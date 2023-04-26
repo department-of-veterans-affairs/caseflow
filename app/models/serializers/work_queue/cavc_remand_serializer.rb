@@ -35,4 +35,10 @@ class WorkQueue::CavcRemandSerializer
   attribute :updated_by do |object|
     object.updated_by&.full_name
   end
+
+  attribute :cavc_remands_appellant_substitution do |object|
+    if object.cavc_remands_appellant_substitution
+      WorkQueue::CavcRemandsAppellantSubstitutionSerializer.new(object.cavc_remands_appellant_substitution).serializable_hash[:data][:attributes]
+    end
+  end
 end
