@@ -36,7 +36,6 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     body = params.require(:request_address).permit!.to_h
     address = OpenStruct.new(body)
     response = VADotGovService.validate_address(format_address(address))
-    byebug
     # specific error handling occurs in va_dot_gov_service/response.rb
     if response.error.present?
       log_error(response.error)

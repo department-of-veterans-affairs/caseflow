@@ -40,45 +40,45 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
         }
       ],
       "address": {
-        "addressLine1": "string",
-        "addressLine2": "string",
-        "addressLine3": "string",
-        "city": "string",
-        "zipCode5": "string",
-        "zipCode4": "string",
+        "addressLine1": "8633 Fordham St.",
+        "addressLine2": "",
+        "addressLine3": "",
+        "city": "Deltona",
+        "zipCode5": "32738",
+        "zipCode4": "2434",
         "internationalPostalCode": "string",
         "county": {
-          "name": "string",
-          "countyFipsCode": "string"
+          "name": "Deltona",
+          "countyFipsCode": "32738"
         },
         "stateProvince": {
-          "name": "string",
-          "code": "string"
+          "name": "Florida",
+          "code": "FL"
         },
         "country": {
-          "name": "string",
-          "code": "string",
-          "fipsCode": "string",
-          "iso2Code": "string",
-          "iso3Code": "string"
-        }
+          "name": "United States",
+          "code": "USA",
+          "fipsCode": "US",
+          "iso2Code": "US",
+          "iso3Code": "USA"
+        },
       },
       "geocode": {
-        "calcDate": "2023-04-25T17:26:05.854Z",
-        "locationPrecision": 0,
-        "latitude": 0,
-        "longitude": 0
+        "calcDate": "2019-01-03T17:33:57+00:00",
+        "locationPrecision": 31.0,
+        "latitude": 38.768185,
+        "longitude": -77.450033
       },
       "usCongressionalDistrict": "string",
       "addressMetaData": {
-        "confidenceScore": 0,
-        "addressType": "string",
+        "confidenceScore": 100.0,
+        "addressType": "Domestic",
         "deliveryPointValidation": "CONFIRMED",
         "residentialDeliveryIndicator": "RESIDENTIAL",
         "nonPostalInputData": [
           "string"
         ],
-        "validationKey": 0
+        "validationKey": 113_008_568
       }
     }
   end

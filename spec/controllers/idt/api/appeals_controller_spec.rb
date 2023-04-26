@@ -765,9 +765,9 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         expect(response.status).to eq(200)
         expect(
-          OpenStruct.new(JSON.parse(response.body))[:address].first.last.first.last
+          JSON.parse(response.body)["address"]["city"]
         ).to eq(
-          Fakes::VADotGovService.fake_address_data[:address][:county][:name]
+          Fakes::VADotGovService.fake_address_data[:address][:city]
         )
       end
     end
@@ -797,8 +797,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         end
       end
 
-      context "Lighthouse returns a 429" do
-        let!(:expected_status_code) { 429 }
+      context "Lighthouse returns a 500" do
+        let!(:expected_status_code) { 500 }
 
         it "Caseflow returns a 500" do
           subject
