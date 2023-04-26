@@ -1,4 +1,4 @@
-Resolves #{github issue number}
+Resolves #{jira issue link}
 
 ### Description
 Please explain the changes you made here.
@@ -9,7 +9,7 @@ Please explain the changes you made here.
 ### Testing Plan
 1. Go to ...
 
-- [ ] For higher-risk changes: [Deploy the custom branch to UAT to test](https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/Applications---Deploy-Custom-Branch-to-UAT)
+- [ ] For feature branches merging into master: Was this deployed to UAT?
 
 ### User Facing Changes
  - [ ] Screenshots of UI changes added to PR & Original Issue
