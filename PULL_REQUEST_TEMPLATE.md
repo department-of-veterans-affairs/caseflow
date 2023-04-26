@@ -1,24 +1,22 @@
 Resolves #{jira issue link}
 
-### Description
+## Description
 Please explain the changes you made here.
 
 ### Acceptance Criteria
 - [ ] Code compiles correctly
 
 ### Testing Plan
-1. Go to ...
+1. Go to #{jira issue link} or list them below
 
 - [ ] For feature branches merging into master: Was this deployed to UAT?
 
+## Frontend
 ### User Facing Changes
  - [ ] Screenshots of UI changes added to PR & Original Issue
 
  BEFORE|AFTER
  ---|---
-
-### Code Documentation Updates
-- [ ] Add or update code comments at the top of the class, module, and/or component.
 
 ### Storybook Story
 *For Frontend (Presentationa) Components*
@@ -26,6 +24,7 @@ Please explain the changes you made here.
 * [ ] Give it a title that reflects the component's location within the overall Caseflow hierarchy
 * [ ] Write a separate story (within the same file) for each discrete variation of the component
 
+## Backend
 ### Database Changes
 *Only for Schema Changes*
 
@@ -46,6 +45,10 @@ Please explain the changes you made here.
   * [ ] Response: Check expected data structure
 * [ ] Update Fakes
 * [ ] Integrations impacting functionality are tested in Caseflow UAT
+
+## Best practices
+### Code Documentation Updates
+- [ ] Add or update code comments at the top of the class, module, and/or component.
 
 ### Monitoring, Logging, Auditing, Error, and Exception Handling Checklist
 
