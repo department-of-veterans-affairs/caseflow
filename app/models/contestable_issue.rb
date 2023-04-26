@@ -80,7 +80,9 @@ class ContestableIssue
       sourceReviewType: source_review_type,
       timely: timely?,
       latestIssuesInChain: serialize_latest_decision_issues,
-      isRating: is_rating
+      isRating: is_rating, 
+      mstAvailable: mst_available?,
+      pactAvailable: pact_available?
     }
   end
 
@@ -111,6 +113,14 @@ class ContestableIssue
   def timely?
     approx_decision_date && contesting_decision_review.timely_issue?(approx_decision_date)
   end
+
+  def mst_available? 
+    contested_by_request_issue&.mst_contention_status?
+  end
+
+  def pact_available?
+    contested_by_request_issue&.pact_contention_status?
+  end 
 
   private
 

@@ -20,6 +20,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     eduPreDocketAppeals: {
       $set: Boolean(featureToggles.eduPreDocketAppeals)
     },
+    mstPactIdentification: {
+      $set: Boolean(featureToggles.mstPactIdentification)
+    },
     updatedAppealForm: {
       $set: Boolean(featureToggles.updatedAppealForm)
     },
@@ -28,9 +31,6 @@ const updateFromServerFeatures = (state, featureToggles) => {
     },
     vhaClaimReviewEstablishment: {
       $set: Boolean(featureToggles.vhaClaimReviewEstablishment)
-    },
-    mstPactIdentification: {
-      $set: Boolean(featureToggles.mstPactIdentification)
     }
   });
 };
@@ -43,10 +43,10 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
       filedByVaGovHlr: false,
       updatedIntakeForms: false,
       eduPreDocketAppeals: false,
+      mstPactIdentification: false,
       updatedAppealForm: false,
       hlrScUnrecognizedClaimants: false,
-      vhaClaimReviewEstablishment: false,
-      mstPactIdentification: false
+      vhaClaimReviewEstablishment: false
     },
     data.featureToggles
   );

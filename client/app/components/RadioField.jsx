@@ -45,9 +45,9 @@ export const RadioField = (props) => {
     styling,
     vertical,
     renderMstAndPact,
-    mstCheckboxValue,
+    mstChecked,
     setMstCheckboxFunction,
-    pactCheckboxValue,
+    pactChecked,
     setPactCheckboxFunction
   } = props;
 
@@ -98,13 +98,13 @@ export const RadioField = (props) => {
           <Checkbox
             label="Issue is related to Military Sexual Trauma (MST)"
             name="MST"
-            value={mstCheckboxValue}
+            value={mstChecked}
             onChange={(checked) => setMstCheckboxFunction(checked)}
           />
           <Checkbox
             label="Issue is related to PACT act"
             name="Pact"
-            value={pactCheckboxValue}
+            value={pactChecked}
             onChange={(checked) => setPactCheckboxFunction(checked)}
           />
         </div>
@@ -245,9 +245,9 @@ RadioField.propTypes = {
   hideLabel: PropTypes.bool,
   styling: PropTypes.object,
   renderMstAndPact: PropTypes.bool,
-  mstCheckboxValue: PropTypes.bool,
+  mstChecked: PropTypes.bool,
   setMstCheckboxFunction: PropTypes.func,
-  pactCheckboxValue: PropTypes.bool,
+  pactChecked: PropTypes.bool,
   setPactCheckboxFunction: PropTypes.func,
 };
 
