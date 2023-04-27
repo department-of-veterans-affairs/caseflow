@@ -36,6 +36,8 @@ feature "VhaCaregiverSupportQueue", :all_dbs do
       expect(find("h1")).to have_content("VHA Caregiver Support Program cases")
     end
 
+    # TODO: Replace all these with the new shared examples when issue type is added to caregiver.
+
     scenario "CSP Queue Has unassigned, in progress, and completed tabs" do
       expect(page).to have_content unassigned_tab_text
       expect(page).to have_content in_progress_tab_text
@@ -76,7 +78,6 @@ feature "VhaCaregiverSupportQueue", :all_dbs do
 
     scenario "CSP Queue In Progress tab has the correct number in the tab name and the number of table rows" do
       # Navigate to the In Progress Tab
-      # click_button(in_progress_tab_text)
       in_progress_tab_button = find("button", text: in_progress_tab_text)
       in_progress_tab_button.click
       num_table_rows = all("tbody > tr").count
