@@ -76,7 +76,6 @@ class SelectDispositionsView extends React.PureComponent {
       specialIssues: null,
     };
   }
-
   decisionReviewCheckoutFlow = () => this.props.checkoutFlow === 'dispatch_decision';
 
   componentDidMount = () => {
@@ -155,15 +154,23 @@ class SelectDispositionsView extends React.PureComponent {
       benefit_type: benefitType,
       diagnostic_code: diagnosticCode,
       request_issue_ids: [requestIssueId],
-      mstStatus: false,
-      pactStatus: false,
+      mstStatus: decisionIssue?.mstStatus ? decisionIssue.mstStatus : false,
+      pactStatus: decisionIssue?.pactStatus ? decisionIssue.pactStatus : false,
+
+      /*
+        Since AMA appeals no longer utilizes SelectSpecialIssuesView.jsx
+        but are still tracked on the appeal level, this will be used
+        to temporarily track burn pit and blue water on issue level since
+        there are multiple decision issues.
+      */
+      issueSpecialIssues: null,
     };
 
     this.setState({
       openRequestIssueId: requestIssueId,
       decisionIssue: decisionIssue || newDecisionIssue,
       editingExistingIssue: Boolean(decisionIssue),
-      deleteAddedDecisionIssue: null
+      deleteAddedDecisionIssue: null,
     });
   }
 
@@ -174,7 +181,7 @@ class SelectDispositionsView extends React.PureComponent {
       editingExistingIssue: false,
       highlightModal: false,
       deleteAddedDecisionIssue: null,
-      requestIdToDelete: null
+      requestIdToDelete: null,
     });
   }
 
@@ -274,31 +281,25 @@ class SelectDispositionsView extends React.PureComponent {
     });
   }
 
-  convertToSnakeCase = (str) => {
-    return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
-  }
-
   onCheckboxChange = (event, decision, spIssues) => {
-    let checkboxId = event.target.getAttribute('id');
+    const checkboxId = event.target.getAttribute('id');
 
-    if (checkboxId === 'mstStatus' || checkboxId === 'pactStatus') {
+    // if (checkboxId === 'mstStatus' || checkboxId === 'pactStatus') {
       this.setState({
         decisionIssue: {
           ...decision,
           [checkboxId]: event.target.checked,
         }
       });
-    }
-    if (checkboxId === 'blueWater' || checkboxId === 'burnPit') {
-      checkboxId = this.convertToSnakeCase(checkboxId);
-
-      this.setState({
-        specialIssues: {
-          ...spIssues,
-          [checkboxId]: event.target.checked,
-        }
-      });
-    }
+    // }
+    // if (checkboxId === 'blue_water' || checkboxId === 'burn_pit') {
+    //   this.setState({
+    //     specialIssues: {
+    //       ...spIssues,
+    //       [checkboxId]: event.target.checked,
+    //     }
+    //   });
+    // }
   };
 
   render = () => {
@@ -317,6 +318,15 @@ class SelectDispositionsView extends React.PureComponent {
     });
     const connectedIssues = this.connectedRequestIssuesWithoutCurrentId(connectedRequestIssues, requestIdToDelete);
     const toDeleteHasConnectedIssue = connectedIssues.length > 0;
+
+    const specialIssuesValues = {
+      // eslint-disable-next-line camelcase
+      blue_water: decisionIssue?.blue_water,
+      // eslint-disable-next-line camelcase
+      burn_pit: decisionIssue?.burn_pit,
+      mstStatus: decisionIssue?.mstStatus,
+      pactStatus: decisionIssue?.pactStatus
+    };
 
     // In order to determine whether or not to display error styling and an error message for each issue,
     // determine if highlight is set to true and if there is not a decision issue
@@ -446,6 +456,7 @@ class SelectDispositionsView extends React.PureComponent {
         <CheckboxGroup
           name={COPY.INTAKE_EDIT_ISSUE_SELECT_SPECIAL_ISSUES}
           options={DECISION_SPECIAL_ISSUES}
+          values={specialIssuesValues}
           styling={specialIssuesCheckboxStyling}
           onChange={(event) => this.onCheckboxChange(event, decisionIssue, specialIssues)}
         />
