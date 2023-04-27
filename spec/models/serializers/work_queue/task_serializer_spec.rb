@@ -5,6 +5,7 @@ describe WorkQueue::TaskSerializer, :postgres do
   let(:user) { create(:user) }
   let!(:parent) { create(:ama_task, assigned_to: user) }
   let(:days_on_hold) { 18 }
+  let(:appeal) { create(:appeal) }
 
   describe "#as_json" do
     subject { described_class.new(parent).serializable_hash[:data][:attributes] }
@@ -54,6 +55,16 @@ describe WorkQueue::TaskSerializer, :postgres do
       let(:task) { create(:distribution_task) }
       it "returns nil for timer_ends_at" do
         expect(subject[:timer_ends_at]).to eq(nil)
+      end
+    end
+  end
+
+  describe "attribute issue_types" do
+    subject { described_class.new(task).serializable_hash[:data][:attributes] }
+    context "displays nonrating_issue_category" do
+      let(:task) {RequestIssue.create!(decision_review_type: "Appeal", decision_review_id: 2252, benefit_type: "compensation", nonrating_issue_category: "[\"Caregiver\", \"Prostetics\"]", type: "RequestIssue")}
+      it "returns the array of nonrating_issue_category" do
+        expect(subject[task.nonrating_issue_category]).to eq("Caregiver", "Prostetics")
       end
     end
   end
