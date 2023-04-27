@@ -145,7 +145,10 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       titleOfActiveReview: issue.title_of_active_review,
       rampClaimId: issue.ramp_claim_id,
       verifiedUnidentifiedIssue: issue.verified_unidentified_issue,
-      isPreDocketNeeded: issue.is_predocket_needed
+      isPreDocketNeeded: issue.is_predocket_needed,
+      mstAvailable: issue.mst_available,
+      pactAvailable: issue.pact_available
+
     };
   }
   );
