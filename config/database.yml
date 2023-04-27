@@ -127,7 +127,7 @@ test_vacols:
   username: VACOLS_TEST
   password: VACOLS_TEST
   database: "(DESCRIPTION=
-    (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=facols_db)(PORT=1521)))
+    (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=<%= ENV['TEST_VACOLS_HOST']%>)(PORT=1521)))
     (RECV_TIMEOUT=120)(SEND_TIMEOUT=5)
     (CONNECT_DATA=(SID=BVAP))
   )"
