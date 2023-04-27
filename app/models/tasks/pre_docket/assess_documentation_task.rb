@@ -44,10 +44,21 @@ class AssessDocumentationTask < Task
       task_actions.concat([Constants.TASK_ACTIONS.VHA_MARK_TASK_IN_PROGRESS.to_h].freeze)
     end
 
-    task_actions
+    sort_task_actions(task_actions)
   end
 
   def self.label
     COPY::ASSESS_DOCUMENTATION_TASK_LABEL
+  end
+
+  private
+
+  def sort_task_actions(task_actions)
+    sorted_task_actions = []
+    task_actions.each_with_index do |action, index|
+      new_index = action.key?(:sort_order) ? action[:sort_order] : index
+      sorted_task_actions.insert(new_index, action)
+    end
+    sorted_task_actions.compact!
   end
 end
