@@ -3,14 +3,6 @@ Resolves #{jira issue link}
 # Description
 Please explain the changes you made here.
 
-### Test Driven Development
-Did you include any test coverage for your code? Check below:
-- [ ] RSpec
-- [ ] Jest
-- [ ] Other
-### Code Climate
-Your code does not add any new code climate offenses? If so why?
-- [ ] No new code climate issues added
 ## Acceptance Criteria
 - [ ] Code compiles correctly
 
@@ -61,6 +53,17 @@ Your code does not add any new code climate offenses? If so why?
 # Best practices
 ## Code Documentation Updates
 - [ ] Add or update code comments at the top of the class, module, and/or component.
+
+## Tests
+### Test Coverage
+Did you include any test coverage for your code? Check below:
+- [ ] RSpec
+- [ ] Jest
+- [ ] Other
+
+### Code Climate
+Your code does not add any new code climate offenses? If so why?
+- [ ] No new code climate issues added
 
 ## Monitoring, Logging, Auditing, Error, and Exception Handling Checklist
 
