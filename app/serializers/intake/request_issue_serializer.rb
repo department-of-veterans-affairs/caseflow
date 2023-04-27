@@ -38,4 +38,6 @@ class Intake::RequestIssueSerializer
   end
   attribute :benefit_type
   attribute :is_predocket_needed
+  attribute :mst_status
+  attribute :pact_status
 end
