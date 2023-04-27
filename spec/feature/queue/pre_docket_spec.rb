@@ -559,6 +559,8 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           fill_in(COPY::VHA_COMPLETE_TASK_MODAL_BODY, with: po_instructions)
           find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
           expect(page).to have_content(COPY::VHA_COMPLETE_TASK_CONFIRMATION_PO)
+          expect(page).to have_current_path("/organizations/#{program_office.url}"\
+            "?tab=po_completed&#{default_query_params}")
 
           visit "/queue/appeals/#{appeal.external_id}"
           find_all("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).first.click
