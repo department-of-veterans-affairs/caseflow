@@ -17,6 +17,7 @@ class AddIssuesModal extends React.Component {
       approxDecisionDate: '',
       selectedContestableIssueIndex: '',
       notes: '',
+      justification: '',
       mstChecked: false,
       pactChecked: false
     };
@@ -29,8 +30,10 @@ class AddIssuesModal extends React.Component {
 
   notesOnChange = (notes) => this.setState({ notes });
 
+  justificationOnChange = (justification) => this.setState({ justification });
+
   onAddIssue = () => {
-    const { selectedContestableIssueIndex, notes, mstChecked, pactChecked } = this.state;
+    const { selectedContestableIssueIndex, notes, mstChecked, pactChecked, justification } = this.state;
     const currentIssue = issueByIndex(this.props.intakeData.contestableIssues, selectedContestableIssueIndex);
 
     if (selectedContestableIssueIndex && !currentIssue.index) {
@@ -46,6 +49,7 @@ class AddIssuesModal extends React.Component {
         notes,
         mstChecked,
         pactChecked,
+        justification,
       }
     });
   };
@@ -96,6 +100,8 @@ class AddIssuesModal extends React.Component {
           value={this.state.selectedContestableIssueIndex}
           onChange={this.radioOnChange}
           renderMstAndPact={this.props.featureToggles.mstPactIdentification}
+          justification={this.state.justification}
+          justificationOnChange={this.justificationOnChange}
           mstChecked={this.state.mstChecked}
           setMstCheckboxFunction={this.mstCheckboxChange}
           pactChecked={this.state.pactChecked}

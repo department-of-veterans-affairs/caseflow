@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Checkbox from './Checkbox';
+import TextField from './TextField';
 
 import RequiredIndicator from './RequiredIndicator';
 import StringUtil from '../util/StringUtil';
@@ -107,6 +108,14 @@ export const RadioField = (props) => {
             value={pactChecked}
             onChange={(checked) => setPactCheckboxFunction(checked)}
           />
+          { (mstChecked || pactChecked) && <TextField
+            name="justification-field"
+            // value={this.state.justification}
+            label="Why was this change made?"
+            optional
+            // onChange={this.justificationOnChange}
+          /> }
+          {/* <TextField name="Notes" value={this.state.notes} optional strongLabel onChange={this.notesOnChange} /> */}
         </div>
       );
     }
@@ -248,6 +257,7 @@ RadioField.propTypes = {
   mstChecked: PropTypes.bool,
   setMstCheckboxFunction: PropTypes.func,
   pactChecked: PropTypes.bool,
+  justificationOnChange: PropTypes.func,
   setPactCheckboxFunction: PropTypes.func,
 };
 
