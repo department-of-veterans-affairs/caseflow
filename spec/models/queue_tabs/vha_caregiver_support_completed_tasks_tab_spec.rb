@@ -47,7 +47,7 @@ describe VhaCaregiverSupportCompletedTasksTab, :postgres do
 
     context "when only the assignee argument is passed when instantiating an VhaCaregiverSupportCompletedTasksTab" do
       it "returns the correct number of columns" do
-        expect(subject.length).to eq(8)
+        expect(subject.length).to eq(9)
       end
     end
   end

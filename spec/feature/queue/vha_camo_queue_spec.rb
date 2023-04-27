@@ -43,7 +43,7 @@ feature "CamoQueue", :all_dbs do
                nonrating_issue_category: "Beneficiary Travel", benefit_type: "vha"),
         create(:request_issue, :nonrating,
                decision_review: vha_camo_assigned_tasks.first.appeal,
-               nonrating_issue_category: "Foreign Medical Program", benefit_type: "vha"),
+               nonrating_issue_category: "Foreign Medical Program", benefit_type: "vha")
       ]
     end
 

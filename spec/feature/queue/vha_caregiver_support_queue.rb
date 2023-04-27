@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "./queue_shared_examples_spec.rb"
+
 feature "VhaCaregiverSupportQueue", :all_dbs do
   context "Load Caregiver Support Queue" do
     let(:csp_org) { VhaCaregiverSupport.singleton }
@@ -9,7 +11,7 @@ feature "VhaCaregiverSupportQueue", :all_dbs do
     let(:completed_tab_text) { "Completed" }
     let(:column_heading_names) do
       [
-        "Case Details", "Tasks", "Assigned By", "Types", "Docket", "Days Waiting", "Veteran Documents"
+        "Case Details", "Issue Type", "Tasks", "Assigned By", "Types", "Docket", "Days Waiting", "Veteran Documents"
       ]
     end
     let!(:num_unassigned_rows) { 3 }
@@ -32,64 +34,48 @@ feature "VhaCaregiverSupportQueue", :all_dbs do
       visit "/organizations/#{csp_org.url}"
     end
 
+    # Setup variables for the Standard Queue feature tests shared examples
+    let!(:tabs) do
+      test_tab = Struct.new(:tab_name, :tab_columns, :tab_body_text, :number_of_tasks)
+      [
+        test_tab.new(unassigned_tab_text, column_heading_names, "Cases assigned to VHA Caregiver Support Program:",
+                     num_unassigned_rows),
+        test_tab.new(in_progress_tab_text, column_heading_names, "Cases assigned to VHA Caregiver Support Program:",
+                     num_in_progress_rows),
+        test_tab.new(completed_tab_text, column_heading_names, "Cases completed (last 7 days):", num_completed_rows)
+      ]
+    end
+    let!(:queue) { Struct.new(:tabs).new(tabs) }
+
+    include_examples "Standard Queue feature tests"
+
     scenario "Caregiver Support Queue Loads" do
       expect(find("h1")).to have_content("VHA Caregiver Support Program cases")
     end
 
-    # TODO: Replace all these with the new shared examples when issue type is added to caregiver.
+    context "issue types column" do
+      let!(:assigned_request_issues) do
+        [
+          create(:request_issue, :nonrating,
+                 decision_review: vha_caregiver_unassigned_tasks.first.appeal,
+                 nonrating_issue_category: "Eligibility for Dental Treatment", benefit_type: "vha"),
+          create(:request_issue, :nonrating,
+                 decision_review: vha_caregiver_unassigned_tasks.first.appeal,
+                 nonrating_issue_category: "Caregiver | Other", benefit_type: "vha"),
+          create(:request_issue, :nonrating,
+                 decision_review: vha_caregiver_unassigned_tasks.first.appeal,
+                 nonrating_issue_category: "Caregiver | Other", benefit_type: "vha"),
+          create(:request_issue, :nonrating,
+                 decision_review: vha_caregiver_unassigned_tasks.first.appeal,
+                 nonrating_issue_category: "Foreign Medical Program", benefit_type: "vha")
+        ]
+      end
 
-    scenario "CSP Queue Has unassigned, in progress, and completed tabs" do
-      expect(page).to have_content unassigned_tab_text
-      expect(page).to have_content in_progress_tab_text
-      expect(page).to have_content completed_tab_text
-    end
-
-    scenario "CSP Queue Unassigned tab has the correct column Headings and description text" do
-      # The first tab is the unassigned tab so there is no need to navigate
-      html_table_headings = all("th").map(&:text).reject(&:empty?).compact
-      expect(page).to have_content "Cases assigned to VHA Caregiver Support Program:"
-      expect(html_table_headings).to eq(column_heading_names)
-    end
-
-    scenario "CSP Queue In Progress tab has the correct column Headings and description text" do
-      # Navigate to the In Progress Tab
-      click_button(in_progress_tab_text)
-
-      html_table_headings = all("th").map(&:text).reject(&:empty?).compact
-      expect(page).to have_content "Cases assigned to VHA Caregiver Support Program:"
-      expect(html_table_headings).to eq(column_heading_names)
-    end
-
-    scenario "CSP Queue Completed tab has the correct column Headings and description text" do
-      # Navigate to the Completed Tab
-      click_button(completed_tab_text)
-
-      html_table_headings = all("th").map(&:text).reject(&:empty?).compact
-      expect(page).to have_content "Cases completed (last 7 days):"
-      expect(html_table_headings).to eq(column_heading_names)
-    end
-
-    scenario "CSP Queue Unassigned tab has the correct number in the tab name and the number of table rows" do
-      unassigned_tab_button = find("button", text: unassigned_tab_text)
-      num_table_rows = all("tbody > tr").count
-      expect(unassigned_tab_button.text).to eq("#{unassigned_tab_text} (#{num_unassigned_rows})")
-      expect(num_table_rows).to eq(num_unassigned_rows)
-    end
-
-    scenario "CSP Queue In Progress tab has the correct number in the tab name and the number of table rows" do
-      # Navigate to the In Progress Tab
-      in_progress_tab_button = find("button", text: in_progress_tab_text)
-      in_progress_tab_button.click
-      num_table_rows = all("tbody > tr").count
-      expect(in_progress_tab_button.text).to eq("#{in_progress_tab_text} (#{num_in_progress_rows})")
-      expect(num_table_rows).to eq(num_in_progress_rows)
-    end
-
-    scenario "CSP Queue Completed tab has the correct number of table rows" do
-      # Navigate to the Completed Tab
-      click_button(completed_tab_text)
-      num_table_rows = all("tbody > tr").count
-      expect(num_table_rows).to eq(num_completed_rows)
+      scenario "Camo assigned tab displays multiple issue types ordered in ascending order and no duplicates" do
+        expect(page).to have_content(
+          /\nCaregiver | Other\nEligibility for Dental Treatment\nForeign Medical Program\n/
+        )
+      end
     end
   end
 end
