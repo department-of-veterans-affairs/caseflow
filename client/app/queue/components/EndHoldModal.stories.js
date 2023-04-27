@@ -10,7 +10,7 @@ import {
   getTaskId
 } from '../../../test/app/queue/components/modalUtils';
 import {
-  visnData
+  visnOnHoldData
 } from '../../../test/data/queue/taskActionModals/taskActionModalData';
 import EndHoldModel from './EndHoldModal';
 
@@ -43,7 +43,7 @@ const Template = (args) => {
     <Provider store={store}>
       <MemoryRouter initialEntries={[path]}>
         <Route component={(props) => {
-          return <EndHoldModel {...props.match.params} modalType={modalType} />;
+          return <EndHoldModel {...props.match.params} />;
         }} path={`/queue/appeals/:appealId/tasks/:taskId/modal/${modalType}`} />
       </MemoryRouter>
     </Provider>
@@ -52,7 +52,8 @@ const Template = (args) => {
 
 export const EndHoldAndReturnToAssigned = Template.bind({});
 EndHoldAndReturnToAssigned.args = {
-  storeValues: visnData,
-  taskType: 'AssessDocumentationTask'
+  storeValues: visnOnHoldData,
+  taskType: 'AssessDocumentationTask',
+  modalType: 'modal/end_hold'
 };
 
