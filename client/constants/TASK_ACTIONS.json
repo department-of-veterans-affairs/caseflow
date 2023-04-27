@@ -204,13 +204,13 @@
     "func": "complete_data"
   },
   "VHA_PO_SEND_TO_CAMO_FOR_REVIEW": {
-    "label": "Documents ready for VHA CAMO team review",
+    "label": "Documents ready for VHA CAMO review",
     "value": "modal/ready_for_review",
     "func": "vha_complete_data",
     "sort_order": 4
   },
   "VHA_VISN_SEND_TO_VHA_PO_FOR_REVIEW": {
-    "label": "Documents ready for Program Office team review",
+    "label": "Documents ready for Program Office review",
     "value": "modal/ready_for_review",
     "func": "vha_complete_data",
     "sort_order": 4
@@ -408,13 +408,13 @@
     "sort_order": 3
   },
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO": {
-    "label": "Return to VHA CAMO team",
+    "label": "Return to VHA CAMO",
     "value": "modal/return_to_camo",
     "func": "vha_program_office_return_to_camo",
     "sort_order": 5
   },
   "VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE": {
-    "label": "Return to Program Office team",
+    "label": "Return to Program Office",
     "value": "modal/return_to_program_office",
     "func": "vha_regional_office_return_to_program_office",
     "sort_order": 5
