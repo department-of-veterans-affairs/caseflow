@@ -1,0 +1,2 @@
+class VbmsDistributionDestination < ApplicationRecord
+end

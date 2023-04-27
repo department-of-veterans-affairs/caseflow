@@ -1,0 +1,2 @@
+class VbmsCommunicationPackage < ApplicationRecord
+end
