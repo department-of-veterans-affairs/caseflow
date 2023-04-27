@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_04_25_171045) do
+ActiveRecord::Schema.define(version: 2023_03_17_164013) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1786,48 +1786,6 @@ ActiveRecord::Schema.define(version: 2023_04_25_171045) do
     t.index ["css_id"], name: "index_users_on_css_id", unique: true
     t.index ["status"], name: "index_users_on_status"
     t.index ["updated_at"], name: "index_users_on_updated_at"
-  end
-
-  create_table "vbms_communication_packages", force: :cascade do |t|
-    t.string "comm_package_name", null: false
-    t.datetime "created_at", null: false
-    t.bigint "document_referenced", default: [], array: true
-    t.string "file_number"
-    t.string "status"
-    t.datetime "updated_at"
-  end
-
-  create_table "vbms_distrobution_destinations", force: :cascade do |t|
-    t.string "address_line_1", null: false
-    t.string "address_line_2", null: false
-    t.string "address_line_3", null: false
-    t.string "address_line_4"
-    t.string "address_line_5"
-    t.string "address_line_6"
-    t.string "city", null: false
-    t.string "country_code", null: false
-    t.string "country_name", null: false
-    t.datetime "created_at", null: false
-    t.string "email_address", null: false
-    t.string "phone_number", null: false
-    t.string "postal_code", null: false
-    t.string "state", null: false
-    t.boolean "treat_line_2_as_addressee", null: false
-    t.boolean "treat_line_3_as_addressee"
-    t.string "type", null: false
-    t.datetime "updated_at"
-  end
-
-  create_table "vbms_distrobutions", force: :cascade do |t|
-    t.string "claimant_station_oc_jurisdiction", null: false
-    t.datetime "created_at", null: false
-    t.string "last_name", null: false
-    t.string "middle_name"
-    t.string "name", null: false
-    t.string "participant_id"
-    t.string "poa_code", null: false
-    t.string "type", null: false
-    t.datetime "updated_at"
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
