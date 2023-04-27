@@ -545,7 +545,10 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       return task_helper if task.assigned_to.is_a?(User)
 
       task_helper.merge(
-        data: { redirect_after: "/organizations/#{task.assigned_to.url}?tab=#{on_hold_tab_url(task.assigned_to)}&page=1" }
+        data: {
+          redirect_after:
+            "/organizations/#{task.assigned_to.url}?tab=#{po_user(task.assigned_to)}_on_hold&page=1"
+        }
       )
     end
 
@@ -667,7 +670,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         instructions_label: COPY::CANCEL_TASK_INSTRUCTIONS_LABEL,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
         type: AssessDocumentationTask.name,
-        redirect_after: "/organizations/#{queue_url}?tab=po_assigned&page=1"
+        redirect_after: "/organizations/#{queue_url}?tab=#{po_user(task.assigned_to)}assigned&page=1"
       }
     end
 
@@ -681,7 +684,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         instructions_label: COPY::CANCEL_TASK_INSTRUCTIONS_LABEL,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
         type: AssessDocumentationTask.name,
-        redirect_after: "/organizations/#{queue_url}?tab=po_assigned&page=1"
+        redirect_after: "/organizations/#{queue_url}?tab=#{po_user(task.assigned_to)}assigned&page=1"
       }
     end
 
@@ -946,10 +949,10 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       end
     end
 
-    def on_hold_tab_url(organization)
-      return "on_hold" unless organization.is_a?(VhaProgramOffice)
+    def po_user(organization)
+      return unless organization.is_a?(VhaProgramOffice)
 
-      "po_on_hold"
+      "po_"
     end
   end
 end
