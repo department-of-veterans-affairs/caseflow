@@ -667,7 +667,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         instructions_label: COPY::CANCEL_TASK_INSTRUCTIONS_LABEL,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
         type: AssessDocumentationTask.name,
-        redirect_after: "/organizations/#{queue_url}?tab=po_completed"
+        redirect_after: "/organizations/#{queue_url}?tab=po_assigned&page=1"
       }
     end
 
@@ -681,7 +681,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         instructions_label: COPY::CANCEL_TASK_INSTRUCTIONS_LABEL,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
         type: AssessDocumentationTask.name,
-        redirect_after: "/organizations/#{queue_url}?tab=po_completed"
+        redirect_after: "/organizations/#{queue_url}?tab=po_assigned&page=1"
       }
     end
 
