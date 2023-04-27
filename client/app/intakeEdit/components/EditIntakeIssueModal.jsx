@@ -13,8 +13,8 @@ import {
   INTAKE_EDIT_ISSUE_LABEL,
   INTAKE_EDIT_ISSUE_BENEFIT_TYPE,
   INTAKE_EDIT_ISSUE_DECISION_DATE,
-  INTAKE_EDIT_ISSUE_MST_LABEL,
-  INTAKE_EDIT_ISSUE_PACT_LABEL
+  MST_LABEL,
+  PACT_LABEL
 } from 'app/../COPY';
 
 export class EditIntakeIssueModal extends React.Component {
@@ -102,7 +102,7 @@ export class EditIntakeIssueModal extends React.Component {
             <li>
               <label>
                 <Checkbox
-                  name={INTAKE_EDIT_ISSUE_MST_LABEL} strongLabel
+                  name={MST_LABEL} strongLabel
                   onChange={this.handleMstCheckboxChange}
                   value={mstCheckboxValue}
                 />
@@ -111,7 +111,7 @@ export class EditIntakeIssueModal extends React.Component {
             <li>
               <label>
                 <Checkbox style={{ 'margin-top': 0, 'margin-bottom': 0 }}
-                  name={INTAKE_EDIT_ISSUE_PACT_LABEL} strongLabel
+                  name={PACT_LABEL} strongLabel
                   onChange={this.handlePactCheckboxChange}
                   value={pactCheckboxValue}
                 />

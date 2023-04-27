@@ -316,7 +316,7 @@ class NonratingRequestIssueModal extends React.Component {
     const { formType, intakeData, onCancel, featureToggles } = this.props;
     const { benefitType, category, selectedNonratingIssueId, isPreDocketNeeded } = this.state;
     const eduPreDocketAppeals = featureToggles.eduPreDocketAppeals;
-    const mstPactIdentification = featureToggles.mstPactIdentification;
+    const mstPactIdentification = featureToggles.mstPactIdentification ? featureToggles.mstPactIdentification : featureToggles.mst_pact_identification;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
