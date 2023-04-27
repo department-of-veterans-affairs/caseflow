@@ -443,7 +443,7 @@ module Caseflow::Error
   class VANotifyApiError < StandardError; end
   class VANotifyUnauthorizedError < VANotifyApiError; end
   class VANotifyForbiddenError < VANotifyApiError; end
-  class VANotifyNotFoundError < VANotifyApiError; end
+  class ClaimEvidenceNotFoundErrorVANotifyNotFoundError < VANotifyApiError; end
   class VANotifyInternalServerError < VANotifyApiError; end
   class VANotifyRateLimitError < VANotifyApiError; end
   class EmptyQueueError < StandardError; end

@@ -28,10 +28,6 @@ class ExternalApi::ClaimEvidenceService
     end
 
     def send_ce_api_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
-      if ApplicationController.dependencies_faked?
-        return Fakes::ClaimEvidenceService.use_faraday({query: query, headers: headers, endpoint: endpoint, method: method, body: body})
-      end
-
       url = URI.escape(BASE_URL + SERVER + endpoint)
       request = HTTPI::Request.new(url)
       request.query = query
@@ -49,12 +45,6 @@ class ExternalApi::ClaimEvidenceService
         case method
         when :get
           response = HTTPI.get(request)
-          service_response = ExternalApi::ClaimEvidenceService::Response.new(response)
-          fail service_response.error if service_response.error.present?
-
-          service_response
-        when :post
-          response = HTTPI.post(request)
           service_response = ExternalApi::ClaimEvidenceService::Response.new(response)
           fail service_response.error if service_response.error.present?
 

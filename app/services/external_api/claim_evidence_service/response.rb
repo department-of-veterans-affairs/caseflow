@@ -17,7 +17,7 @@ class ExternalApi::ClaimEvidenceService::Response
 
   # Checks if there is no error
   def success?
-    !!resp.try(:error?) || resp.try(:success?)
+    resp.try(:success?) || !resp.try(:error?)
   end
 
   # Parses response body to an object
