@@ -82,3 +82,12 @@
 .greyDotStyling {
   padding-left: 6px;
 }
+
+.markdownVJL {
+  p {
+    margin: 0px;
+    &:last-of-type{
+      margin-bottom: 1rem;
+    }
+  }
+}

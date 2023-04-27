@@ -61,7 +61,7 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
 
   validAssignee = () => this.state.selectedAssignee !== null;
   validInstructions = () => this.state.instructions.length > 0;
-  validCancellationInstructions = () => this.state.cancellationInstructions.length > 0;
+  validCancellationInstructions = () => this.state.cancellationInstructions.trim().length > 0;
   validReason = () => this.state.selectedReason !== null;
 
   validatePage = () => this.validCancellationInstructions() && this.validReason();
@@ -83,12 +83,18 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
     return assignee;
   };
 
+  rowValue = (currentValue) => {
+    return currentValue ? (
+      <b>{COPY.TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL}</b>
+    ) : null;
+  };
+
   setOnChangeValue = (stateValue, value) => {
     this.setState({ [stateValue]: value }, function () {
-      if ((this.state.selectedReason !== null && this.state.cancellationInstructions !== '')) {
+      if ((this.state.selectedReason !== null && this.state.cancellationInstructions.trim().length > 0)) {
         this.setState({ disableButton: false });
       }
-      if ((this.state.cancellationInstructions === '' && this.state.selectedReason !== null)) {
+      if ((this.state.cancellationInstructions.trim().length === 0 && this.state.selectedReason !== null)) {
         this.setState({ disableButton: true });
       }
     });
@@ -96,7 +102,7 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
 
   setModalOnChangeValue = (stateValue, value) => {
     this.setState({ [stateValue]: value }, function () {
-      if (this.state.selectedAssignee !== null && this.state.instructions !== '') {
+      if (this.state.selectedAssignee !== null && this.state.instructions.trim().length > 0) {
         this.setState({ modalDisableButton: false });
       } else {
         this.setState({ modalDisableButton: true });
@@ -123,17 +129,28 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
             assigned_to_id: this.state.selectedAssignee,
             assigned_to_type: 'User',
             instructions: [
-              `${this.state.selectedReason}: ${this.state.cancellationInstructions}`,
-              this.state.instructions
+              `${this.state.selectedReason.trim()}: ${this.state.cancellationInstructions.trim()}`,
+              `${task.taskId}`,
+              `${this.state.instructions}`
             ]
           }
         ]
       }
     };
 
+    const assignedByListItem = () => {
+      const assignor = task.assignedBy.firstName ?
+        this.getAbbrevName(task.assignedBy) :
+        null;
+
+      return assignor;
+    };
+
     const successMessage = {
-      title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssigneeLabel()),
-      detail: this.actionData().message_detail
+      title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE_MOVE_LEGACY_APPEALS_VLJ,
+        assignedByListItem(),
+        this.getAssigneeLabel()),
+      detail: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE_MOVE_LEGACY_APPEALS_VLJ_MESSAGE_DETAIL)
     };
 
     return this.props.
@@ -292,7 +309,8 @@ BlockedAdvanceToJudgeLegacyView.propTypes = {
   resetSuccessMessages: PropTypes.func,
   task: PropTypes.shape({
     instructions: PropTypes.string,
-    taskId: PropTypes.string
+    taskId: PropTypes.string,
+    assignedBy: PropTypes.string
   })
 };
 
