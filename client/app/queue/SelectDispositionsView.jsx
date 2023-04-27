@@ -13,6 +13,7 @@ import SelectIssueDispositionDropdown from './components/SelectIssueDispositionD
 import Modal from '../components/Modal';
 import TextareaField from '../components/TextareaField';
 import SearchableDropdown from '../components/SearchableDropdown';
+import CheckboxGroup from '../components/CheckboxGroup';
 import COPY from '../../COPY';
 import { COLORS } from '../constants/AppConstants';
 
@@ -26,12 +27,12 @@ import {
   ISSUE_DISPOSITIONS,
   DECISION_SPECIAL_ISSUES,
 } from './constants';
+import ApiUtil from '../util/ApiUtil';
 
 import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS';
 import uuid from 'uuid';
 import QueueFlowPage from './components/QueueFlowPage';
-import CheckboxGroup from '../components/CheckboxGroup';
 
 const connectedIssueDiv = css({
   display: 'flex',
@@ -71,7 +72,8 @@ class SelectDispositionsView extends React.PureComponent {
       decisionIssue: null,
       editingExistingIssue: false,
       highlightModal: false,
-      deleteAddedDecisionIssue: null
+      deleteAddedDecisionIssue: null,
+      specialIssues: null,
     };
   }
 
@@ -81,6 +83,14 @@ class SelectDispositionsView extends React.PureComponent {
     if (!this.decisionReviewCheckoutFlow()) {
       this.props.setDecisionOptions({ work_product: 'Decision' });
     }
+    ApiUtil.get(
+      `/appeals/${this.props.appealId}/special_issues`).then(
+      (response) => {
+        const { ...specialIssues } = response.body;
+
+        this.setState({ specialIssues });
+      }
+    );
   }
 
   getNextStepUrl = () => {
@@ -203,6 +213,10 @@ class SelectDispositionsView extends React.PureComponent {
       this.props.appeal.externalId, { decisionIssues: newDecisionIssues }
     );
 
+    this.props.editStagedAppeal(
+      this.props.appeal.externalId, { specialIssues: this.state.specialIssues }
+    );
+
     this.handleModalClose();
   }
 
@@ -213,6 +227,10 @@ class SelectDispositionsView extends React.PureComponent {
 
     this.props.editStagedAppeal(
       this.props.appeal.externalId, { decisionIssues: remainingDecisionIssues }
+    );
+
+    this.props.editStagedAppeal(
+      this.props.appeal.externalId, { specialIssues: null }
     );
 
     this.handleModalClose();
@@ -256,13 +274,27 @@ class SelectDispositionsView extends React.PureComponent {
     });
   }
 
-  onCheckboxChange = (event, decision) => {
-    const checkboxId = event.target.getAttribute('id');
+  convertToSnakeCase = (str) => {
+    return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+  }
+
+  onCheckboxChange = (event, decision, spIssues) => {
+    let checkboxId = event.target.getAttribute('id');
 
     if (checkboxId === 'mstStatus' || checkboxId === 'pactStatus') {
       this.setState({
         decisionIssue: {
           ...decision,
+          [checkboxId]: event.target.checked,
+        }
+      });
+    }
+    if (checkboxId === 'blueWater' || checkboxId === 'burnPit') {
+      checkboxId = this.convertToSnakeCase(checkboxId);
+
+      this.setState({
+        specialIssues: {
+          ...spIssues,
           [checkboxId]: event.target.checked,
         }
       });
@@ -277,7 +309,8 @@ class SelectDispositionsView extends React.PureComponent {
       openRequestIssueId,
       editingExistingIssue,
       deleteAddedDecisionIssue,
-      requestIdToDelete
+      requestIdToDelete,
+      specialIssues
     } = this.state;
     const connectedRequestIssues = appeal.issues.filter((issue) => {
       return decisionIssue && decisionIssue.request_issue_ids.includes(issue.id);
@@ -414,7 +447,7 @@ class SelectDispositionsView extends React.PureComponent {
           name={COPY.INTAKE_EDIT_ISSUE_SELECT_SPECIAL_ISSUES}
           options={DECISION_SPECIAL_ISSUES}
           styling={specialIssuesCheckboxStyling}
-          onChange={(event) => this.onCheckboxChange(event, decisionIssue)}
+          onChange={(event) => this.onCheckboxChange(event, decisionIssue, specialIssues)}
         />
         <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_DESCRIPTION}</h3>
         <p {...exampleDiv} {...paragraphH3SiblingStyle}>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_EXAMPLE}</p>
