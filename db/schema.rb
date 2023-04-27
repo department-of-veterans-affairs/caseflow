@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.boolean "appeal_docketed", default: false, null: false, comment: "When true, appeal has been docketed"
     t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID"
     t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
-    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the table"
+    t.datetime "created_at", null: false
     t.bigint "created_by_id", null: false, comment: "User id of the user that inserted the record"
     t.boolean "decision_mailed", default: false, null: false, comment: "When true, appeal has decision mail request complete"
     t.boolean "hearing_postponed", default: false, null: false, comment: "When true, appeal has hearing postponed and no hearings scheduled"
@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.boolean "privacy_act_complete", default: false, null: false, comment: "When true, appeal has a privacy act request completed"
     t.boolean "privacy_act_pending", default: false, null: false, comment: "When true, appeal has a privacy act request still open"
     t.boolean "scheduled_in_error", default: false, null: false, comment: "When true, hearing was scheduled in error and none scheduled"
-    t.datetime "updated_at", comment: "Date and time the record was last updated"
+    t.datetime "updated_at"
     t.bigint "updated_by_id", comment: "User id of the last user that updated the record"
     t.boolean "vso_ihp_complete", default: false, null: false, comment: "When true, appeal has a VSO IHP request completed"
     t.boolean "vso_ihp_pending", default: false, null: false, comment: "When true, appeal has a VSO IHP request pending"
@@ -1194,6 +1194,20 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.index ["request_issue_id"], name: "index_legacy_issues_on_request_issue_id"
   end
 
+  create_table "membership_requests", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "decided_at", comment: "The date and time when the deider user made a decision about the membership request"
+    t.bigint "decider_id", comment: "The user who decides the status of the membership request"
+    t.string "note", comment: "A note that provides additional context from the requestor about their request for access to the organization"
+    t.bigint "organization_id", comment: "The organization that the membership request is asking to join"
+    t.bigint "requestor_id", comment: "The User that is requesting access to the organization"
+    t.string "status", default: "assigned", null: false, comment: "The status of the membership request at any given point of time"
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_membership_requests_on_organization_id"
+    t.index ["requestor_id"], name: "index_membership_requests_on_requestor_id"
+    t.index ["status", "organization_id", "requestor_id"], name: "index_membership_requests_on_status_and_association_ids", unique: true, where: "((status)::text = 'assigned'::text)"
+  end
+
   create_table "messages", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "detail_id", comment: "ID of the related object"
@@ -2011,6 +2025,9 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
   add_foreign_key "legacy_issue_optins", "legacy_issues"
   add_foreign_key "legacy_issue_optins", "request_issues"
   add_foreign_key "legacy_issues", "request_issues"
+  add_foreign_key "membership_requests", "organizations"
+  add_foreign_key "membership_requests", "users", column: "decider_id"
+  add_foreign_key "membership_requests", "users", column: "requestor_id"
   add_foreign_key "messages", "users"
   add_foreign_key "mpi_update_person_events", "api_keys"
   add_foreign_key "nod_date_updates", "appeals"
