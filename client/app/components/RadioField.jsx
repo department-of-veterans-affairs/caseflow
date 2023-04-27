@@ -36,6 +36,7 @@ export const RadioField = (props) => {
     inputProps,
     name,
     options,
+    totalElements,
     value,
     onChange,
     required,
@@ -48,9 +49,7 @@ export const RadioField = (props) => {
     mstCheckboxValue,
     setMstCheckboxFunction,
     pactCheckboxValue,
-    setPactCheckboxFunction,
-    preExistingMST,
-    preExistingPACT
+    setPactCheckboxFunction
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -92,17 +91,23 @@ export const RadioField = (props) => {
     return radioField;
   };
 
-  const returnMstOrCheckboxValue = () => {
-    if (preExistingMST) {
-      return preExistingMST;
+  const returnMstOrCheckboxValue = (counter) => {
+    let valueToCheck = counter - totalElements;
+    const existingMst = options[valueToCheck].mst;
+
+    if (existingMst) {
+      return existingMst;
     }
 
     return mstCheckboxValue;
   };
 
-  const returnPactOrCheckboxValue = () => {
-    if (preExistingPACT) {
-      return preExistingPACT;
+  const returnPactOrCheckboxValue = (counter) => {
+    let valueToCheck = counter - totalElements;
+    const existingPact = options[valueToCheck].pact;
+
+    if (existingPact) {
+      return existingPact;
     }
 
     return pactCheckboxValue;
@@ -110,21 +115,20 @@ export const RadioField = (props) => {
 
   const maybeAddMstAndPactCheckboxes = (option) => {
     if (renderMstAndPact && (option.value === props.value)) {
-
       return (
         <div>
           <Checkbox
             label="Issue is related to Military Sexual Trauma (MST)"
             name="MST"
-            value={returnMstOrCheckboxValue()}
-            disabled={preExistingMST}
+            value={returnMstOrCheckboxValue(value)}
+            disabled={options[value - totalElements].mst}
             onChange={(checked) => setMstCheckboxFunction(checked)}
           />
           <Checkbox
             label="Issue is related to PACT act"
             name="Pact"
-            value={returnPactOrCheckboxValue()}
-            disabled={preExistingPACT}
+            value={returnPactOrCheckboxValue(value)}
+            disabled={options[value - totalElements].pact}
             onChange={(checked) => setPactCheckboxFunction(checked)}
           />
         </div>
@@ -150,7 +154,6 @@ export const RadioField = (props) => {
       <div className="cf-form-radio-options">
         {options.map((option, i) => {
           const optionDisabled = isDisabled(option);
-
           const radioField = (<div
             className="cf-form-radio-option"
             key={`${idPart}-${option.value}-${i}`}
@@ -248,6 +251,10 @@ RadioField.propTypes = {
        * Help text to be displayed below the label
        */
       help: PropTypes.string,
+
+      mst: PropTypes.Boolean,
+      pact: PropTypes.Boolean,
+      counterVal: PropTypes.number
     })
   ),
 
@@ -270,7 +277,8 @@ RadioField.propTypes = {
   pactCheckboxValue: PropTypes.bool,
   setPactCheckboxFunction: PropTypes.func,
   preExistingMST: PropTypes.bool,
-  preExistingPACT: PropTypes.bool
+  preExistingPACT: PropTypes.bool,
+  totalElements: PropTypes.number
 };
 
 export default RadioField;

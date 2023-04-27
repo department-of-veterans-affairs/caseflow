@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { map, findIndex, uniq } from 'lodash';
+import { map, findIndex, uniq, size } from 'lodash';
 
 import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
@@ -18,18 +18,35 @@ class AddIssuesModal extends React.Component {
       selectedContestableIssueIndex: '',
       notes: '',
       mstCheckboxValue: false,
-      pactCheckboxValue: false
+      pactCheckboxValue: false,
+      elementCount: 0,
+      renderedFirstRadiofield: false
     };
   }
 
+  addToElementCount = (increaseAmount) => {
+    this.setState({ elementCount: this.elementCount + increaseAmount });
+  }
+
+  getElementCount = () => {
+    if (this.state.renderedFirstRadiofield) {
+      return this.state.elementCount;
+    }
+    this.setState({ renderedFirstRadiofield: true });
+
+    return 0;
+  }
   mstCheckboxChange = (checked) => this.setState({ mstCheckboxValue: checked });
   pactCheckboxChange = (checked) => this.setState({ pactCheckboxValue: checked });
 
-  radioOnChange = (selectedContestableIssueIndex) => this.setState({ selectedContestableIssueIndex });
+  radioOnChange = (selectedContestableIssueIndex) => {
+    this.setState({ selectedContestableIssueIndex });
+  }
 
   notesOnChange = (notes) => this.setState({ notes });
 
   onAddIssue = () => {
+
     const { selectedContestableIssueIndex, notes, mstCheckboxValue, pactCheckboxValue } = this.state;
     const currentIssue = issueByIndex(this.props.intakeData.contestableIssues, selectedContestableIssueIndex);
 
@@ -52,10 +69,40 @@ class AddIssuesModal extends React.Component {
 
   getContestableIssuesSections() {
     const { intakeData } = this.props;
-
+    let iterations = -1;
     const addedIssues = intakeData.addedIssues ? intakeData.addedIssues : [];
     let preExistingMST;
     let preExistingPACT;
+    let counter = 0;
+    const issueKeys = Object.keys(intakeData.contestableIssues);
+
+    let nestedIssues = [issueKeys.length];
+
+    for (let i = 0; i < issueKeys.length; i++) {
+      nestedIssues.push(intakeData.contestableIssues[issueKeys[i]]);
+    }
+
+    const sizes = nestedIssues.map((foundIssue) => {
+      return Object.keys(foundIssue).length;
+    });
+
+    let accumulation = 0;
+    let accumulationArr = [sizes.length];
+
+    // Each contestable issue section on the child RadioField component consist of a seperate
+    // array. This is a problem because this.state.selectedContestableIssueIndex does not
+    // account for that, and the selected index is used as a prop to identify which Radio option is selected.
+    // The fix is applying offsets so that the index is back to 0 for each new group.
+    for (let i = 0; i < sizes.length; i++) {
+      if (i === 0) {
+        accumulationArr.push(0);
+      }
+
+      else {
+        accumulation += sizes[i];
+      }
+      accumulationArr[i] = accumulation;
+    }
 
     return map(intakeData.contestableIssues, (contestableIssuesByIndex, approxDecisionDate) => {
       const radioOptions = map(contestableIssuesByIndex, (issue) => {
@@ -80,20 +127,25 @@ class AddIssuesModal extends React.Component {
 
           text = `${text} (Please select the most recent decision on ${dates})`;
         }
-        preExistingMST = contestableIssuesByIndex[issue.index].mst;
-        preExistingPACT = contestableIssuesByIndex[issue.index].pact;
 
         return {
+          counterVal: counter,
           displayText: text,
           value: issue.index,
-          disabled: foundIndex !== -1 || hasLaterIssueInChain
+          disabled: foundIndex !== -1 || hasLaterIssueInChain,
+          mst: contestableIssuesByIndex[issue.index].mst_available,
+          pact: contestableIssuesByIndex[issue.index].pact_available
         };
       });
+
+      counter += 1;
+      iterations += 1;
 
       return (
         <IntakeRadioField
           vertical
           label={<h3>Past decisions from {formatDateStr(approxDecisionDate)}</h3>}
+          totalElements={accumulationArr[iterations]}
           name="rating-radio"
           options={radioOptions}
           key={approxDecisionDate}

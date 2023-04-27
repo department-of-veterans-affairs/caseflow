@@ -71,13 +71,35 @@ feature "Intake Add Issues Page", :all_dbs do
     end
 
     scenario "MST and PACT checkboxes are disabled if they already exist in the model" do
-      start_higher_level_review(veteran)
+      claim_id = "abc123"
+      veteran.participant_id = 7
+
+      epe = create(:end_product_establishment,
+          reference_id: claim_id,
+          veteran_file_number: veteran.file_number
+         )
+
+      mst_contention = Generators::Contention.build_mst_contention(
+            claim_id: claim_id
+          )
+
+      req_issue =  create(:request_issue,
+        contention_reference_id: mst_contention.id,
+        end_product_establishment: epe,
+        veteran_participant_id: veteran.participant_id,
+        contested_rating_decision_reference_id: rating.issues[0].reference_id
+      )
+
+      rating.issues[0].associated_end_products = epe
+      contestable_issue = ContestableIssue.from_rating_issue(rating.issues[0], req_issue)
+
+       start_higher_level_review(veteran)
+
       FeatureToggle.enable!(:mst_pact_identification)
       visit "/intake"
       click_intake_continue
       click_intake_add_issue
       choose('rating-radio_0', allow_label_click:true)
-      sleep(1)
       expect(page).to have_field("Issue is related to Military Sexual Trauma (MST)", visible: false, disabled: true)
       expect(page).to have_field("Issue is related to PACT act", visible: false, disabled: true)
     end
