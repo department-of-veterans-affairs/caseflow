@@ -737,16 +737,15 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     end
 
     def vha_mark_task_in_progress(task, _user)
-      org = Organization.find(task.assigned_to_id)
-      queue_url = org.url
+      task_url = task.assigned_to.url
       {
         modal_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_TITLE,
-        modal_body: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_MODAL_BODY,
+        modal_body: COPY::VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY,
         message_title: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE,
         message_detail: COPY::ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL,
         modal_button_text: COPY::MODAL_MARK_TASK_IN_PROGRESS_BUTTON,
         type: AssessDocumentationTask.name,
-        redirect_after: "/organizations/#{queue_url}"
+        redirect_after: "/organizations/#{task_url}?tab=po_inProgressTab&page=1"
       }
     end
 
