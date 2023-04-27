@@ -210,7 +210,7 @@
     "sort_order": 4
   },
   "VHA_VISN_SEND_TO_VHA_PO_FOR_REVIEW": {
-    "label": "Documents ready for VHA Program Office team review",
+    "label": "Documents ready for Program Office team review",
     "value": "modal/ready_for_review",
     "func": "vha_complete_data",
     "sort_order": 4
@@ -414,7 +414,7 @@
     "sort_order": 5
   },
   "VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE": {
-    "label": "Return to VHA Program Office team",
+    "label": "Return to Program Office team",
     "value": "modal/return_to_program_office",
     "func": "vha_regional_office_return_to_program_office",
     "sort_order": 5
