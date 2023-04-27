@@ -83,12 +83,6 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
     return assignee;
   };
 
-  rowValue = (currentValue) => {
-    return currentValue ? (
-      <b>{COPY.TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL}</b>
-    ) : null;
-  };
-
   setOnChangeValue = (stateValue, value) => {
     this.setState({ [stateValue]: value }, function () {
       if ((this.state.selectedReason !== null && this.state.cancellationInstructions.trim().length > 0)) {
