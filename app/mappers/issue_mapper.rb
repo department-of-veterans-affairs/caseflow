@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module IssueMapper
   COLUMN_NAMES = {
     program: :issprog,
@@ -10,7 +8,9 @@ module IssueMapper
     note: :issdesc,
     disposition: :issdc,
     disposition_date: :issdcls,
-    vacols_id: :isskey
+    vacols_id: :isskey,
+    mst_status: :issmst,
+    pact_status: :isspact
   }.freeze
 
   # For disposition descriptions, please see the VACOLS_DISPOSITIONS_BY_ID file
@@ -33,16 +33,20 @@ module IssueMapper
         issue_attrs[:issmduser] = slogid
         issue_attrs[:issmdtime] = VacolsHelper.local_time_with_utc_timezone
       end
+
+      issue_attrs[:issmst] = issue_attrs[:issmst] ? "Y" : "N"
+      issue_attrs[:isspact] = issue_attrs[:isspact] ? "Y" : "N"
+
       issue_attrs
     end
 
     private
 
     def validate!(issue_attrs)
-      return if (issue_attrs.keys & [:issprog, :isscode, :isslev1, :isslev2, :isslev3]).empty?
+      return if (issue_attrs.keys & [:issprog, :isscode, :isslev1, :isslev2, :isslev3, :issmst, :isspact]).empty?
 
-      if issue_attrs.slice(:issprog, :isscode, :isslev1, :isslev2, :isslev3).size != 5
-        msg = "All keys must be present: program, issue, level_1, level_2, level_3"
+      if issue_attrs.slice(:issprog, :isscode, :isslev1, :isslev2, :isslev3, :issmst, :isspact).size != 7
+        msg = "All keys must be present: program, issue, level_1, level_2, level_3, mst_status, pact_status"
         fail Caseflow::Error::IssueRepositoryError, message: msg
       end
 
