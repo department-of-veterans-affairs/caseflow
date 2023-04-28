@@ -7,8 +7,6 @@ class AMOMetricsReportJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :intake
 
-  SLACK_CHANNEL = "#caseflow-vbms-intake"
-
   def perform
     setup_dates
     async_stats = ClaimReviewAsyncStatsReporter.new(start_date: start_date, end_date: end_date)
@@ -33,7 +31,7 @@ class AMOMetricsReportJob < CaseflowJob
 
   def send_report(async_stats:)
     msg = build_report(async_stats)
-    slack_service.send_notification(msg, self.class.to_s, SLACK_CHANNEL)
+    slack_service.send_notification(msg, self.class.to_s)
   end
 
   # rubocop:disable Metrics/AbcSize

@@ -39,7 +39,7 @@ class DataIntegrityChecksJob < CaseflowJob
       log_error(error, extra: { checker: klass })
       slack_msg = "Error running #{klass}."
       slack_msg += " See Sentry event #{Raven.last_event_id}" if Raven.last_event_id.present?
-      slack_service.send_notification(slack_msg, klass, checker.slack_channel)
+      slack_service.send_notification(slack_msg, klass)
     end
   end
 
@@ -52,6 +52,6 @@ class DataIntegrityChecksJob < CaseflowJob
   end
 
   def send_to_slack(checker)
-    slack_service.send_notification(report_msg(checker.report), checker.class.name, checker.slack_channel)
+    slack_service.send_notification(report_msg(checker.report), checker.class.name)
   end
 end

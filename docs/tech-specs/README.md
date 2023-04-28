@@ -18,7 +18,7 @@ This folder contains tech specs for the Caseflow team.
 ## In order to write a tech spec and get it reviewed do the following:
 1. Clone this repo
 2. Start drafting a tech spec by opening a PR creating a file titled YYYY-MM-DD-(tech-spec-name).md in this folder with your tech spec. You can use the [tech spec template here](https://github.com/department-of-veterans-affairs/caseflow/blob/master/.github/ISSUE_TEMPLATE/tech-spec.md)
-3. Post in #appeals-engineering and request for others to review the tech spec
+3. Post in #appeals-development and request for others to review the tech spec
 4. Schedule time on the VA Appeals calendar with your scrum team or the whole Caseflow engineering team as appropriate to discuss the tech spec
 5. Once comments are addressed, the tech spec is finalized and your PR is approved, merge your commit to master so that the tech spec is preserved for future team mates
 6. Link your tech spec in future PRs that implement the changes

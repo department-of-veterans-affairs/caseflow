@@ -23,14 +23,14 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     start_time ||= Time.zone.now # temporary fix to get this job to succeed
     duration = time_ago_in_words(start_time)
     slack_msg = "<!here>\n [ERROR] after running for #{duration}: #{error.message}"
-    slack_service.send_notification(slack_msg, self.class.name, "#appeals-job-alerts")
+    slack_service.send_notification(slack_msg, self.class.name)
     log_error(error)
   ensure
     datadog_report_runtime(metric_group_name: "priority_appeal_push_job")
   end
 
   def send_job_report
-    slack_service.send_notification(slack_report.join("\n"), self.class.name, "#appeals-job-alerts")
+    slack_service.send_notification(slack_report.join("\n"), self.class.name)
   end
 
   def slack_report

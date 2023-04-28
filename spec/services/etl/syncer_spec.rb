@@ -65,7 +65,7 @@ describe ETL::Syncer, :etl do
         syncer.dump_messages_to_slack(ETL::Record)
         expect(slack_service).to have_received(:send_notification)
           .with("100: Expected some_attribute to equal 20 but got 4",
-                "ETL::Record", "#appeals-data-workgroup")
+                "ETL::Record")
         expect(ETL::Record.messages).to eq nil
       end
     end

@@ -19,8 +19,6 @@ class ETLBuilderJob < CaseflowJob
     slack_msg = "Error running #{klass}."
     slack_msg += " See Sentry event #{Raven.last_event_id}" if Raven.last_event_id.present?
     slack_service.send_notification(slack_msg, klass)
-    # Also send a message to #appeals-data-workgroup
-    slack_service.send_notification(slack_msg, klass, "#appeals-data-workgroup")
   end
 
   private

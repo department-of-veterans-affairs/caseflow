@@ -10,10 +10,6 @@ class OpenTasksWithClosedAtChecker < DataIntegrityChecker
     add_to_report "These tasks likely were manually re-opened and should have closed_at set to NULL"
   end
 
-  def slack_channel
-    "#appeals-echo"
-  end
-
   private
 
   def open_tasks_with_closed_at_defined

@@ -3,12 +3,6 @@
 describe StuckVirtualHearingsChecker, :postgres do
   let(:hearing_day) { create(:hearing_day, scheduled_for: Time.zone.today + 2.weeks) }
 
-  it "reports to correct slack channel" do
-    subject.call
-
-    expect(subject.slack_channel).to eq("#appeals-tango")
-  end
-
   context "there are no stuck virtual hearings" do
     let!(:virtual_hearing) do
       create(

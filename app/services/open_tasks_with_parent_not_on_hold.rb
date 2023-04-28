@@ -15,10 +15,6 @@ class OpenTasksWithParentNotOnHold < DataIntegrityChecker
     end
   end
 
-  def slack_channel
-    "#appeals-echo"
-  end
-
   private
 
   def open_tasks_with_parent_not_on_hold

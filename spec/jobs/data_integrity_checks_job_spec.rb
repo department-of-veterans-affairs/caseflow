@@ -130,8 +130,7 @@ describe DataIntegrityChecksJob do
 
         expect(slack_service).to have_received(:send_notification).with(
           "Error running ExpiredAsyncJobsChecker. See Sentry event sentry_12345",
-          "ExpiredAsyncJobsChecker",
-          "#appeals-foxtrot"
+          "ExpiredAsyncJobsChecker"
         )
         expect(@raven_called).to eq(true)
       end
