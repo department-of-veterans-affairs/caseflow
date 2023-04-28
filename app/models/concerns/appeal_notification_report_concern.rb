@@ -48,7 +48,7 @@ module AppealNotificationReportConcern
   # Purpose: Creates the name for the document
   # Returns: The document name
   def notification_document_name
-    "notification-report_#{external_id}"
+    "notification-report_#{external_id}_#{Time.now.utc.strftime('%Y%m%d%k%M%S')}"
   end
 
   # Purpose: Generates the PDF

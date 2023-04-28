@@ -14,7 +14,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   def perform
     RequestStore[:current_user] = User.system_user
     all_active_ama_appeals = appeals_recently_outcoded + appeals_never_synced + ready_for_resync
-    sync_notification_reports(all_active_ama_appeals.first(BATCH_LIMIT))
+    sync_notification_reports(all_active_ama_appeals.first(BATCH_LIMIT.to_i))
   end
 
   private
