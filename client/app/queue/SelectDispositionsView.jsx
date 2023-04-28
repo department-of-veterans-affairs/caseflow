@@ -93,27 +93,20 @@ class SelectDispositionsView extends React.PureComponent {
   }
 
   stageSpecialIssues = (decisionIssues) => {
-    // eslint-disable-next-line camelcase
-    const appealIsBlueWater = decisionIssues.filter((decision) => decision.decisionSpecialIssue?.blue_water);
-    // eslint-disable-next-line camelcase
-    const appealIsBurnPit = decisionIssues.filter((decision) => decision.decisionSpecialIssue?.burn_pit);
-    let blueWater = '';
-    let burnPit = '';
+    const appealIsBlueWater = decisionIssues.filter(
+      // eslint-disable-next-line camelcase, no-unneeded-ternary
+      (decision) => decision.decisionSpecialIssue?.blue_water)[0]?.decisionSpecialIssue.blue_water ? true : false;
 
-    if (appealIsBlueWater[0]?.decisionSpecialIssue) {
-      blueWater = Object.keys(appealIsBlueWater[0]?.decisionSpecialIssue)[0];
-    }
-
-    if (appealIsBurnPit[0]?.decisionSpecialIssue) {
-      burnPit = Object.keys(appealIsBurnPit[0]?.decisionSpecialIssue)[0];
-    }
+    const appealIsBurnPit = decisionIssues.filter(
+      // eslint-disable-next-line camelcase, no-unneeded-ternary
+      (decision) => decision.decisionSpecialIssue?.burn_pit)[0]?.decisionSpecialIssue.burn_pit ? true : false;
 
     this.props.editStagedAppeal(
       this.props.appeal.externalId, {
         specialIssues: {
           ...this.state.specialIssues,
-          [blueWater]: appealIsBlueWater[0]?.decisionSpecialIssue[blueWater],
-          [burnPit]: appealIsBurnPit[0]?.decisionSpecialIssue[burnPit]
+          blue_water: appealIsBlueWater,
+          burn_pit: appealIsBurnPit
         }
       }
     );
