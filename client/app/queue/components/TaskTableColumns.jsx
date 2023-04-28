@@ -260,7 +260,7 @@ export const issueTypesColumn = (tasks, filterOptions) => {
     anyFiltersAreSet: true,
     filterOptions,
     label: 'Filter by issue type',
-    columnName: 'issueTypesColumn',
+    columnName: 'appeal.issueTypes',
     valueName: 'Issue Type',
     tableData: tasks,
     valueFunction: (task) => {

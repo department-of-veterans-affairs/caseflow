@@ -8,7 +8,7 @@ const ALTERNATE_COLUMN_NAMES = {
   'appeal.docketName': COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
   'assignedTo.name': COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
   'closestRegionalOffice.location_hash.city': 'Regional Office',
-  issueTypesColumn: 'Issue Type',
+  'appeal.issueTypes': 'Issue Type',
   readableRequestType: 'Hearing Type',
   regionalOffice: 'Regional Office',
   vlj: 'VLJ',
