@@ -334,7 +334,7 @@ class SelectDispositionsView extends React.PureComponent {
       openRequestIssueId,
       editingExistingIssue,
       deleteAddedDecisionIssue,
-      requestIdToDelete,
+      requestIdToDelete
     } = this.state;
     const connectedRequestIssues = appeal.issues.filter((issue) => {
       return decisionIssue && decisionIssue.request_issue_ids.includes(issue.id);
