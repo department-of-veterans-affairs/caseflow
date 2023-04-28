@@ -261,10 +261,6 @@ class SelectDispositionsView extends React.PureComponent {
       this.props.appeal.externalId, { decisionIssues: remainingDecisionIssues }
     );
 
-    // this.props.editStagedAppeal(
-    //   this.props.appeal.externalId, { specialIssues: null }
-    // );
-
     this.handleModalClose();
   }
 
