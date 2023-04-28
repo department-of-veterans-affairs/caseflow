@@ -5,7 +5,7 @@ import { map, findIndex, uniq } from 'lodash';
 
 import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
-import IntakeRadioField from '../../components/RadioField';
+import IntakeRadioField from './IntakeRadioField';
 import TextField from '../../components/TextField';
 import { issueByIndex } from '../util/issues';
 
