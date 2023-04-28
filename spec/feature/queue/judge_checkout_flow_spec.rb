@@ -146,7 +146,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       # Special Issues screen
       find("label", text: "No Special Issues").click
       click_on "Continue"
-      # sleep(30)
+
       all("button", text: "+ Add decision")[0].click
       expect(page).to have_content "Blue Water"
       expect(page).to have_content "Burn Pit"
