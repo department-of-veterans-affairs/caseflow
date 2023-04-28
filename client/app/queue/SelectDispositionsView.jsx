@@ -92,6 +92,33 @@ class SelectDispositionsView extends React.PureComponent {
     );
   }
 
+  stageSpecialIssues = (decisionIssues) => {
+    // eslint-disable-next-line camelcase
+    const appealIsBlueWater = decisionIssues.filter((decision) => decision.decisionSpecialIssue?.blue_water);
+    // eslint-disable-next-line camelcase
+    const appealIsBurnPit = decisionIssues.filter((decision) => decision.decisionSpecialIssue?.burn_pit);
+    let blueWater = '';
+    let burnPit = '';
+
+    if (appealIsBlueWater[0]?.decisionSpecialIssue) {
+      blueWater = Object.keys(appealIsBlueWater[0]?.decisionSpecialIssue)[0];
+    }
+
+    if (appealIsBurnPit[0]?.decisionSpecialIssue) {
+      burnPit = Object.keys(appealIsBurnPit[0]?.decisionSpecialIssue)[0];
+    }
+
+    this.props.editStagedAppeal(
+      this.props.appeal.externalId, {
+        specialIssues: {
+          ...this.state.specialIssues,
+          [blueWater]: appealIsBlueWater[0]?.decisionSpecialIssue[blueWater],
+          [burnPit]: appealIsBurnPit[0]?.decisionSpecialIssue[burnPit]
+        }
+      }
+    );
+  }
+
   getNextStepUrl = () => {
     const {
       appealId,
@@ -99,6 +126,8 @@ class SelectDispositionsView extends React.PureComponent {
       checkoutFlow,
       appeal: { decisionIssues }
     } = this.props;
+
+    this.stageSpecialIssues(decisionIssues);
 
     let nextStep;
     const dispositions = decisionIssues.map((issue) => issue.disposition);
@@ -158,12 +187,12 @@ class SelectDispositionsView extends React.PureComponent {
       pactStatus: decisionIssue?.pactStatus ? decisionIssue.pactStatus : false,
 
       /*
-        Since AMA appeals no longer utilizes SelectSpecialIssuesView.jsx
-        but are still tracked on the appeal level, this will be used
-        to temporarily track burn pit and blue water on issue level since
-        there are multiple decision issues.
+        Burn Pit and Blue Water will still be tracked on the appeal level but,
+        SelectSpecialIssuesView.jsx is no longer utilized for AMA appeals.
+        So we must temporarily track it on the issue level. As long as one
+        decision has the issue checked, it will be applied to whole appeal.
       */
-      issueSpecialIssues: null,
+      decisionSpecialIssue: null,
     };
 
     this.setState({
@@ -220,10 +249,6 @@ class SelectDispositionsView extends React.PureComponent {
       this.props.appeal.externalId, { decisionIssues: newDecisionIssues }
     );
 
-    this.props.editStagedAppeal(
-      this.props.appeal.externalId, { specialIssues: this.state.specialIssues }
-    );
-
     this.handleModalClose();
   }
 
@@ -236,9 +261,9 @@ class SelectDispositionsView extends React.PureComponent {
       this.props.appeal.externalId, { decisionIssues: remainingDecisionIssues }
     );
 
-    this.props.editStagedAppeal(
-      this.props.appeal.externalId, { specialIssues: null }
-    );
+    // this.props.editStagedAppeal(
+    //   this.props.appeal.externalId, { specialIssues: null }
+    // );
 
     this.handleModalClose();
   }
@@ -281,25 +306,28 @@ class SelectDispositionsView extends React.PureComponent {
     });
   }
 
-  onCheckboxChange = (event, decision, spIssues) => {
+  onCheckboxChange = (event, decision) => {
     const checkboxId = event.target.getAttribute('id');
 
-    // if (checkboxId === 'mstStatus' || checkboxId === 'pactStatus') {
+    if (checkboxId === 'mstStatus' || checkboxId === 'pactStatus') {
       this.setState({
         decisionIssue: {
           ...decision,
           [checkboxId]: event.target.checked,
         }
       });
-    // }
-    // if (checkboxId === 'blue_water' || checkboxId === 'burn_pit') {
-    //   this.setState({
-    //     specialIssues: {
-    //       ...spIssues,
-    //       [checkboxId]: event.target.checked,
-    //     }
-    //   });
-    // }
+    }
+    if (checkboxId === 'blue_water' || checkboxId === 'burn_pit') {
+      this.setState({
+        decisionIssue: {
+          ...decision,
+          decisionSpecialIssue: {
+            ...decision.decisionSpecialIssue,
+            [checkboxId]: event.target.checked,
+          }
+        }
+      });
+    }
   };
 
   render = () => {
@@ -311,7 +339,6 @@ class SelectDispositionsView extends React.PureComponent {
       editingExistingIssue,
       deleteAddedDecisionIssue,
       requestIdToDelete,
-      specialIssues
     } = this.state;
     const connectedRequestIssues = appeal.issues.filter((issue) => {
       return decisionIssue && decisionIssue.request_issue_ids.includes(issue.id);
@@ -321,9 +348,9 @@ class SelectDispositionsView extends React.PureComponent {
 
     const specialIssuesValues = {
       // eslint-disable-next-line camelcase
-      blue_water: decisionIssue?.blue_water,
+      blue_water: decisionIssue?.decisionSpecialIssue?.blue_water,
       // eslint-disable-next-line camelcase
-      burn_pit: decisionIssue?.burn_pit,
+      burn_pit: decisionIssue?.decisionSpecialIssue?.burn_pit,
       mstStatus: decisionIssue?.mstStatus,
       pactStatus: decisionIssue?.pactStatus
     };
@@ -458,7 +485,7 @@ class SelectDispositionsView extends React.PureComponent {
           options={DECISION_SPECIAL_ISSUES}
           values={specialIssuesValues}
           styling={specialIssuesCheckboxStyling}
-          onChange={(event) => this.onCheckboxChange(event, decisionIssue, specialIssues)}
+          onChange={(event) => this.onCheckboxChange(event, decisionIssue)}
         />
         <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_DESCRIPTION}</h3>
         <p {...exampleDiv} {...paragraphH3SiblingStyle}>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_EXAMPLE}</p>
