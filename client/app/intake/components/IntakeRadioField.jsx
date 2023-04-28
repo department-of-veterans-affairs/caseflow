@@ -1,12 +1,14 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import Checkbox from '../../components/Checkbox';
+import TextField from '../../components/TextField';
 
-import RequiredIndicator from './RequiredIndicator';
-import StringUtil from '../util/StringUtil';
-import Tooltip from './Tooltip';
+import RequiredIndicator from '../../components/RequiredIndicator';
+import StringUtil from '../../util/StringUtil';
+import Tooltip from '../../components/Tooltip';
 
-import { helpText } from './RadioField.module.scss';
+import { helpText } from '../../components/RadioField.module.scss';
 
 const RadioFieldHelpText = ({ help, className }) => {
   const helpClasses = classNames('cf-form-radio-help', helpText, className);
@@ -20,13 +22,13 @@ RadioFieldHelpText.propTypes = {
 };
 
 /**
- * Radio button component.
+ * Intake radio button component.
  *
  * See StyleGuideRadioField.jsx for usage examples.
  *
  */
 
-export const RadioField = (props) => {
+export const IntakeRadioField = (props) => {
   const {
     id,
     className,
@@ -42,7 +44,12 @@ export const RadioField = (props) => {
     strongLabel,
     hideLabel,
     styling,
-    vertical
+    vertical,
+    renderMstAndPact,
+    mstChecked,
+    setMstCheckboxFunction,
+    pactChecked,
+    setPactCheckboxFunction
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -50,7 +57,7 @@ export const RadioField = (props) => {
     options,
   ]);
 
-  const radioClass = className.
+  const intakeRadioClass = className.
     concat(isVertical ? 'cf-form-radio' : 'cf-form-radio-inline').
     concat(errorMessage ? 'usa-input-error' : '');
 
@@ -84,13 +91,43 @@ export const RadioField = (props) => {
     return radioField;
   };
 
+  const maybeAddMstAndPactCheckboxes = (option) => {
+    if (renderMstAndPact && (option.value === props.value)) {
+
+      return (
+        <div>
+          <Checkbox
+            label="Issue is related to Military Sexual Trauma (MST)"
+            name="MST"
+            value={mstChecked}
+            onChange={(checked) => setMstCheckboxFunction(checked)}
+          />
+          <Checkbox
+            label="Issue is related to PACT act"
+            name="Pact"
+            value={pactChecked}
+            onChange={(checked) => setPactCheckboxFunction(checked)}
+          />
+          { (mstChecked || pactChecked) && <TextField
+            name="justification-field"
+            // value={this.state.justification}
+            label="Why was this change made?"
+            optional
+            // onChange={this.justificationOnChange}
+          /> }
+          {/* <TextField name="Notes" value={this.state.notes} optional strongLabel onChange={this.notesOnChange} /> */}
+        </div>
+      );
+    }
+  };
+
   const isDisabled = (option) => Boolean(option.disabled);
 
   const handleChange = (event) => onChange?.(event.target.value);
   const controlled = useMemo(() => typeof value !== 'undefined', [value]);
 
   return (
-    <fieldset className={radioClass.join(' ')} {...styling}>
+    <fieldset className={intakeRadioClass.join(' ')} {...styling}>
       <legend className={labelClass}>
         {strongLabel ? <strong>{labelContents}</strong> : labelContents}
       </legend>
@@ -124,6 +161,8 @@ export const RadioField = (props) => {
               htmlFor={`${idPart}_${option.value}`}
             >
               {option.displayText || option.displayElem}
+              {props.onChange}
+              {maybeAddMstAndPactCheckboxes(option)}
             </label>
             {option.help && <RadioFieldHelpText help={option.help} />}
           </div>
@@ -136,12 +175,12 @@ export const RadioField = (props) => {
   );
 };
 
-RadioField.defaultProps = {
+IntakeRadioField.defaultProps = {
   required: false,
   className: ['usa-fieldset-inputs'],
 };
 
-RadioField.propTypes = {
+IntakeRadioField.propTypes = {
   id: PropTypes.string,
   className: PropTypes.arrayOf(PropTypes.string),
   required: PropTypes.bool,
@@ -213,7 +252,13 @@ RadioField.propTypes = {
   errorMessage: PropTypes.string,
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  renderMstAndPact: PropTypes.bool,
+  mstChecked: PropTypes.bool,
+  setMstCheckboxFunction: PropTypes.func,
+  pactChecked: PropTypes.bool,
+  justificationOnChange: PropTypes.func,
+  setPactCheckboxFunction: PropTypes.func,
 };
 
-export default RadioField;
+export default IntakeRadioField;
