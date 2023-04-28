@@ -49,7 +49,9 @@ export const IntakeRadioField = (props) => {
     mstChecked,
     setMstCheckboxFunction,
     pactChecked,
-    setPactCheckboxFunction
+    setPactCheckboxFunction,
+    justification,
+    justificationOnChange
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -91,6 +93,7 @@ export const IntakeRadioField = (props) => {
     return radioField;
   };
 
+  // Creating MST and PACT checkboxes, along with a text input for justification of change
   const maybeAddMstAndPactCheckboxes = (option) => {
     if (renderMstAndPact && (option.value === props.value)) {
 
@@ -108,14 +111,15 @@ export const IntakeRadioField = (props) => {
             value={pactChecked}
             onChange={(checked) => setPactCheckboxFunction(checked)}
           />
-          { (mstChecked || pactChecked) && <TextField
-            name="justification-field"
-            // value={this.state.justification}
-            label="Why was this change made?"
-            optional
-            // onChange={this.justificationOnChange}
-          /> }
-          {/* <TextField name="Notes" value={this.state.notes} optional strongLabel onChange={this.notesOnChange} /> */}
+          { (mstChecked || pactChecked) &&
+            <TextField
+              name="justification-field"
+              value={justification}
+              label="Why was this change made?"
+              optional
+              onChange={(justificationText) => justificationOnChange(justificationText)}
+            />
+          }
         </div>
       );
     }
@@ -257,6 +261,7 @@ IntakeRadioField.propTypes = {
   mstChecked: PropTypes.bool,
   setMstCheckboxFunction: PropTypes.func,
   pactChecked: PropTypes.bool,
+  justification: PropTypes.string,
   justificationOnChange: PropTypes.func,
   setPactCheckboxFunction: PropTypes.func,
 };
