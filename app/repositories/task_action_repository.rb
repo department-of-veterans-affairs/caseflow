@@ -667,7 +667,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE,
         message_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE,
         message_detail: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL,
-        instructions_label: COPY::CANCEL_TASK_INSTRUCTIONS_LABEL,
+        instructions_label: COPY::VHA_CANCEL_TASK_INSTRUCTIONS_LABEL,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}?tab=#{po_user(task.assigned_to)}assigned&page=1"
@@ -681,7 +681,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_title: COPY::VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_MODAL_TITLE,
         message_title: COPY::VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_TITLE,
         message_detail: COPY::VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_DETAIL,
-        instructions_label: COPY::CANCEL_TASK_INSTRUCTIONS_LABEL,
+        instructions_label: COPY::VHA_CANCEL_TASK_INSTRUCTIONS_LABEL,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}?tab=#{po_user(task.assigned_to)}assigned&page=1"
