@@ -199,7 +199,7 @@ class SelectDispositionsView extends React.PureComponent {
       openRequestIssueId: requestIssueId,
       decisionIssue: decisionIssue || newDecisionIssue,
       editingExistingIssue: Boolean(decisionIssue),
-      deleteAddedDecisionIssue: null,
+      deleteAddedDecisionIssue: null
     });
   }
 
@@ -210,7 +210,7 @@ class SelectDispositionsView extends React.PureComponent {
       editingExistingIssue: false,
       highlightModal: false,
       deleteAddedDecisionIssue: null,
-      requestIdToDelete: null,
+      requestIdToDelete: null
     });
   }
 
