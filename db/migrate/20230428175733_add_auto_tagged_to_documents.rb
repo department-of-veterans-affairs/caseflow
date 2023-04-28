@@ -1,4 +1,4 @@
-class AddAutoTaggedToDocuments < ActiveRecord::Migration[5.2]
+class AddAutoTaggedToDocuments < Caseflow::Migration
   def change
     add_column :documents, :auto_tagged, :boolean
   end
