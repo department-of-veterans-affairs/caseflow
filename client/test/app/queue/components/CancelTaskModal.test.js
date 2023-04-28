@@ -18,6 +18,7 @@ import CancelTaskModal from 'app/queue/components/CancelTaskModal';
 import {
   rpoToBvaIntakeData,
   vhaPOToCAMOData,
+  vhaVISNToPoData,
   postData
 } from '../../../data/queue/taskActionModals/taskActionModalData';
 
@@ -58,6 +59,7 @@ afterEach(() => {
 
 describe('Whenever VHA PO returns an appeal to CAMO Team', () => {
   const taskType = 'AssessDocumentationTask';
+  const instructionsLabelText = COPY.VHA_CANCEL_TASK_INSTRUCTIONS_LABEL;
   const buttonText = COPY.MODAL_RETURN_BUTTON;
   const additionalContextText = 'This appeal has been sent to the wrong program office. Please review.';
 
@@ -70,12 +72,18 @@ describe('Whenever VHA PO returns an appeal to CAMO Team', () => {
     expect(submissionButton).not.toHaveClass('usa-button-secondary');
   });
 
+  test('Modal has the correct informational text', () => {
+    renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaPOToCAMOData, taskType);
+
+    expect(screen.getByRole('textbox', { name: instructionsLabelText })).toBeTruthy();
+  });
+
   test('Button Disabled until text field is populated', () => {
     renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaPOToCAMOData, taskType);
 
     expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
-    enterTextFieldOptions(COPY.PRE_DOCKET_MODAL_BODY, additionalContextText);
+    enterTextFieldOptions(instructionsLabelText, additionalContextText);
 
     expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
   });
@@ -83,7 +91,7 @@ describe('Whenever VHA PO returns an appeal to CAMO Team', () => {
   test('Resultant case timeline entry labels reason for cancellation', () => {
     renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaPOToCAMOData, taskType);
 
-    enterTextFieldOptions(COPY.PRE_DOCKET_MODAL_BODY, additionalContextText);
+    enterTextFieldOptions(instructionsLabelText, additionalContextText);
 
     clickSubmissionButton(buttonText);
 
@@ -121,6 +129,50 @@ describe('Whenever RPO returns an appeal to EMO', () => {
     renderCancelTaskModal(TASK_ACTIONS.EDUCATION_RPO_RETURN_TO_EMO.value, rpoToBvaIntakeData, taskType);
 
     enterTextFieldOptions(COPY.PRE_DOCKET_MODAL_BODY, additionalContextText);
+
+    clickSubmissionButton(buttonText);
+
+    expect(getReceivedInstructions()).toBe(
+      `##### REASON FOR CANCELLATION:\n${additionalContextText}`
+    );
+  });
+});
+
+describe('Whenever VISN user returns an appeal to Program Office', () => {
+  const taskType = 'AssessDocumentationTask';
+  const instructionsLabelText = COPY.VHA_CANCEL_TASK_INSTRUCTIONS_LABEL;
+  const buttonText = COPY.MODAL_RETURN_BUTTON;
+  const additionalContextText = 'This appeal has been sent to the wrong program office. Please review.';
+
+  test('Submission button has correct CSS class', () => {
+    renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaVISNToPoData, taskType);
+
+    const submissionButton = screen.getByText(buttonText).closest('button');
+
+    expect(submissionButton).toHaveClass('usa-button');
+    expect(submissionButton).not.toHaveClass('usa-button-secondary');
+  });
+
+  test('Modal has the correct informational text', () => {
+    renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaVISNToPoData, taskType);
+
+    expect(screen.getByRole('textbox', { name: instructionsLabelText })).toBeTruthy();
+  });
+
+  test('Button Disabled until text field is populated', () => {
+    renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaVISNToPoData, taskType);
+
+    expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
+
+    enterTextFieldOptions(instructionsLabelText, additionalContextText);
+
+    expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
+  });
+
+  test('Resultant case timeline entry labels reason for cancellation', () => {
+    renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaVISNToPoData, taskType);
+
+    enterTextFieldOptions(instructionsLabelText, additionalContextText);
 
     clickSubmissionButton(buttonText);
 
