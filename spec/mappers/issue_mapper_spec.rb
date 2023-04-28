@@ -14,7 +14,9 @@ describe IssueMapper do
         level_2: "03",
         level_3: nil,
         note: "k" * 120,
-        vacols_user_id: "TEST1"
+        vacols_user_id: "TEST1",
+        mst_status: true,
+        pact_status: false
       }
     end
 
@@ -32,7 +34,9 @@ describe IssueMapper do
           isslev3: nil,
           issdesc: "k" * 100,
           issaduser: "TEST1",
-          issadtime: VacolsHelper.local_time_with_utc_timezone
+          issadtime: VacolsHelper.local_time_with_utc_timezone,
+          issmst: "Y",
+          isspact: "N"
         }
       end
 
@@ -63,7 +67,9 @@ describe IssueMapper do
           isslev3: nil,
           issdesc: "k" * 100,
           issmduser: "TEST1",
-          issmdtime: VacolsHelper.local_time_with_utc_timezone
+          issmdtime: VacolsHelper.local_time_with_utc_timezone,
+          issmst: "Y",
+          isspact: "N"
         }
       end
 
@@ -81,7 +87,9 @@ describe IssueMapper do
           {
             issdesc: "another one",
             issmduser: "TEST1",
-            issmdtime: VacolsHelper.local_time_with_utc_timezone
+            issmdtime: VacolsHelper.local_time_with_utc_timezone,
+            issmst: "N",
+            isspact: "N"
           }
         end
         it "does not validate code combination" do
@@ -137,7 +145,9 @@ describe IssueMapper do
               issdc: "6",
               issdcls: VacolsHelper.local_date_with_utc_timezone,
               issmduser: "TEST1",
-              issmdtime: VacolsHelper.local_time_with_utc_timezone
+              issmdtime: VacolsHelper.local_time_with_utc_timezone,
+              issmst: "N",
+              isspact: "N"
             }
           end
           it { is_expected.to eq expected_result }
