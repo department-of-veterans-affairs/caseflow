@@ -10,7 +10,9 @@ describe IssuesUpdateTask do
   before do
     bva_intake.add_user(user)
     User.authenticate!(user: user)
-    FeatureToggle.enable!(:mst_pact_identification)
+    FeatureToggle.enable!(:mst_identification)
+    FeatureToggle.enable!(:pact_identification)
+    FeatureToggle.enable!(:legacy_mst_pact_identification)
   end
 
   describe ".verify_user_can_create" do

@@ -149,7 +149,9 @@ class IntakesController < ApplicationController
       filedByVaGovHlr: FeatureToggle.enabled?(:filed_by_va_gov_hlr, user: current_user),
       updatedIntakeForms: FeatureToggle.enabled?(:updated_intake_forms, user: current_user),
       eduPreDocketAppeals: FeatureToggle.enabled?(:edu_predocket_appeals, user: current_user),
-      mstPactIdentification: FeatureToggle.enabled?(:mst_pact_identification, user: current_user),
+      mstIdentification: FeatureToggle.enabled?(:mst_identification, user: current_user),
+      pactIdentification: FeatureToggle.enabled?(:pact_identification, user: current_user),
+      legacyMstPactIdentification: FeatureToggle.enabled?(:legacy_mst_pact_identification, user: current_user),
       updatedAppealForm: FeatureToggle.enabled?(:updated_appeal_form, user: current_user),
       hlrScUnrecognizedClaimants: FeatureToggle.enabled?(:hlr_sc_unrecognized_claimants, user: current_user),
       vhaClaimReviewEstablishment: FeatureToggle.enabled?(:vha_claim_review_establishment, user: current_user)
