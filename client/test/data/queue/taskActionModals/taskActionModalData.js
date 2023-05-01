@@ -97,6 +97,53 @@ const caregiverActions = [
   },
 ];
 
+const visnInProgressActions = [
+  {
+    label: 'End hold early',
+    value: 'modal/end_hold'
+  },
+  {
+    func: 'vha_regional_office_return_to_program_office',
+    label: 'Return to Program Office',
+    value: 'modal/return_to_program_office',
+    data: {
+      modal_title: 'Return to Program Office',
+      message_title: 'You have successfully returned this appeal to the Program Office',
+      message_detail: 'This appeal will be removed from your Queue and placed in the Program Office\'s Queue',
+      modal_button_text: 'Return',
+      type: 'AssessDocumentationTask',
+      redirect_after: '/organizations/sierra-pacific-network'
+    }
+  },
+  {
+    func: 'vha_complete_data',
+    label: 'Documents ready for VHA Program Office team review',
+    value: 'modal/ready_for_review',
+    data: {
+      modal_title: 'Ready for review',
+      modal_button_text: 'Send',
+      radio_field_label: 'This appeal will be sent to VHA Program Office for review.\n\nPlease select where the documents for this appeal were returned',
+      instructions: [],
+      type: 'AssessDocumentationTask',
+      redirect_after: '/organizations/sierra-pacific-network'
+    }
+  },
+  {
+    func: 'vha_mark_task_in_progress',
+    label: 'Mark task in progress',
+    value: 'modal/mark_task_in_progress',
+    data: {
+      modal_title: 'Mark task in progress',
+      modal_body: 'Please confirm that you are actively working on collecting documents for this appeal.  Once confirmed, other members of your organization will no longer be able to mark this task in progress.',
+      message_title: 'You have successfully marked your task as in progress',
+      message_detail: 'This appeal will be visible in the "In Progress" tab of your Queue',
+      modal_button_text: 'Mark in progress',
+      type: 'AssessDocumentationTask',
+      redirect_after: '/organizations/sierra-pacific-network'
+    }
+  }
+];
+
 const vhaDocumentSearchTaskData = {
   7119: {
     uniqueId: '7119',
@@ -1570,6 +1617,27 @@ export const visnData = {
     },
   },
   ...uiData,
+};
+
+export const visnOnHoldData = {
+  queue: {
+    amaTasks: {
+      ...assessVISNData,
+      [Object.keys(assessVISNData)[0]]: {
+        ...Object.values(assessVISNData)[0],
+        status: 'on_hold',
+        placedOnHoldAt: '2022-09-23T15:55:28.334-04:00',
+        availableActions: visnInProgressActions
+      }
+    },
+    appeals: {
+      '419ce568-387c-4ac6-a5f5-00a1554cea36': {
+        id: '1632',
+        externalId: '419ce568-387c-4ac6-a5f5-00a1554cea36'
+      }
+    }
+  },
+  ...uiData
 };
 
 export const vhaPOToCAMOData = {
