@@ -283,4 +283,24 @@ describe Hearing, :postgres do
       expect(hearing.hearing_day_regional_office).to eq(nil)
     end
   end
+
+  shared_context "hearing associated with an appeal with an unrecognized claimant" do
+    let(:unrecognized_appellant) { create(:claimant, type: "OtherClaimant") }
+    let(:appeal) { create(:appeal, claimants: [unrecognized_appellant]) }
+    let!(:hearing) { create(:hearing, appeal: appeal) }
+  end
+
+  context "claimant_id" do
+    include_context "hearing associated with an appeal with an unrecognized claimant"
+    it "returns nil if there is no claimant or if the claimant/appellant is unrecognized" do
+      expect(hearing.claimant_id).to eq(nil)
+    end
+  end
+
+  context "aod?" do
+    include_context "hearing associated with an appeal with an unrecognized claimant"
+    it "returns false if the appeals claimant is an unrecognized claimant" do
+      expect(hearing.aod?).to eq(false)
+    end
+  end
 end
