@@ -1289,6 +1289,22 @@ const assessDocumentationTaskData = {
           redirect_after: '/organizations/prosthetics',
         },
       },
+      {
+        func: 'vha_regional_office_return_to_program_office',
+        label: 'Return to Program Office',
+        value: 'modal/return_to_program_office',
+        data: {
+          modal_title: 'Return to Program Office',
+          instructions_label: COPY.VHA_CANCEL_TASK_INSTRUCTIONS_LABEL,
+          message_title:
+            'You have successfully returned this appeal to the Program Office',
+          message_detail:
+            "This appeal will be removed from your Queue and placed in the Program Office's Queue",
+          modal_button_text: 'Return',
+          type: 'AssessDocumentationTask',
+          redirect_after: '/organizations/sierra-pacific-network?tab=po_assigned&page=1"',
+        }
+      },
     ],
     timelineTitle: 'AssessDocumentationTask completed',
     hideFromQueueTableView: false,
@@ -1557,21 +1573,6 @@ export const visnData = {
 };
 
 export const vhaPOToCAMOData = {
-  queue: {
-    amaTasks: {
-      ...assessDocumentationTaskData,
-    },
-    appeals: {
-      '419ce568-387c-4ac6-a5f5-00a1554cea36': {
-        id: '1632',
-        externalId: '419ce568-387c-4ac6-a5f5-00a1554cea36',
-      },
-    },
-  },
-  ...uiData,
-};
-
-export const vhaVISNToPoData = {
   queue: {
     amaTasks: {
       ...assessDocumentationTaskData,
