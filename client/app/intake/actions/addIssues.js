@@ -43,6 +43,11 @@ export const toggleLegacyOptInModal = (currentIssueAndNotes = {}) => ({
   payload: { currentIssueAndNotes }
 });
 
+export const toggleEditIntakeIssueModal = (index) => ({
+  type: ACTIONS.TOGGLE_EDIT_INTAKE_ISSUES_MODAL,
+  payload: { index }
+});
+
 export const removeIssue = (index) => ({
   type: ACTIONS.REMOVE_ISSUE,
   payload: { index }

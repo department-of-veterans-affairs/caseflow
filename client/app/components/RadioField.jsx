@@ -46,9 +46,9 @@ export const RadioField = (props) => {
     styling,
     vertical,
     renderMstAndPact,
-    mstCheckboxValue,
+    mstChecked,
     setMstCheckboxFunction,
-    pactCheckboxValue,
+    pactChecked,
     setPactCheckboxFunction
   } = props;
 
@@ -99,7 +99,7 @@ export const RadioField = (props) => {
       return existingMst;
     }
 
-    return mstCheckboxValue;
+    return mstChecked;
   };
 
   const returnPactOrCheckboxValue = (counter) => {
@@ -110,7 +110,7 @@ export const RadioField = (props) => {
       return existingPact;
     }
 
-    return pactCheckboxValue;
+    return pactChecked;
   };
 
   const maybeAddMstAndPactCheckboxes = (option) => {
@@ -272,9 +272,9 @@ RadioField.propTypes = {
   hideLabel: PropTypes.bool,
   styling: PropTypes.object,
   renderMstAndPact: PropTypes.bool,
-  mstCheckboxValue: PropTypes.bool,
+  mstChecked: PropTypes.bool,
   setMstCheckboxFunction: PropTypes.func,
-  pactCheckboxValue: PropTypes.bool,
+  pactChecked: PropTypes.bool,
   setPactCheckboxFunction: PropTypes.func,
   preExistingMST: PropTypes.bool,
   preExistingPACT: PropTypes.bool,
