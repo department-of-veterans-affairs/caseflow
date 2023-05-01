@@ -344,7 +344,7 @@ class NonratingRequestIssueModal extends React.Component {
         onChange={this.isPreDocketNeededOnChange} /> : null;
 
     const getSpecialIssues =
-      (mstIdentification && pactIdentification) ?
+      (mstIdentification || pactIdentification) ?
         this.getSpecialIssues() : null;
 
     return (

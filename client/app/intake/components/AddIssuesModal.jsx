@@ -95,8 +95,8 @@ class AddIssuesModal extends React.Component {
           key={approxDecisionDate}
           value={this.state.selectedContestableIssueIndex}
           onChange={this.radioOnChange}
-          renderMstAndPact={this.props.featureToggles.mstIdentification &&
-          this.props.featureToggles.pactIdentification}
+          renderMst={this.props.featureToggles.mstIdentification}
+          renderPact={this.props.featureToggles.pactIdentification}
           mstChecked={this.state.mstChecked}
           setMstCheckboxFunction={this.mstCheckboxChange}
           pactChecked={this.state.pactChecked}
