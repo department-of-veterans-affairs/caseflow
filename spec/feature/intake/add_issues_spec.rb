@@ -788,5 +788,20 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Issue is related to Military Sexual Trauma (MST)")
       expect(page).to have_content("Issue is related to PACT Act")
     end
+
+    scenario "MST and PACT checkboxes render a justification field when checked" do
+      start_higher_level_review(veteran)
+      visit "/intake"
+      click_intake_continue
+      click_intake_add_issue
+      choose("rating-radio_0", allow_label_click: true)
+      expect(page).to have_content("Issue is related to Military Sexual Trauma (MST)")
+      expect(page).to have_content("Issue is related to PACT Act")
+      # find("div.checkbox-wrapper-MST.cf-form-checkboxes").first.click
+      click_on "Issue is related to Military Sexual Trauma (MST)"
+      expect(page).to have_content("Why was this change made?")
+      click_on "Issue is related to Military Sexual Trauma (MST)"
+      expect(page).to_not have_content("Why was this change made?")
+    end
   end
 end
