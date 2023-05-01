@@ -412,7 +412,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         radio_field_label: format(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, org_to_receive),
         instructions: [],
         type: AssessDocumentationTask.name,
-        redirect_after: "/organizations/#{queue_url}"
+        redirect_after: "/organizations/#{queue_url}?tab=#{completed_tab_url(org)}"
       }
     end
 
@@ -545,7 +545,9 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       return task_helper if task.assigned_to.is_a?(User)
 
       task_helper.merge(
-        data: { redirect_after: "/organizations/#{task.assigned_to.url}?tab=#{on_hold_tab_url(task.assigned_to)}&page=1" }
+        data: {
+          redirect_after: "/organizations/#{task.assigned_to.url}?tab=#{on_hold_tab_url(task.assigned_to)}&page=1"
+        }
       )
     end
 
@@ -944,6 +946,10 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       options.map do |_, value|
         value.transform_keys(&:downcase)
       end
+    end
+
+    def completed_tab_url(organization)
+      organization.completed_tasks_tab.name
     end
 
     def on_hold_tab_url(organization)
