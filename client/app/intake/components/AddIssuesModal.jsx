@@ -132,8 +132,8 @@ class AddIssuesModal extends React.Component {
           displayText: text,
           value: issue.index,
           disabled: foundIndex !== -1 || hasLaterIssueInChain,
-          mst: contestableIssuesByIndex[issue.index].mst_available,
-          pact: contestableIssuesByIndex[issue.index].pact_available
+          mst: contestableIssuesByIndex[issue.index].mstAvailable,
+          pact: contestableIssuesByIndex[issue.index].pactAvailable
         };
       });
 

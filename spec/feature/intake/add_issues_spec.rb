@@ -85,10 +85,9 @@ feature "Intake Add Issues Page", :all_dbs do
         contention_reference_id: mst_contention.id,
         end_product_establishment: epe,
         veteran_participant_id: veteran.participant_id,
+        #rating.issues[0].reference_id maps to claim_id
         contested_rating_issue_reference_id: rating.issues[0].reference_id
       )
-
-      contestable_issue = ContestableIssue.from_rating_issue(rating.issues[0], req_issue)
 
       start_higher_level_review(veteran)
 
@@ -98,6 +97,7 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_add_issue
       choose('rating-radio_0', allow_label_click:true)
 
+      #visible is set to false because capybara does not recognize the fields otherwise.
       expect(page).to have_field("Issue is related to Military Sexual Trauma (MST)", visible: false, disabled: true)
       expect(page).to have_field("Issue is related to PACT act", visible: false, disabled: true)
     end
