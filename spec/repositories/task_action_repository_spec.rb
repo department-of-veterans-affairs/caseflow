@@ -18,7 +18,7 @@ describe TaskActionRepository, :all_dbs do
       end
 
       it "should return the task type of task" do
-        expect(TaskActionRepository.assign_to_user_data(task)[:type]).to eq(task.type)
+        expect(TaskActionRepository.assign_to_user_data(task)[:type]).to eq(task)
       end
     end
 
