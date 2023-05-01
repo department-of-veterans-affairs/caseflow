@@ -1361,14 +1361,14 @@ const assessVISNData = {
         value: 'modal/return_to_program_office',
         data: {
           modal_title: 'Return to Program Office',
-          // instructions_label: COPY.VHA_CANCEL_TASK_INSTRUCTIONS_LABEL,
+          instructions_label: COPY.VHA_CANCEL_TASK_INSTRUCTIONS_LABEL,
           message_title:
             'You have successfully returned this appeal to the Program Office',
           message_detail:
             "This appeal will be removed from your Queue and placed in the Program Office's Queue",
           modal_button_text: 'Return',
           type: 'AssessDocumentationTask',
-          redirect_after: '/organizations/sierra-pacific-network',
+          redirect_after: '/organizations/sierra-pacific-network?tab=po_assigned&page=1"',
         },
       },
       {

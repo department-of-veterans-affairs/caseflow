@@ -145,7 +145,7 @@ describe('Whenever VISN user returns an appeal to Program Office', () => {
   const additionalContextText = 'This appeal has been sent to the wrong program office. Please review.';
 
   test('Submission button has correct CSS class', () => {
-    renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaVISNToPoData, taskType);
+    renderCancelTaskModal(TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.value, vhaVISNToPoData, taskType);
 
     const submissionButton = screen.getByText(buttonText).closest('button');
 
@@ -154,13 +154,13 @@ describe('Whenever VISN user returns an appeal to Program Office', () => {
   });
 
   test('Modal has the correct informational text', () => {
-    renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaVISNToPoData, taskType);
+    renderCancelTaskModal(TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.value, vhaVISNToPoData, taskType);
 
     expect(screen.getByRole('textbox', { name: instructionsLabelText })).toBeTruthy();
   });
 
   test('Button Disabled until text field is populated', () => {
-    renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaVISNToPoData, taskType);
+    renderCancelTaskModal(TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.value, vhaVISNToPoData, taskType);
 
     expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
@@ -170,7 +170,7 @@ describe('Whenever VISN user returns an appeal to Program Office', () => {
   });
 
   test('Resultant case timeline entry labels reason for cancellation', () => {
-    renderCancelTaskModal(TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.value, vhaVISNToPoData, taskType);
+    renderCancelTaskModal(TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.value, vhaVISNToPoData, taskType);
 
     enterTextFieldOptions(instructionsLabelText, additionalContextText);
 
