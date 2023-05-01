@@ -253,7 +253,7 @@ class RequestIssue < CaseflowRecord
       if issue[:code].upcase == "MST"
         status = true
         break
-      end 
+      end
     end
     status
   end
@@ -265,7 +265,7 @@ class RequestIssue < CaseflowRecord
       if issue[:code].upcase == "PACT"
         status = true
         break
-      end 
+      end
     end
     status
   end

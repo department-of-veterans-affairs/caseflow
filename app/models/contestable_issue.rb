@@ -82,8 +82,8 @@ class ContestableIssue
       timely: timely?,
       latestIssuesInChain: serialize_latest_decision_issues,
       isRating: is_rating,
-      mstAvailable: mst_available?,
-      pactAvailable: pact_available?
+      mstAvailable: true,
+      pactAvailable: true
     }
   end
 
