@@ -97,6 +97,7 @@ class AddIssuesModal extends React.Component {
           onChange={this.radioOnChange}
           renderMst={this.props.featureToggles.mstIdentification}
           renderPact={this.props.featureToggles.pactIdentification}
+          userCanEditIntakeIssues={this.props.userCanEditIntakeIssues}
           mstChecked={this.state.mstChecked}
           setMstCheckboxFunction={this.mstCheckboxChange}
           pactChecked={this.state.pactChecked}
@@ -164,7 +165,8 @@ AddIssuesModal.propTypes = {
   onSkip: PropTypes.func,
   skipText: PropTypes.string,
   intakeData: PropTypes.object,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  userCanEditIntakeIssues: PropTypes.bool
 };
 
 AddIssuesModal.defaultProps = {

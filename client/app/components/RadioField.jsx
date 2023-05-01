@@ -49,7 +49,8 @@ export const RadioField = (props) => {
     mstChecked,
     setMstCheckboxFunction,
     pactChecked,
-    setPactCheckboxFunction
+    setPactCheckboxFunction,
+    userCanEditIntakeIssues
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -96,7 +97,7 @@ export const RadioField = (props) => {
 
       return (
         <div>
-          { renderMst &&
+          { (renderMst && userCanEditIntakeIssues) &&
             <Checkbox
               label="Issue is related to Military Sexual Trauma (MST)"
               name="MST"
@@ -104,7 +105,7 @@ export const RadioField = (props) => {
               onChange={(checked) => setMstCheckboxFunction(checked)}
             />
           }
-          { renderPact &&
+          { (renderPact && userCanEditIntakeIssues) &&
             <Checkbox
               label="Issue is related to PACT act"
               name="Pact"
@@ -255,6 +256,7 @@ RadioField.propTypes = {
   setMstCheckboxFunction: PropTypes.func,
   pactChecked: PropTypes.bool,
   setPactCheckboxFunction: PropTypes.func,
+  userCanEditIntakeIssues: PropTypes.bool
 };
 
 export default RadioField;

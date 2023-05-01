@@ -471,6 +471,7 @@ class AddIssuesPage extends React.Component {
           <AddIssueManager
             intakeData={intakeData}
             formType={formType}
+            userCanEditIntakeIssues={this.props.userCanEditIntakeIssues}
             featureToggles={featureToggles}
             editPage={editPage}
             onComplete={() => {

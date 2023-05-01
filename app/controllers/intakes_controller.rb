@@ -97,6 +97,7 @@ class IntakesController < ApplicationController
     {
       userDisplayName: current_user.display_name,
       userCanIntakeAppeals: current_user.can_intake_appeals?,
+      userCanEditIntakeIssues: current_user.can_edit_intake_issues?,
       serverIntake: intake_ui_hash,
       dropdownUrls: dropdown_urls,
       page: "Intake",
