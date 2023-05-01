@@ -114,6 +114,8 @@ class QueueTableBuilder extends React.PureComponent {
       ),
       [QUEUE_CONFIG.COLUMNS.DOCUMENT_ID.name]: documentIdColumn(),
       [QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name]: issueCountColumn(
+        tasks,
+        filterOptions,
         requireDasRecord
       ),
       [QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.
