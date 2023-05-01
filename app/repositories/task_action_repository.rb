@@ -953,10 +953,6 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       organization.completed_tasks_tab.name
     end
 
-    def completed_tab_url(organization)
-      organization.completed_tasks_tab.name
-    end
-
     def po_user(organization)
       return unless organization.is_a?(VhaProgramOffice)
 
