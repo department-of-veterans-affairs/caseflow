@@ -13,6 +13,10 @@ class WorkQueue::TaskColumnSerializer
     end.join(",")
   end
 
+  attribute :issue_types do |object|
+    object.appeal.request_issues.map(&:nonrating_issue_category).join(",")
+  end
+
   attribute :instructions do |object|
     object.instructions.is_a?(Array) ? object.instructions : [object.instructions]
   end

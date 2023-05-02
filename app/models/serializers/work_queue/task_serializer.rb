@@ -39,9 +39,7 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :issue_types do |object|
-    object.appeal.request_issues.map do |request_issue|
-      request_issue.nonrating_issue_category
-    end.join(",")
+    object.appeal.request_issues.map(&:nonrating_issue_category).join(",")
   end
 
   attribute :assigned_to do |object|
