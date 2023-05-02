@@ -10,7 +10,7 @@ class WorkQueue::TaskColumnSerializer
   attribute :issue_types do |object|
     object.appeal.request_issues.map do |request_issue|
       request_issue.nonrating_issue_category
-    end.join(',');
+    end.join(",")
   end
 
   attribute :instructions do |object|

@@ -65,11 +65,13 @@ describe WorkQueue::TaskSerializer, :postgres do
     context "displays nonrating_issue_category" do
       let(:task) { EvidenceSubmissionWindowTask.create!(appeal: parent.appeal, assigned_to: user, parent: parent) }
       it "returns the array of nonrating_issue_category" do
-        RequestIssue.create!(decision_review: task.appeal, decision_review_type: "Appeal", nonrating_issue_category: "Caregiver", type: "RequestIssue", benefit_type: "Compensation")
-        RequestIssue.create!(decision_review: task.appeal, decision_review_type: "Appeal", nonrating_issue_category: "Prosthetics", type: "RequestIssue", benefit_type: "Compensation")
-          task.reload
+        RequestIssue.create!(decision_review: task.appeal, decision_review_type: "Appeal",
+        nonrating_issue_category: "Caregiver", type: "RequestIssue", benefit_type: "Compensation")
+        RequestIssue.create!(decision_review: task.appeal, decision_review_type: "Appeal",
+        nonrating_issue_category: "Prosthetics", type: "RequestIssue", benefit_type: "Compensation")
+        task.reload
 
-          expect(subject[:issue_types]).to include("Caregiver", "Prosthetics")
+        expect(subject[:issue_types]).to include("Caregiver", "Prosthetics")
       end
     end
   end
