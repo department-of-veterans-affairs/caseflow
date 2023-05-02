@@ -213,7 +213,8 @@ feature "NonComp Dispositions Task Page", :postgres do
       find_disabled_disposition("Denied", "denied")
 
       # decision date should be saved
-      expect(page).to have_css("input[value='#{arbitrary_decision_date}']")
+
+      expect(page).to have_css("input[value='#{arbitrary_decision_date.to_date.strftime('%Y-%m-%d')}']")
     end
 
     context "when there is an error saving" do
