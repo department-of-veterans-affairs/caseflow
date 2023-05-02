@@ -68,6 +68,7 @@ class TableFilter extends React.PureComponent {
     const { customFilterLabels, enableFilterTextTransform, filterOptionsFromApi, multiValueDelimiter } = this.props;
     const filtersForColumn = _.get(this.props.filteredByList, columnName);
 
+    // Return sorted backend filtering options
     if (filterOptionsFromApi && filterOptionsFromApi.length) {
       filterOptionsFromApi.forEach((option) => {
         option.checked = filtersForColumn ? filtersForColumn.includes(option.value) : false;
@@ -80,7 +81,7 @@ class TableFilter extends React.PureComponent {
     //   tableDataByRow,
     //   (row) => this.transformColumnValue(_.get(row, columnName), row)
     // );
-
+    // Build the filtering options client side
     let countByColumnName;
 
     // TODO: This is kind of gross but idk what to do about it
@@ -89,7 +90,7 @@ class TableFilter extends React.PureComponent {
         const key = _.get(obj, columnName);
 
         if (typeof key === 'string' && key.includes(multiValueDelimiter)) {
-          return key.split(multiValueDelimiter).map((s) => s.trim());
+          return key.split(multiValueDelimiter).map((value) => value.trim());
         }
 
         return key;
