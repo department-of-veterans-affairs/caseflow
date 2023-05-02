@@ -32,6 +32,7 @@ import TextField from '../components/TextField';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import Alert from '../components/Alert';
+import Checkbox from '../components/Checkbox';
 
 import {
   fullWidth,
@@ -329,6 +330,18 @@ class AddEditIssueView extends React.Component {
         value={_.get(this.props.issue, 'note', '')}
         maxLength={ISSUE_DESCRIPTION_MAX_LENGTH}
         onChange={(value) => this.updateIssue({ note: value })} />
+      <Checkbox
+        name="MST"
+        label="Military Sexual Trauma (MST)"
+        defaultValue={issue.mst_status}
+        onChange={(checked) => this.updateIssue({ mst_status: checked })}
+      />
+      <Checkbox
+        name="PACT"
+        label="PACT Act"
+        defaultValue={issue.pact_status}
+        onChange={(checked) => this.updateIssue({ pact_status: checked })}
+      />
     </QueueFlowPage>;
   };
 }
@@ -360,7 +373,9 @@ AddEditIssueView.propTypes = {
     id: PropTypes.number,
     type: PropTypes.string,
     codes: PropTypes.arrayOf(PropTypes.string),
-    program: PropTypes.string
+    program: PropTypes.string,
+    mst_status: PropTypes.bool,
+    pact_status: PropTypes.bool
   }),
   issueId: PropTypes.string,
   issues: PropTypes.object,
