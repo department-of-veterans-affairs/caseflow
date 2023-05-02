@@ -13,7 +13,11 @@ import {
   JUDGE_ADDRESS_MTV_VACATE_TYPE_LABEL,
   JUDGE_ADDRESS_MTV_HYPERLINK_LABEL,
   JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL,
-  JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL
+  JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL,
+  MTV_TASK_INSTRUCTIONS,
+  MTV_TASK_INSTRUCTIONS_TYPE,
+  MTV_TASK_INSTRUCTIONS_DETAIL,
+  MTV_TASK_INSTRUCTIONS_HYPERLINK
 } from '../../../COPY';
 import { DISPOSITION_TEXT, VACATE_TYPE_OPTIONS } from '../../../constants/MOTION_TO_VACATE';
 import { JUDGE_RETURN_TO_LIT_SUPPORT } from '../../../constants/TASK_ACTIONS';
@@ -40,9 +44,32 @@ const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }
 
   switch (disposition) {
   case 'granted':
-  case 'partially_granted':
-    parts.push(`This will be a ${vacateTypeText(vacateType)}`);
+    parts.push(`${MTV_TASK_INSTRUCTIONS} + Full Vacatur`);
+    parts.push(MTV_TASK_INSTRUCTIONS_TYPE);
+    parts.push(vacateTypeText(vacateType));
+    parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
     parts.push(instructions);
+    break;
+  case 'partially_granted':
+    parts.push(`${MTV_TASK_INSTRUCTIONS} + Partial Vacatur`);
+    parts.push(MTV_TASK_INSTRUCTIONS_TYPE);
+    parts.push(vacateTypeText(vacateType));
+    parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
+    parts.push(instructions);
+    break;
+  case 'denied':
+    parts.push(`${MTV_TASK_INSTRUCTIONS} + Deny all issues for vacatur`);
+    parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
+    parts.push(instructions);
+    parts.push(MTV_TASK_INSTRUCTIONS_HYPERLINK);
+    parts.push(hyperlink);
+    break;
+  case 'dismissed':
+    parts.push(`${MTV_TASK_INSTRUCTIONS} + Dismiss all issues for vacatur`);
+    parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
+    parts.push(instructions);
+    parts.push(MTV_TASK_INSTRUCTIONS_HYPERLINK);
+    parts.push(hyperlink);
     break;
   default:
     parts.push(instructions);
