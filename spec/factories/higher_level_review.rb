@@ -44,6 +44,13 @@ FactoryBot.define do
       end
     end
 
+    trait :create_business_line do
+      after(:create) do |hlr|
+        hlr.submit_for_processing!
+        hlr.create_business_line_tasks!
+      end
+    end
+
     trait :processed do
       establishment_processed_at { Time.zone.now }
     end
