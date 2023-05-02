@@ -85,7 +85,8 @@ QueueDropdownFilter.propTypes = {
   isClearEnabled: PropTypes.bool,
   clearFilters: PropTypes.func,
   handleClose: PropTypes.func,
-  addClearFiltersRow: PropTypes.bool
+  addClearFiltersRow: PropTypes.bool,
+  name: PropTypes.string,
 };
 
 export default QueueDropdownFilter;

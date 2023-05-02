@@ -260,6 +260,7 @@ export const issueTypesColumn = (tasks, filterOptions, requireDasRecord) => {
     anyFiltersAreSet: true,
     tableData: tasks,
     columnName: 'appeal.issueTypes',
+    valueName: 'Issue Type',
     multiValueDelimiter: ',',
     enableFilterTextTransform: false,
     span: collapseColumn(requireDasRecord),

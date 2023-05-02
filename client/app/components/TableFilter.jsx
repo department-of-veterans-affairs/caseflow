@@ -96,6 +96,9 @@ class TableFilter extends React.PureComponent {
 
       });
 
+      // This also might need transformColumnValue on it as well.
+      // Or I can use the transformColumnValue on it to do the above split and then do a quick check at the end
+      // To Determine if I need the flat map or not
       countByColumnName = _.countBy(_.flatMap(columnValues));
     } else {
       countByColumnName = _.countBy(

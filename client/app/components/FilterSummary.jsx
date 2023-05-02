@@ -19,6 +19,8 @@ const ALTERNATE_COLUMN_NAMES = {
 const FilterSummary = ({ filteredByList, clearFilteredByList }) => {
   let filterSummary = null;
   let filterListContent = [];
+
+  console.log(filteredByList);
   const clearAllFiltersLink = <button
     onClick={() => clearFilteredByList({})}
     className="cf-btn-link cf-clear-filters-link"> Clear all filters</button>;
