@@ -547,7 +547,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       task_helper.merge(
         data: {
           redirect_after:
-            "/organizations/#{task.assigned_to.url}?tab=#{po_user(task.assigned_to)}_on_hold&page=1"
+            "/organizations/#{task.assigned_to.url}?tab=#{po_user(task.assigned_to)}on_hold&page=1"
         }
       )
     end
