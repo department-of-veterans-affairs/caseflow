@@ -65,14 +65,13 @@ class Fakes::PacmanService < ExternalApi::PacmanService
         OpenStruct.new(
           "id": "",
           "fileNumber": "073-claimant-appeal-file-number",
-          "name": "name",
           "documentReferences": {
             "id": "123",
             "copies": 2
           },
           "status": "",
           "createdDate": "",
-          "name": ""
+          "name": "name"
         )
       )
     end
@@ -83,35 +82,35 @@ class Fakes::PacmanService < ExternalApi::PacmanService
         200,
         {},
         OpenStruct.new(
-          "id": package_id,
+          "id": "12345",
           "recipient": {
-            "type": recipient.type,
-            "name": recipient.name,
-            "firstName": recipient.first_name,
-            "middleName": recipient.middle_name,
-            "lastName": recipient.last_name,
-            "participant_id": recipient.participant_id,
-            "poaCode": recipient.poa_code,
-            "claimantStationOfJurisdiction": recipient.claimant_station_of_jurisdiction
+            "type": "person",
+            "name": "bob joe",
+            "firstName": "bob",
+            "middleName": "",
+            "lastName": "joe",
+            "participant_id": "123455667",
+            "poaCode": "",
+            "claimantStationOfJurisdiction": ""
           },
           "description": "bad",
           "communicationPackageId": "",
           "destinations": {
-            "type": destination[:type],
-            "addressLine1": destination[:addressLine1],
-            "addressLine2": destination[:addressLine2],
-            "addressLine3": destination[:addressLine3],
-            "addressLine4": destination[:addressLine4],
-            "addressLine5": destination[:addressLine5],
-            "addressLine6": destination[:addressLine6],
-            "treatLine2AsAddressee": destination[:treatLine2AsAddressee],
-            "treatLine3AsAddressee": destination[:treatLine3AsAddressee],
-            "city": destination[:city],
-            "state": destination[:state],
-            "postalCode": destination[:postalCode],
-            "countryName": destination[:countryName],
-            "emailAddress": destination[:emailAddress],
-            "phoneNumber": destination[:phoneNumber]
+            "type": "email",
+            "addressLine1": "",
+            "addressLine2": "",
+            "addressLine3": "",
+            "addressLine4": "",
+            "addressLine5": "",
+            "addressLine6": "",
+            "treatLine2AsAddressee": 0,
+            "treatLine3AsAddressee": 0,
+            "city": "",
+            "state": "",
+            "postalCode": "",
+            "countryName": "",
+            "emailAddress": "",
+            "phoneNumber": ""
           },
           "status": "",
           "sentToCbcmDate": ""
@@ -125,35 +124,35 @@ class Fakes::PacmanService < ExternalApi::PacmanService
         200,
         {},
         OpenStruct.new(
-          "id": package_id,
+          "id": "123232323",
           "recipient": {
-            "type": recipient.type,
-            "name": recipient.name,
-            "firstName": recipient.first_name,
-            "middleName": recipient.middle_name,
-            "lastName": recipient.last_name,
-            "participant_id": recipient.participant_id,
-            "poaCode": recipient.poa_code,
-            "claimantStationOfJurisdiction": recipient.claimant_station_of_jurisdiction
+            "type": "person",
+            "name": "bob joe",
+            "firstName": "bob",
+            "middleName": "",
+            "lastName": "joe",
+            "participant_id": "123455667",
+            "poaCode": "",
+            "claimantStationOfJurisdiction": ""
           },
           "description": "bad",
           "communicationPackageId": "",
           "destinations": {
-            "type": destination[:type],
-            "addressLine1": destination[:addressLine1],
-            "addressLine2": destination[:addressLine2],
-            "addressLine3": destination[:addressLine3],
-            "addressLine4": destination[:addressLine4],
-            "addressLine5": destination[:addressLine5],
-            "addressLine6": destination[:addressLine6],
-            "treatLine2AsAddressee": destination[:treatLine2AsAddressee],
-            "treatLine3AsAddressee": destination[:treatLine3AsAddressee],
-            "city": destination[:city],
-            "state": destination[:state],
-            "postalCode": destination[:postalCode],
-            "countryName": destination[:countryName],
-            "emailAddress": destination[:emailAddress],
-            "phoneNumber": destination[:phoneNumber]
+            "type": "email",
+            "addressLine1": "",
+            "addressLine2": "",
+            "addressLine3": "",
+            "addressLine4": "",
+            "addressLine5": "",
+            "addressLine6": "",
+            "treatLine2AsAddressee": 0,
+            "treatLine3AsAddressee": 0,
+            "city": "",
+            "state": "",
+            "postalCode": "",
+            "countryName": "",
+            "emailAddress": "",
+            "phoneNumber": ""
           },
           "status": "",
           "sentToCbcmDate": ""
