@@ -112,4 +112,6 @@ Rails.application.configure do
   ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"] ||= "https://vefs-claimevidence-ui-uat.stage8.bip.va.gov"
 
   ENV['TEST_VACOLS_HOST'] ||= "localhost"
+
+  ENV['PACMAN_API_URL'] ||= "who knows"
 end
