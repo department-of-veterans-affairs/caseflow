@@ -334,7 +334,6 @@ class AddEditIssueView extends React.Component {
       <label style={{ marginBottom: '1rem' }}>Select any special issues that apply</label>
       <Checkbox
         name="MST"
-        id="checkbox-mst"
         label="Military Sexual Trauma (MST)"
         defaultValue={issue.mst_status}
         styling={checkboxStyle}
@@ -342,7 +341,6 @@ class AddEditIssueView extends React.Component {
       />
       <Checkbox
         name="PACT"
-        id="checkbox-pact"
         label="PACT Act"
         defaultValue={issue.pact_status}
         styling={checkboxStyle}
