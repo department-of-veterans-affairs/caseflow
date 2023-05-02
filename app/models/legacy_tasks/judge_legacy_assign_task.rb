@@ -8,10 +8,10 @@ class JudgeLegacyAssignTask < JudgeLegacyTask
         Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
         Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
       ]
-    elsif user.can_act_on_behalf_of_judges?
+    elsif user.can_act_on_behalf_of_judges? && assigned_to.judge_in_vacols?
       [
-        Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
-        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
+        Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
       ]
     else
       []
