@@ -339,26 +339,6 @@ const completedHLRTaskData = {
         ],
         isRating: false
       },
-      {
-        ratingIssueReferenceId: null,
-        ratingIssueProfileDate: null,
-        ratingIssueDiagnosticCode: null,
-        ratingDecisionReferenceId: null,
-        decisionIssueId: 756,
-        approxDecisionDate: '2023-04-01',
-        description: 'granted',
-        rampClaimId: null,
-        titleOfActiveReview: null,
-        sourceReviewType: null,
-        timely: true,
-        latestIssuesInChain: [
-          {
-            id: 756,
-            approxDecisionDate: '2023-04-01'
-          }
-        ],
-        isRating: false
-      }
     ],
     intakeUser: 'ACBAUERVVHAH',
     relationships: [
