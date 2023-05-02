@@ -47,6 +47,7 @@ const dropdownMarginTop = css({ marginTop: '2rem' });
 const smallTopMargin = css({ marginTop: '1rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 const noLeftPadding = css({ paddingLeft: 0 });
+const checkboxStyle = css({ marginTop: '0', marginBottom: '0' });
 
 class AddEditIssueView extends React.Component {
 
@@ -330,16 +331,21 @@ class AddEditIssueView extends React.Component {
         value={_.get(this.props.issue, 'note', '')}
         maxLength={ISSUE_DESCRIPTION_MAX_LENGTH}
         onChange={(value) => this.updateIssue({ note: value })} />
+      <label style={{ marginBottom: '1rem' }}>Select any special issues that apply</label>
       <Checkbox
         name="MST"
+        id="checkbox-mst"
         label="Military Sexual Trauma (MST)"
         defaultValue={issue.mst_status}
+        styling={checkboxStyle}
         onChange={(checked) => this.updateIssue({ mst_status: checked })}
       />
       <Checkbox
         name="PACT"
+        id="checkbox-pact"
         label="PACT Act"
         defaultValue={issue.pact_status}
+        styling={checkboxStyle}
         onChange={(checked) => this.updateIssue({ pact_status: checked })}
       />
     </QueueFlowPage>;

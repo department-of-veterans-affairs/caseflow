@@ -78,7 +78,6 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
       expect(page).to have_content("Blue Water")
       expect(page).to have_content("Burn Pit")
-      expect(page).to have_content("Military Sexual Trauma (MST)")
       find("label", text: "Blue Water").click
       click_on "Continue"
 
@@ -267,7 +266,6 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
       expect(page).to have_content("Blue Water")
       expect(page).to have_content("Burn Pit")
-      expect(page).to have_content("Military Sexual Trauma (MST)")
       find("label", text: "Burn Pit").click
       click_on "Continue"
 
@@ -358,6 +356,22 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         # Vamc should also be marked in the database
         expect(appeal.special_issue_list.vamc).to eq(true)
         click_on "Continue"
+
+        # Checking if MST and PACT are shown under Edit Issue
+        click_on "Edit Issue"
+        expect(page).to have_content "Military Sexual Trauma (MST)"
+        expect(page).to have_content "PACT Act"
+
+        check("Military Sexual Trauma (MST)", allow_label_click: true)
+        check("PACT Act", allow_label_click: true)
+        expect(page).to have_checked_field("Military Sexual Trauma (MST)", visible: false)
+        expect(page).to have_checked_field("PACT Act", visible: false)
+
+        uncheck("Military Sexual Trauma (MST)", allow_label_click: true)
+        uncheck("PACT Act", allow_label_click: true)
+        expect(page).not_to have_checked_field("Military Sexual Trauma (MST)", visible: false)
+        expect(page).not_to have_checked_field("PACT Act", visible: false)
+        click_on "Back"
 
         expect(page).to have_content "Select Dispositions"
 

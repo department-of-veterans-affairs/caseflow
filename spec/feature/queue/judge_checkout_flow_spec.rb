@@ -191,7 +191,6 @@ RSpec.feature "Judge checkout flow", :all_dbs do
 
       expect(page).to have_content("Blue Water")
       expect(page).to have_content("Burn Pit")
-      expect(page).to have_content("Military Sexual Trauma (MST)")
       find("label", text: "Blue Water").click
       expect(page.find("#blue_water", visible: false).checked?).to eq true
       find("label", text: "No Special Issues").click
@@ -288,6 +287,23 @@ RSpec.feature "Judge checkout flow", :all_dbs do
         expect(page.find_all(".issue-disposition-dropdown").length).to eq 1
 
         click_on "Edit Issue"
+        # Checking if MST and PACT are shown under Edit Issue
+        expect(page).to have_content "Military Sexual Trauma (MST)"
+        expect(page).to have_content "PACT Act"
+
+        expect(page).to have_content "Military Sexual Trauma (MST)"
+        expect(page).to have_content "PACT Act"
+
+        check("Military Sexual Trauma (MST)", allow_label_click: true)
+        check("PACT Act", allow_label_click: true)
+        expect(page).to have_checked_field("Military Sexual Trauma (MST)", visible: false)
+        expect(page).to have_checked_field("PACT Act", visible: false)
+
+        uncheck("Military Sexual Trauma (MST)", allow_label_click: true)
+        uncheck("PACT Act", allow_label_click: true)
+        expect(page).not_to have_checked_field("Military Sexual Trauma (MST)", visible: false)
+        expect(page).not_to have_checked_field("PACT Act", visible: false)
+
         click_on "Delete Issue"
         click_on "Delete issue"
 
