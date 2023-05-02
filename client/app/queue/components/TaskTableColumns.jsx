@@ -250,25 +250,37 @@ export const issueCountColumn = (requireDasRecord) => {
   };
 };
 
-export const issueTypesColumn = (filterOptions) => {
+export const issueTypesColumn = (tasks, filterOptions, requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_ISSUE_CATEGORIES_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name,
     backendCanSort: true,
     enableFilter: true,
     filterOptions,
+    anyFiltersAreSet: true,
+    tableData: tasks,
     columnName: 'appeal.issueTypes',
+    multiValueDelimiter: ',',
+    enableFilterTextTransform: false,
+    span: collapseColumn(requireDasRecord),
     valueFunction: (task) => {
+      if (!hasDASRecord(task, requireDasRecord)) {
+        return null;
+      }
+
       const commaDelimitedIssueTypes = task.appeal.issueTypes;
 
       // Remove duplicates from the comma delimited list of issue types
-      const uniqueIssueTypes = [...new Set(commaDelimitedIssueTypes?.split(','))];
+      // TODO: Might need to sort this as well so it doesn't have to be sorted on the backend?
+      // This still messes things up thought because the sortFunction needs to be presorted to behave like it should
+      const uniqueIssueTypes = [...new Set(commaDelimitedIssueTypes?.split(','))].sort();
 
       return uniqueIssueTypes.length > 1 ?
         uniqueIssueTypes.map((type) => (<p key={type}> {type} </p>)) :
         uniqueIssueTypes[0];
     },
-    getSortValue: (task) => task.appeal.issueTypes
+    // TODO: This is so gross. I think it might be better to just do this in the serializer
+    getSortValue: (task) => hasDASRecord(task, requireDasRecord) ? [...new Set(task.appeal.issueTypes?.split(','))].sort() : null
   };
 };
 

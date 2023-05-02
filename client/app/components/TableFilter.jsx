@@ -45,6 +45,10 @@ const iconStyle = css(
  *   - @valueTransform {function(any, any)} function that takes the value of the
  *     column, and transforms it into a string. The row is passed in as a second
  *     argument.
+ *   - @multiValueDelimiter {string} a delimiter value that signifies that the column
+ *     contains multiple values as a delimited string within one columnValue field.
+ *     This also triggers different behavior for creating the filter list and filtering
+ *     on the values in the generated filter list.
  */
 
 class TableFilter extends React.PureComponent {
@@ -61,7 +65,7 @@ class TableFilter extends React.PureComponent {
   }
 
   filterDropdownOptions = (tableDataByRow, columnName) => {
-    const { customFilterLabels, enableFilterTextTransform, filterOptionsFromApi } = this.props;
+    const { customFilterLabels, enableFilterTextTransform, filterOptionsFromApi, multiValueDelimiter } = this.props;
     const filtersForColumn = _.get(this.props.filteredByList, columnName);
 
     if (filterOptionsFromApi && filterOptionsFromApi.length) {
@@ -72,10 +76,36 @@ class TableFilter extends React.PureComponent {
       return _.sortBy(filterOptionsFromApi, 'displayText');
     }
 
-    const countByColumnName = _.countBy(
-      tableDataByRow,
-      (row) => this.transformColumnValue(_.get(row, columnName), row)
-    );
+    // const countByColumnName = _.countBy(
+    //   tableDataByRow,
+    //   (row) => this.transformColumnValue(_.get(row, columnName), row)
+    // );
+
+    let countByColumnName;
+
+    // TODO: This is kind of gross but idk what to do about it
+    if (multiValueDelimiter) {
+      const columnValues = tableDataByRow.map((obj) => {
+        const key = _.get(obj, columnName);
+
+        if (typeof key === 'string' && key.includes(multiValueDelimiter)) {
+          return key.split(multiValueDelimiter).map((s) => s.trim());
+        }
+
+        return key;
+
+      });
+
+      countByColumnName = _.countBy(_.flatMap(columnValues));
+    } else {
+      countByColumnName = _.countBy(
+        tableDataByRow,
+        (row) => {
+          return this.transformColumnValue(_.get(row, columnName), row);
+        }
+      );
+    }
+
     const uniqueOptions = [];
 
     for (let key in countByColumnName) { // eslint-disable-line guard-for-in
@@ -226,7 +256,8 @@ TableFilter.propTypes = {
   valueTransform: PropTypes.func,
   filteredByList: PropTypes.object,
   updateFilters: PropTypes.func,
-  filterOptionsFromApi: PropTypes.array
+  filterOptionsFromApi: PropTypes.array,
+  multiValueDelimiter: PropTypes.string,
 };
 
 export default TableFilter;
