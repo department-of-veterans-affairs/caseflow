@@ -8,7 +8,7 @@ class AutoTagReaderDocumentsJob < ApplicationJob
     MetricsService.record("Auto tagging Recently Created Documents records",
                           service: :reader,
                           name: "job.reader.documents.auto.tagging") do
-      Document.where("created_at < ?", 1.day.ago.to_date).each do |document|
+      Document.where("created_at >= ?", 1.day.ago.to_date).each do |document|
         auto_tag(document)
       end
     end
