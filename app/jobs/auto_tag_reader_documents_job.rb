@@ -20,12 +20,13 @@ class AutoTagReaderDocumentsJob < ApplicationJob
     MetricsService.record("Auto tagging Document with id #{document.id}",
       service: :queue,
       name: "job.reader.documents.auto.tagging") do
-
+        tags = document.auto_tag
+        log_info(document, tags)
     end
   end
 
-  def log_info(user, appeals)
-    Rails.logger.info log_message(user, appeals)
+  def log_info(document, tags)
+    Rails.logger.info log_message(document, tags)
   end
 
   def log_message(document, tags)
