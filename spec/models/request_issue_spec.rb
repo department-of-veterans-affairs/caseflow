@@ -4,6 +4,7 @@ describe RequestIssue, :all_dbs do
   before do
     Timecop.freeze(Time.zone.now)
     FeatureToggle.enable!(:use_ama_activation_date)
+    FeatureToggle.enable!(:mst_pact_identification)
   end
 
   after { FeatureToggle.disable!(:use_ama_activation_date) }
@@ -1082,6 +1083,147 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "._from_intake_data with mst and pact params" do
+    subject { RequestIssue.from_intake_data(data) }
+    context "when mst or pact is in the payload" do
+      let(:data) do
+        {
+          rating_issue_reference_id: rating_issue_reference_id,
+          decision_text: "decision text",
+          nonrating_issue_category: nonrating_issue_category,
+          is_unidentified: is_unidentified,
+          decision_date: Time.zone.today,
+          notes: "notes",
+          untimely_exemption: true,
+          untimely_exemption_notes: "untimely notes",
+          ramp_claim_id: "ramp_claim_id",
+          vacols_sequence_id: 2,
+          contested_decision_issue_id: contested_decision_issue_id,
+          ineligible_reason: "untimely",
+          ineligible_due_to_id: 345,
+          rating_issue_diagnostic_code: "2222",
+          is_predocket_needed: is_predocket_needed,
+          mst_status: true,
+          pact_status: false
+        }
+      end
+
+      let(:rating_issue_reference_id) { nil }
+      let(:contested_decision_issue_id) { nil }
+      let(:nonrating_issue_category) { nil }
+      let(:is_unidentified) { nil }
+
+      it "expects mst and pact are saved to the model" do
+        RequestIssue.from_intake_data(data)
+        is_expected.to have_attributes(
+          decision_date: Time.zone.today,
+          notes: "notes",
+          untimely_exemption: true,
+          untimely_exemption_notes: "untimely notes",
+          ramp_claim_id: "ramp_claim_id",
+          vacols_sequence_id: 2,
+          ineligible_reason: "untimely",
+          ineligible_due_to_id: 345,
+          contested_rating_issue_diagnostic_code: "2222",
+          mst_status: true,
+          pact_status: false
+        )
+      end
+    end
+
+    context "pact is in the payload" do
+      let(:data) do
+        {
+          rating_issue_reference_id: rating_issue_reference_id,
+          decision_text: "decision text",
+          nonrating_issue_category: nonrating_issue_category,
+          is_unidentified: is_unidentified,
+          decision_date: Time.zone.today,
+          notes: "notes",
+          untimely_exemption: true,
+          untimely_exemption_notes: "untimely notes",
+          ramp_claim_id: "ramp_claim_id",
+          vacols_sequence_id: 2,
+          contested_decision_issue_id: contested_decision_issue_id,
+          ineligible_reason: "untimely",
+          ineligible_due_to_id: 345,
+          rating_issue_diagnostic_code: "2222",
+          is_predocket_needed: is_predocket_needed,
+          mst_status: false,
+          pact_status: true
+        }
+      end
+
+      let(:rating_issue_reference_id) { nil }
+      let(:contested_decision_issue_id) { nil }
+      let(:nonrating_issue_category) { nil }
+      let(:is_unidentified) { nil }
+
+      it "expect the pact status to return true" do
+        RequestIssue.from_intake_data(data)
+        is_expected.to have_attributes(
+          decision_date: Time.zone.today,
+          notes: "notes",
+          untimely_exemption: true,
+          untimely_exemption_notes: "untimely notes",
+          ramp_claim_id: "ramp_claim_id",
+          vacols_sequence_id: 2,
+          ineligible_reason: "untimely",
+          ineligible_due_to_id: 345,
+          contested_rating_issue_diagnostic_code: "2222",
+          mst_status: false,
+          pact_status: true
+        )
+      end
+    end
+
+    context "mst and pact are in the payload" do
+      let(:data) do
+        {
+          rating_issue_reference_id: rating_issue_reference_id,
+          decision_text: "decision text",
+          nonrating_issue_category: nonrating_issue_category,
+          is_unidentified: is_unidentified,
+          decision_date: Time.zone.today,
+          notes: "notes",
+          untimely_exemption: true,
+          untimely_exemption_notes: "untimely notes",
+          ramp_claim_id: "ramp_claim_id",
+          vacols_sequence_id: 2,
+          contested_decision_issue_id: contested_decision_issue_id,
+          ineligible_reason: "untimely",
+          ineligible_due_to_id: 345,
+          rating_issue_diagnostic_code: "2222",
+          is_predocket_needed: is_predocket_needed,
+          mst_status: true,
+          pact_status: true
+        }
+      end
+
+      let(:rating_issue_reference_id) { nil }
+      let(:contested_decision_issue_id) { nil }
+      let(:nonrating_issue_category) { nil }
+      let(:is_unidentified) { nil }
+
+      it "expect mst and pact in the payload" do
+        RequestIssue.from_intake_data(data)
+        is_expected.to have_attributes(
+          decision_date: Time.zone.today,
+          notes: "notes",
+          untimely_exemption: true,
+          untimely_exemption_notes: "untimely notes",
+          ramp_claim_id: "ramp_claim_id",
+          vacols_sequence_id: 2,
+          ineligible_reason: "untimely",
+          ineligible_due_to_id: 345,
+          contested_rating_issue_diagnostic_code: "2222",
+          mst_status: true,
+          pact_status: true
+        )
+      end
+    end
+  end
+
   context "#move_stream!" do
     subject { request_issue.move_stream!(new_appeal_stream: new_appeal_stream, closed_status: closed_status) }
     let(:closed_status) { "docket_switch" }
@@ -1375,7 +1517,7 @@ describe RequestIssue, :all_dbs do
       end
       let(:end_prod_establishment) do
        create(:end_product_establishment,
-         reference_id: claim_id   
+         reference_id: claim_id
         )
       end
       let(:mst_request_issue) do
@@ -1383,18 +1525,18 @@ describe RequestIssue, :all_dbs do
          contention_reference_id: mst_contention.id,
          end_product_establishment: end_prod_establishment
        )
-      end 
+      end
 
-      it "mst_contention_status? is true" do 
+      it "mst_contention_status? is true" do
         expect(mst_request_issue.mst_contention_status?).to be true
-      end 
-      
-      it "pact_contention_status? is false" do 
-        expect(mst_request_issue.pact_contention_status?).to be false 
-      end 
-    end 
+      end
 
-    context "when pact is available and mst is not available" do 
+      it "pact_contention_status? is false" do
+        expect(mst_request_issue.pact_contention_status?).to be false
+      end
+    end
+
+    context "when pact is available and mst is not available" do
       let(:claim_id) {"600118959"}
       let(:pact_contention) do
         Generators::Contention.build_pact_contention(
@@ -1403,7 +1545,7 @@ describe RequestIssue, :all_dbs do
       end
       let(:end_prod_establishment) do
        create(:end_product_establishment,
-         reference_id: claim_id   
+         reference_id: claim_id
         )
       end
       let(:pact_request_issue) do
@@ -1411,18 +1553,18 @@ describe RequestIssue, :all_dbs do
          contention_reference_id: pact_contention.id,
          end_product_establishment: end_prod_establishment
        )
-      end 
+      end
 
-      it "mst_contention_status? is false" do 
+      it "mst_contention_status? is false" do
        expect(pact_request_issue.mst_contention_status?).to be false
-      end 
-     
-      it "pact_contention_status? is true" do 
+      end
+
+      it "pact_contention_status? is true" do
        expect(pact_request_issue.pact_contention_status?).to be true
-      end 
+      end
     end
 
-    context "when pact and mst are available" do 
+    context "when pact and mst are available" do
       let(:claim_id) {"600118959"}
       let(:mst_and_pact_contention) do
         Generators::Contention.build_mst_and_pact_contention(
@@ -1431,7 +1573,7 @@ describe RequestIssue, :all_dbs do
       end
       let(:end_prod_establishment) do
        create(:end_product_establishment,
-         reference_id: claim_id   
+         reference_id: claim_id
         )
       end
       let(:mst_and_pact_request_issue) do
@@ -1439,18 +1581,18 @@ describe RequestIssue, :all_dbs do
          contention_reference_id: mst_and_pact_contention.id,
          end_product_establishment: end_prod_establishment
        )
-      end 
+      end
 
-      it "mst_contention_status? is true" do 
+      it "mst_contention_status? is true" do
        expect(mst_and_pact_request_issue.mst_contention_status?).to be true
-      end 
-     
-      it "pact_contention_status? is true" do 
+      end
+
+      it "pact_contention_status? is true" do
        expect(mst_and_pact_request_issue.pact_contention_status?).to be true
-      end 
+      end
     end
 
-    context "when pact and mst are not available" do 
+    context "when pact and mst are not available" do
       let(:claim_id) {"600118959"}
       let(:contention) do
         Generators::Contention.build(
@@ -1459,7 +1601,7 @@ describe RequestIssue, :all_dbs do
       end
       let(:end_prod_establishment) do
        create(:end_product_establishment,
-         reference_id: claim_id   
+         reference_id: claim_id
         )
       end
       let(:request_issue) do
@@ -1467,18 +1609,18 @@ describe RequestIssue, :all_dbs do
          contention_reference_id: contention.id,
          end_product_establishment: end_prod_establishment
        )
-      end 
+      end
 
-      it "mst_contention_status? is false" do 
+      it "mst_contention_status? is false" do
        expect(request_issue.mst_contention_status?).to be false
-      end 
-     
-      it "pact_contention_status? is false" do 
+      end
+
+      it "pact_contention_status? is false" do
        expect(request_issue.pact_contention_status?).to be false
-      end 
+      end
     end
   end
-  
+
   context "#valid?" do
     subject { request_issue.valid? }
     let(:request_issue) do
