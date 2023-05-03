@@ -7,10 +7,6 @@ class WorkQueue::TaskColumnSerializer
     (params[:columns] & columns).any?
   end
 
-  attribute :issue_types do |object|
-    object.appeal.request_issues.map(&:nonrating_issue_category).join(",")
-  end
-
   attribute :instructions do |object|
     object.instructions.is_a?(Array) ? object.instructions : [object.instructions]
   end
@@ -87,6 +83,14 @@ class WorkQueue::TaskColumnSerializer
 
     if serialize_attribute?(params, columns)
       object.appeal.is_a?(LegacyAppeal) ? object.appeal.undecided_issues.count : object.appeal.number_of_issues
+    end
+  end
+
+  attribute :issue_types do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name]
+
+    if serialize_attribute?(params, columns)
+      object.appeal.request_issues.map(&:nonrating_issue_category).join(",")
     end
   end
 
