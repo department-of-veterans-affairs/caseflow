@@ -14,7 +14,7 @@ class CreatePacmanIntegration < Caseflow::Migration
     end
 
     create_table :vbms_distributions do |t|
-      t.string :type, null: false
+      t.string :distribution_type, null: false
       t.string :name
       t.string :first_name
       t.string :middle_name
@@ -31,7 +31,7 @@ class CreatePacmanIntegration < Caseflow::Migration
     end
 
     create_table :vbms_distribution_destinations do |t|
-      t.string :type, null: false
+      t.string :destination_type, null: false
       t.string :address_line_1, null: false
       t.string :address_line_2, null: false
       t.string :address_line_3, null: false
