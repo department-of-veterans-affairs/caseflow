@@ -147,7 +147,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       verifiedUnidentifiedIssue: issue.verified_unidentified_issue,
       isPreDocketNeeded: issue.is_predocket_needed,
       mstChecked: issue.mst_status,
-      pactChecked: issue.pact_status,
+      pactChecked: issue.pact_status
     };
   }
   );
@@ -198,7 +198,7 @@ const formatUnidentifiedIssues = (state) => {
         vacols_sequence_id: issue.vacolsSequenceId,
         verified_unidentified_issue: issue.verifiedUnidentifiedIssue,
         mst_status: issue.mstChecked,
-        pact_status: issue.pactChecked,
+        pact_status: issue.pactChecked
       };
     });
 };
@@ -229,7 +229,7 @@ const formatRatingRequestIssues = (state) => {
         edited_description: issue.editedDescription,
         correction_type: issue.correctionType,
         mst_status: issue.mstChecked,
-        pact_status: issue.pactChecked,
+        pact_status: issue.pactChecked
       };
     });
 };
@@ -257,7 +257,7 @@ const formatNonratingRequestIssues = (state) => {
         correction_type: issue.correctionType,
         is_predocket_needed: issue.isPreDocketNeeded,
         mst_status: issue.mstChecked,
-        pact_status: issue.pactChecked,
+        pact_status: issue.pactChecked
       };
     });
 };
@@ -390,8 +390,8 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
         vacolsSequenceId: issue.vacolsSequenceId,
         vacolsIssue: issue.vacolsIssue,
         verifiedUnidentifiedIssue: issue.verifiedUnidentifiedIssue,
-        mst_status: issue.mstChecked,
-        pact_status: issue.pactChecked,
+        mstChecked: issue.mstChecked,
+        pactChecked: issue.pactChecked
       };
     } else if (issue.isRating) {
       if (!issue.decisionDate && !issue.approxDecisionDate) {
@@ -433,8 +433,8 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
         decisionIssueId: issue.decisionIssueId,
         ratingIssueReferenceId: issue.ratingIssueReferenceId,
         ratingDecisionReferenceId: issue.ratingDecisionReferenceId,
-        mst_status: issue.mstChecked,
-        pact_status: issue.pactChecked,
+        mstChecked: issue.mstChecked,
+        pactChecked: issue.pactChecked
       };
     }
 
@@ -470,8 +470,8 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
       examRequested: issue.examRequested,
       decisionIssueId: issue.decisionIssueId,
       isPreDocketNeeded: issue.isPreDocketNeeded,
-      mst_status: issue.mstChecked,
-      pact_status: issue.pactChecked,
+      mstChecked: issue.mstChecked,
+      pactChecked: issue.pactChecked
     };
   });
 };
