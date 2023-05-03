@@ -300,6 +300,10 @@ class Document < CaseflowRecord
     )
   end
 
+  def auto_tag
+    update(auto_tagged: true)
+  end
+
   private
 
   def reader_with_efolder_api?
