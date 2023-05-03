@@ -40,32 +40,28 @@ const vacateTypeText = (val) => {
 };
 
 const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }) => {
-  const parts = [`I am proceeding with a ${DISPOSITION_TEXT[disposition]}.`];
+  const parts = [`${MTV_TASK_INSTRUCTIONS} ${DISPOSITION_TEXT[disposition].replace(/(^\w{1})|(\s+\w{1})/g, (letter) => letter.toUpperCase())}\n`];
 
   switch (disposition) {
   case 'granted':
-    parts.push(`${MTV_TASK_INSTRUCTIONS} + Full Vacatur`);
     parts.push(MTV_TASK_INSTRUCTIONS_TYPE);
-    parts.push(vacateTypeText(vacateType));
+    parts.push(`${vacateTypeText(vacateType)}\n`);
     parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
-    parts.push(instructions);
+    parts.push(`${instructions}\n`);
     break;
   case 'partially_granted':
-    parts.push(`${MTV_TASK_INSTRUCTIONS} + Partial Vacatur`);
     parts.push(MTV_TASK_INSTRUCTIONS_TYPE);
     parts.push(vacateTypeText(vacateType));
     parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
     parts.push(instructions);
     break;
   case 'denied':
-    parts.push(`${MTV_TASK_INSTRUCTIONS} + Deny all issues for vacatur`);
     parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
     parts.push(instructions);
     parts.push(MTV_TASK_INSTRUCTIONS_HYPERLINK);
     parts.push(hyperlink);
     break;
   case 'dismissed':
-    parts.push(`${MTV_TASK_INSTRUCTIONS} + Dismiss all issues for vacatur`);
     parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
     parts.push(instructions);
     parts.push(MTV_TASK_INSTRUCTIONS_HYPERLINK);
