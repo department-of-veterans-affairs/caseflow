@@ -36,7 +36,6 @@ const Template = (args) => {
       {...args}
     />
   );
-
 };
 
 export const TaskPageCompleted = Template.bind({});
