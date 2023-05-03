@@ -2,5 +2,5 @@
 
 class VbmsDistribution < CaseflowRecord
   has_one :vbms_communication_package
-  has_many :vbms_distribution_destinations
+  has_one :vbms_distribution_destination
 end

@@ -8,15 +8,17 @@ class CreatePacmanIntegration < Caseflow::Migration
       t.timestamps
 
       t.references :vbms_uploaded_document, index: true, foreign_key: { to_table: :vbms_uploaded_documents }
+
       t.references :created_by , index: true, foreign_key: { to_table: :users }
       t.references :updated_by, index: true, foreign_key: { to_table: :users }
     end
 
     create_table :vbms_distributions do |t|
-      t.string :type, null: false
-      t.string :name, null: false
+      t.string :distribution_type, null: false
+      t.string :name
+      t.string :first_name
       t.string :middle_name
-      t.string :last_name, null: false
+      t.string :last_name
       t.string :participant_id
       t.string :poa_code, null: false
       t.string :claimant_station_of_jurisdiction, null: false
@@ -29,7 +31,7 @@ class CreatePacmanIntegration < Caseflow::Migration
     end
 
     create_table :vbms_distribution_destinations do |t|
-      t.string :type, null: false
+      t.string :destination_type, null: false
       t.string :address_line_1, null: false
       t.string :address_line_2, null: false
       t.string :address_line_3, null: false
