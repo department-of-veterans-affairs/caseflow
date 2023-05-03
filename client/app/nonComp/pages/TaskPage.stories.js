@@ -8,6 +8,7 @@ import {
   completeTaskPageData, inProgressTaskPageData
 } from '../../../test/data/queue/nonCompTaskPage/nonCompTaskPageData';
 
+
 const ReduxDecorator = (Story, options) => {
   const props = {
     ...options.args.data
