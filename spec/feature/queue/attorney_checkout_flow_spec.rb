@@ -78,7 +78,6 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
       expect(page).to have_content("Blue Water")
       expect(page).to have_content("Burn Pit")
-      expect(page).to have_content("Military Sexual Trauma (MST)")
       find("label", text: "Blue Water").click
       click_on "Continue"
 
@@ -96,6 +95,10 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       # Add a first decision issue
       all("button", text: "+ Add decision", count: 2)[0].click
       expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+      expect(page).to have_content "Blue Water"
+      expect(page).to have_content "Burn Pit"
+      expect(page).to have_content "Military Sexual Trauma (MST)"
+      expect(page).to have_content "PACT Act"
 
       click_on "Save"
 
@@ -267,7 +270,6 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
       expect(page).to have_content("Blue Water")
       expect(page).to have_content("Burn Pit")
-      expect(page).to have_content("Military Sexual Trauma (MST)")
       find("label", text: "Burn Pit").click
       click_on "Continue"
 
