@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_17_164013) do
+ActiveRecord::Schema.define(version: 2023_04_28_175733) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -704,6 +704,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
   end
 
   create_table "documents", id: :serial, force: :cascade do |t|
+    t.boolean "auto_tagged"
     t.boolean "category_medical"
     t.boolean "category_other"
     t.boolean "category_procedural"
