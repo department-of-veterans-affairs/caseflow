@@ -254,11 +254,9 @@ feature "NonComp Dispositions Task Page", :postgres do
       User.stub = user
       vha_org.add_user(user)
       Timecop.travel(Time.zone.local(2023, 0o2, 0o1))
-      FeatureToggle.enable!(:decision_review_queue_ssn_column)
     end
 
     after do
-      FeatureToggle.disable!(:decision_review_queue_ssn_column)
       Timecop.return
     end
 
@@ -286,9 +284,7 @@ feature "NonComp Dispositions Task Page", :postgres do
         visit dispositions_url
         fill_in "decision-date", with: decision_date.strftime("%m/%d/%Y")
         fill_in_disposition(0, "Granted", "granted")
-
         scroll_to(page, align: :bottom)
-
         expect(page).to have_button("Complete", disabled: false)
         click_button("Complete")
         expect(page).to have_current_path("/#{business_line_url}?tab=completed&page=1")
