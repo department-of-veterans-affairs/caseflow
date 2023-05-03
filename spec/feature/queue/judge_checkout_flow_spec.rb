@@ -147,6 +147,13 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       find("label", text: "No Special Issues").click
       click_on "Continue"
 
+      all("button", text: "+ Add decision")[0].click
+      expect(page).to have_content "Blue Water"
+      expect(page).to have_content "Burn Pit"
+      expect(page).to have_content "Military Sexual Trauma (MST)"
+      expect(page).to have_content "PACT Act"
+      click_on "Close"
+
       # Decision Issues Screen
       click_on "Continue"
       expect(page).to have_content("Evaluate Decision")
