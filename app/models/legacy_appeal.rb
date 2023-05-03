@@ -914,6 +914,69 @@ class LegacyAppeal < CaseflowRecord
     veteran_is_not_claimant ? person_for_appellant&.participant_id : veteran&.participant_id
   end
 
+  def hearing_day_if_schedueled
+    hearing_date = Hearing.find_by(appeal_id: id)
+
+    if hearing_date.nil?
+      return nil
+
+    else
+      return hearing_date.hearing_day.scheduled_for
+    end
+  end
+
+  def ui_hash
+    Intake::LegacyAppealSerializer.new(self).serializable_hash[:data][:attributes]
+  end
+
+  def processed_in_caseflow?
+    true
+  end
+
+  def legacy_opt_in_approved
+    true
+  end
+
+  def serialized_legacy_appeals
+    []
+  end
+
+  def serialized_ratings
+    []
+  end
+
+  def caseflow_only_edit_issues_url
+    "/appeals/#{id}/edit"
+  end
+
+  def establishment_processed_at
+    nil
+  end
+
+  def veteran_invalid_fields
+    nil
+  end
+
+  def active_nonrating_request_issues
+    []
+  end
+
+  def contestable_issues_by_date
+    []
+  end
+
+  def intake_user
+    nil
+  end
+
+  def receipt_date
+    nil
+  end
+
+  def is_legacy?
+    true
+  end
+
   private
 
   def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)

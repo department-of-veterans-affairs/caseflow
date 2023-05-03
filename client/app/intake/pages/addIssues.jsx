@@ -403,7 +403,7 @@ class AddIssuesPage extends React.Component {
               formType={formType}
               featureToggles={featureToggles}
               userCanWithdrawIssues={userCanWithdrawIssues}
-              userCanEditIntakeIssues={userCanEditIntakeIssues && this.props.featureToggles.mst_pact_identification}
+              userCanEditIntakeIssues={true}
               editPage={editPage}
             />
             {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />}

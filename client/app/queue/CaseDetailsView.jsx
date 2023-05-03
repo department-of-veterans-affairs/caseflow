@@ -332,7 +332,7 @@ export const CaseDetailsView = (props) => {
             title="Issues"
             isLegacyAppeal={appeal.isLegacyAppeal}
             additionalHeaderContent={
-              appeal.canEditRequestIssues && (
+              (
                 <span className="cf-push-right" {...anchorEditLinkStyling}>
                   <Link href={`/appeals/${appealId}/edit`}>
                     {COPY.CORRECT_REQUEST_ISSUES_LINK}
