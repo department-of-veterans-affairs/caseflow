@@ -713,5 +713,111 @@ feature "NonComp Reviews Queue", :postgres do
       expect(table_rows.first.include?("B Veteran")).to eq true
       expect(table_rows.last.include?("A Veteran")).to eq true
     end
+
+    context "filtering when the request issue category has a | in it" do
+      let!(:extra_task) do
+        create(:higher_level_review_task,
+               :in_progress,
+               appeal: hlr_e,
+               assigned_to: non_comp_org,
+               assigned_at: last_week)
+      end
+      let!(:extra_completed_task) do
+        create(:higher_level_review_task,
+               :completed,
+               appeal: hlr_f,
+               assigned_to: non_comp_org,
+               assigned_at: last_week)
+      end
+      let(:veteran_e) do
+        create(:veteran, first_name: "In Progress Pipe Veteran", participant_id: "77989", ssn: "140261458")
+      end
+      let(:hlr_e) { create(:higher_level_review, veteran_file_number: veteran_e.file_number) }
+      let(:veteran_f) do
+        create(:veteran, first_name: "Completed Pipe Veteran", participant_id: "77990", ssn: "140261459")
+      end
+      let(:hlr_f) { create(:higher_level_review, veteran_file_number: veteran_f.file_number) }
+      let(:pipe_issue_category) { "Caregiver | Eligibility" }
+      let!(:pipe_request_issues) do
+        [
+          create(:request_issue, :nonrating,
+                 nonrating_issue_category: pipe_issue_category, decision_review: hlr_e),
+          create(:request_issue, :nonrating,
+                 nonrating_issue_category: pipe_issue_category, decision_review: hlr_f)
+        ]
+      end
+
+      let(:url_with_params) do
+        BASE_URL + "?tab=in_progress&page=1&filter%5B%5D=col%3DissueTypesColumn%26val%3DCaregiver%20%7C%20Eligibility"
+      end
+
+      let!(:dispositions_url) { BASE_URL + "/tasks/#{extra_task.id}" }
+
+      scenario "Using a filter from the get url paramaters that contains a '|' character" do
+        visit url_with_params
+        expect(page).to have_content("Caregiver | Eligibility")
+        expect(page).to have_content("Filtering by: Issue Type (1)")
+        expect(page).to_not have_content("Beneficiary Travel")
+      end
+
+      scenario "Preserving a filter when swapping between tabs that contains a '|' character" do
+        visit BASE_URL
+
+        # Expect an issue with foreign medical program to be on the page before filtering
+        expect(page).to have_content("Foreign Medical Program")
+
+        # Filter by Caregiver | Eligibility
+        find("[aria-label='Filter by issue type']").click
+        find("label", text: pipe_issue_category).click
+        expect(page).to have_content(pipe_issue_category)
+        expect(page).to_not have_content("Foreign Medical Program")
+        expect(page).to have_content("Filtering by: Issue Type (1)")
+
+        # Swap to the completed tab
+        click_button("tasks-organization-queue-tab-1")
+        expect(page).to have_content(pipe_issue_category)
+        expect(page).to have_content("Filtering by: Issue Type (1)")
+
+        # Swap back to the in progress tab
+        click_button("tasks-organization-queue-tab-0")
+        expect(page).to have_content(pipe_issue_category)
+        expect(page).to_not have_content("Foreign Medical Program")
+        expect(page).to have_content("Filtering by: Issue Type (1)")
+      end
+
+      # Simulate this by setting a filter, visiting the task page, and coming back
+      scenario "Preserving the in progress filter after redirecting after completing a disposition" do
+        visit BASE_URL
+
+        # Expect an issue with foreign medical program to be on the page before filtering
+        expect(page).to have_content("Foreign Medical Program")
+
+        # Filter by Caregiver | Eligibility
+        find("[aria-label='Filter by issue type']").click
+        find("label", text: pipe_issue_category).click
+        expect(page).to have_content(pipe_issue_category)
+        expect(page).to_not have_content("Foreign Medical Program")
+        expect(page).to have_content("Filtering by: Issue Type (1)")
+
+        # Visit a task page
+        visit dispositions_url
+        expect(page).to have_content("Review each issue and assign the appropriate dispositions.")
+
+        # Return to the in progress tab
+        visit BASE_URL
+        expect(page).to have_content(pipe_issue_category)
+        expect(page).to_not have_content("Foreign Medical Program")
+        expect(page).to have_content("Filtering by: Issue Type (1)")
+
+        # Visit a task page again
+        visit dispositions_url
+        expect(page).to have_content("Review each issue and assign the appropriate dispositions.")
+
+        # Return to the completed tab
+        visit BASE_URL + "?tab=completed&page=1"
+        expect(page).to have_content(pipe_issue_category)
+        expect(page).to have_content("Filtering by: Issue Type (1)")
+      end
+    end
   end
 end
