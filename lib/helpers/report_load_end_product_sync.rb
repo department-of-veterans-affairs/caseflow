@@ -1,8 +1,18 @@
-module WarRoom
-  class ReportLoadEndProductSync
-    def run_by_report_load(report_load)
-      RequestStore[:current_user] = User.system_user
+# frozen_string_literal: true
 
+module WarRoom
+  
+  # Purpose: to find and sync EPs in Caseflow with VBMS
+  class ReportLoadEndProductSync
+    
+    # Currently, out of sync EPs are tracked in OAR report loads that are sent over and then
+    # uploaded to the EP Establishment Workaround table
+    # This method implements logic to sync EPs by a specfied report load number
+    def run_by_report_load(report_load)
+      # Set the user
+      RequestStore[:current_user] = User.system_user
+      
+      # Establish connection
       conn = ActiveRecord::Base.connection
 
       eps_queried = get_eps(report_load, conn)
@@ -10,17 +20,19 @@ module WarRoom
         call_sync(x["reference_id"], report_load, conn)
       end
 
-      # close the connection
+      # Close the connection
       conn.close
     end
 
     private
 
+    # Grab EPs from the specified report load
     def get_eps(report_load, conn)
       conn.raw_connection.exec_params("SELECT reference_id FROM ep_establishment_workaround where
                                                 report_load = $1", [report_load])
     end
 
+    # Method to sync with VBMS
     def call_sync(ep_ref, rep_load, conn)
       start_time = Time.now.to_f
 
