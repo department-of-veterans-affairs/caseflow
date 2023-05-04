@@ -158,7 +158,7 @@ RSpec.feature "Notifications View" do
 
       # clear filter
       filter.click(x: 5, y: 5)
-      page.find("button", text: "Clear Notification type filter").click
+      page.find("button", text: "Clear Notification Type filter").click
 
       # by recipient information
       filter = page.all("rect", class: "unselected-filter-icon-border-1", minimum: 1)[2]
@@ -173,7 +173,7 @@ RSpec.feature "Notifications View" do
 
       # clear filter
       filter.click(x: 5, y: 5)
-      page.find("button", text: "Clear Recipient information filter").click
+      page.find("button", text: "Clear Recipient Information filter").click
 
       # by status
       filter = page.all("rect", class: "unselected-filter-icon-border-1", minimum: 1)[3]
