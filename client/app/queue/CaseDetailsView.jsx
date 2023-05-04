@@ -325,6 +325,7 @@ export const CaseDetailsView = (props) => {
         <TaskSnapshot
           appealId={appealId}
           showPulacCerulloAlert={doPulacCerulloReminder}
+          VLJ_featureToggles = {props.featureToggles.vlj_legacy_appeal}
         />
         <hr {...horizontalRuleStyling} />
         <StickyNavContentArea>
@@ -416,6 +417,7 @@ export const CaseDetailsView = (props) => {
           )}
 
           <CaseTimeline title="Case Timeline" appeal={appeal}
+            VLJ_featureToggles = {props.featureToggles.vlj_legacy_appeal}
             additionalHeaderContent={
               true && (
                 <span className="cf-push-right" {...anchorEditLinkStyling}>

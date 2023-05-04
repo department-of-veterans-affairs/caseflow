@@ -33,7 +33,7 @@ const getAction = (props) => {
   return props.task && props.task.availableActions.length > 0 ? selectedAction(props) : null;
 };
 
-class AssignToView extends React.Component {
+class ReAssignToJudgeLegacy extends React.Component {
   constructor(props) {
     super(props);
 
@@ -51,8 +51,7 @@ class AssignToView extends React.Component {
 
     this.state = {
       selectedValue: action ? action.value : null,
-      instructions: existingInstructions,
-      modalDisableButton: false
+      instructions: existingInstructions
     };
   }
 
@@ -69,18 +68,8 @@ class AssignToView extends React.Component {
       return this.state.selectedValue !== null;
     }
 
-    return this.state.selectedValue !== null && this.state.instructions !== '';
+    return this.state.selectedValue !== null && this.state.instructions.trim().length > 0;
   };
-
-  setModalOnChangeValue = (stateValue, value) => {
-    this.setState({ [stateValue]: value }, function(){
-      if(this.state.instructions.trim().length > 0){
-        this.setState({modalDisableButton: false})
-      } else {
-        this.setState({modalDisableButton: true})
-      }
-    })
-  }
 
   submit = () => {
     const { appeal, task, isReassignAction, isTeamAssign } = this.props;
@@ -171,18 +160,7 @@ class AssignToView extends React.Component {
     });
   };
 
-  determineTitle = (props, action, isPulacCerullo, actionData) => {
-    if (actionData.modal_title) {
-      return actionData.modal_title;
-    }
-    if (props.assigneeAlreadySelected && action) {
-      if (isPulacCerullo) {
-        return COPY.PULAC_CERULLO_MODAL_TITLE;
-      }
-
-      return sprintf(COPY.ASSIGN_TASK_TO_TITLE, action.label);
-    }
-
+  determineTitle = () => {
     return COPY.ASSIGN_TASK_TITLE;
   };
 
@@ -212,30 +190,11 @@ class AssignToView extends React.Component {
     const modalProps = {
       title: this.determineTitle(this.props, action, isPulacCerullo, actionData),
       pathAfterSubmit: (actionData && actionData.redirect_after) || '/queue',
-
+      submitButtonClassNames: ['usa-button'],
+      button: COPY.JUDGE_ASSIGN_TASK_LABEL,
       submit: this.submit,
-      validateForm: isPulacCerullo ?
-        () => {
-          return true;
-        } :
-        this.validateForm
+      submitDisabled: !this.validateForm()
     };
-
-    if (task.type === 'JudgeLegacyDecisionReviewTask'){
-      modalProps.button = 'Assign';
-      modalProps.submitButtonClassNames = ['usa-button', 'usa-button-hover', 'usa-button-warning'];
-      modalProps.submitDisabled = this.state.modalDisableButton
-    }
-
-    if (isPulacCerullo) {
-      modalProps.button = 'Notify';
-    }
-
-    if (modalProps.title === COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE) {
-      modalProps.submitButtonClassNames = ['usa-button', 'usa-button-warning'];
-      modalProps.button = 'Return';
-      modalProps.submitDisabled = !this.validateForm();
-    }
 
     return (
       <QueueFlowModal {...modalProps}>
@@ -245,7 +204,7 @@ class AssignToView extends React.Component {
             <SearchableDropdown
               name="Assign to selector"
               searchable
-              label={COPY.JUDGE_LEGACY_DECISION_REVIEW_TITLE}
+              hideLabel
               errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
               placeholder={this.determinePlaceholder(this.props, actionData)}
               value={this.state.selectedValue}
@@ -261,7 +220,7 @@ class AssignToView extends React.Component {
             errorMessage={highlightFormItems && !actionData.body_optional && !this.state.instructions ?
               COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
             id="taskInstructions"
-            onChange={(value) => this.setModalOnChangeValue('instructions', value)}
+            onChange={(value) => this.setState({ instructions: value })}
             value={this.state.instructions}
             optional={actionData.body_optional}
           />
@@ -277,7 +236,7 @@ class AssignToView extends React.Component {
   };
 }
 
-AssignToView.propTypes = {
+ReAssignToJudgeLegacy.propTypes = {
   appeal: PropTypes.shape({
     externalId: PropTypes.string,
     id: PropTypes.string,
@@ -329,5 +288,5 @@ export default withRouter(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(AssignToView)
+  )(ReAssignToJudgeLegacy)
 );
