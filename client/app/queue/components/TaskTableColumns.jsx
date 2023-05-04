@@ -259,6 +259,7 @@ export const issueTypesColumn = (tasks, filterOptions, requireDasRecord) => {
     filterOptions,
     anyFiltersAreSet: true,
     tableData: tasks,
+    label: 'Filter by issue type',
     columnName: 'appeal.issueTypes',
     valueName: 'Issue Type',
     multiValueDelimiter: ',',
