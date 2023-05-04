@@ -125,7 +125,7 @@ export const RadioField = (props) => {
             onChange={(checked) => setMstCheckboxFunction(checked)}
           />
           <Checkbox
-            label="Issue is related to PACT act"
+            label="Issue is related to PACT ACT"
             name="Pact"
             value={returnPactOrCheckboxValue(value)}
             disabled={options[value - totalElements].pact}
