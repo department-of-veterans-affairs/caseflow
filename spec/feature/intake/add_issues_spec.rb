@@ -802,6 +802,10 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Why was this change made?")
       click_on "Issue is related to Military Sexual Trauma (MST)"
       expect(page).to_not have_content("Why was this change made?")
+      click_on "Issue is related to PACT Act"
+      expect(page).to have_content("Why was this change made?")
+      click_on "Issue is related to PACT Act"
+      expect(page).to_not have_content("Why was this change made?")
     end
   end
 end
