@@ -5,7 +5,6 @@ describe WorkQueue::TaskSerializer, :postgres do
   let(:user) { create(:user) }
   let!(:parent) { create(:ama_task, assigned_to: user) }
   let(:days_on_hold) { 18 }
-  let(:appeal) { create(:appeal) }
 
   describe "#as_json" do
     subject { described_class.new(parent).serializable_hash[:data][:attributes] }
