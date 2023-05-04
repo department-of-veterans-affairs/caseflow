@@ -323,17 +323,6 @@ feature "NonComp Reviews Queue", :postgres do
 
       order_buttons[:date_completed].click
       expect(page).to have_current_path(
-        "#{BASE_URL}?tab=completed&page=1&sort_by=completedDateColumn&order=asc"
-      )
-
-      table_rows = current_table_rows
-
-      expect(table_rows.last.include?(later_date)).to eq true
-      expect(table_rows.first.include?(earlier_date)).to eq true
-
-      # Date Completed desc
-      order_buttons[:date_completed].click
-      expect(page).to have_current_path(
         "#{BASE_URL}?tab=completed&page=1&sort_by=completedDateColumn&order=desc"
       )
 
@@ -341,6 +330,17 @@ feature "NonComp Reviews Queue", :postgres do
 
       expect(table_rows.last.include?(earlier_date)).to eq true
       expect(table_rows.first.include?(later_date)).to eq true
+
+      # Date Completed desc
+      order_buttons[:date_completed].click
+      expect(page).to have_current_path(
+        "#{BASE_URL}?tab=completed&page=1&sort_by=completedDateColumn&order=asc"
+      )
+
+      table_rows = current_table_rows
+
+      expect(table_rows.last.include?(later_date)).to eq true
+      expect(table_rows.first.include?(earlier_date)).to eq true
     end
 
     context "with veteran ssn visable" do
@@ -355,7 +355,7 @@ feature "NonComp Reviews Queue", :postgres do
         # Veteran SSN ascending
         ssn.click
         expect(page).to have_current_path(
-          "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=asc"
+          "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=desc"
         )
 
         table_rows = current_table_rows
@@ -366,7 +366,7 @@ feature "NonComp Reviews Queue", :postgres do
         # Veteran SSN descending
         ssn.click
         expect(page).to have_current_path(
-          "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=desc"
+          "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=asc"
         )
 
         table_rows = current_table_rows
