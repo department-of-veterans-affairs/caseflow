@@ -298,9 +298,6 @@ RSpec.feature "Judge checkout flow", :all_dbs do
         expect(page).to have_content "Military Sexual Trauma (MST)"
         expect(page).to have_content "PACT Act"
 
-        expect(page).to have_content "Military Sexual Trauma (MST)"
-        expect(page).to have_content "PACT Act"
-
         check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
         check("PACT Act", allow_label_click: true, visible: false)
         expect(page).to have_checked_field("Military Sexual Trauma (MST)", visible: false)
