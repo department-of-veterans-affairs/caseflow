@@ -1369,5 +1369,6 @@
   "PDF_GENERATION_ERROR_MESSAGE": "There was an error generating the PDF for download. Please try again later.",
   "DATE_SELECTOR_FUTURE_DATE_ERROR": "Dates cannot be in the future",
   "DATE_SELECTOR_INVALID_DATE_ERROR": "Please select a valid date",
-  "VHA_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold (Value must be between 1 and 45 for VHA users)"
+  "VHA_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold (Value must be between 1 and 45 for VHA users)",
+  "VHA_CANCEL_TASK_INSTRUCTIONS_LABEL": "Why are you returning? Provide any important context"
 }

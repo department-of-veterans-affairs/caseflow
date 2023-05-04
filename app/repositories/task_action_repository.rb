@@ -546,7 +546,8 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
 
       task_helper.merge(
         data: {
-          redirect_after: "/organizations/#{task.assigned_to.url}?tab=#{on_hold_tab_url(task.assigned_to)}&page=1"
+          redirect_after:
+            "/organizations/#{task.assigned_to.url}?tab=#{po_user(task.assigned_to)}on_hold&page=1"
         }
       )
     end
@@ -666,10 +667,10 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE,
         message_title: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE,
         message_detail: COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL,
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::VHA_CANCEL_TASK_INSTRUCTIONS_LABEL,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
         type: AssessDocumentationTask.name,
-        redirect_after: "/organizations/#{queue_url}"
+        redirect_after: "/organizations/#{queue_url}?tab=#{po_user(task.assigned_to)}assigned&page=1"
       }
     end
 
@@ -680,10 +681,10 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_title: COPY::VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_MODAL_TITLE,
         message_title: COPY::VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_TITLE,
         message_detail: COPY::VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_DETAIL,
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::VHA_CANCEL_TASK_INSTRUCTIONS_LABEL,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
         type: AssessDocumentationTask.name,
-        redirect_after: "/organizations/#{queue_url}"
+        redirect_after: "/organizations/#{queue_url}?tab=#{po_user(task.assigned_to)}assigned&page=1"
       }
     end
 
@@ -952,10 +953,10 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       organization.completed_tasks_tab.name
     end
 
-    def on_hold_tab_url(organization)
-      return "on_hold" unless organization.is_a?(VhaProgramOffice)
+    def po_user(organization)
+      return unless organization.is_a?(VhaProgramOffice)
 
-      "po_on_hold"
+      "po_"
     end
   end
 end

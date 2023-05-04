@@ -463,13 +463,15 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content(COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE)
           expect(page).to have_content(COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_INSTRUCTIONS_LABEL)
 
+          page.all(".cf-form-radio-option > label")[1].click
           find(".cf-select__control", text: COPY::VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER).click
           find("div", class: "cf-select__option", text: dropdown_visn_text).click
           fill_in(COPY::VHA_ASSIGN_TO_REGIONAL_OFFICE_INSTRUCTIONS_LABEL, with: ro_instructions)
           find("button", class: "usa-button", text: COPY::MODAL_ASSIGN_BUTTON).click
 
-          expect(page).to have_current_path("/organizations/#{program_office.url}"\
-            "?tab=po_assigned&#{default_query_params}")
+          expect(page).to have_current_path(
+            "/organizations/#{program_office.url}?tab=po_assigned&#{default_query_params}"
+          )
           expect(page).to have_content("Task assigned to #{dropdown_visn_text}")
           expect(page).to have_content(format(COPY::ORGANIZATIONAL_QUEUE_ON_HOLD_TAB_TITLE, 1))
         end
