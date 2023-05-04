@@ -89,9 +89,11 @@ class WorkQueue::TaskColumnSerializer
   attribute :issue_types do |object, params|
     columns = [Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name]
 
-    if serialize_attribute?(params, columns)
-      object.appeal.request_issues.map(&:nonrating_issue_category).join(",")
-    end
+    if object.appeal.is_a?(LegacyAppeal)
+      object.appeal.issue_categories
+    else
+      object.appeal.request_issues.map(&:nonrating_issue_category)
+    end.join(",")
   end
 
   attribute :aod do |object, params|
