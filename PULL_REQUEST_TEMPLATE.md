@@ -76,8 +76,6 @@ Your code does not add any new code climate offenses? If so why?
 - [ ] Are logs being produced at appropriate log levels (debug, info, warn, error, fatal)?
 - [ ] Are logs structured (e.g., using log tags) for easier querying and analysis?
 - [ ] Are sensitive data (e.g., passwords, tokens) redacted or omitted from logs?
-- [ ] Is log retention and rotation configured correctly?
-- [ ] Are logs being forwarded to a centralized logging system if needed?
 
 ### Auditing
 - [ ] Are user actions being logged for audit purposes?
@@ -87,8 +85,10 @@ Your code does not add any new code climate offenses? If so why?
 ### Error Handling
 - [ ] Are errors being caught and handled gracefully?
 - [ ] Are appropriate error messages being displayed to users?
-- [ ] Are critical errors being reported to an error tracking system (e.g., Sentry, ELK)?
-- [ ] Are unhandled exceptions being caught at the application level ?
+- [ ] Are errors being logged in the application log?
+- [ ] Are error messages being formatted with a UUID, as shown in [upload_vbms_document_controller.rb#L14](https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/controllers/idt/api/v1/upload_vbms_document_controller.rb#L14)?
+- [ ] Is the UUID being passed back to the user or API caller for creating a support ticket?
+- [ ] Are unhandled exceptions being caught at the application level (e.g., using `rescue_from`, as shown in [base_controller.rb](https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/controllers/idt/api/v1/base_controller.rb#L12)?
 
 ### Exception Handling
 - [ ] Are custom exceptions defined and used where appropriate?
