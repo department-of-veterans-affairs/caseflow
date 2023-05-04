@@ -51,7 +51,8 @@ class AssignToView extends React.Component {
 
     this.state = {
       selectedValue: action ? action.value : null,
-      instructions: existingInstructions
+      instructions: existingInstructions,
+      modalDisableButton: false
     };
   }
 
@@ -70,6 +71,16 @@ class AssignToView extends React.Component {
 
     return this.state.selectedValue !== null && this.state.instructions !== '';
   };
+
+  setModalOnChangeValue = (stateValue, value) => {
+    this.setState({ [stateValue]: value }, function(){
+      if(this.state.instructions.trim().length > 0){
+        this.setState({modalDisableButton: false})
+      } else {
+        this.setState({modalDisableButton: true})
+      }
+    })
+  }
 
   submit = () => {
     const { appeal, task, isReassignAction, isTeamAssign } = this.props;
@@ -210,6 +221,12 @@ class AssignToView extends React.Component {
         this.validateForm
     };
 
+    if (task.type === 'JudgeLegacyDecisionReviewTask'){
+      modalProps.button = 'Assign';
+      modalProps.submitButtonClassNames = ['usa-button', 'usa-button-hover', 'usa-button-warning'];
+      modalProps.submitDisabled = this.state.modalDisableButton
+    }
+
     if (isPulacCerullo) {
       modalProps.button = 'Notify';
     }
@@ -228,7 +245,7 @@ class AssignToView extends React.Component {
             <SearchableDropdown
               name="Assign to selector"
               searchable
-              hideLabel
+              label={COPY.JUDGE_LEGACY_DECISION_REVIEW_TITLE}
               errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
               placeholder={this.determinePlaceholder(this.props, actionData)}
               value={this.state.selectedValue}
@@ -244,7 +261,7 @@ class AssignToView extends React.Component {
             errorMessage={highlightFormItems && !actionData.body_optional && !this.state.instructions ?
               COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
             id="taskInstructions"
-            onChange={(value) => this.setState({ instructions: value })}
+            onChange={(value) => this.setModalOnChangeValue('instructions', value)}
             value={this.state.instructions}
             optional={actionData.body_optional}
           />
