@@ -50,8 +50,10 @@ export const IntakeRadioField = (props) => {
     setMstCheckboxFunction,
     pactChecked,
     setPactCheckboxFunction,
-    justification,
-    justificationOnChange
+    mstJustification,
+    mstJustificationOnChange,
+    pactJustification,
+    pactJustificationOnChange
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -105,19 +107,30 @@ export const IntakeRadioField = (props) => {
             value={mstChecked}
             onChange={(checked) => setMstCheckboxFunction(checked)}
           />
+          { mstChecked &&
+            <TextField
+              name="mstJustification-field"
+              value={mstJustification}
+              label="Why was this change made?"
+              // textAlign="left"
+              onChange={(mstJustificationText) => mstJustificationOnChange(mstJustificationText)}
+            />
+          }
           <Checkbox
             label="Issue is related to PACT act"
             name="Pact"
             value={pactChecked}
             onChange={(checked) => setPactCheckboxFunction(checked)}
           />
-          { (mstChecked || pactChecked) &&
+          { pactChecked &&
             <TextField
-              name="justification-field"
-              value={justification}
+              name="pactJustification-field"
+              value={pactJustification}
               label="Why was this change made?"
-              optional
-              onChange={(justificationText) => justificationOnChange(justificationText)}
+              onChange={(pactJustificationText) => pactJustificationOnChange(pactJustificationText)}
+              // InputLabelProps={{
+              //   style: { textAlign: 'left' },
+              // }}
             />
           }
         </div>
@@ -261,8 +274,10 @@ IntakeRadioField.propTypes = {
   mstChecked: PropTypes.bool,
   setMstCheckboxFunction: PropTypes.func,
   pactChecked: PropTypes.bool,
-  justification: PropTypes.string,
-  justificationOnChange: PropTypes.func,
+  pactJustification: PropTypes.string,
+  mstJustification: PropTypes.string,
+  pactJustificationOnChange: PropTypes.func,
+  mstJustificationOnChange: PropTypes.func,
   setPactCheckboxFunction: PropTypes.func,
 };
 

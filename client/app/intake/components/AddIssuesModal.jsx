@@ -17,7 +17,8 @@ class AddIssuesModal extends React.Component {
       approxDecisionDate: '',
       selectedContestableIssueIndex: '',
       notes: '',
-      justification: '',
+      mstJustification: '',
+      pactJustification: '',
       mstChecked: false,
       pactChecked: false
     };
@@ -30,10 +31,18 @@ class AddIssuesModal extends React.Component {
 
   notesOnChange = (notes) => this.setState({ notes });
 
-  justificationOnChange = (justification) => this.setState({ justification });
+  mstJustificationOnChange = (mstJustification) => this.setState({ mstJustification });
+  pactJustificationOnChange = (pactJustification) => this.setState({ pactJustification });
 
   onAddIssue = () => {
-    const { selectedContestableIssueIndex, notes, mstChecked, pactChecked, justification } = this.state;
+    const {
+      selectedContestableIssueIndex,
+      notes,
+      mstChecked,
+      pactChecked,
+      mstJustification,
+      pactJustification
+    } = this.state;
     const currentIssue = issueByIndex(this.props.intakeData.contestableIssues, selectedContestableIssueIndex);
 
     if (selectedContestableIssueIndex && !currentIssue.index) {
@@ -49,7 +58,8 @@ class AddIssuesModal extends React.Component {
         notes,
         mstChecked,
         pactChecked,
-        justification,
+        mstJustification,
+        pactJustification,
       }
     });
   };
@@ -100,8 +110,10 @@ class AddIssuesModal extends React.Component {
           value={this.state.selectedContestableIssueIndex}
           onChange={this.radioOnChange}
           renderMstAndPact={this.props.featureToggles.mstPactIdentification}
-          justification={this.state.justification}
-          justificationOnChange={this.justificationOnChange}
+          mstJustification={this.state.mstJustification}
+          mstJustificationOnChange={this.mstJustificationOnChange}
+          pactJustification={this.state.pactJustification}
+          pactJustificationOnChange={this.pactJustificationOnChange}
           mstChecked={this.state.mstChecked}
           setMstCheckboxFunction={this.mstCheckboxChange}
           pactChecked={this.state.pactChecked}
