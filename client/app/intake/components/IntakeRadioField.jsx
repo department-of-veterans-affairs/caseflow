@@ -113,6 +113,7 @@ export const IntakeRadioField = (props) => {
               value={mstJustification}
               label="Why was this change made?"
               // textAlign="left"
+              required
               onChange={(mstJustificationText) => mstJustificationOnChange(mstJustificationText)}
             />
           }
@@ -127,6 +128,7 @@ export const IntakeRadioField = (props) => {
               name="pactJustification-field"
               value={pactJustification}
               label="Why was this change made?"
+              required
               onChange={(pactJustificationText) => pactJustificationOnChange(pactJustificationText)}
               // InputLabelProps={{
               //   style: { textAlign: 'left' },
