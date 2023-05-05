@@ -373,9 +373,12 @@ class ExternalApi::VADotGovService
             addressLine2: address.address_line_2,
             addressLine3: address.address_line_3,
             city: address.city,
-            stateProvince: { code: address.state },
-            requestCountry: { country_code: address.country },
-            zipCode5: address.zip
+            zipCode5: address.zip,
+            zipCode4: address.zip4,
+            international_postal_code: address.international_postal_code,
+            stateProvince: { name: address.state_name, code: address.state },
+            requestCountry: { countryName: address.country_name, countryCode: address.country },
+            addressPOU: address.address_pou
           }
         },
         headers: {
