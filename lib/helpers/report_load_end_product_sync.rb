@@ -43,7 +43,7 @@ module WarRoom
         original_ep.sync!
 
         end_time = Time.now.to_f
-        elapsed_time = (end_time-start_time)*1000
+        elapsed_time = (end_time - start_time) * 1000
         conn.raw_connection.exec_params("UPDATE ep_establishment_workaround SET synced_status = $1,
                           last_synced_at = $2, sync_duration = $3, prev_sync_status = $4 where reference_id = $5
                           AND report_load = $6", [original_ep.synced_status, Time.zone.now, elapsed_time.to_i,
@@ -51,7 +51,7 @@ module WarRoom
 
       rescue StandardError => error
         end_time = Time.now.to_f
-        elapsed_time = (end_time-start_time)*1000
+        elapsed_time = (end_time - start_time) * 1000
 
         conn.raw_connection.exec_params("UPDATE ep_establishment_workaround SET synced_error = $1,
                           synced_status = $2, last_synced_at = $3, sync_duration = $4, prev_sync_status = $5
