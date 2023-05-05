@@ -48,6 +48,7 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleReason: null,
       decisionReviewTitle: null,
       isPreDocketNeeded: null,
+      userCanEditIntakeIssues: props.userCanEditIntakeIssues,
       mstChecked: false,
       pactChecked: false,
       dateError: ''
@@ -316,7 +317,8 @@ class NonratingRequestIssueModal extends React.Component {
     const { formType, intakeData, onCancel, featureToggles } = this.props;
     const { benefitType, category, selectedNonratingIssueId, isPreDocketNeeded } = this.state;
     const eduPreDocketAppeals = featureToggles.eduPreDocketAppeals;
-    const mstPactIdentification = featureToggles.mstPactIdentification ? featureToggles.mstPactIdentification : featureToggles.mst_pact_identification;
+    const mstIdentification = featureToggles.mstIdentification;
+    const pactIdentification = featureToggles.pactIdentification;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
@@ -342,7 +344,7 @@ class NonratingRequestIssueModal extends React.Component {
         onChange={this.isPreDocketNeededOnChange} /> : null;
 
     const getSpecialIssues =
-      mstPactIdentification ?
+      ((mstIdentification || pactIdentification) && this.props.userCanEditIntakeIssues) ?
         this.getSpecialIssues() : null;
 
     return (
@@ -396,6 +398,7 @@ NonratingRequestIssueModal.propTypes = {
   activeNonratingRequestIssues: PropTypes.object,
   receiptDate: PropTypes.string,
   addedIssues: PropTypes.array,
+  userCanEditIntakeIssues: PropTypes.bool,
   mstChecked: PropTypes.bool,
   pactChecked: PropTypes.bool,
   featureToggles: PropTypes.object

@@ -44,11 +44,13 @@ export const RadioField = (props) => {
     hideLabel,
     styling,
     vertical,
-    renderMstAndPact,
+    renderMst,
+    renderPact,
     mstChecked,
     setMstCheckboxFunction,
     pactChecked,
-    setPactCheckboxFunction
+    setPactCheckboxFunction,
+    userCanEditIntakeIssues
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -91,22 +93,26 @@ export const RadioField = (props) => {
   };
 
   const maybeAddMstAndPactCheckboxes = (option) => {
-    if (renderMstAndPact && (option.value === props.value)) {
+    if ((renderMst || renderPact) && (option.value === props.value)) {
 
       return (
         <div>
-          <Checkbox
-            label="Issue is related to Military Sexual Trauma (MST)"
-            name="MST"
-            value={mstChecked}
-            onChange={(checked) => setMstCheckboxFunction(checked)}
-          />
-          <Checkbox
-            label="Issue is related to PACT act"
-            name="Pact"
-            value={pactChecked}
-            onChange={(checked) => setPactCheckboxFunction(checked)}
-          />
+          { (renderMst && userCanEditIntakeIssues) &&
+            <Checkbox
+              label="Issue is related to Military Sexual Trauma (MST)"
+              name="MST"
+              value={mstChecked}
+              onChange={(checked) => setMstCheckboxFunction(checked)}
+            />
+          }
+          { (renderPact && userCanEditIntakeIssues) &&
+            <Checkbox
+              label="Issue is related to PACT act"
+              name="Pact"
+              value={pactChecked}
+              onChange={(checked) => setPactCheckboxFunction(checked)}
+            />
+          }
         </div>
       );
     }
@@ -244,11 +250,13 @@ RadioField.propTypes = {
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
   styling: PropTypes.object,
-  renderMstAndPact: PropTypes.bool,
+  renderMst: PropTypes.bool,
+  renderPact: PropTypes.bool,
   mstChecked: PropTypes.bool,
   setMstCheckboxFunction: PropTypes.func,
   pactChecked: PropTypes.bool,
   setPactCheckboxFunction: PropTypes.func,
+  userCanEditIntakeIssues: PropTypes.bool
 };
 
 export default RadioField;
