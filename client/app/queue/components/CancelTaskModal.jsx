@@ -26,7 +26,7 @@ const CancelTaskModal = (props) => {
 
   const formatInstructions = () => {
     if (instructions.length > 0) {
-      return `##### REASON FOR CANCELLATION:\n${instructions}`;
+      return `##### REASON FOR RETURN:\n${instructions}`;
     }
 
     return instructions;
