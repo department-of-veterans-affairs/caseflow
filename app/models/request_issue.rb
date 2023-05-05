@@ -206,7 +206,9 @@ class RequestIssue < CaseflowRecord
         edited_description: data[:edited_description],
         correction_type: data[:correction_type],
         verified_unidentified_issue: data[:verified_unidentified_issue],
-        is_predocket_needed: data[:is_predocket_needed]
+        is_predocket_needed: data[:is_predocket_needed],
+        mst_status: data[:mst_status],
+        pact_status: data[:pact_status]
       }
     end
     # rubocop:enable Metrics/MethodLength
@@ -253,7 +255,7 @@ class RequestIssue < CaseflowRecord
       if issue[:code].upcase == "MST"
         status = true
         break
-      end 
+      end
     end
     status
   end
@@ -265,7 +267,7 @@ class RequestIssue < CaseflowRecord
       if issue[:code].upcase == "PACT"
         status = true
         break
-      end 
+      end
     end
     status
   end
