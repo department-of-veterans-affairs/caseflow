@@ -25,7 +25,8 @@ export class EditIntakeIssueModal extends React.Component {
     this.state = {
       mstCheckboxValue: false,
       pactCheckboxValue: false,
-      reasonNotes: '',
+      mstReasonNotes: '',
+      pactReasonNotes: ''
     };
   }
 
@@ -41,7 +42,9 @@ export class EditIntakeIssueModal extends React.Component {
     }));
   }
 
-  reasonNotesOnChange = (reasonNotes) => this.setState({ reasonNotes });
+  mstReasonNotesOnChange = (mstReasonNotes) => this.setState({ mstReasonNotes });
+
+  pactReasonNotesOnChange = (pactReasonNotes) => this.setState({ pactReasonNotes });
 
   render() {
     const {
@@ -108,6 +111,18 @@ export class EditIntakeIssueModal extends React.Component {
                 />
               </label>
             </li>
+          </ul>
+          {(mstCheckboxValue) && (
+            <div>
+              <label style={{ 'padding-left': '2em' }}>
+                <TextField
+                  name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
+                  value={this.state.mstReasonNotes}
+                  onChange={this.mstReasonNotesOnChange} />
+              </label>
+            </div>
+          )}
+          <ul className="usa-unstyled-list">
             <li>
               <label>
                 <Checkbox style={{ 'margin-top': 0, 'margin-bottom': 0 }}
@@ -118,14 +133,13 @@ export class EditIntakeIssueModal extends React.Component {
               </label>
             </li>
           </ul>
-          {(mstCheckboxValue || pactCheckboxValue) && (
+          {(pactCheckboxValue) && (
             <div>
               <label style={{ 'padding-left': '2em' }}>
                 <TextField
                   name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
-                  value={this.state.reasonNotes}
-                  optional
-                  onChange={this.reasonNotesOnChange} />
+                  value={this.state.pactReasonNotes}
+                  onChange={this.pactReasonNotesOnChange} />
               </label>
             </div>
           )}
@@ -139,14 +153,18 @@ export class EditIntakeIssueModal extends React.Component {
 const mapStateToProps = (state) => {
   return {
     mstCheckboxValue: state.mstCheckboxValue,
-    pactCheckboxValue: state.pactCheckboxValue
+    pactCheckboxValue: state.pactCheckboxValue,
+    mstReasonNotes: state.mstReasonNotes,
+    pactReasonNotes: state.pactReasonNotes
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    handleMstCheckboxChange: () => dispatch({ type: 'TOGGLE_MSTCHECKBOXVALUE' }),
-    handlePactCheckboxChange: () => dispatch({ type: 'TOGGLE_PACTCHECKBOXVALUE' })
+    handleMstCheckboxChange: () => dispatch({ type: 'mst_status' }),
+    handlePactCheckboxChange: () => dispatch({ type: 'pact_status' }),
+    mstReasonNotes: () => dispatch({ type: 'mst_reason_notes' }),
+    pactReasonNotes: () => dispatch({ type: 'pact_reason_notes' })
   };
 };
 
@@ -157,9 +175,9 @@ EditIntakeIssueModal.propTypes = {
   mst_status: PropTypes.func,
   pact_status: PropTypes.func,
   mstCheckboxValue: PropTypes.bool,
-  setMstCheckboxFunction: PropTypes.func,
   pactCheckboxValue: PropTypes.bool,
-  setPactCheckboxFunction: PropTypes.func,
+  mstReasonNotes: PropTypes.object.isRequired,
+  pactReasonNotes: PropTypes.object.isRequired,
   intakeData: PropTypes.object,
   currentIssue: PropTypes.object,
   currentIssueCategory: PropTypes.string,
