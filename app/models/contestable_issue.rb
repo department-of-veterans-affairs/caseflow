@@ -50,8 +50,8 @@ class ContestableIssue
         source_decision_review: source,
         contesting_decision_review: contesting_decision_review,
         is_rating: decision_issue.rating?,
-        #mst_available: mst_available?,
-        #pact_available: pact_available?
+        mst_available: mst_available?,
+        pact_available: pact_available?
       )
     end
 
@@ -65,8 +65,8 @@ class ContestableIssue
         contesting_decision_review: contesting_decision_review,
         rating_issue_diagnostic_code: rating_decision.diagnostic_code,
         is_rating: true, # true even if rating_reference_id is nil
-        #mst_available: mst_available?,
-        #pact_available: pact_available?
+        mst_available: mst_available?,
+        pact_available: pact_available?
       )
     end
   end
@@ -88,9 +88,6 @@ class ContestableIssue
       isRating: is_rating,
       mst_available: mst_available?,
       pact_available: pact_available?
-
-      #test uses a gui in some ways it performs
-
     }
   end
 
@@ -120,14 +117,18 @@ class ContestableIssue
 
   def mst_available?
     contested_by_request_issue&.mst_contention_status?
+  def timely?
+    approx_decision_date && contesting_decision_review.timely_issue?(approx_decision_date)
   end
 
+  # cycle the issues to see if the past decision had any pact codes on contentions
   def pact_available?
     contested_by_request_issue&.pact_contention_status?
   end
 
   def timely?
     approx_decision_date && contesting_decision_review.timely_issue?(approx_decision_date)
+
   end
 
   private
