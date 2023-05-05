@@ -361,6 +361,22 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         expect(appeal.special_issue_list.vamc).to eq(true)
         click_on "Continue"
 
+        # Checking if MST and PACT are shown under Edit Issue
+        click_on "Edit Issue"
+        expect(page).to have_content "Military Sexual Trauma (MST)"
+        expect(page).to have_content "PACT Act"
+
+        check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+        check("PACT Act", allow_label_click: true, visible: false)
+        expect(page).to have_checked_field("Military Sexual Trauma (MST)", visible: false)
+        expect(page).to have_checked_field("PACT Act", visible: false)
+
+        uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+        uncheck("PACT Act", allow_label_click: true, visible: false)
+        expect(page).not_to have_checked_field("Military Sexual Trauma (MST)", visible: false)
+        expect(page).not_to have_checked_field("PACT Act", visible: false)
+        click_on "Back"
+
         expect(page).to have_content "Select Dispositions"
 
         cancel_button = page.find "#button-cancel-button"
