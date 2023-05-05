@@ -133,7 +133,7 @@ describe('Whenever RPO returns an appeal to EMO', () => {
     clickSubmissionButton(buttonText);
 
     expect(getReceivedInstructions()).toBe(
-      `##### REASON FOR RETURN:\n${additionalContextText}`
+      `##### REASON FOR CANCELLATION:\n${additionalContextText}`
     );
   });
 });

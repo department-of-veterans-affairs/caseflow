@@ -24,9 +24,16 @@ const CancelTaskModal = (props) => {
 
   const [instructions, setInstructions] = useState('');
 
+  const isVhaOffice = () => props.task.assignedTo.type === 'VhaRegionalOffice' ||
+    props.task.assignedTo.type === 'VhaProgramOffice';
+
   const formatInstructions = () => {
+    const reason_text = isVhaOffice() ?
+      '##### REASON FOR RETURN:' :
+      '##### REASON FOR CANCELLATION:';
+
     if (instructions.length > 0) {
-      return `##### REASON FOR RETURN:\n${instructions}`;
+      return `${reason_text}\n${instructions}`;
     }
 
     return instructions;
@@ -153,6 +160,9 @@ CancelTaskModal.propTypes = {
   }),
   requestPatch: PropTypes.func,
   task: PropTypes.shape({
+    assignedTo: PropTypes.shape({
+      type: PropTypes.string
+    }),
     taskId: PropTypes.string,
     type: PropTypes.string,
     onHoldDuration: PropTypes.number
