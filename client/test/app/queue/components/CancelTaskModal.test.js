@@ -96,7 +96,7 @@ describe('Whenever VHA PO returns an appeal to CAMO Team', () => {
     clickSubmissionButton(buttonText);
 
     expect(getReceivedInstructions()).toBe(
-      `##### REASON FOR CANCELLATION:\n${additionalContextText}`
+      `##### REASON FOR RETURN:\n${additionalContextText}`
     );
   });
 });
@@ -177,7 +177,7 @@ describe('Whenever VISN user returns an appeal to Program Office', () => {
     clickSubmissionButton(buttonText);
 
     expect(getReceivedInstructions()).toBe(
-      `##### REASON FOR CANCELLATION:\n${additionalContextText}`
+      `##### REASON FOR RETURN:\n${additionalContextText}`
     );
   });
 });
