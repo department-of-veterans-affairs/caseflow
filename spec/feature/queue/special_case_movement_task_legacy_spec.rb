@@ -12,8 +12,9 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
   let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
   let(:root_task) { create(:root_task, appeal: appeal) }
   let(:distribution_task) { create(:distribution_task, parent: root_task) }
-
   let(:hearing_task) { create(:hearing_task, parent: distribution_task) }
+
+  let(:distribution_task2) { create(:distribution_task, parent: root_task) }
 
   before do
     SpecialCaseMovementTeam.singleton.add_user(scm_user)
@@ -21,11 +22,18 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
   end
   describe "Accessing task actions" do
     context "With the Appeal in the right state" do
-      it "successfully assigns the task to judge" do
+      it "successfully assigns the task to judge when blocked" do
         visit("queue/appeals/#{hearing_task.appeal.external_id}")
         dropdown = find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL)
         dropdown.click
         expect(page).to have_content(Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY.label)
+      end
+
+      it "successfully assigns the task to judge without blocked" do
+        visit("queue/appeals/#{distribution_task2.appeal.external_id}")
+        dropdown = find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL)
+        dropdown.click
+        expect(page).to have_content(Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.label)
       end
 
       it "Checking validations on hearing task is cancelled and case assigns to judge" do
