@@ -55,6 +55,8 @@ export class EditIntakeIssueModal extends React.Component {
       currentIssueDescription = currentIssue.description,
       currentIssueBenefitType = BENEFIT_TYPES[currentIssue.benefitType],
       currentIssueDecisionDate = formatDateStr(currentIssue.decisionDate),
+      mstIdentification,
+      pactIdentification
     } = this.props;
 
     const { mstCheckboxValue, pactCheckboxValue } = this.state;
@@ -81,7 +83,7 @@ export class EditIntakeIssueModal extends React.Component {
           <strong>
             { INTAKE_EDIT_ISSUE_LABEL }
           </strong>
-          { currentIssueCategory ? currentIssueCategory + ' - ' + currentIssueDescription : currentIssueDescription}
+          { currentIssueCategory ? `${currentIssueCategory } - ${ currentIssueDescription}` : currentIssueDescription}
         </div>
 
         <div>
@@ -104,11 +106,13 @@ export class EditIntakeIssueModal extends React.Component {
           <ul className="usa-unstyled-list">
             <li>
               <label>
-                <Checkbox
-                  name={MST_LABEL} strongLabel
-                  onChange={this.handleMstCheckboxChange}
-                  value={mstCheckboxValue}
-                />
+                { mstIdentification &&
+                  <Checkbox
+                    name={INTAKE_EDIT_ISSUE_MST_LABEL} strongLabel
+                    onChange={this.handleMstCheckboxChange}
+                    value={mstCheckboxValue}
+                  />
+                }
               </label>
             </li>
           </ul>
@@ -125,11 +129,13 @@ export class EditIntakeIssueModal extends React.Component {
           <ul className="usa-unstyled-list">
             <li>
               <label>
-                <Checkbox style={{ 'margin-top': 0, 'margin-bottom': 0 }}
-                  name={PACT_LABEL} strongLabel
-                  onChange={this.handlePactCheckboxChange}
-                  value={pactCheckboxValue}
-                />
+                { pactIdentification &&
+                  <Checkbox style={{ 'margin-top': 0, 'margin-bottom': 0 }}
+                    name={INTAKE_EDIT_ISSUE_PACT_LABEL} strongLabel
+                    onChange={this.handlePactCheckboxChange}
+                    value={pactCheckboxValue}
+                  />
+                }
               </label>
             </li>
           </ul>
@@ -172,6 +178,8 @@ EditIntakeIssueModal.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
   issueIndex: PropTypes.number,
+  mstIdentification: PropTypes.bool,
+  pactIdentification: PropTypes.bool,
   mst_status: PropTypes.func,
   pact_status: PropTypes.func,
   mstCheckboxValue: PropTypes.bool,
