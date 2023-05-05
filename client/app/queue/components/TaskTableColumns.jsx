@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import * as React from 'react';
 import moment from 'moment';
 import pluralize from 'pluralize';
@@ -273,16 +274,16 @@ export const issueTypesColumn = (tasks, filterOptions, requireDasRecord) => {
       const commaDelimitedIssueTypes = task.appeal.issueTypes;
 
       // Remove duplicates from the comma delimited list of issue types
-      // TODO: Might need to sort this as well so it doesn't have to be sorted on the backend?
-      // This still messes things up thought because the sortFunction needs to be presorted to behave like it should
+      // Also sort the request issue type alphabetically
       const uniqueIssueTypes = [...new Set(commaDelimitedIssueTypes?.split(','))].sort();
 
       return uniqueIssueTypes.length > 1 ?
         uniqueIssueTypes.map((type) => (<p key={type}> {type} </p>)) :
         uniqueIssueTypes[0];
     },
-    // TODO: This is so gross. I think it might be better to just do this in the serializer
-    getSortValue: (task) => hasDASRecord(task, requireDasRecord) ? [...new Set(task.appeal.issueTypes?.split(','))].sort() : null
+    getSortValue: (task) => (
+      hasDASRecord(task, requireDasRecord) ? [...new Set(task.appeal.issueTypes?.split(','))].sort() : null
+    )
   };
 };
 

@@ -77,38 +77,18 @@ class TableFilter extends React.PureComponent {
       return _.sortBy(filterOptionsFromApi, 'displayText');
     }
 
-    // const countByColumnName = _.countBy(
-    //   tableDataByRow,
-    //   (row) => this.transformColumnValue(_.get(row, columnName), row)
-    // );
-    // Build the filtering options client side
-    let countByColumnName;
+    const columnValues = tableDataByRow.map((obj) => {
+      let key = this.transformColumnValue(_.get(obj, columnName));
 
-    // TODO: This is kind of gross but idk what to do about it
-    if (multiValueDelimiter) {
-      const columnValues = tableDataByRow.map((obj) => {
-        const key = _.get(obj, columnName);
+      if (typeof key === 'string' && key.includes(multiValueDelimiter)) {
+        return key.split(multiValueDelimiter).map((value) => value.trim());
+      }
 
-        if (typeof key === 'string' && key.includes(multiValueDelimiter)) {
-          return key.split(multiValueDelimiter).map((value) => value.trim());
-        }
+      return key;
+    });
 
-        return key;
-
-      });
-
-      // This also might need transformColumnValue on it as well.
-      // Or I can use the transformColumnValue on it to do the above split and then do a quick check at the end
-      // To Determine if I need the flat map or not
-      countByColumnName = _.countBy(_.flatMap(columnValues));
-    } else {
-      countByColumnName = _.countBy(
-        tableDataByRow,
-        (row) => {
-          return this.transformColumnValue(_.get(row, columnName), row);
-        }
-      );
-    }
+    // Flatmap if there are multiple values in each row.
+    const countByColumnName = _.countBy(multiValueDelimiter ? _.flatMap(columnValues) : columnValues);
 
     const uniqueOptions = [];
 
