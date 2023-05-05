@@ -52,6 +52,8 @@ module AppellantNotification
           Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
           message_attributes[:status] = error.status
         end
+      elsif appeal.veteran_appellant_deceased?
+        message_attributes[:status] = "Failure Due to Deceased"
       else
         message_attributes[:status] = "Success"
       end
