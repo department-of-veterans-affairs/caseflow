@@ -12,6 +12,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   end
 
   def create
+
     appeal = nil
     # Find veteran from appeal id and check with db
     if params["appeal_id"].present?
