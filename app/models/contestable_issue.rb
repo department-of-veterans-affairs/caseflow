@@ -15,6 +15,7 @@ class ContestableIssue
 
   class << self
     def from_rating_issue(rating_issue, contesting_decision_review)
+      #epe = EndProductEstablishment.find_by(reference_id: rating_issue.reference_id)
       new(
         rating_issue_reference_id: rating_issue.reference_id,
         rating_issue_profile_date: rating_issue.profile_date.to_date,
@@ -49,8 +50,8 @@ class ContestableIssue
         source_decision_review: source,
         contesting_decision_review: contesting_decision_review,
         is_rating: decision_issue.rating?,
-        mstAvailable: mst_available?,
-        pactAvailable: pact_available?
+        mst_available: mst_available?,
+        pact_available: pact_available?
       )
     end
 
@@ -63,9 +64,9 @@ class ContestableIssue
         description: rating_decision.decision_text,
         contesting_decision_review: contesting_decision_review,
         rating_issue_diagnostic_code: rating_decision.diagnostic_code,
-        mstAvailable: mst_available?,
-        pactAvailable: pact_available?,
-        is_rating: true # true even if rating_reference_id is nil
+        is_rating: true, # true even if rating_reference_id is nil
+        mst_available: mst_available?,
+        pact_available: pact_available?
       )
     end
   end
@@ -85,8 +86,8 @@ class ContestableIssue
       timely: timely?,
       latestIssuesInChain: serialize_latest_decision_issues,
       isRating: is_rating,
-      mstAvailable: mst_available?,
-      pactAvailable: pact_available?
+      mst_available: mst_available?,
+      pact_available: pact_available?
     }
   end
 
@@ -114,24 +115,20 @@ class ContestableIssue
     conflicting_request_issue.try(:review_title)
   end
 
+  def mst_available?
+    contested_by_request_issue&.mst_contention_status?
   def timely?
     approx_decision_date && contesting_decision_review.timely_issue?(approx_decision_date)
   end
 
-  # cycle the issues to see if the past decision had any mst codes on contentions
-  def mst_available?
-    source_request_issues.each do |issue|
-      return issue.mst_contention_status? if issue.mst_contention_status?
-    end
-    false
-  end
-
   # cycle the issues to see if the past decision had any pact codes on contentions
   def pact_available?
-    source_request_issues.each do |issue|
-      return issue.pact_contention_status? if issue.pact_contention_status?
-    end
-    false
+    contested_by_request_issue&.pact_contention_status?
+  end
+
+  def timely?
+    approx_decision_date && contesting_decision_review.timely_issue?(approx_decision_date)
+
   end
 
   private
