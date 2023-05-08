@@ -5,7 +5,7 @@ import { map, findIndex, uniq } from 'lodash';
 
 import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
-import IntakeRadioField from '../../components/RadioField';
+import IntakeRadioField from './IntakeRadioField';
 import TextField from '../../components/TextField';
 import { issueByIndex } from '../util/issues';
 
@@ -17,6 +17,8 @@ class AddIssuesModal extends React.Component {
       approxDecisionDate: '',
       selectedContestableIssueIndex: '',
       notes: '',
+      mstJustification: '',
+      pactJustification: '',
       mstChecked: false,
       pactChecked: false
     };
@@ -29,8 +31,18 @@ class AddIssuesModal extends React.Component {
 
   notesOnChange = (notes) => this.setState({ notes });
 
+  mstJustificationOnChange = (mstJustification) => this.setState({ mstJustification });
+  pactJustificationOnChange = (pactJustification) => this.setState({ pactJustification });
+
   onAddIssue = () => {
-    const { selectedContestableIssueIndex, notes, mstChecked, pactChecked } = this.state;
+    const {
+      selectedContestableIssueIndex,
+      notes,
+      mstChecked,
+      pactChecked,
+      mstJustification,
+      pactJustification
+    } = this.state;
     const currentIssue = issueByIndex(this.props.intakeData.contestableIssues, selectedContestableIssueIndex);
 
     if (selectedContestableIssueIndex && !currentIssue.index) {
@@ -46,6 +58,8 @@ class AddIssuesModal extends React.Component {
         notes,
         mstChecked,
         pactChecked,
+        mstJustification,
+        pactJustification,
       }
     });
   };
@@ -95,6 +109,11 @@ class AddIssuesModal extends React.Component {
           key={approxDecisionDate}
           value={this.state.selectedContestableIssueIndex}
           onChange={this.radioOnChange}
+          renderMstAndPact={this.props.featureToggles.mstPactIdentification}
+          mstJustification={this.state.mstJustification}
+          mstJustificationOnChange={this.mstJustificationOnChange}
+          pactJustification={this.state.pactJustification}
+          pactJustificationOnChange={this.pactJustificationOnChange}
           renderMst={this.props.featureToggles.mstIdentification}
           renderPact={this.props.featureToggles.pactIdentification}
           userCanEditIntakeIssues={this.props.userCanEditIntakeIssues}
