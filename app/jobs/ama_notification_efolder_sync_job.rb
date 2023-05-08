@@ -53,6 +53,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
         notifications.appeals_id = appeals.\"uuid\"::text AND \
         notifications.appeals_type = 'Appeal'")
       .active
+      .non_deceased_appellants
       .where.not(id: appeal_ids_synced)
       .group(:id)
   end
@@ -72,7 +73,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
       .reverse.pluck(:appeal_id)
 
     # Appeals for all the previously synced reports from oldest to newest
-    get_appeals_from_prev_synced_ids(previously_synced_appeal_ids)
+    get_appeals_from_prev_synced_ids(previously_synced_appeal_ids).non_deceased_appellants
   end
 
   # Purpose: Determines if a new notification has happened since the last time a
