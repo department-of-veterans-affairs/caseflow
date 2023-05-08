@@ -26,6 +26,7 @@ import {
   documentIdColumn,
   lastActionColumn,
   issueCountColumn,
+  issueTypesColumn,
   readerLinkColumn,
   readerLinkColumnWithNewDocsIcon,
   regionalOfficeColumn,
@@ -115,6 +116,10 @@ class QueueTableBuilder extends React.PureComponent {
       [QUEUE_CONFIG.COLUMNS.DOCUMENT_ID.name]: documentIdColumn(),
       [QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name]: issueCountColumn(
         requireDasRecord
+      ),
+      [QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name]: issueTypesColumn(
+        tasks,
+        filterOptions
       ),
       [QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.
         name]: readerLinkColumnWithNewDocsIcon(requireDasRecord),
