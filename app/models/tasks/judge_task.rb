@@ -18,6 +18,11 @@ class JudgeTask < Task
         Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
         additional_available_actions(user)
       ].flatten
+    elsif user&.can_act_on_behalf_of_judges? && assigned_to.judge_in_vacols?
+      [
+        Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h,
+        additional_available_actions(user)
+      ].flatten
     elsif user&.can_act_on_behalf_of_judges?
       [
         Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
