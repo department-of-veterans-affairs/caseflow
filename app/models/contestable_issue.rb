@@ -50,6 +50,8 @@ class ContestableIssue
         source_decision_review: source,
         contesting_decision_review: contesting_decision_review,
         is_rating: decision_issue.rating?,
+        mst_available: mst_available?,
+        pact_available: pact_available?
         mstAvailable: mst_available?,
         pactAvailable: pact_available?
       )
@@ -64,7 +66,9 @@ class ContestableIssue
         description: rating_decision.decision_text,
         contesting_decision_review: contesting_decision_review,
         rating_issue_diagnostic_code: rating_decision.diagnostic_code,
-        is_rating: true # true even if rating_reference_id is nil
+        is_rating: true, # true even if rating_reference_id is nil
+        mst_available: mst_available?,
+        pact_available: pact_available?
       )
     end
   end
