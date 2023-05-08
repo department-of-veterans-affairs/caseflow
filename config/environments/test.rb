@@ -113,5 +113,5 @@ Rails.application.configure do
 
   ENV['TEST_VACOLS_HOST'] ||= "localhost"
 
-  ENV['PACMAN_API_URL'] ||= "who knows"
+  ENV['PACMAN_API_URL'] ||= "http://pacman.staging.bip.va.gov"
 end

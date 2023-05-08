@@ -28,8 +28,50 @@ describe ExternalApi::PacManService do
     HTTPI::Response.new(404, {}, error_response_body)
   end
 
+  let(:distribution) do
+    {"id": "123232323",
+    "recipient": {
+      "type": "person",
+      "name": "bob joe",
+      "firstName": "bob",
+      "middleName": "",
+      "lastName": "joe",
+      "participant_id": "123455667",
+      "poaCode": "",
+      "claimantStationOfJurisdiction": ""
+    },
+    "description": "bad",
+    "communicationPackageId": "",
+    "destinations": {
+      "type": "email",
+      "addressLine1": "",
+      "addressLine2": "",
+      "addressLine3": "",
+      "addressLine4": "",
+      "addressLine5": "",
+      "addressLine6": "",
+      "treatLine2AsAddressee": 0,
+      "treatLine3AsAddressee": 0,
+      "city": "",
+      "state": "",
+      "postalCode": "",
+      "countryName": "",
+      "emailAddress": "",
+      "phoneNumber": ""
+    },
+    "status": "",
+    "sentToCbcmDate": ""}.to_json
+  end
+
+  let(:get_distribution_success_response) do
+    HTTPI::Response.new(200, {}, distribution)
+  end
+
   context "get distribution" do
+    subject { ExternalApi::PacManService.get_distribution_request(distribution["id"]) }
     it "gets correct distribution" do
+      allow(HTTPI).to receive(:get).and_return(get_distribution_success_response)
+      expect(subject.body.to_json).to eq(get_distribution_success_response)
     end
     context "bad request" do
       it "returns 400 PacManBadRequestError" do
@@ -42,8 +84,10 @@ describe ExternalApi::PacManService do
       end
     end
     context "not found" do
+      subject { ExternalApi::PacManService.get_distribution_request("fake") }
       it "returns 404 PacManNotFoundError" do
-
+        allow(HTTPI).to receive(:get).and_return(not_found_response)
+        expect { subject }.to raise_error Caseflow::Error::PacManNotFoundError
       end
     end
   end

@@ -58,6 +58,7 @@ class Fakes::PacManService < ExternalApi::PacManService
       )
     end
 
+    # POST: /package-manager-service/communication-package
     def fake_package_request
       HTTPI::Response.new(
         200,
@@ -77,6 +78,7 @@ class Fakes::PacManService < ExternalApi::PacManService
     end
 
     # rubocop:disable Metrics/MethodLength
+    # POST: /package-manager-service/distribution
     def fake_distribution_request
       HTTPI::Response.new(
         200,
@@ -119,40 +121,38 @@ class Fakes::PacManService < ExternalApi::PacManService
     end
     # rubocop:enable Metrics/MethodLength
 
+    # GET: /package-manager-service/distribution/{id}
     def fake_distribution_response(distribution_id)
       HTTPI::Response.new(
         200,
         {},
         OpenStruct.new(
-          "id": "123232323",
+          "id": "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
           "recipient": {
-            "type": "person",
-            "name": "bob joe",
-            "firstName": "bob",
-            "middleName": "",
-            "lastName": "joe",
-            "participant_id": "123455667",
-            "poaCode": "",
-            "claimantStationOfJurisdiction": ""
+            "type": "system",
+            "id": "a050a21e-23f6-4743-a1ff-aa1e24412eff",
+            "name": "VBMS-C"
           },
-          "description": "bad",
-          "communicationPackageId": "",
+          "description": "Staging Mailing Distribution",
+          "communicationPackageId": "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
           "destinations": {
-            "type": "email",
-            "addressLine1": "",
-            "addressLine2": "",
-            "addressLine3": "",
-            "addressLine4": "",
-            "addressLine5": "",
+            "type": "physicalAddress",
+            "id": "28440040-51a5-4d2a-81a2-28730827be14",
+            "status": null,
+            "cbcmSendAttemptDate": "2022-06-06T16:35:27.996",
+            "addressLine1": "POSTMASTER GENERAL",
+            "addressLine2": "UNITED STATES POSTAL SERVICE",
+            "addressLine3": "475 LENFANT PLZ SW RM 10022",
+            "addressLine4": "SUITE 123",
+            "addressLine5": "APO AE 09001-5275",
             "addressLine6": "",
-            "treatLine2AsAddressee": 0,
-            "treatLine3AsAddressee": 0,
-            "city": "",
-            "state": "",
-            "postalCode": "",
-            "countryName": "",
-            "emailAddress": "",
-            "phoneNumber": ""
+            "treatLine2AsAddressee": true,
+            "treatLine3AsAddressee": true,
+            "city": "WASHINGTON DC",
+            "state": "DC",
+            "postalCode": "12345",
+            "countryName": "UNITED STATES",
+            "countryCode": "us"
           },
           "status": "",
           "sentToCbcmDate": ""
