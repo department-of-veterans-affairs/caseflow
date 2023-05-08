@@ -1,12 +1,14 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import Checkbox from '../../components/Checkbox';
+import TextField from '../../components/TextField';
 
-import RequiredIndicator from './RequiredIndicator';
-import StringUtil from '../util/StringUtil';
-import Tooltip from './Tooltip';
+import RequiredIndicator from '../../components/RequiredIndicator';
+import StringUtil from '../../util/StringUtil';
+import Tooltip from '../../components/Tooltip';
 
-import { helpText } from './RadioField.module.scss';
+import { helpText } from '../../components/RadioField.module.scss';
 
 const RadioFieldHelpText = ({ help, className }) => {
   const helpClasses = classNames('cf-form-radio-help', helpText, className);
@@ -20,13 +22,13 @@ RadioFieldHelpText.propTypes = {
 };
 
 /**
- * Radio button component.
+ * Intake radio button component.
  *
  * See StyleGuideRadioField.jsx for usage examples.
  *
  */
 
-export const RadioField = (props) => {
+export const IntakeRadioField = (props) => {
   const {
     id,
     className,
@@ -42,7 +44,16 @@ export const RadioField = (props) => {
     strongLabel,
     hideLabel,
     styling,
-    vertical
+    vertical,
+    renderMstAndPact,
+    mstChecked,
+    setMstCheckboxFunction,
+    pactChecked,
+    setPactCheckboxFunction,
+    mstJustification,
+    mstJustificationOnChange,
+    pactJustification,
+    pactJustificationOnChange
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -50,7 +61,7 @@ export const RadioField = (props) => {
     options,
   ]);
 
-  const radioClass = className.
+  const intakeRadioClass = className.
     concat(isVertical ? 'cf-form-radio' : 'cf-form-radio-inline').
     concat(errorMessage ? 'usa-input-error' : '');
 
@@ -84,13 +95,58 @@ export const RadioField = (props) => {
     return radioField;
   };
 
+  // Creating MST and PACT checkboxes, along with a text input for justification of change
+  const maybeAddMstAndPactCheckboxes = (option) => {
+    if (renderMstAndPact && (option.value === props.value)) {
+
+      return (
+        <div>
+          <Checkbox
+            label="Issue is related to Military Sexual Trauma (MST)"
+            name="MST"
+            value={mstChecked}
+            onChange={(checked) => setMstCheckboxFunction(checked)}
+          />
+          { mstChecked &&
+            <TextField
+              name="mstJustification-field"
+              value={mstJustification}
+              label="Why was this change made?"
+              // textAlign="left"
+              required
+              onChange={(mstJustificationText) => mstJustificationOnChange(mstJustificationText)}
+            />
+          }
+          <Checkbox
+            label="Issue is related to PACT act"
+            name="Pact"
+            value={pactChecked}
+            onChange={(checked) => setPactCheckboxFunction(checked)}
+          />
+          { pactChecked &&
+            <TextField
+              name="pactJustification-field"
+              value={pactJustification}
+              label="Why was this change made?"
+              required
+              onChange={(pactJustificationText) => pactJustificationOnChange(pactJustificationText)}
+              // InputLabelProps={{
+              //   style: { textAlign: 'left' },
+              // }}
+            />
+          }
+        </div>
+      );
+    }
+  };
+
   const isDisabled = (option) => Boolean(option.disabled);
 
   const handleChange = (event) => onChange?.(event.target.value);
   const controlled = useMemo(() => typeof value !== 'undefined', [value]);
 
   return (
-    <fieldset className={radioClass.join(' ')} {...styling}>
+    <fieldset className={intakeRadioClass.join(' ')} {...styling}>
       <legend className={labelClass}>
         {strongLabel ? <strong>{labelContents}</strong> : labelContents}
       </legend>
@@ -102,6 +158,7 @@ export const RadioField = (props) => {
       <div className="cf-form-radio-options">
         {options.map((option, i) => {
           const optionDisabled = isDisabled(option);
+
           const radioField = (<div
             className="cf-form-radio-option"
             key={`${idPart}-${option.value}-${i}`}
@@ -123,6 +180,8 @@ export const RadioField = (props) => {
               htmlFor={`${idPart}_${option.value}`}
             >
               {option.displayText || option.displayElem}
+              {props.onChange}
+              {maybeAddMstAndPactCheckboxes(option)}
             </label>
             {option.help && <RadioFieldHelpText help={option.help} />}
           </div>
@@ -135,12 +194,12 @@ export const RadioField = (props) => {
   );
 };
 
-RadioField.defaultProps = {
+IntakeRadioField.defaultProps = {
   required: false,
   className: ['usa-fieldset-inputs'],
 };
 
-RadioField.propTypes = {
+IntakeRadioField.propTypes = {
   id: PropTypes.string,
   className: PropTypes.arrayOf(PropTypes.string),
   required: PropTypes.bool,
@@ -197,10 +256,6 @@ RadioField.propTypes = {
        * Help text to be displayed below the label
        */
       help: PropTypes.string,
-
-      mst: PropTypes.Boolean,
-      pact: PropTypes.Boolean,
-      counterVal: PropTypes.number
     })
   ),
 
@@ -221,10 +276,11 @@ RadioField.propTypes = {
   mstChecked: PropTypes.bool,
   setMstCheckboxFunction: PropTypes.func,
   pactChecked: PropTypes.bool,
+  pactJustification: PropTypes.string,
+  mstJustification: PropTypes.string,
+  pactJustificationOnChange: PropTypes.func,
+  mstJustificationOnChange: PropTypes.func,
   setPactCheckboxFunction: PropTypes.func,
-  preExistingMST: PropTypes.bool,
-  preExistingPACT: PropTypes.bool,
-  totalElements: PropTypes.number
 };
 
-export default RadioField;
+export default IntakeRadioField;

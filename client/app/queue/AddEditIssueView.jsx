@@ -32,6 +32,7 @@ import TextField from '../components/TextField';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import Alert from '../components/Alert';
+import Checkbox from '../components/Checkbox';
 
 import {
   fullWidth,
@@ -46,6 +47,7 @@ const dropdownMarginTop = css({ marginTop: '2rem' });
 const smallTopMargin = css({ marginTop: '1rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 const noLeftPadding = css({ paddingLeft: 0 });
+const checkboxStyle = css({ marginTop: '0', marginBottom: '0' });
 
 class AddEditIssueView extends React.Component {
 
@@ -109,7 +111,9 @@ class AddEditIssueView extends React.Component {
           level_1: _.get(issue.codes, 0, null),
           level_2: _.get(issue.codes, 1, null),
           level_3: _.get(issue.codes, 2, null),
-          ..._.pick(issue, 'note', 'program')
+          ..._.pick(issue, 'note', 'program'),
+          mst_status: issue.mst_status ? 'Y' : 'N',
+          pact_status: issue.pact_status ? 'Y' : 'N'
         }
       }
     };
@@ -329,6 +333,21 @@ class AddEditIssueView extends React.Component {
         value={_.get(this.props.issue, 'note', '')}
         maxLength={ISSUE_DESCRIPTION_MAX_LENGTH}
         onChange={(value) => this.updateIssue({ note: value })} />
+      <label style={{ marginBottom: '1rem' }}>Select any special issues that apply</label>
+      <Checkbox
+        name="MST"
+        label="Military Sexual Trauma (MST)"
+        defaultValue={issue.mst_status}
+        styling={checkboxStyle}
+        onChange={(checked) => this.updateIssue({ mst_status: checked })}
+      />
+      <Checkbox
+        name="PACT"
+        label="PACT Act"
+        defaultValue={issue.pact_status}
+        styling={checkboxStyle}
+        onChange={(checked) => this.updateIssue({ pact_status: checked })}
+      />
     </QueueFlowPage>;
   };
 }
@@ -360,7 +379,9 @@ AddEditIssueView.propTypes = {
     id: PropTypes.number,
     type: PropTypes.string,
     codes: PropTypes.arrayOf(PropTypes.string),
-    program: PropTypes.string
+    program: PropTypes.string,
+    mst_status: PropTypes.bool,
+    pact_status: PropTypes.bool
   }),
   issueId: PropTypes.string,
   issues: PropTypes.object,
