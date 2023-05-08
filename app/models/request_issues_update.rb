@@ -29,6 +29,7 @@ class RequestIssuesUpdate < CaseflowRecord
         withdrawn_request_issue_ids: withdrawn_issues.map(&:id),
         edited_request_issue_ids: edited_issues.map(&:id),
         mst_edited_request_issue_ids: mst_edited_issues.map(&:id),
+        pact_edited_request_issue_ids: pact_edited_issues.map(&:id),
         corrected_request_issue_ids: corrected_issues.map(&:id)
       )
       create_business_line_tasks! if added_issues.present?
@@ -95,8 +96,12 @@ class RequestIssuesUpdate < CaseflowRecord
     @mst_edited_issues ||= mst_edited_request_issue_ids ? fetch_mst_edited_issues : calculate_mst_edited_issues
   end
 
+  def pact_edited_issues
+    @pact_edited_issues ||= pact_edited_request_issue_ids ? fetch_pact_edited_issues : calculate_pact_edited_issues
+  end
+
   def all_updated_issues
-    added_issues + removed_issues + withdrawn_issues + edited_issues + correction_issues + mst_edited_issues
+    added_issues + removed_issues + withdrawn_issues + edited_issues + correction_issues + mst_edited_issues + pact_edited_issues
   end
 
   private
@@ -126,6 +131,12 @@ class RequestIssuesUpdate < CaseflowRecord
     end
   end
 
+  def calculate_pact_edited_issues
+    pact_edited_issue_data.map do |pact_issue_data|
+      review.find_or_build_request_issue_from_intake_data(pact_issue_data)
+    end
+  end
+
   def edited_issue_data
     return [] unless @request_issues_data
 
@@ -136,6 +147,12 @@ class RequestIssuesUpdate < CaseflowRecord
     return [] unless @request_issues_data
 
     @request_issues_data.select { |ri| ri[:mst_status_update_reason_notes].present? && ri[:request_issue_id] }
+  end
+
+  def pact_edited_issue_data
+    return [] unless @request_issues_data
+
+    @request_issues_data.select { |ri| ri[:pact_status_update_reason_notes].present? && ri[:request_issue_id] }
   end
 
   def calculate_before_issues
@@ -168,6 +185,10 @@ class RequestIssuesUpdate < CaseflowRecord
     RequestIssue.where(id: mst_edited_request_issue_ids)
   end
 
+  def fetch_pact_edited_issues
+    RequestIssue.where(id: pact_edited_request_issue_ids)
+  end
+
   def process_issues!
     review.create_issues!(added_issues, self)
     process_removed_issues!
@@ -176,6 +197,7 @@ class RequestIssuesUpdate < CaseflowRecord
     process_edited_issues!
     process_corrected_issues!
     process_mst_edited_issues!
+    process_pact_edited_issues!
   end
 
   def process_legacy_issues!
@@ -212,6 +234,17 @@ class RequestIssuesUpdate < CaseflowRecord
       ).update!(
         mst_status: mst_edited_issue[:mst_status],
         mst_status_update_reason_notes: mst_edited_issue[:mst_status_update_reason_notes])
+    end
+  end
+
+  def process_pact_edited_issues!
+    return if pact_edited_issues.empty?
+
+    pact_edited_issue_data.each do |pact_edited_issue|
+      RequestIssue.find(pact_edited_issue[:request_issue_id].to_s
+      ).update!(
+        pact_status: pact_edited_issue[:pact_status],
+        pact_status_update_reason_notes: pact_edited_issue[:pact_status_update_reason_notes])
     end
   end
 
