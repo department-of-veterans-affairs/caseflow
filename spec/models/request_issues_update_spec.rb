@@ -251,9 +251,10 @@ describe RequestIssuesUpdate, :all_dbs do
              mst_status_update_reason_notes: mst_status_update_reason_notes }]
         end
 
-        it "updates the request issue's mst status" do
+        it "updates the request issue's mst status and mst status update reason notes" do
           expect(subject).to be_truthy
           expect(existing_request_issue.reload.mst_status).to eq(true)
+          expect(existing_request_issue.reload.mst_status_update_reason_notes).to eq("I am the mst status update reason notes")
         end
       end
 

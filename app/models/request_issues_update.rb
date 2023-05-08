@@ -210,8 +210,8 @@ class RequestIssuesUpdate < CaseflowRecord
     mst_edited_issue_data.each do |mst_edited_issue|
       RequestIssue.find(mst_edited_issue[:request_issue_id].to_s
       ).update!(
-        mst_status: mst_edited_issue[:mst_status]
-        # mst_status_update_reason_notes: mst_edited_issue[:mst_status_update_reason_notes])
+        mst_status: mst_edited_issue[:mst_status],
+        mst_status_update_reason_notes: mst_edited_issue[:mst_status_update_reason_notes])
     end
   end
 
