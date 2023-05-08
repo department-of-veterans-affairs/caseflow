@@ -36,7 +36,6 @@ export const RadioField = (props) => {
     inputProps,
     name,
     options,
-    totalElements,
     value,
     onChange,
     required,
@@ -93,46 +92,7 @@ export const RadioField = (props) => {
     return radioField;
   };
 
-  const returnMstOrCheckboxValue = (counter) => {
-    let valueToCheck = counter - totalElements;
-    const existingMst = options[valueToCheck].mst;
-
-    if (existingMst) {
-      return existingMst;
-    }
-
-    return mstChecked;
-  };
-
-  const returnPactOrCheckboxValue = (counter) => {
-    let valueToCheck = counter - totalElements;
-    const existingPact = options[valueToCheck].pact;
-
-    if (existingPact) {
-      return existingPact;
-    }
-
-    return pactChecked;
-  };
-
   const maybeAddMstAndPactCheckboxes = (option) => {
-    if (renderMstAndPact && (option.value === props.value)) {
-      return (
-        <div>
-          <Checkbox
-            label="Issue is related to Military Sexual Trauma (MST)"
-            name="MST"
-            value={returnMstOrCheckboxValue(value)}
-            disabled={options[value - totalElements].mst}
-            onChange={(checked) => setMstCheckboxFunction(checked)}
-          />
-          <Checkbox
-            label="Issue is related to PACT ACT"
-            name="Pact"
-            value={returnPactOrCheckboxValue(value)}
-            disabled={options[value - totalElements].pact}
-            onChange={(checked) => setPactCheckboxFunction(checked)}
-          />
     if ((renderMst || renderPact) && (option.value === props.value)) {
 
       return (
@@ -152,7 +112,7 @@ export const RadioField = (props) => {
               value={pactChecked}
               onChange={(checked) => setPactCheckboxFunction(checked)}
             />
-           }
+          }
         </div>
       );
     }
@@ -176,6 +136,7 @@ export const RadioField = (props) => {
       <div className="cf-form-radio-options">
         {options.map((option, i) => {
           const optionDisabled = isDisabled(option);
+
           const radioField = (<div
             className="cf-form-radio-option"
             key={`${idPart}-${option.value}-${i}`}
@@ -273,10 +234,6 @@ RadioField.propTypes = {
        * Help text to be displayed below the label
        */
       help: PropTypes.string,
-
-      mst: PropTypes.Boolean,
-      pact: PropTypes.Boolean,
-      counterVal: PropTypes.number
     })
   ),
 
@@ -299,9 +256,6 @@ RadioField.propTypes = {
   setMstCheckboxFunction: PropTypes.func,
   pactChecked: PropTypes.bool,
   setPactCheckboxFunction: PropTypes.func,
-  preExistingMST: PropTypes.bool,
-  preExistingPACT: PropTypes.bool,
-  totalElements: PropTypes.number
   userCanEditIntakeIssues: PropTypes.bool
 };
 
