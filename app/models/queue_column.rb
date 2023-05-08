@@ -121,17 +121,28 @@ class QueueColumn
     count_hash = tasks.with_cached_appeals.group(:issue_types).count
     totals = Hash.new(0)
 
-    # puts count_hash.inspect
+
+    puts "----------------------IN ISSUE TYPE OPTIONS---------------------------------"
+    puts count_hash.inspect
 
     count_hash.each do |key, value|
-      (key&.split(",") || []).each do |string|
-        totals[string.strip] += value.to_i
+      if !key
+        totals["None"] += value.to_i
+      else
+        key.split(",").each do |string|
+          totals[string.strip] += value.to_i
+        end
       end
     end
 
-    totals.each_pair.map do |option, count|
+    puts totals.inspect
+
+    options = totals.each_pair.map do |option, count|
       label = self.class.format_option_label(option, count)
       self.class.filter_option_hash(option, label)
     end
+
+    puts options.inspect
+    options
   end
 end
