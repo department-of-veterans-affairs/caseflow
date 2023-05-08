@@ -44,33 +44,25 @@ const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }
 
   switch (disposition) {
   case 'granted':
+  case 'partially-granted':
     parts.push(MTV_TASK_INSTRUCTIONS_TYPE);
     parts.push(`${vacateTypeText(vacateType)}\n`);
-    parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
-    parts.push(`${instructions}\n`);
-    break;
-  case 'partially_granted':
-    parts.push(MTV_TASK_INSTRUCTIONS_TYPE);
-    parts.push(vacateTypeText(vacateType));
-    parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
-    parts.push(instructions);
+    if (instructions !== '') {
+      parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
+      parts.push(`${instructions}\n`);
+    }
     break;
   case 'denied':
-    parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
-    parts.push(instructions);
-    parts.push(MTV_TASK_INSTRUCTIONS_HYPERLINK);
-    parts.push(hyperlink);
-    break;
   case 'dismissed':
-    parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
-    parts.push(instructions);
-    parts.push(MTV_TASK_INSTRUCTIONS_HYPERLINK);
-    parts.push(hyperlink);
-    break;
   default:
-    parts.push(instructions);
-    parts.push('\nHere is the hyperlink to the signed denial document');
-    parts.push(hyperlink);
+    if (instructions !== '') {
+      parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
+      parts.push(`${instructions}\n`);
+    }
+    if (hyperlink !== null) {
+      parts.push(MTV_TASK_INSTRUCTIONS_HYPERLINK);
+      parts.push(`${hyperlink}\n`);
+    }
     break;
   }
 
