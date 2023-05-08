@@ -93,9 +93,8 @@ class ExternalApi::PacManService
       request.headers = headers.merge(apikey: ENV["PACMAN_API_KEY"])
       sleep 1
 
-      # FIXME idk what the url is
-      MetricsService.record("pacman #{method.to_s.upcase} request to #{url}",
-                            service: :va_dot_gov,
+      MetricsService.record("pacman service #{method.to_s.upcase} request to #{url}",
+                            service: :pacman,
                             name: endpoint) do
         case method
         when :get
