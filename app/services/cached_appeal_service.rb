@@ -14,6 +14,7 @@ class CachedAppealService
           appeal_type: Appeal.name,
           case_type: appeal.type,
           issue_count: request_issues_to_cache[appeal.id] || 0,
+          issue_types: request_issue_for_appeal(appeal.id) || "",
           docket_type: appeal.docket_type,
           docket_number: appeal.docket_number,
           hearing_request_type: appeal.readable_current_hearing_request_type,
@@ -85,6 +86,7 @@ class CachedAppealService
     :hearing_request_type,
     :is_aod,
     :issue_count,
+    :issue_types,
     :suggested_hearing_location,
     :veteran_name
   ].freeze
@@ -132,6 +134,12 @@ class CachedAppealService
   def request_issue_counts_for_appeal_ids(appeal_ids)
     RequestIssue.where(decision_review_id: appeal_ids, decision_review_type: Appeal.name)
       .group(:decision_review_id).count
+  end
+
+  # TODO: DB call inside of the the loop is trash fix it
+  def request_issue_for_appeal(appeal_id)
+    RequestIssue.where(decision_review_id: appeal_id, decision_review_type: Appeal.name).map(&:nonrating_issue_category)
+      .compact.uniq.sort.join(",")
   end
 
   def veteran_names_for_file_numbers(veteran_file_numbers)

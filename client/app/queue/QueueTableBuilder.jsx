@@ -119,7 +119,8 @@ class QueueTableBuilder extends React.PureComponent {
       ),
       [QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name]: issueTypesColumn(
         tasks,
-        filterOptions
+        filterOptions,
+        requireDasRecord
       ),
       [QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.
         name]: readerLinkColumnWithNewDocsIcon(requireDasRecord),

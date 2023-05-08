@@ -30,6 +30,26 @@ class TaskFilter
          filter_selections.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
         clause = extract_aod_clause(filter, clause)
       end
+      if filter.column == Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name
+        # puts "---------------------IN MY crappy block-------------------------------------"
+        # puts filter_selections.inspect
+        # Shorthand way of parsing the first value differently than the rest
+        first_filter_value, *remaining_filters = filter_selections
+        where_clauses = []
+        where_clauses << "POSITION('#{first_filter_value}' IN #{table_column_from_name(filter.column)}) > 0"
+
+        remaining_filters.each do |filter_value|
+          where_clauses << "OR POSITION('#{filter_value}' IN #{table_column_from_name(filter.column)}) > 0"
+        end
+
+        # If you don't include a param insert (?) it will ignore it later in the where_clause method
+        # Which is what we want since we handle it here instead of in the where clause method
+        # becausse the position SQL function doesn't work like IN does
+        clause = where_clauses.join(" ")
+        # clause = "POSITION((?) IN #{table_column_from_name(filter.column)}) > 0"
+        # puts clause.inspect
+        # clause
+      end
       clause
     end
 
@@ -63,6 +83,8 @@ class TaskFilter
         "cached_appeal_attributes.suggested_hearing_location"
       when Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME
         "cached_appeal_attributes.hearing_request_type"
+      when Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name
+        "cached_appeal_attributes.issue_types"
       else
         fail(Caseflow::Error::InvalidTaskTableColumnFilter, column: column_name)
       end

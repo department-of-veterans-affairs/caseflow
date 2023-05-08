@@ -43,6 +43,8 @@ class QueueColumn
       task_type_options(tasks)
     when Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
       assignee_options(tasks)
+    when Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name
+      issue_type_options(tasks)
     else
       fail(
         Caseflow::Error::MustImplementInSubclass,
@@ -107,6 +109,27 @@ class QueueColumn
 
   def assignee_options(tasks)
     tasks.with_assignees.group("assignees.display_name").count(:all).each_pair.map do |option, count|
+      label = self.class.format_option_label(option, count)
+      self.class.filter_option_hash(option, label)
+    end
+  end
+
+  # TODO: This sucks man. There has to be a better way.
+  def issue_type_options(tasks)
+    # puts "issue type options with sql block"
+    # puts tasks.to_sql
+    count_hash = tasks.with_cached_appeals.group(:issue_types).count
+    totals = Hash.new(0)
+
+    # puts count_hash.inspect
+
+    count_hash.each do |key, value|
+      (key&.split(",") || []).each do |string|
+        totals[string.strip] += value.to_i
+      end
+    end
+
+    totals.each_pair.map do |option, count|
       label = self.class.format_option_label(option, count)
       self.class.filter_option_hash(option, label)
     end
