@@ -152,18 +152,7 @@ RSpec.feature "CAMO assignment to program office", :all_dbs do
       expect(page).to_not have_content("Beneficiary Travel")
       expect(page).to_not have_content("Spina Bifida Treatment (Non-Compensation)")
 
-      # TODO: Currently can't filter by more than 1 thing because the 1 thing removes the other filters....
-      # Is that normal for client side filtering?????????????????
-      # # Also filter by "Beneficiary Travel"
-      # find("[aria-label*='Filter by issue type']").click
-      # find("label", text: "Beneficiary Travel").click
-
-      # expect(page).to have_content("Filtering by: #{filter_column_label_text} (2)")
-      # expect(page).to have_content("Caregiver | Eligibility")
-      # expect(page).to have_content("Beneficiary Travel")
-      # expect(page).to_not have_content("Spina Bifida Treatment (Non-Compensation)")
-
-      # Clear filters and check if all the data is there again
+      # Clear filter and check if all the data is there again
       find(".cf-clear-filters-link").click
 
       expect(page).to_not have_content("Filtering by: #{filter_column_label_text}")
