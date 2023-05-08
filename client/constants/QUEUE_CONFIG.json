@@ -99,7 +99,6 @@
       "sorting_columns": ["issue_count"]
     },
     "ISSUE_TYPES": {
-      "filterable": true,
       "name": "issueTypesColumn",
       "sorting_table": "cached_appeal_attributes",
       "sorting_columns": [
