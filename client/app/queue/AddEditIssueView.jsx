@@ -111,7 +111,9 @@ class AddEditIssueView extends React.Component {
           level_1: _.get(issue.codes, 0, null),
           level_2: _.get(issue.codes, 1, null),
           level_3: _.get(issue.codes, 2, null),
-          ..._.pick(issue, 'note', 'program')
+          ..._.pick(issue, 'note', 'program'),
+          mst_status: issue.mst_status ? 'Y' : 'N',
+          pact_status: issue.pact_status ? 'Y' : 'N'
         }
       }
     };
