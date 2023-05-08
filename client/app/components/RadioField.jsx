@@ -216,15 +216,7 @@ RadioField.propTypes = {
   errorMessage: PropTypes.string,
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
-  styling: PropTypes.object,
-  renderMstAndPact: PropTypes.bool,
-  mstChecked: PropTypes.bool,
-  setMstCheckboxFunction: PropTypes.func,
-  pactChecked: PropTypes.bool,
-  setPactCheckboxFunction: PropTypes.func,
-  preExistingMST: PropTypes.bool,
-  preExistingPACT: PropTypes.bool,
-  totalElements: PropTypes.number
+  styling: PropTypes.object
 };
 
 export default RadioField;

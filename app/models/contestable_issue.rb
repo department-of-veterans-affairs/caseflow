@@ -123,17 +123,14 @@ class ContestableIssue
       return issue.mst_contention_status? if issue.mst_contention_status?
     end
     false
-  def mst_available?
-    contested_by_request_issue&.mst_contention_status?
   end
 
   # cycle the issues to see if the past decision had any pact codes on contentions
   def pact_available?
-    contested_by_request_issue&.pact_contention_status?
-  end
-
-  def timely?
-    approx_decision_date && contesting_decision_review.timely_issue?(approx_decision_date)
+    source_request_issues.each do |issue|
+      return issue.pact_contention_status? if issue.pact_contention_status?
+    end
+    false
   end
 
   private

@@ -45,6 +45,7 @@ export const IntakeRadioField = (props) => {
     hideLabel,
     styling,
     vertical,
+    totalElements,
     renderMstAndPact,
     mstChecked,
     setMstCheckboxFunction,
@@ -76,6 +77,28 @@ export const IntakeRadioField = (props) => {
     </span>
   );
 
+  const returnMstOrCheckboxValue = (counter) => {
+    let valueToCheck = counter - totalElements;
+    const existingMst = options[valueToCheck].mst;
+
+    if (existingMst) {
+      return existingMst;
+    }
+
+    return mstChecked;
+  };
+
+  const returnPactOrCheckboxValue = (counter) => {
+    let valueToCheck = counter - totalElements;
+    const existingPact = options[valueToCheck].pact;
+
+    if (existingPact) {
+      return existingPact;
+    }
+
+    return pactChecked;
+  };
+
   const maybeAddTooltip = (option, radioField) => {
     if (option.tooltipText) {
       const idKey = `tooltip-${option.value}`;
@@ -104,7 +127,8 @@ export const IntakeRadioField = (props) => {
           <Checkbox
             label="Issue is related to Military Sexual Trauma (MST)"
             name="MST"
-            value={mstChecked}
+            value={returnMstOrCheckboxValue(value)}
+            disabled={options[value - totalElements].mst}
             onChange={(checked) => setMstCheckboxFunction(checked)}
           />
           { mstChecked &&
@@ -120,7 +144,8 @@ export const IntakeRadioField = (props) => {
           <Checkbox
             label="Issue is related to PACT act"
             name="Pact"
-            value={pactChecked}
+            value={returnPactOrCheckboxValue(value)}
+            disabled={options[value - totalElements].pact}
             onChange={(checked) => setPactCheckboxFunction(checked)}
           />
           { pactChecked &&
@@ -281,6 +306,9 @@ IntakeRadioField.propTypes = {
   pactJustificationOnChange: PropTypes.func,
   mstJustificationOnChange: PropTypes.func,
   setPactCheckboxFunction: PropTypes.func,
+  totalElements: PropTypes.number,
+  preExistingMST: PropTypes.bool,
+  preExistingPACT: PropTypes.bool,
 };
 
 export default IntakeRadioField;
