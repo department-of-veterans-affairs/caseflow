@@ -73,7 +73,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
       .reverse.pluck(:appeal_id)
 
     # Appeals for all the previously synced reports from oldest to newest
-    get_appeals_from_prev_synced_ids(previously_synced_appeal_ids).non_deceased_appellants
+    get_appeals_from_prev_synced_ids(previously_synced_appeal_ids)
   end
 
   # Purpose: Determines if a new notification has happened since the last time a
@@ -108,6 +108,8 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
           (n1.notified_at < n2.notified_at OR (n1.notified_at = n2.notified_at AND n1.id < n2.id)))
       WHERE n2.id IS NULL
         AND n1.id IS NOT NULL
+        AND (n1.email_notification_status <> 'Failure Due to Deceased'
+        OR n1.sms_notification_status <> 'Failure Due to Deceased')
       #{format_appeal_ids_sql_list(appeal_ids)}
     SQL
   end
