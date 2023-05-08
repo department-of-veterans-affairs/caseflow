@@ -137,6 +137,14 @@ class WorkQueue::TaskSerializer
     object.appeal.is_a?(LegacyAppeal) ? object.appeal.undecided_issues.count : object.appeal.number_of_issues
   end
 
+  attribute :issue_types do |object|
+    if object.appeal.is_a?(LegacyAppeal)
+      object.appeal.issue_categories
+    else
+      object.appeal.request_issues.map(&:nonrating_issue_category)
+    end.join(",")
+  end
+
   attribute :external_hearing_id do |object|
     object.hearing&.external_id if object.respond_to?(:hearing)
   end
