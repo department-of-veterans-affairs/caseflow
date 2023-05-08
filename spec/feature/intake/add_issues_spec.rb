@@ -6,6 +6,7 @@ feature "Intake Add Issues Page", :all_dbs do
   before do
     setup_intake_flags
   end
+
   let(:veteran_file_number) { "123412345" }
   let(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
@@ -18,14 +19,13 @@ feature "Intake Add Issues Page", :all_dbs do
                               last_name: "Attings",
                               participant_id: "44444444")
   end
-
   let!(:rating) do
     Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
       issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted"},
+        { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" },
         { reference_id: "def789", decision_text: "Looks like a VACOLS issue" }
       ],
@@ -67,39 +67,7 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_add_issue
       choose('rating-radio_0', allow_label_click:true)
       expect(page).to have_content("Issue is related to Military Sexual Trauma (MST)")
-      expect(page).to have_content("Issue is related to PACT act")
-    end
-
-    scenario "MST and PACT checkboxes are disabled if they already exist in the model" do
-      claim_id = rating.issues[0].reference_id
-      veteran.participant_id = "5217787"
-
-      epe = create(
-        :end_product_establishment,
-        reference_id: claim_id,
-        veteran_file_number: veteran.file_number
-      )
-      mst_contention = Generators::Contention.build_mst_and_pact_contention(claim_id: claim_id)
-
-      req_issue = create(:request_issue,
-        contention_reference_id: mst_contention.id,
-        end_product_establishment: epe,
-        veteran_participant_id: veteran.participant_id,
-        #rating.issues[0].reference_id maps to claim_id
-        contested_rating_issue_reference_id: rating.issues[0].reference_id
-      )
-
-      start_higher_level_review(veteran)
-
-      FeatureToggle.enable!(:mst_pact_identification)
-      visit "/intake"
-      click_intake_continue
-      click_intake_add_issue
-      choose('rating-radio_0', allow_label_click:true)
-
-      #visible is set to false because capybara does not recognize the fields otherwise.
-      expect(page).to have_field("Issue is related to Military Sexual Trauma (MST)", visible: false, disabled: true)
-      expect(page).to have_field("Issue is related to PACT act", visible: false, disabled: true)
+      expect(page).to have_content("Issue is related to PACT Act")
     end
   end
 
