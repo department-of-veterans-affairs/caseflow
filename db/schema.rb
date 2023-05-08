@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_04_12_154615) do
+ActiveRecord::Schema.define(version: 2023_05_08_182827) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1509,6 +1509,7 @@ ActiveRecord::Schema.define(version: 2023_04_12_154615) do
     t.integer "edited_request_issue_ids", comment: "An array of the request issue IDs that were edited during this request issues update", array: true
     t.string "error", comment: "The error message if the last attempt at processing the request issues update was not successful."
     t.datetime "last_submitted_at", comment: "Timestamp for when the processing for the request issues update was last submitted. Used to determine how long to continue retrying the processing job. Can be reset to allow for additional retries."
+    t.integer "mst_edited_request_issue_ids", comment: "An array of the request issue IDs that were updated to be associated with MST in request issues update", array: true
     t.datetime "processed_at", comment: "Timestamp for when the request issue update successfully completed processing."
     t.bigint "review_id", null: false, comment: "The ID of the decision review edited."
     t.string "review_type", null: false, comment: "The type of the decision review edited."
