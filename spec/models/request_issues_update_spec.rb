@@ -61,6 +61,7 @@ describe RequestIssuesUpdate, :all_dbs do
   let(:edited_description) { "I am an edited description" }
   let(:mst_status) { true }
   let(:pact_status) { true }
+  let(:mst_status_update_reason_notes) { "I am the mst status update reason notes" }
   let(:pact_status_update_reason_notes) { "I am the pact status update reason notes" }
   let(:legacy_appeal) do
     create(:legacy_appeal, vacols_case: vacols_case)
