@@ -35,7 +35,7 @@ class UpdateDocumentInVbmsJob < CaseflowJob
     end
     Raven.extra_context(
       vbms_uploaded_document_id: document.id,
-      upload_document_path: "/upload_document",
+      upload_document_path: "/update_document",
       veteran_file_number: document.veteran_file_number
     )
   end
