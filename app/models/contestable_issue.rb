@@ -52,8 +52,6 @@ class ContestableIssue
         is_rating: decision_issue.rating?,
         mst_available: mst_available?,
         pact_available: pact_available?
-        mstAvailable: mst_available?,
-        pactAvailable: pact_available?
       )
     end
 
