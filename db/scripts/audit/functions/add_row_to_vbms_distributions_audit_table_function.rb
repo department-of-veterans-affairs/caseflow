@@ -9,11 +9,11 @@ conn.execute(
   $add_row$
   begin
     if (TG_OP = 'DELETE') then
-      insert into caseflow_audit.vbms_distributions select nextval('caseflow_audit.vbms_distributions_audit_id_seq'::regclass), 'D', OLD.*;
+      insert into caseflow_audit.vbms_distributions_audit select nextval('caseflow_audit.vbms_distributions_audit_id_seq'::regclass), 'D', OLD.*;
     elsif (TG_OP = 'UPDATE') then
-      insert into caseflow_audit.vbms_distributions select nextval('caseflow_audit.vbms_distributions_audit_id_seq'::regclass), 'U', NEW.*;
+      insert into caseflow_audit.vbms_distributions_audit select nextval('caseflow_audit.vbms_distributions_audit_id_seq'::regclass), 'U', NEW.*;
     elsif (TG_OP = 'INSERT') then
-      insert into caseflow_audit.vbms_distributions select nextval('caseflow_audit.vbms_distributions_audit_id_seq'::regclass), 'I', NEW.*;
+      insert into caseflow_audit.vbms_distributions_audit select nextval('caseflow_audit.vbms_distributions_audit_id_seq'::regclass), 'I', NEW.*;
     end if;
     return null;
   end;
