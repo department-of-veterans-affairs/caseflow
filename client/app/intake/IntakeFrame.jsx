@@ -58,6 +58,7 @@ export const IntakeFrame = (props) => {
         rightNavElement={rightNavElements}
         userDisplayName={props.userDisplayName}
         dropdownUrls={props.dropdownUrls}
+        applicationUrls={props.applicationUrls}
         topMessage={topMessage}
         defaultUrl="/"
       >
