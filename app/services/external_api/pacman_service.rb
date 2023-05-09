@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
-class ExternalApi::PacManService
+require "json"
+require "base64"
+require "digest"
+
+class ExternalApi::PacmanService
   BASE_URL = ENV["PACMAN_API_URL"]
   SEND_DISTRIBUTION_ENDPOINT = "package-manager-service/distribution"
   SEND_PACKAGE_ENDPOINT = "package-manager-service/communication-package"

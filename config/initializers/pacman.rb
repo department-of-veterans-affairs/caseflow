@@ -1,1 +1,1 @@
-PacManService = (ApplicationController.dependencies_faked? ? Fakes::PacManService : ExternalApi::PacManService)
+PacmanService = (ApplicationController.dependencies_faked? ? Fakes::PacmanService : ExternalApi::PacmanService)

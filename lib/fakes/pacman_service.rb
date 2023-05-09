@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Fakes::PacManService < ExternalApi::PacManService
+class Fakes::PacmanService < ExternalApi::PacmanService
   class << self
     def send_communication_package_request(file_number, name, document_references)
       request = package_request(file_number, name, document_reference)

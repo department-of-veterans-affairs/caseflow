@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe ExternalApi::PacManService do
+describe ExternalApi::PacmanService do
   let(:client_secret) { "SOME-FAKE-KEY" }
   let(:service_id) { "SOME-FAKE-SERVICE" }
   let(:error_response_body) { { "result": "error", "message": { "token": ["error"] } }.to_json }
@@ -146,24 +146,24 @@ describe ExternalApi::PacManService do
   end
 
   context "get distribution" do
-    subject { ExternalApi::PacManService.get_distribution_request(distribution["id"]) }
+    subject { ExternalApi::PacmanService.get_distribution_request(distribution["id"]) }
     it "gets correct distribution" do
       subject
       allow(HTTPI).to receive(:get).and_return(get_distribution_success_response)
       expect(subject.body.to_json).to eq(get_distribution_success_response)
     end
     context "not found" do
-      subject { ExternalApi::PacManService.get_distribution_request("fake") }
-      it "returns 404 PacManNotFoundError" do
+      subject { ExternalApi::PacmanService.get_distribution_request("fake") }
+      it "returns 404 PacmanNotFoundError" do
         allow(HTTPI).to receive(:get).and_return(not_found_response)
-        expect { subject }.to raise_error Caseflow::Error::PacManNotFoundError
+        expect { subject }.to raise_error Caseflow::Error::PacmanNotFoundError
       end
     end
   end
 
   context "creates and submits distribution" do
     subject do
-      ExternalApi::PacManService.send_distribution_request(distribution_post_request["communicationPackageId"],
+      ExternalApi::PacmanService.send_distribution_request(distribution_post_request["communicationPackageId"],
                                                            distribution_post_request["recipient"],
                                                            distribution_post_request["destinations"])
     end
@@ -172,7 +172,7 @@ describe ExternalApi::PacManService do
       expect(subject.body.to_json).to eq(post_distribution_success_response)
     end
     context "not found" do
-      it "returns 404 PacManNotFoundError" do
+      it "returns 404 PacmanNotFoundError" do
 
       end
     end
@@ -180,7 +180,7 @@ describe ExternalApi::PacManService do
 
   context "creates and sends communication package" do
     subject do
-      ExternalApi::PacManService.send_communication_package_request(package_post_request["file_number"],
+      ExternalApi::PacmanService.send_communication_package_request(package_post_request["file_number"],
                                                                     package_post_request["name"],
                                                                     package_post_request["document_references"])
     end
@@ -191,19 +191,19 @@ describe ExternalApi::PacManService do
   end
 
   describe "response failure" do
-    subject { ExternalApi::PacManService.get_distribution_request(distribution["id"]) }
+    subject { ExternalApi::PacmanService.get_distribution_request(distribution["id"]) }
 
     context "400" do
-      it "throws Caseflow::Error::PacManBadRequestError" do
+      it "throws Caseflow::Error::PacmanBadRequestError" do
         allow(HTTPI).to receive(:get).and_return(error_response)
-        expect { subject }.to raise_error Caseflow::Error::PacManBadRequestError
+        expect { subject }.to raise_error Caseflow::Error::PacmanBadRequestError
       end
     end
 
     context "403" do
-      it "throws Caseflow::Error::PacManForbiddenError" do
+      it "throws Caseflow::Error::PacmanForbiddenError" do
         allow(HTTPI).to receive(:get).and_return(forbidden_response)
-        expect { subject }.to raise_error Caseflow::Error::PacManForbiddenError
+        expect { subject }.to raise_error Caseflow::Error::PacmanForbiddenError
       end
     end
   end

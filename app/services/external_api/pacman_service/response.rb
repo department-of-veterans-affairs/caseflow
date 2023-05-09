@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ExternalApi::PacManService::Response
+class ExternalApi::PacmanService::Response
   attr_reader :resp, :code
 
   def initialize(resp)
@@ -29,9 +29,9 @@ class ExternalApi::PacManService::Response
   private
 
   ERROR_LOOKUP = {
-    400 => Caseflow::Error::PacManBadRequestError,
-    403 => Caseflow::Error::PacManForbiddenError,
-    404 => Caseflow::Error::PacManNotFoundError
+    400 => Caseflow::Error::PacmanBadRequestError,
+    403 => Caseflow::Error::PacmanForbiddenError,
+    404 => Caseflow::Error::PacmanNotFoundError
   }.freeze
 
   def check_for_error
@@ -42,13 +42,13 @@ class ExternalApi::PacManService::Response
     if ERROR_LOOKUP.key? code
       ERROR_LOOKUP[code].new(code: code, message: message)
     else
-      Caseflow::Error::PacManApiError.new(code: code, message: message)
+      Caseflow::Error::PacmanApiError.new(code: code, message: message)
     end
   end
 
   def error_message
-    return "No error message from PacMan" if body.empty?
+    return "No error message from Pacman" if body.empty?
 
-    body&.error || "No error message from PacMan"
+    body&.error || "No error message from Pacman"
   end
 end
