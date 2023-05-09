@@ -1,0 +1,8 @@
+drop table caseflow_audit.vbms_communication_packages_audit;
+drop trigger vbms_communication_packages_audit_trigger;
+drop table caseflow_audit.vbms_distributions_audit;
+drop trigger vbms_distributions_audit_trigger;
+drop table caseflow_audit.vbms_distribution_destinations_audit;
+drop trigger vbms_distribution_destinations_audit_trigger;
+drop table caseflow_audit.vbms_uploaded_documents_audit;
+drop trigger vbms_uploaded_documents_audit_trigger;
