@@ -105,7 +105,7 @@ export class EditIntakeIssueModal extends React.Component {
               <label>
                 { mstIdentification &&
                   <Checkbox
-                    name={INTAKE_EDIT_ISSUE_MST_LABEL} strongLabel
+                    name={MST_LABEL} strongLabel
                     onChange={this.handleMstCheckboxChange}
                     value={mstCheckboxValue}
                   />
@@ -116,7 +116,7 @@ export class EditIntakeIssueModal extends React.Component {
               <label>
                 { pactIdentification &&
                   <Checkbox style={{ 'margin-top': 0, 'margin-bottom': 0 }}
-                    name={INTAKE_EDIT_ISSUE_PACT_LABEL} strongLabel
+                    name={PACT_LABEL} strongLabel
                     onChange={this.handlePactCheckboxChange}
                     value={pactCheckboxValue}
                   />
