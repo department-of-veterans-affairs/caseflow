@@ -327,6 +327,8 @@ class QueueApp extends React.PureComponent {
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
+  routedSpecialCaseMovementLegacy = (props) => <AssignToView {...props.match.params} />;
+
   routedPulacCerulloReminder = (props) => {
     const { appealId, taskId } = props.match.params;
     const pulacRoute = `/queue/appeals/${appealId}/tasks/${taskId}/${
@@ -1134,6 +1136,12 @@ class QueueApp extends React.PureComponent {
                   TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.value
                 }`}
               render={this.routedAssignToUser}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.value
+                }`}
+              render={this.routedSpecialCaseMovementLegacy}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
