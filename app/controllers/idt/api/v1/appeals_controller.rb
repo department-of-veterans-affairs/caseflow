@@ -4,7 +4,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   before_action :verify_access
 
-  skip_before_action :verify_authenticity_token, only: [:outcode]
+  skip_before_action :verify_authenticity_token, only: [:outcode, :validate]
 
   rescue_from BGS::AccountLocked do |_e|
     account_locked_error_msg = "Your account is locked. " \
@@ -30,6 +30,18 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     return render json: { message: "Success!" } if result.success?
 
     render json: { message: result.errors[0] }, status: :bad_request
+  end
+
+  def validate
+    body = params.require(:request_address).permit!.to_h
+    address = OpenStruct.new(body)
+    response = VADotGovService.validate_address(format_address(address))
+    # specific error handling occurs in va_dot_gov_service/response.rb
+    if response.error.present?
+      log_error(response.error)
+      fail response.error
+    end
+    render json: format_response(response), status: response.code
   end
 
   private
@@ -85,5 +97,28 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def json_appeals(appeals)
     ::Idt::V1::AppealSerializer.new(appeals, is_collection: true)
+  end
+
+  def format_address(address)
+    Address.new(
+      address_line_1: address.address_line_1,
+      address_line_2: address.address_line_2,
+      address_line_3: address.address_line_3,
+      city: address.city,
+      state: address.dig(:state_province, :code),
+      zip: address.zip_code_5,
+      zip4: address.zip_code_4,
+      country: address.dig(:request_country, :country_code),
+      international_postal_code: address.international_postal_code,
+      state_name: address.dig(:state_province, :name),
+      country_name: address.dig(:request_country, :country_name),
+      address_pou: address.address_pou
+    )
+  end
+
+  def format_response(response)
+    JSON.parse(response.response.raw_body).deep_transform_keys! do |key|
+      key.underscore.gsub(/e(\d)/, 'e_\1')
+    end
   end
 end
