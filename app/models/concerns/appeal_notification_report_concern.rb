@@ -30,16 +30,8 @@ module AppealNotificationReportConcern
   # Purpose: Generate the PDF and then prepares the document for uploading to S3 or VBMS
   # Returns: nil
   def upload_notification_report!
-    document_params =
-      {
-        veteran_file_number: veteran_file_number,
-        document_type: "BVA Case Notifications",
-        document_subject: "notifications",
-        document_name: notification_document_name,
-        application: "notification-report",
-        file: notification_report
-      }
-    upload_document(document_params)
+    transmit_document!
+
     nil
   end
 
@@ -48,7 +40,7 @@ module AppealNotificationReportConcern
   # Purpose: Creates the name for the document
   # Returns: The document name
   def notification_document_name
-    "notification-report_#{external_id}_#{Time.now.utc.strftime('%Y%m%d%k%M%S')}"
+    "notification-report_#{external_id}"
   end
 
   # Purpose: Generates the PDF
@@ -62,12 +54,41 @@ module AppealNotificationReportConcern
     end
   end
 
+  def document_params
+    {
+      veteran_file_number: veteran_file_number,
+      document_type: "BVA Case Notifications",
+      document_subject: "notifications",
+      document_name: notification_document_name,
+      application: "notification-report",
+      file: notification_report
+    }
+  end
+
+  def transmit_document!
+    document_already_exists? ? update_document : upload_document
+  end
+
+  # Purpose: Checks in eFolder for a doc in the veteran's eFolder with the same type
+  # Returns: Boolean related to whether a document with the same type already exists
+  def document_already_exists?
+    # Hard-coding this for now
+    true
+  end
+
   # Purpose: Uploads the PDF
   # Returns: The job being queued
-  def upload_document(document_params)
+  def upload_document
     response = PrepareDocumentUploadToVbms.new(document_params, User.system_user, self).call
-    if !response.success?
-      fail PDFUploadError
-    end
+
+    fail PDFUploadError unless response.success?
+  end
+
+  # Purpose: Kicks off a document update in eFolder to overwrite a previous version of the document
+  # Returns: The job being queued
+  def update_document
+    response = PrepareDocumentUpdateInVbms.new(document_params, User.system_user, self).call
+
+    fail PDFUploadError unless response.success?
   end
 end
