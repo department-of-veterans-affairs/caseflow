@@ -27,12 +27,12 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
         expect(page).to have_content(Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY.label)
       end
 
-      # it "successfully assigns the task to judge without blocked" do
-      #   visit("queue/appeals/#{distribution_task.appeal.external_id}")
-      #   dropdown = find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL)
-      #   dropdown.click
-      #   expect(page).to have_content(Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.label)
-      # end
+      xit "successfully assigns the task to judge without blocked" do
+        visit("queue/appeals/#{distribution_task.appeal.external_id}")
+        dropdown = find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL)
+        dropdown.click
+        expect(page).to have_content(Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.label)
+      end
 
       it "Checking validations on hearing task is cancelled and case assigns to judge" do
         visit("/queue")
