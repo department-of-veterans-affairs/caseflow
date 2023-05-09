@@ -2,18 +2,14 @@
 
 class Fakes::PacManService < ExternalApi::PacManService
   class << self
-    def send_communication_package_request(file_number, name, document_references:)
-      document_references.each do |document_reference|
-        request = package_request(file_number, name, document_reference)
-        fake_package_request(request)
-      end
+    def send_communication_package_request(file_number, name, document_references)
+      request = package_request(file_number, name, document_reference)
+      fake_package_request(request)
     end
 
-    def send_distribution_request(package_id, recipient, destinations:)
-      destinations.each do |destination|
-        request = distribution_request(package_id, recipient, destination)
-        fake_distribution_request(request)
-      end
+    def send_distribution_request(package_id, recipient, destinations)
+      request = distribution_request(package_id, recipient, destination)
+      fake_distribution_request(request)
     end
 
     def get_distribution_request(distribution_id)
@@ -64,15 +60,14 @@ class Fakes::PacManService < ExternalApi::PacManService
         200,
         {},
         OpenStruct.new(
-          "id": "",
-          "fileNumber": "073-claimant-appeal-file-number",
+          "id": "24eb6a66-3833-4de6-bea4-4b614e55d5ac",
+          "fileNumber": "123456789",
           "documentReferences": {
-            "id": "123",
-            "copies": 2
+            "id": "23233175-6a87-4cd4-b327-f20cf5ef1222",
+            "copies": 1
           },
-          "status": "",
-          "createdDate": "",
-          "name": "name"
+          "status": "NEW",
+          "createDate": ""
         )
       )
     end

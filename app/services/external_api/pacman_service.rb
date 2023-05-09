@@ -7,18 +7,14 @@ class ExternalApi::PacManService
   GET_DISTRIBUTION_ENDPOINT = "package-manager-service/distribution/"
 
   class << self
-    def send_communication_package_request(file_number, name, document_references:)
-      document_references.each do |document_reference|
-        request = package_request(file_number, name, document_reference)
-        send_pacman_request(request)
-      end
+    def send_communication_package_request(file_number, name, document_references)
+      request = package_request(file_number, name, document_references)
+      send_pacman_request(request)
     end
 
-    def send_distribution_request(package_id, recipient, destinations:)
-      destinations.each do |destination|
-        request = distribution_request(package_id, recipient, destination)
-        send_pacman_request(request)
-      end
+    def send_distribution_request(package_id, recipient, destinations)
+      request = distribution_request(package_id, recipient, destinations)
+      send_pacman_request(request)
     end
 
     def get_distribution_request(distribution_id)
@@ -49,14 +45,14 @@ class ExternalApi::PacManService
         body: {
           communicationPackageId: package_id,
           recipient: {
-            type: recipient.type,
-            name: recipient.name,
-            firstName: recipient.first_name,
-            middleName: recipient.middle_name,
-            lastName: recipient.last_name,
-            participant_id: recipient.participant_id,
-            poaCode: recipient.poa_code,
-            claimantStationOfJurisdiction: recipient.claimant_station_of_jurisdiction
+            type: recipient[:type],
+            name: recipient[:name],
+            firstName: recipient[:first_name],
+            middleName: recipient[:middle_name],
+            lastName: recipient[:last_name],
+            participant_id: recipient[:participant_id],
+            poaCode: recipient[:poa_code],
+            claimantStationOfJurisdiction: recipient[:claimant_station_of_jurisdiction]
           },
           destinations: {
             type: destination[:type],
