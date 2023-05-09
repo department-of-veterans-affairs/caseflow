@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Document < CaseflowRecord
+  include DocumentAutoTagConcern
+
   has_many :annotations
   has_many :document_views
   has_many :documents_tags
@@ -301,7 +303,9 @@ class Document < CaseflowRecord
   end
 
   def auto_tag
-    update(auto_tagged: true)
+    new_tags = auto_tag_process
+    update(auto_tagged: new_tags.count > 0)
+    new_tags
   end
 
   private
