@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { map, findIndex, uniq, size } from 'lodash';
+import { map, findIndex, uniq } from 'lodash';
 
 import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
@@ -67,6 +67,13 @@ class AddIssuesModal extends React.Component {
 
     // Ensure we have a value for decisionDate
     currentIssue.decisionDate = currentIssue.decisionDate || currentIssue.approxDecisionDate;
+
+    if (mstChecked && mstJustification === '') {
+      return;
+    }
+    if (pactChecked && pactJustification === '') {
+      return;
+    }
 
     this.props.onSubmit({
       currentIssue: {
