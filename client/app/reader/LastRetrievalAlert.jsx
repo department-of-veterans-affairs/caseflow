@@ -23,7 +23,7 @@ class LastRetrievalAlert extends React.PureComponent {
           a loading error from VBMS or VVA. As a result, you may be viewing a partial list of claims folder documents.
           <br />
           <br />
-          Please refresh your browser at a later point to view a complete list of documents in the claims
+          Please visit at a later point to view a complete list of documents in the claims
           folder.
         </Alert>
       </div>;
@@ -42,7 +42,7 @@ class LastRetrievalAlert extends React.PureComponent {
       return <div {...alertStyling}>
         <Alert title="Warning" type="warning">
           We last synced with VBMS and VVA {Math.max(vbmsDiff, vvaDiff)} hours ago. If you'd like to check for new
-          documents, refresh the page.
+          documents, visit later.
         </Alert>
       </div>;
     }
