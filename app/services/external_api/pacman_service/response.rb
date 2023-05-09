@@ -31,7 +31,8 @@ class ExternalApi::PacmanService::Response
   ERROR_LOOKUP = {
     400 => Caseflow::Error::PacmanBadRequestError,
     403 => Caseflow::Error::PacmanForbiddenError,
-    404 => Caseflow::Error::PacmanNotFoundError
+    404 => Caseflow::Error::PacmanNotFoundError,
+    500 => Caseflow::Error::PacmanInternalServerError
   }.freeze
 
   def check_for_error

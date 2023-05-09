@@ -453,4 +453,5 @@ module Caseflow::Error
   class PacmanBadRequestError < PacmanApiError; end
   class PacmanForbiddenError < PacmanApiError; end
   class PacmanNotFoundError < PacmanApiError; end
+  class PacmanInternalServerError < PacmanApiError; end
 end
