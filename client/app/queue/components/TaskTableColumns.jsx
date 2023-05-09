@@ -250,14 +250,17 @@ export const issueCountColumn = (requireDasRecord) => {
   };
 };
 
-export const issueTypesColumn = (filterOptions) => {
+export const issueTypesColumn = (tasks, filterOptions, requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_ISSUE_CATEGORIES_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name,
     backendCanSort: true,
     enableFilter: true,
     filterOptions,
+    anyFiltersAreSet: true,
+    tableData: tasks,
     columnName: 'appeal.issueTypes',
+    enableFilterTextTransform: false,
     valueFunction: (task) => {
       const commaDelimitedIssueTypes = task.appeal.issueTypes;
 
