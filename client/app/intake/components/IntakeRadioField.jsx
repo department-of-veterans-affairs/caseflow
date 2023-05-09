@@ -136,6 +136,7 @@ export const IntakeRadioField = (props) => {
               name="mstJustification-field"
               value={mstJustification}
               label="Why was this change made?"
+              required
               onChange={(mstJustificationText) => mstJustificationOnChange(mstJustificationText)}
             />
           }
@@ -151,6 +152,7 @@ export const IntakeRadioField = (props) => {
               name="pactJustification-field"
               value={pactJustification}
               label="Why was this change made?"
+              required
               onChange={(pactJustificationText) => pactJustificationOnChange(pactJustificationText)}
             />
           }
