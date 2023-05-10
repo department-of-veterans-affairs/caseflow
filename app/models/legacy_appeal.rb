@@ -629,6 +629,21 @@ class LegacyAppeal < CaseflowRecord
     end
   end
 
+  def mst?
+    return false unless FeatureToggle.enabled?(:mst_pact_identification)
+
+    issues.any?(&:legacy_appeal_vacols_mst) ||
+      (special_issue_list &&
+        special_issue_list.created_at < "2023-06-01".to_date &&
+        special_issue_list.military_sexual_trauma)
+  end
+
+  def pact?
+    return false unless FeatureToggle.enabled?(:mst_pact_identification)
+
+    issues.any?(&:legacy_appeal_vacols_pact)
+  end
+
   def documents_with_type(*types)
     @documents_by_type ||= {}
     types.reduce([]) do |accumulator, type|

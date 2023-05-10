@@ -13,8 +13,8 @@ import {
   INTAKE_EDIT_ISSUE_LABEL,
   INTAKE_EDIT_ISSUE_BENEFIT_TYPE,
   INTAKE_EDIT_ISSUE_DECISION_DATE,
-  INTAKE_EDIT_ISSUE_MST_LABEL,
-  INTAKE_EDIT_ISSUE_PACT_LABEL
+  MST_LABEL,
+  PACT_LABEL
 } from 'app/../COPY';
 
 export class EditIntakeIssueModal extends React.Component {
@@ -54,6 +54,8 @@ export class EditIntakeIssueModal extends React.Component {
       currentIssueText = currentIssue.text || issue.description,
       currentIssueBenefitType = BENEFIT_TYPES[currentIssue.benefitType] || BENEFIT_TYPES[issue.benefitType],
       currentIssueDecisionDate = formatDateStr(currentIssue.decisionDate),
+      mstIdentification,
+      pactIdentification
     } = this.props;
 
     const { mstCheckboxValue, pactCheckboxValue } = this.state;
@@ -104,20 +106,24 @@ export class EditIntakeIssueModal extends React.Component {
           <ul className="usa-unstyled-list">
             <li>
               <label>
-                <Checkbox
-                  name={INTAKE_EDIT_ISSUE_MST_LABEL} strongLabel
-                  onChange={this.handleMstCheckboxChange}
-                  value={mstCheckboxValue}
-                />
+                { mstIdentification &&
+                  <Checkbox
+                    name={MST_LABEL} strongLabel
+                    onChange={this.handleMstCheckboxChange}
+                    value={mstCheckboxValue}
+                  />
+                }
               </label>
             </li>
             <li>
               <label>
-                <Checkbox style={{ 'margin-top': 0, 'margin-bottom': 0 }}
-                  name={INTAKE_EDIT_ISSUE_PACT_LABEL} strongLabel
-                  onChange={this.handlePactCheckboxChange}
-                  value={pactCheckboxValue}
-                />
+                { pactIdentification &&
+                  <Checkbox style={{ 'margin-top': 0, 'margin-bottom': 0 }}
+                    name={PACT_LABEL} strongLabel
+                    onChange={this.handlePactCheckboxChange}
+                    value={pactCheckboxValue}
+                  />
+                }
               </label>
             </li>
           </ul>
@@ -157,6 +163,8 @@ EditIntakeIssueModal.propTypes = {
   onCancel: PropTypes.func,
   onSubmit: PropTypes.func,
   issueIndex: PropTypes.number,
+  mstIdentification: PropTypes.bool,
+  pactIdentification: PropTypes.bool,
   mst_status: PropTypes.func,
   pact_status: PropTypes.func,
   mstCheckboxValue: PropTypes.bool,

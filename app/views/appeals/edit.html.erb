@@ -20,7 +20,9 @@
       covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
       split_appeal_workflow: FeatureToggle.enabled?(:split_appeal_workflow, user: current_user),
       cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user),
-      mst_pact_identification: FeatureToggle.enabled?(:mst_pact_identification, user: current_user),
+      mst_identification: FeatureToggle.enabled?(:mst_identification, user: current_user),
+      pact_identification: FeatureToggle.enabled?(:pact_identification, user: current_user),
+      legacy_mst_pact_identification: FeatureToggle.enabled?(:legacy_mst_pact_identification, user: current_user),
       vhaPreDocketAppeals: false
     }
   }) %>

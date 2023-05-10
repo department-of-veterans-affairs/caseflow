@@ -206,7 +206,9 @@ class RequestIssue < CaseflowRecord
         edited_description: data[:edited_description],
         correction_type: data[:correction_type],
         verified_unidentified_issue: data[:verified_unidentified_issue],
-        is_predocket_needed: data[:is_predocket_needed]
+        is_predocket_needed: data[:is_predocket_needed],
+        mst_status: data[:mst_status],
+        pact_status: data[:pact_status]
       }
     end
     # rubocop:enable Metrics/MethodLength
@@ -244,6 +246,30 @@ class RequestIssue < CaseflowRecord
     return false unless end_product_establishment
 
     end_product_establishment.status_active?
+  end
+
+  def mst_contention_status?
+    return false if contention.nil?
+    status = false
+    contention&.special_issues&.each do |issue|
+      if issue[:code].upcase == "MST"
+        status = true
+        break
+      end
+    end
+    status
+  end
+
+  def pact_contention_status?
+    return false if contention.nil?
+    status = false
+    contention&.special_issues&.each do |issue|
+      if issue[:code].upcase == "PACT"
+        status = true
+        break
+      end
+    end
+    status
   end
 
   def rating?
@@ -609,7 +635,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def contention
-    end_product_establishment.contention_for_object(self)
+    end_product_establishment&.contention_for_object(self)
   end
 
   def bgs_contention

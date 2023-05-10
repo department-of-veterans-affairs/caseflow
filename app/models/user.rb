@@ -54,7 +54,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   # If RO is ambiguous from station_office, use the user-defined RO. Otherwise, use the unambigous RO.
   def regional_office
     upcase = ->(str) { str ? str.upcase : str }
-
     ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
   end
 
@@ -152,8 +151,9 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     admin? || granted?("Admin Intake") || roles.include?("Admin Intake") || member_of_organization?(Bva.singleton)
   end
 
+  # editing logic for MST and PACT
   def can_edit_intake_issues?
-    BvaIntake.singleton.admins.include?(self)
+    BvaIntake.singleton.admins.include?(self) || member_of_organization?(ClerkOfTheBoard.singleton) || judge? || attorney?
   end
 
   def can_view_overtime_status?
@@ -213,7 +213,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def timezone
-    (RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
+    if vso_employee?
+      RegionalOffice::CITIES[users_regional_office][:timezone]
+    else
+      (RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
+    end
   end
 
   # If user has never logged in, we might not have their full name in Caseflow DB.

@@ -410,7 +410,10 @@ class AddIssuesPage extends React.Component {
               formType={formType}
               featureToggles={featureToggles}
               userCanWithdrawIssues={userCanWithdrawIssues}
-              userCanEditIntakeIssues
+              userCanEditIntakeIssues={userCanEditIntakeIssues &&
+              (this.props.featureToggles.mst_identification ||
+              this.props.featureToggles.pact_identification ||
+              this.props.featureToggles.legacy_mst_pact_identification)}
               editPage={editPage}
             />
             {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />}
@@ -475,6 +478,7 @@ class AddIssuesPage extends React.Component {
           <AddIssueManager
             intakeData={intakeData}
             formType={formType}
+            userCanEditIntakeIssues={this.props.userCanEditIntakeIssues}
             featureToggles={featureToggles}
             editPage={editPage}
             onComplete={() => {
@@ -529,6 +533,8 @@ class AddIssuesPage extends React.Component {
             issueIndex={this.state.issueIndex}
             intakeData={intakeData}
             legacyIssues={issues}
+            mstIdentification={this.props.featureToggles.mst_identification}
+            pactIdentification={this.props.featureToggles.pact_identification}
             onCancel={() => {
               this.props.toggleEditIntakeIssueModal();
             }}
