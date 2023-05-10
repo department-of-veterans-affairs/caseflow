@@ -5,9 +5,6 @@ class VbmsCommunicationPackage < CaseflowRecord
 
   validates :file_number, :comm_package_name, :document_referenced, presence: true
 
-  # Would this validation already happen/be more appropriate in the PacMan controller?
-  validate :file_number_matches_bgs
-
   # PacMan docs suggested multiline ^ and $ anchors for regex, but I changed to \A and \Z as suggested by rails log
   validates :comm_package_name, format: { with: /\A[\w !*+,-.:;=?]{1,225}\Z/ }
 
@@ -15,6 +12,9 @@ class VbmsCommunicationPackage < CaseflowRecord
   #   - if you try and store object with "id" and "copies" keys into db it will be converted to nil object
   #   - need to solve before being able to validate "id" and "copies"
   validates :document_referenced, length: { minimum: 1 }
+
+  # This validation currently takes place in PrepareDocumentUploadToVbms... any reason it would need to take place again in model?
+  validate :file_number_matches_bgs
 
   def bgs_service
     @bgs_service || BGSService.new
