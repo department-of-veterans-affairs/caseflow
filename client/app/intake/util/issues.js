@@ -352,6 +352,20 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
 
   return issues.map((issue, index) => {
+
+    if (issue.vacols_sequence_id) {
+      return {
+        index,
+        id: issue.id,
+        benefitType: issue.labels[0].toLowerCase(),
+        // this is just temp because I don't know what goes in category for legacy issue
+        category: 'Apportionment',
+        description: `${issue.labels[1]} - ${issue.labels[2]} - ${issue.labels[3]}`,
+        text: `${issue.labels[1]} - ${issue.labels[2]} - ${issue.labels[3]}`,
+        vacolsSequenceId: issue.vacols_sequence_id,
+      };
+    }
+
     if (issue.isUnidentified || issue.verifiedUnidentifiedIssue) {
       const issueText = issue.isUnidentified ?
         `Unidentified issue: no issue matched for "${issue.description}"` :
@@ -384,10 +398,10 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
         verifiedUnidentifiedIssue: issue.verifiedUnidentifiedIssue
       };
     } else if (issue.isRating) {
-      if (!issue.decisionDate && !issue.approxDecisionDate) {
-        console.warn(issue);
-        throw new Error('no decision date');
-      }
+      // if (!issue.decisionDate && !issue.approxDecisionDate) {
+      //   console.warn(issue);
+      //   throw new Error('no decision date');
+      // }
 
       const decisionDate = new Date(issue.decisionDate || issue.approxDecisionDate);
 

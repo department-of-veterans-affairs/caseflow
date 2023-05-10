@@ -8,7 +8,7 @@ import { formatRelationships } from '../../intake/util';
 
 export const mapDataToInitialState = function(props = {}) {
   const { serverIntake, claimId, featureToggles, userCanWithdrawIssues, userCanEditIntakeIssues, userCanSplitAppeal} = props;
-
+  console.log(serverIntake)
   serverIntake.relationships = formatRelationships(serverIntake.relationships);
   serverIntake.contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
 
