@@ -420,7 +420,7 @@ class TaskActionRepository
     end
 
     def return_to_attorney_data(task, _user = nil)
-      assignee = if task.appeal_type ==  "LegacyAppeal" 
+      assignee = if task.appeal_type ==  "LegacyAppeal"
                   task.assigned_to
                  else
                   task.children.select { |child| child.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
@@ -520,6 +520,18 @@ class TaskActionRepository
         modal_title: COPY::SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
         modal_body: COPY::SPECIAL_CASE_MOVEMENT_MODAL_DETAIL,
         modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER
+      }
+    end
+
+    def special_case_movement_legacy_data(task, _user = nil)
+      {
+        selected: task.appeal.assigned_judge,
+        options: users_to_options(Judge.list_all),
+        type: SpecialCaseMovementTask.name,
+        modal_title: COPY::SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
+        modal_body: COPY::SPECIAL_CASE_MOVEMENT_MODAL_DETAIL,
+        modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER,
+        button: "COPY::MODAL_RETURN_BUTTON"
       }
     end
 

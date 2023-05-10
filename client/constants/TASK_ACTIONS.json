@@ -239,7 +239,7 @@
   "SPECIAL_CASE_MOVEMENT_LEGACY": {
     "label": "Case Movement: Advance to judge",
     "value": "modal/distribute_to_judge_legacy",
-    "func": "special_case_movement_data"
+    "func": "special_case_movement_legacy_data"
   },
   "BLOCKED_SPECIAL_CASE_MOVEMENT": {
     "label": "Case Movement: Cancel blocking tasks and advance to judge",

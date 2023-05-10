@@ -566,7 +566,8 @@
   "RESEND_FINAL_NOTIFICATION_LETTER_TASK_SUCCESS": "Send Final Notification Letter task completed",
 
   "MODAL_SUBMIT_CANCEL_BUTTON_CONTESTED_CLAIM": "Cancel task",
-  "MODAL_SUBMIT_BUTTON": "Submit",
+  "MODAL_SUBMIT_BUTTON": "Submit test",
+  "MODAL_ASSIGN_BUTTON": "Assign test",
   "MODAL_CANCEL_BUTTON": "Cancel",
   "MODAL_CLOSE_BUTTON": "Close",
   "MODAL_CONFIRM_BUTTON": "Confirm",
