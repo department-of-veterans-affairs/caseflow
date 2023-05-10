@@ -65,7 +65,6 @@ RSpec.feature "SwitchApps", :postgres do
       expect(page).to have_current_path("/unauthorized", ignore_query: true)
       expect(page).to_not have_content("Switch product")
     end
-
   end
 
   def check_for_links(link_hashes = all_vha_links)
