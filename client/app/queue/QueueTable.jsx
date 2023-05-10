@@ -460,6 +460,9 @@ export default class QueueTable extends React.PureComponent {
   updateAddressBar = () => {
     if (this.props.useTaskPagesApi) {
       history.pushState('', '', this.deepLink());
+      if (this.props.onHistoryUpdate) {
+        this.props.onHistoryUpdate(this.deepLink());
+      }
     }
   };
 

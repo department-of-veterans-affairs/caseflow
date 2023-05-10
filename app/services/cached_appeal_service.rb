@@ -139,15 +139,9 @@ class CachedAppealService
       .group(:decision_review_id).count
   end
 
-  # # TODO: DB call inside of the the loop is trash fix it
-  # def request_issue_for_appeal(appeal_id)
-  #   RequestIssue.where(decision_review_id: appeal_id, decision_review_type: Appeal.name).map(&:nonrating_issue_category)
-  #     .compact.uniq.sort.join(",")
-  # end
-
   def request_issue_types_for_appeal_ids(appeal_ids)
     issue_type_alias = "STRING_AGG(DISTINCT request_issues.nonrating_issue_category, ','"\
-      " ORDER BY request_issues.nonrating_issue_category)"\
+      " ORDER BY LOWER(request_issues.nonrating_issue_category))"\
       " AS issue_types"
     # Selects a distinct list of string delimited issue_types that matches front end sorting
     Appeal.select(:id, issue_type_alias)

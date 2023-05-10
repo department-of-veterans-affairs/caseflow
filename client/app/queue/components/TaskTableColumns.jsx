@@ -266,7 +266,8 @@ export const issueTypesColumn = (tasks, filterOptions, requireDasRecord) => {
       const commaDelimitedIssueTypes = task.appeal.issueTypes;
 
       // Remove duplicates from the comma delimited list of issue types
-      const uniqueIssueTypes = [...new Set(commaDelimitedIssueTypes?.split(','))];
+      const uniqueIssueTypes = [...new Set(commaDelimitedIssueTypes?.split(','))].
+        sort((stringA, stringB) => stringA.localeCompare(stringB));
 
       return uniqueIssueTypes.length > 1 ?
         uniqueIssueTypes.map((type) => (<p key={type}> {type} </p>)) :
