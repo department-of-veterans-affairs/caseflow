@@ -43,6 +43,24 @@ describe AppellantNotification do
       end
     end
 
+    describe "veteran is deceased" do
+      let(:appeal) { create(:appeal, number_of_claimants: 1) }
+      let(:substitute_appellant) { create(:appellant_substitution) }
+
+      it "with no substitute appellant" do
+        appeal.veteran.update!(date_of_death: Time.zone.today)
+        expect(AppellantNotification.handle_errors(appeal)[:status]).to eq "Failure Due to Deceased"
+      end
+
+      it "with substitute appellant" do
+        appeal.veteran.update!(date_of_death: Time.zone.today)
+        substitute_appellant.update!(source_appeal_id: appeal.id)
+        substitute_appellant.send(:establish_substitution_on_same_appeal)
+        appeal.update!(veteran_is_not_claimant: true)
+        expect(AppellantNotification.handle_errors(appeal)[:status]).to eq "Success"
+      end
+    end
+
     describe "self.create_payload" do
       let(:good_appeal) { create(:appeal, number_of_claimants: 1) }
       let(:bad_appeal) { create(:appeal) }
