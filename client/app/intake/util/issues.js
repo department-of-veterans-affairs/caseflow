@@ -366,8 +366,6 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
         index,
         id: issue.id,
         benefitType: issue.labels[0].toLowerCase(),
-        // this is just temp because I don't know what goes in category for legacy issue
-        category: 'Apportionment',
         description: `${issue.labels[1]} - ${issue.labels[2]} - ${issue.labels[3]}`,
         text: `${issue.labels[1]} - ${issue.labels[2]} - ${issue.labels[3]}`,
         vacolsSequenceId: issue.vacols_sequence_id,
@@ -408,10 +406,10 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
         pactChecked: issue.pactChecked
       };
     } else if (issue.isRating) {
-      // if (!issue.decisionDate && !issue.approxDecisionDate) {
-      //   console.warn(issue);
-      //   throw new Error('no decision date');
-      // }
+      if (!issue.decisionDate && !issue.approxDecisionDate) {
+        console.warn(issue);
+        throw new Error('no decision date');
+      }
 
       const decisionDate = new Date(issue.decisionDate || issue.approxDecisionDate);
 
