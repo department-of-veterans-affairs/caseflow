@@ -52,6 +52,22 @@ RSpec.feature "SwitchApps", :postgres do
     end
   end
 
+  context "A user with no-VHA access" do
+    let!(:user) do
+      User.authenticate!(user: create(:user, roles: ["Mail Intake"]))
+    end
+    let!(:vha_business_line) do
+      create(:business_line, url: "vha", name: "Veterans Health Administration")
+    end
+
+    scenario "Non-VHA user doesn't have access to decision review vha" do
+      visit "/decision_reviews/#{vha_business_line.url}"
+      expect(page).to have_current_path("/unauthorized", ignore_query: true)
+      expect(page).to_not have_content("Switch product")
+    end
+
+  end
+
   def check_for_links(link_hashes = all_vha_links)
     link_hashes.each do |link_hash|
       expect(page).to have_link(link_hash[:title], href: link_hash[:link])
