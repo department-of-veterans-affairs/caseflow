@@ -31,20 +31,19 @@ class QueueColumn
     }
   end
 
+  FILTER_OPTIONS = {
+    Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name => :case_type_options,
+    Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name => :docket_type_options,
+    Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name => :regional_office_options,
+    Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name => :task_type_options,
+    Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name => :assignee_options,
+    Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name => :issue_type_options
+  }.freeze
+
   def filter_options(tasks)
-    case name
-    when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
-      case_type_options(tasks)
-    when Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name
-      docket_type_options(tasks)
-    when Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name
-      regional_office_options(tasks)
-    when Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name
-      task_type_options(tasks)
-    when Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
-      assignee_options(tasks)
-    when Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name
-      issue_type_options(tasks)
+    filter_option_func = FILTER_OPTIONS[name]
+    if filter_option_func
+      send(filter_option_func, tasks)
     else
       fail(
         Caseflow::Error::MustImplementInSubclass,
@@ -114,16 +113,10 @@ class QueueColumn
     end
   end
 
-  # TODO: This sucks man. There has to be a better way.
+  # TODO: I don't like this method, but it might not be avoidable.
   def issue_type_options(tasks)
-    # puts "issue type options with sql block"
-    # puts tasks.to_sql
     count_hash = tasks.with_cached_appeals.group(:issue_types).count
     totals = Hash.new(0)
-
-
-    puts "----------------------IN ISSUE TYPE OPTIONS---------------------------------"
-    puts count_hash.inspect
 
     count_hash.each do |key, value|
       if !key
@@ -135,14 +128,11 @@ class QueueColumn
       end
     end
 
-    puts totals.inspect
-
     options = totals.each_pair.map do |option, count|
       label = self.class.format_option_label(option, count)
       self.class.filter_option_hash(option, label)
     end
 
-    puts options.inspect
     options
   end
 end
