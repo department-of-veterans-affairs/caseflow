@@ -4,7 +4,9 @@ class CachedAppealService
   # rubocop:disable Metrics/MethodLength
   def cache_ama_appeals(appeals)
     import_cached_appeals([:appeal_id, :appeal_type], AMA_CACHED_COLUMNS) do
-      request_issues_to_cache = request_issue_counts_for_appeal_ids(appeals.pluck(:id))
+      cached_appeal_ids = appeals.pluck(:id)
+      request_issues_to_cache = request_issue_counts_for_appeal_ids(cached_appeal_ids)
+      request_issue_types_to_cache = request_issue_types_for_appeal_ids(cached_appeal_ids)
       veteran_names_to_cache = veteran_names_for_file_numbers(appeals.pluck(:veteran_file_number))
 
       appeal_aod_status = aod_status_for_appeals(appeals)
@@ -14,7 +16,8 @@ class CachedAppealService
           appeal_type: Appeal.name,
           case_type: appeal.type,
           issue_count: request_issues_to_cache[appeal.id] || 0,
-          issue_types: request_issue_for_appeal(appeal.id) || "",
+          # issue_types: request_issue_for_appeal(appeal.id) || "",
+          issue_types: request_issue_types_to_cache[appeal.id] || "",
           docket_type: appeal.docket_type,
           docket_number: appeal.docket_number,
           hearing_request_type: appeal.readable_current_hearing_request_type,
@@ -136,10 +139,23 @@ class CachedAppealService
       .group(:decision_review_id).count
   end
 
-  # TODO: DB call inside of the the loop is trash fix it
-  def request_issue_for_appeal(appeal_id)
-    RequestIssue.where(decision_review_id: appeal_id, decision_review_type: Appeal.name).map(&:nonrating_issue_category)
-      .compact.uniq.sort.join(",")
+  # # TODO: DB call inside of the the loop is trash fix it
+  # def request_issue_for_appeal(appeal_id)
+  #   RequestIssue.where(decision_review_id: appeal_id, decision_review_type: Appeal.name).map(&:nonrating_issue_category)
+  #     .compact.uniq.sort.join(",")
+  # end
+
+  def request_issue_types_for_appeal_ids(appeal_ids)
+    issue_type_alias = "STRING_AGG(DISTINCT request_issues.nonrating_issue_category, ','"\
+      " ORDER BY request_issues.nonrating_issue_category)"\
+      " AS issue_types"
+    # Selects a distinct list of string delimited issue_types that matches front end sorting
+    Appeal.select(:id, issue_type_alias)
+      .where(id: appeal_ids)
+      .left_joins(:request_issues)
+      .group("appeals.id")
+      .map { |appeal| [appeal.id, (appeal[:issue_types] || "")] }
+      .to_h
   end
 
   def veteran_names_for_file_numbers(veteran_file_numbers)
