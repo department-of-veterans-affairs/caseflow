@@ -24,6 +24,9 @@ const headingStyling = css({
   marginBottom: 0
 });
 
+// Somewhere in this area the Issues are called in.
+// Not sure whether the MST/PACT badges would be in Decision Issues or Request Issues,
+// or how a Legacy Appeal would affect this
 export default function CaseDetailsIssueList(props) {
   if (!props.isLegacyAppeal) {
     return <AmaIssueList

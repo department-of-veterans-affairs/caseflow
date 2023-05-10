@@ -33,6 +33,7 @@ const issueErrorStyling = css({
   borderLeft: '4px solid #cd2026'
 });
 
+// Issues are created here; this may be where the MST/PACT badges would be placed? Unsure
 export const AmaIssue = (props) => {
   return <li key={props.index} {...singleIssueStyling} {...props.customStyle}>
     <div {...issueContentStyling}><strong>Benefit type</strong>: {BENEFIT_TYPES[props.issue.program]}</div>
@@ -86,6 +87,7 @@ AmaIssue.propTypes = {
   issue: PropTypes.shape({
     program: PropTypes.string,
     description: PropTypes.string,
+    // special_issues: PropTypes.string,
     diagnostic_code: PropTypes.string,
     notes: PropTypes.string,
     closed_status: PropTypes.string

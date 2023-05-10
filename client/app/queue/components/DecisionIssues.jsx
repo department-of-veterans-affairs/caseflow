@@ -146,6 +146,7 @@ DecisionIssues.propTypes = {
     id: PropTypes.number,
     program: PropTypes.string,
     description: PropTypes.string,
+    // special_issues: PropTypes.string,
     notes: PropTypes.string,
     diagnostic_code: PropTypes.string,
     closed_status: PropTypes.string,

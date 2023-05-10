@@ -328,6 +328,7 @@ export const CaseDetailsView = (props) => {
         />
         <hr {...horizontalRuleStyling} />
         <StickyNavContentArea>
+          {/* This is where the Issues field populates in the case timeline screen */}
           <CaseDetailsIssueList
             title="Issues"
             isLegacyAppeal={appeal.isLegacyAppeal}
