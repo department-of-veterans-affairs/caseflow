@@ -126,6 +126,20 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
         expect(job.send(:ready_for_resync)).to eq([appeals[4]])
       end
 
+      it "ignore appeals that need to be resynced if latest notification status is 'Failure Due to Deceased" do
+        Notification.create!(
+          appeals_id: appeals[4].vacols_id,
+          appeals_type: "LegacyAppeal",
+          event_date: today,
+          event_type: "Appeal docketed",
+          notification_type: "Email",
+          notified_at: Time.zone.now,
+          email_notification_status: "Failure Due to Deceased"
+        )
+        create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "LegacyAppeal")
+        expect(job.send(:ready_for_resync)).to eq([])
+      end
+
       it "running the perform" do
         Notification.create!(
           appeals_id: appeals[4].vacols_id,
