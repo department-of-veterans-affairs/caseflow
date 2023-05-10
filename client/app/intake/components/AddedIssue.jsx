@@ -109,11 +109,11 @@ class AddedIssue extends React.PureComponent {
 
     let specialIssuesMessage = 'None';
 
-    if (issue.mst_status && issue.pact_status) {
+    if (issue.mstChecked && issue.pactChecked) {
       specialIssuesMessage = COPY.MST_SHORT_LABEL + ', ' + COPY.PACT_SHORT_LABEL;
-    } else if (issue.mst_status) {
+    } else if (issue.mstChecked) {
       specialIssuesMessage = COPY.MST_SHORT_LABEL;
-    } else if (issue.pact_status) {
+    } else if (issue.pactChecked) {
       specialIssuesMessage = COPY.PACT_SHORT_LABEL;
     }
 
@@ -180,8 +180,8 @@ AddedIssue.propTypes = {
     vacolsId: PropTypes.string,
     withdrawalPending: PropTypes.string,
     withdrawalDate: PropTypes.string,
-    mst_status: PropTypes.bool,
-    pact_status: PropTypes.bool,
+    mstChecked: PropTypes.bool,
+    pactChecked: PropTypes.bool,
   }).isRequired,
   issueIdx: PropTypes.number.isRequired,
   legacyAppeals: PropTypes.array,
