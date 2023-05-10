@@ -31,24 +31,7 @@ class TaskFilter
         clause = extract_aod_clause(filter, clause)
       end
       if filter.column == Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name
-        # puts "---------------------IN MY crappy block-------------------------------------"
-        # puts filter_selections.inspect
-        # Shorthand way of parsing the first value differently than the rest
-        first_filter_value, *remaining_filters = filter_selections
-        where_clauses = []
-        where_clauses << "POSITION('#{first_filter_value}' IN #{table_column_from_name(filter.column)}) > 0"
-
-        remaining_filters.each do |filter_value|
-          where_clauses << "OR POSITION('#{filter_value}' IN #{table_column_from_name(filter.column)}) > 0"
-        end
-
-        # If you don't include a param insert (?) it will ignore it later in the where_clause method
-        # Which is what we want since we handle it here instead of in the where clause method
-        # becausse the position SQL function doesn't work like IN does
-        clause = where_clauses.join(" ")
-        # clause = "POSITION((?) IN #{table_column_from_name(filter.column)}) > 0"
-        # puts clause.inspect
-        # clause
+        clause = build_issue_type_clause(filter)
       end
       clause
     end
@@ -64,32 +47,40 @@ class TaskFilter
       filter.values.empty? ? is_aod_clause : "(#{orig_clause} OR #{is_aod_clause})"
     end
 
-    # rubocop:disable Metrics/CyclomaticComplexity
-    def table_column_from_name(column_name)
-      case column_name
-      when Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name
-        "tasks.type"
-      when Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name
-        "cached_appeal_attributes.closest_regional_office_city"
-      when Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name
-        "cached_appeal_attributes.docket_type"
-      when Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name
-        "cached_appeal_attributes.case_type"
-      when Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
-        "assignees.display_name"
-      when Constants.QUEUE_CONFIG.POWER_OF_ATTORNEY_COLUMN_NAME
-        "cached_appeal_attributes.power_of_attorney_name"
-      when Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME
-        "cached_appeal_attributes.suggested_hearing_location"
-      when Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME
-        "cached_appeal_attributes.hearing_request_type"
-      when Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name
-        "cached_appeal_attributes.issue_types"
-      else
-        fail(Caseflow::Error::InvalidTaskTableColumnFilter, column: column_name)
+    # TODO: Place a comment here showing the type of SQL that will be generated from this
+    def build_issue_type_clause(filter)
+      # Shorthand way of parsing the first value differently than the rest
+      first_filter_value, *remaining_filters = filter_selections
+      where_clauses = []
+      where_clauses << "POSITION('#{first_filter_value}' IN #{table_column_from_name(filter.column)}) > 0"
+
+      remaining_filters.each do |filter_value|
+        where_clauses << "OR POSITION('#{filter_value}' IN #{table_column_from_name(filter.column)}) > 0"
       end
+
+      # If you don't include a param insert (?) it will ignore it later in the where_clause method
+      # Which is what we want since we handle it here instead of in the where clause method
+      # because the position SQL function doesn't work like IN does
+      where_clauses.join(" ")
     end
-    # rubocop:enable Metrics/CyclomaticComplexity
+
+    COLUMN_MAPPING = {
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name => "tasks.type",
+      Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name => "cached_appeal_attributes.closest_regional_office_city",
+      Constants.QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name => "cached_appeal_attributes.docket_type",
+      Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name => "cached_appeal_attributes.case_type",
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name => "assignees.display_name",
+      Constants.QUEUE_CONFIG.POWER_OF_ATTORNEY_COLUMN_NAME => "cached_appeal_attributes.power_of_attorney_name",
+      Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME =>
+        "cached_appeal_attributes.suggested_hearing_location",
+      Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME => "cached_appeal_attributes.hearing_request_type",
+      Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name => "cached_appeal_attributes.issue_types"
+    }.freeze
+
+    def table_column_from_name(column_name)
+      column_name = COLUMN_MAPPING[column_name]
+      column_name || fail(Caseflow::Error::InvalidTaskTableColumnFilter, column: column_name)
+    end
   end
 
   def initialize(args)
