@@ -3,13 +3,11 @@
 class Fakes::PacmanService < ExternalApi::PacmanService
   class << self
     def send_communication_package_request(file_number, name, document_references)
-      request = package_request(file_number, name, document_references)
-      fake_package_request(request)
+      fake_package_request(file_number, name, document_references)
     end
 
     def send_distribution_request(package_id, recipient, destinations)
-      request = distribution_request(package_id, recipient, destinations)
-      fake_distribution_request(request)
+      fake_distribution_request(package_id, recipient, destinations)
     end
 
     def get_distribution_request(distribution_id)
@@ -56,17 +54,15 @@ class Fakes::PacmanService < ExternalApi::PacmanService
     end
 
     # POST: /package-manager-service/communication-package
-    def fake_package_request
+    def fake_package_request(file_number, name, document_references)
       HTTPI::Response.new(
         201,
         {},
         OpenStruct.new(
           "id": "24eb6a66-3833-4de6-bea4-4b614e55d5ac",
-          "fileNumber": "123456789",
-          "documentReferences": {
-            "id": "23233175-6a87-4cd4-b327-f20cf5ef1222",
-            "copies": 1
-          },
+          "fileNumber": file_number,
+          "name": name,
+          "documentReferences": document_references,
           "status": "NEW",
           "createDate": ""
         )
@@ -75,41 +71,16 @@ class Fakes::PacmanService < ExternalApi::PacmanService
 
     # rubocop:disable Metrics/MethodLength
     # POST: /package-manager-service/distribution
-    def fake_distribution_request
+    def fake_distribution_request(package_id, recipient, destinations)
       HTTPI::Response.new(
         201,
         {},
         OpenStruct.new(
           "id": "12345",
-          "recipient": {
-            "type": "person",
-            "name": "bob joe",
-            "firstName": "bob",
-            "middleName": "",
-            "lastName": "joe",
-            "participant_id": "123455667",
-            "poaCode": "",
-            "claimantStationOfJurisdiction": ""
-          },
+          "recipient": recipient,
           "description": "bad",
-          "communicationPackageId": "",
-          "destinations": {
-            "type": "email",
-            "addressLine1": "",
-            "addressLine2": "",
-            "addressLine3": "",
-            "addressLine4": "",
-            "addressLine5": "",
-            "addressLine6": "",
-            "treatLine2AsAddressee": 0,
-            "treatLine3AsAddressee": 0,
-            "city": "",
-            "state": "",
-            "postalCode": "",
-            "countryName": "",
-            "emailAddress": "",
-            "phoneNumber": ""
-          },
+          "communicationPackageId": package_id,
+          "destinations": destinations,
           "status": "",
           "sentToCbcmDate": ""
         )
