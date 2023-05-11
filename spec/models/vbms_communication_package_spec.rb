@@ -5,7 +5,7 @@ describe VbmsCommunicationPackage, :postgres do
     VbmsCommunicationPackage.new(
       file_number: "329780002",
       comm_package_name: "Test Package Name",
-      vbms_uploaded_document: VbmsUploadedDocument.new(document_type: "Test Doc Type")
+      vbms_uploaded_document: class_double(VbmsUploadedDocument)
     )
   end
 
@@ -13,18 +13,22 @@ describe VbmsCommunicationPackage, :postgres do
     expect(package).to be_valid
   end
 
-  it "is not valid without a filenumber" do
+  it "is not valid with nil filenumber" do
     package.filenumber = nil
     expect(package).to_not be_valid
+  end
 
+  it "is not valid with empty string as filenumber" do
     package.filenumber = ""
     expect(package).to_not be_valid
   end
 
-  it "is not valid without a communication package name" do
+  it "is not valid with nil communication package name" do
     package.comm_package_name = nil
     expect(package).to_not be_valid
+  end
 
+  it "is not valid with empty string as communication package name" do
     package.comm_package_name = ""
     expect(package).to_not be_valid
   end
@@ -36,6 +40,11 @@ describe VbmsCommunicationPackage, :postgres do
 
   it "is not valid without a user friendly communication package name" do
     package.comm_package_name = "(Test Package Name)"
+    expect(package).to_not be_valid
+  end
+
+  it "is not valid without an associated VbmsUploadedDocument" do
+    package.vbms_uploaded_document = nil
     expect(package).to_not be_valid
   end
 end
