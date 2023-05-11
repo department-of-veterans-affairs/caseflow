@@ -30,6 +30,7 @@ describe('MTVJudgeDisposition', () => {
     });
 
   const selectDisposition = async (disposition = 'grant all') => {
+
     await userEvent.click(
       screen.getByLabelText(new RegExp(disposition, 'i'))
     );
@@ -47,6 +48,9 @@ describe('MTVJudgeDisposition', () => {
         ).toBeInTheDocument();
       });
     }
+    await userEvent.click(
+      screen.getByText('Submit')
+    );
   };
 
   describe('default view', () => {
@@ -87,4 +91,74 @@ describe('MTVJudgeDisposition', () => {
       });
     }
   );
+
+  describe('instructions sent', () => {
+    let vacateType = '';
+    let hyperlink = '';
+    let instructions = '';
+    let disposition = '';
+    const formatInstructions = () => {
+      const parts = [disposition];
+
+      switch (disposition) {
+      case 'grant all':
+      case 'partially-granted':
+        parts.push(vacateType);
+        parts.push(instructions);
+        break;
+      case 'denied':
+      case 'dismissed':
+        parts.push(instructions);
+        parts.push(hyperlink);
+        break;
+      default:
+        parts.push(instructions);
+      }
+
+      return parts.join('\n');
+    };
+    const handleSubmit = () => {
+      task.instructions = formatInstructions({ disposition, vacateType, hyperlink, instructions });
+    };
+
+    it('sends the correct instructions based on grant all disposition', () => {
+
+      disposition = 'grant all';
+      vacateType = 'vacate and de novo';
+      instructions = 'instructions from judge';
+      handleSubmit(disposition, vacateType, hyperlink, instructions);
+      expect(task.instructions).toMatch('grant all\nvacate and de novo\ninstructions from judge');
+
+    });
+
+    it('sends the correct instructions based on partially granted disposition', () => {
+
+      disposition = 'partially-granted';
+      vacateType = 'straight vacate';
+      instructions = 'some instructions from judge';
+      handleSubmit(disposition, vacateType, hyperlink, instructions);
+      expect(task.instructions).toMatch('partially-granted\nstraight vacate\nsome instructions from judge');
+
+    });
+
+    it('sends the correct instructions based on denied disposition', () => {
+
+      disposition = 'denied';
+      instructions = 'instructions from judge';
+      hyperlink = 'www.caseflow.com';
+      handleSubmit(disposition, vacateType, hyperlink, instructions);
+      expect(task.instructions).toMatch('denied\ninstructions from judge\nwww.caseflow.com');
+
+    });
+
+    it('sends the correct instructions based on dismissed disposition', () => {
+
+      disposition = 'dismissed';
+      instructions = 'new instructions from judge';
+      hyperlink = 'www.google.com';
+      handleSubmit(disposition, vacateType, hyperlink, instructions);
+      expect(task.instructions).toMatch('dismissed\nnew instructions from judge\nwww.google.com');
+
+    });
+  });
 });
