@@ -95,7 +95,7 @@ describe JudgeTask, :all_dbs do
         it "should return the Case Management assignment actions along with attorneys" do
           expect(subject).to eq(
             [
-              Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
+              Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h,
               Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
             ].map { |action| subject_task.build_action_hash(action, user) }
           )
@@ -112,7 +112,7 @@ describe JudgeTask, :all_dbs do
         it "returns the reassign action" do
           expect(subject).to eq(
             [
-              Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
+              Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h
             ].map { |action| subject_task.build_action_hash(action, judge) }
           )
         end
