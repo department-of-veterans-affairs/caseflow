@@ -383,7 +383,8 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     def resend_initial_notification_letter_post_holding(_task, _user = nil)
       params = {
         modal_title: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_TITLE,
-        modal_body: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
+        modal_body: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING_COPY,
+        modal_button_text: COPY::RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON
       }
 
       params
