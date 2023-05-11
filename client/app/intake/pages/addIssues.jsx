@@ -293,7 +293,6 @@ class AddIssuesPage extends React.Component {
       return (
         <div className="cf-actions">
           {splitButtonVisible() ? (
-            intakeData.docketType !== 'Legacy' &&
             [<Button
               name="add-issue"
               label="add-issue"
@@ -316,7 +315,6 @@ class AddIssuesPage extends React.Component {
               </Button>
             </Link>]
           ) : (
-            intakeData.docketType !== 'Legacy' &&
             <Button
               name="add-issue"
               legacyStyling={false}
@@ -463,7 +461,8 @@ class AddIssuesPage extends React.Component {
 
     additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
 
-    const hideAddIssueButton = intakeData.isDtaError && _.isEmpty(intakeData.contestableIssues);
+    const hideAddIssueButton = (intakeData.isDtaError && _.isEmpty(intakeData.contestableIssues)) ||
+      intakeData.docketType === 'Legacy';
 
     if (!hideAddIssueButton) {
       rowObjects = rowObjects.concat({
