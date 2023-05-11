@@ -12,17 +12,53 @@ class Intake::LegacyAppealSerializer
     object.veteran_full_name
   end
   attribute :veteran_is_not_claimant
-  attribute :processed_in_caseflow, &:processed_in_caseflow?
-  attribute :legacy_opt_in_approved
-  attribute :legacy_appeals, &:serialized_legacy_appeals
-  attribute :ratings, &:serialized_ratings
-  attribute :edit_issues_url, &:caseflow_only_edit_issues_url
-  attribute :processed_at, &:establishment_processed_at
-  attribute :veteran_invalid_fields
   attribute :request_issues, &:issues
-  attribute :active_nonrating_request_issues
-  attribute :contestable_issues_by_date
+
   attribute :intake_user
+
+  attribute :processed_in_caseflow do |object|
+    true
+  end
+
+  attribute :legacy_opt_in_approved do |object|
+    true
+  end
+
+  attribute :legacy_appeals do |object|
+    []
+  end
+
+  attribute :ratings do |object|
+    []
+  end
+
+  attribute :edit_issues_url do |object|
+    "/appeals/#{id}/edit"
+  end
+
+  attribute :processed_at do |object|
+    nil
+  end
+
+  attribute :veteran_invalid_fields do |object|
+    nil
+  end
+
+  attribute :active_nonrating_request_issues do |object|
+    []
+  end
+
+  attribute :contestable_issues_by_date do |object|
+    []
+  end
+
+  attribute :intake_user do |object|
+    nil
+  end
+
+  attribute :receipt_date do |object|
+    nil
+  end
 
   attribute :decision_issues do |object|
     object.veteran.decision_issues.map(&:serialize)
@@ -35,8 +71,6 @@ class Intake::LegacyAppealSerializer
   attribute :veteran_valid do |object|
     object.veteran&.valid?(:bgs)
   end
-
-  attribute :receipt_date
 
   attribute :veteran do |object|
     {
