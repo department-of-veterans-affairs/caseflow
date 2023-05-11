@@ -20,3 +20,4 @@ conn.execute(
   $add_row$
   language plpgsql;"
 )
+conn.close

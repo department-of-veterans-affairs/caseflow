@@ -4,3 +4,4 @@ require "pg"
 
 conn = CaseflowRecord.connection
 conn.execute("create schema caseflow_audit;")
+conn.close

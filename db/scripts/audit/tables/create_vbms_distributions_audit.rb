@@ -21,3 +21,4 @@ conn.execute("create table caseflow_audit.vbms_distributions_audit (
               created_by_id int8 NULL,
               updated_by_id int8 NULL
             );")
+conn.close

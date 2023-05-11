@@ -23,3 +23,4 @@ conn.execute("create table caseflow_audit.vbms_uploaded_documents_audit (
               uploaded_to_vbms_at timestamp NULL,
               veteran_file_number varchar NULL
             );")
+conn.close

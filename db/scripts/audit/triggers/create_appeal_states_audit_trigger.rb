@@ -9,3 +9,4 @@ conn.execute(
   for each row
   execute procedure caseflow_audit.add_row_to_appeal_states_audit();"
 )
+conn.close
