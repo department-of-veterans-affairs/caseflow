@@ -102,7 +102,7 @@ describe('MTVJudgeDisposition', () => {
 
       switch (disposition) {
       case 'grant all':
-      case 'partially-granted':
+      case 'partially_granted':
         parts.push(vacateType);
         parts.push(instructions);
         break;
@@ -133,11 +133,11 @@ describe('MTVJudgeDisposition', () => {
 
     it('sends the correct instructions based on partially granted disposition', () => {
 
-      disposition = 'partially-granted';
+      disposition = 'partially_granted';
       vacateType = 'straight vacate';
       instructions = 'some instructions from judge';
       handleSubmit(disposition, vacateType, hyperlink, instructions);
-      expect(task.instructions).toMatch('partially-granted\nstraight vacate\nsome instructions from judge');
+      expect(task.instructions).toMatch('partially_granted\nstraight vacate\nsome instructions from judge');
 
     });
 

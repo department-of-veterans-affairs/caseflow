@@ -44,7 +44,7 @@ const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }
 
   switch (disposition) {
   case 'granted':
-  case 'partially-granted':
+  case 'partially_granted':
     parts.push(MTV_TASK_INSTRUCTIONS_TYPE);
     parts.push(`${vacateTypeText(vacateType)}\n`);
     if (instructions !== '') {
