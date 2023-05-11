@@ -6,10 +6,12 @@ class VbmsDistribution < CaseflowRecord
   # has_one :vbms_communication_package
   has_one :vbms_distribution_destination
 
-  validates :recipient_type, presence: true, inclusion: { in: %w(organization person system ro-colocated)}
-  validates :first_name, :last_name, presence: true, if: :is_person?
-  validates :name, presence: true, unless: :is_person?
-  validates :poa_code, :claimant_station_of_jurisdiction, presence: true, if: :is_ro_colocated?
+  with_options presence: true do
+    validates :recipient_type, inclusion: { in: %w(organization person system ro-colocated)}
+    validates :first_name, :last_name, if: :is_person?
+    validates :name, unless: :is_person?
+    validates :poa_code, :claimant_station_of_jurisdiction, if: :is_ro_colocated?
+  end
 
   def is_person?
     recipient_type == "person"
