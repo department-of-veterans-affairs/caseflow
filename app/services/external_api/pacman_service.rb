@@ -6,9 +6,12 @@ require "digest"
 
 class ExternalApi::PacmanService
   BASE_URL = ENV["PACMAN_API_URL"]
-  SEND_DISTRIBUTION_ENDPOINT = "package-manager-service/distribution"
-  SEND_PACKAGE_ENDPOINT = "package-manager-service/communication-package"
-  GET_DISTRIBUTION_ENDPOINT = "package-manager-service/distribution/"
+  SEND_DISTRIBUTION_ENDPOINT = "/package-manager-service/distribution"
+  SEND_PACKAGE_ENDPOINT = "/package-manager-service/communication-package"
+  GET_DISTRIBUTION_ENDPOINT = "/package-manager-service/distribution/"
+  HEADERS = {
+    "Content-Type": "application/json", Accept: "application/json"
+  }.freeze
 
   class << self
     def send_communication_package_request(file_number, name, document_references)
