@@ -372,7 +372,9 @@ class SelectDispositionsView extends React.PureComponent {
         <DecisionIssues
           decisionIssues={appeal.decisionIssues}
           openDecisionHandler={this.openDecisionHandler}
-          openDeleteAddedDecisionIssueHandler={this.openDeleteAddedDecisionIssueHandler} />
+          openDeleteAddedDecisionIssueHandler={this.openDeleteAddedDecisionIssueHandler}
+          mstStatus={specialIssuesValues.mstStatus}
+          pactStatus={specialIssuesValues.pactStatus} />
       </AmaIssueList>
       { deleteAddedDecisionIssue && <Modal
         buttons = {this.deleteAddedDecisionIssueModalButtons}
