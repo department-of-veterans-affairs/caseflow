@@ -128,7 +128,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_edit_issues?
-    CaseReview.singleton.users.include?(self) || can_intake_appeals?
+    CaseReview.singleton.users.include?(self) || can_intake_appeals? || attorney?
   end
 
   def can_edit_cavc_remands?
