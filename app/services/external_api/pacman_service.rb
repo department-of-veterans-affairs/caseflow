@@ -14,16 +14,37 @@ class ExternalApi::PacmanService
   }.freeze
 
   class << self
+    # Purpose: Creates and sends communication package
+    # POST: /package-manager-service/communication-package
+    #
+    # takes in file_number(string), name(string), document_reference(json of strings)
+    #
+    # Response: JSON of created package from Pacman API
+    # Example response can be seen in lib/fakes/pacman_service.rb under 'fake_package_request' method
     def send_communication_package_request(file_number, name, document_references)
       request = package_request(file_number, name, document_references)
       send_pacman_request(request)
     end
 
+    # Purpose: Creates and sends distribution
+    # POST: /package-manager-service/distribution
+    #
+    # takes in package_id(string), recipient(json of strings), destinations(json of strings)
+    #
+    # Response: JSON of created distribution from Pacman API
+    # Example response can be seen in lib/fakes/pacman_service.rb under 'fake_distribution_request' method
     def send_distribution_request(package_id, recipient, destinations)
       request = distribution_request(package_id, recipient, destinations)
       send_pacman_request(request)
     end
 
+    # Purpose: Gets distribution from distribution id
+    # POST: /package-manager-service/distribution
+    #
+    # takes in distribution_id(string)
+    #
+    # Response: JSON of distribution from Pacman API
+    # Example response can be seen in lib/fakes/pacman_service.rb under 'fake_distribution_response' method
     def get_distribution_request(distribution_id)
       request = {
         endpoint: GET_DISTRIBUTION_ENDPOINT + distribution_id, method: :get
@@ -31,6 +52,13 @@ class ExternalApi::PacmanService
       send_pacman_request(request)
     end
 
+    private
+
+    # Purpose: Builds package request
+    #
+    # takes in file_number(string), name(string), document_reference(json of strings)
+    #
+    # Response: package request hash
     def package_request(file_number, name, document_reference)
       request = {
         body: {
@@ -47,6 +75,11 @@ class ExternalApi::PacmanService
       request
     end
 
+    # Purpose: Builds distribution request
+    #
+    # takes in package_id(string), recipient(json of strings), destinations(json of strings)
+    #
+    # Response: Distribution request hash
     def distribution_request(package_id, recipient, destination)
       request = {
         body: {
@@ -85,6 +118,11 @@ class ExternalApi::PacmanService
       request
     end
 
+    # Purpose: Build and send the request to the server
+    #
+    # Params: general requirements for HTTP request
+    #
+    # Return: service_response: JSON from Pacman or error
     def send_pacman_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
       url = URI.escape(BASE_URL + endpoint)
       request = HTTPI::Request.new(url)

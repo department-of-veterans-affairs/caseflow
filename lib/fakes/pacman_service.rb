@@ -57,7 +57,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
     # POST: /package-manager-service/communication-package
     def fake_package_request
       HTTPI::Response.new(
-        200,
+        201,
         {},
         OpenStruct.new(
           "id": "24eb6a66-3833-4de6-bea4-4b614e55d5ac",
@@ -76,7 +76,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
     # POST: /package-manager-service/distribution
     def fake_distribution_request
       HTTPI::Response.new(
-        200,
+        201,
         {},
         OpenStruct.new(
           "id": "12345",
@@ -114,7 +114,6 @@ class Fakes::PacmanService < ExternalApi::PacmanService
         )
       )
     end
-    # rubocop:enable Metrics/MethodLength
 
     # GET: /package-manager-service/distribution/{id}
     def fake_distribution_response(distribution_id)
@@ -154,5 +153,6 @@ class Fakes::PacmanService < ExternalApi::PacmanService
         )
       )
     end
+    # rubocop:enable Metrics/MethodLength
   end
 end
