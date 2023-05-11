@@ -12,8 +12,10 @@ class CaseReviewsController < ApplicationController
   def complete
     result = CompleteCaseReview.new(case_review_class: case_review_class, params: complete_params).call
     if result.success?
-      update_request_issues_for_mst_and_pact
       case_review = result.extra[:case_review]
+      unless case_review.appeal.is_a?(LegacyAppeal)
+        update_request_issues_for_mst_and_pact
+      end
       render json: {
         task: case_review,
         issues: case_review.appeal.issues
