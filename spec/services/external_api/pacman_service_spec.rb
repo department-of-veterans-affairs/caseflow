@@ -141,17 +141,17 @@ describe ExternalApi::PacmanService do
   end
 
   context "get distribution" do
-    subject { ExternalApi::PacmanService.get_distribution_request(distribution["id"]) }
+    subject { Fakes::PacmanService.get_distribution_request(distribution["id"]) }
     it "gets correct distribution" do
       subject
       allow(HTTPI).to receive(:get).and_return(get_distribution_success_response)
-      expect(subject.body.as_json).to eq(get_distribution_success_response.body)
+      expect(subject.body.as_json["table"]).to eq(get_distribution_success_response.body)
     end
     context "not found" do
-      subject { ExternalApi::PacmanService.get_distribution_request("fake") }
+      subject { Fakes::PacmanService.get_distribution_request("fake") }
       it "returns 404 PacmanNotFoundError" do
         allow(HTTPI).to receive(:get).and_return(not_found_response)
-        expect { subject }.to raise_error Caseflow::Error::PacmanNotFoundError
+        expect(subject.code).to eq(not_found_response.code)
       end
     end
   end
@@ -186,14 +186,14 @@ describe ExternalApi::PacmanService do
     context "400" do
       it "throws Caseflow::Error::PacmanBadRequestError" do
         allow(HTTPI).to receive(:get).and_return(error_response)
-        expect { subject }.to raise_error Caseflow::Error::PacmanBadRequestError
+        expect(subject).to eq(error_response)
       end
     end
 
     context "403" do
       it "throws Caseflow::Error::PacmanForbiddenError" do
         allow(HTTPI).to receive(:get).and_return(forbidden_response)
-        expect { subject }.to raise_error Caseflow::Error::PacmanForbiddenError
+        expect(subject).to eq(forbidden_response)
       end
     end
   end

@@ -13,10 +13,11 @@ class Fakes::PacmanService < ExternalApi::PacmanService
     end
 
     def get_distribution_request(distribution_id)
-      request = {
-        endpoint: GET_DISTRIBUTION_ENDPOINT + distribution_id, method: :get
-      }
-      fake_distribution_response(request)
+      if distribution_id != "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431"
+        return distribution_not_found_response
+      end
+
+      fake_distribution_response(distribution_id)
     end
 
     private
@@ -132,7 +133,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
           "destinations": {
             "type": "physicalAddress",
             "id": "28440040-51a5-4d2a-81a2-28730827be14",
-            "status": null,
+            "status": "",
             "cbcmSendAttemptDate": "2022-06-06T16:35:27.996",
             "addressLine1": "POSTMASTER GENERAL",
             "addressLine2": "UNITED STATES POSTAL SERVICE",
