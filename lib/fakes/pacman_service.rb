@@ -3,12 +3,12 @@
 class Fakes::PacmanService < ExternalApi::PacmanService
   class << self
     def send_communication_package_request(file_number, name, document_references)
-      request = package_request(file_number, name, document_reference)
+      request = package_request(file_number, name, document_references)
       fake_package_request(request)
     end
 
     def send_distribution_request(package_id, recipient, destinations)
-      request = distribution_request(package_id, recipient, destination)
+      request = distribution_request(package_id, recipient, destinations)
       fake_distribution_request(request)
     end
 
