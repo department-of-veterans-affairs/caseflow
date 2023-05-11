@@ -954,7 +954,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     end
 
     def po_user(organization)
-      return unless organization.is_a?(VhaProgramOffice)
+      return unless organization.is_a?(VhaProgramOffice) || organization.is_a?(VhaRegionalOffice)
 
       "po_"
     end
