@@ -6,6 +6,9 @@ class MailRequestJob < CaseflowJob
   application_attr :intake
 
   def perform(vbms_comm_package)
-    ExternalApi::
+    package = ExternalApi::PacmanService.send_communication_package_request(vbms_comm_package.file_number,
+                                                                            vbms_comm_package.comm_package_name,
+                                                                            vbms_comm_package.document_referenced)
+    distribution = ExternalApi::PacmanService.send_distribution_request(package_id, recipient, destinations)
   end
 end
