@@ -15,17 +15,4 @@ class VbmsCommunicationPackage < CaseflowRecord
   #   - if you try and store object with "id" and "copies" keys into db it will be converted to nil object
   #   - need to solve before being able to validate "id" and "copies"
   validates :document_referenced, length: { minimum: 1 }
-
-  # This validation currently takes place in PrepareDocumentUploadToVbms... any reason it would need to take place again in model?
-  validate :file_number_matches_bgs
-
-  def bgs_service
-    @bgs_service || BGSService.new
-  end
-
-  def file_number_matches_bgs
-    if bgs_service.fetch_veteran_info(file_number).nil?
-      errors.add(:file_number, "does not match a valid veteran file number")
-    end
-  end
 end
