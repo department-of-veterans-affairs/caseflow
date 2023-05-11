@@ -340,6 +340,7 @@ module Caseflow::Error
   class AttributeNotLoaded < StandardError; end
   class VeteranNotFound < StandardError; end
   class AppealNotFound < StandardError; end
+  class MissingRecipientInfo < StandardError; end
 
   class EstablishClaimFailedInVBMS < StandardError
     attr_reader :error_code
