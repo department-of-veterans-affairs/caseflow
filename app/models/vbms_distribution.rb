@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 class VbmsDistribution < CaseflowRecord
-  # Changed this association to "belongs_to" instead of "has_one" because FK sits on this table. Is that correct?
   belongs_to :vbms_communication_package, optional: false
-  # has_one :vbms_communication_package
   has_one :vbms_distribution_destination
 
   with_options presence: true do
