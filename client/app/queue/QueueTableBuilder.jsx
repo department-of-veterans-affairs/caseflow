@@ -172,10 +172,10 @@ class QueueTableBuilder extends React.PureComponent {
     const params = new URLSearchParams(url.search);
     const filterParams = params.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
 
-    console.log(filterParams);
     console.log('setting filter param here I guess?');
+    console.log(filterParams);
 
-    localStorage.setItem('queueFilter', filterParams);
+    // localStorage.setItem('queueFilter', filterParams);
 
     // setFilter(filterParam);
   };
@@ -211,19 +211,19 @@ class QueueTableBuilder extends React.PureComponent {
     }
 
     // TODO: I don't want to do this here as well
-    const params = new URLSearchParams(window.location.search);
-    const filterParams = params.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
-    const localQueueFilter = localStorage.getItem('queueFilter');
-    const filter = filterParams.length > 0 ? filterParams : localQueueFilter;
+    // const params = new URLSearchParams(window.location.search);
+    // const filterParams = params.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
+    // const localQueueFilter = localStorage.getItem('queueFilter');
+    // const filter = filterParams.length > 0 ? filterParams : localQueueFilter;
 
     console.log('my filter in queue table builder');
-    console.log(filterParams);
-    console.log(filter);
+    // console.log(filterParams);
+    // console.log(filter);
 
     // TODO: Pulled from how NonComp works. I don't want to do this at all but I might not have a choice
     // TODO: It doesn't work anyhow because of how filters are preserved between tabs since this is never called more than one time.
     // I might have to do it down in QueueTable.jsx which sucks really hard.
-    paginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`] = filter;
+    // paginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`] = filter;
 
     return {
       label: sprintf(tabConfig.label, totalTaskCount),

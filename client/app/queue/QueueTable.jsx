@@ -294,7 +294,20 @@ export default class QueueTable extends React.PureComponent {
     const sortAscending =
       tabPaginationOptions[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] !== QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC;
     const sortColumn = tabPaginationOptions[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] || null;
-    const filteredByList = this.getFilters(tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]);
+    const filterParam = tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`];
+    const filteredByList = this.getFilters(filterParam || localStorage.getItem('queueFilter'));
+    // this.getFilters(localStorage.getItem('queueFilter'));
+
+    const localFilter = this.getFilters(localStorage.getItem('queueFilter'));
+
+    console.log('in queuetable.jsx validatedPaginationOptions');
+    console.log(filterParam);
+    console.log('filteredByList');
+    console.log(filteredByList);
+    console.log('local filter');
+    console.log(localFilter);
+    // TODO: Have to set and clear the localFilter now
+    // TODO: Also need a property/state variable to determine if the local filter should be used?
     const pageNumber = tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1 || 0;
 
     const currentPage = pageNumber + 1 > numberOfPages || pageNumber < 0 ? 0 : pageNumber;
@@ -386,6 +399,8 @@ export default class QueueTable extends React.PureComponent {
 
   updateFilteredByList = (newList) => {
     this.setState({ filteredByList: newList, filtered: true }, this.updateAddressBar);
+
+    console.log('in queue table updateFilteredByList');
 
     // When filters are added or changed, default back to the first page of data
     // because the number of pages could have changed as data is filtered out.
