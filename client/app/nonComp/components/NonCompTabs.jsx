@@ -15,9 +15,9 @@ const NonCompTabsUnconnected = (props) => {
   const onHistoryUpdate = (urlString) => {
     const url = new URL(urlString);
     const params = new URLSearchParams(url.search);
-    const filterParam = params.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
+    const filterParams = params.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
 
-    setFilter(filterParam);
+    setFilter(filterParams);
   };
 
   const queryParams = new URLSearchParams(window.location.search);
