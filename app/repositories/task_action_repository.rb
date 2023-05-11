@@ -31,7 +31,10 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     end
 
     def mark_final_notification_letter(_task, _user = nil)
-      { modal_body: COPY::MARK_AS_COMPLETE_FROM_SEND_FINAL_NOTIFICATION_LETTER_CONTESTED_CLAIM }
+      {
+        modal_body: COPY::MARK_AS_COMPLETE_FROM_SEND_FINAL_NOTIFICATION_LETTER_CONTESTED_CLAIM,
+        modal_button_text: COPY::MARK_TASK_COMPLETE_BUTTON_CONTESTED_CLAIM
+      }
     end
 
     def cancel_task_data(task, _user = nil)
@@ -403,7 +406,8 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     def resend_final_notification_letter_task_data(_task, _user = nil)
       params = {
         modal_title: COPY::RESEND_FINAL_NOTIFICATION_LETTER_TITLE,
-        modal_body: COPY::RESEND_FINAL_NOTIFICATION_LETTER_COPY
+        modal_body: COPY::RESEND_FINAL_NOTIFICATION_LETTER_COPY,
+        modal_button_text: COPY::RESEND_FINAL_NOTIFICATION_LETTER_BUTTON
       }
       params
     end
