@@ -4,7 +4,7 @@ class VbmsCommunicationPackage < CaseflowRecord
   has_many :vbms_distributions
 
   validates :file_number, :comm_package_name, :document_referenced, presence: true
-  validates :comm_package_name, format: { with: /\A[\w !*+,-.:;=?]{1,225}\Z/ }
+  validates :comm_package_name, length: { in: 1..255 }, format: { with: /\A[\w !*+,-.:;=?]{1,255}\Z/ }
 
   # document_referenced has current data type of array of bigint values
   #   - need to solve before being able to validate "id" and "copies"
