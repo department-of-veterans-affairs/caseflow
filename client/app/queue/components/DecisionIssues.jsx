@@ -154,7 +154,9 @@ DecisionIssues.propTypes = {
   openDecisionHandler: PropTypes.func,
   hearingWorksheet: PropTypes.object,
   hideDelete: PropTypes.func,
-  hideEdit: PropTypes.func
+  hideEdit: PropTypes.func,
+  mstStatus: PropTypes.bool,
+  pactStatus: PropTypes.bool
 };
 
 DecisionIssues.defaultProps = {
