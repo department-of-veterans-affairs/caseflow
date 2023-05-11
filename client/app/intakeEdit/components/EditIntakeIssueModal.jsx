@@ -23,8 +23,8 @@ export class EditIntakeIssueModal extends React.Component {
     super(props);
 
     this.state = {
-      mstCheckboxValue: false,
-      pactCheckboxValue: false,
+      mstChecked: false,
+      pactChecked: false,
       mstReasonNotes: '',
       pactReasonNotes: ''
     };
@@ -32,19 +32,19 @@ export class EditIntakeIssueModal extends React.Component {
 
   handleMstCheckboxChange = () => {
     this.setState((prevState) => ({
-      mstCheckboxValue: !prevState.mstCheckboxValue
+      mstChecked: !prevState.mstChecked
     }));
   }
 
   handlePactCheckboxChange = () => {
     this.setState((prevState) => ({
-      pactCheckboxValue: !prevState.pactCheckboxValue
+      pactChecked: !prevState.pactChecked
     }));
   }
 
-  mstReasonNotesOnChange = (mstReasonNotes) => this.setState({ mstReasonNotes });
+  mstReasonNotesChange = (mstReasonNotes) => this.setState({ mstReasonNotes });
 
-  pactReasonNotesOnChange = (pactReasonNotes) => this.setState({ pactReasonNotes });
+  pactReasonNotesChange = (pactReasonNotes) => this.setState({ pactReasonNotes });
 
   render() {
     const {
@@ -59,7 +59,7 @@ export class EditIntakeIssueModal extends React.Component {
       pactIdentification
     } = this.props;
 
-    const { mstCheckboxValue, pactCheckboxValue } = this.state;
+    const { mstChecked, pactChecked } = this.state;
 
     return <div className="edit-intake-issue">
       <Modal
@@ -109,20 +109,20 @@ export class EditIntakeIssueModal extends React.Component {
                 { mstIdentification &&
                   <Checkbox
                     name={MST_LABEL} strongLabel
+                    value={mstChecked}
                     onChange={this.handleMstCheckboxChange}
-                    value={mstCheckboxValue}
                   />
                 }
               </label>
             </li>
           </ul>
-          {(mstCheckboxValue) && (
+          {(mstChecked) && (
             <div>
               <label style={{ 'padding-left': '2em' }}>
                 <TextField
                   name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
                   value={this.state.mstReasonNotes}
-                  onChange={this.mstReasonNotesOnChange} />
+                  onChange={this.mstReasonNotesChange} />
               </label>
             </div>
           )}
@@ -133,19 +133,19 @@ export class EditIntakeIssueModal extends React.Component {
                   <Checkbox style={{ 'margin-top': 0, 'margin-bottom': 0 }}
                     name={PACT_LABEL} strongLabel
                     onChange={this.handlePactCheckboxChange}
-                    value={pactCheckboxValue}
+                    value={pactChecked}
                   />
                 }
               </label>
             </li>
           </ul>
-          {(pactCheckboxValue) && (
+          {(pactChecked) && (
             <div>
               <label style={{ 'padding-left': '2em' }}>
                 <TextField
                   name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
                   value={this.state.pactReasonNotes}
-                  onChange={this.pactReasonNotesOnChange} />
+                  onChange={this.pactReasonNotesChange} />
               </label>
             </div>
           )}
@@ -158,8 +158,8 @@ export class EditIntakeIssueModal extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    mstCheckboxValue: state.mstCheckboxValue,
-    pactCheckboxValue: state.pactCheckboxValue,
+    mstChecked: state.mstChecked,
+    pactChecked: state.pactChecked,
     mstReasonNotes: state.mstReasonNotes,
     pactReasonNotes: state.pactReasonNotes
   };
@@ -183,7 +183,9 @@ EditIntakeIssueModal.propTypes = {
   mst_status: PropTypes.func,
   pact_status: PropTypes.func,
   mstCheckboxValue: PropTypes.bool,
+  setMstCheckboxFunction: PropTypes.func,
   pactCheckboxValue: PropTypes.bool,
+  setPactCheckboxFunction: PropTypes.func,
   mstReasonNotes: PropTypes.object.isRequired,
   pactReasonNotes: PropTypes.object.isRequired,
   intakeData: PropTypes.object,
