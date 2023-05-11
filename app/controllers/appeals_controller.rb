@@ -165,7 +165,6 @@ class AppealsController < ApplicationController
   def edit
     # only AMA appeals may call /edit
     # return not_found if appeal.is_a?(LegacyAppeal)
-    true
   end
 
   helper_method :appeal, :url_appeal_uuid
