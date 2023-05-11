@@ -72,6 +72,9 @@ module AppealNotificationReportConcern
   # Purpose: Checks in eFolder for a doc in the veteran's eFolder with the same type
   # Returns: Boolean related to whether a document with the same type already exists
   def document_already_exists?
+    # Just putting some thoughts down here. I think this may need to be refined further
+    # appeal.vbms_uploaded_documents.where(document_type: "BVA Case Notifications").count > 0
+
     # Hard-coding this for now
     true
   end
