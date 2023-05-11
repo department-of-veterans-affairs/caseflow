@@ -10,14 +10,17 @@ class ExternalApi::PacmanService::Response
 
   def data; end
 
+  # Wrapper method to check for errors
   def error
     check_for_error
   end
 
+  # Checks if there is no error
   def success?
     !resp.error?
   end
 
+  # Parses response body to an object
   def body
     @body ||= begin
                 JSON.parse(resp.body)
@@ -28,6 +31,7 @@ class ExternalApi::PacmanService::Response
 
   private
 
+  # Error codes and their associated error
   ERROR_LOOKUP = {
     400 => Caseflow::Error::PacmanBadRequestError,
     403 => Caseflow::Error::PacmanForbiddenError,
@@ -35,6 +39,7 @@ class ExternalApi::PacmanService::Response
     500 => Caseflow::Error::PacmanInternalServerError
   }.freeze
 
+  # Checks for error and returns if found
   def check_for_error
     return if success?
 
@@ -47,6 +52,7 @@ class ExternalApi::PacmanService::Response
     end
   end
 
+  # Gets the error message from the response
   def error_message
     return "No error message from Pacman" if body.empty?
 
