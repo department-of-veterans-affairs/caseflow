@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 class VbmsCommunicationPackage < CaseflowRecord
-  has_one :vbms_uploaded_document
+  # Changed this association to "belongs_to" instead of "has_one" because FK sits on this table. Is that correct?
+  #   – I also set to optional false, requiring the assocation to an existing vbms_uploaded_document. Is that correct?
+  belongs_to :vbms_uploaded_document, optional: false
+  # has_one :vbms_uploaded_document
   has_many :vbms_distributions
 
   validates :file_number, :comm_package_name, :document_referenced, presence: true
