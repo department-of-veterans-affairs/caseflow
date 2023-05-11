@@ -12,6 +12,11 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   end
 
   def create
+    if address_params.present? && recipient_params.present?
+      MailRequest.new(params)
+    elsif !address_params.present? || !recipient_params.present?
+      # log_some_error
+    end
 
     appeal = nil
     # Find veteran from appeal id and check with db
@@ -38,5 +43,38 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     else
       render json: result.errors[0], status: :bad_request
     end
+  end
+
+  def destination_params
+    params.permit(
+      :address_line_1,
+      :address_line_2,
+      :address_line_3,
+      :address_line_4,
+      :address_line_5,
+      :address_line_6,
+      :city,
+      :country_code,
+      :postal_code,
+      :state,
+      :treat_line_2_as_addressee,
+      :treat_line_3_as_addressee,
+      :country_name,
+      :email_address,
+      :phone_number
+    )
+  end
+
+  def recipient_params
+    params.permit(
+      :recipient_type,
+      :name,
+      :first_name,
+      :middle_name,
+      :last_name,
+      :participant_id,
+      :poa_code,
+      :claimant_station_of_jurisdiction
+    )
   end
 end
