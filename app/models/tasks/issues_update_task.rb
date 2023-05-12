@@ -24,17 +24,11 @@ class IssuesUpdateTask < Task
     edit_issue_format << edit_reason
 
     #add the MST and PACT edit reasons
-    if(mst_edit_reason != "")
       edit_issue_format << mst_edit_reason
-    end
-    if(pact_edit_reason != "")
       edit_issue_format << pact_edit_reason
-    end
 
     # add edit_issue_format into the instructions array for the task
     instructions << edit_issue_format
-    binding.pry
-
     save!
   end
 
