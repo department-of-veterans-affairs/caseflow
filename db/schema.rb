@@ -1790,9 +1790,9 @@ ActiveRecord::Schema.define(version: 2023_04_25_144000) do
 
   create_table "vbms_communication_packages", force: :cascade do |t|
     t.string "comm_package_name", null: false
+    t.bigint "copies", default: 1
     t.datetime "created_at", null: false
     t.bigint "created_by_id"
-    t.bigint "document_referenced", default: [], array: true
     t.string "file_number", comment: "number associated with the documents."
     t.string "status"
     t.datetime "updated_at", null: false

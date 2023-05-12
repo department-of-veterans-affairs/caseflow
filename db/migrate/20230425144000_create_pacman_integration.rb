@@ -2,7 +2,7 @@ class CreatePacmanIntegration < Caseflow::Migration
   def change
     create_table :vbms_communication_packages do |t|
       t.string :file_number, comment: "number associated with the documents."
-      t.bigint :document_referenced, default: [], array: true
+      t.bigint :copies, default: 1
       t.string :status
       t.string :comm_package_name, null: false
       t.timestamps
