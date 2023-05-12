@@ -23,6 +23,12 @@ describe VbmsDistribution, :postgres do
     end
   end
 
+  shared_examples "distribution has valid attributes" do
+    it "is valid with valid attributes" do
+      expect(distribution).to be_valid
+    end
+  end
+
   context "recipient type is person" do
     let(:distribution) do
       VbmsDistribution.new(
@@ -33,9 +39,7 @@ describe VbmsDistribution, :postgres do
       )
     end
 
-    it "is valid person with valid attributes" do
-      expect(distribution).to be_valid
-    end
+    include_examples "distribution has valid attributes"
 
     it "is not valid without a first name" do
       distribution.first_name = nil
@@ -44,6 +48,13 @@ describe VbmsDistribution, :postgres do
 
     it "is not valid without a last name" do
       distribution.first_name = nil
+      expect(distribution).to be_valid
+    end
+  end
+
+  shared_examples "recipient type is not person" do
+    it "is not valid without a name" do
+      distribution.name = nil
       expect(distribution).to be_valid
     end
   end
@@ -57,14 +68,8 @@ describe VbmsDistribution, :postgres do
       )
     end
 
-    it "is valid organization with valid attributes" do
-      expect(distribution).to be_valid
-    end
-
-    it "is not valid without a name" do
-      distribution.name = nil
-      expect(distribution).to be_valid
-    end
+    include_examples "distribution has valid attributes"
+    include_examples "recipient type is not person"
   end
 
   context "recipient is system" do
@@ -76,14 +81,8 @@ describe VbmsDistribution, :postgres do
       )
     end
 
-    it "is valid system with valid attributes" do
-      expect(distribution).to be_valid
-    end
-
-    it "is not valid without a name" do
-      distribution.name = nil
-      expect(distribution).to be_valid
-    end
+    include_examples "distribution has valid attributes"
+    include_examples "recipient type is not person"
   end
 
   context "recipient is ro-colocated" do
@@ -95,14 +94,8 @@ describe VbmsDistribution, :postgres do
       )
     end
 
-    it "is valid ro-colocated with valid attributes" do
-      expect(distribution).to be_valid
-    end
-
-    it "is not valid without a name" do
-      distribution.name = nil
-      expect(distribution).to be_valid
-    end
+    include_examples "distribution has valid attributes"
+    include_examples "recipient type is not person"
 
     it "is not valid without a poa code" do
       distribution.poa_code = nil
