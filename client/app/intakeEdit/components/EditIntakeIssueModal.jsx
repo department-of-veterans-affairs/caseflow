@@ -23,10 +23,8 @@ export class EditIntakeIssueModal extends React.Component {
     super(props);
 
     this.state = {
-      mstChecked: false,
-      pactChecked: false,
-      mstReasonNotes: '',
-      pactReasonNotes: ''
+      mstJustification: '',
+      pactJustification: ''
     };
   }
 
@@ -42,9 +40,9 @@ export class EditIntakeIssueModal extends React.Component {
     }));
   }
 
-  mstReasonNotesChange = (mstReasonNotes) => this.setState({ mstReasonNotes });
+  handleMstJustification = (mstJustification) => this.setState({ mstJustification });
 
-  pactReasonNotesChange = (pactReasonNotes) => this.setState({ pactReasonNotes });
+  handlePactJustification = (pactJustification) => this.setState({ pactJustification });
 
   render() {
     const {
@@ -55,11 +53,13 @@ export class EditIntakeIssueModal extends React.Component {
       currentIssueDescription = currentIssue.description,
       currentIssueBenefitType = BENEFIT_TYPES[currentIssue.benefitType],
       currentIssueDecisionDate = formatDateStr(currentIssue.decisionDate),
+      currentIssueMstChecked = currentIssue.mstChecked,
+      currentIssuePactChecked = currentIssue.pactChecked,
       mstIdentification,
       pactIdentification
     } = this.props;
 
-    const { mstChecked, pactChecked } = this.state;
+    const { mstChecked, pactChecked, mstJustification, pactJustification } = this.state;
 
     return <div className="edit-intake-issue">
       <Modal
@@ -71,7 +71,23 @@ export class EditIntakeIssueModal extends React.Component {
           { classNames: ['usa-button-blue', 'save-issue'],
             name: 'Save',
             onClick: () => {
-              this.props.onSubmit();
+
+              if (this.handleMstCheckboxChange && mstJustification === '') {
+                return;
+              }
+              if (this.handlePactCheckboxChange && pactJustification === '') {
+                return;
+              }
+
+              this.props.onSubmit({
+                currentIssue: {
+                  ...currentIssue,
+                  mstChecked,
+                  pactChecked,
+                  mstJustification,
+                  pactJustification
+                }
+              });
             }
           }
         ]}
@@ -109,7 +125,7 @@ export class EditIntakeIssueModal extends React.Component {
                 { mstIdentification &&
                   <Checkbox
                     name={MST_LABEL} strongLabel
-                    value={mstChecked}
+                    value={this.state.currentIssueMstChecked}
                     onChange={this.handleMstCheckboxChange}
                   />
                 }
@@ -118,11 +134,11 @@ export class EditIntakeIssueModal extends React.Component {
           </ul>
           {(mstChecked) && (
             <div>
-              <label style={{ 'padding-left': '2em' }}>
+              <label style={{ paddingLeft: '2em' }}>
                 <TextField
                   name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
-                  value={this.state.mstReasonNotes}
-                  onChange={this.mstReasonNotesChange} />
+                  value={this.state.mstJustification}
+                  onChange={this.handleMstJustification} />
               </label>
             </div>
           )}
@@ -130,10 +146,10 @@ export class EditIntakeIssueModal extends React.Component {
             <li>
               <label>
                 { pactIdentification &&
-                  <Checkbox style={{ 'margin-top': 0, 'margin-bottom': 0 }}
+                  <Checkbox style={{ marginTop: 0, marginBottom: 0 }}
                     name={PACT_LABEL} strongLabel
+                    value={this.state.currentIssuePactChecked}
                     onChange={this.handlePactCheckboxChange}
-                    value={pactChecked}
                   />
                 }
               </label>
@@ -144,8 +160,8 @@ export class EditIntakeIssueModal extends React.Component {
               <label style={{ 'padding-left': '2em' }}>
                 <TextField
                   name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
-                  value={this.state.pactReasonNotes}
-                  onChange={this.pactReasonNotesChange} />
+                  value={this.state.pactJustification}
+                  onChange={this.handlePactJustification} />
               </label>
             </div>
           )}
@@ -160,17 +176,17 @@ const mapStateToProps = (state) => {
   return {
     mstChecked: state.mstChecked,
     pactChecked: state.pactChecked,
-    mstReasonNotes: state.mstReasonNotes,
-    pactReasonNotes: state.pactReasonNotes
+    mstJustification: state.mstJustification,
+    pactJustification: state.pactJustification
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    handleMstCheckboxChange: () => dispatch({ type: 'mst_status' }),
-    handlePactCheckboxChange: () => dispatch({ type: 'pact_status' }),
-    mstReasonNotes: () => dispatch({ type: 'mst_reason_notes' }),
-    pactReasonNotes: () => dispatch({ type: 'pact_reason_notes' })
+    handleMstCheckboxChange: () => dispatch({ type: 'SET_MST_STATUS' }),
+    handlePactCheckboxChange: () => dispatch({ type: 'SET_PACT_STATUS' }),
+    handleMstJustification: () => dispatch({ type: 'SET_MST_JUSTIFICATION' }),
+    handlePactJustification: () => dispatch({ type: 'SET_PACT_JUSTIFICATION' })
   };
 };
 
@@ -180,14 +196,10 @@ EditIntakeIssueModal.propTypes = {
   issueIndex: PropTypes.number,
   mstIdentification: PropTypes.bool,
   pactIdentification: PropTypes.bool,
-  mst_status: PropTypes.func,
-  pact_status: PropTypes.func,
-  mstCheckboxValue: PropTypes.bool,
-  setMstCheckboxFunction: PropTypes.func,
-  pactCheckboxValue: PropTypes.bool,
-  setPactCheckboxFunction: PropTypes.func,
-  mstReasonNotes: PropTypes.object.isRequired,
-  pactReasonNotes: PropTypes.object.isRequired,
+  mstChecked: PropTypes.bool,
+  pactChecked: PropTypes.bool,
+  mstJustification: PropTypes.object,
+  pactJustification: PropTypes.object,
   intakeData: PropTypes.object,
   currentIssue: PropTypes.object,
   currentIssueCategory: PropTypes.string,

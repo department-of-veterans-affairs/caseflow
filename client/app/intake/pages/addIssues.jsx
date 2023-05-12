@@ -208,6 +208,21 @@ class AddIssuesPage extends React.Component {
     });
   }
 
+  submitEditIntakeIssue = () => {
+    this.props.EditIntakeIssueModal(
+      this.state.mstChecked,
+      this.state.pactChecked,
+      this.state.mstJustification,
+      this.state.pactJustification
+    );
+    this.setState({
+      mstChecked: this.state.mstChecked,
+      pactChecked: this.state.pactChecked,
+      mstJustification: this.state.mstJustification,
+      pactJustification: this.state.pactJustification
+    });
+  }
+
   render() {
     const { intakeForms,
       formType,
@@ -530,11 +545,7 @@ class AddIssuesPage extends React.Component {
             onCancel={() => {
               this.props.toggleEditIntakeIssueModal();
             }}
-            onSubmit={() => {
-              // TO-DO: Logic to update table and state for MST and Pact changes
-              this.props.toggleEditIntakeIssueModal();
-
-            }}
+            onSubmit={this.submitEditIntakeIssue}
           />
         )}
         <h1 className="cf-txt-c">{messageHeader}</h1>
