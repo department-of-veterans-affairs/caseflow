@@ -7,7 +7,8 @@ class IssuesUpdateTask < Task
     "Issues Update Task"
   end
 
-  def format_instructions(issue_category, original_mst, original_pact, edit_mst, edit_pact, edit_reason)
+  def format_instructions(issue_category, original_mst, original_pact, edit_mst, edit_pact, edit_reason,
+  mst_edit_reason = "", pact_edit_reason = "")
     # format the instructions by loading an array and adding it to the instructions
     edit_issue_format = []
     edit_issue_format << issue_category
@@ -22,8 +23,18 @@ class IssuesUpdateTask < Task
     # add edit reason on the end
     edit_issue_format << edit_reason
 
+    #add the MST and PACT edit reasons
+    if(mst_edit_reason != "")
+      edit_issue_format << mst_edit_reason
+    end
+    if(pact_edit_reason != "")
+      edit_issue_format << pact_edit_reason
+    end
+
     # add edit_issue_format into the instructions array for the task
     instructions << edit_issue_format
+    binding.pry
+
     save!
   end
 
