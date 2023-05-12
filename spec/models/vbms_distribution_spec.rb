@@ -23,9 +23,14 @@ describe VbmsDistribution, :postgres do
     end
   end
 
-  shared_examples "distribution has valid attributes" do
+  shared_examples "distribution has valid attributes and associations" do
     it "is valid with valid attributes" do
       expect(distribution).to be_valid
+    end
+
+    it "is not valid without an associated VbmsCommunicationPackage" do
+      destination.vbms_communication_package = nil
+      expect(destination).to_not be_valid
     end
   end
 
@@ -39,7 +44,7 @@ describe VbmsDistribution, :postgres do
       )
     end
 
-    include_examples "distribution has valid attributes"
+    include_examples "distribution has valid attributes and associations"
 
     it "is not valid without a first name" do
       distribution.first_name = nil
@@ -68,7 +73,7 @@ describe VbmsDistribution, :postgres do
       )
     end
 
-    include_examples "distribution has valid attributes"
+    include_examples "distribution has valid attributes and associations"
     include_examples "recipient type is not person"
   end
 
@@ -81,7 +86,7 @@ describe VbmsDistribution, :postgres do
       )
     end
 
-    include_examples "distribution has valid attributes"
+    include_examples "distribution has valid attributes and associations"
     include_examples "recipient type is not person"
   end
 
@@ -94,7 +99,7 @@ describe VbmsDistribution, :postgres do
       )
     end
 
-    include_examples "distribution has valid attributes"
+    include_examples "distribution has valid attributes and associations"
     include_examples "recipient type is not person"
 
     it "is not valid without a poa code" do
