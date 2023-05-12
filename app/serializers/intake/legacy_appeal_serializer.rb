@@ -33,7 +33,7 @@ class Intake::LegacyAppealSerializer
   end
 
   attribute :edit_issues_url do |object|
-    "/appeals/#{object.id}/edit"
+    "/appeals/#{id}/edit"
   end
 
   attribute :processed_at do |object|
