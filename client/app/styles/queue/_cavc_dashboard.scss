@@ -56,6 +56,8 @@
     padding-right: 0;
   }
 
+  // disable scss-lint rule for not allowing element.class syntax
+  // scss-lint:disable QualifyingElement
   // the following two rules are very specific for the "remove basis" button in decision reasons
   // left padding + margin should equal 7.5rem
   div.usa-accordion-content > div > div > div > .dash-basis-group {
@@ -83,6 +85,7 @@
     width: 46rem;
     margin-bottom: 4rem;
   }
+  // scss-lint:enable QualifyingElement
 
   .dash-basis-group {
     display: flex;
