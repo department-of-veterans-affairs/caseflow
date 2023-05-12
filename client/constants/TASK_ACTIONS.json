@@ -37,6 +37,11 @@
     "value": "modal/assign_to_attorney",
     "func": "assign_to_attorney_data"
   },
+  "ASSIGN_TO_ATTORNEY_LEGACY": {
+    "label": "Assign to attorney",
+    "value": "modal/assign_to_attorney",
+    "func": "assign_to_attorney_data"
+  },
   "ASSIGN_TO_HEARING_ADMIN_MEMBER": {
     "label": "Assign to person",
     "value": "modal/assign_to_hearing_admin_member",
