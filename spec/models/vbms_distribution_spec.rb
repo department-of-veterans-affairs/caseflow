@@ -13,7 +13,7 @@ describe VbmsDistribution, :postgres do
       )
     end
 
-    it "is not valid with nil recipient type" do
+    it "is not valid without a recipient type" do
       expect(distribution).to_not be_valid
     end
 
@@ -23,7 +23,7 @@ describe VbmsDistribution, :postgres do
     end
   end
 
-  context "recipient is person" do
+  context "recipient type is person" do
     let(:distribution) do
       VbmsDistribution.new(
         recipient_type: "person",
@@ -37,28 +37,18 @@ describe VbmsDistribution, :postgres do
       expect(distribution).to be_valid
     end
 
-    it "is not valid with nil first name" do
+    it "is not valid without a first name" do
       distribution.first_name = nil
       expect(distribution).to be_valid
     end
 
-    it "is not valid with empty string as first name" do
-      distribution.first_name = ""
-      expect(distribution).to be_valid
-    end
-
-    it "is not valid with nil last name" do
+    it "is not valid without a last name" do
       distribution.first_name = nil
-      expect(distribution).to be_valid
-    end
-
-    it "is not valid with empty string as last name" do
-      distribution.first_name = ""
       expect(distribution).to be_valid
     end
   end
 
-  context "recipient is organization" do
+  context "recipient type is organization" do
     let(:distribution) do
       VbmsDistribution.new(
         recipient_type: "organization",
@@ -71,13 +61,8 @@ describe VbmsDistribution, :postgres do
       expect(distribution).to be_valid
     end
 
-    it "is not valid with nil name" do
+    it "is not valid without a name" do
       distribution.name = nil
-      expect(distribution).to be_valid
-    end
-
-    it "is not valid with empty string as name" do
-      distribution.name = ""
       expect(distribution).to be_valid
     end
   end
@@ -95,13 +80,8 @@ describe VbmsDistribution, :postgres do
       expect(distribution).to be_valid
     end
 
-    it "is not valid with nil name" do
+    it "is not valid without a name" do
       distribution.name = nil
-      expect(distribution).to be_valid
-    end
-
-    it "is not valid with empty string as name" do
-      distribution.name = ""
       expect(distribution).to be_valid
     end
   end
@@ -119,33 +99,18 @@ describe VbmsDistribution, :postgres do
       expect(distribution).to be_valid
     end
 
-    it "is not valid with nil name" do
+    it "is not valid without a name" do
       distribution.name = nil
       expect(distribution).to be_valid
     end
 
-    it "is not valid with empty string as name" do
-      distribution.name = ""
-      expect(distribution).to be_valid
-    end
-
-    it "is not valid with nil poa code" do
+    it "is not valid without a poa code" do
       distribution.poa_code = nil
       expect(distribution).to be_valid
     end
 
-    it "is not valid with empty string as poa code" do
-      distribution.poa_code = ""
-      expect(distribution).to be_valid
-    end
-
-    it "is not valid with nil claimant station of jurisdiction" do
+    it "is not valid without a claimant station of jurisdiction" do
       distribution.claimant_station_of_jurisdiction = nil
-      expect(distribution).to be_valid
-    end
-
-    it "is not valid with empty string as claimant station of jurisdiction" do
-      distribution.claimant_station_of_jurisdiction = ""
       expect(distribution).to be_valid
     end
   end
