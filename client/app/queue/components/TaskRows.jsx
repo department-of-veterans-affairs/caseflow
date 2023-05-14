@@ -309,7 +309,7 @@ class TaskRows extends React.PureComponent {
     };
 
     const renderMstLabel = (mstText, style) => {
-      if (mstText !== '') {
+      if (mstText) {
         return <React.Fragment>
           <h5 style={style}>Reason for Change (MST):</h5>
           <small>{mstText}</small>
@@ -318,7 +318,7 @@ class TaskRows extends React.PureComponent {
     };
 
     const renderPactLabel = (pactText, style) => {
-      if (pactText !== '') {
+      if (pactText) {
         return <React.Fragment>
           <h5 style={style}>Reason for Change (PACT):</h5>
           <small>{pactText}</small>
@@ -345,10 +345,8 @@ class TaskRows extends React.PureComponent {
             <br />
             <small>{text[3]}</small>
             <br />
-            <h5 style={hStyle}>Reason for Change:</h5>
-            <small>{text[4]}</small>
-            {renderMstLabel(text[5], hStyle)}
-            {renderPactLabel(text[6], hStyle)}
+            {renderMstLabel(text[4], hStyle)}
+            {renderPactLabel(text[5], hStyle)}
           </div>
         );
       }
