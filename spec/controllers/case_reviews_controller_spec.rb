@@ -82,11 +82,15 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
             "issues": [{ "disposition": disposition,
                          "description": "wonderful life",
                          "benefit_type": "pension",
+                         "mstStatus": true,
+                         "pactStatus": false,
                          "diagnostic_code": diagnostic_code,
                          "request_issue_ids": request_issue_ids },
                        { "disposition": "remanded",
                          "description": "great moments",
                          "benefit_type": "vha",
+                         "mstStatus": false,
+                         "pactStatus": true,
                          "diagnostic_code": "5002",
                          "request_issue_ids": [request_issue2.id],
                          "remand_reasons": [{ "code": "va_records", "post_aoj": true }] }]
@@ -126,6 +130,30 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
 
           context "when all parameters are present" do
             it_behaves_like "valid params"
+          end
+
+          context "when mst or pact status are passed in params" do
+            it "updates the Request Issues mst or pact status" do
+              expect(request_issue1.mst_status).to be(false)
+              expect(request_issue1.pact_status).to be(false)
+              expect(request_issue2.mst_status).to be(false)
+              expect(request_issue2.pact_status).to be(false)
+              expect(request_issue3.mst_status).to be(false)
+              expect(request_issue3.pact_status).to be(false)
+
+              subject
+              expect(response.status).to eq(200)
+
+              request_issues_from_response = JSON.parse(response.body, symbolize_names: true)[:issues][:request_issues]
+              .sort_by { |issue| issue[:id] }
+
+              expect(request_issues_from_response[0][:mst_status]).to be(true)
+              expect(request_issues_from_response[0][:pact_status]).to be(false)
+              expect(request_issues_from_response[1][:mst_status]).to be(false)
+              expect(request_issues_from_response[1][:pact_status]).to be(true)
+              expect(request_issues_from_response[2][:mst_status]).to be(true)
+              expect(request_issues_from_response[2][:pact_status]).to be(false)
+            end
           end
         end
       end
