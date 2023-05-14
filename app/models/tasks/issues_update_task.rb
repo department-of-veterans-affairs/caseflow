@@ -33,7 +33,6 @@ class IssuesUpdateTask < Task
 
     # add edit_issue_format into the instructions array for the task
     instructions << edit_issue_format
-    binding.pry
 
     save!
   end
