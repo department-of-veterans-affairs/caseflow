@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Modal from 'app/components/Modal';
 import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
-import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
+import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import { formatDateStr } from '../../util/DateUtil';
 import {
   INTAKE_EDIT_ISSUE_TITLE,
@@ -48,9 +48,11 @@ export class EditIntakeIssueModal extends React.Component {
       issueIndex,
       onCancel,
       currentIssue = this.props.intakeData.addedIssues[issueIndex],
+      issue = this.props.legacyIssues[issueIndex],
       currentIssueCategory = currentIssue.category,
       currentIssueDescription = currentIssue.description,
-      currentIssueBenefitType = BENEFIT_TYPES[currentIssue.benefitType],
+      currentIssueText = currentIssue.text || issue.description,
+      currentIssueBenefitType = BENEFIT_TYPES[currentIssue.benefitType] || BENEFIT_TYPES[issue.benefitType],
       currentIssueDecisionDate = formatDateStr(currentIssue.decisionDate),
       mstIdentification,
       pactIdentification
@@ -80,7 +82,8 @@ export class EditIntakeIssueModal extends React.Component {
           <strong>
             { INTAKE_EDIT_ISSUE_LABEL }
           </strong>
-          { currentIssueCategory ? `${currentIssueCategory } - ${ currentIssueDescription}` : currentIssueDescription}
+          { currentIssueCategory ? `${currentIssueCategory} - ${currentIssueDescription}` : currentIssueDescription}
+          { currentIssueText }
         </div>
 
         <div>
@@ -92,7 +95,7 @@ export class EditIntakeIssueModal extends React.Component {
 
         <div>
           <strong>
-            { INTAKE_EDIT_ISSUE_DECISION_DATE }
+            { currentIssueDecisionDate ? INTAKE_EDIT_ISSUE_DECISION_DATE : '' }
           </strong>
           { currentIssueDecisionDate }
         </div>
@@ -173,7 +176,9 @@ EditIntakeIssueModal.propTypes = {
   currentIssueCategory: PropTypes.string,
   currentIssueDescription: PropTypes.string,
   currentIssueBenefitType: PropTypes.string,
-  currentIssueDecisionDate: PropTypes.string
+  currentIssueDecisionDate: PropTypes.string,
+  currentIssueText: PropTypes.string,
+  issue: PropTypes.object
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditIntakeIssueModal);

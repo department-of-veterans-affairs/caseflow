@@ -932,6 +932,10 @@ class Appeal < DecisionReview
     return true if relevant_tasks.all?(&:closed?)
   end
 
+  def is_legacy?
+    false
+  end
+
   private
 
   def business_lines_needing_assignment
