@@ -383,8 +383,7 @@ class SelectDispositionsView extends React.PureComponent {
       <AmaIssueList
         requestIssues={appeal.issues}
         errorMessages={issueErrors}
-        specialIssuesValue={specialIssuesStatus(specialIssuesValues)}
-        pactStatus={specialIssuesValues.pactStatus}>
+        specialIssuesValue={specialIssuesStatus(specialIssuesValues)}>
         <DecisionIssues
           decisionIssues={appeal.decisionIssues}
           openDecisionHandler={this.openDecisionHandler}
