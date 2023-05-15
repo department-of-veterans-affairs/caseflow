@@ -345,7 +345,7 @@ class SelectDispositionsView extends React.PureComponent {
     };
 
     const specialIssuesStatus = (specialIssue) => {
-      if (specialIssue.mstStatus && specialIssuesValues.pactStatus) {
+      if (specialIssue.mstStatus && specialIssue.pactStatus) {
         return 'MST,PACT';
       }
 
