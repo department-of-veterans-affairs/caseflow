@@ -25,7 +25,7 @@ class QueueFilterParameter
   end
 
   def self.escaped_value(value)
-    (URI.unescape(value) == COPY::NULL_FILTER_LABEL) ? nil : URI.unescape(value)
+    (URI::DEFAULT_PARSER.unescape(value) == COPY::NULL_FILTER_LABEL) ? nil : URI::DEFAULT_PARSER.unescape(value)
   end
 
   private
