@@ -3,11 +3,13 @@
 describe VbmsDistributionDestination, :postgres do
   let(:distribution) { VbmsDistribution.new }
 
-  shared_examples "destination has valid attributes and associations" do
+  shared_examples "destination has valid attributes" do
     it "is valid with valid attributes" do
       expect(destination).to be_valid
     end
+  end
 
+  shared_examples "destination has valid associations" do
     it "is not valid without an associated VbmsDistribution" do
       destination.vbms_distribution = nil
       expect(destination).to_not be_valid
@@ -78,7 +80,8 @@ describe VbmsDistributionDestination, :postgres do
       )
     end
 
-    include_examples "destination has valid attributes and associations"
+    include_examples "destination has valid attributes"
+    include_examples "destination has valid associations"
     include_examples "destination is a physical mailing address"
     include_examples "destination is a US address"
   end
@@ -96,7 +99,8 @@ describe VbmsDistributionDestination, :postgres do
       )
     end
 
-    include_examples "destination has valid attributes and associations"
+    include_examples "destination has valid attributes"
+    include_examples "destination has valid associations"
     include_examples "destination is a physical mailing address"
     include_examples "destination is a US address"
   end
@@ -113,7 +117,8 @@ describe VbmsDistributionDestination, :postgres do
       )
     end
 
-    include_examples "destination has valid attributes and associations"
+    include_examples "destination has valid attributes"
+    include_examples "destination has valid associations"
     include_examples "destination is a physical mailing address"
 
     it "is not valid without a country name" do
@@ -131,7 +136,8 @@ describe VbmsDistributionDestination, :postgres do
       )
     end
 
-    include_examples "destination has valid attributes and associations"
+    include_examples "destination has valid attributes"
+    include_examples "destination has valid associations"
 
     it "is invalid without an email address" do
       destination.email_address = nil
@@ -148,7 +154,8 @@ describe VbmsDistributionDestination, :postgres do
       )
     end
 
-    include_examples "destination has valid attributes and associations"
+    include_examples "destination has valid attributes"
+    include_examples "destination has valid associations"
 
     it "is invalid without a phone number" do
       destination.phone_number = nil
@@ -169,7 +176,7 @@ describe VbmsDistributionDestination, :postgres do
       )
     end
 
-    include_examples "destination has valid attributes and associations"
+    include_examples "destination has valid attributes"
 
     it "is not valid without a destination type" do
       destination.destination_type = nil

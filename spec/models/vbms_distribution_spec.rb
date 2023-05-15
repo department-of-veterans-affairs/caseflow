@@ -3,34 +3,22 @@
 describe VbmsDistribution, :postgres do
   let(:package) { VbmsCommunicationPackage.new }
 
-  context "recipient type is nil or incorrect" do
-    let(:distribution) do
-      VbmsDistribution.new(
-        recipient_type: nil,
-        vbms_communication_package: package,
-        first_name: "First",
-        last_name: "Last"
-      )
+  shared_examples "distribution has valid attributes" do
+    it "is valid with valid attributes" do
+      expect(distribution).to be_valid
     end
+  end
 
-    it "is not valid without a recipient type" do
-      expect(distribution).to_not be_valid
-    end
-
-    it "is not valid with incorrect recipient type" do
-      distribution.recipient_type = "Person"
+  shared_examples "distribution has valid associations" do
+    it "is not valid without an associated VbmsCommunicationPackage" do
+      distribution.vbms_communication_package = nil
       expect(distribution).to_not be_valid
     end
   end
 
-  shared_examples "distribution has valid attributes and associations" do
-    it "is valid with valid attributes" do
-      expect(distribution).to be_valid
-    end
-
-    it "is not valid without an associated VbmsCommunicationPackage" do
-      distribution.vbms_communication_package = nil
-      expect(distribution).to_not be_valid
+  shared_examples "recipient type is not ro-colocated" do
+    it "is not ro-colocated" do
+      expect(distribution.is_ro_colocated?).to be false
     end
   end
 
@@ -44,7 +32,13 @@ describe VbmsDistribution, :postgres do
       )
     end
 
-    include_examples "distribution has valid attributes and associations"
+    include_examples "distribution has valid attributes"
+    include_examples "distribution has valid associations"
+    include_examples "recipient type is not ro-colocated"
+
+    it "is a person" do
+      expect(distribution.is_person?).to be true
+    end
 
     it "is not valid without a first name" do
       distribution.first_name = nil
@@ -58,6 +52,10 @@ describe VbmsDistribution, :postgres do
   end
 
   shared_examples "recipient type is not person" do
+    it "is not a person" do
+      expect(distribution.is_person?).to be false
+    end
+
     it "is not valid without a name" do
       distribution.name = nil
       expect(distribution).to_not be_valid
@@ -73,8 +71,10 @@ describe VbmsDistribution, :postgres do
       )
     end
 
-    include_examples "distribution has valid attributes and associations"
+    include_examples "distribution has valid attributes"
+    include_examples "distribution has valid associations"
     include_examples "recipient type is not person"
+    include_examples "recipient type is not ro-colocated"
   end
 
   context "recipient is system" do
@@ -86,8 +86,10 @@ describe VbmsDistribution, :postgres do
       )
     end
 
-    include_examples "distribution has valid attributes and associations"
+    include_examples "distribution has valid attributes"
+    include_examples "distribution has valid associations"
     include_examples "recipient type is not person"
+    include_examples "recipient type is not ro-colocated"
   end
 
   context "recipient is ro-colocated" do
@@ -101,8 +103,13 @@ describe VbmsDistribution, :postgres do
       )
     end
 
-    include_examples "distribution has valid attributes and associations"
+    include_examples "distribution has valid attributes"
+    include_examples "distribution has valid associations"
     include_examples "recipient type is not person"
+
+    it "is ro-colocated" do
+      expect(distribution.is_ro_colocated?).to be true
+    end
 
     it "is not valid without a poa code" do
       distribution.poa_code = nil
@@ -111,6 +118,29 @@ describe VbmsDistribution, :postgres do
 
     it "is not valid without a claimant station of jurisdiction" do
       distribution.claimant_station_of_jurisdiction = nil
+      expect(distribution).to_not be_valid
+    end
+  end
+
+  context "recipient type is nil or incorrect" do
+    let(:distribution) do
+      VbmsDistribution.new(
+        recipient_type: "person",
+        vbms_communication_package: package,
+        first_name: "First",
+        last_name: "Last"
+      )
+    end
+
+    include_examples "distribution has valid attributes"
+
+    it "is not valid without a recipient type" do
+      distribution.recipient_type = nil
+      expect(distribution).to_not be_valid
+    end
+
+    it "is not valid with incorrect recipient type" do
+      distribution.recipient_type = "Person"
       expect(distribution).to_not be_valid
     end
   end
