@@ -62,7 +62,7 @@ class QueueColumn
     value ||= COPY::NULL_FILTER_LABEL
     # Double encode the values here since we un-encode them twice in QueueFilterParameter. Once when parsing the query
     # and again when unpacking the values of the selected filters into an array.
-    { value: URI.escape(URI.escape(value)), displayText: label }
+    { value: URI::DEFAULT_PARSER.escape(URI::DEFAULT_PARSER.escape(value)), displayText: label }
   end
 
   private
