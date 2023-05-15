@@ -18,7 +18,7 @@ describe VbmsDistribution, :postgres do
 
   shared_examples "recipient type is not ro-colocated" do
     it "is not ro-colocated" do
-      expect(distribution.is_ro_colocated?).to be false
+      expect(distribution.is_ro_colocated?).to eq(false)
     end
   end
 
@@ -37,7 +37,7 @@ describe VbmsDistribution, :postgres do
     include_examples "recipient type is not ro-colocated"
 
     it "is a person" do
-      expect(distribution.is_person?).to be true
+      expect(distribution.is_person?).to eq(true)
     end
 
     it "is not valid without a first name" do
@@ -53,7 +53,7 @@ describe VbmsDistribution, :postgres do
 
   shared_examples "recipient type is not person" do
     it "is not a person" do
-      expect(distribution.is_person?).to be false
+      expect(distribution.is_person?).to eq(false)
     end
 
     it "is not valid without a name" do
