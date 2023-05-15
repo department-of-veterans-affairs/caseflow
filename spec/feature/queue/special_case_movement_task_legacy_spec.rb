@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.feature "SpecialCaseMovementTask", :all_dbs do
-  let(:scm_user) { create(:user) }
-
   let(:judge_user) { create(:user) }
   let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
   let!(:judgeteam) { JudgeTeam.create_for_judge(judge_user) }
@@ -13,6 +11,8 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
   let(:root_task) { create(:root_task, appeal: appeal) }
   let(:distribution_task) { create(:distribution_task, parent: root_task) }
   let(:hearing_task) { create(:hearing_task, parent: distribution_task) }
+
+  let!(:scm_user) { create(:user, full_name: "Rosalie SpecialCaseMovement Dunkle", css_id: "BVARDUNKLE", station_id: 101) }
 
   before do
     SpecialCaseMovementTeam.singleton.add_user(scm_user)
@@ -27,7 +27,9 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
         expect(page).to have_content(Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY.label)
       end
 
-      xit "successfully assigns the task to judge without blocked" do
+      it "successfully assigns the task to judge without blocked" do
+        distribution_task.update!(status: "assigned")
+
         visit("queue/appeals/#{distribution_task.appeal.external_id}")
         dropdown = find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL)
         dropdown.click
@@ -56,6 +58,37 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
         # remove instructions in text field
         fill_in("cancellationInstructions", with: "")
         expect(page).to have_button("Continue", disabled: true)
+
+        click_button "Cancel"
+        expect(page).to have_content "Currently active tasks"
+      end
+
+      it "Checking validations on distribution task when withdraw hearings and case assigns to judge" do
+        distribution_task.update!(status: "assigned")
+
+        visit("/queue")
+        visit("/queue/appeals/#{distribution_task.appeal.external_id}")
+        prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
+        text = Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.label
+        click_dropdown(prompt: prompt, text: text)
+
+        # check modal content
+        expect(page).to have_content(format(COPY::SPECIAL_CASE_MOVEMENT_MODAL_DETAIL))
+
+        expect(page).to have_button("Assign", disabled: true)
+
+        dropdowns = page.all(".cf-select__control")
+        dropdowns[1].click
+        dropdowns[1].sibling(".cf-select__menu").find("div .cf-select__option", text: "Lauren Roth").click
+        expect(page).to have_button("Assign", disabled: true)
+
+        # fill out instructions
+        fill_in("taskInstructions", with: "instructions")
+        expect(page).to have_button("Assign", disabled: false)
+
+        # remove instructions in text field
+        fill_in("taskInstructions", with: "")
+        expect(page).to have_button("Assign", disabled: true)
 
         click_button "Cancel"
         expect(page).to have_content "Currently active tasks"

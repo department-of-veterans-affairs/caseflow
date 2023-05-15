@@ -52,7 +52,7 @@ class AssignToView extends React.Component {
     this.state = {
       selectedValue: action ? action.value : null,
       instructions: existingInstructions,
-      modalDisableButton: false
+      modalDisableButton: true
     };
   }
 
@@ -73,13 +73,19 @@ class AssignToView extends React.Component {
   };
 
   setModalOnChangeValue = (stateValue, value) => {
-    this.setState({ [stateValue]: value }, function(){
-      if(this.state.instructions.trim().length > 0){
-        this.setState({modalDisableButton: false})
-      } else {
-        this.setState({modalDisableButton: true})
+    this.setState({ [stateValue]: value }, function() {
+      // if(this.state.instructions.trim().length > 0){
+      //   this.setState({modalDisableButton: false})
+      // } else {
+      //   this.setState({modalDisableButton: true})
+      // }
+      if ((this.state.selectedValue !== null && this.state.instructions !== '')) {
+        this.setState({ modalDisableButton: false });
       }
-    })
+      if ((this.state.instructions === '' && this.state.selectedValue !== null)) {
+        this.setState({ modalDisableButton: true });
+      }
+    });
   }
 
   submit = () => {
@@ -221,10 +227,16 @@ class AssignToView extends React.Component {
         this.validateForm
     };
 
-    if (task.type === 'JudgeLegacyDecisionReviewTask'){
+    if (task.type === 'JudgeLegacyDecisionReviewTask') {
       modalProps.button = 'Assign';
       modalProps.submitButtonClassNames = ['usa-button', 'usa-button-hover', 'usa-button-warning'];
       modalProps.submitDisabled = this.state.modalDisableButton
+    }
+
+    if (this.props.location.pathname.includes('distribute_to_judge_legacy')) {
+      modalProps.button = 'Assign';
+      modalProps.submitButtonClassNames = ['usa-button', 'usa-button-hover', 'usa-button-warning'];
+      modalProps.submitDisabled = this.state.modalDisableButton;
     }
 
     if (isPulacCerullo) {
@@ -249,7 +261,7 @@ class AssignToView extends React.Component {
               errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
               placeholder={this.determinePlaceholder(this.props, actionData)}
               value={this.state.selectedValue}
-              onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
+              onChange={(option) => this.setModalOnChangeValue('selectedValue', option ? option.value : null)}
               options={taskActionData(this.props).options}
             />
             <br />
@@ -261,8 +273,8 @@ class AssignToView extends React.Component {
             errorMessage={highlightFormItems && !actionData.body_optional && !this.state.instructions ?
               COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
             id="taskInstructions"
-            onChange={(value) => this.setModalOnChangeValue('instructions', value)}
             value={this.state.instructions}
+            onChange={(value) => this.setModalOnChangeValue('instructions', value)}
             optional={actionData.body_optional}
           />
         )}
