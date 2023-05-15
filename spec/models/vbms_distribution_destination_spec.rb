@@ -1,29 +1,11 @@
 # frozen_string_literal: true
 
 describe VbmsDistributionDestination, :postgres do
-  let(:distribution) { class_double(VbmsDistribution) }
-
-  context "destination type is nil or incorrect" do
-    let(:destination) do
-      VbmsDistributionDestination.new(
-        destination_type: nil,
-        vbms_distribution: distribution,
-      )
-    end
-
-    it "is not valid without a destination type" do
-      expect(destination).to_not be_valid
-    end
-
-    it "is not valid with incorrect destination type" do
-      destination.recipient_type = "DomesticAddress"
-      expect(destination).to_not be_valid
-    end
-  end
+  let(:distribution) { VbmsDistribution.new }
 
   shared_examples "destination has valid attributes and associations" do
     it "is valid with valid attributes" do
-      expect(distribution).to be_valid
+      expect(destination).to be_valid
     end
 
     it "is not valid without an associated VbmsDistribution" do
@@ -98,7 +80,7 @@ describe VbmsDistributionDestination, :postgres do
 
     include_examples "destination has valid attributes and associations"
     include_examples "destination is a physical mailing address"
-    includes_examples "destination is a US address"
+    include_examples "destination is a US address"
   end
 
   context "destination type is militaryAddress" do
@@ -116,7 +98,7 @@ describe VbmsDistributionDestination, :postgres do
 
     include_examples "destination has valid attributes and associations"
     include_examples "destination is a physical mailing address"
-    includes_examples "destination is a US address"
+    include_examples "destination is a US address"
   end
 
   context "destination type is internationalAddress" do
@@ -144,7 +126,8 @@ describe VbmsDistributionDestination, :postgres do
     let(:destination) do
       VbmsDistributionDestination.new(
         destination_type: "email",
-        email_address: "email@email.com"
+        email_address: "email@email.com",
+        vbms_distribution: distribution
       )
     end
 
@@ -160,7 +143,8 @@ describe VbmsDistributionDestination, :postgres do
     let(:destination) do
       VbmsDistributionDestination.new(
         destination_type: "sms",
-        phone_number: "555-5555"
+        phone_number: "555-5555",
+        vbms_distribution: distribution
       )
     end
 
@@ -168,6 +152,32 @@ describe VbmsDistributionDestination, :postgres do
 
     it "is invalid without a phone number" do
       destination.phone_number = nil
+      expect(destination).to_not be_valid
+    end
+  end
+
+  context "destination type is nil or incorrect" do
+    let(:destination) do
+      VbmsDistributionDestination.new(
+        destination_type: "domesticAddress",
+        vbms_distribution: distribution,
+        address_line_1: "address line 1",
+        city: "city",
+        state: "NY",
+        postal_code: "11385",
+        country_code: "US"
+      )
+    end
+
+    include_examples "destination has valid attributes and associations"
+
+    it "is not valid without a destination type" do
+      destination.destination_type = nil
+      expect(destination).to_not be_valid
+    end
+
+    it "is not valid with incorrect destination type" do
+      destination.destination_type = "DomesticAddress"
       expect(destination).to_not be_valid
     end
   end

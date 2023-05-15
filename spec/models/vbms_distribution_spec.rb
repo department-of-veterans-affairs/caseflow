@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe VbmsDistribution, :postgres do
-  let(:package) { class_double(VbmsCommunicationPackage) }
+  let(:package) { VbmsCommunicationPackage.new }
 
   context "recipient type is nil or incorrect" do
     let(:distribution) do
@@ -29,8 +29,8 @@ describe VbmsDistribution, :postgres do
     end
 
     it "is not valid without an associated VbmsCommunicationPackage" do
-      destination.vbms_communication_package = nil
-      expect(destination).to_not be_valid
+      distribution.vbms_communication_package = nil
+      expect(distribution).to_not be_valid
     end
   end
 
@@ -48,19 +48,19 @@ describe VbmsDistribution, :postgres do
 
     it "is not valid without a first name" do
       distribution.first_name = nil
-      expect(distribution).to be_valid
+      expect(distribution).to_not be_valid
     end
 
     it "is not valid without a last name" do
       distribution.first_name = nil
-      expect(distribution).to be_valid
+      expect(distribution).to_not be_valid
     end
   end
 
   shared_examples "recipient type is not person" do
     it "is not valid without a name" do
       distribution.name = nil
-      expect(distribution).to be_valid
+      expect(distribution).to_not be_valid
     end
   end
 
@@ -95,7 +95,9 @@ describe VbmsDistribution, :postgres do
       VbmsDistribution.new(
         recipient_type: "ro-colocated",
         vbms_communication_package: package,
-        name: "Ro-Colocated"
+        name: "Ro-Colocated",
+        poa_code: "poa code",
+        claimant_station_of_jurisdiction: "claimant station"
       )
     end
 
@@ -104,12 +106,12 @@ describe VbmsDistribution, :postgres do
 
     it "is not valid without a poa code" do
       distribution.poa_code = nil
-      expect(distribution).to be_valid
+      expect(distribution).to_not be_valid
     end
 
     it "is not valid without a claimant station of jurisdiction" do
       distribution.claimant_station_of_jurisdiction = nil
-      expect(distribution).to be_valid
+      expect(distribution).to_not be_valid
     end
   end
 end

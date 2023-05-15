@@ -5,7 +5,8 @@ describe VbmsCommunicationPackage, :postgres do
     VbmsCommunicationPackage.new(
       file_number: "329780002",
       comm_package_name: "test package name",
-      vbms_uploaded_document: class_double(VbmsUploadedDocument)
+      document_referenced: [1],
+      vbms_uploaded_document: VbmsUploadedDocument.new
     )
   end
 
@@ -14,7 +15,7 @@ describe VbmsCommunicationPackage, :postgres do
   end
 
   it "is not valid without a filenumber" do
-    package.filenumber = nil
+    package.file_number = nil
     expect(package).to_not be_valid
   end
 
@@ -24,14 +25,17 @@ describe VbmsCommunicationPackage, :postgres do
   end
 
   it "is not valid if communication package name exceeds 255 characters" do
-    invalid_package_name = ""
-    256.times { invalid_package_name << "x" }
-    package.comm_package_name = invalid_package_name
+    package.comm_package_name = "x" * 256
     expect(package).to_not be_valid
   end
 
   it "is not valid without a user friendly communication package name" do
     package.comm_package_name = "(test package name with parentheses)"
+    expect(package).to_not be_valid
+  end
+
+  it "is not valid without a document referenced" do
+    package.document_referenced = nil
     expect(package).to_not be_valid
   end
 
