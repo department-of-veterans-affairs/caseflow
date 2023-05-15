@@ -5,7 +5,7 @@ import { FORM_TYPES, GENERIC_FORM_ERRORS } from '../../constants';
 import { receiptDateInputValidation } from '../receiptDateInput';
 
 const supplementalClaimHeader = (veteranName) => (
-  <h1>Poop on { veteranName }'s { FORM_TYPES.SUPPLEMENTAL_CLAIM.name }</h1>
+  <h1>Review { veteranName }'s { FORM_TYPES.SUPPLEMENTAL_CLAIM.name }</h1>
 );
 
 const reviewSupplementalClaimSchema = yup.object().shape({
