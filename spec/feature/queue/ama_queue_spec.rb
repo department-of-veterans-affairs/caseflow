@@ -220,7 +220,6 @@ feature "AmaQueue", :all_dbs do
         expect(motion.reason).to eq(Constants.AOD_REASONS.serious_illness)
       end
 
-      #this is our copycat fix it
       scenario "Appeal redirects to Draft Decisions page when 'Decision ready for review' is clicked." do
         visit "/queue/appeals/#{appeals.first.uuid}"
         #We reload the page because the page errors first load for some reason?
@@ -236,8 +235,31 @@ feature "AmaQueue", :all_dbs do
         expect(pathArray[-2] == "draft_decision")
       end
 
+      scenario "Appeal contains MST PACT labels in timeline." do
+        visit "/queue/appeals/#{appeals.first.uuid}"
+
+        #load in the timeline data
+        appeal = appeals[0]
+        iup = IssuesUpdateTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: Organization.find_by_url("bva-intake"), assigned_by: RequestStore[:current_user])
+        iup.format_instructions("test category", false, false, true, true, "MST reason", "PACT reason")
+        iup.completed!
+
+        #We reload the page because the page sometimes errors first load for some reason, also ensures that the timeline
+        #is refreshed with the current data.
+        visit current_path
+
+        click_on "View task instructions"
+        expect(page).to have_content("REASON FOR CHANGE (MST):")
+        expect(page).to have_content("MST reason")
+        expect(page).to have_content("REASON FOR CHANGE (PACT):")
+        expect(page).to have_content("PACT reason")
+      end
+
       scenario "Appeal redirects to special issues page when 'Decision ready for review' is clicked." do
         visit "/queue/appeals/#{legacy_appeal_task.appeal.external_id}"
+
+        #We reload the page because the page sometimes errors first load for some reason?
+        visit current_path
 
         #pop the actions dropdown open and click the 'Decision ready for review' option.
         find(".cf-select__control", text: "Select an action").click
@@ -247,7 +269,6 @@ feature "AmaQueue", :all_dbs do
         pathArray = current_path.split("/")
         expect(pathArray[-1] == "special_issues")
         expect(pathArray[-2] == "draft_decision")
-        binding.pry
       end
 
       context "when there is an error loading addresses" do
