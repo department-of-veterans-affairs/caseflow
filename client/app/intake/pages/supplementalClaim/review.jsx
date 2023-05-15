@@ -5,10 +5,11 @@ import { FORM_TYPES, GENERIC_FORM_ERRORS } from '../../constants';
 import { receiptDateInputValidation } from '../receiptDateInput';
 
 const supplementalClaimHeader = (veteranName) => (
-  <h1>Review { veteranName }'s { FORM_TYPES.SUPPLEMENTAL_CLAIM.name }</h1>
+  <h1>Poop on { veteranName }'s { FORM_TYPES.SUPPLEMENTAL_CLAIM.name }</h1>
 );
 
 const reviewSupplementalClaimSchema = yup.object().shape({
+  'filed-by-va-gov': yup.string().required(GENERIC_FORM_ERRORS.blank),
   'benefit-type-options': yup.string().required(GENERIC_FORM_ERRORS.blank),
   ...receiptDateInputValidation(true),
   ...selectClaimantValidations(),
@@ -16,4 +17,6 @@ const reviewSupplementalClaimSchema = yup.object().shape({
   'legacy-opt-in': yup.string().required(GENERIC_FORM_ERRORS.blank),
 });
 
-export { reviewSupplementalClaimSchema, supplementalClaimHeader };
+export {
+  reviewSupplementalClaimSchema,
+  supplementalClaimHeader };

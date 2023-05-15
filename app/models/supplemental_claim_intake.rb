@@ -10,6 +10,6 @@ class SupplementalClaimIntake < ClaimReviewIntake
   private
 
   def review_param_keys
-    %w[receipt_date benefit_type legacy_opt_in_approved]
+    %w[filed_by_va_gov receipt_date benefit_type legacy_opt_in_approved]
   end
 end
