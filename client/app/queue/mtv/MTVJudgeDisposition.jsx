@@ -40,7 +40,7 @@ const vacateTypeText = (val) => {
 };
 
 const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }) => {
-  const parts = [`${MTV_TASK_INSTRUCTIONS} ${DISPOSITION_TEXT[disposition].replace(/(^\w{1})|(\s+\w{1})/g, (letter) => letter.toUpperCase())}\n`];
+  const parts = [`${MTV_TASK_INSTRUCTIONS} ${StringUtil.titleCase(DISPOSITION_TEXT[disposition])}\n`];
 
   switch (disposition) {
   case 'granted':

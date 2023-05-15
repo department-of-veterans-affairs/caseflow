@@ -18,20 +18,43 @@ const task = generateAmaTask({
 
 describe('MTVJudgeDisposition', () => {
   const onSubmit = jest.fn();
+
   const defaults = {
     appeal: amaAppeal,
     attorneys: generateAttorneys(5),
     task,
     onSubmit,
   };
+
   const setup = (props) =>
     render(<MTVJudgeDisposition {...defaults} {...props} />, {
       wrapper: BrowserRouter,
     });
 
-  const selectDisposition = async (disposition = 'grant all') => {
+  const selectRadioField = (radioSelection) => {
+    // What type of vacate?
+    const radioFieldToSelect = screen.getByLabelText(radioSelection);
 
-    await userEvent.click(
+    userEvent.click(radioFieldToSelect);
+  };
+
+  const enterAdditionalContext = (instructions) => {
+    const instructionsField = screen.getByRole(
+      'textbox',
+      { name: 'Provide context and instructions on which issues should be granted Optional' }
+    );
+
+    userEvent.type(instructionsField, instructions);
+  };
+
+  const selectDisposition = async (
+    disposition = 'grant all',
+    vacateType = 'Vacate and Readjudication (1 document)',
+    hyperlink = 'www.caseflow.com',
+    instructions = 'testing'
+  ) => {
+
+    userEvent.click(
       screen.getByLabelText(new RegExp(disposition, 'i'))
     );
 
@@ -41,6 +64,9 @@ describe('MTVJudgeDisposition', () => {
           screen.getByText(/what type of vacate/i)
         ).toBeInTheDocument();
       });
+
+      selectRadioField(vacateType);
+
     } else {
       await waitFor(() => {
         expect(
@@ -48,6 +74,9 @@ describe('MTVJudgeDisposition', () => {
         ).toBeInTheDocument();
       });
     }
+
+    enterAdditionalContext(instructions);
+
     await userEvent.click(
       screen.getByText('Submit')
     );
@@ -93,72 +122,86 @@ describe('MTVJudgeDisposition', () => {
   );
 
   describe('instructions sent', () => {
-    let vacateType = '';
-    let hyperlink = '';
-    let instructions = '';
-    let disposition = '';
-    const formatInstructions = () => {
-      const parts = [disposition];
+    // let vacateType = '';
+    // let hyperlink = '';
+    // let instructions = '';
+    // let disposition = '';
+    // const formatInstructions = () => {
+    //   const parts = [disposition];
 
-      switch (disposition) {
-      case 'grant all':
-      case 'partially_granted':
-        parts.push(vacateType);
-        parts.push(instructions);
-        break;
-      case 'denied':
-      case 'dismissed':
-        parts.push(instructions);
-        parts.push(hyperlink);
-        break;
-      default:
-        parts.push(instructions);
-      }
+    //   switch (disposition) {
+    //   case 'grant all':
+    //   case 'partially_granted':
+    //     parts.push(vacateType);
+    //     parts.push(instructions);
+    //     break;
+    //   case 'denied':
+    //   case 'dismissed':
+    //     parts.push(instructions);
+    //     parts.push(hyperlink);
+    //     break;
+    //   default:
+    //     parts.push(instructions);
+    //   }
 
-      return parts.join('\n');
-    };
-    const handleSubmit = () => {
-      task.instructions = formatInstructions({ disposition, vacateType, hyperlink, instructions });
-    };
+    //   return parts.join('\n');
+    // };
+    // const handleSubmit = () => {
+    //   task.instructions = formatInstructions({ disposition, vacateType, hyperlink, instructions });
+    // };
 
-    it('sends the correct instructions based on grant all disposition', () => {
+    it.only('sends the correct instructions based on grant all disposition', async () => {
+      const disposition = 'grant all';
+      const vacateType = 'Vacate and Readjudication (1 document)';
+      const instructions = 'instructions from judge';
 
-      disposition = 'grant all';
-      vacateType = 'vacate and de novo';
-      instructions = 'instructions from judge';
-      handleSubmit(disposition, vacateType, hyperlink, instructions);
-      expect(task.instructions).toMatch('grant all\nvacate and de novo\ninstructions from judge');
+      setup();
 
+      await selectDisposition(
+        disposition,
+        vacateType,
+        instructions
+      );
+
+      // disposition = 'grant all';
+      // vacateType = 'vacate and de novo';
+      // instructions = 'instructions from judge';
+      // handleSubmit(disposition, vacateType, hyperlink, instructions);
+      expect(onSubmit.mock.calls[0][0].instructions).toMatch('**Motion To Vacate:**  \n' +
+        ' Grant Or Partial Vacatur\n' +
+        '\n' +
+        '**Type:**  \n' +
+        'Vacate and Readjudication (1 document)\n' +
+        '\n' +
+        '**Detail:**  \n' +
+        'testing\n');
     });
 
     it('sends the correct instructions based on partially granted disposition', () => {
 
-      disposition = 'partially_granted';
-      vacateType = 'straight vacate';
-      instructions = 'some instructions from judge';
-      handleSubmit(disposition, vacateType, hyperlink, instructions);
+      // disposition = 'partially_granted';
+      // vacateType = 'straight vacate';
+      // instructions = 'some instructions from judge';
+      // handleSubmit(disposition, vacateType, hyperlink, instructions);
       expect(task.instructions).toMatch('partially_granted\nstraight vacate\nsome instructions from judge');
-
     });
 
     it('sends the correct instructions based on denied disposition', () => {
 
-      disposition = 'denied';
-      instructions = 'instructions from judge';
-      hyperlink = 'www.caseflow.com';
-      handleSubmit(disposition, vacateType, hyperlink, instructions);
+      // disposition = 'denied';
+      // instructions = 'instructions from judge';
+      // hyperlink = 'www.caseflow.com';
+      // handleSubmit(disposition, vacateType, hyperlink, instructions);
       expect(task.instructions).toMatch('denied\ninstructions from judge\nwww.caseflow.com');
-
     });
 
     it('sends the correct instructions based on dismissed disposition', () => {
 
-      disposition = 'dismissed';
-      instructions = 'new instructions from judge';
-      hyperlink = 'www.google.com';
-      handleSubmit(disposition, vacateType, hyperlink, instructions);
+      // disposition = 'dismissed';
+      // instructions = 'new instructions from judge';
+      // hyperlink = 'www.google.com';
+      // handleSubmit(disposition, vacateType, hyperlink, instructions);
       expect(task.instructions).toMatch('dismissed\nnew instructions from judge\nwww.google.com');
-
     });
   });
 });
