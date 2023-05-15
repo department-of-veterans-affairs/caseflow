@@ -32,7 +32,7 @@ describe VbmsDistributionDestination, :postgres do
     end
   end
 
-  share_examples "destination is a physical mailing address" do
+  shared_examples "destination is a physical mailing address" do
     it "is not valid without an address line 1" do
       destination.address_line_1 = nil
       expect(destination).to_not be_valid
