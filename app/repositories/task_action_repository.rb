@@ -420,11 +420,12 @@ class TaskActionRepository
     end
 
     def return_to_attorney_data(task, _user = nil)
-      assignee = if task.appeal_type ==  "LegacyAppeal"
-                  task.assigned_to
-                 else
-                  task.children.select { |child| child.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
-                 end
+      assignee = if task.appeal_type == "LegacyAppeal"
+        task.assigned_to
+      else
+        task.children.select { |child| child.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
+      end
+
       judge_team = JudgeTeam.for_judge(task.assigned_to)
 
       # Include attorneys for all judge teams in list of possible recipients so that judges can send cases to

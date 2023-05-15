@@ -1372,8 +1372,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(task["attributes"]["user_id"]).to eq(judge_user.css_id)
         expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
         expect(task["attributes"]["available_actions"].size) == 2
-
-        expect(DatabaseRequestCounter.get_counter(:vacols)) == (16)
+        expect(DatabaseRequestCounter.get_counter(:vacols)) == 16
       end
     end
 
