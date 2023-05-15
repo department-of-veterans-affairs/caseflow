@@ -344,6 +344,20 @@ class SelectDispositionsView extends React.PureComponent {
       pactStatus: decisionIssue?.pactStatus
     };
 
+    const specialIssuesStatus = (specialIssue) => {
+      if (specialIssue.mstStatus && specialIssuesValues.pactStatus) {
+        return 'MST,PACT';
+      }
+
+      if (specialIssue.mstStatus) {
+        return 'MST';
+      }
+
+      if (specialIssue.pactStatus) {
+        return 'PACT';
+      }
+    };
+
     // In order to determine whether or not to display error styling and an error message for each issue,
     // determine if highlight is set to true and if there is not a decision issue
     const issueErrors = {};
@@ -368,7 +382,9 @@ class SelectDispositionsView extends React.PureComponent {
       <hr />
       <AmaIssueList
         requestIssues={appeal.issues}
-        errorMessages={issueErrors}>
+        errorMessages={issueErrors}
+        specialIssuesValue={specialIssuesStatus(specialIssuesValues)}
+        pactStatus={specialIssuesValues.pactStatus}>
         <DecisionIssues
           decisionIssues={appeal.decisionIssues}
           openDecisionHandler={this.openDecisionHandler}

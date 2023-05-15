@@ -36,7 +36,7 @@ const issueErrorStyling = css({
 export const AmaIssue = (props) => {
   return <li key={props.index} {...singleIssueStyling} {...props.customStyle}>
     <div {...issueContentStyling}><strong>Benefit type</strong>: {BENEFIT_TYPES[props.issue.program]}</div>
-    <div {...issueContentStyling}><strong>Issue</strong>: {props.issue.description}</div>
+    <div {...issueContentStyling}><strong>Issue</strong>: {props.specialIssuesValue ? props.specialIssuesValue : props.issue.description}</div>
     { props.issue.diagnostic_code &&
       <div {...issueContentStyling}><strong>Diagnostic code</strong>: {props.issue.diagnostic_code}</div> }
     { props.issue.notes &&
@@ -55,7 +55,8 @@ export default class AmaIssueList extends React.PureComponent {
     const {
       requestIssues,
       children,
-      errorMessages
+      errorMessages,
+      specialIssuesValue
     } = this.props;
 
     return <ol {...issueListStyling}>
@@ -71,6 +72,7 @@ export default class AmaIssueList extends React.PureComponent {
           <AmaIssue
             issue={issue}
             index={i}
+            specialIssuesValue={specialIssuesValue}
             customStyle={error && issueErrorStyling} >
             {children}
           </AmaIssue>
@@ -90,11 +92,13 @@ AmaIssue.propTypes = {
     notes: PropTypes.string,
     closed_status: PropTypes.string
   }),
-  children: PropTypes.node
+  children: PropTypes.node,
+  specialIssuesValue: PropTypes.string
 };
 
 AmaIssueList.propTypes = {
   children: PropTypes.node,
   requestIssues: PropTypes.array,
-  errorMessages: PropTypes.object
+  errorMessages: PropTypes.object,
+  specialIssuesValue: PropTypes.string
 };
