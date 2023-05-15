@@ -13,6 +13,7 @@
     buildDate: build_date,
     serverIntake: appeal.ui_hash,
     claimId: url_appeal_uuid,
+    isLegacy: appeal.is_legacy?,
     featureToggles: {
       useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
       correctClaimReviews: FeatureToggle.enabled?(:correct_claim_reviews, user: current_user),

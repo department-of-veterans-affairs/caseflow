@@ -119,6 +119,9 @@ class AddIssuesPage extends React.Component {
 
   // eslint-disable-next-line class-methods-use-this
   requestIssuesWithoutDecisionDates(intakeData) {
+    if (intakeData.docketType === 'Legacy') {
+      return false;
+    }
     const requestIssues = formatRequestIssues(intakeData.requestIssues, intakeData.contestableIssues);
 
     return !requestIssues.every((issue) => issue.ratingIssueReferenceId ||
@@ -247,7 +250,9 @@ class AddIssuesPage extends React.Component {
         (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId
       );
 
-    const issues = formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
+    // eslint-disable-next-line max-len
+    const issues = intakeData.docketType === 'Legacy' ? formatAddedIssues(intakeData.requestIssues) : formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
+
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
     const issuesBySection = formatIssuesBySection(issues);
 
@@ -456,7 +461,8 @@ class AddIssuesPage extends React.Component {
 
     additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
 
-    const hideAddIssueButton = intakeData.isDtaError && _.isEmpty(intakeData.contestableIssues);
+    const hideAddIssueButton = (intakeData.isDtaError && _.isEmpty(intakeData.contestableIssues)) ||
+      intakeData.docketType === 'Legacy';
 
     if (!hideAddIssueButton) {
       rowObjects = rowObjects.concat({
@@ -525,6 +531,7 @@ class AddIssuesPage extends React.Component {
           <EditIntakeIssueModal
             issueIndex={this.state.issueIndex}
             intakeData={intakeData}
+            legacyIssues={issues}
             mstIdentification={this.props.featureToggles.mst_identification}
             pactIdentification={this.props.featureToggles.pact_identification}
             onCancel={() => {
