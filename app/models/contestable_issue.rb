@@ -79,7 +79,7 @@ class ContestableIssue
     end
 
     # cycle the issues to see if the past decision had any pact codes on contentions
-    def pact_available?(source_request_issues)
+    def pact_available?(source_request_issues = [])
       source_request_issues.each do |issue|
         return issue.pact_contention_status? if issue.pact_contention_status?
       end
