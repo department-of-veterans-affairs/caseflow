@@ -99,8 +99,6 @@ export default class IssuesList extends React.Component {
                 requestIssues={intakeData.requestIssues}
                 legacyOptInApproved={intakeData.legacyOptInApproved}
                 legacyAppeals={intakeData.legacyAppeals}
-                mstChecked={issue.mstChecked}
-                pactChecked={issue.pactChecked}
                 formType={formType} />
 
               { !issue.editable && <div className="issue-action">

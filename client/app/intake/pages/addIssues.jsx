@@ -33,6 +33,7 @@ import {
   removeIssue,
   withdrawIssue,
   setIssueWithdrawalDate,
+  setMstPactDetails,
   correctIssue,
   undoCorrection,
   toggleUnidentifiedIssuesModal,
@@ -205,21 +206,6 @@ class AddIssuesPage extends React.Component {
       previousEpCode: this.state.previousEpCode,
       selectedEpCode: this.state.selectedEpCode,
       loading: true
-    });
-  }
-
-  submitEditIntakeIssue = () => {
-    this.props.EditIntakeIssueModal(
-      this.state.mstChecked,
-      this.state.pactChecked,
-      this.state.mstJustification,
-      this.state.pactJustification
-    );
-    this.setState({
-      mstChecked: this.state.mstChecked,
-      pactChecked: this.state.pactChecked,
-      mstJustification: this.state.mstJustification,
-      pactJustification: this.state.pactJustification
     });
   }
 
@@ -545,7 +531,12 @@ class AddIssuesPage extends React.Component {
             onCancel={() => {
               this.props.toggleEditIntakeIssueModal();
             }}
-            onSubmit={this.submitEditIntakeIssue}
+            onSubmit={(issueProps) => {
+              this.props.setMstPactDetails({
+                issueProps,
+              });
+              this.props.toggleEditIntakeIssueModal();
+            }}
           />
         )}
         <h1 className="cf-txt-c">{messageHeader}</h1>
@@ -591,6 +582,7 @@ AddIssuesPage.propTypes = {
   intakeForms: PropTypes.object,
   removeIssue: PropTypes.func,
   setIssueWithdrawalDate: PropTypes.func,
+  setMstPactDetails: PropTypes.func,
   toggleAddingIssue: PropTypes.func,
   toggleAddIssuesModal: PropTypes.func,
   toggleCorrectionTypeModal: PropTypes.func,
@@ -631,7 +623,8 @@ export const IntakeAddIssuesPage = connect(
         toggleLegacyOptInModal,
         removeIssue,
         withdrawIssue,
-        setIssueWithdrawalDate
+        setIssueWithdrawalDate,
+        setMstPactDetails
       },
       dispatch
     )
@@ -656,7 +649,6 @@ export const EditAddIssuesPage = connect(
     userCanWithdrawIssues: state.userCanWithdrawIssues,
     userCanEditIntakeIssues: state.userCanEditIntakeIssues,
     userCanSplitAppeal: state.userCanSplitAppeal
-
   }),
   (dispatch) =>
     bindActionCreators(
@@ -668,6 +660,7 @@ export const EditAddIssuesPage = connect(
         removeIssue,
         withdrawIssue,
         setIssueWithdrawalDate,
+        setMstPactDetails,
         correctIssue,
         undoCorrection,
         toggleUnidentifiedIssuesModal,

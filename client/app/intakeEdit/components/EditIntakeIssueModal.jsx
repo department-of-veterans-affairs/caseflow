@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Modal from 'app/components/Modal';
 import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
-import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
+import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 import { formatDateStr } from '../../util/DateUtil';
 import {
   INTAKE_EDIT_ISSUE_TITLE,
@@ -53,8 +53,6 @@ export class EditIntakeIssueModal extends React.Component {
       currentIssueDescription = currentIssue.description,
       currentIssueBenefitType = BENEFIT_TYPES[currentIssue.benefitType],
       currentIssueDecisionDate = formatDateStr(currentIssue.decisionDate),
-      currentIssueMstChecked = currentIssue.mstChecked,
-      currentIssuePactChecked = currentIssue.pactChecked,
       mstIdentification,
       pactIdentification
     } = this.props;
@@ -72,21 +70,19 @@ export class EditIntakeIssueModal extends React.Component {
             name: 'Save',
             onClick: () => {
 
-              if (this.handleMstCheckboxChange && mstJustification === '') {
+              if (mstChecked && mstJustification === '') {
                 return;
               }
-              if (this.handlePactCheckboxChange && pactJustification === '') {
+              if (pactChecked && pactJustification === '') {
                 return;
               }
 
               this.props.onSubmit({
-                currentIssue: {
-                  ...currentIssue,
-                  mstChecked,
-                  pactChecked,
-                  mstJustification,
-                  pactJustification
-                }
+                issueIndex,
+                mstChecked,
+                pactChecked,
+                mstJustification,
+                pactJustification,
               });
             }
           }
@@ -95,21 +91,21 @@ export class EditIntakeIssueModal extends React.Component {
         closeHandler={onCancel}
         title={INTAKE_EDIT_ISSUE_TITLE}
       >
-        <div>
+        <div className="current-issue-label">
           <strong>
             { INTAKE_EDIT_ISSUE_LABEL }
           </strong>
           { currentIssueCategory ? `${currentIssueCategory } - ${ currentIssueDescription}` : currentIssueDescription}
         </div>
 
-        <div>
+        <div className="current-issue-benefit">
           <strong>
             { currentIssueBenefitType ? INTAKE_EDIT_ISSUE_BENEFIT_TYPE : null }
           </strong>
           { currentIssueBenefitType ? currentIssueBenefitType : null }
         </div>
 
-        <div>
+        <div className="current-issue-decision-date">
           <strong>
             { INTAKE_EDIT_ISSUE_DECISION_DATE }
           </strong>
@@ -117,55 +113,51 @@ export class EditIntakeIssueModal extends React.Component {
         </div>
         <br></br>
         <p>{ INTAKE_EDIT_ISSUE_SELECT_SPECIAL_ISSUES }</p>
-        <fieldset className="usa-fieldset-inputs usa-sans">
-          <legend className="usa-sr-only">MST PACT STATUS</legend>
-          <ul className="usa-unstyled-list">
-            <li>
-              <label>
-                { mstIdentification &&
-                  <Checkbox
-                    name={MST_LABEL} strongLabel
-                    value={this.state.currentIssueMstChecked}
-                    onChange={this.handleMstCheckboxChange}
-                  />
-                }
-              </label>
-            </li>
-          </ul>
-          {(mstChecked) && (
-            <div>
-              <label style={{ paddingLeft: '2em' }}>
-                <TextField
-                  name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
-                  value={this.state.mstJustification}
-                  onChange={this.handleMstJustification} />
-              </label>
-            </div>
-          )}
-          <ul className="usa-unstyled-list">
-            <li>
-              <label>
-                { pactIdentification &&
-                  <Checkbox style={{ marginTop: 0, marginBottom: 0 }}
-                    name={PACT_LABEL} strongLabel
-                    value={this.state.currentIssuePactChecked}
-                    onChange={this.handlePactCheckboxChange}
-                  />
-                }
-              </label>
-            </li>
-          </ul>
-          {(pactChecked) && (
-            <div>
-              <label style={{ 'padding-left': '2em' }}>
-                <TextField
-                  name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
-                  value={this.state.pactJustification}
-                  onChange={this.handlePactJustification} />
-              </label>
-            </div>
-          )}
-        </fieldset>
+        <legend className="usa-sr-only">MST PACT STATUS</legend>
+        <ul className="usa-unstyled-list">
+          <li>
+            { mstIdentification &&
+              <Checkbox style={{ marginTop: 0, marginBottom: 0 }}
+                name={MST_LABEL} strongLabel
+                value={this.state.currentIssueMstChecked}
+                onChange={this.handleMstCheckboxChange}
+              />
+            }
+          </li>
+        </ul>
+        {(mstChecked) && (
+          <div>
+            <label style={{ paddingLeft: '2em' }}>
+              <TextField
+                name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
+                value={this.state.mstJustification}
+                onChange={this.handleMstJustification} />
+            </label>
+          </div>
+        )}
+        <ul className="usa-unstyled-list">
+          <li>
+            <label>
+              { pactIdentification &&
+                <Checkbox style={{ marginTop: 0, marginBottom: 0 }}
+                  name={PACT_LABEL} strongLabel
+                  value={this.state.currentIssuePactChecked}
+                  onChange={this.handlePactCheckboxChange}
+                />
+              }
+            </label>
+          </li>
+        </ul>
+        {(pactChecked) && (
+          <div>
+            <label style={{ paddingLeft: '2em' }}>
+              <TextField
+                name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
+                value={this.state.pactJustification}
+                onChange={this.handlePactJustification} />
+            </label>
+          </div>
+        )}
 
       </Modal>
     </div>;
