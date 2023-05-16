@@ -18,5 +18,4 @@ class VbmsDistribution < CaseflowRecord
   def is_ro_colocated?
     recipient_type == "ro-colocated"
   end
-
 end

@@ -9,11 +9,30 @@ describe VbmsDistribution, :postgres do
     end
   end
 
-  shared_examples "distribution has valid associations" do
-    it "is not valid without an associated VbmsCommunicationPackage" do
-      distribution.vbms_communication_package = nil
-      expect(distribution).to_not be_valid
-    end
+  let(:distribution) do
+    VbmsDistribution.new(
+      recipient_type: "person",
+      vbms_communication_package: package,
+      first_name: "First",
+      last_name: "Last"
+    )
+  end
+
+  include_examples "distribution has valid attributes"
+
+  it "is not valid without an associated VbmsCommunicationPackage" do
+    distribution.vbms_communication_package = nil
+    expect(distribution).to_not be_valid
+  end
+
+  it "is not valid without a recipient type" do
+    distribution.recipient_type = nil
+    expect(distribution).to_not be_valid
+  end
+
+  it "is not valid with incorrect recipient type" do
+    distribution.recipient_type = "Person"
+    expect(distribution).to_not be_valid
   end
 
   shared_examples "recipient type is not ro-colocated" do
@@ -23,22 +42,11 @@ describe VbmsDistribution, :postgres do
   end
 
   context "recipient type is person" do
-    let(:distribution) do
-      VbmsDistribution.new(
-        recipient_type: "person",
-        vbms_communication_package: package,
-        first_name: "First",
-        last_name: "Last"
-      )
-    end
-
-    include_examples "distribution has valid attributes"
-    include_examples "distribution has valid associations"
-    include_examples "recipient type is not ro-colocated"
-
     it "is a person" do
       expect(distribution.is_person?).to eq(true)
     end
+
+    include_examples "recipient type is not ro-colocated"
 
     it "is not valid without a first name" do
       distribution.first_name = nil
@@ -72,12 +80,11 @@ describe VbmsDistribution, :postgres do
     end
 
     include_examples "distribution has valid attributes"
-    include_examples "distribution has valid associations"
     include_examples "recipient type is not person"
     include_examples "recipient type is not ro-colocated"
   end
 
-  context "recipient is system" do
+  context "recipient type is system" do
     let(:distribution) do
       VbmsDistribution.new(
         recipient_type: "system",
@@ -87,7 +94,6 @@ describe VbmsDistribution, :postgres do
     end
 
     include_examples "distribution has valid attributes"
-    include_examples "distribution has valid associations"
     include_examples "recipient type is not person"
     include_examples "recipient type is not ro-colocated"
   end
@@ -104,11 +110,10 @@ describe VbmsDistribution, :postgres do
     end
 
     include_examples "distribution has valid attributes"
-    include_examples "distribution has valid associations"
     include_examples "recipient type is not person"
 
     it "is ro-colocated" do
-      expect(distribution.is_ro_colocated?).to be true
+      expect(distribution.is_ro_colocated?).to eq(true)
     end
 
     it "is not valid without a poa code" do
@@ -118,29 +123,6 @@ describe VbmsDistribution, :postgres do
 
     it "is not valid without a claimant station of jurisdiction" do
       distribution.claimant_station_of_jurisdiction = nil
-      expect(distribution).to_not be_valid
-    end
-  end
-
-  context "recipient type is nil or incorrect" do
-    let(:distribution) do
-      VbmsDistribution.new(
-        recipient_type: "person",
-        vbms_communication_package: package,
-        first_name: "First",
-        last_name: "Last"
-      )
-    end
-
-    include_examples "distribution has valid attributes"
-
-    it "is not valid without a recipient type" do
-      distribution.recipient_type = nil
-      expect(distribution).to_not be_valid
-    end
-
-    it "is not valid with incorrect recipient type" do
-      distribution.recipient_type = "Person"
       expect(distribution).to_not be_valid
     end
   end
