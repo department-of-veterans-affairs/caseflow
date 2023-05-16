@@ -6,16 +6,12 @@ class VbmsDistribution < CaseflowRecord
 
   with_options presence: true do
     validates :recipient_type, inclusion: { in: %w(organization person system ro-colocated) }
-    validates :first_name, :last_name, if: :is_person?
-    validates :name, unless: :is_person?
-    validates :poa_code, :claimant_station_of_jurisdiction, if: :is_ro_colocated?
+    validates :first_name, :last_name, if: -> { recipient_type == "person" }
+    validates :name, if: :is_not_a_person?
+    validates :poa_code, :claimant_station_of_jurisdiction, if: -> { recipient_type == "ro-colocated" }
   end
 
-  def is_person?
-    recipient_type == "person"
-  end
-
-  def is_ro_colocated?
-    recipient_type == "ro-colocated"
+  def is_not_a_person?
+    %w(organization system ro-colocated).include?(recipient_type)
   end
 end
