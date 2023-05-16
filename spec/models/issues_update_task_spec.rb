@@ -69,7 +69,10 @@ describe IssuesUpdateTask do
           original_pact: false,
           edit_mst: true,
           edit_pact: false,
-          edit_reason: "reason for edit here..."
+          edit_reason: "reason for edit here...",
+          mst_reason: "MST reason here",
+          pact_reason: "PACT reason here"
+
         }
       end
 
@@ -79,14 +82,16 @@ describe IssuesUpdateTask do
         params[:original_pact],
         params[:edit_mst],
         params[:edit_pact],
-        params[:edit_reason]) }
+        params[:mst_reason],
+        params[:pact_reason]) }
       it "formats the instructions with MST" do
         expect(subject).to eql(true)
         expect(issues_update_task.instructions[0][0]).to eql("test category")
         expect(issues_update_task.instructions[0][1]).to eql("Special Issues: None")
         expect(issues_update_task.instructions[0][2]).to eql("test category")
         expect(issues_update_task.instructions[0][3]).to eql("Special Issues: MST")
-        expect(issues_update_task.instructions[0][4]).to eql("reason for edit here...")
+        expect(issues_update_task.instructions[0][4]).to eql("MST reason here")
+        expect(issues_update_task.instructions[0][5]).to eql("PACT reason here")
       end
     end
 
@@ -98,7 +103,8 @@ describe IssuesUpdateTask do
           original_pact: false,
           edit_mst: false,
           edit_pact: true,
-          edit_reason: "reason for edit here..."
+          mst_reason: "MST reason here",
+          pact_reason: "PACT reason here"
         }
       end
 
@@ -108,14 +114,16 @@ describe IssuesUpdateTask do
         params[:original_pact],
         params[:edit_mst],
         params[:edit_pact],
-        params[:edit_reason]) }
+        params[:mst_reason],
+        params[:pact_reason]) }
       it "formats the instructions with PACT" do
         expect(subject).to eql(true)
         expect(issues_update_task.instructions[0][0]).to eql("test category")
         expect(issues_update_task.instructions[0][1]).to eql("Special Issues: None")
         expect(issues_update_task.instructions[0][2]).to eql("test category")
         expect(issues_update_task.instructions[0][3]).to eql("Special Issues: PACT")
-        expect(issues_update_task.instructions[0][4]).to eql("reason for edit here...")
+        expect(issues_update_task.instructions[0][4]).to eql("MST reason here")
+        expect(issues_update_task.instructions[0][5]).to eql("PACT reason here")
       end
     end
 
@@ -127,24 +135,26 @@ describe IssuesUpdateTask do
           original_pact: false,
           edit_mst: true,
           edit_pact: true,
-          edit_reason: "reason for edit here..."
+          mst_reason: "MST reason here",
+          pact_reason: "PACT reason here"
         }
       end
-
       subject { issues_update_task.format_instructions(
         params[:issue_category],
         params[:original_mst],
         params[:original_pact],
         params[:edit_mst],
         params[:edit_pact],
-        params[:edit_reason]) }
+        params[:mst_reason],
+        params[:pact_reason]) }
       it "formats the instructions with MST and PACT" do
         expect(subject).to eql(true)
         expect(issues_update_task.instructions[0][0]).to eql("test category")
         expect(issues_update_task.instructions[0][1]).to eql("Special Issues: None")
         expect(issues_update_task.instructions[0][2]).to eql("test category")
         expect(issues_update_task.instructions[0][3]).to eql("Special Issues: MST, PACT")
-        expect(issues_update_task.instructions[0][4]).to eql("reason for edit here...")
+        expect(issues_update_task.instructions[0][4]).to eql("MST reason here")
+        expect(issues_update_task.instructions[0][5]).to eql("PACT reason here")
       end
     end
 
@@ -156,7 +166,8 @@ describe IssuesUpdateTask do
           original_pact: true,
           edit_mst: false,
           edit_pact: false,
-          edit_reason: "reason for edit here..."
+          mst_reason: "MST reason here",
+          pact_reason: "PACT reason here"
         }
       end
 
@@ -166,14 +177,17 @@ describe IssuesUpdateTask do
         params[:original_pact],
         params[:edit_mst],
         params[:edit_pact],
-        params[:edit_reason]) }
+        params[:mst_reason],
+        params[:pact_reason]) }
       it "formats the instructions from MST and PACT to None" do
         expect(subject).to eql(true)
         expect(issues_update_task.instructions[0][0]).to eql("test category")
         expect(issues_update_task.instructions[0][1]).to eql("Special Issues: MST, PACT")
         expect(issues_update_task.instructions[0][2]).to eql("test category")
         expect(issues_update_task.instructions[0][3]).to eql("Special Issues: None")
-        expect(issues_update_task.instructions[0][4]).to eql("reason for edit here...")
+        expect(issues_update_task.instructions[0][4]).to eql("MST reason here")
+        expect(issues_update_task.instructions[0][5]).to eql("PACT reason here")
+        binding.pry
       end
     end
   end
