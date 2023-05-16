@@ -94,6 +94,7 @@ module Seeds
       create_hearings_user
       create_build_and_edit_hearings_users
       create_non_admin_hearing_coordinator_user
+      add_mail_intake_to_all_bva_intake_users
     end
 
     def create_team_admin
@@ -422,6 +423,18 @@ module Seeds
                              roles: ["Hearing Prep"])
       SupervisorySeniorCouncil.singleton.add_user(ussccr2)
       CaseReview.singleton.add_user(ussccr2)
+    end
+
+    def add_mail_intake_to_all_bva_intake_users
+      bva_intake = BvaIntake.singleton
+      new_role = "Mail Intake"
+      bva_intake.users.each do |user|
+        user_roles = user.roles
+        unless user_roles.include?(new_role)
+          new_roles = user_roles << new_role
+          user.update!(roles: new_roles)
+        end
+      end
     end
   end
   # rubocop:enable Metrics/AbcSize
