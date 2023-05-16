@@ -50,8 +50,6 @@ class ContestableIssue
         source_decision_review: source,
         contesting_decision_review: contesting_decision_review,
         is_rating: decision_issue.rating?,
-        # mst_available: mst_available?,
-        # pact_available: pact_available?
       )
     end
 
@@ -65,8 +63,6 @@ class ContestableIssue
         contesting_decision_review: contesting_decision_review,
         rating_issue_diagnostic_code: rating_decision.diagnostic_code,
         is_rating: true, # true even if rating_reference_id is nil
-        mst_available: mst_available?,
-        pact_available: pact_available?
       )
     end
   end
@@ -122,7 +118,7 @@ class ContestableIssue
   # cycle the issues to see if the past decision had any mst codes on contentions
   def mst_available?
     source_request_issues.each do |issue|
-      return issue.mst_contention_status? if issue.mst_contention_status?
+      return true if issue.mst_contention_status? || issue.mst_status?
     end
     false
   end
@@ -130,7 +126,7 @@ class ContestableIssue
   # cycle the issues to see if the past decision had any pact codes on contentions
   def pact_available?
     source_request_issues.each do |issue|
-      return issue.pact_contention_status? if issue.pact_contention_status?
+      return true if issue.pact_contention_status? || issue.pact_status?
     end
     false
   end
