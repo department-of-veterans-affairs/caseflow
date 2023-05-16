@@ -48,11 +48,7 @@ module AppealNotificationReportConcern
   # Purpose: Creates the name for the document
   # Returns: The document name
   def notification_document_name
-    if is_a?(Appeal)
-      "notification-report_#{uuid}_#{Time.now.utc.strftime('%Y%m%d%k%M%S')}"
-    elsif is_a?(LegacyAppeal)
-      "notification-report_#{vacols_id}_#{Time.now.utc.strftime('%Y%m%d%k%M%S')}"
-    end
+    "notification-report_#{external_id}_#{Time.now.utc.strftime('%Y%m%d%k%M%S')}"
   end
 
   # Purpose: Generates the PDF
