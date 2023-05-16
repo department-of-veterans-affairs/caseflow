@@ -35,19 +35,7 @@ describe VbmsDistribution, :postgres do
     expect(distribution).to_not be_valid
   end
 
-  shared_examples "recipient type is not ro-colocated" do
-    it "is not ro-colocated" do
-      expect(distribution.is_ro_colocated?).to eq(false)
-    end
-  end
-
   context "recipient type is person" do
-    it "is a person" do
-      expect(distribution.is_person?).to eq(true)
-    end
-
-    include_examples "recipient type is not ro-colocated"
-
     it "is not valid without a first name" do
       distribution.first_name = nil
       expect(distribution).to_not be_valid
@@ -60,10 +48,6 @@ describe VbmsDistribution, :postgres do
   end
 
   shared_examples "recipient type is not person" do
-    it "is not a person" do
-      expect(distribution.is_person?).to eq(false)
-    end
-
     it "is not valid without a name" do
       distribution.name = nil
       expect(distribution).to_not be_valid
@@ -81,7 +65,6 @@ describe VbmsDistribution, :postgres do
 
     include_examples "distribution has valid attributes"
     include_examples "recipient type is not person"
-    include_examples "recipient type is not ro-colocated"
   end
 
   context "recipient type is system" do
@@ -95,7 +78,6 @@ describe VbmsDistribution, :postgres do
 
     include_examples "distribution has valid attributes"
     include_examples "recipient type is not person"
-    include_examples "recipient type is not ro-colocated"
   end
 
   context "recipient is ro-colocated" do
@@ -111,10 +93,6 @@ describe VbmsDistribution, :postgres do
 
     include_examples "distribution has valid attributes"
     include_examples "recipient type is not person"
-
-    it "is ro-colocated" do
-      expect(distribution.is_ro_colocated?).to eq(true)
-    end
 
     it "is not valid without a poa code" do
       distribution.poa_code = nil
