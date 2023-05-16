@@ -39,6 +39,11 @@ describe VbmsCommunicationPackage, :postgres do
     expect(package).to_not be_valid
   end
 
+  it "is not valid with less than one document referenced" do
+    package.document_referenced = []
+    expect(package).to_not be_valid
+  end
+
   it "is not valid without an associated VbmsUploadedDocument" do
     package.vbms_uploaded_document = nil
     expect(package).to_not be_valid
