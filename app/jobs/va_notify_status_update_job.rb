@@ -5,6 +5,7 @@ class VANotifyStatusUpdateJob < CaseflowJob
   application_attr :hearing_schedule
 
   QUERY_LIMIT = ENV["VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT"]
+  VALID_NOTIFICATION_STATUSES = %w[Success temporary-failure technical-failure sending created].freeze
 
   # Description: Jobs main perform method that will find all notification records that do not have
   #  status updates from VA Notify and calls VA Notify API to get the latest status
@@ -81,22 +82,41 @@ class VANotifyStatusUpdateJob < CaseflowJob
   #
   # Retuns: Lits of Notification Active Record associations meeting the where condition
   def find_notifications_not_processed
-    Notification.where("
-      (notification_type = 'Email' AND email_notification_status IN ('Success', 'temporary-failure',
-        'technical-failure', 'sending', 'created'))
-    OR
-      (notification_type = 'SMS' AND sms_notification_status IN ('Success', 'temporary-failure', 'technical-failure',
-        'sending', 'created'))
-    OR
-      (
-        notification_type = 'Email and SMS'
-      AND
-        (
-          email_notification_status IN ('Success', 'temporary-failure', 'technical-failure', 'sending', 'created')
-        OR
-          sms_notification_status IN ('Success', 'temporary-failure', 'technical-failure', 'sending', 'created')
+    Notification.select(Arel.star).where(
+      Arel::Nodes::Group.new(
+        email_status_check.or(
+          sms_status_check.or(
+            email_and_sms_status_check
+          )
         )
-      )")
+      )
+    )
+      .where(created_at: 4.days.ago..Time.zone.now)
+      .order(created_at: :desc)
+  end
+
+  def email_status_check
+    Notification.arel_table[:notification_type].eq("Email").and(
+      generate_valid_status_check(:email_notification_status)
+    )
+  end
+
+  def sms_status_check
+    Notification.arel_table[:notification_type].eq("SMS").and(
+      generate_valid_status_check(:sms_notification_status)
+    )
+  end
+
+  def email_and_sms_status_check
+    Notification.arel_table[:notification_type].eq("Email and SMS").and(
+      generate_valid_status_check(:email_notification_status).or(
+        generate_valid_status_check(:sms_notification_status)
+      )
+    )
+  end
+
+  def generate_valid_status_check(col_name_sym)
+    Notification.arel_table[col_name_sym].in(VALID_NOTIFICATION_STATUSES)
   end
 
   # Description: Method to be called when an error message need to be logged
