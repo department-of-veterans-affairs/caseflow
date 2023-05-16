@@ -187,7 +187,6 @@ describe IssuesUpdateTask do
         expect(issues_update_task.instructions[0][3]).to eql("Special Issues: None")
         expect(issues_update_task.instructions[0][4]).to eql("MST reason here")
         expect(issues_update_task.instructions[0][5]).to eql("PACT reason here")
-        binding.pry
       end
     end
   end
