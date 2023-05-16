@@ -37,7 +37,7 @@ class VbmsDistributionDestination < CaseflowRecord
     end
   end
 
-  # Are these country and state codes available in a hard coded constant?
+  # Are these country and state codes available in a hard coded constant – or should I create?
 
   def iso_country_codes
     @iso_country_codes ||= ISO3166::Country.codes

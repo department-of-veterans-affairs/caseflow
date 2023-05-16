@@ -9,11 +9,33 @@ describe VbmsDistributionDestination, :postgres do
     end
   end
 
-  shared_examples "destination has valid associations" do
-    it "is not valid without an associated VbmsDistribution" do
-      destination.vbms_distribution = nil
-      expect(destination).to_not be_valid
-    end
+  let(:destination) do
+    VbmsDistributionDestination.new(
+      destination_type: "domesticAddress",
+      vbms_distribution: distribution,
+      address_line_1: "address line 1",
+      city: "city",
+      state: "NY",
+      postal_code: "11385",
+      country_code: "US"
+    )
+  end
+
+  include_examples "destination has valid attributes"
+
+  it "is not valid without a destination type" do
+    destination.destination_type = nil
+    expect(destination).to_not be_valid
+  end
+
+  it "is not valid with incorrect destination type" do
+    destination.destination_type = "DomesticAddress"
+    expect(destination).to_not be_valid
+  end
+
+  it "is not valid without an associated VbmsDistribution" do
+    destination.vbms_distribution = nil
+    expect(destination).to_not be_valid
   end
 
   shared_examples "destination is a physical mailing address" do
@@ -68,20 +90,7 @@ describe VbmsDistributionDestination, :postgres do
   end
 
   context "destination type is domesticAddress" do
-    let(:destination) do
-      VbmsDistributionDestination.new(
-        destination_type: "domesticAddress",
-        vbms_distribution: distribution,
-        address_line_1: "address line 1",
-        city: "city",
-        state: "NY",
-        postal_code: "11385",
-        country_code: "US"
-      )
-    end
-
     include_examples "destination has valid attributes"
-    include_examples "destination has valid associations"
     include_examples "destination is a physical mailing address"
     include_examples "destination is a US address"
   end
@@ -100,7 +109,6 @@ describe VbmsDistributionDestination, :postgres do
     end
 
     include_examples "destination has valid attributes"
-    include_examples "destination has valid associations"
     include_examples "destination is a physical mailing address"
     include_examples "destination is a US address"
   end
@@ -118,7 +126,6 @@ describe VbmsDistributionDestination, :postgres do
     end
 
     include_examples "destination has valid attributes"
-    include_examples "destination has valid associations"
     include_examples "destination is a physical mailing address"
 
     it "is not valid without a country name" do
@@ -137,7 +144,6 @@ describe VbmsDistributionDestination, :postgres do
     end
 
     include_examples "destination has valid attributes"
-    include_examples "destination has valid associations"
 
     it "is invalid without an email address" do
       destination.email_address = nil
@@ -155,36 +161,9 @@ describe VbmsDistributionDestination, :postgres do
     end
 
     include_examples "destination has valid attributes"
-    include_examples "destination has valid associations"
 
     it "is invalid without a phone number" do
       destination.phone_number = nil
-      expect(destination).to_not be_valid
-    end
-  end
-
-  context "destination type is nil or incorrect" do
-    let(:destination) do
-      VbmsDistributionDestination.new(
-        destination_type: "domesticAddress",
-        vbms_distribution: distribution,
-        address_line_1: "address line 1",
-        city: "city",
-        state: "NY",
-        postal_code: "11385",
-        country_code: "US"
-      )
-    end
-
-    include_examples "destination has valid attributes"
-
-    it "is not valid without a destination type" do
-      destination.destination_type = nil
-      expect(destination).to_not be_valid
-    end
-
-    it "is not valid with incorrect destination type" do
-      destination.destination_type = "DomesticAddress"
       expect(destination).to_not be_valid
     end
   end
