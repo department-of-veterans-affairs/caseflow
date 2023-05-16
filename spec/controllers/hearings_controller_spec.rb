@@ -648,7 +648,7 @@ RSpec.describe HearingsController, type: :controller do
 
         expect(response.status).to eq 500
         expect(JSON.parse(response.body).dig("errors").first.dig("detail"))
-          .to eq("An unexpected error occured when attempting to map veteran.")
+          .to eq("Could not connect to the Lighthouse API, please try again later.")
       end
     end
 
@@ -672,7 +672,7 @@ RSpec.describe HearingsController, type: :controller do
 
         expect(response.status).to eq 500
         expect(JSON.parse(response.body).dig("errors").first.dig("detail"))
-          .to eq("An unexpected error occured when attempting to map veteran.")
+          .to eq("Could not connect to the Lighthouse API, please try again later.")
       end
     end
   end

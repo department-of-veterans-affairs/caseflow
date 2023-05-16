@@ -71,7 +71,9 @@ Rails.application.routes.draw do
         post 'upload_document', to: 'upload_vbms_document#create'
         get 'user', to: 'users#index'
         get 'veterans', to: 'veterans#details'
+        post 'addresses/validate', to: 'appeals#validate'
       end
+
       namespace :v2 do
         get 'appeals', to: 'appeals#details'
         get 'appeals/:appeal_id', to: 'appeals#reader_appeal'
