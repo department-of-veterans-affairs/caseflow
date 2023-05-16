@@ -145,7 +145,9 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       titleOfActiveReview: issue.title_of_active_review,
       rampClaimId: issue.ramp_claim_id,
       verifiedUnidentifiedIssue: issue.verified_unidentified_issue,
-      isPreDocketNeeded: issue.is_predocket_needed
+      isPreDocketNeeded: issue.is_predocket_needed,
+      mstChecked: issue.mst_status,
+      pactChecked: issue.pact_status
     };
   }
   );
@@ -194,7 +196,9 @@ const formatUnidentifiedIssues = (state) => {
         ineligibleReason: issue.ineligibleReason,
         vacols_id: issue.vacolsId,
         vacols_sequence_id: issue.vacolsSequenceId,
-        verified_unidentified_issue: issue.verifiedUnidentifiedIssue
+        verified_unidentified_issue: issue.verifiedUnidentifiedIssue,
+        mst_status: issue.mstChecked,
+        pact_status: issue.pactChecked
       };
     });
 };
@@ -223,7 +227,9 @@ const formatRatingRequestIssues = (state) => {
         ineligible_due_to_id: issue.ineligibleDueToId,
         withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : null,
         edited_description: issue.editedDescription,
-        correction_type: issue.correctionType
+        correction_type: issue.correctionType,
+        mst_status: issue.mstChecked,
+        pact_status: issue.pactChecked
       };
     });
 };
@@ -249,7 +255,9 @@ const formatNonratingRequestIssues = (state) => {
         edited_description: issue.editedDescription,
         withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : null,
         correction_type: issue.correctionType,
-        is_predocket_needed: issue.isPreDocketNeeded
+        is_predocket_needed: issue.isPreDocketNeeded,
+        mst_status: issue.mstChecked,
+        pact_status: issue.pactChecked
       };
     });
 };
@@ -352,6 +360,18 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
 
   return issues.map((issue, index) => {
+
+    if (issue.vacols_sequence_id) {
+      return {
+        index,
+        id: issue.id,
+        benefitType: issue.labels[0].toLowerCase(),
+        description: `${issue.labels[1]} - ${issue.labels[2]} - ${issue.labels[3]}`,
+        text: `${issue.labels[1]} - ${issue.labels[2]} - ${issue.labels[3]}`,
+        vacolsSequenceId: issue.vacols_sequence_id,
+      };
+    }
+
     if (issue.isUnidentified || issue.verifiedUnidentifiedIssue) {
       const issueText = issue.isUnidentified ?
         `Unidentified issue: no issue matched for "${issue.description}"` :
@@ -381,7 +401,9 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
         vacolsId: issue.vacolsId,
         vacolsSequenceId: issue.vacolsSequenceId,
         vacolsIssue: issue.vacolsIssue,
-        verifiedUnidentifiedIssue: issue.verifiedUnidentifiedIssue
+        verifiedUnidentifiedIssue: issue.verifiedUnidentifiedIssue,
+        mstChecked: issue.mstChecked,
+        pactChecked: issue.pactChecked
       };
     } else if (issue.isRating) {
       if (!issue.decisionDate && !issue.approxDecisionDate) {
@@ -422,7 +444,9 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
         examRequested: issue.examRequested,
         decisionIssueId: issue.decisionIssueId,
         ratingIssueReferenceId: issue.ratingIssueReferenceId,
-        ratingDecisionReferenceId: issue.ratingDecisionReferenceId
+        ratingDecisionReferenceId: issue.ratingDecisionReferenceId,
+        mstChecked: issue.mstChecked,
+        pactChecked: issue.pactChecked
       };
     }
 
@@ -457,7 +481,9 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
       editable: issue.editable,
       examRequested: issue.examRequested,
       decisionIssueId: issue.decisionIssueId,
-      isPreDocketNeeded: issue.isPreDocketNeeded
+      isPreDocketNeeded: issue.isPreDocketNeeded,
+      mstChecked: issue.mstChecked,
+      pactChecked: issue.pactChecked
     };
   });
 };

@@ -324,7 +324,9 @@ class LegacyHearing < CaseflowRecord
   # we want to fetch it from BGS, save it to the DB, then return it
   def military_service
     super || begin
-      update(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
+      if !HearingDay.find_by(id: hearing_day_id).nil?
+        update(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
+      end
       super
     end
   end
