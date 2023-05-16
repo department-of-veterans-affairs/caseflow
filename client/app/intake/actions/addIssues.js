@@ -48,6 +48,11 @@ export const toggleEditIntakeIssueModal = (index) => ({
   payload: { index }
 });
 
+export const setMstPactDetails = (editIssuesDetails) => ({
+  type: ACTIONS.SET_MST_PACT_DETAILS,
+  payload: { editIssuesDetails }
+});
+
 export const removeIssue = (index) => ({
   type: ACTIONS.REMOVE_ISSUE,
   payload: { index }
