@@ -99,6 +99,30 @@ export const IntakeRadioField = (props) => {
     return pactChecked;
   };
 
+  // prepopulated MST and PACT checkbox values
+  const prePopulatedMst = options[value - totalElements].mst
+  const prePopulatedPact = options[value - totalElements].pact
+
+  // handle both MST and PACT pre-populated checkbox status on load
+  const handlePrepopulatedCheckboxes = (radioOption) => {
+    setMstCheckboxFunction(radioOption.mst);
+    setPactCheckboxFunction(radioOption.pact);
+  };
+
+  // format prepopulated checkbox text to say the values came from VBMS
+  const formatJustificationText = (prePopulatedStatus) => {
+    let text = 'Prepopulated from VBMS';
+
+    if (prePopulatedMst) {
+      mstJustificationOnChange(text);
+    }
+
+    if (prePopulatedPact) {
+      pactJustificationOnChange(text);
+    }
+
+  };
+
   const maybeAddTooltip = (option, radioField) => {
     if (option.tooltipText) {
       const idKey = `tooltip-${option.value}`;
@@ -124,14 +148,16 @@ export const IntakeRadioField = (props) => {
 
       return (
         <div>
+        {console.log(`mst prefilled: ${JSON.stringify(prePopulatedMst)}`)}
+        {console.log(`pact prefilled: ${JSON.stringify(prePopulatedPact)}`)}
           <Checkbox
             label="Issue is related to Military Sexual Trauma (MST)"
             name="MST"
-            value={returnMstOrCheckboxValue(value)}
-            disabled={options[value - totalElements].mst}
+            value={mstChecked}
+            disabled={prePopulatedMst}
             onChange={(checked) => setMstCheckboxFunction(checked)}
           />
-          { mstChecked &&
+          { (mstChecked && !prePopulatedMst) &&
             <TextField
               name="mstJustification-field"
               value={mstJustification}
@@ -143,16 +169,17 @@ export const IntakeRadioField = (props) => {
           <Checkbox
             label="Issue is related to PACT act"
             name="Pact"
-            value={returnPactOrCheckboxValue(value)}
-            disabled={options[value - totalElements].pact}
+            value={pactChecked}
+            disabled={prePopulatedPact}
             onChange={(checked) => setPactCheckboxFunction(checked)}
           />
-          { pactChecked &&
+          { (pactChecked && !prePopulatedPact) &&
             <TextField
               name="pactJustification-field"
               value={pactJustification}
               label="Why was this change made?"
               required
+              optional={prePopulatedPact}
               onChange={(pactJustificationText) => pactJustificationOnChange(pactJustificationText)}
             />
           }
@@ -163,7 +190,22 @@ export const IntakeRadioField = (props) => {
 
   const isDisabled = (option) => Boolean(option.disabled);
 
-  const handleChange = (event) => onChange?.(event.target.value);
+  const handleChange = (event) => {
+    onChange?.(event.target.value);
+
+    // if the radio option has a pre-populated MST/PACT checkbox, update the value
+    handlePrepopulatedCheckboxes(props.options[event.target.value]);
+
+    // prepopulate the justification text for MST and PACT
+    if (prePopulatedMst) {
+      formatJustificationText(prePopulatedMst);
+    }
+
+    if (prePopulatedPact) {
+      formatJustificationText(prePopulatedPact);
+    }
+  };
+
   const controlled = useMemo(() => typeof value !== 'undefined', [value]);
 
   return (

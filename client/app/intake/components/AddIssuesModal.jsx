@@ -91,8 +91,6 @@ class AddIssuesModal extends React.Component {
     const { intakeData } = this.props;
     let iterations = -1;
     const addedIssues = intakeData.addedIssues ? intakeData.addedIssues : [];
-    let preExistingMST;
-    let preExistingPACT;
     let counter = 0;
     const issueKeys = Object.keys(intakeData.contestableIssues);
 
@@ -185,8 +183,6 @@ class AddIssuesModal extends React.Component {
           setMstCheckboxFunction={this.mstCheckboxChange}
           pactChecked={this.state.pactChecked}
           setPactCheckboxFunction={this.pactCheckboxChange}
-          preExistingMST={preExistingMST}
-          preExistingPACT={preExistingPACT}
         />
       );
     });
