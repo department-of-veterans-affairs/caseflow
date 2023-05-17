@@ -1,6 +1,6 @@
 ## Mac Intel  ##################################################
 
-[<< Back](README)
+[<< Back](README.md)
 
 **Pre-requisites for setup:**
 
@@ -114,4 +114,4 @@
 
 25. Navigate to localhost:3000 in browser to see the application
 
-[<< Back](README)
+[<< Back](README.md)

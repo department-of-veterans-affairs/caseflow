@@ -1,6 +1,6 @@
 ## Mac M1 and M2  #######################################################
 
-[<< Back](README)
+[<< Back](README.md)
 
 ***Ensure command line tools are installed via Self Service Portal prior to starting***
 
@@ -281,4 +281,4 @@ After this, anytime I want to run Caseflow follow these steps:
     5. Run lsof -i TCP:<port>, then kill –9 <pid>
     6. Run make run-m1 again
 
-[<< Back](README)
+[<< Back](README.md)
