@@ -289,23 +289,32 @@ export default class QueueTable extends React.PureComponent {
   };
 
   validatedPaginationOptions = () => {
-    const { tabPaginationOptions = {}, numberOfPages, columns } = this.props;
+    const { tabPaginationOptions = {}, numberOfPages, columns, preserveFilter } = this.props;
 
     const sortAscending =
       tabPaginationOptions[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] !== QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC;
     const sortColumn = tabPaginationOptions[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] || null;
     const filterParam = tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`];
-    const filteredByList = this.getFilters(filterParam || localStorage.getItem('queueFilter'));
-    // this.getFilters(localStorage.getItem('queueFilter'));
+    let filteredByList;
 
-    const localFilter = this.getFilters(localStorage.getItem('queueFilter'));
+    // My new testing junk
+    const localFilter = localStorage.getItem('queueFilter');
 
     console.log('in queuetable.jsx validatedPaginationOptions');
     console.log(filterParam);
-    console.log('filteredByList');
-    console.log(filteredByList);
     console.log('local filter');
     console.log(localFilter);
+
+    if (preserveFilter) {
+      filteredByList = this.getFilters(filterParam || localStorage.getItem('queueFilter'));
+    } else {
+      filteredByList = this.getFilters(filterParam);
+    }
+    // this.getFilters(localStorage.getItem('queueFilter'));
+
+    console.log('filteredByList');
+    console.log(filteredByList);
+
     // TODO: Have to set and clear the localFilter now
     // TODO: Also need a property/state variable to determine if the local filter should be used?
     const pageNumber = tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1 || 0;
@@ -401,9 +410,67 @@ export default class QueueTable extends React.PureComponent {
   };
 
   updateFilteredByList = (newList) => {
+    const { preserveFilter } = this.props;
+
     this.setState({ filteredByList: newList, filtered: true }, this.updateAddressBar);
 
     console.log('in queue table updateFilteredByList');
+    // TODO: Try setting the local filter here?
+
+    // TODO: Can maybe extract this into a method?
+    // It's used in requestQueryString()
+    const filterParams = [];
+
+    if (!_.isEmpty(newList)) {
+      for (const columnName in newList) {
+        if (!_.isEmpty(newList[columnName])) {
+          const column = this.props.columns.find((col) => col.columnName === columnName);
+
+          filterParams.push(`col=${column.name}&val=${newList[columnName].join('|')}`);
+        }
+      }
+    }
+
+    // Down there it is this but maybe it should be just the columns and values
+    // const filterQueryString = filterParams.map((filterParam) =>
+    //   `${encodeURIComponent(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`)}=${encodeURIComponent(filterParam)}`
+    // ).
+    //   join('&');
+
+    // Encoding is causing problems?
+    const encodedFilterQueryString = filterParams.map((filterParam) =>
+      `${encodeURIComponent(filterParam)}`
+    ).
+      join('&');
+
+    // Try it without encoding?
+    const filterQueryString = filterParams.map((filterParam) =>
+      filterParam
+    ).
+      join('&');
+
+    console.log('setting local filter to: ');
+    console.log(preserveFilter);
+    console.log(filterQueryString);
+
+    // Temporary check for saving the filter
+    if (preserveFilter) {
+      localStorage.setItem('queueFilter', filterQueryString);
+      localStorage.setItem('encodedQueueFilter', encodedFilterQueryString);
+    }
+
+    // Or just pull it from the url at this point?
+    // Mimic what is done in NonCompTabs for testing for now
+    // TODO: Might keep it, might not
+    // Doesn't work because state is updated asynchronously so the params are wrong at this time
+    // const params = new URLSearchParams(window.location.search);
+    // const filterParams = params.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
+
+    // console.log('setting filter param here I guess?');
+    // console.log(filterParams);
+    // console.log(newList);
+
+    // localStorage.setItem('queueFilter', filterParams);
 
     // When filters are added or changed, default back to the first page of data
     // because the number of pages could have changed as data is filtered out.
@@ -772,6 +839,7 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
     onPageLoaded: PropTypes.func
   }),
   onHistoryUpdate: PropTypes.func,
+  preserveFilter: PropTypes.bool,
 };
 
 /* eslint-enable max-lines */

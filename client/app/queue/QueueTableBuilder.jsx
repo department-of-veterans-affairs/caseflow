@@ -167,13 +167,15 @@ class QueueTableBuilder extends React.PureComponent {
   //   console.log(path);
   // };
 
+  // TODO: Don't think this is going to work for queue unfortunately
   onHistoryUpdate = (urlString) => {
     const url = new URL(urlString);
     const params = new URLSearchParams(url.search);
     const filterParams = params.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
 
-    console.log('setting filter param here I guess?');
-    console.log(filterParams);
+    console.log('in onhistoryupdate in queuetablebuilder');
+    // console.log('setting filter param here I guess?');
+    // console.log(filterParams);
 
     // localStorage.setItem('queueFilter', filterParams);
 
@@ -248,6 +250,7 @@ class QueueTableBuilder extends React.PureComponent {
               paginationOptions.tab === tabConfig.name && paginationOptions
             }
             onHistoryUpdate={this.onHistoryUpdate}
+            preserveFilter
             defaultSort={defaultSort}
             useTaskPagesApi={
               config.use_task_pages_api && !tabConfig.contains_legacy_tasks
