@@ -140,7 +140,7 @@ class CachedAppealService
   end
 
   def request_issue_types_for_appeal_ids(appeal_ids)
-    issue_type_alias = "STRING_AGG(DISTINCT request_issues.nonrating_issue_category, ','"\
+    issue_type_alias = "STRING_AGG(DISTINCT LOWER(request_issues.nonrating_issue_category), ','"\
       " ORDER BY LOWER(request_issues.nonrating_issue_category))"\
       " AS issue_types"
     # Selects a distinct list of string delimited issue_types that matches front end sorting
