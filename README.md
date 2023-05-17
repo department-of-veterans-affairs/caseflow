@@ -21,22 +21,11 @@ The Appeals Modernization team's mission is to empower employees with technology
       * [Developer Setup](#developer-setup)
          * [Github](#github)
          * [Machine setup](#machine-setup)
-            * [Basic Dependencies](#basic-dependencies)
-            * [Setup <a href="https://github.com/rbenv/rbenv">rbenv</a> &amp; <a href="https://github.com/nodenv/nodenv">nodenv</a>.](#setup-rbenv--nodenv)
-            * [Install <a href="https://www.pdflabs.com/tools/pdftk-server/" rel="nofollow">PDFtk Server</a>](#install-pdftk-server)
-            * [Install Database Clients](#install-database-clients)
-            * [Install Docker](#install-docker)
-            * [Install chromedriver](#install-chromedriver)
-            * [Clone this repo](#clone-this-repo)
-            * [Install Ruby dependencies](#install-ruby-dependencies)
-            * [Install JavaScript dependencies](#install-javascript-dependencies)
-            * [Setup the development Postgres user](#setup-the-development-postgres-user)
-            * [Database environment setup](#database-environment-setup)
-      * [Running dev Caseflow &amp; Accessing dev DBs](#running-dev-caseflow--accessing-dev-dbs)
-         * [Running Caseflow](#running-caseflow)
-         * [Seeding Data](#seeding-data)
-         * [Connecting to databases locally](#connecting-to-databases-locally)
-      * [Running tests](#running-tests)
+            * [Windows 10 + WSL](#windows-10-with-wsl)
+            * [Windows 11 + WSL](#windows-11-with-wsl)
+            * [Mac M1/M2](#mac-m1-and-m2)
+            * [Mac Intel](#mac-intel)
+      * [Test Coverage](#test-coverage)
       * [Debugging FACOLS setup](#debugging-facols-setup)
       * [Monitoring](#monitoring)
       * [Roles](#roles)
@@ -106,454 +95,650 @@ Request an invite to the [department-of-veterans-affairs](https://github.com/dep
 We are using 2-factor authentication with Github so, for example, when you access a repository using Git on the command line using commands like git clone, git fetch, git pull or git push with HTTPS URLs, you must provide your GitHub username and your personal access token when prompted for a username and password. Follow directions [here](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) on how to do that.
 
 
-### Machine setup #######################################################
+## Machine setup #######################################################
 
 You can manually go through the following steps.
 Alternatively, if you have a Mac, you can clone this repo and run the following scripts:
 
   - `git clone https://github.com/department-of-veterans-affairs/caseflow`
+  - `git checkout grant/setup-m1`
   - [dev_env_setup_step1.sh](scripts/dev_env_setup_step1.sh)
   - [dev_env_setup_step2.sh](scripts/dev_env_setup_step2.sh)
 
-Remember to follow the instructions printed at the end of the scripts.
 If an error occurs, it is okay to run the scripts multiple times after the error is corrected.
 
-#### Basic Dependencies #######################################################
+---
 
-**Mac**
+## Windows 10 with WSL ######################################################
 
-Install the Xcode commandline tools
+***Pre-requisites for setup:***
 
-`xcode-select --install`
+1. Create GitHub user account (https://github.com)
 
-Install the base dependencies via Homebrew:
+***Setup steps:***
+
+1. Open PowerShell as Administrator (Start menu > PowerShell > right-click > Run as Administrator) and enter these commands:
+    * dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+    * dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+2. Install Docker Desktop: https://hub.docker.com/editions/community/docker-ce-desktop-windows
+    * After install and Windows restart, open Docker Desktop, go to Settings > General and enable "Expose daemon on tcp://localhost:2357 without TLS" and Apply & Restart
+
+3. Download and install: https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi
+
+4. In PowerShell (NOT as Administrator if on a BAH machine) run this command:
+    * `wsl --set-default-version 1`
+
+5. Install VS Code: https://code.visualstudio.com/
+    * After installing VS Code, install the Remote - WSL extension:
+    https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl
+
+6. Download Ubuntu 20.04 LTS from Windows Store: https://www.microsoft.com/store/apps/9n6svws3rx71
+
+7. Generate a personal access token in github: https://github.com/settings/tokens with the following scopes:
+    * repo
+    * workflow
+    * gist write:discussion
+
+8. Download caseflow-setup.zip
+
+9. Launch Ubuntu 20.04 LTS (hit WinKey, type Ubuntu, hit enter)
+    * Set a username and password for yourself
+    * Type `explorer.exe .` and hit enter (note the trailing period)
+    * Copy the caseflow-setup.zip file from Step 8 into the explorer window that opens (if you get a warning about copying "without its properties" just click Yes).
+    * Run the following commands in the Ubuntu terminal:
+        * Each line is a separate command, run them one at a time
+        * If you are on a Booz Allen laptop, connect to Cisco VPN before continuing
+        * Replace <yourtoken> with your github personal access token from step 7 (if you didn't copy it down, just regenerate it)
+            * `sudo apt-get update && sudo apt-get install -y curl unzip wget`
+            * `unzip caseflow-setup.zip`
+            * `mkdir appeals && cd appeals`
+            * `git clone https://<yourtoken>@github.com/department-of-veterans-affairs/caseflow`
+            * `cd caseflow`
+            * `git checkout kevin/setup-ubuntu`
+            * `cp -r ~/caseflow-setup/caseflow-facols/build_facolslocal/vacols/build_facols `
+            * `cp ~/caseflow-setup/*.zip local/vacols/build_facols/`
+            * `rm -rf ~/__MACOSX && rm -rf ~/caseflow-setup && rm -f ~/caseflow-setup.zip`
+            * `source scripts/ubuntu_setup.sh`
+    * This may take a few hours to run. If you run into issues, try to keep your Ubuntu terminal window open and reach out for help if you're stuck
+    * Once it finishes successfully, Caseflow can be started by opening Ubuntu and executing make run in the caseflow directory:
+        * `cd ~/appeals/caseflow`
+        * `make run`
+    * To get the codebase into VSCode, open Ubuntu and (note the trailing period):
+        * `cd ~/appeals/caseflow`
+        * `code .`
+
+---
+
+## Windows 11 with WSL #######################################################
+
+***Pre-requisites for setup:***
+
+* If you have Docker Desktop installed, please follow the steps here in order to
+remove it. We are unable to utilize Docker Desktop on this project due to licensing
+requirements.
+
+* Create GitHub user account (https://github.com)
+    * Use a VA.gov account. Must follow the provisioning process. Use your VA email to
+sign up
+    * Click the link (https://vaww.oit.va.gov/services/github/), scroll to bottom for new
+account submission form and for the request: add items i. department-of-veterans-affairs/appeals-team
+        * department-of-veterans-affairs/Caseflow-team
+    * Once you have access you must generate a personal access token for step 11
+& token must be remembered & not shared or pushed visually to the repo. Generate a personal access token in github: (Located in developer settings)
+https://github.com/settings/tokens with the following scopes and remember for step 11:
+        * repo
+        * workflow
+        * gist write:discussion
+
+***Setup Steps:***
+
+1. Open PowerShell as Administrator (Start menu > PowerShell > right-click > Run as Administrator) and enter these commands:
+    * dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+    * dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+
+2. Download and install: https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi
+
+3. After installing VS Code, install the Remote - WSL extension:
+
+4. Download Ubuntu 20.04.5 LTS from Windows Store: apps.microsoft.com/store/search/Ubuntu
+
+5. Download and install .Net Runtime 6.0.0: https://dotnet.microsoft.com/en-us/download/dotnet/6.0
+
+6. Ensure latest Windows Drivers are installed if on Dell: Download Link to install Dell Support Assistant: Run Across System scan and perform updates as needed: https://www.bing.com/ck/a?!&&p=68372682615bcb3b28a9be38b964a8355fa7e11fe27c48edb22eeecd72 13b669JmltdHM9MTY1ODE3MzcyMiZpZ3VpZD04MmY1YTkwMC0xMGJiL TQ1Y2MtODMzMS05YWEzM DQ3MzBjM2MmaW5zaWQ9NTUwOA&ptn=3&fclid=a02f7d97-06d2-11ed-a996- 7109a4f44a36&u=a1aHR0cHM6Ly93d3cuZGVsbC5jb20vc3VwcG9ydC9jb250ZW50cy9lbi1pbi9hcnRpY2x lL3Byb2R1Y3Qtc3VwcG9ydC9zZWxmLXN1cHBvcnQta25vd2xlZGdlYmFzZS9zb2Z0d2FyZS1hbmQtZG9 3bmxvYWRzL3N1cHBvcnRhc3Npc3Q&ntb=1
+
+7. Download caseflow-setup.zip (Request from Dev. Team: BAH LFS Transfer)
+
+8. Copy the caseflow-setup.zip file from Step 8 into the explorer window that opens (if you get a warning about copying "without its properties" just click Yes). Warning: Cloud Syncing Interference: Can occur on Desktop, Docs, Pics paths. It is recommended to temporary turn off during this process (See removal of identifier shown below to fix if this occurs).
+
+9. A. Launch Ubuntu 20.04.5 LTS (hit WinKey, type Ubuntu, hit enter) Set a username and password for yourself
+Type explorer.exe . and hit enter (note the trailing period)
+In the Ubuntu terminal perform the ls command to list the files. You will notice if Zone.Identifier files populate that will eventually have to be removed due to tracking.
+Run each line is a separate command, run them one at a time
+* ```sudo apt-get update && sudo apt-get install -y curl unzip wget```
+* ```sudo apt upgrade``` enter 'Y' to continue
+(Restart PC maybe required)
+
+10. Launch Ubuntu 20.04.5 LTS (hit WinKey, type Ubuntu, hit enter)
+Run each line is a separate command, run them one at a time
+    * ```unzip caseflow-setup.zip```
+    * ```mkdir appeals && cd appeals```
+
+11. Enter your git token where <yourtoken> is below:
+    * ```git clone https://<yourtoken>@github.com/department-of-veterans-affairs/caseflow```
+    * ```cd caseflow```
+    * ```git checkout kevin/setup-ubuntu```
+    * ```cp -r ~/caseflow-setup/caseflow-facols/build_facols local/vacols/build_facols```
+    * ```cp ~/caseflow-setup/*.zip local/vacols/build_facols/```
+    * ```rm -rf ~/__MACOSX && rm -rf ~/caseflow-setup && rm -f ~/caseflow-setup.zip```
+    * ```source scripts/ubuntu_setup.sh```
+    * ```source scripts/ubuntu_setup.sh (Run twice to review log)```
+    * Restart PC
+
+12. Launch Ubuntu 20.04.5 LTS (hit WinKey, type Ubuntu, hit enter)
+
+13. In the terminal run
+    * ```ls```
+    * If “Zone.Identifier” is found. Cd into the directory and remove. This is caused by cloud tracking. For example: caseflow-setup zip was on desktop before being moved into its new directory.
+    * i.e. ```rm caseflow-setup.zipZone.Identifier```
+14. ```cd ~/appeals/caseflow```
+
+15. ```code .```
+
+16. Open new terminal in VS Code. Trash old terminal.
+
+17. In new terminal run: ```git checkout kevin/setup-ubuntu```
+
+18. ```cd ~/appeals/caseflow```
+
+19. Run source scripts/ubuntu_setup.sh
+    a. This built out Facols 2nd time and removes a intermediate container.
+    b. Run the source scripts/ubuntu_setup.sh a third time. This should do a final check for missing dependancies.
+
+20. (In directory: cd ~/appeals/caseflow): In terminal: perform run commands:
+    a. make run-backend
+        i. Create a new terminal window
+    b. Ensure in the ```cd ~/appeals/caseflow``` directory and run
+        i. ```make run-frontend```
+    c. Ctrl + C both servers to turn them off
+    d. ```cd ..```
+    e. ```cd ..```
+    f. You can close terminal window.
+
+21. Install all recommended extensions located in the visual studio code marketplace
+    a. ES7+ React/Redux/React-Native snippets
+    b. JavaScript (ES6) code snippets
+    c. Remote - WSL
+    d. VSCode Ruby
+    e. Vscode-icons f. Docker
+    g. ESLint
+    h. React PropTypes Generate
+    i. Ruby Solargraph
+    j. VSCode Byebug Debugger k. Vscode-run-rspec-file
+    l. Code Runner m. GitLens
+    n. Git History
+    o. Ruby
+    p. SQLTools
+    q. SQLTools PostgresSQL/Redis Driver
+    r. Oracle Developer Tools for VS Code (SQL and PLSQL)
+
+22. For Postgres DB: Add New Connection:
+    a. Connection name*: DB-Appeals
+    b. Connect using*: Server and Port
+    c. Server Address*: localhost
+    d. Port*: 5432
+    e. Database*: caseflow_certification_development
+    f. Username*: postgres
+    g. Use password: Save password
+    h. Password*: postgres
+
+23. Save Connections & Test
+
+24. Close and restart VS Code
+
+25. branch should be up to date with master (```git checkout master```, ```git pull```)
+
+26. ```cd ~/appeals/caseflow in terminal```
+
+27. ```bin/rails db:migrate RAILS_ENV=development```
+
+28. Run ```bundle install``` to install missing gems and then ```bin/rails db:migrate``` ```RAILS_ENV=development``` command if you have too again.
+
+29. ```make reset``` (should have split_correlation_tables)
+
+30. ```make c``` (then type ```quit``` and enter terminal if builds correct)
+
+31. In new terminal open and run ```bundle install```
+
+32. Open New terminal: ```make run-backend```
+    a. Sometimes Port:3500 is in use and the port must be killed by it's PID value in order to run correct container. Use Commands below to help assist.
+        i. ```docker ps```
+        ii. ```lsof -t -i:3500```
+        iii. ```ps -fu USERNAME```
+    b. Commands to kill the port
+        i. ```kill $(lsof –t -I:3500)```
+        ii. ```kill -9 PID```
+
+33. Open New Terminal: ```cd client```, ```yarn install```, ```cd ..```, and ```make run-frontend```
+
+34. You should now be able to navigate to localhost:3000
+
+35. Again, use crtl + c to stop backend & frontend
+
+36. Created a system restore point here.
+
+37. New branch can be created from here. I.e. ```git checkout –b feature/APPEALS-XXXX```
+    a. Or just checkout if already exist and perform a git pull
+
+38. ```git push --set-upstream origin feature/APPEALS-XXXX```
+
+39. Develop & make some code changes and save based off of your tech lead's recommended branch setup and save changes. Push those new branches to create a draft PR.
+
+40. Set user.email for git & set user.name for git
+    a. ```git config --global user.email "you@va.gov"```
+    b. ```git config –global user.name "Your Name"```
+
+---
+
+## Mac M1 and M2  #######################################################
+
+***Ensure command line tools are installed via Self Service Portal prior to starting***
+
+**Clone these Repos**
+
+1. Create a `~/dev/appeals/` directory
+
+2. Clone the following repos using git clone into this directory
+    a. https://github.com/department-of-veterans-affairs/caseflow.git
+    b. https://github.com/department-of-veterans-affairs/caseflow-commons.git
+    c. https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit.git
+
+3. Optional for setting up a machine, clone if can
+    a. https://github.com/department-of-veterans-affairs/caseflow-efolder.git
+    b. https://github.com/department-of-veterans-affairs/caseflow-facols.git
+    c. https://github.com/department-of-veterans-affairs/appeals-notebook.git
+
+4. If cannot clone the above might need to do https://docs.github.com/en/enterprise- server@3.4/authentication keeping-your-account-and-data-secure/creating-a-personal-access-token
+
+**Homebrew Installation**
+
+1. Install homebrew from self-service portal
+
+**Docker Installation**
+
+1. Navigate to docker website
+
+2. Install “Docker Desktop for Mac Apple silicon”
+
+3. Pop up of app will come up to transfer to application folder
+
+4. Right click on the Docker app and select “install with privilege management”
+
+5. Open terminal and run
+    a. arch –arm64 brew install docker docker-compose colima
+    b. mkdir -p ~/.docker/cli-plugins
+    c. ln -sfn /opt/homebrew/opt/docker-compose/bin/docker-compose~/.docker/cli-plugins/docker-compose
+    d. sudo mv homebrew /usr/local/homebrew
+        i. (moves homebrew from /opt to /usr/local)
+    e. eval $(/usr/local/homebrew/bin/brew shellenv)
+
+**UTM and Vacols VM**
+
+1. Download UTM from this link
+
+2. Right click UTM.app and select “install with privilege management” then open the UTM.app
+
+3. Download the Vacols VM from this link
+
+4. After the file downloads, right click on it in “Finder” and select “Show Package Contents” and delete the view.plist file if it exists
+
+5. Right click on the application and select “Open With > UTM.app (default)”
+
+6. Select the “Play” button when it pops up in UTM
+
+7. The virtual machine will open. To login, the password is “password”
+Booz Allen Hamilton Internal
+
+ 8. Leave this running in the background. If you close the window, you can open it back up by repeating steps 5-7
+
+**Chromedriver Installation**
+
+1. Open terminal and run
+    a. brew install --cask chromedriver
+
+2. Once it successfully installs, run command
+    a. chromedriver –version
+
+3. There will be a pop up. Before clicking “OK,” navigate to System Settings > Privacy & Security
+
+4. Scroll down and it will say “chromedriver was blocked form use because it is not from an identified
+developer”
+
+5. Select “Allow Anyway”
+
+6. Select “Yes” from pop up
+
+7. Open terminal and once again run
+    a. chromedriver –version 8. Select “Open”
+
+**PDFtk Server**
+
+1. Download from this curl -L http:link
+
+**Configure x86_64 Homebrew**
+
+1. Create a homebrew directory under your home directory
+    a. ```mkdir homebrew```
+
+2. Open terminal and run
+    a. ```curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew```
+
+3. If chdir error run
+    a. ``mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew``
+
+4. Using sudo, move the homebrew directory to /usr/local/
+    a. ```sudo mv homebrew /usr/local/homebrew```
+
+**Rosetta**
+
+1. Open standard terminal and run:
+    a. ```softwareupdate –install-rosetta –agree-to-license```
+2. Once Rosetta is installed, find the default terminal in “Finder” > Applications
+
+3. Right click and select “Get Info”
+
+4. Select “Open using Rosetta”
+    Note: you can copy the standard terminal executable to your desktop and enable Rosetta on that, so that you don’t need to disable rosetta on the default terminal once Caseflow setup is complete
+
+*Booz Allen Hamilton Internal*
+
+**Oracle “instantclient” Files**
+
+1. Download these DMG files
+    a. instantclient-basic-macos.x64-19.8.0.0.0dbru.dmg
+    b. instantclient-sqlplus-macos.x64-19.8.0.0.0dbru.dmg
+    c. Instantclient-sdk-macos.x64-19.8.0.0.0dbru.dmg
+
+2. After downloading, click on one of the folders and follow the instructions in INSTALL_IC_README.txt
+
+**Postgres Download**
+
+1. Download from this link
+
+**OpenSSL**
+
+1. Download openssl@1.1 and openssl@3 from this link
+
+2. Open “Finder” and find the two folders under “Downloads”
+
+3. Open openssl@1.1 and find the child folder 1.1.1s
+
+4. Click 1.1.1s, duplicate it, and rename the duplicate folder 1.1.1t
+
+5. Open openssl@3 and find the child folder 3.0.7
+
+6. Click 3.0.7, duplicate it, and rename the duplicate folder 3.1.0
+
+7. Open a second “Finder” window and navigate to /usr/local/homebrew/Cellar
+
+8. Move openssl@1.1 and openssl@3 to the Cellar folder
+
+9. Run command (from a rosetta terminal)
+    a. brew link --force openssl@1.1
+    b. If the one above doesn’t work run: brew link openssl@1.1 --force
+
+**.zshrc File**
+
+1. Run command
+    a. ```open ~/.zshrc```
+
+2. Add the following lines, if any of these are already set make sure to comment previous settings:
 
 ```
-brew install rbenv nodenv yarn
-brew tap ouchxp/nodenv
-brew install nodenv-nvmrc
-brew tap caskroom/cask
-brew install --cask chromedriver
-```
-**Linux**
-
-* [Install rbenv](https://github.com/rbenv/rbenv-installer#rbenv-installer)
-* [Install nodenv](https://github.com/nodenv/nodenv-installer#nodenv-installer)
-* [Install yarn](https://yarnpkg.com/lang/en/docs/install)
-
-Ubuntu specific
-```
-sudo apt-get install git curl
-```
-Fedora specific
-```
-sudo dnf install git-core zlib zlib-devel gcc-c++ patch readline \
-  readline-devel libyaml-devel libffi-devel openssl-devel make bzip2 \
-  autoconf automake libtool bison curl
-```
-
-
-#### Setup [rbenv](https://github.com/rbenv/rbenv) & [nodenv](https://github.com/nodenv/nodenv). ####
-
-Run `rbenv init` and do what it tells you.
-
-Run `nodenv init` and do what it tells you.
-
-Once you've done that, close your terminal window and open a new one. Verify that both environment managers are running:
-
-    $ env | grep ENV_SHELL
-    NODENV_SHELL=bash
-    RBENV_SHELL=bash
-
-If you don't see both, stop and debug.
-
-#### Install [PDFtk Server](https://www.pdflabs.com/tools/pdftk-server/) ########################
-
-**Mac**
-Unfortunately, the link on the website points to a version for older macOS that doesn't work on current versions. Use this link found on a Stack Overflow post instead:
-
-[PDFtk Server for modern macOS](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server-2.02-mac_osx-10.11-setup.pkg)
-
-**Ubuntu**
-Available for Ubuntu in the software manager.
-
-**Fedora**
-[Fedora Instructions](https://www.linuxglobal.com/pdftk-works-on-centos-7/)
-
-#### Install Database Clients #######################################################
-
-_Postgres_
-**Mac & Linux**
-Install postgres client and developer libraries.
-The postgres server is not needed. If you install it, configure it to run on a different port or you will block the docker container.
-Add these postgres variables to your env:
-
-```
-export POSTGRES_HOST=localhost
-export POSTGRES_USER=postgres
-export POSTGRES_PASSWORD=postgres
-```
-
-_Oracle_
-You'll need to install the libraries required to connect to the VACOLS Oracle database.
-
-**Mac**
-
-1) Run the Homebrew install command for the "Instant Client Package - Basic" library:
-
-```
-    brew tap InstantClientTap/instantclient
-    brew install instantclient-basic
-```
-
-2) Homebrew will error and give you instructions to complete a successful installation:
-
-    - Follow the link to the download page
-    - Log in or create an Oracle account
-    - Accept the license agreement
-    - Download the linked zip file
-    - Move and rename the file
-    - rerun the `brew install instantclient-basic` command
-
-3) Do the same thing for the "Instant Client Package - SDK" library; run the install command:
-
-    `brew install instantclient-sdk`
-
-    ...and follow the corresponding steps in Homebrew's error message.
-
-**Linux**
-[Install oracle](https://github.com/kubo/ruby-oci8/blob/master/docs/install-instant-client.md#install-oracle-instant-client-packages)
- - Last known working at Oracle Instant Client v12;
- - Follow _all the steps_ for the zip install.
- - Requires instant-client, sdk, and sql\*plus packages.
- - Don't skip the lib softlink
-
-You probably have to create an Oracle account to download these.
-
-(May need to have your user own the oracle /opt directory?)
-
-**Windows**
-1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](https://www.oracle.com/technetwork/database/database-technologies/instant-client/downloads/index.html) for Windows 32 or 64bit.
-
-2) Unzip both packages into `[DIR]`
-
-3) Add `[DIR]` to your `PATH`
-
-#### Install Docker ####################################################################
-
-**Mac**
-Install Docker on your machine via Homebrew:
-
-```
-    brew install --cask docker
-```
-
-Once Docker's installed, run the application and go into advanced preferences to limit Docker's resources in order to keep FACOLS from consuming your Macbook.  Recommended settings are 4 CPUs, 8 GiB of internal memory, and 512 MiB of swap.
-
-Back in the terminal, run:
-```
-docker login -u dsvaappeals
-```
-
-The password is in the DSVA 1Password account.
-Note you can use your personal account as well, you'll just have to accept the license agreement for the [Oracle Database docker image](https://store.docker.com/images/oracle-database-enterprise-edition). To accept the agreement, checkout with the Oracle image on the docker store.
-
-**Linux**
-
-[Install docker-ce](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
-
-Follow the directions to set docker to run without sudo.
-
-Back in the terminal, run:
-```
-docker login -u dsvaappeals
-```
-
-The password is in the DSVA 1Password account.
-Note you can use your personal account as well, you'll just have to accept the license agreement for the [Oracle Database docker image](https://store.docker.com/images/oracle-database-enterprise-edition). To accept the agreement, checkout with the Oracle image on the docker store.
-
-You may need to adjust your base disk image size to accomodate FACOLS and restart docker. Example:
-
-```
-$ cat /etc/docker/daemon.json
-{
-  "debug": true,
-  "storage-opts" : [ "dm.basesize=256G" ]
-}
-$ systemctl restart docker
-```
-
-#### Install chromedriver
-
-Allows the feature tests to run locally.
-
-**Mac**
-```
-brew install --cask chromedriver
-chromedriver --version
-```
-
-**ubuntu**
-```
-sudo apt-get update
-sudo apt-get install -y unzip xvfb libxi6 libgconf-2-4
-sudo curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add
-sudo echo "deb [arch=amd64]  http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
-sudo apt-get -y update
-sudo apt-get -y install google-chrome-stable
-wget https://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip
-unzip chromedriver_linux64.zip
-sudo mv chromedriver /usr/bin/chromedriver
-sudo chown root:root /usr/bin/chromedriver
-sudo chmod +x /usr/bin/chromedriver
-rm chromedriver_linux64.zip
-chromedriver --version
-```
-
-
-#### Clone this repo #######################################################
-Navigate to the directory you'd like to clone this repo into and run:
-
-    git clone https://github.com/department-of-veterans-affairs/caseflow.git
-
-#### Install Ruby dependencies ##############################################
-
-```
-cd caseflow
-rbenv install $(cat .ruby-version)
-rbenv rehash
-# BUNDLED_WITH<VERSION> is at the bottom Gemfile.lock
-gem install bundler -v BUNDLED_WITH
-# If when running gem install bundler above you get a permissions error,
-# this means you have not propertly configured your rbenv.
-# Debug.
-# !! Do *not* proceed by running sudo gem install bundler. !!
-bundle install
-```
-
-This should install clean. If you have errors, you probably missed a dependency (like the Oracle libraries).
-
-#### Install JavaScript dependencies #########################################
-
-    cd caseflow
-    nodenv install $(cat .nvmrc)
-    nodenv rehash
-    cd client
-    yarn install
-
-This should install clean. If you have errors, ask for help in the slack.
-
-#### Setup the development Postgres user #####################################
-
-Add these to your `.bash_profile`:
-
-```
+export PATH=/usr/local/homebrew/bin:/opt/homebrew/bin:${PATH} eval "$(/usr/local/homebrew/bin/rbenv init -)"
+eval "$(/usr/local/homebrew/bin/nodenv init -)"
+# Add Postgres environment variables for CaseFlow
 export POSTGRES_HOST=localhost
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
 export NLS_LANG=AMERICAN_AMERICA.UTF8
+export FREEDESKTOP_MIME_TYPES_PATH=/usr/local/homebrew/share/mime/packages/freedesktop.org.xml export OCI_DIR=~/Downloads/instantclient_19_8
 ```
 
-The last env var silences one of the Oracle warnings on startup.
+3. Save file
+
+4. Go to your active terminal and enter source ~/.zshrc or create a new terminal
+
+*Booz Allen Hamilton Internal*
+
+**Configure shell env for Rosetta and x86_64 homebrew**
+
+1. Open the terminal that was set up for “Open using Rosetta” above
+
+2. Run the following command:
+    a. ```eval $(/usr/local/homebrew/bin/brew shellenv)```
+
+**Run dev setup scripts in Caseflow repo**
+
+*Script 1*
+
+1. Enter a rosetta terminal and ensure you are in the directory you cloned Caseflow repo into
+(~/dev/appeals/caseflow), run commands
+    a. ```git checkout grant/setup-m1```
+    b. ```./scripts/dev_env_setup_step1.sh```
+    **If this fails, double check the “OpenSSL” section as well as your .zshrc file
+
+*Script 2*
+
+1. Open a rosetta terminal and navigate to /usr/local, run commands
+    a. ```sudo ln -s /usr/local/homebrew/opt optsource```
+    b. ```sudo ln -s /usr/local/homebrew/Cellar Cellar```
+    c. ```sudo spctl --global-disable```
+
+2. Navigate to caseflow/scripts/dev_env_setup_step2.sh and open in VSCode
+
+3. Make sure you are on the branch grant/setup-m1
+
+4. Comment out line 12 (should be like the line in #5a)
 
-(Reload the file `source ~/.bash_profile`)
+5. In terminal navigate to caseflow folder, run
+    a. ```RUBY_CONFIGURE_OPTS="--with-openssl-dir=/usr/local/opt/openssl@1.1" rbenv install 2.7.3```
+    b. ```gem install pg –v '1.1.4' -- --with-pg-config=/Applications/Postgres.app/Contents/Versions/latest/bin/pg_config```
+    c. ```gem install therubyracer -- --with-v8-dir=/usr/local/homebrew/opt/v8@3.15```
+    d. ```./scripts/dev_env_setup_step2.sh```
+    **If you get a permission error while running gem install or bundle install, do not run using sudo. Set the permissions back to you for every directory under /.rbenv
 
-#### Makefile
+Enter command:
+    a. ```sudo chown -R <your name under /Users> /Users/<your name>/.rbenv```
+        • For example, if my name is Eli Brown, the command will be:
+        ```sudo chown –R elibrown /Users/elibrown/.rbenv```
 
-An example Makefile is included in the repo, that can ease some of the setup and common development tasks. To use it,
-try:
+6. If there are no obvious errors messages, run bundle install to ensure all gems are, in fact, installed
 
-```
-% ln -s Makefile.example Makefile
-```
+**Running Caseflow**
 
-Many of the examples that follow have alternate `make` targets for convenience. They are spelled out here
-for clarity as to what is happening "behind the scenes."
+1. Open caseflow in VSCode (optional)
 
-#### Database environment setup
+2. Ensure you are on master branch and up to date by running
+    a. ```git checkout master```
+    b. ```git fetch```
+    c. ```git pull origin master```
 
-**Note:** You must have [AWS access granted & setup](https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/New-Hires) prior to setting up your local environment as the database is not publicly accessible due to Oracle licensing.
+*Booz Allen Hamilton Internal*
+3. Start Vacols UTM VM and log into it. Open the Docker and Postgres applications. Leave all running in background
 
-To rapidly set up your local development (and testing) environment, run:
-```
-bundle exec rake local:build
-```
-The above shortcut runs a set of commands in sequence that should build your local environment. If you need to troubleshoot the process, you can copy each individual step out of the task and run them independently.
+4. In caseflow, run
+    a. make down
+        i. Removes appeals-db, appeals-redis, and localstack docker containers
+    b. docker-compose down –v
+        i. Removes caseflow_postgresdata docker volume
+    c. make up-m1
+        i. Starts docker containers, volume, and network
+    d. make reset
+        i. Resets caseflow and ETL database schemas, seeds databases, and enables feature flags
+    **If “make reset” returns database not found error:
+        a. Run command “bundle exec rake db:drop”
+        b. Download caseflow-db-backup.gz (not able to share this download via policy, message me)
+        c. Enter terminal, navigate to ~/Downloads
+        e. Run command
+            i. “gzip -dck caseflow-db-backup.gz | docker exec -i appeals-db psql -U postgres”
+            ii. (this command will link the caseflow_certification_database to docker)
+        f. Download this file and move through the prompts (wkhtmltopdf => unrelated?)
+        g. Enter terminal, navigate to caseflow, and run
+            *Booz Allen Hamilton Internal*
+           i. make up-m1
+            ii. make reset (this will take a while)
+    **Alternative fix for db not found error?
+        1. bundle exec rake db:drop db:create db:schema:load
+        2. bundle exec rake db:seed
+        3. make install
+        4. Complete the Vacols VM Trigger Fix below
+        5. make test
+            a. This will time out before the command is finished executing. Have been told this is normal behavior if you have completed the VM Trigger Fix
+        6. make run-m1
+            a. Click http://127.0.0.1:3000 to open caseflow in browser
 
+5. Download VACOLS VM Trigger fix from this link
+    a. Follow the instructions file, you will need to download SQLDeveloper on your local
 
-## Running dev Caseflow & Accessing dev DBs ##################
+6. After you are finished, go back to caseflow in VSCode, enter terminal, and run
+    a. make install
+    b. make test
+        i. This will time out before the command is finished executing. Have been told this is normal behavior if you have finished step 5
+    c. make run-m1
+        i. Click http://127.0.0.1:3000 to open caseflow in browser
+**If make run returns a message that the port is already running. Do the following:
+    1. Find the port the error message is referring to. It should say close to the top of the error message
+    2. Run command lsof -i TCP:<port number here>
+    3. Run command kill -9 <PID number here>
+    4. Run command make run-m1 again
 
-We use [docker](https://docs.docker.com/) and [docker-compose](https://docs.docker.com/compose/) to mock a production environment locally.  Prior knowledge of docker is not required and slowly learning how docker works is encouraged. Please ask a team member for an overview, and/or slowly review the docs linked.
+After this, anytime I want to run Caseflow follow these steps:
+    1. Open the Docker app, Postgres app, and Vacols UTM, log in and leave running in background
+    2. Go to ~/Downloads and run gzip -dck caseflow-db-backup.gz | docker exec -i appeals-db psql -U postgres
+    3. make up-m1
+    4. make run-m1 (if bootsnap errors, run this again and you should see a port is already running)
+    5. Run lsof -i TCP:<port>, then kill –9 <pid>
+    6. Run make run-m1 again
 
-Your development setup of caseflow runs Redis, Postgres and OracleDB (VACOLS) in Docker.
+---
 
-### Running Caseflow ###################################################
+## Mac Intel  ##################################################
 
-To run caseflow:
-```
-make run
-```
+**Pre-requisites for setup:**
 
-**Note:** The Docker containers must always be running in order for the Rails application to start successfully. Some rake tasks will start them automatically, but if you restart your computer or otherwise stop Docker, you'll want to run `docker-compose up -d` to start the containers initially.
+1. Create GitHub user account [VA github access process](https://department-of-veterans-affairs.github.io/github-handbook/guides/onboarding/getting-access)
 
-```
-docker-compose up -d
-foreman start
-```
+2. Create [DockerHub](https://hub.docker.com/signup) user account or [install colima](https://github.com/abiosoft/colima#installation)
 
-Spinning up the docker containers is fast, but not instantaneous Occasionally, running `foreman start` *immediately* after `docker-compose up -d`, can cause the rails server to fail to start because not all of the containers are ready. For example, the following _may_ not work:
+3. Create [oracle.com](http://oracle.com/) user account to download instant client [Create Account](https://profile.oracle.com/myprofile/account/create-account.jspx) (Step can be skipped if you have the zip files from file transfer)
 
-```
-docker-compose up -d && foreman start
-```
+4. Install github on the Mac (here)
 
-`Makefile.example` provides a bunch of useful shortcuts, one of which is the `run` directive. `run` will ensure that all of the dockers containers are ready before running `foreman start`.
+5. Install git-lfs for pulling large files down from github [Install instructions](https://git-lfs.github.com/)
 
-Example:
+**Setup steps:**
 
-```
-make -f Makefile.example run
-```
+1. Open the terminal - The terminal will open to your user folder (I.E youruser@host ~ %)
+2. Install Homebrew
+    a. Using BAH Self Service if BAH employee Run ```brew install git-lfs .``` This is required to clone caseflow-facols repo
 
-#### Separate Front & Backend Servers ####################################################
+3. Create a caseflow-setup folder by typing: `mkdir caseflow-setup` (step can be skipped if you have the file transfer files)
 
-`foreman start` starts both the back-end server and the front-end server.
+4. Change directory to caseflow-setup by typing: `cd caseflow-setup`
 
-They can, alternatively, be started separately:
+5. Navigate to [instant client](https://www.oracle.com/database/tecdchnologies/instant-client/linux-x86-64-downloads.html)
 
-_Backend_
-`REACT_ON_RAILS_ENV=HOT bundle exec rails s -p 3000`
+6. Download the following zip files to caseflow-setup directory (Copy from downloads to the caseflow-setup directory if they download to downloads) (Step can be skipped if you received the file transfer files)
+    * instantclient-basic-linux.x64-12.2.0.1.0.zip
+    * instantclient-sqlplus-linux.x64-12.2.0.1.0.zip
+    * instantclient-sdk-linux.x64-12.2.0.1.0.zip
 
-_Frontend_
-`cd client && yarn run dev:hot`
+7. Clone caseflow repositories required for setup into caseflow-setup directory (caseflow-facols requires github account and the account has to be in the VA org in github and can be found in the file transfer files) pwd
+    * HTTP protocol
+        * `git clone https://github.com/department-of-veterans-affairs/caseflow.git`
+        * `git clone https://github.com/department-of-veterans-affairs/caseflow-facols.git`
+            * Upon completion, navigate to caseflow-facols (`cd ~/caseflow-setup/caseflow-facols`)
+            * Run: `git lfs install` (needed to initialize large file storage in repo)
+            * Run: `git lfs pull` (this will pull the large zipfile)
+        * If you do not have VA access yet to clone caseflow-vacols can contact (Your Tech lead or the bid_appeals_mac_support channel) to receive a zip of the repository
 
-### Seeding Data
+**SSH protocol**
 
-Seeding VACOLS:
+1. `git clone git@github.com:department-of-veterans-affairs/caseflow.git`
 
-`bundle exec rake local:vacols:seed`
+2. `git clone git@github.com:department-of-veterans-affairs/caseflow-facols.git`
+    * Upon completion, navigate to caseflow-facols (`cd ~/caseflow-setup/caseflow-facols`)
+    * Run: `git lfs install` (needed to initialize large file storage in repo)
+    * Run: `git lfs pull` (this will pull the large zipfile)
 
-Seeding Caseflow:
+3. Navigate to the caseflow directory in your terminal (type: `cd ~/caseflow-setup/caseflow`) and checkout the grant/setup-no-aws branch `git checkout grant/setup-no-aws`
 
-`bundle exec rake db:seed`
+4. Navigate to caseflow/docker-bin directory (type: `cd docker-bin`)
 
-Resetting Caseflow:
+5. Create oracle_libs subdirectory (type: `mkdir oracle_libs`)
 
-`bundle exec rake db:reset`
+6. Copy the 3 instant-client zip files from the caseflow-setup directory into the oracle_libs directory
 
-### Connecting to databases locally
+7. Navigate to the caseflow root directory (type: `cd ..`)
 
-There are two databases you'll use: the postgres db aka Caseflow's db, and the Oracle db representing VACOLS (FACOLS).
+8. Run scripts/dev_env_setup_step1.sh script from bash terminal (How to run script in Mac Terminal) (Will be prompted for a password will be the SUDO password which is the password used to log into mac after restart)
+    * If/When mac says Chromedriver cannot be opened do this:
+        * Click cancel on the warning modal
+        * Push Command + Space
+        * Type System Preferences
+        * Click Security and Privacy
+        * Click General tab
+        * Click the lock icon and put in your BAH pin Click allow anyway on chromedriver warning Click the lock icon to re lock
 
-#### Postgres Caseflow DB
-Rails provides a useful way to connect to the default database called `dbconsole`:
+9. Setup Docker to use 4 CPUs and 8G memory and sign-in to your personal DockerHub account
+    * To get to these settings:
+        * Command + Space
+        * Type docker
+        * Click docker desktop
+        * Click the gear icon
+        * Click Resources
 
-```sh
-bundle exec rails dbconsole # password is `postgres`
-```
+10. The script updated your bash profile and you need to resource it into the terminal by typing: `source ~/.bash_profile`
+    * If using zsh, will need to update and `source ~/.zshrc` instead
 
-You can also use Psequel (instead of SQL Developer) with the following setup (user and password is postgres):
+11. `brew install shared-mime-info`
 
-<img width="1659" alt="Screenshot 2019-02-11 12 19 42" src="https://user-images.githubusercontent.com/46791771/57386802-1fd1ac00-7183-11e9-8333-63249df033d2.png">
+12. `brew install v8@3.15`
 
-#### FACOLS
+13. Run scripts/dev_env_setup_step2.sh script (may take a while to run)
 
-To connect to FACOLS, we recommend using SQL Plus Instant Client or [SQL Developer](https://www.oracle.com/database/technologies/appdev/sql-developer.html). Connection details can be found in the docker-compose.yml file.
+14. Run `gem install bundler`
+    * Copy the caseflow-facols/build_facols directory to the caseflow/local/vacols subdirectory. (Ensure you have a caseflow/local/vacols/build_facols directory with all the files before continuing to the next step)
 
-To install SQL Plus Instant Client on a Mac, run the following Homebrew install commands:
+15. Navigate to caseflow/local/vacols in terminal `cd ~/caseflow- setup/caseflow/local/vacols`
 
-```sh
-brew tap InstantClientTap/instantclient
-brew install instantclient-sqlplus
-```
+16. Run `./build_push.sh local`
+    * Requires the oracle database image to have been pulled after running scripts/dev_env_setup_step1.sh script
 
-Homebrew will error and give you instructions to complete a successful installation.
+17. Navigate to caseflow root directory `cd ~/caseflow-setup/caseflow`
 
-Once SQL Plus is installed, you can connect to FACOLS with this command:
+18. Run `docker-compose up –d`
 
-```sh
-sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
-```
+19. Run bundle exec rake db:create
+    * If you get connection issues stating no file to be found, run the following:
+        * `rm /opt/homebrew/var/postgres/postmaster.pid` or possibly `rm /usr/local/var/postgres/postmaster.pid`
+        * `brew services restart postgresql`
 
-Alternately, you can run SQL commands on FACOLS via the rails console using this syntax:
+20. Run `bundle exec rake local:vacols:seed`
 
-```ruby
-VACOLS::Case.connection.exec_query("SELECT hearing_pkseq from HEARSCHED").to_hash
-```
+21. Run `bundle exec rake db:schema:load db:seed`
 
-### Debugging Tools
-[RailsPanel](https://github.com/dejan/rails_panel) is a great Chrome extension
-that makes debugging easier. It depends on the `meta_request` gem, which is
-already included in this repo.
+22. Open a new tab in terminal
 
+23. In new tab run make: ```run-backend```
 
-## Running tests
+24. In the old tab run: ```make run-frontend```
 
-To run the test suite:
+25. Navigate to localhost:3000 in browser to see the application
 
-```
-% make test
-```
+---
 
-### Testing frontend changes in feature specs
-
-Making frontend changes requires Webpack to compile the assets in order for the
-spec to pick up the changes. To automatically compile assets after every change,
-you can turn on Webpack's [Hot Module Replacement](https://webpack.js.org/concepts/hot-module-replacement/)
-by setting the env var `REACT_ON_RAILS_ENV` to `HOT` in your Terminal session.
-
-For example:
-```console
-export REACT_ON_RAILS_ENV=HOT
-bundle exec rspec spec/feature/queue/case_details_spec.rb:350
-```
-or
-```console
-REACT_ON_RAILS_ENV=HOT bundle exec rspec spec/feature/queue/case_details_spec.rb:350
-```
-
-For less typing, create an alias in your shell profile (such as `.bash_profile`):
-```
-alias ber='REACT_ON_RAILS_ENV=HOT bundle exec rspec'
-```
-To run a specific test with this alias:
-```console
-ber spec/feature/queue/case_details_spec.rb:350
-```
-
-The webpack server also needs to be running while you are testing. Run this
-command in a separate Terminal pane:
-```
-cd client && yarn run dev:hot
-```
-
-### Debugging tests in the browser
-
-By default, tests will run by launching an instance of Chrome for easier
-debugging. If you prefer to run the tests using a headless driver, set the `CI`
-env var to `true`. For example:
-```console
-CI=true bundle exec rspec spec/feature/queue/case_details_spec.rb:350
-```
-
-### focus
-
-During development, it can be helpful to narrow the scope of tests being run. You can do this by
-adding [`focus: true`](https://relishapp.com/rspec/rspec-core/v/2-6/docs/filtering/inclusion-filters) to a `context` or `it` like so:
-
-```diff
--context "test my new feature" do
-+context "test my new feature", focus: true do
-```
-
-### Guard
-
-In addition, if you are iterating on a subset of tests, [`guard`](https://github.com/guard/guard-rspec) is a useful tool that will
-automatically rerun some command when a watched set of files change - you can do this by
-running `bundle exec guard`, then editing a file (see Guardfile for details). In conjunction with
-the `focus` flag, you can get a short development loop.
-
-### Test coverage
+## Test Coverage  #######################################################
 
 We use the [simplecov](https://github.com/colszowka/simplecov) gem to evaluate test coverage as part of the CircleCI process.
 
@@ -574,12 +759,14 @@ SINGLE_COV=true bundle exec rspec spec/path/to/file_spec.rb
 
 Missing test coverage will be reported automatically at the end of the test run.
 
-## Debugging FACOLS setup
+---
+
+## Debugging FACOLS setup  #######################################################
 See debugging steps as well as more information about FACOLS in our [wiki](https://github.com/department-of-veterans-affairs/caseflow/wiki/FACOLS#debugging-facols) or join the DSVA slack channel #appeals-facols-issues.
 
 Review the [FACOLS documentation](docs/FACOLS.md) for details.
 
-## Monitoring
+## Monitoring  #######################################################
 We use NewRelic to monitor the app. By default, it's disabled locally. To enable it, do:
 
 ```
@@ -588,7 +775,9 @@ NEW_RELIC_LICENSE_KEY='<key as displayed on NewRelic.com>' NEW_RELIC_AGENT_ENABL
 
 You may wish to do this if you are debugging our NewRelic integration, for instance.
 
-## Roles
+---
+
+## Roles  #######################################################
 
 When a VA employee logs in through the VA's unified login system (CSS) a session begins with the user.
 Within this session the user gets a set of roles. These roles determine what pages a user has access to.
@@ -597,7 +786,7 @@ In dev mode, we don't log in with CSS and instead take on the [identity of a use
 ## Running Caseflow connected to external depedencies
 To test the app connected to external dependencies, you'll need to set up Oracle, decrypt the environment variables, install staging gems, and run the app.
 
-### Environment variables
+## Environment variables  #######################################################
 
 First you'll need to install ansible-vault and credstash.
 ```sh
@@ -637,7 +826,9 @@ bundle install --with staging
 bundle exec rails s -e staging
 ```
 
-## Dev Caseflow Usage Tweaks
+---
+
+## Dev Caseflow Usage Tweaks  #######################################################
 ### Changing between test users
 Select 'Switch User' from the dropdown or navigate to
 [http://localhost:3000/dev/users](http://localhost:3000/test/users). You can use
@@ -705,7 +896,10 @@ When Caseflow Monitor starts working again, switch the banner back to automatic 
 Rails.cache.write(:degraded_service_banner, :auto)
 ```
 
-## Documentation
+---
+
+## Documentation  #######################################################
+
 We have a lot of technical documentation spread over a lot of different repositories. Here is a non-exhaustive mapping of where to find documentation:
 
 - [Local Caseflow Setup](https://github.com/department-of-veterans-affairs/caseflow/tree/master/docs)
