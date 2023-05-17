@@ -168,8 +168,8 @@ class SelectDispositionsView extends React.PureComponent {
     const benefitType = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).program;
     const diagnosticCode = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).diagnostic_code;
     const closedStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).closed_status;
-    const mstStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).mst_Status
-    const pactStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).pact_Status;
+    const mstStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).mst_status
+    const pactStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).pact_status;
 
     const newDecisionIssue = {
       id: `temporary-id-${uuid.v4()}`,
