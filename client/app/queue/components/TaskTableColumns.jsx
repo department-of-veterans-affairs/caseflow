@@ -275,14 +275,16 @@ export const issueTypesColumn = (tasks, filterOptions, requireDasRecord) => {
 
       // Remove duplicates from the comma delimited list of issue types
       // Also sort the request issue type alphabetically
-      const uniqueIssueTypes = [...new Set(commaDelimitedIssueTypes?.split(','))].sort();
+      const uniqueIssueTypes = [...new Set(commaDelimitedIssueTypes?.split(','))].
+        sort((stringA, stringB) => stringA.localeCompare(stringB));
 
       return uniqueIssueTypes.length > 1 ?
         uniqueIssueTypes.map((type) => (<p key={type}> {type} </p>)) :
         uniqueIssueTypes[0];
     },
     getSortValue: (task) => (
-      hasDASRecord(task, requireDasRecord) ? [...new Set(task.appeal.issueTypes?.split(','))].sort() : null
+      hasDASRecord(task, requireDasRecord) ? [...new Set(task.appeal.issueTypes?.split(','))].
+        sort((stringA, stringB) => stringA.localeCompare(stringB)) : null
     )
   };
 };
