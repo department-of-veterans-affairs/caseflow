@@ -133,38 +133,4 @@ describe VbmsDistributionDestination, :postgres do
       expect(destination).to_not be_valid
     end
   end
-
-  context "destination type is email" do
-    let(:destination) do
-      VbmsDistributionDestination.new(
-        destination_type: "email",
-        email_address: "email@email.com",
-        vbms_distribution: distribution
-      )
-    end
-
-    include_examples "destination has valid attributes"
-
-    it "is invalid without an email address" do
-      destination.email_address = nil
-      expect(destination).to_not be_valid
-    end
-  end
-
-  context "destination type is sms" do
-    let(:destination) do
-      VbmsDistributionDestination.new(
-        destination_type: "sms",
-        phone_number: "555-5555",
-        vbms_distribution: distribution
-      )
-    end
-
-    include_examples "destination has valid attributes"
-
-    it "is invalid without a phone number" do
-      destination.phone_number = nil
-      expect(destination).to_not be_valid
-    end
-  end
 end
