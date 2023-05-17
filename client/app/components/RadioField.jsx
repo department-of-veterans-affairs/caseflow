@@ -197,10 +197,6 @@ RadioField.propTypes = {
        * Help text to be displayed below the label
        */
       help: PropTypes.string,
-
-      mst: PropTypes.Boolean,
-      pact: PropTypes.Boolean,
-      counterVal: PropTypes.number
     })
   ),
 
