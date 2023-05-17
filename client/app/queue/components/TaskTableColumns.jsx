@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import * as React from 'react';
 import moment from 'moment';
 import pluralize from 'pluralize';
@@ -256,13 +257,15 @@ export const issueTypesColumn = (tasks, filterOptions, requireDasRecord) => {
     name: QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name,
     backendCanSort: true,
     enableFilter: true,
-    filterOptions,
     anyFiltersAreSet: true,
+    filterOptions,
     tableData: tasks,
     columnName: 'appeal.issueTypes',
     multiValueDelimiter: ',',
     enableFilterTextTransform: false,
     span: collapseColumn(requireDasRecord),
+    label: 'Filter by issue type',
+    valueName: 'Issue Type',
     valueFunction: (task) => {
       if (!hasDASRecord(task, requireDasRecord)) {
         return null;
