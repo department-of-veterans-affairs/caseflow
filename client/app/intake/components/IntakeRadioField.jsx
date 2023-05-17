@@ -100,27 +100,13 @@ export const IntakeRadioField = (props) => {
   };
 
   // prepopulated MST and PACT checkbox values
-  const prePopulatedMst = options[value - totalElements].mst
-  const prePopulatedPact = options[value - totalElements].pact
+  let prePopulatedMst = options[value - totalElements].mst
+  let prePopulatedPact = options[value - totalElements].pact
 
   // handle both MST and PACT pre-populated checkbox status on load
   const handlePrepopulatedCheckboxes = (radioOption) => {
     setMstCheckboxFunction(radioOption.mst);
     setPactCheckboxFunction(radioOption.pact);
-  };
-
-  // format prepopulated checkbox text to say the values came from VBMS
-  const formatJustificationText = (prePopulatedStatus) => {
-    let text = 'Prepopulated from VBMS';
-
-    if (prePopulatedMst) {
-      mstJustificationOnChange(text);
-    }
-
-    if (prePopulatedPact) {
-      pactJustificationOnChange(text);
-    }
-
   };
 
   const maybeAddTooltip = (option, radioField) => {
@@ -148,8 +134,6 @@ export const IntakeRadioField = (props) => {
 
       return (
         <div>
-        {console.log(`mst prefilled: ${JSON.stringify(prePopulatedMst)}`)}
-        {console.log(`pact prefilled: ${JSON.stringify(prePopulatedPact)}`)}
           <Checkbox
             label="Issue is related to Military Sexual Trauma (MST)"
             name="MST"
@@ -195,15 +179,6 @@ export const IntakeRadioField = (props) => {
 
     // if the radio option has a pre-populated MST/PACT checkbox, update the value
     handlePrepopulatedCheckboxes(props.options[event.target.value]);
-
-    // prepopulate the justification text for MST and PACT
-    if (prePopulatedMst) {
-      formatJustificationText(prePopulatedMst);
-    }
-
-    if (prePopulatedPact) {
-      formatJustificationText(prePopulatedPact);
-    }
   };
 
   const controlled = useMemo(() => typeof value !== 'undefined', [value]);
@@ -345,8 +320,8 @@ IntakeRadioField.propTypes = {
   mstJustificationOnChange: PropTypes.func,
   setPactCheckboxFunction: PropTypes.func,
   totalElements: PropTypes.number,
-  preExistingMST: PropTypes.bool,
-  preExistingPACT: PropTypes.bool,
+  prePopulatedMst: PropTypes.bool,
+  prePopulatedPact: PropTypes.bool
 };
 
 export default IntakeRadioField;
