@@ -164,7 +164,8 @@ class AppealsController < ApplicationController
 
   def edit
     # only AMA appeals may call /edit
-    return not_found if appeal.is_a?(LegacyAppeal)
+    # this was removed for MST/PACT initiative to edit MST/PACT for legacy issues
+    # return not_found if appeal.is_a?(LegacyAppeal)
   end
 
   helper_method :appeal, :url_appeal_uuid

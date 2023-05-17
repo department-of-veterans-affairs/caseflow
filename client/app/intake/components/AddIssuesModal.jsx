@@ -176,8 +176,10 @@ class AddIssuesModal extends React.Component {
           mstJustificationOnChange={this.mstJustificationOnChange}
           pactJustification={this.state.pactJustification}
           pactJustificationOnChange={this.pactJustificationOnChange}
-          renderMst={this.props.featureToggles.mstIdentification}
-          renderPact={this.props.featureToggles.pactIdentification}
+          renderMst={this.props.featureToggles.mst_identification ?
+            this.props.featureToggles.mst_identification : this.props.featureToggles.mstIdentification}
+          renderPact={this.props.featureToggles.pact_identification ?
+            this.props.featureToggles.pact_identification : this.props.featureToggles.pactIdentification}
           userCanEditIntakeIssues={this.props.userCanEditIntakeIssues}
           mstChecked={this.state.mstChecked}
           setMstCheckboxFunction={this.mstCheckboxChange}

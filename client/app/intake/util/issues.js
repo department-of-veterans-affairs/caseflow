@@ -360,6 +360,18 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
 
   return issues.map((issue, index) => {
+
+    if (issue.vacols_sequence_id) {
+      return {
+        index,
+        id: issue.id,
+        benefitType: issue.labels[0].toLowerCase(),
+        description: `${issue.labels[1]} - ${issue.labels[2]} - ${issue.labels[3]}`,
+        text: `${issue.labels[1]} - ${issue.labels[2]} - ${issue.labels[3]}`,
+        vacolsSequenceId: issue.vacols_sequence_id,
+      };
+    }
+
     if (issue.isUnidentified || issue.verifiedUnidentifiedIssue) {
       const issueText = issue.isUnidentified ?
         `Unidentified issue: no issue matched for "${issue.description}"` :
