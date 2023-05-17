@@ -21,10 +21,10 @@ The Appeals Modernization team's mission is to empower employees with technology
       * [Developer Setup](#developer-setup)
          * [Github](#github)
          * [Machine setup](#machine-setup)
-            * [Windows 10 + WSL](WINDOWS_10)
-            * [Windows 11 + WSL](WINDOWS_11)
-            * [Mac M1/M2](MAC_M1)
-            * [Mac Intel](MAC_INTEL)
+            * [Windows 10 + WSL](WINDOWS_10.md)
+            * [Windows 11 + WSL](WINDOWS_11.md)
+            * [Mac M1/M2](MAC_M1.md)
+            * [Mac Intel](MAC_INTEL.md)
       * [Test Coverage](#test-coverage)
       * [Debugging FACOLS setup](#debugging-facols-setup)
       * [Monitoring](#monitoring)
@@ -106,6 +106,13 @@ Alternatively, if you have a Mac, you can clone this repo and run the following 
   - [dev_env_setup_step2.sh](scripts/dev_env_setup_step2.sh)
 
 If an error occurs, it is okay to run the scripts multiple times after the error is corrected.
+
+**Machine Setup**
+
+* [Windows 10 + WSL](WINDOWS_10.md)
+* [Windows 11 + WSL](WINDOWS_11.md)
+* [Mac M1/M2](MAC_M1.md)
+* [Mac Intel](MAC_INTEL.md)
 
 ---
 
@@ -200,7 +207,9 @@ bundle exec rails s -e staging
 ---
 
 ## Dev Caseflow Usage Tweaks  #######################################################
+
 ### Changing between test users
+
 Select 'Switch User' from the dropdown or navigate to
 [http://localhost:3000/dev/users](http://localhost:3000/test/users). You can use
 this page to switch to any user that is currently in the database. The users' names specify
