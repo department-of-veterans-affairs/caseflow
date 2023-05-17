@@ -133,6 +133,7 @@ export class TaskTableUnconnected extends React.PureComponent {
     getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
     defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
     enablePagination
+    onHistoryUpdate={this.props.onHistoryUpdate}
     rowClassNames={(task) =>
       this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'}
     taskPagesApiEndpoint={this.props.taskPagesApiEndpoint}
@@ -165,7 +166,8 @@ TaskTableUnconnected.propTypes = {
   getKeyForRow: PropTypes.func,
   taskPagesApiEndpoint: PropTypes.string,
   useTaskPagesApi: PropTypes.bool,
-  tabPaginationOptions: PropTypes.object
+  tabPaginationOptions: PropTypes.object,
+  onHistoryUpdate: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({

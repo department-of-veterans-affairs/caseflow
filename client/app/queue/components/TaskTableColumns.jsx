@@ -257,14 +257,15 @@ export const issueTypesColumn = (tasks, filterOptions, requireDasRecord) => {
     name: QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name,
     backendCanSort: true,
     enableFilter: true,
-    filterOptions,
     anyFiltersAreSet: true,
+    filterOptions,
     tableData: tasks,
     columnName: 'appeal.issueTypes',
     enableFilterTextTransform: false,
+    label: 'Filter by issue type',
+    valueName: 'Issue Type',
     valueFunction: (task) => {
       const commaDelimitedIssueTypes = task.appeal.issueTypes;
-
       // Remove duplicates from the comma delimited list of issue types
       const uniqueIssueTypes = [...new Set(commaDelimitedIssueTypes?.split(','))].
         sort((stringA, stringB) => stringA.localeCompare(stringB));
