@@ -1,6 +1,6 @@
 ## Windows 10 with WSL ######################################################
 
-[<< Back](README)
+[<< Back](README.md)
 
 ***Pre-requisites for setup:***
 
@@ -58,4 +58,4 @@
         * `cd ~/appeals/caseflow`
         * `code .`
 
-[<< Back](README)
+[<< Back](README.md)

@@ -1,6 +1,6 @@
 ## Windows 11 with WSL #######################################################
 
-[<< Back](README)
+[<< Back](README.md)
 
 ***Pre-requisites for setup:***
 
@@ -168,4 +168,4 @@ Run each line is a separate command, run them one at a time
     a. ```git config --global user.email "you@va.gov"```
     b. ```git config –global user.name "Your Name"```
 
-[<< Back](README)
+[<< Back](README.md)
