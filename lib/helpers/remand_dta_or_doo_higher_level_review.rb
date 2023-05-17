@@ -8,7 +8,7 @@ module WarRoom
 
     # Currently, HLRs missing SCs are tracked in OAR report loads that are sent over and then
     # uploaded to the EP Establishment Workaround table
-    # This method implements logic to remand SCs for a specfied report load number
+    # This method implements logic to remand SCs for a specified report load number
     def run_by_report_load(report_load, env='prod')
       # Set the user
       RequestStore[:current_user] = User.system_user
