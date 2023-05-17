@@ -228,6 +228,17 @@ describe User, :all_dbs do
       before { user.regional_office = nil }
       it { is_expected.to eq("America/Chicago") }
     end
+
+    # for VSO users with multiple RO's
+    # regional_office will default to nil, but selected_regional_office will not
+    context "when ro isn't set for VSO user" do
+      let!(:vso_user) { create(:user, :vso_role, station_id: "327", selected_regional_office: "RO27") }
+      subject { vso_user.timezone }
+      before do
+        user.regional_office = nil
+      end
+      it { is_expected.to eq("America/Kentucky/Louisville") }
+    end
   end
 
   context "CSUM/CSEM users with 'System Admin' function" do
