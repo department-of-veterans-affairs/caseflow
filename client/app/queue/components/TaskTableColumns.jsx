@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import * as React from 'react';
 import moment from 'moment';
 import pluralize from 'pluralize';
@@ -250,18 +251,21 @@ export const issueCountColumn = (requireDasRecord) => {
   };
 };
 
-export const issueTypesColumn = (filterOptions) => {
+export const issueTypesColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_ISSUE_CATEGORIES_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name,
     backendCanSort: true,
     enableFilter: true,
+    anyFiltersAreSet: true,
     filterOptions,
+    label: 'Filter by issue type',
     columnName: 'appeal.issueTypes',
+    valueName: 'Issue Type',
+    tableData: tasks,
     valueFunction: (task) => {
       const commaDelimitedIssueTypes = task.appeal.issueTypes;
-
-      // Remove duplicates from the comma delimited list of issue types
+      // Remove duplicates from the comma delimited list of issues
       const uniqueIssueTypes = [...new Set(commaDelimitedIssueTypes?.split(','))];
 
       return uniqueIssueTypes.length > 1 ?
