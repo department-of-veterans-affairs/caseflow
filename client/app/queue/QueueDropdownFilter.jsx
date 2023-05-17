@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { css } from 'glamor';
-import _ from 'lodash';
+import { startCase } from 'lodash';
 
 const dropdownFilterViewListStyle = css({
   margin: 0
@@ -31,7 +31,7 @@ class QueueDropdownFilter extends React.PureComponent {
 
     // Some of the filter names are camelCase, which would be displayed to the user.
     // To make this more readable, convert the camelCase text to regular casing.
-    const displayName = _.capitalize(_.upperCase(name));
+    const displayName = startCase(name);
 
     const rel = {
       position: 'relative'

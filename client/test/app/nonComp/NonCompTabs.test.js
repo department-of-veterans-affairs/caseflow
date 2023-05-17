@@ -92,7 +92,7 @@ describe('NonCompTabs', () => {
     // Check for the correct in progress tasks header values
     const expectedHeaders = ['Claimant', 'Veteran SSN', 'Issues', 'Issue Type', 'Days Waiting', 'Type'];
     const sortableHeaders = expectedHeaders.filter((header) => header !== 'Type');
-    const filterableHeaders = ['type'];
+    const filterableHeaders = ['type', 'issue type'];
 
     checkTableHeaders(expectedHeaders);
     checkSortableHeaders(sortableHeaders);
@@ -115,7 +115,7 @@ describe('NonCompTabs', () => {
     // Check for the correct completed tasks header values
     const expectedHeaders = ['Claimant', 'Veteran SSN', 'Issues', 'Issue Type', 'Date Completed', 'Type'];
     const sortableHeaders = expectedHeaders.filter((header) => header !== 'Type');
-    const filterableHeaders = ['type'];
+    const filterableHeaders = ['type', 'issue type'];
 
     checkTableHeaders(expectedHeaders);
     checkSortableHeaders(sortableHeaders);
