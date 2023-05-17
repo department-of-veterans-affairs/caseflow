@@ -397,6 +397,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
 
     context "denial" do
+      byebug
       let(:atty_disposition) { "denied" }
       let(:atty_hyperlink) { "https://efolder.link/file" }
 
