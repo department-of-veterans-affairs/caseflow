@@ -32,6 +32,7 @@ import StringUtil from '../../util/StringUtil';
 import { ReturnToLitSupportAlert } from './ReturnToLitSupportAlert';
 import { grantTypes, dispositionStrings } from './mtvConstants';
 import { sprintf } from 'sprintf-js';
+import { isEmpty } from 'lodash';
 
 const vacateTypeText = (val) => {
   const opt = VACATE_TYPE_OPTIONS.find((i) => i.value === val);
@@ -40,14 +41,14 @@ const vacateTypeText = (val) => {
 };
 
 const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }) => {
-  const parts = [`${MTV_TASK_INSTRUCTIONS} ${DISPOSITION_TEXT[disposition].replace(/(^\w{1})|(\s+\w{1})/g, (letter) => letter.toUpperCase())}\n`];
+  const parts = [`${MTV_TASK_INSTRUCTIONS}${StringUtil.titleCase(DISPOSITION_TEXT[disposition])}\n`];
 
   switch (disposition) {
   case 'granted':
   case 'partially_granted':
     parts.push(MTV_TASK_INSTRUCTIONS_TYPE);
     parts.push(`${vacateTypeText(vacateType)}\n`);
-    if (instructions !== '') {
+    if (isEmpty(instructions) === false) {
       parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
       parts.push(`${instructions}\n`);
     }
@@ -55,7 +56,7 @@ const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }
   case 'denied':
   case 'dismissed':
   default:
-    if (instructions !== '') {
+    if (isEmpty(instructions) === false) {
       parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
       parts.push(`${instructions}\n`);
     }
@@ -195,7 +196,8 @@ export const MTVJudgeDisposition = ({
 
         <TextareaField
           name="instructions"
-          label={sprintf(JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL, disposition || 'granted')}
+          label={sprintf(JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL,
+            disposition === 'partially_granted' ? 'partially granted' : disposition || 'granted')}
           onChange={(val) => setInstructions(val)}
           value={instructions}
           className={['mtv-decision-instructions']}
