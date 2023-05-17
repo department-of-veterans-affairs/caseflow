@@ -77,31 +77,9 @@ export const IntakeRadioField = (props) => {
     </span>
   );
 
-  const returnMstOrCheckboxValue = (counter) => {
-    let valueToCheck = counter - totalElements;
-    const existingMst = options[valueToCheck].mst;
-
-    if (existingMst) {
-      return existingMst;
-    }
-
-    return mstChecked;
-  };
-
-  const returnPactOrCheckboxValue = (counter) => {
-    let valueToCheck = counter - totalElements;
-    const existingPact = options[valueToCheck].pact;
-
-    if (existingPact) {
-      return existingPact;
-    }
-
-    return pactChecked;
-  };
-
   // prepopulated MST and PACT checkbox values
-  let prePopulatedMst = options[value - totalElements].mst
-  let prePopulatedPact = options[value - totalElements].pact
+  let prePopulatedMst = options[value - totalElements]?.mst;
+  let prePopulatedPact = options[value - totalElements]?.pact;
 
   // handle both MST and PACT pre-populated checkbox status on load
   const handlePrepopulatedCheckboxes = (radioOption) => {
