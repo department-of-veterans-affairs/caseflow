@@ -161,11 +161,9 @@ describe('MTVJudgeDisposition', () => {
 
     });
 
-  });
-
-  describe('partial instructions sent', () => {
     it('sends the correct instructions based on partially granted disposition', async () => {
 
+      jest.clearAllMocks();
       const disposition = 'Grant partial vacatur';
       const vacateType = 'Straight Vacate (1 document)';
       const vacateIssues = '1. This is a description of the decision';
@@ -197,32 +195,54 @@ describe('MTVJudgeDisposition', () => {
 
   });
 
-  //   it('sends the correct instructions based on denied disposition', () => {
+  it('sends the correct instructions based on denied disposition', async () => {
 
-  //     disposition = 'deny';
+    jest.clearAllMocks();
+    const disposition = 'deny';
+    let vacateType;
+    let vacateIssues;
+    const hyperlink = 'www.caseflow.com';
+    const instructions = 'testing';
 
-  //     setup();
+    setup();
 
-  //     selectDisposition(disposition);
+    await selectDisposition(
+      disposition,
+      vacateType,
+      vacateIssues,
+      hyperlink,
+      instructions
+    );
 
-  //     expect(onSubmit.mock.calls[0][0].instructions).toMatch('**Motion To Vacate:**  \nDenial of All Issues For Vacatur\n\n**Detail:**  \ntesting\n\n**Hyperlink:**  \nwww.caseflow.com\n'
-  //     );
+    expect(onSubmit.mock.calls[0][0].instructions).toMatch(
+      '**Motion To Vacate:**  \nDenial of All Issues For Vacatur\n\n**Detail:**  \ntesting\n\n**Hyperlink:**  \nwww.caseflow.com\n'
+    );
 
-  //   });
+  });
 
-  //   it('sends the correct instructions based on dismissed disposition', () => {
+  it('sends the correct instructions based on dismissed disposition', async () => {
 
-  //     disposition = 'dismiss';
-  //     instructions = 'new instructions from judge';
-  //     hyperlink = 'www.google.com';
+    jest.clearAllMocks();
+    const disposition = 'dismiss';
+    let vacateType;
+    let vacateIssues;
+    const hyperlink = 'www.google.com';
+    const instructions = 'new instructions from judge';
 
-  //     setup();
+    setup();
 
-  //     selectDisposition(disposition, instructions, hyperlink);
+    await selectDisposition(
+      disposition,
+      vacateType,
+      vacateIssues,
+      hyperlink,
+      instructions
+    );
 
-  //     expect(onSubmit.mock.calls[0][0].instructions).toMatch('**Motion To Vacate:**  \nDismissal\n\n**Detail:**  \nnew instructions from judge\n\n**Hyperlink:**  \nwww.google.com\n'
-  //     );
+    expect(onSubmit.mock.calls[0][0].instructions).toMatch(
+      '**Motion To Vacate:**  \nDismissal\n\n**Detail:**  \nnew instructions from judge\n\n**Hyperlink:**  \nwww.google.com\n'
+    );
 
-  //   });
-  // });
+  });
 });
+
