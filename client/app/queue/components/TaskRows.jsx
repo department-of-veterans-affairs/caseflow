@@ -308,6 +308,24 @@ class TaskRows extends React.PureComponent {
       return text.replace(/<br>|(?<! {2})\n/g, '  \n');
     };
 
+    const renderMstLabel = (mstText, style) => {
+      if (mstText) {
+        return <React.Fragment>
+          <h5 style={style}>Reason for Change (MST):</h5>
+          <small>{mstText}</small>
+        </React.Fragment>;
+      }
+    };
+
+    const renderPactLabel = (pactText, style) => {
+      if (pactText) {
+        return <React.Fragment>
+          <h5 style={style}>Reason for Change (PACT):</h5>
+          <small>{pactText}</small>
+        </React.Fragment>;
+      }
+    };
+
     // formatting used for IssueUpdate task instructions.
     const formatIssueUpdateBreaks = (text = '') => {
       const divStyle = { marginTop: '1rem'}
@@ -327,8 +345,8 @@ class TaskRows extends React.PureComponent {
             <br />
             <small>{text[3]}</small>
             <br />
-            <h5 style={hStyle}>Reason for Change:</h5>
-            <small>{text[4]}</small>
+            {renderMstLabel(text[4], hStyle)}
+            {renderPactLabel(text[5], hStyle)}
           </div>
         );
       }
