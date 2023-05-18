@@ -514,9 +514,7 @@ exports[`MTVJudgeDisposition with denied disposition selected renders correctly 
         <textarea
           id="instructions"
           name="instructions"
-        >
-          testing
-        </textarea>
+        />
       </div>
       <div
         class=""
@@ -623,8 +621,9 @@ exports[`MTVJudgeDisposition with denied disposition selected renders correctly 
     >
       <span>
         <button
-          class="cf-right-side usa-button"
+          class="cf-right-side usa-button-disabled usa-button"
           data-css-wn5k45=""
+          disabled=""
           id="button-submit"
           type="button"
         >
@@ -924,9 +923,7 @@ exports[`MTVJudgeDisposition with dismissed disposition selected renders correct
         <textarea
           id="instructions"
           name="instructions"
-        >
-          testing
-        </textarea>
+        />
       </div>
       <div
         class=""
@@ -1033,8 +1030,9 @@ exports[`MTVJudgeDisposition with dismissed disposition selected renders correct
     >
       <span>
         <button
-          class="cf-right-side usa-button"
+          class="cf-right-side usa-button-disabled usa-button"
           data-css-wn5k45=""
+          disabled=""
           id="button-submit"
           type="button"
         >
@@ -1334,9 +1332,7 @@ exports[`MTVJudgeDisposition with granted disposition selected renders correctly
         <textarea
           id="instructions"
           name="instructions"
-        >
-          testing
-        </textarea>
+        />
       </div>
       <div
         class=""
@@ -1443,8 +1439,9 @@ exports[`MTVJudgeDisposition with granted disposition selected renders correctly
     >
       <span>
         <button
-          class="cf-right-side usa-button"
+          class="cf-right-side usa-button-disabled usa-button"
           data-css-wn5k45=""
+          disabled=""
           id="button-submit"
           type="button"
         >
@@ -1744,9 +1741,7 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
         <textarea
           id="instructions"
           name="instructions"
-        >
-          testing
-        </textarea>
+        />
       </div>
       <div
         class=""
@@ -1853,8 +1848,9 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
     >
       <span>
         <button
-          class="cf-right-side usa-button"
+          class="cf-right-side usa-button-disabled usa-button"
           data-css-wn5k45=""
+          disabled=""
           id="button-submit"
           type="button"
         >

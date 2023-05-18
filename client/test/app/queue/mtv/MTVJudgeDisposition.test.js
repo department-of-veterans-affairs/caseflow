@@ -31,7 +31,27 @@ const enterAdditionalContext = (text, selectedField) => {
   userEvent.type(textField, text);
 };
 
-const selectDisposition = async (disposition, vacateType, vacateIssues, hyperlink, instructions) => {
+const selectDisposition = async (disposition = 'grant all') => {
+  userEvent.click(
+    screen.getByLabelText(new RegExp(disposition, 'i'))
+  );
+
+  if ((/grant/i).test(disposition)) {
+    await waitFor(() => {
+      expect(
+        screen.getByText(/what type of vacate/i)
+      ).toBeInTheDocument();
+    });
+  } else {
+    await waitFor(() => {
+      expect(
+        screen.getByLabelText(/insert caseflow reader document hyperlink/i)
+      ).toBeInTheDocument();
+    });
+  }
+};
+
+const fillForm = async (disposition, vacateType, vacateIssues, hyperlink, instructions) => {
   userEvent.click(
     screen.getByLabelText(new RegExp(disposition, 'i'))
   );
@@ -140,7 +160,7 @@ describe('MTVJudgeDisposition', () => {
 
       setup();
 
-      await selectDisposition(
+      await fillForm(
         disposition,
         vacateType,
         vacateIssues,
@@ -172,7 +192,7 @@ describe('MTVJudgeDisposition', () => {
 
       setup();
 
-      await selectDisposition(
+      await fillForm(
         disposition,
         vacateType,
         vacateIssues,
@@ -206,7 +226,7 @@ describe('MTVJudgeDisposition', () => {
 
     setup();
 
-    await selectDisposition(
+    await fillForm(
       disposition,
       vacateType,
       vacateIssues,
@@ -215,7 +235,10 @@ describe('MTVJudgeDisposition', () => {
     );
 
     expect(onSubmit.mock.calls[0][0].instructions).toMatch(
-      '**Motion To Vacate:**  \nDenial of All Issues For Vacatur\n\n**Detail:**  \ntesting\n\n**Hyperlink:**  \nwww.caseflow.com\n'
+      '**Motion To Vacate:**  \n' +
+      'Denial Of All Issues For Vacatur\n\n' +
+      '**Detail:**  \ntesting\n\n' +
+      '**Hyperlink:**  \nwww.caseflow.com\n'
     );
 
   });
@@ -231,7 +254,7 @@ describe('MTVJudgeDisposition', () => {
 
     setup();
 
-    await selectDisposition(
+    await fillForm(
       disposition,
       vacateType,
       vacateIssues,
@@ -242,7 +265,5 @@ describe('MTVJudgeDisposition', () => {
     expect(onSubmit.mock.calls[0][0].instructions).toMatch(
       '**Motion To Vacate:**  \nDismissal\n\n**Detail:**  \nnew instructions from judge\n\n**Hyperlink:**  \nwww.google.com\n'
     );
-
   });
 });
-
