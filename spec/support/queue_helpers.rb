@@ -37,7 +37,7 @@ module QueueHelpers
     case disposition
     when "granted", "partially_granted"
       parts += ["**Type:**  "]
-      parts +=["#{vacate_types[vacate_type.to_sym]}\n"]
+      parts += ["#{vacate_types[vacate_type.to_sym]}\n"]
       if !notes.empty?
         parts += ["**Detail:**  "]
         parts += ["#{notes}\n"]
