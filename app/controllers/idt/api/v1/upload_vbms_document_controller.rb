@@ -12,10 +12,13 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   end
 
   def create
-    if address_params.present? && recipient_params.present?
-      MailRequest.new(params)
-    elsif !address_params.present? || !recipient_params.present?
-      # log_some_error
+    if recipient_and_destination_params
+      new_mailing = MailRequest.new(params)
+      if new_mailing.valid?
+        new_mailing.create_a_vbms_distribution && new_mailing.create_a_vbms_distribution_destination
+      elsif new_mailing.invalid?
+        fail Caseflow::Error::MissingRecipientInfo, "IDT Standard Error ID: " + SecureRandom.uuid + " Not enough recipient info thats needed to mail the document."
+      end
     end
 
     appeal = nil
@@ -45,8 +48,17 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     end
   end
 
-  def destination_params
+  def recipient_and_destination_params
     params.permit(
+      :recipient_type,
+      :name,
+      :first_name,
+      :middle_name,
+      :last_name,
+      :participant_id,
+      :poa_code,
+      :claimant_station_of_jurisdiction,
+      :destination_type,
       :address_line_1,
       :address_line_2,
       :address_line_3,
@@ -65,16 +77,4 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     )
   end
 
-  def recipient_params
-    params.permit(
-      :recipient_type,
-      :name,
-      :first_name,
-      :middle_name,
-      :last_name,
-      :participant_id,
-      :poa_code,
-      :claimant_station_of_jurisdiction
-    )
-  end
 end
