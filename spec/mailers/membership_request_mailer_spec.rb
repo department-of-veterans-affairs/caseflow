@@ -18,6 +18,7 @@ describe MembershipRequestMailer do
       create(:membership_request, organization: caregiver_support_org, requestor: requestor)
     ]
   end
+  let(:vha_gov_delivery_email_address) { "vhabenefitappeals@messages.va.gov" }
 
   before do
     user_orgs.each do |org|
@@ -35,7 +36,7 @@ describe MembershipRequestMailer do
     end
 
     it "has the correct from email address" do
-      expect(mailer.from).to include(COPY::VHA_BENEFIT_EMAIL_ADDRESS)
+      expect(mailer.from).to include(vha_gov_delivery_email_address)
     end
 
     it "has the correct to email address" do
@@ -62,7 +63,7 @@ describe MembershipRequestMailer do
     end
 
     it "has the correct from email address" do
-      expect(mailer.from).to include(COPY::VHA_BENEFIT_EMAIL_ADDRESS)
+      expect(mailer.from).to include(vha_gov_delivery_email_address)
     end
 
     it "has the correct to email address" do
@@ -89,7 +90,7 @@ describe MembershipRequestMailer do
     end
 
     it "has the correct from email address" do
-      expect(mailer.from).to include(COPY::VHA_BENEFIT_EMAIL_ADDRESS)
+      expect(mailer.from).to include(vha_gov_delivery_email_address)
     end
 
     it "has the correct to email address" do
@@ -119,7 +120,7 @@ describe MembershipRequestMailer do
     end
 
     it "has the correct from email address" do
-      expect(mailer.from).to include(COPY::VHA_BENEFIT_EMAIL_ADDRESS)
+      expect(mailer.from).to include(vha_gov_delivery_email_address)
     end
 
     it "has the correct to email address" do
@@ -158,7 +159,7 @@ describe MembershipRequestMailer do
     end
 
     it "has the correct from email address" do
-      expect(mailer.from).to include(COPY::VHA_BENEFIT_EMAIL_ADDRESS)
+      expect(mailer.from).to include(vha_gov_delivery_email_address)
     end
 
     it "has the correct to email address" do
@@ -227,7 +228,7 @@ describe MembershipRequestMailer do
     end
 
     it "has the correct from email address" do
-      expect(mailer.from).to include(COPY::VHA_BENEFIT_EMAIL_ADDRESS)
+      expect(mailer.from).to include(vha_gov_delivery_email_address)
     end
 
     it "has the correct to email address" do
