@@ -63,6 +63,10 @@ describe InitialTasksFactory, :postgres do
           it "does not create a tracking task" do
             expect(appeal.tasks.count { |t| t.is_a?(TrackVeteranTask) }).to eq(0)
           end
+
+          it "does not create an issue update task" do
+            expect(appeal.tasks.count { |t| t.is_a?(IssuesUpdateTask) }).to eq(0)
+          end
         end
 
         context "on veteran date of death present" do
