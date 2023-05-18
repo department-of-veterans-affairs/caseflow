@@ -21,10 +21,12 @@ The Appeals Modernization team's mission is to empower employees with technology
       * [Developer Setup](#developer-setup)
          * [Github](#github)
          * [Machine setup](#machine-setup)
-            * [Windows 10 + WSL](WINDOWS_10.md)
-            * [Windows 11 + WSL](WINDOWS_11.md)
-            * [Mac M1/M2](MAC_M1.md)
-            * [Mac Intel](MAC_INTEL.md)
+            * Windows
+               * [Windows 10 + WSL](WINDOWS_10.md)
+               * [Windows 11 + WSL](WINDOWS_11.md)
+            * Mac
+               * [Mac M1/M2](MAC_M1.md)
+               * [Mac Intel](MAC_INTEL.md)
       * [Test Coverage](#test-coverage)
       * [Debugging FACOLS setup](#debugging-facols-setup)
       * [Monitoring](#monitoring)
@@ -97,22 +99,12 @@ We are using 2-factor authentication with Github so, for example, when you acces
 
 ## Machine setup #######################################################
 
-You can manually go through the following steps.
-Alternatively, if you have a Mac, you can clone this repo and run the following scripts:
-
-  - `git clone https://github.com/department-of-veterans-affairs/caseflow`
-  - `git checkout grant/setup-m1`
-  - [dev_env_setup_step1.sh](scripts/dev_env_setup_step1.sh)
-  - [dev_env_setup_step2.sh](scripts/dev_env_setup_step2.sh)
-
-If an error occurs, it is okay to run the scripts multiple times after the error is corrected.
-
-**Machine Setup**
-
-* [Windows 10 + WSL](WINDOWS_10.md)
-* [Windows 11 + WSL](WINDOWS_11.md)
-* [Mac M1/M2](MAC_M1.md)
-* [Mac Intel](MAC_INTEL.md)
+* Windows
+   * [Windows 10 + WSL](WINDOWS_10.md)
+   * [Windows 11 + WSL](WINDOWS_11.md)
+* Mac
+   * [Mac M1/M2](MAC_M1.md)
+   * [Mac Intel](MAC_INTEL.md)
 
 ---
 
