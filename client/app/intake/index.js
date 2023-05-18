@@ -27,6 +27,7 @@ import {
 import addClaimantReducer from './reducers/addClaimantSlice';
 import ReduxBase from '../components/ReduxBase';
 import { BrowserRouter } from 'react-router-dom';
+import { mapDataToUserInformation, userInformationReducer } from './reducers/userInformation';
 
 export const reducer = combineReducers({
   intake: intakeReducer,
@@ -37,6 +38,7 @@ export const reducer = combineReducers({
   appeal: appealReducer,
   featureToggles: featureToggleReducer,
   addClaimant: addClaimantReducer,
+  userInformation: userInformationReducer,
 });
 
 export const generateInitialState = (props) => ({
@@ -47,6 +49,7 @@ export const generateInitialState = (props) => ({
   higherLevelReview: mapDataToInitialHigherLevelReview(props),
   appeal: mapDataToInitialAppeal(props),
   featureToggles: mapDataToFeatureToggle(props),
+  userInformation: mapDataToUserInformation(props),
 });
 
 class Intake extends React.PureComponent {

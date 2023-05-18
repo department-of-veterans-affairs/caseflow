@@ -71,9 +71,7 @@
       "veteran_id": null
     }
   ],
-  "decision_documents": [
-
-  ],
+  "decision_documents": [],
   "claimants": [
     {
       "id": 965203,
@@ -93,9 +91,7 @@
       "appeal_id": 126187,
       "status": "on_hold",
       "type": "RootTask",
-      "instructions": [
-
-      ],
+      "instructions": [],
       "assigned_to_id": 2,
       "assigned_by_id": null,
       "assigned_at": "2021-02-07 13:56:10 UTC",
@@ -115,9 +111,7 @@
       "appeal_id": 126187,
       "status": "on_hold",
       "type": "DistributionTask",
-      "instructions": [
-
-      ],
+      "instructions": [],
       "assigned_to_id": 2,
       "assigned_by_id": null,
       "assigned_at": "2021-02-07 13:56:10 UTC",
@@ -159,9 +153,7 @@
       "appeal_id": 126187,
       "status": "on_hold",
       "type": "HearingTask",
-      "instructions": [
-
-      ],
+      "instructions": [],
       "assigned_to_id": 2,
       "assigned_by_id": null,
       "assigned_at": "2021-02-07 13:56:11 UTC",
@@ -204,9 +196,7 @@
       "appeal_id": 126187,
       "status": "assigned",
       "type": "ScheduleHearingTask",
-      "instructions": [
-
-      ],
+      "instructions": [],
       "assigned_to_id": 2,
       "assigned_by_id": null,
       "assigned_at": "2021-08-11 11:29:27 UTC",
@@ -244,18 +234,10 @@
       "cancellation_reason": null
     }
   ],
-  "task_timers": [
-
-  ],
-  "judge_case_reviews": [
-
-  ],
-  "attorney_case_reviews": [
-
-  ],
-  "decision_issues": [
-
-  ],
+  "task_timers": [],
+  "judge_case_reviews": [],
+  "attorney_case_reviews": [],
+  "decision_issues": [],
   "request_issues": [
     {
       "id": 1863648,
@@ -305,24 +287,12 @@
       "type": "RequestIssue"
     }
   ],
-  "request_decision_issues": [
-
-  ],
-  "cavc_remands": [
-
-  ],
-  "hearings": [
-
-  ],
-  "hearing_days": [
-
-  ],
-  "virtual_hearings": [
-
-  ],
-  "hearing_task_associations": [
-
-  ],
+  "request_decision_issues": [],
+  "cavc_remands": [],
+  "hearings": [],
+  "hearing_days": [],
+  "virtual_hearings": [],
+  "hearing_task_associations": [],
   "users": [
     {
       "id": 718,
@@ -6379,7 +6349,7 @@
     {
       "id": 220,
       "type": "BusinessLine",
-      "name": "Vocational Rehabilitation and Employment",
+      "name": "Veterans Readiness and Employment",
       "role": null,
       "url": "voc_rehab",
       "participant_id": null,
@@ -6645,6 +6615,81 @@
       "accepts_priority_pushed_cases": null,
       "ama_only_push": false,
       "ama_only_request": false
+    },
+    {
+      "id": 590,
+      "type": "BusinessLine",
+      "name": "Pension & Survivor's Benefits",
+      "role": null,
+      "url": "pension",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 591,
+      "type": "BusinessLine",
+      "name": "Fiduciary",
+      "role": null,
+      "url": "fiduciary",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 592,
+      "type": "BusinessLine",
+      "name": "Compensation",
+      "role": null,
+      "url": "compensation",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 593,
+      "type": "BusinessLine",
+      "name": "Insurance",
+      "role": null,
+      "url": "insurance",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 594,
+      "type": "BusinessLine",
+      "name": "National Cemetery Administration",
+      "role": null,
+      "url": "nca",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
     }
   ],
   "people": [
@@ -6662,10 +6707,6 @@
       "ssn": "000909921"
     }
   ],
-  "unrecognized_party_details": [
-
-  ],
-  "unrecognized_appellants": [
-
-  ]
+  "unrecognized_party_details": [],
+  "unrecognized_appellants": []
 }

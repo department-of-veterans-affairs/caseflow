@@ -75,7 +75,7 @@ class AsyncableJobsPage extends React.PureComponent {
         });
       });
   }
-  
+
   tabChange = (tab) => {
     this.setState({ currentTab: tab });
   }

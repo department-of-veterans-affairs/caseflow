@@ -13,6 +13,7 @@ export const FORM_TYPES = {
     key: 'higher_level_review',
     name: INTAKE_FORM_NAMES.higher_level_review,
     shortName: INTAKE_FORM_NAMES_SHORT.higher_level_review,
+    unlisted_claimant: { key: 'unlistedClaimant' },
     category: 'decisionReview',
     formName: 'higherLevelReview'
   },
@@ -20,6 +21,7 @@ export const FORM_TYPES = {
     key: 'supplemental_claim',
     name: INTAKE_FORM_NAMES.supplemental_claim,
     shortName: INTAKE_FORM_NAMES_SHORT.supplemental_claim,
+    unlisted_claimant: { key: 'unlistedClaimant' },
     category: 'decisionReview',
     formName: 'supplementalClaim'
   },
@@ -201,6 +203,8 @@ export const REVIEW_DATA_FIELDS = {
     benefit_type: { key: 'benefitType', required: true },
     receipt_date: { key: 'receiptDate', required: true },
     claimant: { key: 'claimant' },
+    unlisted_claimant: { key: 'unlistedClaimant' },
+    poa: { key: 'poa' },
     claimant_type: { key: 'claimantType', required: true },
     payee_code: { key: 'payeeCode' },
     legacy_opt_in_approved: { key: 'legacyOptInApproved', required: true },
@@ -212,6 +216,8 @@ export const REVIEW_DATA_FIELDS = {
     receipt_date: { key: 'receiptDate', required: true },
     filed_by_va_gov: { key: 'filedByVaGov', required: false },
     claimant: { key: 'claimant' },
+    unlisted_claimant: { key: 'unlistedClaimant' },
+    poa: { key: 'poa' },
     claimant_type: { key: 'claimantType', required: true },
     payee_code: { key: 'payeeCode' },
     legacy_opt_in_approved: { key: 'legacyOptInApproved', required: true },
@@ -225,6 +231,12 @@ export const GENERIC_FORM_ERRORS = {
 export const RECEIPT_DATE_ERRORS = {
   invalid: 'Please enter a valid receipt date.',
   in_future: 'Receipt date cannot be in the future.'
+};
+
+export const SUBSTITUTE_DATE_ERRORS = {
+  invalid: 'Please enter a valid substitution granted date.',
+  in_future: 'Substitution granted date cannot be in the future.',
+  min_date_error: "Substitution granted date cannot be earlier than the NOD date or the Veteran's date of death"
 };
 
 export const CLAIMANT_ERRORS = {

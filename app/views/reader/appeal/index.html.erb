@@ -10,6 +10,7 @@
     featureToggles: {
       interfaceVersion2: FeatureToggle.enabled?(:interface_version_2, user: current_user),
       windowSlider: FeatureToggle.enabled?(:window_slider, user: current_user),
+      readerSelectorsMemoized: FeatureToggle.enabled?(:bulk_upload_documents, user: current_user),
     },
     buildDate: build_date
   }) %>

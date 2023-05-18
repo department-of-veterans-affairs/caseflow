@@ -12,6 +12,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
   has_many :organizations, through: :organizations_users
+  has_many :membership_requests, foreign_key: :requestor_id
+  has_many :decided_membership_requests, class_name: "MembershipRequest", foreign_key: :decider_id
   has_many :messages
   has_many :unrecognized_appellants, foreign_key: :created_by_id
   has_one :vacols_user, class_name: "CachedUser", foreign_key: :sdomainid, primary_key: :css_id
@@ -52,7 +54,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   # If RO is ambiguous from station_office, use the user-defined RO. Otherwise, use the unambigous RO.
   def regional_office
     upcase = ->(str) { str ? str.upcase : str }
-
     ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
   end
 
@@ -134,6 +135,14 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     CavcLitigationSupport.singleton.admins.include?(self)
   end
 
+  def can_edit_cavc_dashboards?
+    OaiTeam.singleton.users.include?(self)
+  end
+
+  def can_view_cavc_dashboards?
+    OaiTeam.singleton.users.include?(self) || OccTeam.singleton.users.include?(self)
+  end
+
   def can_intake_appeals?
     BvaIntake.singleton.users.include?(self)
   end
@@ -199,7 +208,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def timezone
-    (RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
+    if vso_employee?
+      RegionalOffice::CITIES[users_regional_office][:timezone]
+    else
+      (RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
+    end
   end
 
   # If user has never logged in, we might not have their full name in Caseflow DB.
@@ -254,6 +267,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def camo_employee?
     member_of_organization?(VhaCamo.singleton) && FeatureToggle.enabled?(:vha_predocket_workflow, user: self)
+  end
+
+  def vha_employee?
+    member_of_organization?(BusinessLine.find_by(url: "vha"))
   end
 
   def organization_queue_user?
@@ -427,6 +444,12 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     member_of_organization?(HearingsManagement.singleton)
   end
 
+  # Purpose: Checks if current user is a hearing admin user
+  # Returns: Boolean for whether or not the user is a hearing admin
+  def in_hearing_admin_team?
+    member_of_organization?(HearingAdmin.singleton)
+  end
+
   def can_view_judge_team_management?
     DvcTeam.for_dvc(self).present?
   end
@@ -500,6 +523,14 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     end
     # :nocov:
 
+    ### Desciption: Retrieves the system user based on the current raisl environment
+    ### Environments are listed here config/environments
+    ### The Rails.current_env name comes from the environment file name
+    ### Example: if development.rb is the current environment then Rails.current_env == development
+    ###
+    ### Params: N/A
+    ### Return: User object for the system user. This object will either be pulled from
+    ### the database if it exists or will be created if it does not exist in the database
     def system_user
       @system_user ||= begin
         private_method_name = "#{Rails.current_env}_system_user".to_sym
@@ -513,6 +544,22 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
         css_id: "APIUSER",
         full_name: "API User"
       )
+    end
+
+    def first_time_logging_in?(session)
+      user_session = session["user"] ||= authentication_service.default_user_session
+
+      unless user_session
+        return false
+      end
+
+      user = find_by_pg_user_id!(user_session["pg_user_id"], session) || User.find_by_css_id(user_session["id"])
+
+      if user&.last_login_at
+        false
+      else
+        true
+      end
     end
 
     def from_session(session)
@@ -603,7 +650,17 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       find_or_initialize_by(station_id: "317", css_id: "CASEFLOW1")
     end
 
-    alias test_system_user uat_system_user
-    alias development_system_user uat_system_user
+    ### Description: System use for the Development and test environments
+    ### Local and demo uses development environment
+    ### Rspec uses TEST environment
+    ###
+    ### Params: N/A
+    ### Return: User object for the system user. This object will eitehr be pulled from
+    ### the database if it exists or will be created if it does not exist in the database
+    def development_system_user
+      find_or_create_by(station_id: "317", css_id: "CASEFLOW1")
+    end
+
+    alias test_system_user development_system_user
   end
 end

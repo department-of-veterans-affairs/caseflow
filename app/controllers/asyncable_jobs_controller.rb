@@ -53,9 +53,14 @@ class AsyncableJobsController < ApplicationController
     success = true
 
     begin
-      job.perform_now
+      if allowed_params[:run_async]
+        job.perform_later
+      else
+        job.perform_now
+      end
     rescue Exception => e
-      Rails.logger.error "Manual run of #{allowed_params[:job_type]} failed : #{e.message}"
+      verb = allowed_params[:run_async] ? "Scheduling" : "Manual run"
+      Rails.logger.error "#{verb} of #{allowed_params[:job_type]} failed : #{e.message}"
       success = false
     end
 
@@ -137,7 +142,7 @@ class AsyncableJobsController < ApplicationController
   end
 
   def allowed_params
-    params.permit(:asyncable_job_klass, :id, :page, :note, :send_to_intake_user, :job_type)
+    params.permit(:asyncable_job_klass, :id, :page, :note, :send_to_intake_user, :job_type, :run_async)
   end
 
   def veteran_file_number

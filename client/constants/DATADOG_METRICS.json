@@ -8,5 +8,9 @@
   "DISPATCH": {
     "APP_NAME": "dispatch",
     "OUTCODE_GROUP_NAME": "outcode"
+  },
+  "VHA": {
+    "APP_NAME": "vha",
+    "MEMBERSHIP_REQUESTS_GROUP_NAME": "membership_requests"
   }
 }

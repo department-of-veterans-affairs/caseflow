@@ -258,7 +258,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         <br />
         <TextareaField
           name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
-          errorMessage={highlightFormItems && instructions.length === 0 ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+          errorMessage={highlightFormItems && instructions.length === 0 ? COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
           id="taskInstructions"
           onChange={(value) => this.setState({ instructions: value })}
           value={this.state.instructions} />
@@ -270,7 +270,8 @@ export class AssignToAttorneyWidget extends React.PureComponent {
           { numCases: selectedTasks.length,
             casePlural: pluralize('case', selectedTasks.length) })}
         loading={savePending}
-        loadingText={COPY.ASSIGN_WIDGET_LOADING} /> }
+        loadingText={COPY.ASSIGN_WIDGET_LOADING}
+        styling={css({ margin: '1.5rem 0' })} /> }
     </React.Fragment>;
 
     return isModal ? <QueueFlowModal title={COPY.ASSIGN_TASK_TITLE}

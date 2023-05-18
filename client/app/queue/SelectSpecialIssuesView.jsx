@@ -139,7 +139,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
         {this.getPageNote()}
       </p>
       {error && <Alert type="error" title={error.title} message={error.detail} />}
-      <div {...flexContainer} className="special-options">
+      <div {...flexContainer}>
         <div {...flexColumn}>
           {
             sectionsMap.noSpecialIssues && <CheckboxGroup

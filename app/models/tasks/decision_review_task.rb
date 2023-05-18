@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ##
-# Task for a business line at BVA (e.g., Vocational Rehab & Employment) to review a decision from a judge relating to
+# Task for a business line at BVA (e.g., Veteran Readiness & Employment) to review a decision from a judge relating to
 # non-compensation benefits like education or loan guarantys.
 
 class DecisionReviewTask < Task
@@ -15,8 +15,14 @@ class DecisionReviewTask < Task
     ::WorkQueue::DecisionReviewTaskSerializer
   end
 
+  # The output of this method is used in lieu of ui_hash's whenever gathering task
+  # data to populate decision review queues with.
+  def serialize_task
+    serializer_class.new(self).serializable_hash[:data]
+  end
+
   def ui_hash
-    serializer_class.new(self).serializable_hash[:data][:attributes]
+    serialize_task[:attributes]
   end
 
   def complete_with_payload!(decision_issue_params, decision_date)

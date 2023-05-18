@@ -1,0 +1,10 @@
+{
+  "hearing_scheduled_privacy_pending": "Hearing Scheduled /  Privacy Act Pending",
+  "ihp_pending_privacy_pending": "VSO IHP Pending / Privacy Act Pending",
+  "hearing_scheduled": "Hearing Scheduled",
+  "privacy_pending": "Privacy Act Pending",
+  "ihp_pending": "VSO IHP Pending",
+  "hearing_to_be_rescheduled": "Hearing to be Rescheduled",
+  "hearing_to_be_rescheduled_privacy_pending": "Hearing to be Rescheduled / Privacy Act Pending",
+  "appeal_docketed": "Appeal Docketed"
+}

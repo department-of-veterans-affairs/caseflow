@@ -580,6 +580,15 @@ feature "Task queue", :all_dbs do
     let(:default_page_query_string) do
       "#{Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM}=1"
     end
+    let(:default_sort_column_string) do
+      "sort_by=typeColumn"
+    end
+    let(:default_sort_direction_string) do
+      "order=asc"
+    end
+    let(:initial_page_url) do
+      "#{default_query_string}&#{default_sort_column_string}&#{default_sort_direction_string}"
+    end
     let(:default_query_string) do
       "#{default_tab_query_string}&#{default_page_query_string}"
     end
@@ -590,7 +599,7 @@ feature "Task queue", :all_dbs do
         expect(page.find(".cf-tab.cf-active")).to have_content(
           format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_count)
         )
-        expect(URI.parse(current_url).query).to eq "#{default_tab_query_string}&#{default_page_query_string}"
+        expect(URI.parse(current_url).query).to eq initial_page_url
       end
     end
 
@@ -599,13 +608,14 @@ feature "Task queue", :all_dbs do
         "#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME}"
       end
 
-      it "switches to the corrct tab and updates the url" do
+      it "switches to the correct tab and updates the url" do
         visit(organization.path)
         click_on format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count / 2)
         expect(page.find(".cf-tab.cf-active")).to have_content(
           format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count / 2)
         )
-        expect(URI.parse(current_url).query).to eq "#{query_string}&#{default_page_query_string}"
+        expect(URI.parse(current_url).query).to eq "#{query_string}&#{default_page_query_string}"\
+          "&#{default_sort_column_string}&#{default_sort_direction_string}"
       end
     end
 
@@ -657,7 +667,8 @@ feature "Task queue", :all_dbs do
         )
         page.find_all(".cf-current-page").each { |btn| expect(btn).to have_content(page_no) }
         expect(find("tbody").find_all("tr").length).to eq(unassigned_count - default_cases_for_page)
-        expect(URI.parse(current_url).query).to eq "#{default_tab_query_string}&#{query_string}"
+        expect(URI.parse(current_url).query).to eq "#{default_tab_query_string}&#{query_string}"\
+          "&#{default_sort_column_string}&#{default_sort_direction_string}"
       end
     end
 
@@ -674,7 +685,7 @@ feature "Task queue", :all_dbs do
         expect(page).to have_content(
           format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
         )
-        page.find_all("path.unselected-filter-icon-inner").first.click
+        page.find_all(".unselected-filter-icon").first.click
         expect(page).to have_content("#{Task.label} (#{unassigned_count / 2})")
         expect(page).to have_content("#{FoiaTask.label} (#{foia_task_count})")
       end
@@ -682,12 +693,13 @@ feature "Task queue", :all_dbs do
       it "filters tasks correctly and updates the url" do
         visit(organization.path)
         expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
-        page.find_all("path.unselected-filter-icon-inner").first.click
+        page.find_all(".unselected-filter-icon").first.click
         page.find("label", text: "#{FoiaTask.label} (#{foia_task_count})").click
         expect(find("tbody").find_all("tr").length).to eq(foia_task_count)
-        expect(URI.parse(current_url).query).to eq "#{default_query_string}&#{query_string}"
+        expect(URI.parse(current_url).query).to eq "#{default_query_string}&#{default_sort_column_string}"\
+          "&#{default_sort_direction_string}&#{query_string}"
         click_on "Clear all filters"
-        expect(URI.parse(current_url).query).to eq default_query_string
+        expect(URI.parse(current_url).query).to eq initial_page_url
       end
     end
   end
@@ -957,10 +969,12 @@ feature "Task queue", :all_dbs do
       end
 
       before do
-        visit("/queue/appeals/#{appeal.external_id}")
+        # force objects above to reload to ensure the visit doesn't fail to load them
+        judge_task.reload
 
         # Add a user to the Colocated team so the task assignment will suceed.
         Colocated.singleton.add_user(create(:user))
+        visit("/queue/appeals/#{appeal.external_id}")
       end
 
       it "should display an option of Ready for Dispatch" do

@@ -7,6 +7,8 @@ class AppellantSubstitution < CaseflowRecord
   belongs_to :source_appeal, class_name: "Appeal", optional: false
   belongs_to :target_appeal, class_name: "Appeal"
 
+  has_many :histories, class_name: "AppellantSubstitutionHistory"
+
   scope :updated_since_for_appeals, lambda { |since|
     select(:target_appeal_id).where("#{table_name}.updated_at >= ?", since)
   }
@@ -19,13 +21,15 @@ class AppellantSubstitution < CaseflowRecord
             :task_params,
             presence: true, allow_blank: true
 
-  attr_accessor :cancelled_task_ids
+  attr_accessor :cancelled_task_ids, :cavc_remand_appeal_substitution, :skip_cancel_tasks
 
   before_create :establish_substitution_on_same_appeal, if: :same_appeal_substitution_allowed?
   before_create :establish_separate_appeal_stream, unless: :same_appeal_substitution_allowed?
+  before_create :establish_sustitution_on_cavc_remand_appeal, if: :cavc_remand_appeal_substitution
+  before_update :establish_substitution_on_same_appeal_on_update, if: :cavc_remand_appeal_substitution
   after_commit :initialize_tasks
   after_commit :initialize_tasks, unless: :same_appeal_substitution_allowed?
-  after_commit :create_substitute_tasks, if: :same_appeal_substitution_allowed?
+  after_commit :create_substitute_tasks, if: :can_create_substitute_tasks?
 
   def substitute_claimant
     target_appeal.claimant
@@ -47,6 +51,8 @@ class AppellantSubstitution < CaseflowRecord
   private
 
   def establish_substitution_on_same_appeal
+    return if cavc_remand_appeal_substitution
+
     # Need to update source appeal veteran_is_not_claimant before creating the substitute claimant.
     # This ensures that substitute claimant is the correct type.
     source_appeal.update!(veteran_is_not_claimant: true)
@@ -60,7 +66,25 @@ class AppellantSubstitution < CaseflowRecord
     self.target_appeal = source_appeal.reload
   end
 
+  def establish_sustitution_on_cavc_remand_appeal
+    target_appeal.update!(veteran_is_not_claimant: true)
+
+    Claimant.create!(
+      participant_id: substitute_participant_id,
+      payee_code: nil,
+      type: claimant_type,
+      decision_review_id: target_appeal.id,
+      decision_review_type: "Appeal"
+    )
+  end
+
+  def establish_substitution_on_same_appeal_on_update
+    target_appeal.claimant&.update(participant_id: substitute_participant_id)
+  end
+
   def establish_separate_appeal_stream
+    return if cavc_remand_appeal_substitution
+
     unassociated_claimant = Claimant.create!(
       participant_id: substitute_participant_id,
       payee_code: nil,
@@ -90,7 +114,7 @@ class AppellantSubstitution < CaseflowRecord
   end
 
   def initialize_tasks
-    InitialTasksFactory.new(target_appeal).create_root_and_sub_tasks!
+    InitialTasksFactory.new(target_appeal).create_root_and_sub_tasks! unless cavc_remand_appeal_substitution
   end
 
   def create_substitute_tasks
@@ -100,7 +124,8 @@ class AppellantSubstitution < CaseflowRecord
     SameAppealSubstitutionTasksFactory.new(target_appeal,
                                            task_ids,
                                            created_by,
-                                           task_params).create_substitute_tasks!
+                                           task_params,
+                                           skip_cancel_tasks).create_substitute_tasks!
   end
 
   def find_or_create_power_of_attorney_for(unassociated_claimant)
@@ -123,5 +148,9 @@ class AppellantSubstitution < CaseflowRecord
         request_issue_copy.save!
       end
     end
+  end
+
+  def can_create_substitute_tasks?
+    same_appeal_substitution_allowed? || cavc_remand_appeal_substitution
   end
 end

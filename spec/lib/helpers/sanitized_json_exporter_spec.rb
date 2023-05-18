@@ -231,7 +231,7 @@ describe "SanitizedJsonExporter/Importer" do
         AppealIntake => ["user_id"],
         JudgeCaseReview => %w[judge_id attorney_id],
         AttorneyCaseReview => %w[reviewing_judge_id attorney_id],
-        Task => %w[assigned_by_id cancelled_by_id],
+        Task => %w[assigned_by_id cancelled_by_id completed_by_id],
         CavcRemand => %w[updated_by_id created_by_id],
         Hearing => %w[updated_by_id judge_id created_by_id],
         HearingDay => %w[updated_by_id judge_id created_by_id],
@@ -449,7 +449,7 @@ describe "SanitizedJsonExporter/Importer" do
       expect(Veteran.count).to eq 1
       expect(Claimant.count).to eq 2
       expect(Organization.count).to eq 2
-      expect(User.count).to eq 0
+      expect(User.count).to eq 1
       expect(Task.count).to eq 5
     end
 
@@ -512,7 +512,7 @@ describe "SanitizedJsonExporter/Importer" do
         expect(Veteran.count).to eq 2
         expect(Claimant.count).to eq 4
         expect(Organization.count).to eq 2
-        expect(User.count).to eq 0
+        expect(User.count).to eq 1
         expect(Task.count).to eq 10
 
         # Compare differences between original records and imported records
@@ -626,7 +626,7 @@ describe "SanitizedJsonExporter/Importer" do
         expect(Veteran.count).to eq 1
         expect(Claimant.count).to eq 2
         expect(Organization.count).to eq 8
-        expect(User.count).to eq 7
+        expect(User.count).to eq 8
         expect(DecisionDocument.count).to eq 1
         expect(Task.count).to eq 16
         expect(TaskTimer.count).to eq 2
@@ -663,7 +663,7 @@ describe "SanitizedJsonExporter/Importer" do
         expect(Veteran.count).to eq 2
         expect(Claimant.count).to eq 4
         expect(Organization.count).to eq 8 # existing orgs are reused
-        expect(User.count).to eq 14
+        expect(User.count).to eq 15
         expect(Task.count).to eq 32
         expect(TaskTimer.count).to eq 4
 

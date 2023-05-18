@@ -37,7 +37,12 @@ class QueueConfig
   end
 
   def attach_tasks_to_tab(tab)
-    task_pager = TaskPager.new(assignee: assignee, tab_name: tab.name)
+    task_pager = TaskPager.new(
+      assignee: assignee,
+      tab_name: tab.name,
+      sort_by: tab.default_sorting_column.name,
+      sort_order: tab.default_sorting_direction
+    )
     endpoint = "task_pages?#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{tab.name}"
 
     tab.to_hash.merge(

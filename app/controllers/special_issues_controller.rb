@@ -50,7 +50,7 @@ class SpecialIssuesController < ApplicationController
               :us_territory_claim_american_samoa_guam_northern_mariana_isla,
               :us_territory_claim_puerto_rico_and_virgin_islands,
               :burn_pit, :military_sexual_trauma, :blue_water,
-              :us_court_of_appeals_for_veterans_claims, :no_special_issues)
+              :no_special_issues)
   end
 
   def record_not_found

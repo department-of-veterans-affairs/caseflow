@@ -1537,7 +1537,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         fill_in "withdraw-date", with: withdraw_date
         click_edit_submit
 
-        expect(page).to have_current_path("/decision_reviews/education")
+        expect(page).to have_current_path("/decision_reviews/education", ignore_query: true)
         expect(page).to have_content("You have successfully withdrawn a review.")
       end
 
@@ -1547,7 +1547,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         fill_in "withdraw-date", with: withdraw_date
         click_edit_submit
 
-        expect(page).to have_current_path("/decision_reviews/education")
+        expect(page).to have_current_path("/decision_reviews/education", ignore_query: true)
         expect(page).to have_content("You have successfully withdrawn 1 issue.")
       end
 
@@ -1556,7 +1556,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         click_remove_intake_issue_dropdown("1")
         click_edit_submit_and_confirm
 
-        expect(page).to have_current_path("/decision_reviews/education")
+        expect(page).to have_current_path("/decision_reviews/education", ignore_query: true)
         expect(page).to have_content("You have successfully removed 1 issue.")
       end
 
@@ -1574,7 +1574,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         fill_in "withdraw-date", with: withdraw_date
         click_edit_submit
 
-        expect(page).to have_current_path("/decision_reviews/education")
+        expect(page).to have_current_path("/decision_reviews/education", ignore_query: true)
         expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
       end
     end

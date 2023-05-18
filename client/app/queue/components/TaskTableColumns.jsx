@@ -323,7 +323,6 @@ export const daysWaitingColumn = (requireDasRecord) => {
     name: QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
     span: collapseColumn(requireDasRecord),
     tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
-    align: 'center',
     valueFunction: (task) => {
       const assignedDays = daysSinceAssigned(task);
       const onHoldDays = daysSincePlacedOnHold(task);
@@ -356,6 +355,19 @@ export const daysSinceIntakeColumn = (requireDasRecord) => {
     },
     backendCanSort: true,
     getSortValue: (task) => task.daysSinceBoardIntake
+  };
+};
+
+export const receiptDateColumn = () => {
+  return {
+    header: COPY.CASE_LIST_TABLE_10182,
+    name: QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name,
+    align: 'center',
+    valueFunction: (task) => {
+      return moment(task.appeal_receipt_date).format('MM/DD/YYYY');
+    },
+    backendCanSort: true,
+    getSortValue: (task) => task.appeal_receipt_date
   };
 };
 

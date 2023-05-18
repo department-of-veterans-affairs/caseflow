@@ -45,6 +45,12 @@ FactoryBot.define do
       end
     end
 
+    trait :ready_for_review do
+      after(:create) do |task|
+        task.parent.update_columns(status: Constants.TASK_STATUSES.assigned)
+      end
+    end
+
     trait :on_hold do
       started_at { rand(20..30).days.ago }
       placed_on_hold_at { rand(1..10).days.ago }
@@ -296,6 +302,23 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
+      factory :supplemental_claim_task, class: DecisionReviewTask do
+        appeal { create(:supplemental_claim, benefit_type: "nca") }
+        assigned_by { nil }
+      end
+
+      factory :higher_level_review_vha_task, class: DecisionReviewTask do
+        appeal { create(:higher_level_review, :with_vha_issue, benefit_type: "vha") }
+        assigned_by { nil }
+        assigned_to { BusinessLine.where(name: "Veterans Health Administration").first }
+      end
+
+      factory :supplemental_claim_vha_task, class: DecisionReviewTask do
+        appeal { create(:supplemental_claim, :with_vha_issue, benefit_type: "vha") }
+        assigned_by { nil }
+        assigned_to { BusinessLine.where(name: "Veterans Health Administration").first }
+      end
+
       factory :distribution_task, class: DistributionTask do
         parent { appeal.root_task || create(:root_task, appeal: appeal) }
         assigned_by { nil }
@@ -494,6 +517,7 @@ FactoryBot.define do
 
       factory :pre_docket_task, class: PreDocketTask do
         parent { create(:root_task, appeal: appeal) }
+        assigned_to { BvaIntake.singleton }
         assigned_by { nil }
       end
 
@@ -502,9 +526,23 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
+      factory :assess_documentation_task_predocket, class: AssessDocumentationTask do
+        parent { create(:pre_docket_task, assigned_to: assigned_to, appeal: appeal) }
+        assigned_by { nil }
+      end
+
       factory :vha_document_search_task, class: VhaDocumentSearchTask do
         parent { create(:pre_docket_task, appeal: appeal) }
         assigned_to { VhaCamo.singleton }
+        assigned_by do
+          User.find_by_css_id("INTAKE_USER") ||
+            create(:user, css_id: "INTAKE_USER").tap { |user| BvaIntake.singleton.add_user(user) }
+        end
+      end
+
+      factory :vha_document_search_task_with_assigned_to, class: VhaDocumentSearchTask do
+        parent { create(:pre_docket_task, assigned_to: assigned_to, appeal: appeal) }
+        assigned_to { :assigned_to }
         assigned_by { nil }
       end
 

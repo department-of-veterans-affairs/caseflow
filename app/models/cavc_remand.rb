@@ -11,28 +11,45 @@ class CavcRemand < CaseflowRecord
   belongs_to :source_appeal, class_name: "Appeal"
   belongs_to :remand_appeal, class_name: "Appeal"
 
+  has_one :cavc_remands_appellant_substitution
+  has_many :cavc_dashboards
+
   validates :created_by, :source_appeal, :cavc_docket_number, :cavc_judge_full_name, :cavc_decision_type,
             :decision_date, :decision_issue_ids, :instructions, presence: true
   validates :represented_by_attorney, inclusion: { in: [true, false] }
   validates :cavc_judge_full_name, inclusion: { in: Constants::CAVC_JUDGE_FULL_NAMES }
   validates :remand_subtype, presence: true, if: :remand?
   validates :judgement_date, :mandate_date, presence: true, unless: :mandate_not_required?
-  validate :decision_issue_ids_match_appeal_decision_issues, if: -> { remand? && jmr? }
   validates :federal_circuit, inclusion: { in: [true, false] }, if: -> { remand? && mdr? }
 
   before_create :normalize_cavc_docket_number
-  before_create :establish_appeal_stream, if: :cavc_remand_form_complete?
-  after_create :initialize_tasks
+  # Check for if the decision types are of the three options from APPEALS-13220
+  def check_to_establish_appeal_stream
+    if cavc_remand_form_complete? && !(cavc_decision_type.include?(Constants.CAVC_DECISION_TYPES.other_dismissal) ||
+                                      cavc_decision_type.include?(Constants.CAVC_DECISION_TYPES.affirmed) ||
+                                      cavc_decision_type.include?(Constants.CAVC_DECISION_TYPES.settlement))
+      return true
+    end
+
+    false
+  end
+
+  before_create :establish_appeal_stream, if: :check_to_establish_appeal_stream
+  after_create :initialize_tasks, if: :check_to_establish_appeal_stream
 
   enum cavc_decision_type: {
     Constants.CAVC_DECISION_TYPES.remand.to_sym => Constants.CAVC_DECISION_TYPES.remand,
     Constants.CAVC_DECISION_TYPES.straight_reversal.to_sym => Constants.CAVC_DECISION_TYPES.straight_reversal,
-    Constants.CAVC_DECISION_TYPES.death_dismissal.to_sym => Constants.CAVC_DECISION_TYPES.death_dismissal
+    Constants.CAVC_DECISION_TYPES.death_dismissal.to_sym => Constants.CAVC_DECISION_TYPES.death_dismissal,
+    Constants.CAVC_DECISION_TYPES.other_dismissal.to_sym => Constants.CAVC_DECISION_TYPES.other_dismissal,
+    Constants.CAVC_DECISION_TYPES.affirmed.to_sym => Constants.CAVC_DECISION_TYPES.affirmed,
+    Constants.CAVC_DECISION_TYPES.settlement.to_sym => Constants.CAVC_DECISION_TYPES.settlement
   }
 
   # Joint Motion Remand, Joint Motion Partial Remand, and Memorandum Decision on Remand
   # The Board uses the initialisms more than the full words, so we are following that norm
   enum remand_subtype: {
+    Constants.CAVC_REMAND_SUBTYPES.jmr_jmpr.to_sym => Constants.CAVC_REMAND_SUBTYPES.jmr_jmpr,
     Constants.CAVC_REMAND_SUBTYPES.jmr.to_sym => Constants.CAVC_REMAND_SUBTYPES.jmr,
     Constants.CAVC_REMAND_SUBTYPES.jmpr.to_sym => Constants.CAVC_REMAND_SUBTYPES.jmpr,
     Constants.CAVC_REMAND_SUBTYPES.mdr.to_sym => Constants.CAVC_REMAND_SUBTYPES.mdr
@@ -41,6 +58,7 @@ class CavcRemand < CaseflowRecord
   # amoeba gem for split appeal duplication
   amoeba do
     enable
+    exclude_association :power_of_attorney, if: :represented_by_attorney?
   end
 
   # called from the Add Cavc Date Modal
@@ -89,12 +107,6 @@ class CavcRemand < CaseflowRecord
 
   def flattened_instructions(params)
     instructions + " - " + params.dig(:instructions).presence
-  end
-
-  def decision_issue_ids_match_appeal_decision_issues
-    unless (source_appeal.decision_issues.map(&:id) - decision_issue_ids).empty?
-      fail Caseflow::Error::JmrAppealDecisionIssueMismatch, message: "JMR remands must address all decision issues"
-    end
   end
 
   def cavc_remand_form_complete?

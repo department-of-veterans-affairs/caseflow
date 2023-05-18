@@ -2387,6 +2387,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant
       </label>
       <span
         className="usa-input-error-message"
+        tabIndex={0}
       >
         Something went wrong...
       </span>
@@ -3287,6 +3288,7 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
       </label>
       <span
         className="usa-input-error-message"
+        tabIndex={0}
       >
         Something went wrong...
       </span>

@@ -40,7 +40,7 @@ describe JudgeLegacyTask, :postgres do
         expect(subject.user_id).to eq user.css_id
         expect(subject.id).to eq vacols_id
         expect(subject.label).to eq COPY::JUDGE_ASSIGN_TASK_LABEL
-        expect(subject.assigned_on).to eq 3.days.ago.to_date
+        expect(subject.assigned_on).to eq 3.days.ago.to_datetime
         expect(subject.task_id).to eq "#{vacols_id}-2015-01-25"
         expect(subject.previous_task).to eq nil
       end
@@ -55,12 +55,12 @@ describe JudgeLegacyTask, :postgres do
         expect(subject.id).to eq vacols_id
         expect(subject.label).to eq COPY::JUDGE_DECISION_REVIEW_TASK_LABEL
         expect(subject.timeline_title).to eq COPY::CASE_TIMELINE_JUDGE_TASK
-        expect(subject.assigned_on).to eq 3.days.ago.to_date
+        expect(subject.assigned_on).to eq 3.days.ago.to_datetime
         expect(subject.task_id).to eq "#{vacols_id}-2015-01-25"
         expect(subject.document_id).to eq document_id
         expect(subject.assigned_by_first_name).to eq assigned_by_first_name
         expect(subject.assigned_by_last_name).to eq assigned_by_last_name
-        expect(subject.previous_task.assigned_at).to eq 10.days.ago.to_date
+        expect(subject.previous_task.assigned_at).to eq 10.days.ago.to_datetime
       end
     end
   end

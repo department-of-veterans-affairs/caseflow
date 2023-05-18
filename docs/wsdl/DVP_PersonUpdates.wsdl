@@ -1,0 +1,867 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch="http://vaww.oed.oit.va.gov" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://vaww.oed.oit.va.gov" targetNamespace="http://vaww.oed.oit.va.gov">
+    <wsdl:types>
+        <xs:schema xmlns:jxb="http://java.sun.com/xml/ns/jaxb" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" jxb:version="2.1" targetNamespace="http://vaww.oed.oit.va.gov">
+            <xs:element name="code">
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="codeSystemName" type="xs:string"/>
+                            <xs:attribute name="code" type="xs:string"/>
+                            <xs:attribute name="displayName" type="xs:string"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="text" type="xs:string"/>
+            <xs:element name="PRPA_IN201302UV02">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="id">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="extension" type="xs:string"/>
+                                        <xs:attribute name="root" type="xs:string"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="creationTime">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="value" type="xs:string">
+                                            <xs:annotation>
+                                                <xs:appinfo>
+                                                    <jxb:property name="valueAttribute"/>
+                                                </xs:appinfo>
+                                            </xs:annotation>
+                                        </xs:attribute>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="interactionId">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="extension" type="xs:string"/>
+                                        <xs:attribute name="root" type="xs:string"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="processingCode">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="code" type="xs:string"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="processingModeCode">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="code" type="xs:string"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="acceptAckCode">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="code" type="xs:string"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="receiver">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="device">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="id">
+                                                    <xs:complexType>
+                                                        <xs:simpleContent>
+                                                            <xs:extension base="xs:string">
+                                                                <xs:attribute name="extension" type="xs:string"/>
+                                                                <xs:attribute name="root" type="xs:string"/>
+                                                            </xs:extension>
+                                                        </xs:simpleContent>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                            </xs:sequence>
+                                            <xs:attribute name="classCode" type="xs:string"/>
+                                            <xs:attribute name="determinerCode" type="xs:string"/>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute name="typeCode" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="sender">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="device">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="id">
+                                                    <xs:complexType>
+                                                        <xs:simpleContent>
+                                                            <xs:extension base="xs:string">
+                                                                <xs:attribute name="extension" type="xs:string"/>
+                                                                <xs:attribute name="root" type="xs:string"/>
+                                                            </xs:extension>
+                                                        </xs:simpleContent>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                            </xs:sequence>
+                                            <xs:attribute name="classCode" type="xs:string"/>
+                                            <xs:attribute name="determinerCode" type="xs:string"/>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute name="typeCode" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="controlActProcess">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="subject">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="registrationEvent">
+                                                    <xs:complexType>
+                                                        <xs:sequence>
+                                                            <xs:element name="id">
+                                                                <xs:complexType>
+                                                                    <xs:simpleContent>
+                                                                        <xs:extension base="xs:string">
+                                                                            <xs:attribute name="nullFlavor" type="xs:string"/>
+                                                                        </xs:extension>
+                                                                    </xs:simpleContent>
+                                                                </xs:complexType>
+                                                            </xs:element>
+                                                            <xs:element name="statusCode">
+                                                                <xs:complexType>
+                                                                    <xs:simpleContent>
+                                                                        <xs:extension base="xs:string">
+                                                                            <xs:attribute name="code" type="xs:string"/>
+                                                                        </xs:extension>
+                                                                    </xs:simpleContent>
+                                                                </xs:complexType>
+                                                            </xs:element>
+                                                            <xs:element name="subject1">
+                                                                <xs:complexType>
+                                                                    <xs:sequence>
+                                                                        <xs:element name="patient">
+                                                                            <xs:complexType>
+                                                                                <xs:sequence>
+                                                                                    <xs:element name="id">
+                                                                                        <xs:complexType>
+                                                                                            <xs:simpleContent>
+                                                                                                <xs:extension base="xs:string">
+                                                                                                    <xs:attribute name="extension" type="xs:string"/>
+                                                                                                    <xs:attribute name="root" type="xs:string"/>
+                                                                                                </xs:extension>
+                                                                                            </xs:simpleContent>
+                                                                                        </xs:complexType>
+                                                                                    </xs:element>
+                                                                                    <xs:element name="statusCode">
+                                                                                        <xs:complexType>
+                                                                                            <xs:simpleContent>
+                                                                                                <xs:extension base="xs:string">
+                                                                                                    <xs:attribute name="code" type="xs:string"/>
+                                                                                                </xs:extension>
+                                                                                            </xs:simpleContent>
+                                                                                        </xs:complexType>
+                                                                                    </xs:element>
+                                                                                    <xs:element name="patientPerson">
+                                                                                        <xs:complexType>
+                                                                                            <xs:sequence>
+                                                                                                <xs:element maxOccurs="unbounded" minOccurs="0" name="name">
+                                                                                                    <xs:complexType>
+                                                                                                        <xs:sequence>
+                                                                                                            <xs:element name="prefix" type="xs:string"/>
+                                                                                                            <xs:element name="suffix" type="xs:string"/>
+                                                                                                            <xs:element maxOccurs="unbounded" minOccurs="0" name="given" type="xs:string"/>
+                                                                                                            <xs:element name="family" type="xs:string"/>
+                                                                                                        </xs:sequence>
+                                                                                                        <xs:attribute name="use" type="xs:string" use="optional"/>
+                                                                                                    </xs:complexType>
+                                                                                                </xs:element>
+                                                                                                <xs:element name="telecom">
+                                                                                                    <xs:complexType>
+                                                                                                        <xs:simpleContent>
+                                                                                                            <xs:extension base="xs:string">
+                                                                                                                <xs:attribute name="use" type="xs:string"/>
+                                                                                                                <xs:attribute name="value" type="xs:string">
+                                                                                                                    <xs:annotation>
+                                                                                                                        <xs:appinfo>
+                                                                                                                            <jxb:property name="valueAttribute"/>
+                                                                                                                        </xs:appinfo>
+                                                                                                                    </xs:annotation>
+                                                                                                                </xs:attribute>
+                                                                                                            </xs:extension>
+                                                                                                        </xs:simpleContent>
+                                                                                                    </xs:complexType>
+                                                                                                </xs:element>
+                                                                                                <xs:element name="birthTime">
+                                                                                                    <xs:complexType>
+                                                                                                        <xs:simpleContent>
+                                                                                                            <xs:extension base="xs:string">
+                                                                                                                <xs:attribute name="value" type="xs:int">
+                                                                                                                    <xs:annotation>
+                                                                                                                        <xs:appinfo>
+                                                                                                                            <jxb:property name="valueAttribute"/>
+                                                                                                                        </xs:appinfo>
+                                                                                                                    </xs:annotation>
+                                                                                                                </xs:attribute>
+                                                                                                            </xs:extension>
+                                                                                                        </xs:simpleContent>
+                                                                                                    </xs:complexType>
+                                                                                                </xs:element>
+                                                                                                <xs:element name="deceasedTime">
+                                                                                                    <xs:complexType>
+                                                                                                        <xs:simpleContent>
+                                                                                                            <xs:extension base="xs:string">
+                                                                                                                <xs:attribute name="value" type="xs:int">
+                                                                                                                    <xs:annotation>
+                                                                                                                        <xs:appinfo>
+                                                                                                                            <jxb:property name="valueAttribute"/>
+                                                                                                                        </xs:appinfo>
+                                                                                                                    </xs:annotation>
+                                                                                                                </xs:attribute>
+                                                                                                            </xs:extension>
+                                                                                                        </xs:simpleContent>
+                                                                                                    </xs:complexType>
+                                                                                                </xs:element>
+                                                                                                <xs:element name="administrativeGenderCode">
+                                                                                                    <xs:complexType>
+                                                                                                        <xs:simpleContent>
+                                                                                                            <xs:extension base="xs:string">
+                                                                                                                <xs:attribute name="code" type="xs:string"/>
+                                                                                                            </xs:extension>
+                                                                                                        </xs:simpleContent>
+                                                                                                    </xs:complexType>
+                                                                                                </xs:element>
+                                                                                                <xs:element name="birthPlace">
+                                                                                                    <xs:complexType>
+                                                                                                        <xs:sequence>
+                                                                                                            <xs:element name="addr">
+                                                                                                                <xs:complexType>
+                                                                                                                    <xs:sequence>
+                                                                                                                        <xs:element name="city" type="xs:string"/>
+                                                                                                                        <xs:element name="state" type="xs:string"/>
+                                                                                                                    </xs:sequence>
+                                                                                                                </xs:complexType>
+                                                                                                            </xs:element>
+                                                                                                        </xs:sequence>
+                                                                                                    </xs:complexType>
+                                                                                                </xs:element>
+                                                                                                <xs:element name="addr">
+                                                                                                    <xs:complexType>
+                                                                                                        <xs:sequence>
+                                                                                                            <xs:element name="streetAddressLine" type="xs:string"/>
+                                                                                                            <xs:element name="city" type="xs:string"/>
+                                                                                                            <xs:element name="state" type="xs:string"/>
+                                                                                                            <xs:element name="country" type="xs:string"/>
+                                                                                                            <xs:element name="postalCode" type="xs:int"/>
+                                                                                                        </xs:sequence>
+                                                                                                        <xs:attribute name="use" type="xs:string"/>
+                                                                                                    </xs:complexType>
+                                                                                                </xs:element>
+                                                                                                <xs:element maxOccurs="unbounded" minOccurs="0" name="asOtherIDs">
+                                                                                                    <xs:complexType>
+                                                                                                        <xs:sequence>
+                                                                                                            <xs:element name="id">
+                                                                                                                <xs:complexType>
+                                                                                                                    <xs:simpleContent>
+                                                                                                                        <xs:extension base="xs:string">
+                                                                                                                            <xs:attribute name="root" type="xs:string" use="optional"/>
+                                                                                                                            <xs:attribute name="extension" type="xs:string" use="optional"/>
+                                                                                                                        </xs:extension>
+                                                                                                                    </xs:simpleContent>
+                                                                                                                </xs:complexType>
+                                                                                                            </xs:element>
+                                                                                                            <xs:element minOccurs="0" name="statusCode">
+                                                                                                                <xs:annotation>
+                                                                                                                    <xs:documentation>specify "Proofing value" specify "In Person Proofing value"</xs:documentation>
+                                                                                                                </xs:annotation>
+                                                                                                                <xs:complexType>
+                                                                                                                    <xs:simpleContent>
+                                                                                                                        <xs:extension base="xs:string">
+                                                                                                                            <xs:attribute name="code" type="xs:byte" use="optional"/>
+                                                                                                                        </xs:extension>
+                                                                                                                    </xs:simpleContent>
+                                                                                                                </xs:complexType>
+                                                                                                            </xs:element>
+                                                                                                            <xs:element minOccurs="0" name="scopingOrganization">
+                                                                                                                <xs:complexType>
+                                                                                                                    <xs:sequence>
+                                                                                                                        <xs:element name="id">
+                                                                                                                            <xs:complexType>
+                                                                                                                                <xs:simpleContent>
+                                                                                                                                    <xs:extension base="xs:string">
+                                                                                                                                        <xs:attribute name="root" type="xs:string" use="optional"/>
+                                                                                                                                    </xs:extension>
+                                                                                                                                </xs:simpleContent>
+                                                                                                                            </xs:complexType>
+                                                                                                                        </xs:element>
+                                                                                                                    </xs:sequence>
+                                                                                                                    <xs:attribute name="classCode" type="xs:string" use="optional"/>
+                                                                                                                    <xs:attribute name="determinerCode" type="xs:string" use="optional"/>
+                                                                                                                </xs:complexType>
+                                                                                                            </xs:element>
+                                                                                                        </xs:sequence>
+                                                                                                        <xs:attribute name="classCode" type="xs:string" use="optional"/>
+                                                                                                    </xs:complexType>
+                                                                                                </xs:element>
+                                                                                            </xs:sequence>
+                                                                                        </xs:complexType>
+                                                                                    </xs:element>
+                                                                                </xs:sequence>
+                                                                                <xs:attribute name="classCode" type="xs:string"/>
+                                                                            </xs:complexType>
+                                                                        </xs:element>
+                                                                    </xs:sequence>
+                                                                    <xs:attribute name="typeCode" type="xs:string"/>
+                                                                </xs:complexType>
+                                                            </xs:element>
+                                                        </xs:sequence>
+                                                        <xs:attribute name="classCode" type="xs:string"/>
+                                                        <xs:attribute name="moodCode" type="xs:string"/>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                            </xs:sequence>
+                                            <xs:attribute name="typeCode" type="xs:string"/>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute name="classCode" type="xs:string"/>
+                                <xs:attribute name="moodCode" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="ITSVersion" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="MCCI_IN000002UV01">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="id">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="extension" type="xs:string"/>
+                                        <xs:attribute name="root" type="xs:string"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="creationTime">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="value" type="xs:long">
+                                            <xs:annotation>
+                                                <xs:appinfo>
+                                                    <jxb:property name="valueAttribute"/>
+                                                </xs:appinfo>
+                                            </xs:annotation>
+                                        </xs:attribute>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="versionCode">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="code" type="xs:float"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="interactionId">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="extension" type="xs:string"/>
+                                        <xs:attribute name="root" type="xs:string"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="processingCode">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="code" type="xs:string"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="processingModeCode">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="code" type="xs:string"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="acceptAckCode">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="code" type="xs:string"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="receiver">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="device">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="id">
+                                                    <xs:complexType>
+                                                        <xs:simpleContent>
+                                                            <xs:extension base="xs:string">
+                                                                <xs:attribute name="extension" type="xs:string"/>
+                                                                <xs:attribute name="root" type="xs:string"/>
+                                                            </xs:extension>
+                                                        </xs:simpleContent>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                            </xs:sequence>
+                                            <xs:attribute name="determinerCode" type="xs:string"/>
+                                            <xs:attribute name="classCode" type="xs:string"/>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute name="typeCode" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="sender">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="device">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="id">
+                                                    <xs:complexType>
+                                                        <xs:simpleContent>
+                                                            <xs:extension base="xs:string">
+                                                                <xs:attribute name="extension" type="xs:string"/>
+                                                                <xs:attribute name="root" type="xs:string"/>
+                                                            </xs:extension>
+                                                        </xs:simpleContent>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                            </xs:sequence>
+                                            <xs:attribute name="determinerCode" type="xs:string"/>
+                                            <xs:attribute name="classCode" type="xs:string"/>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute name="typeCode" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="acknowledgement">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="typeCode">
+                                        <xs:complexType>
+                                            <xs:simpleContent>
+                                                <xs:extension base="xs:string">
+                                                    <xs:attribute name="code" type="xs:string"/>
+                                                </xs:extension>
+                                            </xs:simpleContent>
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element name="targetMessage">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="id">
+                                                    <xs:complexType>
+                                                        <xs:simpleContent>
+                                                            <xs:extension base="xs:string">
+                                                                <xs:attribute name="extension" type="xs:string"/>
+                                                                <xs:attribute name="root" type="xs:string"/>
+                                                            </xs:extension>
+                                                        </xs:simpleContent>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element name="acknowledgementDetail">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="code">
+                                                    <xs:complexType>
+                                                        <xs:simpleContent>
+                                                            <xs:extension base="xs:string">
+                                                                <xs:attribute name="codeSystemName" type="xs:string"/>
+                                                                <xs:attribute name="code" type="xs:string"/>
+                                                                <xs:attribute name="displayName" type="xs:string"/>
+                                                            </xs:extension>
+                                                        </xs:simpleContent>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                                <xs:element maxOccurs="1" minOccurs="0" name="text" type="xs:string"/>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="PRPA_IN201304UV02">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="id">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="extension" type="xs:string"/>
+                                        <xs:attribute name="root" type="xs:string"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="creationTime">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="value" type="xs:string">
+                                            <xs:annotation>
+                                                <xs:appinfo>
+                                                    <jxb:property name="valueAttribute"/>
+                                                </xs:appinfo>
+                                            </xs:annotation>
+                                        </xs:attribute>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="interactionId">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="extension" type="xs:string"/>
+                                        <xs:attribute name="root" type="xs:string"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="processingCode">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="code" type="xs:string"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="processingModeCode">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="code" type="xs:string"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="acceptAckCode">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="code" type="xs:string"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="receiver">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="device">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="id">
+                                                    <xs:complexType>
+                                                        <xs:simpleContent>
+                                                            <xs:extension base="xs:string">
+                                                                <xs:attribute name="extension" type="xs:string"/>
+                                                                <xs:attribute name="root" type="xs:string"/>
+                                                            </xs:extension>
+                                                        </xs:simpleContent>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                            </xs:sequence>
+                                            <xs:attribute name="classCode" type="xs:string"/>
+                                            <xs:attribute name="determinerCode" type="xs:string"/>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute name="typeCode" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="sender">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="device">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="id">
+                                                    <xs:complexType>
+                                                        <xs:simpleContent>
+                                                            <xs:extension base="xs:string">
+                                                                <xs:attribute name="extension" type="xs:string"/>
+                                                                <xs:attribute name="root" type="xs:string"/>
+                                                            </xs:extension>
+                                                        </xs:simpleContent>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                            </xs:sequence>
+                                            <xs:attribute name="classCode" type="xs:string"/>
+                                            <xs:attribute name="determinerCode" type="xs:string"/>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute name="typeCode" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="controlActProcess">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="subject">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="registrationEvent">
+                                                    <xs:complexType>
+                                                        <xs:sequence>
+                                                            <xs:element name="id">
+                                                                <xs:complexType>
+                                                                    <xs:simpleContent>
+                                                                        <xs:extension base="xs:string">
+                                                                            <xs:attribute name="nullFlavor" type="xs:string" use="optional"/>
+                                                                            <xs:attribute name="extension" type="xs:string"/>
+                                                                            <xs:attribute name="root" type="xs:string"/>
+                                                                        </xs:extension>
+                                                                    </xs:simpleContent>
+                                                                </xs:complexType>
+                                                            </xs:element>
+                                                            <xs:element name="statusCode">
+                                                                <xs:complexType>
+                                                                    <xs:simpleContent>
+                                                                        <xs:extension base="xs:string">
+                                                                            <xs:attribute name="code" type="xs:string"/>
+                                                                        </xs:extension>
+                                                                    </xs:simpleContent>
+                                                                </xs:complexType>
+                                                            </xs:element>
+                                                            <xs:element name="subject1">
+                                                                <xs:complexType>
+                                                                    <xs:sequence>
+                                                                        <xs:element name="patient">
+                                                                            <xs:complexType>
+                                                                                <xs:sequence>
+                                                                                    <xs:element name="id">
+                                                                                        <xs:complexType>
+                                                                                            <xs:simpleContent>
+                                                                                                <xs:extension base="xs:string">
+                                                                                                    <xs:attribute name="nullFlavor" type="xs:string" use="optional"/>
+                                                                                                    <xs:attribute name="extension" type="xs:string"/>
+                                                                                                    <xs:attribute name="root" type="xs:string"/>
+                                                                                                </xs:extension>
+                                                                                            </xs:simpleContent>
+                                                                                        </xs:complexType>
+                                                                                    </xs:element>
+                                                                                    <xs:element name="statusCode">
+                                                                                        <xs:complexType>
+                                                                                            <xs:simpleContent>
+                                                                                                <xs:extension base="xs:string">
+                                                                                                    <xs:attribute name="code" type="xs:string"/>
+                                                                                                </xs:extension>
+                                                                                            </xs:simpleContent>
+                                                                                        </xs:complexType>
+                                                                                    </xs:element>
+                                                                                    <xs:element name="patientPerson">
+                                                                                        <xs:complexType>
+                                                                                            <xs:sequence>
+                                                                                                <xs:element maxOccurs="unbounded" minOccurs="0" name="name">
+                                                                                                    <xs:complexType>
+                                                                                                        <xs:attribute name="nullFlavor" type="xs:string" use="optional"/>
+                                                                                                    </xs:complexType>
+                                                                                                </xs:element>
+                                                                                            </xs:sequence>
+                                                                                        </xs:complexType>
+                                                                                    </xs:element>
+                                                                                </xs:sequence>
+                                                                                <xs:attribute name="classCode" type="xs:string"/>
+                                                                            </xs:complexType>
+                                                                        </xs:element>
+                                                                    </xs:sequence>
+                                                                    <xs:attribute name="typeCode" type="xs:string"/>
+                                                                </xs:complexType>
+                                                            </xs:element>
+                                                            <xs:element name="custodian">
+                                                                <xs:complexType>
+                                                                    <xs:sequence>
+                                                                        <xs:element name="assignedEntity">
+                                                                            <xs:complexType>
+                                                                                <xs:sequence>
+                                                                                    <xs:element name="id">
+                                                                                        <xs:complexType>
+                                                                                            <xs:simpleContent>
+                                                                                                <xs:extension base="xs:string">
+                                                                                                    <xs:attribute name="root" type="xs:string"/>
+                                                                                                </xs:extension>
+                                                                                            </xs:simpleContent>
+                                                                                        </xs:complexType>
+                                                                                    </xs:element>
+                                                                                    <xs:element name="assignedOrganization">
+                                                                                        <xs:complexType>
+                                                                                            <xs:sequence>
+                                                                                                <xs:element name="name" type="xs:string"/>
+                                                                                            </xs:sequence>
+                                                                                            <xs:attribute name="classCode" type="xs:string"/>
+                                                                                            <xs:attribute name="determinerCode" type="xs:string"/>
+                                                                                        </xs:complexType>
+                                                                                    </xs:element>
+                                                                                </xs:sequence>
+                                                                                <xs:attribute name="classCode" type="xs:string"/>
+                                                                            </xs:complexType>
+                                                                        </xs:element>
+                                                                    </xs:sequence>
+                                                                    <xs:attribute name="typeCode" type="xs:string"/>
+                                                                </xs:complexType>
+                                                            </xs:element>
+                                                            <xs:element name="replacementOf">
+                                                                <xs:complexType>
+                                                                    <xs:sequence>
+                                                                        <xs:element name="priorRegistration">
+                                                                            <xs:complexType>
+                                                                                <xs:sequence>
+                                                                                    <xs:element name="id">
+                                                                                        <xs:complexType>
+                                                                                            <xs:simpleContent>
+                                                                                                <xs:extension base="xs:string">
+                                                                                                    <xs:attribute name="nullFlavor" type="xs:string" use="optional"/>
+                                                                                                    <xs:attribute name="extension" type="xs:string"/>
+                                                                                                    <xs:attribute name="root" type="xs:string"/>
+                                                                                                </xs:extension>
+                                                                                            </xs:simpleContent>
+                                                                                        </xs:complexType>
+                                                                                    </xs:element>
+                                                                                    <xs:element name="subject1">
+                                                                                        <xs:complexType>
+                                                                                            <xs:sequence>
+                                                                                                <xs:element name="priorRegisteredRole">
+                                                                                                    <xs:complexType>
+                                                                                                        <xs:sequence>
+                                                                                                            <xs:element name="id">
+                                                                                                                <xs:complexType>
+                                                                                                                    <xs:simpleContent>
+                                                                                                                        <xs:extension base="xs:string">
+                                                                                                                            <xs:attribute name="nullFlavor" type="xs:string" use="optional"/>
+                                                                                                                            <xs:attribute name="extension" type="xs:string"/>
+                                                                                                                            <xs:attribute name="root" type="xs:string"/>
+                                                                                                                        </xs:extension>
+                                                                                                                    </xs:simpleContent>
+                                                                                                                </xs:complexType>
+                                                                                                            </xs:element>
+                                                                                                        </xs:sequence>
+                                                                                                        <xs:attribute name="classCode" type="xs:string"/>
+                                                                                                    </xs:complexType>
+                                                                                                </xs:element>
+                                                                                            </xs:sequence>
+                                                                                            <xs:attribute name="typeCode" type="xs:string"/>
+                                                                                        </xs:complexType>
+                                                                                    </xs:element>
+                                                                                </xs:sequence>
+                                                                                <xs:attribute name="classCode" type="xs:string"/>
+                                                                                <xs:attribute name="modeCode" type="xs:string"/>
+                                                                            </xs:complexType>
+                                                                        </xs:element>
+                                                                    </xs:sequence>
+                                                                    <xs:attribute name="typeCode" type="xs:string"/>
+                                                                </xs:complexType>
+                                                            </xs:element>
+                                                        </xs:sequence>
+                                                        <xs:attribute name="classCode" type="xs:string"/>
+                                                        <xs:attribute name="moodCode" type="xs:string"/>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                            </xs:sequence>
+                                            <xs:attribute name="typeCode" type="xs:string"/>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute name="classCode" type="xs:string"/>
+                                <xs:attribute name="moodCode" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="ITSVersion" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="PRPA_IN201304UV02">
+        <wsdl:part element="tns:PRPA_IN201304UV02" name="PRPA_IN201304UV02"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="PRPA_IN201302UV02">
+        <wsdl:part element="tns:PRPA_IN201302UV02" name="PRPA_IN201302UV02"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="MCCI_IN000002UV01">
+        <wsdl:part element="tns:MCCI_IN000002UV01" name="MCCI_IN000002UV01"> </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="VAIdMPort">
+        <wsdl:operation name="PRPA_IN201304U">
+            <wsdl:input message="tns:PRPA_IN201304UV02" name="PRPA_IN201304UV02"> </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="PRPA_IN201302U">
+            <wsdl:input message="tns:PRPA_IN201302UV02" name="PRPA_IN201302UV02"> </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="MCCI_IN000002U">
+            <wsdl:output message="tns:MCCI_IN000002UV01" name="MCCI_IN000002UV01"> </wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="VAIdMPortSoap11" type="tns:VAIdMPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="PRPA_IN201304U">
+            <soap:operation soapAction=""/>
+            <wsdl:input name="PRPA_IN201304UV02">
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="PRPA_IN201302U">
+            <soap:operation soapAction=""/>
+            <wsdl:input name="PRPA_IN201302UV02">
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="MCCI_IN000002U">
+            <soap:operation soapAction=""/>
+            <wsdl:output name="MCCI_IN000002UV01">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="VAIdMPortService">
+        <wsdl:port binding="tns:VAIdMPortSoap11" name="VAIdMPortSoap11">
+            <soap:address location="http://dev-salesforce.lighthouse.va.gov:80/mvi-e-receiver/v0/ws"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

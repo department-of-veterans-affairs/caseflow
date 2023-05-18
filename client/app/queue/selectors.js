@@ -1,10 +1,14 @@
+import Moment from 'moment';
+import { extendMoment } from 'moment-range';
 import { createSelector } from 'reselect';
 import { filter, find, keyBy, map, merge, orderBy, reduce } from 'lodash';
-import { taskIsActive, taskIsOnHold } from './utils';
+import { taskIsActive, taskIsOnHold, getAllChildrenTasks, taskAttributesFromRawTask } from './utils';
 
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
 
 import COPY from '../../COPY';
+
+const moment = extendMoment(Moment);
 
 export const selectedTasksSelector = (state, userId) => {
   return map(state.queue.isTaskAssignedToUserSelected[userId] || {}, (selected, id) => {
@@ -26,7 +30,8 @@ const getAppealId = (state, props) => props.appealId;
 const getTaskUniqueId = (state, props) => props.taskId;
 const getCaseflowVeteranId = (state, props) => props.caseflowVeteranId;
 const getClaimReviews = (state) => state.queue.claimReviews;
-
+const getJudgeDecisionReviewTaskId = (state, props) => props.judgeDecisionReviewTaskId;
+const getJudgeDecisionReviewTask = (state, props) => props.judgeDecisionReviewTask;
 const incompleteTasksSelector = (tasks) => filter(tasks, (task) => taskIsActive(task));
 const completeTasksSelector = (tasks) => filter(tasks, (task) => !taskIsActive(task));
 const taskIsNotOnHoldSelector = (tasks) => filter(tasks, (task) => !taskIsOnHold(task));
@@ -227,6 +232,79 @@ export const camoAssignTasksSelector = createSelector(
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned)
       );
     })
+);
+
+// Get AttorneyRewriteTask, AttorneyTask, and AttorneyLegacyTask tasks with the
+// JudgeDecisionReviewTaskId as their parentId
+export const getAttorneyTasksForJudgeTask = createSelector(
+  [getAllTasksForAppeal, getJudgeDecisionReviewTaskId],
+  (tasks, parentId) => {
+    const types = ['AttorneyRewriteTask', 'AttorneyTask', 'AttorneyLegacyTask'];
+    // task.uniqueId is a String and task.parentId is an Integer
+    // eslint-disable-next-line eqeqeq
+    const attorneyTasks = filter(tasks, (task) => task.parentId == parentId && types.includes(task.type));
+
+    // eslint-disable-next-line id-length
+    attorneyTasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+    return attorneyTasks;
+  }
+);
+
+// Get all task trees for all Attorney Type Tasks found with the JudgeDecisionReviewTaskId as their parentId
+export const getTaskTreesForAttorneyTasks = createSelector(
+  [getAllTasksForAppeal, getAttorneyTasksForJudgeTask],
+  (tasks, attorneyTasks) => {
+    const allAttorneyTasks = attorneyTasks.map((attorneyTask) => {
+      const childrenTasks = getAllChildrenTasks(tasks, attorneyTask.uniqueId).
+        filter((task) => task.closedAt !== null).
+        filter((task) => {
+          // Remove any tasks whose createdAt is older than the AttorneyTask's createdAt date
+          const taskAssignedOn = moment(task.createdAt);
+          const attorneyTaskAssignedOn = moment(attorneyTask.createdAt);
+          const result = taskAssignedOn.diff(attorneyTaskAssignedOn, 'days');
+
+          return result >= 0;
+        });
+
+      // eslint-disable-next-line id-length
+      childrenTasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+      return {
+        attorneyTask,
+        childrenTasks
+      };
+    });
+
+    // eslint-disable-next-line id-length
+    allAttorneyTasks.sort((a, b) => new Date(a.attorneyTask.createdAt) - new Date(b.attorneyTask.createdAt));
+
+    return allAttorneyTasks;
+  }
+);
+
+// Get any tasks that were started and completed within the range Appeal was assigned to Attorney then sent
+// back to Judge
+export const getLegacyTaskTree = createSelector(
+  [getAllTasksForAppeal, getJudgeDecisionReviewTask],
+  (tasks, judgeDecisionReviewTask) =>
+    filter(tasks.filter((task) => task.closedAt !== null),
+      (task) => {
+        // Remove any tasks whose createdAt to closedAt values put it outside of the range of
+        // AttorneyTask.assignedOn - JudgeDecisionReviewTask.assignedOn
+        // moment.utc is required because VACOLS dates are timestamped UTC but aren't properly converted to UTC
+        // but Caseflow DB are timestamped and correctly converted to UTC; moment().toString() lets moment.utc()
+        // parse the time ignoring the timezone, then amending GMT+0000 so that it matches the VACOLS time formats
+        // moment.parseZone() is used to not convert to user's local timezone which makes timelineRange incorrect
+        const taskCreatedAt = moment.utc(moment.parseZone(task.createdAt).toString());
+        const taskClosedAt = moment.utc(moment.parseZone(task.closedAt).toString());
+        const timelineRange = moment.range(moment(judgeDecisionReviewTask.previousTaskAssignedOn),
+          moment(judgeDecisionReviewTask.assignedOn));
+
+        return task.uniqueId !== judgeDecisionReviewTask.uniqueId &&
+        timelineRange.contains(taskCreatedAt) &&
+        timelineRange.contains(taskClosedAt);
+      })
 );
 
 // ***************** Non-memoized selectors *****************

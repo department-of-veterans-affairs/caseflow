@@ -1,10 +1,13 @@
 import React from 'react';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 class CertificationHelp extends React.Component {
 
   render() {
     /* eslint-disable max-len */
     return <div className="cf-help-content">
+
+      <p><Link href="/help">Go Back</Link></p>
 
       <h1 id="#top">Welcome to the Reader Help page!</h1>
 

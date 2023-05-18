@@ -39,6 +39,12 @@ class WorkQueue::LegacyAppealSerializer
   attribute :veteran_appellant_deceased, &:veteran_appellant_deceased?
   # Aliasing the vbms_id to make it clear what we're returning.
   attribute :veteran_file_number, &:sanitized_vbms_id
+  attribute :veteran_participant_id do |object|
+    object&.veteran&.participant_id
+  end
+  attribute :efolder_link do
+    ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"]
+  end
   attribute :external_id, &:vacols_id
   attribute :type
   attribute :aod
@@ -94,6 +100,20 @@ class WorkQueue::LegacyAppealSerializer
 
   attribute :current_user_timezone do |_, params|
     params[:user]&.timezone
+  end
+
+  attribute :has_notifications do |object|
+    @all_notifications = Notification.where(appeals_id: object.vacols_id.to_s, appeals_type: "LegacyAppeal")
+    @allowed_notifications = @all_notifications.where(email_notification_status: nil)
+      .or(@all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .merge(@all_notifications.where(sms_notification_status: nil)
+      .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))).any?
+  end
+
+  attribute :location_history do |object|
+    object.location_history.map do |location|
+      WorkQueue::PriorlocSerializer.new(location).serializable_hash[:data][:attributes]
+    end
   end
 
   def self.latest_vacols_attorney_case_review(object)

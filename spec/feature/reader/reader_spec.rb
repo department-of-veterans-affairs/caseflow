@@ -695,7 +695,11 @@ RSpec.feature "Reader", :all_dbs do
         expect(page).to have_css(".page")
 
         # Click on the second to last comment icon (last comment icon is off screen)
-        all(".commentIcon-container", wait: 3, count: documents[0].annotations.size)[annotations.size - 4].click
+        all(
+          ".commentIcon-container",
+          wait: 3,
+          count: documents[0].annotations.reload.size
+        )[annotations.size - 4].click
 
         # Make sure the comment icon and comment are shown as selected
         expect(find(".comment-container-selected").text).to eq "baby metal 4 lyfe"

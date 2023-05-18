@@ -31,6 +31,9 @@ feature "Non-veteran claimants", :postgres do
   let(:decision_date) { 3.months.ago.mdY }
 
   context "when intaking appeals with non_veteran_claimants" do
+    before { FeatureToggle.enable!(:hlr_sc_unrecognized_claimants) }
+    after { FeatureToggle.disable!(:hlr_sc_unrecognized_claimants) }
+
     let(:attorneys) do
       Array.new(15) { create(:bgs_attorney) }
     end
@@ -444,6 +447,74 @@ feature "Non-veteran claimants", :postgres do
       end
     end
 
+    context "when intaking a Higher Level Review with a non-veteran claimant" do
+      it "HLR with Non-Veteran Claimant and VBMS Benefit Type" do
+        start_higher_level_review(
+          veteran,
+          benefit_type: "compensation"
+        )
+        visit "/intake"
+
+        expect(page).to have_current_path("/intake/review_request")
+
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        expect(page).to have_no_content("Claimant not listed")
+        expect(page).to have_content("What is the payee code for this claimant?")
+      end
+
+      it "HLR with Non-Veteran Claimant and Non-VBMS Benefit Type" do
+        start_higher_level_review(
+          veteran,
+          benefit_type: "insurance"
+        )
+        visit "/intake"
+
+        expect(page).to have_current_path("/intake/review_request")
+
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        expect(page).to have_content("Claimant not listed")
+        expect(page).to have_no_content("What is the payee code for this claimant?")
+      end
+    end
+
+    context "when intaking a Supplemental Claim with a non-veteran claimant" do
+      it "SC with Non-Veteran Claimant and VBMS Benefit Type" do
+        start_supplemental_claim(
+          veteran,
+          benefit_type: "compensation"
+        )
+        visit "/intake"
+
+        expect(page).to have_current_path("/intake/review_request")
+
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        expect(page).to have_no_content("Claimant not listed")
+        expect(page).to have_content("What is the payee code for this claimant?")
+      end
+
+      it "SC with Non-Veteran Claimant and Non-VBMS Benefit Type" do
+        start_supplemental_claim(
+          veteran,
+          benefit_type: "insurance"
+        )
+        visit "/intake"
+
+        expect(page).to have_current_path("/intake/review_request")
+
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        expect(page).to have_content("Claimant not listed")
+        expect(page).to have_no_content("What is the payee code for this claimant?")
+      end
+    end
+
     context "when the veteran has no dependent relations" do
       it "allows selecting claimant not listed" do
         allow_any_instance_of(Veteran).to receive(:relationships).and_return([])
@@ -463,6 +534,51 @@ feature "Non-veteran claimants", :postgres do
         end
 
         expect(page).to have_button("Continue to next step", disabled: false)
+      end
+    end
+
+    context "when the user cancels the intake on the Add POA page" do
+      it "redirects back to the Intake start page" do
+        start_appeal(veteran, receipt_date: "09/01/2022")
+
+        # Review page
+        visit "/intake"
+        expect(page).to have_current_path("/intake/review_request")
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        find("label", text: "Claimant not listed", match: :prefer_exact).click
+        click_intake_continue
+
+        # Add Claimant Page
+        fill_in("Relationship to the Veteran", with: "Spouse").send_keys :enter
+
+        fill_in "First name", with: Faker::Name.first_name
+        fill_in "Last name", with: Faker::Name.last_name
+        fill_in "Street address 1", with: Faker::Address.street_address
+        fill_in "City", with: Faker::Address.city
+        fill_in("State", with: Faker::Address.state_abbr).send_keys :enter
+        fill_in("Zip", with: "12345").send_keys :enter
+        fill_in("Country", with: "United States").send_keys :enter
+        within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        click_intake_continue
+
+        # Add POA Page
+        expect(page).to have_content("Add Claimant's POA")
+        expect(page).to have_current_path("/intake/add_power_of_attorney")
+
+        # Cancellation Modal
+        safe_click "#cancel-intake"
+        within_fieldset("Please select the reason you are canceling this intake.") do
+          find("label", text: "System error").click
+        end
+        safe_click ".confirm-cancel"
+
+        # Post-redirect to homepage
+        expect(page).to have_content("Welcome to Caseflow Intake!")
+        expect(page).to have_current_path("/intake/")
       end
     end
   end

@@ -5,19 +5,20 @@ import { claimantPropTypes } from './utils';
 
 export const AddressBlock = ({ entity }) => {
   const isOrg = entity.partyType === 'organization';
+  const cityString = entity.city ? `${entity.city},` : '';
 
   return (
     <>
       {isOrg && <div>{entity.name}</div>}
       {!isOrg && (
-        <div>{`${entity.title ?? ''} ${entity.firstName ?? ''} 
+        <div>{`${entity.title ?? ''} ${entity.firstName ?? ''}
         ${entity.middleName ?? ''} ${entity.lastName ?? ''}`}</div>
       )}
       <div>{entity.addressLine1 ?? ''}</div>
       {entity.addressLine2 && <div>{entity.addressLine2}</div>}
       {entity.addressLine3 && <div>{entity.addressLine3}</div>}
       <div>
-        {`${entity.city ?? ''}, ${entity.state ?? ''} ${entity.zip ?? ''} ${
+        {`${cityString} ${entity.state ?? ''} ${entity.zip ?? ''} ${
           entity.country
         }`}
       </div>

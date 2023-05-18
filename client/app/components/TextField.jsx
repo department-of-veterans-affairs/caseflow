@@ -64,7 +64,7 @@ export const TextField = (props) => {
   return (
     <div className={textInputClass.join(' ')}>
       {dateErrorMessage && (
-        <span className="usa-input-error-message">{dateErrorMessage}</span>
+        <span className="usa-input-error-message" tabIndex={0}>{dateErrorMessage}</span>
       )}
       {label !== false && (
         <label htmlFor={name}>
@@ -73,7 +73,7 @@ export const TextField = (props) => {
       )}
       {labelText && <p {...labelTextStyling}>{labelText}</p>}
       {errorMessage && (
-        <span className="usa-input-error-message">{errorMessage}</span>
+        <span className="usa-input-error-message" tabIndex={0}>{errorMessage}</span>
       )}
       {props.fixedInput ? (
         <p>{value}</p>

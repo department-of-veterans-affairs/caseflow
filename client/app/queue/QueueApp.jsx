@@ -14,6 +14,8 @@ import {
   setUserIsCobAdmin,
   setCanViewOvertimeStatus,
   setCanEditCavcRemands,
+  setCanEditCavcDashboards,
+  setCanViewCavcDashboards,
   setFeatureToggles,
   setUserId,
   setUserRole,
@@ -39,8 +41,8 @@ import TeamAssignTaskListView from './TeamAssignTaskListView';
 import EvaluateDecisionView from './caseEvaluation/EvaluateDecisionView';
 import AddColocatedTaskView from './colocatedTasks/AddColocatedTaskView';
 import BlockedAdvanceToJudgeView from './BlockedAdvanceToJudgeView';
-import AddCavcRemandView from './AddCavcRemandView';
-import AddCavcDatesModal from './AddCavcDatesModal';
+import AddCavcRemandView from './cavc/AddCavcRemandView';
+import AddCavcDatesModal from './cavc/AddCavcDatesModal';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
@@ -98,9 +100,11 @@ import HearingTypeConversionContainer from '../hearings/components/HearingTypeCo
 import HearingTypeConversionModal from '../hearings/components/HearingTypeConversionModal';
 import CavcReviewExtensionRequestModal from './components/CavcReviewExtensionRequestModal';
 import { PrivateRoute } from '../components/PrivateRoute';
-import { EditCavcRemandView } from './cavc/EditCavcRemandView';
+import { editCavcRemandRoutes } from './cavc/editCavcRemandRoutes';
 import EditAppellantInformation from './editAppellantInformation/EditAppellantInformation';
 import EditPOAInformation from './editPOAInformation/EditPOAInformation';
+import NotificationsView from './NotificationsView';
+import CavcDashboard from './cavcDashboard/CavcDashboard';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -108,6 +112,8 @@ class QueueApp extends React.PureComponent {
     this.props.setCanEditNodDate(this.props.userCanViewEditNodDate);
     this.props.setUserIsCobAdmin(this.props.userIsCobAdmin);
     this.props.setCanEditCavcRemands(this.props.canEditCavcRemands);
+    this.props.setCanEditCavcDashboards(this.props.canEditCavcDashboards);
+    this.props.setCanViewCavcDashboards(this.props.canViewCavcDashboards);
     this.props.setCanViewOvertimeStatus(this.props.userCanViewOvertimeStatus);
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserId(this.props.userId);
@@ -254,6 +260,7 @@ class QueueApp extends React.PureComponent {
   routedEvaluateDecision = (props) => (
     <EvaluateDecisionView nextStep="/queue"
       displayCaseTimelinessQuestion={this.props.featureToggles.das_case_timeliness}
+      displayCaseTimelinessTimeline={this.props.featureToggles.das_case_timeline}
       {...props.match.params} />
   );
 
@@ -269,7 +276,12 @@ class QueueApp extends React.PureComponent {
     <AddCavcRemandView {...props.match.params} />
   );
 
-  routedEditCavcRemand = () => <EditCavcRemandView />;
+  routedCavcDashboard = (props) => (
+    <CavcDashboard
+      appealId={props.match.params.appealId}
+      history={props.history}
+    />
+  );
 
   routedAdvancedOnDocketMotion = (props) => (
     <AdvancedOnDocketMotionView {...props.match.params} />
@@ -334,6 +346,27 @@ class QueueApp extends React.PureComponent {
       {...props.match.params}
     />
   );
+  routedNotifications = (props) => (
+    <NotificationsView
+      userCanScheduleVirtualHearings={
+        this.props.featureToggles.schedule_veteran_virtual_hearing
+      }
+      appealId={props.match.params.appealId}
+      userCanAccessReader={
+        !this.props.hasCaseDetailsRole && !this.props.userCanViewHearingSchedule
+      }
+      userCanEditUnrecognizedPOA={this.props.userCanEditUnrecognizedPOA}
+      vsoVirtualOptIn={this.props.featureToggles.vso_virtual_opt_in}
+    />
+  );
+  routedNotificationsWithLoadingScreen = (props) => (
+    <CaseDetailsLoadingScreen
+      {...this.propsForQueueLoadingScreen()}
+      appealId={props.match.params.appealId}
+    >
+      {this.routedNotifications(props)}
+    </CaseDetailsLoadingScreen>
+  );
 
   routedReassignToUser = (props) => (
     <AssignToView isReassignAction {...props.match.params} />
@@ -341,6 +374,30 @@ class QueueApp extends React.PureComponent {
 
   routedCompleteTaskModal = (props) => (
     <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />
+  );
+
+  routedCompleteTaskContestedClaimModal = (props) => (
+    <CompleteTaskModal modalType="task_complete_contested_claim" {...props.match.params} />
+  );
+
+  routedProceedFinalNotificationLetterInitialModal = (props) => (
+    <CompleteTaskModal modalType="proceed_final_notification_letter_initial" {...props.match.params} />
+  );
+
+  routedProceedFinalNotificationLetterPostHoldingModal = (props) => (
+    <CompleteTaskModal modalType="proceed_final_notification_letter_post_holding" {...props.match.params} />
+  );
+
+  routedResendInitialNotificationLetterPostHoldingModal = (props) => (
+    <CompleteTaskModal modalType="resend_initial_notification_letter_post_holding" {...props.match.params} />
+  );
+
+  routedResendInitialNotificationLetterFinalModal = (props) => (
+    <CompleteTaskModal modalType="resend_initial_notification_letter_final" {...props.match.params} />
+  );
+
+  routedResendFinalNotificationLetterModal = (props) => (
+    <CompleteTaskModal modalType="resend_final_notification_letter" {...props.match.params} />
   );
 
   routedVhaCompleteTaskModal = (props) => (
@@ -381,6 +438,10 @@ class QueueApp extends React.PureComponent {
   );
 
   routedCancelTaskModal = (props) => (
+    <CancelTaskModal {...props.match.params} />
+  );
+
+  routedCancelLetterTaskModal = (props) => (
     <CancelTaskModal {...props.match.params} />
   );
 
@@ -574,10 +635,14 @@ class QueueApp extends React.PureComponent {
       appealId={props.match.params.appealId}
       {...props.match.params}
     />
-  )
+  );
 
-  routedCamoSendToBoardIntake = (props) => (
-    <CompleteTaskModal modalType="vha_send_to_board_intake" {...props.match.params} />
+  routedCamoDocumentsReadyForBvaIntake = (props) => (
+    <CompleteTaskModal modalType="vha_documents_ready_for_bva_intake_for_review" {...props.match.params} />
+  );
+
+  routedCamoReturnToBoardIntake = (props) => (
+    <CompleteTaskModal modalType="vha_return_to_board_intake" {...props.match.params} />
   );
 
   routedEMOReturnToBoardIntake = (props) => (
@@ -632,7 +697,7 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={['/search', '/cases/:caseflowVeteranIds']}
-              title="Caseflow"
+              title="Search Cases | Caseflow"
               render={this.routedSearchResults}
             />
             <PageRoute
@@ -657,6 +722,13 @@ class QueueApp extends React.PureComponent {
               path="/queue/:userId/assign"
               title="Unassigned Cases | Caseflow"
               render={this.routedTeamQueueList('assign')}
+            />
+
+            <PageRoute
+              exact
+              path="/queue/appeals/:appealId/notifications"
+              title="Notifications | Caseflow"
+              render={this.routedNotificationsWithLoadingScreen}
             />
 
             <PageRoute
@@ -766,11 +838,12 @@ class QueueApp extends React.PureComponent {
               title="Add Cavc Remand | Caseflow"
               render={this.routedAddCavcRemand}
             />
+
             <PageRoute
               exact
-              path="/queue/appeals/:appealId/edit_cavc_remand"
-              title="Edit Cavc Remand | Caseflow"
-              render={this.routedEditCavcRemand}
+              path="/queue/appeals/:appealId/cavc_dashboard"
+              title="CAVC Dashboard | Caseflow"
+              render={this.routedCavcDashboard}
             />
             <PageRoute
               exact
@@ -814,6 +887,8 @@ class QueueApp extends React.PureComponent {
             {docketSwitchRoutes.page}
 
             {substituteAppellantRoutes.page}
+
+            {editCavcRemandRoutes.page}
           </Switch>
 
           {/* Modal routes are in their own Switch so they will display above the base routes */}
@@ -1056,9 +1131,15 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.VHA_SEND_TO_BOARD_INTAKE.value
+                  TASK_ACTIONS.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW.value
                 }`}
-              render={this.routedCamoSendToBoardIntake}
+              render={this.routedCamoDocumentsReadyForBvaIntake}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.VHA_RETURN_TO_BOARD_INTAKE.value
+                }`}
+              render={this.routedCamoReturnToBoardIntake}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
@@ -1076,10 +1157,66 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.MARK_TASK_AS_COMPLETE_CONTESTED_CLAIM.value
+                }`}
+              title="Mark Task Complete | Caseflow"
+              render={this.routedCompleteTaskContestedClaimModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE.value
+                }`}
+              title="Mark Task Complete | Caseflow"
+              render={this.routedCompleteTaskContestedClaimModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.MARK_COMPLETE.value
                 }`}
               title="Mark Task Complete | Caseflow"
               render={this.routedCompleteTaskModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL.value
+                }`}
+              title="Letter Task | Caseflow"
+              render={this.routedProceedFinalNotificationLetterInitialModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING.value
+                }`}
+              title="Letter Task | Caseflow"
+              render={this.routedProceedFinalNotificationLetterPostHoldingModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.RESEND_FINAL_NOTIFICATION_LETTER.value
+                }`}
+              title="Letter Task | Caseflow"
+              render={this.routedResendFinalNotificationLetterModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING.value
+                }`}
+              title="Resend Letter Task | Caseflow"
+              render={this.routedResendInitialNotificationLetterPostHoldingModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER_FINAL.value
+                }`}
+              title="Resend Letter Task | Caseflow"
+              render={this.routedResendInitialNotificationLetterFinalModal}
             />
             <PageRoute
               exact
@@ -1166,6 +1303,33 @@ class QueueApp extends React.PureComponent {
               }
               title="Cancel Task | Caseflow"
               render={this.routedCancelTaskModal}
+            />
+            <PageRoute
+              exact
+              path={
+                `/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_FINAL_LETTER_TASK.value
+                }`}
+              title="Cancel Task"
+              render={this.routedCancelLetterTaskModal}
+            />
+            <PageRoute
+              exact
+              path={
+                `/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_INITIAL_LETTER_TASK.value
+                }`}
+              title="Cancel Task"
+              render={this.routedCancelLetterTaskModal}
+            />
+            <PageRoute
+              exact
+              path={
+                `/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_POST_INITIAL_LETTER_TASK.value
+                }`}
+              title="Cancel Task"
+              render={this.routedCancelLetterTaskModal}
             />
             <PageRoute
               exact
@@ -1299,6 +1463,8 @@ QueueApp.propTypes = {
   setCanEditNodDate: PropTypes.func,
   setUserIsCobAdmin: PropTypes.func,
   setCanEditCavcRemands: PropTypes.func,
+  setCanEditCavcDashboards: PropTypes.func,
+  setCanViewCavcDashboards: PropTypes.func,
   canEditAod: PropTypes.bool,
   setFeatureToggles: PropTypes.func,
   featureToggles: PropTypes.object,
@@ -1323,6 +1489,8 @@ QueueApp.propTypes = {
   userCanViewEditNodDate: PropTypes.bool,
   userCanAssignHearingSchedule: PropTypes.bool,
   canEditCavcRemands: PropTypes.bool,
+  canEditCavcDashboards: PropTypes.bool,
+  canViewCavcDashboards: PropTypes.bool,
   userIsCobAdmin: PropTypes.bool,
 };
 
@@ -1337,6 +1505,8 @@ const mapDispatchToProps = (dispatch) =>
       setCanEditNodDate,
       setUserIsCobAdmin,
       setCanEditCavcRemands,
+      setCanEditCavcDashboards,
+      setCanViewCavcDashboards,
       setCanViewOvertimeStatus,
       setFeatureToggles,
       setUserId,

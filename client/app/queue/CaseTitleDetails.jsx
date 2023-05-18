@@ -16,6 +16,7 @@ import {
 } from './selectors';
 import { PencilIcon } from '../components/icons/PencilIcon';
 import { ClockIcon } from '../components/icons/ClockIcon';
+import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import { renderLegacyAppealType } from './utils';
 import { requestPatch } from './uiReducer/uiActions';
 import Button from '../components/Button';
@@ -121,22 +122,26 @@ export class CaseTitleDetails extends React.PureComponent {
       legacyJudgeTasks,
       legacyAttorneyTasks,
       userCssId,
-      userRole
+      userRole,
+      hideOTSection,
+      showEfolderLink
     } = this.props;
 
     const { highlightModal, documentIdError } = this.state;
-
     // eslint-disable-next-line camelcase
     const userIsAssignedAmaJudge = appeal?.assignedJudge?.css_id === userCssId;
     // is there a legacy judge task assigned to the user or legacy attorney task assigned by the user
     const relevantLegacyTasks = legacyJudgeTasks.concat(legacyAttorneyTasks);
 
-    const showOvertimeButton = userRole === 'Judge' && (relevantLegacyTasks.length > 0 || userIsAssignedAmaJudge);
-
+    // eslint-disable-next-line max-len
+    const showOvertimeButton = !hideOTSection && (userRole === 'Judge' && (relevantLegacyTasks.length > 0 || userIsAssignedAmaJudge));
     // for ama appeal, use docket name, for legacy appeal docket name is always legacy so
     // we need to check if the request type is any of threee :central, video, travel or null
     const showHearingRequestType = appeal?.docketName === 'hearing' ||
       (appeal?.docketName === 'legacy' && appeal?.readableHearingRequestType);
+    const link = appeal.veteranParticipantId ?
+      appeal.efolderLink + '/veteran/' + appeal.veteranParticipantId :
+      appeal.efolderLink;
 
     return (
       <TitleDetailsSubheader id="caseTitleDetailsSubheader">
@@ -147,7 +152,7 @@ export class CaseTitleDetails extends React.PureComponent {
           </span>
         </TitleDetailsSubheaderSection>
 
-        {!userIsVsoEmployee && this.props.userCanAccessReader && (
+        {!userIsVsoEmployee && this.props.userCanAccessReader && !this.props.hideDocs && (
           <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_DOCUMENTS_LABEL}>
             <ReaderLink
               appealId={appealId}
@@ -180,7 +185,7 @@ export class CaseTitleDetails extends React.PureComponent {
           </TitleDetailsSubheaderSection>
         )}
 
-        {!userIsVsoEmployee && appeal && appeal.documentID && (
+        {!userIsVsoEmployee && appeal && appeal.documentID && !this.props.hideDecisionDocument && (
           <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}>
             <div id="document-id">
               <CopyTextButton
@@ -208,6 +213,9 @@ export class CaseTitleDetails extends React.PureComponent {
                 closeHandler={this.handleModalClose}
                 title={COPY.TASK_SNAPSHOT_EDIT_DOCUMENT_ID_MODAL_TITLE}
               >
+                {(!this.state.value || this.state.value === appeal.documentID) && !highlightModal ?
+                  <span className="usa-input-error-message" style={{ marginBottom: '5px' }} tabIndex={0}>
+                    {COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} must be different</span> : ''}
                 <TextField
                   errorMessage={highlightModal ? documentIdError : null}
                   name={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}
@@ -242,6 +250,17 @@ export class CaseTitleDetails extends React.PureComponent {
             </Button>
           </TitleDetailsSubheaderSection>
         )}
+        {showEfolderLink && (
+          <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_EFOLDER_LINK}>
+
+            <a href={link} target="_blank" rel="noopener noreferrer">
+              {this.props.appeal.veteranParticipantId ? 'Open eFolder ' : 'Go to eFolder Search '}
+              <span {...css({ position: 'relative', top: '3px' })}>
+                <ExternalLinkIcon color={COLORS.FOCUS_OUTLINE} />
+              </span>
+            </a>
+          </TitleDetailsSubheaderSection>
+        )}
       </TitleDetailsSubheader>
     );
   };
@@ -265,7 +284,17 @@ CaseTitleDetails.propTypes = {
   resetDecisionOptions: PropTypes.func,
   stageAppeal: PropTypes.func,
   legacyJudgeTasks: PropTypes.array,
-  legacyAttorneyTasks: PropTypes.array
+  legacyAttorneyTasks: PropTypes.array,
+  hideOTSection: PropTypes.bool,
+  hasNotifications: PropTypes.bool,
+  hideDocs: PropTypes.bool,
+  hideDecisionDocument: PropTypes.bool,
+  showEfolderLink: PropTypes.bool
+};
+
+CaseTitleDetails.defaultProps = {
+  hideOTSection: false,
+  showEfolderLink: false
 };
 
 const mapStateToProps = (state, ownProps) => {

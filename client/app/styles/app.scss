@@ -19,8 +19,12 @@
 @import '_commons.scss';
 @import '_table.scss';
 @import 'queue/_timeline.scss';
+@import 'queue/_evaluate_decision.scss';
+@import 'queue/_assigned_cases.scss';
+@import 'queue/_cavc_dashboard.scss';
 @import '_task_tree.scss';
 @import 'react/_react_styles_root.scss';
+@import '_team_management.scss';
 
 @import '~react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 

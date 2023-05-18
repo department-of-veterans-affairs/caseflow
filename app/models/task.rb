@@ -20,6 +20,7 @@ class Task < CaseflowRecord
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :cancelled_by, class_name: "User"
+  belongs_to :completed_by, class_name: "User"
 
   include BelongsToPolymorphicAppealConcern
   belongs_to_polymorphic_appeal :appeal, include_decision_review_classes: true
@@ -38,6 +39,7 @@ class Task < CaseflowRecord
 
   after_create :create_and_auto_assign_child_task, if: :automatically_assign_org_task?
   after_create :tell_parent_task_child_task_created
+  after_create :update_appeal_state_on_task_creation
 
   before_save :set_timestamp
 
@@ -45,6 +47,7 @@ class Task < CaseflowRecord
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
   after_update :cancel_task_timers, if: :task_just_closed?
+  after_update :update_appeal_state_on_status_change
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -115,13 +118,28 @@ class Task < CaseflowRecord
 
   attr_accessor :skip_check_for_only_open_task_of_type
 
+  prepend AppealDocketed
+  prepend IhpTaskPending
   prepend IhpTaskComplete
+  prepend IhpTaskCancelled
   prepend PrivacyActComplete
+  prepend AppealCancelled
+  prepend PrivacyActCancelled
+  prepend PrivacyActPending
 
   ############################################################################################
   ## class methods
   class << self
     prepend PrivacyActPending
+
+    # Task types used by RetrieveAndCacheReaderDocumentsJob
+    # To cache docoments from VBMS to S3 for appeals
+    # With taks that are likely to need Reader to complete
+    READER_PRIORITY_TASK_TYPES = [JudgeAssignTask.name, JudgeDecisionReviewTask.name].freeze
+
+    def reader_priority_task_types
+      READER_PRIORITY_TASK_TYPES
+    end
 
     def label
       name.titlecase
@@ -312,6 +330,8 @@ class Task < CaseflowRecord
   # Use the existence of an organization-level task to prevent duplicates since there should only ever be one org-level
   # task active at a time for a single appeal.
   def verify_org_task_unique
+    # do not verify for split appeal process
+    return if appeal.appeal_split_process == true
     return if !open?
 
     if appeal.tasks.open.where(
@@ -404,7 +424,7 @@ class Task < CaseflowRecord
   end
 
   def on_timed_hold?
-    !active_child_timed_hold_task.nil?
+    !active_child_timed_hold_task.nil? || type == PostSendInitialNotificationLetterHoldingTask.name
   end
 
   def active_child_timed_hold_task
@@ -497,6 +517,11 @@ class Task < CaseflowRecord
   def update_with_instructions(params)
     params[:instructions] = flattened_instructions(params)
     update!(params)
+
+    # if completing a letter task, update completed_by to current user.
+    if completed? && is_a?(LetterTask) && completed_by.nil?
+      update!(completed_by: RequestStore[:current_user])
+    end
   end
 
   def flattened_instructions(params)
@@ -769,6 +794,35 @@ class Task < CaseflowRecord
   # currently only defined by ScheduleHearingTask and AssignHearingDispositionTask for virtual hearing related updates
   def alerts
     @alerts ||= []
+  end
+
+  # Purpose: This method is triggered by callback 'after_update'.
+  # This method calls a variety of abstract private methods that are prepended in app/models/prepend/va_notifiy.
+  # These private methods will update an appeal's state within the 'Appeal State' table when certain tracked task
+  # types have their statuses updated to either 'cancelled' or 'completed'.
+  #
+  # Params: NONE
+  #
+  # Response: The Appeal State record correlated to the current task's appeal will be updated.
+  def update_appeal_state_on_status_change
+    update_appeal_state_when_ihp_cancelled
+    update_appeal_state_when_ihp_completed
+    update_appeal_state_when_privacy_act_cancelled
+    update_appeal_state_when_privacy_act_complete
+    update_appeal_state_when_appeal_cancelled
+  end
+
+  # Purpose: This method is triggered by callback 'after_create'.  This method calls a variety of abstract private
+  # methods that are prepended in app/models/prepend/va_notifiy.  These private methods will update an appeal's state
+  # within the 'Appeal State' table when certain tracked tasks are created.
+  #
+  # Params: NONE
+  #
+  # Response: The Appeal State record correlated to the current task's appeal will be updated.
+  def update_appeal_state_on_task_creation
+    update_appeal_state_when_privacy_act_created
+    update_appeal_state_when_appeal_docketed
+    update_appeal_state_when_ihp_created
   end
 
   private

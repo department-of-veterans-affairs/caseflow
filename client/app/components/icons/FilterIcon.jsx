@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { SelectedFilterIcon } from './SelectedFilterIcon';
 import { UnselectedFilterIcon } from './UnselectedFilterIcon';
+import { COLORS } from '../../constants/AppConstants';
 class FilterIcon extends React.PureComponent {
   render() {
     const {
@@ -25,11 +25,8 @@ class FilterIcon extends React.PureComponent {
       tabIndex: '0',
       onKeyDown: handleKeyDown,
       onClick: handleActivate,
+      strokeColor: selected ? COLORS.PRIMARY : COLORS.BASE
     };
-
-    if (selected) {
-      return <SelectedFilterIcon {...props} />;
-    }
 
     return <UnselectedFilterIcon {...props} />;
   }

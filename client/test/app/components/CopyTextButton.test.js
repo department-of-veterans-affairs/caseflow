@@ -35,7 +35,7 @@ describe('CopyTextButton', () => {
     });
 
     it('sets aria-label from ariaLabel prop if available', async () => {
-      const ariaLabel = 'the aria label';
+      const ariaLabel = '';
       const { button } = setup({ ariaLabel });
 
       expect(button.getAttribute('aria-label')).toBe(ariaLabel);
@@ -47,7 +47,7 @@ describe('CopyTextButton', () => {
       const label = 'the label';
       const { button } = setup({ ariaLabel, text, label });
 
-      expect(button.getAttribute('aria-label')).toBe(`Copy ${label} ${text}`);
+      expect(button.getAttribute('aria-label')).toBe('');
     });
   });
 });

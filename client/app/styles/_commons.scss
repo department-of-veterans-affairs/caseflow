@@ -409,6 +409,7 @@ $rems: (
 
   &.active {
     display: block;
+    z-index: 999;
   }
 
   a {
@@ -954,7 +955,6 @@ fieldset {
 
   .disabled {
     color: $color-gray-light;
-    font-style: italic;
   }
 }
 
@@ -1278,3 +1278,15 @@ button {
     }
   }
 }
+
+.csv-link {
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.button-back-button {
+  margin-left: 76%;
+}
+

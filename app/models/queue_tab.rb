@@ -31,7 +31,8 @@ class QueueTab
       description: description,
       columns: columns.map { |column| column.to_hash(tasks) },
       allow_bulk_assign: allow_bulk_assign?,
-      contains_legacy_tasks: contains_legacy_tasks?
+      contains_legacy_tasks: contains_legacy_tasks?,
+      defaultSort: default_sorting_hash
     }
   end
 
@@ -47,6 +48,22 @@ class QueueTab
 
   def columns
     column_names.map { |column_name| QueueColumn.from_name(column_name) }
+  end
+
+  def default_sorting_hash
+    is_ascending = (default_sorting_direction == Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC) ? true : false
+    {
+      Constants.QUEUE_CONFIG.DEFAULT_SORTING_COLUMN_KEY => default_sorting_column.name,
+      Constants.QUEUE_CONFIG.DEFAULT_SORTING_DIRECTION_KEY => is_ascending
+    }
+  end
+
+  def default_sorting_column
+    QueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name)
+  end
+
+  def default_sorting_direction
+    Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
   end
 
   def name
@@ -143,14 +160,34 @@ class QueueTab
     on_hold_task_children.visible_in_queue_table_view.pluck(:id)
   end
 
+  # remove PostSendInitialNotificationLetterHoldingTasks so that they only show in on_hold tab
   def parents_with_child_timed_hold_task_ids
-    on_hold_task_children.where(type: TimedHoldTask.name).pluck(:parent_id)
+    on_hold_task_ids = on_hold_task_children.where(type: TimedHoldTask.name).pluck(:parent_id)
+    on_hold_task_ids.delete_if { |id| Task.find(id).class == PostSendInitialNotificationLetterHoldingTask }
+    on_hold_task_ids
   end
 
-  def on_hold_task_children_and_timed_hold_parents
+  def on_hold_task_children_and_timed_hold_parents_on_hold_tab
     Task.includes(*task_includes).visible_in_queue_table_view.where(
-      id: [visible_child_task_ids, parents_with_child_timed_hold_task_ids].flatten
+      id: [
+        visible_child_task_ids,
+        parents_with_child_timed_hold_task_ids,
+        post_initial_letter_tasks_on_hold
+      ].flatten
     )
+  end
+
+  def on_hold_task_children_and_timed_hold_parents_assigned_tab
+    Task.includes(*task_includes).visible_in_queue_table_view.where(
+      id: [
+        visible_child_task_ids,
+        parents_with_child_timed_hold_task_ids
+      ].flatten
+    )
+  end
+
+  def post_initial_letter_tasks_on_hold
+    on_hold_tasks.where(type: PostSendInitialNotificationLetterHoldingTask.name)
   end
 
   def task_includes

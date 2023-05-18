@@ -34,10 +34,12 @@ feature "Intake Review Page", :postgres do
     before do
       FeatureToggle.enable!(:use_ama_activation_date)
       FeatureToggle.enable!(:non_veteran_claimants)
+      FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)
     end
     after do
       FeatureToggle.disable!(:use_ama_activation_date)
       FeatureToggle.disable!(:non_veteran_claimants)
+      FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
     end
     it "shows correct error with blank or pre-AMA dates" do
       start_appeal(veteran, receipt_date: nil)
@@ -301,6 +303,11 @@ feature "Intake Review Page", :postgres do
       context "when there are no relationships" do
         before do
           allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return([])
+          FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)
+        end
+
+        after do
+          FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
         end
 
         context "higher level review" do
@@ -438,6 +445,149 @@ feature "Intake Review Page", :postgres do
         end
       end
     end
+
+    context "when the user cancels the intake on the Add Claimant page" do
+      before do
+        FeatureToggle.enable!(:non_veteran_claimants)
+        FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)
+      end
+      after do
+        FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
+        FeatureToggle.disable!(:non_veteran_claimants)
+      end
+
+      it "redirects back to the Intake start page" do
+        start_appeal(veteran, receipt_date: "01/01/2022")
+
+        visit "/intake"
+
+        # Review page
+        expect(page).to have_current_path("/intake/review_request")
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        find("label", text: "Claimant not listed", match: :prefer_exact).click
+        click_intake_continue
+
+        # Cancellation Modal
+        safe_click "#cancel-intake"
+        within_fieldset("Please select the reason you are canceling this intake.") do
+          find("label", text: "System error").click
+        end
+        safe_click ".confirm-cancel"
+
+        # Post-redirect to homepage
+        expect(page).to have_content("Welcome to Caseflow Intake!")
+        expect(page).to have_current_path("/intake/")
+      end
+    end
+  end
+
+  shared_examples "Claim review intake with VHA benefit type" do
+    let(:benefit_type_label) { Constants::BENEFIT_TYPES["vha"] }
+    let(:email_href) do
+      "mailto:VHABENEFITAPPEALS@va.gov?subject=Potential%20VHA%20Higher-Level%20Review%20or%20Supplemental%20Claim"
+    end
+
+    context "Current user is a member of the VHA business line" do
+      let(:vha_business_line) { create(:business_line, name: benefit_type_label, url: "vha") }
+      let(:current_user) { create(:user, roles: ["Admin Intake"]) }
+
+      before do
+        vha_business_line.add_user(current_user)
+        User.authenticate!(user: current_user)
+        navigate_to_review_page(form_type)
+      end
+
+      it "Should not display the VHA HLR SC Permissions Update Information Banner" do
+        expect(page).to_not have_content("HLR And SC Permissions Update")
+        expect(page).to_not have_link(COPY::VHA_BENEFIT_EMAIL_ADDRESS, href: email_href)
+      end
+
+      it "VHA benefit type radio option is enabled" do
+        expect(page).to have_field benefit_type_label, disabled: false, visible: false
+      end
+    end
+
+    context "Current user is not a member of the VHA business line" do
+      let(:current_user) { create(:user, roles: ["Admin Intake"]) }
+
+      before do
+        FeatureToggle.enable!(:vha_claim_review_establishment)
+        User.authenticate!(user: current_user)
+        navigate_to_review_page(form_type)
+      end
+
+      after do
+        FeatureToggle.disable!(:vha_claim_review_establishment)
+      end
+
+      it "Should display the VHA HLR SC Permissions Update Information Banner" do
+        expect(page).to have_content("HLR And SC Permissions Update")
+        expect(page).to have_link(COPY::VHA_BENEFIT_EMAIL_ADDRESS, href: email_href)
+      end
+
+      it "VHA benefit type radio option is disabled and tooltip appears whenever it is hovered over" do
+        step "assert that VHA radio option is disabled" do
+          # The <input>s for benefit types are technically off-screen and are displayed
+          # as seen using various CSS styling rules. Thus, we need visible: false for Capybara
+          # to find the radio fields.
+          expect(page).to have_field benefit_type_label, disabled: true, visible: false
+        end
+
+        step "assert that tooltip appears whenenver radio field is hovered over" do
+          find("label", text: benefit_type_label).hover
+
+          # Checks for tooltip text
+          expect(page).to have_content(
+            format(COPY::INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT, COPY::VHA_BENEFIT_EMAIL_ADDRESS)
+          )
+        end
+      end
+    end
+
+    context "Current user is not a member of the VHA business line with feature toggle disabled" do
+      let(:vha_business_line) { create(:business_line, name: benefit_type_label, url: "vha") }
+      let(:current_user) { create(:user, roles: ["Admin Intake"]) }
+
+      before do
+        FeatureToggle.disable!(:vha_claim_review_establishment)
+        User.authenticate!(user: current_user)
+        navigate_to_review_page(form_type)
+      end
+
+      it "Should not display the VHA HLR SC Permissions Update Information Banner" do
+        expect(page).to_not have_content("HLR And SC Permissions Update")
+        expect(page).to_not have_link(COPY::VHA_BENEFIT_EMAIL_ADDRESS, href: email_href)
+      end
+
+      it "VHA benefit type radio option is enabled" do
+        expect(page).to have_field benefit_type_label, disabled: false, visible: false
+      end
+    end
+  end
+
+  describe "Intaking a claim review" do
+    describe "Higher Level Review" do
+      let(:form_type) { Constants.INTAKE_FORM_NAMES.higher_level_review }
+
+      include_examples "Claim review intake with VHA benefit type"
+    end
+
+    describe "Supplemental Claim" do
+      let(:form_type) { Constants.INTAKE_FORM_NAMES.supplemental_claim }
+
+      include_examples "Claim review intake with VHA benefit type"
+    end
+  end
+
+  scenario "It should not show the vha permissions update banner for an appeal intake" do
+    start_appeal(veteran, receipt_date: nil)
+    visit "/intake"
+    expect(page).to have_current_path("/intake/review_request")
+
+    # Check for the absence of the info banner title and email link
+    expect(page).to_not have_content("HLR And SC Permissions Update")
   end
 end
 
@@ -514,14 +664,15 @@ def check_pension_and_compensation_payee_code
     find("label", text: "Compensation", match: :prefer_exact).click
   end
 
-  fill_in "What is the Receipt Date of this form?", with: Time.zone.tomorrow.mdY
   find("label", text: "Blake Vance, Other", match: :prefer_exact).click
-  click_intake_continue
 
-  # check that other validation still works
-  expect(page).to have_content(
-    "Receipt date cannot be in the future."
-  )
+  # DateSelector component has been updated to not allow future dates to be selected at all
+  # fill_in "What is the Receipt Date of this form?", with: Time.zone.tomorrow.mdY
+  # click_intake_continue
+  # # check that other validation still works
+  # expect(page).to have_content(
+  #   "Receipt date cannot be in the future."
+  # )
 
   fill_in "What is the Receipt Date of this form?", with: Time.zone.today.mdY
 

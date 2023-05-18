@@ -5,6 +5,8 @@ class VACOLS::Case < VACOLS::Record
   self.sequence_name = "vacols.bfkeyseq"
   self.primary_key = "bfkey"
 
+  attribute :bfdloout, :datetime
+
   has_one    :folder,          foreign_key: :ticknum
   belongs_to :correspondent,   foreign_key: :bfcorkey, primary_key: :stafkey
   has_many   :case_issues,     foreign_key: :isskey

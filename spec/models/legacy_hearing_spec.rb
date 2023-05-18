@@ -233,7 +233,7 @@ describe LegacyHearing, :all_dbs do
   context "#military_service" do
     subject { hearing.military_service }
     let(:case_hearing) { create(:case_hearing) }
-    let(:hearing) { LegacyHearing.create(vacols_id: case_hearing.hearing_pkseq, military_service: military_service) }
+    let(:hearing) { LegacyHearing.new(vacols_id: case_hearing.hearing_pkseq, military_service: military_service) }
 
     context "when military service is not set" do
       let(:military_service) { nil }
@@ -312,7 +312,7 @@ describe LegacyHearing, :all_dbs do
 
       let!(:existing_user) { User.create(css_id: vacols_record[:css_id], station_id: "123") }
       let!(:user) { User.create(css_id: "1112", station_id: "123") }
-      let!(:hearing) { LegacyHearing.create(vacols_id: case_hearing.hearing_pkseq, user: user) }
+      let!(:hearing) { LegacyHearing.new(vacols_id: case_hearing.hearing_pkseq, user: user) }
       subject { LegacyHearing.assign_or_create_from_vacols_record(vacols_record, legacy_hearing: hearing) }
 
       it "should create a hearing record and reassign user" do

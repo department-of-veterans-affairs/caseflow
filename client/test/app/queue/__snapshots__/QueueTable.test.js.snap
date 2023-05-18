@@ -177,7 +177,7 @@ exports[`QueueTable HeaderRow Can filter when not using task pages API and filte
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="First"
         data-css-9shxm7=""
       >
         <span>
@@ -193,7 +193,7 @@ exports[`QueueTable HeaderRow Can filter when not using task pages API and filte
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="Second"
         data-css-9shxm7=""
       >
         <span>
@@ -210,7 +210,7 @@ exports[`QueueTable HeaderRow Can filter when not using task pages API and filte
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="Third"
         data-css-9shxm7=""
       >
         <span
@@ -264,7 +264,7 @@ exports[`QueueTable HeaderRow Can filter when not using task pages API and getti
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="First"
         data-css-9shxm7=""
       >
         <span>
@@ -280,7 +280,7 @@ exports[`QueueTable HeaderRow Can filter when not using task pages API and getti
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="Second"
         data-css-9shxm7=""
       >
         <span>
@@ -297,7 +297,7 @@ exports[`QueueTable HeaderRow Can filter when not using task pages API and getti
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="Third"
         data-css-9shxm7=""
       >
         <span
@@ -351,7 +351,7 @@ exports[`QueueTable HeaderRow Can filter when using task pages API and column ha
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="First"
         data-css-9shxm7=""
       >
         <span>
@@ -367,7 +367,7 @@ exports[`QueueTable HeaderRow Can filter when using task pages API and column ha
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="Second"
         data-css-9shxm7=""
       >
         <span>
@@ -384,7 +384,7 @@ exports[`QueueTable HeaderRow Can filter when using task pages API and column ha
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="Third"
         data-css-9shxm7=""
       >
         <span
@@ -440,7 +440,7 @@ exports[`QueueTable HeaderRow Can sort when not using the tasks API and getting 
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="First"
         data-css-9shxm7=""
       >
         <span>
@@ -456,7 +456,7 @@ exports[`QueueTable HeaderRow Can sort when not using the tasks API and getting 
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="Second"
         data-css-9shxm7=""
       >
         <span>
@@ -471,7 +471,7 @@ exports[`QueueTable HeaderRow Can sort when not using the tasks API and getting 
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="Third"
         data-css-9shxm7=""
       >
         <span>
@@ -510,7 +510,7 @@ exports[`QueueTable HeaderRow Can sort when the backend can sort and getting col
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="First"
         data-css-9shxm7=""
       >
         <span>
@@ -526,7 +526,7 @@ exports[`QueueTable HeaderRow Can sort when the backend can sort and getting col
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="Second"
         data-css-9shxm7=""
       >
         <span>
@@ -541,7 +541,7 @@ exports[`QueueTable HeaderRow Can sort when the backend can sort and getting col
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="Third"
         data-css-9shxm7=""
       >
         <span>
@@ -580,7 +580,7 @@ exports[`QueueTable HeaderRow Matches snapshot with default props 1`] = `
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="First"
         styleName="header"
       >
         <span>
@@ -596,7 +596,7 @@ exports[`QueueTable HeaderRow Matches snapshot with default props 1`] = `
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="Second"
         styleName="header"
       >
         <span>
@@ -612,7 +612,7 @@ exports[`QueueTable HeaderRow Matches snapshot with default props 1`] = `
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="Second"
         styleName="header"
       >
         <span>
@@ -637,7 +637,7 @@ exports[`QueueTable HeaderRow Renders tooltip when present on the column 1`] = `
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="First"
         data-css-9shxm7=""
       >
         <span>
@@ -653,7 +653,7 @@ exports[`QueueTable HeaderRow Renders tooltip when present on the column 1`] = `
       scope="col"
     >
       <span
-        aria-label=""
+        aria-label="Second"
         data-css-9shxm7=""
       >
         <span>
@@ -669,10 +669,11 @@ exports[`QueueTable HeaderRow Renders tooltip when present on the column 1`] = `
     >
       <Tooltip
         id="tooltip-2"
+        styling="flex"
         text="Some text"
       >
         <span
-          aria-label=""
+          aria-label="Third"
           data-css-9shxm7=""
         >
           <span>
@@ -919,7 +920,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
               scope="col"
             >
               <span
-                aria-label=""
+                aria-label="First"
                 data-css-9shxm7=""
               >
                 <span>
@@ -934,7 +935,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
               scope="col"
             >
               <span
-                aria-label=""
+                aria-label="Second"
                 data-css-9shxm7=""
               >
                 <span>
@@ -950,7 +951,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
               scope="col"
             >
               <span
-                aria-label=""
+                aria-label="Third"
                 data-css-9shxm7=""
               >
                 <span
@@ -1020,17 +1021,18 @@ exports[`QueueTable render() Can filter rows 1`] = `
                           >
                             <g>
                               <rect
-                                className="unselected-filter-icon-border"
+                                className="unselected-filter-icon-border-1"
                                 fill="#fff"
                                 fillRule="nonzero"
                                 height="20"
                                 rx="2"
+                                stroke="#212121"
                                 width="20"
                                 x="0.5"
                                 y="0.5"
                               />
                               <path
-                                className="unselected-filter-icon-inner"
+                                className="unselected-filter-icon-inner-1"
                                 d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
                                 fill="#212121"
                               />
@@ -1567,7 +1569,7 @@ exports[`QueueTable render() Can sort rows 1`] = `
               scope="col"
             >
               <span
-                aria-label=""
+                aria-label="First"
                 data-css-9shxm7=""
               >
                 <span>
@@ -1582,7 +1584,7 @@ exports[`QueueTable render() Can sort rows 1`] = `
               scope="col"
             >
               <span
-                aria-label=""
+                aria-label="Second"
                 data-css-9shxm7=""
               >
                 <span>
@@ -1597,7 +1599,7 @@ exports[`QueueTable render() Can sort rows 1`] = `
               scope="col"
             >
               <span
-                aria-label=""
+                aria-label="Third"
                 data-css-9shxm7=""
               >
                 <span>
@@ -8742,7 +8744,7 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
               scope="col"
             >
               <span
-                aria-label=""
+                aria-label="First"
                 data-css-9shxm7=""
               >
                 <span>
@@ -8757,7 +8759,7 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
               scope="col"
             >
               <span
-                aria-label=""
+                aria-label="Second"
                 data-css-9shxm7=""
               >
                 <span>
@@ -8772,7 +8774,7 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
               scope="col"
             >
               <span
-                aria-label=""
+                aria-label="Second"
                 data-css-9shxm7=""
               >
                 <span>

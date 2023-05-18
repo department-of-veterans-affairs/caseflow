@@ -3086,21 +3086,6 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
         </div>
       </fieldset>
       <div
-        class="usa-alert usa-alert-info usa-alert-slim"
-        data-css-1umdg7m=""
-        role="alert"
-      >
-        <div
-          class="usa-alert-body"
-        >
-          <div
-            class="usa-alert-text"
-          >
-            For a JMR you must select all issues to proceed
-          </div>
-        </div>
-      </div>
-      <div
         class="cf-form-textarea"
       >
         <label

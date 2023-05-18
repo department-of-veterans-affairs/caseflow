@@ -65,9 +65,6 @@ up-m1:  ## Start the docker containers on a M1 Mac
 
 down:	## Stop the docker containers
 	docker-compose down
-	
-down-m1:  ## Stop the docker containers on a M1 Mac
-	docker-compose -f docker-compose-m1.yml down
 
 down-m1:  ## Stop the docker containers on a M1 Mac
 	docker-compose -f docker-compose-m1.yml down
@@ -141,6 +138,15 @@ logs:  ## Follow the docker logs
 db:  ## Connect to your dev postgres (caseflow) db
 	bundle exec rails dbconsole
 
+audit: ## Create caseflow_audit schema, tables, and triggers in postgres
+	bundle exec rails r db/scripts/audit/create_caseflow_audit_schema.rb
+	bundle exec rails r db/scripts/audit/create_appeal_states_audit.rb
+	bundle exec rails r db/scripts/audit/add_row_to_appeal_states_audit_table_function.rb
+	bundle exec rails r db/scripts/audit/create_appeal_states_audit_trigger.rb
+
+audit-remove: ## Remove caseflow_audit schema, tables and triggers in postgres
+	bundle exec rails r db/scripts/audit/remove_caseflow_audit_schema.rb
+
 c:  ## Start rails console
 	bundle exec rails console
 
@@ -169,8 +175,10 @@ fresh:  ## https://github.com/imsky/git-fresh - updates local master to match or
 reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable feature flags
 
 reset-dbs: ## Resets Caseflow and ETL database schemas
+	make audit-remove
 	DB=etl bundle exec rake db:drop db:create db:schema:load
 	bundle exec rake db:drop db:create db:schema:load
+	make audit
 
 seed-dbs:	## Seed all databases
 	bundle exec rake local:vacols:seed
@@ -219,6 +227,9 @@ jest: ## Run jest tests
 
 one-jest:  ## run the jest test passed in (leave off client/)
 	cd client && yarn jest $(RUN_ARGS)
+
+one-jest-snapshot-update: ## Updated the snapshot of a jest test passed in
+	cd client && yarn jest $(RUN_ARGS) -u
 
 unsafe:  ## TODO
 	mv .git/hooks/pre-commit .git/hooks/pre-commit-linter

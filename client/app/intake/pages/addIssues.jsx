@@ -212,7 +212,7 @@ class AddIssuesPage extends React.Component {
     } = this.props;
     const intakeData = intakeForms[formType];
     const appealInfo = intakeForms.appeal;
-    const { useAmaActivationDate } = featureToggles;
+    const { useAmaActivationDate, hlrScUnrecognizedClaimants } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
@@ -337,7 +337,18 @@ class AddIssuesPage extends React.Component {
 
     let fieldsForFormType = getAddIssuesFields(formType, veteran, intakeData);
 
-    if (formType === 'appeal') {
+    const shouldAddPoAField = Boolean(
+      formType === 'appeal' ||
+      (
+        hlrScUnrecognizedClaimants &&
+        (
+          formType === 'higher_level_review' ||
+          formType === 'supplemental_claim'
+        )
+      )
+    );
+
+    if (shouldAddPoAField) {
       fieldsForFormType = fieldsForFormType.concat({
         field: 'Claimant\'s POA',
         content: intakeData.powerOfAttorneyName || COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA
@@ -362,8 +373,10 @@ class AddIssuesPage extends React.Component {
     let rowObjects = fieldsForFormType;
 
     const issueSectionRow = (sectionIssues, fieldTitle) => {
-      const reviewHasVhaIssues = sectionIssues.some((issue) => issue.benefitType === 'vha');
-      const showPreDocketBanner = !editPage && formType === 'appeal' && reviewHasVhaIssues;
+      const reviewHasPredocketVhaIssues = sectionIssues.some(
+        (issue) => issue.benefitType === 'vha' && issue.isPreDocketNeeded === 'true'
+      );
+      const showPreDocketBanner = !editPage && formType === 'appeal' && reviewHasPredocketVhaIssues;
 
       return {
         field: fieldTitle,

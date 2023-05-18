@@ -53,12 +53,18 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
       [docket_type, docket.ready_priority_appeal_ids]
     end.to_h
 
-    report << "*Number of appeals _not_ distributed*: #{appeals_not_distributed.values.flatten.count}"
+    report << "*Total Number of appeals _not_ distributed*: #{appeals_not_distributed.values.flatten.count}"
+    docket_coordinator.dockets.each_pair do |sym, docket|
+      report << "*Number of #{sym} appeals _not_ distributed*: #{docket.count(priority: true, ready: true)}"
+    end
+    unless disable_legacy?
+      report << "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: #{legacy_not_genpop_count}"
+    end
 
     report << ""
     report << "*Debugging information*"
     report << "Priority Target: #{priority_target}"
-    report << "Previous monthly distributions: #{priority_distributions_this_month_for_eligible_judges}"
+    report << "Previous monthly distributions {judge_id=>count}: #{priority_distributions_this_month_for_eligible_judges}"
 
     if appeals_not_distributed.values.flatten.any?
       add_stuck_appeals_to_report(report, appeals_not_distributed)
@@ -69,9 +75,9 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   def add_stuck_appeals_to_report(report, appeals)
     report.unshift("[WARN]")
-    report << "Legacy appeals not distributed: `LegacyAppeal.where(vacols_id: #{appeals[:legacy]})`"
-    report << "AMA appeals not distributed: `Appeal.where(uuid: #{appeals.values.drop(1).flatten})`"
     report << COPY::PRIORITY_PUSH_WARNING_MESSAGE
+    report << "AMA appeals not distributed: `Appeal.where(uuid: #{appeals.values.drop(1).flatten})`"
+    report << "Legacy appeals not distributed: `LegacyAppeal.where(vacols_id: #{appeals[:legacy]})`"
   end
 
   # Distribute all priority cases tied to a judge without limit
@@ -173,5 +179,13 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
 
   def use_by_docket_date?
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
+  end
+
+  def disable_legacy?
+    FeatureToggle.enabled?(:acd_disable_legacy_distributions, user: RequestStore.store[:current_user])
+  end
+
+  def legacy_not_genpop_count
+    docket_coordinator.dockets[:legacy].not_genpop_priority_count
   end
 end

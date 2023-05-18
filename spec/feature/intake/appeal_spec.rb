@@ -75,11 +75,11 @@ feature "Appeal Intake", :all_dbs do
     click_on "Search"
     expect(page).to have_current_path("/intake/review_request")
 
-    fill_in "What is the Receipt Date of this form?", with: future_date.mdY
-    click_intake_continue
-
-    expect(page).to have_content("Receipt date cannot be in the future.")
-    expect(page).to have_content("Please select an option.")
+    # DateSelector component has been updated to not allow future dates to be selected at all
+    # fill_in "What is the Receipt Date of this form?", with: future_date.mdY
+    # click_intake_continue
+    # expect(page).to have_content("Receipt date cannot be in the future.")
+    #expect(page).to have_content("Please select an option.")
 
     fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
@@ -655,14 +655,17 @@ feature "Appeal Intake", :all_dbs do
     safe_click ".close-modal"
     expect(page).to_not have_css("#modal_id-title")
     safe_click "#cancel-intake"
-    safe_click ".confirm-cancel"
-    expect(page).to have_content("Make sure you’ve selected an option below.")
+    expect(page).to have_button("Cancel intake", disabled: true)
+    within_fieldset("Please select the reason you are canceling this intake.") do
+      find("label", text: "System error").click
+    end
+    expect(page).to have_button("Cancel intake", disabled: false)
     within_fieldset("Please select the reason you are canceling this intake.") do
       find("label", text: "Other").click
     end
-    safe_click ".confirm-cancel"
-    expect(page).to have_content("Make sure you’ve filled out the comment box below.")
+    expect(page).to have_button("Cancel intake", disabled: true)
     fill_in "Tell us more about your situation.", with: "blue!"
+    expect(page).to have_button("Cancel intake", disabled: false)
     safe_click ".confirm-cancel"
 
     expect(page).to have_content("Welcome to Caseflow Intake!")

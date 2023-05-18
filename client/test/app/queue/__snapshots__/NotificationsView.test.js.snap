@@ -1,0 +1,590 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NotificationsTest matches snapshot 1`] = `
+<div>
+  <section
+    class="cf-app-segment cf-app-segment--alt"
+  >
+    <div
+      data-css-bui2vg=""
+    >
+      <h1
+        data-css-10hc4to=""
+      >
+        Case notifications for Bob Smithschumm
+      </h1>
+      <div
+        data-css-7o0e0w=""
+      >
+        <div
+          data-css-p21ib3=""
+        >
+          Veteran ID: 
+          <button
+            aria-describedby="tooltip-200000161"
+            aria-label=""
+            class="cf-apppeal-id"
+            currentitem="false"
+            data-css-cjlnsd=""
+            data-event="focus mouseenter"
+            data-event-off="mouseleave keydown"
+            data-for="tooltip-200000161"
+            data-tip="true"
+            tabindex="0"
+            type="submit"
+          >
+            200000161
+             
+            <svg
+              class=""
+              height="17"
+              viewBox="0 0 21 21"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M13.346 2.578h-2.664v-1.29C10.682.585 10.08 0 9.35 0H6.66c-.728 0-1.33.584-1.33 1.29v1.288H2.663v2.577h10.682V2.578zm-4.02 0H6.66v-1.29h2.665v1.29zm6.685 3.89V3.234a.665.665 0 0 0-.678-.656H14v1.29h.68v2.576H6.66v9.046H1.333V3.867h.68v-1.29H.678a.665.665 0 0 0-.68.657v12.913c0 .365.302.656.68.656h6.006v3.867h9.35l3.996-3.867V6.468h-4.02zm0 12.378v-2.043h2.112l-2.11 2.043zm2.665-3.356H14.68v3.867H7.992v-11.6h10.682v7.733z"
+                fill="#5b616b"
+                fill-rule="evenodd"
+              />
+            </svg>
+          </button>
+          <span
+            data-css-8fhvpp=""
+          >
+            <div
+              class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+              data-id="tooltip"
+              id="tooltip-200000161"
+              role="tooltip"
+            >
+              <style>
+                
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  
+              </style>
+              Click to copy
+            </div>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div
+      data-css-7v4y9j=""
+      id="caseTitleDetailsSubheader"
+    >
+      <div
+        data-css-1atuorp=""
+      >
+        <div
+          data-css-1yy2eo1=""
+        >
+          <p>
+            Docket
+          </p>
+          <div>
+            <span
+              data-css-1iid9v3=""
+            >
+              220715-1987
+            </span>
+          </div>
+        </div>
+        <div
+          data-css-1yy2eo1=""
+        >
+          <p>
+            Appeal Stream Type
+          </p>
+          <div>
+            <span />
+          </div>
+        </div>
+        <div
+          data-css-1yy2eo1=""
+        >
+          <p>
+            Link to efolder
+          </p>
+          <div>
+            <a
+              href="undefined/veteran/826209"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Open eFolder 
+              <span
+                data-css-wevxet=""
+              >
+                <svg
+                  class=""
+                  height="20"
+                  version="1.1"
+                  viewBox="0 0 18 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    fill="none"
+                    fill-rule="evenodd"
+                    stroke="none"
+                    stroke-width="1"
+                  >
+                    <g
+                      fill="#2491ff"
+                      fill-rule="nonzero"
+                    >
+                      <g
+                        transform="translate(1.000000, 1.000000)"
+                      >
+                        <path
+                          d="M12.2767813,8.17242825 L11.7057188,8.17242825 C11.6223125,8.17242825 11.553875,8.19969476 11.500625,8.25448292 C11.4469375,8.30895216 11.4202188,8.37876082 11.4202188,8.46378132 L11.4202188,11.377344 C11.4202188,11.7779863 11.2805313,12.1208747 11.001,12.4062005 C10.7214688,12.6914624 10.3853438,12.8339818 9.99275,12.8339818 L2.5695,12.8339818 C2.1769375,12.8339818 1.84084375,12.6914624 1.56125,12.4062005 C1.28171875,12.1209066 1.14196875,11.7780182 1.14196875,11.377344 L1.14196875,3.80200456 C1.14196875,3.40139408 1.2816875,3.05853759 1.56125,2.77324374 C1.84084375,2.487918 2.1769375,2.34533485 2.5695,2.34533485 L8.8505625,2.34533485 C8.93396875,2.34533485 9.00240625,2.31794077 9.055875,2.26337585 C9.10934375,2.20874715 9.1360625,2.13900228 9.1360625,2.05394989 L9.1360625,1.47114806 C9.1360625,1.38625513 9.10934375,1.31638269 9.055875,1.26184966 C9.00240625,1.20722096 8.93396875,1.17995444 8.8505625,1.17995444 L2.5695,1.17995444 C1.86175,1.17995444 1.2565,1.43641913 0.7538125,1.94931663 C0.2513125,2.46218223 0,3.07984055 0,3.80210023 L0,11.3774715 C0,12.0996993 0.2513125,12.7174533 0.75384375,13.2301595 C1.25653125,13.7430888 1.86178125,13.9996811 2.56953125,13.9996811 L9.99275,13.9996811 C10.7004688,13.9996811 11.3057813,13.7430888 11.8084063,13.2301595 C12.3110625,12.7174533 12.562375,12.0997312 12.562375,11.3774715 L12.562375,8.46400456 C12.562375,8.37888838 12.535625,8.30904784 12.4819375,8.25448292 C12.4284063,8.19969476 12.3599688,8.17242825 12.2767813,8.17242825 Z"
+                          id="external-link-outline-box"
+                        />
+                        <path
+                          d="M15.8009687,0.172974943 C15.6879375,0.0576264237 15.5539375,0 15.3994062,0 L10.8313437,0 C10.6767187,0 10.5428125,0.0576264237 10.429875,0.172974943 C10.3168438,0.288259681 10.26025,0.42484738 10.26025,0.58267426 C10.26025,0.740501139 10.3168438,0.877120729 10.429875,0.992469248 L12.0000938,2.59491116 L6.183,8.53138952 C6.1234375,8.59207745 6.09375,8.661918 6.09375,8.74068793 C6.09375,8.81974487 6.12353125,8.88955353 6.183,8.95024146 L7.200125,9.98809112 C7.25959375,10.048779 7.32803125,10.0790433 7.40534375,10.0790433 C7.48265625,10.0790433 7.551125,10.0488109 7.6105625,9.98809112 L13.4276875,4.05170843 L14.9980313,5.65415034 C15.1109687,5.76949886 15.2448438,5.82718907 15.3995,5.82718907 C15.5541562,5.82718907 15.6880312,5.76949886 15.8010937,5.65415034 C15.914125,5.53883371 15.9705937,5.4022779 15.9705937,5.24445103 L15.9705937,0.58267426 C15.9705625,0.424751708 15.9139063,0.288259681 15.8009687,0.172974943 Z"
+                          id="external-link-outline-arrow"
+                        />
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      data-css-48ja=""
+    >
+      <div
+        style="display: flex; justify-content: space-between; align-items: center;"
+      >
+        <p
+          class="notification-text"
+        >
+          VA Notify sent these status notifications to the Appellant about their case.
+        </p>
+        <span>
+          <button
+            class="usa-button-secondary usa-button"
+            id="download-button"
+            type="button"
+          >
+            Download
+          </button>
+        </span>
+      </div>
+      <div
+        class="notification-table"
+      >
+        <div
+          class="cf-table-wrapper"
+        >
+          <div
+            class="cf-pagination"
+          >
+            <div
+              class="cf-pagination-summary"
+            >
+              Viewing 0-0 of 0 total
+            </div>
+            <div
+              class="cf-pagination-pages"
+            />
+          </div>
+          <table
+            aria-describedby="case-table-description"
+            aria-label="Appeals"
+            class="usa-table-borderless undefined"
+            id="case-table-description"
+            role="table"
+          >
+            <thead>
+              <tr
+                role="row"
+              >
+                <th
+                  aria-labelledby="header-eventType"
+                  class=""
+                  role="columnheader"
+                  scope="col"
+                >
+                  <span
+                    aria-label="Event"
+                    data-css-9shxm7=""
+                  >
+                    <span
+                      id="header-eventType"
+                    >
+                      Event
+                    </span>
+                    <span
+                      data-css-ilmt4b=""
+                    >
+                      <svg
+                        aria-label="Filter by event type"
+                        class="table-icon unselected-filter-icon"
+                        height="20"
+                        role="button"
+                        tabindex="0"
+                        viewBox="0 0 21 21"
+                      >
+                        <g
+                          fill="none"
+                          fill-rule="evenodd"
+                          stroke="none"
+                          stroke-width="1"
+                        >
+                          <g>
+                            <rect
+                              class="unselected-filter-icon-border-1"
+                              fill="#fff"
+                              fill-rule="nonzero"
+                              height="20"
+                              rx="2"
+                              stroke="#212121"
+                              width="20"
+                              x="0.5"
+                              y="0.5"
+                            />
+                            <path
+                              class="unselected-filter-icon-inner-1"
+                              d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+                              fill="#212121"
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                    </span>
+                  </span>
+                </th>
+                <th
+                  aria-labelledby="header-eventDate"
+                  aria-sort="ascending"
+                  class=""
+                  role="columnheader"
+                  scope="col"
+                >
+                  <span
+                    aria-label="Notification Date"
+                    data-css-9shxm7=""
+                  >
+                    <span
+                      id="header-eventDate"
+                    >
+                      Notification Date
+                    </span>
+                    <span
+                      aria-label="Sort by Notification Date"
+                      data-css-ilmt4b=""
+                      role="button"
+                      tabindex="0"
+                    >
+                      <svg
+                        class="table-icon"
+                        height="17"
+                        version="1.1"
+                        viewBox="0 0 13 16"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <g
+                          fill="none"
+                          fill-rule="evenodd"
+                          stroke="none"
+                          stroke-width="1"
+                        >
+                          <g
+                            fill-rule="nonzero"
+                          >
+                            <g
+                              fill="#d6d7d9"
+                              transform="translate(2.000000, 1.000000)"
+                            >
+                              <g
+                                transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                              >
+                                <path
+                                  d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                />
+                              </g>
+                            </g>
+                            <g
+                              fill="#0071bc"
+                              transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)"
+                            >
+                              <g
+                                transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) "
+                              >
+                                <path
+                                  d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z"
+                                />
+                              </g>
+                            </g>
+                          </g>
+                        </g>
+                      </svg>
+                    </span>
+                  </span>
+                </th>
+                <th
+                  aria-labelledby="header-notificationType"
+                  class=""
+                  role="columnheader"
+                  scope="col"
+                >
+                  <span
+                    aria-label="Notification Type"
+                    data-css-9shxm7=""
+                  >
+                    <span
+                      id="header-notificationType"
+                    >
+                      Notification Type
+                    </span>
+                    <span
+                      data-css-ilmt4b=""
+                    >
+                      <svg
+                        aria-label="Filter by notification type"
+                        class="table-icon unselected-filter-icon"
+                        height="20"
+                        role="button"
+                        tabindex="0"
+                        viewBox="0 0 21 21"
+                      >
+                        <g
+                          fill="none"
+                          fill-rule="evenodd"
+                          stroke="none"
+                          stroke-width="1"
+                        >
+                          <g>
+                            <rect
+                              class="unselected-filter-icon-border-1"
+                              fill="#fff"
+                              fill-rule="nonzero"
+                              height="20"
+                              rx="2"
+                              stroke="#212121"
+                              width="20"
+                              x="0.5"
+                              y="0.5"
+                            />
+                            <path
+                              class="unselected-filter-icon-inner-1"
+                              d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+                              fill="#212121"
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                    </span>
+                  </span>
+                </th>
+                <th
+                  aria-labelledby="header-recipientInformation"
+                  class=""
+                  role="columnheader"
+                  scope="col"
+                >
+                  <span
+                    aria-label="Recipient Information"
+                    data-css-9shxm7=""
+                  >
+                    <span
+                      id="header-recipientInformation"
+                    >
+                      Recipient Information
+                    </span>
+                    <span
+                      data-css-ilmt4b=""
+                    >
+                      <svg
+                        aria-label="Filter by recipient information column"
+                        class="table-icon unselected-filter-icon"
+                        height="20"
+                        role="button"
+                        tabindex="0"
+                        viewBox="0 0 21 21"
+                      >
+                        <g
+                          fill="none"
+                          fill-rule="evenodd"
+                          stroke="none"
+                          stroke-width="1"
+                        >
+                          <g>
+                            <rect
+                              class="unselected-filter-icon-border-1"
+                              fill="#fff"
+                              fill-rule="nonzero"
+                              height="20"
+                              rx="2"
+                              stroke="#212121"
+                              width="20"
+                              x="0.5"
+                              y="0.5"
+                            />
+                            <path
+                              class="unselected-filter-icon-inner-1"
+                              d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+                              fill="#212121"
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                    </span>
+                  </span>
+                </th>
+                <th
+                  aria-labelledby="header-status"
+                  class=""
+                  role="columnheader"
+                  scope="col"
+                >
+                  <span
+                    aria-label="Status"
+                    data-css-9shxm7=""
+                  >
+                    <span
+                      id="header-status"
+                    >
+                      Status
+                    </span>
+                    <span
+                      data-css-ilmt4b=""
+                    >
+                      <svg
+                        aria-label="Filter by status column"
+                        class="table-icon unselected-filter-icon"
+                        height="20"
+                        role="button"
+                        tabindex="0"
+                        viewBox="0 0 21 21"
+                      >
+                        <g
+                          fill="none"
+                          fill-rule="evenodd"
+                          stroke="none"
+                          stroke-width="1"
+                        >
+                          <g>
+                            <rect
+                              class="unselected-filter-icon-border-1"
+                              fill="#fff"
+                              fill-rule="nonzero"
+                              height="20"
+                              rx="2"
+                              stroke="#212121"
+                              width="20"
+                              x="0.5"
+                              y="0.5"
+                            />
+                            <path
+                              class="unselected-filter-icon-inner-1"
+                              d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z"
+                              fill="#212121"
+                            />
+                          </g>
+                        </g>
+                      </svg>
+                    </span>
+                  </span>
+                </th>
+              </tr>
+            </thead>
+            <tbody
+              class=""
+            />
+            <tfoot />
+          </table>
+          <div
+            class="cf-pagination"
+          >
+            <div
+              class="cf-pagination-summary"
+            >
+              Viewing 0-0 of 0 total
+            </div>
+            <div
+              class="cf-pagination-pages"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+`;

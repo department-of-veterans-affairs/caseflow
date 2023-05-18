@@ -1,5 +1,5 @@
 
-   
+
 {
    "vba_301" : {
       "address_1" : "15 New Sudbury Street",
@@ -190,7 +190,7 @@
       "zip" : "36109",
       "timezone" : "America/Chicago"
    },
-   "vha_586" : {
+   "vba_323" : {
       "address_1" : "1600 E. Woodrow Wilson Ave.",
       "address_2" : null,
       "address_3" : null,
@@ -559,6 +559,15 @@
       "zip" : "57105",
       "timezone" : "America/Chicago"
    },
+   "vba_438a" : {
+      "address_1" : "910 5th St",
+      "address_2" : "Suite 105",
+      "address_3" : null,
+      "city" : "Rapid City",
+      "state" : "SD",
+      "zip" : "57701",
+      "timezone" : "America/Denver"
+   },
    "vba_442" : {
       "address_1" : "2360 E. Pershing Blvd.",
       "address_2" : null,
@@ -675,6 +684,15 @@
       "state" : "TN",
       "zip" : "37604",
       "timezone" : "America/Kentucky/Louisville"
+   },
+   "vc_0704V" : {
+      "address_1" : "1255 Shreveport Barksdale Highway",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "Shreveport",
+      "state" : "LA",
+      "zip" : "71105",
+      "timezone" : "America/Chicago"
    },
    "vc_0719V" : {
       "address_1" : "2605 Nonconnah Blvd",
@@ -1313,6 +1331,15 @@
       "city" : "Green Bay",
       "state" : "WI",
       "zip" : "54311-5855",
+      "timezone" : "America/Chicago"
+   },
+   "vha_740GA" : {
+      "address_1" : "2106 Treasure Hills Boulevard",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "Harlingen",
+      "state" : "TX",
+      "zip" : "78550-8736",
       "timezone" : "America/Chicago"
    },
    "vha_740GB" : {

@@ -76,6 +76,7 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
                 aria-expanded="false"
                 aria-haspopup="menu"
                 aria-label="Logged in as undefined"
+                aria-pressed="false"
                 class="cf-dropdown-trigger"
                 data-css-1oange6=""
                 href="#undefined"
@@ -195,17 +196,6 @@ exports[`CaseWorkerIndex renders correctly 1`] = `
       <div
         class="cf-push-right"
       >
-        <a
-          href="https://caseflow.statuspage.io"
-          target="_blank"
-        >
-          Track Caseflow Status
-        </a>
-        <span
-          data-css-1bblw8p=""
-        >
-          |
-        </span>
         <a
           target="_blank"
         >

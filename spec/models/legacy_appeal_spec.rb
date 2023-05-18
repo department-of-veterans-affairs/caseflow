@@ -762,21 +762,24 @@ describe LegacyAppeal, :all_dbs do
       vacols_case.update_vacols_location!(third_location)
     end
 
-    subject { appeal.location_history.map { |priloc| [priloc.assigned_at, priloc.location, priloc.assigned_by] } }
+    subject { appeal.location_history }
 
-    let(:oracle_sysdate) { Time.zone.now.utc.to_date } # NOT Time.zone.now because we want to act like Oracle SYSDATE
+    # Changes to PRIORLOC to return a datetime need to explicitly fetch this value, else eq() will fail by 1 second
+    let(:assigned_time) { VACOLS::Priorloc.where(locstto: "81").first.locdout }
 
     it "returns array of date, to_whom, by_whom" do
-      expect(subject).to eq([
-                              [oracle_sysdate, first_location, "DSUSER"],
-                              [oracle_sysdate, second_location, "DSUSER"],
-                              [oracle_sysdate, third_location, "DSUSER"]
-                            ])
-      expect(appeal.location_history.last.summary).to eq(location: third_location,
-                                                         assigned_at: oracle_sysdate,
-                                                         assigned_by: "DSUSER",
-                                                         date_in: nil,
-                                                         date_out: oracle_sysdate)
+      expect(subject.length).to eq(3)
+      expect(subject.last.summary).to eq(assigned_by: "DSUSER",
+                                         assigned_at: assigned_time,
+                                         location: third_location,
+                                         sub_location: nil,
+                                         location_staff: nil,
+                                         date_out: assigned_time,
+                                         date_in: nil,
+                                         vacols_id: vacols_case.bfkey,
+                                         exception_flag: nil,
+                                         with_attorney?: false,
+                                         with_judge?: false)
     end
   end
 

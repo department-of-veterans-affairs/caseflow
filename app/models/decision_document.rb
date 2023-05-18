@@ -67,7 +67,7 @@ class DecisionDocument < CaseflowRecord
 
     if appeal.is_a?(Appeal)
       create_board_grant_effectuations!
-      fail NotImplementedError if appeal.claimant.is_a?(OtherClaimant)
+      fail NotImplementedError if appeal.claimant&.unrecognized_claimant?
 
       # We do not want to process Board Grant Effectuations or create remand supplemental claims
       # for appeals with unrecognized appellants because claim establishment

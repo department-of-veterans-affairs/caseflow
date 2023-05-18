@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { bindActionCreators } from 'redux';
 import { connect, useSelector } from 'react-redux';
 import { css } from 'glamor';
@@ -8,7 +9,7 @@ import React, { useEffect, useMemo } from 'react';
 import _ from 'lodash';
 
 import { APPELLANT_TYPES, CATEGORIES, TASK_ACTIONS } from './constants';
-import { COLORS } from '../constants/AppConstants';
+import { COLORS, ICON_SIZES } from '../constants/AppConstants';
 import {
   appealWithDetailSelector,
   getAllTasksForAppeal,
@@ -37,7 +38,7 @@ import CaseHearingsDetail from './CaseHearingsDetail';
 import { CaseTimeline } from './CaseTimeline';
 import CaseTitle from './CaseTitle';
 import CaseTitleDetails from './CaseTitleDetails';
-import CavcDetail from './CavcDetail';
+import CavcDetail from './caseDetails/CavcDetail';
 import CaseDetailsPostDispatchActions from './CaseDetailsPostDispatchActions';
 import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
 import StickyNavContentArea from './StickyNavContentArea';
@@ -57,8 +58,12 @@ import { VsoVisibilityAlert } from './caseDetails/VsoVisibilityAlert';
 import { shouldShowVsoVisibilityAlert } from './caseDetails/utils';
 import { useHistory } from 'react-router';
 import Button from '../components/Button';
+import { ExternalLinkIcon } from '../components/icons/ExternalLinkIcon';
 
 // TODO: Pull this horizontal rule styling out somewhere.
+
+const ICON_POSITION_FIX = css({ position: 'relative', top: 3 });
+
 const horizontalRuleStyling = css({
   border: 0,
   borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
@@ -88,7 +93,7 @@ const topAlertStyles = css({ marginBottom: '2.4rem' });
 
 export const CaseDetailsView = (props) => {
   const { push } = useHistory();
-  const { appealId, featureToggles } = props;
+  const { appealId, featureToggles, canViewCavcDashboards } = props;
   const appeal = useSelector((state) =>
     appealWithDetailSelector(state, { appealId })
   );
@@ -123,6 +128,7 @@ export const CaseDetailsView = (props) => {
       ['Clerk of the Board'].includes(organization.name)
     )
   );
+
   const modalIsOpen = window.location.pathname.includes('modal');
 
   const resetState = () => {
@@ -168,15 +174,26 @@ export const CaseDetailsView = (props) => {
 
   const appealIsDispatched = isAppealDispatched(appeal);
 
-  const editAppellantInformation =
-    appeal.appellantType === APPELLANT_TYPES.OTHER_CLAIMANT && props.featureToggles.edit_unrecognized_appellant;
+  const appealHasRemandWithDashboard = useSelector((state) =>
+    state.queue.appeals[appealId].cavcRemandsWithDashboard > 0
+  );
+
+  const editAppellantInformation = (
+    [APPELLANT_TYPES.OTHER_CLAIMANT, APPELLANT_TYPES.HEALTHCARE_PROVIDER_CLAIMANT].includes(
+      appeal.appellantType
+    ) && props.featureToggles.edit_unrecognized_appellant
+  );
 
   const editPOAInformation =
-    props.userCanEditUnrecognizedPOA && appeal.appellantType === 'OtherClaimant' &&
-    !appeal.hasPOA && props.featureToggles.edit_unrecognized_appellant_poa;
+    props.userCanEditUnrecognizedPOA &&
+    [APPELLANT_TYPES.OTHER_CLAIMANT, APPELLANT_TYPES.HEALTHCARE_PROVIDER_CLAIMANT].includes(
+      appeal.appellantType
+    ) && !appeal.hasPOA && props.featureToggles.edit_unrecognized_appellant_poa;
 
   const supportCavcRemand =
-    currentUserIsOnCavcLitSupport && !appeal.isLegacyAppeal;
+    currentUserIsOnCavcLitSupport && !appeal.isLegacyAppeal && appeal.issueCount > 0;
+
+  const supportCavcDashboard = canViewCavcDashboards && appealHasRemandWithDashboard;
 
   const hasSubstitution = appealHasSubstitution(appeal);
   const supportPostDispatchSubstitution = supportsSubstitutionPostDispatch({
@@ -194,7 +211,7 @@ export const CaseDetailsView = (props) => {
   });
 
   const showPostDispatch =
-    appealIsDispatched && (supportCavcRemand || supportPostDispatchSubstitution);
+    appealIsDispatched && (supportCavcRemand || supportPostDispatchSubstitution || supportCavcDashboard);
 
   const actionableScheduledHearingTasks = useSelector(
     (state) => openScheduleHearingTasksForAppeal(state, { appealId: appeal.externalId })
@@ -257,6 +274,7 @@ export const CaseDetailsView = (props) => {
           appealId={appealId}
           includeCavcRemand={supportCavcRemand}
           includeSubstitute={supportPostDispatchSubstitution}
+          supportCavcDashboard={supportCavcDashboard}
         />
       )}
       {(!modalIsOpen || props.userCanScheduleVirtualHearings) && <UserAlerts />}
@@ -391,12 +409,29 @@ export const CaseDetailsView = (props) => {
                   </span>
                 )
               }
+              appealId = {appealId}
+              canViewCavcDashboards = {canViewCavcDashboards}
               {...appeal.cavcRemand}
             />
           )}
 
-          <CaseTimeline title="Case Timeline" appeal={appeal} />
-        </StickyNavContentArea>
+          <CaseTimeline title="Case Timeline" appeal={appeal}
+            additionalHeaderContent={
+              true && (
+                <span className="cf-push-right" {...anchorEditLinkStyling}>
+                  { appeal.hasNotifications &&
+                  <Link id="notification-link" href={`/queue/appeals/${appealId}/notifications`} target="_blank">
+                    {COPY.VIEW_NOTIFICATION_LINK}
+                    &nbsp;
+                    <span {...ICON_POSITION_FIX}>
+                      <ExternalLinkIcon color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
+                    </span>
+                  </Link>}
+                </span>
+              )
+            }
+          />
+        </StickyNavContentArea >
         {props.pollHearing && pollHearing()}
       </AppSegment>
     </React.Fragment>
@@ -422,7 +457,8 @@ CaseDetailsView.propTypes = {
   pollHearing: PropTypes.bool,
   stopPollingHearing: PropTypes.func,
   substituteAppellant: PropTypes.object,
-  vsoVirtualOptIn: PropTypes.bool
+  vsoVirtualOptIn: PropTypes.bool,
+  canViewCavcDashboards: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
@@ -430,6 +466,7 @@ const mapStateToProps = (state) => ({
   pollHearing: state.components.scheduledHearing.polling,
   featureToggles: state.ui.featureToggles,
   substituteAppellant: state.substituteAppellant,
+  canViewCavcDashboards: state.ui.canViewCavcDashboards
 });
 
 const mapDispatchToProps = (dispatch) =>
@@ -449,3 +486,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(CaseDetailsView);
+/* eslint-enable max-lines */

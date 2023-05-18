@@ -74,7 +74,7 @@ class AttorneyCaseReview < CaseflowRecord
         overtime: overtime,
         note: note,
         modifying_user: modifying_user,
-        reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone
+        reassigned_to_judge_date: VacolsHelper.local_time_with_utc_timezone
       }
     )
   end

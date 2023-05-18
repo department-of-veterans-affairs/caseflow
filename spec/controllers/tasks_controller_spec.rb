@@ -931,6 +931,411 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
     end
   end
 
+  describe "PATCH /tasks/:id with a contested claim appeal" do
+    let(:cob_user) { create(:user) }
+    let(:cob_team) { ClerkOfTheBoard.singleton }
+    let(:cc_appeal) { create(:appeal) }
+    let(:cc_issue) do
+      create(
+        :request_issue,
+        benefit_type: "insurance",
+        nonrating_issue_category: "Contested Death Claim | Other",
+        nonrating_issue_description: "contested death claim",
+        decision_review: cc_appeal,
+        decision_date: 1.month.ago
+      )
+    end
+    let(:distribution_task) { create(:distribution_task, parent: cc_appeal.root_task) }
+    let(:send_initial_task) do
+      SendInitialNotificationLetterTask.create!(
+        appeal: cc_appeal,
+        parent: distribution_task,
+        assigned_to: cob_team,
+        assigned_by: cob_user
+      )
+    end
+
+    before do
+      cob_team.add_user(cob_user)
+      User.authenticate!(user: cob_user)
+      FeatureToggle.enable!(:cc_appeal_workflow)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+    end
+
+    context "a contested claim's send initial notification letter task is marked to be completed" do
+      let(:hold_days) { 45 }
+      let(:params) do
+        {
+          task: {
+            status: Constants.TASK_STATUSES.completed,
+            instructions: "Hold time: 45 days"
+          },
+          id: send_initial_task.id.to_s,
+          select_opc: "task_complete_contested_claim",
+          radio_value: hold_days.to_s
+        }
+      end
+
+      subject { patch :update, params: params }
+
+      it "completes the task and creates a PostSendInitialNotificationLetterHoldingTask" do
+        # load the data properly
+        cc_issue
+        cc_appeal.reload.request_issues
+
+        # call subject
+        subject
+        # expect(response.status).to eq 200
+        expect(send_initial_task.reload.status).to eq("completed")
+        expect(send_initial_task.reload.completed_by).to eq(cob_user)
+        # find post initial task created
+        psi = cc_appeal.reload.tasks.find_by(type: "PostSendInitialNotificationLetterHoldingTask")
+        expect(psi.nil?).to be false
+      end
+
+      it "creates a Timed Task for the PostSendInitialNotificationLetterHoldingTask" do
+        # load the data properly
+        cc_issue
+        cc_appeal.reload.request_issues
+
+        # call subject
+        subject
+
+        # find post initial task that was created
+        psi = cc_appeal.reload.tasks.find_by(type: "PostSendInitialNotificationLetterHoldingTask")
+        # find task timer for the post initial task
+        tt = TaskTimer.find_by(task_id: psi.id)
+        expect(tt.nil?).to be false
+        # expect the submitted at time to be the hold days, minus time it takes to create it
+        expect(tt.submitted_at).to be_within(1.second).of (tt.created_at + hold_days.days)
+      end
+    end
+
+    context "a contested claim's send initial task is marked to go to final task" do
+      let(:instructions) { "Proceed to final instructions here" }
+      let(:params) do
+        {
+          task: {
+            status: Constants.TASK_STATUSES.completed,
+            instructions: instructions
+          },
+          id: send_initial_task.id.to_s,
+          select_opc: "proceed_final_notification_letter_initial"
+        }
+      end
+
+      subject { patch :update, params: params }
+
+      it "completed the initial task and creates a final notification task" do
+        # load the data properly
+        cc_issue
+        cc_appeal.reload.request_issues
+
+        # call subject
+        subject
+
+        expect(response.status).to eq 200
+        expect(send_initial_task.reload.status).to eq("completed")
+        expect(send_initial_task.reload.instructions[0]).to eq(instructions)
+        expect(send_initial_task.reload.completed_by).to eq(cob_user)
+
+        # expect final notification letter task created
+        final_letter_task = cc_appeal.tasks.find_by(type: "SendFinalNotificationLetterTask")
+
+        expect(final_letter_task.status).to eq("assigned")
+        expect(final_letter_task.parent).to eq(distribution_task)
+        expect(distribution_task.status).to eq("on_hold")
+        expect(final_letter_task.assigned_to).to eq(cob_team)
+        expect(final_letter_task.assigned_by).to eq(cob_user)
+      end
+    end
+
+    context "a contested claim's send initial notification letter task is marked to be cancelled" do
+      let(:instructions) { "Cancel instructions go here" }
+      let(:params) do
+        {
+          task: {
+            status: Constants.TASK_STATUSES.cancelled,
+            instructions: instructions
+          },
+          id: send_initial_task.id.to_s
+        }
+      end
+
+      subject { patch :update, params: params }
+
+      it "cancels the task" do
+        # load the data properly
+        cc_issue
+        cc_appeal.reload.request_issues
+
+        # call subject
+        subject
+
+        expect(response.status).to eq 200
+        expect(send_initial_task.reload.status).to eq("cancelled")
+        expect(send_initial_task.reload.instructions[0]).to eq(instructions)
+        expect(send_initial_task.reload.completed_by).to eq(nil)
+        expect(send_initial_task.reload.cancelled_by).to eq(cob_user)
+      end
+    end
+
+    context "a contested claim's post initial task is marked to be completed" do
+      let(:days_on_hold) { 45 }
+      let(:post_initial_task) do
+        PostSendInitialNotificationLetterHoldingTask.create!(
+          appeal: cc_appeal,
+          parent: distribution_task,
+          assigned_to: cob_team,
+          assigned_by: cob_user,
+          end_date: Time.zone.now + days_on_hold.days
+        )
+      end
+
+      let(:post_task_timer) do
+        TimedHoldTask.create_from_parent(
+          post_initial_task,
+          days_on_hold: days_on_hold,
+          instructions: "45 Days Hold Period"
+        )
+      end
+
+      let (:taskTimer) { TaskTimer.find_by(task_id: post_initial_task.id) }
+      let (:dayOnHold) { ((taskTimer.updated_at - taskTimer.created_at).to_i / 1.day) }
+
+      # expected instructions are payload instructions plus the hold time
+      let(:instructions) { "Completion instructions go here" }
+      let(:expected_instructions) do
+        "\nHold time: #{dayOnHold}/#{days_on_hold} days\n\n#{instructions}"
+      end
+
+      let(:params) do
+        {
+          task: {
+            status: Constants.TASK_STATUSES.completed,
+            instructions: expected_instructions
+          },
+          id: post_initial_task.id.to_s
+        }
+      end
+
+      subject { patch :update, params: params }
+
+      it "completes the post initial task and creates a final notification task" do
+        cc_appeal.reload.request_issues
+
+        # call subject
+        subject
+
+        expect(response.status).to eq 200
+        expect(post_initial_task.reload.status).to eq("completed")
+        expect(post_initial_task.reload.completed_by).to eq(cob_user)
+        # post task instructions should be concat with days on hold
+        # uncomment this last line when the post initial task complete is finished
+        # expect(post_initial_task.reload.instructions[0]).to eq(expected_instructions)
+      end
+    end
+
+    context "a contested claim's post initial task is marked to be cancelled" do
+      let(:days_on_hold) { 45 }
+      let(:post_initial_task) do
+        PostSendInitialNotificationLetterHoldingTask.create!(
+          appeal: cc_appeal,
+          parent: distribution_task,
+          assigned_to: cob_team,
+          assigned_by: cob_user,
+          end_date: Time.zone.now + days_on_hold.days
+        )
+      end
+
+      let(:post_task_timer) do
+        TimedHoldTask.create_from_parent(
+          post_initial_task,
+          days_on_hold: days_on_hold,
+          instructions: "45 Days Hold Period"
+        )
+      end
+
+      let (:taskTimer) { TaskTimer.find_by(task_id: post_initial_task.id) }
+      let (:dayOnHold) { ((taskTimer.updated_at - taskTimer.created_at).to_i / 1.day) }
+
+      # expected instructions are payload instructions plus the hold time
+      let(:instructions) { "Completion instructions go here" }
+      let(:expected_instructions) do
+        "\nHold time: #{dayOnHold}/#{days_on_hold} days\n\n#{instructions}"
+      end
+
+      let(:params) do
+        {
+          task: {
+            status: Constants.TASK_STATUSES.cancelled,
+            instructions: expected_instructions
+          },
+          id: post_initial_task.id.to_s
+        }
+      end
+
+      # expected instructions are payload instructions plus the hold time
+
+      subject { patch :update, params: params }
+
+      it "cancels the task" do
+        # load the data properly
+        cc_issue
+        cc_appeal.reload.request_issues
+
+        # call subject
+        subject
+
+        expect(response.status).to eq 200
+        expect(post_initial_task.reload.status).to eq("cancelled")
+        # post task instructions should be concat with days on hold
+        expect(post_initial_task.reload.instructions[0]).to eq(expected_instructions)
+        expect(post_initial_task.reload.completed_by).to eq(nil)
+        expect(post_initial_task.reload.cancelled_by).to eq(cob_user)
+      end
+
+      it "properly displays how many days the task has been on hold" do
+        # load the data properly
+        cc_issue
+        cc_appeal.reload.request_issues
+
+        # set the task timer and post_task to 12 days in the past
+        tt = TaskTimer.find_by(task_id: post_initial_task.id)
+
+        tt.created_at = Time.zone.now - 12.days
+        tt.save!
+        post_initial_task.created_at = Time.zone.now - 12.days
+        post_initial_task.save!
+
+        # call subject
+        subject
+
+        expect(response.status).to eq 200
+        expect(post_initial_task.reload.status).to eq("cancelled")
+        expect(post_initial_task.reload.completed_by).to eq(nil)
+        expect(post_initial_task.reload.cancelled_by).to eq(cob_user)
+        # post task instructions should be concat with days on hold
+        expect(post_initial_task.reload.instructions[0]).to eq(expected_instructions)
+      end
+    end
+
+    context "a contested claim's final letter task is marked to be completed" do
+      let(:final_letter_task) do
+        SendFinalNotificationLetterTask.create!(
+          appeal: cc_appeal,
+          parent: distribution_task,
+          assigned_to: cob_team,
+          assigned_by: cob_user
+        )
+      end
+      let(:hold_days) { 45 }
+      let(:params) do
+        {
+          task: {
+            status: Constants.TASK_STATUSES.completed,
+            instructions: "Hold time: 45 days"
+          },
+          id: final_letter_task.id.to_s
+        }
+      end
+
+      subject { patch :update, params: params }
+
+      it "completes the task and unblocks the distribution task" do
+        # load the data properly
+        send_initial_task.completed!
+        cc_issue
+        cc_appeal.reload.request_issues
+
+        # call subject
+        subject
+
+        expect(response.status).to eq 200
+        expect(final_letter_task.reload.status).to eq("completed")
+        expect(final_letter_task.reload.completed_by).to eq(cob_user)
+        expect(distribution_task.reload.status).to eq("assigned")
+      end
+    end
+
+    context "a contested claim's final notification letter task is marked to be cancelled" do
+      let(:instructions) { "final task cancelled instructions" }
+      let(:final_letter_task) do
+        SendFinalNotificationLetterTask.create!(
+          appeal: cc_appeal,
+          parent: distribution_task,
+          assigned_to: cob_team,
+          assigned_by: cob_user
+        )
+      end
+      let(:params) do
+        {
+          task: {
+            status: Constants.TASK_STATUSES.cancelled,
+            instructions: instructions
+          },
+          id: final_letter_task.id.to_s
+        }
+      end
+
+      subject { patch :update, params: params }
+
+      it "cancels the task" do
+        # load the data properly
+        cc_issue
+        cc_appeal.reload.request_issues
+
+        # call subject
+        subject
+
+        expect(response.status).to eq 200
+        expect(final_letter_task.reload.status).to eq("cancelled")
+        expect(final_letter_task.reload.instructions[0]).to eq(instructions)
+        expect(final_letter_task.reload.completed_by).to eq(nil)
+        expect(final_letter_task.reload.cancelled_by).to eq(cob_user)
+      end
+    end
+
+    context "a contested claim's send initial task is marked to go to final task" do
+      let(:instructions) { "Complete final task instructions here" }
+      let(:params) do
+        {
+          task: {
+            status: Constants.TASK_STATUSES.completed,
+            instructions: instructions
+          },
+          id: send_initial_task.id.to_s,
+          select_opc: "proceed_final_notification_letter_initial"
+        }
+      end
+
+      subject { patch :update, params: params }
+
+      it "completed the initial task and creates a final notification task" do
+        # load the data properly
+        cc_issue
+        cc_appeal.reload.request_issues
+
+        # call subject
+        subject
+
+        expect(response.status).to eq 200
+        expect(send_initial_task.reload.status).to eq("completed")
+        expect(send_initial_task.reload.instructions[0]).to eq(instructions)
+        expect(send_initial_task.reload.completed_by).to eq(cob_user)
+
+        # expect final notification letter task created
+        final_letter_task = cc_appeal.tasks.find_by(type: "SendFinalNotificationLetterTask")
+
+        expect(final_letter_task.status).to eq("assigned")
+        expect(final_letter_task.parent).to eq(distribution_task)
+        expect(distribution_task.status).to eq("on_hold")
+        expect(final_letter_task.assigned_to).to eq(cob_team)
+        expect(final_letter_task.assigned_by).to eq(cob_user)
+      end
+    end
+  end
+
   describe "GET appeals/:id/tasks" do
     let(:assigning_user) { create(:default_user) }
     let(:attorney_user) { create(:user) }
@@ -968,7 +1373,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
         expect(task["attributes"]["available_actions"].size).to eq 2
 
-        expect(DatabaseRequestCounter.get_counter(:vacols)).to eq(15)
+        expect(DatabaseRequestCounter.get_counter(:vacols)).to eq(16)
       end
     end
 

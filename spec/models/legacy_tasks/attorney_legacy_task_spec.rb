@@ -25,7 +25,7 @@ describe AttorneyLegacyTask, :postgres do
       it "sets all the fields correctly" do
         expect(subject.user_id).to eq(user.css_id)
         expect(subject.id).to eq(vacols_id)
-        expect(subject.assigned_on).to eq 5.days.ago.to_date
+        expect(subject.assigned_on).to eq 5.days.ago.to_datetime
         expect(subject.task_id).to eq "1111-2015-01-24"
         expect(subject.started_at).to eq nil
       end

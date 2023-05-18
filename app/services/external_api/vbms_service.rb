@@ -11,6 +11,10 @@ class VBMSCaseflowLogger
         Rails.logger.error(
           "VBMS HTTP Error #{status} (#{data.pretty_inspect})"
         )
+      else
+        Rails.logger.info(
+          "VBMS HTTP Success #{status} (#{data.pretty_inspect})"
+        )
       end
     end
   end
@@ -44,6 +48,12 @@ class ExternalApi::VBMSService
     upload_document(appeal.veteran_file_number, response.upload_token, uploadable_document.pdf_location)
   end
 
+  def self.upload_document_to_vbms_veteran(veteran_file_number, uploadable_document)
+    @vbms_client ||= init_vbms_client
+    response = initialize_upload_veteran(veteran_file_number, uploadable_document)
+    upload_document(veteran_file_number, response.upload_token, uploadable_document.pdf_location)
+  end
+
   def self.initialize_upload(appeal, uploadable_document)
     content_hash = Digest::SHA1.hexdigest(File.read(uploadable_document.pdf_location))
     filename = SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
@@ -58,6 +68,22 @@ class ExternalApi::VBMSService
       new_mail: true
     )
     send_and_log_request(appeal.veteran_file_number, request)
+  end
+
+  def self.initialize_upload_veteran(veteran_file_number, uploadable_document)
+    content_hash = Digest::SHA1.hexdigest(File.read(uploadable_document.pdf_location))
+    filename = uploadable_document.document_name.presence || SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
+    request = VBMS::Requests::InitializeUpload.new(
+      content_hash: content_hash,
+      filename: filename,
+      file_number: veteran_file_number,
+      va_receive_date: Time.zone.now,
+      doc_type: uploadable_document.document_type_id,
+      source: uploadable_document.source,
+      subject: uploadable_document.document_subject.presence || uploadable_document.document_type,
+      new_mail: true
+    )
+    send_and_log_request(veteran_file_number, request)
   end
 
   def self.upload_document(vbms_id, upload_token, filepath)

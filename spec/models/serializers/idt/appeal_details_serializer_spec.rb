@@ -130,6 +130,15 @@ describe Idt::V1::AppealDetailsSerializer, :postgres do
       expect(claimant_attributes[:full_name]).to be nil
     end
 
+    it "includes the name suffix if present" do
+      allow_any_instance_of(Claimant).to receive(:suffix).and_return("PhD")
+
+      serialized_attributes = subject.serializable_hash[:data][:attributes]
+
+      claimant_attributes = serialized_attributes[:appellants].first
+      expect(claimant_attributes[:name_suffix]).to eq "PhD"
+    end
+
     context "when the claimant is missing last name, but has full name" do
       it "populates full name in appellant attributes" do
         allow_any_instance_of(Claimant).to receive(:name).and_return("Full Name")

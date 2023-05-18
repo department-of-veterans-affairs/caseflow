@@ -1095,7 +1095,7 @@ export const scheduleData = ({ hearingSchedule, user }) => {
       align: 'left',
       valueName: 'scheduledFor',
       columnName: 'date',
-      valueFunction: (row) => <Link to={`/schedule/docket/${row.id}`}>
+      valueFunction: (row) => <Link ariaLabel={`schedule docket ${row.id}`} to={`/schedule/docket/${row.id}`}>
         {moment(row.scheduledFor).format('ddd M/DD/YYYY')}
       </Link>,
       getSortValue: (row) => {

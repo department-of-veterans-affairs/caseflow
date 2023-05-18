@@ -8,7 +8,7 @@ import { FormProvider } from 'react-hook-form';
 import { ClaimantForm } from 'app/intake/addClaimant/ClaimantForm';
 
 import { useClaimantForm } from 'app/intake/addClaimant/utils';
-import { fillForm, relationshipOpts } from './testUtils';
+import { fillForm, relationshipOpts, relationshipOptsHlrSc } from './testUtils';
 import { ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
 
 const FormWrapper = ({ children, defaultValues }) => {
@@ -145,4 +145,91 @@ describe('ClaimantForm', () => {
       expect(container).toMatchSnapshot();
     });
   });
+});
+
+describe('HlrScClaimantForm', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  const selectRelationship = async (number) => {
+    await selectEvent.select(
+      screen.getByLabelText('Relationship to the Veteran'),
+      [relationshipOptsHlrSc[number].label]
+    );
+  };
+
+  const onSubmit = jest.fn();
+
+  const setup = (props = { onSubmit, formType: 'higher_level_review' }, wrapperProps = {}) => {
+    return render(<ClaimantForm {...props} />, {
+      wrapper: ({ children }) => (
+        <FormWrapper {...wrapperProps}>{children}</FormWrapper>
+      ),
+    });
+  };
+
+  it('renders default state correctly', () => {
+    const { container } = setup();
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('renders child relationship state correctly', async () => {
+    const { container } = setup();
+
+    await selectRelationship(1);
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('renders spouse relationship state correctly', async () => {
+    const { container } = setup();
+
+    await selectRelationship(2);
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('renders healthcare provider relationship state correctly', async () => {
+    const { container } = setup();
+
+    await selectRelationship(3);
+
+    // Set type to organization
+    await userEvent.click(
+      screen.getByRole('radio', { name: /organization/i })
+    );
+
+    expect(container).toMatchSnapshot();
+
+    // Set type to individual
+    await userEvent.click(
+      screen.getByRole('radio', { name: /individual/i })
+    );
+
+    expect(container).toMatchSnapshot();
+
+  });
+
+  it('renders other relationship state correctly', async () => {
+    const { container } = setup();
+
+    await selectRelationship(4);
+
+    // Set type to organization
+    await userEvent.click(
+      screen.getByRole('radio', { name: /organization/i })
+    );
+
+    expect(container).toMatchSnapshot();
+
+    // Set type to individual
+    await userEvent.click(
+      screen.getByRole('radio', { name: /individual/i })
+    );
+
+    expect(container).toMatchSnapshot();
+  });
+
 });

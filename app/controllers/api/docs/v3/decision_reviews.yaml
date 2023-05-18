@@ -1286,24 +1286,21 @@ components:
         - Entitlement | Medallion (Monetary Allowance)
         - Entitlement | IMO in NC
         # for benefit type:  vha
-        - Eligibility for Treatment | Dental
-        - Eligibility for Treatment | Other
-        - Beneficiary Travel | Mileage
-        - Beneficiary Travel | Common Carrier
-        - Beneficiary Travel | Special Mode
         - Caregiver | Eligibility
         - Caregiver | Tier Level
         - Caregiver | Revocation/Discharge
         - Caregiver | Other
-        - Eligibility for Fee Basis Care
-        - Level of Priority for Treatment
-        - Clothing Allowance § 3.810(b) Certification
-        - Prosthetics Services
-        - Family Member Services | CHAMPVA Eligibility
-        - Family Member Services | CHAMPVA Medical Charges
-        - Family Member Services | Foreign Medical Program Medical Charges
-        - Family Member Services | Spina Bifida Medical Charges
-        - Family Member Services | Camp Lejeune Family Member Eligibility
+        - Beneficiary Travel
+        - Clothing Allowance
+        - Medical and Dental Care Reimbursement
+        - Initial Eligibility and Enrollment in VHA Healthcare
+        - Eligibility for Dental Treatment
+        - CHAMPVA
+        - Camp Lejune Family Member
+        - Foreign Medical Program
+        - Spina Bifida Treatment (Non-Compensation)
+        - Continuing Eligibility/Income Verification Match (IVM)
+        - Prosthetics | Other (not clothing allowance)
         - Other
     PayeeCode:
       type: string

@@ -1,0 +1,26 @@
+<%= render "intro" %>
+
+<%= content_for :content do %>
+  <p>
+    We approved your request for Caseflow <%= @requesting_org_name %> pages, which also includes access to the VHA pages.
+  </p>
+
+  <p style="padding-top:20px">
+    <b> You now have access to the following groups' pages: </b>
+  </p>
+
+  <% @accessible_groups.each do |accessible_group| %>
+    <p> <%= accessible_group %> </p>
+  <% end %>
+
+  <% if @pending_organization_request_names.present? %>
+    <p style="padding-top:20px">
+      You still have pending requests for other Pre-docket offices. You'll get a separate decision email from each Pre-docket office listed below.
+    </p>
+    <%= render "pending_requests" %>
+  <% end %>
+
+<% end %>
+
+<%= render "help" %>
+<%= render "vha_signature" %>

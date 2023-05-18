@@ -136,7 +136,7 @@ class RequestIssue < CaseflowRecord
     # "Active" issues are issues that need decisions.
     # They show up as contentions in VBMS and issues in Caseflow Queue.
     def active
-      eligible.where(closed_at: nil)
+      eligible.where(closed_at: nil, split_issue_status: [nil, "in_progress"])
     end
 
     def active_or_ineligible
@@ -289,18 +289,19 @@ class RequestIssue < CaseflowRecord
   end
 
   def predocket_needed?
-    user = RequestStore.store[:current_user]
-
-    if benefit_type == "vha" ||
-       benefit_type == "education" && FeatureToggle.enabled?(:edu_predocket_appeals, user: user)
-      !!is_predocket_needed
-    else
-      false
-    end
+    !!is_predocket_needed
   end
 
   def education_predocket?
-    benefit_type == "education" && predocket_needed?
+    user = RequestStore.store[:current_user]
+
+    benefit_type == "education" &&
+      FeatureToggle.enabled?(:edu_predocket_appeals, user: user) &&
+      predocket_needed?
+  end
+
+  def vha_predocket?
+    benefit_type == "vha" && predocket_needed?
   end
 
   def description
@@ -535,7 +536,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def requires_record_request_task?
-    return false if predocket_needed?
+    return false if predocket_needed? || benefit_type == "vha"
 
     eligible? && !is_unidentified && !benefit_type_requires_payee_code?
   end

@@ -11,20 +11,38 @@ class Idt::Api::V1::BaseController < ActionController::Base
   # :nocov:
   rescue_from StandardError do |error|
     log_error(error)
+    uuid = SecureRandom.uuid
+    Rails.logger.error("IDT Standard Error ID: " + uuid)
     if error.class.method_defined?(:serialize_response)
       render(error.serialize_response)
     else
-      render json: { message: "Unexpected error: #{error.message}" }, status: :internal_server_error
+      render json: { message: "IDT Standard Error ID: " + uuid + " Unexpected error: #{error.message}" }, status: :internal_server_error
     end
   end
   # :nocov:
 
-  rescue_from ActiveRecord::RecordNotFound do |_e|
-    render(json: { message: "Record not found" }, status: :not_found)
+  rescue_from ActiveRecord::RecordNotFound do |error|
+    log_error(error)
+    uuid = SecureRandom.uuid
+    Rails.logger.error("IDT Standard Error ID: " + uuid)
+    render(json: { message: "IDT Standard Error ID: " + uuid + " Record not found" }, status: :not_found)
   end
 
-  rescue_from Caseflow::Error::InvalidFileNumber do |_e|
-    render(json: { message: "Please enter a file number in the 'FILENUMBER' header" }, status: :unprocessable_entity)
+  rescue_from Caseflow::Error::InvalidFileNumber do |error|
+    log_error(error)
+    uuid = SecureRandom.uuid
+    Rails.logger.error("IDT Standard Error ID: " + uuid)
+    render(json: { message: "IDT Standard Error ID: " + uuid + " Please enter a file number in the 'FILENUMBER' header" }, status: :unprocessable_entity)
+  end
+
+  rescue_from Caseflow::Error::VeteranNotFound do |error|
+    log_error(error)
+    render(json: { message: "IDT Exception ID: " + error.message }, status: :bad_request)
+  end
+
+  rescue_from Caseflow::Error::AppealNotFound do |error|
+    log_error(error)
+    render(json: { message: "IDT Exception ID: " + error.message }, status: :bad_request)
   end
 
   def validate_token
@@ -78,6 +96,6 @@ class Idt::Api::V1::BaseController < ActionController::Base
   def log_error(error)
     Raven.capture_exception(error)
     Rails.logger.error(error)
-    Rails.logger.error(error.backtrace.join("\n"))
+    Rails.logger.error(error&.backtrace&.join("\n"))
   end
 end

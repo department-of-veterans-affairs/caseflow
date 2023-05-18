@@ -57,6 +57,14 @@ FactoryBot.define do
           decision_review: appeal,
           type: "OtherClaimant"
         )
+      elsif evaluator.has_healthcare_provider_claimant
+        create(
+          :claimant,
+          :with_unrecognized_appellant_detail,
+          participant_id: appeal.veteran.participant_id,
+          decision_review: appeal,
+          type: "HealthcareProviderClaimant"
+        )
       elsif !Claimant.exists?(participant_id: appeal.veteran.participant_id, decision_review: appeal)
         create(
           :claimant,
@@ -111,6 +119,10 @@ FactoryBot.define do
 
     transient do
       has_unrecognized_appellant { false }
+    end
+
+    transient do
+      has_healthcare_provider_claimant { false }
     end
 
     transient do
@@ -234,10 +246,24 @@ FactoryBot.define do
       end
     end
 
+    trait :with_completed_root_task do
+      before(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        root_task.update!(status: Constants.TASK_STATUSES.completed)
+      end
+    end
+
+    trait :with_cancelled_root_task do
+      before(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        root_task.update!(status: Constants.TASK_STATUSES.cancelled)
+      end
+    end
+
     trait :with_assigned_bva_dispatch_task do
       after(:create) do |appeal, _evaluator|
         bva_dispatch = BvaDispatch.singleton
-        bva_dispatch_non_admin = create(:default_user)
+        bva_dispatch_non_admin = User.system_user
         bva_dispatch.add_user(bva_dispatch_non_admin)
         root_task = RootTask.find_or_create_by!(appeal: appeal)
         BvaDispatchTask.create!(assigned_to: bva_dispatch, parent_id: root_task.id, appeal: root_task.appeal)
@@ -318,6 +344,36 @@ FactoryBot.define do
         org = Organization.find_by(type: "Vso")
         org ||= create(:vso)
         create(:informal_hearing_presentation_task, appeal: appeal, assigned_to: org)
+      end
+    end
+
+    trait :with_completed_ihp_task do
+      after(:create) do |appeal, _evaluator|
+        org = Organization.find_by(type: "Vso")
+        org ||= create(:vso)
+        ihp_task = create(:informal_hearing_presentation_task, appeal: appeal, assigned_to: org)
+        ihp_task.update!(status: "completed")
+      end
+    end
+
+    trait :with_ihp_colocated_task do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        parent = root_task
+        org = Organization.find_by(type: "Vso")
+        org ||= create(:vso)
+        create(:colocated_task, :ihp, appeal: appeal, parent: parent, assigned_to: org)
+      end
+    end
+
+    trait :with_completed_ihp_colocated_task do
+      after(:create) do |appeal, _evaluator|
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        parent = root_task
+        org = Organization.find_by(type: "Vso")
+        org ||= create(:vso)
+        ihp_colocated_task = create(:colocated_task, :ihp, appeal: appeal, parent: parent, assigned_to: org)
+        ihp_colocated_task.update!(status: "completed")
       end
     end
 

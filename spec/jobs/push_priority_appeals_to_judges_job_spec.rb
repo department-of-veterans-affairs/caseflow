@@ -692,16 +692,20 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       hearing_days_waiting = (today - ready_priority_hearing_case.ready_for_distribution_at.to_date).to_i
       expect(subject[6]).to eq "*Age of oldest hearing case*: #{hearing_days_waiting} days"
 
-      expect(subject[7]).to eq "*Number of appeals _not_ distributed*: 4"
+      expect(subject[7]).to eq "*Total Number of appeals _not_ distributed*: 4"
+      expect(subject[8]).to eq "*Number of legacy appeals _not_ distributed*: 1"
+      expect(subject[9]).to eq "*Number of direct_review appeals _not_ distributed*: 1"
+      expect(subject[10]).to eq "*Number of evidence_submission appeals _not_ distributed*: 1"
+      expect(subject[11]).to eq "*Number of hearing appeals _not_ distributed*: 1"
+      expect(subject[12]).to eq "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: 1"
 
-      expect(subject[10]).to eq "Priority Target: 6"
-      expect(subject[11]).to eq "Previous monthly distributions: #{previous_distributions}"
-      expect(subject[12].include?(legacy_priority_case.bfkey)).to be true
-      expect(subject[13].include?(ready_priority_hearing_case.uuid)).to be true
-      expect(subject[13].include?(ready_priority_evidence_case.uuid)).to be true
-      expect(subject[13].include?(ready_priority_direct_case.uuid)).to be true
-
-      expect(subject.last).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
+      expect(subject[15]).to eq "Priority Target: 6"
+      expect(subject[16]).to eq "Previous monthly distributions {judge_id=>count}: #{previous_distributions}"
+      expect(subject[17]).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
+      expect(subject[18].include?(ready_priority_hearing_case.uuid)).to be true
+      expect(subject[18].include?(ready_priority_evidence_case.uuid)).to be true
+      expect(subject[18].include?(ready_priority_direct_case.uuid)).to be true
+      expect(subject[19].include?(legacy_priority_case.bfkey)).to be true
     end
 
     it "returns the Slack Message associated with By Docket Date Distribution" do
@@ -718,16 +722,20 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       hearing_days_waiting = (today - ready_priority_hearing_case.receipt_date).to_i
       expect(subject[5]).to eq "*Age of oldest hearing case*: #{hearing_days_waiting} days"
 
-      expect(subject[6]).to eq "*Number of appeals _not_ distributed*: 4"
+      expect(subject[6]).to eq "*Total Number of appeals _not_ distributed*: 4"
+      expect(subject[7]).to eq "*Number of legacy appeals _not_ distributed*: 1"
+      expect(subject[8]).to eq "*Number of direct_review appeals _not_ distributed*: 1"
+      expect(subject[9]).to eq "*Number of evidence_submission appeals _not_ distributed*: 1"
+      expect(subject[10]).to eq "*Number of hearing appeals _not_ distributed*: 1"
+      expect(subject[11]).to eq "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: 1"
 
-      expect(subject[9]).to eq "Priority Target: 6"
-      expect(subject[10]).to eq "Previous monthly distributions: #{previous_distributions}"
-      expect(subject[11].include?(legacy_priority_case.bfkey)).to be true
-      expect(subject[12].include?(ready_priority_hearing_case.uuid)).to be true
-      expect(subject[12].include?(ready_priority_evidence_case.uuid)).to be true
-      expect(subject[12].include?(ready_priority_direct_case.uuid)).to be true
-
-      expect(subject.last).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
+      expect(subject[14]).to eq "Priority Target: 6"
+      expect(subject[15]).to eq "Previous monthly distributions {judge_id=>count}: #{previous_distributions}"
+      expect(subject[16]).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
+      expect(subject[17].include?(ready_priority_hearing_case.uuid)).to be true
+      expect(subject[17].include?(ready_priority_evidence_case.uuid)).to be true
+      expect(subject[17].include?(ready_priority_direct_case.uuid)).to be true
+      expect(subject[18].include?(legacy_priority_case.bfkey)).to be true
     end
 
     after do
@@ -826,16 +834,20 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       hearing_days_waiting = (today - ready_priority_hearing_case.ready_for_distribution_at.to_date).to_i
       expect(subject[6]).to eq "*Age of oldest hearing case*: #{hearing_days_waiting} days"
 
-      expect(subject[7]).to eq "*Number of appeals _not_ distributed*: 4"
+      expect(subject[7]).to eq "*Total Number of appeals _not_ distributed*: 4"
+      expect(subject[8]).to eq "*Number of legacy appeals _not_ distributed*: 1"
+      expect(subject[9]).to eq "*Number of direct_review appeals _not_ distributed*: 1"
+      expect(subject[10]).to eq "*Number of evidence_submission appeals _not_ distributed*: 1"
+      expect(subject[11]).to eq "*Number of hearing appeals _not_ distributed*: 1"
+      expect(subject[12]).to eq "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: 1"
 
-      expect(subject[10]).to eq "Priority Target: 6"
-      expect(subject[11]).to eq "Previous monthly distributions: #{previous_distributions}"
-      expect(subject[12].include?(legacy_priority_case.bfkey)).to be true
-      expect(subject[13].include?(ready_priority_hearing_case.uuid)).to be true
-      expect(subject[13].include?(ready_priority_evidence_case.uuid)).to be true
-      expect(subject[13].include?(ready_priority_direct_case.uuid)).to be true
-
-      expect(subject.last).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
+      expect(subject[15]).to eq "Priority Target: 6"
+      expect(subject[16]).to eq "Previous monthly distributions {judge_id=>count}: #{previous_distributions}"
+      expect(subject[17]).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
+      expect(subject[18].include?(ready_priority_hearing_case.uuid)).to be true
+      expect(subject[18].include?(ready_priority_evidence_case.uuid)).to be true
+      expect(subject[18].include?(ready_priority_direct_case.uuid)).to be true
+      expect(subject[19].include?(legacy_priority_case.bfkey)).to be true
     end
   end
 

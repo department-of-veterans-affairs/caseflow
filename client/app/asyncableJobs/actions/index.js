@@ -1,12 +1,12 @@
 import ApiUtil from '../../util/ApiUtil';
 import { ACTIONS } from '../constants';
 
-export const sendJobRequest = (jobType) => (dispatch) => {
+export const sendJobRequest = (jobType, runAsync) => (dispatch) => {
   dispatch({
     type: ACTIONS.CLEAR_MANUAL_JOB_TYPE,
   });
 
-  return ApiUtil.post('asyncable_jobs/start_job', { data: { job_type: jobType } }).
+  return ApiUtil.post('asyncable_jobs/start_job', { data: { job_type: jobType, run_async: runAsync } }).
     then((response) => {
       dispatch({
         type: ACTIONS.MANUAL_JOB_STARTED,

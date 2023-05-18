@@ -17,6 +17,7 @@
       correctClaimReviews: FeatureToggle.enabled?(:correct_claim_reviews, user: current_user),
       covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
       split_appeal_workflow: FeatureToggle.enabled?(:split_appeal_workflow, user: current_user),
+      cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user),
       vhaPreDocketAppeals: false
     }
   }) %>

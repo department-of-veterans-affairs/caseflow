@@ -120,7 +120,7 @@ RSpec.feature "MailTasks", :postgres do
       find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
       # Instructions field is required
-      expect(page).to have_content(COPY::FORM_ERROR_FIELD_REQUIRED)
+      expect(page).to have_content(COPY::INSTRUCTIONS_ERROR_FIELD_REQUIRED)
 
       # Add instructions and try again
       new_instructions = generate_words(5)

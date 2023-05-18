@@ -141,6 +141,41 @@ feature "Appeal Edit issues", :all_dbs do
     expect(page).to have_button("Save", disabled: false)
   end
 
+  scenario "when selecting a new benefit type the issue category dropdown should return to a default state" do
+    new_vet = create(:veteran, first_name: "Ed", last_name: "Merica")
+    new_appeal = create(:appeal,
+                        veteran_file_number: new_vet.file_number,
+                        receipt_date: receipt_date,
+                        docket_type: Constants.AMA_DOCKETS.evidence_submission,
+                        veteran_is_not_claimant: false,
+                        legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+
+    visit "appeals/#{new_appeal.uuid}/edit/"
+
+    click_intake_add_issue
+
+    dropdown_select_string = "Select or enter..."
+    benefit_text = "Compensation"
+
+    # Select the first benefit type
+    all(".cf-select__control", text: dropdown_select_string).first.click
+    find("div", class: "cf-select__option", text: benefit_text).click
+
+    # Select the first issue category
+    find(".cf-select__control", text: dropdown_select_string).click
+    find("div", class: "cf-select__option", text: "Unknown Issue Category").click
+
+    # Verify that the default dropdown text is missing from the page
+    expect(page).to_not have_content(dropdown_select_string)
+
+    # Select a different benefit type
+    find(".cf-select__control", text: benefit_text).click
+    find("div", class: "cf-select__option", text: "Education").click
+
+    # Verify that the default dropdown text once again present on the page
+    expect(page).to have_content(dropdown_select_string)
+  end
+
   context "with remove decision review enabled" do
     scenario "allows all request issues to be removed and saved" do
       visit "appeals/#{appeal.uuid}/edit/"
@@ -164,7 +199,6 @@ feature "Appeal Edit issues", :all_dbs do
 
     scenario "saves diagnostic codes" do
       visit "appeals/#{appeal.uuid}/edit/"
-
       save_and_check_request_issues_with_diagnostic_codes(
         Constants.INTAKE_FORM_NAMES.appeal,
         appeal
@@ -313,6 +347,212 @@ feature "Appeal Edit issues", :all_dbs do
     end
   end
 
+  def add_contested_claim_issue
+    click_intake_add_issue
+    click_intake_no_matching_issues
+
+    # add the cc issue
+    dropdown_select_string = "Select or enter..."
+    benefit_text = "Insurance"
+
+    # Select the benefit type
+    all(".cf-select__control", text: dropdown_select_string).first.click
+    find("div", class: "cf-select__option", text: benefit_text).click
+
+    # Select the issue category
+    find(".cf-select__control", text: dropdown_select_string).click
+    find("div", class: "cf-select__option", text: "Contested Death Claim | Intent of Insured").click
+
+    # fill in date and issue description
+    fill_in "Decision date", with: 1.day.ago.to_date.mdY.to_s
+    fill_in "Issue description", with: "CC Instructions"
+
+    # click buttons
+    click_on "Add this issue"
+    click_on "Save"
+    click_on "Yes, save"
+  end
+
+  context "A contested claim is added to an evidence submission appeal" do
+    let!(:cc_appeal) do
+      create(:appeal,
+             veteran_file_number: veteran.file_number,
+             receipt_date: receipt_date,
+             docket_type: Constants.AMA_DOCKETS.evidence_submission,
+             veteran_is_not_claimant: false,
+             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+    end
+
+    before do
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:cc_appeal_workflow)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+      ClerkOfTheBoard.singleton
+    end
+
+    scenario "the cc_appeal_workflow feature toggle is not enabled" do
+      FeatureToggle.disable!(:cc_appeal_workflow)
+      visit("/appeals/#{cc_appeal.uuid}/edit")
+      add_contested_claim_issue
+
+      assert page.has_content?("You have successfully added 1 issue")
+      expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be true
+    end
+
+    scenario "a cc issue is assigned to an evidence submission appeal" do
+      visit("/appeals/#{cc_appeal.uuid}/edit")
+      add_contested_claim_issue
+
+      assert page.has_content?("You have successfully added 1 issue")
+      expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
+      ).to eql(cc_appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask"))
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
+      ).to eql(ClerkOfTheBoard.singleton)
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_by
+      ).to eql(current_user)
+    end
+  end
+
+  context "A contested claim is added to an hearing appeal" do
+    let!(:cc_appeal) do
+      create(:appeal,
+             veteran_file_number: veteran.file_number,
+             receipt_date: receipt_date,
+             docket_type: Constants.AMA_DOCKETS.hearing,
+             veteran_is_not_claimant: false,
+             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+    end
+
+    before do
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:cc_appeal_workflow)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+      ClerkOfTheBoard.singleton
+    end
+
+    scenario "a cc issue is assigned to a hearing appeal" do
+      visit("/appeals/#{cc_appeal.uuid}/edit")
+      add_contested_claim_issue
+
+      assert page.has_content?("You have successfully added 1 issue")
+      expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
+      ).to eql(cc_appeal.tasks.find_by(type: "ScheduleHearingTask"))
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
+      ).to eql(ClerkOfTheBoard.singleton)
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_by
+      ).to eql(current_user)
+    end
+  end
+
+  context "A contested claim is added to a direct review appeal" do
+    let!(:cc_appeal) do
+      create(:appeal,
+             veteran_file_number: veteran.file_number,
+             receipt_date: receipt_date,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             veteran_is_not_claimant: false,
+             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+    end
+
+    before do
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:cc_appeal_workflow)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+      ClerkOfTheBoard.singleton
+    end
+
+    scenario "a cc issue is assigned to a direct review appeal" do
+      visit("/appeals/#{cc_appeal.uuid}/edit")
+      add_contested_claim_issue
+
+      assert page.has_content?("You have successfully added 1 issue")
+      expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
+      ).to eql(cc_appeal.tasks.find_by(type: "DistributionTask"))
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
+      ).to eql(ClerkOfTheBoard.singleton)
+      expect(
+        cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_by
+      ).to eql(current_user)
+    end
+  end
+
+  context "A cc issue is added to a cc appeal with the initial letter task" do
+    let!(:cc_appeal) do
+      create(:appeal,
+             veteran_file_number: veteran.file_number,
+             receipt_date: receipt_date,
+             docket_type: Constants.AMA_DOCKETS.direct_review,
+             veteran_is_not_claimant: false,
+             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+    end
+
+    let(:initial_letter_task) do
+      SendInitialNotificationLetterTask.create!(
+        appeal: cc_appeal,
+        parent: appeal.tasks.find_by(type: "DistributionTask"),
+        assigned_to: ClerkOfTheBoard.singleton,
+        assigned_by: current_user
+      )
+    end
+
+    before do
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:cc_appeal_workflow)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+      FeatureToggle.enable!(:indicator_for_contested_claims)
+      ClerkOfTheBoard.singleton
+    end
+
+    scenario "if the first task is open, a 2nd SendInitialNotificationLetterTask is not created" do
+      visit("/appeals/#{cc_appeal.uuid}/edit")
+      add_contested_claim_issue
+
+      assert page.has_content?("You have successfully added 1 issue")
+      expect(cc_appeal.reload.tasks.where(type: "SendInitialNotificationLetterTask").count).to eq 1
+      # expect(cc_appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask")).to be initial_letter_task
+    end
+
+    scenario "if the first task is completed, a new SendInitialNotificationLetterTask is created" do
+      initial_letter_task.completed!
+
+      visit("/appeals/#{cc_appeal.uuid}/edit")
+      add_contested_claim_issue
+
+      assert page.has_content?("You have successfully added 1 issue")
+      expect(cc_appeal.reload.tasks.where(type: "SendInitialNotificationLetterTask").count).to eq 2
+      expect(cc_appeal.reload.tasks.where(
+        type: "SendInitialNotificationLetterTask"
+      ).where(status: "assigned").count).to eq 1
+    end
+
+    scenario "if the first task is cancelled, a new SendInitialNotificationLetterTask is created" do
+      initial_letter_task.cancelled!
+
+      visit("/appeals/#{cc_appeal.uuid}/edit")
+      add_contested_claim_issue
+
+      assert page.has_content?("You have successfully added 1 issue")
+      expect(cc_appeal.reload.tasks.where(type: "SendInitialNotificationLetterTask").count).to eq 2
+      expect(cc_appeal.reload.tasks.where(
+        type: "SendInitialNotificationLetterTask"
+      ).where(status: "assigned").count).to eq 1
+    end
+  end
+
   context "User is a member of the Supervisory Senior Council" do
     let!(:organization) { SupervisorySeniorCouncil.singleton }
     let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
@@ -401,6 +641,47 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
     end
 
+    scenario "If no issues are selected on the split appeal page, the Continue button is disabled" do
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal.uuid}/edit/create_split")
+
+      # expect issue descritions to display
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Military Retired Pay - nonrating description")
+      find("label", text: "PTSD denied").click
+      expect(page).to have_content("Select...")
+      expect(page).to have_button("Continue", disabled: true)
+    end
+
+    scenario "If no issues are selected after de-selecting an issue, the Continue button is disabled" do
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal.uuid}/edit/create_split")
+
+      # expect issue descritions to display
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Military Retired Pay - nonrating description")
+      find("label", text: "PTSD denied").click
+      find("label", text: "PTSD denied").click
+      expect(page).to have_content("Select...")
+      expect(page).to have_button("Continue", disabled: true)
+    end
+
+    scenario "If all issues are selected on the split appeal page, the Continue button is disabled" do
+      User.authenticate!(user: current_user)
+      visit("/appeals/#{appeal.uuid}/edit/create_split")
+
+      # expect issue descritions to display
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Military Retired Pay - nonrating description")
+      # click checkboxes
+      find("label", text: "PTSD denied").click
+      find("label", text: "Military Retired Pay - nonrating description").click
+      expect(page).to have_content("Select...")
+      find(:css, ".cf-select").select_option
+      find(:css, ".cf-select__menu").click
+      expect(page).to have_button("Continue", disabled: true)
+    end
+
     def skill_form(appeal)
       # add issues to the appeal
       appeal.request_issues << request_issue_1
@@ -480,7 +761,6 @@ feature "Appeal Edit issues", :all_dbs do
 
     scenario "on the review_split page, testing appellant and vetera" do
       skill_form(appeal2)
-      # binding.pry
       if expect(appeal2.veteran_is_not_claimant).to be(false)
         row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
         row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
@@ -567,6 +847,48 @@ feature "Appeal Edit issues", :all_dbs do
       )
       expect(page).to have_content("Check the Veteran's profile for invalid information")
       expect(page).to have_button("Save", disabled: true)
+    end
+  end
+
+  context "when appeal Type is Veterans Health Administration By default (Predocket option)" do
+    scenario "appeal with benefit type VHA" do
+      visit "appeals/#{appeal.uuid}/edit/"
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      fill_in "Benefit type", with: "Veterans Health Administration"
+      find("#issue-benefit-type").send_keys :enter
+      fill_in "Issue category", with: "Beneficiary Travel"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "I am a VHA issue"
+      fill_in "Decision date", with: 1.month.ago.mdY
+      radio_choices = page.all(".cf-form-radio-option > label")
+      expect(radio_choices[0]).to have_content("Yes")
+      expect(radio_choices[1]).to have_content("No")
+      expect(find("#is-predocket-needed_true", visible: false).checked?).to eq(true)
+      expect(find("#is-predocket-needed_false", visible: false).checked?).to eq(false)
+      expect(page).to have_content(COPY::VHA_PRE_DOCKET_ISSUE_BANNER)
+    end
+  end
+
+  context "when appeal Type is Veterans Health Administration NO Predocket" do
+    scenario "appeal with benefit type VHA no - predocket" do
+      visit "appeals/#{appeal.uuid}/edit/"
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      fill_in "Benefit type", with: "Veterans Health Administration"
+      find("#issue-benefit-type").send_keys :enter
+      fill_in "Issue category", with: "Beneficiary Travel"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "I am a VHA issue"
+      fill_in "Decision date", with: 1.month.ago.mdY
+      radio_choices = page.all(".cf-form-radio-option > label")
+      expect(radio_choices[0]).to have_content("Yes")
+      expect(radio_choices[1]).to have_content("No")
+
+      radio_choices[1].click
+      expect(find("#is-predocket-needed_true", visible: false).checked?).to eq(false)
+      expect(find("#is-predocket-needed_false", visible: false).checked?).to eq(true)
+      expect(page).to have_no_content(COPY::VHA_PRE_DOCKET_ISSUE_BANNER)
     end
   end
 

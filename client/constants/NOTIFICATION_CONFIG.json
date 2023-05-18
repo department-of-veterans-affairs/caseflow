@@ -1,0 +1,37 @@
+{
+    "COLUMNS": {
+      "EVENT_TYPE": {
+        "name": "notificationEventTypeColumn",
+        "filterable": true
+      },
+      "NOTIFICATION_DATE": {
+        "name": "notificationDateColumn",
+        "filterable": false,
+        "sorting_table": "notifications",
+        "sorting_columns": ["notification_date"]
+      },
+      "NOTIFICATION_TYPE": {
+        "name": "notificationTypeColumn",
+        "filterable": true
+      },
+      "RECIPIENT_INFORMATION": {
+        "name": "notificationRecipientInformationColumn",
+        "filterable": true
+      },
+      "STATUS": {
+        "name": "notificationStatusColumn",
+        "filterable": true
+      }
+    },
+    "COLUMN_SORT_ORDER_ASC": "asc",
+    "COLUMN_SORT_ORDER_DESC": "desc",
+    "STATUSES": {
+      "SENT": "Pending Delivery",
+      "DELIVERED": "Delivered",
+      "TEMPORARY-FAILURE": "Pending Delivery",
+      "PERMANENT-FAILURE": "Failed Delivery",
+      "TECHNICAL-FAILURE": "Failed Delivery",
+      "PREFERENCES-DECLINED": "Opted-out"
+    }
+}
+

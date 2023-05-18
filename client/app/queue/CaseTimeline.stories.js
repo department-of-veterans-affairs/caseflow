@@ -17,7 +17,6 @@ export default {
   },
 };
 
-
 const Template = (args) => (
   <Wrapper>
     <CaseTimeline {...args} />
@@ -30,4 +29,4 @@ CompletedChangeHearingRequestTypeTask.args = {
     ...legacyAppealForTravelBoard
   },
   tasks: [changeHearingRequestTypeTask]
-}
+};

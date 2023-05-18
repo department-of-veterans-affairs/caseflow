@@ -185,15 +185,6 @@ module Caseflow::Error
     end
   end
 
-  class JmrAppealDecisionIssueMismatch < SerializableError
-    def initialize(args)
-      @code = args[:code] || 422
-      @decision_issue_ids = args[:decision_issue_ids]
-      @appeal_id = args[:appeal_id]
-      @message = args[:message] || "JMR remands must include all appeal decision issues."
-    end
-  end
-
   class BvaDispatchTaskCountMismatch < SerializableError
     # Add attr_accessors for testing
     attr_accessor :user_id, :appeal_id, :tasks
@@ -347,6 +338,8 @@ module Caseflow::Error
   class InvalidFileNumber < StandardError; end
   class MustImplementInSubclass < StandardError; end
   class AttributeNotLoaded < StandardError; end
+  class VeteranNotFound < StandardError; end
+  class AppealNotFound < StandardError; end
 
   class EstablishClaimFailedInVBMS < StandardError
     attr_reader :error_code

@@ -6,6 +6,7 @@ import { COLORS } from 'app/constants/AppConstants';
 
 import COPY from 'app/../COPY';
 import Button from 'app/components/Button';
+import { CavcDashboardButton } from './components/CavcDashboardButton';
 
 const containerStyling = css({
   border: `1px solid ${COLORS.GREY_LIGHT}`,
@@ -32,7 +33,11 @@ const buttonContainer = css({
  *  - @param {Object} history  Provided with react router to be able to route to another page
  */
 export const CaseDetailsPostDispatchActions = (props) => {
-  const { appealId, includeCavcRemand, includeSubstitute } = props;
+  const { appealId,
+    includeCavcRemand,
+    includeSubstitute,
+    supportCavcDashboard,
+  } = props;
   const { push } = useHistory();
 
   return (
@@ -55,6 +60,9 @@ export const CaseDetailsPostDispatchActions = (props) => {
             {COPY.SUBSTITUTE_APPELLANT_BUTTON}
           </Button>
         )}
+        {supportCavcDashboard && (
+          <CavcDashboardButton appealId={appealId} />
+        )}
       </div>
     </div>
   );
@@ -64,6 +72,7 @@ CaseDetailsPostDispatchActions.propTypes = {
   appealId: PropTypes.string.isRequired,
   includeCavcRemand: PropTypes.bool,
   includeSubstitute: PropTypes.bool,
+  supportCavcDashboard: PropTypes.bool,
 };
 
 export default CaseDetailsPostDispatchActions;

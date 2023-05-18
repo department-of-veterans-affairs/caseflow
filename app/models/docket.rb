@@ -2,6 +2,7 @@
 
 class Docket
   include ActiveModel::Model
+  include DistributionConcern
 
   def docket_type
     fail Caseflow::Error::MustImplementInSubclass
@@ -77,23 +78,29 @@ class Docket
     appeals(priority: true, ready: true).pluck(:uuid)
   end
 
-  # rubocop:disable Lint/UnusedMethodArgument
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Lint/UnusedMethodArgument
   # :reek:FeatureEnvy
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
     appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge).limit(limit)
     tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
     tasks.map do |task|
+      next if task.nil?
+
       # If a distributed case already exists for this appeal, alter the existing distributed case's case id.
       # This is modeled after the allow! method in the redistributed_case model
       distributed_case = DistributedCase.find_by(case_id: task.appeal.uuid)
       if distributed_case && task.appeal.can_redistribute_appeal?
         distributed_case.flag_redistribution(task)
         distributed_case.rename_for_redistribution!
-        distribution.distributed_cases.create!(case_id: task.appeal.uuid,
-                                               docket: docket_type,
-                                               priority: priority,
-                                               ready_at: task.appeal.ready_for_distribution_at,
-                                               task: task)
+        new_dist_case = distribution.distributed_cases.create!(case_id: task.appeal.uuid,
+                                                               docket: docket_type,
+                                                               priority: priority,
+                                                               ready_at: task.appeal.ready_for_distribution_at,
+                                                               task: task)
+        # In a race condition for distributions, two JudgeAssignTasks will be created; this cancels the first one
+        cancel_previous_judge_assign_task(task.appeal, distribution.judge.id)
+        # Returns the new DistributedCase as expected by calling methods; case in elsif is implicitly returned
+        new_dist_case
       elsif !distributed_case
         distribution.distributed_cases.create!(case_id: task.appeal.uuid,
                                                docket: docket_type,
@@ -103,7 +110,7 @@ class Docket
       end
     end
   end
-  # rubocop:enable Lint/UnusedMethodArgument
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Lint/UnusedMethodArgument
 
   def self.nonpriority_decisions_per_year
     Appeal.extending(Scopes).nonpriority
@@ -131,24 +138,6 @@ class Docket
     Appeal.where(docket_type: docket_type).extending(Scopes)
   end
 
-  def assign_judge_tasks_for_appeals(appeals, judge)
-    appeals.map do |appeal|
-      distribution_task = appeal.tasks.of_type(:DistributionTask).first
-      distribution_task_assignee_id = appeal.tasks.of_type(:DistributionTask).first.assigned_to_id
-      Rails.logger.info("Assigning judge task for appeal #{appeal.id}")
-      judge_task = JudgeAssignTaskCreator.new(appeal: appeal, judge: judge,
-                                              assigned_by_id: distribution_task_assignee_id).call
-      Rails.logger.info("Assigned judge task with task id #{judge_task.id} to #{judge_task.assigned_to.css_id}")
-
-      Rails.logger.info("Closing distribution task for appeal #{appeal.id}")
-      appeal.tasks.of_type(:DistributionTask).update(status: :completed)
-      Rails.logger.info("Closing distribution task with task id #{distribution_task.id} "\
-        "that was assigned to id #{distribution_task_assignee_id}")
-
-      judge_task
-    end
-  end
-
   def use_by_docket_date?
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
@@ -167,7 +156,7 @@ class Docket
 
     def nonpriority
       include_aod_motions
-        .where("people.date_of_birth > ?", 75.years.ago)
+        .where("people.date_of_birth > ? or people.date_of_birth is null", 75.years.ago)
         .where.not("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand)
         .group("appeals.id")
         .having("count(case when advance_on_docket_motions.granted "\
@@ -175,7 +164,8 @@ class Docket
     end
 
     def include_aod_motions
-      joins(claimants: :person)
+      joins(:claimants)
+        .joins("LEFT OUTER JOIN people on people.participant_id = claimants.participant_id")
         .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
     end
 

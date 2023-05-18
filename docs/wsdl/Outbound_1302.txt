@@ -1,0 +1,93 @@
+<PRPA_IN201302UV02 xmlns="http://vaww.oed.oit.va.gov">
+  <id extension="2209011153038070146643443" root="2.16.840.1.113883.4.349"/>
+  <creationTime value="20220901115303"/>
+  <interactionId root="2.16.840.1.113883.1.6" extension="PRPA_IN201302UV02"/>
+  <processingCode code="T"/>
+  <processingModeCode code="T"/>
+  <acceptAckCode code="AL"/>
+  <receiver typeCode="RCV">
+    <device classCode="DEV" determinerCode="INSTANCE">
+      <id root="2.16.840.1.113883.4.349" extension="200DSLF"/>
+    </device>
+  </receiver>
+  <sender typeCode="SND">
+    <device classCode="DEV" determinerCode="INSTANCE">
+      <id root="2.16.840.1.113883.4.349" extension="200M"/>
+    </device>
+  </sender>
+  <controlActProcess classCode="CACT" moodCode="EVN">
+    <dataEnterer contextControlCode="AP" typeCode="ENT">
+      <assignedPerson classCode="ASSIGNED">
+        <id extension="MPI^PN^200PROV^USDVA" root="2.16.840.1.113883.4.349" />
+        <assignedPerson determinerCode="INSTANCE" classCode="PSN">
+          <name>
+            <given>MPI</given>
+          </name>
+        </assignedPerson>
+      </assignedPerson>
+    </dataEnterer>
+    <subject typeCode="SUBJ">
+      <registrationEvent classCode="REG" moodCode="EVN">
+        <id root="2.16.840.1.113883.4.349" extension="69452^PI^200DSLF^USDVA^A"/>
+        <statusCode code="active"/>
+        <subject1 typeCode="SBJ">
+          <patient classCode="PAT">
+            <id root="2.16.840.1.113883.4.349" extension="1013709680V689241^NI^200M^USVHA^P"/>
+            <statusCode code="active"/>
+            <patientPerson>
+              <name use="L">
+                <given>CGVIPB</given>
+                <family>CARMALM</family>
+              </name>
+              <telecom value="" use="HP"/>
+              <telecom value="" use="CP"/>
+              <telecom value="" use="WP"/>
+              <administrativeGenderCode code="M"/>
+              <birthTime value="19850328"/>
+              <addr use="WP">
+              </addr>
+              <addr use="PST">
+              </addr>
+              <addr use="HP">
+              </addr>
+              <asOtherIDs classCode="SSN">
+                <id extension="561211811" root="2.16.840.1.113883.4.1"/>
+                <scopingOrganization classCode="ORG" determinerCode="INSTANCE">
+                  <id root="2.16.840.1.113883.4.1"/>
+                </scopingOrganization>
+              </asOtherIDs>
+              <asOtherIDs classCode="PAT">
+                <id root="2.16.840.1.113883.4.349" extension="69452^PI^200DSLF^USDVA^A"/>
+                <scopingOrganization classCode="ORG" determinerCode="INSTANCE">
+                  <id root="2.16.840.1.113883.4.349"/>
+                </scopingOrganization>
+              </asOtherIDs>
+              <birthPlace>
+                <addr>
+                  <city>""</city>
+                  <state>""</state>
+                  <country>USA</country>
+                </addr>
+              </birthPlace>
+            </patientPerson>
+            <providerOrganization classCode="ORG" determinerCode="INSTANCE">
+              <id root="2.16.840.1.113883.4.349"/>
+              <name>USVHA</name>
+              <contactParty classCode="CON">
+                <telecom value="http://vha.med.va.gov"/>
+              </contactParty>
+            </providerOrganization>
+          </patient>
+        </subject1>
+        <custodian typeCode="CST">
+          <assignedEntity classCode="ASSIGNED">
+            <id root="2.16.840.1.113883.4.349"/>
+            <assignedOrganization classCode="ORG" determinerCode="INSTANCE">
+              <name>USVHA</name>
+            </assignedOrganization>
+          </assignedEntity>
+        </custodian>
+      </registrationEvent>
+    </subject>
+  </controlActProcess>
+</PRPA_IN201302UV02>

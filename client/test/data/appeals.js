@@ -249,3 +249,122 @@ export const amaAppealHearingData = {
   disposition: null,
   isVirtual: false
 };
+
+export const splitAppeal = {
+  ...appealData,
+  id: '541',
+  externalId: 'c482facd-e8d1-4dac-8a2f-7190be5aa282',
+  hearings: [],
+};
+
+export const splitAppeal1 = {
+  hearings: [],
+  currentUserEmail: null,
+  currentUserTimezone: 'America/New_York',
+  completedHearingOnPreviousAppeal: false,
+  issues: [
+    {
+      id: 3440,
+      program: 'pension',
+      description: 'Apportionment - test 2 maite',
+      notes: null,
+      diagnostic_code: null,
+      remand_reasons: [],
+      closed_status: null,
+      decision_date: '2022-10-07'
+    },
+    {
+      id: 3441,
+      program: 'pension',
+      description: 'Accrued Benefits - test 2 maite',
+      notes: null,
+      diagnostic_code: null,
+      remand_reasons: [],
+      closed_status: null,
+      decision_date: '2022-10-07'
+    },
+    {
+      id: 3442,
+      program: 'pension',
+      description: 'Accrued Benefits - test modal',
+      notes: null,
+      diagnostic_code: null,
+      remand_reasons: [],
+      closed_status: null,
+      decision_date: '2022-10-06'
+    }
+  ],
+  decisionIssues: [],
+  canEditRequestIssues: true,
+  unrecognizedAppellantId: null,
+  appellantIsNotVeteran: false,
+  appellantFullName: 'Bob Smithjohnston',
+  appellantFirstName: 'Bob',
+  appellantMiddleName: null,
+  appellantLastName: 'Smithjohnston',
+  appellantSuffix: null,
+  appellantDateOfBirth: '1992-10-12',
+  appellantAddress: {
+    address_line_1: '9999 MISSION ST',
+    address_line_2: 'UBER',
+    address_line_3: 'APT 2',
+    city: 'SAN FRANCISCO',
+    zip: '94103',
+    country: 'USA',
+    state: 'CA'
+  },
+  appellantEmailAddress: 'Bob.Smithjohnston@test.com',
+  appellantPhoneNumber: null,
+  appellantType: 'VeteranClaimant',
+  appellantPartyType: null,
+  appellantTz: 'America/Los_Angeles',
+  appellantRelationship: 'Veteran',
+  contestedClaim: true,
+  hasPOA: {
+    id: 1844,
+    authzn_change_clmant_addrs_ind: null,
+    authzn_poa_access_ind: null,
+    claimant_participant_id: '500000000',
+    created_at: '2022-10-14T14:30:57.501-04:00',
+    file_number: '00001234',
+    last_synced_at: '2022-10-14T14:30:57.501-04:00',
+    legacy_poa_cd: '100',
+    poa_participant_id: '600153863',
+    representative_name: 'Clarence Darrow',
+    representative_type: 'Attorney',
+    updated_at: '2022-10-14T14:30:57.501-04:00'
+  },
+  assignedToLocation: 'Board of Veterans\' Appeals',
+  veteranDateOfDeath: null,
+  closestRegionalOffice: null,
+  closestRegionalOfficeLabel: null,
+  availableHearingLocations: [],
+  externalId: 'c482facd-e8d1-4dac-8a2f-7190be5aa282',
+  status: 'not_distributed',
+  decisionDate: null,
+  nodDate: '2022-10-07',
+  nodDateUpdates: [],
+  certificationDate: null,
+  cavcRemand: null,
+  regionalOffice: null,
+  caseflowVeteranId: 1,
+  documentID: null,
+  caseReviewId: null,
+  canEditDocumentId: false,
+  attorneyCaseRewriteDetails: {
+    note_from_attorney: null,
+    untimely_evidence: null
+  },
+  docketSwitch: null,
+  switchedDockets: [],
+  appellantSubstitution: null,
+  substitutions: [],
+  hasSameAppealSubstitution: true,
+  remandSourceAppealId: null,
+  remandJudgeName: null
+};
+
+export const appealWithDashboard = {
+  ...amaAppeal,
+  cavcRemandsWithDashboard: 5
+};

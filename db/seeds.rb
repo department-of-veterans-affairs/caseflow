@@ -32,6 +32,7 @@ class SeedDB
   end
 
   def seed
+    RequestStore[:current_user]=User.system_user
     call_and_log_seed_step :clean_db
 
     call_and_log_seed_step Seeds::Annotations
@@ -53,6 +54,12 @@ class SeedDB
     call_and_log_seed_step Seeds::MTV
     call_and_log_seed_step Seeds::Education
     call_and_log_seed_step Seeds::PriorityDistributions
+    call_and_log_seed_step Seeds::TestCaseData
+    call_and_log_seed_step Seeds::Notifications
+    call_and_log_seed_step Seeds::CavcDashboardData
+    # Always run this as last one
+    call_and_log_seed_step Seeds::StaticTestCaseData
+    call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
   end
 end
 

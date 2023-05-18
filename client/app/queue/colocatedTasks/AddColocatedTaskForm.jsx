@@ -27,7 +27,7 @@ export const AddColocatedTaskForm = ({
     <div className="colocated-task-form">
       <div className={styles.field}>
         <SearchableDropdown
-          errorMessage={highlightFormItems && !type ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+          errorMessage={highlightFormItems && !type ? 'administrative action type field is required' : null}
           name="type"
           label={COPY.ADD_COLOCATED_TASK_ACTION_TYPE_LABEL}
           placeholder="Select an action type"
@@ -38,7 +38,7 @@ export const AddColocatedTaskForm = ({
       </div>
       <div className={styles.field}>
         <TextareaField
-          errorMessage={highlightFormItems && !instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+          errorMessage={highlightFormItems && !instructions ? COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
           name="instructions"
           label={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
           onChange={(val) => setInstructions(val)}

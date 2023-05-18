@@ -1,10 +1,14 @@
 import React from 'react';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 class HearingPrepHelp extends React.Component {
 
   render() {
     /* eslint-disable max-len */
     return <div className="cf-help-content">
+
+      <p><Link href="/help">Go Back</Link></p>
+
       <h1 id="#top">Welcome to the Hearings Help page!</h1>
       <p>Here you will find <a href="#training-videos"> Training Videos</a> and <a href="#faq"> Frequently Asked Questions (FAQs)</a> for Hearing Prep, as well as links to the <a target="_blank" rel="noopener noreferrer" href="/hearingprep_training_guide_june2018.pdf">Training Guide</a> and the  <a target="_blank" rel="noopener noreferrer" href="/assets/hearingprep_quickreference-ab220e981c81dbd346c0e83631ada13474051d2355ab193bcbcfbddd14432aca.pdf">Quick Reference</a>. These items are provided to assist you as you access and use Hearing Prep. If you require further assistance after reviewing these items,
         please contact the Caseflow team

@@ -26,24 +26,21 @@ export default class DropdownButton extends React.Component {
   }
 
   componentDidMount = () => {
-    // commented out, 508 is expecting the dropdow, that's the requirement
-    // document.addEventListener('focusin', this.onClickOutside);
-    // document.addEventListener('keydown', this.onClickOutside);
+    document.addEventListener('keydown', this.onClickOutside);
     document.addEventListener('mousedown', this.onClickOutside);
   }
 
   componentWillUnmount = () => {
-    // commented out, 508 is expecting the dropdow, that's the requirement
-    // document.removeEventListener('focusin', this.onClickOutside);
-    // document.removeEventListener('keydown', this.onClickOutside);
+    document.removeEventListener('keydown', this.onClickOutside);
     document.removeEventListener('mousedown', this.onClickOutside);
   }
   setWrapperRef = (node) => this.wrapperRef = node
 
   onClickOutside = (event) => {
-    // event.path is [html, document, Window] when clicking the scroll bar and always more when clicking content
+    // event.composedPath() is [html, document, Window] when clicking the scroll bar and more when clicking content
     // this stops the menu from closing if a user clicks to use the scroll bar with the menu open
-    if (this.wrapperRef && !this.wrapperRef.contains(event.target) && event.path[2] !== window && this.state.menu) {
+    if (this.wrapperRef && !this.wrapperRef.contains(event.target) &&
+     event.composedPath()[2] !== window && this.state.menu) {
       this.setState({
         menu: false
       });
@@ -100,27 +97,27 @@ export default class DropdownButton extends React.Component {
     return list.target ? this.dropdownLink(list) : this.dropdownAction(list);
   }
   dropdownButtonList = () => {
-    return <ul className="cf-dropdown-menu active" {...dropdownList}>
+    return <ul role="listbox" className="cf-dropdown-menu active" {...dropdownList}>
       {this.props.lists.map((list, index) =>
-        <li key={index}>
+        <li role="option" key={index}>
           {this.renderLiBody(list)}
         </li>)}
     </ul>;
   };
 
   render() {
-    const { label } = this.props;
+    const { label, children } = this.props;
 
     return <div className="cf-dropdown" ref={this.setWrapperRef} {...dropdownBtnContainer} >
       <button {...dropdownBtn}
-        role="dropdown-button"
-        id="dropdown-button"
+        role="button"
         aria-label={label || 'dropdown-button'}
-        aria-haspopup="true"
-        aria-expanded="true"
+        aria-haspopup="listbox"
+        aria-expanded={this.state.menu}
+        aria-pressed={this.state.menu}
         onClick={this.onMenuClick}
         className="cf-dropdown-trigger usa-button usa-button-secondary">
-        {label}
+        {children || label}
       </button>
       {this.state.menu && this.dropdownButtonList() }
     </div>;
@@ -140,5 +137,6 @@ DropdownButton.propTypes = {
   ])),
   onClick: PropTypes.func,
   label: PropTypes.string.isRequired,
-  lists: PropTypes.array.isRequired
+  lists: PropTypes.array.isRequired,
+  children: PropTypes.node,
 };

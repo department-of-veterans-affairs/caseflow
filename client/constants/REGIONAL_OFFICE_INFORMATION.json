@@ -193,7 +193,7 @@
     "timezone": "America/Chicago",
     "hold_hearings": true,
     "facility_locator_id": "vba_321",
-    "alternate_locations": ["vba_321b", "vha_502GA", "vha_502GB", "vha_502GE"]
+    "alternate_locations": ["vba_321b", "vha_502GA", "vha_502GB", "vha_502GE", "vc_0704V"]
   },
   "RO22": {
     "label": "Montgomery regional office",
@@ -210,7 +210,7 @@
     "state": "MS",
     "timezone": "America/Chicago",
     "hold_hearings": true,
-    "facility_locator_id": "vha_586",
+    "facility_locator_id": "vba_323",
     "alternate_locations": ["vha_614GN", "vc_0737V", "vc_0719V"]
   },
   "RO25": {
@@ -377,7 +377,7 @@
     "timezone": "America/Chicago",
     "hold_hearings": true,
     "facility_locator_id": "vba_438",
-    "alternate_locations": ["vha_568", "vha_568A4"]
+    "alternate_locations": ["vha_568", "vha_568A4", "vba_438a"]
   },
   "RO39": {
     "label": "Denver regional office",
@@ -592,7 +592,7 @@
     "timezone": "America/Chicago",
     "hold_hearings": true,
     "facility_locator_id": "vba_362",
-    "alternate_locations": ["vha_671GS", "vha_740GB"]
+    "alternate_locations": ["vha_671GS", "vha_740GA"]
   },
   "RO63": {
     "label": "Anchorage regional office",

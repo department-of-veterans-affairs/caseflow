@@ -32,6 +32,7 @@ module Seeds
     private
 
     def create_users
+      User.create(css_id: "CASEFLOW1", station_id: 317, full_name: "System User")
       User.create(css_id: "BVASCASPER1", station_id: 101, full_name: "Steve Attorney_Cases Casper")
       User.create(css_id: "BVASRITCHIE", station_id: 101, full_name: "Sharree AttorneyNoCases Ritchie")
       User.create(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Aaron Judge_HearingsAndCases Abshire")
@@ -80,6 +81,8 @@ module Seeds
       create_aod_user_and_tasks
       create_privacy_user
       create_lit_support_user
+      create_oai_team_user
+      create_occ_team_user
       create_cavc_lit_support_user
       create_pulac_cerullo_user
       create_mail_team_user
@@ -91,6 +94,7 @@ module Seeds
       create_hearings_user
       create_build_and_edit_hearings_users
       create_non_admin_hearing_coordinator_user
+      add_mail_intake_to_all_bva_intake_users
     end
 
     def create_team_admin
@@ -322,6 +326,21 @@ module Seeds
       LitigationSupport.singleton.add_user(u)
     end
 
+    def create_oai_team_user
+      u = User.create!(station_id: 101, css_id: "OAI_TEAM_USER", full_name: "Tywin OaiTeam Lannister")
+      OaiTeam.singleton.add_user(u)
+      OrganizationsUser.make_user_admin(u, OaiTeam.singleton)
+    end
+
+    def create_occ_team_user
+      u = User.create!(station_id: 101, css_id: "OCC_TEAM_USER", full_name: "Jon OccTeam Snow")
+      OccTeam.singleton.add_user(u)
+      OrganizationsUser.make_user_admin(u, OccTeam.singleton)
+      u = User.create!(station_id: 101, css_id: "OCC_OAI_TEAM_USER", full_name: "Ned OccOaiTeam Stark")
+      OccTeam.singleton.add_user(u)
+      OaiTeam.singleton.add_user(u)
+    end
+
     def create_cavc_lit_support_user
       users_info = [
         { css_id: "CAVC_LIT_SUPPORT_ADMIN", full_name: "Diego CAVCLitSupportAdmin Christiansen" },
@@ -404,6 +423,18 @@ module Seeds
                              roles: ["Hearing Prep"])
       SupervisorySeniorCouncil.singleton.add_user(ussccr2)
       CaseReview.singleton.add_user(ussccr2)
+    end
+
+    def add_mail_intake_to_all_bva_intake_users
+      bva_intake = BvaIntake.singleton
+      new_role = "Mail Intake"
+      bva_intake.users.each do |user|
+        user_roles = user.roles
+        unless user_roles.include?(new_role)
+          new_roles = user_roles << new_role
+          user.update!(roles: new_roles)
+        end
+      end
     end
   end
   # rubocop:enable Metrics/AbcSize

@@ -86,7 +86,7 @@ describe LegacyDocket do
       end
     end
   end
-  
+
   context "#age_of_n_oldest_priority_appeals_available_to_judge" do
     let(:judge) { create(:user, :with_vacols_judge_record) }
     subject { LegacyDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(judge, 3) }
@@ -111,7 +111,7 @@ describe LegacyDocket do
     context "use_by_docket_date is true" do
       before { FeatureToggle.enable!(:acd_distribute_by_docket_date) }
       after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
-      subject { LegacyDocket.new.age_of_oldest_priority_appeal}
+      subject { LegacyDocket.new.age_of_oldest_priority_appeal }
       it "returns the receipt_date(BFD19) field of the oldest legacy priority appeals ready for distribution" do
         appeal = create_priority_distributable_legacy_appeal_not_tied_to_judge
         expect(subject).to eq(appeal.bfd19.to_date)
@@ -119,10 +119,10 @@ describe LegacyDocket do
     end
 
     context "use by_docket_date is false" do
-      subject { LegacyDocket.new.age_of_oldest_priority_appeal}
+      subject { LegacyDocket.new.age_of_oldest_priority_appeal }
       it "returns the receipt_date(BFDLOOUT) field of the oldest legacy priority appeals ready for distribution" do
         appeal = create_priority_distributable_legacy_appeal_not_tied_to_judge
-        expect(subject).to eq(appeal.bfdloout.to_date)
+        expect(subject).to eq(appeal.bfdloout)
       end
     end
   end
@@ -330,7 +330,7 @@ describe LegacyDocket do
       bfac: "3",
       bfmpro: "ACT",
       bfcurloc: "81",
-      bfdloout: 3.days.ago,
+      bfdloout: 3.days.ago
     )
   end
 
@@ -342,7 +342,7 @@ describe LegacyDocket do
       bfac: "3",
       bfmpro: "ACT",
       bfcurloc: "81",
-      bfdloout: 3.days.ago,
+      bfdloout: 3.days.ago
     )
   end
 end

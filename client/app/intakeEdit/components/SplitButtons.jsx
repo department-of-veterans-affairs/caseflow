@@ -3,13 +3,20 @@ import { connect } from 'react-redux';
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import Button from '../../components/Button';
-import { StateContext } from '../IntakeEditFrame';
+import { RequestIssueContext, StateContext } from '../IntakeEditFrame';
 import { Link } from 'react-router-dom';
 
-const ContinueButtonUnconnected = () => {
+const ContinueButtonUnconnected = (props) => {
   const { selectedIssues, reason } = useContext(StateContext);
+  const allIssuesChecked = _.every(_.values(selectedIssues), (value) => {
+    return value === true;
+  });
+  const noIssueSelected = _.every(_.values(selectedIssues), (value) => {
+    return value === false;
+  });
+  const everyIssueSelected = _.keys(selectedIssues).length === props.requestIssueCount;
 
-  const continueDisabled = (_.isEmpty(selectedIssues) || _.isEmpty(reason));
+  const continueDisabled = (noIssueSelected || _.isEmpty(reason) || (everyIssueSelected && allIssuesChecked));
 
   return (
     <span>
@@ -38,7 +45,8 @@ const ContinueButtonUnconnected = () => {
 ContinueButtonUnconnected.propTypes = {
   history: PropTypes.object,
   formType: PropTypes.string,
-  claimId: PropTypes.string
+  claimId: PropTypes.string,
+  requestIssueCount: PropTypes.number
 };
 
 const ContinueButton = connect(
@@ -82,10 +90,14 @@ const CancelSplitButton = connect(
 
 export default class SplitButtons extends React.PureComponent {
   render = () =>
-    <div>
-      <CancelSplitButton history={this.props.history} />
-      <ContinueButton history={this.props.history} />
-    </div>
+    <RequestIssueContext.Consumer>
+      {(requestIssueCount) => (
+        <div>
+          <CancelSplitButton history={this.props.history} />
+          <ContinueButton history={this.props.history} requestIssueCount={requestIssueCount} />
+        </div>
+      )}
+    </RequestIssueContext.Consumer>
 }
 
 SplitButtons.propTypes = {

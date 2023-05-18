@@ -191,24 +191,21 @@
     "Entitlement | Voided Enlistment"
   ],
   "vha": [
-    "Beneficiary Travel | Common Carrier",
-    "Beneficiary Travel | Mileage",
-    "Beneficiary Travel | Special Mode",
+    "Beneficiary Travel",
     "Caregiver | Eligibility",
     "Caregiver | Tier Level",
     "Caregiver | Revocation/Discharge",
     "Caregiver | Other",
-    "Clothing Allowance § 3.810(b) Certification",
-    "Eligibility for Fee Basis Care",
-    "Eligibility for Treatment | Dental",
-    "Eligibility for Treatment | Other",
-    "Family Member Services | CHAMPVA Eligibility",
-    "Family Member Services | CHAMPVA Medical Charges",
-    "Family Member Services | Camp Lejeune Family Member Eligibility",
-    "Family Member Services | Foreign Medical Program Medical Charges",
-    "Family Member Services | Spina Bifida Medical Charges",
-    "Level of Priority for Treatment",
+    "Clothing Allowance",
+    "Medical and Dental Care Reimbursement",
+    "Initial Eligibility and Enrollment in VHA Healthcare",
+    "Eligibility for Dental Treatment",
+    "CHAMPVA",
+    "Camp Lejune Family Member",
+    "Foreign Medical Program",
+    "Spina Bifida Treatment (Non-Compensation)",
+    "Continuing Eligibility/Income Verification Match (IVM)",
     "Other",
-    "Prosthetics Services"
+    "Prosthetics | Other (not clothing allowance)"
   ]
 }

@@ -131,6 +131,7 @@ Object {
                  
                 <span
                   aria-describedby="tooltip-id"
+                  aria-label=""
                   currentitem="false"
                   data-event="focus mouseenter"
                   data-event-off="mouseleave keydown"
@@ -141,7 +142,7 @@ Object {
                   Something
                 </span>
                 <span
-                  data-css-rmx6hr=""
+                  data-css-h1aqyj=""
                 >
                   <div
                     class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
@@ -271,6 +272,7 @@ Object {
                
               <span
                 aria-describedby="tooltip-id"
+                aria-label=""
                 currentitem="false"
                 data-event="focus mouseenter"
                 data-event-off="mouseleave keydown"
@@ -281,7 +283,7 @@ Object {
                 Something
               </span>
               <span
-                data-css-rmx6hr=""
+                data-css-h1aqyj=""
               >
                 <div
                   class="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"

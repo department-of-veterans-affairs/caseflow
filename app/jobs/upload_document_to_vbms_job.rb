@@ -2,10 +2,16 @@
 
 class UploadDocumentToVbmsJob < CaseflowJob
   queue_with_priority :low_priority
-  application_attr :idt
 
-  def perform(document_id:, initiator_css_id:)
-    RequestStore.store[:application] = "idt"
+  # Purpose: Calls the UploadDocumentToVbms workflow to upload the given document to VBMS
+  #
+  # Params: document_id - integer to search for VbmsUploadedDocument
+  #         initiator_css_id - string to find a user by css_id
+  #         application - string with a default value of "idt" but can be overwritten
+  #
+  # Return: nil
+  def perform(document_id:, initiator_css_id:, application: "idt")
+    RequestStore.store[:application] = application
     RequestStore.store[:current_user] = User.system_user
 
     @document = VbmsUploadedDocument.find_by(id: document_id)
@@ -29,7 +35,8 @@ class UploadDocumentToVbmsJob < CaseflowJob
     end
     Raven.extra_context(
       vbms_uploaded_document_id: document.id,
-      case_details_path: "/queue/appeals/#{document.appeal.external_id}"
+      upload_document_path: "/upload_document",
+      veteran_file_number: document.veteran_file_number
     )
   end
 end

@@ -1,6 +1,5 @@
 import ApiUtil from '../../util/ApiUtil';
 import { ACTIONS } from '../constants';
-import { formatTasks } from '../util';
 
 const analytics = true;
 
@@ -18,8 +17,7 @@ export const completeTask = (taskId, businessLine, data, claimant) => (dispatch)
           payload: {
             claimant,
             completedTaskId: taskId,
-            inProgressTasks: formatTasks(response.body.in_progress_tasks),
-            completedTasks: formatTasks(response.body.completed_tasks)
+            taskFilterDetails: response.body.task_filter_details
           },
           meta: { analytics }
         });
