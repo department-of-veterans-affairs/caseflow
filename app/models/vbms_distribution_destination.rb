@@ -4,7 +4,6 @@ class VbmsDistributionDestination < CaseflowRecord
   belongs_to :vbms_distribution, optional: false
 
   with_options presence: true do
-    # Question of whether "derived" is necessary destination_type to check for, or if only relevant to VBMS
     validates :destination_type, inclusion: { in: %w[domesticAddress internationalAddress militaryAddress derived] }
     validates :address_line_1, :city, :country_code, if: :physical_mail?
     validates :address_line_2, if: :treat_line_2_as_addressee
@@ -12,6 +11,8 @@ class VbmsDistributionDestination < CaseflowRecord
     validates :state, :postal_code, if: :us_address?
     validates :country_name, if: -> { destination_type == "internationalAddress" }
   end
+
+  validates :treat_line_2_as_addressee, inclusion: { in: [true] }, if: -> { treat_line_3_as_addressee == true }
 
   validate :valid_country_code?, if: :physical_mail?
   validate :valid_us_state_code?, if: :us_address?
@@ -35,8 +36,6 @@ class VbmsDistributionDestination < CaseflowRecord
       errors.add(:state, "is not a valid ISO 3166-2 code")
     end
   end
-
-  # Are these country and state codes available in a hard coded constant – or can I create?
 
   def iso_country_codes
     @iso_country_codes ||= ISO3166::Country.codes
