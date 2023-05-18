@@ -46,6 +46,13 @@ feature "CamoQueue", :all_dbs do
         end
         # The issue types column needs the CachedAppealsTable to be updated to sort and filter
         UpdateCachedAppealsAttributesJob.perform_now
+        # TODO: Might do this instead of the job?
+        # create(
+        #   :cached_appeal,
+        #   appeal_type: task.appeal.class.name,
+        #   appeal_id: task.appeal.id,
+        #   docket_type: docket_types[index % docket_types.length]
+        # )
         # Visit the url again since the ordering after initialization can be weird
         visit "/organizations/#{organization.url}"
       end

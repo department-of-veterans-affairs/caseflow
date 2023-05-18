@@ -119,7 +119,7 @@ class QueueColumn
     totals = Hash.new(0)
 
     count_hash.each do |key, value|
-      if !key
+      if key.blank?
         totals["None"] += value.to_i
       else
         key.split(",").each do |string|
@@ -128,11 +128,9 @@ class QueueColumn
       end
     end
 
-    options = totals.each_pair.map do |option, count|
+    totals.each_pair.map do |option, count|
       label = self.class.format_option_label(option, count)
       self.class.filter_option_hash(option, label)
     end
-
-    options
   end
 end

@@ -73,7 +73,7 @@ class TaskFilter
 
     def issue_type_where_clause(filter_value, filter)
       if filter_value == "None"
-        "#{table_column_from_name(filter.column)} IS NULL"
+        "#{table_column_from_name(filter.column)} IS NULL OR #{table_column_from_name(filter.column)} = '' "
       else
         "POSITION('#{filter_value}' IN #{table_column_from_name(filter.column)}) > 0"
       end
