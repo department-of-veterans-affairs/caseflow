@@ -64,10 +64,10 @@ class ExternalApi::PacmanService
         body: {
           fileNumber: file_number,
           name: name,
-          documentReferences: {
+          documentReferences: [{
             id: document_reference[:id],
             copies: document_reference[:copies]
-          }
+          }]
         },
         headers: HEADERS,
         endpoint: SEND_PACKAGE_ENDPOINT, method: :post
@@ -123,7 +123,7 @@ class ExternalApi::PacmanService
     # Params: general requirements for HTTP request
     #
     # Return: service_response: JSON from Pacman or error
-    def send_pacman_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
+    def send_pacman_request(headers: {}, endpoint:, method: :get, body: nil)
       url = URI.escape(BASE_URL + endpoint)
       request = HTTPI::Request.new(url)
       request.query = query

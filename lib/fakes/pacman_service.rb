@@ -93,7 +93,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
         200,
         {},
         OpenStruct.new(
-          "id": "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
+          "id": distribution_id,
           "recipient": {
             "type": "system",
             "id": "a050a21e-23f6-4743-a1ff-aa1e24412eff",
