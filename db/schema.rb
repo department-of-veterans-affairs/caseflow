@@ -1275,7 +1275,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
     t.text "sms_notification_content", comment: "Full SMS Text Content of Notification"
-    t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
+    t.string "sms_notification_external_id"
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
@@ -1577,7 +1577,6 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.boolean "national_cemetery_administration", default: false
     t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
     t.boolean "nonrating_issue", default: false
-    t.boolean "pact_act", default: false, comment: "The Sergeant First Class (SFC) Heath Robinson Honoring our Promise to Address Comprehensive Toxics (PACT) Act"
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
     t.boolean "radiation", default: false
