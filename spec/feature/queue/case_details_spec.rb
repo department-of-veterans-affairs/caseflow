@@ -2188,18 +2188,18 @@ RSpec.feature "Case details", :all_dbs do
     end
 
     describe "MST and PACT issues" do
-      let!(:appeal) do
-        create(
-          :appeal,
-          number_of_claimants: 1,
-          request_issues: build_list(
-            :request_issue, 2,
-            contested_issue_description: issue_description,
-            notes: issue_note,
-            contested_rating_issue_diagnostic_code: diagnostic_code
-          )
-        )
-      end
+      # let!(:appeal) do
+      #   create(
+      #     :appeal,
+      #     number_of_claimants: 1,
+      #     request_issues: build_list(
+      #       :request_issue, 2,
+      #       contested_issue_description: issue_description,
+      #       notes: issue_note,
+      #       contested_rating_issue_diagnostic_code: diagnostic_code
+      #     )
+      #   )
+      # end
       let!(:mst_appeal) do
         create(
           :appeal,
@@ -2242,13 +2242,13 @@ RSpec.feature "Case details", :all_dbs do
         end
 
         it "the page shows the Special Issues: PACT Badge" do
-          visit "/queue/appeals/#{appeal.external_id}"
+          visit "/queue/appeals/#{pact_appeal.external_id}"
           page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
           expect(page).to have_content("Special Issues: PACT")
         end
 
         it "the page does not show the Special Issues: MST Badge" do
-          visit "/queue/appeals/#{appeal.external_id}"
+          visit "/queue/appeals/#{pact_appeal.external_id}"
           page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
           expect(page).to_not have_content("Special Issues: MST")
         end
@@ -2260,13 +2260,13 @@ RSpec.feature "Case details", :all_dbs do
         end
 
         it "the page shows the Special Issues: MST Badge" do
-          visit "/queue/appeals/#{appeal.external_id}"
+          visit "/queue/appeals/#{mst_appeal.external_id}"
           page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
           expect(page).to have_content("Special Issues: MST")
         end
 
         it "the page does not show the Special Issues: PACT Badge" do
-          visit "/queue/appeals/#{appeal.external_id}"
+          visit "/queue/appeals/#{mst_appeal.external_id}"
           page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
           expect(page).to_not have_content("Special Issues: PACT")
         end
