@@ -38,14 +38,12 @@ class CreatePacmanIntegration < Caseflow::Migration
       t.string :address_line_5, comment: "PII."
       t.string :address_line_6, comment: "PII."
       t.boolean :treat_line_2_as_addressee
-      t.boolean :treat_line_3_as_addressee
+      t.boolean :treat_line_3_as_addressee, comment: "If true, treatLine2AsAddressee must also be true"
       t.string :city, comment: "PII. If type is [domestic, international, military] then Must not be null"
       t.string :state, comment: "PII. Must be exactly two-letter ISO 3166-2 code. If destination_type is domestic or military then Must not be null"
       t.string :postal_code
       t.string :country_name
       t.string :country_code,comment: "Must be exactly two-letter ISO 3166 code."
-      t.string :email_address
-      t.string :phone_number, comment: "PII."
       t.timestamps
 
       t.references :vbms_distribution, index: true, foreign_key: { to_table: :vbms_distributions }
