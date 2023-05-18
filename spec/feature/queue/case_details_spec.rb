@@ -2186,6 +2186,45 @@ RSpec.feature "Case details", :all_dbs do
         end
       end
     end
+
+    describe "MST and PACT issues" do
+      let!(:appeal) do
+        create(
+          :appeal,
+          number_of_claimants: 1,
+          request_issues: build_list(
+            :request_issue, 2,
+            contested_issue_description: issue_description,
+            notes: issue_note,
+            contested_rating_issue_diagnostic_code: diagnostic_code
+          )
+        )
+      end
+
+      let(:intake_user) { create(:user, css_id: "BVA_INTAKE_USER", station_id: "101") }
+
+      # let!(:appeal) do
+      #   create(:appeal,
+      #          :with_post_intake_tasks,
+      #          veteran_file_number: veteran.file_number,
+      #          docket_type: Constants.AMA_DOCKETS.direct_review,
+      #          receipt_date: 10.months.ago.to_date.mdY)
+      # end
+
+      context "when there is a pact issue prechecked" do
+        before do
+          BvaIntake.singleton.add_user(intake_user)
+          User.authenticate!(user: intake_user)
+        end
+
+        it "the " do
+          visit "/queue/appeals/#{cavc_appeal.external_id}"
+          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
+        end
+      end
+
+    end
   end
 
   describe "task snapshot" do
