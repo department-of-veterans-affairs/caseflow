@@ -139,16 +139,24 @@ class CachedAppealService
       .group(:decision_review_id).count
   end
 
+  # def request_issue_types_for_appeal_ids(appeal_ids)
+  #   issue_type_alias = "STRING_AGG(DISTINCT LOWER(request_issues.nonrating_issue_category), ','"\
+  #     " ORDER BY LOWER(request_issues.nonrating_issue_category))"\
+  #     " AS issue_types"
+  #   # Selects a distinct list of string delimited issue_types that matches front end sorting
+  #   Appeal.select(:id, issue_type_alias)
+  #     .where(id: appeal_ids)
+  #     .left_joins(:request_issues)
+  #     .group("appeals.id")
+  #     .map { |appeal| [appeal.id, (appeal[:issue_types] || "")] }
+  #     .to_h
+  # end
+
+  # TODO: Check if this is more accurate for the setup? I'm sure it is but probably slower
   def request_issue_types_for_appeal_ids(appeal_ids)
-    issue_type_alias = "STRING_AGG(DISTINCT LOWER(request_issues.nonrating_issue_category), ','"\
-      " ORDER BY LOWER(request_issues.nonrating_issue_category))"\
-      " AS issue_types"
-    # Selects a distinct list of string delimited issue_types that matches front end sorting
-    Appeal.select(:id, issue_type_alias)
-      .where(id: appeal_ids)
-      .left_joins(:request_issues)
-      .group("appeals.id")
-      .map { |appeal| [appeal.id, (appeal[:issue_types] || "")] }
+    Appeal.where(id: appeal_ids)
+      .includes(:request_issues)
+      .map { |appeal| [appeal.id, appeal.request_issues.map(&:nonrating_issue_category).uniq.sort_by(&:upcase)] }
       .to_h
   end
 

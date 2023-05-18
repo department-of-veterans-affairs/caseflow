@@ -129,6 +129,7 @@ class QueueColumn
     end
 
     options = totals.each_pair.map do |option, count|
+      # TODO: Might be able to do a slower cached appeals job but more accurate instead of titleize
       label = self.class.format_option_label(option.titleize, count)
       self.class.filter_option_hash(option, label)
     end
