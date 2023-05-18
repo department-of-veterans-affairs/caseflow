@@ -146,7 +146,8 @@ describe('MTVJudgeDisposition', () => {
       await selectDisposition(
         disposition,
         vacateType,
-        instructions
+        instructions,
+        instructionsField
       );
 
       expect(onSubmit.mock.calls[0][0].instructions).toMatch('**Motion To Vacate:**  ' +
