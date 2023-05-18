@@ -198,7 +198,9 @@ const formatUnidentifiedIssues = (state) => {
         vacols_sequence_id: issue.vacolsSequenceId,
         verified_unidentified_issue: issue.verifiedUnidentifiedIssue,
         mst_status: issue.mstChecked,
-        pact_status: issue.pactChecked
+        pact_status: issue.pactChecked,
+        mst_status_update_reason_notes: issue?.mstJustification,
+        pact_status_update_reason_notes: issue?.pactJustification
       };
     });
 };
@@ -257,7 +259,9 @@ const formatNonratingRequestIssues = (state) => {
         correction_type: issue.correctionType,
         is_predocket_needed: issue.isPreDocketNeeded,
         mst_status: issue.mstChecked,
-        pact_status: issue.pactChecked
+        pact_status: issue.pactChecked,
+        mst_status_update_reason_notes: issue?.mstJustification,
+        pact_status_update_reason_notes: issue?.pactJustification
       };
     });
 };
@@ -403,7 +407,9 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
         vacolsIssue: issue.vacolsIssue,
         verifiedUnidentifiedIssue: issue.verifiedUnidentifiedIssue,
         mstChecked: issue.mstChecked,
-        pactChecked: issue.pactChecked
+        pactChecked: issue.pactChecked,
+        mst_status_update_reason_notes: issue?.mstJustification,
+        pact_status_update_reason_notes: issue?.pactJustification
       };
     } else if (issue.isRating) {
       if (!issue.decisionDate && !issue.approxDecisionDate) {
