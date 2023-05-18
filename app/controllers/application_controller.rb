@@ -116,10 +116,22 @@ class ApplicationController < ApplicationBaseController
       }
     end
 
+    manage_urls_for_vha(urls)  if current_user.vha_employee?
     # Only return the URL list if the user has applications to switch between
     (urls.length > 1) ? urls : nil
   end
   helper_method :application_urls
+
+  def manage_urls_for_vha(urls)
+    urls << intake_application_url if current_user.intake_user?
+  end
+
+  def intake_application_url
+    {
+      title: "Intake",
+      link: "/intake"
+    }
+  end
 
   def defult_menu_items
     [
