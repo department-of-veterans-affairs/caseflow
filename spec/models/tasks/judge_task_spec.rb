@@ -131,7 +131,7 @@ describe JudgeTask, :all_dbs do
             ].map { |action| subject_task.build_action_hash(action, judge) }
           )
           assign_action_hash = subject.find { |hash| hash[:label].eql? Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label }
-          expect(assign_action_hash[:data][:options].nil?).to eq true
+          expect(assign_action_hash[:data][:options].nil?).to eq false
         end
 
         context "the task was assigned from Quality Review" do
