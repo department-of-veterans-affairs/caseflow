@@ -12,7 +12,9 @@ class VbmsDistributionDestination < CaseflowRecord
     validates :country_name, if: -> { destination_type == "internationalAddress" }
   end
 
-  validates :treat_line_2_as_addressee, inclusion: { in: [true] }, if: -> { treat_line_3_as_addressee == true }
+  validates :treat_line_2_as_addressee,
+            inclusion: { in: [true], message: "cannot be false if line 3 is treated as addressee" },
+            if: -> { treat_line_3_as_addressee == true }
 
   validate :valid_country_code?, if: :physical_mail?
   validate :valid_us_state_code?, if: :us_address?
