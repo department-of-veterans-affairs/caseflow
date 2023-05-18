@@ -2,14 +2,14 @@
 
 FactoryBot.define do
   factory :vbms_communication_package do
-    comm_package_name {}
-    created_at
-    created_by_id
-    document_referenced
-    file_number
-    status
-    updated_at
-    updated_by_id
-    vbms_uploaded_document_id
+    comm_package_name { nil }
+    created_at { Time.zone.now }
+    created_by_id { nil }
+    document_referenced { nil }
+    file_number { nil }
+    status { nil }
+    updated_at { Time.zone.now }
+    updated_by_id { nil }
+    vbms_uploaded_document_id { nil }
   end
 end
