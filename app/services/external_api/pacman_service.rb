@@ -17,7 +17,7 @@ class ExternalApi::PacmanService
     # Purpose: Creates and sends communication package
     # POST: /package-manager-service/communication-package
     #
-    # takes in file_number(string), name(string), document_reference(json of strings)
+    # takes in file_number(string), name(string), document_reference(array of strings)
     #
     # Response: JSON of created package from Pacman API
     # Example response can be seen in lib/fakes/pacman_service.rb under 'fake_package_request' method
@@ -29,7 +29,7 @@ class ExternalApi::PacmanService
     # Purpose: Creates and sends distribution
     # POST: /package-manager-service/distribution
     #
-    # takes in package_id(string), recipient(json of strings), destinations(json of strings)
+    # takes in package_id(string), recipient(json of strings), destinations(array of strings)
     #
     # Response: JSON of created distribution from Pacman API
     # Example response can be seen in lib/fakes/pacman_service.rb under 'fake_distribution_request' method
