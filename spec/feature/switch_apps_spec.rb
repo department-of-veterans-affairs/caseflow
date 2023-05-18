@@ -30,4 +30,59 @@ RSpec.feature "SwitchApps", :postgres do
       expect(page).to have_content("Welcome to Caseflow Hearings!")
     end
   end
+
+  context "A user with VHA access" do
+    let!(:user) do
+      User.authenticate!(user: create(:user, roles: ["Mail Intake"]))
+    end
+
+    let!(:vha_business_line) do
+      create(:business_line, url: "vha", name: "Veterans Health Administration")
+    end
+
+    before do
+      vha_business_line.add_user(user)
+    end
+
+    scenario "currently sees switch product dropdown with only queue and and intake" do
+      visit "/decision_reviews/#{vha_business_line.url}"
+      expect(page).to have_current_path("/decision_reviews/#{vha_business_line.url}", ignore_query: true)
+      find("a", text: "Switch product").click
+      check_for_links
+    end
+  end
+
+  context "A user with no-VHA access" do
+    let!(:user) do
+      User.authenticate!(user: create(:user, roles: ["Mail Intake"]))
+    end
+    let!(:vha_business_line) do
+      create(:business_line, url: "vha", name: "Veterans Health Administration")
+    end
+
+    scenario "Non-VHA user doesn't have access to decision review vha" do
+      visit "/decision_reviews/#{vha_business_line.url}"
+      expect(page).to have_current_path("/unauthorized", ignore_query: true)
+      expect(page).to_not have_content("Switch product")
+    end
+  end
+
+  def check_for_links(link_hashes = all_vha_links)
+    link_hashes.each do |link_hash|
+      expect(page).to have_link(link_hash[:title], href: link_hash[:link])
+    end
+  end
+
+  def all_vha_links
+    [
+      {
+        title: "Caseflow Intake",
+        link: "/intake"
+      },
+      {
+        title: "Caseflow Queue",
+        link: "/queue"
+      }
+    ]
+  end
 end
