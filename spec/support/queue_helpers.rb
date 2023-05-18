@@ -32,7 +32,7 @@ module QueueHelpers
   end
 
   def format_mtv_judge_instructions(notes:, disposition:, vacate_type: nil, hyperlink: nil)
-    parts = ["**Motion To Vacate:**  \n#{(DISPOSITION_TEXT[disposition])}\n"]
+    parts = ["**Motion To Vacate:**  \n#{(disposition_text[disposition])}\n"]
 
     case disposition
     when "granted", "partially_granted"
