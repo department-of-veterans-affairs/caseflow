@@ -23,14 +23,16 @@ class DistributionTask < Task
 
     if !appeal.is_a?(Appeal)
       if !any_active_distribution_task_legacy
-        return [Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY.to_h]
+        current_opt = [Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY.to_h]
       end
       if any_active_distribution_task_legacy
-        return [Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.to_h]
+        current_opt = [Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.to_h]
       end
     else
-      return more_available_actions(user)
+      current_opt = more_available_actions(user)
     end
+
+    current_opt
   end
 
   def more_available_actions(user)
