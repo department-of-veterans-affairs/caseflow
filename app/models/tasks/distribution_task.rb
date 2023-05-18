@@ -28,15 +28,23 @@ class DistributionTask < Task
       if any_active_distribution_task_legacy
         return [Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.to_h]
       end
-    elsif special_case_movement_task(user)
-      return [Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.to_h]
-    elsif SpecialCaseMovementTeam.singleton.user_has_access?(user) && blocked_special_case_movement(user)
-      return [Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT.to_h]
-    elsif FeatureToggle.enabled?(:docket_switch, user: user)
-      return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h]
+    else
+      return more_available_actions(user)
     end
+  end
 
-    []
+  def more_available_actions(user)
+    return [] unless user
+
+    if special_case_movement_task(user)
+      [Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.to_h]
+    elsif SpecialCaseMovementTeam.singleton.user_has_access?(user) && blocked_special_case_movement(user)
+      [Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT.to_h]
+    elsif FeatureToggle.enabled?(:docket_switch, user: user)
+      [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h]
+    else
+      []
+    end
   end
 
   def any_active_distribution_task_legacy
