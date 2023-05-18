@@ -10,7 +10,7 @@ class AttorneyLegacyTask < LegacyTask
     if current_user && (current_user.judge_in_vacols? || current_user.can_act_on_behalf_of_judges?)
       [
         Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
-        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY_LEGACY.to_h
       ]
     elsif current_user && (current_user.attorney? || role == "attorney")
       [
