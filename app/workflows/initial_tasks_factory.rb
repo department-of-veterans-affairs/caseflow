@@ -44,8 +44,8 @@ class InitialTasksFactory
 
   # rubocop:disable Metrics/CyclomaticComplexity
   def create_subtasks!
-    distribution_task # ensure distribution_task exists
 
+    distribution_task # ensure distribution_task exists
     if @appeal.appellant_substitution?
       create_selected_tasks
     elsif @appeal.cavc?
@@ -65,6 +65,7 @@ class InitialTasksFactory
         distribution_task.ready_for_distribution! if vso_tasks.empty?
       end
     end
+    maybe_create_issue_update_task
   end
   # rubocop:enable Metrics/CyclomaticComplexity
 
@@ -198,5 +199,20 @@ class InitialTasksFactory
     state_code = veteran_state_code
   ensure
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
+  end
+
+  def maybe_create_issue_update_task
+    # Log params, check if issue is here if not cycle through @appeal.request_issues to check for mst/pact changes
+    # need to figure out how to check if mst/pact status changed on an issue
+
+    issue_update_task = IssuesUpdateTask.create!(
+      appeal: @appeal,
+      parent: distribution_task,
+      assigned_to: RequestStore[:current_user],
+      assigned_by: RequestStore[:current_user]
+    )
+    issue_update_task.format_instructions("test category", false, false, true, true, "mst edit reason", "pact edit reason") # dummy data for testing purposes
+    issue_update_task.status = "completed"
+    issue_update_task.save!
   end
 end
