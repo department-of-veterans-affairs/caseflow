@@ -154,10 +154,16 @@ class CachedAppealService
 
   # TODO: Check if this is more accurate for the setup? I'm sure it is but probably slower
   def request_issue_types_for_appeal_ids(appeal_ids)
-    Appeal.where(id: appeal_ids)
+    # puts "--------------------INSIDE MY REQUEST ISSUE TYEPS METHOD----------------------------"
+    result = Appeal.where(id: appeal_ids)
       .includes(:request_issues)
-      .map { |appeal| [appeal.id, appeal.request_issues.map(&:nonrating_issue_category).uniq.sort_by(&:upcase)] }
+      .all
+      .map do |appeal|
+        [appeal.id, appeal.request_issues.map(&:nonrating_issue_category).compact.uniq.sort_by(&:upcase).join(",")]
+      end
       .to_h
+    # puts result.first.inspect
+    result
   end
 
   def veteran_names_for_file_numbers(veteran_file_numbers)

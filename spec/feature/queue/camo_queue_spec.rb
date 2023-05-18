@@ -83,16 +83,12 @@ feature "CamoQueue", :all_dbs do
           if issue_type == "Beneficiary Travel"
             expect(page).to have_content("#{issue_type} (2)")
           else
-            # TODO: Change this for CHAMPVA if that is ever resolved
-            # Right now Champva is the filter since it uses titleize on the options
-            # If a special case is added to uppercase it, then this needs to be changed
-            expect(page).to have_content("#{issue_type.titleize} (1)")
+            expect(page).to have_content("#{issue_type} (1)")
           end
         end
 
         # Filter by Medical and Dental Care Reimbursement
-        # TODO: Once again weird titleize formatting
-        find("label", text: "Medical And Dental Care Reimbursement").click
+        find("label", text: "Medical and Dental Care Reimbursement").click
         expect(page).to have_content("Filtering by: #{filter_column_label_text} (1)")
         expect(page).to have_content("Medical and Dental Care Reimbursement")
         expect(page).to_not have_content("Beneficiary Travel")
