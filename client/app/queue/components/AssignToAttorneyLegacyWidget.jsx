@@ -41,8 +41,13 @@ export class AssignToAttorneyLegacyWidget extends React.PureComponent {
   constructor(props) {
     super(props);
 
+    const instructions = (this.props.selectedTasks[0].instructions.length === 0 ? null :
+      this.props.selectedTasks[0].instructions);
+    const instructionType = Array.isArray(this.props.selectedTasks[0].instructions) ? instructions : null;
+
     this.state = {
-      instructions: (this.props.isModal ? this.props.selectedTasks[0].instructions : null) || ''
+
+      instructions: ((this.props.isModal ? instructionType : null) || null)
     };
   }
 
@@ -275,7 +280,10 @@ export class AssignToAttorneyLegacyWidget extends React.PureComponent {
     </React.Fragment>;
 
     return isModal ? <QueueFlowModal title={COPY.ASSIGN_TASK_TITLE}
-      submit={this.submit} validateForm={this.validateForm} onCancel={onCancel}>
+      submit={this.submit} validateForm={this.validateForm} onCancel={onCancel} button = "Assign"
+      submitDisabled={
+        (this.state.instructions === '' || this.state.instructions === null || !this.props.selectedAssignee)
+      }>
       {Widget}
     </QueueFlowModal> : Widget;
   }
