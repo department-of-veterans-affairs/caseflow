@@ -2,7 +2,7 @@
 
 class VbmsDistribution < CaseflowRecord
   belongs_to :vbms_communication_package, optional: false
-  has_one :vbms_distribution_destination
+  has_many :vbms_distribution_destinations
 
   with_options presence: true do
     validates :recipient_type, inclusion: { in: %w[organization person system ro-colocated] }
