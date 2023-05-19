@@ -25,6 +25,7 @@ class ExternalApi::PacmanService::Response
     @body ||= begin
                 JSON.parse(resp.body)
               rescue JSON::ParserError
+                log(JSON::ParserError)
                 {}
               end
   end
@@ -50,6 +51,12 @@ class ExternalApi::PacmanService::Response
     else
       Caseflow::Error::PacmanApiError.new(code: code, message: message)
     end
+  end
+
+  def log_error(error)
+    uuid = SecureRandom.uuid
+    Rails.logger.error(error.name + " " + error.message + "Error ID: " + uuid)
+    Raven.capture_exception(error.name + " " + error.message, extra: { error_uuid: uuid })
   end
 
   # Gets the error message from the response
