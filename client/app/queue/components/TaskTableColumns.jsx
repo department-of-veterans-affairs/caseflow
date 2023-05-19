@@ -262,10 +262,17 @@ export const issueTypesColumn = (tasks, filterOptions, requireDasRecord) => {
     tableData: tasks,
     columnName: 'appeal.issueTypes',
     enableFilterTextTransform: false,
+    multiValueDelimiter: ',',
+    span: collapseColumn(requireDasRecord),
     label: 'Filter by issue type',
     valueName: 'Issue Type',
     valueFunction: (task) => {
+      if (!hasDASRecord(task, requireDasRecord)) {
+        return null;
+      }
+
       const commaDelimitedIssueTypes = task.appeal.issueTypes;
+
       // Remove duplicates from the comma delimited list of issue types
       const uniqueIssueTypes = [...new Set(commaDelimitedIssueTypes?.split(','))].
         sort((stringA, stringB) => stringA.localeCompare(stringB));
@@ -274,7 +281,7 @@ export const issueTypesColumn = (tasks, filterOptions, requireDasRecord) => {
         uniqueIssueTypes.map((type) => (<p key={type}> {type} </p>)) :
         uniqueIssueTypes[0];
     },
-    getSortValue: (task) => task.appeal.issueTypes
+    getSortValue: (task) => hasDASRecord(task, requireDasRecord) ? task.appeal.issueTypes : null
   };
 };
 
