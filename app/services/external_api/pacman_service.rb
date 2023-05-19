@@ -22,7 +22,7 @@ class ExternalApi::PacmanService
     # Response: JSON of created package from Pacman API
     # Example response can be seen in lib/fakes/pacman_service.rb under 'fake_package_request' method
     def send_communication_package_request(file_number, name, document_references)
-      request = package_request(file_number, name, document_references)
+      request = package_request(file_number, name, document_references.first)
       send_pacman_request(request)
     end
 
@@ -34,7 +34,7 @@ class ExternalApi::PacmanService
     # Response: JSON of created distribution from Pacman API
     # Example response can be seen in lib/fakes/pacman_service.rb under 'fake_distribution_request' method
     def send_distribution_request(package_id, recipient, destinations)
-      destinations.each do |destination|
+      destinations.map do |destination|
         request = distribution_request(package_id, recipient, destination)
         send_pacman_request(request)
       end

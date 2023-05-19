@@ -22,7 +22,7 @@ describe ExternalApi::PacmanService do
       },
       "description" => "Staging Mailing Distribution",
       "communicationPackageId" => "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
-      "destinations" => {
+      "destinations" => [{
         "type" => "physicalAddress",
         "id" => "28440040-51a5-4d2a-81a2-28730827be14",
         "status" => "",
@@ -40,7 +40,7 @@ describe ExternalApi::PacmanService do
         "postalCode" => "12345",
         "countryName" => "UNITED STATES",
         "countryCode" => "us"
-      },
+      }],
       "status" => "",
       "sentToCbcmDate" => ""
     }.as_json
@@ -116,10 +116,10 @@ describe ExternalApi::PacmanService do
     {
       "fileNumber" => "123456789",
       "name" => "ABC abc 1234 !*+,-.:;=?",
-      "documentReferences" => {
+      "documentReferences" => [{
         "id" => "3aec91cc-a88d-4b9c-9183-84bed583bbcc",
         "copies" => 1
-      }
+      }]
     }.as_json
   end
 
@@ -127,10 +127,10 @@ describe ExternalApi::PacmanService do
     {
       "id" => "24eb6a66-3833-4de6-bea4-4b614e55d5ac",
       "fileNumber" => "123456789",
-      "documentReferences" => {
+      "documentReferences" => [{
         "id" => "23233175-6a87-4cd4-b327-f20cf5ef1222",
         "copies" => 1
-      },
+      }],
       "status" => "NEW",
       "createDate" => ""
     }.as_json
@@ -172,12 +172,10 @@ describe ExternalApi::PacmanService do
     end
     it "successfully sends distribution" do
       allow(HTTPI)
-      .to receive(:post) do |req|
-        # Making sure the request being handed to HTTPI.post
-        # has everything we'd expect, and that there's no funny business going on.
+        .to receive(:post) do |req|
         expect(JSON.parse(req.body)).to eq distribution_post_request
       end.and_return(post_distribution_success_response)
-      expect(subject.body.as_json).to eq(post_distribution_success_response.body)
+      expect(subject.first.body.as_json).to eq(post_distribution_success_response.body)
     end
   end
 
