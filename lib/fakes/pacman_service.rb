@@ -101,7 +101,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
           },
           "description": "Staging Mailing Distribution",
           "communicationPackageId": "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
-          "destinations": {
+          "destinations": [{
             "type": "physicalAddress",
             "id": "28440040-51a5-4d2a-81a2-28730827be14",
             "status": "",
@@ -119,7 +119,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
             "postalCode": "12345",
             "countryName": "UNITED STATES",
             "countryCode": "us"
-          },
+          }],
           "status": "",
           "sentToCbcmDate": ""
         )

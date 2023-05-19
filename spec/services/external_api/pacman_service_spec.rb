@@ -50,23 +50,31 @@ describe ExternalApi::PacmanService do
     {
       "communicationPackageId" => "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
       "recipient" => {
-        "type" => "system",
-        "name" => "VBMS-C"
+        "type" => nil,
+        "name" => nil,
+        "firstName" => nil,
+        "middleName" => nil,
+        "lastName" => nil,
+        "participant_id" => nil,
+        "poaCode" => nil,
+        "claimantStationOfJurisdiction" => nil
       },
-      "destinations" => {
-        "type" => "domesticAddress",
-        "addressLine1" => "123 Test St.",
-        "addressLine2" => "",
-        "addressLine3" => "",
-        "addressLine4" => "",
-        "addressLine5" => "",
-        "addressLine6" => "",
-        "city" => "Anytown",
-        "postalCode" => "12345",
-        "state" => "DC",
-        "countryName" => "United States of America",
-        "countryCode" => "01"
-      }
+      "destinations" => [{
+        "type" => nil,
+        "addressLine1" => nil,
+        "addressLine2" => nil,
+        "addressLine3" => nil,
+        "addressLine4" => nil,
+        "addressLine5" => nil,
+        "addressLine6" => nil,
+        "treatLine2AsAddressee" => nil,
+        "treatLine3AsAddressee" => nil,
+        "city" => nil,
+        "state" => nil,
+        "postalCode" => nil,
+        "countryName" => nil,
+        "countryCode" => nil
+      }]
     }.as_json
   end
 
@@ -80,7 +88,7 @@ describe ExternalApi::PacmanService do
       },
       "description" => "Staging Distribution",
       "communicationPackageId" => "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
-      "destinations" => {
+      "destinations" => [{
         "type" => "physicalAddress",
         "id" => "5378bfbd-eff5-470c-bbc4-c7fd3c863a50",
         "status" => "null",
@@ -98,7 +106,7 @@ describe ExternalApi::PacmanService do
         "postalCode" => "12345",
         "countryName" => "UNITED STATES",
         "countryCode" => "us"
-      },
+      }],
       "status" => "null",
       "sentToCbcmDate" => "null"
     }.as_json
@@ -163,7 +171,12 @@ describe ExternalApi::PacmanService do
                                                            distribution_post_request["destinations"])
     end
     it "successfully sends distribution" do
-      allow(HTTPI).to receive(:post).and_return(post_distribution_success_response)
+      allow(HTTPI)
+      .to receive(:post) do |req|
+        # Making sure the request being handed to HTTPI.post
+        # has everything we'd expect, and that there's no funny business going on.
+        expect(JSON.parse(req.body)).to eq distribution_post_request
+      end.and_return(post_distribution_success_response)
       expect(subject.body.as_json).to eq(post_distribution_success_response.body)
     end
   end

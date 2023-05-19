@@ -34,8 +34,10 @@ class ExternalApi::PacmanService
     # Response: JSON of created distribution from Pacman API
     # Example response can be seen in lib/fakes/pacman_service.rb under 'fake_distribution_request' method
     def send_distribution_request(package_id, recipient, destinations)
-      request = distribution_request(package_id, recipient, destinations)
-      send_pacman_request(request)
+      destinations.each do |destination|
+        request = distribution_request(package_id, recipient, destination)
+        send_pacman_request(request)
+      end
     end
 
     # Purpose: Gets distribution from distribution id
@@ -56,7 +58,7 @@ class ExternalApi::PacmanService
 
     # Purpose: Builds package request
     #
-    # takes in file_number(string), name(string), document_reference(json of strings)
+    # takes in file_number(string), name(string), document_reference(array of strings)
     #
     # Response: package request hash
     def package_request(file_number, name, document_reference)
@@ -77,7 +79,7 @@ class ExternalApi::PacmanService
 
     # Purpose: Builds distribution request
     #
-    # takes in package_id(string), recipient(json of strings), destinations(json of strings)
+    # takes in package_id(string), recipient(json of strings), destinations(array of strings)
     #
     # Response: Distribution request hash
     def distribution_request(package_id, recipient, destination)
