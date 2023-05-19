@@ -143,7 +143,6 @@ class ExternalApi::PacmanService
     def send_pacman_request(headers: {}, endpoint:, method: :get, body: nil)
       url = URI.escape(BASE_URL + endpoint)
       request = HTTPI::Request.new(url)
-      request.query = query
       request.open_timeout = 30
       request.read_timeout = 30
       request.body = body.to_json unless body.nil?
