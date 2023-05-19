@@ -251,7 +251,7 @@ export const issueCountColumn = (requireDasRecord) => {
   };
 };
 
-export const issueTypesColumn = (tasks, filterOptions) => {
+export const issueTypesColumn = (tasks, filterOptions, requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_ISSUE_CATEGORIES_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name,
@@ -259,20 +259,29 @@ export const issueTypesColumn = (tasks, filterOptions) => {
     enableFilter: true,
     anyFiltersAreSet: true,
     filterOptions,
-    label: 'Filter by issue type',
-    columnName: 'appeal.issueTypes',
-    valueName: 'Issue Type',
     tableData: tasks,
+    columnName: 'appeal.issueTypes',
+    multiValueDelimiter: ',',
+    enableFilterTextTransform: false,
+    span: collapseColumn(requireDasRecord),
+    label: 'Filter by issue type',
+    valueName: 'Issue Type',
     valueFunction: (task) => {
+      if (!hasDASRecord(task, requireDasRecord)) {
+        return null;
+      }
+
       const commaDelimitedIssueTypes = task.appeal.issueTypes;
-      // Remove duplicates from the comma delimited list of issues
-      const uniqueIssueTypes = [...new Set(commaDelimitedIssueTypes?.split(','))];
+
+      // Remove duplicates from the comma delimited list of issue types
+      const uniqueIssueTypes = [...new Set(commaDelimitedIssueTypes?.split(','))].
+        sort((stringA, stringB) => stringA.localeCompare(stringB));
 
       return uniqueIssueTypes.length > 1 ?
         uniqueIssueTypes.map((type) => (<p key={type}> {type} </p>)) :
         uniqueIssueTypes[0];
     },
-    getSortValue: (task) => task.appeal.issueTypes
+    getSortValue: (task) => hasDASRecord(task, requireDasRecord) ? task.appeal.issueTypes : null
   };
 };
 
