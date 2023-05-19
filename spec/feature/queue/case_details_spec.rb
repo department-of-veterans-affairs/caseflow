@@ -2188,35 +2188,6 @@ RSpec.feature "Case details", :all_dbs do
     end
 
     describe "MST and PACT issues" do
-      # let!(:mst_appeal) do
-      #   claim_id = rating.issues[0].reference_id
-      #   create(
-      #     :end_product_establishment,
-      #     reference_id: claim_id,
-      #     veteran_file_number: "500000102",
-      #   )
-      # end
-      # mst_contention = Generators::Contention.build_mst_and_pact_contention(claim_id: claim_id)
-
-      # req_issue = create(:request_issue,
-      #   contention_reference_id: mst_contention.id,
-      #   end_product_establishment: epe,
-      #   veteran_participant_id: veteran.participant_id,
-      #   contested_rating_issue_reference_id: rating.issues[0].reference_id
-      # )
-      # let!(:mst_appeal) do
-      #   create(
-      #     :appeal,
-      #     number_of_claimants: 1,
-      #     request_issues: build_list(
-      #       :request_issue, 2,
-      #       contested_issue_description: "issue_description",
-      #       notes: "issue_note",
-      #       contested_rating_issue_diagnostic_code: 1234
-      #     )
-      #   )
-      # end
-
       let!(:mst_appeal) do
         create(
           :appeal,
