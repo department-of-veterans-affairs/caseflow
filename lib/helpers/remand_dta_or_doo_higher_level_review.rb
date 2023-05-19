@@ -95,7 +95,7 @@ module WarRoom
       conn.execute(raw_sql)
     end
 
-    # Method to sync with VBMS
+    # Method to remand supplemental claims
     def call_remand(ep_ref, conn)
       begin
         epe = EndProductEstablishment.find_by(reference_id: ep_ref)
