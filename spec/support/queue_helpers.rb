@@ -9,6 +9,10 @@ module QueueHelpers
     mtv_const.DISPOSITION_TEXT.to_h
   end
 
+  def disposition_timeline_text
+    mtv_const.DISPOSITION_TIMELINE_TEXT.to_h
+  end
+
   def recommendation_text
     mtv_const.DISPOSITION_RECOMMENDATIONS.to_h
   end
@@ -32,7 +36,7 @@ module QueueHelpers
   end
 
   def format_mtv_judge_instructions(notes:, disposition:, vacate_type: nil, hyperlink: nil)
-    parts = ["**Motion To Vacate:**  \n#{disposition_text[disposition.to_sym].titlecase}\n"]
+    parts = ["**Motion To Vacate:**  \n#{disposition_timeline_text[disposition.to_sym]}\n"]
 
     case disposition
     when "granted", "partially_granted"
