@@ -84,38 +84,55 @@ class ExternalApi::PacmanService
       request = {
         body: {
           communicationPackageId: package_id,
-          recipient: {
-            type: recipient[:type],
-            name: recipient[:name],
-            firstName: recipient[:first_name],
-            middleName: recipient[:middle_name],
-            lastName: recipient[:last_name],
-            participant_id: recipient[:participant_id],
-            poaCode: recipient[:poa_code],
-            claimantStationOfJurisdiction: recipient[:claimant_station_of_jurisdiction]
-          },
-          destinations: {
-            type: destination[:type],
-            addressLine1: destination[:addressLine1],
-            addressLine2: destination[:addressLine2],
-            addressLine3: destination[:addressLine3],
-            addressLine4: destination[:addressLine4],
-            addressLine5: destination[:addressLine5],
-            addressLine6: destination[:addressLine6],
-            treatLine2AsAddressee: destination[:treatLine2AsAddressee],
-            treatLine3AsAddressee: destination[:treatLine3AsAddressee],
-            city: destination[:city],
-            state: destination[:state],
-            postalCode: destination[:postalCode],
-            countryName: destination[:countryName],
-            emailAddress: destination[:emailAddress],
-            phoneNumber: destination[:phoneNumber]
-          }
+          recipient: recipient_data(recipient),
+          destinations: destinations_data(destination)
         },
         headers: HEADERS,
         endpoint: SEND_PACKAGE_ENDPOINT, method: :post
-      }
+      }.compact
       request
+    end
+
+    # Purpose: Builds recipient json for distribution request
+    #
+    # takes in recipient(json of strings)
+    #
+    # Response: json of recipient data for distribution request hash
+    def recipient_data(recipient)
+      {
+        type: recipient[:type],
+        name: recipient[:name],
+        firstName: recipient[:first_name],
+        middleName: recipient[:middle_name],
+        lastName: recipient[:last_name],
+        participant_id: recipient[:participant_id],
+        poaCode: recipient[:poa_code],
+        claimantStationOfJurisdiction: recipient[:claimant_station_of_jurisdiction]
+      }
+    end
+
+    # Purpose: Builds destinations array for distribution request
+    #
+    # takes in destination(array of strings)
+    #
+    # Response: array of destination data for distribution request hashh
+    def destinations_data(destination)
+      [{
+        type: destination[:type],
+        addressLine1: destination[:addressLine1],
+        addressLine2: destination[:addressLine2],
+        addressLine3: destination[:addressLine3],
+        addressLine4: destination[:addressLine4],
+        addressLine5: destination[:addressLine5],
+        addressLine6: destination[:addressLine6],
+        treatLine2AsAddressee: destination[:treatLine2AsAddressee],
+        treatLine3AsAddressee: destination[:treatLine3AsAddressee],
+        city: destination[:city],
+        state: destination[:state],
+        postalCode: destination[:postalCode],
+        countryName: destination[:countryName],
+        countryCode: destination[:countryCode]
+      }]
     end
 
     # Purpose: Build and send the request to the server
