@@ -131,7 +131,8 @@ class ApplicationController < ApplicationBaseController
   def decision_reviews_vha
     {
       title: "Decision Review Queue",
-      link: "/decision_reviews/vha"
+      link: "/decision_reviews/vha",
+      prefix: "VHA"
     }
   end
 
