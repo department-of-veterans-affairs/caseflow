@@ -40,6 +40,8 @@ RSpec.feature "SwitchApps", :postgres do
       create(:business_line, url: "vha", name: "Veterans Health Administration")
     end
 
+    let!(:list_order) { ["Caseflow Intake", "Caseflow Queue"] }
+
     before do
       vha_business_line.add_user(user)
     end
@@ -49,6 +51,13 @@ RSpec.feature "SwitchApps", :postgres do
       expect(page).to have_current_path("/decision_reviews/#{vha_business_line.url}", ignore_query: true)
       find("a", text: "Switch product").click
       check_for_links
+    end
+
+    it "match the array of the dropdown" do
+      visit "/intake"
+      find("a", text: "Switch product").click
+      dropdown_menu_text = page.find(".cf-dropdown-menu").text
+      expect(dropdown_menu_text.split("\n")).to match_array(list_order)
     end
   end
 

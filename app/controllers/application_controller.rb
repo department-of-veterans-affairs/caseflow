@@ -107,7 +107,8 @@ class ApplicationController < ApplicationBaseController
   def application_urls
     urls = [{
       title: "Queue",
-      link: "/queue"
+      link: "/queue",
+      sort_order: 3
     }]
     if current_user.hearings_user?
       urls << {
@@ -116,9 +117,13 @@ class ApplicationController < ApplicationBaseController
       }
     end
 
-    manage_urls_for_vha(urls)  if current_user.vha_employee?
+    manage_urls_for_vha(urls) if current_user.vha_employee?
     # Only return the URL list if the user has applications to switch between
-    (urls.length > 1) ? urls : nil
+    if urls.length > 1
+      return urls.sort_by { |url| url[:sort_order] || url.count }
+    end
+
+    nil
   end
   helper_method :application_urls
 
@@ -129,7 +134,8 @@ class ApplicationController < ApplicationBaseController
   def intake_application_url
     {
       title: "Intake",
-      link: "/intake"
+      link: "/intake",
+      sort_order: 1
     }
   end
 
