@@ -13,9 +13,13 @@ import {
   JUDGE_ADDRESS_MTV_VACATE_TYPE_LABEL,
   JUDGE_ADDRESS_MTV_HYPERLINK_LABEL,
   JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL,
-  JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL
+  JUDGE_ADDRESS_MTV_ASSIGN_ATTORNEY_LABEL,
+  MTV_TASK_INSTRUCTIONS,
+  MTV_TASK_INSTRUCTIONS_TYPE,
+  MTV_TASK_INSTRUCTIONS_DETAIL,
+  MTV_TASK_INSTRUCTIONS_HYPERLINK
 } from '../../../COPY';
-import { DISPOSITION_TEXT, VACATE_TYPE_OPTIONS } from '../../../constants/MOTION_TO_VACATE';
+import { DISPOSITION_TIMELINE_TEXT, VACATE_TYPE_OPTIONS } from '../../../constants/MOTION_TO_VACATE';
 import { JUDGE_RETURN_TO_LIT_SUPPORT } from '../../../constants/TASK_ACTIONS';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -28,6 +32,7 @@ import StringUtil from '../../util/StringUtil';
 import { ReturnToLitSupportAlert } from './ReturnToLitSupportAlert';
 import { grantTypes, dispositionStrings } from './mtvConstants';
 import { sprintf } from 'sprintf-js';
+import { isEmpty } from 'lodash';
 
 const vacateTypeText = (val) => {
   const opt = VACATE_TYPE_OPTIONS.find((i) => i.value === val);
@@ -36,18 +41,29 @@ const vacateTypeText = (val) => {
 };
 
 const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }) => {
-  const parts = [`I am proceeding with a ${DISPOSITION_TEXT[disposition]}.`];
+  const parts = [`${MTV_TASK_INSTRUCTIONS}${DISPOSITION_TIMELINE_TEXT[disposition]}\n`];
 
   switch (disposition) {
   case 'granted':
   case 'partially_granted':
-    parts.push(`This will be a ${vacateTypeText(vacateType)}`);
-    parts.push(instructions);
+    parts.push(MTV_TASK_INSTRUCTIONS_TYPE);
+    parts.push(`${vacateTypeText(vacateType)}\n`);
+    if (isEmpty(instructions) === false) {
+      parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
+      parts.push(`${instructions}\n`);
+    }
     break;
+  case 'denied':
+  case 'dismissed':
   default:
-    parts.push(instructions);
-    parts.push('\nHere is the hyperlink to the signed denial document');
-    parts.push(hyperlink);
+    if (isEmpty(instructions) === false) {
+      parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
+      parts.push(`${instructions}\n`);
+    }
+    if (hyperlink !== null) {
+      parts.push(MTV_TASK_INSTRUCTIONS_HYPERLINK);
+      parts.push(`${hyperlink}\n`);
+    }
     break;
   }
 
@@ -180,7 +196,8 @@ export const MTVJudgeDisposition = ({
 
         <TextareaField
           name="instructions"
-          label={sprintf(JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL, disposition || 'granted')}
+          label={sprintf(JUDGE_ADDRESS_MTV_DISPOSITION_NOTES_LABEL,
+            disposition === 'partially_granted' ? 'partially granted' : disposition || 'granted')}
           onChange={(val) => setInstructions(val)}
           value={instructions}
           className={['mtv-decision-instructions']}
