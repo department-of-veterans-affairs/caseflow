@@ -172,7 +172,7 @@ describe('MTVJudgeDisposition', () => {
         );
 
         expect(onSubmit.mock.calls[0][0].instructions).toMatch('**Motion To Vacate:**  ' +
-          '\nGrant Or Partial Vacatur' +
+          '\nFull vacatur' +
           '\n' +
           '\n**Type:**  ' +
           '\nVacate and De Novo (2 documents)' +
@@ -201,7 +201,7 @@ describe('MTVJudgeDisposition', () => {
         );
 
         expect(onSubmit.mock.calls[0][0].instructions).toMatch('**Motion To Vacate:**  ' +
-          '\nPartial Vacatur' +
+          '\nPartial vacatur' +
           '\n' +
           '\n**Type:**  ' +
           '\nStraight Vacate (1 document)' +
@@ -233,7 +233,7 @@ describe('MTVJudgeDisposition', () => {
 
         expect(onSubmit.mock.calls[0][0].instructions).toMatch(
           '**Motion To Vacate:**  \n' +
-          'Denial Of All Issues For Vacatur\n\n' +
+          'Deny all issues for vacatur\n\n' +
           '**Detail:**  \ntesting\n\n' +
           '**Hyperlink:**  \nwww.caseflow.com\n'
         );
@@ -258,7 +258,7 @@ describe('MTVJudgeDisposition', () => {
 
         expect(onSubmit.mock.calls[0][0].instructions).toMatch(
           '**Motion To Vacate:**  \n' +
-          'Dismissal\n\n**Detail:**  \nnew instructions from judge\n\n' +
+          'Dismiss all issues for vacatur\n\n**Detail:**  \nnew instructions from judge\n\n' +
           '**Hyperlink:**  \nwww.google.com\n'
         );
       });

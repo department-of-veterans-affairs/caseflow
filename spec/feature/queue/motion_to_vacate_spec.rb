@@ -397,7 +397,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
     end
 
     context "denial" do
-      byebug
       let(:atty_disposition) { "denied" }
       let(:atty_hyperlink) { "https://efolder.link/file" }
 
@@ -436,7 +435,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
         expect(new_task.available_actions(motions_attorney)).to include(
           Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
         )
-        byebug
         expect(new_task.instructions.join("")).to eq(instructions)
       end
     end

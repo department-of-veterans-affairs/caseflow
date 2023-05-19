@@ -19,7 +19,7 @@ import {
   MTV_TASK_INSTRUCTIONS_DETAIL,
   MTV_TASK_INSTRUCTIONS_HYPERLINK
 } from '../../../COPY';
-import { DISPOSITION_TEXT, VACATE_TYPE_OPTIONS } from '../../../constants/MOTION_TO_VACATE';
+import { DISPOSITION_TIMELINE_TEXT, VACATE_TYPE_OPTIONS } from '../../../constants/MOTION_TO_VACATE';
 import { JUDGE_RETURN_TO_LIT_SUPPORT } from '../../../constants/TASK_ACTIONS';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -41,7 +41,7 @@ const vacateTypeText = (val) => {
 };
 
 const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }) => {
-  const parts = [`${MTV_TASK_INSTRUCTIONS}${StringUtil.titleCase(DISPOSITION_TEXT[disposition])}\n`];
+  const parts = [`${MTV_TASK_INSTRUCTIONS}${DISPOSITION_TIMELINE_TEXT[disposition]}\n`];
 
   switch (disposition) {
   case 'granted':
