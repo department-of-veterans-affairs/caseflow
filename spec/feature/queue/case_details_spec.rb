@@ -2204,41 +2204,53 @@ RSpec.feature "Case details", :all_dbs do
       #   veteran_participant_id: veteran.participant_id,
       #   contested_rating_issue_reference_id: rating.issues[0].reference_id
       # )
+      # let!(:mst_appeal) do
+      #   create(
+      #     :appeal,
+      #     number_of_claimants: 1,
+      #     request_issues: build_list(
+      #       :request_issue, 2,
+      #       contested_issue_description: "issue_description",
+      #       notes: "issue_note",
+      #       contested_rating_issue_diagnostic_code: 1234
+      #     )
+      #   )
+      # end
 
       let!(:mst_appeal) do
         create(
           :appeal,
           number_of_claimants: 1,
-          request_issues: build_list(
-            :request_issue, 2,
-            contested_issue_description: issue_description,
-            notes: issue_note,
-            contested_rating_issue_diagnostic_code: diagnostic_code
-          )
+          request_issues: [
+            create(
+              :request_issue,
+              benefit_type: "compensation",
+              mst_status: true,
+              pact_status: false,
+              nonrating_issue_description: "description here",
+              notes: "issue notes here"
+            )
+          ]
         )
       end
       let!(:pact_appeal) do
         create(
           :appeal,
           number_of_claimants: 1,
-          request_issues: build_list(
-            :request_issue, 2,
-            contested_issue_description: issue_description,
-            notes: issue_note,
-            contested_rating_issue_diagnostic_code: diagnostic_code
-          )
+          request_issues: [
+            create(
+              :request_issue,
+              benefit_type: "compensation",
+              mst_status: false,
+              pact_status: true,
+              nonrating_issue_description: "description here",
+              notes: "issue notes here"
+            )
+          ]
         )
       end
 
       let(:intake_user) { create(:user, css_id: "BVA_INTAKE_USER", station_id: "101") }
-
-      # let!(:appeal) do
-      #   create(:appeal,
-      #          :with_post_intake_tasks,
-      #          veteran_file_number: veteran.file_number,
-      #          docket_type: Constants.AMA_DOCKETS.direct_review,
-      #          receipt_date: 10.months.ago.to_date.mdY)
-      # end
 
       context "when there is a pact issue prechecked" do
         before do
