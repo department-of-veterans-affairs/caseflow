@@ -23,7 +23,6 @@ class AttorneyLegacyTask < LegacyTask
     else
       []
     end
-
   end
 
   def timeline_title

@@ -467,7 +467,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
-            expect(response_body.size).to eq(2)
+            expect(response_body.size) == 2
             expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.first["attributes"]["assigned_to"]["name"]).to eq "VLJ Support Staff"
             expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
@@ -1372,8 +1372,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(task["attributes"]["user_id"]).to eq(judge_user.css_id)
         expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
         expect(task["attributes"]["available_actions"].size) == 2
-
-        expect(DatabaseRequestCounter.get_counter(:vacols)) == (16)
+        expect(DatabaseRequestCounter.get_counter(:vacols)) == 16
       end
     end
 
@@ -1409,7 +1408,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
           assert_response :success
           response_body = JSON.parse(response.body)
-          expect(response_body["tasks"].length) == 2
+          expect(response_body["tasks"].length).to eq(2)
           task = response_body["tasks"][0]
           expect(task["id"]).to eq(legacy_appeal2.vacols_id)
           expect(task["attributes"]["type"]).to eq(JudgeLegacyDecisionReviewTask.name)

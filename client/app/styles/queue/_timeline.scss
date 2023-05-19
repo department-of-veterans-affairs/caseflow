@@ -85,8 +85,9 @@
 
 .markdownVJL {
   p {
-    margin: 0px;
-    &:last-of-type{
+    margin: 0;
+
+    &:last-of-type {
       margin-bottom: 1rem;
     }
   }

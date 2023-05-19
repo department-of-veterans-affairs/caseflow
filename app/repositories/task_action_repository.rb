@@ -362,10 +362,10 @@ class TaskActionRepository
       }
 
       params[:modal_body] = if task.type == "PostSendInitialNotificationLetterHoldingTask"
-        COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
-      else
-        COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
-      end
+                              COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
+                            else
+                              COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
+                            end
 
       if defined? task.completion_contact
         params[:contact] = task.completion_contact
@@ -420,11 +420,12 @@ class TaskActionRepository
     end
 
     def return_to_attorney_data(task, _user = nil)
-      assignee = if task.appeal_type ==  "LegacyAppeal"
-                  task.assigned_to
+      assignee = if task.appeal_type == "LegacyAppeal"
+                   task.assigned_to
                  else
-                  task.children.select { |child| child.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
+                   task.children.select { |child| child.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
                  end
+
       judge_team = JudgeTeam.for_judge(task.assigned_to)
 
       # Include attorneys for all judge teams in list of possible recipients so that judges can send cases to
