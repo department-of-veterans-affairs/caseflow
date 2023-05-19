@@ -44,7 +44,6 @@ class InitialTasksFactory
 
   # rubocop:disable Metrics/CyclomaticComplexity
   def create_subtasks!
-
     distribution_task # ensure distribution_task exists
     if @appeal.appellant_substitution?
       create_selected_tasks
@@ -52,7 +51,7 @@ class InitialTasksFactory
       create_cavc_subtasks
     elsif should_streamline_death_dismissal?
       distribution_task.ready_for_distribution!
-    elsif @appeal.request_issues_updates.any?
+    elsif @appeal.mst? || @appeal.pact?
       create_issue_update_task
     else
       case @appeal.docket_type
@@ -203,11 +202,25 @@ class InitialTasksFactory
   end
 
   def create_issue_update_task
-    IssuesUpdateTask.create!(
-      appeal: @appeal,
-      parent: @root_task,
-      assigned_to: RequestStore[:current_user],
-      assigned_by: RequestStore[:current_user]
-    )
+    @appeal.request_issues.each do |issue|
+      next unless issue.mst_status || issue.pact_status
+
+      task = IssuesUpdateTask.create!(
+        appeal: @appeal,
+        parent: @root_task,
+        assigned_to: RequestStore[:current_user],
+        assigned_by: RequestStore[:current_user]
+      )
+      task.format_instructions(
+        issue.nonrating_issue_category,
+        false,
+        false,
+        issue.mst_status,
+        issue.pact_status,
+        issue.mst_status_update_reason_notes,
+        issue.pact_status_update_reason_notes
+      )
+      task.completed!
+    end
   end
 end
