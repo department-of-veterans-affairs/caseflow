@@ -262,10 +262,10 @@ export const issueTypesColumn = (tasks, filterOptions, requireDasRecord) => {
     tableData: tasks,
     label: 'Filter by issue type',
     columnName: 'appeal.issueTypes',
-    valueName: 'Issue Type',
     multiValueDelimiter: ',',
     enableFilterTextTransform: false,
     span: collapseColumn(requireDasRecord),
+    valueName: 'Issue Type',
     valueFunction: (task) => {
       if (!hasDASRecord(task, requireDasRecord)) {
         return null;
