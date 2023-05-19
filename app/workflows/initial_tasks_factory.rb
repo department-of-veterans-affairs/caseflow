@@ -43,6 +43,7 @@ class InitialTasksFactory
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   def create_subtasks!
     distribution_task # ensure distribution_task exists
     if @appeal.appellant_substitution?
@@ -68,6 +69,7 @@ class InitialTasksFactory
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 
   def distribution_task
     @distribution_task ||= @appeal.tasks.open.find_by(type: :DistributionTask) ||
