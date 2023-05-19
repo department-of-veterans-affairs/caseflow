@@ -69,10 +69,14 @@ class AddIssuesModal extends React.Component {
     currentIssue.decisionDate = currentIssue.decisionDate || currentIssue.approxDecisionDate;
 
     if (mstChecked && mstJustification === '') {
-      return;
+      if (!currentIssue.mstAvailable) {
+        return;
+      }
     }
     if (pactChecked && pactJustification === '') {
-      return;
+      if (!currentIssue.pactAvailable) {
+        return;
+      }
     }
 
     this.props.onSubmit({
@@ -91,8 +95,6 @@ class AddIssuesModal extends React.Component {
     const { intakeData } = this.props;
     let iterations = -1;
     const addedIssues = intakeData.addedIssues ? intakeData.addedIssues : [];
-    let preExistingMST;
-    let preExistingPACT;
     let counter = 0;
     const issueKeys = Object.keys(intakeData.contestableIssues);
 
@@ -185,8 +187,6 @@ class AddIssuesModal extends React.Component {
           setMstCheckboxFunction={this.mstCheckboxChange}
           pactChecked={this.state.pactChecked}
           setPactCheckboxFunction={this.pactCheckboxChange}
-          preExistingMST={preExistingMST}
-          preExistingPACT={preExistingPACT}
         />
       );
     });
