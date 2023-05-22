@@ -82,6 +82,15 @@ class MailRequest
     @phone_number = @params[:phone_number]
   end
 
+  def call
+    if valid?
+      create_a_vbms_distribution
+      create_a_vbms_distribution_destination
+    else
+      raise Caseflow::Error::MissingRecipientInfo
+    end
+  end
+
   def create_a_vbms_distribution
     VbmsDistribution.create(recipient_params_parse)
   end
@@ -93,53 +102,77 @@ class MailRequest
   private
 
   def recipient_type_valid?
-    valid_var = %w[organization person system ro-colocated].include?(
-      @params[:recipient_type].slice(1, @params[:recipient_type].length - 2))
-    valid_var
+    unless @params[:recipient_type].blank?
+      valid_var = %w[organization person system ro-colocated].include?(
+        @params[:recipient_type].slice(1, @params[:recipient_type].length - 2))
+      valid_var
+    end
   end
 
   def person?
-    @params[:recipient_type].slice(1, @params[:recipient_type].length - 2) == "person"
+    unless @params[:recipient_type].blank?
+      @params[:recipient_type].slice(1, @params[:recipient_type].length - 2) == "person"
+    end
   end
 
   def ro_colocated?
-    @params[:recipient_type].slice(1, @params[:recipient_type].length - 2) == "ro-colocated"
+    unless @params[:recipient_type].blank?
+      @params[:recipient_type].slice(1, @params[:recipient_type].length - 2) == "ro-colocated"
+    end
   end
 
   def destination_type_valid?
-    %w[domesticAddress internationalAddress militaryAddress derived email sms].include?(
-      @params[:destination_type].slice(1, @params[:destination_type].length - 2)
-    )
+    unless @params[:destination_type].blank?
+      %w[domesticAddress internationalAddress militaryAddress derived email sms].include?(
+        @params[:destination_type].slice(1, @params[:destination_type].length - 2)
+      )
+    end
   end
 
   def physical_mail?
-    %w[domesticAddress internationalAddress militaryAddress].include?(
-      @params[:destination_type].slice(1, @params[:destination_type].length - 2))
+    unless @params[:destination_type].blank?
+      %w[domesticAddress internationalAddress militaryAddress].include?(
+        @params[:destination_type].slice(1, @params[:destination_type].length - 2)
+      )
+    end
   end
 
   def line_2_addressee?
-    @params[:treat_line_2_as_addressee] == true
+    unless @params[:treat_line_2_as_addressee].blank?
+      @params[:treat_line_2_as_addressee] == true
+    end
   end
 
   def line_3_addressee?
-    @params[:treat_line_3_as_addressee] == true
+    unless @params[:treat_line_3_as_addressee].blank?
+      @params[:treat_line_3_as_addressee] == true
+    end
   end
 
   def country_name_required?
-    @params[:destination_type].slice(1, @params[:recipient_type].length - 2) == "internationalAddress"
+    unless @params[:destination_type].blank?
+      @params[:destination_type].slice(1, @params[:destination_type].length - 2) == "internationalAddress"
+    end
   end
 
   def us_address?
-    %w[domesticAddress militaryAddress].include?(
-      @params[:destination_type].slice(1, @params[:recipient_type].length - 2))
+    unless @params[:destination_type].blank?
+      %w[domesticAddress militaryAddress].include?(
+        @params[:destination_type].slice(1, @params[:destination_type].length - 2)
+      )
+    end
   end
 
   def email_required?
-    @params[:destination_type].slice(1, @params[:recipient_type].length - 2) == "email"
+    unless @params[:destination_type].blank?
+      @params[:destination_type].slice(1, @params[:destination_type].length - 2) == "email"
+    end
   end
 
   def phone_number_required?
-    @params[:destination_type].slice(1, @params[:recipient_type].length - 2) == "sms"
+    unless @params[:destination_type].blank?
+      @params[:destination_type].slice(1, @params[:destination_type].length - 2) == "sms"
+    end
   end
 
   def destination_params_parse
@@ -175,4 +208,6 @@ class MailRequest
       claimant_station_of_jurisdiction: @claimant_station_of_jurisdiction
     }
   end
+
+
 end
