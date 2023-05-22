@@ -248,20 +248,25 @@ export const showPdf = createAsyncThunk(
         withCredentials: true,
         timeout: true,
         responseType: 'arraybuffer',
+      }).catch((err) => {
+        // allow HTTP errors to fall on the floor via the console.
+        console.error(new Error(`Problem with GET ${currentDocument.content_url} ${err}`));
       });
 
-      // Store the Document in-memory so that we do not serialize through Redux, but still persist
-      pdfDocuments[currentDocument.id] = {
-        pdf: await PDF.getDocument({ data: body }).promise,
-      };
+      if (body) {
+        // Store the Document in-memory so that we do not serialize through Redux, but still persist
+        pdfDocuments[currentDocument.id] = {
+          pdf: await PDF.getDocument({ data: body }).promise,
+        };
 
-      // Store the pages for the PDF
-      pdfDocuments[currentDocument.id].pages = await Promise.all(
-        range(0, pdfDocuments[currentDocument.id].pdf.numPages).map(
-          (pageIndex) =>
-            pdfDocuments[currentDocument.id].pdf.getPage(pageIndex + 1)
-        )
-      );
+        // Store the pages for the PDF
+        pdfDocuments[currentDocument.id].pages = await Promise.all(
+          range(0, pdfDocuments[currentDocument.id].pdf.numPages).map(
+            (pageIndex) =>
+              pdfDocuments[currentDocument.id].pdf.getPage(pageIndex + 1)
+          )
+        );
+      }
     }
 
     // Store the Viewport
