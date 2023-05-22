@@ -348,8 +348,8 @@ class AppealsController < ApplicationController
 
   def create_issues_update_task(issue_category, original_mst, original_pact, edit_mst, edit_pact, mst_edit_reason, pact_edit_reason)
     task = IssuesUpdateTask.create!(
-      appeal: @appeal,
-      parent: RootTask.find_or_create_by!(appeal: @appeal),
+      appeal: appeal,
+      parent: RootTask.find_or_create_by!(appeal: appeal),
       assigned_to: Organization.find_by_url("clerk-of-the-board"),
       assigned_by: RequestStore[:current_user]
     )
