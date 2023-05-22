@@ -92,8 +92,8 @@ module IntakeHelpers
       receipt_date: receipt_date,
       benefit_type: is_comp ? benefit_type : "education",
       legacy_opt_in_approved: legacy_opt_in_approved,
-      veteran_is_not_claimant: claim_participant_id.present?
-      # filed_by_va_gov: filed_by_va_gov
+      veteran_is_not_claimant: claim_participant_id.present?,
+      filed_by_va_gov: false
     )
 
     intake = SupplementalClaimIntake.create!(
