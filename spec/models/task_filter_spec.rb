@@ -113,14 +113,14 @@ describe TaskFilter, :all_dbs do
       let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name}&val=#{filter_value}"] }
 
       it "returns the expected where_clause" do
-        expect(subject).to eq(["POSITION('#{filter_value}' IN #{database_column_name}) > 0", [filter_value]])
+        expect(subject).to eq(["POSITION('#{filter_value}' IN #{database_column_name}) > 0"])
       end
 
       context "when the filter value is None" do
         let(:filter_value) { "None" }
 
         it "returns the expected where_clause" do
-          expect(subject).to eq(["#{database_column_name} IS NULL OR #{database_column_name} = '' ", [filter_value]])
+          expect(subject).to eq(["#{database_column_name} IS NULL OR #{database_column_name} = '' "])
         end
       end
     end

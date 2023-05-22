@@ -28,15 +28,18 @@ class TaskFilter
       clause
     end
 
+    # Filter is an object not an instance of hash but rubocop is confused by .values
+    # rubocop:disable Performance/InefficientHashSearch
     def former_travel_filter?(filter)
       filter.column == Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME &&
-        filter_selections.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_FORMER_TRAVEL.key)
+        filter.values.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_FORMER_TRAVEL.key)
     end
 
     def aod_filter?(filter)
       filter.column == Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name &&
-        filter_selections.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
+        filter.values.include?(Constants.QUEUE_CONFIG.FILTER_OPTIONS.IS_AOD.key)
     end
+    # rubocop:enable Performance/InefficientHashSearch
 
     def issue_types_filter?(filter)
       filter.column == Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name
@@ -148,7 +151,7 @@ class TaskFilter
   def parse_where_arguments(filters)
     # Reject all columns that do not need placeholders in the query.
     # This allows more freedom in building where clauses that might use other statements instead of just IN (?)
-    where_filters = filters.reject { |filter_param| IGNORE_FILTER_PLACEHOLDERS.include?(filter_param.column) }
+    where_filters = filters.reject { |filter_param| IGNORE_FILTER_PLACEHOLDERS.include?(filter_param.try(:column)) }
 
     # Reject all arguments that are empty and return the remaining values
     where_filters.map(&:values).reject(&:empty?)
