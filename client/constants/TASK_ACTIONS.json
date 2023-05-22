@@ -40,7 +40,7 @@
   "ASSIGN_TO_ATTORNEY_LEGACY": {
     "label": "Assign to attorney",
     "value": "modal/assign_to_attorney_legacy",
-    "func": "assign_to_attorney_data"
+    "func": "assign_to_attorney_legacy_data"
   },
   "ASSIGN_TO_HEARING_ADMIN_MEMBER": {
     "label": "Assign to person",
