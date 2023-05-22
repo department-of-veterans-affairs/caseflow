@@ -108,7 +108,7 @@ RSpec.feature "CAMO assignment to program office", :all_dbs do
 
   context "CAMO User can sort and filter tasks on the CAMO bulk assignment page" do
     # let(:filter_label_text) { "Issue Type" }
-    let(:filter_column_label_text) { "appeal.issueTypes" }
+    let(:filter_column_label_text) { "Issue Type" }
     scenario "CAMO User can sort by issue types" do
       visit "/queue/#{camo_user.css_id}/assign?role=camo"
 
