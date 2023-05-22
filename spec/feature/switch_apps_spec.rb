@@ -43,19 +43,26 @@ RSpec.feature "SwitchApps", :postgres do
     before do
       vha_business_line.add_user(user)
       visit "/decision_reviews/#{vha_business_line.url}"
+    end
+
+    scenario "sees switch product dropdown menu" do
+      expect(page).to have_link("Switch product", href: "#Switch product", exact: true)
+    end
+
+    before do
       find("a", text: "Switch product").click
     end
 
-    scenario "sees switch product dropdown with the queue link as an option" do
-      expect(page).to have_link("Caseflow Queue", href: "/queue", exact: true)
+    scenario "with the intake link as an option" do
+      expect(page).to have_link(all_vha_links[0][:title], href: all_vha_links[0][:link], exact: true)
     end
 
-    scenario "sees switch product dropdown with the intake link as an option" do
-      expect(page).to have_link("Caseflow Intake", href: "/intake", exact: true)
+    scenario "with the decision reviews link as an option" do
+      expect(page).to have_link(all_vha_links[1][:title], href: all_vha_links[1][:link], exact: true)
     end
 
-    scenario "sees switch product dropdown with the decision reviews link as an option" do
-      expect(page).to have_link("VHA Decision Review Queue", href: "/decision_reviews/vha", exact: true)
+    scenario "with the queue link as an option" do
+      expect(page).to have_link(all_vha_links[2][:title], href: all_vha_links[2][:link], exact: true)
     end
   end
 
@@ -87,12 +94,12 @@ RSpec.feature "SwitchApps", :postgres do
         link: "/intake"
       },
       {
-        title: "Caseflow Queue",
-        link: "/queue"
+        title: "VHA Decision Review Queue",
+        link: "/decision_reviews/vha"
       },
       {
-        title: "Decision Review Queue",
-        link: "/decision_reviews/vha"
+        title: "Caseflow Queue",
+        link: "/queue"
       }
     ]
   end
