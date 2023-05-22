@@ -160,6 +160,7 @@ feature "Supplemental Claim Intake", :all_dbs do
 
     supplemental_claim = SupplementalClaim.find_by(veteran_file_number: veteran_file_number)
 
+    # expect(supplemental_claim.filed_by_va_gov).to eq(false)
     expect(supplemental_claim).to_not be_nil
     expect(supplemental_claim.receipt_date).to eq(receipt_date)
     expect(supplemental_claim.benefit_type).to eq(benefit_type)
@@ -361,6 +362,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     is_comp: true,
     legacy_opt_in_approved: false,
     veteran_is_not_claimant: false
+    # filed_by_va_gov: false
   )
 
     supplemental_claim = SupplementalClaim.create!(
@@ -369,6 +371,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       benefit_type: is_comp ? "compensation" : "education",
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: veteran_is_not_claimant
+      # filed_by_va_gov: filed_by_va_gov
     )
 
     intake = SupplementalClaimIntake.create!(
