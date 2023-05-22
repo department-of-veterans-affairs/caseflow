@@ -26,16 +26,18 @@ describe SendNotificationJob, type: :job do
            homelessness: false,
            veteran_file_number: "123456789")
   end
-  let(:no_name_appeal) do
+  let!(:no_name_appeal) do
     create(:appeal,
            docket_type: "Appeal",
            homelessness: false,
-           veteran_file_number: "246813579")
+           veteran: no_name_veteran)
   end
   let(:no_name_veteran) do
     create(:veteran,
            file_number: "246813579",
-           first_name: nil)
+           first_name: nil,
+           middle_name: nil,
+           last_name: nil)
   end
   # rubocop:disable Style/BlockDelimiters
   let(:good_template_name) { "Appeal docketed" }
@@ -317,28 +319,41 @@ describe SendNotificationJob, type: :job do
     end
   end
 
-  before do
-    no_name_veteran
-    no_name_appeal
-  end
-
   context "appeal first name not found" do
+    let(:notification_event) { NotificationEvent.find_by(event_type: "Appeal docketed") }
+
     describe "email" do
+      before { FeatureToggle.enable!(:va_notify_email) }
+      after { FeatureToggle.disable!(:va_notify_email) }
+
       it "is expected to send a generic saluation instead of a name" do
-        FeatureToggle.enable!(:va_notify_email)
         expect(VANotifyService).to receive(:send_email_notifications).with(
-          no_name_participant_id, "", "ae2f0d17-247f-47ee-8f1a-b83a71e0f050", "Appellant", no_name_appeal.docket_number, ""
+          no_name_participant_id,
+          "",
+          notification_event.email_template_id,
+          "Appellant",
+          no_name_appeal.docket_number,
+          ""
         )
+
         SendNotificationJob.perform_now(no_name_message.to_json)
       end
     end
 
     describe "sms" do
+      before { FeatureToggle.enable!(:va_notify_sms) }
+      after { FeatureToggle.disable!(:va_notify_sms) }
+
       it "is expected to send a generic saluation instead of a name" do
-        FeatureToggle.enable!(:va_notify_sms)
         expect(VANotifyService).to receive(:send_sms_notifications).with(
-          no_name_participant_id, "", "9953f7e8-80cb-4fe4-aaef-0309410c84e3", "Appellant", no_name_appeal.docket_number, ""
+          no_name_participant_id,
+          "",
+          notification_event.sms_template_id,
+          "Appellant",
+          no_name_appeal.docket_number,
+          ""
         )
+
         SendNotificationJob.perform_now(no_name_message.to_json)
       end
     end
