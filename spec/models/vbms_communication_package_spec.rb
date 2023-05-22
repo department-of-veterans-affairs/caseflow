@@ -47,13 +47,13 @@ describe VbmsCommunicationPackage, :postgres do
   it "is not valid without a copies attribute" do
     package.copies = nil
     expect(package).to_not be_valid
-    expect(package.errors[:copies]).to eq(["can't be blank", "is too short (minimum is 1 character)"])
+    expect(package.errors[:copies]).to eq(["can't be blank", "is not a number"])
   end
 
   it "is not valid with less than one copy" do
     package.copies = 0
     expect(package).to_not be_valid
-    expect(package.errors[:copies]).to eq(["is too short (minimum is 1 character)"])
+    expect(package.errors[:copies]).to eq(["must be greater than or equal to 1"])
   end
 
   it "is not valid with more than 500 copies" do
@@ -62,7 +62,7 @@ describe VbmsCommunicationPackage, :postgres do
 
     package.copies = 501
     expect(package).to_not be_valid
-    expect(package.errors[:copies]).to eq(["is too long (maximum is 500 characters)"])
+    expect(package.errors[:copies]).to eq(["must be less than or equal to 500"])
   end
 
   it "is not valid without an associated VbmsUploadedDocument" do
