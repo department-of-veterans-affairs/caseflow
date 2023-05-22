@@ -78,18 +78,9 @@ feature "AmaQueue", :all_dbs do
       create(:ama_judge_assign_task, assigned_to: judge_user, parent: root_task)
     end
 
-    #This task is for holding legacy appeals. The factory will create an attached legacy appeal. Attach an attorney task
-    # from :attorney task
-    let!(:legacy_appeal_task) do
-      build(:task, id:"1010", assigned_to: attorney_user, assigned_by_id: "3",
-        assigned_to_id:"2", assigned_to_type: "User" , type: "AttorneyTask", created_at: 5.days.ago)
-    end
-
-
     let(:poa_name) { "Test POA" }
     let(:veteran_participant_id) { "600085544" }
     let(:file_numbers) { Array.new(3) { Random.rand(999_999_999).to_s } }
-
     let!(:appeals) do
       [
         create(
@@ -144,13 +135,6 @@ feature "AmaQueue", :all_dbs do
             assigned_to: attorney_user,
             assigned_by: judge_user,
             appeal: appeals.third
-          ),
-          create(
-            :ama_attorney_task,
-            :in_progress,
-            assigned_to: attorney_user,
-            assigned_by: judge_user,
-            appeal: legacy_appeal_task.appeal
           )
         ]
       end
@@ -210,6 +194,7 @@ feature "AmaQueue", :all_dbs do
 
         find(".cf-select__control", text: "Select a type").click
         find("div", class: "cf-select__option", text: "Serious illness").click
+
         click_on "Submit"
 
         expect(page).to have_content("AOD status has been granted due to Serious illness")
@@ -218,57 +203,6 @@ feature "AmaQueue", :all_dbs do
 
         expect(motion.granted).to eq(true)
         expect(motion.reason).to eq(Constants.AOD_REASONS.serious_illness)
-      end
-
-      scenario "Appeal redirects to Draft Decisions page when 'Decision ready for review' is clicked." do
-        visit "/queue/appeals/#{appeals.first.uuid}"
-        #We reload the page because the page errors first load for some reason?
-        visit current_path
-
-        #pop the actions dropdown open and click the 'Decision ready for review' option.
-        find(".cf-select__control", text: "Select an action").click
-        click_dropdown(prompt: "Select an action", text: "Decision ready for review")
-
-        #Validate that the path changed to the expected location.
-        pathArray = current_path.split("/")
-        expect(pathArray[-1] == "dispositions")
-        expect(pathArray[-2] == "draft_decision")
-      end
-
-      scenario "Appeal contains MST PACT labels in timeline." do
-        visit "/queue/appeals/#{appeals.first.uuid}"
-
-        #load in the timeline data
-        appeal = appeals[0]
-        iup = IssuesUpdateTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: Organization.find_by_url("bva-intake"), assigned_by: RequestStore[:current_user])
-        iup.format_instructions("test category", false, false, true, true, "MST reason", "PACT reason")
-        iup.completed!
-
-        #We reload the page because the page sometimes errors first load for some reason, also ensures that the timeline
-        #is refreshed with the current data.
-        visit current_path
-
-        click_on "View task instructions"
-        expect(page).to have_content("REASON FOR CHANGE (MST):")
-        expect(page).to have_content("MST reason")
-        expect(page).to have_content("REASON FOR CHANGE (PACT):")
-        expect(page).to have_content("PACT reason")
-      end
-
-      scenario "Appeal redirects to special issues page when 'Decision ready for review' is clicked." do
-        visit "/queue/appeals/#{legacy_appeal_task.appeal.external_id}"
-
-        #We reload the page because the page sometimes errors first load for some reason?
-        visit current_path
-
-        #pop the actions dropdown open and click the 'Decision ready for review' option.
-        find(".cf-select__control", text: "Select an action").click
-        click_dropdown(prompt: "Select an action", text: "Decision ready for review")
-
-        #Validate that the path changed to the expected location.
-        pathArray = current_path.split("/")
-        expect(pathArray[-1] == "special_issues")
-        expect(pathArray[-2] == "draft_decision")
       end
 
       context "when there is an error loading addresses" do

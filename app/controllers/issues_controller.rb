@@ -68,9 +68,7 @@ class IssuesController < ApplicationController
               :issue,
               :level_1,
               :level_2,
-              :level_3,
-              :mst_status,
-              :pact_status).to_h
+              :level_3).to_h
     safe_params[:vacols_user_id] = current_user.vacols_uniq_id
     safe_params
   end

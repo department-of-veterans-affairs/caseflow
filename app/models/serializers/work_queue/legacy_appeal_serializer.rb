@@ -90,10 +90,6 @@ class WorkQueue::LegacyAppealSerializer
     ).editable?
   end
 
-  attribute :can_edit_request_issues do |object, params|
-    AppealRequestIssuesPolicy.new(user: params[:user], appeal: object).editable?
-  end
-
   attribute :attorney_case_review_id do |object|
     latest_vacols_attorney_case_review(object)&.vacols_id
   end

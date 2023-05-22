@@ -38,9 +38,7 @@ class WorkQueue::AppealSerializer
         diagnostic_code: issue.contested_rating_issue_diagnostic_code,
         remand_reasons: issue.remand_reasons,
         closed_status: issue.closed_status,
-        decision_date: issue.decision_date,
-        mst_status: issue.mst_status,
-        pact_status: issue.pact_status
+        decision_date: issue.decision_date
       }
     end
   end

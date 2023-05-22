@@ -33,29 +33,12 @@ const issueErrorStyling = css({
   borderLeft: '4px solid #cd2026'
 });
 
-// format special issues to display 'None', 'PACT', 'MST', or 'MST and PACT'
-const specialIssuesFormatting = (mstStatus, pactStatus) => {
-  if (!mstStatus && !pactStatus) {
-    return 'None';
-  } else if (mstStatus && pactStatus) {
-    return 'MST and PACT';
-  } else if (mstStatus) {
-    return 'MST';
-  } else if (pactStatus) {
-    return 'PACT';
-  }
-};
-
 export const AmaIssue = (props) => {
   return <li key={props.index} {...singleIssueStyling} {...props.customStyle}>
-    <div {...issueContentStyling}><strong>Benefit type: </strong>{BENEFIT_TYPES[props.issue.program]}</div>
-    <div {...issueContentStyling}><strong>Issue: </strong>{props.issue.description}</div>
-    <div {...issueContentStyling}><strong>Special Issues: </strong>{
-      specialIssuesFormatting(props.issue.mst_status, props.issue.pact_status)
-    }
-    </div>
+    <div {...issueContentStyling}><strong>Benefit type</strong>: {BENEFIT_TYPES[props.issue.program]}</div>
+    <div {...issueContentStyling}><strong>Issue</strong>: {props.issue.description}</div>
     { props.issue.diagnostic_code &&
-      <div {...issueContentStyling}><strong>Diagnostic code: </strong>: {props.issue.diagnostic_code}</div> }
+      <div {...issueContentStyling}><strong>Diagnostic code</strong>: {props.issue.diagnostic_code}</div> }
     { props.issue.notes &&
       <div {...issueContentStyling} {...issueNoteStyling}>Note from NOD: {props.issue.notes}</div> }
     { props.issue.closed_status && props.issue.closed_status === 'withdrawn' &&
@@ -88,8 +71,6 @@ export default class AmaIssueList extends React.PureComponent {
           <AmaIssue
             issue={issue}
             index={i}
-            mst_status={issue.mst_status}
-            pact_status={issue.pact_status}
             customStyle={error && issueErrorStyling} >
             {children}
           </AmaIssue>
@@ -107,9 +88,7 @@ AmaIssue.propTypes = {
     description: PropTypes.string,
     diagnostic_code: PropTypes.string,
     notes: PropTypes.string,
-    closed_status: PropTypes.string,
-    mst_status: PropTypes.bool,
-    pact_status: PropTypes.bool
+    closed_status: PropTypes.string
   }),
   children: PropTypes.node
 };

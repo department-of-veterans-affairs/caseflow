@@ -1,6 +1,5 @@
 import React from 'react';
 import { css } from 'glamor';
-import PropTypes from 'prop-types';
 
 import { getIssueDiagnosticCodeLabel } from '../utils';
 import AmaIssueList from '../../components/AmaIssueList';
@@ -58,7 +57,6 @@ const LegacyIssueDetails = (props) => {
     <IssueNoteListItem>{issue.note}</IssueNoteListItem>
     <IssueDispositionListItem>{issue.disposition}</IssueDispositionListItem>
     <IssueNoteListItem>{issue.closed_status}</IssueNoteListItem>
-    <SpecialIssueListItem>{issue}</SpecialIssueListItem>
   </CaseDetailsDescriptionList>;
 };
 
@@ -91,22 +89,6 @@ const getDescriptionsFromCodes = (levels, codes, descriptions = []) => {
   return descriptions;
 };
 
-// format special issues to display 'None', 'PACT', 'MST', or 'MST and PACT'
-const specialIssuesFormatting = (props) => {
-  const mstStatus = props.legacy_appeal_vacols_mst;
-  const pactStatus = props.legacy_appeal_vacols_pact;
-
-  if (!mstStatus && !pactStatus) {
-    return 'None';
-  } else if (mstStatus && pactStatus) {
-    return 'MST and PACT';
-  } else if (mstStatus) {
-    return 'MST';
-  } else if (pactStatus) {
-    return 'PACT';
-  }
-};
-
 const IssueDescriptionsListItem = (props) => {
   if (!props.program || !props.children) {
     return null;
@@ -125,23 +107,6 @@ const IssueNoteListItem = (props) => <DescriptionListItem label="Note" styling={
   {props.children}
 </DescriptionListItem>;
 
-const SpecialIssueListItem = (props) => <DescriptionListItem label="Special Issues">
-  {specialIssuesFormatting(props.children)}
-</DescriptionListItem>;
-
 const IssueDispositionListItem = (props) => <DescriptionListItem label="Disposition">
   {dispositionLabelForDescription(props.children)}
 </DescriptionListItem>;
-
-CaseDetailsIssueList.propTypes = {
-  isLegacyAppeal: PropTypes.bool,
-  issues: PropTypes.array,
-  title: PropTypes.string,
-  decisionIssues: PropTypes.node
-};
-
-SpecialIssueListItem.propTypes = {
-  children: PropTypes.object,
-  legacy_appeal_vacols_mst: PropTypes.bool,
-  legacy_appeal_vacols_pact: PropTypes.bool
-};

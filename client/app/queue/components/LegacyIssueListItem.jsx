@@ -25,21 +25,6 @@ const leftAlignTd = css({
   paddingRight: 0
 });
 
-const specialIssuesFormatting = (props) => {
-  const mstStatus = props.legacy_appeal_vacols_mst;
-  const pactStatus = props.legacy_appeal_vacols_pact;
-
-  if (!mstStatus && !pactStatus) {
-    return 'None';
-  } else if (mstStatus && pactStatus) {
-    return 'MST and PACT';
-  } else if (mstStatus) {
-    return 'MST';
-  } else if (pactStatus) {
-    return 'PACT';
-  }
-};
-
 export const dispositionLabelForDescription = (disposition) => {
   // Use the disposition description from constants in order to get the proper capitalization.
   return disposition ? `${disposition} - ${VACOLS_DISPOSITIONS_BY_ID[disposition]}` : null;
@@ -121,9 +106,6 @@ export default class LegacyIssueListItem extends React.PureComponent {
         </div>
         <div {...noteMarginTop}>
           <span {...boldText}>Note:</span> {note}
-        </div>
-        <div {...noteMarginTop}>
-          <span {...boldText}>Special Issues: </span> {specialIssuesFormatting(issue)}
         </div>
       </React.Fragment>;
     }

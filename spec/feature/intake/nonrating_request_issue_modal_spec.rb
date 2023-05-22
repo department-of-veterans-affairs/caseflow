@@ -12,11 +12,6 @@ feature "Nonrating Request Issue Modal", :postgres do
     Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
   end
 
-  def check_for_mst_pact
-    expect(page).to have_content("Military Sexual Trauma (MST)")
-    expect(page).to have_content("PACT Act")
-  end
-
   def test_issue_categories(decision_review_type:, benefit_type:, included_category:, excluded_category:)
     case decision_review_type
     when "higher_level_review"
@@ -43,7 +38,6 @@ feature "Nonrating Request Issue Modal", :postgres do
     click_intake_nonrating_category_dropdown
     expect(page).to have_content(included_category)
     expect(page).to_not have_content(excluded_category)
-    check_for_mst_pact
     add_intake_nonrating_issue(
       category: included_category,
       description: "I am a description",

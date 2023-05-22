@@ -317,8 +317,6 @@ export const prepareAppealIssuesForStore = (appeal) => {
   if (appeal.attributes.docket_name === 'legacy') {
     issues = issues.map((issue) => ({
       id: issue.vacols_sequence_id,
-      mst_status: false,
-      pact_status: false,
       ...issue,
     }));
   }

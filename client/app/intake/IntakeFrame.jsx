@@ -116,10 +116,7 @@ export const IntakeFrame = (props) => {
             title="Add / Remove Issues | Caseflow Intake"
           >
             <IntakeLayout buttons={<FinishButtons history={history} />}>
-              <IntakeAddIssuesPage
-                featureToggles={props.featureToggles}
-                userCanEditIntakeIssues={props.userCanEditIntakeIssues}
-              />
+              <IntakeAddIssuesPage featureToggles={props.featureToggles} />
             </IntakeLayout>
           </PageRoute>
 

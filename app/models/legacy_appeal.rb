@@ -629,21 +629,6 @@ class LegacyAppeal < CaseflowRecord
     end
   end
 
-  def mst?
-    return false unless FeatureToggle.enabled?(:mst_pact_identification)
-
-    issues.any?(&:legacy_appeal_vacols_mst) ||
-      (special_issue_list &&
-        special_issue_list.created_at < "2023-06-01".to_date &&
-        special_issue_list.military_sexual_trauma)
-  end
-
-  def pact?
-    return false unless FeatureToggle.enabled?(:mst_pact_identification)
-
-    issues.any?(&:legacy_appeal_vacols_pact)
-  end
-
   def documents_with_type(*types)
     @documents_by_type ||= {}
     types.reduce([]) do |accumulator, type|
@@ -927,25 +912,6 @@ class LegacyAppeal < CaseflowRecord
 
   def claimant_participant_id
     veteran_is_not_claimant ? person_for_appellant&.participant_id : veteran&.participant_id
-  end
-
-  def hearing_day_if_schedueled
-    hearing_date = Hearing.find_by(appeal_id: id)
-
-    if hearing_date.nil?
-      return nil
-
-    else
-      return hearing_date.hearing_day.scheduled_for
-    end
-  end
-
-  def ui_hash
-    Intake::LegacyAppealSerializer.new(self).serializable_hash[:data][:attributes]
-  end
-
-  def is_legacy?
-    true
   end
 
   private
