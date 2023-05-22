@@ -164,10 +164,10 @@ class TaskActionRepository
       }
     end
 
-    def assign_to_attorney_data(task, user)
+    def assign_to_attorney_data(task, _user)
       {
         selected: nil,
-        options: user.can_act_on_behalf_of_judges? ? users_to_options(Attorney.list_all) : users_to_options(Attorney.list_all),
+        options: users_to_options(Attorney.list_all),
         type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name
       }
     end
