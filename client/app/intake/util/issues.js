@@ -147,7 +147,9 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       verifiedUnidentifiedIssue: issue.verified_unidentified_issue,
       isPreDocketNeeded: issue.is_predocket_needed,
       mstChecked: issue.mst_status,
-      pactChecked: issue.pact_status
+      pactChecked: issue.pact_status,
+      mst_status_update_reason_notes: issue?.mstJustification,
+      pact_status_update_reason_notes: issue?.pactJustification
     };
   }
   );
@@ -231,7 +233,9 @@ const formatRatingRequestIssues = (state) => {
         edited_description: issue.editedDescription,
         correction_type: issue.correctionType,
         mst_status: issue.mstChecked,
-        pact_status: issue.pactChecked
+        pact_status: issue.pactChecked,
+        mst_status_update_reason_notes: issue?.mstJustification,
+        pact_status_update_reason_notes: issue?.pactJustification
       };
     });
 };
@@ -452,7 +456,9 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
         ratingIssueReferenceId: issue.ratingIssueReferenceId,
         ratingDecisionReferenceId: issue.ratingDecisionReferenceId,
         mstChecked: issue.mstChecked,
-        pactChecked: issue.pactChecked
+        pactChecked: issue.pactChecked,
+        mst_status_update_reason_notes: issue?.mstJustification,
+        pact_status_update_reason_notes: issue?.pactJustification
       };
     }
 
@@ -489,7 +495,9 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
       decisionIssueId: issue.decisionIssueId,
       isPreDocketNeeded: issue.isPreDocketNeeded,
       mstChecked: issue.mstChecked,
-      pactChecked: issue.pactChecked
+      pactChecked: issue.pactChecked,
+      mst_status_update_reason_notes: issue?.mstJustification,
+      pact_status_update_reason_notes: issue?.pactJustification
     };
   });
 };
