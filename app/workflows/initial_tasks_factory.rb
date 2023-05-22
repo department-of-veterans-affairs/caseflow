@@ -28,6 +28,10 @@ class InitialTasksFactory
       if @appeal.contested_claim? && FeatureToggle.enabled?(:cc_appeal_workflow)
         send_initial_notification_letter
       end
+      # if changes to mst or pact, create IssueUpdateTask
+      if @appeal.mst? || @appeal.pact?
+        create_issue_update_task
+      end
     end
     maybe_create_translation_task
   end
@@ -52,8 +56,6 @@ class InitialTasksFactory
       create_cavc_subtasks
     elsif should_streamline_death_dismissal?
       distribution_task.ready_for_distribution!
-    elsif @appeal.mst? || @appeal.pact?
-      create_issue_update_task
     else
       case @appeal.docket_type
       when "evidence_submission"
