@@ -5,7 +5,7 @@ describe VbmsCommunicationPackage, :postgres do
     VbmsCommunicationPackage.new(
       file_number: "329780002",
       comm_package_name: "test package name",
-      # copies: 1,
+      copies: 1,
       vbms_uploaded_document: VbmsUploadedDocument.new
     )
   end
@@ -44,26 +44,26 @@ describe VbmsCommunicationPackage, :postgres do
     expect(package.errors[:comm_package_name]).to eq(["is invalid"])
   end
 
-  # it "is not valid without a copies attribute" do
-  #   package.copies = nil
-  #   expect(package).to_not be_valid
-  #   expect(package.errors[:copies]).to eq(["can't be blank", "is too short (minimum is 1 character)"])
-  # end
+  it "is not valid without a copies attribute" do
+    package.copies = nil
+    expect(package).to_not be_valid
+    expect(package.errors[:copies]).to eq(["can't be blank", "is too short (minimum is 1 character)"])
+  end
 
-  # it "is not valid with less than one copy" do
-  #   package.copies = 0
-  #   expect(package).to_not be_valid
-  #   expect(package.errors[:copies]).to eq(["is too short (minimum is 1 character)"])
-  # end
+  it "is not valid with less than one copy" do
+    package.copies = 0
+    expect(package).to_not be_valid
+    expect(package.errors[:copies]).to eq(["is too short (minimum is 1 character)"])
+  end
 
-  # it "is not valid with more than 500 copies" do
-  #   package.copies = 500
-  #   expect(package).to be_valid
+  it "is not valid with more than 500 copies" do
+    package.copies = 500
+    expect(package).to be_valid
 
-  #   package.copies = 501
-  #   expect(package).to_not be_valid
-  #   expect(package.errors[:copies]).to eq(["is too long (maximum is 500 characters)"])
-  # end
+    package.copies = 501
+    expect(package).to_not be_valid
+    expect(package.errors[:copies]).to eq(["is too long (maximum is 500 characters)"])
+  end
 
   it "is not valid without an associated VbmsUploadedDocument" do
     package.vbms_uploaded_document = nil
