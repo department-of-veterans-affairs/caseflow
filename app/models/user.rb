@@ -436,6 +436,12 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     member_of_organization?(SpecialCaseMovementTeam.singleton)
   end
 
+  def can_act_on_behalf_of_legacy_judges?
+    member_of_organization?(SpecialCaseMovementTeam.singleton) ||
+    member_of_organization?(SupervisorySeniorCouncil.singleton) ||
+    judge_in_vacols?
+  end
+
   def can_view_team_management?
     member_of_organization?(Bva.singleton)
   end
