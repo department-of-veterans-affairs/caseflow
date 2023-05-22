@@ -45,24 +45,26 @@ RSpec.feature "SwitchApps", :postgres do
       visit "/decision_reviews/#{vha_business_line.url}"
     end
 
-    scenario "sees switch product dropdown menu" do
+    scenario "see's the switch product dropdown menu" do
       expect(page).to have_link("Switch product", href: "#Switch product", exact: true)
     end
 
-    before do
-      find("a", text: "Switch product").click
-    end
+    context "with the options" do
+      before do
+        find("a", text: "Switch product").click
+      end
 
-    scenario "with the intake link as an option" do
-      expect(page).to have_link(all_vha_links[0][:title], href: all_vha_links[0][:link], exact: true)
-    end
+      scenario "Intake" do
+        expect(page).to have_link(all_vha_links[0][:title], href: all_vha_links[0][:link], exact: true)
+      end
 
-    scenario "with the decision reviews link as an option" do
-      expect(page).to have_link(all_vha_links[1][:title], href: all_vha_links[1][:link], exact: true)
-    end
+      scenario "Decision Reviews Queue" do
+        expect(page).to have_link(all_vha_links[1][:title], href: all_vha_links[1][:link], exact: true)
+      end
 
-    scenario "with the queue link as an option" do
-      expect(page).to have_link(all_vha_links[2][:title], href: all_vha_links[2][:link], exact: true)
+      scenario "Queue" do
+        expect(page).to have_link(all_vha_links[2][:title], href: all_vha_links[2][:link], exact: true)
+      end
     end
   end
 
