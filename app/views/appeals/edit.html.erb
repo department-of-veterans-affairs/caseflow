@@ -3,6 +3,7 @@
     userDisplayName: current_user.display_name,
     userCanWithdrawIssues: current_user.can_withdraw_issues?,
     userCanSplitAppeal: current_user.can_split_appeal?(appeal),
+    userCanEditIntakeIssues: current_user.can_edit_intake_issues?,
     appeal: appeal,
     hearings: appeal.hearings,
     hearingDayDate: appeal.hearing_day_if_schedueled,
@@ -12,12 +13,16 @@
     buildDate: build_date,
     serverIntake: appeal.ui_hash,
     claimId: url_appeal_uuid,
+    isLegacy: appeal.is_legacy?,
     featureToggles: {
       useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
       correctClaimReviews: FeatureToggle.enabled?(:correct_claim_reviews, user: current_user),
       covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
       split_appeal_workflow: FeatureToggle.enabled?(:split_appeal_workflow, user: current_user),
       cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user),
+      mst_identification: FeatureToggle.enabled?(:mst_identification, user: current_user),
+      pact_identification: FeatureToggle.enabled?(:pact_identification, user: current_user),
+      legacy_mst_pact_identification: FeatureToggle.enabled?(:legacy_mst_pact_identification, user: current_user),
       vhaPreDocketAppeals: false
     }
   }) %>

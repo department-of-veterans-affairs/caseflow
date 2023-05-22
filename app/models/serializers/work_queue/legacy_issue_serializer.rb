@@ -16,4 +16,6 @@ class WorkQueue::LegacyIssueSerializer
   attribute :labels
   attribute(:readjudication) { false }
   attribute :remand_reasons
+  attribute :legacy_appeal_vacols_mst
+  attribute :legacy_appeal_vacols_pact
 end

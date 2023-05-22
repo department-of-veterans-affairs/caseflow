@@ -70,6 +70,10 @@ const isCancelled = (task) => {
   return task.status === TASK_STATUSES.cancelled;
 };
 
+const issueUpdateTask = (task) =>{
+  return task.type === 'IssuesUpdateTask';
+}
+
 const tdClassNames = (timeline, task) => {
   const containerClass = timeline ? taskInfoWithIconTimelineContainer : '';
   const closedAtClass = task.closedAt ? null : <span className="greyDotTimelineStyling"></span>;
@@ -304,6 +308,50 @@ class TaskRows extends React.PureComponent {
       return text.replace(/<br>|(?<! {2})\n/g, '  \n');
     };
 
+    const renderMstLabel = (mstText, style) => {
+      if (mstText) {
+        return <React.Fragment>
+          <h5 style={style}>Reason for Change (MST):</h5>
+          <small>{mstText}</small>
+        </React.Fragment>;
+      }
+    };
+
+    const renderPactLabel = (pactText, style) => {
+      if (pactText) {
+        return <React.Fragment>
+          <h5 style={style}>Reason for Change (PACT):</h5>
+          <small>{pactText}</small>
+        </React.Fragment>;
+      }
+    };
+
+    // formatting used for IssueUpdate task instructions.
+    const formatIssueUpdateBreaks = (text = '') => {
+      const divStyle = { marginTop: '1rem'}
+      const hStyle = { marginTop: '30px', marginBottom: '0rem', fontWeight: 'bold' };
+
+      if (Array.isArray(text)) {
+        return (
+          <div style={divStyle}>
+            <b>Edited Issue:</b>
+            <h5 style={hStyle}>Original:</h5>
+            <small>{text[0]}</small>
+            <br />
+            <small>{text[1]}</small>
+            <br />
+            <h5 style={hStyle}>Updated:</h5>
+            <small>{text[2]}</small>
+            <br />
+            <small>{text[3]}</small>
+            <br />
+            {renderMstLabel(text[4], hStyle)}
+            {renderPactLabel(text[5], hStyle)}
+          </div>
+        );
+      }
+    };
+
     // We specify the same 2.4rem margin-bottom as paragraphs to each set of instructions
     // to ensure a consistent margin between instruction content and the "Hide" button
     const divStyles = { marginBottom: '2.4rem' };
@@ -317,7 +365,8 @@ class TaskRows extends React.PureComponent {
               style={divStyles}
               className="task-instructions"
             >
-              <ReactMarkdown>{formatBreaks(text)}</ReactMarkdown>
+              {issueUpdateTask(task) ? (<div>{formatIssueUpdateBreaks(text)}</div>) :
+                (<ReactMarkdown>{formatBreaks(text)}</ReactMarkdown>)}
             </div>
           </React.Fragment>
         ))}
