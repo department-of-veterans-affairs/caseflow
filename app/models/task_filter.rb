@@ -53,7 +53,8 @@ class TaskFilter
       filter.values.empty? ? is_aod_clause : "(#{orig_clause} OR #{is_aod_clause})"
     end
 
-    # TODO: Place a comment here showing the type of SQL that will be generated from this
+    # Filter: "filter"=>["col=issueTypesColumn&val=Beneficiary%2520Travel"]
+    # Resulting SQL: "POSITION('Beneficiary Travel' IN cached_appeal_attributes.issue_types) > 0"
     def build_issue_type_clause(filter)
       filter_selections = filter.values
       # Shorthand way of parsing the first value differently than the rest
@@ -68,8 +69,6 @@ class TaskFilter
       # If you don't include a param insert (?) it will ignore it later in the where_clause method
       # Which is what we want, since we handle it here instead of in the where clause method
       # because the position SQL function does not accept the same paramaters as IN does
-      # TODO: JK if only it were that easy but it doesn't play with other filters because of that crap
-      # TODO: Might be able to give it a dummy param insert predicate? to fake it out
       where_clauses.join(" ")
     end
 
@@ -127,7 +126,7 @@ class TaskFilter
 
     filters = filter_params.map(&QueueFilterParameter.method(:from_string))
     where_string = TaskFilter.where_string_from_filters(filters)
-    where_arguments = filters.map(&:values).reject(&:empty?)
+    where_arguments = parse_where_arguments(filters)
 
     [where_string] + where_arguments
   end
@@ -140,5 +139,18 @@ class TaskFilter
 
   def tasks_type_is_valid
     errors.add(:tasks, COPY::INVALID_TASKS_ARGUMENT) unless tasks.is_a?(ActiveRecord::Relation)
+  end
+
+  IGNORE_FILTER_PLACEHOLDERS = [
+    Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name
+  ].freeze
+
+  def parse_where_arguments(filters)
+    # Reject all columns that do not need placeholders in the query.
+    # This allows more freedom in building where clauses that might use other statements instead of just IN (?)
+    where_filters = filters.reject { |filter_param| IGNORE_FILTER_PLACEHOLDERS.include?(filter_param.column) }
+
+    # Reject all arguments that are empty and return the remaining values
+    where_filters.map(&:values).reject(&:empty?)
   end
 end
