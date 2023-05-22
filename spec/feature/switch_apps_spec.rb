@@ -42,26 +42,19 @@ RSpec.feature "SwitchApps", :postgres do
 
     before do
       vha_business_line.add_user(user)
+      visit "/decision_reviews/#{vha_business_line.url}"
+      find("a", text: "Switch product").click
     end
 
     scenario "sees switch product dropdown with the queue link as an option" do
-      visit "/decision_reviews/#{vha_business_line.url}"
-      expect(page).to have_current_path("/decision_reviews/#{vha_business_line.url}", ignore_query: true)
-      find("a", text: "Switch product").click
       expect(page).to have_link("Caseflow Queue", href: "/queue", exact: true)
     end
 
     scenario "sees switch product dropdown with the intake link as an option" do
-      visit "/decision_reviews/#{vha_business_line.url}"
-      expect(page).to have_current_path("/decision_reviews/#{vha_business_line.url}", ignore_query: true)
-      find("a", text: "Switch product").click
       expect(page).to have_link("Caseflow Intake", href: "/intake", exact: true)
     end
 
     scenario "sees switch product dropdown with the decision reviews link as an option" do
-      visit "/decision_reviews/#{vha_business_line.url}"
-      expect(page).to have_current_path("/decision_reviews/#{vha_business_line.url}", ignore_query: true)
-      find("a", text: "Switch product").click
       expect(page).to have_link("VHA Decision Review Queue", href: "/decision_reviews/vha", exact: true)
     end
   end
