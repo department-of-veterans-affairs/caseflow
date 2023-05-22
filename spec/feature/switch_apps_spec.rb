@@ -53,7 +53,7 @@ RSpec.feature "SwitchApps", :postgres do
       check_for_links
     end
 
-    it "match the array of the dropdown" do
+    it "match the array of the drop" do
       visit "/intake"
       find("a", text: "Switch product").click
       dropdown_menu_text = page.find(".cf-dropdown-menu").text
@@ -73,6 +73,24 @@ RSpec.feature "SwitchApps", :postgres do
       visit "/decision_reviews/#{vha_business_line.url}"
       expect(page).to have_current_path("/unauthorized", ignore_query: true)
       expect(page).to_not have_content("Switch product")
+    end
+  end
+
+  context "A user with 'Case details' role then they will not be able to access queue" do
+    let!(:user) do
+      User.authenticate!(user: create(:user, roles: ["Case Details", "Admin Intake", "Build HearSched"]))
+    end
+    let!(:vha_business_line) do
+      create(:business_line, url: "vha", name: "Veterans Health Administration")
+    end
+    before do
+      vha_business_line.add_user(user)
+    end
+
+    scenario "VHA user with roles 'Case details' should not have queue link in the dropdown" do
+      visit "/decision_reviews/#{vha_business_line.url}"
+
+      expect(page).to have_content("Switch product")
     end
   end
 

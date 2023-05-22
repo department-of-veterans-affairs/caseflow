@@ -105,22 +105,15 @@ class ApplicationController < ApplicationBaseController
   helper_method :logo_path
 
   def application_urls
-    urls = [{
-      title: "Queue",
-      link: "/queue",
-      sort_order: 3
-    }]
-    if current_user.hearings_user?
-      urls << {
-        title: "Hearings",
-        link: "/hearings/schedule"
-      }
-    end
+    urls = []
+    urls << queue_application_url unless current_user.can?("Case Details")
+
+    urls << hearing_application_url if current_user.hearings_user?
 
     manage_urls_for_vha(urls) if current_user.vha_employee?
     # Only return the URL list if the user has applications to switch between
     if urls.length > 1
-      return urls.sort_by { |url| url[:sort_order] || url.count }
+      urls.sort_by { |url| url[:sort_order] || url.count }
     end
 
     nil
@@ -136,6 +129,21 @@ class ApplicationController < ApplicationBaseController
       title: "Intake",
       link: "/intake",
       sort_order: 1
+    }
+  end
+
+  def queue_application_url
+    {
+      title: "Queue",
+      link: "/queue",
+      sort_order: 3
+    }
+  end
+
+  def hearing_application_url
+    {
+      title: "Hearings",
+      link: "/hearings/schedule"
     }
   end
 
