@@ -54,6 +54,10 @@
       cavc_dashboard_workflow: FeatureToggle.enabled?(:cavc_dashboard_workflow, user: current_user),
       cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user),
       cc_vacatur_visibility: FeatureToggle.enabled?(:cc_vacatur_visibility, user: current_user)
+
+      #FeatureToggle.enable!(:cc_vacatur_visibility)
+      #FeatureToggle.disable!(:cc_vacatur_visibility)
+
     }
   }) %>
 <% end %>
