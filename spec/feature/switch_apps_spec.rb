@@ -44,11 +44,18 @@ RSpec.feature "SwitchApps", :postgres do
       vha_business_line.add_user(user)
     end
 
-    scenario "currently sees switch product dropdown with only queue and and intake" do
+    scenario "sees switch product dropdown with the queue link is as an option" do
       visit "/decision_reviews/#{vha_business_line.url}"
       expect(page).to have_current_path("/decision_reviews/#{vha_business_line.url}", ignore_query: true)
       find("a", text: "Switch product").click
-      check_for_links
+      expect(page).to have_link("Caseflow Queue", href: "/queue", exact: true)
+    end
+
+    scenario "sees switch product dropdown with the intake link is as an option" do
+      visit "/decision_reviews/#{vha_business_line.url}"
+      expect(page).to have_current_path("/decision_reviews/#{vha_business_line.url}", ignore_query: true)
+      find("a", text: "Switch product").click
+      expect(page).to have_link("Caseflow Intake", href: "/intake", exact: true)
     end
   end
 
@@ -82,6 +89,10 @@ RSpec.feature "SwitchApps", :postgres do
       {
         title: "Caseflow Queue",
         link: "/queue"
+      },
+      {
+        title: "Decision Review Queue",
+        link: "/decision_reviews/vha"
       }
     ]
   end
