@@ -76,7 +76,7 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
-  ENV["VA_DOT_GOV_API_URL"] = "https://staging-api.va.gov/"
+  ENV["VA_DOT_GOV_API_URL"] = "https://sandbox-api.va.gov/"
 
   # For testing uncertification methods
   ENV["TEST_USER_ID"] = "TEST_USER_ID"
@@ -112,4 +112,6 @@ Rails.application.configure do
   ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"] ||= "https://vefs-claimevidence-ui-uat.stage8.bip.va.gov"
 
   ENV['TEST_VACOLS_HOST'] ||= "localhost"
+
+  ENV['PACMAN_API_URL'] ||= "http://pacman.staging.bip.va.gov"
 end

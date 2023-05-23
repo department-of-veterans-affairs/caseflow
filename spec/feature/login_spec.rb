@@ -51,6 +51,7 @@ RSpec.feature "Login", :all_dbs do
       end
 
       scenario "user is presented with RO selection page and redirects to initial location" do
+        User.authenticate!(user: user)
         visit "organizations/#{organization.url}"
 
         expect(current_path).to eq("/login")
@@ -65,6 +66,7 @@ RSpec.feature "Login", :all_dbs do
 
     context "User is not in the Org they are trying to view" do
       scenario "user is presented with RO selection page and gets 403 /unauthorized error" do
+        User.authenticate!(user: user)
         visit "organizations/#{organization.url}"
 
         expect(current_path).to eq("/login")
