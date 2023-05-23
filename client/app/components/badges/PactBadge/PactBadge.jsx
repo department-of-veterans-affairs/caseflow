@@ -15,7 +15,7 @@ const PactBadge = (props) => {
     return null;
   }
 
-  const tooltipText = "Appeal has issue(s) related to Promise to Address Comprehensive Toxics (PACT) Act.";
+  const tooltipText = 'Appeal has issue(s) related to Promise to Address Comprehensive Toxics (PACT) Act.';
 
   return <Badge
     name="pact"

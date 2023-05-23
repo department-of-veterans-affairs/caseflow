@@ -198,6 +198,8 @@ const appealAttributesFromRawTask = (task) => ({
   veteranFullName: task.attributes.veteran_full_name,
   veteranFileNumber: task.attributes.veteran_file_number,
   isPaperCase: task.attributes.paper_case,
+  mst: task.attributes.mst,
+  pact: task.attributes.pact
 });
 
 const extractAppealsFromTasks = (tasks) => {
@@ -275,6 +277,8 @@ export const prepareLegacyTasksForStore = (tasks) => {
           task.attributes.latest_informal_hearing_presentation_task
             ?.received_at,
       },
+      mst: task.attributes.mst,
+      pact: task.attributes.pact
     };
   });
 
@@ -439,6 +443,8 @@ export const prepareAppealForStore = (appeals) => {
         appeal.attributes.readable_original_hearing_request_type,
       vacateType: appeal.attributes.vacate_type,
       cavcRemandsWithDashboard: appeal.attributes.cavc_remands_with_dashboard,
+      mst: appeal.attributes.mst,
+      pact: appeal.attributes.pact
     };
 
     return accumulator;
@@ -513,6 +519,8 @@ export const prepareAppealForStore = (appeals) => {
       remandJudgeName: appeal.attributes.remand_judge_name,
       hasNotifications: appeal.attributes.has_notifications,
       locationHistory: prepareLocationHistoryForStore(appeal),
+      mst: appeal.attributes.mst,
+      pact: appeal.attributes.pact
     };
 
     return accumulator;

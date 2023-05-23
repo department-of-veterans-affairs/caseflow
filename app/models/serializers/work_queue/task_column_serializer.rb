@@ -253,6 +253,22 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
+  attribute :mst do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
+
+    if serialize_attribute?(params, columns)
+      object.appeal.try(:mst?)
+    end
+  end
+
+  attribute :pact do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
+
+    if serialize_attribute?(params, columns)
+      object.appeal.try(:pact?)
+    end
+  end
+
   attribute :veteran_appellant_deceased do |object, params|
     columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
 
