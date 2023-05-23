@@ -41,7 +41,7 @@ const vacateTypeText = (val) => {
 };
 
 const formatInstructions = ({ vacateTypeFeatureToggle, disposition, vacateType, hyperlink, instructions }) => {
-  const parts = [`${MTV_TASK_INSTRUCTIONS}${StringUtil.titleCase(DISPOSITION_TEXT[disposition])}\n`];
+  const parts = [`${MTV_TASK_INSTRUCTIONS}${DISPOSITION_TIMELINE_TEXT[disposition]}\n`];
 
   if (vacateTypeFeatureToggle) {
     switch (disposition) {
