@@ -372,7 +372,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       receipt_date: receipt_date,
       benefit_type: is_comp ? "compensation" : "education",
       legacy_opt_in_approved: legacy_opt_in_approved,
-      veteran_is_not_claimant: veteran_is_not_claimant
+      veteran_is_not_claimant: veteran_is_not_claimant,
       filed_by_va_gov: filed_by_va_gov
     )
 
