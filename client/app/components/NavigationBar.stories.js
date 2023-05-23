@@ -20,6 +20,7 @@ Basic.args = {
     { link: '/queue', title: 'Queue' },
     { link: '/intake', title: 'Intake' },
     { link: '/hearings/schedule', title: 'Hearing' },
+    { link: '/search', title: 'Search cases' }
   ],
   userDisplayName: 'Test user',
   dropdownUrls: [
