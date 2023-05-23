@@ -40,14 +40,17 @@ const vacateTypeText = (val) => {
   return opt && opt.displayText;
 };
 
-const formatInstructions = ({ disposition, vacateType, hyperlink, instructions }) => {
+const formatInstructions = ({ vacateTypeFeatureToggle, disposition, vacateType, hyperlink, instructions }) => {
   const parts = [`${MTV_TASK_INSTRUCTIONS}${DISPOSITION_TIMELINE_TEXT[disposition]}\n`];
 
   switch (disposition) {
   case 'granted':
   case 'partially_granted':
-    parts.push(MTV_TASK_INSTRUCTIONS_TYPE);
-    parts.push(`${vacateTypeText(vacateType)}\n`);
+    if (!vacateTypeFeatureToggle) {
+      parts.push(MTV_TASK_INSTRUCTIONS_TYPE);
+      parts.push(`${vacateTypeText(vacateType)}\n`);
+
+    }
     if (isEmpty(instructions) === false) {
       parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
       parts.push(`${instructions}\n`);
@@ -78,10 +81,12 @@ const styles = {
 };
 
 export const MTVJudgeDisposition = ({
+
   attorneys,
   selectedAttorney,
   task,
   appeal,
+  vacateTypeFeatureToggle,
   onSubmit = () => null,
   submitting = false,
   returnToLitSupportLink = JUDGE_RETURN_TO_LIT_SUPPORT.value
@@ -97,6 +102,7 @@ export const MTVJudgeDisposition = ({
 
   const handleSubmit = () => {
     const formattedInstructions = formatInstructions({
+      vacateTypeFeatureToggle,
       disposition,
       vacateType,
       hyperlink,
@@ -244,6 +250,7 @@ MTVJudgeDisposition.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   submitting: PropTypes.bool,
   task: PropTypes.object.isRequired,
+  vacateTypeFeatureToggle: PropTypes.bool,
   appeal: PropTypes.object.isRequired,
   attorneys: PropTypes.array.isRequired,
   selectedAttorney: PropTypes.object,

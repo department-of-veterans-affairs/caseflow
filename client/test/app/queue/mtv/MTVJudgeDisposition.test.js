@@ -15,7 +15,6 @@ const task = generateAmaTask({
   type: 'VacateMotionMailTask',
   instructions: ['Lorem ipsum dolor sit amet, consectetur adipiscing'],
 });
-
 let linkField = /Insert Caseflow Reader document hyperlink to/;
 let instructionsField = /Provide context and instructions on which issues should be/;
 
@@ -148,7 +147,8 @@ describe('MTVJudgeDisposition', () => {
     }
   );
 
-  describe('Case timeline instructions', () => {
+  describe('Case timeline instructions, feature toggle enabled', () => {
+
     beforeEach(() => {
       jest.clearAllMocks();
     });
@@ -156,12 +156,12 @@ describe('MTVJudgeDisposition', () => {
     describe('grant or partial grant instructions sent', () => {
       it('sends the correct instructions based on grant all disposition', async () => {
         const disposition = 'grant all';
-        const vacateType = 'Vacate and De Novo (2 documents)';
+        let vacateType = 'Vacate and De Novo (2 documents)';
         let vacateIssues;
         let hyperlink;
         const instructions = 'instructions from judge';
 
-        setup();
+        setup({ vacateTypeFeatureToggle: false });
 
         await fillForm(
           disposition,
@@ -171,15 +171,16 @@ describe('MTVJudgeDisposition', () => {
           instructions
         );
 
-        expect(onSubmit.mock.calls[0][0].instructions).toMatch('**Motion To Vacate:**  ' +
-          '\nFull vacatur' +
-          '\n' +
-          '\n**Type:**  ' +
-          '\nVacate and De Novo (2 documents)' +
-          '\n' +
-          '\n**Detail:**  ' +
-          '\ninstructions from judge' +
-          '\n'
+        expect(onSubmit.mock.calls[0][0].instructions).toMatch(
+          '**Motion To Vacate:**  ' +
+            '\nFull vacatur' +
+            '\n' +
+            '\n**Type:**  ' +
+            '\nVacate and De Novo (2 documents)' +
+            '\n' +
+            '\n**Detail:**  ' +
+            '\ninstructions from judge' +
+            '\n'
         );
       });
 
@@ -190,7 +191,7 @@ describe('MTVJudgeDisposition', () => {
         let hyperlink;
         const instructions = 'some instructions from judge';
 
-        setup();
+        setup({ vacateTypeFeatureToggle: false });
 
         await fillForm(
           disposition,
@@ -260,6 +261,120 @@ describe('MTVJudgeDisposition', () => {
           '**Motion To Vacate:**  \n' +
           'Dismiss all issues for vacatur\n\n**Detail:**  \nnew instructions from judge\n\n' +
           '**Hyperlink:**  \nwww.google.com\n'
+        );
+      });
+    });
+  });
+
+  describe('Case timeline instructions, feature toggle disabled', () => {
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+    describe('grant or partial grant instructions sent', () => {
+      it('sends the correct instructions based on grant all disposition', async () => {
+
+        const disposition = 'grant all';
+        let vacateType = 'Vacate and De Novo (2 documents)';
+        let vacateIssues;
+        let hyperlink;
+        const instructions = 'instructions from judge';
+
+        setup({ vacateTypeFeatureToggle: true });
+
+        await fillForm(
+          disposition,
+          vacateType,
+          vacateIssues,
+          hyperlink,
+          instructions
+        );
+
+        expect(onSubmit.mock.calls[0][0].instructions).toMatch(
+          '**Motion To Vacate:**  ' +
+            '\nFull vacatur' +
+            '\n' +
+            '\n**Detail:**  ' +
+            '\ninstructions from judge' +
+          '\n'
+        );
+
+      });
+
+      it('sends the correct instructions based on partially granted disposition', async () => {
+        const disposition = 'Grant partial vacatur';
+        let vacateType = 'Vacate and De Novo (2 documents)';
+        let vacateIssues = '1. This is a description of the decision';
+        let hyperlink;
+        const instructions = 'some instructions from judge';
+
+        setup({ vacateTypeFeatureToggle: true });
+        await fillForm(
+          disposition,
+          vacateType,
+          vacateIssues,
+          hyperlink,
+          instructions
+        );
+
+        expect(onSubmit.mock.calls[0][0].instructions).toMatch(
+          '**Motion To Vacate:**  ' +
+            '\nPartial vacatur' +
+            '\n' +
+          '\n**Detail:**  ' +
+            '\nsome instructions from judge' +
+            '\n'
+        );
+      });
+    });
+
+    describe('deny or dismiss instructions sent', () => {
+      it('sends the correct instructions based on denied disposition', async () => {
+        const disposition = 'deny';
+        let vacateType;
+        let vacateIssues;
+        const hyperlink = 'www.caseflow.com';
+        const instructions = 'testing';
+
+        setup({ vacateTypeFeatureToggle: true });
+
+        await fillForm(
+          disposition,
+          vacateType,
+          vacateIssues,
+          hyperlink,
+          instructions
+        );
+
+        expect(onSubmit.mock.calls[0][0].instructions).toMatch(
+          '**Motion To Vacate:**  \n' +
+            'Deny all issues for vacatur\n\n' +
+            '**Detail:**  \ntesting\n\n' +
+            '**Hyperlink:**  \nwww.caseflow.com\n'
+        );
+      });
+
+      it('sends the correct instructions based on dismissed disposition', async () => {
+        const disposition = 'dismiss';
+        let vacateType;
+        let vacateIssues;
+        const hyperlink = 'www.google.com';
+        const instructions = 'new instructions from judge';
+
+        setup({ vacateTypeFeatureToggle: true });
+
+        await fillForm(
+          disposition,
+          vacateType,
+          vacateIssues,
+          hyperlink,
+          instructions
+        );
+
+        expect(onSubmit.mock.calls[0][0].instructions).toMatch(
+          '**Motion To Vacate:**  \n' +
+            'Dismiss all issues for vacatur\n\n**Detail:**  \nnew instructions from judge\n\n' +
+            '**Hyperlink:**  \nwww.google.com\n'
         );
       });
     });
