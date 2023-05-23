@@ -32,15 +32,17 @@ RSpec.feature "SwitchApps", :postgres do
   end
 
   context "A user with VHA access" do
+    let!(:roles) { ["Mail Intake", "Build HearSched"] }
+
     let!(:user) do
-      User.authenticate!(user: create(:user, roles: ["Mail Intake"]))
+      User.authenticate!(user: create(:user, roles: roles))
     end
 
     let!(:vha_business_line) do
       create(:business_line, url: "vha", name: "Veterans Health Administration")
     end
 
-    let!(:list_order) { ["Caseflow Intake", "Caseflow Queue"] }
+    let!(:list_order) { ["Caseflow Intake", "Caseflow Queue", "Caseflow Hearings"] }
 
     before do
       vha_business_line.add_user(user)
@@ -59,6 +61,15 @@ RSpec.feature "SwitchApps", :postgres do
       dropdown_menu_text = page.find(".cf-dropdown-menu").text
       expect(dropdown_menu_text.split("\n")).to match_array(list_order)
     end
+
+    it "VHA user with roles 'Case details' should not have queue link in the dropdown" do
+      user.update(roles: roles << "Case Details")
+      visit "/decision_reviews/#{vha_business_line.url}"
+      expect(page).to have_content("Switch product")
+      find("a", text: "Switch product").click
+      dropdown_menu_options = page.find(".cf-dropdown-menu").text
+      expect(dropdown_menu_options.split("\n")).to match_array(list_order - ["Caseflow Queue"])
+    end
   end
 
   context "A user with no-VHA access" do
@@ -73,24 +84,6 @@ RSpec.feature "SwitchApps", :postgres do
       visit "/decision_reviews/#{vha_business_line.url}"
       expect(page).to have_current_path("/unauthorized", ignore_query: true)
       expect(page).to_not have_content("Switch product")
-    end
-  end
-
-  context "A user with 'Case details' role then they will not be able to access queue" do
-    let!(:user) do
-      User.authenticate!(user: create(:user, roles: ["Case Details", "Admin Intake", "Build HearSched"]))
-    end
-    let!(:vha_business_line) do
-      create(:business_line, url: "vha", name: "Veterans Health Administration")
-    end
-    before do
-      vha_business_line.add_user(user)
-    end
-
-    scenario "VHA user with roles 'Case details' should not have queue link in the dropdown" do
-      visit "/decision_reviews/#{vha_business_line.url}"
-
-      expect(page).to have_content("Switch product")
     end
   end
 

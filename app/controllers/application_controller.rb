@@ -106,14 +106,14 @@ class ApplicationController < ApplicationBaseController
 
   def application_urls
     urls = []
-    urls << queue_application_url unless current_user.can?("Case Details")
+    urls << queue_application_url if current_user.roles.exclude?("Case Details")
 
     urls << hearing_application_url if current_user.hearings_user?
 
     manage_urls_for_vha(urls) if current_user.vha_employee?
     # Only return the URL list if the user has applications to switch between
     if urls.length > 1
-      urls.sort_by { |url| url[:sort_order] || url.count }
+      return urls.sort_by { |url| url[:sort_order] || url.count }
     end
 
     nil
