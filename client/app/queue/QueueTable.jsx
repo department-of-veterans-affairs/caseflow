@@ -139,6 +139,12 @@ export const HeaderRow = (props) => {
                 role="button"
                 tabIndex="0"
                 onClick={() => props.setSortOrder(column.name)}
+                onKeyDown={(event) => {
+                  if (event.key === ' ' || event.key === 'Enter') {
+                    props.setSortOrder(column.name);
+                    event.preventDefault();
+                  }
+                }}
               >
                 <DoubleArrowIcon topColor={topColor} bottomColor={botColor} />
               </span>
