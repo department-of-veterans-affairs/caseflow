@@ -82,20 +82,7 @@ run-backend-m1: up-m1 ready  ## Start the rails server without the frontend on a
 	REACT_ON_RAILS_ENV=HOT bundle exec rails s -p 3000
 
 run-frontend: ## Start just the frontend server
-	cd client && yarn dev:hot
-
-## These commands run the app cold which makes it take significantly less resources
-## However this does require a page refresh in the browser to pick up changes
-run-backend-cold: up ready  ## Start rails server without the frontend
-	bundle exec rails s -p 3000
-
-run-backend-cold-m1: up-m1 ready  ## Start the rails server without the frontend on a M1 Mac
-	bundle exec rails s -p 3000
-
-run-frontend-cold: ## Start just the frontend server
-	cd client && yarn dev
-
-## --------------------------------------------------------------------------------------------------------------
+	cd client && yarn run dev:hot
 
 ## These "cold" commands makes the app take significantly less resources
 ## However this does require a page refresh in the browser to pick up changes
