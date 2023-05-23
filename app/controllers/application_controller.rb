@@ -116,9 +116,10 @@ class ApplicationController < ApplicationBaseController
       }
     end
 
+    urls << case_search_url
     manage_urls_for_vha(urls)  if current_user.vha_employee?
-    # Only return the URL list if the user has applications to switch between
-    (urls.length > 1) ? urls : nil
+
+    urls
   end
   helper_method :application_urls
 
@@ -130,6 +131,14 @@ class ApplicationController < ApplicationBaseController
     {
       title: "Intake",
       link: "/intake"
+    }
+  end
+
+  def case_search_url
+    {
+      title: "Search cases",
+      link: "/search",
+      sort_order: 4
     }
   end
 
