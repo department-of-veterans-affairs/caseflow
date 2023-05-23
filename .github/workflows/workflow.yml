@@ -3,7 +3,7 @@ name: RSpec Jest Lint Workflow
 on:
   workflow_dispatch:
   pull_request:
-    types: [opened, reopened, edited, synchronize]
+    types: [opened, reopened, synchronize]
 
 # Use this flag to turn on/off RSpec.  Please go to the lint & js_test job to disable the boolean
 env:

@@ -9,8 +9,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: b9f0f74b85409df2a5f33ec3424f5cabbb5ae97f
-  ref: b9f0f74b85409df2a5f33ec3424f5cabbb5ae97f
+  revision: 6377b46c2639248574673adc6a708d2568c6958c
+  ref: 6377b46c2639248574673adc6a708d2568c6958c
   specs:
     caseflow (0.4.8)
       aws-sdk (~> 2.10)
@@ -35,8 +35,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
-  revision: 43654a058d5a1d3f83f9bfdb832a19b4a9adea8b
-  ref: 43654a058d5a1d3f83f9bfdb832a19b4a9adea8b
+  revision: 70d84cfe184f125208631f48a1d394a563db8ba2
+  branch: MattT/APPEALS-21595
   specs:
     connect_vbms (1.2.0)
       httpclient (~> 2.8.0)

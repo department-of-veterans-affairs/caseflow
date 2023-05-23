@@ -49,6 +49,7 @@ node_modules
 
 # Generated js bundles
 /app/assets/javascripts/*webpack*
+/app/assets/javascripts/*hot-update*
 
 # Storybook
 /public/storybook/*
