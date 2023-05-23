@@ -16,9 +16,9 @@ const stubGet = (url, options) => {
       body: {
         user: {
           id: 7,
-          cssId: 'DEEZNUTS',
-          fullName: 'DEEZ NUTS',
-          displayName: 'idk man',
+          cssId: 'CAMOUSER',
+          fullName: 'Camo User',
+          displayName: 'Camo User',
         }
       }
     };
