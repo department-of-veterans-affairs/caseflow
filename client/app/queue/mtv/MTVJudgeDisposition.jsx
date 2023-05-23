@@ -43,52 +43,31 @@ const vacateTypeText = (val) => {
 const formatInstructions = ({ vacateTypeFeatureToggle, disposition, vacateType, hyperlink, instructions }) => {
   const parts = [`${MTV_TASK_INSTRUCTIONS}${DISPOSITION_TIMELINE_TEXT[disposition]}\n`];
 
-  if (vacateTypeFeatureToggle === false) {
-    switch (disposition) {
-    case 'granted':
-    case 'partially_granted':
+  switch (disposition) {
+  case 'granted':
+  case 'partially_granted':
+    if (!vacateTypeFeatureToggle) {
       parts.push(MTV_TASK_INSTRUCTIONS_TYPE);
       parts.push(`${vacateTypeText(vacateType)}\n`);
-      if (isEmpty(instructions) === false) {
-        parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
-        parts.push(`${instructions}\n`);
-      }
-      break;
-    case 'denied':
-    case 'dismissed':
-    default:
-      if (isEmpty(instructions) === false) {
-        parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
-        parts.push(`${instructions}\n`);
-      }
-      if (hyperlink !== null) {
-        parts.push(MTV_TASK_INSTRUCTIONS_HYPERLINK);
-        parts.push(`${hyperlink}\n`);
-      }
-      break;
+
     }
-  } else {
-    switch (disposition) {
-    case 'granted':
-    case 'partially_granted':
-      if (isEmpty(instructions) === false) {
-        parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
-        parts.push(`${instructions}\n`);
-      }
-      break;
-    case 'denied':
-    case 'dismissed':
-    default:
-      if (isEmpty(instructions) === false) {
-        parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
-        parts.push(`${instructions}\n`);
-      }
-      if (hyperlink !== null) {
-        parts.push(MTV_TASK_INSTRUCTIONS_HYPERLINK);
-        parts.push(`${hyperlink}\n`);
-      }
-      break;
+    if (isEmpty(instructions) === false) {
+      parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
+      parts.push(`${instructions}\n`);
     }
+    break;
+  case 'denied':
+  case 'dismissed':
+  default:
+    if (isEmpty(instructions) === false) {
+      parts.push(MTV_TASK_INSTRUCTIONS_DETAIL);
+      parts.push(`${instructions}\n`);
+    }
+    if (hyperlink !== null) {
+      parts.push(MTV_TASK_INSTRUCTIONS_HYPERLINK);
+      parts.push(`${hyperlink}\n`);
+    }
+    break;
   }
 
   return parts.join('\n');
