@@ -5,14 +5,12 @@ class Metrics::V2::LogsController < ApplicationController
 
   def create
     puts "It worked"
-    puts params[:method]
-    puts params[:url]
-    puts params[:error]
+    puts allowed_params
 
     head :ok
   end
 
   def allowed_params
-    params.permit(:error, :method, :url)
+    params.permit(:error, :method, :uuid, :url)
   end
 end

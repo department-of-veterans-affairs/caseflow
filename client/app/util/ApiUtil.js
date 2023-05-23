@@ -2,6 +2,7 @@ import request from 'superagent';
 import nocache from 'superagent-no-cache';
 import ReactOnRails from 'react-on-rails';
 import StringUtil from './StringUtil';
+import uuid from 'uuid';
 import _ from 'lodash';
 import { timeFunctionPromise } from '../util/PerfDebug';
 
@@ -40,12 +41,15 @@ export const getHeadersObject = (options = {}) => {
   return headers;
 };
 
-const errorHandling = (url, error, method,) => {
-  console.error(new Error(`Problem with ${method} ${url} ${error}`));
+const errorHandling = (url, error, method) => {
+  const id = uuid.v4();
+
+  console.error(new Error(`UUID: ${id}.\nProblem with ${method} ${url} ${error}`));
   const data = {
     method,
     url,
-    error
+    uuid: id,
+    error,
   };
 
   request.
@@ -53,7 +57,7 @@ const errorHandling = (url, error, method,) => {
     set(getHeadersObject()).
     send(data).
     use(nocache).
-    on('error', (err) => console.error(`DANGER DANGER DANGER: ${err}`)).
+    on('error', (err) => console.error(`DANGER DANGER DANGER\nUUID: ${uuid.v4()}.\n: ${err}`)).
     end();
 };
 
