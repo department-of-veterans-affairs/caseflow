@@ -96,8 +96,9 @@ module AppealNotificationReportConcern
   # Purpose: Kicks off a document update in eFolder to overwrite a previous version of the document
   # Returns: The job being queued
   def update_document(version_id)
-    params_with_version = document_params[:version_id] = version_id
-    response = PrepareDocumentUpdateInVbms.new(params_with_version, User.system_user, self).call
+    response = PrepareDocumentUpdateInVbms.new(document_params.merge!(document_version_reference_id: version_id),
+                                               User.system_user,
+                                               self).call
 
     fail PDFUploadError unless response.success?
   end

@@ -16,8 +16,7 @@ class PrepareDocumentUpdateInVbms
                            :document_name,
                            :file,
                            :application,
-                           :document_version_reference_id
-                          )
+                           :document_version_reference_id)
     @document_type = @params[:document_type]
     @user = user
     @appeal = appeal
