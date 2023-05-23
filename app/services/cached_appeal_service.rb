@@ -16,7 +16,6 @@ class CachedAppealService
           appeal_type: Appeal.name,
           case_type: appeal.type,
           issue_count: request_issues_to_cache[appeal.id] || 0,
-          # issue_types: request_issue_for_appeal(appeal.id) || "",
           issue_types: request_issue_types_to_cache[appeal.id] || "",
           docket_type: appeal.docket_type,
           docket_number: appeal.docket_number,
@@ -139,31 +138,15 @@ class CachedAppealService
       .group(:decision_review_id).count
   end
 
-  # def request_issue_types_for_appeal_ids(appeal_ids)
-  #   issue_type_alias = "STRING_AGG(DISTINCT LOWER(request_issues.nonrating_issue_category), ','"\
-  #     " ORDER BY LOWER(request_issues.nonrating_issue_category))"\
-  #     " AS issue_types"
-  #   # Selects a distinct list of string delimited issue_types that matches front end sorting
-  #   Appeal.select(:id, issue_type_alias)
-  #     .where(id: appeal_ids)
-  #     .left_joins(:request_issues)
-  #     .group("appeals.id")
-  #     .map { |appeal| [appeal.id, (appeal[:issue_types] || "")] }
-  #     .to_h
-  # end
-
-  # TODO: Check if this is more accurate for the setup? I'm sure it is but probably slower
   def request_issue_types_for_appeal_ids(appeal_ids)
-    # puts "--------------------INSIDE MY REQUEST ISSUE TYEPS METHOD----------------------------"
-    result = Appeal.where(id: appeal_ids)
+    Appeal.where(id: appeal_ids)
       .includes(:request_issues)
       .all
       .map do |appeal|
+        # Matches front end sorting with no duplicates. Issues associated to same appeal are sorted alphanumerically
         [appeal.id, appeal.request_issues.map(&:nonrating_issue_category).compact.uniq.sort_by(&:upcase).join(",")]
       end
       .to_h
-    # puts result.first.inspect
-    result
   end
 
   def veteran_names_for_file_numbers(veteran_file_numbers)

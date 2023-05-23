@@ -113,13 +113,13 @@ class QueueColumn
     end
   end
 
-  # TODO: I don't like this method, but it might not be avoidable.
   def issue_type_options(tasks)
     count_hash = tasks.with_cached_appeals.group(:issue_types).count
     totals = Hash.new(0)
 
     count_hash.each do |key, value|
       if key.blank?
+        # TODO: Might move this 'None' string key to QUEUE_CONFIG since it might be useful in other filters.
         totals["None"] += value.to_i
       else
         key.split(",").each do |string|

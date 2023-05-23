@@ -57,6 +57,8 @@ import COPY from '../../COPY';
  * - @enablePagination {boolean} whether or not to enablePagination
  * - @casesPerPage {number} how many cases to show per page,
  *   defaults to 15 if nothing is set
+ * - @preserveFilter {boolean} when true, local storage will be used to preserve the existing filter
+ *   between queue page loads and queue tab switches for a user
  *
  * see StyleGuideTables.jsx for usage example.
  */
@@ -297,26 +299,15 @@ export default class QueueTable extends React.PureComponent {
     const filterParam = tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`];
     let filteredByList;
 
-    // My new testing junk
+    // Grab the local storage filter if the property preserveFilter is true
     const localFilter = localStorage.getItem('queueFilter');
 
-    console.log('in queuetable.jsx validatedPaginationOptions');
-    console.log(filterParam);
-    console.log('local filter');
-    console.log(localFilter);
-
     if (preserveFilter) {
+      // Prioritize get parameters over the local filter.
       filteredByList = this.getFilters(filterParam || localFilter ? localFilter.split(',') : '');
     } else {
       filteredByList = this.getFilters(filterParam);
     }
-    // this.getFilters(localStorage.getItem('queueFilter'));
-
-    console.log('filteredByList');
-    console.log(filteredByList);
-
-    // TODO: Have to set and clear the localFilter now
-    // TODO: Also need a property/state variable to determine if the local filter should be used?
     const pageNumber = tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1 || 0;
 
     const currentPage = pageNumber + 1 > numberOfPages || pageNumber < 0 ? 0 : pageNumber;
@@ -370,8 +361,6 @@ export default class QueueTable extends React.PureComponent {
   getFilters = (filterParams) => {
     const filters = {};
 
-    console.log('in getFilters with filterParams');
-    console.log(filterParams);
     // filter: ["col=typeColumn&val=Original", "col=taskColumn&val=OtherColocatedTask|ArnesonColocatedTask"]
     if (filterParams) {
       // When react router encouters an array of strings param with one element, it converts the param to a string
@@ -412,81 +401,7 @@ export default class QueueTable extends React.PureComponent {
   };
 
   updateFilteredByList = (newList) => {
-    const { preserveFilter } = this.props;
-
     this.setState({ filteredByList: newList, filtered: true }, this.updateAddressBar);
-
-    console.log('in queue table updateFilteredByList');
-    // TODO: Try setting the local filter here?
-
-    // TODO: Can maybe extract this into a method?
-    // It's used in requestQueryString()
-    const filterParams = [];
-
-    // if (!_.isEmpty(newList)) {
-    //   for (const columnName in newList) {
-    //     if (!_.isEmpty(newList[columnName])) {
-    //       const column = this.props.columns.find((col) => col.columnName === columnName);
-
-    //       filterParams.push(`col=${column.name}&val=${newList[columnName].join('|')}`);
-    //     }
-    //   }
-    // }
-
-    // Down there it is this but maybe it should be just the columns and values
-    // const filterQueryString = filterParams.map((filterParam) =>
-    //   `${encodeURIComponent(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`)}=${encodeURIComponent(filterParam)}`
-    // ).
-    //   join('&');
-
-    // Encoding is causing problems?
-    const encodedFilterQueryString = filterParams.map((filterParam) =>
-      `${encodeURIComponent(filterParam)}`
-    ).
-      join('&');
-
-    // Try it without encoding?
-    const filterQueryString = filterParams.map((filterParam) =>
-      filterParam
-    ).
-      join('&');
-
-    // console.log('setting local filter to: ');
-    // console.log(preserveFilter);
-    // console.log(filterQueryString);
-
-    // TODO: Figure out how to replicate this over here.
-    // const queryParams = new URLSearchParams(window.location.search);
-    // const url = new URL(urlString);
-    // const params = new URLSearchParams(url.search);
-    // const filterParams = params.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
-
-    // const params = new URLSearchParams(filterQueryString);
-    // const testParams = params.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
-
-    // console.log(params);
-    // console.log(testParams);
-
-    // setFilter(filterParams);
-
-    // Temporary check for saving the filter
-    // if (preserveFilter) {
-    //   localStorage.setItem('queueFilter', filterQueryString);
-    //   localStorage.setItem('encodedQueueFilter', encodedFilterQueryString);
-    // }
-
-    // Or just pull it from the url at this point?
-    // Mimic what is done in NonCompTabs for testing for now
-    // TODO: Might keep it, might not
-    // Doesn't work because state is updated asynchronously so the params are wrong at this time
-    // const params = new URLSearchParams(window.location.search);
-    // const filterParams = params.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
-
-    // console.log('setting filter param here I guess?');
-    // console.log(filterParams);
-    // console.log(newList);
-
-    // localStorage.setItem('queueFilter', filterParams);
 
     // When filters are added or changed, default back to the first page of data
     // because the number of pages could have changed as data is filtered out.
@@ -559,29 +474,22 @@ export default class QueueTable extends React.PureComponent {
   };
 
   updateAddressBar = () => {
-    console.log('in update address bar though?');
-
     if (this.props.useTaskPagesApi) {
       history.pushState('', '', this.deepLink());
 
       if (this.props.onHistoryUpdate) {
         this.props.onHistoryUpdate(this.deepLink());
       }
-
+      // Preserve the filter in local storage if the property preserveFilter is passed
       this.preserveFilterState();
     }
   };
 
   preserveFilterState = () => {
     if (this.props.preserveFilter) {
-      // TODO: Figure out how to replicate this over here.
-      // TODO: Might pass it the filterList instead of grabbing it from the window but it's probably fine I think.
+      // Relies on the history being updated before this method
       const queryParams = new URLSearchParams(window.location.search);
-      // const url = new URL(urlString);
-      // const params = new URLSearchParams(url.search);
       const filterParams = queryParams.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
-
-      console.log(filterParams);
 
       localStorage.setItem('queueFilter', filterParams);
     }
