@@ -363,8 +363,8 @@ feature "Supplemental Claim Intake", :all_dbs do
     test_veteran,
     is_comp: true,
     legacy_opt_in_approved: false,
-    veteran_is_not_claimant: false
-    # filed_by_va_gov: false
+    veteran_is_not_claimant: false,
+    filed_by_va_gov: false
   )
 
     supplemental_claim = SupplementalClaim.create!(
@@ -373,7 +373,7 @@ feature "Supplemental Claim Intake", :all_dbs do
       benefit_type: is_comp ? "compensation" : "education",
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: veteran_is_not_claimant
-      # filed_by_va_gov: filed_by_va_gov
+      filed_by_va_gov: filed_by_va_gov
     )
 
     intake = SupplementalClaimIntake.create!(
