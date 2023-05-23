@@ -56,7 +56,17 @@ const httpMethods = {
       get(url).
       set(getHeadersObject(options.headers)).
       query(options.query).
-      timeout(timeoutSettings);
+      timeout(timeoutSettings).
+      on('error', (err) => {
+        console.error(new Error(`Problem with GET ${url} ${err}`));
+      });
+      // then((response) => {
+      //   console.log(response);
+      // }).
+      // catch((err) => {
+      //   // allow HTTP errors to fall on the floor via the console.
+      //   console.error(new Error(`Problem with GET ${url} ${err}`));
+      // });
 
     if (options.responseType) {
       promise.responseType(options.responseType);
