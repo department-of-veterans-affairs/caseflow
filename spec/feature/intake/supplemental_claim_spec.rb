@@ -62,6 +62,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
   end
 
+  # This test is failing
   it "Creates an end product" do
     # Testing two relationships, tests 1 relationship in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
@@ -343,6 +344,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     expect(page).to have_content("Page not found")
   end
 
+  # This test is failing
   it "Shows a review error when something goes wrong" do
     start_supplemental_claim(veteran_no_ratings)
     visit "/intake"
@@ -390,6 +392,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     [supplemental_claim, intake]
   end
 
+  # This test is failing
   it "Allows a Veteran without ratings to create an intake" do
     start_supplemental_claim(veteran_no_ratings)
 
@@ -410,6 +413,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been submitted.")
   end
 
+  # This test is failing
   context "ratings with disabiliity codes" do
     let(:disabiliity_receive_date) { receipt_date + 2.days }
     let(:disability_profile_date) { profile_date - 1.day }
