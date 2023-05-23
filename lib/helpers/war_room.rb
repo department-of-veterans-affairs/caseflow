@@ -81,4 +81,11 @@ module WarRoom
       dvc.run_remediation_by_vacols_id(vacols_id)
     end
   end
+
+  class OutcodeWithMismatchedVeteranName
+    def run_remediation_by_veteran_id(veteran_id)
+      vnu = VeteranNameUpdater.new
+      vnu.run_remediation_by_veteran_id(veteran_id)
+    end
+  end
 end
