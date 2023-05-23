@@ -118,7 +118,8 @@ class ApplicationController < ApplicationBaseController
 
     manage_urls_for_vha(urls) if current_user.vha_employee?
 
-    urls
+    # Only return the URL list if the user has applications to switch between
+    (urls.length > 1) ? urls : nil
   end
   helper_method :application_urls
 
