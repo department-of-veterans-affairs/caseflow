@@ -43,7 +43,7 @@ const vacateTypeText = (val) => {
 const formatInstructions = ({ vacateTypeFeatureToggle, disposition, vacateType, hyperlink, instructions }) => {
   const parts = [`${MTV_TASK_INSTRUCTIONS}${DISPOSITION_TIMELINE_TEXT[disposition]}\n`];
 
-  if (vacateTypeFeatureToggle) {
+  if (vacateTypeFeatureToggle === false) {
     switch (disposition) {
     case 'granted':
     case 'partially_granted':

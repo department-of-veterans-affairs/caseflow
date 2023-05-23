@@ -161,7 +161,7 @@ describe('MTVJudgeDisposition', () => {
         let hyperlink;
         const instructions = 'instructions from judge';
 
-        setup({ vacateTypeFeatureToggle: true });
+        setup({ vacateTypeFeatureToggle: false });
 
         await fillForm(
           disposition,
@@ -191,7 +191,7 @@ describe('MTVJudgeDisposition', () => {
         let hyperlink;
         const instructions = 'some instructions from judge';
 
-        setup({ vacateTypeFeatureToggle: true });
+        setup({ vacateTypeFeatureToggle: false });
 
         await fillForm(
           disposition,
@@ -280,7 +280,7 @@ describe('MTVJudgeDisposition', () => {
         let hyperlink;
         const instructions = 'instructions from judge';
 
-        setup({ vacateTypeFeatureToggle: false });
+        setup({ vacateTypeFeatureToggle: true });
 
         await fillForm(
           disposition,
@@ -308,7 +308,7 @@ describe('MTVJudgeDisposition', () => {
         let hyperlink;
         const instructions = 'some instructions from judge';
 
-        setup({ vacateTypeFeatureToggle: false });
+        setup({ vacateTypeFeatureToggle: true });
         await fillForm(
           disposition,
           vacateType,
@@ -361,7 +361,7 @@ describe('MTVJudgeDisposition', () => {
         const hyperlink = 'www.google.com';
         const instructions = 'new instructions from judge';
 
-        setup({ vacateTypeFeatureToggle: false });
+        setup({ vacateTypeFeatureToggle: true });
 
         await fillForm(
           disposition,
