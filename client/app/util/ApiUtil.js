@@ -40,13 +40,18 @@ export const getHeadersObject = (options = {}) => {
   return headers;
 };
 
+const errorHandling = (url, error, method) => {
+  console.error(new Error(`Problem with ${method} ${url} ${error}`));
+};
+
 const httpMethods = {
   delete(url, options = {}) {
     return request.
       delete(url).
       set(getHeadersObject(options.headers)).
       send(options.data).
-      use(nocache);
+      use(nocache).
+      on('error', (err) => errorHandling(url, err, 'DELETE'));
   },
 
   get(url, options = {}) {
@@ -57,16 +62,7 @@ const httpMethods = {
       set(getHeadersObject(options.headers)).
       query(options.query).
       timeout(timeoutSettings).
-      on('error', (err) => {
-        console.error(new Error(`Problem with GET ${url} ${err}`));
-      });
-      // then((response) => {
-      //   console.log(response);
-      // }).
-      // catch((err) => {
-      //   // allow HTTP errors to fall on the floor via the console.
-      //   console.error(new Error(`Problem with GET ${url} ${err}`));
-      // });
+      on('error', (err) => errorHandling(url, err, 'GET'));
 
     if (options.responseType) {
       promise.responseType(options.responseType);
@@ -89,7 +85,8 @@ const httpMethods = {
       post(url).
       set(getHeadersObject({ 'X-HTTP-METHOD-OVERRIDE': 'patch' })).
       send(options.data).
-      use(nocache);
+      use(nocache).
+      on('error', (err) => errorHandling(url, err, 'PATCH'));
   },
 
   post(url, options = {}) {
@@ -97,7 +94,8 @@ const httpMethods = {
       post(url).
       set(getHeadersObject(options.headers)).
       send(options.data).
-      use(nocache);
+      use(nocache).
+      on('error', (err) => errorHandling(url, err, 'POST'));
   },
 
   put(url, options = {}) {
@@ -105,7 +103,8 @@ const httpMethods = {
       put(url).
       set(getHeadersObject(options.headers)).
       send(options.data).
-      use(nocache);
+      use(nocache).
+      on('error', (err) => errorHandling(url, err, 'PUT'));
   }
 };
 
