@@ -10,7 +10,14 @@ class PrepareDocumentUpdateInVbms
   #         user - current user that is preparing the document for upload
   #         appeal - Appeal object (optional if ssn or file number are passed into params)
   def initialize(params, user, appeal = nil)
-    @params = params.slice(:veteran_file_number, :document_type, :document_subject, :document_name, :file, :application)
+    @params = params.slice(:veteran_file_number,
+                           :document_type,
+                           :document_subject,
+                           :document_name,
+                           :file,
+                           :application,
+                           :document_version_reference_id
+                          )
     @document_type = @params[:document_type]
     @user = user
     @appeal = appeal
@@ -42,6 +49,10 @@ class PrepareDocumentUpdateInVbms
 
   attr_accessor :success
   attr_reader :document_type, :params, :user
+
+  def document_version_reference_id
+    @params[:document_version_reference_id]
+  end
 
   def veteran_file_number
     @params[:veteran_file_number]
@@ -79,7 +90,8 @@ class PrepareDocumentUpdateInVbms
       document_name: document_name,
       document_subject: document_subject,
       document_type: document_type,
-      file: file
+      file: file,
+      document_version_reference_id: document_version_reference_id
     }
   end
 

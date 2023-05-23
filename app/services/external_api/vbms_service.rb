@@ -42,9 +42,9 @@ class ExternalApi::VBMSService
     ExternalApi::VbmsDocumentSeriesForAppeal.new(file_number: appeal.veteran_file_number).fetch
   end
 
-  def self.update_document_in_vbms(appeal, uploadable_document)
+  def self.update_document_in_vbms(appeal, uploadable_document, prev_version_ref_id)
     @vbms_client ||= init_vbms_client
-    response = initialize_update(appeal, uploadable_document)
+    response = initialize_update(appeal, uploadable_document, prev_version_ref_id)
     update_document(appeal.veteran_file_number, response.upload_token, uploadable_document.pdf_location)
   end
 
@@ -100,15 +100,15 @@ class ExternalApi::VBMSService
     send_and_log_request(vbms_id, request)
   end
 
-  def self.initialize_update_document(uploadable_document)
+  def self.initialize_update(appeal, uploadable_document, prev_version_ref_id)
     content_hash = Digest::SHA1.hexdigest(File.read(uploadable_document.pdf_location))
     request = VBMS::Requests::InitializeUpdate.new(
       content_hash: content_hash,
-      document_version_reference_id: uploadable_document.document_version_reference_id,
+      document_version_reference_id: prev_version_ref_id,
       va_receive_date: Time.zone.now,
       subject: uploadable_document.document_subject.presence || uploadable_document.document_type
     )
-    send_and_log_request(veteran_file_number, request)
+    send_and_log_request(appeal.veteran_file_number, request)
   end
 
   def self.update_document(vbms_id, upload_token, filepath)

@@ -66,17 +66,23 @@ module AppealNotificationReportConcern
   end
 
   def transmit_document!
-    document_already_exists? ? update_document : upload_document
+    version_id = document_version_ref_id
+    version_id.presence ? update_document(version_id) : upload_document
   end
 
   # Purpose: Checks in eFolder for a doc in the veteran's eFolder with the same type
-  # Returns: Boolean related to whether a document with the same type already exists
-  def document_already_exists?
-    # Just putting some thoughts down here. I think this may need to be refined further
-    # appeal.vbms_uploaded_documents.where(document_type: "BVA Case Notifications").count > 0
+  # Returns: document_version_reference_id for newest document in series (string) OR nil
+  def document_version_ref_id
+    response = VBMSService.fetch_document_series_for(self)
+    series = response.select { |obj| obj.series_id == document_series_ref_id }
+    series&.first&.document_id
+  end
 
-    # Hard-coding this for now
-    true
+  # Purpose: gets the document_series_reference_id of the most recently uploaded notification report
+  # Params: none
+  # Returns: document_series_reference_id (string)
+  def document_series_ref_id
+    appeal.vbms_uploaded_documents.where(document_type: "BVA Case Notifications").order(uploaded_to_vbms_at: :desc).first.document_series_reference_id
   end
 
   # Purpose: Uploads the PDF
@@ -89,8 +95,9 @@ module AppealNotificationReportConcern
 
   # Purpose: Kicks off a document update in eFolder to overwrite a previous version of the document
   # Returns: The job being queued
-  def update_document
-    response = PrepareDocumentUpdateInVbms.new(document_params, User.system_user, self).call
+  def update_document(version_id)
+    params_with_version = document_params[:version_id] = version_id
+    response = PrepareDocumentUpdateInVbms.new(params_with_version, User.system_user, self).call
 
     fail PDFUploadError unless response.success?
   end

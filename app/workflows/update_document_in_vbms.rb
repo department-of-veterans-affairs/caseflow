@@ -55,7 +55,7 @@ class UpdateDocumentInVbms
   def update_in_vbms!
     return if document.uploaded_to_vbms_at
 
-    update_response = VBMSService.update_document_in_vbms(document.appeal, self)
+    update_response = VBMSService.update_document_in_vbms(document.appeal, self, document.document_version_reference_id)
 
     persist_efolder_version_info(update_response)
 
@@ -74,7 +74,7 @@ class UpdateDocumentInVbms
   end
 
   def save_rescued_error!(error)
-    document.update!(error: error)
+    document.update!(error: error, document_version_reference_id: nil)
   end
 
   def s3_location
