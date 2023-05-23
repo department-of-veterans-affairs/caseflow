@@ -57,7 +57,8 @@ end
 disabled_flags = [
   "legacy_das_deprecation",
   "cavc_dashboard_workflow",
-  "poa_auto_refresh"
+  "poa_auto_refresh",
+  "cc_vacatur_visibility"
 ]
 
 all_features = AllFeatureToggles.new.call.flatten.uniq
