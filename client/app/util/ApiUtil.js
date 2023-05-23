@@ -40,8 +40,21 @@ export const getHeadersObject = (options = {}) => {
   return headers;
 };
 
-const errorHandling = (url, error, method) => {
+const errorHandling = (url, error, method,) => {
   console.error(new Error(`Problem with ${method} ${url} ${error}`));
+  const data = {
+    method,
+    url,
+    error
+  };
+
+  request.
+    post('/metrics/v2/logs').
+    set(getHeadersObject()).
+    send(data).
+    use(nocache).
+    on('error', (err) => console.error(`DANGER DANGER DANGER: ${err}`)).
+    end();
 };
 
 const httpMethods = {

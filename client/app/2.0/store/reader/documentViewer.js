@@ -243,14 +243,14 @@ export const showPdf = createAsyncThunk(
 
     // Request the PDF document from eFolder
     if (!pdfDocuments[currentDocument.id]) {
-      const { body } = await ApiUtil.get(currentDocument.content_url, {
+      const { body } = await ApiUtil.get(currentDocument.content_url + '1', {
         cache: true,
         withCredentials: true,
         timeout: true,
         responseType: 'arraybuffer',
       }).catch((err) => {
         // allow HTTP errors to fall on the floor via the console.
-        console.error(new Error(`Problem with GET ${currentDocument.content_url} ${err}`));
+        console.error(new Error(`Extra: Problem with GET ${currentDocument.content_url} ${err}`));
       });
 
       if (body) {
