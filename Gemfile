@@ -17,7 +17,7 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 gem "bootsnap", require: false
 gem "browser"
 gem "business_time", "~> 0.9.3"
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "b9f0f74b85409df2a5f33ec3424f5cabbb5ae97f"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "6377b46c2639248574673adc6a708d2568c6958c"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "43654a058d5a1d3f83f9bfdb832a19b4a9adea8b"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
@@ -142,10 +142,11 @@ group :development do
 end
 
 group :test do
-  gem "knapsack_pro"
+  gem "knapsack_pro", "~> 3.8"
   # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
   gem "rspec-retry"
   gem "webmock"
+  gem "rspec-github", require: false
 end
 # rubocop:enable Metrics/LineLength
 

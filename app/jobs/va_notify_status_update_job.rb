@@ -1,9 +1,11 @@
 # frozen_string_literal: true
+
 class VANotifyStatusUpdateJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
 
   QUERY_LIMIT = ENV["VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT"]
+  VALID_NOTIFICATION_STATUSES = %w[Success temporary-failure technical-failure sending created].freeze
 
   # Description: Jobs main perform method that will find all notification records that do not have
   #  status updates from VA Notify and calls VA Notify API to get the latest status
@@ -56,7 +58,8 @@ class VANotifyStatusUpdateJob < CaseflowJob
 
   private
 
-  # Description: Method that applies a query limit to the list of notification records that will get the status checked for
+  # Description: Method that applies a query limit to the list of notification records that
+  # will get the status checked for.
   # them from VA Notiufy
   #
   # Params: None
@@ -66,22 +69,54 @@ class VANotifyStatusUpdateJob < CaseflowJob
     if !QUERY_LIMIT.nil? && QUERY_LIMIT.is_a?(String)
       find_notifications_not_processed.first(QUERY_LIMIT.to_i)
     else
-      log_info("VANotifyStatusJob can not read the VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT environment variable. \
-         Defaulting to 650.")
+      log_info("VANotifyStatusJob can not read the VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT environment variable.\
+        Defaulting to 650.")
       find_notifications_not_processed.first(650)
     end
   end
 
-  # Description: Method to query the Notification database for Notififcation records that have not been updated with a VA Notify Status
+  # Description: Method to query the Notification database for Notififcation
+  # records that have not been updated with a VA Notify Status
   #
   # Params: None
   #
   # Retuns: Lits of Notification Active Record associations meeting the where condition
   def find_notifications_not_processed
-    Notification.where("(notification_type = 'Email' AND email_notification_status = 'Success') \
-      OR (notification_type = 'SMS' AND sms_notification_status = 'Success') \
-      OR (notification_type = 'Email and SMS' AND \
-         (sms_notification_status = 'Success' OR email_notification_status = 'Success'))")
+    Notification.select(Arel.star).where(
+      Arel::Nodes::Group.new(
+        email_status_check.or(
+          sms_status_check.or(
+            email_and_sms_status_check
+          )
+        )
+      )
+    )
+      .where(created_at: 4.days.ago..Time.zone.now)
+      .order(created_at: :desc)
+  end
+
+  def email_status_check
+    Notification.arel_table[:notification_type].eq("Email").and(
+      generate_valid_status_check(:email_notification_status)
+    )
+  end
+
+  def sms_status_check
+    Notification.arel_table[:notification_type].eq("SMS").and(
+      generate_valid_status_check(:sms_notification_status)
+    )
+  end
+
+  def email_and_sms_status_check
+    Notification.arel_table[:notification_type].eq("Email and SMS").and(
+      generate_valid_status_check(:email_notification_status).or(
+        generate_valid_status_check(:sms_notification_status)
+      )
+    )
+  end
+
+  def generate_valid_status_check(col_name_sym)
+    Notification.arel_table[col_name_sym].in(VALID_NOTIFICATION_STATUSES)
   end
 
   # Description: Method to be called when an error message need to be logged
@@ -117,7 +152,8 @@ class VANotifyStatusUpdateJob < CaseflowJob
       if type == "Email"
         { "email_notification_status" => response.body["status"], "recipient_email" => response.body["email_address"] }
       elsif type == "SMS"
-        { "sms_notification_status" => response.body["status"], "recipient_phone_number" => response.body["phone_number"] }
+        { "sms_notification_status" => response.body["status"], "recipient_phone_number" =>
+          response.body["phone_number"] }
       else
         message = "Type neither email nor sms"
         log_error("VA Notify API returned error for notificiation " + notification_id + " with type " + type)

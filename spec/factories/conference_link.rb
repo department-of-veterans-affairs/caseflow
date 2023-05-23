@@ -7,6 +7,7 @@ FactoryBot.define do
     conference_deleted { false }
     host_pin { nil }
     host_link { nil }
+    guest_pin_long { "6393596604" }
     created_at { Time.zone.now }
     updated_at { Time.zone.now }
     created_by { create(:user) }

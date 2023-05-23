@@ -40,6 +40,84 @@ describe VANotifyStatusUpdateJob, type: :job do
            email_notification_status: "Success",
            sms_notification_status: "Success")
   end
+  let(:notification_collection) do
+    create(:notification,
+           appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
+           appeals_type: "Appeal",
+           event_type: "Hearing scheduled",
+           event_date: Time.zone.today,
+           notification_type: "Email",
+           email_notification_external_id: "0",
+           sms_notification_external_id: nil,
+           email_notification_status: "Success",
+           created_at: Time.zone.now)
+    create(:notification,
+           appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
+           appeals_type: "Appeal",
+           event_type: "Hearing scheduled",
+           event_date: Time.zone.today,
+           notification_type: "SMS",
+           email_notification_external_id: nil,
+           sms_notification_external_id: "0",
+           sms_notification_status: "temporary-failure",
+           created_at: Time.zone.now)
+    create(:notification,
+           appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
+           appeals_type: "Appeal",
+           event_type: "Hearing scheduled",
+           event_date: Time.zone.today,
+           notification_type: "SMS",
+           email_notification_external_id: nil,
+           sms_notification_external_id: "1",
+           sms_notification_status: "created",
+           created_at: Time.zone.now)
+    create(:notification,
+           appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
+           appeals_type: "Appeal",
+           event_type: "Hearing scheduled",
+           event_date: Time.zone.today,
+           notification_type: "Email",
+           email_notification_external_id: "1",
+           sms_notification_external_id: nil,
+           email_notification_status: "technical-failure",
+           created_at: Time.zone.now)
+    create(:notification,
+           appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
+           appeals_type: "Appeal",
+           event_type: "Hearing scheduled",
+           event_date: Time.zone.today,
+           notification_type: "Email and SMS",
+           email_notification_external_id: "2",
+           sms_notification_external_id: "2",
+           email_notification_status: "temporary-failure",
+           sms_notification_status: "temporary-failure",
+           created_at: Time.zone.now - 5.days)
+    create(:notification,
+           appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1576",
+           appeals_type: "Appeal",
+           event_type: "Hearing scheduled",
+           event_date: Time.zone.today,
+           notification_type: "Email and SMS",
+           email_notification_external_id: "3",
+           sms_notification_external_id: "3",
+           email_notification_status: "delivered",
+           sms_notification_status: "delivered",
+           created_at: Time.zone.now - 5.days)
+    create(:notification,
+           appeals_id: "5d70058f-8641-4155-bae8-5af4b61b1577",
+           appeals_type: "Appeal",
+           event_type: "Hearing scheduled",
+           event_date: Time.zone.today,
+           notification_type: "Email and SMS",
+           email_notification_external_id: "4",
+           sms_notification_external_id: "4",
+           email_notification_status: "delivered",
+           sms_notification_status: "delivered",
+           created_at: Time.zone.now - 5.days)
+  end
+
+  let(:collect) { Notification.where(id: [1, 2, 3, 4, 5]) }
+
   let(:queue_name) { "caseflow_test_low_priority" }
 
   before do
@@ -77,8 +155,8 @@ describe VANotifyStatusUpdateJob, type: :job do
       it "defaults to 650 for the query limit if environment variable not found or invalid" do
         stub_const("VANotifyStatusUpdateJob::QUERY_LIMIT", nil)
         expect(Rails.logger).to receive(:info)
-          .with("VANotifyStatusJob can not read the VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT environment variable. \
-         Defaulting to 650.")
+          .with("VANotifyStatusJob can not read the VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT environment variable.\
+        Defaulting to 650.")
         VANotifyStatusUpdateJob.perform_now
       end
 
@@ -132,7 +210,8 @@ describe VANotifyStatusUpdateJob, type: :job do
         it "logs when external id is not present" do
           allow(job).to receive(:notifications_not_processed).and_return([email_and_sms])
           job.perform_now
-          expect(email_and_sms.sms_notification_status && email_and_sms.email_notification_status).to eq("No External Id")
+          expect(email_and_sms.sms_notification_status &&
+            email_and_sms.email_notification_status).to eq("No External Id")
         end
 
         it "updates the email and sms notification status if an external id is found" do
@@ -153,7 +232,7 @@ describe VANotifyStatusUpdateJob, type: :job do
       email_and_sms.email_notification_external_id = SecureRandom.uuid
       allow(job).to receive(:notifications_not_processed).and_return([email_and_sms])
       allow(VANotifyService).to receive(:get_status).and_raise(Caseflow::Error::VANotifyNotFoundError)
-      expect(job).to receive(:log_error).with(/VA Notify API returned error/).exactly(2).times
+      expect(job).to receive(:log_error).with(/VA Notify API returned error/).twice
       job.perform_now
     end
   end
@@ -162,8 +241,31 @@ describe VANotifyStatusUpdateJob, type: :job do
     subject(:job) { VANotifyStatusUpdateJob.perform_later }
     it "queries the notification table using activerecord" do
       allow(job).to receive(:find_notifications_not_processed).and_return([])
-      expect(job).to receive(:find_notifications_not_processed)
+      expect(job.send(:find_notifications_not_processed))
       job.perform_now
+    end
+  end
+
+  context "#find_notif_not_processed" do
+    subject(:job) { VANotifyStatusUpdateJob.perform_later }
+    it "returns a collection of notifications from the DB that hold the qualifying statuses" do
+      notification_collection
+      expect(job.send(:find_notifications_not_processed)).not_to include(Notification.where(id: [6, 7]))
+    end
+  end
+
+  context "#default_to_650" do
+    before do
+      VANotifyStatusUpdateJob::QUERY_LIMIT = nil
+    end
+
+    subject(:job) { VANotifyStatusUpdateJob.perform_later }
+    it "defaults to 650" do
+      expect(Rails.logger).to receive(:info).with(
+        "VANotifyStatusJob can not read the VA_NOTIFY_STATUS_UPDATE_BATCH_LIMIT environment variable.\
+        Defaulting to 650."
+      )
+      job.perform
     end
   end
 end

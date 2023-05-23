@@ -179,6 +179,16 @@ class AppealsController < ApplicationController
 
   def update
     if request_issues_update.perform!
+      # if cc appeal, create SendInitialNotificationLetterTask
+      if appeal.contested_claim? && FeatureToggle.enabled?(:cc_appeal_workflow)
+        # check if an existing letter task is open
+        existing_letter_task_open = appeal.tasks.any? do |task|
+          task.class == SendInitialNotificationLetterTask && task.status == "assigned"
+        end
+        # create SendInitialNotificationLetterTask unless one is open
+        send_initial_notification_letter unless existing_letter_task_open
+      end
+
       set_flash_success_message
 
       render json: {
@@ -297,6 +307,25 @@ class AppealsController < ApplicationController
       poa.save_with_updated_bgs_record!
       ["POA Updated Successfully", "success", "updated"]
     end
+  end
+
+  def send_initial_notification_letter
+    # depending on the docket type, create cooresponding task as parent task
+    case appeal.docket_type
+    when "evidence_submission"
+      parent_task = @appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask")
+    when "hearing"
+      parent_task = @appeal.tasks.find_by(type: "ScheduleHearingTask")
+    when "direct_review"
+      parent_task = @appeal.tasks.find_by(type: "DistributionTask")
+    end
+    @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
+                                          SendInitialNotificationLetterTask.create!(
+                                            appeal: @appeal,
+                                            parent: parent_task,
+                                            assigned_to: Organization.find_by_url("clerk-of-the-board"),
+                                            assigned_by: RequestStore[:current_user]
+                                          ) unless parent_task.nil?
   end
 
   def power_of_attorney_data

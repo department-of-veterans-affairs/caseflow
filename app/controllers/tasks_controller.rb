@@ -107,20 +107,24 @@ class TasksController < ApplicationController
   #   assigned_to_id: 23
   # }
   def update
-    tasks = task.update_from_params(update_params, current_user)
-    tasks.each { |t| return invalid_record_error(t) unless t.valid? }
+    Task.transaction do
+      tasks = task.update_from_params(update_params, current_user)
+      tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
-    tasks_hash = json_tasks(tasks.uniq)
+      tasks_hash = json_tasks(tasks.uniq)
+      if task.appeal.class != LegacyAppeal
+        modified_task_contested_claim
+      end
+      # currently alerts are only returned by ScheduleHearingTask
+      # and AssignHearingDispositionTask for virtual hearing related updates
+      # Start with any alerts on the current task, then find alerts on the tasks
+      # that resulted from the update
+      alerts = tasks.reduce(task.alerts) { |acc, t| acc + t.alerts }
 
-    # currently alerts are only returned by ScheduleHearingTask
-    # and AssignHearingDispositionTask for virtual hearing related updates
-    # Start with any alerts on the current task, then find alerts on the tasks
-    # that resulted from the update
-    alerts = tasks.reduce(task.alerts) { |acc, t| acc + t.alerts }
+      tasks_hash[:alerts] = alerts if alerts # does not add to hash if alerts == []
 
-    tasks_hash[:alerts] = alerts if alerts # does not add to hash if alerts == []
-
-    render json: { tasks: tasks_hash }
+      render json: { tasks: tasks_hash }
+    end
   rescue Caseflow::Error::InvalidEmailError => error
     Raven.capture_exception(error, extra: { application: "hearings" })
 
@@ -179,6 +183,107 @@ class TasksController < ApplicationController
   end
 
   private
+
+  def send_initial_notification_letter
+    # depending on the docket type, create cooresponding task as parent task
+    @appeal = task.appeal
+    case @appeal.docket_type
+    when "evidence_submission"
+      parent_task = @appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask")
+    when "hearing"
+      parent_task = @appeal.tasks.find_by(type: "ScheduleHearingTask")
+    when "direct_review"
+      parent_task = @appeal.tasks.find_by(type: "DistributionTask")
+    end
+    unless parent_task.nil?
+      @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
+                                            SendInitialNotificationLetterTask.create!(
+                                              appeal: @appeal,
+                                              parent: parent_task,
+                                              assigned_to: Organization.find_by_url("clerk-of-the-board"),
+                                              assigned_by: RequestStore[:current_user]
+                                            )
+    end
+  end
+
+  def send_final_notification_letter
+    @send_final_notification_letter ||= task.appeal.tasks.open.find_by(type: :SendFinalNotificationLetterTask) ||
+                                        SendFinalNotificationLetterTask.create!(
+                                          appeal: task.appeal,
+                                          parent: task.parent,
+                                          assigned_to: Organization.find_by_url("clerk-of-the-board"),
+                                          assigned_by: current_user
+                                        )
+  end
+
+  def modified_task_contested_claim
+    appeal = Appeal.find(task&.appeal&.id)
+    if appeal&.contested_claim?
+      case task.type
+      when "SendInitialNotificationLetterTask"
+        process_contested_claim_initial_task
+      when "PostSendInitialNotificationLetterHoldingTask"
+        process_contested_claim_post_task
+      when "SendFinalNotificationLetterTask"
+        process_contested_claim_final_task
+      else
+        "No Task currently available."
+      end
+    end
+  end
+
+  def process_contested_claim_initial_task
+    opc = params["select_opc"]
+    case opc
+    when "task_complete_contested_claim"
+      days_on_hold = params["radio_value"].to_i
+      instructions = ""
+      psi = PostSendInitialNotificationLetterHoldingTask.create!(
+        appeal: task.appeal,
+        parent: task.parent,
+        assigned_to: Organization.find_by_url("clerk-of-the-board"),
+        assigned_by: current_user,
+        end_date: Time.zone.now + days_on_hold.days
+      )
+      TimedHoldTask.create_from_parent(psi, days_on_hold: days_on_hold, instructions: instructions)
+    when "proceed_final_notification_letter_initial"
+      send_final_notification_letter
+    end
+  end
+
+  def process_contested_claim_post_task
+    case task.status
+    when "cancelled"
+      task.save!
+    when "completed"
+      if params["select_opc"] == "proceed_final_notification_letter_post_holding"
+        send_final_notification_letter
+      elsif params["select_opc"] == "resend_initial_notification_letter_post_holding"
+        send_initial_notification_letter
+      end
+    end
+  end
+
+  def process_contested_claim_final_task
+    case task.status
+    when "cancelled"
+      if params["select_opc"] == "resend_initial_notification_letter_final"
+        send_initial_notification_letter
+      end
+    when "completed"
+      if params["select_opc"] == "resend_final_notification_letter"
+        send_final_notification_letter
+      elsif params["select_opc"] == "task_complete_contested_claim"
+        radio_opc = params["radio_value"].to_i
+        if radio_opc == 1
+          root_task_id = task.appeal.tasks.find_by(type: "RootTask").id
+          params[:parent_id] = root_task_id
+          # params[:instructions] = params[:task][:instructions]
+          DocketSwitchMailTask.create_from_params(params, current_user)
+        end
+      end
+    end
+  end
 
   def render_update_errors(errors)
     render json: { "errors": errors }, status: :bad_request
@@ -270,6 +375,9 @@ class TasksController < ApplicationController
       :assigned_to_id,
       :instructions,
       :ihp_path,
+      :select_opc,
+      :radio_value,
+      :parent_id,
       reassign: [:assigned_to_id, :assigned_to_type, :instructions],
       business_payloads: [:description, values: {}]
     )

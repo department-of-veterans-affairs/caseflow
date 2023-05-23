@@ -9,8 +9,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: b9f0f74b85409df2a5f33ec3424f5cabbb5ae97f
-  ref: b9f0f74b85409df2a5f33ec3424f5cabbb5ae97f
+  revision: 6377b46c2639248574673adc6a708d2568c6958c
+  ref: 6377b46c2639248574673adc6a708d2568c6958c
   specs:
     caseflow (0.4.8)
       aws-sdk (~> 2.10)
@@ -375,7 +375,7 @@ GEM
       activerecord
       kaminari-core (= 1.2.1)
     kaminari-core (1.2.1)
-    knapsack_pro (2.8.0)
+    knapsack_pro (3.9.0)
       rake
     kramdown (2.4.0)
       rexml
@@ -553,6 +553,8 @@ GEM
     rspec-expectations (3.9.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.9.0)
+    rspec-github (2.4.0)
+      rspec-core (~> 3.0)
     rspec-mocks (3.9.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.9.0)
@@ -757,7 +759,7 @@ DEPENDENCIES
   jshint
   json_schemer (~> 0.2.16)
   kaminari
-  knapsack_pro
+  knapsack_pro (~> 3.8)
   logstasher
   meta_request
   moment_timezone-rails
@@ -786,6 +788,7 @@ DEPENDENCIES
   request_store
   roo (~> 2.7)
   rspec
+  rspec-github
   rspec-rails
   rspec-retry
   rspec_junit_formatter

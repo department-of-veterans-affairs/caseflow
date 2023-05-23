@@ -215,6 +215,17 @@ class TaskRows extends React.PureComponent {
       <dd>{reasonLabel}</dd></div> : null;
   }
 
+  completedByListItem = (task) => {
+    const completedBy = task?.completedBy?.cssId;
+
+    return completedBy ? (
+      <div className="cf-row-wrapper">
+        <dt>{COPY.TASK_SNAPSHOT_TASK_COMPLETED_BY_LABEL}</dt>
+        <dd>{completedBy}</dd>
+      </div>
+    ) : null;
+  };
+
   splitAtListItem = (task) => {
     return (
       <div className="cf-row-wrapper">
@@ -401,6 +412,7 @@ class TaskRows extends React.PureComponent {
         {this.assignedByListItem(task)}
         {this.cancelledByListItem(task)}
         {this.cancelReasonListItem(task)}
+        {this.completedByListItem(task)}
         {this.taskLabelListItem(task)}
         {this.taskInstructionsListItem(task)}
       </React.Fragment>

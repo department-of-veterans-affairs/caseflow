@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 import StringUtil from 'app/util/StringUtil';
+import { format, isDate, max, parseISO } from 'date-fns';
 
 import { CAVC_ALL_ISSUES_ERROR, CAVC_DECISION_DATE_PAST, CAVC_DECISION_DATE_ERROR,
   CAVC_JUDGEMENT_DATE_ERROR, CAVC_JUDGEMENT_DATE_PAST,
@@ -8,6 +9,7 @@ import CAVC_JUDGE_FULL_NAMES from 'constants/CAVC_JUDGE_FULL_NAMES';
 import CAVC_REMAND_SUBTYPES from 'constants/CAVC_REMAND_SUBTYPES';
 import CAVC_REMAND_SUBTYPE_NAMES from 'constants/CAVC_REMAND_SUBTYPE_NAMES';
 import CAVC_DECISION_TYPES from 'constants/CAVC_DECISION_TYPES';
+import { SUBSTITUTE_DATE_ERRORS } from '../../intake/constants';
 
 export const allDecisionTypeOpts = Object.values(CAVC_DECISION_TYPES).map(
   (value) => ({
@@ -22,7 +24,8 @@ export const allRemandTypeOpts = Object.entries(CAVC_REMAND_SUBTYPE_NAMES).map(
   })
 );
 
-export const generateSchema = ({ maxIssues }) => {
+export const generateSchema = ({ maxIssues, nodDate, dateOfDeath }) => {
+  const dates = [nodDate, dateOfDeath].filter(Boolean).map((d) => (isDate(d) ? d : parseISO(d)));
   const requireValidDate = yup.
     date().
     min(new Date(2018, 0, 1)).
@@ -35,6 +38,23 @@ export const generateSchema = ({ maxIssues }) => {
       // We accept ‐ HYPHEN, - Hyphen-minus, − MINUS SIGN, – EN DASH, — EM DASH
       matches(/^\d{2}[-‐−–—]\d{1,5}$/).
       required(),
+    substitutionDate: yup.mixed().when('isAppellantSubstituted', {
+      is: 'true',
+      then: yup.date().typeError(SUBSTITUTE_DATE_ERRORS.invalid).
+        min(
+          new Date(max(dates)),
+          SUBSTITUTE_DATE_ERRORS.min_date_error +
+          ` - ${format(new Date(max(dates)), 'MM/dd/yyyy')}.`
+        ).
+        max(new Date(), SUBSTITUTE_DATE_ERRORS.in_future).
+        required(SUBSTITUTE_DATE_ERRORS.invalid)
+    }),
+    participantId: yup.mixed().when('isAppellantSubstituted', {
+      is: 'true',
+      then: yup.
+        string().
+        required('Please select a substitute claimants.'),
+    }),
     attorney: yup.
       string().
       // mixed().
@@ -58,17 +78,17 @@ export const generateSchema = ({ maxIssues }) => {
         required('Please specify the type of remand').
         oneOf(allRemandTypeOpts.map((opt) => opt.value)),
     }),
-    remandDatesProvided: yup.string().when('remandType', {
-      is: (val) => val !== CAVC_REMAND_SUBTYPES.mdr,
-      then: yup.string(),
-      otherwise: yup.string().required('Choose one'),
+    remandDatesProvided: yup.string().when('decisionType', {
+      is: (val) => val !== 'remand',
+      then: yup.string().required('Choose one'),
     }),
     decisionDate: yup.
       date().
       min(new Date(2018, 0, 1), CAVC_DECISION_DATE_PAST).
       max(new Date(), CAVC_DECISION_DATE_ERROR).
       required(),
-    mandateSame: yup.boolean(), // EditCavcTodo: remove if not needed; see remandDatesProvided
+    // EditCavcTodo: remove if not needed; see remandDatesProvided
+    mandateSame: yup.boolean(),
     judgementDate: yup.mixed().when('remandDatesProvided', {
       is: 'yes',
       then: requireValidDate,
