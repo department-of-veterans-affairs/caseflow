@@ -105,6 +105,12 @@ class Fakes::VBMSService
     end
   end
 
+  def self.update_document_in_vbms(appeal, uploadable_document, prev_version_ref_id)
+    @appeal = appeal
+    @updated_document = uploadable_document
+    @prev_version_ref_id = prev_version_ref_id
+  end
+
   def self.upload_document_to_vbms(appeal, form8)
     @uploaded_form8 = form8
     @uploaded_form8_appeal = appeal
