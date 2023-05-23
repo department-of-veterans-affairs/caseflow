@@ -6,16 +6,11 @@ RSpec.feature "SwitchApps", :postgres do
       User.authenticate!(user: create(:user, roles: ["Reader"]))
     end
 
-    scenario "only has queue and search" do
+    scenario "doesn't see switch product dropdown" do
       visit "/queue"
 
       expect(page).to have_content("Queue")
-      expect(page).to have_content("Switch product")
-
-      find("a", text: "Switch product").click
-
-      expect(page).to have_link("Caseflow Queue", href: "/queue")
-      expect(page).to have_link("Caseflow Search cases", href: "/search")
+      expect(page).to_not have_content("Switch product")
     end
   end
 

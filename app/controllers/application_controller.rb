@@ -116,7 +116,6 @@ class ApplicationController < ApplicationBaseController
       }
     end
 
-    urls << case_search_url
     manage_urls_for_vha(urls) if current_user.vha_employee?
 
     urls
@@ -124,6 +123,7 @@ class ApplicationController < ApplicationBaseController
   helper_method :application_urls
 
   def manage_urls_for_vha(urls)
+    urls << case_search_url
     urls << intake_application_url if current_user.intake_user?
   end
 
