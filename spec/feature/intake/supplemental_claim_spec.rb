@@ -136,6 +136,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     find("#cf-payee-code").send_keys :enter
 
     select_agree_to_withdraw_legacy_issues(false)
+    select_filed_by_va_gov(false)
 
     # DateSelector component has been updated to not allow future dates to be selected at all
     # fill_in "What is the Receipt Date of this form?", with: (Time.zone.today + 1.day).mdY
@@ -344,7 +345,6 @@ feature "Supplemental Claim Intake", :all_dbs do
     expect(page).to have_content("Page not found")
   end
 
-  # This test is failing
   it "Shows a review error when something goes wrong" do
     start_supplemental_claim(veteran_no_ratings)
     visit "/intake"
@@ -392,7 +392,6 @@ feature "Supplemental Claim Intake", :all_dbs do
     [supplemental_claim, intake]
   end
 
-  # This test is failing
   it "Allows a Veteran without ratings to create an intake" do
     start_supplemental_claim(veteran_no_ratings)
 
@@ -413,7 +412,6 @@ feature "Supplemental Claim Intake", :all_dbs do
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been submitted.")
   end
 
-  # This test is failing
   context "ratings with disabiliity codes" do
     let(:disabiliity_receive_date) { receipt_date + 2.days }
     let(:disability_profile_date) { profile_date - 1.day }

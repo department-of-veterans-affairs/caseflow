@@ -83,8 +83,7 @@ module IntakeHelpers
     claim_participant_id: nil,
     benefit_type: "compensation",
     no_claimant: false,
-    is_comp: true,
-    filed_by_va_gov: false
+    is_comp: true
   )
 
     supplemental_claim = SupplementalClaim.create!(
@@ -93,7 +92,7 @@ module IntakeHelpers
       benefit_type: is_comp ? benefit_type : "education",
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: claim_participant_id.present?,
-      filed_by_va_gov: filed_by_va_gov
+      filed_by_va_gov: false
     )
 
     intake = SupplementalClaimIntake.create!(
@@ -1007,6 +1006,12 @@ module IntakeHelpers
   def select_agree_to_withdraw_legacy_issues(withdraw)
     within_fieldset("Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?") do
       find("label", text: withdraw ? "Yes" : "N/A", match: :prefer_exact).click
+    end
+  end
+
+  def select_filed_by_va_gov(submitted_by_va_status)
+    within_fieldset("Was this form submitted through VA.gov?") do
+      find("label", text: submitted_by_va_status ? "Yes" : "No", match: :prefer_exact).click
     end
   end
 
