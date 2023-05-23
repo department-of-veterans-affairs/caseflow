@@ -248,6 +248,12 @@ export const showPdf = createAsyncThunk(
         withCredentials: true,
         timeout: true,
         responseType: 'arraybuffer',
+        featureToggle: {
+          doErrorHandling: true
+        }
+      }).catch((err) => {
+        // allow HTTP errors to fall on the floor via the console.
+        console.error(new Error(`Extra: Problem with GET ${currentDocument.content_url} ${err}`));
       });
 
       if (body) {
