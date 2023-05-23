@@ -117,7 +117,7 @@ class ApplicationController < ApplicationBaseController
     end
 
     urls << case_search_url
-    manage_urls_for_vha(urls)  if current_user.vha_employee?
+    manage_urls_for_vha(urls) if current_user.vha_employee?
 
     urls
   end
