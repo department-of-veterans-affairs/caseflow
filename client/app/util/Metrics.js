@@ -31,3 +31,7 @@ export const collectHistogram = (data) => {
 
   histograms.push(ApiUtil.convertToSnakeCase(data));
 };
+
+export const recordMetrics = (data) => {
+  ApiUtil.post('/metrics/v2/logs', { data });
+};
