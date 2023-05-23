@@ -3,6 +3,32 @@ import UnassignedCasesPage from './UnassignedCasesPage';
 import queueReducer, { initialState } from './reducers';
 import ReduxBase from 'app/components/ReduxBase';
 import { initialState as uiState } from 'app/queue/uiReducer/uiReducer';
+import ApiUtil from '../../app/util/ApiUtil';
+import { queueConfigData } from '../../test/data/camoQueueConfigData';
+import { appealsData } from '../../test/data/camoAmaAppealsData';
+import { amaTasksData } from '../../test/data/camoAmaTasksData';
+
+// Define a custom stub function to replace the Api post method
+// eslint-disable-next-line no-unused-vars
+const stubGet = (url, options) => {
+  return new Promise((resolve) => {
+    const userData = {
+      body: {
+        user: {
+          id: 7,
+          cssId: 'DEEZNUTS',
+          fullName: 'DEEZ NUTS',
+          displayName: 'idk man',
+        }
+      }
+    };
+
+    resolve({ body: { data: {}, document_count: 0, user: userData } });
+  });
+};
+
+// Assign the stub function to ApiUtil get
+ApiUtil.get = stubGet;
 
 const vhaProgramOffices = {
   data: [
@@ -50,14 +76,26 @@ const vhaProgramOffices = {
 };
 
 const ReduxDecorator = (Story, options) => {
-  const state = initialState;
+  const state = {};
   const { args } = options;
 
+  state.queue = initialState;
   state.ui = uiState;
+
+  state.queue.amaTasks = amaTasksData;
+  state.queue.queueConfig = queueConfigData;
+  state.queue.appeals = appealsData;
 
   state.ui.userCssId = 'TESTUSER';
 
-  state.vhaProgramOffices = vhaProgramOffices;
+  state.ui.activeOrganization = {
+    id: 39,
+    name: 'VHA CAMO',
+    isVso: false,
+    userCanBulkAssign: true
+  };
+
+  state.queue.vhaProgramOffices = vhaProgramOffices;
 
   state.ui.userIsCamoEmployee = args.userIsCamoEmployee;
 
