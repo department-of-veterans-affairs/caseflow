@@ -67,7 +67,7 @@ module AppealNotificationReportConcern
 
   def transmit_document!
     version_id = document_version_ref_id
-    version_id.presence ? update_document(version_id) : upload_document
+    version_id.present? ? update_document(version_id) : upload_document
   end
 
   # Purpose: Checks in eFolder for a doc in the veteran's eFolder with the same type
@@ -82,7 +82,12 @@ module AppealNotificationReportConcern
   # Params: none
   # Returns: document_series_reference_id (string)
   def document_series_ref_id
-    appeal.vbms_uploaded_documents.where(document_type: "BVA Case Notifications").order(uploaded_to_vbms_at: :desc).first.document_series_reference_id
+    vbms_uploaded_documents
+      .where(document_type: "BVA Case Notifications")
+      .where.not(uploaded_to_vbms_at: nil)
+      .order(uploaded_to_vbms_at: :desc)
+      .first
+      .document_series_reference_id
   end
 
   # Purpose: Uploads the PDF
