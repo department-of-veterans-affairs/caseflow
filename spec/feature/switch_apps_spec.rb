@@ -6,10 +6,11 @@ RSpec.feature "SwitchApps", :postgres do
       User.authenticate!(user: create(:user, roles: ["Reader"]))
     end
 
-    scenario "doesn't see switch product dropdown" do
+    before do
       visit "/queue"
+    end
 
-      expect(page).to have_content("Queue")
+    scenario "doesn't see switch product dropdown" do
       expect(page).to_not have_content("Switch product")
     end
   end
@@ -19,15 +20,40 @@ RSpec.feature "SwitchApps", :postgres do
       User.authenticate!(user: create(:user, roles: ["Reader", "Build HearSched"]))
     end
 
-    scenario "sees switch product dropdown and can navigate to hearing schedule" do
+    before do
       visit "/queue"
+    end
 
-      expect(page).to have_content("Queue")
+    scenario "sees switch product dropdown" do
+      expect(page).to have_link("Switch product", href: "#Switch product", exact: true)
+    end
 
-      find("a", text: "Switch product").click
-      find("a", text: "Caseflow Hearings").click
+    context "with the options" do
+      before do
+        find("a", text: "Switch product").click
+      end
 
-      expect(page).to have_content("Welcome to Caseflow Hearings!")
+      scenario "queue" do
+        expect(page).to have_link(
+          queue_and_hearings_user_links[0][:title], href: queue_and_hearings_user_links[0][:link], exact: true
+        )
+      end
+
+      scenario "hearings" do
+        expect(page).to have_link(
+          queue_and_hearings_user_links[1][:title], href: queue_and_hearings_user_links[1][:link], exact: true
+        )
+      end
+
+      scenario "and can navigate to queue" do
+        find("a", text: queue_and_hearings_user_links[0][:title]).click
+        expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
+      end
+
+      scenario "and can navigate to hearing schedule" do
+        find("a", text: queue_and_hearings_user_links[1][:title]).click
+        expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
+      end
     end
   end
 
@@ -55,15 +81,15 @@ RSpec.feature "SwitchApps", :postgres do
       end
 
       scenario "Intake" do
-        expect(page).to have_link(all_vha_links[0][:title], href: all_vha_links[0][:link], exact: true)
+        expect(page).to have_link(vha_user_links[0][:title], href: vha_user_links[0][:link], exact: true)
       end
 
       scenario "Decision Reviews Queue" do
-        expect(page).to have_link(all_vha_links[1][:title], href: all_vha_links[1][:link], exact: true)
+        expect(page).to have_link(vha_user_links[1][:title], href: vha_user_links[1][:link], exact: true)
       end
 
       scenario "Queue" do
-        expect(page).to have_link(all_vha_links[2][:title], href: all_vha_links[2][:link], exact: true)
+        expect(page).to have_link(vha_user_links[2][:title], href: vha_user_links[2][:link], exact: true)
       end
     end
   end
@@ -83,13 +109,26 @@ RSpec.feature "SwitchApps", :postgres do
     end
   end
 
-  def check_for_links(link_hashes = all_vha_links)
+  def check_for_links(link_hashes = vha_user_links)
     link_hashes.each do |link_hash|
       expect(page).to have_link(link_hash[:title], href: link_hash[:link])
     end
   end
 
-  def all_vha_links
+  def queue_and_hearings_user_links
+    [
+      {
+        title: "Caseflow Queue",
+        link: "/queue"
+      },
+      {
+        title: "Caseflow Hearings",
+        link: "/hearings/schedule"
+      }
+    ]
+  end
+
+  def vha_user_links
     [
       {
         title: "Caseflow Intake",
