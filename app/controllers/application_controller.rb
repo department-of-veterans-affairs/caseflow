@@ -132,7 +132,8 @@ class ApplicationController < ApplicationBaseController
     {
       title: "Decision Review Queue",
       link: "/decision_reviews/vha",
-      prefix: "VHA"
+      prefix: "VHA",
+      sort_order: 2
     }
   end
 
