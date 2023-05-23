@@ -306,7 +306,7 @@ export default class QueueTable extends React.PureComponent {
     console.log(localFilter);
 
     if (preserveFilter) {
-      filteredByList = this.getFilters(filterParam || localStorage.getItem('queueFilter'));
+      filteredByList = this.getFilters(filterParam || localFilter ? localFilter.split(',') : '');
     } else {
       filteredByList = this.getFilters(filterParam);
     }
@@ -370,6 +370,8 @@ export default class QueueTable extends React.PureComponent {
   getFilters = (filterParams) => {
     const filters = {};
 
+    console.log('in getFilters with filterParams');
+    console.log(filterParams);
     // filter: ["col=typeColumn&val=Original", "col=taskColumn&val=OtherColocatedTask|ArnesonColocatedTask"]
     if (filterParams) {
       // When react router encouters an array of strings param with one element, it converts the param to a string
@@ -421,15 +423,15 @@ export default class QueueTable extends React.PureComponent {
     // It's used in requestQueryString()
     const filterParams = [];
 
-    if (!_.isEmpty(newList)) {
-      for (const columnName in newList) {
-        if (!_.isEmpty(newList[columnName])) {
-          const column = this.props.columns.find((col) => col.columnName === columnName);
+    // if (!_.isEmpty(newList)) {
+    //   for (const columnName in newList) {
+    //     if (!_.isEmpty(newList[columnName])) {
+    //       const column = this.props.columns.find((col) => col.columnName === columnName);
 
-          filterParams.push(`col=${column.name}&val=${newList[columnName].join('|')}`);
-        }
-      }
-    }
+    //       filterParams.push(`col=${column.name}&val=${newList[columnName].join('|')}`);
+    //     }
+    //   }
+    // }
 
     // Down there it is this but maybe it should be just the columns and values
     // const filterQueryString = filterParams.map((filterParam) =>
@@ -449,15 +451,29 @@ export default class QueueTable extends React.PureComponent {
     ).
       join('&');
 
-    console.log('setting local filter to: ');
-    console.log(preserveFilter);
-    console.log(filterQueryString);
+    // console.log('setting local filter to: ');
+    // console.log(preserveFilter);
+    // console.log(filterQueryString);
+
+    // TODO: Figure out how to replicate this over here.
+    // const queryParams = new URLSearchParams(window.location.search);
+    // const url = new URL(urlString);
+    // const params = new URLSearchParams(url.search);
+    // const filterParams = params.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
+
+    // const params = new URLSearchParams(filterQueryString);
+    // const testParams = params.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
+
+    // console.log(params);
+    // console.log(testParams);
+
+    // setFilter(filterParams);
 
     // Temporary check for saving the filter
-    if (preserveFilter) {
-      localStorage.setItem('queueFilter', filterQueryString);
-      localStorage.setItem('encodedQueueFilter', encodedFilterQueryString);
-    }
+    // if (preserveFilter) {
+    //   localStorage.setItem('queueFilter', filterQueryString);
+    //   localStorage.setItem('encodedQueueFilter', encodedFilterQueryString);
+    // }
 
     // Or just pull it from the url at this point?
     // Mimic what is done in NonCompTabs for testing for now
@@ -543,11 +559,31 @@ export default class QueueTable extends React.PureComponent {
   };
 
   updateAddressBar = () => {
+    console.log('in update address bar though?');
+
     if (this.props.useTaskPagesApi) {
       history.pushState('', '', this.deepLink());
+
       if (this.props.onHistoryUpdate) {
         this.props.onHistoryUpdate(this.deepLink());
       }
+
+      this.preserveFilterState();
+    }
+  };
+
+  preserveFilterState = () => {
+    if (this.props.preserveFilter) {
+      // TODO: Figure out how to replicate this over here.
+      // TODO: Might pass it the filterList instead of grabbing it from the window but it's probably fine I think.
+      const queryParams = new URLSearchParams(window.location.search);
+      // const url = new URL(urlString);
+      // const params = new URLSearchParams(url.search);
+      const filterParams = queryParams.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
+
+      console.log(filterParams);
+
+      localStorage.setItem('queueFilter', filterParams);
     }
   };
 
