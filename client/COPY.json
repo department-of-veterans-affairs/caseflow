@@ -318,6 +318,11 @@
   "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE": "Assigned (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_IN_PROGRESS_TAB_TITLE": "In Progress (%d)",
   "ORGANIZATIONAL_QUEUE_ON_HOLD_TAB_TITLE": "On Hold (%d)",
+  "VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed:",
+  "EDUCATION_RPO_QUEUE_PAGE_COMPLETED_TASKS_DESCRIPTION": "Cases completed in the last 7 days:",
+  "VHA_ORGANIZATIONAL_QUEUE_PAGE_READY_FOR_REVIEW_TAB_TITLE": "Ready for Review",
+  "VHA_ORGANIZATIONAL_QUEUE_PAGE_ON_HOLD_TAB_TITLE": "On Hold",
+  "VHA_ORGANIZATIONAL_QUEUE_PAGE_COMPLETED_TAB_TITLE": "Completed",
   "EDUCATION_ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
   "EDUCATION_ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE": "Assigned (%d)",
   "EDUCATION_ORGANIZATIONAL_QUEUE_PAGE_IN_PROGRESS_TASKS_DESCRIPTION": "Cases that are in progress in the %s team's queue:",
@@ -762,11 +767,9 @@
   "USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT": "Remove from team",
   "MEMBERSHIP_REQUEST_ACTION_SUCCESS_TITLE": "You successfully %s %s's request",
   "MEMBERSHIP_REQUEST_ACTION_SUCCESS_MESSAGE": "The user was %s regular member access to %s.",
-
   "VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE": "Note: If you are requesting specialized access and are not a member of the general VHA group, you will automatically be given access to the general VHA group if your request is approved.",
   "VHA_MEMBERSHIP_REQUEST_DISABLED_OPTIONS_INFO_MESSAGE": "Options are disabled if you have a pending request or are already a member of the group.",
   "VHA_MEMBERSHIP_REQUEST_FORM_SUBMIT_SUCCESS_MESSAGE": "Your request to access %s has been submitted. Please check your VA email for updates concerning your request.",
-
   "ACCESS_DENIED_TITLE": "Additional access needed",
   "INFORMATION_CANNOT_BE_FOUND": "Information cannot be found",
   "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet.",
@@ -1370,5 +1373,6 @@
   "DATE_SELECTOR_FUTURE_DATE_ERROR": "Dates cannot be in the future",
   "DATE_SELECTOR_INVALID_DATE_ERROR": "Please select a valid date",
   "VHA_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold (Value must be between 1 and 45 for VHA users)",
-  "VHA_CANCEL_TASK_INSTRUCTIONS_LABEL": "Why are you returning? Provide any important context"
+  "VHA_CANCEL_TASK_INSTRUCTIONS_LABEL": "Why are you returning? Provide any important context",
+  "DISPOSITION_DECISION_DATE_LABEL": "Thank you for completing your decision in Caseflow. Please indicate the decision date."
 }
