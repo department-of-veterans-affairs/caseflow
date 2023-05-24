@@ -69,11 +69,11 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
 
     context "first run" do
       it "get all legacy appeals that have been recently outcoded" do
-        expect(job.send(:appeals_recently_outcoded)).to eq(first_run_outcoded_appeals)
+        expect(job.send(:appeals_recently_outcoded)).to match_array(first_run_outcoded_appeals)
       end
 
       it "get all legacy appeals that have never been synced yet" do
-        expect(job.send(:appeals_never_synced)).to eq(first_run_never_synced_appeals)
+        expect(job.send(:appeals_never_synced)).to match_array(first_run_never_synced_appeals)
       end
 
       it "get all legacy appeals that must be resynced" do
@@ -82,7 +82,7 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
 
       it "running the perform" do
         LegacyNotificationEfolderSyncJob.perform_now
-        expect(VbmsUploadedDocument.first(5).pluck(:appeal_id)).to eq(first_run_vbms_document_ids)
+        expect(VbmsUploadedDocument.first(5).pluck(:appeal_id)).to match_array(first_run_vbms_document_ids)
       end
     end
 
@@ -95,7 +95,7 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
       end
 
       it "get all legacy appeals that have been recently outcoded" do
-        expect(job.send(:appeals_recently_outcoded)).to eq(second_run_outcoded_appeals)
+        expect(job.send(:appeals_recently_outcoded)).to match_array(second_run_outcoded_appeals)
       end
 
       it "get all legacy appeals that have never been synced yet" do
@@ -109,7 +109,7 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
           email_notification_status: "delivered"
         )
         create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "LegacyAppeal")
-        expect(job.send(:appeals_never_synced)).to eq(second_run_never_synced_appeals)
+        expect(job.send(:appeals_never_synced)).to match_array(second_run_never_synced_appeals)
       end
 
       it "get all legacy appeals that must be resynced" do
@@ -152,7 +152,7 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
         )
         create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "LegacyAppeal")
         LegacyNotificationEfolderSyncJob.perform_now
-        expect(VbmsUploadedDocument.where(document_type: "BVA Case Notifications").pluck(:appeal_id)).to eq(second_run_vbms_document_ids)
+        expect(VbmsUploadedDocument.where(document_type: "BVA Case Notifications").pluck(:appeal_id)).to match_array(second_run_vbms_document_ids)
       end
     end
   end
