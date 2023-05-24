@@ -162,7 +162,7 @@ feature "Intake Review Page", :postgres do
           start_higher_level_review(veteran)
           check_deceased_veteran_cant_be_payee
         end
-        # this test is failing
+
         it "disables letting the veteran claimant option" do
           check_deceased_veteran_claimant(intake)
         end

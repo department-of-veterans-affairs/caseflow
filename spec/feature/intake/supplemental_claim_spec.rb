@@ -62,7 +62,6 @@ feature "Supplemental Claim Intake", :all_dbs do
     FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
   end
 
-  # This test is failing
   it "Creates an end product" do
     # Testing two relationships, tests 1 relationship in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
