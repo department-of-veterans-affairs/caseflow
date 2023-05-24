@@ -5,6 +5,10 @@
     userDisplayName: current_user ? current_user.display_name : "Menu",
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
-    buildDate: build_date
+    buildDate: build_date,
+    featureToggles: feature_toggle_ui_hash,
+    userOrganizations: user_organizations,
+    organizationMembershipRequests: pending_membership_requests,
+    userLoggedIn: user_logged_in?
   }) %>
 <% end %>

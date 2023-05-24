@@ -46,34 +46,26 @@ namespace :ci do
     end
   end
 
-  desc "Verify code coverage on CircleCI "
-  task :circleci_verify_code_coverage do
+  desc "Verify code coverage on Github Actions "
+  task :gha_verify_code_coverage  do
     require "simplecov"
-    $stdout.sync = true
 
-    api_url = "https://circleci.com/api/v1.1/project/github/" \
-              "#{ENV['CIRCLE_PROJECT_USERNAME']}/#{ENV['CIRCLE_PROJECT_REPONAME']}/" \
-              "#{ENV['CIRCLE_BUILD_NUM']}/artifacts"
-    coverage_dir = "~/coverage/combined"
+    # Using the same dir as :circleci_verify_code_coverage
+    coverage_dir = "./coverage/combined"
     SimpleCov.coverage_dir(coverage_dir)
-    # Set the merge_timeout very large so that we don't exclude results
-    # just because the runs took a long time.
     SimpleCov.merge_timeout(3600 * 24 * 30)
-    artifacts = JSON.parse(URI.parse(api_url).read)
-    artifact_urls = artifacts.map { |a| a["url"] }
-    resultset_urls = artifact_urls.select { |u| u.end_with?(".resultset.json") }
-    resultsets = resultset_urls.map do |u|
-      c = URI.parse(u).read
-      JSON.parse(c)
+
+    resultset_paths = `find ./artifact -iname '.resultset.json'`.split("\n")
+    resultsets = resultset_paths.map do |path|
+      resultset_file = File.read(path)
+      JSON.parse(resultset_file)
     end
-    # SimpleCov doesn't really support merging results after the fact.
-    # This construct manually re-creates the SimpleCov merge process
-    # NOTE: we use exit! in order to avoid SimpleCov's at_exit handler
-    # which will print misleading results.
+
     results = resultsets.map do |resultset|
       SimpleCov::Result.from_hash(resultset)
     end
     result = SimpleCov::ResultMerger.merge_results(*results)
+
     SimpleCov::ResultMerger.store_result(result)
     if result.covered_percentages.empty?
       puts Rainbow("No valid coverage results were found").red
@@ -83,7 +75,7 @@ namespace :ci do
     # in the build log.
     result.format!
 
-    File.open("#{ENV['COVERAGE_DIR']}/merged_results.json", "w") do |f|
+    File.open("merged_results.json", "w") do |f|
       f.write(JSON.pretty_generate(result.to_hash))
     end
 

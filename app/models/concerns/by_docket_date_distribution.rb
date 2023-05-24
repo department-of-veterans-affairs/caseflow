@@ -26,8 +26,10 @@ module ByDocketDateDistribution
     priority_rem = priority_target.clamp(0, @rem)
     distribute_priority_appeals_from_all_dockets_by_age_to_limit(priority_rem, style: "request")
 
-    # Distribute the oldest nonpriority appeals from any docket if we haven't distributed {batch_size} appeals
-    distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem) until @rem <= 0
+    unless FeatureToggle.enabled?(:acd_disable_nonpriority_distributions, user: RequestStore.store[:current_user])
+      # Distribute the oldest nonpriority appeals from any docket if we haven't distributed {batch_size} appeals
+      distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem) until @rem <= 0
+    end
     @appeals
   end
 
@@ -57,9 +59,18 @@ module ByDocketDateDistribution
       nonpriority_counts[sym] = docket.count(priority: false, ready: true)
     end
 
-    priority_counts[:legacy_hearing_tied_to] = legacy_hearing_priority_count(judge)
-    nonpriority_counts[:legacy_hearing_tied_to] = legacy_hearing_nonpriority_count(judge)
+    unless FeatureToggle.enabled?(:acd_disable_legacy_distributions, user: RequestStore.store[:current_user])
+      priority_counts[:legacy_hearing_tied_to] = legacy_hearing_priority_count(judge)
+      nonpriority_counts[:legacy_hearing_tied_to] = legacy_hearing_nonpriority_count(judge)
+    end
+
     nonpriority_counts[:iterations] = @nonpriority_iterations
+
+    settings = {}
+    feature_toggles = [:acd_disable_legacy_distributions, :acd_disable_nonpriority_distributions]
+    feature_toggles.each do |sym|
+      settings[sym] = FeatureToggle.enabled?(sym, user: RequestStore.store[:current_user])
+    end
 
     {
       batch_size: @appeals.count,
@@ -67,7 +78,8 @@ module ByDocketDateDistribution
       priority_target: @push_priority_target || @request_priority_count,
       priority: priority_counts,
       nonpriority: nonpriority_counts,
-      algorithm: "by_docket_date"
+      algorithm: "by_docket_date",
+      settings: settings
     }
   end
 

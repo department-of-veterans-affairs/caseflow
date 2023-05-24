@@ -152,6 +152,19 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 
+  create_table "appellant_substitution_histories", force: :cascade do |t|
+    t.bigint "appellant_substitution_id", comment: "Appellant substitution id of the last user that updated the CAVC record"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "Current user who created Appellant substitution"
+    t.string "current_appellant_substitute_participant_id", comment: "Current Appellant Substitute participant Id"
+    t.string "current_appellant_veteran_participant_id", comment: "Current Appellant Veteran participant Id"
+    t.string "original_appellant_substitute_participant_id", comment: "Original Appellant Substitute participant Id"
+    t.string "original_appellant_veteran_participant_id", comment: "Original Appeallant Veteran Participant Id"
+    t.date "substitution_date", comment: "Timestamp of substitution granted date"
+    t.datetime "updated_at", null: false
+    t.index ["appellant_substitution_id"], name: "index_appellant_sub_histories_on_appellant_substitution_id"
+  end
+
   create_table "appellant_substitutions", comment: "Store appellant substitution form data", force: :cascade do |t|
     t.string "claimant_type", null: false, comment: "Claimant type of substitute; needed to create Claimant record"
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
@@ -404,6 +417,24 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.bigint "updated_by_id", comment: "User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created."
     t.index ["remand_appeal_id"], name: "index_cavc_remands_on_remand_appeal_id"
     t.index ["source_appeal_id"], name: "index_cavc_remands_on_source_appeal_id"
+  end
+
+  create_table "cavc_remands_appellant_substitutions", force: :cascade do |t|
+    t.bigint "appellant_substitution_id", comment: "Appellant Substitution this is tied to"
+    t.bigint "cavc_remand_id", comment: "Cavc Remand this is tied to"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "Current user who created substitution"
+    t.boolean "is_appellant_substituted", comment: "Y/N Boolean for active substitution"
+    t.string "participant_id", comment: "Claimant Participant Id"
+    t.string "remand_source", comment: "Source of Remand - From Add or Edit"
+    t.string "substitute_participant_id", comment: "Appellant Substitute participant Id"
+    t.date "substitution_date", comment: "Timestamp of substitution"
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id", comment: "Current user who updated substitution"
+    t.index ["appellant_substitution_id"], name: "index_on_appellant_substitution_id"
+    t.index ["cavc_remand_id"], name: "index_on_cavc_remand_id"
+    t.index ["participant_id"], name: "index_on_participant_id"
+    t.index ["substitute_participant_id"], name: "index_on_substitute_participant_id"
   end
 
   create_table "cavc_selection_bases", force: :cascade do |t|
@@ -1163,6 +1194,20 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.index ["request_issue_id"], name: "index_legacy_issues_on_request_issue_id"
   end
 
+  create_table "membership_requests", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "decided_at", comment: "The date and time when the deider user made a decision about the membership request"
+    t.bigint "decider_id", comment: "The user who decides the status of the membership request"
+    t.string "note", comment: "A note that provides additional context from the requestor about their request for access to the organization"
+    t.bigint "organization_id", comment: "The organization that the membership request is asking to join"
+    t.bigint "requestor_id", comment: "The User that is requesting access to the organization"
+    t.string "status", default: "assigned", null: false, comment: "The status of the membership request at any given point of time"
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_membership_requests_on_organization_id"
+    t.index ["requestor_id"], name: "index_membership_requests_on_requestor_id"
+    t.index ["status", "organization_id", "requestor_id"], name: "index_membership_requests_on_status_and_association_ids", unique: true, where: "((status)::text = 'assigned'::text)"
+  end
+
   create_table "messages", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "detail_id", comment: "ID of the related object"
@@ -1230,7 +1275,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
     t.text "sms_notification_content", comment: "Full SMS Text Content of Notification"
-    t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
+    t.string "sms_notification_external_id"
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
@@ -1532,7 +1577,6 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.boolean "national_cemetery_administration", default: false
     t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
     t.boolean "nonrating_issue", default: false
-    t.boolean "pact_act", default: false, comment: "The Sergeant First Class (SFC) Heath Robinson Honoring our Promise to Address Comprehensive Toxics (PACT) Act"
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
     t.boolean "radiation", default: false
@@ -1635,6 +1679,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.string "cancellation_reason", comment: "Reason for latest cancellation status"
     t.integer "cancelled_by_id", comment: "ID of user that cancelled the task. Backfilled from versions table. Can be nil if task was cancelled before this column was added or if there is no user logged in when the task is cancelled"
     t.datetime "closed_at"
+    t.integer "completed_by_id", comment: "ID of user that marked task complete"
     t.datetime "created_at", null: false
     t.text "instructions", default: [], array: true
     t.integer "parent_id"
@@ -1925,6 +1970,10 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
   add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
   add_foreign_key "cavc_remands", "users", column: "created_by_id"
   add_foreign_key "cavc_remands", "users", column: "updated_by_id"
+  add_foreign_key "cavc_remands_appellant_substitutions", "appellant_substitutions"
+  add_foreign_key "cavc_remands_appellant_substitutions", "cavc_remands"
+  add_foreign_key "cavc_remands_appellant_substitutions", "users", column: "created_by_id"
+  add_foreign_key "cavc_remands_appellant_substitutions", "users", column: "updated_by_id"
   add_foreign_key "certification_cancellations", "certifications"
   add_foreign_key "certifications", "users"
   add_foreign_key "claim_establishments", "dispatch_tasks", column: "task_id"
@@ -1975,6 +2024,9 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
   add_foreign_key "legacy_issue_optins", "legacy_issues"
   add_foreign_key "legacy_issue_optins", "request_issues"
   add_foreign_key "legacy_issues", "request_issues"
+  add_foreign_key "membership_requests", "organizations"
+  add_foreign_key "membership_requests", "users", column: "decider_id"
+  add_foreign_key "membership_requests", "users", column: "requestor_id"
   add_foreign_key "messages", "users"
   add_foreign_key "mpi_update_person_events", "api_keys"
   add_foreign_key "nod_date_updates", "appeals"

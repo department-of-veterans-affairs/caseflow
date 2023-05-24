@@ -1,0 +1,15 @@
+<%= render "intro" %>
+
+<%= content_for :content do %>
+  <p>
+    We received your request for Caseflow access to <%= @requesting_org_names&.to_sentence %>. Each organization reviews requests independently; they’ll notify you via email with the decision for their organization.
+  </p>
+
+  <p style="padding-top:20px">
+    If you need to make subsequent access requests, please use the following link: <%= link_to 'http://www.appeals.cf.ds.va.gov/vha=help', 'http://www.appeals.cf.ds.va.gov/vha=help' %>.
+  </p>
+
+<% end %>
+
+<%= render "help" %>
+<%= render "vha_signature" %>

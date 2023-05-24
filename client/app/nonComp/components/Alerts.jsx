@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Alert from '../../components/Alert';
+import { VhaJoinOrgAlert } from '../../queue/membershipRequest/VhaJoinOrgAlert';
 
 export class ErrorAlert extends React.PureComponent {
   render() {
@@ -45,7 +46,6 @@ SuccessAlert.propTypes = {
 
 export class FlashAlerts extends React.PureComponent {
   render() {
-
     let alerts = this.props.flash.map((flash, idx) => {
       let flashMsg;
 
@@ -57,6 +57,8 @@ export class FlashAlerts extends React.PureComponent {
         flashMsg = <Alert key={idx} title="Error" type="error" lowerMargin>{flash[1]}</Alert>;
       } else if (flash[0] === 'edited') {
         flashMsg = <Alert key={idx} title="Edit Completed" type="success" lowerMargin>{flash[1]}</Alert>;
+      } else if (flash[0] === 'show_vha_org_join_info') {
+        flashMsg = <VhaJoinOrgAlert />;
       }
 
       return flashMsg;

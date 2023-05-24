@@ -213,7 +213,8 @@ export class Row extends React.PureComponent {
           filter((column) => getCellSpan(props.rowObject, column) > 0).
           map((column, columnNumber) => (
             <td
-              role="cell"
+              tabIndex={-1}
+              role="gridcell"
               key={columnNumber}
               className={cellClasses(column)}
               colSpan={getCellSpan(props.rowObject, column)}
@@ -656,7 +657,7 @@ export default class QueueTable extends React.PureComponent {
       <table
         aria-label={COPY.CASE_LIST_TABLE_TITLE}
         aria-describedby="case-table-description"
-        role="table"
+        role="grid"
         id={id ?? 'case-table-description'}
         className={`usa-table-borderless ${this.props.className}`}
         {...styling}

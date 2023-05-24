@@ -233,6 +233,12 @@ export const RECEIPT_DATE_ERRORS = {
   in_future: 'Receipt date cannot be in the future.'
 };
 
+export const SUBSTITUTE_DATE_ERRORS = {
+  invalid: 'Please enter a valid substitution granted date.',
+  in_future: 'Substitution granted date cannot be in the future.',
+  min_date_error: "Substitution granted date cannot be earlier than the NOD date or the Veteran's date of death"
+};
+
 export const CLAIMANT_ERRORS = {
   blank: 'Please select an option.',
   claimant_address_required: "Please supply the claimant's address in VBMS.",

@@ -10,7 +10,6 @@ import COPY from '../../../../COPY';
 import {
   postData,
   camoToBvaIntakeData,
-  camoToProgramOfficeToCamoData,
   caregiverToIntakeData,
   emoToBvaIntakeData,
   rpoToBvaIntakeData
@@ -103,78 +102,160 @@ afterEach(() => {
 });
 
 describe('CompleteTaskModal', () => {
-  describe('vha_send_to_board_intake', () => {
+  describe('vha_documents_ready_for_bva_intake_review', () => {
     const taskType = 'VhaDocumentSearchTask';
-    const buttonText = COPY.MODAL_SUBMIT_BUTTON;
-    const modalType = 'vha_send_to_board_intake';
+    const confirmationButtonText = COPY.MODAL_SEND_BUTTON;
+    const modalType = 'vha_documents_ready_for_bva_intake_for_review';
+    const modalTitle = 'Ready for review';
+    const modalRadioOptionVBMS = 'VBMS';
+    const modalRadioOptionOther = 'Other';
+    const modalOtherInstructions = 'Please indicate the source';
+    const modalTextboxInstructions = 'Provide details such as file structure or file path';
 
-    test('modal title is Send to Board Intake', () => {
+    test('modal title: "Ready for review"', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
-      expect(screen.getByText('Send to Board Intake')).toBeTruthy();
+      expect(screen.getByText(modalTitle)).toBeTruthy();
     });
 
-    test('CAMO Notes section only appears once whenever CAMO sends appeal back to BVA Intake', () => {
+    test('modal has textbox with the instructions: "Provide details such as file structure or file path"', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
-      enterModalRadioOptions(
-        'Correct documents have been successfully added',
-        'Provide additional context and/or documents:',
-        'CAMO -> BVA Intake',
-        buttonText
-      );
-
-      expect(getReceivedInstructions()).toBe(
-        '\n**Status:** Correct documents have been successfully added\n\n' +
-        '**CAMO Notes:** CAMO -> BVA Intake'
-      );
+      expect(screen.getByRole('textbox', { name: modalTextboxInstructions })).toBeTruthy();
     });
 
-    test('PO Details appear next to Program Office Notes section', () => {
-      renderCompleteTaskModal(modalType, camoToProgramOfficeToCamoData, taskType);
+    test('Send button is disabled when an option has not been selected', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
-      enterModalRadioOptions(
-        'Correct documents have been successfully added',
-        'Provide additional context and/or documents:',
-        'CAMO -> BVA Intake',
-        buttonText
-      );
-
-      expect(getReceivedInstructions()).toBe(
-        '\n**Status:** Correct documents have been successfully added\n\n' +
-        '**CAMO Notes:** CAMO -> BVA Intake\n\n' +
-        '**Program Office Notes:** Documents for this appeal are stored in VBMS.\n\n' +
-        '**Detail:**\n\n PO back to CAMO!\n\n'
-      );
+      expect(screen.getByRole('button', { name: confirmationButtonText })).toBeDisabled();
     });
 
-    test('No errors are thrown if any task in tree has null instructions', () => {
+    test('When "VBMS" is chosen from the radio options, the "Send" button is enabled', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
-      const taskIDs = Object.keys(camoToProgramOfficeToCamoData.queue.amaTasks);
+      const radioFieldToSelect = screen.getByLabelText(modalRadioOptionVBMS);
 
-      const taskDataWithNullInstructions = camoToProgramOfficeToCamoData;
+      userEvent.click(radioFieldToSelect);
 
-      taskIDs.forEach((id) => {
-        if (taskDataWithNullInstructions.queue.amaTasks[id].assignedTo.type !== 'VhaProgramOffice') {
-          taskDataWithNullInstructions.queue.amaTasks[id].instructions = null;
-        }
-      });
+      expect(screen.getByRole('button', { name: confirmationButtonText })).toBeEnabled();
+    });
 
-      renderCompleteTaskModal(modalType, taskDataWithNullInstructions, taskType);
+    test('When "Other" is chosen from the radio options an additional text box appears', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
-      enterModalRadioOptions(
-        'Correct documents have been successfully added',
-        'Provide additional context and/or documents:',
-        'Null test',
-        buttonText
+      const radioFieldToSelect = screen.getByLabelText(modalRadioOptionOther);
+
+      userEvent.click(radioFieldToSelect);
+
+      expect(screen.getByRole('textbox', { name: modalOtherInstructions })).toBeTruthy();
+    });
+
+    test('When "Other" is chosen from the radio options, the button is still disabled', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      const radioFieldToSelect = screen.getByLabelText(modalRadioOptionOther);
+
+      userEvent.click(radioFieldToSelect);
+
+      expect(screen.getByRole('button', { name: confirmationButtonText })).toBeDisabled();
+    });
+
+    test('When something is typed into the "Other" textbox the button is enabled', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      const radioFieldToSelect = screen.getByLabelText(modalRadioOptionOther);
+
+      userEvent.click(radioFieldToSelect);
+
+      const otherTextbox = screen.getByRole(
+        'textbox', { name: modalOtherInstructions }
       );
 
+      userEvent.type(otherTextbox, 'Additional context');
+
+      expect(screen.getByRole('button', { name: confirmationButtonText })).toBeEnabled();
+    });
+
+    test('When "VBMS" is chosen from the radio options, the addition text box does not appear', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      const radioFieldToSelect = screen.getByLabelText(modalRadioOptionVBMS);
+
+      userEvent.click(radioFieldToSelect);
+
+      expect(screen.queryByRole('textbox', { name: modalOtherInstructions })).toBeFalsy();
+    });
+  });
+
+  describe('vha_return_to_board_intake', () => {
+    const taskType = 'VhaDocumentSearchTask';
+    const buttonText = COPY.MODAL_RETURN_BUTTON;
+    const modalType = 'vha_return_to_board_intake';
+
+    test('modal title is Return to Board Intake', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      expect(screen.getByText('Return to Board Intake')).toBeTruthy();
+    });
+
+    test('instructions textbox is present with the correct label', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      expect(screen.getByRole(
+        'textbox', { name: 'Provide additional context for this action Optional' }
+      )).toBeTruthy();
+    });
+
+    test('Other text area appears when other is selected in the dropdown', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      selectFromDropdown('Why is this appeal being returned?', 'Other');
+
+      expect(screen.getByRole(
+        'textbox', { name: 'Please provide the reason for return' }
+      )).toBeTruthy();
+    });
+
+    test('Return button is disabled until a task is selected', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      expect(screen.findByRole('button', { name: buttonText, disabled: true })).toBeTruthy();
+
+      selectFromDropdown('Why is this appeal being returned?', 'Duplicate');
+
+      expect(screen.findByRole('button', { name: buttonText, disabled: false })).toBeTruthy();
+    });
+
+    test('if other is selected, Return button is disabled until a reason is entered', () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+
+      expect(screen.findByRole('button', { name: buttonText, disabled: true })).toBeTruthy();
+
+      selectFromDropdown('Why is this appeal being returned?', 'Other');
+
+      expect(screen.findByRole('button', { name: buttonText, disabled: true })).toBeTruthy();
+
+      const otherTextArea = screen.getByRole(
+        'textbox', { name: 'Please provide the reason for return' }
+      );
+
+      userEvent.type(otherTextArea, 'Reasoning for the return');
+
+      expect(screen.findByRole('button', { name: buttonText, disabled: false })).toBeTruthy();
+    });
+
+    test('other instructions are formatted', async () => {
+      renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
+      selectFromDropdown('Why is this appeal being returned?', 'Other');
+      const otherTextArea = screen.getByRole(
+        'textbox', { name: 'Please provide the reason for return' }
+      );
+
+      userEvent.type(otherTextArea, 'very good reason');
+
+      userEvent.click(await screen.findByRole('button', { name: buttonText, disabled: false }));
       expect(getReceivedInstructions()).toBe(
-        '\n**Status:** Correct documents have been successfully added' +
-        '\n\n**CAMO Notes:** Null test\n' +
-        '\n**Program Office Notes:** Documents for this appeal are stored in VBMS.' +
-        '\n\n**Detail:**' +
-        '\n\n PO back to CAMO!\n\n'
+        '\n**Reason for return:**\nOther - very good reason'
       );
     });
   });

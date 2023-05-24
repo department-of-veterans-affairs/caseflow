@@ -1,0 +1,29 @@
+<%= render "intro" %>
+
+<%= content_for :content do %>
+  <%= vha_predocket_rejection_header_content(@requesting_org_name, @has_vha_access, @pending_organization_request_names) %>
+
+  <% if @pending_organization_request_names.present? %>
+    <p>
+      This does not impact access you had prior to this decision, or your pending requests for other VHA Pre-Docket offices listed below.
+    </p>
+
+    <%= render "pending_requests" %>
+
+    <p>
+      Each Pre-docket office will send a separate decision email with their decision.
+    </p>
+  <% end %>
+
+  <p style="padding-top:20px">
+    <b> You currently have access to the following groups’ pages, if any: </b>
+  </p>
+
+  <% @accessible_groups.each do |accessible_group| %>
+    <p> <%= accessible_group %> </p>
+  <% end %>
+
+<% end %>
+
+<%= render "help" %>
+<%= render "requesting_org_signature" %>
