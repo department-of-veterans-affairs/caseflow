@@ -167,6 +167,7 @@ class TaskActionRepository
     def assign_to_attorney_data(task, _user)
       {
         selected: nil,
+<<<<<<< Updated upstream
         options: user.can_act_on_behalf_of_judges? ? users_to_options(Attorney.list_all) : nil,
         type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name
       }
@@ -176,6 +177,9 @@ class TaskActionRepository
       {
         selected: nil,
         options: user.can_act_on_behalf_of_legacy_judges? ? users_to_options(Attorney.list_all) : nil,
+=======
+        options: users_to_options(Attorney.list_all),
+>>>>>>> Stashed changes
         type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name
       }
     end
