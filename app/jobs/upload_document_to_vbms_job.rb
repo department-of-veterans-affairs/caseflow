@@ -11,7 +11,7 @@ class UploadDocumentToVbmsJob < CaseflowJob
   #         mail_request - MailRequest object with recipient/address info to be sent to Package Manager (optional)
   #
   # Return: nil
-  def perform(document_id:, initiator_css_id:, mail_request:, application: "idt")
+  def perform(document_id:, initiator_css_id:, mail_requests:, application: "idt")
     RequestStore.store[:application] = application
     RequestStore.store[:current_user] = User.system_user
 
@@ -19,7 +19,7 @@ class UploadDocumentToVbmsJob < CaseflowJob
     @initiator = User.find_by_css_id(initiator_css_id)
     add_context_to_sentry
     UploadDocumentToVbms.new(document: document).call
-    queue_mail_request_job(mail_request) unless mail_request.nil?
+    queue_mail_request_job(mail_requests) unless mail_requests.empty?
   end
 
   private
@@ -42,11 +42,11 @@ class UploadDocumentToVbmsJob < CaseflowJob
     )
   end
 
-  def queue_mail_request_job(mail_request)
+  def queue_mail_request_job(mail_requests)
     return unless document.uploaded_to_vbms_at
 
     # perform or perform_later?
     # check parameter order to match MailRequestJob#perform (APPEALS-21118)
-    MailRequestJob.perform(mail_request, document)
+    MailRequestJob.perform(mail_requests, document)
   end
 end
