@@ -151,6 +151,9 @@ feature "Supplemental Claim Intake", :all_dbs do
     expect(page).to have_current_path("/intake/add_issues")
 
     visit "/intake/review_request"
+    within_fieldset("Was this form submitted through VA.gov?") do
+      find("label", text: "Yes", match: :prefer_exact).click
+    end
 
     expect(find("#different-claimant-option_true", visible: false)).to be_checked
     expect(find_field("Baz Qux, Child", visible: false)).to be_checked
