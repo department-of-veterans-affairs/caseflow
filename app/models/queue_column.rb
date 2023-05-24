@@ -119,8 +119,7 @@ class QueueColumn
 
     count_hash.each do |key, value|
       if key.blank?
-        # TODO: Might move this 'None' string key to QUEUE_CONFIG since it might be useful in other filters.
-        totals["None"] += value.to_i
+        totals[Constants.QUEUE_CONFIG.BLANK_FILTER_KEY_VALUE] += value.to_i
       else
         key.split(",").each do |string|
           totals[string.strip] += value.to_i

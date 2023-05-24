@@ -76,7 +76,7 @@ class TaskFilter
     end
 
     def issue_type_where_clause(filter_value, filter)
-      if filter_value == "None"
+      if filter_value == Constants.QUEUE_CONFIG.BLANK_FILTER_KEY_VALUE
         "#{table_column_from_name(filter.column)} IS NULL OR #{table_column_from_name(filter.column)} = '' "
       else
         "POSITION('#{filter_value}' IN #{table_column_from_name(filter.column)}) > 0"
