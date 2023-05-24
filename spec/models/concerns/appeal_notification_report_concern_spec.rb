@@ -49,7 +49,7 @@ describe AppealNotificationReportConcern do
 
     it "VBMS upload job gets queued up" do
       ama_document_params[:file] = appeal.send(:notification_report)
-      expect { appeal.send(:upload_document, ama_document_params) }.to_not raise_error
+      expect { appeal.send(:upload_document) }.to_not raise_error
     end
   end
 
@@ -71,7 +71,9 @@ describe AppealNotificationReportConcern do
     end
 
     it "Error in PDF upload should throw a pdf upload error" do
-      expect { error_appeal.send(:upload_document, ama_document_params) }
+      allow_any_instance_of(PrepareDocumentUploadToVbms).to receive(:call)
+        .and_return(FormResponse.new(success: false, errors: ["error message"]))
+      expect { appeal.send(:upload_document) }
         .to raise_error(AppealNotificationReportConcern::PDFUploadError)
     end
   end
