@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class VbmsDistribution < CaseflowRecord
-  belongs_to :vbms_communication_package, optional: false
+  belongs_to :vbms_communication_package
   has_many :vbms_distribution_destinations
 
   with_options presence: true do
