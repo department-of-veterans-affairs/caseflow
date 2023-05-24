@@ -9,7 +9,7 @@ class PrepareDocumentUploadToVbms
   # Params: params - hash containing file and document_type at minimum
   #         user - current user that is preparing the document for upload
   #         appeal - Appeal object (optional if ssn or file number are passed into params)
-  #         mail_request - MailRequest object with address and recipient info (optional)
+  #         mail_request - MailRequest object with recipient/address info to be sent to Package Manager (optional)
   def initialize(params, user, appeal = nil, mail_request = nil)
     @params = params.slice(:veteran_file_number, :document_type, :document_subject, :document_name, :file, :application)
     @document_type = @params[:document_type]

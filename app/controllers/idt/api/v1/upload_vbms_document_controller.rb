@@ -44,6 +44,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   private
 
   def recipient_and_address_info
+    # Should IDT send a param e.g. "includes_communication_package"?
     return nil if params["recipient_type"].blank?
 
     # MailRequest#call will need to return the MailRequest instance
