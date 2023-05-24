@@ -12,6 +12,8 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   end
 
   def create
+    mail_request = recipient_and_address_info
+
     appeal = nil
     # Find veteran from appeal id and check with db
     if params["appeal_id"].present?
@@ -30,12 +32,21 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
       params["veteran_file_number"] = file_number
     end
-    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal).call
+    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_request).call
 
     if result.success?
       render json: { message: "Document successfully queued for upload." }
     else
       render json: result.errors[0], status: :bad_request
     end
+  end
+
+  private
+
+  def recipient_and_address_info
+    return nil if params["recipient_type"].blank?
+
+    # MailRequest#call will need to return the MailRequest instance
+    MailRequest.new(params).call
   end
 end

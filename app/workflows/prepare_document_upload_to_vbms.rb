@@ -9,11 +9,13 @@ class PrepareDocumentUploadToVbms
   # Params: params - hash containing file and document_type at minimum
   #         user - current user that is preparing the document for upload
   #         appeal - Appeal object (optional if ssn or file number are passed into params)
-  def initialize(params, user, appeal = nil)
+  #         mail_request - MailRequest object with address and recipient info (optional)
+  def initialize(params, user, appeal = nil, mail_request = nil)
     @params = params.slice(:veteran_file_number, :document_type, :document_subject, :document_name, :file, :application)
     @document_type = @params[:document_type]
     @user = user
     @appeal = appeal
+    @mail_request = mail_request
   end
 
   # Purpose: Queues a job to upload a document to vbms
@@ -30,7 +32,8 @@ class PrepareDocumentUploadToVbms
         UploadDocumentToVbmsJob.perform_later(
           document_id: document.id,
           initiator_css_id: user.css_id,
-          application: @params[:application]
+          application: @params[:application],
+          mail_request: mail_request
         )
       end
     end
