@@ -337,18 +337,18 @@ class AddEditIssueView extends React.Component {
       <Checkbox
         name="MST"
         label="Military Sexual Trauma (MST)"
-        // defaultValue={issue.legacy_appeal_vacols_mst}
-        value={issue.mst_status}
+        defaultValue={issue.legacy_appeal_vacols_mst}
+        value={issue.legacy_appeal_vacols_mst}
         styling={checkboxStyle}
-        onChange={(checked) => this.updateIssue({ mst_status: checked })}
+        onChange={(checked) => this.updateIssue({ legacy_appeal_vacols_mst: checked })}
       />
       <Checkbox
         name="PACT"
         label="PACT Act"
-        // defaultValue={issue.legacy_appeal_vacols_pact}
-        value={issue.pact_status}
+        defaultValue={issue.legacy_appeal_vacols_pact}
+        value={issue.legacy_appeal_vacols_pact}
         styling={checkboxStyle}
-        onChange={(checked) => this.updateIssue({ pact_status: checked })}
+        onChange={(checked) => this.updateIssue({ legacy_appeal_vacols_pact: checked })}
       />
     </QueueFlowPage>;
   };
