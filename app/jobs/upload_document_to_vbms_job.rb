@@ -11,7 +11,7 @@ class UploadDocumentToVbmsJob < CaseflowJob
   #         mail_request - MailRequest object with recipient/address info to be sent to Package Manager (optional)
   #
   # Return: nil
-  def perform(document_id:, initiator_css_id:, application: "idt", mail_request: nil)
+  def perform(document_id:, initiator_css_id:, mail_request:, application: "idt")
     RequestStore.store[:application] = application
     RequestStore.store[:current_user] = User.system_user
 

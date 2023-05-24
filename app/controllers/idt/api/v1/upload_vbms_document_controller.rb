@@ -12,7 +12,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   end
 
   def create
-    mail_request = recipient_and_address_info
+    mail_request = recipient_info_and_address
 
     appeal = nil
     # Find veteran from appeal id and check with db
@@ -43,9 +43,8 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
   private
 
-  def recipient_and_address_info
-    # Should IDT send a param e.g. "includes_communication_package"?
-    return nil if params["recipient_type"].blank?
+  def recipient_info_and_address
+    return nil if params["recipient_info"].blank?
 
     # MailRequest#call will need to return the MailRequest instance
     MailRequest.new(params).call
