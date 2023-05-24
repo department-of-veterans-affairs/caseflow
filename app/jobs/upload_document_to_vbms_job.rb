@@ -10,7 +10,7 @@ class UploadDocumentToVbmsJob < CaseflowJob
   #         application - string with a default value of "idt" but can be overwritten
   #
   # Return: nil
-  def perform(document_id:, initiator_css_id:, application: "idt")
+  def perform(document_id:, initiator_css_id:, application: "idt", mail_request: nil)
     RequestStore.store[:application] = application
     RequestStore.store[:current_user] = User.system_user
 
@@ -18,6 +18,8 @@ class UploadDocumentToVbmsJob < CaseflowJob
     @initiator = User.find_by_css_id(initiator_css_id)
     add_context_to_sentry
     UploadDocumentToVbms.new(document: document).call
+
+    queue_mail_request_job(mail_request)
   end
 
   private
@@ -38,5 +40,12 @@ class UploadDocumentToVbmsJob < CaseflowJob
       upload_document_path: "/upload_document",
       veteran_file_number: document.veteran_file_number
     )
+  end
+
+  def queue_mail_request_job(mail_request)
+    return unless document.processed_at && mail_request
+
+    # perform or perform_later?
+    MailRequestJob.perform(mail_request, document)
   end
 end

@@ -83,6 +83,7 @@ class MailRequest
   end
 
   def call
+    byebug
     if valid?
       create_a_vbms_distribution
       create_a_vbms_distribution_destination
