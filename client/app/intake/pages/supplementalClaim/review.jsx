@@ -10,11 +10,11 @@ const supplementalClaimHeader = (veteranName) => (
 
 const reviewSupplementalClaimSchema = yup.object().shape({
   'filed-by-va-gov': yup.string().required(GENERIC_FORM_ERRORS.blank),
-  'benefit-type-options': yup.string().required(GENERIC_FORM_ERRORS.blank),
   ...receiptDateInputValidation(true),
-  ...selectClaimantValidations(),
+  'benefit-type-options': yup.string().required(GENERIC_FORM_ERRORS.blank),
   'different-claimant-option': yup.string().required(GENERIC_FORM_ERRORS.blank),
   'legacy-opt-in': yup.string().required(GENERIC_FORM_ERRORS.blank),
+  ...selectClaimantValidations(),
 });
 
 export {

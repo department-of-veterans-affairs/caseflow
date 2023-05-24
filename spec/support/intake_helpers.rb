@@ -83,7 +83,8 @@ module IntakeHelpers
     claim_participant_id: nil,
     benefit_type: "compensation",
     no_claimant: false,
-    is_comp: true
+    is_comp: true,
+    filed_by_va_gov: false
   )
 
     supplemental_claim = SupplementalClaim.create!(
@@ -92,7 +93,7 @@ module IntakeHelpers
       benefit_type: is_comp ? benefit_type : "education",
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: claim_participant_id.present?,
-      filed_by_va_gov: false
+      filed_by_va_gov: filed_by_va_gov
     )
 
     intake = SupplementalClaimIntake.create!(

@@ -174,7 +174,8 @@ feature "Intake Review Page", :postgres do
             :supplemental_claim,
             veteran_file_number: veteran.file_number,
             receipt_date: receipt_date,
-            legacy_opt_in_approved: false
+            legacy_opt_in_approved: false,
+            filed_by_va_gov: true
           )
         end
 
