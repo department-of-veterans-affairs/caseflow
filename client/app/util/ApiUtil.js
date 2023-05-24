@@ -44,14 +44,17 @@ export const getHeadersObject = (options = {}) => {
 const errorHandling = (url, error, method, options = {}) => {
   const id = uuid.v4();
 
-  console.error(new Error(`UUID: ${id}.\nProblem with ${method} ${url} ${error}`));
+  console.error(new Error(`UUID: ${id}.\nProblem with ${method} ${url}.\n${error}`));
 
   if (options?.featureToggle?.doErrorHandling) {
     const data = {
-      method,
-      url,
-      uuid: id,
-      error,
+      metric: {
+        method,
+        url,
+        uuid: id,
+        potato: error,
+        isError: true,
+      }
     };
 
     request.
@@ -71,7 +74,7 @@ const httpMethods = {
       set(getHeadersObject(options.headers)).
       send(options.data).
       use(nocache).
-      on('error', (err) => errorHandling(url, err, 'DELETE'));
+      on('error', (err) => errorHandling(url, err, 'DELETE', options));
   },
 
   get(url, options = {}) {
@@ -82,7 +85,7 @@ const httpMethods = {
       set(getHeadersObject(options.headers)).
       query(options.query).
       timeout(timeoutSettings).
-      on('error', (err) => errorHandling(url, err, 'GET'));
+      on('error', (err) => errorHandling(url, err, 'GET', options));
 
     if (options.responseType) {
       promise.responseType(options.responseType);
@@ -106,7 +109,7 @@ const httpMethods = {
       set(getHeadersObject({ 'X-HTTP-METHOD-OVERRIDE': 'patch' })).
       send(options.data).
       use(nocache).
-      on('error', (err) => errorHandling(url, err, 'PATCH'));
+      on('error', (err) => errorHandling(url, err, 'PATCH', options));
   },
 
   post(url, options = {}) {
@@ -115,7 +118,7 @@ const httpMethods = {
       set(getHeadersObject(options.headers)).
       send(options.data).
       use(nocache).
-      on('error', (err) => errorHandling(url, err, 'POST'));
+      on('error', (err) => errorHandling(url, err, 'POST', options));
   },
 
   put(url, options = {}) {
@@ -124,7 +127,7 @@ const httpMethods = {
       set(getHeadersObject(options.headers)).
       send(options.data).
       use(nocache).
-      on('error', (err) => errorHandling(url, err, 'PUT'));
+      on('error', (err) => errorHandling(url, err, 'PUT', options));
   }
 };
 
