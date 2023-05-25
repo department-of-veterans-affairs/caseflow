@@ -9,8 +9,8 @@ const appealFormHeader = (veteranName) => (
 );
 
 const reviewAppealSchema = yup.object().shape({
-  'filed-by-va-gov': yup.string(),
   ...receiptDateInputValidation(true),
+  'filed-by-va-gov': yup.string(),
   'docket-type': yup.string().required(GENERIC_FORM_ERRORS.blank),
   'original-hearing-request-type': yup.string().nullable(true),
   'different-claimant-option': yup.string().required(GENERIC_FORM_ERRORS.blank),
