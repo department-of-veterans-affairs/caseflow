@@ -7,10 +7,32 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
     let(:veteran) { appeal.veteran }
     let(:file_number) { appeal.veteran.file_number }
     let(:valid_document_type) { "BVA Decision" }
+    let(:mail_request_object){create(:valid_mail_request)}
     let(:params) do
       { appeal_id: appeal.external_id,
         file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
         document_type: valid_document_type }
+    end
+
+    let(:mail_request_params) do
+      {
+        recipient_info: [
+          {
+            recipient_type: "person",
+            first_name: "Bob",
+            last_name: "Smithmetz",
+            participant_id: "487470002",
+            destination_type: "domesticAddress",
+            address_line_1: "1234 Main Street",
+            treat_line_2_as_addressee: false,
+            treat_line_3_as_addressee: false,
+            city: "Orlando",
+            state: "FL",
+            postal_code: "12345",
+            country_code: "US"
+          }
+        ]
+      }
     end
 
     let(:params_identifier) do
@@ -130,6 +152,11 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
         end
 
         shared_examples "success_with_valid_parameters" do
+          it "creates a new Mail Request object when optional params exist" do
+            expect_any_instance_of(MailRequest).to receive(:call)
+            post :create, params: mail_request_params
+          end
+
           it "returns a successful message and creates a new VbmsUploadedDocument" do
             expect { post :create, params: params }.to change(VbmsUploadedDocument, :count).by(1)
 
