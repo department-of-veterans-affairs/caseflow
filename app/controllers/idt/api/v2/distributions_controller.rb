@@ -1,4 +1,4 @@
-class Idt::Api::V2::DistributionController < Idt::Api::V1::BaseController
+class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
 
   protect_from_forgery with: :exception
   before_action :verify_access
@@ -9,22 +9,22 @@ class Idt::Api::V2::DistributionController < Idt::Api::V1::BaseController
     id = params[:distribution_id]
 
     # Error handling - Invalid ID
-    if id.blank? || !valid_uuid?(distribution_id)
-      render_error(400, "Invalid ID", distribution_id)
+    if id.blank? || !valid_uuid?(id)
+      render_error(400, "UUID Does Not Exist Or Is Blank", id)
       return
     end
 
     # Query distribution information from Pacman API
     begin
-      distribution = PacmanService.get_distribution_request(distribution_id)
+      distribution = PacmanService.get_distribution_request(id)
     rescue PacmanError => e
       case e.code
       when 400
-        render_error(400, "Participant With UUID Not Valid", distribution_id)
+        render_error(400, "Participant With UUID Not Valid", id)
       when 404
-        render_error(404, "Distribution Does Not Exist At This Time", distribution_id)
+        render_error(404, "Distribution Does Not Exist At This Time", id)
       else
-        render_error(500, "Internal Server Error", distribution_id)
+        render_error(500, "Internal Server Error", id)
       end
       return
     end
@@ -36,13 +36,13 @@ class Idt::Api::V2::DistributionController < Idt::Api::V1::BaseController
   private
 
     # Checks if the UUID exists in the VbmsDistribution Table
-  def valid_uuid?(uuid)
-    VbmsDistribution.exists?(uuid: uuid)
+  def valid_uuid?(id)
+    VbmsDistribution.exists?(uuid: id)
   end
 
-  def render_error(status, message, distribution_id)
-    error = { message: message, id: distribution_id }
-    error_message = "[IDT] Error #{status}: #{message} (UUID: #{distribution_id})"
+  def render_error(status, message, id)
+    error = { message: message, id: id }
+    error_message = "[IDT] Error #{status}: #{message} (UUID: #{id})"
     Rails.logger.error(error_message)
 
     # Log error to DataDog
