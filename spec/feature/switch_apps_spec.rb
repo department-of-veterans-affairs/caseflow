@@ -45,6 +45,14 @@ RSpec.feature "SwitchApps", :postgres do
         )
       end
 
+      scenario "does not have the option for intake" do
+        expect(page).not_to have_link(vha_user_links[0][:title], href: vha_user_links[0][:link])
+      end
+
+      scenario "does not have the option for decision review queue" do
+        expect(page).not_to have_link(vha_user_links[1][:title], href: vha_user_links[1][:link])
+      end
+
       scenario "and can navigate to queue" do
         find("a", text: queue_and_hearings_user_links[0][:title]).click
         expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
