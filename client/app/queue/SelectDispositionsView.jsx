@@ -179,7 +179,9 @@ class SelectDispositionsView extends React.PureComponent {
       diagnostic_code: diagnosticCode,
       request_issue_ids: [requestIssueId],
       mstStatus: mstStatus,
+      mstOriginalStatus: mstStatus,
       pactStatus: pactStatus,
+      pactOriginalStatus: pactStatus,
 
       /*
         Burn Pit and Blue Water will still be tracked on the appeal level but,
@@ -241,8 +243,11 @@ class SelectDispositionsView extends React.PureComponent {
     }
 
     this.props.editStagedAppeal(
-      this.props.appeal.externalId, { decisionIssues: newDecisionIssues }
+      this.props.appeal.externalId, { decisionIssues: newDecisionIssues}
     );
+
+    this.selectedIssues()[0].mst_status = this.state.decisionIssue.mstStatus;
+    this.selectedIssues()[0].pact_status = this.state.decisionIssue.pactStatus;
 
     this.handleModalClose();
   }
@@ -256,7 +261,20 @@ class SelectDispositionsView extends React.PureComponent {
       this.props.appeal.externalId, { decisionIssues: remainingDecisionIssues }
     );
 
+    this.selectedIssuesToDelete()[0].mst_status = this.state.decisionIssue.mstOriginalStatus;
+    this.selectedIssuesToDelete()[0].pact_status = this.state.decisionIssue.pactOriginalStatus;
+
     this.handleModalClose();
+  }
+
+  selectedIssuesToDelete = () => {
+    if (!this.state.requestIdToDelete) {
+      return [];
+    }
+
+    return this.props.appeal.issues.filter((issue) => {
+      return this.state.requestIdToDelete === issue.id;
+    });
   }
 
   selectedIssues = () => {
@@ -370,7 +388,8 @@ class SelectDispositionsView extends React.PureComponent {
       <hr />
       <AmaIssueList
         requestIssues={appeal.issues}
-        errorMessages={issueErrors}>
+        errorMessages={issueErrors}
+        >
         <DecisionIssues
           decisionIssues={appeal.decisionIssues}
           openDecisionHandler={this.openDecisionHandler}
