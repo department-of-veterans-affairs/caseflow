@@ -54,6 +54,7 @@ const errorHandling = (url, error, method, options = {}) => {
         uuid: id,
         message: JSON.stringify(error),
         isError: true,
+        source: 'javascript'
       }
     };
 

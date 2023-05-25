@@ -51,7 +51,8 @@ export const recordMetrics = (data, uniqueId, isError = false) => {
     metric: {
       uuid: id,
       message: JSON.stringify(data),
-      isError
+      isError,
+      source: 'javascript'
     }
   };
 
