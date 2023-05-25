@@ -3,7 +3,7 @@ class CreateMetricsTable < ActiveRecord::Migration[5.2]
     create_table :metrics do |t|
       t.uuid       :uuid, default: -> { "uuid_generate_v4()" }, null: false, comment: "Unique ID for the metric, can be used to search within various systems for the logging"
       t.references :user, null: false, foreign_key: true, comment: "The ID of the user who generated metric."
-      t.string     :type, null: false, comment: "Type of metric: ERROR, LOG, PERFORMANCE, etc"
+      t.string     :metric_type, null: false, comment: "Type of metric: ERROR, LOG, PERFORMANCE, etc"
       t.string     :message, comment: "Message to accompany metric"
       t.string     :sent_to, array: true, comment: "Which system metric was sent to: Datadog, Rails Console, Javascript Console, etc "
       t.json       :sent_to_info, comment: "Which system metric was sent to: Datadog, Rails Console, Javascript Console, etc "

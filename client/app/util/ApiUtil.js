@@ -52,7 +52,7 @@ const errorHandling = (url, error, method, options = {}) => {
         method,
         url,
         uuid: id,
-        potato: error,
+        message: JSON.stringify(error),
         isError: true,
       }
     };
