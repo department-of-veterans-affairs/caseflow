@@ -3,8 +3,8 @@
 class Metric < CaseflowRecord
   belongs_to :user
 
-  METRIC_TYPES = { error: 'error', log: 'log', performance: 'performance' }
-  LOG_SYSTEMS = { datadog: 'datadog', rails_console: 'rails_console', javascript_console: 'javascript_console' }
+  METRIC_TYPES = { error: :error, log: :log, performance: :performance }
+  LOG_SYSTEMS = { datadog: :datadog, rails_console: :rails_console, javascript_console: :javascript_console }
 
   validates :metric_type, inclusion: { in: METRIC_TYPES.values}
   validate :sent_to_in_log_systems
