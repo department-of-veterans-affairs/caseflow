@@ -243,9 +243,10 @@ class SelectDispositionsView extends React.PureComponent {
     }
 
     this.props.editStagedAppeal(
-      this.props.appeal.externalId, { decisionIssues: newDecisionIssues}
+      this.props.appeal.externalId, { decisionIssues: newDecisionIssues }
     );
 
+    //Updated special issues view to the updated mst and pact status
     this.selectedIssues()[0].mst_status = this.state.decisionIssue.mstStatus;
     this.selectedIssues()[0].pact_status = this.state.decisionIssue.pactStatus;
 
@@ -261,6 +262,7 @@ class SelectDispositionsView extends React.PureComponent {
       this.props.appeal.externalId, { decisionIssues: remainingDecisionIssues }
     );
 
+    //Reverts special issues view to their original status when deleting decision
     this.selectedIssuesToDelete()[0].mst_status = this.state.decisionIssue.mstOriginalStatus;
     this.selectedIssuesToDelete()[0].pact_status = this.state.decisionIssue.pactOriginalStatus;
 
@@ -388,8 +390,7 @@ class SelectDispositionsView extends React.PureComponent {
       <hr />
       <AmaIssueList
         requestIssues={appeal.issues}
-        errorMessages={issueErrors}
-        >
+        errorMessages={issueErrors}>
         <DecisionIssues
           decisionIssues={appeal.decisionIssues}
           openDecisionHandler={this.openDecisionHandler}
