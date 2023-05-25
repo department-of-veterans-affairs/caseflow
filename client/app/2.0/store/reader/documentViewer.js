@@ -18,6 +18,7 @@ import {
 import { addMetaLabel, formatCategoryName } from 'utils/reader';
 import { removeComment } from 'store/reader/annotationLayer';
 import { markDocAsRead } from 'store/reader/documentList';
+import { recordMetrics } from '../../../util/Metrics';
 
 // Set the PDFJS service worker
 PDF.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -243,7 +244,7 @@ export const showPdf = createAsyncThunk(
 
     // Request the PDF document from eFolder
     if (!pdfDocuments[currentDocument.id]) {
-      const { body } = await ApiUtil.get(currentDocument.content_url + '1', {
+      const { body } = await ApiUtil.get(currentDocument.content_url, {
         cache: true,
         withCredentials: true,
         timeout: true,
@@ -251,9 +252,6 @@ export const showPdf = createAsyncThunk(
         featureToggle: {
           doErrorHandling: true
         }
-      }).catch((err) => {
-        // allow HTTP errors to fall on the floor via the console.
-        console.error(new Error(`Extra: Problem with GET ${currentDocument.content_url} ${err}`));
       });
 
       if (body) {

@@ -1,6 +1,7 @@
 import ApiUtil from './ApiUtil';
 import _ from 'lodash';
 import moment from 'moment';
+import uuid from 'uuid';
 
 const INTERVAL_TO_SEND_METRICS_MS = moment.duration(60, 'seconds');
 
@@ -32,13 +33,27 @@ export const collectHistogram = (data) => {
   histograms.push(ApiUtil.convertToSnakeCase(data));
 };
 
-export const recordMetrics = (data, uuid) => {
+export const recordMetrics = (data, uniqueId, isError = false) => {
+  let id = uniqueId;
+
+  // If a uuid wasn't provided assume that metric also wasn't sent to javascript console and send with UUID to console
+  if (!uniqueId) {
+    id = uuid.v4();
+    if (isError) {
+      console.error(`${id}\n${data}`);
+    } else {
+      // eslint-disable-next-line no-console
+      console.log(`${id}\n${data}`);
+    }
+  }
+
   const postData = {
     metric: {
-      uuid,
+      uuid: id,
       message: JSON.stringify(data),
+      isError
     }
   };
 
-  ApiUtil.post('/metrics/v2/logs', { postData });
+  ApiUtil.post('/metrics/v2/logs', { data: postData });
 };
