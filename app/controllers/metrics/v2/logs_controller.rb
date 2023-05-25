@@ -15,7 +15,8 @@ class Metrics::V2::LogsController < ApplicationController
       metric = Metric.create_javascript_metric(allowed_params, current_user, options)
     end
 
-    Rails.logger.info("Failed to create metric #{metric.errors.inspect}") unless metric&.valid?
+    failed_metric_info = metric&.errors.inspect || allowed_params[:message]
+    Rails.logger.info("Failed to create metric #{failed_metric_info}") unless metric&.valid?
 
     head :ok
   end

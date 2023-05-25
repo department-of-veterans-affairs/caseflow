@@ -46,7 +46,7 @@ const errorHandling = (url, error, method, options = {}) => {
 
   console.error(new Error(`UUID: ${id}.\nProblem with ${method} ${url}.\n${error}`));
 
-  if (options?.featureToggles?.logErrorMetrics) {
+  if (options?.logErrorMetrics) {
     const data = {
       metric: {
         method,
