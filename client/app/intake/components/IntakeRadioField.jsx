@@ -46,7 +46,8 @@ export const IntakeRadioField = (props) => {
     styling,
     vertical,
     totalElements,
-    renderMstAndPact,
+    renderMst,
+    renderPact,
     mstChecked,
     setMstCheckboxFunction,
     pactChecked,
@@ -108,7 +109,7 @@ export const IntakeRadioField = (props) => {
 
   // Creating MST and PACT checkboxes, along with a text input for justification of change
   const maybeAddMstAndPactCheckboxes = (option) => {
-    if (renderMstAndPact && (option.value === props.value)) {
+    if ((renderMst && renderPact) && (option.value === props.value)) {
 
       return (
         <div>
@@ -288,7 +289,8 @@ IntakeRadioField.propTypes = {
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
   styling: PropTypes.object,
-  renderMstAndPact: PropTypes.bool,
+  renderMst: PropTypes.bool,
+  renderPact: PropTypes.bool,
   mstChecked: PropTypes.bool,
   setMstCheckboxFunction: PropTypes.func,
   pactChecked: PropTypes.bool,
