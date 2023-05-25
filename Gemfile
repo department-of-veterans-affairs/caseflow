@@ -19,7 +19,7 @@ gem "browser"
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "6377b46c2639248574673adc6a708d2568c6958c"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", branch: 'MattT/APPEALS-21595'
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "cc6ecd6976ab8d0e22a3d3dc8077051fc802148f"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
 gem "countries"
 gem "ddtrace"
