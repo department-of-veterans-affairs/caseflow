@@ -32,6 +32,7 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     untimelyExemptionModalVisible: false,
     legacyOptInModalVisible: false,
     removeIssueModalVisible: false,
+    filedByVaGov: null,
     receiptDate: null,
     receiptDateError: null,
     benefitType: null,
