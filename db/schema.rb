@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 2023_05_23_174750) do
     t.boolean "appeal_docketed", default: false, null: false, comment: "When true, appeal has been docketed"
     t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID"
     t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the table"
     t.bigint "created_by_id", null: false, comment: "User id of the user that inserted the record"
     t.boolean "decision_mailed", default: false, null: false, comment: "When true, appeal has decision mail request complete"
     t.boolean "hearing_postponed", default: false, null: false, comment: "When true, appeal has hearing postponed and no hearings scheduled"
@@ -1597,7 +1597,6 @@ ActiveRecord::Schema.define(version: 2023_05_23_174750) do
     t.boolean "national_cemetery_administration", default: false
     t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
     t.boolean "nonrating_issue", default: false
-    t.boolean "pact_act", default: false, comment: "The Sergeant First Class (SFC) Heath Robinson Honoring our Promise to Address Comprehensive Toxics (PACT) Act"
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
     t.boolean "radiation", default: false
