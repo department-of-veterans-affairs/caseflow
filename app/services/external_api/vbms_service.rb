@@ -45,7 +45,7 @@ class ExternalApi::VBMSService
   def self.update_document_in_vbms(appeal, uploadable_document, prev_version_ref_id)
     @vbms_client ||= init_vbms_client
     response = initialize_update(appeal, uploadable_document, prev_version_ref_id)
-    update_document(appeal.veteran_file_number, response.upload_token, uploadable_document.pdf_location)
+    update_document(appeal.veteran_file_number, response.updated_document_token, uploadable_document.pdf_location)
   end
 
   def self.upload_document_to_vbms(appeal, uploadable_document)
