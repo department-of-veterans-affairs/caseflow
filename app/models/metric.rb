@@ -15,6 +15,8 @@ class Metric < CaseflowRecord
 
     metric_type = if is_error
             METRIC_TYPES[:error]
+          elsif performance
+            METRIC_TYPES[:performance]
           else
             METRIC_TYPES[:log]
           end
@@ -40,7 +42,7 @@ class Metric < CaseflowRecord
   end
 
   def sent_to_in_log_systems
-    invalid_systems = (sent_to - LOG_SYSTEMS.values)
+    invalid_systems = sent_to - LOG_SYSTEMS.values
     msg = "contains invalid log systems. The following are valid log systems #{LOG_SYSTEMS.values}"
     errors.add(:sent_to, msg) if invalid_systems.size > 0
   end

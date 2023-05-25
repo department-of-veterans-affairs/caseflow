@@ -33,7 +33,7 @@ export const collectHistogram = (data) => {
   histograms.push(ApiUtil.convertToSnakeCase(data));
 };
 
-export const recordMetrics = (data, uniqueId, isError = false) => {
+export const recordMetrics = (data, uniqueId, isError = false, isPerformance = false) => {
   let id = uniqueId;
 
   // If a uuid wasn't provided assume that metric also wasn't sent to javascript console and send with UUID to console
@@ -52,6 +52,7 @@ export const recordMetrics = (data, uniqueId, isError = false) => {
       uuid: id,
       message: JSON.stringify(data),
       isError,
+      isPerformance,
       source: 'javascript'
     }
   };
