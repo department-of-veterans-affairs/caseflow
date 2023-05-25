@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 
 import LinkToAppeal from '../assignHearings/LinkToAppeal';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
+import MstBadge from 'app/components/badges/MstBadge/MstBadge';
+import PactBadge from 'app/components/badges/PactBadge/PactBadge';
+import { badgeStyle } from 'app/hearings/components/dailyDocket/style';
 import { renderAppealType } from '../../../queue/utils';
 import { HearingRequestType } from '../assignHearings/AssignHearingsFields';
 import { Dot } from '../../../components/Dot';
@@ -24,6 +27,7 @@ export const TimeSlotDetail = ({
   constrainWidth,
   hearingDay,
   regionalOffice,
+  hearing
 }) => {
   const issueLabel = issueCount === 1 ? `${issueCount} issue` : `${issueCount} issues`;
 
@@ -36,6 +40,11 @@ export const TimeSlotDetail = ({
           <Dot spacing={itemSpacing} />{' '}
           <DocketTypeBadge name={docketName} number={docketNumber} />{' '}
           {showType && docketNumber}{' '}
+          <Dot spacing={itemSpacing} />{' '}
+          <div {...badgeStyle} style={{ display: 'flex', whiteSpace: 'pre-wrap' }} >
+            <MstBadge appeal={hearing} />
+            <PactBadge appeal={hearing} />
+          </div>
           <Dot spacing={itemSpacing} />{' '}
           <Tooltip text={poaName} position="bottom">
             <span>{poaName}</span>
@@ -84,4 +93,5 @@ TimeSlotDetail.propTypes = {
   aod: PropTypes.bool,
   itemSpacing: PropTypes.number,
   poaName: PropTypes.string,
+  hearing: PropTypes.object,
 };
