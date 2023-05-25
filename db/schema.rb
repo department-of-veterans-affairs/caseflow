@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 2023_05_23_174750) do
     t.boolean "privacy_act_complete", default: false, null: false, comment: "When true, appeal has a privacy act request completed"
     t.boolean "privacy_act_pending", default: false, null: false, comment: "When true, appeal has a privacy act request still open"
     t.boolean "scheduled_in_error", default: false, null: false, comment: "When true, hearing was scheduled in error and none scheduled"
-    t.datetime "updated_at"
+    t.datetime "updated_at", comment: "Date and time the record was last updated"
     t.bigint "updated_by_id", comment: "User id of the last user that updated the record"
     t.boolean "vso_ihp_complete", default: false, null: false, comment: "When true, appeal has a VSO IHP request completed"
     t.boolean "vso_ihp_pending", default: false, null: false, comment: "When true, appeal has a VSO IHP request pending"
@@ -704,7 +704,6 @@ ActiveRecord::Schema.define(version: 2023_05_23_174750) do
   end
 
   create_table "documents", id: :serial, force: :cascade do |t|
-    t.boolean "auto_tagged", default: false
     t.boolean "category_medical"
     t.boolean "category_other"
     t.boolean "category_procedural"
