@@ -113,7 +113,7 @@ class ApplicationController < ApplicationBaseController
     manage_urls_for_vha(urls) if current_user.vha_employee?
     # Only return the URL list if the user has applications to switch between
     if urls.length > 1
-      return urls.sort_by { |url| url[:sort_order] || url.count }
+      return urls.sort_by { |url| url[:sort_order] || url.count + 1 }
     end
 
     nil

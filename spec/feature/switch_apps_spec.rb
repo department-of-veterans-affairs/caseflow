@@ -48,18 +48,18 @@ RSpec.feature "SwitchApps", :postgres do
       vha_business_line.add_user(user)
     end
 
-    scenario "currently sees switch product dropdown with only queue and and intake" do
+    scenario "should be able to click the dropdown and click all the links in the dropdown option." do
       visit "/decision_reviews/#{vha_business_line.url}"
       expect(page).to have_current_path("/decision_reviews/#{vha_business_line.url}", ignore_query: true)
       find("a", text: "Switch product").click
       check_for_links
     end
 
-    it "match the array of the drop" do
+    it "match the array of the dropdown" do
       visit "/intake"
       find("a", text: "Switch product").click
       dropdown_menu_text = page.find(".cf-dropdown-menu").text
-      expect(dropdown_menu_text.split("\n")).to match_array(list_order)
+      expect(dropdown_menu_text.split("\n")).to eq(list_order)
     end
 
     it "VHA user with roles 'Case details' should not have queue link in the dropdown" do
@@ -68,7 +68,7 @@ RSpec.feature "SwitchApps", :postgres do
       expect(page).to have_content("Switch product")
       find("a", text: "Switch product").click
       dropdown_menu_options = page.find(".cf-dropdown-menu").text
-      expect(dropdown_menu_options.split("\n")).to match_array(list_order - ["Caseflow Queue"])
+      expect(dropdown_menu_options.split("\n")).to eq(list_order - ["Caseflow Queue"])
     end
   end
 
