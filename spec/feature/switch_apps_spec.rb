@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.feature "SwitchApps", :postgres do
-  context "A user with just Queue access" do
+  context "User with just Queue access" do
     let!(:user) do
       User.authenticate!(user: create(:user, roles: ["Reader"]))
     end
@@ -10,12 +10,12 @@ RSpec.feature "SwitchApps", :postgres do
       visit "/queue"
     end
 
-    scenario "doesn't see switch product dropdown" do
+    scenario "doesn't see the Switch product dropdown" do
       expect(page).to_not have_content("Switch product")
     end
   end
 
-  context "A user with Queue and Hearings access" do
+  context "User with Queue and Hearings access" do
     let!(:user) do
       User.authenticate!(user: create(:user, roles: ["Reader", "Build HearSched"]))
     end
@@ -24,48 +24,35 @@ RSpec.feature "SwitchApps", :postgres do
       visit "/queue"
     end
 
-    scenario "sees switch product dropdown" do
+    scenario "sees the Switch product dropdown menu with the options Queue and Hearings" do
       expect(page).to have_link("Switch product", href: "#Switch product", exact: true)
+
+      find("a", text: "Switch product").click
+      expect(page).to have_link(
+        queue_and_hearings_user_links[0][:title], href: queue_and_hearings_user_links[0][:link], exact: true
+      )
+      expect(page).to have_link(
+        queue_and_hearings_user_links[1][:title], href: queue_and_hearings_user_links[1][:link], exact: true
+      )
     end
 
-    context "with the options" do
-      before do
-        find("a", text: "Switch product").click
-      end
+    scenario "doesn't have the options Intake or VHA Decision Review Queue" do
+      expect(page).not_to have_link(vha_user_links[0][:title], href: vha_user_links[0][:link])
+      expect(page).not_to have_link(vha_user_links[1][:title], href: vha_user_links[1][:link])
+    end
 
-      scenario "queue" do
-        expect(page).to have_link(
-          queue_and_hearings_user_links[0][:title], href: queue_and_hearings_user_links[0][:link], exact: true
-        )
-      end
+    scenario "can navigate to Hearing schedule and Queue pages" do
+      find("a", text: "Switch product").click
+      find("a", text: queue_and_hearings_user_links[1][:title]).click
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
 
-      scenario "hearings" do
-        expect(page).to have_link(
-          queue_and_hearings_user_links[1][:title], href: queue_and_hearings_user_links[1][:link], exact: true
-        )
-      end
-
-      scenario "does not have the option for intake" do
-        expect(page).not_to have_link(vha_user_links[0][:title], href: vha_user_links[0][:link])
-      end
-
-      scenario "does not have the option for decision review queue" do
-        expect(page).not_to have_link(vha_user_links[1][:title], href: vha_user_links[1][:link])
-      end
-
-      scenario "and can navigate to queue" do
-        find("a", text: queue_and_hearings_user_links[0][:title]).click
-        expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
-      end
-
-      scenario "and can navigate to hearing schedule" do
-        find("a", text: queue_and_hearings_user_links[1][:title]).click
-        expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
-      end
+      find("a", text: "Switch product").click
+      find("a", text: queue_and_hearings_user_links[0][:title]).click
+      expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
     end
   end
 
-  context "A user with VHA access" do
+  context "User with VHA access" do
     let!(:user) do
       User.authenticate!(user: create(:user, roles: ["Mail Intake"]))
     end
@@ -79,30 +66,23 @@ RSpec.feature "SwitchApps", :postgres do
       visit "/decision_reviews/#{vha_business_line.url}"
     end
 
-    scenario "see's the switch product dropdown menu" do
+    scenario "sees the Switch product dropdown menu with the options Intake, VHA Decision Reviews Queue and Queue" do
       expect(page).to have_link("Switch product", href: "#Switch product", exact: true)
+
+      find("a", text: "Switch product").click
+      expect(page).to have_link(vha_user_links[0][:title], href: vha_user_links[0][:link], exact: true)
+      expect(page).to have_link(vha_user_links[1][:title], href: vha_user_links[1][:link], exact: true)
+      expect(page).to have_link(vha_user_links[2][:title], href: vha_user_links[2][:link], exact: true)
     end
 
-    context "with the options" do
-      before do
-        find("a", text: "Switch product").click
-      end
-
-      scenario "Intake" do
-        expect(page).to have_link(vha_user_links[0][:title], href: vha_user_links[0][:link], exact: true)
-      end
-
-      scenario "Decision Reviews Queue" do
-        expect(page).to have_link(vha_user_links[1][:title], href: vha_user_links[1][:link], exact: true)
-      end
-
-      scenario "Queue" do
-        expect(page).to have_link(vha_user_links[2][:title], href: vha_user_links[2][:link], exact: true)
-      end
+    scenario "can navigate to the VHA Decision Reviews Queue" do
+      find("a", text: "Switch product").click
+      find("a", text: vha_user_links[1][:title]).click
+      expect(page).to have_content(vha_business_line.name)
     end
   end
 
-  context "A user with no-VHA access" do
+  context "User without VHA access" do
     let!(:user) do
       User.authenticate!(user: create(:user, roles: ["Mail Intake"]))
     end
@@ -110,16 +90,10 @@ RSpec.feature "SwitchApps", :postgres do
       create(:business_line, url: "vha", name: "Veterans Health Administration")
     end
 
-    scenario "Non-VHA user doesn't have access to decision review vha" do
+    scenario "doesn't have access to VHA Decision Review Queue" do
       visit "/decision_reviews/#{vha_business_line.url}"
       expect(page).to have_current_path("/unauthorized", ignore_query: true)
       expect(page).to_not have_content("Switch product")
-    end
-  end
-
-  def check_for_links(link_hashes = vha_user_links)
-    link_hashes.each do |link_hash|
-      expect(page).to have_link(link_hash[:title], href: link_hash[:link])
     end
   end
 
