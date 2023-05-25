@@ -413,10 +413,6 @@ class AddIssuesPage extends React.Component {
               (this.props.featureToggles.mst_identification ||
               this.props.featureToggles.pact_identification ||
               this.props.featureToggles.legacy_mst_pact_identification)}
-              userCanEditIntakeIssues={userCanEditIntakeIssues &&
-              (this.props.featureToggles.mst_identification ||
-              this.props.featureToggles.pact_identification ||
-              this.props.featureToggles.legacy_mst_pact_identification)}
               editPage={editPage}
             />
             {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />}
