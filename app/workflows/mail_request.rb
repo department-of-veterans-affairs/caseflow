@@ -25,6 +25,7 @@ class MailRequest
 
 
   EXPECTED_PARAMS_FOR_RECIPIENTS_AND_DESTINATIONS = [
+                                                      recipient_info:[
                                                       :recipient_type,
                                                       :name,
                                                       :first_name,
@@ -46,35 +47,62 @@ class MailRequest
                                                       :state,
                                                       :treat_line_2_as_addressee,
                                                       :treat_line_3_as_addressee,
-                                                      :country_name,
-                                                      :vbms_communication_package
-                                                    ].freeze
+                                                      :country_name
+                                                      ]].freeze
 
   def initialize(params)
-    @params = params.permit(EXPECTED_PARAMS_FOR_RECIPIENTS_AND_DESTINATIONS)
-    @recipient_type = @params[:recipient_type]
-    @name = @params[:name]
-    @first_name = @params[:first_name]
-    @middle_name = @params[:middle_name]
-    @last_name = @params[:last_name]
-    @participant_id = @params[:participant_id]
-    @poa_code = @params[:poa_code]
-    @claimant_station_of_jurisdiction = @params[:claimant_station_of_jurisdiction]
-    @destination_type = @params[:destination_type]
-    @address_line_1 = @params[:address_line_1]
-    @address_line_2 = @params[:address_line_2]
-    @address_line_3 = @params[:address_line_3]
-    @address_line_4 = @params[:address_line_4]
-    @address_line_5 = @params[:address_line_5]
-    @address_line_6 = @params[:address_line_6]
-    @city = @params[:city]
-    @country_code = @params[:country_code]
-    @postal_code = @params[:postal_code]
-    @state = @params[:state]
-    @treat_line_2_as_addressee = @params[:treat_line_2_as_addressee]
-    @treat_line_3_as_addressee = @params[:treat_line_3_as_addressee]
-    @country_name = @params[:country_name]
-    @vbms_communication_package = @params[:vbms_communication_package]
+    @params = params.permit(
+      :veteran_identifier,
+      :document_subject,
+      :document_name,
+      :file,
+      :document_type,
+      recipient_info:[
+      :recipient_type,
+      :name,
+      :first_name,
+      :middle_name,
+      :last_name,
+      :participant_id,
+      :poa_code,
+      :claimant_station_of_jurisdiction,
+      :destination_type,
+      :address_line_1,
+      :address_line_2,
+      :address_line_3,
+      :address_line_4,
+      :address_line_5,
+      :address_line_6,
+      :city,
+      :country_code,
+      :postal_code,
+      :state,
+      :treat_line_2_as_addressee,
+      :treat_line_3_as_addressee,
+      :country_name]).to_h
+    # @recipient_info_hash = @params[:recipient_info]
+    @recipient_type = @params[:recipient_info][0][:recipient_type]
+    @name = @params[:recipient_info][0][:name]
+    @first_name = @params[:recipient_info][0][:first_name]
+    @middle_name = @params[:recipient_info][0][:middle_name]
+    @last_name = @params[:recipient_info][0][:last_name]
+    @participant_id = @params[:recipient_info][0][:participant_id]
+    @poa_code = @params[:recipient_info][0][:poa_code]
+    @claimant_station_of_jurisdiction = @params[:recipient_info][0][:claimant_station_of_jurisdiction]
+    @destination_type = @params[:recipient_info][0][:destination_type]
+    @address_line_1 = @params[:recipient_info][0][:address_line_1]
+    @address_line_2 = @params[:recipient_info][0][:address_line_2]
+    @address_line_3 = @params[:recipient_info][0][:address_line_3]
+    @address_line_4 = @params[:recipient_info][0][:address_line_4]
+    @address_line_5 = @params[:recipient_info][0][:address_line_5]
+    @address_line_6 = @params[:recipient_info][0][:address_line_6]
+    @city = @params[:recipient_info][0][:city]
+    @country_code = @params[:recipient_info][0][:country_code]
+    @postal_code = @params[:recipient_info][0][:postal_code]
+    @state = @params[:recipient_info][0][:state]
+    @treat_line_2_as_addressee = @params[:recipient_info][0][:treat_line_2_as_addressee]
+    @treat_line_3_as_addressee = @params[:recipient_info][0][:treat_line_3_as_addressee]
+    @country_name = @params[:recipient_info][0][:country_name]
     @vbms_distribution_id = nil
     @comm_package_id = nil
   end
@@ -82,10 +110,10 @@ class MailRequest
   def call
     if valid?
       distribution = create_a_vbms_distribution
+      byebug
       @vbms_distribution_id = distribution.id
       byebug
       destination = create_a_vbms_distribution_destination
-      byebug
     else
       raise Caseflow::Error::MissingRecipientInfo
     end
