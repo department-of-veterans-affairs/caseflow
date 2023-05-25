@@ -7,6 +7,8 @@ import { ReadOnly } from '../details/ReadOnly';
 import { AddressLine } from '../details/Address';
 import { renderAppealType } from '../../../queue/utils';
 import { formatDateStr } from '../../../util/DateUtil';
+import MstBadge from '../../../components/badges/MstBadge/MstBadge';
+import PactBadge from '../../../components/badges/PactBadge/PactBadge';
 
 export const AppealStreamDetails = ({
   remandSourceAppealId,
@@ -95,6 +97,10 @@ export const AppealInformation = ({ appeal, hearing }) => {
           </React.Fragment>
         }
       />
+      <div style={{ display: 'flex', justifyContent: 'left' }}>
+        <MstBadge appeal={appeal} />
+        <PactBadge appeal={appeal} />
+      </div>
       <AddressLine
         label={poaLabel}
         name={poaText}
