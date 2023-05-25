@@ -7,9 +7,13 @@ class SupplementalClaimIntake < ClaimReviewIntake
     SupplementalClaim.new(veteran_file_number: veteran_file_number)
   end
 
+  def ui_hash
+    Intake::SupplementalClaimIntakeSerializer.new(self).serializable_hash[:data][:attributes]
+  end
+
   private
 
   def review_param_keys
-    %w[filed_by_va_gov receipt_date benefit_type legacy_opt_in_approved]
+    %w[receipt_date benefit_type legacy_opt_in_approved filed_by_va_gov]
   end
 end

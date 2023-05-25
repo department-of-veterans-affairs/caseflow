@@ -1,7 +1,8 @@
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers, commonStateFromServerIntake } from './common';
 import {
-  convertStringToBoolean,
+  // Lint Fix
+  // convertStringToBoolean,
   getReceiptDateError,
   getBlankOptionError,
   getClaimantError,
