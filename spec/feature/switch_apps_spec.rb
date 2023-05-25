@@ -37,6 +37,7 @@ RSpec.feature "SwitchApps", :postgres do
     end
 
     scenario "doesn't have the options Intake or VHA Decision Review Queue" do
+      find("a", text: "Switch product").click
       expect(page).not_to have_link(vha_user_links[0][:title], href: vha_user_links[0][:link])
       expect(page).not_to have_link(vha_user_links[1][:title], href: vha_user_links[1][:link])
     end
