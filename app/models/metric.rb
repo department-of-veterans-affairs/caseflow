@@ -19,6 +19,11 @@ class Metric < CaseflowRecord
             METRIC_TYPES[:log]
           end
 
+    info = params[:info].merge({
+      method: params[:method],
+      url: params[:url]
+    })
+
     create(
       uuid: params[:uuid],
       user: user,
@@ -26,7 +31,7 @@ class Metric < CaseflowRecord
       message: params[:message],
       sent_to: [ LOG_SYSTEMS[:javascript_console] ] + params[:sent_to],
       sent_to_info: params[:sent_to_info],
-      info: params[:info],
+      info: info,
       start: params[:start],
       end: params[:end],
       duration: calculate_duration(params[:start], params[:end], params[:duration]),
