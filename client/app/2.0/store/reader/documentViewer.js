@@ -234,7 +234,7 @@ export const showPage = async (params) => {
 export const showPdf = createAsyncThunk(
   'documentViewer/show',
   async (
-    { rotation = null, pageNumber, currentDocument, scale },
+    { rotation = null, pageNumber, currentDocument, scale, featureToggles = {} },
     { dispatch }
   ) => {
     // Update the Document as read if not already
@@ -249,9 +249,7 @@ export const showPdf = createAsyncThunk(
         withCredentials: true,
         timeout: true,
         responseType: 'arraybuffer',
-        featureToggle: {
-          doErrorHandling: true
-        }
+        featureToggles
       });
 
       if (body) {

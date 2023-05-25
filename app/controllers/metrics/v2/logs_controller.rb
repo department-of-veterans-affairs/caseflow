@@ -4,7 +4,7 @@ class Metrics::V2::LogsController < ApplicationController
   skip_before_action :verify_authentication
 
   def create
-    metric = null
+    metric = nil
 
     options = {
       is_error: allowed_params[:isError],
