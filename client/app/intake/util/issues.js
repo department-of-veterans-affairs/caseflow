@@ -14,7 +14,7 @@ const getClaimantField = (veteran, intakeData) => {
   let claimantDisplayText = [claimantName, claimantRelationship].filter(Boolean).join(', ');
 
   if (payeeCode) {
-    claimantDisplayText += ` (payee code ${payeeCode})`
+    claimantDisplayText += ` (payee code ${payeeCode})`;
   }
 
   return [{
@@ -54,7 +54,7 @@ export const legacyIssue = (issue, legacyAppeals) => {
       throw new Error(`No legacyAppeal found for '${issue.vacolsId}'`);
     }
 
-    return _.find(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })
+    return _.find(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) });
   }
 };
 
@@ -146,8 +146,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       rampClaimId: issue.ramp_claim_id,
       verifiedUnidentifiedIssue: issue.verified_unidentified_issue,
       isPreDocketNeeded: issue.is_predocket_needed,
-      mstChecked: issue.mst_status,
-      pactChecked: issue.pact_status,
+      mstChecked: issue.vacols_sequence_id ? issue.legacy_appeal_vacols_mst : issue.mst_status,
+      pactChecked: issue.vacols_sequence_id ? issue.legacy_appeal_vacols_pact : issue.pact_status,
       mst_status_update_reason_notes: issue?.mstJustification,
       pact_status_update_reason_notes: issue?.pactJustification
     };
@@ -201,6 +201,8 @@ const formatUnidentifiedIssues = (state) => {
         verified_unidentified_issue: issue.verifiedUnidentifiedIssue,
         mst_status: issue.mstChecked,
         pact_status: issue.pactChecked,
+        // legacy_mst_status: issue.legacy_appeal_vacols_mst,
+        // legacy_pact_status: issue.legacy_appeal_vacols_mst,
         mst_status_update_reason_notes: issue?.mstJustification,
         pact_status_update_reason_notes: issue?.pactJustification
       };
@@ -364,6 +366,22 @@ export const formatIssuesBySection = (issues) => {
   );
 };
 
+export const formatLegacyAddedIssues = (issues = [], addedIssues = []) => {
+  return issues.map((issue, index) => {
+    return {
+      index,
+      id: issue.id,
+      benefitType: issue.labels[0].toLowerCase(),
+      description: `${issue.labels[1]} - ${issue.labels[2]} - ${issue.labels[3]}`,
+      text: `${issue.labels[1]} - ${issue.labels[2]} - ${issue.labels[3]}`,
+      vacolsSequenceId: issue.vacols_sequence_id,
+      mstChecked: addedIssues[index].mstChecked,
+      pactChecked: addedIssues[index].pactChecked
+    };
+  }
+  );
+};
+
 export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => {
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
 
@@ -376,7 +394,7 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
         benefitType: issue.labels[0].toLowerCase(),
         description: `${issue.labels[1]} - ${issue.labels[2]} - ${issue.labels[3]}`,
         text: `${issue.labels[1]} - ${issue.labels[2]} - ${issue.labels[3]}`,
-        vacolsSequenceId: issue.vacols_sequence_id,
+        vacolsSequenceId: issue.vacols_sequence_id
       };
     }
 

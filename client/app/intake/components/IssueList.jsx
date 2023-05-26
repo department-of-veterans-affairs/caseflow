@@ -74,6 +74,7 @@ export default class IssuesList extends React.Component {
 
     return <div className="issues">
       <div>
+      {console.log(`'added issues: ${JSON.stringify(intakeData.addedIssues)}`)}
         { withdrawReview && <p className="cf-red-text">{COPY.INTAKE_WITHDRAWN_BANNER}</p> }
         { issues.map((issue) => {
           // Issues from rating issues or decision issues have editable contention text. New non-rating issues do not.

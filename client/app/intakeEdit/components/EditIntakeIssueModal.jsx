@@ -21,8 +21,9 @@ export class EditIntakeIssueModal extends React.Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
+      mstChecked: props.appealIsLegacy ? props.legacyIssues[props.issueIndex]?.mstChecked : props.currentIssue?.mstChecked,
+      pactChecked: props.appealIsLegacy ? props.legacyIssues[props.issueIndex]?.pactChecked : props.currentIssue?.pactChecked,
       mstJustification: '',
       pactJustification: ''
     };
@@ -47,8 +48,8 @@ export class EditIntakeIssueModal extends React.Component {
   render() {
     const {
       issueIndex,
+      currentIssue,
       onCancel,
-      currentIssue = this.props.intakeData.addedIssues[issueIndex],
       issue = this.props.legacyIssues[issueIndex],
       currentIssueCategory = currentIssue.category,
       currentIssueDescription = currentIssue.description,
@@ -122,7 +123,7 @@ export class EditIntakeIssueModal extends React.Component {
             { mstIdentification &&
               <Checkbox style={{ marginTop: 0, marginBottom: 0 }}
                 name={MST_LABEL} strongLabel
-                value={this.state.currentIssueMstChecked}
+                value={this.state.mstChecked}
                 onChange={this.handleMstCheckboxChange}
               />
             }
@@ -144,7 +145,7 @@ export class EditIntakeIssueModal extends React.Component {
               { pactIdentification &&
                 <Checkbox style={{ marginTop: 0, marginBottom: 0 }}
                   name={PACT_LABEL} strongLabel
-                  value={this.state.currentIssuePactChecked}
+                  value={this.state.pactChecked}
                   onChange={this.handlePactCheckboxChange}
                 />
               }
@@ -195,6 +196,7 @@ EditIntakeIssueModal.propTypes = {
   pactChecked: PropTypes.bool,
   mstJustification: PropTypes.object,
   pactJustification: PropTypes.object,
+  editedIssue: PropTypes.object,
   intakeData: PropTypes.object,
   currentIssue: PropTypes.object,
   currentIssueCategory: PropTypes.string,
@@ -202,7 +204,9 @@ EditIntakeIssueModal.propTypes = {
   currentIssueBenefitType: PropTypes.string,
   currentIssueDecisionDate: PropTypes.string,
   currentIssueText: PropTypes.string,
-  issue: PropTypes.object
+  issue: PropTypes.object,
+  appealIsLegacy: PropTypes.bool,
+  legacyIssues: PropTypes.object
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditIntakeIssueModal);
