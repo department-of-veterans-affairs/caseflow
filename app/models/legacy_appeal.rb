@@ -632,7 +632,7 @@ class LegacyAppeal < CaseflowRecord
   def mst?
     return false unless FeatureToggle.enabled?(:mst_pact_identification)
 
-    issues.any?(&:legacy_appeal_vacols_mst) ||
+    issues.any?(&:mst_status) ||
       (special_issue_list &&
         special_issue_list.created_at < "2023-06-01".to_date &&
         special_issue_list.military_sexual_trauma)
@@ -641,7 +641,7 @@ class LegacyAppeal < CaseflowRecord
   def pact?
     return false unless FeatureToggle.enabled?(:mst_pact_identification)
 
-    issues.any?(&:legacy_appeal_vacols_pact)
+    issues.any?(&:pact_status)
   end
 
   def documents_with_type(*types)

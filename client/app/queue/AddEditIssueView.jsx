@@ -112,8 +112,8 @@ class AddEditIssueView extends React.Component {
           level_2: _.get(issue.codes, 1, null),
           level_3: _.get(issue.codes, 2, null),
           ..._.pick(issue, 'note', 'program'),
-          mst_status: issue.legacy_appeal_vacols_mst ? 'Y' : 'N',
-          pact_status: issue.legacy_appeal_vacols_pact ? 'Y' : 'N'
+          mst_status: issue.mst_status ? 'Y' : 'N',
+          pact_status: issue.pact_status ? 'Y' : 'N'
         }
       }
     };
@@ -337,18 +337,18 @@ class AddEditIssueView extends React.Component {
       <Checkbox
         name="MST"
         label="Military Sexual Trauma (MST)"
-        defaultValue={issue.legacy_appeal_vacols_mst}
-        value={issue.legacy_appeal_vacols_mst}
+        defaultValue={issue.mst_status}
+        value={issue.mst_status}
         styling={checkboxStyle}
-        onChange={(checked) => this.updateIssue({ legacy_appeal_vacols_mst: checked })}
+        onChange={(checked) => this.updateIssue({ mst_status: checked })}
       />
       <Checkbox
         name="PACT"
         label="PACT Act"
-        defaultValue={issue.legacy_appeal_vacols_pact}
-        value={issue.legacy_appeal_vacols_pact}
+        defaultValue={issue.pact_status}
+        value={issue.pact_status}
         styling={checkboxStyle}
-        onChange={(checked) => this.updateIssue({ legacy_appeal_vacols_pact: checked })}
+        onChange={(checked) => this.updateIssue({ pact_status: checked })}
       />
     </QueueFlowPage>;
   };
@@ -382,8 +382,8 @@ AddEditIssueView.propTypes = {
     type: PropTypes.string,
     codes: PropTypes.arrayOf(PropTypes.string),
     program: PropTypes.string,
-    legacy_appeal_vacols_mst: PropTypes.bool,
-    legacy_appeal_vacols_pact: PropTypes.bool
+    mst_status: PropTypes.bool,
+    pact_status: PropTypes.bool
   }),
   issueId: PropTypes.string,
   issues: PropTypes.object,
