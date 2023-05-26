@@ -47,8 +47,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   def create_mail_requests
     return [] if recipient_info.blank?
 
-    addresses = recipient_info
-    addresses.map { |address_params| MailRequest.new(address_params).call }
+    recipient_info.map { |address_params| MailRequest.new(address_params).call }
   end
 
   def find_by_appeal_id
