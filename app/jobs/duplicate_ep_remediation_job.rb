@@ -1,0 +1,20 @@
+# frozen_string_literal: true
+
+class DuplicateEpRemediationJob < ApplicationJob
+  def perform
+    RequestStore[:current_user] = User.system_user
+    queue_with_priority :low_priority
+    application_attr :intake
+
+    WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new
+    run
+  rescue StandardError => error
+    log_error(error)
+  end
+
+  private
+
+  def log_error(message)
+    Rails.logger.error(message)
+  end
+end
