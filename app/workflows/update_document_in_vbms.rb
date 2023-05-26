@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UpdateDocumentInVbms
-  delegate :document_type, :document_subject, :document_name, to: :document
+  delegate :document_type, :document_subject, :document_name,  :document_version_reference_id, to: :document
 
   def initialize(document:)
     @document = document
@@ -55,7 +55,7 @@ class UpdateDocumentInVbms
   def update_in_vbms!
     return if document.uploaded_to_vbms_at
 
-    update_response = VBMSService.update_document_in_vbms(document.appeal, self, document.document_version_reference_id)
+    update_response = VBMSService.update_document_in_vbms(document.appeal, self)
 
     persist_efolder_version_info(update_response)
 
