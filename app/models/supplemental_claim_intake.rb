@@ -7,6 +7,10 @@ class SupplementalClaimIntake < ClaimReviewIntake
     SupplementalClaim.new(veteran_file_number: veteran_file_number)
   end
 
+  def ui_hash
+    Intake::SupplementalClaimIntakeSerializer.new(self).serializable_hash[:data][:attributes]
+  end
+
   private
 
   def review_param_keys
