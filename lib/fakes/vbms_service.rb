@@ -105,15 +105,14 @@ class Fakes::VBMSService
     end
   end
 
-  def self.update_document_in_vbms(appeal, uploadable_document, prev_version_ref_id)
+  def self.update_document_in_vbms(appeal, uploadable_document)
     @appeal = appeal
     @updated_document = uploadable_document
-    @prev_version_ref_id = prev_version_ref_id
 
     {
       appeal: appeal,
       updated_document: uploadable_document,
-      prev_version_ref_id: prev_version_ref_id,
+      prev_version_ref_id: uploadable_document.document_version_reference_id,
       update_document_response: {
         :@new_document_version_ref_id => "ref",
         :@document_series_ref_id => "series"

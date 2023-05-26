@@ -71,9 +71,9 @@ describe AppealNotificationReportConcern do
     end
 
     it "Error in PDF upload should throw a pdf upload error" do
-      allow_any_instance_of(PrepareDocumentUploadToVbms).to receive(:call)
-        .and_return(FormResponse.new(success: false, errors: ["error message"]))
-      expect { appeal.send(:upload_document) }
+      allow(error_appeal).to receive(:document_params).and_return(ama_document_params)
+
+      expect { error_appeal.send(:upload_document) }
         .to raise_error(AppealNotificationReportConcern::PDFUploadError)
     end
   end
