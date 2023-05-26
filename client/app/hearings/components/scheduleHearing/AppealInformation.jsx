@@ -97,7 +97,7 @@ export const AppealInformation = ({ appeal, hearing }) => {
           </React.Fragment>
         }
       />
-      <div style={{ display: 'flex', justifyContent: 'left' }}>
+      <div style={{ display: 'flex', justifyContent: 'left', marginLeft: '-1rem' }}>
         <MstBadge appeal={appeal} />
         <PactBadge appeal={appeal} />
       </div>
