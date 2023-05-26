@@ -201,8 +201,6 @@ const formatUnidentifiedIssues = (state) => {
         verified_unidentified_issue: issue.verifiedUnidentifiedIssue,
         mst_status: issue.mstChecked,
         pact_status: issue.pactChecked,
-        // legacy_mst_status: issue.legacy_appeal_vacols_mst,
-        // legacy_pact_status: issue.legacy_appeal_vacols_mst,
         mst_status_update_reason_notes: issue?.mstJustification,
         pact_status_update_reason_notes: issue?.pactJustification
       };

@@ -622,7 +622,7 @@ export const IntakeAddIssuesPage = connect(
     veteran: intake.veteran,
     featureToggles,
     activeIssue,
-    addingIssue,
+    addingIssue
   }),
   (dispatch) =>
     bindActionCreators(
