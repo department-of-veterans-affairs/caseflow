@@ -95,8 +95,10 @@ export const DetailsHeader = (
         <div>
           Veteran ID: <CopyTextButton text={veteranFileNumber} label="Veteran ID" />
         </div>
-        <MstBadge appeal={hearing} />
-        <PactBadge appeal={hearing} />
+        <div style={{ display: 'inline-flex' }}>
+          <MstBadge appeal={hearing} />
+          <PactBadge appeal={hearing} />
+        </div>
       </div>
 
       <TitleDetailsSubheader columns={columns} />
