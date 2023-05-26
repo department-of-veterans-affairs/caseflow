@@ -22,6 +22,7 @@ class Metrics::V2::LogsController < ApplicationController
   end
 
   def allowed_params
-    params.require(:metric).permit(:method, :uuid, :url, :message, :isError, :source, :isPerformance)
+    params.require(:metric).permit(:method,
+      :uuid, :url, :message, :isError, :source, :isPerformance)
   end
 end

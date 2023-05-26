@@ -10,7 +10,6 @@ describe Metrics::V2::LogsController, type: :controller do
         url: '',
         message: '',
         isError: false,
-        source: '',
         isPerformance: false,
         source: 'javascript'
       }

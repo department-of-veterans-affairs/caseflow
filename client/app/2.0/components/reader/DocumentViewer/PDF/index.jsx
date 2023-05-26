@@ -67,8 +67,8 @@ export const Pdf = ({ doc, clickPage, ...props }) => {
               <StatusMessage title="Unable to load document" type="warning">
               Caseflow is experiencing technical difficulties and cannot load <strong>{doc.type}</strong>.
                 <br />
-              You can try <a href={`${doc.content_url}?type=${doc.type}&download=true`}>downloading the document</a>{' '}
-              or try again later.
+              You can try <a href={`${doc.content_url}?type=${doc.type}&download=true`}>
+              downloading the document</a> or try again later.
               </StatusMessage>
             </div>
           </div>
