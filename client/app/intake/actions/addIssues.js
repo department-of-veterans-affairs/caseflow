@@ -53,6 +53,11 @@ export const setMstPactDetails = (editIssuesDetails) => ({
   payload: { editIssuesDetails }
 });
 
+export const setMstPactIssue = (mstPactValues) => ({
+  type: ACTIONS.SET_MST_PACT_ISSUE,
+  payload: { mstPactValues }
+});
+
 export const removeIssue = (index) => ({
   type: ACTIONS.REMOVE_ISSUE,
   payload: { index }
