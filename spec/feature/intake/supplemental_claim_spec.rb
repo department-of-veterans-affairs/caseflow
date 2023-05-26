@@ -137,6 +137,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     select_agree_to_withdraw_legacy_issues(false)
     select_filed_by_va_gov(false)
 
+
     # DateSelector component has been updated to not allow future dates to be selected at all
     # fill_in "What is the Receipt Date of this form?", with: (Time.zone.today + 1.day).mdY
     # click_intake_continue
@@ -154,7 +155,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     expect(find("#different-claimant-option_true", visible: false)).to be_checked
     expect(find_field("Baz Qux, Child", visible: false)).to be_checked
     expect(find("#legacy-opt-in_false", visible: false)).to be_checked
-
+    select_filed_by_va_gov(false)
     click_intake_continue
 
     expect(page).to have_current_path("/intake/add_issues")
