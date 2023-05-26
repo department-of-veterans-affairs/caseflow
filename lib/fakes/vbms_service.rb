@@ -106,6 +106,10 @@ class Fakes::VBMSService
   end
 
   def self.update_document_in_vbms(appeal, uploadable_document, prev_version_ref_id)
+    @appeal = appeal
+    @updated_document = uploadable_document
+    @prev_version_ref_id = prev_version_ref_id
+
     {
       appeal: appeal,
       updated_document: uploadable_document,
@@ -118,6 +122,9 @@ class Fakes::VBMSService
   end
 
   def self.upload_document_to_vbms(appeal, form8)
+    @uploaded_form8 = form8
+    @uploaded_form8_appeal = appeal
+
     {
       appeal: appeal,
       form8: form8,
@@ -129,6 +136,9 @@ class Fakes::VBMSService
   end
 
   def self.upload_document_to_vbms_veteran(file_number, form8)
+    @uploaded_form8 = form8
+    @veteran_file_number = file_number
+
     {
       file_number: file_number,
       form8: form8,
