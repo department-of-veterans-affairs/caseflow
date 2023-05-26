@@ -2,15 +2,15 @@
 
 describe AmaNotificationEfolderSyncJob, type: :job do
   include ActiveJob::TestHelper
-  let(:current_user) { create(:user, roles: ["System Admin"]) }
-  let(:job) { AmaNotificationEfolderSyncJob.new }
+  let!(:current_user) { create(:user, roles: ["System Admin"]) }
+  let!(:job) { AmaNotificationEfolderSyncJob.new }
 
   describe "perform" do
     before do
       Seeds::NotificationEvents.new.seed!
     end
 
-    let(:today) { Time.now.utc.iso8601 }
+    let!(:today) { Time.now.utc.iso8601 }
     let!(:appeals) do
       create_list(:appeal, 10, :active)
     end
