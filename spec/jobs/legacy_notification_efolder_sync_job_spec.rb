@@ -137,8 +137,12 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
           email_notification_status: "delivered"
         )
         create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "LegacyAppeal")
+
         LegacyNotificationEfolderSyncJob.perform_now
-        expect(VbmsUploadedDocument.where(document_type: "BVA Case Notifications").pluck(:appeal_id)).to eq(second_run_vbms_document_ids)
+
+        expect(
+          VbmsUploadedDocument.where(document_type: "BVA Case Notifications").pluck(:appeal_id)
+        ).to eq(second_run_vbms_document_ids)
       end
     end
   end
