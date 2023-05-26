@@ -45,7 +45,7 @@ class UploadDocumentToVbmsJob < CaseflowJob
   def queue_mail_request_job(mail_request)
     return unless document.uploaded_to_vbms_at
 
-    # perform or perform_later?
+    # perform_now or perform_later?
     # check parameter order to match MailRequestJob#perform (APPEALS-21118)
     MailRequestJob.perform(mail_request, document)
   end
