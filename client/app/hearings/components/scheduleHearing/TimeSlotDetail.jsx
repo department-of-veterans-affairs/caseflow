@@ -41,8 +41,14 @@ export const TimeSlotDetail = ({
           <DocketTypeBadge name={docketName} number={docketNumber} />{' '}
           {showType && docketNumber}{' '}
           <Dot spacing={itemSpacing} />{' '}
-          <div {...badgeStyle} style={{ display: 'flex', whiteSpace: 'pre-wrap' }} >
+          <div
+            className ="schedule-veterans-bagde-designation-1"
+            style={{ display: 'inline-block', justifyContent: 'left', marginLeft: '-1rem' }}>
             <MstBadge appeal={hearing} />
+          </div>
+          <div
+            className ="schedule-veterans-badge-designation-2"
+            style={{ display: 'inline-block', justifyContent: 'left' }}>
             <PactBadge appeal={hearing} />
           </div>
           <Dot spacing={itemSpacing} />{' '}
