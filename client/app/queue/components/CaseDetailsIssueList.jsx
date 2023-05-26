@@ -93,8 +93,8 @@ const getDescriptionsFromCodes = (levels, codes, descriptions = []) => {
 
 // format special issues to display 'None', 'PACT', 'MST', or 'MST and PACT'
 const specialIssuesFormatting = (props) => {
-  const mstStatus = props.legacy_appeal_vacols_mst;
-  const pactStatus = props.legacy_appeal_vacols_pact;
+  const mstStatus = props.mst_status;
+  const pactStatus = props.pact_status;
 
   if (!mstStatus && !pactStatus) {
     return 'None';
@@ -142,6 +142,6 @@ CaseDetailsIssueList.propTypes = {
 
 SpecialIssueListItem.propTypes = {
   children: PropTypes.object,
-  legacy_appeal_vacols_mst: PropTypes.bool,
-  legacy_appeal_vacols_pact: PropTypes.bool
+  mst_status: PropTypes.bool,
+  pact_status: PropTypes.bool
 };

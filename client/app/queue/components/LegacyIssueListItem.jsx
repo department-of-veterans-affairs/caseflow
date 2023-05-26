@@ -26,8 +26,8 @@ const leftAlignTd = css({
 });
 
 const specialIssuesFormatting = (props) => {
-  const mstStatus = props.legacy_appeal_vacols_mst;
-  const pactStatus = props.legacy_appeal_vacols_pact;
+  const mstStatus = props.mst_status;
+  const pactStatus = props.pact_status;
 
   if (!mstStatus && !pactStatus) {
     return 'None';
