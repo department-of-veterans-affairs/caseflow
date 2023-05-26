@@ -7,12 +7,8 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   skip_before_action :verify_authenticity_token, only: [:create]
   before_action :verify_access
 
-  def bgs
-    @bgs ||= BGSService.new
-  end
-
   def create
-    mail_requests = recipient_info
+    mail_requests = create_mail_requests
 
     appeal = nil
     # Find veteran from appeal id and check with db
@@ -33,10 +29,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   private
 
   def recipient_info
-    return [] if params["recipient_info"].blank?
-
-    addresses = params["recipient_info"]
-    addresses.map { |address_params| MailRequest.new(address_params).call }
+    params["recipient_info"]
   end
 
   def appeal_id
@@ -45,6 +38,17 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
   def veteran_identifier
     params["veteran_identifier"]
+  end
+
+  def bgs
+    @bgs ||= BGSService.new
+  end
+
+  def create_mail_requests
+    return [] if recipient_info.blank?
+
+    addresses = recipient_info
+    addresses.map { |address_params| MailRequest.new(address_params).call }
   end
 
   def find_by_appeal_id
