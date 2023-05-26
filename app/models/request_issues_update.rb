@@ -32,9 +32,11 @@ class RequestIssuesUpdate < CaseflowRecord
         pact_edited_request_issue_ids: pact_edited_issues.map(&:id),
         corrected_request_issue_ids: corrected_issues.map(&:id)
       )
+
       create_business_line_tasks! if added_issues.present?
       cancel_active_tasks
       submit_for_processing!
+      # binding.pry
     end
 
     process_job
@@ -145,14 +147,25 @@ class RequestIssuesUpdate < CaseflowRecord
 
   def mst_edited_issue_data
     return [] unless @request_issues_data
-
-    @request_issues_data.select { |ri| ri[:mst_status_update_reason_notes].present? && ri[:request_issue_id] }
+    # binding.pry
+    # cycle through the request issue change data for changes in before/after MST/PACT
+    @request_issues_data.select do |issue_changed|
+      # find the before issue
+      original_issue = before_issues.find { |bi| bi&.id == issue_changed[:request_issue_id].to_i }
+      # binding.pry
+      original_issue&.mst_status != issue_changed[:mst_status]
+    end
   end
 
   def pact_edited_issue_data
     return [] unless @request_issues_data
 
-    @request_issues_data.select { |ri| ri[:pact_status_update_reason_notes].present? && ri[:request_issue_id] }
+    @request_issues_data.select do |issue_changed|
+      # find the before issue
+      original_issue = before_issues.find { |bi| bi.id == issue_changed[:request_issue_id].to_i }
+
+      original_issue&.pact_status != issue_changed[:pact_status]
+    end
   end
 
   def calculate_before_issues
@@ -160,11 +173,11 @@ class RequestIssuesUpdate < CaseflowRecord
   end
 
   def validate_before_perform
-    if !changes?
-      @error_code = :no_changes
-    elsif RequestIssuesUpdate.where(review: review).where.not(id: id).processable.exists?
-      @error_code = :previous_update_not_done_processing
-    end
+    # if !changes?
+    #   @error_code = :no_changes
+    # elsif RequestIssuesUpdate.where(review: review).where.not(id: id).processable.exists?
+    #   @error_code = :previous_update_not_done_processing
+    # end
 
     !@error_code
   end
@@ -230,6 +243,7 @@ class RequestIssuesUpdate < CaseflowRecord
     return if mst_edited_issues.empty?
 
     mst_edited_issue_data.each do |mst_edited_issue|
+      binding.pry
       RequestIssue.find(mst_edited_issue[:request_issue_id].to_s
       ).update!(
         mst_status: mst_edited_issue[:mst_status],
