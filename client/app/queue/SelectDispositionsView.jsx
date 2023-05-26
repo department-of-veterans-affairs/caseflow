@@ -168,6 +168,8 @@ class SelectDispositionsView extends React.PureComponent {
     const benefitType = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).program;
     const diagnosticCode = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).diagnostic_code;
     const closedStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).closed_status;
+    const mstStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).mst_status
+    const pactStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).pact_status;
 
     const newDecisionIssue = {
       id: `temporary-id-${uuid.v4()}`,
@@ -176,8 +178,10 @@ class SelectDispositionsView extends React.PureComponent {
       benefit_type: benefitType,
       diagnostic_code: diagnosticCode,
       request_issue_ids: [requestIssueId],
-      mstStatus: decisionIssue?.mstStatus ? decisionIssue.mstStatus : false,
-      pactStatus: decisionIssue?.pactStatus ? decisionIssue.pactStatus : false,
+      mstStatus: mstStatus,
+      mstOriginalStatus: mstStatus,
+      pactStatus: pactStatus,
+      pactOriginalStatus: pactStatus,
 
       /*
         Burn Pit and Blue Water will still be tracked on the appeal level but,
@@ -242,6 +246,10 @@ class SelectDispositionsView extends React.PureComponent {
       this.props.appeal.externalId, { decisionIssues: newDecisionIssues }
     );
 
+    //Updated special issues view to the updated mst and pact status
+    this.selectedIssues()[0].mst_status = this.state.decisionIssue.mstStatus;
+    this.selectedIssues()[0].pact_status = this.state.decisionIssue.pactStatus;
+
     this.handleModalClose();
   }
 
@@ -254,7 +262,21 @@ class SelectDispositionsView extends React.PureComponent {
       this.props.appeal.externalId, { decisionIssues: remainingDecisionIssues }
     );
 
+    //Reverts special issues view to their original status when deleting decision
+    this.selectedIssuesToDelete()[0].mst_status = this.state.decisionIssue.mstOriginalStatus;
+    this.selectedIssuesToDelete()[0].pact_status = this.state.decisionIssue.pactOriginalStatus;
+
     this.handleModalClose();
+  }
+
+  selectedIssuesToDelete = () => {
+    if (!this.state.requestIdToDelete) {
+      return [];
+    }
+
+    return this.props.appeal.issues.filter((issue) => {
+      return this.state.requestIdToDelete === issue.id;
+    });
   }
 
   selectedIssues = () => {
