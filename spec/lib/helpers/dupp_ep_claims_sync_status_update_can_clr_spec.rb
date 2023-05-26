@@ -78,11 +78,12 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
       end
     end
 
-    describe "#resolve_duplicate_eps" do
+    describe "#resolve_duplicate_end_products" do
       let(:problem_reviews) { script.retrieve_problem_reviews }
 
       it "clears the problem_reviews list" do
-        script.resolve_duplicate_eps(problem_reviews)
+        allow(script).to receive(:upload_logs_to_s3).with(anything).and_return(true)
+        script.resolve_duplicate_end_products(problem_reviews)
         expect(script.retrieve_problem_reviews.count).to eq 0
       end
     end
@@ -90,6 +91,8 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
     describe "#run" do
       let(:initial_pr_count) { script.retrieve_problem_reviews.count }
       it "performs the remediation successfully" do
+        allow(script).to receive(:upload_logs_to_s3).with(anything).and_return(true)
+
         expect(initial_pr_count).to eq 3
         script.run
         expect(script.retrieve_problem_reviews.count).to eq 0
@@ -162,7 +165,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
     end
   end
 
-  context "There is only 1 Review with DuplicateEP errors" do
+  context "Single review with DuplicateEP errors" do
     let(:setups) do
       [
         {
@@ -179,8 +182,10 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
     describe "#resolve_single_review" do
       let(:initial_pr_count) { script.retrieve_problem_reviews.count }
       let(:problem_reviews) { script.retrieve_problem_reviews }
-      it "can use the singlular resolve method" do
+      it "calls resolve_single_review method" do
         expect(initial_pr_count).to eq 1
+        allow(script).to receive(:upload_logs_to_s3).with(anything).and_return(true)
+
         script.resolve_single_review(problem_reviews.first.id, "hlr")
         expect(script.retrieve_problem_reviews.count).to eq 0
       end
