@@ -361,6 +361,7 @@ class AddEditIssueView extends React.Component {
         name="MST"
         label="Military Sexual Trauma (MST)"
         defaultValue={issue.mst_status}
+        value={issue.mst_status}
         styling={checkboxStyle}
         onChange={(checked) => {
           this.updateIssue({ mst_status: checked });
@@ -377,6 +378,7 @@ class AddEditIssueView extends React.Component {
         name="PACT"
         label="PACT Act"
         defaultValue={issue.pact_status}
+        value={issue.pact_status}
         styling={checkboxStyle}
         onChange={(checked) => {
           this.updateIssue({ pact_status: checked });

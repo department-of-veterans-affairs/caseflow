@@ -13,7 +13,8 @@ export const mapDataToInitialState = function(props = {}) {
     featureToggles,
     userCanWithdrawIssues,
     userCanEditIntakeIssues,
-    userCanSplitAppeal } = props;
+    userCanSplitAppeal,
+    isLegacy } = props;
 
   serverIntake.relationships = formatRelationships(serverIntake.relationships);
   serverIntake.contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
@@ -36,6 +37,7 @@ export const mapDataToInitialState = function(props = {}) {
     userCanWithdrawIssues,
     userCanEditIntakeIssues,
     userCanSplitAppeal,
+    isLegacy,
     addIssuesModalVisible: false,
     nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
