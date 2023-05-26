@@ -150,9 +150,6 @@ feature "Supplemental Claim Intake", :all_dbs do
     expect(page).to have_current_path("/intake/add_issues")
 
     visit "/intake/review_request"
-    within_fieldset("Was this form submitted through VA.gov?") do
-      find("label", text: "Yes", match: :prefer_exact).click
-    end
 
     expect(find("#different-claimant-option_true", visible: false)).to be_checked
     expect(find_field("Baz Qux, Child", visible: false)).to be_checked
@@ -164,7 +161,6 @@ feature "Supplemental Claim Intake", :all_dbs do
 
     supplemental_claim = SupplementalClaim.find_by(veteran_file_number: veteran_file_number)
 
-    # expect(supplemental_claim.filed_by_va_gov).to eq(false)
     expect(supplemental_claim).to_not be_nil
     expect(supplemental_claim.receipt_date).to eq(receipt_date)
     expect(supplemental_claim.benefit_type).to eq(benefit_type)
