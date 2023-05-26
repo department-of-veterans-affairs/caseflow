@@ -33,6 +33,9 @@ import Button from '../components/Button';
 import Modal from '../components/Modal';
 import Alert from '../components/Alert';
 import Checkbox from '../components/Checkbox';
+import {
+  INTAKE_EDIT_ISSUE_CHANGE_MESSAGE
+} from 'app/../COPY';
 
 import {
   fullWidth,
@@ -50,6 +53,24 @@ const noLeftPadding = css({ paddingLeft: 0 });
 const checkboxStyle = css({ marginTop: '0', marginBottom: '0' });
 
 class AddEditIssueView extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      showMstJustification: false,
+      showPactJustification: false,
+      mstJustification: '',
+      pactJustification: ''
+    };
+  }
+
+  handleShowMstJustification = () => this.setState((prev) => ({ showMstJustification: !prev.showMstJustification }))
+
+  handleShowPactJustification = () => this.setState((prev) => ({ showPactJustification: !prev.showPactJustification }))
+
+  handleMstJustification = (mstJustification) => this.setState({ mstJustification });
+
+  handlePactJustification = (pactJustification) => this.setState({ pactJustification });
 
   componentDidMount = () => {
     const { issueId, appealId } = this.props;
@@ -112,8 +133,8 @@ class AddEditIssueView extends React.Component {
           level_2: _.get(issue.codes, 1, null),
           level_3: _.get(issue.codes, 2, null),
           ..._.pick(issue, 'note', 'program'),
-          mst_status: issue.legacy_appeal_vacols_mst ? 'Y' : 'N',
-          pact_status: issue.legacy_appeal_vacols_pact ? 'Y' : 'N'
+          mst_status: issue.mst_status ? 'Y' : 'N',
+          pact_status: issue.pact_status ? 'Y' : 'N'
         }
       }
     };
@@ -206,6 +227,8 @@ class AddEditIssueView extends React.Component {
       deleteIssueModal,
       ...otherProps
     } = this.props;
+
+    const { showMstJustification, showPactJustification } = this.state;
 
     const programs = ISSUE_INFO;
     const issues = _.get(programs[issue.program], 'levels');
@@ -337,19 +360,36 @@ class AddEditIssueView extends React.Component {
       <Checkbox
         name="MST"
         label="Military Sexual Trauma (MST)"
-        defaultValue={issue.legacy_appeal_vacols_mst}
-        value={issue.legacy_appeal_vacols_mst}
+        defaultValue={issue.mst_status}
+        value={issue.mst_status}
         styling={checkboxStyle}
-        onChange={(checked) => this.updateIssue({ legacy_appeal_vacols_mst: checked })}
+        onChange={(checked) => {
+          this.updateIssue({ mst_status: checked });
+          this.handleShowMstJustification();
+        }}
       />
+      {showMstJustification &&
+        <TextField
+          name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
+          value={this.state.mstJustification}
+          onChange={this.handleMstJustification} />
+      }
       <Checkbox
         name="PACT"
         label="PACT Act"
-        defaultValue={issue.legacy_appeal_vacols_pact}
-        value={issue.legacy_appeal_vacols_pact}
+        defaultValue={issue.pact_status}
+        value={issue.pact_status}
         styling={checkboxStyle}
-        onChange={(checked) => this.updateIssue({ legacy_appeal_vacols_pact: checked })}
+        onChange={(checked) => {
+          this.updateIssue({ pact_status: checked });
+          this.handleShowPactJustification();
+        }}
       />
+      {showPactJustification &&
+        <TextField
+          name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
+          value={this.state.pactJustification}
+          onChange={this.handlePactJustification} />}
     </QueueFlowPage>;
   };
 }
@@ -382,8 +422,8 @@ AddEditIssueView.propTypes = {
     type: PropTypes.string,
     codes: PropTypes.arrayOf(PropTypes.string),
     program: PropTypes.string,
-    legacy_appeal_vacols_mst: PropTypes.bool,
-    legacy_appeal_vacols_pact: PropTypes.bool
+    mst_status: PropTypes.bool,
+    pact_status: PropTypes.bool
   }),
   issueId: PropTypes.string,
   issues: PropTypes.object,
