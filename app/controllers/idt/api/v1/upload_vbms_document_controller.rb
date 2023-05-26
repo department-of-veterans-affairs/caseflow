@@ -46,6 +46,6 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   def recipient_info
     return nil if params["recipient_info"].blank?
 
-    MailRequest.new(address_params).call
+    MailRequest.new(params).call
   end
 end

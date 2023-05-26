@@ -13,6 +13,7 @@ class UploadDocumentToVbms
     submit_for_processing!
     upload_to_vbms!
     set_processed_at_to_current_time
+    log_info(document: document, status: "Document uploaded to VBMS")
   rescue StandardError => error
     save_rescued_error!(error.to_s)
     raise error
@@ -81,6 +82,11 @@ class UploadDocumentToVbms
 
   def file_number
     document.veteran_file_number
+  end
+
+  def log_info(info_message)
+    uuid = SecureRandom.uuid
+    Rails.logger.info(info_message + "ID: " + uuid)
   end
 
   # Purpose: Get the s3_sub_bucket based on the document type

@@ -45,8 +45,13 @@ class UploadDocumentToVbmsJob < CaseflowJob
   def queue_mail_request_job(mail_request)
     return unless document.uploaded_to_vbms_at
 
-    # perform_now or perform_later?
-    # check parameter order to match MailRequestJob#perform (APPEALS-21118)
-    MailRequestJob.perform(mail_request, document)
+    MailRequestJob.perform_later(document, mail_request)
+    status = "MailRequestJob queued for submission to Package Manager"
+    log_info(document: document, mail_request: mail_request, status: status)
+  end
+
+  def log_info(info_message)
+    uuid = SecureRandom.uuid
+    Rails.logger.info(info_message + "ID: " + uuid)
   end
 end
