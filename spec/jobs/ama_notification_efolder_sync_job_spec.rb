@@ -11,11 +11,11 @@ describe AmaNotificationEfolderSyncJob, type: :job do
     end
 
     let(:today) { Time.now.utc.iso8601 }
-    let(:appeals) do
+    let!(:appeals) do
       create_list(:appeal, 10, :active)
     end
 
-    let(:notifications) do
+    let!(:notifications) do
       appeals.each do |appeal|
         if appeal.id == appeals[3].id || appeal.id == appeals[7].id
           next
