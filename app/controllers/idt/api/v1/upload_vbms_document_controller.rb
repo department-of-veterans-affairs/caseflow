@@ -12,27 +12,16 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   end
 
   def create
-    mail_request = recipient_info
+    mail_requests = recipient_info
 
     appeal = nil
     # Find veteran from appeal id and check with db
-    if params["appeal_id"].present?
-      appeal = LegacyAppeal.find_by_vacols_id(params["appeal_id"]) || Appeal.find_by_uuid(params["appeal_id"])
-      if appeal.nil?
-        fail Caseflow::Error::AppealNotFound, "IDT Standard Error ID: " + SecureRandom.uuid + " The appeal was unable to be found."
-      else
-        params["veteran_file_number"] = appeal.veteran_file_number
-      end
-
+    if appeal_id.present?
+      appeal = find_by_appeal_id
     else
-      file_number = bgs.fetch_veteran_info(params["veteran_identifier"])&.dig(:file_number) || bgs.fetch_file_number_by_ssn(params["veteran_identifier"])
-      if file_number.nil?
-        fail Caseflow::Error::VeteranNotFound, "IDT Standard Error ID: " + SecureRandom.uuid + " The veteran was unable to be found."
-      end
-
-      params["veteran_file_number"] = file_number
+      find_file_number_by_veteran_identifier
     end
-    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_request).call
+    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_requests).call
 
     if result.success?
       render json: { message: "Document successfully queued for upload." }
@@ -44,8 +33,39 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   private
 
   def recipient_info
-    return nil if params["recipient_info"].blank?
+    return [] if params["recipient_info"].blank?
 
-    MailRequest.new(params).call
+    addresses = params["recipient_info"]
+    addresses.map { |address_params| MailRequest.new(address_params).call }
+  end
+
+  def appeal_id
+    params["appeal_id"]
+  end
+
+  def veteran_identifier
+    params["veteran_identifier"]
+  end
+
+  def find_by_appeal_id
+    appeal = LegacyAppeal.find_by_vacols_id(appeal_id) || Appeal.find_by_uuid(appeal_id)
+    throw_not_found_error("appeal") if appeal.nil?
+    update_veteran_file_number(appeal.veteran_file_number)
+    appeal
+  end
+
+  def find_file_number_by_veteran_identifier
+    file_number = bgs.fetch_veteran_info(veteran_identifier)&.dig(:file_number) || bgs.fetch_file_number_by_ssn(veteran_identifier)
+    throw_not_found_error("veteran") if file_number.nil?
+    update_veteran_file_number(file_number)
+  end
+
+  def update_veteran_file_number(file_number)
+    params["veteran_file_number"] = file_number
+  end
+
+  def throw_not_found_error(name)
+    uuid = SecureRandom.uuid
+    fail Caseflow::Error::AppealNotFound, "IDT Standard Error ID: " + uuid + " The #{name} was unable to be found."
   end
 end
