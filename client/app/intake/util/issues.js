@@ -146,8 +146,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       rampClaimId: issue.ramp_claim_id,
       verifiedUnidentifiedIssue: issue.verified_unidentified_issue,
       isPreDocketNeeded: issue.is_predocket_needed,
-      mstChecked: issue.vacols_sequence_id ? issue.legacy_appeal_vacols_mst : issue.mst_status,
-      pactChecked: issue.vacols_sequence_id ? issue.legacy_appeal_vacols_pact : issue.pact_status,
+      mstChecked: issue.mst_status,
+      pactChecked: issue.pact_status,
       mst_status_update_reason_notes: issue?.mstJustification,
       pact_status_update_reason_notes: issue?.pactJustification
     };
