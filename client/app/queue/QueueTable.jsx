@@ -310,10 +310,12 @@ export default class QueueTable extends React.PureComponent {
 
     if (preserveFilter) {
       // Prioritize get parameters over the local filter.
-      filteredByList = this.getFilters(filterParam || localFilter ? localFilter.split(',') : '');
+      // Filters from different columns get stored as a comma delimited list in local storage.
+      filteredByList = this.getFilters(filterParam || (localFilter ? localFilter.split(',') : null));
     } else {
       filteredByList = this.getFilters(filterParam);
     }
+
     const pageNumber = tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1 || 0;
 
     const currentPage = pageNumber + 1 > numberOfPages || pageNumber < 0 ? 0 : pageNumber;
