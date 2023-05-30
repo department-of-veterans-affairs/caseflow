@@ -39,6 +39,14 @@
     "denied": "denial of all issues for vacatur",
     "dismissed": "dismissal"
   },
+
+  "DISPOSITION_TIMELINE_TEXT": {
+    "granted": "Full vacatur",
+    "partially_granted": "Partial vacatur",
+    "denied": "Deny all issues for vacatur",
+    "dismissed": "Dismiss all issues for vacatur"
+  },
+
   "DISPOSITION_RECOMMENDATIONS": {
     "granted": "I recommend granting a vacatur.",
     "partially_granted": "I recommend granting a partial vacatur.",
