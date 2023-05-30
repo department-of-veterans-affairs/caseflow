@@ -48,6 +48,7 @@ export const IntakeRadioField = (props) => {
     totalElements,
     renderMst,
     renderPact,
+    renderJustification,
     mstChecked,
     setMstCheckboxFunction,
     pactChecked,
@@ -120,7 +121,7 @@ export const IntakeRadioField = (props) => {
               disabled={prePopulatedMst}
               onChange={(checked) => setMstCheckboxFunction(checked)}
             />
-            { (mstChecked && !prePopulatedMst) &&
+            { (renderJustification && (mstChecked && !prePopulatedMst)) &&
               <TextField
                 name="mstJustification-field"
                 value={mstJustification}
@@ -139,7 +140,7 @@ export const IntakeRadioField = (props) => {
               disabled={prePopulatedPact}
               onChange={(checked) => setPactCheckboxFunction(checked)}
             />
-            { (pactChecked && !prePopulatedPact) &&
+            { (renderJustification && (pactChecked && !prePopulatedPact)) &&
               <TextField
                 name="pactJustification-field"
                 value={pactJustification}
@@ -296,6 +297,7 @@ IntakeRadioField.propTypes = {
   styling: PropTypes.object,
   renderMst: PropTypes.bool,
   renderPact: PropTypes.bool,
+  renderJustification: PropTypes.bool,
   mstChecked: PropTypes.bool,
   setMstCheckboxFunction: PropTypes.func,
   pactChecked: PropTypes.bool,

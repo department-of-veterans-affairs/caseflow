@@ -129,7 +129,7 @@ export class EditIntakeIssueModal extends React.Component {
             }
           </li>
         </ul>
-        {(mstChecked) && (
+        {( renderJustification && (mstChecked)) && (
           <div>
             <label style={{ paddingLeft: '2em' }}>
               <TextField
@@ -152,7 +152,7 @@ export class EditIntakeIssueModal extends React.Component {
             </label>
           </li>
         </ul>
-        {(pactChecked) && (
+        {( renderJustification && (pactChecked)) && (
           <div>
             <label style={{ paddingLeft: '2em' }}>
               <TextField
@@ -192,6 +192,7 @@ EditIntakeIssueModal.propTypes = {
   issueIndex: PropTypes.number,
   mstIdentification: PropTypes.bool,
   pactIdentification: PropTypes.bool,
+  justificationReason: PropTypes.bool,
   mstChecked: PropTypes.bool,
   pactChecked: PropTypes.bool,
   mstJustification: PropTypes.object,
