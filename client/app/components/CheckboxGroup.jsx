@@ -23,7 +23,8 @@ const renderCheckbox = (option, onChange, values = {}, disabled = false, justifi
         name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
         defaultValue={filterIssuesForJustification(justifications, option.id)[0].justification}
         required
-        onChange={filterIssuesForJustification(justifications, option.id)[0].justificationOnChange} />
+        onChange={filterIssuesForJustification(justifications, option.id)[0].onJustificationChange}
+        />
   }
 </div>;
 
@@ -119,5 +120,5 @@ CheckboxGroup.propTypes = {
       mstJustificationOnChange: PropTypes.func,
     })
   ),
-  filterIssuesForJustification: PropTypes.func,
+  filterIssuesForJustification: PropTypes.func
 };

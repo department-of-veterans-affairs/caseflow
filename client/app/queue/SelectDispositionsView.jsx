@@ -170,6 +170,8 @@ class SelectDispositionsView extends React.PureComponent {
     const benefitType = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).program;
     const diagnosticCode = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).diagnostic_code;
     const closedStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).closed_status;
+    const mst_justification = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).mst_justification;
+    const pact_justification = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).pact_justification;
 
     const newDecisionIssue = {
       id: `temporary-id-${uuid.v4()}`,
@@ -180,6 +182,8 @@ class SelectDispositionsView extends React.PureComponent {
       request_issue_ids: [requestIssueId],
       mstStatus: decisionIssue?.mstStatus ? decisionIssue.mstStatus : false,
       pactStatus: decisionIssue?.pactStatus ? decisionIssue.pactStatus : false,
+      mst_justification: mst_justification,
+      pact_justification: pact_justification,
 
       /*
         Burn Pit and Blue Water will still be tracked on the appeal level but,
@@ -194,7 +198,9 @@ class SelectDispositionsView extends React.PureComponent {
       openRequestIssueId: requestIssueId,
       decisionIssue: decisionIssue || newDecisionIssue,
       editingExistingIssue: Boolean(decisionIssue),
-      deleteAddedDecisionIssue: null
+      deleteAddedDecisionIssue: null,
+      mstJustification: mst_justification,
+      pactJustification: pact_justification,
     });
   }
 
@@ -297,12 +303,25 @@ class SelectDispositionsView extends React.PureComponent {
     });
   }
 
-  mstJustificationOnChange = (mstJustification) => {
-    this.setState({ mstJustification });
-  }
+  onJustificationChange = (event, decision, type) => {
 
-  pactJustificationOnChange = (pactJustification) => {
-    this.setState({ pactJustification });
+    if(type === "mstStatus"){
+      this.setState({
+        decisionIssue: {
+          ...decision,
+          mst_justification: event
+        }
+      });
+      this.setState({ mstJustification: event });
+    }else if(type === "pactStatus"){
+      this.setState({
+        decisionIssue: {
+          ...decision,
+          pact_justification: event
+        }
+      });
+      this.setState({ pactJustification: event });
+    }
   }
 
   filterIssuesForJustification = (issues, idToFilter) => {
@@ -344,8 +363,6 @@ class SelectDispositionsView extends React.PureComponent {
       editingExistingIssue,
       deleteAddedDecisionIssue,
       requestIdToDelete,
-      mstJustification,
-      pactJustification
     } = this.state;
     const connectedRequestIssues = appeal.issues.filter((issue) => {
       return decisionIssue && decisionIssue.request_issue_ids.includes(issue.id);
@@ -497,13 +514,13 @@ class SelectDispositionsView extends React.PureComponent {
           justifications={[
             {
               id: 'mstStatus',
-              justification: mstJustification,
-              justificationOnChange: this.mstJustificationOnChange,
+              justification: decisionIssue.mst_justification,
+              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, "mstStatus")
             },
             {
               id: 'pactStatus',
-              justification: pactJustification,
-              justificationOnChange: this.pactJustificationOnChange,
+              justification: decisionIssue.pact_justification,
+              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, "pactStatus")
             },
           ]}
         />
