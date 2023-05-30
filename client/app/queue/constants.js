@@ -216,4 +216,23 @@ export const PAGE_TITLES = {
 
 export const CUSTOM_HOLD_DURATION_TEXT = 'Custom';
 export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, CUSTOM_HOLD_DURATION_TEXT];
-export const VHA_HOLD_DURATIONS = [15, 30, 45, CUSTOM_HOLD_DURATION_TEXT];
+export const VHA_HOLD_DURATIONS = [15, 30, CUSTOM_HOLD_DURATION_TEXT];
+
+export const DECISION_SPECIAL_ISSUES = [
+  {
+    id: 'blue_water',
+    label: 'Blue Water',
+  },
+  {
+    id: 'burn_pit',
+    label: 'Burn Pit',
+  },
+  {
+    id: 'mstStatus',
+    label: 'Military Sexual Trauma (MST)',
+  },
+  {
+    id: 'pactStatus',
+    label: 'PACT Act',
+  },
+];

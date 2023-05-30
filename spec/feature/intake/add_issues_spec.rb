@@ -6,7 +6,6 @@ feature "Intake Add Issues Page", :all_dbs do
   before do
     setup_intake_flags
   end
-
   let(:veteran_file_number) { "123412345" }
   let(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
@@ -19,13 +18,14 @@ feature "Intake Add Issues Page", :all_dbs do
                               last_name: "Attings",
                               participant_id: "44444444")
   end
+
   let!(:rating) do
     Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
       issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted" },
+        { reference_id: "abc123", decision_text: "Left knee granted"},
         { reference_id: "def456", decision_text: "PTSD denied" },
         { reference_id: "def789", decision_text: "Looks like a VACOLS issue" }
       ],
@@ -58,6 +58,48 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_add_issue
       add_intake_rating_issue(rating_decision_text)
       expect(page).to have_content("1. #{rating_decision_text}\nDecision date: #{promulgation_date.mdY}")
+    end
+
+    scenario "MST and PACT checkboxes appear after selecting decision" do
+      start_higher_level_review(veteran)
+      visit "/intake"
+      click_intake_continue
+      click_intake_add_issue
+      choose('rating-radio_0', allow_label_click:true)
+      expect(page).to have_content("Issue is related to Military Sexual Trauma (MST)")
+      expect(page).to have_content("Issue is related to PACT act")
+    end
+
+    scenario "MST and PACT checkboxes are disabled if they already exist in the model" do
+      claim_id = rating.issues[0].reference_id
+      veteran.participant_id = "5217787"
+
+      epe = create(
+        :end_product_establishment,
+        reference_id: claim_id,
+        veteran_file_number: veteran.file_number
+      )
+      mst_contention = Generators::Contention.build_mst_and_pact_contention(claim_id: claim_id)
+
+      req_issue = create(:request_issue,
+        contention_reference_id: mst_contention.id,
+        end_product_establishment: epe,
+        veteran_participant_id: veteran.participant_id,
+        #rating.issues[0].reference_id maps to claim_id
+        contested_rating_issue_reference_id: rating.issues[0].reference_id
+      )
+
+      start_higher_level_review(veteran)
+
+      FeatureToggle.enable!(:mst_pact_identification)
+      visit "/intake"
+      click_intake_continue
+      click_intake_add_issue
+      choose('rating-radio_0', allow_label_click:true)
+
+      #visible is set to false because capybara does not recognize the fields otherwise.
+      expect(page).to have_field("Issue is related to Military Sexual Trauma (MST)", visible: false, disabled: true)
+      expect(page).to have_field("Issue is related to PACT act", visible: false, disabled: true)
     end
   end
 
@@ -775,6 +817,37 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_current_path("/intake/add_issues")
 
       expect(page).to_not have_content("Hearing type")
+    end
+  end
+
+  context "for MST and PACT Act" do
+    scenario "MST and PACT checkboxes appear after selecting decision" do
+      start_higher_level_review(veteran)
+      visit "/intake"
+      click_intake_continue
+      click_intake_add_issue
+      choose("rating-radio_0", allow_label_click: true)
+      expect(page).to have_content("Issue is related to Military Sexual Trauma (MST)")
+      expect(page).to have_content("Issue is related to PACT Act")
+    end
+
+    scenario "MST and PACT checkboxes render a justification field when checked" do
+      start_higher_level_review(veteran)
+      visit "/intake"
+      click_intake_continue
+      click_intake_add_issue
+      choose("rating-radio_0", allow_label_click: true)
+      expect(page).to have_content("Issue is related to Military Sexual Trauma (MST)")
+      expect(page).to have_content("Issue is related to PACT Act")
+      # find("div.checkbox-wrapper-MST.cf-form-checkboxes").first.click
+      click_on "Issue is related to Military Sexual Trauma (MST)"
+      expect(page).to have_content("Why was this change made?")
+      click_on "Issue is related to Military Sexual Trauma (MST)"
+      expect(page).to_not have_content("Why was this change made?")
+      click_on "Issue is related to PACT Act"
+      expect(page).to have_content("Why was this change made?")
+      click_on "Issue is related to PACT Act"
+      expect(page).to_not have_content("Why was this change made?")
     end
   end
 end

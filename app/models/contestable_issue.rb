@@ -15,6 +15,7 @@ class ContestableIssue
 
   class << self
     def from_rating_issue(rating_issue, contesting_decision_review)
+      # epe = EndProductEstablishment.find_by(reference_id: rating_issue.reference_id)
       new(
         rating_issue_reference_id: rating_issue.reference_id,
         rating_issue_profile_date: rating_issue.profile_date.to_date,
@@ -48,7 +49,7 @@ class ContestableIssue
         source_request_issues: decision_issue.request_issues.active,
         source_decision_review: source,
         contesting_decision_review: contesting_decision_review,
-        is_rating: decision_issue.rating?
+        is_rating: decision_issue.rating?,
       )
     end
 
@@ -61,7 +62,7 @@ class ContestableIssue
         description: rating_decision.decision_text,
         contesting_decision_review: contesting_decision_review,
         rating_issue_diagnostic_code: rating_decision.diagnostic_code,
-        is_rating: true # true even if rating_reference_id is nil
+        is_rating: true, # true even if rating_reference_id is nil
       )
     end
   end
@@ -80,7 +81,9 @@ class ContestableIssue
       sourceReviewType: source_review_type,
       timely: timely?,
       latestIssuesInChain: serialize_latest_decision_issues,
-      isRating: is_rating
+      isRating: is_rating,
+      mstAvailable: mst_available?,
+      pactAvailable: pact_available?
     }
   end
 
@@ -110,6 +113,22 @@ class ContestableIssue
 
   def timely?
     approx_decision_date && contesting_decision_review.timely_issue?(approx_decision_date)
+  end
+
+  # cycle the issues to see if the past decision had any mst codes on contentions
+  def mst_available?
+    source_request_issues.try(:each) do |issue|
+      return true if issue.mst_contention_status? || issue.mst_status?
+    end
+    false
+  end
+
+  # cycle the issues to see if the past decision had any pact codes on contentions
+  def pact_available?
+    source_request_issues.try(:each) do |issue|
+      return true if issue.pact_contention_status? || issue.pact_status?
+    end
+    false
   end
 
   private
