@@ -13,7 +13,7 @@ class UploadDocumentToVbms
     submit_for_processing!
     upload_to_vbms!
     set_processed_at_to_current_time
-    log_info(document: document, status: "Document uploaded to VBMS")
+    log_info("Document #{document.id} uploaded to VBMS")
   rescue StandardError => error
     save_rescued_error!(error.to_s)
     raise error

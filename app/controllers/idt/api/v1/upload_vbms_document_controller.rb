@@ -8,7 +8,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   before_action :verify_access
 
   def create
-    mail_requests = create_mail_requests
+    mail_request = create_mail_request
 
     appeal = nil
     # Find veteran from appeal id and check with db
@@ -17,7 +17,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     else
       find_file_number_by_veteran_identifier
     end
-    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_requests).call
+    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_request).call
 
     if result.success?
       render json: { message: "Document successfully queued for upload." }
@@ -44,10 +44,10 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     @bgs ||= BGSService.new
   end
 
-  def create_mail_requests
-    return [] if recipient_info.blank?
+  def create_mail_request
+    return nil if recipient_info.blank?
 
-    recipient_info.map { |address_params| MailRequest.new(address_params).call }
+    MailRequest.new(recipient_info).call
   end
 
   def find_veteran_by_appeal_id

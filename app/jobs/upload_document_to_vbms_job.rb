@@ -8,10 +8,10 @@ class UploadDocumentToVbmsJob < CaseflowJob
   # Params: document_id - integer to search for VbmsUploadedDocument
   #         initiator_css_id - string to find a user by css_id
   #         application - string with a default value of "idt" but can be overwritten
-  #         mail_request - MailRequest object with recipient/address info to be sent to Package Manager (optional)
+  #         mail_request - MailRequest object with address info to be sent to Package Manager (optional)
   #
   # Return: nil
-  def perform(document_id:, initiator_css_id:, mail_requests: [], application: "idt")
+  def perform(document_id:, initiator_css_id:, mail_request: nil, application: "idt")
     RequestStore.store[:application] = application
     RequestStore.store[:current_user] = User.system_user
 
@@ -19,7 +19,8 @@ class UploadDocumentToVbmsJob < CaseflowJob
     @initiator = User.find_by_css_id(initiator_css_id)
     add_context_to_sentry
     UploadDocumentToVbms.new(document: document).call
-    queue_mail_request_job(mail_requests) unless mail_requests.empty?
+    byebug
+    queue_mail_request_job(mail_request) unless mail_request.nil?
   end
 
   private
@@ -42,12 +43,12 @@ class UploadDocumentToVbmsJob < CaseflowJob
     )
   end
 
-  def queue_mail_request_job(mail_requests)
+  def queue_mail_request_job(mail_request)
     return unless document.uploaded_to_vbms_at
 
-    MailRequestJob.perform_later(document, mail_requests)
-    status = "MailRequestJob queued for submission to Package Manager"
-    log_info(document: document, mail_request: mail_request, status: status)
+    MailRequestJob.perform_later(document, mail_request)
+    info_message = "MailRequestJob for document #{document.id} queued for submission to Package Manager"
+    log_info(info_message)
   end
 
   def log_info(info_message)
