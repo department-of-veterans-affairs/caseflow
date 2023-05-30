@@ -2,7 +2,7 @@
 
 # Migration with built-in timeout extensions for adding indexes
 
-class Caseflow::Migration < ActiveRecord::Migration[5.1]
+class Caseflow::Migration < ActiveRecord::Migration[5.2]
   # hardcode this because setting via class method does not work in subclass
   def disable_ddl_transaction
     say "disable_ddl_transaction is true"
