@@ -13,7 +13,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     appeal = nil
     # Find veteran from appeal id and check with db
     if appeal_id.present?
-      appeal = find_by_appeal_id
+      appeal = find_veteran_by_appeal_id
     else
       find_file_number_by_veteran_identifier
     end
@@ -50,7 +50,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     recipient_info.map { |address_params| MailRequest.new(address_params).call }
   end
 
-  def find_by_appeal_id
+  def find_veteran_by_appeal_id
     appeal = LegacyAppeal.find_by_vacols_id(appeal_id) || Appeal.find_by_uuid(appeal_id)
     throw_not_found_error("appeal") if appeal.nil?
     update_veteran_file_number(appeal.veteran_file_number)
