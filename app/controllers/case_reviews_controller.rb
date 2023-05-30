@@ -106,8 +106,6 @@ class CaseReviewsController < ApplicationController
 
   def create_issue_update_task(original_issue, incoming_issue_update, appeal)
     root_task = RootTask.find_or_create_by!(appeal: appeal)
-    # @appeal.request_issues.each do |issue|
-    #   next unless issue.mst_status || issue.pact_status
     task = IssuesUpdateTask.create!(
       appeal: appeal,
       parent: root_task,
@@ -120,10 +118,7 @@ class CaseReviewsController < ApplicationController
       original_issue.pact_status,
       incoming_issue_update[:mstStatus],
       incoming_issue_update[:pactStatus]
-      # incoming_issue_update.mst_status_update_reason_notes,
-      # incoming_issue_update.pact_status_update_reason_notes
     )
     task.completed!
-    # end
   end
 end
