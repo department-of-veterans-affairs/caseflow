@@ -28,6 +28,10 @@ class WorkQueue::AppealSerializer
 
   attribute :contested_claim, &:contested_claim?
 
+  attribute :mst, &:mst?
+
+  attribute :pact, &:pact?
+
   attribute :issues do |object|
     object.request_issues.active_or_decided_or_withdrawn.includes(:remand_reasons).map do |issue|
       {
