@@ -122,7 +122,7 @@ describe PostSendInitialNotificationLetterHoldingTask do
         post_task.save!
         end_date = tt.updated_at
         start_date = tt.created_at
-        expect((end_date - start_date).to_i / 1.day).to eq(12 - 1)
+        expect((end_date - start_date).to_i / 1.day).to eq(12)
       end
 
       it "shows the difference when time moves into the future if the task isn't closed" do
@@ -154,13 +154,13 @@ describe PostSendInitialNotificationLetterHoldingTask do
         end_date = tt.updated_at
         start_date = tt.created_at
 
-        expect((end_date - start_date).to_i / 1.day).to eq(12 - 1)
+        expect((end_date - start_date).to_i / 1.day).to eq(12)
 
         # set the time 100 days into the future
         Timecop.travel(now + 100.days)
 
         # expect the same days on hold as before
-        expect((end_date - start_date).to_i / 1.day).to eq(12 - 1)
+        expect((end_date - start_date).to_i / 1.day).to eq(12)
       end
 
       it "returns the same on hold time because the task was cancelled" do
@@ -173,13 +173,13 @@ describe PostSendInitialNotificationLetterHoldingTask do
         post_task.status = "cancelled"
         post_task.save!
 
-        expect((post_task.closed_at - post_task.created_at).to_i / 1.day).to eq(12 - 1)
+        expect((post_task.closed_at - post_task.created_at).to_i / 1.day).to eq(12)
 
         # set the time 100 days into the future
         Timecop.travel(now + 100.days)
 
         # expect the same days on hold as before
-        expect((post_task.closed_at - post_task.created_at).to_i / 1.day).to eq(12 - 1)
+        expect((post_task.closed_at - post_task.created_at).to_i / 1.day).to eq(12)
       end
     end
   end
