@@ -205,24 +205,7 @@ class InitialTasksFactory
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
   end
 
-  # def create_establishment_task
-  #   @appeal.request_issues.each do |issue|
-  #     task = EstablishmentTask.create!(
-  #       appeal: @appeal,
-  #       parent: @root_task,
-  #       assigned_to: RequestStore[:current_user],
-  #       assigned_by: RequestStore[:current_user]
-  #     )
-  #     task.format_instructions(
-  #       issue[:nonrating_issue_category],
-  #       issue[:mst_status],
-  #       issue[:pact_status]
-  #     )
-  #     task.completed!
-  #   end
-  # end
-
-  def create_establishment_task
+   def create_establishment_task
     task = EstablishmentTask.create!(
       appeal: @appeal,
       parent: @root_task,
