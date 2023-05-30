@@ -8,6 +8,7 @@ import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import Button from '../../components/Button';
+import COPY from '../../../COPY';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
 
@@ -15,7 +16,8 @@ import { DISPOSITION_OPTIONS, DECISION_ISSUE_UPDATE_STATUS } from '../constants'
 import {
   formatDecisionIssuesFromRequestIssues,
   formatRequestIssuesWithDecisionIssues,
-  buildDispositionSubmission } from '../util';
+  buildDispositionSubmission
+} from '../util';
 
 class NonCompDecisionIssue extends React.PureComponent {
   constructor(props) {
@@ -161,7 +163,7 @@ class NonCompDispositions extends React.PureComponent {
     let decisionDate = this.state.decisionDate;
 
     if (appeal.decisionIssues.length > 0) {
-      decisionDate = formatDateStrUtc(appeal.decisionIssues[0].approxDecisionDate);
+      decisionDate = formatDateStrUtc(appeal.decisionIssues[0].approxDecisionDate, 'YYYY-MM-DD');
     }
 
     let editIssuesLink = null;
@@ -190,7 +192,7 @@ class NonCompDispositions extends React.PureComponent {
             <div>Review each issue and assign the appropriate dispositions.</div>
           </div>
           <div className="usa-width-one-half cf-txt-r">
-            { editIssuesLink }
+            {editIssuesLink}
           </div>
         </div>
         <div className="cf-decision-list">
@@ -211,7 +213,7 @@ class NonCompDispositions extends React.PureComponent {
         <div className="cf-decision-date">
           <InlineForm>
             <DateSelector
-              label="Thank you for completing your decision in Caseflow. Please indicate the decision date."
+              label={COPY.DISPOSITION_DECISION_DATE_LABEL}
               name="decision-date"
               value={decisionDate}
               onChange={this.handleDecisionDate}
@@ -221,7 +223,7 @@ class NonCompDispositions extends React.PureComponent {
           </InlineForm>
         </div>
       </div>
-      { completeDiv }
+      {completeDiv}
       {this.establishmentCredits()}
     </div>;
   }
