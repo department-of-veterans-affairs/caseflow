@@ -2,6 +2,7 @@ import request from 'superagent';
 import nocache from 'superagent-no-cache';
 import ReactOnRails from 'react-on-rails';
 import StringUtil from './StringUtil';
+import uuid from 'uuid';
 import _ from 'lodash';
 import { timeFunctionPromise } from '../util/PerfDebug';
 
@@ -40,13 +41,41 @@ export const getHeadersObject = (options = {}) => {
   return headers;
 };
 
+const errorHandling = (url, error, method, options = {}) => {
+  const id = uuid.v4();
+
+  console.error(new Error(`UUID: ${id}.\nProblem with ${method} ${url}.\n${error}`));
+
+  if (options?.logErrorMetrics) {
+    const data = {
+      metric: {
+        method,
+        url,
+        uuid: id,
+        message: JSON.stringify(error),
+        isError: true,
+        source: 'javascript'
+      }
+    };
+
+    request.
+      post('/metrics/v2/logs').
+      set(getHeadersObject()).
+      send(data).
+      use(nocache).
+      on('error', (err) => console.error(`DANGER DANGER DANGER\nUUID: ${uuid.v4()}.\n: ${err}`)).
+      end();
+  }
+};
+
 const httpMethods = {
   delete(url, options = {}) {
     return request.
       delete(url).
       set(getHeadersObject(options.headers)).
       send(options.data).
-      use(nocache);
+      use(nocache).
+      on('error', (err) => errorHandling(url, err, 'DELETE', options));
   },
 
   get(url, options = {}) {
@@ -56,7 +85,8 @@ const httpMethods = {
       get(url).
       set(getHeadersObject(options.headers)).
       query(options.query).
-      timeout(timeoutSettings);
+      timeout(timeoutSettings).
+      on('error', (err) => errorHandling(url, err, 'GET', options));
 
     if (options.responseType) {
       promise.responseType(options.responseType);
@@ -79,7 +109,8 @@ const httpMethods = {
       post(url).
       set(getHeadersObject({ 'X-HTTP-METHOD-OVERRIDE': 'patch' })).
       send(options.data).
-      use(nocache);
+      use(nocache).
+      on('error', (err) => errorHandling(url, err, 'PATCH', options));
   },
 
   post(url, options = {}) {
@@ -87,7 +118,8 @@ const httpMethods = {
       post(url).
       set(getHeadersObject(options.headers)).
       send(options.data).
-      use(nocache);
+      use(nocache).
+      on('error', (err) => errorHandling(url, err, 'POST', options));
   },
 
   put(url, options = {}) {
@@ -95,7 +127,8 @@ const httpMethods = {
       put(url).
       set(getHeadersObject(options.headers)).
       send(options.data).
-      use(nocache);
+      use(nocache).
+      on('error', (err) => errorHandling(url, err, 'PUT', options));
   }
 };
 

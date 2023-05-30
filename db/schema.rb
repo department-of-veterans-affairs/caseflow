@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_17_164013) do
+ActiveRecord::Schema.define(version: 2023_05_23_174750) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1221,6 +1221,26 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.index ["updated_at"], name: "index_messages_on_updated_at"
   end
 
+  create_table "metrics", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "duration", comment: "Time in milliseconds from start to end"
+    t.datetime "end", comment: "When metric recording stopped"
+    t.json "info", comment: "Store extra information relevant to the metric: OS, browser, etc"
+    t.string "message", comment: "Message to accompany metric"
+    t.string "metric_type", null: false, comment: "Type of metric: ERROR, LOG, PERFORMANCE, etc"
+    t.string "relevant_table", comment: "Indicates which table relevant_table_id applies to"
+    t.bigint "relevant_table_id", comment: "Allows for psuedo foreign keys to be used in queries"
+    t.json "relevant_tables_info", comment: "Store additional information to tie metric to database tables"
+    t.string "sent_to", comment: "Which system metric was sent to: Datadog, Rails Console, Javascript Console, etc ", array: true
+    t.json "sent_to_info", comment: "Which system metric was sent to: Datadog, Rails Console, Javascript Console, etc "
+    t.datetime "start", comment: "When metric recording started"
+    t.json "stats", comment: "Store stats for the metric"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false, comment: "The ID of the user who generated metric."
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "Unique ID for the metric, can be used to search within various systems for the logging"
+    t.index ["user_id"], name: "index_metrics_on_user_id"
+  end
+
   create_table "mpi_update_person_events", force: :cascade do |t|
     t.bigint "api_key_id", null: false, comment: "API Key used to initiate the event"
     t.datetime "completed_at", comment: "Timestamp of when update was completed, regardless of success or failure"
@@ -1275,7 +1295,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
     t.text "sms_notification_content", comment: "Full SMS Text Content of Notification"
-    t.string "sms_notification_external_id"
+    t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
@@ -2028,6 +2048,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
   add_foreign_key "membership_requests", "users", column: "decider_id"
   add_foreign_key "membership_requests", "users", column: "requestor_id"
   add_foreign_key "messages", "users"
+  add_foreign_key "metrics", "users"
   add_foreign_key "mpi_update_person_events", "api_keys"
   add_foreign_key "nod_date_updates", "appeals"
   add_foreign_key "nod_date_updates", "users"
