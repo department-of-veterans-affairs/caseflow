@@ -2,25 +2,16 @@
 
 # This .rb file contains the methods to resolve stuck duplicateEP jobs that are tracked in Metabase
 # Use the manual remediation on the 20 remaining claims in UAT.
-# 'x = WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new' and ('x.resolve_single_review(***Insert ID***, "hlr")
-# for running the remediation for the the hlr **OR** 'x.resolve_single_review(***Insert ID***, "sc")') for a
+# 'WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new.resolve_single_review(***Insert ID***, "hlr")
+# for running the remediation for the the hlr **OR**
+# 'WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new.resolve_single_review(***Insert ID***, "sc")') for a
 # SupplimentalClaim.
-# To execute the entire array of problem claims with the duplicateEP error. Execute in the rake task method i.e.
-# execute 'sudo su -c "source /opt/caseflow-certification/caseflow-certification_env.sh;
-# cd /opt/caseflow-certification/src; bundle exec rake reviews:resolve_multiple_reviews'
-# Another way to run multiple reviews can be performed by
-# 'x = WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new' & 'x.run'
+# To fix multiple reviews, run
+# 'WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new.resolve_dup_ep'
 
 module WarRoom
   class DuppEpClaimsSyncStatusUpdateCanClr
-    def run
-      RequestStore[:current_user] = OpenStruct.new(
-        ip_address: "127.0.0.1",
-        station_id: "283",
-        css_id: "CSFLOW",
-        regional_office: "DSUSER"
-      )
-
+    def resolve_dup_ep
       if retrieve_problem_reviews.count.zero?
         Rails.logger.info("No Supplemental Claims Or Higher Level Reviews with DuplicateEP Error Found")
         return false

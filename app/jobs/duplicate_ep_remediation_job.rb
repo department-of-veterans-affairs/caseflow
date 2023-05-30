@@ -3,19 +3,11 @@
 class DuplicateEpRemediationJob < ApplicationJob
   queue_with_priority :low_priority
   application_attr :intake
-
   def perform
     RequestStore[:current_user] = User.system_user
 
-    WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new
-    run
+    WarRoom::DuppEpClaimsSyncStatusUpdateCanClr.new.resolve_dup_ep
   rescue StandardError => error
     log_error(error)
-  end
-
-  private
-
-  def log_error(message)
-    Rails.logger.error(message)
   end
 end

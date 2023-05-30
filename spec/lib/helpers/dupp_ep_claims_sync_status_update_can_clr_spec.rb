@@ -88,13 +88,13 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
       end
     end
 
-    describe "#run" do
+    describe "#resolve_dup_ep" do
       let(:initial_pr_count) { script.retrieve_problem_reviews.count }
       it "performs the remediation successfully" do
         allow(script).to receive(:upload_logs_to_s3).with(anything).and_return(true)
 
         expect(initial_pr_count).to eq 3
-        script.run
+        script.resolve_dup_ep
         expect(script.retrieve_problem_reviews.count).to eq 0
       end
     end
@@ -123,11 +123,11 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
       ]
     end
 
-    describe "#run" do
+    describe "#resolve_dup_ep" do
       let(:initial_pr_count) { script.retrieve_problem_reviews.count }
       it "does not perform a remediation" do
         expect(initial_pr_count).to eq 0
-        script.run
+        script.resolve_dup_ep
         expect(script.retrieve_problem_reviews.count).to eq 0
       end
     end
@@ -155,11 +155,11 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
       ]
     end
 
-    describe "#run" do
+    describe "#resolve_dup_ep" do
       let(:initial_pr_count) { script.retrieve_problem_reviews.count }
       it "no remediation is required" do
         expect(initial_pr_count).to eq 0
-        script.run
+        script.resolve_dup_ep
         expect(script.retrieve_problem_reviews.count).to eq 0
       end
     end
