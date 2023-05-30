@@ -19,7 +19,6 @@ class UploadDocumentToVbmsJob < CaseflowJob
     @initiator = User.find_by_css_id(initiator_css_id)
     add_context_to_sentry
     UploadDocumentToVbms.new(document: document).call
-    byebug
     queue_mail_request_job(mail_request) unless mail_request.nil?
   end
 
