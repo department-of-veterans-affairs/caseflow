@@ -30,7 +30,7 @@ class InitialTasksFactory
       end
       # if changes to mst or pact, create IssueUpdateTask
       if @appeal.mst? || @appeal.pact?
-        create_issue_update_task
+        create_establishment_task
       end
     end
     maybe_create_translation_task
@@ -205,26 +205,32 @@ class InitialTasksFactory
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
   end
 
-  def create_issue_update_task
-    @appeal.request_issues.each do |issue|
-      next unless issue.mst_status || issue.pact_status
+  # def create_establishment_task
+  #   @appeal.request_issues.each do |issue|
+  #     task = EstablishmentTask.create!(
+  #       appeal: @appeal,
+  #       parent: @root_task,
+  #       assigned_to: RequestStore[:current_user],
+  #       assigned_by: RequestStore[:current_user]
+  #     )
+  #     task.format_instructions(
+  #       issue[:nonrating_issue_category],
+  #       issue[:mst_status],
+  #       issue[:pact_status]
+  #     )
+  #     task.completed!
+  #   end
+  # end
 
-      task = IssuesUpdateTask.create!(
-        appeal: @appeal,
-        parent: @root_task,
-        assigned_to: RequestStore[:current_user],
-        assigned_by: RequestStore[:current_user]
-      )
-      task.format_instructions(
-        issue.nonrating_issue_category,
-        false,
-        false,
-        issue.mst_status,
-        issue.pact_status,
-        issue.mst_status_update_reason_notes,
-        issue.pact_status_update_reason_notes
-      )
-      task.completed!
-    end
+  def create_establishment_task
+    task = EstablishmentTask.create!(
+      appeal: @appeal,
+      parent: @root_task,
+      assigned_by: RequestStore[:current_user],
+      assigned_to: RequestStore[:current_user],
+      completed_by: RequestStore[:current_user],
+    )
+    task.format_instructions(@appeal.request_issues)
+    task.completed!
   end
 end
