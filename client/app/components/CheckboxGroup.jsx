@@ -1,7 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import TextField from './TextField';
+import {
+  INTAKE_EDIT_ISSUE_CHANGE_MESSAGE
+} from 'app/../COPY';
 
-const renderCheckbox = (option, onChange, values = {}, disabled = false) => <div className="checkbox" key={option.id}>
+const renderCheckbox = (option, onChange, values = {}, disabled = false, justifications, filterIssuesForJustification) => <div className="checkbox" key={option.id}>
   <input
     name={option.id}
     onChange={onChange}
@@ -13,6 +17,14 @@ const renderCheckbox = (option, onChange, values = {}, disabled = false) => <div
   <label htmlFor={option.id}>
     {option.label}
   </label>
+  {option.requiresJustification && values[option.id] &&
+
+        <TextField
+        name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
+        defaultValue={filterIssuesForJustification(justifications, option.id)[0].justification}
+        required
+        onChange={filterIssuesForJustification(justifications, option.id)[0].justificationOnChange} />
+  }
 </div>;
 
 export default class CheckboxGroup extends React.Component {
@@ -35,7 +47,9 @@ export default class CheckboxGroup extends React.Component {
       getCheckbox,
       styling,
       strongLabel,
-      disableAll
+      disableAll,
+      justifications,
+      filterIssuesForJustification
     } = this.props;
 
     const labelContents = (
@@ -62,7 +76,7 @@ export default class CheckboxGroup extends React.Component {
         {strongLabel ? <strong>{labelContents}</strong> : labelContents}
       </legend>
       {errorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
-      {options.map((option) => getCheckbox(option, onChange, values, disableAll))}
+      {options.map((option) => getCheckbox(option, onChange, values, disableAll, justifications, filterIssuesForJustification))}
     </fieldset>;
   }
 }
@@ -83,7 +97,8 @@ CheckboxGroup.propTypes = {
       label: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.node
-      ])
+      ]),
+      requiresJustification: PropTypes.bool
     })
   ).isRequired,
   onChange: PropTypes.func.isRequired,
@@ -95,5 +110,14 @@ CheckboxGroup.propTypes = {
   getCheckbox: PropTypes.func,
   styling: PropTypes.object,
   strongLabel: PropTypes.bool,
-  disableAll: PropTypes.bool
+  disableAll: PropTypes.bool,
+  justifications: PropTypes.arrayOf(
+    PropTypes.shape({
+      pactJustification: PropTypes.string,
+      mstJustification: PropTypes.string,
+      pactJustificationOnChange: PropTypes.func,
+      mstJustificationOnChange: PropTypes.func,
+    })
+  ),
+  filterIssuesForJustification: PropTypes.func,
 };

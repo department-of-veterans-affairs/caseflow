@@ -52,7 +52,7 @@ const textAreaStyle = css({
 });
 
 const specialIssuesCheckboxStyling = css({
-  columnCount: '2',
+  columnCount: '1',
   marginTop: '2%',
   maxWidth: '70%',
   '& legend': {
@@ -74,6 +74,8 @@ class SelectDispositionsView extends React.PureComponent {
       highlightModal: false,
       deleteAddedDecisionIssue: null,
       specialIssues: null,
+      mstJustification: "",
+      pactJustification: ""
     };
   }
   decisionReviewCheckoutFlow = () => this.props.checkoutFlow === 'dispatch_decision';
@@ -295,6 +297,20 @@ class SelectDispositionsView extends React.PureComponent {
     });
   }
 
+  mstJustificationOnChange = (mstJustification) => {
+    this.setState({ mstJustification });
+  }
+
+  pactJustificationOnChange = (pactJustification) => {
+    this.setState({ pactJustification });
+  }
+
+  filterIssuesForJustification = (issues, idToFilter) => {
+    return issues.filter((issue) => {
+      return issue.id === idToFilter;
+    });
+  }
+
   onCheckboxChange = (event, decision) => {
     const checkboxId = event.target.getAttribute('id');
 
@@ -327,7 +343,9 @@ class SelectDispositionsView extends React.PureComponent {
       openRequestIssueId,
       editingExistingIssue,
       deleteAddedDecisionIssue,
-      requestIdToDelete
+      requestIdToDelete,
+      mstJustification,
+      pactJustification
     } = this.state;
     const connectedRequestIssues = appeal.issues.filter((issue) => {
       return decisionIssue && decisionIssue.request_issue_ids.includes(issue.id);
@@ -475,6 +493,19 @@ class SelectDispositionsView extends React.PureComponent {
           values={specialIssuesValues}
           styling={specialIssuesCheckboxStyling}
           onChange={(event) => this.onCheckboxChange(event, decisionIssue)}
+          filterIssuesForJustification={this.filterIssuesForJustification}
+          justifications={[
+            {
+              id: 'mstStatus',
+              justification: mstJustification,
+              justificationOnChange: this.mstJustificationOnChange,
+            },
+            {
+              id: 'pactStatus',
+              justification: pactJustification,
+              justificationOnChange: this.pactJustificationOnChange,
+            },
+          ]}
         />
         <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_DESCRIPTION}</h3>
         <p {...exampleDiv} {...paragraphH3SiblingStyle}>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_EXAMPLE}</p>
