@@ -10,11 +10,13 @@ class CaseReviewsController < ApplicationController
   end
 
   def complete
-    result = CompleteCaseReview.new(case_review_class: case_review_class, params: complete_params).call
+    new_complete_case_review = CompleteCaseReview.new(case_review_class: case_review_class, params: complete_params)
+    result = new_complete_case_review.call
     if result.success?
       case_review = result.extra[:case_review]
+      appeal = Appeal.find(case_review.appeal_id)
       unless case_review.appeal.is_a?(LegacyAppeal)
-        update_request_issues_for_mst_and_pact
+        update_request_issues_for_mst_and_pact(appeal)
       end
       render json: {
         task: case_review,
@@ -47,9 +49,12 @@ class CaseReviewsController < ApplicationController
     return judge_case_review_params if case_review_class == "JudgeCaseReview"
   end
 
-  def update_request_issues_for_mst_and_pact
+  def update_request_issues_for_mst_and_pact(appeal)
     params[:tasks][:issues].each do |issue|
       RequestIssue.find(issue[:request_issue_ids]).each do |ri|
+        if ri.mst_status != issue[:mstStatus] || ri.pact_status != issue[:pactStatus]
+          create_issue_update_task(ri, issue, appeal)
+        end
         ri.update(mst_status: issue[:mstStatus], pact_status: issue[:pactStatus])
       end
     end
@@ -97,5 +102,28 @@ class CaseReviewsController < ApplicationController
         :post_aoj
       ]
     ]
+  end
+
+  def create_issue_update_task(original_issue, incoming_issue_update, appeal)
+    root_task = RootTask.find_or_create_by!(appeal: appeal)
+    # @appeal.request_issues.each do |issue|
+    #   next unless issue.mst_status || issue.pact_status
+    task = IssuesUpdateTask.create!(
+      appeal: appeal,
+      parent: root_task,
+      assigned_to: RequestStore[:current_user],
+      assigned_by: RequestStore[:current_user]
+    )
+    task.format_instructions(
+      original_issue.nonrating_issue_category,
+      original_issue.mst_status,
+      original_issue.pact_status,
+      incoming_issue_update[:mstStatus],
+      incoming_issue_update[:pactStatus]
+      # incoming_issue_update.mst_status_update_reason_notes,
+      # incoming_issue_update.pact_status_update_reason_notes
+    )
+    task.completed!
+    # end
   end
 end
