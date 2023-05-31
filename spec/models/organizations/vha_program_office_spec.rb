@@ -17,4 +17,24 @@ describe VhaProgramOffice, :postgres do
       expect(program_office.can_receive_task?(doc_task)).to eq(false)
     end
   end
+
+  describe ".queue_tabs" do
+    it "returns the expected tabs for use in the VHA Program Office organization's queue" do
+      expect(program_office.queue_tabs).to match_array(
+        [
+          VhaProgramOfficeAssignedTasksTab,
+          VhaProgramOfficeInProgressTasksTab,
+          VhaProgramOfficeReadyForReviewTasksTab,
+          VhaProgramOfficeOnHoldTasksTab,
+          VhaProgramOfficeCompletedTasksTab
+        ]
+      )
+    end
+  end
+
+  describe ".COLUMN_NAMES" do
+    it "VHA Program Office organization queue tabs have 7 columns by default" do
+      expect(VhaProgramOffice::COLUMN_NAMES.count).to eq 7
+    end
+  end
 end
