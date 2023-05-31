@@ -16,13 +16,11 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
       end
     end
 
-    let(:create_appeals) do
-      cases.each do |vacols_case|
+    let!(:appeals) do
+      cases.map do |vacols_case|
         create(:legacy_appeal, :with_root_task, :with_veteran, vacols_case: vacols_case)
       end
     end
-
-    let(:appeals) { LegacyAppeal.first(10) }
 
     let!(:notifications) do
       appeals.each do |appeal|
