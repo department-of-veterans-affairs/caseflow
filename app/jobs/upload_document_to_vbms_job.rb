@@ -14,7 +14,6 @@ class UploadDocumentToVbmsJob < CaseflowJob
   def perform(document_id:, initiator_css_id:, mail_request: nil, application: "idt")
     RequestStore.store[:application] = application
     RequestStore.store[:current_user] = User.system_user
-
     @document = VbmsUploadedDocument.find_by(id: document_id)
     @initiator = User.find_by_css_id(initiator_css_id)
     add_context_to_sentry
@@ -52,6 +51,6 @@ class UploadDocumentToVbmsJob < CaseflowJob
 
   def log_info(info_message)
     uuid = SecureRandom.uuid
-    Rails.logger.info(info_message + "ID: " + uuid)
+    Rails.logger.info(info_message + " ID: " + uuid)
   end
 end

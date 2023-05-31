@@ -86,7 +86,7 @@ class UploadDocumentToVbms
 
   def log_info(info_message)
     uuid = SecureRandom.uuid
-    Rails.logger.info(info_message + "ID: " + uuid)
+    Rails.logger.info(info_message + " ID: " + uuid)
   end
 
   # Purpose: Get the s3_sub_bucket based on the document type
