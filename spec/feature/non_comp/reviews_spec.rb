@@ -355,7 +355,7 @@ feature "NonComp Reviews Queue", :postgres do
         # Veteran SSN ascending
         ssn.click
         expect(page).to have_current_path(
-          "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=desc"
+          "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=asc"
         )
 
         table_rows = current_table_rows
@@ -366,7 +366,7 @@ feature "NonComp Reviews Queue", :postgres do
         # Veteran SSN descending
         ssn.click
         expect(page).to have_current_path(
-          "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=asc"
+          "#{BASE_URL}?tab=in_progress&page=1&sort_by=veteranSsnColumn&order=desc"
         )
 
         table_rows = current_table_rows
