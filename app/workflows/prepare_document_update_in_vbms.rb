@@ -2,6 +2,7 @@
 
 class PrepareDocumentUpdateInVbms
   include ActiveModel::Model
+  include VbmsDocumentTransactionConcern
 
   validates :veteran_file_number, :file, presence: true
   validate :valid_document_type
@@ -100,24 +101,5 @@ class PrepareDocumentUpdateInVbms
     {
       message: errors.full_messages.join(", ")
     }
-  end
-
-  def throw_error_if_file_number_not_match_bgs
-    bgs_file_number = nil
-    if !veteran_file_number.nil?
-      bgs_file_number = bgs_service.fetch_file_number_by_ssn(veteran_ssn)
-    end
-    if bgs_service.fetch_veteran_info(veteran_file_number).nil?
-      if !bgs_file_number.blank? && !bgs_service.fetch_veteran_info(bgs_file_number).nil?
-        bgs_file_number
-      else
-        fail(
-          Caseflow::Error::BgsFileNumberMismatch,
-          file_number: veteran_file_number, user_id: user.id
-        )
-      end
-    else
-      veteran_file_number
-    end
   end
 end

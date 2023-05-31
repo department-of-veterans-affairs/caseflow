@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class UploadDocumentToVbms
+  include VbmsDocumentTransactionConcern
+
   delegate :document_type, :document_subject, :document_name, to: :document
 
   def initialize(document:)
@@ -64,13 +66,6 @@ class UploadDocumentToVbms
 
   def set_processed_at_to_current_time
     document.update!(processed_at: Time.zone.now)
-  end
-
-  def persist_efolder_version_info(response)
-    document.update!(
-      document_version_reference_id: response.dig(:upload_document_response, :@new_document_version_ref_id),
-      document_series_reference_id: response.dig(:upload_document_response, :@document_series_ref_id)
-    )
   end
 
   def save_rescued_error!(error)
