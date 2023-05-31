@@ -55,8 +55,7 @@
       mst_identification: FeatureToggle.enabled?(:mst_identification, user: current_user),
       pact_identification: FeatureToggle.enabled?(:pact_identification, user: current_user),
       legacy_mst_pact_identification: FeatureToggle.enabled?(:legacy_mst_pact_identification, user: current_user),
-      cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user),
-      cc_vacatur_visibility: FeatureToggle.enabled?(:cc_vacatur_visibility, user: current_user)
+      cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user)
     }
   }) %>
 <% end %>
