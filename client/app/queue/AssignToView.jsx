@@ -55,6 +55,7 @@ class AssignToView extends React.Component {
       modalDisableButton: true
     };
   }
+  
 
   componentDidMount = () => this.props.resetSuccessMessages();
 
