@@ -15,7 +15,7 @@ class EndProductEstablishment < CaseflowRecord
   has_many :end_product_code_updates
   has_many :effectuations, class_name: "BoardGrantEffectuation"
   has_many :end_product_updates
-  has_one :vbms_ext_claim, foreign_key: "CLAIM_ID"
+  has_one :vbms_ext_claim, foreign_key: "claim_id", primary_key: "reference_id"
 
   # allow @veteran to be assigned to save upstream calls
   attr_writer :veteran
