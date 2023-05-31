@@ -13,7 +13,11 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
   def create
     if params["recipient_info"].present?
-      new_mailing = MailRequest.new(params).call
+      params["recipient_info"].map do |recipient|
+        mail_req = MailRequest.new(recipient).call
+        #  Need to do soemthing with this value at this point in time
+        #  >> mail_req.vbms_distribution_id if I want to return the ids from this file.
+      end
     end
     appeal = nil
     # Find veteran from appeal id and check with db
@@ -36,9 +40,17 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     result = PrepareDocumentUploadToVbms.new(params, current_user, appeal).call
 
     if result.success?
-      render json: { message: "Document successfully queued for upload." }
+      upload_result_successful
     else
       render json: result.errors[0], status: :bad_request
     end
+  end
+
+  private
+  def upload_result_successful
+    render json: {
+      message: "Document successfully queued for upload.",
+      distribution_ids: "1, 2, 4"
+    }
   end
 end
