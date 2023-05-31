@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_10_143457) do
+ActiveRecord::Schema.define(version: 2021_08_10_115459) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,11 +38,11 @@ ActiveRecord::Schema.define(version: 2022_01_10_143457) do
     t.integer "decision_status_sort_key", null: false, comment: "Integer for sorting status in display order"
     t.string "docket_number", limit: 50, null: false, comment: "Docket number"
     t.date "docket_range_date", comment: "Date that appeal was added to hearing docket range."
-    t.string "docket_type", limit: 50, comment: "Docket type"
+    t.string "docket_type", limit: 50, null: false, comment: "Docket type"
     t.datetime "established_at", null: false, comment: "Timestamp for when the appeal was intaken successfully"
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review."
     t.string "poa_participant_id", limit: 20, comment: "Used to identify the power of attorney (POA)"
-    t.date "receipt_date", comment: "Receipt date of the NOD form"
+    t.date "receipt_date", null: false, comment: "Receipt date of the NOD form"
     t.string "status", limit: 32, null: false, comment: "Calculated BVA status based on Tasks"
     t.date "target_decision_date", comment: "If the appeal docket is direct review, this sets the target decision date for the appeal, which is one year after the receipt date."
     t.datetime "updated_at", null: false, comment: "Updated timestamp for the ETL record"
@@ -404,8 +404,6 @@ ActiveRecord::Schema.define(version: 2022_01_10_143457) do
 
   create_table "organizations", comment: "Copy of Organizations table", force: :cascade do |t|
     t.boolean "accepts_priority_pushed_cases", comment: "Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases"
-    t.boolean "ama_only_push", default: false, comment: "whether a JudgeTeam should only get AMA appeals during the PushPriorityAppealsToJudgesJob"
-    t.boolean "ama_only_request", default: false, comment: "whether a JudgeTeam should only get AMA appeals when requesting more cases"
     t.datetime "created_at"
     t.string "name"
     t.string "participant_id", comment: "Organizations BGS partipant id"

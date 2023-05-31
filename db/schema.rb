@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_05_31_144855) do
+ActiveRecord::Schema.define(version: 2023_03_17_164013) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1341,17 +1341,6 @@ ActiveRecord::Schema.define(version: 2023_05_31_144855) do
     t.index ["updated_at"], name: "index_post_decision_motions_on_updated_at"
   end
 
-  create_table "priority_end_product_sync_queue", comment: "Queue of End Product Establishments that need to sync with VBMS", force: :cascade do |t|
-    t.uuid "batch_id", null: false, comment: "A unique UUID for the batch the record is executed with"
-    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the queue"
-    t.integer "end_product_establishment_id", null: false, comment: "ID of end_product_establishment record to be synced"
-    t.string "error_messages", default: [], comment: "Array of Error Message(s) containing Batch ID and specific error if a failure occurs", array: true
-    t.datetime "last_batched_at", comment: "Date and Time the record was last batched"
-    t.string "status", default: "PENDING", null: false, comment: "A status to indicate what state the record is in such as PROCESSING and PROCESSED"
-    t.index ["batch_id"], name: "index_priority_end_product_sync_queue_on_batch_id"
-    t.index ["end_product_establishment_id"], name: "index_priority_end_product_sync_queue_on_epe_id", unique: true
-  end
-
   create_table "ramp_closed_appeals", id: :serial, comment: "Keeps track of legacy appeals that are closed or partially closed in VACOLS due to being transitioned to a RAMP election.  This data can be used to rollback the RAMP Election if needed.", force: :cascade do |t|
     t.datetime "closed_on", comment: "The datetime that the legacy appeal was closed in VACOLS and opted into RAMP."
     t.datetime "created_at"
@@ -2048,7 +2037,6 @@ ActiveRecord::Schema.define(version: 2023_05_31_144855) do
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "appeals"
   add_foreign_key "post_decision_motions", "tasks"
-  add_foreign_key "priority_end_product_sync_queue", "end_product_establishments", column: "id", name: "priority_end_product_sync_queue_end_product_establishment_id_fk"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "users"
