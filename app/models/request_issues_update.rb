@@ -312,7 +312,8 @@ class RequestIssuesUpdate < CaseflowRecord
         appeal: before_issue.decision_review,
         parent: RootTask.find_by(appeal: before_issue.decision_review),
         assigned_to: RequestStore[:current_user],
-        assigned_by: RequestStore[:current_user]
+        assigned_by: RequestStore[:current_user],
+        completed_by: RequestStore[:current_user]
       )
       # format the task instructions and close out
       task.format_instructions(
