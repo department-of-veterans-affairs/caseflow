@@ -110,6 +110,7 @@ class CaseReviewsController < ApplicationController
     task = IssuesUpdateTask.create!(
       appeal: appeal,
       parent: root_task,
+      assigned_to: RequestStore[:current_user],
       assigned_by: RequestStore[:current_user],
       completed_by: RequestStore[:current_user]
     )
