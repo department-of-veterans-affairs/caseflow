@@ -33,6 +33,7 @@ const getAction = (props) => {
   return props.task && props.task.availableActions.length > 0 ? selectedAction(props) : null;
 };
 
+
 class AssignToView extends React.Component {
   constructor(props) {
     super(props);
