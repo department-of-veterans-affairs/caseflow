@@ -5,9 +5,8 @@ describe UploadDocumentToVbmsJob, :postgres do
     let(:document) { create(:vbms_uploaded_document) }
     let(:service) { instance_double(UploadDocumentToVbms) }
     let(:user) { create(:user) }
-    # let(:mail_request) { instance_double(MailRequest) }
-    let(:mail_request) { { name: "Jeff" } }
-    let(:mail_request_job) { class_double("MailRequestJob", :perform_later).as_stubbed_const }
+    let(:mail_request) { instance_double(MailRequest) }
+    let(:mail_request_job) { class_double(MailRequestJob) }
 
     let(:params) do
       { document_id: document.id,
