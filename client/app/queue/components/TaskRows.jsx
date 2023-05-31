@@ -359,22 +359,17 @@ class TaskRows extends React.PureComponent {
     const formatEstablishmentBreaks = (text = '') => {
       const divStyle = { marginTop: '1rem'}
       const hStyle = { marginTop: '30px', marginBottom: '0rem', fontWeight: 'bold' };
-      console.log(text);
       if (Array.isArray(text)) {
         const content = text.map((issue, index) =>
           <div key={index}>
             <br />
             <b>Added Issue:</b>
             <br />
-            <br />
-            <dd>{issue[0]}</dd>
-            <br />
-            <dd>{issue[1]}</dd>
-            {/* No break and horizontal rule after the last issue */}
-            {index === (text.length - 1) ?
-              "" :
+            <p>{issue[0]}</p>
+            <p>{issue[1]}</p>
+            {/* No horizontal rule after the last issue */}
+            {index != (text.length - 1) &&
               <React.Fragment>
-                <br />
                 <hr />
               </React.Fragment>
               }

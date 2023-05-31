@@ -11,8 +11,8 @@ class EstablishmentTask < Task
     # format the instructions by loading an array and adding it to the instructions
     added_issue_format = []
     request_issues.each do |issue|
-      comment = "#{format_special_issues_text(issue.mst_status, issue.pact_status)}"
-      added_issue_format << [issue.nonrating_issue_category, comment]
+      special_issue_status = "#{format_special_issues_text(issue.mst_status, issue.pact_status)}"
+      added_issue_format << [format_description_text(issue), special_issue_status]
     end
     # add edit_issue_format into the instructions array for the task
     instructions << added_issue_format
@@ -21,6 +21,10 @@ class EstablishmentTask < Task
   end
 
   private
+
+  def format_description_text(issue)
+    issue.nonrating_issue_description || issue.contested_issue_description
+  end
 
   def format_special_issues_text(mst_status, pact_status)
     # format the special issues comment to display the change in the special issues status(es)
