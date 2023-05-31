@@ -191,7 +191,7 @@ fresh:  ## https://github.com/imsky/git-fresh - updates local master to match or
 
 reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable feature flags
 
-reset-dbs: audit-remove external-db-remove ## Resets Caseflow and ETL database schemas
+reset-dbs: ## Resets Caseflow and ETL database schemas
 	make audit-remove
 	make external-db-remove
 	DB=etl bundle exec rake db:drop db:create db:schema:load

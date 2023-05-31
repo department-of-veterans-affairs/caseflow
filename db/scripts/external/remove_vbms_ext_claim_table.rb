@@ -4,4 +4,6 @@ require "pg"
 
 conn = CaseflowRecord.connection
 
-conn.execute("drop table if exists public.vbms_ext_claim;")
+conn.execute(
+  "drop table IF EXISTS public.vbms_ext_claim;"
+)
