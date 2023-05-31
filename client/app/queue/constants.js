@@ -97,7 +97,6 @@ export const marginRight = (margin) => css({ marginRight: `${margin}rem` });
 
 export const paddingLeft = (padding) => css({ paddingLeft: `${padding}rem` });
 
-export const slimHeight = css({ height: '4.5rem' });
 export const setHeight = (height) => css({ height: `${height}rem` });
 
 export const CATEGORIES = {
@@ -178,9 +177,62 @@ export const PAGE_TITLES = {
   REMANDS: {
     JUDGE: 'Review Remand Reasons',
     ATTORNEY: 'Select Remand Reasons'
-  }
+  },
+  REVIEW_CASES: 'Review Cases',
+  UNASSIGED_CASES: 'Unassgined Cases',
+  CASE_DETAILS: 'Case Details',
+  DRAFT_DECISION: 'Draft Decision',
+  EVALUATE_DECISION: 'Evaluate Decision',
+  ADD_COLOCATED_TASK: 'Add Colocated Task',
+  ADD_CAVC_REMAND: 'Add Cavc Remand',
+  EDIT_CAVC_REMAND: 'Edit Cavc Remand',
+  ORGANIZATION_USERS: 'Organization Users',
+  ORGANIZATION_QUEUE: 'Organization Queue',
+  EDIT_APPELLANT_INFORMATION: 'Edit Appellant Information',
+  EDIT_POA_INFORMATION: 'Edit POA Information',
+  TEAM_MANAGEMENT: 'Team Management',
+  USER_MANAGEMENT: 'User Management',
+  MOTION_TO_VACATE: {
+    ADDRESS_MOTION_TO_VACATE: 'Address Motion to Vacate',
+    RETURN_TO_LITIGATION_SUPPORT: 'Return to Litigation Support'
+  },
+  SUBSTITUTE_APPELLANT: 'Substitute Appellant',
+  MARK_TASK_COMPLETE: 'Mark Task Complete',
+  READY_FOR_REVIEW: 'Ready for review',
+  RETURN_TO_BOARD_INTAKE: 'Return to Board Intake',
+  ASSIGN_TO_PULAC_CERULLO: 'Assign to Pulac-Cerullo',
+  CANCEL_AND_ASSIGN_TO_RO: 'Cancel Task and Assign Regional Office',
+  SEND_TO_SCHEDULE_VETERAN_LIST: 'Send to Schedule Veteran List',
+  CANCEL_TASK: 'Cancel Task',
+  ASSIGN_HEARING: 'Assign Hearing',
+  REMOVE_HEARING_TO_CORRECT_ERROR: 'Remove hearing to correct a scheduling error',
+  POSTPONE_HEARING: 'Postpone Hearing',
+  CHANGE_TASK_TYPE: 'Change Task Type',
+  CONVERT_HEARING_TO_VIRTUAL: 'Change Hearing Request Type to Virtual',
+  CONVERT_HEARING_TO_VIDEO: 'Change Hearing Request Type to Video',
+  CONVERT_HEARING_TO_CENTRAL: 'Change Hearing Request Type to Central'
+
 };
 
 export const CUSTOM_HOLD_DURATION_TEXT = 'Custom';
 export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, CUSTOM_HOLD_DURATION_TEXT];
 export const VHA_HOLD_DURATIONS = [15, 30, CUSTOM_HOLD_DURATION_TEXT];
+
+export const DECISION_SPECIAL_ISSUES = [
+  {
+    id: 'blue_water',
+    label: 'Blue Water',
+  },
+  {
+    id: 'burn_pit',
+    label: 'Burn Pit',
+  },
+  {
+    id: 'mstStatus',
+    label: 'Military Sexual Trauma (MST)',
+  },
+  {
+    id: 'pactStatus',
+    label: 'PACT Act',
+  },
+];

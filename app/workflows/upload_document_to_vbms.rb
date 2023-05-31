@@ -55,12 +55,22 @@ class UploadDocumentToVbms
   def upload_to_vbms!
     return if document.uploaded_to_vbms_at
 
-    VBMSService.upload_document_to_vbms_veteran(file_number, self)
+    upload_response = VBMSService.upload_document_to_vbms_veteran(file_number, self)
+
+    persist_efolder_version_info(upload_response)
+
     document.update!(uploaded_to_vbms_at: Time.zone.now)
   end
 
   def set_processed_at_to_current_time
     document.update!(processed_at: Time.zone.now)
+  end
+
+  def persist_efolder_version_info(response)
+    document.update!(
+      document_version_reference_id: response.dig(:upload_document_response, :@new_document_version_ref_id),
+      document_series_reference_id: response.dig(:upload_document_response, :@document_series_ref_id)
+    )
   end
 
   def save_rescued_error!(error)

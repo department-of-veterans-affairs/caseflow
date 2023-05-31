@@ -22,7 +22,6 @@ export const Checkbox = (props) => {
   } = props;
 
   const handleChange = (event) => onChange?.(event.target.checked, event);
-
   const wrapperClasses = classnames(`checkbox-wrapper-${name}`, {
     'cf-form-checkboxes': !unpadded,
     'usa-input-error': Boolean(errorMessage),
@@ -42,7 +41,7 @@ export const Checkbox = (props) => {
           defaultChecked={defaultValue}
           checked={value}
           disabled={disabled}
-          aria-label={ariaLabel || name}
+          aria-label={ariaLabel}
           ref={inputRef}
           {...inputProps}
         />
