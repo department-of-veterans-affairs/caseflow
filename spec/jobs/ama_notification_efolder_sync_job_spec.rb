@@ -12,10 +12,8 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
     let!(:appeals) { create_list(:appeal, 10, :active) }
 
     let!(:notifications) do
-      appeals.each do |appeal|
-        if appeal.id == appeals[3].id || appeal.id == appeals[7].id
-          next
-        end
+      appeals.each_with_index do |appeal, index|
+        next if [3, 7].include? index
 
         Notification.create!(
           appeals_id: appeal.uuid,
@@ -41,15 +39,9 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
     let!(:first_run_vbms_document_ids) { [appeals[6].id, appeals[0].id, appeals[1].id, appeals[2].id, appeals[4].id] }
     let!(:second_run_vbms_document_ids) { first_run_vbms_document_ids + [appeals[8].id, appeals[9].id, appeals[4].id] }
 
-    before do
-      AmaNotificationEfolderSyncJob::BATCH_LIMIT = 5
-      notifications
-      make_appeals_outcoded
-    end
+    before(:all) { AmaNotificationEfolderSyncJob::BATCH_LIMIT = 5 }
 
-    after do
-      DatabaseCleaner.clean_with(:truncation)
-    end
+    after(:all) { DatabaseCleaner.clean_with(:truncation) }
 
     context "first run" do
       it "get all ama appeals that have been recently outcoded" do
