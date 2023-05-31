@@ -86,12 +86,12 @@ describe('ColocatedTaskListView', () => {
 
       await waitFor(() => {
         expect(
-          screen.getByRole('cell', {
+          screen.getByRole('gridcell', {
             name: new RegExp(task1.veteran_file_number, 'i'),
           })
         ).toBeInTheDocument();
         expect(
-          screen.getByRole('cell', {
+          screen.getByRole('gridcell', {
             name: new RegExp(task2.veteran_file_number, 'i'),
           })
         ).toBeInTheDocument();
@@ -106,7 +106,7 @@ describe('ColocatedTaskListView', () => {
       const row = screen.getByRole('row', {
         name: new RegExp(task.veteran_file_number, 'i'),
       });
-      const cells = within(row).getAllByRole('cell');
+      const cells = within(row).getAllByRole('gridcell');
 
       const [
         hearings,
@@ -156,7 +156,7 @@ describe('ColocatedTaskListView', () => {
       const row = screen.getByRole('row', {
         name: new RegExp(task.veteran_file_number, 'i'),
       });
-      const cells = within(row).getAllByRole('cell');
+      const cells = within(row).getAllByRole('gridcell');
 
       const numberDaysOnHold = cells[5];
 
@@ -180,7 +180,7 @@ describe('ColocatedTaskListView', () => {
       // Wait for new content to appear
       await waitFor(() => {
         expect(
-          screen.getByRole('cell', {
+          screen.getByRole('gridcell', {
             name: new RegExp(task1.veteran_file_number, 'i'),
           })
         ).toBeInTheDocument();
@@ -214,12 +214,12 @@ describe('ColocatedTaskListView', () => {
       // Wait for new content to appear
       await waitFor(() => {
         expect(
-          screen.getByRole('cell', {
+          screen.getByRole('gridcell', {
             name: new RegExp(task1.veteran_file_number, 'i'),
           })
         ).toBeInTheDocument();
         expect(
-          screen.getByRole('cell', {
+          screen.getByRole('gridcell', {
             name: new RegExp(task2.veteran_file_number, 'i'),
           })
         ).toBeInTheDocument();
@@ -246,7 +246,7 @@ describe('ColocatedTaskListView', () => {
         name: new RegExp(task.veteran_file_number, 'i'),
       });
 
-      const cells = within(row).getAllByRole('cell');
+      const cells = within(row).getAllByRole('gridcell');
 
       const [
         hearings,
@@ -313,7 +313,7 @@ describe('ColocatedTaskListView', () => {
       const row = screen.getByRole('row', {
         name: new RegExp(task.veteran_file_number, 'i'),
       });
-      const cells = within(row).getAllByRole('cell');
+      const cells = within(row).getAllByRole('gridcell');
 
       const numberDaysOnHold = cells[5];
 
