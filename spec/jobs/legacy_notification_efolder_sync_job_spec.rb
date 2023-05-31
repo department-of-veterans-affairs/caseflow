@@ -54,7 +54,7 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
 
     before(:all) { LegacyNotificationEfolderSyncJob::BATCH_LIMIT = 5 }
 
-    after(:all) { DatabaseCleaner.clean_with(:truncation) }
+    # after(:all) { DatabaseCleaner.clean_with(:truncation) }
 
     context "first run" do
       it "get all legacy appeals that have been recently outcoded" do
