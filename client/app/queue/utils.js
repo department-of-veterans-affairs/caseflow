@@ -198,6 +198,8 @@ const appealAttributesFromRawTask = (task) => ({
   veteranFullName: task.attributes.veteran_full_name,
   veteranFileNumber: task.attributes.veteran_file_number,
   isPaperCase: task.attributes.paper_case,
+  mst: task.attributes.mst,
+  pact: task.attributes.pact
 });
 
 const extractAppealsFromTasks = (tasks) => {
@@ -275,6 +277,8 @@ export const prepareLegacyTasksForStore = (tasks) => {
           task.attributes.latest_informal_hearing_presentation_task
             ?.received_at,
       },
+      mst: task.attributes.mst,
+      pact: task.attributes.pact
     };
   });
 
@@ -317,8 +321,6 @@ export const prepareAppealIssuesForStore = (appeal) => {
   if (appeal.attributes.docket_name === 'legacy') {
     issues = issues.map((issue) => ({
       id: issue.vacols_sequence_id,
-      mst_status: false,
-      pact_status: false,
       ...issue,
     }));
   }
@@ -439,6 +441,8 @@ export const prepareAppealForStore = (appeals) => {
         appeal.attributes.readable_original_hearing_request_type,
       vacateType: appeal.attributes.vacate_type,
       cavcRemandsWithDashboard: appeal.attributes.cavc_remands_with_dashboard,
+      mst: appeal.attributes.mst,
+      pact: appeal.attributes.pact
     };
 
     return accumulator;
@@ -513,6 +517,8 @@ export const prepareAppealForStore = (appeals) => {
       remandJudgeName: appeal.attributes.remand_judge_name,
       hasNotifications: appeal.attributes.has_notifications,
       locationHistory: prepareLocationHistoryForStore(appeal),
+      mst: appeal.attributes.mst,
+      pact: appeal.attributes.pact
     };
 
     return accumulator;
@@ -611,6 +617,36 @@ export const getIssueDiagnosticCodeLabel = (code) => {
   }
 
   return `${code} - ${readableLabel.staff_description}`;
+};
+
+export const getMstPactStatus = (issue) => {
+  const mstStatus = issue.mstStatus;
+  const pactStatus = issue.pactStatus;
+
+  if (!mstStatus && !pactStatus) {
+    return 'None';
+  } else if (mstStatus && pactStatus) {
+    return 'MST and PACT';
+  } else if (mstStatus) {
+    return 'MST';
+  } else if (pactStatus) {
+    return 'PACT';
+  }
+};
+
+export const getLegacyMstPactStatus = (issue) => {
+  const mstStatusLegacy = issue.legacy_appeal_vacols_mst;
+  const pactStatusLegacy = issue.legacy_appeal_vacols_pact;
+
+  if (!mstStatusLegacy && !pactStatusLegacy) {
+    return 'None';
+  } else if (mstStatusLegacy && pactStatusLegacy) {
+    return 'MST and PACT';
+  } else if (mstStatusLegacy) {
+    return 'MST';
+  } else if (pactStatusLegacy) {
+    return 'PACT';
+  }
 };
 
 // Build case review payloads for attorney decision draft submissions as well as judge decision evaluations.
