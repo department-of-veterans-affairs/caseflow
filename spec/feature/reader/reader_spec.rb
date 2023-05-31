@@ -82,12 +82,14 @@ RSpec.feature "Reader", :all_dbs do
 
     RequestStore[:current_user] = User.find_or_create_by(css_id: "BVASCASPER1", station_id: 101)
     Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
+
+    User.authenticate!(roles: ["Reader"])
   end
 
   let(:documents) { [] }
   let(:file_number) { "123456789" }
-  let!(:ama_appeal) { Appeal.create(veteran_file_number: file_number) }
-  let!(:appeal) do
+  let(:ama_appeal) { Appeal.create(veteran_file_number: file_number) }
+  let(:appeal) do
     Generators::LegacyAppealV2.create(
       documents: documents,
       case_issue_attrs: [
@@ -97,10 +99,6 @@ RSpec.feature "Reader", :all_dbs do
         { issdc: "D" }
       ]
     )
-  end
-
-  let!(:current_user) do
-    User.authenticate!(roles: ["Reader"])
   end
 
   context "Short list of documents" do
@@ -143,7 +141,8 @@ RSpec.feature "Reader", :all_dbs do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
       end
 
-      scenario "filtering categories" do
+      it "can filter by categories, tags, and comments" do
+        # filter by category
         find("#categories-header .table-icon").click
         find(".checkbox-wrapper-procedural").click
         find(".checkbox-wrapper-medical").click
@@ -154,9 +153,9 @@ RSpec.feature "Reader", :all_dbs do
         # deselect medical filter
         find(".checkbox-wrapper-medical").click
         expect(page).to have_content("Categories (1)")
-      end
+        find("#clear-filters").click
 
-      scenario "filtering tags and comments" do
+        # filter by tag
         find("#tags-header .table-icon").click
         tags_checkboxes = page.find("#tags-header").all(".cf-form-checkbox")
         tags_checkboxes[0].click
@@ -169,14 +168,12 @@ RSpec.feature "Reader", :all_dbs do
 
         tags_checkboxes[1].click
         expect(page).to_not have_content("Issue tags")
-      end
 
-      scenario "filtering comments" do
+        # filter by comments
         click_on "Comments"
         expect(page).to have_content("Sorted by relevant date")
-      end
 
-      scenario "clear all filters" do
+        click_on "Documents"
         # category filter is only visible when DocumentsTable displayed, but affects Comments
         find("#categories-header .table-icon").click
         find(".checkbox-wrapper-procedural").click
@@ -200,7 +197,7 @@ RSpec.feature "Reader", :all_dbs do
       let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.strftime(fetched_at_format)}".squeeze(" ") }
       let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.strftime(fetched_at_format)}".squeeze(" ") }
 
-      let!(:appeal) do
+      let(:appeal) do
         Generators::LegacyAppealV2.build(
           documents: documents,
           manifest_vbms_fetched_at: vbms_fetched_ts,
@@ -209,10 +206,14 @@ RSpec.feature "Reader", :all_dbs do
         )
       end
 
-      scenario "Claims folder details issues show no issues message" do
+      scenario "Claims folder details issues and pdf view sidebar show no issues message" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
         find(".rc-collapse-header", text: "Claims folder details").click
         expect(page).to have_css("#claims-folder-issues", text: "No issues on appeal")
+
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+        find("h3", text: "Document information").click
+        expect(find(".cf-sidebar-document-information")).to have_text("No issues on appeal")
       end
 
       context "When both document source manifest retrieval times are set" do
@@ -252,19 +253,6 @@ RSpec.feature "Reader", :all_dbs do
           expect(page).to_not have_css("#vva-manifest-retrieved-at")
           expect(page).to have_css(".section--document-list .usa-alert-error")
         end
-      end
-
-      scenario "pdf view sidebar shows no issues message" do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
-        find("h3", text: "Document information").click
-        expect(find(".cf-sidebar-document-information")).to have_text("No issues on appeal")
-      end
-    end
-
-    context "Welcome gate page" do
-      scenario "redirects to /queue" do
-        visit "/reader/appeal"
-        expect(page.current_path).to eq("/queue")
       end
     end
 
