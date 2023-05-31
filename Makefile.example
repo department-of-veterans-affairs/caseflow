@@ -158,6 +158,12 @@ audit: ## Create caseflow_audit schema, tables, and triggers in postgres
 audit-remove: ## Remove caseflow_audit schema, tables and triggers in postgres
 	bundle exec rails r db/scripts/audit/remove_caseflow_audit_schema.rb
 
+external-db-create:
+	bundle exec rails r db/scripts/external/create_vbms_ext_claim.rb
+
+external-db-remove:
+	bundle exec rails r db/scripts/external/remove_vbms_ext_claim.rb
+
 c:  ## Start rails console
 	bundle exec rails console
 
@@ -185,11 +191,13 @@ fresh:  ## https://github.com/imsky/git-fresh - updates local master to match or
 
 reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable feature flags
 
-reset-dbs: ## Resets Caseflow and ETL database schemas
+reset-dbs: audit-remove external-db-remove ## Resets Caseflow and ETL database schemas
 	make audit-remove
+	make external-db-remove
 	DB=etl bundle exec rake db:drop db:create db:schema:load
 	bundle exec rake db:drop db:create db:schema:load
 	make audit
+	make external-db-create
 
 seed-dbs:	## Seed all databases
 	bundle exec rake local:vacols:seed
