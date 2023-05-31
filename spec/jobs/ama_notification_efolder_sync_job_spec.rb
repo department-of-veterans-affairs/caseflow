@@ -43,11 +43,11 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
 
     context "first run" do
       it "get all ama appeals that have been recently outcoded" do
-        expect(job.send(:appeals_recently_outcoded)).to eq(first_run_outcoded_appeals)
+        expect(job.send(:appeals_recently_outcoded)).to match_array(first_run_outcoded_appeals)
       end
 
       it "get all ama appeals that have never been synced yet" do
-        expect(job.send(:appeals_never_synced)).to eq(first_run_never_synced_appeals)
+        expect(job.send(:appeals_never_synced)).to match_array(first_run_never_synced_appeals)
       end
 
       it "get all ama appeals that must be resynced" do
@@ -56,7 +56,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
 
       it "running the perform" do
         AmaNotificationEfolderSyncJob.perform_now
-        expect(VbmsUploadedDocument.first(5).pluck(:appeal_id)).to eq(first_run_vbms_document_ids)
+        expect(VbmsUploadedDocument.first(5).pluck(:appeal_id)).to match_array(first_run_vbms_document_ids)
       end
     end
 
@@ -69,7 +69,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
       end
 
       it "get all ama appeals that have been recently outcoded" do
-        expect(job.send(:appeals_recently_outcoded)).to eq(second_run_outcoded_appeals)
+        expect(job.send(:appeals_recently_outcoded)).to match_array(second_run_outcoded_appeals)
       end
 
       it "get all ama appeals that have never been synced yet" do
@@ -83,7 +83,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
           email_notification_status: "delivered"
         )
         create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "Appeal")
-        expect(job.send(:appeals_never_synced)).to eq(second_run_never_synced_appeals)
+        expect(job.send(:appeals_never_synced)).to match_array(second_run_never_synced_appeals)
       end
 
       it "get all ama appeals that must be resynced" do
@@ -98,6 +98,20 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
         )
         create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "Appeal")
         expect(job.send(:ready_for_resync)).to eq([appeals[4]])
+      end
+
+      it "ignore appeals that need to be resynced if latest notification status is 'Failure Due to Deceased" do
+        Notification.create!(
+          appeals_id: appeals[4].uuid,
+          appeals_type: "Appeal",
+          event_date: today,
+          event_type: "Appeal docketed",
+          notification_type: "Email",
+          notified_at: Time.zone.now,
+          email_notification_status: "Failure Due to Deceased"
+        )
+        create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "Appeal")
+        expect(job.send(:ready_for_resync)).to eq([])
       end
 
       it "running the perform" do

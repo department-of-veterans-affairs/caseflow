@@ -53,6 +53,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
         notifications.appeals_id = appeals.\"uuid\"::text AND \
         notifications.appeals_type = 'Appeal'")
       .active
+      .non_deceased_appellants
       .where.not(id: appeal_ids_synced)
       .group(:id)
   end
@@ -107,6 +108,8 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
           (n1.notified_at < n2.notified_at OR (n1.notified_at = n2.notified_at AND n1.id < n2.id)))
       WHERE n2.id IS NULL
         AND n1.id IS NOT NULL
+        AND (n1.email_notification_status <> 'Failure Due to Deceased'
+        OR n1.sms_notification_status <> 'Failure Due to Deceased')
       #{format_appeal_ids_sql_list(appeal_ids)}
     SQL
   end
