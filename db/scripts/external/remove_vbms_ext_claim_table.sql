@@ -1,1 +1,1 @@
-drop table if exists public.vbms_ext_claim;
+drop table IF EXISTS public.vbms_ext_claim;
