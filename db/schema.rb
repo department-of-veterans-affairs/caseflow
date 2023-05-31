@@ -220,16 +220,6 @@ ActiveRecord::Schema.define(version: 2023_05_31_132301) do
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
-  create_table "batch_processes", primary_key: "batch_id", id: :uuid, default: nil, force: :cascade do |t|
-    t.string "batch_type", limit: 50, null: false
-    t.datetime "ended_at"
-    t.integer "records_attempted", default: 0
-    t.integer "records_completed", default: 0
-    t.integer "records_failed", default: 0
-    t.datetime "started_at"
-    t.string "state", limit: 25, default: "pending", null: false
-  end
-
   create_table "bgs_attorneys", comment: "Cache of unique BGS attorney data — used for adding claimants to cases pulled from POA data", force: :cascade do |t|
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.datetime "last_synced_at", comment: "The last time BGS was checked"
@@ -793,16 +783,6 @@ ActiveRecord::Schema.define(version: 2023_05_31_132301) do
     t.index ["end_product_establishment_id"], name: "index_end_product_updates_on_end_product_establishment_id"
     t.index ["original_decision_review_type", "original_decision_review_id"], name: "index_epupdates_on_decision_review_type_and_decision_review_id"
     t.index ["user_id"], name: "index_end_product_updates_on_user_id"
-  end
-
-  create_table "ep_sync_queue", force: :cascade do |t|
-    t.decimal "claim_id", precision: 38, null: false
-    t.string "claim_status", limit: 25
-    t.datetime "claim_status_change_dt"
-    t.string "job_id", limit: 25
-    t.datetime "last_sync_attempt_dt"
-    t.integer "number_of_attmepts", default: 0
-    t.index ["claim_id"], name: "ep_sync_queue_claim_id_key", unique: true
   end
 
   create_table "form8s", id: :serial, force: :cascade do |t|
@@ -1444,14 +1424,6 @@ ActiveRecord::Schema.define(version: 2023_05_31_132301) do
     t.index ["updated_at"], name: "index_record_synced_by_jobs_on_updated_at"
   end
 
-  create_table "remand_queue", force: :cascade do |t|
-    t.uuid "batch_id"
-    t.bigint "end_product_establishment_id", null: false
-    t.string "status", limit: 25, default: "pending", null: false
-    t.index ["batch_id"], name: "remand_queue_batch_id_key", unique: true
-    t.index ["end_product_establishment_id"], name: "remand_queue_end_product_establishment_id_key", unique: true
-  end
-
   create_table "remand_reasons", force: :cascade do |t|
     t.string "code"
     t.datetime "created_at", null: false
@@ -1825,69 +1797,6 @@ ActiveRecord::Schema.define(version: 2023_05_31_132301) do
     t.index ["updated_at"], name: "index_users_on_updated_at"
   end
 
-  create_table "vbms_claim", primary_key: "CLAIMID", id: :decimal, precision: 38, comment: "This is the claim ID and the Primary Key.", force: :cascade do |t|
-    t.datetime "CLAIM_STATUS_CHANGE_DT", comment: "This is the last date that claim statuswas changed."
-    t.string "CREATED_BY_STATION_NUMBER", limit: 128
-    t.decimal "CREATED_BY_SUBJECT_ID", precision: 38
-    t.string "CREATED_BY_USER_ID", limit: 24
-    t.datetime "CREATED_TIMESTAMP", null: false, comment: "This is the date when claim VCAA indicator was created."
-    t.datetime "CURRENT_SOJ_CHANGE_DT"
-    t.datetime "EXPIRATION_TIMESTAMP", comment: "This is the soft delete date - null means our item is still alive."
-    t.datetime "LASTRECALLDT", comment: "The last date that the claim entered 499"
-    t.string "LAST_UPDATED_BY_STATION_NUMBER", limit: 128
-    t.decimal "LAST_UPDATED_BY_SUBJECT_ID", precision: 38
-    t.string "LAST_UPDATED_BY_USER_ID", limit: 24
-    t.datetime "LAST_UPDATED_TIMESTAMP", null: false, comment: "This is the date when Claim VCAA indicator was updated."
-    t.string "ORIGIN", limit: 255
-    t.string "PROCESSINGSYSTEM", limit: 25, null: false, comment: "Processed System value for claims establish via Third Party Claim Establish Service (Primarily used to determine READ-ONLY claims)."
-    t.integer "REQUIRESVCAA", limit: 2, null: false, comment: "To suppress the VCAA letter, this flag is set to False (0)."
-    t.datetime "ROLASTUPDATENONRECALLDT", comment: "date the claim was assigned to an RO other than NWQ"
-    t.string "SAMLNAMEID", limit: 255
-    t.decimal "SEGMENTEDLANE_ID", precision: 38, comment: "The segmented lane id associated to the claim."
-    t.datetime "SUSPENSE_DT_CHANGE_DT", comment: "This is the last date that suspense date was changed."
-    t.datetime "SUSPENSE_REASON_CHANGE_DT", comment: "This is the last date that suspense reason was changed."
-    t.datetime "TEAMLASTUPDATEDT"
-    t.datetime "USERLASTUPDATEDT"
-  end
-
-  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
-    t.string "ALLOW_POA_ACCESS", limit: 5
-    t.decimal "CLAIMANT_PERSON_ID", precision: 38
-    t.datetime "CLAIM_DATE"
-    t.string "CLAIM_SOJ", limit: 25
-    t.integer "CONTENTION_COUNT"
-    t.datetime "CREATEDDT", null: false
-    t.string "EP_CODE", limit: 25
-    t.datetime "ESTABLISHMENT_DATE"
-    t.datetime "EXPIRATIONDT"
-    t.string "INTAKE_SITE", limit: 25
-    t.datetime "LASTUPDATEDT", null: false
-    t.string "LEVEL_STATUS_CODE", limit: 25
-    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
-    t.string "LIFECYCLE_STATUS_NAME", limit: 50
-    t.string "ORGANIZATION_NAME", limit: 100
-    t.string "ORGANIZATION_SOJ", limit: 25
-    t.string "PAYEE_CODE", limit: 25
-    t.string "POA_CODE", limit: 25
-    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
-    t.string "PRE_DISCHARGE_IND", limit: 5
-    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
-    t.string "PRIORITY", limit: 10
-    t.string "PROGRAM_TYPE_CODE", limit: 10
-    t.string "RATING_SOJ", limit: 25
-    t.string "SERVICE_TYPE_CODE", limit: 10
-    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
-    t.string "SUBMITTER_ROLE_CODE", limit: 25
-    t.datetime "SUSPENSE_DATE"
-    t.string "SUSPENSE_REASON_CODE", limit: 25
-    t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
-    t.decimal "SYNC_ID", precision: 38, null: false
-    t.string "TEMPORARY_CLAIM_SOJ", limit: 25
-    t.string "TYPE_CODE", limit: 25
-    t.decimal "VERSION", precision: 38, null: false
-    t.decimal "VETERAN_PERSON_ID", precision: 15
-  end
-
   create_table "vbms_uploaded_documents", force: :cascade do |t|
     t.bigint "appeal_id", comment: "Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals"
     t.string "appeal_type", comment: "'Appeal' or 'LegacyAppeal'"
@@ -2140,7 +2049,6 @@ ActiveRecord::Schema.define(version: 2023_05_31_132301) do
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "users"
-  add_foreign_key "remand_queue", "end_product_establishments", name: "remand_queue_end_product_establishment_id_fkey"
   add_foreign_key "remand_reasons", "decision_issues"
   add_foreign_key "request_decision_issues", "decision_issues"
   add_foreign_key "request_decision_issues", "request_issues"
