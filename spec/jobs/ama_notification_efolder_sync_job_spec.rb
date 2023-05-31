@@ -1,25 +1,19 @@
 # frozen_string_literal: true
 
-describe AmaNotificationEfolderSyncJob, type: :job do
+describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
   include ActiveJob::TestHelper
   let!(:current_user) { create(:user, roles: ["System Admin"]) }
   let!(:job) { AmaNotificationEfolderSyncJob.new }
 
   describe "perform" do
-    before do
-      Seeds::NotificationEvents.new.seed!
-    end
+    before { Seeds::NotificationEvents.new.seed! }
 
     let!(:today) { Time.now.utc.iso8601 }
-    let!(:appeals) do
-      create_list(:appeal, 10, :active)
-    end
+    let!(:appeals) { create_list(:appeal, 10, :active) }
 
     let!(:notifications) do
-      appeals.each do |appeal|
-        if appeal.id == appeals[3].id || appeal.id == appeals[7].id
-          next
-        end
+      appeals.each_with_index do |appeal, index|
+        next if [3, 7].include? index
 
         Notification.create!(
           appeals_id: appeal.uuid,
@@ -45,15 +39,7 @@ describe AmaNotificationEfolderSyncJob, type: :job do
     let!(:first_run_vbms_document_ids) { [appeals[6].id, appeals[0].id, appeals[1].id, appeals[2].id, appeals[4].id] }
     let!(:second_run_vbms_document_ids) { first_run_vbms_document_ids + [appeals[8].id, appeals[9].id, appeals[4].id] }
 
-    before do
-      AmaNotificationEfolderSyncJob::BATCH_LIMIT = 5
-      notifications
-      make_appeals_outcoded
-    end
-
-    after do
-      DatabaseCleaner.clean_with(:truncation)
-    end
+    before(:all) { AmaNotificationEfolderSyncJob::BATCH_LIMIT = 5 }
 
     context "first run" do
       it "get all ama appeals that have been recently outcoded" do
