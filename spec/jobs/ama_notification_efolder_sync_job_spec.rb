@@ -28,7 +28,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
     end
 
     let!(:make_appeals_outcoded) do
-      RootTask.find_by(appeal_id: appeals[5].id).update!(status: "completed", closed_at: 2.days.ago)
+      RootTask.find_by(appeal_id: appeals[5].id).update!(status: "completed", closed_at: 3.days.ago)
       RootTask.find_by(appeal_id: appeals[6].id).update!(status: "completed", closed_at: today)
     end
 

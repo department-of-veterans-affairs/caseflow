@@ -75,7 +75,7 @@ class PrepareDocumentUpdateInVbms
   end
 
   def bgs_service
-    @bgs_service || BGSService.new
+    @bgs_service ||= BGSService.new
   end
 
   def veteran_ssn
