@@ -15,7 +15,7 @@ class JudgeTask < Task
       [
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
         Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
-        Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
+        Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h,
         additional_available_actions(user)
       ].flatten
     elsif user&.can_act_on_behalf_of_judges? && assigned_to.judge_in_vacols?
@@ -48,6 +48,6 @@ class JudgeTask < Task
   end
 
   def reassign_clears_overtime?
-    FeatureToggle.enabled?(:overtime_persistence, user: RequestStore[:current_user]) ? false : true  
+    FeatureToggle.enabled?(:overtime_persistence, user: RequestStore[:current_user]) ? false : true
   end
 end

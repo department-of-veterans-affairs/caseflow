@@ -99,6 +99,9 @@ class LegacyTasksController < ApplicationController
     # Remove overtime status of an appeal when reassigning to a judge
     appeal.overtime = false if appeal.overtime?
 
+    task = appeal.tasks.find_by_status("assigned") || appeal.tasks.find_by_status("in_progress")
+    task.update_from_params(update_params, current_user)
+
     render json: {
       task: json_task(AttorneyLegacyTask.from_vacols(
                         VACOLS::CaseAssignment.latest_task_for_appeal(appeal.vacols_id),
@@ -163,6 +166,12 @@ class LegacyTasksController < ApplicationController
     return task_params.merge(judge: User.find_by(id: params[:tasks][:judge_id])) if params[:tasks][:judge_id]
 
     task_params
+  end
+
+  def update_params
+    params.require("tasks").permit(
+      reassign: [:assigned_to_id, :assigned_to_type, :instructions]
+    )
   end
 
   def json_task(task)
