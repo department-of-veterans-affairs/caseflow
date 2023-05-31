@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
-describe LegacyNotificationEfolderSyncJob, type: :job do
+describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
   include ActiveJob::TestHelper
   let(:current_user) { create(:user, roles: ["System Admin"]) }
   let(:job) { LegacyNotificationEfolderSyncJob.new }
 
   describe "perform" do
-    before do
-      Seeds::NotificationEvents.new.seed!
-    end
+    before { Seeds::NotificationEvents.new.seed! }
 
     let(:today) { Time.now.utc.iso8601 }
 

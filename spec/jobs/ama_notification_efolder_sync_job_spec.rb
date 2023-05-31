@@ -1,19 +1,15 @@
 # frozen_string_literal: true
 
-describe AmaNotificationEfolderSyncJob, type: :job do
+describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
   include ActiveJob::TestHelper
   let!(:current_user) { create(:user, roles: ["System Admin"]) }
   let!(:job) { AmaNotificationEfolderSyncJob.new }
 
   describe "perform" do
-    before do
-      Seeds::NotificationEvents.new.seed!
-    end
+    before { Seeds::NotificationEvents.new.seed! }
 
     let!(:today) { Time.now.utc.iso8601 }
-    let!(:appeals) do
-      create_list(:appeal, 10, :active)
-    end
+    let!(:appeals) { create_list(:appeal, 10, :active) }
 
     let!(:notifications) do
       appeals.each do |appeal|
