@@ -16,7 +16,7 @@ describe VhaProgramOfficeReadyForReviewTasksTab, :postgres do
       let(:params) { { assignee: create(:vha_program_office) } }
 
       it "returns the correct number of columns" do
-        expect(subject.length).to eq(6)
+        expect(subject.length).to eq(7)
       end
     end
   end
