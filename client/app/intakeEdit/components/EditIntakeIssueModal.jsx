@@ -57,7 +57,8 @@ export class EditIntakeIssueModal extends React.Component {
       currentIssueBenefitType = BENEFIT_TYPES[currentIssue.benefitType] || BENEFIT_TYPES[issue.benefitType],
       currentIssueDecisionDate = formatDateStr(currentIssue.decisionDate),
       mstIdentification,
-      pactIdentification
+      pactIdentification,
+      renderJustification
     } = this.props;
 
     const { mstChecked, pactChecked, mstJustification, pactJustification } = this.state;
@@ -129,7 +130,7 @@ export class EditIntakeIssueModal extends React.Component {
             }
           </li>
         </ul>
-        {( renderJustification && (mstChecked)) && (
+        {(renderJustification && (mstChecked)) && (
           <div>
             <label style={{ paddingLeft: '2em' }}>
               <TextField
@@ -152,7 +153,7 @@ export class EditIntakeIssueModal extends React.Component {
             </label>
           </li>
         </ul>
-        {( renderJustification && (pactChecked)) && (
+        {(renderJustification && (pactChecked)) && (
           <div>
             <label style={{ paddingLeft: '2em' }}>
               <TextField
@@ -197,6 +198,7 @@ EditIntakeIssueModal.propTypes = {
   pactChecked: PropTypes.bool,
   mstJustification: PropTypes.object,
   pactJustification: PropTypes.object,
+  renderJustification: PropTypes.object,
   editedIssue: PropTypes.object,
   intakeData: PropTypes.object,
   currentIssue: PropTypes.object,
