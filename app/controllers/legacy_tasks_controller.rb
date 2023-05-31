@@ -117,6 +117,7 @@ class LegacyTasksController < ApplicationController
       return reassign_with_das
     end
 
+
     task = JudgeCaseAssignmentToAttorney.update(legacy_task_params.merge(task_id: params[:id]))
 
     return invalid_record_error(task) unless task.valid?
