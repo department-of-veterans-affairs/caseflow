@@ -41,7 +41,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
 
     before(:all) { AmaNotificationEfolderSyncJob::BATCH_LIMIT = 5 }
 
-    # after(:all) { DatabaseCleaner.clean_with(:truncation) }
+    after(:all) { DatabaseCleaner.clean_with(:truncation) }
 
     context "first run" do
       it "get all ama appeals that have been recently outcoded" do

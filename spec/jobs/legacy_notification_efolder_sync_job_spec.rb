@@ -54,9 +54,9 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
     let(:first_run_vbms_document_ids) { [appeals[6].id, appeals[0].id, appeals[1].id, appeals[2].id, appeals[4].id] }
     let(:second_run_vbms_document_ids) { first_run_vbms_document_ids + [appeals[8].id, appeals[9].id, appeals[4].id] }
 
-    before(:all) {LegacyNotificationEfolderSyncJob::BATCH_LIMIT = 5 }
+    before(:all) { LegacyNotificationEfolderSyncJob::BATCH_LIMIT = 5 }
 
-    # after(:all) { DatabaseCleaner.clean_with(:truncation) }
+    after(:all) { DatabaseCleaner.clean_with(:truncation) }
 
     context "first run" do
       it "get all legacy appeals that have been recently outcoded" do
