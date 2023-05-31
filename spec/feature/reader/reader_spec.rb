@@ -422,7 +422,7 @@ RSpec.feature "Reader", :all_dbs do
       expect(find("#procedural", visible: false).checked?).to be false
     end
 
-    scenario "Add, edit, share, and delete comments", skip: "flake" do
+    scenario "Add, edit, share, and delete comments" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       expect(page).to have_content("CaseflowQueue")
 
@@ -487,7 +487,7 @@ RSpec.feature "Reader", :all_dbs do
       click_on "Save"
 
       # Delete modal should appear
-      click_on "Confirm delete" # flake
+      click_on "Confirm delete"
 
       # Comment should be removed
       expect(page).to_not have_css(".comment-container")
@@ -649,20 +649,21 @@ RSpec.feature "Reader", :all_dbs do
       end
       # :nocov:
 
-      scenario "Jump to section for a comment", skip: "flake" do
+      scenario "Jump to section for a comment" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
         annotation = documents[1].annotations[0]
 
         click_button("expand-#{documents[1].id}-comments-button")
-        click_button("jumpToComment#{annotation.id}")
+
+        click_link("Jump to section")
 
         # Wait for PDFJS to render the pages
         expect(page).to have_css(".page")
         comment_icon_id = "#commentIcon-container-#{annotation.id}"
 
         # wait for comment annotations to load
-        all(".commentIcon-container", wait: 3, count: 1) # flake
+        all(".commentIcon-container", wait: 3, count: 1)
 
         expect(page).to have_css(comment_icon_id)
       end
