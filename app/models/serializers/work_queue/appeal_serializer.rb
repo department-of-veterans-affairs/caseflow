@@ -44,7 +44,9 @@ class WorkQueue::AppealSerializer
         closed_status: issue.closed_status,
         decision_date: issue.decision_date,
         mst_status: issue.mst_status,
-        pact_status: issue.pact_status
+        pact_status: issue.pact_status,
+        mst_justification: issue.mst_justification,
+        pact_justification: issue.pact_justification
       }
     end
   end
