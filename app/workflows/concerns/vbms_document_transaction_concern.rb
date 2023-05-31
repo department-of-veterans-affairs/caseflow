@@ -5,10 +5,10 @@ module VbmsDocumentTransactionConcern
   extend ActiveSupport::Concern
 
   # :reek:FeatureEnvy
-  def persist_efolder_version_info(response)
+  def persist_efolder_version_info(response, response_key)
     document.update!(
-      document_version_reference_id: response.dig(:upload_document_response, :@new_document_version_ref_id),
-      document_series_reference_id: response.dig(:upload_document_response, :@document_series_ref_id)
+      document_version_reference_id: response.dig(response_key, :@new_document_version_ref_id),
+      document_series_reference_id: response.dig(response_key, :@document_series_ref_id)
     )
   end
 
