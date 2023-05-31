@@ -179,6 +179,15 @@ class AppealsController < ApplicationController
   end
 
   def update
+    if appeal.is_legacy?
+      params[:request_issues].each do |issue_update|
+        Issue.update_in_vacols!(
+          vacols_id: appeal.vacols_id,
+          vacols_sequence_id: params[:vacols_sequence_id],
+          issue_attrs: legacy_issue_params
+        )
+      end
+    end
     if request_issues_update.perform!
       # if cc appeal, create SendInitialNotificationLetterTask
       if appeal.contested_claim? && FeatureToggle.enabled?(:cc_appeal_workflow)
@@ -220,6 +229,34 @@ class AppealsController < ApplicationController
       review: appeal,
       request_issues_data: params[:request_issues]
     )
+  end
+
+  def legacy_issue_params
+    safe_params = params.require("issues")
+      .permit(:note,
+              :program,
+              :issue,
+              :level_1,
+              :level_2,
+              :level_3,
+              :mst_status,
+              :pact_status).to_h
+    safe_params[:vacols_user_id] = current_user.vacols_uniq_id
+
+    # set value of MST/PACT from 'true/false' to 'Y/N'
+    if safe_params[:mst_status].upcase == "MST"
+      safe_params[:mst_status] = "Y"
+    else 
+      safe_params[:mst_status] = "N"
+    end
+
+    if safe_params[:pact_status].upcase == "PACT"
+      safe_params[:pact_status] = "Y"
+    else 
+      safe_params[:pact_status] = "N"
+    end
+
+    safe_params
   end
 
   def set_application
