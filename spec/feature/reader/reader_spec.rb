@@ -334,7 +334,7 @@ RSpec.feature "Reader", :all_dbs do
       expect(find(".cf-document-type")).to have_text("NOD")
     end
 
-    xscenario "Rotating documents" do
+    scenario "Rotating documents" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
 
       expect(get_computed_styles("#rotationDiv1", "transform"))
@@ -342,12 +342,8 @@ RSpec.feature "Reader", :all_dbs do
 
       safe_click "#button-rotation"
 
-      # It's annoying that the float math produces an infinitesimal-but-not-0 value.
-      # However, I think that trying to parse the string out and round it would be
-      # more trouble than it's worth. Let's just try it like this and see if the tests
-      # pass consistently. If not, we can find a more sophisticated approach.
       expect(get_computed_styles("#rotationDiv1", "transform"))
-        .to eq "matrix(6.12323e-17, 1, -1, 6.12323e-17, -5.51091e-15, -90)"
+        .to eq "matrix(0, 1, -1, 0, 0, -90)"
     end
 
     scenario "Arrow keys to navigate through documents" do
