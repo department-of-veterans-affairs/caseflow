@@ -55,8 +55,6 @@ class VACOLS::CaseIssue < VACOLS::Record
         ISSUES.ISSLEV1,
         ISSUES.ISSLEV2,
         ISSUES.ISSLEV3,
-        ISSUES.ISSMST,
-        ISSUES.ISSPACT,
         ISSREF.PROG_DESC ISSPROG_LABEL,
         ISSREF.ISS_DESC ISSCODE_LABEL,
         case when ISSUES.ISSLEV1 is not null then
