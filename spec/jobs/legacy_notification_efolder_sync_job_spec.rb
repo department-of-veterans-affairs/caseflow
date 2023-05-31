@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
-describe LegacyNotificationEfolderSyncJob, type: :job do
+describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
   include ActiveJob::TestHelper
   let(:current_user) { create(:user, roles: ["System Admin"]) }
   let(:job) { LegacyNotificationEfolderSyncJob.new }
 
   describe "perform" do
-    before do
-      Seeds::NotificationEvents.new.seed!
-    end
+    before { Seeds::NotificationEvents.new.seed! }
 
     let(:today) { Time.now.utc.iso8601 }
 
@@ -18,15 +16,13 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
       end
     end
 
-    let(:create_appeals) do
-      cases.each do |vacols_case|
+    let!(:appeals) do
+      cases.map do |vacols_case|
         create(:legacy_appeal, :with_root_task, :with_veteran, vacols_case: vacols_case)
       end
     end
 
-    let(:appeals) { LegacyAppeal.first(10) }
-
-    let(:notifications) do
+    let!(:notifications) do
       appeals.each do |appeal|
         if appeal.id == appeals[3].id || appeal.id == appeals[7].id
           next
@@ -44,7 +40,7 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
       end
     end
 
-    let(:make_appeals_outcoded) do
+    let!(:make_appeals_outcoded) do
       RootTask.find_by(appeal_id: appeals[5].id).update!(status: "completed", closed_at: 2.days.ago)
       RootTask.find_by(appeal_id: appeals[6].id).update!(status: "completed", closed_at: today)
     end
@@ -56,24 +52,15 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
     let(:first_run_vbms_document_ids) { [appeals[6].id, appeals[0].id, appeals[1].id, appeals[2].id, appeals[4].id] }
     let(:second_run_vbms_document_ids) { first_run_vbms_document_ids + [appeals[8].id, appeals[9].id, appeals[4].id] }
 
-    before do
-      LegacyNotificationEfolderSyncJob::BATCH_LIMIT = 5
-      create_appeals
-      notifications
-      make_appeals_outcoded
-    end
-
-    after do
-      DatabaseCleaner.clean_with(:truncation)
-    end
+    before(:all) { LegacyNotificationEfolderSyncJob::BATCH_LIMIT = 5 }
 
     context "first run" do
       it "get all legacy appeals that have been recently outcoded" do
-        expect(job.send(:appeals_recently_outcoded)).to eq(first_run_outcoded_appeals)
+        expect(job.send(:appeals_recently_outcoded)).to match_array(first_run_outcoded_appeals)
       end
 
       it "get all legacy appeals that have never been synced yet" do
-        expect(job.send(:appeals_never_synced)).to eq(first_run_never_synced_appeals)
+        expect(job.send(:appeals_never_synced)).to match_array(first_run_never_synced_appeals)
       end
 
       it "get all legacy appeals that must be resynced" do
@@ -82,7 +69,7 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
 
       it "running the perform" do
         LegacyNotificationEfolderSyncJob.perform_now
-        expect(VbmsUploadedDocument.first(5).pluck(:appeal_id)).to eq(first_run_vbms_document_ids)
+        expect(VbmsUploadedDocument.first(5).pluck(:appeal_id)).to match_array(first_run_vbms_document_ids)
       end
     end
 
@@ -95,7 +82,7 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
       end
 
       it "get all legacy appeals that have been recently outcoded" do
-        expect(job.send(:appeals_recently_outcoded)).to eq(second_run_outcoded_appeals)
+        expect(job.send(:appeals_recently_outcoded)).to match_array(second_run_outcoded_appeals)
       end
 
       it "get all legacy appeals that have never been synced yet" do
@@ -109,7 +96,7 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
           email_notification_status: "delivered"
         )
         create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "LegacyAppeal")
-        expect(job.send(:appeals_never_synced)).to eq(second_run_never_synced_appeals)
+        expect(job.send(:appeals_never_synced)).to match_array(second_run_never_synced_appeals)
       end
 
       it "get all legacy appeals that must be resynced" do
@@ -124,6 +111,20 @@ describe LegacyNotificationEfolderSyncJob, type: :job do
         )
         create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "LegacyAppeal")
         expect(job.send(:ready_for_resync)).to eq([appeals[4]])
+      end
+
+      it "ignore appeals that need to be resynced if latest notification status is 'Failure Due to Deceased" do
+        Notification.create!(
+          appeals_id: appeals[4].vacols_id,
+          appeals_type: "LegacyAppeal",
+          event_date: today,
+          event_type: "Appeal docketed",
+          notification_type: "Email",
+          notified_at: Time.zone.now,
+          email_notification_status: "Failure Due to Deceased"
+        )
+        create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "LegacyAppeal")
+        expect(job.send(:ready_for_resync)).to eq([])
       end
 
       it "running the perform" do
