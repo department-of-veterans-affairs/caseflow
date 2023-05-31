@@ -7,7 +7,6 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
     let(:veteran) { appeal.veteran }
     let(:file_number) { appeal.veteran.file_number }
     let(:valid_document_type) { "BVA Decision" }
-    let(:mail_request_object){create(:valid_mail_request)}
     let(:params) do
       { appeal_id: appeal.external_id,
         file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
