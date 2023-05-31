@@ -65,6 +65,10 @@ class WorkQueue::LegacyAppealSerializer
 
   attribute :closest_regional_office_label
 
+  attribute :mst, &:mst?
+
+  attribute :pact, &:pact?
+
   attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 
   attribute :docket_name do
