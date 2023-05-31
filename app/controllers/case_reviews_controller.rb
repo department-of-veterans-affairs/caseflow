@@ -106,12 +106,14 @@ class CaseReviewsController < ApplicationController
 
   def create_issue_update_task(original_issue, incoming_issue_update, appeal)
     root_task = RootTask.find_or_create_by!(appeal: appeal)
+
     task = IssuesUpdateTask.create!(
       appeal: appeal,
       parent: root_task,
-      assigned_to: RequestStore[:current_user],
-      assigned_by: RequestStore[:current_user]
+      assigned_by: RequestStore[:current_user],
+      completed_by: RequestStore[:current_user]
     )
+
     task.format_instructions(
       original_issue.nonrating_issue_category,
       original_issue.mst_status,
@@ -119,6 +121,7 @@ class CaseReviewsController < ApplicationController
       incoming_issue_update[:mstStatus],
       incoming_issue_update[:pactStatus]
     )
+
     task.completed!
   end
 end
