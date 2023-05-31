@@ -158,10 +158,10 @@ audit: ## Create caseflow_audit schema, tables, and triggers in postgres
 audit-remove: ## Remove caseflow_audit schema, tables and triggers in postgres
 	bundle exec rails r db/scripts/audit/remove_caseflow_audit_schema.rb
 
-external-db-create:
+external-db-create: ## Creates external_vbms_ext_claim table
 	bundle exec rails r db/scripts/external/create_vbms_ext_claim.rb
 
-external-db-remove:
+external-db-remove:  ## Remove external_vbms_ext_claim table
 	bundle exec rails r db/scripts/external/remove_vbms_ext_claim.rb
 
 c:  ## Start rails console
