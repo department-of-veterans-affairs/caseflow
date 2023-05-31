@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_05_31_142439) do
+ActiveRecord::Schema.define(version: 2023_05_31_144855) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1348,6 +1348,8 @@ ActiveRecord::Schema.define(version: 2023_05_31_142439) do
     t.string "error_messages", default: [], comment: "Array of Error Message(s) containing Batch ID and specific error if a failure occurs", array: true
     t.datetime "last_batched_at", comment: "Date and Time the record was last batched"
     t.string "status", default: "PENDING", null: false, comment: "A status to indicate what state the record is in such as PROCESSING and PROCESSED"
+    t.index ["batch_id"], name: "index_priority_end_product_sync_queue_on_batch_id"
+    t.index ["end_product_establishment_id"], name: "index_priority_end_product_sync_queue_on_epe_id", unique: true
   end
 
   create_table "ramp_closed_appeals", id: :serial, comment: "Keeps track of legacy appeals that are closed or partially closed in VACOLS due to being transitioned to a RAMP election.  This data can be used to rollback the RAMP Election if needed.", force: :cascade do |t|
