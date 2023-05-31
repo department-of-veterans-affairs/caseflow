@@ -59,7 +59,7 @@ class UploadDocumentToVbms
 
     upload_response = VBMSService.upload_document_to_vbms_veteran(file_number, self)
 
-    persist_efolder_version_info(upload_response)
+    persist_efolder_version_info(upload_response, :upload_document_response)
 
     document.update!(uploaded_to_vbms_at: Time.zone.now)
   end

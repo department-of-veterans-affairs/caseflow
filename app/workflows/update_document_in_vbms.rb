@@ -59,7 +59,7 @@ class UpdateDocumentInVbms
 
     update_response = VBMSService.update_document_in_vbms(document.appeal, self)
 
-    persist_efolder_version_info(update_response)
+    persist_efolder_version_info(update_response, :update_document_response)
 
     document.update!(uploaded_to_vbms_at: Time.zone.now)
   end
