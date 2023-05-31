@@ -196,7 +196,6 @@ class AppealsController < ApplicationController
   private
 
   def create_subtasks!
-    # binding.pry
     # if cc appeal, create SendInitialNotificationLetterTask
     if appeal.contested_claim? && FeatureToggle.enabled?(:cc_appeal_workflow)
       # check if an existing letter task is open
@@ -206,20 +205,6 @@ class AppealsController < ApplicationController
       # create SendInitialNotificationLetterTask unless one is open
       send_initial_notification_letter unless existing_letter_task_open
     end
-    # params[:request_issues].each do |issue|
-    #   original = request_issues_update.before_issues.find { |bi| bi.id == issue[:request_issue_id].to_i }
-    #   if (request_issues_update.mst_edited_request_issue_ids + request_issues_update.pact_edited_request_issue_ids).include?(issue[:request_issue_id].to_i)
-    #     create_issues_update_task(
-    #       issue[:nonrating_issue_category],
-    #       original.mst_status,
-    #       original.pact_status,
-    #       issue[:mst_status],
-    #       issue[:pact_status],
-    #       issue[:mst_status_update_reason_notes],
-    #       issue[:pact_status_update_reason_notes]
-    #       )
-    #   end
-    # end
   end
 
   # :reek:DuplicateMethodCall { allow_calls: ['result.extra'] }
@@ -345,17 +330,6 @@ class AppealsController < ApplicationController
                                             assigned_to: Organization.find_by_url("clerk-of-the-board"),
                                             assigned_by: RequestStore[:current_user]
                                           ) unless parent_task.nil?
-  end
-
-  def create_issues_update_task(issue_category, original_mst, original_pact, edit_mst, edit_pact, mst_edit_reason, pact_edit_reason)
-    task = IssuesUpdateTask.create!(
-      appeal: appeal,
-      parent: RootTask.find_or_create_by!(appeal: appeal),
-      assigned_to: Organization.find_by_url("clerk-of-the-board"),
-      assigned_by: RequestStore[:current_user]
-    )
-    task.format_instructions(issue_category, original_mst, original_pact, edit_mst, edit_pact, mst_edit_reason, pact_edit_reason)
-    task.completed!
   end
 
   def power_of_attorney_data
