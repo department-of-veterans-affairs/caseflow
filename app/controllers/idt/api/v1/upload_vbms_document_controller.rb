@@ -6,18 +6,18 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   skip_before_action :verify_authenticity_token, only: [:create]
   before_action :verify_access
-
+  id_array = []
   def bgs
     @bgs ||= BGSService.new
   end
 
   def create
     if params["recipient_info"].present?
-      params["recipient_info"].map do |recipient|
+      id_array = params["recipient_info"].map do |recipient|
         mail_req = MailRequest.new(recipient).call
-        #  Need to do soemthing with this value at this point in time
-        #  >> mail_req.vbms_distribution_id if I want to return the ids from this file.
+        mail_req.vbms_distribution_id
       end
+
     end
     appeal = nil
     # Find veteran from appeal id and check with db
@@ -40,17 +40,18 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     result = PrepareDocumentUploadToVbms.new(params, current_user, appeal).call
 
     if result.success?
-      upload_result_successful
+      upload_result_successful(id_array)
     else
       render json: result.errors[0], status: :bad_request
     end
   end
 
   private
-  def upload_result_successful
+
+  def upload_result_successful(array)
     render json: {
       message: "Document successfully queued for upload.",
-      distribution_ids: "1, 2, 4"
+      distribution_ids: array
     }
   end
 end
