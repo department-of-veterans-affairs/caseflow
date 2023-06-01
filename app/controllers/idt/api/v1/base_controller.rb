@@ -40,9 +40,7 @@ class Idt::Api::V1::BaseController < ActionController::Base
   rescue_from Caseflow::Error::MissingRecipientInfo do |error|
     log_error(error)
     uuid = SecureRandom.uuid
-    Rails.logger.error("IDT Standard Error ID: " + uuid)
-    render(json: { message: "IDT Standard Error ID: " + uuid + " Not enough address/recipient information " },
-            status: :bad_request)
+    Rails.logger.error("IDT Standard Error ID: " + uuid + " Not enough address/recipient information for a successful mail request. ")
   end
 
   rescue_from Caseflow::Error::VeteranNotFound do |error|
