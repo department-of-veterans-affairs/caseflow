@@ -64,10 +64,10 @@ Booz Allen Hamilton Internal
 **Chromedriver Installation**
 
 1. Open terminal and run \
-    a. brew install --cask chromedriver
+    a. `brew install --cask chromedriver`
 
 2. Once it successfully installs, run command \
-    a. chromedriver –version
+    a. `chromedriver –version`
 
 3. There will be a pop up. Before clicking “OK,” navigate to System Settings > Privacy & Security
 
@@ -78,8 +78,7 @@ developer”
 
 6. Select “Yes” from pop up
 
-7. Open terminal and once again run \
-    a. `chromedriver –version`
+7. Open terminal and once again run `chromedriver –version`
 
 8. Select “Open”
 
@@ -151,8 +150,7 @@ developer”
 
 **.zshrc File**
 
-1. Run command
-    a. ```open ~/.zshrc```
+1. Run command `open ~/.zshrc`
 
 2. Add the following lines, if any of these are already set make sure to comment previous settings:
 
@@ -177,8 +175,7 @@ export FREEDESKTOP_MIME_TYPES_PATH=/usr/local/homebrew/share/mime/packages/freed
 
 1. Open the terminal that was set up for “Open using Rosetta” above
 
-2. Run the following command:
-    a. ```eval $(/usr/local/homebrew/bin/brew shellenv)```
+2. Run the following command: `eval $(/usr/local/homebrew/bin/brew shellenv)`
 
 **Run dev setup scripts in Caseflow repo**
 
@@ -214,7 +211,7 @@ export FREEDESKTOP_MIME_TYPES_PATH=/usr/local/homebrew/share/mime/packages/freed
             * For example, if my name is Eli Brown, the command will be:
             `sudo chown –R elibrown /Users/elibrown/.rbenv`
 
-6. If there are no obvious errors messages, run bundle install to ensure all gems are, in fact, installed
+6. If there are no obvious errors messages, run `bundle install` to ensure all gems are, in fact, installed
 
 **Running Caseflow**
 
@@ -237,7 +234,7 @@ export FREEDESKTOP_MIME_TYPES_PATH=/usr/local/homebrew/share/mime/packages/freed
         * i. Starts doc* ker containers, volume, and network
     * d. `make reset`
         * i. Resets caseflow and ETL database schemas, seeds databases, and enables feature flags
-        * **If “make reset” returns database not found error:
+        * **If `make reset` returns database not found error:
             * a. Run command `bundle exec rake db:drop`
             * b. Download caseflow-db-backup.gz (not able to share this download via policy, message me)
             * c. Enter terminal, navigate to ~/Downloads
@@ -263,24 +260,24 @@ export FREEDESKTOP_MIME_TYPES_PATH=/usr/local/homebrew/share/mime/packages/freed
     a. Follow the instructions file, you will need to download SQLDeveloper on your local
 
 6. After you are finished, go back to caseflow in VSCode, enter terminal, and run
-    * a. make install
-    * b. make test
+    * a. `make install`
+    * b. `make test`
         * i. This will time out before the command is finished executing. Have been told this is normal behavior if you have finished step 5
-    * c. make run-m1
-        * i. Click <http://127.0.0.1:3000> to open caseflow in browser \
+    * c. `make run-m1`
+        * i. Click <http://127.0.0.1:3000> to open caseflow in browser
         * ii. If make run returns a message that the port is already running. Do the following:
             1. Find the port the error message is referring to. It should say close to the top of the error message
-            2. Run command lsof -i TCP:<port number here>
-            3. Run command kill -9 <PID number here>
-            4. Run command make run-m1 again
+            2. Run command `lsof -i TCP:<port number here>`
+            3. Run command `kill -9 <PID number here>`
+            4. Run command `make run-m1 again`
 
 After this, anytime I want to run Caseflow follow these steps:
 
 1. Open the Docker app, Postgres app, and Vacols UTM, log in and leave running in background
-2. Go to ~/Downloads and run gzip -dck caseflow-db-backup.gz | docker exec -i appeals-db psql -U postgres
-3. make up-m1
-4. make run-m1 (if bootsnap errors, run this again and you should see a port is already running)
-5. Run lsof -i TCP:<port>, then kill –9 <pid>
-6. Run make run-m1 again
+2. Go to ~/Downloads and run `gzip -dck caseflow-db-backup.gz | docker exec -i appeals-db psql -U postgres`
+3. `make up-m1`
+4. `make run-m1` (if bootsnap errors, run this again and you should see a port is already running)
+5. Run `lsof -i TCP:<port>`, then `kill –9 <pid>`
+6. Run `make run-m1` again
 
 [<< Back](README.md)
