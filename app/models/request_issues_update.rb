@@ -317,6 +317,7 @@ class RequestIssuesUpdate < CaseflowRecord
       )
       # format the task instructions and close out
       task.format_instructions(
+        "Edited Issue",
         before_issue.nonrating_issue_category,
         before_issue.mst_status,
         before_issue.pact_status,

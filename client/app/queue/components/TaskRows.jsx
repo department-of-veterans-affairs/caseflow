@@ -334,19 +334,19 @@ class TaskRows extends React.PureComponent {
       if (Array.isArray(text)) {
         return (
           <div style={divStyle}>
-            <b>Edited Issue:</b>
+            <b>{text[0]}:</b>
             <h5 style={hStyle}>Original:</h5>
-            <small>{text[0]}</small>
-            <br />
             <small>{text[1]}</small>
             <br />
-            <h5 style={hStyle}>Updated:</h5>
             <small>{text[2]}</small>
             <br />
+            <h5 style={hStyle}>Updated:</h5>
             <small>{text[3]}</small>
             <br />
-            {renderMstLabel(text[4], hStyle)}
-            {renderPactLabel(text[5], hStyle)}
+            <small>{text[4]}</small>
+            <br />
+            {renderMstLabel(text[5], hStyle)}
+            {renderPactLabel(text[6], hStyle)}
           </div>
         );
       }
