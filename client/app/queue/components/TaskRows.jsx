@@ -357,6 +357,7 @@ class TaskRows extends React.PureComponent {
     };
 
     const formatEstablishmentBreaks = (text = '') => {
+      console.log(text)
       const divStyle = { marginTop: '1rem'}
       const hStyle = { marginTop: '30px', marginBottom: '0rem', fontWeight: 'bold' };
       if (Array.isArray(text)) {
@@ -366,7 +367,17 @@ class TaskRows extends React.PureComponent {
             <b>Added Issue:</b>
             <br />
             <p>{issue[0]}</p>
-            <p>{issue[1]}</p>
+            {/* Condition where a prior decision from vbms with mst/pact designation was updated in intake process */}
+            {issue[1] ?
+            <React.Fragment>
+              <h5 style={hStyle}>ORIGINAL: </h5>
+              <small>{issue[1]}</small>
+              <h5 style={hStyle}>UPDATED: </h5>
+              <small>{issue[2]}</small>
+              <p></p>
+            </React.Fragment> :
+            <p>{issue[2]}</p>
+            }
             {/* No horizontal rule after the last issue */}
             {index != (text.length - 1) &&
               <React.Fragment>
