@@ -180,17 +180,8 @@ class AppealsController < ApplicationController
 
   def update
     if request_issues_update.perform!
-      # if cc appeal, create SendInitialNotificationLetterTask
-      if appeal.contested_claim? && FeatureToggle.enabled?(:cc_appeal_workflow)
-        # check if an existing letter task is open
-        existing_letter_task_open = appeal.tasks.any? do |task|
-          task.class == SendInitialNotificationLetterTask && task.status == "assigned"
-        end
-        # create SendInitialNotificationLetterTask unless one is open
-        send_initial_notification_letter unless existing_letter_task_open
-      end
-
       set_flash_success_message
+      create_subtasks!
 
       render json: {
         beforeIssues: request_issues_update.before_issues.map(&:serialize),
@@ -203,6 +194,18 @@ class AppealsController < ApplicationController
   end
 
   private
+
+  def create_subtasks!
+    # if cc appeal, create SendInitialNotificationLetterTask
+    if appeal.contested_claim? && FeatureToggle.enabled?(:cc_appeal_workflow)
+      # check if an existing letter task is open
+      existing_letter_task_open = appeal.tasks.any? do |task|
+        task.class == SendInitialNotificationLetterTask && task.status == "assigned"
+      end
+      # create SendInitialNotificationLetterTask unless one is open
+      send_initial_notification_letter unless existing_letter_task_open
+    end
+  end
 
   # :reek:DuplicateMethodCall { allow_calls: ['result.extra'] }
   # :reek:FeatureEnvy
