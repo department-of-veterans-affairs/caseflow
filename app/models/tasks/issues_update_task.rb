@@ -9,11 +9,11 @@ class IssuesUpdateTask < Task
 
   # accepts the task type (edit, remove, add), issue category, original pact/mst, and updated pact/mst (if applicable)
   # formats the instructions to display on the case timeline
-  def format_instructions(task_type, issue_category, original_mst, original_pact, edit_mst = "", edit_pact = "",
+  def format_instructions(change_type, issue_category, original_mst, original_pact, edit_mst = "", edit_pact = "",
   mst_edit_reason = "", pact_edit_reason = "")
     # format the instructions by loading an array and adding it to the instructions
     edit_issue_format = []
-    edit_issue_format << task_type
+    edit_issue_format << change_type
     edit_issue_format << issue_category
     original_comment = "#{format_special_issues_text(original_mst, original_pact)}"
     edit_issue_format << original_comment
