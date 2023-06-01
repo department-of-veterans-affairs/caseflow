@@ -434,11 +434,12 @@ class RequestIssue < CaseflowRecord
     transaction do
       return unless create_decision_issues
 
-      end_product_establishment.on_decision_issue_sync_processed(self)
+
       clear_error!
       close_decided_issue!
       processed!
     end
+    end_product_establishment.on_decision_issue_sync_processed(self)
   end
 
   def vacols_issue
