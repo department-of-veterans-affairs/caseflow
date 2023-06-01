@@ -16,7 +16,7 @@ begin
       NEW.created_at,
       NEW.last_batched_at,
       CURRENT_TIMESTAMP,
-      NEW.error_message;
+      NEW.error_messages;
   elsif (TG_OP = 'INSERT') then
     insert into caseflow_audit.priority_end_product_sync_queue_audit
     select
@@ -28,7 +28,7 @@ begin
       NEW.created_at,
       NEW.last_batched_at,
       CURRENT_TIMESTAMP,
-      NEW.error_message;
+      NEW.error_messages;
   end if;
   return null;
 end;
