@@ -23,7 +23,7 @@ class EstablishmentTask < Task
   private
 
   def format_description_text(issue)
-    issue.nonrating_issue_description || issue.contested_issue_description
+    issue.nonrating_issue_category + " - " + issue.nonrating_issue_description || issue.contested_issue_description
   end
 
   def format_special_issues_text(mst_status, pact_status)
