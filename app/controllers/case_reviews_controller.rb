@@ -14,8 +14,8 @@ class CaseReviewsController < ApplicationController
     result = new_complete_case_review.call
     if result.success?
       case_review = result.extra[:case_review]
-      appeal = Appeal.find(case_review.appeal_id)
-      unless case_review.appeal.is_a?(LegacyAppeal)
+      if case_review.appeal_type == "Appeal"
+        appeal = Appeal.find(case_review.appeal_id)
         update_request_issues_for_mst_and_pact(appeal)
       end
       render json: {
