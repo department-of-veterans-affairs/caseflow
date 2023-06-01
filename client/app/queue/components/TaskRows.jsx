@@ -477,7 +477,6 @@ class TaskRows extends React.PureComponent {
       appeal,
     } = templateConfig;
 
-    console.log(task)
     const timelineTitle = isCancelled(task) ?
       `${task.type} cancelled` :
       task.timelineTitle;
