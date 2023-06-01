@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 def scroll_position(id: nil, class_name: nil)
-  page.evaluate_script <<-EOS
+  page.driver.evaluate_script <<-EOS
     function() {
       var elem = document.getElementById('#{id}') || document.getElementsByClassName('#{class_name}')[0];
       return elem.scrollTop;
@@ -1135,7 +1135,7 @@ RSpec.feature "Reader", :all_dbs do
         end
 
         # :nocov:
-        scenario "Should show correct auto suggestions", skip: true do
+        scenario "Should show correct auto suggestions" do
           visit "/reader/appeal/#{appeal.vacols_id}/documents"
           click_on documents[1].type
           find(".cf-select__control").click
@@ -1154,6 +1154,7 @@ RSpec.feature "Reader", :all_dbs do
           # going to the document[0] page
           visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
           find(".cf-select__control").click
+          byebug
           expect(page).to have_css(".cf-select__menu")
 
           # making sure correct tag options exist
@@ -1345,21 +1346,21 @@ RSpec.feature "Reader", :all_dbs do
       expect(find("#table-row-#{documents.count - 1}")).to have_css("#read-indicator")
     end
 
-    scenario "Open a document and return to list", skip: true do
+    scenario "Open a document and return to list" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       scroll_to_bottom(id: "documents-table-body")
-      original_scroll_position = scroll_position("documents-table-body")
+      original_scroll_position = scroll_position(id: "documents-table-body")
       click_on documents.last.type
 
       click_on "Back"
 
       expect(page).to have_content("#{num_documents} Documents")
       expect(page).to have_css("#read-indicator")
-      expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
+      expect(scroll_position(id: "documents-table-body")).to eq(original_scroll_position)
     end
 
-    scenario "Open the last document on the page and return to list", skip: true do
+    scenario "Open the last document on the page and return to list" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents.last.id}"
 
       click_on "Back"
