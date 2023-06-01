@@ -67,7 +67,10 @@ class Idt::V1::AppealDetailsSerializer
 
   attribute :badges do |object|
     if object.is_a?(LegacyAppeal)
-      nil
+      {
+        mst: object.mst?,
+        pact: object.pact?
+      }
     else
       {
         contested_claim: object.contested_claim?,
