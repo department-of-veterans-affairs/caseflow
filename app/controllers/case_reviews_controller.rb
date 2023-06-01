@@ -48,7 +48,6 @@ class CaseReviewsController < ApplicationController
   end
 
   def update_request_issues_for_mst_and_pact
-    # binding.pry
     params[:tasks][:issues].each do |issue|
       RequestIssue.find(issue[:request_issue_ids]).each do |ri|
         ri.update(mst_status: issue[:mstStatus], pact_status: issue[:pactStatus])
