@@ -49,7 +49,8 @@ class CaseReviewsController < ApplicationController
     return judge_case_review_params if case_review_class == "JudgeCaseReview"
   end
 
-  def update_request_issues_for_mst_and_pact(appeal)
+  def update_request_issues_for_mst_and_pact
+    # binding.pry
     params[:tasks][:issues].each do |issue|
       RequestIssue.find(issue[:request_issue_ids]).each do |ri|
         if ri.mst_status != issue[:mstStatus] || ri.pact_status != issue[:pactStatus]

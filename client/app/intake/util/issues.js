@@ -148,6 +148,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       isPreDocketNeeded: issue.is_predocket_needed,
       mstChecked: issue.mst_status,
       pactChecked: issue.pact_status,
+      vbmsMstChecked: issue.vbms_mst_status,
+      vbmsPactChecked: issue.vbms_pact_status,
       mst_status_update_reason_notes: issue?.mstJustification,
       pact_status_update_reason_notes: issue?.pactJustification
     };
@@ -200,7 +202,9 @@ const formatUnidentifiedIssues = (state) => {
         vacols_sequence_id: issue.vacolsSequenceId,
         verified_unidentified_issue: issue.verifiedUnidentifiedIssue,
         mst_status: issue.mstChecked,
+        vbms_mst_status: issue.vbmsMstChecked,
         pact_status: issue.pactChecked,
+        vbms_pact_status: issue.vbmsPactChecked,
         mst_status_update_reason_notes: issue?.mstJustification,
         pact_status_update_reason_notes: issue?.pactJustification
       };
@@ -233,7 +237,9 @@ const formatRatingRequestIssues = (state) => {
         edited_description: issue.editedDescription,
         correction_type: issue.correctionType,
         mst_status: issue.mstChecked,
+        vbms_mst_status: issue.vbmsMstChecked,
         pact_status: issue.pactChecked,
+        vbms_pact_status: issue.vbmsPactChecked,
         mst_status_update_reason_notes: issue?.mstJustification,
         pact_status_update_reason_notes: issue?.pactJustification
       };
@@ -263,7 +269,9 @@ const formatNonratingRequestIssues = (state) => {
         correction_type: issue.correctionType,
         is_predocket_needed: issue.isPreDocketNeeded,
         mst_status: issue.mstChecked,
+        vbms_mst_status: issue.vbmsMstChecked,
         pact_status: issue.pactChecked,
+        vbms_pact_status: issue.vbmsPactChecked,
         mst_status_update_reason_notes: issue?.mstJustification,
         pact_status_update_reason_notes: issue?.pactJustification
       };
@@ -428,6 +436,8 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
         verifiedUnidentifiedIssue: issue.verifiedUnidentifiedIssue,
         mstChecked: issue.mstChecked,
         pactChecked: issue.pactChecked,
+        vbmsMstChecked: issue.vbmsMstChecked,
+        vbmsPactChecked: issue.vbmsPactChecked,
         mst_status_update_reason_notes: issue?.mstJustification,
         pact_status_update_reason_notes: issue?.pactJustification
       };
@@ -473,6 +483,8 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
         ratingDecisionReferenceId: issue.ratingDecisionReferenceId,
         mstChecked: issue.mstChecked,
         pactChecked: issue.pactChecked,
+        vbmsMstChecked: issue.vbmsMstChecked,
+        vbmsPactChecked: issue.vbmsPactChecked,
         mst_status_update_reason_notes: issue?.mstJustification,
         pact_status_update_reason_notes: issue?.pactJustification
       };
@@ -512,6 +524,8 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
       isPreDocketNeeded: issue.isPreDocketNeeded,
       mstChecked: issue.mstChecked,
       pactChecked: issue.pactChecked,
+      vbmsMstChecked: issue.vbmsMstChecked,
+      vbmsPactChecked: issue.vbmsPactChecked,
       mst_status_update_reason_notes: issue?.mstJustification,
       pact_status_update_reason_notes: issue?.pactJustification
     };
