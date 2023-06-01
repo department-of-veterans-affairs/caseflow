@@ -18,7 +18,7 @@
     b. https://github.com/department-of-veterans-affairs/caseflow-facols.git
     c. https://github.com/department-of-veterans-affairs/appeals-notebook.git
 
-4. If cannot clone the above might need to do https://docs.github.com/en/enterprise- server@3.4/authentication keeping-your-account-and-data-secure/creating-a-personal-access-token
+4. If cannot clone the above might need to do <https://docs.github.com/en/enterprise-server@3.4/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token>
 
 **Homebrew Installation**
 
@@ -26,7 +26,7 @@
 
 **Docker Installation**
 
-1. Navigate to docker website
+1. Navigate to [docker website](https://docs.docker.com/desktop/install/mac-install/)
 
 2. Install “Docker Desktop for Mac Apple silicon”
 
@@ -44,11 +44,11 @@
 
 **UTM and Vacols VM**
 
-1. Download UTM from this link
+1. Download UTM from this [link](https://github.com/utmapp/UTM/releases/latest/download/UTM.dmg)
 
 2. Right click UTM.app and select “install with privilege management” then open the UTM.app
 
-3. Download the Vacols VM from this link
+3. Download the Vacols VM from this [link](https://boozallen-my.sharepoint.com/personal/582213_bah_com/_layouts/15/onedrive.aspx?id=%2Fpersonal%2F582213%5Fbah%5Fcom%2FDocuments%2FAppeals%20Vacols%20VM%2Eutm%2Ezip&parent=%2Fpersonal%2F582213%5Fbah%5Fcom%2FDocuments&ga=1)
 
 4. After the file downloads, right click on it in “Finder” and select “Show Package Contents” and delete the view.plist file if it exists
 
@@ -83,7 +83,7 @@ developer”
 
 **PDFtk Server**
 
-1. Download from this curl -L http:link
+1. Download from this [curl -L http:link](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server-2.02-mac_osx-10.11-setup.pkg)
 
 **Configure x86_64 Homebrew**
 
@@ -115,19 +115,19 @@ developer”
 **Oracle “instantclient” Files**
 
 1. Download these DMG files
-    a. instantclient-basic-macos.x64-19.8.0.0.0dbru.dmg
-    b. instantclient-sqlplus-macos.x64-19.8.0.0.0dbru.dmg
-    c. Instantclient-sdk-macos.x64-19.8.0.0.0dbru.dmg
+    a. [instantclient-basic-macos.x64-19.8.0.0.0dbru.dmg](https://download.oracle.com/otn_software/mac/instantclient/198000/instantclient-basic-macos.x64-19.8.0.0.0dbru.dmg)
+    b. [instantclient-sqlplus-macos.x64-19.8.0.0.0dbru.dmg](https://download.oracle.com/otn_software/mac/instantclient/198000/instantclient-sqlplus-macos.x64-19.8.0.0.0dbru.dmg)
+    c. [Instantclient-sdk-macos.x64-19.8.0.0.0dbru.dmg](https://download.oracle.com/otn_software/mac/instantclient/198000/instantclient-sdk-macos.x64-19.8.0.0.0dbru.dmg)
 
 2. After downloading, click on one of the folders and follow the instructions in INSTALL_IC_README.txt
 
 **Postgres Download**
 
-1. Download from this link
+1. Download from this [link](https://github.com/PostgresApp/PostgresApp/releases/download/v2.5.8/Postgres-2.5.8-14.dmg)
 
 **OpenSSL**
 
-1. Download openssl@1.1 and openssl@3 from this link
+1. Download openssl@1.1 and openssl@3 from this [link](https://boozallen.sharepoint.com/teams/VABID/appeals/Documents/Forms/AllItems.aspx?viewid=8a8eaf3e%2D2c12%2D4c87%2Db95f%2D4eab3428febd&view=7&q=openssl)
 
 2. Open “Finder” and find the two folders under “Downloads”
 
@@ -243,7 +243,7 @@ Enter command:
         e. Run command
             i. “gzip -dck caseflow-db-backup.gz | docker exec -i appeals-db psql -U postgres”
             ii. (this command will link the caseflow_certification_database to docker)
-        f. Download this file and move through the prompts (wkhtmltopdf => unrelated?)
+        f. Download this [file](https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-2/wkhtmltox-0.12.6-2.macos-cocoa.pkg) and move through the prompts (wkhtmltopdf => unrelated?)
         g. Enter terminal, navigate to caseflow, and run
             *Booz Allen Hamilton Internal*
            i. make up-m1
@@ -258,7 +258,7 @@ Enter command:
         6. make run-m1
             a. Click http://127.0.0.1:3000 to open caseflow in browser
 
-5. Download VACOLS VM Trigger fix from this link
+5. Download VACOLS VM Trigger fix from this [link](https://boozallen.sharepoint.com/:u:/r/teams/VABID/appeals/Documents/Development/Developer%20Setup%20Resources/M1%20Mac%20Developer%20Setup/VACOLS_VM_trigger_fix_M1.zip?csf=1&web=1&e=pIhvuj)
     a. Follow the instructions file, you will need to download SQLDeveloper on your local
 
 6. After you are finished, go back to caseflow in VSCode, enter terminal, and run
