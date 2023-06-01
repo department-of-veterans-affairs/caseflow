@@ -89,7 +89,7 @@ class LegacyTasksController < ApplicationController
                         task.assigned_to
                       ))
     }
-  end
+  end 
 
   def assign_to_judge
     # If the user being assigned to is a judge, do not create a DECASS record, just
