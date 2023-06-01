@@ -173,7 +173,6 @@ class AddIssuesModal extends React.Component {
           key={approxDecisionDate}
           value={this.state.selectedContestableIssueIndex}
           onChange={this.radioOnChange}
-          renderMstAndPact={this.props.featureToggles.mstPactIdentification}
           mstJustification={this.state.mstJustification}
           mstJustificationOnChange={this.mstJustificationOnChange}
           pactJustification={this.state.pactJustification}

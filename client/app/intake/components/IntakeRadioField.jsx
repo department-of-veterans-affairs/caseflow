@@ -46,7 +46,8 @@ export const IntakeRadioField = (props) => {
     styling,
     vertical,
     totalElements,
-    renderMstAndPact,
+    renderMst,
+    renderPact,
     mstChecked,
     setMstCheckboxFunction,
     pactChecked,
@@ -108,44 +109,49 @@ export const IntakeRadioField = (props) => {
 
   // Creating MST and PACT checkboxes, along with a text input for justification of change
   const maybeAddMstAndPactCheckboxes = (option) => {
-    if (renderMstAndPact && (option.value === props.value)) {
-
+    if (option.value === props.value) {
       return (
-        <div>
-          <Checkbox
-            label="Issue is related to Military Sexual Trauma (MST)"
-            name="MST"
-            value={mstChecked}
-            disabled={prePopulatedMst}
-            onChange={(checked) => setMstCheckboxFunction(checked)}
-          />
-          { (mstChecked && !prePopulatedMst) &&
-            <TextField
-              name="mstJustification-field"
-              value={mstJustification}
-              label="Why was this change made?"
-              required
-              onChange={(mstJustificationText) => mstJustificationOnChange(mstJustificationText)}
+        <React.Fragment>
+          { renderMst && <div>
+            <Checkbox
+              label="Issue is related to Military Sexual Trauma (MST)"
+              name="MST"
+              value={mstChecked}
+              disabled={prePopulatedMst}
+              onChange={(checked) => setMstCheckboxFunction(checked)}
             />
+            { (mstChecked && !prePopulatedMst) &&
+              <TextField
+                name="mstJustification-field"
+                value={mstJustification}
+                label="Why was this change made?"
+                required
+                onChange={(mstJustificationText) => mstJustificationOnChange(mstJustificationText)}
+              />
+            }
+          </div>
           }
-          <Checkbox
-            label="Issue is related to PACT act"
-            name="Pact"
-            value={pactChecked}
-            disabled={prePopulatedPact}
-            onChange={(checked) => setPactCheckboxFunction(checked)}
-          />
-          { (pactChecked && !prePopulatedPact) &&
-            <TextField
-              name="pactJustification-field"
-              value={pactJustification}
-              label="Why was this change made?"
-              required
-              optional={prePopulatedPact}
-              onChange={(pactJustificationText) => pactJustificationOnChange(pactJustificationText)}
+          { renderPact && <div>
+            <Checkbox
+              label="Issue is related to PACT act"
+              name="Pact"
+              value={pactChecked}
+              disabled={prePopulatedPact}
+              onChange={(checked) => setPactCheckboxFunction(checked)}
             />
+            { (pactChecked && !prePopulatedPact) &&
+              <TextField
+                name="pactJustification-field"
+                value={pactJustification}
+                label="Why was this change made?"
+                required
+                optional={prePopulatedPact}
+                onChange={(pactJustificationText) => pactJustificationOnChange(pactJustificationText)}
+              />
+            }
+          </div>
           }
-        </div>
+        </React.Fragment>
       );
     }
   };
@@ -288,7 +294,8 @@ IntakeRadioField.propTypes = {
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
   styling: PropTypes.object,
-  renderMstAndPact: PropTypes.bool,
+  renderMst: PropTypes.bool,
+  renderPact: PropTypes.bool,
   mstChecked: PropTypes.bool,
   setMstCheckboxFunction: PropTypes.func,
   pactChecked: PropTypes.bool,

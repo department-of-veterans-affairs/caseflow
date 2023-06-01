@@ -9,7 +9,7 @@ class Issue
 
   attr_accessor :id, :vacols_sequence_id, :codes, :disposition, :disposition_date,
                 :disposition_id, :readable_disposition, :close_date, :note,
-                :legacy_appeal_vacols_mst, :legacy_appeal_vacols_pact
+                :mst_status, :pact_status
 
   # Labels are only loaded if we run the joins to ISSREF and VFTYPES (see VACOLS::CaseIssue)
   attr_writer :labels
@@ -330,8 +330,8 @@ class Issue
         # readable disposition is a string, i.e. "Remanded"
         readable_disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[hash["issdc"]],
         close_date: AppealRepository.normalize_vacols_date(hash["issdcls"]),
-        legacy_appeal_vacols_mst: hash["issmst"]&.casecmp("y")&.zero? || false,
-        legacy_appeal_vacols_pact: hash["isspact"]&.casecmp("y")&.zero? || false
+        mst_status: hash["issmst"]&.casecmp("y")&.zero? || false,
+        pact_status: hash["isspact"]&.casecmp("y")&.zero? || false
       )
     end
 
