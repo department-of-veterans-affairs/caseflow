@@ -14,7 +14,9 @@ const HelpRootView = () => {
     { name: 'Hearings Help',
       url: '/hearing_prep/help' },
     { name: 'Intake Help',
-      url: '/intake/help' },
+      url: '/intake/help',
+      alt: "Learn Caseflow Intake and Frequently Asked Questions",
+      ariaLabel: "Learn Caseflow Intake and Frequently Asked Questions" },
     { name: 'Queue Help',
       url: '/queue/help' },
     { name: 'VHA Help',
@@ -27,8 +29,8 @@ const HelpRootView = () => {
 
     <h1>Caseflow Help</h1>
     <ul id="toc" className="usa-unstyled-list">
-      {pages.map(({ name, url }) =>
-        <li key={name}><Link to={url}>{name}</Link></li>
+      {pages.map(({ name, url, alt, ariaLabel }) =>
+        <li key={name} ariaLabel={ariaLabel}><Link to={url} ariaLabel={ariaLabel} alt={alt}>{name}</Link></li>
       )}
     </ul>
   </div>;

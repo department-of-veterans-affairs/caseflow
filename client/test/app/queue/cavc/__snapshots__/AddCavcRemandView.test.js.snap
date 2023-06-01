@@ -274,6 +274,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
             >
               <section
                 className="cf-app-segment cf-app-segment--alt"
+                role="main"
               >
                 <h1>
                   Add a Court remand
@@ -3864,7 +3865,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       className="cf-form-checkbox"
                     >
                       <input
-                        aria-label="mandate-dates-same-toggle"
                         checked={true}
                         id="mandate-dates-same-toggle"
                         name="mandate-dates-same-toggle"

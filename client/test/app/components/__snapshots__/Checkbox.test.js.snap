@@ -9,7 +9,6 @@ exports[`Checkbox honors the \`disabled\` prop 1`] = `
       class="cf-form-checkbox"
     >
       <input
-        aria-label="field1"
         disabled=""
         id="field1"
         name="field1"
@@ -73,7 +72,6 @@ exports[`Checkbox renders correctly 1`] = `
       class="cf-form-checkbox"
     >
       <input
-        aria-label="field1"
         id="field1"
         name="field1"
         type="checkbox"

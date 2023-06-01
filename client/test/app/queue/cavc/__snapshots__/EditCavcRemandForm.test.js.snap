@@ -5,6 +5,7 @@ exports[`EditCavcRemandForm adding new all feature toggles enabled renders corre
   <form>
     <section
       class="cf-app-segment cf-app-segment--alt"
+      role="main"
     >
       <h1>
         Add a Court remand
@@ -404,6 +405,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
   <form>
     <section
       class="cf-app-segment cf-app-segment--alt"
+      role="main"
     >
       <h1>
         Add a Court remand
@@ -744,7 +746,6 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           class="cf-form-checkbox"
         >
           <input
-            aria-label="mandateSame"
             id="mandateSame"
             name="mandateSame"
             type="checkbox"
@@ -883,6 +884,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
   <form>
     <section
       class="cf-app-segment cf-app-segment--alt"
+      role="main"
     >
       <h1>
         Add a Court remand
@@ -1223,7 +1225,6 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           class="cf-form-checkbox"
         >
           <input
-            aria-label="mandateSame"
             id="mandateSame"
             name="mandateSame"
             type="checkbox"
@@ -1362,6 +1363,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
   <form>
     <section
       class="cf-app-segment cf-app-segment--alt"
+      role="main"
     >
       <h1>
         Add a Court remand
@@ -1788,7 +1790,6 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           class="cf-form-checkbox"
         >
           <input
-            aria-label="federalCircuit"
             id="federalCircuit"
             name="federalCircuit"
             type="checkbox"
@@ -1856,6 +1857,7 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
   <form>
     <section
       class="cf-app-segment cf-app-segment--alt"
+      role="main"
     >
       <h1>
         Add a Court remand
@@ -2305,6 +2307,7 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
   <form>
     <section
       class="cf-app-segment cf-app-segment--alt"
+      role="main"
     >
       <h1>
         Add a Court remand
@@ -2629,7 +2632,6 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
           class="cf-form-checkbox"
         >
           <input
-            aria-label="mandateSame"
             id="mandateSame"
             name="mandateSame"
             type="checkbox"
@@ -2768,6 +2770,7 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
   <form>
     <section
       class="cf-app-segment cf-app-segment--alt"
+      role="main"
     >
       <h1>
         Edit a Court remand
