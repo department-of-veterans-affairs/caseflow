@@ -15,7 +15,7 @@ class EndProductEstablishment < CaseflowRecord
   has_many :end_product_code_updates
   has_many :effectuations, class_name: "BoardGrantEffectuation"
   has_many :end_product_updates
-  has_one :priority_end_product_sync_queue
+  has_one :priority_end_product_syncs_queue
 
   # allow @veteran to be assigned to save upstream calls
   attr_writer :veteran
@@ -292,7 +292,7 @@ class EndProductEstablishment < CaseflowRecord
   end
 
   def priority_queued?
-    priority_end_product_sync_queue ? true : false
+    priority_end_product_syncs_queue ? true : false
   end
 
   def sync_decision_issues!
@@ -308,6 +308,7 @@ class EndProductEstablishment < CaseflowRecord
         record.submit_for_processing!(delay: 1.day)
       end
     end
+
   end
 
   def on_decision_issue_sync_processed(processing_request_issue)
