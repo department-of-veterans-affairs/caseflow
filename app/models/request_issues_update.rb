@@ -267,7 +267,7 @@ class RequestIssuesUpdate < CaseflowRecord
 
   def create_mst_pact_issue_update_tasks
     handle_mst_pact_edits_task
-    # handle_mst_pact_removal_task
+    handle_mst_pact_removal_task
     # handle_mst_pact_addition_task
   end
 
@@ -287,6 +287,8 @@ class RequestIssuesUpdate < CaseflowRecord
     correction.call
   end
 
+  #removed_issues = after_issues - before_issues
+
   def handle_mst_pact_edits_task
     # filter out added or removed issues
     after_issues = fetch_after_issues
@@ -294,19 +296,28 @@ class RequestIssuesUpdate < CaseflowRecord
     # cycle each edited issue (before) and compare MST/PACT with (fetch_after_issues)
     edited_issues.each do |before_issue|
       after_issue = after_issues.find { |i| i.id == before_issue.id }
-
       # if before/after has a change in MST/PACT, create issue update task
       if (before_issue.mst_status != after_issue.mst_status) || (before_issue.pact_status != after_issue.pact_status)
-        create_issue_update_task(before_issue, after_issue)
+        create_issue_update_task("Edited Issue", before_issue, after_issue)
       end
     end
   end
 
-  # adding new issue with MST/PACT task creation logic here
+  def handle_mst_pact_removal_task
+    # filter out added or removed issues
+    after_issues = fetch_after_issues
+    edited_issues = before_issues - after_issues
+    # cycle each edited issue (before) and compare MST/PACT with (fetch_after_issues)
+    edited_issues.each do |before_issue|
+      # lazily create a new RequestIssue since the mst/pact status would be removed if deleted?
+      if (before_issue.mst_status) || (before_issue.pact_status)
+         create_issue_update_task("Removed Issue", before_issue)
+      end
+    end
+  end
 
-  # removal MST/PACT task creation logic here
-
-  def create_issue_update_task(before_issue, after_issue)
+  def create_issue_update_task(change_type, before_issue, after_issue = nil)
+    binding.pry
     transaction do
       task = IssuesUpdateTask.create!(
         appeal: before_issue.decision_review,
@@ -317,12 +328,12 @@ class RequestIssuesUpdate < CaseflowRecord
       )
       # format the task instructions and close out
       task.format_instructions(
-        "Edited Issue",
+        change_type,
         before_issue.nonrating_issue_category,
         before_issue.mst_status,
         before_issue.pact_status,
-        after_issue.mst_status,
-        after_issue.pact_status
+        after_issue&.mst_status,
+        after_issue&.pact_status,
       )
       task.completed!
     end
