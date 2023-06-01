@@ -332,6 +332,7 @@ class TaskRows extends React.PureComponent {
       const hStyle = { marginTop: '30px', marginBottom: '0rem', fontWeight: 'bold' };
 
       if (Array.isArray(text)) {
+
         return (
           <div style={divStyle}>
             <b>{text[0]}:</b>
@@ -340,13 +341,17 @@ class TaskRows extends React.PureComponent {
             <br />
             <small>{text[2]}</small>
             <br />
-            <h5 style={hStyle}>Updated:</h5>
-            <small>{text[3]}</small>
-            <br />
-            <small>{text[4]}</small>
-            <br />
+            {text[3] &&
+            <React.Fragment>
+              <h5 style={hStyle}>Updated:</h5>
+              <small>{text[3]}</small>
+              <br />
+              <small>{text[4]}</small>
+              <br />
+            </React.Fragment>}
             {renderMstLabel(text[5], hStyle)}
             {renderPactLabel(text[6], hStyle)}
+
           </div>
         );
       }
