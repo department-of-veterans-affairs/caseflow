@@ -341,7 +341,7 @@ class TaskRows extends React.PureComponent {
             <br />
             <small>{text[2]}</small>
             <br />
-            {text[3] &&
+            {text[0] === 'Edited Issue' &&
             <React.Fragment>
               <h5 style={hStyle}>Updated:</h5>
               <small>{text[3]}</small>
@@ -351,7 +351,6 @@ class TaskRows extends React.PureComponent {
             </React.Fragment>}
             {renderMstLabel(text[5], hStyle)}
             {renderPactLabel(text[6], hStyle)}
-
           </div>
         );
       }

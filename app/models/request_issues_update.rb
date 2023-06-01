@@ -176,11 +176,11 @@ class RequestIssuesUpdate < CaseflowRecord
   end
 
   def validate_before_perform
-    # if !changes?
-    #   @error_code = :no_changes
-    # elsif RequestIssuesUpdate.where(review: review).where.not(id: id).processable.exists?
-    #   @error_code = :previous_update_not_done_processing
-    # end
+    if !changes?
+      @error_code = :no_changes
+    elsif RequestIssuesUpdate.where(review: review).where.not(id: id).processable.exists?
+      @error_code = :previous_update_not_done_processing
+    end
 
     !@error_code
   end
@@ -287,8 +287,6 @@ class RequestIssuesUpdate < CaseflowRecord
     correction.call
   end
 
-  #removed_issues = after_issues - before_issues
-
   def handle_mst_pact_edits_task
     # filter out added or removed issues
     after_issues = fetch_after_issues
@@ -311,17 +309,12 @@ class RequestIssuesUpdate < CaseflowRecord
     edited_issues.each do |before_issue|
       # lazily create a new RequestIssue since the mst/pact status would be removed if deleted?
       if (before_issue.mst_status) || (before_issue.pact_status)
-         create_issue_update_task( "Removed Issue", before_issue)
+         create_issue_update_task("Removed Issue", before_issue)
       end
     end
   end
 
-  # adding new issue with MST/PACT task creation logic here
-
-  # removal MST/PACT task creation logic here
-
   def create_issue_update_task(change_type, before_issue, after_issue = nil)
-    binding.pry
     transaction do
       task = IssuesUpdateTask.create!(
         appeal: before_issue.decision_review,
@@ -332,6 +325,7 @@ class RequestIssuesUpdate < CaseflowRecord
       )
       # format the task instructions and close out
       task.format_instructions(
+        change_type,
         before_issue.nonrating_issue_category,
         before_issue.mst_status,
         before_issue.pact_status,
