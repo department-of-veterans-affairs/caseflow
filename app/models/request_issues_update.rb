@@ -287,8 +287,6 @@ class RequestIssuesUpdate < CaseflowRecord
     correction.call
   end
 
-  #removed_issues = after_issues - before_issues
-
   def handle_mst_pact_edits_task
     # filter out added or removed issues
     after_issues = fetch_after_issues
@@ -317,7 +315,6 @@ class RequestIssuesUpdate < CaseflowRecord
   end
 
   def create_issue_update_task(change_type, before_issue, after_issue = nil)
-    binding.pry
     transaction do
       task = IssuesUpdateTask.create!(
         appeal: before_issue.decision_review,
