@@ -76,7 +76,7 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
-  ENV["VA_DOT_GOV_API_URL"] = "https://staging-api.va.gov/"
+  ENV["VA_DOT_GOV_API_URL"] = "https://sandbox-api.va.gov/"
 
   # For testing uncertification methods
   ENV["TEST_USER_ID"] = "TEST_USER_ID"

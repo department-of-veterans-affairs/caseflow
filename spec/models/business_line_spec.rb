@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe BusinessLine do
-  let(:business_line) { create(:business_line, name: "VHA", url: "vha") }
+  include_context :business_line, "VHA", "vha"
   let(:veteran) { create(:veteran) }
 
   describe ".tasks_url" do

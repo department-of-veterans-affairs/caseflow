@@ -10,7 +10,6 @@
   "CASE_SEARCH_DATA_LOAD_IN_PROGRESS_MESSAGE": "Loading cases...",
   "CASE_SEARCH_DATA_LOAD_FAILED_MESSAGE": "Unable to load cases",
   "CONTESTED_ISSUE": "Issue",
-
   "CASE_LIST_TABLE_TITLE": "Appeals",
   "CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE": "Case Details",
   "CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE": "Docket",
@@ -54,15 +53,12 @@
   "CASE_LIST_TABLE_TOTAL_DAYS_COLUMN_TITLE": "Total Days",
   "CASE_LIST_TABLE_BOARD_INTAKE": "Board Intake",
   "CASE_LIST_TABLE_TASK_NO_INSTRUCTIONS_TOOLTIP": "No instructions.",
-
   "DOB_INVALID_ERRS": {
     "AGE_MIN_ERR": "Appellant must be at least 14 years of age.",
     "AGE_MAX_ERR": "Appellant cannot be older than 118 years of age."
   },
   "SSN_INVALID_ERR": "Please enter a valid social security number that follows the format: 123-45-6789 or 123456789",
-
   "NULL_FILTER_LABEL": "<<blank>>",
-
   "OTHER_REVIEWS_TABLE_TITLE": "Higher Level Reviews & Supplemental Claims",
   "OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE": "EP Codes",
   "OTHER_REVIEWS_TABLE_APPELLANT_NAME_COLUMN_TITLE": "Appellant Name",
@@ -76,7 +72,6 @@
   "OTHER_REVIEWS_TABLE_ESTABLISHING": "Establishing...",
   "OTHER_REVIEWS_TABLE_SYNCING_DECISIONS": "Syncing decisions...",
   "OTHER_REVIEWS_TABLE_SYNCING_DECISIONS_ERROR": "Decisions sync failed. Support notified.",
-
   "TASK_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
   "TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL": "Hearing Type",
   "TASK_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Appeal Stream Type",
@@ -122,12 +117,10 @@
   "TASK_SNAPSHOT_NO_ACTIVE_LABEL": "There are currently no active tasks",
   "TASK_SNAPSHOT_ACTIVE_TASKS_LABEL": "Currently active tasks",
   "TASK_SNAPSHOT_ADD_NEW_TASK_LABEL": "+ Add a new task",
-
   "TASK_SNAPSHOT_CANCEL_REASONS": {
     "poa_change": "POA Change",
     "substitution": "Substitution"
   },
-
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY": "View VLJ Hearing Worksheet",
   "CASE_DETAILS_HEARING_DETAILS_LINK_COPY": "View Hearing Details",
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP": "This link opens a PDF copy of the Hearing Worksheet",
@@ -156,11 +149,9 @@
   "FNOD_SOURCE": "VBMS",
   "VETERAN_NOT_ACCESSIBLE_ERROR_TITLE": "Permission Issue",
   "VETERAN_NOT_ACCESSIBLE_ERROR_DETAIL": "It looks like you don't have the necessary level of access to view this information. Please alert your manager if you need access to this information.",
-
   "CASE_DETAILS_GENDER_FIELD_LABEL": "Gender",
   "CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE": "Female",
   "CASE_DETAILS_GENDER_FIELD_VALUE_MALE": "Male",
-
   "CASE_DETAILS_CAVC_DOCKET_NUMBER": "Court Docket",
   "CASE_DETAILS_CAVC_ATTORNEY": "Attorney Representation",
   "CASE_DETAILS_CAVC_JUDGE": "Name of judge",
@@ -171,11 +162,9 @@
   "CASE_DETAILS_CAVC_MANDATE_DATE": "Mandate date",
   "CASE_DETAILS_CAVC_FEDERAL_CIRCUIT": "Appealed to Federal Circuit",
   "CASE_DETAILS_CAVC_REMAND_INSTRUCTIONS": "Remand Instructions",
-
   "EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_TITLE": "You have successfully updated %(appellantName)s's information",
   "EDIT_UNRECOGNIZED_APPELLANT_SUCCESS_ALERT_MESSAGE": "If you need to make further changes, select 'Edit information' in the About the Appellant section.",
   "EDIT_UNRECOGNIZED_APPELLANT_FAILURE_ALERT_TITLE": "Unable to edit appellant.",
-
   "POST_DISPATCH_TITLE": "Post-dispatch actions",
   "ADD_CAVC_BUTTON": "+ Add CAVC Remand",
   "ADD_CAVC_PAGE_TITLE": "Add a Court remand",
@@ -253,7 +242,6 @@
   "CAVC_REMAND_REVIEW_SUCCESS_DETAIL": "Any necessary tasks have been created and assigned for further processing.",
   "CAVC_REMAND_REVIEW_SCHEDULE_HEARING_TASK_ALERT_TEXT": "When Schedule Hearing task is selected, Transcription and Evidence Submission tasks will automatically be included and cannot be unselected.",
   "CAVC_REMAND_REVIEW_SOURCE_APPEAL_ALERT_DESCRIPTION": "Post CAVC appeal stream has been established.",
-
   "CAVC_EXTENSION_REQUEST_TITLE": "Review extension request",
   "CAVC_EXTENSION_REQUEST_DECISION_LABEL": "How will you proceed?",
   "CAVC_EXTENSION_REQUEST_GRANT": "grant",
@@ -264,7 +252,6 @@
   "CAVC_EXTENSION_REQUEST_GRANT_SUCCESS_DETAIL": "You can find this case in the on hold tab of you team's queue",
   "CAVC_EXTENSION_REQUEST_DENY_SUCCESS_TITLE": "You have denied extension",
   "CAVC_EXTENSION_REQUEST_DENY_SUCCESS_DETAIL": "This task can be completed to distribute to a judge for further processing",
-
   "CAVC_DASHBOARD_LOADING_SCREEN_TEXT": "Loading CAVC Dashboard...",
   "CAVC_DASHBOARD_LOADING_FAILURE_TITLE": "Unable to load CAVC Dashboard",
   "CAVC_DASHBOARD_LOADING_FAILURE_TEXT": "Caseflow was unable to load this CAVC Dashboard. Refresh the page to try again.",
@@ -282,13 +269,11 @@
   "CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_HEADER": "Your changes are not saved",
   "CANCEL_CAVC_DASHBOARD_CHANGE_MODAL_BODY": "Would you like to continue?",
   "CONTINUE_BUTTON_TEXT": "Continue",
-
   "ADD_CAVC_DATES_TITLE": "Add Court dates",
   "CORRECT_CAVC_REMAND_LINK": "Edit Remand",
   "VIEW_NOTIFICATION_LINK": "View notifications sent to appellant",
   "EDIT_APPELLANT_INFORMATION_LINK": "Edit Information",
   "UP_DATE_POA_LINK": "Update POA",
-
   "EDIT_NOD_DATE_MODAL_TITLE": "Edit NOD Date",
   "EDIT_NOD_DATE_MODAL_DESCRIPTION": "**Editing the NOD date affects the time it takes for a Veteran to receive a response to their appeal.**",
   "EDIT_NOD_DATE_LABEL": "NOD Date",
@@ -300,20 +285,15 @@
   "EDIT_NOD_DATE_TIMELINESS_ERROR_MESSAGE": "The NOD Date has not been edited because the new date affects the eligibility of one or more issues. See below for more information.",
   "EDIT_NOD_DATE_TIMELINESS_ALERT_TITLE": "New NOD Date Not Saved",
   "EDIT_NOD_DATE_TIMELINESS_COB_MESSAGE": "*If you believe this information needs to be updated, please reach out to the Clerk of the Board at [BVA.Clerk@va.gov](mailto:BVA.Clerk@va.gov).*",
-
   "EDIT_POA_SUCCESS_ALERT_TITLE": "You have successfully updated the Appellant's POA Information",
   "EDIT_POA_SUCCESS_ALERT_MESSAGE": "To make further changes, please submit a yourIT ticket.",
-
   "DOCKET_HAS_HEARINGS_SCHEDULED": "The docket type can't be changed because there are hearings scheduled.",
   "DOCKET_INVALID_RO_TYPE": "The Central Office cannot be used for dockets types other than Central",
-
   "DROPDOWN_LABEL_JUDGE": "VLJ",
   "DROPDOWN_LABEL_HEARING_COORDINATOR": "Hearing Coordinator",
   "DROPDOWN_LABEL_HEARING_ROOM": "Hearing Room",
-
   "NEW_FILE_ICON_TOOLTIP": "This case has new documents",
   "NEW_FILE_ALL_ICON_TOOLTIP": "One or more cases has new documents available",
-
   "NO_CASES_IN_QUEUE_MESSAGE": "You have no cases assigned to you. You can ",
   "NO_CASES_IN_QUEUE_LINK_TEXT": "search for cases",
   "ATTORNEY_QUEUE_TABLE_TITLE": "Your cases",
@@ -324,33 +304,27 @@
   "TASKS_NEED_ASSIGNMENT_ERROR_TITLE": "Some cases need preliminary DAS assignments",
   "TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE": "Cases marked with exclamation points need to be assigned to you through DAS. Please contact your judge or senior counsel to create preliminary DAS assignments.",
   "JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE": "Cases to Assign",
-
   "QUEUE_PAGE_COMPLETE_TAB_TITLE": "Completed",
   "QUEUE_PAGE_ASSIGNED_TAB_TITLE": "Assigned (%d)",
   "QUEUE_PAGE_ON_HOLD_TAB_TITLE": "On hold (%d)",
-
   "USER_QUEUE_PAGE_TABLE_TITLE": "Your cases",
   "USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to you:",
   "USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Assigned\" tab when hold is completed):",
-  "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last 7 days):",
-  "VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed:",
-
+  "QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION": "Cases completed (last 7 days):",
+  "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed:",
   "EDUCATION_EMO_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to a member of a Regional Processing Office team or Board Intake:",
   "EDUCATION_EMO_QUEUE_PAGE_COMPLETED_TASKS_DESCRIPTION": "Cases completed:",
-
-  "EDUCATION_RPO_QUEUE_PAGE_COMPLETED_TASKS_DESCRIPTION": "Cases completed in the last 7 days:",
-
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE": "Assigned (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_IN_PROGRESS_TAB_TITLE": "In Progress (%d)",
-
+  "ORGANIZATIONAL_QUEUE_ON_HOLD_TAB_TITLE": "On Hold (%d)",
+  "VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed:",
+  "EDUCATION_RPO_QUEUE_PAGE_COMPLETED_TASKS_DESCRIPTION": "Cases completed in the last 7 days:",
   "VHA_ORGANIZATIONAL_QUEUE_PAGE_READY_FOR_REVIEW_TAB_TITLE": "Ready for Review",
   "VHA_ORGANIZATIONAL_QUEUE_PAGE_ON_HOLD_TAB_TITLE": "On Hold",
   "VHA_ORGANIZATIONAL_QUEUE_PAGE_COMPLETED_TAB_TITLE": "Completed",
-
   "EDUCATION_ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
   "EDUCATION_ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE": "Assigned (%d)",
-  "EDUCATION_ORGANIZATIONAL_QUEUE_PAGE_COMPLETED_TAB_TITLE": "Completed",
   "EDUCATION_ORGANIZATIONAL_QUEUE_PAGE_IN_PROGRESS_TASKS_DESCRIPTION": "Cases that are in progress in the %s team's queue:",
   "EDUCATION_ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases owned by the %s team:",
   "VHA_ORGANIZATIONAL_QUEUE_PAGE_IN_PROGRESS_TASKS_DESCRIPTION": "Cases that are in progress:",
@@ -359,7 +333,6 @@
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases owned by the %s team that are unassigned to a person.",
   "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to a member of the %s team:",
   "ORGANIZATIONAL_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold in a %s team member's queue.",
-  "ORGANIZATIONAL_QUEUE_PAGE_BVA_COMPLETED_TASKS_DESCRIPTION": "Cases that are complete:",
   "ORGANIZATIONAL_QUEUE_PAGE_BVA_PENDING_TASKS_DESCRIPTION": "Appeals in Pre-Docket streams:",
   "ORGANIZATIONAL_QUEUE_PAGE_BVA_READY_FOR_REVIEW_TASKS_DESCRIPTION": "Cases assigned to Board Intake:",
   "ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE": "This queue is empty. You can ",
@@ -367,14 +340,11 @@
   "ORGANIZATIONAL_QUEUE_PAGE_READY_FOR_REVIEW_TAB_TITLE": "Ready for Review (%d)",
   "ORGANIZATIONAL_QUEUE_COMPLETED_TAB_TITLE": "Completed",
   "ORGANIZATIONAL_QUEUE_ASSIGNED_TO_DESCRIPTION": "Cases assigned to %s:",
-
   "TRACKING_TASKS_TAB_TITLE": "All cases",
   "TRACKING_TASKS_TAB_DESCRIPTION": "All AMA cases represented by %s that have been active at the Board of Veterans' Appeals in the past 2 weeks.",
-
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
   "JUDGE_ASSIGN_DROPDOWN_LINK_LABEL": "Assign %s team cases",
   "JUDGE_REVIEW_DROPDOWN_LINK_LABEL": "Your cases",
-
   "JUDGE_ADDRESS_MTV_TITLE": "Address %s's Motion to Vacate",
   "JUDGE_ADDRESS_MTV_DESCRIPTION": "Determine how you would like to address this motion to vacate.\n\nIf you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.\n\nIf you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.\n\nIf they are no longer active, it will be placed in the Litigation Support team queue for reassignment.",
   "JUDGE_ADDRESS_MTV_DISPOSITION_SELECT_LABEL": "How will you address this motion to vacate?",
@@ -387,14 +357,12 @@
   "JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_GRANTED": "This task will be sent to the assigned attorney on your team",
   "JUDGE_ADDRESS_MTV_SUCCESS_TITLE_DENIED": "%s's Motion to Vacate has been %s",
   "JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED": "This task will be completed by the original motions attorney or placed in the team's queue",
-
   "RETURN_TO_LIT_SUPPORT_MODAL_TITLE": "Return to Litigation Support",
   "RETURN_TO_LIT_SUPPORT_MODAL_CONTENT": "Use this action to return the Motion to Vacate task to the previous Motions Attorney in order to request changes to the ruling letter draft, or if the ruling letter draft is missing.\n\nIf the previous attorney is inactive, this will return to the Litigation Support team queue for reassignment.",
   "RETURN_TO_LIT_SUPPORT_MODAL_INSTRUCTIONS_LABEL": "Provide context and instructions for this action",
   "RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS": "I am missing a link to the draft ruling letter. Please resubmit so I can review and sign.",
   "RETURN_TO_LIT_SUPPORT_SUCCESS_TITLE": "%s's Motion to Vacate has been returned to Litigation Support",
   "RETURN_TO_LIT_SUPPORT_SUCCESS_DETAIL": "This task will be completed by the original Motions Attorney or placed in the team's queue",
-
   "MOTIONS_ATTORNEY_ADDRESS_MTV_TITLE": "Review %s's Motion to Vacate",
   "MOTIONS_ATTORNEY_REVIEW_MTV_DESCRIPTION": "Create your review for this motion to vacate, then send it back to the Veteran's Law Judge who originally signed the case if they are available.",
   "MOTIONS_ATTORNEY_REVIEW_MTV_DISPOSITION_SELECT_LABEL": "What is your review for this motion?",
@@ -406,37 +374,30 @@
   "MOTIONS_ATTORNEY_REVIEW_MTV_SUCCESS_DETAIL": "This task will remain in your On Hold tab until it has been completed",
   "MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_MODAL_TITLE": "Add hyperlink",
   "MOTIONS_ATTORNEY_REVIEW_MTV_HYPERLINK_MODAL_INSTRUCTIONS": "Add an additional file you would like the judge to review by entering the type of the document and its URL.",
-
   "MTV_CHECKOUT_REVIEW_VACATURES_TITLE": "Review vacated decision issues",
   "MTV_CHECKOUT_REVIEW_VACATURES_EXPLANATION": "Review the prior decision issues here that have been marked for vacatur by the judge. Please remember to include them in your decision letter if you haven't already.",
   "MTV_CHECKOUT_CONFIRM_REMOVE_DECISION_ISSUE": "Are you sure you want to remove this decision?",
   "MTV_CHECKOUT_ADD_DECISIONS_TITLE": "Add decisions",
   "MTV_CHECKOUT_ADD_DECISIONS_EXPLANATION": "Add decisions to the items listed here that have been reissued because of the motion to vacate. Any decisions to add must be connected to at least one issue on appeal. This helps Caseflow gather metrics on BVA decisions and meet AMA reporting requirements.",
-
   "MTV_CHECKOUT_RETURN_TO_JUDGE_ALERT_TITLE": "Prior decision issues marked for vacatur",
   "MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_TITLE": "Return to Judge",
   "MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_DESCRIPTION": "Use this action to return the Motion to Vacate task to your judge if you believe there is an error in the issues that have been marked for vacatur.\n\nIf your judge is unavailable, this will return to the Litigation Support team queue for reassignment.",
   "MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_INSTRUCTIONS_LABEL": "Provide instructions and context for this action",
   "MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_TITLE": "%s's Motion to Vacate has been returned to %s",
   "MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_DETAILS": "If you made a mistake, please email your judge to resolve the issue.",
-
   "VACATE_AND_DE_NOVO_TASK_LABEL": "Vacate and De Novo",
   "VACATE_AND_READJUDICATION_TASK_LABEL": "Vacate and Readjudication",
   "STRAIGHT_VACATE_TASK_LABEL": "Straight Vacate",
   "DENIED_MOTION_TO_VACATE_TASK_LABEL": "Denied Motion to Vacate",
   "DISMISSED_MOTION_TO_VACATE_TASK_LABEL": "Dismissed Motion to Vacate",
-
   "IS_PAPER_CASE": "This is a paper case",
-
   "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA": "OMO - VHA",
   "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_IME": "OMO - IME",
-
   "REMAND_REASONS_SCREEN_SUBHEAD_LABEL": "Please %s the appropriate remand reasons for all the remand dispositions.",
   "LEGACY_REMAND_REASON_POST_AOJ_LABEL_BEFORE": "Before certification",
   "LEGACY_REMAND_REASON_POST_AOJ_LABEL_AFTER": "After certification",
   "AMA_REMAND_REASON_POST_AOJ_LABEL_BEFORE": "Pre AOJ",
   "AMA_REMAND_REASON_POST_AOJ_LABEL_AFTER": "Post AOJ",
-
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL": "Complexity of case",
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_SUBHEAD": "How would you rate the complexity of this case?",
   "JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL": "Quality of work",
@@ -445,7 +406,6 @@
   "JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL": "Identify areas for improvement",
   "JUDGE_EVALUATE_DECISION_IMPROVEMENT_NOT_CONSIDERED": "The attorney did not properly consider and apply:",
   "JUDGE_EVALUATE_DECISION_IMPROVEMENT_AREAS_FOR_IMPROVEMENT": "Other areas for improvement:",
-
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL": "Case Timeliness",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_CASE_TYPE": "Case Type",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_TOTAL_DAYS_ATTORNEY_ASSIGNED": "Total days since attorney assigned",
@@ -455,22 +415,17 @@
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED": "Days worked by attorney",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM": "does not include days assigned to other teams",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBHEAD": "Was this decision timely?",
-
   "JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_LABEL": "One Touch Initiative",
   "JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_SUBHEAD": "Is this case part of the \"One Touch Initiative\"?",
-
   "JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL": "Additional Comments",
   "JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_SUBHEAD": "Share more details about your evaluation",
-
   "JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE": "You have successfully submitted an OMO for %s.",
   "JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS.",
   "JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE": "Thank you for reviewing %s's decision.",
-
   "CHECKOUT_DISPATCH_SUCCESS_DETAIL_LEGACY": "If you need to make any changes, please manage this case in DAS.",
   "CHECKOUT_DISPATCH_SUCCESS_DETAIL_AMA_BEFORE_LINK": "If you need to make any changes, please ",
   "CHECKOUT_DISPATCH_SUCCESS_DETAIL_AMA_LINK": "submit feedback",
   "CHECKOUT_DISPATCH_SUCCESS_DETAIL_AMA_AFTER_LINK": ".",
-
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_HEADER": "Build Schedule",
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_DESCRIPTION": "To build the schedule, please download one of the templates and fill it with the appropriate data. Then, click the \"Upload files\" button to import your completed .xlsx file.",
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_DOWNLOAD_LINK": "Download templates",
@@ -479,14 +434,12 @@
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK": "View current schedule",
   "HEARING_SCHEDULE_DOCKET_NO_VETERANS": "No Veterans are scheduled for this hearing day.",
   "HEARING_SCHEDULE_DOCKET_JUDGE_WITH_NO_HEARINGS": "You have no hearings scheduled for this hearing day.",
-
   "HEARING_SCHEDULE_UPLOAD_PAGE_HEADER": "Upload Files",
   "HEARING_SCHEDULE_UPLOAD_PAGE_INSTRUCTIONS": "Please select the file you are uploading and choose a date range.",
   "HEARING_SCHEDULE_UPLOAD_PAGE_RADIO_FIELD_HEADER": "What are you uploading?",
   "HEARING_SCHEDULE_UPLOAD_START_DATE_LABEL": "Start Date:",
   "HEARING_SCHEDULE_UPLOAD_END_DATE_LABEL": "End Date:",
   "HEARING_SCHEDULE_SUCCESSFULLY_ASSIGNED_JUDGES": "Successfully assigned judges to the provided hearing days",
-
   "ASSIGN_WIDGET_OTHER": "Other",
   "ASSIGN_WIDGET_NO_ASSIGNEE_TITLE": "No assignee selected",
   "ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL": "Please select someone to assign the tasks to.",
@@ -507,7 +460,6 @@
   "VHA_ASSIGN_WIDGET_BUTTON_TEXT": "Assign %(numCases)s %(casePlural)s",
   "ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL": "Enter the name of an attorney:",
   "ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS": "Error loading attorneys",
-
   "HEARING_SCHEDULE_VIEW_PAGE_HEADER": "Welcome to Caseflow Hearings!",
   "HEARING_SCHEDULE_JUDGE_DEFAULT_VIEW_PAGE_HEADER": "Welcome to Your Hearing Schedule",
   "HEARING_SCHEDULE_JUDGE_SHOW_ALL_VIEW_PAGE_HEADER": "Welcome to Hearing Schedule",
@@ -516,113 +468,93 @@
   "HEARING_SCHEDULE_VIEW_START_DATE_LABEL": "From:",
   "HEARING_SCHEDULE_VIEW_END_DATE_LABEL": "To:",
   "HEARING_SCHEDULE_VIEW_SCHEDULE": "View Schedule",
-
   "HEARING_SCHEDULE_ASSIGN_HEARINGS_HEADER": "Schedule Veterans",
   "HEARING_SCHEDULE_ASSIGN_HEARINGS_VIEW_SCHEDULE_LINK": "View hearing schedule",
-
   "FORM_ERROR_FIELD_REQUIRED": "This field is required",
   "NOTES_ERROR_FIELD_REQUIRED": "Notes field is required",
   "INSTRUCTIONS_ERROR_FIELD_REQUIRED": "Instructions field is required",
   "FORM_ERROR_FIELD_INVALID": "This field is invalid",
-
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_ROCO": "We have assigned your hearings days",
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_JUDGE": "We have assigned your judges",
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_MESSAGE_ROCO": "Please review the following assignments for any errors. You can confirm the schedule to upload this to Caseflow or use go back to upload another file.",
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_MESSAGE_JUDGE": "Please review the following assignments for any errors. You can confirm the schedule to upload this to Caseflow or use go back to upload another file.",
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_MODAL_TITLE": "Please confirm Caseflow upload",
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_MODAL_BODY": "You are about to upload these assignments to Caseflow. Once this is done, you cannot perform this upload for the selected date range again. You will have to make individual edits to the schedule.",
-
   "HEARING_SCHEDULE_SUCCESS_MESSAGE": "You can view your uploaded schedule by clicking the link below",
-
   "MARK_TASK_COMPLETE_TITLE": "Mark as complete",
   "MARK_TASK_COMPLETE_COPY": "You can find this case in the completed tab of your queue.",
   "MARK_TASK_COMPLETE_BUTTON": "Mark complete",
   "MARK_TASK_COMPLETE_CONFIRMATION": "The task for %s's case has been marked complete",
   "MARK_TASK_COMPLETE_CONFIRMATION_DETAIL": "If you have made a mistake, please email %s to manage any changes.",
-
   "MARK_TASK_COMPLETE_TITLE_CONTESTED_CLAIM": "Mark task as complete",
   "MARK_TASK_COMPLETE_BUTTON_CONTESTED_CLAIM": "Mark as complete",
   "DAYS_CONTESTED_CLAIM": "45 days",
   "CUSTOM_CONTESTED_CLAIM": "Custom",
   "TEXTAREA_CONTESTED_CLAIM": "Number of days (Value must be between 45 and 364)",
-
   "PROCEED_FINAL_NOTIFICATION_LETTER_TITLE": "Proceed to final notification letter",
   "PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY": "The \"Post-Send Initial Notification Letter Holding Period\" task will be marked as complete and a new \"Send Final Notification Letter\" task will be created.",
   "PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY": "The \"Send Initial Notification Letter\" task will be marked complete and a new \"Final Notification Letter\" task will be created.",
   "PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON": "Proceed to final letter",
   "PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_TASK_SUCCESS": "Post Send Initial Notification Letter Holding Period task completed",
   "PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_TASK_SUCCESS": "Send Initial Notification Letter task completed",
-
   "RESEND_INITIAL_NOTIFICATION_LETTER_TITLE": "Resend initial notification letter",
   "RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING_COPY": "The \"Post-Send Initial Notification Letter Holding Period\" task will be marked as complete and a new \"Send Initial Notification Letter\" task will be created.",
   "RESEND_INITIAL_NOTIFICATION_LETTER_FINAL_COPY": "The \"Send Final Notification Letter\" task will be cancelled and a new \"Send Initial Notification Letter\" task will be created.",
   "RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON": "Resend notification letter",
   "RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING_TASK_SUCCESS": "Post Send Initial Notification Letter Holding task completed",
   "RESEND_INITIAL_NOTIFICATION_LETTER_FINAL_TASK_SUCCESS": "Send Final Notification Letter task is cancelled",
-
   "RESEND_FINAL_NOTIFICATION_LETTER_TITLE": "Resend final notification letter",
   "RESEND_FINAL_NOTIFICATION_LETTER_COPY": "The \"Send Final Notification Letter\" task will be marked as complete and a new \"Send Final Notification Letter\" task will be created.",
   "RESEND_FINAL_NOTIFICATION_LETTER_BUTTON": "Resend notification letter",
   "RESEND_FINAL_NOTIFICATION_LETTER_TASK_SUCCESS": "Send Final Notification Letter task completed",
-
   "MODAL_SUBMIT_CANCEL_BUTTON_CONTESTED_CLAIM": "Cancel task",
   "MODAL_SUBMIT_BUTTON": "Submit",
   "MODAL_CANCEL_BUTTON": "Cancel",
   "MODAL_CLOSE_BUTTON": "Close",
   "MODAL_CONFIRM_BUTTON": "Confirm",
   "MODAL_RETURN_BUTTON": "Return",
+  "MODAL_ASSIGN_BUTTON": "Assign",
   "MODAL_MARK_TASK_IN_PROGRESS_BUTTON": "Mark in progress",
   "MODAL_SEND_BUTTON": "Send",
+  "MODAL_PUT_TASK_ON_HOLD_BUTTON": "Put task on hold",
+  "MODAL_END_HOLD_BUTTON": "End hold",
   "MODAL_REMOVE_BUTTON": "Remove",
   "MODAL_SAVE_BUTTON": "Save",
-
   "BULK_ASSIGN_BUTTON_TEXT": "Assign Tasks",
   "BULK_ASSIGN_MODAL_TITLE": "Bulk Assign Tasks",
-
   "REGIONAL_OFFICE_REQUIRED_MESSAGE": "Please select a regional office",
-
   "CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_TITLE": "Cancel hearing request",
   "CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_DETAIL": "Canceling this hearing request will release it to a hearing coordinator for review. A 90 day evidence hold may still apply to this case.",
-
   "SPECIAL_CASE_MOVEMENT_MODAL_TITLE": "Case Movement",
   "SPECIAL_CASE_MOVEMENT_MODAL_DETAIL": "This action overrides the normal case distribution process and immediately assigns the appeal to the judge selected.",
   "SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER": "Select a judge",
-
   "BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_TITLE": "Reassign %s's Case",
   "BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_SUBTITLE": "This case currently has blocking tasks that will be cancelled to move this case",
   "BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_TASKS_HEADER": "The following task(s) will be cancelled:",
   "BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_REASONING_HEADER": "Please provide reason(s) and context for the cancellation:",
-
   "BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_TITLE": "Confirm Cancellation and Reassign",
   "BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_WARNING": "To cancel tasks you must select a user to move the case to as well as provide a reason and context for the reassignment below.",
   "BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_JUDGE_HEADER": "Reassign to",
   "BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_INSTRUCTIONS_HEADER": "Provide instructions to %s for this reassignment",
   "BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_SUBMIT": "Cancel Task and Reassign",
   "BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_ERROR_TITLE": "Could not cancel tasks and reassign to %s",
-
   "MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE": "Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930. Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding of clear and unmistakable error, which would result in a brand new docket number being assigned. An updated docket number format will need to be in place for legacy appeals by 2030 in order to ensure that docket numbers are sorted correctly.",
   "BOARD_DOCKET_NUMBER_ERROR": "Please enter a valid docket number provided by the Board (123456-7).",
-
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
   "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to %s",
   "MARK_AS_COMPLETE_CONTESTED_CLAIM_TITLE": "Complete task",
   "MARK_AS_COMPLETE_CONTESTED_CLAIM_DETAIL": "By marking this task as complete, you are confirming that initial notification letter(s) have been sent.\n\nPlease select the number of days to put this task on hold to allow time for the letter(s) to be delivered.",
   "CANCEL_TASK_CONFIRMATION": "Task for %s's case has been cancelled",
   "CANCEL_TASK_CONFIRMATION_DETAIL": "Task for %s's case has been cancelled",
-
   "CANCEL_TASK_CONTACT_LIT_SUPPORT": "the Litigation Support team",
-
   "MARK_AS_COMPLETE_FROM_SEND_FINAL_NOTIFICATION_LETTER_CONTESTED_CLAIM": "The case will be released from the Clerk of the Board queue for reactivation of any pending email or hearing tasks and distribution.\n\nDoes the contesting claimant request a different type of review option than the one selected by the appellant?",
-
   "CANCEL_INITIAL_NOTIFICATION_LETTER_TASK_DETAIL": "The case will be released from the Clerk of the Board queue for reactivation of any pending mail or hearing tasks and distribution.",
   "CANCEL_POST_INITIAL_NOTIFICATION_LETTER_TASK_DETAIL": "The 'Send Initial Notification Letter Holding Period' task will be cancelled and this case will be released for distribution.",
   "CANCEL_FINAL_NOTIFICATION_LETTER_TASK_DETAIL": "The 'Send Final Notification Letter' task will be cancelled and this case will be released for distribution.",
-
   "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_TITLE": "Assign Regional Office",
   "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_DETAIL": "Assigning a Regional Office will place this case in the list of Veterans to be scheduled for the RO you choose. You will need to choose a location for the hearing when you schedule the Veteran.",
   "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_TITLE": "Updated Task Successfully",
   "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_DETAIL": "Task was cancelled and assigned to Regional Office",
-
   "HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL": "Marking this task as complete will remove this admin action from your active tasks.",
   "NO_SHOW_HEARING_TASK_COMPLETE_MODAL_BODY": "Marking this case as complete will release it to a judge for review. A 90 day evidence hold may still apply to this case.",
   "NO_SHOW_HEARING_TASK_RESCHEDULE_FORBIDDEN_ERROR": "Can only reschedule NoShowHearingTasks",
@@ -630,38 +562,25 @@
   "HEARING_TASK_ASSOCIATION_MISSING_MESSAGE": "Hearing task (%s) is missing an associated hearing. This means that either the hearing was deleted in VACOLS or the hearing association has been deleted.",
   "HEARING_TASK_DEFAULT_INSTRUCTIONS": "This task will be auto-completed when all hearing-related tasks have been completed.",
   "OPEN_HEARING_TASK_EXISTS_ON_APPEAL_MESSAGE": "There's already an open hearing task on this appeal.",
-
   "CAVC_TASK_LABEL": "All CAVC-related tasks",
   "CAVC_TASK_DEFAULT_INSTRUCTIONS": "This task will be auto-completed when all CAVC-related tasks have been closed.",
-
   "SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_LABEL": "Send CAVC-Remand-Processed Letter Task",
   "SEND_CAVC_REMAND_PROCESSED_LETTER_TASK_COMPLETE_MODAL_BODY": "Marking this task complete will put this case on hold for 90 days to allow the appellant to respond.",
-
   "CRP_LETTER_RESP_WINDOW_TASK_LABEL": "CAVC-Remand-Processed-Letter Response Window Task",
   "CRP_LETTER_RESP_WINDOW_TASK_DEFAULT_INSTRUCTIONS": "The response window task will return to the CAVC Team's queue after 90 days or when manually ended early.",
   "CAVC_REMAND_LETTER_RESPONSE_TASK_COMPLETE_MODAL_BODY": "Complete this task to make the case available to be distributed to a judge. You will no longer be able to access this case.",
-
   "MDR_TASK_LABEL": "CAVC MDR Remand Task",
   "MDR_WINDOW_TASK_DEFAULT_INSTRUCTIONS": "The MDR task will return to the CAVC Team's queue after 90 days or when manually ended early.",
-
   "MANDATE_HOLD_TASK_DEFAULT_INSTRUCTIONS": "The Mandate Hold task will return to the CAVC Team's queue after 90 days or when manually ended early.",
-
   "CAVC_GRANTED_EXTENSION_TASK_LABEL": "Granted extension",
   "CAVC_DENIED_EXTENSION_TASK_LABEL": "Denied extension",
-
   "CAVC_SEND_TO_TEAM_BLOCKING_DISTRIBUTION_DETAIL": "Create a %s assigned to the %s team. Your task will remain open to add more actions or be marked complete.",
   "CAVC_SEND_TO_TEAM_BLOCKING_CAVC_DETAIL": "Create a %s task assigned to the %s team. This will block you from sending the 90-day letter to the veteran until the new task is completed.",
-
   "CAVC_POA_TASK_LABEL": "Clarify Power of Attorney",
-
   "ASSIGN_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS": "Postpone or cancel a hearing prior to the hearing date. This task will be auto-completed after the hearing's scheduled date.",
-
   "CHANGE_HEARING_DISPOSITION_TASK_DEFAULT_INSTRUCTIONS": "Change hearing disposition (Held, Canceled, No Show, Postponed) if it was marked in error.",
-
   "CHANGE_HEARING_REQUEST_TYPE_TASK_DEFAULT_INSTRUCTIONS": "Change hearing request type for a Travel Board hearing",
-
   "SCHEDULE_HEARING_TASK_DEFAULT_INSTRUCTIONS": "Schedule Veteran and/or appellant for Board hearing.",
-
   "SCHEDULE_LATER_SUCCESS_MESSAGE": "%s was successfully added back to the schedule veteran list.",
   "HEARING_SCHEDULED_IN_ERROR_MODAL_TITLE": "Remove Hearing",
   "REMOVE_HEARING_ERROR_TITLE": "Unable to remove hearing.",
@@ -671,7 +590,7 @@
   "SCHEDULE_LATER_DISPLAY_TEXT": "Send to Schedule Veteran list",
   "ADD_COLOCATED_TASK_SUBHEAD": "Submit admin action",
   "ADD_COLOCATED_TASK_ACTION_TYPE_LABEL": "Select the type of administrative action you'd like to assign:",
-  "ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL": "Provide instructions and context for this action:",
+  "ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL": "Provide instructions and context for this action",
   "ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL": "+ Add another action",
   "ADD_COLOCATED_TASK_REMOVE_BUTTON_LABEL": "Remove this action",
   "ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL": "Assign Action",
@@ -680,19 +599,16 @@
   "ADD_COLOCATED_TASK_CONFIRMATION_DETAIL": "If you need to make any changes, please email your administration action team.",
   "ADD_COLOCATED_TASK_ACTION_DUPLICATE_ERROR": "There is already an open %s action on this case with the instructions \"%s\"",
   "ADD_HEARING_ADMIN_TASK_CONFIRMATION_DETAIL": "The task has been placed in your teams queue.",
-
   "CHANGE_TASK_TYPE_SUBHEAD": "Change task type",
   "CHANGE_TASK_TYPE_ACTION_LABEL": "Select another task type from the list of available options:",
   "CHANGE_TASK_TYPE_INSTRUCTIONS_LABEL": "Provide instructions and context for this change:",
   "CHANGE_TASK_TYPE_CONFIRMATION_TITLE": "You have changed the task type from '%s' to '%s'",
   "CHANGE_TASK_TYPE_CONFIRMATION_DETAIL": "These changes are now reflected in the currently active tasks section below.",
-
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD": "Send action to %s",
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_SUBHEAD": "Select the team you'd like to send this administrative action to",
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY": "You are sending %s's case (%d) to ",
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_CONFIRMATION": "%s's case has been sent to the %s team.",
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON": "Send case",
-
   "COLOCATED_ACTION_PLACE_HOLD_HEAD": "Place %s's case (%s) on hold",
   "COLOCATED_ACTION_PLACE_HOLD_COPY": "Select the total number of days for the hold",
   "COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold",
@@ -701,11 +617,9 @@
   "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL": "You can find this case in your queue",
   "COLOCATED_ACTION_PLACE_HOLD_BUTTON_COPY": "Place case on hold",
   "COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL": "Select number of days",
-
   "MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT": "Are you sure you want to cancel?",
   "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues.",
   "MODAL_CANCEL_ATTORNEY_CHECKOUT_SPECIAL_ISSUES": "All changes made to this page will be lost, except for the selection of special issues and the adding, editing, and deleting of issues.",
-
   "SPECIAL_ISSUES_PAGE_TITLE": "Select special issues",
   "SPECIAL_ISSUES_PAGE_NOTE": "Select the special issues that pertain to this case. If none, please select 'No Special Issues.' Cases with special issues are routed to specific groups who are in charge of adjusting the case.",
   "SPECIAL_ISSUES_ABOUT_SECTION": "About the appellant: ",
@@ -713,10 +627,8 @@
   "SPECIAL_ISSUES_BENEFIT_TYPE_SECTION": "Benefit Types: ",
   "SPECIAL_ISSUES_ISSUES_ON_APPEAL_SECTION": "Issues on Appeal: ",
   "SPECIAL_ISSUES_DIC_OR_PENSION_SECTION": "Dependency and Indemnity Compensation (DIC) or Pension: ",
-
   "SPECIAL_ISSUES_NONE_CHOSEN_TITLE": "Choose at least one.",
   "SPECIAL_ISSUES_NONE_CHOSEN_DETAIL": "If no special issues apply to this case, please confirm by selecting \"No special issues\"",
-
   "ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE": "Update Advanced on Docket (AOD) Status",
   "ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN": "AOD Motion Disposition",
   "ADVANCE_ON_DOCKET_MOTION_REASON_DROPDOWN": "Reason",
@@ -724,10 +636,8 @@
   "ADVANCE_ON_DOCKET_MOTION_REASON_DROPDOWN_PLACEHOLDER": "Select a type",
   "ADVANCE_ON_DOCKET_MOTION_GRANTED": "granted",
   "ADVANCE_ON_DOCKET_MOTION_SUCCESS_MESSAGE": "AOD status has been %s due to %s",
-
   "TASK_ACTION_DROPDOWN_BOX_LABEL": "Select an action…",
   "TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT": "Select...",
-
   "ASSIGN_TO_USER_DROPDOWN": "Select a user",
   "ASSIGN_TO_TEAM_DROPDOWN": "Select a team",
   "ASSIGN_TASK_TITLE": "Assign task",
@@ -745,13 +655,11 @@
   "ASSIGN_TASK_SUCCESS_MESSAGE": "Task assigned to %s",
   "REASSIGN_TASK_SUCCESS_MESSAGE": "Task reassigned to %s",
   "HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL": "You can continue to assign tasks to yourself and others using this queue.",
-
   "CREATE_MAIL_TASK_TITLE": "Create new mail task",
   "MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL": "Select correspondence type",
   "MAIL_TASK_CREATION_SUCCESS_MESSAGE": "Created %s task",
   "SELF_ASSIGNED_MAIL_TASK_CREATION_SUCCESS_TITLE": "You have successfully created a new %s mail task",
   "SELF_ASSIGNED_MAIL_TASK_CREATION_SUCCESS_MESSAGE": "This task will remain in your Queue. Assign or take action on this at any time through your actions dropdown.",
-
   "CASE_TIMELINE_HEADER": "Below is the history of this case.",
   "CASE_TIMELINE_DISPATCHED_FROM_BVA": "Dispatched from BVA",
   "CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING": "Dispatch from BVA pending",
@@ -769,7 +677,6 @@
   "CASE_TIMELINE_APPELLANT_SUBSTITUTION": "Substitution granted by the RO",
   "CASE_TIMELINE_APPELLANT_SUBSTITUTION_PROCESSED": "Substitution completed",
   "CASE_TIMELINE_APPELLANT_IS_A_SUBSTITUTE": "This is a substitute appellant. Substitution was granted by a Regional Office.",
-
   "DECISION_ISSUE_MODAL_TITLE": "Describe what the Veteran is appealing and what you decided.",
   "DECISION_ISSUE_MODAL_SUB_TITLE": "You can also add additional decisions to better address the Veteran's concerns or situation.",
   "DECISION_ISSUE_MODAL_DESCRIPTION": "Description",
@@ -784,9 +691,7 @@
   "DECISION_ISSUE_PAGE_EXPLANATION": "Add decisions to each issue the Veteran is appealing. Any decisions you add must be connected to at least one issue on appeal. This helps Caseflow gather metrics on BVA decisions and meet AMA reporting requirements.",
   "DECISION_ISSUE_CONFIRM_DELETE_WITH_CONNECTED_ISSUES": " Deleting this decision will also remove it from other issues you've added it to.",
   "DECISION_ISSUE_CONFIRM_DELETE": "Are you sure you want to delete this decision?",
-
   "EVALUATE_DECISION_PAGE_TITLE": "Evaluate Decision",
-
   "TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK": "Caseflow team management",
   "TEAM_MANAGEMENT_PAGE_HEADER": "Caseflow Team Management",
   "TEAM_MANAGEMENT_ID_COLUMN_HEADING": "ID",
@@ -817,7 +722,6 @@
   "TEAM_MANAGEMENT_IHP_WRITING_VSO_OPTION": "IHP-writing VSO",
   "TEAM_MANAGEMENT_FIELD_VSO_OPTION": "Field VSO",
   "TEAM_MANAGEMENT_DROPDOWN_LABEL": "Please enter a valid name or CSS ID to search for a user",
-
   "USER_MANAGEMENT_PAGE_DROPDOWN_LINK": "Caseflow user management",
   "USER_MANAGEMENT_STATUS_PAGE_TITLE": "Caseflow user status management",
   "USER_MANAGEMENT_PAGE_DESCRIPTION": "Marking a user inactive will remove them from all organizations they are a member of. Once marked inactive, a user cannot be assigned new tasks.",
@@ -831,12 +735,10 @@
   "USER_MANAGEMENT_ACTIVE_SUCCESS_BODY": "%s can now be assigned new tasks and will need to be added to organizations via the team management page",
   "USER_MANAGEMENT_INACTIVE_SUCCESS_BODY": "%s has been removed from organizations they were a member of. They will no longer be assigned new tasks. If this was a mistake, mark the user ACTIVE and add them back to the proper organizations on those organizations' team management pages",
   "USER_MANAGEMENT_USER_SEARCH_ERROR_TITLE": "Error searching for user",
-
   "LOOKUP_PARTICIPANT_ID_MODAL_TITLE": "Look Up Participant ID",
   "LOOKUP_PARTICIPANT_ID_SELECT_USER_LABEL": "Select user",
   "LOOKUP_PARTICIPANT_ID_MODAL_NO_ORGS_MESSAGE": "User does not belong to any POA organizations.",
   "LOOKUP_PARTICIPANT_ID_MODAL_ERROR_GENERIC": "There was an error processing your request. Please retry your action and contact support if errors persist.",
-
   "USER_MANAGEMENT_PAGE_TITLE": "Team management for %s",
   "USER_MANAGEMENT_JUDGE_TEAM_PAGE_TITLE": "Team management for %s Judge Team",
   "USER_MANAGEMENT_DVC_TEAM_PAGE_TITLE": "Team management for %s DVC Team",
@@ -865,11 +767,9 @@
   "USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT": "Remove from team",
   "MEMBERSHIP_REQUEST_ACTION_SUCCESS_TITLE": "You successfully %s %s's request",
   "MEMBERSHIP_REQUEST_ACTION_SUCCESS_MESSAGE": "The user was %s regular member access to %s.",
-
   "VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE": "Note: If you are requesting specialized access and are not a member of the general VHA group, you will automatically be given access to the general VHA group if your request is approved.",
   "VHA_MEMBERSHIP_REQUEST_DISABLED_OPTIONS_INFO_MESSAGE": "Options are disabled if you have a pending request or are already a member of the group.",
   "VHA_MEMBERSHIP_REQUEST_FORM_SUBMIT_SUCCESS_MESSAGE": "Your request to access %s has been submitted. Please check your VA email for updates concerning your request.",
-
   "ACCESS_DENIED_TITLE": "Additional access needed",
   "INFORMATION_CANNOT_BE_FOUND": "Information cannot be found",
   "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet.",
@@ -877,7 +777,6 @@
   "SLOW_LOADING_MESSAGE": "Loading is taking longer than usual...",
   "DEFAULT_UNKNOWN_ERROR_MESSAGE": "An unknown error occured.",
   "FAILED_HEARING_UPDATE": "There was an error updating the hearing",
-
   "CASE_MOVEMENT_TASK_LABEL": "Case Movement",
   "JUDGE_ASSIGN_TASK_LABEL": "Assign",
   "JUDGE_DECISION_REVIEW_TASK_LABEL": "Review",
@@ -885,16 +784,13 @@
   "JUDGE_DISPATCH_RETURN_TASK_LABEL": "Revise decision (BVA Dispatch)",
   "JUDGE_ADDRESS_MOTION_TO_VACATE_TASK_LABEL": "Address Motion to Vacate",
   "JUDGE_SIGN_MOTION_TO_VACATE_TASK_LABEL": "Sign Motion to Vacate",
-
   "ATTORNEY_TASK_LABEL": "Draft decision",
   "ATTORNEY_TASK_NOTES_PREFIX": "Attorney draft decision notes:",
   "ATTORNEY_REWRITE_TASK_LABEL": "Revise decision draft",
   "ATTORNEY_REWRITE_TASK_NOTES_PREFIX": "Attorney rewrite decision notes:",
   "ATTORNEY_QUALITY_REVIEW_TASK_LABEL": "Quality review",
   "ATTORNEY_DISPATCH_RETURN_TASK_LABEL": "Revise decision (BVA Dispatch)",
-
   "IHP_TASK_LABEL": "Prepare Informal Hearing Presentation",
-
   "ADDRESS_CHANGE_MAIL_TASK_LABEL": "Change of address",
   "AOD_MOTION_MAIL_TASK_LABEL": "Motion to Advance on Docket",
   "APPEAL_WITHDRAWAL_MAIL_TASK_LABEL": "Withdrawal of appeal",
@@ -922,7 +818,6 @@
   "STATUS_INQUIRY_MAIL_TASK_LABEL": "Status inquiry",
   "VACATE_MOTION_MAIL_TASK_LABEL": "Motion to vacate",
   "REVIEW_MOTION_TO_VACATE_TASK_LABEL": "Review motion to vacate",
-
   "DOCKET_SWITCH_RECOMMENDATION_TITLE": "Switch Docket: Send %s's Request to a Judge",
   "DOCKET_SWITCH_RECOMMENDATION_INSTRUCTIONS": "Add and send your recommendation for this docket switch request to a Veteran's Law Judge.",
   "DOCKET_SWITCH_RULING_TASK_LABEL": "Rule on Docket Switch",
@@ -939,7 +834,6 @@
   "DOCKET_SWITCH_DENIAL_INSTRUCTIONS": "Add the date and add any context for the denial of this switch.",
   "DENIED_DOCKET_SWITCH_TASK_LABEL": "Denied Docket Switch",
   "GRANTED_DOCKET_SWITCH_TASK_LABEL": "Granted Docket Switch",
-
   "DOCKET_SWITCH_DENIAL_SUCCESS_TITLE": "You have marked %s's request to switch dockets as denied",
   "DOCKET_SWITCH_DENIAL_SUCCESS_MESSAGE": "This will be recorded in the Case Timeline for future context.",
   "DOCKET_SWITCH_GRANTED_REQUEST_LABEL": "Switch Docket: Review %s's Request",
@@ -962,7 +856,6 @@
   "DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_OLD_DOCKET": "The issues and active tasks can be found on the ",
   "DOCKET_SWITCH_PARTIAL_GRANTED_TITLE_NEW_DOCKET": "Some issues(s) on this appeal are on a different docket.",
   "DOCKET_SWITCH_PARTIAL_GRANTED_LABEL_NEW_DOCKET": "The issues and active tasks can be found on the ",
-
   "SUBSTITUTE_APPELLANT_BUTTON": "+ Add Substitute",
   "SUBSTITUTE_APPELLANT_SELECT_APPELLANT_TITLE": "Select substitute appellant",
   "SUBSTITUTE_APPELLANT_SELECT_APPELLANT_SUBHEAD": "Complete the details below to create the appeal for the substitute for this case.",
@@ -980,12 +873,10 @@
   "SUBSTITUTE_APPELLANT_SUCCESS_DETAIL": "Any necessary tasks have been created and assigned for further processing.",
   "SUBSTITUTE_APPELLANT_SCHEDULE_HEARING_TASK_ALERT_TEXT": "When Schedule Hearing task is selected, Transcription and Evidence Submission tasks will automatically be included and cannot be unselected.",
   "SUBSTITUTE_APPELLANT_SOURCE_APPEAL_ALERT_DESCRIPTION": "This appeal has been reactivated for a substitute appellant.",
-
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",
   "CORRECT_REQUEST_ISSUES_SAVE": "Save",
   "CORRECT_REQUEST_ISSUES_SPLIT_APPEAL": "Split appeal",
-
   "CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TITLE": "Remove review?",
   "CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TEXT": "This will remove the review and cancel all the End Products associated with it.",
   "CORRECT_REQUEST_ISSUES_REMOVE_CASEFLOW_TITLE": "Withdraw appeal and cancel all tasks",
@@ -1001,7 +892,6 @@
   "CORRECT_REQUEST_ISSUES_ESTABLISH_MODAL_TITLE": "Establish 930 EP",
   "CORRECT_REQUEST_ISSUES_ESTABLISH_MODAL_TEXT": "You are now creating a 930 EP in VBMS.",
   "CORRECT_REQUEST_ISSUES_ESTABLISH_MODAL_BUTTON": "Yes, establish",
-
   "NO_RELATIONSHIPS": "This Veteran currently has no known relationships. ",
   "ADD_RELATIONSHIPS": "To add a Veteran's (spouse, child, or parent) to the Corporate Database, please ",
   "ADD_CLAIMANT_TEXT": "If the claimant is an attorney, please click \"Add Claimant\". ",
@@ -1055,11 +945,14 @@
   "UNTIMELY_EXEMPTION_COPY_VHA": " OR is this issue related to a VHA Caregiver appeal",
   "VHA_PRE_DOCKET_ADD_ISSUES_NOTICE": "You have added VHA issues. Once you click \"Submit Appeal\", this appeal will be marked for pre-docketing.",
   "VHA_PRE_DOCKET_ISSUE_BANNER": "Based on the issue selected, this will go to pre-docket queue.",
-
+  "VHA_CAMO_PRE_DOCKET_INTAKE_SUCCESS_TITLE": "Appeal recorded and sent to VHA CAMO for document assessment",
+  "VHA_CAREGIVER_SUPPORT_PRE_DOCKET_INTAKE_SUCCESS_TITLE": "Appeal recorded and sent to VHA Caregiver for document assessment",
+  "EDUCATION_PRE_DOCKET_INTAKE_SUCCESS_TITLE": "Appeal recorded and sent to Education Service for document assessment",
+  "PRE_DOCKET_INTAKE_SUCCESS_TITLE": "Appeal recorded in pre-docket queue",
+  "INTAKE_SUCCESS_TITLE": "Intake completed",
   "VACOLS_OPTIN_ISSUE_NEW": "Adding this issue will automatically close VACOLS issue",
   "VACOLS_OPTIN_ISSUE_CLOSED_EDIT": "This issue has automatically closed the VACOLS issue",
   "VACOLS_OPTIN_ISSUE_CLOSED": "VACOLS issue has been closed",
-
   "WITHDRAW_HEARING_MODAL_TITLE": "Withdraw hearing",
   "WITHDRAW_HEARING_SUCCESS_MESSAGE_TITLE": "You have successfully withdrawn %s's hearing request",
   "WITHDRAW_HEARING": {
@@ -1084,25 +977,20 @@
       "SUCCESS_MESSAGE": "The appeal was sent to <strong>Location 55</strong> for the representative to write an Informal Hearing Presentation (IHP) because they are a co-located organization."
     }
   },
-
   "RETURN_CASE_TO_HEARINGS_MANAGEMENT_TITLE": "Schedule new hearing",
   "RETURN_CASE_TO_HEARINGS_MANAGEMENT_BODY": "This will place the case in the list of veterans to be scheduled for a hearing.",
   "RETURN_CASE_TO_HEARINGS_MANAGEMENT_MESSAGE_TITLE": "You have successfully completed this case",
   "RETURN_CASE_TO_HEARINGS_MANAGEMENT_MESSAGE_BODY": "%s case has been removed from the transcription queue and has been sent to the next hearing management branch.",
-
   "CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_TITLE": "Send for hearing disposition change",
   "CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_BODY": "Choosing this option will send this case to a Hearings Branch administrator for review. All open tasks on this case will be closed and you will no longer be able to work this case.",
   "CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_SUCCESS": "Successfully sent %s's case to a Hearings Branch administrator for review.",
   "REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR": "Want to request a change in hearing disposition, but no eligible hearing task was found.",
-
   "COMPLETE_TRANSCRIPTION_BODY": "Marking this transcription as complete will release it to a judge for review. A 90 day evidence hold may still apply to this case.",
-
   "UNTIMELY_EVIDENCE_TITLE": "AMA requires that VA capture how frequently a Veteran submits evidence that can't be considered.  This includes when the Veteran:",
   "UNTIMELY_EVIDENCE_BULLET_ONE": "Requested a Direct Review appeal option and submitted evidence",
   "UNTIMELY_EVIDENCE_BULLET_TWO": "Requested the Evidence Submission appeal option and submitted evidence outside of the 90-day window after their NOD",
   "UNTIMELY_EVIDENCE_BULLET_THREE": "Requested the Hearing appeal option and submitted evidence outside of the 90-day window after their hearing",
   "WHAT_IS_INELIGIBLE_EVIDENCE": "What is ineligible evidence?",
-
   "INVALID_TASKS_ARGUMENT": "must be an ActiveRecord::Relation object",
   "INVALID_SORT_COLUMN": "must be a QueueColumn",
   "TASK_PAGE_INVALID_ASSIGNEE_MESSAGE": "must be either a User or an Organization",
@@ -1118,89 +1006,64 @@
   "INTAKE_VETERAN_NOT_FOUND": "Note: If you are certain the Veteran ID or SSN is correct, the claimant may not exist in the VBA Corporate Database. If you have access, please add claimant to the Corporate Database to continue processing this intake. If you do not have access, please",
   "NON_COMP_ADDRESS_MESSAGE": "The Veteran/appellant has filed a Notice of Disagreement at the Board of Veterans' Appeals. In order to decide that appeal, the Board will need the complete records from",
   "INTAKE_EDIT_TITLE": "Edit contention title",
-
   "EDIT_CLAIM_LABEL_MODAL_TITLE": "Edit Claim Label",
   "EDIT_CLAIM_LABEL_MODAL_SUBHEAD": "You are editing a %s claim",
   "EDIT_CLAIM_LABEL_MODAL_NOTE": "Please note: you will only be able to select claim labels within the same EP family (e.g. 040, 030). If you need to switch to another EP family, please cancel and re-establish the claim.",
-
   "CONFIRM_CLAIM_LABEL_MODAL_TITLE": "Confirm new claim label",
   "CONFIRM_CLAIM_LABEL_MODAL_BODY": "Select \"confirm\" to save and complete editing this claim label. If the claim label is not updated in VBMS in 24 hours, please submit a YourIT ticket.",
-
   "EDIT_EP_CLAIM_LABEL_SUCCESS_ALERT_TITLE": "You have successfully edited the claim label",
   "EDIT_EP_CLAIM_LABEL_SUCCESS_ALERT_MESSAGE": "If the claim label is not updated in VBMS in 24 hours, please submit a YourIt ticket.",
-
   "INTAKE_CORRECTION_TYPE_MODAL_TITLE": "Set Correction Type",
   "INTAKE_CORRECTION_TYPE_MODAL_COPY": "This issue will be added to a 930 EP for correction. If a mistake was found during quality review, please select whether it was discovered by the local or national quality review team. Otherwise, select control.",
   "INTAKE_LEGACY_OPT_IN_MESSAGE": "Did the Veteran check the \"OPT-IN from SOC/SSOC\" box on the form?",
-
   "INTAKE_HOMELESSNESS_MESSAGE": "Did the claimant check the \"I am experiencing homelessness\" box on the form?",
-
   "ERROR_ADDRESS_LINE_INVALID_CHARACTERS": "This Veteran's address has invalid characters. Please edit it in VBMS or SHARE so each address field does not have invalid characters (including double spaces) then try again.",
   "ERROR_CITY_INVALID_CHARACTERS": "This Veteran's city has invalid characters. Please edit it in VBMS or SHARE so each address field does not have invalid characters (including double spaces) then try again.",
   "ERROR_ADDRESS_TOO_LONG": "This Veteran's address is too long. Please edit it in VBMS or SHARE so each address field is no longer than 20 characters (including spaces) then try again",
   "ERROR_INVALID_ZIP_CODE": "Zip codes in the USA must be 5 characters long. Please check the veteran's address and try again.",
   "ERROR_EMAIL_INVALID_FORMAT": "Please enter a valid email that follows the format: example@email.com",
-
   "END_HOLD_MODAL_TITLE": "End hold early",
   "END_HOLD_MODAL_BODY": "Do you want to end the hold early?",
   "END_HOLD_SUCCESS_MESSAGE_TITLE": "Success! The hold has been ended early.",
-
   "ASSIGN_HEARINGS_HAS_NO_UPCOMING_DAYS_HEADER": "No upcoming hearing days",
   "ASSIGN_HEARINGS_HAS_NO_UPCOMING_DAYS_MESSAGE": "There are no upcoming hearing days for this regional office. Please add a hearing day.",
   "ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_HEADER": "There are no schedulable veterans",
   "ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_MESSAGE": "Please verify that this RO has veterans to assign a hearing",
-
   "SEND_TO_SCHEDULE_VETERAN_LIST_MODAL_TITLE": "Send to Schedule Veterans List",
   "SEND_TO_SCHEDULE_VETERAN_LIST_MODAL_DETAIL": "Sending to Schedule Veteran will place this case in the list of Veterans to be scheduled. You must assign this case a Regional Office to proceed.",
   "SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_TITLE": "Updated Task Successfully",
   "SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_DETAIL": "Successfully sent %s's case to the list of Veterans to be scheduled.",
-
   "INVALID_RECORD_ERROR_TITLE": "Record is invalid",
-
   "SCHEDULE_VETERAN_SUCCESS_MESSAGE_TITLE": "You have successfully assigned %s to a %s hearing on %s.",
   "SCHEDULE_VETERAN_SUCCESS_MESSAGE_DETAIL": "To assign another veteran please use the \"Schedule Veterans\" link below. You can also use the hearings section below to view the hearing in new tab.",
-
   "SCHEDULE_VETERAN_FULL_HEARING_DAY_TITLE": "This hearing day is full",
   "SCHEDULE_VETERAN_FULL_HEARING_DAY_MESSAGE_DETAIL": "You are about to schedule this Veteran on a full docket. Please verify before scheduling.",
   "SCHEDULE_VETERAN_DIRECT_TO_VIRTUAL_HELPER_LABEL": "When you schedule the hearing, the %s and Judge will receive an email with connection information for the virtual hearing.",
-
   "REMOVE_HEARING_DAY_MESSAGE_TITLE": "Remove Hearing Day",
   "REMOVE_HEARING_DAY_MESSAGE_DETAIL": "Once the hearing day is removed, users will no longer be able to schedule Veterans for this %s hearing day on %s.",
-
   "LOCK_HEARING_DAY_MESSAGE_TITLE": "Lock Hearing Day",
   "LOCK_HEARING_DAY_MESSAGE_DETAIL": "Completing this action will not allow more Veterans to be scheduled for this day. You can still make changes to the existing slots.",
-
   "UNLOCK_HEARING_DAY_MESSAGE_TITLE": "Unlock Hearing Day",
   "UNLOCK_HEARING_DAY_MESSAGE_DETAIL": "This hearing day is locked. Do you want to unlock the hearing day?",
-
   "HEARING_DATE_LOADING": "Finding upcoming hearing dates for this regional office...",
-
   "CLAIM_REVIEW_EDIT_ERROR_MISSING_DECISION_DATE": "VBMS or SHARE: One or more ratings may be locked on this Claim. Please try again in 24 hours.",
   "CLAIM_REVIEW_NOT_YET_PROCESSED_ERROR": "Review not yet established in VBMS. Check <a href='%s'>the job page</a> for details.",
   "CLAIM_REVIEW_EDIT_ERROR_DEFAULT": "There was an error preparing this Review for edit.",
-
   "UNKNOWN_REGIONAL_OFFICE": "Unknown",
-
   "ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_TITLE": "Hearing Room 2 is already assigned for %s",
   "ADD_HEARING_DAY_MODAL_CO_HEARING_ERROR_MESSAGE_DETAIL": "To manually add a CO hearing, please unselect, \"Assign Board Hearing Room,\" and then edit hearing day to change room number.",
-
   "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_TITLE": "No rooms available for %s",
   "ADD_HEARING_DAY_MODAL_VIDEO_HEARING_ERROR_MESSAGE_DETAIL": "All hearing rooms are taken for the date you selected.",
-
   "VIRTUAL_HEARING_REQUEST_TYPE": "Virtual",
   "VIRTUAL_HEARING_SCHEDULING_IN_PROGRESS": "Scheduling in progress",
   "VIRTUAL_HEARING_TIME_HELPER_TEXT": "The time at the Board of Veterans' Appeals in Washington, DC",
   "VIRTUAL_HEARING_TIMEZONE_HELPER_TEXT": "The hearing time in email notifications is calculated based on the timezone.",
   "VIRTUAL_HEARING_EMAIL_HELPER_TEXT": "This email address will be used to send notifications for this hearing only.",
   "VIRTUAL_HEARING_EMAIL_HELPER_TEXT_VSO": "An incorrect email address will impact the ability to access the hearing.",
-
   "CENTRAL_OFFICE_CHANGE_FROM_VIRTUAL": "Emails will be sent to the %s and POA / Representative to notify them that their virtual hearing link is no longer valid and they must appear in-person at the Board of Veterans’ Appeals Central Office.",
   "CENTRAL_OFFICE_CHANGE_TO_VIRTUAL": "Email notifications will be sent to the %s, POA / Representative, and Veterans Law Judge (VLJ).",
-
   "VIDEO_CHANGE_FROM_VIRTUAL": "Emails will be sent to the %s and POA / Representative to notify them that their virtual hearing link is no longer valid and they must appear in-person at their designated Regional Office or alternate hearing location.",
-
   "CONVERT_HEARING_TITLE": "Convert to %s Hearing",
-
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIRTUAL_TITLE": "Change to Virtual Hearing",
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_VIDEO_TITLE": "Change to Video Hearing",
   "VIRTUAL_HEARING_MODAL_CHANGE_TO_CENTRAL_TITLE": "Change to Central Hearing",
@@ -1238,17 +1101,12 @@
   "CANCEL_CONVERT_HEARING_TYPE_TO_VIRTUAL_SUCCESS_DETAIL": "You have successfully cancelled the convert hearing to virtual task",
   "CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION": "I affirm that I have the Veteran / Appellant's permisson to opt-in to a virtual hearing.",
   "CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS": "I affirm that the Veteran / Appellant and POA / Representative will have access to a computer, tablet, or mobile device with a reliable internet connection, a camera, and a microphone on the day of the virtual hearing.",
-
-
   "JUDGE_TEAM_REMOVE_JUDGE_ERROR": "Cannot remove a judge from their judge team.",
   "JUDGE_TEAM_ADMIN_ERROR": "Cannot add more than one admin to a judge team",
   "JUDGE_TEAM_DEADMIN_JUDGE_ERROR": "Cannot remove adminship from a judge on their team",
-
   "HEARING_UPDATE_SUCCESSFUL_TITLE": "You have successfully updated %s's hearing.",
-
   "DEFAULT_UPDATE_ERROR_MESSAGE_TITLE": "Unable to save changes",
   "DEFAULT_UPDATE_ERROR_MESSAGE_DETAIL": "An unknown error occurred",
-
   "VIRTUAL_HEARING_PROGRESS_ALERTS": {
     "CHANGED_TO_VIRTUAL": {
       "TITLE": "We're scheduling %s's virtual hearing",
@@ -1267,7 +1125,6 @@
       "MESSAGE": "Emails to the %{recipients} are in progress."
     }
   },
-
   "VIRTUAL_HEARING_SUCCESS_ALERTS": {
     "CHANGED_TO_VIRTUAL": {
       "TITLE": "You have successfully scheduled %s's hearing.",
@@ -1286,7 +1143,6 @@
       "MESSAGE": "Email notifications were sent to the %{recipients}."
     }
   },
-
   "VIRTUAL_HEARING_ERROR_ALERTS": {
     "JOB_IS_RUNNING": {
       "TITLE": "Unable to save changes",
@@ -1297,7 +1153,6 @@
       "MESSAGE": "Another Caseflow user is updating this hearing. Refresh the page to see their changes and try again."
     }
   },
-
   "MPI_SEARCH_ERRORS": {
     "NOT_FOUND": {
       "TITLE": "Not Found Error",
@@ -1316,7 +1171,6 @@
       "MESSAGE": "MPI service not reachable; please try again later."
     }
   },
-
   "VIRTUAL_HEARING_ALREADY_CREATED": "Virtual hearing already exists",
   "VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL": "VLJ Virtual Hearing Link",
   "VLJ_VIRTUAL_HEARING_LINK_LABEL": "VLJ Link",
@@ -1327,22 +1181,19 @@
   "PIN_KEY_MISSING_ERROR_MESSAGE": "Cannot generate a virtual hearing URL without a valid PIN key",
   "URL_HOST_MISSING_ERROR_MESSAGE": "Cannot generate a virtual hearing URL without a valid URL host",
   "URL_PATH_MISSING_ERROR_MESSAGE": "Cannot generate a virtual hearing URL without a valid URL path",
-
   "BULK_REASSIGN_INSTRUCTIONS": "This task has been %s due to the reassignment of all tasks previously assigned to %s.",
-
   "PRIORITY_PUSH_WARNING_MESSAGE": "Some cases are ready to distribute but could not be. This could be due to the tied judge being an acting judge or an attorney (`!user.judge_in_vacols?`). These will be handled manually by the board. The tied judge could also have priority distribution turned off and should not be pushed cases (`JudgeTeam.for_judge(user).accepts_priority_pushed_cases?`). There could also be a duplicate distributed case blocking distribution (`DistributedCase.find_by(case_id: case_id`) or our validations for redistributing legacy appeals failed (https://github.com/department-of-veterans-affairs/caseflow/blob/master/app/services/redistributed_case.rb#L26)",
-
   "INVALID_IHP_DRAFT_PATH": "Path to IHP is invalid. This path should be of the format '\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\VSO\\902\\VetName 12345.pdf' for legacy appeals and '\\\\vacoappbva3.dva.va.gov\\DMDI$\\VBMS Paperless IHPs\\VSO\\AMA IHPs\\VetName 12345.pdf' for AMA appeals. Hold SHIFT and right click the file to copy the path to the drafted IHP.",
-
   "UNSCHEDULED_HEARING_TITLE": "Unscheduled hearing",
   "SAVE_UNSCHEDULED_NOTES_SUCCESS_MESSAGE": "You updated the notes for %s’s hearing",
   "SAVE_UNSCHEDULED_NOTES_ERROR_TITLE": "The hearing notes failed to save.",
   "SAVE_UNSCHEDULED_NOTES_ERROR_DETAIL": "Refresh the page and try again. If the problem persists, please contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via YourIT.",
-
   "VHA_CAMO_LABEL": "VHA",
+  "VHA_CAMO_ASSIGN_TO_PROGRAM_OFFICE_DROPDOWN_LABEL": "Program Office",
+  "VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VAMC": "VA Medical Center",
+  "VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VISN": "VISN",
   "VHA_CAREGIVER_LABEL": "CSP",
   "EDUCATION_LABEL": "Education Service",
-
   "PRE_DOCKET_TASK_LABEL": "Pre-Docket",
   "DOCKET_APPEAL_MODAL_TITLE": "Docket appeal",
   "DOCKET_APPEAL_MODAL_BODY": "Please confirm that the documents provided by %s are available before docketing this appeal.",
@@ -1353,16 +1204,32 @@
   "ASSESS_DOCUMENTATION_TASK_LABEL": "Assess Documentation",
   "REVIEW_DOCUMENTATION_TASK_LABEL": "Review Documentation",
   "VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE": "Assign to Program Office",
-  "VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE": "Assign to VISN/VA Medical Center",
-  "PRE_DOCKET_MODAL_BODY": "Provide instructions and context for this action:",
+  "VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE": "Assign to VAMC/VISN",
+  "VHA_ASSIGN_TO_REGIONAL_OFFICE_RADIO_LABEL": "Find the VISN by:",
+  "VHA_ASSIGN_TO_REGIONAL_OFFICE_INSTRUCTIONS_LABEL": "Provide additional context for this action",
+  "PRE_DOCKET_MODAL_BODY": "Provide instructions and context for this action",
   "VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER": "Select Program Office",
   "VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER": "Select VISN/VA Medical Center",
-  "VHA_COMPLETE_TASK_BUTTON": "Ready for Review",
-  "VHA_COMPLETE_TASK_LABEL": "Ready for Review",
   "VHA_COMPLETE_TASK_MODAL_TITLE": "Where were documents regarding this appeal stored?",
   "VHA_COMPLETE_TASK_MODAL_BODY": "Provide details such as file structure or file path",
-  "VHA_COMPLETE_TASK_CONFIRMATION_PO": "Appeal has been marked as ready for review and sent to the CAMO team for review.",
+  "VHA_COMPLETE_TASK_CONFIRMATION_PO": "Appeal has been marked as ready for review and sent to the VHA CAMO team for review.",
   "VHA_COMPLETE_TASK_CONFIRMATION_VISN": "Appeal has been marked as ready for review and sent to the Program Office team for review.",
+  "VHA_SEND_TO_BOARD_INTAKE_MODAL_TITLE": "Send to Board Intake",
+  "VHA_SEND_TO_BOARD_INTAKE_MODAL_DETAIL": "What is the status of this appeal?",
+  "VHA_SEND_TO_BOARD_INTAKE_MODAL_CORRECT_DOCUMENTS": "Correct documents have been successfully added",
+  "VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_APPEALABLE": "This issue might not be appealable to the Board",
+  "VHA_SEND_TO_BOARD_INTAKE_MODAL_NO_VHA_DECISION": "A VHA decision has not been made",
+  "VHA_SEND_TO_BOARD_INTAKE_MODAL_NOT_VHA_RELATED": "Appeal is not related to a VHA issue",
+  "VHA_SEND_TO_BOARD_INTAKE_MODAL_BODY": "Provide additional context and/or documents",
+  "VHA_SEND_TO_BOARD_INTAKE_CONFIRMATION": "%s's case has been sent to the Board Intake team for review.",
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE": "Return to VHA CAMO team",
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned this appeal to the VHA CAMO team",
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL": "This appeal will be removed from your Queue and placed in the VHA CAMO team's Queue",
+  "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_TITLE": "Mark task in progress",
+  "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY": "By marking task as in progress, you are confirming that you are actively working on collecting documents for this appeal.\n\nOnce marked, other members of your organization will no longer be able to mark this task as in progress.",
+  "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked %s's case as in progress",
+  "VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE": "You have successfully sent %s's case to Board Intake for review",
+  "DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY": "This appeal will be sent to %s for review.\n\nPlease select where the documents for this appeal were returned",
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE": "Return to Board Intake",
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_DETAIL": "Why is this appeal being returned?",
   "VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "This appeal will be returned to Board Intake.",
@@ -1385,7 +1252,7 @@
       "LABEL": "Not VHA related",
       "VALUE": "not vha related"
     },
-      "CLARIFICATION_NEEDED": {
+    "CLARIFICATION_NEEDED": {
       "LABEL": "Clarification needed from appellant",
       "VALUE": "clarification needed from appellant"
     },
@@ -1403,18 +1270,11 @@
   "VHA_RETURN_TO_BOARD_INTAKE_CONFIRMATION": "You have successfully returned %s's case to Board Intake",
   "SELECT_RADIO_ERROR": "Please select an option.",
   "EMPTY_INSTRUCTIONS_ERROR": "Text field cannot be blank.",
-  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_MODAL_TITLE": "Return to CAMO team",
-  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned this appeal to the CAMO team",
-  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL": "This appeal will be removed from your Queue and placed in the CAMO team's Queue",
-  "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_TITLE": "Mark task as in progress",
-  "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_MODAL_BODY": "By marking task as in progress, you are confirming that you are actively working on collecting documents for this appeal.\n\nOnce marked, other members of your organization will no longer be able to mark this task as in progress.",
-  "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked %s's case as in progress",
-  "VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE": "You have successfully sent %s's case to Board Intake for review",
   "DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY": "This appeal will be sent to Board Intake for review.\n\nPlease select where the documents for this appeal were returned",
   "DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE": "Ready for review",
-  "BVA_INTAKE_RETURN_TO_CAMO_MODAL_TITLE": "Return appeal to VHA",
-  "BVA_INTAKE_RETURN_TO_CAMO_MODAL_BODY": "If you are unable to docket this appeal due to insufficient documentation, you may return this to VHA.",
-  "BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned %s's case to VHA",
+  "BVA_INTAKE_RETURN_TO_CAMO_MODAL_TITLE": "Return appeal to VHA CAMO",
+  "BVA_INTAKE_RETURN_TO_CAMO_MODAL_BODY": "If you are unable to docket this appeal due to insufficient documentation, you may return this to VHA CAMO.",
+  "BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE": "You have successfully returned %s's case to VHA CAMO",
   "BVA_INTAKE_RETURN_TO_EMO_MODAL_TITLE": "Return appeal to Education Service",
   "BVA_INTAKE_RETURN_TO_EMO_MODAL_BODY": "If you are unable to docket this appeal due to insufficient documentation, you may return this to Education Service.",
   "BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_TITLE": "You have successfully returned %s's case to Education Service",
@@ -1430,7 +1290,6 @@
   "ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_TITLE": "You have successfully marked your task as in progress",
   "ORGANIZATION_MARK_TASK_IN_PROGRESS_CONFIRMATION_DETAIL": "This appeal will be visible in the \"In Progress\" tab of your Queue",
   "EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE": "Return to Board Intake",
-  "EMO_RETURN_TO_BOARD_INTAKE_MODAL_BODY": "Provide instructions and context for this action:",
   "EMO_RETURN_TO_BOARD_INTAKE_CONFIRMATION": "You have successfully returned %s's case to Board Intake",
   "EDU_SEND_TO_BOARD_INTAKE_FOR_REVIEW_CONFIRMATION_PO": "You have successfully sent %s's case to Board Intake for review.",
   "EMO_ASSIGN_TO_RPO_MODAL_TITLE": "Assign to RPO",
@@ -1492,10 +1351,10 @@
   "SPLIT_APPEAL_BANNER_SUCCESS_MESSAGE": "This new appeal stream has the same docket number and tasks as the original appeal.",
   "TABLE_ORIGINAL_APPEAL": "Original Appeal Stream",
   "TABLE_NEW_APPEAL": "New Appeal Stream",
-  "TABLE_VETERAN" : "Veteran",
-  "TABLE_DOCKET_NUMBER" : "Docket Number",
-  "TABLE_REVIEW_OPTION" : "Review Option",
-  "TABLE_ISSUE" : "Issue(s)",
+  "TABLE_VETERAN": "Veteran",
+  "TABLE_DOCKET_NUMBER": "Docket Number",
+  "TABLE_REVIEW_OPTION": "Review Option",
+  "TABLE_ISSUE": "Issue(s)",
   "APPELLANT": "Appellant",
   "NOTIFICATION_EVENT_TYPE_COLUMN_NAME": "Event",
   "NOTIFICATION_DATE_COLUMN_NAME": "Notification Date",
@@ -1512,5 +1371,8 @@
   "PDF_GENERATION_ERROR_TITLE": "Unable to generate PDF",
   "PDF_GENERATION_ERROR_MESSAGE": "There was an error generating the PDF for download. Please try again later.",
   "DATE_SELECTOR_FUTURE_DATE_ERROR": "Dates cannot be in the future",
-  "DATE_SELECTOR_INVALID_DATE_ERROR": "Please select a valid date"
+  "DATE_SELECTOR_INVALID_DATE_ERROR": "Please select a valid date",
+  "VHA_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold (Value must be between 1 and 45 for VHA users)",
+  "VHA_CANCEL_TASK_INSTRUCTIONS_LABEL": "Why are you returning? Provide any important context",
+  "DISPOSITION_DECISION_DATE_LABEL": "Thank you for completing your decision in Caseflow. Please indicate the decision date."
 }

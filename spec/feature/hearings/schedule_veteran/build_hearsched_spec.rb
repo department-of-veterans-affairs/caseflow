@@ -441,7 +441,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
           expect(page).to have_css(
             ".usa-alert-error",
-            text: "Mapping service is temporarily unavailable. Please try again later."
+            text: "Service is temporarily unavailable, please try again later."
           )
         end
       end
@@ -614,9 +614,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
           # On hold
           click_dropdown({ text: "15 days" }, find(".cf-modal-body"))
-          fill_in "Notes:", with: "Waiting for response"
+          fill_in "Notes", with: "Waiting for response"
 
-          click_on(COPY::MODAL_SUBMIT_BUTTON)
+          click_on(COPY::MODAL_PUT_TASK_ON_HOLD_BUTTON)
 
           expect(page).to have_content("case has been placed on hold")
         end
