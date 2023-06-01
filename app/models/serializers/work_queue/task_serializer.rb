@@ -129,6 +129,14 @@ class WorkQueue::TaskSerializer
     object.appeal.try(:contested_claim?)
   end
 
+  attribute :mst do |object|
+    object.appeal.try(:mst?)
+  end
+
+  attribute :pact do |object|
+    object.appeal.try(:pact?)
+  end
+
   attribute :veteran_appellant_deceased do |object|
     object.appeal.try(:veteran_appellant_deceased?)
   end

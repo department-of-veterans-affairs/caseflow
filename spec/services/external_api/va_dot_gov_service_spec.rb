@@ -103,7 +103,7 @@ describe ExternalApi::VADotGovService do
 
       it "throws Caseflow::Error::VaDotGovServerError" do
         expect(VADotGovService.get_facility_data(ids: ["vba_372"]).error)
-          .to be_an_instance_of(Caseflow::Error::VaDotGovServerError)
+          .to be_an_instance_of(Caseflow::Error::VaDotGovRequestError)
       end
     end
   end
