@@ -457,7 +457,7 @@ class TaskRows extends React.PureComponent {
 
     return (
       <React.Fragment>
-        {this.assignedToListItem(task)}
+        {task.type !== 'IssuesUpdateTask' && this.assignedToListItem(task)}
         {this.assignedByListItem(task)}
         {this.cancelledByListItem(task)}
         {this.cancelReasonListItem(task)}
