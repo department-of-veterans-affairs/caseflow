@@ -53,7 +53,6 @@ class MailRequest
   def call
     if valid?
       distribution = create_a_vbms_distribution
-      byebug
       @vbms_distribution_id = distribution.id
       create_a_vbms_distribution_destination
     elsif invalid?
