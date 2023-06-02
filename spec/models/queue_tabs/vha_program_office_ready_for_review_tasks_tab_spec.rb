@@ -16,8 +16,34 @@ describe VhaProgramOfficeReadyForReviewTasksTab, :postgres do
       let(:params) { { assignee: create(:vha_program_office) } }
 
       it "returns the correct number of columns" do
-        expect(subject.length).to eq(7)
+        expect(subject.length).to eq 8
       end
+    end
+  end
+
+  describe ".label" do
+    subject { tab.label }
+
+    it do
+      is_expected.to eq COPY::ORGANIZATIONAL_QUEUE_PAGE_READY_FOR_REVIEW_TAB_TITLE
+      is_expected.to eq "Ready for Review (%d)"
+    end
+  end
+
+  describe ".description" do
+    subject { tab.description }
+
+    it do
+      is_expected.to eq "Cases ready for review in a #{assignee.name} team member's queue."
+    end
+  end
+
+  describe ".self.tab_name" do
+    subject { described_class.tab_name }
+
+    it "matches expected tab name" do
+      is_expected.to eq(Constants.QUEUE_CONFIG.READY_FOR_REVIEW_TASKS_TAB_NAME)
+      is_expected.to eq("readyForReviewTab")
     end
   end
 
