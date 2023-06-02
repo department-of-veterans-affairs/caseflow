@@ -292,7 +292,8 @@ class RequestIssuesUpdate < CaseflowRecord
     after_issues = fetch_after_issues
     edited_issues = before_issues & after_issues
     # cycle each edited issue (before) and compare MST/PACT with (fetch_after_issues)
-    edited_issues.each do |before_issue|
+    # reverse_each to make the issues on the case timeline appear in similar sequence to what user sees the edit issues page
+    edited_issues.reverse_each do |before_issue|
       after_issue = after_issues.find { |i| i.id == before_issue.id }
       # if before/after has a change in MST/PACT, create issue update task
       if (before_issue.mst_status != after_issue.mst_status) || (before_issue.pact_status != after_issue.pact_status)
