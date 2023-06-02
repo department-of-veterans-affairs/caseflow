@@ -431,13 +431,15 @@ class RequestIssue < CaseflowRecord
     # to avoid a slow BGS call causing the transaction to timeout
     end_product_establishment.veteran
 
-    transaction do
-      return unless create_decision_issues
+    @mutex.synchronize do
+      transaction do
+        return unless create_decision_issues
 
-      end_product_establishment.on_decision_issue_sync_processed(self)
-      clear_error!
-      close_decided_issue!
-      processed!
+        end_product_establishment.on_decision_issue_sync_processed(self)
+        clear_error!
+        close_decided_issue!
+        processed!
+      end
     end
   end
 
