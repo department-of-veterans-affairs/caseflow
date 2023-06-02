@@ -19,9 +19,6 @@ class VhaCamoCompletedTasksTab < QueueTab
   end
 
   def tasks
-    # TODO: This is a lie, however it is using this for things like filter option calculation.
-    # It's actually using app/models/queue_tabs/completed_tasks_tab.rb tasks method which is recently_completed
-    # active_tasks
     recently_completed_tasks
   end
 
