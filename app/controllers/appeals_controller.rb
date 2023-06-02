@@ -247,13 +247,13 @@ class AppealsController < ApplicationController
     safe_params[:vacols_user_id] = current_user.vacols_uniq_id
 
     # set value of MST/PACT from 'true/false' to 'Y/N'
-    if safe_params[:mst_status].upcase == "MST"
+    if safe_params[:mst_status] == true
       safe_params[:mst_status] = "Y"
     else 
       safe_params[:mst_status] = "N"
     end
 
-    if safe_params[:pact_status].upcase == "PACT"
+    if safe_params[:pact_status] == false
       safe_params[:pact_status] = "Y"
     else 
       safe_params[:pact_status] = "N"

@@ -1044,4 +1044,84 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       end
     end
   end
+
+  describe "PATCH /appeals/:appeal_id/update" do
+    context "Legacy Appeal" do
+      before do
+        User.authenticate!(roles: ["System Admin"])
+        Fakes::Initializer.load!
+      end
+
+      
+
+      let(:ssn) { Generators::Random.unique_ssn }
+      
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
+      let(:appeal_url_identifier) { appeal.is_a?(LegacyAppeal) ? appeal.vacols_id : appeal.uuid }
+      let(:options) { { format: :html, appeal_id: appeal_url_identifier } }
+      let!(:request_issue1) { create(:request_issue, decision_review: appeal) }
+      let(:request_issue2) { create(:request_issue, decision_review: appeal) }
+      let(:request_issue3) { create(:request_issue, decision_review: appeal) }
+      let(:request_issue4) { create(:request_issue, decision_review: appeal) }
+      let(:organization) { create(:organization) }
+
+      subject do
+        patch :update, params: {
+          request_issues: [
+            {
+              request_issue_id: request_issue4.id,
+              mst_status: true,
+              mst_status_update_reason_notes: "MST reason note",
+              pact_status_update_reason_notes: ""
+            },
+            {
+              request_issue_id: request_issue3.id,
+              pact_status: true,
+              mst_status_update_reason_notes: "",
+              pact_status_update_reason_notes: "PACT reason note"
+            },
+            {
+              request_issue_id: request_issue2.id,
+              mst_status: true,
+              pact_status: true,
+              mst_status_update_reason_notes: "MST note",
+              pact_status_update_reason_notes: "Pact note"
+            },
+            {
+              request_issue_id: request_issue1.id,
+              mst_status_update_reason_notes: "",
+              pact_status_update_reason_notes: ""
+            }
+          ],
+          controller: "appeals",
+          action: "update",
+          appeal_id: appeal.id
+        }
+      end
+
+      it "responds with a 200 status" do
+        allow_any_instance_of(AppealsController).to receive(:appeal).and_return(appeal)
+        allow(Organization).to receive(:find_by_url).and_return(organization)
+
+        subject
+        expect(response).to be_successful
+      end
+
+      it "creates an IssuesUpdateTask for each updated MST or PACT issue" do
+        #Note: there are 4 issues on the appeal, but since there are no edits to request_issue1, we only expect 3 tasks to be created.
+        allow_any_instance_of(AppealsController).to receive(:appeal).and_return(appeal)
+        allow(Organization).to receive(:find_by_url).and_return(organization)
+
+        subject
+        expect(IssuesUpdateTask.count).to eq(3)
+        expect(IssuesUpdateTask.first.instructions[0].include?("Special Issues: MST")).to eq (true)
+        expect(IssuesUpdateTask.first.instructions[0].include?("MST reason note")).to eq (true)
+        expect(IssuesUpdateTask.second.instructions[0].include?("Special Issues: PACT")).to eq (true)
+        expect(IssuesUpdateTask.second.instructions[0].include?("PACT reason note")).to eq (true)
+        expect(IssuesUpdateTask.third.instructions[0].include?("Special Issues: MST, PACT")).to eq (true)
+        expect(IssuesUpdateTask.third.instructions[0].include?("MST note")).to eq (true)
+        expect(IssuesUpdateTask.third.instructions[0].include?("Pact note")).to eq (true)
+      end
+    end
+  end
 end
