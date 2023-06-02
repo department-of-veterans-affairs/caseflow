@@ -300,7 +300,7 @@ class EndProductEstablishment < CaseflowRecord
       if record.respond_to?(:nonrating?) && record.nonrating?
         # for nonrating issues, submit immediately
         record.submit_for_processing!
-        DecisionIssueSyncJob.perform_now(record)
+        DecisionIssueSyncJob.perform_later(record)
       else
         # It seems to take at least a day for the associated rating to show up in BGS
         # after the EP is cleared. We don't want to tax the BGS ratings endpoint, so
