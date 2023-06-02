@@ -8,7 +8,7 @@ class MailRequest
   :participant_id, :poa_code, :claimant_station_of_jurisdiction, :destination_type,
   :address_line_1, :address_line_2, :address_line_3, :address_line_4, :address_line_5,
   :address_line_6, :city, :country_code, :postal_code, :state, :treat_line_2_as_addressee,
-  :treat_line_3_as_addressee, :country_name
+  :treat_line_3_as_addressee, :country_name, :vbms_distribution_id, :comm_package_id
 
   with_options presence: true do
     validates :recipient_type, if: :recipient_type_valid?
@@ -53,9 +53,10 @@ class MailRequest
   def call
     if valid?
       distribution = create_a_vbms_distribution
+      byebug
       @vbms_distribution_id = distribution.id
       create_a_vbms_distribution_destination
-    else
+    elsif invalid?
       raise Caseflow::Error::MissingRecipientInfo
     end
   end
