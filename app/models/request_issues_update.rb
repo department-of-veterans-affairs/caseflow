@@ -305,7 +305,6 @@ class RequestIssuesUpdate < CaseflowRecord
     after_issues = fetch_after_issues
     added_issues = after_issues - before_issues
     added_issues.each do |issue|
-
       if (issue.mst_status) || (issue.pact_status)
         create_issue_update_task("Added Issue", issue)
       end
@@ -334,24 +333,33 @@ class RequestIssuesUpdate < CaseflowRecord
         assigned_by: RequestStore[:current_user],
         completed_by: RequestStore[:current_user]
       )
-      if change_type == "Added Issue" && (before_issue.vbms_mst_status != before_issue.mst_status) || (before_issue.vbms_pact_status != before_issue.pact_status)
+      # check if change from vbms mst/pact status
+      vbms_mst_edit = before_issue.vbms_mst_status.nil? ? false : !before_issue.vbms_mst_status && before_issue.mst_status
+      vbms_pact_edit = before_issue.vbms_pact_status.nil? ? false : !before_issue.vbms_pact_status && before_issue.pact_status
+
+      # if a new issue is added and VBMS was edited, reference the original status
+      if change_type == "Added Issue" && (vbms_mst_edit || vbms_pact_edit)
         task.format_instructions(
           change_type,
-          before_issue.nonrating_issue_category,
+          before_issue&.contested_issue_description,
           before_issue.vbms_mst_status,
           before_issue.vbms_pact_status,
           before_issue&.mst_status,
-          before_issue&.pact_status,
+          before_issue&.pact_status
         )
       else
         # format the task instructions and close out
+        # use contested issue description if nonrating issue category is nil
+        issue_description = before_issue.nonrating_issue_category unless before_issue.nonrating_issue_category.nil?
+        issue_description = before_issue.contested_issue_description if issue_description.nil?
+
         task.format_instructions(
           change_type,
-          before_issue.nonrating_issue_category,
+          issue_description,
           before_issue.mst_status,
           before_issue.pact_status,
           after_issue&.mst_status,
-          after_issue&.pact_status,
+          after_issue&.pact_status
         )
       end
       task.completed!
