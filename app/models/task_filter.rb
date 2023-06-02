@@ -78,8 +78,13 @@ class TaskFilter
     def issue_type_where_clause(filter_value, filter)
       if filter_value == Constants.QUEUE_CONFIG.BLANK_FILTER_KEY_VALUE
         "#{table_column_from_name(filter.column)} IS NULL OR #{table_column_from_name(filter.column)} = '' "
-      else
+      # Check the values against all the possible ISSUE_CATEGORIES as a form of sanitation and value validation
+      elsif Constants.ISSUE_CATEGORIES.to_h.values.flatten.include?(filter_value)
         "POSITION('#{filter_value}' IN #{table_column_from_name(filter.column)}) > 0"
+      else
+        # Default to returning no tasks if the value was somehow not valid. Log an error but continue
+        Rails.logger.error("User somehow filtered on an invalid issue category **#{filter_value}**")
+        "1=0"
       end
     end
 
@@ -151,6 +156,7 @@ class TaskFilter
   def parse_where_arguments(filters)
     # Reject all columns that do not need placeholders in the query.
     # This allows more freedom in building where clauses that might use other statements instead of just IN (?)
+    # Queries build this way need their own input sanitization since they will not use the standard rails placeholders
     where_filters = filters.reject { |filter_param| IGNORE_FILTER_PLACEHOLDERS.include?(filter_param.try(:column)) }
 
     # Reject all arguments that are empty and return the remaining values
