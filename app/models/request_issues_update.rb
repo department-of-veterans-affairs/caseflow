@@ -246,10 +246,11 @@ class RequestIssuesUpdate < CaseflowRecord
     return if mst_edited_issues.empty?
 
     mst_edited_issue_data.each do |mst_edited_issue|
-      RequestIssue.find(mst_edited_issue[:request_issue_id].to_s
-      ).update!(
-        mst_status: mst_edited_issue[:mst_status],
-        mst_status_update_reason_notes: mst_edited_issue[:mst_status_update_reason_notes])
+      RequestIssue.find(mst_edited_issue[:request_issue_id].to_s)
+        .update!(
+          mst_status: mst_edited_issue[:mst_status],
+          mst_status_update_reason_notes: mst_edited_issue[:mst_status_update_reason_notes]
+      )
     end
   end
 
@@ -261,7 +262,8 @@ class RequestIssuesUpdate < CaseflowRecord
         pact_edited_issue[:request_issue_id].to_s
       ).update!(
         pact_status: pact_edited_issue[:pact_status],
-        pact_status_update_reason_notes: pact_edited_issue[:pact_status_update_reason_notes])
+        pact_status_update_reason_notes: pact_edited_issue[:pact_status_update_reason_notes]
+      )
     end
   end
 
@@ -308,8 +310,8 @@ class RequestIssuesUpdate < CaseflowRecord
     # cycle each edited issue (before) and compare MST/PACT with (fetch_after_issues)
     edited_issues.each do |before_issue|
       # lazily create a new RequestIssue since the mst/pact status would be removed if deleted?
-      if (before_issue.mst_status) || (before_issue.pact_status)
-         create_issue_update_task("Removed Issue", before_issue)
+      if before_issue.mst_status || before_issue.pact_status
+        create_issue_update_task("Removed Issue", before_issue)
       end
     end
   end
@@ -330,7 +332,7 @@ class RequestIssuesUpdate < CaseflowRecord
         before_issue.mst_status,
         before_issue.pact_status,
         after_issue&.mst_status,
-        after_issue&.pact_status,
+        after_issue&.pact_status
       )
       task.completed!
     end
