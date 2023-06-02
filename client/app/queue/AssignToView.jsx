@@ -52,13 +52,9 @@ class AssignToView extends React.Component {
 
     this.state = {
       selectedValue: action ? action.value : null,
-<<<<<<< HEAD
       instructions: existingInstructions,
-      modalDisableButton: true
-=======
-      assignToVHARegionalOfficeSelection: null,
-      instructions: existingInstructions
->>>>>>> master
+      modalDisableButton: true,
+      assignToVHARegionalOfficeSelection: null
     };
   }
 
