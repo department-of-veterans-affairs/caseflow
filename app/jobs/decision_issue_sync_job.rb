@@ -11,8 +11,6 @@ class DecisionIssueSyncJob < CaseflowJob
 
     begin
       request_issue_or_effectuation.sync_decision_issues!
-      RemandJob.perform_now(end_product_establishment.on_decision_issue_sync_processed(self))
-      end_product_establishment.on_decision_issue_sync_processed(self)
     rescue Errno::ETIMEDOUT => error
       # no Raven report. We'll try again later.
       Rails.logger.error error
