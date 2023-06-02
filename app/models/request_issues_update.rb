@@ -268,7 +268,7 @@ class RequestIssuesUpdate < CaseflowRecord
   def create_mst_pact_issue_update_tasks
     handle_mst_pact_edits_task
     handle_mst_pact_removal_task
-    # handle_mst_pact_addition_task
+    handle_added_mst_pact_edits_task
   end
 
   def process_removed_issues!
@@ -301,6 +301,17 @@ class RequestIssuesUpdate < CaseflowRecord
     end
   end
 
+  def handle_added_mst_pact_edits_task
+    after_issues = fetch_after_issues
+    added_issues = after_issues - before_issues
+    added_issues.each do |issue|
+
+      if (issue.mst_status) || (issue.pact_status)
+        create_issue_update_task("Added Issue", issue)
+      end
+    end
+  end
+
   def handle_mst_pact_removal_task
     # filter out added or removed issues
     after_issues = fetch_after_issues
@@ -323,15 +334,26 @@ class RequestIssuesUpdate < CaseflowRecord
         assigned_by: RequestStore[:current_user],
         completed_by: RequestStore[:current_user]
       )
-      # format the task instructions and close out
-      task.format_instructions(
-        change_type,
-        before_issue.nonrating_issue_category,
-        before_issue.mst_status,
-        before_issue.pact_status,
-        after_issue&.mst_status,
-        after_issue&.pact_status,
-      )
+      if change_type == "Added Issue" && (before_issue.vbms_mst_status != before_issue.mst_status) || (before_issue.vbms_pact_status != before_issue.pact_status)
+        task.format_instructions(
+          change_type,
+          before_issue.nonrating_issue_category,
+          before_issue.vbms_mst_status,
+          before_issue.vbms_pact_status,
+          before_issue&.mst_status,
+          before_issue&.pact_status,
+        )
+      else
+        # format the task instructions and close out
+        task.format_instructions(
+          change_type,
+          before_issue.nonrating_issue_category,
+          before_issue.mst_status,
+          before_issue.pact_status,
+          after_issue&.mst_status,
+          after_issue&.pact_status,
+        )
+      end
       task.completed!
     end
   end
