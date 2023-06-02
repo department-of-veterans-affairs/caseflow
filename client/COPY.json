@@ -954,12 +954,10 @@
   "UNTIMELY_EXEMPTION_COPY_VHA": " OR is this issue related to a VHA Caregiver appeal",
   "VHA_PRE_DOCKET_ADD_ISSUES_NOTICE": "You have added VHA issues. Once you click \"Submit Appeal\", this appeal will be marked for pre-docketing.",
   "VHA_PRE_DOCKET_ISSUE_BANNER": "Based on the issue selected, this will go to pre-docket queue.",
-
   "MST_SHORT_LABEL": "MST",
   "PACT_SHORT_LABEL": "PACT",
   "MST_LABEL": "Military Sexual Trauma (MST)",
   "PACT_LABEL": "PACT Act",
-
   "VHA_CAMO_PRE_DOCKET_INTAKE_SUCCESS_TITLE": "Appeal recorded and sent to VHA CAMO for document assessment",
   "VHA_CAREGIVER_SUPPORT_PRE_DOCKET_INTAKE_SUCCESS_TITLE": "Appeal recorded and sent to VHA Caregiver for document assessment",
   "EDUCATION_PRE_DOCKET_INTAKE_SUCCESS_TITLE": "Appeal recorded and sent to Education Service for document assessment",
