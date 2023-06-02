@@ -17,7 +17,8 @@ class RatingIssue
     :promulgation_date,
     :rba_contentions_data,
     :reference_id,
-    :subject_text
+    :subject_text,
+    :special_issues
     # adding another field? *
   )
 
@@ -48,7 +49,8 @@ class RatingIssue
         promulgation_date: rating.promulgation_date,
         rba_contentions_data: ensure_array_of_hashes(bgs_data.dig(:rba_issue_contentions)),
         reference_id: bgs_data[:rba_issue_id],
-        subject_text: bgs_data[:subjct_txt]
+        subject_text: bgs_data[:subjct_txt],
+        special_issues: bgs_data[:special_issues]
       )
     end
 
@@ -66,6 +68,7 @@ class RatingIssue
           :reference_id,
           :subject_text
         ).merge(associated_end_products: deserialize_end_products(serialized_hash))
+         .merge(special_issues: deserialize_special_issues(serialized_hash))
       )
     end
 
@@ -81,6 +84,42 @@ class RatingIssue
       serialized_hash[:associated_end_products].map do |end_product_hash|
         EndProduct.deserialize(end_product_hash)
       end
+    end
+
+    def deserialize_special_issues(serialized_hash)
+      return [] unless serialized_hash[:special_issues]
+
+      serialized_hash[:special_issues].map do |special_issue_hash|
+        if special_issue_has_mst?(special_issue_hash)
+          "Issue is related to Military Sexual Trauma (MST)"
+        elsif special_issue_has_pact?(special_issue_hash)
+          "Issue is related to PACT Act"
+        end
+      end.compact
+    end
+
+    def special_issue_has_mst?(special_issue)
+      if special_issue[:spis_tn] == "PTSD - Personal Trauma"
+        return ["Sexual Trauma/Assault", "Sexual Harassment"].include?(special_issue[:spis_basis_tn])
+      end
+
+      if special_issue[:spis_tn] == "Non-PTSD - Personal Trauma"
+        ["Sexual Assault Trauma", "Sexual Harassment"].include?(special_issue[:spis_basis_tn])
+      end
+    end
+
+    def special_issue_has_pact?(special_issue)
+      return special_issue[:spis_basis_tn] == "Particulate Matter" if special_issue[:spis_tn] == "Gulf War Presumptive 3.3201"
+
+      [
+        "Agent Orange – Outside Vietnam or Unknown",
+        "Agent Orange – Vietnam",
+        "Amytrophic Lateral Sclerosis",
+        "Burn Pit Exposure",
+        "Environmental Hazard in Gulf War",
+        "Gulf War Presumptive",
+        "Radiation"
+      ].include?(special_issue[:spis_tn])
     end
   end
 
