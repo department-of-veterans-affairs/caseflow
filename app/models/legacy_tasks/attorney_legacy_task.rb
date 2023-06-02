@@ -11,7 +11,7 @@ class AttorneyLegacyTask < LegacyTask
       [
         Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY_LEGACY.to_h
-      ]
+      ]   
     elsif current_user && (current_user.attorney? || role == "attorney")
       [
         Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h,
@@ -28,6 +28,6 @@ class AttorneyLegacyTask < LegacyTask
   end
 
   def label
-    COPY::ATTORNEY_TASK_LABEL
+    COPY::ATTORNEY_REWRITE_TASK_LABEL
   end
 end
