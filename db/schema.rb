@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_17_164013) do
+ActiveRecord::Schema.define(version: 2023_06_02_201048) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.boolean "appeal_docketed", default: false, null: false, comment: "When true, appeal has been docketed"
     t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID"
     t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
-    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the table"
+    t.datetime "created_at", null: false
     t.bigint "created_by_id", null: false, comment: "User id of the user that inserted the record"
     t.boolean "decision_mailed", default: false, null: false, comment: "When true, appeal has decision mail request complete"
     t.boolean "hearing_postponed", default: false, null: false, comment: "When true, appeal has hearing postponed and no hearings scheduled"
@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.boolean "privacy_act_complete", default: false, null: false, comment: "When true, appeal has a privacy act request completed"
     t.boolean "privacy_act_pending", default: false, null: false, comment: "When true, appeal has a privacy act request still open"
     t.boolean "scheduled_in_error", default: false, null: false, comment: "When true, hearing was scheduled in error and none scheduled"
-    t.datetime "updated_at", comment: "Date and time the record was last updated"
+    t.datetime "updated_at"
     t.bigint "updated_by_id", comment: "User id of the last user that updated the record"
     t.boolean "vso_ihp_complete", default: false, null: false, comment: "When true, appeal has a VSO IHP request completed"
     t.boolean "vso_ihp_pending", default: false, null: false, comment: "When true, appeal has a VSO IHP request pending"
@@ -220,6 +220,19 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
+  create_table "batch_processes", primary_key: "batch_id", id: :uuid, comment: "The unique id of the created batch", default: nil, comment: "A generalized table for batching and processing records within caseflow", force: :cascade do |t|
+    t.string "batch_type", null: false, comment: "Indicates what type of record is being batched"
+    t.datetime "ended_at", comment: "The date/time that the batch finsished processing"
+    t.integer "records_attempted", default: 0, comment: "The number of records in the batch attempting to be processed"
+    t.integer "records_completed", default: 0, comment: "The number of records in the batch that completed processing successfully"
+    t.integer "records_failed", default: 0, comment: "The number of records in the batch that failed processing"
+    t.datetime "started_at", comment: "The date/time that the batch began processing"
+    t.string "state", default: "PRE_PROCESSING", null: false, comment: "The state that the batch is currently in. PRE_PROCESSING, PROCESSING, PROCESSED"
+    t.index ["batch_type"], name: "index_batch_processes_on_batch_type"
+    t.index ["records_failed"], name: "index_batch_processes_on_records_failed"
+    t.index ["state"], name: "index_batch_processes_on_state"
+  end
+
   create_table "bgs_attorneys", comment: "Cache of unique BGS attorney data — used for adding claimants to cases pulled from POA data", force: :cascade do |t|
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.datetime "last_synced_at", comment: "The last time BGS was checked"
@@ -327,6 +340,15 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.datetime "updated_at", null: false
     t.index ["sdomainid"], name: "index_cached_user_attributes_on_sdomainid", unique: true
     t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
+  end
+
+  create_table "caseflow_stuck_records", force: :cascade do |t|
+    t.datetime "determined_stuck_at", null: false, comment: "The date/time at which the record in question was determined to be stuck."
+    t.string "error_messages", default: [], comment: "Array of Error Message(s) containing Batch ID and specific error if a failure occurs", array: true
+    t.bigint "record_id_id", null: false, comment: "The id / primary key of the stuck record"
+    t.string "record_id_type", null: false
+    t.string "record_type", null: false, comment: "The type of the stuck record / where the record originated from"
+    t.index ["record_id_type", "record_id_id"], name: "index_caseflow_stuck_records_on_record_id_type_and_record_id_id"
   end
 
   create_table "cavc_dashboard_dispositions", force: :cascade do |t|
@@ -1275,7 +1297,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
     t.text "sms_notification_content", comment: "Full SMS Text Content of Notification"
-    t.string "sms_notification_external_id"
+    t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
@@ -1577,6 +1599,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.boolean "national_cemetery_administration", default: false
     t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
     t.boolean "nonrating_issue", default: false
+    t.boolean "pact_act", default: false, comment: "The Sergeant First Class (SFC) Heath Robinson Honoring our Promise to Address Comprehensive Toxics (PACT) Act"
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
     t.boolean "radiation", default: false
