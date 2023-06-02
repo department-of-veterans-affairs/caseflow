@@ -789,7 +789,7 @@
   "JUDGE_DISPATCH_RETURN_TASK_LABEL": "Revise decision (BVA Dispatch)",
   "JUDGE_ADDRESS_MOTION_TO_VACATE_TASK_LABEL": "Address Motion to Vacate",
   "JUDGE_SIGN_MOTION_TO_VACATE_TASK_LABEL": "Sign Motion to Vacate",
-  "ATTORNEY_TASK_LABEL": "Revise decision draft",
+  "ATTORNEY_TASK_LABEL": "Draft decision",
   "ATTORNEY_TASK_NOTES_PREFIX": "Attorney draft decision notes:",
   "ATTORNEY_REWRITE_TASK_LABEL": "Revise decision draft",
   "ATTORNEY_REWRITE_TASK_NOTES_PREFIX": "Attorney rewrite decision notes:",

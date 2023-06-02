@@ -28,6 +28,6 @@ class AttorneyLegacyTask < LegacyTask
   end
 
   def label
-    COPY::ATTORNEY_TASK_LABEL
+    COPY::ATTORNEY_REWRITE_TASK_LABEL
   end
 end
