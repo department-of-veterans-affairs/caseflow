@@ -4,6 +4,11 @@ class MailRequestJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :intake
 
+  # Purpose: performs job
+  #
+  # takes in VbmsUploadedDocument object and MailRequest object
+  #
+  # Response: n/a
   def perform(vbms_uploaded_document, mail_request)
     package_response = ExternalApi::PacmanService.send_communication_package_request(vbms_uploaded_document.veteran_file_number,
                                                                                      mail_request.name,
@@ -20,6 +25,14 @@ class MailRequestJob < CaseflowJob
       log_error(error_msg(package_response.code))
     end
   end
+
+  private
+
+  # Purpose: Creates new VbmsCommunicationPackage
+  #
+  # takes in VbmsUploadedDocument object and MailRequest object
+  #
+  # Response: new VbmsCommunicationPackage object
 # FIXME how to get created_by_id
   def create_package(vbms_uploaded_document, mail_request)
     VbmsCommunicationPackage.new(
@@ -35,6 +48,11 @@ class MailRequestJob < CaseflowJob
     )
   end
 
+  # Purpose: sends distribution POST request to Pacman API
+  #
+  # takes in VbmsCommunicationPackage id (string) and MailRequest object
+  #
+  # Response: n/a
   def create_distribution_request(package_id, mail_request)
     distributions = VbmsDistribution.find(participant_id: mail_request.participant_id)
     distributions.each do |dist|
@@ -51,6 +69,11 @@ class MailRequestJob < CaseflowJob
     end
   end
 
+  # Purpose: creates recipient hash from VbmsDistribution attributes
+  #
+  # takes in VbmsDistribution object
+  #
+  # Response: hash that is needed in Pacman API distribution POST requests
   def get_recipient_hash(distribution)
     {
       type: distribution.recipient_type,
@@ -64,6 +87,11 @@ class MailRequestJob < CaseflowJob
     }
   end
 
+  # Purpose: creates destination hash from VbmsDistributionDestination attributes
+  #
+  # takes in VbmsDistributionDestination object
+  #
+  # Response: array that holds a hash
   def get_destinations_hash(destination)
     [{
       "type" => destination.destination_type,
@@ -79,15 +107,24 @@ class MailRequestJob < CaseflowJob
       "countryName" => destination.country_name,
       "countryCode" => destination.country_code
     }]
-
   end
 
+  # Purpose: logging error in Rails and in Raven
+  #
+  # takes in error message (string)
+  #
+  # Response: n/a
   def log_error(error_msg)
     uuid = SecureRandom.uuid
     Rails.logger.error(error_msg + "Error ID: " + uuid)
     Raven.capture_exception(error_msg, extra: { error_uuid: uuid })
   end
 
+  # Purpose: gets an error message based on the error code
+  #
+  # takes in error code (int)
+  #
+  # Response: error message string
   def error_msg(code)
     if code == 400
       "400 PacmanBadRequestError The server cannot create the new communication package due to a client error "
@@ -99,6 +136,11 @@ class MailRequestJob < CaseflowJob
     end
   end
 
+  # Purpose: logs information in Rails logger
+  #
+  # takes in info message (string)
+  #
+  # Response: n/a
   def log_info(info_message)
     uuid = SecureRandom.uuid
     Rails.logger.info(info_message + "ID: " + uuid)
