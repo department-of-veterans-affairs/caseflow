@@ -263,7 +263,7 @@ class AppealsController < ApplicationController
 
     mst_pact_message = create_mst_pact_message(new_issues)
 
-    "added #{new_issues.count} #{'issue'.pluralize(new_issues.count)} #{mst_pact_message}"
+    "added #{new_issues.count} #{'issue'.pluralize(new_issues.count)}#{mst_pact_message}"
   end
 
   def removed_issues
@@ -273,26 +273,67 @@ class AppealsController < ApplicationController
 
     mst_pact_message = create_mst_pact_message(removed)
 
-    "removed #{removed.count} #{'issue'.pluralize(removed.count)} #{mst_pact_message}"
+    "removed #{removed.count} #{'issue'.pluralize(removed.count)}#{mst_pact_message}"
   end
 
   def review_edited_message
-    "You have successfully " + [added_issues, removed_issues, withdrawn_issues].compact.to_sentence + "."
+    "You have successfully " + [added_issues, removed_issues, withdrawn_issues, mst_and_pact_edited_issues].compact.to_sentence + "."
+  end
+
+  # format MST/PACT edit success banner message
+  def mst_and_pact_edited_issues
+    # list of edit counts
+    mst_added = 0
+    mst_removed = 0
+    pact_added = 0
+    pact_removed = 0
+    # get edited issues from params and reject new issues without id
+    existing_issues = params[:request_issues].reject { |i| i[:request_issue_id].nil? }
+
+    existing_issues.each do |issue_edit|
+      # find the original issue and compare MST/PACT changes
+      before_issue = request_issues_update.before_issues.find { |i| i.id == issue_edit[:request_issue_id].to_i }
+
+      # increment edit counts if they meet the criteria for added/removed
+      mst_added += 1 if issue_edit[:mst_status] != before_issue.mst_status && issue_edit[:mst_status]
+      mst_removed += 1 if issue_edit[:mst_status] != before_issue.mst_status && !issue_edit[:mst_status]
+      pact_added += 1 if issue_edit[:pact_status] != before_issue.pact_status && issue_edit[:pact_status]
+      pact_removed += 1 if issue_edit[:pact_status] != before_issue.pact_status && !issue_edit[:pact_status]
+    end
+
+    # return if no edits
+    return if mst_added + mst_removed + pact_added + pact_removed == 0
+
+    message = []
+
+    message << "added MST to #{mst_added} #{'issue'.pluralize(mst_added)}," unless mst_added == 0
+    message << "removed MST from #{mst_removed} #{'issue'.pluralize(mst_removed)}," unless mst_removed == 0
+    message << "added PACT to #{pact_added} #{'issue'.pluralize(pact_added)}," unless pact_added == 0
+    message << "removed PACT from #{pact_removed} #{'issue'.pluralize(pact_removed)}," unless pact_removed == 0
+
+    # add "and" to last value unless there is only 1 value
+    message.insert(-2, "and") unless message.length < 2
+
+    # combine strings and remove last comma
+    message.join(" ").chop!
   end
 
   def create_mst_pact_message(issues)
     if issues.any? { |issue| issue.mst_status || issue.pact_status}
-      special_issue_message = ": "
+      special_issue_message = [": "]
       # check if any issues have MST/PACT and get the count
-      mst_count = issues.count { |issue| issue.mst_status && !issue.pact_status}
-      pact_count = issues.count { |issue| issue.pact_status && !issue.mst_status}
-      both_count = issues.count { |issue| issue.pact_status && issue.mst_status}
+      mst_count = issues.count { |issue| issue.mst_status && !issue.pact_status }
+      pact_count = issues.count { |issue| issue.pact_status && !issue.mst_status }
+      both_count = issues.count { |issue| issue.pact_status && issue.mst_status }
 
-      special_issue_message += "#{mst_count} MST #{'issue'.pluralize(mst_count)}" unless mst_count == 0
-      special_issue_message += "#{pact_count} PACT #{'issue'.pluralize(pact_count)}" unless pact_count == 0
-      special_issue_message += "#{both_count} MST/PACT #{'issue'.pluralize(both_count)}" unless both_count == 0
+      special_issue_message << "#{mst_count} #{'issue'.pluralize(mst_count)} with MST," unless mst_count == 0
+      special_issue_message << "#{pact_count} #{'issue'.pluralize(pact_count)} with PACT," unless pact_count == 0
+      special_issue_message << "#{both_count} #{'issue'.pluralize(both_count)} with MST and PACT," unless both_count == 0
 
-      special_issue_message
+      # add "and" to last value unless there is only 1 value
+      special_issue_message.insert(-2, "and") unless special_issue_message.length < 3
+      # combine strings and remove last comma
+      special_issue_message.join(" ").chop!
     end
   end
 

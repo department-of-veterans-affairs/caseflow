@@ -250,7 +250,7 @@ class RequestIssuesUpdate < CaseflowRecord
         .update!(
           mst_status: mst_edited_issue[:mst_status],
           mst_status_update_reason_notes: mst_edited_issue[:mst_status_update_reason_notes]
-      )
+        )
     end
   end
 
