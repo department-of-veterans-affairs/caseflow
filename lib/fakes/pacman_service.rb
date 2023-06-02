@@ -11,7 +11,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
     end
 
     def get_distribution_request(distribution_id)
-      if distribution_id != "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431"
+      if distribution_id != "12345"
         return distribution_not_found_response
       end
 
@@ -59,7 +59,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
         201,
         {},
         OpenStruct.new(
-          "id": "24eb6a66-3833-4de6-bea4-4b614e55d5ac",
+          "id": "12345",
           "fileNumber": file_number,
           "name": name,
           "documentReferences": document_references,
