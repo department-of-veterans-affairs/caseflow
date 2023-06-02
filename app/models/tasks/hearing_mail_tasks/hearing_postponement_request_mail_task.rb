@@ -1,4 +1,4 @@
 # frozen_string_literal: true
 
-class HearingPostponementRequestMailTask < MailTask
+class HearingPostponementRequestMailTask < HearingRequestMailTask
 end
