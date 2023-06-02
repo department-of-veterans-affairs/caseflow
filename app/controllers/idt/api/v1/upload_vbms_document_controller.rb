@@ -16,12 +16,13 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
       message: "Document successfully queued for upload."
     }
     begin
+      #check if the parameters to create a mailrequest are present.
       if params["recipient_info"].present?
+        #creating the key for distribution_ids to provide to IDT client within the success_json hash.
         success_json[:distribution_ids] = params["recipient_info"].map do |recipient|
           mail_req = MailRequest.new(recipient)
           if mail_req.invalid?
            success_json[:error_messages] = mail_req.errors.messages
-          #  byebug
           end
           mail_req.call
           mail_req.vbms_distribution_id
