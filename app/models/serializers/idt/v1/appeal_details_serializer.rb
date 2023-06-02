@@ -68,8 +68,8 @@ class Idt::V1::AppealDetailsSerializer
   attribute :badges do |object|
     if object.is_a?(LegacyAppeal)
       {
-        mst: object.mst?,
-        pact: object.pact?
+        mst: !!object.mst?,
+        pact: !!object.pact?
       }
     else
       {
