@@ -9,7 +9,17 @@ LANGUAGE plpgsql
 AS $function$
 begin
  if (TG_OP = 'DELETE') then
-   insert into caseflow_audit.priority_end_product_sync_queue_audit select nextval('caseflow_audit.priority_end_product_sync_queue_audit_id_seq'::regclass), 'D', OLD.*;
+   insert into caseflow_audit.priority_end_product_sync_queue_audit
+   select
+     nextval('caseflow_audit.priority_end_product_sync_queue_audit_id_seq'::regclass),
+     'D',
+     OLD.end_product_establishment_id,
+     OLD.batch_id,
+     OLD.status,
+     OLD.created_at,
+     OLD.last_batched_at,
+     CURRENT_TIMESTAMP,
+     OLD.error_messages;
  elsif (TG_OP = 'UPDATE') then
    insert into caseflow_audit.priority_end_product_sync_queue_audit
    select
