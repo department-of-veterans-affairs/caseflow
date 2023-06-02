@@ -252,14 +252,18 @@ class AppealsController < ApplicationController
 
     return if withdrawn.empty?
 
-    "withdrawn #{withdrawn.count} #{'issue'.pluralize(withdrawn.count)}"
+    mst_pact_message = create_mst_pact_message(withdrawn)
+
+    "withdrawn #{withdrawn.count} #{'issue'.pluralize(withdrawn.count)} #{mst_pact_message}"
   end
 
   def added_issues
     new_issues = request_issues_update.after_issues - request_issues_update.before_issues
     return if new_issues.empty?
 
-    "added #{new_issues.count} #{'issue'.pluralize(new_issues.count)}"
+    mst_pact_message = create_mst_pact_message(new_issues)
+
+    "added #{new_issues.count} #{'issue'.pluralize(new_issues.count)} #{mst_pact_message}"
   end
 
   def removed_issues
@@ -267,11 +271,29 @@ class AppealsController < ApplicationController
 
     return if removed.empty?
 
-    "removed #{removed.count} #{'issue'.pluralize(removed.count)}"
+    mst_pact_message = create_mst_pact_message(removed)
+
+    "removed #{removed.count} #{'issue'.pluralize(removed.count)} #{mst_pact_message}"
   end
 
   def review_edited_message
     "You have successfully " + [added_issues, removed_issues, withdrawn_issues].compact.to_sentence + "."
+  end
+
+  def create_mst_pact_message(issues)
+    if issues.any? { |issue| issue.mst_status || issue.pact_status}
+      special_issue_message = ": "
+      # check if any issues have MST/PACT and get the count
+      mst_count = issues.count { |issue| issue.mst_status && !issue.pact_status}
+      pact_count = issues.count { |issue| issue.pact_status && !issue.mst_status}
+      both_count = issues.count { |issue| issue.pact_status && issue.mst_status}
+
+      special_issue_message += "#{mst_count} MST #{'issue'.pluralize(mst_count)}" unless mst_count == 0
+      special_issue_message += "#{pact_count} PACT #{'issue'.pluralize(pact_count)}" unless pact_count == 0
+      special_issue_message += "#{both_count} MST/PACT #{'issue'.pluralize(both_count)}" unless both_count == 0
+
+      special_issue_message
+    end
   end
 
   def set_flash_success_message
