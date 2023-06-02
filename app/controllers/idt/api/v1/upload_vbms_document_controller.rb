@@ -12,14 +12,24 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   end
 
   def create
-    id_array = []
+    success_json = {
+      message: "Document successfully queued for upload."
+    }
     begin
       if params["recipient_info"].present?
-        id_array = params["recipient_info"].map do |recipient|
-          mail_req = MailRequest.new(recipient).call
+        success_json[:distribution_ids] = params["recipient_info"].map do |recipient|
+          mail_req = MailRequest.new(recipient)
+          if mail_req.invalid?
+           success_json[:error_messages] = mail_req.errors.messages
+          #  byebug
+          end
+          mail_req.call
           mail_req.vbms_distribution_id
         end
       end
+    rescue Caseflow::Error::MissingRecipientInfo => error
+      success_json[:errors] = "Incomplete mailing informaiton provided. No mail request was created."
+      raise error
     ensure
       appeal = nil
       # Find veteran from appeal id and check with db
@@ -41,25 +51,10 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
       end
       result = PrepareDocumentUploadToVbms.new(params, current_user, appeal).call
       if result.success?
-        upload_result_successful(id_array)
+        render json: success_json
       else
         render json: result.errors[0], status: :bad_request
       end
-    end
-  end
-
-  private
-
-  def upload_result_successful(array)
-    if array.empty?
-      render json: {
-        message: "Document successfully queued for upload."
-      }
-    else
-      render json: {
-        message: "Document successfully queued for upload.",
-        distribution_ids: array
-      }
     end
   end
 end
