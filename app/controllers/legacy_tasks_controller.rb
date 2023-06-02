@@ -91,6 +91,10 @@ class LegacyTasksController < ApplicationController
     }
   end
 
+  def assign_to_attorney
+    assign_to_judge
+  end
+
   def assign_to_judge
     # If the user being assigned to is a judge, do not create a DECASS record, just
     # update the location to the assigned judge.

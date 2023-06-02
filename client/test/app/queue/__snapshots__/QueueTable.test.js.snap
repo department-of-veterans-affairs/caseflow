@@ -696,7 +696,8 @@ exports[`QueueTable Row Matches snapshot with default props 1`] = `
     className="testClasses"
     colSpan={1}
     key="0"
-    role="cell"
+    role="gridcell"
+    tabIndex={-1}
   >
     First column
   </td>
@@ -704,7 +705,8 @@ exports[`QueueTable Row Matches snapshot with default props 1`] = `
     className="testClasses"
     colSpan={1}
     key="1"
-    role="cell"
+    role="gridcell"
+    tabIndex={-1}
   >
     Second column
   </td>
@@ -721,19 +723,22 @@ exports[`QueueTable Row Renders footer when the column is set to a footer 1`] = 
     className="testClasses"
     colSpan={1}
     key="0"
-    role="cell"
+    role="gridcell"
+    tabIndex={-1}
   />
   <td
     className="testClasses"
     colSpan={1}
     key="1"
-    role="cell"
+    role="gridcell"
+    tabIndex={-1}
   />
   <td
     className="testClasses"
     colSpan={1}
     key="2"
-    role="cell"
+    role="gridcell"
+    tabIndex={-1}
   >
     Some Footer
   </td>
@@ -811,7 +816,7 @@ exports[`QueueTable render() Can filter rows 1`] = `
       aria-label="Appeals"
       className="usa-table-borderless undefined"
       id="case-table-description"
-      role="table"
+      role="grid"
     >
       <caption
         className="usa-sr-only"
@@ -1198,7 +1203,8 @@ exports[`QueueTable render() Can filter rows 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 First column
               </td>
@@ -1206,7 +1212,8 @@ exports[`QueueTable render() Can filter rows 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 Second column
               </td>
@@ -1214,7 +1221,8 @@ exports[`QueueTable render() Can filter rows 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 Something
               </td>
@@ -1276,7 +1284,8 @@ exports[`QueueTable render() Can filter rows 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 First column second row
               </td>
@@ -1284,7 +1293,8 @@ exports[`QueueTable render() Can filter rows 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 Second column second row
               </td>
@@ -1292,7 +1302,8 @@ exports[`QueueTable render() Can filter rows 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 Something Else
               </td>
@@ -1354,7 +1365,8 @@ exports[`QueueTable render() Can filter rows 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 First column third row
               </td>
@@ -1362,7 +1374,8 @@ exports[`QueueTable render() Can filter rows 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 Second column third row
               </td>
@@ -1370,7 +1383,8 @@ exports[`QueueTable render() Can filter rows 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 EstablishClaim
               </td>
@@ -1477,7 +1491,7 @@ exports[`QueueTable render() Can sort rows 1`] = `
       aria-label="Appeals"
       className="usa-table-borderless undefined"
       id="case-table-description"
-      role="table"
+      role="grid"
     >
       <caption
         className="usa-sr-only"
@@ -1784,7 +1798,8 @@ exports[`QueueTable render() Can sort rows 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 First column
               </td>
@@ -1792,7 +1807,8 @@ exports[`QueueTable render() Can sort rows 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 Second column
               </td>
@@ -1800,7 +1816,8 @@ exports[`QueueTable render() Can sort rows 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 Something
               </td>
@@ -1845,7 +1862,8 @@ exports[`QueueTable render() Can sort rows 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 First column second row
               </td>
@@ -1853,7 +1871,8 @@ exports[`QueueTable render() Can sort rows 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 Second column second row
               </td>
@@ -1861,7 +1880,8 @@ exports[`QueueTable render() Can sort rows 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 Something Else
               </td>
@@ -1906,7 +1926,8 @@ exports[`QueueTable render() Can sort rows 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 First column third row
               </td>
@@ -1914,7 +1935,8 @@ exports[`QueueTable render() Can sort rows 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 Second column third row
               </td>
@@ -1922,7 +1944,8 @@ exports[`QueueTable render() Can sort rows 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 EstablishClaim
               </td>
@@ -1971,7 +1994,7 @@ exports[`QueueTable render() Matches snapshot with default props 1`] = `
     aria-label="Appeals"
     className="usa-table-borderless undefined"
     id="case-table-description"
-    role="table"
+    role="grid"
   >
     <caption
       className="usa-sr-only"
@@ -7024,7 +7047,7 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
       aria-label="Appeals"
       className="usa-table-borderless undefined"
       id="case-table-description"
-      role="table"
+      role="grid"
     >
       <caption
         className="usa-sr-only"
@@ -11740,7 +11763,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={2}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 fizz
               </td>
@@ -11748,7 +11772,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 buzz
               </td>
@@ -11756,7 +11781,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 EstablishClaim
               </td>
@@ -13012,7 +13038,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={2}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 fizz
               </td>
@@ -13020,7 +13047,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 buzz
               </td>
@@ -13028,7 +13056,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 EstablishClaim
               </td>
@@ -14284,7 +14313,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={2}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 fizz
               </td>
@@ -14292,7 +14322,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 buzz
               </td>
@@ -14300,7 +14331,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 EstablishClaim
               </td>
@@ -15556,7 +15588,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={2}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 fizz
               </td>
@@ -15564,7 +15597,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 buzz
               </td>
@@ -15572,7 +15606,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 EstablishClaim
               </td>
@@ -16828,7 +16863,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={2}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 fizz
               </td>
@@ -16836,7 +16872,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 buzz
               </td>
@@ -16844,7 +16881,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 EstablishClaim
               </td>
@@ -18100,7 +18138,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={2}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 fizz
               </td>
@@ -18108,7 +18147,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 buzz
               </td>
@@ -18116,7 +18156,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 EstablishClaim
               </td>
@@ -19372,7 +19413,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={2}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 fizz
               </td>
@@ -19380,7 +19422,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 buzz
               </td>
@@ -19388,7 +19431,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 EstablishClaim
               </td>
@@ -20644,7 +20688,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={2}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 fizz
               </td>
@@ -20652,7 +20697,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 buzz
               </td>
@@ -20660,7 +20706,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 EstablishClaim
               </td>
@@ -21916,7 +21963,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={2}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 fizz
               </td>
@@ -21924,7 +21972,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 buzz
               </td>
@@ -21932,7 +21981,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 EstablishClaim
               </td>
@@ -23188,7 +23238,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={2}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 fizz
               </td>
@@ -23196,7 +23247,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 buzz
               </td>
@@ -23204,7 +23256,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 EstablishClaim
               </td>
@@ -24460,7 +24513,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={2}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 fizz
               </td>
@@ -24468,7 +24522,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 buzz
               </td>
@@ -24476,7 +24531,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 EstablishClaim
               </td>
@@ -25732,7 +25788,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={2}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 fizz
               </td>
@@ -25740,7 +25797,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 buzz
               </td>
@@ -25748,7 +25806,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 EstablishClaim
               </td>
@@ -27004,7 +27063,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={2}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 fizz
               </td>
@@ -27012,7 +27072,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 buzz
               </td>
@@ -27020,7 +27081,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 EstablishClaim
               </td>
@@ -28276,7 +28338,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={2}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 fizz
               </td>
@@ -28284,7 +28347,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 buzz
               </td>
@@ -28292,7 +28356,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 EstablishClaim
               </td>
@@ -29548,7 +29613,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={2}
                 key="0"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 fizz
               </td>
@@ -29556,7 +29622,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="1"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 buzz
               </td>
@@ -29564,7 +29631,8 @@ exports[`QueueTable render() Renders pagination when set 1`] = `
                 className="testClasses"
                 colSpan={1}
                 key="2"
-                role="cell"
+                role="gridcell"
+                tabIndex={-1}
               >
                 EstablishClaim
               </td>

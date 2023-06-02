@@ -319,6 +319,7 @@ Rails.application.routes.draw do
 
   resources :legacy_tasks, only: [:create, :update]
   post '/legacy_tasks/assign_to_judge', to: 'legacy_tasks#assign_to_judge'
+  post '/legacy_tasks/assign_to_attorney', to: 'legacy_tasks#assign_to_attorney'
   resources :tasks, only: [:index, :create, :update] do
     member do
       post :reschedule
