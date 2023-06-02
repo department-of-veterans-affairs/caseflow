@@ -11,6 +11,10 @@
 
 module WarRoom
   class DuppEpClaimsSyncStatusUpdateCanClr
+    def initialize
+      @logs = ["VBMS::DuplicateEP Remediation Log"]
+    end
+
     def resolve_dup_ep
       if retrieve_problem_reviews.count.zero?
         Rails.logger.info("No Supplemental Claims Or Higher Level Reviews with DuplicateEP Error Found")
@@ -62,7 +66,7 @@ module WarRoom
     def resolve_duplicate_end_products(reviews)
       reviews.each do |review|
         vet = review.veteran
-        verb = "cleared"
+        verb = "start"
 
         # get the end products from the veteran
         end_products = vet.end_products
@@ -86,48 +90,45 @@ module WarRoom
           single_end_product_establishment.reload
         end
 
-        output_line = "| Veteran participant ID: #{vet.participant_id} | #{review.class.name} | Review ID: #{review.id}"
+        @logs.push(" #{Time.zone.now} | Veteran participant ID: #{vet.participant_id} | Review: #{review.class.name} | Review ID: #{review.id} | status: #{verb}")
 
-        call_decision_review_process_job(review, verb, output_line)
+        call_decision_review_process_job(review, verb, vet)
       end
     end
 
     def active_duplicates?(end_products, end_product_establishment)
       end_products.select do |end_product|
-        matching_claim_type_code?(end_products, end_product_establishment) &&
-          matching_claim_date?(end_products, end_product_establishment) &&
+        matching_claim_type_code?(end_product, end_product_establishment) &&
+          matching_claim_date?(end_product, end_product_establishment) &&
           end_product_establishment_exists?(end_product)
-      end
+      end.present?
     end
 
-    def matching_claim_type_code?(end_products, end_product_establishment)
-      end_products.claim_type_code == end_product_establishment.code
+    def matching_claim_type_code?(end_product, end_product_establishment)
+      end_product.claim_type_code == end_product_establishment.code
     end
 
-    def matching_claim_date?(end_products, end_product_establishment)
-      end_products.claim_date.to_date == end_product_establishment.claim_date
+    def matching_claim_date?(end_product, end_product_establishment)
+      end_product.claim_date.to_date == end_product_establishment.claim_date
     end
 
     def end_product_establishment_exists?(end_product)
       EndProductEstablishment.where(reference_id: end_product.claim_id).none?
     end
 
-    def call_decision_review_process_job(review, verb, output_line)
+    def call_decision_review_process_job(review, verb, vet)
       begin
         DecisionReviewProcessJob.new.perform(review)
       rescue Caseflow::Error::DuplicateEp => error
-        output_line = "| DuplicateEp Error from DecisionReviewProcessJob #{output_line} #{error}"
+        @logs.push(" #{Time.zone.now} | Veteran participant ID: #{vet.participant_id} | Review: #{review.class.name} | Review ID: #{review.id} | status: Failed | Error: #{error}")
       else
-        output_line = "| #{verb} #{output_line}"
-      ensure
-        output = "#{output_line}\n"
-        create_log(output)
+        verb = "Resolved"
+        @logs.push(" #{Time.zone.now} | Veteran participant ID: #{vet.participant_id} | Review: #{review.class.name} | Review ID: #{review.id} | status: #{verb}")
+        create_log
       end
     end
 
-    def create_log(output)
-      @logs = ["Duplicate EP Error Remediation Log: #{Time.zone.now}", output]
-      @logs.push("#{Time.zone.now} DuplicateEP::Log", output)
+    def create_log
       content = @logs.join("\n")
       temporary_file = Tempfile.new("cdc-log.txt")
       filepath = temporary_file.path
