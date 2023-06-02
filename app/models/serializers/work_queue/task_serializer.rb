@@ -35,7 +35,7 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :completed_by do |object|
-    object.try(:completed_by).try(:css_id) unless object.appeal.is_a?(LegacyAppeal) && !object.is_a?(IssuesUpdateTask)
+    object.try(:completed_by).try(:css_id)
   end
 
   attribute :assigned_to do |object|
