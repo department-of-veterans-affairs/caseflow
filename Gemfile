@@ -127,6 +127,10 @@ group :test, :development, :demo do
   gem "webdrivers"
 end
 
+group :development, :test do
+  gem "spring", "3.1.1"
+end
+
 group :development do
   gem "anbt-sql-formatter"
   gem "bummr", require: false
