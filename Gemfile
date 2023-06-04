@@ -129,6 +129,7 @@ end
 
 group :development, :test do
   gem "spring", "3.1.1"
+  gem "spring-commands-rspec"
 end
 
 group :development do
