@@ -131,6 +131,7 @@ group :development, :test do
   gem "spring", "3.1.1"
   gem "spring-commands-rspec"
   gem "spring-commands-rubocop"
+  gem "guard-rubocop"
 end
 
 group :development do
