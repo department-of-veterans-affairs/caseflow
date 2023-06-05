@@ -52,7 +52,7 @@ const textAreaStyle = css({
 });
 
 const specialIssuesCheckboxStyling = css({
-  columnCount: '2',
+  columnCount: '1',
   marginTop: '2%',
   maxWidth: '70%',
   '& legend': {
@@ -74,6 +74,8 @@ class SelectDispositionsView extends React.PureComponent {
       highlightModal: false,
       deleteAddedDecisionIssue: null,
       specialIssues: null,
+      mstJustification: "",
+      pactJustification: ""
     };
   }
   decisionReviewCheckoutFlow = () => this.props.checkoutFlow === 'dispatch_decision';
@@ -166,7 +168,9 @@ class SelectDispositionsView extends React.PureComponent {
     const benefitType = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).program;
     const diagnosticCode = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).diagnostic_code;
     const closedStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).closed_status;
-    const mstStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).mst_status
+    const mst_justification = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).mst_justification;
+    const pact_justification = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).pact_justification;
+    const mstStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).mst_status;
     const pactStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).pact_status;
 
     const newDecisionIssue = {
@@ -176,6 +180,8 @@ class SelectDispositionsView extends React.PureComponent {
       benefit_type: benefitType,
       diagnostic_code: diagnosticCode,
       request_issue_ids: [requestIssueId],
+      mst_justification: mst_justification,
+      pact_justification: pact_justification,
       mstStatus: mstStatus,
       mstOriginalStatus: mstStatus,
       pactStatus: pactStatus,
@@ -194,7 +200,9 @@ class SelectDispositionsView extends React.PureComponent {
       openRequestIssueId: requestIssueId,
       decisionIssue: decisionIssue || newDecisionIssue,
       editingExistingIssue: Boolean(decisionIssue),
-      deleteAddedDecisionIssue: null
+      deleteAddedDecisionIssue: null,
+      mstJustification: mst_justification,
+      pactJustification: pact_justification,
     });
   }
 
@@ -315,6 +323,33 @@ class SelectDispositionsView extends React.PureComponent {
     });
   }
 
+  onJustificationChange = (event, decision, type) => {
+
+    if(type === "mstStatus"){
+      this.setState({
+        decisionIssue: {
+          ...decision,
+          mst_justification: event
+        }
+      });
+      this.setState({ mstJustification: event });
+    }else if(type === "pactStatus"){
+      this.setState({
+        decisionIssue: {
+          ...decision,
+          pact_justification: event
+        }
+      });
+      this.setState({ pactJustification: event });
+    }
+  }
+
+  filterIssuesForJustification = (issues, idToFilter) => {
+    return issues.filter((issue) => {
+      return issue.id === idToFilter;
+    });
+  }
+
   onCheckboxChange = (event, decision) => {
     const checkboxId = event.target.getAttribute('id');
 
@@ -347,7 +382,7 @@ class SelectDispositionsView extends React.PureComponent {
       openRequestIssueId,
       editingExistingIssue,
       deleteAddedDecisionIssue,
-      requestIdToDelete
+      requestIdToDelete,
     } = this.state;
     const connectedRequestIssues = appeal.issues.filter((issue) => {
       return decisionIssue && decisionIssue.request_issue_ids.includes(issue.id);
@@ -495,6 +530,19 @@ class SelectDispositionsView extends React.PureComponent {
           values={specialIssuesValues}
           styling={specialIssuesCheckboxStyling}
           onChange={(event) => this.onCheckboxChange(event, decisionIssue)}
+          filterIssuesForJustification={this.filterIssuesForJustification}
+          justifications={[
+            {
+              id: 'mstStatus',
+              justification: decisionIssue.mst_justification,
+              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, "mstStatus")
+            },
+            {
+              id: 'pactStatus',
+              justification: decisionIssue.pact_justification,
+              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, "pactStatus")
+            },
+          ]}
         />
         <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_DESCRIPTION}</h3>
         <p {...exampleDiv} {...paragraphH3SiblingStyle}>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_EXAMPLE}</p>
