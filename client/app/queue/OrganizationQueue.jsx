@@ -13,10 +13,6 @@ const containerStyles = css({
   position: 'relative'
 });
 
-const alertPaddingStyles = css({
-  marginTop: '2rem !important',
-});
-
 class OrganizationQueue extends React.PureComponent {
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
@@ -25,12 +21,10 @@ class OrganizationQueue extends React.PureComponent {
   render = () => {
     const { success } = this.props;
 
-    return <React.Fragment>
-      {success && <Alert styling={alertPaddingStyles} type="success" title={success.title} message={success.detail} />}
-      <AppSegment filledBackground styling={containerStyles}>
-        <QueueTableBuilder />
-      </AppSegment>
-    </React.Fragment>;
+    return <AppSegment filledBackground styling={containerStyles}>
+      {success && <Alert type="success" title={success.title} message={success.detail} />}
+      <QueueTableBuilder />
+    </AppSegment>;
   };
 }
 

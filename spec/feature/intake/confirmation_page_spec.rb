@@ -62,26 +62,7 @@ feature "Intake Confirmation Page", :postgres do
   end
 
   describe "when completing an appeal" do
-    context "appeal has VHA CAMO issues" do
-      let(:claim_review_type) { :board_appeal }
-      it "displays the correct copy on confirmation page" do
-        start_claim_review(claim_review_type)
-        visit "/intake"
-        click_intake_continue
-        click_intake_add_issue
-
-        add_intake_vha_issue(date: 2.days.ago, category: "Beneficiary Travel")
-        click_intake_finish
-
-        expect(page).to_not have_content("Intake completed")
-        expect(page).to have_content("Appeal recorded and sent to VHA CAMO for document assessment")
-        expect(page).to have_content("If needed, you may correct the issues")
-        expect(page).to_not have_content("Edit the notice letter to reflect the status of requested issues.")
-        expect(page).to have_content("Appeal created and sent to VHA CAMO for document assessment.")
-      end
-    end
-
-    context "appeal has VHA Caregiver Issues" do
+    context "appeal has VHA issues" do
       let(:claim_review_type) { :board_appeal }
       it "displays the correct copy on confirmation page" do
         start_claim_review(claim_review_type)
@@ -93,10 +74,10 @@ feature "Intake Confirmation Page", :postgres do
         click_intake_finish
 
         expect(page).to_not have_content("Intake completed")
-        expect(page).to have_content("Appeal recorded and sent to VHA Caregiver for document assessment")
+        expect(page).to have_content("Appeal recorded in pre-docket queue")
         expect(page).to have_content("If needed, you may correct the issues")
         expect(page).to_not have_content("Edit the notice letter to reflect the status of requested issues.")
-        expect(page).to have_content("Appeal created and sent to VHA Caregiver for document assessment.")
+        expect(page).to have_content("Appeal created and sent to VHA for document assessment.")
       end
     end
   end

@@ -16,34 +16,8 @@ describe VhaProgramOfficeInProgressTasksTab, :postgres do
       let(:params) { { assignee: create(:vha_program_office) } }
 
       it "returns the correct number of columns" do
-        expect(subject.length).to eq 8
+        expect(subject.length).to eq(7)
       end
-    end
-  end
-
-  describe ".label" do
-    subject { tab.label }
-
-    it do
-      is_expected.to eq COPY::ORGANIZATIONAL_QUEUE_PAGE_IN_PROGRESS_TAB_TITLE
-      is_expected.to eq "In Progress (%d)"
-    end
-  end
-
-  describe ".description" do
-    subject { tab.description }
-
-    it do
-      is_expected.to eq "Cases in progress in a #{assignee.name} team member's queue."
-    end
-  end
-
-  describe ".self.tab_name" do
-    subject { described_class.tab_name }
-
-    it "matches expected tab name" do
-      is_expected.to eq(Constants.QUEUE_CONFIG.VHA_PO_IN_PROGRESS_TASKS_TAB_NAME)
-      is_expected.to eq("po_inProgressTab")
     end
   end
 

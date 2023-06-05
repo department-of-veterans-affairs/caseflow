@@ -57,7 +57,7 @@ feature "CamoQueue", :all_dbs do
     let!(:tabs) do
       test_tab = Struct.new(:tab_name, :tab_columns, :tab_body_text, :number_of_tasks)
       [
-        test_tab.new(assigned_tab_text, column_heading_names, "Cases assigned to VHA CAMO", 12),
+        test_tab.new(assigned_tab_text, column_heading_names, "Cases assigned to you:", 12),
         test_tab.new(in_progress_tab_text, column_heading_names, "Cases that are in progress:", 0),
         test_tab.new(completed_tab_text, column_heading_names, "Cases assigned to you:", 5)
       ]

@@ -250,7 +250,7 @@ describe QueueConfig, :postgres do
 
           expect(tabs[0][:description]).to eq(COPY::USER_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION)
           expect(tabs[1][:description]).to eq(COPY::USER_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
-          expect(tabs[2][:description]).to eq(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
+          expect(tabs[2][:description]).to eq(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
         end
 
         context "when the user does not use the task pages API" do

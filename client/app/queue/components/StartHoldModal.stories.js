@@ -1,58 +1,59 @@
-import React from 'react';
-import { MemoryRouter, Route } from 'react-router';
-import { Provider } from 'react-redux';
-import { applyMiddleware, createStore, compose } from 'redux';
-import thunk from 'redux-thunk';
+// import React from 'react';
+// import StartHoldModal from './StartHoldModal';
+// import { queueWrapper as Wrapper } from '../../../test/data/stores/queueStore';
+// import { onReceiveAmaTasks } from '../QueueActions';
+// import {
+//   requestSave,
+//   resetErrorMessages,
+//   resetSuccessMessages,
+// } from '../uiReducer/uiActions';
 
-import {
-  createQueueReducer,
-  getAppealId,
-  getTaskId,
-  trimTaskActionValue
-} from '../../../test/app/queue/components/modalUtils';
-import { vhaPOToCAMOData } from '../../../test/data/queue/taskActionModals/taskActionModalData';
-import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
-import StartHoldModal from './StartHoldModal';
+// import { amaAppeal } from '../../../test/data/appeals';
 
-export default {
-  title: 'Queue/Components/Task Action Modals/StartHoldModal',
-  component: StartHoldModal,
-  parameters: {
-    docs: {
-      inlineStories: false,
-      iframeHeight: 760,
-    },
-  }
-};
+// export default {
+//   title: 'Queue/CaseTimeline/StartHoldModal',
+//   component: StartHoldModal,
+//   parameters: {
+//     controls: { expanded: true },
+//     docs: {
+//       inlineStories: false,
+//       iframeHeight: 600,
+//     },
+//   },
 
-const Template = (args) => {
-  const { storeValues, taskType, modalType } = args;
+//   args: {
+//     appeal: amaAppeal.veteranFullName,
+//     appealId: amaAppeal.id,
+//     onReceiveAmaTasks: { onReceiveAmaTasks },
+//     requestSave: { requestSave },
+//     resetSuccessMessages: { resetSuccessMessages },
+//     resetErrorMessages: { resetErrorMessages },
+//     task: {
+//       taskId: '123',
+//       type: 'AssessDocumentationTask'
+//     },
+//     title: 'On Hold Modal',
+//     highlightFormItems: false,
+//     pathAfterSubmit: '',
+//     validateForm: {},
+//     submit: {}
+//   },
+//   argTypes: {
+//     closeHandler: { action: 'closed' },
+//   },
+// };
 
-  const appealId = getAppealId(storeValues);
-  const taskId = getTaskId(storeValues, taskType);
+// const Template = ({ ...componentArgs }) => {
+//   const storeArgs = {};
 
-  const queueReducer = createQueueReducer(storeValues);
-  const store = createStore(
-    queueReducer,
-    compose(applyMiddleware(thunk))
-  );
+//   return (
+//     <Wrapper {...storeArgs}>
+//       <StartHoldModal
+//         {...componentArgs}
+//       />
+//     </Wrapper>
 
-  const path = `/queue/appeals/${appealId}/tasks/${taskId}/modal/${modalType}`;
+//   );
+// };
 
-  return (
-    <Provider store={store}>
-      <MemoryRouter initialEntries={[path]}>
-        <Route component={(props) => {
-          return <StartHoldModal {...props.match.params} />;
-        }} path={`/queue/appeals/:appealId/tasks/:taskId/modal/${modalType}`} />
-      </MemoryRouter>
-    </Provider>
-  );
-};
-
-export const VhaProgramOfficeSetTaskOnHold = Template.bind({});
-VhaProgramOfficeSetTaskOnHold.args = {
-  storeValues: vhaPOToCAMOData,
-  taskType: 'AssessDocumentationTask',
-  modalType: ""
-};
+// export const Basic = Template.bind({});

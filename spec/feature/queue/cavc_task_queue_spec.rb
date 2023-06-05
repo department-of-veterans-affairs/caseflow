@@ -252,7 +252,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
 
         step "end timed hold early" do
           click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
-          click_on COPY::MODAL_END_HOLD_BUTTON
+          click_on "Submit"
           expect(page).to have_content COPY::END_HOLD_SUCCESS_MESSAGE_TITLE
 
           find(".cf-select__control", text: "Select an action").click
@@ -667,7 +667,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
           click_on "Cancel"
           click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
-          click_on COPY::MODAL_END_HOLD_BUTTON
+          click_on "Submit"
           expect(page).to have_content COPY::END_HOLD_SUCCESS_MESSAGE_TITLE
         end
 
@@ -756,7 +756,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           User.authenticate!(user: org_nonadmin2)
           visit "queue/appeals/#{task.appeal.external_id}"
           click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
-          click_on COPY::MODAL_END_HOLD_BUTTON
+          click_on "Submit"
           expect(page).to have_content COPY::END_HOLD_SUCCESS_MESSAGE_TITLE
         end
       end
@@ -869,7 +869,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           visit "queue/appeals/#{task.appeal.external_id}"
 
           click_dropdown(text: Constants.TASK_ACTIONS.END_TIMED_HOLD.label)
-          click_on COPY::MODAL_END_HOLD_BUTTON
+          click_on "Submit"
 
           find(".cf-select__control", text: "Select an action").click
           response_window_task_row = page.find("#currently-active-tasks").find_all("tr")[0]

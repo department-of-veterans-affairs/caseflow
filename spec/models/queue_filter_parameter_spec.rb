@@ -7,8 +7,8 @@ describe QueueFilterParameter do
     subject { QueueFilterParameter.from_string(filter_string) }
 
     def encode_values(values)
-      URI::DEFAULT_PARSER.escape(
-        values.map(&URI::DEFAULT_PARSER.method(:escape)).join("|")
+      URI.escape(
+        values.map(&URI.method(:escape)).join("|")
       )
     end
 

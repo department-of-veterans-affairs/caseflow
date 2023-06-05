@@ -4,7 +4,7 @@ class VhaProgramOfficeReadyForReviewTasksTab < QueueTab
   validate :assignee_is_organization
 
   def label
-    COPY::ORGANIZATIONAL_QUEUE_PAGE_READY_FOR_REVIEW_TAB_TITLE
+    COPY::VHA_ORGANIZATIONAL_QUEUE_PAGE_READY_FOR_REVIEW_TAB_TITLE
   end
 
   def self.tab_name

@@ -168,43 +168,4 @@ describe TaskActionRepository, :all_dbs do
       end
     end
   end
-
-  context "#vha po and vha ro ready for review" do
-    let(:user) { create(:user) }
-    before do
-      FeatureToggle.enable!(:visn_predocket_workflow)
-    end
-
-    after do
-      FeatureToggle.disable!(:visn_predocket_workflow)
-    end
-
-    describe "#vha_po_send_to_vha_camo_for_review" do
-      let(:program_office) { VhaProgramOffice.create!(name: "Program Office", url: "Program Office") }
-      let(:program_office_task) { create(:assess_documentation_task, assigned_to: program_office) }
-
-      before { program_office.add_user(user) }
-
-      subject { TaskActionRepository.vha_complete_data(program_office_task, user) }
-
-      it "the modal body includes the text This appeal will be sent to VHA CAMO for review" do
-        expect(subject[:radio_field_label])
-          .to eq(format(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, "VHA CAMO"))
-      end
-    end
-
-    describe "#vha_ro_send_to_vha_po_for_review" do
-      let(:regional_office) { VhaRegionalOffice.create!(name: "Regional Office", url: "Regional Office") }
-      let(:regional_office_task) { create(:assess_documentation_task, assigned_to: regional_office) }
-
-      before { regional_office.add_user(user) }
-
-      subject { TaskActionRepository.vha_complete_data(regional_office_task, user) }
-
-      it "the modal body includes the text This appeal will be sent to VHA Program Office for review" do
-        expect(subject[:radio_field_label])
-          .to eq(format(COPY::DOCUMENTS_READY_FOR_ORG_REVIEW_MODAL_BODY, "VHA Program Office"))
-      end
-    end
-  end
 end

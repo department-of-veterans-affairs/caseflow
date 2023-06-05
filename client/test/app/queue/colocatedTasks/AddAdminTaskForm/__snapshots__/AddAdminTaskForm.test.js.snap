@@ -130,7 +130,7 @@ exports[`AddAdminTaskForm renders correctly 1`] = `
         for="newTasks[0].instructions"
       >
         <span>
-          Provide instructions and context for this action
+          Provide instructions and context for this action:
         </span>
       </label>
       <textarea
