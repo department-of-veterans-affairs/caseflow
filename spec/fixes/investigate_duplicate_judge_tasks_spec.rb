@@ -45,7 +45,7 @@ feature "duplicate JudgeAssignTask investigation" do
       click_dropdown(prompt: "Select an action", text: "Re-assign to a judge")
       click_dropdown(prompt: "Select a user", text: judge_user_second.full_name)
       fill_in "taskInstructions", with: "reassign this task! teamwork makes the dreamwork!"
-      click_on "Assign"
+      click_on "Submit"
       expect(page).to have_content(appeal.veteran.first_name, wait: 30)
       appeal.reload.treee
 

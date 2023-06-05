@@ -464,7 +464,7 @@ feature "AmaQueue", :all_dbs do
       click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
       fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
 
-      click_on "Submit"
+      click_on "Assign"
 
       expect(page).to have_content("Assigned 1 task to #{attorney_user.full_name}")
     end
