@@ -150,15 +150,19 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
     tags_by_doc_id
   end
 
+  def recipient_info
+    params[:recipient_info]
+  end
+
   def create_mail_request_distributions
-    return if params[:recipient_info].blank?
+    return if recipient_info.blank?
 
     throw_error_if_recipient_info_incorrect
     mail_request.call
   end
 
   def mail_request
-    return nil if params[:recipient_info].blank?
+    return nil if recipient_info.blank?
 
     @mail_request ||= MailRequest.new(outcode_params)
   end
