@@ -70,7 +70,6 @@ exports[`AddClaimantPage renders default state correctly 1`] = `
   </div>
   <section
     class="cf-app-segment cf-app-segment--alt"
-
   >
     <div>
       <h1>

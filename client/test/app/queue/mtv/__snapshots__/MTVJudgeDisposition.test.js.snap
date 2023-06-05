@@ -7,7 +7,6 @@ exports[`MTVJudgeDisposition default view renders correctly 1`] = `
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-
     >
       <h1>
         Address Abellona Valtas's Motion to Vacate
@@ -19,7 +18,6 @@ exports[`MTVJudgeDisposition default view renders correctly 1`] = `
           <strong>
             Veteran ID:
           </strong>
-
           123456789
         </span>
         <span
@@ -28,7 +26,6 @@ exports[`MTVJudgeDisposition default view renders correctly 1`] = `
           <strong>
             Task:
           </strong>
-
         </span>
       </div>
       <div
@@ -38,15 +35,12 @@ exports[`MTVJudgeDisposition default view renders correctly 1`] = `
       <p>
         Determine how you would like to address this motion to vacate.
         <br />
-
         <br />
         If you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.
         <br />
-
         <br />
         If you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.
         <br />
-
         <br />
         If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.
       </p>
@@ -72,7 +66,6 @@ exports[`MTVJudgeDisposition default view renders correctly 1`] = `
           <strong>
             <span>
               How will you address this motion to vacate?
-
             </span>
           </strong>
         </legend>
@@ -247,7 +240,6 @@ exports[`MTVJudgeDisposition with denied disposition selected renders correctly 
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-
     >
       <h1>
         Address Abellona Valtas's Motion to Vacate
@@ -259,7 +251,6 @@ exports[`MTVJudgeDisposition with denied disposition selected renders correctly 
           <strong>
             Veteran ID:
           </strong>
-
           123456789
         </span>
         <span
@@ -268,7 +259,6 @@ exports[`MTVJudgeDisposition with denied disposition selected renders correctly 
           <strong>
             Task:
           </strong>
-
         </span>
       </div>
       <div
@@ -278,15 +268,12 @@ exports[`MTVJudgeDisposition with denied disposition selected renders correctly 
       <p>
         Determine how you would like to address this motion to vacate.
         <br />
-
         <br />
         If you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.
         <br />
-
         <br />
         If you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.
         <br />
-
         <br />
         If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.
       </p>
@@ -312,7 +299,6 @@ exports[`MTVJudgeDisposition with denied disposition selected renders correctly 
           <strong>
             <span>
               How will you address this motion to vacate?
-
             </span>
           </strong>
         </legend>
@@ -511,7 +497,6 @@ exports[`MTVJudgeDisposition with dismissed disposition selected renders correct
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-
     >
       <h1>
         Address Abellona Valtas's Motion to Vacate
@@ -523,7 +508,6 @@ exports[`MTVJudgeDisposition with dismissed disposition selected renders correct
           <strong>
             Veteran ID:
           </strong>
-
           123456789
         </span>
         <span
@@ -532,7 +516,6 @@ exports[`MTVJudgeDisposition with dismissed disposition selected renders correct
           <strong>
             Task:
           </strong>
-
         </span>
       </div>
       <div
@@ -542,15 +525,12 @@ exports[`MTVJudgeDisposition with dismissed disposition selected renders correct
       <p>
         Determine how you would like to address this motion to vacate.
         <br />
-
         <br />
         If you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.
         <br />
-
         <br />
         If you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.
         <br />
-
         <br />
         If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.
       </p>
@@ -576,7 +556,6 @@ exports[`MTVJudgeDisposition with dismissed disposition selected renders correct
           <strong>
             <span>
               How will you address this motion to vacate?
-
             </span>
           </strong>
         </legend>
@@ -787,7 +766,6 @@ exports[`MTVJudgeDisposition with granted disposition selected renders correctly
           <strong>
             Veteran ID:
           </strong>
-
           123456789
         </span>
         <span
@@ -806,15 +784,12 @@ exports[`MTVJudgeDisposition with granted disposition selected renders correctly
       <p>
         Determine how you would like to address this motion to vacate.
         <br />
-
         <br />
         If you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.
         <br />
-
         <br />
         If you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.
         <br />
-
         <br />
         If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.
       </p>
@@ -961,7 +936,6 @@ exports[`MTVJudgeDisposition with granted disposition selected renders correctly
           <strong>
             <span>
               What type of vacate?
-
               <span
                 class="cf-required"
               >
@@ -1185,7 +1159,6 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-
     >
       <h1>
         Address Abellona Valtas's Motion to Vacate
@@ -1197,7 +1170,6 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
           <strong>
             Veteran ID:
           </strong>
-
           123456789
         </span>
         <span
@@ -1206,7 +1178,6 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
           <strong>
             Task:
           </strong>
-
         </span>
       </div>
       <div
@@ -1216,15 +1187,12 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
       <p>
         Determine how you would like to address this motion to vacate.
         <br />
-
         <br />
         If you are granting all issues for vacatur or a partial vacatur for this motion, you will then assign this case to an attorney on your team.
         <br />
-
         <br />
         If you are choosing to deny or dismiss this motion, it will be automatically returned to the original Motions Attorney on the case.
         <br />
-
         <br />
         If they are no longer active, it will be placed in the Litigation Support team queue for reassignment.
       </p>
@@ -1250,7 +1218,6 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
           <strong>
             <span>
               How will you address this motion to vacate?
-
             </span>
           </strong>
         </legend>
@@ -1412,7 +1379,6 @@ exports[`MTVJudgeDisposition with partially_granted disposition selected renders
           <strong>
             <span>
               What type of vacate?
-
               <span
                 class="cf-required"
               >

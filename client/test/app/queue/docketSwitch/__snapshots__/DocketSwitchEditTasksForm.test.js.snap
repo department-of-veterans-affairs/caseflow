@@ -8,7 +8,6 @@ exports[`DocketSwitchEditTasksForm default values populates with default values 
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-
     >
       <h1>
         Switch Docket: Add/Remove Tasks
@@ -181,7 +180,6 @@ exports[`DocketSwitchEditTasksForm default values populates with default values 
                       id="aria-selection-event"
                     >
                        
-
                     </span>
                     <span
                       id="aria-context"
@@ -352,7 +350,6 @@ exports[`DocketSwitchEditTasksForm renders correctly 1`] = `
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-
     >
       <h1>
         Switch Docket: Add/Remove Tasks

@@ -7,7 +7,6 @@ Object {
     <div>
       <section
         class="cf-app-segment cf-app-segment--alt"
-
       >
         <div
           class="hearing-day-container"
@@ -156,7 +155,6 @@ Object {
                 >
                   Assign a Board hearing room
                 </span>
-
               </label>
             </div>
           </div>
@@ -214,7 +212,6 @@ Object {
   "container": <div>
     <section
       class="cf-app-segment cf-app-segment--alt"
-
     >
       <div
         class="hearing-day-container"
@@ -363,7 +360,6 @@ Object {
               >
                 Assign a Board hearing room
               </span>
-
             </label>
           </div>
         </div>
@@ -478,7 +474,6 @@ Object {
     <div>
       <section
         class="cf-app-segment cf-app-segment--alt"
-
       >
         <div
           class="hearing-day-container"
@@ -540,7 +535,6 @@ Object {
                       id="aria-selection-event"
                     >
                        
-
                     </span>
                     <span
                       id="aria-context"
@@ -661,7 +655,6 @@ Object {
                 >
                   Assign a Board hearing room
                 </span>
-
               </label>
             </div>
           </div>
@@ -772,7 +765,6 @@ Object {
               <strong>
                 <span>
                   Available Times
-
                 </span>
               </strong>
             </legend>
@@ -1086,7 +1078,6 @@ Object {
   "container": <div>
     <section
       class="cf-app-segment cf-app-segment--alt"
-
     >
       <div
         class="hearing-day-container"
@@ -1148,7 +1139,6 @@ Object {
                     id="aria-selection-event"
                   >
                      
-
                   </span>
                   <span
                     id="aria-context"

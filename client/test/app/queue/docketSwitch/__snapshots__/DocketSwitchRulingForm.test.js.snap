@@ -8,7 +8,6 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-
     >
       <h1>
         Switch Docket: Rule on Claimant 1's Request
@@ -65,7 +64,6 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
           <strong>
             Draft letter:
           </strong>
-
           <a
             href="http://www.va.gov"
             target="_blank"
@@ -86,7 +84,6 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
           <strong>
             <span>
               How will you rule on this docket switch?
-
             </span>
           </strong>
         </legend>

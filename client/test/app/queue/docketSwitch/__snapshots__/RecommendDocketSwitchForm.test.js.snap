@@ -8,7 +8,6 @@ exports[`RecommendDocketSwitchForm renders correctly 1`] = `
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-
     >
       <h1>
         Switch Docket: Send Claimant 1's Request to a Judge
@@ -45,7 +44,6 @@ exports[`RecommendDocketSwitchForm renders correctly 1`] = `
           <strong>
             <span>
               Is this request timely?
-
             </span>
           </strong>
         </legend>
@@ -95,7 +93,6 @@ exports[`RecommendDocketSwitchForm renders correctly 1`] = `
           <strong>
             <span>
               What is your recommendation for this request to switch dockets?
-
             </span>
           </strong>
         </legend>
