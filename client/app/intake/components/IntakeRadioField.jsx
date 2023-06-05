@@ -52,6 +52,8 @@ export const IntakeRadioField = (props) => {
     setMstCheckboxFunction,
     pactChecked,
     setPactCheckboxFunction,
+    setVbmsMstCheckedFunction,
+    setVbmsPactCheckedFunction,
     mstJustification,
     mstJustificationOnChange,
     pactJustification,
@@ -84,8 +86,13 @@ export const IntakeRadioField = (props) => {
 
   // handle both MST and PACT pre-populated checkbox status on load
   const handlePrepopulatedCheckboxes = (radioOption) => {
+    // update the checkbox value
     setMstCheckboxFunction(radioOption.mst);
     setPactCheckboxFunction(radioOption.pact);
+
+    // handle update for pre-populated mst/pact status
+    setVbmsMstCheckedFunction(radioOption.mst);
+    setVbmsPactCheckedFunction(radioOption.pact);
   };
 
   const maybeAddTooltip = (option, radioField) => {
@@ -300,6 +307,8 @@ IntakeRadioField.propTypes = {
   setMstCheckboxFunction: PropTypes.func,
   pactChecked: PropTypes.bool,
   pactJustification: PropTypes.string,
+  setVbmsMstCheckedFunction: PropTypes.func,
+  setVbmsPactCheckedFunction: PropTypes.func,
   mstJustification: PropTypes.string,
   pactJustificationOnChange: PropTypes.func,
   mstJustificationOnChange: PropTypes.func,

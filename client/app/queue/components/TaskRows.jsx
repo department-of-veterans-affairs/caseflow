@@ -341,7 +341,7 @@ class TaskRows extends React.PureComponent {
             <br />
             <small>{text[2]}</small>
             <br />
-            {text[0] === 'Edited Issue' &&
+            {text.length > 3 &&
             <React.Fragment>
               <h5 style={hStyle}>Updated:</h5>
               <small>{text[3]}</small>
