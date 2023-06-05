@@ -23,7 +23,9 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
   end
 
   def outcode
-    result = BvaDispatchTask.outcode(appeal, outcode_params, user)
+    create_mail_request
+
+    result = BvaDispatchTask.outcode(appeal, outcode_params, user, mail_request)
 
     if result.success?
       return render json: { message: "Success!" }
@@ -148,7 +150,55 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
     tags_by_doc_id
   end
 
+  def create_mail_request
+    return if params[:recipient_info].blank?
+
+    throw_error_if_recipient_info_incorrect
+    mail_request.call
+  end
+
+  def mail_request
+    return nil if params[:recipient_info].blank?
+
+    @mail_request ||= MailRequest.new(outcode_params)
+  end
+
+  def throw_error_if_recipient_info_incorrect
+    return if mail_request.valid?
+
+    fail StandardError, mail_request.errors.full_messages.join(",")
+  end
+
   def outcode_params
-    params.permit(:citation_number, :decision_date, :redacted_document_location, :file)
+    params.permit(:citation_number,
+                  :decision_date,
+                  :redacted_document_location,
+                  :file,
+                  :copies,
+                  recipient_info: recipient_params)
+  end
+
+  def recipient_params
+    [
+      :recipient_type,
+      :name,
+      :first_name,
+      :last_name,
+      :claimant_station_of_jurisdiction,
+      :postal_code,
+      :destination_type,
+      :address_line_1,
+      :address_line_2,
+      :address_line_3,
+      :address_line_4,
+      :address_line_5,
+      :address_line_6,
+      :treat_line_2_as_addressee,
+      :treat_line_3_as_addressee,
+      :city,
+      :state,
+      :country_name,
+      :country_code
+    ]
   end
 end

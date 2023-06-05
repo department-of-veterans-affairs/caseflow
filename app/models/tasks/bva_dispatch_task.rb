@@ -37,11 +37,11 @@ class BvaDispatchTask < Task
       true
     end
 
-    def outcode(appeal, params, user)
+    def outcode(appeal, params, user, mail_request = nil)
       if appeal.is_a?(Appeal)
-        AmaAppealDispatch.new(appeal: appeal, user: user, params: params).call
+        AmaAppealDispatch.new(appeal: appeal, user: user, params: params, mail_request: mail_request).call
       elsif appeal.is_a?(LegacyAppeal)
-        LegacyAppealDispatch.new(appeal: appeal, params: params).call
+        LegacyAppealDispatch.new(appeal: appeal, params: params, mail_request: mail_request).call
       end
     end
   end

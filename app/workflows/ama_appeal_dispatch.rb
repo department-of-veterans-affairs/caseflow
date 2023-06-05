@@ -4,7 +4,7 @@ class AmaAppealDispatch
   include ActiveModel::Model
   include DecisionDocumentValidator
 
-  def initialize(appeal:, params:, user:)
+  def initialize(appeal:, params:, user:, mail_request: nil)
     @appeal = appeal
     @params = params.merge(appeal_id: appeal.id, appeal_type: "Appeal")
     @user = user
@@ -12,6 +12,7 @@ class AmaAppealDispatch
     @decision_date = params[:decision_date]
     @redacted_document_location = params[:redacted_document_location]
     @file = params[:file]
+    @mail_request = mail_request
   end
 
   def call
@@ -21,6 +22,8 @@ class AmaAppealDispatch
     @success = valid?
 
     outcode_appeal if success
+
+    queue_mail_request_job unless @mail_request.nil?
 
     FormResponse.new(success: success, errors: [errors.full_messages.join(", ")])
   end
@@ -90,5 +93,11 @@ class AmaAppealDispatch
 
   def store_poa_participant_id
     appeal.update!(poa_participant_id: appeal.power_of_attorney&.participant_id)
+  end
+
+  def queue_mail_request_job
+    return unless dispatch_task.root_task.status == Constants.TASK_STATUSES.completed
+
+    MailRequestJob.perform_later(@file, @mail_request)
   end
 end
