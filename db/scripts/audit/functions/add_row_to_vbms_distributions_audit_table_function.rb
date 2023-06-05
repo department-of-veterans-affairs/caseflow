@@ -9,13 +9,64 @@ conn.execute(
   $add_row$
   begin
     if (TG_OP = 'DELETE') then
-      insert into caseflow_audit.vbms_distributions_audit select nextval('caseflow_audit.vbms_distributions_audit_id_seq'::regclass), 'D', OLD.*;
+      insert into caseflow_audit.vbms_distributions_audit
+      select
+        nextval('caseflow_audit.vbms_distributions_audit_id_seq'::regclass),
+        'D',
+        OLD.id,
+        OLD.recipient_type,
+        OLD.name,
+        OLD.first_name,
+        OLD.middle_name,
+        OLD.last_name,
+        OLD.participant_id,
+        OLD.poa_code,
+        OLD.claimant_station_of_jurisdiction,
+        OLD.created_at,
+        OLD.updated_at,
+        OLD.vbms_communication_package_id,
+        OLD.created_by_id,
+        OLD.updated_by_id;
     elsif (TG_OP = 'UPDATE') then
-      insert into caseflow_audit.vbms_distributions_audit select nextval('caseflow_audit.vbms_distributions_audit_id_seq'::regclass), 'U', NEW.*;
+      insert into caseflow_audit.vbms_distributions_audit
+      select
+        nextval('caseflow_audit.vbms_distributions_audit_id_seq'::regclass),
+        'U',
+        NEW.id,
+        NEW.recipient_type,
+        NEW.name,
+        NEW.first_name,
+        NEW.middle_name,
+        NEW.last_name,
+        NEW.participant_id,
+        NEW.poa_code,
+        NEW.claimant_station_of_jurisdiction,
+        NEW.created_at,
+        NEW.updated_at,
+        NEW.vbms_communication_package_id,
+        NEW.created_by_id,
+        NEW.updated_by_id;
     elsif (TG_OP = 'INSERT') then
-      insert into caseflow_audit.vbms_distributions_audit select nextval('caseflow_audit.vbms_distributions_audit_id_seq'::regclass), 'I', NEW.*;
+      insert into caseflow_audit.vbms_distributions_audit
+      select
+        nextval('caseflow_audit.vbms_distributions_audit_id_seq'::regclass),
+        'I',
+        NEW.id,
+        NEW.recipient_type,
+        NEW.name,
+        NEW.first_name,
+        NEW.middle_name,
+        NEW.last_name,
+        NEW.participant_id,
+        NEW.poa_code,
+        NEW.claimant_station_of_jurisdiction,
+        NEW.created_at,
+        NEW.updated_at,
+        NEW.vbms_communication_package_id,
+        NEW.created_by_id,
+        NEW.updated_by_id;
     end if;
-    return null;
+    return ;
   end;
   $add_row$
   language plpgsql;"
