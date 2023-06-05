@@ -8,7 +8,7 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-      role="main"
+
     >
       <h1>
         Switch Docket: Rule on Claimant 1's Request
@@ -25,7 +25,7 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
           The hyperlink takes you to a draft ruling letter based on the recommended ruling. Please feel free to make any necessary edits to the ruling letter. You may then sign the letter.
         </p>
         <p>
-          If you have any questions, or need assistance making edits to the ruling letter, please 
+          If you have any questions, or need assistance making edits to the ruling letter, please
           <a
             href="mailto:BVA.Clerk@va.gov"
           >
@@ -65,7 +65,7 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
           <strong>
             Draft letter:
           </strong>
-           
+
           <a
             href="http://www.va.gov"
             target="_blank"
@@ -86,7 +86,7 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
           <strong>
             <span>
               How will you rule on this docket switch?
-               
+
             </span>
           </strong>
         </legend>
