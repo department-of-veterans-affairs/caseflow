@@ -292,7 +292,8 @@ class RequestIssuesUpdate < CaseflowRecord
     after_issues = fetch_after_issues
     edited_issues = before_issues & after_issues
     # cycle each edited issue (before) and compare MST/PACT with (fetch_after_issues)
-    edited_issues.each do |before_issue|
+    # reverse_each to make the issues on the case timeline appear in similar sequence to what user sees the edit issues page
+    edited_issues.reverse_each do |before_issue|
       after_issue = after_issues.find { |i| i.id == before_issue.id }
       # if before/after has a change in MST/PACT, create issue update task
       if (before_issue.mst_status != after_issue.mst_status) || (before_issue.pact_status != after_issue.pact_status)
@@ -304,7 +305,7 @@ class RequestIssuesUpdate < CaseflowRecord
   def handle_added_mst_pact_edits_task
     after_issues = fetch_after_issues
     added_issues = after_issues - before_issues
-    added_issues.each do |issue|
+    added_issues.reverse_each do |issue|
       if (issue.mst_status) || (issue.pact_status)
         create_issue_update_task("Added Issue", issue)
       end
@@ -316,7 +317,7 @@ class RequestIssuesUpdate < CaseflowRecord
     after_issues = fetch_after_issues
     edited_issues = before_issues - after_issues
     # cycle each edited issue (before) and compare MST/PACT with (fetch_after_issues)
-    edited_issues.each do |before_issue|
+    edited_issues.reverse_each do |before_issue|
       # lazily create a new RequestIssue since the mst/pact status would be removed if deleted?
       if (before_issue.mst_status) || (before_issue.pact_status)
          create_issue_update_task("Removed Issue", before_issue)
