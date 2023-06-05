@@ -48,7 +48,7 @@
 
 2. Right click UTM.app and select “install with privilege management” then open the UTM.app
 
-3. Download the Vacols VM from this [link](https://boozallen-my.sharepoint.com/personal/582213_bah_com/_layouts/15/onedrive.aspx?id=%2Fpersonal%2F582213%5Fbah%5Fcom%2FDocuments%2FAppeals%20Vacols%20VM%2Eutm%2Ezip&parent=%2Fpersonal%2F582213%5Fbah%5Fcom%2FDocuments&ga=1)
+3. Download the Vacols VM from this [link](https://boozallen-my.sharepoint.com/:u:/r/personal/622659_bah_com/Documents/Appeals%20Vacols%20VM%20May%202023.utm.zip?csf=1&web=1&e=TnDe7c)
 
 4. After the file downloads, right click on it in “Finder” and select “Show Package Contents” and delete the view.plist file if it exists
 
