@@ -128,14 +128,14 @@ RSpec.feature "ColocatedTask", :all_dbs do
         # Attempt to place the task on hold without including notes.
         find(".cf-select__control", text: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL).click
         find("div", class: "cf-select__option", text: "#{hold_duration_days} days").click
-        click_on(COPY::MODAL_PUT_TASK_ON_HOLD_BUTTON)
+        click_on(COPY::MODAL_SUBMIT_BUTTON)
 
         # Notes field is required
         expect(page).to have_content(COPY::NOTES_ERROR_FIELD_REQUIRED)
 
         # Add instructions and try again
         fill_in("instructions", with: "some text")
-        click_on(COPY::MODAL_PUT_TASK_ON_HOLD_BUTTON)
+        click_on(COPY::MODAL_SUBMIT_BUTTON)
 
         # We should see a success message and remain on the case details page.
         expect(page).to have_content(

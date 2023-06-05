@@ -10,7 +10,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { returnToLitSupport } from './mtvActions';
 import { MotionToVacateFlowContainer } from './checkout/MotionToVacateFlowContainer';
 import { appealWithDetailSelector } from '../selectors';
-import { PAGE_TITLES } from '../constants';
 
 const RoutedReturnToLitSupport = (props) => {
   const { taskId, appealId } = useParams();
@@ -41,7 +40,7 @@ const RoutedReturnToLitSupport = (props) => {
 const PageRoutes = [
   <PageRoute
     path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`}
-    title={`${PAGE_TITLES.MOTION_TO_VACATE.ADDRESS_MOTION_TO_VACATE} | Caseflow`}
+    title="Address Motion to Vacate | Caseflow"
     component={AddressMotionToVacateView}
   />,
 
@@ -60,7 +59,7 @@ const ModalRoutes = [
       TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value,
       TASK_ACTIONS.JUDGE_RETURN_TO_LIT_SUPPORT.value
     ].join('/')}
-    title={`${PAGE_TITLES.MOTION_TO_VACATE.RETURN_TO_LITIGATION_SUPPORT} | Caseflow`}
+    title="Return to Litigation Support | Caseflow"
     component={RoutedReturnToLitSupport}
   />,
 

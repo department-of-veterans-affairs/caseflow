@@ -4,7 +4,7 @@ class VhaProgramOfficeOnHoldTasksTab < QueueTab
   validate :assignee_is_organization
 
   def label
-    COPY::ORGANIZATIONAL_QUEUE_ON_HOLD_TAB_TITLE
+    COPY::VHA_ORGANIZATIONAL_QUEUE_PAGE_ON_HOLD_TAB_TITLE
   end
 
   def self.tab_name

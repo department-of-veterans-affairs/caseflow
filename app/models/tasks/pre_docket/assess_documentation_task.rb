@@ -11,17 +11,16 @@ class AssessDocumentationTask < Task
 
   # Actions that can be taken on both organization and user tasks
   DEFAULT_ACTIONS = [
-    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
+    Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+    Constants.TASK_ACTIONS.READY_FOR_REVIEW.to_h
   ].freeze
 
   PO_ACTIONS = [
-    Constants.TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.to_h,
-    Constants.TASK_ACTIONS.VHA_PO_SEND_TO_CAMO_FOR_REVIEW.to_h
+    Constants.TASK_ACTIONS.VHA_PROGRAM_OFFICE_RETURN_TO_CAMO.to_h
   ].freeze
 
   RO_ACTIONS = [
-    Constants.TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.to_h,
-    Constants.TASK_ACTIONS.VHA_VISN_SEND_TO_VHA_PO_FOR_REVIEW.to_h
+    Constants.TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.to_h
   ].freeze
 
   def available_actions(user)
@@ -44,21 +43,16 @@ class AssessDocumentationTask < Task
       task_actions.concat([Constants.TASK_ACTIONS.VHA_MARK_TASK_IN_PROGRESS.to_h].freeze)
     end
 
-    sort_task_actions(task_actions)
+    task_actions
+  end
+
+  def when_child_task_completed(child_task)
+    append_instruction(child_task.instructions.last) if child_task.assigned_to.is_a?(VhaRegionalOffice)
+
+    super
   end
 
   def self.label
     COPY::ASSESS_DOCUMENTATION_TASK_LABEL
-  end
-
-  private
-
-  def sort_task_actions(task_actions)
-    sorted_task_actions = []
-    task_actions.each_with_index do |action, index|
-      new_index = action.key?(:sort_order) ? action[:sort_order] : index
-      sorted_task_actions.insert(new_index, action)
-    end
-    sorted_task_actions.compact!
   end
 end

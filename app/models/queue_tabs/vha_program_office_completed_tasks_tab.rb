@@ -4,7 +4,7 @@ class VhaProgramOfficeCompletedTasksTab < QueueTab
   validate :assignee_is_organization
 
   def label
-    COPY::ORGANIZATIONAL_QUEUE_COMPLETED_TAB_TITLE
+    COPY::VHA_ORGANIZATIONAL_QUEUE_PAGE_COMPLETED_TAB_TITLE
   end
 
   def self.tab_name
@@ -12,7 +12,7 @@ class VhaProgramOfficeCompletedTasksTab < QueueTab
   end
 
   def description
-    COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION
+    COPY::VHA_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION
   end
 
   def parent_ids_with_cancelled_assess_documentation_task

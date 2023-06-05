@@ -16,35 +16,8 @@ describe BvaIntakeCompletedTab, :postgres do
       let(:params) { { assignee: create(:bva) } }
 
       it "returns the correct number of columns" do
-        expect(subject.length).to eq 8
+        expect(subject.length).to eq(7)
       end
-    end
-  end
-
-  describe ".label" do
-    subject { tab.label }
-
-    it do
-      is_expected.to eq COPY::ORGANIZATIONAL_QUEUE_COMPLETED_TAB_TITLE
-      is_expected.to eq "Completed"
-    end
-  end
-
-  describe ".description" do
-    subject { tab.description }
-
-    it do
-      is_expected.to eq COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION
-      is_expected.to eq "Cases completed:"
-    end
-  end
-
-  describe ".self.tab_name" do
-    subject { described_class.tab_name }
-
-    it "matches expected tab name" do
-      is_expected.to eq(Constants.QUEUE_CONFIG.BVA_INTAKE_COMPLETED_TAB_NAME)
-      is_expected.to eq("bvaIntakeCompletedTab")
     end
   end
 

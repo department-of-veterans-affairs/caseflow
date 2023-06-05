@@ -33,8 +33,8 @@ describe VhaProgramOffice, :postgres do
   end
 
   describe ".COLUMN_NAMES" do
-    it "VHA Program Office organization queue tabs have 8 columns by default" do
-      expect(VhaProgramOffice::COLUMN_NAMES.count).to eq 8
+    it "VHA Program Office organization queue tabs have 7 columns by default" do
+      expect(VhaProgramOffice::COLUMN_NAMES.count).to eq 7
     end
   end
 end

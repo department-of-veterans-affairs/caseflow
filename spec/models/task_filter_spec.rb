@@ -88,7 +88,7 @@ describe TaskFilter, :all_dbs do
     context "filtering on suggested hearing location" do
       let(:col) { Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME }
       let(:unescaped_val) { "San Francisco, CA(VA)" }
-      let(:val) { URI::DEFAULT_PARSER.escape(URI::DEFAULT_PARSER.escape(unescaped_val)) }
+      let(:val) { URI.escape(URI.escape(unescaped_val)) }
       let(:filter_params) { ["col=#{col}&val=#{val}"] }
 
       it "calls the QueueFilterParameter#from_string" do
@@ -459,7 +459,7 @@ describe TaskFilter, :all_dbs do
 
       let(:col) { Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME }
       let(:unescaped_val) { hearing_location_sfo.formatted_location }
-      let(:val) { URI::DEFAULT_PARSER.escape(URI::DEFAULT_PARSER.escape(unescaped_val)) }
+      let(:val) { URI.escape(URI.escape(unescaped_val)) }
       let(:filter_params) { ["col=#{col}&val=#{val}"] }
 
       it "returns the correct task" do
