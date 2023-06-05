@@ -270,7 +270,7 @@ class RequestIssuesUpdate < CaseflowRecord
   def create_mst_pact_issue_update_tasks
     handle_mst_pact_edits_task
     handle_mst_pact_removal_task
-    # handle_mst_pact_addition_task
+    handle_added_mst_pact_edits_task
   end
 
   def process_removed_issues!
@@ -294,11 +294,22 @@ class RequestIssuesUpdate < CaseflowRecord
     after_issues = fetch_after_issues
     edited_issues = before_issues & after_issues
     # cycle each edited issue (before) and compare MST/PACT with (fetch_after_issues)
-    edited_issues.each do |before_issue|
+    # reverse_each to make the issues on the case timeline appear in similar sequence to what user sees the edit issues page
+    edited_issues.reverse_each do |before_issue|
       after_issue = after_issues.find { |i| i.id == before_issue.id }
       # if before/after has a change in MST/PACT, create issue update task
       if (before_issue.mst_status != after_issue.mst_status) || (before_issue.pact_status != after_issue.pact_status)
         create_issue_update_task("Edited Issue", before_issue, after_issue)
+      end
+    end
+  end
+
+  def handle_added_mst_pact_edits_task
+    after_issues = fetch_after_issues
+    added_issues = after_issues - before_issues
+    added_issues.reverse_each do |issue|
+      if (issue.mst_status) || (issue.pact_status)
+        create_issue_update_task("Added Issue", issue)
       end
     end
   end
@@ -308,7 +319,7 @@ class RequestIssuesUpdate < CaseflowRecord
     after_issues = fetch_after_issues
     edited_issues = before_issues - after_issues
     # cycle each edited issue (before) and compare MST/PACT with (fetch_after_issues)
-    edited_issues.each do |before_issue|
+    edited_issues.reverse_each do |before_issue|
       # lazily create a new RequestIssue since the mst/pact status would be removed if deleted?
       if before_issue.mst_status || before_issue.pact_status
         create_issue_update_task("Removed Issue", before_issue)
@@ -325,15 +336,36 @@ class RequestIssuesUpdate < CaseflowRecord
         assigned_by: RequestStore[:current_user],
         completed_by: RequestStore[:current_user]
       )
-      # format the task instructions and close out
-      task.format_instructions(
-        change_type,
-        before_issue.nonrating_issue_category,
-        before_issue.mst_status,
-        before_issue.pact_status,
-        after_issue&.mst_status,
-        after_issue&.pact_status
-      )
+
+      # check if change from vbms mst/pact status
+      vbms_mst_edit = before_issue.vbms_mst_status.nil? ? false : !before_issue.vbms_mst_status && before_issue.mst_status
+      vbms_pact_edit = before_issue.vbms_pact_status.nil? ? false : !before_issue.vbms_pact_status && before_issue.pact_status
+
+      # if a new issue is added and VBMS was edited, reference the original status
+      if change_type == "Added Issue" && (vbms_mst_edit || vbms_pact_edit)
+        task.format_instructions(
+          change_type,
+          before_issue&.contested_issue_description,
+          before_issue.vbms_mst_status,
+          before_issue.vbms_pact_status,
+          before_issue&.mst_status,
+          before_issue&.pact_status
+        )
+      else
+        # format the task instructions and close out
+        # use contested issue description if nonrating issue category is nil
+        issue_description = before_issue.nonrating_issue_category unless before_issue.nonrating_issue_category.nil?
+        issue_description = before_issue.contested_issue_description if issue_description.nil?
+
+        task.format_instructions(
+          change_type,
+          issue_description,
+          before_issue.mst_status,
+          before_issue.pact_status,
+          after_issue&.mst_status,
+          after_issue&.pact_status
+        )
+      end
       task.completed!
     end
   end
