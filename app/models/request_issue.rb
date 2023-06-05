@@ -208,8 +208,10 @@ class RequestIssue < CaseflowRecord
         verified_unidentified_issue: data[:verified_unidentified_issue],
         is_predocket_needed: data[:is_predocket_needed],
         mst_status: data[:mst_status],
+        vbms_mst_status: data[:vbms_mst_status],
         mst_status_update_reason_notes: data[:mst_status_update_reason_notes],
         pact_status: data[:pact_status],
+        vbms_pact_status: data[:vbms_pact_status],
         pact_status_update_reason_notes: data[:pact_status_update_reason_notes]
       }
     end
