@@ -48,7 +48,7 @@ SuccessAlert.propTypes = {
 const listChanges = (editList) => {
   const divStyle = { margin: '.1rem'};
 
-  return editList.map((value) => <div style={divStyle}><small>{value}</small></div>);
+  return editList.map((value) => <div style={divStyle}><li>{value}</li></div>);
 };
 
 export class FlashAlerts extends React.PureComponent {

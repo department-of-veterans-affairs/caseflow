@@ -313,10 +313,10 @@ class AppealsController < ApplicationController
 
     message = []
 
-    message << "- #{pact_removed} #{'issue'.pluralize(pact_removed)} unmarked as PACT" unless pact_removed == 0
-    message << "- #{mst_removed} #{'issue'.pluralize(mst_removed)} unmarked as MST" unless mst_removed == 0
-    message << "- #{mst_added} #{'issue'.pluralize(mst_added)} marked as MST" unless mst_added == 0
-    message << "- #{pact_added} #{'issue'.pluralize(pact_added)} marked as PACT" unless pact_added == 0
+    message << "#{pact_removed} #{'issue'.pluralize(pact_removed)} unmarked as PACT" unless pact_removed == 0
+    message << "#{mst_removed} #{'issue'.pluralize(mst_removed)} unmarked as MST" unless mst_removed == 0
+    message << "#{mst_added} #{'issue'.pluralize(mst_added)} marked as MST" unless mst_added == 0
+    message << "#{pact_added} #{'issue'.pluralize(pact_added)} marked as PACT" unless pact_added == 0
 
     # add in removed message and added message, if any
     message << create_mst_pact_message(new_issues, "added") unless new_issues.empty?
@@ -334,9 +334,9 @@ class AppealsController < ApplicationController
       pact_count = issues.count { |issue| issue.pact_status && !issue.mst_status }
       both_count = issues.count { |issue| issue.pact_status && issue.mst_status }
 
-      special_issue_message << "- #{mst_count} #{'issue'.pluralize(mst_count)} with MST #{type}" unless mst_count == 0
-      special_issue_message << "- #{pact_count} #{'issue'.pluralize(pact_count)} with PACT #{type}" unless pact_count == 0
-      special_issue_message << "- #{both_count} #{'issue'.pluralize(both_count)} with MST and PACT #{type}" unless both_count == 0
+      special_issue_message << "#{mst_count} #{'issue'.pluralize(mst_count)} with MST #{type}" unless mst_count == 0
+      special_issue_message << "#{pact_count} #{'issue'.pluralize(pact_count)} with PACT #{type}" unless pact_count == 0
+      special_issue_message << "#{both_count} #{'issue'.pluralize(both_count)} with MST and PACT #{type}" unless both_count == 0
       special_issue_message
     end
   end
