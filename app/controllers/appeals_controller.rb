@@ -252,7 +252,7 @@ class AppealsController < ApplicationController
 
     return if withdrawn.empty?
 
-    "withdrawn #{withdrawn.count} #{'issue'.pluralize(withdrawn.count)} #{mst_pact_message}"
+    "withdrawn #{withdrawn.count} #{'issue'.pluralize(withdrawn.count)}"
   end
 
   def added_issues
