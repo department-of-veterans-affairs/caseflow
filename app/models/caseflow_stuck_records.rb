@@ -5,10 +5,10 @@
 
 class CaseflowStuckRecords < CaseflowRecord
 
-  belongs_to :record_id, polymorphic: true
+  belongs_to :stuck_record, polymorphic: true
   # When we have access to the other models we need to add the code below to each
-    # has_one :column_name_of_polymorphic_id, as: :record_id
-
+    # has_one :column_name_of_polymorphic_id, as: :stuck_record
+    # ^ 'has_one' might need to change depending on the model
 
 
 
