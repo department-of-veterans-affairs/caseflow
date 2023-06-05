@@ -1334,39 +1334,20 @@ RSpec.feature "Reader", :all_dbs do
       end
     end
 
-    scenario "Last read indicator" do
+    scenario "can open a doc, go to previous doc in file, return to list, and verify read status" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
       expect(page).to_not have_css("#read-indicator")
 
+      scroll_to_bottom(id: "documents-table-body")
+      original_scroll_position = scroll_position(id: "documents-table-body")
       click_on documents.last.type
       safe_click "#button-previous"
       click_on "Back"
 
+      expect(page).to have_content("#{num_documents} Documents")
       expect(find("#table-row-#{documents.count - 1}")).to have_css("#read-indicator")
-    end
-
-    scenario "Open a document and return to list" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-
-      scroll_to_bottom(id: "documents-table-body")
-      original_scroll_position = scroll_position(id: "documents-table-body")
-      click_on documents.last.type
-
-      click_on "Back"
-
-      expect(page).to have_content("#{num_documents} Documents")
-      expect(page).to have_css("#read-indicator")
       expect(scroll_position(id: "documents-table-body")).to eq(original_scroll_position)
-    end
-
-    scenario "Open the last document on the page and return to list" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents.last.id}"
-
-      click_on "Back"
-
-      expect(page).to have_content("#{num_documents} Documents")
-      expect(page).to have_css("#read-indicator")
     end
   end
 
