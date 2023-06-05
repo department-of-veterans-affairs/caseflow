@@ -88,6 +88,7 @@ class UnassignedCasesPage extends React.PureComponent {
               includeType
               includeDocketNumber
               includeIssueCount
+              {...(userIsCamoEmployee ? { includeIssueTypes: true } : {})}
               includeDaysWaiting
               includeReaderLink
               includeNewDocsIcon

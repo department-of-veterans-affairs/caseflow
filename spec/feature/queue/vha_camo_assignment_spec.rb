@@ -13,7 +13,35 @@ RSpec.feature "CAMO assignment to program office", :all_dbs do
         assigned_to: camo_org,
         appeal: create(:appeal)
       )
+    end.map(&:appeal)
+  end
+
+  let!(:issue_types) do
+    [
+      "Eligibility for Dental Treatment",
+      "Spina Bifida Treatment (Non-Compensation)",
+      "Beneficiary Travel",
+      "Caregiver | Eligibility",
+      "Clothing Allowance"
+    ]
+  end
+
+  let!(:appeal_request_issues) do
+    request_issues = issue_types.map do |issue_type|
+      create(:request_issue, :nonrating, nonrating_issue_category: issue_type)
     end
+
+    appeals.each_with_index do |appeal, index|
+      appeal.request_issues << request_issues[index]
+      appeal.save
+    end
+    request_issues
+  end
+
+  let(:column_heading_names) do
+    [
+      "Select", "Case Details", "Types", "Docket", "Issues", "Issue Type", "Days Waiting", "Veteran Documents"
+    ]
   end
 
   before do
@@ -68,6 +96,69 @@ RSpec.feature "CAMO assignment to program office", :all_dbs do
         case_rows = page.find_all("tr[id^='table-row-']")
         expect(case_rows.length).to eq(3)
       end
+    end
+
+    scenario "It has the correct body text and column headings" do
+      visit "/queue/#{camo_user.css_id}/assign?role=camo"
+      html_table_headings = all("th").map(&:text).reject(&:empty?).compact
+      expect(page).to have_content "Cases to Assign"
+      expect(html_table_headings).to eq(column_heading_names)
+    end
+  end
+
+  context "CAMO User can sort and filter tasks on the CAMO bulk assignment page" do
+    # let(:filter_label_text) { "Issue Type" }
+    let(:filter_column_label_text) { "Issue Type" }
+    scenario "CAMO User can sort by issue types" do
+      visit "/queue/#{camo_user.css_id}/assign?role=camo"
+
+      # Sort by issue type
+      find("[aria-label='Sort by Issue Type']").click
+
+      # Check order and it should be sorted in descending order
+      table_rows = all("table tbody tr")
+      table_rows.each_with_index do |row, index|
+        expect(row).to have_text(issue_types.sort.reverse[index])
+      end
+
+      # Click the issue type sort again
+      find("[aria-label='Sort by Issue Type']").click
+
+      # Check order and it should be in ascending order
+      table_rows = all("table tbody tr")
+      table_rows.each_with_index do |row, index|
+        expect(row).to have_text(issue_types.sort[index])
+      end
+    end
+
+    scenario "CAMO User can filter by issue types" do
+      visit "/queue/#{camo_user.css_id}/assign?role=camo"
+
+      # Verify Spina Bifida is present on the page
+      expect(page).to have_content("Spina Bifida Treatment (Non-Compensation)")
+
+      # Click the issue type filter icon
+      find("[aria-label='Filter by issue type']").click
+
+      # Check that all filter counts are there in alphanumerically sorted order
+      issue_types.sort.each do |issue_type|
+        expect(page).to have_content("#{issue_type} (1)")
+      end
+
+      # Filter by Caregiver | Eligibility
+      find("label", text: "Caregiver | Eligibility").click
+      expect(page).to have_content("Filtering by: #{filter_column_label_text} (1)")
+      expect(page).to have_content("Caregiver | Eligibility")
+      expect(page).to_not have_content("Beneficiary Travel")
+      expect(page).to_not have_content("Spina Bifida Treatment (Non-Compensation)")
+
+      # Clear filter and check if all the data is there again
+      find(".cf-clear-filters-link").click
+
+      expect(page).to_not have_content("Filtering by: #{filter_column_label_text}")
+      expect(page).to have_content("Spina Bifida Treatment (Non-Compensation)")
+      expect(page).to have_content("Caregiver | Eligibility")
+      expect(page).to have_content("Beneficiary Travel")
     end
   end
 end
