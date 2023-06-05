@@ -50,6 +50,7 @@ exports[`IssueRemandReasonsForm AMA renders correctly by default 1`] = `
               class="cf-form-checkbox"
             >
               <input
+                aria-label="issue-1-no_notice_sent"
                 id="issue-1-no_notice_sent"
                 name="issue-1-no_notice_sent"
                 type="checkbox"
@@ -73,6 +74,7 @@ exports[`IssueRemandReasonsForm AMA renders correctly by default 1`] = `
               class="cf-form-checkbox"
             >
               <input
+                aria-label="issue-1-incorrect_notice_sent"
                 id="issue-1-incorrect_notice_sent"
                 name="issue-1-incorrect_notice_sent"
                 type="checkbox"
@@ -96,6 +98,7 @@ exports[`IssueRemandReasonsForm AMA renders correctly by default 1`] = `
               class="cf-form-checkbox"
             >
               <input
+                aria-label="issue-1-legally_inadequate_notice"
                 id="issue-1-legally_inadequate_notice"
                 name="issue-1-legally_inadequate_notice"
                 type="checkbox"
@@ -132,6 +135,7 @@ exports[`IssueRemandReasonsForm AMA renders correctly by default 1`] = `
               class="cf-form-checkbox"
             >
               <input
+                aria-label="issue-1-va_records"
                 id="issue-1-va_records"
                 name="issue-1-va_records"
                 type="checkbox"
@@ -155,6 +159,7 @@ exports[`IssueRemandReasonsForm AMA renders correctly by default 1`] = `
               class="cf-form-checkbox"
             >
               <input
+                aria-label="issue-1-private_records"
                 id="issue-1-private_records"
                 name="issue-1-private_records"
                 type="checkbox"
@@ -178,6 +183,7 @@ exports[`IssueRemandReasonsForm AMA renders correctly by default 1`] = `
               class="cf-form-checkbox"
             >
               <input
+                aria-label="issue-1-service_personnel_records"
                 id="issue-1-service_personnel_records"
                 name="issue-1-service_personnel_records"
                 type="checkbox"
@@ -201,6 +207,7 @@ exports[`IssueRemandReasonsForm AMA renders correctly by default 1`] = `
               class="cf-form-checkbox"
             >
               <input
+                aria-label="issue-1-service_treatment_records"
                 id="issue-1-service_treatment_records"
                 name="issue-1-service_treatment_records"
                 type="checkbox"
@@ -224,6 +231,7 @@ exports[`IssueRemandReasonsForm AMA renders correctly by default 1`] = `
               class="cf-form-checkbox"
             >
               <input
+                aria-label="issue-1-other_government_records"
                 id="issue-1-other_government_records"
                 name="issue-1-other_government_records"
                 type="checkbox"
@@ -264,6 +272,7 @@ exports[`IssueRemandReasonsForm AMA renders correctly by default 1`] = `
               class="cf-form-checkbox"
             >
               <input
+                aria-label="issue-1-medical_examinations"
                 id="issue-1-medical_examinations"
                 name="issue-1-medical_examinations"
                 type="checkbox"
@@ -287,6 +296,7 @@ exports[`IssueRemandReasonsForm AMA renders correctly by default 1`] = `
               class="cf-form-checkbox"
             >
               <input
+                aria-label="issue-1-medical_opinions"
                 id="issue-1-medical_opinions"
                 name="issue-1-medical_opinions"
                 type="checkbox"
@@ -310,6 +320,7 @@ exports[`IssueRemandReasonsForm AMA renders correctly by default 1`] = `
               class="cf-form-checkbox"
             >
               <input
+                aria-label="issue-1-advisory_medical_opinion"
                 id="issue-1-advisory_medical_opinion"
                 name="issue-1-advisory_medical_opinion"
                 type="checkbox"
@@ -347,6 +358,7 @@ exports[`IssueRemandReasonsForm AMA renders correctly by default 1`] = `
               class="cf-form-checkbox"
             >
               <input
+                aria-label="issue-1-due_process_deficiency"
                 id="issue-1-due_process_deficiency"
                 name="issue-1-due_process_deficiency"
                 type="checkbox"
