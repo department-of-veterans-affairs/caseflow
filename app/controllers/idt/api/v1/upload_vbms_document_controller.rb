@@ -12,24 +12,33 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   end
 
   def create
+    # creating a JSON object that will be used to communicate with the IDT user as to the status of the upload if it was
+    #   successful and if the proper params were supplied, it will also hold the IDs for the created distributions.
+    #   allowing the client to be able to search for the status.
+    # However, if there are any errors in regards to creation of the MailRequest, the errors will be returned
+    #   to the Client and the originally intended upload will still follow through.
     success_json = {
       message: "Document successfully queued for upload."
     }
     begin
-      #check if the parameters to create a mailrequest are present.
+      # optional check if the parameters to create a mailrequest are present.
       if params["recipient_info"].present?
-        #creating the key for distribution_ids to provide to IDT client within the success_json hash.
+        # creating the key for distribution_ids to provide to IDT client within the success_json hash.
         success_json[:distribution_ids] = params["recipient_info"].map do |recipient|
           mail_req = MailRequest.new(recipient)
+          # Given that the mail request is invalid, errors will be taken track of and presented to the
+          #   user within the success_JSON object.
           if mail_req.invalid?
-           success_json[:error_messages] = mail_req.errors.messages
+            success_json[:error_messages] = mail_req.errors.messages
           end
           mail_req.call
           mail_req.vbms_distribution_id
         end
       end
     rescue Caseflow::Error::MissingRecipientInfo => error
-      success_json[:errors] = "Incomplete mailing informaiton provided. No mail request was created."
+      # Raises Caseflow::Error::MissingRecipientInfo if provided params within the recipient_info
+      #   array do not create a valid MailRequest.
+      success_json[:error] = "Incomplete mailing informaiton provided. No mail request was created."
       raise error
     ensure
       appeal = nil
