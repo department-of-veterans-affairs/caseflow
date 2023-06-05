@@ -308,7 +308,6 @@ class EndProductEstablishment < CaseflowRecord
         record.submit_for_processing!(delay: 1.day)
       end
     end
-
   end
 
   def on_decision_issue_sync_processed(processing_request_issue)
