@@ -258,7 +258,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.label)
       click_dropdown(prompt: "Select a user", text: judge_two.full_name)
       fill_in("taskInstructions", with: "Test")
-      click_on("Submit")
+      click_on("Assign")
 
       expect(page).to have_content("Task reassigned to #{judge_two.full_name}")
 
@@ -286,7 +286,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label)
       click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
       fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
-      click_on("Submit")
+      click_on("Assign")
 
       expect(page).to have_content("Assigned 1 task to #{attorney_one.full_name}")
     end
@@ -336,7 +336,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       click_dropdown({ text: judge_two.full_name }, page.find(".dropdown-Other"))
       fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
 
-      click_on("Submit")
+      click_on("Assign")
       expect(page).to have_content("Assigned 1 task to #{judge_two.full_name}")
     end
   end
@@ -353,7 +353,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       click_dropdown(prompt: "Select a user", text: judge_one.full_name)
       fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
 
-      click_on("Submit")
+      click_on("Assign")
       expect(page).to have_content("Assigned 1 task to #{judge_one.full_name}")
     end
   end
