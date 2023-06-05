@@ -143,12 +143,10 @@ class SelectDispositionsView extends React.PureComponent {
 
   getPrevStepUrl = () => {
     const {
-      appealId,
-      taskId,
-      checkoutFlow
+      appealId
     } = this.props;
 
-    return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
+    return `/queue/appeals/${appealId}`;
   }
 
   validateForm = () => {
