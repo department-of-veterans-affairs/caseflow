@@ -12,7 +12,7 @@ class AttorneyLegacyTask < LegacyTask
         Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY_LEGACY.to_h
       ]  
-    elsif current_user && (current_user.attorney? || role == "attorney")
+    elsif current_user&.attorney? || role == "attorney"
       [
         Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h,
         Constants.TASK_ACTIONS.SUBMIT_OMO_REQUEST_FOR_REVIEW.to_h,
