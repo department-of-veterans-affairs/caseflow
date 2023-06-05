@@ -8,7 +8,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   before_action :verify_access
 
   def create
-    mail_request = create_mail_request
+    create_mail_request_distributions
 
     appeal = nil
     # Find veteran from appeal id and check with db
@@ -44,10 +44,16 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     @bgs ||= BGSService.new
   end
 
-  def create_mail_request
+  def mail_request
     return nil if recipient_info.blank?
 
-    MailRequest.new(recipient_info).call
+    @mail_request ||= MailRequest.new(params)
+  end
+
+  def create_mail_request_distributions
+    return if recipient_info.blank?
+
+    mail_requst.call
   end
 
   def find_veteran_by_appeal_id
