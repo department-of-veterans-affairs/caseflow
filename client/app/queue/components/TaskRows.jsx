@@ -74,6 +74,10 @@ const issueUpdateTask = (task) =>{
   return task.type === 'IssuesUpdateTask';
 }
 
+const establishmentTask = (task) => {
+  return task.type === 'EstablishmentTask'
+}
+
 const tdClassNames = (timeline, task) => {
   const containerClass = timeline ? taskInfoWithIconTimelineContainer : '';
   const closedAtClass = task.closedAt ? null : <span className="greyDotTimelineStyling"></span>;
@@ -176,7 +180,7 @@ class TaskRows extends React.PureComponent {
   assignedToListItem = (task) => {
     const assignee = task.assigneeName;
 
-    return assignee ? (
+    return assignee && !establishmentTask(task) ? (
       <div className="cf-row-wrapper">
         <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt>
         <dd>{assignee}</dd>
@@ -356,9 +360,64 @@ class TaskRows extends React.PureComponent {
       }
     };
 
+    const formatEstablishmentBreaks = (text = '') => {
+      console.log(text)
+      const divStyle = { marginTop: '1rem'}
+      const hStyle = { marginTop: '30px', marginBottom: '0rem', fontWeight: 'bold' };
+      if (Array.isArray(text)) {
+        const content = text.map((issue, index) =>
+          <div key={index}>
+            <br />
+            <b>Added Issue:</b>
+            <br />
+            <p>{issue[0]}</p>
+            {/* Condition where a prior decision from vbms with mst/pact designation was updated in intake process */}
+            {issue[1] ?
+            <React.Fragment>
+              <h5 style={hStyle}>ORIGINAL: </h5>
+              <small>{issue[1]}</small>
+              <h5 style={hStyle}>UPDATED: </h5>
+              <small>{issue[2]}</small>
+              <p></p>
+            </React.Fragment> :
+            <p>{issue[2]}</p>
+            }
+            {/* No horizontal rule after the last issue */}
+            {index != (text.length - 1) &&
+              <React.Fragment>
+                <hr />
+              </React.Fragment>
+              }
+          </div>
+        )
+
+        return (
+          <div>
+            {content}
+          </div>
+        )
+      }
+    };
+
     // We specify the same 2.4rem margin-bottom as paragraphs to each set of instructions
     // to ensure a consistent margin between instruction content and the "Hide" button
     const divStyles = { marginBottom: '2.4rem' };
+
+    const formatInstructions = (task, text) => {
+      if (issueUpdateTask(task)) {
+        return (
+          <React.Fragment>{formatIssueUpdateBreaks(text)}</React.Fragment>
+        );
+      } else if (establishmentTask(task)) {
+        return (
+          <React.Fragment>{formatEstablishmentBreaks(text)}</React.Fragment>
+        );
+      } else {
+        return (
+          <ReactMarkdown>{formatBreaks(text)}</ReactMarkdown>
+        )
+      }
+    }
 
     return (
       <React.Fragment key={`${task.uniqueId} fragment`}>
@@ -369,8 +428,9 @@ class TaskRows extends React.PureComponent {
               style={divStyles}
               className="task-instructions"
             >
-              {issueUpdateTask(task) ? (<div>{formatIssueUpdateBreaks(text)}</div>) :
-                (<ReactMarkdown>{formatBreaks(text)}</ReactMarkdown>)}
+              {
+                formatInstructions(task, text)
+              }
             </div>
           </React.Fragment>
         ))}
@@ -387,9 +447,11 @@ class TaskRows extends React.PureComponent {
       <div className="cf-row-wrapper">
         {this.state.taskInstructionsIsVisible[task.uniqueId] && (
           <React.Fragment key={`${task.uniqueId}instructions_text`}>
+            {!establishmentTask(task) &&
             <dt style={{ width: '100%' }}>
               {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
             </dt>
+            }
             <dd style={{ width: '100%' }}>
               {this.taskInstructionsWithLineBreaks(task)}
             </dd>
