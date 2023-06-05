@@ -16,8 +16,34 @@ describe VhaProgramOfficeAssignedTasksTab, :postgres do
       let(:params) { { assignee: create(:vha_program_office) } }
 
       it "returns the correct number of columns" do
-        expect(subject.length).to eq(7)
+        expect(subject.length).to eq 7
       end
+    end
+  end
+
+  describe ".label" do
+    subject { tab.label }
+
+    it do
+      is_expected.to eq COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE
+      is_expected.to eq "Assigned (%d)"
+    end
+  end
+
+  describe ".description" do
+    subject { tab.description }
+
+    it do
+      is_expected.to eq "Cases assigned to a member of the #{assignee.name} team:"
+    end
+  end
+
+  describe ".self.tab_name" do
+    subject { described_class.tab_name }
+
+    it "matches expected tab name" do
+      is_expected.to eq(Constants.QUEUE_CONFIG.VHA_PO_ASSIGNED_TASKS_TAB_NAME)
+      is_expected.to eq("po_assigned")
     end
   end
 
