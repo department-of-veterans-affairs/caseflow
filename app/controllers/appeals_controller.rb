@@ -252,8 +252,6 @@ class AppealsController < ApplicationController
 
     return if withdrawn.empty?
 
-    mst_pact_message = create_mst_pact_message(withdrawn)
-
     "withdrawn #{withdrawn.count} #{'issue'.pluralize(withdrawn.count)} #{mst_pact_message}"
   end
 
@@ -341,10 +339,10 @@ class AppealsController < ApplicationController
     end
   end
 
-  # updated flash message to show mst/pact message if mst/pact changes
+  # updated flash message to show mst/pact message if mst/pact changes (not to legacy)
   def set_flash_success_message
 
-    return set_flash_mst_edit_message if mst_pact_changes?
+    return set_flash_mst_edit_message if mst_pact_changes? && !appeal.is_a?(LegacyAppeal)
 
     set_flash_edit_message
   end
