@@ -22,15 +22,15 @@ class InitialTasksFactory
   STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
 
   def create_root_and_sub_tasks!
+    # if changes to mst or pact, create IssueUpdateTask
+    if @appeal.mst? || @appeal.pact?
+      create_establishment_task
+    end
     create_vso_tracking_tasks
     ActiveRecord::Base.transaction do
       create_subtasks! if @appeal.original? || @appeal.cavc? || @appeal.appellant_substitution?
       if @appeal.contested_claim? && FeatureToggle.enabled?(:cc_appeal_workflow)
         send_initial_notification_letter
-      end
-      # if changes to mst or pact, create IssueUpdateTask
-      if @appeal.mst? || @appeal.pact?
-        create_establishment_task
       end
     end
     maybe_create_translation_task
