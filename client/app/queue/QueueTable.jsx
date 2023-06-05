@@ -430,6 +430,11 @@ export default class QueueTable extends React.PureComponent {
             return filteredByList[columnName].includes('null');
           }
 
+          // This is needed if a column contains multiple values instead of a single value
+          if (columnConfig && columnConfig.multiValueDelimiter) {
+            return filteredByList[columnName].some((filterValue) => cellValue.includes(filterValue));
+          }
+
           return filteredByList[columnName].includes(cellValue);
         });
       }
