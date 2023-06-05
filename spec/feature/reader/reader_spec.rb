@@ -494,19 +494,15 @@ RSpec.feature "Reader", :all_dbs do
     end
 
     context "when comment box contains only whitespace characters" do
-      scenario "save button is disabled" do
+      scenario "save button is disabled and alt+enter doesn't trigger save" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
         add_comment_without_clicking_save(random_whitespace_no_tab)
         expect(find("#button-save")["disabled"]).to eq("true")
-      end
 
-      scenario "alt+enter shortcut doesn't trigger save", skip: true do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
-        add_comment_without_clicking_save(random_whitespace_no_tab)
-
+        # alt+enter doesn't save
         find("body").send_keys [:alt, :enter]
         expect(find("#button-save")["disabled"]).to eq("true")
-        expect(documents[0].annotations.empty?).to eq(true)
+        expect(Document.find(documents[0].id).annotations.empty?).to eq(true)
       end
     end
 
@@ -733,11 +729,10 @@ RSpec.feature "Reader", :all_dbs do
         expect(page).to have_css("#commentIcon-container-#{annotation.id}") # flake
       end
 
-      scenario "Scrolling pages changes page numbers", skip: "flake" do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents"
-        click_on documents[1].type
+      scenario "Scrolling pages changes page numbers" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
 
-        expect(page).to have_content("IN THE APPEAL", wait: 10) # flake
+        expect(page).to have_content("IN THE APPEAL")
         expect(page).to have_css(".page")
         expect(page).to have_field("page-progress-indicator-input", with: "1")
 
