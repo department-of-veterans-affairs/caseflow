@@ -52,12 +52,11 @@ conn.execute(
         NEW.updated_at,
         NEW.vbms_uploaded_document_id,
         NEW.created_by_id,
-        NEW.updated_by_id;;
+        NEW.updated_by_id;
     end if;
     return null;
   end;
   $add_row$
-  language plpgsql;
-  "
+  language plpgsql;"
 )
 conn.close
