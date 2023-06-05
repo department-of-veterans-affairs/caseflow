@@ -167,7 +167,6 @@ audit: ## Create caseflow_audit schema, tables, and triggers in postgres
 	bundle exec rails r db/scripts/audit/triggers/create_vbms_distribution_destinations_audit_trigger.rb
 	bundle exec rails r db/scripts/audit/triggers/create_vbms_uploaded_documents_audit_trigger.rb
 
-
 audit-remove: ## Remove caseflow_audit schema, tables and triggers in postgres
 	bundle exec rails r db/scripts/audit/remove_caseflow_audit_schema.rb
 
