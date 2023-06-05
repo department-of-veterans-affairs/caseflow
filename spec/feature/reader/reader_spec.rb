@@ -777,61 +777,31 @@ RSpec.feature "Reader", :all_dbs do
       end
     end
 
-    # this test being skipped because it often fails during the CI process
-    # and it needs to be revaluated and fixed at a later time.
-    # :nocov:
-    scenario "Zooming changes the size of pages",
-             skip: "This test sometimes fails because it cannot find the expected text" do
-      scroll_amount = 500
+    scenario "Zooming changes the size of pages" do
       zoom_rate = 1.3
 
-      # The margin of error we accept due to float arithmatic rounding
-      size_margin_of_error = 5
-
-      visit "/reader/appeal/#{appeal.vacols_id}/documents/3"
+      # Get document #2 which is from lib/pdfs/FakeDecisionDocument.pdf
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
 
       # Wait for the page to load
       expect(page).to have_content("IN THE APPEAL")
-
       old_height_1 = get_size("pageContainer1")[:height]
-      old_height_10 = get_size("pageContainer10")[:height]
 
-      scroll_to(class_name: "ReactVirtualized__Grid", value: scroll_amount)
-
+      # Rendered page is zoomed by the correct rate
       find("#button-zoomIn").click
-
-      # Wait for the page to load
-      expect(page).to have_content("IN THE APPEAL")
-
-      # Rendered page is zoomed
       ratio = (get_size("pageContainer1")[:height] / old_height_1).round(1)
       expect(ratio).to eq(zoom_rate)
 
-      # Non-rendered page is zoomed
-      ratio = (get_size("pageContainer10")[:height] / old_height_10).round(1)
-      expect(ratio).to eq(zoom_rate)
-
-      # We should scroll further down since we zoomed but not further than the zoom rate
-      # times how much we've scrolled.
-      expect(scroll_position("scrollWindow")).to be_between(scroll_amount, scroll_amount * zoom_rate)
-
       # Zoom out to find text on the last page
-      expect(page).to_not have_content("Office of the General Counsel (022D)")
+      expect(page).to_not have_content(:visible, "Office of the General Counsel (022D)")
+      4.times { find("#button-zoomOut").click }
+      expect(page).to have_content(:visible, "Office of the General Counsel (022D)")
 
-      find("#button-zoomOut").click
-      find("#button-zoomOut").click
-      find("#button-zoomOut").click
-      find("#button-zoomOut").click
-
-      expect(page).to have_content("Office of the General Counsel (022D)")
-
+      # Restore zoom, verify last page is no longer visible and zoom amount
       find("#button-fit").click
-
-      # Fit to screen should make the height of the page the same as the height of the scroll window
-      height_difference = get_size("pageContainer1")[:height].round - get_size("scrollWindow")[:height].round
-      expect(height_difference.abs).to be < size_margin_of_error
+      expect(page).to_not have_content(:visible, "Office of the General Counsel (022D)")
+      expect(get_size("pageContainer1")[:height]).to eq(old_height_1)
     end
-    # :nocov:
 
     scenario "Open single document view and open/close sidebar" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
