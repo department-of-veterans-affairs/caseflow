@@ -23,7 +23,7 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
   end
 
   def outcode
-    create_mail_request
+    create_mail_request_distributions
 
     result = BvaDispatchTask.outcode(appeal, outcode_params, user, mail_request)
 
@@ -150,7 +150,7 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
     tags_by_doc_id
   end
 
-  def create_mail_request
+  def create_mail_request_distributions
     return if params[:recipient_info].blank?
 
     throw_error_if_recipient_info_incorrect
