@@ -214,9 +214,9 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def timezone
     if vso_employee?
-      RegionalOffice::CITIES.dig(users_regional_office, :timezone)
+      RegionalOffice::CITIES[users_regional_office][:timezone]
     else
-      RegionalOffice::CITIES.dig(regional_office, :timezone) || "America/Chicago"
+      (RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
     end
   end
 
