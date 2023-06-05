@@ -294,27 +294,13 @@ class RequestIssuesUpdate < CaseflowRecord
     # cycle each edited issue (before) and compare MST/PACT with (fetch_after_issues)
     edited_issues.each do |before_issue|
       after_issue = after_issues.find { |i| i.id == before_issue.id }
-<<<<<<< HEAD
-
-      # if before/after has a change in MST/PACT, create issue update task
-      if (before_issue.mst_status != after_issue.mst_status) || (before_issue.pact_status != after_issue.pact_status)
-        create_issue_update_task(before_issue, after_issue)
-=======
       # if before/after has a change in MST/PACT, create issue update task
       if (before_issue.mst_status != after_issue.mst_status) || (before_issue.pact_status != after_issue.pact_status)
         create_issue_update_task("Edited Issue", before_issue, after_issue)
->>>>>>> f02554354c565e02b31fadfb1b068ae18f56870f
       end
     end
   end
 
-<<<<<<< HEAD
-  # adding new issue with MST/PACT task creation logic here
-
-  # removal MST/PACT task creation logic here
-
-  def create_issue_update_task(before_issue, after_issue)
-=======
   def handle_mst_pact_removal_task
     # filter out added or removed issues
     after_issues = fetch_after_issues
@@ -329,23 +315,11 @@ class RequestIssuesUpdate < CaseflowRecord
   end
 
   def create_issue_update_task(change_type, before_issue, after_issue = nil)
->>>>>>> f02554354c565e02b31fadfb1b068ae18f56870f
     transaction do
       task = IssuesUpdateTask.create!(
         appeal: before_issue.decision_review,
         parent: RootTask.find_by(appeal: before_issue.decision_review),
         assigned_to: RequestStore[:current_user],
-<<<<<<< HEAD
-        assigned_by: RequestStore[:current_user]
-      )
-      # format the task instructions and close out
-      task.format_instructions(
-        before_issue.nonrating_issue_category,
-        before_issue.mst_status,
-        before_issue.pact_status,
-        after_issue.mst_status,
-        after_issue.pact_status
-=======
         assigned_by: RequestStore[:current_user],
         completed_by: RequestStore[:current_user]
       )
@@ -357,7 +331,6 @@ class RequestIssuesUpdate < CaseflowRecord
         before_issue.pact_status,
         after_issue&.mst_status,
         after_issue&.pact_status,
->>>>>>> f02554354c565e02b31fadfb1b068ae18f56870f
       )
       task.completed!
     end
