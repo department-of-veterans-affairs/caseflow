@@ -133,7 +133,7 @@ export const IntakeRadioField = (props) => {
           }
           { renderPact && <div>
             <Checkbox
-              label="Issue is related to PACT act"
+              label="Issue is related to PACT Act"
               name="Pact"
               value={pactChecked}
               disabled={prePopulatedPact}
