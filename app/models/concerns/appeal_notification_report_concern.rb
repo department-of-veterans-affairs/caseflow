@@ -30,16 +30,8 @@ module AppealNotificationReportConcern
   # Purpose: Generate the PDF and then prepares the document for uploading to S3 or VBMS
   # Returns: nil
   def upload_notification_report!
-    document_params =
-      {
-        veteran_file_number: veteran_file_number,
-        document_type: "BVA Case Notifications",
-        document_subject: "notifications",
-        document_name: notification_document_name,
-        application: "notification-report",
-        file: notification_report
-      }
-    upload_document(document_params)
+    transmit_document!
+
     nil
   end
 
@@ -48,11 +40,7 @@ module AppealNotificationReportConcern
   # Purpose: Creates the name for the document
   # Returns: The document name
   def notification_document_name
-    if is_a?(Appeal)
-      "notification-report_#{uuid}_#{Time.now.utc.strftime('%Y%m%d%k%M%S')}"
-    elsif is_a?(LegacyAppeal)
-      "notification-report_#{vacols_id}_#{Time.now.utc.strftime('%Y%m%d%k%M%S')}"
-    end
+    "notification-report_#{external_id}"
   end
 
   # Purpose: Generates the PDF
@@ -66,12 +54,58 @@ module AppealNotificationReportConcern
     end
   end
 
+  def document_params
+    {
+      veteran_file_number: veteran_file_number,
+      document_type: "BVA Case Notifications",
+      document_subject: "notifications",
+      document_name: notification_document_name,
+      application: "notification-report",
+      file: notification_report
+    }
+  end
+
+  def transmit_document!
+    version_id = document_version_ref_id
+    version_id.present? ? update_document(version_id) : upload_document
+  end
+
+  # Purpose: Checks in eFolder for a doc in the veteran's eFolder with the same type
+  # Returns: document_version_reference_id for newest document in series (string) OR nil
+  def document_version_ref_id
+    response = VBMSService.fetch_document_series_for(self)
+    series = response.select { |obj| obj.series_id == document_series_ref_id }
+    series&.first&.document_id
+  end
+
+  # Purpose: gets the document_series_reference_id of the most recently uploaded notification report
+  # Params: none
+  # Returns: document_series_reference_id (string)
+  def document_series_ref_id
+    vbms_uploaded_documents
+      .where(document_type: "BVA Case Notifications")
+      .where.not(uploaded_to_vbms_at: nil)
+      .order(uploaded_to_vbms_at: :desc)
+      .first
+      &.document_series_reference_id
+  end
+
   # Purpose: Uploads the PDF
   # Returns: The job being queued
-  def upload_document(document_params)
+  def upload_document
     response = PrepareDocumentUploadToVbms.new(document_params, User.system_user, self).call
-    if !response.success?
-      fail PDFUploadError
+
+    fail PDFUploadError unless response.success?
+  end
+
+  # Purpose: Kicks off a document update in eFolder to overwrite a previous version of the document
+  # Returns: The job being queued
+  def update_document(version_id)
+    updated_params = document_params.tap do |params|
+      params[:document_version_reference_id] = version_id
     end
+    response = PrepareDocumentUpdateInVbms.new(updated_params, User.system_user, self).call
+
+    fail PDFUploadError unless response.success?
   end
 end
