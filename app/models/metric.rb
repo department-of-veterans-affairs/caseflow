@@ -36,6 +36,15 @@ class Metric < CaseflowRecord
     create( default_object(caller, params, user) )
   end
 
+  def self.create_metric_from_rest(caller, params, user)
+    params[:metric_attributes] = JSON.parse(params[:metric_attributes]) if params[:metric_attributes]
+    params[:additional_info] = JSON.parse(params[:additional_info]) if params[:additional_info]
+    params[:sent_to_info] = JSON.parse(params[:sent_to_info]) if params[:sent_to_info]
+    params[:relevant_tables_info] = JSON.parse(params[:relevant_tables_info]) if params[:relevant_tables_info]
+
+    create( default_object(caller, params, user) )
+  end
+
   def sent_to_in_log_systems
     invalid_systems = sent_to - LOG_SYSTEMS.values
     msg = "contains invalid log systems. The following are valid log systems #{LOG_SYSTEMS.values}"
@@ -62,11 +71,6 @@ class Metric < CaseflowRecord
   # - end
   # - duration
   def self.default_object(caller, params, user)
-    metric_attributes = JSON.parse(params[:metric_attributes]) if params[:metric_attributes]
-    additional_info = JSON.parse(params[:additional_info]) if params[:additional_info]
-    sent_to_info = JSON.parse(params[:sent_to_info]) if params[:sent_to_info]
-    relevant_tables_info = JSON.parse(params[:relevant_tables_info]) if params[:relevant_tables_info]
-
     {
       uuid: params[:uuid],
       user: user,
@@ -77,11 +81,11 @@ class Metric < CaseflowRecord
       metric_type: params[:type] || METRIC_TYPES[:log],
       metric_product: PRODUCT_TYPES[params[:product]] || PRODUCT_TYPES[:caseflow],
       app_name: params[:app_name] || APP_NAMES[:caseflow],
-      metric_attributes: metric_attributes,
-      additional_info: additional_info,
+      metric_attributes: params[:metric_attributes],
+      additional_info: params[:additional_info],
       sent_to: Array(params[:sent_to]).flatten,
-      sent_to_info: sent_to_info,
-      relevant_tables_info: relevant_tables_info,
+      sent_to_info: params[:sent_to_info],
+      relevant_tables_info: params[:relevant_tables_info],
       start: params[:start],
       end: params[:end],
       duration: calculate_duration(params[:start], params[:end], params[:duration]),

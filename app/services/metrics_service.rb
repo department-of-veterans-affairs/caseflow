@@ -37,11 +37,12 @@ class MetricsService
     end
 
     Rails.logger.info("FINISHED #{description}: #{stopwatch}")
+
     metric_params = {
       name: metric_name,
       message: description,
+      type: Metric::METRIC_TYPES[:performance],
       product: service&.to_s,
-      app_name: app,
       attrs: {
         service: service,
         endpoint: name
@@ -53,7 +54,10 @@ class MetricsService
     store_record_metric(uuid, metric_params, caller)
 
     return_value
-  rescue StandardError
+  rescue StandardError => error
+    Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
+    Raven.capture_exception(error, extra: { type: "request_error", service: service, name: name, app: app })
+
     increment_datadog_counter("request_error", service, name, app) if service
 
     metric_params[:type] = Metric::METRIC_TYPES[:error]
@@ -76,24 +80,26 @@ class MetricsService
         endpoint: endpoint_name
       }
     )
+  end
 
-    private
+  private
 
-    def self.store_record_metric(uuid, params, caller)
-      name ="caseflow.server.metric.#{params[:name]&.downcase.gsub(/::/, '.')}"
-      params = {
-        uuid: uuid,
-        name: name,
-        message: params[:message],
-        type: params[:type] || Metric::METRIC_TYPES[:performance],
-        product: params[:product],
-        app_name: params[:app_name],
-        metric_attributes: params[:attrs],
-        sent_to: params[:sent_to],
-        sent_to_info: params[:sent_to_info],
-        duration: params[:duration],
-      }
-      Metric.create_metric(caller || self, params, RequestStore[:current_user])
-    end
+  def self.store_record_metric(uuid, params, caller)
+
+    name ="caseflow.server.metric.#{params[:name]&.downcase.gsub(/::| :/, '.')}"
+    params = {
+      uuid: uuid,
+      name: name,
+      message: params[:message],
+      type: params[:type],
+      product: params[:product],
+      metric_attributes: params[:attrs],
+      sent_to: params[:sent_to],
+      sent_to_info: params[:sent_to_info],
+      duration: params[:duration],
+    }
+    metric = Metric.create_metric(caller || self, params, RequestStore[:current_user])
+    failed_metric_info = metric&.errors.inspect
+    Rails.logger.info("Failed to create metric #{failed_metric_info}") unless metric&.valid?
   end
 end
