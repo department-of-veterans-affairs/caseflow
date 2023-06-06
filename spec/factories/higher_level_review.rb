@@ -54,6 +54,13 @@ FactoryBot.define do
       establishment_processed_at { nil }
     end
 
+    trait :create_business_line do
+      after(:create) do |hlr|
+        hlr.submit_for_processing!
+        hlr.create_business_line_tasks!
+      end
+    end
+
     after(:create) do |hlr, evaluator|
       if evaluator.number_of_claimants
         create_list(

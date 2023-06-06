@@ -29,6 +29,8 @@ describe Idt::V1::AppealDetailsSerializer, :postgres do
         expect(subject[:fnod]).to be false
         expect(subject[:hearing]).to be false
         expect(subject[:overtime]).to be false
+        expect(subject[:mst]).to be false
+        expect(subject[:pact]).to be false
       end
 
       context "contested claims" do
@@ -51,6 +53,8 @@ describe Idt::V1::AppealDetailsSerializer, :postgres do
           expect(subject[:fnod]).to be false
           expect(subject[:hearing]).to be false
           expect(subject[:overtime]).to be false
+          expect(subject[:mst]).to be false
+          expect(subject[:pact]).to be false
         end
       end
 
@@ -66,6 +70,42 @@ describe Idt::V1::AppealDetailsSerializer, :postgres do
           expect(subject[:fnod]).to be false
           expect(subject[:hearing]).to be false
           expect(subject[:overtime]).to be true
+          expect(subject[:mst]).to be false
+          expect(subject[:pact]).to be false
+        end
+      end
+
+      context "mst" do
+        before do
+          FeatureToggle.enable!(:mst_identification && :legacy_mst_pact_identification)
+          appeal.mst = true
+        end
+        after { FeatureToggle.disable!(:mst_identification && :legacy_mst_pact_identification) }
+
+        it "sets mst key value to true" do
+          expect(subject[:contested_claim]).to be false
+          expect(subject[:fnod]).to be false
+          expect(subject[:hearing]).to be false
+          expect(subject[:overtime]).to be false
+          expect(subject[:mst]).to be true
+          expect(subject[:pact]).to be false
+        end
+      end
+
+      context "pact" do
+        before do
+          FeatureToggle.enable!(:pact_identification && :legacy_mst_pact_identification)
+          appeal.pact = true
+        end
+        after { FeatureToggle.disable!(:pact_identification && :legacy_mst_pact_identification) }
+
+        it "sets pact key value to true" do
+          expect(subject[:contested_claim]).to be false
+          expect(subject[:fnod]).to be false
+          expect(subject[:hearing]).to be false
+          expect(subject[:overtime]).to be false
+          expect(subject[:mst]).to be false
+          expect(subject[:pact]).to be true
         end
       end
 
@@ -84,6 +124,8 @@ describe Idt::V1::AppealDetailsSerializer, :postgres do
           expect(subject[:fnod]).to be true
           expect(subject[:hearing]).to be false
           expect(subject[:overtime]).to be false
+          expect(subject[:mst]).to be false
+          expect(subject[:pact]).to be false
         end
       end
 
@@ -109,6 +151,8 @@ describe Idt::V1::AppealDetailsSerializer, :postgres do
           expect(subject[:fnod]).to be false
           expect(subject[:hearing]).to be true
           expect(subject[:overtime]).to be false
+          expect(subject[:mst]).to be false
+          expect(subject[:pact]).to be false
         end
       end
     end

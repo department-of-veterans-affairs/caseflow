@@ -21,6 +21,8 @@ class AddIssuesModal extends React.Component {
       pactJustification: '',
       mstChecked: false,
       pactChecked: false,
+      vbmsMstChecked: false,
+      vbmsPactChecked: false,
       elementCount: 0,
       renderedFirstRadiofield: false
     };
@@ -41,6 +43,9 @@ class AddIssuesModal extends React.Component {
   mstCheckboxChange = (checked) => this.setState({ mstChecked: checked });
   pactCheckboxChange = (checked) => this.setState({ pactChecked: checked });
 
+  vbmsMstCheckedChange = (checked) => this.setState({ vbmsMstChecked: checked });
+  vbmsPactCheckedChange = (checked) => this.setState({ vbmsPactChecked: checked });
+
   radioOnChange = (selectedContestableIssueIndex) => {
     this.setState({ selectedContestableIssueIndex });
   }
@@ -56,6 +61,8 @@ class AddIssuesModal extends React.Component {
       notes,
       mstChecked,
       pactChecked,
+      vbmsMstChecked,
+      vbmsPactChecked,
       mstJustification,
       pactJustification
     } = this.state;
@@ -85,6 +92,8 @@ class AddIssuesModal extends React.Component {
         notes,
         mstChecked,
         pactChecked,
+        vbmsMstChecked,
+        vbmsPactChecked,
         mstJustification,
         pactJustification,
       }
@@ -188,6 +197,8 @@ class AddIssuesModal extends React.Component {
           setMstCheckboxFunction={this.mstCheckboxChange}
           pactChecked={this.state.pactChecked}
           setPactCheckboxFunction={this.pactCheckboxChange}
+          setVbmsMstCheckedFunction={this.vbmsMstCheckedChange}
+          setVbmsPactCheckedFunction={this.vbmsPactCheckedChange}
         />
       );
     });
