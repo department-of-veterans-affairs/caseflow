@@ -49,3 +49,4 @@ begin
 end;
 $function$
 ;")
+conn.close
