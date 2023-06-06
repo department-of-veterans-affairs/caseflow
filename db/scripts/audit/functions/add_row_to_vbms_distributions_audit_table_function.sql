@@ -60,7 +60,7 @@ begin
       NEW.created_by_id,
       NEW.updated_by_id;
   end if;
-  return ;
+  return null;
 end;
 $add_row$
 language plpgsql;
