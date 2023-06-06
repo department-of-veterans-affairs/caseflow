@@ -2,6 +2,7 @@
 
 class HearingPostponementRequestMailTask < HearingRequestMailTask
   class << self
+    # These should live in COPY.json
     def label
       "Hearing postponement request"
     end
