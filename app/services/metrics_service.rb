@@ -4,7 +4,7 @@ require "benchmark"
 
 # see https://dropwizard.github.io/metrics/3.1.0/getting-started/ for abstractions on metric types
 class MetricsService
-  def self.record(description, service: nil, name: "unknown", caller)
+  def self.record(description, service: nil, name: "unknown", caller: nil)
     return_value = nil
     app = RequestStore[:application] || "other"
     service ||= app
