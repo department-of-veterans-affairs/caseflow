@@ -7,6 +7,10 @@ class HearingRequestMailTask < MailTask
     def allow_creation?(*)
       false
     end
+
+    def default_assignee
+      HearingAdmin.singleton
+    end
   end
 
   def available_actions
