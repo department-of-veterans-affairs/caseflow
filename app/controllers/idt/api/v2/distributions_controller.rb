@@ -5,17 +5,20 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
 
   def get_distribution
     distribution_id = params[:distribution_id]
+      # Checks if the distribution id is blank and if it exists with the database
       if distribution_id.blank? || !valid_id?(distribution_id)
         render_error(400, "Distribution Does Not Exist Or Id is blank", distribution_id)
         return
       end
 
       begin
+          # Retrieves the distribution package from the PacMan API
           distribution = PacManService.get_distribution_request(distribution_id)
           response_code = distribution.code
           if response_code != 200
             fail StandardError
           end
+      # Handles errors when making any requests both from Pacman and the DB
       rescue StandardError
         case response_code
         when 400
@@ -30,6 +33,7 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
       render json: converted_response(distribution)
   end
 
+  #Converts the keys in the response from camelCase to snake_case to be in line with Ruby convention
   def converted_response(response)
     shorthand = response.raw_body
     destination_shorthand = shorthand.destinations[0]
@@ -73,10 +77,12 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
 
   private
 
+  #Checks if the distribution exists in the database before sending request to PacMan
   def valid_id?(distribution_id)
     VbmsDistribution.exists?(id: distribution_id)
   end
 
+  #Renders errors and logs and tracks the here within Raven
   def render_error(status, message, distribution_id)
     error_uuid = SecureRandom.uuid
     error_message = "[IDT] Http Status Code: #{status}, #{message}, (Distribution ID: #{distribution_id})"
