@@ -91,7 +91,9 @@ Rails.application.routes.draw do
     namespace :v2 do
       resources :logs, only: :create
     end
+    get 'dashboard' => 'dashboard#show'
   end
+
 
   namespace :dispatch do
     get "/", to: redirect("/dispatch/establish-claim")
