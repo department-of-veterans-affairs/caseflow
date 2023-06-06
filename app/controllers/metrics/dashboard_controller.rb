@@ -27,5 +27,9 @@ class Metrics::DashboardController < ApplicationController
       Rails.env.development?
   end
 
-
+  def render_access_error
+    render(Caseflow::Error::ActionForbiddenError.new(
+      message: COPY::ACCESS_DENIED_TITLE
+    ).serialize_response)
+  end
 end
