@@ -20,4 +20,14 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
       true
     end
   end
+
+  def available_actions
+    <<-TASKS
+      Change task type
+      Mark as complete and withdraw hearing
+      Assign to team
+      Assign to person
+      Cancel task
+    TASKS
+  end
 end
