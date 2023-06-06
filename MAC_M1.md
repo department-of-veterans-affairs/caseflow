@@ -56,8 +56,8 @@
 
 6. Select the “Play” button when it pops up in UTM
 
-7. The virtual machine will open. To login, the password is “password”
-Booz Allen Hamilton Internal
+7. The virtual machine will open. To login, the password is “password” \
+**Booz Allen Hamilton Internal**
 
 8. Leave this running in the background. If you close the window, you can open it back up by repeating steps 5-7
 
@@ -111,7 +111,7 @@ developer”
 4. Select “Open using Rosetta”
     * Note: you can copy the standard terminal executable to your desktop and enable Rosetta on that, so that you don’t need to disable rosetta on the default terminal once Caseflow setup is complete
 
-*Booz Allen Hamilton Internal*
+**Booz Allen Hamilton Internal**
 
 **Oracle “instantclient” Files**
 
@@ -169,7 +169,7 @@ export FREEDESKTOP_MIME_TYPES_PATH=/usr/local/homebrew/share/mime/packages/freed
 
 4. Go to your active terminal and enter source ~/.zshrc or create a new terminal
 
-*Booz Allen Hamilton Internal*
+**Booz Allen Hamilton Internal**
 
 **Configure shell env for Rosetta and x86_64 homebrew**
 
@@ -220,9 +220,8 @@ export FREEDESKTOP_MIME_TYPES_PATH=/usr/local/homebrew/share/mime/packages/freed
 2. Ensure you are on master branch and up to date by running \
     a. ```git checkout master```\
     b. ```git fetch```\
-    c. ```git pull origin master```
-
-*Booz Allen Hamilton Internal*
+    c. ```git pull origin master``` \
+**Booz Allen Hamilton Internal**
 3. Start Vacols UTM VM and log into it. Open the Docker and Postgres applications. Leave all running in background
 
 4. In caseflow, run
@@ -242,8 +241,8 @@ export FREEDESKTOP_MIME_TYPES_PATH=/usr/local/homebrew/share/mime/packages/freed
                 * i. `gzip -dck caseflow-db-backup.gz | docker exec -i appeals-db psql -U postgres`
                 * ii. (this command will link the caseflow_certification_database to docker)
             * f. Download this [file](https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-2/wkhtmltox-0.12.6-2.macos-cocoa.pkg) and move through the prompts (wkhtmltopdf => unrelated?)
-            * g. Enter terminal, navigate to caseflow, and run
-            *Booz Allen Hamilton Internal*
+            * g. Enter terminal, navigate to caseflow, and run \
+            **Booz Allen Hamilton Internal**
                 * i. `make up-m1`
                 * ii. `make reset` (this will take a while)
                 * iii. **Alternative fix for db not found error?
