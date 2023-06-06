@@ -45,8 +45,8 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
   def hearing_is_active?
     active_tasks = appeal.tasks.active
 
-    active_tasks.any? do |t|
-      t.is_a?(ScheduleHearingTask) || hearing_pending?(t)
+    active_tasks.any? do |task|
+      task.is_a?(ScheduleHearingTask) || hearing_pending?(task)
     end
   end
 
