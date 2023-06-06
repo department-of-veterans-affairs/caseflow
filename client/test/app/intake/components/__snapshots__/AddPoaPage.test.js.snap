@@ -70,6 +70,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
   </div>
   <section
     class="cf-app-segment cf-app-segment--alt"
+    role="main"
   >
     <div>
       <h1>
@@ -780,6 +781,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
   </div>
   <section
     class="cf-app-segment cf-app-segment--alt"
+    role="main"
   >
     <div>
       <h1>
@@ -1432,6 +1434,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
   </div>
   <section
     class="cf-app-segment cf-app-segment--alt"
+    role="main"
   >
     <div>
       <h1>
@@ -2152,6 +2155,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
   </div>
   <section
     class="cf-app-segment cf-app-segment--alt"
+    role="main"
   >
     <div>
       <h1>
@@ -2871,6 +2875,7 @@ exports[`AddPoaPage Can select an existing attorney and it renders correctly 1`]
   </div>
   <section
     class="cf-app-segment cf-app-segment--alt"
+    role="main"
   >
     <div>
       <h1>
@@ -3176,6 +3181,7 @@ exports[`AddPoaPage renders default state correctly 1`] = `
   </div>
   <section
     class="cf-app-segment cf-app-segment--alt"
+    role="main"
   >
     <div>
       <h1>
