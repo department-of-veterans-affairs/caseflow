@@ -10,9 +10,18 @@ class Metric < CaseflowRecord
     hearings: 'hearings',
     intake: 'intake',
     vha: 'vha',
-    case_distribution: 'case_distribution',
+    efolder: 'efolder',
     reader: 'reader',
-    caseflow: 'caseflow'
+    caseflow: 'caseflow', # Default product
+    # Added below because MetricService has usages of this as a service
+    vacols: 'vacols',
+    bgs: 'bgs',
+    gov_delivery: 'gov_delivery',
+    mpi: 'mpi',
+    pexip: 'pexip',
+    va_dot_gov: 'va_dot_gov',
+    va_notify: 'va_notify',
+    vbms: 'vbms',
   }
   APP_NAMES = { caseflow: 'caseflow', efolder: 'efolder' }
   METRIC_GROUPS = { service: 'service' }
