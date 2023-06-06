@@ -115,7 +115,11 @@ export class CreateMailTaskDialog extends React.Component {
           options={this.taskActionData().options}
         />
         <br />
-        {this.isHearingRequestMailTask() && <h2>Testing</h2>}
+        {
+          // The eFolder URL field should probably be its own subcomponent
+          // since it'll have a good deal of validation logic
+          this.isHearingRequestMailTask() && <h2>Testing</h2>
+        }
         <TextareaField
           name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
           errorMessage={
