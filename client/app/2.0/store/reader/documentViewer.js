@@ -244,7 +244,7 @@ export const showPdf = createAsyncThunk(
 
     // Request the PDF document from eFolder
     if (!pdfDocuments[currentDocument.id]) {
-      const { body } = await ApiUtil.get(currentDocument.content_url + '1', {
+      const { body } = await ApiUtil.get(currentDocument.content_url, {
         cache: true,
         withCredentials: true,
         timeout: true,
