@@ -21,12 +21,12 @@ class MailTask < Task
   class << self
     def blocking?
       # Some open mail tasks should block distribution of an appeal to judges.
-      # Define this method in subclasses for blocking task types.
+      # Define this method in descendants for blocking task types.
       false
     end
 
-    def subclass_routing_options(user: nil, appeal: nil)
-      filtered = MailTask.subclasses.select { |sc| sc.allow_creation?(user: user, appeal: appeal) }
+    def descendants_routing_options(user: nil, appeal: nil)
+      filtered = MailTask.descendants.select { |sc| sc.allow_creation?(user: user, appeal: appeal) }
       sorted = filtered.sort_by(&:label).map { |subclass| { value: subclass.name, label: subclass.label } }
       sorted
     end

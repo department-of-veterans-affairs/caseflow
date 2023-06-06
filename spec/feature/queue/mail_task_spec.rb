@@ -109,7 +109,7 @@ RSpec.feature "MailTasks", :postgres do
       expect(page).to have_content(COPY::CHANGE_TASK_TYPE_SUBHEAD)
 
       # Ensure all admin actions are available
-      mail_tasks = MailTask.subclass_routing_options
+      mail_tasks = MailTask.descendants_routing_options
       find(".cf-select__control", text: "Select an action type").click do
         visible_options = page.find_all(".cf-select__option")
         expect(visible_options.length).to eq mail_tasks.length
