@@ -4,16 +4,7 @@ class Metrics::V2::LogsController < ApplicationController
   skip_before_action :verify_authentication
 
   def create
-    metric = nil
-
-    options = {
-      is_error: allowed_params[:isError],
-      performance: allowed_params[:isPerformance]
-    }
-
-    if allowed_params[:source] == 'javascript'
-      metric = Metric.create_javascript_metric(allowed_params, current_user, options)
-    end
+    metric = Metric.create_metric(self, allowed_params, current_user)
 
     failed_metric_info = metric&.errors.inspect || allowed_params[:message]
     Rails.logger.info("Failed to create metric #{failed_metric_info}") unless metric&.valid?
@@ -22,7 +13,21 @@ class Metrics::V2::LogsController < ApplicationController
   end
 
   def allowed_params
-    params.require(:metric).permit(:method,
-      :uuid, :url, :message, :isError, :source, :isPerformance)
+    params.require(:metric).permit(:uuid,
+      :name,
+      :group,
+      :message,
+      :type,
+      :product,
+      :app_name,
+      :metric_attributes,
+      :additional_info,
+      :sent_to,
+      :sent_to_info,
+      :relevant_tables_info,
+      :start,
+      :end,
+      :duration
+    )
   end
 end

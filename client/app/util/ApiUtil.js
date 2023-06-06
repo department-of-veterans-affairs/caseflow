@@ -43,18 +43,24 @@ export const getHeadersObject = (options = {}) => {
 
 const errorHandling = (url, error, method, options = {}) => {
   const id = uuid.v4();
+  const message = `UUID: ${id}.\nProblem with ${method} ${url}.\n${error}`;
 
-  console.error(new Error(`UUID: ${id}.\nProblem with ${method} ${url}.\n${error}`));
+  console.error(new Error(message));
 
   if (options?.logErrorMetrics) {
     const data = {
       metric: {
-        method,
-        url,
         uuid: id,
-        message: JSON.stringify(error),
-        isError: true,
-        source: 'javascript'
+        name: `caseflow.client.rest.${method.toLowerCase()}.error`,
+        message,
+        type: 'error',
+        product: 'caseflow',
+        metric_attributes: JSON.stringify({
+          method,
+          url,
+          error
+        }),
+        sent_to: 'javascript_console',
       }
     };
 

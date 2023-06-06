@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 2023_05_23_174750) do
     t.boolean "appeal_docketed", default: false, null: false, comment: "When true, appeal has been docketed"
     t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID"
     t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
-    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the table"
+    t.datetime "created_at", null: false
     t.bigint "created_by_id", null: false, comment: "User id of the user that inserted the record"
     t.boolean "decision_mailed", default: false, null: false, comment: "When true, appeal has decision mail request complete"
     t.boolean "hearing_postponed", default: false, null: false, comment: "When true, appeal has hearing postponed and no hearings scheduled"
@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 2023_05_23_174750) do
     t.boolean "privacy_act_complete", default: false, null: false, comment: "When true, appeal has a privacy act request completed"
     t.boolean "privacy_act_pending", default: false, null: false, comment: "When true, appeal has a privacy act request still open"
     t.boolean "scheduled_in_error", default: false, null: false, comment: "When true, hearing was scheduled in error and none scheduled"
-    t.datetime "updated_at", comment: "Date and time the record was last updated"
+    t.datetime "updated_at"
     t.bigint "updated_by_id", comment: "User id of the last user that updated the record"
     t.boolean "vso_ihp_complete", default: false, null: false, comment: "When true, appeal has a VSO IHP request completed"
     t.boolean "vso_ihp_pending", default: false, null: false, comment: "When true, appeal has a VSO IHP request pending"
@@ -1222,19 +1222,22 @@ ActiveRecord::Schema.define(version: 2023_05_23_174750) do
   end
 
   create_table "metrics", force: :cascade do |t|
+    t.json "additional_info", comment: "additional data to store for the metric"
+    t.string "app_name", null: false, comment: "Application name: caseflow or efolder"
     t.datetime "created_at", null: false
     t.bigint "duration", comment: "Time in milliseconds from start to end"
     t.datetime "end", comment: "When metric recording stopped"
-    t.json "info", comment: "Store extra information relevant to the metric: OS, browser, etc"
-    t.string "message", comment: "Message to accompany metric"
+    t.json "metric_attributes", comment: "Store attributes relevant to the metric: OS, browser, etc"
+    t.string "metric_class", null: false, comment: "Class of metric, use reflection to find value to populate this"
+    t.string "metric_group", default: "service", null: false, comment: "Metric group: service, etc"
+    t.string "metric_message", null: false, comment: "Message or log for metric"
+    t.string "metric_name", null: false, comment: "Name of metric"
+    t.string "metric_product", null: false, comment: "Where in application: Queue, Hearings, Intake, VHA, Case Distribution, etc"
     t.string "metric_type", null: false, comment: "Type of metric: ERROR, LOG, PERFORMANCE, etc"
-    t.string "relevant_table", comment: "Indicates which table relevant_table_id applies to"
-    t.bigint "relevant_table_id", comment: "Allows for psuedo foreign keys to be used in queries"
-    t.json "relevant_tables_info", comment: "Store additional information to tie metric to database tables"
+    t.json "relevant_tables_info", comment: "Store information to tie metric to database table(s)"
     t.string "sent_to", comment: "Which system metric was sent to: Datadog, Rails Console, Javascript Console, etc ", array: true
-    t.json "sent_to_info", comment: "Which system metric was sent to: Datadog, Rails Console, Javascript Console, etc "
+    t.json "sent_to_info", comment: "Additional information for which system metric was sent to"
     t.datetime "start", comment: "When metric recording started"
-    t.json "stats", comment: "Store stats for the metric"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false, comment: "The ID of the user who generated metric."
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "Unique ID for the metric, can be used to search within various systems for the logging"

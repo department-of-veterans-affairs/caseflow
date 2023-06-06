@@ -5,40 +5,25 @@ class Metric < CaseflowRecord
 
   METRIC_TYPES = { error: 'error', log: 'log', performance: 'performance' }
   LOG_SYSTEMS = { datadog: 'datadog', rails_console: 'rails_console', javascript_console: 'javascript_console' }
+  PRODUCT_TYPES = {
+    queue: 'queue',
+    hearings: 'hearings',
+    intake: 'intake',
+    vha: 'vha',
+    case_distribution: 'case_distribution',
+    caseflow: 'caseflow'
+  }
+  APP_NAMES = { caseflow: 'caseflow', efolder: 'efolder' }
+  METRIC_GROUPS = { service: 'service' }
 
   validates :metric_type, inclusion: { in: METRIC_TYPES.values}
+  validates :metric_product, inclusion: { in: PRODUCT_TYPES.values }
+  validates :metric_group, inclusion: { in: METRIC_GROUPS.values }
+  validates :app_name, inclusion: { in: APP_NAMES.values }
   validate :sent_to_in_log_systems
 
-  def self.create_javascript_metric(params, user, is_error: false, performance: false)
-
-    params = params.reverse_merge(default_params)
-
-    metric_type = if is_error
-            METRIC_TYPES[:error]
-          elsif performance
-            METRIC_TYPES[:performance]
-          else
-            METRIC_TYPES[:log]
-          end
-
-    info = params[:info].merge({
-      method: params[:method],
-      url: params[:url]
-    })
-
-    create(
-      uuid: params[:uuid],
-      user: user,
-      metric_type: metric_type,
-      message: params[:message],
-      sent_to: [ LOG_SYSTEMS[:javascript_console] ] + Array(params[:sent_to]),
-      sent_to_info: params[:sent_to_info],
-      info: info,
-      start: params[:start],
-      end: params[:end],
-      duration: calculate_duration(params[:start], params[:end], params[:duration]),
-      stats: params[:stats]
-    )
+  def self.create_metric(caller, params, user)
+    create( default_object(caller, params, user) )
   end
 
   def sent_to_in_log_systems
@@ -49,19 +34,52 @@ class Metric < CaseflowRecord
 
   private
 
-  def self.default_params
+  # Returns an object with defaults set if below symbols are not found in params default object.
+  # Looks for these symbols in params parameter
+  # - uuid
+  # - name
+  # - group
+  # - message
+  # - type
+  # - product
+  # - app_name
+  # - metric_attributes
+  # - additional_info
+  # - sent_to
+  # - sent_to_info
+  # - relevant_tables_info
+  # - start
+  # - end
+  # - duration
+  def self.default_object(caller, params, user)
+    metric_attributes = JSON.parse(params[:metric_attributes]) if params[:metric_attributes]
+    additional_info = JSON.parse(params[:additional_info]) if params[:additional_info]
+    sent_to_info = JSON.parse(params[:sent_to_info]) if params[:sent_to_info]
+    relevant_tables_info = JSON.parse(params[:relevant_tables_info]) if params[:relevant_tables_info]
+
     {
-      sent_to: [],
-      sent_to_info: {},
-      info: {},
-      start: 0,
-      end: 0,
-      stats: {}
+      uuid: params[:uuid],
+      user: user,
+      metric_name: params[:name] || METRIC_TYPES[:log],
+      metric_class: caller&.class.to_s,
+      metric_group: params[:group] || METRIC_GROUPS[:service],
+      metric_message: params[:message] || METRIC_TYPES[:log],
+      metric_type: params[:type] || METRIC_TYPES[:log],
+      metric_product: PRODUCT_TYPES[params[:product]] || PRODUCT_TYPES[:caseflow],
+      app_name: params[:app_name] || APP_NAMES[:caseflow],
+      metric_attributes: metric_attributes,
+      additional_info: additional_info,
+      sent_to: Array(params[:sent_to]).flatten,
+      sent_to_info: sent_to_info,
+      relevant_tables_info: relevant_tables_info,
+      start: params[:start],
+      end: params[:end],
+      duration: calculate_duration(params[:start], params[:end], params[:duration]),
     }
   end
 
   def self.calculate_duration(start, end_time, duration)
-    return if duration
+    return if duration || !start || !end_time
 
     end_time - start
   end
