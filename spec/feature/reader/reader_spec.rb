@@ -720,13 +720,13 @@ RSpec.feature "Reader", :all_dbs do
         find("g[filter=\"url(##{id})\"]")
       end
 
-      scenario "Follow comment deep link", skip: "flake" do
+      scenario "Follow comment deep link" do
         annotation = documents[1].annotations[0]
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[1].id}?annotation=#{annotation.id}"
 
         expect(page).to have_content(annotation.comment)
         expect(page).to have_css(".page")
-        expect(page).to have_css("#commentIcon-container-#{annotation.id}") # flake
+        expect(page).to have_css("#commentIcon-container-#{annotation.id}")
       end
 
       scenario "Scrolling pages changes page numbers" do
