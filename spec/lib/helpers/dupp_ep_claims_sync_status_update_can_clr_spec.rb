@@ -18,7 +18,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
 
   # create a test review
   def new_review(review_type, veteran_file_number, establishment_error)
-    create(review_type, veteran_file_number: veteran_file_number, establishment_error: establishment_error)
+    create(review_type, :with_end_product_establishment, veteran_file_number: veteran_file_number, establishment_error: establishment_error)
   end
 
   let(:error_text) { "#<Caseflow::Error::DuplicateEp: Caseflow::Error::DuplicateEp>" }
@@ -82,6 +82,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
       let(:problem_reviews) { script.retrieve_problem_reviews }
 
       it "clears the problem_reviews list" do
+        allow(script).to receive(:active_duplicates).and_return(true)
         allow(script).to receive(:upload_logs_to_s3).with(anything).and_return(true)
         script.resolve_duplicate_end_products(problem_reviews)
         expect(script.retrieve_problem_reviews.count).to eq 0
@@ -91,6 +92,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
     describe "#resolve_dup_ep" do
       let(:initial_pr_count) { script.retrieve_problem_reviews.count }
       it "performs the remediation successfully" do
+        allow(script).to receive(:active_duplicates).and_return(true)
         allow(script).to receive(:upload_logs_to_s3).with(anything).and_return(true)
 
         expect(initial_pr_count).to eq 3
@@ -133,7 +135,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
     end
   end
 
-  context "There are no reviews with DuplicateEP errors" do
+  context "when no reviews with DuplicateEP errors" do
     let(:setups) do
       [
         {
@@ -157,36 +159,63 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
 
     describe "#resolve_dup_ep" do
       let(:initial_pr_count) { script.retrieve_problem_reviews.count }
-      it "no remediation is required" do
+      it "logs a message do does nothing" do
         expect(initial_pr_count).to eq 0
+        expect(Rails.logger).to receive(:info).with("No Supplemental Claims Or Higher Level Reviews with DuplicateEP Error Found").once
         script.resolve_dup_ep
-        expect(script.retrieve_problem_reviews.count).to eq 0
       end
     end
   end
 
-  context "Single review with DuplicateEP errors" do
-    let(:setups) do
-      [
-        {
-          file_number: "000_000_001",
-          review_type: :higher_level_review,
-          status_type_code: "CAN",
-          last_action_date: 3.days.ago.mdY,
-          claim_type_code: "030BLAH",
-          error_text: error_text
-        }
-      ]
-    end
+  context "#resolve_single_review" do
+    context "Single HLR with DuplicateEP errors" do
+      let(:setups) do
+        [
+          {
+            file_number: "000_000_001",
+            review_type: :higher_level_review,
+            status_type_code: "CAN",
+            last_action_date: 3.days.ago.mdY,
+            claim_type_code: "030BLAH",
+            error_text: error_text
+          }
+        ]
+      end
 
-    describe "#resolve_single_review" do
       let(:initial_pr_count) { script.retrieve_problem_reviews.count }
       let(:problem_reviews) { script.retrieve_problem_reviews }
-      it "calls resolve_single_review method" do
+      it "resolves the HLR review only" do
         expect(initial_pr_count).to eq 1
+        allow(script).to receive(:active_duplicates).and_return(true)
         allow(script).to receive(:upload_logs_to_s3).with(anything).and_return(true)
 
         script.resolve_single_review(problem_reviews.first.id, "hlr")
+        expect(script.retrieve_problem_reviews.count).to eq 0
+      end
+    end
+
+    context "Single SC with DuplicateEP errors" do
+      let(:setups) do
+        [
+          {
+            file_number: "000_000_001",
+            review_type: :supplemental_claim,
+            status_type_code: "CAN",
+            last_action_date: 3.days.ago.mdY,
+            claim_type_code: "030BLAH",
+            error_text: error_text
+          }
+        ]
+      end
+
+      let(:initial_pr_count) { script.retrieve_problem_reviews.count }
+      let(:problem_reviews) { script.retrieve_problem_reviews }
+      it "resolves the SC review only" do
+        expect(initial_pr_count).to eq 1
+        allow(script).to receive(:active_duplicates).and_return(true)
+        allow(script).to receive(:upload_logs_to_s3).with(anything).and_return(true)
+
+        script.resolve_single_review(problem_reviews.first.id, "sc")
         expect(script.retrieve_problem_reviews.count).to eq 0
       end
     end
