@@ -14,7 +14,9 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
     end
 
     let(:mail_request_params) do
-      {
+      { veteran_identifier: veteran.file_number,
+        file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
+        document_type: valid_document_type,
         recipient_info: [
           {
             recipient_type: "person",
@@ -32,6 +34,26 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
           }
         ]
       }
+    end
+
+    let(:invalid_mail_request_params) do
+      { veteran_identifier: veteran.file_number,
+        file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
+        document_type: valid_document_type,
+        recipient_info: [
+          {
+            recipient_type: "person",
+            participant_id: "487470002",
+            destination_type: "domesticAddress",
+            address_line_1: "1234 Main Street",
+            treat_line_2_as_addressee: false,
+            treat_line_3_as_addressee: false,
+            city: "Orlando",
+            state: "FL",
+            postal_code: "12345",
+            country_code: "US"
+          }
+        ]}
     end
 
     let(:params_identifier) do
@@ -136,6 +158,23 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
         end
       end
 
+      context "when the recipient_info parameters are incomplete" do
+        it "queues the upload(given valid veteran info), returns a descriptive error to the IDT user" do
+          post :create, params: invalid_mail_request_params
+          success_message = JSON.parse(response.body)["message"]
+          validation_error_msgs = JSON.parse(response.body)["error_messages"]
+          error = JSON.parse(response.body)["error"]
+
+          expect(success_message).to eq "Document successfully queued for upload."
+          expect(validation_error_msgs).to eq(
+            {"first_name" => ["can't be blank"],
+            "last_name" => ["can't be blank"]}
+          )
+          expect(error).to eq("Incomplete mailing informaiton provided. No mail request was created.")
+          expect(response.status).to eq(200)
+        end
+      end
+
       context "all parameters are valid" do
         let(:uploaded_document) { instance_double(VbmsUploadedDocument, id: 1) }
         let(:document_params) do
@@ -154,6 +193,16 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
           it "creates a new Mail Request object when optional params exist" do
             expect_any_instance_of(MailRequest).to receive(:call)
             post :create, params: mail_request_params
+          end
+
+          it "returns a list of vbms_distribution ids alongside a success message" do
+            post :create, params: mail_request_params
+            success_message = JSON.parse(response.body)["message"]
+            success_id = JSON.parse(response.body)["distribution_ids"]
+            # expect(VbmsDistribution).to change(:count).by(1)
+            expect(success_message).to eq "Document successfully queued for upload."
+            expect(success_id).not_to eq([])
+            expect(response.status).to eq(200)
           end
 
           it "returns a successful message and creates a new VbmsUploadedDocument" do

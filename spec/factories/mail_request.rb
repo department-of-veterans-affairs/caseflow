@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :valid_mail_request do
+  factory :mail_request do
     recipient_type { "person" }
     first_name { "Bob" }
     last_name  { "Smithcole" }
-    participant_id { 640_460_002 }
+    participant_id { "640460002" }
     destination_type { "domesticAddress" }
     address_line_1 { "1234 Main Street" }
     city { "Orlando" }
