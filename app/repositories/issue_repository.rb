@@ -21,6 +21,7 @@ class IssueRepository
                           name: "update_vacols_issue") do
       record = validate_issue_presence!(vacols_id, vacols_sequence_id)
 
+      binding.pry
       perform_actions_if_disposition_changes(
         record,
         issue_attrs.merge(vacols_id: vacols_id, vacols_sequence_id: vacols_sequence_id)

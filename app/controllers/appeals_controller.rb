@@ -178,8 +178,76 @@ class AppealsController < ApplicationController
     params[:appeal_id]
   end
 
+  #check if there is a change in mst/pact on legacy issue
+  #if there is a change, creat an issue update task
+  def legacy_mst_pact_updates
+    params[:request_issues].each do |current_issue|
+
+      issue = appeal.issues.find { |i| i.vacols_sequence_id == current_issue[:vacols_sequence_id].to_i }
+      binding.pry
+      if issue.mst_status != current_issue[:mst_status] ||
+         issue.pact_status != current_issue[:pact_status]
+        create_legacy_issue_update_task(issue, current_issue)
+      end
+        Issue.update_in_vacols!(
+        vacols_id: appeal.vacols_id,
+        vacols_sequence_id: current_issue[:vacols_sequence_id],
+        issue_attrs: legacy_issue_params
+      )
+      render json: { issues: json_issues }, status: :ok
+    end
+  end
+
+  def legacy_issue_params
+    binding.pry
+
+    params.each do |current_param|
+
+    end
+
+    safe_params = params.require("request_issues")
+      .permit(:issue,
+              :mst_status,
+              :pact_status).to_h
+    safe_params[:vacols_user_id] = current_user.vacols_uniq_id
+    safe_params
+  end
+
+  def create_params
+    legacy_issue_params.merge(vacols_id: appeal.vacols_id)
+  end
+
+  def create_legacy_issue_update_task(before_issue, current_issue)
+    binding.pry
+
+    user = RequestStore[:current_user]
+    task = IssuesUpdateTask.create!(
+      appeal: appeal,
+      parent: appeal.root_task,
+      assigned_to: user,
+      assigned_by: user,
+      completed_by: user
+    )
+    # format the task instructions and close out
+    binding.pry
+    task.format_instructions(
+      "Edited Issue",
+      before_issue.note,
+      before_issue.mst_status,
+      before_issue.pact_status,
+      current_issue[:mst_status],
+      current_issue[:pact_status]
+    )
+    task.completed!
+  end
+
   def update
-    if request_issues_update.perform!
+    binding.pry
+    if appeal.is_a? (LegacyAppeal)
+      legacy_mst_pact_updates
+
+
+    elsif request_issues_update.perform!
       set_flash_success_message
       create_subtasks!
 
