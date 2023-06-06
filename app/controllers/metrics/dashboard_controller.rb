@@ -8,7 +8,7 @@ class Metrics::DashboardController < ApplicationController
 
     no_cache
 
-    @metrics = Metric.where('created_at > ?', 30.days.ago).order(:created_at)
+    @metrics = Metric.where('created_at > ?', 7.days.ago).order(:created_at)
 
     begin
      render :show, layout: "plain_application"
