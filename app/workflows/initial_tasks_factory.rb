@@ -22,15 +22,15 @@ class InitialTasksFactory
   STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
 
   def create_root_and_sub_tasks!
+    # if changes to mst or pact, create IssueUpdateTask
+    if @appeal.mst? || @appeal.pact?
+      create_establishment_task
+    end
     create_vso_tracking_tasks
     ActiveRecord::Base.transaction do
       create_subtasks! if @appeal.original? || @appeal.cavc? || @appeal.appellant_substitution?
       if @appeal.contested_claim? && FeatureToggle.enabled?(:cc_appeal_workflow)
         send_initial_notification_letter
-      end
-      # if changes to mst or pact, create IssueUpdateTask
-      if @appeal.mst? || @appeal.pact?
-        create_issue_update_task
       end
     end
     maybe_create_translation_task
@@ -205,26 +205,15 @@ class InitialTasksFactory
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
   end
 
-  def create_issue_update_task
-    @appeal.request_issues.each do |issue|
-      next unless issue.mst_status || issue.pact_status
-
-      task = IssuesUpdateTask.create!(
-        appeal: @appeal,
-        parent: @root_task,
-        assigned_to: RequestStore[:current_user],
-        assigned_by: RequestStore[:current_user]
-      )
-      task.format_instructions(
-        issue.nonrating_issue_category,
-        false,
-        false,
-        issue.mst_status,
-        issue.pact_status,
-        issue.mst_status_update_reason_notes,
-        issue.pact_status_update_reason_notes
-      )
-      task.completed!
-    end
+   def create_establishment_task
+    task = EstablishmentTask.create!(
+      appeal: @appeal,
+      parent: @root_task,
+      assigned_by: RequestStore[:current_user],
+      assigned_to: RequestStore[:current_user],
+      completed_by: RequestStore[:current_user],
+    )
+    task.format_instructions(@appeal.request_issues)
+    task.completed!
   end
 end

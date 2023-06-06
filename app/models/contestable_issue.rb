@@ -84,8 +84,7 @@ class ContestableIssue
       latestIssuesInChain: serialize_latest_decision_issues,
       isRating: is_rating,
       mstAvailable: mst_available?,
-      pactAvailable: pact_available?,
-      specialIssues: special_issues
+      pactAvailable: pact_available?
     }
   end
 
@@ -122,6 +121,9 @@ class ContestableIssue
     source_request_issues.try(:each) do |issue|
       return true if issue.mst_contention_status? || issue.mst_status?
     end
+    special_issues&.each do |special_issue|
+      return true if special_issue[:mst_available]
+    end
     false
   end
 
@@ -130,6 +132,10 @@ class ContestableIssue
     source_request_issues.try(:each) do |issue|
       return true if issue.pact_contention_status? || issue.pact_status?
     end
+    special_issues&.each do |special_issue|
+      return true if special_issue[:pact_available]
+    end
+
     false
   end
 

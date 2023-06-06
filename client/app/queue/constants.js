@@ -222,17 +222,21 @@ export const DECISION_SPECIAL_ISSUES = [
   {
     id: 'blue_water',
     label: 'Blue Water',
+    requiresJustification: false
   },
   {
     id: 'burn_pit',
     label: 'Burn Pit',
+    requiresJustification: false
   },
   {
     id: 'mstStatus',
     label: 'Military Sexual Trauma (MST)',
+    requiresJustification: true
   },
   {
     id: 'pactStatus',
     label: 'PACT Act',
+    requiresJustification: true
   },
 ];

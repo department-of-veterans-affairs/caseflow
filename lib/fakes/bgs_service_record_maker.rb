@@ -59,9 +59,12 @@ class Fakes::BGSServiceRecordMaker
       promulgation_date: Date.new(2019, 10, 11),
       profile_date: Date.new(2019, 10, 11),
       issues: [
-        { decision_text: "Service connection is granted for PTSD at 10 percent, effective 10/11/2019." },
+        { decision_text: "Service connection is granted for PTSD at 10 percent, effective 10/11/2019.", dis_sn: "1224780" },
         { decision_text: "Service connection is denied for right knee condition." }
-      ]
+      ],
+      disabilities: [{
+        name: "Disability", parent_name: "CP_RBA_PRFIL2", dis_dt: "Wed, 29 Mar 2023 10:28:11 -0500", dis_sn: "1224780", prfl_dt: "Wed, 29 Mar 2023 10:26:14 -0500", ptcpnt_id_a: veteran.participant_id, disability_special_issues: [{ spis_basis_tc: "PTSD/10", spis_basis_tn: "Sexual Trauma/Assault", spis_tc: "PTSD/3", spis_tn: "PTSD - Personal Trauma", dis_sn: "1224780" }, { spis_basis_tc: "AO/14", spis_basis_tn: "Peripheral Neuropathy", spis_tc: "AOOV", spis_tn: "Agent Orange - outside Vietnam or unknown", dis_sn: "1224780" }]
+      }]
     )
   end
 

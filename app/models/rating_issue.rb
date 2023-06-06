@@ -87,39 +87,41 @@ class RatingIssue
     end
 
     def deserialize_special_issues(serialized_hash)
-      return [] unless serialized_hash[:special_issues]
+      data = []
+      return data unless serialized_hash[:special_issues]
 
-      serialized_hash[:special_issues].map do |special_issue_hash|
-        if special_issue_has_mst?(special_issue_hash)
-          "Issue is related to Military Sexual Trauma (MST)"
-        elsif special_issue_has_pact?(special_issue_hash)
-          "Issue is related to PACT Act"
-        end
-      end.compact
+      serialized_hash[:special_issues].each do |special_issue|
+        data << { mst_available: true } if special_issue_has_mst?(special_issue)
+
+        data << { pact_available: true } if special_issue_has_pact?(special_issue)
+      end
+      data
     end
 
     def special_issue_has_mst?(special_issue)
-      if special_issue[:spis_tn] == "PTSD - Personal Trauma"
-        return ["Sexual Trauma/Assault", "Sexual Harassment"].include?(special_issue[:spis_basis_tn])
+      if special_issue[:spis_tn].casecmp("ptsd - personal trauma").zero?
+        return ["sexual trauma/assault", "sexual Hhrassment"].include?(special_issue[:spis_basis_tn].downcase)
       end
 
-      if special_issue[:spis_tn] == "Non-PTSD - Personal Trauma"
-        ["Sexual Assault Trauma", "Sexual Harassment"].include?(special_issue[:spis_basis_tn])
+      if special_issue[:spis_tn].casecmp("non-ptsd - personal trauma").zero?
+        ["sexual assault trauma", "sexual harassment"].include?(special_issue[:spis_basis_tn].downcase)
       end
     end
 
     def special_issue_has_pact?(special_issue)
-      return special_issue[:spis_basis_tn] == "Particulate Matter" if special_issue[:spis_tn] == "Gulf War Presumptive 3.3201"
+      if special_issue[:spis_tn].casecmp("gulf war presumptive 3.3201").zero?
+        return special_issue[:spis_basis_tn].casecmp("particulate matter").zero?
+      end
 
       [
-        "Agent Orange – Outside Vietnam or Unknown",
-        "Agent Orange – Vietnam",
-        "Amytrophic Lateral Sclerosis",
-        "Burn Pit Exposure",
-        "Environmental Hazard in Gulf War",
-        "Gulf War Presumptive",
-        "Radiation"
-      ].include?(special_issue[:spis_tn])
+        "agent orange - outside vietnam or unknown",
+        "agent orange - vietnam",
+        "amytrophic lateral sclerosis",
+        "burn pit exposure",
+        "environmental hazard in gulf war",
+        "gulf war presumptive",
+        "radiation"
+      ].include?(special_issue[:spis_tn].downcase)
     end
   end
 
