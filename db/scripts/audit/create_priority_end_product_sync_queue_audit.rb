@@ -14,3 +14,4 @@ conn.execute("CREATE TABLE caseflow_audit.priority_end_product_sync_queue_audit 
               audit_created_at timestamp without time zone default now(),
               error_messages text[]
             );")
+conn.close
