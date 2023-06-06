@@ -10,7 +10,7 @@
 
 3. Create [oracle.com](http://oracle.com/) user account to download instant client [Create Account](https://profile.oracle.com/myprofile/account/create-account.jspx) (Step can be skipped if you have the zip files from file transfer)
 
-4. Install github on the Mac (here)
+4. Install github on the Mac [here](https://desktop.github.com/)
 
 5. Install git-lfs for pulling large files down from github [Install instructions](https://git-lfs.github.com/)
 
