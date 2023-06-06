@@ -1439,4 +1439,55 @@ describe EndProductEstablishment, :postgres do
                                                                                   ))
     end
   end
+
+  let!(:queued_end_product_establishment) do
+    EndProductEstablishment.create(
+      id: 1,
+      payee_code: "10",
+      source_id: 1,
+      source_type: "HigherLevelReview",
+      veteran_file_number: 1
+    )
+  end
+  let!(:non_queued_end_product_establishment) do
+    EndProductEstablishment.create(
+      id: 2,
+      payee_code: "10",
+      source_id: 2,
+      source_type: "HigherLevelReview",
+      veteran_file_number: 1
+    )
+  end
+  let!(:priority_end_product_sync_queue) do
+    PriorityEndProductSyncQueue.create(
+      id: 1,
+      batch_id: nil,
+      created_at: Time.zone.now,
+      end_product_establishment_id: queued_end_product_establishment.id,
+      error_messages: [],
+      last_batched_at: nil,
+      status: "PENDING"
+    )
+  end
+
+  context "#priority_end_product_sync_queue" do
+    it "will return nil when the End Product Establishment is not enqueued in the Priority End Product Sync Queue" do
+      expect(non_queued_end_product_establishment.priority_end_product_sync_queue).to eq(nil)
+    end
+
+    it "will return the Priority End Product Sync Queue object when the End Product Establishment"\
+       " is enqueued in the Priority End Product Sync Queue" do
+      expect(queued_end_product_establishment.priority_end_product_sync_queue).to eq(priority_end_product_sync_queue)
+    end
+  end
+
+  context "#priority_queued?" do
+    it "will return False on an End Product Establishment that is not within the Priority End Product Sync Queue" do
+      expect(non_queued_end_product_establishment.priority_queued?).to eq(false)
+    end
+
+    it "will return True on an End Product Establishment that is in the Priority End Product Sync Queue" do
+      expect(queued_end_product_establishment.priority_queued?).to eq(true)
+    end
+  end
 end
