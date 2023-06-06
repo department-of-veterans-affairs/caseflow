@@ -7,6 +7,7 @@ class Organizations::TasksController < OrganizationsController
   def index
     render json: {
       organization_name: organization.name,
+      type: organization.type,
       id: organization.id,
       is_vso: organization.is_a?(::Representative),
       queue_config: QueueConfig.new(assignee: organization).to_hash,
