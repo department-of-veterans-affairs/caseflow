@@ -37,6 +37,7 @@ export class CreateMailTaskDialog extends React.Component {
     };
   }
 
+  // If isHearingRequestMailTask == true then we'll need to check for eFolder URL validity also
   validateForm = () =>
     this.state.selectedValue !== null && this.state.instructions !== '';
 
@@ -50,6 +51,8 @@ export class CreateMailTaskDialog extends React.Component {
             type: this.state.selectedValue,
             external_id: appeal.externalId,
             parent_id: task.taskId,
+            // If isHearingRequestMailTask == true then these instructions will need to be formatted
+            // differently to include the eFolder URL, among other differences.
             instructions: this.state.instructions,
           },
         ],
