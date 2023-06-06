@@ -23,6 +23,8 @@ class BatchProcesses < CaseflowRecord
 		else
 			#Error Handling
 
+    end
+
   end
 
 
