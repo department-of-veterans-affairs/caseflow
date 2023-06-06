@@ -1225,7 +1225,7 @@ ActiveRecord::Schema.define(version: 2023_05_23_174750) do
     t.json "additional_info", comment: "additional data to store for the metric"
     t.string "app_name", null: false, comment: "Application name: caseflow or efolder"
     t.datetime "created_at", null: false
-    t.bigint "duration", comment: "Time in milliseconds from start to end"
+    t.float "duration", comment: "Time in milliseconds from start to end"
     t.datetime "end", comment: "When metric recording stopped"
     t.json "metric_attributes", comment: "Store attributes relevant to the metric: OS, browser, etc"
     t.string "metric_class", null: false, comment: "Class of metric, use reflection to find value to populate this"

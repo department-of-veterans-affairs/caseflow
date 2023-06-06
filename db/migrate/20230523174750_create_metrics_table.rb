@@ -17,7 +17,7 @@ class CreateMetricsTable < ActiveRecord::Migration[5.2]
       t.json       :relevant_tables_info, comment: "Store information to tie metric to database table(s)"
       t.timestamp  :start, comment: "When metric recording started"
       t.timestamp  :end, comment: "When metric recording stopped"
-      t.bigint     :duration, comment: "Time in milliseconds from start to end"
+      t.float     :duration, comment: "Time in milliseconds from start to end"
       t.timestamps
     end
   end

@@ -42,7 +42,7 @@ class MetricsService
       name: metric_name,
       message: description,
       type: Metric::METRIC_TYPES[:performance],
-      product: service&.to_s,
+      product: service,
       attrs: {
         service: service,
         endpoint: name
@@ -86,7 +86,7 @@ class MetricsService
 
   def self.store_record_metric(uuid, params, caller)
 
-    name ="caseflow.server.metric.#{params[:name]&.downcase.gsub(/::| :/, '.')}"
+    name ="caseflow.server.metric.#{params[:name]&.downcase.gsub(/::/, '.')}"
     params = {
       uuid: uuid,
       name: name,

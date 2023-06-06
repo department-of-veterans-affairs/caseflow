@@ -75,7 +75,7 @@ class Metric < CaseflowRecord
       uuid: params[:uuid],
       user: user,
       metric_name: params[:name] || METRIC_TYPES[:log],
-      metric_class: caller&.class.to_s,
+      metric_class: caller&.name || self.name,
       metric_group: params[:group] || METRIC_GROUPS[:service],
       metric_message: params[:message] || METRIC_TYPES[:log],
       metric_type: params[:type] || METRIC_TYPES[:log],
@@ -93,7 +93,7 @@ class Metric < CaseflowRecord
   end
 
   def self.calculate_duration(start, end_time, duration)
-    return if duration || !start || !end_time
+    return duration if duration || !start || !end_time
 
     end_time - start
   end
