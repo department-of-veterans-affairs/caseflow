@@ -20,6 +20,8 @@ const NonCompTabsUnconnected = (props) => {
     setFilter(filterParams);
   };
 
+  const isVhaBusinessLine = props.businessLineUrl === 'vha';
+
   const queryParams = new URLSearchParams(window.location.search);
   const currentTabName = queryParams.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM) || 'in_progress';
   const defaultSortColumn = currentTabName === 'in_progress' ? 'daysWaitingColumn' : 'completedDateColumn';
@@ -46,7 +48,7 @@ const NonCompTabsUnconnected = (props) => {
       key="inprogress"
       baseTasksUrl={`${props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=in_progress`}
       tabPaginationOptions={tabPaginationOptions}
-      onHistoryUpdate={onHistoryUpdate}
+      {...(isVhaBusinessLine ? { onHistoryUpdate } : {})}
       filterableTaskTypes={props.taskFilterDetails.in_progress}
       filterableTaskIssueTypes={props.taskFilterDetails.in_progress_issue_types}
       predefinedColumns={{ includeDaysWaiting: true,
@@ -57,7 +59,7 @@ const NonCompTabsUnconnected = (props) => {
       key="completed"
       baseTasksUrl={`${props.baseTasksUrl}?${QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=completed`}
       tabPaginationOptions={tabPaginationOptions}
-      onHistoryUpdate={onHistoryUpdate}
+      {...(isVhaBusinessLine ? { onHistoryUpdate } : {})}
       filterableTaskTypes={props.taskFilterDetails.completed}
       filterableTaskIssueTypes={props.taskFilterDetails.completed_issue_types}
       description={COPY.QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION}
@@ -81,14 +83,16 @@ NonCompTabsUnconnected.propTypes = {
     in_progress_issue_types: PropTypes.object,
     completed: PropTypes.object,
     completed_issue_types: PropTypes.object,
-  })
+  }),
+  businessLineUrl: PropTypes.string,
 };
 
 const NonCompTabs = connect(
   (state) => ({
     currentTab: state.currentTab,
     baseTasksUrl: state.baseTasksUrl,
-    taskFilterDetails: state.taskFilterDetails
+    taskFilterDetails: state.taskFilterDetails,
+    businessLineUrl: state.businessLineUrl,
   })
 )(NonCompTabsUnconnected);
 
