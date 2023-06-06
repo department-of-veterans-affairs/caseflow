@@ -28,7 +28,13 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
     result = BvaDispatchTask.outcode(appeal, outcode_params, user, mail_request)
 
     if result.success?
-      return render json: { message: "Success!" }
+      success_response = { message: "Success!" }
+
+      unless mail_request.nil?
+        success_response[:distributions] = mail_request.distribution_ids
+      end
+
+      return render json: success_response
     end
 
     render json: { message: result.errors[0] }, status: :bad_request
