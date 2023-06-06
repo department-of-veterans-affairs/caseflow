@@ -11,6 +11,7 @@ class Metric < CaseflowRecord
     intake: 'intake',
     vha: 'vha',
     case_distribution: 'case_distribution',
+    reader: 'reader',
     caseflow: 'caseflow'
   }
   APP_NAMES = { caseflow: 'caseflow', efolder: 'efolder' }

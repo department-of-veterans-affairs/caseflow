@@ -33,27 +33,46 @@ export const collectHistogram = (data) => {
   histograms.push(ApiUtil.convertToSnakeCase(data));
 };
 
-export const recordMetrics = (data, uniqueId, isError = false, isPerformance = false) => {
+/**
+ * uniqueId should be V4 UUID
+ * If a uniqueId is not presented one will be generated for it
+ *
+ * Data is an object containing information that will be stored in metric_attributes
+ *
+ * If a message is not provided one will be created based on the data passed in
+ *
+ * Product is which area of Caseflow did the metric come from: queue, hearings, intake, vha, case_distribution, reader
+ *
+ */
+export const recordMetrics = (uniqueId, data, isError = false, { message, product, start, end, duration }) => {
   let id = uniqueId;
+  const type = isError ? 'error' : 'log';
+  let metricMessage = message ? message : `${id}\n${data}`;
+  const productArea = product ? product : 'caseflow';
 
   // If a uuid wasn't provided assume that metric also wasn't sent to javascript console and send with UUID to console
   if (!uniqueId) {
     id = uuid.v4();
     if (isError) {
-      console.error(`${id}\n${data}`);
+      console.error(metricMessage);
     } else {
       // eslint-disable-next-line no-console
-      console.log(`${id}\n${data}`);
+      console.log(metricMessage);
     }
   }
 
   const postData = {
     metric: {
       uuid: id,
-      message: JSON.stringify(data),
-      isError,
-      isPerformance,
-      source: 'javascript'
+      name: `caseflow.client.${productArea}.${type}`,
+      message: metricMessage,
+      type,
+      product: productArea,
+      metric_attributes: JSON.stringify(data),
+      sent_to: 'javascript_console',
+      start,
+      end,
+      duration
     }
   };
 
