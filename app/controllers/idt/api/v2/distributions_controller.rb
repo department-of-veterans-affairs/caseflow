@@ -35,7 +35,7 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
     destination_shorthand = shorthand.destinations[0]
     new_response = {
         "table": {
-            "id": response.raw_body[:id],
+            "id": shorthand[:id],
             "recipient": {
                 "type": shorthand[:recipient][:type],
                 "id": shorthand[:recipient][:id],

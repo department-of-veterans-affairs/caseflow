@@ -11,7 +11,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
     end
 
     def get_distribution_request(distribution_id)
-      if distribution_id != "12345"
+      if distribution_id != "123456"
         return distribution_not_found_response
       end
 
@@ -120,7 +120,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
             "countryName": "UNITED STATES",
             "countryCode": "us"
           }],
-          "status": "",
+          "status": "NEW",
           "sentToCbcmDate": ""
         )
       )
