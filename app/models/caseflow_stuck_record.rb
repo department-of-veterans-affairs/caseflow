@@ -3,7 +3,7 @@
 # to sync or be processed in some way but have continuly errored out. These records
 # are intened to be checked and fixed manually.
 
-class CaseflowStuckRecords < CaseflowRecord
+class CaseflowStuckRecord < CaseflowRecord
 
   belongs_to :stuck_record, polymorphic: true
   # When we have access to the other models we need to add the code below to each
