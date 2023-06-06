@@ -217,6 +217,7 @@ class QueueTableBuilder extends React.PureComponent {
               paginationOptions.tab === tabConfig.name && paginationOptions
             }
             // TODO: Should this be limited to VHA users only?
+            // Yes it should be
             preserveFilter
             defaultSort={defaultSort}
             useTaskPagesApi={

@@ -305,10 +305,12 @@ export default class QueueTable extends React.PureComponent {
     const filterParam = tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`];
     let filteredByList;
 
-    // Grab the local storage filter if the property preserveFilter is true
-    const localFilter = localStorage.getItem('queueFilter');
-
+    // Ignore this if it's a client side queue
     if (preserveFilter) {
+    // if (preserveFilter && this.props.useTaskPagesApi) {
+      // Grab the local storage filter if the property preserveFilter is true
+      const localFilter = localStorage.getItem('queueFilter');
+
       // Prioritize get parameters over the local filter.
       // Filters from different columns get stored as a comma delimited list in local storage.
       filteredByList = this.getFilters(filterParam || (localFilter ? localFilter.split(',') : null));
@@ -382,10 +384,13 @@ export default class QueueTable extends React.PureComponent {
         // This essentially will still split values on '|' but not on ' | '
         const values = columnAndValues[1].split('=')[1].split(/(?<!\s)\|(?!\s)/);
 
-        if (column) {
+        if (column && column.filterOptions) {
           const validValues = column.filterOptions.map((filterOption) => filterOption.value);
 
           filters[column.columnName] = values.filter((value) => validValues.includes(value));
+        } else {
+          // If this is a client side queue, it won't have filterOptions since the options are built dynamically
+          filters[column.columnName] = values;
         }
       });
     }
@@ -493,15 +498,17 @@ export default class QueueTable extends React.PureComponent {
       if (this.props.onHistoryUpdate) {
         this.props.onHistoryUpdate(this.deepLink());
       }
-      // Preserve the filter in local storage if the property preserveFilter is passed
-      this.preserveFilterState();
     }
+
+    // Preserve the filter in local storage if the property preserveFilter is passed
+    this.preserveFilterState();
   };
 
   preserveFilterState = () => {
     if (this.props.preserveFilter) {
-      // Relies on the history being updated before this method
-      const queryParams = new URLSearchParams(window.location.search);
+      // If it is a backend queue then grab the url from the window. Otherwise generate it.
+      const urlQueryString = this.props.useTaskPagesApi ? window.location.search : this.requestQueryString();
+      const queryParams = new URLSearchParams(urlQueryString);
       const filterParams = queryParams.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
 
       localStorage.setItem('queueFilter', filterParams);
