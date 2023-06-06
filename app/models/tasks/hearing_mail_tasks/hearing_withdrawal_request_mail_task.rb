@@ -21,13 +21,36 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
     end
   end
 
+  TASK_ACTIONS_FOR_ACTIVE_HEARING = [
+    Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
+    # Mark as complete and withdraw hearing
+    Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
+    Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
+    Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+  ].freeze
+
+  DEFAULT_TASK_ACTIONS = [
+    Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
+    Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+  ].freeze
+
   def available_actions
-    <<-TASKS
-      Change task type
-      Mark as complete and withdraw hearing
-      Assign to team
-      Assign to person
-      Cancel task
-    TASKS
+    hearing_is_active? ? TASK_ACTIONS_FOR_ACTIVE_HEARING : DEFAULT_TASK_ACTIONS
+  end
+
+  private
+
+  # IF there is an active Schedule hearing task
+  # OR (there is an active Select hearing disposition task AND its hearing date has not passed)
+  def hearing_is_active?
+    active_tasks = appeal.tasks.active
+
+    active_tasks.any? do |t|
+      t.is_a?(ScheduleHearingTask) || hearing_pending?(t)
+    end
+  end
+
+  def hearing_pending?(task)
+    task.is_a?(AssignHearingDispositionTask) && !task.hearing.scheduled_for_past?
   end
 end
