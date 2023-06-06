@@ -81,6 +81,9 @@ export class CreateMailTaskDialog extends React.Component {
     throw new Error('Task action requires data');
   };
 
+  isHearingRequestMailTask = () =>
+    (this.state.selectedValue || '').match(/Hearing.*RequestMailTask/);
+
   render = () => {
     const { highlightFormItems, task } = this.props;
 
@@ -112,6 +115,7 @@ export class CreateMailTaskDialog extends React.Component {
           options={this.taskActionData().options}
         />
         <br />
+        {this.isHearingRequestMailTask() && <h2>Testing</h2>}
         <TextareaField
           name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
           errorMessage={
