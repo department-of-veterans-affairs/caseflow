@@ -178,38 +178,62 @@ class AppealsController < ApplicationController
     params[:appeal_id]
   end
 
-  #check if there is a change in mst/pact on legacy issue
-  #if there is a change, creat an issue update task
+  # check if there is a change in mst/pact on legacy issue
+  # if there is a change, creat an issue update task
   def legacy_mst_pact_updates
-    params[:request_issues].each do |current_issue|
-
+    legacy_issue_params[:request_issues].each do |current_issue|
       issue = appeal.issues.find { |i| i.vacols_sequence_id == current_issue[:vacols_sequence_id].to_i }
-      binding.pry
-      if issue.mst_status != current_issue[:mst_status] ||
-         issue.pact_status != current_issue[:pact_status]
+
+      # Check for changes in mst/pact status
+      if issue.mst_status != current_issue[:mst_status] || issue.pact_status != current_issue[:pact_status]
+        # If there is a change :
+        # Create issue_update_task to populate casetimeline if there is a change
         create_legacy_issue_update_task(issue, current_issue)
-      end
+
+        # Grab record from Vacols database to issue.
+        # When updating an Issue, method in IssueMapper and IssueRepo requires the attrs show below in issue_attrs:{}
+        record = VACOLS::CaseIssue.find_by(isskey: appeal.vacols_id, issseq: current_issue[:vacols_sequence_id])
         Issue.update_in_vacols!(
-        vacols_id: appeal.vacols_id,
-        vacols_sequence_id: current_issue[:vacols_sequence_id],
-        issue_attrs: legacy_issue_params
-      )
-      render json: { issues: json_issues }, status: :ok
+          vacols_id: appeal.vacols_id,
+          vacols_sequence_id: current_issue[:vacols_sequence_id],
+          issue_attrs: {
+            mst_status: issue.mst_status ? "Y" : "N",
+            pact_status: issue.pact_status ? "Y" : "N",
+            program: record[:issprog],
+            issue: record[:isscode],
+            level_1: record[:isslev1],
+            level_2: record[:isslev2],
+            level_3: record[:isslev3]
+          }
+        )
+      end
+    end
+    render json: { issues: json_issues }, status: :ok
+  end
+
+  def json_issues
+    appeal.issues.map do |issue|
+      ::WorkQueue::LegacyIssueSerializer.new(issue).serializable_hash[:data][:attributes]
     end
   end
 
   def legacy_issue_params
-    binding.pry
-
-    params.each do |current_param|
-
+    # Checks the keys for each object in request_issues array
+    request_issue_params = params.require("request_issues").each do |current_param|
+      current_param.permit(:request_issue_id,
+                           :withdrawal_date,
+                           :vacols_sequence_id,
+                           :mst_status,
+                           :pact_status,
+                           :mst_status_update_reason_notes,
+                           :pact_status_update_reason_notes).to_h
     end
 
-    safe_params = params.require("request_issues")
-      .permit(:issue,
-              :mst_status,
-              :pact_status).to_h
-    safe_params[:vacols_user_id] = current_user.vacols_uniq_id
+    # After check, recreate safe_params object and include vacols_uniq_id
+    safe_params = {
+      request_issues: request_issue_params,
+      vacols_user_id: current_user.vacols_uniq_id
+    }
     safe_params
   end
 
@@ -218,8 +242,6 @@ class AppealsController < ApplicationController
   end
 
   def create_legacy_issue_update_task(before_issue, current_issue)
-    binding.pry
-
     user = RequestStore[:current_user]
     task = IssuesUpdateTask.create!(
       appeal: appeal,
@@ -229,7 +251,6 @@ class AppealsController < ApplicationController
       completed_by: user
     )
     # format the task instructions and close out
-    binding.pry
     task.format_instructions(
       "Edited Issue",
       before_issue.note,
@@ -242,11 +263,8 @@ class AppealsController < ApplicationController
   end
 
   def update
-    binding.pry
     if appeal.is_a? (LegacyAppeal)
       legacy_mst_pact_updates
-
-
     elsif request_issues_update.perform!
       set_flash_success_message
       create_subtasks!
@@ -544,5 +562,8 @@ class AppealsController < ApplicationController
       nil
     end
   end
-end
 
+  # def convert_to_bool(status)
+  #   status == "Y"
+  # end
+end
