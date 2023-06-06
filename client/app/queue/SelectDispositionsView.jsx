@@ -13,7 +13,7 @@ import SelectIssueDispositionDropdown from './components/SelectIssueDispositionD
 import Modal from '../components/Modal';
 import TextareaField from '../components/TextareaField';
 import SearchableDropdown from '../components/SearchableDropdown';
-import CheckboxGroup from '../components/CheckboxGroup';
+import QueueCheckboxGroup from './components/QueueCheckboxGroup';
 import COPY from '../../COPY';
 import { COLORS } from '../constants/AppConstants';
 
@@ -225,8 +225,29 @@ class SelectDispositionsView extends React.PureComponent {
     return this.validBenefitType(decisionIssue.benefit_type) && decisionIssue.disposition && decisionIssue.description;
   }
 
+  validateJustification = () => {
+    const { decisionIssue } = this.state;
+    let mstHasChanged = decisionIssue.mstOriginalStatus != decisionIssue.mstStatus;
+    let pactHasChanged = decisionIssue.pactOriginalStatus != decisionIssue.pactStatus;
+    if(mstHasChanged && (decisionIssue.mst_justification == '' || decisionIssue.mst_justification == null)){
+      return false;
+    }
+    if(pactHasChanged && (decisionIssue.pact_justification == '' || decisionIssue.pact_justification == null)){
+      return false;
+    }
+    return true;
+  }
+
   saveDecision = () => {
     if (!this.validate()) {
+      this.setState({
+        highlightModal: true
+      });
+
+      return;
+    }
+
+    if(!this.validateJustification()){
       this.setState({
         highlightModal: true
       });
@@ -524,23 +545,30 @@ class SelectDispositionsView extends React.PureComponent {
             }
           })}
         />
-        <CheckboxGroup
+        <QueueCheckboxGroup
           name={COPY.INTAKE_EDIT_ISSUE_SELECT_SPECIAL_ISSUES}
           options={DECISION_SPECIAL_ISSUES}
           values={specialIssuesValues}
           styling={specialIssuesCheckboxStyling}
           onChange={(event) => this.onCheckboxChange(event, decisionIssue)}
+          errorState={{
+            highlightModal: highlightModal,
+            invalid: !this.validateJustification(),
+            }
+          }
           filterIssuesForJustification={this.filterIssuesForJustification}
           justifications={[
             {
               id: 'mstStatus',
               justification: decisionIssue.mst_justification,
-              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, "mstStatus")
+              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, "mstStatus"),
+              hasChanged: this.state.decisionIssue.mstOriginalStatus != this.state.decisionIssue.mstStatus
             },
             {
               id: 'pactStatus',
               justification: decisionIssue.pact_justification,
-              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, "pactStatus")
+              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, "pactStatus"),
+              hasChanged: this.state.decisionIssue.pactOriginalStatus != this.state.decisionIssue.pactStatus
             },
           ]}
         />

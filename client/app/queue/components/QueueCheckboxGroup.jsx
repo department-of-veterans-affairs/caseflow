@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import TextField from './TextField';
+import TextField from '../../components/TextField';
+import {
+  INTAKE_EDIT_ISSUE_CHANGE_MESSAGE
+} from 'app/../COPY';
 
-const renderCheckbox = (option, onChange, values = {}, disabled = false) => <div className="checkbox" key={option.id}>
+const renderCheckbox = (option, onChange, values = {}, disabled = false, justifications, filterIssuesForJustification, errorState) => <div className="checkbox" key={option.id}>
   <input
     name={option.id}
     onChange={onChange}
@@ -14,9 +17,19 @@ const renderCheckbox = (option, onChange, values = {}, disabled = false) => <div
   <label htmlFor={option.id}>
     {option.label}
   </label>
+  {option.requiresJustification && filterIssuesForJustification(justifications, option.id)[0].hasChanged &&
+
+        <TextField
+        name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
+        defaultValue={filterIssuesForJustification(justifications, option.id)[0].justification}
+        errorMessage={(errorState.invalid && errorState.highlightModal && !filterIssuesForJustification(justifications, option.id)[0].justification) ? 'Justification field is required' : null}
+        required
+        onChange={filterIssuesForJustification(justifications, option.id)[0].onJustificationChange}
+        />
+  }
 </div>;
 
-export default class CheckboxGroup extends React.Component {
+export default class QueueCheckboxGroup extends React.Component {
 
   // number of options that render horizontally by default
   MAX = 2;
@@ -36,7 +49,9 @@ export default class CheckboxGroup extends React.Component {
       getCheckbox,
       styling,
       strongLabel,
-      disableAll
+      disableAll,
+      justifications,
+      filterIssuesForJustification
     } = this.props;
 
     const labelContents = (
@@ -51,7 +66,7 @@ export default class CheckboxGroup extends React.Component {
       fieldClasses += '-inline';
     }
 
-    if (errorState || errorMessage) {
+    if (errorMessage) {
       fieldClasses += ' usa-input-error';
     }
 
@@ -62,19 +77,18 @@ export default class CheckboxGroup extends React.Component {
         {required && <span className="cf-required">Required</span>}
         {strongLabel ? <strong>{labelContents}</strong> : labelContents}
       </legend>
-      {errorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
-      {options.map((option) => getCheckbox(option, onChange, values, disableAll))}
+      {options.map((option) => getCheckbox(option, onChange, values, disableAll, justifications, filterIssuesForJustification, errorState))}
     </fieldset>;
   }
 }
 
-CheckboxGroup.defaultProps = {
+QueueCheckboxGroup.defaultProps = {
   required: false,
   getCheckbox: renderCheckbox,
   hideErrorMessage: false
 };
 
-CheckboxGroup.propTypes = {
+QueueCheckboxGroup.propTypes = {
   label: PropTypes.node,
   hideLabel: PropTypes.bool,
   name: PropTypes.string.isRequired,
@@ -93,9 +107,21 @@ CheckboxGroup.propTypes = {
   vertical: PropTypes.bool,
   values: PropTypes.object,
   errorMessage: PropTypes.string,
-  errorState: PropTypes.bool,
+  errorState: PropTypes.shape({
+    highlightModal: PropTypes.bool,
+    invalid: PropTypes.bool,
+  }),
   getCheckbox: PropTypes.func,
   styling: PropTypes.object,
   strongLabel: PropTypes.bool,
   disableAll: PropTypes.bool,
+  justifications: PropTypes.arrayOf(
+    PropTypes.shape({
+      pactJustification: PropTypes.string,
+      mstJustification: PropTypes.string,
+      pactJustificationOnChange: PropTypes.func,
+      mstJustificationOnChange: PropTypes.func,
+    })
+  ),
+  filterIssuesForJustification: PropTypes.func
 };
