@@ -38,7 +38,7 @@ module WarRoom
 
       error_ids = get_error_ids(env)
 
-      eps_queried = get_cancelled_eps(batch_limit, error_ids, conn)
+      eps_queried = get_cleared_eps(batch_limit, error_ids, conn)
       eps_queried.each do |x|
         call_priority_sync(x["reference_id"], conn)
       end
