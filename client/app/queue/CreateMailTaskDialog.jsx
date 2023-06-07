@@ -12,6 +12,7 @@ import TextareaField from '../components/TextareaField';
 import { requestSave } from './uiReducer/uiActions';
 import { taskById, appealWithDetailSelector } from './selectors';
 import QueueFlowModal from './components/QueueFlowModal';
+import EfolderUrlField from './components/EfolderUrlField';
 
 const successAlertContentMap = {
   DocketSwitchMailTask: ({ label }) => ({
@@ -121,7 +122,10 @@ export class CreateMailTaskDialog extends React.Component {
         {
           // The eFolder URL field should probably be its own subcomponent
           // since it'll have a good deal of validation logic
-          this.isHearingRequestMailTask() && <h2>Testing</h2>
+          this.isHearingRequestMailTask() &&
+            <EfolderUrlField
+              requestType="postponement"
+            />
         }
         <TextareaField
           name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
