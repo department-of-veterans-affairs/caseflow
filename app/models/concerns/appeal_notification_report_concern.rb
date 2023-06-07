@@ -87,7 +87,7 @@ module AppealNotificationReportConcern
       .where.not(uploaded_to_vbms_at: nil)
       .order(uploaded_to_vbms_at: :desc)
       .first
-      .document_series_reference_id
+      &.document_series_reference_id
   end
 
   # Purpose: Uploads the PDF

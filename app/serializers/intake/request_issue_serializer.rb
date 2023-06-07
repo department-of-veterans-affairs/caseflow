@@ -39,7 +39,9 @@ class Intake::RequestIssueSerializer
   attribute :benefit_type
   attribute :is_predocket_needed
   attribute :mst_status
+  attribute :vbms_mst_status
   attribute :pact_status
+  attribute :vbms_pact_status
   attribute :mst_status_update_reason_notes
   attribute :pact_status_update_reason_notes
 end

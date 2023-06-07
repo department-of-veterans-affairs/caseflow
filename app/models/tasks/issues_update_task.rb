@@ -7,22 +7,27 @@ class IssuesUpdateTask < Task
     "Issues Update Task"
   end
 
-  def format_instructions(issue_category, original_mst, original_pact, edit_mst, edit_pact,
-  mst_edit_reason = "", pact_edit_reason = "")
+  def format_instructions(change_type, issue_category, original_mst, original_pact, edit_mst = nil, edit_pact = nil,
+                          _mst_edit_reason = nil, _pact_edit_reason = nil)
     # format the instructions by loading an array and adding it to the instructions
+
     edit_issue_format = []
+    # add the change type
+    edit_issue_format << change_type
     edit_issue_format << issue_category
-    original_comment = "#{format_special_issues_text(original_mst, original_pact)}"
+    original_comment = format_special_issues_text(original_mst, original_pact).to_s
     edit_issue_format << original_comment
 
-    # format edit
-    edit_issue_format << issue_category
-    updated_comment = "#{format_special_issues_text(edit_mst, edit_pact)}"
-    edit_issue_format << updated_comment
+    # format edit if edit values are given
+    unless edit_mst.nil? || edit_pact.nil?
+      edit_issue_format << issue_category
+      updated_comment = format_special_issues_text(edit_mst, edit_pact).to_s
+      edit_issue_format << updated_comment
+    end
 
-    #add the MST and PACT edit reasons
-    edit_issue_format << mst_edit_reason
-    edit_issue_format << pact_edit_reason
+    # add the MST and PACT edit reasons. Removed on release but kept incase we need it for the future
+    # edit_issue_format << mst_edit_reason
+    # edit_issue_format << pact_edit_reason
 
     # add edit_issue_format into the instructions array for the task
     instructions << edit_issue_format

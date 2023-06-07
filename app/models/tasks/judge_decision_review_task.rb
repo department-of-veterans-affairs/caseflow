@@ -35,6 +35,6 @@ class JudgeDecisionReviewTask < JudgeTask
   private
 
   def ama_judge_actions
-    Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT_SP_ISSUES.to_h
+    Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h
   end
 end
