@@ -128,7 +128,7 @@ group :test, :development, :demo do
 end
 
 group :development, :test do
-  gem "spring", "3.1.1"
+  gem "spring", "3.1.1" # later versions require Rails 6.0+
   gem "spring-commands-rspec"
   gem "spring-commands-rubocop"
   gem "guard-rubocop"
