@@ -8,7 +8,7 @@ class HearingRequestMailTask < MailTask
       false
     end
 
-    def default_assignee
+    def default_assignee(_task)
       HearingAdmin.singleton
     end
   end
