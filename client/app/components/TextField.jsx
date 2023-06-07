@@ -79,7 +79,7 @@ export const TextField = (props) => {
       {props.fixedInput ? (
         <p>{value}</p>
       ) : (
-        <>
+        <div className="input-container">
           <input
             ref={inputRef}
             className={className}
@@ -103,17 +103,13 @@ export const TextField = (props) => {
           />
 
           { loading &&
-              <span className="cf-loading-input">
-                <span className="cf-loading-icon-container">
-                  <span className="cf-loading-icon-front">
-                    <span className="cf-loading-icon-back">Testing</span>
-                  </span>
+              <span className="cf-loading-icon-container">
+                <span className="cf-loading-icon-front">
+                  <span className="cf-loading-icon-back" />
                 </span>
               </span>
           }
-
-
-        </>
+        </div>
       )}
 
       {validationError && (
