@@ -1100,8 +1100,7 @@ RSpec.feature "Reader", :all_dbs do
 
         # :nocov:
         scenario "Should show correct auto suggestions" do
-          visit "/reader/appeal/#{appeal.vacols_id}/documents"
-          click_on documents[1].type
+          visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[1].id}"
           find(".cf-select__control").click
           expect(page).to have_css(".cf-select__menu")
 
@@ -1109,16 +1108,15 @@ RSpec.feature "Reader", :all_dbs do
           expect(tag_options.count).to eq(2)
 
           documents[0].tags.each_with_index do |tag, index|
-            expect(tag_options[index]).to have_content(tag.text, wait: 5)
+            expect(tag_options[index]).to have_content(tag.text)
           end
 
-          NEW_TAG_TEXT = "New Tag"
+          NEW_TAG_TEXT = "New Tag3"
           fill_in "tags", with: (NEW_TAG_TEXT + "\n")
 
           # going to the document[0] page
           visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
           find(".cf-select__control").click
-          byebug
           expect(page).to have_css(".cf-select__menu")
 
           # making sure correct tag options exist
