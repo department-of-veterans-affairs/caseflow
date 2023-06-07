@@ -72,7 +72,8 @@ class TaskFilter
       # If you don't include a param insert (?) it will ignore it later in the where_clause method
       # Which is what we want, since we handle it here instead of in the where clause method
       # because the position SQL function does not accept the same paramaters as IN does
-      where_clauses.join(" ")
+      # Finally wrap the joins in parentheses to preserve logical and/or ordering between other filters
+      "(#{where_clauses.join(' ')})"
     end
 
     def issue_type_where_clause(filter_value, filter)
