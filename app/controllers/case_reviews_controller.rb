@@ -117,7 +117,6 @@ class CaseReviewsController < ApplicationController
     )
 
     task.format_instructions(
-      "Edited Issue",
       original_issue.nonrating_issue_category,
       original_issue.mst_status,
       original_issue.pact_status,
