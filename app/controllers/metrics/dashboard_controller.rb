@@ -8,10 +8,10 @@ class Metrics::DashboardController < ApplicationController
 
     no_cache
 
-    @metrics = Metric.where('created_at > ?', 1.day.ago).order(created_at: :desc)
+    @metrics = Metric.where("created_at > ?", 1.day.ago).order(created_at: :desc)
 
     begin
-     render :show, layout: "plain_application"
+      render :show, layout: "plain_application"
     rescue StandardError => error
       Rails.logger.error(error.full_message)
       raise error.full_message

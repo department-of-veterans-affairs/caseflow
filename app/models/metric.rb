@@ -3,37 +3,37 @@
 class Metric < CaseflowRecord
   belongs_to :user
 
-  METRIC_TYPES = { error: 'error', log: 'log', performance: 'performance' }
-  LOG_SYSTEMS = { datadog: 'datadog', rails_console: 'rails_console', javascript_console: 'javascript_console' }
+  METRIC_TYPES = { error: "error", log: "log", performance: "performance" }.freeze
+  LOG_SYSTEMS = { datadog: "datadog", rails_console: "rails_console", javascript_console: "javascript_console" }
   PRODUCT_TYPES = {
-    queue: 'queue',
-    hearings: 'hearings',
-    intake: 'intake',
-    vha: 'vha',
-    efolder: 'efolder',
-    reader: 'reader',
-    caseflow: 'caseflow', # Default product
+    queue: "queue",
+    hearings: "hearings",
+    intake: "intake",
+    vha: "vha",
+    efolder: "efolder",
+    reader: "reader",
+    caseflow: "caseflow", # Default product
     # Added below because MetricService has usages of this as a service
-    vacols: 'vacols',
-    bgs: 'bgs',
-    gov_delivery: 'gov_delivery',
-    mpi: 'mpi',
-    pexip: 'pexip',
-    va_dot_gov: 'va_dot_gov',
-    va_notify: 'va_notify',
-    vbms: 'vbms',
-  }
-  APP_NAMES = { caseflow: 'caseflow', efolder: 'efolder' }
-  METRIC_GROUPS = { service: 'service' }
+    vacols: "vacols",
+    bgs: "bgs",
+    gov_delivery: "gov_delivery",
+    mpi: "mpi",
+    pexip: "pexip",
+    va_dot_gov: "va_dot_gov",
+    va_notify: "va_notify",
+    vbms: "vbms",
+  }.freeze
+  APP_NAMES = { caseflow: "caseflow", efolder: "efolder" }.freeze
+  METRIC_GROUPS = { service: "service" }.freeze
 
-  validates :metric_type, inclusion: { in: METRIC_TYPES.values}
+  validates :metric_type, inclusion: { in: METRIC_TYPES.values }
   validates :metric_product, inclusion: { in: PRODUCT_TYPES.values }
   validates :metric_group, inclusion: { in: METRIC_GROUPS.values }
   validates :app_name, inclusion: { in: APP_NAMES.values }
   validate :sent_to_in_log_systems
 
   def self.create_metric(caller, params, user)
-    create( default_object(caller, params, user) )
+    create(default_object(caller, params, user))
   end
 
   def self.create_metric_from_rest(caller, params, user)
@@ -42,13 +42,13 @@ class Metric < CaseflowRecord
     params[:sent_to_info] = JSON.parse(params[:sent_to_info]) if params[:sent_to_info]
     params[:relevant_tables_info] = JSON.parse(params[:relevant_tables_info]) if params[:relevant_tables_info]
 
-    create( default_object(caller, params, user) )
+    create(default_object(caller, params, user))
   end
 
   def sent_to_in_log_systems
     invalid_systems = sent_to - LOG_SYSTEMS.values
     msg = "contains invalid log systems. The following are valid log systems #{LOG_SYSTEMS.values}"
-    errors.add(:sent_to, msg) if invalid_systems.size > 0
+    errors.add(:sent_to, msg) if !invalid_systems.empty?
   end
 
   private

@@ -14,20 +14,20 @@ class Metrics::V2::LogsController < ApplicationController
 
   def allowed_params
     params.require(:metric).permit(:uuid,
-      :name,
-      :group,
-      :message,
-      :type,
-      :product,
-      :app_name,
-      :metric_attributes,
-      :additional_info,
-      :sent_to,
-      :sent_to_info,
-      :relevant_tables_info,
-      :start,
-      :end,
-      :duration
-    )
+                                   :name,
+                                   :group,
+                                   :message,
+                                   :type,
+                                   :product,
+                                   :app_name,
+                                   :metric_attributes,
+                                   :additional_info,
+                                   :sent_to,
+                                   :sent_to_info,
+                                   :relevant_tables_info,
+                                   :start,
+                                   :end,
+                                   :duration
+                                  )
   end
 end
