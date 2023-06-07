@@ -45,8 +45,8 @@ module WarRoom
 
       error_csv = build_csv(@error_log)
       run_csv = build_csv(@run_log)
-      log_to_s3(error_csv, env, "cleared_ep_error_log")
-      log_to_s3(run_csv, env, "cleared_ep_run_log")
+      log_to_s3(error_csv, "cleared_ep_error_log")
+      log_to_s3(run_csv, "cleared_ep_run_log")
       final_metrics
 
       conn.close
@@ -69,8 +69,8 @@ module WarRoom
 
       error_csv = build_csv(@error_log)
       run_csv = build_csv(@run_log)
-      log_to_s3(error_csv, env, "cancelled_ep_error_log")
-      log_to_s3(run_csv, env, "cancelled_ep_run_log")
+      log_to_s3(error_csv, "cancelled_ep_error_log")
+      log_to_s3(run_csv, "cancelled_ep_run_log")
       final_metrics
 
       conn.close
