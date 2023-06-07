@@ -225,10 +225,11 @@ class AddEditIssueView extends React.Component {
       highlight,
       error,
       deleteIssueModal,
+      justificationFeatureToggle,
       ...otherProps
     } = this.props;
 
-    const { showMstJustification, showPactJustification } = this.state;
+    const { showMstJustification, showPactJustification } = this.state && justificationFeatureToggle;
 
     const programs = ISSUE_INFO;
     const issues = _.get(programs[issue.program], 'levels');
@@ -427,6 +428,7 @@ AddEditIssueView.propTypes = {
   }),
   issueId: PropTypes.string,
   issues: PropTypes.object,
+  justificationFeatureToggle: PropTypes.bool,
   requestDelete: PropTypes.func,
   requestSave: PropTypes.func,
   requestUpdate: PropTypes.func,

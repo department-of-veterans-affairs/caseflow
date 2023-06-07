@@ -153,6 +153,7 @@ class IntakesController < ApplicationController
       mstIdentification: FeatureToggle.enabled?(:mst_identification, user: current_user),
       pactIdentification: FeatureToggle.enabled?(:pact_identification, user: current_user),
       legacyMstPactIdentification: FeatureToggle.enabled?(:legacy_mst_pact_identification, user: current_user),
+      justificationReason: FeatureToggle.enabled?(:justification_reason, user: current_user),
       updatedAppealForm: FeatureToggle.enabled?(:updated_appeal_form, user: current_user),
       hlrScUnrecognizedClaimants: FeatureToggle.enabled?(:hlr_sc_unrecognized_claimants, user: current_user),
       vhaClaimReviewEstablishment: FeatureToggle.enabled?(:vha_claim_review_establishment, user: current_user)
