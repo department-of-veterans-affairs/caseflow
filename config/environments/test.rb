@@ -13,7 +13,7 @@ Rails.application.configure do
   # test suite. You never need to work with it otherwise. Remember that
   # your test database is "scratch space" for the test suite and is wiped
   # and recreated between test runs. Don't rely on the data there!
-  config.cache_classes = false
+  config.cache_classes = ENV.fetch('CI', false)
 
   cache_dir = Rails.root.join("tmp", "cache", "test_#{ENV['TEST_SUBCATEGORY']}", $$.to_s)
   FileUtils.mkdir_p(cache_dir) unless File.exists?(cache_dir)
