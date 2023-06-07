@@ -28,8 +28,11 @@ class RequestIssuesUpdate < CaseflowRecord
         after_request_issue_ids: after_issues.map(&:id),
         withdrawn_request_issue_ids: withdrawn_issues.map(&:id),
         edited_request_issue_ids: edited_issues.map(&:id),
+        mst_edited_request_issue_ids: mst_edited_issues.map(&:id),
+        pact_edited_request_issue_ids: pact_edited_issues.map(&:id),
         corrected_request_issue_ids: corrected_issues.map(&:id)
       )
+      create_mst_pact_issue_update_tasks
       create_business_line_tasks! if added_issues.present?
       cancel_active_tasks
       submit_for_processing!
@@ -90,8 +93,16 @@ class RequestIssuesUpdate < CaseflowRecord
     @edited_issues ||= edited_request_issue_ids ? fetch_edited_issues : calculate_edited_issues
   end
 
+  def mst_edited_issues
+    @mst_edited_issues ||= mst_edited_request_issue_ids ? fetch_mst_edited_issues : calculate_mst_edited_issues
+  end
+
+  def pact_edited_issues
+    @pact_edited_issues ||= pact_edited_request_issue_ids ? fetch_pact_edited_issues : calculate_pact_edited_issues
+  end
+
   def all_updated_issues
-    added_issues + removed_issues + withdrawn_issues + edited_issues + correction_issues
+    added_issues + removed_issues + withdrawn_issues + edited_issues + correction_issues + mst_edited_issues + pact_edited_issues
   end
 
   private
@@ -115,10 +126,49 @@ class RequestIssuesUpdate < CaseflowRecord
     end
   end
 
+  def calculate_mst_edited_issues
+    mst_edited_issue_data.map do |mst_issue_data|
+      review.find_or_build_request_issue_from_intake_data(mst_issue_data)
+    end
+  end
+
+  def calculate_pact_edited_issues
+    pact_edited_issue_data.map do |pact_issue_data|
+      review.find_or_build_request_issue_from_intake_data(pact_issue_data)
+    end
+  end
+
   def edited_issue_data
     return [] unless @request_issues_data
 
     @request_issues_data.select { |ri| ri[:edited_description].present? && ri[:request_issue_id] }
+  end
+
+  def mst_edited_issue_data
+    return [] unless @request_issues_data
+
+    # cycle through the request issue change data for changes in before/after MST/PACT
+    @request_issues_data.select do |issue|
+      # skip if the issue is a new issue
+      next if issue[:request_issue_id].nil?
+
+      # find the before issue
+      original_issue = before_issues.find { |bi| bi&.id == issue[:request_issue_id].to_i }
+      original_issue&.mst_status != issue[:mst_status]
+    end
+  end
+
+  def pact_edited_issue_data
+    return [] unless @request_issues_data
+
+    @request_issues_data.select do |issue|
+      # skip if the issue is a new issue
+      next if issue[:request_issue_id].nil?
+
+      # find the before issue
+      original_issue = before_issues.find { |bi| bi.id == issue[:request_issue_id].to_i }
+      original_issue&.pact_status != issue[:pact_status]
+    end
   end
 
   def calculate_before_issues
@@ -147,6 +197,14 @@ class RequestIssuesUpdate < CaseflowRecord
     RequestIssue.where(id: edited_request_issue_ids)
   end
 
+  def fetch_mst_edited_issues
+    RequestIssue.where(id: mst_edited_issue_data.map(&:id))
+  end
+
+  def fetch_pact_edited_issues
+    RequestIssue.where(id: pact_edited_issue_data.map(&:id))
+  end
+
   def process_issues!
     review.create_issues!(added_issues, self)
     process_removed_issues!
@@ -154,6 +212,8 @@ class RequestIssuesUpdate < CaseflowRecord
     process_withdrawn_issues!
     process_edited_issues!
     process_corrected_issues!
+    process_mst_edited_issues!
+    process_pact_edited_issues!
   end
 
   def process_legacy_issues!
@@ -182,6 +242,37 @@ class RequestIssuesUpdate < CaseflowRecord
     end
   end
 
+  def process_mst_edited_issues!
+    return if mst_edited_issues.empty?
+
+    mst_edited_issue_data.each do |mst_edited_issue|
+      RequestIssue.find(mst_edited_issue[:request_issue_id].to_s)
+        .update!(
+          mst_status: mst_edited_issue[:mst_status],
+          mst_status_update_reason_notes: mst_edited_issue[:mst_status_update_reason_notes]
+        )
+    end
+  end
+
+  def process_pact_edited_issues!
+    return if pact_edited_issues.empty?
+
+    pact_edited_issue_data.each do |pact_edited_issue|
+      RequestIssue.find(
+        pact_edited_issue[:request_issue_id].to_s
+      ).update!(
+        pact_status: pact_edited_issue[:pact_status],
+        pact_status_update_reason_notes: pact_edited_issue[:pact_status_update_reason_notes]
+      )
+    end
+  end
+
+  def create_mst_pact_issue_update_tasks
+    handle_mst_pact_edits_task
+    handle_mst_pact_removal_task
+    handle_added_mst_pact_edits_task
+  end
+
   def process_removed_issues!
     removed_issues.each(&:remove!)
   end
@@ -196,5 +287,86 @@ class RequestIssuesUpdate < CaseflowRecord
 
   def process_corrected_issues!
     correction.call
+  end
+
+  def handle_mst_pact_edits_task
+    # filter out added or removed issues
+    after_issues = fetch_after_issues
+    edited_issues = before_issues & after_issues
+    # cycle each edited issue (before) and compare MST/PACT with (fetch_after_issues)
+    # reverse_each to make the issues on the case timeline appear in similar sequence to what user sees the edit issues page
+    edited_issues.reverse_each do |before_issue|
+      after_issue = after_issues.find { |i| i.id == before_issue.id }
+      # if before/after has a change in MST/PACT, create issue update task
+      if (before_issue.mst_status != after_issue.mst_status) || (before_issue.pact_status != after_issue.pact_status)
+        create_issue_update_task("Edited Issue", before_issue, after_issue)
+      end
+    end
+  end
+
+  def handle_added_mst_pact_edits_task
+    after_issues = fetch_after_issues
+    added_issues = after_issues - before_issues
+    added_issues.reverse_each do |issue|
+      if (issue.mst_status) || (issue.pact_status)
+        create_issue_update_task("Added Issue", issue)
+      end
+    end
+  end
+
+  def handle_mst_pact_removal_task
+    # filter out added or removed issues
+    after_issues = fetch_after_issues
+    edited_issues = before_issues - after_issues
+    # cycle each edited issue (before) and compare MST/PACT with (fetch_after_issues)
+    edited_issues.reverse_each do |before_issue|
+      # lazily create a new RequestIssue since the mst/pact status would be removed if deleted?
+      if before_issue.mst_status || before_issue.pact_status
+        create_issue_update_task("Removed Issue", before_issue)
+      end
+    end
+  end
+
+  def create_issue_update_task(change_type, before_issue, after_issue = nil)
+    transaction do
+      task = IssuesUpdateTask.create!(
+        appeal: before_issue.decision_review,
+        parent: RootTask.find_by(appeal: before_issue.decision_review),
+        assigned_to: RequestStore[:current_user],
+        assigned_by: RequestStore[:current_user],
+        completed_by: RequestStore[:current_user]
+      )
+
+      # check if change from vbms mst/pact status
+      vbms_mst_edit = before_issue.vbms_mst_status.nil? ? false : !before_issue.vbms_mst_status && before_issue.mst_status
+      vbms_pact_edit = before_issue.vbms_pact_status.nil? ? false : !before_issue.vbms_pact_status && before_issue.pact_status
+
+      # if a new issue is added and VBMS was edited, reference the original status
+      if change_type == "Added Issue" && (vbms_mst_edit || vbms_pact_edit)
+        task.format_instructions(
+          change_type,
+          before_issue&.contested_issue_description,
+          before_issue.vbms_mst_status,
+          before_issue.vbms_pact_status,
+          before_issue&.mst_status,
+          before_issue&.pact_status
+        )
+      else
+        # format the task instructions and close out
+        # use contested issue description if nonrating issue category is nil
+        issue_description = before_issue.nonrating_issue_category unless before_issue.nonrating_issue_category.nil?
+        issue_description = before_issue.contested_issue_description if issue_description.nil?
+
+        task.format_instructions(
+          change_type,
+          issue_description,
+          before_issue.mst_status,
+          before_issue.pact_status,
+          after_issue&.mst_status,
+          after_issue&.pact_status
+        )
+      end
+      task.completed!
+    end
   end
 end

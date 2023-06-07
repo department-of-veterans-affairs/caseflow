@@ -26,7 +26,13 @@ import Checkbox from '../../components/Checkbox';
 import CheckboxGroup from '../../components/CheckboxGroup';
 import RadioField from '../../components/RadioField';
 
-import { getIssueProgramDescription, getIssueTypeDescription, getIssueDiagnosticCodeLabel } from '../utils';
+import {
+  getIssueProgramDescription,
+  getIssueTypeDescription,
+  getIssueDiagnosticCodeLabel,
+  getMstPactStatus,
+  getLegacyMstPactStatus } from '../utils';
+
 import {
   fullWidth,
   REMAND_REASONS,
@@ -307,7 +313,12 @@ class IssueRemandReasonsOptions extends React.PureComponent {
             `Program: ${getIssueProgramDescription(issue)}` :
             `Benefit type: ${BENEFIT_TYPES[issue.benefit_type]}`}
         </div>
-        {!appeal.isLegacyAppeal && <div {...smallBottomMargin}>Issue description: {issue.description}</div>}
+        {!appeal.isLegacyAppeal && (
+          <React.Fragment>
+            <div {...smallBottomMargin}>Issue description: {issue.description}</div>
+            <div {...smallBottomMargin}>Special Issues: {getMstPactStatus(issue)}</div>
+          </React.Fragment>
+        )}
         {appeal.isLegacyAppeal && (
           <React.Fragment>
             <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
@@ -316,6 +327,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
               Certified: {formatDateStr(appeal.certificationDate)}
             </div>
             <div {...smallBottomMargin}>Note: {issue.note}</div>
+            <div {...smallBottomMargin}>Special Issues: {getLegacyMstPactStatus(issue)}</div>
           </React.Fragment>
         )}
         {highlight && !this.getChosenOptions().length && (

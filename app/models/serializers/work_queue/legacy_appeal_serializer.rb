@@ -65,6 +65,10 @@ class WorkQueue::LegacyAppealSerializer
 
   attribute :closest_regional_office_label
 
+  attribute :mst, &:mst?
+
+  attribute :pact, &:pact?
+
   attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 
   attribute :docket_name do
@@ -88,6 +92,10 @@ class WorkQueue::LegacyAppealSerializer
       user: params[:user],
       case_review: latest_vacols_attorney_case_review(object)
     ).editable?
+  end
+
+  attribute :can_edit_request_issues do |object, params|
+    AppealRequestIssuesPolicy.new(user: params[:user], appeal: object).editable?
   end
 
   attribute :attorney_case_review_id do |object|
