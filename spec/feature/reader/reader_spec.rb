@@ -755,16 +755,15 @@ RSpec.feature "Reader", :all_dbs do
           )
         end
 
-        scenario "Switch between pages to ensure rendering", skip: "flake" do
-          visit "/reader/appeal/#{appeal.vacols_id}/documents"
-          click_on documents[3].type
-          fill_in "page-progress-indicator-input", with: "23\n" # flake
+        scenario "Switch between pages to ensure rendering" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[3].id}"
+          page.find("input.page-progress-indicator-input").click.set("23")
 
-          expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 10)
+          expect(find("#pageContainer23")).to have_content("Rating Decision")
           expect(page).to have_field("page-progress-indicator-input", with: "23")
 
           # Entering invalid values leaves the viewer on the same page.
-          fill_in "page-progress-indicator-input", with: "abcd\n"
+          page.find("input.page-progress-indicator-input").click.set("abcd")
 
           expect(page).to have_css("#pageContainer23")
           expect(page).to have_field("page-progress-indicator-input", with: "23")
