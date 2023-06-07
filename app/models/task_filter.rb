@@ -81,11 +81,11 @@ class TaskFilter
         "#{table_column_from_name(filter.column)} IS NULL OR #{table_column_from_name(filter.column)} = '' "
       # Check the values against all the possible ISSUE_CATEGORIES as a form of sanitation and value validation
       elsif Constants.ISSUE_CATEGORIES.to_h.values.any? { |value| value.include?(filter_value) }
-        "POSITION('#{filter_value}' IN #{table_column_from_name(filter.column)}) > 0"
+        "'#{filter_value}' = ANY (string_to_array(cached_appeal_attributes.issue_types, ',')) "
       else
         # Default to returning no tasks if the value was somehow not valid. Log an error but continue
         Rails.logger.error("User somehow filtered on an invalid issue category **#{filter_value}**")
-        "1=0"
+        "1=0 "
       end
     end
 

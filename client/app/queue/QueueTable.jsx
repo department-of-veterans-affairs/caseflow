@@ -390,7 +390,12 @@ export default class QueueTable extends React.PureComponent {
           filters[column.columnName] = values.filter((value) => validValues.includes(value));
         } else {
           // If this is a client side queue, it won't have filterOptions since the options are built dynamically
-          filters[column.columnName] = values;
+          // Potentially need to decode the value since it could be set between client side and server side queues
+          // Have to double decode because the filter options are often double encoded
+          const decodedValues = values.map((value) => decodeURI(decodeURI(value)));
+
+          filters[column.columnName] = decodedValues;
+
         }
       });
     }
@@ -509,7 +514,27 @@ export default class QueueTable extends React.PureComponent {
       // If it is a backend queue then grab the url from the window. Otherwise generate it.
       const urlQueryString = this.props.useTaskPagesApi ? window.location.search : this.requestQueryString();
       const queryParams = new URLSearchParams(urlQueryString);
-      const filterParams = queryParams.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
+      let filterParams = queryParams.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
+
+      // If it's a frontend queue do some encoding on the filter values
+      if (!this.props.useTaskPagesApi) {
+        filterParams = filterParams.map((filter) => {
+          const filterParts = filter.split('=');
+          // Get the values out of the filter
+          const values = filterParts.pop().split(/(?<!\s)\|(?!\s)/);
+
+          // If it's a frontend queue then go ahead and double encode the value like the server would.
+          const encodedFilterValues = values.map((value) => encodeURI(encodeURI(value))).join('|');
+
+          // Add the encoded values back into the filter array
+          filterParts.push(encodedFilterValues);
+
+          // Join it back together into it's original form to mimic what a backend queue filter would look like
+          const finalFilter = filterParts.join('=');
+
+          return finalFilter;
+        });
+      }
 
       localStorage.setItem('queueFilter', filterParams);
     }
