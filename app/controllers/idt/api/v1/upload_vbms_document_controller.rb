@@ -12,7 +12,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   end
 
   def create
-    # creating a JSON object that will be used to communicate with the IDT user as to the status of the upload if it was
+    # creating a JSON object that will be used to communicate with the IDT user as to the status of the upload. If it was
     #   successful and if the proper params were supplied, it will also hold the IDs for the created distributions.
     #   allowing the client to be able to search for the status.
     # However, if there are any errors in regards to creation of the MailRequest, the errors will be returned
@@ -38,7 +38,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     rescue Caseflow::Error::MissingRecipientInfo => error
       # Raises Caseflow::Error::MissingRecipientInfo if provided params within the recipient_info
       #   array do not create a valid MailRequest.
-      success_json[:error] = "Incomplete mailing informaiton provided. No mail request was created."
+      success_json[:error] = "Incomplete mailing information provided. No mail request was created."
       raise error
     ensure
       appeal = nil
