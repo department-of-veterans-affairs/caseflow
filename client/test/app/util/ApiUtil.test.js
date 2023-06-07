@@ -14,7 +14,8 @@ jest.mock('superagent', () => ({
   set: jest.fn().mockReturnThis(),
   accept: jest.fn().mockReturnThis(),
   timeout: jest.fn().mockReturnThis(),
-  use: jest.fn().mockReturnThis()
+  use: jest.fn().mockReturnThis(),
+  on: jest.fn().mockReturnThis(),
 }));
 
 const defaultHeaders = {

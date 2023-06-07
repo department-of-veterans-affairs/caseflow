@@ -173,7 +173,8 @@ const DocumentViewer = (props) => {
     showPdf: (currentPage, currentDocument, scale) => dispatch(showPdf({
       currentDocument,
       pageNumber: currentPage,
-      scale
+      scale,
+      featureToggles: props.featureToggles,
     })),
     toggleKeyboardInfo: (val) => dispatch(toggleKeyboardInfo(val)),
     startMove: (commentId) => dispatch(startMove(commentId)),
@@ -292,14 +293,16 @@ const DocumentViewer = (props) => {
 
       dispatch(showPdf({
         currentDocument: state.currentDocument,
-        scale: 1
+        scale: 1,
+        featureToggles: props.featureToggles,
       }));
     },
     rotateDocument: () => {
       dispatch(showPdf({
         currentDocument: state.currentDocument,
         rotation: state.currentDocument.rotation,
-        scale: state.scale
+        scale: state.scale,
+        featureToggles: props.featureToggles,
       }));
     },
     zoom: (direction) => {
@@ -311,7 +314,11 @@ const DocumentViewer = (props) => {
 
       window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, `zoom ${direction}`, scale);
 
-      dispatch(showPdf({ currentDocument: state.currentDocument, scale }));
+      dispatch(showPdf({
+        currentDocument: state.currentDocument,
+        scale,
+        featureToggles: props.featureToggles,
+      }));
     },
     setPageNumber: (pageNumber) => {
       // Add the analytics event
@@ -357,7 +364,8 @@ const DocumentViewer = (props) => {
     if (currentDocument?.id) {
       dispatch(showPdf({
         currentDocument,
-        scale: state.scale
+        scale: state.scale,
+        featureToggles: props.featureToggles,
       }));
     } else {
       // Load the Documents

@@ -18,6 +18,7 @@ import {
 import { addMetaLabel, formatCategoryName } from 'utils/reader';
 import { removeComment } from 'store/reader/annotationLayer';
 import { markDocAsRead } from 'store/reader/documentList';
+import { recordMetrics } from '../../../util/Metrics';
 
 // Set the PDFJS service worker
 PDF.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -233,7 +234,7 @@ export const showPage = async (params) => {
 export const showPdf = createAsyncThunk(
   'documentViewer/show',
   async (
-    { rotation = null, pageNumber, currentDocument, scale },
+    { rotation = null, pageNumber, currentDocument, scale, featureToggles = {} },
     { dispatch }
   ) => {
     // Update the Document as read if not already
@@ -248,20 +249,23 @@ export const showPdf = createAsyncThunk(
         withCredentials: true,
         timeout: true,
         responseType: 'arraybuffer',
+        logErrorMetrics: featureToggles.logErrorMetrics
       });
 
-      // Store the Document in-memory so that we do not serialize through Redux, but still persist
-      pdfDocuments[currentDocument.id] = {
-        pdf: await PDF.getDocument({ data: body }).promise,
-      };
+      if (body) {
+        // Store the Document in-memory so that we do not serialize through Redux, but still persist
+        pdfDocuments[currentDocument.id] = {
+          pdf: await PDF.getDocument({ data: body }).promise,
+        };
 
-      // Store the pages for the PDF
-      pdfDocuments[currentDocument.id].pages = await Promise.all(
-        range(0, pdfDocuments[currentDocument.id].pdf.numPages).map(
-          (pageIndex) =>
-            pdfDocuments[currentDocument.id].pdf.getPage(pageIndex + 1)
-        )
-      );
+        // Store the pages for the PDF
+        pdfDocuments[currentDocument.id].pages = await Promise.all(
+          range(0, pdfDocuments[currentDocument.id].pdf.numPages).map(
+            (pageIndex) =>
+              pdfDocuments[currentDocument.id].pdf.getPage(pageIndex + 1)
+          )
+        );
+      }
     }
 
     // Store the Viewport
