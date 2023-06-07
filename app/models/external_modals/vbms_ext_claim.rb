@@ -45,4 +45,8 @@ class VbmsExtClaim < CaseflowRecord
   alias_attribute :organization_soj, :ORGANIZATION_SOJ
   alias_attribute :allow_poa_access, :ALLOW_POA_ACCESS
   alias_attribute :poa_code, :POA_CODE
+
+  # def find_last_claim_id
+  #   VbmsExtClaim.last.claim_id
+  # end
 end

@@ -199,6 +199,9 @@ reset-dbs: ## Resets Caseflow and ETL database schemas
 	make audit
 	make external-db-create
 
+seed-vbms-ext-claim: ## Seed only vbms_ext_claim
+	bundle exec rake db:seed:vbms_ext_claim
+
 seed-dbs:	## Seed all databases
 	bundle exec rake local:vacols:seed
 	bundle exec rake spec:setup_vacols
