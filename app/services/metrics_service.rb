@@ -49,7 +49,7 @@ class MetricsService
       },
       sent_to: sent_to,
       sent_to_info: sent_to_info,
-      duration: stopwatch.total
+      duration: stopwatch.total * 1000 # values is in seconds and we want milliseconds
     }
     store_record_metric(uuid, metric_params, caller)
 
