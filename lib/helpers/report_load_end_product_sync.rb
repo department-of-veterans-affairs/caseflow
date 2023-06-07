@@ -5,7 +5,7 @@ module WarRoom
   class ReportLoadEndProductSync
 
     require 'csv'
-    S3_BUCKET_NAME = "appeals-dbas"
+    S3_BUCKET_NAME = "ep-priority-sync"
 
     # Currently, out of sync EPs are tracked in OAR report loads that are sent over and then
     # uploaded to the EP Establishment Workaround table
@@ -260,12 +260,8 @@ module WarRoom
     end
 
     # Save Logs to S3 Bucket
-    def log_to_s3(log_file, env, filename)
-      # filepath_with_bucket = "appeals-dbas/ep_establishment_workaround/#{env}/ep_priority_sync/"
-      # S3Service.store_file(filepath_with_bucket + filename + "--#{Time.zone.now}.csv", log_file)
-
-      filepath_no_bucket = "/ep_establishment_workaround/#{env}/ep_priority_sync/"
-      S3Service.store_file(S3_BUCKET_NAME + filepath_no_bucket + filename + "--#{Time.zone.now}.csv", log_file)
+    def log_to_s3(log_file, filename)
+      S3Service.store_file(S3_BUCKET_NAME + "/" + filename + "--#{Time.zone.now}.csv", log_file)
     end
 
     # Spit out metrics at the end of the priority sync
