@@ -8,7 +8,7 @@ class CreateMetricsTable < ActiveRecord::Migration[5.2]
       t.string     :metric_group, null: false, default: "service", comment: "Metric group: service, etc"
       t.string     :metric_message, null: false, comment: "Message or log for metric"
       t.string     :metric_type, null: false, comment: "Type of metric: ERROR, LOG, PERFORMANCE, etc"
-      t.string     :metric_product, null: false, comment: "Where in application: Queue, Hearings, Intake, VHA, Case Distribution, etc"
+      t.string     :metric_product, null: false, comment: "Where in application: Queue, Hearings, Intake, VHA, etc"
       t.string     :app_name, null: false, comment: "Application name: caseflow or efolder"
       t.json       :metric_attributes, comment: "Store attributes relevant to the metric: OS, browser, etc"
       t.json       :additional_info, comment: "additional data to store for the metric"
@@ -20,5 +20,10 @@ class CreateMetricsTable < ActiveRecord::Migration[5.2]
       t.float     :duration, comment: "Time in milliseconds from start to end"
       t.timestamps
     end
+
+    add_index :metrics, :metric_name
+    add_index :metrics, :metric_product
+    add_index :metrics, :app_name
+    add_index :metrics, :sent_to
   end
 end

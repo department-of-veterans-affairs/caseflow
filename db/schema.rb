@@ -1232,7 +1232,7 @@ ActiveRecord::Schema.define(version: 2023_05_23_174750) do
     t.string "metric_group", default: "service", null: false, comment: "Metric group: service, etc"
     t.string "metric_message", null: false, comment: "Message or log for metric"
     t.string "metric_name", null: false, comment: "Name of metric"
-    t.string "metric_product", null: false, comment: "Where in application: Queue, Hearings, Intake, VHA, Case Distribution, etc"
+    t.string "metric_product", null: false, comment: "Where in application: Queue, Hearings, Intake, VHA, etc"
     t.string "metric_type", null: false, comment: "Type of metric: ERROR, LOG, PERFORMANCE, etc"
     t.json "relevant_tables_info", comment: "Store information to tie metric to database table(s)"
     t.string "sent_to", comment: "Which system metric was sent to: Datadog, Rails Console, Javascript Console, etc ", array: true
@@ -1241,6 +1241,10 @@ ActiveRecord::Schema.define(version: 2023_05_23_174750) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false, comment: "The ID of the user who generated metric."
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "Unique ID for the metric, can be used to search within various systems for the logging"
+    t.index ["app_name"], name: "index_metrics_on_app_name"
+    t.index ["metric_name"], name: "index_metrics_on_metric_name"
+    t.index ["metric_product"], name: "index_metrics_on_metric_product"
+    t.index ["sent_to"], name: "index_metrics_on_sent_to"
     t.index ["user_id"], name: "index_metrics_on_user_id"
   end
 
