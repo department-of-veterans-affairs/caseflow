@@ -17,7 +17,8 @@ class RatingIssue
     :promulgation_date,
     :rba_contentions_data,
     :reference_id,
-    :subject_text
+    :subject_text,
+    :special_issues
     # adding another field? *
   )
 
@@ -48,7 +49,8 @@ class RatingIssue
         promulgation_date: rating.promulgation_date,
         rba_contentions_data: ensure_array_of_hashes(bgs_data.dig(:rba_issue_contentions)),
         reference_id: bgs_data[:rba_issue_id],
-        subject_text: bgs_data[:subjct_txt]
+        subject_text: bgs_data[:subjct_txt],
+        special_issues: bgs_data[:special_issues]
       )
     end
 
@@ -66,6 +68,7 @@ class RatingIssue
           :reference_id,
           :subject_text
         ).merge(associated_end_products: deserialize_end_products(serialized_hash))
+         .merge(special_issues: deserialize_special_issues(serialized_hash))
       )
     end
 
@@ -81,6 +84,44 @@ class RatingIssue
       serialized_hash[:associated_end_products].map do |end_product_hash|
         EndProduct.deserialize(end_product_hash)
       end
+    end
+
+    def deserialize_special_issues(serialized_hash)
+      data = []
+      return data unless serialized_hash[:special_issues]
+
+      serialized_hash[:special_issues].each do |special_issue|
+        data << { mst_available: true } if special_issue_has_mst?(special_issue)
+
+        data << { pact_available: true } if special_issue_has_pact?(special_issue)
+      end
+      data
+    end
+
+    def special_issue_has_mst?(special_issue)
+      if special_issue[:spis_tn].casecmp("ptsd - personal trauma").zero?
+        return ["sexual trauma/assault", "sexual Hhrassment"].include?(special_issue[:spis_basis_tn].downcase)
+      end
+
+      if special_issue[:spis_tn].casecmp("non-ptsd - personal trauma").zero?
+        ["sexual assault trauma", "sexual harassment"].include?(special_issue[:spis_basis_tn].downcase)
+      end
+    end
+
+    def special_issue_has_pact?(special_issue)
+      if special_issue[:spis_tn].casecmp("gulf war presumptive 3.3201").zero?
+        return special_issue[:spis_basis_tn].casecmp("particulate matter").zero?
+      end
+
+      [
+        "agent orange - outside vietnam or unknown",
+        "agent orange - vietnam",
+        "amytrophic lateral sclerosis",
+        "burn pit exposure",
+        "environmental hazard in gulf war",
+        "gulf war presumptive",
+        "radiation"
+      ].include?(special_issue[:spis_tn].downcase)
     end
   end
 
