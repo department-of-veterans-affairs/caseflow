@@ -360,8 +360,8 @@ class AppealsController < ApplicationController
           vacols_id: appeal.vacols_id,
           vacols_sequence_id: current_issue[:vacols_sequence_id],
           issue_attrs: {
-            mst_status: issue.mst_status ? "Y" : "N",
-            pact_status: issue.pact_status ? "Y" : "N",
+            mst_status: current_issue[:mst_status] ? "Y" : "N",
+            pact_status: current_issue[:pact_status] ? "Y" : "N",
             program: record[:issprog],
             issue: record[:isscode],
             level_1: record[:isslev1],
