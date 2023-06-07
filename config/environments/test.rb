@@ -13,6 +13,11 @@ Rails.application.configure do
   # test suite. You never need to work with it otherwise. Remember that
   # your test database is "scratch space" for the test suite and is wiped
   # and recreated between test runs. Don't rely on the data there!
+
+  # Spring (when in use) reloads application code, and therefore needs the application to have reloading
+  # enabled (`config.cache_classes == false`) for environments that Spring manages.
+  # An exception is made here for CI test environments (where `ENV["CI"]` is set to `true`), so as not to alter the
+  # existing conditions and performance characteristics of the test suite during CI builds.
   config.cache_classes = ENV.fetch('CI', false)
 
   cache_dir = Rails.root.join("tmp", "cache", "test_#{ENV['TEST_SUBCATEGORY']}", $$.to_s)
