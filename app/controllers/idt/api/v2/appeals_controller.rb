@@ -23,6 +23,7 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
   end
 
   def outcode
+    # Create distributions for Package Manager mail service if recipient info present
     create_mail_request_distributions
 
     result = BvaDispatchTask.outcode(appeal, outcode_params, user, mail_request)

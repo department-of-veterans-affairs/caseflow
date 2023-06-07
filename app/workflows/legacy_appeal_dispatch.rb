@@ -40,9 +40,17 @@ class LegacyAppealDispatch
     @appeal.root_task.update!(status: Constants.TASK_STATUSES.completed)
   end
 
+  # Queues mail request job if recipient info present and dispatch completed
   def queue_mail_request_job
     return unless @appeal.root_task.status == Constants.TASK_STATUSES.completed
 
     MailRequestJob.perform_later(@file, @mail_request)
+    info_message = "MailRequestJob for citation #{@citation_number} queued for submission to Package Manager"
+    log_info(info_message)
+  end
+
+  def log_info(info_message)
+    uuid = SecureRandom.uuid
+    Rails.logger.info(info_message + " ID: " + uuid)
   end
 end
