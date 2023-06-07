@@ -26,6 +26,7 @@ const EfolderUrlField = (props) => {
       label={`Insert Caseflow Reader document hyperlink to request a hearing ${props.requestType}`}
       onChange={testDebounce}
       onBlur={testOnBlur}
+      loading
     />
   </>;
 };

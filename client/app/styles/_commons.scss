@@ -1252,6 +1252,41 @@ button {
   }
 }
 
+.cf-loading-input {
+  display: inline-block;
+  position: absolute;
+  right: 10;
+
+  .cf-loading-icon-container {
+    display: inline-block;
+    position: relative;
+    padding-right: 23px;
+
+    .cf-loading-icon-back,
+    .cf-loading-icon-front {
+      &::after {
+        // container for preloaded images was 0x0, but now...
+        // scss-lint:disable ImportantRule
+        width: 20px !important;
+        height: 20px !important;
+        // scss-lint:enable ImportantRule
+        box-sizing: border-box;
+        position: absolute;
+        right: 0;
+        top: -0.1rem;
+        @include animation(spin 5s linear infinite);
+      }
+    }
+
+    .cf-loading-icon-front {
+      &::after {
+        @include animation(backwardspin 5s linear infinite);
+        opacity: 0.5;
+      }
+    }
+  }
+}
+
 .usa-accordion-button {
   background-image: url(#{$image-path}/minus.svg);
 
