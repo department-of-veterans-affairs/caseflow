@@ -2048,7 +2048,7 @@ ActiveRecord::Schema.define(version: 2023_05_31_144855) do
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "appeals"
   add_foreign_key "post_decision_motions", "tasks"
-  add_foreign_key "priority_end_product_sync_queue", "end_product_establishments", column: "id", name: "priority_end_product_sync_queue_end_product_establishment_id_fk"
+  add_foreign_key "priority_end_product_sync_queue", "end_product_establishments", name: "priority_end_product_sync_queue_end_product_establishment_id_fk"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "users"
