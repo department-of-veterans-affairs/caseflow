@@ -8,6 +8,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   before_action :verify_access
 
   def create
+    # Create distributions for Package Manager mail service if recipient info present
     create_mail_request_distributions
 
     appeal = nil
@@ -64,7 +65,8 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   end
 
   def find_file_number_by_veteran_identifier
-    file_number = bgs.fetch_veteran_info(veteran_identifier)&.dig(:file_number) || bgs.fetch_file_number_by_ssn(veteran_identifier)
+    file_number = bgs.fetch_veteran_info(veteran_identifier)&.dig(:file_number) ||
+                  bgs.fetch_file_number_by_ssn(veteran_identifier)
     throw_not_found_error("veteran") if file_number.nil?
     update_veteran_file_number(file_number)
   end

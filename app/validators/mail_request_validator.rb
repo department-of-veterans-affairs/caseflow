@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module MailRequestValidator
+  # Validations for VbmsDistribution model and MailRequest object
   module Distribution
     extend ActiveSupport::Concern
 
@@ -20,6 +21,7 @@ module MailRequestValidator
     end
   end
 
+  # Validations for VbmsDistributionDestination model and MailRequest object
   module DistributionDestination
     extend ActiveSupport::Concern
 
