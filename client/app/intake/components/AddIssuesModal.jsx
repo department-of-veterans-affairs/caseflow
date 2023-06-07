@@ -75,12 +75,12 @@ class AddIssuesModal extends React.Component {
     // Ensure we have a value for decisionDate
     currentIssue.decisionDate = currentIssue.decisionDate || currentIssue.approxDecisionDate;
 
-    if (mstChecked && mstJustification === '') {
+    if (mstChecked && mstJustification === '' && this.props.featureToggles.justificationReason) {
       if (!currentIssue.mstAvailable) {
         return;
       }
     }
-    if (pactChecked && pactJustification === '') {
+    if (pactChecked && pactJustification === '' && this.props.featureToggles.justificationReason) {
       if (!currentIssue.pactAvailable) {
         return;
       }
