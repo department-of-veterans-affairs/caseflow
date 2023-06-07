@@ -20,14 +20,13 @@ describe VhaRegionalOffice, :postgres do
 
   describe ".queue_tabs" do
     it "returns the expected tabs for use in the VHA Regional Office organization's queue" do
-
-    expect(regional_office.queue_tabs).to match_array(
-      [
-        VhaRegionalOfficeAssignedTasksTab,
-        VhaRegionalOfficeInProgressTasksTab,
-        VhaRegionalOfficeOnHoldTasksTab,
-        VhaRegionalOfficeCompletedTasksTab
-      ]
+      expect(regional_office.queue_tabs).to match_array(
+        [
+          VhaRegionalOfficeAssignedTasksTab,
+          VhaRegionalOfficeInProgressTasksTab,
+          VhaRegionalOfficeOnHoldTasksTab,
+          VhaRegionalOfficeCompletedTasksTab
+        ]
     )
     end
   end
