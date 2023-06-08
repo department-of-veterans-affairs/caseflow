@@ -5,9 +5,9 @@ FactoryBot.define do
     # prevents vbms_ext_claim to have a duplicate key
     sequence(:claim_id) do |n|
       if VbmsExtClaim.last
-        "#{VbmsExtClaim.last.claim_id + n}"
+        (VbmsExtClaim.last.claim_id + n).to_s
       else
-        "#{100_00 + n}"
+        (100_00 + n).to_s
       end
     end
 
