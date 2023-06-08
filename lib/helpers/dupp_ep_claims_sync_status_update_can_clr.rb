@@ -22,6 +22,11 @@ module WarRoom
       end
 
       ActiveRecord::Base.transaction do
+        record_count = retrieve_problem_reviews.count
+        @logs.push("#{Time.zone.now} DuplicateEP::Log Job Started.")
+        @logs.push("#{Time.zone.now} DuplicateEP::Log\n"\
+          " Records with errors: #{record_count}."\
+        )
         resolve_duplicate_end_products(retrieve_problem_reviews)
       end
     end
@@ -100,6 +105,10 @@ module WarRoom
 
         call_decision_review_process_job(review, vet)
       end
+      @logs.push("#{Time.zone.now} DuplicateEP::Log"\
+        " Records with errors: #{retrieve_problem_reviews.count}."\
+      )
+      @logs.push("#{Time.zone.now} Job completed.")
     end
 
     def active_duplicates(end_products, end_product_establishment)
