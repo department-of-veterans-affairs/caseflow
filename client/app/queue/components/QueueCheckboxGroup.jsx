@@ -5,7 +5,9 @@ import {
   INTAKE_EDIT_ISSUE_CHANGE_MESSAGE
 } from 'app/../COPY';
 
-const renderCheckbox = (option, onChange, values = {}, disabled = false, justifications, filterIssuesForJustification, errorState) => <div className="checkbox" key={option.id}>
+const renderCheckbox = (option, onChange, values = {}, disabled = false, justifications,
+  // eslint-disable-next-line max-params
+  filterIssuesForJustification, errorState, justificationFeatureToggle) => <div className="checkbox" key={option.id}>
   <input
     name={option.id}
     onChange={onChange}
@@ -18,13 +20,14 @@ const renderCheckbox = (option, onChange, values = {}, disabled = false, justifi
     {option.label}
   </label>
   {option.requiresJustification && filterIssuesForJustification(justifications, option.id)[0].hasChanged &&
+    justificationFeatureToggle &&
 
         <TextField
-        name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
-        defaultValue={filterIssuesForJustification(justifications, option.id)[0].justification}
-        errorMessage={(errorState.invalid && errorState.highlightModal && !filterIssuesForJustification(justifications, option.id)[0].justification) ? 'Justification field is required' : null}
-        required
-        onChange={filterIssuesForJustification(justifications, option.id)[0].onJustificationChange}
+          name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
+          defaultValue={filterIssuesForJustification(justifications, option.id)[0].justification}
+          errorMessage={(errorState.invalid && errorState.highlightModal && !filterIssuesForJustification(justifications, option.id)[0].justification) ? 'Justification field is required' : null}
+          required
+          onChange={filterIssuesForJustification(justifications, option.id)[0].onJustificationChange}
         />
   }
 </div>;
@@ -35,7 +38,7 @@ export default class QueueCheckboxGroup extends React.Component {
   MAX = 2;
 
   render() {
-    let {
+    const {
       label,
       name,
       required,
@@ -51,7 +54,8 @@ export default class QueueCheckboxGroup extends React.Component {
       strongLabel,
       disableAll,
       justifications,
-      filterIssuesForJustification
+      filterIssuesForJustification,
+      justificationFeatureToggle
     } = this.props;
 
     const labelContents = (
@@ -70,14 +74,15 @@ export default class QueueCheckboxGroup extends React.Component {
       fieldClasses += ' usa-input-error';
     }
 
-    let legendClasses = (hideLabel) ? 'hidden-field' : '';
+    const legendClasses = (hideLabel) ? 'hidden-field' : '';
 
     return <fieldset className={fieldClasses} {...styling}>
       <legend className={legendClasses}>
         {required && <span className="cf-required">Required</span>}
         {strongLabel ? <strong>{labelContents}</strong> : labelContents}
       </legend>
-      {options.map((option) => getCheckbox(option, onChange, values, disableAll, justifications, filterIssuesForJustification, errorState))}
+      {options.map((option) => getCheckbox(option, onChange, values, disableAll,
+        justifications, filterIssuesForJustification, errorState, justificationFeatureToggle))}
     </fieldset>;
   }
 }
@@ -123,5 +128,6 @@ QueueCheckboxGroup.propTypes = {
       mstJustificationOnChange: PropTypes.func,
     })
   ),
-  filterIssuesForJustification: PropTypes.func
+  filterIssuesForJustification: PropTypes.func,
+  justificationFeatureToggle: PropTypes.bool
 };

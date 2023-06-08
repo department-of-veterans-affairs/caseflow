@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import TextField from './TextField';
 
 const renderCheckbox = (option, onChange, values = {}, disabled = false) => <div className="checkbox" key={option.id}>
   <input

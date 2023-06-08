@@ -74,8 +74,8 @@ class SelectDispositionsView extends React.PureComponent {
       highlightModal: false,
       deleteAddedDecisionIssue: null,
       specialIssues: null,
-      mstJustification: "",
-      pactJustification: ""
+      mstJustification: '',
+      pactJustification: ''
     };
   }
   decisionReviewCheckoutFlow = () => this.props.checkoutFlow === 'dispatch_decision';
@@ -180,11 +180,11 @@ class SelectDispositionsView extends React.PureComponent {
       benefit_type: benefitType,
       diagnostic_code: diagnosticCode,
       request_issue_ids: [requestIssueId],
-      mst_justification: mst_justification,
-      pact_justification: pact_justification,
-      mstStatus: mstStatus,
+      mst_justification,
+      pact_justification,
+      mstStatus,
       mstOriginalStatus: mstStatus,
-      pactStatus: pactStatus,
+      pactStatus,
       pactOriginalStatus: pactStatus,
 
       /*
@@ -225,16 +225,20 @@ class SelectDispositionsView extends React.PureComponent {
     return this.validBenefitType(decisionIssue.benefit_type) && decisionIssue.disposition && decisionIssue.description;
   }
 
-  validateJustification = () => {
+  validateJustification = (justificationFeatureToggle) => {
     const { decisionIssue } = this.state;
-    let mstHasChanged = decisionIssue.mstOriginalStatus != decisionIssue.mstStatus;
-    let pactHasChanged = decisionIssue.pactOriginalStatus != decisionIssue.pactStatus;
-    if(mstHasChanged && (decisionIssue.mst_justification == '' || decisionIssue.mst_justification == null)){
+    const mstHasChanged = decisionIssue.mstOriginalStatus !== decisionIssue.mstStatus;
+    const pactHasChanged = decisionIssue.pactOriginalStatus !== decisionIssue.pactStatus;
+
+    if (mstHasChanged && (decisionIssue.mst_justification === '' || decisionIssue.mst_justification === null) &&
+      justificationFeatureToggle) {
       return false;
     }
-    if(pactHasChanged && (decisionIssue.pact_justification == '' || decisionIssue.pact_justification == null)){
+    if (pactHasChanged && (decisionIssue.pact_justification === '' || decisionIssue.pact_justification === null) &&
+      justificationFeatureToggle) {
       return false;
     }
+
     return true;
   }
 
@@ -247,7 +251,7 @@ class SelectDispositionsView extends React.PureComponent {
       return;
     }
 
-    if(!this.validateJustification()){
+    if (!this.validateJustification()) {
       this.setState({
         highlightModal: true
       });
@@ -273,7 +277,7 @@ class SelectDispositionsView extends React.PureComponent {
       this.props.appeal.externalId, { decisionIssues: newDecisionIssues }
     );
 
-    //Updated special issues view to the updated mst and pact status
+    // Updated special issues view to the updated mst and pact status
     this.selectedIssues()[0].mst_status = this.state.decisionIssue.mstStatus;
     this.selectedIssues()[0].pact_status = this.state.decisionIssue.pactStatus;
 
@@ -289,7 +293,7 @@ class SelectDispositionsView extends React.PureComponent {
       this.props.appeal.externalId, { decisionIssues: remainingDecisionIssues }
     );
 
-    //Reverts special issues view to their original status when deleting decision
+    // Reverts special issues view to their original status when deleting decision
     this.selectedIssuesToDelete()[0].mst_status = this.state.decisionIssue.mstOriginalStatus;
     this.selectedIssuesToDelete()[0].pact_status = this.state.decisionIssue.pactOriginalStatus;
 
@@ -346,7 +350,7 @@ class SelectDispositionsView extends React.PureComponent {
 
   onJustificationChange = (event, decision, type) => {
 
-    if(type === "mstStatus"){
+    if (type === 'mstStatus') {
       this.setState({
         decisionIssue: {
           ...decision,
@@ -354,7 +358,7 @@ class SelectDispositionsView extends React.PureComponent {
         }
       });
       this.setState({ mstJustification: event });
-    }else if(type === "pactStatus"){
+    } else if (type === 'pactStatus') {
       this.setState({
         decisionIssue: {
           ...decision,
@@ -396,7 +400,7 @@ class SelectDispositionsView extends React.PureComponent {
   };
 
   render = () => {
-    const { appeal, highlight, ...otherProps } = this.props;
+    const { appeal, highlight, justificationFeatureToggle, ...otherProps } = this.props;
     const {
       highlightModal,
       decisionIssue,
@@ -552,22 +556,23 @@ class SelectDispositionsView extends React.PureComponent {
           styling={specialIssuesCheckboxStyling}
           onChange={(event) => this.onCheckboxChange(event, decisionIssue)}
           errorState={{
-            highlightModal: highlightModal,
-            invalid: !this.validateJustification(),
-            }
+            highlightModal,
+            invalid: !this.validateJustification(justificationFeatureToggle),
+          }
           }
           filterIssuesForJustification={this.filterIssuesForJustification}
+          justificationFeatureToggle={justificationFeatureToggle}
           justifications={[
             {
               id: 'mstStatus',
               justification: decisionIssue.mst_justification,
-              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, "mstStatus"),
+              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, 'mstStatus'),
               hasChanged: this.state.decisionIssue.mstOriginalStatus != this.state.decisionIssue.mstStatus
             },
             {
               id: 'pactStatus',
               justification: decisionIssue.pact_justification,
-              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, "pactStatus"),
+              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, 'pactStatus'),
               hasChanged: this.state.decisionIssue.pactOriginalStatus != this.state.decisionIssue.pactStatus
             },
           ]}
