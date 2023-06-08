@@ -253,27 +253,15 @@ class RequestIssue < CaseflowRecord
   end
 
   def mst_contention_status?
-    return false if contention.nil?
-    status = false
-    contention&.special_issues&.each do |issue|
-      if issue[:code].upcase == "MST"
-        status = true
-        break
-      end
-    end
-    status
+    return false if bgs_contention.nil?
+    return bgs_contention.special_issues[:spis_tc] == 'MST' if bgs_contention&.special_issues
+    false
   end
 
   def pact_contention_status?
-    return false if contention.nil?
-    status = false
-    contention&.special_issues&.each do |issue|
-      if issue[:code].upcase == "PACT"
-        status = true
-        break
-      end
-    end
-    status
+    return false if bgs_contention.nil?
+    return bgs_contention.special_issues[:spis_tc] == 'PACT' if bgs_contention&.special_issues
+    false
   end
 
   def rating?
