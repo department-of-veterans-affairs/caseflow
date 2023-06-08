@@ -108,19 +108,32 @@ describe TaskFilter, :all_dbs do
     end
 
     context "when filtering on issue types" do
-      let(:filter_value) { "Category C" }
+      let(:filter_value) { "Other" }
       let(:database_column_name) { "cached_appeal_attributes.issue_types" }
       let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name}&val=#{filter_value}"] }
 
-      it "returns the expected where_clause" do
-        expect(subject).to eq(["POSITION('#{filter_value}' IN #{database_column_name}) > 0"])
+      it "when the filter matches a value in the ISSUE_CATEGORIES json it returns the expected where_clause" do
+        # expect(subject).to eq(["POSITION('#{filter_value}' IN #{database_column_name}) > 0"])
+        expect(subject).to eq(
+          [
+            "('#{filter_value}' = ANY (string_to_array(#{database_column_name}, ',')) )"
+          ]
+        )
       end
 
       context "when the filter value is None" do
         let(:filter_value) { "None" }
 
         it "returns the expected where_clause" do
-          expect(subject).to eq(["#{database_column_name} IS NULL OR #{database_column_name} = '' "])
+          expect(subject).to eq(["(#{database_column_name} IS NULL OR #{database_column_name} = '' )"])
+        end
+      end
+
+      context "when the filter value does not exist in the defined ISSUE_CATEGORIES json" do
+        let(:filter_value) { "Category C" }
+
+        it "returns a falsey placeholder boolean" do
+          expect(subject).to eq(["(1=0 )"])
         end
       end
     end
@@ -491,11 +504,11 @@ describe TaskFilter, :all_dbs do
       let(:all_tasks) { Task.where(id: create_list(:root_task, 6)) }
       let(:issue_categories) do
         [
-          "Category C",
-          "Category B",
-          "Category B",
-          "Category A",
-          "Category Z",
+          "CHAMPVA",
+          "Spina Bifida Treatment (Non-Compensation)",
+          "Caregiver | Other",
+          "Caregiver | Other",
+          "Other",
           ""
         ]
       end
@@ -540,10 +553,11 @@ describe TaskFilter, :all_dbs do
       end
 
       context "when filter_params includes an existing issue category" do
-        let(:filter_params) { ["col=#{column_name}&val=Category B"] }
+        let(:filter_value) { URI::DEFAULT_PARSER.escape(URI::DEFAULT_PARSER.escape("Caregiver | Other")) }
+        let(:filter_params) { ["col=#{column_name}&val=#{filter_value}"] }
 
-        it "returns the tasks that are associated with an issue_type including 'Category B'" do
-          expect(subject.map(&:id)).to match_array(all_tasks[1..2].map(&:id))
+        it "returns the tasks that are associated with an issue_type including 'Caregiver | Other'" do
+          expect(subject.map(&:id)).to match_array(all_tasks[2..3].map(&:id))
         end
       end
     end
