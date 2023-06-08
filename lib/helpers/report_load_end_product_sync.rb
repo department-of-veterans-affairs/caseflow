@@ -218,19 +218,18 @@ module WarRoom
           prev_synced_status: sync_status_before,
           error: nil
         )
-
       rescue StandardError => error
         @run_log << OpenStruct.new(
           reference_id: epe.reference_id,
           last_synced_at: Time.zone.now,
-          synced_status: epe&.synced_status ? epe.synced_status,
+          synced_status: epe&.synced_status ? epe.synced_status : nil,
           prev_synced_status: sync_status_before,
           error: error.message
         )
         @error_log << OpenStruct.new(
           reference_id: epe.reference_id,
           last_synced_at: Time.zone.now,
-          synced_status: epe&.synced_status ? epe.synced_status,
+          synced_status: epe&.synced_status ? epe.synced_status : nil,
           prev_synced_status: sync_status_before,
           error: error.message
         )
