@@ -2,11 +2,19 @@
 
 FactoryBot.define do
   factory :vbms_ext_claim do
-    sequence(:claim_id) { |n| "10000#{n}" }
+    # prevents vbms_ext_claim to have a duplicate key
+    sequence(:claim_id) do |n|
+      if VbmsExtClaim.last
+        "#{VbmsExtClaim.last.claim_id + n}"
+      else
+        "#{100_00 + n}"
+      end
+    end
+
     sync_id { 1 }
-    createddt { Time.zone.now }
+    createddt { Time.zone.now - 1.day }
     lastupdatedt { Time.zone.now }
-    expirationdt { Time.zone.now }
+    expirationdt { Time.zone.now + 5.days }
     version { 22 }
     prevent_audit_trig { 2 }
 
