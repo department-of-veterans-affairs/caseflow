@@ -183,8 +183,8 @@ class AppealsController < ApplicationController
       params[:request_issues].each do |issue_update|
         Issue.update_in_vacols!(
           vacols_id: appeal.vacols_id,
-          vacols_sequence_id: params[:vacols_sequence_id],
-          issue_attrs: legacy_issue_params
+          vacols_sequence_id: issue_update[:vacols_sequence_id],
+          issue_attrs: legacy_issue_params(issue_update)
         )
       end
     end
@@ -234,26 +234,29 @@ class AppealsController < ApplicationController
     )
   end
 
-  def legacy_issue_params
-    safe_params = params.require("issues")
-      .permit(:note,
-              :program,
-              :issue,
-              :level_1,
-              :level_2,
-              :level_3,
-              :mst_status,
-              :pact_status).to_h
+  def legacy_issue_params(issue_update)
+    legacy_issue = params.require("request_issues").find { |i| i[:vacols_sequence_id] == issue_update[:vacols_sequence_id].to_i }
+    safe_params = {}
+    safe_params[:mst_status] = issue_update[:mst_status]
+    safe_params[:pact_status] = issue_update[:pact_status]
+      # .permit(:note,
+      #         :program,
+      #         :issue,
+      #         :level_1,
+      #         :level_2,
+      #         :level_3,
+      #         :mst_status,
+      #         :pact_status).to_h
     safe_params[:vacols_user_id] = current_user.vacols_uniq_id
 
     # set value of MST/PACT from 'true/false' to 'Y/N'
-    if safe_params[:mst_status] == true
+    if safe_params[:mst_status]
       safe_params[:mst_status] = "Y"
     else 
       safe_params[:mst_status] = "N"
     end
 
-    if safe_params[:pact_status] == false
+    if safe_params[:pact_status]
       safe_params[:pact_status] = "Y"
     else 
       safe_params[:pact_status] = "N"
