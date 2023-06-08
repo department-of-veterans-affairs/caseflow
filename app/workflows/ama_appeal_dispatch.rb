@@ -4,7 +4,7 @@ class AmaAppealDispatch
   include ActiveModel::Model
   include DecisionDocumentValidator
 
-  def initialize(appeal:, params:, user:, mail_request: nil)
+  def initialize(appeal:, params:, user:, mail_request: nil, copies: nil)
     @appeal = appeal
     @params = params.merge(appeal_id: appeal.id, appeal_type: "Appeal")
     @user = user
@@ -13,6 +13,7 @@ class AmaAppealDispatch
     @redacted_document_location = params[:redacted_document_location]
     @file = params[:file]
     @mail_request = mail_request
+    @copies = copies
   end
 
   def call
@@ -99,7 +100,7 @@ class AmaAppealDispatch
   def queue_mail_request_job
     return unless dispatch_task.root_task.status == Constants.TASK_STATUSES.completed
 
-    MailRequestJob.perform_later(@file, @mail_request)
+    MailRequestJob.perform_later(@file, @mail_request, @copies)
     info_message = "MailRequestJob for citation #{@citation_number} queued for submission to Package Manager"
     log_info(info_message)
   end

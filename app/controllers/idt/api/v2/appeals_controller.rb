@@ -24,15 +24,15 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
 
   def outcode
     # Create distributions for Package Manager mail service if recipient info present
-    create_mail_request_distributions
+    create_mail_distributions
 
-    result = BvaDispatchTask.outcode(appeal, outcode_params, user, mail_request)
+    result = BvaDispatchTask.outcode(appeal, outcode_params, user, mail_requests, copies)
 
     if result.success?
       success_response = { message: "Success!" }
 
-      unless mail_request.nil?
-        success_response[:distributions] = mail_request.distribution_ids
+      unless mail_requests.nil?
+        success_response[:distributions] = mail_requests.map(&:vbms_distribution_id)
       end
 
       return render json: success_response
@@ -161,20 +161,37 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
     params[:recipient_info]
   end
 
-  def create_mail_request_distributions
+  def copies
+    return 1 if params[:copies].blank?
+
+    params[:copies]
+  end
+
+  def create_mail_distributions
     return if recipient_info.blank?
 
-    throw_error_if_recipient_info_incorrect
-    mail_request.call
+    throw_error_if_copies_out_of_range
+    mail_requests.each(&:call)
   end
 
-  def mail_request
+  def throw_error_if_copies_out_of_range
+    unless (1..500).cover?(copies)
+      # Update StandardError to BadMailRequestError once Jonathan's updates to BaseController merged in
+      fail StandardError, "Copies must be between 1 and 500 (inclusive)"
+    end
+  end
+
+  def mail_requests
     return nil if recipient_info.blank?
 
-    @mail_request ||= MailRequest.new(outcode_params)
+    @mail_requests ||= recipient_info.map do |address|
+      mail_request = MailRequest.new(address)
+      throw_error_if_recipient_info_invalid(mail_request)
+      mail_request
+    end
   end
 
-  def throw_error_if_recipient_info_incorrect
+  def throw_error_if_recipient_info_invalid(mail_request)
     return if mail_request.valid?
 
     # Update StandardError to BadMailRequestError once Jonathan's updates to BaseController merged in
