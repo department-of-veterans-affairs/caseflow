@@ -121,6 +121,7 @@ class LegacyTasksController < ApplicationController
     end
 
     task = JudgeCaseAssignmentToAttorney.update(legacy_task_params.merge(task_id: params[:id]))
+    task_instruction
 
     return invalid_record_error(task) unless task.valid?
 
@@ -144,6 +145,13 @@ class LegacyTasksController < ApplicationController
 
   def validate_user_role
     return invalid_role_error unless ROLES.include?(user_role)
+  end
+
+  def task_instruction
+    if params[:tasks][:instructions].present?
+      assigned_task = appeal.tasks.find_by_status("assigned") || appeal.tasks.find_by_status("in_progress")
+      assigned_task&.update(instructions: [params[:tasks][:instructions]])
+    end
   end
 
   def user
