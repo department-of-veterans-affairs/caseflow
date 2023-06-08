@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-##
-# VbmsExtClaim records represents Vbms external claim records
-##
+# This model represents entries in the vbms_ext_claim table
+# VbmsExtClaims can have an associated EndProductEstablishment
+
 class VbmsExtClaim < CaseflowRecord
   self.table_name = "vbms_ext_claim"
   self.primary_key = "CLAIM_ID"
