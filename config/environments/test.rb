@@ -14,11 +14,15 @@ Rails.application.configure do
   # your test database is "scratch space" for the test suite and is wiped
   # and recreated between test runs. Don't rely on the data there!
 
-  # Spring (when in use) reloads application code, and therefore needs the application to have reloading
-  # enabled (`config.cache_classes == false`) for environments that Spring manages.
-  # An exception is made here for CI test environments (where `ENV["CI"]` is set to `true`), so as not to alter the
-  # existing conditions and performance characteristics of the test suite during CI builds.
-  config.cache_classes = ENV.fetch('CI', false)
+  # By default, `config.cache_classes == true` to preserve the current behavior
+  # in CI test environments.
+  #
+  # For Spring to work in local test environments, this default must be overridden
+  # by setting ENV variable `ENABLE_SPRING_IN_TEST` to `true` before the Spring
+  # server runs.
+  spring_enabled_in_test =
+    ActiveRecord::Type::Boolean.new.cast(ENV.fetch("ENABLE_SPRING_IN_TEST", false))
+  config.cache_classes = not(spring_enabled_in_test) # default: true
 
   cache_dir = Rails.root.join("tmp", "cache", "test_#{ENV['TEST_SUBCATEGORY']}", $$.to_s)
   FileUtils.mkdir_p(cache_dir) unless File.exists?(cache_dir)

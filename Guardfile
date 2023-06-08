@@ -29,7 +29,10 @@ end
 
 # This group skips RuboCop when RSpec fails.
 group :red_green_refactor, halt_on_fail: true do
-  guard :rspec, cmd: "bundle exec spring rspec" do
+  # Note: ENV["ENABLE_SPRING_IN_TEST"] is a flag used to force Rails application
+  # `config.cache_classes` to `false` in the test environment, so that Spring
+  # reloading can work.
+  guard :rspec, cmd: "ENABLE_SPRING_IN_TEST=true bundle exec spring rspec" do
     require "guard/rspec/dsl"
     dsl = Guard::RSpec::Dsl.new(self)
 
