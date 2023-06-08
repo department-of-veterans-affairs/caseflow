@@ -9,7 +9,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
   def create
     # Create distributions for Package Manager mail service if recipient info present
-    create_mail_request_distributions
+    create_mail_requests
 
     appeal = nil
     # Find veteran from appeal id and check with db
@@ -18,7 +18,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     else
       find_file_number_by_veteran_identifier
     end
-    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_request).call
+    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_requests, copies).call
 
     if result.success?
       render json: { message: "Document successfully queued for upload." }
@@ -30,31 +30,44 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   private
 
   def recipient_info
-    params["recipient_info"]
+    params[:recipient_info]
+  end
+
+  def copies
+    return 1 if params[:copies].blank?
+
+    params[:copies]
   end
 
   def appeal_id
-    params["appeal_id"]
+    params[:appeal_id]
   end
 
   def veteran_identifier
-    params["veteran_identifier"]
+    params[:veteran_identifier]
   end
 
   def bgs
     @bgs ||= BGSService.new
   end
 
-  def mail_request
+  def mail_requests
     return nil if recipient_info.blank?
 
-    @mail_request ||= MailRequest.new(params)
+    # @mail_requests ||= Logic from Jonathan's branch goes here
   end
 
-  def create_mail_request_distributions
+  def create_mail_requests
     return if recipient_info.blank?
 
-    mail_requst.call
+    throw_error_if_copies_out_of_range
+    # Logic from Jonathan's branch goes here
+  end
+
+  def throw_error_if_copies_out_of_range
+    unless (1..500).cover?(copies)
+      fail StandardError, "Copies must be between 1 and 500 (inclusive)"
+    end
   end
 
   def find_veteran_by_appeal_id
