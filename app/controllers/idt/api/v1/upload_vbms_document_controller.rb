@@ -9,7 +9,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
   def create
     # Create distributions for Package Manager mail service if recipient info present
-    create_mail_requests
+    create_mail_distributions
 
     appeal = nil
     # Find veteran from appeal id and check with db
@@ -57,7 +57,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     # @mail_requests ||= Logic from Jonathan's branch goes here
   end
 
-  def create_mail_requests
+  def create_mail_distributions
     return if recipient_info.blank?
 
     throw_error_if_copies_out_of_range
