@@ -16,8 +16,34 @@ describe BvaIntakePendingTab, :postgres do
       let(:params) { { assignee: assignee } }
 
       it "returns the correct number of columns" do
-        expect(subject.length).to eq(7)
+        expect(subject.length).to eq 8
       end
+    end
+  end
+
+  describe ".label" do
+    subject { tab.label }
+
+    it do
+      is_expected.to eq COPY::ORGANIZATIONAL_QUEUE_PAGE_PENDING_TAB_TITLE
+      is_expected.to eq "Pending (%d)"
+    end
+  end
+
+  describe ".description" do
+    subject { tab.description }
+
+    it do
+      is_expected.to eq "Appeals in Pre-Docket streams:"
+    end
+  end
+
+  describe ".self.tab_name" do
+    subject { described_class.tab_name }
+
+    it "matches expected tab name" do
+      is_expected.to eq(Constants.QUEUE_CONFIG.PENDING_TASKS_TAB_NAME)
+      is_expected.to eq("pending")
     end
   end
 

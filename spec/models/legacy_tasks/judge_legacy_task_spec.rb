@@ -108,7 +108,6 @@ describe JudgeLegacyTask, :postgres do
           ]
         end
       end
-
     end
 
     context "when the task is at judge review" do
