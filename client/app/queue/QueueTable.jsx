@@ -388,7 +388,7 @@ export default class QueueTable extends React.PureComponent {
           const validValues = column.filterOptions.map((filterOption) => filterOption.value);
 
           filters[column.columnName] = values.filter((value) => validValues.includes(value));
-        } else {
+        } else if (column) {
           // If this is a client side queue, it won't have filterOptions since the options are built dynamically
           // Potentially need to decode the value since it could be set between client side and server side queues
           // Have to double decode because the filter options are often double encoded
