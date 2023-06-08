@@ -75,7 +75,7 @@ const issueUpdateTask = (task) =>{
 }
 
 const establishmentTask = (task) => {
-  return task.type === 'EstablishmentTask'
+  return task.type === 'EstablishmentTask';
 }
 
 const tdClassNames = (timeline, task) => {
@@ -332,7 +332,7 @@ class TaskRows extends React.PureComponent {
 
     // formatting used for IssueUpdate task instructions.
     const formatIssueUpdateBreaks = (text = '') => {
-      const divStyle = { marginTop: '1rem'}
+      const divStyle = { marginTop: '1rem' };
       const hStyle = { marginTop: '30px', marginBottom: '0rem', fontWeight: 'bold' };
 
       if (Array.isArray(text)) {
@@ -361,9 +361,9 @@ class TaskRows extends React.PureComponent {
     };
 
     const formatEstablishmentBreaks = (text = '') => {
-      console.log(text)
-      const divStyle = { marginTop: '1rem'}
+      const divStyle = { marginTop: '1rem' };
       const hStyle = { marginTop: '30px', marginBottom: '0rem', fontWeight: 'bold' };
+
       if (Array.isArray(text)) {
         const content = text.map((issue, index) =>
           <div key={index}>
@@ -373,29 +373,29 @@ class TaskRows extends React.PureComponent {
             <p>{issue[0]}</p>
             {/* Condition where a prior decision from vbms with mst/pact designation was updated in intake process */}
             {issue[1] ?
-            <React.Fragment>
-              <h5 style={hStyle}>ORIGINAL: </h5>
-              <small>{issue[1]}</small>
-              <h5 style={hStyle}>UPDATED: </h5>
-              <small>{issue[2]}</small>
-              <p></p>
-            </React.Fragment> :
-            <p>{issue[2]}</p>
+              <React.Fragment>
+                <h5 style={hStyle}>ORIGINAL: </h5>
+                <small>{issue[1]}</small>
+                <h5 style={hStyle}>UPDATED: </h5>
+                <small>{issue[2]}</small>
+                <p></p>
+              </React.Fragment> :
+              <p>{issue[2]}</p>
             }
             {/* No horizontal rule after the last issue */}
-            {index != (text.length - 1) &&
+            {index !== (text.length - 1) &&
               <React.Fragment>
                 <hr />
               </React.Fragment>
-              }
+            }
           </div>
-        )
+        );
 
         return (
           <div>
             {content}
           </div>
-        )
+        );
       }
     };
 
