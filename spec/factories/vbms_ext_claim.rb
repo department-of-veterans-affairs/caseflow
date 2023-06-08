@@ -7,7 +7,7 @@ FactoryBot.define do
       if VbmsExtClaim.last
         (VbmsExtClaim.last.claim_id + n).to_s
       else
-        (100_00 + n).to_s
+        Random.rand(n..200_000_00).to_s
       end
     end
 
