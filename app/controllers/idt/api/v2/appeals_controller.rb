@@ -177,7 +177,7 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
   def throw_error_if_recipient_info_incorrect
     return if mail_request.valid?
 
-    # Update StandardError once Jonathan's updates to BaseController merged in
+    # Update StandardError to BadMailRequestError once Jonathan's updates to BaseController merged in
     fail StandardError, mail_request.errors.full_messages.join(",")
   end
 
