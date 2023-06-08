@@ -254,13 +254,25 @@ class RequestIssue < CaseflowRecord
 
   def mst_contention_status?
     return false if bgs_contention.nil?
-    return bgs_contention.special_issues[:spis_tc] == 'MST' if bgs_contention&.special_issues
+    if bgs_contention.special_issues.is_a?(Hash)
+      return bgs_contention.special_issues[:spis_tc] == 'MST' if bgs_contention&.special_issues
+    elsif bgs_contention.special_issues.is_a?(Array)
+      bgs_contention.special_issues.each do |issue|
+        return true if issue[:spis_tc] == 'MST'
+      end
+    end
     false
   end
 
   def pact_contention_status?
     return false if bgs_contention.nil?
-    return bgs_contention.special_issues[:spis_tc] == 'PACT' if bgs_contention&.special_issues
+    if bgs_contention.special_issues.is_a?(Hash)
+      return ['PACT', 'PACTDICRE'].include?(bgs_contention.special_issues[:spis_tc]) if bgs_contention&.special_issues
+    elsif bgs_contention.special_issues.is_a?(Array)
+      bgs_contention.special_issues.each do |issue|
+        return true if ['PACT', 'PACTDICRE'].include?(issue[:spis_tc])
+      end
+    end
     false
   end
 
