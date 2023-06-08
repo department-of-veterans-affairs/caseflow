@@ -1,8 +1,7 @@
-# Public:
-# The records that appear here are records that have attempted multiple times
+# This table consists of records that have repeatedly attempted
 # to sync or be processed in some way but have continuously errored out.
-# This table is polymorphic, instances could belong to different tables.
-# The records on this table are intended to be checked and fixed manually.
+# This table is polymorphic, records on this table could belong to more than one table.
+# Records on this table are intended to be checked and fixed manually.
 
 class CaseflowStuckRecord < CaseflowRecord
   belongs_to :stuck_record, polymorphic: true
@@ -11,8 +10,7 @@ class CaseflowStuckRecord < CaseflowRecord
   # has_one vs has_many might change depending on the model
 
   # This method will report the stuck record to the appropriate places upon insertion e.g. slack channels
-  # A record in our case is a PriorityEndProductSyncQueue record
-  # But it could be a record from a different table that exists within the batch_processes table
+  # Params: Could be a PriorityEndProductSyncQueue record or any other table's record that has a 'has_one' or 'has_many' association.
   def report_stuck_record(record)
     # Method skeleton
   end
