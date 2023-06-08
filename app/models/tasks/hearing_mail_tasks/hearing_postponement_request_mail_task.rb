@@ -20,7 +20,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     Constants.TASK_ACTIONS.CANCEL_TASK.to_h
   ].freeze
 
-  def available_actions
+  def available_actions(_user)
     TASK_ACTIONS
   end
 end

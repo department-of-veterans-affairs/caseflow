@@ -34,7 +34,7 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
     Constants.TASK_ACTIONS.CANCEL_TASK.to_h
   ].freeze
 
-  def available_actions
+  def available_actions(_user)
     hearing_is_active? ? TASK_ACTIONS_FOR_ACTIVE_HEARING : DEFAULT_TASK_ACTIONS
   end
 
