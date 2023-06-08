@@ -72,8 +72,7 @@ class MailRequest
 
   def recipient_type_valid?
     unless @recipient_type.blank?
-      valid_var = %w[organization person system ro-colocated].include?(@recipient_type)
-      valid_var
+      %w[organization person system ro-colocated].include?(@recipient_type)
     end
   end
 
