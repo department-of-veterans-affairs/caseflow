@@ -13,10 +13,12 @@ class MetricsService
     sent_to = [[Metric::LOG_SYSTEMS[:rails_console]]]
     sent_to_info = nil
 
+    start = Time.now
     Rails.logger.info("STARTED #{description}")
     stopwatch = Benchmark.measure do
       return_value = yield
     end
+    stopped = Time.now
 
     if service
       latency = stopwatch.real
@@ -49,6 +51,8 @@ class MetricsService
       },
       sent_to: sent_to,
       sent_to_info: sent_to_info,
+      start: start,
+      end: stopped,
       duration: stopwatch.total * 1000 # values is in seconds and we want milliseconds
     }
     store_record_metric(uuid, metric_params, caller)
@@ -96,6 +100,8 @@ class MetricsService
       metric_attributes: params[:attrs],
       sent_to: params[:sent_to],
       sent_to_info: params[:sent_to_info],
+      start: params[:start],
+      end: params[:end],
       duration: params[:duration],
     }
     metric = Metric.create_metric(caller || self, params, RequestStore[:current_user])

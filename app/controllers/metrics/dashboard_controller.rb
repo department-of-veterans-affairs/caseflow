@@ -6,7 +6,7 @@ class Metrics::DashboardController < ApplicationController
   def show
     no_cache
 
-    @metrics = Metric.where("created_at > ?", 1.hour.ago).order(created_at: :desc)
+    @metrics = Metric.includes(:user).where("created_at > ?", 1.hour.ago).order(created_at: :desc)
 
     begin
       render :show, layout: "plain_application"
@@ -17,6 +17,7 @@ class Metrics::DashboardController < ApplicationController
   end
 
   private
+
   def require_demo
     redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
   end
