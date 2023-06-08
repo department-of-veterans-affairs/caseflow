@@ -51,6 +51,10 @@ class Metric < CaseflowRecord
     errors.add(:sent_to, msg) if !invalid_systems.empty?
   end
 
+  def css_id
+    user.css_id
+  end
+
   private
 
   # Returns an object with defaults set if below symbols are not found in params default object.
