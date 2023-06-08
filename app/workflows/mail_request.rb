@@ -71,60 +71,49 @@ class MailRequest
   end
 
   def recipient_type_valid?
-    unless @recipient_type.blank?
-      %w[organization person system ro-colocated].include?(@recipient_type)
-    end
+   return true if %w[organization person system ro-colocated].include?(@recipient_type)
+   false
   end
 
   def person?
-    unless @recipient_type.blank?
-      @recipient_type == "person"
-    end
+    return true if @recipient_type == "person" unless @recipient_type.blank?
+    false
   end
 
   def ro_colocated?
-    unless @recipient_type.blank?
-      @recipient_type == "ro-colocated"
-    end
+    return true if @recipient_type == "ro-colocated" unless @recipient_type.blank?
+    false
   end
 
   def destination_type_valid?
-    unless @destination_type.blank?
-      %w[domesticAddress internationalAddress militaryAddress derived email sms].include?(
-        @destination_type
-      )
-    end
+    return true if %w[domesticAddress internationalAddress militaryAddress derived email sms].include?(@destination_type) unless @destination_type.blank?
+    false
   end
 
   def physical_mail?
-    unless @destination_type.blank?
-      %w[domesticAddress internationalAddress militaryAddress].include?(@destination_type)
-
-    end
+    return true if %w[domesticAddress internationalAddress militaryAddress].include?(@destination_type) unless @destination_type.blank?
+    false
   end
 
   def line_2_addressee?
-    unless @treat_line_2_as_addressee.blank?
-      @treat_line_2_as_addressee == true
-    end
+    return true if @treat_line_2_as_addressee == true
+    false
   end
 
   def line_3_addressee?
-    unless @treat_line_3_as_addressee.blank?
-      @treat_line_3_as_addressee == true
-    end
+    return true if @treat_line_3_as_addressee == true
+    false
   end
 
   def country_name_required?
-    unless @destination_type.blank?
-      @destination_type == "internationalAddress"
-    end
+    return true if @destination_type == "internationalAddress"
+    false
   end
 
   def us_address?
-    unless @destination_type.blank?
-      %w[domesticAddress militaryAddress].include?(@destination_type)
-    end
+    return true if %w[domesticAddress militaryAddress].include?(@destination_type)
+    false
+
   end
 
   def destination_params_parse
