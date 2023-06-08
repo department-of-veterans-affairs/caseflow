@@ -25,10 +25,17 @@ class DistributionTask < Task
       if !any_active_distribution_task_legacy
         return [Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY.to_h]
       end
+
       if any_active_distribution_task_legacy
-        return [Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.to_h]
+        [Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.to_h]
       end
-    elsif special_case_movement_task(user)
+    else
+      non_legacy_appeal(user)
+    end
+  end
+
+  def non_legacy_appeal(user)
+    if special_case_movement_task(user)
       return [Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.to_h]
     elsif SpecialCaseMovementTeam.singleton.user_has_access?(user) && blocked_special_case_movement(user)
       return [Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT.to_h]
