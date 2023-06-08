@@ -160,17 +160,19 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
 
       context "when the recipient_info parameters are incomplete" do
         it "queues the upload(given valid veteran info), returns a descriptive error to the IDT user" do
+          expect(Raven).to receive(:capture_exception)
           post :create, params: invalid_mail_request_params
           success_message = JSON.parse(response.body)["message"]
           validation_error_msgs = JSON.parse(response.body)["error_messages"]
           error = JSON.parse(response.body)["error"]
-
           expect(success_message).to eq "Document successfully queued for upload."
           expect(validation_error_msgs).to eq(
-            {"first_name" => ["can't be blank"],
-            "last_name" => ["can't be blank"]}
+            {
+              "first_name" => ["can't be blank"],
+              "last_name" => ["can't be blank"]
+            }
           )
-          expect(error).to eq("Incomplete mailing informaiton provided. No mail request was created.")
+          expect(error).to eq("Incomplete mailing information provided. No mail request was created.")
           expect(response.status).to eq(200)
         end
       end

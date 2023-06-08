@@ -11,7 +11,7 @@ class MailRequest
   :treat_line_3_as_addressee, :country_name, :vbms_distribution_id, :comm_package_id
 
   with_options presence: true do
-    validates :recipient_type, if: :recipient_type_valid?
+    validates :recipient_type, inclusion: { in: %w[organization person system ro-colocated] }
     validates :first_name, :last_name, if: :person?
     validates :poa_code, :claimant_station_of_jurisdiction, if: :ro_colocated?
     validates :destination_type, if: :destination_type_valid?
@@ -55,7 +55,7 @@ class MailRequest
       distribution = create_a_vbms_distribution
       @vbms_distribution_id = distribution.id
       create_a_vbms_distribution_destination
-    elsif invalid?
+    else
       raise Caseflow::Error::MissingRecipientInfo
     end
   end
@@ -68,11 +68,6 @@ class MailRequest
 
   def create_a_vbms_distribution_destination
     VbmsDistributionDestination.create!(destination_params_parse)
-  end
-
-  def recipient_type_valid?
-   return true if %w[organization person system ro-colocated].include?(@recipient_type)
-   false
   end
 
   def person?
