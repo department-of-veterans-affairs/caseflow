@@ -50,10 +50,10 @@ export const AmaIssue = (props) => {
   return <li key={props.index} {...singleIssueStyling} {...props.customStyle}>
     <div {...issueContentStyling}><strong>Benefit type: </strong>{BENEFIT_TYPES[props.issue.program]}</div>
     <div {...issueContentStyling}><strong>Issue: </strong>{props.issue.description}</div>
-    <div {...issueContentStyling}><strong>Special Issues: </strong>{
+    {(props.mstFeatureToggle || props.pactFeatureToggle) && <div {...issueContentStyling}><strong>Special Issues: </strong>{
       specialIssuesFormatting(props.issue.mst_status, props.issue.pact_status)
     }
-    </div>
+    </div>}
     { props.issue.diagnostic_code &&
       <div {...issueContentStyling}><strong>Diagnostic code: </strong>: {props.issue.diagnostic_code}</div> }
     { props.issue.notes &&
@@ -72,7 +72,9 @@ export default class AmaIssueList extends React.PureComponent {
     const {
       requestIssues,
       children,
-      errorMessages
+      errorMessages,
+      mstFeatureToggle,
+      pactFeatureToggle
     } = this.props;
 
     return <ol {...issueListStyling}>
@@ -90,6 +92,8 @@ export default class AmaIssueList extends React.PureComponent {
             index={i}
             mst_status={issue.mst_status}
             pact_status={issue.pact_status}
+            mstFeatureToggle={mstFeatureToggle}
+            pactFeatureToggle={pactFeatureToggle}
             customStyle={error && issueErrorStyling} >
             {children}
           </AmaIssue>
@@ -111,11 +115,15 @@ AmaIssue.propTypes = {
     mst_status: PropTypes.bool,
     pact_status: PropTypes.bool
   }),
-  children: PropTypes.node
+  children: PropTypes.node,
+  pactFeatureToggle: PropTypes.bool,
+  mstFeatureToggle: PropTypes.bool
 };
 
 AmaIssueList.propTypes = {
   children: PropTypes.node,
   requestIssues: PropTypes.array,
-  errorMessages: PropTypes.object
+  errorMessages: PropTypes.object,
+  pactFeatureToggle: PropTypes.bool,
+  mstFeatureToggle: PropTypes.bool
 };
