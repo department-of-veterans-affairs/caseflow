@@ -4,13 +4,14 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
-
 import COPY from '../../COPY';
+import VHA_VAMCS from '../../constants/VHA_VAMCS';
 
 import { taskById, appealWithDetailSelector } from './selectors';
 
-import { onReceiveAmaTasks, legacyReassignToJudge, setOvertime } from './QueueActions';
+import { onReceiveAmaTasks, legacyReassignToJudge, setOvertime, legacyReassignToAttorney } from './QueueActions';
 
+import RadioField from '../components/RadioField';
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
 import QueueFlowModal from './components/QueueFlowModal';
@@ -52,7 +53,8 @@ class AssignToView extends React.Component {
     this.state = {
       selectedValue: action ? action.value : null,
       instructions: existingInstructions,
-      modalDisableButton: true
+      modalDisableButton: true,
+      assignToVHARegionalOfficeSelection: null
     };
   }
 
@@ -74,15 +76,9 @@ class AssignToView extends React.Component {
 
   setModalOnChangeValue = (stateValue, value) => {
     this.setState({ [stateValue]: value }, function() {
-      // if(this.state.instructions.trim().length > 0){
-      //   this.setState({modalDisableButton: false})
-      // } else {
-      //   this.setState({modalDisableButton: true})
-      // }
-      if ((this.state.selectedValue !== null && this.state.instructions !== '')) {
+      if (this.state.instructions.trim().length > 0) {
         this.setState({ modalDisableButton: false });
-      }
-      if ((this.state.instructions === '' && this.state.selectedValue !== null)) {
+      } else {
         this.setState({ modalDisableButton: true });
       }
     });
@@ -104,7 +100,7 @@ class AssignToView extends React.Component {
             type: taskType,
             external_id: appeal.externalId,
             parent_id: actionData.parent_id || task.taskId,
-            assigned_to_id: this.state.selectedValue,
+            assigned_to_id: this.isVHAAssignToRegional() ? this.getVisn().value : this.state.selectedValue,
             assigned_to_type: isTeamAssign ? 'Organization' : 'User',
             instructions: this.state.instructions
           }
@@ -121,6 +117,10 @@ class AssignToView extends React.Component {
       title: COPY.PULAC_CERULLO_SUCCESS_TITLE,
       detail: sprintf(COPY.PULAC_CERULLO_SUCCESS_DETAIL, appeal.veteranFullName)
     };
+
+    if (taskType == 'AttorneyRewriteTask' && task.isLegacy == true) {
+      return this.reassignTask(false, true);
+    }
 
     if (isReassignAction) {
       return this.reassignTask();
@@ -144,6 +144,10 @@ class AssignToView extends React.Component {
 
   getAssignee = () => {
     let assignee = 'person';
+
+    if (this.isVHAAssignToRegional()) {
+      return this.getVisn().label;
+    }
 
     taskActionData(this.props).options.forEach((opt) => {
       if (opt.value === this.state.selectedValue) {
@@ -184,6 +188,44 @@ class AssignToView extends React.Component {
     });
   };
 
+  isVHAAssignToRegional = () => {
+    const actionData = taskActionData(this.props);
+
+    return actionData.modal_title === COPY.VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE;
+  };
+
+  determineOptions = (actionData) => {
+    if (this.isVHAAssignToRegional()) {
+      const actionDataOptions = actionData.options[this.state.assignToVHARegionalOfficeSelection];
+
+      return this.state.assignToVHARegionalOfficeSelection === 'visn' ?
+        actionDataOptions : this.sortVisns(actionDataOptions);
+    }
+
+    return actionData.options;
+  };
+
+  sortVisns = (options) => {
+    return options.sort((optA, optB) => {
+      if (optA.label < optB.label) {
+        return -1;
+      }
+      if (optA.label > optB.label) {
+        return 1;
+      }
+
+      return 0;
+    });
+  }
+
+  determineDropDownLabel = (actionData) => {
+    if (this.isVHAAssignToRegional()) {
+      return actionData.drop_down_label[this.state.assignToVHARegionalOfficeSelection];
+    }
+
+    return actionData.drop_down_label;
+  };
+
   determineTitle = (props, action, isPulacCerullo, actionData) => {
     if (actionData.modal_title) {
       return actionData.modal_title;
@@ -209,7 +251,42 @@ class AssignToView extends React.Component {
     }
 
     return COPY.ASSIGN_TO_USER_DROPDOWN;
+
   };
+
+  getVisn = () => {
+    const actionData = taskActionData(this.props);
+
+    if (this.state.assignToVHARegionalOfficeSelection === 'visn') {
+      return actionData.options.visn.find((element) => element.value === this.state.selectedValue);
+    }
+
+    const VamcName = actionData.options.vamc.find((element) => element.value === this.state.selectedValue).label;
+    const VisnName = VHA_VAMCS.find((element) => element.name === VamcName).visn;
+
+    const VisnOption = actionData.options.visn.find((element) => element.label.includes(VisnName));
+
+    return VisnOption;
+  }
+
+  assignToVHARegionalOfficeRadioOptions = [
+    { displayText: COPY.VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VAMC,
+      value: 'vamc' },
+    { displayText: COPY.VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VISN,
+      value: 'visn' }
+  ]
+
+  assignToVHARegionalOfficeRadioChanged = (option) => {
+    this.setState({ selectedValue: null, assignToVHARegionalOfficeSelection: option });
+  }
+
+  shouldDropDownShow = () => {
+    if (!this.isVHAAssignToRegional()) {
+      return true;
+    }
+
+    return this.state.assignToVHARegionalOfficeSelection !== null;
+  }
 
   render = () => {
     const { assigneeAlreadySelected, highlightFormItems, task } = this.props;
@@ -225,7 +302,7 @@ class AssignToView extends React.Component {
     const modalProps = {
       title: this.determineTitle(this.props, action, isPulacCerullo, actionData),
       pathAfterSubmit: (actionData && actionData.redirect_after) || '/queue',
-
+      ...(actionData.modal_button_text && { button: actionData.modal_button_text }),
       submit: this.submit,
       validateForm: isPulacCerullo ?
         () => {
@@ -237,7 +314,7 @@ class AssignToView extends React.Component {
     if (task.type === 'JudgeLegacyDecisionReviewTask') {
       modalProps.button = 'Assign';
       modalProps.submitButtonClassNames = ['usa-button', 'usa-button-hover', 'usa-button-warning'];
-      modalProps.submitDisabled = this.state.modalDisableButton
+      modalProps.submitDisabled = this.state.modalDisableButton;
     }
 
     if (this.props.location.pathname.includes('distribute_to_judge_legacy')) {
@@ -250,10 +327,14 @@ class AssignToView extends React.Component {
       modalProps.button = 'Notify';
     }
 
-    if (modalProps.title === COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE) {
-      modalProps.submitButtonClassNames = ['usa-button', 'usa-button-warning'];
-      modalProps.button = 'Return';
+    if ([
+      'PreDocketTask',
+      'VhaDocumentSearchTask',
+      'EducationDocumentSearchTask',
+      'AssessDocumentationTask'
+    ].includes(task.type)) {
       modalProps.submitDisabled = !this.validateForm();
+      modalProps.submitButtonClassNames = ['usa-button'];
     }
 
     return (
@@ -261,22 +342,43 @@ class AssignToView extends React.Component {
         <p>{actionData.modal_body ? actionData.modal_body : ''}</p>
         {!assigneeAlreadySelected && (
           <React.Fragment>
-            <SearchableDropdown
-              name="Assign to selector"
-              searchable
-              label={COPY.JUDGE_LEGACY_DECISION_REVIEW_TITLE}
-              errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
-              placeholder={this.determinePlaceholder(this.props, actionData)}
-              value={this.state.selectedValue}
-              onChange={(option) => this.setModalOnChangeValue('selectedValue', option ? option.value : null)}
-              options={taskActionData(this.props).options}
-            />
+            {this.isVHAAssignToRegional() && (
+              <RadioField
+                name={COPY.VHA_ASSIGN_TO_REGIONAL_OFFICE_RADIO_LABEL}
+                options={this.assignToVHARegionalOfficeRadioOptions}
+                value={this.state.assignToVHARegionalOfficeSelection}
+                onChange={(option) => this.assignToVHARegionalOfficeRadioChanged(option)}
+                vertical
+              />
+            )}
+            {this.shouldDropDownShow() && (
+              <SearchableDropdown
+                name="Assign to selector"
+                searchable
+                hideLabel={actionData.drop_down_label ? null : true}
+                label={this.determineDropDownLabel(actionData)}
+                errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
+                placeholder={this.determinePlaceholder(this.props, actionData)}
+                value={this.state.selectedValue}
+                onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
+                options={this.determineOptions(actionData)}
+              />
+            )}
+            {this.isVHAAssignToRegional() &&
+            this.state.assignToVHARegionalOfficeSelection === 'vamc' &&
+            this.state.selectedValue !== null && (
+              <div className="assign-vamc-visn-display">
+                <u>VISN</u>
+                <div>{ this.getVisn().label }</div>
+              </div>
+            )}
             <br />
           </React.Fragment>
         )}
         {!isPulacCerullo && (
           <TextareaField
-            name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+            name="Task instructions"
+            label={actionData.instructions_label || COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
             errorMessage={highlightFormItems && !actionData.body_optional && !this.state.instructions ?
               COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
             id="taskInstructions"
@@ -308,6 +410,7 @@ AssignToView.propTypes = {
   isTeamAssign: PropTypes.bool,
   onReceiveAmaTasks: PropTypes.func,
   legacyReassignToJudge: PropTypes.func,
+  legacyReassignToAttorney: PropTypes.func,
   requestPatch: PropTypes.func,
   requestSave: PropTypes.func,
   task: PropTypes.shape({
@@ -339,6 +442,7 @@ const mapDispatchToProps = (dispatch) =>
       requestSave,
       onReceiveAmaTasks,
       legacyReassignToJudge,
+      legacyReassignToAttorney,
       setOvertime,
       resetSuccessMessages
     },

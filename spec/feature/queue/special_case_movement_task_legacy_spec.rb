@@ -11,8 +11,9 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
   let(:root_task) { create(:root_task, appeal: appeal) }
   let(:distribution_task) { create(:distribution_task, parent: root_task) }
   let(:hearing_task) { create(:hearing_task, parent: distribution_task) }
-
-  let!(:scm_user) { create(:user, full_name: "Rosalie SpecialCaseMovement Dunkle", css_id: "BVARDUNKLE", station_id: 101) }
+  let!(:scm_user) do
+    create(:user, full_name: "Rosalie SpecialCaseMovement Dunkle", css_id: "BVARDUNKLE", station_id: 101)
+  end
 
   before do
     SpecialCaseMovementTeam.singleton.add_user(scm_user)

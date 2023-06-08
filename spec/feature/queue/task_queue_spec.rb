@@ -1162,7 +1162,7 @@ feature "Task queue", :all_dbs do
       end
 
       step "submit the end timed hold form" do
-        click_button "Submit"
+        click_button COPY::MODAL_END_HOLD_BUTTON
         expect(page).to have_content "Success!"
         expect(schedule_row).to have_content("DAYS WAITING 0", normalize_ws: true)
       end

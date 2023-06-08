@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 
-import { AssignToAttorneyWidgetModal } from './components/AssignToAttorneyWidget';
+import { AssignToAttorneyLegacyWidgetModal } from './components/AssignToAttorneyLegacyWidget';
 
 import COPY from '../../COPY';
 
@@ -16,7 +16,7 @@ import {
   reassignTasksToUser
 } from './QueueActions';
 
-class AssignToAttorneyModalView extends React.PureComponent {
+class AssignToAttorneyLegacyModalView extends React.PureComponent {
   handleAssignment = (
     { tasks, assigneeId, instructions }
   ) => {
@@ -47,17 +47,17 @@ class AssignToAttorneyModalView extends React.PureComponent {
       return null;
     }
 
-    return <AssignToAttorneyWidgetModal
+    return (<AssignToAttorneyLegacyWidgetModal
       isModal
       match={match}
       userId={userId}
       onTaskAssignment={this.handleAssignment}
       previousAssigneeId={previousAssigneeId}
-      selectedTasks={[task]} />;
+      selectedTasks={[task]} />);
   }
 }
 
-AssignToAttorneyModalView.propTypes = {
+AssignToAttorneyLegacyModalView.propTypes = {
   task: PropTypes.shape({
     assignedTo: PropTypes.shape({
       id: PropTypes.number
@@ -83,4 +83,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 export default (connect(
   mapStateToProps,
   mapDispatchToProps
-)(AssignToAttorneyModalView));
+)(AssignToAttorneyLegacyModalView));
