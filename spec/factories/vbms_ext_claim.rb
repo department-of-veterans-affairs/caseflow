@@ -18,9 +18,6 @@ FactoryBot.define do
     version { 22 }
     prevent_audit_trig { 2 }
 
-    trait :linked_epe do
-    end
-
     trait :cleared do
       LEVEL_STATUS_CODE { "CLR" }
     end
