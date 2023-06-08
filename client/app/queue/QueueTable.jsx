@@ -384,17 +384,20 @@ export default class QueueTable extends React.PureComponent {
         // This essentially will still split values on '|' but not on ' | '
         const values = columnAndValues[1].split('=')[1].split(/(?<!\s)\|(?!\s)/);
 
-        if (column && column.filterOptions) {
-          const validValues = column.filterOptions.map((filterOption) => filterOption.value);
+        if (column) {
+          if (column.filterOptions) {
+            // If it has filterOptions it is a backend queue, so verify that the filter value is valid
+            const validValues = column.filterOptions.map((filterOption) => filterOption.value);
 
-          filters[column.columnName] = values.filter((value) => validValues.includes(value));
-        } else if (column) {
-          // If this is a client side queue, it won't have filterOptions since the options are built dynamically
-          // Potentially need to decode the value since it could be set between client side and server side queues
-          // Have to double decode because the filter options are often double encoded
-          const decodedValues = values.map((value) => decodeURI(decodeURI(value)));
+            filters[column.columnName] = values.filter((value) => validValues.includes(value));
+          } else {
+            // If this is a client side queue, it won't have filterOptions since the options are built dynamically
+            // Potentially need to decode the value since it could be set between client side and server side queues
+            // Have to double decode because the filter options are often double encoded
+            const decodedValues = values.map((value) => decodeURI(decodeURI(value)));
 
-          filters[column.columnName] = decodedValues;
+            filters[column.columnName] = decodedValues;
+          }
 
         }
       });
