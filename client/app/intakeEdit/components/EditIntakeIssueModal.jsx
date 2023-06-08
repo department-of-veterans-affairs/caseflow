@@ -73,10 +73,10 @@ export class EditIntakeIssueModal extends React.Component {
             name: 'Save',
             onClick: () => {
 
-              if (mstChecked && mstJustification === '') {
+              if (!currentIssue?.mstChecked && mstChecked &&  mstJustification === '') {
                 return;
               }
-              if (pactChecked && pactJustification === '') {
+              if (!currentIssue?.pactChecked && pactChecked && pactJustification === '') {
                 return;
               }
 
