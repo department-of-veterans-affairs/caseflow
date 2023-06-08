@@ -9,6 +9,7 @@ class HearingRequestMailTask < MailTask
     end
 
     def default_assignee(_task)
+      # All Hearing X Request Mail tasks will be assigned to the Hearing Admin org initially
       HearingAdmin.singleton
     end
   end
