@@ -77,6 +77,7 @@ class RootTask < Task
   end
 
   def available_actions(user)
+    # TODO: Our new Mail Tasks need to be able to be created on legacy appeals as well
     return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h] if RootTask.user_can_create_mail_task?(user) && ama?
 
     []
