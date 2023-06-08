@@ -41,37 +41,39 @@ export const getHeadersObject = (options = {}) => {
   return headers;
 };
 
+// eslint-disable-next-line no-unused-vars
 const errorHandling = (url, error, method, options = {}) => {
   const id = uuid.v4();
   const message = `UUID: ${id}.\nProblem with ${method} ${url}.\n${error}`;
 
   console.error(new Error(message));
 
-  if (options?.logErrorMetrics) {
-    const data = {
-      metric: {
-        uuid: id,
-        name: `caseflow.client.rest.${method.toLowerCase()}.error`,
-        message,
-        type: 'error',
-        product: 'caseflow',
-        metric_attributes: JSON.stringify({
-          method,
-          url,
-          error
-        }),
-        sent_to: 'javascript_console',
-      }
-    };
+  // Need to renable this check before going to master
+  // if (options?.logErrorMetrics) {
+  const data = {
+    metric: {
+      uuid: id,
+      name: `caseflow.client.rest.${method.toLowerCase()}.error`,
+      message,
+      type: 'error',
+      product: 'caseflow',
+      metric_attributes: JSON.stringify({
+        method,
+        url,
+        error
+      }),
+      sent_to: 'javascript_console',
+    }
+  };
 
-    request.
-      post('/metrics/v2/logs').
-      set(getHeadersObject()).
-      send(data).
-      use(nocache).
-      on('error', (err) => console.error(`DANGER DANGER DANGER\nUUID: ${uuid.v4()}.\n: ${err}`)).
-      end();
-  }
+  request.
+    post('/metrics/v2/logs').
+    set(getHeadersObject()).
+    send(data).
+    use(nocache).
+    on('error', (err) => console.error(`DANGER DANGER DANGER\nUUID: ${uuid.v4()}.\n: ${err}`)).
+    end();
+  // }
 };
 
 const httpMethods = {

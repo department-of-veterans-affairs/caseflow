@@ -48,7 +48,8 @@ export class PdfFile extends React.PureComponent {
       cache: true,
       withCredentials: true,
       timeout: true,
-      responseType: 'arraybuffer'
+      responseType: 'arraybuffer',
+      logErrorMetrics: true
     };
 
     window.addEventListener('keydown', this.keyListener);
