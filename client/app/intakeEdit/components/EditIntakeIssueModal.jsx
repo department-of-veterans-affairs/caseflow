@@ -56,6 +56,7 @@ export class EditIntakeIssueModal extends React.Component {
       currentIssueText = currentIssue.text || issue.description,
       currentIssueBenefitType = BENEFIT_TYPES[currentIssue.benefitType] || BENEFIT_TYPES[issue.benefitType],
       currentIssueDecisionDate = formatDateStr(currentIssue.decisionDate),
+      justificationReason,
       mstIdentification,
       pactIdentification
     } = this.props;
@@ -72,11 +73,10 @@ export class EditIntakeIssueModal extends React.Component {
           { classNames: ['usa-button-blue', 'save-issue'],
             name: 'Save',
             onClick: () => {
-
-              if (mstChecked && mstJustification === '') {
+              if (mstChecked && mstJustification === '' && justificationReason) {
                 return;
               }
-              if (pactChecked && pactJustification === '') {
+              if (pactChecked && pactJustification === '' && justificationReason) {
                 return;
               }
 
@@ -129,7 +129,7 @@ export class EditIntakeIssueModal extends React.Component {
             }
           </li>
         </ul>
-        {(mstChecked) && (
+        {(justificationReason && (mstChecked)) && (
           <div>
             <label style={{ paddingLeft: '2em' }}>
               <TextField
@@ -152,7 +152,7 @@ export class EditIntakeIssueModal extends React.Component {
             </label>
           </li>
         </ul>
-        {(pactChecked) && (
+        {(justificationReason && (pactChecked)) && (
           <div>
             <label style={{ paddingLeft: '2em' }}>
               <TextField
@@ -192,6 +192,7 @@ EditIntakeIssueModal.propTypes = {
   issueIndex: PropTypes.number,
   mstIdentification: PropTypes.bool,
   pactIdentification: PropTypes.bool,
+  justificationReason: PropTypes.bool,
   mstChecked: PropTypes.bool,
   pactChecked: PropTypes.bool,
   mstJustification: PropTypes.object,
