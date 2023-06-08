@@ -237,7 +237,7 @@ class AssignToView extends React.Component {
     if (task.type === 'JudgeLegacyDecisionReviewTask') {
       modalProps.button = 'Assign';
       modalProps.submitButtonClassNames = ['usa-button', 'usa-button-hover', 'usa-button-warning'];
-      modalProps.submitDisabled = this.state.modalDisableButton
+      modalProps.submitDisabled = this.state.modalDisableButton;
     }
 
     if (this.props.location.pathname.includes('distribute_to_judge_legacy')) {

@@ -56,7 +56,6 @@ import CreateChangeHearingDispositionTaskModal from './CreateChangeHearingDispos
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
-import ReAssignToJudgeLegacy from './ReAssignToJudgeLegacy';
 import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
 import AddDvcTeamModal from './AddDvcTeamModal';
