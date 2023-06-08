@@ -32,7 +32,11 @@ class TasksForAppeal
     tasks.assigned.where(assigned_to: user).each(&:in_progress!)
 
     if appeal.is_a?(LegacyAppeal)
-      return (legacy_appeal_tasks + tasks).uniq unless hide_legacy_tasks?
+      if hide_legacy_tasks?
+        return tasks
+      else
+        return (legacy_appeal_tasks + tasks).uniq
+      end
     end
     tasks
   end
@@ -90,8 +94,8 @@ class TasksForAppeal
     legacy_tasks = legacy_appeal_tasks
     if active_tasks && legacy_tasks
       true
-    else false
     end
+    false
   end
 
   def task_includes
