@@ -291,6 +291,11 @@ class EndProductEstablishment < CaseflowRecord
     @associated_rating ||= fetch_associated_rating
   end
 
+  # Purpose: Check if End Product Establishment is enqueued in the Priority End Product Sync Queue.
+  #
+  # Params: NONE
+  #
+  # Response: True if End Product Establishment is queued to sync.  False if not.
   def priority_queued?
     priority_end_product_sync_queue ? true : false
   end
