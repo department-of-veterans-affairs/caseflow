@@ -10,7 +10,8 @@ class CaseflowStuckRecord < CaseflowRecord
   # has_one vs has_many might change depending on the model
 
   # This method will report the stuck record to the appropriate places upon insertion e.g. slack channels
-  # Params: Could be a PriorityEndProductSyncQueue record or any other table's record that has a 'has_one' or 'has_many' association.
+  # Params: Could be a PriorityEndProductSyncQueue record or a record from a different table
+  # that has a has_one or has_many association with this table
   def report_stuck_record(record)
     # Method skeleton
   end
