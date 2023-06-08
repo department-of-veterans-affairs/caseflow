@@ -11,7 +11,7 @@ class ContestableIssue
                 :decision_issue, :rating_issue_profile_date, :source_request_issues,
                 :rating_issue_diagnostic_code, :source_decision_review,
                 :rating_decision_reference_id, :rating_issue_subject_text,
-                :rating_issue_percent_number
+                :rating_issue_percent_number, :special_issues
 
   class << self
     def from_rating_issue(rating_issue, contesting_decision_review)
@@ -31,7 +31,8 @@ class ContestableIssue
         # TODO: These should never be set unless there is a decision issue. We should refactor this to
         # account for that.
         source_request_issues: rating_issue.source_request_issues,
-        source_decision_review: rating_issue.source_request_issues.first&.decision_review
+        source_decision_review: rating_issue.source_request_issues.first&.decision_review,
+        special_issues: rating_issue.special_issues
       )
     end
 
@@ -120,6 +121,9 @@ class ContestableIssue
     source_request_issues.try(:each) do |issue|
       return true if issue.mst_contention_status? || issue.mst_status?
     end
+    special_issues&.each do |special_issue|
+      return true if special_issue[:mst_available]
+    end
     false
   end
 
@@ -128,6 +132,10 @@ class ContestableIssue
     source_request_issues.try(:each) do |issue|
       return true if issue.pact_contention_status? || issue.pact_status?
     end
+    special_issues&.each do |special_issue|
+      return true if special_issue[:pact_available]
+    end
+
     false
   end
 
