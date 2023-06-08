@@ -33,9 +33,15 @@ class SpecialCaseMovementTask < Task
   end
 
   def verify_appeal_distributable
-    if !appeal.ready_for_distribution?
+    if appeal.is_a?(LegacyAppeal)
+      legacy_ready_for_distribution?
+    elsif !appeal.ready_for_distribution?
       fail(Caseflow::Error::IneligibleForSpecialCaseMovement, appeal_id: appeal.id)
     end
+  end
+
+  def legacy_ready_for_distribution?
+    appeal.tasks.active.of_type(:DistributionTask).any?
   end
 
   def verify_user_organization

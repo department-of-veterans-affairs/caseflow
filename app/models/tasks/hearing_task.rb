@@ -46,9 +46,18 @@ class HearingTask < Task
     # super call must happen after AMA check to hold distribution,
     # but before the Legacy check to prevent premature location update.
     super
+    if appeal.is_a?(LegacyAppeal)
 
-    if appeal.tasks.open.where(type: HearingTask.name).empty? && appeal.is_a?(LegacyAppeal)
-      update_legacy_appeal_location
+      if FeatureToggle.enable!(:vlj_legacy_appeal) &&
+        appeal.tasks.open.where(type: HearingTask.name).empty? &&
+        !appeal.tasks.open.where(type: JudgeAssignTask.name).empty? &&
+          current_judge_id = appeal.tasks.find_by(type: "JudgeAssignTask").assigned_to_id
+          current_user = User.find(current_judge_id).css_id
+          update_legacy_appeal_location_scm (current_user)
+
+      elsif  appeal.tasks.open.where(type: HearingTask.name).empty?
+        update_legacy_appeal_location
+      end
     end
   end
 
@@ -111,6 +120,10 @@ class HearingTask < Task
                end
 
     AppealRepository.update_location!(appeal, location)
+  end
+
+  def update_legacy_appeal_location_scm (current_judge)
+    AppealRepository.update_location!(appeal, current_judge)
   end
 
   def create_evidence_or_ihp_task
