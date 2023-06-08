@@ -22,12 +22,12 @@ module WarRoom
       end
 
       ActiveRecord::Base.transaction do
-        record_count = retrieve_problem_reviews.count
+        starting_record_count = retrieve_problem_reviews.count
         @logs.push("#{Time.zone.now} DuplicateEP::Log Job Started.")
         @logs.push("#{Time.zone.now} DuplicateEP::Log\n"\
-          " Records with errors: #{record_count}."\
-        )
-        resolve_duplicate_end_products(retrieve_problem_reviews)
+          " Records with errors: #{starting_record_count}.")
+
+        resolve_duplicate_end_products(retrieve_problem_reviews, starting_record_count)
       end
     end
 
@@ -65,10 +65,10 @@ module WarRoom
                  SupplementalClaim.where(id: review_id)
                end
 
-      resolve_duplicate_end_products(review)
+      resolve_duplicate_end_products(review, review.count)
     end
 
-    def resolve_duplicate_end_products(reviews)
+    def resolve_duplicate_end_products(reviews, starting_record_count)
       reviews.each do |review|
         vet = review.veteran
         verb = "start"
@@ -87,7 +87,8 @@ module WarRoom
           taken = epmf.send(:taken_modifiers).compact
 
           @logs.push("#{Time.zone.now} DuplicateEP::Log"\
-            " Veteran participant ID: #{vet.participant_id}.  Review: #{review.class.name}.  EPE ID: #{single_end_product_establishment.id}."\
+            " Veteran participant ID: #{vet.participant_id}."\
+            " Review: #{review.class.name}.  EPE ID: #{single_end_product_establishment.id}."\
             " EP status: #{single_end_product_establishment.status_type_code}."\
             " Status: Starting retry.")
 
@@ -98,17 +99,25 @@ module WarRoom
           single_end_product_establishment.establish!
 
           @logs.push("#{Time.zone.now} DuplicateEP::Log"\
-            " Veteran participant ID: #{vet.participant_id}.  Review: #{review.class.name}.  EPE ID: #{single_end_product_establishment.id}."\
+            " Veteran participant ID: #{vet.participant_id}.  Review: #{review.class.name}."\
+            " EPE ID: #{single_end_product_establishment.id}."\
             " EP status: #{single_end_product_establishment.status_type_code}."\
             " Status: Complete.")
         end
 
         call_decision_review_process_job(review, vet)
       end
+
+      final_count = retrieve_problem_reviews.count
       @logs.push("#{Time.zone.now} DuplicateEP::Log"\
-        " Records with errors: #{retrieve_problem_reviews.count}."\
-      )
+        " Resolved records: #{resolved_record_count(starting_record_count, final_count)}.")
+      @logs.push("#{Time.zone.now} DuplicateEP::Log"\
+        " Records with errors: #{retrieve_problem_reviews.count}.")
       @logs.push("#{Time.zone.now} Job completed.")
+    end
+
+    def resolved_record_count(starting_record_count, final_count)
+      starting_record_count - final_count
     end
 
     def active_duplicates(end_products, end_product_establishment)
@@ -135,7 +144,8 @@ module WarRoom
       begin
         DecisionReviewProcessJob.new.perform(review)
       rescue Caseflow::Error::DuplicateEp => error
-        @logs.push(" #{Time.zone.now} | Veteran participant ID: #{vet.participant_id} | Review: #{review.class.name} | Review ID: #{review.id} | status: Failed | Error: #{error}")
+        @logs.push(" #{Time.zone.now} | Veteran participant ID: #{vet.participant_id}"\
+          " | Review: #{review.class.name} | Review ID: #{review.id} | status: Failed | Error: #{error}")
       else
         create_log
       end
