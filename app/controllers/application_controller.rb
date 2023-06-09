@@ -109,6 +109,7 @@ class ApplicationController < ApplicationBaseController
       title: "Queue",
       link: "/queue"
     }]
+
     if current_user.hearings_user?
       urls << {
         title: "Hearings",
@@ -125,7 +126,17 @@ class ApplicationController < ApplicationBaseController
 
   def manage_urls_for_vha(urls)
     urls << case_search_url
+    urls << decision_reviews_vha_url
     urls << intake_application_url if current_user.intake_user?
+  end
+
+  def decision_reviews_vha_url
+    {
+      title: "Decision Review Queue",
+      link: "/decision_reviews/vha",
+      prefix: "VHA",
+      sort_order: 2
+    }
   end
 
   def intake_application_url
