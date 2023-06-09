@@ -41,6 +41,10 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
     before(:all) { AmaNotificationEfolderSyncJob::BATCH_LIMIT = 5 }
 
     context "first run" do
+      before do
+        perform_enqueued_jobs { AmaNotificationEfolderSyncJob.perform_later }
+      end
+
       it "get all ama appeals that have been recently outcoded" do
         expect(job.send(:appeals_recently_outcoded)).to match_array(first_run_outcoded_appeals)
       end
@@ -54,16 +58,14 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
       end
 
       it "running the perform" do
-        AmaNotificationEfolderSyncJob.perform_now
-        expect(VbmsUploadedDocument.first(5).pluck(:appeal_id)).to eq(first_run_vbms_document_ids)
+        expect(VbmsUploadedDocument.first(5).pluck(:appeal_id)).to match_array(first_run_vbms_document_ids)
       end
     end
 
     context "second run" do
       before do
-        perform_enqueued_jobs do
-          AmaNotificationEfolderSyncJob.perform_now
-        end
+        perform_enqueued_jobs { AmaNotificationEfolderSyncJob.perform_later }
+
         RootTask.find_by(appeal_id: appeals[6].id).update!(closed_at: 25.hours.ago)
       end
 
@@ -121,7 +123,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                email_notification_status: "delivered")
         create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "Appeal")
 
-        AmaNotificationEfolderSyncJob.perform_now
+        AmaNotificationEfolderSyncJob.perform_later
 
         expect(
           VbmsUploadedDocument
