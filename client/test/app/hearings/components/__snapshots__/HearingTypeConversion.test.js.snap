@@ -216,6 +216,7 @@ exports[`HearingTypeConversion Matches snapshot with default props 1`] = `
       >
         <section
           className="cf-app-segment cf-app-segment--alt"
+
         >
           <h1
             className="cf-margin-bottom-0"

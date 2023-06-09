@@ -5,6 +5,7 @@ exports[`EditCavcRemandForm adding new all feature toggles enabled renders corre
   <form>
     <section
       class="cf-app-segment cf-app-segment--alt"
+
     >
       <h1>
         Add a Court remand
@@ -38,6 +39,7 @@ exports[`EditCavcRemandForm adding new all feature toggles enabled renders corre
           <strong>
             <span>
               Was the appellant represented by an attorney?
+
             </span>
           </strong>
         </legend>
@@ -186,6 +188,7 @@ exports[`EditCavcRemandForm adding new all feature toggles enabled renders corre
           <strong>
             <span>
               How are you proceeding?
+
             </span>
           </strong>
         </legend>
@@ -242,6 +245,7 @@ exports[`EditCavcRemandForm adding new all feature toggles enabled renders corre
           </div>
         </div>
       </fieldset>
+
       <div
         class="cf-form-textinput   "
       >
@@ -401,6 +405,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
   <form>
     <section
       class="cf-app-segment cf-app-segment--alt"
+
     >
       <h1>
         Add a Court remand
@@ -434,6 +439,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           <strong>
             <span>
               Was the appellant represented by an attorney?
+
             </span>
           </strong>
         </legend>
@@ -582,6 +588,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           <strong>
             <span>
               How are you proceeding?
+
             </span>
           </strong>
         </legend>
@@ -648,6 +655,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           <strong>
             <span>
               What type of remand is this?
+
             </span>
           </strong>
         </legend>
@@ -751,6 +759,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
             >
               Same as Court's decision date
             </span>
+
           </label>
         </div>
       </div>
@@ -876,6 +885,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
   <form>
     <section
       class="cf-app-segment cf-app-segment--alt"
+
     >
       <h1>
         Add a Court remand
@@ -909,6 +919,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           <strong>
             <span>
               Was the appellant represented by an attorney?
+
             </span>
           </strong>
         </legend>
@@ -1057,6 +1068,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           <strong>
             <span>
               How are you proceeding?
+
             </span>
           </strong>
         </legend>
@@ -1123,6 +1135,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           <strong>
             <span>
               What type of remand is this?
+
             </span>
           </strong>
         </legend>
@@ -1226,6 +1239,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
             >
               Same as Court's decision date
             </span>
+
           </label>
         </div>
       </div>
@@ -1351,6 +1365,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
   <form>
     <section
       class="cf-app-segment cf-app-segment--alt"
+
     >
       <h1>
         Add a Court remand
@@ -1384,6 +1399,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           <strong>
             <span>
               Was the appellant represented by an attorney?
+
             </span>
           </strong>
         </legend>
@@ -1532,6 +1548,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           <strong>
             <span>
               How are you proceeding?
+
             </span>
           </strong>
         </legend>
@@ -1598,6 +1615,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           <strong>
             <span>
               What type of remand is this?
+
             </span>
           </strong>
         </legend>

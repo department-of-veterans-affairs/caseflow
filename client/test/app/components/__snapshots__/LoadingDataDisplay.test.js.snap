@@ -4,11 +4,13 @@ exports[`LoadingDataDisplay displays loading state initally 1`] = `
 <div>
   <section
     class="cf-app-segment cf-app-segment--alt"
+
   >
     <div
       data-css-1ogvp9u=""
     >
       <div>
+
         <div
           class="cf-loading-button-symbol cf-small-loader-symbol"
         >

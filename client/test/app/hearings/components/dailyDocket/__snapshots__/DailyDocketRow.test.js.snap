@@ -4,11 +4,13 @@ exports[`DailyDocketRow renders banner correctly for conference link error 1`] =
 <div>
   <section
     class="cf-app-segment cf-app-segment--alt"
+
   >
     <div
       data-css-1ogvp9u=""
     >
       <div>
+
         <div
           class="cf-loading-button-symbol cf-small-loader-symbol"
         >
@@ -82,6 +84,7 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
                     Accessibility hack
                   </span>
                 </span>
+
               </label>
             </div>
           </div>
@@ -129,6 +132,7 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
             role="tooltip"
           >
             <style>
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -202,11 +206,13 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
+
             </style>
             Hearing Request
           </div>
         </span>
         220428-968
+
         <br />
         <br />
         <br />
@@ -376,6 +382,7 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
                 >
                   Yes, Waive 90 Day Hold
                 </span>
+
               </label>
             </div>
           </div>
@@ -404,6 +411,7 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
                 >
                   Transcript Requested
                 </span>
+
               </label>
             </div>
           </div>
@@ -710,6 +718,7 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
             role="tooltip"
           >
             <style>
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -783,11 +792,13 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
+
             </style>
             Hearing Request
           </div>
         </span>
         220428-968
+
         <br />
         <br />
         <br />
@@ -957,6 +968,7 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
                 >
                   Transcript Requested
                 </span>
+
               </label>
             </div>
           </div>
@@ -1153,7 +1165,9 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
             data-css-1rsr754=""
           >
             Fri 4/29/2022
+
             <br />
+
             <br />
           </div>
         </div>
@@ -1169,6 +1183,7 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
               <strong>
                 <span>
                   Hearing Time
+
                 </span>
               </strong>
             </legend>
@@ -1286,6 +1301,7 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
             role="tooltip"
           >
             <style>
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -1359,11 +1375,13 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
+
             </style>
             Hearing Request
           </div>
         </span>
         220428-968
+
         <br />
         <br />
         <br />

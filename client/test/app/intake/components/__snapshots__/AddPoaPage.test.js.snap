@@ -70,6 +70,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
   </div>
   <section
     class="cf-app-segment cf-app-segment--alt"
+
   >
     <div>
       <h1>
@@ -227,6 +228,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             <strong>
               <span>
                 Is the representative an organization or individual?
+
               </span>
             </strong>
           </legend>
@@ -779,6 +781,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
   </div>
   <section
     class="cf-app-segment cf-app-segment--alt"
+
   >
     <div>
       <h1>
@@ -936,6 +939,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             <strong>
               <span>
                 Is the representative an organization or individual?
+
               </span>
             </strong>
           </legend>

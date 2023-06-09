@@ -512,6 +512,7 @@ exports[`HearingTypeConversionForm Displays "the appropriate regional office" wh
   >
     <section
       className="cf-app-segment cf-app-segment--alt"
+
     >
       <h1
         className="cf-margin-bottom-0"
@@ -911,6 +912,7 @@ exports[`HearingTypeConversionForm Does not show a divider on top of Appellant S
   >
     <section
       className="cf-app-segment cf-app-segment--alt"
+
     >
       <h1
         className="cf-margin-bottom-0"
@@ -1310,6 +1312,7 @@ exports[`HearingTypeConversionForm Matches snapshot with default props 1`] = `
   >
     <section
       className="cf-app-segment cf-app-segment--alt"
+
     >
       <h1
         className="cf-margin-bottom-0"
