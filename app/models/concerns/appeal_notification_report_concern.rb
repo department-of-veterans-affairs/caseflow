@@ -29,6 +29,8 @@ module AppealNotificationReportConcern
 
   # Purpose: Generate the PDF and then prepares the document for uploading to S3 or VBMS
   # Returns: nil
+  # Replace the upload_notification_report! method call with transmit_document!
+  # and remove the timestamp from the naming convention when enabling versioning within efolder
   def upload_notification_report!
     upload_document
 
