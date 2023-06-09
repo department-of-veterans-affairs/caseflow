@@ -84,7 +84,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
       it "clears the problem_reviews list" do
         allow(script).to receive(:active_duplicates).and_return(true)
         allow(script).to receive(:upload_logs_to_s3).with(anything).and_return(true)
-        script.resolve_duplicate_end_products(problem_reviews)
+        script.resolve_duplicate_end_products(problem_reviews, problem_reviews.count)
         expect(script.retrieve_problem_reviews.count).to eq 0
       end
     end
