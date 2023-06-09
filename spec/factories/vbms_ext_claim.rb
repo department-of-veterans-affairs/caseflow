@@ -3,11 +3,11 @@
 FactoryBot.define do
   factory :vbms_ext_claim do
     # prevents vbms_ext_claim to have a duplicate key
-    sequence(:claim_id) do |n|
+    sequence(:claim_id) do
       if VbmsExtClaim.last
-        (VbmsExtClaim.last.claim_id + n).to_s
+        (VbmsExtClaim.last.claim_id + 1).to_s
       else
-        Random.rand(n..200_000_00).to_s
+        (10_000 + 1).to_s
       end
     end
 
