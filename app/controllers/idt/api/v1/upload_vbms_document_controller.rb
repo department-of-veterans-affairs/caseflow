@@ -74,12 +74,11 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
   def create_mail_requests_and_track_errors
     requests = recipient_info.map.with_index do |recipient, idx|
-      mail_request = MailRequest.new(recipient)
-      if mail_request.invalid?
-        recipient_errors["distribution #{idx + 1}"] = mail_request.errors.full_messages.join(", ")
+      MailRequest.new(recipient).tap do |request|
+        if request.invalid?
+          recipient_errors["distribution #{idx + 1}"] = request.errors.full_messages.join(", ")
+        end
       end
-
-      mail_request
     end
     throw_error_if_recipient_info_invalid
     requests
