@@ -42,7 +42,7 @@ export const TimeSlotDetail = ({
           {showType && docketNumber}{' '}
           <Dot spacing={itemSpacing} />{' '}
           <div
-            className ="schedule-veterans-bagde-designation-1"
+            className ="schedule-veterans-badge-designation-1"
             style={{ display: 'inline-block', justifyContent: 'left', marginLeft: '-1rem' }}>
             <MstBadge appeal={hearing} />
           </div>

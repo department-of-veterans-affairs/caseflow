@@ -22,6 +22,8 @@ import ApiUtil from '../../../util/ApiUtil';
 import LinkToAppeal from './LinkToAppeal';
 import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG';
 import QueueTable from '../../../queue/QueueTable';
+import MstBadge from '../../../components/badges/MstBadge/MstBadge'
+import PactBadge from '../../../components/badges/PactBadge/PactBadge'
 
 const TASKS_ENDPOINT = '/hearings/schedule_hearing_tasks';
 const COLUMNS_ENDPOINT = '/hearings/schedule_hearing_tasks_columns';
@@ -106,6 +108,22 @@ export default class AssignHearingsTable extends React.PureComponent {
         // Since this column isn't tied to anything in the input row, _value will
         // always be undefined.
         valueFunction: (_value, rowId) => <span>{rowId + this.state.rowOffset}.</span>
+      },
+      {
+        header: '',
+        align: 'left',
+        cellClass: 'badge-designation',
+        valueFunction: (row) => (
+          <span
+            style={{ display: 'flex' }}>
+            <div
+              className ="badge-designation"
+              style={{ flexDirection: 'column', marginLeft: '-1rem' }}>
+              <MstBadge appeal={row.appeal} />
+              <PactBadge appeal={row.appeal} />
+            </div>
+          </span>
+        )
       },
       {
         name: 'caseDetails',
