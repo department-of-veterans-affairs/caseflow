@@ -61,10 +61,8 @@ class EstablishmentTask < Task
       created_by_css_id: RequestStore[:current_user].css_id,
       original_mst_status: issue.mst_status,
       original_pact_status: issue.pact_status,
-      updated_mst_status: issue.mst_status,
-      updated_pact_status: issue.pact_status,
-      mst_from_vbms: issue&.vbms_mst_status.nil? ? false : issue.vbms_mst_status,
-      pact_from_vbms: issue&.vbms_pact_status.nil? ? false : issue.vbms_pact_status,
+      mst_from_vbms: issue&.vbms_mst_status,
+      pact_from_vbms: issue&.vbms_pact_status,
       change_category: "Established Issue"
     )
   end
