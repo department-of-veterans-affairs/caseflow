@@ -21,7 +21,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                event_date: today,
                event_type: "Appeal docketed",
                notification_type: "Email",
-               notified_at: today,
+               notified_at: Time.zone.now - (10 - index).minutes,
                email_notification_status: "delivered")
       end
     end
@@ -55,7 +55,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
 
       it "running the perform" do
         AmaNotificationEfolderSyncJob.perform_now
-        expect(VbmsUploadedDocument.first(5).pluck(:appeal_id)).to match_array(first_run_vbms_document_ids)
+        expect(VbmsUploadedDocument.first(5).pluck(:appeal_id)).to eq(first_run_vbms_document_ids)
       end
     end
 
@@ -78,7 +78,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                event_date: today,
                event_type: "Appeal docketed",
                notification_type: "Email",
-               notified_at: Time.zone.now,
+               notified_at: 3.minutes.ago,
                email_notification_status: "delivered")
         create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "Appeal")
         expect(job.send(:appeals_never_synced)).to match_array(second_run_never_synced_appeals)
@@ -91,7 +91,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                event_date: today,
                event_type: "Appeal docketed",
                notification_type: "Email",
-               notified_at: Time.zone.now,
+               notified_at: 2.minutes.ago,
                email_notification_status: "delivered")
         create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "Appeal")
         expect(job.send(:ready_for_resync)).to eq([appeals[4]])
@@ -104,7 +104,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                event_date: today,
                event_type: "Appeal docketed",
                notification_type: "Email",
-               notified_at: Time.zone.now,
+               notified_at: 1.minute.ago,
                email_notification_status: "Failure Due to Deceased")
         create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "Appeal")
         expect(job.send(:ready_for_resync)).to eq([])
@@ -124,7 +124,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
         AmaNotificationEfolderSyncJob.perform_now
 
         expect(
-          VbmsUploadedDocument.where(document_type: "BVA Case Notifications").pluck(:appeal_id)
+          VbmsUploadedDocument.where(document_type: "BVA Case Notifications").where.not("id <= 5").order(:id).pluck(:appeal_id)
         ).to eq(second_run_vbms_document_ids)
       end
     end
