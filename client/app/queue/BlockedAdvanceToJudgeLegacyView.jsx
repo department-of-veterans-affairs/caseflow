@@ -124,7 +124,6 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
             assigned_to_type: 'User',
             instructions: [
               `${this.state.selectedReason.trim()}: ${this.state.cancellationInstructions.trim()}`,
-              `${task.taskId}`,
               `${this.state.instructions}`
             ]
           }
