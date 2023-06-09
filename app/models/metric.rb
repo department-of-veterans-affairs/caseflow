@@ -32,17 +32,17 @@ class Metric < CaseflowRecord
   validates :app_name, inclusion: { in: APP_NAMES.values }
   validate :sent_to_in_log_systems
 
-  def self.create_metric(caller, params, user)
-    create(default_object(caller, params, user))
+  def self.create_metric(klass, params, user)
+    create(default_object(klass, params, user))
   end
 
-  def self.create_metric_from_rest(caller, params, user)
+  def self.create_metric_from_rest(klass, params, user)
     params[:metric_attributes] = JSON.parse(params[:metric_attributes]) if params[:metric_attributes]
     params[:additional_info] = JSON.parse(params[:additional_info]) if params[:additional_info]
     params[:sent_to_info] = JSON.parse(params[:sent_to_info]) if params[:sent_to_info]
     params[:relevant_tables_info] = JSON.parse(params[:relevant_tables_info]) if params[:relevant_tables_info]
 
-    create(default_object(caller, params, user))
+    create(default_object(klass, params, user))
   end
 
   def sent_to_in_log_systems
@@ -74,12 +74,12 @@ class Metric < CaseflowRecord
   # - start
   # - end
   # - duration
-  def self.default_object(caller, params, user)
+  def self.default_object(klass, params, user)
     {
       uuid: params[:uuid],
       user: user,
       metric_name: params[:name] || METRIC_TYPES[:log],
-      metric_class: caller&.name || self.name,
+      metric_class: klass&.class.name || self.class.name,
       metric_group: params[:group] || METRIC_GROUPS[:service],
       metric_message: params[:message] || METRIC_TYPES[:log],
       metric_type: params[:type] || METRIC_TYPES[:log],

@@ -71,7 +71,7 @@ const errorHandling = (url, error, method, options = {}) => {
     set(getHeadersObject()).
     send(data).
     use(nocache).
-    on('error', (err) => console.error(`DANGER DANGER DANGER\nUUID: ${uuid.v4()}.\n: ${err}`)).
+    on('error', (err) => console.error(`Metric not recorded\nUUID: ${uuid.v4()}.\n: ${err}`)).
     end();
   // }
 };
