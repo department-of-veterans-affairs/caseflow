@@ -19,8 +19,6 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
       find_file_number_by_veteran_identifier
     end
 
-    byebug
-
     result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_requests, copies).call
     if result.success?
       success_message = { message: "Document successfully queued for upload." }
@@ -63,7 +61,6 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
     throw_error_if_copies_out_of_range
     mail_requests.map do |request|
-      throw_error_if_recipient_info_invalid
       request.call
       distribution_ids << request.vbms_distribution_id
     end
@@ -76,7 +73,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   end
 
   def create_mail_requests_and_track_errors
-    recipient_info.map.with_index do |recipient, idx|
+    requests = recipient_info.map.with_index do |recipient, idx|
       mail_request = MailRequest.new(recipient)
       if mail_request.invalid?
         recipient_errors["distribution #{idx + 1}"] = mail_request.errors.full_messages.join(", ")
@@ -84,6 +81,8 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
       mail_request
     end
+    throw_error_if_recipient_info_invalid
+    requests
   end
 
   def throw_error_if_copies_out_of_range
