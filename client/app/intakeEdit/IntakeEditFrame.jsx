@@ -274,6 +274,7 @@ IntakeEditFrame.propTypes = {
     requestIssues: PropTypes.array
   }),
   dropdownUrls: PropTypes.array,
+  applicationUrls: PropTypes.array,
   userDisplayName: PropTypes.string,
   appeal: PropTypes.object,
   claimId: PropTypes.string,
