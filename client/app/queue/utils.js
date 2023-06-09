@@ -1009,3 +1009,47 @@ export const statusLabel = (appeal) => {
       '';
   }
 };
+
+const getMostRecentChildTask = (parentTask, tasks) => {
+  // Ignores LegacyTasks as they're only ever the children of RootTasks.
+  const amaTasks = tasks.filter((task) => !task.is_legacy);
+
+  // Sorts tasks by ID in descending order
+  const sortedTasks = amaTasks.sort((task_a, task_b) => {
+    return (parseInt(task_a.taskId, 10) > parseInt(task_b.taskId, 10)) ? -1 : 1;
+  });
+
+  return sortedTasks.find((task) => {
+    // The taskId value is a string while parentId is an integer..
+    return task.parentId === parseInt(parentTask.taskId, 10);
+  });
+};
+
+export const getPreviousTaskInstructions = (parentTask, tasks) => {
+  let reviewNotes = null;
+
+  const childTask = getMostRecentChildTask(parentTask, tasks);
+
+  if (childTask && childTask.instructions.length > 1) {
+    switch (childTask.assignedTo.type) {
+    case 'VhaProgramOffice':
+      reviewNotes = 'Program Office';
+      break;
+    case 'VhaRegionalOffice':
+      reviewNotes = 'VISN';
+      break;
+    case 'VhaCamo':
+      reviewNotes = 'CAMO';
+      break;
+    case 'EducationRpo':
+      reviewNotes = 'Regional Processing Office';
+      break;
+    default:
+      break;
+    }
+  }
+
+  const previousInstructions = reviewNotes ? childTask.instructions.slice(-1)[0] : null;
+
+  return { reviewNotes, previousInstructions };
+};
