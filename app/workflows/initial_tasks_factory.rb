@@ -205,7 +205,7 @@ class InitialTasksFactory
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
   end
 
-   def create_establishment_task
+  def create_establishment_task
     task = EstablishmentTask.create!(
       appeal: @appeal,
       parent: @root_task,
