@@ -47,8 +47,9 @@ const metricMessage = (uniqueId, data, message) => message ? message : `${unique
  * If a uuid wasn't provided assume that metric also wasn't sent to javascript console
  * and send with UUID to console
  */
-const checkUuid = (uniqueId, data, message, isError) => {
+const checkUuid = (uniqueId, data, message, type) => {
   let id = uniqueId;
+  const isError = type === 'error';
 
   if (!uniqueId) {
     id = uuid.v4();
@@ -74,16 +75,16 @@ const checkUuid = (uniqueId, data, message, isError) => {
  * Product is which area of Caseflow did the metric come from: queue, hearings, intake, vha, case_distribution, reader
  *
  */
-export const storeMetrics = (uniqueId, data, isError, { message, product, start, end, duration }) => {
-  const type = isError ? 'error' : 'log';
+export const storeMetrics = (uniqueId, data, { message, type = 'log', product, start, end, duration }) => {
+  const metricType = ['log', 'error', 'performance'].includes(type) ? type : 'log';
   const productArea = product ? product : 'caseflow';
 
   const postData = {
     metric: {
       uuid: uniqueId,
-      name: `caseflow.client.${productArea}.${type}`,
+      name: `caseflow.client.${productArea}.${metricType}`,
       message: metricMessage(uniqueId, data, message),
-      type,
+      type: metricType,
       product: productArea,
       metric_attributes: JSON.stringify(data),
       sent_to: 'javascript_console',
@@ -96,14 +97,14 @@ export const storeMetrics = (uniqueId, data, isError, { message, product, start,
   ApiUtil.post('/metrics/v2/logs', { data: postData });
 };
 
-export const recordMetrics = (targetFunction, { uniqueId, data, message, product }, isError = false) => {
-  let id = checkUuid(uniqueId, data, message, isError);
+export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 'log', product }) => {
+  let id = checkUuid(uniqueId, data, message, type);
 
   const t0 = performance.now();
   const start = Date.now();
 
   // eslint-disable-next-line no-console
-  console.info(`STARTED:${id} ${targetFunction.name}`);
+  console.info(`STARTED: ${id} ${targetFunction.name}`);
   const result = targetFunction();
   const t1 = performance.now();
   const end = Date.now();
@@ -111,26 +112,31 @@ export const recordMetrics = (targetFunction, { uniqueId, data, message, product
   const duration = t1 - t0;
 
   // eslint-disable-next-line no-console
-  console.info(`FINISHED:${id} ${targetFunction.name} in ${duration} milliseconds`);
+  console.info(`FINISHED: ${id} ${targetFunction.name} in ${duration} milliseconds`);
 
   const metricData = {
     ...data,
     functionName: targetFunction.name,
   };
 
-  storeMetrics(uniqueId, metricData, isError, { message, product, start, end, duration });
+  storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration });
 
   return result;
 };
 
-export const recordAsyncMetrics = async (asyncFunction, { uniqueId, data, message, product }, isError = false) => {
-  let id = checkUuid(uniqueId, data, message, isError);
+/**
+ * Hopefully this doesn't cause issues and preserves the async of the promise or async function
+ *
+ * Might need to split into async and promise versions if issues
+ */
+export const recordAsyncMetrics = async (asyncFunction, { uniqueId, data, message, type = 'log', product }) => {
+  let id = checkUuid(uniqueId, data, message, type);
 
   const t0 = performance.now();
   const start = Date.now();
 
   // eslint-disable-next-line no-console
-  console.info(`STARTED:${id} ${asyncFunction}`);
+  console.info(`STARTED: ${id} ${asyncFunction}`);
   const prom = () => asyncFunction;
   const result = await prom();
   const t1 = performance.now();
@@ -139,14 +145,14 @@ export const recordAsyncMetrics = async (asyncFunction, { uniqueId, data, messag
   const duration = t1 - t0;
 
   // eslint-disable-next-line no-console
-  console.info(`FINISHED:${id} ${asyncFunction} in ${duration} milliseconds`);
+  console.info(`FINISHED: ${id} ${asyncFunction} in ${duration} milliseconds`);
 
   const metricData = {
     ...data,
     functionName: asyncFunction.name,
   };
 
-  storeMetrics(uniqueId, metricData, isError, { message, product, start, end, duration });
+  storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration });
 
   return result;
 };

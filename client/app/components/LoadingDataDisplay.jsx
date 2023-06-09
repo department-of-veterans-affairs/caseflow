@@ -43,7 +43,17 @@ class LoadingDataDisplay extends React.PureComponent {
 
     this.setState({ promiseStartTimeMs: Date.now() });
 
-    const metricData = { message: 'loading screen' };
+    const metricData = {
+      message: this.props.loadingComponentProps?.message || 'loading screen',
+      type: 'performance',
+      data: {
+        failStatusMessageProps: this.props.failStatusMessageProps,
+        loadingComponentProps: this.props.loadingComponentProps,
+        slowLoadMessage: this.props.slowLoadMessage,
+        slowLoadThresholdMs: this.props.slowLoadThresholdMs,
+        timeoutMs: this.props.timeoutMs
+      }
+    };
 
     // Promise does not give us a way to "un-then" and stop listening
     // when the component unmounts. So we'll leave this reference dangling,
