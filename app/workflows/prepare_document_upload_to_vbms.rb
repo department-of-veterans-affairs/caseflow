@@ -36,8 +36,8 @@ class PrepareDocumentUploadToVbms
           document_id: document.id,
           initiator_css_id: user.css_id,
           application: @params[:application],
-          # mail_requests: @mail_requests,
-          # copies: @copies
+          mail_requests: @mail_requests,
+          copies: @copies
         )
       end
     end
