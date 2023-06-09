@@ -12,14 +12,14 @@ class UploadDocumentToVbmsJob < CaseflowJob
   #         copies - Number of copies of document to be included in mail distribution (optional)
   #
   # Return: nil
-  def perform(document_id:, initiator_css_id:, mail_request: nil, copies: nil, application: "idt")
+  def perform(document_id:, initiator_css_id:, mail_requests: nil, copies: nil, application: "idt")
     RequestStore.store[:application] = application
     RequestStore.store[:current_user] = User.system_user
     @document = VbmsUploadedDocument.find_by(id: document_id)
     @initiator = User.find_by_css_id(initiator_css_id)
     add_context_to_sentry
     UploadDocumentToVbms.new(document: document).call
-    queue_mail_request_job(mail_request, copies) unless mail_request.nil?
+    queue_mail_request_job(mail_requests, copies) unless mail_requests.nil?
   end
 
   private
@@ -42,10 +42,10 @@ class UploadDocumentToVbmsJob < CaseflowJob
     )
   end
 
-  def queue_mail_request_job(mail_request, copies)
+  def queue_mail_request_job(mail_requests, copies)
     return unless document.uploaded_to_vbms_at
 
-    MailRequestJob.perform_later(document, mail_request, copies)
+    MailRequestJob.perform_later(document, mail_requests, copies)
     info_message = "MailRequestJob for document #{document.id} queued for submission to Package Manager"
     log_info(info_message)
   end

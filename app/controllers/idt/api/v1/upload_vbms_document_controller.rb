@@ -9,28 +9,28 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
   def create
     # Create distributions for Package Manager mail service if recipient info present
-    begin
-      create_mail_distributions
-    rescue Caseflow::Error::MissingRecipientInfo => error
-      # Raises Caseflow::Error::MissingRecipientInfo if provided params within the recipient_info
-      #   array do not create a valid MailRequest.
-      success_json[:error] = "Incomplete mailing information provided. No mail request was created."
-      raise error
-    ensure
-      appeal = nil
-      # Find veteran from appeal id and check with db
-      if appeal_id.present?
-        appeal = find_veteran_by_appeal_id
-      else
-        find_file_number_by_veteran_identifier
-      end
-      result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_requests, copies).call
+    create_mail_distributions
 
-      if result.success?
-        render json: { message: "Document successfully queued for upload." }
-      else
-        render json: result.errors[0], status: :bad_request
-      end
+    appeal = nil
+    # Find veteran from appeal id and check with db
+    if appeal_id.present?
+      appeal = find_veteran_by_appeal_id
+    else
+      find_file_number_by_veteran_identifier
+    end
+
+    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_requests, copies).call
+
+    success_message = { message: "Document successfully queued for upload." }
+
+    if recipient_info.present?
+      success_message[:distribution_ids] = distribution_ids
+    end
+
+    if result.success?
+      render json: success_message
+    else
+      render json: result.errors[0], status: :bad_request
     end
   end
 
@@ -41,6 +41,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   end
 
   def copies
+    # Default value of 1 for copies
     return 1 if params[:copies].blank?
 
     params[:copies]
@@ -61,24 +62,38 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   def mail_requests
     return nil if recipient_info.blank?
 
-    # @mail_requests ||= Logic from Jonathan's branch goes here
-    recipient_info.map do |recipient|
-      mail_req = MailRequest.new(recipient)
+    request_errors = []
+
+    @mail_requests ||= recipient_info.map.with_index do |recipient, idx|
+      mail_request = MailRequest.new(recipient)
       # Given that the mail request is invalid, errors will be taken track of and presented to the
       #   user within the success_JSON object.
-      if mail_req.invalid?
-        success_json[:error_messages] = mail_req.errors.messages
+      if mail_request.invalid?
+        request_errors << "Recipient #{idx + 1}: " + mail_request.errors.full_messages.join(", ")
       end
 
-      mail_req.call
+      mail_request
     end
+
+    if request_errors.any?
+      fail Caseflow::Error::MissingRecipientInfo, request_errors.flatten.join(", ")
+    end
+
+    @mail_requests
   end
 
   def create_mail_distributions
     return if recipient_info.blank?
 
     throw_error_if_copies_out_of_range
-    # Logic from Jonathan's branch goes here
+    mail_requests.map do |request|
+      request.call
+      distribution_ids << request.vbms_distribution_id
+    end
+  end
+
+  def distribution_ids
+    @distribution_ids ||= []
   end
 
   def throw_error_if_copies_out_of_range
@@ -89,7 +104,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
   def find_veteran_by_appeal_id
     appeal = LegacyAppeal.find_by_vacols_id(appeal_id) || Appeal.find_by_uuid(appeal_id)
-    throw_not_found_error("appeal") if appeal.nil?
+    throw_appeal_not_found_error if appeal.nil?
     update_veteran_file_number(appeal.veteran_file_number)
     appeal
   end
@@ -97,7 +112,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   def find_file_number_by_veteran_identifier
     file_number = bgs.fetch_veteran_info(veteran_identifier)&.dig(:file_number) ||
                   bgs.fetch_file_number_by_ssn(veteran_identifier)
-    throw_not_found_error("veteran") if file_number.nil?
+    throw_veteran_not_found_error if file_number.nil?
     update_veteran_file_number(file_number)
   end
 
@@ -105,8 +120,13 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     params["veteran_file_number"] = file_number
   end
 
-  def throw_not_found_error(name)
+  def throw_appeal_not_found_error
     uuid = SecureRandom.uuid
-    fail Caseflow::Error::AppealNotFound, "IDT Standard Error ID: " + uuid + " The #{name} was unable to be found."
+    fail Caseflow::Error::AppealNotFound, uuid + " The appeal was unable to be found."
+  end
+
+  def throw_veteran_not_found_error
+    uuid = SecureRandom.uuid
+    fail Caseflow::Error::VeteranNotFound, uuid + " The veteran was unable to be found."
   end
 end
