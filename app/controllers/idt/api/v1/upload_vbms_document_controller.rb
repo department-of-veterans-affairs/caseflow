@@ -9,21 +9,28 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
   def create
     # Create distributions for Package Manager mail service if recipient info present
-    create_mail_distributions
+    begin
+      create_mail_distributions
+    rescue Caseflow::Error::MissingRecipientInfo => error
+      # Raises Caseflow::Error::MissingRecipientInfo if provided params within the recipient_info
+      #   array do not create a valid MailRequest.
+      success_json[:error] = "Incomplete mailing information provided. No mail request was created."
+      raise error
+    ensure
+      appeal = nil
+      # Find veteran from appeal id and check with db
+      if appeal_id.present?
+        appeal = find_veteran_by_appeal_id
+      else
+        find_file_number_by_veteran_identifier
+      end
+      result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_requests, copies).call
 
-    appeal = nil
-    # Find veteran from appeal id and check with db
-    if appeal_id.present?
-      appeal = find_veteran_by_appeal_id
-    else
-      find_file_number_by_veteran_identifier
-    end
-    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_requests, copies).call
-
-    if result.success?
-      render json: { message: "Document successfully queued for upload." }
-    else
-      render json: result.errors[0], status: :bad_request
+      if result.success?
+        render json: { message: "Document successfully queued for upload." }
+      else
+        render json: result.errors[0], status: :bad_request
+      end
     end
   end
 
@@ -55,6 +62,16 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     return nil if recipient_info.blank?
 
     # @mail_requests ||= Logic from Jonathan's branch goes here
+    recipient_info.map do |recipient|
+      mail_req = MailRequest.new(recipient)
+      # Given that the mail request is invalid, errors will be taken track of and presented to the
+      #   user within the success_JSON object.
+      if mail_req.invalid?
+        success_json[:error_messages] = mail_req.errors.messages
+      end
+
+      mail_req.call
+    end
   end
 
   def create_mail_distributions
