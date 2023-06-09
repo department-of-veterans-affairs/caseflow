@@ -56,7 +56,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
       it "running the perform" do
         perform_enqueued_jobs { AmaNotificationEfolderSyncJob.perform_later }
 
-        expect(VbmsUploadedDocument.first(5).pluck(:appeal_id)).to match_array(first_run_vbms_document_ids)
+        expect(VbmsUploadedDocument.first(5).pluck(:appeal_id)).to eq(first_run_vbms_document_ids)
       end
     end
 
