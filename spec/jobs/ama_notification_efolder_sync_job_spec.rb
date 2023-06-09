@@ -41,6 +41,8 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
     before(:all) { AmaNotificationEfolderSyncJob::BATCH_LIMIT = 5 }
 
     context "first run" do
+      before { VbmsUploadedDocument.delete_all }
+
       it "get all ama appeals that have been recently outcoded" do
         expect(job.send(:appeals_recently_outcoded)).to match_array(first_run_outcoded_appeals)
       end
