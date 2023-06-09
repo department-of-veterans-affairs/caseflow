@@ -60,47 +60,6 @@ class MailRequest
     VbmsDistributionDestination.create!(destination_params_parse)
   end
 
-  def person?
-    return true if @recipient_type == "person" unless @recipient_type.blank?
-    false
-  end
-
-  def ro_colocated?
-    return true if @recipient_type == "ro-colocated" unless @recipient_type.blank?
-    false
-  end
-
-  def destination_type_valid?
-    return true if %w[domesticAddress internationalAddress militaryAddress derived email sms].include?(@destination_type) unless @destination_type.blank?
-    false
-  end
-
-  def physical_mail?
-    return true if %w[domesticAddress internationalAddress militaryAddress].include?(@destination_type) unless @destination_type.blank?
-    false
-  end
-
-  def line_2_addressee?
-    return true if @treat_line_2_as_addressee == true
-    false
-  end
-
-  def line_3_addressee?
-    return true if @treat_line_3_as_addressee == true
-    false
-  end
-
-  def country_name_required?
-    return true if @destination_type == "internationalAddress"
-    false
-  end
-
-  def us_address?
-    return true if %w[domesticAddress militaryAddress].include?(@destination_type)
-    false
-
-  end
-
   def destination_params_parse
     {
       destination_type: @destination_type,
