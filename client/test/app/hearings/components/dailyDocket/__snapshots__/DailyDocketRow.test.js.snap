@@ -67,7 +67,6 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
               class="cf-form-checkbox"
             >
               <input
-                aria-label="checkbox-prepped-ae4c4050-36e8-4df2-83a4-839cf73725dc"
                 id="checkbox-prepped-ae4c4050-36e8-4df2-83a4-839cf73725dc"
                 name="checkbox-prepped-ae4c4050-36e8-4df2-83a4-839cf73725dc"
                 type="checkbox"
@@ -369,7 +368,6 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
               class="cf-form-checkbox"
             >
               <input
-                aria-label="ae4c4050-36e8-4df2-83a4-839cf73725dc-evidenceWindowWaived"
                 id="ae4c4050-36e8-4df2-83a4-839cf73725dc-evidenceWindowWaived"
                 name="ae4c4050-36e8-4df2-83a4-839cf73725dc-evidenceWindowWaived"
                 type="checkbox"
@@ -398,7 +396,6 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
               class="cf-form-checkbox"
             >
               <input
-                aria-label="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
                 id="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
                 name="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
                 type="checkbox"
@@ -955,7 +952,6 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
               class="cf-form-checkbox"
             >
               <input
-                aria-label="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
                 id="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
                 name="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
                 type="checkbox"
@@ -1530,7 +1526,6 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
               class="cf-form-checkbox"
             >
               <input
-                aria-label="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
                 id="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
                 name="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
                 type="checkbox"
@@ -1792,7 +1787,6 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
               class="cf-form-checkbox"
             >
               <input
-                aria-label="checkbox-prepped-ae4c4050-36e8-4df2-83a4-839cf73725dc"
                 id="checkbox-prepped-ae4c4050-36e8-4df2-83a4-839cf73725dc"
                 name="checkbox-prepped-ae4c4050-36e8-4df2-83a4-839cf73725dc"
                 type="checkbox"
@@ -2094,7 +2088,6 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
               class="cf-form-checkbox"
             >
               <input
-                aria-label="ae4c4050-36e8-4df2-83a4-839cf73725dc-evidenceWindowWaived"
                 id="ae4c4050-36e8-4df2-83a4-839cf73725dc-evidenceWindowWaived"
                 name="ae4c4050-36e8-4df2-83a4-839cf73725dc-evidenceWindowWaived"
                 type="checkbox"
@@ -2123,7 +2116,6 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
               class="cf-form-checkbox"
             >
               <input
-                aria-label="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
                 id="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
                 name="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
                 type="checkbox"
@@ -2680,7 +2672,6 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
               class="cf-form-checkbox"
             >
               <input
-                aria-label="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
                 id="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
                 name="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
                 type="checkbox"
@@ -2992,7 +2983,6 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
               class="cf-form-checkbox"
             >
               <input
-                aria-label="checkbox-prepped-ae4c4050-36e8-4df2-83a4-839cf73725dc"
                 id="checkbox-prepped-ae4c4050-36e8-4df2-83a4-839cf73725dc"
                 name="checkbox-prepped-ae4c4050-36e8-4df2-83a4-839cf73725dc"
                 type="checkbox"
@@ -3294,7 +3284,6 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
               class="cf-form-checkbox"
             >
               <input
-                aria-label="ae4c4050-36e8-4df2-83a4-839cf73725dc-evidenceWindowWaived"
                 id="ae4c4050-36e8-4df2-83a4-839cf73725dc-evidenceWindowWaived"
                 name="ae4c4050-36e8-4df2-83a4-839cf73725dc-evidenceWindowWaived"
                 type="checkbox"
@@ -3323,7 +3312,6 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
               class="cf-form-checkbox"
             >
               <input
-                aria-label="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
                 id="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
                 name="ae4c4050-36e8-4df2-83a4-839cf73725dc-transcriptRequested"
                 type="checkbox"
@@ -3919,7 +3907,6 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
               class="cf-form-checkbox"
             >
               <input
-                aria-label="3c170697-2c52-4bad-b7bd-2ccf44f0c44c-transcriptRequested"
                 id="3c170697-2c52-4bad-b7bd-2ccf44f0c44c-transcriptRequested"
                 name="3c170697-2c52-4bad-b7bd-2ccf44f0c44c-transcriptRequested"
                 type="checkbox"

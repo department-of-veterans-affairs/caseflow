@@ -746,7 +746,6 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           class="cf-form-checkbox"
         >
           <input
-            aria-label="mandateSame"
             id="mandateSame"
             name="mandateSame"
             type="checkbox"
@@ -1226,7 +1225,6 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           class="cf-form-checkbox"
         >
           <input
-            aria-label="mandateSame"
             id="mandateSame"
             name="mandateSame"
             type="checkbox"
@@ -1792,7 +1790,6 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           class="cf-form-checkbox"
         >
           <input
-            aria-label="federalCircuit"
             id="federalCircuit"
             name="federalCircuit"
             type="checkbox"
@@ -2635,7 +2632,6 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
           class="cf-form-checkbox"
         >
           <input
-            aria-label="mandateSame"
             id="mandateSame"
             name="mandateSame"
             type="checkbox"

@@ -3865,7 +3865,6 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       className="cf-form-checkbox"
                     >
                       <input
-                        aria-label="mandate-dates-same-toggle"
                         checked={true}
                         id="mandate-dates-same-toggle"
                         name="mandate-dates-same-toggle"

@@ -9,7 +9,6 @@ exports[`IssueRemandReasonCheckbox AMA hides AOJ choice until checked 1`] = `
       class="cf-form-checkbox"
     >
       <input
-        aria-label="-lorem"
         id="-lorem"
         name="-lorem"
         type="checkbox"
@@ -87,7 +86,6 @@ exports[`IssueRemandReasonCheckbox AMA renders correctly by default 1`] = `
       class="cf-form-checkbox"
     >
       <input
-        aria-label="-lorem"
         id="-lorem"
         name="-lorem"
         type="checkbox"

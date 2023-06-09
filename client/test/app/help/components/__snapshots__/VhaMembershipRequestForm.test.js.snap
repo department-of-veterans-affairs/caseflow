@@ -27,7 +27,6 @@ exports[`VhaMembershipRequestForm renders the default state with the feature tog
           class="cf-form-checkbox"
         >
           <input
-            aria-label="vhaAccess"
             id="vhaAccess"
             name="vhaAccess"
             type="checkbox"
@@ -156,7 +155,6 @@ exports[`VhaMembershipRequestForm renders the default state with the feature tog
           class="cf-form-checkbox"
         >
           <input
-            aria-label="vhaAccess"
             id="vhaAccess"
             name="vhaAccess"
             type="checkbox"

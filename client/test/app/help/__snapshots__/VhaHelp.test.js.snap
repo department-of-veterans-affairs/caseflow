@@ -85,7 +85,6 @@ exports[`VhaHelp renders the help page 1`] = `
             class="cf-form-checkbox"
           >
             <input
-              aria-label="vhaAccess"
               id="vhaAccess"
               name="vhaAccess"
               type="checkbox"
