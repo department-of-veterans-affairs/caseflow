@@ -4,7 +4,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
 <div>
   <section
     class="cf-app-segment cf-app-segment--alt"
-
+    role="main"
   >
     <div
       data-css-bui2vg=""
@@ -59,7 +59,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
               role="tooltip"
             >
               <style>
-
+                
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -133,7 +133,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
               </style>
               Click to copy
             </div>
@@ -184,7 +184,7 @@ exports[`NotificationsTest matches snapshot 1`] = `
               rel="noopener noreferrer"
               target="_blank"
             >
-              Open eFolder
+              Open eFolder 
               <span
                 data-css-wevxet=""
               >

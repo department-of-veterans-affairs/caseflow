@@ -4,7 +4,7 @@ exports[`DocketSwitchReviewConfirm renders correctly 1`] = `
 <div>
   <section
     class="cf-app-segment cf-app-segment--alt"
-
+    role="main"
   >
     <h1>
       Switch Docket: Review and Confirm
@@ -69,7 +69,7 @@ exports[`DocketSwitchReviewConfirm renders correctly 1`] = `
                     </div>
                     <div>
                       Decision date:
-
+                       
                       1/21/2021
                     </div>
                   </td>
@@ -81,7 +81,7 @@ exports[`DocketSwitchReviewConfirm renders correctly 1`] = `
                     </div>
                     <div>
                       Decision date:
-
+                       
                       1/21/2021
                     </div>
                   </td>
@@ -93,7 +93,7 @@ exports[`DocketSwitchReviewConfirm renders correctly 1`] = `
                     </div>
                     <div>
                       Decision date:
-
+                       
                       1/21/2021
                     </div>
                   </td>
@@ -105,7 +105,7 @@ exports[`DocketSwitchReviewConfirm renders correctly 1`] = `
                     </div>
                     <div>
                       Decision date:
-
+                       
                       1/21/2021
                     </div>
                   </td>
@@ -212,7 +212,7 @@ exports[`DocketSwitchReviewConfirm with alternate claimant renders the claimant 
 <div>
   <section
     class="cf-app-segment cf-app-segment--alt"
-
+    role="main"
   >
     <h1>
       Switch Docket: Review and Confirm
@@ -285,7 +285,7 @@ exports[`DocketSwitchReviewConfirm with alternate claimant renders the claimant 
                     </div>
                     <div>
                       Decision date:
-
+                       
                       1/21/2021
                     </div>
                   </td>
@@ -297,7 +297,7 @@ exports[`DocketSwitchReviewConfirm with alternate claimant renders the claimant 
                     </div>
                     <div>
                       Decision date:
-
+                       
                       1/21/2021
                     </div>
                   </td>
@@ -309,7 +309,7 @@ exports[`DocketSwitchReviewConfirm with alternate claimant renders the claimant 
                     </div>
                     <div>
                       Decision date:
-
+                       
                       1/21/2021
                     </div>
                   </td>
@@ -321,7 +321,7 @@ exports[`DocketSwitchReviewConfirm with alternate claimant renders the claimant 
                     </div>
                     <div>
                       Decision date:
-
+                       
                       1/21/2021
                     </div>
                   </td>

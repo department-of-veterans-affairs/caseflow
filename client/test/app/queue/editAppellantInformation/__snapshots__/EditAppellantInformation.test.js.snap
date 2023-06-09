@@ -8,7 +8,7 @@ Object {
       <div>
         <section
           class="cf-app-segment cf-app-segment--alt"
-
+          role="main"
         >
           <h1>
             Edit Appellant Information
@@ -589,7 +589,7 @@ Object {
     <div>
       <section
         class="cf-app-segment cf-app-segment--alt"
-
+        role="main"
       >
         <h1>
           Edit Appellant Information

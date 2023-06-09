@@ -8,7 +8,7 @@ exports[`DocketSwitchEditTasksForm default values populates with default values 
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-
+      role="main"
     >
       <h1>
         Switch Docket: Add/Remove Tasks
@@ -24,15 +24,15 @@ exports[`DocketSwitchEditTasksForm default values populates with default values 
       </div>
       <div>
         <p>
-          Below is a list of tasks that will remain open when you switch dockets. Tasks that are automatically created with the Hearing docket cannot be selected or removed. Please
+          Below is a list of tasks that will remain open when you switch dockets. Tasks that are automatically created with the Hearing docket cannot be selected or removed. Please 
           <strong>
             unselect
           </strong>
-           any tasks you would like to
+           any tasks you would like to 
           <strong>
             remove
           </strong>
-           (the remaining tasks will be transferred to the new docket) and
+           (the remaining tasks will be transferred to the new docket) and 
           <strong>
             add
           </strong>
@@ -181,13 +181,13 @@ exports[`DocketSwitchEditTasksForm default values populates with default values 
                       id="aria-selection-event"
                     >
                        
-
+                      
                     </span>
                     <span
                       id="aria-context"
                     >
                        
-                        0 results available. Select is focused ,type to refine list, press Down to open the menu,
+                        0 results available. Select is focused ,type to refine list, press Down to open the menu, 
                     </span>
                   </span>
                   <div
@@ -352,7 +352,7 @@ exports[`DocketSwitchEditTasksForm renders correctly 1`] = `
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
-
+      role="main"
     >
       <h1>
         Switch Docket: Add/Remove Tasks
@@ -368,15 +368,15 @@ exports[`DocketSwitchEditTasksForm renders correctly 1`] = `
       </div>
       <div>
         <p>
-          Below is a list of tasks that will remain open when you switch dockets. Tasks that are automatically created with the Hearing docket cannot be selected or removed. Please
+          Below is a list of tasks that will remain open when you switch dockets. Tasks that are automatically created with the Hearing docket cannot be selected or removed. Please 
           <strong>
             unselect
           </strong>
-           any tasks you would like to
+           any tasks you would like to 
           <strong>
             remove
           </strong>
-           (the remaining tasks will be transferred to the new docket) and
+           (the remaining tasks will be transferred to the new docket) and 
           <strong>
             add
           </strong>

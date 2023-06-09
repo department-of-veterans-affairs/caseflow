@@ -5,7 +5,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
   <section
     class="cf-app-segment cf-app-segment--alt"
     data-css-13azwyo=""
-
+    role="main"
   >
     <div
       class="css-1fk0u9n"
@@ -30,11 +30,11 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
         >
           <div>
             <span>
-
+              
               <span>
                 Assigned (2)
               </span>
-
+              
             </span>
           </div>
         </button>
@@ -49,11 +49,11 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
         >
           <div>
             <span>
-
+              
               <span>
                 On hold (2)
               </span>
-
+              
             </span>
           </div>
         </button>
@@ -68,11 +68,11 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
         >
           <div>
             <span>
-
+              
               <span>
                 Completed
               </span>
-
+              
             </span>
           </div>
         </button>
@@ -588,7 +588,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                         role="tooltip"
                       >
                         <style>
-
+                          
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -662,9 +662,9 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                         </style>
-                        Calendar days since
+                        Calendar days since 
                         <br />
                          this case was assigned
                       </div>
@@ -773,7 +773,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                         role="tooltip"
                       >
                         <style>
-
+                          
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -847,7 +847,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                         </style>
                         Direct Review
                       </div>
@@ -869,7 +869,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                         class=""
                       >
                         1
-
+                         
                         day
                       </span>
                     </div>
@@ -883,7 +883,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     <a
                       href="/reader/appeal/fe583ee4-6f58-41a6-b8c5-09bfdc987c75/documents?queue_redirect_url=%2F"
                     >
-                      View
+                      View 
                        docs
                     </a>
                     <div
@@ -981,7 +981,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                         role="tooltip"
                       >
                         <style>
-
+                          
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -1055,7 +1055,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                         </style>
                         Direct Review
                       </div>
@@ -1077,7 +1077,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                         class="cf-red-text"
                       >
                         31
-
+                         
                         days
                       </span>
                       <div
@@ -1099,7 +1099,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                     <a
                       href="/reader/appeal/fe583ee4-6f58-41a6-b8c5-09bfdc987c75/documents?queue_redirect_url=%2F"
                     >
-                      View
+                      View 
                        docs
                     </a>
                     <div
@@ -1153,7 +1153,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
   <section
     class="cf-app-segment cf-app-segment--alt"
     data-css-13azwyo=""
-
+    role="main"
   >
     <div
       class="css-1fk0u9n"
@@ -1178,11 +1178,11 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
         >
           <div>
             <span>
-
+              
               <span>
                 Assigned (2)
               </span>
-
+              
             </span>
           </div>
         </button>
@@ -1197,11 +1197,11 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
         >
           <div>
             <span>
-
+              
               <span>
                 On hold (2)
               </span>
-
+              
             </span>
           </div>
         </button>
@@ -1216,11 +1216,11 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
         >
           <div>
             <span>
-
+              
               <span>
                 Completed
               </span>
-
+              
             </span>
           </div>
         </button>
@@ -1742,7 +1742,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                         role="tooltip"
                       >
                         <style>
-
+                          
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -1816,9 +1816,9 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                         </style>
-                        Calendar days since
+                        Calendar days since 
                         <br />
                          this case was placed on hold
                       </div>
@@ -1927,7 +1927,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                         role="tooltip"
                       >
                         <style>
-
+                          
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -2001,7 +2001,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                         </style>
                         Direct Review
                       </div>
@@ -2035,7 +2035,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     <a
                       href="/reader/appeal/fe583ee4-6f58-41a6-b8c5-09bfdc987c75/documents?queue_redirect_url=%2F"
                     >
-                      View
+                      View 
                        docs
                     </a>
                     <div
@@ -2129,7 +2129,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                         role="tooltip"
                       >
                         <style>
-
+                          
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -2203,7 +2203,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
         border-right-style: solid;
         border-right-width: 6px;
     }
-
+  
                         </style>
                         Direct Review
                       </div>
@@ -2237,7 +2237,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                     <a
                       href="/reader/appeal/fe583ee4-6f58-41a6-b8c5-09bfdc987c75/documents?queue_redirect_url=%2F"
                     >
-                      View
+                      View 
                        docs
                     </a>
                     <div
