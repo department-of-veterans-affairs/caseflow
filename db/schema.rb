@@ -330,6 +330,14 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
     t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
   end
 
+  create_table "caseflow_stuck_records", comment: "This is a polymorphic table consisting of records that have repeatedly errored out of the syncing process. Currently, the only records on this table come from the PriorityEndProductSyncQueue table.", force: :cascade do |t|
+    t.datetime "determined_stuck_at", null: false, comment: "The date/time at which the record in question was determined to be stuck."
+    t.string "error_messages", default: [], comment: "Array of Error Message(s) containing Batch ID and specific error if a failure occurs", array: true
+    t.bigint "stuck_record_id", null: false, comment: "The id / primary key of the stuck record and the type / where the record came from"
+    t.string "stuck_record_type", null: false
+    t.index ["stuck_record_type", "stuck_record_id"], name: "index_caseflow_stuck_records_on_stuck_record_id_and_type"
+  end
+
   create_table "cavc_dashboard_dispositions", force: :cascade do |t|
     t.bigint "cavc_dashboard_id", comment: "ID of the associated CAVC Dashboard"
     t.bigint "cavc_dashboard_issue_id"
