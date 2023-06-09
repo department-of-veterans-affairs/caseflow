@@ -15,15 +15,14 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
       appeals.each_with_index do |appeal, index|
         next if [3, 7].include? index
 
-        Notification.create!(
-          appeals_id: appeal.uuid,
-          appeals_type: "Appeal",
-          event_date: today,
-          event_type: "Appeal docketed",
-          notification_type: "Email",
-          notified_at: today,
-          email_notification_status: "delivered"
-        )
+        create(:notification,
+               appeals_id: appeal.uuid,
+               appeals_type: "Appeal",
+               event_date: today,
+               event_type: "Appeal docketed",
+               notification_type: "Email",
+               notified_at: today,
+               email_notification_status: "delivered")
       end
     end
 
@@ -73,57 +72,53 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
       end
 
       it "get all ama appeals that have never been synced yet" do
-        Notification.create!(
-          appeals_id: appeals[4].uuid,
-          appeals_type: "Appeal",
-          event_date: today,
-          event_type: "Appeal docketed",
-          notification_type: "Email",
-          notified_at: Time.zone.now,
-          email_notification_status: "delivered"
-        )
+        create(:notification,
+               appeals_id: appeals[4].uuid,
+               appeals_type: "Appeal",
+               event_date: today,
+               event_type: "Appeal docketed",
+               notification_type: "Email",
+               notified_at: Time.zone.now,
+               email_notification_status: "delivered")
         create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "Appeal")
         expect(job.send(:appeals_never_synced)).to match_array(second_run_never_synced_appeals)
       end
 
       it "get all ama appeals that must be resynced" do
-        Notification.create!(
-          appeals_id: appeals[4].uuid,
-          appeals_type: "Appeal",
-          event_date: today,
-          event_type: "Appeal docketed",
-          notification_type: "Email",
-          notified_at: Time.zone.now,
-          email_notification_status: "delivered"
-        )
+        create(:notification,
+               appeals_id: appeals[4].uuid,
+               appeals_type: "Appeal",
+               event_date: today,
+               event_type: "Appeal docketed",
+               notification_type: "Email",
+               notified_at: Time.zone.now,
+               email_notification_status: "delivered")
         create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "Appeal")
         expect(job.send(:ready_for_resync)).to eq([appeals[4]])
       end
 
       it "ignore appeals that need to be resynced if latest notification status is 'Failure Due to Deceased" do
-        Notification.create!(
-          appeals_id: appeals[4].uuid,
-          appeals_type: "Appeal",
-          event_date: today,
-          event_type: "Appeal docketed",
-          notification_type: "Email",
-          notified_at: Time.zone.now,
-          email_notification_status: "Failure Due to Deceased"
-        )
+        create(:notification,
+               appeals_id: appeals[4].uuid,
+               appeals_type: "Appeal",
+               event_date: today,
+               event_type: "Appeal docketed",
+               notification_type: "Email",
+               notified_at: Time.zone.now,
+               email_notification_status: "Failure Due to Deceased")
         create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "Appeal")
         expect(job.send(:ready_for_resync)).to eq([])
       end
 
       it "running the perform" do
-        Notification.create!(
-          appeals_id: appeals[4].uuid,
-          appeals_type: "Appeal",
-          event_date: today,
-          event_type: "Appeal docketed",
-          notification_type: "Email",
-          notified_at: Time.zone.now,
-          email_notification_status: "delivered"
-        )
+        create(:notification,
+               appeals_id: appeals[4].uuid,
+               appeals_type: "Appeal",
+               event_date: today,
+               event_type: "Appeal docketed",
+               notification_type: "Email",
+               notified_at: Time.zone.now,
+               email_notification_status: "delivered")
         create(:vbms_uploaded_document, appeal_id: appeals[4].id, appeal_type: "Appeal")
 
         AmaNotificationEfolderSyncJob.perform_now
