@@ -41,10 +41,6 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
     before(:all) { AmaNotificationEfolderSyncJob::BATCH_LIMIT = 5 }
 
     context "first run" do
-      before do
-        perform_enqueued_jobs { AmaNotificationEfolderSyncJob.perform_later }
-      end
-
       it "get all ama appeals that have been recently outcoded" do
         expect(job.send(:appeals_recently_outcoded)).to match_array(first_run_outcoded_appeals)
       end
@@ -58,6 +54,8 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
       end
 
       it "running the perform" do
+        perform_enqueued_jobs { AmaNotificationEfolderSyncJob.perform_later }
+
         expect(VbmsUploadedDocument.first(5).pluck(:appeal_id)).to match_array(first_run_vbms_document_ids)
       end
     end
