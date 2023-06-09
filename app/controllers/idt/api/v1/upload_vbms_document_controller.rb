@@ -19,15 +19,14 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
       find_file_number_by_veteran_identifier
     end
 
+    byebug
+
     result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_requests, copies).call
-
-    success_message = { message: "Document successfully queued for upload." }
-
-    if recipient_info.present?
-      success_message[:distribution_ids] = distribution_ids
-    end
-
     if result.success?
+      success_message = { message: "Document successfully queued for upload." }
+      if recipient_info.present?
+        success_message[:distribution_ids] = distribution_ids
+      end
       render json: success_message
     else
       render json: result.errors[0], status: :bad_request

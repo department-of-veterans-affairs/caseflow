@@ -66,11 +66,11 @@ module MailRequestValidator
     end
 
     def iso_country_codes
-      @iso_country_codes ||= ISO3166::Country.codes
+      ISO3166::Country.codes
     end
 
     def iso_us_state_codes
-      @iso_us_state_codes ||= ISO3166::Country.find_country_by_alpha2("US").subdivisions.keys
+      ISO3166::Country.find_country_by_alpha2("US").subdivisions.keys
     end
   end
 end
