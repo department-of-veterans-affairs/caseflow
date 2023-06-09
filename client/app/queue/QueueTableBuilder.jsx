@@ -41,6 +41,7 @@ import { tasksWithAppealsFromRawTasks } from './utils';
 import COPY from '../../COPY';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import { css } from 'glamor';
+import { isActiveOrganizationVHA } from '../queue/selectors';
 
 const rootStyles = css({
   '.usa-alert + &': {
@@ -121,7 +122,8 @@ class QueueTableBuilder extends React.PureComponent {
       ),
       [QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name]: issueTypesColumn(
         tasks,
-        filterOptions
+        filterOptions,
+        requireDasRecord
       ),
       [QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.
         name]: readerLinkColumnWithNewDocsIcon(requireDasRecord),
@@ -169,6 +171,8 @@ class QueueTableBuilder extends React.PureComponent {
     let totalTaskCount = tabConfig.total_task_count;
     let noCasesMessage;
 
+    const { isVhaOrg } = this.props;
+
     if (tabConfig.contains_legacy_tasks) {
       tasks.unshift(...this.props.assignedTasks);
       totalTaskCount = tasks.length;
@@ -215,6 +219,8 @@ class QueueTableBuilder extends React.PureComponent {
             tabPaginationOptions={
               paginationOptions.tab === tabConfig.name && paginationOptions
             }
+            // Limit filter preservation/retention to only VHA orgs for now.
+            {...(isVhaOrg ? { preserveFilter: true } : {})}
             defaultSort={defaultSort}
             useTaskPagesApi={
               config.use_task_pages_api && !tabConfig.contains_legacy_tasks
@@ -252,6 +258,7 @@ const mapStateToProps = (state) => {
   return {
     config: state.queue.queueConfig,
     organizations: state.ui.organizations,
+    isVhaOrg: isActiveOrganizationVHA(state),
     userCanBulkAssign: state.ui.activeOrganization.userCanBulkAssign,
   };
 };
@@ -265,6 +272,7 @@ QueueTableBuilder.propTypes = {
   }),
   requireDasRecord: PropTypes.bool,
   userCanBulkAssign: PropTypes.bool,
+  isVhaOrg: PropTypes.bool,
 };
 
 export default connect(mapStateToProps)(QueueTableBuilder);

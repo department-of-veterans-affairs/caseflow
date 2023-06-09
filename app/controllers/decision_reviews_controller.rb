@@ -19,7 +19,7 @@ class DecisionReviewsController < ApplicationController
     "veteranParticipantIdColumn" => "veteran_participant_id",
     "veteranSsnColumn" => "veteran_ssn",
     "issueCountColumn" => "issue_count",
-    "issueTypesColumn" => "issue_types",
+    "issueTypesColumn" => "issue_types_lower",
     "daysWaitingColumn" => "tasks.assigned_at",
     "completedDateColumn" => "tasks.closed_at"
   }.freeze

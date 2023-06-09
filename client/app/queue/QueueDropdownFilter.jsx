@@ -30,7 +30,7 @@ class QueueDropdownFilter extends React.PureComponent {
     const { children, name } = this.props;
 
     // Some of the filter names are camelCase, which would be displayed to the user.
-    // To make this more readable, convert the camelCase text to regular casing.
+    // To make this more readable, convert the camelCase text to title case.
     const displayName = startCase(name);
 
     const rel = {

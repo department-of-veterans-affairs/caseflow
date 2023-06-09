@@ -134,6 +134,7 @@ export class TaskTableUnconnected extends React.PureComponent {
     defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
     enablePagination
     onHistoryUpdate={this.props.onHistoryUpdate}
+    preserveFilter={this.props.preserveQueueFilter}
     rowClassNames={(task) =>
       this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'}
     taskPagesApiEndpoint={this.props.taskPagesApiEndpoint}
@@ -168,6 +169,7 @@ TaskTableUnconnected.propTypes = {
   useTaskPagesApi: PropTypes.bool,
   tabPaginationOptions: PropTypes.object,
   onHistoryUpdate: PropTypes.func,
+  preserveQueueFilter: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({

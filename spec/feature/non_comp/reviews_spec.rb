@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 feature "NonComp Reviews Queue", :postgres do
-  let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+  let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "vha") }
   let(:user) { create(:default_user) }
 
   let(:veteran_a) { create(:veteran, first_name: "Aaa", participant_id: "12345", ssn: "140261454") }
@@ -35,7 +35,7 @@ feature "NonComp Reviews Queue", :postgres do
   let(:today) { Time.zone.now }
   let(:last_week) { Time.zone.now - 7.days }
 
-  BASE_URL = "/decision_reviews/nco"
+  BASE_URL = "/decision_reviews/vha"
 
   let!(:completed_tasks) do
     [
