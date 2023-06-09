@@ -167,7 +167,8 @@ class BusinessLine < Organization
         claimant_name_alias,
         participant_id_alias,
         veteran_ssn_alias,
-        issue_types
+        issue_types,
+        issue_types_lower
       ]
     end
 
@@ -182,6 +183,13 @@ class BusinessLine < Organization
       "STRING_AGG(DISTINCT request_issues.nonrating_issue_category, ','"\
       " ORDER BY request_issues.nonrating_issue_category)"\
       " AS issue_types"
+    end
+
+    # Bandaid alias for case insensitive ordering
+    def issue_types_lower
+      "STRING_AGG(DISTINCT LOWER(request_issues.nonrating_issue_category), ','"\
+      " ORDER BY LOWER(request_issues.nonrating_issue_category))"\
+      " AS issue_types_lower"
     end
 
     # Alias for claimant_name for sorting and serialization

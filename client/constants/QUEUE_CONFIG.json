@@ -99,6 +99,7 @@
       "sorting_columns": ["issue_count"]
     },
     "ISSUE_TYPES": {
+      "filterable": true,
       "name": "issueTypesColumn",
       "sorting_table": "cached_appeal_attributes",
       "sorting_columns": [
@@ -182,6 +183,7 @@
 
   "DEFAULT_SORTING_COLUMN_KEY": "sortColName",
   "DEFAULT_SORTING_DIRECTION_KEY": "sortAscending",
+  "BLANK_FILTER_KEY_VALUE": "None",
 
   "FILTER_OPTIONS": {
     "IS_AOD": {

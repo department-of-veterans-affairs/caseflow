@@ -93,7 +93,9 @@ class UnassignedCasesPage extends React.PureComponent {
               includeReaderLink
               includeNewDocsIcon
               tasks={this.props.tasks}
-              userId={userId} />
+              userId={userId}
+              {...(userIsCamoEmployee ? { preserveQueueFilter: true } : {})}
+            />
           }
         </React.Fragment>
       </div>

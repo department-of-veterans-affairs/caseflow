@@ -74,7 +74,8 @@ class TableFilter extends React.PureComponent {
         option.checked = filtersForColumn ? filtersForColumn.includes(option.value) : false;
       });
 
-      return _.sortBy(filterOptionsFromApi, 'displayText');
+      // Case insensitive ordering for the filter options
+      return _.orderBy(filterOptionsFromApi, [(option) => option.displayText.toLowerCase()], ['asc']);
     }
 
     const columnValues = tableDataByRow.map((obj) => {
