@@ -216,6 +216,7 @@ class QueueApp extends React.PureComponent {
       appealId={props.match.params.appealId}
       taskId={props.match.params.taskId}
       checkoutFlow={props.match.params.checkoutFlow}
+      justificationFeatureToggle={this.props.featureToggles.justification_reason}
     />
   );
 
@@ -241,6 +242,7 @@ class QueueApp extends React.PureComponent {
       <AddEditIssueView
         nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         prevStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
+        justificationFeatureToggle={this.props.featureToggles.justification_reason}
         {...props.match.params}
       />
     );
