@@ -49,14 +49,21 @@ class HearingTask < Task
     if appeal.is_a?(LegacyAppeal)
       if FeatureToggle.enable!(:vlj_legacy_appeal) &&
         appeal.tasks.open.where(type: HearingTask.name).empty? &&
-        !appeal.tasks.open.where(type: JudgeAssignTask.name).empty? &&
-          current_judge_id = appeal.tasks.find_by(type: "JudgeAssignTask").assigned_to_id
-          current_user = User.find(current_judge_id).css_id
-          update_legacy_appeal_location_scm (current_user)
+        appeal.tasks.open.where(type: ScheduleHearingTask.name).empty?
+        if !appeal.tasks.open.where(type: JudgeAssignTask.name).empty? ?
+          process_appeal_scm(appeal) :
+          update_legacy_appeal_location
+        end
       elsif  appeal.tasks.open.where(type: HearingTask.name).empty?
         update_legacy_appeal_location
       end
     end
+  end
+
+  def process_appeal_scm(appeal)
+    current_judge_id = appeal.tasks.find_by(type: "JudgeAssignTask").assigned_to_id
+    current_user = User.find(current_judge_id).css_id
+    update_legacy_appeal_location_scm (current_user)
   end
 
   def create_change_hearing_disposition_task(instructions = nil)
