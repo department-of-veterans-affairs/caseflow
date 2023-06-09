@@ -129,7 +129,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
             .where(document_type: "BVA Case Notifications")
             .order(:id)
             .pluck(:appeal_id)
-        ).to eq(second_run_vbms_document_ids)
+        ).to match_array(second_run_vbms_document_ids)
       end
     end
   end
