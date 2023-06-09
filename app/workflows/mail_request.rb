@@ -4,24 +4,14 @@ class MailRequest
   include ActiveModel::Model
   include ActiveModel::Validations
 
+  include MailRequestValidator::Distribution
+  include MailRequestValidator::DistributionDestination
+
   attr_accessor :recipient_type, :name, :first_name, :middle_name, :last_name,
   :participant_id, :poa_code, :claimant_station_of_jurisdiction, :destination_type,
   :address_line_1, :address_line_2, :address_line_3, :address_line_4, :address_line_5,
   :address_line_6, :city, :country_code, :postal_code, :state, :treat_line_2_as_addressee,
   :treat_line_3_as_addressee, :country_name, :vbms_distribution_id, :comm_package_id
-
-  with_options presence: true do
-    validates :recipient_type, inclusion: { in: %w[organization person system ro-colocated] }
-    validates :first_name, :last_name, if: :person?
-    validates :poa_code, :claimant_station_of_jurisdiction, if: :ro_colocated?
-    validates :destination_type, if: :destination_type_valid?
-    validates :address_line_1, :city, :country_code, if: :physical_mail?
-    validates :address_line_2, if: :line_2_addressee?
-    validates :address_line_3, if: :line_3_addressee?
-    validates :state, :postal_code, if: :us_address?
-    validates :country_name, if: :country_name_required?
-  end
-  validate :name, unless: :person?
 
   def initialize(recipient_and_destination_hash)
     @recipient_type = recipient_and_destination_hash[:recipient_type]
