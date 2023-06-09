@@ -3,6 +3,10 @@ import _ from 'lodash';
 import moment from 'moment';
 import uuid from 'uuid';
 
+// ------------------------------------------------------------------------------------------
+// Histograms
+// ------------------------------------------------------------------------------------------
+
 const INTERVAL_TO_SEND_METRICS_MS = moment.duration(60, 'seconds');
 
 let histograms = [];
@@ -33,6 +37,32 @@ export const collectHistogram = (data) => {
   histograms.push(ApiUtil.convertToSnakeCase(data));
 };
 
+// ------------------------------------------------------------------------------------------
+// Metric Storage and recording
+// ------------------------------------------------------------------------------------------
+
+const metricMessage = (uniqueId, data, message) => message ? message : `${uniqueId}\n${data}`;
+
+/**
+ * If a uuid wasn't provided assume that metric also wasn't sent to javascript console
+ * and send with UUID to console
+ */
+const checkUuid = (uniqueId, data, message, isError) => {
+  let id = uniqueId;
+
+  if (!uniqueId) {
+    id = uuid.v4();
+    if (isError) {
+      console.error(metricMessage(uniqueId, data, message));
+    } else {
+      // eslint-disable-next-line no-console
+      console.log(metricMessage(uniqueId, data, message));
+    }
+  }
+
+  return id;
+};
+
 /**
  * uniqueId should be V4 UUID
  * If a uniqueId is not presented one will be generated for it
@@ -44,28 +74,15 @@ export const collectHistogram = (data) => {
  * Product is which area of Caseflow did the metric come from: queue, hearings, intake, vha, case_distribution, reader
  *
  */
-export const recordMetrics = (uniqueId, data, isError = false, { message, product, start, end, duration }) => {
-  let id = uniqueId;
+export const storeMetrics = (uniqueId, data, isError, { message, product, start, end, duration }) => {
   const type = isError ? 'error' : 'log';
-  let metricMessage = message ? message : `${id}\n${data}`;
   const productArea = product ? product : 'caseflow';
-
-  // If a uuid wasn't provided assume that metric also wasn't sent to javascript console and send with UUID to console
-  if (!uniqueId) {
-    id = uuid.v4();
-    if (isError) {
-      console.error(metricMessage);
-    } else {
-      // eslint-disable-next-line no-console
-      console.log(metricMessage);
-    }
-  }
 
   const postData = {
     metric: {
-      uuid: id,
+      uuid: uniqueId,
       name: `caseflow.client.${productArea}.${type}`,
-      message: metricMessage,
+      message: metricMessage(uniqueId, data, message),
       type,
       product: productArea,
       metric_attributes: JSON.stringify(data),
@@ -78,3 +95,59 @@ export const recordMetrics = (uniqueId, data, isError = false, { message, produc
 
   ApiUtil.post('/metrics/v2/logs', { data: postData });
 };
+
+export const recordMetrics = (targetFunction, { uniqueId, data, message, product }, isError = false) => {
+  let id = checkUuid(uniqueId, data, message, isError);
+
+  const t0 = performance.now();
+  const start = Date.now();
+
+  // eslint-disable-next-line no-console
+  console.info(`STARTED:${id} ${targetFunction.name}`);
+  const result = targetFunction();
+  const t1 = performance.now();
+  const end = Date.now();
+
+  const duration = t1 - t0;
+
+  // eslint-disable-next-line no-console
+  console.info(`FINISHED:${id} ${targetFunction.name} in ${duration} milliseconds`);
+
+  const metricData = {
+    ...data,
+    functionName: targetFunction.name,
+  };
+
+  storeMetrics(uniqueId, metricData, isError, { message, product, start, end, duration });
+
+  return result;
+};
+
+export const recordAsyncMetrics = async (asyncFunction, { uniqueId, data, message, product }, isError = false) => {
+  let id = checkUuid(uniqueId, data, message, isError);
+
+  const t0 = performance.now();
+  const start = Date.now();
+
+  // eslint-disable-next-line no-console
+  console.info(`STARTED:${id} ${asyncFunction}`);
+  const prom = () => asyncFunction;
+  const result = await prom();
+  const t1 = performance.now();
+  const end = Date.now();
+
+  const duration = t1 - t0;
+
+  // eslint-disable-next-line no-console
+  console.info(`FINISHED:${id} ${asyncFunction} in ${duration} milliseconds`);
+
+  const metricData = {
+    ...data,
+    functionName: asyncFunction.name,
+  };
+
+  storeMetrics(uniqueId, metricData, isError, { message, product, start, end, duration });
+
+  return result;
+};
+
