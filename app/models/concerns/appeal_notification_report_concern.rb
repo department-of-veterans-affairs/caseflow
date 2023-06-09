@@ -30,7 +30,7 @@ module AppealNotificationReportConcern
   # Purpose: Generate the PDF and then prepares the document for uploading to S3 or VBMS
   # Returns: nil
   def upload_notification_report!
-    upload_document(document_params)
+    upload_document
 
     nil
   end
