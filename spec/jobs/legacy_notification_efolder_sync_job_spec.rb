@@ -135,7 +135,11 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
         LegacyNotificationEfolderSyncJob.perform_now
 
         expect(
-          VbmsUploadedDocument.where(document_type: "BVA Case Notifications").where.not("id <= 5").order(:id).pluck(:appeal_id)
+          VbmsUploadedDocument
+            .where(document_type: "BVA Case Notifications")
+            .where.not("id <= 5")
+            .order(:id)
+            .pluck(:appeal_id)
         ).to eq(second_run_vbms_document_ids)
       end
     end
