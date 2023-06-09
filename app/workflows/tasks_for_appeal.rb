@@ -92,10 +92,7 @@ class TasksForAppeal
   def hide_legacy_tasks?
     active_tasks = all_tasks_except_for_decision_review_tasks.active
     legacy_tasks = legacy_appeal_tasks
-    if active_tasks && legacy_tasks
-      true
-    end
-    false
+    (active_tasks && legacy_tasks) ? true : false
   end
 
   def task_includes
