@@ -3,14 +3,16 @@
 describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
   include ActiveJob::TestHelper
   let!(:current_user) { create(:user, roles: ["System Admin"]) }
+  let!(:appeals) { create_list(:appeal, 10, :active) }
   let!(:job) { AmaNotificationEfolderSyncJob.new }
+
+  first_run_vbms_document_appeal_indexes = []
+  BATCH_LIMIT_SIZE = 5
 
   describe "perform" do
     before { Seeds::NotificationEvents.new.seed! }
 
     let!(:today) { Time.now.utc.iso8601 }
-    let!(:appeals) { create_list(:appeal, 10, :active) }
-
     let!(:notifications) do
       appeals.each_with_index do |appeal, index|
         next if [3, 7].include? index
@@ -32,13 +34,9 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
     end
 
     let!(:first_run_outcoded_appeals) { [appeals[6]] }
-    let!(:second_run_outcoded_appeals) { [] }
     let!(:first_run_never_synced_appeals) { appeals.first(3) + [appeals[4]] + appeals.last(2) }
-    let!(:second_run_never_synced_appeals) { appeals.last(2) }
-    let!(:first_run_vbms_document_ids) { [appeals[6].id, appeals[0].id, appeals[1].id, appeals[2].id, appeals[4].id] }
-    let!(:second_run_vbms_document_ids) { first_run_vbms_document_ids + [appeals[8].id, appeals[9].id, appeals[4].id] }
 
-    before(:all) { AmaNotificationEfolderSyncJob::BATCH_LIMIT = 5 }
+    before(:all) { AmaNotificationEfolderSyncJob::BATCH_LIMIT = BATCH_LIMIT_SIZE }
 
     context "first run" do
       before { VbmsUploadedDocument.delete_all }
@@ -58,11 +56,43 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
       it "running the perform" do
         perform_enqueued_jobs { AmaNotificationEfolderSyncJob.perform_later }
 
-        expect(VbmsUploadedDocument.first(5).pluck(:appeal_id)).to eq(first_run_vbms_document_ids)
+        first_run_vbms_document_appeal_indexes =
+          VbmsUploadedDocument.first(5)
+            .pluck(:appeal_id)
+            .map { |appeal_id| find_appeal_index_by_id(appeal_id) }
+            .compact
+
+        expect(first_run_vbms_document_appeal_indexes.size).to eq BATCH_LIMIT_SIZE
       end
     end
 
     context "second run" do
+      # Appeal IDs change between tests. Finds the appeals from the first job execution for this context.
+      let(:first_run_vbms_document_appeal_ids) do
+        first_run_vbms_document_appeal_indexes.map { |idx| appeals[idx].id }
+      end
+
+      # These appeals do not have notifications, or were outcoded too long ago.
+      let(:will_not_sync_appeal_ids) { [appeals[3].id, appeals[5].id, appeals[7].id] }
+
+      # There are no more appeals that have been outcoded within the last 24 hours
+      let(:second_run_outcoded_appeals) { [] }
+
+      # These appeals will be the ones that have not already been processed but should receive
+      # notifications reports.
+      let(:second_run_never_synced_appeals_ids) do
+        appeals.map(&:id) - first_run_vbms_document_appeal_ids - will_not_sync_appeal_ids
+      end
+
+      # These appeals should be all that have had notification reports generated for them after two
+      # runs with BATCH_LIMIT_SIZE number of appeals processed each time.
+      let(:second_run_vbms_document_appeal_ids) do
+        first_run_vbms_document_appeal_ids +
+          [appeals[4].id] -
+          will_not_sync_appeal_ids +
+          second_run_never_synced_appeals_ids
+      end
+
       before do
         perform_enqueued_jobs { AmaNotificationEfolderSyncJob.perform_later }
 
@@ -83,7 +113,9 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                notified_at: 3.minutes.ago,
                email_notification_status: "delivered")
 
-        expect(job.send(:appeals_never_synced)).to match_array(second_run_never_synced_appeals)
+        expect(
+          job.send(:appeals_never_synced).map(&:id)
+        ).to match_array(second_run_never_synced_appeals_ids)
       end
 
       it "get all ama appeals that must be resynced" do
@@ -129,8 +161,14 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
             .where(document_type: "BVA Case Notifications")
             .order(:id)
             .pluck(:appeal_id)
-        ).to match_array(second_run_vbms_document_ids)
+        ).to match_array(second_run_vbms_document_appeal_ids)
       end
+    end
+
+    def find_appeal_index_by_id(id)
+      appeal_ids = appeals.map(&:id)
+
+      appeal_ids.find_index(id)
     end
   end
 end
