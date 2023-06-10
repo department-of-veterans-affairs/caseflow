@@ -6,7 +6,6 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
   let!(:appeals) { create_list(:appeal, 10, :active) }
   let!(:job) { AmaNotificationEfolderSyncJob.new }
 
-  first_run_vbms_document_appeal_indexes = []
   BATCH_LIMIT_SIZE = 5
 
   describe "perform" do
@@ -56,17 +55,15 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
       it "running the perform" do
         perform_enqueued_jobs { AmaNotificationEfolderSyncJob.perform_later }
 
-        first_run_vbms_document_appeal_indexes =
-          VbmsUploadedDocument.first(5)
-            .pluck(:appeal_id)
-            .map { |appeal_id| find_appeal_index_by_id(appeal_id) }
-            .compact
-
-        expect(first_run_vbms_document_appeal_indexes.size).to eq BATCH_LIMIT_SIZE
+        expect(find_appeal_ids_from_first_document_sync.size).to eq BATCH_LIMIT_SIZE
       end
     end
 
     context "second run" do
+      # Gets the appeal IDs for all of the documents created during the first run of the
+      # AmaNotificationEfolderSyncJob
+      let(:first_run_vbms_document_appeal_indexes) { find_appeal_ids_from_first_document_sync }
+
       # These appeals do not have notifications, or were outcoded too long ago.
       let(:will_not_sync_appeal_ids) { [appeals[3].id, appeals[5].id, appeals[7].id] }
 
@@ -154,13 +151,18 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
     end
 
     def find_appeal_index_by_id(id)
-      appeal_ids = appeals.map(&:id)
-
-      appeal_ids.find_index(id)
+      appeals.map(&:id)&.find_index(id)
     end
 
     def first_run_vbms_document_appeal_ids(appeal_indexes)
       appeal_indexes.map { |idx| appeals[idx].id }
+    end
+
+    def find_appeal_ids_from_first_document_sync
+      VbmsUploadedDocument.first(BATCH_LIMIT_SIZE)
+        .pluck(:appeal_id)
+        .map { |appeal_id| find_appeal_index_by_id(appeal_id) }
+        .compact
     end
   end
 end
