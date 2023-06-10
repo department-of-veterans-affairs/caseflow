@@ -76,7 +76,9 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
       # These appeals will be the ones that have not already been processed but should receive
       # notifications reports.
       let(:second_run_never_synced_appeals_ids) do
-        appeals.map(&:id) - first_run_vbms_document_appeal_ids - will_not_sync_appeal_ids
+        appeals.map(&:id) -
+          first_run_vbms_document_appeal_ids(first_run_vbms_document_appeal_indexes) -
+          will_not_sync_appeal_ids
       end
 
       # These appeals should be all that have had notification reports generated for them after two
@@ -166,8 +168,8 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
       appeal_ids.find_index(id)
     end
 
-    def first_run_vbms_document_appeal_ids
-      first_run_vbms_document_appeal_indexes.map { |idx| appeals[idx].id }
+    def first_run_vbms_document_appeal_ids(appeal_indexes)
+      appeal_indexes.map { |idx| appeals[idx].id }
     end
   end
 end
