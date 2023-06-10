@@ -84,7 +84,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
       # These appeals should be all that have had notification reports generated for them after two
       # runs with BATCH_LIMIT_SIZE number of appeals processed each time.
       let(:second_run_vbms_document_appeal_ids) do
-        first_run_vbms_document_appeal_ids +
+        first_run_vbms_document_appeal_ids(first_run_vbms_document_appeal_indexes) +
           [appeals[4].id] -
           will_not_sync_appeal_ids +
           second_run_never_synced_appeals_ids
