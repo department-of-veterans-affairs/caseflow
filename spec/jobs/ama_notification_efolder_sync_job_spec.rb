@@ -67,11 +67,6 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
     end
 
     context "second run" do
-      # Appeal IDs change between tests. Finds the appeals from the first job execution for this context.
-      let(:first_run_vbms_document_appeal_ids) do
-        first_run_vbms_document_appeal_indexes.map { |idx| appeals[idx].id }
-      end
-
       # These appeals do not have notifications, or were outcoded too long ago.
       let(:will_not_sync_appeal_ids) { [appeals[3].id, appeals[5].id, appeals[7].id] }
 
@@ -169,6 +164,10 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
       appeal_ids = appeals.map(&:id)
 
       appeal_ids.find_index(id)
+    end
+
+    def first_run_vbms_document_appeal_ids
+      first_run_vbms_document_appeal_indexes.map { |idx| appeals[idx].id }
     end
   end
 end
