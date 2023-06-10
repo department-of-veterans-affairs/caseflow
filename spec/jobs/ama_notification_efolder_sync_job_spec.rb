@@ -101,15 +101,6 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
       end
 
       it "get all ama appeals that have never been synced yet" do
-        create(:notification,
-               appeals_id: appeals[4].uuid,
-               appeals_type: "Appeal",
-               event_date: today,
-               event_type: "Appeal docketed",
-               notification_type: "Email",
-               notified_at: 3.minutes.ago,
-               email_notification_status: "delivered")
-
         expect(
           job.send(:appeals_never_synced).map(&:id)
         ).to match_array(second_run_never_synced_appeals_ids)
