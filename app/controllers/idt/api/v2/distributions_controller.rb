@@ -3,7 +3,6 @@
 class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   before_action :verify_access
-  skip_before_action :verify_authenticity_token, only: [:outcode]
 
   # rubocop:disable Metrics/MethodLength, Naming/AccessorMethodName, Metrics/CyclomaticComplexity
   def get_distribution
@@ -18,6 +17,8 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
     begin
       # Retrieves the distribution package from the PacMan API
       distribution = PacManService.get_distribution_request(distribution_id)
+      # new_response = JSON.parse(distribution)
+
       response_code = distribution.code
       if response_code != 200
         fail StandardError
@@ -34,44 +35,16 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
       end
       return
     end
-    render json: converted_response(distribution)
+    # render json: converted_response(distribution)
+    render json: format_response(distribution)
   end
 
   # Converts the keys in the response from camelCase to snake_case to be in line with Ruby convention
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-  def converted_response(response)
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
-    shorthand = response.raw_body
-    destination_shorthand = shorthand.destinations[0]
-    new_response = { "table":
-                    { "id": shorthand[:id],
-                      "recipient": {  "type": shorthand[:recipient][:type],
-                                      "id": shorthand[:recipient][:id],
-                                      "name": shorthand[:recipient][:name] },
-                      "description": shorthand.description,
-                      "communication_package_id": shorthand.communicationPackageId,
-                      "destinations": [
-                        { "type": destination_shorthand[:type],
-                          "id": destination_shorthand[:id],
-                          "status": destination_shorthand[:status],
-                          "cbcm_send_attempt_date": destination_shorthand[:cbcmSendAttemptDate],
-                          "address_line_1": destination_shorthand[:addressLine1],
-                          "address_line_2": destination_shorthand[:addressLine2],
-                          "address_line_3": destination_shorthand[:addressLine3],
-                          "address_line_4": destination_shorthand[:addressLine4],
-                          "address_line_5": destination_shorthand[:addressLine5],
-                          "address_line_6": destination_shorthand[:addressLine6],
-                          "treat_line_2_as_addressee": destination_shorthand[:treatLine2AsAddressee],
-                          "treat_line_3_as_addressee": destination_shorthand[:treatLine3AsAddressee],
-                          "city": destination_shorthand[:city],
-                          "state": destination_shorthand[:state],
-                          "postal_code": destination_shorthand[:postalCode],
-                          "country_name": destination_shorthand[:countryName],
-                          "country_code": destination_shorthand[:countryCode] }
-                      ],
-                      "status": shorthand.status,
-                      "sent_to_cbcm_date": shorthand.sentToCbcmDate } }
-    new_response
+  def format_response(response)
+    JSON.parse(response.raw_body.to_json).deep_transform_keys! do |key|
+
+      key.underscore.gsub(/e(\d)/, 'e_\1')
+    end
   end
 
   private

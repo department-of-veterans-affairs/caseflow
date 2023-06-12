@@ -92,7 +92,6 @@ class Fakes::PacmanService < ExternalApi::PacmanService
       HTTPI::Response.new(
         200,
         {},
-        OpenStruct.new(
           "id": distribution_id,
           "recipient": {
             "type": "system",
@@ -122,7 +121,6 @@ class Fakes::PacmanService < ExternalApi::PacmanService
           }],
           "status": "NEW",
           "sentToCbcmDate": ""
-        )
       )
     end
     # rubocop:enable Metrics/MethodLength
