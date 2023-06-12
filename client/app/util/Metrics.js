@@ -97,7 +97,9 @@ export const storeMetrics = (uniqueId, data, { message, type = 'log', product, s
   ApiUtil.post('/metrics/v2/logs', { data: postData });
 };
 
-export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 'log', product }) => {
+export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 'log', product },
+  saveMetrics = true) => {
+
   let id = checkUuid(uniqueId, data, message, type);
 
   const t0 = performance.now();
@@ -115,12 +117,14 @@ export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 
   // eslint-disable-next-line no-console
   console.info(`FINISHED: ${id} ${name} in ${duration} milliseconds`);
 
-  const metricData = {
-    ...data,
-    name
-  };
+  if (saveMetrics) {
+    const metricData = {
+      ...data,
+      name
+    };
 
-  storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration });
+    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration });
+  }
 
   return result;
 };
@@ -130,7 +134,9 @@ export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 
  *
  * Might need to split into async and promise versions if issues
  */
-export const recordAsyncMetrics = async (asyncFunction, { uniqueId, data, message, type = 'log', product }) => {
+export const recordAsyncMetrics = async (asyncFunction, { uniqueId, data, message, type = 'log', product },
+  saveMetrics = true) => {
+
   let id = checkUuid(uniqueId, data, message, type);
 
   const t0 = performance.now();
@@ -149,12 +155,15 @@ export const recordAsyncMetrics = async (asyncFunction, { uniqueId, data, messag
   // eslint-disable-next-line no-console
   console.info(`FINISHED: ${id} ${name} in ${duration} milliseconds`);
 
-  const metricData = {
-    ...data,
-    name,
-  };
+  if (saveMetrics) {
+    const metricData = {
+      ...data,
+      name
+    };
 
-  storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration });
+    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration });
+  }
+
 
   return result;
 };
