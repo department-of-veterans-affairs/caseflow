@@ -8,7 +8,7 @@ class UploadDocumentToVbmsJob < CaseflowJob
   # Params: document_id - integer to search for VbmsUploadedDocument
   #         initiator_css_id - string to find a user by css_id
   #         application - string with a default value of "idt" but can be overwritten
-  #         communication_package - Payload with copies value (integer) and distributions value (array of JSON-formatted
+  #         mail_package - Payload with copies value (integer) and distributions value (array of JSON-formatted
   #           MailRequest objects) to be submitted to Package Manager if optional recipient info is present
   #
   # Return: nil
@@ -20,7 +20,7 @@ class UploadDocumentToVbmsJob < CaseflowJob
     @initiator = User.find_by_css_id(initiator_css_id)
     add_context_to_sentry
     UploadDocumentToVbms.new(document: document).call
-    queue_mail_request_job(communication_package) unless communication_package.nil?
+    queue_mail_request_job(mail_package) unless mail_package.nil?
   end
 
   private
@@ -41,10 +41,10 @@ class UploadDocumentToVbmsJob < CaseflowJob
     @params[:initiator_css_id]
   end
 
-  def communication_package
-    return nil if @params[:communication_package].blank?
+  def mail_package
+    return nil if @params[:mail_package].blank?
 
-    @params[:communication_package]
+    @params[:mail_package]
   end
 
   def add_context_to_sentry
@@ -63,10 +63,10 @@ class UploadDocumentToVbmsJob < CaseflowJob
     )
   end
 
-  def queue_mail_request_job(communication_package)
+  def queue_mail_request_job(mail_package)
     return unless document.uploaded_to_vbms_at
 
-    MailRequestJob.perform_later(document, communication_package)
+    MailRequestJob.perform_later(document, mail_package)
     info_message = "MailRequestJob for document #{document.id} queued for submission to Package Manager"
     log_info(info_message)
   end

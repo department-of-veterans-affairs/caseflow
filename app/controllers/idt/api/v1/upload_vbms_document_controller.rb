@@ -9,17 +9,9 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
   def create
     # Validate copies and create distributions for Package Manager mail service if recipient info present
-    build_communication_package
+    build_mail_package
 
-    appeal = nil
-    # Find veteran from appeal id and check with db
-    if appeal_id.present?
-      appeal = find_veteran_by_appeal_id
-    else
-      find_file_number_by_veteran_identifier
-    end
-
-    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, communication_package).call
+    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal).call
     if result.success?
       success_message = { message: "Document successfully queued for upload." }
       if recipient_info.present?
@@ -45,20 +37,22 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   end
 
   # Payload with distributions value (array of JSON-formatted MailRequest objects) and copies (integer)
-  def communication_package
+  def mail_package
     return nil if recipient_info.blank?
 
     { distributions: mail_requests, copies: copies }
   end
 
-  def build_communication_package
+  def build_mail_package
     return if recipient_info.blank?
 
     throw_error_if_copies_out_of_range
+    # Create and validate MailRequest objects, save to database, and store distribution IDs
     mail_requests.map do |request|
       request.call
       distribution_ids << request.vbms_distribution_id
     end
+    params[:mail_package] = mail_package
   end
 
   def mail_requests
@@ -97,6 +91,15 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     @distribution_ids ||= []
   end
 
+  def vbms_upload_params
+    params[:mail_package] = mail_package
+    {
+      params: params,
+      user: current_user,
+      appeal: appeal
+    }
+  end
+
   def appeal_id
     params[:appeal_id]
   end
@@ -107,6 +110,15 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
   def bgs
     @bgs ||= BGSService.new
+  end
+
+  def appeal
+    if appeal_id.blank?
+      find_file_number_by_veteran_identifier
+      return nil
+    end
+
+    @appeal ||= find_veteran_by_appeal_id
   end
 
   def find_veteran_by_appeal_id
