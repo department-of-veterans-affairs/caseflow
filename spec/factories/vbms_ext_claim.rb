@@ -10,9 +10,10 @@ FactoryBot.define do
         (10_000 + 1).to_s
       end
     end
-
+    claim_date { Time.zone.now - 1.day }
     sync_id { 1 }
     createddt { Time.zone.now - 1.day }
+    establishment_date { Time.zone.now - 1.day }
     lastupdatedt { Time.zone.now }
     expirationdt { Time.zone.now + 5.days }
     version { 22 }
@@ -29,6 +30,18 @@ FactoryBot.define do
     # rdc: rating decision complete
     trait :rdc do
       LEVEL_STATUS_CODE { "RDC" }
+    end
+
+    trait :hlr do
+      EP_CODE { "030" }
+      TYPE_CODE { "030HLRR" }
+      PAYEE_CODE { "00" }
+    end
+
+    trait :slc do
+      EP_CODE { "040" }
+      TYPE_CODE { "040SCR" }
+      PAYEE_CODE { "00" }
     end
   end
 end
