@@ -205,12 +205,12 @@ class InitialTasksFactory
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
   end
 
-   def create_establishment_task
+  def create_establishment_task
     task = EstablishmentTask.create!(
       appeal: @appeal,
       parent: @root_task,
       assigned_by: RequestStore[:current_user],
-      assigned_to: RequestStore[:current_user],
+      assigned_to: SpecialIssueEditTeam.singleton,
       completed_by: RequestStore[:current_user],
     )
     task.format_instructions(@appeal.request_issues)
