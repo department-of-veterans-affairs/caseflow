@@ -29,8 +29,10 @@ module AppealNotificationReportConcern
 
   # Purpose: Generate the PDF and then prepares the document for uploading to S3 or VBMS
   # Returns: nil
+  # Replace the upload_notification_report! method call with transmit_document!
+  # and remove the timestamp from the naming convention when enabling versioning within efolder
   def upload_notification_report!
-    transmit_document!
+    upload_document
 
     nil
   end
@@ -40,7 +42,7 @@ module AppealNotificationReportConcern
   # Purpose: Creates the name for the document
   # Returns: The document name
   def notification_document_name
-    "notification-report_#{external_id}"
+    "notification-report_#{external_id}_#{Time.now.utc.strftime('%Y%m%d%k%M%S')}"
   end
 
   # Purpose: Generates the PDF
@@ -65,6 +67,8 @@ module AppealNotificationReportConcern
     }
   end
 
+  # Purpose: Adds a new document version to a series in eFolder if a series already exists
+  # Returns: The first document ID in the BVA Case Notifications series for the appeal.
   def transmit_document!
     version_id = document_version_ref_id
     version_id.present? ? update_document(version_id) : upload_document

@@ -67,7 +67,7 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_add_issue
       choose('rating-radio_0', allow_label_click:true)
       expect(page).to have_content("Issue is related to Military Sexual Trauma (MST)")
-      expect(page).to have_content("Issue is related to PACT act")
+      expect(page).to have_content("Issue is related to PACT Act")
     end
 
     scenario "MST and PACT checkboxes are disabled if they already exist in the model" do
@@ -99,7 +99,7 @@ feature "Intake Add Issues Page", :all_dbs do
 
       #visible is set to false because capybara does not recognize the fields otherwise.
       expect(page).to have_field("Issue is related to Military Sexual Trauma (MST)", visible: false, disabled: true)
-      expect(page).to have_field("Issue is related to PACT act", visible: false, disabled: true)
+      expect(page).to have_field("Issue is related to PACT Act", visible: false, disabled: true)
     end
   end
 

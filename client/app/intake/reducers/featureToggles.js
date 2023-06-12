@@ -26,6 +26,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     pactIdentification: {
       $set: Boolean(featureToggles.pactIdentification)
     },
+    justificationReason: {
+      $set: Boolean(featureToggles.justificationReason)
+    },
     legacyMstPactIdentification: {
       $set: Boolean(featureToggles.legacyMstPactIdentification)
     },
@@ -52,6 +55,7 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
       mstIdentification: false,
       pactIdentification: false,
       legacyMstPactIdentification: false,
+      justificationReason: false,
       updatedAppealForm: false,
       hlrScUnrecognizedClaimants: false,
       vhaClaimReviewEstablishment: false
