@@ -102,21 +102,22 @@ export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 
 
   const t0 = performance.now();
   const start = Date.now();
+  const name = targetFunction?.name || message;
 
   // eslint-disable-next-line no-console
-  console.info(`STARTED: ${id} ${targetFunction.name}`);
-  const result = targetFunction();
+  console.info(`STARTED: ${id} ${name}`);
+  const result = () => targetFunction();
   const t1 = performance.now();
   const end = Date.now();
 
   const duration = t1 - t0;
 
   // eslint-disable-next-line no-console
-  console.info(`FINISHED: ${id} ${targetFunction.name} in ${duration} milliseconds`);
+  console.info(`FINISHED: ${id} ${name} in ${duration} milliseconds`);
 
   const metricData = {
     ...data,
-    functionName: targetFunction.name,
+    name
   };
 
   storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration });
@@ -134,9 +135,10 @@ export const recordAsyncMetrics = async (asyncFunction, { uniqueId, data, messag
 
   const t0 = performance.now();
   const start = Date.now();
+  const name = message || asyncFunction;
 
   // eslint-disable-next-line no-console
-  console.info(`STARTED: ${id} ${asyncFunction}`);
+  console.info(`STARTED: ${id} ${name}`);
   const prom = () => asyncFunction;
   const result = await prom();
   const t1 = performance.now();
@@ -145,11 +147,11 @@ export const recordAsyncMetrics = async (asyncFunction, { uniqueId, data, messag
   const duration = t1 - t0;
 
   // eslint-disable-next-line no-console
-  console.info(`FINISHED: ${id} ${asyncFunction} in ${duration} milliseconds`);
+  console.info(`FINISHED: ${id} ${name} in ${duration} milliseconds`);
 
   const metricData = {
     ...data,
-    functionName: asyncFunction.name,
+    name,
   };
 
   storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration });

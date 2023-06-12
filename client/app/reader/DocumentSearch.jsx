@@ -14,6 +14,7 @@ import { searchText, getDocumentText, updateSearchIndex, setSearchIndexToHighlig
 import _ from 'lodash';
 import classNames from 'classnames';
 import { LOGO_COLORS } from '../constants/AppConstants';
+import { recordMetrics } from '../util/Metrics';
 
 export class DocumentSearch extends React.PureComponent {
   constructor() {
@@ -41,8 +42,18 @@ export class DocumentSearch extends React.PureComponent {
 
     this.getText();
 
+    const metricData = {
+      message: `Searching within Reader for "${this.searchTerm}"`,
+      type: 'performance',
+      product: 'reader',
+      data: {
+        searchTerm: this.searchTerm,
+        file: this.props.file,
+      },
+    };
+
     // todo: add guard to PdfActions.searchText to abort if !searchTerm.length
-    this.props.searchText(this.searchTerm);
+    recordMetrics(this.props.searchText(this.searchTerm), metricData);
   }
 
   updateSearchIndex = (iterateForwards) => {
