@@ -76,13 +76,15 @@ RSpec.feature "SwitchApps", :postgres do
       visit "/decision_reviews/#{vha_business_line.url}"
     end
 
-    scenario "sees the Switch product dropdown menu with the options Intake, VHA Decision Reviews Queue and Queue" do
+    scenario "sees the Switch product dropdown menu with the options
+    Intake, VHA Decision Reviews Queue, Queue and search" do
       expect(page).to have_link("Switch product", href: "#Switch product", exact: true)
 
       find("a", text: "Switch product").click
       expect(page).to have_link(vha_user_links[0][:title], href: vha_user_links[0][:link], exact: true)
       expect(page).to have_link(vha_user_links[1][:title], href: vha_user_links[1][:link], exact: true)
       expect(page).to have_link(vha_user_links[2][:title], href: vha_user_links[2][:link], exact: true)
+      expect(page).to have_link(vha_user_links[3][:title], href: vha_user_links[3][:link], exact: true)
     end
 
     scenario "can navigate to the VHA Decision Reviews Queue" do
@@ -91,7 +93,15 @@ RSpec.feature "SwitchApps", :postgres do
       expect(page).to have_content(vha_business_line.name)
     end
 
-    it "match the array of the dropdown" do
+    scenario "can navigate to different links" do
+      vha_user_links.each do |item|
+        find("a", text: "Switch product").click
+        find("a", text: item[:title]).click
+        expect(current_url).to have_content(item[:link])
+      end
+    end
+
+    it "should match the order in the dropdown" do
       visit "/intake"
       find("a", text: "Switch product").click
       dropdown_menu_text = page.find(".cf-dropdown-menu").text

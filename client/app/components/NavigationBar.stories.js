@@ -17,11 +17,11 @@ Basic.args = {
     overlapColor: '#CA9E00'
   },
   applicationUrls: [
-    { link: '/queue', title: 'Queue' },
     { link: '/intake', title: 'Intake' },
-    { link: '/hearings/schedule', title: 'Hearing' },
     { link: '/decision_reviews/vha', title: 'Decision Review Queue', prefix: 'VHA' },
-    { link: '/search', title: 'Search cases' }
+    { link: '/queue', title: 'Queue' },
+    { link: '/search', title: 'Search cases' },
+    { link: '/hearings/schedule', title: 'Hearing' }
   ],
   userDisplayName: 'Test user',
   dropdownUrls: [
