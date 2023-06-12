@@ -14,7 +14,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
   TASK_ACTIONS = [
     Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
-    # Mark as complete,
+    Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.to_h,
     Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
     Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
     Constants.TASK_ACTIONS.CANCEL_TASK.to_h

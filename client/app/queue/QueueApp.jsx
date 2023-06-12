@@ -652,6 +652,10 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="vha_caregiver_support_return_to_board_intake" {...props.match.params} />
   );
 
+  routeCompleteHearingPostponementRequest = (props) => (
+    <h1>Placeholder</h1>
+  );
+
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
       'Your Queue' :
@@ -1198,6 +1202,13 @@ class QueueApp extends React.PureComponent {
                 }`}
               title={`${PAGE_TITLES.RETURN_TO_BOARD_INTAKE} | Caseflow`}
               render={this.routedVhaCaregiverSupportReturnToBoardIntake}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.COMPLETE_AND_POSTPONE.value}`}
+              // This title is just a placeholder. Not sure what it is supposed to actually be.
+              title="Complete Hearing Postponement Request | Caseflow"
+              render={this.routeCompleteHearingPostponementRequest}
             />
             <PageRoute
               exact
