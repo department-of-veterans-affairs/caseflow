@@ -6,12 +6,16 @@ describe UploadDocumentToVbmsJob, :postgres do
     let(:service) { instance_double(UploadDocumentToVbms) }
     let(:user) { create(:user) }
     let(:mail_request) { instance_double(MailRequest) }
+    let(:mail_package) do
+      { distributions: [mail_request.to_json],
+        copies: 1 }
+    end
     let(:mail_request_job) { class_double(MailRequestJob) }
 
     let(:params) do
       { document_id: document.id,
         initiator_css_id: user.css_id,
-        mail_request: mail_request }
+        mail_package: mail_package }
     end
 
     subject { UploadDocumentToVbmsJob.perform_now(params) }
@@ -24,15 +28,15 @@ describe UploadDocumentToVbmsJob, :postgres do
       subject
     end
 
-    context "document is associated with a mail request" do
+    context "document is associated with a mail package" do
       it "calls #perform_later on MailRequestJob" do
-        expect(mail_request_job).to receive(:perform_later).with(document, mail_request)
+        expect(mail_request_job).to receive(:perform_later).with(document, mail_package)
         subject
       end
     end
 
-    context "document is not associated with a mail request" do
-      let(:mail_request) { nil }
+    context "document is not associated with a mail package" do
+      let(:mail_package) { nil }
       it "does not call #perform_later on MailRequestJob" do
         expect(mail_request_job).to_not receive(:perform_later)
         subject

@@ -15,6 +15,7 @@ class UploadDocumentToVbmsJob < CaseflowJob
 
   # document_id:, initiator_css_id:, application: "idt", mail_package: nil
   def perform(params)
+    @params = params
     RequestStore.store[:application] = application
     RequestStore.store[:current_user] = User.system_user
     @document = VbmsUploadedDocument.find_by(id: params[:document_id])
