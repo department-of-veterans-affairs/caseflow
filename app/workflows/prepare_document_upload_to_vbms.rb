@@ -32,12 +32,13 @@ class PrepareDocumentUploadToVbms
       @params[:veteran_file_number] = throw_error_if_file_number_not_match_bgs
       VbmsUploadedDocument.create(document_params).tap do |document|
         document.cache_file
-        UploadDocumentToVbmsJob.perform_later(
+        upload_job_payload = {
           document_id: document.id,
           initiator_css_id: user.css_id,
           application: @params[:application],
           mail_requests: @mail_requests
-        )
+        }
+        UploadDocumentToVbmsJob.perform_later(upload_job_payload)
       end
     end
 
