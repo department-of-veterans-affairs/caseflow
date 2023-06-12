@@ -355,9 +355,9 @@ class RequestIssuesUpdate < CaseflowRecord
       else
         # format the task instructions and close out
         # use contested issue description if nonrating issue category is nil
-        issue_description = before_issue.nonrating_issue_category unless before_issue.nonrating_issue_category.nil?
+        # rubocop:disable Layout/LineLength
+        issue_description = "#{before_issue.nonrating_issue_category} - #{before_issue.nonrating_issue_description}" unless before_issue.nonrating_issue_category.nil?
         issue_description = before_issue.contested_issue_description if issue_description.nil?
-
         task.format_instructions(
           change_type,
           issue_description,
@@ -367,6 +367,7 @@ class RequestIssuesUpdate < CaseflowRecord
           after_issue&.pact_status
         )
       end
+      # rubocop:enable Layout/LineLength
       task.completed!
     end
   end

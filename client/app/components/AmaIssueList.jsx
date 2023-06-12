@@ -50,12 +50,13 @@ export const AmaIssue = (props) => {
   return <li key={props.index} {...singleIssueStyling} {...props.customStyle}>
     <div {...issueContentStyling}><strong>Benefit type: </strong>{BENEFIT_TYPES[props.issue.program]}</div>
     <div {...issueContentStyling}><strong>Issue: </strong>{props.issue.description}</div>
-    {(props.mstFeatureToggle || props.pactFeatureToggle) && <div {...issueContentStyling}><strong>Special Issues: </strong>{
-      specialIssuesFormatting(props.issue.mst_status, props.issue.pact_status)
-    }
-    </div>}
     { props.issue.diagnostic_code &&
       <div {...issueContentStyling}><strong>Diagnostic code: </strong>: {props.issue.diagnostic_code}</div> }
+    { (props.mstFeatureToggle || props.pactFeatureToggle) && <div {...issueContentStyling}>
+      <strong>Special Issues: </strong>{
+        specialIssuesFormatting(props.issue.mst_status, props.issue.pact_status)
+      }
+    </div> }
     { props.issue.notes &&
       <div {...issueContentStyling} {...issueNoteStyling}>Note from NOD: {props.issue.notes}</div> }
     { props.issue.closed_status && props.issue.closed_status === 'withdrawn' &&

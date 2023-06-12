@@ -189,7 +189,7 @@ class ExternalApi::VANotifyService
     #
     # Return: service_response: JSON from VA Notify or error
     def send_va_notify_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
-      url = URI.escape(BASE_URL + endpoint)
+      url = URI::DEFAULT_PARSER.escape(BASE_URL + endpoint)
       request = HTTPI::Request.new(url)
       request.query = query
       request.open_timeout = 30
