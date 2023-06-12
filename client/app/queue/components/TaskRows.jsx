@@ -75,7 +75,7 @@ const issueUpdateTask = (task) =>{
 }
 
 const establishmentTask = (task) => {
-  return task.type === 'EstablishmentTask'
+  return task.type === 'EstablishmentTask';
 }
 
 const tdClassNames = (timeline, task) => {
