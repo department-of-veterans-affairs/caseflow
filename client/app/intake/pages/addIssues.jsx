@@ -538,6 +538,7 @@ class AddIssuesPage extends React.Component {
             appealIsLegacy={isLegacy}
             mstIdentification={this.props.featureToggles.mst_identification}
             pactIdentification={this.props.featureToggles.pact_identification}
+            justificationReason={this.props.featureToggles.justification_reason}
             onCancel={() => {
               this.props.toggleEditIntakeIssueModal();
             }}

@@ -75,12 +75,12 @@ class AddIssuesModal extends React.Component {
     // Ensure we have a value for decisionDate
     currentIssue.decisionDate = currentIssue.decisionDate || currentIssue.approxDecisionDate;
 
-    if (mstChecked && mstJustification === '') {
+    if (mstChecked && mstJustification === '' && this.props.featureToggles.justificationReason) {
       if (!currentIssue.mstAvailable) {
         return;
       }
     }
-    if (pactChecked && pactJustification === '') {
+    if (pactChecked && pactJustification === '' && this.props.featureToggles.justificationReason) {
       if (!currentIssue.pactAvailable) {
         return;
       }
@@ -190,6 +190,8 @@ class AddIssuesModal extends React.Component {
             this.props.featureToggles.mst_identification : this.props.featureToggles.mstIdentification}
           renderPact={this.props.featureToggles.pact_identification ?
             this.props.featureToggles.pact_identification : this.props.featureToggles.pactIdentification}
+          renderJustification={this.props.featureToggles.justification_reason ?
+            this.props.featureToggles.justification_reason: this.props.featureToggles.justificationReason}
           userCanEditIntakeIssues={this.props.userCanEditIntakeIssues}
           mstChecked={this.state.mstChecked}
           setMstCheckboxFunction={this.mstCheckboxChange}
