@@ -333,7 +333,7 @@ class TaskRows extends React.PureComponent {
     // formatting used for IssueUpdate task instructions.
     const formatIssueUpdateBreaks = (text = '') => {
       const divStyle = { marginTop: '1rem' };
-      const hStyle = { marginTop: '30px', marginBottom: '0rem', fontWeight: 'bold' };
+      const hStyle = { marginTop: '1.5rem', marginBottom: '0rem', fontWeight: 'bold' };
 
       if (Array.isArray(text)) {
 
@@ -341,17 +341,21 @@ class TaskRows extends React.PureComponent {
           <div style={divStyle}>
             <b>{text[0]}:</b>
             <h5 style={hStyle}>Original:</h5>
-            <small>{text[1]}</small>
-            <br />
-            <small>{text[2]}</small>
-            <br />
+            <div>
+              <small>{text[1]}</small>
+            </div>
+            <div style={divStyle}>
+              <small>{text[2]}</small>
+            </div>
             {text.length > 3 &&
             <React.Fragment>
               <h5 style={hStyle}>Updated:</h5>
-              <small>{text[3]}</small>
-              <br />
-              <small>{text[4]}</small>
-              <br />
+              <div>
+                <small>{text[3]}</small>
+              </div>
+              <div style={divStyle}>
+                <small>{text[4]}</small>
+              </div>
             </React.Fragment>}
             {renderMstLabel(text[5], hStyle)}
             {renderPactLabel(text[6], hStyle)}
@@ -361,8 +365,8 @@ class TaskRows extends React.PureComponent {
     };
 
     const formatEstablishmentBreaks = (text = '') => {
-      const divStyle = { marginTop: '1rem' };
-      const hStyle = { marginTop: '30px', marginBottom: '0rem', fontWeight: 'bold' };
+      const divStyle = { marginTop: '1rem'};
+      const hStyle = { marginTop: '1rem', marginBottom: '0rem', fontWeight: 'bold' };
 
       if (Array.isArray(text)) {
         const content = text.map((issue, index) =>
@@ -415,9 +419,9 @@ class TaskRows extends React.PureComponent {
       } else {
         return (
           <ReactMarkdown>{formatBreaks(text)}</ReactMarkdown>
-        )
+        );
       }
-    }
+    };
 
     return (
       <React.Fragment key={`${task.uniqueId} fragment`}>
