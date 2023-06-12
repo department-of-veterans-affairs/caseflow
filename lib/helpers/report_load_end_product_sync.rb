@@ -127,11 +127,6 @@ module WarRoom
     #
     ####################################################################
 
-    # Helper method for get_error_ids to return txt file contents as an array
-    def to_array
-      body.read.gsub("\r","").split("\n").map{ |obj| obj[1...-1] }
-    end
-
     # Grab txt file of previously errored EP reference ids from s3 and return as an array
     def get_error_ids(env)
       # Set Client Resources for AWS
@@ -140,7 +135,7 @@ module WarRoom
       key_name = "ep_establishment_workaround/#{env}/ep_priority_sync/error_ids.txt"
 
       filepath = s3client.get_object(bucket:'appeals-dbas', key:key_name)
-      filepath.to_array
+      filepath.body.read.gsub("\r","").split("\n").map{ |obj| obj[1...-1] }
     end
 
     # Grab cleared EPs that are out of sync
@@ -167,7 +162,7 @@ module WarRoom
         ORDER BY
           epe.id ASC
         LIMIT
-          batch_limit
+          #{batch_limit}
       SQL
 
       conn.execute(raw_sql)
@@ -197,7 +192,7 @@ module WarRoom
         ORDER BY
           epe.id ASC
         LIMIT
-          batch_limit
+          #{batch_limit}
       SQL
 
       conn.execute(raw_sql)
@@ -251,7 +246,7 @@ module WarRoom
               data.reference_id,
               data.last_synced_at,
               data.synced_status,
-              data.prev_sync_status,
+              data.prev_synced_status,
               data.error
             ].flatten
         end
