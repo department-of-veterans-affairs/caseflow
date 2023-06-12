@@ -143,6 +143,10 @@ RSpec.feature "SwitchApps", :postgres do
       {
         title: "Caseflow Queue",
         link: "/queue"
+      },
+      {
+        title: "Caseflow Search cases",
+        link: "/search"
       }
     ]
   end
