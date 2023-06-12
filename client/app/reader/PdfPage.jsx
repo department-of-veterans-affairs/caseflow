@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Mark from 'mark.js';
 
 import CommentLayer from './CommentLayer';
-import { connect } from 'react-redux';
+import { useSelector, connect } from 'react-redux';
 import { get, noop, sum, filter, map } from 'lodash';
 import { setSearchIndexToHighlight } from './PdfSearch/PdfSearchActions';
 import { setDocScrollPosition } from './PdfViewer/PdfViewerActions';
@@ -181,6 +181,21 @@ export class PdfPage extends React.PureComponent {
   };
 
   drawText = (page, text) => {
+
+    const renderTextTimeMetricEnabled = useSelector((state) => state.featureToggles.renderTextTimeMetric);
+
+    if (renderTextTimeMetricEnabled) {
+
+      const startTime = performance.now();
+      const endTime = performance.now();
+      const elapsedTime = endTime - startTime;
+
+      console.log(`Text rendering time: ${elapsedTime} ms`);
+    } else {
+      console.log('Feature toggle is disabled. Text rendering is skipped.');
+
+    }
+
     if (!this.textLayer) {
       return;
     }
