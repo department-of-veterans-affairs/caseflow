@@ -60,7 +60,7 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
      it "returns the expected converted response" do
       response = HTTPI::Response.new(
         200,
-        {}, OpenStruct.new(
+        {},
           "id": distribution_id,
           "recipient": {
             "type": "system",
@@ -90,8 +90,7 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
           }],
           "status": "NEW",
           "sentToCbcmDate": ""
-          ).to_json
-      )
+          )
 
       new_table = {
           "id": 123_456,
@@ -124,7 +123,7 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
           "status": "destination_status",
           "sent_to_cbcm_date": "sent_to_cbcm_date"
         }
-      expect(controller.format_response(response)).to eq(new_table)
+      expect(controller.format_response(response)).to eq(new_table.to_json)
 
     end
   end
