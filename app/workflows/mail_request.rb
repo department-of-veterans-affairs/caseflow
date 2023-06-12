@@ -8,10 +8,10 @@ class MailRequest
   include MailRequestValidator::DistributionDestination
 
   attr_accessor :recipient_type, :name, :first_name, :middle_name, :last_name,
-  :participant_id, :poa_code, :claimant_station_of_jurisdiction, :destination_type,
-  :address_line_1, :address_line_2, :address_line_3, :address_line_4, :address_line_5,
-  :address_line_6, :city, :country_code, :postal_code, :state, :treat_line_2_as_addressee,
-  :treat_line_3_as_addressee, :country_name, :vbms_distribution_id, :comm_package_id
+                :participant_id, :poa_code, :claimant_station_of_jurisdiction, :destination_type,
+                :address_line_1, :address_line_2, :address_line_3, :address_line_4, :address_line_5,
+                :address_line_6, :city, :country_code, :postal_code, :state, :treat_line_2_as_addressee,
+                :treat_line_3_as_addressee, :country_name, :vbms_distribution_id, :comm_package_id
 
   def initialize(recipient_and_destination_hash)
     @recipient_type = recipient_and_destination_hash[:recipient_type]
@@ -46,7 +46,7 @@ class MailRequest
       @vbms_distribution_id = distribution.id
       create_a_vbms_distribution_destination
     else
-      raise Caseflow::Error::MissingRecipientInfo
+      fail Caseflow::Error::MissingRecipientInfo
     end
   end
 

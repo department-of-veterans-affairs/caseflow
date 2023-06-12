@@ -32,8 +32,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
             postal_code: "12345",
             country_code: "US"
           }
-        ]
-      }
+        ] }
     end
 
     let(:invalid_mail_request_params) do
@@ -53,7 +52,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
             postal_code: "12345",
             country_code: "US"
           }
-        ]}
+        ] }
     end
 
     let(:params_identifier) do

@@ -8,7 +8,7 @@ FactoryBot.define do
     destination_type { "domesticAddress" }
     address_line_1 { "1234 Main Street" }
     city { "Orlando" }
-    country_code { "US"}
+    country_code { "US" }
     postal_code { "12345" }
     state { "FL" }
     treat_line_2_as_addressee { false }
