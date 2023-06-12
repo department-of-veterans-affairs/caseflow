@@ -49,7 +49,7 @@ const errorHandling = (url, error, method, options = {}) => {
   console.error(new Error(message));
 
   // Need to renable this check before going to master
-  // if (options?.logErrorMetrics) {
+  // if (options?.metricsLogRestError) {
   const data = {
     metric: {
       uuid: id,
