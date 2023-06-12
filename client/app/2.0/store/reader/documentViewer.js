@@ -18,7 +18,6 @@ import {
 import { addMetaLabel, formatCategoryName } from 'utils/reader';
 import { removeComment } from 'store/reader/annotationLayer';
 import { markDocAsRead } from 'store/reader/documentList';
-import { recordMetrics } from '../../../util/Metrics';
 
 // Set the PDFJS service worker
 PDF.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -249,7 +248,7 @@ export const showPdf = createAsyncThunk(
         withCredentials: true,
         timeout: true,
         responseType: 'arraybuffer',
-        logErrorMetrics: featureToggles.logErrorMetrics
+        metricsLogRestError: featureToggles.metricsLogRestError
       });
 
       if (body) {

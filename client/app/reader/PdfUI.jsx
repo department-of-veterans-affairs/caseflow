@@ -317,7 +317,7 @@ export class PdfUI extends React.Component {
         </span>
       </div>
       <div>
-        <DocumentSearch file={this.props.doc.content_url} />
+        <DocumentSearch file={this.props.doc.content_url} featureToggles={this.props.featureToggles} />
         <Pdf
           documentId={this.props.doc.id}
           documentPathBase={this.props.documentPathBase}

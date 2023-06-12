@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
 class Metrics::DashboardController < ApplicationController
-  skip_before_action :verify_authentication
+  before_action :require_demo
 
   def show
-    return render_access_error unless access_allowed?
-
     no_cache
 
-    @metrics = Metric.where("created_at > ?", 1.day.ago).order(created_at: :desc)
+    @metrics = Metric.includes(:user).where("created_at > ?", 1.hour.ago).order(created_at: :desc)
 
     begin
       render :show, layout: "plain_application"
@@ -20,16 +18,7 @@ class Metrics::DashboardController < ApplicationController
 
   private
 
-  def access_allowed?
-    current_user.admin? ||
-      BoardProductOwners.singleton.user_has_access?(current_user) ||
-      CaseflowSupport.singleton.user_has_access?(current_user) ||
-      Rails.env.development?
-  end
-
-  def render_access_error
-    render(Caseflow::Error::ActionForbiddenError.new(
-      message: COPY::ACCESS_DENIED_TITLE
-    ).serialize_response)
+  def require_demo
+    redirect_to "/unauthorized" unless Rails.deploy_env?(:demo)
   end
 end
