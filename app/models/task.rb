@@ -525,7 +525,7 @@ class Task < CaseflowRecord
   end
 
   def flattened_instructions(params)
-    [params.dig(:instructions)]
+    params[:instructions]
   end
 
   def append_instruction(instruction)
