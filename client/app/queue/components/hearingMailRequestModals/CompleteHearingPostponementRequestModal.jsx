@@ -46,7 +46,17 @@ const CompleteHearingPostponementRequestModal = (props) => {
     >
       <>
         {/* Granted/Denied */}
-        <RadioField />
+        <RadioField
+          id="grantedOrDenied"
+          label="What is the Judge's ruling on the motion to postpone?"
+          inputRef={props.register}
+          onChange={(value) => dispatch({ type: 'granted', payload: value })}
+          value={state.granted}
+          options={[
+            { displayText: 'Granted', value: true },
+            { displayText: 'Denied', value: false }
+          ]}
+        />
 
         {/* Date picker */}
 
@@ -63,6 +73,10 @@ const CompleteHearingPostponementRequestModal = (props) => {
       </>
     </QueueFlowModal>
   );
+};
+
+CompleteHearingPostponementRequestModal.propTypes = {
+  register: PropTypes.func
 };
 
 export default CompleteHearingPostponementRequestModal;
