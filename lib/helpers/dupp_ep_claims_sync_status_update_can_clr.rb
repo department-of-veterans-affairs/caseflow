@@ -39,7 +39,8 @@ module WarRoom
     def find_supplement_claims_with_errors
       supplemental_claims_with_errors = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'")
       supplemental_claims_with_errors.select do |supplemental_claim|
-        supplemental_claim.veteran.end_products.select do |end_product|
+        sc_vet = supplemental_claim.veteran.presence || []
+        sc_vet.end_products.select do |end_product|
           end_product.claim_type_code.include?("040") && %w[CAN CLR].include?(end_product.status_type_code) &&
             [Time.zone.today, 1.day.ago.to_date].include?(end_product.last_action_date)
         end.empty?
@@ -49,7 +50,8 @@ module WarRoom
     def find_hlrs_with_errors
       hlrs_with_errors = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
       hlrs_with_errors.select do |hlr|
-        hlr.veteran.end_products.select do |end_product|
+        hlr_vet = hlr.veteran.presence || []
+        hlr_vet.end_products.select do |end_product|
           end_product.claim_type_code.include?("030") && %w[CAN CLR].include?(end_product.status_type_code) &&
             [Time.zone.today, 1.day.ago.to_date].include?(end_product.last_action_date)
         end.empty?
