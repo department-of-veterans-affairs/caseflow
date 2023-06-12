@@ -90,15 +90,6 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     @distribution_ids ||= []
   end
 
-  def vbms_upload_params
-    params[:mail_package] = mail_package
-    {
-      params: params,
-      user: current_user,
-      appeal: appeal
-    }
-  end
-
   def appeal_id
     params[:appeal_id]
   end
