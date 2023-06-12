@@ -8,7 +8,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   before_action :verify_access
 
   def create
-    # Validate copies and create distributions for Package Manager mail service if recipient info present
+    # Create distributions for Package Manager mail service if recipient info present
     build_mail_package
 
     result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_package).call

@@ -43,7 +43,7 @@ class Idt::Api::V1::BaseController < ApplicationController
   rescue_from Caseflow::Error::MissingRecipientInfo do |error|
     log_error(error)
     uuid = SecureRandom.uuid
-    render(json: { message: "IDT Exception ID:" + uuid + " Recipient information received was invalid or incomplete.",
+    render(json: { message: "IDT Exception ID: " + uuid + " Recipient information received was invalid or incomplete.",
                    errors: JSON.parse(error.message) }, status: :bad_request)
   end
 
