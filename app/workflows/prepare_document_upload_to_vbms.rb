@@ -9,16 +9,16 @@ class PrepareDocumentUploadToVbms
   # Params: params - hash containing file and document_type at minimum
   #         user - current user that is preparing the document for upload
   #         appeal - Appeal object (optional if ssn or file number are passed into params)
-  #         mail_request - MailRequest object with address info to be sent to Package Manager (optional)
+  #         mail_requests - Payload with copies value (integer) and distributions value (array of JSON-formatted
+  #           MailRequest objects) to be submitted to Package Manager if optional recipient info is present
   #         copies - Number of copies of document to be included in mail distribution (optional)
 
-  def initialize(params, user, appeal = nil, mail_requests = nil, copies = nil)
+  def initialize(params, user, appeal = nil, mail_requests = nil)
     @params = params.slice(:veteran_file_number, :document_type, :document_subject, :document_name, :file, :application)
     @document_type = @params[:document_type]
     @user = user
     @appeal = appeal
     @mail_requests = mail_requests
-    @copies = copies
   end
 
   # Purpose: Queues a job to upload a document to vbms
@@ -36,8 +36,7 @@ class PrepareDocumentUploadToVbms
           document_id: document.id,
           initiator_css_id: user.css_id,
           application: @params[:application],
-          mail_requests: @mail_requests.to_json,
-          copies: @copies
+          mail_requests: @mail_requests
         )
       end
     end

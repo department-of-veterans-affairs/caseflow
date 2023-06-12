@@ -19,7 +19,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
       find_file_number_by_veteran_identifier
     end
 
-    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_requests, copies).call
+    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_requests_payload).call
     if result.success?
       success_message = { message: "Document successfully queued for upload." }
       if recipient_info.present?
@@ -67,9 +67,13 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   end
 
   def mail_requests
+    @mail_requests ||= create_mail_requests_and_track_errors
+  end
+
+  def mail_requests_payload
     return nil if recipient_info.blank?
 
-    @mail_requests ||= create_mail_requests_and_track_errors
+    { distributions: mail_requests.to_json, copies: copies }
   end
 
   def create_mail_requests_and_track_errors
