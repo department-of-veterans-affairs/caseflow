@@ -22,6 +22,7 @@ const EfolderUrlField = (props) => {
   const testOnBlur = () => console.log("Blurred!");
 
   return <>
+    {/* The UUID in the URL will be the document series ID and not the version ID */}
     <TextField
       label={`Insert Caseflow Reader document hyperlink to request a hearing ${props.requestType}`}
       onChange={testDebounce}
