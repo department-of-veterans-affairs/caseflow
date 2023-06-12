@@ -1,69 +1,43 @@
 # frozen_string_literal: true
 
 class FileNumberNotFoundRemediationJob < CaseflowJob
+  # CONFIRM WHERE TO RESCUE
+  class FileNumberMachesVetFileNumberError < StandardError; end
+  class FileNumberIsNilError < StandardError; end
+  class DuplicateVeteranFoundError < StandardError; end
+  class NoAssociatedRecordsFoundForFileNumberError < StandardError; end
+
   queue_with_priority :low_priority
 
-  ASSOCIATED_OBJECTS = FixFileNumberWizard::ASSOCIATIONS
-  ASSOCIATED_OBJECTS = %w[one two].freeze
+  # ASSOCIATED_OBJECTS = FixFileNumberWizard.new::ASSOCIATIONS
+  ASSOCIATED_OBJECTS = ["1,12,3"]
   ERROR_TEXT = "FILENUMBER does not exist"
 
-  attr_reader :decision_doc
+  attr_reader :decision_doc, :veteran, :appeal
 
-  def initialize(decision_doc)
+  def initialize(veteran)
     @logs = ["VBMS::FILENUMBERERROR Remediation Log"]
     @decision_doc = decision_doc
+    @veteran = veteran
+    @appeal = appeal
   end
 
   def perform
-    decision_document_with_errors
+    start_fix_veteran(veteran)
   end
 
-  def decision_doc_with_error
-    DecisionDocument.where("error LIKE ?", "%#{ERROR_TEXT}%")
+  def fetch_file_number_from_bgs_service
+   BGSService.new.fetch_file_number_by_ssn(veteran.ssn)
   end
 
-  def decision_document_with_errors
-binding.pry
-    decision_doc_with_error.map do |decision_doc|
-      # "DID not find dude" #add more logic IGNORE this one
-      next if find_appeal(decision_doc).blank?
-
-      vet = find_appeal(decision_doc).veteran
-      binding.pry
-    @logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
-        " Veteran SSN: #{vet.ssn}.  Veteran File Number: #{vet.file_number}.  FileNumber Error Present: Yes."\
-        " Status: Starting to resolve error.")
-      fix_file_number(vet.ssn)
-    end
-  end
-
-  def find_appeal
-    @find_appeal ||= decision_doc.appeal
-  end
-
-  def extract_file_number_or_ssn(decision_doc)
-    error_message = decision_doc.error.split(", ")[4]
-    extract_file_number_or_ssn_regex(error_message)
-  end
-
-  def extract_file_number_or_ssn_regex(error_message)
-    error_message.match(/\d+/).to_s
-  end
-
-  def fix_file_number(ssn)
-    fetch_file_number_from_vbms(ssn)
-
-    file_number = fetch_file_number_from_vbms(ssn)
-    return  if fetch_file_number_from_vbms(ssn).nil?
-
+  def start_fix_veteran(veteran)
+    file_number = fetch_file_number_from_bgs_service
+    binding.pry
     verify_file_number(file_number)
 
     collections = ASSOCIATED_OBJECTS.map { |klass| FixFileNumberWizard::Collection.new(klass, veteran.ssn) }
-     if collections.map(&:count).sum == 0
-      Rails.logger.info("No associated records found for the current file number. Aborting because this is very strange.")
-      return
-
-      # raise error and rescue
+    if collections.map(&:count).sum == 0
+      fail NoAssociatedRecordsFoundForFileNumberError
     end
 
     collections.each { |collection| collection.update!(file_number) }
@@ -77,17 +51,14 @@ binding.pry
     create_log
   end
 
-  def fetch_file_number_from_vbms(ssn)
-    BGSService.new.fetch_file_number_by_ssn(ssn)
-  end
-
   def verify_file_number(file_number)
+    binding.pry
     if file_number == veteran.file_number
-      Rails.logger.info("Veteran's file number is already up-to-date.")
+      fail FileNumberMachesVetFileNumberError
     elsif file_number.nil?
-      Rails.logger.info("Veteran's file number could not be found in BGS.")
+      fail FileNumberIsNilError
     elsif Veteran.find_by(file_number: file_number).present?
-      Rails.logger.info("Duplicate veteran record found. Handling this scenario is not supported yet.")
+      fail DuplicateVeteranFoundError
     end
   end
 
