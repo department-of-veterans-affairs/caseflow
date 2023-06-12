@@ -7,6 +7,7 @@ Object {
     <div>
       <section
         class="cf-app-segment cf-app-segment--alt"
+        role="main"
       >
         <div
           class="hearing-day-container"
@@ -213,6 +214,7 @@ Object {
   "container": <div>
     <section
       class="cf-app-segment cf-app-segment--alt"
+      role="main"
     >
       <div
         class="hearing-day-container"
@@ -476,6 +478,7 @@ Object {
     <div>
       <section
         class="cf-app-segment cf-app-segment--alt"
+        role="main"
       >
         <div
           class="hearing-day-container"
@@ -1083,6 +1086,7 @@ Object {
   "container": <div>
     <section
       class="cf-app-segment cf-app-segment--alt"
+      role="main"
     >
       <div
         class="hearing-day-container"
@@ -1747,6 +1751,7 @@ Object {
     <div>
       <section
         class="cf-app-segment cf-app-segment--alt"
+        role="main"
       >
         <div
           class="hearing-day-container"
@@ -2354,6 +2359,7 @@ Object {
   "container": <div>
     <section
       class="cf-app-segment cf-app-segment--alt"
+      role="main"
     >
       <div
         class="hearing-day-container"
@@ -3015,6 +3021,7 @@ exports[`AddHearingDay Matches snapshot with default props 1`] = `
 <div>
   <section
     class="cf-app-segment cf-app-segment--alt"
+    role="main"
   >
     <div
       class="hearing-day-container"
