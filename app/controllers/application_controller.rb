@@ -156,6 +156,14 @@ class ApplicationController < ApplicationBaseController
     {
       title: "Hearings",
       link: "/hearings/schedule",
+      sort_order: 5
+    }
+  end
+
+  def case_search_url
+    {
+      title: "Search cases",
+      link: "/search",
       sort_order: 4
     }
   end

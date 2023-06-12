@@ -63,7 +63,7 @@ RSpec.feature "SwitchApps", :postgres do
       create(:business_line, url: "vha", name: "Veterans Health Administration")
     end
 
-    let!(:list_order) { ["Caseflow Intake", "VHA Decision Review Queue", "Caseflow Queue", "Caseflow Hearings"] }
+    let!(:list_order) { ["Caseflow Intake", "VHA Decision Review Queue", "Caseflow Queue", "Caseflow Search cases", "Caseflow Hearings"] }
 
     before do
       vha_business_line.add_user(user)
