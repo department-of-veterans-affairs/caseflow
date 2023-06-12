@@ -25,6 +25,12 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
       allow(controller).to receive(:token).and_return(token) # Stub the token retrieval
       allow(VbmsDistribution).to receive(:exists?).with(id: distribution_id).and_return(true)
       allow(PacManService).to receive(:get_distribution_request).with(distribution_id).and_return(distribution)
+      BvaDispatch.singleton.add_user(user)
+      key, t = Idt::Token.generate_one_time_key_and_proposed_token
+      Idt::Token.activate_proposed_token(key, user.css_id)
+      request.headers["TOKEN"] = t
+      create(:staff, :attorney_role, sdomainid: user.css_id)
+      allow_any_instance_of(BGSService).to receive(:fetch_file_number_by_ssn) { file_number }
     end
 
     context "when distribution_id is blank or invalid" do
@@ -57,43 +63,11 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
       end
     end
 
-     it "returns the expected converted response" do
-      response = HTTPI::Response.new(
-        200,
-        {},
-          "id": distribution_id,
-          "recipient": {
-            "type": "system",
-            "id": "a050a21e-23f6-4743-a1ff-aa1e24412eff",
-            "name": "VBMS-C"
-          },
-          "description": "Staging Mailing Distribution",
-          "communicationPackageId": "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
-          "destinations": [{
-            "type": "physicalAddress",
-            "id": "28440040-51a5-4d2a-81a2-28730827be14",
-            "status": "",
-            "cbcmSendAttemptDate": "2022-06-06T16:35:27.996",
-            "addressLine1": "POSTMASTER GENERAL",
-            "addressLine2": "UNITED STATES POSTAL SERVICE",
-            "addressLine3": "475 LENFANT PLZ SW RM 10022",
-            "addressLine4": "SUITE 123",
-            "addressLine5": "APO AE 09001-5275",
-            "addressLine6": "",
-            "treatLine2AsAddressee": true,
-            "treatLine3AsAddressee": true,
-            "city": "WASHINGTON DC",
-            "state": "DC",
-            "postalCode": "12345",
-            "countryName": "UNITED STATES",
-            "countryCode": "us"
-          }],
-          "status": "NEW",
-          "sentToCbcmDate": ""
-          )
+    context "When successful response" do
 
+    it "returns the expected converted response" do
       new_table = {
-          "id": 123_456,
+          "id": "123456",
           "recipient": {
             "type": "recipient_type",
             "id": "recipient_id",
@@ -123,8 +97,8 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
           "status": "destination_status",
           "sent_to_cbcm_date": "sent_to_cbcm_date"
         }
-      expect(controller.format_response(response)).to eq(new_table.to_json)
-
+      expect((get :get_distribution, params: { distribution_id: distribution_id }).body).to eq(new_table.to_json)
+      end
     end
   end
 
