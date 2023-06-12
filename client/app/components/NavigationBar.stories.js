@@ -21,6 +21,7 @@ Basic.args = {
     { link: '/intake', title: 'Intake' },
     { link: '/hearings/schedule', title: 'Hearing' },
     { link: '/decision_reviews/vha', title: 'Decision Review Queue', prefix: 'VHA' },
+    { link: '/search', title: 'Search cases' }
   ],
   userDisplayName: 'Test user',
   dropdownUrls: [
