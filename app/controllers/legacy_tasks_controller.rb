@@ -104,7 +104,7 @@ class LegacyTasksController < ApplicationController
     appeal.overtime = false if appeal.overtime?
 
     task = appeal.tasks.find_by_status("assigned") || appeal.tasks.find_by_status("in_progress")
-    task.update_from_params(update_params, current_user)
+    task.update_from_params(update_params, current_user) if task.present?
 
     render json: {
       task: json_task(AttorneyLegacyTask.from_vacols(
