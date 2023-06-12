@@ -122,7 +122,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                       id="aria-context"
                     >
                        
-                        0 results available. Select is focused ,type to refine list, press Down to open the menu, 
+                        0 results available. Select is focused ,type to refine list, press Down to open the menu,
                     </span>
                   </span>
                   <div
@@ -227,7 +227,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             <strong>
               <span>
                 Is the representative an organization or individual?
-                 
+
               </span>
             </strong>
           </legend>
@@ -832,7 +832,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                       id="aria-context"
                     >
                        
-                        0 results available. Select is focused ,type to refine list, press Down to open the menu, 
+                        0 results available. Select is focused ,type to refine list, press Down to open the menu,
                     </span>
                   </span>
                   <div
@@ -937,7 +937,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             <strong>
               <span>
                 Is the representative an organization or individual?
-                 
+
               </span>
             </strong>
           </legend>
@@ -1484,7 +1484,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                       id="aria-context"
                     >
                        
-                        0 results available. Select is focused ,type to refine list, press Down to open the menu, 
+                        0 results available. Select is focused ,type to refine list, press Down to open the menu,
                     </span>
                   </span>
                   <div
@@ -1589,7 +1589,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             <strong>
               <span>
                 Is the representative an organization or individual?
-                 
+
               </span>
             </strong>
           </legend>
@@ -2204,7 +2204,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                       id="aria-context"
                     >
                        
-                        0 results available. Select is focused ,type to refine list, press Down to open the menu, 
+                        0 results available. Select is focused ,type to refine list, press Down to open the menu,
                     </span>
                   </span>
                   <div
@@ -2309,7 +2309,7 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
             <strong>
               <span>
                 Is the representative an organization or individual?
-                 
+
               </span>
             </strong>
           </legend>
@@ -2923,7 +2923,7 @@ exports[`AddPoaPage Can select an existing attorney and it renders correctly 1`]
                       id="aria-context"
                     >
                        
-                        0 results available. Select is focused ,type to refine list, press Down to open the menu, 
+                        0 results available. Select is focused ,type to refine list, press Down to open the menu,
                     </span>
                   </span>
                   <div
@@ -3035,31 +3035,31 @@ exports[`AddPoaPage Can select an existing attorney and it renders correctly 1`]
               data-css-1t62idy=""
             >
               <span>
-                 
+
                 9999 Mission St
               </span>
               <span>
-                 
+
                 <span>
                   Uber
                 </span>
               </span>
               <span>
-                 
+
                 <span>
                   Apt 2
                 </span>
               </span>
               <span>
-                 
+
                 <span>
                   San Francisco
-                  , 
+                  ,
                   CA
-                   
+
                   94103
-                   
-                  
+
+
                 </span>
               </span>
             </span>

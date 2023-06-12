@@ -47,7 +47,7 @@ exports[`SubstituteAppellantBasicsForm with blank form renders default state cor
           <strong>
             <span>
               Please select the substitute from the following claimants.
-               
+
             </span>
           </strong>
         </legend>
@@ -163,7 +163,7 @@ exports[`SubstituteAppellantBasicsForm with existing form data renders default s
           <strong>
             <span>
               Please select the substitute from the following claimants.
-               
+
             </span>
           </strong>
         </legend>

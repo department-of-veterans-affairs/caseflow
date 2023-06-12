@@ -8,6 +8,7 @@ exports[`DocketSwitchRulingForm renders correctly 1`] = `
   >
     <section
       class="cf-app-segment cf-app-segment--alt"
+      role="main"
     >
       <h1>
         Switch Docket: Rule on Claimant 1's Request

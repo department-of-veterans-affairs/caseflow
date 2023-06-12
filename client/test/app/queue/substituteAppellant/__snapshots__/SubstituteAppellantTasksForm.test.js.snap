@@ -57,7 +57,7 @@ exports[`SubstituteAppellantTasksForm with blank form renders default state corr
             href="/queue/appeals/abc123"
             target="_blank"
           >
-            View existing case details 
+            View existing case details
             <i
               class="fa fa-external-link"
             />
@@ -178,7 +178,7 @@ exports[`SubstituteAppellantTasksForm with existing form data renders default st
             href="/queue/appeals/abc123"
             target="_blank"
           >
-            View existing case details 
+            View existing case details
             <i
               class="fa fa-external-link"
             />

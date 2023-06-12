@@ -68,7 +68,7 @@ exports[`SubstituteAppellantReview renders correctly 1`] = `
             class="task-detail"
           >
             <td>
-              Root 
+              Root
             </td>
             <td />
           </tr>
@@ -76,7 +76,7 @@ exports[`SubstituteAppellantReview renders correctly 1`] = `
             class="task-detail"
           >
             <td>
-              Distribution 
+              Distribution
             </td>
             <td />
           </tr>
@@ -84,13 +84,13 @@ exports[`SubstituteAppellantReview renders correctly 1`] = `
             class="task-detail"
           >
             <td>
-              Evidence Submission Window 
+              Evidence Submission Window
             </td>
             <td>
               <span
                 class="bolded-header"
               >
-                End date: 
+                End date:
               </span>
               05/29/2021
             </td>

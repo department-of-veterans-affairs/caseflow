@@ -366,7 +366,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       <strong>
                         <span>
                           Was the appellant represented by an attorney?
-                           
+
                         </span>
                       </strong>
                     </legend>
@@ -3622,7 +3622,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       <strong>
                         <span>
                           How are you proceeding?
-                           
+
                         </span>
                       </strong>
                     </legend>
@@ -3749,7 +3749,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                       <strong>
                         <span>
                           What type of remand is this?
-                           
+
                         </span>
                       </strong>
                     </legend>
@@ -3879,7 +3879,7 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                         >
                           Same as Court's decision date
                         </span>
-                         
+
                       </label>
                     </div>
                   </div>

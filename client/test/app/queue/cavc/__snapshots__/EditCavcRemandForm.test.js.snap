@@ -38,7 +38,7 @@ exports[`EditCavcRemandForm adding new all feature toggles enabled renders corre
           <strong>
             <span>
               Was the appellant represented by an attorney?
-               
+
             </span>
           </strong>
         </legend>
@@ -187,7 +187,7 @@ exports[`EditCavcRemandForm adding new all feature toggles enabled renders corre
           <strong>
             <span>
               How are you proceeding?
-               
+
             </span>
           </strong>
         </legend>
@@ -244,7 +244,7 @@ exports[`EditCavcRemandForm adding new all feature toggles enabled renders corre
           </div>
         </div>
       </fieldset>
-      
+
       <div
         class="cf-form-textinput   "
       >
@@ -437,7 +437,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           <strong>
             <span>
               Was the appellant represented by an attorney?
-               
+
             </span>
           </strong>
         </legend>
@@ -586,7 +586,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           <strong>
             <span>
               How are you proceeding?
-               
+
             </span>
           </strong>
         </legend>
@@ -653,7 +653,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           <strong>
             <span>
               What type of remand is this?
-               
+
             </span>
           </strong>
         </legend>
@@ -757,7 +757,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
             >
               Same as Court's decision date
             </span>
-             
+
           </label>
         </div>
       </div>
@@ -916,7 +916,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           <strong>
             <span>
               Was the appellant represented by an attorney?
-               
+
             </span>
           </strong>
         </legend>
@@ -1065,7 +1065,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           <strong>
             <span>
               How are you proceeding?
-               
+
             </span>
           </strong>
         </legend>
@@ -1132,7 +1132,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           <strong>
             <span>
               What type of remand is this?
-               
+
             </span>
           </strong>
         </legend>
@@ -1236,7 +1236,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
             >
               Same as Court's decision date
             </span>
-             
+
           </label>
         </div>
       </div>
@@ -1395,7 +1395,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           <strong>
             <span>
               Was the appellant represented by an attorney?
-               
+
             </span>
           </strong>
         </legend>
@@ -1544,7 +1544,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           <strong>
             <span>
               How are you proceeding?
-               
+
             </span>
           </strong>
         </legend>
@@ -1611,7 +1611,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
           <strong>
             <span>
               What type of remand is this?
-               
+
             </span>
           </strong>
         </legend>
@@ -1801,7 +1801,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
             >
               Yes, this case has been appealed to the Federal Circuit
             </span>
-             
+
           </label>
         </div>
       </div>
@@ -1889,7 +1889,7 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
           <strong>
             <span>
               Was the appellant represented by an attorney?
-               
+
             </span>
           </strong>
         </legend>
@@ -2038,7 +2038,7 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
           <strong>
             <span>
               How are you proceeding?
-               
+
             </span>
           </strong>
         </legend>
@@ -2105,7 +2105,7 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
           <strong>
             <span>
               Are judgement and mandate dates provided?
-               
+
             </span>
           </strong>
         </legend>
@@ -2338,7 +2338,7 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
           <strong>
             <span>
               Was the appellant represented by an attorney?
-               
+
             </span>
           </strong>
         </legend>
@@ -2487,7 +2487,7 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
           <strong>
             <span>
               How are you proceeding?
-               
+
             </span>
           </strong>
         </legend>
@@ -2554,7 +2554,7 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
           <strong>
             <span>
               Are judgement and mandate dates provided?
-               
+
             </span>
           </strong>
         </legend>
@@ -2642,7 +2642,7 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
             >
               Same as Court's decision date
             </span>
-             
+
           </label>
         </div>
       </div>
@@ -2768,6 +2768,7 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
   <form>
     <section
       class="cf-app-segment cf-app-segment--alt"
+      role="main"
     >
       <h1>
         Edit a Court remand
@@ -2801,7 +2802,7 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
           <strong>
             <span>
               Was the appellant represented by an attorney?
-               
+
             </span>
           </strong>
         </legend>

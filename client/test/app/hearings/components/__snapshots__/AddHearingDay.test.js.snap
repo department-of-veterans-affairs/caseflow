@@ -155,7 +155,7 @@ Object {
                 >
                   Assign a Board hearing room
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -361,7 +361,7 @@ Object {
               >
                 Assign a Board hearing room
               </span>
-               
+
             </label>
           </div>
         </div>
@@ -537,7 +537,7 @@ Object {
                       id="aria-selection-event"
                     >
                        
-                      
+
                     </span>
                     <span
                       id="aria-context"
@@ -658,7 +658,7 @@ Object {
                 >
                   Assign a Board hearing room
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -769,7 +769,7 @@ Object {
               <strong>
                 <span>
                   Available Times
-                   
+
                 </span>
               </strong>
             </legend>
@@ -1144,7 +1144,7 @@ Object {
                     id="aria-selection-event"
                   >
                      
-                    
+
                   </span>
                   <span
                     id="aria-context"
@@ -1265,7 +1265,7 @@ Object {
               >
                 Assign a Board hearing room
               </span>
-               
+
             </label>
           </div>
         </div>
@@ -1376,7 +1376,7 @@ Object {
             <strong>
               <span>
                 Available Times
-                 
+
               </span>
             </strong>
           </legend>
@@ -1808,7 +1808,7 @@ Object {
                       id="aria-selection-event"
                     >
                        
-                      
+
                     </span>
                     <span
                       id="aria-context"
@@ -1929,7 +1929,7 @@ Object {
                 >
                   Assign a Board hearing room
                 </span>
-                 
+
               </label>
             </div>
           </div>
@@ -2040,7 +2040,7 @@ Object {
               <strong>
                 <span>
                   Available Times
-                   
+
                 </span>
               </strong>
             </legend>
@@ -2415,7 +2415,7 @@ Object {
                     id="aria-selection-event"
                   >
                      
-                    
+
                   </span>
                   <span
                     id="aria-context"
@@ -2536,7 +2536,7 @@ Object {
               >
                 Assign a Board hearing room
               </span>
-               
+
             </label>
           </div>
         </div>
@@ -2647,7 +2647,7 @@ Object {
             <strong>
               <span>
                 Available Times
-                 
+
               </span>
             </strong>
           </legend>
@@ -3163,7 +3163,7 @@ exports[`AddHearingDay Matches snapshot with default props 1`] = `
             >
               Assign a Board hearing room
             </span>
-             
+
           </label>
         </div>
       </div>

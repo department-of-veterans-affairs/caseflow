@@ -48,7 +48,7 @@ exports[`DocketSwitchReviewRequestForm default values full grant populates with 
           <strong>
             <span>
               How are you proceeding with this request to switch dockets?
-               
+
             </span>
           </strong>
         </legend>
@@ -103,7 +103,7 @@ exports[`DocketSwitchReviewRequestForm default values full grant populates with 
           <strong>
             <span>
               Which docket will the issue(s) be switched to?
-               
+
             </span>
           </strong>
         </legend>
@@ -239,7 +239,7 @@ exports[`DocketSwitchReviewRequestForm default values partial grant populates wi
           <strong>
             <span>
               How are you proceeding with this request to switch dockets?
-               
+
             </span>
           </strong>
         </legend>
@@ -335,7 +335,7 @@ exports[`DocketSwitchReviewRequestForm default values partial grant populates wi
           <strong>
             <span>
               Which docket will the issue(s) be switched to?
-               
+
             </span>
           </strong>
         </legend>
@@ -471,7 +471,7 @@ exports[`DocketSwitchReviewRequestForm renders correctly 1`] = `
           <strong>
             <span>
               How are you proceeding with this request to switch dockets?
-               
+
             </span>
           </strong>
         </legend>
