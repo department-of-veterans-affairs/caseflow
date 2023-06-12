@@ -19,10 +19,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
 
     def mail_assign_to_organization_data(task, user = nil)
       if task.appeal.is_a? LegacyAppeal
-        valid_options = [
-          { value: "HearingPostponementRequestMailTask", label: "Hearing postponement request" },
-          { value: "HearingWithdrawalRequestMailTask", label: "Hearing withdrawal request" }
-        ]
+        valid_options = available_legacy_actions(user)
       else
         options = MailTask.descendants_routing_options(user: user, appeal: task.appeal)
         valid_options = task.appeal.outcoded? ? options : options.reject { |opt| opt[:value] == "VacateMotionMailTask" }

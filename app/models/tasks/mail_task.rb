@@ -101,6 +101,17 @@ class MailTask < Task
     super(user).present? ? super(user).unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h) : []
   end
 
+  def available_legacy_actions(user)
+    if super(user).present?
+      [
+        { value: "HearingPostponementRequestMailTask", label: "Hearing postponement request" },
+        { value: "HearingWithdrawalRequestMailTask", label: "Hearing withdrawal request" }
+      ]
+    end
+
+    []
+  end
+
   def create_twin_of_type(params)
     task_type = Object.const_get(params[:type])
     parent_task = task_type.create!(
