@@ -32,12 +32,13 @@ FactoryBot.define do
       LEVEL_STATUS_CODE { "RDC" }
     end
 
+    # high_level_review ext claim
     trait :hlr do
       EP_CODE { "030" }
       TYPE_CODE { "030HLRR" }
       PAYEE_CODE { "00" }
     end
-
+    # supplemental_claim ext claim
     trait :slc do
       EP_CODE { "040" }
       TYPE_CODE { "040SCR" }
