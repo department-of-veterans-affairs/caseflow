@@ -103,9 +103,6 @@ module WarRoom
             single_end_product_establishment.instance_variable_set(:@end_product_to_establish, ep2e)
             single_end_product_establishment.establish!
 
-            index += 1
-            records_with_errors -= 1
-
             @logs.push("#{Time.zone.now} DuplicateEP::Log"\
               " Veteran participant ID: #{vet.participant_id}.  Review: #{review.class.name}."\
               " EPE ID: #{single_end_product_establishment.id}."\
@@ -114,12 +111,20 @@ module WarRoom
               " Status: Complete.")
           end
 
+          index += 1
+          records_with_errors -= 1
+
+          @logs.push("#{Time.zone.now} DuplicateEP::Log"\
+            " Veteran participant ID: #{vet.participant_id}.  Review: #{review.class.name}."\
+            " Resolved records: #{index}."\
+            " Records with errors: #{records_with_errors}."\
+            " Status: Complete.")
           call_decision_review_process_job(review, vet)
         end
-
-        @logs.push("#{Time.zone.now} DuplicateEP::Log")
-        @logs.push("#{Time.zone.now} Job completed.")
       end
+
+      @logs.push("#{Time.zone.now} DuplicateEP::Log")
+      @logs.push("#{Time.zone.now} Job completed.")
     end
 
     def active_duplicates(end_products, end_product_establishment)
