@@ -47,7 +47,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     return if recipient_info.blank?
 
     throw_error_if_copies_out_of_range
-    # Create and validate MailRequest objects, save to database, and store distribution IDs
+    # Create and validate MailRequest objects, save to db, and store distribution IDs
     mail_requests.map do |request|
       request.call
       distribution_ids << request.vbms_distribution_id
@@ -90,6 +90,16 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     @distribution_ids ||= []
   end
 
+  # Find veteran from appeal id and check with db
+  def appeal
+    if appeal_id.blank?
+      find_file_number_by_veteran_identifier
+      return nil
+    end
+
+    @appeal ||= find_veteran_by_appeal_id
+  end
+
   def appeal_id
     params[:appeal_id]
   end
@@ -100,15 +110,6 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
   def bgs
     @bgs ||= BGSService.new
-  end
-
-  def appeal
-    if appeal_id.blank?
-      find_file_number_by_veteran_identifier
-      return nil
-    end
-
-    @appeal ||= find_veteran_by_appeal_id
   end
 
   def find_veteran_by_appeal_id

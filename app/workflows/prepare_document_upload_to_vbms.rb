@@ -47,23 +47,23 @@ class PrepareDocumentUploadToVbms
   attr_reader :params, :user
 
   def veteran_file_number
-    @params[:veteran_file_number]
+    params[:veteran_file_number]
   end
 
   def document_subject
-    @params[:document_subject]
+    params[:document_subject]
   end
 
   def document_name
-    @params[:document_name]
+    params[:document_name]
   end
 
   def file
-    @params[:file]
+    params[:file]
   end
 
   def document_type
-    @params[:document_type]
+    params[:document_type]
   end
 
   def valid_document_type
