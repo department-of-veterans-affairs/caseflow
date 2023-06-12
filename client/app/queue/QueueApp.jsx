@@ -67,7 +67,8 @@ import SetOvertimeStatusModal from './SetOvertimeStatusModal';
 import StartHoldModal from './components/StartHoldModal';
 import EndHoldModal from './components/EndHoldModal';
 import BulkAssignModal from './components/BulkAssignModal';
-
+import CompleteHearingPostponementRequestModal
+  from './components/hearingMailRequestModals/CompleteHearingPostponementRequestModal';
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
@@ -653,7 +654,7 @@ class QueueApp extends React.PureComponent {
   );
 
   routeCompleteHearingPostponementRequest = (props) => (
-    <h1>Placeholder</h1>
+    <CompleteHearingPostponementRequestModal {...props.match.params} />
   );
 
   queueName = () =>
