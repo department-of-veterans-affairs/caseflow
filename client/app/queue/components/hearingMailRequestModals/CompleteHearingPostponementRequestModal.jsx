@@ -1,6 +1,7 @@
 import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
 
+import Alert from 'app/components/Alert';
 import QueueFlowModal from '../QueueFlowModal';
 import RadioField from '../../../components/RadioField';
 import TextareaField from 'app/components/TextareaField';
@@ -50,13 +51,19 @@ const CompleteHearingPostponementRequestModal = (props) => {
           id="grantedOrDenied"
           label="What is the Judge's ruling on the motion to postpone?"
           inputRef={props.register}
-          onChange={(value) => dispatch({ type: 'granted', payload: value })}
+          onChange={(value) => dispatch({ type: 'granted', payload: value === 'true' })}
           value={state.granted}
           options={[
             { displayText: 'Granted', value: true },
             { displayText: 'Denied', value: false }
           ]}
         />
+
+        {state.granted && <Alert
+          message="By marking this task as complete, you will postpone the hearing."
+          type="info"
+          lowerMargin
+        />}
 
         {/* Date picker */}
 
