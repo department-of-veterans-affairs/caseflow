@@ -49,7 +49,6 @@ class CaseReviewsController < ApplicationController
     return judge_case_review_params if case_review_class == "JudgeCaseReview"
   end
 
-
   def update_request_issues_for_mst_and_pact(appeal)
     params[:tasks][:issues].each do |issue|
       RequestIssue.find(issue[:request_issue_ids]).each do |ri|
@@ -126,5 +125,22 @@ class CaseReviewsController < ApplicationController
     )
 
     task.completed!
+
+    SpecialIssueChange.create!(
+      issue_id: original_issue.id,
+      appeal_id: appeal.id,
+      appeal_type: "Appeal",
+      task_id: task.id,
+      created_at: Time.zone.now.utc,
+      created_by_id: RequestStore[:current_user].id,
+      created_by_css_id: RequestStore[:current_user].css_id,
+      original_mst_status: original_issue.mst_status,
+      original_pact_status: original_issue.pact_status,
+      updated_mst_status: incoming_issue_update[:mstStatus],
+      updated_pact_status: incoming_issue_update[:pactStatus],
+      mst_from_vbms: original_issue&.vbms_mst_status,
+      pact_from_vbms: original_issue&.vbms_pact_status,
+      change_category: "Edited Issue"
+    )
   end
 end
