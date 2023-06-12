@@ -89,7 +89,7 @@ class Fakes::BGSServiceRecordMaker
     in_active_review_receipt_date = Time.zone.parse("2018-04-01")
     completed_review_receipt_date = in_active_review_receipt_date - 30.days
     completed_review_reference_id = "cleared-review-ref-id"
-    contention = Generators::Contention.build
+    contention = Generators::BgsContention.build
 
     Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id
@@ -103,7 +103,7 @@ class Fakes::BGSServiceRecordMaker
         { decision_text: "Right knee" },
         { decision_text: "PTSD" },
         { decision_text: "This rating is in active review", reference_id: in_active_review_reference_id },
-        { decision_text: "I am on a completed Higher Level Review", contention_reference_id: contention.id }
+        { decision_text: "I am on a completed Higher Level Review", contention_reference_id: contention.reference_id }
       ]
     )
     Generators::PromulgatedRating.build(
@@ -175,7 +175,7 @@ class Fakes::BGSServiceRecordMaker
       benefit_type: "compensation",
       end_product_establishment: cleared_epe,
       contested_rating_issue_reference_id: completed_review_reference_id,
-      contention_reference_id: contention.id
+      contention_reference_id: contention.reference_id
     ) do |reqi|
       reqi.contested_rating_issue_profile_date = Time.zone.today - 100
     end
@@ -234,17 +234,17 @@ class Fakes::BGSServiceRecordMaker
 
   def has_hlr_with_mst_contention(veteran)
     claim_id = "600118959"
-    mst_contention = Generators::Contention.build_mst_contention(
+    mst_contention = Generators::BgsContention.build_mst_contention(
       claim_id: claim_id
     )
-    contention_reference_id = mst_contention.id
+    contention_reference_id = mst_contention.reference_id
 
     # if contention ID is already linked to a RequestIssue, generate a new contention
     while !RequestIssue.find_by(contention_reference_id: contention_reference_id).nil?
-      mst_contention = Generators::Contention.build_mst_contention(
+      mst_contention = Generators::BgsContention.build_mst_contention(
         claim_id: claim_id
       )
-      contention_reference_id = mst_contention.id
+      contention_reference_id = mst_contention.reference_id
     end
 
     hlr = HigherLevelReview.find_or_create_by!(
@@ -282,16 +282,16 @@ class Fakes::BGSServiceRecordMaker
 
   def has_hlr_with_pact_contention(veteran)
     claim_id = "600118960"
-    pact = Generators::Contention.build_pact_contention(
+    pact = Generators::BgsContention.build_pact_contention(
       claim_id: claim_id
     )
     contention_reference_id = pact.id
     # if contention ID is already linked to a RequestIssue, generate a new contention
     while !RequestIssue.find_by(contention_reference_id: contention_reference_id).nil?
-      mst_contention = Generators::Contention.build_mst_contention(
+      mst_contention = Generators::BgsContention.build_mst_contention(
         claim_id: claim_id
       )
-      contention_reference_id = mst_contention.id
+      contention_reference_id = mst_contention.reference_id
     end
     hlr = HigherLevelReview.find_or_create_by!(
       veteran_file_number: veteran.file_number
@@ -323,7 +323,7 @@ class Fakes::BGSServiceRecordMaker
       veteran_file_number: veteran.file_number,
       bgs_attrs: { benefit_claim_id: claim_id }
     )
-    Generators::Contention.build_pact_contention(
+    Generators::BgsContention.build_pact_contention(
       claim_id: claim_id
     )
     hlr

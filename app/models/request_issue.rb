@@ -253,27 +253,27 @@ class RequestIssue < CaseflowRecord
   end
 
   def mst_contention_status?
-    return false if contention.nil?
-    status = false
-    contention&.special_issues&.each do |issue|
-      if issue[:code].upcase == "MST"
-        status = true
-        break
+    return false if bgs_contention.nil?
+    if bgs_contention.special_issues.is_a?(Hash)
+      return bgs_contention.special_issues[:spis_tc] == 'MST' if bgs_contention&.special_issues
+    elsif bgs_contention.special_issues.is_a?(Array)
+      bgs_contention.special_issues.each do |issue|
+        return true if issue[:spis_tc] == 'MST'
       end
     end
-    status
+    false
   end
 
   def pact_contention_status?
-    return false if contention.nil?
-    status = false
-    contention&.special_issues&.each do |issue|
-      if issue[:code].upcase == "PACT"
-        status = true
-        break
+    return false if bgs_contention.nil?
+    if bgs_contention.special_issues.is_a?(Hash)
+      return ['PACT', 'PACTDICRE'].include?(bgs_contention.special_issues[:spis_tc]) if bgs_contention&.special_issues
+    elsif bgs_contention.special_issues.is_a?(Array)
+      bgs_contention.special_issues.each do |issue|
+        return true if ['PACT', 'PACTDICRE'].include?(issue[:spis_tc])
       end
     end
-    status
+    false
   end
 
   def rating?
