@@ -248,7 +248,7 @@ export const showPdf = createAsyncThunk(
         withCredentials: true,
         timeout: true,
         responseType: 'arraybuffer',
-        logErrorMetrics: featureToggles.logErrorMetrics
+        metricsLogRestError: featureToggles.metricsLogRestError
       });
 
       if (body) {

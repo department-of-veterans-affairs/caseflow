@@ -11,7 +11,7 @@
       interfaceVersion2: FeatureToggle.enabled?(:interface_version_2, user: current_user),
       windowSlider: FeatureToggle.enabled?(:window_slider, user: current_user),
       readerSelectorsMemoized: FeatureToggle.enabled?(:bulk_upload_documents, user: current_user),
-      logErrorMetrics: FeatureToggle.enabled?(:log_error_metrics, user: current_user),
+      metricsLogRestError: FeatureToggle.enabled?(:metrics_log_rest_error, user: current_user),
     },
     buildDate: build_date
   }) %>
