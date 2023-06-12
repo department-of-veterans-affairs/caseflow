@@ -12,6 +12,7 @@
       windowSlider: FeatureToggle.enabled?(:window_slider, user: current_user),
       readerSelectorsMemoized: FeatureToggle.enabled?(:bulk_upload_documents, user: current_user),
       metricsLogRestError: FeatureToggle.enabled?(:metrics_log_rest_error, user: current_user),
+      metricsLoadScreen: FeatureToggle.enabled?(:metrics_load_screen, user: current_user),
     },
     buildDate: build_date
   }) %>

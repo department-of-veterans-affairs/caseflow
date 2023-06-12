@@ -90,7 +90,8 @@ export class DecisionReviewer extends React.PureComponent {
     return <ReaderLoadingScreen
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
-      vacolsId={vacolsId}>
+      vacolsId={vacolsId}
+      featureToggles={this.props.featureToggles}>
       <PdfListView
         showPdf={this.showPdf(props.history, vacolsId)}
         sortBy={this.state.sortBy}
