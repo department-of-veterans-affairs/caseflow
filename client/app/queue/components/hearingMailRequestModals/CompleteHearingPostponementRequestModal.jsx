@@ -38,7 +38,6 @@ const CompleteHearingPostponementRequestModal = (props) => {
   return (
     <QueueFlowModal
       title="Mark as complete"
-      /* eslint-disable-next-line camelcase */
       button="Mark as complete"
       submitDisabled={!validateForm}
       validateForm={validateForm}
