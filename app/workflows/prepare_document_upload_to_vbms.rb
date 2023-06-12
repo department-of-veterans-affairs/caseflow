@@ -29,12 +29,7 @@ class PrepareDocumentUploadToVbms
       @params[:veteran_file_number] = throw_error_if_file_number_not_match_bgs
       VbmsUploadedDocument.create(document_params).tap do |document|
         document.cache_file
-        UploadDocumentToVbmsJob.perform_later(
-          document_id: document.id,
-          initiator_css_id: @user.css_id,
-          application: @params[:application],
-          mail_package: @mail_package
-        )
+        UploadDocumentToVbmsJob.perform_later(upload_job_params(document))
       end
     end
 
@@ -44,7 +39,7 @@ class PrepareDocumentUploadToVbms
   private
 
   attr_accessor :success
-  attr_reader :params, :user
+  attr_reader :params, :user, :mail_package, :document
 
   def veteran_file_number
     params[:veteran_file_number]
@@ -87,6 +82,15 @@ class PrepareDocumentUploadToVbms
       document_subject: document_subject,
       document_type: document_type,
       file: file
+    }
+  end
+
+  def upload_job_params(document)
+    {
+      document_id: document.id,
+      initiator_css_id: user.css_id,
+      application: params[:application],
+      mail_package: mail_package
     }
   end
 
