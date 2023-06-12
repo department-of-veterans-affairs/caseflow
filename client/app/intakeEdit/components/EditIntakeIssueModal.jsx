@@ -74,10 +74,13 @@ export class EditIntakeIssueModal extends React.Component {
             name: 'Save',
             onClick: () => {
 
-              if (!currentIssue?.mstChecked && mstChecked &&  mstJustification === '') {
+              // justificationReason feature toggle turns off the field being mandatory
+              if ((!currentIssue?.mstChecked && mstChecked && mstJustification === '') &&
+              justificationReason) {
                 return;
               }
-              if (!currentIssue?.pactChecked && pactChecked && pactJustification === '') {
+              if ((!currentIssue?.pactChecked && pactChecked && pactJustification === '' &&
+              justificationReason)) {
                 return;
               }
 
