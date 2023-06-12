@@ -8,8 +8,8 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   before_action :verify_access
 
   def create
-    # Create distributions for Package Manager mail service if recipient info present
-    create_mail_distributions
+    # Validate copies and create distributions for Package Manager mail service if recipient info present
+    build_communication_package
 
     appeal = nil
     # Find veteran from appeal id and check with db
@@ -19,7 +19,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
       find_file_number_by_veteran_identifier
     end
 
-    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_requests_payload).call
+    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, communication_package).call
     if result.success?
       success_message = { message: "Document successfully queued for upload." }
       if recipient_info.present?
@@ -44,19 +44,14 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     params[:copies]
   end
 
-  def appeal_id
-    params[:appeal_id]
+  # Payload with distributions value (array of JSON-formatted MailRequest objects) and copies (integer)
+  def communication_package
+    return nil if recipient_info.blank?
+
+    { distributions: mail_requests, copies: copies }
   end
 
-  def veteran_identifier
-    params[:veteran_identifier]
-  end
-
-  def bgs
-    @bgs ||= BGSService.new
-  end
-
-  def create_mail_distributions
+  def build_communication_package
     return if recipient_info.blank?
 
     throw_error_if_copies_out_of_range
@@ -68,12 +63,6 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
   def mail_requests
     @mail_requests ||= create_mail_requests_and_track_errors
-  end
-
-  def mail_requests_payload
-    return nil if recipient_info.blank?
-
-    { distributions: mail_requests.to_json, copies: copies }
   end
 
   def create_mail_requests_and_track_errors
@@ -106,6 +95,18 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
 
   def distribution_ids
     @distribution_ids ||= []
+  end
+
+  def appeal_id
+    params[:appeal_id]
+  end
+
+  def veteran_identifier
+    params[:veteran_identifier]
+  end
+
+  def bgs
+    @bgs ||= BGSService.new
   end
 
   def find_veteran_by_appeal_id
