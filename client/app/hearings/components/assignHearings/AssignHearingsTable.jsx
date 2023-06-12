@@ -22,8 +22,8 @@ import ApiUtil from '../../../util/ApiUtil';
 import LinkToAppeal from './LinkToAppeal';
 import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG';
 import QueueTable from '../../../queue/QueueTable';
-import MstBadge from '../../../components/badges/MstBadge/MstBadge'
-import PactBadge from '../../../components/badges/PactBadge/PactBadge'
+import MstBadge from '../../../components/badges/MstBadge/MstBadge';
+import PactBadge from '../../../components/badges/PactBadge/PactBadge';
 
 const TASKS_ENDPOINT = '/hearings/schedule_hearing_tasks';
 const COLUMNS_ENDPOINT = '/hearings/schedule_hearing_tasks_columns';
