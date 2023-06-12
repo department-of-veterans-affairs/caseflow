@@ -9,16 +9,13 @@ class PrepareDocumentUploadToVbms
   # Params: params - hash containing file and document_type at minimum
   #         user - current user that is preparing the document for upload
   #         appeal - Appeal object (optional if ssn or file number are passed into params)
-  def initialize(params, user, appeal = nil)
-    @params = params.slice(:veteran_file_number,
-                           :document_type,
-                           :document_subject,
-                           :document_name,
-                           :file,
-                           :application,
-                           :mail_package)
+  #         mail_package - Payload with copies value (integer) and distributions value (array of JSON-formatted
+  #           MailRequest objects) to be submitted to Package Manager if optional recipient info is present
+  def initialize(params, user, appeal = nil, mail_package = nil)
+    @params = params.slice(:veteran_file_number, :document_type, :document_subject, :document_name, :file, :application)
     @user = user
     @appeal = appeal
+    @mail_package = mail_package
   end
 
   # Purpose: Queues a job to upload a document to vbms
@@ -32,7 +29,12 @@ class PrepareDocumentUploadToVbms
       @params[:veteran_file_number] = throw_error_if_file_number_not_match_bgs
       VbmsUploadedDocument.create(document_params).tap do |document|
         document.cache_file
-        UploadDocumentToVbmsJob.perform_later(upload_job_params(document))
+        UploadDocumentToVbmsJob.perform_later(
+          document_id: document.id,
+          initiator_css_id: @user.css_id,
+          application: @params[:application],
+          mail_package: @mail_package
+        )
       end
     end
 
@@ -86,23 +88,6 @@ class PrepareDocumentUploadToVbms
       document_type: document_type,
       file: file
     }
-  end
-
-  def upload_job_params(document)
-    {
-      document_id: document.id,
-      initiator_css_id: @user.css_id,
-      application: @params[:application],
-      mail_package: mail_package
-    }
-  end
-
-  # JSON-formatted payload with copies value (integer) and distributions value (array of MailRequest objects)
-  # to be submitted to Package Manager if optional recipient info is present
-  def mail_package
-    return nil if params[:mail_package].blank?
-
-    params[:mail_package].to_json
   end
 
   def response_errors

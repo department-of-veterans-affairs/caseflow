@@ -12,8 +12,7 @@ class UploadDocumentToVbmsJob < CaseflowJob
   #           MailRequest objects) to be submitted to Package Manager if optional recipient info is present
   #
   # Return: nil
-  def perform(params)
-    @params = params
+  def perform(document_id:, initiator_css_id:, application: "idt", mail_package: nil)
     RequestStore.store[:application] = application
     RequestStore.store[:current_user] = User.system_user
     @document = VbmsUploadedDocument.find_by(id: document_id)
@@ -26,26 +25,6 @@ class UploadDocumentToVbmsJob < CaseflowJob
   private
 
   attr_reader :document, :initiator
-
-  def application
-    return "idt" if @params[:application].blank?
-
-    @params[:application]
-  end
-
-  def document_id
-    @params[:document_id]
-  end
-
-  def initiator_css_id
-    @params[:initiator_css_id]
-  end
-
-  def mail_package
-    return nil if @params[:mail_package].blank?
-
-    @params[:mail_package]
-  end
 
   def add_context_to_sentry
     if initiator.present?

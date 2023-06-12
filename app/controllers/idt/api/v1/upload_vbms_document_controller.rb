@@ -11,7 +11,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     # Validate copies and create distributions for Package Manager mail service if recipient info present
     build_mail_package
 
-    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal).call
+    result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_package).call
     if result.success?
       success_message = { message: "Document successfully queued for upload." }
       if recipient_info.present?
@@ -40,7 +40,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   def mail_package
     return nil if recipient_info.blank?
 
-    { distributions: mail_requests, copies: copies }
+    { distributions: mail_requests.to_json, copies: copies }
   end
 
   def build_mail_package
@@ -52,7 +52,6 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
       request.call
       distribution_ids << request.vbms_distribution_id
     end
-    params[:mail_package] = mail_package
   end
 
   def mail_requests
