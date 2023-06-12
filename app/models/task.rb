@@ -525,7 +525,7 @@ class Task < CaseflowRecord
   end
 
   def flattened_instructions(params)
-    [instructions, params.dig(:instructions).presence].flatten.compact
+    [params.dig(:instructions)]
   end
 
   def append_instruction(instruction)
@@ -630,7 +630,7 @@ class Task < CaseflowRecord
         ActiveRecord::Base.transaction do
           task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
           task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
-          task.instructions = flattened_instructions(reassign_params)
+          task.instructions = [reassign_params[:instructions]]
           task.status = Constants.TASK_STATUSES.assigned
 
           task.save!

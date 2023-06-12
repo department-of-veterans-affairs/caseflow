@@ -593,13 +593,19 @@ export const reassignTasksToUser = ({
 }));
 
 export const legacyReassignToJudge = ({
-  tasks, assigneeId
+  tasks, assigneeId, instructions
 }, successMessage) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   const params = {
     data: {
       tasks: {
         assigned_to_id: assigneeId,
-        appeal_id: oldTask.appealId
+        appeal_id: oldTask.appealId,
+        instructions,
+        reassign: {
+          assigned_to_id: assigneeId,
+          assigned_to_type: 'User',
+          instructions
+        }
       }
     }
   };
