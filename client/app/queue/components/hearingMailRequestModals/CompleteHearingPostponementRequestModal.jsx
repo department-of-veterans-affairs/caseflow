@@ -59,6 +59,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
           ]}
         />
 
+        {/* TODO: Fix the margin-top on this banner */}
         {state.granted && <Alert
           message="By marking this task as complete, you will postpone the hearing."
           type="info"
