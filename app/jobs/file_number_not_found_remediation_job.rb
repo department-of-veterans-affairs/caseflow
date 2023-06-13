@@ -3,7 +3,6 @@
 require "./lib/helpers/fix_file_number_wizard.rb"
 
 class FileNumberNotFoundRemediationJob < CaseflowJob
-  # CONFIRM WHERE TO RESCUE
   class FileNumberMachesVetFileNumberError < StandardError; end
   class FileNumberIsNilError < StandardError; end
   class DuplicateVeteranFoundError < StandardError; end
@@ -32,6 +31,7 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
   def start_fix_veteran
     file_number = fetch_file_number_from_bgs_service
     verify_file_number(file_number)
+
     collections = ASSOCIATED_OBJECTS.map do |klass|
       FixFileNumberWizard::Collection.new(klass, veteran.ssn)
     end
@@ -43,16 +43,17 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
     ActiveRecord::Base.transaction do
       collections.each do |collection|
         collection.update!(file_number)
-
-        # @logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
-        #   " Veteran SSN: #{veteran.ssn}.  Veteran File Number: #{veteran.file_number}."\
-        #   " Object Type: #{collection}.   Object ID: #{collection.id}."\
-        #   " Status: File Number Updated.")
       end
+
       veteran.update!(file_number: file_number)
+      @logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
+        " Veteran SSN: #{veteran.ssn}.  Veteran File Number: #{veteran.file_number}."\
+        " Status: File Number Updated.")
 
     rescue StandardError => error
-      Rails.logger.error(error)
+      @logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
+        " Veteran SSN: #{veteran.ssn}.  Veteran File Number: #{veteran.file_number}."\
+        " Error: #{error} Status: Update failed.")
       raise ActiveRecord::Rollback
     end
 
@@ -76,7 +77,7 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
     temporary_file.write(content)
     temporary_file.flush
 
-    # upload_logs_to_s3(filepath)
+    upload_logs_to_s3(filepath)
 
     temporary_file.close!
   end
@@ -85,7 +86,7 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
     s3client = Aws::S3::Client.new
     s3resource = Aws::S3::Resource.new(client: s3client)
     s3bucket = s3resource.bucket("data-remediation-output")
-    file_name = "duplicate-ep-remediation-logs/duplicate-ep-remediation-log-#{Time.zone.now}"
+    file_name = "file-number-remediation-logs/file-number-remediation-log-#{Time.zone.now}"
 
     # Store file to S3 bucket
     s3bucket.object(file_name).upload_file(filepath, acl: "private", server_side_encryption: "AES256")
