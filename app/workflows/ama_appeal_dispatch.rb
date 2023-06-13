@@ -4,16 +4,9 @@ class AmaAppealDispatch
   include ActiveModel::Model
   include DecisionDocumentValidator
 
-  def initialize(appeal:, params:, user:, mail_request: nil, copies: nil)
-    @appeal = appeal
+  def initialize(params, mail_package = nil)
     @params = params.merge(appeal_id: appeal.id, appeal_type: "Appeal")
-    @user = user
-    @citation_number = params[:citation_number]
-    @decision_date = params[:decision_date]
-    @redacted_document_location = params[:redacted_document_location]
-    @file = params[:file]
-    @mail_request = mail_request
-    @copies = copies
+    @mail_package = mail_package
   end
 
   def call
@@ -31,8 +24,31 @@ class AmaAppealDispatch
 
   private
 
-  attr_reader :appeal, :params, :user, :success, :citation_number,
-              :decision_date, :redacted_document_location, :file
+  attr_reader :params, :success
+
+  def appeal
+    @appeal ||= params[:appeal]
+  end
+
+  def user
+    params[:user]
+  end
+
+  def citation_number
+    params[:citation_number]
+  end
+
+  def decision_date
+    params[:decision_date]
+  end
+
+  def redacted_document_location
+    params[:redacted_document_location]
+  end
+
+  def file
+    params[:file]
+  end
 
   def dispatch_tasks
     @dispatch_tasks ||= BvaDispatchTask.not_cancelled.where(appeal: appeal, assigned_to: user)
@@ -100,8 +116,8 @@ class AmaAppealDispatch
   def queue_mail_request_job
     return unless dispatch_task.root_task.status == Constants.TASK_STATUSES.completed
 
-    MailRequestJob.perform_later(@file, @mail_request, @copies)
-    info_message = "MailRequestJob for citation #{@citation_number} queued for submission to Package Manager"
+    MailRequestJob.perform_later(file, mail_package)
+    info_message = "MailRequestJob for citation #{citation_number} queued for submission to Package Manager"
     log_info(info_message)
   end
 

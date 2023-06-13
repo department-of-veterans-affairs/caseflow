@@ -4,15 +4,9 @@ class LegacyAppealDispatch
   include ActiveModel::Model
   include DecisionDocumentValidator
 
-  def initialize(appeal:, params:, mail_request: nil, copies: nil)
-    @appeal = appeal
+  def initialize(params, mail_package)
     @params = params.merge(appeal_id: appeal.id, appeal_type: "LegacyAppeal")
-    @citation_number = params[:citation_number]
-    @decision_date = params[:decision_date]
-    @redacted_document_location = params[:redacted_document_location]
-    @file = params[:file]
-    @mail_request = mail_request
-    @copies = copies
+    @mail_pacjage = mail_package
   end
 
   def call
@@ -30,8 +24,27 @@ class LegacyAppealDispatch
 
   private
 
-  attr_reader :appeal, :params, :success, :citation_number,
-              :decision_date, :redacted_document_location, :file
+  attr_reader :params, :success
+
+  def appeal
+    @appeal ||= params[:appeal]
+  end
+
+  def citation_number
+    params[:citation_number]
+  end
+
+  def decision_date
+    params[:decision_date]
+  end
+
+  def redacted_document_location
+    params[:redacted_document_location]
+  end
+
+  def file
+    params[:file]
+  end
 
   def create_decision_document_and_submit_for_processing!(params)
     DecisionDocument.create!(params).tap(&:submit_for_processing!)
@@ -45,8 +58,8 @@ class LegacyAppealDispatch
   def queue_mail_request_job
     return unless @appeal.root_task.status == Constants.TASK_STATUSES.completed
 
-    MailRequestJob.perform_later(@file, @mail_request, @copies)
-    info_message = "MailRequestJob for citation #{@citation_number} queued for submission to Package Manager"
+    MailRequestJob.perform_later(file, mail_package)
+    info_message = "MailRequestJob for citation #{citation_number} queued for submission to Package Manager"
     log_info(info_message)
   end
 

@@ -24,9 +24,9 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
 
   def outcode
     # Create distributions for Package Manager mail service if recipient info present
-    create_mail_distributions
+    build_mail_package
 
-    result = BvaDispatchTask.outcode(appeal, outcode_params, user, mail_requests, copies)
+    result = BvaDispatchTask.outcode(appeal, outcode_params, user, mail_package)
 
     if result.success?
       success_response = { message: "Success!" }
@@ -167,35 +167,58 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
     params[:copies]
   end
 
-  def create_mail_distributions
+  # Payload with distributions value (array of JSON-formatted MailRequest objects) and copies (integer)
+  def mail_package
+    return nil if recipient_info.blank?
+
+    { distributions: mail_requests.to_json, copies: copies }
+  end
+
+  def build_mail_package
     return if recipient_info.blank?
 
     throw_error_if_copies_out_of_range
-    mail_requests.each(&:call)
-  end
-
-  def throw_error_if_copies_out_of_range
-    unless (1..500).cover?(copies)
-      # Update StandardError to BadMailRequestError once Jonathan's updates to BaseController merged in
-      fail StandardError, "Copies must be between 1 and 500 (inclusive)"
+    # Create and validate MailRequest objects, save to db, and store distribution IDs
+    mail_requests.map do |request|
+      request.call
+      distribution_ids << request.vbms_distribution_id
     end
   end
 
   def mail_requests
-    return nil if recipient_info.blank?
+    @mail_requests ||= create_mail_requests_and_track_errors
+  end
 
-    @mail_requests ||= recipient_info.map do |address|
-      mail_request = MailRequest.new(address)
-      throw_error_if_recipient_info_invalid(mail_request)
-      mail_request
+  def throw_error_if_copies_out_of_range
+    unless (1..500).cover?(copies)
+      fail Caseflow::Error::MissingRecipientInfo, "Copies must be between 1 and 500 (inclusive)".to_json
     end
   end
 
-  def throw_error_if_recipient_info_invalid(mail_request)
-    return if mail_request.valid?
+  def create_mail_requests_and_track_errors
+    requests = recipient_info.map.with_index do |recipient, idx|
+      MailRequest.new(recipient).tap do |request|
+        if request.invalid?
+          recipient_errors["distribution #{idx + 1}"] = request.errors.full_messages.join(", ")
+        end
+      end
+    end
+    throw_error_if_recipient_info_invalid
+    requests
+  end
 
-    # Update StandardError to BadMailRequestError once Jonathan's updates to BaseController merged in
-    fail StandardError, mail_request.errors.full_messages.join(",")
+  def throw_error_if_recipient_info_invalid
+    return unless recipient_errors.any?
+
+    fail Caseflow::Error::MissingRecipientInfo, recipient_errors.to_json
+  end
+
+  def recipient_errors
+    @recipient_errors ||= {}
+  end
+
+  def distribution_ids
+    @distribution_ids ||= []
   end
 
   def outcode_params
@@ -209,24 +232,9 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
 
   def recipient_params
     [
-      :recipient_type,
-      :name,
-      :first_name,
-      :last_name,
-      :claimant_station_of_jurisdiction,
-      :postal_code,
-      :destination_type,
-      :address_line_1,
-      :address_line_2,
-      :address_line_3,
-      :address_line_4,
-      :address_line_5,
-      :address_line_6,
-      :treat_line_2_as_addressee,
-      :treat_line_3_as_addressee,
-      :city,
-      :state,
-      :country_name,
+      :recipient_type, :name, :first_name, :last_name, :claimant_station_of_jurisdiction, :postal_code,
+      :destination_type, :address_line_1, :address_line_2, :address_line_3, :address_line_4, :address_line_5,
+      :address_line_6, :treat_line_2_as_addressee, :treat_line_3_as_addressee, :city, :state, :country_name,
       :country_code
     ]
   end
