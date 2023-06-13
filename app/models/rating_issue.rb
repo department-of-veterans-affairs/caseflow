@@ -91,9 +91,9 @@ class RatingIssue
       return data unless serialized_hash[:special_issues]
 
       serialized_hash[:special_issues].each do |special_issue|
-        data << { mst_available: true } if special_issue_has_mst?(special_issue)
+        data << { mst_available: true } if special_issue_has_mst?(special_issue) || Rating.mst_from_contentions_for_rating?
 
-        data << { pact_available: true } if special_issue_has_pact?(special_issue)
+        data << { pact_available: true } if special_issue_has_pact?(special_issue) || Rating.pact_from_contentions_for_rating?
       end
       data
     end
