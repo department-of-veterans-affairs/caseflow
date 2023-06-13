@@ -154,6 +154,7 @@ class Rating
 
   def mst_contention_status?(bgs_contention)
     return false if bgs_contention.nil?
+    
     if bgs_contention.special_issues.is_a?(Hash)
       return bgs_contention.special_issues[:spis_tc] == 'MST' if bgs_contention&.special_issues
     elsif bgs_contention.special_issues.is_a?(Array)
@@ -164,8 +165,9 @@ class Rating
     false
   end
 
-  def pact_contention_status?
+  def pact_contention_status?(bgs_contention)
     return false if bgs_contention.nil?
+
     if bgs_contention.special_issues.is_a?(Hash)
       return ['PACT', 'PACTDICRE'].include?(bgs_contention.special_issues[:spis_tc]) if bgs_contention&.special_issues
     elsif bgs_contention.special_issues.is_a?(Array)
