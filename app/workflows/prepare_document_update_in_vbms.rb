@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PrepareDocumentUploadToVbms
+class PrepareDocumentUpdateInVbms
   include ActiveModel::Model
   include VbmsDocumentTransactionConcern
 
@@ -11,7 +11,13 @@ class PrepareDocumentUploadToVbms
   #         user - current user that is preparing the document for upload
   #         appeal - Appeal object (optional if ssn or file number are passed into params)
   def initialize(params, user, appeal = nil)
-    @params = params.slice(:veteran_file_number, :document_type, :document_subject, :document_name, :file, :application)
+    @params = params.slice(:veteran_file_number,
+                           :document_type,
+                           :document_subject,
+                           :document_name,
+                           :file,
+                           :application,
+                           :document_version_reference_id)
     @document_type = @params[:document_type]
     @user = user
     @appeal = appeal
@@ -28,7 +34,7 @@ class PrepareDocumentUploadToVbms
       @params[:veteran_file_number] = throw_error_if_file_number_not_match_bgs
       VbmsUploadedDocument.create(document_params).tap do |document|
         document.cache_file
-        UploadDocumentToVbmsJob.perform_later(
+        UpdateDocumentInVbmsJob.perform_later(
           document_id: document.id,
           initiator_css_id: user.css_id,
           application: @params[:application]
@@ -43,6 +49,10 @@ class PrepareDocumentUploadToVbms
 
   attr_accessor :success
   attr_reader :document_type, :params, :user
+
+  def document_version_reference_id
+    @params[:document_version_reference_id]
+  end
 
   def veteran_file_number
     @params[:veteran_file_number]
@@ -65,7 +75,7 @@ class PrepareDocumentUploadToVbms
   end
 
   def bgs_service
-    @bgs_service || BGSService.new
+    @bgs_service ||= BGSService.new
   end
 
   def veteran_ssn
@@ -80,7 +90,8 @@ class PrepareDocumentUploadToVbms
       document_name: document_name,
       document_subject: document_subject,
       document_type: document_type,
-      file: file
+      file: file,
+      document_version_reference_id: document_version_reference_id
     }
   end
 
