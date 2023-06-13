@@ -2,6 +2,7 @@ import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
 
 import Alert from 'app/components/Alert';
+import DateSelector from 'app/components/DateSelector';
 import QueueFlowModal from '../QueueFlowModal';
 import RadioField from '../../../components/RadioField';
 import TextareaField from 'app/components/TextareaField';
@@ -11,9 +12,9 @@ const CompleteHearingPostponementRequestModal = (props) => {
     switch (action.type) {
     case 'granted':
       return { ...state, granted: action.payload }
-    case 'date':
+    case 'rulingDate':
       return { ...state, date: action.payload }
-    case 'schedule-option':
+    case 'scheduleOption':
       return { ...state, scheduleOption: action.payload }
     case 'instructions':
       return { ...state, instructions: action.payload }
@@ -48,8 +49,8 @@ const CompleteHearingPostponementRequestModal = (props) => {
       <>
         {/* Granted/Denied */}
         <RadioField
-          id="grantedOrDenied"
-          label="What is the Judge's ruling on the motion to postpone?"
+          id="grantedOrDeniedField"
+          label="What is the Judge's ruling on the motion to postpone?:"
           inputRef={props.register}
           onChange={(value) => dispatch({ type: 'granted', payload: value === 'true' })}
           value={state.granted}
@@ -67,13 +68,32 @@ const CompleteHearingPostponementRequestModal = (props) => {
         />}
 
         {/* Date picker */}
+        <DateSelector
+          label="Date of ruling:"
+          name="rulingDateSelector"
+          onChange={(value) => dispatch({ type: 'rulingDate', payload: value === 'true' })}
+          value={state.date}
+          noFutureDates
+        />
 
         {/* How would you like to proceed? */}
+        <RadioField
+          id="scheduleOptionField"
+          label="How would you like to proceed?:"
+          inputRef={props.register}
+          onChange={(value) => dispatch({ type: 'scheduleOption', payload: value })}
+          value={state.granted}
+          options={[
+            { displayText: 'Reschedule immediately', value: 'now' },
+            { displayText: 'Send to Schedule Veteran list', value: 'later' }
+          ]}
+          vertical
+        />
 
         {/* Additional instructions */}
         <TextareaField
           label="Provide instructions and context for this action:"
-          name="instructions"
+          name="instructionsField"
           id="completePostponementInstructions"
           onChange={(value) => dispatch({ type: 'instructions', payload: value })}
           value={state.instructions}
