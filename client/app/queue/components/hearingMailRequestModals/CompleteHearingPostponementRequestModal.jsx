@@ -11,13 +11,13 @@ const CompleteHearingPostponementRequestModal = (props) => {
   const formReducer = (state, action) => {
     switch (action.type) {
     case 'granted':
-      return { ...state, granted: action.payload }
+      return { ...state, granted: action.payload };
     case 'rulingDate':
-      return { ...state, date: action.payload }
+      return { ...state, date: action.payload };
     case 'scheduleOption':
-      return { ...state, scheduleOption: action.payload }
+      return { ...state, scheduleOption: action.payload };
     case 'instructions':
-      return { ...state, instructions: action.payload }
+      return { ...state, instructions: action.payload };
     default:
       throw new Error("Whatever you passed this reducer made it really angry. Please don't do it again.");
     }
