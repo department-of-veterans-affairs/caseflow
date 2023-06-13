@@ -37,7 +37,10 @@ export default class AssignHearingsTable extends React.PureComponent {
       showNoVeteransToAssignError: false,
       colsFromApi: null,
       amaDocketLineIndex: null,
-      rowOffset: 0
+      rowOffset: 0,
+      mstIdentification: this.mstIdentification,
+      pactIdentification: this.pactIdentification,
+      legacyMstPactIdentification: this.legacyMstPactIdentification
     };
   }
 
@@ -91,14 +94,37 @@ export default class AssignHearingsTable extends React.PureComponent {
   /*
    * Gets the list of columns to populate the QueueTable with.
    */
+
   getColumns = () => {
-    const { selectedRegionalOffice, selectedHearingDay } = this.props;
+    const { selectedRegionalOffice,
+      selectedHearingDay,
+      mstIdentification,
+      pactIdentification,
+      legacyMstPactIdentification } = this.props;
 
     const { colsFromApi } = this.state;
 
     if (_.isNil(selectedHearingDay) || _.isNil(colsFromApi)) {
       return [];
     }
+
+    let mstPactBadgeColumn =
+    {
+      header: '',
+      align: 'left',
+      cellClass: 'badge-designation',
+      valueFunction: (row) => (
+        <span
+          style={{ display: 'flex' }}>
+          <div
+            className ="badge-designation"
+            style={{ flexDirection: 'column', marginLeft: '-1rem' }}>
+            <MstBadge appeal={row.appeal} />
+            <PactBadge appeal={row.appeal} />
+          </div>
+        </span>
+      )
+    };
 
     const columns = [
       {
@@ -108,22 +134,6 @@ export default class AssignHearingsTable extends React.PureComponent {
         // Since this column isn't tied to anything in the input row, _value will
         // always be undefined.
         valueFunction: (_value, rowId) => <span>{rowId + this.state.rowOffset}.</span>
-      },
-      {
-        header: '',
-        align: 'left',
-        cellClass: 'badge-designation',
-        valueFunction: (row) => (
-          <span
-            style={{ display: 'flex' }}>
-            <div
-              className ="badge-designation"
-              style={{ flexDirection: 'column', marginLeft: '-1rem' }}>
-              <MstBadge appeal={row.appeal} />
-              <PactBadge appeal={row.appeal} />
-            </div>
-          </span>
-        )
       },
       {
         name: 'caseDetails',
@@ -211,6 +221,10 @@ export default class AssignHearingsTable extends React.PureComponent {
         filterOptions: this.getFilterOptionsFromApi(QUEUE_CONFIG.POWER_OF_ATTORNEY_COLUMN_NAME)
       }
     ];
+
+    if (mstIdentification || pactIdentification || legacyMstPactIdentification) {
+      columns.splice(1, 0, mstPactBadgeColumn);
+    }
 
     return columns;
   }
@@ -301,5 +315,8 @@ AssignHearingsTable.propTypes = {
   // Selected Regional Office Key
   selectedRegionalOffice: PropTypes.string,
 
-  tabName: PropTypes.string
+  tabName: PropTypes.string,
+  mstIdentification: PropTypes.bool,
+  pactIdentification: PropTypes.bool,
+  legacyMstPactIdentification: PropTypes.bool
 };
