@@ -226,6 +226,7 @@ class AddEditIssueView extends React.Component {
       error,
       deleteIssueModal,
       justificationFeatureToggle,
+      legacyMstPactFeatureToggle,
       ...otherProps
     } = this.props;
 
@@ -357,8 +358,8 @@ class AddEditIssueView extends React.Component {
         value={_.get(this.props.issue, 'note', '')}
         maxLength={ISSUE_DESCRIPTION_MAX_LENGTH}
         onChange={(value) => this.updateIssue({ note: value })} />
-      <label style={{ marginBottom: '1rem' }}>Select any special issues that apply</label>
-      <Checkbox
+      {legacyMstPactFeatureToggle && <label style={{ marginBottom: '1rem' }}>Select any special issues that apply</label>}
+      {legacyMstPactFeatureToggle && <Checkbox
         name="MST"
         label="Military Sexual Trauma (MST)"
         defaultValue={issue.mst_status}
@@ -368,14 +369,14 @@ class AddEditIssueView extends React.Component {
           this.updateIssue({ mst_status: checked });
           this.handleShowMstJustification();
         }}
-      />
+      />}
       {showMstJustification &&
         <TextField
           name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
           value={this.state.mstJustification}
           onChange={this.handleMstJustification} />
       }
-      <Checkbox
+      {legacyMstPactFeatureToggle && <Checkbox
         name="PACT"
         label="PACT Act"
         defaultValue={issue.pact_status}
@@ -385,7 +386,7 @@ class AddEditIssueView extends React.Component {
           this.updateIssue({ pact_status: checked });
           this.handleShowPactJustification();
         }}
-      />
+      />}
       {showPactJustification &&
         <TextField
           name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
@@ -429,6 +430,7 @@ AddEditIssueView.propTypes = {
   issueId: PropTypes.string,
   issues: PropTypes.object,
   justificationFeatureToggle: PropTypes.bool,
+  legacyMstPactFeatureToggle: PropTypes.bool,
   requestDelete: PropTypes.func,
   requestSave: PropTypes.func,
   requestUpdate: PropTypes.func,
