@@ -11,7 +11,12 @@ const CompleteHearingPostponementRequestModal = (props) => {
   const formReducer = (state, action) => {
     switch (action.type) {
     case 'granted':
-      return { ...state, granted: action.payload };
+      return {
+        ...state,
+        granted: action.payload,
+        // If granted is being set to false then reset scheduleOption to null
+        ...(action.payload || { scheduleOption: null })
+      };
     case 'rulingDate':
       return { ...state, date: action.payload };
     case 'scheduleOption':

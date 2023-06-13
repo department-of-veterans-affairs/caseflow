@@ -63,7 +63,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   # Kind of just guessing here and putting the new HearingTask
   # under the same parent of the most recent HearingTask in the tree.
   #
-  # Not sure what all the scenarios are that could get thrown at this yet are.
+  # Not sure what all the scenarios are that could get thrown at this yet.
   # This approach may not work.
   def create_new_root_hearing_task!
     most_recent_hearing_task = locate_most_recent_hearing_task
