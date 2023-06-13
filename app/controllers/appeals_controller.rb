@@ -2,7 +2,6 @@
 
 class AppealsController < ApplicationController
   before_action :react_routed
-  before_action :verify_edit_issue_access, only: :edit
   before_action :set_application, only: [:document_count, :power_of_attorney, :update_power_of_attorney]
   # Only whitelist endpoints VSOs should have access to.
   skip_before_action :deny_vso_access, only: [
@@ -463,12 +462,6 @@ class AppealsController < ApplicationController
 
   def docket_number?(search)
     !search.nil? && search.match?(/\d{6}-{1}\d+$/)
-  end
-
-  def verify_edit_issue_access
-    unless current_user&.can_edit_issues?
-      redirect_to '/unauthorized'
-    end
   end
 
   def update_or_delete_power_of_attorney!
