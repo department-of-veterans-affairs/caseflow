@@ -89,6 +89,7 @@ class SelectDispositionsView extends React.PureComponent {
       (response) => {
         const { ...specialIssues } = response.body;
 
+        this.editStagedAppeal({ specialIssues });
         this.setState({ specialIssues });
       }
     );
@@ -97,11 +98,17 @@ class SelectDispositionsView extends React.PureComponent {
   stageSpecialIssues = (decisionIssues) => {
     const appealIsBlueWater = decisionIssues.filter(
       // eslint-disable-next-line camelcase, no-unneeded-ternary
-      (decision) => decision.decisionSpecialIssue?.blue_water)[0]?.decisionSpecialIssue.blue_water ? true : false;
+      (decision) => decision.decisionSpecialIssue?.blue_water).length > 0;
 
     const appealIsBurnPit = decisionIssues.filter(
       // eslint-disable-next-line camelcase, no-unneeded-ternary
-      (decision) => decision.decisionSpecialIssue?.burn_pit)[0]?.decisionSpecialIssue.burn_pit ? true : false;
+      (decision) => decision.decisionSpecialIssue?.burn_pit).length > 0;
+
+    this.setState({ specialIssues: {
+      ...this.state.specialIssues,
+      blue_water: appealIsBlueWater,
+      burn_pit: appealIsBurnPit
+    } });
 
     this.props.editStagedAppeal(
       this.props.appeal.externalId, {
@@ -114,6 +121,22 @@ class SelectDispositionsView extends React.PureComponent {
     );
   }
 
+  createSpecialIssueList = (decisionIssues) => {
+    const blueWater = decisionIssues.filter(
+      // eslint-disable-next-line camelcase, no-unneeded-ternary
+      (decision) => decision.decisionSpecialIssue?.blue_water);
+
+    const burnPit = decisionIssues.filter(
+      // eslint-disable-next-line camelcase, no-unneeded-ternary
+      (decision) => decision.decisionSpecialIssue?.burn_pit);
+
+    return {
+      ...this.state.specialIssues,
+      blue_water: _.some(blueWater, (bW) => bW.decisionSpecialIssue.blue_water === true),
+      burn_pit: _.some(burnPit, (bP) => bP.decisionSpecialIssue.burn_pit === true)
+    };
+  };
+
   getNextStepUrl = () => {
     const {
       appealId,
@@ -122,8 +145,10 @@ class SelectDispositionsView extends React.PureComponent {
       appeal: { decisionIssues }
     } = this.props;
 
-    this.stageSpecialIssues(decisionIssues);
-    ApiUtil.post(`/appeals/${appealId}/special_issues`, { data: { special_issues: this.state.specialIssues } });
+    ApiUtil.post(`/appeals/${appealId}/special_issues`,
+      {
+        data: { special_issues: this.createSpecialIssueList(decisionIssues) }
+      });
 
     let nextStep;
     const dispositions = decisionIssues.map((issue) => issue.disposition);
@@ -282,6 +307,7 @@ class SelectDispositionsView extends React.PureComponent {
     this.selectedIssues()[0].mst_status = this.state.decisionIssue.mstStatus;
     this.selectedIssues()[0].pact_status = this.state.decisionIssue.pactStatus;
 
+    this.stageSpecialIssues(this.props.appeal.decisionIssues);
     this.handleModalClose();
   }
 
