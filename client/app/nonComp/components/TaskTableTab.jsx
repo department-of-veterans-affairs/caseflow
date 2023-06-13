@@ -9,11 +9,16 @@ import {
   claimantColumn,
   veteranParticipantIdColumn,
   veteranSsnColumn,
-  decisionReviewTypeColumn
+  decisionReviewTypeColumn,
 } from './TaskTableColumns';
 import {
+  issueCountColumn,
+  issueTypesColumn
+} from '../../queue/components/TaskTableColumns';
+import {
   buildDecisionReviewFilterInformation,
-  extractEnabledTaskFilters
+  extractEnabledTaskFilters,
+  parseFilterOptions,
 } from '../util/index';
 
 class TaskTableTabUnconnected extends React.PureComponent {
@@ -61,7 +66,12 @@ class TaskTableTabUnconnected extends React.PureComponent {
     },
     this.props.featureToggles.decisionReviewQueueSsnColumn ?
       veteranSsnColumn() :
-      veteranParticipantIdColumn()
+      veteranParticipantIdColumn(),
+    issueCountColumn(),
+    {
+      ...issueTypesColumn(),
+      filterOptions: parseFilterOptions(this.props.filterableTaskIssueTypes)
+    },
   ];
 
   enabledTaskFilters = () => extractEnabledTaskFilters(
@@ -91,8 +101,8 @@ class TaskTableTabUnconnected extends React.PureComponent {
         <TaskTableUnconnected
           {...this.state.predefinedColumns}
           getKeyForRow={(row, object) => object.id}
+          onHistoryUpdate={this.props.onHistoryUpdate}
           customColumns={this.getTableColumns()}
-          includeIssueCount
           tasks={[]}
           taskPagesApiEndpoint={this.props.baseTasksUrl}
           useTaskPagesApi
@@ -119,12 +129,14 @@ TaskTableTabUnconnected.propTypes = {
     onPageLoaded: PropTypes.func
   }),
   filterableTaskTypes: PropTypes.object,
+  filterableTaskIssueTypes: PropTypes.object,
+  onHistoryUpdate: PropTypes.func,
 };
 
 const TaskTableTab = connect(
   (state) => ({
     featureToggles: state.featureToggles
-  })
+  }),
 )(TaskTableTabUnconnected);
 
 export default TaskTableTab;
