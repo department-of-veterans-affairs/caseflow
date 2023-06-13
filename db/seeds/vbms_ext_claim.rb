@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# create vbms-ext-claim seeds
+# create vbms claims
 module Seeds
 
   class VbmsExtClaim < Base
@@ -11,7 +11,7 @@ module Seeds
       create_out_of_sync_epes_and_vbms_ext_claims
     end
 
-	 private
+private
 
   # creates out_of_sync vbms_ext_claims and end_produdct_establishments
 	def create_out_of_sync_epes_and_vbms_ext_claims
