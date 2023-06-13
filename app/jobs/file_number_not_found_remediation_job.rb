@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "./lib/helpers/fix_file_number_wizard.rb"
+
 class FileNumberNotFoundRemediationJob < CaseflowJob
   # CONFIRM WHERE TO RESCUE
   class FileNumberMachesVetFileNumberError < StandardError; end
@@ -9,50 +11,55 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
 
   queue_with_priority :low_priority
 
-  # ASSOCIATED_OBJECTS = FixFileNumberWizard.new::ASSOCIATIONS
-  ASSOCIATED_OBJECTS = ["1,12,3"]
-  ERROR_TEXT = "FILENUMBER does not exist"
+  ASSOCIATED_OBJECTS = FixFileNumberWizard::ASSOCIATIONS
 
-  attr_reader :decision_doc, :veteran, :appeal
+  attr_reader :veteran, :appeal
 
-  def initialize(veteran)
+  def initialize(appeal)
     @logs = ["VBMS::FILENUMBERERROR Remediation Log"]
-    @decision_doc = decision_doc
-    @veteran = veteran
     @appeal = appeal
+    @veteran = appeal.veteran
   end
 
   def perform
-    start_fix_veteran(veteran)
+    start_fix_veteran
   end
 
   def fetch_file_number_from_bgs_service
-   BGSService.new.fetch_file_number_by_ssn(veteran.ssn)
+    BGSService.new.fetch_file_number_by_ssn(veteran.ssn)
   end
 
-  def start_fix_veteran(veteran)
+  def start_fix_veteran
     file_number = fetch_file_number_from_bgs_service
-    binding.pry
     verify_file_number(file_number)
+    collections = ASSOCIATED_OBJECTS.map do |klass|
+      FixFileNumberWizard::Collection.new(klass, veteran.ssn)
+    end
 
-    collections = ASSOCIATED_OBJECTS.map { |klass| FixFileNumberWizard::Collection.new(klass, veteran.ssn) }
     if collections.map(&:count).sum == 0
       fail NoAssociatedRecordsFoundForFileNumberError
     end
 
-    collections.each { |collection| collection.update!(file_number) }
-    veteran.update!(file_number: file_number)
+    ActiveRecord::Base.transaction do
+      collections.each do |collection|
+        collection.update!(file_number)
 
-    # add logic to confirm its updated
-    @logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
-      " Veteran SSN: #{veteran.ssn}.  Veteran File Number: #{veteran.file_number}.  FileNumber Error Present: No."\
-      " Status: Resolved.")
+        # @logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
+        #   " Veteran SSN: #{veteran.ssn}.  Veteran File Number: #{veteran.file_number}."\
+        #   " Object Type: #{collection}.   Object ID: #{collection.id}."\
+        #   " Status: File Number Updated.")
+      end
+      veteran.update!(file_number: file_number)
+
+    rescue StandardError => error
+      Rails.logger.error(error)
+      raise ActiveRecord::Rollback
+    end
 
     create_log
   end
 
   def verify_file_number(file_number)
-    binding.pry
     if file_number == veteran.file_number
       fail FileNumberMachesVetFileNumberError
     elsif file_number.nil?
@@ -69,7 +76,7 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
     temporary_file.write(content)
     temporary_file.flush
 
-    upload_logs_to_s3(filepath)
+    # upload_logs_to_s3(filepath)
 
     temporary_file.close!
   end
