@@ -3,10 +3,23 @@
 describe Seeds::VbmsExtClaim do
   let(:seed) { Seeds::VbmsExtClaim.new }
 
+  context "#seed!" do
+    it "seeds total of 325 VBMS EXT CLAIMS, 100 High Level Review EndProduct Establishments
+      100 Supplemental Claim End Product Establishments, and 125 Non Associated End Product
+      Establishments" do
+      seed.seed!
+      expect(VbmsExtClaim.count).to eq(325)
+      expect(HigherLevelReview.count).to eq(100)
+      expect(SupplementalClaim.count).to eq(100)
+      expect(VbmsExtClaim.where(ep_code: nil).count).to eq(125)
+    end
+  end
+
   context "#create_vbms_ext_claims_with_no_end_product_establishment" do
     it "seeds total of 125 VBMS EXT CLAIMS Not associated with an EPE" do
       seed.send(:create_vbms_ext_claims_with_no_end_product_establishment)
       expect(VbmsExtClaim.count).to eq(125)
+      expect(VbmsExtClaim.where(ep_code: nil).count).to eq(125)
     end
   end
   context "#create_in_sync_epes_and_vbms_ext_claims" do
