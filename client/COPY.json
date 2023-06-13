@@ -527,7 +527,7 @@
   "CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_TITLE": "Cancel hearing request",
   "CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_DETAIL": "Canceling this hearing request will release it to a hearing coordinator for review. A 90 day evidence hold may still apply to this case.",
   "SPECIAL_CASE_MOVEMENT_MODAL_TITLE": "Case Movement",
-  "SPECIAL_CASE_MOVEMENT_MODAL_DETAIL": "This action overrides the normal case distribution process and immediately assigns the appeal to the judge selected.",
+  "SPECIAL_CASE_MOVEMENT_MODAL_DETAIL": "This action overrides the normal case distribution process and immediately reassigns the appeal to the judge selected.",
   "SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER": "Select a judge",
   "BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_TITLE": "Reassign %s's Case",
   "BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_SUBTITLE": "This case currently has blocking tasks that will be cancelled to move this case",

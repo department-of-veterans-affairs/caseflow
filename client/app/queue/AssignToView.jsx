@@ -123,12 +123,20 @@ class AssignToView extends React.Component {
     }
 
     if (isReassignAction) {
-      return this.reassignTask(taskType === 'JudgeLegacyAssignTask');
+      return this.reassignTask();
     }
 
     return this.props.
       requestSave('/tasks', payload, isPulacCerullo ? pulacCerulloSuccessMessage : assignTaskSuccessMessage).
-      then((resp) => this.props.onReceiveAmaTasks(resp.body.tasks.data)).
+      then((resp) => {
+        this.props.onReceiveAmaTasks(resp.body.tasks.data);
+        if (task.appealType === 'LegacyAppeal') {
+          this.props.legacyReassignToJudge({
+            tasks: [task],
+            assigneeId: this.state.selectedValue
+          }, assignTaskSuccessMessage);
+        }
+      }).
       catch(() => {
         // handle the error from the frontend
       });
@@ -150,7 +158,7 @@ class AssignToView extends React.Component {
     return assignee;
   };
 
-  reassignTask = (isLegacyReassignToJudge = false, isLegacyReassignToAttorney = false) => {
+  reassignTask = () => {
     const task = this.props.task;
     const payload = {
       data: {
@@ -166,24 +174,16 @@ class AssignToView extends React.Component {
 
     const successMsg = { title: sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) };
 
-    if (isLegacyReassignToAttorney) {
-      return this.props.legacyReassignToAttorney({
-        tasks: [task],
-        assigneeId: this.state.selectedValue
-      }, successMsg);
-    }
-
-    if (isLegacyReassignToJudge) {
-      return this.props.legacyReassignToJudge({
-        tasks: [task],
-        assigneeId: this.state.selectedValue
-      }, successMsg);
-    }
-
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).then((resp) => {
       this.props.onReceiveAmaTasks(resp.body.tasks.data);
       if (task.type === 'JudgeAssignTask') {
         this.props.setOvertime(task.externalAppealId, false);
+      }
+      if (task.appealType === 'LegacyAppeal') {
+        this.props.legacyReassignToJudge({
+          tasks: [task],
+          assigneeId: this.state.selectedValue
+        }, successMsg);
       }
     });
   };
@@ -418,7 +418,8 @@ AssignToView.propTypes = {
     taskId: PropTypes.string,
     availableActions: PropTypes.arrayOf(PropTypes.object),
     externalAppealId: PropTypes.string,
-    type: PropTypes.string
+    type: PropTypes.string,
+    appealType: PropTypes.string
   }),
   setOvertime: PropTypes.func,
   resetSuccessMessages: PropTypes.func

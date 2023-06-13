@@ -57,7 +57,6 @@ import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToAttorneyLegacyModalView from './AssignToAttorneyLegacyModalView';
 import AssignToView from './AssignToView';
-import ReAssignToJudgeLegacy from './ReAssignToJudgeLegacy';
 import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
 import AddDvcTeamModal from './AddDvcTeamModal';
@@ -385,7 +384,7 @@ class QueueApp extends React.PureComponent {
   );
 
   routedReassignToJudgeLegacy = (props) => (
-    <ReAssignToJudgeLegacy isReassignAction {...props.match.params} />
+    <AssignToView isReassignAction {...props.match.params} />
   );
 
   routedCompleteTaskModal = (props) => (
