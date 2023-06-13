@@ -1,21 +1,24 @@
 # frozen_string_literal: true
 
 RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :controller do
+  include ActiveJob::TestHelper
+
   describe "POST /idt/api/v1/appeals/:appeal_id/upload_document" do
     let(:user) { create(:user) }
     let(:appeal) { create(:appeal) }
     let(:veteran) { appeal.veteran }
     let(:file_number) { appeal.veteran.file_number }
+    let(:file) { "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW" }
     let(:valid_document_type) { "BVA Decision" }
     let(:params) do
       { appeal_id: appeal.external_id,
-        file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
+        file: file,
         document_type: valid_document_type }
     end
 
     let(:mail_request_params) do
       { veteran_identifier: veteran.file_number,
-        file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
+        file: file,
         document_type: valid_document_type,
         recipient_info: [
           {
@@ -184,7 +187,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
             appeal_type: appeal.class.name,
             veteran_file_number: file_number,
             document_type: params[:document_type],
-            file: params[:file],
+            file: file,
             document_name: nil,
             document_subject: nil
           }
@@ -239,6 +242,48 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
           end
 
           it_behaves_like "success_with_valid_parameters"
+        end
+      end
+
+      context "queues async mail request job" do
+        let(:recipient_info) { mail_request_params[:recipient_info] }
+        let(:mail_request) { MailRequest.new(recipient_info[0]) }
+        let(:mail_request_job) { class_double(MailRequestJob) }
+        let(:mail_package) do
+          { distributions: [mail_request.to_json],
+            copies: 1 }
+        end
+        let(:uploaded_document) { instance_double(VbmsUploadedDocument, id: 1) }
+        let(:upload_job_params) do
+          { document_id: uploaded_document.id,
+            initiator_css_id: user.css_id,
+            application: nil,
+            mail_package: mail_package }
+        end
+
+        context "document is associated with a mail package" do
+          it "calls #perform_later on MailRequestJob" do
+            post :create, params: mail_request_params, as: :json
+            expect(mail_request_job).to receive(:perform_later)
+            perform_enqueued_jobs do
+              UploadDocumentToVbmsJob.perform_later(upload_job_params)
+            end
+          end
+        end
+
+        context "document is not associated with a mail package" do
+          it "does not call #perform_later on MailRequestJob" do
+            mail_request_params[:recipient_info] = []
+            post :create, params: mail_request_params, as: :json
+            expect(mail_request_job).to_not receive(:perform_later)
+          end
+        end
+
+        context "recipient info is incorrect" do
+          it "does not call #perform_later on MailRequestJob" do
+            post :create, params: invalid_mail_request_params, as: :json
+            expect(mail_request_job).to_not receive(:perform_later)
+          end
         end
       end
     end
