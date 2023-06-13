@@ -119,11 +119,11 @@ class SelectDispositionsView extends React.PureComponent {
       appealId,
       taskId,
       checkoutFlow,
-      appeal: { decisionIssues, specialIssues }
+      appeal: { decisionIssues }
     } = this.props;
 
     this.stageSpecialIssues(decisionIssues);
-    ApiUtil.post(`/appeals/${appealId}/special_issues`, { data: { special_issues: specialIssues } });
+    ApiUtil.post(`/appeals/${appealId}/special_issues`, { data: { special_issues: this.state.specialIssues } });
 
     let nextStep;
     const dispositions = decisionIssues.map((issue) => issue.disposition);
