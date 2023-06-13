@@ -1268,9 +1268,16 @@ describe Appeal, :all_dbs do
   describe "#mst?" do
     subject { appeal.mst? }
 
-    before { FeatureToggle.enable!(:mst_pact_identification) }
-    after { FeatureToggle.disable!(:mst_pact_identification) }
-
+    before do
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
+      FeatureToggle.enable!(:legacy_mst_pact_identification)
+    end
+    after do
+      FeatureToggle.disable!(:mst_identification)
+      FeatureToggle.disable!(:pact_identification)
+      FeatureToggle.disable!(:legacy_mst_pact_identification)
+    end
     let(:request_issues) do
       [
         create(:request_issue, mst_status: mst_status)
@@ -1330,8 +1337,16 @@ describe Appeal, :all_dbs do
   describe "#pact?" do
     subject { appeal.pact? }
 
-    before { FeatureToggle.enable!(:mst_pact_identification) }
-    after { FeatureToggle.disable!(:mst_pact_identification) }
+    before do
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
+      FeatureToggle.enable!(:legacy_mst_pact_identification)
+    end
+    after do
+      FeatureToggle.disable!(:mst_identification)
+      FeatureToggle.disable!(:pact_identification)
+      FeatureToggle.disable!(:legacy_mst_pact_identification)
+    end
 
     let(:request_issues) do
       [

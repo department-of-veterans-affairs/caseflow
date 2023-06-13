@@ -630,7 +630,8 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def mst?
-    return false unless FeatureToggle.enabled?(:mst_pact_identification)
+    return false unless FeatureToggle.enabled?(:mst_identification) &&
+                        FeatureToggle.enabled?(:legacy_mst_pact_identification)
 
     issues.any?(&:mst_status) ||
       (special_issue_list &&
@@ -639,7 +640,8 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def pact?
-    return false unless FeatureToggle.enabled?(:mst_pact_identification)
+    return false unless FeatureToggle.enabled?(:pact_identification) &&
+                        FeatureToggle.enabled?(:legacy_mst_pact_identification)
 
     issues.any?(&:pact_status)
   end

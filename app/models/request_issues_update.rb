@@ -32,7 +32,8 @@ class RequestIssuesUpdate < CaseflowRecord
         pact_edited_request_issue_ids: pact_edited_issues.map(&:id),
         corrected_request_issue_ids: corrected_issues.map(&:id)
       )
-      create_mst_pact_issue_update_tasks
+      create_mst_pact_issue_update_tasks if FeatureToggle.enabled?(:mst_identification) ||
+                                            FeatureToggle.enabled?(:pact_identification)
       create_business_line_tasks! if added_issues.present?
       cancel_active_tasks
       submit_for_processing!
@@ -212,8 +213,8 @@ class RequestIssuesUpdate < CaseflowRecord
     process_withdrawn_issues!
     process_edited_issues!
     process_corrected_issues!
-    process_mst_edited_issues!
-    process_pact_edited_issues!
+    process_mst_edited_issues! if FeatureToggle.enabled?(:mst_identification)
+    process_pact_edited_issues! if FeatureToggle.enabled?(:mst_identification)
   end
 
   def process_legacy_issues!
@@ -332,7 +333,7 @@ class RequestIssuesUpdate < CaseflowRecord
       task = IssuesUpdateTask.create!(
         appeal: before_issue.decision_review,
         parent: RootTask.find_by(appeal: before_issue.decision_review),
-        assigned_to: RequestStore[:current_user],
+        assigned_to: SpecialIssueEditTeam.singleton,
         assigned_by: RequestStore[:current_user],
         completed_by: RequestStore[:current_user]
       )
