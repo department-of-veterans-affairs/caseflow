@@ -5,7 +5,7 @@ describe "remediations/sync_attributes_with_bgs" do
   let(:args) { "44556677" }
 
   it "calls SyncAttributesWithBGS::VeteranCacheUpdater.run_by_file_number" do
-    expect(SyncAttributesWithBGS::VeteranCacheUpdater).to receive(:run_by_file_number).with(args)
+    expect(SyncAttributesWithBGS::VeteranCacheUpdater).to receive(:find_by_file_number_or_ssn).with(args)
     Rake::Task["remediations:update_veteran_cached_attributes"].invoke(*args)
   end
 end

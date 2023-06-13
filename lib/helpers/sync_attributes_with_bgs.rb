@@ -2,12 +2,10 @@
 
 module SyncAttributesWithBGS
   class VeteranCacheUpdater
-    def self.run_by_file_number(file_number)
-      veteran = Veteran.find_or_create_by_file_number(file_number, sync_name: true)
-
-      if veteran.blank?
+    def self.find_by_file_number_or_ssn(file_number)
+      unless (veteran = Veteran.find_by_file_number_or_ssn(file_number, sync_name: true))
         puts "veteran was not found"
-        fail Interrupt
+        return
       end
 
       puts "Veteran Name: #{veteran.first_name} #{veteran.middle_name} #{veteran.last_name}"
@@ -16,25 +14,25 @@ module SyncAttributesWithBGS
 
   class PersonCacheUpdater
     def self.run_by_participant_id(participant_id)
-      person = Person.find_by(participant_id: participant_id)
-
-      if person.blank?
+      unless (person = Person.find_by(participant_id: participant_id))
         puts "person not found"
-        fail Interrupt
+        return
       end
-      if person.found?
-        person.class.cached_bgs_attributes.each do |name_attr|
-          fetched_attr = person.bgs_record[name_attr]
-          if fetched_attr != person[name_attr]
-            person[name_attr] = fetched_attr
-          end
-        end
-        unless person.changes.any? && person.save
-          puts "person was not updated"
-        end
-      else
+
+      unless person.found?
         puts "bgs record not found"
-        fail Interrupt
+        return
+      end
+
+      if person.stale_attributes?
+        person.update(
+          person.bgs_record.select { |attr_name, _value| Person::CACHED_BGS_ATTRIBUTES.include?(attr_name) }
+        )
+      end
+
+      unless person.previous_changes.any?
+        puts "person was not updated"
+        return
       end
 
       puts "Person Name: #{person.first_name} #{person.middle_name} #{person.last_name}"

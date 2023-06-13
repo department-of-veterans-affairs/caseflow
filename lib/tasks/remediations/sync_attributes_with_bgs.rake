@@ -5,7 +5,7 @@ require_relative "../../../lib/helpers/sync_attributes_with_bgs"
 namespace :remediations do
   desc "Sync veteran cached attributes with bgs record"
   task :update_veteran_cached_attributes, [:file_number] => :environment do |_task, args|
-    SyncAttributesWithBGS::VeteranCacheUpdater.run_by_file_number(args[:file_number])
+    SyncAttributesWithBGS::VeteranCacheUpdater.find_by_file_number_or_ssn(args[:file_number])
   end
 
   desc "sync person cached attributes with bgs record"

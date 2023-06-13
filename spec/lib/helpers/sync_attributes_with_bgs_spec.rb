@@ -5,7 +5,7 @@ require "helpers/sync_attributes_with_bgs"
 describe SyncAttributesWithBGS do
   describe SyncAttributesWithBGS::VeteranCacheUpdater do
     subject { SyncAttributesWithBGS::VeteranCacheUpdater }
-    context "#run_by_file_number" do
+    context "#find_by_file_number_or_ssn" do
       let(:veteran) { create(:veteran, last_name: "INCORRECT") }
       let(:bgs_record) { Fakes::VeteranStore.new.fetch_and_inflate(veteran.file_number) }
       before do
@@ -16,7 +16,7 @@ describe SyncAttributesWithBGS do
       it "syncs veteran info with bgs" do
         expect(veteran.last_name).to eq "INCORRECT"
         expect(subject).to receive(:puts).with("Veteran Name: Bob  CORRECT")
-        subject.run_by_file_number(veteran.file_number)
+        subject.find_by_file_number_or_ssn(veteran.file_number)
         veteran.reload
         expect(veteran.last_name).to eq "CORRECT"
       end
@@ -26,8 +26,9 @@ describe SyncAttributesWithBGS do
           let(:file_number) { "12345678" }
           it "does not find a veteran" do
             expect(veteran.last_name).to eq "INCORRECT"
-            expect(subject).to receive(:run_by_file_number).with(veteran.file_number).and_return("veteran not found")
-            subject.run_by_file_number(veteran.file_number)
+            expect(subject).to receive(:find_by_file_number_or_ssn)
+              .with(veteran.file_number).and_return("veteran not found")
+            subject.find_by_file_number_or_ssn(veteran.file_number)
             veteran.reload
             expect(veteran.last_name).to eq "INCORRECT"
           end
@@ -60,7 +61,8 @@ describe SyncAttributesWithBGS do
       let(:participant_id) { "12345678" }
       context "find a person by participant_id" do
         it "does not find person" do
-          expect(subject).to receive(:run_by_participant_id).with(participant_id).and_return("person was not found")
+          expect(subject).to receive(:run_by_participant_id)
+            .with(participant_id).and_return("person was not found")
           subject.run_by_participant_id(participant_id)
         end
       end
@@ -71,7 +73,8 @@ describe SyncAttributesWithBGS do
         end
 
         it "does not find a person bgs record" do
-          expect(subject).to receive(:run_by_participant_id).with(participant_id).and_return("bgs record was not found")
+          expect(subject).to receive(:run_by_participant_id)
+            .with(participant_id).and_return("bgs record was not found")
           subject.run_by_participant_id(participant_id)
         end
       end
@@ -81,7 +84,8 @@ describe SyncAttributesWithBGS do
           allow(person).to receive(:save).and_return(false)
         end
         it "persons is not updated" do
-          expect(subject).to receive(:run_by_participant_id).with(participant_id).and_return("person was not updated")
+          expect(subject).to receive(:run_by_participant_id)
+            .with(participant_id).and_return("person was not updated")
           subject.run_by_participant_id(participant_id)
         end
       end
