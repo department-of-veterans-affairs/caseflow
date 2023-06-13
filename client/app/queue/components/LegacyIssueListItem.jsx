@@ -105,7 +105,8 @@ export default class LegacyIssueListItem extends React.PureComponent {
         note
       },
       issuesOnly,
-      showDisposition
+      showDisposition,
+      legacyMstPactFeatureToggle
     } = this.props;
     let issueContent = <span />;
 
@@ -122,9 +123,9 @@ export default class LegacyIssueListItem extends React.PureComponent {
         <div {...noteMarginTop}>
           <span {...boldText}>Note:</span> {note}
         </div>
-        <div {...noteMarginTop}>
+        {legacyMstPactFeatureToggle && <div {...noteMarginTop}>
           <span {...boldText}>Special Issues: </span> {specialIssuesFormatting(issue)}
-        </div>
+        </div>}
       </React.Fragment>;
     }
 
@@ -144,7 +145,8 @@ LegacyIssueListItem.propTypes = {
   issue: PropTypes.object.isRequired,
   issuesOnly: PropTypes.bool,
   idx: PropTypes.number.isRequired,
-  showDisposition: PropTypes.bool
+  showDisposition: PropTypes.bool,
+  legacyMstPactFeatureToggle: PropTypes.bool
 };
 
 LegacyIssueListItem.defaultProps = {

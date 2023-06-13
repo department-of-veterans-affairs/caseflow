@@ -26,6 +26,7 @@ import {
   VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS,
   DECISION_SPECIAL_ISSUES,
+  DECISION_SPECIAL_ISSUES_NO_MST_PACT
 } from './constants';
 import ApiUtil from '../util/ApiUtil';
 
@@ -400,7 +401,14 @@ class SelectDispositionsView extends React.PureComponent {
   };
 
   render = () => {
-    const { appeal, highlight, justificationFeatureToggle, ...otherProps } = this.props;
+    const {
+      appeal,
+      highlight,
+      justificationFeatureToggle,
+      mstFeatureToggle,
+      pactFeatureToggle,
+      ...otherProps
+    } = this.props;
     const {
       highlightModal,
       decisionIssue,
@@ -448,6 +456,8 @@ class SelectDispositionsView extends React.PureComponent {
       <hr />
       <AmaIssueList
         requestIssues={appeal.issues}
+        mstFeatureToggle={mstFeatureToggle}
+        pactFeatureToggle={pactFeatureToggle}
         errorMessages={issueErrors}>
         <DecisionIssues
           decisionIssues={appeal.decisionIssues}
@@ -551,7 +561,7 @@ class SelectDispositionsView extends React.PureComponent {
         />
         <QueueCheckboxGroup
           name={COPY.INTAKE_EDIT_ISSUE_SELECT_SPECIAL_ISSUES}
-          options={DECISION_SPECIAL_ISSUES}
+          options={(mstFeatureToggle || pactFeatureToggle) ? DECISION_SPECIAL_ISSUES : DECISION_SPECIAL_ISSUES_NO_MST_PACT}
           values={specialIssuesValues}
           styling={specialIssuesCheckboxStyling}
           onChange={(event) => this.onCheckboxChange(event, decisionIssue)}
@@ -562,6 +572,8 @@ class SelectDispositionsView extends React.PureComponent {
           }
           filterIssuesForJustification={this.filterIssuesForJustification}
           justificationFeatureToggle={justificationFeatureToggle}
+          mstFeatureToggle={mstFeatureToggle}
+          pactFeatureToggle={pactFeatureToggle}
           justifications={[
             {
               id: 'mstStatus',
@@ -638,7 +650,10 @@ SelectDispositionsView.propTypes = {
   hideSuccessMessage: PropTypes.func,
   highlight: PropTypes.bool,
   setDecisionOptions: PropTypes.func,
-  taskId: PropTypes.string
+  taskId: PropTypes.string,
+  justificationFeatureToggle: PropTypes.bool,
+  mstFeatureToggle: PropTypes.bool,
+  pactFeatureToggle: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => ({
