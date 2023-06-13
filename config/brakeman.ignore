@@ -236,11 +236,31 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
+      "fingerprint": "788fbc4dec8a4fe7dc7494113f49d1ab24a04c0824f7b1fe6749f34a703b0e34",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/jobs/legacy_notification_efolder_sync_job.rb",
+      "line": 85,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "LegacyAppeal.where(:id => RootTask.open.where(:appeal_type => \"LegacyAppeal\").pluck(:appeal_id)).find_by_sql(\"          SELECT la.*\\n          FROM legacy_appeals la\\n          JOIN (#{appeals_on_latest_notifications(appeal_ids)}) AS notifs ON\\n            notifs.appeals_id = la.vacols_id AND notifs.appeals_type = 'LegacyAppeal'\\n          JOIN (#{appeals_on_latest_doc_uploads(appeal_ids)}) AS vbms_uploads ON\\n            vbms_uploads.appeal_id = la.id AND vbms_uploads.appeal_type = 'LegacyAppeal'\\n          WHERE\\n            notifs.notified_at > vbms_uploads.attempted_at\\n          OR\\n            notifs.created_at > vbms_uploads.attempted_at\\n          GROUP BY la.id\\n\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "LegacyNotificationEfolderSyncJob",
+        "method": "get_appeals_from_prev_synced_ids"
+      },
+      "user_input": "appeals_on_latest_notifications(appeal_ids)",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
       "fingerprint": "b2bd6bb603baecc6357c6dfb9641be1848b106ecec425bd7659844e27b860bf1",
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/task.rb",
-      "line": 236,
+      "line": 273,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "Arel.sql(\"CASE WHEN #{CachedAppeal.table_name}.is_aod = TRUE THEN #{(\"0 ELSE 1\" or \"1 ELSE 0\")} END, CASE WHEN #{CachedAppeal.table_name}.case_type = 'Court Remand' THEN #{(\"0 ELSE 1\" or \"1 ELSE 0\")} END, #{CachedAppeal.table_name}.docket_number #{order}, #{Task.table_name}.created_at #{order}\")",
       "render_path": null,
@@ -260,7 +280,7 @@
       "check_name": "SendFile",
       "message": "Model attribute used in file name",
       "file": "app/controllers/idt/api/v2/appeals_controller.rb",
-      "line": 49,
+      "line": 61,
       "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
       "code": "send_file(Document.find(document_id).serve, :type => \"application/pdf\", :disposition => (\"attachment; filename='#{current_document[0][\"type\"]}-#{document_id}.pdf'\"))",
       "render_path": null,
@@ -272,8 +292,28 @@
       "user_input": "Document.find(document_id).serve",
       "confidence": "Medium",
       "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "d0e669b8d1a56e5cd7ce3c7b761d52b4eb47c0da54623b8104bbf865925b70e3",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/jobs/ama_notification_efolder_sync_job.rb",
+      "line": 88,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "Appeal.active.find_by_sql(\"        SELECT appeals.*\\n        FROM appeals\\n        JOIN (#{appeals_on_latest_notifications(appeal_ids)}) AS notifs ON\\n          notifs.appeals_id = appeals.\\\"uuid\\\"::text AND notifs.appeals_type = 'Appeal'\\n        JOIN (#{appeals_on_latest_doc_uploads(appeal_ids)}) AS vbms_uploads ON\\n          vbms_uploads.appeal_id = appeals.id AND vbms_uploads.appeal_type = 'Appeal'\\n        WHERE\\n          notifs.notified_at > vbms_uploads.attempted_at\\n        OR\\n          notifs.created_at > vbms_uploads.attempted_at\\n        GROUP BY appeals.id\\n\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "AmaNotificationEfolderSyncJob",
+        "method": "get_appeals_from_prev_synced_ids"
+      },
+      "user_input": "appeals_on_latest_notifications(appeal_ids)",
+      "confidence": "Medium",
+      "note": ""
     }
   ],
-  "updated": "2022-02-02 09:46:55 -0500",
-  "brakeman_version": "5.2.0"
+  "updated": "2023-05-26 15:30:49 -0400",
+  "brakeman_version": "4.7.1"
 }

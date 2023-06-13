@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class UploadDocumentToVbms
+  include VbmsDocumentTransactionConcern
+
   delegate :document_type, :document_subject, :document_name, to: :document
 
   def initialize(document:)
@@ -55,7 +57,10 @@ class UploadDocumentToVbms
   def upload_to_vbms!
     return if document.uploaded_to_vbms_at
 
-    VBMSService.upload_document_to_vbms_veteran(file_number, self)
+    upload_response = VBMSService.upload_document_to_vbms_veteran(file_number, self)
+
+    persist_efolder_version_info(upload_response, :upload_document_response)
+
     document.update!(uploaded_to_vbms_at: Time.zone.now)
   end
 
