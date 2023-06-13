@@ -90,8 +90,10 @@ const CompleteHearingPostponementRequestModal = (props) => {
           onChange={(value) => dispatch({ type: 'scheduleOption', payload: value })}
           value={state.granted}
           options={[
-            { displayText: 'Reschedule immediately', value: 'now' },
-            { displayText: 'Send to Schedule Veteran list', value: 'later' }
+            // See links for the corresponding options over in the PostponeHearingModal component
+            // These options will need to trigger the same behavior.
+            { displayText: 'Reschedule immediately', value: 'now' }, // https://github.com/department-of-veterans-affairs/caseflow/blob/4fa0a746d2542c6c3f76d59d4764810459f09783/client/app/queue/components/PostponeHearingModal.jsx#L30-L33
+            { displayText: 'Send to Schedule Veteran list', value: 'later' } // https://github.com/department-of-veterans-affairs/caseflow/blob/4fa0a746d2542c6c3f76d59d4764810459f09783/client/app/queue/components/PostponeHearingModal.jsx#L34-L37
           ]}
           vertical
         />}
