@@ -7,6 +7,7 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
   class FileNumberIsNilError < StandardError; end
   class DuplicateVeteranFoundError < StandardError; end
   class NoAssociatedRecordsFoundForFileNumberError < StandardError; end
+  class VeteranSsnDoesNotMatchFileNumberError < StandardError; end
 
   queue_with_priority :low_priority
 
@@ -30,6 +31,7 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
 
   def start_fix_veteran
     file_number = fetch_file_number_from_bgs_service
+
     verify_file_number(file_number)
 
     collections = ASSOCIATED_OBJECTS.map do |klass|

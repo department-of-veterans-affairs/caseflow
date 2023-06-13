@@ -9,7 +9,6 @@ describe FileNumberNotFoundRemediationJob, :postgres do
   let!(:appeal) { create(:appeal, veteran_file_number: number) }
   let!(:appeal_2) { create(:appeal, veteran_file_number: veteran_2.file_number) }
 
-
   let!(:available_hearing_locations) { create(:available_hearing_locations, veteran_file_number: number) }
   let!(:bgs_power_of_attorney) { create(:bgs_power_of_attorney, file_number: number) }
   let!(:document) { create(:document, file_number: number) }
