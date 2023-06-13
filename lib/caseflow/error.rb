@@ -447,4 +447,11 @@ module Caseflow::Error
   class VANotifyInternalServerError < VANotifyApiError; end
   class VANotifyRateLimitError < VANotifyApiError; end
   class EmptyQueueError < StandardError; end
+
+  # Pacman errors
+  class PacmanApiError < StandardError; end
+  class PacmanBadRequestError < PacmanApiError; end
+  class PacmanForbiddenError < PacmanApiError; end
+  class PacmanNotFoundError < PacmanApiError; end
+  class PacmanInternalServerError < PacmanApiError; end
 end
