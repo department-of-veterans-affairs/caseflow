@@ -65,7 +65,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// expose the module cache
 /******/ 	__w_pdfjs_require__.c = installedModules;
 /******/
-/******/ 	// define getter function for harmony exports
+/******/ 	// define getter function for  exports
 /******/ 	__w_pdfjs_require__.d = function(exports, name, getter) {
 /******/ 		if(!__w_pdfjs_require__.o(exports, name)) {
 /******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
