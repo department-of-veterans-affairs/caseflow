@@ -159,8 +159,16 @@ describe InitialTasksFactory, :postgres do
         end
 
         context "when appeal has request issues with mst or pact" do
-          before { FeatureToggle.enable!(:mst_pact_identification) }
-          after { FeatureToggle.disable!(:mst_pact_identification) }
+          before do
+            FeatureToggle.enable!(:mst_identification)
+            FeatureToggle.enable!(:pact_identification)
+            FeatureToggle.enable!(:legacy_mst_pact_identification)
+          end
+          after do
+            FeatureToggle.disable!(:mst_identification)
+            FeatureToggle.disable!(:pact_identification)
+            FeatureToggle.disable!(:legacy_mst_pact_identification)
+          end
 
           let(:intake_user) { create(:user, css_id: "BVADWISE", station_id: "101") }
           let(:has_mst) { true }
@@ -198,8 +206,16 @@ describe InitialTasksFactory, :postgres do
         end
 
         context "when appeal does does not have request issues with mst or pact" do
-          before { FeatureToggle.enable!(:mst_pact_identification) }
-          after { FeatureToggle.disable!(:mst_pact_identification) }
+          before do
+            FeatureToggle.enable!(:mst_identification)
+            FeatureToggle.enable!(:pact_identification)
+            FeatureToggle.enable!(:legacy_mst_pact_identification)
+          end
+          after do
+            FeatureToggle.disable!(:mst_identification)
+            FeatureToggle.disable!(:pact_identification)
+            FeatureToggle.disable!(:legacy_mst_pact_identification)
+          end
 
           let(:intake_user) { create(:user, css_id: "BVADWISE", station_id: "101") }
           let(:docket_type) { Constants.AMA_DOCKETS.direct_review }

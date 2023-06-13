@@ -14,7 +14,8 @@ class CaseReviewsController < ApplicationController
     result = new_complete_case_review.call
     if result.success?
       case_review = result.extra[:case_review]
-      if case_review.appeal_type == "Appeal"
+      if case_review.appeal_type == "Appeal" &&
+         (FeatureToggle.enabled?(:mst_identification) || FeatureToggle.enabled?(:pact_identification))
         appeal = Appeal.find(case_review.appeal_id)
         update_request_issues_for_mst_and_pact(appeal)
       end
