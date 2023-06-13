@@ -1,12 +1,10 @@
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers, commonStateFromServerIntake } from './common';
 import {
-  convertStringToBoolean,
   getReceiptDateError,
   getBlankOptionError,
   getClaimantError,
   getPageError,
-  formatRelationships,
   getDefaultPayeeCode
 } from '../util';
 import { update } from '../../util/ReducerUtil';
@@ -17,6 +15,7 @@ const updateFromServerIntake = (state, serverIntake) => {
   }
 
   const commonState = commonStateFromServerIntake(serverIntake);
+
   return update(state, {
     ...commonState,
     benefitType: {
@@ -35,6 +34,8 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     removeIssueModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
+    filedByVaGov: null,
+    filedByVaGovError: null,
     benefitType: null,
     benefitTypeError: null,
     veteranIsNotClaimant: null,
@@ -95,6 +96,18 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
     return update(state, {
       receiptDate: {
         $set: action.payload.receiptDate
+      }
+    });
+  case ACTIONS.SET_FILED_BY_VA_GOV:
+    return update(state, {
+      filedByVaGov: {
+        $set: action.payload.filedByVaGov
+      }
+    });
+  case ACTIONS.SET_FILED_BY_VA_GOV_ERROR:
+    return update(state, {
+      filedByVaGovError: {
+        $set: action.payload.filedByVaGovError
       }
     });
   case ACTIONS.SET_BENEFIT_TYPE:

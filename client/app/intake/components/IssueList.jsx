@@ -69,7 +69,8 @@ export default class IssuesList extends React.Component {
       withdrawReview,
       userCanWithdrawIssues,
       userCanEditIntakeIssues,
-      editPage
+      editPage,
+      featureToggles
     } = this.props;
 
     return <div className="issues">
@@ -101,6 +102,7 @@ export default class IssuesList extends React.Component {
                 requestIssues={intakeData.requestIssues}
                 legacyOptInApproved={intakeData.legacyOptInApproved}
                 legacyAppeals={intakeData.legacyAppeals}
+                featureToggles={featureToggles}
                 formType={formType} />
 
               { !issue.editable && <div className="issue-action">
@@ -143,5 +145,6 @@ IssuesList.propTypes = {
   withdrawReview: PropTypes.bool,
   userCanWithdrawIssues: PropTypes.bool,
   userCanEditIntakeIssues: PropTypes.bool,
-  editPage: PropTypes.bool
+  editPage: PropTypes.bool,
+  featureToggles: PropTypes.object
 };

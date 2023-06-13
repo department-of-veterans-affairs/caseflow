@@ -14,7 +14,8 @@ class CaseReviewsController < ApplicationController
     result = new_complete_case_review.call
     if result.success?
       case_review = result.extra[:case_review]
-      if case_review.appeal_type == "Appeal"
+      if case_review.appeal_type == "Appeal" &&
+         (FeatureToggle.enabled?(:mst_identification) || FeatureToggle.enabled?(:pact_identification))
         appeal = Appeal.find(case_review.appeal_id)
         update_request_issues_for_mst_and_pact(appeal)
       end
@@ -111,7 +112,7 @@ class CaseReviewsController < ApplicationController
     task = IssuesUpdateTask.create!(
       appeal: appeal,
       parent: root_task,
-      assigned_to: RequestStore[:current_user],
+      assigned_to: SpecialIssueEditTeam.singleton,
       assigned_by: RequestStore[:current_user],
       completed_by: RequestStore[:current_user]
     )

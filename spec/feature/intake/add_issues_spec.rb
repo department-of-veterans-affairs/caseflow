@@ -91,7 +91,8 @@ feature "Intake Add Issues Page", :all_dbs do
 
       start_higher_level_review(veteran)
 
-      FeatureToggle.enable!(:mst_pact_identification)
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
       visit "/intake"
       click_intake_continue
       click_intake_add_issue
