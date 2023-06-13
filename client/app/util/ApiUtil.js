@@ -5,6 +5,7 @@ import StringUtil from './StringUtil';
 import uuid from 'uuid';
 import _ from 'lodash';
 import { timeFunctionPromise } from '../util/PerfDebug';
+import moment from 'moment';
 
 export const STANDARD_API_TIMEOUT_MILLISECONDS = 60 * 1000;
 export const RESPONSE_COMPLETE_LIMIT_MILLISECONDS = 5 * 60 * 1000;
@@ -76,6 +77,55 @@ const errorHandling = (url, error, method, options = {}) => {
   // }
 };
 
+const successHandling = (url, res, method, options = {}) => {
+  const id = uuid.v4();
+  const message = `UUID: ${id}.\nSuccess with ${method} ${url}.\n${res.status}`;
+
+  // Need to renable this check before going to master
+  options.t1 = performance.now();
+  options.end = moment().format();
+  options.duration = options.t1 - options.t0;
+
+  // if (options?.metricsLogRestSuccess) {
+  const data = {
+    metric: {
+      uuid: id,
+      name: `caseflow.client.rest.${method.toLowerCase()}.info`,
+      message,
+      type: 'info',
+      product: 'caseflow',
+      metric_attributes: JSON.stringify({
+        method,
+        url
+      }),
+      sent_to: 'javascript_console',
+      sent_to_info: JSON.stringify({
+        metric_group: "Rest call",
+        metric_name: "Javascript request",
+        metric_value: options.duration,
+        app_name: "JS reader",
+        attrs: {
+          service: "rest service",
+          endpoint: url,
+          uuid: id
+        }
+      }),
+
+      start: options.start,
+      end: options.end,
+      duration: options.duration,
+    }
+  };
+
+  request.
+    post('/metrics/v2/logs').
+    set(getHeadersObject()).
+    send(data).
+    use(nocache).
+    on('error', (err) => console.error(`Metric not recorded\nUUID: ${uuid.v4()}.\n: ${err}`)).
+    end();
+};
+
 const httpMethods = {
   delete(url, options = {}) {
     return request.
@@ -88,6 +138,8 @@ const httpMethods = {
 
   get(url, options = {}) {
     const timeoutSettings = Object.assign({}, defaultTimeoutSettings, _.get(options, 'timeout', {}));
+    options.t0 = performance.now();
+    options.start = moment().format();
 
     let promise = request.
       get(url).
@@ -109,7 +161,11 @@ const httpMethods = {
     }
 
     return promise.
-      use(nocache);
+      use(nocache).
+      then(res => {
+        successHandling(url, res, 'GET', options);
+        return res;
+      });
   },
 
   patch(url, options = {}) {
