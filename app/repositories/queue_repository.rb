@@ -219,7 +219,7 @@ class QueueRepository
     end
 
     def create_decass_record(decass_attrs)
-      decass_attrs = decass_attrs.merge(added_at_date: VacolsHelper.local_date_with_utc_timezone)
+      decass_attrs = decass_attrs.merge(added_at_date: VacolsHelper.local_date_with_utc_timezone, deteam: "SB")
       decass_attrs = QueueMapper.new(decass_attrs).rename_and_validate_decass_attrs
       VACOLS::Decass.create!(decass_attrs)
     end
