@@ -33,7 +33,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
     }
   );
 
-  const submit = () => console.log("Submitting");
+  const submit = () => console.log('Submitting');
 
   const validateForm = () => false;
 
@@ -73,6 +73,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
           name="rulingDateSelector"
           onChange={(value) => dispatch({ type: 'rulingDate', payload: value === 'true' })}
           value={state.date}
+          type="date"
           noFutureDates
         />
 
