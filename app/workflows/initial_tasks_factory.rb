@@ -211,7 +211,7 @@ class InitialTasksFactory
       appeal: @appeal,
       parent: @root_task,
       assigned_by: RequestStore[:current_user],
-      assigned_to: RequestStore[:current_user],
+      assigned_to: SpecialIssueEditTeam.singleton,
       completed_by: RequestStore[:current_user],
     )
     task.format_instructions(@appeal.request_issues)
