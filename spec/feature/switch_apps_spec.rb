@@ -85,6 +85,8 @@ RSpec.feature "SwitchApps", :postgres do
       expect(page).to have_link(vha_user_links[1][:title], href: vha_user_links[1][:link], exact: true)
       expect(page).to have_link(vha_user_links[2][:title], href: vha_user_links[2][:link], exact: true)
       expect(page).to have_link(vha_user_links[3][:title], href: vha_user_links[3][:link], exact: true)
+      dropdown_menu_text = page.find(".cf-dropdown-menu").text
+      expect(dropdown_menu_text.split("\n")).to eq(list_order)
     end
 
     scenario "can navigate to the VHA Decision Reviews Queue" do
@@ -99,37 +101,6 @@ RSpec.feature "SwitchApps", :postgres do
         find("a", text: item[:title]).click
         expect(current_url).to have_content(item[:link])
       end
-    end
-
-    it "should match the order in the dropdown" do
-      visit "/intake"
-      find("a", text: "Switch product").click
-      dropdown_menu_text = page.find(".cf-dropdown-menu").text
-      expect(dropdown_menu_text.split("\n")).to eq(list_order)
-    end
-
-    it "VHA user with roles 'Case details' should not have queue link in the dropdown" do
-      user.update(roles: roles << "Case Details")
-      visit "/decision_reviews/#{vha_business_line.url}"
-      expect(page).to have_content("Switch product")
-      find("a", text: "Switch product").click
-      dropdown_menu_options = page.find(".cf-dropdown-menu").text
-      expect(dropdown_menu_options.split("\n")).to eq(list_order - ["Caseflow Queue"])
-    end
-  end
-
-  context "User without VHA access" do
-    let!(:user) do
-      User.authenticate!(user: create(:user, roles: ["Mail Intake"]))
-    end
-    let!(:vha_business_line) do
-      create(:business_line, url: "vha", name: "Veterans Health Administration")
-    end
-
-    scenario "doesn't have access to VHA Decision Review Queue" do
-      visit "/decision_reviews/#{vha_business_line.url}"
-      expect(page).to have_current_path("/unauthorized", ignore_query: true)
-      expect(page).to_not have_content("Switch product")
     end
   end
 

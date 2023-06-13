@@ -106,7 +106,7 @@ class ApplicationController < ApplicationBaseController
 
   def application_urls
     urls = []
-    urls << queue_application_url # if current_user.roles.exclude?("Case Details")
+    urls << queue_application_url
 
     urls << hearing_application_url if current_user.hearings_user?
 
@@ -125,7 +125,7 @@ class ApplicationController < ApplicationBaseController
     urls << case_search_url
     urls << decision_reviews_vha_url
     urls << intake_application_url if current_user.intake_user?
-    urls.reject! { |h| h[:title] == "Queue" } if current_user.roles.include?("Case Details")
+    urls.reject! { |url| url[:title] == "Queue" } if current_user.roles.include?("Case Details")
   end
 
   def decision_reviews_vha_url
