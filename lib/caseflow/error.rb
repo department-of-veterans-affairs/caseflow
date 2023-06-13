@@ -73,6 +73,14 @@ module Caseflow::Error
     end
   end
 
+  class NoHearingTask < SerializableError
+    def initialize(args)
+      @task_id = args[:task_id]
+      @code = args[:code] || 500
+      @message = args[:message] ||
+                 "Appeal associated with #{@task_id} doesn't have a HearingTask to postpone or withdraw."
+    end
+  end
   class MissingRequiredProperty < SerializableError
     def initialize(args)
       @code = args[:code] || 400

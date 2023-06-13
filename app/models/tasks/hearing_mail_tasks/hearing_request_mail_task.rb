@@ -17,4 +17,8 @@ class HearingRequestMailTask < MailTask
   def available_actions
     []
   end
+
+  def update_from_params(params, current_user)
+    super(params, current_user)
+  end
 end

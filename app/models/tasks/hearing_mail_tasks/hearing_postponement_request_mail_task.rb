@@ -25,8 +25,10 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   end
 
   def update_from_params(params, current_user)
+    current_task = super(params, current_user)
+
     if params[:status] == Constants.TASK_STATUSES.completed
-      multi_transaction do
+      new_hearing_task = multi_transaction do
         update!(
           status: Constants.TASK_STATUSES.completed,
           completed_by: current_user
@@ -36,7 +38,11 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
         create_new_root_hearing_task!
       end
+
+      return current_task + [new_hearing_task]
     end
+
+    current_task
   end
 
   private
@@ -57,17 +63,18 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   # Kind of just guessing here and putting the new HearingTask
   # under the same parent of the most recent HearingTask in the tree.
   #
-  #
+  # Not sure what all the scenarios are that could get thrown at this yet are.
+  # This approach may not work.
   def create_new_root_hearing_task!
     most_recent_hearing_task = locate_most_recent_hearing_task
 
-    if most_recent_hearing_task
-      HearingTask.create!(
-        appeal: appeal,
-        parent: most_recent_hearing_task.parent,
-        assigned_to: Bva.singleton
-      )
-    end
+    fail Caseflow::Error::NoHearingTask, task_id: id unless most_recent_hearing_task
+
+    HearingTask.create!(
+      appeal: appeal,
+      parent: most_recent_hearing_task.parent,
+      assigned_to: Bva.singleton
+    )
   end
 
   def locate_most_recent_hearing_task
