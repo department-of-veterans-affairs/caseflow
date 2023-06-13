@@ -333,7 +333,7 @@ class RequestIssuesUpdate < CaseflowRecord
       task = IssuesUpdateTask.create!(
         appeal: before_issue.decision_review,
         parent: RootTask.find_by(appeal: before_issue.decision_review),
-        assigned_to: RequestStore[:current_user],
+        assigned_to: SpecialIssueEditTeam.singleton,
         assigned_by: RequestStore[:current_user],
         completed_by: RequestStore[:current_user]
       )

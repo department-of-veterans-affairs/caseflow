@@ -58,7 +58,7 @@ class IssuesController < ApplicationController
     task = IssuesUpdateTask.create!(
       appeal: appeal,
       parent: appeal.root_task,
-      assigned_to: user,
+      assigned_to: SpecialIssueEditTeam.singleton,
       assigned_by: user,
       completed_by: user
     )
