@@ -650,6 +650,8 @@ GEM
       tilt (~> 2.0)
       yard (~> 0.9)
     spring (3.1.1)
+    spring-commands-rspec (1.0.4)
+      spring (>= 0.9.1)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -808,6 +810,7 @@ DEPENDENCIES
   sniffybara!
   solargraph
   spring (= 3.1.1)
+  spring-commands-rspec
   sql_tracker
   stringex
   strong_migrations
