@@ -78,7 +78,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
         />
 
         {/* How would you like to proceed? */}
-        <RadioField
+        {state.granted && <RadioField
           id="scheduleOptionField"
           label="How would you like to proceed?:"
           inputRef={props.register}
@@ -89,7 +89,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
             { displayText: 'Send to Schedule Veteran list', value: 'later' }
           ]}
           vertical
-        />
+        />}
 
         {/* Additional instructions */}
         <TextareaField
