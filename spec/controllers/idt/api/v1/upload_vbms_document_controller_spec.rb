@@ -161,21 +161,13 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
       end
 
       context "when the recipient_info parameters are incomplete" do
-        it "queues the upload(given valid veteran info), returns a descriptive error to the IDT user" do
+        it "returns a descriptive error to the IDT user" do
           expect(Raven).to receive(:capture_exception)
-          post :create, params: invalid_mail_request_params
-          success_message = JSON.parse(response.body)["message"]
-          validation_error_msgs = JSON.parse(response.body)["error_messages"]
-          error = JSON.parse(response.body)["error"]
-          expect(success_message).to eq "Document successfully queued for upload."
-          expect(validation_error_msgs).to eq(
-            {
-              "first_name" => ["can't be blank"],
-              "last_name" => ["can't be blank"]
-            }
-          )
-          expect(error).to eq("Incomplete mailing information provided. No mail request was created.")
-          expect(response.status).to eq(200)
+          post :create, params: invalid_mail_request_params, as: :json
+          returned_message = JSON.parse(response.body)["message"]
+          validation_error_msgs = JSON.parse(response.body)["errors"]
+          expect(returned_message).to eq("Recipient information received was invalid or incomplete.")
+          expect(validation_error_msgs).to eq("distribution 1" => "First name can't be blank, Last name can't be blank")
         end
       end
 
@@ -194,16 +186,10 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
         end
 
         shared_examples "success_with_valid_parameters" do
-          it "creates a new Mail Request object when optional params exist" do
-            expect_any_instance_of(MailRequest).to receive(:call)
-            post :create, params: mail_request_params
-          end
-
           it "returns a list of vbms_distribution ids alongside a success message" do
-            post :create, params: mail_request_params
+            post :create, params: mail_request_params, as: :json
             success_message = JSON.parse(response.body)["message"]
             success_id = JSON.parse(response.body)["distribution_ids"]
-            # expect(VbmsDistribution).to change(:count).by(1)
             expect(success_message).to eq "Document successfully queued for upload."
             expect(success_id).not_to eq([])
             expect(response.status).to eq(200)

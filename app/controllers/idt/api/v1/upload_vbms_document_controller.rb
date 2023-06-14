@@ -10,7 +10,6 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   def create
     # Create distributions for Package Manager mail service if recipient info present
     build_mail_package
-
     result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_package).call
     if result.success?
       success_message = { message: "Document successfully queued for upload." }
