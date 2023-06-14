@@ -4,8 +4,10 @@ class AmaAppealDispatch
   include ActiveModel::Model
   include DecisionDocumentValidator
 
-  def initialize(params, mail_package = nil)
+  def initialize(appeal:, params:, user:, mail_package: nil)
     @params = params.merge(appeal_id: appeal.id, appeal_type: "Appeal")
+    @appeal = appeal
+    @user = user
     @mail_package = mail_package
   end
 
@@ -17,22 +19,14 @@ class AmaAppealDispatch
 
     outcode_appeal if success
 
-    queue_mail_request_job unless @mail_request.nil?
+    queue_mail_request_job unless @mail_package.nil?
 
     FormResponse.new(success: success, errors: [errors.full_messages.join(", ")])
   end
 
   private
 
-  attr_reader :params, :success
-
-  def appeal
-    @appeal ||= params[:appeal]
-  end
-
-  def user
-    params[:user]
-  end
+  attr_reader :params, :appeal, :user, :mail_package, :success
 
   def citation_number
     params[:citation_number]

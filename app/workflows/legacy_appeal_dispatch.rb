@@ -4,7 +4,7 @@ class LegacyAppealDispatch
   include ActiveModel::Model
   include DecisionDocumentValidator
 
-  def initialize(params, mail_package)
+  def initialize(appeal:, params:, mail_package: nil)
     @params = params.merge(appeal_id: appeal.id, appeal_type: "LegacyAppeal")
     @mail_pacjage = mail_package
   end
@@ -17,7 +17,7 @@ class LegacyAppealDispatch
       complete_root_task!
     end
 
-    queue_mail_request_job unless @mail_request.nil?
+    queue_mail_request_job unless @mail_package.nil?
 
     FormResponse.new(success: success, errors: [errors.full_messages.join(", ")])
   end

@@ -39,12 +39,11 @@ class BvaDispatchTask < Task
 
     # Passes mail distributions to Package Manager service if recipient info present
     def outcode(appeal, params, user, mail_package = nil)
-      dispatch_params = { appeal: appeal, params: params }
       if appeal.is_a?(Appeal)
         dispatch_params[:user] = user
-        AmaAppealDispatch.new(dispatch_params, mail_package).call
+        AmaAppealDispatch.new(appeal, params, user, mail_package).call
       elsif appeal.is_a?(LegacyAppeal)
-        LegacyAppealDispatch.new(dispatch_params, mail_package).call
+        LegacyAppealDispatch.new(appeal, params, mail_package).call
       end
     end
   end
