@@ -17,9 +17,8 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
     begin
       # Retrieves the distribution package from the PacMan API
       distribution = PacManService.get_distribution_request(distribution_id)
-      # new_response = JSON.parse(distribution)
-
       response_code = distribution.code
+
       if response_code != 200
         fail StandardError
       end
@@ -35,16 +34,19 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
       end
       return
     end
-    # render json: converted_response(distribution)
+
     render json: format_response(distribution)
   end
 
-  # Converts the keys in the response from camelCase to snake_case to be in line with Ruby convention
   def format_response(response)
-    JSON.parse(response.raw_body.to_json).deep_transform_keys! do |key|
+    new_response = response.raw_body.to_json
 
-      key.underscore.gsub(/e(\d)/, 'e_\1')
+    parsed_response = JSON.parse(new_response)
+    # Convert keys from camelCase to snake_case
+    formatted_response = parsed_response.deep_transform_keys do |key|
+      key.to_s.underscore.gsub(/e(\d)/, 'e_\1')
     end
+    formatted_response
   end
 
   private

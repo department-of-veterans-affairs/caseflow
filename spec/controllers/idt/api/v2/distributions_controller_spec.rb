@@ -11,31 +11,22 @@ require "rails_helper"
 RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
   describe "#get_distribution" do
     let(:user) { create(:user) }
-    let(:distribution_id) { "123456" }
-    let(:distribution) { double("Distribution", code: 200) }
-    let(:token) do
-      key, token = Idt::Token.generate_one_time_key_and_proposed_token
-      Idt::Token.activate_proposed_token(key, user.css_id)
-      token
-    end
-    let(:params) { :distribution_id }
+    let(:distribution_id) { 123_456 }
+    let(:appeal) { create(:appeal, :at_attorney_drafting) }
+    let(:distribution) { create(:distribution, judge: JudgeTask.find_by(appeal: appeal).assigned_to) }
 
     before do
       allow(controller).to receive(:params).and_return(distribution_id: distribution_id)
-      allow(controller).to receive(:token).and_return(token) # Stub the token retrieval
       allow(VbmsDistribution).to receive(:exists?).with(id: distribution_id).and_return(true)
       allow(PacManService).to receive(:get_distribution_request).with(distribution_id).and_return(distribution)
-      BvaDispatch.singleton.add_user(user)
       key, t = Idt::Token.generate_one_time_key_and_proposed_token
       Idt::Token.activate_proposed_token(key, user.css_id)
       request.headers["TOKEN"] = t
       create(:staff, :attorney_role, sdomainid: user.css_id)
-      allow_any_instance_of(BGSService).to receive(:fetch_file_number_by_ssn) { file_number }
     end
 
     context "when distribution_id is blank or invalid" do
       let(:distribution_id) { "" }
-
       it "renders an error with status 400" do
         error_message = "Distribution Does Not Exist Or Id is blank"
         expect(controller).to receive(:render_error).with(400, error_message, distribution_id)
@@ -55,7 +46,6 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
 
     context "when PacManService fails with a 500 error" do
       let(:distribution) { double("Distribution", code: 500) }
-
       it "renders an error with status 500" do
         error_message = "Internal Server Error"
         expect(controller).to receive(:render_error).with(500, error_message, distribution_id)
@@ -63,43 +53,88 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
       end
     end
 
-    context "When successful response" do
+    context "convert distribution" do
+    let(:distribution_id) { 123456 }
+    let(:distribution) do
+      HTTPI::Response.new(
+        200,
+        {},
+        {
+          "id": distribution_id,
+          "recipient": {
+            "type": "system",
+            "id": "a050a21e-23f6-4743-a1ff-aa1e24412eff",
+            "name": "VBMS-C"
+          },
+          "description": "Staging Mailing Distribution",
+          "communicationPackageId": "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
+          "destinations": [{
+            "type": "physicalAddress",
+            "id": "28440040-51a5-4d2a-81a2-28730827be14",
+            "status": "",
+            "cbcmSendAttemptDate": "2022-06-06T16:35:27.996",
+            "addressLine1": "POSTMASTER GENERAL",
+            "addressLine2": "UNITED STATES POSTAL SERVICE",
+            "addressLine3": "475 LENFANT PLZ SW RM 10022",
+            "addressLine4": "SUITE 123",
+            "addressLine5": "APO AE 09001-5275",
+            "addressLine6": "",
+            "treatLine2AsAddressee": true,
+            "treatLine3AsAddressee": true,
+            "city": "WASHINGTON DC",
+            "state": "DC",
+            "postalCode": "12345",
+            "countryName": "UNITED STATES",
+            "countryCode": "us"
+          }],
+          "status": "NEW",
+          "sentToCbcmDate": ""
+        }
+      )
+    end
+
+    before do
+      allow(PacManService).to receive(:get_distribution_request).with(distribution_id).and_return(distribution)
+    end
 
     it "returns the expected converted response" do
-      new_table = {
-          "id": "123456",
-          "recipient": {
-            "type": "recipient_type",
-            "id": "recipient_id",
-            "name": "recipient_name"
-          },
-          "description": "description",
-          "communication_package_id": "package_id",
-          "destinations": [{
-            "type": "destination_type",
-            "id": "destination_id",
-            "status": "destination_status",
-            "cbcm_send_attempt_date": "send_attempt_date",
-            "address_line_1": "address_line_1",
-            "address_line_2": "address_line_2",
-            "address_line_3": "address_line_3",
-            "address_line_4": "address_line_4",
-            "address_line_5": "address_line_5",
-            "address_line_6": "address_line_6",
-            "treat_line_2_as_addressee": true,
-            "treat_line_3_as_addressee": false,
-            "city": "city",
-            "state": "state",
-            "postal_code": "postal_code",
-            "country_name": "country_name",
-            "country_code": "country_code"
-          }],
-          "status": "destination_status",
-          "sent_to_cbcm_date": "sent_to_cbcm_date"
-        }
-      expect((get :get_distribution, params: { distribution_id: distribution_id }).body).to eq(new_table.to_json)
-      end
+      expected_response = {
+        "id": distribution_id,
+        "recipient": {
+          "type": "system",
+          "id": "a050a21e-23f6-4743-a1ff-aa1e24412eff",
+          "name": "VBMS-C"
+        },
+        "description": "Staging Mailing Distribution",
+        "communication_package_id": "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
+        "destinations": [{
+          "type": "physicalAddress",
+          "id": "28440040-51a5-4d2a-81a2-28730827be14",
+          "status": "",
+          "cbcm_send_attempt_date": "2022-06-06T16:35:27.996",
+          "address_line_1": "POSTMASTER GENERAL",
+          "address_line_2": "UNITED STATES POSTAL SERVICE",
+          "address_line_3": "475 LENFANT PLZ SW RM 10022",
+          "address_line_4": "SUITE 123",
+          "address_line_5": "APO AE 09001-5275",
+          "address_line_6": "",
+          "treat_line_2_as_addressee": true,
+          "treat_line_3_as_addressee": true,
+          "city": "WASHINGTON DC",
+          "state": "DC",
+          "postal_code": "12345",
+          "country_name": "UNITED STATES",
+          "country_code": "us"
+        }],
+        "status": "NEW",
+        "sent_to_cbcm_date": ""
+      }
+      get :get_distribution, params: { distribution_id: distribution_id }
+      expect(response).to have_http_status(200)
+      expect(JSON.parse(response.body.to_json)).to eq(expected_response.to_json)
     end
+  end
+
   end
 
   describe "#render_error" do
@@ -111,7 +146,6 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
     it "renders the error response with correct status, message, and distribution ID" do
       allow(SecureRandom).to receive(:uuid).and_return(error_uuid)
       error_message = "[IDT] Http Status Code: #{status}, #{message}, (Distribution ID: #{distribution_id})"
-
       expect(Rails.logger).to receive(:error).with("#{error_message}Error ID: #{error_uuid}")
       expect(Raven).to receive(:capture_exception).with(error_message, extra: { error_uuid: error_uuid })
       expect(controller).to receive(:render).with(
