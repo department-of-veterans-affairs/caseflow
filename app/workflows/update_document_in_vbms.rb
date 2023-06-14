@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class UploadDocumentToVbms
+class UpdateDocumentInVbms
   include VbmsDocumentTransactionConcern
 
-  delegate :document_type, :document_subject, :document_name, to: :document
+  delegate :document_type, :document_subject, :document_name, :document_version_reference_id, to: :document
 
   def initialize(document:)
     @document = document
@@ -13,7 +13,7 @@ class UploadDocumentToVbms
     return if document.processed_at
 
     submit_for_processing!
-    upload_to_vbms!
+    update_in_vbms!
     set_processed_at_to_current_time
   rescue StandardError => error
     save_rescued_error!(error.to_s)
@@ -54,12 +54,12 @@ class UploadDocumentToVbms
     )
   end
 
-  def upload_to_vbms!
+  def update_in_vbms!
     return if document.uploaded_to_vbms_at
 
-    upload_response = VBMSService.upload_document_to_vbms_veteran(file_number, self)
+    update_response = VBMSService.update_document_in_vbms(document.appeal, self)
 
-    persist_efolder_version_info(upload_response, :upload_document_response)
+    persist_efolder_version_info(update_response, :update_document_response)
 
     document.update!(uploaded_to_vbms_at: Time.zone.now)
   end
@@ -69,7 +69,7 @@ class UploadDocumentToVbms
   end
 
   def save_rescued_error!(error)
-    document.update!(error: error)
+    document.update!(error: error, document_version_reference_id: nil)
   end
 
   def s3_location
