@@ -94,7 +94,7 @@ export const storeMetrics = (uniqueId, data, { message, type = 'log', product, s
     }
   };
 
-  ApiUtil.post('/metrics/v2/logs', { data: postData });
+  ApiUtil.postMetricLogs('/metrics/v2/logs', { data: postData });
 };
 
 export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 'log', product },

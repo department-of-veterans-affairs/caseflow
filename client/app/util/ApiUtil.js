@@ -48,6 +48,9 @@ const errorHandling = (url, error, method, options = {}) => {
   const message = `UUID: ${id}.\nProblem with ${method} ${url}.\n${error}`;
 
   console.error(new Error(message));
+  options.t1 = performance.now();
+  options.end = moment().format();
+  options.duration = options.t1 - options.t0;
 
   // Need to renable this check before going to master
   // if (options?.metricsLogRestError) {
@@ -64,16 +67,13 @@ const errorHandling = (url, error, method, options = {}) => {
         error
       }),
       sent_to: 'javascript_console',
+      start: options.start,
+      end: options.end,
+      duration: options.duration,
     }
   };
 
-  request.
-    post('/metrics/v2/logs').
-    set(getHeadersObject()).
-    send(data).
-    use(nocache).
-    on('error', (err) => console.error(`Metric not recorded\nUUID: ${uuid.v4()}.\n: ${err}`)).
-    end();
+ ApiUtil.postMetricLogs('/metrics/v2/logs', { data: data });
   // }
 };
 
@@ -117,23 +117,24 @@ const successHandling = (url, res, method, options = {}) => {
     }
   };
 
-  request.
-    post('/metrics/v2/logs').
-    set(getHeadersObject()).
-    send(data).
-    use(nocache).
-    on('error', (err) => console.error(`Metric not recorded\nUUID: ${uuid.v4()}.\n: ${err}`)).
-    end();
+  ApiUtil.postMetricLogs('/metrics/v2/logs', { data: data });
 };
 
 const httpMethods = {
   delete(url, options = {}) {
+    options.t0 = performance.now();
+    options.start = moment().format();
+
     return request.
       delete(url).
       set(getHeadersObject(options.headers)).
       send(options.data).
       use(nocache).
-      on('error', (err) => errorHandling(url, err, 'DELETE', options));
+      on('error', (err) => errorHandling(url, err, 'DELETE', options)).
+      then(res => {
+        successHandling(url, res, 'DELETE', options);
+        return res;
+      });
   },
 
   get(url, options = {}) {
@@ -169,30 +170,61 @@ const httpMethods = {
   },
 
   patch(url, options = {}) {
+    options.t0 = performance.now();
+    options.start = moment().format();
+
     return request.
       post(url).
       set(getHeadersObject({ 'X-HTTP-METHOD-OVERRIDE': 'patch' })).
       send(options.data).
       use(nocache).
-      on('error', (err) => errorHandling(url, err, 'PATCH', options));
+      on('error', (err) => errorHandling(url, err, 'PATCH', options)).
+      then(res => {
+        successHandling(url, res, 'PATCH', options);
+        return res;
+      });
   },
 
   post(url, options = {}) {
+    options.t0 = performance.now();
+    options.start = moment().format();
+
     return request.
       post(url).
       set(getHeadersObject(options.headers)).
       send(options.data).
       use(nocache).
-      on('error', (err) => errorHandling(url, err, 'POST', options));
+      on('error', (err) => errorHandling(url, err, 'POST', options)).
+      then(res => {
+        successHandling(url, res, 'POST', options);
+        return res;
+      });
   },
 
   put(url, options = {}) {
+    options.t0 = performance.now();
+    options.start = moment().format();
+
     return request.
       put(url).
       set(getHeadersObject(options.headers)).
       send(options.data).
       use(nocache).
-      on('error', (err) => errorHandling(url, err, 'PUT', options));
+      on('error', (err) => errorHandling(url, err, 'PUT', options)).
+      then(res => {
+        successHandling(url, res, 'PUT', options);
+        return res;
+      });
+  },
+
+  postMetricLogs(url, options = {}) {
+    return request.
+      post('/metrics/v2/logs').
+      set(getHeadersObject()).
+      send(options.data).
+      use(nocache).
+      on('error', (err) => console.error(`Metric not recorded\nUUID: ${uuid.v4()}.\n: ${err}`)).
+      end();
   }
 };
 
