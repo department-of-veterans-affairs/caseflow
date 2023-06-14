@@ -55,7 +55,7 @@ class LegacyAppealDispatch
   def queue_mail_request_job
     return unless @appeal.root_task.status == Constants.TASK_STATUSES.completed
 
-    MailRequestJob.perform_later(file, mail_package)
+    MailRequestJob.perform_later(file, @mail_package)
     info_message = "MailRequestJob for citation #{citation_number} queued for submission to Package Manager"
     log_info(info_message)
   end

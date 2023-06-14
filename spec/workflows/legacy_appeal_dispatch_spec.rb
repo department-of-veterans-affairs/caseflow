@@ -16,33 +16,39 @@ describe LegacyAppealDispatch do
         redacted_document_location: "some/filepath",
         file: "some file" }
     end
+    let(:mail_package) do
+      { distributions: [{ first_name: "Jeff" }],
+        copies: 1 }
+    end
+    let(:mail_request_job) { class_double("MailRequestJob", :perform_later).as_stubbed_const }
 
     before do
       BvaDispatch.singleton.add_user(user)
       BvaDispatchTask.create_from_root_task(root_task)
     end
 
-    subject { LegacyAppealDispatch.new(appeal: legacy_appeal, params: params) }
+    subject { LegacyAppealDispatch.new(appeal: legacy_appeal, params: params, mail_package: mail_package).call }
 
     context "valid parameters" do
       it "successfully outcodes dispatch" do
-        expect(subject.call).to be_success
+        allow(mail_request_job).to receive(:perform_later).with(params[:file], mail_package)
+        expect(subject).to be_success
       end
     end
 
     context "invalid citation number" do
       it "returns an object with validation errors" do
         params[:citation_number] = "123"
-        expect(subject.call).to_not be_success
-        expect(subject.call.errors[0]).to eq "Citation number is invalid"
+        expect(subject).to_not be_success
+        expect(subject.errors[0]).to eq "Citation number is invalid"
       end
     end
 
     context "citation number already exists" do
       it "returns an object with validation errors" do
-        allow(subject).to receive(:unique_citation_number?).and_return(false)
-        expect(subject.call).to_not be_success
-        expect(subject.call.errors[0]).to eq "Citation number already exists"
+        allow_any_instance_of(LegacyAppealDispatch).to receive(:unique_citation_number?).and_return(false)
+        expect(subject).to_not be_success
+        expect(subject.errors[0]).to eq "Citation number already exists"
       end
     end
 
@@ -55,8 +61,31 @@ describe LegacyAppealDispatch do
         error_message = "Decision date can't be blank, Redacted document " \
                         "location can't be blank, File can't be blank"
 
-        expect(subject.call).to_not be_success
-        expect(subject.call.errors[0]).to eq error_message
+        expect(subject).to_not be_success
+        expect(subject.errors[0]).to eq error_message
+      end
+    end
+
+    context "dispatch is associated with a mail request" do
+      it "calls #perform_later on MailRequestJob" do
+        expect(mail_request_job).to receive(:perform_later).with(params[:file], mail_package)
+        subject
+      end
+    end
+
+    context "document is not associated with a mail request" do
+      let(:mail_package) { nil }
+      it "does not call #perform_later on MailRequestJob" do
+        expect(mail_request_job).to_not receive(:perform_later)
+        subject
+      end
+    end
+
+    context "document is not successfully processed" do
+      it "does not call #perform_later on MailRequestJob" do
+        allow(ProcessDecisionDocumentJob).to receive(:perform_later).and_raise(StandardError)
+        expect(mail_request_job).to_not receive(:perform_later)
+        expect { subject }.to raise_error(StandardError)
       end
     end
   end
