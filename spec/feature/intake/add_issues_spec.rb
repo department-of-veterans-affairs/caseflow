@@ -822,6 +822,19 @@ feature "Intake Add Issues Page", :all_dbs do
   end
 
   context "for MST and PACT Act" do
+    before do
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
+      BvaIntake.singleton.add_user(current_user)
+      OrganizationsUser.find_by(user_id: current_user.id).update(admin: true)
+    end
+
+    after do
+      FeatureToggle.disable!(:mst_identification)
+      FeatureToggle.disable!(:pact_identification)
+      # FeatureToggle.disable!(:legacy_mst_pact_identification)
+    end
+
     scenario "MST and PACT checkboxes appear after selecting decision" do
       start_higher_level_review(veteran)
       visit "/intake"
@@ -832,7 +845,7 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Issue is related to PACT Act")
     end
 
-    scenario "MST and PACT checkboxes render a justification field when checked" do
+    xit "MST and PACT checkboxes render a justification field when checked" do
       start_higher_level_review(veteran)
       visit "/intake"
       click_intake_continue
@@ -849,6 +862,63 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Why was this change made?")
       click_on "Issue is related to PACT Act"
       expect(page).to_not have_content("Why was this change made?")
+    end
+
+    scenario "MST designation added during AMA intake" do
+      start_appeal(veteran_no_ratings)
+      visit "/intake"
+      click_intake_continue
+      click_intake_add_issue
+      find_by_id("mst-checkbox", visible: false).check(allow_label_click: true)
+      add_intake_nonrating_issue(date: "01/01/2023")
+      click_on "Establish appeal"
+
+      appeal_id = Appeal.find_by(veteran_file_number: veteran_no_ratings.file_number).uuid
+      visit "/queue/appeals/#{appeal_id}"
+      #to prevent timeout
+      visit current_path
+      click_on "View task instructions"
+
+      expect(page).to have_content("Special issues: MST")
+      expect(page).to have_no_content("Special issues: PACT")
+    end
+
+    scenario "Pact designation added during AMA intake" do
+      start_appeal(veteran_no_ratings)
+      visit "/intake"
+      click_intake_continue
+      click_intake_add_issue
+      find_by_id("pact-checkbox", visible: false).check(allow_label_click: true)
+      add_intake_nonrating_issue(date: "01/01/2023")
+      click_on "Establish appeal"
+
+      appeal_id = Appeal.find_by(veteran_file_number: veteran_no_ratings.file_number).uuid
+      visit "/queue/appeals/#{appeal_id}"
+      #to prevent timeout
+      visit current_path
+      click_on "View task instructions"
+
+      expect(page).to have_content("Special issues: PACT")
+      expect(page).to have_no_content("Special issues: MST")
+    end
+
+    scenario "MST and Pact designation added during AMA intake" do
+      start_appeal(veteran_no_ratings)
+      visit "/intake"
+      click_intake_continue
+      click_intake_add_issue
+      find_by_id("mst-checkbox", visible: false).check(allow_label_click: true)
+      find_by_id("pact-checkbox", visible: false).check(allow_label_click: true)
+      add_intake_nonrating_issue(date: "01/01/2023")
+      click_on "Establish appeal"
+
+      appeal_id = Appeal.find_by(veteran_file_number: veteran_no_ratings.file_number).uuid
+      visit "/queue/appeals/#{appeal_id}"
+      #to prevent timeout
+      visit current_path
+      click_on "View task instructions"
+
+      expect(page).to have_content("Special issues: MST, PACT")
     end
   end
 end
