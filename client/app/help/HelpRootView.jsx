@@ -23,7 +23,7 @@ const HelpRootView = () => {
 
   return <div className="cf-help-content">
 
-    <p><CaseFlowLink href="/search">Go Back TEST</CaseFlowLink></p>
+    <p><CaseFlowLink href="/search">Go Back</CaseFlowLink></p>
 
     <h1>Caseflow Help</h1>
     <ul id="toc" className="usa-unstyled-list">
