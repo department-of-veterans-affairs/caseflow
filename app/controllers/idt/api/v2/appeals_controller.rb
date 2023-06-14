@@ -29,12 +29,10 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
     result = BvaDispatchTask.outcode(appeal, outcode_params, user, mail_package)
 
     if result.success?
-      success_response = { message: "Success!" }
-
-      unless mail_requests.nil?
-        success_response[:distributions] = mail_requests.map(&:vbms_distribution_id)
+      success_response = { message: "Successful dispatch!" }
+      if recipient_info.present?
+        success_response[:distribution_ids] = distribution_ids
       end
-
       return render json: success_response
     end
 
@@ -158,13 +156,13 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
   end
 
   def recipient_info
-    params[:recipient_info]
+    mail_params[:recipient_info]
   end
 
   def copies
     return 1 if params[:copies].blank?
 
-    params[:copies]
+    mail_params[:copies]
   end
 
   # Payload with distributions value (array of JSON-formatted MailRequest objects) and copies (integer)
@@ -186,15 +184,7 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
   end
 
   def mail_requests
-    return nil if recipient_info.blank?
-
     @mail_requests ||= create_mail_requests_and_track_errors
-  end
-
-  def throw_error_if_copies_out_of_range
-    unless (1..500).cover?(copies)
-      fail Caseflow::Error::MissingRecipientInfo, "Copies must be between 1 and 500 (inclusive)".to_json
-    end
   end
 
   def create_mail_requests_and_track_errors
@@ -207,6 +197,12 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
     end
     throw_error_if_recipient_info_invalid
     requests
+  end
+
+  def throw_error_if_copies_out_of_range
+    unless (1..500).cover?(copies)
+      fail Caseflow::Error::MissingRecipientInfo, "Copies must be between 1 and 500 (inclusive)".to_json
+    end
   end
 
   def throw_error_if_recipient_info_invalid
@@ -224,15 +220,14 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
   end
 
   def outcode_params
-    params.permit(:citation_number,
-                  :decision_date,
-                  :redacted_document_location,
-                  :file,
-                  :copies,
-                  recipient_info: recipient_params)
+    params.permit(:citation_number, :decision_date, :redacted_document_location, :file)
   end
 
-  def recipient_params
+  def mail_params
+    params.permit(:copies, recipient_info: recipient_keys)
+  end
+
+  def recipient_keys
     [
       :recipient_type, :name, :first_name, :last_name, :claimant_station_of_jurisdiction, :postal_code,
       :destination_type, :address_line_1, :address_line_2, :address_line_3, :address_line_4, :address_line_5,
