@@ -58,6 +58,7 @@ import Inbox from 'app/inbox';
 import Explain from 'app/explain';
 import MPISearch from 'app/mpi/MPISearch';
 import Admin from 'app/admin';
+import uuid from 'uuid';
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
@@ -106,7 +107,20 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         colno,
         error
       };
-      storeMetrics(id, data, {type: 'error', product: 'browser'});
+      const t0 = performance.now();
+      const start = Date.now();
+      const t1 = performance.now();
+      const end = Date.now();
+      const duration = t1 - t0;
+      storeMetrics(
+        id,
+        data,
+        { type: 'error',
+        product: 'browser',
+        start: start,
+        end: end,
+        duration: duration }
+      );
     }
     return true;
   };
