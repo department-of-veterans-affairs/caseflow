@@ -49,6 +49,28 @@ class Rating
     def from_bgs_hash(_data)
       fail Caseflow::Error::MustImplementInSubclass
     end
+
+    def mst_from_contentions_for_rating?
+      self.get_contentions_with_claim_ids.each do |contention|
+        if self.mst_contention_status?(contention)
+          return true
+        else
+          next
+        end
+      end
+      false
+    end
+
+    def pact_from_contentions_for_rating?
+      self.get_contentions_with_claim_ids.each do |contention|
+        if self.pact_contention_status?(contention)
+          return true
+        else
+          next
+        end
+      end
+      false
+    end
   end
 
   # WARNING: profile_date is a misnomer adopted from BGS terminology.
@@ -95,28 +117,6 @@ class Rating
     end
   end
 
-  def mst_from_contentions_for_rating?
-    get_contentions_with_claim_ids.each do |contention|
-      if mst_contention_status?(contention)
-        return true
-      else
-        next
-      end
-    end
-    false
-  end
-
-  def pact_from_contentions_for_rating?
-    get_contentions_with_claim_ids.each do |contention|
-      if pact_contention_status?(contention)
-        return true
-      else
-        next
-      end
-    end
-    false
-  end
-
   def pension?
     associated_claims_data.any? { |ac| ac[:bnft_clm_tc].match(/PMC$/) }
   end
@@ -154,7 +154,7 @@ class Rating
 
   def mst_contention_status?(bgs_contention)
     return false if bgs_contention.nil?
-    
+
     if bgs_contention.special_issues.is_a?(Hash)
       return bgs_contention.special_issues[:spis_tc] == 'MST' if bgs_contention&.special_issues
     elsif bgs_contention.special_issues.is_a?(Array)

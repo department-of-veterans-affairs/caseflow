@@ -180,10 +180,13 @@ class RequestIssuesUpdate < CaseflowRecord
     # if !changes?
     #   @error_code = :no_changes
     # elsif RequestIssuesUpdate.where(review: review).where.not(id: id).processable.exists?
+    #   if @error_code == :no_changes
+    #     RequestIssuesUpdate.where(review: review).where.not(id: id).processable.last.destroy
+    #   end
     #   @error_code = :previous_update_not_done_processing
     # end
 
-    !@error_code
+    # !@error_code
   end
 
   def fetch_before_issues
