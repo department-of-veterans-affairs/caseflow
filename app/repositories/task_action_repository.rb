@@ -545,7 +545,8 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_title: COPY::SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
         modal_body: COPY::SPECIAL_CASE_MOVEMENT_MODAL_DETAIL,
         modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER,
-        modal_button_text: COPY::MODAL_ASSIGN_BUTTON
+        modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
+        message_title: COPY::DISTRIBUTE_TASK_SUCCESS_MESSAGE_NON_BLOCKING
       }
     end
 
@@ -557,7 +558,8 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_title: COPY::SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
         modal_body: COPY::SPECIAL_CASE_MOVEMENT_MODAL_DETAIL,
         modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER,
-        modal_button_text: COPY::MODAL_ASSIGN_BUTTON
+        modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
+        message_title: COPY::DISTRIBUTE_TASK_SUCCESS_MESSAGE_NON_BLOCKING
       }
     end
 

@@ -108,9 +108,17 @@ class AssignToView extends React.Component {
       }
     };
 
+    const caseNameListItem = () => {
+      const caseName = appeal.veteranFullName || null;
+
+      return caseName;
+    };
+
     const assignTaskSuccessMessage = {
-      title: taskActionData(this.props).message_title || sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()),
-      detail: taskActionData(this.props).message_detail
+      title: taskActionData(this.props).message_title ? sprintf(taskActionData(this.props).message_title,
+        caseNameListItem(),
+        this.getAssignee()) : sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()),
+      detail: taskActionData(this.props).message_detail || null
     };
 
     const pulacCerulloSuccessMessage = {
@@ -157,6 +165,8 @@ class AssignToView extends React.Component {
 
     return assignee;
   };
+
+
 
   reassignTask = () => {
     const task = this.props.task;
@@ -421,7 +431,8 @@ AssignToView.propTypes = {
     availableActions: PropTypes.arrayOf(PropTypes.object),
     externalAppealId: PropTypes.string,
     type: PropTypes.string,
-    appealType: PropTypes.string
+    appealType: PropTypes.string,
+    assignedBy: PropTypes.string
   }),
   setOvertime: PropTypes.func,
   resetSuccessMessages: PropTypes.func
