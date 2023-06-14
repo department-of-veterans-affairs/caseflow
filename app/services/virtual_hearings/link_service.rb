@@ -2,6 +2,9 @@
 
 require "digest"
 
+# Currently Pexip-specific. Maybe rename to VirtualHearings::PexipLinkService
+# and have VirtualHearings::LinkService be a facade?
+
 ##
 # Service for generating new guest and host virtual hearings links
 ##

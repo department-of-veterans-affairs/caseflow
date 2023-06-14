@@ -39,6 +39,7 @@ class VirtualHearing < CaseflowRecord
   include UpdatedByUserConcern
 
   class << self
+    # This whole class has lots of Pexip references in it.
     def client_host_or_default
       ENV["PEXIP_CLIENT_HOST"] || "care.evn.va.gov"
     end
@@ -140,6 +141,7 @@ class VirtualHearing < CaseflowRecord
   end
 
   # Returns a random host and guest pin
+  # ?? Will this work for Webex?
   def generate_conference_pins
     self.guest_pin_long = "#{rand(1_000_000_000..9_999_999_999).to_s[0..9]}#"
     self.host_pin_long = "#{rand(1_000_000..9_999_999).to_s[0..9]}#"
@@ -165,6 +167,8 @@ class VirtualHearing < CaseflowRecord
   def guest_link
     return guest_hearing_link if guest_hearing_link.present?
 
+    # Webex has a different format
+
     "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
     "conference=#{formatted_alias_or_alias_with_host}&" \
     "pin=#{guest_pin}&role=guest"
@@ -173,11 +177,14 @@ class VirtualHearing < CaseflowRecord
   def host_link
     return host_hearing_link if host_hearing_link.present?
 
+    # Webex has a different format
+
     "#{VirtualHearing.base_url}?join=1&media=&escalate=1&" \
     "conference=#{formatted_alias_or_alias_with_host}&" \
     "pin=#{host_pin}&role=host"
   end
 
+  # Webex has a different format
   def test_link(title)
     if use_vc_test_link?
       if ENV["VIRTUAL_HEARING_URL_HOST"].blank?
@@ -264,6 +271,8 @@ class VirtualHearing < CaseflowRecord
     fail NoAliasWithHostPresentError if alias_with_host.blank?
 
     conference_id = alias_with_host[/BVA(\d+)@/, 1]
+
+    # LinkService is currently Pexip-specific
     link_service = VirtualHearings::LinkService.new(conference_id)
 
     # confirm that we extracted the conference ID correctly,

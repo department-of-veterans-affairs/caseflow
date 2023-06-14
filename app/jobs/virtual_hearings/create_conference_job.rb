@@ -177,6 +177,10 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   end
 
   def create_pexip_conference
+    # client comes from VirtualHearings::PexipClient
+    #
+    # Ideally we could keep this same method call and params
+    # and just have client be switched depending on user/docket type/feature toggles
     client.create_conference(
       host_pin: virtual_hearing.host_pin,
       guest_pin: virtual_hearing.guest_pin,
@@ -188,6 +192,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     virtual_hearing.alias.nil? || virtual_hearing.host_pin.nil? || virtual_hearing.guest_pin.nil?
   end
 
+  # This looks kind of Pexip-y as well
   def assign_virtual_hearing_alias_and_pins
     # Using pessimistic locking here because no other processes should be reading
     # the record while maximum is being calculated.
@@ -207,6 +212,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       "[#{virtual_hearing.hearing_id}])..."
     )
     begin
+      # VirtualHearings::LinkService is currently Pexip-specific
       link_service = VirtualHearings::LinkService.new
       virtual_hearing.update!(
         host_hearing_link: link_service.host_link,
