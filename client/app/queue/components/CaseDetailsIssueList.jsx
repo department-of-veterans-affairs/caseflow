@@ -29,7 +29,9 @@ export default function CaseDetailsIssueList(props) {
   if (!props.isLegacyAppeal) {
     return <AmaIssueList
       requestIssues={props.issues}
-      decisionIssues={props.decisionIssues}>
+      decisionIssues={props.decisionIssues}
+      mstFeatureToggle={props.featureToggles.mst_identification}
+      pactFeatureToggle={props.featureToggles.pact_identification}>
       <DecisionIssues
         decisionIssues={props.decisionIssues} />
     </AmaIssueList>;
@@ -39,13 +41,16 @@ export default function CaseDetailsIssueList(props) {
     {props.issues.map((issue, i) =>
       <div key={i} {...singleIssueContainerStyling}>
         <h3 {...headingStyling}>Issue {1 + i}</h3>
-        { <LegacyIssueDetails>{issue}</LegacyIssueDetails> }
+        <LegacyIssueDetails legacyMstPactFeatureToggle={props.featureToggles.legacy_mst_pact_identification}>
+          {issue}
+        </LegacyIssueDetails>
       </div>
     )}
   </React.Fragment>;
 }
 
 const LegacyIssueDetails = (props) => {
+  const legacyMstPactFeatureToggle = props.legacyMstPactFeatureToggle
   const issue = props.children;
   const codes = issue.codes ? issue.codes.slice() : [];
   const diagnosticCode = getIssueDiagnosticCodeLabel(codes[codes.length - 1]) ? codes.pop() : null;
@@ -58,7 +63,7 @@ const LegacyIssueDetails = (props) => {
     <IssueNoteListItem>{issue.note}</IssueNoteListItem>
     <IssueDispositionListItem>{issue.disposition}</IssueDispositionListItem>
     <IssueNoteListItem>{issue.closed_status}</IssueNoteListItem>
-    <SpecialIssueListItem>{issue}</SpecialIssueListItem>
+    {legacyMstPactFeatureToggle && <SpecialIssueListItem>{issue}</SpecialIssueListItem>}
   </CaseDetailsDescriptionList>;
 };
 
@@ -137,11 +142,23 @@ CaseDetailsIssueList.propTypes = {
   isLegacyAppeal: PropTypes.bool,
   issues: PropTypes.array,
   title: PropTypes.string,
-  decisionIssues: PropTypes.node
+  decisionIssues: PropTypes.node,
+  featureToggles: PropTypes.object
 };
 
 SpecialIssueListItem.propTypes = {
   children: PropTypes.object,
   mst_status: PropTypes.bool,
   pact_status: PropTypes.bool
+};
+
+LegacyIssueDetails.propTypes = {
+  legacyMstPactFeatureToggle: PropTypes.bool,
+  children: PropTypes.object
+};
+
+DescriptionListItem.propTypes = {
+  label: PropTypes.object,
+  children: PropTypes.object,
+  styling: PropTypes.object
 };
