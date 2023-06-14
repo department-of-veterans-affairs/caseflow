@@ -17,6 +17,7 @@ import {
   detailsColumn,
   daysWaitingColumn,
   issueCountColumn,
+  issueTypesColumn,
   typeColumn,
   readerLinkColumn,
   taskCompletedDateColumn,
@@ -79,6 +80,10 @@ export class TaskTableUnconnected extends React.PureComponent {
     return this.props.includeIssueCount ? issueCountColumn(this.props.requireDasRecord) : null;
   }
 
+  caseIssueTypesColumn = () => {
+    return this.props.includeIssueTypes ? issueTypesColumn() : null;
+  }
+
   caseDaysWaitingColumn = () => {
     return this.props.includeDaysWaiting ? daysWaitingColumn(this.props.requireDasRecord) : null;
   }
@@ -102,6 +107,7 @@ export class TaskTableUnconnected extends React.PureComponent {
         this.caseTypeColumn(),
         this.caseDocketNumberColumn(),
         this.caseIssueCountColumn(),
+        this.caseIssueTypesColumn(),
         this.caseDaysWaitingColumn(),
         this.completedDateColumn(),
         this.caseReaderLinkColumn()
@@ -127,6 +133,8 @@ export class TaskTableUnconnected extends React.PureComponent {
     getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
     defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
     enablePagination
+    onHistoryUpdate={this.props.onHistoryUpdate}
+    preserveFilter={this.props.preserveQueueFilter}
     rowClassNames={(task) =>
       this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'}
     taskPagesApiEndpoint={this.props.taskPagesApiEndpoint}
@@ -148,6 +156,7 @@ TaskTableUnconnected.propTypes = {
   includeType: PropTypes.bool,
   includeDocketNumber: PropTypes.bool,
   includeIssueCount: PropTypes.bool,
+  includeIssueTypes: PropTypes.bool,
   includeDaysWaiting: PropTypes.bool,
   includeCompletedDate: PropTypes.bool,
   userIsVsoEmployee: PropTypes.bool,
@@ -158,7 +167,9 @@ TaskTableUnconnected.propTypes = {
   getKeyForRow: PropTypes.func,
   taskPagesApiEndpoint: PropTypes.string,
   useTaskPagesApi: PropTypes.bool,
-  tabPaginationOptions: PropTypes.object
+  tabPaginationOptions: PropTypes.object,
+  onHistoryUpdate: PropTypes.func,
+  preserveQueueFilter: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({

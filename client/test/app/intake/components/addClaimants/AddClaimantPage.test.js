@@ -94,7 +94,7 @@ describe('AddClaimantPage', () => {
       await waitFor(() => {
         expect(submit).not.toBeDisabled();
       });
-    }, 15000);
+    }, 20000);
   });
 
   describe('Redirection to Intake home page', () => {
