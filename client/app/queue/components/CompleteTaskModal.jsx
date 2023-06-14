@@ -629,8 +629,9 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
     getContent: VhaCamoReturnToBoardIntakeModal,
     buttonText: COPY.MODAL_RETURN_BUTTON,
-    submitDisabled: ({ state }) => (
-      !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
+    customValidation: ({ state }) => (
+      state.dropdown === 'other' ? validInstructions(state.otherInstructions) && validDropdown(state.dropdown) :
+        validDropdown(state.dropdown)
     ),
     customFormatInstructions: ({ state }) => {
       return formatOtherInstructions(state);
@@ -927,8 +928,8 @@ class CompleteTaskModal extends React.Component {
       (MODAL_TYPE_ATTRS[this.props.modalType].buttonText === 'Resend notification letter') ||
       (this.props.modalType === 'task_complete_contested_claim')
     ) ? ('/organizations/clerk-of-the-board?tab=unassignedTab&page=1') : (
-        taskData.redirect_after || '/queue'
-      );
+      taskData.redirect_after || '/queue'
+    );
 
     return (
       <QueueFlowModal

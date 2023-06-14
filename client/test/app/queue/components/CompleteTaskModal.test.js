@@ -180,12 +180,13 @@ describe('CompleteTaskModal', () => {
 
     test('Return button is disabled until a task is selected', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
-
-      expect(screen.findByRole('button', { name: buttonText, disabled: true })).toBeTruthy();
+      expect(screen.getByRole('button', { name: buttonText })).toBeDisabled();
+      // expect(screen.findByRole('button', { name: buttonText, disabled: true })).toBeTruthy();
 
       selectFromDropdown('Why is this appeal being returned?', 'Duplicate');
 
-      expect(screen.findByRole('button', { name: buttonText, disabled: false })).toBeTruthy();
+      // expect(screen.findByRole('button', { name: buttonText, disabled: false })).toBeTruthy();
+      expect(screen.getByRole('button', { name: buttonText })).not.toBeDisabled();
     });
 
     test('if other is selected, Return button is disabled until a reason is entered', () => {
