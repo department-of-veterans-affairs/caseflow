@@ -186,6 +186,8 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
   end
 
   def mail_requests
+    return nil if recipient_info.blank?
+
     @mail_requests ||= create_mail_requests_and_track_errors
   end
 
