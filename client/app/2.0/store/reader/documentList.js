@@ -66,7 +66,10 @@ export const loadDocuments = createAsyncThunk('documentList/load', async (params
   const state = getState();
 
   // Request the Documents for the Appeal
-  const { body } = await ApiUtil.get(`/reader/appeal/${params.vacolsId}/documents?json`, {}, ENDPOINT_NAMES.DOCUMENTS);
+  const { body } = await ApiUtil.get(`/reader/appeal/${params.vacolsId}/documents?json`, {
+    metricsLogRestError: featureToggles.metricsLogRestError,
+    metricsLogRestSuccess: featureToggles.metricsLogRestSuccess
+  }, ENDPOINT_NAMES.DOCUMENTS);
 
   // Return the response and attach the Filter Criteria
   return {
