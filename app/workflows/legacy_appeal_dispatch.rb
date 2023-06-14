@@ -6,7 +6,8 @@ class LegacyAppealDispatch
 
   def initialize(appeal:, params:, mail_package: nil)
     @params = params.merge(appeal_id: appeal.id, appeal_type: "LegacyAppeal")
-    @mail_pacjage = mail_package
+    @appeal = appeal
+    @mail_package = mail_package
   end
 
   def call
@@ -24,11 +25,7 @@ class LegacyAppealDispatch
 
   private
 
-  attr_reader :params, :success
-
-  def appeal
-    @appeal ||= params[:appeal]
-  end
+  attr_reader :params, :appeal, :success
 
   def citation_number
     params[:citation_number]

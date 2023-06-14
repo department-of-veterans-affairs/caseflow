@@ -9,14 +9,11 @@ describe AmaAppealDispatch, :postgres do
   let(:poa_participant_id) { "600153863" }
   let(:bgs_poa) { instance_double(BgsPowerOfAttorney) }
   let(:params) do
-    { appeal_id: appeal.id,
-      appeal_type: "Appeal",
-      citation_number: "A18123456",
+    { citation_number: "A18123456",
       decision_date: Time.zone.now,
       redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx",
       file: "12345678" }
   end
-  let(:decision_document) { DecisionDocument.create!(params) }
   let(:mail_package) do
     { distributions: [{ first_name: "Jeff" }],
       copies: 1 }
@@ -35,8 +32,9 @@ describe AmaAppealDispatch, :postgres do
 
   describe "#call" do
     it "stores current POA participant ID in the Appeals table" do
+      allow(mail_request_job).to receive(:perform_later).with(params[:file], mail_package)
       subject
-      expect(appeal.reload.poa_participant_id).to eq poa_participant_id
+      expect(appeal.poa_participant_id).to eq poa_participant_id
     end
 
     context "document is associated with a mail request" do
@@ -54,7 +52,7 @@ describe AmaAppealDispatch, :postgres do
       end
     end
 
-    context "document is not successfully uploaded to vbms" do
+    context "document is not successfully processed" do
       it "does not call #perform_later on MailRequestJob" do
         allow(ProcessDecisionDocumentJob).to receive(:perform_later).and_raise(StandardError)
         expect(mail_request_job).to_not receive(:perform_later)
