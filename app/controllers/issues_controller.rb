@@ -41,7 +41,7 @@ class IssuesController < ApplicationController
     )
 
     # Set LegacyAppeal issues to nil in order to refresh and retrieve new update
-    appeal.issues = nil
+    appeal.issues = nil if appeal.is_legacy?
 
     render json: { issues: json_issues }, status: :ok
   end
