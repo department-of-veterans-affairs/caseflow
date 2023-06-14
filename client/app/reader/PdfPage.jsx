@@ -3,20 +3,21 @@ import PropTypes from 'prop-types';
 import Mark from 'mark.js';
 
 import CommentLayer from './CommentLayer';
-import { useSelector, connect } from 'react-redux';
-import { get, noop, sum, filter, map } from 'lodash';
-import { setSearchIndexToHighlight } from './PdfSearch/PdfSearchActions';
+import { connect } from 'react-redux';
+import { get, noop, sum, filter, map, uniqueId } from 'lodash';
+import { getDocumentText, setSearchIndexToHighlight, setSearchIsLoading } from './PdfSearch/PdfSearchActions';
 import { setDocScrollPosition } from './PdfViewer/PdfViewerActions';
 import { getSearchTerm, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import * as PDFJS from 'pdfjs-dist';
-import { collectHistogram } from '../util/Metrics';
+import { collectHistogram, recordMetrics } from '../util/Metrics';
 
 import { css } from 'glamor';
 import classNames from 'classnames';
 import { COLORS } from '../constants/AppConstants';
+import uuid from 'uuid';
 
 const markStyle = css({
   '& mark': {
@@ -182,20 +183,6 @@ export class PdfPage extends React.PureComponent {
 
   drawText = (page, text) => {
 
-    const renderTextTimeMetricEnabled = useSelector((state) => state.featureToggles.renderTextTimeMetric);
-
-    if (renderTextTimeMetricEnabled) {
-
-      const startTime = performance.now();
-      const endTime = performance.now();
-      const elapsedTime = endTime - startTime;
-
-      console.log(`Text rendering time: ${elapsedTime} ms`);
-    } else {
-      console.log('Feature toggle is disabled. Text rendering is skipped.');
-
-    }
-
     if (!this.textLayer) {
       return;
     }
@@ -230,8 +217,22 @@ export class PdfPage extends React.PureComponent {
         then((page) => {
           this.page = page;
 
+          const readerRenderText = {
+            uuid: uniqueId,
+            message: 'Searching within Reader document text',
+            type: 'performance',
+            product: 'reader',
+            data: {
+              documentId: this.props.documentId,
+              documentType: this.props.documentType,
+              file: PropTypes.string
+            },
+          };
+
           this.getText(page).then((text) => {
             this.drawText(page, text);
+            // eslint-disable-next-line max-len
+            recordMetrics(this.drawText(page, text), readerRenderText, this.props.featureToggles.metricsReaderRenderText);
           });
 
           this.drawPage(page).then(() => {
@@ -371,7 +372,8 @@ PdfPage.propTypes = {
   searchText: PropTypes.string,
   setDocScrollPosition: PropTypes.func,
   setSearchIndexToHighlight: PropTypes.func,
-  windowingOverscan: PropTypes.string
+  windowingOverscan: PropTypes.string,
+  featureToggles: PropTypes.object
 };
 
 const mapDispatchToProps = (dispatch) => ({
