@@ -181,30 +181,25 @@ describe('CompleteTaskModal', () => {
     test('Return button is disabled until a task is selected', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
       expect(screen.getByRole('button', { name: buttonText })).toBeDisabled();
-      // expect(screen.findByRole('button', { name: buttonText, disabled: true })).toBeTruthy();
 
       selectFromDropdown('Why is this appeal being returned?', 'Duplicate');
-
-      // expect(screen.findByRole('button', { name: buttonText, disabled: false })).toBeTruthy();
       expect(screen.getByRole('button', { name: buttonText })).not.toBeDisabled();
     });
 
     test('if other is selected, Return button is disabled until a reason is entered', () => {
       renderCompleteTaskModal(modalType, camoToBvaIntakeData, taskType);
 
-      expect(screen.findByRole('button', { name: buttonText, disabled: true })).toBeTruthy();
-
+      expect(screen.getByRole('button', { name: buttonText })).toBeDisabled();
       selectFromDropdown('Why is this appeal being returned?', 'Other');
 
-      expect(screen.findByRole('button', { name: buttonText, disabled: true })).toBeTruthy();
-
+      expect(screen.getByRole('button', { name: buttonText })).toBeDisabled();
       const otherTextArea = screen.getByRole(
         'textbox', { name: 'Please provide the reason for return' }
       );
 
       userEvent.type(otherTextArea, 'Reasoning for the return');
 
-      expect(screen.findByRole('button', { name: buttonText, disabled: false })).toBeTruthy();
+      expect(screen.getByRole('button', { name: buttonText })).not.toBeDisabled();
     });
 
     test('other instructions are formatted', async () => {
@@ -216,7 +211,7 @@ describe('CompleteTaskModal', () => {
 
       userEvent.type(otherTextArea, 'very good reason');
 
-      userEvent.click(await screen.findByRole('button', { name: buttonText, disabled: false }));
+      userEvent.click(await screen.getByRole('button', { name: buttonText }));
       expect(getReceivedInstructions()).toBe(
         '\n**Reason for return:**\nOther - very good reason'
       );
