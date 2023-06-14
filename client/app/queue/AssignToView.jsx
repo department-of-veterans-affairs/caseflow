@@ -71,7 +71,7 @@ class AssignToView extends React.Component {
       return this.state.selectedValue !== null;
     }
 
-    return this.state.selectedValue !== null && this.state.instructions !== '';
+    return this.state.selectedValue !== null && this.state.instructions.trim().length > 0;
   };
 
   setModalOnChangeValue = (stateValue, value) => {
@@ -304,6 +304,8 @@ class AssignToView extends React.Component {
       pathAfterSubmit: (actionData && actionData.redirect_after) || '/queue',
       ...(actionData.modal_button_text && { button: actionData.modal_button_text }),
       submit: this.submit,
+      submitButtonClassNames: ['usa-button'],
+      submitDisabled: !this.validateForm(),
       validateForm: isPulacCerullo ?
         () => {
           return true;
