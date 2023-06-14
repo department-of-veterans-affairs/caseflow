@@ -26,12 +26,13 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
   end
 
   def fetch_file_number_from_bgs_service
-    # BGSService.new.fetch_file_number_by_ssn(veteran.ssn)
-    "000979834"
+    BGSService.new.fetch_file_number_by_ssn(veteran.ssn)
   end
 
   def start_fix_veteran
     file_number = fetch_file_number_from_bgs_service
+
+    # binding.pry
     verify_file_number(file_number)
 
     collections = ASSOCIATED_OBJECTS.map do |klass|
@@ -63,7 +64,7 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
   end
 
   def verify_file_number(file_number)
-    # binding.pry
+    binding.pry
     if file_number == veteran.file_number
       fail FileNumberMachesVetFileNumberError
     elsif file_number.nil?

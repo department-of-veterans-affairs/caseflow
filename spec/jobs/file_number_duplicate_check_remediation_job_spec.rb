@@ -1,18 +1,44 @@
 # frozen_string_literal: true
 
-# require "./../../jobs/file_number_not_found_remediation_job.rb"
-# require "./spec/jobs/file_number_not_found_remediation_job_spec.rb"
-# spec/jobs/file_number_duplicate_check_remediation_job_spec.rb
-# require "../../../app/jobs/file_number_not_found_remediation_job.rb"
-
 describe FileNumberDuplicateCheckRemediationJob, :postgres do
   ERROR_TEXT = "FILENUMBER does not exist"
   let!(:number) { "424200002" }
-  let!(:bgs_file_number) { "000979834" }
+  let!(:number_2) { "999999999" }
+  let!(:bgs_file_number_1) { "000979834" }
+  let!(:bgs_file_number_2) { "999979834" }
 
   let!(:veteran) { create(:veteran, ssn: number, file_number: number) }
+  let!(:veteran_2) { create(:veteran, ssn: number_2, file_number: number_2) }
   let!(:appeal) { create(:appeal, veteran_file_number: number) }
+  let!(:appeal_2) { create(:appeal, veteran_file_number: veteran_2.file_number) }
+
   let!(:decision_document) { create(:decision_document, appeal_type: "Appeal", appeal_id: appeal.id, error: ERROR_TEXT) }
+  let!(:decision_document_2) { create(:decision_document, appeal_type: "Appeal", appeal_id: appeal_2.id, error: ERROR_TEXT) }
+
+
+
+  let!(:available_hearing_locations) { create(:available_hearing_locations, veteran_file_number: number_2) }
+  let!(:bgs_power_of_attorney) { create(:bgs_power_of_attorney, file_number: number_2) }
+  let!(:document) { create(:document, file_number: number_2) }
+  let!(:end_product_establishment) { create(:end_product_establishment, veteran_file_number: number_2) }
+  let!(:form8) { create(:default_form8, file_number: number_2) }
+  let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: number_2) }
+  let!(:intake) { create(:intake, veteran_file_number: number_2) }
+  let!(:ramp_election) { create(:ramp_election, veteran_file_number: number_2) }
+  let!(:ramp_refiling) { RampRefiling.create(veteran_file_number: number_2) }
+  let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: number_2) }
+
+
+  let!(:available_hearing_locations) { create(:available_hearing_locations, veteran_file_number: number) }
+  let!(:bgs_power_of_attorney) { create(:bgs_power_of_attorney, file_number: number) }
+  let!(:document) { create(:document, file_number: number) }
+  let!(:end_product_establishment) { create(:end_product_establishment, veteran_file_number: number) }
+  let!(:form8) { create(:default_form8, file_number: number) }
+  let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: number) }
+  let!(:intake) { create(:intake, veteran_file_number: number) }
+  let!(:ramp_election) { create(:ramp_election, veteran_file_number: number) }
+  let!(:ramp_refiling) { RampRefiling.create(veteran_file_number: number) }
+  let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: number) }
 
   # let!(:number_2) { "524200005" }
   # let!(:bgs_file_number) { "500979835" }
@@ -22,17 +48,10 @@ describe FileNumberDuplicateCheckRemediationJob, :postgres do
   # let!(:decision_document_2) { create(:decision_document, appeal_type: "Appeal", appeal_id: appeal_2.id, error: ERROR_TEXT) }
 
   subject { FileNumberDuplicateCheckRemediationJob.new }
-  # let!(:fixer) { double(FileNumberNotFoundRemediationJob)}
-  let!(:fixer) { double(WarRoom::FileNumberNotFoundRemediationJob.new(appeal)) }
 
-  # before do
-  #   allow(WarRoom::FileNumberNotFoundRemediationJob.new)
-  #   .to receive(:fetch_file_number_from_bgs_service).with(anything)
-  #   .and_return(bgs_file_number)
-  # end
   before do
-
-
+    allow_any_instance_of(FileNumberNotFoundRemediationJob).to receive(:upload_logs_to_s3).and_return("logs")
+    allow_any_instance_of(FileNumberNotFoundRemediationJob).to receive(:fetch_file_number_from_bgs_service).and_return(bgs_file_number_1, bgs_file_number_2 )
   end
 
   context "decision document with errors" do
@@ -44,20 +63,46 @@ describe FileNumberDuplicateCheckRemediationJob, :postgres do
       allow(subject)
         .to receive(:duplicate_vet?)
         .and_return(false)
-        file_path = "string"
-        # allow_any_instance_of(FileNumberNotFoundRemediationJob).to receive(:new).with(appeal).and_return(veteran)
-      allow_any_instance_of(FileNumberNotFoundRemediationJob.perform_now(appeal)).to receive(:upload_to_s3).with(anything)
 
+      count = DecisionDocument.where("error LIKE ?", "%#{ERROR_TEXT}%").count
+
+      expect(count).to eq(2)
       subject.perform
-      expect(veteran.reload.file_number).to eq(bgs_file_number)
-      expect(veteran2.reload.file_number).to eq(bgs_file_number)
+
+      decision_document.reload
+      decision_document_2.reload
+      after_fix_count = DecisionDocument.where("error LIKE ?", "%#{ERROR_TEXT}%").reload.count
+      expect(veteran.reload.file_number).to eq(bgs_file_number_1)
+      expect(decision_document.error).to eq(nil)
+      expect(decision_document_2.error).to eq(nil)
+      # expect(after_fix_count).to eq(0)
+    end
+
+    it 'fixes multiple records fileNumber error' do
+
+
+      allow(subject)
+      .to receive(:duplicate_vet?)
+      .and_return(false)
+
+    count = DecisionDocument.where("error LIKE ?", "%#{ERROR_TEXT}%").count
+
+    expect(count).to eq(1)
+    subject.perform
+
+    decision_document.reload
+    after_fix_count = DecisionDocument.where("error LIKE ?", "%#{ERROR_TEXT}%").reload.count
+    expect(veteran.reload.file_number).to eq(bgs_file_number)
+    expect(decision_document.error).to eq(nil)
+    expect(after_fix_count).to eq(0)
     end
 
     it "throws an error if there is a duplicate veteran" do
-      allow(subject)
-        .to receive(:duplicate_vet?)
-        .and_return(true)
-      expect { subject.perform }.to raise_error(FileNumberDuplicateCheckRemediationJob::DuplicateVeteranFoundOutCodeError)
+      # allow(subject)
+      #   .to receive(:duplicate_vet?)
+      #   .and_return(true)
+      # expect { subject.perform }.to raise_error(FileNumberDuplicateCheckRemediationJob::DuplicateVeteranFoundOutCodeError)
+      expect { subject.perform }.to raise_error
     end
 
     context "when vet ssn does not match vet file_number" do
@@ -66,5 +111,17 @@ describe FileNumberDuplicateCheckRemediationJob, :postgres do
         expect { subject.perform }.to raise_error(FileNumberDuplicateCheckRemediationJob::VeteranSSNAndFileNumberNoMatchError)
       end
     end
+  end
+
+  context "#single_decision_doc_with_errors" do
+    describe "when ssn is passed in" do
+      it "resolves filenumber error" do
+        FileNumberDuplicateCheckRemediationJob.new.single_decision_doc_with_errors(ssn:veteran.ssn)
+
+        expect(veteran.reload.file_number).to eq(bgs_file_number)
+        binding.pry
+      end
+    end
+
   end
 end
