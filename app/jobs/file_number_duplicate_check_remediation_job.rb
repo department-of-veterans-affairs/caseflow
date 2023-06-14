@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "./lib/helpers/war_room.rb"
+# require "./file_number_not_found_remediation_job.rb"
 
 class FileNumberDuplicateCheckRemediationJob < CaseflowJob
   class DuplicateVeteranFoundOutCodeError < StandardError; end
@@ -14,7 +15,6 @@ class FileNumberDuplicateCheckRemediationJob < CaseflowJob
   def initialize
     @veteran = veteran
     @logs = ["VBMS::FileNumberDuplicateCheckRemediationJob Remediation Log"]
-
   end
 
   def perform
@@ -25,14 +25,18 @@ class FileNumberDuplicateCheckRemediationJob < CaseflowJob
     bulk_decision_docs_with_error.map do |decision_document|
       vet = decision_document.veteran
       appeal = decision_document.appeal
+
+      fail VeteranSSNAndFileNumberNoMatchError if vet.ssn != vet.file_number
+
       fail DuplicateVeteranFoundOutCodeError if duplicate_vet?(vet)
 
-      WarRoom::FileNumberNotFoundRemediationJob.new(appeal).perform
+      # WarRoom::FileNumberNotFoundRemediationJob.new(appeal).perform
+      FileNumberNotFoundRemediationJob.new(appeal).perform
 
-      rescue FileNumberMachesVetFileNumberError => error
-      rescue FileNumberIsNilError => error
-      rescue DuplicateVeteranFoundError => error
-      rescue NoAssociatedRecordsFoundForFileNumberError => error
+      # rescue FileNumberMachesVetFileNumberError => error
+      # rescue FileNumberIsNilError => error
+      # rescue DuplicateVeteranFoundError => error
+      # rescue NoAssociatedRecordsFoundForFileNumberError => error
     end
   end
 

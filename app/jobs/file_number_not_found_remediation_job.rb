@@ -7,6 +7,7 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
   class FileNumberIsNilError < StandardError; end
   class DuplicateVeteranFoundError < StandardError; end
   class NoAssociatedRecordsFoundForFileNumberError < StandardError; end
+  class VeteranSsnDoesNotMatchFileNumberError < StandardError; end
 
   queue_with_priority :low_priority
 
@@ -25,7 +26,8 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
   end
 
   def fetch_file_number_from_bgs_service
-    BGSService.new.fetch_file_number_by_ssn(veteran.ssn)
+    # BGSService.new.fetch_file_number_by_ssn(veteran.ssn)
+    "000979834"
   end
 
   def start_fix_veteran
@@ -61,6 +63,7 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
   end
 
   def verify_file_number(file_number)
+    # binding.pry
     if file_number == veteran.file_number
       fail FileNumberMachesVetFileNumberError
     elsif file_number.nil?
