@@ -10,7 +10,8 @@ namespace :db do
         load(filename)
         # when bundle exec rake db:seed:vbms_ext_claim is called
         # it runs the seed! method inside vbms_ext_claim.rb
-        Seeds::VbmsExtClaim.new.seed!
+        class_name = task_name.to_s.camelize
+        Seeds.const_get(class_name).new.seed!
       end
     end
 
