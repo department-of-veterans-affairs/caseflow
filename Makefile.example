@@ -158,6 +158,12 @@ audit: ## Create caseflow_audit schema, tables, and triggers in postgres
 audit-remove: ## Remove caseflow_audit schema, tables and triggers in postgres
 	bundle exec rails r db/scripts/audit/remove_caseflow_audit_schema.rb
 
+external-db-create: ## Creates external_vbms_ext_claim table
+	bundle exec rails r db/scripts/external/create_vbms_ext_claim_table.rb
+
+external-db-remove:  ## Remove external_vbms_ext_claim table
+	bundle exec rails r db/scripts/external/remove_vbms_ext_claim_table.rb
+
 c:  ## Start rails console
 	bundle exec rails console
 
@@ -187,9 +193,11 @@ reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable fe
 
 reset-dbs: ## Resets Caseflow and ETL database schemas
 	make audit-remove
+	make external-db-remove
 	DB=etl bundle exec rake db:drop db:create db:schema:load
 	bundle exec rake db:drop db:create db:schema:load
 	make audit
+	make external-db-create
 
 seed-dbs:	## Seed all databases
 	bundle exec rake local:vacols:seed

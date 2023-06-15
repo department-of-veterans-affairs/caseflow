@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_06_02_201048) do
+ActiveRecord::Schema.define(version: 2023_06_08_192149) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -342,7 +342,7 @@ ActiveRecord::Schema.define(version: 2023_06_02_201048) do
     t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
   end
 
-  create_table "caseflow_stuck_records", force: :cascade do |t|
+  create_table "caseflow_stuck_records", comment: "This is a polymorphic table consisting of records that have repeatedly errored out of the syncing process. Currently, the only records on this table come from the PriorityEndProductSyncQueue table.", force: :cascade do |t|
     t.datetime "determined_stuck_at", null: false, comment: "The date/time at which the record in question was determined to be stuck."
     t.string "error_messages", default: [], comment: "Array of Error Message(s) containing Batch ID and specific error if a failure occurs", array: true
     t.bigint "stuck_record_id", null: false, comment: "The id / primary key of the stuck record and the type / where the record came from"
