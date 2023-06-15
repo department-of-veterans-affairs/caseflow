@@ -2,91 +2,143 @@
 
 require "helpers/sync_attributes_with_bgs"
 
-describe SyncAttributesWithBGS do
-  describe SyncAttributesWithBGS::VeteranCacheUpdater do
-    subject { SyncAttributesWithBGS::VeteranCacheUpdater }
-    context "#find_by_file_number_or_ssn" do
-      let(:veteran) { create(:veteran, last_name: "INCORRECT") }
-      let(:bgs_record) { Fakes::VeteranStore.new.fetch_and_inflate(veteran.file_number) }
+describe SyncAttributesWithBGS::VeteranCacheUpdater do
+  describe "#run_by_file_number" do
+    subject(:run_by_file_number) { described_class.new.run_by_file_number(file_number) }
+
+    let(:file_number) { "dummy-file-number" }
+
+    it "attempts to find veteran by file_number" do
+      expect(Veteran).to receive(:find_by_file_number_or_ssn).with(file_number, sync_name: true)
+      run_by_file_number
+    end
+
+    context "when veteran is not found" do
       before do
-        Fakes::BGSService.edit_veteran_record(veteran.file_number, :last_name, "CORRECT")
-        allow(veteran).to receive(:bgs_record).and_return(bgs_record)
+        allow(Veteran).to receive(:find_by).and_return(nil)
       end
 
-      it "syncs veteran info with bgs" do
-        expect(veteran.last_name).to eq "INCORRECT"
-        expect(subject).to receive(:puts).with("Veteran Name: Bob  CORRECT")
-        subject.find_by_file_number_or_ssn(veteran.file_number)
-        veteran.reload
-        expect(veteran.last_name).to eq "CORRECT"
+      it "outputs error message" do
+        expect { run_by_file_number }.to output("veteran was not found\n").to_stdout
+      end
+    end
+
+    context "when veteran is found" do
+      let(:file_number) { veteran.file_number }
+      let(:veteran) { build(:veteran) }
+
+      before do
+        allow(Veteran).to receive(:find_by).and_return(veteran)
       end
 
-      context "errors" do
-        context "find a veteran by file_number" do
-          let(:file_number) { "12345678" }
-          it "does not find a veteran" do
-            expect(veteran.last_name).to eq "INCORRECT"
-            expect(subject).to receive(:find_by_file_number_or_ssn)
-              .with(veteran.file_number).and_return("veteran not found")
-            subject.find_by_file_number_or_ssn(veteran.file_number)
-            veteran.reload
-            expect(veteran.last_name).to eq "INCORRECT"
-          end
-        end
+      it "outputs success message" do
+        expect { run_by_file_number }.to output(
+          "Veteran Name: #{veteran.first_name} #{veteran.middle_name} #{veteran.last_name}\n"
+        ).to_stdout
       end
     end
   end
 
   describe SyncAttributesWithBGS::PersonCacheUpdater do
-    subject { SyncAttributesWithBGS::PersonCacheUpdater }
-    let(:person) { create(:person, first_name: "INCORRECT", last_name: "INCORRECT", email_address: "bad@notgood.com") }
-    context "#run_by_participant_id" do
-      let(:bgs_person) { Fakes::BGSService.new.fetch_person_info(person.participant_id) }
-
-      it "syncs person info with bgs" do
-        expect(person.first_name).to eq "INCORRECT"
-        expect(person.last_name).to eq "INCORRECT"
-        expect(person.email_address).to eq "bad@notgood.com"
-        expect(subject).to receive(:puts).with("Person Name: Tom Edward Brady")
-        subject.run_by_participant_id(person.participant_id)
-        person.reload
-        expect(person.first_name).to eq "Tom"
-        expect(person.last_name).to eq "Brady"
-        expect(person.email_address).to eq "tom.brady@caseflow.gov"
-        expect(person.date_of_birth).to eq Date.new(1998, 9, 5)
-      end
-    end
-
-    context "errors" do
+    describe "#run_by_participant_id" do
+      subject(:run_by_participant_id) { described_class.new.run_by_participant_id(participant_id) }
       let(:participant_id) { "12345678" }
-      context "find a person by participant_id" do
-        it "does not find person" do
-          expect(subject).to receive(:run_by_participant_id)
-            .with(participant_id).and_return("person was not found")
-          subject.run_by_participant_id(participant_id)
+
+      it "attempts to find person by participant_id" do
+        expect(Person).to receive(:find_by).with(participant_id: participant_id)
+        run_by_participant_id
+      end
+
+      context "when person record is not found" do
+        before { allow(Person).to receive(:find_by).and_return(nil) }
+
+        it "outputs error message" do
+          expect { subject }.to output("person was not found\n").to_stdout
         end
       end
 
-      context "bgs record not found" do
+      context "when person record is found" do
+        let(:person) { instance_double("Person", first_name: "Billy", middle_name: "Bob", last_name: "Thornton") }
+
         before do
-          allow(person).to receive(:fetch_bgs_record_by_participant_id).and_return(:not_found)
+          allow(Person).to receive(:find_by).and_return(person)
         end
 
-        it "does not find a person bgs record" do
-          expect(subject).to receive(:run_by_participant_id)
-            .with(participant_id).and_return("bgs record was not found")
-          subject.run_by_participant_id(participant_id)
-        end
-      end
+        context "when BGS request raises an error" do
+          before do
+            allow(person).to receive(:found?).and_raise(StandardError)
+          end
 
-      context "person not valid" do
-        before do
-          allow(person).to receive(:save).and_return(false)
+          it "outputs error message" do
+            expect { subject }.to output(
+              "StandardError\n\nthere was bgs error. person not updated.\n"
+            ).to_stdout
+          end
         end
-        it "persons is not updated" do
-          expect(subject).to receive(:run_by_participant_id)
-            .with(participant_id).and_return("person was not updated")
-          subject.run_by_participant_id(participant_id)
+
+        context "when person bgs record is found" do
+          let(:person_bgs_record) do
+            {
+              first_name: "BGS first_name",
+              last_name: "BGS last_name",
+              non_bgs_cached_attribute: "foobar"
+            }
+          end
+
+          before do
+            allow(person).to receive(:found?).and_return(true)
+            allow(person).to receive(:bgs_record).and_return(person_bgs_record)
+          end
+
+          it "updates person record with bgs attributes" do
+            allow(person).to receive(:previous_changes).and_return(first_name: %w[Peter Mark], updated_at: [])
+
+            expect(person).to receive(:update!).with(
+              first_name: "BGS first_name",
+              last_name: "BGS last_name"
+            )
+
+            run_by_participant_id
+          end
+
+          context "when person update fails due to validation error" do
+            before do
+              allow(person).to receive(:update!).and_raise(ActiveModel::ValidationError.new(Person.new))
+            end
+
+            it "outputs error message" do
+              expect { run_by_participant_id }.to output(
+                "Validation failed: \n\nthere was an error. person not updated.\n"
+              ).to_stdout
+            end
+          end
+
+          context "when person update succeeds" do
+            before { allow(person).to receive(:update!).and_return(true) }
+
+            context "When person attributes did not change" do
+              before { allow(person).to receive(:previous_changes).and_return({}) }
+
+              it "outputs message" do
+                expect { run_by_participant_id }.to output(
+                  "person was not updated\n"
+                ).to_stdout
+              end
+            end
+
+            context "When person attributes changed" do
+              before do
+                allow(person).to receive(:previous_changes)
+                  .and_return("first_name" => %w[Peter Mark], "updated_at" => [])
+              end
+
+              it "outputs success message" do
+                expect { run_by_participant_id }.to output(
+                  "Person Name: #{person.first_name} #{person.middle_name} #{person.last_name}\n"
+                ).to_stdout
+              end
+            end
+          end
         end
       end
     end
