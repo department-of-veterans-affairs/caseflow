@@ -11,7 +11,7 @@ import { COLORS } from 'app/constants/AppConstants';
 const MstBadge = (props) => {
   const { appeal } = props;
 
-  if (!appeal.mst) {
+  if (!appeal?.mst) {
     return null;
   }
 
