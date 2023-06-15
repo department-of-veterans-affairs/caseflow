@@ -176,8 +176,6 @@ jobs:
         run: |
           ./ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate"
           ./ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate"
-          ./ci-bin/capture-log "make -f Makefile.example external-db-create"
-        # added line to create external table(s) that are needed for tests
 
       - name: make seed-dbs
         run: |
