@@ -34,6 +34,8 @@ const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
     const tableNotifications = [];
 
     for (let i = 0; i < notificationsArr.length; i++) {
+      console.dir(notifications[i])
+
       const {
         email_notification_status,
         sms_notification_status,

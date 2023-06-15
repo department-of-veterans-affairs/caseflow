@@ -11,4 +11,7 @@ class SentEmailEventSerializer
     object.sent_by.username
   end
   attribute :send_successful
+  attribute :event_type do |_object|
+    "GovDelivery Email"
+  end
 end
