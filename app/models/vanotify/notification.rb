@@ -22,6 +22,6 @@ class Notification < CaseflowRecord
   end
 
   def serialize_notification
-    serializer_class.new(self).serializable_hash[:data]
+    serializer_class.new(self).serializable_hash[:data][:attributes]
   end
 end

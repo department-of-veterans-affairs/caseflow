@@ -44,7 +44,7 @@ const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
         recipient_phone_number,
         event_type,
         event_date,
-      } = notifications[i].attributes;
+      } = notifications[i];
 
       const email_notification = {
         status: email_notification_status === 'Success' ? 'Sent' : email_notification_status,
