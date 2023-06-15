@@ -39,9 +39,9 @@ module WarRoom
     def find_supplement_claims_with_errors
       supplemental_claims_with_errors = SupplementalClaim.where("establishment_error ILIKE '%duplicateep%'")
       supplemental_claims_with_errors.select do |supplemental_claim|
+        next if supplemental_claim.veteran.blank?
 
-        sc_vet = supplemental_claim.veteran.present? ? supplemental_claim.veteran : []
-        sc_vet.end_products.select do |end_product|
+        supplemental_claim.veteran.end_products.select do |end_product|
           end_product.claim_type_code.include?("040") && %w[CAN CLR].include?(end_product.status_type_code) &&
             [Time.zone.today, 1.day.ago.to_date].include?(end_product.last_action_date)
         end.empty?
@@ -51,8 +51,9 @@ module WarRoom
     def find_hlrs_with_errors
       hlrs_with_errors = HigherLevelReview.where("establishment_error ILIKE '%duplicateep%'")
       hlrs_with_errors.select do |hlr|
-        hlr_vet =  hlr.veteran.present? ? hlr.veteran : []
-        hlr_vet.end_products.select do |end_product|
+        next if hlr.veteran.blank?
+
+        hlr.veteran.end_products.select do |end_product|
           end_product.claim_type_code.include?("030") && %w[CAN CLR].include?(end_product.status_type_code) &&
             [Time.zone.today, 1.day.ago.to_date].include?(end_product.last_action_date)
         end.empty?
@@ -110,7 +111,6 @@ module WarRoom
 
         call_decision_review_process_job(review, vet)
       end
-
       final_count = retrieve_problem_reviews.count
       @logs.push("#{Time.zone.now} DuplicateEP::Log"\
         " Resolved records: #{resolved_record_count(starting_record_count, final_count)}.")
