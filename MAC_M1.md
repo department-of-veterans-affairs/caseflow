@@ -236,10 +236,10 @@ export FREEDESKTOP_MIME_TYPES_PATH=/usr/local/homebrew/share/mime/packages/freed
 4. In caseflow, run
     * a. `make down`
         * i.  Removes appeals-db, appeals-redis, and localstack docker containers
-    * b. `docker*compose down –v`
-        * i. Removes c* aseflow_postgresdata docker volume
-    * c. `make up*m1`
-        * i. Starts doc* ker containers, volume, and network
+    * b. `docker-compose down –v`
+        * i. Removes caseflow_postgresdata docker volume
+    * c. `make up-m1`
+        * i. Starts docker containers, volume, and network
     * d. `make reset`
         * i. Resets caseflow and ETL database schemas, seeds databases, and enables feature flags
         * **If `make reset` returns database not found error:
