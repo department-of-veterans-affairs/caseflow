@@ -15,6 +15,7 @@ class EndProductEstablishment < CaseflowRecord
   has_many :end_product_code_updates
   has_many :effectuations, class_name: "BoardGrantEffectuation"
   has_many :end_product_updates
+  has_one :priority_end_product_sync_queue
   has_one :vbms_ext_claim, foreign_key: "claim_id", primary_key: "reference_id"
 
   # allow @veteran to be assigned to save upstream calls
@@ -291,6 +292,15 @@ class EndProductEstablishment < CaseflowRecord
 
   def associated_rating
     @associated_rating ||= fetch_associated_rating
+  end
+
+  # Purpose: Check if End Product Establishment is enqueued in the Priority End Product Sync Queue.
+  #
+  # Params: NONE
+  #
+  # Response: True if End Product Establishment is queued to sync.  False if not.
+  def priority_queued?
+    priority_end_product_sync_queue ? true : false
   end
 
   def sync_decision_issues!
