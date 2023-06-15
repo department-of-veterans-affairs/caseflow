@@ -16,12 +16,12 @@ describe AppellantChange do
       }
     end
 
-    context 'when appeal does not exist' do
+    context "when appeal does not exist" do
       before { allow(Appeal).to receive(:find_by).and_return(nil) }
 
       it { is_expected.to be_nil }
 
-      it 'puts an error message' do
+      it "puts an error message" do
         expect { run_appellant_change }.to output("Appeal not found for UUID\n").to_stdout
       end
     end
@@ -30,19 +30,18 @@ describe AppellantChange do
       let(:appeal) { instance_double("Appeal") }
       before { allow(Appeal).to receive(:find_by).and_return(appeal) }
 
-      context 'when claimant type is invalid' do
+      context "when claimant type is invalid" do
         let(:arguments) { valid_params.merge(claimant_type: "InvalidClaimantType") }
 
         it { is_expected.to be_nil }
       end
 
-      context 'when all parameters are valid' do
-
+      context "when all parameters are valid" do
         context "when appeal has a claimant" do
           let!(:appeal) { create(:appeal) }
           let!(:claimant) { create(:claimant, decision_review: appeal) }
 
-          it 'destroys the existing claimant' do
+          it "destroys the existing claimant" do
             expect(Claimant.find_by(id: claimant.id)).not_to be_nil
             run_appellant_change
             expect(Claimant.find_by(id: claimant.id)).to be_nil
@@ -55,14 +54,14 @@ describe AppellantChange do
             end
 
             it "does not update appeal" do
-              expect { run_appellant_change }.not_to change { appeal.attributes }
+              expect { run_appellant_change }.not_to change{ appeal.attributes }
             end
 
             it "does not create new claimant for appeal" do
-              expect { run_appellant_change }.not_to change { Claimant.count }
+              expect { run_appellant_change }.not_to change{ Claimant.count }
             end
 
-            it 'ouputs an error message' do
+            it "ouputs an error message" do
               expect { run_appellant_change }.to output(
                 "StandardError\n\n\nAn error occurred. Appeal claimant not changed.\n"
               ).to_stdout
@@ -125,7 +124,7 @@ describe AppellantChange do
               expect(appeal.claimant.reload.attributes).to include(original_claimant_attributes)
             end
 
-            it 'ouputs an error message' do
+            it "ouputs an error message" do
               expect { run_appellant_change }.to output(
                 "StandardError\n\n\nAn error occurred. Appeal claimant not changed.\n"
               ).to_stdout
