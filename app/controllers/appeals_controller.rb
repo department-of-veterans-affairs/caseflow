@@ -368,18 +368,11 @@ class AppealsController < ApplicationController
   #
   # Response: Returns an array of all retrieved notifications
   def find_notifications_by_appeals_id(appeals_id)
-    # Retrieve notifications based on appeals_id, excluding statuses of 'No participant_id' & 'No claimant'
-    @all_notifications = Notification.where(appeals_id: appeals_id)
-    @allowed_notifications = @all_notifications.where(email_notification_status: nil)
-      .or(@all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
-      .merge(@all_notifications.where(sms_notification_status: nil)
-      .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"])))
-    # If no notifications were found, return an empty array, else return serialized notifications
-    if @allowed_notifications == []
-      []
-    else
-      WorkQueue::NotificationSerializer.new(@allowed_notifications).serializable_hash[:data]
-    end
+    notifications = Notification.find_notifications_by_appeals_id(appeals_id)
+
+    return [] if notifications.empty?
+
+    WorkQueue::NotificationSerializer.new(notifications).serializable_hash[:data]
   end
 
   # Notification report pdf template only accepts the Appeal or Legacy Appeal object
