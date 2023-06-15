@@ -54,12 +54,21 @@ RSpec.feature "SwitchApps", :postgres do
   end
 
   context "User with VHA access" do
+    let(:roles) { ["Mail Intake", "Build HearSched"] }
     let!(:user) do
-      User.authenticate!(user: create(:user, roles: ["Mail Intake"]))
+      User.authenticate!(user: create(:user, roles: roles))
     end
 
     let!(:vha_business_line) do
       create(:business_line, url: "vha", name: "Veterans Health Administration")
+    end
+
+    let!(:list_order) do
+      ["Caseflow Intake",
+       "VHA Decision Review Queue",
+       "Caseflow Queue",
+       "Caseflow Search cases",
+       "Caseflow Hearings"]
     end
 
     before do
@@ -67,13 +76,17 @@ RSpec.feature "SwitchApps", :postgres do
       visit "/decision_reviews/#{vha_business_line.url}"
     end
 
-    scenario "sees the Switch product dropdown menu with the options Intake, VHA Decision Reviews Queue and Queue" do
+    scenario "sees the Switch product dropdown menu with the options
+    Intake, VHA Decision Reviews Queue, Queue and search" do
       expect(page).to have_link("Switch product", href: "#Switch product", exact: true)
 
       find("a", text: "Switch product").click
       expect(page).to have_link(vha_user_links[0][:title], href: vha_user_links[0][:link], exact: true)
       expect(page).to have_link(vha_user_links[1][:title], href: vha_user_links[1][:link], exact: true)
       expect(page).to have_link(vha_user_links[2][:title], href: vha_user_links[2][:link], exact: true)
+      expect(page).to have_link(vha_user_links[3][:title], href: vha_user_links[3][:link], exact: true)
+      dropdown_menu_text = page.find(".cf-dropdown-menu").text
+      expect(dropdown_menu_text.split("\n")).to eq(list_order)
     end
 
     scenario "can navigate to the VHA Decision Reviews Queue" do
@@ -81,20 +94,13 @@ RSpec.feature "SwitchApps", :postgres do
       find("a", text: vha_user_links[1][:title]).click
       expect(page).to have_content(vha_business_line.name)
     end
-  end
 
-  context "User without VHA access" do
-    let!(:user) do
-      User.authenticate!(user: create(:user, roles: ["Mail Intake"]))
-    end
-    let!(:vha_business_line) do
-      create(:business_line, url: "vha", name: "Veterans Health Administration")
-    end
-
-    scenario "doesn't have access to VHA Decision Review Queue" do
-      visit "/decision_reviews/#{vha_business_line.url}"
-      expect(page).to have_current_path("/unauthorized", ignore_query: true)
-      expect(page).to_not have_content("Switch product")
+    scenario "can navigate to different links" do
+      vha_user_links.each do |item|
+        find("a", text: "Switch product").click
+        find("a", text: item[:title]).click
+        expect(current_url).to have_content(item[:link])
+      end
     end
   end
 
