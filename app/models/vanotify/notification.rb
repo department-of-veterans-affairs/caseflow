@@ -16,4 +16,12 @@ class Notification < CaseflowRecord
         .or(all_notifications.where.not(sms_notification_status: IGNORED_STATUSES)))
     end
   end
+
+  def serializer_class
+    ::WorkQueue::NotificationSerializer
+  end
+
+  def serialize_notification
+    serializer_class.new(self).serializable_hash[:data]
+  end
 end

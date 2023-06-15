@@ -49,39 +49,26 @@ class AppealsController < ApplicationController
   end
 
   def fetch_notification_list
-    appeals_id = params[:appeals_id]
+    appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeals_id])
     respond_to do |format|
       format.json do
-        results = find_notifications_by_appeals_id(appeals_id)
-        render json: results
+        render json: Notification.find_notifications_by_appeals_id(appeal.external_id).map(&:serialize_notification)
       end
       format.pdf do
         request.headers["HTTP_PDF"]
-        appeal = get_appeal_object(appeals_id)
-        date = Time.zone.now.strftime("%Y-%m-%d %H.%M")
         begin
-          if !appeal.nil?
-            pdf = PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal)
-            send_data pdf,
-                      filename: "Notification Report #{appeals_id} #{date}.pdf",
-                      type: "application/pdf",
-                      disposition: :attachment
-          else
-            fail ActionController::RoutingError, "Appeal Not Found"
-          end
+          fail ActionController::RoutingError, "Appeal Not Found" unless appeal
+
+          send_data PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal),
+                    filename: notification_pdf_file_name,
+                    type: "application/pdf",
+                    disposition: :attachment
         rescue StandardError => error
-          uuid = SecureRandom.uuid
-          Rails.logger.error(error.to_s + "Error ID: " + uuid)
-          Raven.capture_exception(error, extra: { error_uuid: uuid })
-          render json: { "errors": ["message": uuid] }, status: :internal_server_error
+          render_error(error)
         end
       end
-      format.csv do
-        fail ActionController::ParameterMissing, "Bad Format"
-      end
-      format.html do
-        fail ActionController::ParameterMissing, "Bad Format"
-      end
+      format.csv { fail ActionController::ParameterMissing, "Bad Format" }
+      format.html { fail ActionController::ParameterMissing, "Bad Format" }
     end
   end
 
@@ -205,6 +192,10 @@ class AppealsController < ApplicationController
   end
 
   private
+
+  def notification_pdf_file_name(appeal)
+    "Notification Report #{appeal.external_id} #{Time.zone.now.strftime("%Y-%m-%d %H.%M")}.pdf"
+  end
 
   # :reek:DuplicateMethodCall { allow_calls: ['result.extra'] }
   # :reek:FeatureEnvy
@@ -365,31 +356,5 @@ class AppealsController < ApplicationController
       alert_type: "error",
       message: "Something went wrong"
     }, status: :unprocessable_entity
-  end
-
-  # Purpose: Fetches all notifications for an appeal
-  #
-  # Params: appeals_id (vacols_id OR uuid)
-  #
-  # Response: Returns an array of all retrieved notifications
-  def find_notifications_by_appeals_id(appeals_id)
-    notifications = Notification.find_notifications_by_appeals_id(appeals_id)
-
-    return [] if notifications.empty?
-
-    WorkQueue::NotificationSerializer.new(notifications).serializable_hash[:data]
-  end
-
-  # Notification report pdf template only accepts the Appeal or Legacy Appeal object
-  # Finds appeal object using appeals id passed through url params
-  def get_appeal_object(appeals_id)
-    type = Notification.find_by(appeals_id: appeals_id)&.appeals_type
-    if type == "LegacyAppeal"
-      LegacyAppeal.find_by(vacols_id: appeals_id)
-    elsif type == "Appeal"
-      Appeal.find_by(uuid: appeals_id)
-    elsif !type.nil?
-      nil
-    end
   end
 end
