@@ -4,7 +4,10 @@
 module Seeds
 
   class VbmsExtClaim < Base
+    ##
     # creates and seeds 325 total vbms_ext_claims
+    # The number of claims created are subject to change in order to meet testing requirements
+    ##
     def seed!
       create_vbms_ext_claims_with_no_end_product_establishment
       create_in_sync_epes_and_vbms_ext_claims
@@ -13,7 +16,11 @@ module Seeds
 
 private
 
-  # creates out_of_sync vbms_ext_claims and end_produdct_establishments
+  ##
+  # this out_of_sync method creates and seeds Vbms_Ext_Claims that have a Level_Status_Code DIFFERENT then the
+  # End_Product_Establishment sync_status in order to test the sync_job and batch_job that finds differences between
+  # VbmsExtClaim associated with the End Product Establishment
+  ##
 	def create_out_of_sync_epes_and_vbms_ext_claims
     # 25 High Level Review, End Product Establishments that have a sync_status of cleared and are out_of_sync with
     # vbms_ext_claims
@@ -138,7 +145,12 @@ private
     end
 	end
 
-  # creates in_sync vbms_ext_claims and end_produdct_establishments
+  ##
+  # this in_sync method creates and seeds Vbms_Ext_Claims that have a Level_Status_Code matching the
+  # End_Product_Establishment sync_status in order to test the sync_job and batch_job that finds differences between
+  # VbmsExtClaim associated with the End Product Establishment. Both jobs should skip these objects because
+  # Level_Status_Code matches the sync_status
+  ##
 	def create_in_sync_epes_and_vbms_ext_claims
     # 25 High Level Review, End Product Establishments that have a sync_status of canceled and are in_sync with
     # vbms_ext_claims
@@ -262,8 +274,10 @@ private
              claimant_participant_id: veteran.participant_id)
     end
 	end
-
-  # creates 124 vbms_ext_claims not associated with an end_product_establishment
+  ##
+  # this method creates VBMS_EXT_CLAIMS that have yet to be Established in CASEFLOW to mimic
+  # the VBMS API CALL. The VBMS_EXT_CLAIMS have no assocations to an End Product Establishment.
+  ##
 	def create_vbms_ext_claims_with_no_end_product_establishment
     # creates 50 none epe assocated vbms_ext_claims with LEVEL_STATUS_CODE "CLR"
     50.times do
