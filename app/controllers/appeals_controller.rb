@@ -194,7 +194,7 @@ class AppealsController < ApplicationController
   private
 
   def notification_pdf_file_name(appeal)
-    "Notification Report #{appeal.external_id} #{Time.zone.now.strftime("%Y-%m-%d %H.%M")}.pdf"
+    "Notification Report #{appeal.external_id} #{Time.zone.now.strftime('%Y-%m-%d %H.%M')}.pdf"
   end
 
   # :reek:DuplicateMethodCall { allow_calls: ['result.extra'] }

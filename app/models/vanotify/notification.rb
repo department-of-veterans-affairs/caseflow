@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class Notification < CaseflowRecord
-  class << self
-    ignored_columns = ["notification_events_id"].freeze
+  self.ignored_columns = ["notification_events_id"]
 
+  class << self
     IGNORED_STATUSES = ["No Participant Id Found", "No Claimant Found", "No External Id"].freeze
 
     # Retrieve notifications based on appeals_id
