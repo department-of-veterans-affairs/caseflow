@@ -18,6 +18,146 @@ exports[`MstBadge renders correctly 1`] = `
         "mst": true,
       }
     }
-  />
+  >
+    <Badge
+      ariaLabel="mst"
+      color="#21827E"
+      displayName="MST"
+      id="mst-undefined"
+      name="mst"
+      tooltipText="Appeal has issue(s) related to Military Sexual Trauma"
+    >
+      <div
+        className="cf-mst-badge"
+      >
+        <Tooltip
+          ariaLabel="mst"
+          id="badge-mst-undefined"
+          position="bottom"
+          text="Appeal has issue(s) related to Military Sexual Trauma"
+        >
+          <span
+            aria-describedby="badge-mst-undefined"
+            aria-label="mst"
+            data-css-hlqwxu=""
+            data-event="focus mouseenter"
+            data-event-off="mouseleave keydown"
+            data-for="badge-mst-undefined"
+            data-tip={true}
+            tabIndex={0}
+          >
+            MST
+          </span>
+          <span
+            data-css-ow37v3=""
+          >
+            <ReactTooltip
+              className="cf-tooltip"
+              clickable={false}
+              effect="solid"
+              id="badge-mst-undefined"
+              insecure={true}
+              multiline={true}
+              offset={Object {}}
+              place="bottom"
+              resizeHide={true}
+              role="tooltip"
+              wrapper="div"
+            >
+              <div
+                className="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+                data-id="tooltip"
+                id="badge-mst-undefined"
+                role="tooltip"
+              >
+                <style
+                  dangerouslySetInnerHTML={
+                    Object {
+                      "__html": "
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  ",
+                    }
+                  }
+                />
+                Appeal has issue(s) related to Military Sexual Trauma
+              </div>
+            </ReactTooltip>
+          </span>
+        </Tooltip>
+      </div>
+    </Badge>
+  </MstBadge>
 </Provider>
 `;
