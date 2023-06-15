@@ -202,8 +202,17 @@ export FREEDESKTOP_MIME_TYPES_PATH=/usr/local/homebrew/share/mime/packages/freed
 
 5. In terminal navigate to caseflow folder, run
     * a. ```RUBY_CONFIGURE_OPTS="--with-openssl-dir=/usr/local/opt/openssl@1.1" rbenv install 2.7.3```
-    * b. ```gem install pg –v '1.1.4' -- --with-pg-config=/Applications/Postgres.app/Contents/Versions/latest/bin/pg_config```
+    * b. `gem install pg:1.1.4 -- --with-pg-config=/Applications/Postgres.app/Contents/Versions/latest/bin/pg_config`
     * c. ```gem install therubyracer -- --with-v8-dir=/usr/local/homebrew/opt/v8@3.15```
+        * i. If step c. fails try running these commands first
+
+    ``` zsh
+    brew install v8@3.15
+    bundle config build.libv8 --with-system-v8
+    bundle config build.therubyracer --with-v8-dir=$(brew --prefix v8@3.15)
+    bundle install
+    ```
+
     * d. ```./scripts/dev_env_setup_step2.sh```
     * If you get  a permission error while running gem install or bundle install, do not run using sudo.
     Set the permissions back to you for every directory under /.rbenv
