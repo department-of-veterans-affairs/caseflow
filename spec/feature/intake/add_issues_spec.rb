@@ -920,5 +920,32 @@ feature "Intake Add Issues Page", :all_dbs do
 
       expect(page).to have_content("Special issues: MST, PACT")
     end
+
+    # scenario "Adding MST designation to issue coming from VBMS contention during intake" do
+    #   claim_id = rating.issues[2].reference_id
+    #   epe = create(
+    #     :end_product_establishment,
+    #     reference_id: claim_id,
+    #     veteran_file_number: veteran.file_number
+    #     )
+    #   mst_contention = Generators::Contention.build_mst_and_pact_contention(claim_id: claim_id)
+    #   start_appeal(veteran, legacy_opt_in_approved: true)
+    #   visit "/intake"
+    #   click_intake_continue
+    #   click_intake_add_issue
+    #   # find_all("label", text: "Looks like a VACOLS issue", minimum: 1).first.click
+    #   #click MST checkbox
+    #   binding.pry
+    #   find_by_id("MST", visible: false).check(allow_label_click: true)
+    #   safe_click ".add-issue"
+    #   click_on "Establish appeal"
+    #   #navigate to case details page
+    #   appeal_id = Appeal.find_by(veteran_file_number: veteran.file_number).uuid
+    #   visit "/queue/appeals/#{appeal_id}"
+    #   #to prevent timeout
+    #   visit current_path
+    #   click_on "View task instructions"
+    #   binding.pry
+    # end
   end
 end
