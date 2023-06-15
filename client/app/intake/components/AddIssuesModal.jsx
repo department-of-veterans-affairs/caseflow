@@ -66,6 +66,7 @@ class AddIssuesModal extends React.Component {
       mstJustification,
       pactJustification
     } = this.state;
+
     const currentIssue = issueByIndex(this.props.intakeData.contestableIssues, selectedContestableIssueIndex);
 
     if (selectedContestableIssueIndex && !currentIssue.index) {
@@ -75,14 +76,16 @@ class AddIssuesModal extends React.Component {
     // Ensure we have a value for decisionDate
     currentIssue.decisionDate = currentIssue.decisionDate || currentIssue.approxDecisionDate;
 
-    if (mstChecked && mstJustification === '' && this.props.featureToggles.justificationReason) {
-      if (!currentIssue.mstAvailable) {
-        return;
+    if (this.props.featureToggles.justificationReason) {
+      if (mstChecked && mstJustification === '') {
+        if (!currentIssue.mstAvailable) {
+          return;
+        }
       }
-    }
-    if (pactChecked && pactJustification === '' && this.props.featureToggles.justificationReason) {
-      if (!currentIssue.pactAvailable) {
-        return;
+      if (pactChecked && pactJustification === '') {
+        if (!currentIssue.pactAvailable) {
+          return;
+        }
       }
     }
 
@@ -156,7 +159,7 @@ class AddIssuesModal extends React.Component {
         // Do nothing if variable not specified in list
         break;
       }
-      
+
       return featureFlagToUse && formType === 'appeal';
     };
 
