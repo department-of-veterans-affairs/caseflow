@@ -20,4 +20,3 @@ conn.execute(
   $appeal_states_audit$
   language plpgsql;"
 )
-conn.close

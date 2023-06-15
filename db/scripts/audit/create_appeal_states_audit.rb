@@ -25,4 +25,3 @@ conn.execute("create table caseflow_audit.appeal_states_audit (
               vso_ihp_complete boolean not null,
               vso_ihp_pending boolean not null
             );")
-conn.close
