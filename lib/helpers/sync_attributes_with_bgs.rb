@@ -37,6 +37,8 @@ module SyncAttributesWithBGS
       puts "Person Name: #{person.first_name} #{person.middle_name} #{person.last_name}"
     end
 
+    private
+
     def bgs_record?(person)
       begin
         if person.found?
