@@ -2,13 +2,13 @@
 
 require "./lib/helpers/war_room.rb"
 require "./lib/helpers/duplicate_veteran_checker.rb"
-# require "./file_number_not_found_remediation_job.rb"
-
 class FileNumberDuplicateCheckRemediationJob < CaseflowJob
   class DuplicateVeteranFoundOutCodeError < StandardError; end
   class VeteranSSNAndFileNumberNoMatchError < StandardError; end
 
   queue_with_priority :low_priority
+  application_attr :intake
+
   ERROR_TEXT = "FILENUMBER does not exist"
 
   attr_reader :veteran
@@ -19,28 +19,26 @@ class FileNumberDuplicateCheckRemediationJob < CaseflowJob
   end
 
   def perform
+    RequestStore[:current_user] = User.system_user
+
     check_if_duplicate_veteran
   end
 
   def check_if_duplicate_veteran
-    # binding.pry
     bulk_decision_docs_with_error.map do |decision_document|
-      # binding.pry
       vet = decision_document.veteran
       appeal = decision_document.appeal
-      # binding.pry
       fail VeteranSSNAndFileNumberNoMatchError if vet.ssn != vet.file_number
 
       fail DuplicateVeteranFoundOutCodeError if duplicate_vet?(vet)
-      # binding.pry
+
       FileNumberNotFoundRemediationJob.new(appeal).perform
-# binding.pry
       decision_document.update(error: nil)
 
-      rescue FileNumberNotFoundRemediationJob::FileNumberMachesVetFileNumberError => error
-      rescue FileNumberNotFoundRemediationJob::FileNumberIsNilError => error
-      rescue FileNumberNotFoundRemediationJob::DuplicateVeteranFoundError => error
-      rescue FileNumberNotFoundRemediationJob::NoAssociatedRecordsFoundForFileNumberError => error
+    rescue FileNumberNotFoundRemediationJob::FileNumberMachesVetFileNumberError => error
+    rescue FileNumberNotFoundRemediationJob::FileNumberIsNilError => error
+    rescue FileNumberNotFoundRemediationJob::DuplicateVeteranFoundError => error
+    rescue FileNumberNotFoundRemediationJob::NoAssociatedRecordsFoundForFileNumberError => error
     end
   end
 

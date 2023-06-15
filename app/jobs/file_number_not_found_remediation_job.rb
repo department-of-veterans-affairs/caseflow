@@ -64,7 +64,6 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
   end
 
   def verify_file_number(file_number)
-    binding.pry
     if file_number == veteran.file_number
       fail FileNumberMachesVetFileNumberError
     elsif file_number.nil?
