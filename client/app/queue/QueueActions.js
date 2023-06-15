@@ -562,7 +562,8 @@ export const reassignTasksToUser = ({
         tasks: {
           assigned_to_id: assigneeId,
           type: 'JudgeCaseAssignmentToAttorney',
-          appeal_id: oldTask.appealId
+          appeal_id: oldTask.appealId,
+          instructions
         }
       }
     };
@@ -592,6 +593,37 @@ export const reassignTasksToUser = ({
 }));
 
 export const legacyReassignToJudge = ({
+  tasks, assigneeId, instructions
+}, successMessage) => (dispatch) => Promise.all(tasks.map((oldTask) => {
+  const params = {
+    data: {
+      tasks: {
+        assigned_to_id: assigneeId,
+        appeal_id: oldTask.appealId,
+        instructions,
+        reassign: {
+          assigned_to_id: assigneeId,
+          assigned_to_type: 'User',
+          instructions
+        }
+      }
+    }
+  };
+
+  return ApiUtil.post('/legacy_tasks/assign_to_judge', params).
+    then((resp) => resp.body).
+    then((resp) => {
+      const allTasks = prepareAllTasksForStore([resp.task.data]);
+
+      dispatch(onReceiveTasks(_.pick(allTasks, ['tasks', 'amaTasks'])));
+
+      dispatch(showSuccessMessage(successMessage));
+
+      dispatch(setOvertime(oldTask.externalAppealId, false));
+    });
+}));
+
+export const legacyReassignToAttorney = ({
   tasks, assigneeId
 }, successMessage) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   const params = {
@@ -603,7 +635,7 @@ export const legacyReassignToJudge = ({
     }
   };
 
-  return ApiUtil.post('/legacy_tasks/assign_to_judge', params).
+  return ApiUtil.post('/legacy_tasks/assign_to_attorney', params).
     then((resp) => resp.body).
     then((resp) => {
       const allTasks = prepareAllTasksForStore([resp.task.data]);

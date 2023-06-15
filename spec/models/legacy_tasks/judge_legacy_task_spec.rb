@@ -82,7 +82,7 @@ describe JudgeLegacyTask, :postgres do
           expect(subject).to match_array [
             Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
             Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
-            Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
+            Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h
           ]
         end
       end
@@ -92,8 +92,19 @@ describe JudgeLegacyTask, :postgres do
 
         it "returns only case movement actions" do
           expect(subject).to match_array [
-            Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
-            Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
+            Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h,
+            Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+          ]
+        end
+      end
+
+      context "when the user is on the special case movement team" do
+        let(:user) { create(:user).tap { |scm_user| SpecialCaseMovementTeam.singleton.add_user(scm_user) } }
+
+        it "returns only case movement actions" do
+          expect(subject).to match_array [
+            Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h,
+            Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
           ]
         end
       end
@@ -107,7 +118,9 @@ describe JudgeLegacyTask, :postgres do
         it "returns all judge actions" do
           expect(subject).to match_array [
             Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-            Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.to_h
+            Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.to_h,
+            Constants.TASK_ACTIONS.JUDGE_LEGACY_RETURN_TO_ATTORNEY.to_h,
+            Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h
           ]
         end
       end
