@@ -7,7 +7,8 @@ import {
   notificationDateColumn,
   notificationTypeColumn,
   recipientInformationColumn,
-  statusColumn } from './NotificationTableColumns';
+  statusColumn
+} from './NotificationTableColumns';
 import NOTIFICATION_CONFIG from '../../../constants/NOTIFICATION_CONFIG';
 import ApiUtil from '../../util/ApiUtil';
 import NotificationModal from './NotificationModal';
@@ -53,7 +54,7 @@ const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
       notification_type: 'GovDelivery Email',
       // eslint-disable-next-line no-negated-condition
       recipient_information: notification.email_address === '' ? null : notification.email_address,
-      event_type: notification.email_type,
+      event_type: notification.email_type_label,
       event_date: notification.sent_at
     };
   };
@@ -89,7 +90,7 @@ const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
         tableNotifications.push(parseGovDeliveryEmailNotification(notifications[i]));
         break;
       default:
-        // "The notification_type didn't match anything I was expecting to see."
+      // "The notification_type didn't match anything I was expecting to see."
       }
     }
 
@@ -165,11 +166,11 @@ const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
         }}
       />
       {modalState &&
-      <NotificationModal
-        eventType={notificationState.event_type}
-        notificationContent={notificationState.content}
-        closeNotificationModal={closeModal}
-      />}
+        <NotificationModal
+          eventType={notificationState.event_type}
+          notificationContent={notificationState.content}
+          closeNotificationModal={closeModal}
+        />}
     </>
   );
 };
