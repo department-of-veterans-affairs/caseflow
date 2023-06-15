@@ -8,20 +8,20 @@ import { debounce } from 'lodash';
 
 import TextField from '../../components/TextField';
 
+// THIS MODAL IS MISSING FUNCTIONALITY THAT CLOSES MODAL WHEN CLICKING OUTSIDE OF MODAL
 const EfolderUrlField = (props) => {
   // We can't debounce/compare time of last time of method invocation if the ref changes after
   // a re-render. Thus the need for useCallback.
 
   const efolderLinkRegexMatch = (url) => {
     // could set a second capture group for UUID to ship off to wherever is needed for API call
-    return url.match(/https:\/\/vefs-claimevidence.*\.bip\.va\.gov\/file\/\S{8}-\S{4}-\S{4}-\S{4}-\S{12}/) === url.split('?')[0];
+    return url.match(/https:\/\/vefs-claimevidence.*\.bip\.va\.gov\/file\/\S{8}-\S{4}-\S{4}-\S{4}-\S{12}/)?.[0] === url.split('?')[0];
   };
 
   const testDebounce = useCallback(
-    debounce(() => {
+    debounce((value) => {
       console.log("Debounced!");
       if (efolderLinkRegexMatch(value)) {
-        // Currently not working ^ need to replace value with the actual value from the input field
         console.log('Valid regex match');
       } else {
         console.log('Invalid efolder regex match');
@@ -30,8 +30,14 @@ const EfolderUrlField = (props) => {
     }, 500)
   );
 
-  const testOnBlur = () => console.log("Blurred!");
-  // implement the regex check in this function as well ^
+  const testOnBlur = (value) => {
+    console.log("Blurred!");
+    if (efolderLinkRegexMatch(value)) {
+      console.log('Valid regex match');
+    } else {
+      console.log('Invalid efolder regex match');
+    }
+  };
 
   return <>
     {/* The UUID in the URL will be the document series ID and not the version ID */}
