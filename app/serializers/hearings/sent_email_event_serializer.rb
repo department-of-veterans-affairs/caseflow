@@ -10,4 +10,5 @@ class SentEmailEventSerializer
   attribute :sent_by do |object|
     object.sent_by.username
   end
+  attribute :send_successful
 end

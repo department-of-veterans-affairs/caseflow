@@ -52,7 +52,7 @@ class AppealsController < ApplicationController
     appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeals_id])
     respond_to do |format|
       format.json do
-        render json: Notification.find_notifications_by_appeals_id(appeal.external_id).map(&:serialize_notification)
+        render json: hacky_notifications_plus_email_events(appeal)
       end
       format.pdf do
         request.headers["HTTP_PDF"]
@@ -70,6 +70,11 @@ class AppealsController < ApplicationController
       format.csv { fail ActionController::ParameterMissing, "Bad Format" }
       format.html { fail ActionController::ParameterMissing, "Bad Format" }
     end
+  end
+
+  def hacky_notifications_plus_email_events(appeal)
+    (Notification.find_notifications_by_appeals_id(appeal.external_id).map(&:serialize_notification) +
+      appeal.hearings.map(&:serialized_email_events)).flatten
   end
 
   def document_count
