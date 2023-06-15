@@ -3,8 +3,8 @@
 require "helpers/appellant_change"
 
 describe AppellantChange do
-  describe "#run_appellant_change" do
-    subject(:run_appellant_change) { described_class.new.run_appellant_change(arguments) }
+  describe ".run_appellant_change" do
+    subject(:run_appellant_change) { described_class.run_appellant_change(arguments) }
 
     let(:arguments) { valid_params }
     let(:valid_params) do
