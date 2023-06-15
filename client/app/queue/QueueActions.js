@@ -479,15 +479,15 @@ export const initialCamoAssignTasksToVhaProgramOffice = ({
 export const initialAssignTasksToUser = ({
   tasks, assigneeId, previousAssigneeId, instructions
 }) => (dispatch) => {
-  const amaTasks = tasks.filter((oldTask) => oldTask.appealType === 'Appeal');
-  const legacyTasks = tasks.filter((oldTask) => oldTask.appealType === 'LegacyAppeal');
+  // const amaTasks = tasks.filter((oldTask) => oldTask.isLegacy === 'false');
+  // const legacyTasks = tasks.filter((oldTask) => oldTask.appealType === 'LegacyAppeal');
 
   const amaParams = {
     url: '/judge_assign_tasks',
-    taskIds: amaTasks.map((oldTask) => oldTask.uniqueId),
+    taskIds: tasks.map((oldTask) => oldTask.uniqueId),
     requestParams: {
       data: {
-        tasks: amaTasks.map((oldTask) => ({
+        tasks: tasks.map((oldTask) => ({
           external_id: oldTask.externalAppealId,
           parent_id: oldTask.taskId,
           assigned_to_id: assigneeId,
@@ -497,24 +497,24 @@ export const initialAssignTasksToUser = ({
     }
   };
 
-  const legacyParams = legacyTasks.map((oldTask) => ({
-    url: '/legacy_tasks',
-    taskIds: [oldTask.uniqueId],
-    requestParams: {
-      data: {
-        tasks: {
-          assigned_to_id: assigneeId,
-          type: 'JudgeCaseAssignmentToAttorney',
-          appeal_id: oldTask.appealId,
-          judge_id: previousAssigneeId
-        }
-      }
-    }
-  }));
+  // const legacyParams = legacyTasks.map((oldTask) => ({
+  //   url: '/legacy_tasks',
+  //   taskIds: [oldTask.uniqueId],
+  //   requestParams: {
+  //     data: {
+  //       tasks: {
+  //         assigned_to_id: assigneeId,
+  //         type: 'JudgeCaseAssignmentToAttorney',
+  //         appeal_id: oldTask.appealId,
+  //         judge_id: previousAssigneeId
+  //       }
+  //     }
+  //   }
+  // }));
 
-  const paramsArray = amaParams.requestParams.data.tasks.length ? legacyParams.concat(amaParams) : legacyParams;
+  // const paramsArray = amaParams.requestParams.data.tasks.length ? legacyParams.concat(amaParams) : legacyParams;
 
-  return Promise.all(paramsArray.map((params) => {
+  return Promise.all([amaParams].map((params) => {
     const { requestParams, url, taskIds } = params;
 
     return ApiUtil.post(url, requestParams).
@@ -542,34 +542,20 @@ export const reassignTasksToUser = ({
 }) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   let params, url;
 
-  if (oldTask.appealType === 'Appeal') {
-    url = `/tasks/${oldTask.taskId}`;
-    params = {
-      data: {
-        task: {
-          reassign: {
-            assigned_to_id: assigneeId,
-            assigned_to_type: 'User',
-            instructions
-          }
-        }
-      }
-    };
-  } else {
-    url = `/legacy_tasks/${oldTask.taskId}`;
-    params = {
-      data: {
-        tasks: {
+  url = `/tasks/${oldTask.taskId}`;
+  params = {
+    data: {
+      task: {
+        reassign: {
           assigned_to_id: assigneeId,
-          type: 'JudgeCaseAssignmentToAttorney',
-          appeal_id: oldTask.appealId,
+          assigned_to_type: 'User',
           instructions
         }
       }
-    };
-  }
+    }
+  };
 
-  return ApiUtil.patch(url, params).
+  return ApiUtil.post(url, params).
     then((resp) => resp.body).
     then((resp) => {
       dispatchOldTasks(dispatch, oldTask, resp);
@@ -589,6 +575,7 @@ export const reassignTasksToUser = ({
       }));
 
       dispatch(setOvertime(oldTask.externalAppealId, false));
+
     });
 }));
 

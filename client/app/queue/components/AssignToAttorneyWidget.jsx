@@ -42,9 +42,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     super(props);
 
     this.state = {
-      instructions: (this.props.isModal ? this.props.selectedTasks[0].instructions : null) || '',
-      assignedTo: null,
-      modalDisableButton: true
+      instructions: (this.props.isModal ? this.props.selectedTasks[0].instructions : null) || ''
     };
   }
 
@@ -88,16 +86,6 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
     return true;
   }
-
-  setModalOnChangeValue = (stateValue, value) => {
-    this.setState({ [stateValue]: value }, function () {
-      if (this.state.assignedTo !== null && this.state.instructions.length > 0) {
-        this.setState({ modalDisableButton: false });
-      } else {
-        this.setState({ modalDisableButton: true });
-      }
-    });
-  };
 
   validateForm = () => this.validAssignee() && this.validTasks() && this.validInstructions();
 
@@ -248,8 +236,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         errorMessage={isModal && highlightFormItems && !selectedOption ? 'Choose one' : null}
         options={options}
         placeholder={COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER}
-        onChange={(option) => option && this.props.setSelectedAssignee({ assigneeId: option.value }) &&
-         this.setModalOnChangeValue('assignedTo', option ? option.value : null)}
+        onChange={(option) => option && this.props.setSelectedAssignee({ assigneeId: option.value })}
         value={selectedOption}
         styling={css({ width: '30rem' })} />
       {selectedAssignee === OTHER &&
@@ -263,7 +250,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
             errorMessage={isModal && highlightFormItems && !selectedOptionOther ? 'Choose one' : null}
             options={optionsOther}
             placeholder={placeholderOther}
-            onChange={(option) => this.setModalOnChangeValue('assignedTo', option ? option.value : null)}
+            onChange={(option) => option && this.props.setSelectedAssigneeSecondary({ assigneeId: option.value })}
             value={selectedOptionOther}
             styling={css({ width: '30rem' })} />
         </React.Fragment>}
@@ -273,7 +260,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
           name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
           errorMessage={highlightFormItems && instructions.length === 0 ? COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
           id="taskInstructions"
-          onChange={(value) => this.setModalOnChangeValue('instructions', value)}
+          onChange={(value) => this.setState({ instructions: value })}
           value={this.state.instructions} />
       </React.Fragment> }
       {!isModal && <Button
@@ -288,7 +275,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     </React.Fragment>;
 
     return isModal ? <QueueFlowModal title={COPY.ASSIGN_TASK_TITLE}
-      submit={this.submit} validateForm={this.validateForm} onCancel={onCancel} submitDisabled={this.state.modalDisableButton} button={COPY.MODAL_ASSIGN_BUTTON} submitButtonClassNames={['usa-button-hover', 'usa-button-warning']}>
+      submit={this.submit} validateForm={this.validateForm} onCancel={onCancel}>
       {Widget}
     </QueueFlowModal> : Widget;
   }
@@ -385,4 +372,3 @@ export const AssignToAttorneyWidgetModal = (props) => {
     />
   );
 };
-
