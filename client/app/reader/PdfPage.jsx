@@ -227,7 +227,7 @@ export class PdfPage extends React.PureComponent {
             data: {
               documentId: this.props.documentId,
               documentType: this.props.documentType,
-              file: PropTypes.string
+              file: this.props.file
             },
           };
 
