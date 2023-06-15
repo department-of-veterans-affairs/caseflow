@@ -11,12 +11,14 @@ class Fakes::PacmanService < ExternalApi::PacmanService
     end
 
     def get_distribution_request(distribution_id)
-      if distribution_id != "123456"
+      unless VbmsDistribution.exists?(id: distribution_id)
         return distribution_not_found_response
-      end
+      else
 
-      fake_distribution_response(distribution_id)
+        fake_distribution_response(distribution_id)
+      end
     end
+
 
     private
 
@@ -59,7 +61,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
         201,
         {},
         OpenStruct.new(
-          "id": "12345",
+          "id": "24eb6a66-3833-4de6-bea4-4b614e55d5ac",
           "fileNumber": file_number,
           "name": name,
           "documentReferences": document_references,
@@ -119,7 +121,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
             "countryName": "UNITED STATES",
             "countryCode": "us"
           }],
-          "status": "NEW",
+          "status": "",
           "sentToCbcmDate": ""
       )
     end

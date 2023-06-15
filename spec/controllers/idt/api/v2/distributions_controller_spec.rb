@@ -1,3 +1,4 @@
+
 # frozen_string_literal: true
 
 require "rails_helper"
@@ -27,6 +28,7 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
 
     context "when distribution_id is blank or invalid" do
       let(:distribution_id) { "" }
+
       it "renders an error with status 400" do
         error_message = "Distribution Does Not Exist Or Id is blank"
         expect(controller).to receive(:render_error).with(400, error_message, distribution_id)
@@ -38,14 +40,19 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
       let(:distribution) { double("Distribution", code: 404) }
 
       it "renders an error based on the response code" do
-        error_message = "Distribution Does Not Exist At This Time"
-        expect(controller).to receive(:render_error).with(404, error_message, distribution_id)
+        error_response = {
+          "id": distribution_id.to_s,
+          "status": "PENDING_ESTABLISHMENT"
+        }
+        expect(controller).to receive(:render_error).with(404, error_response, distribution_id)
         controller.get_distribution
       end
     end
 
+
     context "when PacManService fails with a 500 error" do
       let(:distribution) { double("Distribution", code: 500) }
+
       it "renders an error with status 500" do
         error_message = "Internal Server Error"
         expect(controller).to receive(:render_error).with(500, error_message, distribution_id)
@@ -53,13 +60,52 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
       end
     end
 
-    context "convert distribution" do
-    let(:distribution_id) { 123456 }
-    let(:distribution) do
-      HTTPI::Response.new(
-        200,
-        {},
-        {
+    context "when converting the distribution" do
+      let(:distribution_id) { 123_456 }
+      let(:distribution) do
+        HTTPI::Response.new(
+          200,
+          {},
+          {
+            "id": distribution_id,
+            "recipient": {
+              "type": "system",
+              "id": "a050a21e-23f6-4743-a1ff-aa1e24412eff",
+              "name": "VBMS-C"
+            },
+            "description": "Staging Mailing Distribution",
+            "communicationPackageId": "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
+            "destinations": [{
+              "type": "physicalAddress",
+              "id": "28440040-51a5-4d2a-81a2-28730827be14",
+              "status": "",
+              "cbcmSendAttemptDate": "2022-06-06T16:35:27.996",
+              "addressLine1": "POSTMASTER GENERAL",
+              "addressLine2": "UNITED STATES POSTAL SERVICE",
+              "addressLine3": "475 LENFANT PLZ SW RM 10022",
+              "addressLine4": "SUITE 123",
+              "addressLine5": "APO AE 09001-5275",
+              "addressLine6": "",
+              "treatLine2AsAddressee": true,
+              "treatLine3AsAddressee": true,
+              "city": "WASHINGTON DC",
+              "state": "DC",
+              "postalCode": "12345",
+              "countryName": "UNITED STATES",
+              "countryCode": "us"
+            }],
+            "status": "NEW",
+            "sentToCbcmDate": ""
+          }
+        )
+      end
+
+      before do
+        allow(PacManService).to receive(:get_distribution_request).with(distribution_id).and_return(distribution)
+      end
+
+      it "returns the expected converted response" do
+        expected_response = {
           "id": distribution_id,
           "recipient": {
             "type": "system",
@@ -67,79 +113,39 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
             "name": "VBMS-C"
           },
           "description": "Staging Mailing Distribution",
-          "communicationPackageId": "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
+          "communication_package_id": "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
           "destinations": [{
             "type": "physicalAddress",
             "id": "28440040-51a5-4d2a-81a2-28730827be14",
             "status": "",
-            "cbcmSendAttemptDate": "2022-06-06T16:35:27.996",
-            "addressLine1": "POSTMASTER GENERAL",
-            "addressLine2": "UNITED STATES POSTAL SERVICE",
-            "addressLine3": "475 LENFANT PLZ SW RM 10022",
-            "addressLine4": "SUITE 123",
-            "addressLine5": "APO AE 09001-5275",
-            "addressLine6": "",
-            "treatLine2AsAddressee": true,
-            "treatLine3AsAddressee": true,
+            "cbcm_send_attempt_date": "2022-06-06T16:35:27.996",
+            "address_line_1": "POSTMASTER GENERAL",
+            "address_line_2": "UNITED STATES POSTAL SERVICE",
+            "address_line_3": "475 LENFANT PLZ SW RM 10022",
+            "address_line_4": "SUITE 123",
+            "address_line_5": "APO AE 09001-5275",
+            "address_line_6": "",
+            "treat_line_2_as_addressee": true,
+            "treat_line_3_as_addressee": true,
             "city": "WASHINGTON DC",
             "state": "DC",
-            "postalCode": "12345",
-            "countryName": "UNITED STATES",
-            "countryCode": "us"
+            "postal_code": "12345",
+            "country_name": "UNITED STATES",
+            "country_code": "us"
           }],
           "status": "NEW",
-          "sentToCbcmDate": ""
+          "sent_to_cbcm_date": ""
         }
-      )
-    end
-
-    before do
-      allow(PacManService).to receive(:get_distribution_request).with(distribution_id).and_return(distribution)
-    end
-
-    it "returns the expected converted response" do
-      expected_response = {
-        "id": distribution_id,
-        "recipient": {
-          "type": "system",
-          "id": "a050a21e-23f6-4743-a1ff-aa1e24412eff",
-          "name": "VBMS-C"
-        },
-        "description": "Staging Mailing Distribution",
-        "communication_package_id": "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
-        "destinations": [{
-          "type": "physicalAddress",
-          "id": "28440040-51a5-4d2a-81a2-28730827be14",
-          "status": "",
-          "cbcm_send_attempt_date": "2022-06-06T16:35:27.996",
-          "address_line_1": "POSTMASTER GENERAL",
-          "address_line_2": "UNITED STATES POSTAL SERVICE",
-          "address_line_3": "475 LENFANT PLZ SW RM 10022",
-          "address_line_4": "SUITE 123",
-          "address_line_5": "APO AE 09001-5275",
-          "address_line_6": "",
-          "treat_line_2_as_addressee": true,
-          "treat_line_3_as_addressee": true,
-          "city": "WASHINGTON DC",
-          "state": "DC",
-          "postal_code": "12345",
-          "country_name": "UNITED STATES",
-          "country_code": "us"
-        }],
-        "status": "NEW",
-        "sent_to_cbcm_date": ""
-      }
-      get :get_distribution, params: { distribution_id: distribution_id }
-      expect(response).to have_http_status(200)
-      expect(JSON.parse(response.body.to_json)).to eq(expected_response.to_json)
+        get :get_distribution, params: { distribution_id: distribution_id }
+        expect(response).to have_http_status(200)
+        expect(JSON.parse(response.body.to_json)).to eq(expected_response.to_json)
+      end
     end
   end
 
-  end
-
-  describe "#render_error" do
+  describe "render_error" do
     let(:status) { 400 }
-    let(:message) { "Participant With UUID Not Valid" }
+    let(:message) { "Distribution Does Not Exist Or Id is blank" }
     let(:distribution_id) { "123456" }
     let(:error_uuid) { SecureRandom.uuid }
 
@@ -150,16 +156,13 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
       expect(Raven).to receive(:capture_exception).with(error_message, extra: { error_uuid: error_uuid })
       expect(controller).to receive(:render).with(
         json: {
-          "Errors": [
-            {
-              "Message": error_message
-            }
-          ],
-          "Error UUID": error_uuid
-        }
+          "message": error_message + " #{error_uuid}"
+        },
+        status: status
       )
 
       controller.send(:render_error, status, message, distribution_id)
     end
   end
 end
+

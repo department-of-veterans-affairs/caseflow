@@ -18,19 +18,16 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
       # Retrieves the distribution package from the PacMan API
       distribution = PacManService.get_distribution_request(distribution_id)
       response_code = distribution.code
-
       if response_code != 200
         fail StandardError
       end
       # Handles errors when making any requests both from Pacman and the DB
     rescue StandardError
       case response_code
-      when 400
-        render_error(400, "Participant With UUID Not Valid", distribution_id)
       when 404
-        render_error(404, "Distribution Does Not Exist At This Time", distribution_id)
+        render_error(response_code, {"id": "#{distribution_id}", "status": "PENDING_ESTABLISHMENT"}, distribution_id)
       else
-        render_error(500, "Internal Server Error", distribution_id)
+        render_error(response_code, "Internal Server Error", distribution_id)
       end
       return
     end
@@ -40,13 +37,11 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
 
   def format_response(response)
     new_response = response.raw_body.to_json
-
     parsed_response = JSON.parse(new_response)
     # Convert keys from camelCase to snake_case
-    formatted_response = parsed_response.deep_transform_keys do |key|
+    parsed_response.deep_transform_keys do |key|
       key.to_s.underscore.gsub(/e(\d)/, 'e_\1')
     end
-    formatted_response
   end
 
   private
@@ -62,6 +57,6 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
     error_message = "[IDT] Http Status Code: #{status}, #{message}, (Distribution ID: #{distribution_id})"
     Rails.logger.error(error_message.to_s + "Error ID: " + error_uuid)
     Raven.capture_exception(error_message, extra: { error_uuid: error_uuid })
-    render json: { "Errors": ["Message": error_message], "Error UUID": error_uuid }
+    render json: { message: error_message + " #{error_uuid}" }, status: status
   end
 end
