@@ -27,6 +27,7 @@ export const TimeSlotCard = ({ hearing, hearingDay, regionalOffice }) => {
           showType
           showDetails
           itemSpacing={5}
+          hearing={hearing}
           label={
             <span className="time-slot-card-label">
               <HearingAppellantName

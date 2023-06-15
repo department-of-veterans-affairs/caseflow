@@ -10,7 +10,7 @@ describe VhaCamoAssignedTasksTab, :postgres do
 
     context "when only the assignee argument is passed when instantiating an VhaCamoAssignedTasksTab" do
       it "returns the correct number of columns" do
-        expect(subject.length).to eq(7)
+        expect(subject.length).to eq(8)
       end
     end
   end

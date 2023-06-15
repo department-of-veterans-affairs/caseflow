@@ -25,6 +25,7 @@ class Appeal < DecisionReview
   has_many :hearings
   has_many :email_recipients, class_name: "HearingEmailRecipient"
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
+  has_many :vbms_uploaded_documents, as: :appeal
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents, as: :appeal
@@ -109,6 +110,17 @@ class Appeal < DecisionReview
   }
 
   scope :established, -> { where.not(established_at: nil) }
+
+  scope :non_deceased_appellants, lambda {
+    joins("INNER JOIN veterans ON veterans.file_number = appeals.veteran_file_number")
+      .where("veterans.date_of_death is null OR (veterans.date_of_death is not null
+        AND veteran_is_not_claimant = true)")
+  }
+
+  scope :has_substitute_appellant, lambda {
+    joins("INNER JOIN veterans ON veterans.file_number = appeals.veteran_file_number")
+      .where("veterans.date_of_death is not null AND veteran_is_not_claimant = true")
+  }
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
@@ -252,6 +264,19 @@ class Appeal < DecisionReview
     request_issues.active.any? do |request_issue|
       category_substrings.any? { |substring| self.request_issues.active.include?(request_issue) && request_issue.nonrating_issue_category&.include?(substring) }
     end
+  end
+
+  def mst?
+    return false unless FeatureToggle.enabled?(:mst_identification)
+
+    request_issues.active.any?(&:mst_status) ||
+      (special_issue_list && special_issue_list.created_at < "2023-06-01".to_date && special_issue_list.military_sexual_trauma)
+  end
+
+  def pact?
+    return false unless FeatureToggle.enabled?(:pact_identification)
+
+    request_issues.active.any?(&:pact_status)
   end
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
@@ -917,6 +942,10 @@ class Appeal < DecisionReview
     end
     return false if relevant_tasks.any?(&:open?)
     return true if relevant_tasks.all?(&:closed?)
+  end
+
+  def is_legacy?
+    false
   end
 
   private

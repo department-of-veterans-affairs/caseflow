@@ -34,6 +34,14 @@ class BusinessLine < Organization
     QueryBuilder.new(query_type: :completed, parent: self).task_type_count
   end
 
+  def in_progress_tasks_issue_type_counts
+    QueryBuilder.new(query_type: :in_progress, parent: self).issue_type_count
+  end
+
+  def completed_tasks_issue_type_counts
+    QueryBuilder.new(query_type: :completed, parent: self).issue_type_count
+  end
+
   class QueryBuilder
     attr_accessor :query_type, :parent, :query_params
 
@@ -87,6 +95,61 @@ class BusinessLine < Organization
         .count
     end
 
+    # rubocop:disable Metrics/MethodLength
+    def issue_type_count
+      query_type_predicate = if query_type == :in_progress
+                               "AND tasks.status IN ('assigned', 'in_progress', 'on_hold')
+                               AND request_issues.closed_at IS NULL
+                               AND request_issues.ineligible_reason IS NULL"
+                             else
+                               "AND tasks.status = 'completed'
+                                AND #{Task.arel_table[:closed_at].between(7.days.ago..Time.zone.now).to_sql}"
+                             end
+
+      nonrating_issue_count = ActiveRecord::Base.connection.execute <<-SQL
+        WITH task_review_issues AS (
+          SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
+          FROM tasks
+          INNER JOIN higher_level_reviews ON tasks.appeal_id = higher_level_reviews.id
+        AND tasks.appeal_type = 'HigherLevelReview'
+          INNER JOIN request_issues ON higher_level_reviews.id = request_issues.decision_review_id
+        AND request_issues.decision_review_type = 'HigherLevelReview'
+          WHERE request_issues.nonrating_issue_category IS NOT NULL
+        AND tasks.assigned_to_id = #{business_line_id}
+        AND tasks.assigned_to_type = 'Organization'
+        #{query_type_predicate}
+        UNION ALL
+        SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
+          FROM tasks
+          INNER JOIN supplemental_claims ON tasks.appeal_id = supplemental_claims.id
+        AND tasks.appeal_type = 'SupplementalClaim'
+          INNER JOIN request_issues ON supplemental_claims.id = request_issues.decision_review_id
+        AND request_issues.decision_review_type = 'SupplementalClaim'
+        WHERE tasks.assigned_to_id = #{business_line_id}
+        AND tasks.assigned_to_type = 'Organization'
+        #{query_type_predicate}
+        UNION ALL
+        SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
+          FROM tasks
+          INNER JOIN appeals ON tasks.appeal_id = appeals.id
+        AND tasks.appeal_type = 'Appeal'
+          INNER JOIN request_issues ON appeals.id = request_issues.decision_review_id
+        AND request_issues.decision_review_type = 'Appeal'
+        WHERE tasks.assigned_to_id = #{business_line_id}
+        AND tasks.assigned_to_type = 'Organization'
+        #{query_type_predicate}
+        )
+        SELECT issue_category, COUNT(issue_category) AS nonrating_issue_count
+        FROM task_review_issues
+        GROUP BY issue_category;
+      SQL
+
+      nonrating_issue_count.reduce({}) do |acc, hash|
+        acc.merge(hash["issue_category"] => hash["nonrating_issue_count"])
+      end
+    end
+    # rubocop:enable Metrics/MethodLength
+
     private
 
     def business_line_id
@@ -98,12 +161,35 @@ class BusinessLine < Organization
     end
 
     def union_select_statements
-      [Task.arel_table[Arel.star], issue_count, claimant_name_alias, participant_id_alias, veteran_ssn_alias]
+      [
+        Task.arel_table[Arel.star],
+        issue_count,
+        claimant_name_alias,
+        participant_id_alias,
+        veteran_ssn_alias,
+        issue_types,
+        issue_types_lower
+      ]
     end
 
     def issue_count
       # Issue count alias for sorting and serialization
       "COUNT(request_issues.id) AS issue_count"
+    end
+
+    # Alias for the issue_categories on request issues for sorting and serialization
+    # This is Postgres specific since it uses STRING_AGG vs GROUP_CONCAT
+    def issue_types
+      "STRING_AGG(DISTINCT request_issues.nonrating_issue_category, ','"\
+      " ORDER BY request_issues.nonrating_issue_category)"\
+      " AS issue_types"
+    end
+
+    # Bandaid alias for case insensitive ordering
+    def issue_types_lower
+      "STRING_AGG(DISTINCT LOWER(request_issues.nonrating_issue_category), ','"\
+      " ORDER BY LOWER(request_issues.nonrating_issue_category))"\
+      " AS issue_types_lower"
     end
 
     # Alias for claimant_name for sorting and serialization
@@ -181,7 +267,7 @@ class BusinessLine < Organization
       return "" if query_params[:search_query].blank?
 
       clause = +"veterans.participant_id LIKE ? "\
-               "OR #{claimant_name} ILIKE ? "
+               "OR #{claimant_name} ILIKE ? "\
 
       if FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: RequestStore[:current_user])
         clause << search_ssn_and_file_number_clause
@@ -214,6 +300,13 @@ class BusinessLine < Organization
       decision_reviews_on_request_issues(ama_appeal: :request_issues)
     end
 
+    # Specific case for BoardEffectuationGrantTasks to include them in the result set
+    # if the :board_grant_effectuation_task FeatureToggle is enabled for the current user.
+    def board_grant_effectuation_tasks
+      decision_reviews_on_request_issues(board_grant_effectuation_task_appeals_requests_join,
+                                         board_grant_effectuation_task_constraints)
+    end
+
     def ama_appeals_query
       if FeatureToggle.enabled?(:board_grant_effectuation_task, user: RequestStore[:current_user])
         return Arel::Nodes::UnionAll.new(
@@ -225,25 +318,7 @@ class BusinessLine < Organization
       appeals_on_request_issues
     end
 
-    # Specific case for BoardEffectuationGrantTasks to include them in the result set
-    # if the :board_grant_effectuation_task FeatureToggle is enabled for the current user.
-    def board_grant_effectuation_tasks
-      Task.select(union_select_statements)
-        .send(TASKS_QUERY_TYPE[query_type])
-        .joins(board_grant_effectuation_task_appeals_requests_join)
-        .joins(veterans_join)
-        .joins(claimants_join)
-        .joins(people_join)
-        .joins(unrecognized_appellants_join)
-        .joins(party_details_join)
-        .joins(bgs_attorneys_join)
-        .where(board_grant_effectuation_task_constraints)
-        .where(search_all_clause, *search_values)
-        .group(group_by_columns)
-        .arel
-    end
-
-    def decision_reviews_on_request_issues(join_constraint)
+    def decision_reviews_on_request_issues(join_constraint, where_constraints = query_constraints)
       Task.select(union_select_statements)
         .send(TASKS_QUERY_TYPE[query_type])
         .joins(join_constraint)
@@ -253,8 +328,9 @@ class BusinessLine < Organization
         .joins(unrecognized_appellants_join)
         .joins(party_details_join)
         .joins(bgs_attorneys_join)
-        .where(query_constaints)
+        .where(where_constraints)
         .where(search_all_clause, *search_values)
+        .where(issue_type_filter_predicate(query_params[:filters]))
         .group(group_by_columns)
         .arel
     end
@@ -271,7 +347,7 @@ class BusinessLine < Organization
       Arel::Nodes::As.new(union_query, Task.arel_table)
     end
 
-    def query_constaints
+    def query_constraints
       {
         in_progress: {
           # Don't retrieve any tasks with closed issues or issues with ineligible reasons for in progress
@@ -339,6 +415,60 @@ class BusinessLine < Organization
 
       parsed_filters.find do |filter|
         filter["col"].include?("decisionReviewType")
+      end
+    end
+
+    def issue_type_filter_predicate(filters)
+      return "" unless filters
+
+      issue_type_filter = locate_issue_type_filter(filters)
+
+      return "" unless issue_type_filter
+
+      # ex: "val"=>["Caregiver | Other|Beneficiary Travel"]
+      tasks_to_include = issue_type_filter["val"].first.split(/(?<!\s)\|(?!\s)/)
+
+      build_issue_type_filter_predicates(tasks_to_include) || ""
+    end
+
+    def build_issue_type_filter_predicates(tasks_to_include)
+      first_task_name, *remaining_task_names = tasks_to_include
+
+      filter = RequestIssue.arel_table[:nonrating_issue_category].eq(first_task_name)
+
+      remaining_task_names.each do |task_name|
+        filter = filter.or(RequestIssue.arel_table[:nonrating_issue_category].eq(task_name))
+      end
+
+      filtered_ids = decision_review_requests_union_subquery(filter)
+
+      ["tasks.id IN (?)", filtered_ids]
+    end
+
+    def decision_review_requests_union_subquery(filter)
+      base_query = Task.select("tasks.id").send(TASKS_QUERY_TYPE[query_type])
+      union_query = Arel::Nodes::UnionAll.new(
+        Arel::Nodes::UnionAll.new(
+          base_query
+            .joins(higher_level_review: :request_issues).where(query_constraints).where(filter).arel,
+          base_query
+            .joins(supplemental_claim: :request_issues).where(query_constraints).where(filter).arel
+        ),
+        base_query.joins(ama_appeal: :request_issues).where(query_constraints).where(filter).arel
+      )
+
+      # Grab all the ids and use it in the where clause
+      Task.from(Arel::Nodes::As.new(union_query, Task.arel_table)).pluck(:id)
+    end
+
+    def locate_issue_type_filter(filters)
+      # Example filter:
+      # [{"col"=>["issueTypesColumn"], "val"=>["Apportionment|CHAMPVA"]},
+      # {"col"=>["decisionReviewType"], "val"=>["HigherLevelReview"]}]
+      parsed_filters = parse_filters(filters)
+
+      parsed_filters.find do |filter|
+        filter["col"].include?("issueTypesColumn")
       end
     end
   end
