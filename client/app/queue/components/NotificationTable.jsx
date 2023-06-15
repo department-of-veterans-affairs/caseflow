@@ -22,6 +22,42 @@ const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
     setNotificationState(state);
   };
 
+  const parseSmsNotification = (notification) => {
+    return {
+      status: notification.sms_notification_status === 'Success' ? 'Sent' : notification.sms_notification_status,
+      content: notification.sms_notification_content,
+      notification_type: 'Text',
+      // eslint-disable-next-line no-negated-condition
+      recipient_information: notification.recipient_phone_number === '' ? null : notification.recipient_phone_number,
+      event_type: notification.event_type,
+      event_date: notification.event_date
+    };
+  };
+
+  const parseEmailNotification = (notification) => {
+    return {
+      status: notification.email_notification_status === 'Success' ? 'Sent' : notification.email_notification_status,
+      content: notification.notification_content,
+      notification_type: 'Email',
+      // eslint-disable-next-line no-negated-condition
+      recipient_information: notification.recipient_email === '' ? null : notification.recipient_email,
+      event_type: notification.event_type,
+      event_date: notification.event_date
+    };
+  };
+
+  const parseGovDeliveryEmailNotification = (notification) => {
+    return {
+      status: notification.send_successful ? 'Success' : 'Maybe success',
+      content: 'No content to show yet',
+      notification_type: 'GovDelivery Email',
+      // eslint-disable-next-line no-negated-condition
+      recipient_information: notification.email_address === '' ? null : notification.email_address,
+      event_type: notification.email_type,
+      event_date: notification.sent_at
+    };
+  };
+
   // Purpose: This function generates one or two entries for each record depending on notification type
   // Params: notifications - The notification list received from get request call
   // Return: The generated table entries
@@ -34,46 +70,26 @@ const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
     const tableNotifications = [];
 
     for (let i = 0; i < notificationsArr.length; i++) {
-      console.dir(notifications[i])
+      const { notification_type } = notifications[i];
 
-      const {
-        email_notification_status,
-        sms_notification_status,
-        notification_content,
-        sms_notification_content,
-        notification_type,
-        recipient_email,
-        recipient_phone_number,
-        event_type,
-        event_date,
-      } = notifications[i];
-
-      const email_notification = {
-        status: email_notification_status === 'Success' ? 'Sent' : email_notification_status,
-        content: notification_content,
-        notification_type: 'Email',
-        // eslint-disable-next-line no-negated-condition
-        recipient_information: recipient_email === '' ? null : recipient_email,
-        event_type,
-        event_date
-      };
-
-      const sms_notification = {
-        status: sms_notification_status === 'Success' ? 'Sent' : sms_notification_status,
-        content: sms_notification_content,
-        notification_type: 'Text',
-        // eslint-disable-next-line no-negated-condition
-        recipient_information: recipient_phone_number === '' ? null : recipient_phone_number,
-        event_type,
-        event_date
-      };
-
-      if (notification_type === 'Email and SMS') {
-        tableNotifications.push(email_notification, sms_notification);
-      } else if (notification_type === 'Email') {
-        tableNotifications.push(email_notification);
-      } else if (notification_type === 'SMS') {
-        tableNotifications.push(sms_notification);
+      switch (notification_type) {
+      case 'Email and SMS':
+        tableNotifications.push(
+          parseEmailNotification(notifications[i]),
+          parseSmsNotification(notifications[i])
+        );
+        break;
+      case 'Email':
+        tableNotifications.push(parseEmailNotification(notifications[i]));
+        break;
+      case 'SMS':
+        tableNotifications.push(parseSmsNotification(notifications[i]));
+        break;
+      case 'GovDelivery Email':
+        tableNotifications.push(parseGovDeliveryEmailNotification(notifications[i]));
+        break;
+      default:
+        // "The notification_type didn't match anything I was expecting to see."
       }
     }
 
