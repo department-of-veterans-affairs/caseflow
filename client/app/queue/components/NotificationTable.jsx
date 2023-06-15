@@ -23,7 +23,7 @@ const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
   };
 
   // Purpose: This function generates one or two entries for each record depending on notification type
-  // Params: notifications - The notification list recieved from get request call
+  // Params: notifications - The notification list received from get request call
   // Return: The generated table entries
   const generateTableEntries = (notifications) => {
     let notificationsArr = notifications;
