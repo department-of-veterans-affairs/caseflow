@@ -15,10 +15,7 @@ class EndProductEstablishment < CaseflowRecord
   has_many :end_product_code_updates
   has_many :effectuations, class_name: "BoardGrantEffectuation"
   has_many :end_product_updates
-<<<<<<< HEAD
   has_one :priority_end_product_sync_queue
-=======
->>>>>>> 50a2bda5d7 (Jonathan/APPEALS-21352 (#18675))
   has_one :vbms_ext_claim, foreign_key: "claim_id", primary_key: "reference_id"
 
   # allow @veteran to be assigned to save upstream calls
