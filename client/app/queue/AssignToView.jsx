@@ -162,11 +162,14 @@ class AssignToView extends React.Component {
         assignee = opt.label;
       }
     });
+    const splitAssignee = assignee.split(' ');
+
+    if (splitAssignee.length >= 3) {
+      assignee = `${splitAssignee[0] } ${ splitAssignee[2]}`;
+    }
 
     return assignee;
   };
-
-
 
   reassignTask = () => {
     const task = this.props.task;
@@ -432,7 +435,8 @@ AssignToView.propTypes = {
     externalAppealId: PropTypes.string,
     type: PropTypes.string,
     appealType: PropTypes.string,
-    assignedBy: PropTypes.string
+    assignedBy: PropTypes.string,
+    assigneeName: PropTypes.string,
   }),
   setOvertime: PropTypes.func,
   resetSuccessMessages: PropTypes.func
