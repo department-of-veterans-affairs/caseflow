@@ -451,7 +451,7 @@ class ExternalApi::BGSService
     end
   end
 
-  def find_contention_by_participant_id(participant_id)
+  def find_contentions_by_participant_id(participant_id)
     DBService.release_db_connections
     MetricsService.record("BGS: find contentions for veteran by participant_id #{participant_id}",
                           service: :bgs,
