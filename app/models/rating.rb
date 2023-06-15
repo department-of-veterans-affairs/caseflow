@@ -32,6 +32,10 @@ class Rating
       fail Caseflow::Error::MustImplementInSubclass
     end
 
+    def fetch_contentions_by_participant_id(participant_id)
+      BGSService.new.find_contentions_by_participant_id(participant_id)
+    end
+
     def sorted_ratings_from_bgs_response(response:, start_date:)
       unsorted = ratings_from_bgs_response(response)
       unpromulgated = unsorted.select { |rating| rating.promulgation_date.nil? }
@@ -48,28 +52,6 @@ class Rating
 
     def from_bgs_hash(_data)
       fail Caseflow::Error::MustImplementInSubclass
-    end
-
-    def mst_from_contentions_for_rating?
-      self.get_contentions_with_claim_ids.each do |contention|
-        if self.mst_contention_status?(contention)
-          return true
-        else
-          next
-        end
-      end
-      false
-    end
-
-    def pact_from_contentions_for_rating?
-      self.get_contentions_with_claim_ids.each do |contention|
-        if self.pact_contention_status?(contention)
-          return true
-        else
-          next
-        end
-      end
-      false
     end
   end
 
@@ -137,44 +119,5 @@ class Rating
     @map_of_dis_sn_to_most_recent_disability_hash ||= RatingProfileDisabilities.new(
       Array.wrap(rating_profile[:disabilities] || rating_profile.dig(:disability_list, :disability))
     ).most_recent
-  end
-
-  def get_associated_claim_ids
-    associated_claims_data.any? { |ac| ac.pluck(:clm_id) }
-  end
-
-  def get_contentions_with_claim_ids
-    contetions_for_rating = []
-    get_associated_claim_ids.each do |claim_id|
-      # call BGS service with BGS service
-      contetions_for_rating << BGS.new.find_contentions_by_claim_id(claim_id)
-    end
-    contentions_for_rating.flatten
-  end
-
-  def mst_contention_status?(bgs_contention)
-    return false if bgs_contention.nil?
-
-    if bgs_contention.special_issues.is_a?(Hash)
-      return bgs_contention.special_issues[:spis_tc] == 'MST' if bgs_contention&.special_issues
-    elsif bgs_contention.special_issues.is_a?(Array)
-      bgs_contention.special_issues.each do |issue|
-        return true if issue[:spis_tc] == 'MST'
-      end
-    end
-    false
-  end
-
-  def pact_contention_status?(bgs_contention)
-    return false if bgs_contention.nil?
-
-    if bgs_contention.special_issues.is_a?(Hash)
-      return ['PACT', 'PACTDICRE'].include?(bgs_contention.special_issues[:spis_tc]) if bgs_contention&.special_issues
-    elsif bgs_contention.special_issues.is_a?(Array)
-      bgs_contention.special_issues.each do |issue|
-        return true if ['PACT', 'PACTDICRE'].include?(issue[:spis_tc])
-      end
-    end
-    false
   end
 end
