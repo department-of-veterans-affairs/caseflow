@@ -55,35 +55,35 @@ const rootStyles = css({
  * - @assignedTasks {array[object]} array of task objects to appear in the assigned tab
  **/
 
-class QueueTableBuilder extends React.PureComponent {
-  paginationOptions = () => querystring.parse(window.location.search.slice(1));
+const QueueTableBuilder = (props) => {
+  const paginationOptions = () => querystring.parse(window.location.search.slice(1));
 
-  calculateActiveTabIndex = (config) => {
+  const calculateActiveTabIndex = (config) => {
     const tabNames = config.tabs.map((tab) => {
       return tab.name;
     });
 
-    const activeTab = this.paginationOptions().tab || config.active_tab;
+    const activeTab = paginationOptions().tab || config.active_tab;
     const index = _.indexOf(tabNames, activeTab);
 
     return index === -1 ? 0 : index;
   };
 
-  queueConfig = () => {
-    const { config } = this.props;
+  const queueConfig = () => {
+    const { config } = props;
 
-    config.active_tab_index = this.calculateActiveTabIndex(config);
+    config.active_tab_index = calculateActiveTabIndex(config);
 
     return config;
   };
 
-  filterValuesForColumn = (column) =>
+  const filterValuesForColumn = (column) =>
     column && column.filterable && column.filter_options;
 
-  createColumnObject = (column, config, tasks) => {
+  const createColumnObject = (column, config, tasks) => {
 
-    const { requireDasRecord } = this.props;
-    const filterOptions = this.filterValuesForColumn(column);
+    const { requireDasRecord } = props;
+    const filterOptions = filterValuesForColumn(column);
     const functionForColumn = {
       [QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name]: typeColumn(
         tasks,
@@ -160,21 +160,21 @@ class QueueTableBuilder extends React.PureComponent {
     return functionForColumn[column.name];
   };
 
-  columnsFromConfig = (config, tabConfig, tasks) =>
+  const columnsFromConfig = (config, tabConfig, tasks) =>
     (tabConfig.columns || []).map((column) =>
-      this.createColumnObject(column, config, tasks)
+      createColumnObject(column, config, tasks)
     );
 
-  taskTableTabFactory = (tabConfig, config) => {
-    const paginationOptions = this.paginationOptions();
+  const taskTableTabFactory = (tabConfig, config) => {
+    // const paginationOptions = this.paginationOptions();
     const tasks = tasksWithAppealsFromRawTasks(tabConfig.tasks);
     let totalTaskCount = tabConfig.total_task_count;
     let noCasesMessage;
 
-    const { isVhaOrg } = this.props;
+    const { isVhaOrg } = props;
 
     if (tabConfig.contains_legacy_tasks) {
-      tasks.unshift(...this.props.assignedTasks);
+      tasks.unshift(...props.assignedTasks);
       totalTaskCount = tasks.length;
 
       noCasesMessage = totalTaskCount === 0 && (
@@ -197,6 +197,9 @@ class QueueTableBuilder extends React.PureComponent {
       Object.assign(defaultSort, tabConfig.defaultSort);
     }
 
+    console.log('in QueueTableBuilder -> taskTableTabFactory. I should see this 3 times for camo');
+    console.log(paginationOptions);
+
     return {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
@@ -204,12 +207,12 @@ class QueueTableBuilder extends React.PureComponent {
           <p className="cf-margin-top-0">
             {noCasesMessage || tabConfig.description}
           </p>
-          {this.props.userCanBulkAssign && tabConfig.allow_bulk_assign && (
+          {props.userCanBulkAssign && tabConfig.allow_bulk_assign && (
             <BulkAssignButton />
           )}
           <QueueTable
             key={tabConfig.name}
-            columns={this.columnsFromConfig(config, tabConfig, tasks)}
+            columns={columnsFromConfig(config, tabConfig, tasks)}
             rowObjects={tasks}
             getKeyForRow={(_rowNumber, task) => task.uniqueId}
             casesPerPage={config.tasks_per_page}
@@ -232,27 +235,31 @@ class QueueTableBuilder extends React.PureComponent {
     };
   };
 
-  tabsFromConfig = (config) =>
+  const tabsFromConfig = (config) =>
     (config.tabs || []).map((tabConfig) =>
-      this.taskTableTabFactory(tabConfig, config)
+      taskTableTabFactory(tabConfig, config)
     );
 
-  render = () => {
-    const config = this.queueConfig();
+  const tabWindowChange = (tabIndex) => {
+    console.log('in my new tab change function');
+    console.log(tabIndex);
 
-    return (
-      <div className={rootStyles}>
-        <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
-        <QueueOrganizationDropdown organizations={this.props.organizations} />
-        <TabWindow
-          name="tasks-tabwindow"
-          tabs={this.tabsFromConfig(config)}
-          defaultPage={config.active_tab_index}
-        />
-      </div>
-    );
+    return false;
   };
-}
+
+  const config = queueConfig();
+
+  return <div className={rootStyles}>
+    <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
+    <QueueOrganizationDropdown organizations={props.organizations} />
+    <TabWindow
+      name="tasks-tabwindow"
+      tabs={tabsFromConfig(config)}
+      defaultPage={config.active_tab_index}
+      onChange={tabWindowChange}
+    />
+  </div>;
+};
 
 const mapStateToProps = (state) => {
   return {

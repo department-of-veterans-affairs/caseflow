@@ -113,6 +113,37 @@ class QueueColumn
     end
   end
 
+  # Helper for issue type options
+  def all_possible_issue_type_options(tasks)
+    assigned_to = tasks.first.assigned_to
+    # Can add more orgs to this if needed
+    if assigned_to.is_a?(VhaCamo || VhaRegionalOffice || VhaProgramOffice)
+      Constants.ISSUE_CATEGORIES.vha.reject { |category| category.match?(/caregiver/i) }
+    elsif assigned_to.is_a?(VhaCaregiverSupport)
+      Constants.ISSUE_CATEGORIES.vha.select { |category| category.match?(/caregiver/i) }
+    end
+  end
+
+  # Another issue type helper
+  def add_empty_issue_types_to_filter_list(tasks, totals)
+    # Get the extra issue types from the ISSUE_CATEGORIES json
+    extra_issue_types = all_possible_issue_type_options(tasks)
+    # If there are extra issues merge them in to the totals hash. e.g. Other => 0
+    if extra_issue_types
+      extra_issue_types.each do |key|
+        count = totals[key] || 0
+        merged[key] = count
+      end
+      extra_issue_types.each_with_object({}) do |key, merged|
+        count = totals[key] || 0
+        merged[key] = count
+      end
+    else
+      # If there are no extra issue types then just return the normal count
+      totals
+    end
+  end
+
   def issue_type_options(tasks)
     count_hash = tasks.with_cached_appeals.group(:issue_types).count
     totals = Hash.new(0)
@@ -127,7 +158,9 @@ class QueueColumn
       end
     end
 
-    totals.each_pair.map do |option, count|
+    extra_issue_types = add_empty_issue_types_to_filter_list(tasks, totals)
+
+    extra_issue_types.each_pair.map do |option, count|
       label = self.class.format_option_label(option, count)
       self.class.filter_option_hash(option, label)
     end
