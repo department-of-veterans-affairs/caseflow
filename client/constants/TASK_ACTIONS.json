@@ -37,6 +37,11 @@
     "value": "modal/assign_to_attorney",
     "func": "assign_to_attorney_data"
   },
+  "ASSIGN_TO_ATTORNEY_LEGACY": {
+    "label": "Assign to attorney",
+    "value": "modal/assign_to_attorney_legacy",
+    "func": "assign_to_attorney_legacy_data"
+  },
   "ASSIGN_TO_HEARING_ADMIN_MEMBER": {
     "label": "Assign to person",
     "value": "modal/assign_to_hearing_admin_member",
@@ -171,10 +176,6 @@
     "label": "Ready for Dispatch",
     "value": "dispatch_decision/dispositions"
   },
-  "JUDGE_AMA_CHECKOUT_SP_ISSUES": {
-    "label": "Ready for Dispatch",
-    "value": "dispatch_decision/special_issues"
-  },
   "JUDGE_CHECKOUT_PULAC_CERULLO_REMINDER": {
     "label": "Ready for Dispatch",
     "value": "modal/check_cavc"
@@ -184,6 +185,11 @@
     "func": "return_to_lit_support_data"
   },
   "JUDGE_RETURN_TO_ATTORNEY": {
+    "label": "Return to attorney",
+    "value": "modal/return_to_attorney",
+    "func": "return_to_attorney_data"
+  },
+  "JUDGE_LEGACY_RETURN_TO_ATTORNEY": {
     "label": "Return to attorney",
     "value": "modal/return_to_attorney",
     "func": "return_to_attorney_data"
@@ -240,10 +246,20 @@
     "value": "modal/distribute_to_judge",
     "func": "special_case_movement_data"
   },
+  "SPECIAL_CASE_MOVEMENT_LEGACY": {
+    "label": "Case Movement: Advance to judge",
+    "value": "modal/distribute_to_judge_legacy",
+    "func": "special_case_movement_legacy_data"
+  },
   "BLOCKED_SPECIAL_CASE_MOVEMENT": {
     "label": "Case Movement: Cancel blocking tasks and advance to judge",
     "value": "distribute_to_judge",
     "func": "blocked_special_case_movement_data"
+  },
+  "BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY": {
+    "label": "Case Movement: Cancel blocking tasks and advance to judge",
+    "value": "distribute_to_judge_legacy",
+    "func": "blocked_special_case_movement_data_legacy"
   },
   "TOGGLE_TIMED_HOLD": {
     "func": "toggle_timed_hold",
@@ -252,6 +268,11 @@
   "REASSIGN_TO_JUDGE": {
     "label": "Re-assign to a judge",
     "value": "modal/reassign_to_judge",
+    "func": "reassign_to_judge_data"
+  },
+  "REASSIGN_TO_LEGACY_JUDGE": {
+    "label": "Re-assign to a judge",
+    "value": "modal/reassign_to_judge_legacy",
     "func": "reassign_to_judge_data"
   },
   "REASSIGN_TO_PERSON": {

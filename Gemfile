@@ -12,14 +12,14 @@ gem "acts_as_tree"
 gem "amoeba"
 # BGS
 
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "7d7c67f7bad5e5aa03e257f0d8e57a4aa1a6cbbf"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", branch: "update-bgs-contention-service"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "browser"
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "6377b46c2639248574673adc6a708d2568c6958c"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "43654a058d5a1d3f83f9bfdb832a19b4a9adea8b"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "98b1f9f8aa368189a59af74d91cb0aa4c55006af"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
 gem "countries"
 gem "ddtrace"

@@ -91,6 +91,10 @@ class LegacyTasksController < ApplicationController
     }
   end
 
+  def assign_to_attorney
+    assign_to_judge
+  end
+
   def assign_to_judge
     # If the user being assigned to is a judge, do not create a DECASS record, just
     # update the location to the assigned judge.
@@ -98,6 +102,9 @@ class LegacyTasksController < ApplicationController
 
     # Remove overtime status of an appeal when reassigning to a judge
     appeal.overtime = false if appeal.overtime?
+
+    task = appeal.tasks.find_by_status("assigned") || appeal.tasks.find_by_status("in_progress")
+    task.update_from_params(update_params, current_user) if task.present?
 
     render json: {
       task: json_task(AttorneyLegacyTask.from_vacols(
@@ -114,6 +121,7 @@ class LegacyTasksController < ApplicationController
     end
 
     task = JudgeCaseAssignmentToAttorney.update(legacy_task_params.merge(task_id: params[:id]))
+    task_instruction
 
     return invalid_record_error(task) unless task.valid?
 
@@ -137,6 +145,13 @@ class LegacyTasksController < ApplicationController
 
   def validate_user_role
     return invalid_role_error unless ROLES.include?(user_role)
+  end
+
+  def task_instruction
+    if params[:tasks][:instructions].present?
+      assigned_task = appeal.tasks.find_by_status("assigned") || appeal.tasks.find_by_status("in_progress")
+      assigned_task&.update(instructions: [params[:tasks][:instructions]])
+    end
   end
 
   def user
@@ -163,6 +178,12 @@ class LegacyTasksController < ApplicationController
     return task_params.merge(judge: User.find_by(id: params[:tasks][:judge_id])) if params[:tasks][:judge_id]
 
     task_params
+  end
+
+  def update_params
+    params.require("tasks").permit(
+      reassign: [:assigned_to_id, :assigned_to_type, :instructions]
+    )
   end
 
   def json_task(task)

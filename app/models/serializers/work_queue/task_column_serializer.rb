@@ -86,6 +86,18 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
+  attribute :issue_types do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name]
+
+    if serialize_attribute?(params, columns)
+      if object.appeal.is_a?(LegacyAppeal)
+        object.appeal.issue_categories
+      else
+        object.appeal.request_issues.map(&:nonrating_issue_category)
+      end.join(",")
+    end
+  end
+
   attribute :aod do |object, params|
     columns = [Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name]
 
@@ -250,6 +262,22 @@ class WorkQueue::TaskColumnSerializer
 
     if serialize_attribute?(params, columns)
       object.appeal.try(:contested_claim?)
+    end
+  end
+
+  attribute :mst do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
+
+    if serialize_attribute?(params, columns)
+      object.appeal.try(:mst?)
+    end
+  end
+
+  attribute :pact do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
+
+    if serialize_attribute?(params, columns)
+      object.appeal.try(:pact?)
     end
   end
 

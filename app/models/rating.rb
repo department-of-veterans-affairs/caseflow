@@ -32,6 +32,10 @@ class Rating
       fail Caseflow::Error::MustImplementInSubclass
     end
 
+    def fetch_contentions_by_participant_id(participant_id)
+      BGSService.new.find_contentions_by_participant_id(participant_id)
+    end
+
     def sorted_ratings_from_bgs_response(response:, start_date:)
       unsorted = ratings_from_bgs_response(response)
       unpromulgated = unsorted.select { |rating| rating.promulgation_date.nil? }
@@ -65,12 +69,13 @@ class Rating
     issues.map do |issue|
       most_recent_disability_hash_for_issue = map_of_dis_sn_to_most_recent_disability_hash[issue[:dis_sn]]
       most_recent_evaluation_for_issue = most_recent_disability_hash_for_issue&.most_recent_evaluation
+      special_issues = most_recent_disability_hash_for_issue&.special_issues
 
       if most_recent_evaluation_for_issue
         issue[:dgnstc_tc] = most_recent_evaluation_for_issue[:dgnstc_tc]
         issue[:prcnt_no] = most_recent_evaluation_for_issue[:prcnt_no]
       end
-
+      issue[:special_issues] = special_issues if special_issues
       RatingIssue.from_bgs_hash(self, issue)
     end
   end

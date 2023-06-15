@@ -178,6 +178,14 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       }
     end
 
+    def assign_to_attorney_legacy_data(task, user)
+      {
+        selected: nil,
+        options: user.can_act_on_behalf_of_legacy_judges? ? users_to_options(Attorney.list_all) : nil,
+        type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name
+      }
+    end
+
     def judge_qr_return_to_attorney_data(task, _user = nil)
       attorney = task.appeal.assigned_attorney
       {
@@ -369,12 +377,11 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_button_text: COPY::PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON
       }
 
-      params[:modal_body] =
-        if task.type == "PostSendInitialNotificationLetterHoldingTask"
-          COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
-        else
-          COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
-        end
+      params[:modal_body] = if task.type == "PostSendInitialNotificationLetterHoldingTask"
+                              COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
+                            else
+                              COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
+                            end
 
       if defined? task.completion_contact
         params[:contact] = task.completion_contact
@@ -435,7 +442,11 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     end
 
     def return_to_attorney_data(task, _user = nil)
-      assignee = task.children.select { |child| child.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
+      assignee = if task.appeal_type == "LegacyAppeal"
+                   task.assigned_to
+                 else
+                   task.children.select { |child| child.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
+                 end
 
       judge_team = JudgeTeam.for_judge(task.assigned_to)
 
@@ -536,7 +547,27 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       }
     end
 
+    def special_case_movement_legacy_data(task, _user = nil)
+      {
+        selected: task.appeal.assigned_judge,
+        options: users_to_options(Judge.list_all),
+        type: SpecialCaseMovementTask.name,
+        modal_title: COPY::SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
+        modal_body: COPY::SPECIAL_CASE_MOVEMENT_MODAL_DETAIL,
+        modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER,
+        button: "COPY::MODAL_RETURN_BUTTON"
+      }
+    end
+
     def blocked_special_case_movement_data(task, _user = nil)
+      {
+        options: users_to_options(Judge.list_all),
+        type: BlockedSpecialCaseMovementTask.name,
+        blocking_tasks: task.visible_blocking_tasks.map(&:serialize_for_cancellation)
+      }
+    end
+
+    def blocked_special_case_movement_data_legacy(task, _user = nil)
       {
         options: users_to_options(Judge.list_all),
         type: BlockedSpecialCaseMovementTask.name,
@@ -877,7 +908,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     def select_ama_review_decision_action(task)
       return Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.appeal.vacate?
 
-      Constants.TASK_ACTIONS.REVIEW_AMA_DECISION_SP_ISSUES.to_h
+      Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h
     end
 
     def select_withdraw_hearing_copy(appeal)
