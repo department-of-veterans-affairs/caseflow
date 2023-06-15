@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_17_164013) do
+ActiveRecord::Schema.define(version: 2023_06_08_192149) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -220,6 +220,19 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
+  create_table "batch_processes", primary_key: "batch_id", id: :uuid, comment: "The unique id of the created batch", default: nil, comment: "A generalized table for batching and processing records within caseflow", force: :cascade do |t|
+    t.string "batch_type", null: false, comment: "Indicates what type of record is being batched"
+    t.datetime "ended_at", comment: "The date/time that the batch finsished processing"
+    t.integer "records_attempted", default: 0, comment: "The number of records in the batch attempting to be processed"
+    t.integer "records_completed", default: 0, comment: "The number of records in the batch that completed processing successfully"
+    t.integer "records_failed", default: 0, comment: "The number of records in the batch that failed processing"
+    t.datetime "started_at", comment: "The date/time that the batch began processing"
+    t.string "state", default: "PRE_PROCESSING", null: false, comment: "The state that the batch is currently in. PRE_PROCESSING, PROCESSING, PROCESSED"
+    t.index ["batch_type"], name: "index_batch_processes_on_batch_type"
+    t.index ["records_failed"], name: "index_batch_processes_on_records_failed"
+    t.index ["state"], name: "index_batch_processes_on_state"
+  end
+
   create_table "bgs_attorneys", comment: "Cache of unique BGS attorney data — used for adding claimants to cases pulled from POA data", force: :cascade do |t|
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.datetime "last_synced_at", comment: "The last time BGS was checked"
@@ -327,6 +340,14 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.datetime "updated_at", null: false
     t.index ["sdomainid"], name: "index_cached_user_attributes_on_sdomainid", unique: true
     t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
+  end
+
+  create_table "caseflow_stuck_records", comment: "This is a polymorphic table consisting of records that have repeatedly errored out of the syncing process. Currently, the only records on this table come from the PriorityEndProductSyncQueue table.", force: :cascade do |t|
+    t.datetime "determined_stuck_at", null: false, comment: "The date/time at which the record in question was determined to be stuck."
+    t.string "error_messages", default: [], comment: "Array of Error Message(s) containing Batch ID and specific error if a failure occurs", array: true
+    t.bigint "stuck_record_id", null: false, comment: "The id / primary key of the stuck record and the type / where the record came from"
+    t.string "stuck_record_type", null: false
+    t.index ["stuck_record_type", "stuck_record_id"], name: "index_caseflow_stuck_records_on_stuck_record_id_and_type"
   end
 
   create_table "cavc_dashboard_dispositions", force: :cascade do |t|
