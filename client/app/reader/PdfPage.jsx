@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Mark from 'mark.js';
+import { v4 as uuidv4 } from 'uuid';
 
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
-import { get, noop, sum, filter, map, uniqueId } from 'lodash';
-import { getDocumentText, setSearchIndexToHighlight, setSearchIsLoading } from './PdfSearch/PdfSearchActions';
+import { get, noop, sum, filter, map } from 'lodash';
+import { setSearchIndexToHighlight } from './PdfSearch/PdfSearchActions';
 import { setDocScrollPosition } from './PdfViewer/PdfViewerActions';
 import { getSearchTerm, getCurrentMatchIndex, getMatchesPerPageInFile } from '../reader/selectors';
 import { bindActionCreators } from 'redux';
@@ -17,7 +18,6 @@ import { collectHistogram, recordMetrics } from '../util/Metrics';
 import { css } from 'glamor';
 import classNames from 'classnames';
 import { COLORS } from '../constants/AppConstants';
-import uuid from 'uuid';
 
 const markStyle = css({
   '& mark': {
@@ -217,8 +217,10 @@ export class PdfPage extends React.PureComponent {
         then((page) => {
           this.page = page;
 
+          const uuid = uuidv4();
+
           const readerRenderText = {
-            uuid: uniqueId,
+            uuid,
             message: 'Searching within Reader document text',
             type: 'performance',
             product: 'reader',
