@@ -150,7 +150,7 @@ class BusinessLine < Organization
 
       # Merge in all of the possible issue types for businessline. Guess that the key is the snakecase url
       # It will add in a count for each category with a count of 0 even if there are no tasks with that issue type
-      Constants.ISSUE_CATEGORIES.send(parent.url.snakecase)&.each do |key|
+      Constants.ISSUE_CATEGORIES.try(parent.url.snakecase)&.each do |key|
         count = issue_count_options[key] || 0
         issue_count_options[key] = count
       end
