@@ -20,7 +20,7 @@ class AppellantChange
     @claimant_payee_code = kwargs[:claimant_payee_code]
   end
 
-  def run_appellant_change(**kwargs)
+  def run_appellant_change
     RequestStore[:current_user] = User.system_user
 
     unless appeal

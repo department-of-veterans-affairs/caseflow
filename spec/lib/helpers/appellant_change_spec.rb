@@ -54,11 +54,11 @@ describe AppellantChange do
             end
 
             it "does not update appeal" do
-              expect { run_appellant_change }.not_to change{ appeal.attributes }
+              expect { run_appellant_change }.not_to(change { appeal.attributes })
             end
 
             it "does not create new claimant for appeal" do
-              expect { run_appellant_change }.not_to change{ Claimant.count }
+              expect { run_appellant_change }.not_to(change { Claimant.count })
             end
 
             it "ouputs an error message" do
