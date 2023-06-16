@@ -179,8 +179,7 @@ class AssignToView extends React.Component {
           reassign: {
             assigned_to_id: this.state.selectedValue,
             assigned_to_type: 'User',
-            instructions: this.state.instructions,
-            previous_assignee: task.assigneeName
+            instructions: this.state.instructions
           }
         }
       }
@@ -431,7 +430,6 @@ AssignToView.propTypes = {
   requestSave: PropTypes.func,
   task: PropTypes.shape({
     instructions: PropTypes.string,
-    previousAssignee: PropTypes.string,
     taskId: PropTypes.string,
     availableActions: PropTypes.arrayOf(PropTypes.object),
     externalAppealId: PropTypes.string,

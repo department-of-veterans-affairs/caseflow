@@ -321,18 +321,6 @@ class TaskRows extends React.PureComponent {
           </div>
         </React.Fragment>
         )}
-        { task.previousAssignee && (
-          <React.Fragment key={`${task.uniqueId} div`}>
-            <div
-              key={`${task.uniqueId} instructions`}
-              style={divStyles}
-              className="task-instructions"
-            >
-              <b>{COPY.LEGACY_APPEALS_VLJ_ORIGINAL_JUDGE_INSTRUCTIONS}</b>
-              <ReactMarkdown>{formatBreaks(task.previousAssignee)}</ReactMarkdown>
-            </div>
-          </React.Fragment>
-        )}
         {task.assigneeName && !(task.type === ('AttorneyTask' || 'AttorneyRewriteTask')) && (<React.Fragment key={`${task.uniqueId} div`}>
           <div
             key={`${task.uniqueId} instructions`}
