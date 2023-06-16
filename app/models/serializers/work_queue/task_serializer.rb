@@ -17,7 +17,6 @@ class WorkQueue::TaskSerializer
   attribute :instructions do |object|
     object.instructions.presence || object.default_instructions.presence || []
   end
-  attribute :previous_assignee
   attribute :appeal_type
   attribute :parent_id
   attribute :timeline_title
