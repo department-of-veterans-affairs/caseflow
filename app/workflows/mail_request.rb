@@ -9,12 +9,24 @@ class MailRequest
 
   attr_reader :vbms_distribution_id, :comm_package_id
 
+  #  Purpose: initializes a mail_request object making use of the passed in hash and also initializing
+  #           the attributes of vbms_distribution_id and a comm_package_id. Both set to nil until set
+  #           otherwise.
+  #
+  #  Params: recipient_and_destination_hash - expected parameters that that hold information
+  #          that will be used to create a valid VbmsDistribution and valid VbmsDistributionDestination.
+  #
+  #  Return: nil
   def initialize(recipient_and_destination_hash)
     @recipient_info = recipient_and_destination_hash
     @vbms_distribution_id = nil
     @comm_package_id = nil
   end
 
+  # Purpose: With the passed in parameters, the call method creates both a valid VBMSDistribution and
+  #          valid VBMSDistributionDestination. If there is an error it will fail and that information will be provided
+  #          to the IDT user.
+  #
   def call
     if valid?
       distribution = create_a_vbms_distribution
@@ -52,7 +64,6 @@ class MailRequest
       treat_line_3_as_addressee: treat_line_3_as_addressee,
       country_name: country_name,
       vbms_distribution_id: vbms_distribution_id
-
     }
   end
 
@@ -65,7 +76,8 @@ class MailRequest
       last_name: last_name,
       participant_id: participant_id,
       poa_code: poa_code,
-      claimant_station_of_jurisdiction: claimant_station_of_jurisdiction
+      claimant_station_of_jurisdiction: claimant_station_of_jurisdiction,
+      created_by_id: RequestStore[:current_user].id
     }
   end
 
