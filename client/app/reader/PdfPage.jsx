@@ -12,7 +12,7 @@ import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import * as PDFJS from 'pdfjs-dist';
-import { collectHistogram } from '../util/Metrics';
+import { collectHistogram, recordAsyncMetrics } from '../util/Metrics';
 
 import { css } from 'glamor';
 import classNames from 'classnames';
@@ -210,29 +210,57 @@ export class PdfPage extends React.PureComponent {
   setUpPage = () => {
     // eslint-disable-next-line no-underscore-dangle
     if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
-      this.props.pdfDocument.
-        getPage(pageNumberOfPageIndex(this.props.pageIndex)).
-        then((page) => {
-          this.page = page;
+      const pageMetricData = {
+        message: 'Getting PDF page',
+        type: 'performance',
+        product: 'reader',
+        data: {
+          file: this.props.file,
+          documentId: this.props.documentId,
+          pageIndex: this.props.pageIndex,
+          numPagesInDoc: this.props.pdfDocument.numPages,
+        },
+      };
 
-          this.getText(page).then((text) => {
-            this.drawText(page, text);
-          });
+      const textMetricData = {
+        message: 'Extracting PDF text',
+        type: 'performance',
+        product: 'reader',
+        data: {
+          file: this.props.file,
+          documentId: this.props.documentId,
+          pageIndex: this.props.pageIndex,
+        },
+      };
 
-          this.drawPage(page).then(() => {
-            collectHistogram({
-              group: 'front_end',
-              name: 'pdf_page_render_time_in_ms',
-              value: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0,
-              appName: 'Reader',
-              attrs: {
-                overscan: this.props.windowingOverscan,
-                documentType: this.props.documentType,
-                pageCount: this.props.pdfDocument.pdfInfo?.numPages
-              }
-            });
+      const document = this.props.pdfDocument;
+      const pageIndex = pageNumberOfPageIndex(this.props.pageIndex);
+
+      const pageResult = recordAsyncMetrics(document.getPage(pageIndex), pageMetricData);
+
+      pageResult.then((page) => {
+        this.page = page;
+
+        const textResult = recordAsyncMetrics(this.getText(page), textMetricData);
+
+        textResult.then((text) => {
+          this.drawText(page, text);
+        });
+
+        this.drawPage(page).then(() => {
+          collectHistogram({
+            group: 'front_end',
+            name: 'pdf_page_render_time_in_ms',
+            value: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0,
+            appName: 'Reader',
+            attrs: {
+              overscan: this.props.windowingOverscan,
+              documentType: this.props.documentType,
+              pageCount: this.props.pdfDocument.pdfInfo?.numPages
+            }
           });
-        }).
+        });
+      }).
         catch(() => {
           // We might need to do something else here.
         });
