@@ -13,7 +13,7 @@ import {
 import {
   initialAssignTasksToUser,
   reassignTasksToUser,
-  legacyReassignToJudge
+  legacyReassignToJudgeAttorney
 } from './QueueActions';
 
 class AssignToAttorneyLegacyModalView extends React.PureComponent {
@@ -30,8 +30,8 @@ class AssignToAttorneyLegacyModalView extends React.PureComponent {
         instructions
       }).then(() => {
         if (tasks[0].appealType === 'LegacyAppeal') {
-          this.props.legacyReassignToJudge({
-            tasks: [tasks],
+          this.props.legacyReassignToJudgeAttorney({
+            tasks,
             assigneeId
           });
         }
@@ -74,7 +74,7 @@ AssignToAttorneyLegacyModalView.propTypes = {
   match: PropTypes.object,
   initialAssignTasksToUser: PropTypes.func,
   reassignTasksToUser: PropTypes.func,
-  legacyReassignToJudge: PropTypes.func
+  legacyReassignToJudgeAttorney: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -86,7 +86,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   initialAssignTasksToUser,
   reassignTasksToUser,
-  legacyReassignToJudge
+  legacyReassignToJudgeAttorney
 }, dispatch);
 
 export default (connect(
