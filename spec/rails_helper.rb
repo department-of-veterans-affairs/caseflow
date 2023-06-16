@@ -72,6 +72,8 @@ RSpec.configure do |config|
 
   config.before(:each) do
     @spec_time_zone = Time.zone
+    allow(Metric).to receive(:create_metric).and_return(nil)
+    allow(Metric).to receive(:create_javascript_metric).and_return(nil)
   end
 
   config.after(:each) do
