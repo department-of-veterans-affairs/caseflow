@@ -14,7 +14,7 @@ class AppellantChange
   private
 
   def initialize(**kwargs)
-    @@appeal_uuid = kwargs[:appeal_uuid]
+    @appeal_uuid = kwargs[:appeal_uuid]
     @claimant_participant_id = kwargs[:claimant_participant_id]
     @claimant_type = kwargs[:claimant_type]
     @claimant_payee_code = kwargs[:claimant_payee_code]
@@ -23,33 +23,47 @@ class AppellantChange
   def run_appellant_change(**kwargs)
     RequestStore[:current_user] = User.system_user
 
-    unless (appeal = Appeal.find_by(uuid: @appeal_uuid))
+    unless appeal
       puts "Appeal not found for UUID"
       return
     end
 
-    unless VALID_CLAIMANT_TYPES.include?(@claimant_type)
+    unless claimant_type_valid?
       puts "Invalid claimant type"
       return
     end
 
     begin
-      ActiveRecord::Base.transaction do
-        appeal.claimant&.destroy!
-        appeal.update!(veteran_is_not_claimant: @claimant_type != "VeteranClaimant")
-
-        Claimant.create!(
-          participant_id: @claimant_participant_id,
-          payee_code: @claimant_payee_code,
-          type: @claimant_type,
-          decision_review_id: appeal.id,
-          decision_review_type: "Appeal"
-        )
-      end
+      change_appellant!
     rescue StandardError => error
       puts error.message
       puts "\n\n"
       puts "An error occurred. Appeal claimant not changed."
+    end
+  end
+
+  def appeal
+    return @appeal if defined?(@appeal)
+
+    @appeal = Appeal.find_by(uuid: @appeal_uuid)
+  end
+
+  def claimant_type_valid?
+    VALID_CLAIMANT_TYPES.include?(@claimant_type)
+  end
+
+  def change_appellant!
+    ActiveRecord::Base.transaction do
+      appeal.claimant&.destroy!
+      appeal.update!(veteran_is_not_claimant: @claimant_type != "VeteranClaimant")
+
+      Claimant.create!(
+        participant_id: @claimant_participant_id,
+        payee_code: @claimant_payee_code,
+        type: @claimant_type,
+        decision_review_id: appeal.id,
+        decision_review_type: "Appeal"
+      )
     end
   end
 end
