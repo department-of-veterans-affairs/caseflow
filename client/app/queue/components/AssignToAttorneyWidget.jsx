@@ -263,7 +263,9 @@ export class AssignToAttorneyWidget extends React.PureComponent {
             errorMessage={isModal && highlightFormItems && !selectedOptionOther ? 'Choose one' : null}
             options={optionsOther}
             placeholder={placeholderOther}
-            onChange={(option) => this.setModalOnChangeValue('assignedTo', option ? option.value : null)}
+            onChange={(option) => {
+              option && this.props.setSelectedAssigneeSecondary({ assigneeId: option.value }); this.setModalOnChangeValue('assignedTo', option ? option.value : null);
+            }}
             value={selectedOptionOther}
             styling={css({ width: '30rem' })} />
         </React.Fragment>}

@@ -10,7 +10,7 @@
 
 3. Create [oracle.com](http://oracle.com/) user account to download instant client [Create Account](https://profile.oracle.com/myprofile/account/create-account.jspx) (Step can be skipped if you have the zip files from file transfer)
 
-4. Install github on the Mac (here)
+4. Install github on the Mac [here](https://desktop.github.com/)
 
 5. Install git-lfs for pulling large files down from github [Install instructions](https://git-lfs.github.com/)
 
@@ -18,7 +18,7 @@
 
 1. Open the terminal - The terminal will open to your user folder (I.E youruser@host ~ %)
 2. Install Homebrew
-    a. Using BAH Self Service if BAH employee Run ```brew install git-lfs .``` This is required to clone caseflow-facols repo
+    * a. Using BAH Self Service if BAH employee Run ```brew install git-lfs .``` This is required to clone caseflow-facols repo
 
 3. Create a caseflow-setup folder by typing: `mkdir caseflow-setup` (step can be skipped if you have the file transfer files)
 
@@ -97,7 +97,7 @@
 
 18. Run `docker-compose up –d`
 
-19. Run bundle exec rake db:create
+19. Run `bundle exec rake db:create`
     * If you get connection issues stating no file to be found, run the following:
         * `rm /opt/homebrew/var/postgres/postmaster.pid` or possibly `rm /usr/local/var/postgres/postmaster.pid`
         * `brew services restart postgresql`
