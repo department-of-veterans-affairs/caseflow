@@ -12,8 +12,8 @@ import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import * as PDFJS from 'pdfjs-dist';
-import { collectHistogram } from '../util/Metrics';
-
+import { collectHistogram, recordMetrics } from '../util/Metrics';
+import uuid from 'uuid';
 import { css } from 'glamor';
 import classNames from 'classnames';
 import { COLORS } from '../constants/AppConstants';
@@ -136,7 +136,22 @@ export class PdfPage extends React.PureComponent {
   };
 
   componentDidMount = () => {
+    console.log('Component Did Mount Successfully!')
     this.setUpPage();
+
+    const readerData = {
+      uuid: uuid.v4(),
+      data: {
+        documentId: this.props.documentId,
+        documentType: this.props.documentType,
+        file: PropTypes.string
+      },
+      message: 'Render Document Content',
+      type: 'performance',
+      product: 'pdfjs.document.render',
+
+    };
+    recordMetrics(this.render(),readerData);
   };
 
   componentWillUnmount = () => {
