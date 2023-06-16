@@ -149,7 +149,8 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       {
         selected: nil,
         options: users_to_options(Judge.list_all),
-        type: task.appeal_type.eql?(Appeal.name) ? task.type : "JudgeLegacyAssignTask"
+        type: task.appeal_type.eql?(Appeal.name) ? task.type : "JudgeLegacyAssignTask",
+        modal_button_text: COPY::MODAL_ASSIGN_BUTTON
       }
     end
 
@@ -543,7 +544,9 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         type: SpecialCaseMovementTask.name,
         modal_title: COPY::SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
         modal_body: COPY::SPECIAL_CASE_MOVEMENT_MODAL_DETAIL,
-        modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER
+        modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER,
+        modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
+        message_title: COPY::DISTRIBUTE_TASK_SUCCESS_MESSAGE_NON_BLOCKING
       }
     end
 
@@ -555,7 +558,8 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_title: COPY::SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
         modal_body: COPY::SPECIAL_CASE_MOVEMENT_MODAL_DETAIL,
         modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER,
-        button: "COPY::MODAL_RETURN_BUTTON"
+        modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
+        message_title: COPY::DISTRIBUTE_TASK_SUCCESS_MESSAGE_NON_BLOCKING
       }
     end
 

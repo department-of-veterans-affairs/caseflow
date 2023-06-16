@@ -22,7 +22,8 @@ class SpecialCaseMovementTask < Task
                               parent: appeal.root_task,
                               assigned_to: assigned_to,
                               assigned_by: assigned_by,
-                              instructions: instructions)
+                              instructions: instructions,
+                              cancellation_reason: cancellation_reason)
       # We don't want the judge to have to worry about the SpecialCaseMovementTask,
       #   so we assign it to the SCM user that assigned this.
       update!(status: Constants.TASK_STATUSES.completed, assigned_to: assigned_by)

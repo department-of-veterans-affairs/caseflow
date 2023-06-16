@@ -71,7 +71,7 @@ class AssignToView extends React.Component {
       return this.state.selectedValue !== null;
     }
 
-    return this.state.selectedValue !== null && this.state.instructions !== '';
+    return this.state.selectedValue !== null && this.state.instructions.trim().length > 0;
   };
 
   setModalOnChangeValue = (stateValue, value) => {
@@ -102,15 +102,23 @@ class AssignToView extends React.Component {
             parent_id: actionData.parent_id || task.taskId,
             assigned_to_id: this.isVHAAssignToRegional() ? this.getVisn().value : this.state.selectedValue,
             assigned_to_type: isTeamAssign ? 'Organization' : 'User',
-            instructions: this.state.instructions
+            instructions: this.state.instructions,
           }
         ]
       }
     };
 
+    const caseNameListItem = () => {
+      const caseName = appeal.veteranFullName || null;
+
+      return caseName;
+    };
+
     const assignTaskSuccessMessage = {
-      title: taskActionData(this.props).message_title || sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()),
-      detail: taskActionData(this.props).message_detail
+      title: taskActionData(this.props).message_title ? sprintf(taskActionData(this.props).message_title,
+        caseNameListItem(),
+        this.getAssignee()) : sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()),
+      detail: taskActionData(this.props).message_detail || null
     };
 
     const pulacCerulloSuccessMessage = {
@@ -154,6 +162,11 @@ class AssignToView extends React.Component {
         assignee = opt.label;
       }
     });
+    const splitAssignee = assignee.split(' ');
+
+    if (splitAssignee.length >= 3) {
+      assignee = `${splitAssignee[0] } ${ splitAssignee[2]}`;
+    }
 
     return assignee;
   };
@@ -166,7 +179,8 @@ class AssignToView extends React.Component {
           reassign: {
             assigned_to_id: this.state.selectedValue,
             assigned_to_type: 'User',
-            instructions: this.state.instructions
+            instructions: this.state.instructions,
+            previous_assignee: task.assigneeName
           }
         }
       }
@@ -223,7 +237,7 @@ class AssignToView extends React.Component {
       return actionData.drop_down_label[this.state.assignToVHARegionalOfficeSelection];
     }
 
-    return actionData.drop_down_label;
+    return actionData.drop_down_label || 'Assign To';
   };
 
   determineTitle = (props, action, isPulacCerullo, actionData) => {
@@ -304,6 +318,8 @@ class AssignToView extends React.Component {
       pathAfterSubmit: (actionData && actionData.redirect_after) || '/queue',
       ...(actionData.modal_button_text && { button: actionData.modal_button_text }),
       submit: this.submit,
+      submitButtonClassNames: ['usa-button'],
+      submitDisabled: !this.validateForm(),
       validateForm: isPulacCerullo ?
         () => {
           return true;
@@ -415,11 +431,14 @@ AssignToView.propTypes = {
   requestSave: PropTypes.func,
   task: PropTypes.shape({
     instructions: PropTypes.string,
+    previousAssignee: PropTypes.string,
     taskId: PropTypes.string,
     availableActions: PropTypes.arrayOf(PropTypes.object),
     externalAppealId: PropTypes.string,
     type: PropTypes.string,
-    appealType: PropTypes.string
+    appealType: PropTypes.string,
+    assignedBy: PropTypes.string,
+    assigneeName: PropTypes.string,
   }),
   setOvertime: PropTypes.func,
   resetSuccessMessages: PropTypes.func
