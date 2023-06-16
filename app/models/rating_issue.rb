@@ -145,26 +145,28 @@ class RatingIssue
 
     def participant_contentions(serialized_hash)
       response = Rating.fetch_contentions_by_participant_id(serialized_hash[:participant_id])
-      response.contentions.select { |contention| contention.cntntn_id == serialized_hash.dig(:rba_issue_contentions, :cntntn_id) }
+      response.map do |resp|
+        resp[:contentions] if resp[:contentions][:cntntn_id] == serialized_hash.dig(:rba_issue_contentions, :cntntn_id)
+      end.compact
     end
 
     def mst_contention_status?(bgs_contention)
-      return false if bgs_contention.nil? || bgs_contention.special_issues.blank?
+      return false if bgs_contention.nil? || bgs_contention[:special_issues].blank?
 
-      if bgs_contention.special_issues.is_a?(Hash)
-        bgs_contention.special_issues[:spis_tc] == "MST"
-      elsif bgs_contention.special_issues.is_a?(Array)
-        bgs_contention.special_issues.any? { |issue| issue[:spis_tc] == "MST" }
+      if bgs_contention[:special_issues].is_a?(Hash)
+        bgs_contention[:special_issues][:spis_tc] == "MST"
+      elsif bgs_contention[:special_issues].is_a?(Array)
+        bgs_contention[:special_issues].any? { |issue| issue[:spis_tc] == "MST" }
       end
     end
 
     def pact_contention_status?(bgs_contention)
-      return false if bgs_contention.nil? || bgs_contention.special_issues.blank?
+      return false if bgs_contention.nil? || bgs_contention[:special_issues].blank?
 
-      if bgs_contention.special_issues.is_a?(Hash)
-        CONTENTION_PACT_ISSUES.include?(bgs_contention.special_issues[:spis_tc])
-      elsif bgs_contention.special_issues.is_a?(Array)
-        bgs_contention.special_issues.any? { |issue| CONTENTION_PACT_ISSUES.include?(issue[:spis_tc]) }
+      if bgs_contention[:special_issues].is_a?(Hash)
+        CONTENTION_PACT_ISSUES.include?(bgs_contention[:special_issues][:spis_tc])
+      elsif bgs_contention[:special_issues].is_a?(Array)
+        bgs_contention[:special_issues].any? { |issue| CONTENTION_PACT_ISSUES.include?(issue[:spis_tc]) }
       end
     end
   end
