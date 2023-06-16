@@ -4,9 +4,9 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   before_action :verify_access
 
-  # rubocop:disable Metrics/MethodLength, Naming/AccessorMethodName, Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/MethodLength, Naming/AccessorMethodName
   def get_distribution
-    # rubocop:enable Metrics/MethodLength, Naming/AccessorMethodName, Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/MethodLength, Naming/AccessorMethodName
     distribution_id = params[:distribution_id]
     # Checks if the distribution id is blank and if it exists with the database
     if distribution_id.blank? || !valid_id?(distribution_id)
@@ -25,8 +25,9 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
     rescue StandardError
       case response_code
       when 404
-        render_error(response_code, {"id": "#{distribution_id}", "status": "PENDING_ESTABLISHMENT"}, distribution_id)
+        render_error(response_code, { "id": distribution_id, "status": "PENDING_ESTABLISHMENT" }, distribution_id)
       else
+        response_code = 500
         render_error(response_code, "Internal Server Error", distribution_id)
       end
       return
