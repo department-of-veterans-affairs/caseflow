@@ -113,7 +113,7 @@ class QueueColumn
     end
   end
 
-  # Helper for issue type options
+  # Issue Type helpers to expand issue type filter options to all possible options for orgs that support it
   def all_possible_issue_type_options(tasks)
     assigned_to = tasks&.first&.assigned_to
     # Can add more orgs if they want to automatically add all possible issue categories to the options
@@ -125,7 +125,6 @@ class QueueColumn
     end
   end
 
-  # Another issue type helper
   def add_empty_issue_types_to_filter_list(tasks, totals)
     # Get the extra issue types from the ISSUE_CATEGORIES json
     extra_issue_types = all_possible_issue_type_options(tasks)
@@ -153,6 +152,7 @@ class QueueColumn
       end
     end
 
+    # Add in extra options if the org supports it. e.g. Other (0)
     extra_issue_types = add_empty_issue_types_to_filter_list(tasks, totals)
 
     extra_issue_types.each_pair.map do |option, count|
