@@ -74,6 +74,7 @@ class Task < CaseflowRecord
     include_association :placed_on_hold_at
     include_association :started_at
     include_association :type
+    include_association :previous_assignee
   end
 
   # This suppresses a warning about the :open scope overwriting the Kernel#open method
@@ -235,7 +236,8 @@ class Task < CaseflowRecord
         assigned_by_id: child_assigned_by_id(parent, current_user),
         parent_id: parent.id,
         assigned_to: params[:assigned_to] || child_task_assignee(parent, params),
-        instructions: params[:instructions]
+        instructions: params[:instructions],
+        cancellation_reason: params[:cancellation_reason]
       )
     end
 
@@ -631,6 +633,7 @@ class Task < CaseflowRecord
           task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
           task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
           task.instructions = [reassign_params[:instructions]]
+          task.previous_assignee = reassign_params[:previous_assignee]
           task.status = Constants.TASK_STATUSES.assigned
 
           task.save!
