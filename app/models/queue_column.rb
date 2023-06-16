@@ -129,14 +129,15 @@ class QueueColumn
   def add_empty_issue_types_to_filter_list(tasks, totals)
     # Get the extra issue types from the ISSUE_CATEGORIES json
     extra_issue_types = all_possible_issue_type_options(tasks)
+    updated_totals = totals.dup
 
     # If there are extra issues merge them in to the totals hash. e.g. Other => 0
     extra_issue_types&.each do |key|
       count = totals[key] || 0
-      totals[key] = count
+      updated_totals[key] = count
     end
 
-    totals
+    updated_totals
   end
 
   def issue_type_options(tasks)
