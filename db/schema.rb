@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_06_16_044038) do
+ActiveRecord::Schema.define(version: 2023_03_17_144835) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1684,7 +1684,6 @@ ActiveRecord::Schema.define(version: 2023_06_16_044038) do
     t.text "instructions", default: [], array: true
     t.integer "parent_id"
     t.datetime "placed_on_hold_at"
-    t.string "previous_assignee"
     t.datetime "started_at"
     t.string "status", default: "assigned"
     t.string "type"
@@ -1965,8 +1964,6 @@ ActiveRecord::Schema.define(version: 2023_06_16_044038) do
   add_foreign_key "cavc_dispositions_to_reasons", "users", column: "updated_by_id", name: "cavc_dispositions_to_reasons_updated_by_id_fk"
   add_foreign_key "cavc_reasons_to_bases", "cavc_dispositions_to_reasons"
   add_foreign_key "cavc_reasons_to_bases", "cavc_selection_bases"
-  add_foreign_key "cavc_reasons_to_bases", "users", column: "created_by_id", name: "cavc_reasons_to_bases_created_by_id_fk"
-  add_foreign_key "cavc_reasons_to_bases", "users", column: "updated_by_id", name: "cavc_reasons_to_bases_updated_by_id_fk"
   add_foreign_key "cavc_remands", "appeals", column: "remand_appeal_id"
   add_foreign_key "cavc_remands", "appeals", column: "source_appeal_id"
   add_foreign_key "cavc_remands", "users", column: "created_by_id"
