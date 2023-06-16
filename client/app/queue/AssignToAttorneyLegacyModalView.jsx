@@ -43,6 +43,13 @@ class AssignToAttorneyLegacyModalView extends React.PureComponent {
       assigneeId,
       previousAssigneeId,
       instructions
+    }).then(() => {
+      if (tasks[0].appealType === 'LegacyAppeal') {
+        this.props.legacyReassignToJudgeAttorney({
+          tasks,
+          assigneeId
+        });
+      }
     });
   }
 
