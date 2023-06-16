@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Disable :reek:InstanceVariableAssumption
+# Disable :reek:TooManyInstanceVariables
 class AppellantChange
   VALID_CLAIMANT_TYPES = %w[
     VeteranClaimant
