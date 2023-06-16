@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 
 import { AssignToAttorneyLegacyWidgetModal } from './components/AssignToAttorneyLegacyWidget';
-
 import COPY from '../../COPY';
 
 import {
@@ -13,7 +12,8 @@ import {
 
 import {
   initialAssignTasksToUser,
-  reassignTasksToUser
+  reassignTasksToUser,
+  legacyReassignToJudgeAttorney
 } from './QueueActions';
 
 class AssignToAttorneyLegacyModalView extends React.PureComponent {
@@ -28,6 +28,13 @@ class AssignToAttorneyLegacyModalView extends React.PureComponent {
         assigneeId,
         previousAssigneeId,
         instructions
+      }).then(() => {
+        if (tasks[0].appealType === 'LegacyAppeal') {
+          this.props.legacyReassignToJudgeAttorney({
+            tasks,
+            assigneeId
+          });
+        }
       });
     }
 
@@ -36,6 +43,13 @@ class AssignToAttorneyLegacyModalView extends React.PureComponent {
       assigneeId,
       previousAssigneeId,
       instructions
+    }).then(() => {
+      if (tasks[0].appealType === 'LegacyAppeal') {
+        this.props.legacyReassignToJudgeAttorney({
+          tasks,
+          assigneeId
+        });
+      }
     });
   }
 
@@ -66,7 +80,8 @@ AssignToAttorneyLegacyModalView.propTypes = {
   userId: PropTypes.string,
   match: PropTypes.object,
   initialAssignTasksToUser: PropTypes.func,
-  reassignTasksToUser: PropTypes.func
+  reassignTasksToUser: PropTypes.func,
+  legacyReassignToJudgeAttorney: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -77,7 +92,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   initialAssignTasksToUser,
-  reassignTasksToUser
+  reassignTasksToUser,
+  legacyReassignToJudgeAttorney
 }, dispatch);
 
 export default (connect(

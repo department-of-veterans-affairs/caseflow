@@ -26,10 +26,16 @@ class AttorneyTask < Task
       Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
     ].compact
 
-    movement_actions = [
-      Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
-      Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
-    ]
+    if appeal.is_a?(LegacyAppeal) && FeatureToggle.enable!(:vlj_legacy_appeal)
+      movement_actions = [
+        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY_LEGACY.to_h,
+        Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h]
+    else
+      movement_actions = [
+        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
+        Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
+      ]
+    end
 
     actions_based_on_assignment(user, atty_actions, movement_actions)
   end
@@ -65,7 +71,7 @@ class AttorneyTask < Task
   end
 
   def reassign_clears_overtime?
-    FeatureToggle.enabled?(:overtime_persistence, user: RequestStore[:current_user]) ? false : true  
+    FeatureToggle.enabled?(:overtime_persistence, user: RequestStore[:current_user]) ? false : true
   end
 
   def send_back_to_judge_assign!(params = {})

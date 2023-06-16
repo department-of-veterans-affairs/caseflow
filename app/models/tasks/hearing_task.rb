@@ -68,8 +68,8 @@ class HearingTask < Task
 
   def process_appeal_scm(appeal)
     current_judge_id = appeal.tasks.find_by(type: "JudgeAssignTask").assigned_to_id
-    current_user = User.find(current_judge_id).css_id
-    update_legacy_appeal_location_scm(current_user)
+    current_user = User.find(current_judge_id)
+    update_legacy_appeal_location_scm(current_user.vacols_uniq_id)
   end
 
   def create_change_hearing_disposition_task(instructions = nil)
