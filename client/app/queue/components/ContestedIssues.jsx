@@ -90,8 +90,8 @@ export default class ContestedIssues extends React.PureComponent {
             <div>Diagnostic code: {issue.diagnostic_code}</div>
           }
           {
-            specialIssuesFormatting(issue.mst, issue.pact) &&
-            <div>Special Issues: {specialIssuesFormatting(issue.mst, issue.pact)}</div>
+            specialIssuesFormatting(issue.mst_status, issue.pact_status) &&
+            <div>Special Issues: {specialIssuesFormatting(issue.mst_status, issue.pact_status)}</div>
           }
           { issue.notes &&
             <div {...noteDiv} {...verticalSpaceDiv}>Note: "{issue.notes}"</div>
