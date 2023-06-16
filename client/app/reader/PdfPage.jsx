@@ -233,15 +233,15 @@ export class PdfPage extends React.PureComponent {
         },
       };
 
+      const pageAndTextFeatureToggle = this.props.featureToggles.metricsPdfPageGet;
       const document = this.props.pdfDocument;
       const pageIndex = pageNumberOfPageIndex(this.props.pageIndex);
-
-      const pageResult = recordAsyncMetrics(document.getPage(pageIndex), pageMetricData);
+      const pageResult = recordAsyncMetrics(document.getPage(pageIndex), pageMetricData, pageAndTextFeatureToggle);
 
       pageResult.then((page) => {
         this.page = page;
 
-        const textResult = recordAsyncMetrics(this.getText(page), textMetricData);
+        const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);
 
         textResult.then((text) => {
           this.drawText(page, text);
