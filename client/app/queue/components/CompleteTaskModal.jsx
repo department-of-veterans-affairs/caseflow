@@ -60,8 +60,6 @@ const submitDisabled = ({ state }) => {
   return !(radio === 'other' ? validRadio(otherInstructions) : validRadio(radio));
 };
 
-const enableDisableSubmit = ({ state }) => (validInstructions(state.instructions));
-
 const MarkTaskCompleteModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
   const instructionsLabel = taskConfiguration && taskConfiguration.instructions_label;
@@ -542,7 +540,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: ProceedFinalNotificationLetterTaskModal,
     buttonText: COPY.PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON,
     submitButtonClassNames: ['usa-button'],
-    customValidation: enableDisableSubmit
+    customValidation: ({ state }) => (validInstructions(state.instructions))
   },
 
   proceed_final_notification_letter_post_holding: {
@@ -553,7 +551,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: ProceedFinalNotificationLetterTaskModal,
     buttonText: COPY.PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON,
     submitButtonClassNames: ['usa-button'],
-    customValidation: enableDisableSubmit
+    customValidation: ({ state }) => (validInstructions(state.instructions))
   },
 
   resend_initial_notification_letter_post_holding: {
@@ -564,7 +562,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: ResendInitialNotificationLetterTaskModal,
     buttonText: COPY.RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON,
     submitButtonClassNames: ['usa-button'],
-    customValidation: enableDisableSubmit
+    customValidation: ({ state }) => (validInstructions(state.instructions))
   },
 
   resend_initial_notification_letter_final: {
@@ -575,7 +573,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: ResendInitialNotificationLetterTaskModal,
     buttonText: COPY.RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON,
     submitButtonClassNames: ['usa-button'],
-    customValidation: enableDisableSubmit
+    customValidation: ({ state }) => (validInstructions(state.instructions))
   },
 
   resend_final_notification_letter: {
@@ -586,7 +584,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: ResendFinalNotificationLetterTaskModal,
     buttonText: COPY.RESEND_FINAL_NOTIFICATION_LETTER_BUTTON,
     submitButtonClassNames: ['usa-button'],
-    customValidation: enableDisableSubmit
+    customValidation: ({ state }) => (validInstructions(state.instructions))
   },
 
   ready_for_review: {
