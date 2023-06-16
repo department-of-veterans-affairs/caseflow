@@ -530,7 +530,7 @@ const MODAL_TYPE_ATTRS = {
         isValid = validRadio(radio);
       }
 
-      return !isValid;
+      return isValid;
     }
   },
 
