@@ -330,6 +330,7 @@ export class PdfUI extends React.Component {
           onPageChange={this.onPageChange}
           prefetchFiles={this.props.prefetchFiles}
           resetJumpToPage={this.props.resetJumpToPage}
+          featureToggles={this.props.featureToggles}
         />
       </div>
       { this.getPdfFooter() }
