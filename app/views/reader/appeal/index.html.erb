@@ -12,7 +12,7 @@
       windowSlider: FeatureToggle.enabled?(:window_slider, user: current_user),
       readerSelectorsMemoized: FeatureToggle.enabled?(:bulk_upload_documents, user: current_user),
       metricsLogRestError: FeatureToggle.enabled?(:metrics_log_rest_error, user: current_user),
-      metricsPdfPageGet: FeatureToggle.enabled?(:metrics_pdf_page_get, user: current_user),
+      metricsPdfStorePages: FeatureToggle.enabled?(:metrics_pdf_store_pages, user: current_user),
     },
     buildDate: build_date
   }) %>

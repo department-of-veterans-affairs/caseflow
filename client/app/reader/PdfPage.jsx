@@ -211,9 +211,9 @@ export class PdfPage extends React.PureComponent {
     // eslint-disable-next-line no-underscore-dangle
     if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
       const pageMetricData = {
-        message: 'Getting PDF page',
+        message: 'Storing PDF page',
+        product: 'pdfjs.document.pages',
         type: 'performance',
-        product: 'reader',
         data: {
           file: this.props.file,
           documentId: this.props.documentId,
@@ -223,17 +223,16 @@ export class PdfPage extends React.PureComponent {
       };
 
       const textMetricData = {
-        message: 'Extracting PDF text',
+        message: 'Storing PDF page text',
+        product: 'pdfjs.document.pages',
         type: 'performance',
-        product: 'reader',
         data: {
           file: this.props.file,
           documentId: this.props.documentId,
-          pageIndex: this.props.pageIndex,
         },
       };
 
-      const pageAndTextFeatureToggle = this.props.featureToggles.metricsPdfPageGet;
+      const pageAndTextFeatureToggle = this.props.featureToggles.metricsPdfStorePages;
       const document = this.props.pdfDocument;
       const pageIndex = pageNumberOfPageIndex(this.props.pageIndex);
       const pageResult = recordAsyncMetrics(document.getPage(pageIndex), pageMetricData, pageAndTextFeatureToggle);
