@@ -102,7 +102,7 @@ class AssignToView extends React.Component {
             parent_id: actionData.parent_id || task.taskId,
             assigned_to_id: this.isVHAAssignToRegional() ? this.getVisn().value : this.state.selectedValue,
             assigned_to_type: isTeamAssign ? 'Organization' : 'User',
-            instructions: this.state.instructions
+            instructions: this.state.instructions,
           }
         ]
       }
@@ -179,7 +179,8 @@ class AssignToView extends React.Component {
           reassign: {
             assigned_to_id: this.state.selectedValue,
             assigned_to_type: 'User',
-            instructions: this.state.instructions
+            instructions: this.state.instructions,
+            previous_assignee: task.assigneeName
           }
         }
       }
@@ -236,7 +237,7 @@ class AssignToView extends React.Component {
       return actionData.drop_down_label[this.state.assignToVHARegionalOfficeSelection];
     }
 
-    return actionData.drop_down_label;
+    return actionData.drop_down_label || 'Assign To';
   };
 
   determineTitle = (props, action, isPulacCerullo, actionData) => {
@@ -430,6 +431,7 @@ AssignToView.propTypes = {
   requestSave: PropTypes.func,
   task: PropTypes.shape({
     instructions: PropTypes.string,
+    previousAssignee: PropTypes.string,
     taskId: PropTypes.string,
     availableActions: PropTypes.arrayOf(PropTypes.object),
     externalAppealId: PropTypes.string,
