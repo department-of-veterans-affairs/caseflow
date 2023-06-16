@@ -461,12 +461,10 @@ class AppealsController < ApplicationController
 
   # create success message with added and removed issues
   def set_flash_mst_edit_message
-    binding.pry
     flash[:mst_pact_edited] = mst_and_pact_edited_issues
   end
 
   def set_flash_edit_message
-    binding.pry
     flash[:edited] = if request_issues_update.after_issues.empty?
                        review_removed_message
                      elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
