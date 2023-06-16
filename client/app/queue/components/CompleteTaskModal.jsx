@@ -60,6 +60,8 @@ const submitDisabled = ({ state }) => {
   return !(radio === 'other' ? validRadio(otherInstructions) : validRadio(radio));
 };
 
+const enableDisableSubmit = ({ state }) => (validInstructions(state.instructions));
+
 const MarkTaskCompleteModal = ({ props, state, setState }) => {
   const taskConfiguration = taskActionData(props);
   const instructionsLabel = taskConfiguration && taskConfiguration.instructions_label;
@@ -513,7 +515,7 @@ const MODAL_TYPE_ATTRS = {
     buttonText: COPY.MARK_TASK_COMPLETE_BUTTON_CONTESTED_CLAIM,
     submitButtonClassNames: ['usa-button'],
 
-    submitDisabled: ({ state }) => {
+    customValidation: ({ state }) => {
       const { instructions, radio } = state;
 
       let isValid = true;
@@ -540,7 +542,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: ProceedFinalNotificationLetterTaskModal,
     buttonText: COPY.PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON,
     submitButtonClassNames: ['usa-button'],
-    submitDisabled: ({ state }) => (!validInstructions(state.instructions))
+    customValidation: enableDisableSubmit
   },
 
   proceed_final_notification_letter_post_holding: {
@@ -551,7 +553,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: ProceedFinalNotificationLetterTaskModal,
     buttonText: COPY.PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON,
     submitButtonClassNames: ['usa-button'],
-    submitDisabled: ({ state }) => (!validInstructions(state.instructions))
+    customValidation: enableDisableSubmit
   },
 
   resend_initial_notification_letter_post_holding: {
@@ -562,7 +564,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: ResendInitialNotificationLetterTaskModal,
     buttonText: COPY.RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON,
     submitButtonClassNames: ['usa-button'],
-    submitDisabled: ({ state }) => (!validInstructions(state.instructions))
+    customValidation: enableDisableSubmit
   },
 
   resend_initial_notification_letter_final: {
@@ -573,7 +575,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: ResendInitialNotificationLetterTaskModal,
     buttonText: COPY.RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON,
     submitButtonClassNames: ['usa-button'],
-    submitDisabled: ({ state }) => (!validInstructions(state.instructions))
+    customValidation: enableDisableSubmit
   },
 
   resend_final_notification_letter: {
@@ -584,7 +586,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: ResendFinalNotificationLetterTaskModal,
     buttonText: COPY.RESEND_FINAL_NOTIFICATION_LETTER_BUTTON,
     submitButtonClassNames: ['usa-button'],
-    submitDisabled: ({ state }) => (!validInstructions(state.instructions))
+    customValidation: enableDisableSubmit
   },
 
   ready_for_review: {
@@ -620,7 +622,7 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SEND_BUTTON,
-    submitDisabled
+    customValidation: submitDisabled
   },
   vha_return_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
@@ -698,7 +700,7 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
-    submitDisabled
+    customValidation: submitDisabled
   }
 };
 
