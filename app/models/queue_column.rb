@@ -133,7 +133,7 @@ class QueueColumn
 
     # If there are extra issues merge them in to the totals hash. e.g. Other => 0
     extra_issue_types&.each do |key|
-      count = totals[key] || 0
+      count = updated_totals[key] || 0
       updated_totals[key] = count
     end
 
