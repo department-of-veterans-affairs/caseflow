@@ -40,7 +40,7 @@ const specialIssuesFormatting = (mstStatus, pactStatus) => {
   if (!mstStatus && !pactStatus) {
     return 'None';
   } else if (mstStatus && pactStatus) {
-    return 'MST and PACT';
+    return 'MST, PACT';
   } else if (mstStatus) {
     return 'MST';
   } else if (pactStatus) {
