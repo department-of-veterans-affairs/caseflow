@@ -36,6 +36,18 @@ const errorTextSpacing = css({
   margin: TEXT_INDENTATION
 });
 
+const specialIssuesFormatting = (mstStatus, pactStatus) => {
+  if (!mstStatus && !pactStatus) {
+    return 'None';
+  } else if (mstStatus && pactStatus) {
+    return 'MST and PACT';
+  } else if (mstStatus) {
+    return 'MST';
+  } else if (pactStatus) {
+    return 'PACT';
+  }
+};
+
 export default class ContestedIssues extends React.PureComponent {
   render = () => {
     const {
@@ -76,6 +88,10 @@ export default class ContestedIssues extends React.PureComponent {
           {issue.description}
           { issue.diagnostic_code &&
             <div>Diagnostic code: {issue.diagnostic_code}</div>
+          }
+          {
+            specialIssuesFormatting(issue.mst, issue.pact) &&
+            <div>Special Issues: {specialIssuesFormatting(issue.mst, issue.pact)}</div>
           }
           { issue.notes &&
             <div {...noteDiv} {...verticalSpaceDiv}>Note: "{issue.notes}"</div>
