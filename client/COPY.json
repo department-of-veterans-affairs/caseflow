@@ -658,7 +658,7 @@
   "REASSIGN_TASK_SUCCESS_MESSAGE": "Task reassigned to %s",
   "HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL": "You can continue to assign tasks to yourself and others using this queue.",
   "ASSIGN_TASK_SUCCESS_MESSAGE_MOVE_LEGACY_APPEALS_VLJ": "You have successfully reassigned %s’s case to %s",
-  "ASSIGN_TASK_SUCCESS_MESSAGE_MOVE_LEGACY_APPEALS_VLJ_MESSAGE_DETAIL": " All blocking task have been cancelled.",
+  "ASSIGN_TASK_SUCCESS_MESSAGE_MOVE_LEGACY_APPEALS_VLJ_MESSAGE_DETAIL": " All blocking task(s) have been cancelled.",
   "DISTRIBUTE_TASK_SUCCESS_MESSAGE_NON_BLOCKING": "You have successfully assigned %s’s case to %s",
   "LEGACY_APPEALS_VLJ_REASON_INSTRUCTIONS" : "Reason:",
   "LEGACY_APPEALS_VLJ_ORIGINAL_JUDGE_INSTRUCTIONS" : "Original Judge:",
