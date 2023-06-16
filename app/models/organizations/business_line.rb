@@ -144,9 +144,18 @@ class BusinessLine < Organization
         GROUP BY issue_category;
       SQL
 
-      nonrating_issue_count.reduce({}) do |acc, hash|
+      issue_count_options = nonrating_issue_count.reduce({}) do |acc, hash|
         acc.merge(hash["issue_category"] => hash["nonrating_issue_count"])
       end
+
+      # Merge in all of the possible issue types for businessline. Guess that the key is the snakecase url
+      # It will add in a count for each category with a count of 0 even if there are no tasks with that issue type
+      Constants.ISSUE_CATEGORIES.send(parent.url.snakecase)&.each do |key|
+        count = issue_count_options[key] || 0
+        issue_count_options[key] = count
+      end
+
+      issue_count_options
     end
     # rubocop:enable Metrics/MethodLength
 

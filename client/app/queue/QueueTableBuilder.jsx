@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
@@ -57,6 +57,14 @@ const rootStyles = css({
 
 const QueueTableBuilder = (props) => {
   const paginationOptions = () => querystring.parse(window.location.search.slice(1));
+
+  const [myPaginationOptions, setMyPaginationOptions] = useState(querystring.parse(window.location.search.slice(1)));
+
+  // Causes one additional rerender of the QueueTables/tabs but prevents saved pagination behavior
+  // e.g. clearing filter in a tab, then swapping tabs, then swapping back and the filter will still be applied
+  useEffect(() => {
+    setMyPaginationOptions({});
+  }, []);
 
   const calculateActiveTabIndex = (config) => {
     const tabNames = config.tabs.map((tab) => {
@@ -166,7 +174,8 @@ const QueueTableBuilder = (props) => {
     );
 
   const taskTableTabFactory = (tabConfig, config) => {
-    // const paginationOptions = this.paginationOptions();
+    // const savedPaginationOptions = paginationOptions();
+    const savedPaginationOptions = myPaginationOptions;
     const tasks = tasksWithAppealsFromRawTasks(tabConfig.tasks);
     let totalTaskCount = tabConfig.total_task_count;
     let noCasesMessage;
@@ -193,12 +202,9 @@ const QueueTableBuilder = (props) => {
 
     // If there is no sort by column in the pagination options, then use the tab config default sort
     // eslint-disable-next-line camelcase
-    if (!paginationOptions?.sort_by) {
+    if (!savedPaginationOptions?.sort_by) {
       Object.assign(defaultSort, tabConfig.defaultSort);
     }
-
-    console.log('in QueueTableBuilder -> taskTableTabFactory. I should see this 3 times for camo');
-    console.log(paginationOptions);
 
     return {
       label: sprintf(tabConfig.label, totalTaskCount),
@@ -220,7 +226,7 @@ const QueueTableBuilder = (props) => {
             totalTaskCount={totalTaskCount}
             taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
             tabPaginationOptions={
-              paginationOptions.tab === tabConfig.name && paginationOptions
+              savedPaginationOptions.tab === tabConfig.name && savedPaginationOptions
             }
             // Limit filter preservation/retention to only VHA orgs for now.
             {...(isVhaOrg ? { preserveFilter: true } : {})}
@@ -240,13 +246,6 @@ const QueueTableBuilder = (props) => {
       taskTableTabFactory(tabConfig, config)
     );
 
-  const tabWindowChange = (tabIndex) => {
-    console.log('in my new tab change function');
-    console.log(tabIndex);
-
-    return false;
-  };
-
   const config = queueConfig();
 
   return <div className={rootStyles}>
@@ -256,7 +255,6 @@ const QueueTableBuilder = (props) => {
       name="tasks-tabwindow"
       tabs={tabsFromConfig(config)}
       defaultPage={config.active_tab_index}
-      onChange={tabWindowChange}
     />
   </div>;
 };
