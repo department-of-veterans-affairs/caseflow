@@ -83,21 +83,25 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   #
   # Return: Array of active appeals
   def get_appeals_from_prev_synced_ids(appeal_ids)
-    Appeal.active.find_by_sql(
-      <<-SQL
-        SELECT appeals.*
-        FROM appeals
-        JOIN (#{appeals_on_latest_notifications(appeal_ids)}) AS notifs ON
-          notifs.appeals_id = appeals."uuid"::text AND notifs.appeals_type = 'Appeal'
-        JOIN (#{appeals_on_latest_doc_uploads(appeal_ids)}) AS vbms_uploads ON
-          vbms_uploads.appeal_id = appeals.id AND vbms_uploads.appeal_type = 'Appeal'
-        WHERE
-          notifs.notified_at > vbms_uploads.attempted_at
-        OR
-          notifs.created_at > vbms_uploads.attempted_at
-        GROUP BY appeals.id
-      SQL
-    )
+    appeal_ids.in_groups_of(1000).flat_map do |ids|
+      clean_ids = ids.compact
+
+      Appeal.active.find_by_sql(
+        <<-SQL
+          SELECT appeals.*
+          FROM appeals
+          JOIN (#{appeals_on_latest_notifications(clean_ids)}) AS notifs ON
+            notifs.appeals_id = appeals."uuid"::text AND notifs.appeals_type = 'Appeal'
+          JOIN (#{appeals_on_latest_doc_uploads(clean_ids)}) AS vbms_uploads ON
+            vbms_uploads.appeal_id = appeals.id AND vbms_uploads.appeal_type = 'Appeal'
+          WHERE
+            notifs.notified_at > vbms_uploads.attempted_at
+          OR
+            notifs.created_at > vbms_uploads.attempted_at
+          GROUP BY appeals.id
+        SQL
+      )
+    end
   end
 
   def appeals_on_latest_notifications(appeal_ids)
@@ -145,15 +149,20 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   def sync_notification_reports(appeals)
     Rails.logger.info("Starting to sync notification reports for AMA appeals")
     gen_count = 0
-    appeals.each do |appeal|
-      begin
-        appeal.upload_notification_report!
-        gen_count += 1
-      rescue StandardError => error
-        log_error(error)
-        next
+
+    ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
+      Parallel.each(appeals, in_threads: 4, progress: "Generating notification reports") do |appeal|
+        Rails.application.executor.wrap do
+          begin
+            appeal.upload_notification_report!
+            gen_count += 1
+          rescue StandardError => error
+            log_error(error)
+          end
+        end
       end
     end
+
     Rails.logger.info("Finished generating #{gen_count} notification reports for AMA appeals")
   end
 end
