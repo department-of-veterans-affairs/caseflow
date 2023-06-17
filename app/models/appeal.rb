@@ -266,6 +266,19 @@ class Appeal < DecisionReview
     end
   end
 
+  def mst?
+    return false unless FeatureToggle.enabled?(:mst_identification)
+
+    request_issues.active.any?(&:mst_status) ||
+      (special_issue_list && special_issue_list.created_at < "2023-06-01".to_date && special_issue_list.military_sexual_trauma)
+  end
+
+  def pact?
+    return false unless FeatureToggle.enabled?(:pact_identification)
+
+    request_issues.active.any?(&:pact_status)
+  end
+
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
   def assigned_to_location
@@ -929,6 +942,10 @@ class Appeal < DecisionReview
     end
     return false if relevant_tasks.any?(&:open?)
     return true if relevant_tasks.all?(&:closed?)
+  end
+
+  def is_legacy?
+    false
   end
 
   private

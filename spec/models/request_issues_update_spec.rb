@@ -59,6 +59,10 @@ describe RequestIssuesUpdate, :all_dbs do
   let!(:vacols_issue) { create(:case_issue, issseq: vacols_sequence_id) }
   let!(:vacols_case) { create(:case, bfkey: vacols_id, case_issues: [vacols_issue, create(:case_issue, issseq: 2)]) }
   let(:edited_description) { "I am an edited description" }
+  let(:mst_status) { true }
+  let(:pact_status) { true }
+  let(:mst_status_update_reason_notes) { "I am the mst status update reason notes" }
+  let(:pact_status_update_reason_notes) { "I am the pact status update reason notes" }
   let(:legacy_appeal) do
     create(:legacy_appeal, vacols_case: vacols_case)
   end
@@ -240,6 +244,36 @@ describe RequestIssuesUpdate, :all_dbs do
           expect(subject).to be_truthy
           expect(existing_request_issue.reload.edited_description).to eq(edited_description)
         end
+
+      context "when an issue's mst status is updated" do
+        let(:request_issues_data) do
+          [{ request_issue_id: existing_legacy_opt_in_request_issue.id },
+           { request_issue_id: existing_request_issue.id,
+             mst_status: mst_status,
+             mst_status_update_reason_notes: mst_status_update_reason_notes }]
+        end
+
+        it "updates the request issue's mst status and mst status update reason notes" do
+          expect(subject).to be_truthy
+          expect(existing_request_issue.reload.mst_status).to eq(true)
+          expect(existing_request_issue.reload.mst_status_update_reason_notes).to eq("I am the mst status update reason notes")
+        end
+      end
+
+      context "when an issue's pact status is updated" do
+        let(:request_issues_data) do
+          [{ request_issue_id: existing_legacy_opt_in_request_issue.id },
+           { request_issue_id: existing_request_issue.id,
+             pact_status: pact_status,
+             pact_status_update_reason_notes: pact_status_update_reason_notes }]
+        end
+
+        it "updates the request issue's pact status and pact status update reason notes" do
+          expect(subject).to be_truthy
+          expect(existing_request_issue.reload.pact_status).to eq(true)
+          expect(existing_request_issue.reload.pact_status_update_reason_notes).to eq("I am the pact status update reason notes")
+        end
+      end
 
         context "if the contention text has been updated in VBMS before" do
           let(:contention_updated_at) { 1.day.ago }

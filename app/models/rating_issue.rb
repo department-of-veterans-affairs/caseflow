@@ -5,6 +5,7 @@
 
 class RatingIssue
   include ActiveModel::Model
+  CONTENTION_PACT_ISSUES = %w[PACT PACTDICRE].freeze
 
   attr_accessor(
     :associated_end_products,
@@ -17,7 +18,8 @@ class RatingIssue
     :promulgation_date,
     :rba_contentions_data,
     :reference_id,
-    :subject_text
+    :subject_text,
+    :special_issues
     # adding another field? *
   )
 
@@ -48,7 +50,8 @@ class RatingIssue
         promulgation_date: rating.promulgation_date,
         rba_contentions_data: ensure_array_of_hashes(bgs_data.dig(:rba_issue_contentions)),
         reference_id: bgs_data[:rba_issue_id],
-        subject_text: bgs_data[:subjct_txt]
+        subject_text: bgs_data[:subjct_txt],
+        special_issues: bgs_data[:special_issues]
       )
     end
 
@@ -66,6 +69,7 @@ class RatingIssue
           :reference_id,
           :subject_text
         ).merge(associated_end_products: deserialize_end_products(serialized_hash))
+         .merge(special_issues: deserialize_special_issues(serialized_hash))
       )
     end
 
@@ -80,6 +84,93 @@ class RatingIssue
 
       serialized_hash[:associated_end_products].map do |end_product_hash|
         EndProduct.deserialize(end_product_hash)
+      end
+    end
+
+    def deserialize_special_issues(serialized_hash)
+      data = []
+      serialized_hash[:special_issues]&.each do |special_issue|
+        data << { mst_available: true } if special_issue_has_mst?(special_issue)
+
+        data << { pact_available: true } if special_issue_has_pact?(special_issue)
+      end
+      if serialized_hash[:rba_contentions_data]
+        data << { mst_available: true } if mst_from_contentions_for_rating?(serialized_hash)
+
+        data << { pact_available: true } if pact_from_contentions_for_rating?(serialized_hash)
+      end
+      data
+    end
+
+    def special_issue_has_mst?(special_issue)
+      if special_issue[:spis_tn].casecmp("ptsd - personal trauma").zero?
+        return ["sexual trauma/assault", "sexual Hhrassment"].include?(special_issue[:spis_basis_tn].downcase)
+      end
+
+      if special_issue[:spis_tn].casecmp("non-ptsd - personal trauma").zero?
+        ["sexual assault trauma", "sexual harassment"].include?(special_issue[:spis_basis_tn].downcase)
+      end
+    end
+
+    def special_issue_has_pact?(special_issue)
+      if special_issue[:spis_tn].casecmp("gulf war presumptive 3.3201").zero?
+        return special_issue[:spis_basis_tn].casecmp("particulate matter").zero?
+      end
+
+      [
+        "agent orange - outside vietnam or unknown",
+        "agent orange - vietnam",
+        "amytrophic lateral sclerosis",
+        "burn pit exposure",
+        "environmental hazard in gulf war",
+        "gulf war presumptive",
+        "radiation"
+      ].include?(special_issue[:spis_tn].downcase)
+    end
+
+    def mst_from_contentions_for_rating?(serialized_hash)
+      contentions = participant_contentions(serialized_hash)
+      return false if contentions.blank?
+
+      contentions.any? { |contention| mst_contention_status?(contention) }
+    end
+
+    def pact_from_contentions_for_rating?(serialized_hash)
+      contentions = participant_contentions(serialized_hash)
+      return false if contentions.blank?
+
+      contentions.any? { |contention| pact_contention_status?(contention) }
+    end
+
+    def participant_contentions(serialized_hash)
+      contentions_data = []
+      response = Rating.fetch_contentions_by_participant_id(serialized_hash[:participant_id])
+
+      serialized_hash[:rba_contentions_data].each do |rba|
+        response.each do |resp|
+          contentions_data << resp[:contentions] if resp[:contentions][:cntntn_id] == rba[:cntntn_id]
+        end
+      end
+      contentions_data.compact
+    end
+
+    def mst_contention_status?(bgs_contention)
+      return false if bgs_contention.nil? || bgs_contention[:special_issues].blank?
+
+      if bgs_contention[:special_issues].is_a?(Hash)
+        bgs_contention[:special_issues][:spis_tc] == "MST"
+      elsif bgs_contention[:special_issues].is_a?(Array)
+        bgs_contention[:special_issues].any? { |issue| issue[:spis_tc] == "MST" }
+      end
+    end
+
+    def pact_contention_status?(bgs_contention)
+      return false if bgs_contention.nil? || bgs_contention[:special_issues].blank?
+
+      if bgs_contention[:special_issues].is_a?(Hash)
+        CONTENTION_PACT_ISSUES.include?(bgs_contention[:special_issues][:spis_tc])
+      elsif bgs_contention[:special_issues].is_a?(Array)
+        bgs_contention[:special_issues].any? { |issue| CONTENTION_PACT_ISSUES.include?(issue[:spis_tc]) }
       end
     end
   end
