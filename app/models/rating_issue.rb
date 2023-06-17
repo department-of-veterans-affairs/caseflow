@@ -5,7 +5,7 @@
 
 class RatingIssue
   include ActiveModel::Model
-  CONTENTION_PACT_ISSUES = %w[PACT PACTDICRE]
+  CONTENTION_PACT_ISSUES = %w[PACT PACTDICRE].freeze
 
   attr_accessor(
     :associated_end_products,
@@ -89,16 +89,15 @@ class RatingIssue
 
     def deserialize_special_issues(serialized_hash)
       data = []
-      return data unless serialized_hash[:special_issues]
+      serialized_hash[:special_issues]&.each do |special_issue|
+        data << { mst_available: true } if special_issue_has_mst?(special_issue)
 
-      serialized_hash[:special_issues].each do |special_issue|
-        if special_issue_has_mst?(special_issue) || mst_from_contentions_for_rating?(serialized_hash)
-          data << { mst_available: true }
-        end
+        data << { pact_available: true } if special_issue_has_pact?(special_issue)
+      end
+      if serialized_hash[:rba_contentions_data]
+        data << { mst_available: true } if mst_from_contentions_for_rating?(serialized_hash)
 
-        if special_issue_has_pact?(special_issue) || pact_from_contentions_for_rating?(serialized_hash)
-          data << { pact_available: true }
-        end
+        data << { pact_available: true } if pact_from_contentions_for_rating?(serialized_hash)
       end
       data
     end
@@ -144,10 +143,15 @@ class RatingIssue
     end
 
     def participant_contentions(serialized_hash)
+      contentions_data = []
       response = Rating.fetch_contentions_by_participant_id(serialized_hash[:participant_id])
-      response.map do |resp|
-        resp[:contentions] if resp[:contentions][:cntntn_id] == serialized_hash.dig(:rba_issue_contentions, :cntntn_id)
-      end.compact
+
+      serialized_hash[:rba_contentions_data].each do |rba|
+        response.each do |resp|
+          contentions_data << resp[:contentions] if resp[:contentions][:cntntn_id] == rba[:cntntn_id]
+        end
+      end
+      contentions_data.compact
     end
 
     def mst_contention_status?(bgs_contention)
