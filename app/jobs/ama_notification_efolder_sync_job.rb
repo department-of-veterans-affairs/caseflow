@@ -43,20 +43,30 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   # Return: Array of appeals that have never been synced and meet all requirements for syncing
   def appeals_never_synced
     # A list of Appeals that have never had notification reports generated and synced with VBMS
-    Appeal.joins("JOIN notifications ON \
-        notifications.appeals_id = appeals.\"uuid\"::text \
-        AND notifications.appeals_type = 'Appeal' \
-        AND notifications.email_notification_status NOT IN \
-          ('No Participant Id Found', 'No Claimant Found', 'No External Id') \
-        AND notifications.sms_notification_status NOT IN \
-          ('No Participant Id Found', 'No Claimant Found', 'No External Id')")
-      .joins("LEFT JOIN vbms_uploaded_documents vud ON vud.appeal_type = 'Appeal' \
-          AND vud.appeal_id = appeals.id \
-          AND vud.document_type = 'BVA Case Notifications'")
+    Appeal.joins(successful_notifications_join_clause)
+      .joins(previous_case_notifications_document_join_clause)
       .active
       .non_deceased_appellants
       .where("vud.id IS NULL")
       .group(:id)
+  end
+
+  def successful_notifications_join_clause
+    "JOIN notifications ON \
+    notifications.appeals_id = appeals.\"uuid\"::text \
+    AND notifications.appeals_type = 'Appeal' \
+    AND (notifications.email_notification_status IS NULL OR \
+      notifications.email_notification_status NOT IN \
+      ('No Participant Id Found', 'No Claimant Found', 'No External Id')) \
+    AND (notifications.sms_notification_status IS NULL OR \
+      notifications.sms_notification_status NOT IN \
+      ('No Participant Id Found', 'No Claimant Found', 'No External Id'))"
+  end
+
+  def previous_case_notifications_document_join_clause
+    "LEFT JOIN vbms_uploaded_documents vud ON vud.appeal_type = 'Appeal' \
+    AND vud.appeal_id = appeals.id \
+    AND vud.document_type = 'BVA Case Notifications'"
   end
 
   # Purpose: Determines which appeals need a NEW notification report uploaded to efolder

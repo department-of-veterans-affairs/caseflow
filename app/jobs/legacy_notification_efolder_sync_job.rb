@@ -42,20 +42,37 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   #
   # Return: Array of appeals that have never been synced and meet all requirements for syncing
   def appeals_never_synced
-    LegacyAppeal.joins("JOIN notifications ON \
-        notifications.appeals_id = legacy_appeals.vacols_id \
-        AND notifications.appeals_type = 'LegacyAppeal' \
-        AND notifications.email_notification_status NOT IN \
-          ('No Participant Id Found', 'No Claimant Found', 'No External Id') \
-        AND notifications.sms_notification_status NOT IN \
-          ('No Participant Id Found', 'No Claimant Found', 'No External Id')")
-      .joins("LEFT JOIN vbms_uploaded_documents vud ON vud.appeal_type = 'LegacyAppeal' \
-          AND vud.appeal_id = legacy_appeals.id \
-          AND vud.document_type = 'BVA Case Notifications'")
-      .where(id: RootTask.open.where(appeal_type: "LegacyAppeal").pluck(:appeal_id))
+    LegacyAppeal.joins(successful_notifications_join_clause)
+      .joins(previous_case_notifications_document_join_clause)
+      .joins(open_root_task_join_clause)
       .where("vud.id IS NULL")
       .group(:id)
   end
+
+  def successful_notifications_join_clause
+    "JOIN notifications ON \
+    notifications.appeals_id = legacy_appeals.vacols_id \
+    AND notifications.appeals_type = 'LegacyAppeal' \
+    AND (notifications.email_notification_status IS NULL OR \
+      notifications.email_notification_status NOT IN \
+      ('No Participant Id Found', 'No Claimant Found', 'No External Id')) \
+    AND (notifications.sms_notification_status IS NULL OR \
+      notifications.sms_notification_status NOT IN \
+      ('No Participant Id Found', 'No Claimant Found', 'No External Id'))"
+  end
+
+  def previous_case_notifications_document_join_clause
+    "LEFT JOIN vbms_uploaded_documents vud ON vud.appeal_type = 'LegacyAppeal' \
+    AND vud.appeal_id = legacy_appeals.id \
+    AND vud.document_type = 'BVA Case Notifications'"
+  end
+
+  def open_root_task_join_clause
+    "JOIN tasks t ON t.appeal_type = 'LegacyAppeal' AND t.id = legacy_appeals.id \
+      AND t.type = 'RootTask' AND t.status NOT IN ('completed', 'cancelled')"
+  end
+
+  # Notification.where(appeals_type: "LegacyAppeal").where.not(email_notification_status: ['No Participant Id Found', 'No Claimant Found', 'No External Id'], sms_notification_status: ['No Participant Id Found', 'No Claimant Found', 'No External Id'])
 
   # Purpose: Determines which appeals need a NEW notification report uploaded to efolder
   #
