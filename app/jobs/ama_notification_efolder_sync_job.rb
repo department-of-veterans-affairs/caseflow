@@ -48,7 +48,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
         AND notifications.appeals_type = 'Appeal' \
         AND notifications.email_notification_status NOT IN \
           ('No Participant Id Found', 'No Claimant Found', 'No External Id') \
-        AND notifications.sms_notification_status NOT IN \ 
+        AND notifications.sms_notification_status NOT IN \
           ('No Participant Id Found', 'No Claimant Found', 'No External Id')")
       .joins("LEFT JOIN vbms_uploaded_documents vud ON vud.appeal_type = 'Appeal' \
           AND vud.appeal_id = appeals.id \
