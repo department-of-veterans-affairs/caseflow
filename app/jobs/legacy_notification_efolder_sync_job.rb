@@ -143,7 +143,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   # Params: appeals - LegacyAppeals records in need of a new notification report to be generated
   # Return: none
   def sync_notification_reports(appeals)
-    Rails.logger.info("Starting to sync notification reports for AMA appeals")
+    Rails.logger.info("Starting to sync notification reports for legacy appeals")
     gen_count = 0
 
     ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
@@ -159,6 +159,6 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
       end
     end
 
-    Rails.logger.info("Finished generating #{gen_count} notification reports for AMA appeals")
+    Rails.logger.info("Finished generating #{gen_count} notification reports for legacy appeals")
   end
 end
