@@ -47,12 +47,15 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
       .successfully_uploaded
       .pluck(:appeal_id)
 
-    LegacyAppeal.joins("JOIN notifications ON \
+    appeal_ids_synced.in_groups_of(1000).flat_map do |ids|
+      clean_ids = ids.compact
+      LegacyAppeal.joins("JOIN notifications ON \
         notifications.appeals_id = legacy_appeals.vacols_id AND \
         notifications.appeals_type = 'LegacyAppeal'")
-      .where(id: RootTask.open.where(appeal_type: "LegacyAppeal").pluck(:appeal_id))
-      .where.not(id: appeal_ids_synced)
-      .group(:id)
+        .where(id: RootTask.open.where(appeal_type: "LegacyAppeal").pluck(:appeal_id))
+        .where.not(id: clean_ids)
+        .group(:id)
+    end
   end
 
   # Purpose: Determines which appeals need a NEW notification report uploaded to efolder
@@ -78,7 +81,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   #
   # Return: Array of active appeals
   def get_appeals_from_prev_synced_ids(appeal_ids)
-    appeal_ids.in_groups_of(750).flat_map do |ids|
+    appeal_ids.in_groups_of(1000).flat_map do |ids|
       clean_ids = ids.compact
 
       LegacyAppeal.where(id: RootTask.open.where(appeal_type: "LegacyAppeal").pluck(:appeal_id))

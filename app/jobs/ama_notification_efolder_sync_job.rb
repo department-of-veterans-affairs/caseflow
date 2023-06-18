@@ -49,13 +49,16 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
       .pluck(:appeal_id)
 
     # A list of Appeals that have never had notification reports generated and synced with VBMS
-    Appeal.joins("JOIN notifications ON \
+    appeal_ids_synced.in_groups_of(1000).flat_map do |ids|
+      clean_ids = ids.compact
+      Appeal.joins("JOIN notifications ON \
         notifications.appeals_id = appeals.\"uuid\"::text AND \
         notifications.appeals_type = 'Appeal'")
-      .active
-      .non_deceased_appellants
-      .where.not(id: appeal_ids_synced)
-      .group(:id)
+        .active
+        .non_deceased_appellants
+        .where.not(id: clean_ids)
+        .group(:id)
+    end
   end
 
   # Purpose: Determines which appeals need a NEW notification report uploaded to efolder
