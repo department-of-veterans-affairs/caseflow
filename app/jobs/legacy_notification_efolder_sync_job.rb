@@ -42,20 +42,19 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   #
   # Return: Array of appeals that have never been synced and meet all requirements for syncing
   def appeals_never_synced
-    appeal_ids_synced = VbmsUploadedDocument.distinct
-      .where(appeal_type: "LegacyAppeal", document_type: "BVA Case Notifications")
-      .successfully_uploaded
-      .pluck(:appeal_id)
-
-    appeal_ids_synced.in_groups_of(1000).flat_map do |ids|
-      clean_ids = ids.compact
-      LegacyAppeal.joins("JOIN notifications ON \
-        notifications.appeals_id = legacy_appeals.vacols_id AND \
-        notifications.appeals_type = 'LegacyAppeal'")
-        .where(id: RootTask.open.where(appeal_type: "LegacyAppeal").pluck(:appeal_id))
-        .where.not(id: clean_ids)
-        .group(:id)
-    end
+    LegacyAppeal.joins("JOIN notifications ON \
+        notifications.appeals_id = legacy_appeals.vacols_id \
+        AND notifications.appeals_type = 'LegacyAppeal' \
+        AND notifications.email_notification_status NOT IN \
+          ('No Participant Id Found', 'No Claimant Found', 'No External Id') \
+        AND notifications.sms_notification_status NOT IN \
+          ('No Participant Id Found', 'No Claimant Found', 'No External Id')")
+      .joins("LEFT JOIN vbms_uploaded_documents vud ON vud.appeal_type = 'LegacyAppeal' \
+          AND vud.appeal_id = legacy_appeals.id \
+          AND vud.document_type = 'BVA Case Notifications'")
+      .where(id: RootTask.open.where(appeal_type: "LegacyAppeal").pluck(:appeal_id))
+      .where("vud.id IS NULL")
+      .group(:id)
   end
 
   # Purpose: Determines which appeals need a NEW notification report uploaded to efolder

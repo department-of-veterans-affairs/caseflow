@@ -42,23 +42,21 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   #
   # Return: Array of appeals that have never been synced and meet all requirements for syncing
   def appeals_never_synced
-    # A list of unique appeal ids (Primary Key) that exist in VBMSUploadedDocument and are of type BVA Case Notification
-    appeal_ids_synced = VbmsUploadedDocument.distinct
-      .where(appeal_type: "Appeal", document_type: "BVA Case Notifications")
-      .successfully_uploaded
-      .pluck(:appeal_id)
-
     # A list of Appeals that have never had notification reports generated and synced with VBMS
-    appeal_ids_synced.in_groups_of(1000).flat_map do |ids|
-      clean_ids = ids.compact
-      Appeal.joins("JOIN notifications ON \
-        notifications.appeals_id = appeals.\"uuid\"::text AND \
-        notifications.appeals_type = 'Appeal'")
-        .active
-        .non_deceased_appellants
-        .where.not(id: clean_ids)
-        .group(:id)
-    end
+    Appeal.joins("JOIN notifications ON \
+        notifications.appeals_id = appeals.\"uuid\"::text \
+        AND notifications.appeals_type = 'Appeal' \
+        AND notifications.email_notification_status NOT IN \
+          ('No Participant Id Found', 'No Claimant Found', 'No External Id') \
+        AND notifications.sms_notification_status NOT IN \ 
+          ('No Participant Id Found', 'No Claimant Found', 'No External Id')")
+      .joins("LEFT JOIN vbms_uploaded_documents vud ON vud.appeal_type = 'Appeal' \
+          AND vud.appeal_id = appeals.id \
+          AND vud.document_type = 'BVA Case Notifications'")
+      .active
+      .non_deceased_appellants
+      .where("vud.id IS NULL")
+      .group(:id)
   end
 
   # Purpose: Determines which appeals need a NEW notification report uploaded to efolder
