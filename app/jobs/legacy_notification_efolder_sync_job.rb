@@ -153,6 +153,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
       Parallel.each(appeals, in_threads: 4, progress: "Generating notification reports") do |appeal|
         Rails.application.executor.wrap do
           begin
+            RequestStore[:current_user] = User.system_user
             appeal.upload_notification_report!
             gen_count += 1
           rescue StandardError => error
