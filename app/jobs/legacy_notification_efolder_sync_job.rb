@@ -13,7 +13,9 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   # Return: Array of appeals that were attempted to upload notification reports to efolder
   def perform
     RequestStore[:current_user] = User.system_user
+
     all_active_legacy_appeals = appeals_recently_outcoded + appeals_never_synced + ready_for_resync
+
     sync_notification_reports(all_active_legacy_appeals.first(BATCH_LIMIT.to_i))
   end
 
@@ -151,8 +153,6 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   def format_appeal_ids_sql_list(appeal_ids)
     return "" if appeal_ids.empty?
 
-    return "a.id = #{appeal_ids.first}" if appeal_ids.one?
-
     "AND a.id IN (#{appeal_ids.join(',').chomp(',')})"
   end
 
@@ -161,6 +161,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   # Return: none
   def sync_notification_reports(appeals)
     Rails.logger.info("Starting to sync notification reports for legacy appeals")
+    mutex = Mutex.new
     gen_count = 0
 
     ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
@@ -169,7 +170,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
           begin
             RequestStore[:current_user] = User.system_user
             appeal.upload_notification_report!
-            gen_count += 1
+            mutex.synchronize { gen_count += 1 }
           rescue StandardError => error
             log_error(error)
           end

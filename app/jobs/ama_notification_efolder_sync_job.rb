@@ -13,7 +13,9 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   # Return: Array of appeals that were attempted to upload notification reports to efolder
   def perform
     RequestStore[:current_user] = User.system_user
+
     all_active_ama_appeals = appeals_recently_outcoded + appeals_never_synced + ready_for_resync
+
     sync_notification_reports(all_active_ama_appeals.first(BATCH_LIMIT.to_i))
   end
 
@@ -148,8 +150,6 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
 
   def format_appeal_ids_sql_list(appeal_ids)
     return "" if appeal_ids.empty?
-
-    return "a.id = #{appeal_ids.first}" if appeal_ids.one?
 
     "AND a.id IN (#{appeal_ids.join(',').chomp(',')})"
   end
