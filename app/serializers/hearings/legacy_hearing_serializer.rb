@@ -122,4 +122,6 @@ class LegacyHearingSerializer
   attribute :current_user_timezone do |_, params|
     params[:user]&.timezone
   end
+
+  attribute :worksheet_issues, &:prepare_worksheet_issues
 end
