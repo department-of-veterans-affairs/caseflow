@@ -72,8 +72,6 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
       AND t.type = 'RootTask' AND t.status NOT IN ('completed', 'cancelled')"
   end
 
-  # Notification.where(appeals_type: "LegacyAppeal").where.not(email_notification_status: ['No Participant Id Found', 'No Claimant Found', 'No External Id'], sms_notification_status: ['No Participant Id Found', 'No Claimant Found', 'No External Id'])
-
   # Purpose: Determines which appeals need a NEW notification report uploaded to efolder
   #
   # Params: none
