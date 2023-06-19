@@ -54,7 +54,7 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
 
     before(:all) do
       LegacyNotificationEfolderSyncJob::BATCH_LIMIT = BATCH_LIMIT_SIZE
-      Seeds::NotificationEvents.new.seed!
+      ensure_notification_events_exist
     end
 
     context "first run" do
@@ -106,7 +106,10 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
           will_not_sync_appeal_ids
       end
 
-      before { RootTask.find_by(appeal_id: appeals[6].id).update!(closed_at: 25.hours.ago) }
+      before do
+        ensure_notification_events_exist
+        RootTask.find_by(appeal_id: appeals[6].id).update!(closed_at: 25.hours.ago)
+      end
       after { clean_up_after_threads }
 
       it "get all legacy appeals that have been recently outcoded", bypass_cleaner: true do
@@ -194,6 +197,10 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
 
     def clean_up_after_threads
       DatabaseCleaner.clean_with(:truncation, except: %w[notification_events])
+    end
+
+    def ensure_notification_events_exist
+      Seeds::NotificationEvents.new.seed! unless NotificationEvent.count > 0
     end
   end
 end
