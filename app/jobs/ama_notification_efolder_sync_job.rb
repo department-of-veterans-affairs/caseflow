@@ -159,6 +159,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   # Return: none
   def sync_notification_reports(appeals)
     Rails.logger.info("Starting to sync notification reports for AMA appeals")
+    mutex = Mutex.new
     gen_count = 0
 
     ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
@@ -167,7 +168,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
           begin
             RequestStore[:current_user] = User.system_user
             appeal.upload_notification_report!
-            gen_count += 1
+            mutex.synchronize { gen_count += 1 }
           rescue StandardError => error
             log_error(error)
           end
