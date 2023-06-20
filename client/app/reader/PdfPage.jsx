@@ -17,6 +17,7 @@ import { collectHistogram } from '../util/Metrics';
 import { css } from 'glamor';
 import classNames from 'classnames';
 import { COLORS } from '../constants/AppConstants';
+import uuid from 'uuid';
 
 const markStyle = css({
   '& mark': {
@@ -121,16 +122,17 @@ export class PdfPage extends React.PureComponent {
     this.renderTask = page.render(options);
 
     // Call PDFJS to actually draw the page.
-    return this.renderTask.promise.then(() => {
-      this.isDrawing = false;
+    return this.renderTask.promise.
+      then(() => {
+        this.isDrawing = false;
 
-      // If the scale has changed, draw the page again at the latest scale.
-      if (currentScale !== this.props.scale && page) {
-        return this.drawPage(page);
-      }
-    }).
-      catch(() => {
-        // We might need to do something else here.
+        // If the scale has changed, draw the page again at the latest scale.
+        if (currentScale !== this.props.scale && page) {
+          return this.drawPage(page);
+        }
+      }).
+      catch((error) => {
+        console.error(`${uuid.v4()} : ${error}`);
         this.isDrawing = false;
       });
   };
@@ -233,8 +235,8 @@ export class PdfPage extends React.PureComponent {
             });
           });
         }).
-        catch(() => {
-          // We might need to do something else here.
+        catch((error) => {
+          console.error(`${uuid.v4()} : ${error}`);
         });
     }
   };
