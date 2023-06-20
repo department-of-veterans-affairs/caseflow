@@ -15,8 +15,6 @@ class MailRequestJob < CaseflowJob
                                                                                      vbms_comm_package.document_referenced)
     log_info(package_response)
     vbms_comm_package = create_package(vbms_uploaded_document, mail_request)
-# FIXME what do we want when the response is an error?
-# should a VbmsCommunicationPackage object still be created?
     if package_response.code == 201
       vbms_comm_package.update!(status: "success")
       create_distribution_request(vbms_comm_package.id, mail_request)
@@ -33,19 +31,22 @@ class MailRequestJob < CaseflowJob
   # takes in VbmsUploadedDocument object and MailRequest object
   #
   # Response: new VbmsCommunicationPackage object
-# FIXME how to get created_by_id
   def create_package(vbms_uploaded_document, mail_request)
     VbmsCommunicationPackage.new(
-      comm_package_name: mail_request.name,
+      comm_package_name: get_package_name(vbms_uploaded_document),
       created_at: Time.zone.now,
-      created_by_id: "",
-      copies: nil,
-      file_number: vbms_uploaded_document.veteran_file_number,
+      created_by_id: mail_request["distributions"][0]["created_by_id"],
+      copies: mail_request["distributions"]["copies"],
+      file_number: mail_request["distributions"][0]["veteranFileNumber"],
       status: nil,
       updated_at: Time.zone.now,
-      updated_by_id: " ",
+      updated_by_id: mail_request["distributions"][0]["created_by_id"],
       vbms_uploaded_document_id: vbms_uploaded_document.id
     )
+  end
+
+  def get_package_name(vbms_uploaded_document)
+    "#{vbms_uploaded_document.document_name}_#{Time.now.utc.strftime('%Y%m%d%k%M%S')}"
   end
 
   # Purpose: sends distribution POST request to Pacman API
@@ -54,9 +55,9 @@ class MailRequestJob < CaseflowJob
   #
   # Response: n/a
   def create_distribution_request(package_id, mail_request)
-    distributions = VbmsDistribution.find(participant_id: mail_request.participant_id)
+    distributions = mail_request["distributions"]
     distributions.each do |dist|
-      distribution_destination = VbmsDistributionDestination.find(vbms_distribution_id: dist.id)
+      distribution_destination = VbmsDistributionDestination.find(vbms_distribution_id: dist["id"])
       distribution_response = ExternalApi::PacmanService.send_distribution_request(package_id,
                                                                                    get_recipient_hash(distribution),
                                                                                    get_destinations_hash(distribution_destination))
