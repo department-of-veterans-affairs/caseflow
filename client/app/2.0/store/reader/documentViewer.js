@@ -238,6 +238,7 @@ export const showPdf = createAsyncThunk(
   ) => {
     // Update the Document as read if not already
     if (!currentDocument.opened_by_current_user) {
+      console.log("HERE!!!!!!!!!!!!!!!!!!!");
       dispatch(markDocAsRead({ docId: currentDocument.id }));
     }
 
@@ -258,12 +259,16 @@ export const showPdf = createAsyncThunk(
         };
 
         // Store the pages for the PDF
-        pdfDocuments[currentDocument.id].pages = await Promise.all(
+        promise = Promise.all(
           range(0, pdfDocuments[currentDocument.id].pdf.numPages).map(
             (pageIndex) =>
               pdfDocuments[currentDocument.id].pdf.getPage(pageIndex + 1)
           )
         );
+
+        recordAsyncMetrics(promise, metricData, shouldRecordMetrics)
+
+        // pdfDocuments[currentDocument.id].pages
       }
     }
 
@@ -301,6 +306,7 @@ export const showPdf = createAsyncThunk(
 export const removeTag = createAsyncThunk(
   'documentViewer/removeTag',
   async ({ doc, tag }) => {
+    console.log("IN REMOVE TAG!!!!!!")
     // Request the deletion of the selected tag
     await ApiUtil.delete(
       `/document/${doc.id}/tag/${tag.id}`,
@@ -320,6 +326,7 @@ export const addTag = createAsyncThunk(
   'documentViewer/addTag',
   async ({ doc, tags }) => {
     // Request the addition of the selected tags
+    console.log("IN ADD TAG!!!!!!")
     const { body } = await ApiUtil.post(
       `/document/${doc.id}/tag`,
       { data: { tags } },
