@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe UploadDocumentToVbms, :postgres do
+describe UpdateDocumentInVbms, :postgres do
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
   end
@@ -15,14 +15,15 @@ describe UploadDocumentToVbms, :postgres do
       uploaded_to_vbms_at: uploaded_to_vbms_at,
       veteran_file_number: appeal.veteran_file_number,
       processed_at: processed_at,
-      file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW"
+      file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
+      document_version_reference_id: "prev_ref_id"
     )
   end
   let(:uploaded_to_vbms_at) { nil }
   let(:processed_at) { nil }
-  let!(:doc_to_upload) { UploadDocumentToVbms.new(document: document) }
-  let(:transaction_method) { :upload_document_to_vbms_veteran }
-  let(:upload_arg) { document.veteran_file_number }
+  let!(:doc_to_upload) { UpdateDocumentInVbms.new(document: document) }
+  let(:transaction_method) { :update_document_in_vbms }
+  let(:upload_arg) { document.appeal }
 
   include_examples "VBMS Document Storage Location Tests"
 
