@@ -3,7 +3,7 @@
 class Metric < CaseflowRecord
   belongs_to :user
 
-  METRIC_TYPES = { error: "error", log: "log", performance: "performance" }.freeze
+  METRIC_TYPES = { error: "error", log: "log", performance: "performance", info: "info" }.freeze
   LOG_SYSTEMS = { datadog: "datadog", rails_console: "rails_console", javascript_console: "javascript_console" }
   PRODUCT_TYPES = {
     queue: "queue",

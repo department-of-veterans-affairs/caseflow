@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Mark from 'mark.js';
+import { v4 as uuidv4 } from 'uuid';
 
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
@@ -13,7 +14,7 @@ import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCAL
 import { pageNumberOfPageIndex } from './utils';
 import * as PDFJS from 'pdfjs-dist';
 import { collectHistogram, recordMetrics } from '../util/Metrics';
-import uuid from 'uuid';
+
 import { css } from 'glamor';
 import classNames from 'classnames';
 import { COLORS } from '../constants/AppConstants';
@@ -136,22 +137,7 @@ export class PdfPage extends React.PureComponent {
   };
 
   componentDidMount = () => {
-    console.log('Component Did Mount Successfully!')
     this.setUpPage();
-
-    const readerData = {
-      uuid: uuid.v4(),
-      data: {
-        documentId: this.props.documentId,
-        documentType: this.props.documentType,
-        file: PropTypes.string
-      },
-      message: 'Render Document Content',
-      type: 'performance',
-      product: 'pdfjs.document.render',
-
-    };
-    recordMetrics(this.render(),readerData);
   };
 
   componentWillUnmount = () => {
@@ -196,6 +182,7 @@ export class PdfPage extends React.PureComponent {
   };
 
   drawText = (page, text) => {
+
     if (!this.textLayer) {
       return;
     }
@@ -230,8 +217,24 @@ export class PdfPage extends React.PureComponent {
         then((page) => {
           this.page = page;
 
+          const uuid = uuidv4();
+
+          const readerRenderText = {
+            uuid,
+            message: 'Searching within Reader document text',
+            type: 'performance',
+            product: 'reader',
+            data: {
+              documentId: this.props.documentId,
+              documentType: this.props.documentType,
+              file: this.props.file
+            },
+          };
+
           this.getText(page).then((text) => {
             this.drawText(page, text);
+            // eslint-disable-next-line max-len
+            recordMetrics(this.drawText(page, text), readerRenderText, this.props.featureToggles.metricsReaderRenderText);
           });
 
           this.drawPage(page).then(() => {
@@ -371,7 +374,8 @@ PdfPage.propTypes = {
   searchText: PropTypes.string,
   setDocScrollPosition: PropTypes.func,
   setSearchIndexToHighlight: PropTypes.func,
-  windowingOverscan: PropTypes.string
+  windowingOverscan: PropTypes.string,
+  featureToggles: PropTypes.object
 };
 
 const mapDispatchToProps = (dispatch) => ({
