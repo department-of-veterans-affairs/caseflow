@@ -119,7 +119,7 @@ class CaseReviewsController < ApplicationController
 
     task.format_instructions(
       "Edited Issue",
-      original_issue.nonrating_issue_category,
+      [original_issue.nonrating_issue_category, original_issue.contested_issue_description].join,
       original_issue.mst_status,
       original_issue.pact_status,
       incoming_issue_update[:mstStatus],
