@@ -57,13 +57,14 @@ const rootStyles = css({
 
 const QueueTableBuilder = (props) => {
   const paginationOptions = () => querystring.parse(window.location.search.slice(1));
-
-  const [myPaginationOptions, setMyPaginationOptions] = useState(querystring.parse(window.location.search.slice(1)));
+  const [storedPaginationOptions, setStoredPaginationOptions] = useState(
+    querystring.parse(window.location.search.slice(1))
+  );
 
   // Causes one additional rerender of the QueueTables/tabs but prevents saved pagination behavior
   // e.g. clearing filter in a tab, then swapping tabs, then swapping back and the filter will still be applied
   useEffect(() => {
-    setMyPaginationOptions({});
+    setStoredPaginationOptions({});
   }, []);
 
   const calculateActiveTabIndex = (config) => {
@@ -174,8 +175,7 @@ const QueueTableBuilder = (props) => {
     );
 
   const taskTableTabFactory = (tabConfig, config) => {
-    // const savedPaginationOptions = paginationOptions();
-    const savedPaginationOptions = myPaginationOptions;
+    const savedPaginationOptions = storedPaginationOptions;
     const tasks = tasksWithAppealsFromRawTasks(tabConfig.tasks);
     let totalTaskCount = tabConfig.total_task_count;
     let noCasesMessage;
