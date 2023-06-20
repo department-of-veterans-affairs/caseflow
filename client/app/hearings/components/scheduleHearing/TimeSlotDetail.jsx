@@ -27,7 +27,11 @@ export const TimeSlotDetail = ({
   constrainWidth,
   hearingDay,
   regionalOffice,
-  hearing
+  hearing,
+  mstIdentification,
+  pactIdentification,
+  legacyMstPactIdentification
+
 }) => {
   const issueLabel = issueCount === 1 ? `${issueCount} issue` : `${issueCount} issues`;
 
@@ -41,16 +45,18 @@ export const TimeSlotDetail = ({
           <DocketTypeBadge name={docketName} number={docketNumber} />{' '}
           {showType && docketNumber}{' '}
           <Dot spacing={itemSpacing} />{' '}
+          {(mstIdentification || legacyMstPactIdentification) &&
           <div
-            className ="schedule-veterans-bagde-designation-1"
+            className ="schedule-veterans-badge-designation-1"
             style={{ display: 'inline-block', justifyContent: 'left', marginLeft: '-1rem' }}>
             <MstBadge appeal={hearing} />
-          </div>
+          </div>}
+          {(pactIdentification || legacyMstPactIdentification) &&
           <div
             className ="schedule-veterans-badge-designation-2"
             style={{ display: 'inline-block', justifyContent: 'left' }}>
             <PactBadge appeal={hearing} />
-          </div>
+          </div>}
           <Dot spacing={itemSpacing} />{' '}
           <Tooltip text={poaName} position="bottom">
             <span>{poaName}</span>
@@ -100,4 +106,7 @@ TimeSlotDetail.propTypes = {
   itemSpacing: PropTypes.number,
   poaName: PropTypes.string,
   hearing: PropTypes.object,
+  mstIdentification: PropTypes.bool,
+  pactIdentification: PropTypes.bool,
+  legacyMstPactIdentification: PropTypes.bool
 };
