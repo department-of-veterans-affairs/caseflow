@@ -6,6 +6,6 @@
     "./client"
   ],
   "files.insertFinalNewline": true,
-  "files.trimTrailingWhitespace": false,
+  "files.trimTrailingWhitespace": true,
   "git.autofetch": true,
 }
