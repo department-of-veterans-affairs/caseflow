@@ -103,12 +103,13 @@ class RatingIssue
     end
 
     def special_issue_has_mst?(special_issue)
+      mst_special_issue_basis = ["sexual assault trauma", "sexual trauma/assault", "sexual harassment"]
       if special_issue[:spis_tn].casecmp("ptsd - personal trauma").zero?
-        return ["sexual trauma/assault", "sexual Hhrassment"].include?(special_issue[:spis_basis_tn].downcase)
+        return mst_special_issue_basis.include?(special_issue[:spis_basis_tn].downcase)
       end
 
       if special_issue[:spis_tn].casecmp("non-ptsd - personal trauma").zero?
-        ["sexual assault trauma", "sexual harassment"].include?(special_issue[:spis_basis_tn].downcase)
+        mst_special_issue_basis.include?(special_issue[:spis_basis_tn].downcase)
       end
     end
 
