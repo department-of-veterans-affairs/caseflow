@@ -2,6 +2,7 @@ SCHEDULED_JOBS = {
     "amo_metrics_report" => AMOMetricsReportJob,
     "annual_metrics" => AnnualMetricsReportJob,
     "calculate_dispatch_stats" => CalculateDispatchStatsJob,
+    "claim_date_invalid_remediation_job" => ClaimDateInvalidRemediationJob,
     "create_establish_claim" => CreateEstablishClaimTasksJob,
     "data_integrity_checks" => DataIntegrityChecksJob,
     "delete_conferences_job" => VirtualHearings::DeleteConferencesJob,
