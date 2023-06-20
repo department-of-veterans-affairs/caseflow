@@ -42,8 +42,9 @@ export class AssignToAttorneyLegacyWidget extends React.PureComponent {
     super(props);
 
     const instructions = (this.props.selectedTasks[0].instructions.length === 0 ? null :
-      this.props.selectedTasks[0].instructions);
-    const instructionType = Array.isArray(this.props.selectedTasks[0].instructions) ? instructions : null;
+      this.props.selectedTasks[0].instructions.filter((instructionData) => instructionData));
+    const isInstructionArray = (instructions.length === 0 ? null : instructions);
+    const instructionType = Array.isArray(this.props.selectedTasks[0].instructions) ? isInstructionArray : null;
 
     this.state = {
 
@@ -150,7 +151,8 @@ export class AssignToAttorneyLegacyWidget extends React.PureComponent {
       { tasks: selectedTasks,
         assigneeId: assignee.id,
         previousAssigneeId,
-        instructions }).
+        instructions,
+        assignee: assignee.full_name }).
       then(() => {
         const isReassign = selectedTasks[0].type === 'AttorneyTask';
 
@@ -281,8 +283,10 @@ export class AssignToAttorneyLegacyWidget extends React.PureComponent {
 
     return isModal ? <QueueFlowModal title={COPY.ASSIGN_TASK_TITLE}
       submit={this.submit} validateForm={this.validateForm} onCancel={onCancel} button = "Assign"
+      submitButtonClassNames = {['usa-button-hover', 'usa-button-warning']}
       submitDisabled={
-        (this.state.instructions === '' || this.state.instructions === null || !this.props.selectedAssignee)
+        (this.state.instructions === '' || this.state.instructions === null || !selectedAssignee ||
+        (this.props.selectedAssignee === OTHER && !selectedOptionOther))
       }>
       {Widget}
     </QueueFlowModal> : Widget;

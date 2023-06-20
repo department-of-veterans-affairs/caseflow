@@ -2,13 +2,12 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
+import { taskActionData } from './utils';
+import { sprintf } from 'sprintf-js';
 
 import { AssignToAttorneyLegacyWidgetModal } from './components/AssignToAttorneyLegacyWidget';
+import { taskById } from './selectors';
 import COPY from '../../COPY';
-
-import {
-  taskById
-} from './selectors';
 
 import {
   initialAssignTasksToUser,
@@ -18,9 +17,17 @@ import {
 
 class AssignToAttorneyLegacyModalView extends React.PureComponent {
   handleAssignment = (
-    { tasks, assigneeId, instructions }
+    { tasks, assigneeId, instructions, assignee }
   ) => {
     const previousAssigneeId = tasks[0].assignedTo.id.toString();
+    const previousAssignee = tasks[0].assigneeName;
+
+    const assignTaskSuccessMessage = {
+      title: taskActionData(this.props).message_title ? sprintf(taskActionData(this.props).message_title,
+        previousAssignee,
+        assignee) : sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()),
+      detail: taskActionData(this.props).message_detail || null
+    };
 
     if ([COPY.JUDGE_ASSIGN_TASK_LABEL, COPY.JUDGE_QUALITY_REVIEW_TASK_LABEL].includes(tasks[0].label)) {
       return this.props.initialAssignTasksToUser({
@@ -33,7 +40,7 @@ class AssignToAttorneyLegacyModalView extends React.PureComponent {
           this.props.legacyReassignToJudgeAttorney({
             tasks,
             assigneeId
-          });
+          }, assignTaskSuccessMessage);
         }
       });
     }
@@ -48,10 +55,27 @@ class AssignToAttorneyLegacyModalView extends React.PureComponent {
         this.props.legacyReassignToJudgeAttorney({
           tasks,
           assigneeId
-        });
+        }, assignTaskSuccessMessage);
       }
     });
   }
+
+  getAssignee = () => {
+    let assignee = 'person';
+
+    taskActionData(this.props).options.forEach((opt) => {
+      if (opt.value === this.state.selectedValue) {
+        assignee = opt.label;
+      }
+    });
+    const splitAssignee = assignee.split(' ');
+
+    if (splitAssignee.length >= 3) {
+      assignee = `${splitAssignee[0] } ${ splitAssignee[2]}`;
+    }
+
+    return assignee;
+  };
 
   render = () => {
     const { task, userId, match } = this.props;
