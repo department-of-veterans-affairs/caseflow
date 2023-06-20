@@ -27,6 +27,12 @@ class IssuesController < ApplicationController
   def update
     return record_not_found unless appeal
 
+    issue = appeal.issues.find { |i| i.vacols_sequence_id == params[:vacols_sequence_id].to_i }
+    if issue.mst_status != convert_to_bool(params[:issues][:mst_status]) ||
+       issue.pact_status != convert_to_bool(params[:issues][:pact_status])
+      create_legacy_issue_update_task(issue) if FeatureToggle.enabled?(:legacy_mst_pact_identification)
+    end
+
     Issue.update_in_vacols!(
       vacols_id: appeal.vacols_id,
       vacols_sequence_id: params[:vacols_sequence_id],
@@ -46,6 +52,31 @@ class IssuesController < ApplicationController
   end
 
   private
+
+  def create_legacy_issue_update_task(before_issue)
+    user = current_user
+    task = IssuesUpdateTask.create!(
+      appeal: appeal,
+      parent: appeal.root_task,
+      assigned_to: SpecialIssueEditTeam.singleton,
+      assigned_by: user,
+      completed_by: user
+    )
+    # format the task instructions and close out
+    task.format_instructions(
+      "Edited Issue",
+      before_issue.note,
+      before_issue.mst_status,
+      before_issue.pact_status,
+      convert_to_bool(params[:issues][:mst_status]),
+      convert_to_bool(params[:issues][:pact_status])
+    )
+    task.completed!
+  end
+
+  def convert_to_bool(status)
+    status == "Y"
+  end
 
   def json_issues
     appeal.issues.map do |issue|
@@ -68,7 +99,9 @@ class IssuesController < ApplicationController
               :issue,
               :level_1,
               :level_2,
-              :level_3).to_h
+              :level_3,
+              :mst_status,
+              :pact_status).to_h
     safe_params[:vacols_user_id] = current_user.vacols_uniq_id
     safe_params
   end

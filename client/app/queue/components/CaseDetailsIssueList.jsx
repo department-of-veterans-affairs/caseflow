@@ -1,5 +1,6 @@
 import React from 'react';
 import { css } from 'glamor';
+import PropTypes from 'prop-types';
 
 import { getIssueDiagnosticCodeLabel } from '../utils';
 import AmaIssueList from '../../components/AmaIssueList';
@@ -28,7 +29,9 @@ export default function CaseDetailsIssueList(props) {
   if (!props.isLegacyAppeal) {
     return <AmaIssueList
       requestIssues={props.issues}
-      decisionIssues={props.decisionIssues}>
+      decisionIssues={props.decisionIssues}
+      mstFeatureToggle={props.featureToggles.mst_identification}
+      pactFeatureToggle={props.featureToggles.pact_identification}>
       <DecisionIssues
         decisionIssues={props.decisionIssues} />
     </AmaIssueList>;
@@ -38,13 +41,16 @@ export default function CaseDetailsIssueList(props) {
     {props.issues.map((issue, i) =>
       <div key={i} {...singleIssueContainerStyling}>
         <h3 {...headingStyling}>Issue {1 + i}</h3>
-        { <LegacyIssueDetails>{issue}</LegacyIssueDetails> }
+        <LegacyIssueDetails legacyMstPactFeatureToggle={props.featureToggles.legacy_mst_pact_identification}>
+          {issue}
+        </LegacyIssueDetails>
       </div>
     )}
   </React.Fragment>;
 }
 
 const LegacyIssueDetails = (props) => {
+  const legacyMstPactFeatureToggle = props.legacyMstPactFeatureToggle
   const issue = props.children;
   const codes = issue.codes ? issue.codes.slice() : [];
   const diagnosticCode = getIssueDiagnosticCodeLabel(codes[codes.length - 1]) ? codes.pop() : null;
@@ -57,6 +63,7 @@ const LegacyIssueDetails = (props) => {
     <IssueNoteListItem>{issue.note}</IssueNoteListItem>
     <IssueDispositionListItem>{issue.disposition}</IssueDispositionListItem>
     <IssueNoteListItem>{issue.closed_status}</IssueNoteListItem>
+    {legacyMstPactFeatureToggle && <SpecialIssueListItem>{issue}</SpecialIssueListItem>}
   </CaseDetailsDescriptionList>;
 };
 
@@ -89,6 +96,22 @@ const getDescriptionsFromCodes = (levels, codes, descriptions = []) => {
   return descriptions;
 };
 
+// format special issues to display 'None', 'PACT', 'MST', or 'MST and PACT'
+const specialIssuesFormatting = (props) => {
+  const mstStatus = props.mst_status;
+  const pactStatus = props.pact_status;
+
+  if (!mstStatus && !pactStatus) {
+    return 'None';
+  } else if (mstStatus && pactStatus) {
+    return 'MST and PACT';
+  } else if (mstStatus) {
+    return 'MST';
+  } else if (pactStatus) {
+    return 'PACT';
+  }
+};
+
 const IssueDescriptionsListItem = (props) => {
   if (!props.program || !props.children) {
     return null;
@@ -107,6 +130,35 @@ const IssueNoteListItem = (props) => <DescriptionListItem label="Note" styling={
   {props.children}
 </DescriptionListItem>;
 
+const SpecialIssueListItem = (props) => <DescriptionListItem label="Special Issues">
+  {specialIssuesFormatting(props.children)}
+</DescriptionListItem>;
+
 const IssueDispositionListItem = (props) => <DescriptionListItem label="Disposition">
   {dispositionLabelForDescription(props.children)}
 </DescriptionListItem>;
+
+CaseDetailsIssueList.propTypes = {
+  isLegacyAppeal: PropTypes.bool,
+  issues: PropTypes.array,
+  title: PropTypes.string,
+  decisionIssues: PropTypes.node,
+  featureToggles: PropTypes.object
+};
+
+SpecialIssueListItem.propTypes = {
+  children: PropTypes.object,
+  mst_status: PropTypes.bool,
+  pact_status: PropTypes.bool
+};
+
+LegacyIssueDetails.propTypes = {
+  legacyMstPactFeatureToggle: PropTypes.bool,
+  children: PropTypes.object
+};
+
+DescriptionListItem.propTypes = {
+  label: PropTypes.object,
+  children: PropTypes.object,
+  styling: PropTypes.object
+};
