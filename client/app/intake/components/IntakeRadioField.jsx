@@ -58,7 +58,8 @@ export const IntakeRadioField = (props) => {
     mstJustification,
     mstJustificationOnChange,
     pactJustification,
-    pactJustificationOnChange
+    pactJustificationOnChange,
+    userCanEditIntakeIssues
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -117,7 +118,7 @@ export const IntakeRadioField = (props) => {
 
   // Creating MST and PACT checkboxes, along with a text input for justification of change
   const maybeAddMstAndPactCheckboxes = (option) => {
-    if (option.value === props.value) {
+    if (option.value === props.value && userCanEditIntakeIssues) {
       return (
         <React.Fragment>
           { renderMst && <div>
@@ -315,6 +316,7 @@ IntakeRadioField.propTypes = {
   pactJustificationOnChange: PropTypes.func,
   mstJustificationOnChange: PropTypes.func,
   setPactCheckboxFunction: PropTypes.func,
+  userCanEditIntakeIssues: PropTypes.bool,
   totalElements: PropTypes.number,
   prePopulatedMst: PropTypes.bool,
   prePopulatedPact: PropTypes.bool

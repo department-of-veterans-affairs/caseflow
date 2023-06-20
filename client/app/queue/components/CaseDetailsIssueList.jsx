@@ -27,13 +27,33 @@ const headingStyling = css({
 
 export default function CaseDetailsIssueList(props) {
   if (!props.isLegacyAppeal) {
+    // Map props from redux store - values from queue.appeals.issues and queue.appeals.decisionissues
+    const updatedDecisionIssues = props.decisionIssues.map((decisionIssue) => {
+      // Get corresponding request_issue_id
+      const correspondingRequestIssueId = decisionIssue.request_issue_ids[0];
+      // Filter request issues for the corresponding request issue id
+      const correspondingRequestIssue = props.issues.filter((requestIssue) => {
+        return requestIssue.id === correspondingRequestIssueId;
+      })[0];
+      // Grab the mst and pact statuses to add to decision issues
+      const requestIssueMstStatus = correspondingRequestIssue.mst_status;
+      const requestIssuePactStatus = correspondingRequestIssue.pact_status;
+
+      return {
+        // spread operator - opening up and duplicating each key value pair of an object/hash/dictionary/array
+        ...decisionIssue,
+        mstStatus: requestIssueMstStatus,
+        pactStatus: requestIssuePactStatus,
+      };
+    });
+
     return <AmaIssueList
       requestIssues={props.issues}
       decisionIssues={props.decisionIssues}
       mstFeatureToggle={props.featureToggles.mst_identification}
       pactFeatureToggle={props.featureToggles.pact_identification}>
       <DecisionIssues
-        decisionIssues={props.decisionIssues} />
+        decisionIssues={updatedDecisionIssues} />
     </AmaIssueList>;
   }
 
