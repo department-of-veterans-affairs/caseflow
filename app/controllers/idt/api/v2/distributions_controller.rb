@@ -25,9 +25,8 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
     rescue StandardError
       case response_code
       when 404
-        pending_establishment(distribution_id, response_code)
+        pending_establishment(distribution_id)
       else
-        response_code = 500
         render_error(response_code, "Internal Server Error", distribution_id)
       end
       return
@@ -36,8 +35,8 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
     render json: format_response(distribution)
   end
 
-  def pending_establishment(distribution_id, response_code)
-    render json: { id: distribution_id, response_status: "PENDING_ESTABLISHMENT" }, status: response_code
+  def pending_establishment(distribution_id)
+    render json: { id: distribution_id, status: "PENDING_ESTABLISHMENT" }, status: :ok
   end
 
   def format_response(response)

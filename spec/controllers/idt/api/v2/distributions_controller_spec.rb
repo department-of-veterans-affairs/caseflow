@@ -45,10 +45,10 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
 
     context "when PacManService fails with a 404 error" do
       let(:distribution_id) { 123_456 }
-      it "renders the expected response with status 404" do
+      it "renders the expected response with status 200, Pacman api has a 404" do
         expected_response = {
           "id" => distribution_id,
-          "response_status" => "PENDING_ESTABLISHMENT"
+          "status" => "PENDING_ESTABLISHMENT"
         }
 
         allow(PacManService).to receive(:get_distribution_request).with(distribution_id) do
@@ -57,7 +57,7 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
 
         get :get_distribution, params: { distribution_id: distribution_id }
 
-        expect(response).to have_http_status(404)
+        expect(response).to have_http_status(200)
         expect(JSON.parse(response.body)).to eq(expected_response)
       end
     end
@@ -162,12 +162,10 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
       let(:status) { 500 }
       let(:message) { "Internal Server Error" }
       let(:distribution_id) { "123456" }
-      let(:error_uuid) { SecureRandom.uuid }
 
       it "renders the error response with correct status, message, and distribution ID" do
-        allow(SecureRandom).to receive(:uuid).and_return(error_uuid)
         error_message = "[IDT] Http Status Code: #{status}, #{message}, (Distribution ID: #{distribution_id})"
-        expect(Rails.logger).to receive(:error).with("#{error_message}Error ID: #{error_uuid}")
+        expect(Rails.logger).to receive(:error).with("#{error_message}Error ID: #{uuid}")
 
         allow(PacManService).to receive(:get_distribution_request).with(distribution_id) do
           OpenStruct.new(code: 500)
