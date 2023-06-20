@@ -16,6 +16,7 @@ jest.mock('superagent', () => ({
   timeout: jest.fn().mockReturnThis(),
   use: jest.fn().mockReturnThis(),
   on: jest.fn().mockReturnThis(),
+  then: jest.fn().mockReturnThis()
 }));
 
 const defaultHeaders = {
@@ -54,6 +55,25 @@ describe('ApiUtil', () => {
       expect(request.use).toHaveBeenCalledWith(nocache);
       expect(req).toMatchObject(request);
     });
+
+    test('calls success handling method when calls the api request', () => {
+      const successHandling = jest.fn();
+
+      const res = {};
+
+      // Setup the test
+      const options = { data: { sample: 'data' } };
+
+      // Run the test
+      const req = ApiUtil.patch('/foo', options);
+
+      // Expectations
+      req.then(() => {
+        // Assert that successHandling method is called
+        expect(request.then).toHaveBeenCalled(res);
+        expect(successHandling).toHaveBeenCalled();
+      })
+    });
   });
 
   describe('.post', () => {
@@ -70,6 +90,25 @@ describe('ApiUtil', () => {
       expect(request.send).toHaveBeenCalledWith(options.data);
       expect(request.use).toHaveBeenCalledWith(nocache);
       expect(req).toMatchObject(request);
+    });
+
+    test('calls success handling method when calls the api request', () => {
+      const successHandling = jest.fn();
+
+      const res = {};
+
+      // Setup the test
+      const options = { data: { sample: 'data' } };
+
+      // Run the test
+      const req = ApiUtil.post('/bar', options);
+
+      // Expectations
+      req.then(() => {
+        // Assert that successHandling method is called
+        expect(request.then).toHaveBeenCalled(res);
+        expect(successHandling).toHaveBeenCalled();
+      })
     });
 
     test('attaches custom headers when provided', () => {
@@ -127,6 +166,25 @@ describe('ApiUtil', () => {
       expect(request.query).toHaveBeenCalledWith(options.query);
       expect(request.use).toHaveBeenCalledWith(nocache);
       expect(req).toMatchObject(request);
+    });
+
+    test('calls success handling method when calls the api request', () => {
+      const successHandling = jest.fn();
+
+      const res = {};
+
+      // Setup the test
+      const options = { query: { bar: 'baz' } };
+
+      // Run the test
+      const req = ApiUtil.get('/foo', options);
+
+      // Expectations
+      req.then(() => {
+        // Assert that successHandling method is called
+        expect(request.then).toHaveBeenCalled(res);
+        expect(successHandling).toHaveBeenCalled();
+      })
     });
   });
 });
