@@ -927,9 +927,7 @@ class CompleteTaskModal extends React.Component {
       (MODAL_TYPE_ATTRS[this.props.modalType].buttonText === 'Proceed to final letter') ||
       (MODAL_TYPE_ATTRS[this.props.modalType].buttonText === 'Resend notification letter') ||
       (this.props.modalType === 'task_complete_contested_claim')
-    ) ? ('/organizations/clerk-of-the-board?tab=unassignedTab&page=1') : (
-      taskData.redirect_after || '/queue'
-    );
+    ) ? ('/organizations/clerk-of-the-board?tab=unassignedTab&page=1') : (taskData.redirect_after || '/queue');
 
     return (
       <QueueFlowModal
