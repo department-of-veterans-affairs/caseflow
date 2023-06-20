@@ -21,14 +21,27 @@ module WarRoom
         return false
       end
 
-      ActiveRecord::Base.transaction do
-        starting_record_count = retrieve_problem_reviews.count
-        @logs.push("#{Time.zone.now} DuplicateEP::Log Job Started.")
-        @logs.push("#{Time.zone.now} DuplicateEP::Log\n"\
-          " Records with errors: #{starting_record_count}.")
+      starting_record_count = retrieve_problem_reviews.count
+      @logs.push("#{Time.zone.now} DuplicateEP::Log Job Started .")
+      @logs.push("#{Time.zone.now} DuplicateEP::Log"\
+        " Records with errors: #{starting_record_count} .")
 
+      ActiveRecord::Base.transaction do
         resolve_duplicate_end_products(retrieve_problem_reviews, starting_record_count)
+
+      rescue StandardError => error
+        @logs.push("An error occurred: #{error.message}")
+        raise error
       end
+
+      final_count = retrieve_problem_reviews.count
+
+      @logs.push("#{Time.zone.now} DuplicateEP::Log"\
+        " Resolved records: #{resolved_record_count(starting_record_count, final_count)} .")
+      @logs.push("#{Time.zone.now} DuplicateEP::Log"\
+        " Records with errors: #{retrieve_problem_reviews.count} .")
+      @logs.push("#{Time.zone.now} DuplicateEP::Log Job completed .")
+      Rails.logger.info(@logs)
     end
 
     # finding reviews that potentially need resolution
@@ -72,7 +85,7 @@ module WarRoom
       resolve_duplicate_end_products(review, review.count)
     end
 
-    def resolve_duplicate_end_products(reviews, starting_record_count)
+    def resolve_duplicate_end_products(reviews, _starting_record_count)
       reviews.each do |review|
         vet = review.veteran
         verb = "start"
@@ -111,12 +124,6 @@ module WarRoom
 
         call_decision_review_process_job(review, vet)
       end
-      final_count = retrieve_problem_reviews.count
-      @logs.push("#{Time.zone.now} DuplicateEP::Log"\
-        " Resolved records: #{resolved_record_count(starting_record_count, final_count)}.")
-      @logs.push("#{Time.zone.now} DuplicateEP::Log"\
-        " Records with errors: #{retrieve_problem_reviews.count}.")
-      @logs.push("#{Time.zone.now} Job completed.")
     end
 
     def resolved_record_count(starting_record_count, final_count)
