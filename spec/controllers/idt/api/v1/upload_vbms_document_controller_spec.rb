@@ -248,7 +248,6 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
       context "queues async mail request job" do
         let(:recipient_info) { mail_request_params[:recipient_info] }
         let(:mail_request) { MailRequest.new(recipient_info[0]) }
-        let(:mail_request_job) { class_double(MailRequestJob) }
         let(:mail_package) do
           { distributions: [mail_request.to_json],
             copies: 1 }
@@ -264,7 +263,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
         context "document is associated with a mail package" do
           it "calls #perform_later on MailRequestJob" do
             post :create, params: mail_request_params, as: :json
-            expect(mail_request_job).to receive(:perform_later)
+            expect(MailRequestJob).to receive(:perform_later)
             perform_enqueued_jobs do
               UploadDocumentToVbmsJob.perform_later(upload_job_params)
             end
@@ -275,14 +274,14 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
           it "does not call #perform_later on MailRequestJob" do
             mail_request_params[:recipient_info] = []
             post :create, params: mail_request_params, as: :json
-            expect(mail_request_job).to_not receive(:perform_later)
+            expect(MailRequestJob).to_not receive(:perform_later)
           end
         end
 
         context "recipient info is incorrect" do
           it "does not call #perform_later on MailRequestJob" do
             post :create, params: invalid_mail_request_params, as: :json
-            expect(mail_request_job).to_not receive(:perform_later)
+            expect(MailRequestJob).to_not receive(:perform_later)
           end
         end
       end

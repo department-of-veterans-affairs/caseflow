@@ -10,7 +10,6 @@ describe UploadDocumentToVbmsJob, :postgres do
       { distributions: [mail_request.to_json],
         copies: 1 }
     end
-    let(:mail_request_job) { class_double(MailRequestJob) }
 
     let(:params) do
       { document_id: document.id,
@@ -30,7 +29,7 @@ describe UploadDocumentToVbmsJob, :postgres do
 
     context "document is associated with a mail package" do
       it "calls #perform_later on MailRequestJob" do
-        expect(mail_request_job).to receive(:perform_later).with(document, mail_package)
+        expect(MailRequestJob).to receive(:perform_later).with(document, mail_package)
         subject
       end
     end
@@ -38,7 +37,7 @@ describe UploadDocumentToVbmsJob, :postgres do
     context "document is not associated with a mail package" do
       let(:mail_package) { nil }
       it "does not call #perform_later on MailRequestJob" do
-        expect(mail_request_job).to_not receive(:perform_later)
+        expect(MailRequestJob).to_not receive(:perform_later)
         subject
       end
     end
@@ -46,7 +45,7 @@ describe UploadDocumentToVbmsJob, :postgres do
     context "document is not successfully uploaded to vbms" do
       it "does not call #perform_later on MailRequestJob" do
         allow(VBMSService).to receive(:upload_document_to_vbms_veteran).and_raise(StandardError)
-        expect(mail_request_job).to_not receive(:perform_later)
+        expect(MailRequestJob).to_not receive(:perform_later)
         expect { subject }.to raise_error(StandardError)
       end
     end
