@@ -124,4 +124,11 @@ class LegacyHearingSerializer
   end
 
   attribute :worksheet_issues, &:prepare_worksheet_issues
+  attribute :mst do |object|
+    object.appeal.mst?
+  end
+
+  attribute :pact do |object|
+    object.appeal.pact?
+  end
 end
