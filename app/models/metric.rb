@@ -79,7 +79,7 @@ class Metric < CaseflowRecord
       uuid: params[:uuid],
       user: user,
       metric_name: params[:name] || METRIC_TYPES[:log],
-      metric_class: klass&.class.name || self.class.name,
+      metric_class: klass&.try(:name) || klass&.class.name,
       metric_group: params[:group] || METRIC_GROUPS[:service],
       metric_message: params[:message] || METRIC_TYPES[:log],
       metric_type: params[:type] || METRIC_TYPES[:log],
