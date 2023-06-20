@@ -138,7 +138,6 @@ export class PdfFile extends React.PureComponent {
 
     return <div key={pageIndex} style={style}>
       <PdfPage
-        {...this.props}
         documentId={this.props.documentId}
         file={this.props.file}
         isPageVisible={isVisible}
