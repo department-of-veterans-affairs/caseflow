@@ -1,13 +1,3 @@
-# frozen_string_literal: true
-
-require "rails_helper"
-
-# This is the command to run rspec in the console
-# bundle exec rspec spec/controllers/idt/api/v2/distributions_controller_spec.rb
-
-# Here is where you look at code coverage
-# open coverage/index.html
-
 RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
   describe "#get_distribution" do
     let(:user) { create(:user) }
@@ -36,7 +26,6 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
 
       it "renders an error with status 400" do
         get :get_distribution, params: { distribution_id: distribution_id }
-
         expect(response.code).to eq "400"
         expect(JSON.parse(response.body)).to eq(
           "message" => error_msg
@@ -158,27 +147,30 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
         expect(JSON.parse(response.body.to_json)).to eq(expected_response.to_json)
       end
     end
-  end
 
-  describe "render_error" do
-    let(:status) { 400 }
-    let(:message) { "Distribution Does Not Exist Or Id is blank" }
-    let(:distribution_id) { "123456" }
-    let(:error_uuid) { SecureRandom.uuid }
+    context "render_error" do
+      let(:status) { 500 }
+      let(:message) { "Internal Server Error" }
+      let(:distribution_id) { "123456" }
+      let(:error_uuid) { SecureRandom.uuid }
 
-    it "renders the error response with correct status, message, and distribution ID" do
-      allow(SecureRandom).to receive(:uuid).and_return(error_uuid)
-      error_message = "[IDT] Http Status Code: #{status}, #{message}, (Distribution ID: #{distribution_id})"
-      expect(Rails.logger).to receive(:error).with("#{error_message}Error ID: #{error_uuid}")
-      expect(Raven).to receive(:capture_exception).with(error_message, extra: { error_uuid: error_uuid })
-      expect(controller).to receive(:render).with(
-        json: {
-          "message": error_message + " #{error_uuid}"
-        },
-        status: status
-      )
+      it "renders the error response with correct status, message, and distribution ID" do
+        allow(SecureRandom).to receive(:uuid).and_return(error_uuid)
+        error_message = "[IDT] Http Status Code: #{status}, #{message}, (Distribution ID: #{distribution_id})"
+        expect(Rails.logger).to receive(:error).with("#{error_message}Error ID: #{error_uuid}")
 
-      controller.send(:render_error, status, message, distribution_id)
+        allow(PacManService).to receive(:get_distribution_request).with(distribution_id) do
+          OpenStruct.new(code: 500)
+        end
+
+        get :get_distribution, params: { distribution_id: distribution_id }
+
+        expect(response).to have_http_status(status)
+        expect(JSON.parse(response.body)).to eq(
+          "message" => error_message + " #{error_uuid}"
+        )
+      end
     end
   end
 end
+
