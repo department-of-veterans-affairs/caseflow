@@ -178,7 +178,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     return (
       <React.Fragment key={option.id}>
         <Checkbox
-          name={rowOptId}
+          name={option.label}
           onChange={onChange}
           value={checkboxValues[option.id].checked}
           label={option.label}
