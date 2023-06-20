@@ -62,6 +62,7 @@ exports[`MembershipRequestTable renders the default state with mocked membership
       <tr
         class="membership-request-row"
         id="table-row-1"
+        tabindex="0"
       >
         <td
           class=""
@@ -158,6 +159,7 @@ exports[`MembershipRequestTable renders the default state with mocked membership
       <tr
         class="membership-request-row"
         id="table-row-2"
+        tabindex="0"
       >
         <td
           class=""
@@ -254,6 +256,7 @@ exports[`MembershipRequestTable renders the default state with mocked membership
       <tr
         class="membership-request-row"
         id="table-row-3"
+        tabindex="0"
       >
         <td
           class=""
@@ -343,6 +346,7 @@ exports[`MembershipRequestTable renders the default state with mocked membership
       <tr
         class="membership-request-row"
         id="table-row-4"
+        tabindex="0"
       >
         <td
           class=""
@@ -432,6 +436,7 @@ exports[`MembershipRequestTable renders the default state with mocked membership
       <tr
         class="membership-request-row"
         id="table-row-5"
+        tabindex="0"
       >
         <td
           class=""
@@ -674,6 +679,7 @@ exports[`MembershipRequestTable shows the request note when the expansion button
       <tr
         class="membership-request-row"
         id="table-row-1"
+        tabindex="0"
       >
         <td
           class=""
@@ -770,6 +776,7 @@ exports[`MembershipRequestTable shows the request note when the expansion button
       <tr
         class="membership-request-row"
         id="table-row-2"
+        tabindex="0"
       >
         <td
           class=""
@@ -866,6 +873,7 @@ exports[`MembershipRequestTable shows the request note when the expansion button
       <tr
         class="membership-request-expanded-note-row"
         id="table-row-2-note"
+        tabindex="0"
       >
         <td
           class=""
@@ -886,6 +894,7 @@ exports[`MembershipRequestTable shows the request note when the expansion button
       <tr
         class="membership-request-row"
         id="table-row-3"
+        tabindex="0"
       >
         <td
           class=""
@@ -975,6 +984,7 @@ exports[`MembershipRequestTable shows the request note when the expansion button
       <tr
         class="membership-request-row"
         id="table-row-4"
+        tabindex="0"
       >
         <td
           class=""
@@ -1064,6 +1074,7 @@ exports[`MembershipRequestTable shows the request note when the expansion button
       <tr
         class="membership-request-row"
         id="table-row-5"
+        tabindex="0"
       >
         <td
           class=""
