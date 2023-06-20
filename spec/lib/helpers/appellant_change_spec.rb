@@ -68,6 +68,13 @@ describe AppellantChange do
             end
           end
 
+          context "when claimant_type is invalid" do
+            let(:arguments) { valid_params.merge(claimant_type: "InvalidClaimant") }
+            it "puts error message and returns nil when claimant type is invalid" do
+              expect { run_appellant_change }.to output("Invalid claimant type\n").to_stdout
+            end
+          end
+
           context "when claimant_type is 'VeteranClaimant'" do
             let(:arguments) { valid_params.merge(claimant_type: "VeteranClaimant") }
             let!(:appeal) { create(:appeal, veteran_is_not_claimant: true) }
