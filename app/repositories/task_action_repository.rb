@@ -183,7 +183,8 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       {
         selected: nil,
         options: user.can_act_on_behalf_of_legacy_judges? ? users_to_options(Attorney.list_all) : nil,
-        type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name
+        type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name,
+        message_title: COPY::DISTRIBUTE_TASK_SUCCESS_MESSAGE_NON_BLOCKING
       }
     end
 
