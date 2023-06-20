@@ -116,12 +116,16 @@ class QueueColumn
   # Issue Type helpers to expand issue type filter options to all possible options for orgs that support it
   def all_possible_issue_type_options(tasks)
     assigned_to = tasks&.first&.assigned_to
-    # Can add more orgs if they want to automatically add all possible issue categories to the options
+    # Can add more orgs/users if neccessary to limit the possible issue categories in the available options
     # E.g. Add Issue Category1(0), Issue Category2(0) into the options if they aren't on the tasks in the tab
-    if assigned_to.is_a?(VhaCamo || VhaRegionalOffice || VhaProgramOffice)
+    if assigned_to.is_a?(VhaCamo) || assigned_to.is_a?(VhaRegionalOffice) || assigned_to.is_a?(VhaProgramOffice)
       Constants.ISSUE_CATEGORIES.vha.reject { |category| category.match?(/caregiver/i) }
     elsif assigned_to.is_a?(VhaCaregiverSupport)
       Constants.ISSUE_CATEGORIES.vha.select { |category| category.match?(/caregiver/i) }
+    else
+      # If there is no assigned_to or the org/user has no defined issue categories then go ahead and build
+      # a list of all possible issue categories as the filterable options. This will be large
+      Constants.ISSUE_CATEGORIES.to_h.values.flatten.uniq
     end
   end
 
