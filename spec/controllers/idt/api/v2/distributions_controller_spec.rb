@@ -31,7 +31,7 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
       let(:distribution_id) { "" }
       let(:error_msg) do
         "[IDT] Http Status Code: 400, Distribution Does Not Exist Or Id is blank," \
-          " (Distribution ID: ) #{uuid}"
+          " (Distribution ID: #{distribution_id}) #{uuid}"
       end
 
       it "renders an error with status 400" do
@@ -45,25 +45,37 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
     end
 
     context "when PacManService fails with a 404 error" do
-      let(:distribution) { double("Distribution", code: 404) }
-
-      it "renders an error based on the response code" do
-        error_response = {
-          "id": distribution_id,
-          "status": "PENDING_ESTABLISHMENT"
+      let(:distribution_id) { 123_456 }
+      it "renders the expected response with status 404" do
+        expected_response = {
+          "id" => distribution_id,
+          "response_status" => "PENDING_ESTABLISHMENT"
         }
-        expect(controller).to receive(:render_error).with(404, error_response, distribution_id)
-        controller.get_distribution
+
+        allow(PacManService).to receive(:get_distribution_request).with(distribution_id) do
+          OpenStruct.new(code: 404)
+        end
+
+        get :get_distribution, params: { distribution_id: distribution_id }
+
+        expect(response).to have_http_status(404)
+        expect(JSON.parse(response.body)).to eq(expected_response)
       end
     end
 
     context "when PacManService fails with a 500 error" do
       let(:distribution) { double("Distribution", code: 500) }
+      let(:error_msg) do
+        "[IDT] Http Status Code: 500, Internal Server Error," \
+          " (Distribution ID: #{distribution_id}) #{uuid}"
+      end
 
       it "renders an error with status 500" do
-        error_message = "Internal Server Error"
-        expect(controller).to receive(:render_error).with(500, error_message, distribution_id)
-        controller.get_distribution
+        get :get_distribution, params: { distribution_id: distribution_id }
+        expect(response.code).to eq "500"
+        expect(JSON.parse(response.body)).to eq(
+          "message" => error_msg
+        )
       end
     end
 
