@@ -75,7 +75,7 @@ export default class AmaIssueList extends React.PureComponent {
       children,
       errorMessages,
       mstFeatureToggle,
-      pactFeatureToggle
+      pactFeatureToggle,
     } = this.props;
 
     return <ol {...issueListStyling}>
