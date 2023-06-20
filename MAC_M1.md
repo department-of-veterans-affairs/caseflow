@@ -128,7 +128,7 @@ developer”
 
 **OpenSSL**
 
-1. Download openssl@1.1 and openssl@3 from this [link](https://boozallen.sharepoint.com/teams/VABID/appeals/Documents/Forms/AllItems.aspx?viewid=8a8eaf3e%2D2c12%2D4c87%2Db95f%2D4eab3428febd&view=7&q=openssl)
+1. Download openssl@1.1 and openssl@3 from this [link](https://boozallen.sharepoint.com/teams/VABID/appeals/Documents/Forms/AllItems.aspx?id=%2Fteams%2FVABID%2Fappeals%2FDocuments%2FDevelopment%2FDeveloper%20Setup%20Resources%2FM1%20Mac%20Developer%20Setup&viewid=8a8eaf3e%2D2c12%2D4c87%2Db95f%2D4eab3428febd)
 
 2. Open “Finder” and find the two folders under “Downloads”
 
@@ -258,16 +258,12 @@ export FREEDESKTOP_MIME_TYPES_PATH=/usr/local/homebrew/share/mime/packages/freed
                     * a. ```bundle exec rake db:drop db:create db:schema:load```
                     * b. `bundle exec rake db:seed`
                     * c. `make install`
-                    * d. Complete the Vacols VM Trigger Fix below
-                    * e. `make test`
+                    * d. `make test`
                         * i. This will time out before the command is finished executing. Have been told this is normal behavior if you have completed the VM Trigger Fix
-                    * f. `make run-m1`
+                    * e. `make run-m1`
                         * i. Click <http://127.0.0.1:3000> to open caseflow in browser
 
-5. Download VACOLS VM Trigger fix from this [link](https://boozallen.sharepoint.com/:u:/r/teams/VABID/appeals/Documents/Development/Developer%20Setup%20Resources/M1%20Mac%20Developer%20Setup/VACOLS_VM_trigger_fix_M1.zip?csf=1&web=1&e=pIhvuj) \
-    a. Follow the instructions file, you will need to download SQLDeveloper on your local
-
-6. After you are finished, go back to caseflow in VSCode, enter terminal, and run
+5. After you are finished, go back to caseflow in VSCode, enter terminal, and run
     * a. `make install`
     * b. `make test`
         * i. This will time out before the command is finished executing. Have been told this is normal behavior if you have finished step 5
