@@ -17,4 +17,23 @@ describe VhaRegionalOffice, :postgres do
       expect(regional_office.can_receive_task?(doc_task)).to eq(false)
     end
   end
+
+  describe ".queue_tabs" do
+    it "returns the expected tabs for use in the VHA Regional Office organization's queue" do
+      expect(regional_office.queue_tabs).to match_array(
+        [
+          VhaRegionalOfficeAssignedTasksTab,
+          VhaRegionalOfficeInProgressTasksTab,
+          VhaRegionalOfficeOnHoldTasksTab,
+          VhaRegionalOfficeCompletedTasksTab
+        ]
+    )
+    end
+  end
+
+  describe ".COLUMN_NAMES" do
+    it "VHA Regional Office orgainzation queue tabs have 9 columns by default" do
+      expect(VhaRegionalOffice::COLUMN_NAMES.count).to eq 9
+    end
+  end
 end
