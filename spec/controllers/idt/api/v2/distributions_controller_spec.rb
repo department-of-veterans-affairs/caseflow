@@ -1,3 +1,13 @@
+# frozen_string_literal: true
+
+require "rails_helper"
+
+# This is the command to run rspec in the console
+# bundle exec rspec spec/controllers/idt/api/v2/distributions_controller_spec.rb
+
+# Here is where you look at code coverage
+# open coverage/index.html
+
 RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
   describe "#get_distribution" do
     let(:user) { create(:user) }
@@ -173,4 +183,3 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
     end
   end
 end
-
