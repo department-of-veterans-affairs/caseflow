@@ -13,7 +13,9 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   # Return: Array of appeals that were attempted to upload notification reports to efolder
   def perform
     RequestStore[:current_user] = User.system_user
+
     all_active_legacy_appeals = appeals_recently_outcoded + appeals_never_synced + ready_for_resync
+
     sync_notification_reports(all_active_legacy_appeals.first(BATCH_LIMIT.to_i))
   end
 
@@ -42,17 +44,34 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   #
   # Return: Array of appeals that have never been synced and meet all requirements for syncing
   def appeals_never_synced
-    appeal_ids_synced = VbmsUploadedDocument.distinct
-      .where(appeal_type: "LegacyAppeal", document_type: "BVA Case Notifications")
-      .successfully_uploaded
-      .pluck(:appeal_id)
-
-    LegacyAppeal.joins("JOIN notifications ON \
-        notifications.appeals_id = legacy_appeals.vacols_id AND \
-        notifications.appeals_type = 'LegacyAppeal'")
-      .where(id: RootTask.open.where(appeal_type: "LegacyAppeal").pluck(:appeal_id))
-      .where.not(id: appeal_ids_synced)
+    LegacyAppeal.joins(successful_notifications_join_clause)
+      .joins(previous_case_notifications_document_join_clause)
+      .joins(open_root_task_join_clause)
+      .where("vud.id IS NULL")
       .group(:id)
+  end
+
+  def successful_notifications_join_clause
+    "JOIN notifications ON \
+    notifications.appeals_id = legacy_appeals.vacols_id \
+    AND notifications.appeals_type = 'LegacyAppeal' \
+    AND (notifications.email_notification_status IS NULL OR \
+      notifications.email_notification_status NOT IN \
+      ('No Participant Id Found', 'No Claimant Found', 'No External Id')) \
+    AND (notifications.sms_notification_status IS NULL OR \
+      notifications.sms_notification_status NOT IN \
+      ('No Participant Id Found', 'No Claimant Found', 'No External Id'))"
+  end
+
+  def previous_case_notifications_document_join_clause
+    "LEFT JOIN vbms_uploaded_documents vud ON vud.appeal_type = 'LegacyAppeal' \
+    AND vud.appeal_id = legacy_appeals.id \
+    AND vud.document_type = 'BVA Case Notifications'"
+  end
+
+  def open_root_task_join_clause
+    "JOIN tasks t ON t.appeal_type = 'LegacyAppeal' AND t.id = legacy_appeals.id \
+      AND t.type = 'RootTask' AND t.status NOT IN ('completed', 'cancelled')"
   end
 
   # Purpose: Determines which appeals need a NEW notification report uploaded to efolder
@@ -78,22 +97,26 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   #
   # Return: Array of active appeals
   def get_appeals_from_prev_synced_ids(appeal_ids)
-    LegacyAppeal.where(id: RootTask.open.where(appeal_type: "LegacyAppeal").pluck(:appeal_id))
-      .find_by_sql(
-        <<-SQL
-          SELECT la.*
-          FROM legacy_appeals la
-          JOIN (#{appeals_on_latest_notifications(appeal_ids)}) AS notifs ON
-            notifs.appeals_id = la.vacols_id AND notifs.appeals_type = 'LegacyAppeal'
-          JOIN (#{appeals_on_latest_doc_uploads(appeal_ids)}) AS vbms_uploads ON
-            vbms_uploads.appeal_id = la.id AND vbms_uploads.appeal_type = 'LegacyAppeal'
-          WHERE
-            notifs.notified_at > vbms_uploads.attempted_at
-          OR
-            notifs.created_at > vbms_uploads.attempted_at
-          GROUP BY la.id
-        SQL
-      )
+    appeal_ids.in_groups_of(1000).flat_map do |ids|
+      clean_ids = ids.compact
+
+      LegacyAppeal.where(id: RootTask.open.where(appeal_type: "LegacyAppeal").pluck(:appeal_id))
+        .find_by_sql(
+          <<-SQL
+              SELECT la.*
+              FROM legacy_appeals la
+              JOIN (#{appeals_on_latest_notifications(clean_ids)}) AS notifs ON
+                notifs.appeals_id = la.vacols_id AND notifs.appeals_type = 'LegacyAppeal'
+              JOIN (#{appeals_on_latest_doc_uploads(clean_ids)}) AS vbms_uploads ON
+                vbms_uploads.appeal_id = la.id AND vbms_uploads.appeal_type = 'LegacyAppeal'
+              WHERE
+                notifs.notified_at > vbms_uploads.attempted_at
+              OR
+                notifs.created_at > vbms_uploads.attempted_at
+              GROUP BY la.id
+          SQL
+        )
+    end
   end
 
   def appeals_on_latest_notifications(appeal_ids)
@@ -130,8 +153,6 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   def format_appeal_ids_sql_list(appeal_ids)
     return "" if appeal_ids.empty?
 
-    return "a.id = #{appeal_ids.first}" if appeal_ids.one?
-
     "AND a.id IN (#{appeal_ids.join(',').chomp(',')})"
   end
 
@@ -139,17 +160,24 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   # Params: appeals - LegacyAppeals records in need of a new notification report to be generated
   # Return: none
   def sync_notification_reports(appeals)
-    Rails.logger.info("Starting to sync notification reports for Legacy appeals")
+    Rails.logger.info("Starting to sync notification reports for legacy appeals")
+    mutex = Mutex.new
     gen_count = 0
-    appeals.each do |appeal|
-      begin
-        appeal.upload_notification_report!
-        gen_count += 1
-      rescue StandardError => error
-        log_error(error)
-        next
+
+    ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
+      Parallel.each(appeals, in_threads: 4, progress: "Generating notification reports") do |appeal|
+        Rails.application.executor.wrap do
+          begin
+            RequestStore[:current_user] = User.system_user
+            appeal.upload_notification_report!
+            mutex.synchronize { gen_count += 1 }
+          rescue StandardError => error
+            log_error(error)
+          end
+        end
       end
     end
-    Rails.logger.info("Finished generating #{gen_count} notification reports for Legacy appeals")
+
+    Rails.logger.info("Finished generating #{gen_count} notification reports for legacy appeals")
   end
 end
