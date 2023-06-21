@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Mark from 'mark.js';
+import { v4 as uuidv4 } from 'uuid';
 
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
@@ -12,7 +13,7 @@ import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import * as PDFJS from 'pdfjs-dist';
-import { collectHistogram, recordAsyncMetrics } from '../util/Metrics';
+import { collectHistogram, recordMetrics, recordAsyncMetrics } from '../util/Metrics';
 
 import { css } from 'glamor';
 import classNames from 'classnames';
@@ -181,6 +182,7 @@ export class PdfPage extends React.PureComponent {
   };
 
   drawText = (page, text) => {
+
     if (!this.textLayer) {
       return;
     }
@@ -239,11 +241,27 @@ export class PdfPage extends React.PureComponent {
 
       pageResult.then((page) => {
         this.page = page;
+        
+        const uuid = uuidv4();
 
+        const readerRenderText = {
+          uuid,
+          message: 'Searching within Reader document text',
+          type: 'performance',
+          product: 'reader',
+          data: {
+            documentId: this.props.documentId,
+            documentType: this.props.documentType,
+            file: this.props.file
+          },
+        };
+        
         const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);
 
         textResult.then((text) => {
           this.drawText(page, text);
+          // eslint-disable-next-line max-len
+          recordMetrics(this.drawText(page, text), readerRenderText, this.props.featureToggles.metricsReaderRenderText);
         });
 
         this.drawPage(page).then(() => {
@@ -383,7 +401,8 @@ PdfPage.propTypes = {
   searchText: PropTypes.string,
   setDocScrollPosition: PropTypes.func,
   setSearchIndexToHighlight: PropTypes.func,
-  windowingOverscan: PropTypes.string
+  windowingOverscan: PropTypes.string,
+  featureToggles: PropTypes.object
 };
 
 const mapDispatchToProps = (dispatch) => ({

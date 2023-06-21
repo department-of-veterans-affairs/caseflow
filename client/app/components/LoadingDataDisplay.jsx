@@ -55,10 +55,12 @@ class LoadingDataDisplay extends React.PureComponent {
       }
     };
 
+    const shouldRecordMetrics = this.props.metricsLoadScreen;
+
     // Promise does not give us a way to "un-then" and stop listening
     // when the component unmounts. So we'll leave this reference dangling,
     // but at least we can use this._isMounted to avoid taking action if necessary.
-    recordAsyncMetrics(promise, metricData).then(
+    recordAsyncMetrics(promise, metricData, shouldRecordMetrics).then(
       () => {
         if (!this._isMounted) {
           return;
@@ -175,7 +177,8 @@ LoadingDataDisplay.propTypes = {
   loadingComponentProps: PropTypes.object,
   slowLoadMessage: PropTypes.string,
   slowLoadThresholdMs: PropTypes.number,
-  timeoutMs: PropTypes.number
+  timeoutMs: PropTypes.number,
+  metricsLoadScreen: PropTypes.bool,
 };
 
 LoadingDataDisplay.defaultProps = {
@@ -186,7 +189,8 @@ LoadingDataDisplay.defaultProps = {
   errorComponent: StatusMessage,
   loadingComponentProps: {},
   failStatusMessageProps: {},
-  failStatusMessageChildren: DEFAULT_UNKNOWN_ERROR_MSG
+  failStatusMessageChildren: DEFAULT_UNKNOWN_ERROR_MSG,
+  metricsLoadScreen: false,
 };
 
 export default LoadingDataDisplay;
