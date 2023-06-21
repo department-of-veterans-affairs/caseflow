@@ -198,7 +198,6 @@ class QueueTab
           :claimants,
           :work_mode,
           :latest_informal_hearing_presentation_task,
-          :request_issues
         ]
       },
       :assigned_by, :assigned_to, :children, :parent,
