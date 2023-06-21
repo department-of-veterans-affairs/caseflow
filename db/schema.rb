@@ -1790,9 +1790,9 @@ ActiveRecord::Schema.define(version: 2023_05_08_202742) do
 
   create_table "vbms_communication_packages", force: :cascade do |t|
     t.string "comm_package_name", null: false
+    t.bigint "copies", default: 1
     t.datetime "created_at", null: false
     t.bigint "created_by_id"
-    t.bigint "document_referenced", default: [], array: true
     t.string "file_number", comment: "number associated with the documents."
     t.string "status"
     t.datetime "updated_at", null: false
@@ -1816,12 +1816,10 @@ ActiveRecord::Schema.define(version: 2023_05_08_202742) do
     t.datetime "created_at", null: false
     t.bigint "created_by_id"
     t.string "destination_type", null: false, comment: "Must be 'domesticAddress', 'internationalAddress', 'militaryAddress', 'derived', 'email', or 'sms'. Cannot be 'physicalAddress'."
-    t.string "email_address"
-    t.string "phone_number", comment: "PII."
     t.string "postal_code"
     t.string "state", comment: "PII. Must be exactly two-letter ISO 3166-2 code. If destination_type is domestic or military then Must not be null"
     t.boolean "treat_line_2_as_addressee"
-    t.boolean "treat_line_3_as_addressee"
+    t.boolean "treat_line_3_as_addressee", comment: "If true, treatLine2AsAddressee must also be true"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id"
     t.bigint "vbms_distribution_id"
