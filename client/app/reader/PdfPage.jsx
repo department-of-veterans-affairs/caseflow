@@ -244,9 +244,10 @@ export class PdfPage extends React.PureComponent {
               value: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0,
               appName: 'Reader',
               attrs: {
+                documentId: this.props.documentId,
                 overscan: this.props.windowingOverscan,
                 documentType: this.props.documentType,
-                pageCount: this.props.pdfDocument.pdfInfo?.numPages
+                pageCount: this.props.pdfDocument.numPages
               }
             });
           });

@@ -35,6 +35,25 @@ export const collectHistogram = (data) => {
   initialize();
 
   histograms.push(ApiUtil.convertToSnakeCase(data));
+  
+  const id = uuid.v4();
+  const metricsData = data;
+  const time = Date(Date.now()).toString();
+  const readerData = {
+    message: 'Render document content for "' + data.attrs.documentType + '"',
+    type: 'performance',
+    product: 'pdfjs.document.render',
+    start:time,
+    end: Date(Date.now()).toString(),
+    duration: data.value,
+  }
+
+  if(data.value > 0){
+    storeMetrics(id,metricsData,readerData);
+  }
+  else if(data.attrs.pageCount < 2){
+    storeMetrics(id,metricsData,readerData);
+  }
 };
 
 // ------------------------------------------------------------------------------------------
