@@ -197,7 +197,7 @@ class QueueTab
           :available_hearing_locations,
           :claimants,
           :work_mode,
-          :latest_informal_hearing_presentation_task,
+          :latest_informal_hearing_presentation_task
         ]
       },
       :assigned_by, :assigned_to, :children, :parent,
