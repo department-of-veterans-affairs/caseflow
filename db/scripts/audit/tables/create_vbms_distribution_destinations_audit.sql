@@ -16,6 +16,8 @@ create table caseflow_audit.vbms_distribution_destinations_audit (
               postal_code varchar NULL,
               country_name varchar NULL,
               country_code varchar NULL,
+              email_address varchar NULL,
+              phone_number varchar NULL,
               created_at timestamp NOT NULL,
               updated_at timestamp NOT NULL,
               vbms_distribution_id int8 NULL,

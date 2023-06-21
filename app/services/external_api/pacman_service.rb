@@ -10,7 +10,8 @@ class ExternalApi::PacmanService
   SEND_PACKAGE_ENDPOINT = "/package-manager-service/communication-package"
   GET_DISTRIBUTION_ENDPOINT = "/package-manager-service/distribution/"
   HEADERS = {
-    "Content-Type": "application/json", Accept: "application/json"
+    "Content-Type": "application/json", Accept: "application/json",
+    "TOKEN": ENV["PACMAN_API_KEY"]
   }.freeze
 
   class << self
