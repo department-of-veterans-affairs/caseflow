@@ -1506,7 +1506,6 @@ RSpec.feature "Case details", :all_dbs do
     before { FeatureToggle.enable!(:indicator_for_contested_claims) }
     after { FeatureToggle.disable!(:indicator_for_contested_claims) }
 
-
     it "should show the contested claim badge" do
       request_issues = [create(:request_issue,
                                benefit_type: "compensation",
@@ -2156,8 +2155,8 @@ RSpec.feature "Case details", :all_dbs do
           User.authenticate!(user: non_occoai_user)
         end
         it "the 'CAVC Dashboard' button is not visible on the page" do
-          visit "/queue/appeals/#{cavc_appeal.external_id}"
-          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          reload_case_detail_page cavc_appeal.external_id
+
           expect(page).to_not have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
         end
       end
@@ -2168,8 +2167,8 @@ RSpec.feature "Case details", :all_dbs do
           User.authenticate!(user: occ_user)
         end
         it "the 'CAVC Dashboard' button is visible on the page" do
-          visit "/queue/appeals/#{cavc_appeal.external_id}"
-          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          reload_case_detail_page cavc_appeal.external_id
+
           expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
         end
       end
@@ -2180,8 +2179,8 @@ RSpec.feature "Case details", :all_dbs do
           User.authenticate!(user: oai_user)
         end
         it "the 'CAVC Dashboard' button is visible on the page" do
-          visit "/queue/appeals/#{cavc_appeal.external_id}"
-          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          reload_case_detail_page cavc_appeal.external_id
+
           expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
         end
       end
