@@ -31,6 +31,12 @@ module Caseflow::Error
   class EfolderAccessForbidden < EfolderError; end
   class ClientRequestError < EfolderError; end
 
+  class ProcessingPriorityEndProductSyncError < StandardError
+    def ignorable?
+      true
+    end
+  end
+
   class VaDotGovAPIError < SerializableError; end
   class VaDotGovRequestError < VaDotGovAPIError; end
   class VaDotGovServerError < VaDotGovAPIError; end
