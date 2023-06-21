@@ -452,7 +452,7 @@ class AppealsController < ApplicationController
 
   # updated flash message to show mst/pact message if mst/pact changes (not to legacy)
   def set_flash_success_message
-    return set_flash_mst_edit_message if (mst_pact_changes? && !appeal.is_a?(LegacyAppeal)) &&
+    return set_flash_mst_edit_message if mst_pact_changes? &&
                                          (FeatureToggle.enabled?(:mst_identification) ||
                                          FeatureToggle.enabled?(:pact_identification))
 

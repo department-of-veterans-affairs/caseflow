@@ -1803,8 +1803,10 @@ ActiveRecord::Schema.define(version: 2023_05_31_163349) do
     t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
     t.datetime "created_at", null: false
     t.string "document_name"
+    t.string "document_series_reference_id", comment: "UUID that is provided by eFolder that represents the group of documentsthis document belongs to. Think of a series as a stack of versions."
     t.string "document_subject"
     t.string "document_type", null: false
+    t.string "document_version_reference_id", comment: "UUID that is provided by eFolder that represents the specific version of the document."
     t.string "error"
     t.datetime "last_submitted_at"
     t.datetime "processed_at"

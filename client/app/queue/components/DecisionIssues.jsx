@@ -117,7 +117,7 @@ export default class DecisionIssues extends React.PureComponent {
                   {decisionIssue.description}
                   {decisionIssue.diagnostic_code && <div>Diagnostic code: {decisionIssue.diagnostic_code}</div>}
                   {decisionIssue.benefit_type && <div>Benefit Type: {BENEFIT_TYPES[decisionIssue.benefit_type]}</div>}
-                  {specialIssuesFormatting(decisionIssue.mstStatus, decisionIssue.pactStatus) && <div>Special Issues: {specialIssuesFormatting(decisionIssue.mstStatus, decisionIssue.pactStatus)}</div>}
+                  <div>Special Issues: {specialIssuesFormatting(decisionIssue.mstStatus, decisionIssue.pactStatus)}</div>
                 </span>
                 <span>{ISSUE_DISPOSITIONS_BY_ID[decisionIssue.disposition]}</span>
               </div>
