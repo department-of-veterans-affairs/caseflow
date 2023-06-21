@@ -649,6 +649,11 @@ GEM
       thor (~> 0.19, >= 0.19.4)
       tilt (~> 2.0)
       yard (~> 0.9)
+    spring (3.1.1)
+    spring-commands-rspec (1.0.4)
+      spring (>= 0.9.1)
+    spring-commands-rubocop (0.4.0)
+      spring (>= 1.0)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -806,6 +811,9 @@ DEPENDENCIES
   single_cov
   sniffybara!
   solargraph
+  spring (= 3.1.1)
+  spring-commands-rspec
+  spring-commands-rubocop
   sql_tracker
   stringex
   strong_migrations

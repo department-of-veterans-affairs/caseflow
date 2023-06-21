@@ -127,6 +127,12 @@ group :test, :development, :demo do
   gem "webdrivers"
 end
 
+group :development, :test do
+  gem "spring", "3.1.1" # later versions require Rails 6.0+
+  gem "spring-commands-rspec"
+  gem "spring-commands-rubocop"
+end
+
 group :development do
   gem "anbt-sql-formatter"
   gem "bummr", require: false
