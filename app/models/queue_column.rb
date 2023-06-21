@@ -129,7 +129,8 @@ class QueueColumn
     where_hash = tasks.where_values_hash
     # Try to grab assigned to from the task association.
     # If it's not available, then extract it from the active record relation object
-    tasks&.first&.assigned_to || where_hash["assigned_to_type"].constantize&.find_by(id: where_hash["assigned_to_id"])
+    tasks&.first&.assigned_to ||
+      where_hash["assigned_to_type"].try(:constantize)&.find_by(id: where_hash["assigned_to_id"])
   end
 
   def add_empty_issue_types_to_filter_list(tasks, totals)
