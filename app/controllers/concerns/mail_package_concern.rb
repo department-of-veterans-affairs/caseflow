@@ -5,24 +5,11 @@
 module MailPackageConcern
   extend ActiveSupport::Concern
 
-  included do
-    def recipient_info
-      params[:recipient_info]
-    end
-
-    def build_mail_package
-      return if recipient_info.blank?
-
-      throw_error_if_copies_out_of_range
-      # Create and validate MailRequest objects, save to db, and store distribution IDs
-      mail_requests.map do |request|
-        request.call
-        distribution_ids << request.vbms_distribution_id
-      end
-    end
-  end
-
   private
+
+  def recipient_info
+    params[:recipient_info]
+  end
 
   def copies
     # Default value of 1 for copies
@@ -36,6 +23,17 @@ module MailPackageConcern
     return nil if recipient_info.blank?
 
     { distributions: mail_requests.to_json, copies: copies }
+  end
+
+  def build_mail_package
+    return if recipient_info.blank?
+
+    throw_error_if_copies_out_of_range
+    # Create and validate MailRequest objects, save to db, and store distribution IDs
+    mail_requests.map do |request|
+      request.call
+      distribution_ids << request.vbms_distribution_id
+    end
   end
 
   def mail_requests
