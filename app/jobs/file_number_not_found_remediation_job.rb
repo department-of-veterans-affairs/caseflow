@@ -22,7 +22,11 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
   end
 
   def perform
-    start_fix_veteran
+    begin
+      start_fix_veteran
+    rescue StandardError => error
+      raise error
+    end
   end
 
   def fetch_file_number_from_bgs_service
@@ -31,17 +35,16 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
 
   def start_fix_veteran
     file_number = fetch_file_number_from_bgs_service
-
-    raise FileNumberNotFoundError unless file_number
-
+    fail FileNumberNotFoundError unless file_number
+    
     verify_file_number(file_number)
-
+    
     collections = ASSOCIATED_OBJECTS.map do |klass|
-      FixFileNumberWizard::Collection.new(klass,  @veteran.ssn)
+      FixFileNumberWizard::Collection.new(klass, @veteran.ssn)
     end
-
+    
     if collections.map(&:count).sum == 0
-      raise NoAssociatedRecordsFoundForFileNumberError
+      fail NoAssociatedRecordsFoundForFileNumberError
     end
 
     ActiveRecord::Base.transaction do
@@ -49,18 +52,18 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
         collection.update!(file_number)
 
         @logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
-          " collection: #{ collection.klass.name}. ."\
+          " collection: #{collection.klass.name}. ."\
           " Status: collection.")
       end
 
-       @veteran.update!(file_number: file_number)
+      @veteran.update!(file_number: file_number)
       @logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
-        " Participant Id: #{ @veteran.participant_id}. @veteran File Number: #{ @veteran.file_number}."\
+        " Participant Id: #{@veteran.participant_id}. @veteran File Number: #{@veteran.file_number}."\
         " Status: File Number Updated.")
 
     rescue StandardError => error
       @logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
-        " Participant Id: #{ @veteran.participant_id}.  Veteran File Number: #{ @veteran.file_number}."\
+        " Participant Id: #{@veteran.participant_id}.  Veteran File Number: #{@veteran.file_number}."\
         " Error: #{error} Status: Update failed.")
       raise ActiveRecord::Rollback
     end
@@ -69,11 +72,11 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
 
   def verify_file_number(file_number)
     if file_number == @veteran.file_number
-      raise FileNumberMachesVetFileNumberError
+      fail FileNumberMachesVetFileNumberError
     elsif file_number.nil?
-      raise FileNumberNotFoundError
+      fail FileNumberNotFoundError
     elsif Veteran.find_by(file_number: file_number).present?
-      raise DuplicateVeteranFoundError
+      fail DuplicateVeteranFoundError
     end
   end
 

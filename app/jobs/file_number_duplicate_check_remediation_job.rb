@@ -26,7 +26,11 @@ class FileNumberDuplicateCheckRemediationJob < CaseflowJob
 
   def check_if_duplicate_veteran
     bulk_decision_docs_with_error.each do |decision_document|
-      vet = decision_document.veteran
+      begin
+        vet = decision_document.veteran
+      rescue StandardError => error
+        raise error
+      end
       appeal = decision_document.appeal
       raise VeteranSSNAndFileNumberNoMatchError if vet.ssn != vet.file_number
 
