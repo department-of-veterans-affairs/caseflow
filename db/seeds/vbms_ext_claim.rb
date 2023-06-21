@@ -47,13 +47,20 @@ private
                    claimant_person_id: veteran.participant_id)
       higher_level_review = create(:higher_level_review,
                                     veteran_file_number: veteran.file_number)
-      eligible_request_issue = create(:request_issue,
-                                      decision_review: higher_level_review,
-                                      nonrating_issue_category: "Military Retired Pay",
-                                      nonrating_issue_description: "nonrating description",
-                                      ineligible_reason: nil,
-                                      benefit_type: "compensation",
-                                      decision_date: Date.new(2018, 5, 1))
+      create(:request_issue,
+              decision_review: higher_level_review,
+              nonrating_issue_category: "Military Retired Pay",
+              nonrating_issue_description: "nonrating description",
+              ineligible_reason: nil,
+              benefit_type: "compensation",
+              decision_date: Date.new(2018, 5, 1))
+      create(:request_issue,
+              decision_review: higher_level_review,
+              nonrating_issue_category: "Active Duty Adjustments",
+              nonrating_issue_description: "nonrating description",
+              ineligible_reason: nil,
+              benefit_type: "compensation",
+              decision_date: Date.new(2018, 5, 1))
       create(:end_product_establishment,
              :active,
               source: higher_level_review,
@@ -77,13 +84,20 @@ private
                    claimant_person_id: veteran.participant_id)
       higher_level_review = create(:higher_level_review,
                                     veteran_file_number: veteran.file_number)
-      eligible_request_issue = create(:request_issue,
-                                      decision_review: higher_level_review,
-                                      nonrating_issue_category: "Military Retired Pay",
-                                      nonrating_issue_description: "nonrating description",
-                                      ineligible_reason: nil,
-                                      benefit_type: "compensation",
-                                      decision_date: Date.new(2018, 5, 1))
+      create(:request_issue,
+              decision_review: higher_level_review,
+              nonrating_issue_category: "Military Retired Pay",
+              nonrating_issue_description: "nonrating description",
+              ineligible_reason: nil,
+              benefit_type: "compensation",
+              decision_date: Date.new(2018, 5, 1))
+      create(:request_issue,
+              decision_review: higher_level_review,
+              nonrating_issue_category: "Active Duty Adjustments",
+              nonrating_issue_description: "nonrating description",
+              ineligible_reason: nil,
+              benefit_type: "compensation",
+              decision_date: Date.new(2018, 5, 1))
       create(:end_product_establishment,
              :active,
              source: higher_level_review,
@@ -109,13 +123,20 @@ private
             veteran_file_number: veteran.file_number,
             receipt_date: Time.zone.now,
             benefit_type: "compensation")
-      eligible_request_issue = create(:request_issue,
-                                      decision_review: supplemental_claim,
-                                      nonrating_issue_category: "Military Retired Pay",
-                                      nonrating_issue_description: "nonrating description",
-                                      ineligible_reason: nil,
-                                      benefit_type: "compensation",
-                                      decision_date: Date.new(2018, 5, 1))
+      create(:request_issue,
+              decision_review: supplemental_claim,
+              nonrating_issue_category: "Military Retired Pay",
+              nonrating_issue_description: "nonrating description",
+              ineligible_reason: nil,
+              benefit_type: "compensation",
+              decision_date: Date.new(2018, 5, 1))
+      create(:request_issue,
+              decision_review: supplemental_claim,
+              nonrating_issue_category: "Active Duty Adjustments",
+              nonrating_issue_description: "nonrating description",
+              ineligible_reason: nil,
+              benefit_type: "compensation",
+              decision_date: Date.new(2018, 5, 1))
       create(:end_product_establishment,
              :active,
              source: supplemental_claim,
@@ -142,13 +163,20 @@ private
             veteran_file_number: veteran.file_number,
             receipt_date: Time.zone.now,
             benefit_type: "compensation")
-      eligible_request_issue = create(:request_issue,
-                                      decision_review: supplemental_claim,
-                                      nonrating_issue_category: "Military Retired Pay",
-                                      nonrating_issue_description: "nonrating description",
-                                      ineligible_reason: nil,
-                                      benefit_type: "compensation",
-                                      decision_date: Date.new(2018, 5, 1))
+      create(:request_issue,
+              decision_review: supplemental_claim,
+              nonrating_issue_category: "Military Retired Pay",
+              nonrating_issue_description: "nonrating description",
+              ineligible_reason: nil,
+              benefit_type: "compensation",
+              decision_date: Date.new(2018, 5, 1))
+      create(:request_issue,
+              decision_review: supplemental_claim,
+              nonrating_issue_category: "Active Duty Adjustments",
+              nonrating_issue_description: "nonrating description",
+              ineligible_reason: nil,
+              benefit_type: "compensation",
+              decision_date: Date.new(2018, 5, 1))
       create(:end_product_establishment,
              :active,
              source: supplemental_claim,
@@ -181,13 +209,20 @@ private
                    claimant_person_id: veteran.participant_id)
       higher_level_review = create(:higher_level_review,
                                     veteran_file_number: veteran.file_number)
-      eligible_request_issue = create(:request_issue,
-                                      decision_review: higher_level_review,
-                                      nonrating_issue_category: "Military Retired Pay",
-                                      nonrating_issue_description: "nonrating description",
-                                      ineligible_reason: nil,
-                                      benefit_type: "compensation",
-                                      decision_date: Date.new(2018, 5, 1))
+      create(:request_issue,
+              decision_review: higher_level_review,
+              nonrating_issue_category: "Military Retired Pay",
+              nonrating_issue_description: "nonrating description",
+              ineligible_reason: nil,
+              benefit_type: "compensation",
+              decision_date: Date.new(2018, 5, 1))
+      create(:request_issue,
+              decision_review: higher_level_review,
+              nonrating_issue_category: "Active Duty Adjustments",
+              nonrating_issue_description: "nonrating description",
+              ineligible_reason: nil,
+              benefit_type: "compensation",
+              decision_date: Date.new(2018, 5, 1))
       create(:end_product_establishment,
              :canceled,
               source: higher_level_review,
@@ -211,13 +246,20 @@ private
                    claimant_person_id: veteran.participant_id)
       higher_level_review = create(:higher_level_review,
                                     veteran_file_number: veteran.file_number)
-      eligible_request_issue = create(:request_issue,
-                                      decision_review: higher_level_review,
-                                      nonrating_issue_category: "Military Retired Pay",
-                                      nonrating_issue_description: "nonrating description",
-                                      ineligible_reason: nil,
-                                      benefit_type: "compensation",
-                                      decision_date: Date.new(2018, 5, 1))
+      create(:request_issue,
+              decision_review: higher_level_review,
+              nonrating_issue_category: "Military Retired Pay",
+              nonrating_issue_description: "nonrating description",
+              ineligible_reason: nil,
+              benefit_type: "compensation",
+              decision_date: Date.new(2018, 5, 1))
+      create(:request_issue,
+              decision_review: higher_level_review,
+              nonrating_issue_category: "Active Duty Adjustments",
+              nonrating_issue_description: "nonrating description",
+              ineligible_reason: nil,
+              benefit_type: "compensation",
+              decision_date: Date.new(2018, 5, 1))
       create(:end_product_establishment,
              :cleared,
              source: higher_level_review,
@@ -243,13 +285,20 @@ private
             veteran_file_number: veteran.file_number,
             receipt_date: Time.zone.now,
             benefit_type: "compensation")
-      eligible_request_issue = create(:request_issue,
-                                      decision_review: supplemental_claim,
-                                      nonrating_issue_category: "Military Retired Pay",
-                                      nonrating_issue_description: "nonrating description",
-                                      ineligible_reason: nil,
-                                      benefit_type: "compensation",
-                                      decision_date: Date.new(2018, 5, 1))
+      create(:request_issue,
+              decision_review: supplemental_claim,
+              nonrating_issue_category: "Military Retired Pay",
+              nonrating_issue_description: "nonrating description",
+              ineligible_reason: nil,
+              benefit_type: "compensation",
+              decision_date: Date.new(2018, 5, 1))
+      create(:request_issue,
+              decision_review: supplemental_claim,
+              nonrating_issue_category: "Active Duty Adjustments",
+              nonrating_issue_description: "nonrating description",
+              ineligible_reason: nil,
+              benefit_type: "compensation",
+              decision_date: Date.new(2018, 5, 1))
       create(:end_product_establishment,
              :cleared,
              source: supplemental_claim,
@@ -276,13 +325,20 @@ private
             veteran_file_number: veteran.file_number,
             receipt_date: Time.zone.now,
             benefit_type: "compensation")
-      eligible_request_issue = create(:request_issue,
-                                      decision_review: supplemental_claim,
-                                      nonrating_issue_category: "Military Retired Pay",
-                                      nonrating_issue_description: "nonrating description",
-                                      ineligible_reason: nil,
-                                      benefit_type: "compensation",
-                                      decision_date: Date.new(2018, 5, 1))
+      create(:request_issue,
+              decision_review: supplemental_claim,
+              nonrating_issue_category: "Military Retired Pay",
+              nonrating_issue_description: "nonrating description",
+              ineligible_reason: nil,
+              benefit_type: "compensation",
+              decision_date: Date.new(2018, 5, 1))
+      create(:request_issue,
+              decision_review: supplemental_claim,
+              nonrating_issue_category: "Active Duty Adjustments",
+              nonrating_issue_description: "nonrating description",
+              ineligible_reason: nil,
+              benefit_type: "compensation",
+              decision_date: Date.new(2018, 5, 1))
       create(:end_product_establishment,
              :canceled,
              source: supplemental_claim,
