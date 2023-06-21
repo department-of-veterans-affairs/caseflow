@@ -115,18 +115,21 @@ class QueueColumn
 
   # Issue Type helpers to expand issue type filter options to all possible options for orgs that support it
   def all_possible_issue_type_options(tasks)
-    assigned_to = tasks&.first&.assigned_to
+    assigned_to = extract_assigned_to_from_relation(tasks)
     # Can add more orgs/users if neccessary to limit the possible issue categories in the available options
     # E.g. Add Issue Category1(0), Issue Category2(0) into the options if they aren't on the tasks in the tab
     if assigned_to.is_a?(VhaCamo) || assigned_to.is_a?(VhaRegionalOffice) || assigned_to.is_a?(VhaProgramOffice)
       Constants.ISSUE_CATEGORIES.vha.reject { |category| category.match?(/caregiver/i) }
     elsif assigned_to.is_a?(VhaCaregiverSupport)
       Constants.ISSUE_CATEGORIES.vha.select { |category| category.match?(/caregiver/i) }
-    else
-      # If there is no assigned_to or the org/user has no defined issue categories then go ahead and build
-      # a list of all possible issue categories as the filterable options. This will be large
-      Constants.ISSUE_CATEGORIES.to_h.values.flatten.uniq
     end
+  end
+
+  def extract_assigned_to_from_relation(tasks)
+    where_hash = tasks.where_values_hash
+    # Try to grab assigned to from the task association.
+    # If it's not available, then extract it from the active record relation object
+    tasks&.first&.assigned_to || where_hash["assigned_to_type"].constantize&.find_by(id: where_hash["assigned_to_id"])
   end
 
   def add_empty_issue_types_to_filter_list(tasks, totals)
