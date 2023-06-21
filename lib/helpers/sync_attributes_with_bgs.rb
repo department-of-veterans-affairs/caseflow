@@ -1,7 +1,19 @@
 # frozen_string_literal: true
 
 module SyncAttributesWithBGS
+  def self.inherited(*)
+    RequestStore[:current_user] = User.system_user
+  end
+
   class VeteranCacheUpdater
+    #
+    # This method attempts to update a veteran cached attributes.
+    #
+    # @param [String] file_number used to find veteran
+    # @param [Boolean] sync_name set to true to update cached attributes.
+    #
+    # @return [String] error message or updated name of veteran
+    #
     def run_by_file_number(file_number)
       unless (veteran = Veteran.find_by_file_number_or_ssn(file_number, sync_name: true))
         puts "veteran was not found"
@@ -13,6 +25,13 @@ module SyncAttributesWithBGS
   end
 
   class PersonCacheUpdater
+    #
+    # This method attemps to update a person cached attributes.
+    #
+    # @param [String] participant_id used to find person
+    #
+    # @return [String] error message or updated name of person
+    #
     def run_by_participant_id(participant_id)
       unless (person = Person.find_by(participant_id: participant_id))
         puts "person was not found"
