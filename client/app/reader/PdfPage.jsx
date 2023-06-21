@@ -132,7 +132,7 @@ export class PdfPage extends React.PureComponent {
         }
       }).
       catch((error) => {
-        console.error(`${uuid.v4()} : ${error}`);
+        console.error(`${uuid.v4()} : render ${this.props.file} : ${error}`);
         this.isDrawing = false;
       });
   };
@@ -236,7 +236,7 @@ export class PdfPage extends React.PureComponent {
           });
         }).
         catch((error) => {
-          console.error(`${uuid.v4()} : ${error}`);
+          console.error(`${uuid.v4()} : setUpPage ${this.props.file} : ${error}`);
         });
     }
   };

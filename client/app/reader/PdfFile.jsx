@@ -77,7 +77,7 @@ export class PdfFile extends React.PureComponent {
         }
       }).
       catch((error) => {
-        console.error(`${uuid.v4()} : ${error}`);
+        console.error(`${uuid.v4()} : GET ${this.props.file} : ${error}`);
         this.loadingTask = null;
         this.props.setDocumentLoadError(this.props.file);
       });
@@ -100,7 +100,7 @@ export class PdfFile extends React.PureComponent {
       // Eventually we should send a sentry error? Or metrics?
       }).
       catch((error) => {
-        console.error(`${uuid.v4()} : ${error}`);
+        console.error(`${uuid.v4()} : setPageDimensions ${this.props.file} : ${error}`);
       });
   }
 
