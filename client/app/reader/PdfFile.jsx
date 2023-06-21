@@ -61,22 +61,19 @@ export class PdfFile extends React.PureComponent {
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
         const metricData = {
-          message: `Getting PDF document ${this.props.documentId}"`,
+          message: `Getting PDF document id: "${this.props.documentId}"`,
           type: 'performance',
           product: 'reader',
           data: {
             file: this.props.file,
-            documents: this.props.documents,
-            props: this.props
           }
         };
 
-        // this.loadingTask = recordMetrics(PDFJS.getDocument({ data: resp.body }), metricData, true)
-          // this.props.featureToggles.metricsRecordPDFJSGetDocument);
         this.loadingTask = PDFJS.getDocument({ data: resp.body });
         let promise = this.loadingTask.promise;
 
-        return recordAsyncMetrics(promise, metricData, true);
+        return recordAsyncMetrics(promise, metricData,
+          !this.props.featureToggles.metricsRecordPDFJSGetDocument);
       }).
       then((pdfDocument) => {
 
