@@ -18,7 +18,7 @@ class BvaIntakePendingTab < QueueTab
   end
 
   def tasks
-    on_hold_task_children.open.includes(*task_includes, :cancelled_by).joins(:ama_appeal)
+    on_hold_task_children.open.joins(:ama_appeal)
   end
 
   def column_names
