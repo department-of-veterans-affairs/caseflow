@@ -13,7 +13,15 @@ Rails.application.configure do
   # test suite. You never need to work with it otherwise. Remember that
   # your test database is "scratch space" for the test suite and is wiped
   # and recreated between test runs. Don't rely on the data there!
-  config.cache_classes = true
+
+  # Note: Reloading is necessary for Spring to work
+  # https://github.com/rails/spring/blob/e7d88f57eaaeae84ddcdc6cc000874500e812165/README.md#L69-L80
+  # However, we want to preserve the existing behavior with class caching in CI
+  # test environments. Thus, ENV["ENABLE_SPRING_IN_TEST"] can be set to `true`
+  # to disable class caching and enable Spring in local test environments.
+  spring_enabled_in_test =
+    ActiveRecord::Type::Boolean.new.cast(ENV.fetch("ENABLE_SPRING_IN_TEST", false))
+  config.cache_classes = not(spring_enabled_in_test) # default: true
 
   cache_dir = Rails.root.join("tmp", "cache", "test_#{ENV['TEST_SUBCATEGORY']}", $$.to_s)
   FileUtils.mkdir_p(cache_dir) unless File.exists?(cache_dir)
