@@ -98,6 +98,8 @@ Rails.application.configure do
   # Notifications page eFolder link
   ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"] ||= "https://vefs-claimevidence-ui-uat.stage.bip.va.gov"
 
+  ENV["PACMAN_API_URL"] ||= "https://pacman-uat.stage.bip.va.gov/"
+
   if ENV["WITH_TEST_EMAIL_SERVER"]
     config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {
