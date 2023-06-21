@@ -113,5 +113,7 @@ Rails.application.configure do
 
   ENV['TEST_VACOLS_HOST'] ||= "localhost"
 
-  ENV['PACMAN_API_URL'] ||= "http://pacman.staging.bip.va.gov"
+  # PacMan environment variables
+  ENV["PACMAN_API_URL"] ||= "https://pacman-uat.stage.bip.va.gov"
+  ENV["PACMAN_API_KEY"] ||= "secret-key"
 end
