@@ -4,6 +4,11 @@
 module Seeds
 
   class VbmsExtClaim < Base
+
+
+    def initialize
+      file_number_initial_value
+    end
     ##
     # creates and seeds 325 total vbms_ext_claims
     # The number of claims created are subject to change in order to meet testing requirements
@@ -16,6 +21,14 @@ module Seeds
 
 private
 
+ # maintains previous file number values while allowing for reseeding
+ def file_number_initial_value
+  @file_number ||= 300_000
+  # this seed file creates 200 new veterans on each run, 250 is sufficient margin to add more data
+  @file_number += 250 while Veteran.find_by(file_number: format("%<n>09d", n: @file_number))
+  @file_number
+  end
+
   ##
   # this out_of_sync method creates and seeds Vbms_Ext_Claims that have a Level_Status_Code DIFFERENT then the
   # End_Product_Establishment sync_status in order to test the sync_job and batch_job that finds differences between
@@ -25,7 +38,8 @@ private
     # 25 High Level Review, End Product Establishments that have a sync_status of cleared and are out_of_sync with
     # vbms_ext_claims
     25.times do
-      veteran = create(:veteran)
+      veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
+      @file_number += 1
       # out_of_sync vbms_ext_claim LEVEL_STATUS_CODE "CAN"
       vec = create(:vbms_ext_claim,
                    :canceled,
@@ -54,7 +68,8 @@ private
     # 25 High Level Review, End Product Establishments that have a sync_status of canceled and are out_of_sync with
     # vbms_ext_claims
     25.times do
-      veteran = create(:veteran)
+      veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
+      @file_number += 1
       # out_of_sync vbms_ext_claim LEVEL_STATUS_CODE "CLR"
       vec = create(:vbms_ext_claim,
                    :cleared,
@@ -83,7 +98,8 @@ private
     # # 25 Supplemental Claims, End Product Establishments that have a sync_status of cleared and are out_of_sync with
     # # vbms_ext_claims
     25.times do
-      veteran = create(:veteran)
+      veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
+      @file_number += 1
       # out_of_sync vbms_ext_claim LEVEL_STATUS_CODE "CAN"
       vec = create(:vbms_ext_claim,
                    :cleared,
@@ -115,7 +131,8 @@ private
     # # 25 Supplemental Claims, End Product Establishments that have a sync_status of canceled and are out_of_sync with
     # # vbms_ext_claims
     25.times do
-      veteran = create(:veteran)
+      veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
+      @file_number += 1
       # out_of_sync vbms_ext_claim LEVEL_STATUS_CODE "CLR"
       vec = create(:vbms_ext_claim,
                    :cleared,
@@ -155,7 +172,8 @@ private
     # 25 High Level Review, End Product Establishments that have a sync_status of canceled and are in_sync with
     # vbms_ext_claims
     25.times do
-      veteran = create(:veteran)
+      veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
+      @file_number += 1
       # in_sync vbms_ext_claim LEVEL_STATUS_CODE "CAN"
       vec = create(:vbms_ext_claim,
                    :canceled,
@@ -184,7 +202,8 @@ private
     # 25 High Level Review, End Product Establishments that have a sync_status of cleared and are in_sync with
     # vbms_ext_claims
     25.times do
-      veteran = create(:veteran)
+      veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
+      @file_number += 1
       # in_sync vbms_ext_claim LEVEL_STATUS_CODE "CLR"
       vec = create(:vbms_ext_claim,
                    :cleared,
@@ -213,7 +232,8 @@ private
     # # 25 Supplemental Claims, End Product Establishments that have a sync_status of cleared and are in_sync with
     # # vbms_ext_claims
     25.times do
-      veteran = create(:veteran)
+      veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
+      @file_number += 1
       # in_sync vbms_ext_claim LEVEL_STATUS_CODE "CLR"
       vec = create(:vbms_ext_claim,
                    :cleared,
@@ -245,7 +265,8 @@ private
     # # 25 Supplemental Claims, End Product Establishments that have a sync_status of canceled and are out_sync with
     # # vbms_ext_claims
     25.times do
-      veteran = create(:veteran)
+      veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
+      @file_number += 1
       # in_sync vbms_ext_claim LEVEL_STATUS_CODE "CAN"
       vec = create(:vbms_ext_claim,
                    :canceled,
