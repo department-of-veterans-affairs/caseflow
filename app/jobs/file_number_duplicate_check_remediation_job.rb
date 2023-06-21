@@ -25,18 +25,18 @@ class FileNumberDuplicateCheckRemediationJob < CaseflowJob
   end
 
   def check_if_duplicate_veteran
-    bulk_decision_docs_with_error.map do |decision_document|
+    bulk_decision_docs_with_error.each do |decision_document|
       vet = decision_document.veteran
       appeal = decision_document.appeal
-      fail VeteranSSNAndFileNumberNoMatchError if vet.ssn != vet.file_number
+      raise VeteranSSNAndFileNumberNoMatchError if vet.ssn != vet.file_number
 
-      fail DuplicateVeteranFoundOutCodeError if duplicate_vet?(vet)
+      raise DuplicateVeteranFoundOutCodeError if duplicate_vet?(vet)
 
       FileNumberNotFoundRemediationJob.new(appeal).perform
       decision_document.update(error: nil)
 
     rescue FileNumberNotFoundRemediationJob::FileNumberMachesVetFileNumberError => error
-    rescue FileNumberNotFoundRemediationJob::FileNumberIsNilError => error
+    rescue FileNumberNotFoundRemediationJob::FileNumberNotFoundError => error
     rescue FileNumberNotFoundRemediationJob::DuplicateVeteranFoundError => error
     rescue FileNumberNotFoundRemediationJob::NoAssociatedRecordsFoundForFileNumberError => error
     end
