@@ -108,7 +108,7 @@ class RatingIssue
         return mst_special_issue_basis.include?(special_issue[:spis_basis_tn].downcase)
       end
 
-      if special_issue[:spis_tn].casecmp("non-ptsd - personal trauma").zero?
+      if special_issue[:spis_tn].casecmp("non-ptsd personal trauma").zero?
         mst_special_issue_basis.include?(special_issue[:spis_basis_tn].downcase)
       end
     end
