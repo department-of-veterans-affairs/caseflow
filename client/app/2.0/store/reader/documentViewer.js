@@ -258,7 +258,7 @@ export const showPdf = createAsyncThunk(
         };
 
         // Store the pages for the PDF
-        promise = Promise.all(
+        pdfDocuments[currentDocument.id].pages = await Promise.all(
           range(0, pdfDocuments[currentDocument.id].pdf.numPages).map(
             (pageIndex) =>
               pdfDocuments[currentDocument.id].pdf.getPage(pageIndex + 1)
