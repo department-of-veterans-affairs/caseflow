@@ -265,9 +265,7 @@ export const showPdf = createAsyncThunk(
           )
         );
 
-        recordAsyncMetrics(promise, metricData, shouldRecordMetrics)
-
-        // pdfDocuments[currentDocument.id].pages
+        pdfDocuments[currentDocument.id].pages
       }
     }
 
