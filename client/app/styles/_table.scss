@@ -60,6 +60,13 @@
 // Pagination
 // ============================*/
 
+.cf-pagination {
+  position: sticky;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
+
 .cf-pagination-summary {
   float: left;
   margin-bottom: 2em;
