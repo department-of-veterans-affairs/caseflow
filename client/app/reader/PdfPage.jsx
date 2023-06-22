@@ -264,17 +264,19 @@ export class PdfPage extends React.PureComponent {
           recordMetrics(this.drawText(page, text), readerRenderText, this.props.featureToggles.metricsReaderRenderText);
         });
 
-        this.drawPage(page).then(() => {
-          collectHistogram({
-            group: 'front_end',
-            name: 'pdf_page_render_time_in_ms',
-            value: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0,
-            appName: 'Reader',
-            attrs: {
-              overscan: this.props.windowingOverscan,
-              documentType: this.props.documentType,
-              pageCount: this.props.pdfDocument.pdfInfo?.numPages
-            }
+          this.drawPage(page).then(() => {
+            collectHistogram({
+              group: 'front_end',
+              name: 'pdf_page_render_time_in_ms',
+              value: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0,
+              appName: 'Reader',
+              attrs: {
+                documentId: this.props.documentId,
+                overscan: this.props.windowingOverscan,
+                documentType: this.props.documentType,
+                pageCount: this.props.pdfDocument.numPages
+              }
+            });
           });
         });
       }).
