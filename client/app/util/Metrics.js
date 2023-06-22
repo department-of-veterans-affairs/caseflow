@@ -35,6 +35,25 @@ export const collectHistogram = (data) => {
   initialize();
 
   histograms.push(ApiUtil.convertToSnakeCase(data));
+  
+  const id = uuid.v4();
+  const metricsData = data;
+  const time = Date(Date.now()).toString();
+  const readerData = {
+    message: 'Render document content for "' + data.attrs.documentType + '"',
+    type: 'performance',
+    product: 'pdfjs.document.render',
+    start:time,
+    end: Date(Date.now()).toString(),
+    duration: data.value,
+  }
+
+  if(data.value > 0){
+    storeMetrics(id,metricsData,readerData);
+  }
+  else if(data.attrs.pageCount < 2){
+    storeMetrics(id,metricsData,readerData);
+  }
 };
 
 // ------------------------------------------------------------------------------------------
@@ -94,7 +113,7 @@ export const storeMetrics = (uniqueId, data, { message, type = 'log', product, s
     }
   };
 
-  ApiUtil.post('/metrics/v2/logs', { data: postData });
+  ApiUtil.postMetricLogs('/metrics/v2/logs', { data: postData });
 };
 
 export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 'log', product },
