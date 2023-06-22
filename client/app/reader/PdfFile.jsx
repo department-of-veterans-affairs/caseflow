@@ -23,6 +23,7 @@ import { startPlacingAnnotation, showPlaceAnnotationIcon
 import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, getSearchTerm } from './selectors';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
+import { recordMetrics, recordAsyncMetrics } from '../util/Metrics';
 
 PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -59,9 +60,20 @@ export class PdfFile extends React.PureComponent {
     // different domain (eFolder), and still need to pass our credentials to authenticate.
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
-        this.loadingTask = PDFJS.getDocument({ data: resp.body });
+        const metricData = {
+          message: `Getting PDF document id: "${this.props.documentId}"`,
+          type: 'performance',
+          product: 'reader',
+          data: {
+            file: this.props.file,
+          }
+        };
 
-        return this.loadingTask.promise;
+        this.loadingTask = PDFJS.getDocument({ data: resp.body });
+        const promise = this.loadingTask.promise;
+
+        return recordAsyncMetrics(promise, metricData,
+          this.props.featureToggles.metricsRecordPDFJSGetDocument);
       }).
       then((pdfDocument) => {
 
