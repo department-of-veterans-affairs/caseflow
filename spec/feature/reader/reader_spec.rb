@@ -25,15 +25,6 @@ def scrolled_amount(child_class_name)
   EOS
 end
 
-def scroll_to_bottom(id: nil, class_name: nil)
-  page.driver.evaluate_script <<-EOS
-    function() {
-      var elem = document.getElementById('#{id}') || document.getElementsByClassName('#{class_name}')[0];
-      elem.scrollTop = elem.scrollHeight;
-    }();
-  EOS
-end
-
 def get_size(element)
   size = page.driver.evaluate_script <<-EOS
     function() {
@@ -1321,7 +1312,7 @@ RSpec.feature "Reader", :all_dbs do
 
       expect(page).to_not have_css("#read-indicator")
 
-      scroll_to_bottom(id: "documents-table-body")
+      page.find("#documents-table-body").scroll_to(:bottom)
       original_scroll_position = scroll_position(id: "documents-table-body")
       click_on documents.last.type
       safe_click "#button-previous"
