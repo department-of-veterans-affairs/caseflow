@@ -6,7 +6,7 @@
 # Methods for batching should follow the convention of "batch_" followed by the type
 class BatchProcess < CaseflowRecord
 
-  has_many :priority_end_product_sync_queue
+  # has_many :priority_end_product_sync_queue
 
 
   # This method checks the priority_end_product_sync_queue table and begin creating a batch.
@@ -17,23 +17,24 @@ class BatchProcess < CaseflowRecord
     batch_limit = 100 # Number of total possible records in a batch
     error_delay = 12 # Delay, in hours, before an errored out record will try and be synced again
     max_errors = 3 # Number of errors before declaring stuck
+    records_batched = 0
 
-
-    new_batch = BatchProcess.create!(batch_id: uuid
+    uuid = SecureRandom.uuid
+    new_batch = BatchProcess.create!(batch_id: uuid,
                                      state: "CREATING_BATCH",
                                      batch_type: "priority_end_product_sync")
 
     PriorityEndProductSyncQueue.where(
       "batch_id IS NULL AND
       (last_batched_at IS NULL OR
-       last_batched_at >= :time)",
-      time: params[error_delay.hours.ago]).limit(batch_limit).each do |r|
-        r.update!(batch_id: new_batch.batch_id, state: "PRE_PROCESSING")
+       last_batched_at >= ?)",
+      error_delay.hours.ago).limit(batch_limit).each do |r|
+        r.update!(batch_id: new_batch.batch_id, status: "PRE_PROCESSING")
+        records_batched+=1
 
-      end
     end
 
-    new_batch.update!(state: "PRE_PROCESSING", records_attempted: batch_limit)
+    new_batch.update!(state: "PRE_PROCESSING", records_attempted: records_batched)
   end
 
 
@@ -50,17 +51,25 @@ class BatchProcess < CaseflowRecord
       # Call EndProductSyncJob.preform and try to sync the process
       # If passes, completed++. Otherwise failed++ and update record
       #
+
+      puts r
+      puts r.end_product_establishment
+      puts '==============================='
+      vbms_rec = VbmsExtClaim.find_by(claim_id: r.end_product_establishment.reference_id.to_i)
+
+      puts vbms_rec
+
       begin
+
         r.end_product_establishment.sync! #sync_status matach level status code
         r.end_product_establishment.reload
-        r_in_vbms = VbmsExtClaim.find_by(CLAIM_ID: r.end_product_establishment.reference_id)
 
-        if r.end_product_establishment.sync_status != r_in_vbms.level_status_code
+        if r.end_product_establishment.sync_status != vbms_rec.level_status_code
           fail ProcessingPriorityEndProductSyncError, "#{Time.zone.now}"
 
         else
           completed+=1
-          r.update!(state: 'SYNCED')
+          r.update!(status: 'SYNCED')
         end
 
       rescue Errno::ETIMEDOUT => error
@@ -90,14 +99,14 @@ class BatchProcess < CaseflowRecord
 
   def error_out_record(rec, error)
     error_array = rec.error_messages
-    error_array.push("#{error.inspect} - BatchID: #{rec.batch_id} - Time: #{Time.zone.now}"
+    error_array.push("#{error.inspect} - BatchID: #{rec.batch_id} - Time: #{Time.zone.now}")
     if(error_array.length >= 3) # CHANGE hard coded value after env setup
       rec.update!(state: "STUCK", error_messages: error_array)
       declare_record_stuck(rec)
     else
       rec.update!(batch_id: nil,
                   last_batched_at: nil,
-                  state: 'ERROR',
+                  status: 'ERROR',
                   error_messages: error_array)
     end
   end

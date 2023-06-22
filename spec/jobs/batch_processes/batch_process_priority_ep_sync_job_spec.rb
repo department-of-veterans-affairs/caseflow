@@ -1,11 +1,12 @@
 
 
 
-describe BatchProcessPriorityEPSyncJob, :postgres do
+describe BatchProcessPriorityEPSyncJobSpec, :postgres do
   # Testing the batch_priority_end_product_sync! method
   context 'Priority EP Sync Batch Creation Tests' do
     before(:each) do
-      # call seed data
+      let(:seed) { Seeds::VbmsExtClaim.new }
+      seed.seed!
       # put seed data into PEPSQ table
       batch = BatchProcess.batch_priority_end_product_sync!
     end
@@ -73,6 +74,13 @@ describe BatchProcessPriorityEPSyncJob, :postgres do
       expect(correctly_synced).to eq(synced_records.length)
     end
 
+
+    # Checking to make sure that when a record fails to synce
+    # the processing method errors out the record correctly
+    it 'Ensuring the a failed record is updated correctly' do
+            # .and_raise(StandardError.new)
+
+    end
 
     # Checking that a new record was created within the caseflow_stuck_recoreds
     # table, based off the record in priority_end_product_sync_queue that was
