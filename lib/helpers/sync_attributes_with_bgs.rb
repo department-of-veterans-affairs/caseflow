@@ -10,11 +10,11 @@ module SyncAttributesWithBGS
     # This method attempts to update a veteran cached attributes.
     #
     # @param [String] file_number used to find veteran
-    # @param [Boolean] sync_name set to true to update cached attributes.
     #
     # @return [String] error message or updated name of veteran
     #
     def run_by_file_number(file_number)
+      RequestStore[:current_user] = User.system_user
       unless (veteran = Veteran.find_by_file_number_or_ssn(file_number, sync_name: true))
         puts "veteran was not found"
         return
@@ -33,6 +33,7 @@ module SyncAttributesWithBGS
     # @return [String] error message or updated name of person
     #
     def run_by_participant_id(participant_id)
+      RequestStore[:current_user] = User.system_user
       unless (person = Person.find_by(participant_id: participant_id))
         puts "person was not found"
         return
