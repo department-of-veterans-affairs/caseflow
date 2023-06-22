@@ -10,7 +10,7 @@ class MailRequestJob < CaseflowJob
   #
   # Response: n/a
   def perform(vbms_uploaded_document, mail_request)
-    package_response = ExternalApi::PacmanService.send_communication_package_request(vbms_uploaded_document.veteran_file_number,
+    package_response = Fakes::PacmanService.send_communication_package_request(vbms_uploaded_document.veteran_file_number,
                                                                                      get_package_name(vbms_uploaded_document),
                                                                                      document_referenced(vbms_uploaded_document.id, mail_request[:copies]))
     log_info(package_response)
@@ -20,12 +20,17 @@ class MailRequestJob < CaseflowJob
       create_distribution_request(vbms_comm_package.id, mail_request)
     else
       vbms_comm_package.update!(status: "error")
-      # log_error(error_msg(package_response.code))
+      log_error(error_msg(package_response.code))
     end
   end
 
   private
 
+  # Purpose: arranges id and copies to pass into package post request
+  #
+  # takes in VbmsUploadedDocument id and copies integer
+  #
+  # Response: Array of json with document id and copies
   def document_referenced(doc_id, copies)
     [{ "id": doc_id, "copies": copies }]
   end
@@ -63,14 +68,14 @@ class MailRequestJob < CaseflowJob
     distributions.each do |dist|
       dist_hash = JSON.parse(dist)
       distribution = VbmsDistribution.find(dist_hash["vbms_distribution_id"])
-      distribution_response = ExternalApi::PacmanService.send_distribution_request(package_id,
+      distribution_response = Fakes::PacmanService.send_distribution_request(package_id,
                                                                              get_recipient_hash(distribution),
                                                                              get_destinations_hash(dist_hash))
       log_info(distribution_response)
       if distribution_response.code == 201
         distribution.update!(vbms_communication_package_id: package_id)
       else
-        # log_error(error_msg(distribution.code))
+        log_error(error_msg(distribution.code))
       end
     end
   end
