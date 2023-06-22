@@ -264,8 +264,6 @@ export const showPdf = createAsyncThunk(
               pdfDocuments[currentDocument.id].pdf.getPage(pageIndex + 1)
           )
         );
-
-        pdfDocuments[currentDocument.id].pages
       }
     }
 
