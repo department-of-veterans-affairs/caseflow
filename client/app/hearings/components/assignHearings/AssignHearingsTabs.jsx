@@ -62,6 +62,9 @@ export default class AssignHearingsTabs extends React.PureComponent {
               page: <UpcomingHearingsTable
                 selectedRegionalOffice={selectedRegionalOffice}
                 selectedHearingDay={selectedHearingDay}
+                mstIdentification={mstIdentification}
+                pactIdentification={pactIdentification}
+                legacyMstPactIdentification={legacyMstPactIdentification}
               />
             },
             {

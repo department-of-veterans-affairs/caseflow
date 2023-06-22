@@ -58,7 +58,7 @@ GIT
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
   revision: d34780936eb6ca3268af32274e509cdec9850b1b
-  branch: update-bgs-contention-service
+  ref: d34780936eb6ca3268af32274e509cdec9850b1b
   specs:
     bgs (0.3)
       httpclient
