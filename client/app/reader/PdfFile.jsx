@@ -157,6 +157,7 @@ export class PdfFile extends React.PureComponent {
         isFileVisible={this.props.isVisible}
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
+        featureToggles={this.props.featureToggles}
       />
     </div>;
   }

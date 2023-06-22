@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Mark from 'mark.js';
+import { v4 as uuidv4 } from 'uuid';
 
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
@@ -12,7 +13,7 @@ import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import * as PDFJS from 'pdfjs-dist';
-import { collectHistogram } from '../util/Metrics';
+import { collectHistogram, recordMetrics, recordAsyncMetrics } from '../util/Metrics';
 
 import { css } from 'glamor';
 import classNames from 'classnames';
@@ -181,6 +182,7 @@ export class PdfPage extends React.PureComponent {
   };
 
   drawText = (page, text) => {
+
     if (!this.textLayer) {
       return;
     }
@@ -210,14 +212,57 @@ export class PdfPage extends React.PureComponent {
   setUpPage = () => {
     // eslint-disable-next-line no-underscore-dangle
     if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
-      this.props.pdfDocument.
-        getPage(pageNumberOfPageIndex(this.props.pageIndex)).
-        then((page) => {
-          this.page = page;
+      const pageMetricData = {
+        message: 'Storing PDF page',
+        product: 'pdfjs.document.pages',
+        type: 'performance',
+        data: {
+          file: this.props.file,
+          documentId: this.props.documentId,
+          pageIndex: this.props.pageIndex,
+          numPagesInDoc: this.props.pdfDocument.numPages,
+        },
+      };
 
-          this.getText(page).then((text) => {
-            this.drawText(page, text);
-          });
+      const textMetricData = {
+        message: 'Storing PDF page text',
+        product: 'pdfjs.document.pages',
+        type: 'performance',
+        data: {
+          file: this.props.file,
+          documentId: this.props.documentId,
+        },
+      };
+
+      const pageAndTextFeatureToggle = this.props.featureToggles.metricsPdfStorePages;
+      const document = this.props.pdfDocument;
+      const pageIndex = pageNumberOfPageIndex(this.props.pageIndex);
+      const pageResult = recordAsyncMetrics(document.getPage(pageIndex), pageMetricData, pageAndTextFeatureToggle);
+
+      pageResult.then((page) => {
+        this.page = page;
+        
+        const uuid = uuidv4();
+
+        const readerRenderText = {
+          uuid,
+          message: 'Searching within Reader document text',
+          type: 'performance',
+          product: 'reader',
+          data: {
+            documentId: this.props.documentId,
+            documentType: this.props.documentType,
+            file: this.props.file
+          },
+        };
+        
+        const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);
+
+        textResult.then((text) => {
+          this.drawText(page, text);
+          // eslint-disable-next-line max-len
+          recordMetrics(this.drawText(page, text), readerRenderText, this.props.featureToggles.metricsReaderRenderText);
+        });
 
           this.drawPage(page).then(() => {
             collectHistogram({
@@ -226,13 +271,15 @@ export class PdfPage extends React.PureComponent {
               value: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0,
               appName: 'Reader',
               attrs: {
+                documentId: this.props.documentId,
                 overscan: this.props.windowingOverscan,
                 documentType: this.props.documentType,
-                pageCount: this.props.pdfDocument.pdfInfo?.numPages
+                pageCount: this.props.pdfDocument.numPages
               }
             });
           });
-        }).
+        });
+      }).
         catch(() => {
           // We might need to do something else here.
         });
@@ -356,7 +403,8 @@ PdfPage.propTypes = {
   searchText: PropTypes.string,
   setDocScrollPosition: PropTypes.func,
   setSearchIndexToHighlight: PropTypes.func,
-  windowingOverscan: PropTypes.string
+  windowingOverscan: PropTypes.string,
+  featureToggles: PropTypes.object
 };
 
 const mapDispatchToProps = (dispatch) => ({
