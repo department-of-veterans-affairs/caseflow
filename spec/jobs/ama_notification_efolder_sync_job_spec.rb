@@ -33,7 +33,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
     end
 
     let!(:first_run_outcoded_appeals) { [appeals[6]] }
-    let!(:first_run_never_synced_appeals) { appeals.first(3) + [appeals[4]] + appeals.last(2) }
+    let(:first_run_never_synced_appeals) { appeals.first(3) + [appeals[4]] + appeals.last(2) }
 
     before(:all) { AmaNotificationEfolderSyncJob::BATCH_LIMIT = BATCH_LIMIT_SIZE }
 
