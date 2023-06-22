@@ -43,7 +43,6 @@ module Seeds
         higher_level_review = create_high_level_review(veteran)
         # out_of_sync end_product_establishment sync_status "PEND"
         end_product_establishment = create_end_product_establishment(higher_level_review, :active, vbms_ext_claim, veteran)
-
         request_issue1 = create_request_issue(higher_level_review, end_product_establishment, "Military Retired Pay")
         request_issue2 = create_request_issue(higher_level_review, end_product_establishment, "Active Duty Adjustments")
       end
