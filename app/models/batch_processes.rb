@@ -29,6 +29,7 @@ class BatchProcess < CaseflowRecord
        last_batched_at >= :time)",
       time: params[error_delay.hours.ago]).limit(batch_limit).each do |r|
         r.update!(batch_id: new_batch.batch_id, state: "PRE_PROCESSING")
+
       end
     end
 
@@ -54,7 +55,7 @@ class BatchProcess < CaseflowRecord
         r.end_product_establishment.reload
         r_in_vbms = VbmsExtClaim.find_by(CLAIM_ID: r.end_product_establishment.reference_id)
 
-        if r.sync_status != r_in_vbms.level_status_code
+        if r.end_product_establishment.sync_status != r_in_vbms.level_status_code
           fail ProcessingPriorityEndProductSyncError, "#{Time.zone.now}"
 
         else
