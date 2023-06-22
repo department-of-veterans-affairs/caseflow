@@ -149,7 +149,7 @@ class QueueTab
   end
 
   def on_hold_task_children
-    Task.where(parent: on_hold_tasks).references(:parent)
+    Task.where(parent: on_hold_tasks)
   end
 
   def assigned_task_children
