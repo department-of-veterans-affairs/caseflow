@@ -168,10 +168,10 @@ private
 	end
 
 
-	def create_vbms_ext_claim(veteran, trait1, trait2)
+	def create_vbms_ext_claim(veteran, claim_status, claim)
 		create(:vbms_ext_claim,
-					 trait1,
-			     trait2,
+					 claim_status,
+			     claim,
 			     claimant_person_id: veteran.participant_id)
 	end
 
@@ -187,9 +187,9 @@ private
 					 benefit_type: "compensation")
 	end
 
-	def create_end_product_establishment(source, trait, vbms_ext_claim, veteran)
+	def create_end_product_establishment(source, claim_status, vbms_ext_claim, veteran)
 		create(:end_product_establishment,
-					 trait,
+					 claim_status,
 					 source: source,
 				   reference_id: vbms_ext_claim.claim_id,
 					 established_at: vbms_ext_claim.establishment_date,
