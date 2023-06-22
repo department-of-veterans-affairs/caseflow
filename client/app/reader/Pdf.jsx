@@ -72,7 +72,6 @@ export class Pdf extends React.PureComponent {
   render() {
     const pages = [...this.props.prefetchFiles, this.props.file].map((file) => {
       return <PdfFile
-        featureToggles={this.props.featureToggles}
         documentId={this.props.documentId}
         key={`${file}`}
         file={file}
