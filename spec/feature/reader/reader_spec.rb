@@ -1,14 +1,5 @@
 # frozen_string_literal: true
 
-def scroll_position(id: nil, class_name: nil)
-  page.driver.evaluate_script <<-EOS
-    function() {
-      var elem = document.getElementById('#{id}') || document.getElementsByClassName('#{class_name}')[0];
-      return elem.scrollTop;
-    }();
-  EOS
-end
-
 def scrolled_amount(child_class_name)
   page.evaluate_script <<-EOS
     function() {
@@ -1284,14 +1275,14 @@ RSpec.feature "Reader", :all_dbs do
       expect(page).to_not have_css("#read-indicator")
 
       page.find("#documents-table-body").scroll_to(:bottom)
-      original_scroll_position = scroll_position(id: "documents-table-body")
+      original_scroll_position = page.find("#documents-table-body").evaluate_script("this.scrollTop")
       click_on documents.last.type
       safe_click "#button-previous"
       click_on "Back"
 
       expect(page).to have_content("#{num_documents} Documents")
       expect(find("#table-row-#{documents.count - 1}")).to have_css("#read-indicator")
-      expect(scroll_position(id: "documents-table-body")).to eq(original_scroll_position)
+      expect(page.find("#documents-table-body").evaluate_script("this.scrollTop")).to eq(original_scroll_position)
     end
   end
 
