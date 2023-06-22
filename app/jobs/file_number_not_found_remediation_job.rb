@@ -36,13 +36,11 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
   def start_fix_veteran
     file_number = fetch_file_number_from_bgs_service
     fail FileNumberNotFoundError unless file_number
-    
+
     verify_file_number(file_number)
-    
-    collections = ASSOCIATED_OBJECTS.map do |klass|
-      FixFileNumberWizard::Collection.new(klass, @veteran.ssn)
-    end
-    
+
+    collections = FixfileNumberCollections.get_collections(@veteran)
+
     if collections.map(&:count).sum == 0
       fail NoAssociatedRecordsFoundForFileNumberError
     end
@@ -100,5 +98,14 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
 
     # Store file to S3 bucket
     s3bucket.object(file_name).upload_file(filepath, acl: "private", server_side_encryption: "AES256")
+  end
+end
+
+class FixfileNumberCollections
+  ASSOCIATED_OBJECTS = FixFileNumberWizard::ASSOCIATIONS
+  def self.get_collections(veteran)
+    ASSOCIATED_OBJECTS.map do |klass|
+      FixFileNumberWizard::Collection.new(klass, veteran.ssn)
+    end
   end
 end

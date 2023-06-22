@@ -18,7 +18,6 @@ describe FileNumberNotFoundRemediationJob, :postgres do
   let!(:ramp_election) { create(:ramp_election, veteran_file_number: number) }
   let!(:ramp_refiling) { RampRefiling.create(veteran_file_number: number) }
   let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: number) }
-  let!(:form8) { create(:default_form8, file_number: number) }
 
   subject { FileNumberNotFoundRemediationJob.new(appeal) }
 
@@ -63,7 +62,6 @@ describe FileNumberNotFoundRemediationJob, :postgres do
         expect(supplemental_claim.reload.veteran_file_number).to eq(bgs_file_number)
         expect(bgs_power_of_attorney.reload.file_number).to eq(bgs_file_number)
         expect(document.reload.file_number).to eq(bgs_file_number)
-        # expect(form8.reload.vacols_id).to eq("123456789S") # Need to figure out why this one is different
       end
     end
 
@@ -85,7 +83,6 @@ describe FileNumberNotFoundRemediationJob, :postgres do
         expect(supplemental_claim.reload.veteran_file_number).to eq(number)
         expect(bgs_power_of_attorney.reload.file_number).to eq(number)
         expect(document.reload.file_number).to eq(number)
-        # expect(form8.reload.file_number).to eq(bgs_file_number)
       end
     end
 
@@ -133,8 +130,12 @@ describe FileNumberNotFoundRemediationJob, :postgres do
   end
 
   context "legacy appeal" do
-    let!(:veteran_2) { create(:veteran, ssn: "999999998") }
-    let!(:appeal_2) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "399999998S")) }
+    let!(:bgs_file_number) { "000979834S" }
+    let!(:veteran_2) { create(:veteran, ssn: "343434349") }
+    let!(:appeal_2) { create(:legacy_appeal, vbms_id: "343434349", vacols_case: create(:case, bfcorlid: "399999998S")) }
+    let!(:form8) { create(:default_form8, file_number: "343434349S") }
+
+    subject { FileNumberNotFoundRemediationJob.new(appeal_2) }
 
     before do
       allow(subject)
@@ -146,72 +147,16 @@ describe FileNumberNotFoundRemediationJob, :postgres do
       allow(subject)
         .to receive(:fetch_file_number_from_bgs_service)
         .and_return(bgs_file_number)
+
+      allow(FixfileNumberCollections)
+        .to receive(:get_collections)
+        .with(veteran_2)
+        .and_return([FixFileNumberWizard::Collection.new(Form8, veteran_2.ssn)])
+
       subject.perform
-      veteran.reload
-      expect(veteran.file_number).to eq(bgs_file_number)
-    end
-
-    it "updates associated objects" do
-      subject.perform
-      expect(veteran.reload.file_number).to eq(bgs_file_number)
-      expect(available_hearing_locations.reload.veteran_file_number).to eq(bgs_file_number)
-      expect(end_product_establishment.reload.veteran_file_number).to eq(bgs_file_number)
-      expect(higher_level_review.reload.veteran_file_number).to eq(bgs_file_number)
-      expect(intake.reload.veteran_file_number).to eq(bgs_file_number)
-      expect(ramp_election.reload.veteran_file_number).to eq(bgs_file_number)
-      expect(ramp_refiling.reload.veteran_file_number).to eq(bgs_file_number)
-      expect(supplemental_claim.reload.veteran_file_number).to eq(bgs_file_number)
-      expect(bgs_power_of_attorney.reload.file_number).to eq(bgs_file_number)
-      expect(document.reload.file_number).to eq(bgs_file_number)
-      # expect(form8.reload.file_number).to eq(bgs_file_number)
-    end
-
-    context "when job does not successfully complete" do
-      it "rollsback everything" do
-        allow(subject)
-          .to receive(:fetch_file_number_from_bgs_service)
-          .and_return("failure")
-
-        subject.perform
-
-        expect(veteran.reload.file_number).to eq(number)
-        expect(available_hearing_locations.reload.veteran_file_number).to eq(number)
-        expect(end_product_establishment.reload.veteran_file_number).to eq(number)
-        expect(higher_level_review.reload.veteran_file_number).to eq(number)
-        expect(intake.reload.veteran_file_number).to eq(number)
-        expect(ramp_election.reload.veteran_file_number).to eq(number)
-        expect(ramp_refiling.reload.veteran_file_number).to eq(number)
-        expect(supplemental_claim.reload.veteran_file_number).to eq(number)
-        expect(bgs_power_of_attorney.reload.file_number).to eq(number)
-        expect(document.reload.file_number).to eq(number)
-        # expect(form8.reload.file_number).to eq(bgs_file_number)
-      end
-    end
-
-    context "when file vet file_number matches VBMS file_number" do
-      it "throws Duplicate Veteran Found error" do
-        veteran.update(file_number: bgs_file_number)
-        expect { subject.perform }.to raise_error(FileNumberNotFoundRemediationJob::DuplicateVeteranFoundError)
-      end
-
-      describe " when file number from vbms is nil" do
-        it "throws File Number is Nil error error" do
-          allow(subject)
-            .to receive(:fetch_file_number_from_bgs_service)
-            .and_return(nil)
-
-          expect { subject.perform }.to raise_error(FileNumberNotFoundRemediationJob::FileNumberNotFoundError)
-        end
-      end
-      describe "when veteran is found by file_number from vbms" do
-        it "throws a file number matches veteran file number error" do
-          bgs_file_number = "424200002"
-          allow(subject)
-            .to receive(:fetch_file_number_from_bgs_service)
-            .and_return(bgs_file_number)
-          expect { subject.perform }.to raise_error(FileNumberNotFoundRemediationJob::FileNumberMachesVetFileNumberError)
-        end
-      end
+      veteran_2.reload
+      expect(veteran_2.file_number).to eq(bgs_file_number)
+      expect(form8.reload.file_number).to eq(bgs_file_number)
     end
   end
 end
