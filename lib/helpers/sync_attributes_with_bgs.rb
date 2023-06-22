@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module SyncAttributesWithBGS
+  # Disable :reek:FeatureEnvy
   class VeteranCacheUpdater
     #
     # This method attempts to update a veteran cached attributes.
@@ -20,6 +21,7 @@ module SyncAttributesWithBGS
     end
   end
 
+  # Disable :reek:FeatureEnvy
   class PersonCacheUpdater
     #
     # This method attemps to update a person cached attributes.
