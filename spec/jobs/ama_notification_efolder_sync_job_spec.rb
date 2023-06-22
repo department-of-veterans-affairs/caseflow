@@ -2,16 +2,16 @@
 
 describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
   include ActiveJob::TestHelper
-  let!(:current_user) { create(:user, roles: ["System Admin"]) }
-  let!(:appeals) { create_list(:appeal, 10, :active) }
-  let!(:job) { AmaNotificationEfolderSyncJob.new }
+  let(:current_user) { create(:user, roles: ["System Admin"]) }
+  let(:appeals) { create_list(:appeal, 10, :active) }
+  let(:job) { AmaNotificationEfolderSyncJob.new }
 
   BATCH_LIMIT_SIZE = 5
 
   describe "perform" do
     before { Seeds::NotificationEvents.new.seed! }
 
-    let!(:today) { Time.now.utc.iso8601 }
+    let(:today) { Time.now.utc.iso8601 }
     let!(:notifications) do
       appeals.each_with_index do |appeal, index|
         next if [3, 7].include? index
@@ -81,10 +81,10 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
       # These appeals should be all that have had notification reports generated for them after two
       # runs with BATCH_LIMIT_SIZE number of appeals processed each time.
       let(:second_run_vbms_document_appeal_ids) do
-        first_run_vbms_document_appeal_ids(first_run_vbms_document_appeal_indexes) +
+        (first_run_vbms_document_appeal_ids(first_run_vbms_document_appeal_indexes) +
           [appeals[4].id] -
           will_not_sync_appeal_ids +
-          second_run_never_synced_appeals_ids
+          second_run_never_synced_appeals_ids).uniq
       end
 
       before do
@@ -146,6 +146,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
             .where(document_type: "BVA Case Notifications")
             .order(:id)
             .pluck(:appeal_id)
+            .uniq
         ).to match_array(second_run_vbms_document_appeal_ids)
       end
     end
