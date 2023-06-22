@@ -44,6 +44,7 @@ module Seeds
       higher_level_review = create_high_level_review(veteran)
 			# out_of_sync end_product_establishment sync_status "PEND"
 			end_product_establishment = create_end_product_establishment(higher_level_review, :active, vbms_ext_claim, veteran)
+
 			create_request_issue(higher_level_review, end_product_establishment, "Military Retired Pay")
 			create_request_issue(higher_level_review, end_product_establishment, "Active Duty Adjustments")
 		end
@@ -58,6 +59,7 @@ module Seeds
 			higher_level_review = create_high_level_review(veteran)
 			# out_of_sync end_product_establishment sync_status "PEND"
 			end_product_establishment = create_end_product_establishment(higher_level_review, :active, vbms_ext_claim, veteran)
+
       create_request_issue(higher_level_review, end_product_establishment, "Military Retired Pay")
 			create_request_issue(higher_level_review, end_product_establishment, "Active Duty Adjustments")
     end
@@ -72,6 +74,7 @@ module Seeds
       supplemental_claim = create_supplemental_claim(veteran)
 			# out_of_sync end_product_establishment sync_status "PEND"
 			end_product_establishment = create_end_product_establishment(supplemental_claim, :active, vbms_ext_claim, veteran)
+
       create_request_issue(supplemental_claim, end_product_establishment, "Military Retired Pay")
 			create_request_issue(supplemental_claim, end_product_establishment, "Active Duty Adjustments")
     end
@@ -86,6 +89,7 @@ module Seeds
       supplemental_claim = create_supplemental_claim(veteran)
 			# out_of_sync end_product_establishment sync_status "PEND"
 			end_product_establishment = create_end_product_establishment(supplemental_claim, :active, vbms_ext_claim, veteran)
+
       create_request_issue(supplemental_claim, end_product_establishment, "Military Retired Pay")
 			create_request_issue(supplemental_claim, end_product_establishment, "Active Duty Adjustments")
     end
@@ -107,6 +111,7 @@ module Seeds
 			vbms_ext_claim = create_vbms_ext_claim(veteran, :canceled, :hlr)
 			higher_level_review = create_high_level_review(veteran)
 			end_product_establishment = create_end_product_establishment(higher_level_review,:canceled, vbms_ext_claim, veteran)
+
 			create_request_issue(higher_level_review, end_product_establishment, "Military Retired Pay")
 			create_request_issue(higher_level_review, end_product_establishment, "Active Duty Adjustments")
     end
@@ -120,6 +125,7 @@ module Seeds
 			vbms_ext_claim = create_vbms_ext_claim(veteran, :cleared, :hlr)
 			higher_level_review = create_high_level_review(veteran)
 			end_product_establishment = create_end_product_establishment(higher_level_review,:cleared, vbms_ext_claim, veteran)
+
 			create_request_issue(higher_level_review, end_product_establishment, "Military Retired Pay")
 			create_request_issue(higher_level_review, end_product_establishment, "Active Duty Adjustments")
     end
@@ -132,6 +138,7 @@ module Seeds
 			vbms_ext_claim = create_vbms_ext_claim(veteran, :cleared, :slc)
 			supplemental_claim = create_supplemental_claim(veteran)
 			end_product_establishment = create_end_product_establishment(supplemental_claim, :cleared, vbms_ext_claim, veteran)
+
 			create_request_issue(supplemental_claim, end_product_establishment, "Military Retired Pay")
 			create_request_issue(supplemental_claim, end_product_establishment, "Active Duty Adjustments")
     end
@@ -145,6 +152,7 @@ module Seeds
       vbms_ext_claim = create_vbms_ext_claim(veteran, :canceled, :slc)
 			supplemental_claim = create_supplemental_claim(veteran)
 			end_product_establishment = create_end_product_establishment(supplemental_claim, :canceled, vbms_ext_claim, veteran)
+
 			create_request_issue(supplemental_claim, end_product_establishment, "Military Retired Pay")
 			create_request_issue(supplemental_claim, end_product_establishment, "Active Duty Adjustments")
     end
