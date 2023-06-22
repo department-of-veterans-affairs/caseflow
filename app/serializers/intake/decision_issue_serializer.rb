@@ -12,4 +12,6 @@ class Intake::DecisionIssueSerializer
   attribute :request_issue_id do |object|
     object.request_issues&.first&.id
   end
+  attribute :mst_status
+  attribute :pact_status
 end

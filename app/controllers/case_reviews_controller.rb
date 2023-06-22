@@ -98,6 +98,8 @@ class CaseReviewsController < ApplicationController
       :readjudication,
       :benefit_type,
       :diagnostic_code,
+      :mst_status,
+      :pact_status,
       request_issue_ids: [],
       remand_reasons: [
         :code,

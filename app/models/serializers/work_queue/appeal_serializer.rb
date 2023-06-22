@@ -67,7 +67,9 @@ class WorkQueue::AppealSerializer
         benefit_type: issue.benefit_type,
         remand_reasons: issue.remand_reasons,
         diagnostic_code: issue.diagnostic_code,
-        request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id)
+        request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id),
+        mst_status: issue.mst_status,
+        pact_status: issue.pact_status
       }
     end
   end
