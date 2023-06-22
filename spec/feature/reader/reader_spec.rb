@@ -25,20 +25,6 @@ def scrolled_amount(child_class_name)
   EOS
 end
 
-def get_size(element)
-  size = page.driver.evaluate_script <<-EOS
-    function() {
-      var ele = document.getElementById('#{element}');
-      var rect = ele.getBoundingClientRect();
-      return [rect.width, rect.height];
-    }();
-  EOS
-  {
-    width: size[0],
-    height: size[1]
-  }
-end
-
 def add_comment_without_clicking_save(text)
   # It seems that this can fail in some cases on Travis, retry if it does.
   3.times do
@@ -776,35 +762,20 @@ RSpec.feature "Reader", :all_dbs do
 
       # Wait for the page to load
       expect(page).to have_content("IN THE APPEAL")
-      original_height = get_size("pageContainer1")[:height]
+      original_height = page.find("#pageContainer1").style("height")["height"].to_f
 
       # Zoom in and verify zoom rate
       find("#button-zoomIn").click
-      retries = 0
-      until get_size("pageContainer1")[:height] != original_height || retries == 5
-        retries += 1
-        sleep 1
-      end
-      ratio = (get_size("pageContainer1")[:height] / original_height).round(1)
+      ratio = (page.find("#pageContainer1").style("height")["height"].to_f / original_height).round(1)
       expect(ratio).to eq(1 + zoom_rate)
 
       # Reset zoom amount
       find("#button-fit").click
-      retries = 0
-      until get_size("pageContainer1")[:height] == original_height || retries == 5
-        retries += 1
-        sleep 1
-      end
-      expect(get_size("pageContainer1")[:height]).to eq(original_height)
+      expect(page.find("#pageContainer1").style("height")["height"].to_f).to eq(original_height)
 
       # Zoom out and verify zoom rate
       find("#button-zoomOut").click
-      retries = 0
-      until get_size("pageContainer1")[:height] != original_height || retries == 5
-        retries += 1
-        sleep 1
-      end
-      ratio = (get_size("pageContainer1")[:height] / original_height).round(1)
+      ratio = (page.find("#pageContainer1").style("height")["height"].to_f / original_height).round(1)
       expect(ratio).to eq(1 - zoom_rate)
     end
 
