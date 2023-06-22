@@ -73,7 +73,7 @@ export class PdfFile extends React.PureComponent {
         let promise = this.loadingTask.promise;
 
         return recordAsyncMetrics(promise, metricData,
-          !this.props.featureToggles.metricsRecordPDFJSGetDocument);
+          this.props.featureToggles.metricsRecordPDFJSGetDocument);
       }).
       then((pdfDocument) => {
 
