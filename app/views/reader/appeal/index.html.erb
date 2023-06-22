@@ -16,6 +16,7 @@
       metricsLoadScreen: FeatureToggle.enabled?(:metrics_load_screen, user: current_user),
       metricsReaderRenderText: FeatureToggle.enabled?(:metrics_reader_render_text, user: current_user),
       metricsLogRestSuccess: FeatureToggle.enabled?(:metrics_log_rest_success, user: current_user),
+      metricsPdfStorePages: FeatureToggle.enabled?(:metrics_pdf_store_pages, user: current_user),
     },
     buildDate: build_date
   }) %>
