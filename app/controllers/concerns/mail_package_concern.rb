@@ -22,7 +22,7 @@ module MailPackageConcern
   def mail_package
     return nil if recipient_info.blank?
 
-    { distributions: mail_requests.to_json, copies: copies }
+    { distributions: mail_requests.to_json, copies: copies, created_by_id: user.id }
   end
 
   def build_mail_package
