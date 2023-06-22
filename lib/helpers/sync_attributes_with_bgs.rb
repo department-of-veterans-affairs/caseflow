@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 module SyncAttributesWithBGS
-  def self.inherited(*)
-    RequestStore[:current_user] = User.system_user
-  end
-
   class VeteranCacheUpdater
     #
     # This method attempts to update a veteran cached attributes.
