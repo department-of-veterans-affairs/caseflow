@@ -19,9 +19,9 @@ module Seeds
       create_out_of_sync_epes_and_vbms_ext_claims
     end
 
-private
+  private
 
- # maintains previous file number values while allowing for reseeding
+  # maintains previous file number values while allowing for reseeding
  	def file_number_initial_value
   	@file_number ||= 300_000
   	# this seed file creates 200 new veterans on each run, 250 is sufficient margin to add more data
@@ -61,6 +61,7 @@ private
       create_request_issue(higher_level_review, end_product_establishment, "Military Retired Pay")
 			create_request_issue(higher_level_review, end_product_establishment, "Active Duty Adjustments")
     end
+
     # # 25 Supplemental Claims, End Product Establishments that have a sync_status of cleared and are out_of_sync with
     # # vbms_ext_claims
     25.times do
