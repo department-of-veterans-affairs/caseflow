@@ -123,7 +123,8 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
             assigned_to_id: this.state.selectedAssignee,
             assigned_to_type: 'User',
             // cancellation_reason: `${this.state.selectedReason.trim()}: ${this.state.cancellationInstructions.trim()}`,
-            instructions: this.state.instructions
+            instructions: [this.state.instructions, 
+              `${this.state.selectedReason.trim()}: ${this.state.cancellationInstructions.trim()}`]
           }
         ]
       }

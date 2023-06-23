@@ -179,7 +179,12 @@ class AssignToView extends React.Component {
           reassign: {
             assigned_to_id: this.state.selectedValue,
             assigned_to_type: 'User',
-            instructions: this.state.instructions
+            instructions: this.state.instructions,
+            previous: {
+              details: this.state.instructions,
+              old_judge: task.assigneeName,
+              new_judge: this.state.selectedValue
+            }
           }
         }
       }
