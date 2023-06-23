@@ -532,7 +532,7 @@
   "BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_SUBTITLE": "This case currently has blocking tasks that will be cancelled to move this case",
   "BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_TASKS_HEADER": "The following task(s) will be cancelled:",
   "BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_REASONING_HEADER": "Please provide reason(s) and context for the cancellation:",
-  "BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY_MODAL_TITLE": "Confirm Cancellation",
+  "BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY_MODAL_TITLE": "Confirm Cancellation and Reassign",
   "BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_TITLE": "Confirm Cancellation and Reassign",
   "BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_WARNING": "To cancel tasks you must select a user to move the case to as well as provide a reason and context for the reassignment below.",
   "BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_JUDGE_HEADER": "Reassign to",
