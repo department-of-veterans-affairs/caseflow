@@ -10,10 +10,15 @@ class CaseReviewsController < ApplicationController
   end
 
   def complete
-    result = CompleteCaseReview.new(case_review_class: case_review_class, params: complete_params).call
-
+    new_complete_case_review = CompleteCaseReview.new(case_review_class: case_review_class, params: complete_params)
+    result = new_complete_case_review.call
     if result.success?
       case_review = result.extra[:case_review]
+      if case_review.appeal_type == "Appeal" &&
+         (FeatureToggle.enabled?(:mst_identification) || FeatureToggle.enabled?(:pact_identification))
+        appeal = Appeal.find(case_review.appeal_id)
+        update_request_issues_for_mst_and_pact(appeal)
+      end
       render json: {
         task: case_review,
         issues: case_review.appeal.issues
@@ -43,6 +48,20 @@ class CaseReviewsController < ApplicationController
   def complete_params
     return attorney_case_review_params if case_review_class == "AttorneyCaseReview"
     return judge_case_review_params if case_review_class == "JudgeCaseReview"
+  end
+
+
+  def update_request_issues_for_mst_and_pact(appeal)
+    params[:tasks][:issues].each do |issue|
+      unless [issue[:mstStatus], issue[:pactStatus], issue[:mstOriginalStatus], issue[:pactOriginalStatus]].include?(nil)
+        RequestIssue.find(issue[:request_issue_ids]).each do |ri|
+          if ri.mst_status != issue[:mstStatus] || ri.pact_status != issue[:pactStatus]
+            create_issue_update_task(ri, issue, appeal)
+          end
+          ri.update(mst_status: issue[:mstStatus], pact_status: issue[:pactStatus])
+        end
+      end
+    end
   end
 
   def attorney_case_review_params
@@ -87,5 +106,28 @@ class CaseReviewsController < ApplicationController
         :post_aoj
       ]
     ]
+  end
+
+  def create_issue_update_task(original_issue, incoming_issue_update, appeal)
+    root_task = RootTask.find_or_create_by!(appeal: appeal)
+
+    task = IssuesUpdateTask.create!(
+      appeal: appeal,
+      parent: root_task,
+      assigned_to: SpecialIssueEditTeam.singleton,
+      assigned_by: RequestStore[:current_user],
+      completed_by: RequestStore[:current_user]
+    )
+
+    task.format_instructions(
+      "Edited Issue",
+      [original_issue.nonrating_issue_category, original_issue.contested_issue_description].join,
+      original_issue.mst_status,
+      original_issue.pact_status,
+      incoming_issue_update[:mstStatus],
+      incoming_issue_update[:pactStatus]
+    )
+
+    task.completed!
   end
 end

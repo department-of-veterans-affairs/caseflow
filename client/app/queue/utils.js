@@ -194,10 +194,13 @@ const appealAttributesFromRawTask = (task) => ({
   contestedClaim: task.attributes.contested_claim,
   veteranAppellantDeceased: task.attributes.veteran_appellant_deceased,
   issueCount: task.attributes.issue_count,
+  issueTypes: task.attributes.issue_types,
   docketNumber: task.attributes.docket_number,
   veteranFullName: task.attributes.veteran_full_name,
   veteranFileNumber: task.attributes.veteran_file_number,
   isPaperCase: task.attributes.paper_case,
+  mst: task.attributes.mst,
+  pact: task.attributes.pact
 });
 
 const extractAppealsFromTasks = (tasks) => {
@@ -275,6 +278,8 @@ export const prepareLegacyTasksForStore = (tasks) => {
           task.attributes.latest_informal_hearing_presentation_task
             ?.received_at,
       },
+      mst: task.attributes.mst,
+      pact: task.attributes.pact
     };
   });
 
@@ -437,6 +442,8 @@ export const prepareAppealForStore = (appeals) => {
         appeal.attributes.readable_original_hearing_request_type,
       vacateType: appeal.attributes.vacate_type,
       cavcRemandsWithDashboard: appeal.attributes.cavc_remands_with_dashboard,
+      mst: appeal.attributes.mst,
+      pact: appeal.attributes.pact
     };
 
     return accumulator;
@@ -511,6 +518,8 @@ export const prepareAppealForStore = (appeals) => {
       remandJudgeName: appeal.attributes.remand_judge_name,
       hasNotifications: appeal.attributes.has_notifications,
       locationHistory: prepareLocationHistoryForStore(appeal),
+      mst: appeal.attributes.mst,
+      pact: appeal.attributes.pact
     };
 
     return accumulator;
@@ -609,6 +618,36 @@ export const getIssueDiagnosticCodeLabel = (code) => {
   }
 
   return `${code} - ${readableLabel.staff_description}`;
+};
+
+export const getMstPactStatus = (issue) => {
+  const mstStatus = issue.mstStatus;
+  const pactStatus = issue.pactStatus;
+
+  if (!mstStatus && !pactStatus) {
+    return 'None';
+  } else if (mstStatus && pactStatus) {
+    return 'MST and PACT';
+  } else if (mstStatus) {
+    return 'MST';
+  } else if (pactStatus) {
+    return 'PACT';
+  }
+};
+
+export const getLegacyMstPactStatus = (issue) => {
+  const mstStatusLegacy = issue.mst_status;
+  const pactStatusLegacy = issue.pact_status;
+
+  if (!mstStatusLegacy && !pactStatusLegacy) {
+    return 'None';
+  } else if (mstStatusLegacy && pactStatusLegacy) {
+    return 'MST and PACT';
+  } else if (mstStatusLegacy) {
+    return 'MST';
+  } else if (pactStatusLegacy) {
+    return 'PACT';
+  }
 };
 
 // Build case review payloads for attorney decision draft submissions as well as judge decision evaluations.
@@ -812,7 +851,7 @@ export const timelineEventsFromAppeal = ({ appeal }) => {
   // Possibly add appellant substitution
   if (appeal.appellantSubstitution) {
     if (appeal.appellantSubstitution.histories) {
-      appeal.appellantSubstitution.histories.map( appellantSubstitutionHistory => {
+      appeal.appellantSubstitution.histories.map((appellantSubstitutionHistory) => {
         if (appellantSubstitutionHistory.substitution_date) {
           timelineEvents.push({
             type: 'substitutionDate',
@@ -830,8 +869,7 @@ export const timelineEventsFromAppeal = ({ appeal }) => {
           currentAppellantFullName: appellantSubstitutionHistory.current_appellant_full_name
         });
       });
-    }
-    else {
+    } else {
       timelineEvents.push({
         type: 'substitutionDate',
         createdAt: appeal.appellantSubstitution.substitution_date,
