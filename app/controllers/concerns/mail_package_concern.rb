@@ -18,18 +18,22 @@ module MailPackageConcern
     params[:copies]
   end
 
-  # Payload with distributions value (array of JSON-formatted MailRequest objects) and copies (integer)
   def mail_package
     return nil if recipient_info.blank?
 
-    { distributions: mail_requests.to_json, copies: copies, created_by_id: user.id }
+    { distributions: json_mail_requests, copies: copies, created_by_id: user.id }
   end
 
+  # Purpose: - Creates and validates a MailRequest object for each recipient
+  #          - Calls #call method on each MailRequest to save corresponding VbmsDistirbution and
+  #            VbmsDistributionDestination to the db
+  #          - Stores the distribution IDs (to be returned to the IDT user as an immediate means of tracking
+  #            each distribution)
+  #
   def build_mail_package
     return if recipient_info.blank?
 
     throw_error_if_copies_out_of_range
-    # Create and validate MailRequest objects, save to db, and store distribution IDs
     mail_requests.map do |request|
       request.call
       distribution_ids << request.vbms_distribution_id
@@ -38,6 +42,10 @@ module MailPackageConcern
 
   def mail_requests
     @mail_requests ||= create_mail_requests_and_track_errors
+  end
+
+  def json_mail_requests
+    mail_requests.map(&:to_json)
   end
 
   def create_mail_requests_and_track_errors

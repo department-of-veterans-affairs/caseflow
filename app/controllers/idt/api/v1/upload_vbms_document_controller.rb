@@ -13,6 +13,7 @@ class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
     build_mail_package
 
     result = PrepareDocumentUploadToVbms.new(params, current_user, appeal, mail_package).call
+
     if result.success?
       success_message = { message: "Document successfully queued for upload." }
       if recipient_info.present?

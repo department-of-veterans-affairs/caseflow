@@ -8,7 +8,8 @@ describe UploadDocumentToVbmsJob, :postgres do
     let(:mail_request) { instance_double(MailRequest) }
     let(:mail_package) do
       { distributions: [mail_request.to_json],
-        copies: 1 }
+        copies: 1,
+        created_by_id: user.id }
     end
 
     let(:params) do

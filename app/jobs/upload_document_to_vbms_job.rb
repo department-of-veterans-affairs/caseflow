@@ -8,17 +8,16 @@ class UploadDocumentToVbmsJob < CaseflowJob
   # Params: document_id - integer to search for VbmsUploadedDocument
   #         initiator_css_id - string to find a user by css_id
   #         application - string with a default value of "idt" but can be overwritten
-  #         mail_package - Payload with copies value (integer) and distributions value (array of JSON-formatted
-  #           MailRequest objects) to be submitted to Package Manager if optional recipient info is present
+  #         mail_package - Payload with distributions value (array of JSON-formatted MailRequest objects),
+  #                        copies value (integer), and created_by_id value (integer) to be submitted to
+  #                        Package Manager if optional recipient info is present
   #
   # Return: nil
-
-  # document_id:, initiator_css_id:, application: "idt", mail_package: nil
   def perform(params)
     @params = params
     RequestStore.store[:application] = application
     RequestStore.store[:current_user] = User.system_user
-    @document = VbmsUploadedDocument.find_by(id: params[:document_id])
+    @document = VbmsUploadedDocument.find(params[:document_id])
     @initiator = User.find_by_css_id(params[:initiator_css_id])
     add_context_to_sentry
     UploadDocumentToVbms.new(document: document).call
