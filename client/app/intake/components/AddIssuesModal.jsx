@@ -163,7 +163,23 @@ class AddIssuesModal extends React.Component {
       return featureFlagToUse && formType === 'appeal';
     };
 
-    return map(intakeData.contestableIssues, (contestableIssuesByIndex, approxDecisionDate) => {
+    const contestableIssuesWithoutDecisionIssues = () => {
+      let filteredIssues = {};
+      for (const [date, issuesObj] of Object.entries(intakeData.contestableIssues)) {
+        let dateObj = {};
+        let count = 0;
+        for (const [index, issue] of Object.entries(issuesObj)) {
+          if (issue.ratingIssueReferenceId != null) {
+            dateObj[count] = issue;
+            count += 1;
+          }
+        }
+        filteredIssues[date] = dateObj;
+        }
+        return filteredIssues;
+      };
+
+    return map(contestableIssuesWithoutDecisionIssues(), (contestableIssuesByIndex, approxDecisionDate) => {
       const radioOptions = map(contestableIssuesByIndex, (issue) => {
         const foundIndex = findIndex(addedIssues, { index: issue.index });
         let text =
@@ -192,8 +208,8 @@ class AddIssuesModal extends React.Component {
           displayText: text,
           value: issue.index,
           disabled: foundIndex !== -1 || hasLaterIssueInChain,
-          mst: contestableIssuesByIndex[issue.index].mstAvailable,
-          pact: contestableIssuesByIndex[issue.index].pactAvailable
+          mst: issue.mstAvailable,
+          pact: issue.pactAvailable
         };
       });
 
