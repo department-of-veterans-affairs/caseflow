@@ -607,7 +607,7 @@ export const legacyReassignToJudgeAttorney = ({
     }
   };
 
-  return ApiUtil.post('/legacy_tasks/assign_to_judge', params).
+  return ApiUtil.put(`/legacy_tasks/${tasks[0].uniqueId}`, params).
     then((resp) => resp.body).
     then((resp) => {
       const allTasks = prepareAllTasksForStore([resp.task.data]);
