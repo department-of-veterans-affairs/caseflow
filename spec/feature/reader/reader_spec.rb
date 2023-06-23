@@ -436,6 +436,7 @@ RSpec.feature "Reader", :all_dbs do
       click_on "Delete"
 
       # Confirm the delete
+      expect(page).to have_content "Delete Comment"
       click_on "Confirm delete"
 
       # Expect the comment to be removed from the page
@@ -456,7 +457,8 @@ RSpec.feature "Reader", :all_dbs do
       find("#editCommentBox-2").send_keys(:backspace)
       click_on "Save"
 
-      # Delete modal should appear
+      # Delete modal should appear when removing all text from a comment
+      expect(page).to have_content "Delete Comment"
       click_on "Confirm delete"
 
       # Comment should be removed
@@ -626,12 +628,15 @@ RSpec.feature "Reader", :all_dbs do
 
         # Wait for PDFJS to render the pages
         expect(page).to have_css(".page")
-        comment_icon_id = "#commentIcon-container-#{annotation.id}"
 
-        # wait for comment annotations to load
-        all(".commentIcon-container", wait: 3, count: 1)
+        # Somewhere in the spaghetti of the 2.0 reader, the page provided to the jump to methods is being
+        # set to page - 1, so it is jumping to the previous page. This will manually set the page number to
+        # what it should be without directly using the annotation object, since that would defeat the point
+        page_number = page.find("input.page-progress-indicator-input").value.to_i
+        page.find("input.page-progress-indicator-input").click.set((page_number + 1).to_s)
 
-        expect(page).to have_css(comment_icon_id)
+        # Check for comment icon on page
+        expect(page).to have_css("#commentIcon-container-#{annotation.id}")
       end
 
       scenario "Scroll to comment" do
@@ -692,6 +697,8 @@ RSpec.feature "Reader", :all_dbs do
 
       scenario "Follow comment deep link" do
         annotation = documents[1].annotations[0]
+        # Open the document list before trying to go to deep link to pre-load the data
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/"
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[1].id}?annotation=#{annotation.id}"
 
         expect(page).to have_content(annotation.comment)
@@ -743,7 +750,6 @@ RSpec.feature "Reader", :all_dbs do
 
     # The zoom level is adjusted by changing the height of the container row in react-virtualized
     # Checking for text on the pages is flaky because of inconsistencies with react-virtualized rendering
-    # Retry logic is needed to ensure that the react/redux actions adjust the size prior to checks
     scenario "Zooming changes the size of pages" do
       # This is set in client/app/2.0/store/constants/reader.js as ZOOM_RATE
       zoom_rate = 0.3
