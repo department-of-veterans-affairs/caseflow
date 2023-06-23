@@ -20,7 +20,7 @@ const MstBadge = (props) => {
   return <Badge
     name="mst"
     displayName="MST"
-    color={COLORS.GRAY}
+    color={COLORS.GREY}
     tooltipText={tooltipText}
     id={`mst-${appeal.id}`}
     ariaLabel="mst"

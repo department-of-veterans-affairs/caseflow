@@ -87,14 +87,14 @@ export const IntakeRadioField = (props) => {
   let prePopulatedPact = options[value - totalElements]?.pact;
 
   // handle both MST and PACT pre-populated checkbox status on load
-  const handlePrepopulatedCheckboxes = (radioOption) => {
+  const handlePrepopulatedCheckboxes = (radioOptions, index) => {
     // update the checkbox value
-    setMstCheckboxFunction(radioOption.mst);
-    setPactCheckboxFunction(radioOption.pact);
+    setMstCheckboxFunction(radioOptions[index - totalElements]?.mst);
+    setPactCheckboxFunction(radioOptions[index - totalElements]?.pact);
 
     // handle update for pre-populated mst/pact status
-    setVbmsMstCheckedFunction(radioOption.mst);
-    setVbmsPactCheckedFunction(radioOption.pact);
+    setVbmsMstCheckedFunction(radioOptions[index - totalElements]?.mst);
+    setVbmsPactCheckedFunction(radioOptions[index - totalElements]?.pact);
   };
 
   const maybeAddTooltip = (option, radioField) => {
@@ -171,7 +171,7 @@ export const IntakeRadioField = (props) => {
     onChange?.(event.target.value);
 
     // if the radio option has a pre-populated MST/PACT checkbox, update the value
-    handlePrepopulatedCheckboxes(props.options[event.target.value]);
+    handlePrepopulatedCheckboxes(props.options, event.target.value);
   };
 
   const controlled = useMemo(() => typeof value !== 'undefined', [value]);

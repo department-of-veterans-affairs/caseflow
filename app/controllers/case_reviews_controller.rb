@@ -53,11 +53,13 @@ class CaseReviewsController < ApplicationController
 
   def update_request_issues_for_mst_and_pact(appeal)
     params[:tasks][:issues].each do |issue|
-      RequestIssue.find(issue[:request_issue_ids]).each do |ri|
-        if ri.mst_status != issue[:mstStatus] || ri.pact_status != issue[:pactStatus]
-          create_issue_update_task(ri, issue, appeal)
+      unless [issue[:mstStatus], issue[:pactStatus], issue[:mstOriginalStatus], issue[:pactOriginalStatus]].include?(nil)
+        RequestIssue.find(issue[:request_issue_ids]).each do |ri|
+          if ri.mst_status != issue[:mstStatus] || ri.pact_status != issue[:pactStatus]
+            create_issue_update_task(ri, issue, appeal)
+          end
+          ri.update(mst_status: issue[:mstStatus], pact_status: issue[:pactStatus])
         end
-        ri.update(mst_status: issue[:mstStatus], pact_status: issue[:pactStatus])
       end
     end
   end
