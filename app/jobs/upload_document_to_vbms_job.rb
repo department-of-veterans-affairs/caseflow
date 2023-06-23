@@ -17,7 +17,7 @@ class UploadDocumentToVbmsJob < CaseflowJob
     @params = params
     RequestStore.store[:application] = application
     RequestStore.store[:current_user] = User.system_user
-    @document = VbmsUploadedDocument.find_by(id: params[:document_id])
+    @document = VbmsUploadedDocument.find(params[:document_id])
     @initiator = User.find_by_css_id(params[:initiator_css_id])
     add_context_to_sentry
     UploadDocumentToVbms.new(document: document).call

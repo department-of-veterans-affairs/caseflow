@@ -223,7 +223,8 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
             expect(UploadDocumentToVbmsJob).to receive(:perform_later).with(
               document_id: uploaded_document.id,
               initiator_css_id: user.css_id,
-              application: anything
+              application: anything,
+              mail_package: nil
             )
             expect(uploaded_document).to receive(:cache_file)
 
@@ -253,7 +254,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
             copies: 1,
             created_by_id: user.id }
         end
-        let(:uploaded_document) { instance_double(VbmsUploadedDocument, id: 4) }
+        let(:uploaded_document) { create(:vbms_uploaded_document) }
         let(:upload_job_params) do
           { document_id: uploaded_document.id,
             initiator_css_id: user.css_id,
