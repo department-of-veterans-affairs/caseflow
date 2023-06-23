@@ -629,7 +629,9 @@ class Task < CaseflowRecord
     replacement = dup.tap do |task|
       begin
         ActiveRecord::Base.transaction do
-          reassign_params[:previous][:new_judge] = self.class.child_task_assignee(parent, reassign_params).css_id
+          if reassign_params[:previous][:new_judge]
+            reassign_params[:previous][:new_judge] = self.class.child_task_assignee(parent, reassign_params).css_id
+          end
           task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
           task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
           task.instructions = [reassign_params[:instructions]]
