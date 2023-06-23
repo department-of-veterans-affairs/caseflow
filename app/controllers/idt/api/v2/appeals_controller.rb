@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
+  include MailPackageConcern
+
   protect_from_forgery with: :exception
   before_action :verify_access
 
   skip_before_action :verify_authenticity_token, only: [:outcode]
-
-  include MailPackageConcern
 
   def details
     case_search = request.headers["HTTP_CASE_SEARCH"]
