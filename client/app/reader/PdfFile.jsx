@@ -23,6 +23,7 @@ import { startPlacingAnnotation, showPlaceAnnotationIcon
 import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, getSearchTerm } from './selectors';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
+import uuid from 'uuid';
 import { recordMetrics, recordAsyncMetrics } from '../util/Metrics';
 
 PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -87,7 +88,8 @@ export class PdfFile extends React.PureComponent {
           this.props.setPdfDocument(this.props.file, pdfDocument);
         }
       }).
-      catch(() => {
+      catch((error) => {
+        console.error(`${uuid.v4()} : GET ${this.props.file} : ${error}`);
         this.loadingTask = null;
         this.props.setDocumentLoadError(this.props.file);
       });
@@ -99,15 +101,19 @@ export class PdfFile extends React.PureComponent {
       return pdfDocument.getPage(pageNumberOfPageIndex(index));
     });
 
-    Promise.all(promises).then((pages) => {
-      const viewports = pages.map((page) => {
-        return _.pick(page.getViewport({ scale: PAGE_DIMENSION_SCALE }), ['width', 'height']);
-      });
+    Promise.all(promises).
+      then((pages) => {
+        const viewports = pages.map((page) => {
+          return _.pick(page.getViewport({ scale: PAGE_DIMENSION_SCALE }), ['width', 'height']);
+        });
 
-      this.props.setPageDimensions(this.props.file, viewports);
-    }, () => {
+        this.props.setPageDimensions(this.props.file, viewports);
+      }, () => {
       // Eventually we should send a sentry error? Or metrics?
-    });
+      }).
+      catch((error) => {
+        console.error(`${uuid.v4()} : setPageDimensions ${this.props.file} : ${error}`);
+      });
   }
 
   componentWillUnmount = () => {
