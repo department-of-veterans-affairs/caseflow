@@ -18,11 +18,19 @@ const EfolderUrlField = (props) => {
     return url.match(/https:\/\/vefs-claimevidence.*\.bip\.va\.gov\/file\/\S{8}-\S{4}-\S{4}-\S{4}-\S{12}/)?.[0] === url.split('?')[0];
   };
 
+  const captureDocumentSeriesId = (url) => {
+    return url.match(/\S{8}-\S{4}-\S{4}-\S{4}-\S{12}/)?.[0]
+  }
+
   const testDebounce = useCallback(
     debounce((value) => {
       console.log("Debounced!");
       if (efolderLinkRegexMatch(value)) {
         console.log('Valid regex match');
+        const seriesId = captureDocumentSeriesId(value)
+        // let seriesIds = VBMSService.fetch_document_series_for(appeal)
+        // seriesIds.includes(seriesId)
+        // Then render green check since we know this is guaranteed to work
       } else {
         console.log('Invalid efolder regex match');
       }
@@ -34,6 +42,10 @@ const EfolderUrlField = (props) => {
     console.log("Blurred!");
     if (efolderLinkRegexMatch(value)) {
       console.log('Valid regex match');
+      const seriesId = captureDocumentSeriesId(value)
+      // let seriesIds = VBMSService.fetch_document_series_for(appeal)
+      // seriesIds.includes(seriesId)
+      // Then render green check since we know this is guaranteed to work
     } else {
       console.log('Invalid efolder regex match');
     }
