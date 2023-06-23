@@ -113,7 +113,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                notified_at: 2.minutes.ago,
                email_notification_status: "delivered")
 
-        expect(job.send(:ready_for_resync)).to eq([appeals[4]])
+        expect(job.send(:ready_for_resync)).to match_array([appeals[4]])
       end
 
       it "ignore appeals that need to be resynced if latest notification status is 'Failure Due to Deceased" do

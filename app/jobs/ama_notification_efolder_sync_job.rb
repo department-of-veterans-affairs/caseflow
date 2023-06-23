@@ -72,6 +72,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
       .uniq(&:appeal_id)
       .reverse.pluck(:appeal_id)
 
+    puts "logging info: " + previously_synced_appeal_ids.to_s
     # Appeals for all the previously synced reports from oldest to newest
     get_appeals_from_prev_synced_ids(previously_synced_appeal_ids)
   end
