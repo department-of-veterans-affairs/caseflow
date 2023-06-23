@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# This is a method for changing the Claimant on an Appeal by taking in the Appeal UUID
+# and atrributes of the proposed claimant substitution to create a new Claimant object
+# for the appeal
+
 # Disable :reek:InstanceVariableAssumption
 # Disable :reek:TooManyInstanceVariables
 class AppellantChange
