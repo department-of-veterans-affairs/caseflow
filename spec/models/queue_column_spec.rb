@@ -276,6 +276,25 @@ describe QueueColumn, :all_dbs do
           expect(subject).to include(option)
         end
       end
+
+      context "for the Vha Camo Org" do
+        let(:org) { VhaCamo.singleton }
+
+        it "returns an array with all the task issue_categories and all possible issue categories" do
+          issue_types_filter = org_tasks.map { |task| task.appeal.request_issues.map(&:nonrating_issue_category).uniq }
+            .flatten
+            .group_by { |item| item }
+            .transform_values(&:count)
+
+          issue_types_filter.each do |issue_type, count|
+            option = QueueColumn.filter_option_hash(issue_type, QueueColumn.format_option_label(issue_type, count))
+            expect(subject).to include(option)
+          end
+
+          # There should be 12 total possible issue categories for VhaCamo
+          expect(subject.count).to eq 12
+        end
+      end
     end
   end
 end
