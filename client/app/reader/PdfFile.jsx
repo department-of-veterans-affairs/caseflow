@@ -63,30 +63,32 @@ export class PdfFile extends React.PureComponent {
         this.loadingTask = PDFJS.getDocument({ data: resp.body });
 
         return this.loadingTask.promise;
-      }).
+      }, (reason) => this.onRejected(reason, 'getDocument')).
       then((pdfDocument) => {
+        this.pdfDocument = pdfDocument;
 
-        this.getPages(pdfDocument).
-          then((pages) => this.setPageDimensions(pages)).
-          catch((error) => {
-            console.error(`${uuid.v4()} : setPageDimensions ${this.props.file} : ${error}`);
-          });
-
-        // this.setPageDimensions(pdfDocument);
-
+        return this.getPages(pdfDocument);
+      }, (reason) => this.onRejected(reason, 'getPages')).
+      then((pages) => this.setPageDimensions(pages)
+        , (reason) => this.onRejected(reason, 'setPageDimensions')).
+      then(() => {
         if (this.loadingTask.destroyed) {
-          pdfDocument.destroy();
-        } else {
-          this.loadingTask = null;
-          this.pdfDocument = pdfDocument;
-          this.props.setPdfDocument(this.props.file, pdfDocument);
+          return this.pdfDocument.destroy();
         }
-      }).
+        this.loadingTask = null;
+
+        return this.props.setPdfDocument(this.props.file, this.pdfDocument);
+      }, (reason) => this.onRejected(reason, 'setPdfDocument')).
       catch((error) => {
         console.error(`${uuid.v4()} : GET ${this.props.file} : ${error}`);
         this.loadingTask = null;
         this.props.setDocumentLoadError(this.props.file);
       });
+  }
+
+  onRejected = (reason, step) => {
+    console.error(`${uuid.v4()} : GET ${this.props.file} : STEP ${step} : ${reason}`);
+    throw reason;
   }
 
   getPages = (pdfDocument) => {
@@ -105,25 +107,6 @@ export class PdfFile extends React.PureComponent {
 
     this.props.setPageDimensions(this.props.file, viewports);
   }
-
-  // setPageDimensions = (pdfDocument) => {
-  //   const promises = _.range(0, pdfDocument?.numPages).map((index) => {
-
-  //     return pdfDocument.getPage(pageNumberOfPageIndex(index));
-  //   });
-
-  //   Promise.all(promises).
-  //     then((pages) => {
-  //       const viewports = pages.map((page) => {
-  //         return _.pick(page.getViewport({ scale: PAGE_DIMENSION_SCALE }), ['width', 'height']);
-  //       });
-
-  //       this.props.setPageDimensions(this.props.file, viewports);
-  //     }).
-  //     catch((error) => {
-  //       console.error(`${uuid.v4()} : setPageDimensions ${this.props.file} : ${error}`);
-  //     });
-  // }
 
   componentWillUnmount = () => {
     window.removeEventListener('keydown', this.keyListener);
