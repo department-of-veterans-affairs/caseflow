@@ -34,7 +34,6 @@ module MailPackageConcern
     return if recipient_info.blank?
 
     throw_error_if_copies_out_of_range
-    # Create and validate MailRequest objects, save to db, and store distribution IDs
     mail_requests.map do |request|
       request.call
       distribution_ids << request.vbms_distribution_id
