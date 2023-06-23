@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Mark from 'mark.js';
-import { v4 as uuidv4 } from 'uuid';
+import uuid, { v4 as uuidv4 } from 'uuid';
 
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
@@ -122,16 +122,17 @@ export class PdfPage extends React.PureComponent {
     this.renderTask = page.render(options);
 
     // Call PDFJS to actually draw the page.
-    return this.renderTask.promise.then(() => {
-      this.isDrawing = false;
+    return this.renderTask.promise.
+      then(() => {
+        this.isDrawing = false;
 
-      // If the scale has changed, draw the page again at the latest scale.
-      if (currentScale !== this.props.scale && page) {
-        return this.drawPage(page);
-      }
-    }).
-      catch(() => {
-        // We might need to do something else here.
+        // If the scale has changed, draw the page again at the latest scale.
+        if (currentScale !== this.props.scale && page) {
+          return this.drawPage(page);
+        }
+      }).
+      catch((error) => {
+        console.error(`${uuid.v4()} : render ${this.props.file} : ${error}`);
         this.isDrawing = false;
       });
   };
@@ -241,11 +242,9 @@ export class PdfPage extends React.PureComponent {
 
       pageResult.then((page) => {
         this.page = page;
-        
-        const uuid = uuidv4();
 
         const readerRenderText = {
-          uuid,
+          uuid: uuidv4(),
           message: 'Searching within Reader document text',
           type: 'performance',
           product: 'reader',
@@ -255,34 +254,32 @@ export class PdfPage extends React.PureComponent {
             file: this.props.file
           },
         };
-        
+
         const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);
 
         textResult.then((text) => {
           this.drawText(page, text);
-          // eslint-disable-next-line max-len
-          recordMetrics(this.drawText(page, text), readerRenderText, this.props.featureToggles.metricsReaderRenderText);
+          recordMetrics(this.drawText(page, text), readerRenderText,
+            this.props.featureToggles.metricsReaderRenderText);
         });
 
-          this.drawPage(page).then(() => {
-            collectHistogram({
-              group: 'front_end',
-              name: 'pdf_page_render_time_in_ms',
-              value: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0,
-              appName: 'Reader',
-              attrs: {
-                documentId: this.props.documentId,
-                overscan: this.props.windowingOverscan,
-                documentType: this.props.documentType,
-                pageCount: this.props.pdfDocument.numPages
-              }
-            });
+        this.drawPage(page).then(() => {
+          collectHistogram({
+            group: 'front_end',
+            name: 'pdf_page_render_time_in_ms',
+            value: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0,
+            appName: 'Reader',
+            attrs: {
+              documentId: this.props.documentId,
+              overscan: this.props.windowingOverscan,
+              documentType: this.props.documentType,
+              pageCount: this.props.pdfDocument.numPages
+            }
           });
         });
-      }).
-        catch(() => {
-          // We might need to do something else here.
-        });
+      }).catch((error) => {
+        console.error(`${uuid.v4()} : setUpPage ${this.props.file} : ${error}`);
+      });
     }
   };
 
