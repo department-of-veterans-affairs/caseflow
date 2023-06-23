@@ -8,6 +8,16 @@ class Rating
 
   ONE_YEAR_PLUS_DAYS = 372.days
   TWO_LIFETIMES = 250.years
+  MST_SPECIAL_ISSUES = ["sexual assault trauma", "sexual trauma/assault", "sexual harassment"].freeze
+  PACT_SPECIAL_ISSUES = [
+    "agent orange - outside vietnam or unknown",
+    "agent orange - vietnam",
+    "amytrophic lateral sclerosis",
+    "burn pit exposure",
+    "environmental hazard in gulf war",
+    "gulf war presumptive",
+    "radiation"
+  ].freeze
 
   class NilRatingProfileListError < StandardError
     def ignorable?
@@ -53,6 +63,25 @@ class Rating
     def from_bgs_hash(_data)
       fail Caseflow::Error::MustImplementInSubclass
     end
+
+    def special_issue_has_mst?(special_issue)
+      #binding.pry
+      if special_issue[:spis_tn]&.casecmp("ptsd - personal trauma")&.zero?
+        return MST_SPECIAL_ISSUES.include?(special_issue[:spis_basis_tn]&.downcase)
+      end
+
+      if special_issue[:spis_tn]&.casecmp("non-ptsd personal trauma")&.zero?
+        MST_SPECIAL_ISSUES.include?(special_issue[:spis_basis_tn]&.downcase)
+      end
+    end
+
+    def special_issue_has_pact?(special_issue)
+      if special_issue[:spis_tn]&.casecmp("gulf war presumptive 3.3201")&.zero?
+        return special_issue[:spis_basis_tn]&.casecmp("particulate matter")&.zero?
+      end
+
+      PACT_SPECIAL_ISSUES.include?(special_issue[:spis_tn]&.downcase)
+    end
   end
 
   # WARNING: profile_date is a misnomer adopted from BGS terminology.
@@ -86,6 +115,10 @@ class Rating
     disability_data = Array.wrap(rating_profile[:disabilities] || rating_profile.dig(:disability_list, :disability))
 
     disability_data.map do |disability|
+      most_recent_disability_hash_for_issue = map_of_dis_sn_to_most_recent_disability_hash[disability[:dis_sn]]
+      special_issues = most_recent_disability_hash_for_issue&.special_issues
+      disability[:special_issues] = special_issues if special_issues
+
       RatingDecision.from_bgs_disability(self, disability)
     end
   end
