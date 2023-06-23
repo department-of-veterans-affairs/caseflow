@@ -1202,11 +1202,11 @@ RSpec.feature "Reader", :all_dbs do
 
       fill_in "search-ahead", with: "decision"
 
-      expect(internal_text).to have_xpath("//input[@value='1 of 2']")
+      expect(internal_text.value).to eq "1 of 2"
 
       find("body").send_keys [:meta, "g"]
 
-      expect(internal_text).to have_xpath("//input[@value='2 of 2']")
+      expect(internal_text.value).to eq "2 of 2"
     end
 
     scenario "Show and Hide Document Searchbar with Keyboard" do
