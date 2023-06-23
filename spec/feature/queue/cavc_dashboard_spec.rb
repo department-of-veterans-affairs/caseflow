@@ -183,7 +183,9 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
       go_to_dashboard(cavc_remand.remand_appeal.uuid)
 
-      dropdowns = page.all("div.cf-select__placeholder", exact_text: "Select option")
+      expect(page).to have_text `CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}`
+
+      dropdowns = page.all("div.cf-select__placeholder", exact_text: /Select option/)
       dropdowns.first.click
       page.find("div.cf-select__menu").find("div", exact_text: "Reversed").click
 
@@ -227,4 +229,5 @@ end
 def go_to_dashboard(appeal_uuid)
   visit "/queue/appeals/#{appeal_uuid}/"
   click_button "CAVC Dashboard"
+  expect(page).to have_current_path("/queue/appeals/#{appeal_uuid}/cavc_dashboard", ignore_query: true)
 end
