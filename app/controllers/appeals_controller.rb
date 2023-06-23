@@ -279,7 +279,7 @@ class AppealsController < ApplicationController
 
   # check if changes in params
   def mst_pact_changes?
-    params[:request_issues].any? { |issue| issue[:mst_status] || issue[:pact_status] }
+    request_issues_update.mst_edited_issues.any? || request_issues_update.pact_edited_issues.any?
   end
 
   # format MST/PACT edit success banner message
@@ -453,7 +453,7 @@ class AppealsController < ApplicationController
 
   # updated flash message to show mst/pact message if mst/pact changes (not to legacy)
   def set_flash_success_message
-    return set_flash_mst_edit_message if mst_and_pact_edited_issues &&
+    return set_flash_mst_edit_message if mst_pact_changes? &&
                                          (FeatureToggle.enabled?(:mst_identification) ||
                                          FeatureToggle.enabled?(:pact_identification))
 
