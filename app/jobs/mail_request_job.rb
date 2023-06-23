@@ -10,7 +10,7 @@ class MailRequestJob < CaseflowJob
   #
   # Response: n/a
   def perform(vbms_uploaded_document, mail_request)
-    package_response = Fakes::PacmanService.send_communication_package_request(vbms_uploaded_document.veteran_file_number,
+    package_response = ExternalApi::PacmanService.send_communication_package_request(vbms_uploaded_document.veteran_file_number,
                                                                                      get_package_name(vbms_uploaded_document),
                                                                                      document_referenced(vbms_uploaded_document.id, mail_request[:copies]))
     log_info(package_response)
@@ -68,7 +68,7 @@ class MailRequestJob < CaseflowJob
     distributions.each do |dist|
       dist_hash = JSON.parse(dist)
       distribution = VbmsDistribution.find(dist_hash["vbms_distribution_id"])
-      distribution_response = Fakes::PacmanService.send_distribution_request(package_id,
+      distribution_response = ExternalApi::PacmanService.send_distribution_request(package_id,
                                                                              get_recipient_hash(distribution),
                                                                              get_destinations_hash(dist_hash))
       log_info(distribution_response)
