@@ -66,7 +66,13 @@ export class PdfFile extends React.PureComponent {
       }).
       then((pdfDocument) => {
 
-        this.setPageDimensions(pdfDocument);
+        this.getPages(pdfDocument).
+          then((pages) => this.setPageDimensions(pages)).
+          catch((error) => {
+            console.error(`${uuid.v4()} : setPageDimensions ${this.props.file} : ${error}`);
+          });
+
+        // this.setPageDimensions(pdfDocument);
 
         if (this.loadingTask.destroyed) {
           pdfDocument.destroy();
@@ -83,26 +89,41 @@ export class PdfFile extends React.PureComponent {
       });
   }
 
-  setPageDimensions = (pdfDocument) => {
+  getPages = (pdfDocument) => {
     const promises = _.range(0, pdfDocument?.numPages).map((index) => {
 
       return pdfDocument.getPage(pageNumberOfPageIndex(index));
     });
 
-    Promise.all(promises).
-      then((pages) => {
-        const viewports = pages.map((page) => {
-          return _.pick(page.getViewport({ scale: PAGE_DIMENSION_SCALE }), ['width', 'height']);
-        });
-
-        this.props.setPageDimensions(this.props.file, viewports);
-      }, () => {
-      // Eventually we should send a sentry error? Or metrics?
-      }).
-      catch((error) => {
-        console.error(`${uuid.v4()} : setPageDimensions ${this.props.file} : ${error}`);
-      });
+    return Promise.all(promises);
   }
+
+  setPageDimensions = (pages) => {
+    const viewports = pages.map((page) => {
+      return _.pick(page.getViewport({ scale: PAGE_DIMENSION_SCALE }), ['width', 'height']);
+    });
+
+    this.props.setPageDimensions(this.props.file, viewports);
+  }
+
+  // setPageDimensions = (pdfDocument) => {
+  //   const promises = _.range(0, pdfDocument?.numPages).map((index) => {
+
+  //     return pdfDocument.getPage(pageNumberOfPageIndex(index));
+  //   });
+
+  //   Promise.all(promises).
+  //     then((pages) => {
+  //       const viewports = pages.map((page) => {
+  //         return _.pick(page.getViewport({ scale: PAGE_DIMENSION_SCALE }), ['width', 'height']);
+  //       });
+
+  //       this.props.setPageDimensions(this.props.file, viewports);
+  //     }).
+  //     catch((error) => {
+  //       console.error(`${uuid.v4()} : setPageDimensions ${this.props.file} : ${error}`);
+  //     });
+  // }
 
   componentWillUnmount = () => {
     window.removeEventListener('keydown', this.keyListener);
