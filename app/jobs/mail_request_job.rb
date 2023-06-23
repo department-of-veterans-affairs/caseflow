@@ -10,9 +10,9 @@ class MailRequestJob < CaseflowJob
   #
   # Response: n/a
   def perform(vbms_uploaded_document, mail_request)
-    package_response = ExternalApi::PacmanService.send_communication_package_request(vbms_uploaded_document.veteran_file_number,
-                                                                                     mail_request.name,
-                                                                                     vbms_comm_package.document_referenced)
+    package_response = Fakes::PacmanService.send_communication_package_request(vbms_uploaded_document.veteran_file_number,
+                                                                                     get_package_name(vbms_uploaded_document),
+                                                                                     document_referenced(vbms_uploaded_document.id, mail_request[:copies]))
     log_info(package_response)
     vbms_comm_package = create_package(vbms_uploaded_document, mail_request)
     if package_response.code == 201
@@ -26,6 +26,15 @@ class MailRequestJob < CaseflowJob
 
   private
 
+  # Purpose: arranges id and copies to pass into package post request
+  #
+  # takes in VbmsUploadedDocument id and copies integer
+  #
+  # Response: Array of json with document id and copies
+  def document_referenced(doc_id, copies)
+    [{ "id": doc_id, "copies": copies }]
+  end
+
   # Purpose: Creates new VbmsCommunicationPackage
   #
   # takes in VbmsUploadedDocument object and MailRequest object
@@ -35,12 +44,12 @@ class MailRequestJob < CaseflowJob
     VbmsCommunicationPackage.new(
       comm_package_name: get_package_name(vbms_uploaded_document),
       created_at: Time.zone.now,
-      created_by_id: mail_request["distributions"][0]["created_by_id"],
-      copies: mail_request["distributions"]["copies"],
-      file_number: mail_request["distributions"][0]["veteranFileNumber"],
+      created_by_id: mail_request[:created_by_id],
+      copies: mail_request[:copies],
+      file_number: vbms_uploaded_document.veteran_file_number,
       status: nil,
       updated_at: Time.zone.now,
-      updated_by_id: mail_request["distributions"][0]["created_by_id"],
+      updated_by_id: mail_request[:created_by_id],
       vbms_uploaded_document_id: vbms_uploaded_document.id
     )
   end
@@ -55,15 +64,16 @@ class MailRequestJob < CaseflowJob
   #
   # Response: n/a
   def create_distribution_request(package_id, mail_request)
-    distributions = mail_request["distributions"]
+    distributions = mail_request[:distributions]
     distributions.each do |dist|
-      distribution_destination = VbmsDistributionDestination.find(vbms_distribution_id: dist["id"])
-      distribution_response = ExternalApi::PacmanService.send_distribution_request(package_id,
-                                                                                   get_recipient_hash(distribution),
-                                                                                   get_destinations_hash(distribution_destination))
+      dist_hash = JSON.parse(dist)
+      distribution = VbmsDistribution.find(dist_hash["vbms_distribution_id"])
+      distribution_response = Fakes::PacmanService.send_distribution_request(package_id,
+                                                                             get_recipient_hash(distribution),
+                                                                             get_destinations_hash(dist_hash))
       log_info(distribution_response)
       if distribution_response.code == 201
-        dist.update!(vbms_communication_package_id: package_id)
+        distribution.update!(vbms_communication_package_id: package_id)
       else
         log_error(error_msg(distribution.code))
       end
@@ -95,18 +105,18 @@ class MailRequestJob < CaseflowJob
   # Response: array that holds a hash
   def get_destinations_hash(destination)
     [{
-      "type" => destination.destination_type,
-      "addressLine1" => destination.address_line_1,
-      "addressLine2" => destination.address_line_2,
-      "addressLine3" => destination.address_line_3,
-      "addressLine4" => destination.address_line_4,
-      "addressLine5" => destination.address_line_5,
-      "addressLine6" => destination.address_line_6,
-      "city" => destination.city,
-      "state" => destination.state,
-      "postalCode" => destination.postal_code,
-      "countryName" => destination.country_name,
-      "countryCode" => destination.country_code
+      "type" => destination["destination_type"],
+      "addressLine1" => destination["address_line_1"],
+      "addressLine2" => destination["address_line_2"],
+      "addressLine3" => destination["address_line_3"],
+      "addressLine4" => destination["address_line_4"],
+      "addressLine5" => destination["address_line_5"],
+      "addressLine6" => destination["address_line_6"],
+      "city" => destination["city"],
+      "state" => destination["state"],
+      "postalCode" => destination["postal_code"],
+      "countryName" => destination["country_name"],
+      "countryCode" => destination["country_code"]
     }]
   end
 
@@ -144,6 +154,7 @@ class MailRequestJob < CaseflowJob
   # Response: n/a
   def log_info(info_message)
     uuid = SecureRandom.uuid
-    Rails.logger.info(info_message + "ID: " + uuid)
+    info_message.body.uuid = uuid
+    Rails.logger.info(info_message)
   end
 end
