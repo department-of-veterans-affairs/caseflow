@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# This is a method for changing the Claimant on an Appeal by taking in the Appeal UUID
+# and atrributes of the proposed claimant substitution to create a new Claimant object
+# for the appeal
+
 require "helpers/appellant_change"
 
 describe AppellantChange do
@@ -14,6 +18,10 @@ describe AppellantChange do
         claimant_type: "DependentClaimant",
         claimant_payee_code: "dummy-payee-code"
       }
+    end
+
+    it "sets RequestStore current_user" do
+      expect { run_appellant_change }.to change { RequestStore[:current_user] } .from(nil).to(User.system_user)
     end
 
     context "when appeal does not exist" do
