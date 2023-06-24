@@ -13,6 +13,7 @@ import {
   initialAssignTasksToUser,
   reassignTasksToUser,
   legacyReassignToJudgeAttorney
+  legacyReassignToJudge
 } from './QueueActions';
 
 class AssignToAttorneyLegacyModalView extends React.PureComponent {
@@ -106,6 +107,7 @@ AssignToAttorneyLegacyModalView.propTypes = {
   initialAssignTasksToUser: PropTypes.func,
   reassignTasksToUser: PropTypes.func,
   legacyReassignToJudgeAttorney: PropTypes.func
+  legacyReassignToJudge: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -118,6 +120,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   initialAssignTasksToUser,
   reassignTasksToUser,
   legacyReassignToJudgeAttorney
+  legacyReassignToJudge
 }, dispatch);
 
 export default (connect(
