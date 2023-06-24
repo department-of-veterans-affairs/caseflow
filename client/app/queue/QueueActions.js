@@ -482,8 +482,6 @@ export const initialCamoAssignTasksToVhaProgramOffice = ({
 export const initialAssignTasksToUser = ({
   tasks, assigneeId, previousAssigneeId, instructions
 }) => (dispatch) => {
-  // const amaTasks = tasks.filter((oldTask) => oldTask.isLegacy === 'false');
-  // const legacyTasks = tasks.filter((oldTask) => oldTask.appealType === 'LegacyAppeal');
 
   const amaParams = {
     url: '/judge_assign_tasks',
@@ -527,8 +525,8 @@ export const reassignTasksToUser = ({
   tasks, assigneeId, previousAssigneeId, instructions
 }) => (dispatch) => Promise.all(tasks.map((oldTask) => {
 
-  url = `/tasks/${oldTask.taskId}`;
-  params = {
+  const url = `/tasks/${oldTask.taskId}`;
+  const params = {
     data: {
       task: {
         reassign: {
@@ -540,7 +538,7 @@ export const reassignTasksToUser = ({
     }
   };
 
-  return ApiUtil.post(url, params).
+  return ApiUtil.patch(url, params).
     then((resp) => resp.body).
     then((resp) => {
       dispatchOldTasks(dispatch, oldTask, resp);
