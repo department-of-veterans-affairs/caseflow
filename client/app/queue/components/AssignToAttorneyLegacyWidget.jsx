@@ -40,11 +40,10 @@ const OTHER = 'OTHER';
 export class AssignToAttorneyLegacyWidget extends React.PureComponent {
   constructor(props) {
     super(props);
-
-    const instructions = (this.props.selectedTasks[0].instructions.length === 0 ? null :
-      this.props.selectedTasks[0].instructions.filter((instructionData) => instructionData));
-    const isInstructionArray = (instructions.length === 0 ? null : instructions);
-    const instructionType = Array.isArray(this.props.selectedTasks[0].instructions) ? isInstructionArray : null;
+    const instructions = (props.selectedTasks[0].instructions.length === 0 ? null :
+      props.selectedTasks[0].instructions.filter((instructionData) => instructionData));
+    const isInstructionArray = (instructions === null ? null : instructions);
+    const instructionType = Array.isArray(props.selectedTasks[0].instructions) ? isInstructionArray : null;
 
     this.state = {
 

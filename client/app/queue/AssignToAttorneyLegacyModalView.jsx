@@ -12,7 +12,7 @@ import COPY from '../../COPY';
 import {
   initialAssignTasksToUser,
   reassignTasksToUser,
-  legacyReassignToJudgeAttorney
+  legacyReassignToJudgeAttorney,
   legacyReassignToJudge
 } from './QueueActions';
 
@@ -106,7 +106,7 @@ AssignToAttorneyLegacyModalView.propTypes = {
   match: PropTypes.object,
   initialAssignTasksToUser: PropTypes.func,
   reassignTasksToUser: PropTypes.func,
-  legacyReassignToJudgeAttorney: PropTypes.func
+  legacyReassignToJudgeAttorney: PropTypes.func,
   legacyReassignToJudge: PropTypes.func
 };
 
@@ -119,7 +119,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   initialAssignTasksToUser,
   reassignTasksToUser,
-  legacyReassignToJudgeAttorney
+  legacyReassignToJudgeAttorney,
   legacyReassignToJudge
 }, dispatch);
 
