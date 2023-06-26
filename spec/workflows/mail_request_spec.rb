@@ -35,7 +35,7 @@ describe MailRequest, :postgres do
   end
 
   shared_examples "mail request has valid attributes" do
-    let(:mail_request_spec_object) { build(:mail_request, :person_recipient_type) }
+    let(:mail_request_spec_object) { build(:mail_request) }
     it "is valid with valid attributes" do
       expect(mail_request_spec_object).to be_valid
     end
@@ -50,6 +50,11 @@ describe MailRequest, :postgres do
   describe "#call" do
     context "when valid parameters are passed into the mail requests initialize method." do
       subject { described_class.new(mail_request_params).call }
+
+      before do
+        RequestStore.store[:current_user] = User.system_user
+      end
+
       it "creates a vbms_distribution" do
         expect { subject }.to change(VbmsDistribution, :count).by(1)
       end
