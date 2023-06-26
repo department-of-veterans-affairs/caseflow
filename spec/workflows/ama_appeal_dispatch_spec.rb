@@ -15,10 +15,11 @@ describe AmaAppealDispatch, :postgres do
       file: "12345678" }
   end
   let(:mail_package) do
-    { distributions: [{ first_name: "Jeff" }],
-      copies: 1 }
+    { distributions: ["json formatted mail request objects"],
+      copies: 1,
+      created_by_id: user.id }
   end
-  let(:mail_request_job) { class_double("MailRequestJob", :perform_later).as_stubbed_const }
+  # let(:mail_request_job) { class_double("MailRequestJob", :perform_later).as_stubbed_const }
 
   before do
     BvaDispatch.singleton.add_user(user)
@@ -32,14 +33,13 @@ describe AmaAppealDispatch, :postgres do
 
   describe "#call" do
     it "stores current POA participant ID in the Appeals table" do
-      allow(mail_request_job).to receive(:perform_later).with(params[:file], mail_package)
       subject
       expect(appeal.poa_participant_id).to eq poa_participant_id
     end
 
     context "document is associated with a mail request" do
       it "calls #perform_later on MailRequestJob" do
-        expect(mail_request_job).to receive(:perform_later).with(params[:file], mail_package)
+        expect(MailRequestJob).to receive(:perform_later).with(params[:file], mail_package)
         subject
       end
     end
@@ -47,7 +47,7 @@ describe AmaAppealDispatch, :postgres do
     context "document is not associated with a mail request" do
       let(:mail_package) { nil }
       it "does not call #perform_later on MailRequestJob" do
-        expect(mail_request_job).to_not receive(:perform_later)
+        expect(MailRequestJob).to_not receive(:perform_later)
         subject
       end
     end
@@ -55,7 +55,7 @@ describe AmaAppealDispatch, :postgres do
     context "document is not successfully processed" do
       it "does not call #perform_later on MailRequestJob" do
         allow(ProcessDecisionDocumentJob).to receive(:perform_later).and_raise(StandardError)
-        expect(mail_request_job).to_not receive(:perform_later)
+        expect(MailRequestJob).to_not receive(:perform_later)
         expect { subject }.to raise_error(StandardError)
       end
     end

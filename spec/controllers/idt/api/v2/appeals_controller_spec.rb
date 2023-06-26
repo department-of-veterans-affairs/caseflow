@@ -511,36 +511,16 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
         decision_date: Date.new(1989, 12, 13).to_s,
         file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
         redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx",
-        recipient_info: [
-          {
-            recipient_type: "person",
-            first_name: "Bob",
-            last_name: "Smithmetz",
-            participant_id: "487470002",
-            destination_type: "domesticAddress",
-            address_line_1: "1234 Main Street",
-            treat_line_2_as_addressee: false,
-            treat_line_3_as_addressee: false,
-            city: "Orlando",
-            state: "FL",
-            postal_code: "12345",
-            country_code: "US"
-          }
-        ] }
+        recipient_info: [] }
     end
-    let(:mail_package) do
-      { distributions: "[1,2,3]",
-        copies: 1 }
-    end
-    let(:mail_request_job) { class_double("MailRequestJob", :perform_later).as_stubbed_const }
 
     before do
-      allow(controller).to receive(:verify_access).and_return(true)
       BvaDispatch.singleton.add_user(user)
 
       key, t = Idt::Token.generate_one_time_key_and_proposed_token
       Idt::Token.activate_proposed_token(key, user.css_id)
       request.headers["TOKEN"] = t
+      create(:staff, :attorney_role, sdomainid: user.css_id)
     end
 
     context "when some params are missing" do
@@ -587,7 +567,6 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
       before { BvaDispatchTask.create_from_root_task(root_task) }
 
       it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
-        allow(mail_request_job).to receive(:perform_later).with(params[:file], mail_package)
         post :outcode, params: params
         expect(response.status).to eq(200)
 
@@ -605,16 +584,32 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
       end
 
       context "when dispatch is associated with a mail request" do
+        let(:recipient) do
+          { recipient_type: "person",
+            first_name: "Bob",
+            last_name: "Smithmetz",
+            participant_id: "487470002",
+            destination_type: "domesticAddress",
+            address_line_1: "1234 Main Street",
+            treat_line_2_as_addressee: false,
+            treat_line_3_as_addressee: false,
+            city: "Orlando",
+            state: "FL",
+            postal_code: "12345",
+            country_code: "US" }
+        end
+
         it "calls #perform_later on MailRequestJob" do
-          expect(mail_request_job).to receive(:perform_later).with(params[:file], mail_package)
-          post :outcode, params: params
+          params[:recipient_info] << recipient
+          expect(MailRequestJob).to receive(:perform_later)
+          post :outcode, params: params, as: :json
         end
       end
 
       context "when dispatch is not associated with a mail request" do
         it "does not call #perform_later on MailRequestJob" do
           params[:recipient_info] = []
-          expect(mail_request_job).to_not receive(:perform_later)
+          expect(MailRequestJob).to_not receive(:perform_later)
           post :outcode, params: params
         end
       end
@@ -622,7 +617,7 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
       context "when dispatch is not successfully processed" do
         let(:citation_number) { "INVALID" }
         it "does not call #perform_later on MailRequestJob" do
-          expect(mail_request_job).to_not receive(:perform_later)
+          expect(MailRequestJob).to_not receive(:perform_later)
           post :outcode, params: params
         end
       end

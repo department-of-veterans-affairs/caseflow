@@ -17,10 +17,10 @@ describe LegacyAppealDispatch do
         file: "some file" }
     end
     let(:mail_package) do
-      { distributions: [{ first_name: "Jeff" }],
-        copies: 1 }
+      { distributions: ["json formatted mail request objects"],
+        copies: 1,
+        created_by_id: user.id }
     end
-    let(:mail_request_job) { class_double("MailRequestJob", :perform_later).as_stubbed_const }
 
     before do
       BvaDispatch.singleton.add_user(user)
@@ -31,7 +31,6 @@ describe LegacyAppealDispatch do
 
     context "valid parameters" do
       it "successfully outcodes dispatch" do
-        allow(mail_request_job).to receive(:perform_later).with(params[:file], mail_package)
         expect(subject).to be_success
       end
     end
@@ -68,7 +67,7 @@ describe LegacyAppealDispatch do
 
     context "dispatch is associated with a mail request" do
       it "calls #perform_later on MailRequestJob" do
-        expect(mail_request_job).to receive(:perform_later).with(params[:file], mail_package)
+        expect(MailRequestJob).to receive(:perform_later).with(params[:file], mail_package)
         subject
       end
     end
@@ -76,7 +75,7 @@ describe LegacyAppealDispatch do
     context "document is not associated with a mail request" do
       let(:mail_package) { nil }
       it "does not call #perform_later on MailRequestJob" do
-        expect(mail_request_job).to_not receive(:perform_later)
+        expect(MailRequestJob).to_not receive(:perform_later)
         subject
       end
     end
@@ -84,7 +83,7 @@ describe LegacyAppealDispatch do
     context "document is not successfully processed" do
       it "does not call #perform_later on MailRequestJob" do
         allow(ProcessDecisionDocumentJob).to receive(:perform_later).and_raise(StandardError)
-        expect(mail_request_job).to_not receive(:perform_later)
+        expect(MailRequestJob).to_not receive(:perform_later)
         expect { subject }.to raise_error(StandardError)
       end
     end
