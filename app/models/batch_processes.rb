@@ -46,8 +46,6 @@ class BatchProcess < CaseflowRecord
     failed = 0
     processing_batch.update!(state: 'PROCESSING')
     PriorityEndProductSyncQueue.where(batch_id: processing_batch.batch_id).each do |r|
-      r.update!(status: 'PROCESSING')
-
       # Call EndProductSyncJob.preform and try to sync the process
       # If passes, completed++. Otherwise failed++ and update record
       #
@@ -55,16 +53,16 @@ class BatchProcess < CaseflowRecord
       puts r
       puts r.end_product_establishment
       puts '==============================='
-      vbms_rec = VbmsExtClaim.find_by(claim_id: r.end_product_establishment.reference_id.to_i)
 
-      puts vbms_rec
+
 
       begin
-
+        r.update!(status: 'PROCESSING')
         r.end_product_establishment.sync! #sync_status matach level status code
         r.end_product_establishment.reload
-
-        if r.end_product_establishment.sync_status != vbms_rec.level_status_code
+        vbms_rec = VbmsExtClaim.find_by(claim_id: r.end_product_establishment.reference_id.to_i)
+        puts vbms_rec
+        if r.end_product_establishment.synced_status != vbms_rec.level_status_code
           fail ProcessingPriorityEndProductSyncError, "#{Time.zone.now}"
 
         else
