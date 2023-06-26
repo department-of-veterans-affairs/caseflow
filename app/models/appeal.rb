@@ -269,14 +269,15 @@ class Appeal < DecisionReview
   def mst?
     return false unless FeatureToggle.enabled?(:mst_identification)
 
-    request_issues.active.any?(&:mst_status) ||
+    request_issues.active.any?(&:mst_status) || decision_issues.any?(&:mst_status) ||
       (special_issue_list && special_issue_list.created_at < "2023-06-01".to_date && special_issue_list.military_sexual_trauma)
+
   end
 
   def pact?
     return false unless FeatureToggle.enabled?(:pact_identification)
 
-    request_issues.active.any?(&:pact_status)
+    request_issues.active.any?(&:pact_status) || decision_issues.any?(&:pact_status)
   end
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
