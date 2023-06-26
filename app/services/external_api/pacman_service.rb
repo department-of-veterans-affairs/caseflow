@@ -108,7 +108,7 @@ class ExternalApi::PacmanService
         firstName: recipient[:first_name],
         middleName: recipient[:middle_name],
         lastName: recipient[:last_name],
-        participant_id: recipient[:participant_id],
+        participantId: recipient[:participant_id],
         poaCode: recipient[:poa_code],
         claimantStationOfJurisdiction: recipient[:claimant_station_of_jurisdiction]
       }
