@@ -27,7 +27,7 @@ describe VhaRegionalOffice, :postgres do
           VhaRegionalOfficeOnHoldTasksTab,
           VhaRegionalOfficeCompletedTasksTab
         ]
-    )
+      )
     end
   end
 
