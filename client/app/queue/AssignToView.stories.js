@@ -22,7 +22,7 @@ import {
   getAppealId,
   getTaskId
 } from '../../test/app/queue/components/modalUtils';
-import AssignToView from './AssignToView';
+import { AssignToView } from './AssignToView';
 
 export default {
   title: 'Queue/Components/Task Action Modals/AssignToView',
