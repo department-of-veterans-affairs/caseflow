@@ -96,7 +96,7 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
   # Notifications page eFolder link
-  ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"] ||= "https://vefs-claimevidence-ui-uat.stage8.bip.va.gov"
+  ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"] ||= "https://vefs-claimevidence-ui-uat.stage.bip.va.gov"
 
   ENV["PACMAN_API_URL"] ||= "https://pacman-uat.stage.bip.va.gov/"
 

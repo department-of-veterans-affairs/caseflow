@@ -32,7 +32,19 @@ class Idt::Api::V1::BaseController < ActionController::Base
     log_error(error)
     uuid = SecureRandom.uuid
     Rails.logger.error("IDT Standard Error ID: " + uuid)
-    render(json: { message: "IDT Standard Error ID: " + uuid + " Please enter a file number in the 'FILENUMBER' header" }, status: :unprocessable_entity)
+    render(json:
+            { message:
+              "IDT Standard Error ID: " +
+                uuid +
+                " Please enter a file number in the 'FILENUMBER' header" },
+           status: :unprocessable_entity)
+  end
+
+  rescue_from Caseflow::Error::MissingRecipientInfo do |error|
+    log_error(error)
+    uuid = SecureRandom.uuid
+    render(json: { message: "IDT Exception ID: " + uuid + " Recipient information received was invalid or incomplete.",
+                   errors: JSON.parse(error.message) }, status: :bad_request)
   end
 
   rescue_from Caseflow::Error::VeteranNotFound do |error|

@@ -111,6 +111,17 @@ class Appeal < DecisionReview
 
   scope :established, -> { where.not(established_at: nil) }
 
+  scope :non_deceased_appellants, lambda {
+    joins("INNER JOIN veterans ON veterans.file_number = appeals.veteran_file_number")
+      .where("veterans.date_of_death is null OR (veterans.date_of_death is not null
+        AND veteran_is_not_claimant = true)")
+  }
+
+  scope :has_substitute_appellant, lambda {
+    joins("INNER JOIN veterans ON veterans.file_number = appeals.veteran_file_number")
+      .where("veterans.date_of_death is not null AND veteran_is_not_claimant = true")
+  }
+
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
   alias_attribute :nod_date, :receipt_date # LegacyAppeal parity
