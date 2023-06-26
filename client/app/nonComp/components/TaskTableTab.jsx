@@ -98,7 +98,7 @@ class TaskTableTabUnconnected extends React.PureComponent {
             isSearchAhead
             value={this.state.searchText} />
         </div>
-        <div className="section-hearings-list" style={{ clear: 'both' }}>
+        <div className="section-hearings-list">
           <TaskTableUnconnected
             {...this.state.predefinedColumns}
             getKeyForRow={(row, object) => object.id}
