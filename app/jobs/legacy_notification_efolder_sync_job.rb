@@ -13,6 +13,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   # Return: Array of appeals that were attempted to upload notification reports to efolder
   def perform
     RequestStore[:current_user] = User.system_user
+    @mutex = Mutex.new
 
     all_active_legacy_appeals = appeals_recently_outcoded + appeals_never_synced + ready_for_resync
 
@@ -97,17 +98,15 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   #
   # Return: Array of active appeals
   def get_appeals_from_prev_synced_ids(appeal_ids)
-    appeal_ids.in_groups_of(1000).flat_map do |ids|
-      clean_ids = ids.compact
-
+    appeal_ids.in_groups_of(1000, false).flat_map do |ids|
       LegacyAppeal.where(id: RootTask.open.where(appeal_type: "LegacyAppeal").pluck(:appeal_id))
         .find_by_sql(
           <<-SQL
               SELECT la.*
               FROM legacy_appeals la
-              JOIN (#{appeals_on_latest_notifications(clean_ids)}) AS notifs ON
+              JOIN (#{appeals_on_latest_notifications(ids)}) AS notifs ON
                 notifs.appeals_id = la.vacols_id AND notifs.appeals_type = 'LegacyAppeal'
-              JOIN (#{appeals_on_latest_doc_uploads(clean_ids)}) AS vbms_uploads ON
+              JOIN (#{appeals_on_latest_doc_uploads(ids)}) AS vbms_uploads ON
                 vbms_uploads.appeal_id = la.id AND vbms_uploads.appeal_type = 'LegacyAppeal'
               WHERE
                 notifs.notified_at > vbms_uploads.attempted_at
@@ -161,7 +160,6 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   # Return: none
   def sync_notification_reports(appeals)
     Rails.logger.info("Starting to sync notification reports for legacy appeals")
-    mutex = Mutex.new
     gen_count = 0
 
     ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
@@ -170,7 +168,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
           begin
             RequestStore[:current_user] = User.system_user
             appeal.upload_notification_report!
-            mutex.synchronize { gen_count += 1 }
+            @mutex.synchronize { gen_count += 1 }
           rescue StandardError => error
             log_error(error)
           end
