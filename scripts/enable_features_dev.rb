@@ -58,6 +58,7 @@ disabled_flags = [
   "legacy_das_deprecation",
   "cavc_dashboard_workflow",
   "poa_auto_refresh",
+  "justification_reason",
   "interface_version_2"
 ]
 

@@ -60,4 +60,13 @@ describe ApplicationController, type: :controller do
       end
     end
   end
+
+  describe "#application_urls" do
+    let(:user) { build(:user, roles: ["Mail Intake", "Case Details"]) }
+    let(:vha_org) { build(:business_line, url: "vha", name: "Veterans Health Administration") }
+    before { vha_org.add_user(user) }
+    it "should not return queue link if user is a part of VHA org and has role 'Case Details' " do
+      expect(subject.send(:application_urls)).not_to include(subject.send(:queue_application_url))
+    end
+  end
 end
