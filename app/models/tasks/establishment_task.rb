@@ -33,7 +33,7 @@ class EstablishmentTask < Task
   private
 
   def format_description_text(issue)
-    if issue.contested_issue_description || issue.nonrating_issue_category
+    if issue.contested_issue_description || issue.nonrating_issue_category && issue.nonrating_issue_description
       issue.contested_issue_description || issue.nonrating_issue_category + " - " + issue.nonrating_issue_description
     else
       " "
