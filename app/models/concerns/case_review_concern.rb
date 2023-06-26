@@ -41,6 +41,8 @@ module CaseReviewConcern
     # use column values if they exist
     return appeal.is_a?(LegacyAppeal) if appeal_association?
 
+    return task.appeal.is_a?(LegacyAppeal) if task && task.appeal
+
     # fall back to original implementation
     (task_id =~ LegacyTask::TASK_ID_REGEX) ? true : false
   end
