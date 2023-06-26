@@ -131,3 +131,16 @@
   margin-top: 20px;
   clear: right;
 }
+
+.non-comp-queue-table-wrapper {
+  position: relative;
+
+  .cf-noncomp-search {
+    position: absolute;
+    right: 0;
+    z-index: 99999;
+  }
+  .cf-pagination-pages {
+    padding-top: 50px;
+  }
+}
