@@ -1,26 +1,6 @@
 {
   "ignored_warnings": [
     {
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
-      "fingerprint": "043f08c701160782247cb7236491a307a8a2c2bcd3e00054aa86dd9de9da0812",
-      "check_name": "SQL",
-      "message": "Possible SQL injection",
-      "file": "app/jobs/ama_notification_efolder_sync_job.rb",
-      "line": 103,
-      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "Appeal.active.find_by_sql(\"          SELECT appeals.*\\n          FROM appeals\\n          JOIN (#{appeals_on_latest_notifications(ids.compact)}) AS notifs ON\\n            notifs.appeals_id = appeals.\\\"uuid\\\"::text AND notifs.appeals_type = 'Appeal'\\n          JOIN (#{appeals_on_latest_doc_uploads(ids.compact)}) AS vbms_uploads ON\\n            vbms_uploads.appeal_id = appeals.id AND vbms_uploads.appeal_type = 'Appeal'\\n          WHERE\\n            notifs.notified_at > vbms_uploads.attempted_at\\n          OR\\n            notifs.created_at > vbms_uploads.attempted_at\\n          GROUP BY appeals.id\\n\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "AmaNotificationEfolderSyncJob",
-        "method": "get_appeals_from_prev_synced_ids"
-      },
-      "user_input": "appeals_on_latest_notifications(ids.compact)",
-      "confidence": "Medium",
-      "note": ""
-    },
-    {
       "warning_type": "File Access",
       "warning_code": 16,
       "fingerprint": "140e07405ecb20ab6aa52f2f41aeeef0ed7830d781698d6b752ee3d8b0a9c065",
@@ -37,6 +17,26 @@
         "method": "download"
       },
       "user_input": "SchedulePeriod.find(params[:schedule_period_id]).spreadsheet_location",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "3563fb89283da15302f7a0e5f9be93f31eb5aabfa18ff7bdb7080230f2dea4cf",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/jobs/legacy_notification_efolder_sync_job.rb",
+      "line": 106,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "LegacyAppeal.where(:id => RootTask.open.where(:appeal_type => \"LegacyAppeal\").pluck(:appeal_id)).find_by_sql(\"              SELECT la.*\\n              FROM legacy_appeals la\\n              JOIN (#{appeals_on_latest_notifications(ids)}) AS notifs ON\\n                notifs.appeals_id = la.vacols_id AND notifs.appeals_type = 'LegacyAppeal'\\n              JOIN (#{appeals_on_latest_doc_uploads(ids)}) AS vbms_uploads ON\\n                vbms_uploads.appeal_id = la.id AND vbms_uploads.appeal_type = 'LegacyAppeal'\\n              WHERE\\n                notifs.notified_at > vbms_uploads.attempted_at\\n              OR\\n                notifs.created_at > vbms_uploads.attempted_at\\n              GROUP BY la.id\\n\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "LegacyNotificationEfolderSyncJob",
+        "method": "get_appeals_from_prev_synced_ids"
+      },
+      "user_input": "appeals_on_latest_notifications(ids)",
       "confidence": "Medium",
       "note": ""
     },
@@ -103,24 +103,24 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
-      "fingerprint": "f6df7a37b9a278153a25c87d9860152d518edd154c1a21dd4f69d27f45110048",
+      "fingerprint": "c9d432e0f7bca941b3cd382a9979de3b85717cdfab0055c3229378e07f84ba70",
       "check_name": "SQL",
       "message": "Possible SQL injection",
-      "file": "app/jobs/legacy_notification_efolder_sync_job.rb",
-      "line": 105,
+      "file": "app/jobs/ama_notification_efolder_sync_job.rb",
+      "line": 104,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "LegacyAppeal.where(:id => RootTask.open.where(:appeal_type => \"LegacyAppeal\").pluck(:appeal_id)).find_by_sql(\"              SELECT la.*\\n              FROM legacy_appeals la\\n              JOIN (#{appeals_on_latest_notifications(ids.compact)}) AS notifs ON\\n                notifs.appeals_id = la.vacols_id AND notifs.appeals_type = 'LegacyAppeal'\\n              JOIN (#{appeals_on_latest_doc_uploads(ids.compact)}) AS vbms_uploads ON\\n                vbms_uploads.appeal_id = la.id AND vbms_uploads.appeal_type = 'LegacyAppeal'\\n              WHERE\\n                notifs.notified_at > vbms_uploads.attempted_at\\n              OR\\n                notifs.created_at > vbms_uploads.attempted_at\\n              GROUP BY la.id\\n\")",
+      "code": "Appeal.active.find_by_sql(\"          SELECT appeals.*\\n          FROM appeals\\n          JOIN (#{appeals_on_latest_notifications(ids)}) AS notifs ON\\n            notifs.appeals_id = appeals.\\\"uuid\\\"::text AND notifs.appeals_type = 'Appeal'\\n          JOIN (#{appeals_on_latest_doc_uploads(ids)}) AS vbms_uploads ON\\n            vbms_uploads.appeal_id = appeals.id AND vbms_uploads.appeal_type = 'Appeal'\\n          WHERE\\n            notifs.notified_at > vbms_uploads.attempted_at\\n          OR\\n            notifs.created_at > vbms_uploads.attempted_at\\n          GROUP BY appeals.id\\n\")",
       "render_path": null,
       "location": {
         "type": "method",
-        "class": "LegacyNotificationEfolderSyncJob",
+        "class": "AmaNotificationEfolderSyncJob",
         "method": "get_appeals_from_prev_synced_ids"
       },
-      "user_input": "appeals_on_latest_notifications(ids.compact)",
+      "user_input": "appeals_on_latest_notifications(ids)",
       "confidence": "Medium",
       "note": ""
     }
   ],
-  "updated": "2023-06-18 20:23:20 -0400",
+  "updated": "2023-06-26 09:46:58 -0400",
   "brakeman_version": "4.7.1"
 }

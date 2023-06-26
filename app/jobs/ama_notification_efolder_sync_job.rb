@@ -4,6 +4,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   queue_with_priority :low_priority
 
   BATCH_LIMIT = ENV["AMA_NOTIFICATION_REPORT_SYNC_LIMIT"] || 500
+  GEN_COUNT_MUTEX = Mutex.new
 
   # Purpose: Determines which appeals need a notification report generated and uploaded to efolder,
   #          then uploads reports for those appeals
@@ -13,7 +14,6 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   # Return: Array of appeals that were attempted to upload notification reports to efolder
   def perform
     RequestStore[:current_user] = User.system_user
-    @mutex = Mutex.new
 
     all_active_ama_appeals = appeals_recently_outcoded + appeals_never_synced + ready_for_resync
 
@@ -166,7 +166,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
           begin
             RequestStore[:current_user] = User.system_user
             appeal.upload_notification_report!
-            @mutex.synchronize { gen_count += 1 }
+            GEN_COUNT_MUTEX.synchronize { gen_count += 1 }
           rescue StandardError => error
             log_error(error)
           end
