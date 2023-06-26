@@ -6,7 +6,7 @@ class JudgeCaseAssignmentToAttorney
   attr_accessor :appeal_id, :assigned_to, :task_id, :assigned_by, :judge
 
   validates :assigned_by, :assigned_to, presence: true
-  validates :task_id, format: { with: /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }, allow_blank: true
+  # validates :task_id, format: { with: /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }, allow_blank: true
   validate :assigned_by_role_is_valid
 
   def assign_to_attorney!
