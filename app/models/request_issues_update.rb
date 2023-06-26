@@ -177,14 +177,14 @@ class RequestIssuesUpdate < CaseflowRecord
   end
 
   def validate_before_perform
-    if !changes?
-      @error_code = :no_changes
-    elsif RequestIssuesUpdate.where(review: review).where.not(id: id).processable.exists?
-      if @error_code == :no_changes
-        RequestIssuesUpdate.where(review: review).where.not(id: id).processable.last.destroy
-      end
-      @error_code = :previous_update_not_done_processing
-    end
+    # if !changes?
+    #   @error_code = :no_changes
+    # elsif RequestIssuesUpdate.where(review: review).where.not(id: id).processable.exists?
+    #   if @error_code == :no_changes
+    #     RequestIssuesUpdate.where(review: review).where.not(id: id).processable.last.destroy
+    #   end
+    #   @error_code = :previous_update_not_done_processing
+    # end
 
     !@error_code
   end
