@@ -3,8 +3,8 @@
 module WarRoom
   class PoaAccess
     # Legacy Appeals - no POA access when spouse not in people table
-    def initialize(appeals_id, poa_participant_id)
-      @appeals_id = appeals_id
+    def initialize(vacols_id, poa_participant_id)
+      @vacols_id = vacols_id
       @poa_participant_id = poa_participant_id
       RequestStore[:current_user] = User.system_user
     end
@@ -26,12 +26,12 @@ module WarRoom
       # NOTE: The POA is updated in a before_save callback. It will pull in all the attrs for the created POA
       BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(@poa_participant_id)
 
-      # Confirm fix
+      # Confirm fix by returning the POA for passed in appeal
       appeal.bgs_power_of_attorney.present?
     end
 
     def appeal
-      Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(@appeals_id)
+      Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(@vacols_id)
     end
 
     def poa
