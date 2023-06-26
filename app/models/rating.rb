@@ -8,6 +8,16 @@ class Rating
 
   ONE_YEAR_PLUS_DAYS = 372.days
   TWO_LIFETIMES = 250.years
+  MST_SPECIAL_ISSUES = ["sexual assault trauma", "sexual trauma/assault", "sexual harassment"].freeze
+  PACT_SPECIAL_ISSUES = [
+    "agent orange - outside vietnam or unknown",
+    "agent orange - vietnam",
+    "amytrophic lateral sclerosis",
+    "burn pit exposure",
+    "environmental hazard in gulf war",
+    "gulf war presumptive",
+    "radiation"
+  ].freeze
 
   class NilRatingProfileListError < StandardError
     def ignorable?
@@ -32,6 +42,10 @@ class Rating
       fail Caseflow::Error::MustImplementInSubclass
     end
 
+    def fetch_contentions_by_participant_id(participant_id)
+      BGSService.new.find_contentions_by_participant_id(participant_id)
+    end
+
     def sorted_ratings_from_bgs_response(response:, start_date:)
       unsorted = ratings_from_bgs_response(response)
       unpromulgated = unsorted.select { |rating| rating.promulgation_date.nil? }
@@ -50,26 +64,23 @@ class Rating
       fail Caseflow::Error::MustImplementInSubclass
     end
 
-    def mst_from_contentions_for_rating?
-      self.get_contentions_with_claim_ids.each do |contention|
-        if self.mst_contention_status?(contention)
-          return true
-        else
-          next
-        end
+    def special_issue_has_mst?(special_issue)
+      #binding.pry
+      if special_issue[:spis_tn]&.casecmp("ptsd - personal trauma")&.zero?
+        return MST_SPECIAL_ISSUES.include?(special_issue[:spis_basis_tn]&.downcase)
       end
-      false
+
+      if special_issue[:spis_tn]&.casecmp("non-ptsd personal trauma")&.zero?
+        MST_SPECIAL_ISSUES.include?(special_issue[:spis_basis_tn]&.downcase)
+      end
     end
 
-    def pact_from_contentions_for_rating?
-      self.get_contentions_with_claim_ids.each do |contention|
-        if self.pact_contention_status?(contention)
-          return true
-        else
-          next
-        end
+    def special_issue_has_pact?(special_issue)
+      if special_issue[:spis_tn]&.casecmp("gulf war presumptive 3.3201")&.zero?
+        return special_issue[:spis_basis_tn]&.casecmp("particulate matter")&.zero?
       end
-      false
+
+      PACT_SPECIAL_ISSUES.include?(special_issue[:spis_tn]&.downcase)
     end
   end
 
@@ -104,6 +115,10 @@ class Rating
     disability_data = Array.wrap(rating_profile[:disabilities] || rating_profile.dig(:disability_list, :disability))
 
     disability_data.map do |disability|
+      most_recent_disability_hash_for_issue = map_of_dis_sn_to_most_recent_disability_hash[disability[:dis_sn]]
+      special_issues = most_recent_disability_hash_for_issue&.special_issues
+      disability[:special_issues] = special_issues if special_issues
+
       RatingDecision.from_bgs_disability(self, disability)
     end
   end
@@ -137,44 +152,5 @@ class Rating
     @map_of_dis_sn_to_most_recent_disability_hash ||= RatingProfileDisabilities.new(
       Array.wrap(rating_profile[:disabilities] || rating_profile.dig(:disability_list, :disability))
     ).most_recent
-  end
-
-  def get_associated_claim_ids
-    associated_claims_data.any? { |ac| ac.pluck(:clm_id) }
-  end
-
-  def get_contentions_with_claim_ids
-    contetions_for_rating = []
-    get_associated_claim_ids.each do |claim_id|
-      # call BGS service with BGS service
-      contetions_for_rating << BGS.new.find_contentions_by_claim_id(claim_id)
-    end
-    contentions_for_rating.flatten
-  end
-
-  def mst_contention_status?(bgs_contention)
-    return false if bgs_contention.nil?
-
-    if bgs_contention.special_issues.is_a?(Hash)
-      return bgs_contention.special_issues[:spis_tc] == 'MST' if bgs_contention&.special_issues
-    elsif bgs_contention.special_issues.is_a?(Array)
-      bgs_contention.special_issues.each do |issue|
-        return true if issue[:spis_tc] == 'MST'
-      end
-    end
-    false
-  end
-
-  def pact_contention_status?(bgs_contention)
-    return false if bgs_contention.nil?
-
-    if bgs_contention.special_issues.is_a?(Hash)
-      return ['PACT', 'PACTDICRE'].include?(bgs_contention.special_issues[:spis_tc]) if bgs_contention&.special_issues
-    elsif bgs_contention.special_issues.is_a?(Array)
-      bgs_contention.special_issues.each do |issue|
-        return true if ['PACT', 'PACTDICRE'].include?(issue[:spis_tc])
-      end
-    end
-    false
   end
 end
