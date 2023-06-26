@@ -52,12 +52,10 @@ class CaseReviewsController < ApplicationController
 
 
   def mst_pact_decision_issue_changes(appeal)
-    params[:tasks][:issues].each do |issue|
+    params[:tasks][:issues].each do |di|
       RequestIssue.find(issue[:request_issue_ids]).each do |ri|
-        ri.decision_issues.each do |di|
-          if ri.mst_status != di.mst_status || ri.pact_status != di.pact_status
-            create_issue_update_task(ri, di, appeal)
-          end
+        if ri.mst_status != issue[:mst_status] || ri.pact_status != issue[:pact_status]
+          create_issue_update_task(ri, di, appeal)
         end
       end
     end
@@ -92,6 +90,7 @@ class CaseReviewsController < ApplicationController
 
   def issues_params
     # This is a combined list of params for ama and legacy appeals
+    # Reprsents the information the front end is sending to create a decision issue object
     [
       :id,
       :disposition,
@@ -125,8 +124,8 @@ class CaseReviewsController < ApplicationController
       [original_issue.nonrating_issue_category, original_issue.contested_issue_description].join,
       original_issue.mst_status,
       original_issue.pact_status,
-      decision_issue.mst_status,
-      decision_issue.pact_status
+      decision_issue[:mst_status],
+      decision_issue[:pact_status]
     )
 
     task.completed!
