@@ -24,15 +24,15 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
           {
             recipient_type: "person",
             first_name: "Bob",
-            last_name: "Smithmetz",
+            last_name: "Smithmets",
             participant_id: "487470002",
             destination_type: "domesticAddress",
-            address_line_1: "1234 Main Street",
+            address_line_1: "1235 Main Street",
             treat_line_2_as_addressee: false,
             treat_line_3_as_addressee: false,
             city: "Orlando",
             state: "FL",
-            postal_code: "12345",
+            postal_code: "13246",
             country_code: "US"
           }
         ] }
@@ -169,10 +169,8 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
           error = JSON.parse(response.body)["error"]
           expect(success_message).to eq "Document successfully queued for upload."
           expect(validation_error_msgs).to eq(
-            {
-              "first_name" => ["can't be blank"],
-              "last_name" => ["can't be blank"]
-            }
+            "first_name" => ["can't be blank"],
+            "last_name" => ["can't be blank"]
           )
           expect(error).to eq("Incomplete mailing information provided. No mail request was created.")
           expect(response.status).to eq(200)
