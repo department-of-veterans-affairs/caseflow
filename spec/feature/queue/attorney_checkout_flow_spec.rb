@@ -99,7 +99,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
       click_on "Save"
 
-      expect(page).to have_content "Text box field is required"
+      expect(page).to have_content "This field is required"
       fill_in "Text Box", with: decision_issue_text
 
       find(".cf-select__control", text: "Select disposition").click

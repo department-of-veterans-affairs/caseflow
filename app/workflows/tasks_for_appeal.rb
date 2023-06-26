@@ -66,6 +66,14 @@ class TasksForAppeal
     end
   end
 
+  def tasks_includes_colocated_task?
+    appeal.tasks
+      .includes(*task_includes)
+      .select do |task|
+      (task.is_a?(IhpColocatedTask) || task.is_a?(ColocatedTask))
+    end
+  end
+
   def all_tasks_except_for_decision_review_tasks
     appeal.tasks.not_decisions_review.includes(*task_includes)
   end
@@ -92,7 +100,7 @@ class TasksForAppeal
   def hide_legacy_tasks?
     active_tasks = all_tasks_except_for_decision_review_tasks.active
     legacy_tasks = legacy_appeal_tasks
-    (active_tasks && legacy_tasks) ? true : false
+    (active_tasks && legacy_tasks && !tasks_includes_colocated_task?) ? true : false
   end
 
   def task_includes
