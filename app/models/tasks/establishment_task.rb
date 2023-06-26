@@ -36,7 +36,8 @@ class EstablishmentTask < Task
     if issue.contested_issue_description || issue.nonrating_issue_category && issue.nonrating_issue_description
       issue.contested_issue_description || issue.nonrating_issue_category + " - " + issue.nonrating_issue_description
     else
-      " "
+      # we should probably remove this before pushing to prod
+      "Description unavailable"
     end
   end
 
