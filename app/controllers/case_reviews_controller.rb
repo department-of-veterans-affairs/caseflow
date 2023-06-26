@@ -50,7 +50,6 @@ class CaseReviewsController < ApplicationController
     return judge_case_review_params if case_review_class == "JudgeCaseReview"
   end
 
-
   def mst_pact_decision_issue_changes(appeal)
     params[:tasks][:issues].each do |di|
       RequestIssue.find(issue[:request_issue_ids]).each do |ri|
