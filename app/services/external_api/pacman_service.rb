@@ -144,7 +144,7 @@ class ExternalApi::PacmanService
     #
     # Return: service_response: JSON from Pacman or error
     def send_pacman_request(headers: {}, endpoint:, method: :get, body: nil)
-      url = URI.escape(BASE_URL + endpoint)
+      url = ERB::Util.url_encode(BASE_URL + endpoint)
       request = HTTPI::Request.new(url)
       request.open_timeout = 30
       request.read_timeout = 30
