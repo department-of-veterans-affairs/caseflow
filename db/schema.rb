@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_05_31_163349) do
+ActiveRecord::Schema.define(version: 2023_06_23_132146) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -594,6 +594,8 @@ ActiveRecord::Schema.define(version: 2023_05_31_163349) do
     t.string "diagnostic_code", comment: "If a decision resulted in a rating, this is the rating issue's diagnostic code."
     t.string "disposition", comment: "The disposition for a decision issue. Dispositions made in Caseflow and dispositions made in VBMS can have different values."
     t.date "end_product_last_action_date", comment: "After an end product gets synced with a status of CLR (cleared), the end product's last_action_date is saved on any decision issues that are created as a result. This is used as a proxy for decision date for non-rating issues that are processed in VBMS because they don't have a rating profile date, and the exact decision date is not available."
+    t.boolean "mst_status", default: false, comment: "Indicates if decision issue is related to Military Sexual Trauma (MST)"
+    t.boolean "pact_status", default: false, comment: "Indicates if decision issue is related to Promise to Address Comprehensive Toxics (PACT) Act"
     t.string "participant_id", null: false, comment: "The Veteran's participant id."
     t.string "percent_number", comment: "percent_number from RatingIssue (prcntNo from Rating Profile)"
     t.string "rating_issue_reference_id", comment: "Identifies the specific issue on the rating that resulted from the decision issue (a rating issue can be connected to multiple contentions)."
