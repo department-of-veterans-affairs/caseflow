@@ -279,7 +279,7 @@ class AppealsController < ApplicationController
 
   # check if changes in params
   def mst_pact_changes?
-    params[:request_issues].any? { |issue| issue[:mst_status] || issue[:pact_status] }
+    request_issues_update.mst_edited_issues.any? || request_issues_update.pact_edited_issues.any?
   end
 
   # format MST/PACT edit success banner message
