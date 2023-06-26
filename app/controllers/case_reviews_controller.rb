@@ -52,8 +52,8 @@ class CaseReviewsController < ApplicationController
 
   def mst_pact_decision_issue_changes(appeal)
     params[:tasks][:issues].each do |di|
-      RequestIssue.find(issue[:request_issue_ids]).each do |ri|
-        if ri.mst_status != issue[:mst_status] || ri.pact_status != issue[:pact_status]
+      RequestIssue.find(di[:request_issue_ids]).each do |ri|
+        if ri.mst_status != di[:mst_status] || ri.pact_status != di[:pact_status]
           create_issue_update_task(ri, di, appeal)
         end
       end
