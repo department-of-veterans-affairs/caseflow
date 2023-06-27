@@ -180,7 +180,6 @@ class AppealsController < ApplicationController
 
   def update
     if appeal.is_a?(LegacyAppeal) && FeatureToggle.enabled?(:legacy_mst_pact_identification)
-      set_flash_success_message
       legacy_mst_pact_updates
     elsif request_issues_update.perform!
       set_flash_success_message
@@ -385,6 +384,7 @@ class AppealsController < ApplicationController
         )
       end
     end
+    set_flash_mst_edit_message
     render json: { issues: json_issues }, status: :ok
   end
 
