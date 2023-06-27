@@ -44,13 +44,13 @@ class ExternalApi::PacmanService
     # Purpose: Gets distribution from distribution id
     # POST: /package-manager-service/distribution
     #
-    # takes in distribution_id(string)
+    # takes in distribution_id(int)
     #
     # Response: JSON of distribution from Pacman API
     # Example response can be seen in lib/fakes/pacman_service.rb under 'fake_distribution_response' method
     def get_distribution_request(distribution_id)
       request = {
-        endpoint: GET_DISTRIBUTION_ENDPOINT + distribution_id, method: :get
+        endpoint: GET_DISTRIBUTION_ENDPOINT + distribution_id.to_s, method: :get
       }
       send_pacman_request(request)
     end
