@@ -349,11 +349,12 @@ class RequestIssuesUpdate < CaseflowRecord
       if change_type == "Added Issue" && (vbms_mst_edit || vbms_pact_edit)
         task.format_instructions(
           change_type,
-          before_issue&.contested_issue_description,
+          before_issue.contested_issue_description,
+          before_issue.benefit_type,
           before_issue.vbms_mst_status,
           before_issue.vbms_pact_status,
-          before_issue&.mst_status,
-          before_issue&.pact_status
+          before_issue.mst_status,
+          before_issue.pact_status
         )
       else
         # format the task instructions and close out
@@ -364,6 +365,7 @@ class RequestIssuesUpdate < CaseflowRecord
         task.format_instructions(
           change_type,
           issue_description,
+          before_issue.benefit_type,
           before_issue.mst_status,
           before_issue.pact_status,
           after_issue&.mst_status,
