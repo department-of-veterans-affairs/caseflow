@@ -83,30 +83,32 @@ class TaskTableTabUnconnected extends React.PureComponent {
 
     return <React.Fragment>
       {this.props.description && <div className="cf-noncomp-queue-completed-task">{this.props.description}</div>}
-      <div className="cf-search-ahead-parent cf-push-right cf-noncomp-search">
-        <SearchBar
-          id="searchBar"
-          size="small"
-          title={this.props.featureToggles.decisionReviewQueueSsnColumn ?
-            'Search by Claimant Name, Veteran Participant ID, File Number or SSN' :
-            ''}
-          onChange={this.onChange}
-          recordSearch={this.onSearch}
-          placeholder="Type to search..."
-          onClearSearch={this.onClearSearch}
-          isSearchAhead
-          value={this.state.searchText} />
-      </div>
-      <div className="section-hearings-list">
-        <TaskTableUnconnected
-          {...this.state.predefinedColumns}
-          getKeyForRow={(row, object) => object.id}
-          onHistoryUpdate={this.props.onHistoryUpdate}
-          customColumns={this.getTableColumns()}
-          tasks={[]}
-          taskPagesApiEndpoint={this.props.baseTasksUrl}
-          useTaskPagesApi
-          tabPaginationOptions={this.props.tabPaginationOptions} />
+      <div className="non-comp-queue-table-wrapper">
+        <div className="cf-search-ahead-parent cf-push-right cf-noncomp-search">
+          <SearchBar
+            id="searchBar"
+            size="small"
+            title={this.props.featureToggles.decisionReviewQueueSsnColumn ?
+              'Search by Claimant Name, Veteran Participant ID, File Number or SSN' :
+              ''}
+            onChange={this.onChange}
+            recordSearch={this.onSearch}
+            placeholder="Type to search..."
+            onClearSearch={this.onClearSearch}
+            isSearchAhead
+            value={this.state.searchText} />
+        </div>
+        <div className="section-hearings-list">
+          <TaskTableUnconnected
+            {...this.state.predefinedColumns}
+            getKeyForRow={(row, object) => object.id}
+            onHistoryUpdate={this.props.onHistoryUpdate}
+            customColumns={this.getTableColumns()}
+            tasks={[]}
+            taskPagesApiEndpoint={this.props.baseTasksUrl}
+            useTaskPagesApi
+            tabPaginationOptions={this.props.tabPaginationOptions} />
+        </div>
       </div>
     </React.Fragment>;
   };
