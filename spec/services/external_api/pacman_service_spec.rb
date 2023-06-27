@@ -55,7 +55,7 @@ describe ExternalApi::PacmanService do
         "firstName" => nil,
         "middleName" => nil,
         "lastName" => nil,
-        "participant_id" => nil,
+        "participantId" => nil,
         "poaCode" => nil,
         "claimantStationOfJurisdiction" => nil
       },
