@@ -23,5 +23,6 @@ create table caseflow_audit.vbms_distribution_destinations_audit (
               updated_at timestamp NOT NULL,
               vbms_distribution_id int8 NULL,
               created_by_id int8 NULL,
-              updated_by_id int8 NULL
+              updated_by_id int8 NULL,
+              pacman_uuid varchar NULL
             );
