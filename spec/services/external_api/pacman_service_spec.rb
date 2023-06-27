@@ -14,14 +14,14 @@ describe ExternalApi::PacmanService do
 
   let(:distribution) do
     {
-      "id" => "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
+      "id" => 1,
       "recipient" => {
         "type" => "system",
         "id" => "a050a21e-23f6-4743-a1ff-aa1e24412eff",
         "name" => "VBMS-C"
       },
       "description" => "Staging Mailing Distribution",
-      "communicationPackageId" => "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
+      "communicationPackageId" => 1,
       "destinations" => [{
         "type" => "physicalAddress",
         "id" => "28440040-51a5-4d2a-81a2-28730827be14",
@@ -47,7 +47,7 @@ describe ExternalApi::PacmanService do
   end
 
   let(:vbms_distribution) do
-    create(:vbms_distribution, vbms_communication_package_id: distribution["communicationPackageId"])
+    create(:vbms_distribution)
   end
 
   let(:distribution_post_request) do
