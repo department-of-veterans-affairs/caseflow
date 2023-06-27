@@ -152,13 +152,11 @@ describe ExternalApi::PacmanService do
     subject { Fakes::PacmanService.get_distribution_request(distribution["id"]) }
     it "gets correct distribution" do
       subject
-      allow(HTTPI).to receive(:get).and_return(get_distribution_success_response)
       expect(subject.body.as_json["table"]).to eq(get_distribution_success_response.body)
     end
     context "not found" do
       subject { Fakes::PacmanService.get_distribution_request("fake") }
       it "returns 404 PacmanNotFoundError" do
-        allow(HTTPI).to receive(:get).and_return(not_found_response)
         expect(subject.code).to eq(not_found_response.code)
       end
     end
