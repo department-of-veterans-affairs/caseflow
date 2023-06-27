@@ -4,35 +4,27 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   before_action :verify_access
 
-  # rubocop:disable Metrics/MethodLength, Naming/AccessorMethodName
-  def get_distribution
-    # rubocop:enable Metrics/MethodLength, Naming/AccessorMethodName
+  def distribution
     distribution_id = params[:distribution_id]
     # Checks if the distribution id is blank and if it exists with the database
     if distribution_id.blank? || !valid_id?(distribution_id)
-      render_error(400, "Distribution Does Not Exist Or Id is blank", distribution_id)
-      return
+      return render_error(400, "Distribution Does Not Exist Or Id is blank", distribution_id)
     end
+
+    distribution_uuid = distribution_uuid_from_id(distribution_id)
+
+    return pending_establishment(distribution_id) unless distribution_uuid
 
     begin
       # Retrieves the distribution package from the PacMan API
-      distribution_response = PacManService.get_distribution_request(
-        distribution_uuid_from_id(distribution_id)
-      )
+      distribution_response = PacManService.get_distribution_request(distribution_uuid)
 
       response_code = distribution.code
-      if response_code != 200
-        fail StandardError
-      end
+
+      fail StandardError if response_code != 200
       # Handles errors when making any requests both from Pacman and the DB
     rescue StandardError
-      case response_code
-      when 404
-        pending_establishment(distribution_id)
-      else
-        render_error(response_code, "Internal Server Error", distribution_id)
-      end
-      return
+      return render_error(response_code, "Internal Server Error", distribution_id)
     end
 
     render json: format_response(distribution_response)
