@@ -6,4 +6,19 @@ class PriorityEndProductSyncQueue < CaseflowRecord
   self.table_name = "priority_end_product_sync_queue"
 
   belongs_to :end_product_establishment
+  belongs_to :batch_process, foreign_key: "batch_id", primary_key: "batch_id"
+  has_one :caseflow_stuck_records, as: :stuck_record
+
+  def finished_sync_status!
+    update!(status: "SYNCED")
+  end
+
+  def unbatch!(errors)
+    update!(batch_id: nil, status: "ERROR", error_messages: errors)
+  end
+
+  def stuck!
+    update!(status: "STUCK")
+    CaseflowStuckRecord.create!(stuck_record: self, error_messages: error_messages, determined_stuck_at: Time.zone.now)
+  end
 end

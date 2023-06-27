@@ -31,7 +31,7 @@ module Caseflow::Error
   class EfolderAccessForbidden < EfolderError; end
   class ClientRequestError < EfolderError; end
 
-  class ProcessingPriorityEndProductSyncError < StandardError
+  class PriorityEndProductSyncError < StandardError
     def ignorable?
       true
     end
