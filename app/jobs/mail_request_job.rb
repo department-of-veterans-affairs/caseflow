@@ -84,13 +84,7 @@ class MailRequestJob < CaseflowJob
       rescue Caseflow::Error::PacmanApiError => error
         log_error(error)
       end
-      begin
-        distribution = VbmsDistribution.find(dist_hash["vbms_distribution_id"])
-      rescue ActiveRecord::RecordNotFound => error
-        uuid = SecureRandom.uuid
-        Rails.logger.error(error.to_s + "Error ID: " + uuid)
-        Raven.capture_exception(error, extra: { error_uuid: uuid })
-      end
+      distribution = VbmsDistribution.find(dist_hash["vbms_distribution_id"])
       distribution_response = PacmanService.send_distribution_request(
         package_id,
         get_recipient_hash(distribution),
