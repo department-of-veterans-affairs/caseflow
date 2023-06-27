@@ -599,10 +599,21 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
             country_code: "US" }
         end
 
+        before { params[:recipient_info] << recipient }
+
         it "calls #perform_later on MailRequestJob" do
-          params[:recipient_info] << recipient
           expect(MailRequestJob).to receive(:perform_later)
           post :outcode, params: params, as: :json
+        end
+
+        context "recipient info is incorrect" do
+          it "returns validation errors and does not call #perform_later on MailRequestJob" do
+            recipient[:first_name] = nil
+            expect(MailRequestJob).to_not receive(:perform_later)
+            post :outcode, params: params, as: :json
+            error_message = JSON.parse(response.body)["errors"]["distribution 1"]
+            expect(error_message).to eq("First name can't be blank")
+          end
         end
       end
 
