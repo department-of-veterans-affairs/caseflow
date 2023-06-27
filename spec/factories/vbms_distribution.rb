@@ -14,6 +14,6 @@ FactoryBot.define do
     recipient_type { "person" }
     updated_at { Time.zone.now }
     updated_by_id { nil }
-    vbms_communication_package_id { "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431" }
+    vbms_communication_package_id { nil }
   end
 end

@@ -46,6 +46,10 @@ describe ExternalApi::PacmanService do
     }.as_json
   end
 
+  let(:vbms_distribution) do
+    create(:vbms_distribution, vbms_communication_package_id: distribution["communicationPackageId"])
+  end
+
   let(:distribution_post_request) do
     {
       "communicationPackageId" => "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
@@ -149,10 +153,10 @@ describe ExternalApi::PacmanService do
   end
 
   context "get distribution" do
-    subject { Fakes::PacmanService.get_distribution_request(distribution["id"]) }
+    subject { Fakes::PacmanService.get_distribution_request(vbms_distribution.id) }
     it "gets correct distribution" do
       subject
-      expect(subject.body.as_json["table"]).to eq(get_distribution_success_response.body)
+      expect(subject.body.as_json).to eq(get_distribution_success_response.body)
     end
     context "not found" do
       subject { Fakes::PacmanService.get_distribution_request("fake") }
