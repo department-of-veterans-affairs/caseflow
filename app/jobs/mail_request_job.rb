@@ -21,7 +21,7 @@ class MailRequestJob < CaseflowJob
   # Response: n/a
   def perform(vbms_uploaded_document, mail_package)
     begin
-      package_response = Fakes::PacmanService.send_communication_package_request(
+      package_response = PacmanService.send_communication_package_request(
         vbms_uploaded_document.veteran_file_number,
         get_package_name(vbms_uploaded_document),
         document_referenced(vbms_uploaded_document.id, mail_package[:copies])
@@ -91,7 +91,7 @@ class MailRequestJob < CaseflowJob
         Rails.logger.error(error.to_s + "Error ID: " + uuid)
         Raven.capture_exception(error, extra: { error_uuid: uuid })
       end
-      distribution_response = Fakes::PacmanService.send_distribution_request(
+      distribution_response = PacmanService.send_distribution_request(
         package_id,
         get_recipient_hash(distribution),
         get_destinations_hash(dist_hash)
