@@ -26,7 +26,7 @@ conn.execute(
         OLD.updated_at,
         OLD.vbms_communication_package_id,
         OLD.created_by_id,
-        OLD.updated_by_id
+        OLD.updated_by_id,
         OLD.pacman_uuid;
     elsif (TG_OP = 'UPDATE') then
       insert into caseflow_audit.vbms_distributions_audit
