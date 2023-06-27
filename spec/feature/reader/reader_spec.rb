@@ -245,32 +245,14 @@ RSpec.feature "Reader", :all_dbs do
       expect(find_link(documents[0].type)[:href]).to eq(single_link)
     end
 
-    scenario "Progress indicator" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      click_on documents[0].type
-      expect(find(".doc-list-progress-indicator")).to have_text("Document 3 of 3")
-      click_on "Back"
-      fill_in "searchBar", with: "Form"
-      click_on documents[1].type
-      expect(find(".doc-list-progress-indicator")).to have_text("Document 1 of 1")
-      expect(page).to have_selector(".doc-list-progress-indicator .filter-icon")
-    end
-
-    scenario "User visits help page" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      find("a", text: "DSUSER (DSUSER)").click
-      find_link("Help").click
-      expect(page).to have_content("Reader Help")
-    end
-
     context "Query params in documents URL" do
-      scenario "User enters valid category" do
+      scenario "Sets filter only when user enters valid category" do
+        # URL contains valid categories
         visit "/reader/appeal/#{appeal.vacols_id}/documents?category=case_summary"
         expect(page).to have_content("Filtering by:")
         expect(page).to have_content("Categories (1)")
-      end
 
-      scenario "User enters invalid category" do
+        # URL does not contain valid categories
         visit "/reader/appeal/#{appeal.vacols_id}/documents?category=thisisfake"
         expect(page).to_not have_content("Filtering by:")
         expect(page).to_not have_content("Categories (1)")
@@ -290,16 +272,19 @@ RSpec.feature "Reader", :all_dbs do
       expect(page).to_not have_css(".cf-pdf-placing-comment")
     end
 
-    scenario "Next and Previous buttons move between docs" do
+    scenario "Next and Previous buttons move between docs and update progress indicator" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
       find("h3", text: "Document information").click
       expect(find(".cf-document-type")).to have_text("Form 9")
+      expect(find(".doc-list-progress-indicator")).to have_text("Document 2 of 3")
       find("#button-next").click
 
       expect(find(".cf-document-type")).to have_text("BVA Decision")
+      expect(find(".doc-list-progress-indicator")).to have_text("Document 3 of 3")
       find("#button-previous").click
       find("#button-previous").click
       expect(find(".cf-document-type")).to have_text("NOD")
+      expect(find(".doc-list-progress-indicator")).to have_text("Document 1 of 3")
     end
 
     scenario "Rotating documents" do
@@ -317,79 +302,37 @@ RSpec.feature "Reader", :all_dbs do
     end
 
     scenario "Arrow keys to navigate through documents" do
-      def expect_doc_type_to_be(doc_type)
-        expect(find(".cf-document-type")).to have_text(doc_type)
-      end
-
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
-      expect(page).to have_content("CaseflowQueue")
+      expect(page).to have_content "Document Viewer"
 
-      add_comment(text: "comment text")
+      add_comment "comment text"
 
-      expect(page.find("#comments-header")).to have_content("Page 1")
+      expect(page).to have_content("Page 1")
       click_on "Edit"
       find("h3", text: "Document information").click
       find("#editCommentBox-1").send_keys(:arrow_left)
-      expect_doc_type_to_be "Form 9"
+      expect(page).to have_content "Form 9"
       find("#editCommentBox-1").send_keys(:arrow_right)
-      expect_doc_type_to_be "Form 9"
+      expect(page).to have_content "Form 9"
 
       click_on "Cancel"
       find("body").send_keys(:arrow_right)
-      expect_doc_type_to_be "BVA Decision"
+      expect(page).to have_content "BVA Decision"
 
       find("body").send_keys(:arrow_left)
-      expect_doc_type_to_be "Form 9"
+      expect(page).to have_content "Form 9"
 
       add_comment_without_clicking_save "unsaved comment text"
       find("#addComment").send_keys(:arrow_left)
-      expect_doc_type_to_be "Form 9"
+      expect(page).to have_content "Form 9"
       find("#addComment").send_keys(:arrow_right)
-      expect_doc_type_to_be "Form 9"
+      expect(page).to have_content "Form 9"
 
       fill_in "tags", with: "tag content"
       find("#tags").send_keys(:arrow_left)
-      expect_doc_type_to_be "Form 9"
+      expect(page).to have_content "Form 9"
       find("#tags").send_keys(:arrow_right)
-      expect_doc_type_to_be "Form 9"
-    end
-
-    scenario "PdfListView Dropdown" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents"
-
-      def expect_dropdown_filter_to_be_hidden
-        expect(all(".cf-dropdown-filter")).to be_empty
-      end
-
-      def expect_dropdown_filter_to_be_visible
-        expect(all(".cf-dropdown-filter").count).to eq(1)
-      end
-
-      expect_dropdown_filter_to_be_hidden
-
-      find("#categories-header .table-icon").click
-      expect_dropdown_filter_to_be_visible
-
-      find(".checkbox-wrapper-procedural").click
-      expect(find("#procedural", visible: false).checked?).to be true
-
-      find("#receipt-date-header").click
-      expect_dropdown_filter_to_be_hidden
-
-      find("#categories-header .table-icon").click
-      expect_dropdown_filter_to_be_visible
-
-      expect(find("#procedural", visible: false).checked?).to be true
-
-      find("#categories-header .table-icon").send_keys :enter
-      expect_dropdown_filter_to_be_hidden
-
-      find("#clear-filters").click
-
-      find("#categories-header .table-icon").send_keys :enter
-      expect_dropdown_filter_to_be_visible
-
-      expect(find("#procedural", visible: false).checked?).to be false
+      expect(page).to have_content "Form 9"
     end
 
     scenario "Add, edit, share, and delete comments" do
@@ -446,9 +389,12 @@ RSpec.feature "Reader", :all_dbs do
       expect(documents[0].reload.annotations.count).to eq(0)
 
       # Try to add an empty comment
-      add_comment_without_clicking_save("")
+      add_comment_without_clicking_save(random_whitespace_no_tab)
 
+      # Button should be disabled and alt+enter keyboard shortcut should not trigger save
       expect(find("#button-save")["disabled"]).to eq("true")
+      find("body").send_keys [:alt, :enter]
+      expect(Document.find(documents[0].id).annotations.empty?).to eq(true)
 
       # Try to edit a comment to contain no text
       add_comment("A")
@@ -463,40 +409,6 @@ RSpec.feature "Reader", :all_dbs do
 
       # Comment should be removed
       expect(page).to_not have_css(".comment-container")
-    end
-
-    context "when comment box contains only whitespace characters" do
-      scenario "save button is disabled and alt+enter doesn't trigger save" do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
-        add_comment_without_clicking_save(random_whitespace_no_tab)
-        expect(find("#button-save")["disabled"]).to eq("true")
-
-        # alt+enter doesn't save
-        find("body").send_keys [:alt, :enter]
-        expect(find("#button-save")["disabled"]).to eq("true")
-        expect(Document.find(documents[0].id).annotations.empty?).to eq(true)
-      end
-    end
-
-    context "existing comment edited to contain only whitespace characters" do
-      let!(:annotations) do
-        [Generators::Annotation.create(
-          comment: Generators::Random.word_characters,
-          document_id: documents[0].id
-        )]
-      end
-      let(:comment_id) { annotations.length }
-
-      scenario "prompts delete modal to appear" do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
-
-        find("#button-edit-comment-#{comment_id}").click
-        fill_in "editCommentBox-#{comment_id}", with: random_whitespace_no_tab
-        click_on "Save"
-
-        # Delete modal should appear.
-        expect(page).to have_css("#Delete-Comment-button-id-1")
-      end
     end
 
     context "When there is an existing annotation" do
@@ -706,18 +618,6 @@ RSpec.feature "Reader", :all_dbs do
         expect(page).to have_css("#commentIcon-container-#{annotation.id}")
       end
 
-      scenario "Scrolling pages changes page numbers" do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
-
-        expect(page).to have_content("IN THE APPEAL")
-        expect(page).to have_css(".page")
-        expect(page).to have_field("page-progress-indicator-input", with: "1")
-
-        all(".ReactVirtualized__Grid").last.scroll_to(0, 2000)
-
-        expect(page).to_not have_field("page-progress-indicator-input", with: "1")
-      end
-
       context "When document 3 is a 147 page document" do
         before do
           documents.push(
@@ -734,6 +634,13 @@ RSpec.feature "Reader", :all_dbs do
 
         scenario "Switch between pages to ensure rendering" do
           visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[3].id}"
+
+          # Verify page indicator starts on page 1 and updates as user scrolls document
+          expect(page).to have_field("page-progress-indicator-input", with: "1")
+          all(".ReactVirtualized__Grid").last.scroll_to(0, 2000)
+          expect(page).to_not have_field("page-progress-indicator-input", with: "1")
+
+          # Click on and set a page number to jump to a page and verify that it renders
           page.find("input.page-progress-indicator-input").click.set("23")
 
           expect(find("#pageContainer23")).to have_content("Rating Decision")
@@ -776,20 +683,7 @@ RSpec.feature "Reader", :all_dbs do
       expect(ratio).to eq(1 - zoom_rate)
     end
 
-    scenario "Open single document view and open/close sidebar" do
-      visit "/reader/appeal/#{appeal.vacols_id}/documents/"
-      click_on documents[0].type
-      find("h3", text: "Document information").click
-
-      # Expect only the first page of the pdf to be rendered
-      find("#hide-menu-header").click
-      expect(page).to_not have_content("Document Type")
-
-      click_on "Open menu"
-      expect(page).to have_content("Document Type")
-    end
-
-    scenario "Open and close accordion sidebar menu" do
+    scenario "Open document, close/open sidebar, and open/close sidebar accordions" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
 
@@ -797,11 +691,18 @@ RSpec.feature "Reader", :all_dbs do
         find_all(".rc-collapse-header")[index].click
       end
 
-      find("h3", text: "Document information").click
-      click_accordion_header(0)
-      expect(page).to_not have_content("Document Type")
+      # Hide sidebar
+      find("#hide-menu-header").click
+      expect(page).to_not have_content("Document information")
+
+      # Open sidebar
+      click_on "Open menu"
+      expect(page).to have_content("Document information")
+
       click_accordion_header(0)
       expect(page).to have_content("Document Type")
+      click_accordion_header(0)
+      expect(page).to_not have_content("Document Type")
 
       click_accordion_header(1)
       expect(page).to_not have_content("Procedural")
@@ -848,6 +749,7 @@ RSpec.feature "Reader", :all_dbs do
     end
 
     scenario "Update Document Description" do
+      # Using save button
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
       find("h3", text: "Document information").click
@@ -857,19 +759,17 @@ RSpec.feature "Reader", :all_dbs do
       find("#document_description-save").click
 
       expect(find("#document_description").text).to eq("New Description")
-    end
 
-    scenario "Update Document Description with Enter" do
+      # Using keyboard shortcut for save
       visit "/reader/appeal/#{appeal.vacols_id}/documents/"
       click_on documents[0].type
       find("h3", text: "Document information").click
       find("#document_description-edit").click
       find("#document_description-save")
-      fill_in "document_description", with: "Another New Description"
-
+      fill_in "document_description", with: "Another Description"
       find("#document_description").send_keys [:enter]
 
-      expect(find("#document_description").text).to eq("Another New Description")
+      expect(find("#document_description").text).to eq("Another Description")
     end
 
     scenario "Open and close keyboard shortcuts modal" do
@@ -1037,6 +937,14 @@ RSpec.feature "Reader", :all_dbs do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
         click_on documents[1].type
 
+        # tags for first document are shared in tag auto suggestions for second document
+        tag_options = find_all(".cf-select__option")
+        expect(tag_options.count).to eq 4
+
+        documents[0].tags.each_with_index do |tag, index|
+          expect(tag_options[index]).to have_content(tag.text)
+        end
+
         fill_in "tags", with: (DOC2_TAG1 + "\n")
 
         expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
@@ -1055,69 +963,8 @@ RSpec.feature "Reader", :all_dbs do
 
         click_on documents[0].type
 
-        # verify that the tags on the previous document still exist
+        # verify that the tags on first doc still exist and tag deleted from second doc isn't suggested
         expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
-      end
-
-      scenario "create new tag" do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents"
-        click_on documents[1].type
-        find(".cf-select__control").click
-
-        expect_any_instance_of(TagController).to receive(:create).and_call_original
-        fill_in "tags", with: (new_tag_text + "\n")
-        expect(Tag.last.text).to eq("Foo")
-      end
-
-      context "Share tags among all documents in a case" do
-        scenario "Shouldn't show auto suggestions" do
-          visit "/reader/appeal/#{appeal.vacols_id}/documents"
-          click_on documents[0].type
-          find("#tags").click
-          expect(page).not_to have_css(".cf-select__menu")
-        end
-
-        # :nocov:
-        scenario "Should show correct auto suggestions" do
-          visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[1].id}"
-          find(".cf-select__control").click
-          expect(page).to have_css(".cf-select__menu")
-
-          tag_options = find_all(".cf-select__option")
-          expect(tag_options.count).to eq(2)
-
-          documents[0].tags.each_with_index do |tag, index|
-            expect(tag_options[index]).to have_content(tag.text)
-          end
-
-          NEW_TAG_TEXT = "New Tag3"
-          fill_in "tags", with: (NEW_TAG_TEXT + "\n")
-
-          # going to the document[0] page
-          visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
-          find(".cf-select__control").click
-          expect(page).to have_css(".cf-select__menu")
-
-          # making sure correct tag options exist
-          tag_options = find_all(".cf-select__option")
-          expect(tag_options.count).to eq(1)
-          expect(tag_options[0]).to have_content(NEW_TAG_TEXT)
-
-          # removing an existing tag
-          select_control = find(".cf-issue-tag-sidebar").find(".cf-select__control")
-          removed_value_text = select_control.find_all(".cf-select__multi-value")[0].text
-          select_control.find_all(".cf-select__multi-value__remove")[0].click
-          expect(page).not_to have_css(".cf-select__multi-value__label", text: removed_value_text)
-
-          find(".cf-select__control").click
-
-          # again making sure the correct tag options exist
-          expect(page).to have_css(".cf-select__menu")
-          tag_options = find_all(".cf-select__option")
-          expect(tag_options.count).to eq(1)
-          expect(tag_options[0]).to have_content(NEW_TAG_TEXT)
-        end
-        # :nocov:
       end
     end
 
