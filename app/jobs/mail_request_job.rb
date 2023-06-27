@@ -52,6 +52,7 @@ class MailRequestJob < CaseflowJob
   # takes in VbmsUploadedDocument object and MailRequest object
   #
   # Response: new VbmsCommunicationPackage object
+  # :reek:FeatureEnvy
   def create_package(vbms_uploaded_document, mail_package)
     VbmsCommunicationPackage.new(
       comm_package_name: get_package_name(vbms_uploaded_document),
