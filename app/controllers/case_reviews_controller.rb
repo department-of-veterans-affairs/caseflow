@@ -139,11 +139,11 @@ class CaseReviewsController < ApplicationController
       created_by_css_id: RequestStore[:current_user].css_id,
       original_mst_status: original_issue.mst_status,
       original_pact_status: original_issue.pact_status,
-      updated_mst_status: incoming_issue_update[:mstStatus],
-      updated_pact_status: incoming_issue_update[:pactStatus],
+      updated_mst_status: decision_issue[:mst_status],
+      updated_pact_status: decision_issue[:pact_status],
       mst_from_vbms: original_issue&.vbms_mst_status,
       pact_from_vbms: original_issue&.vbms_pact_status,
-      change_category: "Edited Issue"
+      change_category: "Edited Decision Issue"
     )
   end
 end

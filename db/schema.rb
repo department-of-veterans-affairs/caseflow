@@ -10,7 +10,6 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
 ActiveRecord::Schema.define(version: 2023_06_23_132146) do
 
   # These are extensions that must be enabled in order to support this database
@@ -294,6 +293,7 @@ ActiveRecord::Schema.define(version: 2023_06_23_132146) do
     t.string "hearing_request_type", limit: 10, comment: "Stores hearing type requested by appellant; could be one of nil, 'Video', 'Central', 'Travel', or 'Virtual'"
     t.boolean "is_aod", comment: "Whether the case is Advanced on Docket"
     t.integer "issue_count", comment: "Number of issues on the appeal."
+    t.string "issue_types", comment: "A string delimited list of nonrating issue categories on the appeal."
     t.string "power_of_attorney_name", comment: "'Firstname Lastname' of power of attorney"
     t.string "suggested_hearing_location", comment: "Suggested hearing location in 'City, State (Facility Type)' format"
     t.datetime "updated_at"
