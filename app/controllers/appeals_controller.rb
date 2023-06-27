@@ -165,7 +165,7 @@ class AppealsController < ApplicationController
   def edit
     # only AMA appeals may call /edit
     # this was removed for MST/PACT initiative to edit MST/PACT for legacy issues
-    # return not_found if appeal.is_a?(LegacyAppeal)
+    return not_found if appeal.is_a?(LegacyAppeal) && !FeatureToggle.enabled?(:legacy_mst_pact_identification)
   end
 
   helper_method :appeal, :url_appeal_uuid
@@ -179,7 +179,8 @@ class AppealsController < ApplicationController
   end
 
   def update
-    if appeal.is_a? (LegacyAppeal)
+    if appeal.is_a?(LegacyAppeal) && FeatureToggle.enabled?(:legacy_mst_pact_identification)
+      set_flash_success_message
       legacy_mst_pact_updates
     elsif request_issues_update.perform!
       set_flash_success_message
@@ -278,7 +279,7 @@ class AppealsController < ApplicationController
 
   # check if changes in params
   def mst_pact_changes?
-    params[:request_issues].any? { |issue| issue[:mst_status] || issue[:pact_status] }
+    request_issues_update.mst_edited_issues.any? || request_issues_update.pact_edited_issues.any?
   end
 
   # format MST/PACT edit success banner message
@@ -289,23 +290,35 @@ class AppealsController < ApplicationController
     pact_added = 0
     pact_removed = 0
     # get edited issues from params and reject new issues without id
-    existing_issues = params[:request_issues].reject { |i| i[:request_issue_id].nil? }
+    if !appeal.is_a?(LegacyAppeal)
+      existing_issues = params[:request_issues].reject { |i| i[:request_issue_id].nil? }
 
-    # get added issues
-    new_issues = request_issues_update.after_issues - request_issues_update.before_issues
-    # get removed issues
-    removed_issues = request_issues_update.before_issues - request_issues_update.after_issues
+      # get added issues
+      new_issues = request_issues_update.after_issues - request_issues_update.before_issues
+      # get removed issues
+      removed_issues = request_issues_update.before_issues - request_issues_update.after_issues
 
-    # calculate edits
-    existing_issues.each do |issue_edit|
-      # find the original issue and compare MST/PACT changes
-      before_issue = request_issues_update.before_issues.find { |i| i.id == issue_edit[:request_issue_id].to_i }
+      # calculate edits
+      existing_issues.each do |issue_edit|
+        # find the original issue and compare MST/PACT changes
+        before_issue = request_issues_update.before_issues.find { |i| i.id == issue_edit[:request_issue_id].to_i }
 
-      # increment edit counts if they meet the criteria for added/removed
-      mst_added += 1 if issue_edit[:mst_status] != before_issue.mst_status && issue_edit[:mst_status]
-      mst_removed += 1 if issue_edit[:mst_status] != before_issue.mst_status && !issue_edit[:mst_status]
-      pact_added += 1 if issue_edit[:pact_status] != before_issue.pact_status && issue_edit[:pact_status]
-      pact_removed += 1 if issue_edit[:pact_status] != before_issue.pact_status && !issue_edit[:pact_status]
+        # increment edit counts if they meet the criteria for added/removed
+        mst_added += 1 if issue_edit[:mst_status] != before_issue.mst_status && issue_edit[:mst_status]
+        mst_removed += 1 if issue_edit[:mst_status] != before_issue.mst_status && !issue_edit[:mst_status]
+        pact_added += 1 if issue_edit[:pact_status] != before_issue.pact_status && issue_edit[:pact_status]
+        pact_removed += 1 if issue_edit[:pact_status] != before_issue.pact_status && !issue_edit[:pact_status]
+      end
+    else
+      existing_issues = legacy_issue_params[:request_issues]
+      existing_issues.each do |issue_edit|
+        mst_added += 1 if legacy_issues_with_updated_mst_pact_status[:mst_edited].include?(issue_edit) && issue_edit[:mst_status]
+        mst_removed += 1 if legacy_issues_with_updated_mst_pact_status[:mst_edited].include?(issue_edit) && !issue_edit[:mst_status]
+        pact_added += 1 if legacy_issues_with_updated_mst_pact_status[:pact_edited].include?(issue_edit) && issue_edit[:pact_status]
+        pact_removed += 1 if legacy_issues_with_updated_mst_pact_status[:pact_edited].include?(issue_edit) && !issue_edit[:pact_status]
+        new_issues = []
+        removed_issues = []
+      end
     end
 
     # return if no edits, removals, or additions
@@ -319,26 +332,27 @@ class AppealsController < ApplicationController
     message << "#{pact_added} #{'issue'.pluralize(pact_added)} marked as PACT" unless pact_added == 0
 
     # add in removed message and added message, if any
-    message << create_mst_pact_message(new_issues, "added") unless new_issues.empty?
-    message << create_mst_pact_message(removed_issues, "removed") unless removed_issues.empty?
+    message << create_mst_pact_message_for_new_and_removed_issues(new_issues, "added") unless new_issues.empty?
+    message << create_mst_pact_message_for_new_and_removed_issues(removed_issues, "removed") unless removed_issues.empty?
 
     message.flatten
   end
 
   # create MST/PACT message for added/removed issues
-  def create_mst_pact_message(issues, type)
-    if issues.any? { |issue| issue.mst_status || issue.pact_status }
-      special_issue_message = []
-      # check if any issues have MST/PACT and get the count
-      mst_count = issues.count { |issue| issue.mst_status && !issue.pact_status }
-      pact_count = issues.count { |issue| issue.pact_status && !issue.mst_status }
-      both_count = issues.count { |issue| issue.pact_status && issue.mst_status }
+  def create_mst_pact_message_for_new_and_removed_issues(issues, type)
+    special_issue_message = []
+    # check if any added/removed issues have MST/PACT and get the count
+    mst_count = issues.count { |issue| issue.mst_status && !issue.pact_status }
+    pact_count = issues.count { |issue| issue.pact_status && !issue.mst_status }
+    both_count = issues.count { |issue| issue.pact_status && issue.mst_status }
+    none_count = issues.count { |issue| !issue.pact_status && !issue.mst_status }
 
-      special_issue_message << "#{mst_count} #{'issue'.pluralize(mst_count)} with MST #{type}" unless mst_count == 0
-      special_issue_message << "#{pact_count} #{'issue'.pluralize(pact_count)} with PACT #{type}" unless pact_count == 0
-      special_issue_message << "#{both_count} #{'issue'.pluralize(both_count)} with MST and PACT #{type}" unless both_count == 0
-      special_issue_message
-    end
+    special_issue_message << "#{mst_count} #{'issue'.pluralize(mst_count)} with MST #{type}" unless mst_count == 0
+    special_issue_message << "#{pact_count} #{'issue'.pluralize(pact_count)} with PACT #{type}" unless pact_count == 0
+    special_issue_message << "#{both_count} #{'issue'.pluralize(both_count)} with MST and PACT #{type}" unless both_count == 0
+    special_issue_message << "#{none_count} #{'issue'.pluralize(none_count)} #{type}" unless none_count == 0
+
+    special_issue_message
   end
 
   # check if there is a change in mst/pact on legacy issue
@@ -380,6 +394,18 @@ class AppealsController < ApplicationController
     end
   end
 
+  def legacy_issues_with_updated_mst_pact_status
+    mst_edited = legacy_issue_params[:request_issues].find_all do |current_issue|
+      issue = appeal.issues.find { |i| i.vacols_sequence_id == current_issue[:vacols_sequence_id].to_i }
+      issue.mst_status != current_issue[:mst_status]
+    end
+    pact_edited = legacy_issue_params[:request_issues].find_all do |current_issue|
+      issue = appeal.issues.find { |i| i.vacols_sequence_id == current_issue[:vacols_sequence_id].to_i }
+      issue.pact_status != current_issue[:pact_status]
+    end
+    {mst_edited: mst_edited, pact_edited: pact_edited}
+  end
+
   def legacy_issue_params
     # Checks the keys for each object in request_issues array
     request_issue_params = params.require("request_issues").each do |current_param|
@@ -409,7 +435,7 @@ class AppealsController < ApplicationController
     task = IssuesUpdateTask.create!(
       appeal: appeal,
       parent: appeal.root_task,
-      assigned_to: user,
+      assigned_to: SpecialIssueEditTeam.singleton,
       assigned_by: user,
       completed_by: user
     )
@@ -443,8 +469,9 @@ class AppealsController < ApplicationController
 
   # updated flash message to show mst/pact message if mst/pact changes (not to legacy)
   def set_flash_success_message
-
-    return set_flash_mst_edit_message if mst_pact_changes? && !appeal.is_a?(LegacyAppeal)
+    return set_flash_mst_edit_message if mst_pact_changes? &&
+                                         (FeatureToggle.enabled?(:mst_identification) ||
+                                         FeatureToggle.enabled?(:pact_identification))
 
     set_flash_edit_message
   end

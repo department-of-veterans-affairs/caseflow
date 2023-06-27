@@ -230,13 +230,26 @@ export const DECISION_SPECIAL_ISSUES = [
     requiresJustification: false
   },
   {
-    id: 'mstStatus',
+    id: 'mst_status',
     label: 'Military Sexual Trauma (MST)',
     requiresJustification: true
   },
   {
-    id: 'pactStatus',
+    id: 'pact_status',
     label: 'PACT Act',
     requiresJustification: true
   },
+];
+
+export const DECISION_SPECIAL_ISSUES_NO_MST_PACT = [
+  {
+    id: 'blue_water',
+    label: 'Blue Water',
+    requiresJustification: false
+  },
+  {
+    id: 'burn_pit',
+    label: 'Burn Pit',
+    requiresJustification: false
+  }
 ];

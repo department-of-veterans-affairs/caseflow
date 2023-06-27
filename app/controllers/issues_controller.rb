@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# IssuesController for LegacyAppeals
 class IssuesController < ApplicationController
   before_action :validate_access_to_task
 
@@ -30,7 +31,7 @@ class IssuesController < ApplicationController
     issue = appeal.issues.find { |i| i.vacols_sequence_id == params[:vacols_sequence_id].to_i }
     if issue.mst_status != convert_to_bool(params[:issues][:mst_status]) ||
        issue.pact_status != convert_to_bool(params[:issues][:pact_status])
-      create_legacy_issue_update_task(issue)
+      create_legacy_issue_update_task(issue) if FeatureToggle.enabled?(:legacy_mst_pact_identification)
     end
 
     Issue.update_in_vacols!(
@@ -38,6 +39,10 @@ class IssuesController < ApplicationController
       vacols_sequence_id: params[:vacols_sequence_id],
       issue_attrs: issue_params
     )
+
+    # Set LegacyAppeal issues to nil in order to refresh and retrieve new update
+    appeal.issues = nil if appeal.is_legacy?
+
     render json: { issues: json_issues }, status: :ok
   end
 
@@ -58,7 +63,7 @@ class IssuesController < ApplicationController
     task = IssuesUpdateTask.create!(
       appeal: appeal,
       parent: appeal.root_task,
-      assigned_to: user,
+      assigned_to: SpecialIssueEditTeam.singleton,
       assigned_by: user,
       completed_by: user
     )

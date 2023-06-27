@@ -12,6 +12,10 @@ class AppealRequestIssuesPolicy
       editable_by_ssc_team_member? || editable_by_cob_team_member?
   end
 
+  def legacy_issues_editable?
+    FeatureToggle.enabled?(:legacy_mst_pact_identification) && editable?
+  end
+
   private
 
   attr_reader :user, :appeal

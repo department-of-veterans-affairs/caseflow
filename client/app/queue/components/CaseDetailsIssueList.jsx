@@ -27,11 +27,33 @@ const headingStyling = css({
 
 export default function CaseDetailsIssueList(props) {
   if (!props.isLegacyAppeal) {
+    // Map props from redux store - values from queue.appeals.issues and queue.appeals.decisionissues
+    const updatedDecisionIssues = props.decisionIssues.map((decisionIssue) => {
+      // Get corresponding request_issue_id
+      const correspondingRequestIssueId = decisionIssue.request_issue_ids[0];
+      // Filter request issues for the corresponding request issue id
+      const correspondingRequestIssue = props.issues.filter((requestIssue) => {
+        return requestIssue.id === correspondingRequestIssueId;
+      })[0];
+      // Grab the mst and pact statuses to add to decision issues
+      const requestIssueMstStatus = correspondingRequestIssue.mst_status;
+      const requestIssuePactStatus = correspondingRequestIssue.pact_status;
+
+      return {
+        // spread operator - opening up and duplicating each key value pair of an object/hash/dictionary/array
+        ...decisionIssue,
+        mstStatus: requestIssueMstStatus,
+        pactStatus: requestIssuePactStatus,
+      };
+    });
+
     return <AmaIssueList
       requestIssues={props.issues}
-      decisionIssues={props.decisionIssues}>
+      decisionIssues={props.decisionIssues}
+      mstFeatureToggle={props.featureToggles.mst_identification}
+      pactFeatureToggle={props.featureToggles.pact_identification}>
       <DecisionIssues
-        decisionIssues={props.decisionIssues} />
+        decisionIssues={updatedDecisionIssues} />
     </AmaIssueList>;
   }
 
@@ -39,13 +61,16 @@ export default function CaseDetailsIssueList(props) {
     {props.issues.map((issue, i) =>
       <div key={i} {...singleIssueContainerStyling}>
         <h3 {...headingStyling}>Issue {1 + i}</h3>
-        { <LegacyIssueDetails>{issue}</LegacyIssueDetails> }
+        <LegacyIssueDetails legacyMstPactFeatureToggle={props.featureToggles.legacy_mst_pact_identification}>
+          {issue}
+        </LegacyIssueDetails>
       </div>
     )}
   </React.Fragment>;
 }
 
 const LegacyIssueDetails = (props) => {
+  const legacyMstPactFeatureToggle = props.legacyMstPactFeatureToggle
   const issue = props.children;
   const codes = issue.codes ? issue.codes.slice() : [];
   const diagnosticCode = getIssueDiagnosticCodeLabel(codes[codes.length - 1]) ? codes.pop() : null;
@@ -58,7 +83,7 @@ const LegacyIssueDetails = (props) => {
     <IssueNoteListItem>{issue.note}</IssueNoteListItem>
     <IssueDispositionListItem>{issue.disposition}</IssueDispositionListItem>
     <IssueNoteListItem>{issue.closed_status}</IssueNoteListItem>
-    <SpecialIssueListItem>{issue}</SpecialIssueListItem>
+    {legacyMstPactFeatureToggle && <SpecialIssueListItem>{issue}</SpecialIssueListItem>}
   </CaseDetailsDescriptionList>;
 };
 
@@ -137,11 +162,23 @@ CaseDetailsIssueList.propTypes = {
   isLegacyAppeal: PropTypes.bool,
   issues: PropTypes.array,
   title: PropTypes.string,
-  decisionIssues: PropTypes.node
+  decisionIssues: PropTypes.node,
+  featureToggles: PropTypes.object
 };
 
 SpecialIssueListItem.propTypes = {
   children: PropTypes.object,
   mst_status: PropTypes.bool,
   pact_status: PropTypes.bool
+};
+
+LegacyIssueDetails.propTypes = {
+  legacyMstPactFeatureToggle: PropTypes.bool,
+  children: PropTypes.object
+};
+
+DescriptionListItem.propTypes = {
+  label: PropTypes.object,
+  children: PropTypes.object,
+  styling: PropTypes.object
 };

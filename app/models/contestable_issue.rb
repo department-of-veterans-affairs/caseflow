@@ -63,6 +63,7 @@ class ContestableIssue
         description: rating_decision.decision_text,
         contesting_decision_review: contesting_decision_review,
         rating_issue_diagnostic_code: rating_decision.diagnostic_code,
+        special_issues: rating_decision.special_issues,
         is_rating: true, # true even if rating_reference_id is nil
       )
     end

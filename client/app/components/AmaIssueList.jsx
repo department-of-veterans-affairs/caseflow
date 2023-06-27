@@ -52,10 +52,11 @@ export const AmaIssue = (props) => {
     <div {...issueContentStyling}><strong>Issue: </strong>{props.issue.description}</div>
     { props.issue.diagnostic_code &&
       <div {...issueContentStyling}><strong>Diagnostic code: </strong>: {props.issue.diagnostic_code}</div> }
-    <div {...issueContentStyling}><strong>Special Issues: </strong>{
-      specialIssuesFormatting(props.issue.mst_status, props.issue.pact_status)
-    }
-    </div>
+    { (props.mstFeatureToggle || props.pactFeatureToggle) && <div {...issueContentStyling}>
+      <strong>Special Issues: </strong>{
+        specialIssuesFormatting(props.issue.mst_status, props.issue.pact_status)
+      }
+    </div> }
     { props.issue.notes &&
       <div {...issueContentStyling} {...issueNoteStyling}>Note from NOD: {props.issue.notes}</div> }
     { props.issue.closed_status && props.issue.closed_status === 'withdrawn' &&
@@ -72,7 +73,9 @@ export default class AmaIssueList extends React.PureComponent {
     const {
       requestIssues,
       children,
-      errorMessages
+      errorMessages,
+      mstFeatureToggle,
+      pactFeatureToggle,
     } = this.props;
 
     return <ol {...issueListStyling}>
@@ -90,6 +93,8 @@ export default class AmaIssueList extends React.PureComponent {
             index={i}
             mst_status={issue.mst_status}
             pact_status={issue.pact_status}
+            mstFeatureToggle={mstFeatureToggle}
+            pactFeatureToggle={pactFeatureToggle}
             customStyle={error && issueErrorStyling} >
             {children}
           </AmaIssue>
@@ -111,11 +116,15 @@ AmaIssue.propTypes = {
     mst_status: PropTypes.bool,
     pact_status: PropTypes.bool
   }),
-  children: PropTypes.node
+  children: PropTypes.node,
+  pactFeatureToggle: PropTypes.bool,
+  mstFeatureToggle: PropTypes.bool
 };
 
 AmaIssueList.propTypes = {
   children: PropTypes.node,
   requestIssues: PropTypes.array,
-  errorMessages: PropTypes.object
+  errorMessages: PropTypes.object,
+  pactFeatureToggle: PropTypes.bool,
+  mstFeatureToggle: PropTypes.bool
 };

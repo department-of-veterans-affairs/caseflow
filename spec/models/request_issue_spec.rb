@@ -4,10 +4,17 @@ describe RequestIssue, :all_dbs do
   before do
     Timecop.freeze(Time.zone.now)
     FeatureToggle.enable!(:use_ama_activation_date)
-    FeatureToggle.enable!(:mst_pact_identification)
+    FeatureToggle.enable!(:mst_identification)
+    FeatureToggle.enable!(:pact_identification)
+    FeatureToggle.enable!(:legacy_mst_pact_identification)
   end
 
-  after { FeatureToggle.disable!(:use_ama_activation_date) }
+  after do
+    FeatureToggle.disable!(:mst_identification)
+    FeatureToggle.disable!(:pact_identification)
+    FeatureToggle.disable!(:legacy_mst_pact_identification)
+    FeatureToggle.disable!(:use_ama_activation_date)
+  end
 
   let(:contested_rating_issue_reference_id) { "abc123" }
   let(:contested_rating_decision_reference_id) { nil }

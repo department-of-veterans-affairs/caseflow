@@ -11,7 +11,7 @@ import { COLORS } from 'app/constants/AppConstants';
 const PactBadge = (props) => {
   const { appeal } = props;
 
-  if (!appeal.pact) {
+  if (!appeal?.pact) {
     return null;
   }
 

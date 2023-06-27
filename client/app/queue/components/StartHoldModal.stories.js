@@ -12,7 +12,7 @@ import {
 } from '../../../test/app/queue/components/modalUtils';
 import { vhaPOToCAMOData } from '../../../test/data/queue/taskActionModals/taskActionModalData';
 import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
-import StartHoldModal from './StartHoldModal';
+import { StartHoldModal } from './StartHoldModal';
 
 export default {
   title: 'Queue/Components/Task Action Modals/StartHoldModal',

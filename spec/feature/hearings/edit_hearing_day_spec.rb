@@ -8,7 +8,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
   let(:sample_room) { "1 (1W200A)" }
 
   let!(:current_user) do
-    user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
+    user = create(:user, css_id: "EDITHEARINGDAY", roles: ["Build HearSched"])
     HearingsManagement.singleton.add_user(user)
     User.authenticate!(user: user)
   end

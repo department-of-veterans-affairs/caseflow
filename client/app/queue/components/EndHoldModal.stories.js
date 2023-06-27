@@ -12,11 +12,11 @@ import {
 import {
   visnOnHoldData
 } from '../../../test/data/queue/taskActionModals/taskActionModalData';
-import EndHoldModel from './EndHoldModal';
+import { EndHoldModal } from './EndHoldModal';
 
 export default {
-  title: 'Queue/Components/Task Action Modals/EndHoldModel',
-  component: EndHoldModel,
+  title: 'Queue/Components/Task Action Modals/EndHoldModal',
+  component: EndHoldModal,
   parameters: {
     docs: {
       inlineStories: false,
@@ -43,7 +43,7 @@ const Template = (args) => {
     <Provider store={store}>
       <MemoryRouter initialEntries={[path]}>
         <Route component={(props) => {
-          return <EndHoldModel {...props.match.params} />;
+          return <EndHoldModal {...props.match.params} />;
         }} path={`/queue/appeals/:appealId/tasks/:taskId/modal/${modalType}`} />
       </MemoryRouter>
     </Provider>

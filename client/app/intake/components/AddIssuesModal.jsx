@@ -66,6 +66,7 @@ class AddIssuesModal extends React.Component {
       mstJustification,
       pactJustification
     } = this.state;
+
     const currentIssue = issueByIndex(this.props.intakeData.contestableIssues, selectedContestableIssueIndex);
 
     if (selectedContestableIssueIndex && !currentIssue.index) {
@@ -75,14 +76,16 @@ class AddIssuesModal extends React.Component {
     // Ensure we have a value for decisionDate
     currentIssue.decisionDate = currentIssue.decisionDate || currentIssue.approxDecisionDate;
 
-    if (mstChecked && mstJustification === '' && this.props.featureToggles.justificationReason) {
-      if (!currentIssue.mstAvailable) {
-        return;
+    if (this.props.featureToggles.justificationReason) {
+      if (mstChecked && mstJustification === '') {
+        if (!currentIssue.mstAvailable) {
+          return;
+        }
       }
-    }
-    if (pactChecked && pactJustification === '' && this.props.featureToggles.justificationReason) {
-      if (!currentIssue.pactAvailable) {
-        return;
+      if (pactChecked && pactJustification === '') {
+        if (!currentIssue.pactAvailable) {
+          return;
+        }
       }
     }
 
@@ -101,7 +104,8 @@ class AddIssuesModal extends React.Component {
   };
 
   getContestableIssuesSections() {
-    const { intakeData } = this.props;
+    const { intakeData, formType, featureToggles } = this.props;
+
     let iterations = -1;
     const addedIssues = intakeData.addedIssues ? intakeData.addedIssues : [];
     let counter = 0;
@@ -134,6 +138,30 @@ class AddIssuesModal extends React.Component {
       }
       accumulationArr[i] = accumulation;
     }
+
+    const renderTrueOrFalse = (whatToRender) => {
+      let featureFlagToUse;
+
+      switch (whatToRender) {
+      case 'mst':
+        featureFlagToUse = featureToggles.mst_identification ?
+          featureToggles.mst_identification : featureToggles.mstIdentification;
+        break;
+      case 'pact':
+        featureFlagToUse = featureToggles.pact_identification ?
+          featureToggles.mst_identification : featureToggles.pactIdentification;
+        break;
+      case 'justification':
+        featureFlagToUse = featureToggles.justification_reason ?
+          featureToggles.justification_reason : featureToggles.justificationReason;
+        break;
+      default:
+        // Do nothing if variable not specified in list
+        break;
+      }
+
+      return featureFlagToUse && formType === 'appeal';
+    };
 
     return map(intakeData.contestableIssues, (contestableIssuesByIndex, approxDecisionDate) => {
       const radioOptions = map(contestableIssuesByIndex, (issue) => {
@@ -186,12 +214,9 @@ class AddIssuesModal extends React.Component {
           mstJustificationOnChange={this.mstJustificationOnChange}
           pactJustification={this.state.pactJustification}
           pactJustificationOnChange={this.pactJustificationOnChange}
-          renderMst={this.props.featureToggles.mst_identification ?
-            this.props.featureToggles.mst_identification : this.props.featureToggles.mstIdentification}
-          renderPact={this.props.featureToggles.pact_identification ?
-            this.props.featureToggles.pact_identification : this.props.featureToggles.pactIdentification}
-          renderJustification={this.props.featureToggles.justification_reason ?
-            this.props.featureToggles.justification_reason: this.props.featureToggles.justificationReason}
+          renderMst={renderTrueOrFalse('mst')}
+          renderPact={renderTrueOrFalse('pact')}
+          renderJustification={renderTrueOrFalse('justification')}
           userCanEditIntakeIssues={this.props.userCanEditIntakeIssues}
           mstChecked={this.state.mstChecked}
           setMstCheckboxFunction={this.mstCheckboxChange}
@@ -262,7 +287,8 @@ AddIssuesModal.propTypes = {
   skipText: PropTypes.string,
   intakeData: PropTypes.object,
   featureToggles: PropTypes.object,
-  userCanEditIntakeIssues: PropTypes.bool
+  userCanEditIntakeIssues: PropTypes.bool,
+  formType: PropTypes.string
 };
 
 AddIssuesModal.defaultProps = {

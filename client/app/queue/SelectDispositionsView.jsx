@@ -26,6 +26,7 @@ import {
   VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS,
   DECISION_SPECIAL_ISSUES,
+  DECISION_SPECIAL_ISSUES_NO_MST_PACT
 } from './constants';
 import ApiUtil from '../util/ApiUtil';
 
@@ -89,6 +90,7 @@ class SelectDispositionsView extends React.PureComponent {
       (response) => {
         const { ...specialIssues } = response.body;
 
+        this.editStagedAppeal({ specialIssues });
         this.setState({ specialIssues });
       }
     );
@@ -97,11 +99,17 @@ class SelectDispositionsView extends React.PureComponent {
   stageSpecialIssues = (decisionIssues) => {
     const appealIsBlueWater = decisionIssues.filter(
       // eslint-disable-next-line camelcase, no-unneeded-ternary
-      (decision) => decision.decisionSpecialIssue?.blue_water)[0]?.decisionSpecialIssue.blue_water ? true : false;
+      (decision) => decision.decisionSpecialIssue?.blue_water).length > 0;
 
     const appealIsBurnPit = decisionIssues.filter(
       // eslint-disable-next-line camelcase, no-unneeded-ternary
-      (decision) => decision.decisionSpecialIssue?.burn_pit)[0]?.decisionSpecialIssue.burn_pit ? true : false;
+      (decision) => decision.decisionSpecialIssue?.burn_pit).length > 0;
+
+    this.setState({ specialIssues: {
+      ...this.state.specialIssues,
+      blue_water: appealIsBlueWater,
+      burn_pit: appealIsBurnPit
+    } });
 
     this.props.editStagedAppeal(
       this.props.appeal.externalId, {
@@ -114,6 +122,22 @@ class SelectDispositionsView extends React.PureComponent {
     );
   }
 
+  createSpecialIssueList = (decisionIssues) => {
+    const blueWater = decisionIssues.filter(
+      // eslint-disable-next-line camelcase, no-unneeded-ternary
+      (decision) => decision.decisionSpecialIssue?.blue_water);
+
+    const burnPit = decisionIssues.filter(
+      // eslint-disable-next-line camelcase, no-unneeded-ternary
+      (decision) => decision.decisionSpecialIssue?.burn_pit);
+
+    return {
+      ...this.state.specialIssues,
+      blue_water: _.some(blueWater, (bW) => bW.decisionSpecialIssue.blue_water === true),
+      burn_pit: _.some(burnPit, (bP) => bP.decisionSpecialIssue.burn_pit === true)
+    };
+  };
+
   getNextStepUrl = () => {
     const {
       appealId,
@@ -122,7 +146,10 @@ class SelectDispositionsView extends React.PureComponent {
       appeal: { decisionIssues }
     } = this.props;
 
-    this.stageSpecialIssues(decisionIssues);
+    ApiUtil.post(`/appeals/${appealId}/special_issues`,
+      {
+        data: { special_issues: this.createSpecialIssueList(decisionIssues) }
+      });
 
     let nextStep;
     const dispositions = decisionIssues.map((issue) => issue.disposition);
@@ -170,8 +197,8 @@ class SelectDispositionsView extends React.PureComponent {
     const closedStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).closed_status;
     const mst_justification = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).mst_justification;
     const pact_justification = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).pact_justification;
-    const mstStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).mst_status;
-    const pactStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).pact_status;
+    const mst_status = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).mst_status;
+    const pact_status = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).pact_status;
 
     const newDecisionIssue = {
       id: `temporary-id-${uuid.v4()}`,
@@ -182,10 +209,10 @@ class SelectDispositionsView extends React.PureComponent {
       request_issue_ids: [requestIssueId],
       mst_justification,
       pact_justification,
-      mstStatus,
-      mstOriginalStatus: mstStatus,
-      pactStatus,
-      pactOriginalStatus: pactStatus,
+      mst_status,
+      mstOriginalStatus: mst_status,
+      pact_status,
+      pactOriginalStatus: pact_status,
 
       /*
         Burn Pit and Blue Water will still be tracked on the appeal level but,
@@ -227,8 +254,8 @@ class SelectDispositionsView extends React.PureComponent {
 
   validateJustification = (justificationFeatureToggle) => {
     const { decisionIssue } = this.state;
-    const mstHasChanged = decisionIssue.mstOriginalStatus !== decisionIssue.mstStatus;
-    const pactHasChanged = decisionIssue.pactOriginalStatus !== decisionIssue.pactStatus;
+    const mstHasChanged = decisionIssue.mstOriginalStatus !== decisionIssue.mst_status;
+    const pactHasChanged = decisionIssue.pactOriginalStatus !== decisionIssue.pact_status;
 
     if (mstHasChanged && (decisionIssue.mst_justification === '' || decisionIssue.mst_justification === null) &&
       justificationFeatureToggle) {
@@ -277,10 +304,7 @@ class SelectDispositionsView extends React.PureComponent {
       this.props.appeal.externalId, { decisionIssues: newDecisionIssues }
     );
 
-    // Updated special issues view to the updated mst and pact status
-    this.selectedIssues()[0].mst_status = this.state.decisionIssue.mstStatus;
-    this.selectedIssues()[0].pact_status = this.state.decisionIssue.pactStatus;
-
+    this.stageSpecialIssues(this.props.appeal.decisionIssues);
     this.handleModalClose();
   }
 
@@ -350,7 +374,7 @@ class SelectDispositionsView extends React.PureComponent {
 
   onJustificationChange = (event, decision, type) => {
 
-    if (type === 'mstStatus') {
+    if (type === 'mst_status') {
       this.setState({
         decisionIssue: {
           ...decision,
@@ -358,7 +382,7 @@ class SelectDispositionsView extends React.PureComponent {
         }
       });
       this.setState({ mstJustification: event });
-    } else if (type === 'pactStatus') {
+    } else if (type === 'pact_status') {
       this.setState({
         decisionIssue: {
           ...decision,
@@ -378,7 +402,7 @@ class SelectDispositionsView extends React.PureComponent {
   onCheckboxChange = (event, decision) => {
     const checkboxId = event.target.getAttribute('id');
 
-    if (checkboxId === 'mstStatus' || checkboxId === 'pactStatus') {
+    if (checkboxId === 'mst_status' || checkboxId === 'pact_status') {
       this.setState({
         decisionIssue: {
           ...decision,
@@ -400,7 +424,14 @@ class SelectDispositionsView extends React.PureComponent {
   };
 
   render = () => {
-    const { appeal, highlight, justificationFeatureToggle, ...otherProps } = this.props;
+    const {
+      appeal,
+      highlight,
+      justificationFeatureToggle,
+      mstFeatureToggle,
+      pactFeatureToggle,
+      ...otherProps
+    } = this.props;
     const {
       highlightModal,
       decisionIssue,
@@ -420,8 +451,8 @@ class SelectDispositionsView extends React.PureComponent {
       blue_water: decisionIssue?.decisionSpecialIssue?.blue_water,
       // eslint-disable-next-line camelcase
       burn_pit: decisionIssue?.decisionSpecialIssue?.burn_pit,
-      mstStatus: decisionIssue?.mstStatus,
-      pactStatus: decisionIssue?.pactStatus
+      mst_status: decisionIssue?.mst_status,
+      pact_status: decisionIssue?.pact_status
     };
 
     // In order to determine whether or not to display error styling and an error message for each issue,
@@ -448,6 +479,8 @@ class SelectDispositionsView extends React.PureComponent {
       <hr />
       <AmaIssueList
         requestIssues={appeal.issues}
+        mstFeatureToggle={mstFeatureToggle}
+        pactFeatureToggle={pactFeatureToggle}
         errorMessages={issueErrors}>
         <DecisionIssues
           decisionIssues={appeal.decisionIssues}
@@ -551,7 +584,7 @@ class SelectDispositionsView extends React.PureComponent {
         />
         <QueueCheckboxGroup
           name={COPY.INTAKE_EDIT_ISSUE_SELECT_SPECIAL_ISSUES}
-          options={DECISION_SPECIAL_ISSUES}
+          options={(mstFeatureToggle || pactFeatureToggle) ? DECISION_SPECIAL_ISSUES : DECISION_SPECIAL_ISSUES_NO_MST_PACT}
           values={specialIssuesValues}
           styling={specialIssuesCheckboxStyling}
           onChange={(event) => this.onCheckboxChange(event, decisionIssue)}
@@ -562,18 +595,20 @@ class SelectDispositionsView extends React.PureComponent {
           }
           filterIssuesForJustification={this.filterIssuesForJustification}
           justificationFeatureToggle={justificationFeatureToggle}
+          mstFeatureToggle={mstFeatureToggle}
+          pactFeatureToggle={pactFeatureToggle}
           justifications={[
             {
-              id: 'mstStatus',
+              id: 'mst_status',
               justification: decisionIssue.mst_justification,
-              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, 'mstStatus'),
-              hasChanged: this.state.decisionIssue.mstOriginalStatus != this.state.decisionIssue.mstStatus
+              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, 'mst_status'),
+              hasChanged: this.state.decisionIssue.mstOriginalStatus != this.state.decisionIssue.mst_status
             },
             {
-              id: 'pactStatus',
+              id: 'pact_status',
               justification: decisionIssue.pact_justification,
-              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, 'pactStatus'),
-              hasChanged: this.state.decisionIssue.pactOriginalStatus != this.state.decisionIssue.pactStatus
+              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, 'pact_status'),
+              hasChanged: this.state.decisionIssue.pactOriginalStatus != this.state.decisionIssue.pact_status
             },
           ]}
         />
@@ -628,6 +663,7 @@ class SelectDispositionsView extends React.PureComponent {
 SelectDispositionsView.propTypes = {
   appeal: PropTypes.shape({
     decisionIssues: PropTypes.array,
+    specialIssues: PropTypes.object,
     externalId: PropTypes.string,
     isLegacyAppeal: PropTypes.bool,
     issues: PropTypes.array
@@ -638,7 +674,10 @@ SelectDispositionsView.propTypes = {
   hideSuccessMessage: PropTypes.func,
   highlight: PropTypes.bool,
   setDecisionOptions: PropTypes.func,
-  taskId: PropTypes.string
+  taskId: PropTypes.string,
+  justificationFeatureToggle: PropTypes.bool,
+  mstFeatureToggle: PropTypes.bool,
+  pactFeatureToggle: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => ({
