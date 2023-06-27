@@ -12,7 +12,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
 
     def get_distribution_request(distribution_id)
       unless VbmsDistribution.exists?(id: distribution_id)
-        distribution_not_found_response
+        return distribution_not_found_response
       end
 
       fake_distribution_response(distribution_id)
