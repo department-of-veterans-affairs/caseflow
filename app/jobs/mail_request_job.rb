@@ -20,20 +20,20 @@ class MailRequestJob < CaseflowJob
   #
   # Response: n/a
   def perform(vbms_uploaded_document, mail_package)
-    package_response = PacmanService.send_communication_package_request(
-      vbms_uploaded_document.veteran_file_number,
-      get_package_name(vbms_uploaded_document),
-      document_referenced(vbms_uploaded_document.id, mail_package[:copies])
-    )
-    log_info(package_response)
-    vbms_comm_package = create_package(vbms_uploaded_document, mail_package)
-    if package_response.code == 201
-      vbms_comm_package.update!(status: "success")
-      create_distribution_request(vbms_comm_package.id, mail_package)
-    else
+    begin
+      package_response = Fakes::PacmanService.send_communication_package_request(
+        vbms_uploaded_document.veteran_file_number,
+        get_package_name(vbms_uploaded_document),
+        document_referenced(vbms_uploaded_document.id, mail_package[:copies])
+      )
+      log_info(package_response)
+    rescue Caseflow::Error::PacmanApiError => error
       vbms_comm_package.update!(status: "error")
-      log_error(error_msg(package_response.code))
+      log_error(error)
     end
+    vbms_comm_package = create_package(vbms_uploaded_document, mail_package)
+    vbms_comm_package.update!(status: "success")
+    create_distribution_request(vbms_comm_package.id, mail_package)
   end
 
   private
@@ -78,19 +78,25 @@ class MailRequestJob < CaseflowJob
   def create_distribution_request(package_id, mail_package)
     distributions = mail_package[:distributions]
     distributions.each do |dist|
-      dist_hash = JSON.parse(dist)
-      distribution = VbmsDistribution.find(dist_hash["vbms_distribution_id"])
-      distribution_response = PacmanService.send_distribution_request(
+      begin
+        dist_hash = JSON.parse(dist)
+      rescue Caseflow::Error::PacmanApiError => error
+        log_error(error)
+      end
+      begin
+        distribution = VbmsDistribution.find(dist_hash["vbms_distribution_id"])
+      rescue ActiveRecord::RecordNotFound => error
+        uuid = SecureRandom.uuid
+        Rails.logger.error(error.to_s + "Error ID: " + uuid)
+        Raven.capture_exception(error, extra: { error_uuid: uuid })
+      end
+      distribution_response = Fakes::PacmanService.send_distribution_request(
         package_id,
         get_recipient_hash(distribution),
         get_destinations_hash(dist_hash)
       )
       log_info(distribution_response)
-      if distribution_response.code == 201
-        distribution.update!(vbms_communication_package_id: package_id)
-      else
-        log_error(error_msg(distribution.code))
-      end
+      distribution.update!(vbms_communication_package_id: package_id)
     end
   end
 
@@ -141,27 +147,19 @@ class MailRequestJob < CaseflowJob
   # takes in error message (string)
   #
   # Response: n/a
-  def log_error(error_msg)
+  def log_error(error)
     uuid = SecureRandom.uuid
-    Rails.logger.error(error_msg + "Error ID: " + uuid)
-    Raven.capture_exception(error_msg, extra: { error_uuid: uuid })
+    Rails.logger.error(ERROR_MESSAGES[error.code] + "Error ID: " + uuid)
+    Raven.capture_exception(error, extra: { error_uuid: uuid })
   end
 
-  # Purpose: gets an error message based on the error code
-  #
-  # takes in error code (int)
-  #
-  # Response: error message string
-  def error_msg(code)
-    if code == 400
-      "400 PacmanBadRequestError The server cannot create the new communication package due to a client error "
-    elsif code == 403
-      "403 PacmanForbiddenError The server cannot create the new communication package due to insufficient privileges."
-    elsif code == 404
-      "404 PacmanNotFoundError The communication package could not be found but may be available again in the future.
-       Subsequent requests by the client are permissible. "
-    end
-  end
+  ERROR_MESSAGES = {
+    400 => "400 PacmanBadRequestError The server cannot create the new communication package due to a client error.",
+    403 => "403 PacmanForbiddenError The server cannot create the new communication package" \
+           "due to insufficient privileges.",
+    404 => "404 PacmanNotFoundError The communication package could not be found but may be available" \
+      "again in the future. Subsequent requests by the client are permissible."
+  }.freeze
 
   # Purpose: logs information in Rails logger
   #
