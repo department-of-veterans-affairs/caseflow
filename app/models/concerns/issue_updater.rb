@@ -47,12 +47,15 @@ module IssueUpdater
         diagnostic_code: issue_attrs[:diagnostic_code].presence,
         participant_id: appeal.veteran.participant_id,
         decision_review: appeal,
-        caseflow_decision_date: appeal.decision_document&.decision_date
+        caseflow_decision_date: appeal.decision_document&.decision_date,
+        mst_status: issue_attrs[:mst_status],
+        pact_status: issue_attrs[:pact_status]
       )
 
       request_issues.each do |request_issue|
         RequestDecisionIssue.create!(decision_issue: decision_issue, request_issue: request_issue)
       end
+      
       create_remand_reasons(decision_issue, issue_attrs[:remand_reasons] || [])
     end
   end
