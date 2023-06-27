@@ -3,36 +3,33 @@
 
 describe BatchProcessPriorityEPSyncJobSpec, :postgres do
   # Testing the batch_priority_end_product_sync! method
-  context 'Priority EP Sync Batch Creation Tests' do
-    before(:each) do
-      let(:seed) { Seeds::VbmsExtClaim.new }
-      seed.seed!
-      # put seed data into PEPSQ table
-      batch = BatchProcess.batch_priority_end_product_sync!
-    end
+  let(:seed) { Seeds::VbmsExtClaim.new }
+  seed.seed!
 
+  # Add unsynced records to the PEPSQ table
+  EndProductEstablishment.where(synced_status: "PEND").each do |r|
+    PriorityEndProductSyncQueue.create!(end_product_establishment_id: r.id,
+                                        created_at: Time.zone.now)
+  end
+
+  batch = BatchProcess.batch_priority_end_product_sync!
+
+  context 'Priority EP Sync Batch Creation Tests' do
     it 'Checking if a new batch was created' do
       expect(batch).to eq(true)
     end
 
     it 'Checking if the created batch was populated correctly' do
       records = PriorityEndProductSyncQueue.where(batch_id: batch.batch_id)
-      expect(records.length).to eq(100) #REPLACE with ENV when setup
+      expect(records.length).to eq(batch.records_attempted)
     end
   end
 
 
-
-
   # Testing the process_priority_end_product_sync! method
   context 'Priority EP Sync Batch Processing Tests' do
-    before(:each) do
-      #call seed data
-      #put the seed data into PEPSQ table
-      batch = BatchProcess.batch_priority_end_product_sync!
-      batch = BatchProces.process_priority_end_product_sync!(batch)
-    end
 
+    batch = BatchProces.process_priority_end_product_sync!(batch)
 
     # Checking that the number of synced and failed records = the batch total
     it 'Ensuring the processing method attempted to sync every record' do

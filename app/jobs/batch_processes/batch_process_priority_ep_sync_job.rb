@@ -1,6 +1,3 @@
-
-
-
 class BatchProcessPriorityEPSyncJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :queue

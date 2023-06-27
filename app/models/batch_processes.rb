@@ -20,9 +20,12 @@ class BatchProcess < CaseflowRecord
     # Find the records that need batching but also haven't had an error recently
     PriorityEndProductSyncQueue.where(
       "batch_id IS NULL AND
-      (last_batched_at IS NULL OR last_batched_at >= ?)",
-      ENV["ERROR_DELAY"].to_i.hours.ago).limit(ENV["BATCH_LIMIT"].to_i).each do |r|
-        r.update!(batch_id: new_batch.batch_id, status: "PRE_PROCESSING")
+      (last_batched_at IS NULL OR last_batched_at <= ?)",
+      ENV["ERROR_DELAY"].to_i.hours.ago).limit(ENV["BATCH_LIMIT"].to_i).each do |rec|
+        rec.update!(batch_id: new_batch.batch_id,
+                  status: "PRE_PROCESSING",
+                  last_batched_at: Time.zone.now)
+
         records_batched+=1
     end
 
@@ -38,51 +41,41 @@ class BatchProcess < CaseflowRecord
     processing_batch.update!(state: 'PROCESSING', started_at: Time.zone.now)
 
     # Find the batchs records and attempt to sync them
-    PriorityEndProductSyncQueue.where(batch_id: processing_batch.batch_id).each do |r|
+    PriorityEndProductSyncQueue.where(batch_id: processing_batch.batch_id).each do |rec|
       begin
-        r.update!(status: 'PROCESSING')
-        epe = r.end_product_establishment
-        EndProductSyncJob.perform_now(epe.id)
+        rec.update!(status: 'PROCESSING')
+        epe = rec.end_product_establishment
+        epe.sync!
         epe.reload
         vbms_rec = VbmsExtClaim.find_by(claim_id: epe.reference_id.to_i)
 
         # Check if the EPE was actually synced with VBMS, if it wasn't throw error
         if epe.synced_status != vbms_rec.level_status_code
-          byebug
-            fail ProcessingPriorityEndProductSyncError, "EPE Failed to sync at: #{Time.zone.now}"
+
+            fail Caseflow::Error::ProcessingPriorityEndProductSyncError, "EPE Failed to sync at: #{Time.zone.now}"
 
         else
           completed+=1
-          r.update!(status: 'SYNCED')
+          rec.update!(status: 'SYNCED')
         end
 
       rescue Errno::ETIMEDOUT => error
-        error_out_record(r, error)
-
-      #rescue EstablishedEndProductNotFound => error
-        #raise error
+        error_out_record(rec, error)
+        failed+=1
+        next
 
       # When the record still isn't synced after .sync! has been called on it
-      rescue ProcessingPriorityEndProductSyncError => error
-        puts '*********************************************'
-        puts error
-        puts '*********************************************'
-        error_out_record(r, error)
+      rescue Caseflow::Error::ProcessingPriorityEndProductSyncError => error
+        error_out_record(rec, error)
         failed+=1
-        capture_exception(error: error, extra: {batch_id: batch_id})
-        #next
+        next
 
       rescue StandardError => error
-        error_out_record(r, error)
-        capture_exception(error: error, extra: {batch_id: batch_id})
+        error_out_record(rec, error)
+        failed+=1
+        Rails.logger.error(error.inspect)
+        next
 
-      #ensure
-       # puts '============================================='
-        #puts error
-        #puts '============================================='
-        #error_out_record(r, error)
-       # failed+=1
-        #next
       end # Begin/Rescues/ensure
     end # PEPSQ.where.each
 
@@ -103,7 +96,6 @@ class BatchProcess < CaseflowRecord
   # As a general method, it's assumed the record has a batch_id and error_messages
   # column within the associated table.
   def error_out_record(rec, error)
-    puts
     error_array = rec.error_messages
     error_array.push("Error: #{error.inspect} - BatchID: #{rec.batch_id} - Time: #{Time.zone.now} ")
     if(error_array.length >= ENV["MAX_ERRORS_BEFORE_STUCK"].to_i)
@@ -111,7 +103,6 @@ class BatchProcess < CaseflowRecord
       declare_record_stuck(rec)
     else
       rec.update!(batch_id: nil,
-                  last_batched_at: nil,
                   status: 'ERROR',
                   error_messages: error_array)
     end
