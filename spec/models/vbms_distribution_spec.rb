@@ -20,10 +20,9 @@ describe VbmsDistribution, :postgres do
 
   include_examples "distribution has valid attributes"
 
-  it "is not valid without an associated VbmsCommunicationPackage" do
+  it "is valid without an associated VbmsCommunicationPackage" do
     distribution.vbms_communication_package = nil
-    expect(distribution).to_not be_valid
-    expect(distribution.errors[:vbms_communication_package]).to eq(["must exist"])
+    expect(distribution).to be_valid
   end
 
   it "is not valid without a recipient type" do
