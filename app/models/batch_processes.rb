@@ -6,32 +6,24 @@
 # Methods for batching should follow the convention of "batch_" followed by the type
 class BatchProcess < CaseflowRecord
 
-  # has_many :priority_end_product_sync_queue
-
-
   # This method checks the priority_end_product_sync_queue table and begin creating a batch.
   # After creation the method will call the appropriate processing method.
   #
   # Returns the batch_id created of the batch that is formed.
   def batch_priority_end_product_sync!
-    batch_limit = 100 # Number of total possible records in a batch
-    error_delay = 12 # Delay, in hours, before an errored out record will try and be synced again
-    max_errors = 3 # Number of errors before declaring stuck
     records_batched = 0
-
     uuid = SecureRandom.uuid
     new_batch = BatchProcess.create!(batch_id: uuid,
                                      state: "CREATING_BATCH",
                                      batch_type: "priority_end_product_sync")
 
+    # Find the records that need batching but also haven't had an error recently
     PriorityEndProductSyncQueue.where(
       "batch_id IS NULL AND
-      (last_batched_at IS NULL OR
-       last_batched_at >= ?)",
-      error_delay.hours.ago).limit(batch_limit).each do |r|
+      (last_batched_at IS NULL OR last_batched_at >= ?)",
+      ENV["ERROR_DELAY"].to_i.hours.ago).limit(ENV["BATCH_LIMIT"].to_i).each do |r|
         r.update!(batch_id: new_batch.batch_id, status: "PRE_PROCESSING")
         records_batched+=1
-
     end
 
     new_batch.update!(state: "PRE_PROCESSING", records_attempted: records_batched)
@@ -41,29 +33,23 @@ class BatchProcess < CaseflowRecord
   # This method is responsible for finding 'priority_end_product_sync' batches that have
   # yet to be processed and process them.
   def process_priority_end_product_sync!(processing_batch)
-
     completed = 0
     failed = 0
-    processing_batch.update!(state: 'PROCESSING')
+    processing_batch.update!(state: 'PROCESSING', started_at: Time.zone.now)
+
+    # Find the batchs records and attempt to sync them
     PriorityEndProductSyncQueue.where(batch_id: processing_batch.batch_id).each do |r|
-      # Call EndProductSyncJob.preform and try to sync the process
-      # If passes, completed++. Otherwise failed++ and update record
-      #
-
-      puts r
-      puts r.end_product_establishment
-      puts '==============================='
-
-
-
       begin
         r.update!(status: 'PROCESSING')
-        r.end_product_establishment.sync! #sync_status matach level status code
-        r.end_product_establishment.reload
-        vbms_rec = VbmsExtClaim.find_by(claim_id: r.end_product_establishment.reference_id.to_i)
-        puts vbms_rec
-        if r.end_product_establishment.synced_status != vbms_rec.level_status_code
-          fail ProcessingPriorityEndProductSyncError, "#{Time.zone.now}"
+        epe = r.end_product_establishment
+        EndProductSyncJob.perform_now(epe.id)
+        epe.reload
+        vbms_rec = VbmsExtClaim.find_by(claim_id: epe.reference_id.to_i)
+
+        # Check if the EPE was actually synced with VBMS, if it wasn't throw error
+        if epe.synced_status != vbms_rec.level_status_code
+          byebug
+            fail ProcessingPriorityEndProductSyncError, "EPE Failed to sync at: #{Time.zone.now}"
 
         else
           completed+=1
@@ -71,21 +57,34 @@ class BatchProcess < CaseflowRecord
         end
 
       rescue Errno::ETIMEDOUT => error
-        raise error
+        error_out_record(r, error)
 
+      #rescue EstablishedEndProductNotFound => error
+        #raise error
+
+      # When the record still isn't synced after .sync! has been called on it
       rescue ProcessingPriorityEndProductSyncError => error
+        puts '*********************************************'
+        puts error
+        puts '*********************************************'
         error_out_record(r, error)
         failed+=1
         capture_exception(error: error, extra: {batch_id: batch_id})
-        next
+        #next
 
       rescue StandardError => error
         error_out_record(r, error)
-        failed+=1
         capture_exception(error: error, extra: {batch_id: batch_id})
-        next
-      end #Begin/Rescue
-    end # .where.each
+
+      #ensure
+       # puts '============================================='
+        #puts error
+        #puts '============================================='
+        #error_out_record(r, error)
+       # failed+=1
+        #next
+      end # Begin/Rescues/ensure
+    end # PEPSQ.where.each
 
     processing_batch.update!(state: "COMPLETED",
                              records_failed: failed,
@@ -95,11 +94,20 @@ class BatchProcess < CaseflowRecord
 
   private
 
+
+  # When a record and error is sent to this method, it updates the record and checks to see
+  # if the record should be declared stuck. If the records should be stuck it called the
+  # declare_record_stuck method below. Otherwise the record is updated with the error message,
+  # and the previous batch information is removed so the record can get picked up in queue again.
+  #
+  # As a general method, it's assumed the record has a batch_id and error_messages
+  # column within the associated table.
   def error_out_record(rec, error)
+    puts
     error_array = rec.error_messages
-    error_array.push("#{error.inspect} - BatchID: #{rec.batch_id} - Time: #{Time.zone.now}")
-    if(error_array.length >= 3) # CHANGE hard coded value after env setup
-      rec.update!(state: "STUCK", error_messages: error_array)
+    error_array.push("Error: #{error.inspect} - BatchID: #{rec.batch_id} - Time: #{Time.zone.now} ")
+    if(error_array.length >= ENV["MAX_ERRORS_BEFORE_STUCK"].to_i)
+      rec.update!(status: "STUCK", error_messages: error_array)
       declare_record_stuck(rec)
     else
       rec.update!(batch_id: nil,
@@ -109,13 +117,14 @@ class BatchProcess < CaseflowRecord
     end
   end
 
+
   # This method creates a new record within caseflow_stuck_records table
   # based on the record sent to it. The innitial record is not altered.
   # The method will then notify that a record has gotten stuck and needs
   # manual review.
   #
   # As a general method, it's assumed the record has a batch_id and error_messages
-  # column within the table.
+  # column within the associated table.
   def declare_record_stuck(rec)
     associated_batch = BatchProcess.find_by(batch_id: rec.batch_id)
     CaseflowStuckRecord.create!(stuck_record_id: rec.id,
@@ -125,7 +134,4 @@ class BatchProcess < CaseflowRecord
 
     # NOTIFING CODE - Ask Jeremy what should be notified. Raven / Slack etc...
   end
-
-
-
 end

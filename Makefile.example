@@ -188,7 +188,7 @@ db-migrate:	## Migrate main Caseflow db
 db-rollback:	## Rollback main Caseflow db
 	bundle exec rake db:rollback
 
-migrate: etl-migrate etl-test-prepare db-migrate ## Migrate all Rails databases
+migrate: external-db-remove etl-migrate etl-test-prepare db-migrate ## Migrate all Rails databases
 
 rollback: etl-rollback db-rollback	## Rollback all Rails databases
 
