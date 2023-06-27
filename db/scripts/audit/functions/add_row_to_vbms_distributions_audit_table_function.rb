@@ -26,7 +26,8 @@ conn.execute(
         OLD.updated_at,
         OLD.vbms_communication_package_id,
         OLD.created_by_id,
-        OLD.updated_by_id;
+        OLD.updated_by_id
+        OLD.pacman_uuid;
     elsif (TG_OP = 'UPDATE') then
       insert into caseflow_audit.vbms_distributions_audit
       select
@@ -45,7 +46,8 @@ conn.execute(
         NEW.updated_at,
         NEW.vbms_communication_package_id,
         NEW.created_by_id,
-        NEW.updated_by_id;
+        NEW.updated_by_id,
+        NEW.pacman_uuid;
     elsif (TG_OP = 'INSERT') then
       insert into caseflow_audit.vbms_distributions_audit
       select
@@ -64,7 +66,8 @@ conn.execute(
         NEW.updated_at,
         NEW.vbms_communication_package_id,
         NEW.created_by_id,
-        NEW.updated_by_id;
+        NEW.updated_by_id,
+        NEW.pacman_uuid;
     end if;
     return null;
   end;
