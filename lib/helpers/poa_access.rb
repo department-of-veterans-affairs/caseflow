@@ -3,9 +3,9 @@
 module WarRoom
   class PoaAccess
     # Legacy Appeals - no POA access when spouse not in people table
-    def initialize(vacols_id, poa_participant_id)
+    def initialize(vacols_id, claimant_participant_id)
       @vacols_id = vacols_id
-      @poa_participant_id = poa_participant_id
+      @claimant_participant_id = claimant_participant_id
       RequestStore[:current_user] = User.system_user
     end
 
@@ -20,11 +20,11 @@ module WarRoom
       purge_poa!
 
       # Create person record
-      Person.find_or_create_by_participant_id(@poa_participant_id)
+      Person.find_or_create_by_participant_id(@claimant_participant_id)
 
       # Create bgs POA record
-      # NOTE: The POA is updated in a before_save callback. It will pull in all the attrs for the created POA
-      BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(@poa_participant_id)
+      # NOTE: The POA is updated in a before_save callback. It will pull in all data for the created POA
+      BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(@claimant_participant_id)
 
       # Confirm fix by returning the POA for passed in appeal
       appeal.bgs_power_of_attorney.present?
