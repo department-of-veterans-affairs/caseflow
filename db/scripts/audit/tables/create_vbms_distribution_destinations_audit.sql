@@ -2,7 +2,6 @@ create table caseflow_audit.vbms_distribution_destinations_audit (
               id BIGSERIAL PRIMARY KEY,
               type_of_change CHAR(1) not null,
               vbms_distribution_destinations_id bigint not null,
-              uuid varchar NULL,
               destination_type varchar NOT NULL,
               address_line_1 varchar NOT NULL,
               address_line_2 varchar NULL,
