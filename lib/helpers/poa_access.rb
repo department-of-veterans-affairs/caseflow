@@ -17,7 +17,7 @@ module WarRoom
       end
 
       # due diligence to clean up records that may have been created when looking for an existing record
-      purge_poa!
+      poa.destroy!
 
       # Create person record
       Person.find_or_create_by_participant_id(@claimant_participant_id)
@@ -38,12 +38,6 @@ module WarRoom
       # clear memoization on legacy appeals
       appeal.power_of_attorney&.try(:clear_bgs_power_of_attorney!)
       appeal.bgs_power_of_attorney
-    end
-
-    private
-
-    def purge_poa!
-      poa.destroy!
     end
   end
 end
