@@ -938,6 +938,7 @@ RSpec.feature "Reader", :all_dbs do
         click_on documents[1].type
 
         # tags for first document are shared in tag auto suggestions for second document
+        page.find("#tags").click
         tag_options = find_all(".cf-select__option")
         expect(tag_options.count).to eq 4
 
