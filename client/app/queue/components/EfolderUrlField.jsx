@@ -30,9 +30,12 @@ const EfolderUrlField = (props) => {
         const seriesId = captureDocumentSeriesId(value)
         // let seriesIds = VBMSService.fetch_document_series_for(appeal)
         // seriesIds.includes(seriesId)
-        // Then render green check since we know this is guaranteed to work
+        // Remove spinner if this seriesId is in seriesIds array. If not, display error message (doen't exist in efolder)
       } else {
         console.log('Invalid efolder regex match');
+        // https://benefits-int-delivery.slack.com/archives/C03NCPYRXK2/p1687881917481399?thread_ts=1687878651.089549&cid=C03NCPYRXK2
+        // Show error message as described in thread ^^ (invalid link format)
+        // Block form submission until resolved
       }
       // We'll need to dial in this delay a bit.
     }, 500)
@@ -45,9 +48,12 @@ const EfolderUrlField = (props) => {
       const seriesId = captureDocumentSeriesId(value)
       // let seriesIds = VBMSService.fetch_document_series_for(appeal)
       // seriesIds.includes(seriesId)
-      // Then render green check since we know this is guaranteed to work
+      // Remove spinner if this seriesId is in seriesIds array. If not, display error message (doen't exist in efolder)
     } else {
       console.log('Invalid efolder regex match');
+      // https://benefits-int-delivery.slack.com/archives/C03NCPYRXK2/p1687881917481399?thread_ts=1687878651.089549&cid=C03NCPYRXK2
+      // Show error message as described in thread ^^ (invalid link format)
+      // Block form submission until resolved
     }
   };
 
