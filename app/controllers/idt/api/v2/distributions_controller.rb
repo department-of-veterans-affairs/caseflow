@@ -15,8 +15,8 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
     end
 
     begin
-      # Retrieves the distribution package from the PacMan API
-      distribution = PacManService.get_distribution_request(distribution_id)
+      # Retrieves the distribution package from the Pacman API
+      distribution = PacmanService.get_distribution_request(distribution_id)
       response_code = distribution.code
       if response_code != 200
         fail StandardError
@@ -50,7 +50,7 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
     end
   end
 
-  # Checks if the distribution exists in the database before sending request to PacMan
+  # Checks if the distribution exists in the database before sending request to Pacman
   def valid_id?(distribution_id)
     VbmsDistribution.exists?(id: distribution_id)
   end
