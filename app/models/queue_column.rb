@@ -113,6 +113,7 @@ class QueueColumn
     end
   end
 
+  # :reek:FeatureEnvy
   # Issue Type helpers to expand issue type filter options to all possible options for orgs that support it
   def all_possible_issue_type_options(tasks)
     assigned_to = extract_assigned_to_from_relation(tasks)
@@ -133,6 +134,7 @@ class QueueColumn
       where_hash["assigned_to_type"].try(:constantize)&.find_by(id: where_hash["assigned_to_id"])
   end
 
+  # :reek:FeatureEnvy
   def add_empty_issue_types_to_filter_list(tasks, totals)
     # Get the extra issue types from the ISSUE_CATEGORIES json
     extra_issue_types = all_possible_issue_type_options(tasks)
