@@ -615,19 +615,19 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
             expect(error_message).to eq("First name can't be blank")
           end
         end
+
+        context "when dispatch is not successfully processed" do
+          let(:citation_number) { "INVALID" }
+          it "does not call #perform_later on MailRequestJob" do
+            expect(MailRequestJob).to_not receive(:perform_later)
+            post :outcode, params: params
+          end
+        end
       end
 
       context "when dispatch is not associated with a mail request" do
         it "does not call #perform_later on MailRequestJob" do
           params[:recipient_info] = []
-          expect(MailRequestJob).to_not receive(:perform_later)
-          post :outcode, params: params
-        end
-      end
-
-      context "when dispatch is not successfully processed" do
-        let(:citation_number) { "INVALID" }
-        it "does not call #perform_later on MailRequestJob" do
           expect(MailRequestJob).to_not receive(:perform_later)
           post :outcode, params: params
         end
