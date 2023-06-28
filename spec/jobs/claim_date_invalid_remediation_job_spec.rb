@@ -9,7 +9,9 @@ describe ClaimDateInvalidRemediationJob, :postgres do
     Timecop.freeze(Time.zone.now)
     allow(subject).to receive(:upload_logs_to_s3).with(anything).and_return("logs")
   end
-  let(:expected_logs) { "\n #{Time.zone.now} ClaimDateInvalidRemediationJob::Log - Found 1 Decision Document(s) with errors" }
+  let(:expected_logs) do
+    "\n #{Time.zone.now} ClaimDateInvalidRemediationJob::Log - Found 1 Decision Document(s) with errors"
+  end
 
   context "when error, processed_at and uploaded_to_vbms_at are populated" do
     it "clears the error field" do
@@ -45,7 +47,8 @@ describe ClaimDateInvalidRemediationJob, :postgres do
   context "when faced with multiple decision documents" do
     it "filters out the decision documents with nil in error column" do
       create_list(:decision_document, 5)
-      create_list(:decision_document, 2, error: "ClaimDateDt", processed_at: 7.days.ago, uploaded_to_vbms_at: 7.days.ago)
+      create_list(:decision_document, 2, error: "ClaimDateDt", processed_at: 7.days.ago,
+                                         uploaded_to_vbms_at: 7.days.ago)
 
       expect(subject.retrieve_decision_docs_with_errors.length).to eq(3)
       subject.perform
