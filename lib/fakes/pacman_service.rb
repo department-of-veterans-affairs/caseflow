@@ -11,7 +11,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
     end
 
     def get_distribution_request(distribution_uuid)
-      distribution = VbmsDistribution.find(uuid: distribution_uuid)
+      distribution = VbmsDistribution.find_by(uuid: distribution_uuid)
 
       return distribution_not_found_response unless distribution
 
