@@ -922,22 +922,7 @@ feature "Intake Add Issues Page", :all_dbs do
     end
 
     scenario "Adding MST designation to issue coming from VBMS contention during intake" do
-      claim_id = rating.issues[2].reference_id
-      epe = create(
-        :end_product_establishment,
-        reference_id: claim_id,
-        veteran_file_number: veteran.file_number
-        )
-      mst_contention = Generators::Contention.build_mst_and_pact_contention(claim_id: claim_id)
 
-      req_issue = create(:request_issue,
-      contention_reference_id: mst_contention.id,
-      end_product_establishment: epe,
-      veteran_participant_id: veteran.participant_id,
-      #rating.issues[0].reference_id maps to claim_id
-      contested_rating_issue_reference_id: rating.issues[2].reference_id
-    )
-      start_higher_level_review(veteran, legacy_opt_in_approved: true)
       visit "/intake"
       click_intake_continue
       click_intake_add_issue
