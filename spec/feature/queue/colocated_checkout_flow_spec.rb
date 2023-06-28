@@ -136,13 +136,13 @@ RSpec.feature "Colocated checkout flows", :all_dbs do
       click_dropdown(index: 0, text: "Assign to team")
       expect(page).to have_content("Assign task")
 
-      click_dropdown({ index: 1 }, find(".cf-modal-body"))
+      click_dropdown({ text: "CAVC Litigation Support" }, find(".cf-modal-body"))
       fill_in "taskInstructions", with: "testing this out"
       click_on COPY::MODAL_SUBMIT_BUTTON
 
       expect(page).to have_current_path("/queue")
       expect(page).to have_content(
-        format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, "Litigation Support")
+        format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, "CAVC Litigation Support")
       )
 
       expect(translation_action.reload.status).to eq "on_hold"
