@@ -24,7 +24,6 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
   end
 
   let(:error_text) { "#<Caseflow::Error::DuplicateEp: Caseflow::Error::DuplicateEp>" }
-  let(:setups) { [] }
 
   before do
     setups.each do |setup|
