@@ -18,6 +18,7 @@ class Rating
     "gulf war presumptive",
     "radiation"
   ].freeze
+  CONTENTION_PACT_ISSUES = %w[PACT PACTDICRE].freeze
 
   class NilRatingProfileListError < StandardError
     def ignorable?
@@ -65,7 +66,6 @@ class Rating
     end
 
     def special_issue_has_mst?(special_issue)
-      #binding.pry
       if special_issue[:spis_tn]&.casecmp("ptsd - personal trauma")&.zero?
         return MST_SPECIAL_ISSUES.include?(special_issue[:spis_basis_tn]&.downcase)
       end
@@ -81,6 +81,52 @@ class Rating
       end
 
       PACT_SPECIAL_ISSUES.include?(special_issue[:spis_tn]&.downcase)
+    end
+
+    def mst_from_contentions_for_rating?(serialized_hash)
+      contentions = participant_contentions(serialized_hash)
+      return false if contentions.blank?
+
+      contentions.any? { |contention| mst_contention_status?(contention) }
+    end
+
+    def pact_from_contentions_for_rating?(serialized_hash)
+      contentions = participant_contentions(serialized_hash)
+      return false if contentions.blank?
+
+      contentions.any? { |contention| pact_contention_status?(contention) }
+    end
+
+    def participant_contentions(serialized_hash)
+      contentions_data = []
+      response = fetch_contentions_by_participant_id(serialized_hash[:participant_id])
+
+      serialized_hash[:rba_contentions_data].each do |rba|
+        response.each do |resp|
+          contentions_data << resp[:contentions] if resp[:contentions][:cntntn_id] == rba[:cntntn_id]
+        end
+      end
+      contentions_data.compact
+    end
+
+    def mst_contention_status?(bgs_contention)
+      return false if bgs_contention.nil? || bgs_contention[:special_issues].blank?
+
+      if bgs_contention[:special_issues].is_a?(Hash)
+        bgs_contention[:special_issues][:spis_tc] == "MST"
+      elsif bgs_contention[:special_issues].is_a?(Array)
+        bgs_contention[:special_issues].any? { |issue| issue[:spis_tc] == "MST" }
+      end
+    end
+
+    def pact_contention_status?(bgs_contention)
+      return false if bgs_contention.nil? || bgs_contention[:special_issues].blank?
+
+      if bgs_contention[:special_issues].is_a?(Hash)
+        CONTENTION_PACT_ISSUES.include?(bgs_contention[:special_issues][:spis_tc])
+      elsif bgs_contention[:special_issues].is_a?(Array)
+        bgs_contention[:special_issues].any? { |issue| CONTENTION_PACT_ISSUES.include?(issue[:spis_tc]) }
+      end
     end
   end
 
@@ -118,9 +164,26 @@ class Rating
       most_recent_disability_hash_for_issue = map_of_dis_sn_to_most_recent_disability_hash[disability[:dis_sn]]
       special_issues = most_recent_disability_hash_for_issue&.special_issues
       disability[:special_issues] = special_issues if special_issues
+      disability[:rba_contentions_data] = rba_contentions_data(disability)
 
       RatingDecision.from_bgs_disability(self, disability)
     end
+  end
+
+  def rba_contentions_data(disability)
+    rating_issues.each do |issue|
+      next unless issue[:dis_sn] == disability[:dis_sn]
+
+      return ensure_array_of_hashes(issue[:rba_issue_contentions])
+    end
+  end
+
+  def rating_issues
+    @rating_issues ||= Array.wrap(rating_profile[:rating_issues] || rating_profile.dig(:rba_issue_list, :rba_issue))
+  end
+
+  def ensure_array_of_hashes(array_or_hash_or_nil)
+    [array_or_hash_or_nil || {}].flatten
   end
 
   def associated_end_products
