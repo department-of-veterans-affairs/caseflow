@@ -1,5 +1,6 @@
 require "./lib/helpers/fix_file_number_wizard.rb"
 class FileNumberNotFoundFix
+  attr_reader :logs
   # frozen_string_literal: true
   ERROR_TEXT = "FILENUMBER does not exist"
 
@@ -10,7 +11,7 @@ class FileNumberNotFoundFix
   end
 
   def fix_multiple_records
-    @logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
+    logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
       " Records with errors: #{bulk_decision_docs_with_error.count}. "\
       " Status: Starting fix.")
 
@@ -21,7 +22,7 @@ class FileNumberNotFoundFix
 
       decision_document.update(error: nil)
     end
-    @logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
+    logs .push("#{Time.zone.now} FILENUMBERERROR::Log"\
       " Records with errors: #{bulk_decision_docs_with_error.count}. "\
       " Status: Complete.")
   end
@@ -44,8 +45,8 @@ class FileNumberNotFoundFix
     return if collections.map(&:count).sum == 0
 
     update_records(collections, file_number, veteran)
-    @logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
-      " Participant Id: #{veteran.participant_id}.veteranFile Number: #{file_number}."\
+    logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
+      " Participant Id: #{veteran.participant_id}.Veteran File Number: #{file_number}."\
       " Status: File Number Updated.")
 
     create_log
@@ -56,7 +57,7 @@ class FileNumberNotFoundFix
       begin
         collections.each do |collection|
           collection.update!(file_number)
-          @logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
+          logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
             " collection: #{collection.klass.name}. ."\
             " Status: Successful.")
         end
@@ -76,7 +77,7 @@ class FileNumberNotFoundFix
   end
 
   def create_log
-    content = @logs.join("\n")
+    content = logs.join("\n")
     temporary_file = Tempfile.new("cdc-log.txt")
     filepath = temporary_file.path
     temporary_file.write(content)

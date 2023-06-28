@@ -44,7 +44,7 @@ describe FileNumberNotFoundFix, :postgres do
       subject { FileNumberNotFoundFix.new }
 
       context "when job completes successfully" do
-        let!(:expected_logs) { "#{Time.zone.now} FILENUMBERERROR::Log Participant Id: 788690002.veteranFile Number: 555555555. Status: File Number Updated." }
+        let!(:expected_logs) { "#{Time.zone.now} FILENUMBERERROR::Log Records with errors: 0.  Status: Complete." }
 
         before do
           allow(subject)
@@ -61,7 +61,7 @@ describe FileNumberNotFoundFix, :postgres do
 
         it "updates the logs correctly" do
           subject.fix_multiple_records
-          expect(subject.fix_multiple_records.instance_variable_get("@logs")).to include(expected_logs)
+          expect(subject.logs.last).to include(expected_logs)
         end
 
         it "updates associated objects" do
@@ -126,7 +126,7 @@ describe FileNumberNotFoundFix, :postgres do
       subject { FileNumberNotFoundFix.new }
 
       context "when job completes successfully" do
-        let!(:expected_logs) { "#{Time.zone.now} FILENUMBERERROR::Log Participant Id: 788690002.veteranFile Number: 555555555. Status: File Number Updated." }
+        let!(:expected_logs) { "Veteran File Number: 000979834. Status: File Number Updated" }
 
         before do
           allow(subject)
@@ -141,7 +141,7 @@ describe FileNumberNotFoundFix, :postgres do
 
         it "updates the logs correctly" do
           subject.single_record_fix(appeal)
-          expect(subject.instance_variable_get("@logs")).to include(expected_logs)
+          expect(subject.logs.last).to include(expected_logs)
         end
 
         it "updates associated objects" do
