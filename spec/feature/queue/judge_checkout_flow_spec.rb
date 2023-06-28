@@ -615,8 +615,12 @@ RSpec.feature "Judge checkout flow", :all_dbs do
           fill_in "additional-factors", with: dummy_note
           click_on "Continue"
 
-          expect(appeal.decision_issues.first.mst_status).to eq(true)
-          expect(appeal.decision_issues.first.pact_status).to eq(false)
+          decision_issues = appeal.decision_issues
+
+          visit "queue/appeals/#{appeal.uuid}"
+
+          expect(decision_issues[0].mst_status).to eq(true)
+          expect(decision_issues[0].pact_status).to eq(false)
         end
 
         scenario " - adds pact to the decision" do
@@ -642,8 +646,12 @@ RSpec.feature "Judge checkout flow", :all_dbs do
           fill_in "additional-factors", with: dummy_note
           click_on "Continue"
 
-          expect(appeal.decision_issues.first.mst_status).to eq(false)
-          expect(appeal.decision_issues.first.pact_status).to eq(true)
+          decision_issues = appeal.decision_issues
+
+          visit "queue/appeals/#{appeal.uuid}"
+
+          expect(decision_issues[0].mst_status).to eq(false)
+          expect(decision_issues[0].pact_status).to eq(true)
         end
 
         scenario " - adds mst and pact to the decision" do
@@ -670,8 +678,12 @@ RSpec.feature "Judge checkout flow", :all_dbs do
           fill_in "additional-factors", with: dummy_note
           click_on "Continue"
 
-          expect(appeal.decision_issues.first.mst_status).to eq(true)
-          expect(appeal.decision_issues.first.pact_status).to eq(true)
+          decision_issues = appeal.decision_issues
+
+          visit "queue/appeals/#{appeal.uuid}"
+
+          expect(decision_issues[0].mst_status).to eq(true)
+          expect(decision_issues[0].pact_status).to eq(true)
         end
       end
 
@@ -728,8 +740,12 @@ RSpec.feature "Judge checkout flow", :all_dbs do
           fill_in "additional-factors", with: dummy_note
           click_on "Continue"
 
-          expect(appeal_with_mst_pact.decision_issues.first.mst_status).to eq(false)
-          expect(appeal_with_mst_pact.decision_issues.first.pact_status).to eq(false)
+          decision_issues = appeal_with_mst_pact.decision_issues
+
+          visit "queue/appeals/#{appeal.uuid}"
+
+          expect(decision_issues[0].mst_status).to eq(false)
+          expect(decision_issues[0].pact_status).to eq(false)
         end
       end
     end
