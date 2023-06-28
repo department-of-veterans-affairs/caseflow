@@ -4,9 +4,9 @@
 # individual private methods.
 #
 # Methods for batching should follow the convention of "batch_" followed by the type
-class BatchProcesses < CaseflowRecord
+class BatchProcess < CaseflowRecord
 
-  # has_many :priority_end_product_sync_queue
+  has_many :priority_end_product_sync_queue, foreign_key: "batch_id"
 
 
   # Calls the associated private method responible for creating and processing

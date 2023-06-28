@@ -220,7 +220,7 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
-  create_table "batch_processes", primary_key: "batch_id", id: :uuid, comment: "The unique id of the created batch", default: nil, comment: "A generalized table for batching and processing records within caseflow", force: :cascade do |t|
+  create_table "batch_processes", primary_key: "batch_id", id: :uuid, default: -> { "uuid_generate_v4()" }, comment: "A generalized table for batching and processing records within caseflow", force: :cascade do |t|
     t.string "batch_type", null: false, comment: "Indicates what type of record is being batched"
     t.datetime "ended_at", comment: "The date/time that the batch finsished processing"
     t.integer "records_attempted", default: 0, comment: "The number of records in the batch attempting to be processed"
@@ -2167,6 +2167,7 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "appeals"
   add_foreign_key "post_decision_motions", "tasks"
+  add_foreign_key "priority_end_product_sync_queue", "batch_processes", column: "batch_id", primary_key: "batch_id", name: "priority_end_product_sync_queue_batch_processes_id_fk"
   add_foreign_key "priority_end_product_sync_queue", "end_product_establishments", name: "priority_end_product_sync_queue_end_product_establishment_id_fk"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "ramp_elections"
