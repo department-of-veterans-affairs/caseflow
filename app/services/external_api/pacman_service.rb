@@ -151,7 +151,7 @@ class ExternalApi::PacmanService
       request.read_timeout = 30
       request.body = body.to_json unless body.nil?
       # not sure how user validation will be handled
-      request.headers = headers.merge(apikey: ENV["PACMAN_API_KEY"])
+      request.headers = headers.merge(Bearer: ENV["PACMAN_API_KEY"])
       sleep 1
 
       MetricsService.record("pacman service #{method.to_s.upcase} request to #{url}",
