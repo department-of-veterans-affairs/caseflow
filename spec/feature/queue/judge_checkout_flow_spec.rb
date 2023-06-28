@@ -501,6 +501,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
   end
 
   describe " - mst/pact identification" do
+
     context " - AMA appeals" do
       let(:issue_note) { "Test note" }
       let(:issue_description) { "Test description" }
