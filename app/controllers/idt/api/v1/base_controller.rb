@@ -16,7 +16,9 @@ class Idt::Api::V1::BaseController < ActionController::Base
     if error.class.method_defined?(:serialize_response)
       render(error.serialize_response)
     else
-      render json: { message: "IDT Standard Error ID: " + uuid + " Unexpected error: #{error.message}" }, status: :internal_server_error
+      render json: {
+        message: "IDT Standard Error ID: " + uuid + " Unexpected error: #{error.message}"
+      }, status: :internal_server_error
     end
   end
   # :nocov:
