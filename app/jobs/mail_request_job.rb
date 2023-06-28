@@ -28,7 +28,6 @@ class MailRequestJob < CaseflowJob
       )
       log_info(package_response)
     rescue Caseflow::Error::PacmanApiError => error
-      vbms_comm_package.update!(status: "error")
       log_error(error)
     end
     vbms_comm_package = create_package(vbms_uploaded_document, mail_package)

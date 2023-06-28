@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class Fakes::PacmanService < ExternalApi::PacmanService
+  COMMUNICATION_PACKAGE_UUID = "24eb6a66-3833-4de6-bea4-4b614e55d5ac"
+  DISTRIBUTION_UUID = "201cef13-49ba-4f40-8741-97d06cee0270"
+
   class << self
     def send_communication_package_request(file_number, name, document_references)
       fake_package_request(file_number, name, document_references)
@@ -15,7 +18,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
 
       return distribution_not_found_response unless distribution
 
-      fake_distribution_response(distribution)
+      fake_distribution_response(distribution.uuid)
     end
 
     private
@@ -59,7 +62,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
         201,
         {},
         OpenStruct.new(
-          "id": "24eb6a66-3833-4de6-bea4-4b614e55d5ac",
+          "id": COMMUNICATION_PACKAGE_UUID,
           "fileNumber": file_number,
           "name": name,
           "documentReferences": document_references,
@@ -69,14 +72,13 @@ class Fakes::PacmanService < ExternalApi::PacmanService
       )
     end
 
-    # rubocop:disable Metrics/MethodLength
     # POST: /package-manager-service/distribution
     def fake_distribution_request(package_id, recipient, destinations)
       HTTPI::Response.new(
         201,
         {},
         OpenStruct.new(
-          "id": "12345",
+          "id": DISTRIBUTION_UUID,
           "recipient": recipient,
           "description": "bad",
           "communicationPackageId": package_id,
@@ -87,13 +89,13 @@ class Fakes::PacmanService < ExternalApi::PacmanService
       )
     end
 
+    # rubocop:disable Metrics/MethodLength
     # GET: /package-manager-service/distribution/{id}
-    def fake_distribution_response(distribution)
+    def fake_distribution_response(_distribution_id)
       HTTPI::Response.new(
         200,
         {},
-        "id": distribution.id,
-        "pacman_id": distribution.uuid,
+        "id": DISTRIBUTION_UUID,
         "recipient": {
           "type": "system",
           "id": "a050a21e-23f6-4743-a1ff-aa1e24412eff",
