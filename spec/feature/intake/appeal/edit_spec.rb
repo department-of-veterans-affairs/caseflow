@@ -1218,4 +1218,69 @@ feature "Appeal Edit issues", :all_dbs do
       end
     end
   end
+
+  # We need to
+  # 1. Sign in as BVA Intake Admin User
+  # 2. We need a veteran file number with a legacy appeal
+  # 3. The legacy appeal with 3 request issues
+  context "with BVA Intake Admin user" do
+    # creates organization
+    let!(:bva_intake) { BvaIntake.singleton }
+    # creates admin user
+    let!(:bva_intake_admin_user) { create(:user, roles: ["Mail Intake"]) }
+    # { Bva.singleton.add_user(authenticated_user) }
+
+    before do
+      # joins the user with the organization to grant access to role and org permissions
+      OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
+      User.authenticate!(user: bva_intake_admin_user)
+    end
+
+    context "with Legacy MST/PACT identifications" do
+
+      let!(:legacy_appeal) do
+        create(
+          :legacy_appeal,
+          vacols_id: "1234567",
+          vbms_id: appeal.veteran_file_number,
+          vacols_case: create(
+            :case,
+            :assigned,
+            user: bva_intake_admin_user,
+            case_issues: [
+              create(:case_issue, issmst: "N", isspact: "Y"),
+              create(:case_issue, issmst: "Y", isspact: "N"),
+              create(:case_issue, issmst: "Y", isspact: "Y")
+            ]
+          )
+        )
+      end
+
+      before do
+        FeatureToggle.enable!(:mst_identification)
+        FeatureToggle.enable!(:pact_identification)
+        FeatureToggle.enable!(:legacy_mst_pact_identification)
+      end
+
+      after do
+        FeatureToggle.disable!(:mst_identification)
+        FeatureToggle.disable!(:pact_identification)
+        FeatureToggle.disable!(:legacy_mst_pact_identification)
+      end
+
+      scenario "can add MST/PACT to issues" do
+        visit "/queue"
+        # click_on "Search cases"
+        # fill_in "search", with: appeal.veteran_file_number
+        # click_on "Search"
+        binding.pry
+        # click_on appeal.docket_number.to_s
+        click_on "Correct issues"
+        # find("select", id: "issue-action-0").click
+        # find("div", class: ".cf-form-dropdown", text: "Edit issue").click
+        # uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+        # uncheck("PACT Act", allow_label_click: true, visible: false)
+      end
+    end
+  end
 end
