@@ -32,15 +32,13 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
         limit #{ENV["END_PRODUCT_QUEUE_BATCH_LIMIT"]};
     SQL
 
-    ActiveRecord::Base.connection.exec_query(get_batches).rows.flatten
+    ActiveRecord::Base.connection.exec_query(get_batch).rows.flatten
   end
 
   def insert_into_priority_sync_queue(batch)
-    batch_id = SecureRandom.uuid
     batch.each do |ep_id|
       PriorityEndProductSyncQueue.create(
         end_product_establishment_id: ep_id,
-        batch_id: batch_id,
         last_batched_at: Time.now,
         status: "NOT_PROCESSED"
       )
