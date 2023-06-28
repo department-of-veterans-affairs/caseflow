@@ -8,10 +8,29 @@ describe MailRequestJob do
   context "successful " do
     it "creates a new VbmsCommunicationPackage" do
       mail_request.call
-      mail_package = { distributions: [mail_request.to_json], copies: 1, created_by_id: 1 }
+      mail_package = { distributions: [mail_request.to_json], copies: 1, created_by_id: current_user.id }
       MailRequestJob.perform_now(vbms_file, mail_package)
       expect { MailRequestJob.perform_now(vbms_file, mail_package) }.to change { VbmsCommunicationPackage.count }.by(1)
       expect(find_comm_package_via_distribution_id(mail_request.vbms_distribution_id).status).to eq("success")
+    end
+  end
+
+  context "Unsuccessful execution of MailRequestJob" do
+    it "VbmsCommunicationPackage is not created. VbmsDistribution's vbms_communication_package_id remains nil." do
+      mail_request.call
+      mail_package = { distributions: [mail_request.to_json], copies: 1, created_by_id: current_user.id }
+
+      allow(PacmanService)
+        .to receive(:send_communication_package_request)
+        .and_raise(Caseflow::Error::PacmanApiError.new(code: 500, message: "Fake Error"))
+
+      expect do
+        perform_enqueued_jobs { MailRequestJob.perform_later(vbms_file, mail_package) }
+      end.to change { VbmsCommunicationPackage.count }.by(0)
+
+      distribution = VbmsDistribution.find(mail_request.vbms_distribution_id)
+
+      expect(distribution.vbms_communication_package_id).to be_nil
     end
   end
   def find_comm_package_via_distribution_id(distro_id)

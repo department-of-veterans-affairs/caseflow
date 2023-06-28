@@ -29,10 +29,11 @@ class MailRequestJob < CaseflowJob
       log_info(package_response)
     rescue Caseflow::Error::PacmanApiError => error
       log_error(error)
+    else
+      vbms_comm_package = create_package(vbms_uploaded_document, mail_package)
+      vbms_comm_package.update!(status: "success")
+      create_distribution_request(vbms_comm_package.id, mail_package)
     end
-    vbms_comm_package = create_package(vbms_uploaded_document, mail_package)
-    vbms_comm_package.update!(status: "success")
-    create_distribution_request(vbms_comm_package.id, mail_package)
   end
 
   private
@@ -82,15 +83,16 @@ class MailRequestJob < CaseflowJob
         dist_hash = JSON.parse(dist)
       rescue Caseflow::Error::PacmanApiError => error
         log_error(error)
+      else
+        distribution = VbmsDistribution.find(dist_hash["vbms_distribution_id"])
+        distribution_response = PacmanService.send_distribution_request(
+          package_id,
+          get_recipient_hash(distribution),
+          get_destinations_hash(dist_hash)
+        )
+        log_info(distribution_response)
+        distribution.update!(vbms_communication_package_id: package_id)
       end
-      distribution = VbmsDistribution.find(dist_hash["vbms_distribution_id"])
-      distribution_response = PacmanService.send_distribution_request(
-        package_id,
-        get_recipient_hash(distribution),
-        get_destinations_hash(dist_hash)
-      )
-      log_info(distribution_response)
-      distribution.update!(vbms_communication_package_id: package_id)
     end
   end
 
