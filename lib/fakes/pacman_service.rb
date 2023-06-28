@@ -10,12 +10,12 @@ class Fakes::PacmanService < ExternalApi::PacmanService
       fake_distribution_request(package_id, recipient, destinations)
     end
 
-    def get_distribution_request(distribution_id)
-      unless VbmsDistribution.exists?(id: distribution_id)
-        return distribution_not_found_response
-      end
+    def get_distribution_request(distribution_uuid)
+      distribution = VbmsDistribution.find(uuid: distribution_uuid)
 
-      fake_distribution_response(distribution_id)
+      return distribution_not_found_response unless distribution
+
+      fake_distribution_response(distribution)
     end
 
     private
@@ -88,11 +88,12 @@ class Fakes::PacmanService < ExternalApi::PacmanService
     end
 
     # GET: /package-manager-service/distribution/{id}
-    def fake_distribution_response(distribution_id)
+    def fake_distribution_response(distribution)
       HTTPI::Response.new(
         200,
         {},
-        "id": distribution_id,
+        "id": distribution.id,
+        "pacman_id": distribution.uuid,
         "recipient": {
           "type": "system",
           "id": "a050a21e-23f6-4743-a1ff-aa1e24412eff",
