@@ -19,7 +19,7 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
     before do
       allow(controller).to receive(:params).and_return(distribution_id: distribution_id)
       allow(VbmsDistribution).to receive(:exists?).with(id: distribution_id).and_return(true)
-      allow(PacManService).to receive(:get_distribution_request).with(distribution_id).and_return(distribution)
+      allow(PacmanService).to receive(:get_distribution_request).with(distribution_id).and_return(distribution)
       allow(SecureRandom).to receive(:uuid).and_return(uuid)
       key, t = Idt::Token.generate_one_time_key_and_proposed_token
       Idt::Token.activate_proposed_token(key, user.css_id)
@@ -43,7 +43,7 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
       end
     end
 
-    context "when PacManService fails with a 404 error" do
+    context "when PacmanService fails with a 404 error" do
       let(:distribution_id) { 123_456 }
       it "renders the expected response with status 200, Pacman api has a 404" do
         expected_response = {
@@ -51,7 +51,7 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
           "status" => "PENDING_ESTABLISHMENT"
         }
 
-        allow(PacManService).to receive(:get_distribution_request).with(distribution_id) do
+        allow(PacmanService).to receive(:get_distribution_request).with(distribution_id) do
           OpenStruct.new(code: 404)
         end
 
@@ -62,7 +62,7 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
       end
     end
 
-    context "when PacManService fails with a 500 error" do
+    context "when PacmanService fails with a 500 error" do
       let(:distribution) { double("Distribution", code: 500) }
       let(:error_msg) do
         "[IDT] Http Status Code: 500, Internal Server Error," \
@@ -117,7 +117,7 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
       end
 
       before do
-        allow(PacManService).to receive(:get_distribution_request).with(distribution_id).and_return(distribution)
+        allow(PacmanService).to receive(:get_distribution_request).with(distribution_id).and_return(distribution)
       end
 
       it "returns the expected converted response" do
@@ -167,7 +167,7 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
         error_message = "[IDT] Http Status Code: #{status}, #{message}, (Distribution ID: #{distribution_id})"
         expect(Rails.logger).to receive(:error).with("#{error_message}Error ID: #{uuid}")
 
-        allow(PacManService).to receive(:get_distribution_request).with(distribution_id) do
+        allow(PacmanService).to receive(:get_distribution_request).with(distribution_id) do
           OpenStruct.new(code: 500)
         end
 

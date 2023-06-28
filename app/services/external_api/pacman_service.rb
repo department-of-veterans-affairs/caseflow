@@ -108,7 +108,7 @@ class ExternalApi::PacmanService
         firstName: recipient[:first_name],
         middleName: recipient[:middle_name],
         lastName: recipient[:last_name],
-        participant_id: recipient[:participant_id],
+        participantId: recipient[:participant_id],
         poaCode: recipient[:poa_code],
         claimantStationOfJurisdiction: recipient[:claimant_station_of_jurisdiction]
       }
@@ -143,8 +143,9 @@ class ExternalApi::PacmanService
     # Params: general requirements for HTTP request
     #
     # Return: service_response: JSON from Pacman or error
+    # :reek:LongParameterList
     def send_pacman_request(headers: {}, endpoint:, method: :get, body: nil)
-      url = URI.escape(BASE_URL + endpoint)
+      url = ERB::Util.url_encode(BASE_URL + endpoint)
       request = HTTPI::Request.new(url)
       request.open_timeout = 30
       request.read_timeout = 30
