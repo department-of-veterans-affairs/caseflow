@@ -744,8 +744,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           :request_issue, 1,
           contested_issue_description: issue_description,
           notes: issue_note,
-          contested_rating_issue_diagnostic_code: diagnostic_code,
-          decision_date: 24.hours.ago
+          contested_rating_issue_diagnostic_code: diagnostic_code
         )
       )
     end
@@ -795,7 +794,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           BvaDispatch.singleton.add_user(create(:user))
         end
 
-        it " - add both mst and pact to all issues" do
+        it " - add both mst and pact to an issue" do
           visit "/queue"
           click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
@@ -827,15 +826,14 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           User.authenticate!(user: judge_user)
           visit "/queue"
           click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-
           expect(page).to have_selector(".cf-mst-badge")
           expect(page).to have_selector(".cf-pact-badge")
           expect(page).to have_content("Special Issues: MST and PACT")
-          expect(appeal.request_issues.first.mst_status).to eq(true)
-          expect(appeal.request_issues.first.pact_status).to eq(true)
+          expect(appeal.decision_issues.first.mst_status).to eq(true)
+          expect(appeal.decision_issues.first.pact_status).to eq(true)
         end
 
-        it " - add mst to all issues" do
+        it " - add mst to an issue" do
           visit "/queue"
           click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
@@ -870,11 +868,11 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           expect(page).to have_selector(".cf-mst-badge")
           expect(page).to_not have_selector(".cf-pact-badge")
           expect(page).to have_content("Special Issues: MST")
-          expect(appeal.request_issues.first.mst_status).to eq(true)
-          expect(appeal.request_issues.first.pact_status).to eq(false)
+          expect(appeal.decision_issues.first.mst_status).to eq(true)
+          expect(appeal.decision_issues.first.pact_status).to eq(false)
         end
 
-        it " - add pact to all issues" do
+        it " - add pact to an issue" do
           visit "/queue"
           click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
@@ -909,8 +907,8 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           expect(page).to_not have_selector(".cf-mst-badge")
           expect(page).to have_selector(".cf-pact-badge")
           expect(page).to have_content("Special Issues: PACT")
-          expect(appeal.request_issues.first.mst_status).to eq(false)
-          expect(appeal.request_issues.first.pact_status).to eq(true)
+          expect(appeal.decision_issues.first.mst_status).to eq(false)
+          expect(appeal.decision_issues.first.pact_status).to eq(true)
         end
       end
 
@@ -995,12 +993,12 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           expect(page).to have_content("Special Issues: MST and PACT")
           expect(page).to have_content("Special Issues: MST")
           expect(page).to have_content("Special Issues: PACT")
-          expect(appeal_multiple_issues.request_issues.first.mst_status).to eq(true)
-          expect(appeal_multiple_issues.request_issues.first.pact_status).to eq(true)
-          expect(appeal_multiple_issues.request_issues.second.mst_status).to eq(true)
-          expect(appeal_multiple_issues.request_issues.second.pact_status).to eq(false)
-          expect(appeal_multiple_issues.request_issues.third.mst_status).to eq(false)
-          expect(appeal_multiple_issues.request_issues.third.pact_status).to eq(true)
+          expect(appeal_multiple_issues.decision_issues.first.mst_status).to eq(true)
+          expect(appeal_multiple_issues.decision_issues.first.pact_status).to eq(true)
+          expect(appeal_multiple_issues.decision_issues.second.mst_status).to eq(true)
+          expect(appeal_multiple_issues.decision_issues.second.pact_status).to eq(false)
+          expect(appeal_multiple_issues.decision_issues.third.mst_status).to eq(false)
+          expect(appeal_multiple_issues.decision_issues.third.pact_status).to eq(true)
         end
       end
     end
@@ -1034,7 +1032,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       it " - add mst to an issue" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-        click_dropdown(index: 0)
+        click_dropdown(index: 0, visible: false)
         find("label", text: "No Special Issues").click
         click_on "Continue"
         first("a", text: "Edit Issue").click
@@ -1048,7 +1046,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       it " - add pact to an issue" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-        click_dropdown(index: 0)
+        click_dropdown(index: 0, visible: false)
         find("label", text: "No Special Issues").click
         click_on "Continue"
         first("a", text: "Edit Issue").click
@@ -1062,7 +1060,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       it " - add mst and pact to an issue" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-        click_dropdown(index: 0)
+        click_dropdown(index: 0, visible: false)
         find("label", text: "No Special Issues").click
         click_on "Continue"
         first("a", text: "Edit Issue").click
@@ -1077,7 +1075,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       it " - remove mst and pact from issue" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-        click_dropdown(index: 0)
+        click_dropdown(index: 0, visible: false)
         find("label", text: "No Special Issues").click
         click_on "Continue"
         all("a", text: "Edit Issue")[1].click
