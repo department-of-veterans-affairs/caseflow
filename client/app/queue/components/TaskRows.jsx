@@ -386,29 +386,46 @@ class TaskRows extends React.PureComponent {
     const formatEstablishmentBreaks = (text = '') => {
       const divStyle = { marginTop: '1rem'};
       const hStyle = { marginTop: '1rem', marginBottom: '0rem', fontWeight: 'bold' };
-
       if (Array.isArray(text)) {
         const content = text.map((issue, index) =>
+        // issue array indexes:
+        // 0: Issue description
+        // 1: Benefit Type
+        // 2: Original special issues (empty string unless issue originated in VBMS AND mst/pact designation changes by intake user)
+        // 3: Special issues (Either added by intake user or originating in VBMS - if left unaltered during intake)
           <div key={index}>
-            <br />
-            <b>Added Issue:</b>
-            <br />
-            <p>{issue[0]}</p>
+            <div style={divStyle}>
+              <b>Added Issue:</b>
+            </div>
+            <div style={divStyle}>
+              {issue[0]}
+            </div>
+            {issue.at(1) != "" &&
+              <React.Fragment>
+                <div style={divStyle}>
+                  Benefit type: {issue[1]}
+                </div>
+              </React.Fragment>}
             {/* Condition where a prior decision from vbms with mst/pact designation was updated in intake process */}
-            {issue[1] ?
+            {issue[2] ?
               <React.Fragment>
                 <h5 style={hStyle}>ORIGINAL: </h5>
-                <small>{issue[1]}</small>
-                <h5 style={hStyle}>UPDATED: </h5>
                 <small>{issue[2]}</small>
+                <h5 style={hStyle}>UPDATED: </h5>
+                <small>{issue[3]}</small>
                 <p></p>
               </React.Fragment> :
-              <p>{issue[2]}</p>
+              <div style={divStyle}>
+                {issue[3]}
+                <p></p>
+              </div>
             }
             {/* No horizontal rule after the last issue */}
             {index !== (text.length - 1) &&
               <React.Fragment>
-                <hr />
+                <div style={divStyle}>
+                  <hr />
+                </div>
               </React.Fragment>
             }
           </div>
