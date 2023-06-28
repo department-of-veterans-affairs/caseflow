@@ -1823,7 +1823,6 @@ ActiveRecord::Schema.define(version: 2023_06_27_203547) do
     t.boolean "treat_line_3_as_addressee", comment: "If true, treatLine2AsAddressee must also be true"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id"
-    t.string "uuid", comment: "UUID of the distrubtion destination in Package Manager (Pacman)"
     t.bigint "vbms_distribution_id"
     t.index ["created_by_id"], name: "index_vbms_distribution_destinations_on_created_by_id"
     t.index ["updated_by_id"], name: "index_vbms_distribution_destinations_on_updated_by_id"
