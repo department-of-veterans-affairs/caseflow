@@ -16,6 +16,7 @@ describe PopulateEndProductSyncQueueJob, type: :job do
       expect(EndProductEstablishment.find(PriorityEndProductSyncQueue.first.end_product_establishment_id).reference_id).to eq found_vec.claim_id.to_s
       expect(PriorityEndProductSyncQueue.first.end_product_establishment_id).to eq found_epe.id
       expect(PriorityEndProductSyncQueue.first.status).to eq "NOT_PROCESSED"
+      expect(PriorityEndProductSyncQueue.first.batch_id).not_to be nil
       expect(RequestStore.store[:current_user].id).to eq(User.system_user.id)
     end
 
