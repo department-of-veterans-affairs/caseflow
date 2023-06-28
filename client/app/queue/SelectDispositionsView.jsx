@@ -197,8 +197,8 @@ class SelectDispositionsView extends React.PureComponent {
     const closedStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).closed_status;
     const mst_justification = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).mst_justification;
     const pact_justification = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).pact_justification;
-    const mstStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).mst_status;
-    const pactStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).pact_status;
+    const mst_status = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).mst_status;
+    const pact_status = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).pact_status;
 
     const newDecisionIssue = {
       id: `temporary-id-${uuid.v4()}`,
@@ -209,10 +209,10 @@ class SelectDispositionsView extends React.PureComponent {
       request_issue_ids: [requestIssueId],
       mst_justification,
       pact_justification,
-      mstStatus,
-      mstOriginalStatus: mstStatus,
-      pactStatus,
-      pactOriginalStatus: pactStatus,
+      mst_status,
+      mstOriginalStatus: mst_status,
+      pact_status,
+      pactOriginalStatus: pact_status,
 
       /*
         Burn Pit and Blue Water will still be tracked on the appeal level but,
@@ -254,8 +254,8 @@ class SelectDispositionsView extends React.PureComponent {
 
   validateJustification = (justificationFeatureToggle) => {
     const { decisionIssue } = this.state;
-    const mstHasChanged = decisionIssue.mstOriginalStatus !== decisionIssue.mstStatus;
-    const pactHasChanged = decisionIssue.pactOriginalStatus !== decisionIssue.pactStatus;
+    const mstHasChanged = decisionIssue.mstOriginalStatus !== decisionIssue.mst_status;
+    const pactHasChanged = decisionIssue.pactOriginalStatus !== decisionIssue.pact_status;
 
     if (mstHasChanged && (decisionIssue.mst_justification === '' || decisionIssue.mst_justification === null) &&
       justificationFeatureToggle) {
@@ -303,10 +303,6 @@ class SelectDispositionsView extends React.PureComponent {
     this.props.editStagedAppeal(
       this.props.appeal.externalId, { decisionIssues: newDecisionIssues }
     );
-
-    // Updated special issues view to the updated mst and pact status
-    this.selectedIssues()[0].mst_status = this.state.decisionIssue.mstStatus;
-    this.selectedIssues()[0].pact_status = this.state.decisionIssue.pactStatus;
 
     this.stageSpecialIssues(this.props.appeal.decisionIssues);
     this.handleModalClose();
@@ -378,7 +374,7 @@ class SelectDispositionsView extends React.PureComponent {
 
   onJustificationChange = (event, decision, type) => {
 
-    if (type === 'mstStatus') {
+    if (type === 'mst_status') {
       this.setState({
         decisionIssue: {
           ...decision,
@@ -386,7 +382,7 @@ class SelectDispositionsView extends React.PureComponent {
         }
       });
       this.setState({ mstJustification: event });
-    } else if (type === 'pactStatus') {
+    } else if (type === 'pact_status') {
       this.setState({
         decisionIssue: {
           ...decision,
@@ -406,7 +402,7 @@ class SelectDispositionsView extends React.PureComponent {
   onCheckboxChange = (event, decision) => {
     const checkboxId = event.target.getAttribute('id');
 
-    if (checkboxId === 'mstStatus' || checkboxId === 'pactStatus') {
+    if (checkboxId === 'mst_status' || checkboxId === 'pact_status') {
       this.setState({
         decisionIssue: {
           ...decision,
@@ -455,8 +451,8 @@ class SelectDispositionsView extends React.PureComponent {
       blue_water: decisionIssue?.decisionSpecialIssue?.blue_water,
       // eslint-disable-next-line camelcase
       burn_pit: decisionIssue?.decisionSpecialIssue?.burn_pit,
-      mstStatus: decisionIssue?.mstStatus,
-      pactStatus: decisionIssue?.pactStatus
+      mst_status: decisionIssue?.mst_status,
+      pact_status: decisionIssue?.pact_status
     };
 
     // In order to determine whether or not to display error styling and an error message for each issue,
@@ -603,16 +599,16 @@ class SelectDispositionsView extends React.PureComponent {
           pactFeatureToggle={pactFeatureToggle}
           justifications={[
             {
-              id: 'mstStatus',
+              id: 'mst_status',
               justification: decisionIssue.mst_justification,
-              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, 'mstStatus'),
-              hasChanged: this.state.decisionIssue.mstOriginalStatus != this.state.decisionIssue.mstStatus
+              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, 'mst_status'),
+              hasChanged: this.state.decisionIssue.mstOriginalStatus != this.state.decisionIssue.mst_status
             },
             {
-              id: 'pactStatus',
+              id: 'pact_status',
               justification: decisionIssue.pact_justification,
-              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, 'pactStatus'),
-              hasChanged: this.state.decisionIssue.pactOriginalStatus != this.state.decisionIssue.pactStatus
+              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, 'pact_status'),
+              hasChanged: this.state.decisionIssue.pactOriginalStatus != this.state.decisionIssue.pact_status
             },
           ]}
         />
