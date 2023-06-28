@@ -14,8 +14,7 @@ describe ExternalApi::PacmanService do
 
   let(:distribution) do
     {
-      "id" => vbms_distribution.id,
-      "pacman_id": vbms_distribution.uuid,
+      "id" => Fakes::PacmanService::DISTRIBUTION_UUID,
       "recipient" => {
         "type" => "system",
         "id" => "a050a21e-23f6-4743-a1ff-aa1e24412eff",
