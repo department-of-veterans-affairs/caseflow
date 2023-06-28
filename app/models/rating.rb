@@ -178,8 +178,23 @@ class Rating
     end
   end
 
+  def veteran
+    @veteran ||= Veteran.find_by(participant_id: participant_id)
+  end
+
   def rating_issues
-    @rating_issues ||= Array.wrap(rating_profile[:rating_issues] || rating_profile.dig(:rba_issue_list, :rba_issue))
+    return [] unless veteran
+
+    veteran.ratings.map { |rating| Array.wrap(rating.rating_profile[:rating_issues]) }.compact.flatten
+
+    # return empty list when there are no ratings
+  rescue PromulgatedRating::BackfilledRatingError
+    # Ignore PromulgatedRating::BackfilledRatingErrors since they are a regular occurrence and we don't need to take
+    # any action when we see them.
+    []
+  rescue PromulgatedRating::LockedRatingError => error
+    Raven.capture_exception(error)
+    []
   end
 
   def ensure_array_of_hashes(array_or_hash_or_nil)
