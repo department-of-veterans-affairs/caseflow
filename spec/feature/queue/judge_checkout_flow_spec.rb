@@ -818,7 +818,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
         check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
         check("PACT Act", allow_label_click: true, visible: false)
 
-        click on "Continue"
+        click_on "Continue"
 
         all("a", text: "Edit Issue")[1].click
         uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
