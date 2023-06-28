@@ -19,7 +19,7 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
       # Retrieves the distribution package from the PacMan API
       distribution_response = PacmanService.get_distribution_request(distribution_uuid)
 
-      response_code = distribution.code
+      response_code = distribution_response.code
 
       fail StandardError if response_code != 200
       # Handles errors when making any requests both from Pacman and the DB
