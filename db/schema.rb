@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_05_08_202742) do
+ActiveRecord::Schema.define(version: 2023_06_23_132146) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -594,6 +594,8 @@ ActiveRecord::Schema.define(version: 2023_05_08_202742) do
     t.string "diagnostic_code", comment: "If a decision resulted in a rating, this is the rating issue's diagnostic code."
     t.string "disposition", comment: "The disposition for a decision issue. Dispositions made in Caseflow and dispositions made in VBMS can have different values."
     t.date "end_product_last_action_date", comment: "After an end product gets synced with a status of CLR (cleared), the end product's last_action_date is saved on any decision issues that are created as a result. This is used as a proxy for decision date for non-rating issues that are processed in VBMS because they don't have a rating profile date, and the exact decision date is not available."
+    t.boolean "mst_status", default: false, comment: "Indicates if decision issue is related to Military Sexual Trauma (MST)"
+    t.boolean "pact_status", default: false, comment: "Indicates if decision issue is related to Promise to Address Comprehensive Toxics (PACT) Act"
     t.string "participant_id", null: false, comment: "The Veteran's participant id."
     t.string "percent_number", comment: "percent_number from RatingIssue (prcntNo from Rating Profile)"
     t.string "rating_issue_reference_id", comment: "Identifies the specific issue on the rating that resulted from the decision issue (a rating issue can be connected to multiple contentions)."
@@ -1469,9 +1471,13 @@ ActiveRecord::Schema.define(version: 2023_05_08_202742) do
     t.string "ineligible_reason", comment: "The reason for a Request Issue being ineligible. If a Request Issue has an ineligible_reason, it is still captured, but it will not get a contention in VBMS or a decision."
     t.boolean "is_predocket_needed", comment: "Indicates whether or not an issue has been selected to go to the pre-docket queue opposed to normal docketing."
     t.boolean "is_unidentified", comment: "Indicates whether a Request Issue is unidentified, meaning it wasn't found in the list of contestable issues, and is not a new nonrating issue. Contentions for unidentified issues are created on a rating End Product if processed in VBMS but without the issue description, and someone is required to edit it in Caseflow before proceeding with the decision."
+    t.boolean "mst_status", default: false, comment: "Indicates if issue is related to Military Sexual Trauma (MST)"
+    t.text "mst_status_update_reason_notes", comment: "The reason for why Request Issue is Military Sexual Trauma (MST)"
     t.string "nonrating_issue_category", comment: "The category selected for nonrating request issues. These vary by business line."
     t.string "nonrating_issue_description", comment: "The user entered description if the issue is a nonrating issue"
     t.text "notes", comment: "Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
+    t.boolean "pact_status", default: false, comment: "Indicates if issue is related to Promise to Address Comprehensive Toxics (PACT) Act"
+    t.text "pact_status_update_reason_notes", comment: "The reason for why Request Issue is Promise to Address Comprehensive Toxics (PACT) Act"
     t.string "ramp_claim_id", comment: "If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
     t.datetime "rating_issue_associated_at", comment: "Timestamp when a contention and its contested rating issue are associated in VBMS."
     t.string "split_issue_status", comment: "If a request issue is part of a split, on_hold status applies to the original request issues while active are request issues on splitted appeals"
@@ -1482,6 +1488,8 @@ ActiveRecord::Schema.define(version: 2023_05_08_202742) do
     t.datetime "updated_at", comment: "Automatic timestamp whenever the record changes."
     t.string "vacols_id", comment: "The vacols_id of the legacy appeal that had an issue found to match the request issue."
     t.integer "vacols_sequence_id", comment: "The vacols_sequence_id, for the specific issue on the legacy appeal which the Claims Assistant determined to match the request issue on the Decision Review. A combination of the vacols_id (for the legacy appeal), and vacols_sequence_id (for which issue on the legacy appeal), is required to identify the issue being opted-in."
+    t.boolean "vbms_mst_status", default: false, comment: "Indicates if issue is related to Military Sexual Trauma (MST) and was imported from VBMS"
+    t.boolean "vbms_pact_status", default: false, comment: "Indicates if issue is related to Promise to Address Comprehensive Toxics (PACT) Act and was imported from VBMS"
     t.boolean "verified_unidentified_issue", comment: "A verified unidentified issue allows an issue whose rating data is missing to be intaken as a regular rating issue. In order to be marked as verified, a VSR needs to confirm that they were able to find the record of the decision for the issue."
     t.string "veteran_participant_id", comment: "The veteran participant ID. This should be unique in upstream systems and used in the future to reconcile duplicates."
     t.index ["closed_at"], name: "index_request_issues_on_closed_at"
@@ -1507,6 +1515,8 @@ ActiveRecord::Schema.define(version: 2023_05_08_202742) do
     t.integer "edited_request_issue_ids", comment: "An array of the request issue IDs that were edited during this request issues update", array: true
     t.string "error", comment: "The error message if the last attempt at processing the request issues update was not successful."
     t.datetime "last_submitted_at", comment: "Timestamp for when the processing for the request issues update was last submitted. Used to determine how long to continue retrying the processing job. Can be reset to allow for additional retries."
+    t.integer "mst_edited_request_issue_ids", comment: "An array of the request issue IDs that were updated to be associated with MST in request issues update", array: true
+    t.integer "pact_edited_request_issue_ids", comment: "An array of the request issue IDs that were updated to be associated with PACT in request issues update", array: true
     t.datetime "processed_at", comment: "Timestamp for when the request issue update successfully completed processing."
     t.bigint "review_id", null: false, comment: "The ID of the decision review edited."
     t.string "review_type", null: false, comment: "The type of the decision review edited."
