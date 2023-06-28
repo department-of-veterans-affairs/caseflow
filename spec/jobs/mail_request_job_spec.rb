@@ -13,8 +13,4 @@ describe MailRequestJob do
       expect(VbmsCommunicationPackage.first.status).to eq("success")
     end
   end
-  # context "400 error in package request" do
-  #   it "does not create a new VbmsCommunicationPackage"
-  #   expect { MailRequestJob.perform_now(vbms_file, nil) }.to change { VbmsCommunicationPackage.count }.by(0)
-  # end
 end
