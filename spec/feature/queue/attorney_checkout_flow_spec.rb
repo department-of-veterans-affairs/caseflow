@@ -1111,7 +1111,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       it " - add mst to an issue" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-        click_dropdown(index: 0, visible: false)
+        click_dropdown(text: "Decision ready for review", visible: false)
         find("label", text: "No Special Issues").click
         click_on "Continue"
         first("a", text: "Edit Issue").click
@@ -1125,7 +1125,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       it " - add pact to an issue" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-        click_dropdown(index: 0, visible: false)
+        click_dropdown(text: "Decision ready for review", visible: false)
         find("label", text: "No Special Issues").click
         click_on "Continue"
         first("a", text: "Edit Issue").click
@@ -1139,7 +1139,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       it " - add mst and pact to an issue" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-        click_dropdown(index: 0, visible: false)
+        click_dropdown(text: "Decision ready for review", visible: false)
         find("label", text: "No Special Issues").click
         click_on "Continue"
         first("a", text: "Edit Issue").click
@@ -1154,7 +1154,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       it " - remove mst and pact from issue" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-        click_dropdown(index: 0, visible: false)
+        click_dropdown(text: "Decision ready for review", visible: false)
         find("label", text: "No Special Issues").click
         click_on "Continue"
         all("a", text: "Edit Issue")[1].click
