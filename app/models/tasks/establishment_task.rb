@@ -16,13 +16,14 @@ class EstablishmentTask < Task
       next if !issue.mst_status && !issue.pact_status
 
       # Logic for checking if a prior decision from vbms with mst/pact designation was updated in intake process
-      if issue.vbms_mst_status || issue.vbms_pact_status
+      if issue.contested_rating_issue_reference_id
         if issue.vbms_mst_status != issue.mst_status || issue.vbms_pact_status != issue.pact_status
           original_special_issue_status = format_special_issues_text(issue.vbms_mst_status, issue.vbms_pact_status).to_s
         end
       end
+
       special_issue_status = format_special_issues_text(issue.mst_status, issue.pact_status).to_s
-      added_issue_format << [format_description_text(issue), original_special_issue_status, special_issue_status]
+      added_issue_format << [format_description_text(issue), issue.benefit_type.capitalize, original_special_issue_status, special_issue_status]
     end
     # add edit_issue_format into the instructions array for the task
     instructions << added_issue_format
