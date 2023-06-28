@@ -98,8 +98,9 @@ class AttorneyTask < Task
   def can_be_moved_by_user?(user)
     return false unless parent.is_a?(JudgeTask)
 
+    # Allows SSC, SCM, VLJ's if legacy
     if appeal.is_a?(LegacyAppeal)
-      return user&.can_act_on_behalf_of_legacy_judges?
+      return parent.assigned_to == user || assigned_by == user || user&.can_act_on_behalf_of_legacy_judges?
     end
 
     # The judge who is assigned the parent review task, the assigning judge, and SpecialCaseMovementTeam members can
