@@ -4,6 +4,8 @@ class BatchProcessPriorityEpSync < BatchProcess
   class << self
     def find_records
 
+
+
       PriorityEndProductSyncQueue.where(
         batch_id: [nil, BatchProcess.where.not("state = ?", "PROCESSING")])
         .where("(status <> ? AND status <> ?) AND

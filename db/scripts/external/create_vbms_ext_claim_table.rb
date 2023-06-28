@@ -3,7 +3,7 @@
 require "pg"
 
 conn = CaseflowRecord.connection
-conn.execute('CREATE TABLE public.vbms_ext_claim (
+conn.execute('CREATE TABLE IF NOT EXISTS public.vbms_ext_claim (
             "CLAIM_ID" numeric(38,0) primary key unique NOT null,
             "CLAIM_DATE" timestamp without time zone,
             "EP_CODE" character varying(25),
@@ -41,3 +41,7 @@ conn.execute('CREATE TABLE public.vbms_ext_claim (
             "ALLOW_POA_ACCESS" character varying(5),
             "POA_CODE" character varying(25)
           );')
+
+conn.execute('CREATE INDEX IF NOT EXISTS claim_id_index ON public.vbms_ext_claim ("CLAIM_ID")')
+conn.execute('CREATE INDEX IF NOT EXISTS level_status_code_index ON public.vbms_ext_claim ("LEVEL_STATUS_CODE")')
+conn.close
