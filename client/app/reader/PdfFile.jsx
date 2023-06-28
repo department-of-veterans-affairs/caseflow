@@ -23,6 +23,7 @@ import { startPlacingAnnotation, showPlaceAnnotationIcon
 import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, getSearchTerm } from './selectors';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
+import uuid from 'uuid';
 
 PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -62,40 +63,49 @@ export class PdfFile extends React.PureComponent {
         this.loadingTask = PDFJS.getDocument({ data: resp.body });
 
         return this.loadingTask.promise;
-      }).
+      }, (reason) => this.onRejected(reason, 'getDocument')).
       then((pdfDocument) => {
+        this.pdfDocument = pdfDocument;
 
-        this.setPageDimensions(pdfDocument);
-
+        return this.getPages(pdfDocument);
+      }, (reason) => this.onRejected(reason, 'getPages')).
+      then((pages) => this.setPageDimensions(pages)
+        , (reason) => this.onRejected(reason, 'setPageDimensions')).
+      then(() => {
         if (this.loadingTask.destroyed) {
-          pdfDocument.destroy();
-        } else {
-          this.loadingTask = null;
-          this.pdfDocument = pdfDocument;
-          this.props.setPdfDocument(this.props.file, pdfDocument);
+          return this.pdfDocument.destroy();
         }
-      }).
-      catch(() => {
+        this.loadingTask = null;
+
+        return this.props.setPdfDocument(this.props.file, this.pdfDocument);
+      }, (reason) => this.onRejected(reason, 'setPdfDocument')).
+      catch((error) => {
+        console.error(`${uuid.v4()} : GET ${this.props.file} : ${error}`);
         this.loadingTask = null;
         this.props.setDocumentLoadError(this.props.file);
       });
   }
 
-  setPageDimensions = (pdfDocument) => {
+  onRejected = (reason, step) => {
+    console.error(`${uuid.v4()} : GET ${this.props.file} : STEP ${step} : ${reason}`);
+    throw reason;
+  }
+
+  getPages = (pdfDocument) => {
     const promises = _.range(0, pdfDocument?.numPages).map((index) => {
 
       return pdfDocument.getPage(pageNumberOfPageIndex(index));
     });
 
-    Promise.all(promises).then((pages) => {
-      const viewports = pages.map((page) => {
-        return _.pick(page.getViewport({ scale: PAGE_DIMENSION_SCALE }), ['width', 'height']);
-      });
+    return Promise.all(promises);
+  }
 
-      this.props.setPageDimensions(this.props.file, viewports);
-    }, () => {
-      // Eventually we should send a sentry error? Or metrics?
+  setPageDimensions = (pages) => {
+    const viewports = pages.map((page) => {
+      return _.pick(page.getViewport({ scale: PAGE_DIMENSION_SCALE }), ['width', 'height']);
     });
+
+    this.props.setPageDimensions(this.props.file, viewports);
   }
 
   componentWillUnmount = () => {
