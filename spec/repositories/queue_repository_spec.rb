@@ -230,10 +230,10 @@ describe QueueRepository, :all_dbs do
 
     let(:judge) { User.create(css_id: "BAWS123", station_id: User::BOARD_STATION_ID) }
     let(:attorney) { User.create(css_id: "FATR456", station_id: User::BOARD_STATION_ID) }
+    let(:vacols_case) { create(:case, bfcurloc: judge_staff.slogid) }
     let!(:judge_staff) do
       create(:staff, :judge_role, slogid: "BVABAWS", sdomainid: judge.css_id)
     end
-    let(:vacols_case) { create(:case, bfcurloc: judge_staff.slogid) }
     let!(:attorney_staff) do
       create(:staff, :attorney_role, stitle: "DF", slogid: "BVASAMD", sdomainid: attorney.css_id)
     end
