@@ -38,7 +38,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
     let(:setups) do
       [
         {
-          file_number: "000_000_001",
+          file_number: "500_000_001",
           review_type: :higher_level_review,
           status_type_code: "CAN",
           last_action_date: 3.days.ago.mdY,
@@ -46,7 +46,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
           error_text: error_text
         },
         {
-          file_number: "000_000_002",
+          file_number: "500_000_002",
           review_type: :higher_level_review,
           status_type_code: "CLR",
           last_action_date: 2.days.ago.mdY,
@@ -54,7 +54,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
           error_text: error_text
         },
         {
-          file_number: "000_000_003",
+          file_number: "500_000_003",
           review_type: :supplemental_claim,
           status_type_code: "PEND",
           last_action_date: 2.days.ago.mdY,
@@ -62,7 +62,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
           error_text: error_text
         },
         {
-          file_number: "000_000_004",
+          file_number: "500_000_004",
           review_type: :supplemental_claim,
           status_type_code: "CLR",
           last_action_date: Time.zone.today.mdY,
@@ -108,7 +108,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
     let(:setups) do
       [
         {
-          file_number: "000_000_001",
+          file_number: "999_100_001",
           review_type: :higher_level_review,
           status_type_code: "CAN",
           last_action_date: Time.zone.today.mdY,
@@ -116,7 +116,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
           error_text: error_text
         },
         {
-          file_number: "000_000_002",
+          file_number: "999_100_002",
           review_type: :higher_level_review,
           status_type_code: "CLR",
           last_action_date: Time.zone.today.mdY,
@@ -141,7 +141,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
     let(:setups) do
       [
         {
-          file_number: "000_000_001",
+          file_number: "000_500_001",
           review_type: :higher_level_review,
           status_type_code: "CAN",
           last_action_date: 13.days.ago.mdY,
@@ -149,7 +149,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
           error_text: ""
         },
         {
-          file_number: "000_000_002",
+          file_number: "000_500_002",
           review_type: :supplemental_claim,
           status_type_code: "CLR",
           last_action_date: 22.days.ago.mdY,
@@ -174,7 +174,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
       let(:setups) do
         [
           {
-            file_number: "000_000_001",
+            file_number: "200_000_001",
             review_type: :higher_level_review,
             status_type_code: "CAN",
             last_action_date: 3.days.ago.mdY,
@@ -200,7 +200,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
       let(:setups) do
         [
           {
-            file_number: "000_000_001",
+            file_number: "100_000_001",
             review_type: :supplemental_claim,
             status_type_code: "CAN",
             last_action_date: 3.days.ago.mdY,
