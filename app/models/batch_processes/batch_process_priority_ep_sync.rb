@@ -2,52 +2,65 @@
 
 class BatchProcessPriorityEpSync < BatchProcess
   class << self
-    def find_records_to_batch
-      PriorityEndProductSyncQueue.where("batch_id IS NULL AND (last_batched_at IS NULL OR last_batched_at <= ?)",
-                                        BatchProcess::ERROR_DELAY.hours.ago).lock.limit(BatchProcess::BATCH_LIMIT)
+    def find_records
+
+      PriorityEndProductSyncQueue.where(
+        batch_id: [nil, BatchProcess.where.not("state = ?", "PROCESSING")])
+        .where("(status <> ? AND status <> ?) AND
+                (last_batched_at IS NULL OR last_batched_at <= ?)",
+                Constants.PRIORITY_EP_SYNC.synced,
+                Constants.PRIORITY_EP_SYNC.stuck,
+                BatchProcess::ERROR_DELAY.hours.ago).lock.limit(BatchProcess::BATCH_LIMIT)
+
     end
 
-    def create_batch!
+
+    def create_batch!(records)
       uuid = SecureRandom.uuid
-      BatchProcessPriorityEpSync.create!(batch_id: uuid, batch_type: name)
+      new_batch = BatchProcessPriorityEpSync.create!(batch_id: uuid,
+                                                     batch_type: name,
+                                                     state: Constants.BATCH_PROCESS.pre_processing,
+                                                     records_attempted: records.count)
+
+      new_batch.assign_batch_to_queued_records!(records)
+      new_batch
     end
   end
 
-  def build_batch!(records_to_batch)
-    batch_priority_queued_epes!(records_to_batch)
-    records_attempted!
-    self
-  end
 
   def process_batch!
-    process_state!
-
+    batch_processing!
     priority_end_product_sync_queue.each do |record|
+      record.status_processing!
       epe = record.end_product_establishment
+
       begin
         epe.sync!
 
-        fail Caseflow::Error::PriorityEndProductSyncError, "Claim Not In VBMS_EXT_CLAIM." unless epe.vbms_ext_claim
-        if epe.synced_status != epe.vbms_ext_claim&.level_status_code
+        if epe.vbms_ext_claim.nil?
+          fail Caseflow::Error::PriorityEndProductSyncError, "Claim Not In VBMS_EXT_CLAIM."
+
+        elsif epe.synced_status != epe.vbms_ext_claim&.level_status_code
           fail Caseflow::Error::PriorityEndProductSyncError, "EPE synced_status does not match VBMS."
         end
+
       rescue StandardError => error
         error_out_record!(record, error)
         next
       end
-      record.finished_sync_status!
+
+      record.status_sync!
       increment_completed
     end
 
-    complete_state!
+    batch_complete!
   end
 
-  private
 
-  def batch_priority_queued_epes!(records_to_batch)
-    @attempted_count = records_to_batch.count
-    records_to_batch.update_all(batch_id: batch_id,
-                                status: "PRE_PROCESSING",
+  def assign_batch_to_queued_records!(records)
+    records.update_all(batch_id: batch_id,
+                                status: Constants.PRIORITY_EP_SYNC.pre_processing,
                                 last_batched_at: Time.zone.now)
+
   end
 end

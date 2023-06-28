@@ -9,42 +9,43 @@ class BatchProcess < CaseflowRecord
   ERROR_DELAY = ENV["ERROR_DELAY"].to_i
   BATCH_LIMIT = ENV["BATCH_LIMIT"].to_i
 
+
+  enum state: {
+    Constants.BATCH_PROCESS.pre_processing.to_sym => Constants.BATCH_PROCESS.pre_processing,
+    Constants.BATCH_PROCESS.processing.to_sym => Constants.BATCH_PROCESS.processing,
+    Constants.BATCH_PROCESS.completed.to_sym => Constants.BATCH_PROCESS.completed
+
+  }
+
+
   class << self
-    def find_records_to_batch
+    def find_records
       # no-op, can be overwritten
     end
 
-    def create_batch!
+    def create_batch!(record)
       # no-op, can be overwritten
     end
-  end
-
-  def build_batch!(records_to_batch)
-    # no-op, can be overwritten
   end
 
   def process_batch!
     # no-op, can be overwritten
   end
 
+
   private
 
   def init_counters
     @completed_count = 0
     @failed_count = 0
-    @attempted_count = 0
   end
 
-  def records_attempted!
-    update!(records_attempted: @attempted_count)
+  def batch_processing!
+    update!(state: Constants.BATCH_PROCESS.processing, started_at: Time.zone.now)
   end
 
-  def process_state!
-    update!(state: "PROCESSING", started_at: Time.zone.now)
-  end
-
-  def complete_state!
-    update!(state: "COMPLETED",
+  def batch_complete!
+    update!(state: Constants.BATCH_PROCESS.completed,
             records_failed: @failed_count,
             records_completed: @completed_count,
             ended_at: Time.zone.now)
@@ -62,15 +63,13 @@ class BatchProcess < CaseflowRecord
     increment_failed
     error_array = record.error_messages || []
     error_array.push("Error: #{error.inspect} - Batch ID: #{record.batch_id} - Time: #{Time.zone.now}.")
-    if error_array.length >= ERROR_LIMIT
-      declare_record_stuck!(record)
-    else
-      record.unbatch!(error_array)
-    end
-    Rails.logger.error(error.inspect)
-  end
 
-  def declare_record_stuck!(record)
-    record.stuck!
+    if error_array.length >= ERROR_LIMIT
+      record.declare_record_stuck!
+    else
+      record.status_error!(error_array)
+    end
+
+    Rails.logger.error(error.inspect)
   end
 end

@@ -9,16 +9,35 @@ class PriorityEndProductSyncQueue < CaseflowRecord
   belongs_to :batch_process, foreign_key: "batch_id", primary_key: "batch_id"
   has_one :caseflow_stuck_records, as: :stuck_record
 
-  def finished_sync_status!
-    update!(status: "SYNCED")
+  enum status: {
+    Constants.PRIORITY_EP_SYNC.not_processed.to_sym => Constants.PRIORITY_EP_SYNC.not_processed,
+    Constants.PRIORITY_EP_SYNC.pre_processing.to_sym => Constants.PRIORITY_EP_SYNC.pre_processing,
+    Constants.PRIORITY_EP_SYNC.processing.to_sym => Constants.PRIORITY_EP_SYNC.processing,
+    Constants.PRIORITY_EP_SYNC.synced.to_sym => Constants.PRIORITY_EP_SYNC.synced,
+    Constants.PRIORITY_EP_SYNC.error.to_sym => Constants.PRIORITY_EP_SYNC.error,
+    Constants.PRIORITY_EP_SYNC.stuck.to_sym => Constants.PRIORITY_EP_SYNC.stuck
+  }
+
+
+  def status_processing!
+    update!(status: Constants.PRIORITY_EP_SYNC.processing)
   end
 
-  def unbatch!(errors)
-    update!(batch_id: nil, status: "ERROR", error_messages: errors)
+  def status_sync!
+    update!(status: Constants.PRIORITY_EP_SYNC.synced)
   end
 
-  def stuck!
-    update!(status: "STUCK")
-    CaseflowStuckRecord.create!(stuck_record: self, error_messages: error_messages, determined_stuck_at: Time.zone.now)
+  def status_error!(errors)
+    update!(status: Constants.PRIORITY_EP_SYNC.error,
+            error_messages: errors)
+  end
+
+  def declare_record_stuck!
+    update!(status: Constants.PRIORITY_EP_SYNC.stuck)
+    CaseflowStuckRecord.create!(stuck_record: self,
+                                error_messages: error_messages,
+                                determined_stuck_at: Time.zone.now)
+
+    # ASK Jeremy about other notifiers like Raven.
   end
 end

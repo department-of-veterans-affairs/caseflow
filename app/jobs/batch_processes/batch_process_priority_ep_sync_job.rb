@@ -7,24 +7,31 @@ class BatchProcessPriorityEpSyncJob < CaseflowJob
     JOB_ATTR = job
   end
 
+
   def perform
     begin
       batch = ActiveRecord::Base.transaction do
-        records_to_batch = BatchProcessPriorityEpSync.find_records_to_batch
+        # .find_records MUST remain in a transaction block
+        # otherwise the table will remain locked
+        records_to_batch = BatchProcessPriorityEpSync.find_records
         next if records_to_batch.empty?
 
-        new_batch = BatchProcessPriorityEpSync.create_batch!
-        batched_records = new_batch.build_batch!(records_to_batch)
-        batched_records
+        # DOUBLE LOCK TESTING BYEBUG
+
+        BatchProcessPriorityEpSync.create_batch!(records_to_batch)
       end
+
       if batch
         batch.process_batch!
       else
         Rails.logger.info("No Records Available to Batch.  Time: #{Time.zone.now}")
       end
+
     rescue StandardError => error
       Rails.logger.error("Error: #{error.inspect}, Job ID: #{JOB_ATTR&.job_id}, Job Time: #{Time.zone.now}")
-      capture_exception(error: error, extra: { job_id: JOB_ATTR&.job_id.to_s, job_time: Time.zone.now.to_s })
+      capture_exception(error: error,
+                        extra: { job_id: JOB_ATTR&.job_id.to_s,
+                                 job_time: Time.zone.now.to_s })
     end
   end
 end
