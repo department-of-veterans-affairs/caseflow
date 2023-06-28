@@ -51,7 +51,7 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
   end
 
   def distribution_uuid_from_id(pk_id)
-    VbmsDistribution.find(pk_id).pacman_uuid
+    VbmsDistribution.find(pk_id).uuid
   end
 
   # Renders errors and logs and tracks the here within Raven

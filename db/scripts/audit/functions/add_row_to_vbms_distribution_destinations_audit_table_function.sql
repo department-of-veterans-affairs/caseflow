@@ -27,7 +27,7 @@ begin
       OLD.vbms_distribution_id,
       OLD.created_by_id,
       OLD.updated_by_id,
-      OLD.pacman_uuid;
+      OLD.uuid;
   elsif (TG_OP = 'UPDATE') then
     insert into caseflow_audit.vbms_distribution_destinations_audit
     select
@@ -53,7 +53,7 @@ begin
       NEW.vbms_distribution_id,
       NEW.created_by_id,
       NEW.updated_by_id,
-      NEW.pacman_uuid;
+      NEW.uuid;
   elsif (TG_OP = 'INSERT') then
     insert into caseflow_audit.vbms_distribution_destinations_audit
     select
@@ -79,7 +79,7 @@ begin
       NEW.vbms_distribution_id,
       NEW.created_by_id,
       NEW.updated_by_id,
-      NEW.pacman_uuid;
+      NEW.uuid;
   end if;
   return null;
 end;
