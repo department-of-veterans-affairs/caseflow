@@ -51,7 +51,7 @@ export const AmaIssue = (props) => {
     <div {...issueContentStyling}><strong>Benefit type: </strong>{BENEFIT_TYPES[props.issue.program]}</div>
     <div {...issueContentStyling}><strong>Issue: </strong>{props.issue.description}</div>
     { props.issue.diagnostic_code &&
-      <div {...issueContentStyling}><strong>Diagnostic code: </strong>: {props.issue.diagnostic_code}</div> }
+      <div {...issueContentStyling}><strong>Diagnostic code: </strong>{props.issue.diagnostic_code}</div> }
     { (props.mstFeatureToggle || props.pactFeatureToggle) && <div {...issueContentStyling}>
       <strong>Special Issues: </strong>{
         specialIssuesFormatting(props.issue.mst_status, props.issue.pact_status)

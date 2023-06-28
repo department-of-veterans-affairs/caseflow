@@ -68,10 +68,6 @@ RSpec.feature "Judge checkout flow", :all_dbs do
 
       expect(page).to have_content("Select an action")
       click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
-      # Special Issues page
-      expect(page).to have_content("Select special issues")
-      find("label", text: "No Special Issues").click
-      click_on "Continue"
 
       # Decision Issues page
       click_on "Continue"
@@ -143,9 +139,6 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       click_on "(#{appeal.veteran_file_number})"
 
       click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
-      # Special Issues screen
-      find("label", text: "No Special Issues").click
-      click_on "Continue"
 
       all("button", text: "+ Add decision")[0].click
       expect(page).to have_content "Blue Water"
@@ -190,23 +183,6 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       click_on "(#{appeal.veteran_file_number})"
 
       click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
-
-      # Special Issues page
-      expect(page).to have_content("Select special issues")
-
-      expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
-
-      expect(page).to have_content("Blue Water")
-      expect(page).to have_content("Burn Pit")
-      find("label", text: "Blue Water").click
-      expect(page.find("#blue_water", visible: false).checked?).to eq true
-      find("label", text: "No Special Issues").click
-      expect(page.find("#blue_water", visible: false).checked?).to eq false
-      expect(page.find("#blue_water", visible: false).disabled?).to eq true
-      find("label", text: "No Special Issues").click
-      expect(page.find("#blue_water", visible: false).checked?).to eq false
-      find("label", text: "Blue Water").click
-      click_on "Continue"
 
       # Decision Issues screen
       click_on "Continue"
@@ -384,10 +360,6 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       step("Navigate from case details to decision issues by way of actions dropdown") do
         visit("/queue/appeals/#{appeal.external_id}")
         click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
-        if !find("#no_special_issues", visible: false).checked?
-          find("label", text: "No Special Issues").click
-        end
-        click_on "Continue"
         expect(page).to have_content(COPY::DECISION_ISSUE_PAGE_TITLE)
       end
 
@@ -525,6 +497,179 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       appeal_id = LegacyAppeal.last.vacols_id
 
       expect(page).to have_current_path("/queue/appeals/#{appeal_id}")
+    end
+  end
+
+  describe " - mst/pact identification" do
+    before do
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
+    end
+
+    after do
+      FeatureToggle.disable!(:mst_identification)
+      FeatureToggle.disable!(:pact_identification)
+    end
+
+    context " - AMA appeals" do
+      let(:issue_note) { "Test note" }
+      let(:issue_description) { "Test description" }
+      let(:diagnostic_code) { "5008" }
+      let(:other_issue_text) { "Decision issue text here" }
+      let(:disposition_allowed) { "Allowed" }
+      let(:benefit_type) { "Compensation" }
+      let(:appeal) do
+        create(
+          :appeal,
+          # :with_decision_issue,
+          number_of_claimants: 1,
+          request_issues: [
+            create(
+              :request_issue,
+              benefit_type: "compensation",
+              nonrating_issue_description: issue_description,
+              notes: issue_note,
+              contested_rating_issue_diagnostic_code: diagnostic_code,
+            )
+          ],
+          decision_issues: create_list(:decision_issue, 1)
+        )
+      end
+
+      let(:appeal_with_mst_pact) do
+        create(
+          :appeal,
+          number_of_claimants: 1,
+          request_issues: [
+            create(
+              :request_issue,
+              benefit_type: "compensation",
+              mst_status: true,
+              pact_status: true,
+              nonrating_issue_description: issue_description,
+              notes: issue_note,
+              contested_rating_issue_diagnostic_code: diagnostic_code
+            )
+          ]
+        )
+      end
+
+      let(:decision_issue) do
+        create(
+          :decision_issue,
+          disposition: "allowed",
+          description: "Decision 1"
+        )
+      end
+
+      context " - given a single issue" do
+        let(:root_task) { create(:root_task, appeal: appeal) }
+        let(:judge_review_task) do
+          create(
+            :ama_judge_decision_review_task,
+            appeal: appeal,
+            parent: root_task,
+            assigned_to: judge_user
+          )
+        end
+        let!(:attorney_task) do
+          create(
+            :ama_attorney_task,
+            appeal: appeal,
+            parent: judge_review_task,
+            assigned_to: attorney_user
+          )
+        end
+
+        before do
+          attorney_task.update!(status: Constants.TASK_STATUSES.completed)
+          create(
+            :request_decision_issue,
+            request_issue: appeal.request_issues.first,
+            decision_issue: appeal.decision_issues.first
+          )
+          User.authenticate!(user: judge_user)
+        end
+
+        scenario " - adds mst to the decision" do
+          visit "/queue"
+          click_on "(#{appeal.veteran_file_number})"
+
+          click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
+
+          all("button", text: "Edit", count: 1)[0].click
+          fill_in "Text Box", with: other_issue_text
+          check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+          click_on "Save"
+
+          click_on "Continue"
+
+          find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["TIMELINESS"]["timely"]).click
+          find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
+          find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["QUALITY"]["outstanding"]).click
+
+          dummy_note = generate_words 5
+          fill_in "additional-factors", with: dummy_note
+          click_on "Continue"
+
+          expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
+          expect(appeal.decision_issues.first.mst_status).to eq(true)
+          expect(appeal.decision_issues.first.pact_status).to eq(false)
+        end
+
+        scenario " - adds pact to the decision" do
+          visit "/queue"
+          click_on "(#{appeal.veteran_file_number})"
+
+          click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
+
+          all("button", text: "Edit", count: 1)[0].click
+          fill_in "Text Box", with: other_issue_text
+          check("PACT Act", allow_label_click: true, visible: false)
+          click_on "Save"
+
+          click_on "Continue"
+
+          find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["TIMELINESS"]["timely"]).click
+          find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
+          find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["QUALITY"]["outstanding"]).click
+
+          dummy_note = generate_words 5
+          fill_in "additional-factors", with: dummy_note
+          click_on "Continue"
+
+          expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
+          expect(appeal.decision_issues.first.mst_status).to eq(false)
+          expect(appeal.decision_issues.first.pact_status).to eq(true)
+        end
+
+        scenario " - adds mst and pact to the decision" do
+          visit "/queue"
+          click_on "(#{appeal.veteran_file_number})"
+
+          click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
+
+          all("button", text: "Edit", count: 1)[0].click
+          fill_in "Text Box", with: other_issue_text
+          check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+          check("PACT Act", allow_label_click: true, visible: false)
+          click_on "Save"
+
+          click_on "Continue"
+
+          find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["TIMELINESS"]["timely"]).click
+          find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
+          find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["QUALITY"]["outstanding"]).click
+
+          dummy_note = generate_words 5
+          fill_in "additional-factors", with: dummy_note
+          click_on "Continue"
+
+          expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
+          expect(appeal.decision_issues.first.mst_status).to eq(true)
+          expect(appeal.decision_issues.first.pact_status).to eq(true)
+        end
+      end
     end
   end
 end
