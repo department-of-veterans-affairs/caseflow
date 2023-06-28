@@ -24,7 +24,7 @@ class MailRequestJob < CaseflowJob
       package_response = PacmanService.send_communication_package_request(
         vbms_uploaded_document.veteran_file_number,
         get_package_name(vbms_uploaded_document),
-        document_referenced(vbms_uploaded_document.id, mail_package[:copies])
+        document_referenced(vbms_uploaded_document.document_version_reference_id, mail_package[:copies])
       )
       log_info(package_response)
     rescue Caseflow::Error::PacmanApiError => error
