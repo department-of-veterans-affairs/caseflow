@@ -27,11 +27,11 @@ class MailRequestJob < CaseflowJob
         document_referenced(vbms_uploaded_document.id, mail_package[:copies])
       )
       log_info(package_response)
+      vbms_comm_package = create_package(vbms_uploaded_document, mail_package)
     rescue Caseflow::Error::PacmanApiError => error
       vbms_comm_package.update!(status: "error")
       log_error(error)
     end
-    vbms_comm_package = create_package(vbms_uploaded_document, mail_package)
     vbms_comm_package.update!(status: "success")
     create_distribution_request(vbms_comm_package.id, mail_package)
   end
