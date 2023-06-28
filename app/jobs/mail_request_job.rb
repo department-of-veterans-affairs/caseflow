@@ -153,7 +153,8 @@ class MailRequestJob < CaseflowJob
     403 => "403 PacmanForbiddenError The server cannot create the new communication package" \
            "due to insufficient privileges.",
     404 => "404 PacmanNotFoundError The communication package could not be found but may be available" \
-      "again in the future. Subsequent requests by the client are permissible."
+      "again in the future. Subsequent requests by the client are permissible.",
+    500 => "500 PacmanInternalServerError The request was unable to be completed."
   }.freeze
 
   # Purpose: logs information in Rails logger
