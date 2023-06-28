@@ -117,7 +117,7 @@ RSpec.feature "Colocated checkout flows", :all_dbs do
 
       instructions = generate_words 5
       fill_in "instructions", with: instructions
-      click_on(COPY::MODAL_SUBMIT_BUTTON)
+      click_on(COPY::MODAL_PUT_TASK_ON_HOLD_BUTTON)
 
       expect(page).to have_content(
         format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, appeal.veteran_full_name, hold_duration)
