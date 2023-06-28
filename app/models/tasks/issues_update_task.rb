@@ -7,20 +7,19 @@ class IssuesUpdateTask < Task
     "Issues Update Task"
   end
 
-  def format_instructions(change_type, issue_category, original_mst, original_pact, edit_mst = nil, edit_pact = nil,
+  def format_instructions(change_type, issue_category, benefit_type, original_mst, original_pact, edit_mst = nil, edit_pact = nil,
                           _mst_edit_reason = nil, _pact_edit_reason = nil)
     # format the instructions by loading an array and adding it to the instructions
-
     edit_issue_format = []
     # add the change type
     edit_issue_format << change_type
+    edit_issue_format << benefit_type
     edit_issue_format << issue_category
     original_comment = format_special_issues_text(original_mst, original_pact).to_s
     edit_issue_format << original_comment
 
     # format edit if edit values are given
     unless edit_mst.nil? || edit_pact.nil?
-      edit_issue_format << issue_category
       updated_comment = format_special_issues_text(edit_mst, edit_pact).to_s
       edit_issue_format << updated_comment
     end
