@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# IssuesController for LegacyAppeals
 class IssuesController < ApplicationController
   before_action :validate_access_to_task
 
@@ -38,6 +39,10 @@ class IssuesController < ApplicationController
       vacols_sequence_id: params[:vacols_sequence_id],
       issue_attrs: issue_params
     )
+
+    # Set LegacyAppeal issues to nil in order to refresh and retrieve new update
+    appeal.issues = nil if appeal.is_legacy?
+
     render json: { issues: json_issues }, status: :ok
   end
 
@@ -66,6 +71,7 @@ class IssuesController < ApplicationController
     task.format_instructions(
       "Edited Issue",
       before_issue.note,
+      before_issue.labels[0] || "",
       before_issue.mst_status,
       before_issue.pact_status,
       convert_to_bool(params[:issues][:mst_status]),

@@ -180,7 +180,6 @@ class AppealsController < ApplicationController
 
   def update
     if appeal.is_a?(LegacyAppeal) && FeatureToggle.enabled?(:legacy_mst_pact_identification)
-      set_flash_success_message
       legacy_mst_pact_updates
     elsif request_issues_update.perform!
       set_flash_success_message
@@ -279,7 +278,7 @@ class AppealsController < ApplicationController
 
   # check if changes in params
   def mst_pact_changes?
-    params[:request_issues].any? { |issue| issue[:mst_status] || issue[:pact_status] }
+    request_issues_update.mst_edited_issues.any? || request_issues_update.pact_edited_issues.any?
   end
 
   # format MST/PACT edit success banner message
@@ -332,26 +331,27 @@ class AppealsController < ApplicationController
     message << "#{pact_added} #{'issue'.pluralize(pact_added)} marked as PACT" unless pact_added == 0
 
     # add in removed message and added message, if any
-    message << create_mst_pact_message(new_issues, "added") unless new_issues.empty?
-    message << create_mst_pact_message(removed_issues, "removed") unless removed_issues.empty?
+    message << create_mst_pact_message_for_new_and_removed_issues(new_issues, "added") unless new_issues.empty?
+    message << create_mst_pact_message_for_new_and_removed_issues(removed_issues, "removed") unless removed_issues.empty?
 
     message.flatten
   end
 
   # create MST/PACT message for added/removed issues
-  def create_mst_pact_message(issues, type)
-    if issues.any? { |issue| issue.mst_status || issue.pact_status }
-      special_issue_message = []
-      # check if any issues have MST/PACT and get the count
-      mst_count = issues.count { |issue| issue.mst_status && !issue.pact_status }
-      pact_count = issues.count { |issue| issue.pact_status && !issue.mst_status }
-      both_count = issues.count { |issue| issue.pact_status && issue.mst_status }
+  def create_mst_pact_message_for_new_and_removed_issues(issues, type)
+    special_issue_message = []
+    # check if any added/removed issues have MST/PACT and get the count
+    mst_count = issues.count { |issue| issue.mst_status && !issue.pact_status }
+    pact_count = issues.count { |issue| issue.pact_status && !issue.mst_status }
+    both_count = issues.count { |issue| issue.pact_status && issue.mst_status }
+    none_count = issues.count { |issue| !issue.pact_status && !issue.mst_status }
 
-      special_issue_message << "#{mst_count} #{'issue'.pluralize(mst_count)} with MST #{type}" unless mst_count == 0
-      special_issue_message << "#{pact_count} #{'issue'.pluralize(pact_count)} with PACT #{type}" unless pact_count == 0
-      special_issue_message << "#{both_count} #{'issue'.pluralize(both_count)} with MST and PACT #{type}" unless both_count == 0
-      special_issue_message
-    end
+    special_issue_message << "#{mst_count} #{'issue'.pluralize(mst_count)} with MST #{type}" unless mst_count == 0
+    special_issue_message << "#{pact_count} #{'issue'.pluralize(pact_count)} with PACT #{type}" unless pact_count == 0
+    special_issue_message << "#{both_count} #{'issue'.pluralize(both_count)} with MST and PACT #{type}" unless both_count == 0
+    special_issue_message << "#{none_count} #{'issue'.pluralize(none_count)} #{type}" unless none_count == 0
+
+    special_issue_message
   end
 
   # check if there is a change in mst/pact on legacy issue
@@ -384,6 +384,7 @@ class AppealsController < ApplicationController
         )
       end
     end
+    set_flash_mst_edit_message
     render json: { issues: json_issues }, status: :ok
   end
 
@@ -442,6 +443,7 @@ class AppealsController < ApplicationController
     task.format_instructions(
       "Edited Issue",
       before_issue.note,
+      before_issue.labels[0] || "",
       before_issue.mst_status,
       before_issue.pact_status,
       current_issue[:mst_status],
@@ -452,10 +454,9 @@ class AppealsController < ApplicationController
 
   # updated flash message to show mst/pact message if mst/pact changes (not to legacy)
   def set_flash_success_message
-
-    return set_flash_mst_edit_message if (mst_pact_changes? && !appeal.is_a?(LegacyAppeal)) &&
-                                         FeatureToggle.enabled?(:mst_identification) ||
-                                         FeatureToggle.enabled?(:pact_identification)
+    return set_flash_mst_edit_message if mst_pact_changes? &&
+                                        (FeatureToggle.enabled?(:mst_identification) ||
+                                        FeatureToggle.enabled?(:pact_identification))
 
     set_flash_edit_message
   end

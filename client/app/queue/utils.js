@@ -635,8 +635,8 @@ export const getMstPactStatus = (issue) => {
 };
 
 export const getLegacyMstPactStatus = (issue) => {
-  const mstStatusLegacy = issue.legacy_appeal_vacols_mst;
-  const pactStatusLegacy = issue.legacy_appeal_vacols_pact;
+  const mstStatusLegacy = issue.mst_status;
+  const pactStatusLegacy = issue.pact_status;
 
   if (!mstStatusLegacy && !pactStatusLegacy) {
     return 'None';

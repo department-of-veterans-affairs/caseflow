@@ -17,7 +17,7 @@ class CaseReviewsController < ApplicationController
       if case_review.appeal_type == "Appeal" &&
          (FeatureToggle.enabled?(:mst_identification) || FeatureToggle.enabled?(:pact_identification))
         appeal = Appeal.find(case_review.appeal_id)
-        update_request_issues_for_mst_and_pact(appeal)
+        mst_pact_decision_issue_changes(appeal)
       end
       render json: {
         task: case_review,
@@ -50,14 +50,12 @@ class CaseReviewsController < ApplicationController
     return judge_case_review_params if case_review_class == "JudgeCaseReview"
   end
 
-
-  def update_request_issues_for_mst_and_pact(appeal)
-    params[:tasks][:issues].each do |issue|
-      RequestIssue.find(issue[:request_issue_ids]).each do |ri|
-        if ri.mst_status != issue[:mstStatus] || ri.pact_status != issue[:pactStatus]
-          create_issue_update_task(ri, issue, appeal)
+  def mst_pact_decision_issue_changes(appeal)
+    params[:tasks][:issues].each do |di|
+      RequestIssue.find(di[:request_issue_ids]).each do |ri|
+        if ri.mst_status != di[:mst_status] || ri.pact_status != di[:pact_status]
+          create_issue_update_task(ri, di, appeal)
         end
-        ri.update(mst_status: issue[:mstStatus], pact_status: issue[:pactStatus])
       end
     end
   end
@@ -91,6 +89,7 @@ class CaseReviewsController < ApplicationController
 
   def issues_params
     # This is a combined list of params for ama and legacy appeals
+    # Reprsents the information the front end is sending to create a decision issue object
     [
       :id,
       :disposition,
@@ -98,6 +97,8 @@ class CaseReviewsController < ApplicationController
       :readjudication,
       :benefit_type,
       :diagnostic_code,
+      :mst_status,
+      :pact_status,
       request_issue_ids: [],
       remand_reasons: [
         :code,
@@ -106,7 +107,7 @@ class CaseReviewsController < ApplicationController
     ]
   end
 
-  def create_issue_update_task(original_issue, incoming_issue_update, appeal)
+  def create_issue_update_task(original_issue, decision_issue, appeal)
     root_task = RootTask.find_or_create_by!(appeal: appeal)
 
     task = IssuesUpdateTask.create!(
@@ -119,13 +120,29 @@ class CaseReviewsController < ApplicationController
 
     task.format_instructions(
       "Edited Issue",
-      original_issue.nonrating_issue_category,
+      # [original_issue.nonrating_issue_category, original_issue.contested_issue_description].join,
+      task_text_helper([original_issue.contested_issue_description, original_issue.nonrating_issue_category, original_issue.nonrating_issue_description]),
+      task_text_benefit_type(original_issue),
       original_issue.mst_status,
       original_issue.pact_status,
-      incoming_issue_update[:mstStatus],
-      incoming_issue_update[:pactStatus]
+      decision_issue[:mst_status],
+      decision_issue[:pact_status]
     )
 
     task.completed!
+  end
+
+  def task_text_benefit_type(issue)
+    issue.benefit_type ? issue.benefit_type.capitalize : ""
+  end
+
+  def task_text_helper(text_array)
+    if text_array.compact.length > 1
+      text_array.compact.join(" - ")
+    elsif text_array.compact.length == 1
+      text_array.join
+    else
+      "Description unavailable"
+    end
   end
 end

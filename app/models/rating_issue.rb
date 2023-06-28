@@ -88,40 +88,17 @@ class RatingIssue
 
     def deserialize_special_issues(serialized_hash)
       data = []
-      return data unless serialized_hash[:special_issues]
+      serialized_hash[:special_issues]&.each do |special_issue|
+        data << { mst_available: true } if Rating.special_issue_has_mst?(special_issue)
 
-      serialized_hash[:special_issues].each do |special_issue|
-        data << { mst_available: true } if special_issue_has_mst?(special_issue) || Rating.mst_from_contentions_for_rating?
+        data << { pact_available: true } if Rating.special_issue_has_pact?(special_issue)
+      end
+      if serialized_hash[:rba_contentions_data]
+        data << { mst_available: true } if Rating.mst_from_contentions_for_rating?(serialized_hash)
 
-        data << { pact_available: true } if special_issue_has_pact?(special_issue) || Rating.pact_from_contentions_for_rating?
+        data << { pact_available: true } if Rating.pact_from_contentions_for_rating?(serialized_hash)
       end
       data
-    end
-
-    def special_issue_has_mst?(special_issue)
-      if special_issue[:spis_tn].casecmp("ptsd - personal trauma").zero?
-        return ["sexual trauma/assault", "sexual Hhrassment"].include?(special_issue[:spis_basis_tn].downcase)
-      end
-
-      if special_issue[:spis_tn].casecmp("non-ptsd - personal trauma").zero?
-        ["sexual assault trauma", "sexual harassment"].include?(special_issue[:spis_basis_tn].downcase)
-      end
-    end
-
-    def special_issue_has_pact?(special_issue)
-      if special_issue[:spis_tn].casecmp("gulf war presumptive 3.3201").zero?
-        return special_issue[:spis_basis_tn].casecmp("particulate matter").zero?
-      end
-
-      [
-        "agent orange - outside vietnam or unknown",
-        "agent orange - vietnam",
-        "amytrophic lateral sclerosis",
-        "burn pit exposure",
-        "environmental hazard in gulf war",
-        "gulf war presumptive",
-        "radiation"
-      ].include?(special_issue[:spis_tn].downcase)
     end
   end
 
