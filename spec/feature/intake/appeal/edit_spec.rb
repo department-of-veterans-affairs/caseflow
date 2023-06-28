@@ -1237,20 +1237,14 @@ feature "Appeal Edit issues", :all_dbs do
     end
 
     context "with Legacy MST/PACT identifications" do
-
       let!(:legacy_appeal) do
         create(
           :legacy_appeal,
-          vacols_id: "1234567",
-          vbms_id: appeal.veteran_file_number,
+          :with_veteran,
           vacols_case: create(
             :case,
-            :assigned,
-            user: bva_intake_admin_user,
             case_issues: [
-              create(:case_issue, issmst: "N", isspact: "Y"),
-              create(:case_issue, issmst: "Y", isspact: "N"),
-              create(:case_issue, issmst: "Y", isspact: "Y")
+              create(:case_issue, issmst: "N", isspact: "N")
             ]
           )
         )
@@ -1269,17 +1263,56 @@ feature "Appeal Edit issues", :all_dbs do
       end
 
       scenario "can add MST/PACT to issues" do
-        visit "/queue"
-        # click_on "Search cases"
-        # fill_in "search", with: appeal.veteran_file_number
-        # click_on "Search"
-        binding.pry
-        # click_on appeal.docket_number.to_s
+        visit "/queue/appeals/#{appeal.veteran_file_number}"
         click_on "Correct issues"
-        # find("select", id: "issue-action-0").click
-        # find("div", class: ".cf-form-dropdown", text: "Edit issue").click
-        # uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
-        # uncheck("PACT Act", allow_label_click: true, visible: false)
+
+        # Adds MST and PACT
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
+        check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+        find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
+        click_on "Save"
+
+        click_on "Save"
+
+        expect(page).to have_content("Special issues: MST, PACT")
+      end
+
+      scenario "can remove MST/PACT issues" do
+        # Removes MST and PACT
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
+        uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+        find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
+        click_on "Save"
+
+        click_on "Save"
+
+        expect(page).to have_no_content("Special issues: MST, PACT")
+      end
+
+      scenario "can add only PACT to an issue" do
+        # Adds PACT
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
+        find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
+        click_on "Save"
+
+        click_on "Save"
+
+        expect(page).to have_content("Special issues: PACT")
+      end
+
+      scenario "can add only MST to an issue" do
+        # Adds MST
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
+        check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+        click_on "Save"
+
+        click_on "Save"
+
+        expect(page).to have_content("Special issues: PACT")
       end
     end
   end
