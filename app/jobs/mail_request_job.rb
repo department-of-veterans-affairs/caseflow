@@ -32,7 +32,7 @@ class MailRequestJob < CaseflowJob
       log_error(error)
     end
     vbms_comm_package = create_package(vbms_uploaded_document, mail_package)
-    vbms_comm_package.update!(status: "success")
+    vbms_comm_package.update!(status: "success", uuid: package_response.body[:id])
     create_distribution_request(vbms_comm_package.id, mail_package)
   end
 
@@ -91,7 +91,7 @@ class MailRequestJob < CaseflowJob
         get_destinations_hash(dist_hash)
       )
       log_info(distribution_response)
-      distribution.update!(vbms_communication_package_id: package_id)
+      distribution.update!(vbms_communication_package_id: package_id, uuid: distribution_response.body[:id])
     end
   end
 
