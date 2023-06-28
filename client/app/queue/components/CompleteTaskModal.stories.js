@@ -20,7 +20,7 @@ import {
   returnToOrgData
 } from '../../../test/data/queue/taskActionModals/taskActionModalData';
 import TASK_ACTIONS from '../../../constants/TASK_ACTIONS';
-import CompleteTaskModal from './CompleteTaskModal';
+import { CompleteTaskModal } from './CompleteTaskModal';
 
 export default {
   title: 'Queue/Components/Task Action Modals/CompleteTaskModal',
