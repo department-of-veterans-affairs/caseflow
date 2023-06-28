@@ -166,7 +166,7 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :cont
           post :create, params: invalid_mail_request_params, as: :json
           validation_error_msgs = JSON.parse(response.body)["errors"]
           expect(validation_error_msgs).to eq(
-            "distribution 1"=>"First name can't be blank, Last name can't be blank"
+            "distribution 1" => "First name can't be blank, Last name can't be blank"
           )
           expect(response.status).to eq(400)
         end
