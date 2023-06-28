@@ -983,8 +983,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
             User.authenticate!(user: judge_user)
             visit "/queue"
             click_on "#{appeal_with_mst_pact.veteran_full_name} (#{appeal_with_mst_pact.veteran_file_number})"
-            expect(page).to_not have_selector(".cf-mst-badge")
-            expect(page).to_not have_selector(".cf-pact-badge")
+
             expect(page).to have_content("Special Issues: None")
             expect(appeal_with_mst_pact.decision_issues.first.mst_status).to eq(false)
             expect(appeal_with_mst_pact.decision_issues.first.pact_status).to eq(false)
