@@ -336,22 +336,41 @@ class TaskRows extends React.PureComponent {
       const hStyle = { marginTop: '1.5rem', marginBottom: '0rem', fontWeight: 'bold' };
 
       if (Array.isArray(text)) {
-
+        // text array indexes
+        // 0: change_type,
+        // 1: benefit_type,
+        // 2: issue description,
+        // 3: original special issues list
+        // 4: updated special issues list
+        // 5: mst edit reason (not currently implemented)
+        // 6: pact edit reason (not currently implemented)
         return (
           <div style={divStyle}>
             <b>{text[0]}:</b>
             <h5 style={hStyle}>Original:</h5>
-            <div>
-              <small>{text[1]}</small>
-            </div>
+              {text.at(1) != "" &&
+              <React.Fragment>
+                <div>
+                  <small>Benefit type: {text[1]}</small>
+                </div>
+              </React.Fragment>}
             <div style={divStyle}>
               <small>{text[2]}</small>
             </div>
-            {text.length > 3 &&
+            <div style={divStyle}>
+              <small>{text[3]}</small>
+            </div>
+            {text.length > 4 &&
             <React.Fragment>
               <h5 style={hStyle}>Updated:</h5>
-              <div>
-                <small>{text[3]}</small>
+              {text.at(1) != "" &&
+                <React.Fragment>
+                  <div>
+                    <small>Benefit type: {text[1]}</small>
+                  </div>
+                </React.Fragment>}
+              <div style={divStyle}>
+                <small>{text[2]}</small>
               </div>
               <div style={divStyle}>
                 <small>{text[4]}</small>
