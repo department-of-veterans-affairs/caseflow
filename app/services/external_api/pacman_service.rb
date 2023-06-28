@@ -63,7 +63,7 @@ class ExternalApi::PacmanService
     #
     # Response: package request hash
     def package_request(file_number, name, document_reference)
-      request = {
+      {
         body: {
           fileNumber: file_number,
           name: name,
@@ -75,7 +75,6 @@ class ExternalApi::PacmanService
         headers: HEADERS,
         endpoint: SEND_PACKAGE_ENDPOINT, method: :post
       }
-      request
     end
 
     # Purpose: Builds distribution request
@@ -84,7 +83,7 @@ class ExternalApi::PacmanService
     #
     # Response: Distribution request hash
     def distribution_request(package_id, recipient, destination)
-      request = {
+      {
         body: {
           communicationPackageId: package_id,
           recipient: recipient_data(recipient),
@@ -93,7 +92,6 @@ class ExternalApi::PacmanService
         headers: HEADERS,
         endpoint: SEND_PACKAGE_ENDPOINT, method: :post
       }.compact
-      request
     end
 
     # Purpose: Builds recipient json for distribution request
