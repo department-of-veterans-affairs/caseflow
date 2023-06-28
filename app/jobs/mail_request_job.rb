@@ -20,7 +20,6 @@ class MailRequestJob < CaseflowJob
   #
   # Response: n/a
   def perform(vbms_uploaded_document, mail_package)
-    vbms_comm_package = create_package(vbms_uploaded_document, mail_package)
     begin
       package_response = PacmanService.send_communication_package_request(
         vbms_uploaded_document.veteran_file_number,
@@ -29,9 +28,9 @@ class MailRequestJob < CaseflowJob
       )
       log_info(package_response)
     rescue Caseflow::Error::PacmanApiError => error
-      vbms_comm_package.update!(status: "error")
       log_error(error)
     end
+    vbms_comm_package = create_package(vbms_uploaded_document, mail_package)
     vbms_comm_package.update!(status: "success")
     create_distribution_request(vbms_comm_package.id, mail_package)
   end
