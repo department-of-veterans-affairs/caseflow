@@ -3,9 +3,6 @@
 class BatchProcessPriorityEpSync < BatchProcess
   class << self
     def find_records
-
-
-
       PriorityEndProductSyncQueue.where(
         batch_id: [nil, BatchProcess.where.not("state = ?", "PROCESSING")])
         .where("(status <> ? AND status <> ?) AND
@@ -18,9 +15,7 @@ class BatchProcessPriorityEpSync < BatchProcess
 
 
     def create_batch!(records)
-      uuid = SecureRandom.uuid
-      new_batch = BatchProcessPriorityEpSync.create!(batch_id: uuid,
-                                                     batch_type: name,
+      new_batch = BatchProcessPriorityEpSync.create!(batch_type: name,
                                                      state: Constants.BATCH_PROCESS.pre_processing,
                                                      records_attempted: records.count)
 
