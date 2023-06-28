@@ -18,7 +18,9 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
 
   # create a test review
   def new_review(review_type, veteran_file_number, establishment_error)
-    create(review_type, :with_end_product_establishment, veteran_file_number: veteran_file_number, establishment_error: establishment_error)
+    create(review_type, :with_end_product_establishment,
+           veteran_file_number: veteran_file_number,
+           establishment_error: establishment_error)
   end
 
   let(:error_text) { "#<Caseflow::Error::DuplicateEp: Caseflow::Error::DuplicateEp>" }
@@ -83,7 +85,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
 
       it "clears the problem_reviews list" do
         allow(script).to receive(:active_duplicates).and_return(true)
-        allow(script).to receive(:upload_logs_to_s3).with(anything).and_return(true)
+        allow(script).to receive(:upload_logs_to_s3_bucket).with(anything).and_return(true)
         script.resolve_duplicate_end_products(problem_reviews, problem_reviews.count)
         expect(script.retrieve_problem_reviews.count).to eq 0
       end
@@ -93,7 +95,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
       let(:initial_pr_count) { script.retrieve_problem_reviews.count }
       it "performs the remediation successfully" do
         allow(script).to receive(:active_duplicates).and_return(true)
-        allow(script).to receive(:upload_logs_to_s3).with(anything).and_return(true)
+        allow(script).to receive(:upload_logs_to_s3_bucket).with(anything).and_return(true)
 
         expect(initial_pr_count).to eq 3
         script.resolve_dup_ep
@@ -161,7 +163,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
       let(:initial_pr_count) { script.retrieve_problem_reviews.count }
       it "logs a message do does nothing" do
         expect(initial_pr_count).to eq 0
-        expect(Rails.logger).to receive(:info).with("No Supplemental Claims Or Higher Level Reviews with DuplicateEP Error Found").once
+        expect(Rails.logger).to receive(:info).with("No records with errors found.").once
         script.resolve_dup_ep
       end
     end
@@ -187,7 +189,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
       it "resolves the HLR review only" do
         expect(initial_pr_count).to eq 1
         allow(script).to receive(:active_duplicates).and_return(true)
-        allow(script).to receive(:upload_logs_to_s3).with(anything).and_return(true)
+        allow(script).to receive(:upload_logs_to_s3_bucket).with(anything).and_return(true)
 
         script.resolve_single_review(problem_reviews.first.id, "hlr")
         expect(script.retrieve_problem_reviews.count).to eq 0
@@ -213,7 +215,7 @@ describe "DuppEpClaimsSyncStatusUpdateCanClr", :postgres do
       it "resolves the SC review only" do
         expect(initial_pr_count).to eq 1
         allow(script).to receive(:active_duplicates).and_return(true)
-        allow(script).to receive(:upload_logs_to_s3).with(anything).and_return(true)
+        allow(script).to receive(:upload_logs_to_s3_bucket).with(anything).and_return(true)
 
         script.resolve_single_review(problem_reviews.first.id, "sc")
         expect(script.retrieve_problem_reviews.count).to eq 0

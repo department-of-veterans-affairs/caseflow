@@ -17,7 +17,7 @@ module WarRoom
 
     def resolve_dup_ep
       if retrieve_problem_reviews.count.zero?
-        Rails.logger.info("No Supplemental Claims Or Higher Level Reviews with DuplicateEP Error Found")
+        Rails.logger.info("No records with errors found.")
         return false
       end
 
@@ -168,12 +168,12 @@ module WarRoom
       temporary_file.write(content)
       temporary_file.flush
 
-      upload_logs_to_s3(filepath)
+      upload_logs_to_s3_bucket(filepath)
 
       temporary_file.close!
     end
 
-    def upload_logs_to_s3(filepath)
+    def upload_logs_to_s3_bucket(filepath)
       s3client = Aws::S3::Client.new
       s3resource = Aws::S3::Resource.new(client: s3client)
       s3bucket = s3resource.bucket("data-remediation-output")
