@@ -3,8 +3,10 @@
 require "helpers/poa_access"
 
 describe "WarRoom::PoaAccess" do
-  before { FeatureToggle.enable!(:poa_auto_refresh) }
-  after { FeatureToggle.disable!(:poa_auto_refresh) }
+  before do
+    allow(FeatureToggle).to receive(:enabled?).
+      with(:poa_auto_refresh, user: RequestStore.store[:current_user]) { true } 
+  end
 
   let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
   let(:poa) { create(:bgs_power_of_attorney, claimant_participant_id: "2", poa_participant_id: "1") }
