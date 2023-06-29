@@ -14,11 +14,6 @@ class CaseReviewsController < ApplicationController
     result = new_complete_case_review.call
     if result.success?
       case_review = result.extra[:case_review]
-      if case_review.appeal_type == "Appeal" &&
-         (FeatureToggle.enabled?(:mst_identification) || FeatureToggle.enabled?(:pact_identification))
-        appeal = Appeal.find(case_review.appeal_id)
-        mst_pact_decision_issue_changes(appeal)
-      end
       render json: {
         task: case_review,
         issues: case_review.appeal.issues
@@ -48,16 +43,6 @@ class CaseReviewsController < ApplicationController
   def complete_params
     return attorney_case_review_params if case_review_class == "AttorneyCaseReview"
     return judge_case_review_params if case_review_class == "JudgeCaseReview"
-  end
-
-  def mst_pact_decision_issue_changes(appeal)
-    params[:tasks][:issues].each do |di|
-      RequestIssue.find(di[:request_issue_ids]).each do |ri|
-        if ri.mst_status != di[:mst_status] || ri.pact_status != di[:pact_status]
-          create_issue_update_task(ri, di, appeal)
-        end
-      end
-    end
   end
 
   def attorney_case_review_params
@@ -105,45 +90,5 @@ class CaseReviewsController < ApplicationController
         :post_aoj
       ]
     ]
-  end
-
-  def create_issue_update_task(original_issue, decision_issue, appeal)
-    root_task = RootTask.find_or_create_by!(appeal: appeal)
-
-    task = IssuesUpdateTask.create!(
-      appeal: appeal,
-      parent: root_task,
-      assigned_to: SpecialIssueEditTeam.singleton,
-      assigned_by: RequestStore[:current_user],
-      completed_by: RequestStore[:current_user]
-    )
-
-    task.format_instructions(
-      "Edited Issue",
-      [original_issue.nonrating_issue_category, original_issue.contested_issue_description].join,
-      original_issue.mst_status,
-      original_issue.pact_status,
-      decision_issue[:mst_status],
-      decision_issue[:pact_status]
-    )
-
-    task.completed!
-
-    SpecialIssueChange.create!(
-      issue_id: original_issue.id,
-      appeal_id: appeal.id,
-      appeal_type: "Appeal",
-      task_id: task.id,
-      created_at: Time.zone.now.utc,
-      created_by_id: RequestStore[:current_user].id,
-      created_by_css_id: RequestStore[:current_user].css_id,
-      original_mst_status: original_issue.mst_status,
-      original_pact_status: original_issue.pact_status,
-      updated_mst_status: decision_issue[:mst_status],
-      updated_pact_status: decision_issue[:pact_status],
-      mst_from_vbms: original_issue&.vbms_mst_status,
-      pact_from_vbms: original_issue&.vbms_pact_status,
-      change_category: "Edited Decision Issue"
-    )
   end
 end
