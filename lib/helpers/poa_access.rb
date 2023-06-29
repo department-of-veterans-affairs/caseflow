@@ -3,6 +3,10 @@
 module WarRoom
   class PoaAccess
     # Legacy Appeals - no POA access when spouse not in people table
+    #
+    # @param vacols_id [String] VACOLS id for Legacy Appeal
+    # @param claimant_participant_id [String] participant ID of spouse
+    # @return [true, false] whether the fix was successful
     def initialize(vacols_id, claimant_participant_id)
       @vacols_id = vacols_id
       @claimant_participant_id = claimant_participant_id
