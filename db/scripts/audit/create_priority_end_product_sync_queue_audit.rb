@@ -7,7 +7,7 @@ conn.execute("CREATE TABLE caseflow_audit.priority_end_product_sync_queue_audit 
               id bigserial primary key unique NOT null,
               type_of_change CHAR(1) not null,
               end_product_establishment_id bigint NOT null references end_product_establishments(id),
-              batch_id uuid,
+              batch_id uuid references batch_processes(batch_id),
               status varchar(50) NOT null,
               created_at timestamp without time zone,
               last_batched_at timestamp without time zone,

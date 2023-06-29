@@ -1,11 +1,11 @@
-CREATE TABLE caseflow_audit.priority_end_product_sync_queue_audit (
-              id bigserial primary key unique NOT null,
-              type_of_change CHAR(1) not null,
-              end_product_establishment_id bigint NOT null references end_product_establishments(id),
-              batch_id uuid,
-              status varchar(50) NOT null,
-              created_at timestamp without time zone,
-              last_batched_at timestamp without time zone,
-              audit_created_at timestamp without time zone default now(),
-              error_messages text[]
-          );
+CREATE TABLE CASEFLOW_AUDIT.PRIORITY_END_PRODUCT_SYNC_QUEUE_AUDIT (
+    ID BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
+    TYPE_OF_CHANGE CHAR(1) NOT NULL,
+    END_PRODUCT_ESTABLISHMENT_ID BIGINT NOT NULL REFERENCES END_PRODUCT_ESTABLISHMENTS(ID),
+    BATCH_ID UUID REFERENCES BATCH_PROCESSES(BATCH_ID),
+    STATUS VARCHAR(50) NOT NULL,
+    CREATED_AT TIMESTAMP WITHOUT TIME ZONE,
+    LAST_BATCHED_AT TIMESTAMP WITHOUT TIME ZONE,
+    AUDIT_CREATED_AT TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    ERROR_MESSAGES TEXT[]
+);

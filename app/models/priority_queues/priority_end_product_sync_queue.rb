@@ -6,4 +6,5 @@ class PriorityEndProductSyncQueue < CaseflowRecord
   self.table_name = "priority_end_product_sync_queue"
 
   belongs_to :end_product_establishment
+  belongs_to :batch_process, foreign_key: "batch_id"
 end
