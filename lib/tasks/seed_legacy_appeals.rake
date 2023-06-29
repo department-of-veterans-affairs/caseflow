@@ -73,8 +73,52 @@ namespace :db do
           cases.map do |case_record|
             AppealRepository.build_appeal(case_record).tap do |appeal|
               appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
+
+              create_decision_tasks(appeal)
             end.save!
           end
+        end
+
+        # for demo only remove after
+        def create_decision_tasks(appeal)
+          admin = User.system_user
+          RequestStore[:current_user] = admin
+          judge = User.find_by_css_id('BVAAABSHIRE')
+          att = User.find_by_css_id('BVASCASPER1')
+
+          # case_assignment = OpenStruct.new(
+          #   vacols_id: appeal.vacols_id,
+          #   date_due: 1.day.ago,
+          #   assigned_to_location_date: 5.days.ago,
+          #   created_at: 6.days.ago,
+          #   docket_date: nil
+          # )
+
+          root_task = RootTask.find_or_create_by!(appeal: appeal)
+          root_task.assigned_to = judge
+          root_task.save!
+          # binding.pry
+          task = AttorneyTask.new(
+            appeal: appeal,
+            parent: root_task,
+            assigned_to: att,
+            assigned_by: judge,
+            instructions: "demo instructions"
+          )
+          task.save!
+
+          acr = AttorneyCaseReview.new(
+            appeal: appeal,
+            reviewing_judge: judge,
+            attorney: att,
+            task: task,
+            document_id: '22222222.2222',
+            document_type: "draft_decision",
+            work_product: "Decision",
+            note: "Jeremy was here haha"
+          )
+
+          acr.save!
         end
 
         # MST is true for even indexes, and indexes that are multiples of 5. False for all other numbers.
@@ -98,11 +142,11 @@ namespace :db do
                                            011899928 011899929 011899930 011899937 011899938
                                            011899939 011899940]
 
-        veterans_with_250_appeals = %w[011899906 011899999]
+        # veterans_with_250_appeals = %w[011899906 011899999]
       end
 
-      veterans_with_like_45_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals(45, file_number) }
-      veterans_with_250_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals(250, file_number) }
+      veterans_with_like_45_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals(1, file_number) }
+      # veterans_with_250_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals(250, file_number) }
     end
   end
 end
