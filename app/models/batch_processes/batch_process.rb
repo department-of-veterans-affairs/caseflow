@@ -20,26 +20,46 @@ class BatchProcess < CaseflowRecord
   }
 
   class << self
+
+    # A method for overriding, for the purpose of finding the records that
+    # need to be batched. This method should return the records found.
     def find_records
       # no-op, can be overwritten
     end
 
+    # A method for orverriding, for the purpose of creating the batch and
+    # associating the batch_id with the records gathered by the find_records method.
     def create_batch!(record)
       # no-op, can be overwritten
     end
   end
 
+  # A method for overriding, for the purpose of processing the batch created
+  # in the create_batch method. Processing can be anything, an example of which
+  # is syncing up the records within the batch between caseflow and vbms.
   def process_batch!
     # no-op, can be overwritten
   end
 
+
   private
 
+  # Instance var methods
   def init_counters
     @completed_count = 0
     @failed_count = 0
   end
 
+  def increment_completed
+    @completed_count += 1
+  end
+
+  def increment_failed
+    @failed_count += 1
+  end
+
+
+  # State update Methods
   def batch_processing!
     update!(state: Constants.BATCH_PROCESS.processing, started_at: Time.zone.now)
   end
@@ -51,14 +71,15 @@ class BatchProcess < CaseflowRecord
             ended_at: Time.zone.now)
   end
 
-  def increment_completed
-    @completed_count += 1
-  end
 
-  def increment_failed
-    @failed_count += 1
-  end
-
+  # When a record and error is sent to this method, it updates the record and checks to see
+  # if the record should be declared stuck. If the records should be stuck, it calls the
+  # declare_record_stuck method (Found in priority_end_product_sync_queue.rb).
+  # Otherwise, the record is updated with status: error and the error message is added to
+  # error_messages.
+  #
+  # As a general method, it's assumed the record has a batch_id and error_messages
+  # column within the associated table.
   def error_out_record!(record, error)
     increment_failed
     error_array = record.error_messages || []

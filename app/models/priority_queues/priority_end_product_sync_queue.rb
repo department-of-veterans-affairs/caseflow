@@ -25,6 +25,8 @@ class PriorityEndProductSyncQueue < CaseflowRecord
     Constants.PRIORITY_EP_SYNC.stuck.to_sym => Constants.PRIORITY_EP_SYNC.stuck
   }
 
+
+  # Status Update methods
   def status_processing!
     update!(status: Constants.PRIORITY_EP_SYNC.processing)
   end
@@ -38,6 +40,9 @@ class PriorityEndProductSyncQueue < CaseflowRecord
             error_messages: errors)
   end
 
+  # Method will update the status of the record to STUCK
+  # While also create a record within the caseflow_stuck_records table
+  # for later manual review.
   def declare_record_stuck!
     update!(status: Constants.PRIORITY_EP_SYNC.stuck)
     CaseflowStuckRecord.create!(stuck_record: self,
