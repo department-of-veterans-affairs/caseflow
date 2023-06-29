@@ -71,6 +71,7 @@ class IssuesController < ApplicationController
     task.format_instructions(
       "Edited Issue",
       before_issue.note,
+      before_issue.labels[0] || "",
       before_issue.mst_status,
       before_issue.pact_status,
       convert_to_bool(params[:issues][:mst_status]),

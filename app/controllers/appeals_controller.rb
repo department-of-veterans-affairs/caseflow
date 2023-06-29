@@ -443,6 +443,7 @@ class AppealsController < ApplicationController
     task.format_instructions(
       "Edited Issue",
       before_issue.note,
+      before_issue.labels[0] || "",
       before_issue.mst_status,
       before_issue.pact_status,
       current_issue[:mst_status],
@@ -470,8 +471,8 @@ class AppealsController < ApplicationController
   # updated flash message to show mst/pact message if mst/pact changes (not to legacy)
   def set_flash_success_message
     return set_flash_mst_edit_message if mst_pact_changes? &&
-                                         (FeatureToggle.enabled?(:mst_identification) ||
-                                         FeatureToggle.enabled?(:pact_identification))
+                                        (FeatureToggle.enabled?(:mst_identification) ||
+                                        FeatureToggle.enabled?(:pact_identification))
 
     set_flash_edit_message
   end
