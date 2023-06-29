@@ -10,37 +10,31 @@ class QuarterlyNotificationsJob < CaseflowJob
   # Params: none
   #
   # Response: None
-  def perform
+  def perform(dry_run: false)
     RequestStore.store[:current_user] = User.system_user
-    AppealState.where.not(
-      decision_mailed: true, appeal_cancelled: true
-    ).find_in_batches(batch_size: QUERY_LIMIT.to_i) do |batched_appeal_states|
-      batched_appeal_states.each do |appeal_state|
-        # add_record_to_appeal_states_table(appeal_state.appeal)
-        if appeal_state.appeal_type == "Appeal"
-          appeal = Appeal.find_by(id: appeal_state.appeal_id)
-        elsif appeal_state.appeal_type == "LegacyAppeal"
-          appeal = LegacyAppeal.find_by(id: appeal_state.appeal_id)
+
+    # Getting all of the IDs upfront
+    # Takes ~150 ms for the query + ~10 seconds to allocate the array
+    # Occupies ~1.4 MB of RAM
+    ids = AppealState.where(decision_mailed: false, appeal_cancelled: false).pluck(:id)
+
+    ids.each do |id|
+      appeal_state = AppealState.find(id)
+      appeal = appeal_state&.appeal
+
+      if appeal.nil?
+        log_appeal_not_found(appeal_state)
+        next
+      end
+
+      begin
+        MetricsService.record("Creating Quarterly Notification for #{appeal.class} ID #{appeal.id}",
+                              name: "send_quarterly_notifications(appeal_state, appeal)") do
+          send_quarterly_notifications(appeal_state, appeal) unless dry_run
         end
-        if appeal.nil?
-          begin
-            fail Caseflow::Error::AppealNotFound, "Standard Error ID: " + SecureRandom.uuid + " The appeal was unable "\
-            "to be found."
-          rescue Caseflow::Error::AppealNotFound => error
-            Rails.logger.error("QuarterlyNotificationsJob::Error - Unable to send a notification for "\
-              "#{appeal_state&.appeal_type} ID #{appeal_state&.appeal_id} because of #{error}")
-          end
-        else
-          begin
-            MetricsService.record("Creating Quarterly Notification for #{appeal.class} ID #{appeal.id}",
-                                  name: "send_quarterly_notifications(appeal_state, appeal)") do
-              send_quarterly_notifications(appeal_state, appeal)
-            end
-          rescue StandardError => error
-            Rails.logger.error("QuarterlyNotificationsJob::Error - Unable to send a notification for "\
-              "#{appeal_state&.appeal_type} ID #{appeal_state&.appeal_id} because of #{error}")
-          end
-        end
+      rescue StandardError => error
+        log_error("QuarterlyNotificationsJob::Error - Unable to send a notification for "\
+          "#{appeal_state.appeal_type} ID #{appeal_state.appeal_id} because of #{error}")
       end
     end
   end
