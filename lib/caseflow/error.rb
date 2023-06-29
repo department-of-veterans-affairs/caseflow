@@ -450,7 +450,10 @@ module Caseflow::Error
   class EmptyQueueError < StandardError; end
 
   # Pacman errors
-  class PacmanApiError < StandardError; end
+  class PacmanApiError < StandardError
+    include Caseflow::Error::ErrorSerializer
+    attr_accessor :code, :message
+  end
   class PacmanBadRequestError < PacmanApiError; end
   class PacmanForbiddenError < PacmanApiError; end
   class PacmanNotFoundError < PacmanApiError; end
