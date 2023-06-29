@@ -130,6 +130,7 @@ const taskAttributesFromRawTask = (task) => {
     status: task.attributes.status,
     onHoldDuration: task.attributes.on_hold_duration,
     instructions: task.attributes.instructions,
+    previous: task.attributes.previous,
     decisionPreparedBy,
     availableActions: task.attributes.available_actions,
     caseReviewId: task.attributes.attorney_case_review_id,

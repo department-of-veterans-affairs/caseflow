@@ -209,9 +209,9 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def timezone
     if vso_employee?
-      RegionalOffice::CITIES[users_regional_office][:timezone]
+      RegionalOffice::CITIES.dig(users_regional_office, :timezone)
     else
-      (RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
+      RegionalOffice::CITIES.dig(regional_office, :timezone) || "America/Chicago"
     end
   end
 
@@ -434,6 +434,12 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def can_act_on_behalf_of_judges?
     member_of_organization?(SpecialCaseMovementTeam.singleton)
+  end
+
+  def can_act_on_behalf_of_legacy_judges?
+    member_of_organization?(SpecialCaseMovementTeam.singleton) ||
+      member_of_organization?(SupervisorySeniorCouncil.singleton) ||
+      judge_in_vacols?
   end
 
   def can_view_team_management?

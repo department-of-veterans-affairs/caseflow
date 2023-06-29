@@ -95,7 +95,7 @@ describe JudgeTask, :all_dbs do
         it "should return the Case Management assignment actions along with attorneys" do
           expect(subject).to eq(
             [
-              Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
+              Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h,
               Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
             ].map { |action| subject_task.build_action_hash(action, user) }
           )
@@ -112,7 +112,7 @@ describe JudgeTask, :all_dbs do
         it "returns the reassign action" do
           expect(subject).to eq(
             [
-              Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
+              Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h
             ].map { |action| subject_task.build_action_hash(action, judge) }
           )
         end
@@ -126,7 +126,7 @@ describe JudgeTask, :all_dbs do
             [
               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
               Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h,
-              Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
+              Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h,
               Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
             ].map { |action| subject_task.build_action_hash(action, judge) }
           )
@@ -142,7 +142,7 @@ describe JudgeTask, :all_dbs do
               [
                 Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
                 Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h,
-                Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
+                Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h,
                 Constants.TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.to_h,
                 Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
                 Constants.TASK_ACTIONS.CANCEL_TASK.to_h
@@ -162,7 +162,7 @@ describe JudgeTask, :all_dbs do
             [
               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
               Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h,
-              Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
+              Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h,
               Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT_SP_ISSUES.to_h,
               Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h
             ].map { |action| subject_task.build_action_hash(action, judge) }
@@ -294,7 +294,7 @@ describe JudgeTask, :all_dbs do
 
         it "merges instruction text" do
           subject
-          expect(jqr_task.reload.instructions).to eq([existing_instructions, new_instructions])
+          expect(jqr_task.reload.instructions).to eq([[new_instructions]])
         end
       end
 

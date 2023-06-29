@@ -52,7 +52,8 @@
       split_appeal_workflow: FeatureToggle.enabled?(:split_appeal_workflow, user: current_user),
       cavc_remand_granted_substitute_appellant: FeatureToggle.enabled?(:cavc_remand_granted_substitute_appellant, user: current_user),
       cavc_dashboard_workflow: FeatureToggle.enabled?(:cavc_dashboard_workflow, user: current_user),
-      cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user)
-    }
+      cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user),
+      vlj_legacy_appeal: FeatureToggle.enabled?(:vlj_legacy_appeal, user: current_user)
+}
   }) %>
 <% end %>

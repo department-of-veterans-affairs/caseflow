@@ -359,7 +359,7 @@ class TasksController < ApplicationController
     @create_params ||= [params.require("tasks")].flatten.map do |task|
       appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id])
       task = task.merge(instructions: [task[:instructions]].flatten.compact)
-      task = task.permit(:type, { instructions: [] }, :assigned_to_id,
+      task = task.permit(:type, { instructions: [] }, :assigned_to_id, :cancellation_reason,
                          :assigned_to_type, :parent_id, business_payloads: [:description, values: {}])
         .merge(assigned_by: current_user)
         .merge(appeal: appeal)
@@ -378,7 +378,7 @@ class TasksController < ApplicationController
       :select_opc,
       :radio_value,
       :parent_id,
-      reassign: [:assigned_to_id, :assigned_to_type, :instructions],
+      reassign: [:assigned_to_id, :assigned_to_type, :instructions, previous: [:details, :old_judge, :new_judge]],
       business_payloads: [:description, values: {}]
     )
   end

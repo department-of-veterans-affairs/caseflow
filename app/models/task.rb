@@ -71,6 +71,7 @@ class Task < CaseflowRecord
     include_association :cancelled_by_id
     include_association :closed_at
     include_association :instructions
+    include_association :previous
     include_association :placed_on_hold_at
     include_association :started_at
     include_association :type
@@ -235,7 +236,8 @@ class Task < CaseflowRecord
         assigned_by_id: child_assigned_by_id(parent, current_user),
         parent_id: parent.id,
         assigned_to: params[:assigned_to] || child_task_assignee(parent, params),
-        instructions: params[:instructions]
+        instructions: params[:instructions],
+        cancellation_reason: params[:cancellation_reason]
       )
     end
 
@@ -506,7 +508,6 @@ class Task < CaseflowRecord
 
   def update_from_params(params, current_user)
     verify_user_can_update!(current_user)
-
     return reassign(params[:reassign], current_user) if params[:reassign]
 
     update_with_instructions(params)
@@ -628,11 +629,14 @@ class Task < CaseflowRecord
     replacement = dup.tap do |task|
       begin
         ActiveRecord::Base.transaction do
+          if !reassign_params[:previous].nil?
+            reassign_params[:previous][:new_judge] = self.class.child_task_assignee(parent, reassign_params).css_id
+          end
           task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
           task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
-          task.instructions = flattened_instructions(reassign_params)
+          task.instructions = [reassign_params[:instructions]]
           task.status = Constants.TASK_STATUSES.assigned
-
+          task.previous ? (task.previous << reassign_params[:previous]) : (task.previous = [reassign_params[:previous]])
           task.save!
         end
       ensure

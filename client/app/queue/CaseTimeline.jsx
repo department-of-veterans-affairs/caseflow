@@ -20,6 +20,7 @@ export const CaseTimeline = ({ appeal }) => {
             editNodDateEnabled={!appeal.isLegacyAppeal && canEditNodDate}
             timeline
             statusSplit
+            VLJ_featureToggles
           />
         </tbody>
       </table>
@@ -29,5 +30,6 @@ export const CaseTimeline = ({ appeal }) => {
 
 CaseTimeline.propTypes = {
   appeal: PropTypes.object,
-  statusSplit: PropTypes.bool
+  statusSplit: PropTypes.bool,
+  VLJ_featureToggles: PropTypes.string,
 };

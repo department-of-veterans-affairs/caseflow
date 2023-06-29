@@ -32,6 +32,7 @@ export const TaskSnapshot = ({ appeal, hideDropdown, tasks, showPulacCerulloAler
           timeline={false}
           editNodDateEnabled={!appeal.isLegacyAppeal && canEditNodDate}
           hideDropdown={hideDropdown}
+          VLJ_featureToggles
         />
       </tbody>
     </table>
@@ -73,7 +74,8 @@ TaskSnapshot.propTypes = {
   tasks: PropTypes.array,
   appeal: PropTypes.object,
   hideDropdown: PropTypes.bool,
-  showPulacCerulloAlert: PropTypes.bool
+  showPulacCerulloAlert: PropTypes.bool,
+  VLJ_featureToggles: PropTypes.string,
 };
 
 const mapStateToProps = (state, ownProps) => {

@@ -45,7 +45,7 @@ feature "duplicate JudgeAssignTask investigation" do
       click_dropdown(prompt: "Select an action", text: "Re-assign to a judge")
       click_dropdown(prompt: "Select a user", text: judge_user_second.full_name)
       fill_in "taskInstructions", with: "reassign this task! teamwork makes the dreamwork!"
-      click_on "Submit"
+      click_on "Assign"
       expect(page).to have_content(appeal.veteran.first_name, wait: 30)
       appeal.reload.treee
 
@@ -59,7 +59,7 @@ feature "duplicate JudgeAssignTask investigation" do
         click_dropdown(prompt: "Select a user", text: "Other")
         click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
         fill_in "taskInstructions", with: "assign to attorney"
-        click_on "Submit"
+        click_on "Assign"
         appeal.reload.treee
 
         expect(page).to have_content("It looks like you can't take action on this task because it is closed. " \

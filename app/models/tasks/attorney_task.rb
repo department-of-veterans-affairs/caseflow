@@ -26,10 +26,17 @@ class AttorneyTask < Task
       Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
     ].compact
 
-    movement_actions = [
-      Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
-      Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
-    ]
+    movement_actions = if appeal.is_a?(LegacyAppeal) && FeatureToggle.enable!(:vlj_legacy_appeal)
+                         [
+                           Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY_LEGACY.to_h,
+                           Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h
+                         ]
+                       else
+                         [
+                           Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
+                           Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
+                         ]
+                       end
 
     actions_based_on_assignment(user, atty_actions, movement_actions)
   end
@@ -65,7 +72,7 @@ class AttorneyTask < Task
   end
 
   def reassign_clears_overtime?
-    FeatureToggle.enabled?(:overtime_persistence, user: RequestStore[:current_user]) ? false : true  
+    FeatureToggle.enabled?(:overtime_persistence, user: RequestStore[:current_user]) ? false : true
   end
 
   def send_back_to_judge_assign!(params = {})
@@ -90,6 +97,11 @@ class AttorneyTask < Task
 
   def can_be_moved_by_user?(user)
     return false unless parent.is_a?(JudgeTask)
+
+    # Allows SSC, SCM, VLJ's if legacy
+    if appeal.is_a?(LegacyAppeal)
+      return parent.assigned_to == user || assigned_by == user || user&.can_act_on_behalf_of_legacy_judges?
+    end
 
     # The judge who is assigned the parent review task, the assigning judge, and SpecialCaseMovementTeam members can
     # cancel or reassign this task

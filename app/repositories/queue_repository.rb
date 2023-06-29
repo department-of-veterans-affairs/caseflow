@@ -56,19 +56,22 @@ class QueueRepository
       appeals
     end
 
-    def reassign_case_to_judge!(vacols_id:, created_in_vacols_date:, judge_vacols_user_id:, decass_attrs:)
-      decass_record = find_decass_record(vacols_id, created_in_vacols_date)
-      # In attorney checkout, we are automatically selecting the judge who
-      # assigned the attorney the case. But we also have a drop down for the
-      # attorney to select a different judge if they are checking it out to someone else
-      if decass_record.deadusr != judge_vacols_user_id
-        BusinessMetrics.record(service: :queue, name: "reassign_case_to_different_judge")
-      end
-
-      update_decass_record(decass_record, decass_attrs)
-
-      # update location with the judge's slogid
-      decass_record.update_vacols_location!(judge_vacols_user_id)
+    def reassign_case_to_judge!(vacols_id:, assigned_by:, created_in_vacols_date:, judge_vacols_user_id:, decass_attrs:)
+      begin
+        decass_record = find_decass_record(vacols_id, created_in_vacols_date)
+        # In attorney checkout, we are automatically selecting the judge who
+        # assigned the attorney the case. But we also have a drop down for the
+        # attorney to select a different judge if they are checking it out to someone else
+        if decass_record.deadusr != judge_vacols_user_id.vacols_uniq_id
+          BusinessMetrics.record(service: :queue, name: "reassign_case_to_different_judge")
+        end
+        update_decass_record(decass_record, decass_attrs)
+        # update location with the judge's slogid
+        decass_record.update_vacols_location!(judge_vacols_user_id.vacols_uniq_id)
+      rescue Caseflow::Error::QueueRepositoryError => e  
+        attrs = assign_to_attorney_attrs(vacols_id, assigned_by, judge_vacols_user_id)
+        decass_record = create_decass_record(attrs.merge(adding_user: judge_vacols_user_id.vacols_uniq_id))
+      end       
       true
     end
 
@@ -157,15 +160,19 @@ class QueueRepository
 
     def reassign_case_to_attorney!(judge:, attorney:, vacols_id:, created_in_vacols_date:)
       transaction do
-        update_location_to_attorney(vacols_id, attorney)
-
-        decass_record = find_decass_record(vacols_id, created_in_vacols_date)
-        update_decass_record(decass_record,
-                             attorney_id: attorney.vacols_attorney_id,
-                             group_name: attorney.vacols_group_id[0..2],
-                             assigned_to_attorney_date: VacolsHelper.local_time_with_utc_timezone,
-                             deadline_date: VacolsHelper.local_date_with_utc_timezone + 30.days,
-                             modifying_user: judge.vacols_uniq_id)
+        #update_location_to_attorney(vacols_id, attorney)
+        begin 
+          decass_record = find_decass_record(vacols_id, created_in_vacols_date)
+          update_decass_record(decass_record,
+                               attorney_id: attorney.vacols_attorney_id,
+                               group_name: attorney.vacols_group_id[0..2],
+                               assigned_to_attorney_date: VacolsHelper.local_time_with_utc_timezone,
+                               deadline_date: VacolsHelper.local_date_with_utc_timezone + 30.days,
+                               modifying_user: judge.vacols_uniq_id)
+        rescue Caseflow::Error::QueueRepositoryError => e  
+          attrs = assign_to_attorney_attrs(vacols_id, attorney, judge)
+          create_decass_record(attrs.merge(adding_user: judge.vacols_uniq_id))
+        end
       end
     end
 
@@ -219,7 +226,7 @@ class QueueRepository
     end
 
     def create_decass_record(decass_attrs)
-      decass_attrs = decass_attrs.merge(added_at_date: VacolsHelper.local_date_with_utc_timezone)
+      decass_attrs = decass_attrs.merge(added_at_date: VacolsHelper.local_date_with_utc_timezone, deteam: "DF")
       decass_attrs = QueueMapper.new(decass_attrs).rename_and_validate_decass_attrs
       VACOLS::Decass.create!(decass_attrs)
     end
