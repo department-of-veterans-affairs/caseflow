@@ -1219,16 +1219,12 @@ feature "Appeal Edit issues", :all_dbs do
     end
   end
 
-  # We need to
-  # 1. Sign in as BVA Intake Admin User
-  # 2. We need a veteran file number with a legacy appeal
-  # 3. The legacy appeal with 3 request issues
   context "with BVA Intake Admin user" do
     # creates organization
     let(:bva_intake) { BvaIntake.singleton }
     # creates admin user
     let(:bva_intake_admin_user) { create(:user, roles: ["Mail Intake"]) }
-    # create legacy appeal
+
     let(:legacy_appeal_mst_pact_unchecked) do
       create(
         :legacy_appeal,
