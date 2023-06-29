@@ -15,8 +15,8 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
     end
 
     begin
-      # Retrieves the distribution package from the PacMan API
-      distribution = PacManService.get_distribution_request(distribution_id)
+      # Retrieves the distribution package from the Pacman API
+      distribution = PacmanService.get_distribution_request(distribution_id)
       response_code = distribution.code
       if response_code != 200
         fail StandardError
@@ -35,6 +35,8 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
     render json: format_response(distribution)
   end
 
+  private
+
   def pending_establishment(distribution_id)
     render json: { id: distribution_id, status: "PENDING_ESTABLISHMENT" }, status: :ok
   end
@@ -48,14 +50,13 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
     end
   end
 
-  private
-
-  # Checks if the distribution exists in the database before sending request to PacMan
+  # Checks if the distribution exists in the database before sending request to Pacman
   def valid_id?(distribution_id)
     VbmsDistribution.exists?(id: distribution_id)
   end
 
   # Renders errors and logs and tracks the here within Raven
+  # :reek:FeatureEnvy
   def render_error(status, message, distribution_id)
     error_uuid = SecureRandom.uuid
     error_message = "[IDT] Http Status Code: #{status}, #{message}, (Distribution ID: #{distribution_id})"

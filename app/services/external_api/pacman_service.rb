@@ -44,13 +44,13 @@ class ExternalApi::PacmanService
     # Purpose: Gets distribution from distribution id
     # POST: /package-manager-service/distribution
     #
-    # takes in distribution_id(string)
+    # takes in distribution_id(int)
     #
     # Response: JSON of distribution from Pacman API
     # Example response can be seen in lib/fakes/pacman_service.rb under 'fake_distribution_response' method
     def get_distribution_request(distribution_id)
       request = {
-        endpoint: GET_DISTRIBUTION_ENDPOINT + distribution_id, method: :get
+        endpoint: GET_DISTRIBUTION_ENDPOINT + distribution_id.to_s, method: :get
       }
       send_pacman_request(request)
     end
@@ -108,7 +108,7 @@ class ExternalApi::PacmanService
         firstName: recipient[:first_name],
         middleName: recipient[:middle_name],
         lastName: recipient[:last_name],
-        participant_id: recipient[:participant_id],
+        participantId: recipient[:participant_id],
         poaCode: recipient[:poa_code],
         claimantStationOfJurisdiction: recipient[:claimant_station_of_jurisdiction]
       }
@@ -143,14 +143,15 @@ class ExternalApi::PacmanService
     # Params: general requirements for HTTP request
     #
     # Return: service_response: JSON from Pacman or error
+    # :reek:LongParameterList
     def send_pacman_request(headers: {}, endpoint:, method: :get, body: nil)
-      url = URI.escape(BASE_URL + endpoint)
+      url = ERB::Util.url_encode(BASE_URL + endpoint)
       request = HTTPI::Request.new(url)
       request.open_timeout = 30
       request.read_timeout = 30
       request.body = body.to_json unless body.nil?
       # not sure how user validation will be handled
-      request.headers = headers.merge(apikey: ENV["PACMAN_API_KEY"])
+      request.headers = headers.merge(Bearer: ENV["PACMAN_API_KEY"])
       sleep 1
 
       MetricsService.record("pacman service #{method.to_s.upcase} request to #{url}",

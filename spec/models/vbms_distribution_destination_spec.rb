@@ -66,7 +66,8 @@ describe VbmsDistributionDestination, :postgres do
       destination.treat_line_3_as_addressee = true
       destination.treat_line_2_as_addressee = false
       expect(destination).to_not be_valid
-      expect(destination.errors[:treat_line_2_as_addressee]).to eq(["cannot be false if line 3 is treated as addressee"])
+      expect(destination.errors[:treat_line_2_as_addressee])
+        .to eq(["cannot be false if line 3 is treated as addressee"])
     end
 
     it "is not valid without a city" do

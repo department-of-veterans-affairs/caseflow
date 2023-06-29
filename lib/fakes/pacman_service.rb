@@ -12,7 +12,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
 
     def get_distribution_request(distribution_id)
       unless VbmsDistribution.exists?(id: distribution_id)
-        distribution_not_found_response
+        return distribution_not_found_response
       end
 
       fake_distribution_response(distribution_id)
@@ -99,7 +99,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
           "name": "VBMS-C"
         },
         "description": "Staging Mailing Distribution",
-        "communicationPackageId": "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
+        "communicationPackageId": 1,
         "destinations": [{
           "type": "physicalAddress",
           "id": "28440040-51a5-4d2a-81a2-28730827be14",

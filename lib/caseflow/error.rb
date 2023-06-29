@@ -340,6 +340,7 @@ module Caseflow::Error
   class AttributeNotLoaded < StandardError; end
   class VeteranNotFound < StandardError; end
   class AppealNotFound < StandardError; end
+  class MissingRecipientInfo < StandardError; end
 
   class EstablishClaimFailedInVBMS < StandardError
     attr_reader :error_code
@@ -449,7 +450,10 @@ module Caseflow::Error
   class EmptyQueueError < StandardError; end
 
   # Pacman errors
-  class PacmanApiError < StandardError; end
+  class PacmanApiError < StandardError
+    include Caseflow::Error::ErrorSerializer
+    attr_accessor :code, :message
+  end
   class PacmanBadRequestError < PacmanApiError; end
   class PacmanForbiddenError < PacmanApiError; end
   class PacmanNotFoundError < PacmanApiError; end
