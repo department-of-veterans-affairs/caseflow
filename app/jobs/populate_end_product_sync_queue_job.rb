@@ -11,8 +11,9 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
     RequestStore.store[:current_user] = User.system_user
 
     begin
-      ActiveRecord::Base.transaction do
+      ActiveRecord::Base.transaction(requires_new: true, isolation: :serializable) do
         batch = find_priority_end_product_establishments_to_sync
+        Rails.logger.info("PopulateEndProductSyncQueueJob EPEs processed: #{batch.to_s} - Time: #{Time.zone.now}")
         batch.empty? ? return : insert_into_priority_sync_queue(batch)
       end
     rescue StandardError => error
