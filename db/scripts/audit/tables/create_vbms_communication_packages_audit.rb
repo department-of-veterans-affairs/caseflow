@@ -15,6 +15,7 @@ conn.execute("create table caseflow_audit.vbms_communication_packages_audit (
               updated_at timestamp NOT NULL,
               vbms_uploaded_document_id int8 NULL,
               created_by_id int8 NULL,
-              updated_by_id int8 NULL
+              updated_by_id int8 NULL,
+              uuid varchar NULL
             );")
 conn.close

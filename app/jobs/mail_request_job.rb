@@ -31,7 +31,7 @@ class MailRequestJob < CaseflowJob
       log_error(error)
     else
       vbms_comm_package = create_package(vbms_uploaded_document, mail_package)
-      vbms_comm_package.update!(status: "success")
+      vbms_comm_package.update!(status: "success", uuid: package_response.body[:id])
       create_distribution_request(vbms_comm_package.id, mail_package)
     end
   end
@@ -91,7 +91,7 @@ class MailRequestJob < CaseflowJob
           get_destinations_hash(dist_hash)
         )
         log_info(distribution_response)
-        distribution.update!(vbms_communication_package_id: package_id)
+        distribution.update!(vbms_communication_package_id: package_id, uuid: distribution_response.body[:id])
       end
     end
   end
@@ -145,7 +145,9 @@ class MailRequestJob < CaseflowJob
   # Response: n/a
   def log_error(error)
     uuid = SecureRandom.uuid
-    Rails.logger.error(ERROR_MESSAGES[error.code] + "Error ID: " + uuid)
+    error_msg = ERROR_MESSAGES[error.code] || "#{error.code} Unknown error has occurred."
+
+    Rails.logger.error(error_msg + "Error ID: " + uuid)
     Raven.capture_exception(error, extra: { error_uuid: uuid })
   end
 

@@ -11,5 +11,6 @@ FactoryBot.define do
     status { nil }
     updated_at { Time.zone.now }
     updated_by_id { nil }
+    uuid { nil }
   end
 end

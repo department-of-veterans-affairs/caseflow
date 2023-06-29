@@ -2,6 +2,7 @@
 
 describe MailRequestJob do
   include ActiveJob::TestHelper
+
   let!(:current_user) { User.authenticate! }
   let!(:vbms_file) { create(:vbms_uploaded_document) }
   let!(:mail_request) { build(:mail_request) }
