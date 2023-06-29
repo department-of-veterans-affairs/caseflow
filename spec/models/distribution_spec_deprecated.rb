@@ -198,7 +198,7 @@ describe Distribution, :all_dbs do
         end
       end
 
-      context "with priority_acd on" do
+      context "with priority_acd on", skip: "covered by distribution_spec and legacy_docket_spec" do
         before { FeatureToggle.enable!(:priority_acd) }
         after { FeatureToggle.disable!(:priority_acd) }
 
@@ -280,7 +280,8 @@ describe Distribution, :all_dbs do
         end
       end
 
-      context "when a nonpriority distribution of an AMA appeal with an existing distributed case is attempted" do
+      context "when a nonpriority distribution of an AMA appeal with an existing distributed case is attempted",
+              skip: "covered in docket.rb" do
         let!(:target_appeal) { due_direct_review_cases.first }
         let(:past_distribution) { Distribution.create(judge: judge) }
         let!(:past_distributed_case) do
@@ -322,7 +323,8 @@ describe Distribution, :all_dbs do
         end
       end
 
-      context "when an illegit nonpriority legacy case re-distribution is attempted" do
+      context "when an illegit nonpriority legacy case re-distribution is attempted",
+              skip: "covered in redistributed_case_spec" do
         let(:case_id) { legacy_case.bfkey }
         let!(:previous_location) { legacy_case.bfcurloc }
         let(:legacy_case) { legacy_nonpriority_cases.second }
@@ -349,7 +351,8 @@ describe Distribution, :all_dbs do
         end
       end
 
-      context "when a legit nonpriority legacy case re-distribution is attempted" do
+      context "when a legit nonpriority legacy case re-distribution is attempted",
+              skip: "covered in redistributed_case_spec" do
         let(:case_id) { legacy_case.bfkey }
         let(:legacy_case) { legacy_nonpriority_cases.first }
         let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case) }
@@ -387,7 +390,8 @@ describe Distribution, :all_dbs do
         )
       end
 
-      context "when an illegit priority legacy case re-distribution is attempted" do
+      context "when an illegit priority legacy case re-distribution is attempted",
+              skip: "this is testing the same code as above" do
         let(:case_id) { legacy_case.bfkey }
         let(:legacy_case) { legacy_priority_cases.last }
 
@@ -411,7 +415,8 @@ describe Distribution, :all_dbs do
         end
       end
 
-      context "when a legit priority legacy case re-distribution is attempted" do
+      context "when a legit priority legacy case re-distribution is attempted",
+              skip: "this is testing the same code as above" do
         let(:case_id) { legacy_case.bfkey }
         let(:legacy_case) { legacy_priority_cases.last }
         let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks, vacols_case: legacy_case) }
@@ -491,7 +496,7 @@ describe Distribution, :all_dbs do
         end
       end
 
-      describe "JudgeTeam ama_only_request toggle" do
+      describe "JudgeTeam ama_only_request toggle", skip: "covered in legacy_docket_spec" do
         context "when the toggle is not set for a JudgeTeam (default case)" do
           it "includes untied legacy cases" do
             subject.distribute!
@@ -636,7 +641,7 @@ describe Distribution, :all_dbs do
         end
       end
 
-      context "when there is no limit specified" do
+      context "when there is no limit specified", skip: "covered by distribution_spec" do
         it "distributes all priority cases associated with the judge" do
           distributed_case_ids = priority_legacy_hearings_tied_to_judge.map(&:folder_nr)
             .concat(priority_ama_hearings_tied_to_judge.map(&:uuid))
@@ -665,7 +670,7 @@ describe Distribution, :all_dbs do
         end
       end
 
-      context "when a limit is specified" do
+      context "when a limit is specified", skip: "covered by distribution_spec" do
         let(:limit) { 4 }
 
         it "distributes that number of priority cases from all dockets, based on docket age" do
