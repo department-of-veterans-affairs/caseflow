@@ -19,6 +19,12 @@ feature "Intake Add Issues Page", :all_dbs do
                               participant_id: "44444444")
   end
 
+  let(:veteran_vbms_mst_pact) do
+    Generators::Veteran.build(file_number: "66666666",
+                              first_name: "Veeby",
+                              last_name: "Emmess")
+  end
+
   let!(:rating) do
     Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
@@ -42,6 +48,11 @@ feature "Intake Add Issues Page", :all_dbs do
       ]
     )
   end
+
+  let!(:vbms_rating) do
+    generate_rating_with_mst_pact(veteran_vbms_mst_pact)
+  end
+
 
   context "not service connected rating decision" do
     before { FeatureToggle.enable!(:contestable_rating_decisions) }
@@ -845,6 +856,7 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Issue is related to PACT Act")
     end
 
+    #skipped due to feature being sidelined by client and feature flag disabled
     xit "MST and PACT checkboxes render a justification field when checked" do
       start_higher_level_review(veteran)
       visit "/intake"
@@ -921,24 +933,55 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Special issues: MST, PACT")
     end
 
-    scenario "Adding MST designation to issue coming from VBMS contention during intake" do
-
+     scenario "Intake appeal with MST contention from VBMS" do
+      start_appeal_with_mst_pact_from_vbms(veteran_vbms_mst_pact)
       visit "/intake"
       click_intake_continue
       click_intake_add_issue
-      # find_all("label", text: "Looks like a VACOLS issue", minimum: 1).first.click
-      #click MST checkbox
-      binding.pry
-      find_by_id("MST", visible: false).check(allow_label_click: true)
+      find_all("label", text: "Service connection is granted for PTSD at 10 percent, effective 10/11/2022.", minimum: 1).first.click
       safe_click ".add-issue"
       click_on "Establish appeal"
-      #navigate to case details page
-      appeal_id = Appeal.find_by(veteran_file_number: veteran.file_number).uuid
+      appeal_id = Appeal.find_by(veteran_file_number: veteran_vbms_mst_pact.file_number).uuid
       visit "/queue/appeals/#{appeal_id}"
       #to prevent timeout
-      visit current_path
+      refresh
       click_on "View task instructions"
-      binding.pry
+      expect(page).to have_content("Service connection is granted for PTSD at 10 percent, effective 10/11/2022.")
+      expect(page).to have_content("Special issues: MST")
+    end
+
+    scenario "Intake appeal with PACT contention from VBMS" do
+      start_appeal_with_mst_pact_from_vbms(veteran_vbms_mst_pact)
+      visit "/intake"
+      click_intake_continue
+      click_intake_add_issue
+      find_all("label", text: "Service connection is granted for AOOV at 10 percent, effective 10/11/2022.", minimum: 1).first.click
+      safe_click ".add-issue"
+      click_on "Establish appeal"
+      appeal_id = Appeal.find_by(veteran_file_number: veteran_vbms_mst_pact.file_number).uuid
+      visit "/queue/appeals/#{appeal_id}"
+      #to prevent timeout
+      refresh
+      click_on "View task instructions"
+      expect(page).to have_content("Service connection is granted for AOOV at 10 percent, effective 10/11/2022.")
+      expect(page).to have_content("Special issues: PACT")
+    end
+
+    scenario "Intake appeal with MST and PACT contentions from VBMS" do
+      start_appeal_with_mst_pact_from_vbms(veteran_vbms_mst_pact)
+      visit "/intake"
+      click_intake_continue
+      click_intake_add_issue
+      find_all("label", text: "Service connection is granted for PTSD, AOOV at 10 percent, effective 10/11/2022.", minimum: 1).first.click
+      safe_click ".add-issue"
+      click_on "Establish appeal"
+      appeal_id = Appeal.find_by(veteran_file_number: veteran_vbms_mst_pact.file_number).uuid
+      visit "/queue/appeals/#{appeal_id}"
+      #to prevent timeout
+      refresh
+      click_on "View task instructions"
+      expect(page).to have_content("Service connection is granted for PTSD, AOOV at 10 percent, effective 10/11/2022.")
+      expect(page).to have_content("Special issues: MST, PACT")
     end
   end
 end
