@@ -450,6 +450,22 @@ class AppealsController < ApplicationController
       current_issue[:pact_status]
     )
     task.completed!
+
+    # create SpecialIssueChange record to log the changes
+    SpecialIssueChange.create!(
+      issue_id: before_issue.id,
+      appeal_id: appeal.id,
+      appeal_type: "LegacyAppeal",
+      task_id: task.id,
+      created_at: Time.zone.now.utc,
+      created_by_id: RequestStore[:current_user].id,
+      created_by_css_id: RequestStore[:current_user].css_id,
+      original_mst_status: before_issue.mst_status,
+      original_pact_status: before_issue.pact_status,
+      updated_mst_status: current_issue[:mst_status],
+      updated_pact_status: current_issue[:pact_status],
+      change_category: "Edited Issue"
+    )
   end
 
   # updated flash message to show mst/pact message if mst/pact changes (not to legacy)

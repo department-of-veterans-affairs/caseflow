@@ -14,11 +14,6 @@ class CaseReviewsController < ApplicationController
     result = new_complete_case_review.call
     if result.success?
       case_review = result.extra[:case_review]
-      if case_review.appeal_type == "Appeal" &&
-         (FeatureToggle.enabled?(:mst_identification) || FeatureToggle.enabled?(:pact_identification))
-        appeal = Appeal.find(case_review.appeal_id)
-        mst_pact_decision_issue_changes(appeal)
-      end
       render json: {
         task: case_review,
         issues: case_review.appeal.issues
@@ -48,16 +43,6 @@ class CaseReviewsController < ApplicationController
   def complete_params
     return attorney_case_review_params if case_review_class == "AttorneyCaseReview"
     return judge_case_review_params if case_review_class == "JudgeCaseReview"
-  end
-
-  def mst_pact_decision_issue_changes(appeal)
-    params[:tasks][:issues].each do |di|
-      RequestIssue.find(di[:request_issue_ids]).each do |ri|
-        if ri.mst_status != di[:mst_status] || ri.pact_status != di[:pact_status]
-          create_issue_update_task(ri, di, appeal)
-        end
-      end
-    end
   end
 
   def attorney_case_review_params
