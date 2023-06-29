@@ -442,7 +442,7 @@ describe Distribution, :all_dbs do
         end
       end
 
-      context "when the job errors" do
+      context "when the job errors", skip: "covered in distribution_spec" do
         it "marks the distribution as error" do
           allow_any_instance_of(LegacyDocket).to receive(:distribute_nonpriority_appeals).and_raise(StandardError)
           expect { subject.distribute! }.to raise_error(StandardError)
@@ -452,7 +452,7 @@ describe Distribution, :all_dbs do
         end
       end
 
-      context "when the judge has an empty team" do
+      context "when the judge has an empty team", skip: "covered in distribution_spec" do
         let(:judge_wo_attorneys) { create(:user, :judge) }
         let!(:vacols_judge_wo_attorneys) { create(:staff, :judge_role, sdomainid: judge_wo_attorneys.css_id) }
 
@@ -467,7 +467,9 @@ describe Distribution, :all_dbs do
         end
       end
 
-      context "when there are zero legacy cases eligible" do
+      context "when there are zero legacy cases eligible",
+              skip: "this isn't a case that should be covered here because the relevant methods are
+              found in other files and are tested in their respective files" do
         let!(:legacy_priority_cases) { [] }
         let!(:legacy_nonpriority_cases) { [] }
         let!(:same_judge_nonpriority_hearings) { [] }
@@ -703,7 +705,7 @@ describe Distribution, :all_dbs do
     end
   end
 
-  context "validations" do
+  context "validations", skip: "covered in distribution_spec" do
     shared_examples "passes validations" do
       it "is valid" do
         expect(subject.valid?).to be true
