@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class VbmsCommunicationPackage < CaseflowRecord
-  belongs_to :vbms_uploaded_document, optional: false
+  belongs_to :document_mailable_via_pacman, polymorphic: true
   has_many :vbms_distributions
 
   validates :file_number, :comm_package_name, :copies, presence: true
