@@ -89,7 +89,7 @@ class BatchProcess < CaseflowRecord
   def error_out_record!(record, error)
     increment_failed
     error_array = record.error_messages || []
-    error_array.push("Error: #{error.inspect} - BatchID: #{record.batch_id} - Time: #{Time.zone.now}.")
+    error_array.push("Error: #{error.inspect} - Batch ID: #{record.batch_id} - Time: #{Time.zone.now}.")
     if error_array.length >= ERROR_LIMIT
       declare_record_stuck!(record)
     end
