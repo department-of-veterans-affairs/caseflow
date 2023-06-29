@@ -6,19 +6,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
   end
 
   context ".distribute_non_genpop_priority_appeals" do
-    before do
-      FeatureToggle.disable!(:acd_distribute_by_docket_date)
-      allow_any_instance_of(DirectReviewDocket)
-        .to receive(:nonpriority_receipts_per_year)
-        .and_return(100)
-
-      allow(Docket)
-        .to receive(:nonpriority_decisions_per_year)
-        .and_return(1000)
-      allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
-    end
-    after { FeatureToggle.enable!(:acd_distribute_by_docket_date) }
-
     let(:ready_priority_bfkey) { "12345" }
     let(:ready_priority_bfkey2) { "12346" }
     let(:ready_priority_uuid) { "bece6907-3b6f-4c49-a580-6d5f2e1ca65c" }
@@ -164,28 +151,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       ]
     end
 
-    subject { PushPriorityAppealsToJudgesJob.new.distribute_non_genpop_priority_appeals }
-
-    it "should only distribute the ready priority cases tied to a judge" do
-      expect(subject.count).to eq eligible_judges.count
-      expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [1, 1, 0, 0]
-
-      # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
-      distributed_cases = DistributedCase.where(distribution: subject)
-      expect(distributed_cases.count).to eq 2
-      expected_array = [ready_priority_bfkey, ready_priority_bfkey2]
-      expect(distributed_cases.map(&:case_id)).to match_array expected_array
-      # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
-      expected_array2 = %w[legacy legacy]
-      expect(distributed_cases.map(&:docket)).to match_array expected_array2
-      expect(distributed_cases.map(&:priority).uniq).to match_array [true]
-      expect(distributed_cases.map(&:genpop).uniq).to match_array [false]
-    end
-  end
-
-  context ".distribute_non_genpop_priority_appeals - All Case Distribution" do
     before do
-      FeatureToggle.enable!(:acd_distribute_by_docket_date)
       allow_any_instance_of(DirectReviewDocket)
         .to receive(:nonpriority_receipts_per_year)
         .and_return(100)
@@ -193,170 +159,56 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       allow(Docket)
         .to receive(:nonpriority_decisions_per_year)
         .and_return(1000)
-      allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
-    end
-
-    let(:ready_priority_bfkey) { "12345" }
-    let(:ready_priority_bfkey2) { "12346" }
-    let(:ready_priority_uuid) { "bece6907-3b6f-4c49-a580-6d5f2e1ca65c" }
-    let(:ready_priority_uuid2) { "bece6907-3b6f-4c49-a580-6d5f2e1ca65d" }
-    let!(:judge_with_ready_priority_cases) do
-      create(:user, :judge, :with_vacols_judge_record).tap do |judge|
-        vacols_case = create(
-          :case,
-          :aod,
-          bfkey: ready_priority_bfkey,
-          bfd19: 1.year.ago,
-          bfac: "3",
-          bfmpro: "ACT",
-          bfcurloc: "81",
-          bfdloout: 3.days.ago,
-          bfbox: nil,
-          folder: build(:folder, tinum: "1801003", titrnum: "123456789S")
-        )
-        create(
-          :case_hearing,
-          :disposition_held,
-          folder_nr: vacols_case.bfkey,
-          hearing_date: 5.days.ago.to_date,
-          board_member: judge.vacols_attorney_id
-        )
-
-        appeal = create(
-          :appeal,
-          :ready_for_distribution,
-          :advanced_on_docket_due_to_age,
-          uuid: ready_priority_uuid,
-          docket_type: Constants.AMA_DOCKETS.hearing
-        )
-        most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
-        hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-        hearing.update!(judge: judge)
-      end
-    end
-
-    let!(:judge_with_ready_nonpriority_cases) do
-      create(:user, :judge, :with_vacols_judge_record).tap do |judge|
-        vacols_case = create(
-          :case,
-          bfd19: 1.year.ago,
-          bfac: "3",
-          bfmpro: "ACT",
-          bfcurloc: "81",
-          bfdloout: 3.days.ago,
-          bfbox: nil,
-          folder: build(:folder, tinum: "1801002", titrnum: "123456782S")
-        )
-        create(
-          :case_hearing,
-          :disposition_held,
-          folder_nr: vacols_case.bfkey,
-          hearing_date: 5.days.ago.to_date,
-          board_member: judge.vacols_attorney_id
-        )
-
-        appeal = create(
-          :appeal,
-          :ready_for_distribution,
-          docket_type: Constants.AMA_DOCKETS.hearing
-        )
-        most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
-        hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-        hearing.update!(judge: judge)
-      end
-    end
-
-    let!(:judge_with_nonready_priority_cases) do
-      create(:user, :judge).tap do |judge|
-        create(:staff, :judge_role, user: judge)
-        vacols_case = create(
-          :case,
-          :aod,
-          bfd19: 1.year.ago,
-          bfac: "3",
-          bfmpro: "ACT",
-          bfcurloc: "not ready",
-          bfdloout: 3.days.ago,
-          bfbox: nil,
-          folder: build(:folder, tinum: "1801003", titrnum: "123456783S")
-        )
-        create(
-          :case_hearing,
-          :disposition_held,
-          folder_nr: vacols_case.bfkey,
-          hearing_date: 5.days.ago.to_date,
-          board_member: judge.vacols_attorney_id
-        )
-
-        appeal = create(
-          :appeal,
-          :advanced_on_docket_due_to_age,
-          docket_type: Constants.AMA_DOCKETS.hearing
-        )
-        most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
-        hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-        hearing.update!(judge: judge)
-      end
-    end
-    let!(:ama_only_judge_with_ready_priority_cases) do
-      create(:user, :ama_only_judge, :with_vacols_judge_record).tap do |judge|
-        vacols_case = create(
-          :case,
-          :aod,
-          bfkey: ready_priority_bfkey2,
-          bfd19: 1.year.ago,
-          bfac: "3",
-          bfmpro: "ACT",
-          bfcurloc: "81",
-          bfdloout: 3.days.ago,
-          bfbox: nil,
-          folder: build(:folder, tinum: "1801005", titrnum: "923456790S")
-        )
-        create(
-          :case_hearing,
-          :disposition_held,
-          folder_nr: vacols_case.bfkey,
-          hearing_date: 5.days.ago.to_date,
-          board_member: judge.vacols_attorney_id
-        )
-
-        appeal = create(
-          :appeal,
-          :ready_for_distribution,
-          :advanced_on_docket_due_to_age,
-          uuid: "bece6907-3b6f-4c49-a580-6d5f2e1ca65d",
-          docket_type: Constants.AMA_DOCKETS.hearing
-        )
-        most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
-        hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-        hearing.update!(judge: judge)
-      end
-    end
-    let(:eligible_judges) do
-      [
-        judge_with_ready_priority_cases,
-        judge_with_ready_nonpriority_cases,
-        judge_with_nonready_priority_cases,
-        ama_only_judge_with_ready_priority_cases
-      ]
     end
 
     subject { PushPriorityAppealsToJudgesJob.new.distribute_non_genpop_priority_appeals }
 
-    it "should only distribute the ready priority cases tied to a judge" do
-      expect(subject.count).to eq eligible_judges.count
-      expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [3, 1, 0, 0]
+    context "using Automatic Case Distribution module" do
+      before do
+        FeatureToggle.disable!(:acd_distribute_by_docket_date)
 
-      # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
-      distributed_cases = DistributedCase.where(distribution: subject)
-      expect(distributed_cases.count).to eq 4
-      expected_array = [ready_priority_bfkey, ready_priority_bfkey2, ready_priority_uuid, ready_priority_uuid2]
-      expect(distributed_cases.map(&:case_id)).to match_array expected_array
-      # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
-      expected_array2 = %w[hearing hearing legacy legacy]
-      expect(distributed_cases.map(&:docket)).to match_array expected_array2
-      expect(distributed_cases.map(&:priority).uniq).to match_array [true]
-      expect(distributed_cases.map(&:genpop).uniq).to match_array [false, true]
+        allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
+      end
+
+      it "should only distribute the ready priority cases tied to a judge" do
+        expect(subject.count).to eq eligible_judges.count
+        expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [1, 1, 0, 0]
+
+        # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
+        distributed_cases = DistributedCase.where(distribution: subject)
+        expect(distributed_cases.count).to eq 2
+        expected_array = [ready_priority_bfkey, ready_priority_bfkey2]
+        expect(distributed_cases.map(&:case_id)).to match_array expected_array
+        # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
+        expected_array2 = %w[legacy legacy]
+        expect(distributed_cases.map(&:docket)).to match_array expected_array2
+        expect(distributed_cases.map(&:priority).uniq).to match_array [true]
+        expect(distributed_cases.map(&:genpop).uniq).to match_array [false]
+      end
+    end
+
+    context "using By Docket Date Distribution module" do
+      before do
+        FeatureToggle.enable!(:acd_distribute_by_docket_date)
+
+        allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
+      end
+
+      it "should only distribute the ready priority cases tied to a judge" do
+        expect(subject.count).to eq eligible_judges.count
+        expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [3, 1, 0, 0]
+
+        # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
+        distributed_cases = DistributedCase.where(distribution: subject)
+        expect(distributed_cases.count).to eq 4
+        expected_array = [ready_priority_bfkey, ready_priority_bfkey2, ready_priority_uuid, ready_priority_uuid2]
+        expect(distributed_cases.map(&:case_id)).to match_array expected_array
+        # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
+        expected_array2 = %w[hearing hearing legacy legacy]
+        expect(distributed_cases.map(&:docket)).to match_array expected_array2
+        expect(distributed_cases.map(&:priority).uniq).to match_array [true]
+        expect(distributed_cases.map(&:genpop).uniq).to match_array [false, true]
+      end
     end
   end
 
@@ -440,150 +292,76 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let(:priority_count) { Appeal.count { |a| a.aod? || a.cavc? } + legacy_priority_cases.count }
     let(:priority_target) { (priority_count + judge_distributions_this_month.sum) / judges.count }
 
-    it "should distribute ready priority appeals to the judges" do
-      expect(subject.count).to eq judges.count
+    context "using Automatic Case Distribution module" do
+      before { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
 
-      # Ensure we distributed all available ready cases from any docket that are not tied to a judge
-      distributed_cases = DistributedCase.where(distribution: subject)
-      expect(distributed_cases.count).to eq priority_count
-      expect(distributed_cases.map(&:priority).uniq.compact).to match_array [true]
-      expect(distributed_cases.map(&:genpop).uniq.compact).to match_array [true]
-      expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy"))
-      expect(distributed_cases.group(:docket).count.values.uniq).to match_array [5]
-    end
+      it "should distribute ready priority appeals to the judges" do
+        expect(subject.count).to eq judges.count
 
-    it "distributes cases to each judge based on their priority target" do
-      judges.each_with_index do |judge, i|
-        target_distributions = priority_target - judge_distributions_this_month[i]
-        distribution = subject.detect { |dist| dist.judge_id == judge.id }
-        expect(distribution.statistics["batch_size"]).to eq target_distributions
-        distributed_cases = DistributedCase.where(distribution: distribution)
-        expect(distributed_cases.count).to eq target_distributions
-      end
-    end
-
-    context "where there is an ama-only judge" do
-      let!(:ama_only_judge) { create(:user, :judge, :ama_only_judge, :with_vacols_judge_record) }
-      let(:judges) { [ama_only_judge] }
-      it "only distributes ama cases to ama-only judge" do
+        # Ensure we distributed all available ready cases from any docket that are not tied to a judge
         distributed_cases = DistributedCase.where(distribution: subject)
-        distributed_cases.each do |distributed_case|
-          expect(distributed_case.docket).not_to eq("legacy")
+        expect(distributed_cases.count).to eq priority_count
+        expect(distributed_cases.map(&:priority).uniq.compact).to match_array [true]
+        expect(distributed_cases.map(&:genpop).uniq.compact).to match_array [true]
+        expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy"))
+        expect(distributed_cases.group(:docket).count.values.uniq).to match_array [5]
+      end
+
+      it "distributes cases to each judge based on their priority target" do
+        judges.each_with_index do |judge, i|
+          target_distributions = priority_target - judge_distributions_this_month[i]
+          distribution = subject.detect { |dist| dist.judge_id == judge.id }
+          expect(distribution.statistics["batch_size"]).to eq target_distributions
+          distributed_cases = DistributedCase.where(distribution: distribution)
+          expect(distributed_cases.count).to eq target_distributions
+        end
+      end
+
+      context "where there is an ama-only judge" do
+        let!(:ama_only_judge) { create(:user, :judge, :ama_only_judge, :with_vacols_judge_record) }
+        let(:judges) { [ama_only_judge] }
+        it "only distributes ama cases to ama-only judge" do
+          distributed_cases = DistributedCase.where(distribution: subject)
+          distributed_cases.each do |distributed_case|
+            expect(distributed_case.docket).not_to eq("legacy")
+          end
         end
       end
     end
-  end
 
-  context ".distribute_genpop_priority_appeals - All Case Distribution" do
-    before do
-      FeatureToggle.enable!(:acd_distribute_by_docket_date)
-      allow_any_instance_of(DirectReviewDocket)
-        .to receive(:nonpriority_receipts_per_year)
-        .and_return(100)
+    context "using By Docket Date Distribution module" do
+      before { FeatureToggle.enable!(:acd_distribute_by_docket_date) }
 
-      allow(Docket)
-        .to receive(:nonpriority_decisions_per_year)
-        .and_return(1000)
+      it "should distribute ready priority appeals to the judges" do
+        expect(subject.count).to eq judges.count
 
-      allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-        .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(
-          judges.each_with_index.map { |judge, i| [judge.id, judge_distributions_this_month[i]] }.to_h
-        )
-    end
-
-    subject { PushPriorityAppealsToJudgesJob.new.distribute_genpop_priority_appeals }
-
-    let(:judges) { create_list(:user, 5, :judge, :with_vacols_judge_record) }
-    let(:judge_distributions_this_month) { (0..4).to_a }
-    let!(:legacy_priority_cases) do
-      (1..5).map do |i|
-        vacols_case = create(
-          :case,
-          :aod,
-          bfd19: 1.year.ago,
-          bfac: "1",
-          bfmpro: "ACT",
-          bfcurloc: "81",
-          bfdloout: i.months.ago,
-          folder: build(
-            :folder,
-            tinum: "1801#{format('%<index>03d', index: i)}",
-            titrnum: "123456789S"
-          )
-        )
-        create(
-          :case_hearing,
-          :disposition_held,
-          folder_nr: vacols_case.bfkey,
-          hearing_date: 5.days.ago.to_date
-        )
-        vacols_case
-      end
-    end
-    let!(:ready_priority_hearing_cases) do
-      (1..5).map do |i|
-        appeal = create(:appeal,
-                        :advanced_on_docket_due_to_age,
-                        :ready_for_distribution,
-                        docket_type: Constants.AMA_DOCKETS.hearing)
-        appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.months.ago)
-        appeal.reload
-      end
-    end
-    let!(:ready_priority_evidence_cases) do
-      (1..5).map do |i|
-        appeal = create(:appeal,
-                        :type_cavc_remand,
-                        :cavc_ready_for_distribution,
-                        docket_type: Constants.AMA_DOCKETS.evidence_submission)
-        appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.month.ago)
-        appeal
-      end
-    end
-    let!(:ready_priority_direct_cases) do
-      (1..5).map do |i|
-        appeal = create(:appeal,
-                        :with_post_intake_tasks,
-                        :advanced_on_docket_due_to_age,
-                        docket_type: Constants.AMA_DOCKETS.direct_review,
-                        receipt_date: 1.month.ago)
-        appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: i.month.ago)
-        appeal
-      end
-    end
-
-    let(:priority_count) { Appeal.count { |a| a.aod? || a.cavc? } + legacy_priority_cases.count }
-    let(:priority_target) { (priority_count + judge_distributions_this_month.sum) / judges.count }
-
-    it "should distribute ready priority appeals to the judges" do
-      expect(subject.count).to eq judges.count
-
-      # Ensure we distributed all available ready cases from any docket that are not tied to a judge
-      distributed_cases = DistributedCase.where(distribution: subject)
-      expect(distributed_cases.count).to eq priority_count
-      expect(distributed_cases.map(&:priority).uniq.compact).to match_array [true]
-      expect(distributed_cases.map(&:genpop).uniq.compact).to match_array [true]
-      expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy"))
-      expect(distributed_cases.group(:docket).count.values.uniq).to match_array [5]
-    end
-
-    it "distributes cases to each judge based on their priority target" do
-      judges.each_with_index do |judge, i|
-        target_distributions = priority_target - judge_distributions_this_month[i]
-        distribution = subject.detect { |dist| dist.judge_id == judge.id }
-        expect(distribution.statistics["batch_size"]).to eq target_distributions
-        distributed_cases = DistributedCase.where(distribution: distribution)
-        expect(distributed_cases.count).to eq target_distributions
-      end
-    end
-
-    context "where there is an ama-only judge" do
-      let!(:ama_only_judge) { create(:user, :judge, :ama_only_judge, :with_vacols_judge_record) }
-      let(:judges) { [ama_only_judge] }
-      it "only distributes ama cases to ama-only judge" do
+        # Ensure we distributed all available ready cases from any docket that are not tied to a judge
         distributed_cases = DistributedCase.where(distribution: subject)
-        distributed_cases.each do |distributed_case|
-          expect(distributed_case.docket).not_to eq("legacy")
+        expect(distributed_cases.count).to eq priority_count
+        expect(distributed_cases.map(&:priority).uniq.compact).to match_array [true]
+        expect(distributed_cases.map(&:genpop).uniq.compact).to match_array [true]
+        expect(distributed_cases.pluck(:docket).uniq).to match_array(Constants::AMA_DOCKETS.keys.unshift("legacy"))
+        expect(distributed_cases.group(:docket).count.values.uniq).to match_array [5]
+      end
+
+      it "distributes cases to each judge based on their priority target" do
+        judges.each_with_index do |judge, i|
+          target_distributions = priority_target - judge_distributions_this_month[i]
+          distribution = subject.detect { |dist| dist.judge_id == judge.id }
+          expect(distribution.statistics["batch_size"]).to eq target_distributions
+          distributed_cases = DistributedCase.where(distribution: distribution)
+          expect(distributed_cases.count).to eq target_distributions
+        end
+      end
+
+      context "where there is an ama-only judge" do
+        let!(:ama_only_judge) { create(:user, :judge, :ama_only_judge, :with_vacols_judge_record) }
+        let(:judges) { [ama_only_judge] }
+        it "only distributes ama cases to ama-only judge" do
+          distributed_cases = DistributedCase.where(distribution: subject)
+          distributed_cases.each do |distributed_case|
+            expect(distributed_case.docket).not_to eq("legacy")
+          end
         end
       end
     end
@@ -666,7 +444,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(20)
     end
 
-    it "returns ids and age of ready priority appeals not distributed" do
+    it "using Automatic Case Distribution module" do
       expect(subject.second).to eq "*Number of cases tied to judges distributed*: 10"
       expect(subject.third).to eq "*Number of general population cases distributed*: 10"
 
@@ -696,7 +474,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect(subject[19].include?(legacy_priority_case.bfkey)).to be true
     end
 
-    it "returns the Slack Message associated with By Docket Date Distribution" do
+    it "using By Docket Date Distribution module" do
       FeatureToggle.enable!(:acd_distribute_by_docket_date)
       expect(subject.second).to eq "*Number of cases distributed*: 10"
 
@@ -731,469 +509,207 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     end
   end
 
-  context ".slack_report - All Case Distribution" do
-    FeatureToggle.enable!(:acd_distribute_by_docket_date)
-    let!(:job) { PushPriorityAppealsToJudgesJob.new }
-    let(:previous_distributions) { to_judge_hash([4, 3, 2, 1, 0]) }
-    let!(:legacy_priority_case) do
-      judge = create(:user, :judge, :with_vacols_judge_record)
-      create(
-        :case,
-        :aod,
-        bfd19: 1.year.ago,
-        bfac: "1",
-        bfmpro: "ACT",
-        bfcurloc: "81",
-        bfdloout: 1.month.ago,
-        folder: build(
-          :folder,
-          tinum: "1801000",
-          titrnum: "123456789S"
-        )
-      ).tap do |vacols_case|
-        create(
-          :case_hearing,
-          :disposition_held,
-          folder_nr: vacols_case.bfkey,
-          hearing_date: 5.days.ago.to_date,
-          board_member: judge.vacols_attorney_id
-        )
-      end
-    end
-    let!(:ready_priority_hearing_case) do
-      appeal = FactoryBot.create(:appeal,
-                                 :advanced_on_docket_due_to_age,
-                                 :ready_for_distribution,
-                                 docket_type: Constants.AMA_DOCKETS.hearing)
-      appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: 2.months.ago)
-      most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
-      hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
-      hearing.update!(judge: create(:user, :judge, :with_vacols_judge_record))
-      appeal.reload
-    end
-    let!(:ready_priority_evidence_case) do
-      appeal = create(:appeal,
-                      :with_post_intake_tasks,
-                      :advanced_on_docket_due_to_age,
-                      docket_type: Constants.AMA_DOCKETS.evidence_submission)
-      appeal.tasks.find_by(type: EvidenceSubmissionWindowTask.name).completed!
-      appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: 3.months.ago)
-      appeal
-    end
-    let!(:ready_priority_direct_case) do
-      appeal = create(:appeal,
-                      :with_post_intake_tasks,
-                      :advanced_on_docket_due_to_age,
-                      docket_type: Constants.AMA_DOCKETS.direct_review,
-                      receipt_date: 1.month.ago)
-      appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: 4.months.ago)
-      appeal
-    end
-
-    let(:distributed_cases) do
-      (0...5).map do |count|
-        distribution = build(:distribution, statistics: { "batch_size" => count })
-        distribution.save(validate: false)
-        distribution
-      end
-    end
-
-    subject { job.slack_report }
-
-    before do
-      job.instance_variable_set(:@tied_distributions, distributed_cases)
-      job.instance_variable_set(:@genpop_distributions, distributed_cases)
-      allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-        .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(previous_distributions)
-      allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(20)
-    end
-
-    it "returns ids and age of ready priority appeals not distributed" do
-      expect(subject.second).to eq "*Number of cases tied to judges distributed*: 10"
-      expect(subject.third).to eq "*Number of general population cases distributed*: 10"
-
-      today = Time.zone.now.to_date
-      legacy_days_waiting = (today - legacy_priority_case.bfdloout.to_date).to_i
-      expect(subject[3]).to eq "*Age of oldest legacy case*: #{legacy_days_waiting} days"
-      direct_review_days_waiting = (today - ready_priority_direct_case.ready_for_distribution_at.to_date).to_i
-      expect(subject[4]).to eq "*Age of oldest direct_review case*: #{direct_review_days_waiting} days"
-      evidence_submission_days_waiting = (today - ready_priority_evidence_case.ready_for_distribution_at.to_date).to_i
-      expect(subject[5]).to eq "*Age of oldest evidence_submission case*: #{evidence_submission_days_waiting} days"
-      hearing_days_waiting = (today - ready_priority_hearing_case.ready_for_distribution_at.to_date).to_i
-      expect(subject[6]).to eq "*Age of oldest hearing case*: #{hearing_days_waiting} days"
-
-      expect(subject[7]).to eq "*Total Number of appeals _not_ distributed*: 4"
-      expect(subject[8]).to eq "*Number of legacy appeals _not_ distributed*: 1"
-      expect(subject[9]).to eq "*Number of direct_review appeals _not_ distributed*: 1"
-      expect(subject[10]).to eq "*Number of evidence_submission appeals _not_ distributed*: 1"
-      expect(subject[11]).to eq "*Number of hearing appeals _not_ distributed*: 1"
-      expect(subject[12]).to eq "*Number of Legacy Hearing Non Genpop appeals _not_ distributed*: 1"
-
-      expect(subject[15]).to eq "Priority Target: 6"
-      expect(subject[16]).to eq "Previous monthly distributions {judge_id=>count}: #{previous_distributions}"
-      expect(subject[17]).to eq COPY::PRIORITY_PUSH_WARNING_MESSAGE
-      expect(subject[18].include?(ready_priority_hearing_case.uuid)).to be true
-      expect(subject[18].include?(ready_priority_evidence_case.uuid)).to be true
-      expect(subject[18].include?(ready_priority_direct_case.uuid)).to be true
-      expect(subject[19].include?(legacy_priority_case.bfkey)).to be true
-    end
-  end
-
   context ".eligible_judge_target_distributions_with_leftovers" do
-    shared_examples "correct target distributions with leftovers" do
-      before do
-        allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-          .to receive(:priority_distributions_this_month_for_eligible_judges)
-          .and_return(to_judge_hash(distribution_counts))
-        allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(priority_count)
+
+    shared_examples "calling eligible judge target distributions with leftovers" do
+      shared_examples "correct target distributions with leftovers" do
+        before do
+          allow_any_instance_of(PushPriorityAppealsToJudgesJob)
+            .to receive(:priority_distributions_this_month_for_eligible_judges)
+            .and_return(to_judge_hash(distribution_counts))
+          allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(priority_count)
+        end
+
+        subject { PushPriorityAppealsToJudgesJob.new.eligible_judge_target_distributions_with_leftovers }
+
+        it "returns hash of how many cases should be distributed to each judge that is below the priority target " \
+          "including any leftover cases" do
+          expect(subject.values).to match_array expected_priority_targets_with_leftovers
+        end
       end
 
-      subject { PushPriorityAppealsToJudgesJob.new.eligible_judge_target_distributions_with_leftovers }
+      context "when the distributions this month have been even" do
+        shared_examples "even distributions this month" do
+          context "when there are more eligible judges than cases to distribute" do
+            let(:eligible_judge_count) { 10 }
+            let(:priority_count) { 5 }
+            # Priority target will be 0, 5 cases are allotted to 5 judges
+            let(:expected_priority_targets_with_leftovers) { Array.new(priority_count, 1) }
 
-      it "returns hash of how many cases should be distributed to each judge that is below the priority target " \
-        "including any leftover cases" do
-        expect(subject.values).to match_array expected_priority_targets_with_leftovers
+            it_behaves_like "correct target distributions with leftovers"
+          end
+
+          context "when there are more cases to distribute than eligible judges" do
+            let(:eligible_judge_count) { 5 }
+            let(:priority_count) { 10 }
+            # Priority target will be 2, evenly distributed amongst judges
+            let(:expected_priority_targets_with_leftovers) { Array.new(eligible_judge_count, 2) }
+
+            it_behaves_like "correct target distributions with leftovers"
+
+            context "when the cases cannot be evenly distributed" do
+              let(:priority_count) { 9 }
+              # Priority target rounds down, leftover 4 cases are allotted to judges with the fewest cases to distribute
+              let(:expected_priority_targets_with_leftovers) { [1, 2, 2, 2, 2] }
+
+              it_behaves_like "correct target distributions with leftovers"
+            end
+          end
+        end
+
+        let(:distribution_counts) { Array.new(eligible_judge_count, number_of_distributions) }
+
+        context "when there have been no distributions this month" do
+          let(:number_of_distributions) { 0 }
+
+          it_behaves_like "even distributions this month"
+        end
+
+        context "when there have been some distributions this month" do
+          let(:number_of_distributions) { eligible_judge_count * 2 }
+
+          it_behaves_like "even distributions this month"
+        end
       end
-    end
 
-    context "when the distributions this month have been even" do
-      shared_examples "even distributions this month" do
-        context "when there are more eligible judges than cases to distribute" do
-          let(:eligible_judge_count) { 10 }
-          let(:priority_count) { 5 }
-          # Priority target will be 0, 5 cases are allotted to 5 judges
-          let(:expected_priority_targets_with_leftovers) { Array.new(priority_count, 1) }
+      context "when previous distributions counts are not greater than the priority target" do
+        let(:distribution_counts) { [10, 15, 20, 25, 30] }
+        let(:priority_count) { 75 }
+        # 75 should be able to be divided up to get all judges up to 35
+        let(:expected_priority_targets_with_leftovers) { [25, 20, 15, 10, 5] }
+
+        it_behaves_like "correct target distributions with leftovers"
+
+        context "when cases are not evenly distributable" do
+          let(:priority_count) { 79 }
+          # Priority target still is 35, the leftover 4 cases are allotted to judges with the fewest cases to distribute
+          let(:expected_priority_targets_with_leftovers) { [25, 21, 16, 11, 6] }
 
           it_behaves_like "correct target distributions with leftovers"
         end
+      end
 
-        context "when there are more cases to distribute than eligible judges" do
-          let(:eligible_judge_count) { 5 }
-          let(:priority_count) { 10 }
-          # Priority target will be 2, evenly distributed amongst judges
-          let(:expected_priority_targets_with_leftovers) { Array.new(eligible_judge_count, 2) }
+      context "when previous distributions counts are greater than the priority target" do
+        let(:distribution_counts) { [0, 0, 22, 28, 50] }
+        let(:priority_count) { 50 }
+        # The two judges with 0 cases should receive 24 cases, the one judge with 22 cases should recieve 2, leaving us
+        # with [24, 24, 24, 28, 50] to hopefully even out more in the next distribution.
+        let(:expected_priority_targets_with_leftovers) { [24, 24, 2] }
+
+        it_behaves_like "correct target distributions with leftovers"
+
+        context "when the distribution counts are even more disparate" do
+          let(:distribution_counts) { [0, 0, 5, 9, 26, 27, 55, 56, 89, 100] }
+          let(:priority_count) { 50 }
+          # Ending counts should be [16, 16, 16, 16, 26, 27, 55, 56, 89, 100], perfectly using up all 50 cases
+          let(:expected_priority_targets_with_leftovers) { [16, 16, 11, 7] }
 
           it_behaves_like "correct target distributions with leftovers"
 
-          context "when the cases cannot be evenly distributed" do
-            let(:priority_count) { 9 }
-            # Priority target rounds down, leftover 4 cases are allotted to judges with the fewest cases to distribute
-            let(:expected_priority_targets_with_leftovers) { [1, 2, 2, 2, 2] }
+          context "when there are leftover cases" do
+            let(:priority_count) { 53 }
+            # Ending counts should be [16, 17, 17, 17, 26, 27, 55, 56, 89, 100]
+            let(:expected_priority_targets_with_leftovers) { [16, 17, 12, 8] }
 
             it_behaves_like "correct target distributions with leftovers"
           end
         end
       end
 
-      let(:distribution_counts) { Array.new(eligible_judge_count, number_of_distributions) }
+      context "tracking distributions over time" do
+        let(:number_judges) { rand(5..10) }
+        let(:priority_count) { rand(10..30) }
+        # Github Issue 15984, this stops this test from flaking, by making sure the
+        # expects below are achievable for all values rand() will produce.
+        let(:max_preexisting_cases) { (priority_count / (number_judges - 1)).floor }
 
-      context "when there have been no distributions this month" do
-        let(:number_of_distributions) { 0 }
-
-        it_behaves_like "even distributions this month"
-      end
-
-      context "when there have been some distributions this month" do
-        let(:number_of_distributions) { eligible_judge_count * 2 }
-
-        it_behaves_like "even distributions this month"
-      end
-    end
-
-    context "when previous distributions counts are not greater than the priority target" do
-      let(:distribution_counts) { [10, 15, 20, 25, 30] }
-      let(:priority_count) { 75 }
-      # 75 should be able to be divided up to get all judges up to 35
-      let(:expected_priority_targets_with_leftovers) { [25, 20, 15, 10, 5] }
-
-      it_behaves_like "correct target distributions with leftovers"
-
-      context "when cases are not evenly distributable" do
-        let(:priority_count) { 79 }
-        # Priority target still is 35, the leftover 4 cases are allotted to judges with the fewest cases to distribute
-        let(:expected_priority_targets_with_leftovers) { [25, 21, 16, 11, 6] }
-
-        it_behaves_like "correct target distributions with leftovers"
-      end
-    end
-
-    context "when previous distributions counts are greater than the priority target" do
-      let(:distribution_counts) { [0, 0, 22, 28, 50] }
-      let(:priority_count) { 50 }
-      # The two judges with 0 cases should receive 24 cases, the one judge with 22 cases should recieve 2, leaving us
-      # with [24, 24, 24, 28, 50] to hopefully even out more in the next distribution.
-      let(:expected_priority_targets_with_leftovers) { [24, 24, 2] }
-
-      it_behaves_like "correct target distributions with leftovers"
-
-      context "when the distribution counts are even more disparate" do
-        let(:distribution_counts) { [0, 0, 5, 9, 26, 27, 55, 56, 89, 100] }
-        let(:priority_count) { 50 }
-        # Ending counts should be [16, 16, 16, 16, 26, 27, 55, 56, 89, 100], perfectly using up all 50 cases
-        let(:expected_priority_targets_with_leftovers) { [16, 16, 11, 7] }
-
-        it_behaves_like "correct target distributions with leftovers"
-
-        context "when there are leftover cases" do
-          let(:priority_count) { 53 }
-          # Ending counts should be [16, 17, 17, 17, 26, 27, 55, 56, 89, 100]
-          let(:expected_priority_targets_with_leftovers) { [16, 17, 12, 8] }
-
-          it_behaves_like "correct target distributions with leftovers"
-        end
-      end
-    end
-
-    context "tracking distributions over time" do
-      let(:number_judges) { rand(5..10) }
-      let(:priority_count) { rand(10..30) }
-      # Github Issue 15984, this stops this test from flaking, by making sure the
-      # expects below are achievable for all values rand() will produce.
-      let(:max_preexisting_cases) { (priority_count / (number_judges - 1)).floor }
-
-      before do
-        # Mock cases already distributed this month
-        @distribution_counts = to_judge_hash(Array.new(number_judges).map { rand(max_preexisting_cases) })
-        allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-          .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(@distribution_counts)
-        allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-          .to receive(:ready_genpop_priority_appeals_count).and_return(priority_count)
-      end
-
-      it "evens out over multiple calls" do
-        4.times do
-          # Mock distributing cases each week
-          target_distributions = PushPriorityAppealsToJudgesJob.new.eligible_judge_target_distributions_with_leftovers
-          @distribution_counts.merge!(target_distributions) { |_, prev_dists, target_dist| prev_dists + target_dist }
-        end
-        final_counts = @distribution_counts.values.uniq
-        # Expect no more than two distinct counts, no more than 1 apart
-        expect(final_counts.max - final_counts.min).to be <= 1
-        expect(final_counts.count).to be <= 2
-      end
-    end
-  end
-
-  context ".eligible_judge_target_distributions_with_leftovers - All Case Distribution" do
-    shared_examples "correct target distributions with leftovers" do
-      before do
-        FeatureToggle.enable!(:acd_distribute_by_docket_date)
-        allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-          .to receive(:priority_distributions_this_month_for_eligible_judges)
-          .and_return(to_judge_hash(distribution_counts))
-        allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(priority_count)
-      end
-
-      subject { PushPriorityAppealsToJudgesJob.new.eligible_judge_target_distributions_with_leftovers }
-
-      it "returns hash of how many cases should be distributed to each judge that is below the priority target " \
-        "including any leftover cases" do
-        expect(subject.values).to match_array expected_priority_targets_with_leftovers
-      end
-    end
-
-    context "when the distributions this month have been even" do
-      shared_examples "even distributions this month" do
-        context "when there are more eligible judges than cases to distribute" do
-          let(:eligible_judge_count) { 10 }
-          let(:priority_count) { 5 }
-          # Priority target will be 0, 5 cases are allotted to 5 judges
-          let(:expected_priority_targets_with_leftovers) { Array.new(priority_count, 1) }
-
-          it_behaves_like "correct target distributions with leftovers"
+        before do
+          # Mock cases already distributed this month
+          @distribution_counts = to_judge_hash(Array.new(number_judges).map { rand(max_preexisting_cases) })
+          allow_any_instance_of(PushPriorityAppealsToJudgesJob)
+            .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(@distribution_counts)
+          allow_any_instance_of(PushPriorityAppealsToJudgesJob)
+            .to receive(:ready_genpop_priority_appeals_count).and_return(priority_count)
         end
 
-        context "when there are more cases to distribute than eligible judges" do
-          let(:eligible_judge_count) { 5 }
-          let(:priority_count) { 10 }
-          # Priority target will be 2, evenly distributed amongst judges
-          let(:expected_priority_targets_with_leftovers) { Array.new(eligible_judge_count, 2) }
-
-          it_behaves_like "correct target distributions with leftovers"
-
-          context "when the cases cannot be evenly distributed" do
-            let(:priority_count) { 9 }
-            # Priority target rounds down, leftover 4 cases are allotted to judges with the fewest cases to distribute
-            let(:expected_priority_targets_with_leftovers) { [1, 2, 2, 2, 2] }
-
-            it_behaves_like "correct target distributions with leftovers"
+        it "evens out over multiple calls" do
+          4.times do
+            # Mock distributing cases each week
+            target_distributions = PushPriorityAppealsToJudgesJob.new.eligible_judge_target_distributions_with_leftovers
+            @distribution_counts.merge!(target_distributions) { |_, prev_dists, target_dist| prev_dists + target_dist }
           end
-        end
-      end
-
-      let(:distribution_counts) { Array.new(eligible_judge_count, number_of_distributions) }
-
-      context "when there have been no distributions this month" do
-        let(:number_of_distributions) { 0 }
-
-        it_behaves_like "even distributions this month"
-      end
-
-      context "when there have been some distributions this month" do
-        let(:number_of_distributions) { eligible_judge_count * 2 }
-
-        it_behaves_like "even distributions this month"
-      end
-    end
-
-    context "when previous distributions counts are not greater than the priority target" do
-      let(:distribution_counts) { [10, 15, 20, 25, 30] }
-      let(:priority_count) { 75 }
-      # 75 should be able to be divided up to get all judges up to 35
-      let(:expected_priority_targets_with_leftovers) { [25, 20, 15, 10, 5] }
-
-      it_behaves_like "correct target distributions with leftovers"
-
-      context "when cases are not evenly distributable" do
-        let(:priority_count) { 79 }
-        # Priority target still is 35, the leftover 4 cases are allotted to judges with the fewest cases to distribute
-        let(:expected_priority_targets_with_leftovers) { [25, 21, 16, 11, 6] }
-
-        it_behaves_like "correct target distributions with leftovers"
-      end
-    end
-
-    context "when previous distributions counts are greater than the priority target" do
-      let(:distribution_counts) { [0, 0, 22, 28, 50] }
-      let(:priority_count) { 50 }
-      # The two judges with 0 cases should receive 24 cases, the one judge with 22 cases should recieve 2, leaving us
-      # with [24, 24, 24, 28, 50] to hopefully even out more in the next distribution.
-      let(:expected_priority_targets_with_leftovers) { [24, 24, 2] }
-
-      it_behaves_like "correct target distributions with leftovers"
-
-      context "when the distribution counts are even more disparate" do
-        let(:distribution_counts) { [0, 0, 5, 9, 26, 27, 55, 56, 89, 100] }
-        let(:priority_count) { 50 }
-        # Ending counts should be [16, 16, 16, 16, 26, 27, 55, 56, 89, 100], perfectly using up all 50 cases
-        let(:expected_priority_targets_with_leftovers) { [16, 16, 11, 7] }
-
-        it_behaves_like "correct target distributions with leftovers"
-
-        context "when there are leftover cases" do
-          let(:priority_count) { 53 }
-          # Ending counts should be [16, 17, 17, 17, 26, 27, 55, 56, 89, 100]
-          let(:expected_priority_targets_with_leftovers) { [16, 17, 12, 8] }
-
-          it_behaves_like "correct target distributions with leftovers"
+          final_counts = @distribution_counts.values.uniq
+          # Expect no more than two distinct counts, no more than 1 apart
+          expect(final_counts.max - final_counts.min).to be <= 1
+          expect(final_counts.count).to be <= 2
         end
       end
     end
 
-    context "tracking distributions over time" do
-      let(:number_judges) { rand(5..10) }
-      let(:priority_count) { rand(10..30) }
-      # Github Issue 15984, this stops this test from flaking, by making sure the
-      # expects below are achievable for all values rand() will produce.
-      let(:max_preexisting_cases) { (priority_count / (number_judges - 1)).floor }
+    context "using Automatic Case Distribution module" do
+      it_behaves_like "calling eligible judge target distributions with leftovers"
+    end
 
-      before do
-        # Mock cases already distributed this month
-        @distribution_counts = to_judge_hash(Array.new(number_judges).map { rand(max_preexisting_cases) })
-        allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-          .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(@distribution_counts)
-        allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-          .to receive(:ready_genpop_priority_appeals_count).and_return(priority_count)
-      end
+    context "using By Docket Date Distribution module" do
+      before { FeatureToggle.enable!(:acd_distribute_by_docket_date) }
 
-      it "evens out over multiple calls" do
-        4.times do
-          # Mock distributing cases each week
-          target_distributions = PushPriorityAppealsToJudgesJob.new.eligible_judge_target_distributions_with_leftovers
-          @distribution_counts.merge!(target_distributions) { |_, prev_dists, target_dist| prev_dists + target_dist }
-        end
-        final_counts = @distribution_counts.values.uniq
-        # Expect no more than two distinct counts, no more than 1 apart
-        expect(final_counts.max - final_counts.min).to be <= 1
-        expect(final_counts.count).to be <= 2
-      end
+      it_behaves_like "calling eligible judge target distributions with leftovers"
     end
   end
 
   context ".leftover_cases_count" do
-    before do
-      allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-        .to receive(:target_distributions_for_eligible_judges).and_return(target_distributions)
-      allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(priority_count)
-    end
+    shared_examples "calling leftover cases count" do
+      before do
 
-    subject { PushPriorityAppealsToJudgesJob.new.leftover_cases_count }
-
-    context "when the number of cases to distribute is evenly divisible by the number of judges that need cases" do
-      let(:eligible_judge_count) { 4 }
-      let(:priority_count) { 100 }
-      let(:target_distributions) do
-        Array.new(eligible_judge_count, priority_count / eligible_judge_count)
-          .each_with_index
-          .map { |count, i| [i, count] }.to_h
+        allow_any_instance_of(PushPriorityAppealsToJudgesJob)
+          .to receive(:target_distributions_for_eligible_judges).and_return(target_distributions)
+        allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(priority_count)
       end
 
-      it "returns no leftover cases" do
-        expect(subject).to eq 0
-      end
-    end
+      subject { PushPriorityAppealsToJudgesJob.new.leftover_cases_count }
 
-    context "when the number of cases can be distributed to all judges evenly" do
-      let(:priority_count) { target_distributions.values.sum }
-      let(:target_distributions) { to_judge_hash([5, 10, 15, 20, 25]) }
+      context "when the number of cases to distribute is evenly divisible by the number of judges that need cases" do
+        let(:eligible_judge_count) { 4 }
+        let(:priority_count) { 100 }
+        let(:target_distributions) do
+          Array.new(eligible_judge_count, priority_count / eligible_judge_count)
+            .each_with_index
+            .map { |count, i| [i, count] }.to_h
+        end
 
-      it "returns no leftover cases" do
-        expect(subject).to eq 0
-      end
-    end
-
-    context "when the number of cases are not evenly distributable bewteen all judges" do
-      let(:leftover_cases_count) { target_distributions.count - 1 }
-      let(:priority_count) { target_distributions.values.sum + leftover_cases_count }
-      let(:target_distributions) { to_judge_hash([5, 10, 15, 20, 25]) }
-
-      it "returns the correct number of leftover cases" do
-        expect(subject).to eq leftover_cases_count
-      end
-    end
-  end
-
-  context ".leftover_cases_count - All Case Distribution" do
-    before do
-      FeatureToggle.enable!(:acd_distribute_by_docket_date)
-      allow_any_instance_of(PushPriorityAppealsToJudgesJob)
-        .to receive(:target_distributions_for_eligible_judges).and_return(target_distributions)
-      allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(priority_count)
-    end
-
-    subject { PushPriorityAppealsToJudgesJob.new.leftover_cases_count }
-
-    context "when the number of cases to distribute is evenly divisible by the number of judges that need cases" do
-      let(:eligible_judge_count) { 4 }
-      let(:priority_count) { 100 }
-      let(:target_distributions) do
-        Array.new(eligible_judge_count, priority_count / eligible_judge_count)
-          .each_with_index
-          .map { |count, i| [i, count] }.to_h
+        it "returns no leftover cases" do
+          expect(subject).to eq 0
+        end
       end
 
-      it "returns no leftover cases" do
-        expect(subject).to eq 0
+      context "when the number of cases can be distributed to all judges evenly" do
+        let(:priority_count) { target_distributions.values.sum }
+        let(:target_distributions) { to_judge_hash([5, 10, 15, 20, 25]) }
+
+        it "returns no leftover cases" do
+          expect(subject).to eq 0
+        end
+      end
+
+      context "when the number of cases are not evenly distributable bewteen all judges" do
+        let(:leftover_cases_count) { target_distributions.count - 1 }
+        let(:priority_count) { target_distributions.values.sum + leftover_cases_count }
+        let(:target_distributions) { to_judge_hash([5, 10, 15, 20, 25]) }
+
+        it "returns the correct number of leftover cases" do
+          expect(subject).to eq leftover_cases_count
+        end
       end
     end
 
-    context "when the number of cases can be distributed to all judges evenly" do
-      let(:priority_count) { target_distributions.values.sum }
-      let(:target_distributions) { to_judge_hash([5, 10, 15, 20, 25]) }
-
-      it "returns no leftover cases" do
-        expect(subject).to eq 0
-      end
+    context "using Automatic Case Distribution module" do
+      it_behaves_like "calling leftover cases count"
     end
 
-    context "when the number of cases are not evenly distributable bewteen all judges" do
-      let(:leftover_cases_count) { target_distributions.count - 1 }
-      let(:priority_count) { target_distributions.values.sum + leftover_cases_count }
-      let(:target_distributions) { to_judge_hash([5, 10, 15, 20, 25]) }
+    context "using By Docket Date Distribution module" do
+      before { FeatureToggle.enable!(:acd_distribute_by_docket_date) }
 
-      it "returns the correct number of leftover cases" do
-        expect(subject).to eq leftover_cases_count
-      end
+      it_behaves_like "calling leftover cases count"
     end
   end
 
