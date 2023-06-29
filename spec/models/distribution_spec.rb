@@ -196,6 +196,7 @@ describe Distribution, :all_dbs do
     end
   end
 
+  # This is specifically testing the priority push code in the AutomaticCaseDistribution module
   context "priority push distributions" do
     let(:priority_push) { true }
 
@@ -253,6 +254,7 @@ describe Distribution, :all_dbs do
     end
   end
 
+  # This is specifically testing the priority push code in the AutomaticCaseDistribution module
   context "requested distributions" do
     context "when priority_acd is enabled" do
       let(:limit) { 10 }

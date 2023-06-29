@@ -152,7 +152,8 @@ describe Distribution, :all_dbs do
         end
       end
 
-      context "when min legacy proportion and max direct review proportion are set and used" do
+      context "when min legacy proportion and max direct review proportion are set and used",
+              skip: "the actual proportion calculation is tested in docket_coordinator_spec" do
         # Proportion for hearings and evidence submission dockets
         let(:other_dockets_proportion) { (1 - min_legacy_proportion - max_direct_review_proportion) / 2 }
 
