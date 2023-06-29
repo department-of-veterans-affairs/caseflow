@@ -83,6 +83,39 @@ describe BusinessLine do
         expect(tasks.map(&:appeal_type).uniq).to match_array [HigherLevelReview.name, SupplementalClaim.name]
       end
     end
+
+    context "Filtering by issue type" do
+      let!(:task_filters) { ["col=issueTypesColumn&val=Beneficiary Travel"] }
+
+      it "Select request issue types are included, none others" do
+        tasks = subject
+        expect(tasks.all? { |task| task.issue_types.include?("Beneficiary Travel") }).to eq true
+      end
+    end
+
+    context "Filtering by an issue type that includes | in the string" do
+      let!(:task_filters) { ["col=issueTypesColumn&val=Caregiver | Other"] }
+
+      it "Select request issue types are included, none others" do
+        tasks = subject
+        expect(tasks.all? { |task| task.issue_types.include?("Caregiver | Other") }).to eq true
+      end
+    end
+
+    context "Filtering by type and an issue type" do
+      let!(:task_filters) do
+        ["col=issueTypesColumn&val=Beneficiary Travel", "col=decisionReviewType&val=HigherLevelReview"]
+      end
+
+      it "Select request issue types are included, none others" do
+        tasks = subject
+        expect(tasks.all? do |task|
+          task.issue_types.include?("Beneficiary Travel") &&
+          task.type == DecisionReviewTask.name &&
+          task.appeal_type == HigherLevelReview.name
+        end).to eq true
+      end
+    end
   end
 
   describe ".in_progress_tasks" do
@@ -244,7 +277,11 @@ describe BusinessLine do
   def add_veteran_and_request_issues_to_decision_reviews(tasks)
     tasks.each do |task|
       task.appeal.update!(veteran_file_number: veteran.file_number)
-      create(:request_issue, :nonrating, decision_review: task.appeal, benefit_type: business_line.url)
+      rand(1..4).times do
+        create(:request_issue, :nonrating,
+               nonrating_issue_category: Constants.ISSUE_CATEGORIES.vha.sample,
+               decision_review: task.appeal, benefit_type: business_line.url)
+      end
     end
 
     tasks
