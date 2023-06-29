@@ -76,7 +76,7 @@ class Rating
     end
 
     def special_issue_has_pact?(special_issue)
-      if special_issue[:spis_tn]&.casecmp("gulf war presumptive 3.3201")&.zero?
+      if special_issue[:spis_tn]&.casecmp("gulf war presumptive 3.320")&.zero?
         return special_issue[:spis_basis_tn]&.casecmp("particulate matter")&.zero?
       end
 
