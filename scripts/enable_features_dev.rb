@@ -58,8 +58,8 @@ disabled_flags = [
   "legacy_das_deprecation",
   "cavc_dashboard_workflow",
   "poa_auto_refresh",
-  "interface_version_2",
-  "justification_reason"
+  "justification_reason",
+  "interface_version_2"
 ]
 
 all_features = AllFeatureToggles.new.call.flatten.uniq
