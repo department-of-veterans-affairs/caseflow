@@ -1,6 +1,7 @@
 SCHEDULED_JOBS = {
     "amo_metrics_report" => AMOMetricsReportJob,
     "annual_metrics" => AnnualMetricsReportJob,
+    "batch_process_priority_ep_sync" => BatchProcessPriorityEpSyncJob,
     "calculate_dispatch_stats" => CalculateDispatchStatsJob,
     "create_establish_claim" => CreateEstablishClaimTasksJob,
     "data_integrity_checks" => DataIntegrityChecksJob,
@@ -18,6 +19,7 @@ SCHEDULED_JOBS = {
     "monthly_metrics" => MonthlyMetricsReportJob,
     "nightly_syncs" => NightlySyncsJob,
     "out_of_service_reminder" => OutOfServiceReminderJob,
+    "populate_end_product_sync_queue", => PopulateEndProductSyncQueueJob,
     "prepare_establish_claim" => PrepareEstablishClaimTasksJob,
     "push_priority_appeals_to_judges" => PushPriorityAppealsToJudgesJob,
     "quarterly_metrics" => QuarterlyMetricsReportJob,
