@@ -19,8 +19,6 @@ class AmaAppealDispatch
 
     outcode_appeal if success
 
-    queue_mail_request_job unless @mail_package.nil?
-
     FormResponse.new(success: success, errors: [errors.full_messages.join(", ")])
   end
 
@@ -87,7 +85,7 @@ class AmaAppealDispatch
   end
 
   def create_decision_document_and_submit_for_processing!(params)
-    DecisionDocument.create!(params).tap(&:submit_for_processing!)
+    DecisionDocument.create_document!(params, mail_package).tap(&:submit_for_processing!)
   end
 
   def complete_dispatch_task!
@@ -104,19 +102,5 @@ class AmaAppealDispatch
 
   def store_poa_participant_id
     appeal.update!(poa_participant_id: appeal.power_of_attorney&.participant_id)
-  end
-
-  # Queues mail request job if recipient info present and dispatch completed
-  def queue_mail_request_job
-    return unless dispatch_task.root_task.status == Constants.TASK_STATUSES.completed
-
-    MailRequestJob.perform_later(file, mail_package)
-    info_message = "MailRequestJob for citation #{citation_number} queued for submission to Package Manager"
-    log_info(info_message)
-  end
-
-  def log_info(info_message)
-    uuid = SecureRandom.uuid
-    Rails.logger.info(info_message + " ID: " + uuid)
   end
 end

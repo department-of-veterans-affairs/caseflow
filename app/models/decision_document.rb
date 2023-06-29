@@ -19,12 +19,27 @@ class DecisionDocument < CaseflowRecord
   S3_SUB_BUCKET = "decisions"
 
   delegate :veteran, to: :appeal
+  delegate :file_number, to: :veteran, prefix: true
 
   include BelongsToPolymorphicAppealConcern
   # Sets up belongs_to association with :appeal and provides `ama_appeal` used by `has_many` call
   belongs_to_polymorphic_appeal :appeal
   has_many :ama_decision_issues, -> { includes(:ama_decision_documents).references(:decision_documents) },
            through: :ama_appeal, source: :decision_issues
+
+  def self.create_document!(params, mail_package)
+    create!(params).tap { |document| document.add_mail_package(mail_package) }
+  end
+
+  def add_mail_package(mail_package)
+    @mail_package = mail_package
+  end
+
+  def pdf_name
+    appeal.external_id + ".pdf"
+  end
+
+  alias document_name pdf_name
 
   def decision_issues
     ama_decision_issues if appeal_type == "Appeal"
@@ -53,17 +68,18 @@ class DecisionDocument < CaseflowRecord
     super
 
     if not_processed_or_decision_date_not_in_the_future?
-      ProcessDecisionDocumentJob.perform_later(id)
+      ProcessDecisionDocumentJob.perform_later(id, mail_package)
     end
   end
 
-  def process!
+  def process!(mail_package)
     return if processed?
 
     fail NotYetSubmitted unless submitted_and_ready?
 
     attempted!
     upload_to_vbms!
+    queue_mail_request_job!(mail_package) unless mail_package.nil?
 
     if appeal.is_a?(Appeal)
       create_board_grant_effectuations!
@@ -109,6 +125,8 @@ class DecisionDocument < CaseflowRecord
 
   private
 
+  attr_reader :mail_package
+
   def create_board_grant_effectuations!
     appeal.decision_issues.granted.each do |granted_decision_issue|
       BoardGrantEffectuation.find_or_create_by(granted_decision_issue: granted_decision_issue)
@@ -136,10 +154,6 @@ class DecisionDocument < CaseflowRecord
 
     VBMSService.upload_document_to_vbms(appeal, self)
     update!(uploaded_to_vbms_at: Time.zone.now)
-  end
-
-  def pdf_name
-    appeal.external_id + ".pdf"
   end
 
   def s3_location
@@ -183,5 +197,19 @@ class DecisionDocument < CaseflowRecord
       log = { class: self.class, appeal_id: appeal.id, message: message }
       Rails.logger.warn("BVADispatchEmail #{log}")
     end
+  end
+
+  # Queues mail request job if recipient info present and dispatch completed
+  def queue_mail_request_job!(mail_package)
+    return unless uploaded_to_vbms_at
+
+    MailRequestJob.perform_later(self, mail_package)
+    info_message = "MailRequestJob for citation #{citation_number} queued for submission to Package Manager"
+    log_info(info_message)
+  end
+
+  def log_info(info_message)
+    uuid = SecureRandom.uuid
+    Rails.logger.info(info_message + " ID: " + uuid)
   end
 end
