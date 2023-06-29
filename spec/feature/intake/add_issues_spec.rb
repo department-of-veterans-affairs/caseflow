@@ -523,8 +523,8 @@ feature "Intake Add Issues Page", :all_dbs do
     let(:untimely_promulgation_date) { receipt_date - untimely_days - 1.day }
     let(:untimely_profile_date) { receipt_date - untimely_days - 3.days }
 
-    let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
-    let!(:untimely_ratings) { generate_untimely_rating(veteran, untimely_promulgation_date, untimely_profile_date) }
+    # let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
+    # let!(:untimely_ratings) { generate_untimely_rating(veteran, untimely_promulgation_date, untimely_profile_date) }
 
     let!(:old_ratings) do
       Generators::PromulgatedRating.build(
@@ -576,9 +576,9 @@ feature "Intake Add Issues Page", :all_dbs do
       # this scenario below does not make sense, it was previously skipped because expectation on line#591 was failing.
       # as it expected a popup with title 'Issue 1 is an Untimely Issue' to not appear but it was appearing.
       # looks like there was some requirement change which might have  caused it to fail.
-      # For now i changed legacy_opt_in_approved to false which atleast makes this test pass.
+      # For now i removed legacy_opt_in_approved parameter to the start_higher_level_review method
       scenario "when vacols issue ineligible even with an exemption" do
-        start_higher_level_review(veteran, legacy_opt_in_approved: false)
+        start_higher_level_review(veteran)
         visit "/intake/add_issues"
         click_intake_add_issue
         add_intake_rating_issue("PTSD denied")
@@ -678,7 +678,7 @@ feature "Intake Add Issues Page", :all_dbs do
       # same comment as line#574
 
       scenario "when vacols issue is ineligible even with an exemption" do
-        start_supplemental_claim(veteran, legacy_opt_in_approved: false)
+        start_supplemental_claim(veteran)
         visit "/intake/add_issues"
         click_intake_add_issue
         add_intake_rating_issue("PTSD denied")
