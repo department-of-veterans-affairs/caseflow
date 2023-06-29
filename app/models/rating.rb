@@ -198,7 +198,7 @@ class Rating
   end
 
   def ensure_array_of_hashes(array_or_hash_or_nil)
-    [array_or_hash_or_nil || {}].flatten
+    [array_or_hash_or_nil || {}].flatten.map(&:deep_symbolize_keys)
   end
 
   def associated_end_products
