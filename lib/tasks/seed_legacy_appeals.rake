@@ -94,13 +94,15 @@ namespace :db do
           #   docket_date: nil
           # )
 
+          # build task tree
           root_task = RootTask.find_or_create_by!(appeal: appeal)
-          root_task.assigned_to = judge
+          root_task.assigned_to = att
           root_task.save!
+          distribution_task = DistributionTask.create(appeal: appeal, parent: root_task, assigned_to: att)
           # binding.pry
           task = AttorneyTask.new(
             appeal: appeal,
-            parent: root_task,
+            parent: distribution_task,
             assigned_to: att,
             assigned_by: judge,
             instructions: "demo instructions"
@@ -110,7 +112,7 @@ namespace :db do
           acr = AttorneyCaseReview.new(
             appeal: appeal,
             reviewing_judge: judge,
-            attorney: att,
+            attorney: judge,
             task: task,
             document_id: '22222222.2222',
             document_type: "draft_decision",
