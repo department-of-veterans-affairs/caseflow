@@ -1318,8 +1318,7 @@ feature "Appeal Edit issues", :all_dbs do
         click_on "Save"
 
         click_on "Save"
-        issue_node_element = find(:xpath, "/html/body/div/div/div[2]/div/main/div/div[2]/section/div[4]/div[1]")
-        expect(issue_node_element).to have_content("PACT")
+        expect(page).to have_content("SPECIAL ISSUES\nPACT")
 
         click_on "Correct issues"
         find("select", id: "issue-action-0").click
@@ -1328,8 +1327,7 @@ feature "Appeal Edit issues", :all_dbs do
         click_on "Save"
 
         click_on "Save"
-        issue_node_element = find(:xpath, "/html/body/div/div/div[2]/div/main/div/div[2]/section/div[4]/div[1]")
-        expect(issue_node_element).to have_no_content("PACT")
+        expect(page).to have_no_content("SPECIAL ISSUES\nPact")
       end
 
       scenario "can add and remove only MST to an issue" do
@@ -1340,8 +1338,7 @@ feature "Appeal Edit issues", :all_dbs do
         click_on "Save"
 
         click_on "Save"
-        issue_node_element = find(:xpath, "/html/body/div/div/div[2]/div/main/div/div[2]/section/div[4]/div[1]")
-        expect(issue_node_element).to have_content("MST")
+        expect(page).to have_content("SPECIAL ISSUES\nMST")
 
         click_on "Correct issues"
         find("select", id: "issue-action-0").click
@@ -1350,8 +1347,7 @@ feature "Appeal Edit issues", :all_dbs do
         click_on "Save"
 
         click_on "Save"
-        issue_node_element = find(:xpath, "/html/body/div/div/div[2]/div/main/div/div[2]/section/div[4]/div[1]")
-        expect(issue_node_element).to have_no_content("MST")
+        expect(page).to have_no_content("SPECIAL ISSUES\nMST")
       end
     end
   end
