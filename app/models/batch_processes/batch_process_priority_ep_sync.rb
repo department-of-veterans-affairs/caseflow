@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "batch_process"
-
 class BatchProcessPriorityEpSync < BatchProcess
   class << self
     def find_records_to_batch
