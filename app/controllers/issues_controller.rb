@@ -78,6 +78,21 @@ class IssuesController < ApplicationController
       convert_to_bool(params[:issues][:pact_status])
     )
     task.completed!
+    # create SpecialIssueChange record to log the changes
+    SpecialIssueChange.create!(
+      issue_id: before_issue.id,
+      appeal_id: appeal.id,
+      appeal_type: "LegacyAppeal",
+      task_id: task.id,
+      created_at: Time.zone.now.utc,
+      created_by_id: user.id,
+      created_by_css_id: user.css_id,
+      original_mst_status: before_issue.mst_status,
+      original_pact_status: before_issue.pact_status,
+      updated_mst_status: convert_to_bool(params[:issues][:mst_status]),
+      updated_pact_status: convert_to_bool(params[:issues][:pact_status]),
+      change_category: "Edited Issue"
+    )
   end
 
   def convert_to_bool(status)
