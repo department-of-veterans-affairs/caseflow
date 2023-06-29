@@ -79,8 +79,7 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
       let(:vbms_distribution) { create(:vbms_distribution, uuid: distro_uuid) }
       let(:expected_response) do
         {
-          "id": vbms_distribution.id,
-          "pacman_id": vbms_distribution.uuid,
+          "id": Fakes::PacmanService::DISTRIBUTION_UUID,
           "recipient":
           {
             "type": "system",
