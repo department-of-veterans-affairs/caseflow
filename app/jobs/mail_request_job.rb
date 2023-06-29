@@ -20,7 +20,6 @@ class MailRequestJob < CaseflowJob
   #
   # Response: n/a
   def perform(document_to_mail, mail_package)
-    byebug
     begin
       package_response = PacmanService.send_communication_package_request(
         document_to_mail.veteran_file_number,
