@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_06_29_172100) do
+ActiveRecord::Schema.define(version: 2023_06_29_184615) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1795,14 +1795,15 @@ ActiveRecord::Schema.define(version: 2023_06_29_172100) do
     t.bigint "copies", default: 1
     t.datetime "created_at", null: false
     t.bigint "created_by_id"
+    t.bigint "document_mailable_via_pacman_id"
+    t.string "document_mailable_via_pacman_type"
     t.string "file_number", comment: "number associated with the documents."
     t.string "status"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id"
-    t.bigint "vbms_uploaded_document_id"
     t.index ["created_by_id"], name: "index_vbms_communication_packages_on_created_by_id"
+    t.index ["document_mailable_via_pacman_type", "document_mailable_via_pacman_id"], name: "index_vbms_communication_packages_on_pacman_document_id"
     t.index ["updated_by_id"], name: "index_vbms_communication_packages_on_updated_by_id"
-    t.index ["vbms_uploaded_document_id"], name: "index_vbms_communication_packages_on_vbms_uploaded_document_id"
   end
 
   create_table "vbms_distribution_destinations", force: :cascade do |t|
@@ -2132,7 +2133,6 @@ ActiveRecord::Schema.define(version: 2023_06_29_172100) do
   add_foreign_key "user_quotas", "users"
   add_foreign_key "vbms_communication_packages", "users", column: "created_by_id"
   add_foreign_key "vbms_communication_packages", "users", column: "updated_by_id"
-  add_foreign_key "vbms_communication_packages", "vbms_uploaded_documents"
   add_foreign_key "vbms_distribution_destinations", "users", column: "created_by_id"
   add_foreign_key "vbms_distribution_destinations", "users", column: "updated_by_id"
   add_foreign_key "vbms_distribution_destinations", "vbms_distributions"
