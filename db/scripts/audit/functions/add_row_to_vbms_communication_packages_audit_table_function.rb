@@ -20,7 +20,8 @@ conn.execute(
         OLD.comm_package_name,
         OLD.created_at,
         OLD.updated_at,
-        OLD.vbms_uploaded_document_id,
+        OLD.document_mailable_via_pacman_id,
+        OLD.document_mailable_via_pacman_type,
         OLD.created_by_id,
         OLD.updated_by_id;
     elsif (TG_OP = 'UPDATE') then
@@ -35,7 +36,8 @@ conn.execute(
         NEW.comm_package_name,
         NEW.created_at,
         NEW.updated_at,
-        NEW.vbms_uploaded_document_id,
+        NEW.document_mailable_via_pacman_id,
+        NEW.document_mailable_via_pacman_type,
         NEW.created_by_id,
         NEW.updated_by_id;
     elsif (TG_OP = 'INSERT') then
@@ -50,7 +52,8 @@ conn.execute(
         NEW.comm_package_name,
         NEW.created_at,
         NEW.updated_at,
-        NEW.vbms_uploaded_document_id,
+        NEW.document_mailable_via_pacman_id,
+        NEW.document_mailable_via_pacman_type,
         NEW.created_by_id,
         NEW.updated_by_id;
     end if;
