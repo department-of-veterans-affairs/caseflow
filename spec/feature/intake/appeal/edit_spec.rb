@@ -1249,7 +1249,6 @@ feature "Appeal Edit issues", :all_dbs do
           )
         )
       end
-
       before do
         FeatureToggle.enable!(:mst_identification)
         FeatureToggle.enable!(:pact_identification)
@@ -1265,8 +1264,6 @@ feature "Appeal Edit issues", :all_dbs do
       scenario "can add MST/PACT to issues" do
         visit "/queue/appeals/#{appeal.veteran_file_number}"
         click_on "Correct issues"
-
-        # Adds MST and PACT
         find("select", id: "issue-action-0").click
         find("option", id: "issue-action-0_edit").click
         check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
@@ -1275,11 +1272,12 @@ feature "Appeal Edit issues", :all_dbs do
 
         click_on "Save"
 
-        expect(page).to have_content("Special issues: MST, PACT")
+        expect(page).to have_content("MST and PACT")
       end
 
       scenario "can remove MST/PACT issues" do
-        # Removes MST and PACT
+        visit "/queue/appeals/#{appeal.veteran_file_number}"
+        click_on "Correct issues"
         find("select", id: "issue-action-0").click
         find("option", id: "issue-action-0_edit").click
         uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
@@ -1288,11 +1286,12 @@ feature "Appeal Edit issues", :all_dbs do
 
         click_on "Save"
 
-        expect(page).to have_no_content("Special issues: MST, PACT")
+        expect(page).to have_no_content("MST and PACT")
       end
 
       scenario "can add only PACT to an issue" do
-        # Adds PACT
+        visit "/queue/appeals/#{appeal.veteran_file_number}"
+        click_on "Correct issues"
         find("select", id: "issue-action-0").click
         find("option", id: "issue-action-0_edit").click
         find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
@@ -1300,11 +1299,12 @@ feature "Appeal Edit issues", :all_dbs do
 
         click_on "Save"
 
-        expect(page).to have_content("Special issues: PACT")
+        expect(page).to have_content("PACT")
       end
 
       scenario "can add only MST to an issue" do
-        # Adds MST
+        visit "/queue/appeals/#{appeal.veteran_file_number}"
+        click_on "Correct issues"
         find("select", id: "issue-action-0").click
         find("option", id: "issue-action-0_edit").click
         check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
@@ -1312,7 +1312,7 @@ feature "Appeal Edit issues", :all_dbs do
 
         click_on "Save"
 
-        expect(page).to have_content("Special issues: PACT")
+        expect(page).to have_content("MST")
       end
     end
   end
