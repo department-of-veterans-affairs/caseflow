@@ -102,8 +102,9 @@ class Rating
       response = fetch_contentions_by_participant_id(serialized_hash[:participant_id])
 
       serialized_hash[:rba_contentions_data].each do |rba|
+        rba_contention = rba.with_indifferent_access
         response.each do |resp|
-          contentions_data << resp[:contentions] if resp[:contentions][:cntntn_id] == rba[:cntntn_id]
+          contentions_data << resp[:contentions] if resp[:contentions][:cntntn_id] == rba_contention[:cntntn_id]
         end
       end
       contentions_data.compact
