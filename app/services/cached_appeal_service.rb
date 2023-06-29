@@ -4,7 +4,9 @@ class CachedAppealService
   # rubocop:disable Metrics/MethodLength
   def cache_ama_appeals(appeals)
     import_cached_appeals([:appeal_id, :appeal_type], AMA_CACHED_COLUMNS) do
-      request_issues_to_cache = request_issue_counts_for_appeal_ids(appeals.pluck(:id))
+      cached_appeal_ids = appeals.pluck(:id)
+      request_issues_to_cache = request_issue_counts_for_appeal_ids(cached_appeal_ids)
+      request_issue_types_to_cache = request_issue_types_for_appeal_ids(cached_appeal_ids)
       veteran_names_to_cache = veteran_names_for_file_numbers(appeals.pluck(:veteran_file_number))
 
       appeal_aod_status = aod_status_for_appeals(appeals)
@@ -14,6 +16,7 @@ class CachedAppealService
           appeal_type: Appeal.name,
           case_type: appeal.type,
           issue_count: request_issues_to_cache[appeal.id] || 0,
+          issue_types: request_issue_types_to_cache[appeal.id] || "",
           docket_type: appeal.docket_type,
           docket_number: appeal.docket_number,
           hearing_request_type: appeal.readable_current_hearing_request_type,
@@ -85,6 +88,7 @@ class CachedAppealService
     :hearing_request_type,
     :is_aod,
     :issue_count,
+    :issue_types,
     :suggested_hearing_location,
     :veteran_name
   ].freeze
@@ -132,6 +136,17 @@ class CachedAppealService
   def request_issue_counts_for_appeal_ids(appeal_ids)
     RequestIssue.where(decision_review_id: appeal_ids, decision_review_type: Appeal.name)
       .group(:decision_review_id).count
+  end
+
+  def request_issue_types_for_appeal_ids(appeal_ids)
+    Appeal.where(id: appeal_ids)
+      .includes(:request_issues)
+      .all
+      .map do |appeal|
+        # Matches front end sorting with no duplicates. Issues associated to same appeal are sorted alphanumerically
+        [appeal.id, appeal.request_issues.map(&:nonrating_issue_category).compact.uniq.sort_by(&:upcase).join(",")]
+      end
+      .to_h
   end
 
   def veteran_names_for_file_numbers(veteran_file_numbers)
