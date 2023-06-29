@@ -20,15 +20,21 @@ RSpec.configure do |config|
     DatabaseCleaner[:active_record, { connection: caseflow }].clean_with(:truncation)
   end
 
-  config.before(:each) do
-    DatabaseCleaner[:active_record, { connection: vacols }].strategy = :transaction
-    DatabaseCleaner[:active_record, { connection: caseflow }].strategy = :transaction
+  config.before(:each) do |example|
+    # Allows seeded data to persist for use across threads
+    # You will need to manually clean the data once the threads under test close.
+    unless example.metadata[:bypass_cleaner]
+      DatabaseCleaner[:active_record, { connection: vacols }].strategy = :transaction
+      DatabaseCleaner[:active_record, { connection: caseflow }].strategy = :transaction
+    end
   end
 
-  config.before(:each, db_clean: :truncation) do
-    DatabaseCleaner[:active_record, { connection: vacols }].strategy =
-      :deletion, { except: vacols_tables_to_preserve }
-    DatabaseCleaner[:active_record, { connection: caseflow }].strategy = :truncation
+  config.before(:each, db_clean: :truncation) do |example|
+    unless example.metadata[:bypass_cleaner]
+      DatabaseCleaner[:active_record, { connection: vacols }].strategy =
+        :deletion, { except: vacols_tables_to_preserve }
+      DatabaseCleaner[:active_record, { connection: caseflow }].strategy = :truncation
+    end
   end
 
   config.before(:each, type: :feature) do
@@ -46,9 +52,11 @@ RSpec.configure do |config|
     end
   end
 
-  config.before(:each) do
-    DatabaseCleaner[:active_record, { connection: vacols }].start
-    DatabaseCleaner[:active_record, { connection: caseflow }].start
+  config.before(:each) do |example|
+    unless example.metadata[:bypass_cleaner]
+      DatabaseCleaner[:active_record, { connection: vacols }].start
+      DatabaseCleaner[:active_record, { connection: caseflow }].start
+    end
   end
 
   config.append_after(:each) do
