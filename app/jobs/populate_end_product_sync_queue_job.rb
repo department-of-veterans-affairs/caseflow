@@ -11,8 +11,10 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
     RequestStore.store[:current_user] = User.system_user
 
     begin
-      batch = find_priority_end_product_establishments_to_sync
-      batch.empty? ? return : insert_into_priority_sync_queue(batch)
+      ActiveRecord::Base.transaction do
+        batch = find_priority_end_product_establishments_to_sync
+        batch.empty? ? return : insert_into_priority_sync_queue(batch)
+      end
     rescue StandardError => error
       capture_exception(error: error)
     end
