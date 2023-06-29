@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
@@ -26,6 +26,7 @@ import {
   documentIdColumn,
   lastActionColumn,
   issueCountColumn,
+  issueTypesColumn,
   readerLinkColumn,
   readerLinkColumnWithNewDocsIcon,
   regionalOfficeColumn,
@@ -40,6 +41,7 @@ import { tasksWithAppealsFromRawTasks } from './utils';
 import COPY from '../../COPY';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import { css } from 'glamor';
+import { isActiveOrganizationVHA } from '../queue/selectors';
 
 const rootStyles = css({
   '.usa-alert + &': {
@@ -53,35 +55,44 @@ const rootStyles = css({
  * - @assignedTasks {array[object]} array of task objects to appear in the assigned tab
  **/
 
-class QueueTableBuilder extends React.PureComponent {
-  paginationOptions = () => querystring.parse(window.location.search.slice(1));
+const QueueTableBuilder = (props) => {
+  const paginationOptions = () => querystring.parse(window.location.search.slice(1));
+  const [storedPaginationOptions, setStoredPaginationOptions] = useState(
+    querystring.parse(window.location.search.slice(1))
+  );
 
-  calculateActiveTabIndex = (config) => {
+  // Causes one additional rerender of the QueueTables/tabs but prevents saved pagination behavior
+  // e.g. clearing filter in a tab, then swapping tabs, then swapping back and the filter will still be applied
+  useEffect(() => {
+    setStoredPaginationOptions({});
+  }, []);
+
+  const calculateActiveTabIndex = (config) => {
     const tabNames = config.tabs.map((tab) => {
       return tab.name;
     });
 
-    const activeTab = this.paginationOptions().tab || config.active_tab;
+    const activeTab = paginationOptions().tab || config.active_tab;
     const index = _.indexOf(tabNames, activeTab);
 
     return index === -1 ? 0 : index;
   };
 
-  queueConfig = () => {
-    const { config } = this.props;
+  const queueConfig = () => {
+    const { config } = props;
 
-    config.active_tab_index = this.calculateActiveTabIndex(config);
+    config.active_tab_index = calculateActiveTabIndex(config);
 
     return config;
   };
 
-  filterValuesForColumn = (column) =>
+  const filterValuesForColumn = (column) =>
     column && column.filterable && column.filter_options;
 
-  createColumnObject = (column, config, tasks) => {
+  const createColumnObject = (column, config, tasks) => {
 
-    const { requireDasRecord } = this.props;
-    const filterOptions = this.filterValuesForColumn(column);
+    const { requireDasRecord } = props;
+    const filterOptions = filterValuesForColumn(column);
     const functionForColumn = {
       [QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name]: typeColumn(
         tasks,
@@ -114,6 +125,13 @@ class QueueTableBuilder extends React.PureComponent {
       ),
       [QUEUE_CONFIG.COLUMNS.DOCUMENT_ID.name]: documentIdColumn(),
       [QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name]: issueCountColumn(
+        tasks,
+        filterOptions,
+        requireDasRecord
+      ),
+      [QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name]: issueTypesColumn(
+        tasks,
+        filterOptions,
         requireDasRecord
       ),
       [QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.
@@ -151,19 +169,21 @@ class QueueTableBuilder extends React.PureComponent {
     return functionForColumn[column.name];
   };
 
-  columnsFromConfig = (config, tabConfig, tasks) =>
+  const columnsFromConfig = (config, tabConfig, tasks) =>
     (tabConfig.columns || []).map((column) =>
-      this.createColumnObject(column, config, tasks)
+      createColumnObject(column, config, tasks)
     );
 
-  taskTableTabFactory = (tabConfig, config) => {
-    const paginationOptions = this.paginationOptions();
+  const taskTableTabFactory = (tabConfig, config) => {
+    const savedPaginationOptions = storedPaginationOptions;
     const tasks = tasksWithAppealsFromRawTasks(tabConfig.tasks);
     let totalTaskCount = tabConfig.total_task_count;
     let noCasesMessage;
 
+    const { isVhaOrg } = props;
+
     if (tabConfig.contains_legacy_tasks) {
-      tasks.unshift(...this.props.assignedTasks);
+      tasks.unshift(...props.assignedTasks);
       totalTaskCount = tasks.length;
 
       noCasesMessage = totalTaskCount === 0 && (
@@ -182,7 +202,7 @@ class QueueTableBuilder extends React.PureComponent {
 
     // If there is no sort by column in the pagination options, then use the tab config default sort
     // eslint-disable-next-line camelcase
-    if (!paginationOptions?.sort_by) {
+    if (!savedPaginationOptions?.sort_by) {
       Object.assign(defaultSort, tabConfig.defaultSort);
     }
 
@@ -193,12 +213,12 @@ class QueueTableBuilder extends React.PureComponent {
           <p className="cf-margin-top-0">
             {noCasesMessage || tabConfig.description}
           </p>
-          {this.props.userCanBulkAssign && tabConfig.allow_bulk_assign && (
+          {props.userCanBulkAssign && tabConfig.allow_bulk_assign && (
             <BulkAssignButton />
           )}
           <QueueTable
             key={tabConfig.name}
-            columns={this.columnsFromConfig(config, tabConfig, tasks)}
+            columns={columnsFromConfig(config, tabConfig, tasks)}
             rowObjects={tasks}
             getKeyForRow={(_rowNumber, task) => task.uniqueId}
             casesPerPage={config.tasks_per_page}
@@ -206,8 +226,10 @@ class QueueTableBuilder extends React.PureComponent {
             totalTaskCount={totalTaskCount}
             taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
             tabPaginationOptions={
-              paginationOptions.tab === tabConfig.name && paginationOptions
+              savedPaginationOptions.tab === tabConfig.name && savedPaginationOptions
             }
+            // Limit filter preservation/retention to only VHA orgs for now.
+            {...(isVhaOrg ? { preserveFilter: true } : {})}
             defaultSort={defaultSort}
             useTaskPagesApi={
               config.use_task_pages_api && !tabConfig.contains_legacy_tasks
@@ -219,32 +241,29 @@ class QueueTableBuilder extends React.PureComponent {
     };
   };
 
-  tabsFromConfig = (config) =>
+  const tabsFromConfig = (config) =>
     (config.tabs || []).map((tabConfig) =>
-      this.taskTableTabFactory(tabConfig, config)
+      taskTableTabFactory(tabConfig, config)
     );
 
-  render = () => {
-    const config = this.queueConfig();
+  const config = queueConfig();
 
-    return (
-      <div className={rootStyles}>
-        <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
-        <QueueOrganizationDropdown organizations={this.props.organizations} />
-        <TabWindow
-          name="tasks-tabwindow"
-          tabs={this.tabsFromConfig(config)}
-          defaultPage={config.active_tab_index}
-        />
-      </div>
-    );
-  };
-}
+  return <div className={rootStyles}>
+    <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
+    <QueueOrganizationDropdown organizations={props.organizations} />
+    <TabWindow
+      name="tasks-tabwindow"
+      tabs={tabsFromConfig(config)}
+      defaultPage={config.active_tab_index}
+    />
+  </div>;
+};
 
 const mapStateToProps = (state) => {
   return {
     config: state.queue.queueConfig,
     organizations: state.ui.organizations,
+    isVhaOrg: isActiveOrganizationVHA(state),
     userCanBulkAssign: state.ui.activeOrganization.userCanBulkAssign,
   };
 };
@@ -258,6 +277,7 @@ QueueTableBuilder.propTypes = {
   }),
   requireDasRecord: PropTypes.bool,
   userCanBulkAssign: PropTypes.bool,
+  isVhaOrg: PropTypes.bool,
 };
 
 export default connect(mapStateToProps)(QueueTableBuilder);
