@@ -19,7 +19,7 @@ class VhaCamoCompletedTasksTab < QueueTab
   end
 
   def tasks
-    active_tasks
+    recently_completed_tasks
   end
 
   def column_names
