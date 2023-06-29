@@ -42,6 +42,14 @@ describe PopulateEndProductSyncQueueJob, type: :job do
       PopulateEndProductSyncQueueJob.perform_now
       expect(PriorityEndProductSyncQueue.count).to eq 1
     end
+
+    it "will add the epe if epe synced status is nil" do
+      found_epe.update!(synced_status: nil)
+      expect(PriorityEndProductSyncQueue.count).to eq 0
+      PopulateEndProductSyncQueueJob.perform_now
+      expect(PriorityEndProductSyncQueue.count).to eq 1
+      found_epe.update!(synced_status: "PEND")
+    end
   end
 
 end
