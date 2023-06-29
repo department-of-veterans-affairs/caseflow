@@ -132,6 +132,8 @@ RSpec.feature "Judge checkout flow", :all_dbs do
     before do
       child_task.update!(status: Constants.TASK_STATUSES.completed)
       User.authenticate!(user: judge_user)
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
     end
 
     scenario "starts dispatch checkout flow" do
@@ -237,6 +239,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
 
     before do
       User.authenticate!(user: judge_user)
+      FeatureToggle.enable!(:legacy_mst_pact_identification)
     end
 
     context "where work product is draft decision" do
