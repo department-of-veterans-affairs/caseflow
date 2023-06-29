@@ -58,6 +58,7 @@ export const IntakeFrame = (props) => {
         rightNavElement={rightNavElements}
         userDisplayName={props.userDisplayName}
         dropdownUrls={props.dropdownUrls}
+        applicationUrls={props.applicationUrls}
         topMessage={topMessage}
         defaultUrl="/"
       >
@@ -116,7 +117,10 @@ export const IntakeFrame = (props) => {
             title="Add / Remove Issues | Caseflow Intake"
           >
             <IntakeLayout buttons={<FinishButtons history={history} />}>
-              <IntakeAddIssuesPage featureToggles={props.featureToggles} />
+              <IntakeAddIssuesPage
+                featureToggles={props.featureToggles}
+                userCanEditIntakeIssues={props.userCanEditIntakeIssues}
+              />
             </IntakeLayout>
           </PageRoute>
 
