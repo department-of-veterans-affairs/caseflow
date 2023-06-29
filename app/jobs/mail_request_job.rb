@@ -19,18 +19,19 @@ class MailRequestJob < CaseflowJob
   # }
   #
   # Response: n/a
-  def perform(vbms_uploaded_document, mail_package)
+  def perform(document_to_mail, mail_package)
+    byebug
     begin
       package_response = PacmanService.send_communication_package_request(
-        vbms_uploaded_document.veteran_file_number,
-        get_package_name(vbms_uploaded_document),
-        document_referenced(vbms_uploaded_document.document_version_reference_id, mail_package[:copies])
+        document_to_mail.veteran_file_number,
+        get_package_name(document_to_mail),
+        document_referenced(document_to_mail.document_version_reference_id, mail_package[:copies])
       )
       log_info(package_response)
     rescue Caseflow::Error::PacmanApiError => error
       log_error(error)
     else
-      vbms_comm_package = create_package(vbms_uploaded_document, mail_package)
+      vbms_comm_package = create_package(document_to_mail, mail_package)
       vbms_comm_package.update!(status: "success")
       create_distribution_request(vbms_comm_package.id, mail_package)
     end
@@ -53,22 +54,22 @@ class MailRequestJob < CaseflowJob
   #
   # Response: new VbmsCommunicationPackage object
   # :reek:FeatureEnvy
-  def create_package(vbms_uploaded_document, mail_package)
+  def create_package(document_to_mail, mail_package)
     VbmsCommunicationPackage.new(
-      comm_package_name: get_package_name(vbms_uploaded_document),
+      comm_package_name: get_package_name(document_to_mail),
       created_at: Time.zone.now,
       created_by_id: mail_package[:created_by_id],
       copies: mail_package[:copies],
-      file_number: vbms_uploaded_document.veteran_file_number,
+      file_number: document_to_mail.veteran_file_number,
       status: nil,
       updated_at: Time.zone.now,
       updated_by_id: mail_package[:created_by_id],
-      vbms_uploaded_document_id: vbms_uploaded_document.id
+      document_mailable_via_pacman: document_to_mail
     )
   end
 
-  def get_package_name(vbms_uploaded_document)
-    "#{vbms_uploaded_document.document_name}_#{Time.now.utc.strftime('%Y%m%d%k%M%S')}"
+  def get_package_name(document_to_mail)
+    "#{document_to_mail.document_name}_#{Time.now.utc.strftime('%Y%m%d%k%M%S')}"
   end
 
   # Purpose: sends distribution POST request to Pacman API
