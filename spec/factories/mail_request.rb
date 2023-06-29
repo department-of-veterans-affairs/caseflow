@@ -2,6 +2,7 @@
 
 FactoryBot.define do
   factory :mail_request do
+    recipient_type { "person" }
     first_name { "Bob" }
     last_name  { "Smithcole" }
     participant_id { "487470002" }
@@ -13,10 +14,6 @@ FactoryBot.define do
     state { "FL" }
     treat_line_2_as_addressee { false }
     treat_line_3_as_addressee { false }
-
-    trait :person_recipient_type do
-      recipient_type { "person" }
-    end
 
     trait :nil_recipient_type do
       recipient_type { nil }

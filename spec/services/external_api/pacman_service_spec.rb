@@ -14,14 +14,14 @@ describe ExternalApi::PacmanService do
 
   let(:distribution) do
     {
-      "id" => "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
+      "id" => 1,
       "recipient" => {
         "type" => "system",
         "id" => "a050a21e-23f6-4743-a1ff-aa1e24412eff",
         "name" => "VBMS-C"
       },
       "description" => "Staging Mailing Distribution",
-      "communicationPackageId" => "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
+      "communicationPackageId" => 1,
       "destinations" => [{
         "type" => "physicalAddress",
         "id" => "28440040-51a5-4d2a-81a2-28730827be14",
@@ -46,6 +46,10 @@ describe ExternalApi::PacmanService do
     }.as_json
   end
 
+  let(:vbms_distribution) do
+    create(:vbms_distribution)
+  end
+
   let(:distribution_post_request) do
     {
       "communicationPackageId" => "673c8b4a-cb7d-4fdf-bc4d-998d6d5d7431",
@@ -55,7 +59,7 @@ describe ExternalApi::PacmanService do
         "firstName" => nil,
         "middleName" => nil,
         "lastName" => nil,
-        "participant_id" => nil,
+        "participantId" => nil,
         "poaCode" => nil,
         "claimantStationOfJurisdiction" => nil
       },
@@ -149,16 +153,14 @@ describe ExternalApi::PacmanService do
   end
 
   context "get distribution" do
-    subject { Fakes::PacmanService.get_distribution_request(distribution["id"]) }
+    subject { Fakes::PacmanService.get_distribution_request(vbms_distribution.id) }
     it "gets correct distribution" do
       subject
-      allow(HTTPI).to receive(:get).and_return(get_distribution_success_response)
-      expect(subject.body.as_json["table"]).to eq(get_distribution_success_response.body)
+      expect(subject.body.as_json).to eq(get_distribution_success_response.body)
     end
     context "not found" do
       subject { Fakes::PacmanService.get_distribution_request("fake") }
       it "returns 404 PacmanNotFoundError" do
-        allow(HTTPI).to receive(:get).and_return(not_found_response)
         expect(subject.code).to eq(not_found_response.code)
       end
     end
