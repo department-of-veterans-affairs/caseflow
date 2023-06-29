@@ -6,7 +6,7 @@ describe VbmsCommunicationPackage, :postgres do
       file_number: "329780002",
       comm_package_name: "test package name",
       copies: 1,
-      vbms_uploaded_document: VbmsUploadedDocument.new
+      document_mailable_via_pacman: VbmsUploadedDocument.new
     )
   end
 
@@ -65,9 +65,9 @@ describe VbmsCommunicationPackage, :postgres do
     expect(package.errors[:copies]).to eq(["must be less than 501"])
   end
 
-  it "is not valid without an associated VbmsUploadedDocument" do
-    package.vbms_uploaded_document = nil
+  it "is not valid without an associated document mailable via pacman" do
+    package.document_mailable_via_pacman = nil
     expect(package).to_not be_valid
-    expect(package.errors[:vbms_uploaded_document]).to eq(["must exist"])
+    expect(package.errors[:document_mailable_via_pacman]).to eq(["must exist"])
   end
 end
