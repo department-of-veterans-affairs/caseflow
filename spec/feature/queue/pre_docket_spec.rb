@@ -570,11 +570,100 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_content(po_instructions)
         end
 
+        step "enacting the 'Return to Board Intake' task action returns the task to BVA intake" do
+          User.authenticate!(user: camo_user)
+
+          vha_document_search_task = VhaDocumentSearchTask.last
+
+          appeal = vha_document_search_task.appeal
+
+          visit "/queue/appeals/#{appeal.external_id}"
+
+          task_name = Constants.TASK_ACTIONS.VHA_RETURN_TO_BOARD_INTAKE.label
+
+          other_text_field_text = "Wrong type of documents"
+          optional_text_field_text = "The documents included in the appeal are incorrect"
+
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+          find(
+            "div",
+            class: "cf-select__option",
+            text: task_name
+          ).click
+
+          expect(page).to have_content(COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE)
+          expect(page).to have_content(COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_BODY)
+
+          expect(page).to have_content(COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_DETAIL)
+          expect(page).to have_content(COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_INSTRUCTIONS_LABEL)
+
+          # Fill in info and check for disabled submit button and warning text before submitting
+          submit_button = find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON)
+
+          expect(submit_button[:disabled]).to eq "true"
+
+          # Open the searchable dropdown to view the options
+          find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT).click
+
+          page_options = all("div.cf-select__option")
+          page_options_text = page_options.map(&:text)
+          controller_options = COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS
+          controller_options = controller_options.values.pluck("LABEL")
+
+          # Verify that all of the options are in the dropdown
+          expect(page_options_text).to eq(controller_options)
+
+          # Click the duplicate option and verify that the button is no longer disabled
+          first_tested_option_text = controller_options.first
+          find("div", class: "cf-select__option", text: first_tested_option_text).click
+          expect(submit_button[:disabled]).to eq "false"
+
+          # Check the other option functionality
+          conditional_drop_down_text = COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_DROPDOWN_OPTIONS[
+            "OTHER"
+          ]["LABEL"]
+
+          # Reclick the dropdown with the new option and change it to "Other"
+          find(".cf-select__control", text: first_tested_option_text).click
+          find("div", class: "cf-select__option", text: conditional_drop_down_text).click
+
+          # Verify the submit button is disabled again and check for the other reason text field
+          expect(submit_button[:disabled]).to eq "true"
+          expect(page).to have_content(
+            COPY::VHA_RETURN_TO_BOARD_INTAKE_OTHER_INSTRUCTIONS_LABEL
+          )
+
+          # Enter info into the optional text field and verify the submit button is still disabled
+          fill_in(COPY::VHA_RETURN_TO_BOARD_INTAKE_MODAL_INSTRUCTIONS_LABEL,
+                  with: optional_text_field_text)
+
+          expect(submit_button[:disabled]).to eq "true"
+
+          fill_in(COPY::VHA_RETURN_TO_BOARD_INTAKE_OTHER_INSTRUCTIONS_LABEL,
+                  with: other_text_field_text)
+
+          expect(submit_button[:disabled]).to eq "false"
+
+          submit_button.click
+
+          expect(page).to have_content(
+            format(
+              COPY::VHA_RETURN_TO_BOARD_INTAKE_CONFIRMATION,
+              appeal.veteran_full_name
+            )
+          )
+
+          completed_tab_name = VhaCamoCompletedTasksTab.tab_name
+          expected_url = "/organizations/#{camo.url}?tab=#{completed_tab_name}&#{default_query_params}"
+          expect(page).to have_current_path(expected_url)
+        end
+
         step "CAMO can return the appeal to BVA Intake" do
           appeal = Appeal.last
           camo_task = VhaDocumentSearchTask.last
           bva_intake_task = PreDocketTask.last
 
+          camo_task.update!(status: Constants.TASK_STATUSES.assigned)
           # Remove this section once the steps completing these tasks is available
           camo_task.children.each { |task| task.update!(status: "completed") }
 
@@ -589,8 +678,15 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE)
           expect(page).to have_content(COPY::DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_BODY)
+          submit_button = find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON)
+
+          expect(submit_button[:disabled]).to eq "true"
+
           page.all(".cf-form-radio-option > label")[0].click
-          find("button", class: "usa-button", text: COPY::MODAL_SEND_BUTTON).click
+
+          expect(submit_button[:disabled]).to eq "false"
+
+          submit_button.click
 
           expect(page).to have_content(
             COPY::VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_CONFIRMATION_TITLE
