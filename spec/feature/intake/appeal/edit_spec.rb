@@ -1225,30 +1225,53 @@ feature "Appeal Edit issues", :all_dbs do
   # 3. The legacy appeal with 3 request issues
   context "with BVA Intake Admin user" do
     # creates organization
-    let!(:bva_intake) { BvaIntake.singleton }
+    let(:bva_intake) { BvaIntake.singleton }
     # creates admin user
-    let!(:bva_intake_admin_user) { create(:user, roles: ["Mail Intake"]) }
-    # { Bva.singleton.add_user(authenticated_user) }
+    let(:bva_intake_admin_user) { create(:user, roles: ["Mail Intake"]) }
+    # create legacy appeal
+    let(:legacy_appeal_mst_pact_unchecked) do
+      create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: create(
+          :case,
+          case_issues: [
+            create(:case_issue, issmst: "N", isspact: "N")
+          ]
+        )
+      )
+    end
+
+    let(:legacy_appeal_mst_pact_checked) do
+      create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: create(
+          :case,
+          case_issues: [
+            create(:case_issue, issmst: "Y", isspact: "Y")
+          ]
+        )
+      )
+    end
 
     before do
       # joins the user with the organization to grant access to role and org permissions
       OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
+      # authenticates and sets the user
       User.authenticate!(user: bva_intake_admin_user)
     end
 
+    def go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal)
+      visit "/queue"
+      click_on "Search cases"
+      fill_in "search", with: legacy_appeal.veteran_file_number
+      click_on "Search"
+      click_on legacy_appeal.docket_number
+      click_on "Correct issues"
+    end
+
     context "with Legacy MST/PACT identifications" do
-      let!(:legacy_appeal) do
-        create(
-          :legacy_appeal,
-          :with_veteran,
-          vacols_case: create(
-            :case,
-            case_issues: [
-              create(:case_issue, issmst: "N", isspact: "N")
-            ]
-          )
-        )
-      end
       before do
         FeatureToggle.enable!(:mst_identification)
         FeatureToggle.enable!(:pact_identification)
@@ -1262,8 +1285,7 @@ feature "Appeal Edit issues", :all_dbs do
       end
 
       scenario "can add MST/PACT to issues" do
-        visit "/queue/appeals/#{appeal.veteran_file_number}"
-        click_on "Correct issues"
+        go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
         find("select", id: "issue-action-0").click
         find("option", id: "issue-action-0_edit").click
         check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
@@ -1276,8 +1298,7 @@ feature "Appeal Edit issues", :all_dbs do
       end
 
       scenario "can remove MST/PACT issues" do
-        visit "/queue/appeals/#{appeal.veteran_file_number}"
-        click_on "Correct issues"
+        go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_checked)
         find("select", id: "issue-action-0").click
         find("option", id: "issue-action-0_edit").click
         uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
@@ -1289,8 +1310,17 @@ feature "Appeal Edit issues", :all_dbs do
         expect(page).to have_no_content("MST and PACT")
       end
 
-      scenario "can add only PACT to an issue" do
-        visit "/queue/appeals/#{appeal.veteran_file_number}"
+      scenario "can add and remove only PACT to an issue" do
+        go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
+        find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
+        click_on "Save"
+
+        click_on "Save"
+
+        expect(page).to have_content("Special Issues: PACT")
+
         click_on "Correct issues"
         find("select", id: "issue-action-0").click
         find("option", id: "issue-action-0_edit").click
@@ -1299,12 +1329,11 @@ feature "Appeal Edit issues", :all_dbs do
 
         click_on "Save"
 
-        expect(page).to have_content("PACT")
+        expect(page).to have_no_content("Special Issues: PACT")
       end
 
-      scenario "can add only MST to an issue" do
-        visit "/queue/appeals/#{appeal.veteran_file_number}"
-        click_on "Correct issues"
+      scenario "can add and remove only MST to an issue" do
+        go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
         find("select", id: "issue-action-0").click
         find("option", id: "issue-action-0_edit").click
         check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
@@ -1312,7 +1341,17 @@ feature "Appeal Edit issues", :all_dbs do
 
         click_on "Save"
 
-        expect(page).to have_content("MST")
+        expect(page).to have_content("Special Issues: MST")
+
+        click_on "Correct issues"
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
+        uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+        click_on "Save"
+
+        click_on "Save"
+
+        expect(page).to have_no_content("Special Issues: MST")
       end
     end
   end
