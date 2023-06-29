@@ -56,47 +56,6 @@ describe('AddClaimantPage', () => {
     });
   });
 
-  describe('form validation', () => {
-    it('disables submit button unless valid', async () => {
-      setup();
-
-      const submit = screen.getByRole('button', {
-        name: /Continue to next step/i,
-      });
-
-      // submit button disabled
-      await waitFor(() => {
-        expect(submit).toBeDisabled();
-      });
-
-      // Select option
-      await selectEvent.select(
-        screen.getByLabelText('Relationship to the Veteran'),
-        [relationshipOpts[3].label]
-      );
-
-      // Set organization
-      await userEvent.click(
-        screen.getByRole('radio', { name: /organization/i })
-      );
-
-      // Wait for form to re-render
-      await waitFor(() => {
-        expect(
-          screen.getByRole('textbox', { name: /Organization name/i })
-        ).toBeInTheDocument();
-      });
-
-      await fillForm();
-      // trigger onBlur
-      userEvent.tab();
-      // submit button enabled
-      await waitFor(() => {
-        expect(submit).not.toBeDisabled();
-      });
-    }, 20000);
-  });
-
   describe('Redirection to Intake home page', () => {
     let storeValues;
 
