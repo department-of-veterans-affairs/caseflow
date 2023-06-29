@@ -39,7 +39,6 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
   end
 
   def insert_into_priority_sync_queue(batch)
-    batch_id = SecureRandom.uuid
     batch.each do |ep_id|
       PriorityEndProductSyncQueue.create(
         end_product_establishment_id: ep_id
