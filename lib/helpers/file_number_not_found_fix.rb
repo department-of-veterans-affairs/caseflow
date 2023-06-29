@@ -1,4 +1,12 @@
+# frozen_string_literal: true
+
 require "./lib/helpers/fix_file_number_wizard.rb"
+
+# This .rb file fixes the file number not found error on
+# decision documents. The fix can either be run as a
+# scheduled job or run against an individual appeal by
+# running FileNumberNotFoundFix.new.single_record_fix(appeal)
+
 class FileNumberNotFoundFix
   attr_reader :logs
   # frozen_string_literal: true
@@ -39,9 +47,12 @@ class FileNumberNotFoundFix
     veteran = appeal.veteran
     file_number = fetch_file_number_from_bgs_service(veteran)
 
+    # ensures that the file number from bgs is not already used
     return if verify_file_number(file_number, appeal).present?
 
     collections = FixfileNumberCollections.get_collections(veteran)
+
+    # ensures that we have related collections else abort.
     return if collections.map(&:count).sum == 0
 
     update_records(collections, file_number, veteran)
@@ -52,6 +63,8 @@ class FileNumberNotFoundFix
     create_log
   end
 
+  # updates all the related accoicated objects with the correct
+  # file number
   def update_records(collections, file_number, veteran)
     ActiveRecord::Base.transaction do
       begin
@@ -99,6 +112,7 @@ class FileNumberNotFoundFix
   end
 end
 
+# created this class below so as to mock FixFileNumberWizard::Collection instance
 class FixfileNumberCollections
   ASSOCIATED_OBJECTS = FixFileNumberWizard::ASSOCIATIONS
   def self.get_collections(veteran)
