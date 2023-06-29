@@ -126,7 +126,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           expect(page).to_not have_content("#{appeal.veteran.first_name} #{appeal.veteran.last_name}")
 
           click_on("Request more cases")
-          sleep 1
+          assert page.has_content?("Distribution complete")
           expect(page).to have_content("Distribution complete")
 
           expect(page).to have_content("Assign 2 Cases for #{judge_one.css_id}")
