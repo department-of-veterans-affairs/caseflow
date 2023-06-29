@@ -13,7 +13,8 @@ class BatchProcessPriorityEpSyncJob < CaseflowJob
         records_to_batch = BatchProcessPriorityEpSync.find_records_to_batch
         next if records_to_batch.empty?
 
-        BatchProcessPriorityEpSync.build_batch!(records_to_batch)
+        new_batch = BatchProcessPriorityEpSync.create_batch!
+        new_batch.build_batch!(records_to_batch)
       end
       if batch
         batch.process_batch!

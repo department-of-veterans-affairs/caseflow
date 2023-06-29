@@ -13,17 +13,17 @@ class BatchProcessPriorityEpSync < BatchProcess
       uuid = SecureRandom.uuid
       BatchProcessPriorityEpSync.create!(batch_id: uuid, batch_type: name)
     end
+  end
 
-    def build_batch!(records_to_batch)
-      batch = BatchProcessPriorityEpSync.create_batch!
-      batch.batch_priority_queued_epes!(records_to_batch)
-      batch.records_attempted!
-      batch
-    end
+  def build_batch!(records_to_batch)
+    batch_priority_queued_epes!(records_to_batch)
+    records_attempted!
+    self
   end
 
   def process_batch!
     process_state!
+
     priority_end_product_sync_queue.each do |record|
       epe = record.end_product_establishment
       begin
@@ -40,8 +40,11 @@ class BatchProcessPriorityEpSync < BatchProcess
       record.finished_sync_status!
       increment_completed
     end
+
     complete_state!
   end
+
+  private
 
   def batch_priority_queued_epes!(records_to_batch)
     @attempted_count = records_to_batch.count

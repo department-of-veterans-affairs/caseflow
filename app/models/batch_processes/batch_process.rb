@@ -17,18 +17,14 @@ class BatchProcess < CaseflowRecord
     def create_batch!
       # no-op, can be overwritten
     end
+  end
 
-    def build_batch!(records_to_batch)
-      # no-op, can be overwritten
-    end
+  def build_batch!(records_to_batch)
+    # no-op, can be overwritten
   end
 
   def process_batch!
     # no-op, can be overwritten
-  end
-
-  def records_attempted!
-    update!(records_attempted: @attempted_count)
   end
 
   private
@@ -37,6 +33,10 @@ class BatchProcess < CaseflowRecord
     @completed_count = 0
     @failed_count = 0
     @attempted_count = 0
+  end
+
+  def records_attempted!
+    update!(records_attempted: @attempted_count)
   end
 
   def process_state!
