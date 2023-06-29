@@ -10,7 +10,7 @@
       businessLineUrl: business_line.url,
       featureToggles: {
         decisionReviewQueueSsnColumn: FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: current_user),
-        metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user)
+        metricsBrowserError: FeatureToggle.enabled_metric?(:metrics_browser_error, user: current_user)
       },
       baseTasksUrl: business_line.tasks_url,
       taskFilterDetails: task_filter_details

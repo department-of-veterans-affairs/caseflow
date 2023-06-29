@@ -24,7 +24,7 @@ import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, getSearchTerm } from './selectors';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import uuid from 'uuid';
-import { recordMetrics, recordAsyncMetrics } from '../util/Metrics';
+import { recordAsyncMetrics } from '../util/Metrics';
 
 PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -50,7 +50,9 @@ export class PdfFile extends React.PureComponent {
       cache: true,
       withCredentials: true,
       timeout: true,
-      responseType: 'arraybuffer'
+      responseType: 'arraybuffer',
+      metricsLogRestError: this.props.featureToggles.metricsLogRestError,
+      metricsLogRestSuccess: this.props.featureToggles.metricsLogRestSuccess
     };
 
     window.addEventListener('keydown', this.keyListener);
@@ -544,7 +546,8 @@ PdfFile.propTypes = {
   togglePdfSidebar: PropTypes.func,
   updateSearchIndexPage: PropTypes.func,
   updateSearchRelativeIndex: PropTypes.func,
-  windowingOverscan: PropTypes.number
+  windowingOverscan: PropTypes.number,
+  featureToggles: PropTypes.object
 };
 
 const mapDispatchToProps = (dispatch) => ({

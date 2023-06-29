@@ -10,7 +10,7 @@
       pagination: pagination
     },
     featureToggles: {
-      metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user)
+      metricsBrowserError: FeatureToggle.enabled_metric?(:metrics_browser_error, user: current_user)
     }
   }) %>
 <% end %>
