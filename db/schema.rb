@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_06_23_132146) do
+ActiveRecord::Schema.define(version: 2023_06_29_114954) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1573,6 +1573,7 @@ ActiveRecord::Schema.define(version: 2023_06_23_132146) do
     t.datetime "created_at", null: false, comment: "Date the special issue change was made"
     t.string "created_by_css_id", null: false, comment: "CSS ID of the user that made the special issue change"
     t.bigint "created_by_id", null: false, comment: "User ID of the user that made the special issue change"
+    t.bigint "decision_issue_id", comment: "ID of the decision issue that had a special issue change from its corresponding request issue"
     t.bigint "issue_id", null: false, comment: "ID of the issue that was changed"
     t.boolean "mst_from_vbms", comment: "Indication that the MST status originally came from VBMS on intake"
     t.string "mst_reason_for_change", comment: "Reason for changing the MST status on an issue"
