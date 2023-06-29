@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_05_08_202742) do
+ActiveRecord::Schema.define(version: 2023_06_29_172100) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -570,6 +570,8 @@ ActiveRecord::Schema.define(version: 2023_05_08_202742) do
     t.string "citation_number", null: false, comment: "Unique identifier for decision document"
     t.datetime "created_at", null: false
     t.date "decision_date", null: false
+    t.string "document_series_reference_id", comment: "UUID that is provided by eFolder that represents the group of documentsthis document belongs to. Think of a series as a stack of versions."
+    t.string "document_version_reference_id", comment: "UUID that is provided by eFolder that represents the specific version of the document."
     t.string "error", comment: "Message captured from a failed attempt"
     t.datetime "last_submitted_at", comment: "When the job is eligible to run (can be reset to restart the job)"
     t.datetime "processed_at", comment: "When the job has concluded"
