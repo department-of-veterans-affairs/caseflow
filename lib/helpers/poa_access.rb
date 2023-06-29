@@ -39,7 +39,7 @@ module WarRoom
       @legacy_appeal = LegacyAppeal.find_by!(vacols_id: @vacols_id)
     end
 
-    def poa
+    def find_or_create_bgs_power_of_attorney!
       # clear memoization on legacy appeals
       appeal.power_of_attorney&.try(:clear_bgs_power_of_attorney!)
       appeal.bgs_power_of_attorney
