@@ -16,7 +16,6 @@ describe PopulateEndProductSyncQueueJob, type: :job do
       expect(EndProductEstablishment.find(PriorityEndProductSyncQueue.first.end_product_establishment_id).reference_id).to eq found_vec.claim_id.to_s
       expect(PriorityEndProductSyncQueue.first.end_product_establishment_id).to eq found_epe.id
       expect(PriorityEndProductSyncQueue.first.status).to eq "NOT_PROCESSED"
-      expect(PriorityEndProductSyncQueue.first.batch_id).not_to be nil
       expect(RequestStore.store[:current_user].id).to eq(User.system_user.id)
     end
 
@@ -34,6 +33,14 @@ describe PopulateEndProductSyncQueueJob, type: :job do
       PopulateEndProductSyncQueueJob.perform_now
       expect(PriorityEndProductSyncQueue.count).to eq 0
       found_epe.update!(reference_id: found_vec.claim_id.to_s)
+    end
+
+    it "will not add same epe more than once in the priorty end product sync queue table" do
+      PriorityEndProductSyncQueue.create(
+        end_product_establishment_id: found_epe.id
+      )
+      PopulateEndProductSyncQueueJob.perform_now
+      expect(PriorityEndProductSyncQueue.count).to eq 1
     end
   end
 
