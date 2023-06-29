@@ -9,7 +9,7 @@ class PriorityEndProductSyncQueue < CaseflowRecord
   belongs_to :batch_process, foreign_key: "batch_id"
   has_one :caseflow_stuck_records, as: :stuck_record
 
-  def synced_status!
+  def finished_sync_status!
     update!(status: "SYNCED")
   end
 

@@ -21,7 +21,6 @@ class BatchProcess < CaseflowRecord
 
     def build_priority_end_product_sync_batch!(records_to_batch)
       batch = BatchProcess.create_batch!
-      byebug
       batch.batch_priority_queued_epes!(records_to_batch)
       batch.records_attempted!
       batch
@@ -43,7 +42,7 @@ class BatchProcess < CaseflowRecord
         error_out_record!(record, error)
         next
       end
-      record.synced_status!
+      record.finished_sync_status!
       increment_completed
     end
     complete_state!
@@ -57,7 +56,6 @@ class BatchProcess < CaseflowRecord
   end
 
   def records_attempted!
-    byebug
     update!(records_attempted: @attempted_count)
   end
 
@@ -90,7 +88,6 @@ class BatchProcess < CaseflowRecord
 
   def error_out_record!(record, error)
     increment_failed
-    byebug
     error_array = record.error_messages || []
     error_array.push("Error: #{error.inspect} - BatchID: #{record.batch_id} - Time: #{Time.zone.now}.")
     if error_array.length >= ERROR_LIMIT
