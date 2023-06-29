@@ -12,6 +12,7 @@ describe VhaRegionalOfficeAssignedTasksTab, :postgres do
     COLUMN_NAMES = [
       Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
       Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
+      Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name,
       Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
       Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name,
       Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name,
@@ -25,7 +26,7 @@ describe VhaRegionalOfficeAssignedTasksTab, :postgres do
 
     context "when only the assignee argument is passed when instantiating an VhaRegionalOfficeAssignedTasksTab" do
       it "returns the correct number of columns" do
-        expect(subject.length).to eq 8
+        expect(subject.length).to eq 9
       end
 
       it "returns the correct column name" do
