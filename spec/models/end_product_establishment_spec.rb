@@ -1463,7 +1463,7 @@ describe EndProductEstablishment, :postgres do
       end_product_establishment_id: queued_end_product_establishment.id,
       error_messages: [],
       last_batched_at: nil,
-      status: "PEND"
+      status: "NOT_PROCESSED"
     )
   end
 
