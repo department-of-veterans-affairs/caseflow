@@ -34,8 +34,9 @@ module WarRoom
       appeal.bgs_power_of_attorney.present?
     end
 
-    def appeal
-      Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(@vacols_id)
+    def legacy_appeal
+      return @legacy_appeal if defined?(@legacy_appeal)
+      @legacy_appeal = LegacyAppeal.find_by!(vacols_id: @vacols_id)
     end
 
     def poa
