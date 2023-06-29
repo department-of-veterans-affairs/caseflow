@@ -67,16 +67,16 @@ class RatingDecision
     # rubocop:disable Metrics/PerceivedComplexity
     def deserialize_special_issues(serialized_hash)
       data = []
-      return data if serialized_hash[:special_issues].blank?
+      if serialized_hash[:special_issues].present?
+        filtered_special_issues = serialized_hash[:special_issues].map do |special_issue|
+          special_issue.with_indifferent_access if special_issue.with_indifferent_access[:dis_sn] == serialized_hash[:disability_id] # rubocop:disable Layout/LineLength
+        end.compact
 
-      filtered_special_issues = serialized_hash[:special_issues].map do |special_issue|
-        special_issue.with_indifferent_access if special_issue.with_indifferent_access[:dis_sn] == serialized_hash[:disability_id] # rubocop:disable Layout/LineLength
-      end.compact
+        filtered_special_issues.each do |special_issue|
+          data << { mst_available: true } if Rating.special_issue_has_mst?(special_issue)
 
-      filtered_special_issues.each do |special_issue|
-        data << { mst_available: true } if Rating.special_issue_has_mst?(special_issue)
-
-        data << { pact_available: true } if Rating.special_issue_has_pact?(special_issue)
+          data << { pact_available: true } if Rating.special_issue_has_pact?(special_issue)
+        end
       end
 
       if serialized_hash[:rba_contentions_data]
