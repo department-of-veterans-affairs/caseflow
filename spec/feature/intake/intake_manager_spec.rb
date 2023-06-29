@@ -12,17 +12,13 @@ RSpec.feature "Intake Manager Page", :postgres do
 
     let(:date_mdY) { Time.zone.yesterday.mdY }
 
-    scenario "Has access to intake manager page", skip: "deprecated" do
+    scenario "Has access to intake manager page", :aggregate_failures do
       visit "/intake/manager"
-      expect(page).to have_content("Claims for manager review")
-      expect(page).to have_content("Veteran File Number")
-      expect(page).to have_content("Date Processed")
-      expect(page).to have_content("Form")
-      expect(page).to have_content("Employee")
-      expect(page).to have_content("Explanation")
+      expect(page).to have_content("Intake Stats per User")
+      expect(page).to have_content("Enter the User ID")
     end
 
-    scenario "Only included errors and cancellations appear", skip: "deprecated" do
+    scenario "Only included errors and cancellations appear", :aggregate_failures do
       RampElectionIntake.create!(
         veteran_file_number: "1100",
         completed_at: 5.minutes.ago,
@@ -63,7 +59,13 @@ RSpec.feature "Intake Manager Page", :postgres do
         user: current_user
       )
 
+      let!(intake_user) = User.create!
+
       visit "/intake/manager"
+
+      select_user_stats(css_id)
+
+      expect(page).to have_table(".usa-table-borderless")
 
       expect(find("#table-row-4")).to have_content("1100")
       expect(find("#table-row-4")).to_not have_content(":")
