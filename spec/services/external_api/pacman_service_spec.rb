@@ -14,7 +14,7 @@ describe ExternalApi::PacmanService do
 
   let(:distribution) do
     {
-      "id" => 1,
+      "id" => Fakes::PacmanService::DISTRIBUTION_UUID,
       "recipient" => {
         "type" => "system",
         "id" => "a050a21e-23f6-4743-a1ff-aa1e24412eff",
@@ -47,7 +47,7 @@ describe ExternalApi::PacmanService do
   end
 
   let(:vbms_distribution) do
-    create(:vbms_distribution)
+    create(:vbms_distribution, uuid: SecureRandom.uuid)
   end
 
   let(:distribution_post_request) do
@@ -153,9 +153,8 @@ describe ExternalApi::PacmanService do
   end
 
   context "get distribution" do
-    subject { Fakes::PacmanService.get_distribution_request(vbms_distribution.id) }
+    subject { Fakes::PacmanService.get_distribution_request(vbms_distribution.uuid) }
     it "gets correct distribution" do
-      subject
       expect(subject.body.as_json).to eq(get_distribution_success_response.body)
     end
     context "not found" do
@@ -194,7 +193,7 @@ describe ExternalApi::PacmanService do
   end
 
   describe "response failure" do
-    subject { ExternalApi::PacmanService.get_distribution_request(distribution["id"]) }
+    subject { ExternalApi::PacmanService.get_distribution_request(vbms_distribution.uuid) }
 
     context "400" do
       it "throws Caseflow::Error::PacmanBadRequestError" do

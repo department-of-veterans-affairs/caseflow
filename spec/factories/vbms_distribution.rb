@@ -15,5 +15,6 @@ FactoryBot.define do
     updated_at { Time.zone.now }
     updated_by_id { nil }
     vbms_communication_package_id { nil }
+    uuid { nil }
   end
 end

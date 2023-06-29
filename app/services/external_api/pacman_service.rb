@@ -44,13 +44,13 @@ class ExternalApi::PacmanService
     # Purpose: Gets distribution from distribution id
     # POST: /package-manager-service/distribution
     #
-    # takes in distribution_id(int)
+    # takes in distribution_uuid(string)
     #
     # Response: JSON of distribution from Pacman API
     # Example response can be seen in lib/fakes/pacman_service.rb under 'fake_distribution_response' method
-    def get_distribution_request(distribution_id)
+    def get_distribution_request(distribution_uuid)
       request = {
-        endpoint: GET_DISTRIBUTION_ENDPOINT + distribution_id.to_s, method: :get
+        endpoint: GET_DISTRIBUTION_ENDPOINT + distribution_uuid, method: :get
       }
       send_pacman_request(request)
     end
@@ -63,7 +63,7 @@ class ExternalApi::PacmanService
     #
     # Response: package request hash
     def package_request(file_number, name, document_reference)
-      request = {
+      {
         body: {
           fileNumber: file_number,
           name: name,
@@ -75,7 +75,6 @@ class ExternalApi::PacmanService
         headers: HEADERS,
         endpoint: SEND_PACKAGE_ENDPOINT, method: :post
       }
-      request
     end
 
     # Purpose: Builds distribution request
@@ -84,7 +83,7 @@ class ExternalApi::PacmanService
     #
     # Response: Distribution request hash
     def distribution_request(package_id, recipient, destination)
-      request = {
+      {
         body: {
           communicationPackageId: package_id,
           recipient: recipient_data(recipient),
@@ -93,7 +92,6 @@ class ExternalApi::PacmanService
         headers: HEADERS,
         endpoint: SEND_PACKAGE_ENDPOINT, method: :post
       }.compact
-      request
     end
 
     # Purpose: Builds recipient json for distribution request

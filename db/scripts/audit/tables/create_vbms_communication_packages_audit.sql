@@ -11,5 +11,6 @@ create table caseflow_audit.vbms_communication_packages_audit (
               document_mailable_via_pacman_id bigint not NULL,
               document_mailable_via_pacman_type varchar not NULL,
               created_by_id int8 NULL,
-              updated_by_id int8 NULL
+              updated_by_id int8 NULL,
+              uuid varchar NULL
             );

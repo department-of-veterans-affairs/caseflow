@@ -1801,6 +1801,7 @@ ActiveRecord::Schema.define(version: 2023_06_29_184615) do
     t.string "status"
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id"
+    t.string "uuid", comment: "UUID of the communication package in Package Manager (Pacman)"
     t.index ["created_by_id"], name: "index_vbms_communication_packages_on_created_by_id"
     t.index ["document_mailable_via_pacman_type", "document_mailable_via_pacman_id"], name: "index_vbms_communication_packages_on_pacman_document_id"
     t.index ["updated_by_id"], name: "index_vbms_communication_packages_on_updated_by_id"
@@ -1844,6 +1845,7 @@ ActiveRecord::Schema.define(version: 2023_06_29_184615) do
     t.string "recipient_type", null: false, comment: "Must be one of [person, organization, ro-colocated, System]."
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id"
+    t.string "uuid", comment: "UUID of the distrubtion in Package Manager (Pacman)"
     t.bigint "vbms_communication_package_id"
     t.index ["created_by_id"], name: "index_vbms_distributions_on_created_by_id"
     t.index ["updated_by_id"], name: "index_vbms_distributions_on_updated_by_id"
