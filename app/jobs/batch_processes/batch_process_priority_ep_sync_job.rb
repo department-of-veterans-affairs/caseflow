@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class BatchProcessPriorityEPSyncJob < CaseflowJob
+class BatchProcessPriorityEpSyncJob < CaseflowJob
   queue_with_priority :low_priority
 
   before_perform do |job|
@@ -10,13 +10,13 @@ class BatchProcessPriorityEPSyncJob < CaseflowJob
   def perform
     begin
       batch = ActiveRecord::Base.transaction do
-        records_to_batch = BatchProcess.find_records_to_batch
-        next unless records_to_batch.any?
+        records_to_batch = BatchProcessPriorityEpSync.find_records_to_batch
+        next if records_to_batch.empty?
 
-        BatchProcess.build_priority_end_product_sync_batch!(records_to_batch)
+        BatchProcessPriorityEpSync.build_batch!(records_to_batch)
       end
       if batch
-        batch.process_priority_end_product_sync!
+        batch.process_batch!
       else
         Rails.logger.info("No Records Available to Batch.  Time: #{Time.zone.now}")
       end
