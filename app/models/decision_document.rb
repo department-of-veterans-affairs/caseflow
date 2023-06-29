@@ -27,6 +27,8 @@ class DecisionDocument < CaseflowRecord
   has_many :ama_decision_issues, -> { includes(:ama_decision_documents).references(:decision_documents) },
            through: :ama_appeal, source: :decision_issues
 
+  has_many :vbms_communication_packages, as: :document
+
   def self.create_document!(params, mail_package)
     create!(params).tap { |document| document.add_mail_package(mail_package) }
   end
