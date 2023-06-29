@@ -45,7 +45,7 @@ gem "parallel"
 gem "paranoia", "~> 2.2"
 # PDF Tools
 gem "pdf-forms"
-gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git", ref: "a4249eacbf70175db63b57e9f364d0a9a79e2b43"
+# gem "pdfjs_viewer-rails", git: "https://github.com/mikefinneran/pdfjs_viewer-rails-va.git", ref: "296d923eec7d0b2c66b5e340fb5261b780760f5d"
 #Used to build out PDF files on the backend
 #https://github.com/pdfkit/pdfkit
 gem "pdfkit"
