@@ -7,7 +7,7 @@ class PriorityEndProductSyncQueue < CaseflowRecord
 
   belongs_to :end_product_establishment
   belongs_to :batch_process, foreign_key: "batch_id", primary_key: "batch_id"
-  has_one :caseflow_stuck_records, as: :stuck_record
+  has_one :caseflow_stuck_record, as: :stuck_record
 
   scope :completed_or_unbatched, -> { where(batch_id: [nil, BatchProcess.completed_batch_process_ids]) }
   scope :batchable, -> { where("last_batched_at IS NULL OR last_batched_at <= ?", BatchProcess::ERROR_DELAY.hours.ago) }
