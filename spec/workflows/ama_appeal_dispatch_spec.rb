@@ -29,7 +29,11 @@ describe AmaAppealDispatch, :postgres do
     allow(bgs_poa).to receive(:participant_id).and_return(poa_participant_id)
   end
 
-  subject { AmaAppealDispatch.new(appeal: appeal, params: params, user: user, mail_package: mail_package).call }
+  subject do
+    perform_enqueued_jobs do
+      AmaAppealDispatch.new(appeal: appeal, params: params, user: user, mail_package: mail_package).call
+    end
+  end
 
   describe "#call" do
     it "stores current POA participant ID in the Appeals table" do

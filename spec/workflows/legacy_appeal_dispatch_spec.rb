@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 describe LegacyAppealDispatch do
+  include ActiveJob::TestHelper
+
   describe "#call" do
-    let(:user) { create(:user) }
+    let(:user) { User.authenticate! }
     let(:legacy_appeal) do
       create(:legacy_appeal,
+             :with_veteran,
              vacols_case: create(:case, :aod, :type_cavc_remand, bfregoff: "RO13",
                                                                  folder: create(:folder, tinum: "13 11-265")))
     end
@@ -17,17 +20,22 @@ describe LegacyAppealDispatch do
         file: "some file" }
     end
     let(:mail_package) do
-      { distributions: ["json formatted mail request objects"],
+      { distributions: [build(:mail_request).call.to_json],
         copies: 1,
         created_by_id: user.id }
     end
 
     before do
+      Seeds::NotificationEvents.new.seed!
       BvaDispatch.singleton.add_user(user)
       BvaDispatchTask.create_from_root_task(root_task)
     end
 
-    subject { LegacyAppealDispatch.new(appeal: legacy_appeal, params: params, mail_package: mail_package).call }
+    subject do
+      perform_enqueued_jobs do
+        LegacyAppealDispatch.new(appeal: legacy_appeal, params: params, mail_package: mail_package).call
+      end
+    end
 
     context "valid parameters" do
       it "successfully outcodes dispatch" do
@@ -67,7 +75,17 @@ describe LegacyAppealDispatch do
 
     context "dispatch is associated with a mail request" do
       it "calls #perform_later on MailRequestJob" do
-        expect(MailRequestJob).to receive(:perform_later).with(params[:file], mail_package)
+        expect(MailRequestJob).to receive(:perform_later) do |doc, pkg|
+          expect(doc).to be_a DecisionDocument
+          expect(doc.appeal_type).to eq "LegacyAppeal"
+          expect(doc.appeal_id).to eq params[:appeal_id]
+          expect(doc.citation_number).to eq params[:citation_number]
+          expect(doc.decision_date).to eq params[:decision_date]
+          expect(doc.redacted_document_location).to eq params[:redacted_document_location]
+
+          expect(pkg).to eq mail_package
+        end
+
         subject
       end
     end

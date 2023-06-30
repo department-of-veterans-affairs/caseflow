@@ -584,6 +584,8 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
       end
 
       context "when dispatch is associated with a mail request" do
+        include ActiveJob::TestHelper
+
         let(:recipient) do
           { recipient_type: "person",
             first_name: "Bob",
@@ -603,7 +605,8 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
 
         it "calls #perform_later on MailRequestJob" do
           expect(MailRequestJob).to receive(:perform_later)
-          post :outcode, params: params, as: :json
+
+          perform_enqueued_jobs { post :outcode, params: params, as: :json }
         end
 
         context "recipient info is incorrect" do
