@@ -39,6 +39,10 @@ class QuarterlyNotificationsJob < CaseflowJob
     end
   end
 
+  def log_appeal_not_found(state)
+    log_error("QuarterlyNotificationsJob::Error - Unable to find an appeal for appeal state ID #{state.id}")
+  end
+
   private
 
   # Purpose: Method to be called with an error need to be logged to the rails logger
