@@ -196,7 +196,8 @@ describe Distribution, :all_dbs do
     end
   end
 
-  # This is specifically testing the priority push code in the AutomaticCaseDistribution module
+  # The following are specifically testing the priority push code in the AutomaticCaseDistribution module
+  # ByDocketDateDistribution tests are in their own file, by_docket_date_distribution_spec.rb
   context "priority push distributions" do
     let(:priority_push) { true }
 
@@ -254,7 +255,6 @@ describe Distribution, :all_dbs do
     end
   end
 
-  # This is specifically testing the priority push code in the AutomaticCaseDistribution module
   context "requested distributions" do
     context "when priority_acd is enabled" do
       let(:limit) { 10 }
