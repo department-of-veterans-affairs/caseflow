@@ -26,7 +26,6 @@ describe LegacyAppealDispatch, :all_dbs do
     end
 
     before(:all) { Seeds::NotificationEvents.new.seed! }
-    after(:all) { DatabaseCleaner.clean_with(:truncation) }
 
     before do
       BvaDispatch.singleton.add_user(user)
