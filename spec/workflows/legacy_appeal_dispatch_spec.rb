@@ -3,8 +3,6 @@
 describe LegacyAppealDispatch, :all_dbs do
   include ActiveJob::TestHelper
 
-  self.use_transactional_tests = false
-
   describe "#call" do
     let(:user) { User.authenticate! }
     let(:legacy_appeal) do
