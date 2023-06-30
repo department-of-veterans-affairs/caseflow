@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :vbms_communication_package do
-    association :vbms_uploaded_document, factory: :vbms_uploaded_document
+    association :document_mailable_via_pacman, factory: :vbms_uploaded_document
     comm_package_name { "DocumentName_" + Time.zone.now.to_s }
     copies { 1 }
     created_at { Time.zone.now }

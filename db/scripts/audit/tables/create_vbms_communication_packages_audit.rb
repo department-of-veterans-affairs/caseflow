@@ -13,7 +13,8 @@ conn.execute("create table caseflow_audit.vbms_communication_packages_audit (
               comm_package_name varchar NOT NULL,
               created_at timestamp NOT NULL,
               updated_at timestamp NOT NULL,
-              vbms_uploaded_document_id int8 NULL,
+              document_mailable_via_pacman_id bigint not NULL,
+              document_mailable_via_pacman_type varchar not NULL,
               created_by_id int8 NULL,
               updated_by_id int8 NULL,
               uuid varchar NULL
