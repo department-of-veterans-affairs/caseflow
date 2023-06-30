@@ -3,7 +3,7 @@
 describe AmaAppealDispatch, :postgres do
   include ActiveJob::TestHelper
 
-  let(:user) { create(:user) }
+  let(:user) { User.authenticate! }
   let(:appeal) { create(:appeal, :advanced_on_docket_due_to_age) }
   let(:root_task) { create(:root_task, appeal: appeal) }
   let(:poa_participant_id) { "600153863" }
@@ -15,15 +15,15 @@ describe AmaAppealDispatch, :postgres do
       file: "12345678" }
   end
   let(:mail_package) do
-    { distributions: ["json formatted mail request objects"],
+    { distributions: [build(:mail_request).call.to_json],
       copies: 1,
       created_by_id: user.id }
   end
-  # let(:mail_request_job) { class_double("MailRequestJob", :perform_later).as_stubbed_const }
 
   before do
     BvaDispatch.singleton.add_user(user)
     BvaDispatchTask.create_from_root_task(root_task)
+    Seeds::NotificationEvents.new.seed!
     allow(BgsPowerOfAttorney).to receive(:find_or_create_by_file_number)
       .with(appeal.veteran_file_number).and_return(bgs_poa)
     allow(bgs_poa).to receive(:participant_id).and_return(poa_participant_id)
@@ -43,7 +43,16 @@ describe AmaAppealDispatch, :postgres do
 
     context "document is associated with a mail request" do
       it "calls #perform_later on MailRequestJob" do
-        expect(MailRequestJob).to receive(:perform_later).with(params[:file], mail_package)
+        expect(MailRequestJob).to receive(:perform_later) do |doc, pkg|
+          expect(doc).to be_a DecisionDocument
+          expect(doc.appeal_type).to eq "Appeal"
+          expect(doc.appeal_id).to eq appeal.id
+          expect(doc.redacted_document_location).to eq params[:redacted_document_location]
+          expect(doc.citation_number).to eq params[:citation_number]
+
+          expect(pkg).to eq mail_package
+        end
+
         subject
       end
     end

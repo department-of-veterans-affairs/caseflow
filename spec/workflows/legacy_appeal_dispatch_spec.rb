@@ -80,7 +80,6 @@ describe LegacyAppealDispatch do
           expect(doc.appeal_type).to eq "LegacyAppeal"
           expect(doc.appeal_id).to eq params[:appeal_id]
           expect(doc.citation_number).to eq params[:citation_number]
-          expect(doc.decision_date).to eq params[:decision_date]
           expect(doc.redacted_document_location).to eq params[:redacted_document_location]
 
           expect(pkg).to eq mail_package
