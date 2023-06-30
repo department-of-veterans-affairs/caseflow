@@ -12,17 +12,18 @@ FactoryBot.define do
       status { "PROCESSING" }
     end
 
-    trait :processed do
-      status { "PROCESSED" }
+    trait :synced do
+      status { "SYNCED" }
     end
 
-    trait :errored_out do
+    trait :error do
       status { "ERROR" }
     end
 
     trait :stuck do
       status { "STUCK" }
     end
+
 
   end
 end
