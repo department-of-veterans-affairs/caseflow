@@ -41,4 +41,7 @@ conn.execute('CREATE TABLE IF NOT EXISTS public.vbms_ext_claim (
             "ALLOW_POA_ACCESS" character varying(5),
             "POA_CODE" character varying(25)
           );')
+
+conn.execute('CREATE INDEX claim_id_index ON public.vbms_ext_claim ("CLAIM_ID")')
+conn.execute('CREATE INDEX claim_id_index ON public.vbms_ext_claim ("LEVEL_STATUS_CODE")')
 conn.close
