@@ -119,7 +119,7 @@ namespace :db do
       # request CSS ID for task assignment
       STDOUT.puts("Enter the CSS ID of the user that you want to assign these appeals to")
       STDOUT.puts("Hint: an Attorney User for demo env is BVASCASPER1, and UAT is TCASEY_JUDGE and CGRAHAM_JUDGE")
-      css_id = STDIN.gets.chomp
+      css_id = STDIN.gets.chomp.upcase
       user = User.find_by_css_id(css_id)
 
       fail ActiveRecord::RecordNotFound unless user
