@@ -5,8 +5,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     arr.each_with_index.map { |count, i| [i, count] }.to_h
   end
 
-  after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
-
   context ".perform" do
     before do
       expect_any_instance_of(PushPriorityAppealsToJudgesJob)
@@ -14,6 +12,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       expect_any_instance_of(PushPriorityAppealsToJudgesJob)
         .to receive(:send_job_report).and_return([])
     end
+
+    after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
 
     subject { described_class.perform_now }
 
@@ -193,8 +193,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     context "using Automatic Case Distribution module" do
       before do
-        FeatureToggle.disable!(:acd_distribute_by_docket_date)
-
         allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
       end
 
@@ -221,6 +219,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
         allow_any_instance_of(PushPriorityAppealsToJudgesJob).to receive(:eligible_judges).and_return(eligible_judges)
       end
+
+      after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
 
       it "should only distribute the ready priority cases tied to a judge" do
         expect(subject.count).to eq eligible_judges.count
@@ -357,6 +357,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
     context "using By Docket Date Distribution module" do
       before { FeatureToggle.enable!(:acd_distribute_by_docket_date) }
+      after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
 
       it "should distribute ready priority appeals to the judges" do
         expect(subject.count).to eq judges.count
@@ -469,6 +470,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         .to receive(:priority_distributions_this_month_for_eligible_judges).and_return(previous_distributions)
       allow_any_instance_of(DocketCoordinator).to receive(:genpop_priority_count).and_return(20)
     end
+
+    after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
 
     it "using Automatic Case Distribution module" do
       expect(subject.second).to eq "*Number of cases tied to judges distributed*: 10"
@@ -1117,8 +1120,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
   end
 
   context "when the entire job fails" do
-    before { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
-
     let(:error_msg) { "Some dummy error" }
 
     it "sends a message to Slack that includes the error" do
