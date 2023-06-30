@@ -9,7 +9,7 @@ namespace :db do
     class LegacyAppealFactory
       class << self
         # Stamping out appeals like mufflers!
-        def stamp_out_legacy_appeals(num_appeals_to_create, file_number, user)
+        def stamp_out_legacy_appeals(num_appeals_to_create, file_number, user, docket_number)
           veteran = Veteran.find_by_file_number(file_number)
 
           fail ActiveRecord::RecordNotFound unless veteran
@@ -24,7 +24,7 @@ namespace :db do
                 Generators::Vacols::CaseIssue.case_issue_attrs.merge(ADD_SPECIAL_ISSUES ? special_issue_types(idx) : {})
               ],
               folder_attrs: Generators::Vacols::Folder.folder_attrs.merge(
-                custom_folder_attributes(vacols_veteran_record)
+                custom_folder_attributes(vacols_veteran_record, docket_number.to_s)
               ),
               case_attrs: {
                 bfcorkey: vacols_veteran_record.stafkey,
@@ -48,10 +48,11 @@ namespace :db do
           build_the_cases_in_caseflow(cases)
         end
 
-        def custom_folder_attributes(veteran)
+        def custom_folder_attributes(veteran, docket_number)
           {
             titrnum: veteran.slogid,
-            tiocuser: nil
+            tiocuser: nil,
+            tinum: docket_number
           }
         end
 
@@ -124,7 +125,13 @@ namespace :db do
 
       fail ActiveRecord::RecordNotFound unless user
 
-      veterans_with_like_45_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals(1, file_number, user) }
+      # increment docket number for each case
+      docket_number = 9_000_000
+
+      veterans_with_like_45_appeals.each do |file_number|
+        docket_number += 1
+        LegacyAppealFactory.stamp_out_legacy_appeals(1, file_number, user, docket_number)
+      end
       # veterans_with_250_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals(250, file_number, user) }
     end
   end

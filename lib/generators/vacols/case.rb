@@ -6,10 +6,6 @@ class Generators::Vacols::Case
       SecureRandom.random_number(99_999_999)
     end
 
-    def generate_bfcclkid
-      SecureRandom.random_number(9_999_999).to_s
-    end
-
     # rubocop:disable Metrics/MethodLength
     def case_attrs
       {
@@ -42,7 +38,7 @@ class Generators::Vacols::Case
         bfbsasgn: nil,
         bfattid: "1286",
         bfdasgn: nil,
-        bfcclkid: generate_bfcclkid,
+        bfcclkid: nil,
         bfdqrsnt: nil,
         bfdlocin: "2017-11-30 09:01:21 UTC",
         bfdloout: "2017-11-30 09:01:21 UTC",
