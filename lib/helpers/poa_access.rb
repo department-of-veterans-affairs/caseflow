@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# When POA is not accessible some users see an error on frontend.
+# Others will see a blank POA and when refreshed the POA will still show empty
+# The root cause is no person record and we solve this by grabbing
+# a new person record and creating the BGS POA if needed.
 module WarRoom
   class PoaAccess
     # Legacy Appeals - no POA access when spouse not in people table
@@ -14,15 +18,6 @@ module WarRoom
     end
 
     def run
-      # only allow records that are not_found to be remidiated
-      unless poa.bgs_record == :not_found
-        puts("bgs record exists. Aborting...")
-        fail Interrupt
-      end
-
-      # due diligence to clean up records that may have been created when looking for an existing record
-      poa.destroy!
-
       # Create person record
       Person.find_or_create_by_participant_id(@claimant_participant_id)
 
@@ -31,18 +26,13 @@ module WarRoom
       BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(@claimant_participant_id)
 
       # Confirm fix by returning the POA for passed in appeal
-      appeal.bgs_power_of_attorney.present?
+      legacy_appeal.bgs_power_of_attorney.present?
     end
 
     def legacy_appeal
       return @legacy_appeal if defined?(@legacy_appeal)
-      @legacy_appeal = LegacyAppeal.find_by!(vacols_id: @vacols_id)
-    end
 
-    def find_or_create_bgs_power_of_attorney!
-      # clear memoization on legacy appeals
-      appeal.power_of_attorney&.try(:clear_bgs_power_of_attorney!)
-      appeal.bgs_power_of_attorney
+      @legacy_appeal = LegacyAppeal.find_by!(vacols_id: @vacols_id)
     end
   end
 end
