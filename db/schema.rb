@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_06_26_213334) do
+ActiveRecord::Schema.define(version: 2023_06_30_134611) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -783,6 +783,7 @@ ActiveRecord::Schema.define(version: 2023_06_26_213334) do
     t.datetime "updated_at"
     t.integer "user_id", comment: "The ID of the user who performed the decision review intake."
     t.string "veteran_file_number", null: false, comment: "PII. The file number of the Veteran submitted when establishing the end product."
+    t.index ["reference_id"], name: "index_end_product_establishments_on_reference_id"
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["updated_at"], name: "index_end_product_establishments_on_updated_at"
     t.index ["user_id"], name: "index_end_product_establishments_on_user_id"
