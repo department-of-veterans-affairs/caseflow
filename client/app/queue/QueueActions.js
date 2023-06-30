@@ -777,6 +777,7 @@ export const fetchCamoTasks = (userId) => (dispatch) => {
   return ApiUtil.get(url).
     then((resp) => {
       dispatch(setActiveOrganization(resp.body.id,
+        resp.body.type,
         resp.body.organization_name,
         resp.body.is_vso,
         resp.body.user_can_bulk_assign));
