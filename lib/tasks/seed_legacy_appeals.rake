@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
+# to create legacy appeals with MST/PACT issues, run "bundle exec rake 'db:generate_legacy_appeals[true]'""
+# to create without, run "bundle exec rake db:generate_legacy_appeals"
 namespace :db do
   desc "Generates a smattering of legacy appeals with VACOLS cases that have special issues assocaited with them"
-  task generate_legacy_appeals: :environment do
+  task :generate_legacy_appeals, [:add_special_issues] => :environment do |_, args|
+    ADD_SPECIAL_ISSUES = args.add_special_issues == "true"
     class LegacyAppealFactory
       class << self
         # Stamping out appeals like mufflers!
@@ -18,7 +21,7 @@ namespace :db do
             Generators::Vacols::Case.create(
               corres_exists: true,
               case_issue_attrs: [
-                Generators::Vacols::CaseIssue.case_issue_attrs.merge(special_issue_types(idx))
+                Generators::Vacols::CaseIssue.case_issue_attrs.merge(ADD_SPECIAL_ISSUES ? special_issue_types(idx) : {})
               ],
               folder_attrs: Generators::Vacols::Folder.folder_attrs.merge(
                 custom_folder_attributes(vacols_veteran_record)
