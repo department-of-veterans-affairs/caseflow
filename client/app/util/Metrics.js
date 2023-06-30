@@ -100,18 +100,18 @@ export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 
  *
  * Might need to split into async and promise versions if issues
  */
-export const recordAsyncMetrics = async (asyncFunction, { uniqueId, data, message, type = 'log', product },
+export const recordAsyncMetrics = async (promise, { uniqueId, data, message, type = 'log', product },
   saveMetrics = true) => {
 
   let id = checkUuid(uniqueId, data, message, type);
 
   const t0 = performance.now();
   const start = Date.now();
-  const name = message || asyncFunction;
+  const name = message || promise;
 
   // eslint-disable-next-line no-console
   console.info(`STARTED: ${id} ${name}`);
-  const prom = () => asyncFunction;
+  const prom = () => promise;
   const result = await prom();
   const t1 = performance.now();
   const end = Date.now();

@@ -24,7 +24,7 @@ import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, getSearchTerm } from './selectors';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import uuid from 'uuid';
-import { recordAsyncMetrics } from '../util/Metrics';
+import { storeMetrics, recordAsyncMetrics } from '../util/Metrics';
 
 PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -94,7 +94,21 @@ export class PdfFile extends React.PureComponent {
         return this.props.setPdfDocument(this.props.file, this.pdfDocument);
       }, (reason) => this.onRejected(reason, 'setPdfDocument')).
       catch((error) => {
-        console.error(`${uuid.v4()} : GET ${this.props.file} : ${error}`);
+        const id = uuid.v4();
+        const data = {
+          file: this.props.file
+        };
+        const message = `${id} : GET ${this.props.file} : ${error}`;
+
+        console.error(message);
+        storeMetrics(
+          id,
+          data,
+          { message,
+            type: 'error',
+            product: 'browser',
+          }
+        );
         this.loadingTask = null;
         this.props.setDocumentLoadError(this.props.file);
       });

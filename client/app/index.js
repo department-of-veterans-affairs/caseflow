@@ -112,16 +112,18 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
       const t1 = performance.now();
       const end = Date.now();
       const duration = t1 - t0;
+
       storeMetrics(
         id,
         data,
         { type: 'error',
-        product: 'browser',
-        start: start,
-        end: end,
-        duration: duration }
+          product: 'browser',
+          start,
+          end,
+          duration }
       );
     }
+
     return true;
   };
 

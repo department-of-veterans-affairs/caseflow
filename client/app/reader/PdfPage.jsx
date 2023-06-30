@@ -13,7 +13,7 @@ import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import * as PDFJS from 'pdfjs-dist';
-import { collectHistogram, recordMetrics, recordAsyncMetrics } from '../util/Metrics';
+import { collectHistogram, recordMetrics, recordAsyncMetrics, storeMetrics } from '../util/Metrics';
 
 import { css } from 'glamor';
 import classNames from 'classnames';
@@ -258,7 +258,6 @@ export class PdfPage extends React.PureComponent {
         const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);
 
         textResult.then((text) => {
-          this.drawText(page, text);
           recordMetrics(this.drawText(page, text), readerRenderText,
             this.props.featureToggles.metricsReaderRenderText);
         });
@@ -278,7 +277,23 @@ export class PdfPage extends React.PureComponent {
           });
         });
       }).catch((error) => {
-        console.error(`${uuid.v4()} : setUpPage ${this.props.file} : ${error}`);
+        const id = uuid.v4();
+        const data = {
+          documentId: this.props.documentId,
+          documentType: this.props.documentType,
+          file: this.props.file
+        };
+        const message = `${id} : setUpPage ${this.props.file} : ${error}`;
+
+        console.error(message);
+        storeMetrics(
+          id,
+          data,
+          { message,
+            type: 'error',
+            product: 'browser',
+          }
+        );
       });
     }
   };
