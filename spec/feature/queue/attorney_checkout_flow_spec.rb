@@ -61,6 +61,16 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       )
     end
 
+    before do
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
+    end
+
+    after do
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
+    end
+
     scenario "submits draft decision" do
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
@@ -72,14 +82,6 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       expect(page).to have_content "Correct issues"
 
       click_dropdown(text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.label)
-
-      expect(page).to have_content("Select special issues")
-
-      expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
-      expect(page).to have_content("Blue Water")
-      expect(page).to have_content("Burn Pit")
-      find("label", text: "Blue Water").click
-      click_on "Continue"
 
       click_on "Continue"
 
@@ -266,15 +268,6 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
       click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
 
-      expect(page).to have_content("Select special issues")
-      expect(page.find("label[for=no_special_issues]")).to have_content("No Special Issues")
-      expect(page).to have_content("Blue Water")
-      expect(page).to have_content("Burn Pit")
-      find("label", text: "Burn Pit").click
-      click_on "Continue"
-
-      expect(page).to have_content("Added to 2 issues", count: 2)
-
       expect(page).to have_content(decision_issue_text)
 
       # Update the decision issue
@@ -334,7 +327,14 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       )
     end
 
-    before { User.authenticate!(user: attorney_user) }
+    before do
+      User.authenticate!(user: attorney_user)
+      FeatureToggle.enable!(:legacy_mst_pact_identification)
+    end
+
+    after do
+      FeatureToggle.disable!(:legacy_mst_pact_identification)
+    end
 
     context "with a single issue" do
       let(:case_issues) { create_list(:case_issue, 1) }
@@ -723,6 +723,447 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         visit "/queue"
 
         expect(appeal.reload.issues.length).to eq 2
+      end
+    end
+  end
+
+  describe "MST/PACT identification on ama and legacy appeal issues" do
+    let(:issue_note) { "Test note" }
+    let(:issue_description) { "Test description" }
+    let(:other_issue_text) { "Decision issue text here" }
+    let(:allowed_issue_text) { "This is an allowed issue" }
+    let(:disposition_allowed) { "Allowed" }
+    let(:benefit_type) { "Compensation" }
+    let(:diagnostic_code) { "5008" }
+
+    let!(:appeal) do
+      create(
+        :appeal,
+        number_of_claimants: 1,
+        request_issues: build_list(
+          :request_issue, 1,
+          contested_issue_description: issue_description,
+          notes: issue_note,
+          contested_rating_issue_diagnostic_code: diagnostic_code
+        )
+      )
+    end
+
+    let(:appeal_with_mst_pact) do
+      create(
+        :appeal,
+        number_of_claimants: 1,
+        request_issues: [
+          create(
+            :request_issue,
+            benefit_type: "compensation",
+            mst_status: true,
+            pact_status: true,
+            nonrating_issue_description: issue_description,
+            notes: issue_note,
+            contested_rating_issue_diagnostic_code: diagnostic_code
+          )
+        ]
+      )
+    end
+
+    let!(:appeal_multiple_issues) do
+      create(
+        :appeal,
+        number_of_claimants: 1,
+        request_issues: build_list(
+          :request_issue, 3,
+          contested_issue_description: issue_description,
+          notes: issue_note,
+          contested_rating_issue_diagnostic_code: diagnostic_code
+        )
+      )
+    end
+
+    context " - AMA Appeals" do
+      before do
+        FeatureToggle.enable!(:mst_identification)
+        FeatureToggle.enable!(:pact_identification)
+      end
+
+      after do
+        FeatureToggle.disable!(:mst_identification)
+        FeatureToggle.disable!(:pact_identification)
+      end
+
+      context "given a single issue" do
+        before do
+          root_task = create(:root_task, appeal: appeal)
+          parent_task = create(
+            :ama_judge_decision_review_task,
+            assigned_to: judge_user,
+            parent: root_task
+          )
+
+          create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user,
+            assigned_by: judge_user,
+            parent: parent_task
+          )
+
+          User.authenticate!(user: attorney_user)
+          BvaDispatch.singleton.add_user(create(:user))
+        end
+
+        it " - add both mst and pact to an issue" do
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+
+          click_dropdown(text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.label)
+
+          expect(page).to have_content COPY::DECISION_ISSUE_PAGE_TITLE
+
+          all("button", text: "+ Add decision", count: 1)[0].click
+          fill_in "Text Box", with: allowed_issue_text
+          find(".cf-select__control", text: "Select disposition").click
+          find("div", class: "cf-select__option", text: disposition_allowed).click
+          find(".cf-select__control", text: benefit_type).click
+          find("div", class: "cf-select__option", text: benefit_type).click
+          find(".cf-select__control", text: diagnostic_code).click
+          find("div", class: "cf-select__option", text: diagnostic_code).click
+          check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+          check("PACT Act", allow_label_click: true, visible: false)
+          click_on "Save"
+
+          click_on "Continue"
+
+          safe_click "#select-judge"
+          click_dropdown(index: 0)
+          fill_in "document_id", with: valid_document_id
+          fill_in "notes", with: "note"
+
+          click_on "Continue"
+
+          User.authenticate!(user: judge_user)
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+          expect(page).to have_selector(".cf-mst-badge")
+          expect(page).to have_selector(".cf-pact-badge")
+          expect(page).to have_content("Special Issues: MST and PACT")
+          expect(appeal.decision_issues.first.mst_status).to eq(true)
+          expect(appeal.decision_issues.first.pact_status).to eq(true)
+        end
+
+        it " - add mst to an issue" do
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+
+          click_dropdown(text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.label)
+
+          expect(page).to have_content COPY::DECISION_ISSUE_PAGE_TITLE
+
+          all("button", text: "+ Add decision", count: 1)[0].click
+          fill_in "Text Box", with: allowed_issue_text
+          find(".cf-select__control", text: "Select disposition").click
+          find("div", class: "cf-select__option", text: disposition_allowed).click
+          find(".cf-select__control", text: benefit_type).click
+          find("div", class: "cf-select__option", text: benefit_type).click
+          find(".cf-select__control", text: diagnostic_code).click
+          find("div", class: "cf-select__option", text: diagnostic_code).click
+          check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+          click_on "Save"
+
+          click_on "Continue"
+
+          safe_click "#select-judge"
+          click_dropdown(index: 0)
+          fill_in "document_id", with: valid_document_id
+          fill_in "notes", with: "note"
+
+          click_on "Continue"
+
+          User.authenticate!(user: judge_user)
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+
+          expect(page).to have_selector(".cf-mst-badge")
+          expect(page).to_not have_selector(".cf-pact-badge")
+          expect(page).to have_content("Special Issues: MST")
+          expect(appeal.decision_issues.first.mst_status).to eq(true)
+          expect(appeal.decision_issues.first.pact_status).to eq(false)
+        end
+
+        it " - add pact to an issue" do
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+
+          click_dropdown(text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.label)
+
+          expect(page).to have_content COPY::DECISION_ISSUE_PAGE_TITLE
+
+          all("button", text: "+ Add decision", count: 1)[0].click
+          fill_in "Text Box", with: allowed_issue_text
+          find(".cf-select__control", text: "Select disposition").click
+          find("div", class: "cf-select__option", text: disposition_allowed).click
+          find(".cf-select__control", text: benefit_type).click
+          find("div", class: "cf-select__option", text: benefit_type).click
+          find(".cf-select__control", text: diagnostic_code).click
+          find("div", class: "cf-select__option", text: diagnostic_code).click
+          check("PACT Act", allow_label_click: true, visible: false)
+          click_on "Save"
+
+          click_on "Continue"
+
+          safe_click "#select-judge"
+          click_dropdown(index: 0)
+          fill_in "document_id", with: valid_document_id
+          fill_in "notes", with: "note"
+
+          click_on "Continue"
+
+          User.authenticate!(user: judge_user)
+          visit "/queue"
+          click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+
+          expect(page).to_not have_selector(".cf-mst-badge")
+          expect(page).to have_selector(".cf-pact-badge")
+          expect(page).to have_content("Special Issues: PACT")
+          expect(appeal.decision_issues.first.mst_status).to eq(false)
+          expect(appeal.decision_issues.first.pact_status).to eq(true)
+        end
+
+        context " - with mst and pact designated" do
+          before do
+            root_task = create(:root_task, appeal: appeal_with_mst_pact)
+            parent_task = create(
+              :ama_judge_decision_review_task,
+              assigned_to: judge_user,
+              parent: root_task
+            )
+
+            create(
+              :ama_attorney_task,
+              :in_progress,
+              assigned_to: attorney_user,
+              assigned_by: judge_user,
+              parent: parent_task
+            )
+
+            User.authenticate!(user: attorney_user)
+            BvaDispatch.singleton.add_user(create(:user))
+          end
+
+          it " removes mst and pact from the issue" do
+            visit "/queue"
+            click_on "#{appeal_with_mst_pact.veteran_full_name} (#{appeal_with_mst_pact.veteran_file_number})"
+            expect(page).to have_selector(".cf-mst-badge")
+            expect(page).to have_selector(".cf-pact-badge")
+            expect(page).to have_content("Special Issues: MST and PACT")
+
+            click_dropdown(text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.label)
+
+            all("button", text: "+ Add decision", count: 1)[0].click
+            fill_in "Text Box", with: allowed_issue_text
+            find(".cf-select__control", text: "Select disposition").click
+            find("div", class: "cf-select__option", text: disposition_allowed).click
+            find(".cf-select__control", text: benefit_type).click
+            find("div", class: "cf-select__option", text: benefit_type).click
+            find(".cf-select__control", text: diagnostic_code).click
+            find("div", class: "cf-select__option", text: diagnostic_code).click
+            uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+            uncheck("PACT Act", allow_label_click: true, visible: false)
+            click_on "Save"
+
+            click_on "Continue"
+
+            safe_click "#select-judge"
+            click_dropdown(index: 0)
+            fill_in "document_id", with: valid_document_id
+            fill_in "notes", with: "note"
+
+            click_on "Continue"
+
+            User.authenticate!(user: judge_user)
+            visit "/queue"
+            click_on "#{appeal_with_mst_pact.veteran_full_name} (#{appeal_with_mst_pact.veteran_file_number})"
+
+            expect(page).to have_content("Special Issues: None")
+            expect(appeal_with_mst_pact.decision_issues.first.mst_status).to eq(false)
+            expect(appeal_with_mst_pact.decision_issues.first.pact_status).to eq(false)
+          end
+        end
+      end
+
+      context "given multiple issues" do
+        before do
+          root_task = create(:root_task, appeal: appeal_multiple_issues)
+          parent_task = create(
+            :ama_judge_decision_review_task,
+            assigned_to: judge_user,
+            parent: root_task
+          )
+
+          create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user,
+            assigned_by: judge_user,
+            parent: parent_task
+          )
+
+          User.authenticate!(user: attorney_user)
+          BvaDispatch.singleton.add_user(create(:user))
+        end
+
+        it " - add one of each mst, pact, and both to issues" do
+          visit "/queue"
+          click_on "#{appeal_multiple_issues.veteran_full_name} (#{appeal_multiple_issues.veteran_file_number})"
+
+          click_dropdown(text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.label)
+
+          expect(page).to have_content COPY::DECISION_ISSUE_PAGE_TITLE
+
+          all("button", text: "+ Add decision", count: 3)[0].click
+          fill_in "Text Box", with: allowed_issue_text
+          find(".cf-select__control", text: "Select disposition").click
+          find("div", class: "cf-select__option", text: disposition_allowed).click
+          find(".cf-select__control", text: benefit_type).click
+          find("div", class: "cf-select__option", text: benefit_type).click
+          find(".cf-select__control", text: diagnostic_code).click
+          find("div", class: "cf-select__option", text: diagnostic_code).click
+          check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+          check("PACT Act", allow_label_click: true, visible: false)
+          click_on "Save"
+
+          all("button", text: "+ Add decision", count: 3)[1].click
+          fill_in "Text Box", with: allowed_issue_text
+          find(".cf-select__control", text: "Select disposition").click
+          find("div", class: "cf-select__option", text: disposition_allowed).click
+          find(".cf-select__control", text: benefit_type).click
+          find("div", class: "cf-select__option", text: benefit_type).click
+          find(".cf-select__control", text: diagnostic_code).click
+          find("div", class: "cf-select__option", text: diagnostic_code).click
+          check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+          click_on "Save"
+
+          all("button", text: "+ Add decision", count: 3)[2].click
+          fill_in "Text Box", with: allowed_issue_text
+          find(".cf-select__control", text: "Select disposition").click
+          find("div", class: "cf-select__option", text: disposition_allowed).click
+          find(".cf-select__control", text: benefit_type).click
+          find("div", class: "cf-select__option", text: benefit_type).click
+          find(".cf-select__control", text: diagnostic_code).click
+          find("div", class: "cf-select__option", text: diagnostic_code).click
+          check("PACT Act", allow_label_click: true, visible: false)
+          click_on "Save"
+
+          click_on "Continue"
+
+          safe_click "#select-judge"
+          click_dropdown(index: 0)
+          fill_in "document_id", with: valid_document_id
+          fill_in "notes", with: "note"
+
+          click_on "Continue"
+
+          User.authenticate!(user: judge_user)
+          visit "/queue"
+          click_on "#{appeal_multiple_issues.veteran_full_name} (#{appeal_multiple_issues.veteran_file_number})"
+
+          expect(page).to have_selector(".cf-mst-badge")
+          expect(page).to have_selector(".cf-pact-badge")
+          expect(page).to have_content("Special Issues: MST and PACT")
+          expect(page).to have_content("Special Issues: MST")
+          expect(page).to have_content("Special Issues: PACT")
+          expect(appeal_multiple_issues.decision_issues.first.mst_status).to eq(true)
+          expect(appeal_multiple_issues.decision_issues.first.pact_status).to eq(true)
+          expect(appeal_multiple_issues.decision_issues.second.mst_status).to eq(true)
+          expect(appeal_multiple_issues.decision_issues.second.pact_status).to eq(false)
+          expect(appeal_multiple_issues.decision_issues.third.mst_status).to eq(false)
+          expect(appeal_multiple_issues.decision_issues.third.pact_status).to eq(true)
+        end
+      end
+    end
+
+    context " - Legacy Appeals " do
+      let!(:appeal) do
+        create(
+          :legacy_appeal,
+          :with_veteran,
+          vacols_case: create(
+            :case,
+            :assigned,
+            user: attorney_user,
+            case_issues: [
+              create(:case_issue, issmst: "N", isspact: "N"),
+              create(:case_issue, issmst: "Y", isspact: "Y")
+            ]
+          )
+        )
+      end
+
+      before do
+        User.authenticate!(user: attorney_user)
+        FeatureToggle.enable!(:legacy_mst_pact_identification)
+      end
+
+      after do
+        FeatureToggle.disable!(:legacy_mst_pact_identification)
+      end
+
+      it " - add mst to an issue" do
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+        click_dropdown(text: "Decision ready for review", visible: false)
+        find("label", text: "No Special Issues").click
+        click_on "Continue"
+        first("a", text: "Edit Issue").click
+        check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+        click_on "Continue"
+        expect(page).to have_content("Special Issues: MST")
+        expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[0].issmst).to eq "Y"
+        expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[0].isspact).to eq "N"
+      end
+
+      it " - add pact to an issue" do
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+        click_dropdown(text: "Decision ready for review", visible: false)
+        find("label", text: "No Special Issues").click
+        click_on "Continue"
+        first("a", text: "Edit Issue").click
+        check("PACT Act", allow_label_click: true, visible: false)
+        click_on "Continue"
+        expect(page).to have_content("Special Issues: PACT")
+        expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[0].issmst).to eq "N"
+        expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[0].isspact).to eq "Y"
+      end
+
+      it " - add mst and pact to an issue" do
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+        click_dropdown(text: "Decision ready for review", visible: false)
+        find("label", text: "No Special Issues").click
+        click_on "Continue"
+        first("a", text: "Edit Issue").click
+        check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+        check("PACT Act", allow_label_click: true, visible: false)
+        click_on "Continue"
+        expect(page).to have_content("Special Issues: MST and PACT")
+        expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[0].issmst).to eq "Y"
+        expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[0].isspact).to eq "Y"
+      end
+
+      it " - remove mst and pact from issue" do
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+        click_dropdown(text: "Decision ready for review", visible: false)
+        find("label", text: "No Special Issues").click
+        click_on "Continue"
+        all("a", text: "Edit Issue")[1].click
+        uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+        uncheck("PACT Act", allow_label_click: true, visible: false)
+        click_on "Continue"
+        expect(page).to have_content("Special Issues: None")
+        expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[1].issmst).to eq "N"
+        expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[1].isspact).to eq "N"
       end
     end
   end

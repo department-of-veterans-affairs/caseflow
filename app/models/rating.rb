@@ -76,7 +76,7 @@ class Rating
     end
 
     def special_issue_has_pact?(special_issue)
-      if special_issue[:spis_tn]&.casecmp("gulf war presumptive 3.3201")&.zero?
+      if special_issue[:spis_tn]&.casecmp("gulf war presumptive 3.320")&.zero?
         return special_issue[:spis_basis_tn]&.casecmp("particulate matter")&.zero?
       end
 
@@ -102,8 +102,9 @@ class Rating
       response = fetch_contentions_by_participant_id(serialized_hash[:participant_id])
 
       serialized_hash[:rba_contentions_data].each do |rba|
+        rba_contention = rba.with_indifferent_access
         response.each do |resp|
-          contentions_data << resp[:contentions] if resp[:contentions][:cntntn_id] == rba[:cntntn_id]
+          contentions_data << resp[:contentions] if resp[:contentions][:cntntn_id] == rba_contention[:cntntn_id]
         end
       end
       contentions_data.compact
@@ -198,7 +199,7 @@ class Rating
   end
 
   def ensure_array_of_hashes(array_or_hash_or_nil)
-    [array_or_hash_or_nil || {}].flatten
+    [array_or_hash_or_nil || {}].flatten.map(&:deep_symbolize_keys)
   end
 
   def associated_end_products

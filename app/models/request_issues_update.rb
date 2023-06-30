@@ -374,6 +374,24 @@ class RequestIssuesUpdate < CaseflowRecord
       end
       # rubocop:enable Layout/LineLength
       task.completed!
+
+      # create SpecialIssueChange record to log the changes
+      SpecialIssueChange.create!(
+        issue_id: before_issue.id,
+        appeal_id: before_issue.decision_review.id,
+        appeal_type: "Appeal",
+        task_id: task.id,
+        created_at: Time.zone.now.utc,
+        created_by_id: RequestStore[:current_user].id,
+        created_by_css_id: RequestStore[:current_user].css_id,
+        original_mst_status: before_issue.mst_status,
+        original_pact_status: before_issue.pact_status,
+        updated_mst_status: after_issue&.mst_status,
+        updated_pact_status: after_issue&.pact_status,
+        mst_from_vbms: before_issue&.vbms_mst_status,
+        pact_from_vbms: before_issue&.vbms_pact_status,
+        change_category: change_type
+      )
     end
   end
 end
