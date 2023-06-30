@@ -113,7 +113,7 @@ namespace :db do
 
 
         # remove under after done testing
-        vets = Veteran.last(3)
+        vets = Veteran.first(3)
         veterans_with_few_appeals = vets[0..3].pluck(:file_number)
       else
         veterans_with_like_45_appeals = %w[011899917 011899918 011899919 011899920 011899927
