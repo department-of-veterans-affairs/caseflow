@@ -17,4 +17,22 @@ describe VhaCamo, :postgres do
       expect(vha_camo.can_receive_task?(vha_assess_doc_task)).to eq(false)
     end
   end
+
+  describe ".queue_tabs" do
+    it "returns the expected tabs for use in the VHA CAMO organization's queue" do
+      expect(vha_camo.queue_tabs).to match_array(
+        [
+          VhaCamoAssignedTasksTab,
+          VhaCamoInProgressTasksTab,
+          VhaCamoCompletedTasksTab
+        ]
+      )
+    end
+  end
+
+  describe ".COLUMN_NAMES" do
+    it "VHA CAMO organization queue tabs have 8 columns by default" do
+      expect(VhaCamo::COLUMN_NAMES.count).to eq 8
+    end
+  end
 end
