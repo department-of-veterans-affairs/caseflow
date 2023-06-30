@@ -122,6 +122,10 @@ class Fakes::BGSService
   def get_end_products(file_number)
     store = self.class.end_product_store
     records = store.fetch_and_inflate(file_number) || store.fetch_and_inflate(:default) || {}
+
+    # syncs statuses between EPE, EP, and VbmsExtClaim records
+    check_for_vbms_sync(records, file_number)
+
     records.values
   end
 
@@ -802,6 +806,46 @@ class Fakes::BGSService
       trsury_seq_nbr: "5",
       zip_prefix_nbr: FakeConstants.BGS_SERVICE.DEFAULT_ZIP
     }
+  end
+
+  # we only want to sync statuses if 3 conditions are met:
+  # 1. the vbms_ext_claim table is standing
+  # 2. "records" is associated with an EPE
+  # 3. the EPE belongs to a VbmsExtClaim record
+  def check_for_vbms_sync(records, file_number)
+    epe = EndProductEstablishment.find_by(veteran_file_number: file_number)
+
+    sync(records, epe) if vbms_table? && epe_with_vbms_claim?(epe)
+  end
+
+  # "records" returns an object of objects
+  # incase there are multiple nested objects,
+  # all of them must be iterated over and updated
+  def sync(records, epe)
+    vbms_status = epe.vbms_ext_claim.level_status_code
+    records.values.each do |record|
+      # update EP status to match VBMS status
+      record[:status_type_code] = vbms_status
+
+      # checks that there is a benefit_claim_id present
+      epe_claim_id_sync(record)
+    end
+  end
+
+  # while running '.result' on factory EPEs, an EP is generated without a claim_id causing `epe.sync!` to fail
+  # to bypass the nil value, we manually set the EP's benefit_claim_id
+  def epe_claim_id_sync(record)
+    record[:benefit_claim_id] = epe.reference_id unless record[:benefit_claim_id]
+  end
+
+  # this table will be standing after a make reset or make external-db-create
+  def vbms_table?
+    ActiveRecord::Base.connection.table_exists? "vbms_ext_claim"
+  end
+
+  # checks if an EPE belonging to a VbmsExtClaim record was found
+  def epe_with_vbms_claim?(epe)
+    !!epe&.vbms_ext_claim
   end
   # rubocop:enable Metrics/MethodLength
 end
