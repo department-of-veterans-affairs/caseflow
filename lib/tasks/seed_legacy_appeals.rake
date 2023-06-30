@@ -14,6 +14,7 @@ namespace :db do
           vacols_veteran_record = find_or_create_vacols_veteran(veteran)
 
           cases = Array.new(num_appeals_to_create).each_with_index.map do |_element, idx|
+            key = VACOLS::Folder.maximum(:ticknum).next
             Generators::Vacols::Case.create(
               corres_exists: true,
               case_issue_attrs: [
@@ -25,7 +26,18 @@ namespace :db do
               case_attrs: {
                 bfcorkey: vacols_veteran_record.stafkey,
                 bfcorlid: vacols_veteran_record.slogid,
-                bfkey: VACOLS::Folder.maximum(:ticknum).next
+                bfkey: key,
+                bfcurloc: 2,
+                bfmpro: "ACT"
+              },
+              staff_attrs: {
+                sattyid: "2",
+                sdomainid: "BVASCASPER1"
+              },
+              decass_attrs: {
+                defolder: key,
+                deatty: "2",
+                dereceive: "2020-11-17 00:00:00 UTC"
               }
             )
           end.compact
@@ -74,7 +86,7 @@ namespace :db do
             AppealRepository.build_appeal(case_record).tap do |appeal|
               appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
 
-              create_decision_tasks(appeal)
+              # create_decision_tasks(appeal)
             end.save!
           end
         end
