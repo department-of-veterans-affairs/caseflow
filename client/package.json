@@ -97,7 +97,7 @@
     "moment-timezone": "^0.5.27",
     "node-sass": "^4.13.1",
     "pdf-annotate.js": "^1.0.0",
-    "pdfjs-dist": "2.5.207",
+    "pdfjs-dist": "3.4.120",
     "pluralize": "^7.0.0",
     "prop-types": "^15.7.2",
     "rc-collapse": "^1.11.8",
