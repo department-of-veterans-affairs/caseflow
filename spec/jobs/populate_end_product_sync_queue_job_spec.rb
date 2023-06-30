@@ -4,8 +4,8 @@ describe PopulateEndProductSyncQueueJob, type: :job do
 
   let!(:veteran) { create(:veteran) }
   let!(:found_vec) { create(:vbms_ext_claim, :canceled, claimant_person_id: veteran.participant_id) }
-  let!(:found_epe) { create(:end_product_establishment, :active, veteran_file_number: veteran.file_number, established_at: Time.zone.today, reference_id: found_vec.claim_id.to_s) }
-  let!(:not_found_epe) { create(:end_product_establishment, :cleared, veteran_file_number: veteran.file_number, established_at: Time.zone.today, reference_id: found_vec.claim_id.to_s) }
+  let!(:found_epe) { create(:end_product_establishment, :cleared, veteran_file_number: veteran.file_number, established_at: Time.zone.today, reference_id: found_vec.claim_id.to_s) }
+  let!(:not_found_epe) { create(:end_product_establishment, :canceled, veteran_file_number: veteran.file_number, established_at: Time.zone.today, reference_id: found_vec.claim_id.to_s) }
   let!(:not_found_vec) { create(:vbms_ext_claim, :rdc, claimant_person_id: veteran.participant_id) }
 
   context "#perform" do
@@ -43,13 +43,14 @@ describe PopulateEndProductSyncQueueJob, type: :job do
       expect(PriorityEndProductSyncQueue.count).to eq 1
     end
 
-    it "will add the epe if epe synced status is nil" do
+    it "will add the epe if epe synced status is nil and other conditions are met" do
       found_epe.update!(synced_status: nil)
       expect(PriorityEndProductSyncQueue.count).to eq 0
       PopulateEndProductSyncQueueJob.perform_now
       expect(PriorityEndProductSyncQueue.count).to eq 1
       found_epe.update!(synced_status: "PEND")
     end
+
   end
 
 end
