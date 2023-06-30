@@ -9,7 +9,7 @@ namespace :db do
     class LegacyAppealFactory
       class << self
         # Stamping out appeals like mufflers!
-        def stamp_out_legacy_appeals(num_appeals_to_create, file_number)
+        def stamp_out_legacy_appeals(num_appeals_to_create, file_number, user)
           veteran = Veteran.find_by_file_number(file_number)
 
           fail ActiveRecord::RecordNotFound unless veteran
@@ -30,16 +30,16 @@ namespace :db do
                 bfcorkey: vacols_veteran_record.stafkey,
                 bfcorlid: vacols_veteran_record.slogid,
                 bfkey: key,
-                bfcurloc: 2,
+                bfcurloc: user.id,
                 bfmpro: "ACT"
               },
               staff_attrs: {
                 sattyid: "2",
-                sdomainid: "BVASCASPER1"
+                sdomainid: user.css_id
               },
               decass_attrs: {
                 defolder: key,
-                deatty: "2",
+                deatty: user.id,
                 dereceive: "2020-11-17 00:00:00 UTC"
               }
             )
@@ -88,54 +88,8 @@ namespace :db do
           cases.map do |case_record|
             AppealRepository.build_appeal(case_record).tap do |appeal|
               appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
-
-              # create_decision_tasks(appeal)
             end.save!
           end
-        end
-
-        # for demo only remove after
-        def create_decision_tasks(appeal)
-          admin = User.system_user
-          RequestStore[:current_user] = admin
-          judge = User.find_by_css_id('BVAAABSHIRE')
-          att = User.find_by_css_id('BVASCASPER1')
-
-          # case_assignment = OpenStruct.new(
-          #   vacols_id: appeal.vacols_id,
-          #   date_due: 1.day.ago,
-          #   assigned_to_location_date: 5.days.ago,
-          #   created_at: 6.days.ago,
-          #   docket_date: nil
-          # )
-
-          # build task tree
-          root_task = RootTask.find_or_create_by!(appeal: appeal)
-          root_task.assigned_to = att
-          root_task.save!
-          distribution_task = DistributionTask.create(appeal: appeal, parent: root_task, assigned_to: att)
-          # binding.pry
-          task = AttorneyTask.new(
-            appeal: appeal,
-            parent: distribution_task,
-            assigned_to: att,
-            assigned_by: judge,
-            instructions: "demo instructions"
-          )
-          task.save!
-
-          acr = AttorneyCaseReview.new(
-            appeal: appeal,
-            reviewing_judge: judge,
-            attorney: judge,
-            task: task,
-            document_id: '22222222.2222',
-            document_type: "draft_decision",
-            work_product: "Decision",
-            note: "Jeremy was here haha"
-          )
-
-          acr.save!
         end
 
         # MST is true for even indexes, and indexes that are multiples of 5. False for all other numbers.
@@ -162,8 +116,16 @@ namespace :db do
         # veterans_with_250_appeals = %w[011899906 011899999]
       end
 
-      veterans_with_like_45_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals(1, file_number) }
-      # veterans_with_250_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals(250, file_number) }
+      # request CSS ID for task assignment
+      STDOUT.puts("Enter the CSS ID of the user that you want to assign these appeals to")
+      STDOUT.puts("Hint: an Attorney User for demo env is BVASCASPER1, and UAT is TCASEY_JUDGE and CGRAHAM_JUDGE")
+      css_id = STDIN.gets.chomp
+      user = User.find_by_css_id(css_id)
+
+      fail ActiveRecord::RecordNotFound unless user
+
+      veterans_with_like_45_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals(1, file_number, user) }
+      # veterans_with_250_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals(250, file_number, user) }
     end
   end
 end
