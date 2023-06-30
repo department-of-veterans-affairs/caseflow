@@ -106,20 +106,15 @@ namespace :db do
       end
 
       if Rails.env.development? || Rails.env.test?
-        # vets = Veteran.first(15)
+        vets = Veteran.first(5)
 
-        # veterans_with_like_45_appeals = vets[0..12].pluck(:file_number)
+        veterans_with_like_45_appeals = vets[0..12].pluck(:file_number)
 
         # veterans_with_250_appeals = vets.last(3).pluck(:file_number)
 
 
-        # remove under after done testing
-        vets = Veteran.first(3)
-        veterans_with_few_appeals = vets[0..3].pluck(:file_number)
       else
-        veterans_with_like_45_appeals = %w[011899917 011899918 011899919 011899920 011899927
-                                           011899928 011899929 011899930 011899937 011899938
-                                           011899939 011899940]
+        veterans_with_like_45_appeals = %w[011899917 011899918]
 
         # veterans_with_250_appeals = %w[011899906 011899999]
       end
@@ -135,9 +130,9 @@ namespace :db do
       # increment docket number for each case
       docket_number = 9_000_000
 
-      veterans_with_few_appeals.each do |file_number|
+      veterans_with_like_45_appeals.each do |file_number|
         docket_number += 1
-        LegacyAppealFactory.stamp_out_legacy_appeals(1, file_number, user, docket_number)
+        LegacyAppealFactory.stamp_out_legacy_appeals(10, file_number, user, docket_number)
       end
       # veterans_with_250_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals(250, file_number, user) }
     end
