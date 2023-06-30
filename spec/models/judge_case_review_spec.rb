@@ -137,8 +137,8 @@ describe JudgeCaseReview, :all_dbs do
                dedeadline: 6.days.ago)
       end
       let!(:vacols_case) { create(:case, bfkey: "123456") }
-      let!(:vacols_issue1) { create(:case_issue, isskey: "123456") }
-      let!(:vacols_issue2) { create(:case_issue, isskey: "123456") }
+      let(:vacols_issue1) { create(:case_issue, isskey: "123456") }
+      let(:vacols_issue2) { create(:case_issue, isskey: "123456") }
       let!(:judge_staff) { create(:staff, :judge_role, slogid: "CFS456", sdomainid: judge.css_id, sattyid: "AA") }
 
       context "when all parameters are present to sign a decision and VACOLS update is successful" do
@@ -208,17 +208,20 @@ describe JudgeCaseReview, :all_dbs do
             # 1 vacated, 1 remanded and 1 blank issue created because of vacated disposition
             expect(vacols_issues.size).to eq 3
 
-            expect(vacols_issues.first.issdc).to eq "5"
-            expect(vacols_issues.first.issseq).to eq vacols_issue1.issseq
-            expect(vacols_issues.first.issmduser).to eq "CFS456"
+            vacols_issue = vacols_issues.find_by(issseq: 1)
+            expect(vacols_issue.issdc).to eq "5"
+            expect(vacols_issue.issseq).to eq vacols_issue1.issseq
+            expect(vacols_issue.issmduser).to eq "CFS456"
 
-            expect(vacols_issues.second.issdc).to eq "3"
-            expect(vacols_issues.second.issseq).to eq vacols_issue2.issseq
-            expect(vacols_issues.second.issmduser).to eq "CFS456"
+            vacols_issue = vacols_issues.find_by(issseq: 2)
+            expect(vacols_issue.issdc).to eq "3"
+            expect(vacols_issue.issseq).to eq vacols_issue2.issseq
+            expect(vacols_issue.issmduser).to eq "CFS456"
 
-            expect(vacols_issues.third.issdc).to eq nil
-            expect(vacols_issues.third.issseq).to eq(vacols_issue2.issseq + 1)
-            expect(vacols_issues.third.issaduser).to eq "CFS456"
+            vacols_issue = vacols_issues.find_by(issseq: 3)
+            expect(vacols_issue.issdc).to eq nil
+            expect(vacols_issue.issseq).to eq(vacols_issue2.issseq + 1)
+            expect(vacols_issue.issaduser).to eq "CFS456"
 
             remand_reasons = VACOLS::RemandReason.where(rmdkey: "123456", rmdissseq: vacols_issue2.issseq)
             expect(remand_reasons.size).to eq 1
