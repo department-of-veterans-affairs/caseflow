@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe LegacyAppealDispatch do
+describe LegacyAppealDispatch, :all_dbs do
   include ActiveJob::TestHelper
 
   describe "#call" do
