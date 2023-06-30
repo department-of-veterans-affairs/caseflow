@@ -23,11 +23,12 @@ describe AmaAppealDispatch, :postgres do
   before do
     BvaDispatch.singleton.add_user(user)
     BvaDispatchTask.create_from_root_task(root_task)
-    Seeds::NotificationEvents.new.seed!
     allow(BgsPowerOfAttorney).to receive(:find_or_create_by_file_number)
       .with(appeal.veteran_file_number).and_return(bgs_poa)
     allow(bgs_poa).to receive(:participant_id).and_return(poa_participant_id)
   end
+
+  before(:all) { Seeds::NotificationEvents.new.seed! }
 
   subject do
     perform_enqueued_jobs do

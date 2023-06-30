@@ -25,8 +25,9 @@ describe LegacyAppealDispatch, :all_dbs do
         created_by_id: user.id }
     end
 
+    before(:all) { Seeds::NotificationEvents.new.seed! }
+
     before do
-      Seeds::NotificationEvents.new.seed!
       BvaDispatch.singleton.add_user(user)
       BvaDispatchTask.create_from_root_task(root_task)
     end
