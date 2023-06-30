@@ -31,7 +31,8 @@ namespace :db do
                 bfcorlid: vacols_veteran_record.slogid,
                 bfkey: key,
                 bfcurloc: VACOLS::Staff.find_by(sdomainid: user.css_id).slogid,
-                bfmpro: "ACT"
+                bfmpro: "ACT",
+                bfddec: nil,
               },
               staff_attrs: {
                 sattyid: user.id,
