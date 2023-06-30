@@ -15,6 +15,7 @@ module.exports = {
           "activeRequestIssues": 1
         },
         "issue_count": 1,
+        "issue_types": "Caregiver | Eligibility",
         "tasks_url": "/decision_reviews/vha",
         "id": 17397,
         "created_at": "2022-12-28T13:19:13.801-05:00",
@@ -43,6 +44,7 @@ module.exports = {
           "activeRequestIssues": 1
         },
         "issue_count": 1,
+        "issue_types": "Initial Eligibility and Enrollment in VHA Healthcare",
         "tasks_url": "/decision_reviews/vha",
         "id": 17395,
         "created_at": "2022-12-22T12:03:57.796-05:00",
@@ -71,6 +73,7 @@ module.exports = {
           "activeRequestIssues": 1
         },
         "issue_count": 1,
+        "issue_types": "Initial Eligibility and Enrollment in VHA Healthcare",
         "tasks_url": "/decision_reviews/vha",
         "id": 17394,
         "created_at": "2022-12-22T11:46:24.041-05:00",
@@ -99,6 +102,7 @@ module.exports = {
           "activeRequestIssues": 0
         },
         "issue_count": 0,
+        "issue_types": "",
         "tasks_url": "/decision_reviews/vha",
         "id": 17386,
         "created_at": "2022-12-16T10:47:58.296-05:00",
@@ -127,6 +131,7 @@ module.exports = {
           "activeRequestIssues": 1
         },
         "issue_count": 1,
+        "issue_types": "Caregiver | Revocation/Discharge",
         "tasks_url": "/decision_reviews/vha",
         "id": 17376,
         "created_at": "2022-12-07T10:39:35.204-05:00",
@@ -155,6 +160,7 @@ module.exports = {
           "activeRequestIssues": 1
         },
         "issue_count": 1,
+        "issue_types": "Initial Eligibility and Enrollment in VHA Healthcare",
         "tasks_url": "/decision_reviews/vha",
         "id": 17375,
         "created_at": "2022-12-07T10:32:31.051-05:00",
@@ -183,6 +189,7 @@ module.exports = {
           "activeRequestIssues": 1
         },
         "issue_count": 1,
+        "issue_types": "Initial Eligibility and Enrollment in VHA Healthcare",
         "tasks_url": "/decision_reviews/vha",
         "id": 15128,
         "created_at": "2022-11-18T16:43:16.547-05:00",
@@ -210,6 +217,7 @@ module.exports = {
           "issueCount": 1
         },
         "issue_count": 1,
+        "issue_types": "Spina Bifida Treatment (Non-Compensation)",
         "tasks_url": "/decision_reviews/vha",
         "id": 17382,
         "created_at": "2022-12-14T13:55:26.852-05:00",
@@ -238,6 +246,7 @@ module.exports = {
           "activeRequestIssues": 1
         },
         "issue_count": 1,
+        "issue_types": "Foreign Medical Program",
         "tasks_url": "/decision_reviews/vha",
         "id": 16359,
         "created_at": "2022-11-30T10:23:06.122-05:00",
@@ -266,6 +275,7 @@ module.exports = {
           "activeRequestIssues": 2
         },
         "issue_count": 2,
+        "issue_types": "Foreign Medical Program,Spina Bifida Treatment (Non-Compensation)",
         "tasks_url": "/decision_reviews/vha",
         "id": 16350,
         "created_at": "2022-11-30T10:23:05.591-05:00",
@@ -294,6 +304,7 @@ module.exports = {
           "activeRequestIssues": 1
         },
         "issue_count": 1,
+        "issue_types": "Spina Bifida Treatment (Non-Compensation)",
         "tasks_url": "/decision_reviews/vha",
         "id": 16337,
         "created_at": "2022-11-30T10:23:04.813-05:00",
@@ -322,6 +333,7 @@ module.exports = {
           "activeRequestIssues": 1
         },
         "issue_count": 1,
+        "issue_types": "Camp Lejune Family Member",
         "tasks_url": "/decision_reviews/vha",
         "id": 16335,
         "created_at": "2022-11-30T10:23:04.712-05:00",
@@ -350,6 +362,7 @@ module.exports = {
           "activeRequestIssues": 1
         },
         "issue_count": 1,
+        "issue_types": "Camp Lejune Family Member",
         "tasks_url": "/decision_reviews/vha",
         "id": 16360,
         "created_at": "2022-11-30T10:23:06.190-05:00",
@@ -378,6 +391,7 @@ module.exports = {
           "activeRequestIssues": 1
         },
         "issue_count": 1,
+        "issue_types": "Other",
         "tasks_url": "/decision_reviews/vha",
         "id": 16355,
         "created_at": "2022-11-30T10:23:05.856-05:00",
@@ -406,6 +420,7 @@ module.exports = {
           "activeRequestIssues": 1
         },
         "issue_count": 1,
+        "issue_types": "Caregiver | Other",
         "tasks_url": "/decision_reviews/vha",
         "id": 16348,
         "created_at": "2022-11-30T10:23:05.473-05:00",
