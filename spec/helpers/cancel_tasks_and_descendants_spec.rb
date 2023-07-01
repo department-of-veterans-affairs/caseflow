@@ -7,7 +7,7 @@ describe CancelTasksAndDescendants do
     context "when task_relation is not given" do
       subject(:call) { described_class.call }
 
-      it "assignes RequestStore[:current_user]" do
+      it "assigns RequestStore[:current_user]" do
         expect { call }.to change { RequestStore[:current_user] }.
           from(nil).to(User.system_user)
       end
