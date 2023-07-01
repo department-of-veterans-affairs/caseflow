@@ -10,7 +10,7 @@ class QuarterlyNotificationsJob < CaseflowJob
   # Params: none
   #
   # Response: None
-  def perform(dry_run: false)
+  def perform
     RequestStore.store[:current_user] = User.system_user
 
     appeal_states_of_interest.in_batches(of: QUERY_LIMIT.to_i).each_record do |appeal_state|
@@ -24,7 +24,7 @@ class QuarterlyNotificationsJob < CaseflowJob
       begin
         MetricsService.record("Creating Quarterly Notification for #{appeal.class} ID #{appeal.id}",
                               name: "send_quarterly_notifications(appeal_state, appeal)") do
-          send_quarterly_notifications(appeal_state, appeal) unless dry_run
+          send_quarterly_notifications(appeal_state, appeal)
         end
       rescue StandardError => error
         log_error("QuarterlyNotificationsJob::Error - Unable to send a notification for "\
