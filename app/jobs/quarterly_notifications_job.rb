@@ -13,27 +13,38 @@ class QuarterlyNotificationsJob < CaseflowJob
   def perform
     RequestStore.store[:current_user] = User.system_user
 
-    appeal_states_of_interest.in_batches(of: QUERY_LIMIT.to_i).each_record do |appeal_state|
-      appeal = appeal_state.appeal
+    appeal_state_ids = appeal_states_of_interest.pluck(:id)
 
-      if appeal.nil?
-        log_appeal_not_found(appeal_state)
-        next
-      end
+    ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
+      Parallel.each(appeal_state_ids, in_threads: 8, progress: "Creating Quaterly Notifications") do |id|
+        Rails.application.executor.wrap do
+          appeal_state = AppealState.find(id)
+          appeal = appeal_state&.appeal
 
-      begin
-        MetricsService.record("Creating Quarterly Notification for #{appeal.class} ID #{appeal.id}",
-                              name: "send_quarterly_notifications(appeal_state, appeal)") do
-          send_quarterly_notifications(appeal_state, appeal)
+          if appeal.nil?
+            log_appeal_not_found(appeal_state)
+            next
+          end
+
+          begin
+            send_and_log_quarterly_notification(appeal_state, appeal)
+          rescue StandardError => error
+            log_error("QuarterlyNotificationsJob::Error - Unable to send a notification for "\
+              "#{appeal_state.appeal_type} ID #{appeal_state.appeal_id} because of #{error}")
+          end
         end
-      rescue StandardError => error
-        log_error("QuarterlyNotificationsJob::Error - Unable to send a notification for "\
-          "#{appeal_state.appeal_type} ID #{appeal_state.appeal_id} because of #{error}")
       end
     end
   end
 
   private
+
+  def send_and_log_quarterly_notification(appeal_state, appeal)
+    MetricsService.record("Creating Quarterly Notification for #{appeal.class} ID #{appeal.id}",
+                          name: "send_quarterly_notifications(appeal_state, appeal)") do
+      send_quarterly_notifications(appeal_state, appeal)
+    end
+  end
 
   # Purpose: Method to be called with an error need to be logged to the rails logger
   #
