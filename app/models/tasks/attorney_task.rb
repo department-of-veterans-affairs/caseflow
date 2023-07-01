@@ -18,7 +18,7 @@ class AttorneyTask < Task
   validate :assigned_by_role_is_valid, if: :will_save_change_to_assigned_by_id?
   validate :assigned_to_role_is_valid, if: :will_save_change_to_assigned_to_id?
 
-  attr_accessor :assigned_to_judge
+  @@assign_to_judge = false
 
   def available_actions(user)
     atty_actions = [
