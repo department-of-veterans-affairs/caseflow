@@ -30,9 +30,7 @@ module WarRoom
     end
 
     def legacy_appeal
-      return @legacy_appeal if defined?(@legacy_appeal)
-
-      @legacy_appeal = LegacyAppeal.find_by!(vacols_id: @vacols_id)
+      LegacyAppeal.find_by!(vacols_id: @vacols_id)
     end
   end
 end
