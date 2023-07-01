@@ -108,6 +108,7 @@ class TasksController < ApplicationController
   # }
   def update
     Task.transaction do
+      task.assigned_to_judge = (params[:task][:assigned_to_judge] || false)
       tasks = task.update_from_params(update_params, current_user)
       tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
@@ -378,6 +379,7 @@ class TasksController < ApplicationController
       :select_opc,
       :radio_value,
       :parent_id,
+      :assigned_to_judge,
       reassign: [:assigned_to_id, :assigned_to_type, :instructions, previous: [:details, :old_judge, :new_judge]],
       business_payloads: [:description, values: {}]
     )

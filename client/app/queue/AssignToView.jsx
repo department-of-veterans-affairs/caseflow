@@ -85,7 +85,7 @@ class AssignToView extends React.Component {
   }
 
   submit = () => {
-    const { appeal, task, isReassignAction, isTeamAssign } = this.props;
+    const { appeal, task, isReassignAction, isTeamAssign, isJudgeAssignee } = this.props;
 
     const action = getAction(this.props);
     const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
@@ -173,6 +173,8 @@ class AssignToView extends React.Component {
 
   reassignTask = () => {
     const task = this.props.task;
+    const assigned_to_judge = this.props.isJudgeAssignee;
+
     const payload = {
       data: {
         task: {
@@ -185,7 +187,8 @@ class AssignToView extends React.Component {
               old_judge: task.assigneeName,
               new_judge: this.state.selectedValue
             }
-          }
+          },
+          assigned_to_judge: assigned_to_judge
         }
       }
     };
@@ -429,6 +432,7 @@ AssignToView.propTypes = {
   isReassignAction: PropTypes.bool,
   isTeamAssign: PropTypes.bool,
   onReceiveAmaTasks: PropTypes.func,
+  isJudgeAssignee: PropTypes.bool,
   legacyReassignToJudge: PropTypes.func,
   legacyReassignToAttorney: PropTypes.func,
   requestPatch: PropTypes.func,

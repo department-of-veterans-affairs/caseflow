@@ -384,7 +384,7 @@ class QueueApp extends React.PureComponent {
   );
 
   routedReassignToJudgeLegacy = (props) => (
-    <AssignToView isReassignAction {...props.match.params} />
+    <AssignToView isReassignAction isJudgeAssignee={true} {...props.match.params} />
   );
 
   routedCompleteTaskModal = (props) => (

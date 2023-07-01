@@ -18,6 +18,8 @@ class AttorneyTask < Task
   validate :assigned_by_role_is_valid, if: :will_save_change_to_assigned_by_id?
   validate :assigned_to_role_is_valid, if: :will_save_change_to_assigned_to_id?
 
+  attr_accessor :assigned_to_judge
+
   def available_actions(user)
     atty_actions = [
       (Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h if ama? && appeal.vacate?),
@@ -116,6 +118,8 @@ class AttorneyTask < Task
   end
 
   def assigned_to_role_is_valid
+    return true if assigned_to_judge
+    
     is_self = assigned_to == assigned_by
 
     errors.add(:assigned_to, "has to be an attorney") if assigned_to && !assigned_to.attorney_in_vacols? && !is_self
