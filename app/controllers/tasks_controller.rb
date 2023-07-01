@@ -379,7 +379,6 @@ class TasksController < ApplicationController
       :select_opc,
       :radio_value,
       :parent_id,
-      :assigned_to_judge,
       reassign: [:assigned_to_id, :assigned_to_type, :instructions, previous: [:details, :old_judge, :new_judge]],
       business_payloads: [:description, values: {}]
     )
