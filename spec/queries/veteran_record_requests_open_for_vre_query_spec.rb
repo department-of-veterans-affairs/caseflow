@@ -27,7 +27,7 @@ describe VeteranRecordRequestsOpenForVREQuery do
       let!(:in_progress) { create(:veteran_record_request_task, :in_progress, assigned_to: non_vre_organization) }
       let!(:on_hold) { create(:veteran_record_request_task, :on_hold, assigned_to: non_vre_organization) }
 
-      let(:vre_business_line) { create(:business_line, name: "Veterans Readiness and Employment") }
+      let(:vre_business_line) { create(:vre_business_line) }
       let(:non_vre_organization) { create(:organization) }
 
       it "only returns those that are both open and assigned to the VRE business line" do
