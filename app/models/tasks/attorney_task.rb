@@ -95,6 +95,7 @@ class AttorneyTask < Task
     type == AttorneyTask.name && params[:status].eql?(Constants.TASK_STATUSES.cancelled)
   end
 
+
   def can_be_moved_by_user?(user)
     return false unless parent.is_a?(JudgeTask)
 
