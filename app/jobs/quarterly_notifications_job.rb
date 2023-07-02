@@ -11,13 +11,13 @@ class QuarterlyNotificationsJob < CaseflowJob
   #
   # Response: None
   def perform
-    RequestStore.store[:current_user] = User.system_user
-
-    appeal_state_ids = appeal_states_of_interest.pluck(:id)
+    appeal_state_ids = ama_appeal_states_of_interest.pluck(:id)
 
     ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
       Parallel.each(appeal_state_ids, in_threads: 8, progress: "Creating Quaterly Notifications") do |id|
         Rails.application.executor.wrap do
+          RequestStore.store[:current_user] = User.system_user
+
           appeal_state = AppealState.find(id)
           appeal = appeal_state&.appeal
 
@@ -38,6 +38,35 @@ class QuarterlyNotificationsJob < CaseflowJob
   end
 
   private
+
+  def ama_appeal_states_of_interest
+    AppealState.find_by_sql(
+      <<-SQL
+        SELECT states.*
+        FROM appeal_states states
+        JOIN appeals a ON states.appeal_id = a.id AND states.appeal_type = 'Appeal'
+        LEFT OUTER JOIN notifications notifs ON a."uuid"::text = notifs.appeals_id
+          AND notifs.event_type = 'Quarterly Notification' AND notifs.created_at > ('2023-06-30'::date)
+        WHERE states.decision_mailed IS NOT true AND states.appeal_cancelled IS NOT TRUE
+        AND notifs.id IS null
+      SQL
+    )
+  end
+
+  def legacy_appeal_states_of_interest
+    AppealState.find_by_sql(
+      <<-SQL
+        SELECT states.*
+        FROM appeal_states states
+        JOIN legacy_appeals la ON states.appeal_id = la.id AND states.appeal_type = 'LegacyAppeal'
+        LEFT OUTER JOIN notifications notifs ON la.vacols_id = notifs.appeals_id
+          AND notifs.event_type = 'Quarterly Notification' AND notifs.created_at > ('2023-06-30'::date)
+        WHERE states.decision_mailed IS NOT true AND states.appeal_cancelled IS NOT TRUE
+        AND notifs.id IS null
+      SQL
+    )
+  end
+
 
   def send_and_log_quarterly_notification(appeal_state, appeal)
     MetricsService.record("Creating Quarterly Notification for #{appeal.class} ID #{appeal.id}",
