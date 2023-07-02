@@ -26,7 +26,7 @@ class AttorneyTask < Task
   #   @assign_to_judge || false
   # end
 
-  @@assign_to_judge = false
+  # @@assign_to_judge = false
 
   def available_actions(user)
     atty_actions = [
@@ -96,7 +96,7 @@ class AttorneyTask < Task
   end
 
   def update_from_params(params, user, assigned_to_judge = false)
-    @@assign_to_judge = assigned_to_judge
+    # @@assign_to_judge = assigned_to_judge
     update_params_will_cancel_attorney_task?(params) ? send_back_to_judge_assign!(params) : super(params, user)
   end
 
