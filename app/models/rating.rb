@@ -12,7 +12,7 @@ class Rating
   PACT_SPECIAL_ISSUES = [
     "agent orange - outside vietnam or unknown",
     "agent orange - vietnam",
-    "amytrophic lateral sclerosis (als)",
+    "amyotrophic lateral sclerosis (als)",
     "burn pit exposure",
     "environmental hazard in gulf war",
     "gulf war presumptive",
