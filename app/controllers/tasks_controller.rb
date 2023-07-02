@@ -108,8 +108,8 @@ class TasksController < ApplicationController
   # }
   def update
     Task.transaction do
-      assigned_to_judge = (params[:task][:assigned_to_judge] || false)
-      task.assign_to_judge = assigned_to_judge
+      # assigned_to_judge = (params[:task][:assigned_to_judge] || false)
+      # task.assign_to_judge = assigned_to_judge
       tasks = task.update_from_params(update_params, current_user)
       tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
