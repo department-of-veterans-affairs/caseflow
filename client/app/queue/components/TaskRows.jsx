@@ -347,35 +347,31 @@ class TaskRows extends React.PureComponent {
         return (
           <div style={divStyle}>
             <b>{text[0]}:</b>
-            <h5 style={hStyle}>Original:</h5>
-              {text.at(1) != "" &&
+            <div style={divStyle}>
+              <div style={{whiteSpace: 'pre-line'}}>
+                {text[2]}
+              </div>
+            </div>
+            {text[1] &&
               <React.Fragment>
-                <div>
-                  <small>Benefit type: {text[1]}</small>
+                <div style={divStyle}>
+                  Benefit type: {text[1]}
                 </div>
               </React.Fragment>}
-            <div style={divStyle}>
-              <small>{text[2]}</small>
-            </div>
-            <div style={divStyle}>
-              <small>{text[3]}</small>
-            </div>
-            {text.length > 4 &&
-            <React.Fragment>
-              <h5 style={hStyle}>Updated:</h5>
-              {text.at(1) != "" &&
-                <React.Fragment>
-                  <div>
-                    <small>Benefit type: {text[1]}</small>
-                  </div>
-                </React.Fragment>}
+            {text[4] ?
+              <React.Fragment>
+              <h5 style={hStyle}>Original:</h5>
               <div style={divStyle}>
-                <small>{text[2]}</small>
+                <small>{text[3]}</small>
               </div>
-              <div style={divStyle}>
-                <small>{text[4]}</small>
+                <h5 style={hStyle}>Updated:</h5>
+                <div style={divStyle}>
+                  <small>{text[4]}</small>
               </div>
-            </React.Fragment>}
+              </React.Fragment> :
+                <div style={divStyle}>
+                  {text[3]}
+                </div>}
             {renderMstLabel(text[5], hStyle)}
             {renderPactLabel(text[6], hStyle)}
           </div>
