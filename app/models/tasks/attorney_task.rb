@@ -26,6 +26,8 @@ class AttorneyTask < Task
   #   @assign_to_judge || false
   # end
 
+  @@assign_to_judge = false
+
   def available_actions(user)
     atty_actions = [
       (Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h if ama? && appeal.vacate?),
@@ -93,8 +95,8 @@ class AttorneyTask < Task
     end
   end
 
-  def update_from_params(params, user)
-    @@assign_to_judge = params[:assigned_to_judge]
+  def update_from_params(params, user, assigned_to_judge = false)
+    @@assign_to_judge = assigned_to_judge
     update_params_will_cancel_attorney_task?(params) ? send_back_to_judge_assign!(params) : super(params, user)
   end
 
