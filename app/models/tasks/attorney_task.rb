@@ -9,6 +9,8 @@
 # them to be assigned to an attorney from another team or even the assigning VLJ themselves
 
 class AttorneyTask < Task
+  attr_accessor :assign_to_judge 
+
   validate :only_open_task_of_type, on: :create,
                                     unless: :skip_check_for_only_open_task_of_type
 
@@ -16,9 +18,8 @@ class AttorneyTask < Task
   validates :parent, presence: true, if: :ama?
 
   validate :assigned_by_role_is_valid, if: :will_save_change_to_assigned_by_id?
-  validate :assigned_to_role_is_valid, if: :will_save_change_to_assigned_to_id?
+  validate :assigned_to_role_is_valid, if: -> { will_save_change_to_assigned_to_id? && assign_to_judge == false } 
 
-  @@assign_to_judge = false
 
   def available_actions(user)
     atty_actions = [
@@ -118,9 +119,7 @@ class AttorneyTask < Task
     assigned_to == user && assigned_by == user
   end
 
-  def assigned_to_role_is_valid
-    #return true if @@assign_to_judge 
-    
+  def assigned_to_role_is_valid    
     is_self = assigned_to == assigned_by
     errors.add(:assigned_to, "has to be an attorney") if assigned_to && !assigned_to.attorney_in_vacols? && !is_self
   end
