@@ -88,6 +88,7 @@ class AttorneyTask < Task
   end
 
   def update_from_params(params, user)
+    @@assign_to_judge = params[:assigned_to_judge]
     update_params_will_cancel_attorney_task?(params) ? send_back_to_judge_assign!(params) : super(params, user)
   end
 
@@ -118,10 +119,9 @@ class AttorneyTask < Task
   end
 
   def assigned_to_role_is_valid
-    return true if assigned_to_judge
+    return true if @@assign_to_judge 
     
     is_self = assigned_to == assigned_by
-
     errors.add(:assigned_to, "has to be an attorney") if assigned_to && !assigned_to.attorney_in_vacols? && !is_self
   end
 
