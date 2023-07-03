@@ -137,9 +137,11 @@ class ExternalApi::PacmanService
 
     def jwt_payload
       current_epoch_timestamp = DateTime.now.strftime("%Q").to_i / 1000.floor
+
       {
         iat: current_epoch_timestamp,
         iss: ENV["PACMAN_API_TOKEN_ISSUER"],
+        aud: ENV["PACMAN_API_TOKEN_ISSUER"],
         samlToken: ENV["PACMAN_API_SAML_TOKEN"],
         externalSystemSource: ENV["PACMAN_API_SYS_ACCOUNT"]
       }
@@ -173,11 +175,10 @@ class ExternalApi::PacmanService
       stringified_data = jwt_payload.to_json.encode("UTF-8")
       encoded_data = base64url(stringified_data)
       token = "#{encoded_header}.#{encoded_data}"
-      signature = OpenSSL::HMAC.digest("SHA256", ENV["PACMAN_API_TOKEN_SECRET"], token)
-      signature = base64url(signature)
+      signature = OpenSSL::HMAC.digest("SHA512", ENV["PACMAN_API_TOKEN_SECRET"], token)
 
       # Signed Token
-      "#{token}.#{signature}"
+      "#{token}.#{base64url(signature)}"
     end
 
     # Purpose: Build and send the request to the server
