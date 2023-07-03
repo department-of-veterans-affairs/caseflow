@@ -182,7 +182,6 @@ class ExternalApi::PacmanService
       request.open_timeout = 30
       request.read_timeout = 30
       request.body = body.to_json unless body.nil?
-      # not sure how user validation will be handled
       request.auth.ssl.ssl_version  = :TLSv1_2
       request.auth.ssl.ca_cert_file = ENV["SSL_CERT_FILE"]
       request.headers = headers.merge("X-Forwarded-User": generate_token)
