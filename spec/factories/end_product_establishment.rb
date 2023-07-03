@@ -24,6 +24,11 @@ FactoryBot.define do
       established_at { 5.days.ago }
     end
 
+    trait :out_of_sync_with_vbms do
+      synced_status { "PEND" }
+      vbms_ext_claim { create(:vbms_ext_claim, :cleared, claim_id: reference_id.to_i) }
+    end
+
     after(:build) do |end_product_establishment, _evaluator|
       Generators::EndProduct.build(
         veteran_file_number: end_product_establishment.veteran_file_number,
