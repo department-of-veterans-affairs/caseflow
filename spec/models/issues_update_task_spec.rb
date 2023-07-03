@@ -22,23 +22,29 @@ describe IssuesUpdateTask do
       let(:distribution_task) { nil }
 
       it "throws an error" do
-        expect { task_class.create!(
-          appeal: root_task.appeal,
-          parent_id: distribution_task&.id,
-          type: task_class.name,
-          assigned_to: bva_intake,
-          assigned_by: user) }.to raise_error(ActiveRecord::RecordInvalid)
+        expect {
+          task_class.create!(
+            appeal: root_task.appeal,
+            parent_id: distribution_task&.id,
+            type: task_class.name,
+            assigned_to: bva_intake,
+            assigned_by: user
+          )
+        }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
 
     context "proper params are sent" do
       it "creates the new task" do
-        expect { task_class.create!(
-          appeal: root_task.appeal,
-          parent_id: distribution_task&.id,
-          type: task_class.name,
-          assigned_to: bva_intake,
-          assigned_by: user) }.to change{IssuesUpdateTask.count}.by(1)
+        expect {
+          task_class.create!(
+            appeal: root_task.appeal,
+            parent_id: distribution_task&.id,
+            type: task_class.name,
+            assigned_to: bva_intake,
+            assigned_by: user
+          )
+        }.to change { IssuesUpdateTask.count }.by(1)
       end
     end
 
@@ -158,7 +164,7 @@ describe IssuesUpdateTask do
           edit_pact: true
           # mst_reason: "MST reason here",
           # pact_reason: "PACT reason here"
-        }-
+        }
       end
 
       subject do
@@ -196,7 +202,7 @@ describe IssuesUpdateTask do
           original_mst: true,
           original_pact: true,
           edit_mst: false,
-          edit_pact: false,
+          edit_pact: false
           # mst_reason: "MST reason here",
           # pact_reason: "PACT reason here"
         }
