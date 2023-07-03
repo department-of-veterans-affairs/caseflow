@@ -88,11 +88,14 @@ class UnassignedCasesPage extends React.PureComponent {
               includeType
               includeDocketNumber
               includeIssueCount
+              {...(userIsCamoEmployee ? { includeIssueTypes: true } : {})}
               includeDaysWaiting
               includeReaderLink
               includeNewDocsIcon
               tasks={this.props.tasks}
-              userId={userId} />
+              userId={userId}
+              {...(userIsCamoEmployee ? { preserveQueueFilter: true } : {})}
+            />
           }
         </React.Fragment>
       </div>

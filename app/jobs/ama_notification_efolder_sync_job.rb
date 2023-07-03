@@ -4,6 +4,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   queue_with_priority :low_priority
 
   BATCH_LIMIT = ENV["AMA_NOTIFICATION_REPORT_SYNC_LIMIT"] || 500
+  GEN_COUNT_MUTEX = Mutex.new
 
   # Purpose: Determines which appeals need a notification report generated and uploaded to efolder,
   #          then uploads reports for those appeals
@@ -13,7 +14,9 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   # Return: Array of appeals that were attempted to upload notification reports to efolder
   def perform
     RequestStore[:current_user] = User.system_user
+
     all_active_ama_appeals = appeals_recently_outcoded + appeals_never_synced + ready_for_resync
+
     sync_notification_reports(all_active_ama_appeals.first(BATCH_LIMIT.to_i))
   end
 
@@ -42,20 +45,31 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   #
   # Return: Array of appeals that have never been synced and meet all requirements for syncing
   def appeals_never_synced
-    # A list of unique appeal ids (Primary Key) that exist in VBMSUploadedDocument and are of type BVA Case Notification
-    appeal_ids_synced = VbmsUploadedDocument.distinct
-      .where(appeal_type: "Appeal", document_type: "BVA Case Notifications")
-      .successfully_uploaded
-      .pluck(:appeal_id)
-
     # A list of Appeals that have never had notification reports generated and synced with VBMS
-    Appeal.joins("JOIN notifications ON \
-        notifications.appeals_id = appeals.\"uuid\"::text AND \
-        notifications.appeals_type = 'Appeal'")
+    Appeal.joins(successful_notifications_join_clause)
+      .joins(previous_case_notifications_document_join_clause)
       .active
       .non_deceased_appellants
-      .where.not(id: appeal_ids_synced)
+      .where("vud.id IS NULL")
       .group(:id)
+  end
+
+  def successful_notifications_join_clause
+    "JOIN notifications ON \
+    notifications.appeals_id = appeals.\"uuid\"::text \
+    AND notifications.appeals_type = 'Appeal' \
+    AND (notifications.email_notification_status IS NULL OR \
+      notifications.email_notification_status NOT IN \
+      ('No Participant Id Found', 'No Claimant Found', 'No External Id')) \
+    AND (notifications.sms_notification_status IS NULL OR \
+      notifications.sms_notification_status NOT IN \
+      ('No Participant Id Found', 'No Claimant Found', 'No External Id'))"
+  end
+
+  def previous_case_notifications_document_join_clause
+    "LEFT JOIN vbms_uploaded_documents vud ON vud.appeal_type = 'Appeal' \
+    AND vud.appeal_id = appeals.id \
+    AND vud.document_type = 'BVA Case Notifications'"
   end
 
   # Purpose: Determines which appeals need a NEW notification report uploaded to efolder
@@ -84,21 +98,23 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   #
   # Return: Array of active appeals
   def get_appeals_from_prev_synced_ids(appeal_ids)
-    Appeal.active.find_by_sql(
-      <<-SQL
-        SELECT appeals.*
-        FROM appeals
-        JOIN (#{appeals_on_latest_notifications(appeal_ids)}) AS notifs ON
-          notifs.appeals_id = appeals."uuid"::text AND notifs.appeals_type = 'Appeal'
-        JOIN (#{appeals_on_latest_doc_uploads(appeal_ids)}) AS vbms_uploads ON
-          vbms_uploads.appeal_id = appeals.id AND vbms_uploads.appeal_type = 'Appeal'
-        WHERE
-          notifs.notified_at > vbms_uploads.attempted_at
-        OR
-          notifs.created_at > vbms_uploads.attempted_at
-        GROUP BY appeals.id
-      SQL
-    )
+    appeal_ids.in_groups_of(1000, false).flat_map do |ids|
+      Appeal.active.find_by_sql(
+        <<-SQL
+          SELECT appeals.*
+          FROM appeals
+          JOIN (#{appeals_on_latest_notifications(ids)}) AS notifs ON
+            notifs.appeals_id = appeals."uuid"::text AND notifs.appeals_type = 'Appeal'
+          JOIN (#{appeals_on_latest_doc_uploads(ids)}) AS vbms_uploads ON
+            vbms_uploads.appeal_id = appeals.id AND vbms_uploads.appeal_type = 'Appeal'
+          WHERE
+            notifs.notified_at > vbms_uploads.attempted_at
+          OR
+            notifs.created_at > vbms_uploads.attempted_at
+          GROUP BY appeals.id
+        SQL
+      )
+    end
   end
 
   def appeals_on_latest_notifications(appeal_ids)
@@ -135,8 +151,6 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   def format_appeal_ids_sql_list(appeal_ids)
     return "" if appeal_ids.empty?
 
-    return "a.id = #{appeal_ids.first}" if appeal_ids.one?
-
     "AND a.id IN (#{appeal_ids.join(',').chomp(',')})"
   end
 
@@ -146,15 +160,21 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   def sync_notification_reports(appeals)
     Rails.logger.info("Starting to sync notification reports for AMA appeals")
     gen_count = 0
-    appeals.each do |appeal|
-      begin
-        appeal.upload_notification_report!
-        gen_count += 1
-      rescue StandardError => error
-        log_error(error)
-        next
+
+    ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
+      Parallel.each(appeals, in_threads: 4, progress: "Generating notification reports") do |appeal|
+        Rails.application.executor.wrap do
+          begin
+            RequestStore[:current_user] = User.system_user
+            appeal.upload_notification_report!
+            GEN_COUNT_MUTEX.synchronize { gen_count += 1 }
+          rescue StandardError => error
+            log_error(error)
+          end
+        end
       end
     end
+
     Rails.logger.info("Finished generating #{gen_count} notification reports for AMA appeals")
   end
 end
