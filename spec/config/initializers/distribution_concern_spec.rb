@@ -5,8 +5,9 @@
 # we cannot test the negative of this expectation because once we initialize the Distribution class
 # here, it will never load AutomaticCaseDistribution
 RSpec.describe "Distribution concern module loading", :all_dbs do
+  before { FeatureToggle.enable!(:acd_distribute_by_docket_date) }
+
   it "loads ByDocketDateDistribution if :acd_distribute_by_docket_date is enabled" do
-    FeatureToggle.enable!(:acd_distribute_by_docket_date)
     dist = Distribution.new
     expect(dist.class.include?(ByDocketDateDistribution)).to eq true
   end
