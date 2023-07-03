@@ -218,7 +218,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       v_and_r_section.find("div", exact_text: "Decision Reasons (1)").click
 
       click_button "Save Changes"
-      refresh_if_needed(cavc_remand.remand_appeal.uuid)
+      reload_case_detail_page(cavc_remand.remand_appeal.uuid)
       expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
       click_button "CAVC Dashboard"
 
@@ -231,17 +231,7 @@ end
 
 def go_to_dashboard(appeal_uuid)
   visit "/queue/appeals/#{appeal_uuid}/"
-  refresh_if_needed(appeal_uuid)
+  reload_case_detail_page(appeal_uuid)
   click_button "CAVC Dashboard"
   expect(page).to have_current_path("/queue/appeals/#{appeal_uuid}/cavc_dashboard", ignore_query: true)
-end
-
-# this refresh_if_needed method will be removed after 24058 has been merged with master.
-# replaced with
-# -> https://github.com/department-of-veterans-affairs/caseflow/blob/e10bbffc196ffd6036de976ace99c4ff557548cb/spec/support/feature_helper.rb#L102
-def refresh_if_needed(appeal_uuid)
-  if page.has_text?("Unable to load this case")
-    page.find("a", text: "refresh the page").click
-    expect(page).to have_current_path("/queue/appeals/#{appeal_uuid}/", ignore_query: true)
-  end
 end
