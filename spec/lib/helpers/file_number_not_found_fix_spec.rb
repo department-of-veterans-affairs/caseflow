@@ -7,9 +7,6 @@ describe FileNumberNotFoundFix, :postgres do
 
   before do
     allow(subject).to receive(:upload_logs_to_s3).with(anything).and_return("logs")
-  end
-
-  before do
     Timecop.freeze(Time.zone.now)
   end
 
@@ -24,8 +21,14 @@ describe FileNumberNotFoundFix, :postgres do
     let!(:veteran_2) { create(:veteran, ssn: number_2, file_number: number_2) }
     let!(:appeal) { create(:appeal, veteran_file_number: number) }
     let!(:appeal_2) { create(:appeal, veteran_file_number: number_2) }
-    let!(:decision_document) { create(:decision_document, appeal_type: "Appeal", appeal_id: appeal.id, error: error_text) }
-    let!(:decision_document_2) { create(:decision_document, appeal_type: "Appeal", appeal_id: appeal_2.id, error: error_text) }
+    let!(:decision_document) do
+      create(:decision_document, appeal_type: "Appeal",
+                                 appeal_id: appeal.id, error: error_text)
+    end
+    let!(:decision_document_2) do
+      create(:decision_document, appeal_type: "Appeal",
+                                 appeal_id: appeal_2.id, error: error_text)
+    end
 
     let!(:available_hearing_locations) { create(:available_hearing_locations, veteran_file_number: number) }
     let!(:available_hearing_locations_2) { create(:available_hearing_locations, veteran_file_number: number_2) }
@@ -43,12 +46,17 @@ describe FileNumberNotFoundFix, :postgres do
     context "#fix_multiple_records" do
       subject { FileNumberNotFoundFix.new }
 
+      let(:bgs_service) { instance_double("BGSService") }
+
+      before do
+        allow(BGSService).to receive(:new) { bgs_service }
+      end
+
       context "when job completes successfully" do
         let!(:expected_logs) { "#{Time.zone.now} FILENUMBERERROR::Log Records with errors: 0.  Status: Complete." }
 
         before do
-          allow(subject)
-            .to receive(:fetch_file_number_from_bgs_service)
+          allow(bgs_service).to receive(:fetch_file_number_by_ssn)
             .and_return(bgs_file_number, bgs_file_number_2)
         end
 
@@ -78,10 +86,12 @@ describe FileNumberNotFoundFix, :postgres do
           expect(document.reload.file_number).to eq(bgs_file_number)
         end
       end
+
       context "when job does not complete successfully" do
+        let(:bgs_service) { instance_double("BGSService") }
+
         it "rollsback everything" do
-          allow(subject)
-            .to receive(:fetch_file_number_from_bgs_service)
+          allow(bgs_service).to receive(:fetch_file_number_by_ssn)
             .and_return(nil)
 
           subject.fix_multiple_records
@@ -102,9 +112,9 @@ describe FileNumberNotFoundFix, :postgres do
       context "when file vet file_number matches VBMS file_number" do
         describe "when file number from vbms = veteran_file_number" do
           it "does not update the file_number" do
-            allow(subject)
-              .to receive(:fetch_file_number_from_bgs_service)
+            allow(bgs_service).to receive(:fetch_file_number_by_ssn)
               .and_return(number)
+
             subject.fix_multiple_records
             expect(veteran.reload.file_number).to eq(number)
           end
@@ -112,8 +122,7 @@ describe FileNumberNotFoundFix, :postgres do
 
         describe "when file number from vbms is nil" do
           it "does not update the file_number" do
-            allow(subject)
-              .to receive(:fetch_file_number_from_bgs_service)
+            allow(bgs_service).to receive(:fetch_file_number_by_ssn)
               .and_return(nil)
             subject.fix_multiple_records
             expect(veteran.reload.file_number).to eq(number)
@@ -125,12 +134,17 @@ describe FileNumberNotFoundFix, :postgres do
     context "#single_record_fix" do
       subject { FileNumberNotFoundFix.new }
 
+      let(:bgs_service) { instance_double("BGSService") }
+
+      before do
+        allow(BGSService).to receive(:new) { bgs_service }
+      end
+
       context "when job completes successfully" do
         let!(:expected_logs) { "Veteran File Number: 000979834. Status: File Number Updated" }
 
         before do
-          allow(subject)
-            .to receive(:fetch_file_number_from_bgs_service)
+          allow(bgs_service).to receive(:fetch_file_number_by_ssn)
             .and_return(bgs_file_number, bgs_file_number_2)
         end
 
@@ -158,10 +172,10 @@ describe FileNumberNotFoundFix, :postgres do
           expect(document.reload.file_number).to eq(bgs_file_number)
         end
       end
+
       context "when job does not complete successfully" do
         it "rollsback everything" do
-          allow(subject)
-            .to receive(:fetch_file_number_from_bgs_service)
+          allow(bgs_service).to receive(:fetch_file_number_by_ssn)
             .and_return(nil)
 
           subject.single_record_fix(appeal)
@@ -182,8 +196,7 @@ describe FileNumberNotFoundFix, :postgres do
       context "when file vet file_number matches VBMS file_number" do
         describe "when file number from vbms = veteran_file_number" do
           it "does not update the file_number" do
-            allow(subject)
-              .to receive(:fetch_file_number_from_bgs_service)
+            allow(bgs_service).to receive(:fetch_file_number_by_ssn)
               .and_return(number)
             subject.single_record_fix(appeal)
             expect(veteran.reload.file_number).to eq(number)
@@ -192,8 +205,7 @@ describe FileNumberNotFoundFix, :postgres do
 
         describe "when file number from vbms is nil" do
           it "does not update the file_number" do
-            allow(subject)
-              .to receive(:fetch_file_number_from_bgs_service)
+            allow(bgs_service).to receive(:fetch_file_number_by_ssn)
               .and_return(nil)
             subject.single_record_fix(appeal)
             expect(veteran.reload.file_number).to eq(number)
@@ -206,21 +218,28 @@ describe FileNumberNotFoundFix, :postgres do
   context "legacy appeal" do
     let!(:bgs_file_number) { "000979834S" }
     let!(:veteran_2) { create(:veteran, ssn: "343434349") }
-    let!(:appeal_2) { create(:legacy_appeal, vbms_id: "343434349", vacols_case: create(:case, bfcorlid: "399999998S")) }
+    let!(:appeal_2) do
+      create(:legacy_appeal, vbms_id: "343434349",
+                             vacols_case: create(:case, bfcorlid: "399999998S"))
+    end
     let!(:form8) { create(:default_form8, file_number: "343434349S") }
-    let!(:decision_document) { create(:decision_document, appeal_type: "LegacyAppeal", appeal_id: appeal_2.id, error: error_text) }
+    let!(:decision_document) do
+      create(:decision_document, appeal_type: "LegacyAppeal",
+                                 appeal_id: appeal_2.id, error: error_text)
+    end
 
-    subject { FileNumberNotFoundFix.new }
+    let(:bgs_service) { instance_double("BGSService") }
 
     before do
-      allow(subject)
-        .to receive(:fetch_file_number_from_bgs_service)
+      allow(BGSService).to receive(:new) { bgs_service }
+      allow(bgs_service).to receive(:fetch_file_number_by_ssn)
         .and_return(bgs_file_number)
     end
 
+    subject { FileNumberNotFoundFix.new }
+
     it "updates the veteran file_number" do
-      allow(subject)
-        .to receive(:fetch_file_number_from_bgs_service)
+      allow(bgs_service).to receive(:fetch_file_number_by_ssn)
         .and_return(bgs_file_number)
 
       allow(FixfileNumberCollections)

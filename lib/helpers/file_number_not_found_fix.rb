@@ -26,67 +26,62 @@ class FileNumberNotFoundFix
     bulk_decision_docs_with_error.each do |decision_document|
       appeal = decision_document.appeal
 
-      single_record_fix(appeal)
+      single_record_fix(appeal, log_to_s3: false)
 
       decision_document.update(error: nil)
     end
     logs .push("#{Time.zone.now} FILENUMBERERROR::Log"\
       " Records with errors: #{bulk_decision_docs_with_error.count}. "\
       " Status: Complete.")
+
+    create_log
   end
 
-  def bulk_decision_docs_with_error
-    DecisionDocument.where("error LIKE ?", "%#{ERROR_TEXT}%")
-  end
-
-  def fetch_file_number_from_bgs_service(veteran)
-    BGSService.new.fetch_file_number_by_ssn(veteran.ssn)
-  end
-
-  def single_record_fix(appeal)
+  def single_record_fix(appeal, log_to_s3: true)
     veteran = appeal.veteran
-    file_number = fetch_file_number_from_bgs_service(veteran)
+    bgs_file_number = fetch_file_number_from_bgs_service(veteran)
 
-    # ensures that the file number from bgs is not already used
-    return if verify_file_number(file_number, appeal).present?
+    # ensure that file number from bgs exists and is not already used
+    return unless bgs_file_number
+    return if Veteran.exists?(file_number: bgs_file_number)
 
     collections = FixfileNumberCollections.get_collections(veteran)
 
     # ensures that we have related collections else abort.
     return if collections.map(&:count).sum == 0
 
-    update_records(collections, file_number, veteran)
+    update_records!(collections, bgs_file_number, veteran)
     logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
-      " Participant Id: #{veteran.participant_id}.Veteran File Number: #{file_number}."\
+      " Participant Id: #{veteran.participant_id}.Veteran File Number: #{bgs_file_number}."\
       " Status: File Number Updated.")
 
-    create_log
+    create_log if log_to_s3
+  rescue StandardError => error
+    Rails.logger.error("FILENUMBER UPDATE error. Error: #{error}")
+  end
+
+  private
+
+  def bulk_decision_docs_with_error
+    DecisionDocument.where("error LIKE ?", "%#{ERROR_TEXT}%")
+  end
+
+  def fetch_file_number_from_bgs_service(veteran)
+    FetchFileNumberBySSN.call(veteran.ssn)
   end
 
   # updates all the related accoicated objects with the correct
   # file number
-  def update_records(collections, file_number, veteran)
+  def update_records!(collections, file_number, veteran)
     ActiveRecord::Base.transaction do
-      begin
-        collections.each do |collection|
-          collection.update!(file_number)
-          logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
-            " collection: #{collection.klass.name}. ."\
-            " Status: Successful.")
-        end
-        veteran.update!(file_number: file_number)
-      rescue StandardError => error
-        Rails.logger.error("FILENUMBER UPDATE error. Error: #{error}")
-        raise error
+      collections.each do |collection|
+        collection.update!(file_number)
+        logs.push("#{Time.zone.now} FILENUMBERERROR::Log"\
+          " collection: #{collection.klass.name}. ."\
+          " Status: Successful.")
       end
+      veteran.update!(file_number: file_number)
     end
-  end
-
-  def verify_file_number(file_number, appeal)
-    veteran = appeal&.veteran
-    return true if file_number == veteran.file_number
-    return true if file_number.nil?
-    return true if Veteran.find_by(file_number: file_number).present?
   end
 
   def create_log
@@ -109,6 +104,13 @@ class FileNumberNotFoundFix
 
     # Store file to S3 bucket
     s3bucket.object(file_name).upload_file(filepath, acl: "private", server_side_encryption: "AES256")
+  end
+
+  # created class to mock BGSService
+  class FetchFileNumberBySSN
+    def self.call(ssn)
+      BGSService.new.fetch_file_number_by_ssn(ssn)
+    end
   end
 end
 
