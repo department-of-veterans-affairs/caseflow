@@ -164,7 +164,7 @@ class ExternalApi::PacmanService
     #
     # Params: none
     #
-    # Return: token needed for authorization
+    # Return: token needed for authentication
     def generate_token
       header = {
         alg: ENV["PACMAN_API_TOKEN_ALG"]
