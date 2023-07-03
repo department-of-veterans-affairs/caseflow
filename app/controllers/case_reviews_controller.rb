@@ -10,8 +10,8 @@ class CaseReviewsController < ApplicationController
   end
 
   def complete
-    result = CompleteCaseReview.new(case_review_class: case_review_class, params: complete_params).call
-
+    new_complete_case_review = CompleteCaseReview.new(case_review_class: case_review_class, params: complete_params)
+    result = new_complete_case_review.call
     if result.success?
       case_review = result.extra[:case_review]
       render json: {
@@ -74,6 +74,7 @@ class CaseReviewsController < ApplicationController
 
   def issues_params
     # This is a combined list of params for ama and legacy appeals
+    # Reprsents the information the front end is sending to create a decision issue object
     [
       :id,
       :disposition,
@@ -81,11 +82,52 @@ class CaseReviewsController < ApplicationController
       :readjudication,
       :benefit_type,
       :diagnostic_code,
+      :mst_status,
+      :pact_status,
       request_issue_ids: [],
       remand_reasons: [
         :code,
         :post_aoj
       ]
     ]
+  end
+
+  def create_issue_update_task(original_issue, decision_issue, appeal)
+    root_task = RootTask.find_or_create_by!(appeal: appeal)
+
+    task = IssuesUpdateTask.create!(
+      appeal: appeal,
+      parent: root_task,
+      assigned_to: SpecialIssueEditTeam.singleton,
+      assigned_by: RequestStore[:current_user],
+      completed_by: RequestStore[:current_user]
+    )
+
+    task.format_instructions(
+      "Edited Issue",
+      # [original_issue.nonrating_issue_category, original_issue.contested_issue_description].join,
+      task_text_helper([original_issue.contested_issue_description, original_issue.nonrating_issue_category, original_issue.nonrating_issue_description]),
+      task_text_benefit_type(original_issue),
+      original_issue.mst_status,
+      original_issue.pact_status,
+      decision_issue[:mst_status],
+      decision_issue[:pact_status]
+    )
+
+    task.completed!
+  end
+
+  def task_text_benefit_type(issue)
+    issue.benefit_type ? issue.benefit_type.capitalize : ""
+  end
+
+  def task_text_helper(text_array)
+    if text_array.compact.length > 1
+      text_array.compact.join(" - ")
+    elsif text_array.compact.length == 1
+      text_array.join
+    else
+      "Description unavailable"
+    end
   end
 end
