@@ -72,6 +72,10 @@ Rails/LexicallyScopedActionFilter:
 Rails/SkipsModelValidations:
   Enabled: false
 
+Rails/ApplicationController:
+  Exclude:
+    - app/controllers/idt/api/v1/base_controller.rb
+
 Rails/FilePath:
   Enabled: false
 
