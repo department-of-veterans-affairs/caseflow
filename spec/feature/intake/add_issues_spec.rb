@@ -833,21 +833,21 @@ feature "Intake Add Issues Page", :all_dbs do
   end
 
   context "for MST and PACT Act" do
-    before do
+    before :each do
       FeatureToggle.enable!(:mst_identification)
       FeatureToggle.enable!(:pact_identification)
       BvaIntake.singleton.add_user(current_user)
       OrganizationsUser.find_by(user_id: current_user.id).update(admin: true)
     end
 
-    after do
+    after :each do
       FeatureToggle.disable!(:mst_identification)
       FeatureToggle.disable!(:pact_identification)
       # FeatureToggle.disable!(:legacy_mst_pact_identification)
     end
 
     scenario "MST and PACT checkboxes appear after selecting decision" do
-      start_higher_level_review(veteran)
+      start_appeal(veteran)
       visit "/intake"
       click_intake_continue
       click_intake_add_issue
@@ -856,24 +856,28 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Issue is related to PACT Act")
     end
 
-    #skipped due to feature being sidelined by client and feature flag disabled
-    xit "MST and PACT checkboxes render a justification field when checked" do
-      start_higher_level_review(veteran)
+    scenario "MST and PACT checkboxes render a justification field when checked" do
+      FeatureToggle.enable!(:justification_reason)
+      start_appeal(veteran)
       visit "/intake"
       click_intake_continue
       click_intake_add_issue
       choose("rating-radio_0", allow_label_click: true)
       expect(page).to have_content("Issue is related to Military Sexual Trauma (MST)")
       expect(page).to have_content("Issue is related to PACT Act")
-      # find("div.checkbox-wrapper-MST.cf-form-checkboxes").first.click
-      click_on "Issue is related to Military Sexual Trauma (MST)"
+      # check mst checkbox
+      find_by_id("MST", visible: false).check(allow_label_click: true)
       expect(page).to have_content("Why was this change made?")
-      click_on "Issue is related to Military Sexual Trauma (MST)"
+      # uncheck mst checkbox
+      find_by_id("MST", visible: false).uncheck(allow_label_click: true)
       expect(page).to_not have_content("Why was this change made?")
-      click_on "Issue is related to PACT Act"
+      # check pact checbox
+      find_by_id("Pact", visible: false).check(allow_label_click: true)
       expect(page).to have_content("Why was this change made?")
-      click_on "Issue is related to PACT Act"
+      # uncheck pact checkbox
+      find_by_id("Pact", visible: false).uncheck(allow_label_click: true)
       expect(page).to_not have_content("Why was this change made?")
+      FeatureToggle.disable!(:justification_reason)
     end
 
     scenario "MST designation added during AMA intake" do
