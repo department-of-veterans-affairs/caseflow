@@ -6,7 +6,7 @@ describe AppealSeriesIssues, :all_dbs do
   end
 
   let(:vacols_id) { "12345678" }
-  let!(:series) { AppealSeries.create(appeals: appeals) }
+  let(:series) { AppealSeries.create(appeals: appeals) }
   let(:appeals) { [original, post_remand] }
 
   let(:original) do
