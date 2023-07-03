@@ -22,7 +22,8 @@ class Rating
     "pact",
     "pactdicre",
     "pact act dic reevaluation",
-    "pact exam exclusion - sec. 1168"
+    "pact exam exclusion - sec. 1168",
+    "pees1"
   ].freeze
 
   class NilRatingProfileListError < StandardError
