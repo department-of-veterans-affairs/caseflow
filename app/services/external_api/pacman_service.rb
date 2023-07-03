@@ -144,7 +144,7 @@ class ExternalApi::PacmanService
         iat: current_epoch_timestamp,
         iss: ENV["PACMAN_API_TOKEN_ISSUER"],
         aud: ENV["PACMAN_API_TOKEN_ISSUER"],
-        samlToken: ENV["PACMAN_API_SAML_TOKEN"],
+        samlToken: ENV["PACMAN_API_SAML_TOKEN"]&.encode("UTF-8"),
         externalSystemSource: ENV["PACMAN_API_SYS_ACCOUNT"]
       }
     end
