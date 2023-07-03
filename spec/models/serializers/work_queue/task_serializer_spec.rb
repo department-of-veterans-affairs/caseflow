@@ -57,4 +57,34 @@ describe WorkQueue::TaskSerializer, :postgres do
       end
     end
   end
+
+  describe "attribute issue_types" do
+    subject { described_class.new(task).serializable_hash[:data][:attributes] }
+
+    context "displays nonrating_issue_category" do
+      let(:task) { EvidenceSubmissionWindowTask.create!(appeal: parent.appeal, assigned_to: user, parent: parent) }
+      let!(:request_issues) do
+        requests = [
+          RequestIssue.create!(
+            decision_review: task.appeal,
+            decision_review_type: "Appeal",
+            nonrating_issue_category: "Caregiver",
+            type: "RequestIssue", benefit_type: "Compensation"
+          ),
+          RequestIssue.create!(
+            decision_review: task.appeal,
+            decision_review_type: "Appeal",
+            nonrating_issue_category: "Prosthetics",
+            type: "RequestIssue", benefit_type: "Compensation"
+          )
+        ]
+        task.reload
+        requests
+      end
+
+      it "returns the array of nonrating_issue_category" do
+        expect(subject[:issue_types]).to include("Caregiver", "Prosthetics")
+      end
+    end
+  end
 end
