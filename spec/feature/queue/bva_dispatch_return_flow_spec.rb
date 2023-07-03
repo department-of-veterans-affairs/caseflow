@@ -102,7 +102,6 @@ def attorney_checkout
   click_on "Continue"
 end
 
-# rubocop:disable Metrics/AbcSize
 def judge_checkout
   User.authenticate!(user: judge_user)
   visit "/queue"
@@ -119,4 +118,3 @@ def judge_checkout
   fill_in "additional-factors", with: dummy_note
   click_on "Continue"
 end
-# rubocop:enable Metrics/AbcSize
