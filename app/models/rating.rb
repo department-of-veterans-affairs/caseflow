@@ -18,7 +18,12 @@ class Rating
     "gulf war presumptive",
     "radiation"
   ].freeze
-  CONTENTION_PACT_ISSUES = %w[PACT PACTDICRE].freeze
+  CONTENTION_PACT_ISSUES = [
+    "pact",
+    "pactdicre",
+    "pact act dic reevaluation",
+    "pact exam exclusion - sec. 1168"
+  ].freeze
 
   class NilRatingProfileListError < StandardError
     def ignorable?
@@ -124,9 +129,9 @@ class Rating
       return false if bgs_contention.nil? || bgs_contention[:special_issues].blank?
 
       if bgs_contention[:special_issues].is_a?(Hash)
-        CONTENTION_PACT_ISSUES.include?(bgs_contention[:special_issues][:spis_tc])
+        CONTENTION_PACT_ISSUES.include?(bgs_contention[:special_issues][:spis_tc]&.downcase)
       elsif bgs_contention[:special_issues].is_a?(Array)
-        bgs_contention[:special_issues].any? { |issue| CONTENTION_PACT_ISSUES.include?(issue[:spis_tc]) }
+        bgs_contention[:special_issues].any? { |issue| CONTENTION_PACT_ISSUES.include?(issue[:spis_tc]&.downcase) }
       end
     end
   end
