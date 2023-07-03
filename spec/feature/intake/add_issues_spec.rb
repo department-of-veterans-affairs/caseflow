@@ -881,20 +881,20 @@ feature "Intake Add Issues Page", :all_dbs do
     end
 
     scenario "MST designation added during AMA intake" do
-      start_appeal(veteran_no_ratings)
+      start_appeal(veteran)
       visit "/intake"
       click_intake_continue
       click_intake_add_issue
+      click_intake_no_matching_issues
       find_by_id("mst-checkbox", visible: false).check(allow_label_click: true)
       add_intake_nonrating_issue(date: "01/01/2023")
       click_on "Establish appeal"
 
-      appeal_id = Appeal.find_by(veteran_file_number: veteran_no_ratings.file_number).uuid
+      appeal_id = Appeal.find_by(veteran_file_number: veteran.file_number).uuid
       visit "/queue/appeals/#{appeal_id}"
       #to prevent timeout
-      visit current_path
+      refresh
       click_on "View task instructions"
-
       expect(page).to have_content("Special issues: MST")
       expect(page).to have_no_content("Special issues: PACT")
     end
