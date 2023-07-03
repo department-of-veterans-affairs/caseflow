@@ -135,6 +135,38 @@ class ExternalApi::PacmanService
       }]
     end
 
+    def jwt_payload
+      current_epoch_timestamp = DateTime.now.strftime("%Q").to_i / 1000.floor
+      {
+        iat: current_epoch_timestamp,
+        iss: ENV["PACMAN_API_TOKEN_ISSUER"],
+        samlToken: ENV["PACMAN_API_SAML_TOKEN"],
+        externalSystemSource: ENV["PACMAN_API_SYS_ACCOUNT"]
+      }
+    end
+
+    # Purpose: Generate the JWT token
+    #
+    # Params: none
+    #
+    # Return: token needed for authorization
+    def generate_token
+      header = {
+        alg: ENV["PACMAN_API_TOKEN_ALG"]
+      }
+
+      stringified_header = header.to_json.encode("UTF-8")
+      encoded_header = base64url(stringified_header)
+      stringified_data = jwt_payload.to_json.encode("UTF-8")
+      encoded_data = base64url(stringified_data)
+      token = "#{encoded_header}.#{encoded_data}"
+      signature = OpenSSL::HMAC.digest("SHA256", ENV["PACMAN_API_TOKEN_SECRET"], token)
+      signature = base64url(signature)
+
+      # Signed Token
+      "#{token}.#{signature}"
+    end
+
     # Purpose: Build and send the request to the server
     #
     # Params: general requirements for HTTP request
@@ -148,10 +180,12 @@ class ExternalApi::PacmanService
       request.read_timeout = 30
       request.body = body.to_json unless body.nil?
       # not sure how user validation will be handled
-      request.headers = headers.merge(Bearer: ENV["PACMAN_API_KEY"])
+      request.auth.ssl.ssl_version  = :TLSv1_2
+      request.auth.ssl.ca_cert_file = ENV["SSL_CERT_FILE"]
+      request.headers = headers.merge("X-Forwarded-User": generate_token)
       sleep 1
 
-      MetricsService.record("pacman service #{method.to_s.upcase} request to #{url}",
+      MetricsService.record("Pacman Service #{method.to_s.upcase} request to #{url}",
                             service: :pacman,
                             name: endpoint) do
         case method
