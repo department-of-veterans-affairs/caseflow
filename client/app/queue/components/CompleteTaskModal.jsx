@@ -513,7 +513,7 @@ const MODAL_TYPE_ATTRS = {
     buttonText: COPY.MARK_TASK_COMPLETE_BUTTON_CONTESTED_CLAIM,
     submitButtonClassNames: ['usa-button'],
 
-    submitDisabled: ({ state }) => {
+    customValidation: ({ state }) => {
       const { instructions, radio } = state;
 
       let isValid = true;
@@ -528,7 +528,7 @@ const MODAL_TYPE_ATTRS = {
         isValid = validRadio(radio);
       }
 
-      return !isValid;
+      return isValid;
     }
   },
 
@@ -540,7 +540,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: ProceedFinalNotificationLetterTaskModal,
     buttonText: COPY.PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON,
     submitButtonClassNames: ['usa-button'],
-    submitDisabled: ({ state }) => (!validInstructions(state.instructions))
+    customValidation: ({ state }) => (validInstructions(state.instructions))
   },
 
   proceed_final_notification_letter_post_holding: {
@@ -551,7 +551,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: ProceedFinalNotificationLetterTaskModal,
     buttonText: COPY.PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON,
     submitButtonClassNames: ['usa-button'],
-    submitDisabled: ({ state }) => (!validInstructions(state.instructions))
+    customValidation: ({ state }) => (validInstructions(state.instructions))
   },
 
   resend_initial_notification_letter_post_holding: {
@@ -562,7 +562,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: ResendInitialNotificationLetterTaskModal,
     buttonText: COPY.RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON,
     submitButtonClassNames: ['usa-button'],
-    submitDisabled: ({ state }) => (!validInstructions(state.instructions))
+    customValidation: ({ state }) => (validInstructions(state.instructions))
   },
 
   resend_initial_notification_letter_final: {
@@ -573,7 +573,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: ResendInitialNotificationLetterTaskModal,
     buttonText: COPY.RESEND_INITIAL_NOTIFICATION_LETTER_BUTTON,
     submitButtonClassNames: ['usa-button'],
-    submitDisabled: ({ state }) => (!validInstructions(state.instructions))
+    customValidation: ({ state }) => (validInstructions(state.instructions))
   },
 
   resend_final_notification_letter: {
@@ -584,7 +584,7 @@ const MODAL_TYPE_ATTRS = {
     getContent: ResendFinalNotificationLetterTaskModal,
     buttonText: COPY.RESEND_FINAL_NOTIFICATION_LETTER_BUTTON,
     submitButtonClassNames: ['usa-button'],
-    submitDisabled: ({ state }) => (!validInstructions(state.instructions))
+    customValidation: ({ state }) => (validInstructions(state.instructions))
   },
 
   ready_for_review: {
@@ -620,7 +620,7 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
     buttonText: COPY.MODAL_SEND_BUTTON,
-    submitDisabled
+    customValidation: submitDisabled
   },
   vha_return_to_board_intake: {
     buildSuccessMsg: (appeal) => ({
@@ -629,8 +629,9 @@ const MODAL_TYPE_ATTRS = {
     title: () => COPY.VHA_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
     getContent: VhaCamoReturnToBoardIntakeModal,
     buttonText: COPY.MODAL_RETURN_BUTTON,
-    submitDisabled: ({ state }) => (
-      !validDropdown(state.dropdown) || (state.dropdown === 'other' && !validInstructions(state.otherInstructions))
+    customValidation: ({ state }) => (
+      state.dropdown === 'other' ? validInstructions(state.otherInstructions) && validDropdown(state.dropdown) :
+        validDropdown(state.dropdown)
     ),
     customFormatInstructions: ({ state }) => {
       return formatOtherInstructions(state);
@@ -697,7 +698,7 @@ const MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW_MODAL_TITLE,
     getContent: ReadyForReviewModal,
-    submitDisabled
+    customValidation: submitDisabled
   }
 };
 
@@ -926,9 +927,7 @@ class CompleteTaskModal extends React.Component {
       (MODAL_TYPE_ATTRS[this.props.modalType].buttonText === 'Proceed to final letter') ||
       (MODAL_TYPE_ATTRS[this.props.modalType].buttonText === 'Resend notification letter') ||
       (this.props.modalType === 'task_complete_contested_claim')
-    ) ? ('/organizations/clerk-of-the-board?tab=unassignedTab&page=1') : (
-        taskData.redirect_after || '/queue'
-      );
+    ) ? ('/organizations/clerk-of-the-board?tab=unassignedTab&page=1') : (taskData.redirect_after || '/queue');
 
     return (
       <QueueFlowModal

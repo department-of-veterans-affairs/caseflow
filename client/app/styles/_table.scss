@@ -13,6 +13,10 @@
   }
 }
 
+.cf-table-wrapper {
+  overflow-x: auto;
+}
+
 .cf-table-wrapper:focus {
   outline: none;
 }
@@ -55,6 +59,13 @@
 // ===========================*
 // Pagination
 // ============================*/
+
+.cf-pagination {
+  position: sticky;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
 
 .cf-pagination-summary {
   float: left;
