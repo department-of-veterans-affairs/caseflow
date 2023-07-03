@@ -11,7 +11,7 @@ class QuarterlyNotificationsJob < CaseflowJob
   #
   # Response: None
   def perform
-    appeal_state_ids = ama_appeal_states_of_interest.pluck(:id)
+    appeal_state_ids = ama_appeal_states_of_interest.pluck(:id).uniq
 
     ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
       Parallel.each(appeal_state_ids, in_threads: 8, progress: "Creating Quaterly Notifications") do |id|
