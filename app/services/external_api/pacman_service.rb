@@ -5,6 +5,8 @@ require "base64"
 require "digest"
 
 class ExternalApi::PacmanService
+  include JwtGenerator
+
   BASE_URL = ENV["PACMAN_API_URL"]
   SEND_DISTRIBUTION_ENDPOINT = "/package-manager-service/distribution"
   SEND_PACKAGE_ENDPOINT = "/package-manager-service/communication-package"
@@ -145,19 +147,6 @@ class ExternalApi::PacmanService
         samlToken: ENV["PACMAN_API_SAML_TOKEN"],
         externalSystemSource: ENV["PACMAN_API_SYS_ACCOUNT"]
       }
-    end
-
-    # Purpose: Remove any illegal characters and keeps source at proper format
-    #
-    # Params: string
-    #
-    # Return: sanitized string
-    def base64url(source)
-      encoded_source = Base64.encode64(source)
-      encoded_source = encoded_source.sub(/=+$/, "")
-      encoded_source = encoded_source.tr("+", "-")
-      encoded_source = encoded_source.tr("/", "_")
-      encoded_source
     end
 
     # Purpose: Generate the JWT token
