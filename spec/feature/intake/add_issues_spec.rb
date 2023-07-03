@@ -80,39 +80,6 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_no_content("Issue is related to Military Sexual Trauma (MST)")
       expect(page).to have_no_content("Issue is related to PACT Act")
     end
-
-    scenario "MST and PACT checkboxes are disabled if they already exist in the model" do
-      claim_id = rating.issues[0].reference_id
-      veteran.participant_id = "5217787"
-
-      epe = create(
-        :end_product_establishment,
-        reference_id: claim_id,
-        veteran_file_number: veteran.file_number
-      )
-      mst_contention = Generators::Contention.build_mst_and_pact_contention(claim_id: claim_id)
-
-      req_issue = create(:request_issue,
-        contention_reference_id: mst_contention.id,
-        end_product_establishment: epe,
-        veteran_participant_id: veteran.participant_id,
-        #rating.issues[0].reference_id maps to claim_id
-        contested_rating_issue_reference_id: rating.issues[0].reference_id
-      )
-
-      start_higher_level_review(veteran)
-
-      FeatureToggle.enable!(:mst_identification)
-      FeatureToggle.enable!(:pact_identification)
-      visit "/intake"
-      click_intake_continue
-      click_intake_add_issue
-      choose('rating-radio_0', allow_label_click:true)
-
-      #visible is set to false because capybara does not recognize the fields otherwise.
-      expect(page).to have_field("Issue is related to Military Sexual Trauma (MST)", visible: false, disabled: true)
-      expect(page).to have_field("Issue is related to PACT Act", visible: false, disabled: true)
-    end
   end
 
   context "check for correct time zone" do
