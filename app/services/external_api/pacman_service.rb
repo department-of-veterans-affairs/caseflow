@@ -177,7 +177,8 @@ class ExternalApi::PacmanService
     # Return: service_response: JSON from Pacman or error
     # :reek:LongParameterList
     def send_pacman_request(headers: {}, endpoint:, method: :get, body: nil)
-      request = HTTPI::Request.new(BASE_URL + endpoint)
+      url= BASE_URL + endpoint
+      request = HTTPI::Request.new(url)
       request.open_timeout = 30
       request.read_timeout = 30
       request.body = body.to_json unless body.nil?
