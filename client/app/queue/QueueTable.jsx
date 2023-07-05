@@ -57,6 +57,8 @@ import COPY from '../../COPY';
  * - @enablePagination {boolean} whether or not to enablePagination
  * - @casesPerPage {number} how many cases to show per page,
  *   defaults to 15 if nothing is set
+ * - @preserveFilter {boolean} when true, local storage will be used to preserve the existing filter
+ *   between queue page loads and queue tab switches for a user
  *
  * see StyleGuideTables.jsx for usage example.
  */
@@ -137,6 +139,12 @@ export const HeaderRow = (props) => {
                 role="button"
                 tabIndex="0"
                 onClick={() => props.setSortOrder(column.name)}
+                onKeyDown={(event) => {
+                  if (event.key === ' ' || event.key === 'Enter') {
+                    props.setSortOrder(column.name);
+                    event.preventDefault();
+                  }
+                }}
               >
                 <DoubleArrowIcon topColor={topColor} bottomColor={botColor} />
               </span>
@@ -289,12 +297,27 @@ export default class QueueTable extends React.PureComponent {
   };
 
   validatedPaginationOptions = () => {
-    const { tabPaginationOptions = {}, numberOfPages, columns } = this.props;
+    const { tabPaginationOptions = {}, numberOfPages, columns, preserveFilter } = this.props;
 
     const sortAscending =
       tabPaginationOptions[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] !== QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC;
     const sortColumn = tabPaginationOptions[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] || null;
-    const filteredByList = this.getFilters(tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]);
+    const filterParam = tabPaginationOptions[`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`];
+    let filteredByList;
+
+    // Ignore this if it's a client side queue
+    if (preserveFilter) {
+    // if (preserveFilter && this.props.useTaskPagesApi) {
+      // Grab the local storage filter if the property preserveFilter is true
+      const localFilter = localStorage.getItem('queueFilter');
+
+      // Prioritize get parameters over the local filter.
+      // Filters from different columns get stored as a comma delimited list in local storage.
+      filteredByList = this.getFilters(filterParam || (localFilter ? localFilter.split(',') : null));
+    } else {
+      filteredByList = this.getFilters(filterParam);
+    }
+
     const pageNumber = tabPaginationOptions[QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM] - 1 || 0;
 
     const currentPage = pageNumber + 1 > numberOfPages || pageNumber < 0 ? 0 : pageNumber;
@@ -356,12 +379,26 @@ export default class QueueTable extends React.PureComponent {
         const columnAndValues = filter.split('&');
         const columnName = columnAndValues[0].split('=')[1];
         const column = this.props.columns.find((col) => col.name === columnName);
-        const values = columnAndValues[1].split('=')[1].split('|');
+
+        // Using a more complex split than | to work with issue category strings that contain |
+        // This essentially will still split values on '|' but not on ' | '
+        const values = columnAndValues[1].split('=')[1].split(/(?<!\s)\|(?!\s)/);
 
         if (column) {
-          const validValues = column.filterOptions.map((filterOption) => filterOption.value);
+          if (column.filterOptions) {
+            // If it has filterOptions it is a backend queue, so verify that the filter value is valid
+            const validValues = column.filterOptions.map((filterOption) => filterOption.value);
 
-          filters[column.columnName] = values.filter((value) => validValues.includes(value));
+            filters[column.columnName] = values.filter((value) => validValues.includes(value));
+          } else {
+            // If this is a client side queue, it won't have filterOptions since the options are built dynamically
+            // Potentially need to decode the value since it could be set between client side and server side queues
+            // Have to double decode because the filter options are often double encoded
+            const decodedValues = values.map((value) => decodeURI(decodeURI(value)));
+
+            filters[column.columnName] = decodedValues;
+          }
+
         }
       });
     }
@@ -427,6 +464,11 @@ export default class QueueTable extends React.PureComponent {
             return filteredByList[columnName].includes('null');
           }
 
+          // This is needed if a column contains multiple values instead of a single value
+          if (columnConfig && columnConfig.multiValueDelimiter) {
+            return filteredByList[columnName].some((filterValue) => cellValue.includes(filterValue));
+          }
+
           return filteredByList[columnName].includes(cellValue);
         });
       }
@@ -460,6 +502,44 @@ export default class QueueTable extends React.PureComponent {
   updateAddressBar = () => {
     if (this.props.useTaskPagesApi) {
       history.pushState('', '', this.deepLink());
+
+      if (this.props.onHistoryUpdate) {
+        this.props.onHistoryUpdate(this.deepLink());
+      }
+    }
+
+    // Preserve the filter in local storage if the property preserveFilter is passed
+    this.preserveFilterState();
+  };
+
+  preserveFilterState = () => {
+    if (this.props.preserveFilter) {
+      // If it is a backend queue then grab the url from the window. Otherwise generate it.
+      const urlQueryString = this.props.useTaskPagesApi ? window.location.search : this.requestQueryString();
+      const queryParams = new URLSearchParams(urlQueryString);
+      let filterParams = queryParams.getAll(`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`);
+
+      // If it's a frontend queue do some encoding on the filter values
+      if (!this.props.useTaskPagesApi) {
+        filterParams = filterParams.map((filter) => {
+          const filterParts = filter.split('=');
+          // Get the values out of the filter
+          const values = filterParts.pop().split(/(?<!\s)\|(?!\s)/);
+
+          // If it's a frontend queue then go ahead and double encode the value like the server would.
+          const encodedFilterValues = values.map((value) => encodeURI(encodeURI(value))).join('|');
+
+          // Add the encoded values back into the filter array
+          filterParts.push(encodedFilterValues);
+
+          // Join it back together into it's original form to mimic what a backend queue filter would look like
+          const finalFilter = filterParts.join('=');
+
+          return finalFilter;
+        });
+      }
+
+      localStorage.setItem('queueFilter', filterParams);
     }
   };
 
@@ -749,7 +829,9 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
     [`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]: PropTypes.arrayOf(PropTypes.string),
     [QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM]: PropTypes.string,
     onPageLoaded: PropTypes.func
-  })
+  }),
+  onHistoryUpdate: PropTypes.func,
+  preserveFilter: PropTypes.bool,
 };
 
 /* eslint-enable max-lines */

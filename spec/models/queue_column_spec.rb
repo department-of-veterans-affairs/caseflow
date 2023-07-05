@@ -54,7 +54,7 @@ describe QueueColumn, :all_dbs do
     let(:label) { Generators::Random.word_characters(rand(1..20)) }
 
     def match_encoding(str)
-      URI.escape(URI.escape(str))
+      URI::DEFAULT_PARSER.escape(URI::DEFAULT_PARSER.escape(str))
     end
 
     context "when input value is null" do
@@ -223,6 +223,76 @@ describe QueueColumn, :all_dbs do
           option = QueueColumn.filter_option_hash(name, QueueColumn.format_option_label(name, task_set.count))
 
           expect(subject).to include(option)
+        end
+      end
+    end
+
+    context "for the issue types column" do
+      let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name }
+      let(:org) { create(:organization) }
+      let(:org_tasks) { create_list(:root_task, 5, assigned_to: org) }
+      let(:tasks) { Task.where(id: org_tasks.pluck(:id)) }
+      let(:issue_categories) do
+        [
+          "Other",
+          "Beneficiary Travel",
+          "CHAMPVA",
+          "Spina Bifida Treatment (Non-Compensation)",
+          "Beneficiary Travel"
+        ]
+      end
+      let(:request_issues) do
+        issue_categories.map do |issue_category|
+          create(:request_issue, nonrating_issue_category: issue_category)
+        end
+      end
+
+      before do
+        org_tasks.each_with_index do |task, index|
+          task.appeal.request_issues << request_issues[index]
+          task.save
+          task.appeal.save
+        end
+
+        # Setup cached appeals
+        org_tasks.each do |task|
+          create(
+            :cached_appeal,
+            appeal_type: task.appeal.class.name,
+            appeal_id: task.appeal.id,
+            issue_types: task.appeal.request_issues.map(&:nonrating_issue_category).uniq.sort_by(&:upcase).join(",")
+          )
+        end
+      end
+
+      it "returns an array with all the issue_categories" do
+        issue_types_filter = org_tasks.map { |task| task.appeal.request_issues.map(&:nonrating_issue_category).uniq }
+          .flatten
+          .group_by { |item| item }
+          .transform_values(&:count)
+
+        issue_types_filter.each do |issue_type, count|
+          option = QueueColumn.filter_option_hash(issue_type, QueueColumn.format_option_label(issue_type, count))
+          expect(subject).to include(option)
+        end
+      end
+
+      context "for the Vha Camo Org" do
+        let(:org) { VhaCamo.singleton }
+
+        it "returns an array with all the task issue_categories and all possible issue categories" do
+          issue_types_filter = org_tasks.map { |task| task.appeal.request_issues.map(&:nonrating_issue_category).uniq }
+            .flatten
+            .group_by { |item| item }
+            .transform_values(&:count)
+
+          issue_types_filter.each do |issue_type, count|
+            option = QueueColumn.filter_option_hash(issue_type, QueueColumn.format_option_label(issue_type, count))
+            expect(subject).to include(option)
+          end
+
+          # There should be 12 total possible issue categories for VhaCamo
+          expect(subject.count).to eq 12
         end
       end
     end
