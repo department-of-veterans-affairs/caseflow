@@ -14,7 +14,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
     it "user cannot see the CAVC Dashboard button on the remand appeal case details page" do
       visit "/queue/appeals/#{cavc_remand.remand_appeal.uuid}"
-      refresh_if_needed(cavc_remand.remand_appeal.uuid)
+      reload_case_detail_page(cavc_remand.remand_appeal.uuid)
       expect(page).to have_text "CAVC Remand"
       expect(page).not_to have_text "CAVC Dashboard"
     end
@@ -52,7 +52,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       expect(page).to have_button("Cancel")
       click_button "Cancel"
 
-      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
+      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}"
     end
 
     it "dashboard save button is disabled until changes made, cancel button shows warning if clicked without saving" do
@@ -71,7 +71,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       expect(page).to have_button("Continue")
       click_button "Continue"
 
-      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
+      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}"
       click_button "CAVC Dashboard"
       expect(page).not_to have_content("Abandoned")
     end
@@ -97,7 +97,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
       expect(page).to have_button("Continue")
       click_button "Continue"
-      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
+      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}"
     end
 
     it "user can edit and save CAVC remand details" do
@@ -167,7 +167,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
       click_button "Save Changes"
 
-      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
+      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}"
       click_button "CAVC Dashboard"
 
       abandoned = page.all("div.cf-select__value-container", exact_text: "Abandoned")
@@ -219,7 +219,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
       click_button "Save Changes"
       reload_case_detail_page(cavc_remand.remand_appeal.uuid)
-      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
+      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}"
       click_button "CAVC Dashboard"
 
       expect(page).to have_content "Decision Reasons (2)"
