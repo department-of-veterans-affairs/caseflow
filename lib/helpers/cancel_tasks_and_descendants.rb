@@ -3,6 +3,8 @@
 require "securerandom"
 
 class CancelTasksAndDescendants
+  LOG_TAG = "CancelTasksAndDescendants"
+
   # @param task_relation [ActiveRecord::Relation] tasks to be cancelled
   # @return [true]
   def self.call(task_relation = Task.none)
@@ -35,7 +37,7 @@ class CancelTasksAndDescendants
   end
 
   def log(message, level: :info)
-    Rails.logger.tagged("CancelTasksAndDescendants", @request_id) do
+    Rails.logger.tagged(LOG_TAG, @request_id) do
       Rails.logger.public_send(level, message)
     end
   end
