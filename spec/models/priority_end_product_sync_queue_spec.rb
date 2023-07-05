@@ -50,7 +50,6 @@ describe PriorityEndProductSyncQueue, :postgres do
       expect(pepsq.error_messages).to eq([])
 
       uuid = SecureRandom.uuid
-
       pepsq.status_error!(["Error: EndProductEstablishmentNotFound - Batch ID: #{uuid} - Time: #{Time.zone.now}."])
 
       expect(pepsq.status).to eq("ERROR")
@@ -59,11 +58,10 @@ describe PriorityEndProductSyncQueue, :postgres do
   end
 
   context "#declare_record_stuck!" do
-
     let!(:stuck_pepsq) do
       PriorityEndProductSyncQueue.create(
         created_at: Time.zone.now,
-        end_product_establishment_id: create(:end_product_establishment, :out_of_sync_with_vbms).id,
+        end_product_establishment_id: create(:end_product_establishment, :active_hlr).id,
         error_messages: ["error 1 - batch id 1", "error 2 - batch id 2", "error 3 - batch id 3"],
         last_batched_at: Time.zone.now + 1,
         status: "ERROR"
@@ -71,7 +69,6 @@ describe PriorityEndProductSyncQueue, :postgres do
     end
 
     it "updates the PEPSQ record's status to 'STUCK' and creates corresponding CaseflowStuckRecord record" do
-
       expect(stuck_pepsq.status).not_to eq("STUCK")
       expect(stuck_pepsq.error_messages.length).to eq(3)
 
@@ -80,8 +77,12 @@ describe PriorityEndProductSyncQueue, :postgres do
       stuck_pepsq.declare_record_stuck!
 
       expect(stuck_pepsq.status).to eq("STUCK")
-      expect(stuck_pepsq.error_messages.count).to eq(3)
+
+      # new record added to CaseflowStuckRecord table
       expect(CaseflowStuckRecord.all.count).to eq(before_count + 1)
+
+      # stuck_pepsq's error messages are transferred to the new CaseflowStuckRecord
+      expect(CaseflowStuckRecord.last.error_messages).to eq(stuck_pepsq.error_messages)
     end
   end
 
