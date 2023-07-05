@@ -4,10 +4,6 @@ FactoryBot.define do
   factory :priority_end_product_sync_queue do
     end_product_establishment { create(:end_product_establishment, :out_of_sync_with_vbms) }
 
-    trait :batched do
-      batch_process { create(:batch_process_priority_ep_sync) }
-    end
-
     trait :pre_processing do
       status { "PRE_PROCESSING" }
     end

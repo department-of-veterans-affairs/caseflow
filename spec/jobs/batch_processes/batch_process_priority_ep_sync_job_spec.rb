@@ -27,6 +27,7 @@ describe BatchProcessPriorityEpSyncJob, type: :job do
   end
 
   it "raises an error if there are no PEPSQ records to batch" do
+    # destroy all PEPSQ records
     PriorityEndProductSyncQueue.destroy_all
     expect(PriorityEndProductSyncQueue.count).to eq 0
 
@@ -34,10 +35,9 @@ describe BatchProcessPriorityEpSyncJob, type: :job do
     BatchProcessPriorityEpSyncJob.perform_now
 
     # custom error message sent to rails logger
-    allow(Rails.logger).to receive(:info)
     expect(Rails.logger.info == "No Records Available to Batch.  Time: #{Time.zone.now}")
 
     # raises a StandardError
-    expect { BatchProcessPriorityEpSyncJob.perform }.to raise_error StandardError
+    expect { BatchProcessPriorityEpSyncJob.perform }.to raise_error(StandardError)
   end
 end
