@@ -16,8 +16,13 @@ describe CancelTasksAndDescendants do
         rails_logger = Rails.logger
         allow(Rails).to receive(:logger).and_return(rails_logger)
 
-        expect(rails_logger).to receive(:info)
-          .with(/Elapsed time \(sec\):/).ordered
+        aggregate_failures do
+          expect(rails_logger).to receive(:info)
+            .with("Total tasks for cancellation: 0").ordered
+
+          expect(rails_logger).to receive(:info)
+            .with(/Elapsed time \(sec\):/).ordered
+        end
 
         call
       end
@@ -38,6 +43,10 @@ describe CancelTasksAndDescendants do
           .and_yield(task_1)
           .and_yield(task_2)
           .and_yield(task_3)
+
+        allow(task_1).to receive(:self_and_descendants) { [task_1] }
+        allow(task_2).to receive(:self_and_descendants) { [task_2] }
+        allow(task_3).to receive(:self_and_descendants) { [task_3] }
       end
 
       it "cancels each task and its descendants" do
@@ -53,8 +62,13 @@ describe CancelTasksAndDescendants do
         rails_logger = Rails.logger
         allow(Rails).to receive(:logger).and_return(rails_logger)
 
-        expect(rails_logger).to receive(:info)
-          .with(/Elapsed time \(sec\):/).ordered
+        aggregate_failures do
+          expect(rails_logger).to receive(:info)
+            .with("Total tasks for cancellation: 3").ordered
+
+          expect(rails_logger).to receive(:info)
+            .with(/Elapsed time \(sec\):/).ordered
+        end
 
         call
       end
@@ -81,8 +95,13 @@ describe CancelTasksAndDescendants do
           rails_logger = Rails.logger
           allow(Rails).to receive(:logger).and_return(rails_logger)
 
-          expect(rails_logger).to receive(:info)
-            .with(/Elapsed time \(sec\):/).ordered
+          aggregate_failures do
+            expect(rails_logger).to receive(:info)
+              .with("Total tasks for cancellation: 3").ordered
+
+            expect(rails_logger).to receive(:info)
+              .with(/Elapsed time \(sec\):/).ordered
+          end
 
           call
         end

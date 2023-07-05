@@ -21,6 +21,7 @@ class CancelTasksAndDescendants
   def call
     RequestStore[:current_user] = User.system_user
 
+    log_total_tasks_for_cancellation
     log_time_elapsed { cancel_tasks }
   end
 
@@ -29,6 +30,12 @@ class CancelTasksAndDescendants
       task.cancel_task_and_child_subtasks
     rescue StandardError => error
     end
+  end
+
+  def log_total_tasks_for_cancellation
+    sum = 0
+    @task_relation.find_each { |task| sum += task.self_and_descendants.count }
+    log("Total tasks for cancellation: #{sum}")
   end
 
   def log_time_elapsed(&block)
