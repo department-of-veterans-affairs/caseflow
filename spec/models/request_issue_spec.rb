@@ -1515,17 +1515,17 @@ describe RequestIssue, :all_dbs do
   end
 
   context "#mst_contention_status?, #pact_contention_status?" do
+    let(:claim_id) { "600118959" }
+    let(:end_prod_establishment) do
+      create(
+        :end_product_establishment,
+        reference_id: claim_id
+      )
+    end
     context "when mst is available and pact is not available" do
-      let(:claim_id) { "600118959" }
       let!(:mst_contention) do
         Generators::Contention.build_mst_contention(
           claim_id: claim_id
-        )
-      end
-      let(:end_prod_establishment) do
-        create(
-          :end_product_establishment,
-          reference_id: claim_id
         )
       end
       let(:mst_request_issue) do
@@ -1560,18 +1560,12 @@ describe RequestIssue, :all_dbs do
     end
 
     context "when pact is available and mst is not available" do
-      let(:claim_id) { "600118959" }
       let(:pact_contention) do
         Generators::Contention.build_pact_contention(
           claim_id: claim_id
         )
       end
-      let(:end_prod_establishment) do
-        create(
-          :end_product_establishment,
-          reference_id: claim_id
-        )
-      end
+
       let(:pact_request_issue) do
         create(
           :request_issue,
@@ -1579,6 +1573,7 @@ describe RequestIssue, :all_dbs do
           end_product_establishment: end_prod_establishment
         )
       end
+
       let!(:bgs_contention) do
         Generators::BgsContention.build_pact_contention(
           reference_id: pact_contention.id,
@@ -1604,18 +1599,12 @@ describe RequestIssue, :all_dbs do
     end
 
     context "when pact and mst are available" do
-      let(:claim_id) { "600118959" }
       let(:mst_and_pact_contention) do
         Generators::Contention.build_mst_and_pact_contention(
           claim_id: claim_id
         )
       end
-      let(:end_prod_establishment) do
-        create(
-          :end_product_establishment,
-          reference_id: claim_id
-        )
-      end
+
       let(:mst_and_pact_request_issue) do
         create(
           :request_issue,
@@ -1623,6 +1612,7 @@ describe RequestIssue, :all_dbs do
           end_product_establishment: end_prod_establishment
         )
       end
+
       let!(:bgs_contention) do
         Generators::BgsContention.build(
           reference_id: mst_and_pact_contention.id,
@@ -1664,18 +1654,12 @@ describe RequestIssue, :all_dbs do
     end
 
     context "when pact and mst are not available" do
-      let(:claim_id) { "600118959" }
       let(:contention) do
         Generators::Contention.build(
           claim_id: claim_id
         )
       end
-      let(:end_prod_establishment) do
-        create(
-          :end_product_establishment,
-          reference_id: claim_id
-        )
-      end
+
       let(:request_issue) do
         create(
           :request_issue,
