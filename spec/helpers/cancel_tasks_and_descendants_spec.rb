@@ -4,6 +4,18 @@ require "helpers/cancel_tasks_and_descendants"
 
 describe CancelTasksAndDescendants do
   describe ".call" do
+    shared_context "logs elapsed time" do
+      it "logs elapsed time" do
+        rails_logger = Rails.logger
+        allow(Rails).to receive(:logger).and_return(rails_logger)
+
+        expect(rails_logger).to receive(:info).at_least(:once)
+          .with(/Elapsed time \(sec\):/)
+
+        call
+      end
+    end
+
     context "when task_relation is not given" do
       subject(:call) { described_class.call }
 
@@ -12,12 +24,9 @@ describe CancelTasksAndDescendants do
           from(nil).to(User.system_user)
       end
 
-      it "does not cancel any tasks" do
-        expect_any_instance_of(Task).not_to receive(:cancel_task_and_child_subtasks)
-        call
-      end
+      it_behaves_like "logs elapsed time"
 
-      it { is_expected.to be_nil }
+      it { is_expected.to eq(true) }
     end
 
     context "when task_relation is given " do
@@ -61,6 +70,10 @@ describe CancelTasksAndDescendants do
         it "does not raise error" do
           expect { call }.not_to raise_error
         end
+
+        it_behaves_like "logs elapsed time"
+
+        it { is_expected.to eq(true) }
       end
     end
   end
