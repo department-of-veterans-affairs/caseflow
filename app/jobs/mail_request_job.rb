@@ -33,15 +33,15 @@ class MailRequestJob < CaseflowJob
       log_error(error)
     else
       vbms_comm_package = create_package(document_to_mail, mail_package)
-      vbms_comm_package.update!(status: "success", uuid: parse_comm_package_pacman_id(package_response))
+      vbms_comm_package.update!(status: "success", uuid: parse_pacman_id(package_response))
       create_distribution_request(vbms_comm_package.id, mail_package)
     end
   end
 
   private
 
-  def parse_comm_package_pacman_id(package_response)
-    JSON.parse(package_response.body)["id"]
+  def parse_pacman_id(pacman_response)
+    JSON.parse(pacman_response.body)["id"]
   end
 
   # Purpose: arranges id and copies to pass into package post request
@@ -86,18 +86,16 @@ class MailRequestJob < CaseflowJob
     distributions = mail_package[:distributions]
     distributions.each do |dist|
       begin
-        dist_hash = JSON.parse(dist)
-      rescue Caseflow::Error::PacmanApiError => error
-        log_error(error)
-      else
-        distribution = VbmsDistribution.find(dist_hash["vbms_distribution_id"])
+        distribution = VbmsDistribution.find(dist[:vbms_distribution_id])
         distribution_response = PacmanService.send_distribution_request(
           package_id,
           get_recipient_hash(distribution),
-          get_destinations_hash(dist_hash)
+          get_destinations_hash(dist)
         )
         log_info(distribution_response)
-        distribution.update!(vbms_communication_package_id: package_id, uuid: distribution_response.body[:id])
+        distribution.update!(vbms_communication_package_id: package_id, uuid: parse_pacman_id(distribution_response))
+      rescue Caseflow::Error::PacmanApiError => error
+        log_error(error)
       end
     end
   end
