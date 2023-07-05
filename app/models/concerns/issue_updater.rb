@@ -47,12 +47,22 @@ module IssueUpdater
         diagnostic_code: issue_attrs[:diagnostic_code].presence,
         participant_id: appeal.veteran.participant_id,
         decision_review: appeal,
-        caseflow_decision_date: appeal.decision_document&.decision_date
+        caseflow_decision_date: appeal.decision_document&.decision_date,
+        mst_status: issue_attrs[:mst_status],
+        pact_status: issue_attrs[:pact_status]
       )
 
       request_issues.each do |request_issue|
         RequestDecisionIssue.create!(decision_issue: decision_issue, request_issue: request_issue)
+
+        # compare the MST/PACT status of the orignial issue and decision to create task and record
+        next unless (request_issue.mst_status != decision_issue.mst_status ||
+                    request_issue.pact_status != decision_issue.pact_status) &&
+                    (FeatureToggle.enabled?(:mst_identification) || FeatureToggle.enabled?(:pact_identification))
+
+        create_issue_update_task(request_issue, decision_issue)
       end
+
       create_remand_reasons(decision_issue, issue_attrs[:remand_reasons] || [])
     end
   end
@@ -107,5 +117,46 @@ module IssueUpdater
         record.save!
       end
     end
+  end
+
+  def create_issue_update_task(original_issue, decision_issue)
+    root_task = RootTask.find_or_create_by!(appeal: appeal)
+
+    task = IssuesUpdateTask.create!(
+      appeal: appeal,
+      parent: root_task,
+      assigned_to: SpecialIssueEditTeam.singleton,
+      assigned_by: RequestStore[:current_user],
+      completed_by: RequestStore[:current_user]
+    )
+
+    task.format_instructions(
+      "Edited Issue",
+      [original_issue.nonrating_issue_category, original_issue.contested_issue_description].join,
+      original_issue.mst_status,
+      original_issue.pact_status,
+      decision_issue.mst_status,
+      decision_issue.pact_status
+    )
+
+    task.completed!
+
+    SpecialIssueChange.create!(
+      issue_id: original_issue.id,
+      appeal_id: appeal.id,
+      appeal_type: "Appeal",
+      task_id: task.id,
+      created_at: Time.zone.now.utc,
+      created_by_id: RequestStore[:current_user].id,
+      created_by_css_id: RequestStore[:current_user].css_id,
+      original_mst_status: original_issue.mst_status,
+      original_pact_status: original_issue.pact_status,
+      updated_mst_status: decision_issue.mst_status,
+      updated_pact_status: decision_issue.pact_status,
+      mst_from_vbms: original_issue&.vbms_mst_status,
+      pact_from_vbms: original_issue&.vbms_pact_status,
+      change_category: "Edited Decision Issue",
+      decision_issue_id: decision_issue.id
+    )
   end
 end

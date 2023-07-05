@@ -6,6 +6,9 @@ class ETL::DecisionDocument < ETL::Record
   class << self
     private
 
+    ATTRS_TO_OMIT = %w[created_at updated_at
+                       document_series_reference_id document_version_reference_id].freeze
+
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     # rubocop:disable Metrics/CyclomaticComplexity
@@ -14,7 +17,7 @@ class ETL::DecisionDocument < ETL::Record
       # To-do: ETL legacy appeals; AMA appeals are sufficient for now
       return unless original.appeal_type == "Appeal"
 
-      target.attributes = original.attributes.reject { |key| %w[created_at updated_at].include?(key) }
+      target.attributes = original.attributes.reject { |key| ATTRS_TO_OMIT.include?(key) }
       target.decision_document_created_at = original.created_at
       target.decision_document_updated_at = original.updated_at
 

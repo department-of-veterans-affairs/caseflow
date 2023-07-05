@@ -80,6 +80,7 @@ Rails.application.routes.draw do
         post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
         get 'appeals/:appeal_id/documents', to: 'appeals#appeal_documents'
         get 'appeals/:appeal_id/documents/:document_id', to: 'appeals#appeals_single_document'
+        get 'distributions/:distribution_id', to: 'distributions#distribution'
       end
     end
   end
@@ -88,7 +89,12 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :histogram, only: :create
     end
+    namespace :v2 do
+      resources :logs, only: :create
+    end
+    get 'dashboard' => 'dashboard#show'
   end
+
 
   namespace :dispatch do
     get "/", to: redirect("/dispatch/establish-claim")

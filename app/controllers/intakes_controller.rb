@@ -10,7 +10,6 @@ class IntakesController < ApplicationController
 
   def index
     no_cache
-
     respond_to do |format|
       format.html { render(:index) }
     end
@@ -43,6 +42,7 @@ class IntakesController < ApplicationController
   def review
     if intake.review!(params)
       render json: intake.ui_hash
+
     else
       render json: { error_codes: intake.review_errors }, status: :unprocessable_entity
     end
@@ -97,8 +97,10 @@ class IntakesController < ApplicationController
     {
       userDisplayName: current_user.display_name,
       userCanIntakeAppeals: current_user.can_intake_appeals?,
+      userCanEditIntakeIssues: current_user.can_edit_intake_issues?,
       serverIntake: intake_ui_hash,
       dropdownUrls: dropdown_urls,
+      applicationUrls: application_urls,
       page: "Intake",
       feedbackUrl: feedback_url,
       buildDate: build_date,
@@ -149,9 +151,14 @@ class IntakesController < ApplicationController
       filedByVaGovHlr: FeatureToggle.enabled?(:filed_by_va_gov_hlr, user: current_user),
       updatedIntakeForms: FeatureToggle.enabled?(:updated_intake_forms, user: current_user),
       eduPreDocketAppeals: FeatureToggle.enabled?(:edu_predocket_appeals, user: current_user),
+      mstIdentification: FeatureToggle.enabled?(:mst_identification, user: current_user),
+      pactIdentification: FeatureToggle.enabled?(:pact_identification, user: current_user),
+      legacyMstPactIdentification: FeatureToggle.enabled?(:legacy_mst_pact_identification, user: current_user),
+      justificationReason: FeatureToggle.enabled?(:justification_reason, user: current_user),
       updatedAppealForm: FeatureToggle.enabled?(:updated_appeal_form, user: current_user),
       hlrScUnrecognizedClaimants: FeatureToggle.enabled?(:hlr_sc_unrecognized_claimants, user: current_user),
-      vhaClaimReviewEstablishment: FeatureToggle.enabled?(:vha_claim_review_establishment, user: current_user)
+      vhaClaimReviewEstablishment: FeatureToggle.enabled?(:vha_claim_review_establishment, user: current_user),
+      metricsBrowserError: FeatureToggle.enabled_metric?(:metrics_browser_error, user: current_user)
     }
   end
 

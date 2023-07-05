@@ -1506,7 +1506,6 @@ RSpec.feature "Case details", :all_dbs do
     before { FeatureToggle.enable!(:indicator_for_contested_claims) }
     after { FeatureToggle.disable!(:indicator_for_contested_claims) }
 
-
     it "should show the contested claim badge" do
       request_issues = [create(:request_issue,
                                benefit_type: "compensation",
@@ -2156,8 +2155,8 @@ RSpec.feature "Case details", :all_dbs do
           User.authenticate!(user: non_occoai_user)
         end
         it "the 'CAVC Dashboard' button is not visible on the page" do
-          visit "/queue/appeals/#{cavc_appeal.external_id}"
-          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          reload_case_detail_page cavc_appeal.external_id
+
           expect(page).to_not have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
         end
       end
@@ -2168,8 +2167,8 @@ RSpec.feature "Case details", :all_dbs do
           User.authenticate!(user: occ_user)
         end
         it "the 'CAVC Dashboard' button is visible on the page" do
-          visit "/queue/appeals/#{cavc_appeal.external_id}"
-          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          reload_case_detail_page cavc_appeal.external_id
+
           expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
         end
       end
@@ -2180,9 +2179,84 @@ RSpec.feature "Case details", :all_dbs do
           User.authenticate!(user: oai_user)
         end
         it "the 'CAVC Dashboard' button is visible on the page" do
-          visit "/queue/appeals/#{cavc_appeal.external_id}"
-          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          reload_case_detail_page cavc_appeal.external_id
+
           expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
+        end
+      end
+    end
+
+    describe "MST and PACT issues" do
+      let!(:mst_appeal) do
+        create(
+          :appeal,
+          number_of_claimants: 1,
+          request_issues: [
+            create(
+              :request_issue,
+              benefit_type: "compensation",
+              mst_status: true,
+              pact_status: false,
+              nonrating_issue_description: "description here",
+              notes: "issue notes here"
+            )
+          ]
+        )
+      end
+      let!(:pact_appeal) do
+        create(
+          :appeal,
+          number_of_claimants: 1,
+          request_issues: [
+            create(
+              :request_issue,
+              benefit_type: "compensation",
+              mst_status: false,
+              pact_status: true,
+              nonrating_issue_description: "description here",
+              notes: "issue notes here"
+            )
+          ]
+        )
+      end
+
+      let(:intake_user) { create(:user, css_id: "BVA_INTAKE_USER", station_id: "101") }
+
+      context "when there is a pact issue prechecked" do
+        before do
+          BvaIntake.singleton.add_user(intake_user)
+          User.authenticate!(user: intake_user)
+        end
+
+        it "the page shows the Special Issues: PACT Badge" do
+          visit "/queue/appeals/#{pact_appeal.external_id}"
+          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          expect(page).to have_content("Special Issues: PACT")
+        end
+
+        it "the page does not show the Special Issues: MST Badge" do
+          visit "/queue/appeals/#{pact_appeal.external_id}"
+          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          expect(page).to_not have_content("Special Issues: MST")
+        end
+      end
+
+      context "when there is an mst issue prechecked" do
+        before do
+          BvaIntake.singleton.add_user(intake_user)
+          User.authenticate!(user: intake_user)
+        end
+
+        it "the page shows the Special Issues: MST Badge" do
+          visit "/queue/appeals/#{mst_appeal.external_id}"
+          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          expect(page).to have_content("Special Issues: MST")
+        end
+
+        it "the page does not show the Special Issues: PACT Badge" do
+          visit "/queue/appeals/#{mst_appeal.external_id}"
+          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          expect(page).to_not have_content("Special Issues: PACT")
         end
       end
     end

@@ -127,6 +127,7 @@ export const IntakeEditFrame = (props) => {
           }}
           userDisplayName={props.userDisplayName}
           dropdownUrls={props.dropdownUrls}
+          applicationUrls={props.applicationUrls}
           topMessage={topMessage}
           defaultUrl="/"
         >
@@ -273,10 +274,12 @@ IntakeEditFrame.propTypes = {
     requestIssues: PropTypes.array
   }),
   dropdownUrls: PropTypes.array,
+  applicationUrls: PropTypes.array,
   userDisplayName: PropTypes.string,
   appeal: PropTypes.object,
   claimId: PropTypes.string,
   user: PropTypes.string,
+  isLegacy: PropTypes.bool,
   routerTestProps: PropTypes.object,
   router: PropTypes.object
 };
