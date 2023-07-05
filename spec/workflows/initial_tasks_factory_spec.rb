@@ -158,11 +158,13 @@ describe InitialTasksFactory, :postgres do
           end
         end
 
-        context "when appeal has request issues with mst or pact" do
+        context "related to MST/PACT work" do
           before do
             FeatureToggle.enable!(:mst_identification)
             FeatureToggle.enable!(:pact_identification)
             FeatureToggle.enable!(:legacy_mst_pact_identification)
+            BvaIntake.singleton.add_user(intake_user)
+            User.authenticate!(user: intake_user)
           end
           after do
             FeatureToggle.disable!(:mst_identification)
@@ -171,8 +173,6 @@ describe InitialTasksFactory, :postgres do
           end
 
           let(:intake_user) { create(:user, css_id: "BVADWISE", station_id: "101") }
-          let(:has_mst) { true }
-          let(:has_pact) { true }
           let(:docket_type) { Constants.AMA_DOCKETS.direct_review }
           let(:appeal_with_mst_pact_issues) do
             create(
@@ -183,8 +183,8 @@ describe InitialTasksFactory, :postgres do
                 benefit_type: "compensation",
                 nonrating_issue_category: "Unknown Issue Category",
                 decision_date: "2023-04-28",
-                mst_status: has_mst,
-                pact_status: has_pact
+                mst_status: true,
+                pact_status: true
               ),
               claimants: [
                 create(:claimant, participant_id: participant_id_with_pva)
@@ -193,32 +193,6 @@ describe InitialTasksFactory, :postgres do
             )
           end
 
-          before do
-            BvaIntake.singleton.add_user(intake_user)
-            User.authenticate!(user: intake_user)
-          end
-
-          it "creates multiple IssuesUpdateTask" do
-            InitialTasksFactory.new(appeal_with_mst_pact_issues).create_root_and_sub_tasks!
-            expect(appeal_with_mst_pact_issues.tasks.map(&:type)).to include("IssuesUpdateTask")
-            expect(appeal_with_mst_pact_issues.tasks.count { |task| task.is_a?(IssuesUpdateTask) }).to eq(4)
-          end
-        end
-
-        context "when appeal does does not have request issues with mst or pact" do
-          before do
-            FeatureToggle.enable!(:mst_identification)
-            FeatureToggle.enable!(:pact_identification)
-            FeatureToggle.enable!(:legacy_mst_pact_identification)
-          end
-          after do
-            FeatureToggle.disable!(:mst_identification)
-            FeatureToggle.disable!(:pact_identification)
-            FeatureToggle.disable!(:legacy_mst_pact_identification)
-          end
-
-          let(:intake_user) { create(:user, css_id: "BVADWISE", station_id: "101") }
-          let(:docket_type) { Constants.AMA_DOCKETS.direct_review }
           let(:appeal_with_no_mst_or_pact_issues) do
             create(
               :appeal,
@@ -238,14 +212,15 @@ describe InitialTasksFactory, :postgres do
             )
           end
 
-          before do
-            BvaIntake.singleton.add_user(intake_user)
-            User.authenticate!(user: intake_user)
+          it "creates an EstablishmentTask when mst/pact is on an issue" do
+            InitialTasksFactory.new(appeal_with_mst_pact_issues).create_root_and_sub_tasks!
+            expect(appeal_with_mst_pact_issues.tasks.map(&:type)).to include("EstablishmentTask")
+            expect(appeal_with_mst_pact_issues.tasks.count { |task| task.is_a?(EstablishmentTask) }).to eq(1)
           end
 
-          it "does not create an IssuesUpdateTask" do
+          it "does not create an EstablishmentTask when mst/pact is not on an issue" do
             InitialTasksFactory.new(appeal_with_no_mst_or_pact_issues).create_root_and_sub_tasks!
-            expect(appeal_with_no_mst_or_pact_issues.tasks.count { |task| task.is_a?(IssuesUpdateTask) }).to eq(0)
+            expect(appeal_with_no_mst_or_pact_issues.tasks.count { |task| task.is_a?(EstablishmentTask) }).to eq(0)
           end
         end
       end
