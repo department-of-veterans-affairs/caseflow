@@ -2224,8 +2224,15 @@ RSpec.feature "Case details", :all_dbs do
 
       context "when there is a pact issue prechecked" do
         before do
+          FeatureToggle.enable!(:mst_identification)
+          FeatureToggle.enable!(:pact_identification)
           BvaIntake.singleton.add_user(intake_user)
           User.authenticate!(user: intake_user)
+        end
+
+        after do
+          FeatureToggle.disable!(:mst_identification)
+          FeatureToggle.disable!(:pact_identification)
         end
 
         it "the page shows the Special Issues: PACT Badge" do
@@ -2245,6 +2252,13 @@ RSpec.feature "Case details", :all_dbs do
         before do
           BvaIntake.singleton.add_user(intake_user)
           User.authenticate!(user: intake_user)
+          FeatureToggle.enable!(:mst_identification)
+          FeatureToggle.enable!(:pact_identification)
+        end
+
+        after do
+          FeatureToggle.disable!(:mst_identification)
+          FeatureToggle.disable!(:pact_identification)
         end
 
         it "the page shows the Special Issues: MST Badge" do
