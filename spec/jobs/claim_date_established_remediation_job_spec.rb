@@ -11,12 +11,21 @@ describe ClaimDateEstablishedRemediationJob, :postgres do
                                        veteran_file_number: file_number)
   end
   let!(:file_number_2) { "123456789" }
-  let!(:veteran) { create(:veteran, file_number: file_number_2) }
-  let!(:appeal) { create(:appeal, veteran_file_number: file_number_2) }
-  let!(:decision_document_with_error_2) { create(:decision_document, error: error_text, appeal: appeal) }
-  let!(:epe) do
-    create(:end_product_establishment, established_at: Time.zone.now, code: "030",
+  let!(:veteran_2) { create(:veteran, file_number: file_number_2) }
+  let!(:appeal_2) { create(:appeal, veteran_file_number: file_number_2) }
+  let!(:decision_document_with_error_2) { create(:decision_document, error: error_text, appeal: appeal_2) }
+  let!(:epe_2) do
+    create(:end_product_establishment, established_at: Time.zone.now, code: "040",
                                        veteran_file_number: file_number_2)
+  end
+
+  let!(:file_number_3) { "383828282" }
+  let!(:veteran_3) { create(:veteran, file_number: file_number_3) }
+  let!(:appeal_3) { create(:appeal, veteran_file_number: file_number_3) }
+  let!(:decision_document_with_error_3) { create(:decision_document, error: error_text, appeal: appeal_3) }
+  let!(:epe_3) do
+    create(:end_product_establishment, established_at: Time.zone.now, code: "060",
+                                       veteran_file_number: file_number_3)
   end
 
   before do
@@ -28,13 +37,14 @@ describe ClaimDateEstablishedRemediationJob, :postgres do
   context "when all necessary fields on epe are populated" do
     it "clears the error field of the DD" do
       create_list(:decision_document, 5)
-      expect(subject.decision_document_with_errors.count).to eq(2)
+      expect(subject.decision_document_with_errors.count).to eq(3)
 
       subject.perform
 
-      expect(subject.decision_document_with_errors.count).to eq(0)
+      expect(subject.decision_document_with_errors.count).to eq(1)
       expect(decision_document_with_error.reload.error).to be_nil
       expect(decision_document_with_error_2.reload.error).to be_nil
+      expect(decision_document_with_error_3.reload.error).not_to be_nil
     end
   end
 

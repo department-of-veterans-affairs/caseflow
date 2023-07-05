@@ -8,6 +8,9 @@
 # This is going to be a scheduled job. However, we can manually call it from
 # the rails console by ClaimDateEstablishedRemediationJob.new.perform
 class ClaimDateEstablishedRemediationJob < CaseflowJob
+  # most 930 and 682 are very rare but they have occured in the past and as
+  # such we added it to the list.
+  EPECODES = %w[030 040 930 682].freeze
   attr_reader :logs
   queue_with_priority :low_priority
   application_attr :intake
@@ -46,7 +49,8 @@ class ClaimDateEstablishedRemediationJob < CaseflowJob
   end
 
   def check_error_records(epe)
-    epe&.code.present? && epe&.established_at.present?
+    epe_code_code = epe&.code.slice(0, 3)
+    EPECODES.include?(epe_code_code) && epe&.established_at.present?
   end
 
   def decision_document_with_errors
