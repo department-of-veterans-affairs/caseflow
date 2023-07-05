@@ -52,7 +52,8 @@
       split_appeal_workflow: FeatureToggle.enabled?(:split_appeal_workflow, user: current_user),
       cavc_remand_granted_substitute_appellant: FeatureToggle.enabled?(:cavc_remand_granted_substitute_appellant, user: current_user),
       cavc_dashboard_workflow: FeatureToggle.enabled?(:cavc_dashboard_workflow, user: current_user),
-      cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user)
+      cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user),
+      metricsBrowserError: FeatureToggle.enabled_metric?(:metrics_browser_error, user: current_user)
     }
   }) %>
 <% end %>
