@@ -113,12 +113,12 @@ class MailRequestJob < CaseflowJob
     {
       type: distribution.recipient_type,
       name: distribution.name,
-      firstName: distribution.first_name,
-      middleName: distribution.middle_name,
-      lastName: distribution.last_name,
-      participantId: distribution.participant_id,
-      poaCode: distribution.poa_code,
-      claimantStationOfJurisdiction: distribution.claimant_station_of_jurisdiction
+      first_name: distribution.first_name,
+      middle_name: distribution.middle_name,
+      last_name: distribution.last_name,
+      participant_id: distribution.participant_id,
+      poa_code: distribution.poa_code,
+      claimant_station_of_jurisdiction: distribution.claimant_station_of_jurisdiction
     }
   end
 
