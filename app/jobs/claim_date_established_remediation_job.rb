@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+# This .rb file fixes the ClaimDateEstablished error. The logic
+# checks to ensure that the associcated epe has the code and established_at
+# fields populated. If that is the case then we clear the errror field on the
+# associated decision document.
+
+# This is going to be a scheduled job. However, we can manually call it from
+# the rails console by ClaimDateEstablishedRemediationJob.new.perform
 class ClaimDateEstablishedRemediationJob < CaseflowJob
   attr_reader :logs
   queue_with_priority :low_priority
