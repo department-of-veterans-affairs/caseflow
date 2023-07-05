@@ -3,25 +3,23 @@
 require "./app/jobs/batch_processes/batch_process_priority_ep_sync_job.rb"
 
 describe BatchProcessPriorityEpSyncJob, type: :job do
+  # creates 110 PEPSQ records
+  before(:each) do
+    110.times do
+      PriorityEndProductSyncQueue.create!(end_product_establishment: create(:end_product_establishment, :active_hlr))
+    end
+  end
 
   context "#perform" do
-
-    before(:each) do
-      110.times do
-        PriorityEndProductSyncQueue.create!(end_product_establishment: create(:end_product_establishment, :out_of_sync_with_vbms))
-      end
-    end
-
-    pepsq_records = PriorityEndProductSyncQueue.all
-
     it "batch object is successfully created " do
       # the number of PEPSQ table records matches the amount of records in :pepsq_records
       expect(PriorityEndProductSyncQueue.count).to eq(110)
+      expect(BatchProcessPriorityEpSync.count).to eq(0)
 
       # perform the sync
       BatchProcessPriorityEpSyncJob.perform_now
 
-      # check that job ran successfully
+      # check that a new batch object was created
       expect(BatchProcessPriorityEpSync.count).to eq(1)
     end
   end

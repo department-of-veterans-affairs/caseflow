@@ -24,11 +24,10 @@ FactoryBot.define do
       established_at { 5.days.ago }
     end
 
-    trait :out_of_sync_with_vbms do
+    trait :active_hlr do
       synced_status { "PEND" }
       established_at { 5.days.ago }
       source { create(:higher_level_review, veteran_file_number: veteran_file_number) }
-      vbms_ext_claim { create(:vbms_ext_claim, :cleared, claim_id: reference_id) }
     end
 
     after(:build) do |end_product_establishment, _evaluator|

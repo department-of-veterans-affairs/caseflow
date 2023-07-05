@@ -27,6 +27,7 @@ class BatchProcessPriorityEpSync < BatchProcess
 
   def process_batch!
     batch_processing!
+
     priority_end_product_sync_queue.each do |record|
       record.status_processing!
       epe = record.end_product_establishment
@@ -55,9 +56,11 @@ class BatchProcessPriorityEpSync < BatchProcess
 
 
   def assign_batch_to_queued_records!(records)
-    records.update_all(batch_id: batch_id,
-                                status: Constants.PRIORITY_EP_SYNC.pre_processing,
-                                last_batched_at: Time.zone.now)
-
+    records.each do |pepsq_record|
+      pepsq_record.update!(batch_id: batch_id,
+                          status: Constants.PRIORITY_EP_SYNC.pre_processing,
+                          last_batched_at: Time.zone.now)
+      end
   end
+
 end
