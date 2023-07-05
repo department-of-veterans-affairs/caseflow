@@ -167,7 +167,6 @@ class MailRequestJob < CaseflowJob
   # Response: n/a
   def log_info(info_message)
     uuid = SecureRandom.uuid
-    info_message.body.uuid = uuid
-    Rails.logger.info(info_message)
+    Rails.logger.info("#{info_message} - ID: #{uuid}")
   end
 end
