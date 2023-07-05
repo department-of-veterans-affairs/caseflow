@@ -68,7 +68,27 @@ describe AppealSeriesIssues, :all_dbs do
   end
 
   let(:combined_issues) do
-    AppealSeriesIssues.new(appeal_series: series).all.sort_by { |issue_hash| issue_hash[:diagnostic_code] }
+    AppealSeriesIssues.new(appeal_series: series).all
+  end
+
+  let(:combined_issues_array) do
+    [
+      {
+        description: "Service connection, limitation of thigh motion (flexion)",
+        diagnosticCode: "5252",
+        active: true,
+        lastAction: :remand,
+        date: 6.months.ago.to_date
+      },
+      {
+        description: "New and material evidence to reopen claim for service connection,"\
+          " shoulder or arm muscle injury",
+        diagnosticCode: "5301",
+        active: false,
+        lastAction: :allowed,
+        date: 6.months.ago.to_date
+      }
+    ]
   end
 
   context "#all" do
@@ -77,18 +97,7 @@ describe AppealSeriesIssues, :all_dbs do
     context "when an issue spans a remand" do
       it "combines issues together" do
         expect(subject.length).to eq(2)
-        expect(subject.first[:description]).to eq(
-          "Service connection, limitation of thigh motion (flexion)"
-        )
-        expect(subject.first[:active]).to be_truthy
-        expect(subject.first[:lastAction]).to eq(:remand)
-        expect(subject.first[:date]).to eq(6.months.ago.to_date)
-        expect(subject.last[:description]).to eq(
-          "New and material evidence to reopen claim for service connection, shoulder or arm muscle injury"
-        )
-        expect(subject.last[:active]).to be_falsey
-        expect(subject.last[:lastAction]).to eq(:allowed)
-        expect(subject.last[:date]).to eq(6.months.ago.to_date)
+        expect(subject).to match_array(combined_issues_array)
       end
 
       context "when there is a draft decision" do
@@ -105,9 +114,7 @@ describe AppealSeriesIssues, :all_dbs do
 
         it "does not show the draft disposition" do
           expect(subject.length).to eq(2)
-          expect(subject.first[:active]).to be_truthy
-          expect(subject.first[:date]).to eq(6.months.ago.to_date)
-          expect(subject.first[:lastAction]).to eq(:remand)
+          expect(subject).to match_array(combined_issues_array)
         end
       end
     end
@@ -116,7 +123,7 @@ describe AppealSeriesIssues, :all_dbs do
       let(:appeals) { [original] }
 
       it "is marked as active" do
-        expect(subject.first[:active]).to be_truthy
+        expect(subject).to match_array(combined_issues_array)
       end
     end
 
@@ -124,7 +131,7 @@ describe AppealSeriesIssues, :all_dbs do
       let(:original_issues) { [] }
 
       it "returns issues" do
-        expect(subject.first[:description]).to eq("Service connection, limitation of thigh motion (flexion)")
+        expect(subject).to match_array(combined_issues_array)
       end
     end
 
@@ -152,6 +159,15 @@ describe AppealSeriesIssues, :all_dbs do
 
       it "does not show as a last_action" do
         expect(subject.first[:lastAction]).to eq(:remand)
+        expect(subject.length).to eq(3)
+        other_hash = {
+          description: "Other",
+          diagnosticCode: nil,
+          active: false,
+          lastAction: nil,
+          date: nil
+        }
+        expect(subject).to match_array(combined_issues_array.push(other_hash))
       end
     end
 
@@ -161,8 +177,13 @@ describe AppealSeriesIssues, :all_dbs do
       end
 
       it "appears as the last action" do
-        expect(subject.first[:lastAction]).to eq(:cavc_remand)
-        expect(subject.first[:date]).to eq(1.month.ago.to_date)
+        expect(subject.length).to eq(2)
+        expect(subject).to include(
+          a_hash_including(
+            lastAction: :cavc_remand,
+            date: 1.month.ago.to_date
+          )
+        )
       end
     end
   end
