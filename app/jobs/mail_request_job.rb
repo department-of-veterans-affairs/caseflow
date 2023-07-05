@@ -92,7 +92,7 @@ class MailRequestJob < CaseflowJob
           get_recipient_hash(distribution),
           get_destinations_hash(dist)
         )
-        log_info(distribution_response)
+        distribution_response.each { |response| log_info(response) }
         distribution.update!(vbms_communication_package_id: package_id, uuid: parse_pacman_id(distribution_response))
       rescue Caseflow::Error::PacmanApiError => error
         log_error(error)
