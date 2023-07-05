@@ -27,16 +27,22 @@ class MailRequestJob < CaseflowJob
         document_referenced(document_to_mail.document_version_reference_id, mail_package[:copies])
       )
       log_info(package_response)
+
+      fail Caseflow::Error::PacmanApiError if package_response.error?
     rescue Caseflow::Error::PacmanApiError => error
       log_error(error)
     else
       vbms_comm_package = create_package(document_to_mail, mail_package)
-      vbms_comm_package.update!(status: "success", uuid: package_response.body[:id])
+      vbms_comm_package.update!(status: "success", uuid: parse_comm_package_pacman_id(package_response))
       create_distribution_request(vbms_comm_package.id, mail_package)
     end
   end
 
   private
+
+  def parse_comm_package_pacman_id(package_response)
+    JSON.parse(package_response.body)["id"]
+  end
 
   # Purpose: arranges id and copies to pass into package post request
   #
@@ -167,6 +173,7 @@ class MailRequestJob < CaseflowJob
   # Response: n/a
   def log_info(info_message)
     uuid = SecureRandom.uuid
-    Rails.logger.info("#{info_message} - ID: #{uuid}")
+
+    Rails.logger.info("#{info_message.body} - ID: #{uuid}")
   end
 end

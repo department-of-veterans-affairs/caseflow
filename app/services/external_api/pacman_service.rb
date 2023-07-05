@@ -184,7 +184,7 @@ class ExternalApi::PacmanService
       request.body = body.to_json unless body.nil?
       request.auth.ssl.ssl_version  = :TLSv1_2
       request.auth.ssl.ca_cert_file = ENV["SSL_CERT_FILE"]
-      request.headers = headers.merge("X-Forwarded-User": generate_token)
+      request.headers = headers.merge("X-Forwarded-User": ENV["PACMAN_API_JWT"])
       sleep 1
 
       MetricsService.record("Pacman Service #{method.to_s.upcase} request to #{url}",
