@@ -96,6 +96,6 @@ class Idt::Api::V1::BaseController < ActionController::Base
   def log_error(error)
     Raven.capture_exception(error)
     Rails.logger.error(error)
-    Rails.logger.error(error.backtrace.join("\n"))
+    Rails.logger.error(error&.backtrace&.join("\n"))
   end
 end

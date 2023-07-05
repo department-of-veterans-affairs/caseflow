@@ -36,7 +36,7 @@ describe VhaCaregiverSupportCompletedTasksTab, :postgres do
 
     context "the description should be appropriately reflected" do
       it "matches what is defined in the Copy.json file" do
-        expect(subject).to eq(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
+        expect(subject).to eq(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
         expect(subject).to eq("Cases completed (last 7 days):")
       end
     end
@@ -47,7 +47,7 @@ describe VhaCaregiverSupportCompletedTasksTab, :postgres do
 
     context "when only the assignee argument is passed when instantiating an VhaCaregiverSupportCompletedTasksTab" do
       it "returns the correct number of columns" do
-        expect(subject.length).to eq(8)
+        expect(subject.length).to eq(9)
       end
     end
   end

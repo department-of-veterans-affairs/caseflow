@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "./send_notification_shared_examples_spec.rb"
+
 describe PostSendInitialNotificationLetterHoldingTask do
   let(:user) { create(:user) }
   let(:cob_team) { ClerkOfTheBoard.singleton }
@@ -16,20 +18,7 @@ describe PostSendInitialNotificationLetterHoldingTask do
     Timecop.return
   end
 
-  describe ".verify_user_can_create" do
-    let(:params) { { appeal: root_task.appeal, parent_id: distribution_task_id, type: task_class.name } }
-    let(:distribution_task_id) { distribution_task.id }
-
-    context "when no distribution_task exists for appeal" do
-      let(:distribution_task_id) { nil }
-
-      it "throws an error" do
-        expect { task_class.create_from_params(params, user) }.to raise_error(ActiveRecord::RecordNotFound)
-      end
-    end
-
-    # test contexts for successfully creating task when an appeal has a CC will go here once other tasks are made
-  end
+  include_examples "verify_user_can_create"
 
   describe ".available_actions" do
     let(:post_send_initial_notification_letter_holding_task) do
@@ -133,7 +122,7 @@ describe PostSendInitialNotificationLetterHoldingTask do
         post_task.save!
         end_date = tt.updated_at
         start_date = tt.created_at
-        expect((end_date - start_date).to_i / 1.day).to eq(12 - 1)
+        expect((end_date - start_date).to_i / 1.day).to eq(12)
       end
 
       it "shows the difference when time moves into the future if the task isn't closed" do
@@ -165,13 +154,13 @@ describe PostSendInitialNotificationLetterHoldingTask do
         end_date = tt.updated_at
         start_date = tt.created_at
 
-        expect((end_date - start_date).to_i / 1.day).to eq(12 - 1)
+        expect((end_date - start_date).to_i / 1.day).to eq(12)
 
         # set the time 100 days into the future
         Timecop.travel(now + 100.days)
 
         # expect the same days on hold as before
-        expect((end_date - start_date).to_i / 1.day).to eq(12 - 1)
+        expect((end_date - start_date).to_i / 1.day).to eq(12)
       end
 
       it "returns the same on hold time because the task was cancelled" do
@@ -184,13 +173,13 @@ describe PostSendInitialNotificationLetterHoldingTask do
         post_task.status = "cancelled"
         post_task.save!
 
-        expect((post_task.closed_at - post_task.created_at).to_i / 1.day).to eq(12 - 1)
+        expect((post_task.closed_at - post_task.created_at).to_i / 1.day).to eq(12)
 
         # set the time 100 days into the future
         Timecop.travel(now + 100.days)
 
         # expect the same days on hold as before
-        expect((post_task.closed_at - post_task.created_at).to_i / 1.day).to eq(12 - 1)
+        expect((post_task.closed_at - post_task.created_at).to_i / 1.day).to eq(12)
       end
     end
   end

@@ -118,7 +118,7 @@ RSpec.feature "Notifications View" do
 
       # sort by notification date
       sort = page.all("svg", class: "table-icon", minimum: 1)[1]
-      sort.click(x: 5, y: 5)
+      sort.click
       cell = page.all("td", minimum: 1)[1]
       expect(cell).to have_content("11/08/2022")
     end
@@ -131,10 +131,10 @@ RSpec.feature "Notifications View" do
       expect(page).to have_current_path(appeal_notifications_page)
 
       # by event type
-      filter = page.find("rect", class: "unselected-filter-icon-border-1", match: :first)
-      filter.click(x: 5, y: 5)
+      filter = page.find("path", class: "unselected-filter-icon-inner-1", match: :first)
+      filter.click
       filter_option = page.find("li", class: "cf-filter-option-row", text: "Appeal docketed")
-      filter_option.click(x: 5, y: 5)
+      filter_option.click
       table = page.find("tbody")
       cells = table.all("td", minimum: 1)
       expect(table).to have_selector("tr", count: 2)
@@ -142,14 +142,14 @@ RSpec.feature "Notifications View" do
       expect(cells[5]).to have_content("Appeal docketed")
 
       # clear filter
-      filter.click(x: 5, y: 5)
+      filter.click
       page.find("button", text: "Clear Event filter").click
 
       # by notification type
-      filter = page.all("rect", class: "unselected-filter-icon-border-1", minimum: 1)[1]
-      filter.click(x: 5, y: 5)
+      filter = page.all("path", class: "unselected-filter-icon-inner-1", minimum: 1)[1]
+      filter.click
       filter_option = page.find("li", class: "cf-filter-option-row", text: "Email")
-      filter_option.click(x: 5, y: 5)
+      filter_option.click
       table = page.find("tbody")
       cells = table.all("td", minimum: 1)
       expect(table).to have_selector("tr", count: 8)
@@ -157,14 +157,14 @@ RSpec.feature "Notifications View" do
       expect(cells[37]).to have_content("Email")
 
       # clear filter
-      filter.click(x: 5, y: 5)
-      page.find("button", text: "Clear Notification type filter").click
+      filter.click
+      page.find("button", text: "Clear Notification Type filter").click
 
       # by recipient information
-      filter = page.all("rect", class: "unselected-filter-icon-border-1", minimum: 1)[2]
-      filter.click(x: 5, y: 5)
+      filter = page.all("path", class: "unselected-filter-icon-inner-1", minimum: 1)[2]
+      filter.click
       filter_option = page.find("li", class: "cf-filter-option-row", text: "Example@example.com")
-      filter_option.click(x: 5, y: 5)
+      filter_option.click
       table = page.find("tbody")
       cells = table.all("td", minimum: 1)
       expect(table).to have_selector("tr", count: 4)
@@ -172,14 +172,14 @@ RSpec.feature "Notifications View" do
       expect(cells[18]).to have_content("example@example.com")
 
       # clear filter
-      filter.click(x: 5, y: 5)
-      page.find("button", text: "Clear Recipient information filter").click
+      filter.click
+      page.find("button", text: "Clear Recipient Information filter").click
 
       # by status
-      filter = page.all("rect", class: "unselected-filter-icon-border-1", minimum: 1)[3]
-      filter.click(x: 5, y: 5)
+      filter = page.all("path", class: "unselected-filter-icon-inner-1", minimum: 1)[3]
+      filter.click
       filter_option = page.find("li", class: "cf-filter-option-row", text: "Delivered")
-      filter_option.click(x: 5, y: 5)
+      filter_option.click
       table = page.find("tbody")
       cells = table.all("td", minimum: 1)
       expect(table).to have_selector("tr", count: 5)
@@ -187,15 +187,15 @@ RSpec.feature "Notifications View" do
       expect(cells[24]).to have_content("Delivered")
 
       # clear filter
-      filter.click(x: 5, y: 5)
+      filter.click
       page.find("button", text: "Clear Status filter").click
 
       # by multiple columns at once
-      filters = page.all("rect", class: "unselected-filter-icon-border-1", minimum: 1)
-      filters[0].click(x: 5, y: 5)
-      page.find("li", class: "cf-filter-option-row", text: "Hearing scheduled").click(x: 5, y: 5)
-      filters[1].click(x: 5, y: 5)
-      page.find("li", class: "cf-filter-option-row", text: "Text").click(x: 5, y: 5)
+      filters = page.all("path", class: "unselected-filter-icon-inner-1", minimum: 1)
+      filters[0].click
+      page.find("li", class: "cf-filter-option-row", text: "Hearing scheduled").click
+      filters[1].click
+      page.find("li", class: "cf-filter-option-row", text: "Text").click
       table = page.find("tbody")
       cells = table.all("td", minimum: 1)
       expect(table).to have_selector("tr", count: 1)
