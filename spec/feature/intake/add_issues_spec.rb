@@ -511,9 +511,9 @@ feature "Intake Add Issues Page", :all_dbs do
     end
     after { FeatureToggle.disable!(:covid_timeliness_exemption) }
     let!(:rating_before_ama) { generate_pre_ama_rating(veteran) }
-    # let!(:ratings_with_legacy_issues) do
-    #   generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
-    # end
+    let!(:ratings_with_legacy_issues) do
+      generate_rating_with_legacy_issues(veteran, receipt_date - 4.days, receipt_date - 4.days)
+    end
 
     let(:receipt_date) { Time.zone.today - 30.days }
     let(:promulgation_date) { receipt_date - 10.days }
