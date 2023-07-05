@@ -32,9 +32,11 @@ class MailRequestJob < CaseflowJob
     rescue Caseflow::Error::PacmanApiError => error
       log_error(error)
     else
-      vbms_comm_package = create_package(document_to_mail, mail_package)
-      vbms_comm_package.update!(status: "success", uuid: parse_pacman_id(package_response))
-      create_distribution_request(vbms_comm_package.id, mail_package)
+      transaction do
+        vbms_comm_package = create_package(document_to_mail, mail_package)
+        vbms_comm_package.update!(status: "success", uuid: parse_pacman_id(package_response))
+        create_distribution_request(vbms_comm_package.id, mail_package)
+      end
     end
   end
 
@@ -87,13 +89,15 @@ class MailRequestJob < CaseflowJob
     distributions.each do |dist|
       begin
         distribution = VbmsDistribution.find(dist[:vbms_distribution_id])
-        distribution_response = PacmanService.send_distribution_request(
+        distribution_responses = PacmanService.send_distribution_request(
           package_id,
           get_recipient_hash(distribution),
           get_destinations_hash(dist)
         )
-        distribution_response.each { |response| log_info(response) }
-        distribution.update!(vbms_communication_package_id: package_id, uuid: parse_pacman_id(distribution_response))
+        distribution_responses.each do |response|
+          log_info(response)
+          distribution.update!(vbms_communication_package_id: package_id, uuid: parse_pacman_id(response))
+        end
       rescue Caseflow::Error::PacmanApiError => error
         log_error(error)
       end
@@ -124,21 +128,23 @@ class MailRequestJob < CaseflowJob
   #
   # Response: array that holds a hash
   def get_destinations_hash(destination)
+    recipient_info = destination[:recipient_info]
+
     [{
-      "type" => destination["destination_type"],
-      "addressLine1" => destination["address_line_1"],
-      "addressLine2" => destination["address_line_2"],
-      "addressLine3" => destination["address_line_3"],
-      "addressLine4" => destination["address_line_4"],
-      "addressLine5" => destination["address_line_5"],
-      "addressLine6" => destination["address_line_6"],
-      "treatLine2AsAddressee" => destination["treat_line_2_as_addressee"],
-      "treatLine3AsAddressee" => destination["treat_line_3_as_addressee"],
-      "city" => destination["city"],
-      "state" => destination["state"],
-      "postalCode" => destination["postal_code"],
-      "countryName" => destination["country_name"],
-      "countryCode" => destination["country_code"]
+      "type" => recipient_info[:destination_type],
+      "addressLine1" => recipient_info[:address_line_1],
+      "addressLine2" => recipient_info[:address_line_2],
+      "addressLine3" => recipient_info[:address_line_3],
+      "addressLine4" => recipient_info[:address_line_4],
+      "addressLine5" => recipient_info[:address_line_5],
+      "addressLine6" => recipient_info[:address_line_6],
+      "treatLine2AsAddressee" => recipient_info[:treat_line_2_as_addressee],
+      "treatLine3AsAddressee" => recipient_info[:treat_line_3_as_addressee],
+      "city" => recipient_info[:city],
+      "state" => recipient_info[:state],
+      "postalCode" => recipient_info[:postal_code],
+      "countryName" => recipient_info[:country_name],
+      "countryCode" => recipient_info[:country_code]
     }]
   end
 
