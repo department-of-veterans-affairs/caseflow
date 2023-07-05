@@ -42,6 +42,16 @@ export const getHeadersObject = (options = {}) => {
   return headers;
 };
 
+export const postMetricLogs = (data) => {
+  return request.
+    post('/metrics/v2/logs').
+    set(getHeadersObject()).
+    send(data).
+    use(nocache).
+    on('error', (err) => console.error(`Metric not recorded\nUUID: ${uuid.v4()}.\n: ${err}`)).
+    end();
+};
+
 // eslint-disable-next-line no-unused-vars
 const errorHandling = (url, error, method, options = {}) => {
   const id = uuid.v4();
@@ -53,28 +63,28 @@ const errorHandling = (url, error, method, options = {}) => {
   options.duration = options.t1 - options.t0;
 
   // Need to renable this check before going to master
-  // if (options?.metricsLogRestError) {
-  const data = {
-    metric: {
-      uuid: id,
-      name: `caseflow.client.rest.${method.toLowerCase()}.error`,
-      message,
-      type: 'error',
-      product: 'caseflow',
-      metric_attributes: JSON.stringify({
-        method,
-        url,
-        error
-      }),
-      sent_to: 'javascript_console',
-      start: options.start,
-      end: options.end,
-      duration: options.duration,
-    }
-  };
+  if (options?.metricsLogRestError) {
+    const data = {
+      metric: {
+        uuid: id,
+        name: `caseflow.client.rest.${method.toLowerCase()}.error`,
+        message,
+        type: 'error',
+        product: 'caseflow',
+        metric_attributes: JSON.stringify({
+          method,
+          url,
+          error
+        }),
+        sent_to: 'javascript_console',
+        start: options.start,
+        end: options.end,
+        duration: options.duration,
+      }
+    };
 
- ApiUtil.postMetricLogs('/metrics/v2/logs', { data: data });
-  // }
+    postMetricLogs(data);
+  }
 };
 
 const successHandling = (url, res, method, options = {}) => {
@@ -86,38 +96,39 @@ const successHandling = (url, res, method, options = {}) => {
   options.end = moment().format();
   options.duration = options.t1 - options.t0;
 
-  // if (options?.metricsLogRestSuccess) {
-  const data = {
-    metric: {
-      uuid: id,
-      name: `caseflow.client.rest.${method.toLowerCase()}.info`,
-      message,
-      type: 'info',
-      product: 'caseflow',
-      metric_attributes: JSON.stringify({
-        method,
-        url
-      }),
-      sent_to: 'javascript_console',
-      sent_to_info: JSON.stringify({
-        metric_group: "Rest call",
-        metric_name: "Javascript request",
-        metric_value: options.duration,
-        app_name: "JS reader",
-        attrs: {
-          service: "rest service",
-          endpoint: url,
-          uuid: id
-        }
-      }),
+  if (options?.metricsLogRestSuccess) {
+    const data = {
+      metric: {
+        uuid: id,
+        name: `caseflow.client.rest.${method.toLowerCase()}.info`,
+        message,
+        type: 'info',
+        product: 'caseflow',
+        metric_attributes: JSON.stringify({
+          method,
+          url
+        }),
+        sent_to: 'javascript_console',
+        sent_to_info: JSON.stringify({
+          metric_group: 'Rest call',
+          metric_name: 'Javascript request',
+          metric_value: options.duration,
+          app_name: 'JS reader',
+          attrs: {
+            service: 'rest service',
+            endpoint: url,
+            uuid: id
+          }
+        }),
 
-      start: options.start,
-      end: options.end,
-      duration: options.duration,
-    }
-  };
+        start: options.start,
+        end: options.end,
+        duration: options.duration,
+      }
+    };
 
-  ApiUtil.postMetricLogs('/metrics/v2/logs', { data: data });
+    postMetricLogs(data);
+  }
 };
 
 const httpMethods = {
@@ -131,14 +142,16 @@ const httpMethods = {
       send(options.data).
       use(nocache).
       on('error', (err) => errorHandling(url, err, 'DELETE', options)).
-      then(res => {
+      then((res) => {
         successHandling(url, res, 'DELETE', options);
+
         return res;
       });
   },
 
   get(url, options = {}) {
     const timeoutSettings = Object.assign({}, defaultTimeoutSettings, _.get(options, 'timeout', {}));
+
     options.t0 = performance.now();
     options.start = moment().format();
 
@@ -163,8 +176,9 @@ const httpMethods = {
 
     return promise.
       use(nocache).
-      then(res => {
+      then((res) => {
         successHandling(url, res, 'GET', options);
+
         return res;
       });
   },
@@ -179,8 +193,9 @@ const httpMethods = {
       send(options.data).
       use(nocache).
       on('error', (err) => errorHandling(url, err, 'PATCH', options)).
-      then(res => {
+      then((res) => {
         successHandling(url, res, 'PATCH', options);
+
         return res;
       });
   },
@@ -195,8 +210,9 @@ const httpMethods = {
       send(options.data).
       use(nocache).
       on('error', (err) => errorHandling(url, err, 'POST', options)).
-      then(res => {
+      then((res) => {
         successHandling(url, res, 'POST', options);
+
         return res;
       });
   },
@@ -211,21 +227,13 @@ const httpMethods = {
       send(options.data).
       use(nocache).
       on('error', (err) => errorHandling(url, err, 'PUT', options)).
-      then(res => {
+      then((res) => {
         successHandling(url, res, 'PUT', options);
+
         return res;
       });
-  },
-
-  postMetricLogs(url, options = {}) {
-    return request.
-      post('/metrics/v2/logs').
-      set(getHeadersObject()).
-      send(options.data).
-      use(nocache).
-      on('error', (err) => console.error(`Metric not recorded\nUUID: ${uuid.v4()}.\n: ${err}`)).
-      end();
   }
+
 };
 
 // TODO(jd): Fill in other HTTP methods as needed
