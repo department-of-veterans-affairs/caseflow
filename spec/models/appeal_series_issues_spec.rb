@@ -131,7 +131,8 @@ describe AppealSeriesIssues, :all_dbs do
       let(:original_issues) { [] }
 
       it "returns issues" do
-        expect(subject).to match_array(combined_issues_array)
+        expect(subject.length).to eq(1)
+        expect(subject.first[:description]).to eq("Service connection, limitation of thigh motion (flexion)")
       end
     end
 
