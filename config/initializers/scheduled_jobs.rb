@@ -3,6 +3,7 @@ SCHEDULED_JOBS = {
     "annual_metrics" => AnnualMetricsReportJob,
     "calculate_dispatch_stats" => CalculateDispatchStatsJob,
     "create_establish_claim" => CreateEstablishClaimTasksJob,
+    "claim_date_establishmedremediationjob" => ClaimDateEstablishedRemediationJob,
     "data_integrity_checks" => DataIntegrityChecksJob,
     "delete_conferences_job" => VirtualHearings::DeleteConferencesJob,
     "dependencies_check" => DependenciesCheckJob,
