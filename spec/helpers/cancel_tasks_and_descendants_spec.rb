@@ -4,18 +4,6 @@ require "helpers/cancel_tasks_and_descendants"
 
 describe CancelTasksAndDescendants do
   describe ".call" do
-    shared_context "logs elapsed time" do
-      it "logs elapsed time" do
-        rails_logger = Rails.logger
-        allow(Rails).to receive(:logger).and_return(rails_logger)
-
-        expect(rails_logger).to receive(:info).at_least(:once)
-          .with(/Elapsed time \(sec\):/)
-
-        call
-      end
-    end
-
     context "when task_relation is not given" do
       subject(:call) { described_class.call }
 
@@ -24,7 +12,15 @@ describe CancelTasksAndDescendants do
           from(nil).to(User.system_user)
       end
 
-      it_behaves_like "logs elapsed time"
+      it "logs all the things" do
+        rails_logger = Rails.logger
+        allow(Rails).to receive(:logger).and_return(rails_logger)
+
+        expect(rails_logger).to receive(:info)
+          .with(/Elapsed time \(sec\):/).ordered
+
+        call
+      end
 
       it { is_expected.to eq(true) }
     end
@@ -32,16 +28,16 @@ describe CancelTasksAndDescendants do
     context "when task_relation is given " do
       subject(:call) { described_class.call(task_relation) }
 
-      let(:task_relation) { instance_double("ActiveRecord::Relation") }
-      let(:task_1) { instance_double("Task", cancel_task_and_child_subtasks: nil) }
-      let(:task_2) { instance_double("Task", cancel_task_and_child_subtasks: nil) }
-      let(:task_3) { instance_double("Task", cancel_task_and_child_subtasks: nil) }
+      let(:task_relation) { Task.where(id: [task_1, task_2, task_3]) }
+      let(:task_1) { create(:veteran_record_request_task) }
+      let(:task_2) { create(:veteran_record_request_task) }
+      let(:task_3) { create(:veteran_record_request_task) }
 
       before do
-        expect(task_relation).to receive(:find_each).
-          and_yield(task_1).
-          and_yield(task_2).
-          and_yield(task_3)
+        expect(task_relation).to receive(:find_each).at_least(:once)
+          .and_yield(task_1)
+          .and_yield(task_2)
+          .and_yield(task_3)
       end
 
       it "cancels each task and its descendants" do
@@ -50,6 +46,16 @@ describe CancelTasksAndDescendants do
           expect(task_2).to receive(:cancel_task_and_child_subtasks)
           expect(task_3).to receive(:cancel_task_and_child_subtasks)
         end
+        call
+      end
+
+      it "logs all the things" do
+        rails_logger = Rails.logger
+        allow(Rails).to receive(:logger).and_return(rails_logger)
+
+        expect(rails_logger).to receive(:info)
+          .with(/Elapsed time \(sec\):/).ordered
+
         call
       end
 
@@ -71,7 +77,15 @@ describe CancelTasksAndDescendants do
           expect { call }.not_to raise_error
         end
 
-        it_behaves_like "logs elapsed time"
+        it "logs all the things" do
+          rails_logger = Rails.logger
+          allow(Rails).to receive(:logger).and_return(rails_logger)
+
+          expect(rails_logger).to receive(:info)
+            .with(/Elapsed time \(sec\):/).ordered
+
+          call
+        end
 
         it { is_expected.to eq(true) }
       end
