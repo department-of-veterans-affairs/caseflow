@@ -621,8 +621,8 @@ export const getIssueDiagnosticCodeLabel = (code) => {
 };
 
 export const getMstPactStatus = (issue) => {
-  const mstStatus = issue.mstStatus;
-  const pactStatus = issue.pactStatus;
+  const mstStatus = issue.mst_status;
+  const pactStatus = issue.pact_status;
 
   if (!mstStatus && !pactStatus) {
     return 'None';
