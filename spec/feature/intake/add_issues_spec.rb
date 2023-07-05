@@ -523,8 +523,8 @@ feature "Intake Add Issues Page", :all_dbs do
     let(:untimely_promulgation_date) { receipt_date - untimely_days - 1.day }
     let(:untimely_profile_date) { receipt_date - untimely_days - 3.days }
 
-    # let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
-    # let!(:untimely_ratings) { generate_untimely_rating(veteran, untimely_promulgation_date, untimely_profile_date) }
+    let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
+    let!(:untimely_ratings) { generate_untimely_rating(veteran, untimely_promulgation_date, untimely_profile_date) }
 
     let!(:old_ratings) do
       Generators::PromulgatedRating.build(
