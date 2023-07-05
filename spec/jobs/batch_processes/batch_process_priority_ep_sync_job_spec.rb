@@ -27,7 +27,7 @@ describe BatchProcessPriorityEpSyncJob, type: :job do
 
   # STILL NEEDS WORKED (rescue StandardError?)
   it "raises an error if there are no PEPSQ records to batch" do
-    # destroy all PEPSQ records
+    # destroy all PEPSQ records to raise the error
     PriorityEndProductSyncQueue.destroy_all
     expect(PriorityEndProductSyncQueue.count).to eq 0
 

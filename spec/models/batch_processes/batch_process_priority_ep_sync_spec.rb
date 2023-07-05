@@ -22,7 +22,7 @@ describe BatchProcessPriorityEpSync, :postgres do
     end
 
     it "returns an empty array if there are no PriorityEndProductSyncQueue records available to batch" do
-      # deletes any pre-existing PEPSQ records
+      # delete any pre-existing PEPSQ records to test what the method return
       PriorityEndProductSyncQueue.destroy_all
 
       # if there aren't any PEPSQ records, an empty array is returned
@@ -118,16 +118,18 @@ describe BatchProcessPriorityEpSync, :postgres do
 
     # STILL NEEDS WORKED (error not being raised)
     it "raises error if the EPE doesn't have an associated VbmsExtClaim record" do
-      # EPE's should have no associated VbmsExtClaim
+      # EPE's should have no associated VbmsExtClaim to test error
       batch.priority_end_product_sync_queue.all.each do |pepsq|
         expect(pepsq.end_product_establishment.vbms_ext_claim).to eq(nil)
       end
 
+      # run the method
       batch.process_batch!
 
-      expect(Rails.logger.error == "Claim Not In VBMS_EXT_CLAIM.")
+      # Rails.logger picks up message => NOT DONE
+      expect(Rails.logger.error.inspect).to eq("Claim Not In VBMS_EXT_CLAIM.")
 
-      # raises a StandardError
+      # raises a StandardError => NOT DONE
       expect { batch.process_batch! }.to raise_error(Caseflow::Error::PriorityEndProductSyncError)
     end
 
