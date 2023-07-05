@@ -131,20 +131,20 @@ class MailRequestJob < CaseflowJob
     recipient_info = destination[:recipient_info]
 
     [{
-      "type" => recipient_info[:destination_type],
-      "addressLine1" => recipient_info[:address_line_1],
-      "addressLine2" => recipient_info[:address_line_2],
-      "addressLine3" => recipient_info[:address_line_3],
-      "addressLine4" => recipient_info[:address_line_4],
-      "addressLine5" => recipient_info[:address_line_5],
-      "addressLine6" => recipient_info[:address_line_6],
-      "treatLine2AsAddressee" => recipient_info[:treat_line_2_as_addressee],
-      "treatLine3AsAddressee" => recipient_info[:treat_line_3_as_addressee],
-      "city" => recipient_info[:city],
-      "state" => recipient_info[:state],
-      "postalCode" => recipient_info[:postal_code],
-      "countryName" => recipient_info[:country_name],
-      "countryCode" => recipient_info[:country_code]
+      type: recipient_info[:destination_type],
+      addressLine1: recipient_info[:address_line_1],
+      addressLine2: recipient_info[:address_line_2],
+      addressLine3: recipient_info[:address_line_3],
+      addressLine4: recipient_info[:address_line_4],
+      addressLine5: recipient_info[:address_line_5],
+      addressLine6: recipient_info[:address_line_6],
+      treatLine2AsAddressee: recipient_info[:treat_line_2_as_addressee],
+      treatLine3AsAddressee: recipient_info[:treat_line_3_as_addressee],
+      city: recipient_info[:city],
+      state: recipient_info[:state],
+      postalCode: recipient_info[:postal_code],
+      countryName: recipient_info[:country_name],
+      countryCode: recipient_info[:country_code]
     }]
   end
 
