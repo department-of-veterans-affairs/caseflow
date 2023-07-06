@@ -24,8 +24,22 @@ class CancelTasksAndDescendants
   def call
     RequestStore[:current_user] = User.system_user
 
-    log_time_elapsed { log_task_count_before_and_after { cancel_tasks } }
-    print_logs_to_stdout
+    with_paper_trail_options do
+      log_time_elapsed { log_task_count_before_and_after { cancel_tasks } }
+      print_logs_to_stdout
+    end
+  end
+
+  # @note Temporarily sets the PaperTrail request options and executes the given
+  #   block. The request options are only in effect on the current thread for
+  #   the duration of the block.
+  #   This is needed so that the PaperTrail `versions` records for cancelled
+  #   tasks reflect the appropriate `whodunnit` and `request_id`.
+  def with_paper_trail_options(&block)
+    options = { whodunnit: User.system_user.id,
+                controller_info: { request_id: @request_id } }
+
+    PaperTrail.request(options, &block)
   end
 
   def cancel_tasks

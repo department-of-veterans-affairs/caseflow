@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "helpers/cancel_tasks_and_descendants"
+require "securerandom"
 
 describe CancelTasksAndDescendants do
   describe ".call" do
@@ -72,6 +73,17 @@ describe CancelTasksAndDescendants do
           expect(task_3).to receive(:cancel_task_and_child_subtasks)
         end
         call
+      end
+
+      it "sets PaperTrail versions data appropriately for cancelled tasks" do
+        request_id = SecureRandom.uuid
+        allow(SecureRandom).to receive(:uuid) { request_id }
+
+        call
+
+        task_1_version = task_1.versions.last
+        expect(task_1_version.whodunnit).to eq(User.system_user.id.to_s)
+        expect(task_1_version.request_id).to eq(request_id)
       end
 
       it "appends appropriate logs to application logs" do
