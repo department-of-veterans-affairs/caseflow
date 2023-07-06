@@ -124,18 +124,7 @@ class Fakes::BGSService
     records = store.fetch_and_inflate(file_number) || store.fetch_and_inflate(:default) || {}
 
     if ActiveRecord::Base.connection.table_exists? "vbms_ext_claims"
-      epe = EndProductEstablishment.find_by(veteran_file_number: file_number)
-
-      if epe.vbms_ext_claim
-        records.values.each do |record|
-          vbms_status = epe.vbms_ext_claim.level_status_code
-          record[:status_type_code] = vbms_status
-
-          # EP benefit_claim_id needs to match the EPE's reference_id
-          record[:benefit_claim_id] = epe.reference_id
-        end
-      end
-
+      vbms_status_sync(records)
     end
 
     records.values
@@ -818,6 +807,26 @@ class Fakes::BGSService
       trsury_seq_nbr: "5",
       zip_prefix_nbr: FakeConstants.BGS_SERVICE.DEFAULT_ZIP
     }
+  end
+
+  def vbms_status_sync(records)
+    epe = EndProductEstablishment.find_by(veteran_file_number: file_number)
+    return unless epe.vbms_ext_claim
+
+    vbms_status = epe.vbms_ext_claim.level_status_code
+    sync(records, vbms_status)
+  end
+
+  def sync(records, vbms_status)
+    records.values.each do |record|
+      record[:status_type_code] = vbms_status
+    end
+  end
+
+  def epe_claim_id_sync
+    return if record[:benefit_claim_id]
+
+    record[:benefit_claim_id] = epe.reference_id
   end
   # rubocop:enable Metrics/MethodLength
 end
