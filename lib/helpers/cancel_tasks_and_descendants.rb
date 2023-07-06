@@ -48,15 +48,19 @@ class CancelTasksAndDescendants
   end
 
   def log_cancelled(task, &block)
-    task_ids = task.descendants.map(&:id)
+    task_ids = cancellable_task_ids_for(task)
     yield(block)
     log("Task ids #{task_ids} cancelled successfully")
   end
 
   def log_errored(task, error)
-    task_ids = task.descendants.map(&:id)
+    task_ids = cancellable_task_ids_for(task)
     log("Task ids #{task_ids} not cancelled due to error - #{error}",
         level: :error)
+  end
+
+  def cancellable_task_ids_for(task)
+    Task.open.where(id: task.descendants).pluck(:id)
   end
 
   def log_time_elapsed(&block)
