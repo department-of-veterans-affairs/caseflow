@@ -47,7 +47,7 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
         key.to_s.underscore.gsub(/e(\d)/, 'e_\1')
       end
     rescue JSON::ParseError => error
-      log_error(error)
+      log_error(error + " Distribution ID: #{params[:distribution_id]}")
 
       response_body
     end
