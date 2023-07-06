@@ -153,7 +153,7 @@ class MailRequestJob < CaseflowJob
                            JSON.parse(destination_info).with_indifferent_access
                          end
 
-    parsed_destination[:recipient_info] || parsed_destination["recipient_info"]
+    parsed_destination[:recipient_info] || parsed_destination["recipient_info"] || parsed_destination
   end
 
   # Purpose: creates destination hash from VbmsDistributionDestination attributes
