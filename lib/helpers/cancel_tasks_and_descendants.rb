@@ -29,6 +29,7 @@ class CancelTasksAndDescendants
     @task_relation.find_each do |task|
       log_cancelled(task) { task.cancel_task_and_child_subtasks }
     rescue StandardError => error
+      log_errored(task, error)
     end
   end
 
@@ -42,6 +43,12 @@ class CancelTasksAndDescendants
     task_ids = task.self_and_descendants.map(&:id)
     yield(block)
     log("Task ids #{task_ids} cancelled successfully")
+  end
+
+  def log_errored(task, error)
+    task_ids = task.self_and_descendants.map(&:id)
+    log("Task ids #{task_ids} not cancelled due to error - #{error}",
+        level: :error)
   end
 
   def log_time_elapsed(&block)

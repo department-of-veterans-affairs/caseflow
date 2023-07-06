@@ -112,14 +112,15 @@ describe CancelTasksAndDescendants do
             expect(rails_logger).to receive(:info)
               .with("Total tasks for cancellation: 3").ordered
 
-          expect(rails_logger).to receive(:info)
-            .with(/Task ids \[#{task_1.id}\] cancelled successfully/).ordered
+            expect(rails_logger).to receive(:info)
+              .with(/Task ids \[#{task_1.id}\] cancelled successfully/).ordered
 
-          expect(rails_logger).not_to receive(:info)
-            .with(/Task ids \[#{task_2.id}\] cancelled successfully/)
+            expect(rails_logger).to receive(:error).with(
+              /Task ids \[#{task_2.id}\] not cancelled due to error - Validation failed/
+            ).ordered
 
-          expect(rails_logger).to receive(:info)
-            .with(/Task ids \[#{task_3.id}\] cancelled successfully/).ordered
+            expect(rails_logger).to receive(:info)
+              .with(/Task ids \[#{task_3.id}\] cancelled successfully/).ordered
 
             expect(rails_logger).to receive(:info)
               .with(/Elapsed time \(sec\):/).ordered
