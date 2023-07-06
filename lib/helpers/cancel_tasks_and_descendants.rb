@@ -40,19 +40,19 @@ class CancelTasksAndDescendants
   def total_tasks_for_cancellation
     @total_tasks_for_cancellation ||= begin
       sum = 0
-      @task_relation.find_each { |task| sum += task.self_and_descendants.count }
+      @task_relation.find_each { |task| sum += task.descendants.count }
       sum
     end
   end
 
   def log_cancelled(task, &block)
-    task_ids = task.self_and_descendants.map(&:id)
+    task_ids = task.descendants.map(&:id)
     yield(block)
     log("Task ids #{task_ids} cancelled successfully")
   end
 
   def log_errored(task, error)
-    task_ids = task.self_and_descendants.map(&:id)
+    task_ids = task.descendants.map(&:id)
     log("Task ids #{task_ids} not cancelled due to error - #{error}",
         level: :error)
   end
