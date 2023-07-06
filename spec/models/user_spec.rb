@@ -972,7 +972,8 @@ describe User, :all_dbs do
       end
 
       context "when the user is a member of many orgs" do
-        let(:judge_team) { JudgeTeam.create_for_judge(create(:user)) }
+        let(:judge) { create(:user) }
+        let(:judge_team) { JudgeTeam.create_for_judge(judge) }
         let(:other_orgs) { [Colocated.singleton, create(:organization)] }
 
         before { other_orgs.each { |org| org.add_user(user) } }
@@ -991,27 +992,23 @@ describe User, :all_dbs do
           end
         end
 
-        context "when marking the admin inactive", skip: "flaky test" do
+        context "when marking the admin inactive" do
           before do
-            OrganizationsUser.make_user_admin(user, judge_team)
-            allow(user).to receive(:judge_in_vacols?).and_return(false)
+            other_orgs.each { |org| org.add_user(judge) }
+            allow(judge).to receive(:judge_in_vacols?).and_return(false)
           end
 
           it "removes admin from all organizations, including JudgeTeam" do
-            if FeatureToggle.enabled?(:judge_admin_scm)
-              expect(judge_team.judge).not_to eq user
-              expect(user.selectable_organizations.length).to eq 3
-            else
-              expect(user.selectable_organizations.length).to eq 2
-            end
+            expect(judge_team.admin).to eq judge
+            expect(judge.organizations.size).to eq 3
+            expect(judge.selectable_organizations.length).to eq 3
 
-            expect(judge_team.admin).to eq user
-            expect(user.organizations.size).to eq 3
-            expect(subject).to eq true
-            expect(user.reload.status).to eq status
-            expect(user.status_updated_at.to_s).to eq Time.zone.now.to_s
-            expect(user.organizations.size).to eq 0
-            expect(user.selectable_organizations.length).to eq 0
+            expect(judge.update_status!(status)).to eq true
+            expect(judge.reload.status).to eq status
+
+            expect(judge.status_updated_at.to_s).to eq Time.zone.now.to_s
+            expect(judge.organizations.size).to eq 0
+            expect(judge.selectable_organizations.length).to eq 0
           end
         end
 
