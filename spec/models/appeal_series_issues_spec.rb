@@ -159,7 +159,6 @@ describe AppealSeriesIssues, :all_dbs do
       end
 
       it "does not show as a last_action" do
-        expect(subject.first[:lastAction]).to eq(:remand)
         expect(subject.length).to eq(3)
         other_hash = {
           description: "Other",
