@@ -91,7 +91,7 @@ class ExternalApi::PacmanService
           destinations: destinations_data(destination)
         },
         headers: HEADERS,
-        endpoint: SEND_PACKAGE_ENDPOINT, method: :post
+        endpoint: SEND_DISTRIBUTION_ENDPOINT, method: :post
       }.compact
     end
 
