@@ -40,7 +40,9 @@ class CancelTasksAndDescendants
   def total_tasks_for_cancellation
     @total_tasks_for_cancellation ||= begin
       sum = 0
-      @task_relation.find_each { |task| sum += task.descendants.count }
+      @task_relation.find_each do |task|
+        sum += Task.open.where(id: task.descendants).count
+      end
       sum
     end
   end
