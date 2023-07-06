@@ -14,8 +14,9 @@ describe Idt::V1::AppealDetailsSerializer, :postgres do
     context "legacy appeals " do
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 
-      it "returns nil for legacy appeals" do
-        expect(subject).to be nil
+      it "returns mst/pact hash for legacy appeals" do
+        expect(subject[:mst]).to be false
+        expect(subject[:pact]).to be false
       end
     end
 
@@ -76,11 +77,9 @@ describe Idt::V1::AppealDetailsSerializer, :postgres do
       end
 
       context "mst" do
-        before do
-          FeatureToggle.enable!(:mst_identification && :legacy_mst_pact_identification)
-          appeal.mst = true
-        end
-        after { FeatureToggle.disable!(:mst_identification && :legacy_mst_pact_identification) }
+        let(:appeal) { create(:appeal, request_issues: [create(:request_issue, mst_status: true)]) }
+        before { FeatureToggle.enable!(:mst_identification) }
+        after { FeatureToggle.disable!(:mst_identification) }
 
         it "sets mst key value to true" do
           expect(subject[:contested_claim]).to be false
@@ -93,11 +92,9 @@ describe Idt::V1::AppealDetailsSerializer, :postgres do
       end
 
       context "pact" do
-        before do
-          FeatureToggle.enable!(:pact_identification && :legacy_mst_pact_identification)
-          appeal.pact = true
-        end
-        after { FeatureToggle.disable!(:pact_identification && :legacy_mst_pact_identification) }
+        let(:appeal) { create(:appeal, request_issues: [create(:request_issue, pact_status: true)]) }
+        before { FeatureToggle.enable!(:pact_identification) }
+        after { FeatureToggle.disable!(:pact_identification) }
 
         it "sets pact key value to true" do
           expect(subject[:contested_claim]).to be false
