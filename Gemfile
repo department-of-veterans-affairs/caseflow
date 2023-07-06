@@ -62,6 +62,7 @@ gem "rainbow"
 gem "react_on_rails", "11.3.0"
 gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
+gem 'redis-mutex'
 gem "request_store"
 gem "roo", "~> 2.7"
 # Use SCSS for stylesheets
