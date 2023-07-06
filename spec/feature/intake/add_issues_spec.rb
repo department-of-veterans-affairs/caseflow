@@ -594,7 +594,7 @@ feature "Intake Add Issues Page", :all_dbs do
         expect(page).to have_content("Intake completed")
       end
 
-      scenario "when vacols issue ineligible even with an exemption", skip: true do
+      scenario "when vacols issue ineligible even with an exemption" do
         start_higher_level_review(veteran, legacy_opt_in_approved: true)
         visit "/intake/add_issues"
         click_intake_add_issue
@@ -602,9 +602,7 @@ feature "Intake Add Issues Page", :all_dbs do
 
         # Expect legacy opt in issue modal to show
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-        add_intake_rating_issue("lumbosacral strain")
-
-        # Expect untimely issue modal not to show
+        add_intake_rating_issue("typhoid arthritis")
         expect(page).to_not have_content("Issue 1 is an Untimely Issue")
       end
 
@@ -692,7 +690,7 @@ feature "Intake Add Issues Page", :all_dbs do
         expect(page).to have_content("Intake completed")
       end
 
-      scenario "when vacols issue is ineligible even with an exemption", skip: true do
+      scenario "when vacols issue is ineligible even with an exemption" do
         start_supplemental_claim(veteran, legacy_opt_in_approved: true)
         visit "/intake/add_issues"
         click_intake_add_issue
@@ -700,10 +698,11 @@ feature "Intake Add Issues Page", :all_dbs do
 
         # Expect legacy opt in issue modal to show
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-        add_intake_rating_issue("lumbosacral strain")
+        add_intake_rating_issue("typhoid arthritis")
 
         # Expect untimely issue modal to not show
         expect(page).to_not have_content("Issue 1 is an Untimely Issue")
+        expect(page).to have_content("PTSD denied is ineligible")
       end
 
       scenario "when vacols issue is eligible on a supplemental claim" do

@@ -196,7 +196,7 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
     end
 
     def clean_up_after_threads
-      DatabaseCleaner.clean_with(:truncation, except: %w[notification_events])
+      DatabaseCleaner.clean_with(:truncation, except: %w[notification_events vftypes issref])
     end
 
     def ensure_notification_events_exist
