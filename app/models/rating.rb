@@ -21,8 +21,6 @@ class Rating
   CONTENTION_PACT_ISSUES = [
     "pact",
     "pactdicre",
-    "pact act dic reevaluation",
-    "pact exam exclusion - sec. 1168",
     "pees1"
   ].freeze
 

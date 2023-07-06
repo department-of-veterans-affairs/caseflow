@@ -21,6 +21,8 @@ namespace :db do
             Generators::Vacols::Case.create(
               corres_exists: true,
               case_issue_attrs: [
+                Generators::Vacols::CaseIssue.case_issue_attrs.merge(ADD_SPECIAL_ISSUES ? special_issue_types(idx) : {}),
+                Generators::Vacols::CaseIssue.case_issue_attrs.merge(ADD_SPECIAL_ISSUES ? special_issue_types(idx) : {}),
                 Generators::Vacols::CaseIssue.case_issue_attrs.merge(ADD_SPECIAL_ISSUES ? special_issue_types(idx) : {})
               ],
               folder_attrs: Generators::Vacols::Folder.folder_attrs.merge(
@@ -132,7 +134,7 @@ namespace :db do
 
       veterans_with_like_45_appeals.each do |file_number|
         docket_number += 1
-        LegacyAppealFactory.stamp_out_legacy_appeals(10, file_number, user, docket_number)
+        LegacyAppealFactory.stamp_out_legacy_appeals(5, file_number, user, docket_number)
       end
       # veterans_with_250_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals(250, file_number, user) }
     end
