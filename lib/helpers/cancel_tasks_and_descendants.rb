@@ -34,9 +34,15 @@ class CancelTasksAndDescendants
   end
 
   def log_total_tasks_for_cancellation
-    sum = 0
-    @task_relation.find_each { |task| sum += task.self_and_descendants.count }
-    log("Total tasks for cancellation: #{sum}")
+    log("Total tasks for cancellation: #{total_tasks_for_cancellation}")
+  end
+
+  def total_tasks_for_cancellation
+    @total_tasks_for_cancellation ||= begin
+      sum = 0
+      @task_relation.find_each { |task| sum += task.self_and_descendants.count }
+      sum
+    end
   end
 
   def log_cancelled(task, &block)
