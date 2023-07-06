@@ -123,8 +123,8 @@ class Fakes::BGSService
     store = self.class.end_product_store
     records = store.fetch_and_inflate(file_number) || store.fetch_and_inflate(:default) || {}
 
-    if ActiveRecord::Base.connection.table_exists? "vbms_ext_claims"
-      vbms_status_sync(records)
+    if ActiveRecord::Base.connection.table_exists? "vbms_ext_claim"
+      vbms_status_sync(records, file_number)
     end
 
     records.values
@@ -809,15 +809,15 @@ class Fakes::BGSService
     }
   end
 
-  def vbms_status_sync(records)
+  def vbms_status_sync(records, file_number)
     epe = EndProductEstablishment.find_by(veteran_file_number: file_number)
     return unless epe.vbms_ext_claim
 
-    vbms_status = epe.vbms_ext_claim.level_status_code
-    sync(records, vbms_status)
+    sync(records, epe)
   end
 
-  def sync(records, vbms_status)
+  def sync(records, epe)
+    vbms_status = epe.vbms_ext_claim.level_status_code
     records.values.each do |record|
       record[:status_type_code] = vbms_status
     end
