@@ -21,7 +21,7 @@ feature "VhaRegionalQueue", :all_dbs do
     let(:on_hold_pagination_text) { "Viewing 1-#{num_on_hold_rows} of #{num_on_hold_rows} total" }
     let(:column_heading_names) do
       [
-        "Case Details", "Tasks", "Assigned By", "Types", "Docket", "Days Waiting", "Veteran Documents"
+        "Case Details", "Issue Type", "Tasks", "Assigned By", "Types", "Docket", "Days Waiting", "Veteran Documents"
       ]
     end
     let!(:num_assigned_rows) { 3 }
