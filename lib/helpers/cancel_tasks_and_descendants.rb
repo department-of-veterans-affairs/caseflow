@@ -24,7 +24,10 @@ class CancelTasksAndDescendants
     @initial_cancellable_count = count_of_cancellable_tasks
     log_total_tasks_for_cancellation(@initial_cancellable_count)
 
-    log_time_elapsed { cancel_tasks }
+    log_time_elapsed do
+      cancel_tasks
+      log_total_cancelled_tasks
+    end
   end
 
   def cancel_tasks
@@ -61,6 +64,11 @@ class CancelTasksAndDescendants
 
   def cancellable_descendants_for(task)
      Task.open.where(id: task.descendants)
+  end
+
+  def log_total_cancelled_tasks
+    difference = @initial_cancellable_count - count_of_cancellable_tasks
+    log("Tasks cancelled successfully: #{difference}")
   end
 
   def log_time_elapsed(&block)

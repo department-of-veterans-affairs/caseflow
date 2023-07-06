@@ -24,8 +24,10 @@ describe CancelTasksAndDescendants do
             .with(/Task ids \[.+\] cancelled successfully/)
 
           expect(rails_logger).to receive(:info)
-            .with(/Elapsed time \(sec\):/).ordered
+            .with(/Tasks cancelled successfully: 0/).ordered
 
+          expect(rails_logger).to receive(:info)
+            .with(/Elapsed time \(sec\):/).ordered
         end
 
         call
@@ -80,6 +82,9 @@ describe CancelTasksAndDescendants do
             .with(/Task ids \[#{task_3.id}\] cancelled successfully/).ordered
 
           expect(rails_logger).to receive(:info)
+            .with(/Tasks cancelled successfully: 3/).ordered
+
+          expect(rails_logger).to receive(:info)
             .with(/Elapsed time \(sec\):/).ordered
         end
 
@@ -121,6 +126,9 @@ describe CancelTasksAndDescendants do
 
             expect(rails_logger).to receive(:info)
               .with(/Task ids \[#{task_3.id}\] cancelled successfully/).ordered
+
+            expect(rails_logger).to receive(:info)
+              .with(/Tasks cancelled successfully: 2/).ordered
 
             expect(rails_logger).to receive(:info)
               .with(/Elapsed time \(sec\):/).ordered
