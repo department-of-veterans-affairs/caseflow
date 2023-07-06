@@ -3,15 +3,23 @@ import * as React from 'react';
 
 import Badge from '../Badge';
 import { COLORS } from 'app/constants/AppConstants';
+import { connect } from 'react-redux';
 
 /**
  * Component to display if the appeal is a mst.
  */
 
 const MstBadge = (props) => {
-  const { appeal } = props;
+  const { appeal, appealDetails } = props;
 
-  if (!appeal?.mst) {
+  // During decision review workflow, saved/staged changes made are updated to appealDetails
+  if (appealDetails[appeal.externalId]?.issues) {
+    const issues = appealDetails[appeal.externalId].issues;
+
+    if (!issues.some((issue) => issue.mst_status === true)) {
+      return null;
+    }
+  } else if (!appeal?.mst) {
     return null;
   }
 
@@ -28,7 +36,14 @@ const MstBadge = (props) => {
 };
 
 MstBadge.propTypes = {
-  appeal: PropTypes.object
+  appeal: PropTypes.object,
+  appealDetails: PropTypes.object
 };
 
-export default MstBadge;
+const mapStateToProps = (state) => ({
+  appealDetails: state.queue.appealDetails,
+});
+
+export default connect(
+  mapStateToProps
+)(MstBadge);
