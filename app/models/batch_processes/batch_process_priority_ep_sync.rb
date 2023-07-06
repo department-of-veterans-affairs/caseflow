@@ -3,14 +3,7 @@
 class BatchProcessPriorityEpSync < BatchProcess
   class << self
     def find_records
-      PriorityEndProductSyncQueue.where(
-        batch_id: [nil, BatchProcess.where("state = ?", Constants.BATCH_PROCESS.completed)])
-        .where("(status <> ? AND status <> ?) AND
-                (last_batched_at IS NULL OR last_batched_at <= ?)",
-                Constants.PRIORITY_EP_SYNC.synced,
-                Constants.PRIORITY_EP_SYNC.stuck,
-                BatchProcess::ERROR_DELAY.hours.ago).lock.limit(BatchProcess::BATCH_LIMIT)
-
+      PriorityEndProductSyncQueue.completed_or_unbatched.not_synced_or_stuck.rebatchable.batch_limit.lock
     end
 
 

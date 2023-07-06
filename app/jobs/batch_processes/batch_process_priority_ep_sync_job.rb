@@ -11,12 +11,8 @@ class BatchProcessPriorityEpSyncJob < CaseflowJob
   def perform
     begin
       batch = ActiveRecord::Base.transaction do
-        # .find_records MUST remain in a transaction block
-        # otherwise the table will remain locked
         records_to_batch = BatchProcessPriorityEpSync.find_records
         next if records_to_batch.empty?
-
-        # DOUBLE LOCK TESTING BYEBUG
 
         BatchProcessPriorityEpSync.create_batch!(records_to_batch)
       end

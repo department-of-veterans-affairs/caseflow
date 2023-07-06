@@ -9,6 +9,7 @@ class BatchProcess < CaseflowRecord
   ERROR_DELAY = ENV["ERROR_DELAY"].to_i
   BATCH_LIMIT = ENV["BATCH_LIMIT"].to_i
 
+  scope :completed_batch_process_ids, -> { where(state: Constants.BATCH_PROCESS.completed).select(:batch_id) }
 
   enum state: {
     Constants.BATCH_PROCESS.pre_processing.to_sym => Constants.BATCH_PROCESS.pre_processing,
