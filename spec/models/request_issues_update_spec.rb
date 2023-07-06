@@ -253,7 +253,11 @@ describe RequestIssuesUpdate, :all_dbs do
              mst_status_update_reason_notes: mst_status_update_reason_notes }]
         end
 
+        before { FeatureToggle.enable!(:mst_identification) }
+        after { FeatureToggle.disable!(:mst_identification) }
+
         it "updates the request issue's mst status and mst status update reason notes" do
+          allow_any_instance_of(RequestIssuesUpdate).to receive(:create_issue_update_task).and_return(true)
           expect(subject).to be_truthy
           expect(existing_request_issue.reload.mst_status).to eq(true)
           expect(existing_request_issue.reload.mst_status_update_reason_notes).to eq("I am the mst status update reason notes")
@@ -268,7 +272,11 @@ describe RequestIssuesUpdate, :all_dbs do
              pact_status_update_reason_notes: pact_status_update_reason_notes }]
         end
 
+        before { FeatureToggle.enable!(:pact_identification) }
+        after { FeatureToggle.disable!(:pact_identification) }
+
         it "updates the request issue's pact status and pact status update reason notes" do
+          allow_any_instance_of(RequestIssuesUpdate).to receive(:create_issue_update_task).and_return(true)
           expect(subject).to be_truthy
           expect(existing_request_issue.reload.pact_status).to eq(true)
           expect(existing_request_issue.reload.pact_status_update_reason_notes).to eq("I am the pact status update reason notes")
