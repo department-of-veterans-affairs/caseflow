@@ -153,7 +153,7 @@ RSpec.feature "Case details", :all_dbs do
         expect(details_link.text).to eq(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)
       end
 
-      context "the user has a VSO role", skip: "re-enable when pagination is fixed" do
+      context "the user has a VSO role" do
         let!(:vso) { create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: "8054") }
         let!(:vso_user) { create(:user, :vso_role) }
         let!(:vso_task) { create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: appeal) }
