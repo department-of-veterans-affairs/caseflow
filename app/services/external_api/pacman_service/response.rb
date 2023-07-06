@@ -23,7 +23,7 @@ class ExternalApi::PacmanService::Response
   # Parses response body to an object
   def body
     @body ||= begin
-                JSON.parse(resp.body)
+                JSON.parse(resp.body).with_indifferent_access
               rescue JSON::ParserError
                 log(JSON::ParserError)
                 {}

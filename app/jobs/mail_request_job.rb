@@ -48,7 +48,15 @@ class MailRequestJob < CaseflowJob
   #
   # Response: The UUID of the communication package or distribution just created
   def parse_pacman_id(pacman_response)
-    JSON.parse(pacman_response.body)["id"]
+    response_body = pacman_response.body
+
+    parsed_body = if response_body.is_a?(ActiveSupport::HashWithIndifferentAccess)
+                    response_body
+                  else
+                    JSON.parse(response_body).with_indifferent_access
+                  end
+
+    parsed_body[:id]
   end
 
   # Purpose: arranges id and copies to pass into package post request
@@ -84,6 +92,16 @@ class MailRequestJob < CaseflowJob
     "#{document_to_mail.document_name}_#{Time.now.utc.strftime('%Y%m%d%k%M%S')}"
   end
 
+  def find_associated_vbms_distribution_record(distribution_info)
+    parsed_distro = if [ActiveSupport::HashWithIndifferentAccess, Hash].include?(distribution_info.class)
+                      distribution_info
+                    else
+                      JSON.parse(distribution_info).with_indifferent_access
+                    end
+
+    VbmsDistribution.find(parsed_distro[:vbms_distribution_id] || parsed_distro["vbms_distribution_id"])
+  end
+
   # Purpose: sends distribution POST request to Pacman API
   #
   # takes in VbmsCommunicationPackage id (string) and MailRequest object
@@ -91,9 +109,10 @@ class MailRequestJob < CaseflowJob
   # Response: n/a
   def create_distribution_request(package_id, mail_package)
     distributions = mail_package[:distributions]
+
     distributions.each do |dist|
       begin
-        distribution = VbmsDistribution.find(dist[:vbms_distribution_id])
+        distribution = find_associated_vbms_distribution_record(dist)
         distribution_responses = PacmanService.send_distribution_request(
           VbmsCommunicationPackage.find(package_id).uuid,
           get_recipient_hash(distribution),
@@ -127,13 +146,23 @@ class MailRequestJob < CaseflowJob
     }
   end
 
+  def parse_recipient_info_from_destinaton(destination_info)
+    parsed_destination = if [ActiveSupport::HashWithIndifferentAccess, Hash].include?(destination_info.class)
+                           destination_info
+                         else
+                           JSON.parse(destination_info).with_indifferent_access
+                         end
+
+    parsed_destination[:recipient_info] || parsed_destination["recipient_info"]
+  end
+
   # Purpose: creates destination hash from VbmsDistributionDestination attributes
   #
   # takes in VbmsDistributionDestination object
   #
   # Response: array that holds a hash
   def get_destinations_hash(destination)
-    recipient_info = destination[:recipient_info]
+    recipient_info = parse_recipient_info_from_destinaton(destination)
 
     [{
       type: recipient_info[:destination_type],
