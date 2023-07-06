@@ -132,7 +132,8 @@ module IssueUpdater
 
     task.format_instructions(
       "Edited Issue",
-      [original_issue.nonrating_issue_category, original_issue.contested_issue_description].join,
+      task_text_helper([original_issue.contested_issue_description, original_issue.nonrating_issue_category, original_issue.nonrating_issue_description]),
+      task_text_benefit_type(original_issue),
       original_issue.mst_status,
       original_issue.pact_status,
       decision_issue.mst_status,
@@ -158,5 +159,19 @@ module IssueUpdater
       change_category: "Edited Decision Issue",
       decision_issue_id: decision_issue.id
     )
+  end
+
+  def task_text_benefit_type(issue)
+    issue.benefit_type ? issue.benefit_type.capitalize : ""
+  end
+
+  def task_text_helper(text_array)
+    if text_array.compact.length > 1
+      text_array.compact.join(" - ")
+    elsif text_array.compact.length == 1
+      text_array.join
+    else
+      "Description unavailable"
+    end
   end
 end
