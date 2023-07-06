@@ -5,6 +5,8 @@ require "securerandom"
 class CancelTasksAndDescendants
   LOG_TAG = "CancelTasksAndDescendants"
 
+  # Cancels all tasks and descendant tasks for given Task relation
+  #
   # @param task_relation [ActiveRecord::Relation] tasks to be cancelled
   # @return [true]
   def self.call(task_relation = Task.none)
@@ -45,7 +47,8 @@ class CancelTasksAndDescendants
   end
 
   def cancellable_descendants_for(task)
-     Task.open.where(id: task.descendants)
+    # Note: The result of `Task #descendants` also includes the instance itself
+    Task.open.where(id: task.descendants)
   end
 
   def log_task_count_before_and_after(&block)
