@@ -41,26 +41,26 @@ class CancelTasksAndDescendants
     @total_tasks_for_cancellation ||= begin
       sum = 0
       @task_relation.find_each do |task|
-        sum += Task.open.where(id: task.descendants).count
+        sum += cancellable_descendants_for(task).count
       end
       sum
     end
   end
 
   def log_cancelled(task, &block)
-    task_ids = cancellable_task_ids_for(task)
+    task_ids = cancellable_descendants_for(task).pluck(:id)
     yield(block)
     log("Task ids #{task_ids} cancelled successfully")
   end
 
   def log_errored(task, error)
-    task_ids = cancellable_task_ids_for(task)
+    task_ids = cancellable_descendants_for(task).pluck(:id)
     log("Task ids #{task_ids} not cancelled due to error - #{error}",
         level: :error)
   end
 
-  def cancellable_task_ids_for(task)
-    Task.open.where(id: task.descendants).pluck(:id)
+  def cancellable_descendants_for(task)
+     Task.open.where(id: task.descendants)
   end
 
   def log_time_elapsed(&block)
