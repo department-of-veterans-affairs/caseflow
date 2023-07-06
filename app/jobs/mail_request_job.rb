@@ -32,7 +32,7 @@ class MailRequestJob < CaseflowJob
     rescue Caseflow::Error::PacmanApiError => error
       log_error(error)
     else
-      transaction do
+      ActiveRecord::Base.transaction do
         vbms_comm_package = create_package(document_to_mail, mail_package)
         vbms_comm_package.update!(status: "success", uuid: parse_pacman_id(package_response))
         create_distribution_request(vbms_comm_package.id, mail_package)
