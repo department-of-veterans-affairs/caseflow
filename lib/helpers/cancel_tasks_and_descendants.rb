@@ -27,7 +27,7 @@ class CancelTasksAndDescendants
 
   def cancel_tasks
     @task_relation.find_each do |task|
-      task.cancel_task_and_child_subtasks
+      log_cancelled(task) { task.cancel_task_and_child_subtasks }
     rescue StandardError => error
     end
   end
@@ -36,6 +36,12 @@ class CancelTasksAndDescendants
     sum = 0
     @task_relation.find_each { |task| sum += task.self_and_descendants.count }
     log("Total tasks for cancellation: #{sum}")
+  end
+
+  def log_cancelled(task, &block)
+    task_ids = task.self_and_descendants.map(&:id)
+    yield(block)
+    log("Task ids #{task_ids} cancelled successfully")
   end
 
   def log_time_elapsed(&block)
