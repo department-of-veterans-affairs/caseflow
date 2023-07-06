@@ -127,15 +127,14 @@ class Fakes::BGSService
     # if it standing, we will attempt to sync EP, EPE, and VbmsExtClaim statuses
     if ActiveRecord::Base.connection.table_exists? "vbms_ext_claim"
       epe = EndProductEstablishment.find_by(veteran_file_number: file_number)
-      return unless epe.vbms_ext_claim
+      if epe.vbms_ext_claim
+        vbms_status = epe.vbms_ext_claim.level_status_code
 
-      vbms_status = epe.vbms_ext_claim.level_status_code
-      records.values.each do |record|
-        record[:status_type_code] = vbms_status
+        records.values.each do |record|
+          record[:status_type_code] = vbms_status
 
-        # checks that there is a benefit_claim_id present
-        unless record[:benefit_claim_id] do
-          record[:benefit_claim_id] = epe.reference_id
+          # checks that there is a benefit_claim_id present
+          record[:benefit_claim_id] = epe.reference_id unless record[:benefit_claim_id]
         end
       end
     end
