@@ -53,10 +53,10 @@ class MailRequestJob < CaseflowJob
     parsed_body = if response_body.is_a?(ActiveSupport::HashWithIndifferentAccess)
                     response_body
                   else
-                    JSON.parse(response_body).with_indifferent_access
+                    JSON.parse(response_body)
                   end
 
-    parsed_body[:id]
+    parsed_body.with_indifferent_access[:id]
   end
 
   # Purpose: arranges id and copies to pass into package post request
@@ -99,10 +99,10 @@ class MailRequestJob < CaseflowJob
     parsed_distro = if [ActiveSupport::HashWithIndifferentAccess, Hash].include?(distribution_info.class)
                       distribution_info
                     else
-                      JSON.parse(distribution_info).with_indifferent_access
+                      JSON.parse(distribution_info)
                     end
 
-    VbmsDistribution.find(parsed_distro[:vbms_distribution_id] || parsed_distro["vbms_distribution_id"])
+    VbmsDistribution.find(parsed_distro.with_indifferent_access[:vbms_distribution_id])
   end
 
   # Purpose: sends distribution POST request to Pacman API
