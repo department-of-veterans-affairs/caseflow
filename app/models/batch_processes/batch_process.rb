@@ -3,6 +3,7 @@
 class BatchProcess < CaseflowRecord
   self.inheritance_column = :batch_type
   has_many :priority_end_product_sync_queue, foreign_key: "batch_id", primary_key: "batch_id"
+  has_many :end_product_establishments, through: :priority_end_product_sync_queue
   after_initialize :init_counters
 
   ERROR_LIMIT = ENV["MAX_ERRORS_BEFORE_STUCK"].to_i
@@ -18,7 +19,6 @@ class BatchProcess < CaseflowRecord
 
   }
 
-
   class << self
     def find_records
       # no-op, can be overwritten
@@ -32,7 +32,6 @@ class BatchProcess < CaseflowRecord
   def process_batch!
     # no-op, can be overwritten
   end
-
 
   private
 

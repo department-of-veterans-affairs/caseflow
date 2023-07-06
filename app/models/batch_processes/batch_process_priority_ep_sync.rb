@@ -3,9 +3,8 @@
 class BatchProcessPriorityEpSync < BatchProcess
   class << self
     def find_records
-      PriorityEndProductSyncQueue.completed_or_unbatched.not_synced_or_stuck.rebatchable.batch_limit.lock
+      PriorityEndProductSyncQueue.completed_or_unbatched.not_synced_or_stuck.batchable.batch_limit.lock
     end
-
 
     def create_batch!(records)
       new_batch = BatchProcessPriorityEpSync.create!(batch_type: name,
@@ -16,7 +15,6 @@ class BatchProcessPriorityEpSync < BatchProcess
       new_batch
     end
   end
-
 
   def process_batch!
     batch_processing!
@@ -34,7 +32,6 @@ class BatchProcessPriorityEpSync < BatchProcess
         elsif epe.synced_status != epe.vbms_ext_claim&.level_status_code
           fail Caseflow::Error::PriorityEndProductSyncError, "EPE synced_status does not match VBMS."
         end
-
       rescue StandardError => error
         error_out_record!(record, error)
         next
@@ -47,13 +44,11 @@ class BatchProcessPriorityEpSync < BatchProcess
     batch_complete!
   end
 
-
   def assign_batch_to_queued_records!(records)
     records.each do |pepsq_record|
       pepsq_record.update!(batch_id: batch_id,
-                          status: Constants.PRIORITY_EP_SYNC.pre_processing,
-                          last_batched_at: Time.zone.now)
-      end
+                           status: Constants.PRIORITY_EP_SYNC.pre_processing,
+                           last_batched_at: Time.zone.now)
+    end
   end
-
 end

@@ -7,7 +7,6 @@ class BatchProcessPriorityEpSyncJob < CaseflowJob
     JOB_ATTR = job
   end
 
-
   def perform
     begin
       batch = ActiveRecord::Base.transaction do
@@ -22,7 +21,6 @@ class BatchProcessPriorityEpSyncJob < CaseflowJob
       else
         Rails.logger.info("No Records Available to Batch.  Time: #{Time.zone.now}")
       end
-
     rescue StandardError => error
       Rails.logger.error("Error: #{error.inspect}, Job ID: #{JOB_ATTR&.job_id}, Job Time: #{Time.zone.now}")
       capture_exception(error: error,
