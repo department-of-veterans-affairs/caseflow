@@ -46,7 +46,9 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
       parsed_response.deep_transform_keys do |key|
         key.to_s.underscore.gsub(/e(\d)/, 'e_\1')
       end
-    rescue JSON::ParseError => _error
+    rescue JSON::ParseError => error
+      log_error(error)
+
       response_body
     end
   end
