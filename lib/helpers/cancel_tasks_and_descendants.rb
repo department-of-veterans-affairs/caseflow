@@ -21,12 +21,7 @@ class CancelTasksAndDescendants
   def call
     RequestStore[:current_user] = User.system_user
 
-    log_time_elapsed do
-      @initial_cancellable_count = count_of_cancellable_tasks
-      log_total_tasks_for_cancellation(@initial_cancellable_count)
-      cancel_tasks
-      log_total_cancelled_tasks
-    end
+    log_time_elapsed { log_cancellable_tasks_before_and_after { cancel_tasks } }
   end
 
   def cancel_tasks
@@ -35,10 +30,6 @@ class CancelTasksAndDescendants
     rescue StandardError => error
       log_errored(task, error)
     end
-  end
-
-  def log_total_tasks_for_cancellation(count)
-    log("Total tasks for cancellation: #{count}")
   end
 
   def count_of_cancellable_tasks
@@ -65,9 +56,20 @@ class CancelTasksAndDescendants
      Task.open.where(id: task.descendants)
   end
 
-  def log_total_cancelled_tasks
-    difference = @initial_cancellable_count - count_of_cancellable_tasks
-    log("Tasks cancelled successfully: #{difference}")
+  def log_cancellable_tasks_before_and_after(&block)
+    initial_count = count_of_cancellable_tasks
+    log_total_tasks_for_cancellation(initial_count)
+    yield(block)
+    final_count = initial_count - count_of_cancellable_tasks
+    log_cancelled_successfully(final_count)
+  end
+
+  def log_total_tasks_for_cancellation(count)
+    log("Total tasks for cancellation: #{count}")
+  end
+
+  def log_cancelled_successfully(count)
+    log("Tasks cancelled successfully: #{count}")
   end
 
   def log_time_elapsed(&block)
