@@ -134,7 +134,7 @@ namespace :db do
 
       veterans_with_like_45_appeals.each do |file_number|
         docket_number += 1
-        LegacyAppealFactory.stamp_out_legacy_appeals(10, file_number, user, docket_number)
+        LegacyAppealFactory.stamp_out_legacy_appeals(5, file_number, user, docket_number)
       end
       # veterans_with_250_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals(250, file_number, user) }
     end
