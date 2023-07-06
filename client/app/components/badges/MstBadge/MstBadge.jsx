@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 const MstBadge = (props) => {
   const { appeal, appealDetails } = props;
 
+  // During decision review workflow, saved/staged changes made are updated to appealDetails
   if (appealDetails[appeal.externalId]?.issues) {
     const issues = appealDetails[appeal.externalId].issues;
 
