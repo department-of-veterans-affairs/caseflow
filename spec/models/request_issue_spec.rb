@@ -1515,23 +1515,39 @@ describe RequestIssue, :all_dbs do
   end
 
   context "#mst_contention_status?, #pact_contention_status?" do
+    let(:claim_id) { "600118959" }
+    let(:end_prod_establishment) do
+      create(
+        :end_product_establishment,
+        reference_id: claim_id
+      )
+    end
     context "when mst is available and pact is not available" do
-      let(:claim_id) {"600118959"}
-      let(:mst_contention) do
+      let!(:mst_contention) do
         Generators::Contention.build_mst_contention(
           claim_id: claim_id
         )
       end
-      let(:end_prod_establishment) do
-       create(:end_product_establishment,
-         reference_id: claim_id
+      let(:mst_request_issue) do
+        create(
+          :request_issue,
+          contention_reference_id: mst_contention.id,
+          end_product_establishment: end_prod_establishment
         )
       end
-      let(:mst_request_issue) do
-       create(:request_issue,
-         contention_reference_id: mst_contention.id,
-         end_product_establishment: end_prod_establishment
-       )
+      let!(:bgs_contention) do
+        Generators::BgsContention.build_mst_contention(
+          reference_id: mst_contention.id,
+          claim_id: end_prod_establishment.reference_id
+        )
+      end
+
+      before do
+        end_prod_establishment.bgs_contentions << bgs_contention
+      end
+
+      after do
+        end_prod_establishment.bgs_contentions.clear
       end
 
       it "mst_contention_status? is true" do
@@ -1544,86 +1560,135 @@ describe RequestIssue, :all_dbs do
     end
 
     context "when pact is available and mst is not available" do
-      let(:claim_id) {"600118959"}
       let(:pact_contention) do
         Generators::Contention.build_pact_contention(
           claim_id: claim_id
         )
       end
-      let(:end_prod_establishment) do
-       create(:end_product_establishment,
-         reference_id: claim_id
+
+      let(:pact_request_issue) do
+        create(
+          :request_issue,
+          contention_reference_id: pact_contention.id,
+          end_product_establishment: end_prod_establishment
         )
       end
-      let(:pact_request_issue) do
-       create(:request_issue,
-         contention_reference_id: pact_contention.id,
-         end_product_establishment: end_prod_establishment
-       )
+
+      let!(:bgs_contention) do
+        Generators::BgsContention.build_pact_contention(
+          reference_id: pact_contention.id,
+          claim_id: end_prod_establishment.reference_id
+        )
+      end
+
+      before do
+        end_prod_establishment.bgs_contentions << bgs_contention
+      end
+
+      after do
+        end_prod_establishment.bgs_contentions.clear
       end
 
       it "mst_contention_status? is false" do
-       expect(pact_request_issue.mst_contention_status?).to be false
+        expect(pact_request_issue.mst_contention_status?).to be false
       end
 
       it "pact_contention_status? is true" do
-       expect(pact_request_issue.pact_contention_status?).to be true
+        expect(pact_request_issue.pact_contention_status?).to be true
       end
     end
 
     context "when pact and mst are available" do
-      let(:claim_id) {"600118959"}
       let(:mst_and_pact_contention) do
         Generators::Contention.build_mst_and_pact_contention(
           claim_id: claim_id
         )
       end
-      let(:end_prod_establishment) do
-       create(:end_product_establishment,
-         reference_id: claim_id
+
+      let(:mst_and_pact_request_issue) do
+        create(
+          :request_issue,
+          contention_reference_id: mst_and_pact_contention.id,
+          end_product_establishment: end_prod_establishment
         )
       end
-      let(:mst_and_pact_request_issue) do
-       create(:request_issue,
-         contention_reference_id: mst_and_pact_contention.id,
-         end_product_establishment: end_prod_establishment
-       )
+
+      let!(:bgs_contention) do
+        Generators::BgsContention.build(
+          reference_id: mst_and_pact_contention.id,
+          claim_id: end_prod_establishment.reference_id,
+          special_issues: [
+            {
+              call_id: "12345",
+              jrn_dt: 5.days.ago,
+              name: "SpecialIssue",
+              spis_tc: "MST",
+              spis_tn: "Military Sexual Trauma (MST)"
+            },
+            {
+              call_id: "12345",
+              jrn_dt: 5.days.ago,
+              name: "SpecialIssue",
+              spis_tc: "PACT",
+              spis_tn: "PACT"
+            }
+          ]
+        )
+      end
+
+      before do
+        end_prod_establishment.bgs_contentions << bgs_contention
+      end
+
+      after do
+        end_prod_establishment.bgs_contentions.clear
       end
 
       it "mst_contention_status? is true" do
-       expect(mst_and_pact_request_issue.mst_contention_status?).to be true
+        expect(mst_and_pact_request_issue.mst_contention_status?).to be true
       end
 
       it "pact_contention_status? is true" do
-       expect(mst_and_pact_request_issue.pact_contention_status?).to be true
+        expect(mst_and_pact_request_issue.pact_contention_status?).to be true
       end
     end
 
     context "when pact and mst are not available" do
-      let(:claim_id) {"600118959"}
       let(:contention) do
         Generators::Contention.build(
           claim_id: claim_id
         )
       end
-      let(:end_prod_establishment) do
-       create(:end_product_establishment,
-         reference_id: claim_id
+
+      let(:request_issue) do
+        create(
+          :request_issue,
+          contention_reference_id: contention.id,
+          end_product_establishment: end_prod_establishment
         )
       end
-      let(:request_issue) do
-       create(:request_issue,
-         contention_reference_id: contention.id,
-         end_product_establishment: end_prod_establishment
-       )
+
+      let!(:bgs_contention) do
+        Generators::BgsContention.build(
+          reference_id: contention.id,
+          claim_id: end_prod_establishment.reference_id
+        )
+      end
+
+      before do
+        end_prod_establishment.bgs_contentions << bgs_contention
+      end
+
+      after do
+        end_prod_establishment.bgs_contentions.clear
       end
 
       it "mst_contention_status? is false" do
-       expect(request_issue.mst_contention_status?).to be false
+        expect(request_issue.mst_contention_status?).to be false
       end
 
       it "pact_contention_status? is false" do
-       expect(request_issue.pact_contention_status?).to be false
+        expect(request_issue.pact_contention_status?).to be false
       end
     end
   end
