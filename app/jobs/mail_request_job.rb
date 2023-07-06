@@ -32,16 +32,31 @@ class MailRequestJob < CaseflowJob
     rescue Caseflow::Error::PacmanApiError => error
       log_error(error)
     else
-      vbms_comm_package = create_package(document_to_mail, mail_package)
-      vbms_comm_package.update!(status: "success", uuid: parse_pacman_id(package_response))
-      create_distribution_request(vbms_comm_package.id, mail_package)
+      ActiveRecord::Base.transaction do
+        vbms_comm_package = create_package(document_to_mail, mail_package)
+        vbms_comm_package.update!(status: "success", uuid: parse_pacman_id(package_response))
+        create_distribution_request(vbms_comm_package.id, mail_package)
+      end
     end
   end
 
   private
 
+  # Purpose: Parses responses from the PacMan API and pulls out the
+  #
+  # ID (UUID) of the entity created in the request.
+  #
+  # Response: The UUID of the communication package or distribution just created
   def parse_pacman_id(pacman_response)
-    JSON.parse(pacman_response.body)["id"]
+    response_body = pacman_response.body
+
+    parsed_body = if response_body.is_a?(ActiveSupport::HashWithIndifferentAccess)
+                    response_body
+                  else
+                    JSON.parse(response_body)
+                  end
+
+    parsed_body.with_indifferent_access[:id]
   end
 
   # Purpose: arranges id and copies to pass into package post request
@@ -77,6 +92,19 @@ class MailRequestJob < CaseflowJob
     "#{document_to_mail.document_name}_#{Time.now.utc.strftime('%Y%m%d%k%M%S')}"
   end
 
+  # Purpose: Find a VbmsDistribution from various input formats
+  #
+  # Response: The corresponding VbmsDistribution record
+  def find_associated_vbms_distribution_record(distribution_info)
+    parsed_distro = if [ActiveSupport::HashWithIndifferentAccess, Hash].include?(distribution_info.class)
+                      distribution_info
+                    else
+                      JSON.parse(distribution_info)
+                    end
+
+    VbmsDistribution.find(parsed_distro.with_indifferent_access[:vbms_distribution_id])
+  end
+
   # Purpose: sends distribution POST request to Pacman API
   #
   # takes in VbmsCommunicationPackage id (string) and MailRequest object
@@ -84,16 +112,19 @@ class MailRequestJob < CaseflowJob
   # Response: n/a
   def create_distribution_request(package_id, mail_package)
     distributions = mail_package[:distributions]
+
     distributions.each do |dist|
       begin
-        distribution = VbmsDistribution.find(dist[:vbms_distribution_id])
-        distribution_response = PacmanService.send_distribution_request(
-          package_id,
+        distribution = find_associated_vbms_distribution_record(dist)
+        distribution_responses = PacmanService.send_distribution_request(
+          VbmsCommunicationPackage.find(package_id).uuid,
           get_recipient_hash(distribution),
           get_destinations_hash(dist)
         )
-        distribution_response.each { |response| log_info(response) }
-        distribution.update!(vbms_communication_package_id: package_id, uuid: parse_pacman_id(distribution_response))
+        distribution_responses.each do |response|
+          log_info(response)
+          distribution.update!(vbms_communication_package_id: package_id, uuid: parse_pacman_id(response))
+        end
       rescue Caseflow::Error::PacmanApiError => error
         log_error(error)
       end
@@ -109,13 +140,26 @@ class MailRequestJob < CaseflowJob
     {
       type: distribution.recipient_type,
       name: distribution.name,
-      firstName: distribution.first_name,
-      middleName: distribution.middle_name,
-      lastName: distribution.last_name,
-      participantId: distribution.participant_id,
-      poaCode: distribution.poa_code,
-      claimantStationOfJurisdiction: distribution.claimant_station_of_jurisdiction
+      first_name: distribution.first_name,
+      middle_name: distribution.middle_name,
+      last_name: distribution.last_name,
+      participant_id: distribution.participant_id,
+      poa_code: distribution.poa_code,
+      claimant_station_of_jurisdiction: distribution.claimant_station_of_jurisdiction
     }
+  end
+
+  # Purpose: Find root of available destination information
+  #
+  # Response: Hash containing the root of available destination information
+  def parse_recipient_info_from_destinaton(destination_info)
+    parsed_destination = if [ActiveSupport::HashWithIndifferentAccess, Hash].include?(destination_info.class)
+                           destination_info
+                         else
+                           JSON.parse(destination_info).with_indifferent_access
+                         end
+
+    parsed_destination[:recipient_info] || parsed_destination["recipient_info"] || parsed_destination
   end
 
   # Purpose: creates destination hash from VbmsDistributionDestination attributes
@@ -124,21 +168,23 @@ class MailRequestJob < CaseflowJob
   #
   # Response: array that holds a hash
   def get_destinations_hash(destination)
+    recipient_info = parse_recipient_info_from_destinaton(destination)
+
     [{
-      "type" => destination["destination_type"],
-      "addressLine1" => destination["address_line_1"],
-      "addressLine2" => destination["address_line_2"],
-      "addressLine3" => destination["address_line_3"],
-      "addressLine4" => destination["address_line_4"],
-      "addressLine5" => destination["address_line_5"],
-      "addressLine6" => destination["address_line_6"],
-      "treatLine2AsAddressee" => destination["treat_line_2_as_addressee"],
-      "treatLine3AsAddressee" => destination["treat_line_3_as_addressee"],
-      "city" => destination["city"],
-      "state" => destination["state"],
-      "postalCode" => destination["postal_code"],
-      "countryName" => destination["country_name"],
-      "countryCode" => destination["country_code"]
+      type: recipient_info[:destination_type],
+      addressLine1: recipient_info[:address_line_1],
+      addressLine2: recipient_info[:address_line_2],
+      addressLine3: recipient_info[:address_line_3],
+      addressLine4: recipient_info[:address_line_4],
+      addressLine5: recipient_info[:address_line_5],
+      addressLine6: recipient_info[:address_line_6],
+      treatLine2AsAddressee: recipient_info[:treat_line_2_as_addressee],
+      treatLine3AsAddressee: recipient_info[:treat_line_3_as_addressee],
+      city: recipient_info[:city],
+      state: recipient_info[:state],
+      postalCode: recipient_info[:postal_code],
+      countryName: recipient_info[:country_name],
+      countryCode: recipient_info[:country_code]
     }]
   end
 

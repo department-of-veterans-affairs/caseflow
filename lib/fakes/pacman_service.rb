@@ -10,7 +10,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
     end
 
     def send_distribution_request(package_id, recipient, destinations)
-      fake_distribution_request(package_id, recipient, destinations)
+      [fake_distribution_request(package_id, recipient, destinations)]
     end
 
     def get_distribution_request(distribution_uuid)
@@ -27,10 +27,10 @@ class Fakes::PacmanService < ExternalApi::PacmanService
       HTTPI::Response.new(
         400,
         {},
-        OpenStruct.new(
+        {
           "error": "BadRequestError",
           "message": "participant id is not valid"
-        )
+        }.with_indifferent_access
       )
     end
 
@@ -38,10 +38,10 @@ class Fakes::PacmanService < ExternalApi::PacmanService
       HTTPI::Response.new(
         403,
         {},
-        OpenStruct.new(
+        {
           "error": "BadRequestError",
           "message": "package cannot be created because of insufficient privileges"
-        )
+        }.with_indifferent_access
       )
     end
 
@@ -49,10 +49,10 @@ class Fakes::PacmanService < ExternalApi::PacmanService
       HTTPI::Response.new(
         404,
         {},
-        OpenStruct.new(
+        {
           "error": "BadRequestError",
           "message": "distribution does not exist at this time"
-        )
+        }.with_indifferent_access
       )
     end
 
@@ -61,14 +61,14 @@ class Fakes::PacmanService < ExternalApi::PacmanService
       HTTPI::Response.new(
         201,
         {},
-        OpenStruct.new(
-          "id": COMMUNICATION_PACKAGE_UUID,
+        {
+          "id" => COMMUNICATION_PACKAGE_UUID,
           "fileNumber": file_number,
           "name": name,
           "documentReferences": document_references,
           "status": "NEW",
           "createDate": ""
-        )
+        }.with_indifferent_access
       )
     end
 
@@ -77,7 +77,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
       HTTPI::Response.new(
         201,
         {},
-        OpenStruct.new(
+        {
           "id": DISTRIBUTION_UUID,
           "recipient": recipient,
           "description": "bad",
@@ -85,7 +85,7 @@ class Fakes::PacmanService < ExternalApi::PacmanService
           "destinations": destinations,
           "status": "",
           "sentToCbcmDate": ""
-        )
+        }.with_indifferent_access
       )
     end
 
@@ -95,35 +95,37 @@ class Fakes::PacmanService < ExternalApi::PacmanService
       HTTPI::Response.new(
         200,
         {},
-        "id": DISTRIBUTION_UUID,
-        "recipient": {
-          "type": "system",
-          "id": "a050a21e-23f6-4743-a1ff-aa1e24412eff",
-          "name": "VBMS-C"
-        },
-        "description": "Staging Mailing Distribution",
-        "communicationPackageId": 1,
-        "destinations": [{
-          "type": "physicalAddress",
-          "id": "28440040-51a5-4d2a-81a2-28730827be14",
+        {
+          "id": DISTRIBUTION_UUID,
+          "recipient": {
+            "type": "system",
+            "id": "a050a21e-23f6-4743-a1ff-aa1e24412eff",
+            "name": "VBMS-C"
+          },
+          "description": "Staging Mailing Distribution",
+          "communicationPackageId": 1,
+          "destinations": [{
+            "type": "physicalAddress",
+            "id": "28440040-51a5-4d2a-81a2-28730827be14",
+            "status": "",
+            "cbcmSendAttemptDate": "2022-06-06T16:35:27.996",
+            "addressLine1": "POSTMASTER GENERAL",
+            "addressLine2": "UNITED STATES POSTAL SERVICE",
+            "addressLine3": "475 LENFANT PLZ SW RM 10022",
+            "addressLine4": "SUITE 123",
+            "addressLine5": "APO AE 09001-5275",
+            "addressLine6": "",
+            "treatLine2AsAddressee": true,
+            "treatLine3AsAddressee": true,
+            "city": "WASHINGTON DC",
+            "state": "DC",
+            "postalCode": "12345",
+            "countryName": "UNITED STATES",
+            "countryCode": "us"
+          }],
           "status": "",
-          "cbcmSendAttemptDate": "2022-06-06T16:35:27.996",
-          "addressLine1": "POSTMASTER GENERAL",
-          "addressLine2": "UNITED STATES POSTAL SERVICE",
-          "addressLine3": "475 LENFANT PLZ SW RM 10022",
-          "addressLine4": "SUITE 123",
-          "addressLine5": "APO AE 09001-5275",
-          "addressLine6": "",
-          "treatLine2AsAddressee": true,
-          "treatLine3AsAddressee": true,
-          "city": "WASHINGTON DC",
-          "state": "DC",
-          "postalCode": "12345",
-          "countryName": "UNITED STATES",
-          "countryCode": "us"
-        }],
-        "status": "",
-        "sentToCbcmDate": ""
+          "sentToCbcmDate": ""
+        }.with_indifferent_access
       )
     end
     # rubocop:enable Metrics/MethodLength
