@@ -140,7 +140,6 @@ class Fakes::BGSService
     records.values
   end
 
-
   # Util method for further filtering a veteran's EPs by code, modifier, payee code, or claim date.
   # Each parameter is optional; if omitted or set to nil, it won't be used for filtering.
   def select_end_products(file_number, code: nil, modifier: nil, payee_code: nil, claim_date: nil)
