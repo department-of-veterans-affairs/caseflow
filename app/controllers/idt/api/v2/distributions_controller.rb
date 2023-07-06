@@ -37,11 +37,17 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
   end
 
   def format_response(response)
-    new_response = response.raw_body.to_json
-    parsed_response = JSON.parse(new_response)
-    # Convert keys from camelCase to snake_case
-    parsed_response.deep_transform_keys do |key|
-      key.to_s.underscore.gsub(/e(\d)/, 'e_\1')
+    response_body = response.raw_body
+
+    begin
+      parsed_response = JSON.parse(response_body)
+
+      # Convert keys from camelCase to snake_case
+      parsed_response.deep_transform_keys do |key|
+        key.to_s.underscore.gsub(/e(\d)/, 'e_\1')
+      end
+    rescue JSON::ParseError => _error
+      response_body
     end
   end
 
