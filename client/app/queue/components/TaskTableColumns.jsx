@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import * as React from 'react';
 import moment from 'moment';
 import pluralize from 'pluralize';
@@ -247,6 +248,44 @@ export const issueCountColumn = (requireDasRecord) => {
     span: collapseColumn(requireDasRecord),
     backendCanSort: true,
     getSortValue: (task) => hasDASRecord(task, requireDasRecord) ? task.appeal.issueCount : null
+  };
+};
+
+export const issueTypesColumn = (tasks, filterOptions, requireDasRecord) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_APPEAL_ISSUE_CATEGORIES_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name,
+    backendCanSort: true,
+    enableFilter: true,
+    anyFiltersAreSet: true,
+    filterOptions,
+    tableData: tasks,
+    label: 'Filter by issue type',
+    columnName: 'appeal.issueTypes',
+    enableFilterTextTransform: false,
+    multiValueDelimiter: ',',
+    span: collapseColumn(requireDasRecord),
+    valueName: 'Issue Type',
+    valueFunction: (task) => {
+      if (!hasDASRecord(task, requireDasRecord)) {
+        return null;
+      }
+
+      const commaDelimitedIssueTypes = task.appeal.issueTypes;
+
+      // Remove duplicates from the comma delimited list of issue types
+      // Also sort the request issue type alphabetically
+      const uniqueIssueTypes = [...new Set(commaDelimitedIssueTypes?.split(','))].
+        sort((stringA, stringB) => stringA.localeCompare(stringB));
+
+      return uniqueIssueTypes.length > 1 ?
+        uniqueIssueTypes.map((type) => (<p key={type}> {type} </p>)) :
+        uniqueIssueTypes[0];
+    },
+    getSortValue: (task) => (
+      hasDASRecord(task, requireDasRecord) ? [...new Set(task.appeal.issueTypes?.split(','))].
+        sort((stringA, stringB) => stringA.localeCompare(stringB)) : null
+    )
   };
 };
 
