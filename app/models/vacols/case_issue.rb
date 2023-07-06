@@ -27,7 +27,9 @@ class VACOLS::CaseIssue < VACOLS::Record
       level_2: isslev2,
       level_3: isslev3,
       vacols_id: isskey,
-      note: issdesc
+      note: issdesc,
+      mst_status: issmst,
+      pact_status: isspact
     }
   end
 
