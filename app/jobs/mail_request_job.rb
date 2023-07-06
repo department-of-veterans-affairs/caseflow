@@ -92,6 +92,9 @@ class MailRequestJob < CaseflowJob
     "#{document_to_mail.document_name}_#{Time.now.utc.strftime('%Y%m%d%k%M%S')}"
   end
 
+  # Purpose: Find a VbmsDistribution from various input formats
+  #
+  # Response: The corresponding VbmsDistribution record
   def find_associated_vbms_distribution_record(distribution_info)
     parsed_distro = if [ActiveSupport::HashWithIndifferentAccess, Hash].include?(distribution_info.class)
                       distribution_info
@@ -146,6 +149,9 @@ class MailRequestJob < CaseflowJob
     }
   end
 
+  # Purpose: Find root of available destination information
+  #
+  # Response: Hash containing the root of available destination information
   def parse_recipient_info_from_destinaton(destination_info)
     parsed_destination = if [ActiveSupport::HashWithIndifferentAccess, Hash].include?(destination_info.class)
                            destination_info
