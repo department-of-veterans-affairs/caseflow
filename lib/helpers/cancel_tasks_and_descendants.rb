@@ -21,7 +21,7 @@ class CancelTasksAndDescendants
   def call
     RequestStore[:current_user] = User.system_user
 
-    log_time_elapsed { log_cancellable_tasks_before_and_after { cancel_tasks } }
+    log_time_elapsed { log_task_count_before_and_after { cancel_tasks } }
   end
 
   def cancel_tasks
@@ -48,7 +48,7 @@ class CancelTasksAndDescendants
      Task.open.where(id: task.descendants)
   end
 
-  def log_cancellable_tasks_before_and_after(&block)
+  def log_task_count_before_and_after(&block)
     initial_count = count_of_cancellable_tasks
     log_total_tasks_for_cancellation(initial_count)
     yield(block)
