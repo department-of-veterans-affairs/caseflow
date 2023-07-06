@@ -32,14 +32,6 @@ class CancelTasksAndDescendants
     end
   end
 
-  def count_of_cancellable_tasks
-    sum = 0
-    @task_relation.find_each do |task|
-      sum += cancellable_descendants_for(task).count
-    end
-    sum
-  end
-
   def log_cancelled(task, &block)
     task_ids = cancellable_descendants_for(task).pluck(:id)
     yield(block)
@@ -62,6 +54,14 @@ class CancelTasksAndDescendants
     yield(block)
     final_count = initial_count - count_of_cancellable_tasks
     log_cancelled_successfully(final_count)
+  end
+
+  def count_of_cancellable_tasks
+    sum = 0
+    @task_relation.find_each do |task|
+      sum += cancellable_descendants_for(task).count
+    end
+    sum
   end
 
   def log_total_tasks_for_cancellation(count)
