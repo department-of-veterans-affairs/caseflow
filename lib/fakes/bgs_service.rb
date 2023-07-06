@@ -123,9 +123,9 @@ class Fakes::BGSService
     store = self.class.end_product_store
     records = store.fetch_and_inflate(file_number) || store.fetch_and_inflate(:default) || {}
 
-    epe = EndProductEstablishment.find_by(veteran_file_number: file_number)
+    if ActiveRecord::Base.connection.table_exists? "vbms_ext_claims"
+      epe = EndProductEstablishment.find_by(veteran_file_number: file_number)
 
-    if VbmsExtClaim.table_exists?
       if epe.vbms_ext_claim
         records.values.each do |record|
           vbms_status = epe.vbms_ext_claim.level_status_code
@@ -135,6 +135,7 @@ class Fakes::BGSService
           record[:benefit_claim_id] = epe.reference_id
         end
       end
+
     end
 
     records.values
