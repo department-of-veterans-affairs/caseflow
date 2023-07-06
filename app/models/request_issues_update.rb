@@ -155,7 +155,7 @@ class RequestIssuesUpdate < CaseflowRecord
 
       # find the before issue
       original_issue = before_issues.find { |bi| bi&.id == issue[:request_issue_id].to_i }
-      original_issue&.mst_status != issue[:mst_status]
+      original_issue&.mst_status != !!issue[:mst_status]
     end
   end
 
@@ -168,7 +168,7 @@ class RequestIssuesUpdate < CaseflowRecord
 
       # find the before issue
       original_issue = before_issues.find { |bi| bi.id == issue[:request_issue_id].to_i }
-      original_issue&.pact_status != issue[:pact_status]
+      original_issue&.pact_status != !!issue[:pact_status]
     end
   end
 
@@ -217,7 +217,7 @@ class RequestIssuesUpdate < CaseflowRecord
     process_edited_issues!
     process_corrected_issues!
     process_mst_edited_issues! if FeatureToggle.enabled?(:mst_identification)
-    process_pact_edited_issues! if FeatureToggle.enabled?(:mst_identification)
+    process_pact_edited_issues! if FeatureToggle.enabled?(:pact_identification)
   end
 
   def process_legacy_issues!
