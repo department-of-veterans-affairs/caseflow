@@ -8,7 +8,7 @@ class CancelTasksAndDescendants
   # Cancels all tasks and descendant tasks for given Task relation
   #
   # @param task_relation [ActiveRecord::Relation] tasks to be cancelled
-  # @return [true]
+  # @return [NilClass]
   def self.call(task_relation = Task.none)
     new(task_relation).__send__(:call)
   end
@@ -18,12 +18,14 @@ class CancelTasksAndDescendants
   def initialize(task_relation)
     @task_relation = task_relation
     @request_id = SecureRandom.uuid
+    @logs = []
   end
 
   def call
     RequestStore[:current_user] = User.system_user
 
     log_time_elapsed { log_task_count_before_and_after { cancel_tasks } }
+    print_logs_to_stdout
   end
 
   def cancel_tasks
@@ -81,8 +83,21 @@ class CancelTasksAndDescendants
   end
 
   def log(message, level: :info)
+    append_to_application_logs(level, message)
+    append_to_logs_for_stdout(message)
+  end
+
+  def append_to_application_logs(level, message)
     Rails.logger.tagged(LOG_TAG, @request_id) do
       Rails.logger.public_send(level, message)
     end
+  end
+
+  def append_to_logs_for_stdout(message)
+    @logs << "[#{LOG_TAG}] [#{@request_id}] #{message}"
+  end
+
+  def print_logs_to_stdout
+    puts @logs
   end
 end

@@ -12,7 +12,7 @@ describe CancelTasksAndDescendants do
           from(nil).to(User.system_user)
       end
 
-      it "logs all the things" do
+      it "appends appropriate logs to application logs" do
         rails_logger = Rails.logger
         allow(Rails).to receive(:logger).and_return(rails_logger)
 
@@ -33,7 +33,17 @@ describe CancelTasksAndDescendants do
         call
       end
 
-      it { is_expected.to eq(true) }
+      it "appends appropriate logs to stdout" do
+        allow(SecureRandom).to receive(:uuid) { "dummy-request-id" }
+
+        expect { call }.to output(
+          match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Total tasks for cancellation: 0"))
+          .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Tasks cancelled successfully: 0"))
+          .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Elapsed time (sec):"))
+        ).to_stdout
+      end
+
+      it { is_expected.to be_nil }
     end
 
     context "when task_relation is given " do
@@ -64,7 +74,7 @@ describe CancelTasksAndDescendants do
         call
       end
 
-      it "logs all the things" do
+      it "appends appropriate logs to application logs" do
         rails_logger = Rails.logger
         allow(Rails).to receive(:logger).and_return(rails_logger)
 
@@ -91,6 +101,19 @@ describe CancelTasksAndDescendants do
         call
       end
 
+      it "appends appropriate logs to stdout" do
+        allow(SecureRandom).to receive(:uuid) { "dummy-request-id" }
+
+        expect { call }.to output(
+          match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Total tasks for cancellation: 3"))
+          .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Task ids [#{task_1.id}] cancelled successfully"))
+          .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Task ids [#{task_2.id}] cancelled successfully"))
+          .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Task ids [#{task_3.id}] cancelled successfully"))
+          .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Tasks cancelled successfully: 3"))
+          .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Elapsed time (sec):"))
+        ).to_stdout
+      end
+
       context "when a task fails to cancel" do
         before do
           expect(task_2).to receive(:cancel_task_and_child_subtasks).
@@ -109,7 +132,7 @@ describe CancelTasksAndDescendants do
           expect { call }.not_to raise_error
         end
 
-        it "logs all the things" do
+        it "appends appropriate logs to application logs" do
           rails_logger = Rails.logger
           allow(Rails).to receive(:logger).and_return(rails_logger)
 
@@ -137,7 +160,20 @@ describe CancelTasksAndDescendants do
           call
         end
 
-        it { is_expected.to eq(true) }
+        it "appends appropriate logs to stdout" do
+          allow(SecureRandom).to receive(:uuid) { "dummy-request-id" }
+
+          expect { call }.to output(
+            match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Total tasks for cancellation: 3"))
+            .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Task ids [#{task_1.id}] cancelled successfully"))
+            .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Task ids [#{task_2.id}] not cancelled due to error - Validation failed"))
+            .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Task ids [#{task_3.id}] cancelled successfully"))
+            .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Tasks cancelled successfully: 2"))
+            .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Elapsed time (sec):"))
+          ).to_stdout
+        end
+
+        it { is_expected.to be_nil }
       end
     end
   end
