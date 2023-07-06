@@ -90,7 +90,7 @@ class MailRequestJob < CaseflowJob
       begin
         distribution = VbmsDistribution.find(dist[:vbms_distribution_id])
         distribution_responses = PacmanService.send_distribution_request(
-          package_id,
+          VbmsCommunicationPackage.find(package_id).uuid,
           get_recipient_hash(distribution),
           get_destinations_hash(dist)
         )
