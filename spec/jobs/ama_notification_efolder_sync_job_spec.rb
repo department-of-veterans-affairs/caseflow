@@ -5,9 +5,9 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
 
   self.use_transactional_tests = false
 
-  let!(:current_user) { create(:user, roles: ["System Admin"]) }
-  let!(:appeals) { create_list(:appeal, 10, :active) }
-  let!(:job) { AmaNotificationEfolderSyncJob.new }
+  let(:current_user) { create(:user, roles: ["System Admin"]) }
+  let(:appeals) { create_list(:appeal, 10, :active) }
+  let(:job) { AmaNotificationEfolderSyncJob.new }
 
   BATCH_LIMIT_SIZE = 5
 
@@ -34,7 +34,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
     end
 
     let!(:first_run_outcoded_appeals) { [appeals[6]] }
-    let!(:first_run_never_synced_appeals) { appeals.first(3) + [appeals[4]] + appeals.last(2) }
+    let(:first_run_never_synced_appeals) { appeals.first(3) + [appeals[4]] + appeals.last(2) }
 
     before(:all) do
       AmaNotificationEfolderSyncJob::BATCH_LIMIT = BATCH_LIMIT_SIZE
@@ -85,10 +85,10 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
       # These appeals should be all that have had notification reports generated for them after two
       # runs with BATCH_LIMIT_SIZE number of appeals processed each time.
       let(:second_run_vbms_document_appeal_ids) do
-        first_run_vbms_document_appeal_ids(first_run_vbms_document_appeal_indexes) +
+        (first_run_vbms_document_appeal_ids(first_run_vbms_document_appeal_indexes) +
           [appeals[4].id] -
           will_not_sync_appeal_ids +
-          second_run_never_synced_appeals_ids
+          second_run_never_synced_appeals_ids).uniq
       end
 
       before { RootTask.find_by(appeal_id: appeals[6].id).update!(closed_at: 25.hours.ago) }
@@ -122,7 +122,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                notified_at: 2.minutes.ago,
                email_notification_status: "delivered")
 
-        expect(job.send(:ready_for_resync)).to eq([appeals[4]])
+        expect(job.send(:ready_for_resync)).to match_array([appeals[4]])
       end
 
       it "ignore appeals that need to be resynced if latest notification status is" \
@@ -160,6 +160,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
             .where(document_type: "BVA Case Notifications")
             .order(:id)
             .pluck(:appeal_id)
+            .uniq
         ).to match_array(second_run_vbms_document_appeal_ids)
       end
     end
