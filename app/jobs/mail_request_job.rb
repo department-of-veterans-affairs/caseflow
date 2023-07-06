@@ -42,6 +42,11 @@ class MailRequestJob < CaseflowJob
 
   private
 
+  # Purpose: Parses responses from the PacMan API and pulls out the
+  #
+  # ID (UUID) of the entity created in the request.
+  #
+  # Response: The UUID of the communication package or distribution just created
   def parse_pacman_id(pacman_response)
     JSON.parse(pacman_response.body)["id"]
   end
