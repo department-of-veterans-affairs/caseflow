@@ -21,7 +21,9 @@ class CancelTasksAndDescendants
   def call
     RequestStore[:current_user] = User.system_user
 
-    log_total_tasks_for_cancellation
+    @initial_cancellable_count = count_of_cancellable_tasks
+    log_total_tasks_for_cancellation(@initial_cancellable_count)
+
     log_time_elapsed { cancel_tasks }
   end
 
@@ -33,18 +35,16 @@ class CancelTasksAndDescendants
     end
   end
 
-  def log_total_tasks_for_cancellation
-    log("Total tasks for cancellation: #{total_tasks_for_cancellation}")
+  def log_total_tasks_for_cancellation(count)
+    log("Total tasks for cancellation: #{count}")
   end
 
-  def total_tasks_for_cancellation
-    @total_tasks_for_cancellation ||= begin
-      sum = 0
-      @task_relation.find_each do |task|
-        sum += cancellable_descendants_for(task).count
-      end
-      sum
+  def count_of_cancellable_tasks
+    sum = 0
+    @task_relation.find_each do |task|
+      sum += cancellable_descendants_for(task).count
     end
+    sum
   end
 
   def log_cancelled(task, &block)
