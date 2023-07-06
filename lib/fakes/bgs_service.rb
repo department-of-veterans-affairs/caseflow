@@ -125,13 +125,13 @@ class Fakes::BGSService
 
     epe = EndProductEstablishment.find_by(veteran_file_number: file_number)
 
-    records.values.each do |record|
+    if VbmsExtClaim.table_exists?
       if epe.vbms_ext_claim
-        vbms_status = epe.vbms_ext_claim.level_status_code
-        record[:status_type_code] = vbms_status
+        records.values.each do |record|
+          vbms_status = epe.vbms_ext_claim.level_status_code
+          record[:status_type_code] = vbms_status
 
-        # EP benefit_claim_id needs to match the EPE's reference_id
-        unless record[:benefit_claim_id]
+          # EP benefit_claim_id needs to match the EPE's reference_id
           record[:benefit_claim_id] = epe.reference_id
         end
       end
