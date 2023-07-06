@@ -123,6 +123,8 @@ class Fakes::BGSService
     store = self.class.end_product_store
     records = store.fetch_and_inflate(file_number) || store.fetch_and_inflate(:default) || {}
 
+    # if the table isn't standing, this will prevent a 'nil class' error
+    # if it standing, we will attempt to sync EP, EPE, and VbmsExtClaim statuses
     if ActiveRecord::Base.connection.table_exists? "vbms_ext_claim"
       vbms_status_sync(records, file_number)
     end
@@ -809,6 +811,7 @@ class Fakes::BGSService
     }
   end
 
+  # we only want to sync statuses if the EPE belongs to a VbmsExtClaim record
   def vbms_status_sync(records, file_number)
     epe = EndProductEstablishment.find_by(veteran_file_number: file_number)
     return unless epe.vbms_ext_claim
@@ -816,14 +819,23 @@ class Fakes::BGSService
     sync(records, epe)
   end
 
+  # 'records' returns an object of objects
+  # incase there are multiple nested objects,
+  # all of them must be iterated over and updated
   def sync(records, epe)
     vbms_status = epe.vbms_ext_claim.level_status_code
     records.values.each do |record|
       record[:status_type_code] = vbms_status
+
+      # checks that there is a benefit_claim_id present
+      epe_claim_id_sync(record)
     end
   end
 
-  def epe_claim_id_sync
+  # while running rspec on factory EPEs, an EP is generated without a claim_id
+  # causing `epe.sync!` to result in an error
+  # to bypass the nil value, we manually set the EP's benefit_claim_id
+  def epe_claim_id_sync(record)
     return if record[:benefit_claim_id]
 
     record[:benefit_claim_id] = epe.reference_id
