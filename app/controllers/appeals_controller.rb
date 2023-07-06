@@ -443,12 +443,13 @@ class AppealsController < ApplicationController
     task.format_instructions(
       "Edited Issue",
       [
+        "Benefit Type: #{before_issue.labels[0]}\n",
         "Issue: #{before_issue.labels[1..-2].join("\n")}\n",
         "Code: #{[before_issue.codes[-1], before_issue.labels[-1]].join(" - ")}\n",
         "Note: #{before_issue.note}\n",
         "Disposition: #{before_issue.readable_disposition}\n"
       ].compact.join("\r\n"),
-      before_issue.labels[0] || "",
+      "",
       before_issue.mst_status,
       before_issue.pact_status,
       current_issue[:mst_status],
