@@ -3,15 +3,22 @@ import * as React from 'react';
 
 import Badge from '../Badge';
 import { COLORS } from 'app/constants/AppConstants';
+import { connect } from 'react-redux';
 
 /**
  * Component to display if the appeal is a pact.
  */
 
 const PactBadge = (props) => {
-  const { appeal } = props;
+  const { appeal, appealDetails } = props;
 
-  if (!appeal?.pact) {
+  if (appealDetails[appeal.externalId]?.issues) {
+    const issues = appealDetails[appeal.externalId].issues;
+
+    if (!issues.some((issue) => issue.pact_status === true)) {
+      return null;
+    }
+  } else if (!appeal?.pact) {
     return null;
   }
 
@@ -28,7 +35,15 @@ const PactBadge = (props) => {
 };
 
 PactBadge.propTypes = {
-  appeal: PropTypes.object
+  appeal: PropTypes.object,
+  appealDetails: PropTypes.object
 };
 
-export default PactBadge;
+const mapStateToProps = (state) => ({
+  appealDetails: state.queue.appealDetails,
+});
+
+export default connect(
+  mapStateToProps
+)(PactBadge);
+
