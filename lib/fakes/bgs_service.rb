@@ -122,6 +122,9 @@ class Fakes::BGSService
   def get_end_products(file_number)
     store = self.class.end_product_store
     records = store.fetch_and_inflate(file_number) || store.fetch_and_inflate(:default) || {}
+
+    check_for_vbms_sync(records, file_number)
+
     records.values
   end
 
@@ -803,6 +806,38 @@ class Fakes::BGSService
       zip_prefix_nbr: FakeConstants.BGS_SERVICE.DEFAULT_ZIP
     }
   end
+
+  def check_for_vbms_sync(records, file_number)
+    epe = EndProductEstablishment.find_by(veteran_file_number: file_number)
+
+    sync(records, epe) if vbms_table? && epe_with_vbms_claim?(epe)
+  end
+
+  def sync(records, epe)
+    vbms_status = epe.vbms_ext_claim.level_status_code
+    records.values.each do |record|
+      # update EP status to match VBMS status
+      record[:status_type_code] = vbms_status
+
+      # checks that there is a benefit_claim_id present
+      epe_claim_id_sync(record)
+    end
+  end
+
+  def epe_claim_id_sync(record)
+    record[:benefit_claim_id] = epe.reference_id unless record[:benefit_claim_id]
+  end
+
+  # this table will be standing after a make reset or make external-db-create
+  def vbms_table?
+    ActiveRecord::Base.connection.table_exists? "vbms_ext_claim"
+  end
+
+  # checks if an EPE belonging to a VbmsExtClaim record was found
+  def epe_with_vbms_claim?(epe)
+    !!epe&.vbms_ext_claim
+  end
   # rubocop:enable Metrics/MethodLength
 end
 # rubocop:enable Metrics/ClassLength
+
