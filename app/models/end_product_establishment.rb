@@ -9,6 +9,9 @@
 # the current status of the EP when the EndProductEstablishment is synced.
 
 class EndProductEstablishment < CaseflowRecord
+
+  include RedisMutex::Macro
+
   belongs_to :source, polymorphic: true
   belongs_to :user
   has_many :request_issues
@@ -17,6 +20,8 @@ class EndProductEstablishment < CaseflowRecord
   has_many :end_product_updates
   has_one :priority_end_product_sync_queue
   belongs_to :vbms_ext_claim, foreign_key: "reference_id", primary_key: "claim_id", optional: true
+
+  auto_mutex :sync!, on: [:id]
 
   # allow @veteran to be assigned to save upstream calls
   attr_writer :veteran
