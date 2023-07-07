@@ -20,7 +20,14 @@ class IssuesController < ApplicationController
   def create
     return record_not_found unless appeal
 
-    Issue.create_in_vacols!(issue_attrs: create_params)
+    issue = Issue.create_in_vacols!(issue_attrs: create_params)
+
+    # create MST/PACT task if issue was created
+    if convert_to_bool(create_params[:mst_status]) ||
+       convert_to_bool(create_params[:pact_status])
+      issue_in_caseflow = appeal.issues.find { |i| i.vacols_sequence_id == issue.issseq.to_i }
+      create_legacy_issue_update_task(issue_in_caseflow) if FeatureToggle.enabled?(:legacy_mst_pact_identification)
+    end
 
     render json: { issues: json_issues }, status: :created
   end
@@ -67,21 +74,28 @@ class IssuesController < ApplicationController
       assigned_by: user,
       completed_by: user
     )
+
+    # set up data for added or edited issue
+    disposition = before_issue.readable_disposition.nil? ? "N/A" : before_issue.readable_disposition
+    change_category = (disposition == "N/A") ? "Added Issue" : "Edited Issue"
+    updated_mst_status = convert_to_bool(params[:issues][:mst_status]) unless disposition == "N/A"
+    updated_pact_status = convert_to_bool(params[:issues][:pact_status]) unless disposition == "N/A"
+
     # format the task instructions and close out
     task.format_instructions(
-      "Edited Issue",
+      change_category,
       [
         "Benefit Type: #{before_issue.labels[0]}\n",
         "Issue: #{before_issue.labels[1..-2].join("\n")}\n",
         "Code: #{[before_issue.codes[-1], before_issue.labels[-1]].join(" - ")}\n",
         "Note: #{before_issue.note}\n",
-        "Disposition: #{before_issue.readable_disposition}\n"
+        "Disposition: #{disposition}\n"
       ].compact.join("\r\n"),
       "",
       before_issue.mst_status,
       before_issue.pact_status,
-      convert_to_bool(params[:issues][:mst_status]),
-      convert_to_bool(params[:issues][:pact_status])
+      updated_mst_status,
+      updated_pact_status
     )
     task.completed!
     # create SpecialIssueChange record to log the changes
@@ -95,9 +109,9 @@ class IssuesController < ApplicationController
       created_by_css_id: user.css_id,
       original_mst_status: before_issue.mst_status,
       original_pact_status: before_issue.pact_status,
-      updated_mst_status: convert_to_bool(params[:issues][:mst_status]),
-      updated_pact_status: convert_to_bool(params[:issues][:pact_status]),
-      change_category: "Edited Issue"
+      updated_mst_status: updated_mst_status,
+      updated_pact_status: updated_pact_status,
+      change_category: change_category
     )
   end
 
