@@ -126,19 +126,7 @@ class Fakes::BGSService
     # if the table isn't standing, this will prevent a 'nil class' error
     # if it standing, we will attempt to sync EP, EPE, and VbmsExtClaim statuses
     if ActiveRecord::Base.connection.table_exists? "vbms_ext_claim"
-      epe = EndProductEstablishment.find_by(veteran_file_number: file_number)
-
-      if epe&.vbms_ext_claim
-        vbms_status = epe.vbms_ext_claim.level_status_code
-
-        records.values.each do |record|
-          record[:status_type_code] = vbms_status
-
-          # checks that there is a benefit_claim_id present
-          record[:benefit_claim_id] = epe.reference_id unless record[:benefit_claim_id]
-        end
-      end
-
+      vbms_status_sync(records, file_number)
     end
 
     records.values
@@ -823,35 +811,31 @@ class Fakes::BGSService
     }
   end
 
-  # # we only want to sync statuses if the EPE belongs to a VbmsExtClaim record
-  # def vbms_status_sync(records, file_number)
-  #   epe = EndProductEstablishment.find_by(veteran_file_number: file_number)
-  #   return unless epe.vbms_ext_claim
+  # we only want to sync statuses if the EPE belongs to a VbmsExtClaim record
+  def vbms_status_sync(records, file_number)
+    epe = EndProductEstablishment.find_by(veteran_file_number: file_number)
+    sync(records, epe) if epe&.vbms_ext_claim
+  end
 
-  #   sync(records, epe)
-  # end
+  # 'records' returns an object of objects
+  # incase there are multiple nested objects,
+  # all of them must be iterated over and updated
+  def sync(records, epe)
+    vbms_status = epe.vbms_ext_claim.level_status_code
+    records.values.each do |record|
+      record[:status_type_code] = vbms_status
 
-  # # 'records' returns an object of objects
-  # # incase there are multiple nested objects,
-  # # all of them must be iterated over and updated
-  # def sync(records, epe)
-  #   vbms_status = epe.vbms_ext_claim.level_status_code
-  #   records.values.each do |record|
-  #     record[:status_type_code] = vbms_status
+      # checks that there is a benefit_claim_id present
+      epe_claim_id_sync(record)
+    end
+  end
 
-  #     # checks that there is a benefit_claim_id present
-  #     epe_claim_id_sync(record)
-  #   end
-  # end
-
-  # # while running rspec on factory EPEs, an EP is generated without a claim_id
-  # # causing `epe.sync!` to result in an error
-  # # to bypass the nil value, we manually set the EP's benefit_claim_id
-  # def epe_claim_id_sync(record)
-  #   return if record[:benefit_claim_id]
-
-  #   record[:benefit_claim_id] = epe.reference_id
-  # end
+  # while running rspec on factory EPEs, an EP is generated without a claim_id
+  # causing `epe.sync!` to result in an error
+  # to bypass the nil value, we manually set the EP's benefit_claim_id
+  def epe_claim_id_sync(record)
+    record[:benefit_claim_id] = epe.reference_id unless record[:benefit_claim_id]
+  end
   # rubocop:enable Metrics/MethodLength
 end
 # rubocop:enable Metrics/ClassLength
