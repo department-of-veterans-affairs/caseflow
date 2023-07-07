@@ -125,7 +125,7 @@ class Fakes::BGSService
 
     # if the table isn't standing, this will prevent a 'nil class' error
     # if it standing, we will attempt to sync EP, EPE, and VbmsExtClaim statuses
-    if ActiveRecord::Base.connection.data_source_exists? "vbms_ext_claim"
+    if VbmsExtClaim.table_exists?
       epe = EndProductEstablishment.find_by(veteran_file_number: file_number)
 
       if epe.vbms_ext_claim
