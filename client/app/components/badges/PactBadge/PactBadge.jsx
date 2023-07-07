@@ -3,23 +3,25 @@ import * as React from 'react';
 
 import Badge from '../Badge';
 import { COLORS } from 'app/constants/AppConstants';
-import { connect } from 'react-redux';
 
 /**
  * Component to display if the appeal is a pact.
  */
 
 const PactBadge = (props) => {
-  const { appeal, appealDetails } = props;
+  const { appeal } = props;
 
-  // During decision review workflow, saved/staged changes made are updated to appealDetails
-  if (appealDetails[appeal.externalId]?.decisionIssues) {
-    const issues = appealDetails[appeal.externalId].decisionIssues;
+  // During decision review workflow, saved/staged changes made are updated to appeal.decisionIssues
+  // if legacy check issues for changes, if ama check decision for changes
+  const issues = (appeal.isLegacyAppeal || appeal.type === 'LegacyAppeal') ? appeal.issues : appeal.decisionIssues;
 
+  // check the issues/decisions for mst/pact changes in flight
+  if (issues && issues?.length > 0) {
     if (!issues.some((issue) => issue.pact_status === true)) {
       return null;
     }
   } else if (!appeal?.pact) {
+    // if issues are empty/undefined, use appeal model mst check
     return null;
   }
 
@@ -36,15 +38,7 @@ const PactBadge = (props) => {
 };
 
 PactBadge.propTypes = {
-  appeal: PropTypes.object,
-  appealDetails: PropTypes.object
+  appeal: PropTypes.object
 };
 
-const mapStateToProps = (state) => ({
-  appealDetails: state.queue.appealDetails,
-});
-
-export default connect(
-  mapStateToProps
-)(PactBadge);
-
+export default PactBadge;
