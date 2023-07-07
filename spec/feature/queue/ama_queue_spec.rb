@@ -241,7 +241,7 @@ feature "AmaQueue", :all_dbs do
         #load in the timeline data
         appeal = appeals[0]
         iup = IssuesUpdateTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: Organization.find_by_url("bva-intake"), assigned_by: RequestStore[:current_user])
-        iup.format_instructions("test category", false, false, true, true, "MST reason", "PACT reason")
+        iup.format_instructions("Edited Issue", "test category", "benefit type", false, false, true, true, "MST reason", "PACT reason")
         iup.completed!
 
         #We reload the page because the page sometimes errors first load for some reason, also ensures that the timeline
@@ -249,10 +249,11 @@ feature "AmaQueue", :all_dbs do
         visit current_path
 
         click_on "View task instructions"
-        expect(page).to have_content("REASON FOR CHANGE (MST):")
-        expect(page).to have_content("MST reason")
-        expect(page).to have_content("REASON FOR CHANGE (PACT):")
-        expect(page).to have_content("PACT reason")
+
+        expect(page).to have_content("ORIGINAL")
+        expect(page).to have_content("Special Issues: None")
+        expect(page).to have_content("UPDATED")
+        expect(page).to have_content("Special Issues: MST, PACT")
       end
 
       scenario "Appeal redirects to special issues page when 'Decision ready for review' is clicked." do
@@ -548,12 +549,6 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        if !find("#no_special_issues", visible: false).checked?
-          find("label", text: "No Special Issues").click
-        end
-        click_on "Continue"
-        expect(page.has_no_content?("Select special issues")).to eq(true)
-
         expect(page).to have_content("Add decisions")
 
         # Add a first decision issue
@@ -626,11 +621,6 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        if !find("#no_special_issues", visible: false).checked?
-          find("label", text: "No Special Issues").click
-        end
-        click_on "Continue"
-
         expect(page).to have_content("Add decisions")
         expect(page).to have_content("Allowed")
         expect(page).to have_content("Remanded")
@@ -675,11 +665,6 @@ feature "AmaQueue", :all_dbs do
         click_on veteran_full_name
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
-
-        if !find("#no_special_issues", visible: false).checked?
-          find("label", text: "No Special Issues").click
-        end
-        click_on "Continue"
 
         expect(page).to have_content("Add decisions")
 
@@ -749,11 +734,6 @@ feature "AmaQueue", :all_dbs do
         click_on veteran_full_name
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
-
-        if !find("#no_special_issues", visible: false).checked?
-          find("label", text: "No Special Issues").click
-        end
-        click_on "Continue"
 
         expect(page).to have_content("Add decisions")
         click_on "Continue"
@@ -856,11 +836,6 @@ feature "AmaQueue", :all_dbs do
           click_on veteran_full_name
 
           click_dropdown(prompt: "Select an action", text: "Decision ready for review")
-
-          if !find("#no_special_issues", visible: false).checked?
-            find("label", text: "No Special Issues").click
-          end
-          click_on "Continue"
 
           expect(page).to have_content("Add decisions")
 
