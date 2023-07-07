@@ -13,8 +13,8 @@ const MstBadge = (props) => {
   const { appeal, appealDetails } = props;
 
   // During decision review workflow, saved/staged changes made are updated to appealDetails
-  if (appealDetails[appeal.externalId]?.issues) {
-    const issues = appealDetails[appeal.externalId].issues;
+  if (appealDetails[appeal.externalId]?.decisionIssues) {
+    const issues = appealDetails[appeal.externalId].decisionIssues;
 
     if (!issues.some((issue) => issue.mst_status === true)) {
       return null;
