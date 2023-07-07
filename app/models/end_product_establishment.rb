@@ -21,7 +21,7 @@ class EndProductEstablishment < CaseflowRecord
   has_one :priority_end_product_sync_queue
   belongs_to :vbms_ext_claim, foreign_key: "reference_id", primary_key: "claim_id", optional: true
 
-  auto_mutex :sync!, on: [:id]
+  auto_mutex :sync!
 
   # allow @veteran to be assigned to save upstream calls
   attr_writer :veteran
