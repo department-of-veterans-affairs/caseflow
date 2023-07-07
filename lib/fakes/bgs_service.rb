@@ -128,7 +128,7 @@ class Fakes::BGSService
     if ActiveRecord::Base.connection.table_exists? "vbms_ext_claim"
       epe = EndProductEstablishment.find_by(veteran_file_number: file_number)
 
-      if VbmsExtClaim.find_by(claim_id: epe.reference_id)
+      if epe&.vbms_ext_claim
         vbms_status = epe.vbms_ext_claim.level_status_code
 
         records.values.each do |record|
