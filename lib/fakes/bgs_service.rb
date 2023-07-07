@@ -850,4 +850,3 @@ class Fakes::BGSService
   # rubocop:enable Metrics/MethodLength
 end
 # rubocop:enable Metrics/ClassLength
-
