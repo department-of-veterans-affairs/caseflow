@@ -9,11 +9,16 @@ import {
   claimantColumn,
   veteranParticipantIdColumn,
   veteranSsnColumn,
-  decisionReviewTypeColumn
+  decisionReviewTypeColumn,
 } from './TaskTableColumns';
 import {
+  issueCountColumn,
+  issueTypesColumn
+} from '../../queue/components/TaskTableColumns';
+import {
   buildDecisionReviewFilterInformation,
-  extractEnabledTaskFilters
+  extractEnabledTaskFilters,
+  parseFilterOptions,
 } from '../util/index';
 
 class TaskTableTabUnconnected extends React.PureComponent {
@@ -61,7 +66,12 @@ class TaskTableTabUnconnected extends React.PureComponent {
     },
     this.props.featureToggles.decisionReviewQueueSsnColumn ?
       veteranSsnColumn() :
-      veteranParticipantIdColumn()
+      veteranParticipantIdColumn(),
+    issueCountColumn(),
+    {
+      ...issueTypesColumn(),
+      filterOptions: parseFilterOptions(this.props.filterableTaskIssueTypes)
+    },
   ];
 
   enabledTaskFilters = () => extractEnabledTaskFilters(
@@ -73,30 +83,32 @@ class TaskTableTabUnconnected extends React.PureComponent {
 
     return <React.Fragment>
       {this.props.description && <div className="cf-noncomp-queue-completed-task">{this.props.description}</div>}
-      <div className="cf-search-ahead-parent cf-push-right cf-noncomp-search">
-        <SearchBar
-          id="searchBar"
-          size="small"
-          title={this.props.featureToggles.decisionReviewQueueSsnColumn ?
-            'Search by Claimant Name, Veteran Participant ID, File Number or SSN' :
-            ''}
-          onChange={this.onChange}
-          recordSearch={this.onSearch}
-          placeholder="Type to search..."
-          onClearSearch={this.onClearSearch}
-          isSearchAhead
-          value={this.state.searchText} />
-      </div>
-      <div className="section-hearings-list">
-        <TaskTableUnconnected
-          {...this.state.predefinedColumns}
-          getKeyForRow={(row, object) => object.id}
-          customColumns={this.getTableColumns()}
-          includeIssueCount
-          tasks={[]}
-          taskPagesApiEndpoint={this.props.baseTasksUrl}
-          useTaskPagesApi
-          tabPaginationOptions={this.props.tabPaginationOptions} />
+      <div className="non-comp-queue-table-wrapper">
+        <div className="cf-search-ahead-parent cf-push-right cf-noncomp-search">
+          <SearchBar
+            id="searchBar"
+            size="small"
+            title={this.props.featureToggles.decisionReviewQueueSsnColumn ?
+              'Search by Claimant Name, Veteran Participant ID, File Number or SSN' :
+              ''}
+            onChange={this.onChange}
+            recordSearch={this.onSearch}
+            placeholder="Type to search..."
+            onClearSearch={this.onClearSearch}
+            isSearchAhead
+            value={this.state.searchText} />
+        </div>
+        <div className="section-hearings-list">
+          <TaskTableUnconnected
+            {...this.state.predefinedColumns}
+            getKeyForRow={(row, object) => object.id}
+            onHistoryUpdate={this.props.onHistoryUpdate}
+            customColumns={this.getTableColumns()}
+            tasks={[]}
+            taskPagesApiEndpoint={this.props.baseTasksUrl}
+            useTaskPagesApi
+            tabPaginationOptions={this.props.tabPaginationOptions} />
+        </div>
       </div>
     </React.Fragment>;
   };
@@ -119,12 +131,14 @@ TaskTableTabUnconnected.propTypes = {
     onPageLoaded: PropTypes.func
   }),
   filterableTaskTypes: PropTypes.object,
+  filterableTaskIssueTypes: PropTypes.object,
+  onHistoryUpdate: PropTypes.func,
 };
 
 const TaskTableTab = connect(
   (state) => ({
     featureToggles: state.featureToggles
-  })
+  }),
 )(TaskTableTabUnconnected);
 
 export default TaskTableTab;

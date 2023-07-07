@@ -28,6 +28,33 @@ describe CachedAppealService do
     end
   end
 
+  context "caches issue_count and issue_types correctly" do
+    let(:ama_appeal) { create(:appeal) }
+    let(:request_issues) do
+      [
+        create(:request_issue, nonrating_issue_category: "Category C"),
+        create(:request_issue, nonrating_issue_category: "Category B"),
+        create(:request_issue, nonrating_issue_category: "Category C"),
+        create(:request_issue, nonrating_issue_category: "Category D")
+      ]
+    end
+    let(:ama_cached_appeal) { CachedAppeal.find_by(appeal_id: ama_appeal.id, appeal_type: Appeal.name) }
+
+    before do
+      ama_appeal.request_issues = request_issues
+      ama_appeal.save
+      subject.cache_ama_appeals([ama_appeal])
+    end
+
+    it "caches issue_count correctly" do
+      expect(ama_cached_appeal.issue_count).to eq(4)
+    end
+
+    it "caches issue_types correctly" do
+      expect(ama_cached_appeal.issue_types).to eq("Category B,Category C,Category D")
+    end
+  end
+
   context "cached appeal was recently updated" do
     let(:ama_appeal) { create(:appeal) }
     let(:vacols_case) { create(:case, :travel_board_hearing) }
