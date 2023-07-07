@@ -73,6 +73,15 @@ GIT
       rainbow
       selenium-webdriver
 
+GIT
+  remote: https://github.com/senny/pdfjs_viewer-rails.git
+  revision: a4249eacbf70175db63b57e9f364d0a9a79e2b43
+  ref: a4249eacbf70175db63b57e9f364d0a9a79e2b43
+  specs:
+    pdfjs_viewer-rails (0.0.9)
+      rails (> 4.2.0)
+      sass-rails (~> 5.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -761,6 +770,7 @@ DEPENDENCIES
   parallel
   paranoia (~> 2.2)
   pdf-forms
+  pdfjs_viewer-rails!
   pdfkit
   pg
   pluck_to_hash
