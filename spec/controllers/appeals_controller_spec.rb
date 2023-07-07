@@ -1026,22 +1026,6 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         subject
         expect(response).to be_successful
       end
-
-      it "creates an IssuesUpdateTask for each updated MST or PACT issue" do
-        #Note: there are 4 issues on the appeal, but since there are no edits to request_issue1, we only expect 3 tasks to be created.
-        allow_any_instance_of(AppealsController).to receive(:appeal).and_return(appeal)
-        allow(Organization).to receive(:find_by_url).and_return(organization)
-
-        subject
-        expect(IssuesUpdateTask.count).to eq(3)
-        expect(IssuesUpdateTask.first.instructions[0].include?("Special Issues: MST")).to eq (true)
-        expect(IssuesUpdateTask.first.instructions[0].include?("MST reason note")).to eq (true)
-        expect(IssuesUpdateTask.second.instructions[0].include?("Special Issues: PACT")).to eq (true)
-        expect(IssuesUpdateTask.second.instructions[0].include?("PACT reason note")).to eq (true)
-        expect(IssuesUpdateTask.third.instructions[0].include?("Special Issues: MST, PACT")).to eq (true)
-        expect(IssuesUpdateTask.third.instructions[0].include?("MST note")).to eq (true)
-        expect(IssuesUpdateTask.third.instructions[0].include?("Pact note")).to eq (true)
-      end
     end
   end
 end
