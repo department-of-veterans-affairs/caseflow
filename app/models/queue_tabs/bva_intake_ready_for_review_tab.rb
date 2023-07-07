@@ -18,7 +18,7 @@ class BvaIntakeReadyForReviewTab < QueueTab
   end
 
   def tasks
-    active_tasks.joins(:ama_appeal)
+    active_tasks.includes(*task_includes).joins(:ama_appeal)
   end
 
   def column_names

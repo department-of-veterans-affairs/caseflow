@@ -368,8 +368,6 @@ Rails.application.routes.draw do
 
   get "tableau-login", to: "tableau_logins#login"
 
-  mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
-
   get "unauthorized" => "application#unauthorized"
 
   get "feedback" => "application#feedback"
