@@ -45,6 +45,8 @@ gem "parallel"
 gem "paranoia", "~> 2.2"
 # PDF Tools
 gem "pdf-forms"
+# Used in Caseflow Dispatch
+gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git", ref: "a4249eacbf70175db63b57e9f364d0a9a79e2b43"
 #Used to build out PDF files on the backend
 #https://github.com/pdfkit/pdfkit
 gem "pdfkit"
