@@ -124,6 +124,12 @@ module IssueUpdater
   def create_issue_update_task(original_issue, decision_issue)
     root_task = RootTask.find_or_create_by!(appeal: appeal)
 
+    # close out any tasks that might be open
+    open_issue_task = Task.where(
+      assigned_to: SpecialIssueEditTeam.singleton
+    ).where(status: "assigned").where(appeal: appeal)
+    open_issue_task[0].delete unless open_issue_task.empty?
+
     task = IssuesUpdateTask.create!(
       appeal: appeal,
       parent: root_task,
