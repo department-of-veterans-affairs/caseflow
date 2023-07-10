@@ -207,16 +207,12 @@ class InitialTasksFactory
   end
 
   def create_establishment_task
-    # close out any tasks that might be open on the appeal
-    open_issue_task = Task.where(assigned_to: SpecialIssueEditTeam.singleton).where(status: "assigned")
-    open_issue_task[0].delete unless open_issue_task.empty?
-
     task = EstablishmentTask.create!(
       appeal: @appeal,
       parent: @root_task,
       assigned_by: RequestStore[:current_user],
       assigned_to: SpecialIssueEditTeam.singleton,
-      completed_by: RequestStore[:current_user],
+      completed_by: RequestStore[:current_user]
     )
     task.format_instructions(@appeal.request_issues)
     task.completed!
