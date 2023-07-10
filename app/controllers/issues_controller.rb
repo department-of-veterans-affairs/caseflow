@@ -20,7 +20,14 @@ class IssuesController < ApplicationController
   def create
     return record_not_found unless appeal
 
-    Issue.create_in_vacols!(issue_attrs: create_params)
+    issue = Issue.create_in_vacols!(issue_attrs: create_params)
+
+    # create MST/PACT task if issue was created
+    if convert_to_bool(create_params[:mst_status]) ||
+       convert_to_bool(create_params[:pact_status])
+      issue_in_caseflow = appeal.issues.find { |i| i.vacols_sequence_id == issue.issseq.to_i }
+      create_legacy_issue_update_task(issue_in_caseflow) if FeatureToggle.enabled?(:legacy_mst_pact_identification)
+    end
 
     render json: { issues: json_issues }, status: :created
   end
@@ -58,7 +65,8 @@ class IssuesController < ApplicationController
 
   private
 
-  def create_legacy_issue_update_task(before_issue)
+  def create_legacy_issue_update_task(issue)
+    user = current_user
 
     # close out any tasks that might be open
     open_issue_task = Task.where(
@@ -66,7 +74,6 @@ class IssuesController < ApplicationController
     ).where(status: "assigned").where(appeal: appeal)
     open_issue_task[0].delete unless open_issue_task.empty?
 
-    user = current_user
     task = IssuesUpdateTask.create!(
       appeal: appeal,
       parent: appeal.root_task,
@@ -74,37 +81,56 @@ class IssuesController < ApplicationController
       assigned_by: user,
       completed_by: user
     )
+
+    # set up data for added or edited issue depending on the params action
+    disposition = issue.readable_disposition.nil? ? "N/A" : issue.readable_disposition
+    change_category = (params[:action] == "create") ? "Added Issue" : "Edited Issue"
+    updated_mst_status = convert_to_bool(params[:issues][:mst_status]) unless params[:action] == "create"
+    updated_pact_status = convert_to_bool(params[:issues][:pact_status]) unless params[:action] == "create"
+
+    note = params[:issues][:note].nil? ? "N/A" : params[:issues][:note]
+    # use codes from params to get descriptions
+    # opting to use params vs issue model to capture in-flight issue changes
+    program_code = params[:issues][:program]
+    issue_code = params[:issues][:issue]
+    level_1_code = params[:issues][:level_1]
+
+    # line up param codes to their descriptions
+    param_issue = Constants::ISSUE_INFO[program_code]
+    iss = param_issue["levels"][issue_code]["description"] unless issue_code.nil?
+    level_1_description = level_1_code.nil? ? "N/A" : param_issue["levels"][issue_code]["levels"][level_1_code]["description"]
+
     # format the task instructions and close out
     task.format_instructions(
-      "Edited Issue",
+      change_category,
       [
-        "Benefit Type: #{before_issue.labels[0]}\n",
-        "Issue: #{before_issue.labels[1..-2].join("\n")}\n",
-        "Code: #{[before_issue.codes[-1], before_issue.labels[-1]].join(" - ")}\n",
-        "Note: #{before_issue.note}\n",
-        "Disposition: #{before_issue.readable_disposition}\n"
+        "Benefit Type: #{param_issue['description']}\n",
+        "Issue: #{iss}\n",
+        "Code: #{[level_1_code, level_1_description].join(" - ")}\n",
+        "Note: #{note}\n",
+        "Disposition: #{disposition}\n"
       ].compact.join("\r\n"),
       "",
-      before_issue.mst_status,
-      before_issue.pact_status,
-      convert_to_bool(params[:issues][:mst_status]),
-      convert_to_bool(params[:issues][:pact_status])
+      issue.mst_status,
+      issue.pact_status,
+      updated_mst_status,
+      updated_pact_status
     )
     task.completed!
     # create SpecialIssueChange record to log the changes
     SpecialIssueChange.create!(
-      issue_id: before_issue.id,
+      issue_id: issue.id,
       appeal_id: appeal.id,
       appeal_type: "LegacyAppeal",
       task_id: task.id,
       created_at: Time.zone.now.utc,
       created_by_id: user.id,
       created_by_css_id: user.css_id,
-      original_mst_status: before_issue.mst_status,
-      original_pact_status: before_issue.pact_status,
-      updated_mst_status: convert_to_bool(params[:issues][:mst_status]),
-      updated_pact_status: convert_to_bool(params[:issues][:pact_status]),
-      change_category: "Edited Issue"
+      original_mst_status: issue.mst_status,
+      original_pact_status: issue.pact_status,
+      updated_mst_status: updated_mst_status,
+      updated_pact_status: updated_pact_status,
+      change_category: change_category
     )
   end
 
