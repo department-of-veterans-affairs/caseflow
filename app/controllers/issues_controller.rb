@@ -66,7 +66,7 @@ class IssuesController < ApplicationController
   private
 
   def create_legacy_issue_update_task(issue)
-    user = current_userm
+    user = current_user
     task = IssuesUpdateTask.create!(
       appeal: appeal,
       parent: appeal.root_task,
