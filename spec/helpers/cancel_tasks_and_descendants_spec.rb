@@ -9,8 +9,8 @@ describe CancelTasksAndDescendants do
       subject(:call) { described_class.call }
 
       it "assigns RequestStore[:current_user]" do
-        expect { call }.to change { RequestStore[:current_user] }.
-          from(nil).to(User.system_user)
+        expect { call }.to change { RequestStore[:current_user] }
+          .from(nil).to(User.system_user)
       end
 
       it "appends appropriate logs to application logs" do
@@ -37,11 +37,17 @@ describe CancelTasksAndDescendants do
       it "appends appropriate logs to stdout" do
         allow(SecureRandom).to receive(:uuid) { "dummy-request-id" }
 
+        # rubocop:disable Layout/FirstArgumentIndentation
         expect { call }.to output(
-          match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Total tasks for cancellation: 0"))
-          .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Tasks cancelled successfully: 0"))
-          .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Elapsed time (sec):"))
+          match(Regexp.escape(
+            "[CancelTasksAndDescendants] [dummy-request-id] Total tasks for cancellation: 0"
+          )).and(match(Regexp.escape(
+            "[CancelTasksAndDescendants] [dummy-request-id] Tasks cancelled successfully: 0"
+          ))).and(match(Regexp.escape(
+            "[CancelTasksAndDescendants] [dummy-request-id] Elapsed time (sec):"
+          )))
         ).to_stdout
+        # rubocop:enable Layout/FirstArgumentIndentation
       end
 
       it { is_expected.to be_nil }
@@ -116,20 +122,29 @@ describe CancelTasksAndDescendants do
       it "appends appropriate logs to stdout" do
         allow(SecureRandom).to receive(:uuid) { "dummy-request-id" }
 
+        # rubocop:disable Layout/FirstArgumentIndentation
         expect { call }.to output(
-          match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Total tasks for cancellation: 3"))
-          .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Task ids [#{task_1.id}] cancelled successfully"))
-          .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Task ids [#{task_2.id}] cancelled successfully"))
-          .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Task ids [#{task_3.id}] cancelled successfully"))
-          .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Tasks cancelled successfully: 3"))
-          .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Elapsed time (sec):"))
+          match(Regexp.escape(
+            "[CancelTasksAndDescendants] [dummy-request-id] Total tasks for cancellation: 3"
+          )).and(match(Regexp.escape(
+            "[CancelTasksAndDescendants] [dummy-request-id] Task ids [#{task_1.id}] cancelled successfully"
+          ))).and(match(Regexp.escape(
+            "[CancelTasksAndDescendants] [dummy-request-id] Task ids [#{task_2.id}] cancelled successfully"
+          ))).and(match(Regexp.escape(
+            "[CancelTasksAndDescendants] [dummy-request-id] Task ids [#{task_3.id}] cancelled successfully"
+          ))).and(match(Regexp.escape(
+            "[CancelTasksAndDescendants] [dummy-request-id] Tasks cancelled successfully: 3"
+          ))).and(match(Regexp.escape(
+            "[CancelTasksAndDescendants] [dummy-request-id] Elapsed time (sec):"
+          )))
         ).to_stdout
+        # rubocop:enable Layout/FirstArgumentIndentation
       end
 
       context "when a task fails to cancel" do
         before do
-          expect(task_2).to receive(:cancel_task_and_child_subtasks).
-            and_raise(ActiveModel::ValidationError.new(Task.new))
+          expect(task_2).to receive(:cancel_task_and_child_subtasks)
+            .and_raise(ActiveModel::ValidationError.new(Task.new))
         end
 
         it "does not prevent cancellation of other tasks in the relation" do
@@ -175,14 +190,24 @@ describe CancelTasksAndDescendants do
         it "appends appropriate logs to stdout" do
           allow(SecureRandom).to receive(:uuid) { "dummy-request-id" }
 
+          # rubocop:disable Layout/FirstArgumentIndentation
           expect { call }.to output(
-            match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Total tasks for cancellation: 3"))
-            .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Task ids [#{task_1.id}] cancelled successfully"))
-            .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Task ids [#{task_2.id}] not cancelled due to error - Validation failed"))
-            .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Task ids [#{task_3.id}] cancelled successfully"))
-            .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Tasks cancelled successfully: 2"))
-            .and match(Regexp.escape("[CancelTasksAndDescendants] [dummy-request-id] Elapsed time (sec):"))
+            match(Regexp.escape(
+              "[CancelTasksAndDescendants] [dummy-request-id] Total tasks for cancellation: 3"
+            )).and(match(Regexp.escape(
+              "[CancelTasksAndDescendants] [dummy-request-id] Task ids [#{task_1.id}] cancelled successfully"
+            ))).and(match(Regexp.escape(
+              "[CancelTasksAndDescendants] [dummy-request-id] Task ids [#{task_2.id}] not cancelled due to error - " \
+              "Validation failed"
+            ))).and(match(Regexp.escape(
+              "[CancelTasksAndDescendants] [dummy-request-id] Task ids [#{task_3.id}] cancelled successfully"
+            ))).and(match(Regexp.escape(
+              "[CancelTasksAndDescendants] [dummy-request-id] Tasks cancelled successfully: 2"
+            ))).and(match(Regexp.escape(
+              "[CancelTasksAndDescendants] [dummy-request-id] Elapsed time (sec):"
+            )))
           ).to_stdout
+          # rubocop:enable Layout/FirstArgumentIndentation
         end
 
         it { is_expected.to be_nil }
