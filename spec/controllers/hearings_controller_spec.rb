@@ -458,7 +458,7 @@ RSpec.describe HearingsController, type: :controller do
           id: ama_hearing.external_id,
           advance_on_docket_motion: {
             user_id: user.id,
-            person_id: ama_hearing.appeal.appellant.id,
+            person_id: ama_hearing.appeal.appellant.person.id,
             reason: Constants.AOD_REASONS.age,
             granted: true
           },
