@@ -66,7 +66,7 @@ class IssuesController < ApplicationController
   private
 
   def create_legacy_issue_update_task(issue)
-    user = current_user
+    user = current_userm
     task = IssuesUpdateTask.create!(
       appeal: appeal,
       parent: appeal.root_task,
@@ -76,19 +76,33 @@ class IssuesController < ApplicationController
     )
 
     # set up data for added or edited issue depending on the params action
-    disposition = (params[:action] == "create") ? "N/A" : issue.readable_disposition
+    disposition = issue.readable_disposition.nil? ? "N/A" : issue.readable_disposition
     change_category = (params[:action] == "create") ? "Added Issue" : "Edited Issue"
     updated_mst_status = convert_to_bool(params[:issues][:mst_status]) unless params[:action] == "create"
     updated_pact_status = convert_to_bool(params[:issues][:pact_status]) unless params[:action] == "create"
+
+    # use codes from params to get descriptions
+    # opting to use params vs issue model to capture in-flight issue changes
+    program_code = params[:issues][:program]
+    issue_code = params[:issues][:issue]
+    level_1_code = params[:issues][:level_1]
+
+    # line up param codes to their descriptions
+    param_issue = Constants::ISSUE_INFO[program_code]
+    iss = param_issue["levels"][issue_code]["description"] unless issue_code.nil?
+    level_1 = {
+      "code": level_1_code,
+      "description": param_issue["levels"][issue_code]["levels"][level_1_code]["description"]
+    } unless level_1_code.nil?
 
     # format the task instructions and close out
     task.format_instructions(
       change_category,
       [
-        "Benefit Type: #{issue.labels[0]}\n",
-        "Issue: #{issue.labels[1..-2].join("\n")}\n",
-        "Code: #{[issue.codes[-1], issue.labels[-1]].join(" - ")}\n",
-        "Note: #{issue.note}\n",
+        "Benefit Type: #{param_issue['description']}\n",
+        "Issue: #{iss}\n",
+        "Code: #{[level_1[:code], level_1[:description]].join(" - ")}\n",
+        "Note: #{params[:issues][:note]}\n",
         "Disposition: #{disposition}\n"
       ].compact.join("\r\n"),
       "",
