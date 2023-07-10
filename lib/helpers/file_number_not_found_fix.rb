@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "./lib/helpers/fix_file_number_wizard.rb"
+require "./lib/helpers/duplicate_veteran_checker.rb"
 
 # This .rb file fixes the file number not found error on
 # decision documents. The fix can either be run as a
@@ -26,6 +27,8 @@ class FileNumberNotFoundFix
     bulk_decision_docs_with_error.each do |decision_document|
       appeal = decision_document.appeal
 
+      return unless duplicate_vet?(appeal.veteran_file_number)
+
       single_record_fix(appeal, log_to_s3: false)
 
       decision_document.update(error: nil)
@@ -35,6 +38,10 @@ class FileNumberNotFoundFix
       " Status: Complete.")
 
     create_log
+  end
+
+  def duplicate_vet?(file_number)
+    DuplicateVeteranChecker.new.check_by_duplicate_veteran_file_number(file_number)
   end
 
   def single_record_fix(appeal, log_to_s3: true)
