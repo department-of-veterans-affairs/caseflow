@@ -57,10 +57,10 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: 7d7c67f7bad5e5aa03e257f0d8e57a4aa1a6cbbf
-  ref: 7d7c67f7bad5e5aa03e257f0d8e57a4aa1a6cbbf
+  revision: d34780936eb6ca3268af32274e509cdec9850b1b
+  ref: d34780936eb6ca3268af32274e509cdec9850b1b
   specs:
-    bgs (0.2)
+    bgs (0.3)
       httpclient
       nokogiri (>= 1.11.0.rc4)
       savon (~> 2.12)
