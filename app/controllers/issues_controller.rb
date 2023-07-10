@@ -67,6 +67,11 @@ class IssuesController < ApplicationController
 
   def create_legacy_issue_update_task(issue)
     user = current_user
+
+    # close out any tasks that might be open
+    open_issue_task = Task.where(assigned_to: SpecialIssueEditTeam.singleton).where(status: "assigned")
+    open_issue_task[0].delete unless open_issue_task.empty?
+
     task = IssuesUpdateTask.create!(
       appeal: appeal,
       parent: appeal.root_task,
@@ -90,10 +95,7 @@ class IssuesController < ApplicationController
     # line up param codes to their descriptions
     param_issue = Constants::ISSUE_INFO[program_code]
     iss = param_issue["levels"][issue_code]["description"] unless issue_code.nil?
-    level_1 = {
-      "code": level_1_code,
-      "description": param_issue["levels"][issue_code]["levels"][level_1_code]["description"]
-    } unless level_1_code.nil?
+    level_1_description = level_1_code.nil? ? "N/A" : param_issue["levels"][issue_code]["levels"][level_1_code]["description"]
 
     # format the task instructions and close out
     task.format_instructions(
@@ -101,7 +103,7 @@ class IssuesController < ApplicationController
       [
         "Benefit Type: #{param_issue['description']}\n",
         "Issue: #{iss}\n",
-        "Code: #{[level_1[:code], level_1[:description]].join(" - ")}\n",
+        "Code: #{[level_1_code, level_1_description].join(" - ")}\n",
         "Note: #{params[:issues][:note]}\n",
         "Disposition: #{disposition}\n"
       ].compact.join("\r\n"),
