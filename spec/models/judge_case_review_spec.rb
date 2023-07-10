@@ -97,9 +97,9 @@ describe JudgeCaseReview, :all_dbs do
   end
 
   context ".create" do
-    let(:judge) { create(:user, :judge, css_id: "CFS123" ) }
+    let(:judge) { create(:user, :judge ) }
     let!(:vacols_judge) { create(:staff, :judge_role, user: judge) }
-    let(:attorney) { create(:user, css_id: "CFS456", station_id: "317") }
+    let(:attorney) { create(:user, station_id: "317") }
     let!(:vacols_attorney) { create(:staff, :attorney_role, user: attorney) }
     let(:probability) { JudgeCaseReview::QUALITY_REVIEW_SELECTION_PROBABILITY }
     subject { JudgeCaseReview.complete(params) }
