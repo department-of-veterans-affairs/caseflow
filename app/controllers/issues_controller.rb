@@ -86,6 +86,7 @@ class IssuesController < ApplicationController
     updated_mst_status = convert_to_bool(params[:issues][:mst_status]) unless params[:action] == "create"
     updated_pact_status = convert_to_bool(params[:issues][:pact_status]) unless params[:action] == "create"
 
+    note = params[:issues][:note].nil? ? "N/A" : params[:issues][:note]
     # use codes from params to get descriptions
     # opting to use params vs issue model to capture in-flight issue changes
     program_code = params[:issues][:program]
@@ -104,7 +105,7 @@ class IssuesController < ApplicationController
         "Benefit Type: #{param_issue['description']}\n",
         "Issue: #{iss}\n",
         "Code: #{[level_1_code, level_1_description].join(" - ")}\n",
-        "Note: #{params[:issues][:note]}\n",
+        "Note: #{note}\n",
         "Disposition: #{disposition}\n"
       ].compact.join("\r\n"),
       "",
