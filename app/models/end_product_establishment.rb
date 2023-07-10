@@ -47,8 +47,6 @@ class EndProductEstablishment < CaseflowRecord
   class ContentionNotFound < StandardError; end
 
   class << self
-      auto_mutex :sync, block: 7, after_failure: lambda { render text: 'failed to acquire lock!' }, on: [self.id]
-
     def order_by_sync_priority
       active.order("last_synced_at IS NOT NULL, last_synced_at ASC")
     end
