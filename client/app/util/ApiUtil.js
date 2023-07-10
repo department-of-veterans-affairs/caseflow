@@ -171,14 +171,17 @@ const httpMethods = {
     }
 
     if (options.cache) {
-      return promise;
+      return promise.
+      then((res) => {
+        successHandling(url, res, 'GET', options);
+        return res;
+      });
     }
 
     return promise.
       use(nocache).
       then((res) => {
         successHandling(url, res, 'GET', options);
-
         return res;
       });
   },
