@@ -97,7 +97,7 @@ describe JudgeCaseReview, :all_dbs do
   end
 
   context ".create" do
-    let(:judge) { create(:user, :judge ) }
+    let(:judge) { create(:user, :judge) }
     let!(:vacols_judge) { create(:staff, :judge_role, user: judge) }
     let(:attorney) { create(:user, station_id: "317") }
     let!(:vacols_attorney) { create(:staff, :attorney_role, user: attorney) }
