@@ -108,6 +108,8 @@ class Rating
       serialized_hash[:rba_contentions_data].each do |rba|
         rba_contention = rba.with_indifferent_access
         response.each do |resp|
+          next if resp.dig(:contentions, :cntntn_id).nil?
+
           contentions_data << resp[:contentions] if resp.dig(:contentions, :cntntn_id) == rba_contention.dig(:cntntn_id)
         end
       end
