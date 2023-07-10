@@ -65,7 +65,7 @@ class IssuesController < ApplicationController
 
   private
 
-  def create_legacy_issue_update_task(before_issue)
+  def create_legacy_issue_update_task(issue)
     user = current_user
     task = IssuesUpdateTask.create!(
       appeal: appeal,
@@ -75,40 +75,40 @@ class IssuesController < ApplicationController
       completed_by: user
     )
 
-    # set up data for added or edited issue
-    disposition = before_issue.readable_disposition.nil? ? "N/A" : before_issue.readable_disposition
-    change_category = (disposition == "N/A") ? "Added Issue" : "Edited Issue"
-    updated_mst_status = convert_to_bool(params[:issues][:mst_status]) unless disposition == "N/A"
-    updated_pact_status = convert_to_bool(params[:issues][:pact_status]) unless disposition == "N/A"
+    # set up data for added or edited issue depending on the params action
+    disposition = (params[:action] == "create") ? "N/A" : issue.readable_disposition
+    change_category = (params[:action] == "create") ? "Added Issue" : "Edited Issue"
+    updated_mst_status = convert_to_bool(params[:issues][:mst_status]) unless params[:action] == "create"
+    updated_pact_status = convert_to_bool(params[:issues][:pact_status]) unless params[:action] == "create"
 
     # format the task instructions and close out
     task.format_instructions(
       change_category,
       [
-        "Benefit Type: #{before_issue.labels[0]}\n",
-        "Issue: #{before_issue.labels[1..-2].join("\n")}\n",
-        "Code: #{[before_issue.codes[-1], before_issue.labels[-1]].join(" - ")}\n",
-        "Note: #{before_issue.note}\n",
+        "Benefit Type: #{issue.labels[0]}\n",
+        "Issue: #{issue.labels[1..-2].join("\n")}\n",
+        "Code: #{[issue.codes[-1], issue.labels[-1]].join(" - ")}\n",
+        "Note: #{issue.note}\n",
         "Disposition: #{disposition}\n"
       ].compact.join("\r\n"),
       "",
-      before_issue.mst_status,
-      before_issue.pact_status,
+      issue.mst_status,
+      issue.pact_status,
       updated_mst_status,
       updated_pact_status
     )
     task.completed!
     # create SpecialIssueChange record to log the changes
     SpecialIssueChange.create!(
-      issue_id: before_issue.id,
+      issue_id: issue.id,
       appeal_id: appeal.id,
       appeal_type: "LegacyAppeal",
       task_id: task.id,
       created_at: Time.zone.now.utc,
       created_by_id: user.id,
       created_by_css_id: user.css_id,
-      original_mst_status: before_issue.mst_status,
-      original_pact_status: before_issue.pact_status,
+      original_mst_status: issue.mst_status,
+      original_pact_status: issue.pact_status,
       updated_mst_status: updated_mst_status,
       updated_pact_status: updated_pact_status,
       change_category: change_category
