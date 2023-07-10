@@ -27,7 +27,7 @@ class EndProductEstablishment < CaseflowRecord
   #                 # It is NOT recommended to go below 0.01. (default: 0.1)
   # :expire => 10   # Specify in seconds when the lock should be considered stale when something went wrong
   #                 # with the one who held the lock and failed to unlock. (default: 10)
-  auto_mutex :sync, block: 7, after_failure: lambda { render text: 'failed to acquire lock!' }, on: [id]
+  auto_mutex :sync, block: 7, after_failure: lambda { render text: 'failed to acquire lock!' }
 
   # allow @veteran to be assigned to save upstream calls
   attr_writer :veteran
@@ -47,6 +47,8 @@ class EndProductEstablishment < CaseflowRecord
   class ContentionNotFound < StandardError; end
 
   class << self
+      auto_mutex :sync, block: 7, after_failure: lambda { render text: 'failed to acquire lock!' }, on: [self.id]
+
     def order_by_sync_priority
       active.order("last_synced_at IS NOT NULL, last_synced_at ASC")
     end
