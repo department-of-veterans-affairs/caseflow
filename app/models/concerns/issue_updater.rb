@@ -36,7 +36,8 @@ module IssueUpdater
   private
 
   def create_decision_issues!
-    issues.each do |issue_attrs|
+    ordered_issues = issues.sort_by { |issue| issue[:request_issue_ids]&.first }
+    ordered_issues.each do |issue_attrs|
       request_issues = appeal.request_issues.active_or_withdrawn.where(id: issue_attrs[:request_issue_ids])
       next if request_issues.empty?
 
@@ -53,6 +54,7 @@ module IssueUpdater
       )
 
       request_issues.each do |request_issue|
+
         RequestDecisionIssue.create!(decision_issue: decision_issue, request_issue: request_issue)
 
         # compare the MST/PACT status of the orignial issue and decision to create task and record
@@ -121,6 +123,12 @@ module IssueUpdater
 
   def create_issue_update_task(original_issue, decision_issue)
     root_task = RootTask.find_or_create_by!(appeal: appeal)
+
+    # close out any tasks that might be open
+    open_issue_task = Task.where(
+      assigned_to: SpecialIssueEditTeam.singleton
+    ).where(status: "assigned").where(appeal: appeal)
+    open_issue_task[0].delete unless open_issue_task.empty?
 
     task = IssuesUpdateTask.create!(
       appeal: appeal,
