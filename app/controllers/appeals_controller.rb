@@ -432,6 +432,11 @@ class AppealsController < ApplicationController
 
   def create_legacy_issue_update_task(before_issue, current_issue)
     user = RequestStore[:current_user]
+
+    # close out any tasks that might be open
+    open_issue_task = Task.where(assigned_to: SpecialIssueEditTeam.singleton).where(status: "assigned")
+    open_issue_task[0].delete unless open_issue_task.empty?
+
     task = IssuesUpdateTask.create!(
       appeal: appeal,
       parent: appeal.root_task,
