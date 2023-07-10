@@ -9,7 +9,7 @@
 # the current status of the EP when the EndProductEstablishment is synced.
 
 class EndProductEstablishment < CaseflowRecord
-
+  # Using macro-style definition. The locking scope will be TheClass#method and only one method can run at any given time.
   include RedisMutex::Macro
 
   belongs_to :source, polymorphic: true
@@ -21,7 +21,13 @@ class EndProductEstablishment < CaseflowRecord
   has_one :priority_end_product_sync_queue
   belongs_to :vbms_ext_claim, foreign_key: "reference_id", primary_key: "claim_id", optional: true
 
-  auto_mutex :sync!
+  # :block  => 1    # Specify in seconds how long you want to wait for the lock to be released.
+  #                 # Specify 0 if you need non-blocking sematics and return false immediately. (default: 1)
+  # :sleep  => 0.1  # Specify in seconds how long the polling interval should be when :block is given.
+  #                 # It is NOT recommended to go below 0.01. (default: 0.1)
+  # :expire => 10   # Specify in seconds when the lock should be considered stale when something went wrong
+  #                 # with the one who held the lock and failed to unlock. (default: 10)
+  auto_mutex :sync, block: 7, after_failure: lambda { render text: 'failed to acquire lock!' }, on: [id]
 
   # allow @veteran to be assigned to save upstream calls
   attr_writer :veteran
@@ -217,6 +223,7 @@ class EndProductEstablishment < CaseflowRecord
     contentions unless result.status_type_code == EndProduct::STATUSES.key("Canceled")
 
     transaction do
+      sleep 30
       update!(
         synced_status: result.status_type_code,
         last_synced_at: Time.zone.now
