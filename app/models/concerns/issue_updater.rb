@@ -36,7 +36,7 @@ module IssueUpdater
   private
 
   def create_decision_issues!
-    ordered_issues = issues.sort_by { |issue| issue[:request_issue_ids]&.min }
+    ordered_issues = issues.sort_by { |issue| issue[:request_issue_ids]&.first }
     ordered_issues.each do |issue_attrs|
       request_issues = appeal.request_issues.active_or_withdrawn.where(id: issue_attrs[:request_issue_ids])
       next if request_issues.empty?
