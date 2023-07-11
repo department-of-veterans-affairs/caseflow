@@ -351,6 +351,13 @@ paths:
                   value:
                     message: "IDT Exception ID: 67ce1137-4d94-43ec-ba0a-1daf43fc6a65 Recipient information received was invalid or incomplete."
                     errors: "Copies must be between 1 and 500 (inclusive)"
+                RecipientTypeIsAbsent:
+                  summary: 'Scenario: recipient_type is not included in the list: ["organization", "person", "system", "ro-colocated"]'
+                  value:
+                    message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
+                    errors:
+                      "distribution 1": "Recipient type is not included in the list"
+
   /idt/api/v2/appeals/{appeal_id}/outcode:
     post:
       tags:
