@@ -238,30 +238,7 @@ paths:
                         type: string
                         example: "The veteran was unable to be found."
               examples:
-                AlreadyOutcodedExample:
-                  summary: "Whenever a decision review has already been outcoded."
-                  value:
-                    - title: "Appeal 12345, task ID 54321 has already been outcoded. Cannot outcode the same appeal and task combination more than once"
-                      detail: "Appeal 12345, task ID 54321 has already been outcoded. Cannot outcode the same appeal and task combination more than once"
-                IncorrectBvaDispatchTasksExample:
-                  summary: "User has either more or fewer than 1 BvaDispatchTask assigned to them for the decision review being outcoded."
-                  value:
-                    - title: "Expected 1 BvaDispatchTask received 0 tasks for appeal 12345, user 1"
-                      detail: "Expected 1 BvaDispatchTask received 0 tasks for appeal 12345, user 1"
-                CitationNumberExistsExample:
-                  summary: "Citation number provided is already associated with another outcoded appeal."
-                  value:
-                    - title: "Citation number already exists"
-                      detail: "Citation number already exists"
-                CitationNumberInvalidExample:
-                  summary: "Thrown whenever citation number provided fails to match with a set regular expression."
-                  value:
-                    message: "Citation number is invalid"
-                MissingParamsExample:
-                  summary: Whenever one or more required parameters are
-                  value:
-                    message: "Decision date can't be blank, Redacted document location can't be blank, File can't be blank"
-                InvalidCopiesValid:
+                InvalidCopiesValue:
                   summary: "Scenario: Copies out of range (1-500 inclusive, default value of 1)"
                   value:
                     message: "IDT Exception ID: 67ce1137-4d94-43ec-ba0a-1daf43fc6a65 Recipient information received was invalid or incomplete."
@@ -272,6 +249,36 @@ paths:
                     message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
                     errors:
                       "distribution 1": "Recipient type is not included in the list"
+                NameBlank:
+                  summary: 'recipient_type is "system", "organization", or "ro-colocated" and name is blank'
+                  value:
+                    message: "IDT Exception ID: d8cecfbd-c664-440e-919b-bb1d91e77f1d Recipient information received was invalid or incomplete."
+                    errors:
+                          "distribution 1": "Name can't be blank"
+                PoaCodeBlank:
+                  summary: 'recipient_type is "ro-colocated" and poa_code is blank'
+                  value:
+                    message: "IDT Exception ID: 8af4913f-1e96-4437-9294-0c31b0f545df Recipient information received was invalid or incomplete."
+                    errors:
+                        "distribution 1": "Poa code can't be blank"
+                ClaimantStationOfJurisdictionBlank:
+                  summary: recipient_type is "ro-colocated" and claimant_station_of_jurisdiction is blank
+                  value:
+                    message: "IDT Exception ID: cf9e0208-e5de-4fb6-9dd5-2e182acdb8c3 Recipient information received was invalid or incomplete."
+                    errors:
+                        "distribution 1": "Claimant station of jurisdiction can't be blank"
+                DestinationTypeInvalid:
+                  summary: 'destination_type is not included in the list: ["domesticAddress", "internationalAddress", "militaryAddress", "derived"]'
+                  value:
+                    message: "IDT Exception ID: d7d581fa-4e31-445c-a513-ff40c49a3b95 Recipient information received was invalid or incomplete."
+                    errors":
+                        "distribution 1": "Destination type is not included in the list"
+                AddressLine1Blank:
+                  summary: destination_type is "domesticAddress", "internationalAddress", or "militaryAddress" and address_line_1 is blank"
+                  value:
+                    message: "IDT Exception ID: 578abf44-0292-49b6-a77f-27878d734145 Recipient information received was invalid or incomplete."
+                    "errors":
+                        "distribution 1": "Address line 1 can't be blank"
                 PersonRecipientMissingFirstName:
                   summary: 'Scenario: recipient_type is "person" and first_name is blank'
                   value:
@@ -344,8 +351,6 @@ paths:
                     message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
                     errors:
                       "distribution 1": "Address line 3 can't be blank"
-
-
         '500':
           description: 'A server error occurred.'
           content:
@@ -432,29 +437,6 @@ paths:
                         type: string
                         example: "The veteran was unable to be found."
               examples:
-                AlreadyOutcodedExample:
-                  summary: "Whenever a decision review has already been outcoded."
-                  value:
-                    - title: "Appeal 12345, task ID 54321 has already been outcoded. Cannot outcode the same appeal and task combination more than once"
-                      detail: "Appeal 12345, task ID 54321 has already been outcoded. Cannot outcode the same appeal and task combination more than once"
-                IncorrectBvaDispatchTasksExample:
-                  summary: "User has either more or fewer than 1 BvaDispatchTask assigned to them for the decision review being outcoded."
-                  value:
-                    - title: "Expected 1 BvaDispatchTask received 0 tasks for appeal 12345, user 1"
-                      detail: "Expected 1 BvaDispatchTask received 0 tasks for appeal 12345, user 1"
-                CitationNumberExistsExample:
-                  summary: "Citation number provided is already associated with another outcoded appeal."
-                  value:
-                    - title: "Citation number already exists"
-                      detail: "Citation number already exists"
-                CitationNumberInvalidExample:
-                  summary: "Thrown whenever citation number provided fails to match with a set regular expression."
-                  value:
-                    message: "Citation number is invalid"
-                MissingParamsExample:
-                  summary: Whenever one or more required parameters are
-                  value:
-                    message: "Decision date can't be blank, Redacted document location can't be blank, File can't be blank"
                 InvalidCopiesValue:
                   summary: "Scenario: Copies out of range (1-500 inclusive, default value of 1)"
                   value:
