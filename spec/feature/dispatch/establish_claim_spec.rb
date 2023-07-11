@@ -622,10 +622,10 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
             }
           )
         end
-        # nocov
+
         scenario "Assigning it to complete the claims establishment", skip: "flakey hang" do
           visit "/dispatch/establish-claim"
-          click_on "Estsablish next claim"
+          click_on "Establish next claim"
           # expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
 
           click_on "Route claim"
@@ -639,7 +639,6 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
           expect(task.reload.outgoing_reference_id).to eq(end_product.claim_id)
           expect(task.reload.completion_status).to eq("assigned_existing_ep")
         end
-        # nocov
       end
     end
 
