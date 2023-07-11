@@ -133,7 +133,7 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
           end
 
           context "when mst or pact status are passed in params" do
-            it "it create the decision issues with the corect mst and pact status" do
+            it "it create the decision issues with the correct mst and pact status" do
               subject
 
               decision_issues_from_response = JSON.parse(response.body, symbolize_names: true)[:issues][:decision_issues]
