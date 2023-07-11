@@ -357,6 +357,12 @@ paths:
                     message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
                     errors:
                       "distribution 1": "Recipient type is not included in the list"
+                PersonRecipientMissingFirstName:
+                  summary: 'Scenario: recipient_type is "person" and first_name is blank'
+                  value:
+                    message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
+                    errors:
+                      "distribution 1": "First name can't be blank"
 
   /idt/api/v2/appeals/{appeal_id}/outcode:
     post:
