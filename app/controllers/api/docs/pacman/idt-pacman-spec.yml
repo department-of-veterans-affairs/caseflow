@@ -369,6 +369,24 @@ paths:
                     message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
                     errors:
                       "distribution 1": "Last name can't be blank"
+                TreatLine2AsAddresseeTrueMissingAddressLine2:
+                  summary: 'Scenario: treat_line_2_as_addressee is true and address_line_2 is blank'
+                  value:
+                    message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
+                    errors:
+                      "distribution 1": "Address line 2 can't be blank"
+                TreatLine3AsAddresseeTrueMissingAddressLine3:
+                  summary: 'Scenario: treat_line_3_as_addressee is true and address_line_3 is blank'
+                  value:
+                    message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
+                    errors:
+                      "distribution 1": "Treat line 2 as addressee cannot be false if line 3 is treated as addressee"
+                TreatLine3AsAddresseeDependentValueMissing:
+                  summary: 'Scenario: treat_line_3_as_addressee is true and treat_line_2_as_addressee is false'
+                  value:
+                    message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
+                    errors:
+                      "distribution 1": "Address line 3 can't be blank"
 
   /idt/api/v2/appeals/{appeal_id}/outcode:
     post:
