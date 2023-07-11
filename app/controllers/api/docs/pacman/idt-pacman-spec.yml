@@ -1,0 +1,907 @@
+openapi: 3.0.2
+info:
+  title: IDT-Caseflow-Package Manager Bridge API
+  description: >-
+    # [Caseflow Wiki Article](https://github.com/department-of-veterans-affairs/caseflow/wiki/Lighthouse-API-Implementation)
+
+    The document outlines a number of endpoints that can be utilized within a IDT-Caseflow-Package Manager workflow.
+  termsOfService: https://developer.va.gov/terms-of-service
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  version: 1.0.0
+servers:
+- url: https://appeals.cf.uat.ds.va.gov
+  description: UAT/Staging server
+- url: http://localhost:3000
+  description: Local Development server
+paths:
+  /idt/api/v1/addresses/validate:
+    post:
+      tags:
+        - Address Validation
+      summary: A passthrough to the Lighthouse Address Validation API - Validates Mailing Addresses
+      description: >-
+        This route is largely a passthrough to the Lighthouse Address Validation API. In most cases, any messages Caseflow receives from its upstream source will simply be forwarded back to the requestor (IDT).
+
+        The upstream Lighthouse Address Validation API adheres to [USPS Publication 28](https://pe.usps.com/text/pub28/welcome.htm) standards for domestic, military, and US territory address.
+
+        <h2>Data Definitions</h2>
+        <table>
+          <tr>
+              <td>Data</td>
+              <td>Description</td>
+          </tr>
+          <tr>
+              <td>request_address.address_line_1</td>
+              <td>Solely the first line of the requested address without city, state, or zip. Cannot be null if addressLine2 and addressLine3 are null.</td>
+          </tr>
+          <tr>
+              <td>request_address.address_line_2</td>
+              <td>Solely the second line of the requested address without city, state, or zip. Cannot be null if addressLine1 and addressLine3 are null.</td>
+          </tr>
+          <tr>
+              <td>request_address.address_line_3</td>
+              <td>Solely the third line of the requested address without city, state, or zip. Cannot be null if addressLine1 and addressLine2 are null.</td>
+          </tr>
+          <tr>
+              <td>request_address.city</td>
+              <td>The name of the city of the requested address. Must only contain letters.</td>
+          </tr>
+          <tr>
+              <td>request_address.zip_code_5</td>
+              <td>The five digit postal code of the requested address. Must only contain five digits and only used for domestic or military addresses.</td>
+          </tr>
+          <tr>
+              <td>request_address.zip_code_4</td>
+              <td>The four digit postal code of the requested address. Must only contain four digits and only used for domestic or military addresses.</td>
+          </tr>
+          <tr>
+              <td>request_address.international_postal_code</td>
+              <td>The postal code for an international address. This can contain numbers and letters and used for international addresses.</td>
+          </tr>
+          <tr>
+              <td>request_address.state_province.code</td>
+              <td>The two digit code for state/province of the requested address. Must only contain two digits.</td>
+          </tr>
+          <tr>
+              <td>request_address.state_province.name</td>
+              <td>The name of the state/province of the requested address.</td>
+          </tr>
+          <tr>
+              <td>request_address.country_name</td>
+              <td>The name of the country of the requested address.</td>
+          </tr>
+          <tr>
+              <td>request_address.country_code</td>
+              <td>The ISO2, ISO3, or FIPS country code of the requested address. Must only contain two or three letters.</td>
+          </tr>
+          <tr>
+              <td>request_address.address_pou</td>
+              <td>Should be either RESIDENCE, CHOICE, or CORRESPONDENCE. Optional</td>
+          </tr>
+        </table>
+        <br />
+        <h2>Upstream Data Input Requirements</h2>
+        One of:
+        <ul>
+          <li>Address Line 1</li>
+          <li>Address Line 2</li>
+          <li>Address Line 3</li>
+        </ul>
+        AND:
+        <ul>
+          <li>country</li>
+        </ul>
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddressValidationRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateAddressResponseV2'
+        '400':
+          description: An error occurred either between IDT and Caseflow, or Caseflow and the Lighthouse API.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/LighthouseGenericError'
+                  - $ref: '#/components/schemas/CaseflowMissingTokenError'
+              examples:
+                LighthouseGenericError:
+                  summary: Whenever Caseflow experiences an error while communicating with the Lighthouse API.
+                  value:
+                    errors:
+                      - status: 400
+                        title: 'An unexpected error occurred.'
+                        message: 'An unexpected error occurred.'
+                CaseflowMissingTokenError:
+                  summary: Whenever a token is not provided to the Caseflow IDT endpoint.
+                  value:
+                    message: Missing token
+        '403':
+          description: The token used for authorization with the Caseflow IDT API is invalid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Invalid token
+        '429':
+          description: Caseflow is being rate-limited by the Lighthouse API.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: number
+                          format: int32
+                          example: 429
+                        title:
+                          type: string
+                          example: Service is temporarily unavailable, please try again later.
+                        detail:
+                          type: string
+                          example: Service is temporarily unavailable, please try again later.
+        '500':
+          description: There was an error encountered processing the request. This will mean that Caseflow ran into an issue while contacting the Lighthouse Address Validation API.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: 'Lighthouse API Error ID: 322483ae-7953-4d3c-9738-e108506d52c2 An unexpected error occurred, please try again.'
+  /idt/api/v1/appeals/{appeal_id}/upload_document:
+    post:
+      tags:
+        - Document Posting
+      summary: Used for uploading documents to eFolder for specific appeals/veterans
+      parameters:
+        - in: path
+          name: appeal_id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/UploadDocumentRequestWithRecipientInformation'
+                - $ref: '#/components/schemas/UploadDocumentRequest'
+            examples:
+              "With recipient information for Package Manager":
+                $ref: '#/components/schemas/UploadDocumentRequestWithRecipientInformation'
+              "Without recipient information for Package Manager":
+                value:
+                  veteran_identifier: '555555555'
+                  document_type: 'BVA Decision'
+                  document_subject: 'Test'
+                  document_name: 'Test Doc'
+                  file: 'VGhpcyBpcyBhIHRlc3QuIERvIG5vdCBiZSBhbGFybWVkLgo='
+      responses:
+        '200':
+          description: 'Document was successfully placed into an S3 bucket and queued for uploading to eFolder.'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Document successfully queued for upload."
+                  - $ref: '#/components/schemas/DistributionUUIDList'
+        '400':
+          description: 'An unknown, blank, or invalid required parameter was provided.'
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Document type is not recognized"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "File can't be blank"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "The appeal was unable to be found."
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "The veteran was unable to be found."
+        '500':
+          description: 'A server error occurred.'
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Unexpected error: job error"
+  /idt/api/v1/upload_document:
+    post:
+      tags:
+        - Document Posting
+      summary: Used for uploading documents to eFolder for specific appeals/veterans
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/UploadDocumentRequestWithRecipientInformation'
+                - $ref: '#/components/schemas/UploadDocumentRequest'
+            examples:
+              "With recipient information for Package Manager":
+                $ref: '#/components/schemas/UploadDocumentRequestWithRecipientInformation'
+              "Without recipient information for Package Manager":
+                value:
+                  veteran_identifier: '555555555'
+                  document_type: 'BVA Decision'
+                  document_subject: 'Test'
+                  document_name: 'Test Doc'
+                  file: 'VGhpcyBpcyBhIHRlc3QuIERvIG5vdCBiZSBhbGFybWVkLgo='
+      responses:
+        '200':
+          description: 'Document was successfully placed into an S3 bucket and queued for uploading to eFolder.'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Document successfully queued for upload."
+                  - $ref: '#/components/schemas/DistributionUUIDList'
+              examples:
+                WithRecipientInformationPresent:
+                  summary: "With recipient information for Package Manager"
+                  value:
+                    message: "Document successfully queued for upload."
+                    distribution_ids:
+                      - "1234"
+                      - "1235"
+                      - "1236"
+                WithoutRecipientInformationPresent:
+                  summary: "Without recipient information for Package Manager"
+                  value:
+                    message: "Document successfully queued for upload."
+        '400':
+          description: 'An unknown, blank, or invalid required parameter was provided.'
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Document type is not recognized"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "File can't be blank"
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "The appeal was unable to be found."
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "The veteran was unable to be found."
+  /idt/api/v2/appeals/{appeal_id}/outcode:
+    post:
+      tags:
+        - Document Posting
+      summary: Route used for outcoding decision reviews
+      parameters:
+        - in: path
+          name: appeal_id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/OutcodeRequestWithRecipientInformation'
+                - $ref: '#/components/schemas/OutcodeRequest'
+            examples:
+              "With recipient information for Package Manager":
+                $ref: '#/components/schemas/OutcodeRequestWithRecipientInformation'
+              "Without recipient information for Package Manager":
+                value:
+                  citation_number: "A19062122"
+                  decision_date: "December 21, 2022"
+                  redacted_document_location: "\\path.va.gov\\archdata$\\some-file.pdf"
+                  file: "VGVzdGluZyAxMjMK"
+      responses:
+        '200':
+          description: 'Decision review has been successfully outcoded.'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Success!"
+                  - $ref: '#/components/schemas/DistributionUUIDList'
+              examples:
+                WithRecipientInformationPresent:
+                  summary: "With recipient information for Package Manager"
+                  value:
+                    message: "Success!"
+                    distribution_ids:
+                      - "1234"
+                      - "1235"
+                      - "1236"
+                WithoutRecipientInformationPresent:
+                  summary: "Without recipient information for Package Manager"
+                  value:
+                    message: "Success!"
+
+        '400':
+          description: 'Occurs if a valid decision review-BVA Dispatch Task combination cannot be located given the params provided.'
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                          example: "Appeal 12345, task ID 54321 has already been outcoded. Cannot outcode the same appeal and task combination more than once"
+                        detail:
+                          type: string
+                          example: "Appeal 12345, task ID 54321 has already been outcoded. Cannot outcode the same appeal and task combination more than once"
+                  - type: array
+                    items:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                          example: "Expected 1 BvaDispatchTask received 0 tasks for appeal 12345, user 1"
+                        detail:
+                          type: string
+                          example: "Expected 1 BvaDispatchTask received 0 tasks for appeal 12345, user 1"
+                  - type: array
+                    items:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                          example: "Citation number already exists"
+                        detail:
+                          type: string
+                          example: "Citation number already exists"
+              examples:
+                AlreadyOutcodedExample:
+                  summary: "Whenever a decision review has already been outcoded."
+                  value:
+                    - title: "Appeal 12345, task ID 54321 has already been outcoded. Cannot outcode the same appeal and task combination more than once"
+                      detail: "Appeal 12345, task ID 54321 has already been outcoded. Cannot outcode the same appeal and task combination more than once"
+                IncorrectBvaDispatchTasksExample:
+                  summary: "User has either more or fewer than 1 BvaDispatchTask assigned to them for the decision review being outcoded."
+                  value:
+                    - title: "Expected 1 BvaDispatchTask received 0 tasks for appeal 12345, user 1"
+                      detail: "Expected 1 BvaDispatchTask received 0 tasks for appeal 12345, user 1"
+                CitationNumberExistsExample:
+                  summary: "Citation number provided is already associated with another outcoded appeal."
+                  value:
+                    - title: "Citation number already exists"
+                      detail: "Citation number already exists"
+                CitationNumberInvalidExample:
+                  summary: "Thrown whenever citation number provided fails to match with a set regular expression."
+                  value:
+                    message: "Citation number is invalid"
+                MissingParamsExample:
+                  summary: Whenever one or more required parameters are
+                  value:
+                    message: "Decision date can't be blank, Redacted document location can't be blank, File can't be blank"
+        '500':
+          description: 'The server encountered an error.'
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                          example: "VBMS::FilenumberDoesNotExist"
+                        detail:
+                          type: string
+                          example: "The veteran file number does not match the file number in VBMS"
+  /idt/api/v2/distributions/{distribution_id}:
+    get:
+      tags:
+        - Distribution Tracking
+      summary: Queries Package Manager for information on a specified distribution.
+      parameters:
+        - in: path
+          name: distribution_id
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: 'Distribution information has been successfully obtained.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DistributionStatusResponse'
+              examples:
+                DistributionIsEstablishedExample:
+                  summary: Distribution is established
+                  $ref: '#/components/schemas/DistributionStatusResponse'
+                DistributionIsPendingEstablishmentInPacManExample:
+                  summary: Distribution is pending establishment
+                  value:
+                    id: 1234
+                    status: "PENDING_ESTABLISHMENT"
+        '403':
+          description: 'IDT token provided is invalid.'
+        '400':
+          description: 'Distribution ID provided is of an invalid format.'
+        '404':
+          description: 'A distribution could not be located given the ID provided.'
+        '500':
+          description: 'An error has occurred while trying to process the request.'
+          content:
+            application/json:
+              examples:
+                ServerError:
+                  summary: Server Error
+                  value:
+                    message: 'An error has occurred while trying to process the request. Sentry ID: 02658f1e-31f1-4162-8903-63e70b81364d'
+                DistributionEstablishmentFailed:
+                  summary: Distribution establishment failed
+                  value:
+                    id: 1234
+                    status: "ESTABLISHMENT_FAILED"
+                    message: "The error message given to us by Package Manager."
+components:
+  schemas:
+    DistributionUUIDList:
+      type: object
+      properties:
+        distribution_ids:
+          type: array
+          items:
+            type: string
+            format: number
+    DistributionStatusResponse:
+      $ref: '#/components/schemas/Distribution'
+    Distribution:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1234
+          description: The primary key of the distribution in our database. There is an initial delay while we establish \
+            the distribution in Package Manager where its UUID is unavailable. This is why we utilize our primary key instead.
+        distribution_uuid:
+          type: string
+          format: uuid
+        recipient:
+          $ref: '#/components/schemas/DistributionRecipient'
+        destinations:
+          type: array
+          items:
+            $ref: '#/components/schemas/DistributionDestination'
+        status:
+          type: string
+          enum: ['IN_PROGRESS', 'SUCCESS', 'DRAFT', 'FAIL', 'ELECTRONIC_NOTIFICATION']
+        sent_to_cbcm_date:
+          type: string
+    DistributionRecipient:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: ['organization', 'person', 'system', 'ro-colocated']
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    DistributionDestination:
+      type: object
+      properties:
+        type:
+          type: string
+        address_line_1:
+          type: string
+        address_line_2:
+          type: string
+        address_line_3:
+          type: string
+        address_line_4:
+          type: string
+        address_line_5:
+          type: string
+        address_line_6:
+          type: string
+        treat_line_2_as_addressee:
+          type: boolean
+        treat_line_3_as_addressee:
+          type: boolean
+        city:
+          type: string
+        state:
+          type: string
+        postal_code:
+          type: string
+        country_name:
+          type: string
+        country_code:
+          type: string
+    UploadDocumentRequestWithRecipientInformation:
+      allOf:
+        - $ref: '#/components/schemas/UploadDocumentRequest'
+        - type: object
+          properties:
+            recipient_info:
+              type: array
+              items:
+                type: object
+                $ref: '#/components/schemas/RecipientRequestInformation'
+    UploadDocumentRequest:
+      type: object
+      properties:
+        veteran_identifier:
+          type: string
+          example: '555555555'
+        document_type:
+          type: string
+          example: 'BVA Decision'
+        document_subject:
+          type: string
+          example: 'Test'
+        document_name:
+          type: string
+          example: 'Test Doc'
+        file:
+          type: string
+          format: base64
+          example: 'VGhpcyBpcyBhIHRlc3QuIERvIG5vdCBiZSBhbGFybWVkLgo='
+      required:
+        - document_type
+        - file
+    OutcodeRequestWithRecipientInformation:
+      allOf:
+        - $ref: '#/components/schemas/OutcodeRequest'
+        - type: object
+          properties:
+            recipient_info:
+              type: array
+              items:
+                type: object
+                $ref: '#/components/schemas/RecipientRequestInformation'
+    RecipientRequestInformation:
+      type: object
+      properties:
+        recipient_type:
+          type: string
+          enum: ['organization', 'person', 'system', 'ro-colocated']
+        name:
+          description: 'Required if recipient_type is organization, system, or ro-colocated. Unused for people.'
+          type: string
+        first_name:
+          type: string
+        middle_name:
+          type: string
+        last_name:
+          type: string
+        claimant_station_of_jurisdiction:
+          type: string
+          description: 'Required if recipient_type is ro-colocated.'
+        postal_code:
+          type: string
+          description: 'Required if recipient_type is ro-colocated.'
+        destination_type:
+          type: string
+          enum: ['domesticAddress', 'internationalAddress', 'militaryAddress']
+        address_line_1:
+          type: string
+        address_line_2:
+          type: string
+        address_line_3:
+          type: string
+        address_line_4:
+          type: string
+        address_line_5:
+          type: string
+        address_line_6:
+          type: string
+        treat_line_2_as_addressee:
+          type: boolean
+        treat_line_3_as_addressee:
+          type: boolean
+        city:
+          type: string
+        state:
+          type: string
+        country_name:
+          type: string
+        country_code:
+          type: string
+        copies:
+          type: integer
+          example: 1
+    OutcodeRequest:
+      type: object
+      properties:
+        citation_number:
+          type: string
+          format: /\AA?\d{8}\Z/i
+        decision_date:
+          type: string
+          example: "December 21, 2022"
+        file:
+          type: string
+          format: base64
+        redacted_document_location:
+          type: string
+    LighthouseGenericError:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              status:
+                type: number
+                format: int32
+              title:
+                type: string
+              detail:
+                type: string
+    CaseflowMissingTokenError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Missing token
+    Message:
+      required:
+        - code
+        - key
+        - severity
+      type: object
+      properties:
+        code:
+          type: string
+        key:
+          type: string
+        text:
+          type: string
+        severity:
+          type: string
+          enum:
+            - INFO
+            - WARN
+            - ERROR
+            - FATAL
+        potentiallySelfCorrectingOnRetry:
+          type: boolean
+    ServiceResponse:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+    AddressValidationRequest:
+      required:
+        - request_address
+      type: object
+      properties:
+        request_address:
+          $ref: '#/components/schemas/RequestAddress'
+      description: Request format to describe the address to correct and validate.
+    RequestAddress:
+      type: object
+      properties:
+        address_line_1:
+          type: string
+        address_line_2:
+          type: string
+        address_line_3:
+          type: string
+        city:
+          type: string
+        zip_code_5:
+          type: string
+        zip_code_4:
+          type: string
+        international_post_code:
+          type: string
+        state_province:
+          $ref: '#/components/schemas/StateProvince'
+        request_country:
+          $ref: '#/components/schemas/RequestCountry'
+        address_pou:
+          type: string
+          enum:
+            - RESIDENCE/CHOICE
+            - CORRESPONDENCE
+    RequestCountry:
+      type: object
+      properties:
+        country_code:
+          type: string
+    StateProvince:
+      type: object
+      properties:
+        code:
+          type: string
+    Address:
+      required:
+        - country
+        - county
+        - state_province
+      type: object
+      properties:
+        address_line_1:
+          type: string
+        address_line_2:
+          type: string
+        address_line_3:
+          type: string
+        city:
+          type: string
+        zip_code_5:
+          type: string
+        zip_code_4:
+          type: string
+        international_post_code:
+          type: string
+        county:
+          $ref: '#/components/schemas/County'
+        state_province:
+          $ref: '#/components/schemas/StateProvince'
+        country:
+          $ref: '#/components/schemas/Country'
+    AddressMetaData:
+      type: object
+      properties:
+        confidence_score:
+          type: number
+          format: double
+        address_type:
+          type: string
+        delivery_point_validation:
+          type: string
+          enum:
+            - CONFIRMED
+            - STREET_NUMBER_VALIDATED_BUT_MISSING_UNIT_NUMBER
+            - STREET_NUMBER_VALIDATED_BUT_BAD_UNIT_NUMBER
+            - MULTIPLE_MATCHES_FOUND
+            - UNDELIVERABLE
+            - MISSING_ZIP
+            - FALSE_POSITIVE
+        residential_delivery_indicator:
+          type: string
+          enum:
+            - RESIDENTIAL
+            - BUSINESS
+            - MIXED
+        non_postal_input_data:
+          maxItems: 100
+          minItems: 0
+          type: array
+          items:
+            type: string
+        validation_key:
+          type: integer
+          format: int32
+    AddressValidationResponse:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+        address:
+          $ref: '#/components/schemas/Address'
+        geocode:
+          $ref: '#/components/schemas/Geocode'
+        us_congressional_district:
+          type: string
+        address_metadata:
+          $ref: '#/components/schemas/AddressMetaData'
+    CandidateAddressResponseV2:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+        candidate_addresses:
+          maxItems: 100
+          minItems: 0
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressValidationResponse'
+    Country:
+      type: object
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+        fips_code:
+          type: string
+        iso2_code:
+          type: string
+        iso3_code:
+          type: string
+    County:
+      type: object
+      properties:
+        name:
+          type: string
+        county_fips_code:
+          type: string
+    Geocode:
+      type: object
+      properties:
+        calc_date:
+          type: string
+          format: date-time
+        location_precision:
+          type: number
+          format: double
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: TOKEN
