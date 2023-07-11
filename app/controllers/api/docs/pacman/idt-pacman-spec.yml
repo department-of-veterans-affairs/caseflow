@@ -549,6 +549,84 @@ paths:
                   value:
                     message: "IDT Exception ID: 67ce1137-4d94-43ec-ba0a-1daf43fc6a65 Recipient information received was invalid or incomplete."
                     errors: "Copies must be between 1 and 500 (inclusive)"
+                RecipientTypeIsAbsent:
+                  summary: 'Scenario: recipient_type is not included in the list: ["organization", "person", "system", "ro-colocated"]'
+                  value:
+                    message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
+                    errors:
+                      "distribution 1": "Recipient type is not included in the list"
+                PersonRecipientMissingFirstName:
+                  summary: 'Scenario: recipient_type is "person" and first_name is blank'
+                  value:
+                    message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
+                    errors:
+                      "distribution 1": "First name can't be blank"
+                PersonRecipientMissingLastName:
+                  summary: 'Scenario: recipient_type is "person" and last_name is blank'
+                  value:
+                    message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
+                    errors:
+                      "distribution 1": "Last name can't be blank"
+                CityIsMissing:
+                  summary: 'Scenario: destination_type is "domesticAddress", "internationalAddress", or "militaryAddress" and city is blank'
+                  value:
+                    message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
+                    errors:
+                      "distribution 1": "City can't be blank"
+                CountryCodeIsMissing:
+                  summary: 'Scenario: destination_type is "domesticAddress", "internationalAddress", or "militaryAddress" and county_code is blank'
+                  value:
+                    message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
+                    errors:
+                      "distribution 1": "Country code can't be blank, Country code is not a valid ISO 3166-2 code"
+                ProvidedCountryCodeIsInvalid:
+                  summary: 'Scenario: destination_type is "domesticAddress", "internationalAddress", or "militaryAddress" and county_code is not a valid ISO 3166-code'
+                  value:
+                    message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
+                    errors:
+                      "distribution 1": "Country code is not a valid ISO 3166-2 code"
+                DomesticOrMilitaryNeedsNonBlankState:
+                  summary: 'Scenario: destination_type is "domesticAddress" or "militaryAddress" and state_code is blank'
+                  value:
+                    message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
+                    errors:
+                      "distribution 1": "State can't be blank, State is not a valid ISO 3166-2 code"
+                DomesticOrMilitaryNeedsValidState:
+                  summary: 'Scenario: destination_type is "domesticAddress" or "militaryAddress" and state_code is not a valid ISO 3166-code'
+                  value:
+                    message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
+                    errors:
+                      "distribution 1": "State is not a valid ISO 3166-2 code"
+                DomesticOrMilitaryNeedsPostalCode:
+                  summary: 'Scenario: destination_type is "domesticAddress" or "militaryAddress" and postal_code is blank'
+                  value:
+                    message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
+                    errors:
+                      "distribution 1": "Postal code can't be blank"
+                InternationalAddressNeedsCountryName:
+                  summary: 'Scenario: destination_type is "internationalAddress" and country_code is blank'
+                  value:
+                    message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
+                    errors:
+                      "distribution 1": "Country name can't be blank"
+                TreatLine2AsAddresseeTrueMissingAddressLine2:
+                  summary: 'Scenario: treat_line_2_as_addressee is true and address_line_2 is blank'
+                  value:
+                    message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
+                    errors:
+                      "distribution 1": "Address line 2 can't be blank"
+                TreatLine3AsAddresseeTrueMissingAddressLine3:
+                  summary: 'Scenario: treat_line_3_as_addressee is true and address_line_3 is blank'
+                  value:
+                    message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
+                    errors:
+                      "distribution 1": "Treat line 2 as addressee cannot be false if line 3 is treated as addressee"
+                TreatLine3AsAddresseeDependentValueMissing:
+                  summary: 'Scenario: treat_line_3_as_addressee is true and treat_line_2_as_addressee is false'
+                  value:
+                    message: "IDT Exception ID: 2b26f07f-b742-4056-8781-be2a8ccb5d35 Recipient information received was invalid or incomplete."
+                    errors:
+                      "distribution 1": "Address line 3 can't be blank"
 
         '500':
           description: 'The server encountered an error.'
