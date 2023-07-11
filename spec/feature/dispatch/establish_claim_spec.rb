@@ -491,12 +491,11 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
           Generators::Document.build(type: "BVA Decision", received_at: 6.days.ago)
         ]
       end
-      # :nocov:
+
       scenario "Review page lets users choose which document to use" do
-        #  skip: "This test is failing because of a stale element reference"
         visit "/dispatch/establish-claim"
         click_on "Establish next claim"
-        # byebug
+
         expect(find("#review-decision-heading")).to have_content("Multiple Decision Documents")
 
         # Text on the tab
@@ -509,7 +508,6 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
       end
 
       scenario "the EP creation page has a link back to decision review" do
-        # skip: "This test is failing because of a stale element reference" do
         visit "/dispatch/establish-claim"
         click_on "Establish next claim"
 
@@ -518,7 +516,6 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
         click_on "< Back to Review Decision"
         expect(page).to have_content("Multiple Decision Documents")
       end
-      # :nocov:
     end
 
     context "For a full grant" do
@@ -625,12 +622,12 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
             }
           )
         end
-
+        # nocov
         scenario "Assigning it to complete the claims establishment", skip: "flakey hang" do
           visit "/dispatch/establish-claim"
           click_on "Estsablish next claim"
           # expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-          # sleep(1)
+
           click_on "Route claim"
           # expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
           expect(page).to have_content("Route Claim")
@@ -642,6 +639,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
           expect(task.reload.outgoing_reference_id).to eq(end_product.claim_id)
           expect(task.reload.completion_status).to eq("assigned_existing_ep")
         end
+        # nocov
       end
     end
 
@@ -655,7 +653,6 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
       end
 
       scenario "Establish a new claim routed to ARC", :aggregate_failure do
-        #  skip: "This test is failing because of a stale element reference" do
         # Mock the claim_id returned by VBMS's create end product
         Fakes::VBMSService.end_product_claim_id = "CLAIM_ID_123"
 
@@ -686,7 +683,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
         expect(page).to have_css(".cf-progress-bar-activated", text: "1. Review Decision")
         expect(page).to have_css(".cf-progress-bar-activated", text: "2. Route Claim")
         expect(page).to have_css(".cf-progress-bar-activated", text: "3. Confirmation")
-        # byebug
+
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
             benefit_type_code: "1",
