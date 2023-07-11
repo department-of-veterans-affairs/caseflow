@@ -250,31 +250,31 @@ paths:
                     errors:
                       "distribution 1": "Recipient type is not included in the list"
                 NameBlank:
-                  summary: 'recipient_type is "system", "organization", or "ro-colocated" and name is blank'
+                  summary: 'Scenario: recipient_type is "system", "organization", or "ro-colocated" and name is blank'
                   value:
                     message: "IDT Exception ID: d8cecfbd-c664-440e-919b-bb1d91e77f1d Recipient information received was invalid or incomplete."
                     errors:
                           "distribution 1": "Name can't be blank"
                 PoaCodeBlank:
-                  summary: 'recipient_type is "ro-colocated" and poa_code is blank'
+                  summary: 'Scenario: recipient_type is "ro-colocated" and poa_code is blank'
                   value:
                     message: "IDT Exception ID: 8af4913f-1e96-4437-9294-0c31b0f545df Recipient information received was invalid or incomplete."
                     errors:
                         "distribution 1": "Poa code can't be blank"
                 ClaimantStationOfJurisdictionBlank:
-                  summary: recipient_type is "ro-colocated" and claimant_station_of_jurisdiction is blank
+                  summary: 'Scenario: recipient_type is "ro-colocated" and claimant_station_of_jurisdiction is blank'
                   value:
                     message: "IDT Exception ID: cf9e0208-e5de-4fb6-9dd5-2e182acdb8c3 Recipient information received was invalid or incomplete."
                     errors:
                         "distribution 1": "Claimant station of jurisdiction can't be blank"
                 DestinationTypeInvalid:
-                  summary: 'destination_type is not included in the list: ["domesticAddress", "internationalAddress", "militaryAddress", "derived"]'
+                  summary: 'Scenario: destination_type is not included in the list: ["domesticAddress", "internationalAddress", "militaryAddress", "derived"]'
                   value:
                     message: "IDT Exception ID: d7d581fa-4e31-445c-a513-ff40c49a3b95 Recipient information received was invalid or incomplete."
                     errors":
                         "distribution 1": "Destination type is not included in the list"
                 AddressLine1Blank:
-                  summary: destination_type is "domesticAddress", "internationalAddress", or "militaryAddress" and address_line_1 is blank"
+                  summary: 'Scenario: destination_type is "domesticAddress", "internationalAddress", or "militaryAddress" and address_line_1 is blank"'
                   value:
                     message: "IDT Exception ID: 578abf44-0292-49b6-a77f-27878d734145 Recipient information received was invalid or incomplete."
                     "errors":
@@ -449,31 +449,31 @@ paths:
                     errors:
                       "distribution 1": "Recipient type is not included in the list"
                 NameBlank:
-                  summary: 'recipient_type is "system", "organization", or "ro-colocated" and name is blank'
+                  summary: 'Scenario: recipient_type is "system", "organization", or "ro-colocated" and name is blank'
                   value:
                     message: "IDT Exception ID: d8cecfbd-c664-440e-919b-bb1d91e77f1d Recipient information received was invalid or incomplete."
                     errors:
                           "distribution 1": "Name can't be blank"
                 PoaCodeBlank:
-                  summary: 'recipient_type is "ro-colocated" and poa_code is blank'
+                  summary: 'Scenario: recipient_type is "ro-colocated" and poa_code is blank'
                   value:
                     message: "IDT Exception ID: 8af4913f-1e96-4437-9294-0c31b0f545df Recipient information received was invalid or incomplete."
                     errors:
                         "distribution 1": "Poa code can't be blank"
                 ClaimantStationOfJurisdictionBlank:
-                  summary: recipient_type is "ro-colocated" and claimant_station_of_jurisdiction is blank
+                  summary: 'Scenario: recipient_type is "ro-colocated" and claimant_station_of_jurisdiction is blank'
                   value:
                     message: "IDT Exception ID: cf9e0208-e5de-4fb6-9dd5-2e182acdb8c3 Recipient information received was invalid or incomplete."
                     errors:
                         "distribution 1": "Claimant station of jurisdiction can't be blank"
                 DestinationTypeInvalid:
-                  summary: 'destination_type is not included in the list: ["domesticAddress", "internationalAddress", "militaryAddress", "derived"]'
+                  summary: 'Scenario: destination_type is not included in the list: ["domesticAddress", "internationalAddress", "militaryAddress", "derived"]'
                   value:
                     message: "IDT Exception ID: d7d581fa-4e31-445c-a513-ff40c49a3b95 Recipient information received was invalid or incomplete."
                     errors":
                         "distribution 1": "Destination type is not included in the list"
                 AddressLine1Blank:
-                  summary: destination_type is "domesticAddress", "internationalAddress", or "militaryAddress" and address_line_1 is blank"
+                  summary: 'Scenario: destination_type is "domesticAddress", "internationalAddress", or "militaryAddress" and address_line_1 is blank"'
                   value:
                     message: "IDT Exception ID: 578abf44-0292-49b6-a77f-27878d734145 Recipient information received was invalid or incomplete."
                     "errors":
@@ -662,7 +662,7 @@ paths:
                   value:
                     message: "Citation number is invalid"
                 MissingParamsExample:
-                  summary: Whenever one or more required parameters are
+                  summary: Whenever one or more required parameters are absent.
                   value:
                     message: "Decision date can't be blank, Redacted document location can't be blank, File can't be blank"
                 InvalidCopiesValue:
@@ -677,31 +677,31 @@ paths:
                     errors:
                       "distribution 1": "Recipient type is not included in the list"
                 NameBlank:
-                  summary: 'recipient_type is "system", "organization", or "ro-colocated" and name is blank'
+                  summary: 'Scenario: recipient_type is "system", "organization", or "ro-colocated" and name is blank'
                   value:
                     message: "IDT Exception ID: d8cecfbd-c664-440e-919b-bb1d91e77f1d Recipient information received was invalid or incomplete."
                     errors:
                           "distribution 1": "Name can't be blank"
                 PoaCodeBlank:
-                  summary: 'recipient_type is "ro-colocated" and poa_code is blank'
+                  summary: 'Scenario: recipient_type is "ro-colocated" and poa_code is blank'
                   value:
                     message: "IDT Exception ID: 8af4913f-1e96-4437-9294-0c31b0f545df Recipient information received was invalid or incomplete."
                     errors:
                         "distribution 1": "Poa code can't be blank"
                 ClaimantStationOfJurisdictionBlank:
-                  summary: recipient_type is "ro-colocated" and claimant_station_of_jurisdiction is blank
+                  summary: 'Scenario: recipient_type is "ro-colocated" and claimant_station_of_jurisdiction is blank'
                   value:
                     message: "IDT Exception ID: cf9e0208-e5de-4fb6-9dd5-2e182acdb8c3 Recipient information received was invalid or incomplete."
                     errors:
                         "distribution 1": "Claimant station of jurisdiction can't be blank"
                 DestinationTypeInvalid:
-                  summary: 'destination_type is not included in the list: ["domesticAddress", "internationalAddress", "militaryAddress", "derived"]'
+                  summary: 'Scenario: destination_type is not included in the list: ["domesticAddress", "internationalAddress", "militaryAddress", "derived"]'
                   value:
                     message: "IDT Exception ID: d7d581fa-4e31-445c-a513-ff40c49a3b95 Recipient information received was invalid or incomplete."
                     errors":
                         "distribution 1": "Destination type is not included in the list"
                 AddressLine1Blank:
-                  summary: destination_type is "domesticAddress", "internationalAddress", or "militaryAddress" and address_line_1 is blank"
+                  summary: 'Scenario: destination_type is "domesticAddress", "internationalAddress", or "militaryAddress" and address_line_1 is blank"'
                   value:
                     message: "IDT Exception ID: 578abf44-0292-49b6-a77f-27878d734145 Recipient information received was invalid or incomplete."
                     "errors":
