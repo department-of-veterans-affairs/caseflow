@@ -13,6 +13,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 const IntakeManager = ({
   userDisplayName,
   dropdownUrls,
+  applicationUrls,
   selectedUser,
   feedbackUrl,
   buildDate
@@ -33,6 +34,7 @@ const IntakeManager = ({
             defaultUrl="/"
             userDisplayName={userDisplayName}
             dropdownUrls={dropdownUrls}>
+            applicationUrls={applicationUrls}
             <div className="cf-wide-app">
               <div className="usa-grid">
                 <Route exact path="/"

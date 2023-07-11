@@ -37,6 +37,12 @@
       color: $color-black;
     }
   }
+
+  nav {
+    .cf-application-title {
+      margin-top: 0;
+    }
+  }
 }
 
 .cf-intake-substeps {

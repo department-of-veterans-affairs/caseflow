@@ -347,17 +347,17 @@ class TaskRows extends React.PureComponent {
         return (
           <div style={divStyle}>
             <b>{text[0]}:</b>
-            <div style={divStyle}>
-              <div style={{whiteSpace: 'pre-line'}}>
-                {text[2]}
-              </div>
-            </div>
             {text[1] &&
               <React.Fragment>
                 <div style={divStyle}>
                   Benefit type: {text[1]}
                 </div>
               </React.Fragment>}
+            <div style={divStyle}>
+              <div style={{whiteSpace: 'pre-line'}}>
+                {text[2]}
+              </div>
+            </div>
             {text[4] ?
               <React.Fragment>
               <h5 style={hStyle}>Original:</h5>

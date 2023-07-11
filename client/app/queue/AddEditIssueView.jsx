@@ -123,7 +123,8 @@ class AddEditIssueView extends React.Component {
     const {
       issue,
       appeal,
-      appeal: { issues }
+      appeal: { issues },
+      action
     } = this.props;
     const params = {
       data: {
@@ -135,7 +136,8 @@ class AddEditIssueView extends React.Component {
           ..._.pick(issue, 'note', 'program'),
           mst_status: issue.mst_status ? 'Y' : 'N',
           pact_status: issue.pact_status ? 'Y' : 'N'
-        }
+        },
+        action
       }
     };
     const issueIndex = _.map(issues, 'id').indexOf(issue.id);

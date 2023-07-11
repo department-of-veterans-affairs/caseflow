@@ -100,6 +100,7 @@ class IntakesController < ApplicationController
       userCanEditIntakeIssues: current_user.can_edit_intake_issues?,
       serverIntake: intake_ui_hash,
       dropdownUrls: dropdown_urls,
+      applicationUrls: application_urls,
       page: "Intake",
       feedbackUrl: feedback_url,
       buildDate: build_date,
