@@ -5,7 +5,8 @@ class HelpController < ApplicationController
 
   def feature_toggle_ui_hash(user = current_user)
     {
-      programOfficeTeamManagement: FeatureToggle.enabled?(:program_office_team_management, user: user)
+      programOfficeTeamManagement: FeatureToggle.enabled?(:program_office_team_management, user: user),
+      metricsBrowserError: FeatureToggle.enabled_metric?(:metrics_browser_error, user: current_user)
     }
   end
 

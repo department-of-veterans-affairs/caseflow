@@ -8,6 +8,9 @@
 	buildDate: build_date,
 	buttonText: start_text,
 	userQuota: user_quota && user_quota.to_hash,
-	currentUserHistoricalTasks: current_user_historical_tasks.map(&:to_hash)
+	currentUserHistoricalTasks: current_user_historical_tasks.map(&:to_hash),
+	featureToggles: {
+		metricsBrowserError: FeatureToggle.enabled_metric?(:metrics_browser_error, user: current_user)
+	}
 	}) %>
 <% end %>
