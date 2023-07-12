@@ -11,10 +11,19 @@ feature "Attorney checkout flow", :all_dbs do
     create(
       :veteran,
       first_name: "Vick",
-      bgs_veteran_record: { first_name: "Vick" },
+      bgs_veteran_record: {
+        first_name: "Vick",
+        address_line1: "1234 Main Street",
+        country: "USA",
+        zip_code: "12345",
+        state: "FL",
+        city: "Orlando",
+        file_number: file_numbers[0],
+      },
       file_number: file_numbers[0]
     )
   end
+
 
   let(:attorney_first_name) { "Robby" }
   let(:attorney_last_name) { "McDobby" }
@@ -70,13 +79,6 @@ feature "Attorney checkout flow", :all_dbs do
   let!(:poa_address) { "123 Poplar St." }
   let!(:participant_id) { "600153863" }
 
-  #This task is for holding legacy appeals. The factory will create an attached legacy appeal. Attach an attorney task
-  # from :attorney task
-  # let!(:legacy_appeal_task) do
-  #   build(:task, id:"1010", assigned_to: attorney_user, assigned_by_id: "3",
-  #     assigned_to_id:"2", assigned_to_type: "User" , type: "AttorneyTask", created_at: 5.days.ago)
-  # end
-
   let!(:root_task) { create(:root_task, appeal: appeal) }
   let!(:parent_task) do
     create(:ama_judge_assign_task, appeal: appeal, assigned_to: judge_user, parent: root_task)
@@ -104,22 +106,39 @@ feature "Attorney checkout flow", :all_dbs do
       )
   end
 
+  let!(:root_task2) { create(:root_task, appeal: appeal_vanilla_vet) }
+  let!(:parent_task2) do
+    create(:ama_judge_assign_task, appeal: appeal_vanilla_vet, assigned_to: judge_user, parent: root_task2)
+  end
+
+  let(:poa_name2) { "Test POA" }
+  let(:veteran_participant_id2) { "600085544" }
+
+  let(:judge_task2) do
+    create(
+      :ama_judge_decision_review_task,
+      appeal: appeal_vanilla_vet,
+      assigned_to: judge_user,
+      parent: root_task2
+    )
+  end
+
+  let!(:attorney_tasks2) do
+    create(
+        :ama_attorney_task,
+        assigned_to: attorney_user,
+        assigned_by: judge_user,
+        appeal: appeal_vanilla_vet,
+        parent: judge_task2
+      )
+  end
+
   let!(:colocated_team) do
     Colocated.singleton.tap { |org| org.add_user(create(:user)) }
   end
 
-  # let!(:colocated_task) do
-  #   create(
-  #     :colocated_task,
-  #     appeal: legacy_appeal_task.appeal,
-  #     assigned_by: attorney_user,
-  #     parent: attorney_tasks
-  #   )
-  # end
-
   before do
     User.authenticate!(user: bva_intake_admin_user)
-  #  appeal_vanilla_vet.update(decision_date: 5.days.ago)
   end
 #Adding a new issue to appeal
   context "AC 1.1 It passes the feature tests for adding a new issue appeal MST" do
@@ -132,15 +151,12 @@ feature "Attorney checkout flow", :all_dbs do
       FeatureToggle.enable!(:acd_distribute_by_docket_date)
     end
     scenario "Adding a new issue with MST" do
-      # allow_any_instance_of(AppealsController).to receive(appeal_vanilla_vet.receipt_date.to_s).and_return(5.days.ago)
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       click_on "+ Add issue"
-      # add the benefit type
       check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
       add_intake_nonrating_issue(date: "01/01/2023")
       click_on "Save"
-      # binding.pry
       click_on "Yes, save"
       visit "/queue/appeals/#{appeal_vanilla_vet.uuid}"
       refresh
@@ -158,15 +174,12 @@ feature "Attorney checkout flow", :all_dbs do
       FeatureToggle.enable!(:acd_distribute_by_docket_date)
     end
     scenario "Adding a new issue with PACT" do
-      # allow_any_instance_of(AppealsController).to receive(appeal_vanilla_vet.receipt_date.to_s).and_return(5.days.ago)
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       click_on "+ Add issue"
-      # add the benefit type
       check("PACT Act", allow_label_click: true, visible: false)
       add_intake_nonrating_issue(date: "01/01/2023")
       click_on "Save"
-      # binding.pry
       click_on "Yes, save"
       visit "/queue/appeals/#{appeal_vanilla_vet.uuid}"
       refresh
@@ -184,16 +197,13 @@ feature "Attorney checkout flow", :all_dbs do
       FeatureToggle.enable!(:acd_distribute_by_docket_date)
     end
     scenario "Adding a new issue with PACT" do
-      # allow_any_instance_of(AppealsController).to receive(appeal_vanilla_vet.receipt_date.to_s).and_return(5.days.ago)
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       click_on "+ Add issue"
-      # add the benefit type
       check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
       check("PACT Act", allow_label_click: true, visible: false)
       add_intake_nonrating_issue(date: "01/01/2023")
       click_on "Save"
-      # binding.pry
       click_on "Yes, save"
       visit "/queue/appeals/#{appeal_vanilla_vet.uuid}"
       refresh
@@ -213,7 +223,6 @@ feature "Attorney checkout flow", :all_dbs do
       FeatureToggle.enable!(:acd_distribute_by_docket_date)
     end
     scenario "Adding a new issue with MST" do
-      # allow_any_instance_of(AppealsController).to receive(appeal_vanilla_vet.receipt_date.to_s).and_return(5.days.ago)
       generate_rating_with_mst_pact(veteran)
       visit "/appeals/#{appeal.uuid}/edit"
       visit "/appeals/#{appeal.uuid}/edit"
@@ -223,7 +232,6 @@ feature "Attorney checkout flow", :all_dbs do
       click_on "Next"
       click_on "Save"
       click_on "Yes, save"
-      find('#issue-action-3').find(:xpath, 'option[3]').select_option
       visit "/queue/appeals/#{appeal.uuid}"
       refresh
       click_on "View task instructions"
@@ -242,7 +250,6 @@ feature "Attorney checkout flow", :all_dbs do
       FeatureToggle.enable!(:acd_distribute_by_docket_date)
     end
     scenario "Adding a new issue with PACT" do
-      # allow_any_instance_of(AppealsController).to receive(appeal_vanilla_vet.receipt_date.to_s).and_return(5.days.ago)
       generate_rating_with_mst_pact(veteran)
       visit "/appeals/#{appeal.uuid}/edit"
       visit "/appeals/#{appeal.uuid}/edit"
@@ -252,7 +259,6 @@ feature "Attorney checkout flow", :all_dbs do
       click_on "Next"
       click_on "Save"
       click_on "Yes, save"
-      find('#issue-action-3').find(:xpath, 'option[3]').select_option
       visit "/queue/appeals/#{appeal.uuid}"
       refresh
       click_on "View task instructions"
@@ -270,7 +276,6 @@ feature "Attorney checkout flow", :all_dbs do
       FeatureToggle.enable!(:acd_distribute_by_docket_date)
     end
     scenario "Adding a new issue with MST & PACT" do
-      # allow_any_instance_of(AppealsController).to receive(appeal_vanilla_vet.receipt_date.to_s).and_return(5.days.ago)
       generate_rating_with_mst_pact(veteran)
       visit "/appeals/#{appeal.uuid}/edit"
       visit "/appeals/#{appeal.uuid}/edit"
@@ -281,7 +286,6 @@ feature "Attorney checkout flow", :all_dbs do
       click_on "Next"
       click_on "Save"
       click_on "Yes, save"
-      find('#issue-action-3').find(:xpath, 'option[3]').select_option
       visit "/queue/appeals/#{appeal.uuid}"
       refresh
       click_on "View task instructions"
@@ -289,7 +293,7 @@ feature "Attorney checkout flow", :all_dbs do
     end
   end
 
-  context " AC 2.5 It passes the feature tests for adding a new issue appeal MST & PACT" do
+  context " AC 2.5 It passes the feature tests for adding a new issue appeal MST & PACT coming from a contention, then removing the MST/PACT designation" do
     before do
       # creates admin user
       # joins the user with the organization to grant access to role and org permissions
@@ -299,24 +303,20 @@ feature "Attorney checkout flow", :all_dbs do
       FeatureToggle.enable!(:acd_distribute_by_docket_date)
     end
     scenario "Adding a new issue with MST & PACT" do
-      # allow_any_instance_of(AppealsController).to receive(appeal_vanilla_vet.receipt_date.to_s).and_return(5.days.ago)
       generate_rating_with_mst_pact(veteran)
       visit "/appeals/#{appeal.uuid}/edit"
       visit "/appeals/#{appeal.uuid}/edit"
       click_on "+ Add issue"
-      choose('rating-radio_3', allow_label_click:true)
-      check("Issue is related to Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
-      check("Issue is related to PACT Act", allow_label_click: true, visible: false)
+      choose('rating-radio_2', allow_label_click:true)
       click_on "Next"
-      click_on "Save"
-      click_on "Yes, save"
-      find('#issue-action-3').find(:xpath, 'option[2]').select_option
-      click_on "Yes, remove issue"
+      find('#issue-action-3').find(:xpath, 'option[3]').select_option
+      find("label[for='Military Sexual Trauma (MST)']").click
+      find("label[for='PACT Act']").click
+      find("#Edit-issue-button-id-1").click
       click_on "Save"
       click_on "Yes, save"
       visit "/queue/appeals/#{appeal.uuid}"
       refresh
-      click_on "View task instructions"
       expect(page).to have_content("Special Issues: None")
     end
   end
@@ -332,24 +332,20 @@ context " AC 2.1 It passes the feature tests for editing an issue on an appeal b
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
   end
   scenario "Editing an issue with MST" do
-    # allow_any_instance_of(AppealsController).to receive(appeal_vanilla_vet.receipt_date.to_s).and_return(5.days.ago)
     visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
     visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
     click_on "+ Add issue"
-    # add the benefit type
     check("PACT Act", allow_label_click: true, visible: false)
     add_intake_nonrating_issue(date: "01/01/2023")
-    click_on "Save"
-    click_on "Yes, save"
-    # binding.pry
     find('#issue-action-3').find(:xpath, 'option[3]').select_option
-    # binding.pry
     check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
     find("#Edit-issue-button-id-1").click
+    click_on "Save"
+    click_on "Yes, save"
     visit "/queue/appeals/#{appeal_vanilla_vet.uuid}"
     refresh
     click_on "View task instructions"
-    expect(page).to have_content("Special Issues: MST + PACT")
+    expect(page).to have_content("Special Issues: MST and PACT")
   end
 end
 
@@ -363,19 +359,16 @@ context "AC 2.2 It passes the feature tests for editing an issue on an appeal by
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
   end
   scenario "Editing an issue with MST" do
-    # allow_any_instance_of(AppealsController).to receive(appeal_vanilla_vet.receipt_date.to_s).and_return(5.days.ago)
     visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
     visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
     click_on "+ Add issue"
-    # add the benefit type
     check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
     add_intake_nonrating_issue(date: "01/01/2023")
-    click_on "Save"
-    click_on "Yes, save"
-    # binding.pry
     find('#issue-action-3').find(:xpath, 'option[3]').select_option
     find("label[for='PACT Act']").click
     find("#Edit-issue-button-id-1").click
+    click_on "Save"
+    click_on "Yes, save"
     visit "/queue/appeals/#{appeal_vanilla_vet.uuid}"
     refresh
     click_on "View task instructions"
@@ -393,13 +386,10 @@ context "AC 2.3 It passes the feature tests for editing an issue on an appeal by
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
   end
   scenario "Editing an issue with MST + PACT" do
-    # allow_any_instance_of(AppealsController).to receive(appeal_vanilla_vet.receipt_date.to_s).and_return(5.days.ago)
     visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
     visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
     click_on "+ Add issue"
-    # add the benefit type
     add_intake_nonrating_issue(date: "01/01/2023")
-    # binding.pry
     find('#issue-action-3').find(:xpath, 'option[3]').select_option
     check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
     find("label[for='PACT Act']").click
@@ -422,13 +412,10 @@ context "AC 2.4 It passes the feature tests for editing an issue on an appeal by
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
   end
   scenario "Editing an issue with MST" do
-    # allow_any_instance_of(AppealsController).to receive(appeal_vanilla_vet.receipt_date.to_s).and_return(5.days.ago)
     visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
     visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
     click_on "+ Add issue"
-    # add the benefit type
     add_intake_nonrating_issue(date: "01/01/2023")
-    # binding.pry
     find('#issue-action-3').find(:xpath, 'option[3]').select_option
     check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
     find("label[for='PACT Act']").click
@@ -444,91 +431,9 @@ context "AC 2.4 It passes the feature tests for editing an issue on an appeal by
     expect(page).to have_content("Special Issues: MST")
   end
 end
-# Adding a new issue with MST/PACT coming from a contention
-    context "AC 2.5 It passes the feature tests for adding a new issue appeal MST & PACT from a contention" do
-      scenario "Adding a new issue with MST & PACT from a contention then removing it" do
-        #allow_any_instance_of(AppealsController).to receive(receipt_date).and_return(5.days.ago)
-        visit "/appeals/#{appeal.uuid}/edit"
-        #visit "/queue/appeals/#{appeals[0].uuid}"
-        click_on "+ Add issue"
-        choose('rating-radio_0', allow_label_click:true)
-        click_on "Issue is related to Military Sexual Trauma (MST)"
-        click_on "Issue is related to PACT Act"
-        click_on "Next"
-        sleep(30000)
-        #Added appeal
-        click_on "Select action"
-        click_on "Remove issue"
-        click_on "Yes, remove issue"
-        sleep(30000)
-        #Remove issue
-      end
-      end
 
 #Removing an issue on an appeal
-context "AC 3.1 It passes the feature tests for removing an issue on an appeal with MST" do
-  before do
-    # creates admin user
-    # joins the user with the organization to grant access to role and org permissions
-    OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
-    FeatureToggle.enable!(:mst_identification)
-    FeatureToggle.enable!(:pact_identification)
-    FeatureToggle.enable!(:acd_distribute_by_docket_date)
-  end
-  scenario "Removing an issue on an appeal with MST" do
-    # allow_any_instance_of(AppealsController).to receive(appeal_vanilla_vet.receipt_date.to_s).and_return(5.days.ago)
-    visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
-    visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
-    click_on "+ Add issue"
-    # add the benefit type
-    check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
-    add_intake_nonrating_issue(date: "01/01/2023")
-    click_on "Save"
-    click_on "Yes, save"
-    find('#issue-action-3').find(:xpath, 'option[2]').select_option
-    click_on "Yes, remove issue"
-    # binding.pry
-    click_on "Save"
-    click_on "Yes, save"
-    visit "/queue/appeals/#{appeal_vanilla_vet.uuid}"
-    refresh
-    click_on "View task instructions"
-    expect(page).to have_content("Special Issues: None")
-  end
-end
-
-context "AC 3.2 It passes the feature tests for removing an issue on an appeal with PACT" do
-  before do
-    # creates admin user
-    # joins the user with the organization to grant access to role and org permissions
-    OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
-    FeatureToggle.enable!(:mst_identification)
-    FeatureToggle.enable!(:pact_identification)
-    FeatureToggle.enable!(:acd_distribute_by_docket_date)
-  end
-  scenario "Removing an issue on an appeal with PACT" do
-    # allow_any_instance_of(AppealsController).to receive(appeal_vanilla_vet.receipt_date.to_s).and_return(5.days.ago)
-    visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
-    visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
-    click_on "+ Add issue"
-    # add the benefit type
-    check("PACT Act", allow_label_click: true, visible: false)
-    add_intake_nonrating_issue(date: "01/01/2023")
-    click_on "Save"
-    click_on "Yes, save"
-    find('#issue-action-3').find(:xpath, 'option[2]').select_option
-    click_on "Yes, remove issue"
-    # binding.pry
-    click_on "Save"
-    click_on "Yes, save"
-    visit "/queue/appeals/#{appeal_vanilla_vet.uuid}"
-    refresh
-    click_on "View task instructions"
-    expect(page).to have_content("Special Issues: None")
-  end
-end
-
-context "AC 3.3 It passes the feature tests for removing an issue on an appeal with MST + PACT" do
+context "AC 3.1 ,3.2 ,3.3 It passes the feature tests for removing an issue on an appeal with MST + PACT" do
   before do
     # creates admin user
     # joins the user with the organization to grant access to role and org permissions
@@ -538,24 +443,21 @@ context "AC 3.3 It passes the feature tests for removing an issue on an appeal w
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
   end
   scenario "Removing an issue on an appeal with MST + PACT" do
-    # allow_any_instance_of(AppealsController).to receive(appeal_vanilla_vet.receipt_date.to_s).and_return(5.days.ago)
+    appeal_vanilla_vet.request_issues[0].update(mst_status: true)
+    appeal_vanilla_vet.request_issues[1].update(pact_status: true)
+    appeal_vanilla_vet.request_issues[2].update(mst_status: true, pact_status: true)
     visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
     visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
+    # Adding issue so entire appeal is deleted
     click_on "+ Add issue"
-    # add the benefit type
-    check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
-    check("PACT Act", allow_label_click: true, visible: false)
     add_intake_nonrating_issue(date: "01/01/2023")
+    3.times do
+      find('#issue-action-0').find(:xpath, 'option[2]').select_option
+      click_on "Yes, remove issue"
+    end
     click_on "Save"
     click_on "Yes, save"
-    find('#issue-action-3').find(:xpath, 'option[2]').select_option
-    click_on "Yes, remove issue"
-    click_on "Save"
-    click_on "Yes, save"
-    visit "/queue/appeals/#{appeal_vanilla_vet.uuid}"
-    refresh
-    click_on "View task instructions"
-    expect(page).to have_content("Special Issues: None")
+    expect(page).to have_content("You have successfully added 1 issue and removed 3 issues.")
   end
 end
 
