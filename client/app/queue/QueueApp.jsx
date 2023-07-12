@@ -725,7 +725,7 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               path="/queue/:userId/assign"
-              title={`${PAGE_TITLES.UNASSIGED_CASES} | Caseflow`}
+              title={`${PAGE_TITLES.UNASSIGNED_CASES} | Caseflow`}
               render={this.routedTeamQueueList('assign')}
             />
 
