@@ -17,7 +17,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
 
     all_active_ama_appeals = appeals_recently_outcoded + appeals_never_synced + ready_for_resync
 
-    sync_notification_reports(all_active_ama_appeals.first(BATCH_LIMIT.to_i))
+    sync_notification_reports(all_active_ama_appeals.uniq.first(BATCH_LIMIT.to_i))
   end
 
   private
