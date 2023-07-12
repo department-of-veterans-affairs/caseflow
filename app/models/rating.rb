@@ -105,11 +105,13 @@ class Rating
       contentions_data = []
       response = fetch_contentions_by_participant_id(serialized_hash[:participant_id])
 
+      return if response.nil?
+
       serialized_hash[:rba_contentions_data].each do |rba|
         rba_contention = rba.with_indifferent_access
         response.each do |resp|
           next unless resp.is_a?(Hash)
-          next if resp.dig(:contentions, :cntntn_id).blank?
+          next if resp.dig(:contentions, :cntntn_id).nil?
 
           contentions_data << resp[:contentions] if resp.dig(:contentions, :cntntn_id) == rba_contention.dig(:cntntn_id)
         end
