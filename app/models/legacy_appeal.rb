@@ -41,6 +41,7 @@ class LegacyAppeal < CaseflowRecord
   has_many :email_recipients, class_name: "HearingEmailRecipient", foreign_key: :appeal_id
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
   has_one :appeal_state, as: :appeal
+  has_many :vbms_uploaded_documents, as: :appeal
 
   class UnknownLocationError < StandardError; end
 

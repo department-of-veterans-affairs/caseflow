@@ -328,7 +328,7 @@ class ExternalApi::VADotGovService
     end
 
     def send_va_dot_gov_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
-      url = URI.escape(BASE_URL + endpoint)
+      url = URI::DEFAULT_PARSER.escape(BASE_URL + endpoint)
       request = HTTPI::Request.new(url)
       request.query = query
       request.open_timeout = 30
@@ -373,9 +373,12 @@ class ExternalApi::VADotGovService
             addressLine2: address.address_line_2,
             addressLine3: address.address_line_3,
             city: address.city,
-            stateProvince: { code: address.state },
-            requestCountry: { country_code: address.country },
-            zipCode5: address.zip
+            zipCode5: address.zip,
+            zipCode4: address.zip4,
+            international_postal_code: address.international_postal_code,
+            stateProvince: { name: address.state_name, code: address.state },
+            requestCountry: { countryName: address.country_name, countryCode: address.country },
+            addressPOU: address.address_pou
           }
         },
         headers: {
