@@ -378,9 +378,6 @@ feature "Appeal Intake", :all_dbs do
     visit "/intake/add_issues"
 
     expect(page).to have_content("Add / Remove Issues")
-    # check_row("Review option", "Evidence Submission")
-    # check_row("Claimant", "Ed Merica, Veteran")
-    # check_row("SOC/SSOC Opt-in", "No")
 
     # clicking the add issues button should bring up the modal
     click_intake_add_issue
@@ -756,7 +753,6 @@ feature "Appeal Intake", :all_dbs do
     end
 
     context "with legacy_opt_in_approved" do
-      # let(:receipt_date) { Time.zone.today }
 
       scenario "adding issues" do
         start_appeal(veteran_with_ratings, legacy_opt_in_approved: true)
