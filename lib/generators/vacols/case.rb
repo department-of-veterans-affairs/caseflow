@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 class Generators::Vacols::Case
   class << self
     def generate_pkseq
@@ -38,12 +37,12 @@ class Generators::Vacols::Case
         bfbsasgn: nil,
         bfattid: "1286",
         bfdasgn: nil,
-        bfcclkid: "8927941",
+        bfcclkid: nil,
         bfdqrsnt: nil,
         bfdlocin: "2017-11-30 09:01:21 UTC",
         bfdloout: "2017-11-30 09:01:21 UTC",
         bfstasgn: nil,
-        bfcurloc: "98",
+        bfcurloc: "CASEFLOW",
         bfnrcopy: nil,
         bfmemid: "909",
         bfdmem: nil,
