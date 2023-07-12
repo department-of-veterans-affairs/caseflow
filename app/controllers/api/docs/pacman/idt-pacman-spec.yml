@@ -238,6 +238,22 @@ paths:
                         type: string
                         example: "The veteran was unable to be found."
               examples:
+                DocumentTypeNotRecognized:
+                  summary: Document type not recognized
+                  value:
+                    message: Document type is not recognized
+                FileBlank:
+                  summary: File is blank
+                  value:
+                    message: File can't be blank
+                AppealNotFound:
+                  summary: Appeal does not exist
+                  value:
+                    message: The appeal was unable to be found.
+                VeteranNotFound:
+                  summary: Veteran does not exist
+                  value:
+                    message: The veteran was unable to be found.
                 InvalidCopiesValue:
                   summary: "Scenario: Copies out of range (1-500 inclusive, default value of 1)"
                   value:
@@ -437,6 +453,22 @@ paths:
                         type: string
                         example: "The veteran was unable to be found."
               examples:
+                DocumentTypeNotRecognized:
+                  summary: Document type not recognized
+                  value:
+                    message: Document type is not recognized
+                FileBlank:
+                  summary: File is blank
+                  value:
+                    message: File can't be blank
+                AppealNotFound:
+                  summary: Appeal does not exist
+                  value:
+                    message: The appeal was unable to be found.
+                VeteranNotFound:
+                  summary: Veteran does not exist
+                  value:
+                    message: The veteran was unable to be found.
                 InvalidCopiesValue:
                   summary: "Scenario: Copies out of range (1-500 inclusive, default value of 1)"
                   value:
