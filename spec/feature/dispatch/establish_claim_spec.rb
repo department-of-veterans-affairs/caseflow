@@ -626,10 +626,9 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
         scenario "Assigning it to complete the claims establishment", skip: "flakey hang" do
           visit "/dispatch/establish-claim"
           click_on "Establish next claim"
-          # expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
 
           click_on "Route claim"
-          # expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
+          expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
           expect(page).to have_content("Route Claim")
           expect(page).to have_selector(:link_or_button, "Assign to Claim")
           click_on "Assign to Claim" # unknown reason sometimes hangs here
@@ -713,7 +712,6 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
 
         expect(task.appeal.reload.dispatched_to_station).to eq("397")
 
-        # click_on "Caseflow Dispatch"
         expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
 
         # No tasks left
