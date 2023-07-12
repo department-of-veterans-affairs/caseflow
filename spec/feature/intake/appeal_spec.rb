@@ -912,7 +912,6 @@ feature "Appeal Intake", :all_dbs do
 
       visit "/intake/add_issues"
       click_intake_add_issue
-      binding.pry
       expect(page).to have_content(decision_issue_date.mdY)
       expect(page).to have_content("granted issue")
       expect(page).to have_content("dismissed issue")
