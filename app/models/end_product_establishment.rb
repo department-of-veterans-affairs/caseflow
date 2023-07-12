@@ -27,7 +27,7 @@ class EndProductEstablishment < CaseflowRecord
   #                 # It is NOT recommended to go below 0.01. (default: 0.1)
   # :expire => 10   # Specify in seconds when the lock should be considered stale when something went wrong
   #                 # with the one who held the lock and failed to unlock. (default: 10)
-  auto_mutex :sync, block: 7, after_failure: lambda { render text: 'failed to acquire lock!' }
+  auto_mutex :sync!, block: 60, expire: 100, after_failure: lambda { Rails.logger.error('failed to acquire lock! EPE sync is being called by another process. Please try again later.') }
 
   # allow @veteran to be assigned to save upstream calls
   attr_writer :veteran
@@ -211,6 +211,9 @@ class EndProductEstablishment < CaseflowRecord
   end
 
   def sync!
+    sleep(1)
+    puts "entered block"
+    byebug
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
     return true unless status_active?
@@ -223,7 +226,6 @@ class EndProductEstablishment < CaseflowRecord
     contentions unless result.status_type_code == EndProduct::STATUSES.key("Canceled")
 
     transaction do
-      sleep 30
       update!(
         synced_status: result.status_type_code,
         last_synced_at: Time.zone.now
