@@ -32,6 +32,7 @@ class NonComp extends React.PureComponent {
               }}
               userDisplayName={this.props.userDisplayName}
               dropdownUrls={this.props.dropdownUrls}
+              applicationUrls={this.props.applicationUrls}
               topMessage={null}
               defaultUrl={`/${this.props.serverNonComp.businessLineUrl}`}
             >
@@ -68,6 +69,7 @@ NonComp.propTypes = {
   routerTestProps: PropTypes.object,
   userDisplayName: PropTypes.string,
   dropdownUrls: PropTypes.array,
+  applicationUrls: PropTypes.array,
   feedbackUrl: PropTypes.string,
   buildDate: PropTypes.string,
   flash: PropTypes.array,
