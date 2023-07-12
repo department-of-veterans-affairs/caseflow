@@ -453,12 +453,12 @@ RSpec.describe HearingsController, type: :controller do
         expect(response.status).to eq 200
       end
 
-      it "should return a 200 and update aod if provided", :aggregate_failures, skip: "flake AOD present" do
+      it "should return a 200 and update aod if provided", :aggregate_failures do
         params = {
           id: ama_hearing.external_id,
           advance_on_docket_motion: {
             user_id: user.id,
-            person_id: ama_hearing.appeal.appellant.id,
+            person_id: ama_hearing.appeal.appellant.person.id,
             reason: Constants.AOD_REASONS.age,
             granted: true
           },
