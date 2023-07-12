@@ -32,7 +32,7 @@ const WrapperComponent = ({ children }) => (
 );
 
 // Date constructor uses zero-based offset for months — this is 2021-03-17
-const fakeDate = new Date(2021, 2, 17, 12);
+const fakeDate = new Date(2021, 2, 17, 23, 30, 0, 0);
 
 beforeAll(() => {
   // Ensure consistent handling of dates across tests
