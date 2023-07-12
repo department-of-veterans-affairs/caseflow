@@ -8,7 +8,10 @@ describe BatchProcessPriorityEpSync, :postgres do
   end
 
   describe ".find_records" do
+    # Normal records
     let!(:pepsq_records) { create_list(:priority_end_product_sync_queue, BatchProcess::BATCH_LIMIT - 10)}
+
+    # Pepsq Status Checks
     let!(:pepsq_pre_processing) {create(:priority_end_product_sync_queue, :pre_processing) }
     let!(:pepsq_processing) {create(:priority_end_product_sync_queue, :processing)}
     let!(:pepsq_synced) {create(:priority_end_product_sync_queue, :synced)}
@@ -32,10 +35,11 @@ describe BatchProcessPriorityEpSync, :postgres do
     # testing BATCH_LIMIT
     let!(:pepsq_additional_record) { create(:priority_end_product_sync_queue  ) }
 
+    # Apply sql filter
     let(:recs) {BatchProcessPriorityEpSync.find_records}
 
     context "verifying that find_records method filters records accurately" do
-      it "checking that the batch_id is only null or complete" do
+      it "checking that the batch_id is only null or batch state: complete" do
         expect(recs.any? {|r| r.batch_id == nil}).to eq(true)
         expect(recs.any? {|r| r&.batch_process&.state == "COMPLETED"}).to eq(true)
         expect(recs.any? {|r| r&.batch_process&.state == "PRE_PROCESSING"}).to eq(false)
@@ -51,8 +55,6 @@ describe BatchProcessPriorityEpSync, :postgres do
         expect(recs.any? {|r| r.last_batched_at == nil}).to eq(true)
         expect(recs.include?(pepsq_lba_aftere_error_delay_ends)).to eq(true)
         expect(recs.include?(pepsq_lba_before_error_delay_ends)).to eq(false)
-
-        #expect(recs.all? {|r| r.last_batched_at <= Time.zone.now - 12.hours}).to eq(true)
       end
 
       it "checking that the number of records in a batch doesn't exceed BATCH_LIMIT" do
@@ -105,13 +107,21 @@ describe BatchProcessPriorityEpSync, :postgres do
 
 
   describe "#process_batch!" do
-    let!(:veteran) { create(:veteran) }
-    let!(:vbms_ext_claims) { create_list(:vbms_ext_claim, 10, :cleared, claimant_person_id: veteran.participant_id) }
+    let!(:veterans) { Array.new(10) { create(:veteran) } }
+    let!(:vbms_ext_claims) do
+      veterans.map do |vet|
+        create(:vbms_ext_claim, :cleared, claimant_person_id: vet.participant_id)
+      end
+    end
+
     let!(:end_product_establishments) do
-      vbms_ext_claim_ids = vbms_ext_claims.map(&:claim_id).first(10)
-      epes = create_list(:end_product_establishment, 10, :active, veteran_file_number: veteran.file_number)
+      vbms_ext_claim_ids = vbms_ext_claims.map(&:claim_id)
+      vet_file_numbers = veterans.map(&:file_number)
+      # epes = Array.new(10) { create(:end_product_establishment, :active) }
+      epes = create_list(:end_product_establishment, 10, :active)
       epes.each_with_index do |record, index|
         record.update_attribute(:reference_id, vbms_ext_claim_ids[index].to_s)
+        record.update_attribute(:veteran_file_number, vet_file_numbers[index])
       end
     end
 
@@ -122,12 +132,13 @@ describe BatchProcessPriorityEpSync, :postgres do
     end
 
     let!(:batch_process) { BatchProcessPriorityEpSync.create_batch!(pepsq_records) }
+
     subject { batch_process }
     context "when all batched records in the queue are able to sync successfully" do
       before do
         subject.process_batch!
         subject.reload
-        byebug
+
       end
 
       it "each batched record in the queue will have a status of 'SYNCED'" do
@@ -233,5 +244,5 @@ describe BatchProcessPriorityEpSync, :postgres do
         expect(Rails.logger).to have_received(:error).with("#<Caseflow::Error::PriorityEndProductSyncError: Claim Not In VBMS_EXT_CLAIM.>")
       end
     end
-  end
+  end # describe process_batch
 end
