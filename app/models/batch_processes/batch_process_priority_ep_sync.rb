@@ -2,7 +2,6 @@
 
 class BatchProcessPriorityEpSync < BatchProcess
   class << self
-
     # Finds the records within the PEPSQ table that need to be batched and returns
     # a total number of records equal to the BATCH_LIMIT constant
     def find_records
@@ -22,7 +21,6 @@ class BatchProcessPriorityEpSync < BatchProcess
     end
   end
 
-
   # Updates the batches status to processing then loops through each record within
   # the batch. Each records status is updated to processing, then the sync! method is
   # attempted. If the record fails, the error_out_record! method is called.
@@ -35,10 +33,10 @@ class BatchProcessPriorityEpSync < BatchProcess
 
       begin
         epe.sync!
+        epe.reload
 
         if epe.vbms_ext_claim.nil?
           fail Caseflow::Error::PriorityEndProductSyncError, "Claim Not In VBMS_EXT_CLAIM."
-
         elsif epe.synced_status != epe.vbms_ext_claim&.level_status_code
           fail Caseflow::Error::PriorityEndProductSyncError, "EPE synced_status does not match VBMS."
         end
@@ -54,7 +52,6 @@ class BatchProcessPriorityEpSync < BatchProcess
 
     batch_complete!
   end
-
 
   # Assigns the batch_id (line 20) to every record that needs to be associated with the batch
   def assign_batch_to_queued_records!(records)
