@@ -359,8 +359,6 @@ Rails.application.routes.draw do
 
   get 'whats-new' => 'whats_new#show'
 
-  get 'stats', to: 'stats#show'
-
   match '/intake/:any' => 'intakes#index', via: [:get]
 
   get "styleguide", to: "styleguide#show"
