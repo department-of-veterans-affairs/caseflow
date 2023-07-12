@@ -40,7 +40,6 @@ class BatchProcessPriorityEpSync < BatchProcess
         elsif epe.synced_status != epe.vbms_ext_claim&.level_status_code
           fail Caseflow::Error::PriorityEndProductSyncError, "EPE synced_status does not match VBMS."
         end
-
       rescue StandardError => error
         error_out_record!(record, error)
         next

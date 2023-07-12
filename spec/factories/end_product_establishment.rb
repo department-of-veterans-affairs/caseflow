@@ -127,7 +127,7 @@ FactoryBot.define do
         ep = end_product_establishment.result
         ep_store = Fakes::EndProductStore.new
         ep_store.update_ep_status(end_product_establishment.veteran_file_number,
-                                  ep.claim_id, "RFD")
+                                  ep.claim_id, "RDC")
       end
     end
 

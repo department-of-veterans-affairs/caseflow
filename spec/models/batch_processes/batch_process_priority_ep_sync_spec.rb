@@ -254,5 +254,5 @@ describe BatchProcessPriorityEpSync, :postgres do
           .with("#<Caseflow::Error::PriorityEndProductSyncError: Claim Not In VBMS_EXT_CLAIM.>")
       end
     end
-  end # describe process_batch
+  end
 end
