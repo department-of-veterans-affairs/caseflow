@@ -63,4 +63,30 @@ describe PriorityEndProductSyncQueue, :postgres do
       end
     end
   end
+
+  let!(:end_product_establishment) do
+    EndProductEstablishment.create(
+      payee_code: "10",
+      source_id: 1,
+      source_type: "HigherLevelReview",
+      veteran_file_number: 1
+    )
+  end
+
+  let!(:pepsq) do
+    PriorityEndProductSyncQueue.create(
+      batch_id: nil,
+      created_at: Time.zone.now,
+      end_product_establishment_id: end_product_establishment.id,
+      error_messages: [],
+      last_batched_at: nil,
+      status: "PRE_PROCESSING"
+    )
+  end
+
+  context "#end_product_establishment" do
+    it "will return the End Product Establishment object" do
+      expect(pepsq.end_product_establishment).to eq(end_product_establishment)
+    end
+  end
 end
