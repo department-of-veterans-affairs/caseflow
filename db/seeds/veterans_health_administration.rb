@@ -118,7 +118,7 @@ module Seeds
         DependentClaimant.create!(decision_review: sc, participant_id: dependent.participant_id, payee_code: "10")
         RequestIssue.create!(
           decision_review: sc,
-          nonrating_issue_category: "Beneficiary Travel | Special Mode",
+          nonrating_issue_category: "Beneficiary Travel",
           nonrating_issue_description: arg[:benefit_type].to_s,
           benefit_type: arg[:benefit_type],
           decision_date: 1.month.ago

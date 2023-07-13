@@ -481,6 +481,7 @@ exports[`QueueTable HeaderRow Can sort when not using the tasks API and getting 
           aria-label="Sort by Third"
           data-css-hwg41t=""
           onClick={[Function]}
+          onKeyDown={[Function]}
           role="button"
           tabIndex="0"
         >
@@ -551,6 +552,7 @@ exports[`QueueTable HeaderRow Can sort when the backend can sort and getting col
           aria-label="Sort by Third"
           data-css-hwg41t=""
           onClick={[Function]}
+          onKeyDown={[Function]}
           role="button"
           tabIndex="0"
         >
@@ -1623,6 +1625,7 @@ exports[`QueueTable render() Can sort rows 1`] = `
                   aria-label="Sort by Third"
                   data-css-hwg41t=""
                   onClick={[Function]}
+                  onKeyDown={[Function]}
                   role="button"
                   tabIndex="0"
                 >

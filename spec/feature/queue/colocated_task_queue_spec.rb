@@ -56,6 +56,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
       find(".cf-form-dropdown", text: "Select number of tasks to assign").click
       find("option", text: "1 (all available tasks)").click
       find("button", id: "Bulk-Assign-Tasks-button-id-1").click # going by text is an ambiguous match
+      expect(page).to have_content("You have bulk assigned 1 Poa Clarification Colocated Task tasks")
 
       # Visit case details page for VLJ support staff.
       User.authenticate!(user: vlj_support_staff)
@@ -84,8 +85,8 @@ RSpec.feature "ColocatedTask", :all_dbs do
       # verify that the instructions from the VLJ appear on the case timeline
       expect(page).to have_css("h2", text: "Case Timeline")
       scroll_to(find("h2", text: "Case Timeline"))
-      poa_task = PoaClarificationColocatedTask.find_by(assigned_to_type: User.name)
-      click_button(COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, id: poa_task.id)
+      poa_task = PoaClarificationColocatedTask.last
+      click_button(text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, id: poa_task.id)
       expect(page).to have_content(return_instructions)
       # Expect to see draft decision option.
       find(".cf-select__control", text: "Select an action…").click
