@@ -133,8 +133,8 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
 
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
-        puts 'testing'
-        puts response_body
+        puts "response_body: "
+        puts response.body
         expect(response_body["hearing_days"].count).to eq 2
         response_body["hearing_days"].each do |hearing_day|
           expect(HearingDay.find(hearing_day["id"]).judge_css_id).not_to eq hearing_day["judge_css_id"]
