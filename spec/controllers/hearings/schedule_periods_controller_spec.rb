@@ -5,6 +5,9 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
   let!(:ro_schedule_period) { create(:ro_schedule_period) }
   let!(:judge_stuart) { create(:user, :with_vacols_judge_record, full_name: "Stuart Huels", css_id: "BVAHUELS") }
   let!(:judge_doris) { create(:user, :with_vacols_judge_record, full_name: "Doris Lamphere", css_id: "BVALAMPHERE") }
+  before(:all) do
+    clean_up_hearing_days
+  end
 
   shared_context "hearing_days" do
     let!(:hearing_days) do
@@ -231,5 +234,9 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
       }, as: :json
       expect(response.status).to eq 200
     end
+  end
+
+  def clean_up_hearing_days
+    DatabaseCleaner.clean_with(:truncation, except: %w[notification_events vftypes issref])
   end
 end
