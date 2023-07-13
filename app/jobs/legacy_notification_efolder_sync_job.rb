@@ -15,7 +15,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   def perform
     RequestStore[:current_user] = User.system_user
 
-    all_active_legacy_appeals = appeals_recently_outcoded + appeals_never_synced + ready_for_resync
+    all_active_legacy_appeals = (appeals_recently_outcoded + appeals_never_synced + ready_for_resync).uniq
 
     sync_notification_reports(all_active_legacy_appeals.first(BATCH_LIMIT.to_i))
   end
@@ -104,14 +104,19 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
           <<-SQL
               SELECT la.*
               FROM legacy_appeals la
+              JOIN tasks t ON la.id = t.appeal_id
+              AND t.appeal_type = 'LegacyAppeal'
               JOIN (#{appeals_on_latest_notifications(ids)}) AS notifs ON
                 notifs.appeals_id = la.vacols_id AND notifs.appeals_type = 'LegacyAppeal'
               JOIN (#{appeals_on_latest_doc_uploads(ids)}) AS vbms_uploads ON
                 vbms_uploads.appeal_id = la.id AND vbms_uploads.appeal_type = 'LegacyAppeal'
-              WHERE
+              WHERE (
                 notifs.notified_at > vbms_uploads.attempted_at
               OR
                 notifs.created_at > vbms_uploads.attempted_at
+              )
+              AND t.TYPE = 'RootTask'
+              AND t.status NOT IN ('completed', 'cancelled')
               GROUP BY la.id
           SQL
         )

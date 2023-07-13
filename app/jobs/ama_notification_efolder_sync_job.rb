@@ -15,7 +15,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   def perform
     RequestStore[:current_user] = User.system_user
 
-    all_active_ama_appeals = appeals_recently_outcoded + appeals_never_synced + ready_for_resync
+    all_active_ama_appeals = (appeals_recently_outcoded + appeals_never_synced + ready_for_resync).uniq
 
     sync_notification_reports(all_active_ama_appeals.first(BATCH_LIMIT.to_i))
   end
@@ -98,18 +98,23 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   # Return: Array of active appeals
   def get_appeals_from_prev_synced_ids(appeal_ids)
     appeal_ids.in_groups_of(1000, false).flat_map do |ids|
-      Appeal.active.find_by_sql(
+      Appeal.find_by_sql(
         <<-SQL
           SELECT appeals.*
           FROM appeals
+          JOIN tasks t ON appeals.id = t.appeal_id
+          AND t.appeal_type = 'Appeal'
           JOIN (#{appeals_on_latest_notifications(ids)}) AS notifs ON
             notifs.appeals_id = appeals."uuid"::text AND notifs.appeals_type = 'Appeal'
           JOIN (#{appeals_on_latest_doc_uploads(ids)}) AS vbms_uploads ON
             vbms_uploads.appeal_id = appeals.id AND vbms_uploads.appeal_type = 'Appeal'
-          WHERE
+          WHERE (
             notifs.notified_at > vbms_uploads.attempted_at
           OR
             notifs.created_at > vbms_uploads.attempted_at
+          )
+          AND t.TYPE = 'RootTask'
+          AND t.status NOT IN ('completed', 'cancelled')
           GROUP BY appeals.id
         SQL
       )
