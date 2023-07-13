@@ -18,7 +18,7 @@ const getAmaTaskTemplate = ({ id = 1 } = {}) => ({
     placed_on_hold_at: null,
     on_hold_duration: null,
     status: null,
-    assigned_at: formatISO(sub(new Date(), { hours: 47 })),
+    assigned_at: formatISO(sub(new Date(), { days: 2 })),
     closest_regional_office: null,
     assigned_to: {
       css_id: null,

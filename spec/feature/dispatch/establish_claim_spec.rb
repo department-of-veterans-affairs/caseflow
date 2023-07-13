@@ -27,7 +27,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
   let(:folder) { build(:folder, tioctime: 23.days.ago.midnight) }
 
   let(:case_remand) do
-    create(:case_with_decision, :status_remand, folder: folder)
+    create(:case_with_multi_decision, :status_remand, folder: folder)
   end
 
   let(:appeal_remand) do
@@ -491,9 +491,8 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
           Generators::Document.build(type: "BVA Decision", received_at: 6.days.ago)
         ]
       end
-      # :nocov:
-      scenario "Review page lets users choose which document to use",
-               skip: "This test is failing because of a stale element reference" do
+
+      scenario "Review page lets users choose which document to use" do
         visit "/dispatch/establish-claim"
         click_on "Establish next claim"
 
@@ -508,8 +507,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
         expect(page).to have_content("Benefit Type")
       end
 
-      scenario "the EP creation page has a link back to decision review",
-               skip: "This test is failing because of a stale element reference" do
+      scenario "the EP creation page has a link back to decision review" do
         visit "/dispatch/establish-claim"
         click_on "Establish next claim"
 
@@ -518,7 +516,6 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
         click_on "< Back to Review Decision"
         expect(page).to have_content("Multiple Decision Documents")
       end
-      # :nocov:
     end
 
     context "For a full grant" do
@@ -629,10 +626,11 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
         scenario "Assigning it to complete the claims establishment", skip: "flakey hang" do
           visit "/dispatch/establish-claim"
           click_on "Establish next claim"
-          expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
 
           click_on "Route claim"
           expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
+          expect(page).to have_content("Route Claim")
+          expect(page).to have_selector(:link_or_button, "Assign to Claim")
           click_on "Assign to Claim" # unknown reason sometimes hangs here
 
           expect(page).to have_content("Success!")
@@ -652,8 +650,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
                aasm_state: "unassigned")
       end
 
-      scenario "Establish a new claim routed to ARC",
-               skip: "This test is failing because of a stale element reference" do
+      scenario "Establish a new claim routed to ARC", :aggregate_failure do
         # Mock the claim_id returned by VBMS's create end product
         Fakes::VBMSService.end_product_claim_id = "CLAIM_ID_123"
 
@@ -700,9 +697,11 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
             suppress_acknowledgement_letter: true,
             claimant_participant_id: nil,
             limited_poa_code: nil,
-            limited_poa_access: nil
+            limited_poa_access: nil,
+            status_type_code: nil
           },
-          veteran_hash: task.appeal.veteran.to_vbms_hash
+          veteran_hash: task.appeal.veteran.to_vbms_hash,
+          user: RequestStore[:current_user]
         )
 
         expect(AppealRepository).to have_received(:update_vacols_after_dispatch!)
@@ -713,11 +712,11 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
 
         expect(task.appeal.reload.dispatched_to_station).to eq("397")
 
-        click_on "Caseflow Dispatch"
-        expect(page).to have_current_path("/dispatch/establish-claim")
+        expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
 
         # No tasks left
-        expect(page).to have_content("Way to go! You have completed all the claims assigned to you.")
+        expect(page).to have_content("Way to go!")
+        expect(page).to have_content("You have completed all of the total cases assigned to you today")
         expect(page).to have_css(".usa-button-disabled")
       end
 
