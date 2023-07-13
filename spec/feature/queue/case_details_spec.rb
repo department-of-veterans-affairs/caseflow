@@ -153,7 +153,7 @@ RSpec.feature "Case details", :all_dbs do
         expect(details_link.text).to eq(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)
       end
 
-      context "the user has a VSO role", skip: "re-enable when pagination is fixed" do
+      context "the user has a VSO role" do
         let!(:vso) { create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: "8054") }
         let!(:vso_user) { create(:user, :vso_role) }
         let!(:vso_task) { create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: appeal) }
@@ -655,9 +655,10 @@ RSpec.feature "Case details", :all_dbs do
         Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
           .and_raise(BGS::ShareError, "NonUniqueResultException")
+        appeal.veteran&.multiple_phone_numbers?
       end
 
-      scenario "access the appeal's case details", skip: "flake" do
+      scenario "access the appeal's case details" do
         visit "/queue/appeals/#{appeal.external_id}"
 
         expect(page).to have_content(COPY::DUPLICATE_PHONE_NUMBER_TITLE)
