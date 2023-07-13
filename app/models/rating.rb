@@ -111,9 +111,26 @@ class Rating
         rba_contention = rba.with_indifferent_access
         response.each do |resp|
           next unless resp.is_a?(Hash)
-          next if resp.dig(:contentions, :cntntn_id).nil?
 
-          contentions_data << resp[:contentions] if resp.dig(:contentions, :cntntn_id) == rba_contention.dig(:cntntn_id)
+          # if only one contention, check the contention info
+          if resp.dig(:contentions).is_a?(Hash)
+            # get the single contention from the response
+            cntn = resp.dig(:contentions)
+
+            next if cntn.blank?
+
+            # see if the contetion ties to the rating
+            contentions_data << cntn if cntn.dig(:cntntn_id) == rba_contention.dig(:cntntn_id)
+
+          # if the response contains an array of contentions, unpack each one and compare
+          elsif resp.dig(:contentions).is_a?(Array)
+
+            resp.dig(:contentions).each do |contention|
+              next if contention.dig(:cntntn_id).blank?
+
+              contentions_data << contention if contention.dig(:cntntn_id) == rba_contention.dig(:cntntn_id)
+            end
+          end
         end
       end
       contentions_data.compact
