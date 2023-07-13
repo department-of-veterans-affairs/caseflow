@@ -3,7 +3,7 @@
 [<< Back](README.md)
 
 **Pre-requisites for setup:**
-**Some steps require completeing VA On-boarding**
+**Some steps require completing VA On-boarding**
 
 1. Create GitHub user account [VA github access process](https://department-of-veterans-affairs.github.io/github-handbook/guides/onboarding/getting-access)
 
