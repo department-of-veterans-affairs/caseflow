@@ -9,6 +9,9 @@
 # the current status of the EP when the EndProductEstablishment is synced.
 
 class EndProductEstablishment < CaseflowRecord
+  # Using macro-style definition. The locking scope will be TheClass#method and only one method can run at any given time.
+  include RedisMutex::Macro
+
   belongs_to :source, polymorphic: true
   belongs_to :user
   has_many :request_issues
@@ -17,6 +20,14 @@ class EndProductEstablishment < CaseflowRecord
   has_many :end_product_updates
   has_one :priority_end_product_sync_queue
   belongs_to :vbms_ext_claim, foreign_key: "reference_id", primary_key: "claim_id", optional: true
+
+  # :block  => 1    # Specify in seconds how long you want to wait for the lock to be released.
+  #                 # Specify 0 if you need non-blocking sematics and return false immediately. (default: 1)
+  # :sleep  => 0.1  # Specify in seconds how long the polling interval should be when :block is given.
+  #                 # It is NOT recommended to go below 0.01. (default: 0.1)
+  # :expire => 10   # Specify in seconds when the lock should be considered stale when something went wrong
+  #                 # with the one who held the lock and failed to unlock. (default: 10)
+  auto_mutex :sync!, block: 60, expire: 100, after_failure: lambda { Rails.logger.error('failed to acquire lock! EPE sync is being called by another process. Please try again later.') }
 
   # allow @veteran to be assigned to save upstream calls
   attr_writer :veteran
@@ -200,6 +211,7 @@ class EndProductEstablishment < CaseflowRecord
   end
 
   def sync!
+    sleep(1)
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
     return true unless status_active?
