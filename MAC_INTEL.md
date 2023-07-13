@@ -81,16 +81,20 @@
 
 21. Navigate to `~/appeals/caseflow/local/vacols` in terminal (type: `cd ~/appeals/caseflow/local/vacols`)
 
-22. Run `./build_push.sh local`
-    * Requires the oracle database image to have been pulled after running scripts/dev_env_setup_step1.sh script
+22. To install the latest and enterprise Oracle Database version follow (https://seanstacey.org/deploying-an-oracle-database-19c-as-a-docker-container/2020/09/) guide.
+    1. Go to http://container-registry.oracle.com/ (Here log in and opt for Database)
+    2. On command line `docker login container-registry.oracle.com`
+    3. On command line `docker pull container-registry.oracle.com/database/enterprise:latest`
+       
+23. Run `./build_push.sh local`
 
-23. Navigate to caseflow root directory `cd ~/appeals/caseflow`
+24. Navigate to caseflow root directory `cd ~/appeals/caseflow`
 
-24. Run `ln -s Makefile.example Makefile`
+25. Run `ln -s Makefile.example Makefile`
 
-25. Run `make up`
+26. Run `make up`
 
-26. Run `make reset`
+27. Run `make reset`
    * If issues occur:
       1.  Run `bundle exec rake db:create`
          * If you get connection issues stating no file to be found, run the following:
