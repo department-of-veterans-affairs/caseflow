@@ -457,6 +457,7 @@ context "AC 3.1 ,3.2 ,3.3 It passes the feature tests for removing an issue on a
     end
     click_on "Save"
     click_on "Yes, save"
+    sleep(3)
     expect(page).to have_content("You have successfully added 1 issue and removed 3 issues.")
   end
 end
