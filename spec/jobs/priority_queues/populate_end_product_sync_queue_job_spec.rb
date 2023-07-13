@@ -1,11 +1,24 @@
 # frozen_string_literal: true
 
 describe PopulateEndProductSyncQueueJob, type: :job do
-
   let!(:veteran) { create(:veteran) }
-  let!(:found_vec) { create(:vbms_ext_claim, :canceled, claimant_person_id: veteran.participant_id) }
-  let!(:found_epe) { create(:end_product_establishment, :cleared, veteran_file_number: veteran.file_number, established_at: Time.zone.today, reference_id: found_vec.claim_id.to_s) }
-  let!(:not_found_epe) { create(:end_product_establishment, :canceled, veteran_file_number: veteran.file_number, established_at: Time.zone.today, reference_id: found_vec.claim_id.to_s) }
+  let!(:found_vec) do
+    create(:vbms_ext_claim, :canceled, claimant_person_id: veteran.participant_id)
+  end
+  let!(:found_epe) do
+    create(:end_product_establishment,
+           :cleared,
+           veteran_file_number: veteran.file_number,
+           established_at: Time.zone.today,
+           reference_id: found_vec.claim_id.to_s)
+  end
+  let!(:not_found_epe) do
+    create(:end_product_establishment,
+           :canceled,
+           veteran_file_number: veteran.file_number,
+           established_at: Time.zone.today,
+           reference_id: found_vec.claim_id.to_s)
+  end
   let!(:not_found_vec) { create(:vbms_ext_claim, :rdc, claimant_person_id: veteran.participant_id) }
 
   context "#perform" do
@@ -50,7 +63,5 @@ describe PopulateEndProductSyncQueueJob, type: :job do
       expect(PriorityEndProductSyncQueue.count).to eq 1
       found_epe.update!(synced_status: "PEND")
     end
-
   end
-
 end

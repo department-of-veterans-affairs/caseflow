@@ -25,7 +25,6 @@ class PriorityEndProductSyncQueue < CaseflowRecord
     Constants.PRIORITY_EP_SYNC.stuck.to_sym => Constants.PRIORITY_EP_SYNC.stuck
   }
 
-
   # Status Update methods
   def status_processing!
     update!(status: Constants.PRIORITY_EP_SYNC.processing)
@@ -48,7 +47,5 @@ class PriorityEndProductSyncQueue < CaseflowRecord
     CaseflowStuckRecord.create!(stuck_record: self,
                                 error_messages: error_messages,
                                 determined_stuck_at: Time.zone.now)
-
-    # ASK Jeremy about other notifiers like Raven.
   end
 end

@@ -253,6 +253,73 @@ describe BatchProcessPriorityEpSync, :postgres do
         expect(Rails.logger).to have_received(:error)
           .with("#<Caseflow::Error::PriorityEndProductSyncError: Claim Not In VBMS_EXT_CLAIM.>")
       end
+
+      it "the batch process will have a state of 'COMPLETED'" do
+        expect(subject.state).to eq(Constants.BATCH_PROCESS.completed)
+      end
+
+      it "the number of records_attempted for the batch process will match the number of PEPSQ records batched" do
+        expect(subject.records_attempted).to eq(pepsq_records.count)
+      end
+
+      it "the number of records_completed for the batch process will match the number of successfully synced records" do
+        synced_pepsq_records = pepsq_records.select { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
+        expect(subject.records_completed).to eq(synced_pepsq_records.count)
+      end
+
+      it "the number of records_failed for the batch process will match the number of errored records" do
+        failed_sync_pepsq_records = pepsq_records.reject { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
+        expect(subject.records_failed).to eq(failed_sync_pepsq_records.count)
+      end
+    end
+
+    context "when one of the batched records fails because the End Product does not exist in BGS" do
+      before do
+        epe = EndProductEstablishment.find active_hlr_epe_w_cleared_vbms_ext_claim.id
+        Fakes::EndProductStore.cache_store.redis.del("end_product_records_test:#{epe.veteran_file_number}")
+        allow(Rails.logger).to receive(:error)
+        subject.process_batch!
+        subject.reload
+        pepsq_records.each(&:reload)
+      end
+
+      it "all but ONE of the batched records will have a status of 'SYNCED'" do
+        synced_pepsq_records = pepsq_records.select { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
+        not_synced_pepsq_records = pepsq_records.reject { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
+        expect(synced_pepsq_records.count).to eq(pepsq_records.count - not_synced_pepsq_records.count)
+        expect(synced_pepsq_records.count).to eq(pepsq_records.count - 1)
+        expect(not_synced_pepsq_records.count).to eq(pepsq_records.count - synced_pepsq_records.count)
+        expect(not_synced_pepsq_records.count).to eq(1)
+      end
+
+      it "the failed batched record will have a status of 'ERROR'" do
+        pepsq_record_without_synced_status = pepsq_records.find { |r| r.status != Constants.PRIORITY_EP_SYNC.synced }
+        expect(pepsq_record_without_synced_status.status).to eq(Constants.PRIORITY_EP_SYNC.error)
+      end
+
+      it "the failed batched record will raise and log error" do
+        expect(Rails.logger).to have_received(:error)
+          .with("#<EndProductEstablishment::EstablishedEndProductNotFound: "\
+                "EndProductEstablishment::EstablishedEndProductNotFound>")
+      end
+
+      it "the batch process will have a state of 'COMPLETED'" do
+        expect(subject.state).to eq(Constants.BATCH_PROCESS.completed)
+      end
+
+      it "the number of records_attempted for the batch process will match the number of PEPSQ records batched" do
+        expect(subject.records_attempted).to eq(pepsq_records.count)
+      end
+
+      it "the number of records_completed for the batch process will match the number of successfully synced records" do
+        synced_pepsq_records = pepsq_records.select { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
+        expect(subject.records_completed).to eq(synced_pepsq_records.count)
+      end
+
+      it "the number of records_failed for the batch process will match the number of errored records" do
+        failed_sync_pepsq_records = pepsq_records.reject { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
+        expect(subject.records_failed).to eq(failed_sync_pepsq_records.count)
+      end
     end
   end
 end

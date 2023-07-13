@@ -11,7 +11,7 @@ class BatchProcessPriorityEpSyncJob < CaseflowJob
     begin
       batch = ActiveRecord::Base.transaction do
         # The find records method NEEDS to remain within the transation block.
-        # Otherwise the .lock will keep the table locked upon error.
+        # to ensure that the table lock is not released until records have been batched.
         records_to_batch = BatchProcessPriorityEpSync.find_records
         next if records_to_batch.empty?
 
@@ -23,7 +23,6 @@ class BatchProcessPriorityEpSyncJob < CaseflowJob
       else
         Rails.logger.info("No Records Available to Batch.  Time: #{Time.zone.now}")
       end
-
     rescue StandardError => error
       Rails.logger.error("Error: #{error.inspect}, Job ID: #{JOB_ATTR&.job_id}, Job Time: #{Time.zone.now}")
       capture_exception(error: error,
