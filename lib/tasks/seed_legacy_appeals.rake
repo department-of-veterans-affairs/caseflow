@@ -9,7 +9,7 @@ namespace :db do
     class LegacyAppealFactory
       class << self
         # Stamping out appeals like mufflers!
-        def stamp_out_legacy_appeals(num_appeals_to_create, file_number, user, docket_number)
+        def stamp_out_legacy_appeals(num_appeals_to_create, file_number, user, docket_number, task_creation)
           veteran = Veteran.find_by_file_number(file_number)
 
           fail ActiveRecord::RecordNotFound unless veteran
@@ -34,7 +34,7 @@ namespace :db do
                 bfkey: key,
                 bfcurloc: VACOLS::Staff.find_by(sdomainid: user.css_id).slogid,
                 bfmpro: "ACT",
-                bfddec: nil,
+                bfddec: nil
               },
               staff_attrs: {
                 sattyid: user.id,
@@ -48,7 +48,7 @@ namespace :db do
             )
           end.compact
 
-          build_the_cases_in_caseflow(cases)
+          build_the_cases_in_caseflow(cases, task_creation)
         end
 
         def custom_folder_attributes(veteran, docket_number)
@@ -79,12 +79,21 @@ namespace :db do
         end
 
         ########################################################
+        # Create Tasks for the LegacyAppeals that have just been generated
+        #
+        #
+        # This Includes Hearing Tasks, Judge Tasks, & Attorney Tasks
+        def create_tasks_for_legacy_appeals(_appeal)
+          STDOUT.puts("You have created a task")
+        end
+
+        ########################################################
         # Create Postgres LegacyAppeals based on VACOLS Cases
         #
         # AND
         #
         # Create Postgres Request Issues based on VACOLS Issues
-        def build_the_cases_in_caseflow(cases)
+        def build_the_cases_in_caseflow(cases, task_creation)
           vacols_ids = cases.map(&:bfkey)
 
           issues = VACOLS::CaseIssue.where(isskey: vacols_ids).group_by(&:isskey)
@@ -92,6 +101,9 @@ namespace :db do
           cases.map do |case_record|
             AppealRepository.build_appeal(case_record).tap do |appeal|
               appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
+              if task_creation == "Y"
+                create_task_for_legacy_appeals(appeal)
+              end
             end.save!
           end
         end
@@ -114,7 +126,6 @@ namespace :db do
 
         # veterans_with_250_appeals = vets.last(3).pluck(:file_number)
 
-
       else
         veterans_with_like_45_appeals = %w[011899917 011899918]
 
@@ -127,6 +138,10 @@ namespace :db do
       css_id = STDIN.gets.chomp.upcase
       user = User.find_by_css_id(css_id)
 
+      STDOUT.puts("Do you want to add tasks to these Legacy Appeals? (y/n)")
+      STDOUT.puts("Hint: These tasks could include Hearing Tasks, Judge Tasks, and Attorney Tasks")
+      task_creation = STDIN.gets.chomp.upcase
+
       fail ActiveRecord::RecordNotFound unless user
 
       # increment docket number for each case
@@ -134,8 +149,9 @@ namespace :db do
 
       veterans_with_like_45_appeals.each do |file_number|
         docket_number += 1
-        LegacyAppealFactory.stamp_out_legacy_appeals(5, file_number, user, docket_number)
+        LegacyAppealFactory.stamp_out_legacy_appeals(5, file_number, user, docket_number, task_creation)
       end
+      STDOUT.puts("You have created Legacy Appeals")
       # veterans_with_250_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals(250, file_number, user) }
     end
   end
