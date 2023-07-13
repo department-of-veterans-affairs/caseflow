@@ -71,47 +71,14 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("1. #{rating_decision_text}\nDecision date: #{promulgation_date.mdY}")
     end
 
-    scenario "MST and PACT checkboxes appear after selecting decision" do
+    scenario "MST and PACT checkboxes DO NOT appear after selecting decision in higher level review" do
       start_higher_level_review(veteran)
       visit "/intake"
       click_intake_continue
       click_intake_add_issue
       choose('rating-radio_0', allow_label_click:true)
-      expect(page).to have_content("Issue is related to Military Sexual Trauma (MST)")
-      expect(page).to have_content("Issue is related to PACT Act")
-    end
-
-    scenario "MST and PACT checkboxes are disabled if they already exist in the model" do
-      claim_id = rating.issues[0].reference_id
-      veteran.participant_id = "5217787"
-
-      epe = create(
-        :end_product_establishment,
-        reference_id: claim_id,
-        veteran_file_number: veteran.file_number
-      )
-      mst_contention = Generators::Contention.build_mst_and_pact_contention(claim_id: claim_id)
-
-      req_issue = create(:request_issue,
-        contention_reference_id: mst_contention.id,
-        end_product_establishment: epe,
-        veteran_participant_id: veteran.participant_id,
-        #rating.issues[0].reference_id maps to claim_id
-        contested_rating_issue_reference_id: rating.issues[0].reference_id
-      )
-
-      start_higher_level_review(veteran)
-
-      FeatureToggle.enable!(:mst_identification)
-      FeatureToggle.enable!(:pact_identification)
-      visit "/intake"
-      click_intake_continue
-      click_intake_add_issue
-      choose('rating-radio_0', allow_label_click:true)
-
-      #visible is set to false because capybara does not recognize the fields otherwise.
-      expect(page).to have_field("Issue is related to Military Sexual Trauma (MST)", visible: false, disabled: true)
-      expect(page).to have_field("Issue is related to PACT Act", visible: false, disabled: true)
+      expect(page).to have_no_content("Issue is related to Military Sexual Trauma (MST)")
+      expect(page).to have_no_content("Issue is related to PACT Act")
     end
   end
 
@@ -627,7 +594,7 @@ feature "Intake Add Issues Page", :all_dbs do
         expect(page).to have_content("Intake completed")
       end
 
-      scenario "when vacols issue ineligible even with an exemption", skip: true do
+      scenario "when vacols issue ineligible even with an exemption" do
         start_higher_level_review(veteran, legacy_opt_in_approved: true)
         visit "/intake/add_issues"
         click_intake_add_issue
@@ -635,9 +602,7 @@ feature "Intake Add Issues Page", :all_dbs do
 
         # Expect legacy opt in issue modal to show
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-        add_intake_rating_issue("lumbosacral strain")
-
-        # Expect untimely issue modal not to show
+        add_intake_rating_issue("typhoid arthritis")
         expect(page).to_not have_content("Issue 1 is an Untimely Issue")
       end
 
@@ -725,7 +690,7 @@ feature "Intake Add Issues Page", :all_dbs do
         expect(page).to have_content("Intake completed")
       end
 
-      scenario "when vacols issue is ineligible even with an exemption", skip: true do
+      scenario "when vacols issue is ineligible even with an exemption" do
         start_supplemental_claim(veteran, legacy_opt_in_approved: true)
         visit "/intake/add_issues"
         click_intake_add_issue
@@ -733,10 +698,11 @@ feature "Intake Add Issues Page", :all_dbs do
 
         # Expect legacy opt in issue modal to show
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-        add_intake_rating_issue("lumbosacral strain")
+        add_intake_rating_issue("typhoid arthritis")
 
         # Expect untimely issue modal to not show
         expect(page).to_not have_content("Issue 1 is an Untimely Issue")
+        expect(page).to have_content("PTSD denied is ineligible")
       end
 
       scenario "when vacols issue is eligible on a supplemental claim" do
@@ -833,21 +799,21 @@ feature "Intake Add Issues Page", :all_dbs do
   end
 
   context "for MST and PACT Act" do
-    before do
+    before :each do
       FeatureToggle.enable!(:mst_identification)
       FeatureToggle.enable!(:pact_identification)
       BvaIntake.singleton.add_user(current_user)
       OrganizationsUser.find_by(user_id: current_user.id).update(admin: true)
     end
 
-    after do
+    after :each do
       FeatureToggle.disable!(:mst_identification)
       FeatureToggle.disable!(:pact_identification)
       # FeatureToggle.disable!(:legacy_mst_pact_identification)
     end
 
     scenario "MST and PACT checkboxes appear after selecting decision" do
-      start_higher_level_review(veteran)
+      start_appeal(veteran)
       visit "/intake"
       click_intake_continue
       click_intake_add_issue
@@ -856,41 +822,45 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Issue is related to PACT Act")
     end
 
-    #skipped due to feature being sidelined by client and feature flag disabled
-    xit "MST and PACT checkboxes render a justification field when checked" do
-      start_higher_level_review(veteran)
+    scenario "MST and PACT checkboxes render a justification field when checked" do
+      FeatureToggle.enable!(:justification_reason)
+      start_appeal(veteran)
       visit "/intake"
       click_intake_continue
       click_intake_add_issue
       choose("rating-radio_0", allow_label_click: true)
       expect(page).to have_content("Issue is related to Military Sexual Trauma (MST)")
       expect(page).to have_content("Issue is related to PACT Act")
-      # find("div.checkbox-wrapper-MST.cf-form-checkboxes").first.click
-      click_on "Issue is related to Military Sexual Trauma (MST)"
+      # check mst checkbox
+      find_by_id("MST", visible: false).check(allow_label_click: true)
       expect(page).to have_content("Why was this change made?")
-      click_on "Issue is related to Military Sexual Trauma (MST)"
+      # uncheck mst checkbox
+      find_by_id("MST", visible: false).uncheck(allow_label_click: true)
       expect(page).to_not have_content("Why was this change made?")
-      click_on "Issue is related to PACT Act"
+      # check pact checbox
+      find_by_id("Pact", visible: false).check(allow_label_click: true)
       expect(page).to have_content("Why was this change made?")
-      click_on "Issue is related to PACT Act"
+      # uncheck pact checkbox
+      find_by_id("Pact", visible: false).uncheck(allow_label_click: true)
       expect(page).to_not have_content("Why was this change made?")
+      FeatureToggle.disable!(:justification_reason)
     end
 
     scenario "MST designation added during AMA intake" do
-      start_appeal(veteran_no_ratings)
+      start_appeal(veteran)
       visit "/intake"
       click_intake_continue
       click_intake_add_issue
+      click_intake_no_matching_issues
       find_by_id("mst-checkbox", visible: false).check(allow_label_click: true)
       add_intake_nonrating_issue(date: "01/01/2023")
       click_on "Establish appeal"
 
-      appeal_id = Appeal.find_by(veteran_file_number: veteran_no_ratings.file_number).uuid
+      appeal_id = Appeal.find_by(veteran_file_number: veteran.file_number).uuid
       visit "/queue/appeals/#{appeal_id}"
       #to prevent timeout
-      visit current_path
+      refresh
       click_on "View task instructions"
-
       expect(page).to have_content("Special issues: MST")
       expect(page).to have_no_content("Special issues: PACT")
     end

@@ -155,7 +155,7 @@ class RequestIssuesUpdate < CaseflowRecord
 
       # find the before issue
       original_issue = before_issues.find { |bi| bi&.id == issue[:request_issue_id].to_i }
-      original_issue&.mst_status != issue[:mst_status]
+      original_issue&.mst_status != !!issue[:mst_status]
     end
   end
 
@@ -168,7 +168,7 @@ class RequestIssuesUpdate < CaseflowRecord
 
       # find the before issue
       original_issue = before_issues.find { |bi| bi.id == issue[:request_issue_id].to_i }
-      original_issue&.pact_status != issue[:pact_status]
+      original_issue&.pact_status != !!issue[:pact_status]
     end
   end
 
@@ -217,7 +217,7 @@ class RequestIssuesUpdate < CaseflowRecord
     process_edited_issues!
     process_corrected_issues!
     process_mst_edited_issues! if FeatureToggle.enabled?(:mst_identification)
-    process_pact_edited_issues! if FeatureToggle.enabled?(:mst_identification)
+    process_pact_edited_issues! if FeatureToggle.enabled?(:pact_identification)
   end
 
   def process_legacy_issues!
@@ -333,6 +333,12 @@ class RequestIssuesUpdate < CaseflowRecord
 
   def create_issue_update_task(change_type, before_issue, after_issue = nil)
     transaction do
+      # close out any tasks that might be open
+      open_issue_task = Task.where(
+        assigned_to: SpecialIssueEditTeam.singleton
+      ).where(status: "assigned").where(appeal: before_issue.decision_review)
+      open_issue_task[0].delete unless open_issue_task.empty?
+
       task = IssuesUpdateTask.create!(
         appeal: before_issue.decision_review,
         parent: RootTask.find_by(appeal: before_issue.decision_review),

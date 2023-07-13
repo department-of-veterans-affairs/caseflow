@@ -21,8 +21,7 @@ class Rating
   CONTENTION_PACT_ISSUES = [
     "pact",
     "pactdicre",
-    "pact act dic reevaluation",
-    "pact exam exclusion - sec. 1168"
+    "pees1"
   ].freeze
 
   class NilRatingProfileListError < StandardError
@@ -106,10 +105,32 @@ class Rating
       contentions_data = []
       response = fetch_contentions_by_participant_id(serialized_hash[:participant_id])
 
+      return if response.nil?
+
       serialized_hash[:rba_contentions_data].each do |rba|
         rba_contention = rba.with_indifferent_access
         response.each do |resp|
-          contentions_data << resp[:contentions] if resp[:contentions][:cntntn_id] == rba_contention[:cntntn_id]
+          next unless resp.is_a?(Hash)
+
+          # if only one contention, check the contention info
+          if resp.dig(:contentions).is_a?(Hash)
+            # get the single contention from the response
+            cntn = resp.dig(:contentions)
+
+            next if cntn.blank?
+
+            # see if the contetion ties to the rating
+            contentions_data << cntn if cntn.dig(:cntntn_id) == rba_contention.dig(:cntntn_id)
+
+          # if the response contains an array of contentions, unpack each one and compare
+          elsif resp.dig(:contentions).is_a?(Array)
+
+            resp.dig(:contentions).each do |contention|
+              next if contention.dig(:cntntn_id).blank?
+
+              contentions_data << contention if contention.dig(:cntntn_id) == rba_contention.dig(:cntntn_id)
+            end
+          end
         end
       end
       contentions_data.compact

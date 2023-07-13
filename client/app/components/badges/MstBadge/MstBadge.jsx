@@ -11,7 +11,17 @@ import { COLORS } from 'app/constants/AppConstants';
 const MstBadge = (props) => {
   const { appeal } = props;
 
-  if (!appeal?.mst) {
+  // During decision review workflow, saved/staged changes made are updated to appeal.decisionIssues
+  // if legacy check issues for changes, if ama check decision for changes
+  const issues = (appeal.isLegacyAppeal || appeal.type === 'LegacyAppeal') ? appeal.issues : appeal.decisionIssues;
+
+  // check the issues/decisions for mst/pact changes in flight
+  if (issues && issues?.length > 0) {
+    if (!issues.some((issue) => issue.mst_status === true)) {
+      return null;
+    }
+  } else if (!appeal?.mst) {
+    // if issues are empty/undefined, use appeal model mst check
     return null;
   }
 
@@ -28,7 +38,7 @@ const MstBadge = (props) => {
 };
 
 MstBadge.propTypes = {
-  appeal: PropTypes.object
+  appeal: PropTypes.object,
 };
 
 export default MstBadge;
