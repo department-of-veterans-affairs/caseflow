@@ -26,9 +26,21 @@ class CavcDashboard < CaseflowRecord
   end
 
   def remand_request_issues
-    return cavc_remand.remand_appeal&.request_issues.order(:id) if cavc_remand.remand_appeal
+    # return cavc_remand.remand_appeal&.request_issues.order(:id) if cavc_remand.remand_appeal
 
-    cavc_remand.source_appeal&.request_issues.order(:id)
+    # cavc_remand.source_appeal&.request_issues.order(:id)
+    remand_appeal_issues = if cavc_remand.remand_appeal
+                             cavc_remand.remand_appeal&.request_issues.order(:id)
+                           else
+                             []
+                           end
+    source_issues = cavc_remand.source_appeal&.request_issues.order(:id)
+
+    remand_appeal_issues + source_issues.reject do |ri|
+      remand_appeal_issues.any? do |rai|
+        rai.description.gsub(/#\d+\z/, "").rstrip == ri.description && rai.benefit_type == ri.benefit_type
+      end
+    end
   end
 
   def create_dispositions_for_remand_request_issues

@@ -305,11 +305,6 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :cavc_remands_with_dashboard do |appeal|
-    @remands_with_dashboard = CavcRemand.where(source_appeal_id: appeal.id, cavc_decision_type:
-    [
-      Constants.CAVC_DECISION_TYPES.other_dismissal,
-      Constants.CAVC_DECISION_TYPES.affirmed,
-      Constants.CAVC_DECISION_TYPES.settlement
-    ]).count
+    @remands_with_dashboard = CavcRemand.where(source_appeal_id: appeal.id).count
   end
 end
