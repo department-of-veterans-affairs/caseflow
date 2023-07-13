@@ -21,7 +21,7 @@
 2. Install Homebrew
     * a. Using BAH Self Service if BAH employee Run ```brew install git-lfs .``` This is required to clone caseflow-facols repo
 
-3. Create an appeals folder by typing: `mkdir ~/appeals` 
+3. Create an appeals folder by typing: `mkdir ~/appeals`
 
 4. Change directory to appeals by typing: `cd appeals`
 
@@ -51,7 +51,7 @@
 
 13. Navigate to the caseflow root directory (type: `cd ~/appeals/caseflow`)
 
-14. Run `scripts/dev_env_setup_step1.sh` script from bash terminal (How to run script in Mac Terminal) (Will be prompted for a password will be the SUDO password which is the password used to log into mac after restart)
+14. Run `scripts/dev_env_setup_step1.sh` script from bash terminal [[How to run script in Mac Terminal](https://apple.stackexchange.com/questions/235128/how-do-i-run-a-sh-or-command-file-in-terminal)] (Will be prompted for a password will be the SUDO password which is the password used to log into mac after restart)
     * If/When mac says Chromedriver cannot be opened do this:
         * Click cancel on the warning modal
         * Push Command + Space
@@ -85,7 +85,7 @@
     1. Go to http://container-registry.oracle.com/ (Here log in and opt for Database)
     2. On command line `docker login container-registry.oracle.com`
     3. On command line `docker pull container-registry.oracle.com/database/enterprise:latest`
-       
+
 23. Run `./build_push.sh local`
 
 24. Navigate to caseflow root directory `cd ~/appeals/caseflow`
