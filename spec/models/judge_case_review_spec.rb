@@ -23,7 +23,7 @@ end
 # rubocop:disable Metrics/AbcSize
 def expect_decass_to_be_up_to_date(decass)
   decass.reload
-  expect(decass.demdusr).to eq "CFS456"
+  expect(decass.demdusr).to eq vacols_judge.slogid
   expect(decass.defdiff).to eq "3"
   expect(decass.deoq).to eq "1"
   expect(decass.deqr2).to eq "Y"
@@ -35,13 +35,26 @@ def expect_decass_to_be_up_to_date(decass)
   expect(decass.decomp).to eq VacolsHelper.local_date_with_utc_timezone
   expect(decass.detrem).to eq "N"
 end
-# rubocop:enable Metrics/AbcSize
 
 def expect_case_to_be_update_to_date(vacols_case, decass)
   expect(vacols_case.bfmemid).to eq(decass.dememid)
   expect(vacols_case.bfattid).to eq(decass.deatty)
   expect(vacols_case.bfboard).to eq(decass.deteam)
 end
+
+def expect_case_review_to_match_params(case_review)
+  expect(case_review.valid?).to eq true
+  expect(case_review.complexity).to eq "hard"
+  expect(case_review.quality).to eq "does_not_meet_expectations"
+  expect(case_review.comment).to eq "do this"
+  expect(case_review.factors_not_considered).to match_array %w[theory_contention relevant_records]
+  expect(case_review.areas_for_improvement).to match_array ["process_violations"]
+  expect(case_review.judge).to eq judge
+  expect(case_review.attorney).to eq attorney
+  expect(case_review.appeal_type).to eq "LegacyAppeal"
+  expect(case_review.appeal_id).to eq LegacyAppeal.find_by_vacols_id(vacols_case.bfkey).id
+end
+# rubocop:enable Metrics/AbcSize
 
 describe JudgeCaseReview, :all_dbs do
   before do
@@ -84,8 +97,10 @@ describe JudgeCaseReview, :all_dbs do
   end
 
   context ".create" do
-    let(:judge) { User.create(css_id: "CFS123", station_id: User::BOARD_STATION_ID) }
-    let(:attorney) { User.create(css_id: "CFS456", station_id: "317") }
+    let(:judge) { create(:user, :judge) }
+    let!(:vacols_judge) { create(:staff, :judge_role, user: judge) }
+    let(:attorney) { create(:user, station_id: "317") }
+    let!(:vacols_attorney) { create(:staff, :attorney_role, user: attorney) }
     let(:probability) { JudgeCaseReview::QUALITY_REVIEW_SELECTION_PROBABILITY }
     subject { JudgeCaseReview.complete(params) }
 
@@ -129,7 +144,7 @@ describe JudgeCaseReview, :all_dbs do
       let!(:decass) do
         create(:decass,
                deadtim: "2013-12-06".to_date,
-               defolder: "123456",
+               defolder: vacols_case.bfkey,
                deprod: work_product,
                deatty: "102",
                deteam: "BB",
@@ -137,8 +152,8 @@ describe JudgeCaseReview, :all_dbs do
                dedeadline: 6.days.ago)
       end
       let!(:vacols_case) { create(:case, bfkey: "123456") }
-      let(:vacols_issue1) { create(:case_issue, isskey: "123456", issmst: "Y", isspact: "Y")}
-      let(:vacols_issue2) { create(:case_issue, isskey: "123456", issmst: "N", isspact: "N")}
+      let(:vacols_issue1) { create(:case_issue, isskey: vacols_case.bfkey, issmst: "Y", isspact: "Y")}
+      let(:vacols_issue2) { create(:case_issue, isskey: vacols_case.bfkey, issmst: "N", isspact: "N")}
       let!(:judge_staff) { create(:staff, :judge_role, slogid: "CFS456", sdomainid: judge.css_id, sattyid: "AA") }
 
       context "when all parameters are present to sign a decision and VACOLS update is successful" do
@@ -173,63 +188,42 @@ describe JudgeCaseReview, :all_dbs do
 
           it "should create judge case review and change the location to quality review" do
             allow_any_instance_of(JudgeCaseReview).to receive(:rand).and_return(probability / 2)
-            expect(subject.valid?).to eq true
             expect(subject.location).to eq "quality_review"
-            expect(subject.complexity).to eq "hard"
-            expect(subject.quality).to eq "does_not_meet_expectations"
-            expect(subject.comment).to eq "do this"
-            expect(subject.factors_not_considered).to eq %w[theory_contention relevant_records]
-            expect(subject.areas_for_improvement).to eq ["process_violations"]
-            expect(subject.judge).to eq judge
-            expect(subject.attorney).to eq attorney
+            expect_case_review_to_match_params(subject)
 
-            expect(subject.appeal_type).to eq "LegacyAppeal"
-            expect(subject.appeal_id).to eq LegacyAppeal.find_by_vacols_id(vacols_case.bfkey).id
-
-            expect(decass.reload.demdusr).to eq "CFS456"
-            expect(decass.defdiff).to eq "3"
-            expect(decass.deoq).to eq "1"
-            expect(decass.deqr2).to eq "Y"
-            expect(decass.deqr6).to eq "Y"
-            expect(decass.deqr9).to eq "Y"
-            expect(decass.deqr1).to eq nil
-            expect(decass.deqr3).to eq nil
-            expect(decass.deqr4).to eq nil
-            expect(decass.dememid).to eq "AA"
-            expect(decass.decomp).to eq VacolsHelper.local_date_with_utc_timezone
-            expect(decass.detrem).to eq "N"
+            expect_decass_to_be_up_to_date(decass)
 
             expect(vacols_case.reload.bfcurloc).to eq "48"
-            expect(vacols_case.bfmemid).to eq "AA"
+            expect(vacols_case.bfmemid).to eq vacols_judge.sattyid
             expect(vacols_case.bfattid).to eq "102"
             expect(vacols_case.bfboard).to eq "BB"
 
-            vacols_issues = VACOLS::CaseIssue.where(isskey: "123456")
+            vacols_issues = VACOLS::CaseIssue.where(isskey: vacols_case.bfkey)
             # 1 vacated, 1 remanded and 1 blank issue created because of vacated disposition
             expect(vacols_issues.size).to eq 3
 
             vacols_issue = vacols_issues.find_by(issseq: 1)
             expect(vacols_issue.issdc).to eq "5"
             expect(vacols_issue.issseq).to eq vacols_issue1.issseq
-            expect(vacols_issue.issmduser).to eq "CFS456"
+            expect(vacols_issue.issmduser).to eq vacols_judge.slogid
 
             vacols_issue = vacols_issues.find_by(issseq: 2)
             expect(vacols_issue.issdc).to eq "3"
             expect(vacols_issue.issseq).to eq vacols_issue2.issseq
-            expect(vacols_issue.issmduser).to eq "CFS456"
+            expect(vacols_issue.issmduser).to eq vacols_judge.slogid
 
             vacols_issue = vacols_issues.find_by(issseq: 3)
             expect(vacols_issue.issdc).to eq nil
             expect(vacols_issue.issseq).to eq(vacols_issue2.issseq + 1)
-            expect(vacols_issue.issaduser).to eq "CFS456"
+            expect(vacols_issue.issaduser).to eq vacols_judge.slogid
 
             remand_reasons = VACOLS::RemandReason.where(rmdkey: "123456", rmdissseq: vacols_issue2.issseq)
             expect(remand_reasons.size).to eq 1
             expect(remand_reasons.first.rmdissseq).to eq vacols_issue2.issseq
-            expect(remand_reasons.first.rmdmdusr).to eq "CFS456"
+            expect(remand_reasons.first.rmdmdusr).to eq vacols_judge.slogid
 
             quality_review_record = VACOLS::DecisionQualityReview.find_by(qrfolder: vacols_case.bfkey)
-            expect(quality_review_record.qrsmem).to eq "AA"
+            expect(quality_review_record.qrsmem).to eq vacols_judge.sattyid
             expect(quality_review_record.qrteam).to eq "BB"
             expect(quality_review_record.qrseldate).to eq VacolsHelper.local_date_with_utc_timezone
             expect(quality_review_record.qryymm).to eq "1901"
@@ -250,18 +244,8 @@ describe JudgeCaseReview, :all_dbs do
 
           it "should create Judge Case Review" do
             allow_any_instance_of(JudgeCaseReview).to receive(:rand).and_return(probability + probability)
-            expect(subject.valid?).to eq true
             expect(subject.location).to eq "bva_dispatch"
-            expect(subject.judge).to eq judge
-            expect(subject.attorney).to eq attorney
-            expect(subject.complexity).to eq "hard"
-            expect(subject.quality).to eq "does_not_meet_expectations"
-            expect(subject.comment).to eq "do this"
-            expect(subject.factors_not_considered).to eq %w[theory_contention relevant_records]
-            expect(subject.areas_for_improvement).to eq ["process_violations"]
-
-            expect(subject.appeal_type).to eq "LegacyAppeal"
-            expect(subject.appeal_id).to eq LegacyAppeal.find_by_vacols_id(vacols_case.bfkey).id
+            expect_case_review_to_match_params(subject)
 
             expect_decass_to_be_up_to_date(decass)
 
@@ -269,26 +253,26 @@ describe JudgeCaseReview, :all_dbs do
             expect(vacols_case.bfcurloc).to eq "4E"
             expect_case_to_be_update_to_date(vacols_case, decass)
 
-            vacols_issues = VACOLS::CaseIssue.where(isskey: "123456")
+            vacols_issues = VACOLS::CaseIssue.where(isskey: vacols_case.bfkey)
             # 1 vacated, 1 remanded and 1 blank issue created because of vacated disposition
             expect(vacols_issues.size).to eq 3
 
-            expect(vacols_issues.first.issdc).to eq "5"
-            expect(vacols_issues.first.issseq).to eq vacols_issue1.issseq
-            expect(vacols_issues.first.issmduser).to eq "CFS456"
+            vacols_issue = vacols_issues.find_by(issseq: vacols_issue1.issseq)
+            expect(vacols_issue.issdc).to eq "5"
+            expect(vacols_issue.issmduser).to eq vacols_judge.slogid
 
-            expect(vacols_issues.second.issdc).to eq "3"
-            expect(vacols_issues.second.issseq).to eq vacols_issue2.issseq
-            expect(vacols_issues.second.issmduser).to eq "CFS456"
+            vacols_issue = vacols_issues.find_by(issseq: vacols_issue2.issseq)
+            expect(vacols_issue.issdc).to eq "3"
+            expect(vacols_issue.issmduser).to eq vacols_judge.slogid
 
-            expect(vacols_issues.third.issdc).to eq nil
-            expect(vacols_issues.third.issseq).to eq(vacols_issue2.issseq + 1)
-            expect(vacols_issues.third.issaduser).to eq "CFS456"
+            vacols_issue = vacols_issues.find_by(issseq: vacols_issue2.issseq + 1)
+            expect(vacols_issue.issdc).to eq nil
+            expect(vacols_issue.issaduser).to eq vacols_judge.slogid
 
             remand_reasons = VACOLS::RemandReason.where(rmdkey: "123456", rmdissseq: vacols_issue2.issseq)
             expect(remand_reasons.size).to eq 1
             expect(remand_reasons.first.rmdissseq).to eq vacols_issue2.issseq
-            expect(remand_reasons.first.rmdmdusr).to eq "CFS456"
+            expect(remand_reasons.first.rmdmdusr).to eq vacols_judge.slogid
 
             expect(VACOLS::DecisionQualityReview.find_by(qrfolder: vacols_case.bfkey)).to eq nil
           end
