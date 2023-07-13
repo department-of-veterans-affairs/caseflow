@@ -67,7 +67,9 @@ describe AppealSeriesIssues, :all_dbs do
     )
   end
 
-  let(:combined_issues) { AppealSeriesIssues.new(appeal_series: series).all }
+  let(:combined_issues) do
+    AppealSeriesIssues.new(appeal_series: series).all.sort_by { |issue_hash| issue_hash[:diagnostic_code] }
+  end
 
   context "#all" do
     subject { combined_issues }

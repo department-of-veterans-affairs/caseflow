@@ -155,7 +155,8 @@ developer”
 2. Add the following lines, if any of these are already set make sure to comment previous settings:
 
 ```
-export PATH=/usr/local/homebrew/bin:/opt/homebrew/bin:${PATH} eval "$(/usr/local/homebrew/bin/rbenv init -)"
+export PATH=/usr/local/homebrew/bin:/opt/homebrew/bin:${PATH}
+eval "$(/usr/local/homebrew/bin/rbenv init -)"
 eval "$(/usr/local/homebrew/bin/nodenv init -)"
 # Add Postgres environment variables for CaseFlow
 export POSTGRES_HOST=localhost

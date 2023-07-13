@@ -194,6 +194,7 @@ const appealAttributesFromRawTask = (task) => ({
   contestedClaim: task.attributes.contested_claim,
   veteranAppellantDeceased: task.attributes.veteran_appellant_deceased,
   issueCount: task.attributes.issue_count,
+  issueTypes: task.attributes.issue_types,
   docketNumber: task.attributes.docket_number,
   veteranFullName: task.attributes.veteran_full_name,
   veteranFileNumber: task.attributes.veteran_file_number,
@@ -812,7 +813,7 @@ export const timelineEventsFromAppeal = ({ appeal }) => {
   // Possibly add appellant substitution
   if (appeal.appellantSubstitution) {
     if (appeal.appellantSubstitution.histories) {
-      appeal.appellantSubstitution.histories.map( appellantSubstitutionHistory => {
+      appeal.appellantSubstitution.histories.map((appellantSubstitutionHistory) => {
         if (appellantSubstitutionHistory.substitution_date) {
           timelineEvents.push({
             type: 'substitutionDate',
@@ -830,8 +831,7 @@ export const timelineEventsFromAppeal = ({ appeal }) => {
           currentAppellantFullName: appellantSubstitutionHistory.current_appellant_full_name
         });
       });
-    }
-    else {
+    } else {
       timelineEvents.push({
         type: 'substitutionDate',
         createdAt: appeal.appellantSubstitution.substitution_date,
