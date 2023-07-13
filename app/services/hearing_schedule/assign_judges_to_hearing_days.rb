@@ -19,13 +19,12 @@ class HearingSchedule::AssignJudgesToHearingDays
       if errors.count > 0
         errors.each { |error| fail error }
       end
-      puts 'here i am'
-      print ::HearingDay.all
+      puts "here i am"
+      print ::HearingDay.all.to_a
       hearing_days = ::HearingDay.where(id: spreadsheet_data.judge_assignments.pluck(:hearing_day_id))
-      puts 'this is me'
+      puts "this is me"
       puts spreadsheet_data.judge_assignments.pluck(:hearing_day_id)
       hearing_days.sort_by(&:scheduled_for).map do |hearing_day|
-        
         data = spreadsheet_data.judge_assignments.find { |day| day[:hearing_day_id] == hearing_day.id }
         result = hearing_day.to_hash
         result[:judge_css_id] = data[:judge_css_id]
