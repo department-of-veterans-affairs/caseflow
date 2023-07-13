@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_17_164013) do
+ActiveRecord::Schema.define(version: 2023_05_08_224138) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.boolean "appeal_docketed", default: false, null: false, comment: "When true, appeal has been docketed"
     t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID"
     t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the table"
     t.bigint "created_by_id", null: false, comment: "User id of the user that inserted the record"
     t.boolean "decision_mailed", default: false, null: false, comment: "When true, appeal has decision mail request complete"
     t.boolean "hearing_postponed", default: false, null: false, comment: "When true, appeal has hearing postponed and no hearings scheduled"
@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.boolean "privacy_act_complete", default: false, null: false, comment: "When true, appeal has a privacy act request completed"
     t.boolean "privacy_act_pending", default: false, null: false, comment: "When true, appeal has a privacy act request still open"
     t.boolean "scheduled_in_error", default: false, null: false, comment: "When true, hearing was scheduled in error and none scheduled"
-    t.datetime "updated_at"
+    t.datetime "updated_at", comment: "Date and time the record was last updated"
     t.bigint "updated_by_id", comment: "User id of the last user that updated the record"
     t.boolean "vso_ihp_complete", default: false, null: false, comment: "When true, appeal has a VSO IHP request completed"
     t.boolean "vso_ihp_pending", default: false, null: false, comment: "When true, appeal has a VSO IHP request pending"
@@ -293,6 +293,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.string "hearing_request_type", limit: 10, comment: "Stores hearing type requested by appellant; could be one of nil, 'Video', 'Central', 'Travel', or 'Virtual'"
     t.boolean "is_aod", comment: "Whether the case is Advanced on Docket"
     t.integer "issue_count", comment: "Number of issues on the appeal."
+    t.string "issue_types", comment: "A string delimited list of nonrating issue categories on the appeal."
     t.string "power_of_attorney_name", comment: "'Firstname Lastname' of power of attorney"
     t.string "suggested_hearing_location", comment: "Suggested hearing location in 'City, State (Facility Type)' format"
     t.datetime "updated_at"
@@ -1275,7 +1276,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
     t.text "sms_notification_content", comment: "Full SMS Text Content of Notification"
-    t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
+    t.string "sms_notification_external_id"
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
@@ -1577,7 +1578,6 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.boolean "national_cemetery_administration", default: false
     t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
     t.boolean "nonrating_issue", default: false
-    t.boolean "pact_act", default: false, comment: "The Sergeant First Class (SFC) Heath Robinson Honoring our Promise to Address Comprehensive Toxics (PACT) Act"
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
     t.boolean "radiation", default: false
@@ -1796,8 +1796,10 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
     t.datetime "created_at", null: false
     t.string "document_name"
+    t.string "document_series_reference_id", comment: "UUID that is provided by eFolder that represents the group of documentsthis document belongs to. Think of a series as a stack of versions."
     t.string "document_subject"
     t.string "document_type", null: false
+    t.string "document_version_reference_id", comment: "UUID that is provided by eFolder that represents the specific version of the document."
     t.string "error"
     t.datetime "last_submitted_at"
     t.datetime "processed_at"

@@ -14,7 +14,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
     it "user cannot see the CAVC Dashboard button on the remand appeal case details page" do
       visit "/queue/appeals/#{cavc_remand.remand_appeal.uuid}"
-
+      reload_case_detail_page(cavc_remand.remand_appeal.uuid)
       expect(page).to have_text "CAVC Remand"
       expect(page).not_to have_text "CAVC Dashboard"
     end
@@ -52,7 +52,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       expect(page).to have_button("Cancel")
       click_button "Cancel"
 
-      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
+      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}"
     end
 
     it "dashboard save button is disabled until changes made, cancel button shows warning if clicked without saving" do
@@ -71,7 +71,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       expect(page).to have_button("Continue")
       click_button "Continue"
 
-      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
+      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}"
       click_button "CAVC Dashboard"
       expect(page).not_to have_content("Abandoned")
     end
@@ -97,7 +97,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
       expect(page).to have_button("Continue")
       click_button "Continue"
-      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
+      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}"
     end
 
     it "user can edit and save CAVC remand details" do
@@ -167,7 +167,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
       click_button "Save Changes"
 
-      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
+      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}"
       click_button "CAVC Dashboard"
 
       abandoned = page.all("div.cf-select__value-container", exact_text: "Abandoned")
@@ -183,7 +183,9 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
       go_to_dashboard(cavc_remand.remand_appeal.uuid)
 
-      dropdowns = page.all("div.cf-select__placeholder", exact_text: "Select option")
+      expect(page).to have_text `CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}`
+
+      dropdowns = page.all("div.cf-select__placeholder", exact_text: /Select option/)
       dropdowns.first.click
       page.find("div.cf-select__menu").find("div", exact_text: "Reversed").click
 
@@ -194,6 +196,8 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       reversed_section.find("span", exact_text: "Treatment records").click
       expect(page).to have_content "Decision Reasons (2)"
       reversed_section.find("div", exact_text: "Decision Reasons (2)").click
+      reversed_section.click
+      expect(page).to have_css('div[aria-expanded="false"]')
 
       dropdowns.last.click
       page.find("div.cf-select__menu").find("div", exact_text: "Vacated and Remanded").click
@@ -203,6 +207,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       v_and_r_section.find("span", exact_text: "AMA specific remand").click
       v_and_r_section.find("span", exact_text: "Issuing a decision before 90-day window closed").click
       v_and_r_section.find("span", exact_text: "Other").click
+      click_button "Add basis"
       other_dropdown = page.find("div.cf-form-dropdown", text: "Type to search...")
       other_dropdown.find("div.cf-select").click
       other_dropdown.find("input").send_keys "oth"
@@ -213,7 +218,8 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       v_and_r_section.find("div", exact_text: "Decision Reasons (1)").click
 
       click_button "Save Changes"
-      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}/"
+      reload_case_detail_page(cavc_remand.remand_appeal.uuid)
+      expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}"
       click_button "CAVC Dashboard"
 
       expect(page).to have_content "Decision Reasons (2)"
@@ -225,5 +231,7 @@ end
 
 def go_to_dashboard(appeal_uuid)
   visit "/queue/appeals/#{appeal_uuid}/"
+  reload_case_detail_page(appeal_uuid)
   click_button "CAVC Dashboard"
+  expect(page).to have_current_path("/queue/appeals/#{appeal_uuid}/cavc_dashboard", ignore_query: true)
 end

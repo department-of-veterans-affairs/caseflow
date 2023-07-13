@@ -36,10 +36,11 @@ class VhaProgramOffice < Organization
   end
 
   COLUMN_NAMES = [
+    Constants.QUEUE_CONFIG.COLUMNS.BADGES.name,
     Constants.QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name,
+    Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name,
     Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
     Constants.QUEUE_CONFIG.COLUMNS.TASK_OWNER.name,
-    # Constants.QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name,
     Constants.QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name,
     Constants.QUEUE_CONFIG.COLUMNS.LAST_ACTION.name,
     Constants.QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name
