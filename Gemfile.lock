@@ -225,7 +225,8 @@ GEM
       octokit (~> 4.7)
       terminal-table (~> 1)
     database_cleaner (1.7.0)
-    ddtrace (0.34.1)
+    ddtrace (0.54.2)
+      debase-ruby_core_source (<= 0.10.14)
       msgpack
     debase (0.2.4.1)
       debase-ruby_core_source (>= 0.10.2)
@@ -739,7 +740,7 @@ DEPENDENCIES
   countries
   danger (~> 6.2.2)
   database_cleaner
-  ddtrace
+  ddtrace (= 0.54.2)
   debase
   derailed_benchmarks
   dogstatsd-ruby

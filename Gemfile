@@ -22,7 +22,7 @@ gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/conne
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "98b1f9f8aa368189a59af74d91cb0aa4c55006af"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
 gem "countries"
-gem "ddtrace"
+gem "ddtrace", "0.54.2"
 gem "dogstatsd-ruby"
 gem "dry-schema", "~> 1.4"
 gem "fast_jsonapi"
