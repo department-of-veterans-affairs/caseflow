@@ -22,7 +22,7 @@ gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/conne
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "98b1f9f8aa368189a59af74d91cb0aa4c55006af"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
 gem "countries"
-gem "ddtrace", "0.54.2"
+gem "ddtrace", "1.12.1"
 gem "dogstatsd-ruby"
 gem "dry-schema", "~> 1.4"
 gem "fast_jsonapi"
@@ -50,7 +50,7 @@ gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git"
 #Used to build out PDF files on the backend
 #https://github.com/pdfkit/pdfkit
 gem "pdfkit"
-gem "pg", platforms: :ruby
+gem "pg", "1.1.4", platforms: :ruby
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
@@ -118,6 +118,7 @@ group :test, :development, :demo do
   gem "rubocop", "= 0.79", require: false
   gem "rubocop-performance"
   gem "rubocop-rails"
+  gem "debase-ruby_core_source", "3.2.1"
   gem "scss_lint", require: false
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "single_cov"
