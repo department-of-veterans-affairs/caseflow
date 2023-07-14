@@ -6,6 +6,9 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
   let!(:judge_stuart) { create(:user, :with_vacols_judge_record, full_name: "Stuart Huels", css_id: "BVAHUELS") }
   let!(:judge_doris) { create(:user, :with_vacols_judge_record, full_name: "Doris Lamphere", css_id: "BVALAMPHERE") }
   before(:all) do
+    # clean up is required as Hearing day ID is hard coded in the spreadsheet file.
+    # if for some reason the database's table pk is not reset then it will cause test failure.
+
     clean_up_hearing_days
   end
 
@@ -136,8 +139,6 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
 
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
-        puts "response_body: "
-        puts response.body
         expect(response_body["hearing_days"].count).to eq 2
         response_body["hearing_days"].each do |hearing_day|
           expect(HearingDay.find(hearing_day["id"]).judge_css_id).not_to eq hearing_day["judge_css_id"]
@@ -237,6 +238,7 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
   end
 
   def clean_up_hearing_days
-    DatabaseCleaner.clean_with(:truncation, except: %w[notification_events vftypes issref])
+    HearingDay.delete_all
+    ActiveRecord::Base.connection.reset_pk_sequence!(HearingDay.table_name)
   end
 end
