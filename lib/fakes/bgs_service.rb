@@ -125,7 +125,7 @@ class Fakes::BGSService
     records = store.fetch_and_inflate(file_number) || store.fetch_and_inflate(:default) || {}
 
     # syncs statuses between EPE, EP, and VbmsExtClaim records
-    check_for_vbms_sync(records, file_number)
+    # check_for_vbms_sync(records, file_number)
 
     records.values
   end
