@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_06_30_134611) do
+ActiveRecord::Schema.define(version: 2023_07_11_153654) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -222,12 +222,14 @@ ActiveRecord::Schema.define(version: 2023_06_30_134611) do
 
   create_table "batch_processes", primary_key: "batch_id", id: :uuid, default: -> { "uuid_generate_v4()" }, comment: "A generalized table for batching and processing records within caseflow", force: :cascade do |t|
     t.string "batch_type", null: false, comment: "Indicates what type of record is being batched"
+    t.datetime "created_at", null: false, comment: "Date and Time that batch was created."
     t.datetime "ended_at", comment: "The date/time that the batch finsished processing"
     t.integer "records_attempted", default: 0, comment: "The number of records in the batch attempting to be processed"
     t.integer "records_completed", default: 0, comment: "The number of records in the batch that completed processing successfully"
     t.integer "records_failed", default: 0, comment: "The number of records in the batch that failed processing"
     t.datetime "started_at", comment: "The date/time that the batch began processing"
     t.string "state", default: "PRE_PROCESSING", null: false, comment: "The state that the batch is currently in. PRE_PROCESSING, PROCESSING, PROCESSED"
+    t.datetime "updated_at", null: false, comment: "Date and Time that batch was last updated."
     t.index ["batch_type"], name: "index_batch_processes_on_batch_type"
     t.index ["records_failed"], name: "index_batch_processes_on_records_failed"
     t.index ["state"], name: "index_batch_processes_on_state"
@@ -1370,8 +1372,11 @@ ActiveRecord::Schema.define(version: 2023_06_30_134611) do
     t.string "error_messages", default: [], comment: "Array of Error Message(s) containing Batch ID and specific error if a failure occurs", array: true
     t.datetime "last_batched_at", comment: "Date and Time the record was last batched"
     t.string "status", default: "NOT_PROCESSED", null: false, comment: "A status to indicate what state the record is in such as PROCESSING and PROCESSED"
+    t.datetime "updated_at", null: false, comment: "Date and Time the record was last updated."
     t.index ["batch_id"], name: "index_priority_end_product_sync_queue_on_batch_id"
     t.index ["end_product_establishment_id"], name: "index_priority_end_product_sync_queue_on_epe_id", unique: true
+    t.index ["last_batched_at"], name: "index_priority_ep_sync_queue_on_last_batched_at"
+    t.index ["status"], name: "index_priority_ep_sync_queue_on_status"
   end
 
   create_table "ramp_closed_appeals", id: :serial, comment: "Keeps track of legacy appeals that are closed or partially closed in VACOLS due to being transitioned to a RAMP election.  This data can be used to rollback the RAMP Election if needed.", force: :cascade do |t|
