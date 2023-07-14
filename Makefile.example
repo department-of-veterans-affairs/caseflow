@@ -182,6 +182,13 @@ external-db-remove:  ## Remove external_vbms_ext_claim table
 external-db-create-test: ## Creates table in caseflow_certification_test DB for local RSPEC
 	bundle exec rails r -e test db/scripts/external/create_vbms_ext_claim_table.rb
 
+remove-vbms-ext-claim-seeds: ## Drops audit tables, removes all PriorityEndProductSyncQueue, BatchProcess, and seed-vbms-ext-claim records, then rebuilds audit tables
+	make audit-remove
+	bundle exec rails r db/scripts/external/remove_vbms_ext_claim_seeds.rb
+	make audit
+
+reseed-vbms-ext-claim: remove-vbms-ext-claim-seeds seed-vbms-ext-claim ## Re-seeds database with records created from seed-vbms-ext-claim
+
 c:  ## Start rails console
 	bundle exec rails console
 

@@ -22,6 +22,7 @@ describe Seeds::VbmsExtClaim do
       expect(VbmsExtClaim.where(ep_code: nil).count).to eq(125)
     end
   end
+
   context "#create_in_sync_epes_and_vbms_ext_claims" do
     it "seeds total of 100 VBMS EXT CLAIMS Associated with 50 High Level Review End Product
         Establishments and 50 Supplemental Claims End Product Establishments that are in sync" do
@@ -45,9 +46,12 @@ describe Seeds::VbmsExtClaim do
       seed.send(:create_out_of_sync_epes_and_vbms_ext_claims)
       expect(VbmsExtClaim.count).to eq(100)
       # need to show where VbmsExtClaim and EndProductEstablishment are out_of_sync
-      # where VbmsExtClaim.Level_status_code CAN and CLR is equal to EndProductEstablish.sync_status PEND
-      expect(VbmsExtClaim.where(level_status_code: %w[CAN CLR]).count).to eq(EndProductEstablishment
+      # where VbmsExtClaim.Level_status_code CAN and CLR is half of the amount of EPEs that have "PEND"
+      expect(VbmsExtClaim.where(level_status_code: %w[CAN CLR]).count / 2).to eq(EndProductEstablishment
         .where(synced_status: "PEND").count)
+      # where VbmsExtClaim.Level_status_code CAN and CLR is half of the amount of EPEs that have "CAN" or "CLR"
+      expect(VbmsExtClaim.where(level_status_code: %w[CAN CLR]).count / 2).to eq(EndProductEstablishment
+        .where(synced_status: %w[CAN CLR]).count)
       expect(HigherLevelReview.count).to eq(50)
       expect(SupplementalClaim.count).to eq(50)
       expect(EndProductEstablishment.count).to eq(100)
