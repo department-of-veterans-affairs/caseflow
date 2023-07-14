@@ -200,7 +200,7 @@ class EndProductEstablishment < CaseflowRecord
   end
 
   def sync!
-    RedisMutex.with_lock(self.id.to_s, block: 60, expire: 100) do    # key => "EndProductEstablishment:id"
+    RedisMutex.with_lock("EndProductEstablishment:#{id}", block: 60, expire: 100) do    # key => "EndProductEstablishment:id"
       # There is no need to sync end_product_status if the status
       # is already inactive since an EP can never leave that state
       return true unless status_active?
