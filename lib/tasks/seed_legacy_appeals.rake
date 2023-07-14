@@ -83,7 +83,7 @@ namespace :db do
         #
         #
         # This Includes Hearing Tasks, Judge Tasks, & Attorney Tasks
-        def create_tasks_for_legacy_appeals(_appeal)
+        def create_task_for_legacy_appeals(_appeal)
           STDOUT.puts("You have created a task")
         end
 
