@@ -87,6 +87,13 @@ Rails.application.configure do
   ENV["AWS_ACCESS_KEY_ID"] ||= "dummykeyid"
   ENV["AWS_SECRET_ACCESS_KEY"] ||= "dummysecretkey"
 
+# BatchProcess ENVs
+  # priority_end_product_sync
+  ENV["BATCH_LIMIT"] ||= "100" # Max number of records in a batch
+  ENV["ERROR_DELAY"] ||= "12" # In number of hours
+  ENV["MAX_ERRORS_BEFORE_STUCK"] ||= "3" # When record errors for X time, it's declared stuck
+
+
   config.active_job.queue_adapter = :test
 
   # Disable SqlTracker from creating tmp/sql_tracker-*.json files -- https://github.com/steventen/sql_tracker/pull/10
