@@ -103,7 +103,7 @@ namespace :db do
           STDOUT.puts("You have created a Judge task")
         end
 
-        def create_task(task_type)
+        def create_task(task_type, appeal)
           if task_type == "HEARINGTASK"
             create_hearing_task_for_legacy_appeals(appeal)
           elsif task_type == "ATTORNEYTASK"
@@ -129,7 +129,7 @@ namespace :db do
             AppealRepository.build_appeal(case_record).tap do |appeal|
               appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
               if TASK_CREATION
-                create_task(task_type)
+                create_task(task_type, appeal)
               end
             end.save!
           end
