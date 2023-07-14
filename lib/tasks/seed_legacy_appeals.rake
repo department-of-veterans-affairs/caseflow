@@ -92,9 +92,27 @@ namespace :db do
         end
 
         ########################################################
-        # Creates Hearing Tasks for the LegacyAppeals that have just been generated
+        # Creates Judge Tasks for the LegacyAppeals that have just been generated
         def create_judge_task_for_legacy_appeals(_appeal)
           STDOUT.puts("You have created a Judge task")
+        end
+
+        ########################################################
+        # Creates Review Tasks for the LegacyAppeals that have just been generated
+        def create_judge_task_for_legacy_appeals(_appeal)
+          STDOUT.puts("You have created a Judge task")
+        end
+
+        def create_task(task_type)
+          if task_type == "HEARINGTASK"
+            create_hearing_task_for_legacy_appeals(appeal)
+          elsif task_type == "ATTORNEYTASK"
+            create_attorney_task_for_legacy_appeals(appeal)
+          elsif task_type == "JUDGETASK"
+            create_judge_task_for_legacy_appeals(appeal)
+          elsif task_type == "REVIEWTASK"
+            create_review_task_for_legacy_appeals(appeal)
+          end
         end
 
         ########################################################
@@ -110,12 +128,8 @@ namespace :db do
           cases.map do |case_record|
             AppealRepository.build_appeal(case_record).tap do |appeal|
               appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
-              if task_type == "HEARINGTASK"
-                create_hearing_task_for_legacy_appeals(appeal)
-              elsif task_type == "ATTORNEYTASK"
-                create_attorney_task_for_legacy_appeals(appeal)
-              elsif task_type == "JUDGETASK"
-                create_judge_task_for_legacy_appeals(appeal)
+              if TASK_CREATION
+                create_task(task_type)
               end
             end.save!
           end
