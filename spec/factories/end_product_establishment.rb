@@ -3,7 +3,13 @@
 FactoryBot.define do
   factory :end_product_establishment do
     veteran_file_number { generate :veteran_file_number }
-    sequence(:reference_id, &:to_s)
+    sequence(:reference_id) do
+      if EndProductEstablishment.any?
+        (EndProductEstablishment.last.reference_id.to_i + 1).to_s
+      else
+        "1"
+      end
+    end
     source { create(:ramp_election, veteran_file_number: veteran_file_number) }
     code { "030HLRR" }
     modifier { "030" }
