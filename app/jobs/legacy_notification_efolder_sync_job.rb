@@ -71,7 +71,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   end
 
   def open_root_task_join_clause
-    "JOIN tasks t ON t.appeal_type = 'LegacyAppeal' AND t.id = legacy_appeals.id \
+    "JOIN tasks t ON t.appeal_type = 'LegacyAppeal' AND t.appeal_id = legacy_appeals.id \
       AND t.type = 'RootTask' AND t.status NOT IN ('completed', 'cancelled')"
   end
 
