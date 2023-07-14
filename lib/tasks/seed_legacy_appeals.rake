@@ -104,7 +104,7 @@ namespace :db do
         ########################################################
         # Creates Review Tasks for the LegacyAppeals that have just been generated
         # Scenario 6/7
-        def create_judge_task_for_legacy_appeals(_appeal)
+        def create_review_task_for_legacy_appeals(_appeal)
           STDOUT.puts("You have created a Judge task")
         end
 
