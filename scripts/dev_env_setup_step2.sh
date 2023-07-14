@@ -9,7 +9,8 @@ function detectVersion(){
 	echo ${version}
 }
 echo "==> Installing Ruby dependencies"
-RUBY_CONFIGURE_OPTS=--with-openssl-dir=/usr/local/homebrew/Cellar/openssl@1.1/1.1.1s rbenv install $(cat .ruby-version)
+# You may need to manually set RUBY_CONFIGURE_OPTS before doing this, check the MAC_M1 setup instructions
+rbenv install $(cat .ruby-version)
 rbenv rehash
 rbenv local $(cat .ruby-version)
 
@@ -27,11 +28,12 @@ if [ $? == 0 ]; then
 	VERSION=$(detectVersion)
 	echo "==> Detected OS Version $VERSION"
 
-	if [[ "$VERSION" == "10.15"* || "$VERSION" =~ 1[1-9]* ]]; then
-		brew install v8@3.15
-		bundle config build.libv8 --with-system-v8
-		bundle config build.therubyracer --with-v8-dir=$(/usr/local/homebrew/bin/brew --prefix v8@3.15)
-	fi
+  # v8@3.15 has been disabled by Homebrew and must be manually installed. Check the MAC_M1 setup instructions
+	# if [[ "$VERSION" == "10.15"* || "$VERSION" =~ 1[1-9]* ]]; then
+	# 	brew install v8@3.15
+	# 	bundle config build.libv8 --with-system-v8
+	# 	bundle config build.therubyracer --with-v8-dir=$(/usr/local/homebrew/bin/brew --prefix v8@3.15)
+	# fi
 
 	bundle install
 fi
@@ -49,11 +51,7 @@ ln -s Makefile.example Makefile
 
 echo "
 ===================================
-You must do the following manually:
-
-AWS access is needed starting at this point.
-If you need to get AWS access, follow these instructions:
-   https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/New-Hires
+Congratulations
 "
 
 echo 'Finish the manual set up from "Database environment setup":
