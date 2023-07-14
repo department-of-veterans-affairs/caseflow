@@ -108,12 +108,6 @@ class Certification < CaseflowRecord
     @form8 ||= Form8.find_by(certification_id: id)
   end
 
-  def time_to_certify
-    return nil if !completed_at || !created_at
-
-    completed_at - created_at
-  end
-
   def self.completed
     where("completed_at IS NOT NULL")
   end
@@ -125,30 +119,6 @@ class Certification < CaseflowRecord
       .or(where.not(bgs_representative_name: nil))
       .or(where.not(vacols_representative_type: nil))
       .or(where.not(vacols_representative_name: nil))
-  end
-
-  def self.was_missing_doc
-    was_missing_nod.or(was_missing_soc)
-      .or(was_missing_ssoc)
-      .or(was_missing_form9)
-  end
-
-  def self.was_missing_nod
-    # allow 30 second lag just in case 'nod_matching_at' timestamp is a few seconds
-    # greater than 'created_at' timestamp
-    where(nod_matching_at: nil).or(where("nod_matching_at > created_at + INTERVAL '30 seconds'"))
-  end
-
-  def self.was_missing_soc
-    where(soc_matching_at: nil).or(where("soc_matching_at > created_at + INTERVAL '30 seconds'"))
-  end
-
-  def self.was_missing_ssoc
-    ssoc_required.where(ssocs_matching_at: nil).or(where("ssocs_matching_at > created_at + INTERVAL '30 seconds'"))
-  end
-
-  def self.was_missing_form9
-    where(form9_matching_at: nil).or(where("form9_matching_at > created_at + INTERVAL '30 seconds'"))
   end
 
   def self.ssoc_required
