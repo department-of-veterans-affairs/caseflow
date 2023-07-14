@@ -15,6 +15,7 @@ class HearingSchedule::AssignJudgesToHearingDays
     def stage_assignments(spreadsheet_data)
       validate_spreadsheet = HearingSchedule::ValidateJudgeSpreadsheet.new(spreadsheet_data)
       errors = validate_spreadsheet.validate
+
       if errors.count > 0
         errors.each { |error| fail error }
       end
