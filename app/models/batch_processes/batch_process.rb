@@ -11,6 +11,9 @@ class BatchProcess < CaseflowRecord
   BATCH_LIMIT = ENV["BATCH_LIMIT"].to_i
 
   scope :completed_batch_process_ids, -> { where(state: Constants.BATCH_PROCESS.completed).select(:batch_id) }
+  scope :needs_reprocessing, lambda {
+    where("created_at <= ? AND state <> ?", BatchProcess::ERROR_DELAY.hours.ago, Constants.BATCH_PROCESS.completed)
+  }
 
   enum state: {
     Constants.BATCH_PROCESS.pre_processing.to_sym => Constants.BATCH_PROCESS.pre_processing,
@@ -20,7 +23,6 @@ class BatchProcess < CaseflowRecord
   }
 
   class << self
-
     # A method for overriding, for the purpose of finding the records that
     # need to be batched. This method should return the records found.
     def find_records
@@ -41,7 +43,6 @@ class BatchProcess < CaseflowRecord
     # no-op, can be overwritten
   end
 
-
   private
 
   # Instance var methods
@@ -58,7 +59,6 @@ class BatchProcess < CaseflowRecord
     @failed_count += 1
   end
 
-
   # State update Methods
   def batch_processing!
     update!(state: Constants.BATCH_PROCESS.processing, started_at: Time.zone.now)
@@ -70,7 +70,6 @@ class BatchProcess < CaseflowRecord
             records_completed: @completed_count,
             ended_at: Time.zone.now)
   end
-
 
   # When a record and error is sent to this method, it updates the record and checks to see
   # if the record should be declared stuck. If the records should be stuck, it calls the
