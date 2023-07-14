@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # to create legacy appeals with MST/PACT issues, run "bundle exec rake 'db:generate_legacy_appeals[true]'""
+# to create legacy appeals with AMA Tasks added, run "bundle exec rake db:generate_legacy_appeals[false,true]"
 # to create without, run "bundle exec rake db:generate_legacy_appeals"
 namespace :db do
   desc "Generates a smattering of legacy appeals with VACOLS cases that have special issues assocaited with them"
@@ -81,24 +82,28 @@ namespace :db do
 
         ########################################################
         # Creates Hearing Tasks for the LegacyAppeals that have just been generated
+        # Scenario 1
         def create_hearing_task_for_legacy_appeals(_appeal)
           STDOUT.puts("You have created a Hearing task")
         end
 
         ########################################################
         # Creates Attorney Tasks for the LegacyAppeals that have just been generated
+        # Scenario 4
         def create_attorney_task_for_legacy_appeals(_appeal)
           STDOUT.puts("You have created an Attorney task")
         end
 
         ########################################################
         # Creates Judge Tasks for the LegacyAppeals that have just been generated
+        # Scenario 3/5
         def create_judge_task_for_legacy_appeals(_appeal)
           STDOUT.puts("You have created a Judge task")
         end
 
         ########################################################
         # Creates Review Tasks for the LegacyAppeals that have just been generated
+        # Scenario 6/7
         def create_judge_task_for_legacy_appeals(_appeal)
           STDOUT.puts("You have created a Judge task")
         end
@@ -167,7 +172,7 @@ namespace :db do
 
       if TASK_CREATION
         STDOUT.puts("Which type of tasks do you want to add to these Legacy Appeals?")
-        STDOUT.puts("Hint: Options include 'HearingTask', 'JudgeTask', and 'AttorneyTask'")
+        STDOUT.puts("Hint: Options include 'HearingTask', 'JudgeTask', 'AttorneyTask', and 'ReviewTask'")
         task_type = STDIN.gets.chomp.upcase
       end
 
