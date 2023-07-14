@@ -1,9 +1,15 @@
 # frozen_string_literal: true
 
-# VbmsExtClaims and related records are created here to test the new EP Establishment process
-# To create the table, run 'make external-db-create'
+# VbmsExtClaim and related records are created here to test the new EP Establishment process
+# To create the VbmsExtClaim table, run 'make external-db-create'
+#
 # To create the seeds, run 'make seed-vbms-ext-claim'
-# To destroy the seeds, run 'make remove-vbms-ext-claim-seeds'
+# => this can be ran multiple times to create more seeds
+#
+# To destroy the seeds and records related to EP Establishment testing, run 'make remove-vbms-ext-claim-seeds'
+# => removes the audit tables; removes all PriorityEndProductSyncQueue, BatchProcess, and seed records; recreates audit tables
+#
+# To destroy the records mentioned above and re-seed, run 'make reseed-vbms-ext-claim'
 module Seeds
   class VbmsExtClaim < Base
 
