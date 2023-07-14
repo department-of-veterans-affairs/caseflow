@@ -1,23 +1,43 @@
 # frozen_string_literal: true
 
-# create vbms claims
+# VbmsExtClaims and related records are created here to test the new EP Establishment process
+# To create the table, run 'make external-db-create'
+# To create the seeds, run 'make seed-vbms-ext-claim'
+# To destroy the seeds, run 'make remove-vbms-ext-claim-seeds'
 module Seeds
-
   class VbmsExtClaim < Base
-
 
     def initialize
       file_number_initial_value
     end
-    ##
-    # creates and seeds 325 total vbms_ext_claims
-    # The number of claims created are subject to change in order to meet testing requirements
-    ##
+
+    ################# records created ##################
+    # 325 vbms_ext_claims (125 not connected to an EPE)
+    # 200 veterans (each connected to an EPE)
+
+    # 100 HLR EPEs
+    # 50 out of sync with vbms
+    # 25 "PEND", VEC "CLR" | 25 "CAN", VEC "CLR"
+    #
+    # 50 in sync with vbms =>
+    # 25 "CAN", VEC "CAN" | 25 "CLR", VEC "CLR"
+
+    # 100 SC EPEs
+    # 50 out of sync with vbms =>
+    # 25 "PEND", VEC "CAN" | 25 "CLR", VEC "CAN"
+    #
+    # 50 in sync with vbms =>
+    # 25 "CLR", VEC "CLR" | 25 "CAN", VEC "CAN"
+
+    # Each EPE has 2 request issues (one rating, one nonrating)
+    # 400 request issues => 200 rating, 200 nonrating
+    ####################################################
     def seed!
       create_vbms_ext_claims_with_no_end_product_establishment
       create_in_sync_epes_and_vbms_ext_claims
       create_out_of_sync_epes_and_vbms_ext_claims
     end
+
     private
 
     # maintains previous file number values while allowing for reseeding
@@ -33,60 +53,48 @@ module Seeds
     # VbmsExtClaim associated with the End Product Establishment
     ##
     def create_out_of_sync_epes_and_vbms_ext_claims
-      # 25 High Level Review, End Product Establishments that have a sync_status of cleared and are out_of_sync with
-      # vbms_ext_claims
+      # 25 High Level Review, End Product Establishments that have a sync_status of "PEND" and are out_of_sync with
+      # vbms_ext_claims ("CLR")
       25.times do
         veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
         @file_number += 1
-        # out_of_sync vbms_ext_claim LEVEL_STATUS_CODE "CAN"
-        vbms_ext_claim = create_vbms_ext_claim(veteran, :canceled, :hlr)
-        higher_level_review = create_high_level_review(veteran)
-        # out_of_sync end_product_establishment sync_status "PEND"
-        end_product_establishment = create_end_product_establishment(higher_level_review, :active, vbms_ext_claim, veteran)
-        request_issue1 = create_request_issue(higher_level_review, end_product_establishment, "Military Retired Pay")
-        request_issue2 = create_request_issue(higher_level_review, end_product_establishment, "Active Duty Adjustments")
+
+        end_product_establishment = create_end_product_establishment(:active_hlr_with_cleared_vbms_ext_claim, veteran)
+        request_issue1 = create_request_issue(:rating, end_product_establishment)
+        request_issue2 = create_request_issue(:nonrating, end_product_establishment)
       end
 
-      # 25 High Level Review, End Product Establishments that have a sync_status of canceled and are out_of_sync with
-      # vbms_ext_claims
+      # 25 High Level Review, End Product Establishments that have a sync_status of "CAN" and are out_of_sync with
+      # vbms_ext_claims ("CLR")
       25.times do
         veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
         @file_number += 1
-        # out_of_sync vbms_ext_claim LEVEL_STATUS_CODE "CLR"
-        vbms_ext_claim = create_vbms_ext_claim(veteran, :cleared, :hlr)
-        higher_level_review = create_high_level_review(veteran)
-        # out_of_sync end_product_establishment sync_status "PEND"
-        end_product_establishment = create_end_product_establishment(higher_level_review, :active, vbms_ext_claim, veteran)
-        request_issue1 = create_request_issue(higher_level_review, end_product_establishment, "Military Retired Pay")
-        request_issue2 = create_request_issue(higher_level_review, end_product_establishment, "Active Duty Adjustments")
+
+        end_product_establishment = create_end_product_establishment(:canceled_hlr_with_cleared_vbms_ext_claim, veteran)
+        request_issue1 = create_request_issue(:rating, end_product_establishment)
+        request_issue2 = create_request_issue(:nonrating, end_product_establishment)
       end
 
-      # # 25 Supplemental Claims, End Product Establishments that have a sync_status of cleared and are out_of_sync with
-      # # vbms_ext_claims
+      # 25 Supplemental Claims, End Product Establishments that have a sync_status of "CLR" and are out_of_sync with
+      # vbms_ext_claims ("CAN")
       25.times do
         veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
         @file_number += 1
-        # out_of_sync vbms_ext_claim LEVEL_STATUS_CODE "CAN"
-        vbms_ext_claim = create_vbms_ext_claim(veteran, :canceled, :slc)
-        supplemental_claim = create_supplemental_claim(veteran)
-        # out_of_sync end_product_establishment sync_status "PEND"
-        end_product_establishment = create_end_product_establishment(supplemental_claim, :active, vbms_ext_claim, veteran)
-        request_issue1 = create_request_issue(supplemental_claim, end_product_establishment, "Military Retired Pay")
-        request_issue2 = create_request_issue(supplemental_claim, end_product_establishment, "Active Duty Adjustments")
+
+        end_product_establishment = create_end_product_establishment(:cleared_supp_with_canceled_vbms_ext_claim, veteran)
+        request_issue1 = create_request_issue(:rating, end_product_establishment)
+        request_issue2 = create_request_issue(:nonrating, end_product_establishment)
       end
 
-      # # 25 Supplemental Claims, End Product Establishments that have a sync_status of canceled and are out_of_sync with
-      # # vbms_ext_claims
+      # 25 Supplemental Claims, End Product Establishments that have a sync_status of "PEND" and are out_of_sync with
+      # vbms_ext_claims ("CAN")
       25.times do
         veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
         @file_number += 1
-        # out_of_sync vbms_ext_claim LEVEL_STATUS_CODE "CLR"
-        vbms_ext_claim = create_vbms_ext_claim(veteran, :cleared, :slc)
-        supplemental_claim = create_supplemental_claim(veteran)
-        # out_of_sync end_product_establishment sync_status "PEND"
-        end_product_establishment = create_end_product_establishment(supplemental_claim, :active, vbms_ext_claim, veteran)
-        request_issue1 = create_request_issue(supplemental_claim, end_product_establishment, "Military Retired Pay")
-        request_issue2 = create_request_issue(supplemental_claim, end_product_establishment, "Active Duty Adjustments")
+
+        end_product_establishment = create_end_product_establishment(:active_supp_with_canceled_vbms_ext_claim, veteran)
+        request_issue1 = create_request_issue(:rating, end_product_establishment)
+        request_issue2 = create_request_issue(:nonrating, end_product_establishment)
       end
 	  end
 
@@ -97,63 +105,57 @@ module Seeds
     # Level_Status_Code matches the sync_status
     ##
     def create_in_sync_epes_and_vbms_ext_claims
-      # 25 High Level Review, End Product Establishments that have a sync_status of canceled and are in_sync with
-      # vbms_ext_claims
+      # 25 High Level Review, End Product Establishments that have a sync_status of "CAN" and are in_sync with
+      # vbms_ext_claims ("CAN")
       25.times do
         veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
         @file_number += 1
-        # in_sync vbms_ext_claim LEVEL_STATUS_CODE "CAN"
-        vbms_ext_claim = create_vbms_ext_claim(veteran, :canceled, :hlr)
-        higher_level_review = create_high_level_review(veteran)
-        end_product_establishment = create_end_product_establishment(higher_level_review,:canceled, vbms_ext_claim, veteran)
-        request_issue1 = create_request_issue(higher_level_review, end_product_establishment, "Military Retired Pay")
-        request_issue2 = create_request_issue(higher_level_review, end_product_establishment, "Active Duty Adjustments")
+
+        end_product_establishment = create_end_product_establishment(:canceled_hlr_with_canceled_vbms_ext_claim, veteran)
+        request_issue1 = create_request_issue(:rating, end_product_establishment)
+        request_issue2 = create_request_issue(:nonrating, end_product_establishment)
       end
 
-      # 25 High Level Review, End Product Establishments that have a sync_status of cleared and are in_sync with
-      # vbms_ext_claims
+      # 25 High Level Review, End Product Establishments that have a sync_status of "CLR"" and are in_sync with
+      # vbms_ext_claims ("CLR")
       25.times do
         veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
         @file_number += 1
-        # in_sync vbms_ext_claim LEVEL_STATUS_CODE "CLR"
-        vbms_ext_claim = create_vbms_ext_claim(veteran, :cleared, :hlr)
-        higher_level_review = create_high_level_review(veteran)
-        end_product_establishment = create_end_product_establishment(higher_level_review,:cleared, vbms_ext_claim, veteran)
-        request_issue1 = create_request_issue(higher_level_review, end_product_establishment, "Military Retired Pay")
-        request_issue2 = create_request_issue(higher_level_review, end_product_establishment, "Active Duty Adjustments")
-      end
-      # # 25 Supplemental Claims, End Product Establishments that have a sync_status of cleared and are in_sync with
-      # # vbms_ext_claims
-      25.times do
-        veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
-        @file_number += 1
-        # in_sync vbms_ext_claim LEVEL_STATUS_CODE "CLR"
-        vbms_ext_claim = create_vbms_ext_claim(veteran, :cleared, :slc)
-        supplemental_claim = create_supplemental_claim(veteran)
-        end_product_establishment = create_end_product_establishment(supplemental_claim, :cleared, vbms_ext_claim, veteran)
-        request_issue1 = create_request_issue(supplemental_claim, end_product_establishment, "Military Retired Pay")
-        request_issue2 = create_request_issue(supplemental_claim, end_product_establishment, "Active Duty Adjustments")
+
+        end_product_establishment = create_end_product_establishment(:cleared_hlr_with_cleared_vbms_ext_claim, veteran)
+        request_issue1 = create_request_issue(:rating, end_product_establishment)
+        request_issue2 = create_request_issue(:nonrating, end_product_establishment)
       end
 
-      # # 25 Supplemental Claims, End Product Establishments that have a sync_status of canceled and are out_sync with
-      # # vbms_ext_claims
+      # 25 Supplemental Claims, End Product Establishments that have a sync_status of "CLR" and are in_sync with
+      # vbms_ext_claims ("CLR")
       25.times do
         veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
         @file_number += 1
-        # in_sync vbms_ext_claim LEVEL_STATUS_CODE "CAN"
-        vbms_ext_claim = create_vbms_ext_claim(veteran, :canceled, :slc)
-        supplemental_claim = create_supplemental_claim(veteran)
-        end_product_establishment = create_end_product_establishment(supplemental_claim, :canceled, vbms_ext_claim, veteran)
-        request_issue1 = create_request_issue(supplemental_claim, end_product_establishment, "Military Retired Pay")
-        request_issue2 = create_request_issue(supplemental_claim, end_product_establishment, "Active Duty Adjustments")
+
+        end_product_establishment = create_end_product_establishment(:cleared_supp_with_cleared_vbms_ext_claim, veteran)
+        request_issue1 = create_request_issue(:rating, end_product_establishment)
+        request_issue2 = create_request_issue(:nonrating, end_product_establishment)
+      end
+
+      # 25 Supplemental Claims, End Product Establishments that have a sync_status of "CAN" and are in sync with
+      # vbms_ext_claims ("CAN")
+      25.times do
+        veteran = create(:veteran, file_number: format("%<n>09d", n: @file_number))
+        @file_number += 1
+
+        end_product_establishment = create_end_product_establishment(:canceled_supp_with_canceled_vbms_ext_claim, veteran)
+        request_issue1 = create_request_issue(:rating, end_product_establishment)
+        request_issue2 = create_request_issue(:nonrating, end_product_establishment)
       end
     end
+
     ##
     # this method creates VBMS_EXT_CLAIMS that have yet to be Established in CASEFLOW to mimic
     # the VBMS API CALL. The VBMS_EXT_CLAIMS have no assocations to an End Product Establishment.
     ##
     def create_vbms_ext_claims_with_no_end_product_establishment
-      # creates 50 none epe assocated vbms_ext_claims with LEVEL_STATUS_CODE "CLR"
+      # creates 50 non epe associated vbms_ext_claims with LEVEL_STATUS_CODE "CLR"
       50.times do
         create(:vbms_ext_claim, :cleared)
       end
@@ -167,48 +169,33 @@ module Seeds
       end
 	  end
 
+    # 'trait' will update the following EPE columns:
+    # synced_status, established_at, modifier, code
 
-    def create_vbms_ext_claim(veteran, claim_status, claim)
-        create(:vbms_ext_claim,
-                claim_status,
-                claim,
-                claimant_person_id: veteran.participant_id)
-    end
-
-    def create_high_level_review(veteran)
-      create(:higher_level_review,
-              veteran_file_number: veteran.file_number)
-    end
-
-    def create_supplemental_claim(veteran)
-      create(:supplemental_claim,
-              veteran_file_number: veteran.file_number,
-              receipt_date: Time.zone.now,
-              benefit_type: "compensation")
-    end
-
-    def create_end_product_establishment(source, claim_status, vbms_ext_claim, veteran)
+    # additionally, the following records will be created:
+    # an HLR or SC
+    # a VbmsExtClaim
+    def create_end_product_establishment(trait, veteran)
       create(:end_product_establishment,
-              claim_status,
-              source: source,
-              reference_id: vbms_ext_claim.claim_id,
-              established_at: vbms_ext_claim.establishment_date,
-              claim_date: vbms_ext_claim.claim_date,
-              modifier: vbms_ext_claim.ep_code,
-              code: vbms_ext_claim.type_code,
+              trait,
               veteran_file_number: veteran.file_number,
-              claimant_participant_id: veteran.participant_id)
+              claimant_participant_id: veteran.participant_id
+            )
     end
 
-    def create_request_issue(decision_review, end_product_establishment, nonrating_issue_category)
+    # 'trait' will specify if the RI is rating or nonrating
+
+    # if it is rating, these columns will be updated:
+    # contested_rating_issue_reference_id, contested_rating_issue_profile_date, decision_date
+
+    # if it is nonrating, these columns will be updated:
+    # nonrating_issue_category, decision_date, nonrating_issue_description
+    def create_request_issue(trait, end_product_establishment)
       create(:request_issue,
-             decision_review: decision_review,
-             end_product_establishment: end_product_establishment,
-             nonrating_issue_category: nonrating_issue_category,
-             nonrating_issue_description: "nonrating description",
-             ineligible_reason: nil,
-             benefit_type: "compensation",
-             decision_date: Date.new(2018, 5, 1))
+              trait,
+              decision_review: end_product_establishment.source,
+              end_product_establishment: end_product_establishment
+            )
     end
 
   end
