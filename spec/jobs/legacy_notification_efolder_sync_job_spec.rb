@@ -72,8 +72,73 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
         expect(job.send(:ready_for_resync)).to eq([])
       end
 
+      it "doesnt sync when appeals have only error notifications" do
+        Notification.find_by_appeals_id(appeals[8].vacols_id)
+          .update!(event_type: "No Participant Id Found",
+                   email_notification_status: "No Participant Id Found",
+                   sms_notification_status: "No Participant Id Found")
+
+        Notification.find_by_appeals_id(appeals[9].vacols_id)
+          .update!(event_type: "No Participant Id Found",
+                   email_notification_status: "No Participant Id Found",
+                   sms_notification_status: "No Participant Id Found")
+
+        expect(job.send(:appeals_never_synced).to_a.pluck(:id)).not_to include(8, 9)
+      end
+
+      it "does not sync veteran deceased status" do
+        create(:vbms_uploaded_document,
+               appeal_id: appeals[6].vacols_id,
+               attempted_at: 1.day.ago,
+               appeal_type: "LegacyAppeal",
+               document_type: "BVA Case Notifications")
+
+        create(:notification,
+               appeals_id: appeals[6].vacols_id,
+               appeals_type: "LegacyAppeal",
+               event_date: today,
+               event_type: "Appeal docketed",
+               notification_type: "Email",
+               notified_at: Time.zone.now,
+               email_notification_status: "Failure Due to Deceased")
+
+        expect(job.send(:ready_for_resync).to_a).to eq([])
+      end
+
+      it "does not sync when all notifications fail" do
+        Notification.all.to_a.each do |notif|
+          notif.update!(email_notification_status: "No Participant Id Found")
+        end
+
+        expect(job.send(:appeals_never_synced)).to eq([])
+      end
+
+      it "failed document uploads are still ready to sync" do
+        create(:vbms_uploaded_document,
+               appeal_id: appeals[4].id,
+               attempted_at: today,
+               last_submitted_at: today,
+               processed_at: today,
+               uploaded_to_vbms_at: nil,
+               appeal_type: "LegacyAppeal",
+               document_type: "BVA Case Notifications")
+
+        expect(job.send(:ready_for_resync).pluck(:id)).to eq([])
+      end
+
       it "running the perform", bypass_cleaner: true do
         perform_enqueued_jobs { LegacyNotificationEfolderSyncJob.perform_later }
+
+        create(:notification,
+               appeals_id: appeals[6].vacols_id,
+               appeals_type: "LegacyAppeal",
+               event_date: today,
+               event_type: "Appeal decision mailed (Non-contested claims)",
+               notification_type: "Email",
+               notified_at: Time.zone.now,
+               email_notification_status: "delivered")
+
+        appeals[6].root_task.update!(status: "completed", closed_at: today)
 
         expect(find_appeal_ids_from_first_document_sync.size).to eq BATCH_LIMIT_SIZE
       end
