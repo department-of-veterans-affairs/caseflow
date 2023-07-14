@@ -105,7 +105,7 @@ namespace :db do
         # Creates Review Tasks for the LegacyAppeals that have just been generated
         # Scenario 6/7
         def create_review_task_for_legacy_appeals(_appeal)
-          STDOUT.puts("You have created a Judge task")
+          STDOUT.puts("You have created a Review task")
         end
 
         def create_task(task_type, appeal)
@@ -133,10 +133,11 @@ namespace :db do
           cases.map do |case_record|
             AppealRepository.build_appeal(case_record).tap do |appeal|
               appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
-              if TASK_CREATION
-                create_task(task_type, appeal)
-              end
             end.save!
+            if TASK_CREATION
+              appeal = LegacyAppeal.find_or_initialize_by(vacols_id: case_record.bfkey)
+              create_task(task_type, appeal)
+            end
           end
         end
 
