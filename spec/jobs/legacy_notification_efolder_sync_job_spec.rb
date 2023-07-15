@@ -58,15 +58,9 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
     context "first run" do
       after(:all) { clean_up_after_threads }
 
-      it "get all legacy appeals that have been recently outcoded" do
+      it "get all legacy appeals that have been recently outcoded, never been synced, and must be resynced" do
         expect(job.send(:appeals_recently_outcoded)).to match_array(first_run_outcoded_appeals)
-      end
-
-      it "get all legacy appeals that have never been synced yet" do
         expect(job.send(:appeals_never_synced)).to match_array(first_run_never_synced_appeals)
-      end
-
-      it "get all legacy appeals that must be resynced" do
         expect(job.send(:ready_for_resync)).to eq([])
       end
 
