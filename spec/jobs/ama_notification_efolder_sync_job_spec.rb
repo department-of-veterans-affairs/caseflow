@@ -36,10 +36,8 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
     let!(:first_run_outcoded_appeals) { [appeals[6]] }
     let(:first_run_never_synced_appeals) { appeals.first(3) + [appeals[4]] + appeals.last(2) }
 
-    before(:all) do
-      AmaNotificationEfolderSyncJob::BATCH_LIMIT = BATCH_LIMIT_SIZE
-      Seeds::NotificationEvents.new.seed!
-    end
+    before(:all) { Seeds::NotificationEvents.new.seed! }
+    before(:each) { stub_const("AmaNotificationEfolderSyncJob::BATCH_LIMIT", BATCH_LIMIT_SIZE) }
 
     context "first run" do
       after(:all) { clean_up_after_threads }
