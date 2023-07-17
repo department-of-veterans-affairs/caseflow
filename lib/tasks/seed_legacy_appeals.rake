@@ -50,7 +50,7 @@ namespace :db do
             )
           end.compact
 
-          build_the_cases_in_caseflow(cases, task_type)
+          build_the_cases_in_caseflow(cases, task_type, user)
         end
 
         def custom_folder_attributes(veteran, docket_number)
@@ -102,33 +102,62 @@ namespace :db do
         ########################################################
         # Creates Attorney Tasks for the LegacyAppeals that have just been generated
         # Scenario 4
-        def create_attorney_task_for_legacy_appeals(_appeal)
+        def create_attorney_task_for_legacy_appeals(_appeal, _user)
+          # Will need a judge user for judge decision review task and an attorney user for the subsequent Attorney Task
+          # root_task = RootTask.find_or_create_by!(appeal: appeal)
+
+          # review_task = JudgeDecisionReviewTask.create!(
+          #   appeal: appeal,
+          #   parent: root_task,
+          #   assigned_to: user
+          # )
+          # AttorneyTask.create!(
+          #   appeal: appeal,
+          #   parent: review_task,
+          #   assigned_to: attorney
+          # )
           STDOUT.puts("You have created an Attorney task")
         end
 
         ########################################################
-        # Creates Judge Tasks for the LegacyAppeals that have just been generated
+        # Creates Judge Assign Tasks for the LegacyAppeals that have just been generated
         # Scenario 3/5
-        def create_judge_task_for_legacy_appeals(_appeal)
+        def create_judge_task_for_legacy_appeals(_appeal, _user)
+          # User should be a judge
+          # root_task = RootTask.find_or_create_by!(appeal: appeal)
+          #
+          # JudgeAssignTask.create!(
+          #   appeal: appeal,
+          #   parent: root_task,
+          #   assigned_to: user
+          # )
           STDOUT.puts("You have created a Judge task")
         end
 
         ########################################################
         # Creates Review Tasks for the LegacyAppeals that have just been generated
         # Scenario 6/7
-        def create_review_task_for_legacy_appeals(_appeal)
+        def create_review_task_for_legacy_appeals(_appeal, _user)
+          # User should be a judge
+          # root_task = RootTask.find_or_create_by!(appeal: appeal)
+          #
+          # JudgeDecisionReviewTask.create!(
+          #   appeal: appeal,
+          #   parent: root_task,
+          #   assigned_to: user
+          # )
           STDOUT.puts("You have created a Review task")
         end
 
-        def create_task(task_type, appeal)
+        def create_task(task_type, appeal, user)
           if task_type == "HEARINGTASK"
             create_hearing_task_for_legacy_appeals(appeal)
           elsif task_type == "ATTORNEYTASK"
-            create_attorney_task_for_legacy_appeals(appeal)
+            create_attorney_task_for_legacy_appeals(appeal, user, attorney)
           elsif task_type == "JUDGETASK"
-            create_judge_task_for_legacy_appeals(appeal)
+            create_judge_task_for_legacy_appeals(appeal, user)
           elsif task_type == "REVIEWTASK"
-            create_review_task_for_legacy_appeals(appeal)
+            create_review_task_for_legacy_appeals(appeal, user)
           end
         end
 
@@ -138,7 +167,7 @@ namespace :db do
         # AND
         #
         # Create Postgres Request Issues based on VACOLS Issues
-        def build_the_cases_in_caseflow(cases, task_type)
+        def build_the_cases_in_caseflow(cases, task_type, user)
           vacols_ids = cases.map(&:bfkey)
 
           issues = VACOLS::CaseIssue.where(isskey: vacols_ids).group_by(&:isskey)
@@ -148,7 +177,7 @@ namespace :db do
             end.save!
             if TASK_CREATION
               appeal = LegacyAppeal.find_or_initialize_by(vacols_id: case_record.bfkey)
-              create_task(task_type, appeal)
+              create_task(task_type, appeal, user)
             end
           end
         end
@@ -188,6 +217,12 @@ namespace :db do
         STDOUT.puts("Hint: Options include 'HearingTask', 'JudgeTask', 'AttorneyTask', and 'ReviewTask'")
         task_type = STDIN.gets.chomp.upcase
       end
+
+      # if task_type === "ATTORNEYTASK"
+      #   STDOUT.puts("Which attorney do you want to assign this Attorney Task to?")
+      #   STDOUT.puts("Hint: Options include 'HearingTask', 'JudgeTask', 'AttorneyTask', and 'ReviewTask'")
+      #   attorney = STDIN.gets.chomp.upcase
+      # end
 
       fail ActiveRecord::RecordNotFound unless user
 
