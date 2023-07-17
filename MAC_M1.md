@@ -2,6 +2,12 @@
 
 [<< Back](README.md)
 
+How to verify that you have an Apple Silicion processor:
+1. Click the Apple icon in the top-left of the screen
+2. Click 'About This Mac'
+3. Look for the 'Chip' section at the top of the list
+    1. Apple Silicon processors will begin with 'Apple'; as of 7/2023, these a variant of 'Apple M1' or 'Apple M2'
+
 ***Ensure command line tools are installed via Self Service Portal prior to starting***
 
 ***Follow these instructions as closely as possible. If you can't complete a step, ask for help in the #bid_appeals_mac_support channel of the Benefits Integrated Delivery (BID) Slack workspace.***
