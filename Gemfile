@@ -22,7 +22,7 @@ gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/conne
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "98b1f9f8aa368189a59af74d91cb0aa4c55006af"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
 gem "countries"
-gem "ddtrace", "1.12.1"
+gem "ddtrace", "1.12.1", require: "ddtrace/auto_instrument"
 gem "dogstatsd-ruby"
 gem "dry-schema", "~> 1.4"
 gem "fast_jsonapi"
@@ -69,7 +69,7 @@ gem "roo", "~> 2.7"
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
 gem "sentry-raven"
-gem "shoryuken", "3.1.11"
+gem "shoryuken", "3.2"
 gem "stringex", require: false
 # catch problematic migrations at development/test time
 gem "strong_migrations"

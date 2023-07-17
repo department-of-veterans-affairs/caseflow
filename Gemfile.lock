@@ -635,7 +635,7 @@ GEM
       faraday (>= 0.7.6, < 1.0)
     sexp_processor (4.12.1)
     shellany (0.0.1)
-    shoryuken (3.1.11)
+    shoryuken (3.2.0)
       aws-sdk-core (>= 2)
       concurrent-ruby
       thor
@@ -808,7 +808,7 @@ DEPENDENCIES
   sass-rails (~> 5.0)
   scss_lint
   sentry-raven
-  shoryuken (= 3.1.11)
+  shoryuken (= 3.2)
   simplecov!
   single_cov
   sniffybara!

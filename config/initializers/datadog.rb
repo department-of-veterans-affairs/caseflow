@@ -1,14 +1,16 @@
+require 'ddtrace'
+
 unless Rails.env.test?
   Datadog.configure do |c|
-    # options = { analytics_enabled: true }
+    c.service = "DD_SERVICE"
 
-    # c.analytics_enabled = true
-    # c.use :rails, options
-    # c.use :active_record, options
-    # c.use :rack, options
-    # c.use :redis, options
-    # c.use :shoryuken, options
+    c.tracing.enabled = true
+    c.tracing.instrument :rails
+    c.tracing.instrument :active_record
+    c.tracing.instrument :rack
+    c.tracing.instrument :redis
+    c.tracing.instrument :shoryuken
 
-    # c.env = ENV['DEPLOY_ENV']
+    c.env = ENV['DEPLOY_ENV']
   end
 end
