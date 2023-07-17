@@ -15,6 +15,7 @@ describe "WarRoom::PoaAccess" do
 
       expect(BgsPowerOfAttorney).to receive(:find_or_create_by_claimant_participant_id)
         .with(poa.claimant_participant_id)
+        .and_return(poa)
 
       remediation_success = WarRoom::PoaAccess.new(legacy_appeal.vacols_id, poa.claimant_participant_id).run
 
