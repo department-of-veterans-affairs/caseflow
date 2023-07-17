@@ -83,8 +83,20 @@ namespace :db do
         ########################################################
         # Creates Hearing Tasks for the LegacyAppeals that have just been generated
         # Scenario 1
-        def create_hearing_task_for_legacy_appeals(_appeal)
-          STDOUT.puts("You have created a Hearing task")
+        def create_hearing_task_for_legacy_appeals(appeal)
+          root_task = RootTask.find_or_create_by!(appeal: appeal)
+
+          hearing_task = HearingTask.create!(
+            appeal: appeal,
+            parent: root_task,
+            assigned_to: Bva.singleton
+          )
+          ScheduleHearingTask.create!(
+            appeal: appeal,
+            parent: hearing_task,
+            assigned_to: Bva.singleton
+          )
+          STDOUT.puts("You have created a Hearing Task")
         end
 
         ########################################################
