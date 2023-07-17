@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+##
+# Interface for:
+#   - HearingPostponementRequestMailTask
+#   - HearingWithdrawalRequestMailTask
+# HearingRequestMailTask is itself not an assignable task type
+
 class HearingRequestMailTask < MailTask
   validates :parent, presence: true, parentTask: { task_type: HearingTask }, on: :create
 
@@ -25,8 +31,11 @@ class HearingRequestMailTask < MailTask
 
   private
 
+  # Ensure #create is called on a descendant class
   def verify_request_type_designated
-    if type == "HearingRequestMailTask"
+    valid_request_types = %w[HearingPostponementRequestMailTask HearingWithdrawalRequestMailTask]
+
+    unless valid_request_types.include?(type)
       fail Caseflow::Error::InvalidTaskTypeOnTaskCreate, task_type: type
     end
   end
