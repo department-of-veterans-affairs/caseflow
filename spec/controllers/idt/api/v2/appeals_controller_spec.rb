@@ -510,16 +510,17 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
         citation_number: citation_number,
         decision_date: Date.new(1989, 12, 13).to_s,
         file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
-        redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx" }
+        redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx",
+        recipient_info: [] }
     end
 
     before do
-      allow(controller).to receive(:verify_access).and_return(true)
       BvaDispatch.singleton.add_user(user)
 
       key, t = Idt::Token.generate_one_time_key_and_proposed_token
       Idt::Token.activate_proposed_token(key, user.css_id)
       request.headers["TOKEN"] = t
+      create(:staff, :attorney_role, sdomainid: user.css_id)
     end
 
     context "when some params are missing" do
@@ -567,7 +568,6 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
 
       it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
         post :outcode, params: params
-
         expect(response.status).to eq(200)
 
         tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
@@ -580,7 +580,60 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
         expect(task.parent.status).to eq("completed")
         expect(S3Service.files["decisions/" + root_task.appeal.external_id + ".pdf"]).to_not eq nil
         expect(DecisionDocument.find_by(appeal_id: root_task.appeal.id)&.submitted_at).to_not be_nil
-        expect(JSON.parse(response.body)["message"]).to eq("Success!")
+        expect(JSON.parse(response.body)["message"]).to eq("Successful dispatch!")
+      end
+
+      context "when dispatch is associated with a mail request" do
+        include ActiveJob::TestHelper
+
+        let(:recipient) do
+          { recipient_type: "person",
+            first_name: "Bob",
+            last_name: "Smithmetz",
+            participant_id: "487470002",
+            destination_type: "domesticAddress",
+            address_line_1: "1234 Main Street",
+            treat_line_2_as_addressee: false,
+            treat_line_3_as_addressee: false,
+            city: "Orlando",
+            state: "FL",
+            postal_code: "12345",
+            country_code: "US" }
+        end
+
+        before { params[:recipient_info] << recipient }
+
+        it "calls #perform_later on MailRequestJob" do
+          expect(MailRequestJob).to receive(:perform_later)
+
+          perform_enqueued_jobs { post :outcode, params: params, as: :json }
+        end
+
+        context "recipient info is incorrect" do
+          it "returns validation errors and does not call #perform_later on MailRequestJob" do
+            recipient[:first_name] = nil
+            expect(MailRequestJob).to_not receive(:perform_later)
+            perform_enqueued_jobs { post :outcode, params: params, as: :json }
+            error_message = JSON.parse(response.body)["errors"]["distribution 1"]
+            expect(error_message).to eq("First name can't be blank")
+          end
+        end
+
+        context "when dispatch is not successfully processed" do
+          let(:citation_number) { "INVALID" }
+          it "does not call #perform_later on MailRequestJob" do
+            perform_enqueued_jobs { expect(MailRequestJob).to_not receive(:perform_later) }
+            post :outcode, params: params
+          end
+        end
+      end
+
+      context "when dispatch is not associated with a mail request" do
+        it "does not call #perform_later on MailRequestJob" do
+          params[:recipient_info] = []
+          expect(MailRequestJob).to_not receive(:perform_later)
+          post :outcode, params: params
+        end
       end
     end
 

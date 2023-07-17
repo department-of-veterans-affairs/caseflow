@@ -6,3 +6,4 @@ conn = CaseflowRecord.connection
 conn.execute(
   "drop schema IF EXISTS caseflow_audit CASCADE;"
 )
+conn.close

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
+  include MailPackageConcern
+
   protect_from_forgery with: :exception
   before_action :verify_access
 
@@ -23,10 +25,17 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
   end
 
   def outcode
-    result = BvaDispatchTask.outcode(appeal, outcode_params, user)
+    # Create distributions for Package Manager mail service if recipient info present
+    build_mail_package
+
+    result = BvaDispatchTask.outcode(appeal, outcode_params, user, mail_package)
 
     if result.success?
-      return render json: { message: "Success!" }
+      success_response = { message: "Successful dispatch!" }
+      if recipient_info.present?
+        success_response[:distribution_ids] = distribution_ids
+      end
+      return render json: success_response
     end
 
     render json: { message: result.errors[0] }, status: :bad_request
@@ -150,5 +159,18 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
 
   def outcode_params
     params.permit(:citation_number, :decision_date, :redacted_document_location, :file)
+  end
+
+  def mail_params
+    params.permit(:copies, recipient_info: recipient_keys)
+  end
+
+  def recipient_keys
+    [
+      :recipient_type, :name, :first_name, :last_name, :claimant_station_of_jurisdiction, :postal_code,
+      :destination_type, :address_line_1, :address_line_2, :address_line_3, :address_line_4, :address_line_5,
+      :address_line_6, :treat_line_2_as_addressee, :treat_line_3_as_addressee, :city, :state, :country_name,
+      :country_code
+    ]
   end
 end
