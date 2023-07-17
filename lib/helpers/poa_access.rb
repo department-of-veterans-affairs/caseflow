@@ -18,15 +18,23 @@ module WarRoom
     end
 
     def run
+      # clean up any records we don't need
+      legacy_appeal.power_of_attorney&.try(:clear_bgs_power_of_attorney!)
+      poa = legacy_appeal.bgs_power_of_attorney
+
+      if poa.bgs_record == :not_found || poa.claimant_participant_id != @claimant_participant_id
+        poa.destroy!
+      end
+
       # Create person record
       Person.find_or_create_by_participant_id(@claimant_participant_id)
 
       # Create bgs POA record
       # NOTE: The POA is updated in a before_save callback. It will pull in all data for the created POA
-      poa = BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(@claimant_participant_id)
+      BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(@claimant_participant_id)
 
       # Confirm fix by returning the POA by comparing the claimant_participant_id with the new bgs poa claimant_participant_id
-      poa&.claimant_participant_id == @claimant_participant_id
+      legacy_appeal.bgs_power_of_attorney.claimant_participant_id == @claimant_participant_id
     end
 
     def legacy_appeal
