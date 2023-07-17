@@ -75,8 +75,8 @@ class DuplicateVeteranChecker
 
     # Check that only oen vet has the bad file number
     if vets.nil? || vets.count > 1
-      Rail.loggger.info("More than on vet with the duplicate veteran file number exists. Aborting..")
-      return true
+      puts("More than on vet with the duplicate veteran file number exists. Aborting..")
+      fail Interrupt
     end
 
     # Get the duplicate veteran into memory
@@ -87,8 +87,8 @@ class DuplicateVeteranChecker
 
     # Check if veteran is not found
     if v.nil?
-      Rails.logger.info("No veteran found. Aborting.")
-      return true
+      puts("No veteran found. Aborting.")
+      fail Interrupt
     end
 
     # Check if there in fact duplicate veterans. Can be duplicated with
@@ -100,27 +100,27 @@ class DuplicateVeteranChecker
     vet_ssn = v.ssn
     # checks if we get no vets or les sthan 2 vets}
     if dupe_vets.nil? || dupe_vets.count < 2
-      Rails.logger.info("No duplicate veteran found")
-      return true
+      puts("No duplicate veteran found")
+      fail Interrupt
     elsif dupe_vets.count > 2 # check if we get more than 2 vets back
-      Rails.logger.info("More than two veterans found. Aborting")
-      return true
+      puts("More than two veterans found. Aborting")
+      fail Interrupt
     else
       other_v = dupe_vets.first # grab first of the dupilicates and check if the duplicate veteran}
       if other_v.file_number == old_file_number
         other_v = dupe_vets.last # First is duplicate veteran so get 2nd
       end
-      if other_v.file_number.empty? || other_v.file_number == old_file_number # if correct veteran has wrong file number
-        Rails.logger.info("Both veterans have the same file_number or No file_number on the correct veteran. Aborting...")
-        return true
+      if other_v.file_number.empty? || other_v.file_number == old_file_number #if correct veteran has wrong file number
+        puts("Both veterans have the same file_number or No file_number on the correct veteran. Aborting...")
+        fail Interrupt
       elsif v.ssn.empty? && !other_v.ssn.empty?
         vet_ssn = other_v.ssn
       elsif v.ssn.empty? && other_v.ssn.empty?
-        Rails.logger.info("Neither veteran has a ssn and a ssn is needed to check the BGS file number. Aborting")
-        return true
+        puts("Neither veteran has a ssn and a ssn is needed to check the BGS file number. Aborting")
+        fail Interrupt
       elsif !other_v.ssn.empty? && v.ssn != other_v.ssn
-        Rails.logger.info("Veterans do not have the same ssn and a correct ssn needs to be chosen. Aborting.")
-        return true
+        puts("Veterans do not have the same ssn and a correct ssn needs to be chosen. Aborting.")
+        fail Interrupt
       else
         vet_ssn = v.ssn
       end
@@ -133,8 +133,8 @@ class DuplicateVeteranChecker
     file_number = BGSService.new.fetch_file_number_by_ssn(vet_ssn)
 
     if file_number != v2.file_number
-      Rails.logger.info("File number from BGS does not match correct veteran record. Aborting...")
-      return true
+      puts("File number from BGS does not match correct veteran record. Aborting...")
+      fail Interrupt
     end
 
     # The following code runs through all possible relations
