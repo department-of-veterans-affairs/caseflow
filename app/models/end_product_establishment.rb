@@ -375,6 +375,15 @@ class EndProductEstablishment < CaseflowRecord
     end
   end
 
+  def handle_inactive_status_on_sync!
+    if EndProduct::INACTIVE_STATUSES.include?(synced_status)
+      if synced_status == 'CAN'
+        reset_canceled_request_issues!
+      end
+      update!(synced_status: nil)
+    end
+  end
+
   private
 
   def status_type
@@ -600,5 +609,12 @@ class EndProductEstablishment < CaseflowRecord
 
   def generate_tracked_item_in_bgs
     BGSService.new.generate_tracked_items!(reference_id)
+  end
+end
+
+def reset_canceled_request_issues!
+  request_issues.each do |ri|
+    ri.update!(closed_status: nil, closed_at: nil)
+    ri.submit_for_processing!
   end
 end

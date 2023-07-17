@@ -32,6 +32,7 @@ class BatchProcessPriorityEpSync < BatchProcess
       epe = record.end_product_establishment
 
       begin
+        epe.handle_inactive_status_on_sync!
         epe.sync!
         epe.reload
 
