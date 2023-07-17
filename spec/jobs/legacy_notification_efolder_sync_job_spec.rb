@@ -126,6 +126,27 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
         expect(job.send(:ready_for_resync).pluck(:id)).to eq([])
       end
 
+      it "failed document uploads are still ready to sync" do
+        create(:vbms_uploaded_document,
+               appeal_id: appeals[4].id,
+               attempted_at: today,
+               last_submitted_at: today,
+               processed_at: today,
+               uploaded_to_vbms_at: nil,
+               appeal_type: "Appeal",
+               document_type: "BVA Case Notifications")
+
+        create(:notification,
+               appeals_id: appeals[4].vacols_id,
+               appeals_type: "LegacyAppeal",
+               event_date: today,
+               event_type: "Appeal docketed",
+               notification_type: "Email",
+               notified_at: Time.zone.now,
+               email_notification_status: "delivered")
+        expect(job.send(:ready_for_resync).pluck(:id)).to eq([])
+      end
+
       it "running the perform", bypass_cleaner: true do
         perform_enqueued_jobs { LegacyNotificationEfolderSyncJob.perform_later }
 

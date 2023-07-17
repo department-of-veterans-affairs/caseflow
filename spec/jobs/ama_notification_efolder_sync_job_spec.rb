@@ -128,6 +128,15 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                uploaded_to_vbms_at: nil,
                appeal_type: "Appeal",
                document_type: "BVA Case Notifications")
+
+        create(:notification,
+               appeals_id: appeals[4].uuid,
+               appeals_type: "Appeal",
+               event_date: today,
+               event_type: "Appeal docketed",
+               notification_type: "Email",
+               notified_at: Time.zone.now,
+               email_notification_status: "delivered")
         expect(job.send(:ready_for_resync).pluck(:id)).to eq([])
       end
     end
