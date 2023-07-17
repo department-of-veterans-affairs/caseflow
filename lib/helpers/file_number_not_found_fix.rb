@@ -27,8 +27,6 @@ class FileNumberNotFoundFix
     bulk_decision_docs_with_error.each do |decision_document|
       appeal = decision_document.appeal
 
-      return unless duplicate_vet?(appeal.veteran_file_number)
-
       single_record_fix(appeal, log_to_s3: false)
 
       decision_document.update(error: nil)
@@ -40,17 +38,14 @@ class FileNumberNotFoundFix
     create_log
   end
 
-  def duplicate_vet?(file_number)
-    DuplicateVeteranChecker.new.check_by_duplicate_veteran_file_number(file_number)
-  end
-
   def single_record_fix(appeal, log_to_s3: true)
     veteran = appeal.veteran
     bgs_file_number = fetch_file_number_from_bgs_service(veteran)
 
     # ensure that file number from bgs exists and is not already used
     return unless bgs_file_number
-    return if Veteran.exists?(file_number: bgs_file_number)
+    # ensure that there is no duplicate veteran.
+    return if Veteran.find_by(file_number: bgs_file_number).present?
 
     collections = FixfileNumberCollections.get_collections(veteran)
 
