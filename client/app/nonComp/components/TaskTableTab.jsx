@@ -37,6 +37,7 @@ class TaskTableTabUnconnected extends React.PureComponent {
       predefinedColumns: this.props.predefinedColumns,
       searchText,
       searchValue: searchText,
+      tabName: this.props.tabName
     };
   }
 
@@ -60,6 +61,9 @@ class TaskTableTabUnconnected extends React.PureComponent {
   claimantColumnHelper = () => {
     const { tabName } = this.state;
     const claimantColumnObject = claimantColumn();
+
+    console.log('in claimantColumnHelper');
+    console.log(tabName);
 
     if (tabName === 'incomplete') {
       claimantColumnObject.valueFunction = (task) => {

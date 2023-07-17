@@ -122,9 +122,13 @@ class BusinessLine < Organization
     # rubocop:disable Metrics/MethodLength
     def issue_type_count
       query_type_predicate = if query_type == :in_progress
-                               "AND tasks.status IN ('assigned', 'in_progress', 'on_hold')
-                               AND request_issues.closed_at IS NULL
-                               AND request_issues.ineligible_reason IS NULL"
+                               "AND tasks.status IN ('assigned', 'in_progress')
+                                AND request_issues.closed_at IS NULL
+                                AND request_issues.ineligible_reason IS NULL"
+                             elsif query_type == :incomplete
+                               "AND tasks.status = 'on_hold'
+                                AND request_issues.closed_at IS NULL
+                                AND request_issues.ineligible_reason IS NULL"
                              else
                                "AND tasks.status = 'completed'
                                 AND #{Task.arel_table[:closed_at].between(7.days.ago..Time.zone.now).to_sql}"
@@ -201,7 +205,8 @@ class BusinessLine < Organization
         participant_id_alias,
         veteran_ssn_alias,
         issue_types,
-        issue_types_lower
+        issue_types_lower,
+        appeal_unique_id_alias
       ]
     end
 
