@@ -8,6 +8,7 @@ SCHEDULED_JOBS = {
     "dependencies_check" => DependenciesCheckJob,
     "dependencies_report_service_log" => DependenciesReportServiceLogJob,
     "docket_range_job" => DocketRangeJob,
+    "duplicate_ep_remediation_job" => DuplicateEpRemediationJob,
     "etl_builder" => ETLBuilderJob,
     "fetch_hearing_locations_for_veterans_job" => FetchHearingLocationsForVeteransJob,
     "foreign_key_polymorphic_association_job" => ForeignKeyPolymorphicAssociationJob,

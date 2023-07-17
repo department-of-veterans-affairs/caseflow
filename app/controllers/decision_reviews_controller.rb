@@ -8,8 +8,10 @@ class DecisionReviewsController < ApplicationController
 
   delegate :in_progress_tasks,
            :in_progress_tasks_type_counts,
+           :in_progress_tasks_issue_type_counts,
            :completed_tasks,
            :completed_tasks_type_counts,
+           :completed_tasks_issue_type_counts,
            to: :business_line
 
   SORT_COLUMN_MAPPINGS = {
@@ -17,6 +19,7 @@ class DecisionReviewsController < ApplicationController
     "veteranParticipantIdColumn" => "veteran_participant_id",
     "veteranSsnColumn" => "veteran_ssn",
     "issueCountColumn" => "issue_count",
+    "issueTypesColumn" => "issue_types_lower",
     "daysWaitingColumn" => "tasks.assigned_at",
     "completedDateColumn" => "tasks.closed_at"
   }.freeze
@@ -80,7 +83,9 @@ class DecisionReviewsController < ApplicationController
   def task_filter_details
     {
       in_progress: in_progress_tasks_type_counts,
-      completed: completed_tasks_type_counts
+      completed: completed_tasks_type_counts,
+      in_progress_issue_types: in_progress_tasks_issue_type_counts,
+      completed_issue_types: completed_tasks_issue_type_counts
     }
   end
 
