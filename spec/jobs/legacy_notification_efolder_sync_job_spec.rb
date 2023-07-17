@@ -52,23 +52,15 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
     let(:first_run_vbms_document_ids) { [appeals[6].id, appeals[0].id, appeals[1].id, appeals[2].id, appeals[4].id] }
     let(:second_run_vbms_document_ids) { first_run_vbms_document_ids + [appeals[8].id, appeals[9].id, appeals[4].id] }
 
-    before(:all) do
-      LegacyNotificationEfolderSyncJob::BATCH_LIMIT = BATCH_LIMIT_SIZE
-      ensure_notification_events_exist
-    end
+    before(:all) { ensure_notification_events_exist }
+    before(:each) { stub_const("LegacyNotificationEfolderSyncJob::BATCH_LIMIT", BATCH_LIMIT_SIZE) }
 
     context "first run" do
       after(:all) { clean_up_after_threads }
 
-      it "get all legacy appeals that have been recently outcoded" do
+      it "get all legacy appeals that have been recently outcoded, never been synced, and must be resynced" do
         expect(job.send(:appeals_recently_outcoded)).to match_array(first_run_outcoded_appeals)
-      end
-
-      it "get all legacy appeals that have never been synced yet" do
         expect(job.send(:appeals_never_synced)).to match_array(first_run_never_synced_appeals)
-      end
-
-      it "get all legacy appeals that must be resynced" do
         expect(job.send(:ready_for_resync)).to eq([])
       end
 
