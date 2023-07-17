@@ -13,6 +13,7 @@
         decisionReviewQueueSsnColumn: FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: current_user)
       },
       baseTasksUrl: business_line.tasks_url,
+      businessLineConfig: business_line_config_options,
       taskFilterDetails: task_filter_details
     }
   }) %>

@@ -5,11 +5,23 @@ class BusinessLine < Organization
     "/decision_reviews/#{url}"
   end
 
+  def included_tabs
+    [:in_progress, :completed]
+  end
+
   # Example Params:
   # sort_order: 'desc',
   # sort_by: 'assigned_at',
   # filters: [],
   # search_query: 'Bob'
+  def incomplete_tasks(pagination_params = {})
+    QueryBuilder.new(
+      query_type: :incomplete,
+      query_params: pagination_params,
+      parent: self
+    ).build_query
+  end
+
   def in_progress_tasks(pagination_params = {})
     QueryBuilder.new(
       query_type: :in_progress,
@@ -24,6 +36,14 @@ class BusinessLine < Organization
       query_params: pagination_params,
       parent: self
     ).build_query
+  end
+
+  def incomplete_tasks_type_counts
+    QueryBuilder.new(query_type: :incomplete, parent: self).task_type_count
+  end
+
+  def incomplete_tasks_issue_type_counts
+    QueryBuilder.new(query_type: :incomplete, parent: self).issue_type_count
   end
 
   def in_progress_tasks_type_counts
@@ -57,11 +77,15 @@ class BusinessLine < Organization
     }.freeze
 
     TASKS_QUERY_TYPE = {
-      in_progress: "open",
+      incomplete: "on_hold",
+      in_progress: "active",
       completed: "recently_completed"
     }.freeze
 
     DEFAULT_ORDERING_HASH = {
+      incomplete: {
+        sort_by: :assigned_at
+      },
       in_progress: {
         sort_by: :assigned_at
       },
@@ -262,6 +286,10 @@ class BusinessLine < Organization
       "LEFT JOIN bgs_attorneys ON claimants.participant_id = bgs_attorneys.participant_id"
     end
 
+    def appeal_unique_id_alias
+      "uuid as external_appeal_id"
+    end
+
     # These values reflect the number of searchable fields in search_all_clause for where interpolation later
     def number_of_search_fields
       FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: RequestStore[:current_user]) ? 4 : 2
@@ -286,7 +314,7 @@ class BusinessLine < Organization
     end
 
     def group_by_columns
-      "tasks.id, veterans.participant_id, veterans.ssn, veterans.first_name, veterans.last_name, "\
+      "tasks.id, uuid, veterans.participant_id, veterans.ssn, veterans.first_name, veterans.last_name, "\
       "unrecognized_party_details.name, unrecognized_party_details.last_name, people.first_name, people.last_name, "\
       "veteran_is_not_claimant, bgs_attorneys.name"
     end
@@ -358,6 +386,14 @@ class BusinessLine < Organization
 
     def query_constraints
       {
+        incomplete: {
+          # TODO: Figure out if we need additional constraints for these like empty decision dates. Problem is
+          # Working that into this query in a reasonable way.
+          # Don't retrieve any tasks with closed issues or issues with ineligible reasons for incomplete
+          assigned_to: business_line_id,
+          "request_issues.closed_at": nil,
+          "request_issues.ineligible_reason": nil
+        },
         in_progress: {
           # Don't retrieve any tasks with closed issues or issues with ineligible reasons for in progress
           assigned_to: business_line_id,

@@ -6,12 +6,16 @@ class DecisionReviewsController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
   before_action :verify_veteran_record_access, only: [:show]
 
-  delegate :in_progress_tasks,
+  delegate :incomplete_tasks,
+           :incomplete_tasks_type_counts,
+           :incomplete_tasks_issue_type_counts,
+           :in_progress_tasks,
            :in_progress_tasks_type_counts,
            :in_progress_tasks_issue_type_counts,
            :completed_tasks,
            :completed_tasks_type_counts,
            :completed_tasks_issue_type_counts,
+           :included_tabs,
            to: :business_line
 
   SORT_COLUMN_MAPPINGS = {
@@ -82,14 +86,22 @@ class DecisionReviewsController < ApplicationController
 
   def task_filter_details
     {
+      incomplete: incomplete_tasks_type_counts,
       in_progress: in_progress_tasks_type_counts,
       completed: completed_tasks_type_counts,
+      incomplete_issue_types: incomplete_tasks_issue_type_counts,
       in_progress_issue_types: in_progress_tasks_issue_type_counts,
       completed_issue_types: completed_tasks_issue_type_counts
     }
   end
 
-  helper_method :task_filter_details, :business_line, :task
+  def business_line_config_options
+    {
+      tabs: included_tabs
+    }
+  end
+
+  helper_method :task_filter_details, :business_line, :task, :business_line_config_options
 
   private
 
@@ -115,6 +127,7 @@ class DecisionReviewsController < ApplicationController
     sort_by_column = SORT_COLUMN_MAPPINGS[allowed_params[Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM.to_sym]]
 
     tasks = case tab_name
+            when "incomplete" then incomplete_tasks(pagination_query_params(sort_by_column))
             when "in_progress" then in_progress_tasks(pagination_query_params(sort_by_column))
             when "completed" then completed_tasks(pagination_query_params(sort_by_column))
             else
@@ -138,6 +151,7 @@ class DecisionReviewsController < ApplicationController
 
   # TODO: authz rules for this space
   def verify_access
+    puts "in verify_access for business_line: #{business_line}"
     return false unless business_line
     return true if current_user.admin?
     return true if current_user.can?("Admin Intake")
