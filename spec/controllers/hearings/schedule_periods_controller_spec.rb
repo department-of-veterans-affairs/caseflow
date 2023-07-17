@@ -5,6 +5,12 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
   let!(:ro_schedule_period) { create(:ro_schedule_period) }
   let!(:judge_stuart) { create(:user, :with_vacols_judge_record, full_name: "Stuart Huels", css_id: "BVAHUELS") }
   let!(:judge_doris) { create(:user, :with_vacols_judge_record, full_name: "Doris Lamphere", css_id: "BVALAMPHERE") }
+  before(:all) do
+    # clean up is required as Hearing day ID is hard coded in the spreadsheet file.
+    # if for some reason the database's table pk is not reset then it will cause test failure.
+
+    clean_up_hearing_days
+  end
 
   shared_context "hearing_days" do
     let!(:hearing_days) do
@@ -121,7 +127,7 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
     context "judge assignment" do
       include_context "hearing_days"
 
-      it "stages hearing days for judge assignment", skip: "flake" do
+      it "stages hearing days for judge assignment" do
         base64_header = "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,"
         post :create, params: {
           schedule_period: {
@@ -229,5 +235,10 @@ RSpec.describe Hearings::SchedulePeriodsController, :all_dbs, type: :controller 
       }, as: :json
       expect(response.status).to eq 200
     end
+  end
+
+  def clean_up_hearing_days
+    HearingDay.delete_all
+    ActiveRecord::Base.connection.reset_pk_sequence!(HearingDay.table_name)
   end
 end
