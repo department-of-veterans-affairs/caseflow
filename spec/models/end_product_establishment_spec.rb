@@ -1440,34 +1440,33 @@ describe EndProductEstablishment, :postgres do
     end
   end
 
-  let!(:queued_end_product_establishment) do
-    EndProductEstablishment.create(
-      payee_code: "10",
-      source_id: 1,
-      source_type: "HigherLevelReview",
-      veteran_file_number: 1
-    )
-  end
-  let!(:non_queued_end_product_establishment) do
-    EndProductEstablishment.create(
-      payee_code: "10",
-      source_id: 2,
-      source_type: "HigherLevelReview",
-      veteran_file_number: 1
-    )
-  end
-  let!(:priority_end_product_sync_queue) do
-    PriorityEndProductSyncQueue.create(
-      batch_id: nil,
-      created_at: Time.zone.now,
-      end_product_establishment_id: queued_end_product_establishment.id,
-      error_messages: [],
-      last_batched_at: nil,
-      status: "NOT_PROCESSED"
-    )
-  end
-
-  context "#priority_end_product_sync_queue" do
+  describe "#priority_end_product_sync_queue" do
+    let!(:queued_end_product_establishment) do
+      EndProductEstablishment.create(
+        payee_code: "10",
+        source_id: 1,
+        source_type: "HigherLevelReview",
+        veteran_file_number: 1
+      )
+    end
+    let!(:non_queued_end_product_establishment) do
+      EndProductEstablishment.create(
+        payee_code: "10",
+        source_id: 2,
+        source_type: "HigherLevelReview",
+        veteran_file_number: 1
+      )
+    end
+    let!(:priority_end_product_sync_queue) do
+      PriorityEndProductSyncQueue.create(
+        batch_id: nil,
+        created_at: Time.zone.now,
+        end_product_establishment_id: queued_end_product_establishment.id,
+        error_messages: [],
+        last_batched_at: nil,
+        status: "NOT_PROCESSED"
+      )
+    end
     context "if the End Product Establishment is not enqueued in the Priority End Product Sync Queue" do
       it "will return nil" do
         expect(non_queued_end_product_establishment.priority_end_product_sync_queue).to eq(nil)
@@ -1476,12 +1475,38 @@ describe EndProductEstablishment, :postgres do
 
     context "if the End Product Establishment is enqueued in the Priority End Product Sync Queue" do
       it "will return the record that is enqueued to sync from the Priority End Product Sync Queue" do
-        expect(non_queued_end_product_establishment.priority_end_product_sync_queue).to eq(nil)
+        expect(queued_end_product_establishment.priority_end_product_sync_queue).to eq(priority_end_product_sync_queue)
       end
     end
   end
 
-  context "#priority_queued?" do
+  describe "#priority_queued?" do
+    let!(:queued_end_product_establishment) do
+      EndProductEstablishment.create(
+        payee_code: "10",
+        source_id: 1,
+        source_type: "HigherLevelReview",
+        veteran_file_number: 1
+      )
+    end
+    let!(:non_queued_end_product_establishment) do
+      EndProductEstablishment.create(
+        payee_code: "10",
+        source_id: 2,
+        source_type: "HigherLevelReview",
+        veteran_file_number: 1
+      )
+    end
+    let!(:priority_end_product_sync_queue) do
+      PriorityEndProductSyncQueue.create(
+        batch_id: nil,
+        created_at: Time.zone.now,
+        end_product_establishment_id: queued_end_product_establishment.id,
+        error_messages: [],
+        last_batched_at: nil,
+        status: "NOT_PROCESSED"
+      )
+    end
     context "if the End Product Establishment is not enqueued in the Priority End Product Sync Queue" do
       it "will return False" do
         expect(non_queued_end_product_establishment.priority_queued?).to eq(false)
@@ -1491,6 +1516,88 @@ describe EndProductEstablishment, :postgres do
     context "if the End Product Establishment is enqueued in the Priority End Product Sync Queue" do
       it "will return True" do
         expect(queued_end_product_establishment.priority_queued?).to eq(true)
+      end
+    end
+  end
+
+  describe "#handle_inactive_status_on_sync!" do
+    context "when an end product establishment has a synced_status of 'CAN' but VBMS has a status of 'CLR'" do
+      let!(:end_product_establishment) do
+        create(:end_product_establishment, :canceled_hlr_with_cleared_vbms_ext_claim)
+      end
+
+      let!(:review) do
+        end_product_establishment.source
+      end
+
+      let(:contention_reference_id) { "5678" }
+
+      let(:original_closed_at) { Time.zone.now - 1.hour }
+
+      let(:original_decision_sync_last_submitted_at) { Time.zone.now - 1.hour }
+
+      let(:original_decision_sync_submitted_at) { Time.zone.now - 1.hour }
+
+      let(:original_closed_status) { "end_product_canceled" }
+
+      let!(:request_issue) do
+        create(
+          :request_issue,
+          decision_review: review,
+          nonrating_issue_description: "some description",
+          nonrating_issue_category: "a category",
+          decision_date: 1.day.ago,
+          decision_sync_processed_at: Time.zone.now,
+          closed_at: original_closed_at,
+          closed_status: original_closed_status,
+          end_product_establishment: end_product_establishment,
+          contention_reference_id: contention_reference_id,
+          benefit_type: review.benefit_type,
+          decision_sync_last_submitted_at: original_decision_sync_last_submitted_at,
+          decision_sync_submitted_at: original_decision_sync_submitted_at
+        )
+      end
+
+      let!(:contention) do
+        Generators::Contention.build(
+          id: contention_reference_id,
+          claim_id: end_product_establishment.reference_id,
+          disposition: "allowed"
+        )
+      end
+
+      subject { end_product_establishment.handle_inactive_status_on_sync! }
+
+      before do
+        Timecop.freeze(Time.utc(2022, 1, 1, 12, 0, 0))
+      end
+
+      it "the closed_at will be set to NULL" do
+        expect(request_issue.closed_at).to eq(original_closed_at)
+        subject
+        request_issue.reload
+        expect(request_issue.closed_at).to eq(nil)
+      end
+
+      it "the closed_status will be set to NULL" do
+        expect(request_issue.closed_status).to eq(original_closed_status)
+        subject
+        request_issue.reload
+        expect(request_issue.closed_status).to eq(nil)
+      end
+
+      it "the decision_sync_last_submitted_at will be set to the current date/time" do
+        expect(request_issue.decision_sync_last_submitted_at).to eq(original_decision_sync_last_submitted_at)
+        subject
+        request_issue.reload
+        expect(request_issue.decision_sync_last_submitted_at).to eq(Time.zone.now)
+      end
+
+      it "the decision_sync_submitted_at will be set to the current date/time" do
+        expect(request_issue.decision_sync_submitted_at).to eq(original_decision_sync_submitted_at)
+        subject
+        request_issue.reload
+        expect(request_issue.decision_sync_submitted_at).to eq(Time.zone.now)
       end
     end
   end

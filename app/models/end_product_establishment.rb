@@ -214,6 +214,7 @@ class EndProductEstablishment < CaseflowRecord
     RedisMutex.with_lock("EndProductEstablishment:#{id}", block: 60, expire: 100) do    # key => "EndProductEstablishment:id"
       # There is no need to sync end_product_status if the status
       # is already inactive since an EP can never leave that state
+      reload
       return true unless status_active?
 
       fail EstablishedEndProductNotFound, id unless result
@@ -377,7 +378,7 @@ class EndProductEstablishment < CaseflowRecord
 
   def handle_inactive_status_on_sync!
     if EndProduct::INACTIVE_STATUSES.include?(synced_status)
-      if synced_status == 'CAN'
+      if status_cancelled?
         reset_canceled_request_issues!
       end
       update!(synced_status: nil)
@@ -610,11 +611,21 @@ class EndProductEstablishment < CaseflowRecord
   def generate_tracked_item_in_bgs
     BGSService.new.generate_tracked_items!(reference_id)
   end
-end
 
-def reset_canceled_request_issues!
-  request_issues.each do |ri|
-    ri.update!(closed_status: nil, closed_at: nil)
-    ri.submit_for_processing!
+  def reset_canceled_request_issues!
+    canceled_issues = request_issues.select { |ri| ri.closed_status == "end_product_canceled" }
+    canceled_issues.each do |ri|
+      next unless ri.contention_disposition && ri.contention
+
+      prev_closed_at = ri.closed_at
+      prev_closed_status = ri.closed_status
+      ri.update!(closed_status: nil, closed_at: nil)
+      ri.submit_for_processing!
+      ri.reload
+      Rails.logger.info("InactiveEPECorrectionSync::Claim ID: #{ri.end_product_establishment.reference_id}.  "\
+      "Previous synded_status: #{ri.end_product_establishment.synced_status}.  "\
+      "Request Issue ID: #{ri.id}.  Previous closed_at: #{prev_closed_at}.  "\
+      "Previous closed_status: #{prev_closed_status}.")
+    end
   end
 end
