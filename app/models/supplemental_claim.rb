@@ -13,6 +13,16 @@ class SupplementalClaim < ClaimReview
 
   attr_accessor :appeal_split_process
 
+  delegate :power_of_attorney, to: :claimant
+  delegate :representative_name,
+           :representative_type,
+           :representative_address,
+           :representative_email_address,
+           :poa_last_synced_at,
+           :update_cached_attributes!,
+           :save_with_updated_bgs_record!,
+           to: :power_of_attorney, allow_nil: true
+
   def ui_hash
     Intake::SupplementalClaimSerializer.new(self).serializable_hash[:data][:attributes]
   end

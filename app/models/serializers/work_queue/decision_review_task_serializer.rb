@@ -58,9 +58,20 @@ class WorkQueue::DecisionReviewTaskSerializer
 
     {
       id: decision_review(object).external_id,
+
+      uuid: decision_review(object).uuid,
       isLegacyAppeal: false,
       issueCount: issue_count(object),
       activeRequestIssues: skip_acquiring_request_issues || request_issues(object).active.map(&:serialize)
+    }
+  end
+
+  attribute :power_of_attorney do |_object|
+    {
+      # representative_type: decision_review(object).representative_type,
+      # representative_name: decision_review(object).representative_name,
+      # representative_address: decision_review(object).representative_address,
+      # representative_email_address: decision_review(object).representative_email_address
     }
   end
 

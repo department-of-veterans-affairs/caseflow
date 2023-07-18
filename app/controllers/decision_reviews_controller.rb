@@ -76,6 +76,14 @@ class DecisionReviewsController < ApplicationController
     @task ||= Task.includes([:appeal, :assigned_to]).find(task_id)
   end
 
+  def appeal
+    @appeal ||= Appeal.find_by_uuid(url_appeal_uuid) || Appeal.find(task.appeal_id)
+  end
+
+  def url_appeal_uuid
+    params[:appeal_id]
+  end
+
   def business_line
     @business_line ||= BusinessLine.find_by(url: business_line_slug)
   end
@@ -87,6 +95,10 @@ class DecisionReviewsController < ApplicationController
       in_progress_issue_types: in_progress_tasks_issue_type_counts,
       completed_issue_types: completed_tasks_issue_type_counts
     }
+  end
+
+  def power_of_attorney
+    render json: power_of_attorney_data
   end
 
   helper_method :task_filter_details, :business_line, :task
@@ -160,6 +172,8 @@ class DecisionReviewsController < ApplicationController
 
   def allowed_params
     params.permit(
+      :appeal,
+      :appeal_id,
       :decision_review_business_line_slug,
       :decision_review,
       :decision_date,
@@ -173,5 +187,16 @@ class DecisionReviewsController < ApplicationController
       :page,
       decision_issues: [:description, :disposition, :request_issue_id]
     )
+  end
+
+  def power_of_attorney_data
+    {
+      # representative_type: appeal.representative_type,
+      # representative_name: appeal.representative_name,
+      # representative_address: appeal.representative_address,
+      # representative_email_address: appeal.representative_email_address
+      # representative_tz: task.representative_tz,
+      # poa_last_synced_at: task.poa_last_synced_at
+    }
   end
 end
