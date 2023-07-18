@@ -1,4 +1,4 @@
-Resolves #{jira issue link}
+Resolves [Jira Issue Title](https://jira.devops.va.gov/browse/JIRA-12345)
 
 # Description
 Please explain the changes you made here.
@@ -19,7 +19,7 @@ Please explain the changes you made here.
  ---|---
 
 ## Storybook Story
-*For Frontend (Presentationa) Components*
+*For Frontend (Presentation) Components*
 * [ ] Add a [Storybook](https://github.com/department-of-veterans-affairs/caseflow/wiki/Documenting-React-Components-with-Storybook) file alongside the component file (e.g. create `MyComponent.stories.js` alongside `MyComponent.jsx`)
 * [ ] Give it a title that reflects the component's location within the overall Caseflow hierarchy
 * [ ] Write a separate story (within the same file) for each discrete variation of the component
