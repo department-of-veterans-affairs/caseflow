@@ -15,9 +15,9 @@ namespace :db do
           bfcurloc = VACOLS::Staff.find_by(sdomainid: user.css_id).slogid
 
           # Changes location of vacols based on if you want a hearing task or only a distribution task
-          if task_type && task_type == "HEARINGTASK"
+          if task_type == "HEARINGTASK"
             bfcurloc = 57
-          elsif task_type && task_type == "DISTRIBUTIONTASK"
+          elsif task_type == "DISTRIBUTIONTASK"
             bfcurloc = 81
           end
 
