@@ -27,11 +27,13 @@ class MailTask < Task
       false
     end
 
-    def descendants_routing_options(user: nil, appeal: nil)
+    def descendant_routing_options(user: nil, appeal: nil)
       filtered = MailTask.descendants.select { |sc| sc.allow_creation?(user: user, appeal: appeal) }
       sorted = filtered.sort_by(&:label).map { |subclass| { value: subclass.name, label: subclass.label } }
       sorted
     end
+
+    alias subclass_routing_options descendant_routing_options
 
     def allow_creation?(_user = nil, _appeal = nil)
       true
