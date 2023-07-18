@@ -88,6 +88,30 @@ FactoryBot.define do
       end
     end
 
+    trait :with_unscheduled_hearing do
+      after(:create) do |task|
+        appeal = task.appeal
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        distro_task = DistributionTask.find_or_create_by!(appeal: appeal, parent: root_task, assigned_to: Bva.singleton)
+        ScheduleHearingTask.create!(appeal: appeal, parent: distro_task, assigned_to: Bva.singleton)
+      end
+    end
+
+    trait :with_scheduled_hearing do
+      after(:create) do |task|
+        appeal = task.appeal
+        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+        distro_task = DistributionTask.find_or_create_by!(appeal: appeal, parent: root_task, assigned_to: Bva.singleton)
+        schedule_hearing_task = ScheduleHearingTask.create!(appeal: appeal, parent: distro_task,
+                                                            assigned_to: Bva.singleton)
+        schedule_hearing_task.update(status: "completed", closed_at: Time.zone.now)
+        distro_task.update!(status: "on_hold")
+        create(:hearing, disposition: nil, judge: nil, appeal: appeal)
+        AssignHearingDispositionTask.create!(appeal: appeal, parent: schedule_hearing_task.parent,
+                                             assigned_to: Bva.singleton)
+      end
+    end
+
     # Colocated tasks for Legacy appeals
     factory :colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
       # don't expect to have a parent for LegacyAppeals
@@ -627,6 +651,16 @@ FactoryBot.define do
           User.find_by_css_id("LIT_SUPPORT_ATTY_1") ||
             create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1")
         end
+      end
+
+      factory :hearing_postponement_request_mail_task_without_hearing, class: Task do
+        parent { create(:distribution_task, :with_unscheduled_hearing, appeal: appeal) }
+        assigned_to { MailTeam.singleton }
+      end
+
+      factory :hearing_postponement_request_mail_task_with_hearing, class: Task do
+        parent { create(:distribution_task, :with_scheduled_hearing, appeal: appeal) }
+        assigned_to { MailTeam.singleton }
       end
     end
   end
