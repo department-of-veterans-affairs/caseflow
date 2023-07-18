@@ -191,10 +191,10 @@ class DecisionReviewsController < ApplicationController
 
   def power_of_attorney_data
     {
-      # representative_type: appeal.representative_type,
-      # representative_name: appeal.representative_name,
-      # representative_address: appeal.representative_address,
-      # representative_email_address: appeal.representative_email_address
+      representative_type: appeal.representative_type,
+      representative_name: appeal.representative_name,
+      representative_address: appeal.representative_address,
+      representative_email_address: appeal.representative_email_address
       # representative_tz: task.representative_tz,
       # poa_last_synced_at: task.poa_last_synced_at
     }

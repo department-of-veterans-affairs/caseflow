@@ -34,6 +34,10 @@ class WorkQueue::DecisionReviewTaskSerializer
     decision_review(object).request_issues
   end
 
+  def self.power_of_attorney(object)
+    decision_review(object).power_of_attorney
+  end
+
   def self.issue_count(object)
     object[:issue_count] || request_issues(object).active_or_ineligible.size
   end
@@ -55,10 +59,9 @@ class WorkQueue::DecisionReviewTaskSerializer
     # If :issue_count is present then we're hitting this serializer from a Decision Review
     # queue table, and we do not need to gather request issues as they are not used there.
     skip_acquiring_request_issues = object[:issue_count]
-
+    # byebug
     {
       id: decision_review(object).external_id,
-
       uuid: decision_review(object).uuid,
       isLegacyAppeal: false,
       issueCount: issue_count(object),
@@ -67,11 +70,12 @@ class WorkQueue::DecisionReviewTaskSerializer
   end
 
   attribute :power_of_attorney do |_object|
+    # byebug
     {
-      # representative_type: decision_review(object).representative_type,
-      # representative_name: decision_review(object).representative_name,
-      # representative_address: decision_review(object).representative_address,
-      # representative_email_address: decision_review(object).representative_email_address
+      representative_type: power_of_attorney(_object)&.representative_type,
+      representative_name: power_of_attorney(_object)&.representative_name,
+      representative_address: power_of_attorney(_object)&.representative_address,
+      representative_email_address: power_of_attorney(_object)&.representative_email_address
     }
   end
 

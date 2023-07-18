@@ -11,7 +11,7 @@ class HigherLevelReview < ClaimReview
 
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
-  delegate :power_of_attorney, to: :claimant
+  delegate :power_of_attorney, to: :claimant, allow_nil: true
   delegate :representative_name,
            :representative_type,
            :representative_address,

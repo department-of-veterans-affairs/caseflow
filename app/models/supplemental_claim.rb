@@ -13,7 +13,7 @@ class SupplementalClaim < ClaimReview
 
   attr_accessor :appeal_split_process
 
-  delegate :power_of_attorney, to: :claimant
+  delegate :power_of_attorney, to: :claimant, allow_nil: true
   delegate :representative_name,
            :representative_type,
            :representative_address,
