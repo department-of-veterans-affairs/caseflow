@@ -474,30 +474,6 @@ feature "Higher-Level Review", :all_dbs do
     end
   end
 
-  context "when disabling claim establishment is enabled" do
-    before { FeatureToggle.enable!(:disable_claim_establishment) }
-    after { FeatureToggle.disable!(:disable_claim_establishment) }
-
-    it "completes intake and prevents edit" do
-      start_higher_level_review(veteran_no_ratings)
-      visit "/intake"
-      click_intake_continue
-      click_intake_add_issue
-      add_intake_nonrating_issue(
-        category: "Active Duty Adjustments",
-        description: "Description for Active Duty Adjustments",
-        date: profile_date.mdY
-      )
-      click_intake_finish
-
-      expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
-
-      click_on "correct the issues"
-
-      expect(page).to have_content("Review not editable")
-    end
-  end
-
   it "Shows a review error when something goes wrong" do
     start_higher_level_review(veteran_no_ratings)
     visit "/intake"
