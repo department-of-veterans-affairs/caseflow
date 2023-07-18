@@ -11,7 +11,7 @@ namespace :db do
     class LegacyAppealFactory
       class << self
         # Stamping out appeals like mufflers!
-        def stamp_out_legacy_appeals(num_appeals_to_create, file_number, user, docket_number, task_type)
+        def stamp_out_legacy_appeals(num_appeals_to_create, file_number, user, attorney, docket_number, task_type)
           bfcurloc = VACOLS::Staff.find_by(sdomainid: user.css_id).slogid
 
           # Changes location of vacols based on if you want a hearing task or only a distribution task
@@ -59,7 +59,7 @@ namespace :db do
             )
           end.compact
 
-          build_the_cases_in_caseflow(cases, task_type, user)
+          build_the_cases_in_caseflow(cases, task_type, user, attorney)
         end
 
         def custom_folder_attributes(veteran, docket_number)
@@ -105,27 +105,28 @@ namespace :db do
             parent: hearing_task,
             assigned_to: Bva.singleton
           )
-          STDOUT.puts("You have created a Hearing Task")
+          $stdout.puts("You have created a Hearing Task")
         end
 
         ########################################################
         # Creates Attorney Tasks for the LegacyAppeals that have just been generated
         # Scenario 4
-        def create_attorney_task_for_legacy_appeals(_appeal, _user)
+        def create_attorney_task_for_legacy_appeals(appeal, user, attorney)
           # Will need a judge user for judge decision review task and an attorney user for the subsequent Attorney Task
-          # root_task = RootTask.find_or_create_by!(appeal: appeal)
+          root_task = RootTask.find_or_create_by!(appeal: appeal)
 
-          # review_task = JudgeDecisionReviewTask.create!(
-          #   appeal: appeal,
-          #   parent: root_task,
-          #   assigned_to: user
-          # )
-          # AttorneyTask.create!(
-          #   appeal: appeal,
-          #   parent: review_task,
-          #   assigned_to: attorney
-          # )
-          STDOUT.puts("You have created an Attorney task")
+          review_task = JudgeDecisionReviewTask.create!(
+            appeal: appeal,
+            parent: root_task,
+            assigned_to: user
+          )
+          AttorneyTask.create!(
+            appeal: appeal,
+            parent: review_task,
+            assigned_to: attorney,
+            assigned_by: user
+          )
+          $stdout.puts("You have created an Attorney task")
         end
 
         ########################################################
@@ -140,7 +141,7 @@ namespace :db do
             parent: root_task,
             assigned_to: user
           )
-          STDOUT.puts("You have created a Judge task")
+          $stdout.puts("You have created a Judge task")
         end
 
         ########################################################
@@ -155,14 +156,14 @@ namespace :db do
             parent: root_task,
             assigned_to: user
           )
-          STDOUT.puts("You have created a Review task")
+          $stdout.puts("You have created a Review task")
         end
 
-        def create_task(task_type, appeal, user)
+        def create_task(task_type, appeal, user, attorney)
           if task_type == "HEARINGTASK"
             create_hearing_task_for_legacy_appeals(appeal)
-          elsif task_type == "ATTORNEYTASK"
-            create_attorney_task_for_legacy_appeals(appeal, user)
+          elsif task_type == "ATTORNEYTASK" && user.judge_in_vacols? && attorney.attorney_in_vacols?
+            create_attorney_task_for_legacy_appeals(appeal, user, attorney)
           elsif task_type == "JUDGETASK" && user.judge_in_vacols?
             create_judge_task_for_legacy_appeals(appeal, user)
           elsif task_type == "REVIEWTASK" && user.judge_in_vacols?
@@ -176,7 +177,7 @@ namespace :db do
         # AND
         #
         # Create Postgres Request Issues based on VACOLS Issues
-        def build_the_cases_in_caseflow(cases, task_type, user)
+        def build_the_cases_in_caseflow(cases, task_type, user, attorney)
           vacols_ids = cases.map(&:bfkey)
 
           issues = VACOLS::CaseIssue.where(isskey: vacols_ids).group_by(&:isskey)
@@ -186,7 +187,7 @@ namespace :db do
             end.save!
             if TASK_CREATION
               appeal = LegacyAppeal.find_or_initialize_by(vacols_id: case_record.bfkey)
-              create_task(task_type, appeal, user)
+              create_task(task_type, appeal, user, attorney)
             end
           end
         end
@@ -216,15 +217,28 @@ namespace :db do
       end
 
       # request CSS ID for task assignment
-      STDOUT.puts("Enter the CSS ID of the user that you want to assign these appeals to")
-      STDOUT.puts("Hint: an Attorney User for demo env is BVASCASPER1, and UAT is TCASEY_JUDGE and CGRAHAM_JUDGE")
-      css_id = STDIN.gets.chomp.upcase
+      $stdout.puts("Enter the CSS ID of the user that you want to assign these appeals to")
+      $stdout.puts("Hint: an Attorney User for demo env is BVASCASPER1, and UAT is TCASEY_JUDGE and CGRAHAM_JUDGE")
+      css_id = $stdin.gets.chomp.upcase
       user = User.find_by_css_id(css_id)
 
       if TASK_CREATION
-        STDOUT.puts("Which type of tasks do you want to add to these Legacy Appeals?")
-        STDOUT.puts("Hint: Options include 'HearingTask', 'JudgeTask', 'AttorneyTask', 'ReviewTask', and 'DistributionTask'")
-        task_type = STDIN.gets.chomp.upcase
+        $stdout.puts("Which type of tasks do you want to add to these Legacy Appeals?")
+        $stdout.puts("Hint: Options include 'HearingTask', 'JudgeTask', 'AttorneyTask', 'ReviewTask', and 'DistributionTask'")
+        task_type = $stdin.gets.chomp.upcase
+      end
+
+      if task_type == "ATTORNEYTASK" && user.judge_in_vacols?
+        $stdout.puts("Which attorney do you want to assign the Attorney Task to?")
+        $stdout.puts("Hint: Options include 'BVASCASPER1', 'BVARERDMAN', 'BVALSHIELDS'")
+        css_id = $stdin.gets.chomp.upcase
+        attorney = User.find_by_css_id(css_id)
+      elsif task_type == "ATTORNEYTASK" && user.attorney_in_vacols?
+        $stdout.puts("Which Judge do you want to assign the Judge Decision Review Task to?")
+        $stdout.puts("Hint: Options include 'BVAEBECKER', 'BVAKKEELING', 'BVAAABSHIRE'")
+        attorney = user
+        css_id = $stdin.gets.chomp.upcase
+        user = User.find_by_css_id(css_id)
       end
 
       fail ActiveRecord::RecordNotFound unless user
@@ -234,9 +248,9 @@ namespace :db do
 
       veterans_with_like_45_appeals.each do |file_number|
         docket_number += 1
-        LegacyAppealFactory.stamp_out_legacy_appeals(5, file_number, user, docket_number, task_type)
+        LegacyAppealFactory.stamp_out_legacy_appeals(5, file_number, user, attorney, docket_number, task_type)
       end
-      STDOUT.puts("You have created Legacy Appeals")
+      $stdout.puts("You have created Legacy Appeals")
       # veterans_with_250_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals(250, file_number, user) }
     end
   end
