@@ -100,8 +100,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
     appeal_ids.in_groups_of(1000, false).flat_map do |ids|
       Appeal.find_by_sql(
         <<-SQL
-          SELECT appeals.*
-          FROM appeals
+          SELECT appeals.* FROM appeals
           JOIN tasks t ON appeals.id = t.appeal_id
           AND t.appeal_type = 'Appeal'
           JOIN (#{appeals_on_latest_notifications(ids)}) AS notifs ON
@@ -113,8 +112,7 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
           OR
             notifs.created_at > vbms_uploads.attempted_at
           )
-          AND t.TYPE = 'RootTask'
-          AND t.status NOT IN ('completed', 'cancelled')
+          AND t.TYPE = 'RootTask' AND t.status NOT IN ('completed', 'cancelled')
           GROUP BY appeals.id
         SQL
       )

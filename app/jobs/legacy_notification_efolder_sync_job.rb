@@ -99,11 +99,9 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   # Return: Array of active appeals
   def get_appeals_from_prev_synced_ids(appeal_ids)
     appeal_ids.in_groups_of(1000, false).flat_map do |ids|
-      LegacyAppeal.where(id: RootTask.open.where(appeal_type: "LegacyAppeal").pluck(:appeal_id))
-        .find_by_sql(
-          <<-SQL
-              SELECT la.*
-              FROM legacy_appeals la
+      LegacyAppeal.find_by_sql(
+        <<-SQL
+              SELECT la.* FROM legacy_appeals la
               JOIN tasks t ON la.id = t.appeal_id
               AND t.appeal_type = 'LegacyAppeal'
               JOIN (#{appeals_on_latest_notifications(ids)}) AS notifs ON
@@ -115,11 +113,10 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
               OR
                 notifs.created_at > vbms_uploads.attempted_at
               )
-              AND t.TYPE = 'RootTask'
-              AND t.status NOT IN ('completed', 'cancelled')
+              AND t.type = 'RootTask' AND t.status NOT IN ('completed', 'cancelled')
               GROUP BY la.id
-          SQL
-        )
+        SQL
+      )
     end
   end
 
