@@ -270,7 +270,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def vha_employee?
-    member_of_organization?(BusinessLine.find_by(url: "vha"))
+    # member_of_organization?(BusinessLine.find_by(url: "vha"))
+    member_of_organization?(VhaBusinessLine.singleton)
   end
 
   def organization_queue_user?

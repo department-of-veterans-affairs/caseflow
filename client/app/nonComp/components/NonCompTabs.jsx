@@ -42,9 +42,6 @@ const NonCompTabsUnconnected = (props) => {
   const findTab = tabArray.findIndex((tabName) => tabName === currentTabName);
   const getTabByIndex = findTab === -1 ? 0 : findTab;
 
-  // TODO: Add the correct description into copy.json here
-  const incompleteDescription = 'Placeholder description ';
-
   const ALL_TABS = {
     incomplete: {
       label: 'Incomplete tasks',
@@ -54,7 +51,7 @@ const NonCompTabsUnconnected = (props) => {
         tabPaginationOptions={tabPaginationOptions}
         filterableTaskTypes={props.taskFilterDetails.incomplete}
         filterableTaskIssueTypes={props.taskFilterDetails.incomplete_issue_types}
-        description={incompleteDescription}
+        description={COPY.VHA_INCOMPLETE_TAB_DESCRIPTION}
         tabName="incomplete"
         predefinedColumns={{ includeDaysWaiting: true,
           defaultSortIdx: 3 }} />

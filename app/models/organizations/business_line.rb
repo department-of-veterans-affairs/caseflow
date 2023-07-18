@@ -9,6 +9,9 @@ class BusinessLine < Organization
     [:in_progress, :completed]
   end
 
+  # TODO: Figure out why VhaBusinessLine is not being preloaded into controllers and other models.
+  # self.inheritance_column = "type"
+
   # Example Params:
   # sort_order: 'desc',
   # sort_by: 'assigned_at',

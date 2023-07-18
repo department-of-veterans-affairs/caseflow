@@ -9,7 +9,7 @@ describe VhaMembershipRequestMailBuilder, :postgres do
   end
 
   let(:camo_org) { VhaCamo.singleton }
-  let(:vha_business_line) { BusinessLine.find_by(url: "vha") }
+  let(:vha_business_line) { VhaBusinessLine.singleton }
   let(:requestor) { create(:user, full_name: "Alice", email: "alice@test.com", css_id: "ALICEREQUEST") }
   let(:membership_requests) do
     [

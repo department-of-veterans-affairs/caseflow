@@ -98,7 +98,7 @@ class WorkQueue::DecisionReviewTaskSerializer
   end
 
   attribute :external_appeal_id do |object|
-    object[:external_appeal_id] || object.appeal.external_id
+    object[:external_appeal_id] || decision_review(object).uuid
   end
 
   attribute :appeal_type

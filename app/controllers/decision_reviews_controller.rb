@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# TODO: Make sure this actually loads the stupid child class since it's failing for some reason.
+# Figure out if there's a better way to make sure this is loaded so that BusinessLine.find_by(url: "vha") works
+require_dependency "vha_business_line"
+
 class DecisionReviewsController < ApplicationController
   include GenericTaskPaginationConcern
 
@@ -81,7 +85,12 @@ class DecisionReviewsController < ApplicationController
   end
 
   def business_line
-    @business_line ||= BusinessLine.find_by(url: business_line_slug)
+    # @business_line = if business_line_slug == "vha"
+    #                    VhaBusinessLine.first
+    #                  else
+    #                    BusinessLine.find_by(url: business_line_slug)
+    #                  end
+    @business_line ||= ::BusinessLine.find_by(url: business_line_slug)
   end
 
   def task_filter_details
