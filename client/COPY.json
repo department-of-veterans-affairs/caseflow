@@ -810,6 +810,7 @@
   "EXTENSION_REQUEST_MAIL_TASK_LABEL": "Extension request",
   "FOIA_REQUEST_MAIL_TASK_LABEL": "FOIA request",
   "HEARING_RELATED_MAIL_TASK_LABEL": "Hearing-related",
+  "HEARING_POSTPONEMENT_REQUEST_MAIL_TASK_LABEL": "Hearing postponement request",
   "OTHER_MOTION_MAIL_TASK_LABEL": "Other motion",
   "POWER_OF_ATTORNEY_MAIL_TASK_LABEL": "Power of attorney-related",
   "PRIVACY_ACT_REQUEST_MAIL_TASK_LABEL": "Privacy act request",
