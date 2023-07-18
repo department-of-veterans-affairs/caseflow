@@ -55,6 +55,29 @@ import Inbox from 'app/inbox';
 import Explain from 'app/explain';
 import MPISearch from 'app/mpi/MPISearch';
 import Admin from 'app/admin';
+import { datadogRum } from '@datadog/browser-rum';
+
+const environment = process.env.NODE_ENV === 'production' ? 'production'
+  : process.env.NODE_ENV === 'demo' ? 'demo'
+  : process.env.NODE_ENV === 'test' ? 'test'
+  : 'development';
+
+const datadogEnv = environment === 'production' ? '<%= Rails.deploy_env %>' : environment;
+
+datadogRum.init({
+  applicationId: '1ac96c4f-a7e3-4af0-bac3-f9244d0b19b5',
+  clientToken: 'pub906aa4183ac61b33cad8ddcdfa15f3c5',
+  site: 'ddog-gov.com',
+  service: 'caseflow-apm-metrics',
+  env: datadogEnv,
+  version: '1.0.0',
+  sessionSampleRate: 100,
+  sessionReplaySampleRate: 20,
+  trackUserInteractions: true,
+  trackResources: true,
+  trackLongTasks: true,
+  defaultPrivacyLevel: 'mask-user-input'
+});
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
