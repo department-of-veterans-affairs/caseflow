@@ -8,7 +8,8 @@ Please explain the changes you made here.
 - [ ] Code compiles correctly
 
 ## Testing Plan
-1. Go to #{jira issue link} or list them below
+<!-- Change JIRA-12345 to reflect the URL of the location of the test plan(s) for this PR -->
+1. Go to [Jira Issue/Test Plan Link](https://jira.devops.va.gov/browse/JIRA-12345) or list them below
 
 - [ ] For feature branches merging into master: Was this deployed to UAT?
 
