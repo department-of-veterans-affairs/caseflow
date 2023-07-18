@@ -655,12 +655,12 @@ FactoryBot.define do
 
       factory :hearing_postponement_request_mail_task_without_hearing, class: HearingPostponementRequestMailTask do
         parent { create(:distribution_task, :with_unscheduled_hearing, appeal: appeal) }
-        assigned_to { MailTeam.singleton }
+        assigned_to { HearingAdmin.singleton }
       end
 
       factory :hearing_postponement_request_mail_task_with_hearing, class: HearingPostponementRequestMailTask do
         parent { create(:distribution_task, :with_scheduled_hearing, appeal: appeal) }
-        assigned_to { MailTeam.singleton }
+        assigned_to { HearingAdmin.singleton }
       end
     end
   end
