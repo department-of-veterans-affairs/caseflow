@@ -182,7 +182,7 @@ Run dev setup scripts in Caseflow repo
         4. save and quit by typing `:x`
     5. Configure build opts for gem `therubyracer`:
         1. `bundle config build.libv8 --with-system-v8`
-        2. `bundle config build.therubyracer --with-v8-dir=$(brew --prefix v8@3.15`
+        2. `bundle config build.therubyracer --with-v8-dir=$(brew --prefix v8@3.15)`
     6. run ```./scripts/dev_env_setup_step2.sh```
   If you get a permission error while running gem install or bundle install, **do not run using sudo.**
   Set the permissions back to you for every directory under /.rbenv
