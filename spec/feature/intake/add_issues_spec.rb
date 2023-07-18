@@ -158,6 +158,20 @@ feature "Intake Add Issues Page", :all_dbs do
           expect(find("#is-predocket-needed_false", visible: false).checked?).to eq(false)
           expect(page).to have_content(COPY::VHA_PRE_DOCKET_ISSUE_BANNER)
         end
+
+      context "when the veteran does not have a POA"
+        before { FeatureToggle.enable!(:hlr_sc_unrecognized_claimants) }
+        after { FeatureToggle.disable!(:hlr_sc_unrecognized_claimants) }
+
+        let(:veteran) { create(:veteran, participant_id: "NO_POA111111113", file_number: "111111113") }
+
+        scenario "the correct text displays for VHA" do
+          start_claim_review(:higher_level_review, benefit_type: "vha", veteran: veteran)
+          visit "/intake"
+          click_intake_continue
+          expect(page).to have_current_path("/intake/add_issues")
+          expect(page).to have_content(COPY::VHA_NO_POA)
+        end
       end
     end
 
