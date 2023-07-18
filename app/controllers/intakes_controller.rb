@@ -99,6 +99,7 @@ class IntakesController < ApplicationController
       userCanIntakeAppeals: current_user.can_intake_appeals?,
       serverIntake: intake_ui_hash,
       dropdownUrls: dropdown_urls,
+      applicationUrls: application_urls,
       page: "Intake",
       feedbackUrl: feedback_url,
       buildDate: build_date,

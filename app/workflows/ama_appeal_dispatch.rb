@@ -4,14 +4,11 @@ class AmaAppealDispatch
   include ActiveModel::Model
   include DecisionDocumentValidator
 
-  def initialize(appeal:, params:, user:)
-    @appeal = appeal
+  def initialize(appeal:, params:, user:, mail_package: nil)
     @params = params.merge(appeal_id: appeal.id, appeal_type: "Appeal")
+    @appeal = appeal
     @user = user
-    @citation_number = params[:citation_number]
-    @decision_date = params[:decision_date]
-    @redacted_document_location = params[:redacted_document_location]
-    @file = params[:file]
+    @mail_package = mail_package
   end
 
   def call
@@ -27,8 +24,23 @@ class AmaAppealDispatch
 
   private
 
-  attr_reader :appeal, :params, :user, :success, :citation_number,
-              :decision_date, :redacted_document_location, :file
+  attr_reader :params, :appeal, :user, :mail_package, :success
+
+  def citation_number
+    params[:citation_number]
+  end
+
+  def decision_date
+    params[:decision_date]
+  end
+
+  def redacted_document_location
+    params[:redacted_document_location]
+  end
+
+  def file
+    params[:file]
+  end
 
   def dispatch_tasks
     @dispatch_tasks ||= BvaDispatchTask.not_cancelled.where(appeal: appeal, assigned_to: user)
@@ -73,7 +85,7 @@ class AmaAppealDispatch
   end
 
   def create_decision_document_and_submit_for_processing!(params)
-    DecisionDocument.create!(params).tap(&:submit_for_processing!)
+    DecisionDocument.create_document!(params, mail_package).tap(&:submit_for_processing!)
   end
 
   def complete_dispatch_task!

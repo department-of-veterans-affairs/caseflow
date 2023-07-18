@@ -26,6 +26,7 @@ Rails.application.routes.draw do
       resources :appeals, only: :index
       resources :jobs, only: :create
       post 'mpi', to: 'mpi#veteran_updates'
+      post 'va_notify_update', to: 'va_notify#notifications_update'
     end
     namespace :v2 do
       resources :appeals, only: :index
@@ -70,13 +71,16 @@ Rails.application.routes.draw do
         post 'upload_document', to: 'upload_vbms_document#create'
         get 'user', to: 'users#index'
         get 'veterans', to: 'veterans#details'
+        post 'addresses/validate', to: 'appeals#validate'
       end
+
       namespace :v2 do
         get 'appeals', to: 'appeals#details'
         get 'appeals/:appeal_id', to: 'appeals#reader_appeal'
         post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
         get 'appeals/:appeal_id/documents', to: 'appeals#appeal_documents'
         get 'appeals/:appeal_id/documents/:document_id', to: 'appeals#appeals_single_document'
+        get 'distributions/:distribution_id', to: 'distributions#distribution'
       end
     end
   end

@@ -84,6 +84,17 @@ run-backend-m1: up-m1 ready  ## Start the rails server without the frontend on a
 run-frontend: ## Start just the frontend server
 	cd client && yarn run dev:hot
 
+## These "cold" commands makes the app take significantly less resources
+## However this does require a page refresh in the browser to pick up changes
+run-backend-cold: up ready  ## Start rails server without the frontend
+	bundle exec rails s -p 3000
+
+run-backend-cold-m1: up-m1 ready  ## Start the rails server without the frontend on a M1 Mac
+	bundle exec rails s -p 3000
+
+run-frontend-cold: ## Start just the frontend server
+	cd client && yarn dev
+
 storybook: ## run Storybook
 	cd client && yarn storybook
 
@@ -140,9 +151,21 @@ db:  ## Connect to your dev postgres (caseflow) db
 
 audit: ## Create caseflow_audit schema, tables, and triggers in postgres
 	bundle exec rails r db/scripts/audit/create_caseflow_audit_schema.rb
-	bundle exec rails r db/scripts/audit/create_appeal_states_audit.rb
-	bundle exec rails r db/scripts/audit/add_row_to_appeal_states_audit_table_function.rb
-	bundle exec rails r db/scripts/audit/create_appeal_states_audit_trigger.rb
+	bundle exec rails r db/scripts/audit/tables/create_appeal_states_audit.rb
+	bundle exec rails r db/scripts/audit/tables/create_vbms_communication_packages_audit.rb
+	bundle exec rails r db/scripts/audit/tables/create_vbms_distributions_audit.rb
+	bundle exec rails r db/scripts/audit/tables/create_vbms_distribution_destinations_audit.rb
+	bundle exec rails r db/scripts/audit/tables/create_vbms_uploaded_documents_audit.rb
+	bundle exec rails r db/scripts/audit/functions/add_row_to_appeal_states_audit_table_function.rb
+	bundle exec rails r db/scripts/audit/functions/add_row_to_vbms_communication_packages_audit_table_function.rb
+	bundle exec rails r db/scripts/audit/functions/add_row_to_vbms_distributions_audit_table_function.rb
+	bundle exec rails r db/scripts/audit/functions/add_row_to_vbms_distribution_destinations_audit_table_function.rb
+	bundle exec rails r db/scripts/audit/functions/add_row_to_vbms_uploaded_documents_audit_table_function.rb
+	bundle exec rails r db/scripts/audit/triggers/create_appeal_states_audit_trigger.rb
+	bundle exec rails r db/scripts/audit/triggers/create_vbms_communication_packages_audit_trigger.rb
+	bundle exec rails r db/scripts/audit/triggers/create_vbms_distributions_audit_trigger.rb
+	bundle exec rails r db/scripts/audit/triggers/create_vbms_distribution_destinations_audit_trigger.rb
+	bundle exec rails r db/scripts/audit/triggers/create_vbms_uploaded_documents_audit_trigger.rb
 
 audit-remove: ## Remove caseflow_audit schema, tables and triggers in postgres
 	bundle exec rails r db/scripts/audit/remove_caseflow_audit_schema.rb

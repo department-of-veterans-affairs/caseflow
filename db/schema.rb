@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_17_164013) do
+ActiveRecord::Schema.define(version: 2023_06_29_184615) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.boolean "appeal_docketed", default: false, null: false, comment: "When true, appeal has been docketed"
     t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID"
     t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the table"
     t.bigint "created_by_id", null: false, comment: "User id of the user that inserted the record"
     t.boolean "decision_mailed", default: false, null: false, comment: "When true, appeal has decision mail request complete"
     t.boolean "hearing_postponed", default: false, null: false, comment: "When true, appeal has hearing postponed and no hearings scheduled"
@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.boolean "privacy_act_complete", default: false, null: false, comment: "When true, appeal has a privacy act request completed"
     t.boolean "privacy_act_pending", default: false, null: false, comment: "When true, appeal has a privacy act request still open"
     t.boolean "scheduled_in_error", default: false, null: false, comment: "When true, hearing was scheduled in error and none scheduled"
-    t.datetime "updated_at"
+    t.datetime "updated_at", comment: "Date and time the record was last updated"
     t.bigint "updated_by_id", comment: "User id of the last user that updated the record"
     t.boolean "vso_ihp_complete", default: false, null: false, comment: "When true, appeal has a VSO IHP request completed"
     t.boolean "vso_ihp_pending", default: false, null: false, comment: "When true, appeal has a VSO IHP request pending"
@@ -293,6 +293,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.string "hearing_request_type", limit: 10, comment: "Stores hearing type requested by appellant; could be one of nil, 'Video', 'Central', 'Travel', or 'Virtual'"
     t.boolean "is_aod", comment: "Whether the case is Advanced on Docket"
     t.integer "issue_count", comment: "Number of issues on the appeal."
+    t.string "issue_types", comment: "A string delimited list of nonrating issue categories on the appeal."
     t.string "power_of_attorney_name", comment: "'Firstname Lastname' of power of attorney"
     t.string "suggested_hearing_location", comment: "Suggested hearing location in 'City, State (Facility Type)' format"
     t.datetime "updated_at"
@@ -570,6 +571,8 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.string "citation_number", null: false, comment: "Unique identifier for decision document"
     t.datetime "created_at", null: false
     t.date "decision_date", null: false
+    t.string "document_series_reference_id", comment: "UUID that is provided by eFolder that represents the group of documentsthis document belongs to. Think of a series as a stack of versions."
+    t.string "document_version_reference_id", comment: "UUID that is provided by eFolder that represents the specific version of the document."
     t.string "error", comment: "Message captured from a failed attempt"
     t.datetime "last_submitted_at", comment: "When the job is eligible to run (can be reset to restart the job)"
     t.datetime "processed_at", comment: "When the job has concluded"
@@ -1275,7 +1278,7 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
     t.text "sms_notification_content", comment: "Full SMS Text Content of Notification"
-    t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
+    t.string "sms_notification_external_id"
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
@@ -1577,7 +1580,6 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.boolean "national_cemetery_administration", default: false
     t.boolean "no_special_issues", default: false, comment: "Affirmative no special issues, added belatedly"
     t.boolean "nonrating_issue", default: false
-    t.boolean "pact_act", default: false, comment: "The Sergeant First Class (SFC) Heath Robinson Honoring our Promise to Address Comprehensive Toxics (PACT) Act"
     t.boolean "pension_united_states", default: false
     t.boolean "private_attorney_or_agent", default: false
     t.boolean "radiation", default: false
@@ -1789,6 +1791,68 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.index ["updated_at"], name: "index_users_on_updated_at"
   end
 
+  create_table "vbms_communication_packages", force: :cascade do |t|
+    t.string "comm_package_name", null: false
+    t.bigint "copies", default: 1
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id"
+    t.bigint "document_mailable_via_pacman_id"
+    t.string "document_mailable_via_pacman_type"
+    t.string "file_number", comment: "number associated with the documents."
+    t.string "status"
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id"
+    t.string "uuid", comment: "UUID of the communication package in Package Manager (Pacman)"
+    t.index ["created_by_id"], name: "index_vbms_communication_packages_on_created_by_id"
+    t.index ["document_mailable_via_pacman_type", "document_mailable_via_pacman_id"], name: "index_vbms_communication_packages_on_pacman_document_id"
+    t.index ["updated_by_id"], name: "index_vbms_communication_packages_on_updated_by_id"
+  end
+
+  create_table "vbms_distribution_destinations", force: :cascade do |t|
+    t.string "address_line_1", null: false, comment: "PII. If destination_type is domestic, international, or military then Must not be null."
+    t.string "address_line_2", comment: "PII. If treatLine2AsAddressee is [true] then must not be null"
+    t.string "address_line_3", comment: "PII. If treatLine3AsAddressee is [true] then must not be null"
+    t.string "address_line_4", comment: "PII."
+    t.string "address_line_5", comment: "PII."
+    t.string "address_line_6", comment: "PII."
+    t.string "city", comment: "PII. If type is [domestic, international, military] then Must not be null"
+    t.string "country_code", comment: "Must be exactly two-letter ISO 3166 code."
+    t.string "country_name"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id"
+    t.string "destination_type", null: false, comment: "Must be 'domesticAddress', 'internationalAddress', 'militaryAddress', 'derived', 'email', or 'sms'. Cannot be 'physicalAddress'."
+    t.string "postal_code"
+    t.string "state", comment: "PII. Must be exactly two-letter ISO 3166-2 code. If destination_type is domestic or military then Must not be null"
+    t.boolean "treat_line_2_as_addressee"
+    t.boolean "treat_line_3_as_addressee", comment: "If true, treatLine2AsAddressee must also be true"
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id"
+    t.bigint "vbms_distribution_id"
+    t.index ["created_by_id"], name: "index_vbms_distribution_destinations_on_created_by_id"
+    t.index ["updated_by_id"], name: "index_vbms_distribution_destinations_on_updated_by_id"
+    t.index ["vbms_distribution_id"], name: "index_vbms_distribution_destinations_on_vbms_distribution_id"
+  end
+
+  create_table "vbms_distributions", force: :cascade do |t|
+    t.string "claimant_station_of_jurisdiction", comment: "Can't be null if [recipient_type] is ro-colocated."
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id"
+    t.string "first_name", comment: "recipient's first name. If Type is [person] then it cant be null."
+    t.string "last_name", comment: "recipient's last name. If Type is [person] then it cant be null."
+    t.string "middle_name", comment: "recipient's middle name."
+    t.string "name", comment: "should only be used for non-person entity names. Not null if [recipient_type] is organization, ro-colocated, or System."
+    t.string "participant_id", comment: "recipient's participant id."
+    t.string "poa_code", comment: "Can't be null if [recipient_type] is ro-colocated. The recipients POA code"
+    t.string "recipient_type", null: false, comment: "Must be one of [person, organization, ro-colocated, System]."
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id"
+    t.string "uuid", comment: "UUID of the distrubtion in Package Manager (Pacman)"
+    t.bigint "vbms_communication_package_id"
+    t.index ["created_by_id"], name: "index_vbms_distributions_on_created_by_id"
+    t.index ["updated_by_id"], name: "index_vbms_distributions_on_updated_by_id"
+    t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
+  end
+
   create_table "vbms_uploaded_documents", force: :cascade do |t|
     t.bigint "appeal_id", comment: "Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals"
     t.string "appeal_type", comment: "'Appeal' or 'LegacyAppeal'"
@@ -1796,8 +1860,10 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
     t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
     t.datetime "created_at", null: false
     t.string "document_name"
+    t.string "document_series_reference_id", comment: "UUID that is provided by eFolder that represents the group of documentsthis document belongs to. Think of a series as a stack of versions."
     t.string "document_subject"
     t.string "document_type", null: false
+    t.string "document_version_reference_id", comment: "UUID that is provided by eFolder that represents the specific version of the document."
     t.string "error"
     t.datetime "last_submitted_at"
     t.datetime "processed_at"
@@ -2068,6 +2134,14 @@ ActiveRecord::Schema.define(version: 2023_03_17_164013) do
   add_foreign_key "unrecognized_appellants", "users", column: "created_by_id"
   add_foreign_key "user_quotas", "team_quotas"
   add_foreign_key "user_quotas", "users"
+  add_foreign_key "vbms_communication_packages", "users", column: "created_by_id"
+  add_foreign_key "vbms_communication_packages", "users", column: "updated_by_id"
+  add_foreign_key "vbms_distribution_destinations", "users", column: "created_by_id"
+  add_foreign_key "vbms_distribution_destinations", "users", column: "updated_by_id"
+  add_foreign_key "vbms_distribution_destinations", "vbms_distributions"
+  add_foreign_key "vbms_distributions", "users", column: "created_by_id"
+  add_foreign_key "vbms_distributions", "users", column: "updated_by_id"
+  add_foreign_key "vbms_distributions", "vbms_communication_packages"
   add_foreign_key "virtual_hearing_establishments", "virtual_hearings"
   add_foreign_key "virtual_hearings", "users", column: "created_by_id"
   add_foreign_key "virtual_hearings", "users", column: "updated_by_id"

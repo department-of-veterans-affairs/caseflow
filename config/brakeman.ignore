@@ -1,26 +1,6 @@
 {
   "ignored_warnings": [
     {
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
-      "fingerprint": "0ed3c295e5216f5a6ae5ee60d4c5baf3fcf4c624c9769ab723114045a565ebca",
-      "check_name": "SQL",
-      "message": "Possible SQL injection",
-      "file": "app/models/task_pager.rb",
-      "line": 76,
-      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.docket_type #{sort_order}, cached_appeal_attributes.docket_number #{sort_order}\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "TaskPager",
-        "method": "tasks_sorted_by_docket_number"
-      },
-      "user_input": "sort_order",
-      "confidence": "Weak",
-      "note": ""
-    },
-    {
       "warning_type": "File Access",
       "warning_code": 16,
       "fingerprint": "140e07405ecb20ab6aa52f2f41aeeef0ed7830d781698d6b752ee3d8b0a9c065",
@@ -41,101 +21,24 @@
       "note": ""
     },
     {
-      "warning_type": "Cross-Site Request Forgery",
-      "warning_code": 86,
-      "fingerprint": "1812c8892bb9cfd21d2582d5e52f2c4d72f45abb327b73d50139da2259905905",
-      "check_name": "ForgerySetting",
-      "message": "`protect_from_forgery` should be configured with `with: :exception`",
-      "file": "app/controllers/api/metadata_controller.rb",
-      "line": 4,
-      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_request_forgery/",
-      "code": "protect_from_forgery(:with => :null_session)",
-      "render_path": null,
-      "location": {
-        "type": "controller",
-        "controller": "Api::MetadataController"
-      },
-      "user_input": null,
-      "confidence": "Medium",
-      "note": ""
-    },
-    {
-      "warning_type": "Cross-Site Request Forgery",
-      "warning_code": 7,
-      "fingerprint": "1a5ba045bdf2941e540d11c5f239696af2cb1478657b4d91b629186f6f4fbf2c",
-      "check_name": "ForgerySetting",
-      "message": "`protect_from_forgery` should be called in `Api::Docs::V3::DocsController`",
-      "file": "app/controllers/api/docs/v3/docs_controller.rb",
-      "line": 3,
-      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_request_forgery/",
-      "code": null,
-      "render_path": null,
-      "location": {
-        "type": "controller",
-        "controller": "Api::Docs::V3::DocsController"
-      },
-      "user_input": null,
-      "confidence": "High",
-      "note": ""
-    },
-    {
-      "warning_type": "Cross-Site Request Forgery",
-      "warning_code": 86,
-      "fingerprint": "2494532c77b2833cf67088a95d0a7b9b9c66b4b2277cbfa04ea936cd0bb25c24",
-      "check_name": "ForgerySetting",
-      "message": "`protect_from_forgery` should be configured with `with: :exception`",
-      "file": "app/controllers/api/application_controller.rb",
-      "line": 4,
-      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_request_forgery/",
-      "code": "protect_from_forgery(:with => :null_session)",
-      "render_path": null,
-      "location": {
-        "type": "controller",
-        "controller": "Api::ApplicationController"
-      },
-      "user_input": null,
-      "confidence": "Medium",
-      "note": "Because it's an API, :null_session is the appropriate CSRF protection"
-    },
-    {
       "warning_type": "SQL Injection",
       "warning_code": 0,
-      "fingerprint": "46d8934746498039691a8b5e522384236c6adc8c7b30755ec296bc05743864b0",
+      "fingerprint": "3563fb89283da15302f7a0e5f9be93f31eb5aabfa18ff7bdb7080230f2dea4cf",
       "check_name": "SQL",
       "message": "Possible SQL injection",
-      "file": "app/models/task_pager.rb",
-      "line": 91,
+      "file": "app/jobs/legacy_notification_efolder_sync_job.rb",
+      "line": 106,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.veteran_name #{sort_order}\")",
+      "code": "LegacyAppeal.where(:id => RootTask.open.where(:appeal_type => \"LegacyAppeal\").pluck(:appeal_id)).find_by_sql(\"              SELECT la.*\\n              FROM legacy_appeals la\\n              JOIN (#{appeals_on_latest_notifications(ids)}) AS notifs ON\\n                notifs.appeals_id = la.vacols_id AND notifs.appeals_type = 'LegacyAppeal'\\n              JOIN (#{appeals_on_latest_doc_uploads(ids)}) AS vbms_uploads ON\\n                vbms_uploads.appeal_id = la.id AND vbms_uploads.appeal_type = 'LegacyAppeal'\\n              WHERE\\n                notifs.notified_at > vbms_uploads.attempted_at\\n              OR\\n                notifs.created_at > vbms_uploads.attempted_at\\n              GROUP BY la.id\\n\")",
       "render_path": null,
       "location": {
         "type": "method",
-        "class": "TaskPager",
-        "method": "tasks_sorted_by_veteran_name"
+        "class": "LegacyNotificationEfolderSyncJob",
+        "method": "get_appeals_from_prev_synced_ids"
       },
-      "user_input": "sort_order",
-      "confidence": "Weak",
+      "user_input": "appeals_on_latest_notifications(ids)",
+      "confidence": "Medium",
       "note": ""
-    },
-    {
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
-      "fingerprint": "49b7084cd2189b3077f3aa32a6c8bceabb0fcf478396aa2d82bc8cacee1a7e78",
-      "check_name": "SQL",
-      "message": "Possible SQL injection",
-      "file": "app/models/task_pager.rb",
-      "line": 71,
-      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.is_aod DESC, cached_appeal_attributes.case_type #{sort_order}, cached_appeal_attributes.docket_number #{sort_order}\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "TaskPager",
-        "method": "tasks_sorted_by_appeal_case_type"
-      },
-      "user_input": "sort_order",
-      "confidence": "Weak",
-      "note": "False positive, sort_order is validated in sort_order_is_valid"
     },
     {
       "warning_type": "File Access",
@@ -160,87 +63,11 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
-      "fingerprint": "5e7193afe39d87737f803459761fab47394b577e13c53606b71ea94312ded2a2",
-      "check_name": "SQL",
-      "message": "Possible SQL injection",
-      "file": "app/models/task_pager.rb",
-      "line": 87,
-      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.issue_count #{sort_order}\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "TaskPager",
-        "method": "tasks_sorted_by_issue_count"
-      },
-      "user_input": "sort_order",
-      "confidence": "Weak",
-      "note": "False positive, sort_order is validated in sort_order_is_valid"
-    },
-    {
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
-      "fingerprint": "62eee76f337de2ef652f6755165cf76c318d170b2a3a13a5da6c92dd7a2f18d7",
-      "check_name": "SQL",
-      "message": "Possible SQL injection",
-      "file": "app/models/vacols/case.rb",
-      "line": 348,
-      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "connection.execute(\"insert all #{vacols_ids.map do\n sanitize_sql_array([\"into PRIORLOC (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY) values (SYSDATE, SYSDATE, ?, ?, ?)\", location, (RequestStore.store[:current_user].vacols_uniq_id or \"DSUSER\").upcase, vacols_id])\n end.join(\" \")} select 1 from dual\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "VACOLS::Case",
-        "method": "VACOLS::Case.batch_update_vacols_location"
-      },
-      "user_input": "vacols_ids.map do\n sanitize_sql_array([\"into PRIORLOC (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY) values (SYSDATE, SYSDATE, ?, ?, ?)\", location, (RequestStore.store[:current_user].vacols_uniq_id or \"DSUSER\").upcase, vacols_id])\n end.join(\" \")",
-      "confidence": "Medium",
-      "note": "False positive, all input is sanitized by sanitize_sql_array"
-    },
-    {
-      "warning_type": "Missing Encryption",
-      "warning_code": 109,
-      "fingerprint": "6a26086cd2400fbbfb831b2f8d7291e320bcc2b36984d2abc359e41b3b63212b",
-      "check_name": "ForceSSL",
-      "message": "The application does not force use of HTTPS: `config.force_ssl` is not enabled",
-      "file": "config/environments/production.rb",
-      "line": 1,
-      "link": "https://brakemanscanner.org/docs/warning_types/missing_encryption/",
-      "code": null,
-      "render_path": null,
-      "location": null,
-      "user_input": null,
-      "confidence": "High",
-      "note": "The application does not force use of HTTPS: `config.force_ssl` is not enabled"
-    },
-    {
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
-      "fingerprint": "74680b779aa1ec56237b794a5508d3f93d91eecfd819193790edc893a7b5a5ed",
-      "check_name": "SQL",
-      "message": "Possible SQL injection",
-      "file": "app/models/task_pager.rb",
-      "line": 82,
-      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "tasks.joins(cached_attributes_join_clause).order(\"cached_appeal_attributes.closest_regional_office_city #{sort_order}\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "TaskPager",
-        "method": "tasks_sorted_by_regional_office"
-      },
-      "user_input": "sort_order",
-      "confidence": "Weak",
-      "note": ""
-    },
-    {
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
       "fingerprint": "b2bd6bb603baecc6357c6dfb9641be1848b106ecec425bd7659844e27b860bf1",
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/task.rb",
-      "line": 236,
+      "line": 273,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "Arel.sql(\"CASE WHEN #{CachedAppeal.table_name}.is_aod = TRUE THEN #{(\"0 ELSE 1\" or \"1 ELSE 0\")} END, CASE WHEN #{CachedAppeal.table_name}.case_type = 'Court Remand' THEN #{(\"0 ELSE 1\" or \"1 ELSE 0\")} END, #{CachedAppeal.table_name}.docket_number #{order}, #{Task.table_name}.created_at #{order}\")",
       "render_path": null,
@@ -260,7 +87,7 @@
       "check_name": "SendFile",
       "message": "Model attribute used in file name",
       "file": "app/controllers/idt/api/v2/appeals_controller.rb",
-      "line": 49,
+      "line": 61,
       "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
       "code": "send_file(Document.find(document_id).serve, :type => \"application/pdf\", :disposition => (\"attachment; filename='#{current_document[0][\"type\"]}-#{document_id}.pdf'\"))",
       "render_path": null,
@@ -272,8 +99,28 @@
       "user_input": "Document.find(document_id).serve",
       "confidence": "Medium",
       "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "c9d432e0f7bca941b3cd382a9979de3b85717cdfab0055c3229378e07f84ba70",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/jobs/ama_notification_efolder_sync_job.rb",
+      "line": 104,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "Appeal.active.find_by_sql(\"          SELECT appeals.*\\n          FROM appeals\\n          JOIN (#{appeals_on_latest_notifications(ids)}) AS notifs ON\\n            notifs.appeals_id = appeals.\\\"uuid\\\"::text AND notifs.appeals_type = 'Appeal'\\n          JOIN (#{appeals_on_latest_doc_uploads(ids)}) AS vbms_uploads ON\\n            vbms_uploads.appeal_id = appeals.id AND vbms_uploads.appeal_type = 'Appeal'\\n          WHERE\\n            notifs.notified_at > vbms_uploads.attempted_at\\n          OR\\n            notifs.created_at > vbms_uploads.attempted_at\\n          GROUP BY appeals.id\\n\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "AmaNotificationEfolderSyncJob",
+        "method": "get_appeals_from_prev_synced_ids"
+      },
+      "user_input": "appeals_on_latest_notifications(ids)",
+      "confidence": "Medium",
+      "note": ""
     }
   ],
-  "updated": "2022-02-02 09:46:55 -0500",
-  "brakeman_version": "5.2.0"
+  "updated": "2023-06-26 09:46:58 -0400",
+  "brakeman_version": "4.7.1"
 }

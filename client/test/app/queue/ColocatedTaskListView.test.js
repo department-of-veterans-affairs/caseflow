@@ -31,8 +31,9 @@ const WrapperComponent = ({ children }) => (
   </MemoryRouter>
 );
 
-// Date constructor uses zero-based offset for months — this is 2021-03-17
-const fakeDate = new Date(2021, 2, 17, 12);
+// Date constructor uses zero-based offset for months — this is 2021-03-17. The time (11:30pm) is to ensure
+// that the crossover between days doesn't affect the front end calculations for when tasks were assigned
+const fakeDate = new Date(2021, 2, 17, 23, 30, 0, 0);
 
 beforeAll(() => {
   // Ensure consistent handling of dates across tests
@@ -86,12 +87,12 @@ describe('ColocatedTaskListView', () => {
 
       await waitFor(() => {
         expect(
-          screen.getByRole('cell', {
+          screen.getByRole('gridcell', {
             name: new RegExp(task1.veteran_file_number, 'i'),
           })
         ).toBeInTheDocument();
         expect(
-          screen.getByRole('cell', {
+          screen.getByRole('gridcell', {
             name: new RegExp(task2.veteran_file_number, 'i'),
           })
         ).toBeInTheDocument();
@@ -106,7 +107,7 @@ describe('ColocatedTaskListView', () => {
       const row = screen.getByRole('row', {
         name: new RegExp(task.veteran_file_number, 'i'),
       });
-      const cells = within(row).getAllByRole('cell');
+      const cells = within(row).getAllByRole('gridcell');
 
       const [
         hearings,
@@ -156,7 +157,7 @@ describe('ColocatedTaskListView', () => {
       const row = screen.getByRole('row', {
         name: new RegExp(task.veteran_file_number, 'i'),
       });
-      const cells = within(row).getAllByRole('cell');
+      const cells = within(row).getAllByRole('gridcell');
 
       const numberDaysOnHold = cells[5];
 
@@ -180,7 +181,7 @@ describe('ColocatedTaskListView', () => {
       // Wait for new content to appear
       await waitFor(() => {
         expect(
-          screen.getByRole('cell', {
+          screen.getByRole('gridcell', {
             name: new RegExp(task1.veteran_file_number, 'i'),
           })
         ).toBeInTheDocument();
@@ -214,12 +215,12 @@ describe('ColocatedTaskListView', () => {
       // Wait for new content to appear
       await waitFor(() => {
         expect(
-          screen.getByRole('cell', {
+          screen.getByRole('gridcell', {
             name: new RegExp(task1.veteran_file_number, 'i'),
           })
         ).toBeInTheDocument();
         expect(
-          screen.getByRole('cell', {
+          screen.getByRole('gridcell', {
             name: new RegExp(task2.veteran_file_number, 'i'),
           })
         ).toBeInTheDocument();
@@ -246,7 +247,7 @@ describe('ColocatedTaskListView', () => {
         name: new RegExp(task.veteran_file_number, 'i'),
       });
 
-      const cells = within(row).getAllByRole('cell');
+      const cells = within(row).getAllByRole('gridcell');
 
       const [
         hearings,
@@ -313,7 +314,7 @@ describe('ColocatedTaskListView', () => {
       const row = screen.getByRole('row', {
         name: new RegExp(task.veteran_file_number, 'i'),
       });
-      const cells = within(row).getAllByRole('cell');
+      const cells = within(row).getAllByRole('gridcell');
 
       const numberDaysOnHold = cells[5];
 
