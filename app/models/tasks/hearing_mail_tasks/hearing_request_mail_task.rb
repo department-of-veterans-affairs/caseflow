@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
 ##
-# Interface for:
+# Task to serve as interface with shared methods for:
 #   - HearingPostponementRequestMailTask
 #   - HearingWithdrawalRequestMailTask
 # HearingRequestMailTask is itself not an assignable task type
 
 class HearingRequestMailTask < MailTask
+  # Is parentTask option necessary?
   validates :parent, presence: true, parentTask: { task_type: HearingTask }, on: :create
 
+  # Is this check necessary, and would it be more effective reworked as a validation statement? Or no difference
   before_create :verify_request_type_designated
 
   class << self
@@ -20,7 +22,7 @@ class HearingRequestMailTask < MailTask
       HearingAdmin.singleton
     end
 
-    def available_actions
+    def available_actions(_user)
       []
     end
 
@@ -31,7 +33,7 @@ class HearingRequestMailTask < MailTask
 
   private
 
-  # Ensure #create is called on a descendant class
+  # Ensure create is called on a descendant class and not directly on this class
   def verify_request_type_designated
     valid_request_types = %w[HearingPostponementRequestMailTask HearingWithdrawalRequestMailTask]
 
