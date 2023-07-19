@@ -24,6 +24,9 @@ common: &default_settings
     request.headers.contentType,
   ]
 
+# Before we enable this, we should verify that it won't send any PII.
+browser_monitoring.auto_instrument: false
+
 # Environment-specific settings are in this section.
 # RAILS_ENV or RACK_ENV (as appropriate) is used to determine the environment.
 # If your application has other named environments, configure them here.
