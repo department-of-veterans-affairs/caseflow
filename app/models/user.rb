@@ -645,6 +645,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     end
 
     alias preprod_system_user prod_system_user
+    alias prodtest_system_user prod_system_user
 
     def uat_system_user
       find_or_initialize_by(station_id: "317", css_id: "CASEFLOW1")
