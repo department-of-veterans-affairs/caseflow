@@ -23,17 +23,17 @@ module Seeds
     BENEFIT_TYPE_LIST = Constants::BENEFIT_TYPES.keys.map(&:to_s).freeze
 
     def seed!
-      #setup_camo_org
-      #setup_caregiver_org
-      #setup_program_offices!
-      #create_visn_org_teams!
-      #create_vha_camo
-      #create_vha_caregiver
-      #create_vha_program_office
-      #create_vha_visn_pre_docket_queue
+      setup_camo_org
+      setup_caregiver_org
+      setup_program_offices!
+      create_visn_org_teams!
+      create_vha_camo
+      create_vha_caregiver
+      create_vha_program_office
+      create_vha_visn_pre_docket_queue
       create_higher_level_reviews
       create_supplemental_claims
-      #add_vha_user_to_be_vha_business_line_member
+      add_vha_user_to_be_vha_business_line_member
     end
 
     private
