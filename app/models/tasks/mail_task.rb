@@ -33,8 +33,6 @@ class MailTask < Task
       sorted
     end
 
-    alias subclass_routing_options descendant_routing_options
-
     def allow_creation?(_user = nil, _appeal = nil)
       true
     end
