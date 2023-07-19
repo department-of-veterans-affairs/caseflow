@@ -94,14 +94,23 @@ class DecisionReviewsController < ApplicationController
   end
 
   def task_filter_details
-    {
-      incomplete: incomplete_tasks_type_counts,
-      in_progress: in_progress_tasks_type_counts,
-      completed: completed_tasks_type_counts,
-      incomplete_issue_types: incomplete_tasks_issue_type_counts,
-      in_progress_issue_types: in_progress_tasks_issue_type_counts,
-      completed_issue_types: completed_tasks_issue_type_counts
-    }
+    task_filter_hash = {}
+    included_tabs.each do |tab_name|
+      case tab_name
+      when :incomplete
+        task_filter_hash[:incomplete] = incomplete_tasks_type_counts
+        task_filter_hash[:incomplete_issue_types] = incomplete_tasks_issue_type_counts
+      when :in_progress
+        task_filter_hash[:in_progress] = in_progress_tasks_type_counts
+        task_filter_hash[:in_progress] = in_progress_tasks_issue_type_counts
+      when :completed
+        task_filter_hash[:completed] = completed_tasks_type_counts
+        task_filter_hash[:completed_issue_types] = completed_tasks_issue_type_counts
+      else
+        fail NotImplementedError "Tab name type not implemented for this business line: #{business_line}"
+      end
+    end
+    task_filter_hash
   end
 
   def business_line_config_options
@@ -160,7 +169,6 @@ class DecisionReviewsController < ApplicationController
 
   # TODO: authz rules for this space
   def verify_access
-    puts "in verify_access for business_line: #{business_line}"
     return false unless business_line
     return true if current_user.admin?
     return true if current_user.can?("Admin Intake")
