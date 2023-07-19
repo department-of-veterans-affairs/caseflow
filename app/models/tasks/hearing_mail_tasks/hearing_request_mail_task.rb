@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ##
-# Task to serve as interface with shared methods for:
+# Task to serve as interface with shared methods for the following hearings mail tasks:
 #   - HearingPostponementRequestMailTask
 #   - HearingWithdrawalRequestMailTask
 # HearingRequestMailTask is itself not an assignable task type

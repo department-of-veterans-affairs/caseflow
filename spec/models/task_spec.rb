@@ -3,7 +3,7 @@
 describe Task, :all_dbs do
   context "includes PrintsTaskTree concern" do
     describe ".structure" do
-      let(:root_task) { create(:root_task) }
+      let(:root_task) { create(:hearing_postponement_request_mail_task_with_hearing) }
       let!(:bva_task) { create(:bva_dispatch_task, :in_progress, parent: root_task) }
       let(:judge_task) { create(:ama_judge_assign_task, :completed, parent: root_task) }
       let!(:attorney_task) { create(:ama_attorney_task, :completed, parent: judge_task) }
@@ -11,6 +11,7 @@ describe Task, :all_dbs do
       subject { root_task.structure(:id, :status) }
 
       it "outputs the task structure" do
+        byebug
         root_key = "#{root_task.type} #{root_task.id}, #{root_task.status}".to_sym
         judge_key = "#{judge_task.type} #{judge_task.id}, #{judge_task.status}".to_sym
         bva_key = "#{bva_task.type} #{bva_task.id}, #{bva_task.status}".to_sym

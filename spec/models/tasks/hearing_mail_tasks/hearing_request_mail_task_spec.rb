@@ -8,7 +8,7 @@ describe HearingRequestMailTask, :postgres do
     let(:params) { { appeal: root_task.appeal, parent: root_task, assigned_to: user } }
 
     it "throws an error" do
-      expect { subject.class.create!(params) }.to raise_error(Caseflow::Error::InvalidTaskTypeOnTaskCreate)
+      expect { described_class.create!(params) }.to raise_error(Caseflow::Error::InvalidTaskTypeOnTaskCreate)
     end
   end
 end
