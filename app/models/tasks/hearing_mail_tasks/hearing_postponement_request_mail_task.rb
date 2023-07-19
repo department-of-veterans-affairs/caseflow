@@ -9,6 +9,12 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     def allow_creation?(*)
       true
     end
+
+    # Setting blocking? to true will set the parent task as a DistributionTask
+    #   - Question of whether HPR mail tasks should block distribution or not
+    # def blocking?
+    #   true
+    # end
   end
 
   TASK_ACTIONS = [
