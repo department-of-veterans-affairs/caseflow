@@ -142,6 +142,15 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
       it "running the perform", bypass_cleaner: true do
         perform_enqueued_jobs { LegacyNotificationEfolderSyncJob.perform_later }
 
+        create(:vbms_uploaded_document,
+          appeal_id: appeals[4].id,
+          attempted_at: 3.days.ago,
+          last_submitted_at: 3.days.ago,
+          processed_at: 3.days.ago,
+          uploaded_to_vbms_at: nil,
+          appeal_type: "LegacyAppeal",
+          document_type: "BVA Case Notifications")
+
         create(:notification,
                appeals_id: appeals[6].vacols_id,
                appeals_type: "LegacyAppeal",
@@ -150,8 +159,6 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
                notification_type: "Email",
                notified_at: Time.zone.now,
                email_notification_status: "delivered")
-
-        appeals[6].root_task.update!(status: "completed", closed_at: today)
 
         expect(find_appeal_ids_from_first_document_sync.size).to eq BATCH_LIMIT_SIZE
       end

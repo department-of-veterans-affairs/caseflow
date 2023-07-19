@@ -72,6 +72,15 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
         # The above line causes the appeal to have a case notifications report created for it.
         # Outcoded appeals will almost certainly have had previous case notifications report
         # Generated for them.
+        create(:vbms_uploaded_document,
+               appeal_id: appeals[4].id,
+               attempted_at: 3.days.ago,
+               last_submitted_at: 3.days.ago,
+               processed_at: 3.days.ago,
+               uploaded_to_vbms_at: nil,
+               appeal_type: "Appeal",
+               document_type: "BVA Case Notifications")
+
         create(:notification,
                appeals_id: appeals[6].uuid,
                appeals_type: "Appeal",
@@ -80,8 +89,6 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                notification_type: "Email",
                notified_at: Time.zone.now,
                email_notification_status: "delivered")
-
-        appeals[6].root_task.update!(status: "completed", closed_at: today)
 
         expect(find_appeal_ids_from_first_document_sync.size).to eq BATCH_LIMIT_SIZE
       end
