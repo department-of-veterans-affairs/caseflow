@@ -236,7 +236,7 @@ class EndProductEstablishment < CaseflowRecord
       save_updated_end_product_code!
     end
   rescue RedisMutex::LockError
-    Rails.logger.error('failed to acquire lock! EPE sync is being called by another process. Please try again later.')
+    Rails.logger.error("failed to acquire lock! EPE sync is being called by another process. Please try again later.")
   rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => error
     raise error
   rescue StandardError => error
@@ -378,10 +378,8 @@ class EndProductEstablishment < CaseflowRecord
 
   def handle_inactive_status_on_sync!
     if EndProduct::INACTIVE_STATUSES.include?(synced_status)
-      if status_cancelled?
-        reset_canceled_request_issues!
-      end
-      update!(synced_status: nil)
+      status_cancelled? ? reset_canceled_request_issues! : reset_non_removed_or_withdrawn_request_issues!
+      clear_synced_status!
     end
   end
 
@@ -620,12 +618,33 @@ class EndProductEstablishment < CaseflowRecord
       prev_closed_at = ri.closed_at
       prev_closed_status = ri.closed_status
       ri.update!(closed_status: nil, closed_at: nil)
-      ri.submit_for_processing!
       ri.reload
-      Rails.logger.info("InactiveEPECorrectionSync::Claim ID: #{ri.end_product_establishment.reference_id}.  "\
-      "Previous synded_status: #{ri.end_product_establishment.synced_status}.  "\
-      "Request Issue ID: #{ri.id}.  Previous closed_at: #{prev_closed_at}.  "\
-      "Previous closed_status: #{prev_closed_status}.")
+      Rails.logger.info("InactiveEPESyncedStatusReset::EPE_CAN Claim ID: #{ri.end_product_establishment.reference_id}."\
+      "  Previous synced_status: #{ri.end_product_establishment.synced_status}."\
+      "  Request Issue ID: #{ri.id}.  Previous closed_at: #{prev_closed_at}."\
+      "  Previous closed_status: #{prev_closed_status}.")
     end
+  end
+
+  def reset_non_removed_or_withdrawn_request_issues!
+    byebug
+    non_removed_or_withdrawn_issues = request_issues.reject do |ri|
+      ri.closed_status == "withdrawn" || ri.closed_status == "removed"
+    end
+
+    non_removed_or_withdrawn_issues.each do |ri|
+      prev_closed_at = ri.closed_at
+      prev_closed_status = ri.closed_status
+      ri.update!(closed_status: nil, closed_at: nil)
+      ri.reload
+      Rails.logger.info("InactiveEPESyncedStatusReset::EPE_CLR Claim ID: #{ri.end_product_establishment.reference_id}."\
+      "  Previous synced_status: #{ri.end_product_establishment.synced_status}."\
+      "  Request Issue ID: #{ri.id}.  Previous closed_at: #{prev_closed_at}."\
+      "  Previous closed_status: #{prev_closed_status}.")
+    end
+  end
+
+  def clear_synced_status!
+    update!(synced_status: nil)
   end
 end

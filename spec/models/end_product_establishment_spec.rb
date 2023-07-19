@@ -1523,7 +1523,8 @@ describe EndProductEstablishment, :postgres do
   describe "#handle_inactive_status_on_sync!" do
     context "when an end product establishment has a synced_status of 'CAN' but VBMS has a status of 'CLR'" do
       let!(:end_product_establishment) do
-        create(:end_product_establishment, :canceled_hlr_with_cleared_vbms_ext_claim)
+        epe = create(:end_product_establishment, :canceled_hlr_with_cleared_vbms_ext_claim)
+        EndProductEstablishment.find epe.id
       end
 
       let!(:review) do
@@ -1585,20 +1586,69 @@ describe EndProductEstablishment, :postgres do
         request_issue.reload
         expect(request_issue.closed_status).to eq(nil)
       end
+    end
+  end
 
-      it "the decision_sync_last_submitted_at will be set to the current date/time" do
-        expect(request_issue.decision_sync_last_submitted_at).to eq(original_decision_sync_last_submitted_at)
-        subject
-        request_issue.reload
-        expect(request_issue.decision_sync_last_submitted_at).to eq(Time.zone.now)
-      end
+  context "when an end product establishment has a synced_status of 'CLR' but VBMS has a status of 'CAN'" do
+    let!(:end_product_establishment) do
+      epe = create(:end_product_establishment, :cleared_hlr_with_canceled_vbms_ext_claim)
+      EndProductEstablishment.find epe.id
+    end
 
-      it "the decision_sync_submitted_at will be set to the current date/time" do
-        expect(request_issue.decision_sync_submitted_at).to eq(original_decision_sync_submitted_at)
-        subject
-        request_issue.reload
-        expect(request_issue.decision_sync_submitted_at).to eq(Time.zone.now)
-      end
+    let!(:review) do
+      end_product_establishment.source
+    end
+
+    let(:contention_reference_id) { "5678" }
+
+    let(:original_decision_sync_last_submitted_at) { Time.zone.now - 1.hour }
+
+    let(:original_decision_sync_submitted_at) { Time.zone.now - 1.hour }
+
+    let!(:request_issue) do
+      create(
+        :request_issue,
+        decision_review: review,
+        nonrating_issue_description: "some description",
+        nonrating_issue_category: "a category",
+        decision_date: 1.day.ago,
+        end_product_establishment: end_product_establishment,
+        contention_reference_id: contention_reference_id,
+        benefit_type: review.benefit_type,
+        decision_sync_last_submitted_at: original_decision_sync_last_submitted_at,
+        decision_sync_submitted_at: original_decision_sync_submitted_at
+      )
+    end
+
+    let!(:contention) do
+      Generators::Contention.build(
+        id: contention_reference_id,
+        claim_id: end_product_establishment.reference_id,
+        disposition: "allowed"
+      )
+    end
+
+    let!(:decision_issue) do
+      request_issue.sync_decision_issues!
+      DecisionIssue.first
+    end
+
+    subject { end_product_establishment.handle_inactive_status_on_sync! }
+
+    before do
+      Timecop.freeze(Time.utc(2022, 1, 1, 12, 0, 0))
+    end
+
+    it "the closed_at will be set to NULL" do
+      subject
+      request_issue.reload
+      expect(request_issue.closed_at).to eq(nil)
+    end
+
+    it "the closed_status will be set to NULL" do
+      subject
+      request_issue.reload
+      expect(request_issue.closed_status).to eq(nil)
     end
   end
 end
