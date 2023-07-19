@@ -143,17 +143,17 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
         perform_enqueued_jobs { LegacyNotificationEfolderSyncJob.perform_later }
 
         create(:vbms_uploaded_document,
-          appeal_id: appeals[4].id,
-          attempted_at: 3.days.ago,
-          last_submitted_at: 3.days.ago,
-          processed_at: 3.days.ago,
-          uploaded_to_vbms_at: nil,
-          appeal_type: "LegacyAppeal",
-          document_type: "BVA Case Notifications")
+               appeal_id: appeals[4].id,
+               attempted_at: 3.days.ago,
+               last_submitted_at: 3.days.ago,
+               processed_at: 3.days.ago,
+               uploaded_to_vbms_at: nil,
+               appeal_type: appeals[4].class.name,
+               document_type: "BVA Case Notifications")
 
         create(:notification,
                appeals_id: appeals[6].vacols_id,
-               appeals_type: "LegacyAppeal",
+               appeals_type: appeals[6].class.name,
                event_date: today,
                event_type: "Appeal decision mailed (Non-contested claims)",
                notification_type: "Email",
