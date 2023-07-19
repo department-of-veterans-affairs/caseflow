@@ -89,6 +89,7 @@ FactoryBot.define do
     end
 
     trait :with_unscheduled_hearing do
+      parent { create(:distribution_task, appeal: appeal) }
       after(:create) do |task|
         appeal = task.appeal
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
@@ -98,6 +99,7 @@ FactoryBot.define do
     end
 
     trait :with_scheduled_hearing do
+      parent { create(:distribution_task, appeal: appeal) }
       after(:create) do |task|
         appeal = task.appeal
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
@@ -106,9 +108,10 @@ FactoryBot.define do
                                                             assigned_to: Bva.singleton)
         schedule_hearing_task.update(status: "completed", closed_at: Time.zone.now)
         distro_task.update!(status: "on_hold")
-        create(:hearing, disposition: nil, judge: nil, appeal: appeal)
+        hearing = create(:hearing, disposition: nil, judge: nil, appeal: appeal)
         AssignHearingDispositionTask.create!(appeal: appeal, parent: schedule_hearing_task.parent,
-                                             assigned_to: Bva.singleton)
+                                                          assigned_to: Bva.singleton)
+        HearingTaskAssociation.create!(hearing: hearing, hearing_task: schedule_hearing_task.parent)
       end
     end
 
@@ -653,13 +656,7 @@ FactoryBot.define do
         end
       end
 
-      factory :hearing_postponement_request_mail_task_without_hearing, class: HearingPostponementRequestMailTask do
-        parent { create(:distribution_task, :with_unscheduled_hearing, appeal: appeal) }
-        assigned_to { HearingAdmin.singleton }
-      end
-
-      factory :hearing_postponement_request_mail_task_with_hearing, class: HearingPostponementRequestMailTask do
-        parent { create(:distribution_task, :with_scheduled_hearing, appeal: appeal) }
+      factory :hearing_postponement_request_mail_task, class: HearingPostponementRequestMailTask do
         assigned_to { HearingAdmin.singleton }
       end
     end
