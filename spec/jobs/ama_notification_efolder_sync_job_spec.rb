@@ -54,6 +54,19 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
         expect(job.send(:ready_for_resync)).to eq([])
       end
 
+      it "recently outcoded appeals that have new notifications will not be in the ready_to_resync bunket" do
+        create(:notification,
+               appeals_id: appeals[6].uuid,
+               appeals_type: "Appeal",
+               event_date: today,
+               event_type: "Appeal docketed",
+               notification_type: "Email",
+               notified_at: Time.zone.now,
+               email_notification_status: "delivered")
+        expect(job.send(:appeals_recently_outcoded)).to eq([appeals[6]])
+        expect(job.send(:ready_for_resync)).to eq([])
+      end
+
       it "running the perform", bypass_cleaner: true do
         perform_enqueued_jobs { AmaNotificationEfolderSyncJob.perform_later }
         # The above line causes the appeal to have a case notifications report created for it.
