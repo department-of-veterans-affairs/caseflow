@@ -4,7 +4,7 @@ require "redis"
 
 module SyncLock
   extend ActiveSupport::Concern
-  LOCK_TIMEOUT = ENV["SYNC_LOCK_MAX_DURATION"] || 60
+  LOCK_TIMEOUT = ENV["SYNC_LOCK_MAX_DURATION"]
 
   def hlr_sync_lock
     if decision_review.is_a?(HigherLevelReview) && block_given?

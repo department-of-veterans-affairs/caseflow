@@ -108,6 +108,9 @@ Rails.application.configure do
   # Travel Board Sync Batch Size
   ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"] ||= "250"
 
+  # Time in seconds before the sync lock expires
+  LOCK_TIMEOUT = ENV["SYNC_LOCK_MAX_DURATION"] ||= "60"
+
   # Notifications page eFolder link
   ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"] ||= "https://vefs-claimevidence-ui-uat.stage.bip.va.gov"
 
