@@ -8,6 +8,10 @@ describe BusinessLine do
     it { expect(business_line.tasks_url).to eq "/decision_reviews/vha" }
   end
 
+  describe ".included_tabs" do
+    it { expect(business_line.included_tabs).to match_array [:incomplete, :in_progress, :completed] }
+  end
+
   shared_examples "task filtration" do
     context "Higher-Level Review tasks" do
       let!(:task_filters) { ["col=decisionReviewType&val=HigherLevelReview"] }
@@ -197,6 +201,44 @@ describe BusinessLine do
     end
   end
 
+  describe ".incomplete_tasks" do
+    let!(:hlr_tasks_on_active_decision_reviews) do
+      tasks = create_list(:higher_level_review_vha_task, 5, assigned_to: business_line)
+      tasks.each(&:on_hold!)
+      tasks
+    end
+
+    let!(:sc_tasks_on_active_decision_reviews) do
+      tasks = create_list(:supplemental_claim_vha_task, 5, assigned_to: business_line)
+      tasks.each(&:on_hold!)
+      tasks
+    end
+
+    # TODO: Presumably this is still fine??
+    let!(:decision_review_tasks_on_inactive_decision_reviews) do
+      tasks = create_list(:higher_level_review_task, 5, assigned_to: business_line)
+      tasks.each(&:on_hold!)
+      tasks
+    end
+
+    subject { business_line.incomplete_tasks(filters: task_filters) }
+
+    include_examples "task filtration"
+
+    context "with no filters" do
+      let!(:task_filters) { nil }
+
+      it "All tasks associated with active decision reviews and BoardGrantEffectuationTasks are included" do
+        expect(subject.size).to eq 10
+        expect(subject.map(&:id)).to match_array(
+          (hlr_tasks_on_active_decision_reviews +
+            sc_tasks_on_active_decision_reviews
+          ).pluck(:id)
+        )
+      end
+    end
+  end
+
   describe ".completed_tasks" do
     let!(:open_hlr_tasks) do
       add_veteran_and_request_issues_to_decision_reviews(
@@ -270,6 +312,106 @@ describe BusinessLine do
             completed_veteran_record_requests
           ).pluck(:id)
         )
+      end
+    end
+  end
+
+  describe "Generic Non Comp Org Businessline" do
+    include_context :business_line, "NONCOMPORG", "nco"
+
+    describe ".tasks_url" do
+      it { expect(business_line.tasks_url).to eq "/decision_reviews/nco" }
+    end
+
+    describe ".included_tabs" do
+      it { expect(business_line.included_tabs).to match_array [:in_progress, :completed] }
+    end
+
+    describe ".in_progress_tasks" do
+      let!(:hlr_tasks_on_active_decision_reviews) do
+        create_list(:higher_level_review_vha_task, 5, assigned_to: business_line)
+      end
+
+      let!(:sc_tasks_on_active_decision_reviews) do
+        create_list(:supplemental_claim_vha_task, 5, assigned_to: business_line)
+      end
+
+      # Set some on hold tasks as well
+      let!(:on_hold_sc_tasks_on_active_decision_reviews) do
+        tasks = create_list(:supplemental_claim_vha_task, 5, assigned_to: business_line)
+        tasks.each(&:on_hold!)
+        tasks
+      end
+
+      let!(:decision_review_tasks_on_inactive_decision_reviews) do
+        create_list(:higher_level_review_task, 5, assigned_to: business_line)
+      end
+
+      let!(:board_grant_effectuation_tasks) do
+        tasks = create_list(:board_grant_effectuation_task, 5, assigned_to: business_line)
+
+        tasks.each do |task|
+          create(
+            :request_issue,
+            :nonrating,
+            decision_review: task.appeal,
+            benefit_type: business_line.url,
+            closed_at: Time.zone.now,
+            closed_status: "decided"
+          )
+        end
+
+        tasks
+      end
+
+      let!(:veteran_record_request_on_active_appeals) do
+        add_veteran_and_request_issues_to_decision_reviews(
+          create_list(:veteran_record_request_task, 5, assigned_to: business_line)
+        )
+      end
+
+      let!(:veteran_record_request_on_inactive_appeals) do
+        create_list(:veteran_record_request_task, 5, assigned_to: business_line)
+      end
+
+      subject { business_line.in_progress_tasks(filters: task_filters) }
+
+      include_examples "task filtration"
+
+      context "With the :board_grant_effectuation_task FeatureToggle enabled" do
+        let!(:task_filters) { nil }
+
+        before { FeatureToggle.enable!(:board_grant_effectuation_task) }
+        after { FeatureToggle.disable!(:board_grant_effectuation_task) }
+
+        it "All tasks associated with active decision reviews and BoardGrantEffectuationTasks are included" do
+          expect(subject.size).to eq 25
+          expect(subject.map(&:id)).to match_array(
+            (veteran_record_request_on_active_appeals +
+              board_grant_effectuation_tasks +
+              hlr_tasks_on_active_decision_reviews +
+              sc_tasks_on_active_decision_reviews +
+              on_hold_sc_tasks_on_active_decision_reviews
+            ).pluck(:id)
+          )
+        end
+      end
+
+      context "With the :board_grant_effectuation_task FeatureToggle disabled" do
+        let!(:task_filters) { nil }
+
+        before { FeatureToggle.disable!(:board_grant_effectuation_task) }
+
+        it "All tasks associated with active decision reviews are included, but not BoardGrantEffectuationTasks" do
+          expect(subject.size).to eq 20
+          expect(subject.map(&:id)).to match_array(
+            (veteran_record_request_on_active_appeals +
+              hlr_tasks_on_active_decision_reviews +
+              sc_tasks_on_active_decision_reviews +
+              on_hold_sc_tasks_on_active_decision_reviews
+            ).pluck(:id)
+          )
+        end
       end
     end
   end
