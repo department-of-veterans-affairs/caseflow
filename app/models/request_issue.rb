@@ -11,6 +11,7 @@ class RequestIssue < CaseflowRecord
   include HasBusinessLine
   include DecisionSyncable
   include HasDecisionReviewUpdatedSince
+  include SyncLock
 
   # how many days before we give up trying to sync decisions
   REQUIRES_PROCESSING_WINDOW_DAYS = 30
@@ -431,14 +432,23 @@ class RequestIssue < CaseflowRecord
     # to avoid a slow BGS call causing the transaction to timeout
     end_product_establishment.veteran
 
-    transaction do
-      return unless create_decision_issues
+    ### hlr_sync_lock will stop any other request issues associated with the current End Product Establishment
+    ### from syncing with BGS concurrently if the claim is a Higher Level Review. This will ensure that
+    ### the remand supplemental claim generation that occurs within '#on_decision_issue_sync_processed' will
+    ### not be inadvertantly bypassed due to two request issues from the same claim being synced at the same
+    ### time. If this situation does occur, one of the request issues will error out with
+    ### Caseflow::Error:SyncLockFailed and be picked up to sync again later
+    hlr_sync_lock do
+      transaction do
+        return unless create_decision_issues
 
-      end_product_establishment.on_decision_issue_sync_processed(self)
-      clear_error!
-      close_decided_issue!
-      processed!
+        end_product_establishment.on_decision_issue_sync_processed(self)
+        clear_error!
+        close_decided_issue!
+        processed!
+      end
     end
+
   end
 
   def vacols_issue
