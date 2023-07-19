@@ -3,14 +3,18 @@
 # to create legacy appeals with MST/PACT issues, run "bundle exec rake 'db:generate_legacy_appeals[true]'""
 # to create legacy appeals with AMA Tasks added, run "bundle exec rake db:generate_legacy_appeals[false,true]"
 # to create without, run "bundle exec rake db:generate_legacy_appeals"
+# rubocop:disable Lint/ConstantDefinitionInBlock
+
 namespace :db do
   desc "Generates a smattering of legacy appeals with VACOLS cases that have special issues assocaited with them"
   task :generate_legacy_appeals, [:add_special_issues, :task_creation] => :environment do |_, args|
     ADD_SPECIAL_ISSUES = args.add_special_issues == "true"
     TASK_CREATION = args.task_creation == "true"
+
     class LegacyAppealFactory
       class << self
         # Stamping out appeals like mufflers!
+        # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength, Metrics/AbcSize, Layout/LineLength
         def stamp_out_legacy_appeals(num_appeals_to_create, file_number, user, attorney, docket_number, task_type)
           bfcurloc = VACOLS::Staff.find_by(sdomainid: user.css_id).slogid
 
@@ -60,6 +64,7 @@ namespace :db do
           end.compact
 
           build_the_cases_in_caseflow(cases, task_type, user, attorney)
+          # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength, Metrics/AbcSize, Layout/LineLength
         end
 
         def custom_folder_attributes(veteran, docket_number)
@@ -159,6 +164,7 @@ namespace :db do
           $stdout.puts("You have created a Review task")
         end
 
+        # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         def create_task(task_type, appeal, user, attorney)
           if task_type == "HEARINGTASK"
             create_hearing_task_for_legacy_appeals(appeal)
@@ -169,6 +175,7 @@ namespace :db do
           elsif task_type == "REVIEWTASK" && user.judge_in_vacols?
             create_review_task_for_legacy_appeals(appeal, user)
           end
+          # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         end
 
         ########################################################
@@ -224,7 +231,8 @@ namespace :db do
 
       if TASK_CREATION
         $stdout.puts("Which type of tasks do you want to add to these Legacy Appeals?")
-        $stdout.puts("Hint: Options include 'HearingTask', 'JudgeTask', 'AttorneyTask', 'ReviewTask', and 'DistributionTask'")
+        $stdout.puts("Hint: Options include 'HearingTask', 'JudgeTask', 'AttorneyTask',
+                     'ReviewTask', and 'DistributionTask'")
         task_type = $stdin.gets.chomp.upcase
       end
 
@@ -251,7 +259,9 @@ namespace :db do
         LegacyAppealFactory.stamp_out_legacy_appeals(5, file_number, user, attorney, docket_number, task_type)
       end
       $stdout.puts("You have created Legacy Appeals")
-      # veterans_with_250_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals(250, file_number, user) }
+      # veterans_with_250_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals
+      #                                  (250, file_number, user) }
     end
   end
 end
+# rubocop:enable Lint/ConstantDefinitionInBlock
