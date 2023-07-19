@@ -649,28 +649,43 @@ RSpec.feature "Case details", :all_dbs do
           )
         )
       end
+      # some of the below values are hardcoded in the veteran factory
+      let!(:inflated_bgs_veteran_record) do
+        { first_name: appeal.veteran.first_name,
+          last_name: appeal.veteran.last_name,
+          date_of_birth: 30.years.ago.to_date.strftime("%m/%d/%Y"),
+          date_of_death: nil,
+          name_suffix: appeal.veteran.name_suffix,
+          sex: "M",
+          address_line1: "1234 Main Street",
+          country: "USA",
+          zip_code: "12345",
+          state: "FL",
+          city: "Orlando",
+          file_number: appeal.veteran.file_number,
+          ssn: appeal.veteran.ssn,
+          email_address: "#{appeal.veteran.first_name}.#{appeal.veteran.last_name}@test.com",
+          ptcpnt_id: appeal.veteran.participant_id,
+          participant_id: appeal.veteran.participant_id }
+      end
+      let!(:bgs) { Fakes::BGSService.new }
 
       before do
-        Fakes::BGSService.inaccessible_appeal_vbms_ids = []
-        Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
+        bgs.class.mark_veteran_not_accessible(appeal.veteran_file_number)
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
           .and_raise(BGS::ShareError, "NonUniqueResultException")
-        appeal.veteran&.multiple_phone_numbers?
       end
 
       scenario "access the appeal's case details" do
-        visit "/queue/appeals/#{appeal.external_id}"
-
+        reload_case_detail_page(appeal.external_id)
         expect(page).to have_content(COPY::DUPLICATE_PHONE_NUMBER_TITLE)
 
-        cache_key = Fakes::BGSService.new.can_access_cache_key(current_user, appeal.veteran_file_number)
-        expect(Rails.cache.exist?(cache_key)).to eq(false)
+        bgs.inaccessible_appeal_vbms_ids = []
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
+          .and_return(inflated_bgs_veteran_record)
 
-        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
-        Fakes::BGSService.inaccessible_appeal_vbms_ids = []
         visit "/queue/appeals/#{appeal.external_id}"
-
-        expect(Rails.cache.exist?(cache_key)).to eq(true)
+        expect(page).to have_content(appeal.veteran_full_name)
       end
     end
   end
