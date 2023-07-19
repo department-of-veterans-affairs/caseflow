@@ -182,11 +182,7 @@ module Seeds
     # an HLR or SC
     # a VbmsExtClaim
     def create_end_product_establishment(trait, veteran)
-      create(:end_product_establishment,
-              trait,
-              veteran_file_number: veteran.file_number,
-              claimant_participant_id: veteran.participant_id
-            )
+      create(:end_product_establishment, :canceled_hlr_with_cleared_vbms_ext_claim, veteran_file_number: veteran.file_number, claimant_participant_id: veteran.participant_id)
     end
 
     # 'trait' will specify if the RI is rating or nonrating
