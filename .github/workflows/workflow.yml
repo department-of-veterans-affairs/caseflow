@@ -233,8 +233,8 @@ jobs:
 
   caseflow_rspec_coverage_report:
     runs-on: ubuntu-8-cores-latest
-    if: ${{ success() }}
-    needs: caseflow_rspec_job
+    # if: ${{ success() }}
+    # needs: caseflow_rspec_job
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       credentials:
@@ -248,7 +248,7 @@ jobs:
 
       - name: Inflate Coverage tar.gz files
         run: |
-          (cd artifact && for file in coverage-*.tar.gz ; do tar -xvf "$file"; done)
+          (cd artifact && for  file in coverage-*.tar.gz ; do tar -xvf "$file"; done)
 
       - uses: ruby/setup-ruby@v1
         with:
