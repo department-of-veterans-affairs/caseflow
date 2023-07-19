@@ -523,12 +523,7 @@ FactoryBot.define do
 
       factory :assess_documentation_task, class: AssessDocumentationTask do
         parent { create(:vha_document_search_task, appeal: appeal) }
-        assigned_by { nil }
-      end
-
-      factory :assess_documentation_task_predocket, class: AssessDocumentationTask do
-        parent { create(:pre_docket_task, assigned_to: assigned_to, appeal: appeal) }
-        assigned_by { nil }
+        assigned_by { parent.assigned_by }
       end
 
       factory :vha_document_search_task, class: VhaDocumentSearchTask do
@@ -538,12 +533,6 @@ FactoryBot.define do
           User.find_by_css_id("INTAKE_USER") ||
             create(:user, css_id: "INTAKE_USER").tap { |user| BvaIntake.singleton.add_user(user) }
         end
-      end
-
-      factory :vha_document_search_task_with_assigned_to, class: VhaDocumentSearchTask do
-        parent { create(:pre_docket_task, assigned_to: assigned_to, appeal: appeal) }
-        assigned_to { :assigned_to }
-        assigned_by { nil }
       end
 
       factory :education_document_search_task, class: EducationDocumentSearchTask do

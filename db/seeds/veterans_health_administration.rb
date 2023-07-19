@@ -24,7 +24,7 @@ module Seeds
       create_vha_caregiver
       create_vha_program_office
       create_vha_visn_pre_docket_queue
-      create_high_level_reviews
+      create_higher_level_reviews
       create_supplemental_claims
       add_vha_user_to_be_vha_business_line_member
     end
@@ -72,38 +72,54 @@ module Seeds
 
     def create_vha_camo
       create_vha_camo_queue_assigned
-      create_vha_camo_queue_in_progress
+      # create_vha_camo_queue_in_progress
       create_vha_camo_queue_completed
     end
 
     def create_vha_caregiver
       create_vha_caregiver_queue_assigned
-      create_vha_caregiver_queue_in_progress
+      # create_vha_caregiver_queue_in_progress
       create_vha_caregiver_queue_completed
     end
 
-    def create_high_level_reviews
-      business_line_list = BusinessLine.all
-      business_line_list.each do |bussiness_line|
-        benefit_claim_type = { benefit_type: bussiness_line.url.underscore, claim_type: "HLR" }
-        create_list(:higher_level_review_vha_task, 5, assigned_to: bussiness_line)
-        create_claims_with_dependent_claimants(benefit_claim_type)
-        create_claims_with_attorney_claimants(benefit_claim_type)
-        create_claims_with_other_claimants(benefit_claim_type)
+    def create_higher_level_reviews
+      benefit_type_list = Constants::BENEFIT_TYPES.keys.map(&:to_s)
+      benefit_type_list.each do |benefit_type|
+        3.times do
+          create_hlr_with_claimant(benefit_type, :veteran_claimant)
+          create_hlr_with_claimant(benefit_type, :dependent_claimant)
+          create_hlr_with_claimant(benefit_type, :attorney_claimant)
+          create_hlr_with_claimant(benefit_type, :healthcare_claimant)
+          create_hlr_with_claimant(benefit_type, :other_claimant)
+        end
+
+
+        # benefit_claim_type = { benefit_type: business_line.url.underscore, claim_type: "HLR" }
+        # create_list(:higher_level_review_vha_task, 5, assigned_to: business_line)
+        # create_claims_with_dependent_claimants(benefit_claim_type)
+        # create_claims_with_attorney_claimants(benefit_claim_type)
+        # create_claims_with_other_claimants(benefit_claim_type)
       end
-      create_claims_with_health_care_claimants("HLR")
+      # create_claims_with_health_care_claimants("HLR")
     end
 
     def create_supplemental_claims
-      business_line_list = Organization.where(type: "BusinessLine")
-      business_line_list.each do |bussiness_line|
-        benefit_claim_type = { benefit_type: bussiness_line.url.underscore, claim_type: "supplemental" }
-        create_list(:supplemental_claim_vha_task, 5, assigned_to: bussiness_line)
-        create_claims_with_dependent_claimants(benefit_claim_type)
-        create_claims_with_attorney_claimants(benefit_claim_type)
-        create_claims_with_other_claimants(benefit_claim_type)
+      benefit_type_list = Constants::BENEFIT_TYPES.keys.map(&:to_s)
+      benefit_type_list.each do |benefit_type|
+        3.times do
+          create_sc_with_claimant(benefit_type, :veteran_claimant)
+          create_sc_with_claimant(benefit_type, :dependent_claimant)
+          create_sc_with_claimant(benefit_type, :attorney_claimant)
+          create_sc_with_claimant(benefit_type, :healthcare_claimant)
+          create_sc_with_claimant(benefit_type, :other_claimant)
+        end
+        # benefit_claim_type = { benefit_type: business_line.url.underscore, claim_type: "supplemental" }
+        # create_list(:supplemental_claim_vha_task, 5, assigned_to: business_line)
+        # create_claims_with_dependent_claimants(benefit_claim_type)
+        # create_claims_with_attorney_claimants(benefit_claim_type)
+        # create_claims_with_other_claimants(benefit_claim_type)
       end
-      create_claims_with_health_care_claimants("supplemental")
+      # create_claims_with_health_care_claimants("supplemental")
     end
 
     def create_claims_with_dependent_claimants(arg = {})
@@ -239,63 +255,106 @@ module Seeds
       sc
     end
 
+    def create_hlr_with_claimant(benefit_type, claimant_type = nil)
+      case claimant_type
+      when :dependent_claimant
+        hlr = create(:higher_level_review, :with_request_issue, :processed, veteran_is_not_claimant: true, benefit_type: benefit_type, number_of_claimants: 1)
+      when :attorney_claimant
+        hlr = create(:higher_level_review, :with_request_issue, :processed, veteran_is_not_claimant: true, has_attorney_claimant: true, benefit_type: benefit_type)
+      when :healthcare_claimant
+        hlr = create(:higher_level_review, :with_request_issue, :processed, veteran_is_not_claimant: true, has_healthcare_provider_claimant: true, benefit_type: benefit_type)
+      when :other_claimant
+        hlr = create(:higher_level_review, :with_request_issue, :processed, veteran_is_not_claimant: true, has_unrecognized_appellant: true, benefit_type: benefit_type)
+      else
+        hlr = create(:higher_level_review, :with_request_issue, :processed, veteran_is_not_claimant: false, benefit_type: benefit_type, number_of_claimants: 1)
+      end
+      hlr.create_business_line_tasks!
+    end
+
+    def create_sc_with_claimant(benefit_type, claimant_type = nil)
+      case claimant_type
+      when :dependent_claimant
+        sc = create(:supplemental_claim, :with_request_issue, :processed, veteran_is_not_claimant: true, benefit_type: benefit_type, number_of_claimants: 1)
+      when :attorney_claimant
+        sc = create(:supplemental_claim, :with_request_issue, :processed, veteran_is_not_claimant: true, has_attorney_claimant: true, benefit_type: benefit_type)
+      when :healthcare_claimant
+        sc = create(:supplemental_claim, :with_request_issue, :processed, veteran_is_not_claimant: true, has_healthcare_provider_claimant: true, benefit_type: benefit_type)
+      when :other_claimant
+        sc = create(:supplemental_claim, :with_request_issue, :processed, veteran_is_not_claimant: true, has_unrecognized_appellant: true, benefit_type: benefit_type)
+      else
+        sc = create(:supplemental_claim, :with_request_issue, :processed, veteran_is_not_claimant: false, benefit_type: benefit_type, number_of_claimants: 1)
+      end
+      sc.create_business_line_tasks!
+    end
+
     def create_vha_visn_pre_docket_queue
       tabs = [:assigned, :completed, :in_progress, :on_hold]
       vha_regional_offices = VhaRegionalOffice.all
+      vha_program_offices = VhaProgramOffice.all
       tabs.each do |status|
         vha_regional_offices.each do |regional_office|
-          create_list(:assess_documentation_task_predocket, 5, status, assigned_to: regional_office) unless status == :on_hold
-          create_list(:assess_documentation_task_predocket, 5, :on_hold, assigned_to: regional_office) if status == :on_hold
+          # We want to also populate the VhaProgramOffice queue's in_progress tabs, so loop through them here also
+          vha_program_offices.each do |program_office|
+            po_task = create(:assess_documentation_task, :assigned, assigned_to: program_office)
+            if status == :completed
+              # VISN completed tasks will populate the PO office 'ready for review' tab
+              ro_task = create(:assess_documentation_task, parent: po_task, assigned_to: regional_office)
+              ro_task.completed!
+            else
+              # assigned, in_progress, and on_hold status will populate in the PO office 'on_hold' tab
+              create(:assess_documentation_task, status, parent: po_task, assigned_to: regional_office)
+            end
+          end
         end
       end
     end
 
     def create_vha_camo_queue_assigned
       5.times do
-        create(:vha_document_search_task_with_assigned_to, assigned_to: VhaCamo.singleton)
+        create(:vha_document_search_task, :assigned, assigned_to: VhaCamo.singleton)
       end
     end
 
-    def create_vha_camo_queue_in_progress
-      5.times do
-        appeal = create(:appeal)
-        root_task = create(:task, appeal: appeal, assigned_to: VhaCamo.singleton)
-        pre_docket_task = FactoryBot.create(
-          :pre_docket_task,
-          :in_progress,
-          assigned_to: VhaCamo.singleton,
-          appeal: appeal,
-          parent: root_task
-        )
-        create(:task, :in_progress, assigned_to: VhaCamo.singleton, appeal: appeal, parent: pre_docket_task)
-      end
-    end
+    # This data needs to come from cases assigned to a PO, not by manually setting these attributes
+    # def create_vha_camo_queue_in_progress
+    #   5.times do
+    #     appeal = create(:appeal)
+    #     root_task = create(:task, appeal: appeal, assigned_to: VhaCamo.singleton)
+    #     pre_docket_task = FactoryBot.create(
+    #       :pre_docket_task,
+    #       :in_progress,
+    #       assigned_to: VhaCamo.singleton,
+    #       appeal: appeal,
+    #       parent: root_task
+    #     )
+    #     create(:task, :in_progress, assigned_to: VhaCamo.singleton, appeal: appeal, parent: pre_docket_task)
+    #   end
+    # end
 
     def create_vha_camo_queue_completed
       5.times do
-        create(
-          :vha_document_search_task_with_assigned_to,
-          :completed,
-          assigned_to: VhaCamo.singleton
-        )
+        task = create(:vha_document_search_task, assigned_to: VhaCamo.singleton)
+        task.completed!
       end
     end
 
     def create_vha_caregiver_queue_assigned
       5.times do
-        create(:vha_document_search_task_with_assigned_to, assigned_to: VhaCaregiverSupport.singleton)
+        create(:vha_document_search_task, assigned_to: VhaCaregiverSupport.singleton)
       end
     end
 
-    def create_vha_caregiver_queue_in_progress
-      5.times do
-        create(:vha_document_search_task_with_assigned_to, :in_progress, assigned_to: VhaCaregiverSupport.singleton)
-      end
-    end
+    # This data needs to come from cases assigned to a PO, not by manually setting these attributes
+    # def create_vha_caregiver_queue_in_progress
+    #   5.times do
+    #     create(:vha_document_search_task, :in_progress, assigned_to: VhaCaregiverSupport.singleton)
+    #   end
+    # end
 
     def create_vha_caregiver_queue_completed
       5.times do
-        create(:vha_document_search_task_with_assigned_to, :completed, assigned_to: VhaCaregiverSupport.singleton)
+        task = create(:vha_document_search_task, assigned_to: VhaCaregiverSupport.singleton)
+        task.completed!
       end
     end
 
@@ -305,11 +364,18 @@ module Seeds
       tabs.each do |status|
         program_offices.each do |program_office|
           if status == :on_hold
-            create_list(:assess_documentation_task_predocket, 5, :on_hold, assigned_to: program_office)
+            # this data should be implemented by cases being assigned to a VISN, not manually setting attributes
+            # create_list(:assess_documentation_task, 5, :on_hold, assigned_to: program_office)
           elsif status == :ready_for_review
-            create_list(:assess_documentation_task_predocket, 5, :completed, :ready_for_review, assigned_to: program_office)
+            # this data should be implemented by cases being completed! by as VISN, not manually setting attributes
+            # create_list(:assess_documentation_task, 5, :completed, :ready_for_review, assigned_to: program_office)
+          elsif status == :completed
+            5.times do
+              task = create(:assess_documentation_task, assigned_to: program_office)
+              task.completed!
+            end
           else
-            create_list(:assess_documentation_task_predocket, 5, status, assigned_to: program_office)
+            create_list(:assess_documentation_task, 5, assigned_to: program_office)
           end
         end
       end
