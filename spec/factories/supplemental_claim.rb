@@ -6,22 +6,14 @@ FactoryBot.define do
     receipt_date { 1.month.ago }
     benefit_type { "compensation" }
     uuid { SecureRandom.uuid }
-    veteran_is_not_claimant { false }
+    veteran_is_not_claimant { true }
 
     transient do
       number_of_claimants { nil }
     end
 
     transient do
-      has_unrecognized_appellant { false }
-    end
-
-    transient do
-      has_healthcare_provider_claimant { false }
-    end
-
-    transient do
-      has_attorney_claimant { false }
+      claimant_type { :veteran_claimant }
     end
 
     transient do
@@ -45,42 +37,55 @@ FactoryBot.define do
           claimant.decision_review = sc
           claimant.save
         end
-      elsif evaluator.number_of_claimants
-        claimant_class_name = sc.veteran_is_not_claimant ? "DependentClaimant" : "VeteranClaimant"
-        create_list(
-          :claimant,
-          evaluator.number_of_claimants,
-          decision_review: sc,
-          type: claimant_class_name,
-          payee_code: (claimant_class_name == "DependentClaimant") ? "10" : payee_code
-        )
-      elsif evaluator.has_unrecognized_appellant
-        create(
-          :claimant,
-          :with_unrecognized_appellant_detail,
-          participant_id: sc.veteran.participant_id,
-          decision_review: sc,
-          type: "OtherClaimant",
-          payee_code: payee_code
-        )
-      elsif evaluator.has_healthcare_provider_claimant
-        create(
-          :claimant,
-          :with_unrecognized_appellant_detail,
-          participant_id: sc.veteran.participant_id,
-          decision_review: sc,
-          type: "HealthcareProviderClaimant",
-          payee_code: payee_code
-        )
-      elsif evaluator.has_attorney_claimant
-        create(
-          :claimant,
-          :attorney,
-          participant_id: sc.veteran.participant_id,
-          decision_review: sc,
-          payee_code: payee_code
-        )
+      elsif evaluator.claimant_type
+        case evaluator.claimant_type
+        when :dependent_claimant
+          create_list(
+            :claimant,
+            evaluator.number_of_claimants,
+            decision_review: sc,
+            type: "DependentClaimant",
+            # there was previously a HLR created in seeds/intake with payee_code "10", this covers that scenario
+            payee_code: "10"
+          )
+        when :attorney_claimant
+          create(
+            :claimant,
+            :attorney,
+            participant_id: sc.veteran.participant_id,
+            decision_review: sc,
+            payee_code: payee_code
+          )
+        when :healthcare_claimant
+          create(
+            :claimant,
+            :with_unrecognized_appellant_detail,
+            participant_id: sc.veteran.participant_id,
+            decision_review: sc,
+            type: "HealthcareProviderClaimant",
+            payee_code: payee_code
+          )
+        when :other_claimant
+          create(
+            :claimant,
+            :with_unrecognized_appellant_detail,
+            participant_id: sc.veteran.participant_id,
+            decision_review: sc,
+            type: "OtherClaimant",
+            payee_code: payee_code
+          )
+        else # :veteran_claimant
+          sc.update!(veteran_is_not_claimant: false)
+          create(
+            :claimant,
+            participant_id: sc.veteran.participant_id,
+            decision_review: sc,
+            payee_code: payee_code,
+            type: "VeteranClaimant"
+          )
+        end
       elsif !Claimant.exists?(participant_id: sc.veteran.participant_id, decision_review: sc)
+        sc.update!(veteran_is_not_claimant: false)
         create(
           :claimant,
           participant_id: sc.veteran.participant_id,
