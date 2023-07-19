@@ -233,7 +233,7 @@ jobs:
 
   caseflow_rspec_coverage_report:
     runs-on: ubuntu-8-cores-latest
-    if: ${{ always() }}
+    if: ${{ success() }}
     needs: caseflow_rspec_job
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
