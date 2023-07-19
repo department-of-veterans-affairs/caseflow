@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import update from 'immutability-helper';
 import moment from 'moment';
+import { css } from 'glamor';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
@@ -11,6 +13,8 @@ import Button from '../../components/Button';
 import COPY from '../../../COPY';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
+
+import PowerOfAttorneyDecisionReview from './PowerOfAttorneyDecisionReview';
 
 import { DISPOSITION_OPTIONS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import {
@@ -91,6 +95,14 @@ class NonCompDecisionIssue extends React.PureComponent {
     </div>;
   }
 }
+
+const editPOAInformation = true;
+const editAppellantInformationLinkStyling = css({
+  fontSize: '2rem',
+  fontWeight: 'normal',
+  margin: '5px',
+});
+const updatePOALink = true;
 
 class NonCompDispositions extends React.PureComponent {
   constructor(props) {
@@ -186,15 +198,42 @@ class NonCompDispositions extends React.PureComponent {
 
     return <div>
       <div className="cf-decisions">
-        <div className="usa-grid-full">
-          <div className="usa-width-one-half">
-            <h2>Decision</h2>
-            <div>Review each issue and assign the appropriate dispositions.</div>
-          </div>
-          <div className="usa-width-one-half cf-txt-r">
-            {editIssuesLink}
+        <div className="cf-decision">
+          <hr />
+          <div className="usa-grid-full">
+            <h2>{COPY.CASE_DETAILS_POA_SUBSTITUTE} </h2>
+            <PowerOfAttorneyDecisionReview
+              appealId={task.appeal.uuid}
+              additionalHeaderContent={
+                editPOAInformation && (
+                  <span
+                    className="cf-push-right"
+                    {...editAppellantInformationLinkStyling}
+                  >
+                    <Link to={`/queue/appeals/${task.appeal.uuid}/edit_poa_information`}>
+                      {updatePOALink}
+                    </Link>
+                  </span>
+                )
+              }
+            />
           </div>
         </div>
+      </div>
+      <div className="cf-decisions">
+        <div className="cf-decision">
+          <hr />
+          <div className="usa-grid-full">
+            <div className="usa-width-one-half">
+              <h2>Decision</h2>
+              <div>Review each issue and assign the appropriate dispositions.</div>
+            </div>
+            <div className="usa-width-one-half cf-txt-r">
+              {editIssuesLink}
+            </div>
+          </div>
+        </div>
+
         <div className="cf-decision-list">
           {
             this.state.requestIssues.map((issue, index) => {

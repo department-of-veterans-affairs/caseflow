@@ -59,24 +59,26 @@ class WorkQueue::DecisionReviewTaskSerializer
     # If :issue_count is present then we're hitting this serializer from a Decision Review
     # queue table, and we do not need to gather request issues as they are not used there.
     skip_acquiring_request_issues = object[:issue_count]
-    # byebug
     {
       id: decision_review(object).external_id,
       uuid: decision_review(object).uuid,
       isLegacyAppeal: false,
       issueCount: issue_count(object),
-      activeRequestIssues: skip_acquiring_request_issues || request_issues(object).active.map(&:serialize)
+      activeRequestIssues: skip_acquiring_request_issues || request_issues(object).active.map(&:serialize),
+      appellant_type: decision_review(object).claimant&.type
     }
   end
 
   attribute :power_of_attorney do |_object|
-    # byebug
     {
       representative_type: power_of_attorney(_object)&.representative_type,
       representative_name: power_of_attorney(_object)&.representative_name,
       representative_address: power_of_attorney(_object)&.representative_address,
       representative_email_address: power_of_attorney(_object)&.representative_email_address
     }
+  end
+
+  attribute :appellant_type do |appeal|
   end
 
   attribute :issue_count do |object|

@@ -36,7 +36,7 @@ const powerOfAttorneyFromAppealSelector = (appealId) =>
       error: loadingPowerOfAttorney?.error
     };
   }
-;
+  ;
 
 /**
  * Wraps a component with logic to fetch the power of attorney data from the API.
@@ -50,7 +50,7 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
       shallowEqual
     );
     const poaAlert = useSelector((state) => state.ui.poaAlert);
-
+    debugger;
     if (!powerOfAttorney) {
       if (loading) {
         return <React.Fragment>{COPY.CASE_DETAILS_LOADING}</React.Fragment>;
@@ -99,7 +99,7 @@ export const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
  */
 export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, poaAlert, appellantType }) => {
   let poa = powerOfAttorney;
-
+  debugger;
   if (poaAlert.powerOfAttorney) {
     poa = poaAlert.powerOfAttorney;
   }
@@ -152,14 +152,14 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
   return (
     <React.Fragment>
       <div>
-        { renderPoaLogic() }
-        { showPoaDetails && (
+        {renderPoaLogic()}
+        {showPoaDetails && (
           <ul {...detailListStyling}>
             <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
           </ul>
         )}
-        <p><em>{ renderBottomMessage() }</em></p>
-        { poaAlert.message && poaAlert.alertType && (
+        <p><em>{renderBottomMessage()}</em></p>
+        {poaAlert.message && poaAlert.alertType && (
           <div>
             <Alert type={poaAlert.alertType} message={poaAlert.message} scrollOnAlert={false} />
           </div>
@@ -197,7 +197,18 @@ export const PowerOfAttorneyName = _.flow(
   connect(null, mapDispatchToProps)
 )(PowerOfAttorneyNameUnconnected);
 
-export default _.flow(
+// export default _.flow(
+//   PowerOfAttorneyDetailWrapper,
+//   connect(null, mapDispatchToProps)
+// )(PowerOfAttorneyDetailUnconnected);
+
+
+
+export const PowerOfAttorneyDetail = _.flow(
   PowerOfAttorneyDetailWrapper,
   connect(null, mapDispatchToProps)
 )(PowerOfAttorneyDetailUnconnected);
+
+export default PowerOfAttorneyDetailUnconnected;
+
+

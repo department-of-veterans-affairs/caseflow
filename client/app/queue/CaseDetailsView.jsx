@@ -40,7 +40,7 @@ import CaseTitle from './CaseTitle';
 import CaseTitleDetails from './CaseTitleDetails';
 import CavcDetail from './caseDetails/CavcDetail';
 import CaseDetailsPostDispatchActions from './CaseDetailsPostDispatchActions';
-import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
+import { PowerOfAttorneyDetail } from './PowerOfAttorneyDetail';
 import StickyNavContentArea from './StickyNavContentArea';
 import TaskSnapshot from './TaskSnapshot';
 import UserAlerts from '../components/UserAlerts';
@@ -307,10 +307,10 @@ export const CaseDetailsView = (props) => {
           featureToggles,
           userIsVsoEmployee,
         }) && (
-          <div className={topAlertStyles}>
-            <VsoVisibilityAlert />
-          </div>
-        )}
+            <div className={topAlertStyles}>
+              <VsoVisibilityAlert />
+            </div>
+          )}
         <CaseTitleDetails
           appealId={appealId}
           redirectUrl={window.location.pathname}
@@ -366,14 +366,14 @@ export const CaseDetailsView = (props) => {
             // but prior to a hearing being scheduled they will need the Hearings section rendered anyways.
             (props.vsoVirtualOptIn && userIsVsoEmployee && allScheduleHearingTasks.length)
           ) && (
-            <CaseHearingsDetail
-              title="Hearings"
-              appeal={appeal}
-              hearingTasks={userIsVsoEmployee ? allScheduleHearingTasks : parentHearingTasks}
-              vsoVirtualOptIn={props.vsoVirtualOptIn}
-              currentUserEmailPresent={Boolean(appeal.currentUserEmail)}
-            />
-          )}
+              <CaseHearingsDetail
+                title="Hearings"
+                appeal={appeal}
+                hearingTasks={userIsVsoEmployee ? allScheduleHearingTasks : parentHearingTasks}
+                vsoVirtualOptIn={props.vsoVirtualOptIn}
+                currentUserEmailPresent={Boolean(appeal.currentUserEmail)}
+              />
+            )}
           <VeteranDetail title="About the Veteran" appealId={appealId} />
           {appeal.appellantIsNotVeteran && !_.isNull(appeal.appellantFullName) && (
             <AppellantDetail
@@ -409,8 +409,8 @@ export const CaseDetailsView = (props) => {
                   </span>
                 )
               }
-              appealId = {appealId}
-              canViewCavcDashboards = {canViewCavcDashboards}
+              appealId={appealId}
+              canViewCavcDashboards={canViewCavcDashboards}
               {...appeal.cavcRemand}
             />
           )}
@@ -419,14 +419,14 @@ export const CaseDetailsView = (props) => {
             additionalHeaderContent={
               true && (
                 <span className="cf-push-right" {...anchorEditLinkStyling}>
-                  { appeal.hasNotifications &&
-                  <Link id="notification-link" href={`/queue/appeals/${appealId}/notifications`} target="_blank">
-                    {COPY.VIEW_NOTIFICATION_LINK}
-                    &nbsp;
-                    <span {...ICON_POSITION_FIX}>
-                      <ExternalLinkIcon color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
-                    </span>
-                  </Link>}
+                  {appeal.hasNotifications &&
+                    <Link id="notification-link" href={`/queue/appeals/${appealId}/notifications`} target="_blank">
+                      {COPY.VIEW_NOTIFICATION_LINK}
+                      &nbsp;
+                      <span {...ICON_POSITION_FIX}>
+                        <ExternalLinkIcon color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
+                      </span>
+                    </Link>}
                 </span>
               )
             }
