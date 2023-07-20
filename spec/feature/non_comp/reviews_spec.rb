@@ -1,14 +1,18 @@
 # frozen_string_literal: true
 
 feature "NonComp Reviews Queue", :postgres do
-  let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "vha") }
+  let(:non_comp_org) { VhaBusinessLine.singleton }
   let(:user) { create(:default_user) }
 
   let(:veteran_a) { create(:veteran, first_name: "Aaa", participant_id: "12345", ssn: "140261454") }
   let(:veteran_b) { create(:veteran, first_name: "Bbb", participant_id: "601111772", ssn: "191097395") }
+  let(:veteran_a_on_hold) { create(:veteran, first_name: "Douglas", participant_id: "87474", ssn: "999393976") }
+  let(:veteran_b_on_hold) { create(:veteran, first_name: "Gaius", participant_id: "601172", ssn: "191039395") }
   let(:veteran_c) { create(:veteran, first_name: "Ccc", participant_id: "1002345", ssn: "128455943") }
   let(:hlr_a) { create(:higher_level_review, veteran_file_number: veteran_a.file_number) }
   let(:hlr_b) { create(:higher_level_review, veteran_file_number: veteran_b.file_number) }
+  let(:hlr_a_on_hold) { create(:higher_level_review, veteran_file_number: veteran_a_on_hold.file_number) }
+  let(:hlr_b_on_hold) { create(:higher_level_review, veteran_file_number: veteran_b_on_hold.file_number) }
   let(:hlr_c) { create(:higher_level_review, veteran_file_number: veteran_c.file_number) }
   let(:appeal) { create(:appeal, veteran: veteran_c) }
 
@@ -30,6 +34,14 @@ feature "NonComp Reviews Queue", :postgres do
            nonrating_issue_category: "Camp Lejune Family Member",
            decision_review: appeal,
            closed_at: 1.day.ago)
+  end
+
+  let!(:request_issue_a_on_hold) do
+    create(:request_issue, :nonrating, nonrating_issue_category: "Clothing Allowance", decision_review: hlr_a_on_hold)
+  end
+
+  let!(:request_issue_b_on_hold) do
+    create(:request_issue, :nonrating, nonrating_issue_category: "Other", decision_review: hlr_b_on_hold)
   end
 
   let(:today) { Time.zone.now }
@@ -82,6 +94,23 @@ feature "NonComp Reviews Queue", :postgres do
     ]
   end
 
+  let!(:on_hold_tasks) do
+    tasks = [
+      create(:higher_level_review_task,
+             :in_progress,
+             appeal: hlr_a_on_hold,
+             assigned_to: non_comp_org,
+             assigned_at: last_week),
+      create(:higher_level_review_task,
+             :in_progress,
+             appeal: hlr_b_on_hold,
+             assigned_to: non_comp_org,
+             assigned_at: last_week)
+    ]
+    tasks.each(&:on_hold!)
+    tasks
+  end
+
   let(:search_box_label) { "Search by Claimant Name, Veteran Participant ID, File Number or SSN" }
 
   let(:vet_id_column_header) do
@@ -131,11 +160,12 @@ feature "NonComp Reviews Queue", :postgres do
 
     scenario "displays tasks page with decision_review_queue_ssn_column feature toggle disabled" do
       visit BASE_URL
-      expect(page).to have_content("Non-Comp Org")
+      expect(page).to have_content("Veterans Health Administration")
+      expect(page).to have_content("Incomplete tasks")
       expect(page).to have_content("In progress tasks")
       expect(page).to have_content("Completed tasks")
 
-      # default is the in progress page
+      # default is the in progress page if no tab is specified in the url
       expect(page).to have_content("Days Waiting")
       expect(page).to have_content("Issues")
       expect(page).to have_content("Issue Type")
@@ -144,6 +174,8 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content(veteran_a.name)
       expect(page).to have_content(veteran_b.name)
       expect(page).to have_content(veteran_c.name)
+      expect(page).to_not have_content(veteran_a_on_hold.name)
+      expect(page).to_not have_content(veteran_b_on_hold.name)
       expect(page).to have_content(vet_id_column_header)
       expect(page).to have_content(vet_a_id_column_value)
       expect(page).to have_content(vet_b_id_column_value)
@@ -151,9 +183,17 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_no_content(search_box_label)
 
       # ordered by assigned_at descending
-
       expect(page).to have_content(
         /#{veteran_b.name}.+\s#{veteran_c.name}.+\s#{veteran_a.name}/
+      )
+
+      click_on "Incomplete tasks"
+      expect(page).to have_content("Higher-Level Review", count: 2)
+      expect(page).to have_content("Days Waiting")
+
+      # ordered by assigned_at descending
+      expect(page).to have_content(
+        /#{veteran_a_on_hold.name}.+\s#{veteran_b_on_hold.name}/
       )
 
       click_on "Completed tasks"
@@ -172,11 +212,12 @@ feature "NonComp Reviews Queue", :postgres do
     context "with user enabled for intake" do
       scenario "displays tasks page" do
         visit BASE_URL
-        expect(page).to have_content("Non-Comp Org")
+        expect(page).to have_content("Veterans Health Administration")
+        expect(page).to have_content("Incomplete tasks")
         expect(page).to have_content("In progress tasks")
         expect(page).to have_content("Completed tasks")
 
-        # default is the in progress page
+        # default is the in progress page if no tab is specified in the url
         expect(page).to have_content("Days Waiting")
         expect(page).to have_content("Issues")
         expect(page).to have_content("Issue Type")
@@ -185,6 +226,8 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content(veteran_a.name)
         expect(page).to have_content(veteran_b.name)
         expect(page).to have_content(veteran_c.name)
+        expect(page).to_not have_content(veteran_a_on_hold.name)
+        expect(page).to_not have_content(veteran_b_on_hold.name)
         expect(page).to have_content(vet_id_column_header)
         expect(page).to have_content(vet_a_id_column_value)
         expect(page).to have_content(vet_b_id_column_value)
@@ -316,7 +359,7 @@ feature "NonComp Reviews Queue", :postgres do
       # Date Completed asc
       # Currently swapping tabs does not correctly populate get params.
       # These statements will need to updated when that is fixed
-      click_button("tasks-organization-queue-tab-1")
+      click_button("tasks-organization-queue-tab-2")
 
       later_date = Time.zone.now.strftime("%m/%d/%y")
       earlier_date = 2.days.ago.strftime("%m/%d/%y")
@@ -774,13 +817,18 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content("Filtering by: Issue Type (1)")
 
         # Swap to the completed tab
-        click_button("tasks-organization-queue-tab-1")
+        click_button("tasks-organization-queue-tab-2")
         expect(page).to have_content(pipe_issue_category)
         expect(page).to have_content("Filtering by: Issue Type (1)")
 
         # Swap back to the in progress tab
-        click_button("tasks-organization-queue-tab-0")
+        click_button("tasks-organization-queue-tab-1")
         expect(page).to have_content(pipe_issue_category)
+        expect(page).to_not have_content("Foreign Medical Program")
+        expect(page).to have_content("Filtering by: Issue Type (1)")
+
+        # Swap to the incomplete tab with no results
+        click_button("tasks-organization-queue-tab-0")
         expect(page).to_not have_content("Foreign Medical Program")
         expect(page).to have_content("Filtering by: Issue Type (1)")
       end
@@ -818,6 +866,54 @@ feature "NonComp Reviews Queue", :postgres do
         expect(page).to have_content(pipe_issue_category)
         expect(page).to have_content("Filtering by: Issue Type (1)")
       end
+    end
+  end
+
+  context "For a non comp org that is not VHA" do
+    after { FeatureToggle.disable!(:board_grant_effectuation_task) }
+    let(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+
+    scenario "displays tasks page for non VHA" do
+      visit "/decision_reviews/nco"
+      expect(page).to have_content("Non-Comp Org")
+      expect(page).to_not have_content("Incomplete tasks")
+      expect(page).to have_content("In progress tasks")
+      expect(page).to have_content("Completed tasks")
+
+      # default is the in progress page if no tab is specified in the url
+      # in progress for non vha should still include on hold tasks
+      expect(page).to have_content("Days Waiting")
+      expect(page).to have_content("Issues")
+      expect(page).to have_content("Issue Type")
+      expect(page).to have_content("Higher-Level Review", count: 4)
+      expect(page).to have_content("Board Grant")
+      expect(page).to have_content(veteran_a.name)
+      expect(page).to have_content(veteran_b.name)
+      expect(page).to have_content(veteran_c.name)
+      expect(page).to have_content(veteran_a_on_hold.name)
+      expect(page).to have_content(veteran_b_on_hold.name)
+      expect(page).to have_content(vet_id_column_header)
+      expect(page).to have_content(vet_a_id_column_value)
+      expect(page).to have_content(vet_b_id_column_value)
+      expect(page).to have_content(vet_c_id_column_value)
+      expect(page).to have_no_content(search_box_label)
+
+      # ordered by assigned_at descending
+      expect(page).to have_content(
+        /#{veteran_b.name}.+\s#{veteran_c.name}.+\s#{veteran_a.name}/
+      )
+
+      click_on "Completed tasks"
+      expect(page).to have_content("Higher-Level Review", count: 2)
+      expect(page).to have_content("Date Completed")
+
+      # ordered by closed_at descending
+      expect(page).to have_content(
+        Regexp.new(
+          /#{veteran_b.name} #{vet_b_id_column_value} 1/,
+          /#{request_issue_b.decision_date.strftime("%m\/%d\/%y")} Higher-Level Review/
+        )
+      )
     end
   end
 end
