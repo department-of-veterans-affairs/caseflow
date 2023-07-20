@@ -9,8 +9,9 @@
 class HearingRequestMailTask < MailTask
   validates :parent, presence: true, on: :create
 
-  # Is this check necessary, and would it be more effective reworked as a validation statement? Or no difference
-  before_create :verify_request_type_designated
+  # Is this check necessary?
+  #   - In theory you could call MailTask.create even though MailTask is not an assignable task
+  before_validation :verify_request_type_designated
 
   class << self
     def allow_creation?(*)
@@ -33,11 +34,9 @@ class HearingRequestMailTask < MailTask
 
   private
 
-  # Ensure create is called on a valid descendant task and not directly on this class
+  # Ensure create is called on a descendant mail task and not directly on the HearingRequestMailTask class
   def verify_request_type_designated
-    valid_request_types = %w[HearingPostponementRequestMailTask HearingWithdrawalRequestMailTask]
-
-    unless valid_request_types.include?(type)
+    if self.class == HearingRequestMailTask
       fail Caseflow::Error::InvalidTaskTypeOnTaskCreate, task_type: type
     end
   end

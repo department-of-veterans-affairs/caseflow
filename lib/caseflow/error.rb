@@ -108,7 +108,7 @@ module Caseflow::Error
     def initialize(args)
       @task_type = args[:task_type]
       @code = args[:code] || 400
-      @message = args[:message] || "#{@task_type} is not a valid task type"
+      @message = args[:message] || "#{@task_type} is not an assignable task type"
     end
   end
 
