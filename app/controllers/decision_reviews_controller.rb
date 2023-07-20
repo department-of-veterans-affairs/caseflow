@@ -85,12 +85,7 @@ class DecisionReviewsController < ApplicationController
   end
 
   def business_line
-    # @business_line = if business_line_slug == "vha"
-    #                    VhaBusinessLine.first
-    #                  else
-    #                    BusinessLine.find_by(url: business_line_slug)
-    #                  end
-    @business_line ||= ::BusinessLine.find_by(url: business_line_slug)
+    @business_line ||= BusinessLine.find_by(url: business_line_slug)
   end
 
   def task_filter_details
@@ -102,7 +97,7 @@ class DecisionReviewsController < ApplicationController
         task_filter_hash[:incomplete_issue_types] = incomplete_tasks_issue_type_counts
       when :in_progress
         task_filter_hash[:in_progress] = in_progress_tasks_type_counts
-        task_filter_hash[:in_progress] = in_progress_tasks_issue_type_counts
+        task_filter_hash[:in_progress_issue_types] = in_progress_tasks_issue_type_counts
       when :completed
         task_filter_hash[:completed] = completed_tasks_type_counts
         task_filter_hash[:completed_issue_types] = completed_tasks_issue_type_counts
