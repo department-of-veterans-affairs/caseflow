@@ -94,9 +94,11 @@ class RatingIssue
         data << { pact_available: true } if Rating.special_issue_has_pact?(special_issue)
       end
       if serialized_hash[:rba_contentions_data]
-        data << { mst_available: true } if Rating.mst_from_contentions_for_rating?(serialized_hash)
+        # get the contentinons from the rating by the participant id
+        contentions = Rating.participant_contentions(serialized_hash)
+        data << { mst_available: true } if Rating.mst_from_contentions_for_rating?(contentions)
 
-        data << { pact_available: true } if Rating.pact_from_contentions_for_rating?(serialized_hash)
+        data << { pact_available: true } if Rating.pact_from_contentions_for_rating?(contentions)
       end
       data
     end
