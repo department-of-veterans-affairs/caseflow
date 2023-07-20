@@ -257,12 +257,6 @@ jobs:
       - name: Run coverage analysis
         run: bundle exec rake ci:gha_verify_code_coverage
 
-      - uses: actions/upload-artifact@v3
-        if: success() || failure()
-        name: merged-results
-        with:
-          path: ./merged_results.json
-
 
   caseflow_jest_job:
     # This job will run the jest, change the value below to false if you wish to turn it off.
