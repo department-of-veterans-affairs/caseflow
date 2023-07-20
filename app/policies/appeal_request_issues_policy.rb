@@ -13,7 +13,7 @@ class AppealRequestIssuesPolicy
   end
 
   def legacy_issues_editable?
-    FeatureToggle.enabled?(:legacy_mst_pact_identification) && editable?
+    FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user]) && editable?
   end
 
   private
@@ -42,9 +42,9 @@ class AppealRequestIssuesPolicy
 
   # returns true if one feature toggle is enabled
   def mst_pact_feature_toggles_enabled?
-    FeatureToggle.enabled?(:mst_identification) ||
-      FeatureToggle.enabled?(:pact_identification) ||
-      FeatureToggle.enabled?(:legacy_mst_pact_identification)
+    FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
+      FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user]) ||
+      FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
   end
 
   def current_user_can_edit_issues?

@@ -165,7 +165,8 @@ class AppealsController < ApplicationController
   def edit
     # only AMA appeals may call /edit
     # this was removed for MST/PACT initiative to edit MST/PACT for legacy issues
-    return not_found if appeal.is_a?(LegacyAppeal) && !FeatureToggle.enabled?(:legacy_mst_pact_identification)
+    return not_found if appeal.is_a?(LegacyAppeal) &&
+                        !FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
   end
 
   helper_method :appeal, :url_appeal_uuid
@@ -179,7 +180,8 @@ class AppealsController < ApplicationController
   end
 
   def update
-    if appeal.is_a?(LegacyAppeal) && FeatureToggle.enabled?(:legacy_mst_pact_identification)
+    if appeal.is_a?(LegacyAppeal) &&
+       FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
       legacy_mst_pact_updates
     elsif request_issues_update.perform!
       set_flash_success_message
@@ -484,8 +486,8 @@ class AppealsController < ApplicationController
   # updated flash message to show mst/pact message if mst/pact changes (not to legacy)
   def set_flash_success_message
     return set_flash_mst_edit_message if mst_pact_changes? &&
-                                        (FeatureToggle.enabled?(:mst_identification) ||
-                                        FeatureToggle.enabled?(:pact_identification))
+                                         (FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
+                                         FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user]))
 
     set_flash_edit_message
   end
