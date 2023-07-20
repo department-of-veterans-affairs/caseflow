@@ -60,6 +60,7 @@ disabled_flags = %w[
   poa_auto_refresh
   interface_version_2
   cc_vacatur_visibility
+  justification_reason
 ]
 
 all_features = AllFeatureToggles.new.call.flatten.uniq

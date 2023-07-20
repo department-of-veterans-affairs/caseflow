@@ -50,6 +50,27 @@ export const commonReducers = (state, action) => {
     });
   };
 
+  actionsMap[ACTIONS.TOGGLE_EDIT_INTAKE_ISSUES_MODAL] = () => {
+    return update(state, {
+      $toggle: ['editIntakeIssueModalVisible']
+    });
+  };
+
+  actionsMap[ACTIONS.SET_MST_PACT_DETAILS] = () => {
+    const { editIssuesDetails } = action.payload;
+    const index = editIssuesDetails.issueProps.issueIndex;
+
+    listOfIssues[index].mstChecked = editIssuesDetails.issueProps.mstChecked;
+    listOfIssues[index].pactChecked = editIssuesDetails.issueProps.pactChecked;
+    listOfIssues[index].mstJustification = editIssuesDetails.issueProps.mstJustification;
+    listOfIssues[index].pactJustification = editIssuesDetails.issueProps.pactJustification;
+
+    return {
+      ...state,
+      addedIssues: listOfIssues
+    };
+  };
+
   actionsMap[ACTIONS.TOGGLE_CORRECTION_TYPE_MODAL] = () => {
     return update(state, {
       $toggle: ['correctIssueModalVisible'],
@@ -188,11 +209,11 @@ export const commonStateFromServerIntake = (serverIntake) => {
     claimantName: {
       $set: serverIntake.claimantName
     },
-     claimantRelationship: {
+    claimantRelationship: {
       $set: serverIntake.claimantRelationship
     },
     powerOfAttorneyName: {
-     $set: serverIntake.powerOfAttorneyName
+      $set: serverIntake.powerOfAttorneyName
     },
     payeeCode: {
       $set: serverIntake.payeeCode
