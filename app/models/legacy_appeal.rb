@@ -631,8 +631,8 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def mst?
-    return false unless FeatureToggle.enabled?(:mst_identification) &&
-                        FeatureToggle.enabled?(:legacy_mst_pact_identification)
+    return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) &&
+                        FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
 
     issues.any?(&:mst_status) ||
       (special_issue_list &&
@@ -641,8 +641,8 @@ class LegacyAppeal < CaseflowRecord
   end
 
   def pact?
-    return false unless FeatureToggle.enabled?(:pact_identification) &&
-                        FeatureToggle.enabled?(:legacy_mst_pact_identification)
+    return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user]) &&
+                        FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
 
     issues.any?(&:pact_status)
   end

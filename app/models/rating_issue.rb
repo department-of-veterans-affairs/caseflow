@@ -88,7 +88,8 @@ class RatingIssue
 
     def deserialize_special_issues(serialized_hash)
       # guard for MST/PACT feature toggle
-      return [] unless FeatureToggle.enabled?(:mst_identification) || FeatureToggle.enabled?(:pact_identification)
+      return [] unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
+                       FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
 
       data = []
       serialized_hash[:special_issues]&.each do |special_issue|
