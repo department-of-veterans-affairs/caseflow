@@ -155,6 +155,14 @@ class NonratingRequestIssueModal extends React.Component {
   };
 
   requiredFieldsMissing() {
+    if (this.state.benefitType === 'vha') {
+      return this.vhaRequiredFieldsMissing();
+    }
+
+    return this.nonVhaRequiredFieldsMissing();
+  }
+
+  nonVhaRequiredFieldsMissing = () => {
     const { formType } = this.props;
     const {
       description,
@@ -178,7 +186,31 @@ class NonratingRequestIssueModal extends React.Component {
       (formType === 'appeal' && !benefitType) ||
       enforcePreDocketRequirement
     );
-  }
+  };
+
+  vhaRequiredFieldsMissing = () => {
+    const { formType } = this.props;
+    const {
+      description,
+      category,
+      benefitType,
+      isPreDocketNeeded,
+    } = this.state;
+
+    const enforcePreDocketRequirement = (
+      this.props.featureToggles.eduPreDocketAppeals &&
+      formType === 'appeal' &&
+      (benefitType === 'education' || benefitType === 'vha') &&
+      !isPreDocketNeeded
+    );
+
+    return (
+      !description ||
+      !category ||
+      (formType === 'appeal' && !benefitType) ||
+      enforcePreDocketRequirement
+    );
+  };
 
   getModalButtons() {
     const btns = [
@@ -191,7 +223,7 @@ class NonratingRequestIssueModal extends React.Component {
         classNames: ['usa-button', 'add-issue'],
         name: this.props.submitText,
         onClick: this.onAddIssue,
-        disabled: this.requiredFieldsMissing() || this.state.decisionDate.length < 10 || Boolean(this.state.dateError)
+        disabled: this.requiredFieldsMissing() || Boolean(this.state.dateError)
       }
     ];
 
