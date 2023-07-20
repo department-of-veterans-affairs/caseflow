@@ -100,6 +100,9 @@ class Rating
     end
 
     def participant_contentions(serialized_hash)
+      # guard for MST/PACT feature toggle
+      return [] unless FeatureToggle.enabled?(:mst_identification) || FeatureToggle.enabled?(:pact_identification)
+
       contentions_data = []
       response = fetch_contentions_by_participant_id(serialized_hash[:participant_id])
 
