@@ -890,7 +890,13 @@ export const sortCaseTimelineEvents = (...eventArrays) => {
 
   // Reverse the array for the order we actually want
   // return sortedTimelineEvents.reverse();
-  return sortedTimelineEvents;
+  if (timelineEvents[0].appealType === 'LegacyAppeal') {
+    if (timelineEvents[0].assigneeName === '57' || timelineEvents[0].assigneeName === 'CASEFLOW') {
+      return sortedTimelineEvents.reverse();
+    }
+  }
+
+  return timelineEvents;
 };
 
 export const regionalOfficeCity = (objWithLocation, defaultToUnknown) => {
