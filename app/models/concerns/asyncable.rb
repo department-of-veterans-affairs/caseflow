@@ -141,8 +141,8 @@ module Asyncable
     end
 
     update!(
-      self.class.RequestIssue.last_submitted_at_column => when_to_start,
-      self.class.RequestIssue.submitted_at_column => delay.try(:to_datetime) ? delay.to_datetime : Time.zone.now,
+      self.class.last_submitted_at_column => when_to_start,
+      self.class.submitted_at_column => delay.try(:to_datetime) ? delay.to_datetime : Time.zone.now,
       self.class.processed_at_column => nil
     )
   end
