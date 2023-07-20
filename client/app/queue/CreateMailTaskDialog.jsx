@@ -9,6 +9,7 @@ import COPY from '../../COPY';
 import { onReceiveAmaTasks } from './QueueActions';
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
+import EfolderUrlField from './components/EfolderUrlField';
 import { requestSave } from './uiReducer/uiActions';
 import { taskById, appealWithDetailSelector } from './selectors';
 import QueueFlowModal from './components/QueueFlowModal';
@@ -34,11 +35,16 @@ export class CreateMailTaskDialog extends React.Component {
     this.state = {
       selectedValue: null,
       instructions: '',
+      eFolderUrl: ''
     };
   }
 
   validateForm = () =>
     this.state.selectedValue !== null && this.state.instructions !== '';
+
+  prependUrlToInstructions = () => (
+    this.isHearingRequestMailTask ? (`${this.state.eFolderUrl} - ${this.state.instructions}`) : this.state.instructions
+  );
 
   submit = () => {
     const { appeal, task } = this.props;
@@ -50,7 +56,7 @@ export class CreateMailTaskDialog extends React.Component {
             type: this.state.selectedValue,
             external_id: appeal.externalId,
             parent_id: task.taskId,
-            instructions: this.state.instructions,
+            instructions: this.prependUrlToInstructions(),
           },
         ],
       },
@@ -80,6 +86,8 @@ export class CreateMailTaskDialog extends React.Component {
     // We should never get here since any task action the creates this modal should provide data.
     throw new Error('Task action requires data');
   };
+
+  isHearingRequestMailTask = () => (this.state.selectedValue || '').match(/Hearing.*RequestMailTask/);
 
   render = () => {
     const { highlightFormItems, task } = this.props;
@@ -112,6 +120,14 @@ export class CreateMailTaskDialog extends React.Component {
           options={this.taskActionData().options}
         />
         <br />
+        {
+          this.isHearingRequestMailTask() &&
+          <EfolderUrlField
+            requestType={this.state.selectedValue}
+            onChange={(value) => this.setState({ eFolderUrl: value })}
+            value={this.state.eFolderUrl}
+          />
+        }
         <TextareaField
           name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
           errorMessage={
