@@ -119,6 +119,8 @@ class ContestableIssue
 
   # cycle the issues to see if the past decision had any mst codes on contentions
   def mst_available?
+    return false unless FeatureToggle.enabled?(:mst_identification)
+
     source_request_issues.try(:each) do |issue|
       return true if issue.mst_contention_status? || issue.mst_status?
     end
@@ -130,6 +132,8 @@ class ContestableIssue
 
   # cycle the issues to see if the past decision had any pact codes on contentions
   def pact_available?
+    return false unless FeatureToggle.enabled?(:pact_identification)
+
     source_request_issues.try(:each) do |issue|
       return true if issue.pact_contention_status? || issue.pact_status?
     end
