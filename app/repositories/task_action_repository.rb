@@ -877,7 +877,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     def select_ama_review_decision_action(task)
       return Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.appeal.vacate?
 
-      Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h
+      Constants.TASK_ACTIONS.REVIEW_AMA_DECISION_SP_ISSUES.to_h
     end
 
     def select_withdraw_hearing_copy(appeal)
