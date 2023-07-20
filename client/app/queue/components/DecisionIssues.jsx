@@ -6,7 +6,6 @@ import Button from '../../components/Button';
 import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID';
 import { LinkIcon } from '../../components/icons/LinkIcon';
 import HearingWorksheetAmaIssues from '../../hearings/components/hearingWorksheet/HearingWorksheetAmaIssues';
-import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES';
 
 const TEXT_INDENTATION = '10px';
 
@@ -58,18 +57,6 @@ const noteDiv = css({
   color: COLORS.GREY
 });
 
-const specialIssuesFormatting = (mstStatus, pactStatus) => {
-  if (!mstStatus && !pactStatus) {
-    return 'None';
-  } else if (mstStatus && pactStatus) {
-    return 'MST and PACT';
-  } else if (mstStatus) {
-    return 'MST';
-  } else if (pactStatus) {
-    return 'PACT';
-  }
-};
-
 export default class DecisionIssues extends React.PureComponent {
   static generateDecisionIssues = (requestIssue, props) => {
     const { decisionIssues, openDecisionHandler, openDeleteAddedDecisionIssueHandler, hideDelete, hideEdit } = props;
@@ -116,8 +103,6 @@ export default class DecisionIssues extends React.PureComponent {
                 <span {...descriptionSpan}>
                   {decisionIssue.description}
                   {decisionIssue.diagnostic_code && <div>Diagnostic code: {decisionIssue.diagnostic_code}</div>}
-                  {decisionIssue.benefit_type && <div>Benefit Type: {BENEFIT_TYPES[decisionIssue.benefit_type]}</div>}
-                  <div>Special Issues: {specialIssuesFormatting(decisionIssue.mst_status, decisionIssue.pact_status)}</div>
                 </span>
                 <span>{ISSUE_DISPOSITIONS_BY_ID[decisionIssue.disposition]}</span>
               </div>
@@ -164,9 +149,7 @@ DecisionIssues.propTypes = {
     notes: PropTypes.string,
     diagnostic_code: PropTypes.string,
     closed_status: PropTypes.string,
-    remand_reasons: PropTypes.array,
-    mst_status: PropTypes.bool,
-    pact_status: PropTypes.bool
+    remand_reasons: PropTypes.array
   }),
   openDecisionHandler: PropTypes.func,
   hearingWorksheet: PropTypes.object,
