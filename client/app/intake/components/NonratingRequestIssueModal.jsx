@@ -298,6 +298,7 @@ class NonratingRequestIssueModal extends React.Component {
             errorMessage={this.state.dateError}
             onChange={this.decisionDateOnChange}
             type="date"
+            optional={this.state.benefitType === 'vha'}
           />
         </div>
 
