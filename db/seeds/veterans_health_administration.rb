@@ -131,6 +131,7 @@ module Seeds
       sc.create_business_line_tasks!
     end
 
+    # :reek:NestedIterators
     # this method is creating most of the data, but we can't get around it because of how many PO/VISN combos there are
     def create_vha_visn_pre_docket_queue
       tabs = [:assigned, :completed, :in_progress, :on_hold]
@@ -157,9 +158,7 @@ module Seeds
     end
 
     def create_vha_camo_queue_assigned
-      5.times do
-        create(:vha_document_search_task, :assigned, assigned_to: VhaCamo.singleton)
-      end
+      5.times { create(:vha_document_search_task, :assigned, assigned_to: VhaCamo.singleton) }
     end
 
     def create_vha_camo_queue_completed
@@ -170,9 +169,7 @@ module Seeds
     end
 
     def create_vha_caregiver_queue_assigned
-      5.times do
-        create(:vha_document_search_task, assigned_to: VhaCaregiverSupport.singleton)
-      end
+      5.times { create(:vha_document_search_task, assigned_to: VhaCaregiverSupport.singleton) }
     end
 
     def create_vha_caregiver_queue_completed
