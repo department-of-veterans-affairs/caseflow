@@ -88,9 +88,10 @@ describe HearingPostponementRequestMailTask, :postgres do
       context "when there is neither an active ScheduleHearingTask " \
               "nor an open AssignHearingDispositionTask in the appeal's task tree" do
         let(:hpr) { create(:hearing_postponement_request_mail_task, :with_unscheduled_hearing) }
+        let(:schedul_hearing_task) { hpr.appeal.tasks.find_by(type: ScheduleHearingTask.name) }
+
         before do
-          task = hpr.appeal.tasks.find_by(type: ScheduleHearingTask.name)
-          task.cancel_task_and_child_subtasks
+          schedul_hearing_task.cancel_task_and_child_subtasks
         end
 
         include_examples "returns appropriate reduced task actions"
