@@ -35,7 +35,7 @@ class WorkQueue::DecisionReviewTaskSerializer
   end
 
   def self.power_of_attorney(object)
-    decision_review(object).power_of_attorney
+    decision_review(object).claimant&.power_of_attorney
   end
 
   def self.issue_count(object)
@@ -69,13 +69,17 @@ class WorkQueue::DecisionReviewTaskSerializer
     }
   end
 
-  attribute :power_of_attorney do |_object|
-    {
-      representative_type: power_of_attorney(_object)&.representative_type,
-      representative_name: power_of_attorney(_object)&.representative_name,
-      representative_address: power_of_attorney(_object)&.representative_address,
-      representative_email_address: power_of_attorney(_object)&.representative_email_address
-    }
+  attribute :power_of_attorney do |object|
+    if power_of_attorney(object).nil?
+      nil
+    else
+      {
+        representative_type: power_of_attorney(object)&.representative_type,
+        representative_name: power_of_attorney(object)&.representative_name,
+        representative_address: power_of_attorney(object)&.representative_address,
+        representative_email_address: power_of_attorney(object)&.representative_email_address
+      }
+    end
   end
 
   attribute :appellant_type do |appeal|

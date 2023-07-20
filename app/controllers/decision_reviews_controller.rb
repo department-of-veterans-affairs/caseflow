@@ -14,15 +14,15 @@ class DecisionReviewsController < ApplicationController
            :completed_tasks_issue_type_counts,
            to: :business_line
 
-  delegate :power_of_attorney, to: :claimant, allow_nil: true
-  delegate :representative_name,
-           :representative_type,
-           :representative_address,
-           :representative_email_address,
-           :poa_last_synced_at,
-           :update_cached_attributes!,
-           :save_with_updated_bgs_record!,
-           to: :power_of_attorney, allow_nil: true
+  # delegate :power_of_attorney, to: :claimant, allow_nil: true
+  # delegate :representative_name,
+  #          :representative_type,
+  #          :representative_address,
+  #          :representative_email_address,
+  #          :poa_last_synced_at,
+  #          :update_cached_attributes!,
+  #          :save_with_updated_bgs_record!,
+  #          to: :power_of_attorney, allow_nil: true
 
   SORT_COLUMN_MAPPINGS = {
     "claimantColumn" => "claimant_name",

@@ -4,39 +4,39 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'lodash';
 
-
 import COPY from '../../../COPY';
 import PowerOfAttorneyDetailUnconnected from '../../queue/PowerOfAttorneyDetail';
+import { getPoAValue } from '../actions/task';
 
 /**
- * Returns a selector to fetch the power of attorney details from the Redux state.
- * @param {Object} appealId -- The appeal's external id
+ * returns different props required for the Original Component.
+ * @param
  * @returns {function} -- A function that selects the power of attorney from the Redux state.
  */
-const powerOfAttorneyFromAppealSelector = (appealId) =>
+const powerOfAttorneyFromNonCompState = () =>
   (state) => {
-    console.log(state);
-
     return {
       appellantType: state.appeal?.claimantType,
+      /* eslint-disable camelcase */
       powerOfAttorney: state.task?.power_of_attorney,
-      loading: false,
-      // error: loadingPowerOfAttorney?.error
-      error: false, //todo -
-      poaAlert: state.poaAlert
+      /* eslint-enable camelcase */
+      loading: state?.loadingPowerOfAttorney?.loading,
+      error: state?.loadingPowerOfAttorney?.error,
+      poaAlert: state.poaAlert,
+      taskId: state.task?.id
     };
   }
   ;
 
 /**
  * Wraps a component with logic to fetch the power of attorney data from the API.
- * @param {Object} WrappedComponent -- The component being wrapped / The display component.
- * @returns {Component} -- The wrapped component.
+ * @param {Object} WrappedComponent -- The component being wrapped in this case its PowerOfAttorneyDetailUnconnected.
+ * @returns {Component} -- HOC component.
  */
 const powerOfAttorneyDecisionReviewWrapper = (WrappedComponent) => {
-  const wrappedComponent = ({ appealId }) => {
-    const { error, loading, powerOfAttorney, appellantType, poaAlert } = useSelector(
-      powerOfAttorneyFromAppealSelector(appealId),
+  const wrappedComponent = ({ appealId, getPoAValue: getPoAValueRedux }) => {
+    const { error, loading, powerOfAttorney, appellantType, poaAlert, taskId } = useSelector(
+      powerOfAttorneyFromNonCompState(),
       shallowEqual
     );
 
@@ -49,7 +49,7 @@ const powerOfAttorneyDecisionReviewWrapper = (WrappedComponent) => {
         return <React.Fragment>{COPY.CASE_DETAILS_UNABLE_TO_LOAD}</React.Fragment>;
       }
 
-      // getAppealValueRedux(appealId, 'power_of_attorney', 'powerOfAttorney');
+      getPoAValueRedux(taskId, 'power_of_attorney');
 
       return null;
     }
@@ -64,7 +64,7 @@ const powerOfAttorneyDecisionReviewWrapper = (WrappedComponent) => {
 
   wrappedComponent.propTypes = {
     appealId: PropTypes.string,
-    getAppealValue: PropTypes.func,
+    getPoAValue: PropTypes.func,
     appellantType: PropTypes.string,
     poaAlert: PropTypes.shape({
       alertType: PropTypes.string,
@@ -76,4 +76,14 @@ const powerOfAttorneyDecisionReviewWrapper = (WrappedComponent) => {
   return wrappedComponent;
 };
 
-export default powerOfAttorneyDecisionReviewWrapper(PowerOfAttorneyDetailUnconnected);
+const mapDispatchToProps = (dispatch) => bindActionCreators(
+  {
+    getPoAValue
+  },
+  dispatch
+);
+
+export default _.flow(
+  powerOfAttorneyDecisionReviewWrapper,
+  connect(null, mapDispatchToProps)
+)(PowerOfAttorneyDetailUnconnected);
