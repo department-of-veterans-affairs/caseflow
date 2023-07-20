@@ -3,7 +3,9 @@
 describe HearingPostponementRequestMailTask, :postgres do
   let(:user) { create(:user) }
 
-  describe ".available_actions" do
+  # If the tests for #available_actions end up being similar/identical to the tests for
+  # HearingWithdrawalRequestMailTask, we can relocate them to hearing_request_mail_task_spec
+  describe "#available_actions" do
     let(:task_actions) do
       [
         Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
@@ -66,6 +68,20 @@ describe HearingPostponementRequestMailTask, :postgres do
           end
 
           include_examples "returns appropriate task actions"
+
+          context "when there is a child ChangeHearingDispositionTask in the appeal's task tree" do
+            let(:appeal) { hpr.appeal }
+            let(:disposition_task) { appeal.tasks.find_by(type: AssignHearingDispositionTask.name) }
+            let(:hearing_task) { appeal.tasks.find_by(type: HearingTask.name) }
+
+            before do
+              disposition_task.update!(status: "completed", closed_at: Time.zone.now)
+              ChangeHearingDispositionTask.create!(appeal: appeal, parent: hearing_task,
+                                                   assigned_to: HearingAdmin.singleton)
+            end
+
+            include_examples "returns appropriate task actions"
+          end
         end
       end
 

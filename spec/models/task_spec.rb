@@ -11,7 +11,6 @@ describe Task, :all_dbs do
       subject { root_task.structure(:id, :status) }
 
       it "outputs the task structure" do
-        byebug
         root_key = "#{root_task.type} #{root_task.id}, #{root_task.status}".to_sym
         judge_key = "#{judge_task.type} #{judge_task.id}, #{judge_task.status}".to_sym
         bva_key = "#{bva_task.type} #{bva_task.id}, #{bva_task.status}".to_sym
