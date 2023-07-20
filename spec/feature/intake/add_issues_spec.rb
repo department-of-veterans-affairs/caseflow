@@ -172,6 +172,14 @@ feature "Intake Add Issues Page", :all_dbs do
           expect(page).to have_current_path("/intake/add_issues")
           expect(page).to have_content(COPY::VHA_NO_POA)
         end
+
+        scenario "the correct text displays for non-VHA" do
+          start_claim_review(:higher_level_review, veteran: veteran)
+          visit "/intake"
+          click_intake_continue
+          expect(page).to have_current_path("/intake/add_issues")
+          expect(page).to have_content(COPY::ADD_CLAIMANT_CONFIRM_MODAL_NO_POA)
+        end
       end
     end
 
