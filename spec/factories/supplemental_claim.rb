@@ -32,17 +32,19 @@ FactoryBot.define do
     after(:create) do |sc, evaluator|
       payee_code = ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(sc.benefit_type) ? "00" : nil
 
-      if !sc.claimants.empty?
-        sc.claimants.each do |claimant|
+      if !evaluator.claimants.empty?
+        evaluator.claimants.each do |claimant|
           claimant.decision_review = sc
           claimant.save
         end
       elsif evaluator.claimant_type
         case evaluator.claimant_type
         when :dependent_claimant
+          claimants_to_create = evaluator.number_of_claimants || 1
+
           create_list(
             :claimant,
-            evaluator.number_of_claimants,
+            claimants_to_create,
             decision_review: sc,
             type: "DependentClaimant",
             # there was previously a HLR created in seeds/intake with payee_code "10", this covers that scenario
