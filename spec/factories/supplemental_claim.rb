@@ -13,7 +13,7 @@ FactoryBot.define do
     end
 
     transient do
-      claimant_type { :veteran_claimant }
+      claimant_type { :none }
     end
 
     transient do
@@ -76,7 +76,7 @@ FactoryBot.define do
             type: "OtherClaimant",
             payee_code: payee_code
           )
-        else # :veteran_claimant
+        when :veteran_claimant
           sc.update!(veteran_is_not_claimant: false)
           create(
             :claimant,
