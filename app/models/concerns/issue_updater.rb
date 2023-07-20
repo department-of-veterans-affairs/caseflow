@@ -60,7 +60,8 @@ module IssueUpdater
         # compare the MST/PACT status of the orignial issue and decision to create task and record
         next unless (request_issue.mst_status != decision_issue.mst_status ||
                     request_issue.pact_status != decision_issue.pact_status) &&
-                    (FeatureToggle.enabled?(:mst_identification) || FeatureToggle.enabled?(:pact_identification))
+                    FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
+                    FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
 
         create_issue_update_task(request_issue, decision_issue)
       end

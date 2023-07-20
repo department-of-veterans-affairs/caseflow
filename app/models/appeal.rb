@@ -268,7 +268,7 @@ class Appeal < DecisionReview
 
   # decision issue status overrules request issues/special issue list for both mst and pact
   def mst?
-    return false unless FeatureToggle.enabled?(:mst_identification)
+    return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])
 
     return decision_issues.any?(&:mst_status) unless decision_issues.empty?
 
@@ -279,7 +279,7 @@ class Appeal < DecisionReview
   end
 
   def pact?
-    return false unless FeatureToggle.enabled?(:pact_identification)
+    return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
 
     return decision_issues.any?(&:pact_status) unless decision_issues.empty?
 
