@@ -456,7 +456,9 @@ class ExternalApi::BGSService
                      FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
 
     # find contention info in cache; if not there, call to BGS and cache it
+    Rails.logger.info("fetching contention info for participant #{participant_id}")
     Rails.cache.fetch("find_contentions_by_participant_id_#{participant_id}", expires_in: 2.hours) do
+      Rails.logger.info("calling BGS and caching contention info for participant #{participant_id}")
       DBService.release_db_connections
       MetricsService.record("BGS: find contentions for veteran by participant_id #{participant_id}",
                             service: :bgs,
