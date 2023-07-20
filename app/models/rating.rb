@@ -87,15 +87,13 @@ class Rating
       PACT_SPECIAL_ISSUES.include?(special_issue[:spis_tn]&.downcase)
     end
 
-    def mst_from_contentions_for_rating?(serialized_hash)
-      contentions = participant_contentions(serialized_hash)
+    def mst_from_contentions_for_rating?(contentions)
       return false if contentions.blank?
 
       contentions.any? { |contention| mst_contention_status?(contention) }
     end
 
-    def pact_from_contentions_for_rating?(serialized_hash)
-      contentions = participant_contentions(serialized_hash)
+    def pact_from_contentions_for_rating?(contentions)
       return false if contentions.blank?
 
       contentions.any? { |contention| pact_contention_status?(contention) }
