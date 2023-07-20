@@ -87,6 +87,9 @@ class RatingIssue
     end
 
     def deserialize_special_issues(serialized_hash)
+      # guard for MST/PACT feature toggle
+      return [] unless FeatureToggle.enabled?(:mst_identification) || FeatureToggle.enabled?(:pact_identification)
+
       data = []
       serialized_hash[:special_issues]&.each do |special_issue|
         data << { mst_available: true } if Rating.special_issue_has_mst?(special_issue)
