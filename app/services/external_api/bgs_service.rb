@@ -452,11 +452,17 @@ class ExternalApi::BGSService
   end
 
   def find_contentions_by_participant_id(participant_id)
-    DBService.release_db_connections
-    MetricsService.record("BGS: find contentions for veteran by participant_id #{participant_id}",
-                          service: :bgs,
-                          name: "contention.find_contention_by_participant_id") do
-      client.contention.find_contention_by_participant_id(participant_id)
+    return [] unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
+                     FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
+
+    # find contention info in cache; if not there, call to BGS and cache it
+    Rails.cache.fetch("find_contentions_by_participant_id_#{participant_id}", expires_in: 2.hours) do
+      DBService.release_db_connections
+      MetricsService.record("BGS: find contentions for veteran by participant_id #{participant_id}",
+                            service: :bgs,
+                            name: "contention.find_contention_by_participant_id") do
+        client.contention.find_contention_by_participant_id(participant_id)
+      end
     end
   end
 
