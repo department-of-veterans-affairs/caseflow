@@ -86,13 +86,13 @@ class DecisionReviewsController < ApplicationController
     @task ||= Task.includes([:appeal, :assigned_to]).find(task_id)
   end
 
-  def appeal
-    @appeal ||= Appeal.find_by_uuid(url_appeal_uuid) || Appeal.find(task.appeal_id)
-  end
+  # def appeal
+  #   @appeal ||= Appeal.find_by_uuid(url_appeal_uuid) || Appeal.find(task.appeal_id)
+  # end
 
-  def url_appeal_uuid
-    params[:appeal_id]
-  end
+  # def url_appeal_uuid
+  #   params[:appeal_id]
+  # end
 
   def business_line
     @business_line ||= BusinessLine.find_by(url: business_line_slug)
@@ -201,10 +201,10 @@ class DecisionReviewsController < ApplicationController
 
   def power_of_attorney_data
     {
-      representative_type: appeal.representative_type,
-      representative_name: appeal.representative_name,
-      representative_address: appeal.representative_address,
-      representative_email_address: appeal.representative_email_address
+      representative_type: task.appeal.claimant.power_of_attorney.representative_type,
+      representative_name: task.appeal.claimant.power_of_attorney.representative_name,
+      representative_address: task.appeal.claimant.power_of_attorney.representative_address,
+      representative_email_address: task.appeal.claimant.power_of_attorney.representative_email_address
       # representative_tz: task.representative_tz,
       # poa_last_synced_at: task.poa_last_synced_at
     }
