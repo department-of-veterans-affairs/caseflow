@@ -39,11 +39,18 @@ export class CreateMailTaskDialog extends React.Component {
     };
   }
 
-  validateForm = () =>
-    this.state.selectedValue !== null && this.state.instructions !== '';
+  validateForm = () => {
+    const instructionsAndValue = () => this.state.selectedValue !== null && this.state.instructions !== '';
+
+    if (this.isHearingRequestMailTask()) {
+      return instructionsAndValue() && this.state.eFolderUrl !== '';
+    }
+
+    return instructionsAndValue();
+  }
 
   prependUrlToInstructions = () => (
-    this.isHearingRequestMailTask ? (`${this.state.eFolderUrl} - ${this.state.instructions}`) : this.state.instructions
+    this.isHearingRequestMailTask() ? (`${this.state.eFolderUrl} - ${this.state.instructions}`) : this.state.instructions
   );
 
   submit = () => {
@@ -102,6 +109,7 @@ export class CreateMailTaskDialog extends React.Component {
         validateForm={this.validateForm}
         title={COPY.CREATE_MAIL_TASK_TITLE}
         pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
+        submitDisabled={!this.validateForm()}
       >
         <SearchableDropdown
           name="Correspondence type selector"
@@ -124,6 +132,12 @@ export class CreateMailTaskDialog extends React.Component {
           this.isHearingRequestMailTask() &&
           <EfolderUrlField
             requestType={this.state.selectedValue}
+            errorMessage={
+              highlightFormItems && !this.state.eFolderUrl ?
+                'You need one of these' :
+                null
+            }
+            // does not work ^
             onChange={(value) => this.setState({ eFolderUrl: value })}
             value={this.state.eFolderUrl}
           />

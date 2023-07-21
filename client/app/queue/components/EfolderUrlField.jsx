@@ -24,13 +24,15 @@ const EfolderUrlField = (props) => {
       name="meaninglessName"
       value={props.value}
       onChange={handleChange}
+      errorMessage={props.errorMessage}
     />
   </>;
 };
 
 EfolderUrlField.propTypes = {
   requestType: PropTypes.string,
-  value: PropTypes.string
+  value: PropTypes.string,
+  errorMessage: PropTypes.string
 };
 
 export default EfolderUrlField;
