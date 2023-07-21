@@ -896,7 +896,7 @@ export const sortCaseTimelineEvents = (...eventArrays) => {
     }
   }
 
-  return timelineEvents;
+  return sortedTimelineEvents;
 };
 
 export const regionalOfficeCity = (objWithLocation, defaultToUnknown) => {
