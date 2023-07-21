@@ -1,4 +1,4 @@
-export const taskFilterDetails = {
+export const vhaTaskFilterDetails = {
   in_progress: {
     '["BoardGrantEffectuationTask", "Appeal"]': 6,
     '["DecisionReviewTask", "HigherLevelReview"]': 330,
@@ -48,4 +48,11 @@ export const taskFilterDetails = {
     'Camp Lejune Family Member': 8
   },
   incomplete_issue_types: {},
+};
+
+export const genericTaskFilterDetails = {
+  in_progress: {},
+  in_progress_issue_types: {},
+  completed: {},
+  completed_issue_types: {},
 };
