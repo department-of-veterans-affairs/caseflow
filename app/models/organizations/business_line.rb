@@ -1,6 +1,15 @@
 # frozen_string_literal: true
 
 class BusinessLine < Organization
+  # TODO: Might override this method
+  # def self.find_or_create_by(attributes, &block)
+  #   if attributes[:name] == "Veterans Health Administration" || attributes[:url] == "vha"
+  #     VhaBusinessLine.find_or_create_by(attributes, &block)
+  #   else
+  #     super
+  #   end
+  # end
+
   def tasks_url
     "/decision_reviews/#{url}"
   end

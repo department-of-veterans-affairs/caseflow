@@ -16,7 +16,9 @@ class TaskPageUnconnected extends React.PureComponent {
   handleSave = (data) => {
     const successHandler = () => {
       // update to the completed tab
-      this.props.taskUpdateDefaultPage(1);
+      const completedTabIndex = (this.props.businessLineConfig?.tabs?.length - 1) || 1;
+
+      this.props.taskUpdateDefaultPage(completedTabIndex);
       this.props.history.push(`/${this.props.businessLineUrl}`);
     };
 
@@ -113,7 +115,8 @@ TaskPageUnconnected.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func
   }),
-  businessLineUrl: PropTypes.string
+  businessLineUrl: PropTypes.string,
+  businessLineConfig: PropTypes.shape({ tabs: PropTypes.array }),
 };
 
 const TaskPage = connect(
@@ -121,6 +124,7 @@ const TaskPage = connect(
     appeal: state.appeal,
     businessLine: state.businessLine,
     businessLineUrl: state.businessLineUrl,
+    businessLineConfig: state.businessLineConfig,
     task: state.task,
     decisionIssuesStatus: state.decisionIssuesStatus
   }),

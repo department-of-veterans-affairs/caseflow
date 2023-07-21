@@ -765,7 +765,7 @@ describe User, :all_dbs do
 
   describe "vha_employee?" do
     let(:user) { create(:user) }
-    let(:org) { BusinessLine.create!(name: "Veterans Health Administration", url: "vha") }
+    let(:org) { VhaBusinessLine.singleton }
 
     subject { user.vha_employee? }
 

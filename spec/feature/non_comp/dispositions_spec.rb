@@ -260,7 +260,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       Timecop.return
     end
 
-    let!(:vha_org) { create(:business_line, name: "Veterans Health Administration", url: "vha") }
+    let!(:vha_org) { VhaBusinessLine.singleton }
     let(:user) { create(:default_user) }
     let(:veteran) { create(:veteran) }
     let(:decision_date) { Time.zone.now + 10.days }
