@@ -155,14 +155,6 @@ class NonratingRequestIssueModal extends React.Component {
   };
 
   requiredFieldsMissing() {
-    if (this.state.benefitType === 'vha') {
-      return this.vhaRequiredFieldsMissing();
-    }
-
-    return this.nonVhaRequiredFieldsMissing();
-  }
-
-  nonVhaRequiredFieldsMissing = () => {
     const { formType } = this.props;
     const {
       description,
@@ -179,6 +171,15 @@ class NonratingRequestIssueModal extends React.Component {
       !isPreDocketNeeded
     );
 
+    if (this.state.benefitType === 'vha') {
+      return (
+        !description ||
+        !category ||
+        (formType === 'appeal' && !benefitType) ||
+        enforcePreDocketRequirement
+      );
+    }
+
     return (
       !description ||
       !category ||
@@ -186,31 +187,7 @@ class NonratingRequestIssueModal extends React.Component {
       (formType === 'appeal' && !benefitType) ||
       enforcePreDocketRequirement
     );
-  };
-
-  vhaRequiredFieldsMissing = () => {
-    const { formType } = this.props;
-    const {
-      description,
-      category,
-      benefitType,
-      isPreDocketNeeded,
-    } = this.state;
-
-    const enforcePreDocketRequirement = (
-      this.props.featureToggles.eduPreDocketAppeals &&
-      formType === 'appeal' &&
-      (benefitType === 'education' || benefitType === 'vha') &&
-      !isPreDocketNeeded
-    );
-
-    return (
-      !description ||
-      !category ||
-      (formType === 'appeal' && !benefitType) ||
-      enforcePreDocketRequirement
-    );
-  };
+  }
 
   getModalButtons() {
     const btns = [
