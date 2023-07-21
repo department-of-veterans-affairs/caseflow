@@ -22,9 +22,9 @@ describe DecisionReviewTask, :postgres do
     let(:hlr) do
       create(
         :higher_level_review,
-        number_of_claimants: 1,
         veteran_file_number: veteran.file_number,
-        benefit_type: benefit_type
+        benefit_type: benefit_type,
+        claimant_type: :veteran_claimant
       )
     end
     let(:trait) { :assigned }
@@ -104,7 +104,9 @@ describe DecisionReviewTask, :postgres do
 
   shared_context "decision review task assigned to business line" do
     let(:veteran) { create(:veteran) }
-    let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+    let(:hlr) do
+      create(:higher_level_review, claimant_type: :veteran_claimant, veteran_file_number: veteran.file_number)
+    end
     let(:business_line) { create(:business_line, name: "National Cemetery Administration", url: "nca") }
 
     let(:decision_review_task) { create(:higher_level_review_task, appeal: hlr, assigned_to: business_line) }
