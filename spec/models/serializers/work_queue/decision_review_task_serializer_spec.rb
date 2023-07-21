@@ -2,13 +2,15 @@
 
 describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
   let(:veteran) { create(:veteran) }
-  let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+  let(:claimant_type) { :none }
+  let(:hlr) { create(:higher_level_review, benefit_type: nil, veteran_file_number: veteran.file_number, claimant_type: claimant_type) }
   let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
   let(:task) { create(:higher_level_review_task, appeal: hlr, assigned_to: non_comp_org) }
 
   subject { described_class.new(task) }
 
   describe "#as_json" do
+    let(:claimant_type) { :veteran_claimant }
     it "renders ready for client consumption" do
       serializable_hash = {
         id: task.id.to_s,
@@ -106,10 +108,9 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
     end
 
     context "decision review with multiple issues with multiple issue categories" do
+      let(:claimant_type) { :veteran_claimant }
+      let(:benefit_type) { "vha" }
       let!(:vha_org) { create(:business_line, name: "Veterans Health Administration", url: "vha") }
-      let(:hlr) do
-        create(:higher_level_review_vha_task).appeal
-      end
       let(:request_issues) do
         [
           create(:request_issue, benefit_type: "vha", nonrating_issue_category: "Beneficiary Travel"),
@@ -128,7 +129,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
           type: :decision_review_task,
           attributes: {
             claimant: { name: hlr.veteran_full_name, relationship: "self" },
-            appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 3, activeRequestIssues: serialized_issues },
+            appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 2, activeRequestIssues: serialized_issues },
             veteran_ssn: hlr.veteran.ssn,
             veteran_participant_id: hlr.veteran.participant_id,
             assigned_on: task.assigned_at,
@@ -138,7 +139,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             tasks_url: "/decision_reviews/nco",
             id: task.id,
             created_at: task.created_at,
-            issue_count: 3,
+            issue_count: 2,
             issue_types: hlr.request_issues.active.pluck(:nonrating_issue_category).join(","),
             type: "Higher-Level Review",
             business_line: non_comp_org.url

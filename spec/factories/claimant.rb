@@ -35,7 +35,9 @@ FactoryBot.define do
       initialize_with { AttorneyClaimant.new(attributes) }
       type { AttorneyClaimant.name }
       after(:create) do |claimant, _evaluator|
-        create(:bgs_attorney, name: claimant.person.name, participant_id: claimant.participant_id)
+        claimant.person
+        name = claimant.person&.name || "Seeded AttyClaimant"
+        create(:bgs_attorney, name: name, participant_id: claimant.participant_id)
       end
     end
 
