@@ -10,6 +10,7 @@ export const taskFilterDetails = {
     '["DecisionReviewTask", "SupplementalClaim"]': 15,
     '["VeteranRecordRequest", "Appeal"]': 3
   },
+  incomplete: {},
   in_progress_issue_types: {
     CHAMPVA: 12,
     'Caregiver | Tier Level': 20,
@@ -45,5 +46,6 @@ export const taskFilterDetails = {
     'Caregiver | Other': 9,
     'Foreign Medical Program': 13,
     'Camp Lejune Family Member': 8
-  }
+  },
+  incomplete_issue_types: {},
 };

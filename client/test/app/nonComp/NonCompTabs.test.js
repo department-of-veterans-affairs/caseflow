@@ -7,6 +7,7 @@ import '@testing-library/jest-dom';
 import { taskFilterDetails } from '../../data/taskFilterDetails';
 import NonCompTabsUnconnected from 'app/nonComp/components/NonCompTabs';
 import ApiUtil from '../../../app/util/ApiUtil';
+import { VHA_INCOMPLETE_TAB_DESCRIPTION } from '../../../COPY';
 
 const basicProps = {
   businessLine: 'Veterans Health Administration',
@@ -17,6 +18,9 @@ const basicProps = {
   taskFilterDetails,
   featureToggles: {
     decisionReviewQueueSsnColumn: true
+  },
+  businessLineConfig: {
+    tabs: ['incomplete', 'in_progress', 'completed']
   },
 };
 
@@ -100,13 +104,36 @@ describe('NonCompTabs', () => {
 
   });
 
+  it('renders a tab titled "Incomplete tasks"', async () => {
+
+    expect(screen.getAllByText('Incomplete tasks')).toBeTruthy();
+
+    const tabs = screen.getAllByRole('tab');
+
+    await tabs[0].click();
+
+    await waitFor(() => {
+      expect(screen.getByText(VHA_INCOMPLETE_TAB_DESCRIPTION)).toBeInTheDocument();
+    });
+
+    // Check for the correct completed tasks header values
+    const expectedHeaders = ['Claimant', 'Veteran SSN', 'Issues', 'Issue Type', 'Days Waiting', 'Type'];
+    const sortableHeaders = expectedHeaders.filter((header) => header !== 'Type');
+    const filterableHeaders = ['type', 'issue type'];
+
+    checkTableHeaders(expectedHeaders);
+    checkSortableHeaders(sortableHeaders);
+    checkFilterableHeaders(filterableHeaders);
+
+  });
+
   it('renders a tab titled "Completed tasks"', async () => {
 
     expect(screen.getAllByText('Completed tasks')).toBeTruthy();
 
     const tabs = screen.getAllByRole('tab');
 
-    await tabs[1].click();
+    await tabs[2].click();
 
     await waitFor(() => {
       expect(screen.getByText('Cases completed (last 7 days):')).toBeInTheDocument();
