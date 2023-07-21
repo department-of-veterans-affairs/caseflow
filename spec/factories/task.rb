@@ -94,6 +94,7 @@ FactoryBot.define do
         appeal = task.appeal
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
         ScheduleHearingTask.create!(appeal: appeal, parent: root_task, assigned_to: Bva.singleton)
+        HearingPostponementRequestMailTask.create!(appeal: appeal, parent: task, assigned_to: HearingAdmin.singleton)
       end
     end
 
@@ -109,6 +110,7 @@ FactoryBot.define do
         AssignHearingDispositionTask.create!(appeal: appeal, parent: schedule_hearing_task.parent,
                                              assigned_to: Bva.singleton)
         HearingTaskAssociation.create!(hearing: hearing, hearing_task: schedule_hearing_task.parent)
+        HearingPostponementRequestMailTask.create!(appeal: appeal, parent: task, assigned_to: HearingAdmin.singleton)
       end
     end
 
@@ -654,7 +656,7 @@ FactoryBot.define do
       end
 
       factory :hearing_postponement_request_mail_task, class: HearingPostponementRequestMailTask do
-        assigned_to { HearingAdmin.singleton }
+        assigned_to { MailTeam.singleton }
       end
     end
   end
