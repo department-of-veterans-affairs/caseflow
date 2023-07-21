@@ -520,6 +520,30 @@ describe DecisionReviewsController, :postgres, type: :controller do
     end
   end
 
+  describe "#power_of_attorney" do
+    let!(:appeal) { create(:appeal, veteran_file_number: file_number) }
+    let(:task) { create(:supplemental_claim, :processed, :with_vha_issue, :with_end_product_establishment, benefit_type: "vha", number_of_claimants: 1) }
+    let(:file_number) { Random.rand(999_999_999).to_s }
+
+    before do
+      task.create_business_line_tasks!
+    end
+    context "get the appeals POA information" do
+      subject do
+        get :power_of_attorney, params: { use_route: "decision_reviews/#{non_comp_org.url}/tasks", task_id: task.id }
+      end
+
+      it "returns a successful response" do
+        subject
+        assert_response(:success)
+        expect(JSON.parse(subject.body)["representative_type"]).to eq "Attorney"
+        expect(JSON.parse(subject.body)["representative_name"]).to eq "Clarence Darrow"
+        expect(JSON.parse(subject.body)["representative_email_address"]).to eq "jamie.fakerton@caseflowdemo.com"
+        # expect(JSON.parse(subject.body)["representative_tz"]).to eq "America/Los_Angeles"
+      end
+    end
+  end
+
   def task_ids_from_response_body(response_body)
     response_body["tasks"]["data"].map { |task| task["id"].to_i }
   end
