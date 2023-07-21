@@ -3,7 +3,6 @@
 # to create legacy appeals with MST/PACT issues, run "bundle exec rake 'db:generate_legacy_appeals[true]'""
 # to create legacy appeals with AMA Tasks added, run "bundle exec rake db:generate_legacy_appeals[false,true]"
 # to create without, run "bundle exec rake db:generate_legacy_appeals"
-# rubocop:disable Lint/ConstantDefinitionInBlock
 
 namespace :db do
   desc "Generates a smattering of legacy appeals with VACOLS cases that have special issues assocaited with them"
@@ -14,15 +13,26 @@ namespace :db do
     class LegacyAppealFactory
       class << self
         # Stamping out appeals like mufflers!
-        # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength, Metrics/AbcSize, Layout/LineLength
         def stamp_out_legacy_appeals(num_appeals_to_create, file_number, user, attorney, docket_number, task_type)
-          bfcurloc = VACOLS::Staff.find_by(sdomainid: user.css_id).slogid
+          unless user == "BVA"
+            bfcurloc = VACOLS::Staff.find_by(sdomainid: user.css_id).slogid
+            sattyid = user.id
+            sdomainid = user.css_id
+            deatty = user.id
+          end
 
           # Changes location of vacols based on if you want a hearing task or only a distribution task
+          # Assign to BVA?
           if task_type == "HEARINGTASK"
             bfcurloc = 57
+            sattyid = 5
+            sdomainid = Bva.singleton.type
+            deatty = 5
           elsif task_type == "DISTRIBUTIONTASK"
             bfcurloc = 81
+            sattyid = 5
+            sdomainid = Bva.singleton.type
+            deatty = 5
           end
 
           veteran = Veteran.find_by_file_number(file_number)
@@ -52,19 +62,19 @@ namespace :db do
                 bfddec: nil
               },
               staff_attrs: {
-                sattyid: user.id,
-                sdomainid: user.css_id
+                sattyid: sattyid,
+                sdomainid: sdomainid
               },
               decass_attrs: {
                 defolder: key,
-                deatty: user.id,
+                deatty: deatty,
                 dereceive: "2020-11-17 00:00:00 UTC"
               }
             )
           end.compact
 
           build_the_cases_in_caseflow(cases, task_type, user, attorney)
-          # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength, Metrics/AbcSize, Layout/LineLength
+          # rubocop:enable, Metrics/ParameterLists, Metrics/MethodLength, Metrics/AbcSize, Layout/LineLength
         end
 
         def custom_folder_attributes(veteran, docket_number)
@@ -164,7 +174,6 @@ namespace :db do
           $stdout.puts("You have created a Review task")
         end
 
-        # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         def create_task(task_type, appeal, user, attorney)
           if task_type == "HEARINGTASK"
             create_hearing_task_for_legacy_appeals(appeal)
@@ -175,7 +184,7 @@ namespace :db do
           elsif task_type == "REVIEWTASK" && user.judge_in_vacols?
             create_review_task_for_legacy_appeals(appeal, user)
           end
-          # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+          # rubocop:enable
         end
 
         ########################################################
@@ -223,28 +232,29 @@ namespace :db do
         # veterans_with_250_appeals = %w[011899906 011899999]
       end
 
-      # request CSS ID for task assignment
-      $stdout.puts("Enter the CSS ID of the user that you want to assign these appeals to")
-      $stdout.puts("Hint: an Attorney User for demo env is BVASCASPER1, and UAT is TCASEY_JUDGE and CGRAHAM_JUDGE")
-      css_id = $stdin.gets.chomp.upcase
-      user = User.find_by_css_id(css_id)
-
       if TASK_CREATION
         $stdout.puts("Which type of tasks do you want to add to these Legacy Appeals?")
         $stdout.puts("Hint: Options include 'HearingTask', 'JudgeTask', 'AttorneyTask',
                      'ReviewTask', and 'DistributionTask'")
         task_type = $stdin.gets.chomp.upcase
-      end
-
-      if task_type == "ATTORNEYTASK" && user.judge_in_vacols?
-        $stdout.puts("Which attorney do you want to assign the Attorney Task to?")
-        $stdout.puts("Hint: Options include 'BVASCASPER1', 'BVARERDMAN', 'BVALSHIELDS'")
-        css_id = $stdin.gets.chomp.upcase
-        attorney = User.find_by_css_id(css_id)
-      elsif task_type == "ATTORNEYTASK" && user.attorney_in_vacols?
-        $stdout.puts("Which Judge do you want to assign the Judge Decision Review Task to?")
-        $stdout.puts("Hint: Options include 'BVAEBECKER', 'BVAKKEELING', 'BVAAABSHIRE'")
-        attorney = user
+        if task_type == ("JUDGETASK" || "ATTORNEYTASK" || "REVIEWTASK")
+          $stdout.puts("Enter the CSS ID of the user that you want to assign these appeals to")
+          $stdout.puts("Hint: an Attorney User for demo env is BVASCASPER1, and UAT is TCASEY_JUDGE and CGRAHAM_JUDGE")
+          css_id = $stdin.gets.chomp.upcase
+          user = User.find_by_css_id(css_id)
+          if task_type == "ATTORNEYTASK" && user.judge_in_vacols?
+            $stdout.puts("Which attorney do you want to assign the Attorney Task to?")
+            $stdout.puts("Hint: Options include 'BVASCASPER1', 'BVARERDMAN', 'BVALSHIELDS'")
+            css_id = $stdin.gets.chomp.upcase
+            attorney = User.find_by_css_id(css_id)
+          end
+        else
+          user = "BVA"
+        end
+      else
+        # request CSS ID for task assignment
+        $stdout.puts("Enter the CSS ID of the user that you want to assign these appeals to")
+        $stdout.puts("Hint: an Attorney User for demo env is BVASCASPER1, and UAT is TCASEY_JUDGE and CGRAHAM_JUDGE")
         css_id = $stdin.gets.chomp.upcase
         user = User.find_by_css_id(css_id)
       end
@@ -256,7 +266,7 @@ namespace :db do
 
       veterans_with_like_45_appeals.each do |file_number|
         docket_number += 1
-        LegacyAppealFactory.stamp_out_legacy_appeals(5, file_number, user, attorney, docket_number, task_type)
+        LegacyAppealFactory.stamp_out_legacy_appeals(1, file_number, user, attorney, docket_number, task_type)
       end
       $stdout.puts("You have created Legacy Appeals")
       # veterans_with_250_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals
@@ -264,4 +274,3 @@ namespace :db do
     end
   end
 end
-# rubocop:enable Lint/ConstantDefinitionInBlock
