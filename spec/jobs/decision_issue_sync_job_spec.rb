@@ -5,11 +5,13 @@ describe DecisionIssueSyncJob, :postgres do
   let(:request_issue) { create(:request_issue, end_product_establishment: epe) }
   let(:no_ratings_err) { Rating::NilRatingProfileListError.new("none!") }
   let(:bgs_transport_err) { BGS::ShareError.new("network!") }
+  let(:sync_lock_err) {Caseflow::Error::SyncLockFailed.new("#{Time.zone.now}")}
 
   subject { described_class.perform_now(request_issue) }
 
   before do
     @raven_called = false
+    Timecop.freeze(Time.utc(2023, 1, 1, 12, 0, 0))
   end
 
   it "ignores NilRatingProfileListError for Sentry, logs on db" do
@@ -40,6 +42,16 @@ describe DecisionIssueSyncJob, :postgres do
 
     expect(request_issue.decision_sync_error).to eq("#<StandardError: random error>")
     expect(@raven_called).to eq(true)
+  end
+
+  it "logs SyncLock errors" do
+    capture_raven_log
+    allow(request_issue).to receive(:sync_decision_issues!).and_raise(sync_lock_err)
+
+    subject
+    expect(request_issue.decision_sync_error).to eq("#<Caseflow::Error::SyncLockFailed: #{Time.zone.now}>")
+    expect(request_issue.decision_sync_attempted_at).to be_within(5.minutes).of 12.hours.ago
+    expect(@raven_called).to eq(false) # should be true?
   end
 
   it "ignores error on success" do
