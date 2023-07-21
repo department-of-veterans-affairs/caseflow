@@ -3,7 +3,12 @@
 describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
   let(:veteran) { create(:veteran) }
   let(:claimant_type) { :none }
-  let(:hlr) { create(:higher_level_review, benefit_type: nil, veteran_file_number: veteran.file_number, claimant_type: claimant_type) }
+  let(:hlr) do
+    create(:higher_level_review,
+           benefit_type: nil,
+           veteran_file_number: veteran.file_number,
+           claimant_type: claimant_type)
+  end
   let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
   let(:task) { create(:higher_level_review_task, appeal: hlr, assigned_to: non_comp_org) }
 
