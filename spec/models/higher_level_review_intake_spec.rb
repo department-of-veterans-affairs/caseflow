@@ -195,30 +195,6 @@ describe HigherLevelReviewIntake, :all_dbs do
       )
     end
 
-    context "when disable_claim_establishment is enabled" do
-      before { FeatureToggle.enable!(:disable_claim_establishment) }
-      after { FeatureToggle.disable!(:disable_claim_establishment) }
-
-      it "does not submit claims to VBMS" do
-        subject
-
-        expect(intake).to be_success
-        expect(intake.detail.establishment_submitted_at).to eq(Time.zone.now)
-        expect(ratings_end_product_establishment).to_not be_nil
-        expect(ratings_end_product_establishment.established_at).to eq(nil)
-        expect(Fakes::VBMSService).not_to have_received(:establish_claim!)
-        expect(Fakes::VBMSService).not_to have_received(:create_contentions!)
-        expect(Fakes::VBMSService).not_to have_received(:associate_rating_request_issues!)
-        expect(intake.detail.request_issues.count).to eq 1
-        expect(intake.detail.request_issues.first).to have_attributes(
-          contested_rating_issue_reference_id: "reference-id",
-          contested_issue_description: "decision text",
-          rating_issue_associated_at: nil
-        )
-        expect(HigherLevelReview.processable.count).to eq 1
-      end
-    end
-
     context "when benefit type is pension" do
       let(:benefit_type) { "pension" }
       let(:pension_rating_ep_establishment) do

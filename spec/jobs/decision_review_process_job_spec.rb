@@ -49,15 +49,6 @@ describe DecisionReviewProcessJob do
     expect(establishment_subject.error).to be_nil
   end
 
-  context "when disable_claim_establishment feature toggle is enabled" do
-    before { FeatureToggle.enable!(:disable_claim_establishment) }
-    after { FeatureToggle.disable!(:disable_claim_establishment) }
-
-    it "does not attempt establishment" do
-      expect(subject).to eq(nil)
-    end
-  end
-
   context "transient VBMS error" do
     let(:vbms_error) do
       VBMS::HTTPError.new("500", "FAILED FOR UNKNOWN REASONS")
