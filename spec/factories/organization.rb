@@ -70,6 +70,11 @@ FactoryBot.define do
       type { "BusinessLine" }
     end
 
+    factory :vre_business_line, class: BusinessLine do
+      type { "BusinessLine" }
+      name { Constants::BENEFIT_TYPES["voc_rehab"] }
+    end
+
     factory :hearings_management do
       type { "HearingsManagement" }
       name { "Hearings Management" }
