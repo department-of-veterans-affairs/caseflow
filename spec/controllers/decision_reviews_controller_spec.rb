@@ -596,7 +596,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
           }
         end
 
-        # The Vha Businessline in_progress should not include on_hold since it should be using active for the tasks query
+        # The Vha Businessline in_progress should not include on_hold since it uses active for the tasks query
         let(:in_progress_tasks) { in_progress_hlr_tasks + in_progress_sc_tasks }
 
         it "page 1 displays first 15 tasks" do

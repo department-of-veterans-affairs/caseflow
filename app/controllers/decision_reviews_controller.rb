@@ -135,14 +135,14 @@ class DecisionReviewsController < ApplicationController
   def queue_tasks
     tab_name = allowed_params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM.to_sym]
 
-    return missing_tab_parameter_error unless tab_name
-
     sort_by_column = SORT_COLUMN_MAPPINGS[allowed_params[Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM.to_sym]]
 
     tasks = case tab_name
             when "incomplete" then incomplete_tasks(pagination_query_params(sort_by_column))
             when "in_progress" then in_progress_tasks(pagination_query_params(sort_by_column))
             when "completed" then completed_tasks(pagination_query_params(sort_by_column))
+            when nil
+              return missing_tab_parameter_error
             else
               return unrecognized_tab_name_error
             end

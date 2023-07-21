@@ -328,6 +328,7 @@ describe BusinessLine do
     end
 
     describe ".in_progress_tasks" do
+      let(:current_time) { Time.zone.now }
       let!(:hlr_tasks_on_active_decision_reviews) do
         create_list(:higher_level_review_vha_task, 5, assigned_to: business_line)
       end
@@ -356,7 +357,7 @@ describe BusinessLine do
             :nonrating,
             decision_review: task.appeal,
             benefit_type: business_line.url,
-            closed_at: Time.zone.now,
+            closed_at: current_time,
             closed_status: "decided"
           )
         end

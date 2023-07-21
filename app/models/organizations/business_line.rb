@@ -5,7 +5,6 @@ class BusinessLine < Organization
     "/decision_reviews/#{url}"
   end
 
-  # TODO: Could maybe combine these two methods since there shouldn't be a tab if there's no query type defined?
   def included_tabs
     [:in_progress, :completed]
   end
@@ -87,13 +86,6 @@ class BusinessLine < Organization
         .and(Task.arel_table[:type].eq(DecisionReviewTask.name))
     }.freeze
 
-    # TODO: Figure out if this is needs to be changed for all business lines except vha as well
-    # TASKS_QUERY_TYPE = {
-    #   incomplete: "on_hold",
-    #   in_progress: "active",
-    #   completed: "recently_completed"
-    # }.freeze
-
     DEFAULT_ORDERING_HASH = {
       incomplete: {
         sort_by: :assigned_at
@@ -133,23 +125,6 @@ class BusinessLine < Organization
 
     # rubocop:disable Metrics/MethodLength
     def issue_type_count
-      # TODO: Figure out if this needs to be changed for all the businesslines somehow except vha
-      # TODO: Task.open.to_sql.partition("WHERE").last
-      # The above block would get close to what we need
-
-      query_type_predicate = if query_type == :in_progress
-                               "AND #{tasks_query_status_where_clause}
-                                AND request_issues.closed_at IS NULL
-                                AND request_issues.ineligible_reason IS NULL"
-                             elsif query_type == :incomplete
-                               "AND #{tasks_query_status_where_clause}
-                                AND request_issues.closed_at IS NULL
-                                AND request_issues.ineligible_reason IS NULL"
-                             else
-                               "AND tasks.status = 'completed'
-                                AND #{Task.arel_table[:closed_at].between(7.days.ago..Time.zone.now).to_sql}"
-                             end
-
       nonrating_issue_count = ActiveRecord::Base.connection.execute <<-SQL
         WITH task_review_issues AS (
           SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
@@ -160,8 +135,8 @@ class BusinessLine < Organization
         AND request_issues.decision_review_type = 'HigherLevelReview'
           WHERE request_issues.nonrating_issue_category IS NOT NULL
         AND tasks.assigned_to_id = #{business_line_id}
-        AND tasks.assigned_to_type = 'Organization'
-        #{query_type_predicate}
+        AND tasks.assigned_to_type = '#{Organization.name}'
+        #{issue_type_count_predicate}
         UNION ALL
         SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
           FROM tasks
@@ -170,8 +145,8 @@ class BusinessLine < Organization
           INNER JOIN request_issues ON supplemental_claims.id = request_issues.decision_review_id
         AND request_issues.decision_review_type = 'SupplementalClaim'
         WHERE tasks.assigned_to_id = #{business_line_id}
-        AND tasks.assigned_to_type = 'Organization'
-        #{query_type_predicate}
+        AND tasks.assigned_to_type = '#{Organization.name}'
+        #{issue_type_count_predicate}
         UNION ALL
         SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
           FROM tasks
@@ -180,8 +155,8 @@ class BusinessLine < Organization
           INNER JOIN request_issues ON appeals.id = request_issues.decision_review_id
         AND request_issues.decision_review_type = 'Appeal'
         WHERE tasks.assigned_to_id = #{business_line_id}
-        AND tasks.assigned_to_type = 'Organization'
-        #{query_type_predicate}
+        AND tasks.assigned_to_type = '#{Organization.name}'
+        #{issue_type_count_predicate}
         )
         SELECT issue_category, COUNT(1) AS nonrating_issue_count
         FROM task_review_issues
@@ -208,6 +183,21 @@ class BusinessLine < Organization
 
     def business_line_id
       parent.id
+    end
+
+    def issue_type_count_predicate
+      if query_type == :in_progress
+        "AND #{tasks_query_status_where_clause}
+         AND request_issues.closed_at IS NULL
+         AND request_issues.ineligible_reason IS NULL"
+      elsif query_type == :incomplete
+        "AND #{tasks_query_status_where_clause}
+         AND request_issues.closed_at IS NULL
+         AND request_issues.ineligible_reason IS NULL"
+      else
+        "AND tasks.status = 'completed'
+         AND #{Task.arel_table[:closed_at].between(7.days.ago..Time.zone.now).to_sql}"
+      end
     end
 
     def decision_review_task_includes
@@ -415,8 +405,6 @@ class BusinessLine < Organization
     def query_constraints
       {
         incomplete: {
-          # TODO: Figure out if we need additional constraints for these like empty decision dates. Problem is
-          # Working that into this query in a reasonable way.
           # Don't retrieve any tasks with closed issues or issues with ineligible reasons for incomplete
           assigned_to: business_line_id,
           "request_issues.closed_at": nil,
@@ -522,7 +510,6 @@ class BusinessLine < Organization
     end
 
     def decision_review_requests_union_subquery(filter)
-      # base_query = Task.select("tasks.id").send(TASKS_QUERY_TYPE[query_type])
       base_query = Task.select("tasks.id").send(parent.tasks_query_type[query_type])
       union_query = Arel::Nodes::UnionAll.new(
         Arel::Nodes::UnionAll.new(
