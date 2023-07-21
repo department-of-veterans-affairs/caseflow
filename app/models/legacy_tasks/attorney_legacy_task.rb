@@ -34,6 +34,8 @@ class AttorneyLegacyTask < LegacyTask
   end
 
   def label
+    return false if appeal.case_record.nil?
+
     if appeal.case_record.reload.bfcurloc == "57" || appeal.case_record.reload.bfcurloc == "CASEFLOW"
       COPY::ATTORNEY_REWRITE_TASK_LEGACY_LABEL
     else
