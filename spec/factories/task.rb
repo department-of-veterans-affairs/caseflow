@@ -89,28 +89,25 @@ FactoryBot.define do
     end
 
     trait :with_unscheduled_hearing do
-      parent { create(:distribution_task, appeal: appeal) }
+      parent { create(:root_task, appeal: appeal) }
       after(:create) do |task|
         appeal = task.appeal
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
-        distro_task = DistributionTask.find_or_create_by!(appeal: appeal, parent: root_task, assigned_to: Bva.singleton)
-        ScheduleHearingTask.create!(appeal: appeal, parent: distro_task, assigned_to: Bva.singleton)
+        ScheduleHearingTask.create!(appeal: appeal, parent: root_task, assigned_to: Bva.singleton)
       end
     end
 
     trait :with_scheduled_hearing do
-      parent { create(:distribution_task, appeal: appeal) }
+      parent { create(:root_task, appeal: appeal) }
       after(:create) do |task|
         appeal = task.appeal
         root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
-        distro_task = DistributionTask.find_or_create_by!(appeal: appeal, parent: root_task, assigned_to: Bva.singleton)
-        schedule_hearing_task = ScheduleHearingTask.create!(appeal: appeal, parent: distro_task,
+        schedule_hearing_task = ScheduleHearingTask.create!(appeal: appeal, parent: root_task,
                                                             assigned_to: Bva.singleton)
         schedule_hearing_task.update(status: "completed", closed_at: Time.zone.now)
-        distro_task.update!(status: "on_hold")
         hearing = create(:hearing, disposition: nil, judge: nil, appeal: appeal)
         AssignHearingDispositionTask.create!(appeal: appeal, parent: schedule_hearing_task.parent,
-                                                          assigned_to: Bva.singleton)
+                                             assigned_to: Bva.singleton)
         HearingTaskAssociation.create!(hearing: hearing, hearing_task: schedule_hearing_task.parent)
       end
     end
