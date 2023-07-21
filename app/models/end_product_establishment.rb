@@ -627,7 +627,6 @@ class EndProductEstablishment < CaseflowRecord
   end
 
   def reset_non_removed_or_withdrawn_request_issues!
-    byebug
     non_removed_or_withdrawn_issues = request_issues.reject do |ri|
       ri.closed_status == "withdrawn" || ri.closed_status == "removed"
     end

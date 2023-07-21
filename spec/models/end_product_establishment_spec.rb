@@ -1563,7 +1563,7 @@ describe EndProductEstablishment, :postgres do
         Generators::Contention.build(
           id: contention_reference_id,
           claim_id: end_product_establishment.reference_id,
-          disposition: "allowed"
+          disposition: "Difference of Opinion"
         )
       end
 

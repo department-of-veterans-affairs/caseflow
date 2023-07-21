@@ -65,7 +65,6 @@ describe BatchProcessPriorityEpSync, :postgres do
         it "the number of returned PEPSQ records should match the BATCH_LIMIT" do
           expect(recs.count).to eq(BatchProcess::BATCH_LIMIT)
         end
-
       end
     end
   end
@@ -111,6 +110,8 @@ describe BatchProcessPriorityEpSync, :postgres do
   end
 
   describe "#process_batch!" do
+    include ActiveJob::TestHelper
+
     let!(:canceled_hlr_epe_w_canceled_vbms_ext_claim) do
       create(:end_product_establishment, :canceled_hlr_with_canceled_vbms_ext_claim)
     end
@@ -326,6 +327,92 @@ describe BatchProcessPriorityEpSync, :postgres do
       it "the number of records_failed for the batch process will match the number of errored records" do
         failed_sync_pepsq_records = pepsq_records.reject { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
         expect(subject.records_failed).to eq(failed_sync_pepsq_records.count)
+      end
+    end
+
+    context "when a batched record with a DTA/DOO disposition has a synced_status of CAN and BGS has a status of CLR" do
+      let!(:veteran) { create(:veteran) }
+
+      let!(:claimant) do
+        Claimant.create!(decision_review: end_product_establishment.source,
+                         participant_id: end_product_establishment.veteran.participant_id,
+                         payee_code: "00")
+      end
+
+      let!(:end_product_establishment) do
+        epe = create(:end_product_establishment, :active_hlr_with_canceled_vbms_ext_claim, veteran_file_number: veteran.file_number)
+        EndProductEstablishment.find epe.id
+      end
+
+      let!(:hlr) do
+        end_product_establishment.source
+      end
+
+      let(:contention_reference_id) { "5678" }
+
+      let!(:request_issue) do
+        create(
+          :request_issue,
+          decision_review: hlr,
+          nonrating_issue_description: "some description",
+          nonrating_issue_category: "a category",
+          decision_date: 1.day.ago,
+          end_product_establishment: end_product_establishment,
+          contention_reference_id: contention_reference_id,
+          benefit_type: hlr.benefit_type
+        )
+      end
+
+      let!(:contention) do
+        Generators::Contention.build(
+          id: contention_reference_id,
+          claim_id: end_product_establishment.reference_id,
+          disposition: "Difference of Opinion"
+        )
+      end
+
+      let!(:pepsq_record) do
+        PriorityEndProductSyncQueue.create!(end_product_establishment_id: end_product_establishment.id)
+      end
+
+      let!(:batch_process) { BatchProcessPriorityEpSync.create_batch!([pepsq_record]) }
+
+      before do
+        end_product_establishment.sync!
+        ep = end_product_establishment.result
+        ep_store = Fakes::EndProductStore.new
+        ep_store.update_ep_status(end_product_establishment.veteran_file_number, ep.claim_id, "CLR")
+      end
+
+      it "all request issue closed_statuses will now reflect what BGS has" do
+        request_issue.reload
+        expect(request_issue.closed_status).to eq("end_product_canceled")
+        perform_enqueued_jobs do
+          batch_process.process_batch!
+        end
+        request_issue.reload
+        expect(request_issue.closed_status).to eq('decided')
+      end
+
+      it "all request issue closed_at date/times will be updated to when the decision issue syncing occurred " do
+        request_issue.reload
+        expect(request_issue.closed_at).to eq(Time.zone.now)
+        future_sync_time = Timecop.travel(Time.zone.now + 1.hour)
+        perform_enqueued_jobs do
+          batch_process.process_batch!
+        end
+        request_issue.reload
+        expect(request_issue.closed_at).to be > future_sync_time
+      end
+
+      it "a remanded supplemental claim will be generated" do
+        expect(hlr.remand_supplemental_claims.first).to be_nil
+        perform_enqueued_jobs do
+          batch_process.process_batch!
+        end
+        hlr.reload
+        expect(hlr.remand_supplemental_claims.first).to_not be_nil
+        expect(hlr.remand_supplemental_claims.first.decision_review_remanded_id).to eq(hlr.id)
       end
     end
   end
