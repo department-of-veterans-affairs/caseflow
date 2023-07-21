@@ -14,7 +14,7 @@ namespace :db do
       class << self
         # Stamping out appeals like mufflers!
         def stamp_out_legacy_appeals(num_appeals_to_create, file_number, user, attorney, docket_number, task_type)
-          unless user == "BVA"
+          unless user == "Bva"
             bfcurloc = VACOLS::Staff.find_by(sdomainid: user.css_id).slogid
             sattyid = user.id
             sdomainid = user.css_id
@@ -62,8 +62,8 @@ namespace :db do
                 bfddec: nil
               },
               staff_attrs: {
-                sattyid: sattyid,
-                sdomainid: sdomainid
+                sattyid: sattyid
+                # sdomainid: sdomainid
               },
               decass_attrs: {
                 defolder: key,
@@ -238,8 +238,8 @@ namespace :db do
                      'ReviewTask', and 'DistributionTask'")
         task_type = $stdin.gets.chomp.upcase
         if task_type == ("JUDGETASK" || "ATTORNEYTASK" || "REVIEWTASK")
-          $stdout.puts("Enter the CSS ID of the user that you want to assign these appeals to")
-          $stdout.puts("Hint: an Attorney User for demo env is BVASCASPER1, and UAT is TCASEY_JUDGE and CGRAHAM_JUDGE")
+          $stdout.puts("Enter the CSS ID of the judge user that you want to assign these appeals to")
+          $stdout.puts("Hint: a Judge use is BVAAWAKEFIELD")
           css_id = $stdin.gets.chomp.upcase
           user = User.find_by_css_id(css_id)
           if task_type == "ATTORNEYTASK" && user.judge_in_vacols?
@@ -249,7 +249,7 @@ namespace :db do
             attorney = User.find_by_css_id(css_id)
           end
         else
-          user = "BVA"
+          user = "Bva"
         end
       else
         # request CSS ID for task assignment
