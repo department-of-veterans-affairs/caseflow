@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable max-len */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
@@ -10,6 +10,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import ApiUtil from '../util/ApiUtil';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
+import RadioField from '../components/RadioField';
 import SearchableDropdown from '../components/SearchableDropdown';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -43,6 +44,28 @@ const buttonContainerStyle = css({
 const listStyle = css({
   listStyle: 'none'
 });
+
+const radioOptions = [
+  { displayText: 'Pexip',
+    value: '1'},
+  { displayText: 'Webex',
+    value: '2' }
+];
+
+// const [value, setValue] = useState('1');
+// const onChange = (val) => setValue(val);
+// const selectConferenceTypeRadioField = () => {
+//   // const [value, setValue] = useState('1');
+//   // const onChange = (val) => setValue(val);
+
+//   <div>
+//     <RadioField
+//       label="Schedule hearings using:"
+//       name="Schedule hearings using:"
+//       options={radioOptions}
+//       value={value}
+//       onChange={onChange} /></div>
+// }
 
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
@@ -240,6 +263,19 @@ export default class OrganizationUsers extends React.PureComponent {
       loading={this.state.removingUser[user.id]}
       onClick={this.removeUser(user)} /></div>
 
+  // selectConferenceTypeRadioField = () => {
+  //   // const [value, setValue] = useState('1');
+  //   // const onChange = (val) => setValue(val);
+
+  //   <div>
+  //     <RadioField
+  //       label="Schedule hearings using:"
+  //       name="Schedule hearings using:"
+  //       options={radioOptions}
+  //       // value={'1'}
+  //       onChange={onChange} /></div>
+  // }
+
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
     const dvcTeam = this.state.dvcTeam;
@@ -249,11 +285,13 @@ export default class OrganizationUsers extends React.PureComponent {
 
       return <React.Fragment key={user.id}>
         <li key={user.id} {...style}>{this.formatName(user)}
+          {/* { this.selectConferenceTypeRadioField() } */}
           { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
           { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
           { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
           { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
         </li>
+        {/* { this.selectConferenceTypeRadioField()} */}
         { (judgeTeam || dvcTeam) && admin ?
           <div {...topUserBorder}></div> :
           <div {...buttonContainerStyle}>
