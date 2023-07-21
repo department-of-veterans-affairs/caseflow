@@ -188,6 +188,7 @@ feature "NonComp Reviews Queue", :postgres do
       )
 
       click_on "Incomplete tasks"
+      expect(page).to have_content(COPY::VHA_INCOMPLETE_TAB_DESCRIPTION)
       expect(page).to have_content("Higher-Level Review", count: 2)
       expect(page).to have_content("Days Waiting")
 
@@ -491,6 +492,18 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to_not have_content("Camp Lejune Family Member")
       find(".cf-clear-filters-link").click
       expect(page).to have_content("Camp Lejune Family Member")
+
+      # Verify the filter counts for the incomplete tab
+      click_on "Incomplete tasks"
+      find("[aria-label='Filter by issue type']").click
+      expect(page).to have_content("Clothing Allowance (1)")
+      expect(page).to have_content("Other (1)")
+
+      # Verify the filter counts for the completed tab
+      click_on "Completed tasks"
+      find("[aria-label='Filter by issue type']").click
+      expect(page).to have_content("Apportionment (1)")
+      expect(page).to have_content("Camp Lejune Family Member (1)")
     end
 
     scenario "searching reviews by name" do
