@@ -42,3 +42,12 @@ export const basic = Template.bind({});
 
 export const WithSkipButton = Template.bind({});
 WithSkipButton.args = { ...defaultArgs, onSkip: () => true };
+
+export const VhaBenefitType = Template.bind({});
+VhaBenefitType.args = {
+  ...defaultArgs,
+  intakeData: {
+    activeNonratingRequestIssues: [],
+    benefitType: 'vha'
+  }
+};
