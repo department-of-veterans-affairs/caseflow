@@ -9,12 +9,6 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     def allow_creation?(*)
       true
     end
-
-    # Setting blocking? to true will set the parent task as a DistributionTask
-    #   - Question of whether HPR mail tasks should block distribution or not
-    # def blocking?
-    #   true
-    # end
   end
 
   TASK_ACTIONS = [
@@ -45,7 +39,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   end
 
   def open_assign_hearing_disposition_task?
-    # ChangeHearingDispositionTask is a descendant of AssignHearingDispositionTask
+    # ChangeHearingDispositionTask is a subclass of AssignHearingDispositionTask
     disposition_task_names = [AssignHearingDispositionTask.name, ChangeHearingDispositionTask.name]
     open_task = appeal.tasks.where(type: disposition_task_names).open.first
     open_task && hearing_not_scheduled_in_past(open_task)
