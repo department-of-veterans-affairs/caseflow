@@ -19,7 +19,6 @@ module WarRoom
 
     def run
       # clean up any records we don't need
-      legacy_appeal.power_of_attorney&.try(:clear_bgs_power_of_attorney!)
       poa = legacy_appeal.bgs_power_of_attorney
 
       if poa.bgs_record == :not_found || poa.claimant_participant_id != @claimant_participant_id
