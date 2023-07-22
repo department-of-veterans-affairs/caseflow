@@ -21,9 +21,7 @@ RSpec.feature "VhaMembershipRequest" do
   let(:camo_org) { VhaCamo.singleton }
   let(:caregiver_org) { VhaCaregiverSupport.singleton }
   let(:vha_org) do
-    org = BusinessLine.find_or_create_by(name: "Veterans Health Administration", url: "vha")
-    org.save
-    org
+    VhaBusinessLine.singleton
   end
   let(:prosthetics_org) do
     org = VhaProgramOffice.find_or_create_by(name: "Prosthetics", url: "prosthetics-url")

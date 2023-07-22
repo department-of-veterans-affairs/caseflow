@@ -214,7 +214,6 @@ describe BusinessLine do
       tasks
     end
 
-    # TODO: Presumably this is still fine??
     let!(:decision_review_tasks_on_inactive_decision_reviews) do
       tasks = create_list(:higher_level_review_task, 5, assigned_to: business_line)
       tasks.each(&:on_hold!)
