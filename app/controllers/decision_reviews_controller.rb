@@ -14,16 +14,6 @@ class DecisionReviewsController < ApplicationController
            :completed_tasks_issue_type_counts,
            to: :business_line
 
-  # delegate :power_of_attorney, to: :claimant, allow_nil: true
-  # delegate :representative_name,
-  #          :representative_type,
-  #          :representative_address,
-  #          :representative_email_address,
-  #          :poa_last_synced_at,
-  #          :update_cached_attributes!,
-  #          :save_with_updated_bgs_record!,
-  #          to: :power_of_attorney, allow_nil: true
-
   SORT_COLUMN_MAPPINGS = {
     "claimantColumn" => "claimant_name",
     "veteranParticipantIdColumn" => "veteran_participant_id",
@@ -201,10 +191,10 @@ class DecisionReviewsController < ApplicationController
 
   def power_of_attorney_data
     {
-      representative_type: task.appeal.claimant.power_of_attorney.representative_type,
-      representative_name: task.appeal.claimant.power_of_attorney.representative_name,
-      representative_address: task.appeal.claimant.power_of_attorney.representative_address,
-      representative_email_address: task.appeal.claimant.power_of_attorney.representative_email_address
+      representative_type: task.appeal.power_of_attorney&.representative_type,
+      representative_name: task.appeal.power_of_attorney&.representative_name,
+      representative_address: task.appeal.power_of_attorney&.representative_address,
+      representative_email_address: task.appeal.power_of_attorney&.representative_email_address
       # representative_tz: task.representative_tz,
       # poa_last_synced_at: task.poa_last_synced_at
     }

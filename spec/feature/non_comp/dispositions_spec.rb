@@ -266,7 +266,17 @@ feature "NonComp Dispositions Task Page", :postgres do
     let(:decision_date) { Time.zone.now + 10.days }
 
     let!(:in_progress_task) do
-      create(:higher_level_review, :with_vha_issue, :create_business_line, benefit_type: "vha", veteran: veteran)
+      create(:higher_level_review,
+             :with_vha_issue,
+             :with_end_product_establishment,
+             :create_business_line,
+             benefit_type: "vha",
+             veteran: veteran,
+             number_of_claimants: 1)
+    end
+
+    let(:poa_task) do
+      create(:supplemental_claim_poa_task)
     end
 
     let(:business_line_url) { "decision_reviews/vha" }
@@ -301,6 +311,23 @@ feature "NonComp Dispositions Task Page", :postgres do
         expect(disposition_dropdown).to have_css(".cf-select--is-disabled")
         expect(page).to have_text(COPY::DISPOSITION_DECISION_DATE_LABEL)
         expect(page.find_by_id("decision-date").value).to have_content(decision_date.strftime("%Y-%m-%d"))
+      end
+    end
+
+    it "Decision Review should have Power of Attorney Section" do
+      visit dispositions_url
+
+      expect(page).to have_selector("h1", text: "Veterans Health Administration")
+      expect(page).to have_selector("h2", text: "Appellant's Power of Attorney")
+      expect(page).to have_button("Refresh POA")
+      expect(page).to have_text("Attorney: #{in_progress_task.power_of_attorney.representative_name}")
+      expect(page).to have_text("Email Address: #{in_progress_task.power_of_attorney.representative_email_address}")
+
+      expect(page).to have_text("Address")
+      full_address = in_progress_task.power_of_attorney.representative_address
+      sliced_full_address = full_address.slice!(:country)
+      sliced_full_address.each do |address|
+        expect(page).to have_text(address[1])
       end
     end
   end
