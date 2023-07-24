@@ -41,7 +41,6 @@ const powerOfAttorneyDecisionReviewWrapper = (WrappedComponent) => {
     );
 
     if (!powerOfAttorney) {
-      debugger;
       if (loading) {
         return <React.Fragment>{COPY.CASE_DETAILS_LOADING}</React.Fragment>;
       }

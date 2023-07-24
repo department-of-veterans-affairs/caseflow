@@ -51,7 +51,6 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
       shallowEqual
     );
     const poaAlert = useSelector((state) => state.ui.poaAlert);
-    debugger;
     if (!powerOfAttorney) {
       if (loading) {
         return <React.Fragment>{COPY.CASE_DETAILS_LOADING}</React.Fragment>;
@@ -100,7 +99,7 @@ export const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
  */
 export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, poaAlert, appellantType }) => {
   let poa = powerOfAttorney;
-  debugger;
+
   if (poaAlert.powerOfAttorney) {
     poa = poaAlert.powerOfAttorney;
   }
@@ -198,18 +197,9 @@ export const PowerOfAttorneyName = _.flow(
   connect(null, mapDispatchToProps)
 )(PowerOfAttorneyNameUnconnected);
 
-// export default _.flow(
-//   PowerOfAttorneyDetailWrapper,
-//   connect(null, mapDispatchToProps)
-// )(PowerOfAttorneyDetailUnconnected);
-
-
-
 export const PowerOfAttorneyDetail = _.flow(
   PowerOfAttorneyDetailWrapper,
   connect(null, mapDispatchToProps)
 )(PowerOfAttorneyDetailUnconnected);
 
 export default PowerOfAttorneyDetailUnconnected;
-
-

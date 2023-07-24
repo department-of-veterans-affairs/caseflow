@@ -255,7 +255,6 @@ Rails.application.routes.draw do
       end
     end
   end
-  # get '/decision_reviews/:business_line_slug/:appeal_id/power_of_attorney' => 'decision_reviews#power_of_attorney'
   match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
 
   resources :unrecognized_appellants, only: [:update] do

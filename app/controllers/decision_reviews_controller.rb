@@ -76,14 +76,6 @@ class DecisionReviewsController < ApplicationController
     @task ||= Task.includes([:appeal, :assigned_to]).find(task_id)
   end
 
-  # def appeal
-  #   @appeal ||= Appeal.find_by_uuid(url_appeal_uuid) || Appeal.find(task.appeal_id)
-  # end
-
-  # def url_appeal_uuid
-  #   params[:appeal_id]
-  # end
-
   def business_line
     @business_line ||= BusinessLine.find_by(url: business_line_slug)
   end
@@ -172,8 +164,6 @@ class DecisionReviewsController < ApplicationController
 
   def allowed_params
     params.permit(
-      :appeal,
-      :appeal_id,
       :decision_review_business_line_slug,
       :decision_review,
       :decision_date,
@@ -195,6 +185,7 @@ class DecisionReviewsController < ApplicationController
       representative_name: task.appeal.power_of_attorney&.representative_name,
       representative_address: task.appeal.power_of_attorney&.representative_address,
       representative_email_address: task.appeal.power_of_attorney&.representative_email_address
+      # needs to add these two data for POA Refresh button.
       # representative_tz: task.representative_tz,
       # poa_last_synced_at: task.poa_last_synced_at
     }
