@@ -51,7 +51,7 @@ describe DecisionIssueSyncJob, :postgres do
     subject
     expect(request_issue.decision_sync_error).to eq("#<Caseflow::Error::SyncLockFailed: #{Time.zone.now}>")
     expect(request_issue.decision_sync_attempted_at).to be_within(5.minutes).of 12.hours.ago
-    expect(@raven_called).to eq(false) # should be true?
+    expect(@raven_called).to eq(false)
   end
 
   it "ignores error on success" do
