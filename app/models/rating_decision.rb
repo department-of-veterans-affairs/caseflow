@@ -80,7 +80,7 @@ class RatingDecision
       end
 
       if serialized_hash[:rba_contentions_data]
-        # get the contentinons from the rating by the participant id
+        # get the contentions from the rating by the participant id
         contentions = Rating.participant_contentions(serialized_hash)
         data << { mst_available: true } if Rating.mst_from_contentions_for_rating?(contentions)
 
