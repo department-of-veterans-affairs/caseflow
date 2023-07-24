@@ -134,6 +134,8 @@ class BusinessLine < Organization
 
     # rubocop:disable Metrics/MethodLength
     def issue_type_count
+      # Brakeman false positive fix without disabling it for the whole method
+      sanitized_business_line = ActiveRecord::Base.sanitize(business_line_id)
       nonrating_issue_count = ActiveRecord::Base.connection.execute <<-SQL
         WITH task_review_issues AS (
           SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
@@ -143,7 +145,7 @@ class BusinessLine < Organization
           INNER JOIN request_issues ON higher_level_reviews.id = request_issues.decision_review_id
         AND request_issues.decision_review_type = 'HigherLevelReview'
           WHERE request_issues.nonrating_issue_category IS NOT NULL
-        AND tasks.assigned_to_id = '#{business_line_id}'
+        AND tasks.assigned_to_id = #{sanitized_business_line}
         AND tasks.assigned_to_type = '#{Organization.name}'
         #{issue_type_count_predicate}
         UNION ALL
@@ -153,7 +155,7 @@ class BusinessLine < Organization
         AND tasks.appeal_type = 'SupplementalClaim'
           INNER JOIN request_issues ON supplemental_claims.id = request_issues.decision_review_id
         AND request_issues.decision_review_type = 'SupplementalClaim'
-        WHERE tasks.assigned_to_id = '#{business_line_id}'
+        WHERE tasks.assigned_to_id = #{sanitized_business_line}
         AND tasks.assigned_to_type = '#{Organization.name}'
         #{issue_type_count_predicate}
         UNION ALL
@@ -163,7 +165,7 @@ class BusinessLine < Organization
         AND tasks.appeal_type = 'Appeal'
           INNER JOIN request_issues ON appeals.id = request_issues.decision_review_id
         AND request_issues.decision_review_type = 'Appeal'
-        WHERE tasks.assigned_to_id = '#{business_line_id}'
+        WHERE tasks.assigned_to_id = #{sanitized_business_line}
         AND tasks.assigned_to_type = '#{Organization.name}'
         #{issue_type_count_predicate}
         )
