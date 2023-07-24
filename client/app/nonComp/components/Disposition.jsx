@@ -96,13 +96,18 @@ class NonCompDecisionIssue extends React.PureComponent {
   }
 }
 
-const editPOAInformation = true;
+
 const editAppellantInformationLinkStyling = css({
   fontSize: '2rem',
   fontWeight: 'normal',
   margin: '5px',
 });
+
+//  both const updatePOALink and editPOAInformation needs to be changed when working
+// refreshPOA botton story.
+
 const updatePOALink = true;
+const editPOAInformation = true;
 
 class NonCompDispositions extends React.PureComponent {
   constructor(props) {
@@ -115,6 +120,8 @@ class NonCompDispositions extends React.PureComponent {
       isFilledOut: false
     };
   }
+
+
 
   handleDecisionDate = (value) => {
     this.setState({ decisionDate: value }, this.checkFormFilledOut);
@@ -179,6 +186,7 @@ class NonCompDispositions extends React.PureComponent {
     }
 
     let editIssuesLink = null;
+    let displayPOAComponent = this.props.task.business_line === 'vha';
 
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
@@ -197,7 +205,7 @@ class NonCompDispositions extends React.PureComponent {
     }
 
     return <div>
-      <div className="cf-decisions">
+      {displayPOAComponent && <div className="cf-decisions">
         <div className="cf-decision">
           <hr />
           <div className="usa-grid-full">
@@ -219,7 +227,7 @@ class NonCompDispositions extends React.PureComponent {
             />
           </div>
         </div>
-      </div>
+      </div>}
       <div className="cf-decisions">
         <div className="cf-decision">
           <hr />
