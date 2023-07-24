@@ -134,7 +134,11 @@ class BusinessLine < Organization
 
     # rubocop:disable Metrics/MethodLength
     def issue_type_count
-      org_id = ActiveRecord::Base.connection.quote(business_line_id)
+      # Resused Arel statements
+      tasks_table = Task.arel_table
+      assigned_to_id_predicate = tasks_table[:assigned_to_id].eq(business_line_id).to_sql
+      assigned_to_type_predicate = tasks_table[:assigned_to_type].eq(Organization.name).to_sql
+
       nonrating_issue_count = ActiveRecord::Base.connection.execute <<-SQL
         WITH task_review_issues AS (
           SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
@@ -144,8 +148,8 @@ class BusinessLine < Organization
           INNER JOIN request_issues ON higher_level_reviews.id = request_issues.decision_review_id
         AND request_issues.decision_review_type = 'HigherLevelReview'
           WHERE request_issues.nonrating_issue_category IS NOT NULL
-        AND tasks.assigned_to_id = #{org_id}
-        AND tasks.assigned_to_type = '#{Organization.name}'
+        AND #{assigned_to_id_predicate}
+        AND #{assigned_to_type_predicate}
         #{issue_type_count_predicate}
         UNION ALL
         SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
@@ -154,8 +158,8 @@ class BusinessLine < Organization
         AND tasks.appeal_type = 'SupplementalClaim'
           INNER JOIN request_issues ON supplemental_claims.id = request_issues.decision_review_id
         AND request_issues.decision_review_type = 'SupplementalClaim'
-        WHERE tasks.assigned_to_id = #{org_id}
-        AND tasks.assigned_to_type = '#{Organization.name}'
+        WHERE #{assigned_to_id_predicate}
+        AND #{assigned_to_type_predicate}
         #{issue_type_count_predicate}
         UNION ALL
         SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
@@ -164,8 +168,8 @@ class BusinessLine < Organization
         AND tasks.appeal_type = 'Appeal'
           INNER JOIN request_issues ON appeals.id = request_issues.decision_review_id
         AND request_issues.decision_review_type = 'Appeal'
-        WHERE tasks.assigned_to_id = #{org_id}
-        AND tasks.assigned_to_type = '#{Organization.name}'
+        WHERE #{assigned_to_id_predicate}
+        AND #{assigned_to_type_predicate}
         #{issue_type_count_predicate}
         )
         SELECT issue_category, COUNT(1) AS nonrating_issue_count
