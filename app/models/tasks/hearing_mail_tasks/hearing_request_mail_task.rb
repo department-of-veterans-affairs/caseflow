@@ -5,7 +5,7 @@
 #   - HearingPostponementRequestMailTask
 #   - HearingWithdrawalRequestMailTask
 # HearingRequestMailTask is itself not an assignable task type
-
+##
 class HearingRequestMailTask < MailTask
   validates :parent, presence: true, on: :create
 
