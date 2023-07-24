@@ -7,22 +7,39 @@ import { sample1 } from './testData';
 describe('NonratingRequestIssueModal', () => {
   const formType = 'higher_level_review';
   const intakeData = sample1.intakeData;
+  const featureTogglesEMOPreDocket = { eduPreDocketAppeals: true };
+
+  const wrapper = mount(
+    <NonratingRequestIssueModal
+      formType={formType}
+      intakeData={intakeData}
+      onSkip={() => null}
+      featureToggles={{}}
+    />
+  );
+
+  const wrapperNoSkip = mount(
+    <NonratingRequestIssueModal
+      formType={formType}
+      intakeData={intakeData}
+      featureToggles={{}}
+    />
+  );
+
+  const wrapperEMOPreDocket = mount(
+    <NonratingRequestIssueModal
+      formType="appeal"
+      intakeData={intakeData}
+      featureToggles={featureTogglesEMOPreDocket}
+    />
+  );
 
   describe('renders', () => {
+    const cancelBtn = wrapper.find('.cf-modal-controls .close-modal');
+    const skipBtn = wrapper.find('.cf-modal-controls .no-matching-issues');
+    const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
+
     it('renders button text', () => {
-      const wrapper = mount(
-        <NonratingRequestIssueModal
-          formType={formType}
-          intakeData={intakeData}
-          onSkip={() => null}
-          featureToggles={{}}
-        />
-      );
-
-      const cancelBtn = wrapper.find('.cf-modal-controls .close-modal');
-      const skipBtn = wrapper.find('.cf-modal-controls .no-matching-issues');
-      const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
-
       expect(cancelBtn.text()).toBe('Cancel adding this issue');
       expect(skipBtn.text()).toBe('None of these match, see more options');
       expect(submitBtn.text()).toBe('Add this issue');
@@ -39,36 +56,23 @@ describe('NonratingRequestIssueModal', () => {
     });
 
     it('skip button only with onSkip prop', () => {
-      const wrapper = mount(
-        <NonratingRequestIssueModal
-          formType={formType}
-          intakeData={intakeData}
-          featureToggles={{}}
-        />);
+      expect(wrapperNoSkip.find('.cf-modal-controls .no-matching-issues').exists()).toBe(false);
 
-      expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).toBe(false);
+      wrapperNoSkip.setProps({ onSkip: () => null });
 
-      wrapper.setProps({ onSkip: () => null });
-      expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).toBe(true);
+      expect(wrapperNoSkip.find('.cf-modal-controls .no-matching-issues').exists()).toBe(true);
     });
 
     it('disables button when nothing selected', () => {
-      const wrapper = mount(
-        <NonratingRequestIssueModal
-          formType={formType}
-          intakeData={intakeData}
-          featureToggles={{}} />
-      );
-
-      const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
-
       expect(submitBtn.prop('disabled')).toBe(true);
 
       //   Lots of things required for button to be enabled...
       wrapper.setState({
         benefitType: 'compensation',
-        category: { label: 'Apportionment',
-          value: 'Apportionment' },
+        category: {
+          label: 'Apportionment',
+          value: 'Apportionment'
+        },
         decisionDate: '06/01/2019',
         dateError: false,
         description: 'thing'
@@ -79,37 +83,23 @@ describe('NonratingRequestIssueModal', () => {
   });
 
   describe('on appeal, with EMO Pre-Docket', () => {
-    const featureTogglesEMOPreDocket = { eduPreDocketAppeals: true };
+    const benefitType = wrapperEMOPreDocket.find('.cf-is-predocket-needed');
 
     it(' enabled selecting benefit type of "education" renders PreDocketRadioField', () => {
-      const wrapper = mount(
-        <NonratingRequestIssueModal
-          formType="appeal"
-          intakeData={intakeData}
-          featureToggles={featureTogglesEMOPreDocket} />
-      );
-
       // Benefit type isn't education, so it should not be rendered
-      expect(wrapper.find('.cf-is-predocket-needed')).toHaveLength(0);
+      expect(benefitType).toHaveLength(0);
 
-      wrapper.setState({
+      wrapperEMOPreDocket.setState({
         benefitType: 'education'
       });
 
       // Benefit type is now education, so it should be rendered
-      expect(wrapper.find('.cf-is-predocket-needed')).toHaveLength(1);
+      expect(wrapperEMOPreDocket.find('.cf-is-predocket-needed')).toHaveLength(1);
     });
 
     it('submit button is disabled with Education benefit_type if pre-docket selection is empty', () => {
-      const wrapper = mount(
-        <NonratingRequestIssueModal
-          formType="appeal"
-          intakeData={intakeData}
-          featureToggles={featureTogglesEMOPreDocket} />
-      );
-
       // Switch to an Education issue, but don't fill in pre-docket field
-      wrapper.setState({
+      wrapperEMOPreDocket.setState({
         benefitType: 'education',
         category: {
           label: 'accrued',
@@ -121,30 +111,35 @@ describe('NonratingRequestIssueModal', () => {
         isPreDocketNeeded: null
       });
 
-      const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
+      const submitBtn = wrapperEMOPreDocket.find('.cf-modal-controls .add-issue');
 
       expect(submitBtn.prop('disabled')).toBe(true);
 
       // Fill in pre-docket field to make sure the submit button gets enabled
       // Note that the radio field values are strings.
-      wrapper.setState({
+      wrapperEMOPreDocket.setState({
         isPreDocketNeeded: 'false'
       });
 
-      expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
+      expect(wrapperEMOPreDocket.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
     });
 
     it('Decision date does not have an optional label ', () => {
-      const wrapper = mount(
-        <NonratingRequestIssueModal
-          formType="appeal"
-          intakeData={intakeData}
-          featureToggles={{}} />
-      );
+      wrapperEMOPreDocket.setState({
+        benefitType: 'education',
+        category: {
+          label: 'accrued',
+          value: 'accrued'
+        },
+        decisionDate: '03/30/2022',
+        dateError: false,
+        description: 'thing',
+        isPreDocketNeeded: null
+      });
 
       // Since this is a non vha benifit type the decision date is required, so the optional label should not be visible
-      const optionalLabel = wrapper.find('.cf-optional');
-      const submitButton = wrapper.find('.cf-modal-controls .add-issue');
+      const optionalLabel = wrapperEMOPreDocket.find('.cf-optional');
+      const submitButton = wrapperEMOPreDocket.find('.cf-modal-controls .add-issue');
 
       expect(optionalLabel).not.toBe();
       expect(submitButton.prop('disabled')).toBe(true);
@@ -152,14 +147,7 @@ describe('NonratingRequestIssueModal', () => {
   });
 
   describe('on higher level review, with VHA benefit type', () => {
-    const wrapper = mount(
-      <NonratingRequestIssueModal
-        formType={formType}
-        intakeData={intakeData}
-        featureToggles={{}} />
-    );
-
-    wrapper.setState({
+    wrapperNoSkip.setState({
       benefitType: 'vha',
       category: {
         label: 'Beneficiary Travel',
@@ -168,8 +156,8 @@ describe('NonratingRequestIssueModal', () => {
       description: 'test'
     });
 
-    const optionalLabel = wrapper.find('.cf-optional');
-    const submitButton = wrapper.find('.cf-modal-controls .add-issue');
+    const optionalLabel = wrapperNoSkip.find('.cf-optional');
+    const submitButton = wrapperNoSkip.find('.cf-modal-controls .add-issue');
 
     it('renders modal with decision date field being optional', () => {
       expect(optionalLabel.text()).toBe('Optional');
