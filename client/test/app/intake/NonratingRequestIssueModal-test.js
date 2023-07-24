@@ -133,6 +133,7 @@ describe('NonratingRequestIssueModal', () => {
 
       expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
     });
+
     it('Decision date does not have an optional label ', () => {
       const wrapper = mount(
         <NonratingRequestIssueModal
@@ -143,13 +144,15 @@ describe('NonratingRequestIssueModal', () => {
 
       // Since this is a non vha benifit type the decision date is required, so the optional label should not be visible
       const optionalLabel = wrapper.find('.cf-optional');
+      const submitButton = wrapper.find('.cf-modal-controls .add-issue');
 
       expect(optionalLabel).not.toBe();
+      expect(submitButton.prop('disabled')).toBe(true);
     });
   });
 
-  describe('on appeal, with VHA Pre-Docket', () => {
-    it('renders modal', () => {
+  describe('on higher level review, with VHA benefit type', () => {
+    it('renders modal with decision date field being optional', () => {
       const wrapper = mount(
         <NonratingRequestIssueModal
           formType={formType}
@@ -157,12 +160,22 @@ describe('NonratingRequestIssueModal', () => {
           featureToggles={{}} />
       );
 
-      wrapper.setState({ benefitType: 'vha' });
+      wrapper.setState({
+        benefitType: 'vha',
+        category: {
+          label: 'Beneficiary Travel',
+          value: 'Beneficiary Travel'
+        },
+        description: 'test'
+      });
 
       // Since this is a vha benifit type the decision date is not required, so the optional label should be visible
       const optionalLabel = wrapper.find('.cf-optional');
+      const submitButton = wrapper.find('.cf-modal-controls .add-issue');
 
       expect(optionalLabel.text()).toBe('Optional');
+
+      expect(submitButton.prop('disabled')).toBe(false);
     });
   });
 });
