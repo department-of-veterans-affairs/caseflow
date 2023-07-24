@@ -257,16 +257,16 @@ export default class OrganizationUsers extends React.PureComponent {
       loading={this.state.removingUser[user.id]}
       onClick={this.removeUser(user)} /></div>
 
-  selectConferenceTypeRadioField = () =>
-    <div>
-      <RadioField
-        label="Schedule hearings using:"
-        name={""}
-        options={radioOptions}
-        value={this.state.value}
-        onChange={this.onChange}
-        vertical
-    /></div>
+  // selectConferenceTypeRadioField = () =>
+  //   <div>
+  //     <RadioField
+  //       label="Schedule hearings using:"
+  //       name={""}
+  //       options={radioOptions}
+  //       value={this.state.value}
+  //       onChange={this.onChange}
+  //       vertical
+  //   /></div>
 
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
@@ -282,7 +282,7 @@ export default class OrganizationUsers extends React.PureComponent {
           { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
           { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
         </li>
-        <SelectConferenceTypeRadioField/>
+        <SelectConferenceTypeRadioField key={`${user.id}-conference-selection`} name={user.id}/>
         { (judgeTeam || dvcTeam) && admin ?
           <div {...topUserBorder}></div> :
           <div {...buttonContainerStyle}>
