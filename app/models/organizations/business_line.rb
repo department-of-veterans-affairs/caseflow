@@ -134,11 +134,7 @@ class BusinessLine < Organization
 
     # rubocop:disable Metrics/MethodLength
     def issue_type_count
-      # Resused Arel statements
-      tasks_table = Task.arel_table
-      assigned_to_id_predicate = tasks_table[:assigned_to_id].eq(business_line_id).to_sql
-      assigned_to_type_predicate = tasks_table[:assigned_to_type].eq(Organization.name).to_sql
-
+      repeated_predicates = issue_type_count_predicates
       nonrating_issue_count = ActiveRecord::Base.connection.execute <<-SQL
         WITH task_review_issues AS (
           SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
@@ -147,10 +143,7 @@ class BusinessLine < Organization
         AND tasks.appeal_type = 'HigherLevelReview'
           INNER JOIN request_issues ON higher_level_reviews.id = request_issues.decision_review_id
         AND request_issues.decision_review_type = 'HigherLevelReview'
-          WHERE request_issues.nonrating_issue_category IS NOT NULL
-        AND #{assigned_to_id_predicate}
-        AND #{assigned_to_type_predicate}
-        #{issue_type_count_predicate}
+        #{repeated_predicates}
         UNION ALL
         SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
           FROM tasks
@@ -158,9 +151,7 @@ class BusinessLine < Organization
         AND tasks.appeal_type = 'SupplementalClaim'
           INNER JOIN request_issues ON supplemental_claims.id = request_issues.decision_review_id
         AND request_issues.decision_review_type = 'SupplementalClaim'
-        WHERE #{assigned_to_id_predicate}
-        AND #{assigned_to_type_predicate}
-        #{issue_type_count_predicate}
+        #{repeated_predicates}
         UNION ALL
         SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
           FROM tasks
@@ -168,9 +159,7 @@ class BusinessLine < Organization
         AND tasks.appeal_type = 'Appeal'
           INNER JOIN request_issues ON appeals.id = request_issues.decision_review_id
         AND request_issues.decision_review_type = 'Appeal'
-        WHERE #{assigned_to_id_predicate}
-        AND #{assigned_to_type_predicate}
-        #{issue_type_count_predicate}
+        #{repeated_predicates}
         )
         SELECT issue_category, COUNT(1) AS nonrating_issue_count
         FROM task_review_issues
@@ -197,21 +186,6 @@ class BusinessLine < Organization
 
     def business_line_id
       parent.id
-    end
-
-    def issue_type_count_predicate
-      if query_type == :in_progress
-        "AND #{tasks_query_status_where_clause}
-         AND request_issues.closed_at IS NULL
-         AND request_issues.ineligible_reason IS NULL"
-      elsif query_type == :incomplete
-        "AND #{tasks_query_status_where_clause}
-         AND request_issues.closed_at IS NULL
-         AND request_issues.ineligible_reason IS NULL"
-      else
-        "AND tasks.status = 'completed'
-         AND #{Task.arel_table[:closed_at].between(7.days.ago..Time.zone.now).to_sql}"
-      end
     end
 
     def decision_review_task_includes
@@ -547,6 +521,32 @@ class BusinessLine < Organization
 
       parsed_filters.find do |filter|
         filter["col"].include?("issueTypesColumn")
+      end
+    end
+
+    # Issue type count helpers
+    def issue_type_count_predicates
+      # Reused Arel statements
+      tasks_table = Task.arel_table
+      assigned_to_id_predicate = tasks_table[:assigned_to_id].eq(business_line_id).to_sql
+      assigned_to_type_predicate = tasks_table[:assigned_to_type].eq(Organization.name).to_sql
+      shared_predicate = "WHERE #{assigned_to_id_predicate}"\
+                        " AND #{assigned_to_type_predicate}"
+
+      if query_type == :in_progress
+        "#{shared_predicate}
+         AND #{tasks_query_status_where_clause}
+         AND request_issues.closed_at IS NULL
+         AND request_issues.ineligible_reason IS NULL"
+      elsif query_type == :incomplete
+        "#{shared_predicate}
+         AND #{tasks_query_status_where_clause}
+         AND request_issues.closed_at IS NULL
+         AND request_issues.ineligible_reason IS NULL"
+      else
+        "#{shared_predicate}
+         AND tasks.status = 'completed'
+         AND #{Task.arel_table[:closed_at].between(7.days.ago..Time.zone.now).to_sql}"
       end
     end
 
