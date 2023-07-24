@@ -3,7 +3,7 @@
 describe Task, :all_dbs do
   context "includes PrintsTaskTree concern" do
     describe ".structure" do
-      let(:root_task) { create(:hearing_postponement_request_mail_task_with_hearing) }
+      let(:root_task) { create(:root_task) }
       let!(:bva_task) { create(:bva_dispatch_task, :in_progress, parent: root_task) }
       let(:judge_task) { create(:ama_judge_assign_task, :completed, parent: root_task) }
       let!(:attorney_task) { create(:ama_attorney_task, :completed, parent: judge_task) }
