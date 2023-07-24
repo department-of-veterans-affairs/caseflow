@@ -21,6 +21,10 @@ class RegionalOffice
   # The string key is a unique identifier for a regional office.
   attr_reader :key
 
+  def flipper_id
+    key
+  end
+
   def initialize(key)
     @key = key
   end
