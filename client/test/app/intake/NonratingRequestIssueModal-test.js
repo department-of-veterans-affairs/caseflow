@@ -134,4 +134,27 @@ describe('NonratingRequestIssueModal', () => {
       expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
     });
   });
+
+  describe('on appeal, with VHA Pre-Docket', () => {
+    it('renders modal', () => {
+      const featureTogglesEMOPreDocket = { eduPreDocketAppeals: true };
+
+      const wrapper = mount(
+        <NonratingRequestIssueModal
+          formType="appeal"
+          intakeData={intakeData}
+          featureToggles={featureTogglesEMOPreDocket} />
+      );
+
+      wrapper.setState({ benefitType: 'vha' });
+
+      const optionalLabel = wrapper.find('.cf-optional');
+
+      expect(optionalLabel.text()).toBe('Optional');
+    });
+  });
+
+  describe('on appeal, with non VHA', () => {
+
+  });
 });
