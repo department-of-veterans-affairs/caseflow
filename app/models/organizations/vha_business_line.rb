@@ -2,7 +2,7 @@
 
 class VhaBusinessLine < BusinessLine
   def self.singleton
-    VhaBusinessLine.first || VhaBusinessLine.find_or_create_by!(name: Constants::BENEFIT_TYPES["vha"], url: "vha")
+    VhaBusinessLine.first || VhaBusinessLine.find_or_create_by(name: Constants::BENEFIT_TYPES["vha"], url: "vha")
   end
 
   def included_tabs
