@@ -6348,7 +6348,7 @@
     },
     {
       "id": 220,
-      "type": "VhaBusinessLine",
+      "type": "BusinessLine",
       "name": "Veterans Readiness and Employment",
       "role": null,
       "url": "voc_rehab",
@@ -6378,7 +6378,7 @@
     },
     {
       "id": 222,
-      "type": "BusinessLine",
+      "type": "VhaBusinessLine",
       "name": "Veterans Health Administration",
       "role": null,
       "url": "vha",
