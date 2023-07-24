@@ -17,6 +17,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
+import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
 
 const userStyle = css({
   margin: '.5rem 0 .5rem',
@@ -68,9 +69,17 @@ export default class OrganizationUsers extends React.PureComponent {
       addingUser: null,
       changingAdminRights: {},
       removingUser: {},
-      isVhaOrg: false
+      isVhaOrg: false,
+      value: '1'
     };
   }
+
+  onChange = (value) => {
+    this.setState({
+      value
+    });
+  }
+  // handleChange = (event) => (event.target.value);
 
   loadingPromise = () => {
     return ApiUtil.get(`/organizations/${this.props.organization}/users`).then((response) => {
@@ -215,12 +224,6 @@ export default class OrganizationUsers extends React.PureComponent {
     });
   }
 
-  modifyConferenceType = () => {
-    const [value, setValue] = useState('1');
-
-    const onChange = (val) => setValue(val);
-  }
-
   asyncLoadUser = (inputValue) => {
     // don't search till we have min length input
     if (inputValue.length < 2) {
@@ -254,19 +257,16 @@ export default class OrganizationUsers extends React.PureComponent {
       loading={this.state.removingUser[user.id]}
       onClick={this.removeUser(user)} /></div>
 
-  selectConferenceTypeRadioField = () => {
-    // const [value, setValue] = useState('1');
-    // const onChange = (val) = setValue(val);
-
+  selectConferenceTypeRadioField = () =>
     <div>
       <RadioField
         label="Schedule hearings using:"
-        name="Schedule hearings using:"
+        name={""}
         options={radioOptions}
-        value={radioOptions.value}
-        onChange={this.modifyConferenceType()}
+        value={this.state.value}
+        onChange={this.onChange}
+        vertical
     /></div>
-  }
 
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
@@ -277,19 +277,18 @@ export default class OrganizationUsers extends React.PureComponent {
 
       return <React.Fragment key={user.id}>
         <li key={user.id} {...style}>{this.formatName(user)}
-          { this.selectConferenceTypeRadioField() }
           { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
           { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
           { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
           { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
         </li>
-        {/* { this.selectConferenceTypeRadioField()} */}
+        <SelectConferenceTypeRadioField/>
         { (judgeTeam || dvcTeam) && admin ?
           <div {...topUserBorder}></div> :
           <div {...buttonContainerStyle}>
             { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
             { this.removeUserButton(user) }
-            {/* { this.selectConferenceTypeRadioField() } */}
+            {/* <SelectConferenceTypeRadioField/> */}
           </div> }
       </React.Fragment>;
     });
