@@ -416,25 +416,25 @@ class BusinessLine < Organization
       {
         incomplete: {
           # Don't retrieve any tasks with closed issues or issues with ineligible reasons for incomplete
-          assigned_to: business_line_id,
+          assigned_to: parent,
           "request_issues.closed_at": nil,
           "request_issues.ineligible_reason": nil
         },
         in_progress: {
           # Don't retrieve any tasks with closed issues or issues with ineligible reasons for in progress
-          assigned_to: business_line_id,
+          assigned_to: parent,
           "request_issues.closed_at": nil,
           "request_issues.ineligible_reason": nil
         },
         completed: {
-          assigned_to: business_line_id
+          assigned_to: parent
         }
       }[query_type]
     end
 
     def board_grant_effectuation_task_constraints
       {
-        assigned_to: business_line_id,
+        assigned_to: parent,
         'tasks.type': BoardGrantEffectuationTask.name
       }
     end
