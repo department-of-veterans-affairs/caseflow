@@ -219,7 +219,7 @@ class AddIssuesPage extends React.Component {
       return this.redirect(intakeData, hasClearedEp);
     }
 
-    if (intakeData && this.requestIssuesWithoutDecisionDates(intakeData)) {
+    if (intakeData && intakeData.benefitType !== 'vha' && this.requestIssuesWithoutDecisionDates(intakeData)) {
       return <Redirect to={PAGE_PATHS.REQUEST_ISSUE_MISSING_DECISION_DATE} />;
     }
 
