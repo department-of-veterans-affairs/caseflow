@@ -64,11 +64,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
     return false unless open_task&.hearing
 
-    hearing_not_scheduled_in_past?(open_task.hearing)
-  end
-
-  # Ensure hearing associated with AssignHearingDispositionTask is not scheduled in the past
-  def hearing_not_scheduled_in_past?(hearing)
-    hearing.scheduled_for >= Time.zone.now
+    # Ensure hearing associated with AssignHearingDispositionTask is not scheduled in the past
+    !open_task.hearing.scheduled_for_past?
   end
 end
