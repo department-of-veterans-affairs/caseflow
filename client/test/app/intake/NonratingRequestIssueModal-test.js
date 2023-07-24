@@ -152,29 +152,30 @@ describe('NonratingRequestIssueModal', () => {
   });
 
   describe('on higher level review, with VHA benefit type', () => {
+    const wrapper = mount(
+      <NonratingRequestIssueModal
+        formType={formType}
+        intakeData={intakeData}
+        featureToggles={{}} />
+    );
+
+    wrapper.setState({
+      benefitType: 'vha',
+      category: {
+        label: 'Beneficiary Travel',
+        value: 'Beneficiary Travel'
+      },
+      description: 'test'
+    });
+
+    const optionalLabel = wrapper.find('.cf-optional');
+    const submitButton = wrapper.find('.cf-modal-controls .add-issue');
+
     it('renders modal with decision date field being optional', () => {
-      const wrapper = mount(
-        <NonratingRequestIssueModal
-          formType={formType}
-          intakeData={intakeData}
-          featureToggles={{}} />
-      );
-
-      wrapper.setState({
-        benefitType: 'vha',
-        category: {
-          label: 'Beneficiary Travel',
-          value: 'Beneficiary Travel'
-        },
-        description: 'test'
-      });
-
-      // Since this is a vha benifit type the decision date is not required, so the optional label should be visible
-      const optionalLabel = wrapper.find('.cf-optional');
-      const submitButton = wrapper.find('.cf-modal-controls .add-issue');
-
       expect(optionalLabel.text()).toBe('Optional');
+    });
 
+    it('submit button is enabled without a decision date entered', () => {
       expect(submitButton.prop('disabled')).toBe(false);
     });
   });
