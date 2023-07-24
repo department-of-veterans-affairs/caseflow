@@ -67,7 +67,8 @@ class TasksForAppeal
   end
 
   def only_root_task?
-    !appeal.tasks.active.where(type: RootTask.name).empty?
+    !appeal.tasks.active.where(type: RootTask.name).empty? ||
+      !appeal.tasks.active.where(type: ScheduleHearingTask.name).empty?
   end
 
   def all_tasks_except_for_decision_review_tasks

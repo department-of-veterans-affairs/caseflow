@@ -803,6 +803,7 @@
   "ATTORNEY_TASK_LABEL": "Draft decision",
   "ATTORNEY_TASK_NOTES_PREFIX": "Attorney draft decision notes:",
   "ATTORNEY_REWRITE_TASK_LABEL": "Revise decision draft",
+  "ATTORNEY_REWRITE_TASK_LEGACY_LABEL": "Distribution Task",
   "ATTORNEY_REWRITE_TASK_NOTES_PREFIX": "Attorney rewrite decision notes:",
   "ATTORNEY_QUALITY_REVIEW_TASK_LABEL": "Quality review",
   "ATTORNEY_DISPATCH_RETURN_TASK_LABEL": "Revise decision (BVA Dispatch)",
