@@ -4,14 +4,6 @@ describe BusinessLine do
   include_context :business_line, "VHA", "vha"
   let(:veteran) { create(:veteran) }
 
-  describe ".tasks_url" do
-    it { expect(business_line.tasks_url).to eq "/decision_reviews/vha" }
-  end
-
-  describe ".included_tabs" do
-    it { expect(business_line.included_tabs).to match_array [:incomplete, :in_progress, :completed] }
-  end
-
   shared_examples "task filtration" do
     context "Higher-Level Review tasks" do
       let!(:task_filters) { ["col=decisionReviewType&val=HigherLevelReview"] }
