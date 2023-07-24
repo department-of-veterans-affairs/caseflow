@@ -199,7 +199,7 @@ describe VhaMembershipRequestMailBuilder, :postgres do
   private
 
   def create_vha_orgs
-    create(:business_line, name: "Veterans Health Administration", url: "vha")
+    VhaBusinessLine.singleton
     VhaCamo.singleton
     VhaCaregiverSupport.singleton
     create(:vha_program_office,
