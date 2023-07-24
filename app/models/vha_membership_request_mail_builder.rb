@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: Okay this is problem
-require_dependency "vha_business_line"
-
 class VhaMembershipRequestMailBuilder < MembershipRequestMailBuilder
   attr_accessor :membership_requests, :requestor
 
