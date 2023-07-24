@@ -62,8 +62,8 @@ namespace :db do
                 bfddec: nil
               },
               staff_attrs: {
-                sattyid: sattyid
-                # sdomainid: sdomainid
+                sattyid: sattyid,
+                sdomainid: sdomainid
               },
               decass_attrs: {
                 defolder: key,
