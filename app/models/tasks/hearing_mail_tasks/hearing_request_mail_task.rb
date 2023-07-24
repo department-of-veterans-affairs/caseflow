@@ -9,8 +9,6 @@
 class HearingRequestMailTask < MailTask
   validates :parent, presence: true, on: :create
 
-  # Is this check necessary?
-  #   - In theory you could call MailTask.create even though MailTask is not an assignable task
   before_validation :verify_request_type_designated
 
   class << self
