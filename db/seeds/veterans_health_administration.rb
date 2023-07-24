@@ -84,6 +84,7 @@ module Seeds
 
     def create_vha_caregiver
       create_vha_caregiver_queue_assigned
+      create_vha_caregiver_queue_in_progress
       create_vha_caregiver_queue_completed
     end
 
@@ -172,6 +173,10 @@ module Seeds
       5.times { create(:vha_document_search_task, assigned_to: VhaCaregiverSupport.singleton) }
     end
 
+    def create_vha_caregiver_queue_in_progress
+      5.times { create(:vha_document_search_task, :in_progress, assigned_to: VhaCaregiverSupport.singleton) }
+    end
+
     def create_vha_caregiver_queue_completed
       5.times do
         task = create(:vha_document_search_task, assigned_to: VhaCaregiverSupport.singleton)
@@ -185,13 +190,10 @@ module Seeds
       program_offices = VhaProgramOffice.all
       tabs.each do |status|
         program_offices.each do |program_office|
-          if status == :completed
-            3.times do
-              task = create(:assess_documentation_task, assigned_to: program_office)
-              task.completed!
-            end
-          else
-            create_list(:assess_documentation_task, 3, assigned_to: program_office)
+          3.times do
+            task = create(:assess_documentation_task, assigned_to: program_office)
+            task.in_progress! if status == :in_progress
+            task.completed! if status == :completed
           end
         end
       end
