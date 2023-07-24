@@ -35,18 +35,21 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   private
 
   def active_schedule_hearing_task?
-    appeal.tasks.find_by(type: ScheduleHearingTask.name)&.active?
+    appeal.tasks.where(type: ScheduleHearingTask.name).active.any?
   end
 
   def open_assign_hearing_disposition_task?
     # ChangeHearingDispositionTask is a subclass of AssignHearingDispositionTask
     disposition_task_names = [AssignHearingDispositionTask.name, ChangeHearingDispositionTask.name]
     open_task = appeal.tasks.where(type: disposition_task_names).open.first
-    open_task && hearing_not_scheduled_in_past(open_task)
+
+    return false unless open_task&.hearing
+
+    hearing_not_scheduled_in_past(open_task.hearing)
   end
 
   # Ensure hearing associated with AssignHearingDispositionTask is not scheduled in the past
-  def hearing_not_scheduled_in_past(task)
-    task.hearing.scheduled_for >= Time.zone.now
+  def hearing_not_scheduled_in_past(hearing)
+    hearing.scheduled_for >= Time.zone.now
   end
 end
