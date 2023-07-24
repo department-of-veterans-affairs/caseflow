@@ -9,11 +9,7 @@ class AppealRequestIssuesPolicy
   def editable?
     editable_by_case_review_team_member? || case_is_in_active_review_by_current_user? ||
       hearing_is_assigned_to_judge_user? || editable_by_cavc_team_member? ||
-      editable_by_ssc_team_member? || editable_by_cob_team_member?
-  end
-
-  def legacy_issues_editable?
-    FeatureToggle.enabled?(:legacy_mst_pact_identification) && editable?
+      editable_by_ssc_team_member?
   end
 
   private
@@ -32,19 +28,6 @@ class AppealRequestIssuesPolicy
   def editable_by_ssc_team_member?
     SupervisorySeniorCouncil.singleton.users.include?(user) &&
       FeatureToggle.enabled?(:split_appeal_workflow)
-  end
-
-  # editable option added for MST and PACT editing
-  def editable_by_cob_team_member?
-    ClerkOfTheBoard.singleton.users.include?(user) &&
-      mst_pact_feature_toggles_enabled?
-  end
-
-  # returns true if one feature toggle is enabled
-  def mst_pact_feature_toggles_enabled?
-    FeatureToggle.enabled?(:mst_identification) ||
-      FeatureToggle.enabled?(:pact_identification) ||
-      FeatureToggle.enabled?(:legacy_mst_pact_identification)
   end
 
   def current_user_can_edit_issues?
