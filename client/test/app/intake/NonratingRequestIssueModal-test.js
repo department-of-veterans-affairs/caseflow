@@ -133,28 +133,36 @@ describe('NonratingRequestIssueModal', () => {
 
       expect(wrapper.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
     });
-  });
-
-  describe('on appeal, with VHA Pre-Docket', () => {
-    it('renders modal', () => {
-      const featureTogglesEMOPreDocket = { eduPreDocketAppeals: true };
-
+    it('Decision date does not have an optional label ', () => {
       const wrapper = mount(
         <NonratingRequestIssueModal
           formType="appeal"
           intakeData={intakeData}
-          featureToggles={featureTogglesEMOPreDocket} />
+          featureToggles={{}} />
+      );
+
+      // Since this is a non vha benifit type the decision date is required, so the optional label should not be visible
+      const optionalLabel = wrapper.find('.cf-optional');
+
+      expect(optionalLabel).not.toBe();
+    });
+  });
+
+  describe('on appeal, with VHA Pre-Docket', () => {
+    it('renders modal', () => {
+      const wrapper = mount(
+        <NonratingRequestIssueModal
+          formType={formType}
+          intakeData={intakeData}
+          featureToggles={{}} />
       );
 
       wrapper.setState({ benefitType: 'vha' });
 
+      // Since this is a vha benifit type the decision date is not required, so the optional label should be visible
       const optionalLabel = wrapper.find('.cf-optional');
 
       expect(optionalLabel.text()).toBe('Optional');
     });
-  });
-
-  describe('on appeal, with non VHA', () => {
-
   });
 });
