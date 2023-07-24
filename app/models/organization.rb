@@ -45,6 +45,10 @@ class Organization < CaseflowRecord
     end
   end
 
+  def flipper_id
+    url
+  end
+
   def active!
     self.status_updated_at = Time.zone.now
     super
