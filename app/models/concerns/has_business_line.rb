@@ -10,8 +10,6 @@ module HasBusinessLine
                        else
                          BusinessLine.find_or_create_by(name: business_line_name) { |org| org.url = benefit_type }
                        end
-    # TODO: more side effects from subclassing Vha
-    # @business_line ||= BusinessLine.find_or_create_by(name: business_line_name) { |org| org.url = benefit_type }
   end
 
   def processed_in_vbms?

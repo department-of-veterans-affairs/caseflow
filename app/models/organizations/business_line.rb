@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class BusinessLine < Organization
-  # TODO: Might override this method
+  # TODO: Might override this method eventually
   # def self.find_or_create_by(attributes, &block)
   #   if attributes[:name] == "Veterans Health Administration" || attributes[:url] == "vha"
   #     VhaBusinessLine.find_or_create_by(attributes, &block)
@@ -24,9 +24,6 @@ class BusinessLine < Organization
       completed: "recently_completed"
     }
   end
-
-  # TODO: Figure out why VhaBusinessLine is not being preloaded into controllers and other models.
-  # self.inheritance_column = "type"
 
   # Example Params:
   # sort_order: 'desc',
@@ -133,33 +130,28 @@ class BusinessLine < Organization
     end
 
     # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
     def issue_type_count
-      repeated_predicates = issue_type_count_predicates
+      appeals_query = Task.send(parent.tasks_query_type[query_type])
+        .select("tasks.id as tasks_id, request_issues.nonrating_issue_category as issue_category")
+        .joins(ama_appeal: :request_issues)
+        .where(query_constraints)
+      hlr_query = Task.send(parent.tasks_query_type[query_type])
+        .select("tasks.id as tasks_id, request_issues.nonrating_issue_category as issue_category")
+        .joins(supplemental_claim: :request_issues)
+        .where(query_constraints)
+      sc_query = Task.send(parent.tasks_query_type[query_type])
+        .select("tasks.id as tasks_id, request_issues.nonrating_issue_category as issue_category")
+        .joins(higher_level_review: :request_issues)
+        .where(query_constraints)
+
       nonrating_issue_count = ActiveRecord::Base.connection.execute <<-SQL
         WITH task_review_issues AS (
-          SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
-          FROM tasks
-          INNER JOIN higher_level_reviews ON tasks.appeal_id = higher_level_reviews.id
-        AND tasks.appeal_type = 'HigherLevelReview'
-          INNER JOIN request_issues ON higher_level_reviews.id = request_issues.decision_review_id
-        AND request_issues.decision_review_type = 'HigherLevelReview'
-        #{repeated_predicates}
-        UNION ALL
-        SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
-          FROM tasks
-          INNER JOIN supplemental_claims ON tasks.appeal_id = supplemental_claims.id
-        AND tasks.appeal_type = 'SupplementalClaim'
-          INNER JOIN request_issues ON supplemental_claims.id = request_issues.decision_review_id
-        AND request_issues.decision_review_type = 'SupplementalClaim'
-        #{repeated_predicates}
-        UNION ALL
-        SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
-          FROM tasks
-          INNER JOIN appeals ON tasks.appeal_id = appeals.id
-        AND tasks.appeal_type = 'Appeal'
-          INNER JOIN request_issues ON appeals.id = request_issues.decision_review_id
-        AND request_issues.decision_review_type = 'Appeal'
-        #{repeated_predicates}
+            #{hlr_query.to_sql}
+          UNION ALL
+            #{sc_query.to_sql}
+          UNION ALL
+            #{appeals_query.to_sql}
         )
         SELECT issue_category, COUNT(1) AS nonrating_issue_count
         FROM task_review_issues
@@ -181,6 +173,7 @@ class BusinessLine < Organization
       issue_count_options
     end
     # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
 
     private
 
@@ -522,36 +515,6 @@ class BusinessLine < Organization
       parsed_filters.find do |filter|
         filter["col"].include?("issueTypesColumn")
       end
-    end
-
-    # Issue type count helpers
-    def issue_type_count_predicates
-      # Reused Arel statements
-      tasks_table = Task.arel_table
-      assigned_to_id_predicate = tasks_table[:assigned_to_id].eq(business_line_id).to_sql
-      assigned_to_type_predicate = tasks_table[:assigned_to_type].eq(Organization.name).to_sql
-      shared_predicate = "WHERE #{assigned_to_id_predicate}"\
-                        " AND #{assigned_to_type_predicate}"
-
-      if query_type == :in_progress
-        "#{shared_predicate}
-         AND #{tasks_query_status_where_clause}
-         AND request_issues.closed_at IS NULL
-         AND request_issues.ineligible_reason IS NULL"
-      elsif query_type == :incomplete
-        "#{shared_predicate}
-         AND #{tasks_query_status_where_clause}
-         AND request_issues.closed_at IS NULL
-         AND request_issues.ineligible_reason IS NULL"
-      else
-        "#{shared_predicate}
-         AND tasks.status = 'completed'
-         AND #{Task.arel_table[:closed_at].between(7.days.ago..Time.zone.now).to_sql}"
-      end
-    end
-
-    def tasks_query_status_where_clause
-      Task.send(parent.tasks_query_type[query_type]).to_sql.partition("WHERE").last
     end
   end
 end
