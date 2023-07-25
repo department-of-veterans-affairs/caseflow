@@ -70,7 +70,7 @@ datadogRum.init({
   site: 'ddog-gov.com',
   service: 'caseflow-rum-metrics',
   env: datadogEnv,
-  version: '',
+  version: '2.0',
   sessionSampleRate: 100,
   sessionReplaySampleRate: 20,
   trackUserInteractions: true,
