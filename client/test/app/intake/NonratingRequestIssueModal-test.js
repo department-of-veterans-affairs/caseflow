@@ -85,6 +85,18 @@ describe('NonratingRequestIssueModal', () => {
   describe('on appeal, with EMO Pre-Docket', () => {
     const benefitType = wrapperEMOPreDocket.find('.cf-is-predocket-needed');
 
+    wrapperEMOPreDocket.setState({
+      benefitType: 'education',
+      category: {
+        label: 'accrued',
+        value: 'accrued'
+      },
+      decisionDate: '03/30/2022',
+      dateError: false,
+      description: 'thing',
+      isPreDocketNeeded: null
+    });
+
     it(' enabled selecting benefit type of "education" renders PreDocketRadioField', () => {
       // Benefit type isn't education, so it should not be rendered
       expect(benefitType).toHaveLength(0);
@@ -97,20 +109,17 @@ describe('NonratingRequestIssueModal', () => {
       expect(wrapperEMOPreDocket.find('.cf-is-predocket-needed')).toHaveLength(1);
     });
 
+    it('Decision date does not have an optional label ', () => {
+      // Since this is a non vha benifit type the decision date is required, so the optional label should not be visible
+      const optionalLabel = wrapperEMOPreDocket.find('.cf-optional');
+      const submitButton = wrapperEMOPreDocket.find('.cf-modal-controls .add-issue');
+
+      expect(optionalLabel).not.toBe();
+      expect(submitButton.prop('disabled')).toBe(true);
+    });
+
     it('submit button is disabled with Education benefit_type if pre-docket selection is empty', () => {
       // Switch to an Education issue, but don't fill in pre-docket field
-      wrapperEMOPreDocket.setState({
-        benefitType: 'education',
-        category: {
-          label: 'accrued',
-          value: 'accrued'
-        },
-        decisionDate: '03/30/2022',
-        dateError: false,
-        description: 'thing',
-        isPreDocketNeeded: null
-      });
-
       const submitBtn = wrapperEMOPreDocket.find('.cf-modal-controls .add-issue');
 
       expect(submitBtn.prop('disabled')).toBe(true);
@@ -122,27 +131,6 @@ describe('NonratingRequestIssueModal', () => {
       });
 
       expect(wrapperEMOPreDocket.find('.cf-modal-controls .add-issue').prop('disabled')).toBe(false);
-    });
-
-    it('Decision date does not have an optional label ', () => {
-      wrapperEMOPreDocket.setState({
-        benefitType: 'education',
-        category: {
-          label: 'accrued',
-          value: 'accrued'
-        },
-        decisionDate: '03/30/2022',
-        dateError: false,
-        description: 'thing',
-        isPreDocketNeeded: null
-      });
-
-      // Since this is a non vha benifit type the decision date is required, so the optional label should not be visible
-      const optionalLabel = wrapperEMOPreDocket.find('.cf-optional');
-      const submitButton = wrapperEMOPreDocket.find('.cf-modal-controls .add-issue');
-
-      expect(optionalLabel).not.toBe();
-      expect(submitButton.prop('disabled')).toBe(true);
     });
   });
 
