@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 import COPY from '../../../../COPY';
+import { initialState } from '../../../../app/reader/CaseSelect/CaseSelectReducer';
 export const uiData = {
   ui: {
     highlightFormItems: false,
@@ -1802,19 +1803,7 @@ export const rootTaskData = {
     fetchedAllCasesFor: {}
   },
   caseSelect: {
-    selectedAppealVacolsId: null,
-    isRequestingAppealsUsingVeteranId: false,
-    selectedAppeal: {},
-    receivedAppeals: [],
-    search: {
-      showErrorMessage: false,
-      noAppealsFoundSearchQueryValue: null
-    },
-    caseSelectCriteria: {
-      searchQuery: ''
-    },
-    assignments: [],
-    assignmentsLoaded: false
+    initialState
   },
   queue: {
     judges: {},
