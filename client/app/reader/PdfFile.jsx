@@ -23,6 +23,7 @@ import { startPlacingAnnotation, showPlaceAnnotationIcon
 import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, getSearchTerm } from './selectors';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
+import uuid from 'uuid';
 
 PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -55,47 +56,118 @@ export class PdfFile extends React.PureComponent {
 
     this.props.clearDocumentLoadError(this.props.file);
 
-    // We have to set withCredentials to true since we're requesting the file from a
-    // different domain (eFolder), and still need to pass our credentials to authenticate.
+    if (this.props.featureToggles.readerGetDocumentLogging) {
+      return this.getDocumentWithLogging(requestOptions);
+    }
+
+    return this.getDocument(requestOptions);
+  }
+
+  /**
+   * We have to set withCredentials to true since we're requesting the file from a
+   * different domain (eFolder), and still need to pass our credentials to authenticate.
+   */
+  getDocument = (requestOptions) => {
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
         this.loadingTask = PDFJS.getDocument({ data: resp.body });
 
         return this.loadingTask.promise;
-      }).
+      }, (reason) => this.onRejected(reason, 'getDocument')).
       then((pdfDocument) => {
+        this.pdfDocument = pdfDocument;
 
-        this.setPageDimensions(pdfDocument);
-
+        return this.getPages(pdfDocument);
+      }, (reason) => this.onRejected(reason, 'getPages')).
+      then((pages) => this.setPageDimensions(pages)
+        , (reason) => this.onRejected(reason, 'setPageDimensions')).
+      then(() => {
         if (this.loadingTask.destroyed) {
-          pdfDocument.destroy();
-        } else {
-          this.loadingTask = null;
-          this.pdfDocument = pdfDocument;
-          this.props.setPdfDocument(this.props.file, pdfDocument);
+          return this.pdfDocument.destroy();
         }
-      }).
-      catch(() => {
+        this.loadingTask = null;
+
+        return this.props.setPdfDocument(this.props.file, this.pdfDocument);
+      }, (reason) => this.onRejected(reason, 'setPdfDocument')).
+      catch((error) => {
+        console.error(`${uuid.v4()} : GET ${this.props.file} : ${error}`);
         this.loadingTask = null;
         this.props.setDocumentLoadError(this.props.file);
       });
   }
 
-  setPageDimensions = (pdfDocument) => {
+  /**
+   * This version of the method has additional logging and debugging configuration
+   * It is behind the feature toggle reader_get_document_logging
+   *
+   * We have to set withCredentials to true since we're requesting the file from a
+   * different domain (eFolder), and still need to pass our credentials to authenticate.
+   */
+  getDocumentWithLogging = (requestOptions) => {
+    const logId = uuid.v4();
+
+    return ApiUtil.get(this.props.file, requestOptions).
+      then((resp) => {
+        const src = {
+          data: resp.body,
+          verbosity: 5,
+          stopAtErrors: false,
+          pdfBug: true,
+        };
+
+        this.loadingTask = PDFJS.getDocument(src);
+
+        this.loadingTask.onProgress = (progress) => {
+          // eslint-disable-next-line no-console
+          console.log(`${logId} : Progress of ${this.props.file} reached ${progress}`);
+          // eslint-disable-next-line no-console
+          console.log(`${logId} : Progress of ${this.props.file} reached ${progress.loaded} / ${progress.total}`);
+        };
+
+        return this.loadingTask.promise;
+      }, (reason) => this.onRejected(reason, 'getDocument')).
+      then((pdfDocument) => {
+        this.pdfDocument = pdfDocument;
+
+        return this.getPages(pdfDocument);
+      }, (reason) => this.onRejected(reason, 'getPages')).
+      then((pages) => this.setPageDimensions(pages)
+        , (reason) => this.onRejected(reason, 'setPageDimensions')).
+      then(() => {
+        if (this.loadingTask.destroyed) {
+          return this.pdfDocument.destroy();
+        }
+        this.loadingTask = null;
+
+        return this.props.setPdfDocument(this.props.file, this.pdfDocument);
+      }, (reason) => this.onRejected(reason, 'setPdfDocument')).
+      catch((error) => {
+        console.error(`${logId} : GET ${this.props.file} : ${error}`);
+        this.loadingTask = null;
+        this.props.setDocumentLoadError(this.props.file);
+      });
+  }
+
+  onRejected = (reason, step) => {
+    console.error(`${uuid.v4()} : GET ${this.props.file} : STEP ${step} : ${reason}`);
+    throw reason;
+  }
+
+  getPages = (pdfDocument) => {
     const promises = _.range(0, pdfDocument?.numPages).map((index) => {
 
       return pdfDocument.getPage(pageNumberOfPageIndex(index));
     });
 
-    Promise.all(promises).then((pages) => {
-      const viewports = pages.map((page) => {
-        return _.pick(page.getViewport({ scale: PAGE_DIMENSION_SCALE }), ['width', 'height']);
-      });
+    return Promise.all(promises);
+  }
 
-      this.props.setPageDimensions(this.props.file, viewports);
-    }, () => {
-      // Eventually we should send a sentry error? Or metrics?
+  setPageDimensions = (pages) => {
+    const viewports = pages.map((page) => {
+      return _.pick(page.getViewport({ scale: PAGE_DIMENSION_SCALE }), ['width', 'height']);
     });
+
+    this.props.setPageDimensions(this.props.file, viewports);
   }
 
   componentWillUnmount = () => {
@@ -521,7 +593,8 @@ PdfFile.propTypes = {
   togglePdfSidebar: PropTypes.func,
   updateSearchIndexPage: PropTypes.func,
   updateSearchRelativeIndex: PropTypes.func,
-  windowingOverscan: PropTypes.number
+  windowingOverscan: PropTypes.number,
+  featureToggles: PropTypes.object
 };
 
 const mapDispatchToProps = (dispatch) => ({

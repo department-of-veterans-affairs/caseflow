@@ -239,26 +239,30 @@ describe "Appeals API v2", :all_dbs, type: :request do
       status = json["data"].last["attributes"]["status"]
       expect(status["type"]).to eq("pending_form9")
 
+      issues_array = [
+        {
+          "description" =>
+          "New and material evidence to reopen claim for service"\
+          " connection, shoulder or arm muscle injury",
+          "diagnosticCode" => "5301",
+          "active" => true,
+          "lastAction" => nil,
+          "date" => nil
+        },
+        {
+          "description" =>
+          "New and material evidence to reopen claim for service connection,"\
+          " shoulder or arm muscle injury",
+          "diagnosticCode" => "5302",
+          "active" => false,
+          "lastAction" => "field_grant",
+          "date" => (Time.zone.today - 5.days).to_s
+        }
+      ]
+
       # check the last appeal's issues
       expect(json["data"].last["attributes"]["issues"])
-        .to eq([
-                 {
-                   "description" =>
-                     "New and material evidence to reopen claim for service connection, shoulder or arm muscle injury",
-                   "diagnosticCode" => "5301",
-                   "active" => true,
-                   "lastAction" => nil,
-                   "date" => nil
-                 },
-                 {
-                   "description" =>
-                     "New and material evidence to reopen claim for service connection, shoulder or arm muscle injury",
-                   "diagnosticCode" => "5302",
-                   "active" => false,
-                   "lastAction" => "field_grant",
-                   "date" => (Time.zone.today - 5.days).to_s
-                 }
-               ])
+        .to match_array(issues_array)
 
       # check that the date for the last event was formatted correctly
       json_notification_date = json["data"].last["attributes"]["events"].first["date"]

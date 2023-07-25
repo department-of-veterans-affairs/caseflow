@@ -88,7 +88,7 @@ describe TaskFilter, :all_dbs do
     context "filtering on suggested hearing location" do
       let(:col) { Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME }
       let(:unescaped_val) { "San Francisco, CA(VA)" }
-      let(:val) { URI.escape(URI.escape(unescaped_val)) }
+      let(:val) { URI::DEFAULT_PARSER.escape(URI::DEFAULT_PARSER.escape(unescaped_val)) }
       let(:filter_params) { ["col=#{col}&val=#{val}"] }
 
       it "calls the QueueFilterParameter#from_string" do
@@ -99,11 +99,42 @@ describe TaskFilter, :all_dbs do
         subject
       end
 
-      it "returns the expected where_clase" do
+      it "returns the expected where_clause" do
         expect(subject).to eq([
                                 "cached_appeal_attributes.suggested_hearing_location IN (?)",
                                 [unescaped_val]
                               ])
+      end
+    end
+
+    context "when filtering on issue types" do
+      let(:filter_value) { "Other" }
+      let(:database_column_name) { "cached_appeal_attributes.issue_types" }
+      let(:filter_params) { ["col=#{Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name}&val=#{filter_value}"] }
+
+      it "when the filter matches a value in the ISSUE_CATEGORIES json it returns the expected where_clause" do
+        # expect(subject).to eq(["POSITION('#{filter_value}' IN #{database_column_name}) > 0"])
+        expect(subject).to eq(
+          [
+            "('#{filter_value}' = ANY (string_to_array(#{database_column_name}, ',')) )"
+          ]
+        )
+      end
+
+      context "when the filter value is None" do
+        let(:filter_value) { "None" }
+
+        it "returns the expected where_clause" do
+          expect(subject).to eq(["(#{database_column_name} IS NULL OR #{database_column_name} = '' )"])
+        end
+      end
+
+      context "when the filter value does not exist in the defined ISSUE_CATEGORIES json" do
+        let(:filter_value) { "Category C" }
+
+        it "returns a falsey placeholder boolean" do
+          expect(subject).to eq(["(1=0 )"])
+        end
       end
     end
   end
@@ -350,7 +381,7 @@ describe TaskFilter, :all_dbs do
           ["col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=#{case_types['1']}|#{case_types['2']}"]
         end
 
-        it "returns tasks with Original or Supplemental case types", skip: "flakey" do
+        it "returns tasks with Original or Supplemental case types" do
           expect(subject.map(&:id)).to match_array(tasks_type_original.map(&:id) + tasks_type_supplemental.map(&:id))
         end
       end
@@ -459,13 +490,75 @@ describe TaskFilter, :all_dbs do
 
       let(:col) { Constants.QUEUE_CONFIG.SUGGESTED_HEARING_LOCATION_COLUMN_NAME }
       let(:unescaped_val) { hearing_location_sfo.formatted_location }
-      let(:val) { URI.escape(URI.escape(unescaped_val)) }
+      let(:val) { URI::DEFAULT_PARSER.escape(URI::DEFAULT_PARSER.escape(unescaped_val)) }
       let(:filter_params) { ["col=#{col}&val=#{val}"] }
 
       it "returns the correct task" do
         UpdateCachedAppealsAttributesJob.new.cache_ama_appeals
         expect(subject.count).to eq 1
         expect(subject.first).to eq task2
+      end
+    end
+
+    context "when filtering by issue types" do
+      let(:all_tasks) { Task.where(id: create_list(:root_task, 6)) }
+      let(:issue_categories) do
+        [
+          "CHAMPVA",
+          "Spina Bifida Treatment (Non-Compensation)",
+          "Caregiver | Other",
+          "Caregiver | Other",
+          "Other",
+          ""
+        ]
+      end
+      let(:request_issues) do
+        issue_categories.map do |issue_category|
+          create(:request_issue, nonrating_issue_category: issue_category)
+        end
+      end
+      let(:column_name) { Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name }
+
+      before do
+        all_tasks.each_with_index do |task, index|
+          task.appeal.request_issues << request_issues[index]
+          task.save
+          task.appeal.save
+        end
+        UpdateCachedAppealsAttributesJob.new.cache_ama_appeals
+      end
+
+      context "when filter_params is an empty array" do
+        let(:filter_params) { [] }
+
+        it "returns the same set of tasks for the filtered and unfiltered set" do
+          expect(subject.map(&:id)).to match_array(all_tasks.map(&:id))
+        end
+      end
+
+      context "when filter_params includes a non existent issue category" do
+        let(:filter_params) { ["col=#{column_name}&val=NON_EXISTANT_ISSUE_CATEGORY"] }
+
+        it "returns no tasks" do
+          expect(subject).to match_array([])
+        end
+      end
+
+      context "when filter_params includes a task without a request issue" do
+        let(:filter_params) { ["col=#{column_name}&val=None"] }
+
+        it "returns the task with no request issues" do
+          expect(subject).to match_array([all_tasks.last])
+        end
+      end
+
+      context "when filter_params includes an existing issue category" do
+        let(:filter_value) { URI::DEFAULT_PARSER.escape(URI::DEFAULT_PARSER.escape("Caregiver | Other")) }
+        let(:filter_params) { ["col=#{column_name}&val=#{filter_value}"] }
+
+        it "returns the tasks that are associated with an issue_type including 'Caregiver | Other'" do
+          expect(subject.map(&:id)).to match_array(all_tasks[2..3].map(&:id))
+        end
       end
     end
   end
