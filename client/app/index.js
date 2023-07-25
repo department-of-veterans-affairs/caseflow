@@ -65,12 +65,12 @@ const environment = process.env.NODE_ENV === 'production' ? 'production'
 const datadogEnv = environment === 'production' ? '<%= Rails.deploy_env %>' : environment;
 
 datadogRum.init({
-  applicationId: '1ac96c4f-a7e3-4af0-bac3-f9244d0b19b5',
-  clientToken: 'pub906aa4183ac61b33cad8ddcdfa15f3c5',
+  applicationId: '1551b197-e14b-4af1-a645-afda936eba1b',
+  clientToken: 'pub27d27d37e8c9303f44ca5fb2af394724',
   site: 'ddog-gov.com',
-  service: 'caseflow-apm-metrics',
+  service: 'caseflow-rum-metrics',
   env: datadogEnv,
-  version: '1.0.0',
+  version: '',
   sessionSampleRate: 100,
   sessionReplaySampleRate: 20,
   trackUserInteractions: true,
@@ -78,6 +78,8 @@ datadogRum.init({
   trackLongTasks: true,
   defaultPrivacyLevel: 'mask-user-input'
 });
+
+datadogRum.startSessionReplayRecording();
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
