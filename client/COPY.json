@@ -954,6 +954,7 @@
   "VHA_PRE_DOCKET_ISSUE_BANNER": "Based on the issue selected, this will go to pre-docket queue.",
   "VHA_CAMO_PRE_DOCKET_INTAKE_SUCCESS_TITLE": "Appeal recorded and sent to VHA CAMO for document assessment",
   "VHA_CAREGIVER_SUPPORT_PRE_DOCKET_INTAKE_SUCCESS_TITLE": "Appeal recorded and sent to VHA Caregiver for document assessment",
+  "VHA_NO_DECISION_DATE_BANNER": "This claim will be saved, but cannot be worked on until a decision date is added to this issue.",
   "EDUCATION_PRE_DOCKET_INTAKE_SUCCESS_TITLE": "Appeal recorded and sent to Education Service for document assessment",
   "PRE_DOCKET_INTAKE_SUCCESS_TITLE": "Appeal recorded in pre-docket queue",
   "INTAKE_SUCCESS_TITLE": "Intake completed",
