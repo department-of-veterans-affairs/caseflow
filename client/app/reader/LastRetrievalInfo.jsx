@@ -11,18 +11,11 @@ class UnconnectedLastRetrievalInfo extends React.PureComponent {
         </div> :
         <div className="cf-red-text" key="vbms">
           Unable to display VBMS documents at this time
-        </div>,
-      this.props.manifestVvaFetchedAt ?
-        <div id="vva-manifest-retrieved-at" key="vva">
-          Last VVA retrieval: {this.props.manifestVvaFetchedAt.slice(0, -5)}
-        </div> :
-        <div className="cf-red-text" key="vva">
-          Unable to display VVA documents at this time
         </div>
     ];
   }
 }
 
 export default connect(
-  (state) => _.pick(state.documentList, ['manifestVvaFetchedAt', 'manifestVbmsFetchedAt'])
+  (state) => _.pick(state.documentList, ['manifestVbmsFetchedAt'])
 )(UnconnectedLastRetrievalInfo);
