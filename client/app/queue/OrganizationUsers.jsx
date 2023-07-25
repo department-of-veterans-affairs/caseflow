@@ -62,7 +62,6 @@ export default class OrganizationUsers extends React.PureComponent {
       changingAdminRights: {},
       removingUser: {},
       isVhaOrg: false,
-      value: '1'
     };
   }
 

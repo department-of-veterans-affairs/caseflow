@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import RadioField from '../components/RadioField';
+import COPY from '../../COPY';
 
 const radioOptions = [
   { displayText: 'Pexip',
@@ -14,7 +15,7 @@ const SelectConferenceTypeRadioField = ({name}) => {
   return (
     <div >
       <RadioField
-        label="Schedule hearings using:"
+        label={COPY.USER_MANAGEMENT_SELECT_HEARINGS_CONFERENCE_TYPE}
         name={name}
         options={radioOptions}
         value={value}
