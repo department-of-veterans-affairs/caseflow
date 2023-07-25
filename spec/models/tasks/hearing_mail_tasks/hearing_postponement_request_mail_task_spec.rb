@@ -76,7 +76,7 @@ describe HearingPostponementRequestMailTask, :postgres do
               before do
                 disposition_task.update!(status: "completed", closed_at: Time.zone.now)
                 ChangeHearingDispositionTask.create!(appeal: appeal, parent: hearing_task,
-                                                    assigned_to: HearingAdmin.singleton)
+                                                     assigned_to: HearingAdmin.singleton)
               end
 
               include_examples "returns appropriate task actions"
