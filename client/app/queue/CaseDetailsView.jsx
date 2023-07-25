@@ -307,10 +307,10 @@ export const CaseDetailsView = (props) => {
           featureToggles,
           userIsVsoEmployee,
         }) && (
-            <div className={topAlertStyles}>
-              <VsoVisibilityAlert />
-            </div>
-          )}
+          <div className={topAlertStyles}>
+            <VsoVisibilityAlert />
+          </div>
+        )}
         <CaseTitleDetails
           appealId={appealId}
           redirectUrl={window.location.pathname}
@@ -366,14 +366,14 @@ export const CaseDetailsView = (props) => {
             // but prior to a hearing being scheduled they will need the Hearings section rendered anyways.
             (props.vsoVirtualOptIn && userIsVsoEmployee && allScheduleHearingTasks.length)
           ) && (
-              <CaseHearingsDetail
-                title="Hearings"
-                appeal={appeal}
-                hearingTasks={userIsVsoEmployee ? allScheduleHearingTasks : parentHearingTasks}
-                vsoVirtualOptIn={props.vsoVirtualOptIn}
-                currentUserEmailPresent={Boolean(appeal.currentUserEmail)}
-              />
-            )}
+            <CaseHearingsDetail
+              title="Hearings"
+              appeal={appeal}
+              hearingTasks={userIsVsoEmployee ? allScheduleHearingTasks : parentHearingTasks}
+              vsoVirtualOptIn={props.vsoVirtualOptIn}
+              currentUserEmailPresent={Boolean(appeal.currentUserEmail)}
+            />
+          )}
           <VeteranDetail title="About the Veteran" appealId={appealId} />
           {appeal.appellantIsNotVeteran && !_.isNull(appeal.appellantFullName) && (
             <AppellantDetail

@@ -17,9 +17,8 @@ const powerOfAttorneyFromNonCompState = () =>
   (state) => {
     return {
       appellantType: state.appeal?.claimantType,
-      /* eslint-disable camelcase */
+      /* eslint-disable-next-line camelcase */
       powerOfAttorney: state.task?.power_of_attorney,
-      /* eslint-enable camelcase */
       loading: state?.loadingPowerOfAttorney?.loading,
       error: state?.loadingPowerOfAttorney?.error,
       poaAlert: state.poaAlert,

@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-
 import TabWindow from '../../components/TabWindow';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import COPY from '../../../COPY';

@@ -90,9 +90,13 @@ feature "NonComp Dispositions Task Page", :postgres do
       non_comp_org.add_user(user)
       setup_prior_claim_with_payee_code(decision_review, veteran, "00")
       FeatureToggle.enable!(:decision_review_queue_ssn_column)
+      FeatureToggle.enable!(:poa_button_refresh)
     end
 
-    after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
+    after do
+      FeatureToggle.disable!(:decision_review_queue_ssn_column)
+      FeatureToggle.disable!(:poa_button_refresh)
+    end
 
     context "decision_review is a Supplemental Claim" do
       let(:decision_review) do
@@ -130,6 +134,8 @@ feature "NonComp Dispositions Task Page", :postgres do
       expect(page).to have_content(
         "Prior decision date: #{decision_review.request_issues[0].decision_date.strftime('%m/%d/%Y')}"
       )
+      expect(page).not_to have_content("Appellant's Power of Attorney")
+      expect(page).not_to have_button("Refresh POA")
       expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
     end
 
@@ -143,7 +149,10 @@ feature "NonComp Dispositions Task Page", :postgres do
     context "the complete button enables only after a decision date and disposition are set" do
       before do
         visit dispositions_url
+        FeatureToggle.enable!(:poa_button_refresh)
       end
+
+      after { FeatureToggle.disable!(:poa_button_refresh) }
 
       scenario "neither disposition nor date is set" do
         expect(page).to have_button("Complete", disabled: true)
@@ -319,7 +328,6 @@ feature "NonComp Dispositions Task Page", :postgres do
 
       expect(page).to have_selector("h1", text: "Veterans Health Administration")
       expect(page).to have_selector("h2", text: "Appellant's Power of Attorney")
-      expect(page).to have_button("Refresh POA")
       expect(page).to have_text("Attorney: #{in_progress_task.power_of_attorney.representative_name}")
       expect(page).to have_text("Email Address: #{in_progress_task.power_of_attorney.representative_email_address}")
 

@@ -11,16 +11,6 @@ class HigherLevelReview < ClaimReview
 
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
-  delegate :power_of_attorney, to: :claimant, allow_nil: true
-  delegate :representative_name,
-           :representative_type,
-           :representative_address,
-           :representative_email_address,
-           :poa_last_synced_at,
-           :update_cached_attributes!,
-           :save_with_updated_bgs_record!,
-           to: :power_of_attorney, allow_nil: true
-
   attr_accessor :appeal_split_process
 
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 034 035 036 037 038 039].freeze

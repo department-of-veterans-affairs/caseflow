@@ -96,7 +96,6 @@ class NonCompDecisionIssue extends React.PureComponent {
   }
 }
 
-
 const editAppellantInformationLinkStyling = css({
   fontSize: '2rem',
   fontWeight: 'normal',
@@ -120,8 +119,6 @@ class NonCompDispositions extends React.PureComponent {
       isFilledOut: false
     };
   }
-
-
 
   handleDecisionDate = (value) => {
     this.setState({ decisionDate: value }, this.checkFormFilledOut);

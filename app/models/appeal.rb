@@ -62,16 +62,6 @@ class Appeal < DecisionReview
            :email_address,
            :country, to: :veteran, prefix: true
 
-  delegate :power_of_attorney, to: :claimant
-  delegate :representative_name,
-           :representative_type,
-           :representative_address,
-           :representative_email_address,
-           :poa_last_synced_at,
-           :update_cached_attributes!,
-           :save_with_updated_bgs_record!,
-           to: :power_of_attorney, allow_nil: true
-
   enum stream_type: {
     Constants.AMA_STREAM_TYPES.original.to_sym => Constants.AMA_STREAM_TYPES.original,
     Constants.AMA_STREAM_TYPES.vacate.to_sym => Constants.AMA_STREAM_TYPES.vacate,

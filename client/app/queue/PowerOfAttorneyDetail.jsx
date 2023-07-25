@@ -7,7 +7,6 @@ import _ from 'lodash';
 import { appealWithDetailSelector } from './selectors';
 import { detailListStyling, getDetailField } from './Detail';
 import { getAppealValue } from './QueueActions';
-
 import Address from './components/Address';
 import BareList from '../components/BareList';
 import { PoaRefresh } from './components/PoaRefresh';
@@ -51,6 +50,7 @@ const PowerOfAttorneyDetailWrapper = (WrappedComponent) => {
       shallowEqual
     );
     const poaAlert = useSelector((state) => state.ui.poaAlert);
+
     if (!powerOfAttorney) {
       if (loading) {
         return <React.Fragment>{COPY.CASE_DETAILS_LOADING}</React.Fragment>;
