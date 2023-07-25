@@ -237,14 +237,14 @@ namespace :db do
         $stdout.puts("Hint: Options include 'HearingTask', 'JudgeTask', 'AttorneyTask',
                      'ReviewTask', and 'DistributionTask'")
         task_type = $stdin.gets.chomp.upcase
-        if task_type == ("JUDGETASK" || "ATTORNEYTASK" || "REVIEWTASK")
+        if task_type == "JUDGETASK" || task_type == "ATTORNEYTASK" || task_type == "REVIEWTASK"
           $stdout.puts("Enter the CSS ID of the judge user that you want to assign these appeals to")
-          $stdout.puts("Hint: a Judge use is BVAAWAKEFIELD")
+          $stdout.puts("Hint: Judge Options include 'BVAAWAKEFIELD', 'BVAEBECKER', 'BVAAABSHIRE'")
           css_id = $stdin.gets.chomp.upcase
           user = User.find_by_css_id(css_id)
           if task_type == "ATTORNEYTASK" && user.judge_in_vacols?
             $stdout.puts("Which attorney do you want to assign the Attorney Task to?")
-            $stdout.puts("Hint: Options include 'BVASCASPER1', 'BVARERDMAN', 'BVALSHIELDS'")
+            $stdout.puts("Hint: Attorney Options include 'BVASCASPER1', 'BVARERDMAN', 'BVALSHIELDS'")
             css_id = $stdin.gets.chomp.upcase
             attorney = User.find_by_css_id(css_id)
           end
