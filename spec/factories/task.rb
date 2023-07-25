@@ -89,21 +89,21 @@ FactoryBot.define do
     end
 
     trait :with_unscheduled_hearing do
-      parent { create(:root_task, appeal: appeal) }
+      parent { create(:distribution_task, appeal: appeal) }
       after(:create) do |task|
         appeal = task.appeal
-        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
-        ScheduleHearingTask.create!(appeal: appeal, parent: root_task, assigned_to: Bva.singleton)
+        distro_task = DistributionTask.find_by(appeal: appeal, assigned_to: Bva.singleton)
+        ScheduleHearingTask.create!(appeal: appeal, parent: distro_task, assigned_to: Bva.singleton)
         HearingPostponementRequestMailTask.create!(appeal: appeal, parent: task, assigned_to: HearingAdmin.singleton)
       end
     end
 
     trait :with_scheduled_hearing do
-      parent { create(:root_task, appeal: appeal) }
+      parent { create(:distribution_task, appeal: appeal) }
       after(:create) do |task|
         appeal = task.appeal
-        root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
-        schedule_hearing_task = ScheduleHearingTask.create!(appeal: appeal, parent: root_task,
+        distro_task = DistributionTask.find_by(appeal: appeal, assigned_to: Bva.singleton)
+        schedule_hearing_task = ScheduleHearingTask.create!(appeal: appeal, parent: distro_task,
                                                             assigned_to: Bva.singleton)
         schedule_hearing_task.update(status: "completed", closed_at: Time.zone.now)
         hearing = create(:hearing, disposition: nil, judge: nil, appeal: appeal)
