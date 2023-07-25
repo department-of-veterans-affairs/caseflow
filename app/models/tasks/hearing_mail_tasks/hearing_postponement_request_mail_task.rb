@@ -5,19 +5,8 @@
 #
 # When this task is created:
 #   - It's parent task is set as the RootTask of the associated appeal
-#   - The task is assigned to the MailTeam to track how the child was created
+#   - The task is assigned to the MailTeam to track where the request originated
 #   - A child task of the same name is created and assigned to the HearingAdmin organization
-#
-# If there is an active ScheduleHearingTask in the appeal's task tree, or there is an open AssignHearingDispositionTask
-# whose associated hearing is not scheduled in the past, the following actions are available to a Hearing Admin
-#   1. Change task type
-#   2. Mark as complete
-#   3. Assign to team
-#   4. Assign to person
-#   5. Cancel task
-# Otherwise:
-#   1. Change task type
-#   2. Cancel task
 ##
 class HearingPostponementRequestMailTask < HearingRequestMailTask
   class << self
