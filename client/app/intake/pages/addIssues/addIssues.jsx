@@ -10,19 +10,19 @@ import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-import RemoveIssueModal from '../components/RemoveIssueModal';
-import CorrectionTypeModal from '../components/CorrectionTypeModal';
-import AddIssueManager from '../components/AddIssueManager';
+import RemoveIssueModal from '../../components/RemoveIssueModal';
+import CorrectionTypeModal from '../../components/CorrectionTypeModal';
+import AddIssueManager from '../../components/AddIssueManager';
 
-import Button from '../../components/Button';
-import InlineForm from '../../components/InlineForm';
-import DateSelector from '../../components/DateSelector';
-import ErrorAlert from '../components/ErrorAlert';
-import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../constants';
-import EP_CLAIM_TYPES from '../../../constants/EP_CLAIM_TYPES';
-import { formatAddedIssues, formatRequestIssues, getAddIssuesFields, formatIssuesBySection } from '../util/issues';
-import Table from '../../components/Table';
-import issueSectionRow from './addIssues/issueSectionRow/issueSectionRow';
+import Button from '../../../components/Button';
+import InlineForm from '../../../components/InlineForm';
+import DateSelector from '../../../components/DateSelector';
+import ErrorAlert from '../../components/ErrorAlert';
+import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../../constants';
+import EP_CLAIM_TYPES from '../../../../constants/EP_CLAIM_TYPES';
+import { formatAddedIssues, formatRequestIssues,getAddIssuesFields, formatIssuesBySection } from '../../util/issues';
+import Table from '../../../components/Table';
+import issueSectionRow from './issueSectionRow/issueSectionRow';
 
 import {
   toggleAddingIssue,
@@ -38,11 +38,11 @@ import {
   toggleIssueRemoveModal,
   toggleLegacyOptInModal,
   toggleCorrectionTypeModal
-} from '../actions/addIssues';
-import { editEpClaimLabel } from '../../intakeEdit/actions/edit';
-import COPY from '../../../COPY';
-import { EditClaimLabelModal } from '../../intakeEdit/components/EditClaimLabelModal';
-import { ConfirmClaimLabelModal } from '../../intakeEdit/components/ConfirmClaimLabelModal';
+} from '../../actions/addIssues';
+import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
+import COPY from '../../../../COPY';
+import { EditClaimLabelModal } from '../../../intakeEdit/components/EditClaimLabelModal';
+import { ConfirmClaimLabelModal } from '../../../intakeEdit/components/ConfirmClaimLabelModal';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
