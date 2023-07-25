@@ -381,7 +381,7 @@ describe TaskFilter, :all_dbs do
           ["col=#{Constants.QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name}&val=#{case_types['1']}|#{case_types['2']}"]
         end
 
-        it "returns tasks with Original or Supplemental case types", skip: "flakey" do
+        it "returns tasks with Original or Supplemental case types" do
           expect(subject.map(&:id)).to match_array(tasks_type_original.map(&:id) + tasks_type_supplemental.map(&:id))
         end
       end
