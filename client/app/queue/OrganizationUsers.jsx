@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable max-len */
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
@@ -10,7 +10,6 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import ApiUtil from '../util/ApiUtil';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
-import RadioField from '../components/RadioField';
 import SearchableDropdown from '../components/SearchableDropdown';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -46,13 +45,6 @@ const listStyle = css({
   listStyle: 'none'
 });
 
-const radioOptions = [
-  { displayText: 'Pexip',
-    value: '1'},
-  { displayText: 'Webex',
-    value: '2'}
-];
-
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -73,13 +65,6 @@ export default class OrganizationUsers extends React.PureComponent {
       value: '1'
     };
   }
-
-  onChange = (value) => {
-    this.setState({
-      value
-    });
-  }
-  // handleChange = (event) => (event.target.value);
 
   loadingPromise = () => {
     return ApiUtil.get(`/organizations/${this.props.organization}/users`).then((response) => {
@@ -257,17 +242,6 @@ export default class OrganizationUsers extends React.PureComponent {
       loading={this.state.removingUser[user.id]}
       onClick={this.removeUser(user)} /></div>
 
-  // selectConferenceTypeRadioField = () =>
-  //   <div>
-  //     <RadioField
-  //       label="Schedule hearings using:"
-  //       name={""}
-  //       options={radioOptions}
-  //       value={this.state.value}
-  //       onChange={this.onChange}
-  //       vertical
-  //   /></div>
-
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
     const dvcTeam = this.state.dvcTeam;
@@ -288,7 +262,6 @@ export default class OrganizationUsers extends React.PureComponent {
           <div {...buttonContainerStyle}>
             { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
             { this.removeUserButton(user) }
-            {/* <SelectConferenceTypeRadioField/> */}
           </div> }
       </React.Fragment>;
     });
