@@ -16,6 +16,13 @@ describe WorkQueue::VeteranRecordRequestSerializer, :postgres do
         attributes: {
           claimant: { name: appeal.veteran_full_name, relationship: "self" },
           appeal: { id: appeal.uuid.to_s, isLegacyAppeal: false, issueCount: 0 },
+          power_of_attorney: {
+            representative_address: appeal.power_of_attorney&.representative_address,
+            representative_email_address: appeal.power_of_attorney&.representative_email_address,
+            representative_name: appeal.power_of_attorney&.representative_name,
+            representative_type: appeal.power_of_attorney&.representative_type
+          },
+          appellant_type: nil,
           veteran_ssn: veteran.ssn,
           veteran_participant_id: veteran.participant_id,
           assigned_on: task.assigned_at,
@@ -29,9 +36,9 @@ describe WorkQueue::VeteranRecordRequestSerializer, :postgres do
           issue_types: "",
           type: "Record Request",
           business_line: non_comp_org.url
-
         }
       }
+
       expect(subject.serializable_hash[:data]).to eq(serializable_hash)
     end
   end

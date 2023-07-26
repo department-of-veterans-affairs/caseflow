@@ -40,6 +40,31 @@ export const completeTask = (taskId, businessLine, data, claimant) => (dispatch)
     );
 };
 
+export const getPoAValue = (taskId, endpoint) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.STARTED_LOADING_POWER_OF_ATTORNEY_VALUE,
+    // payload: {
+    //   appealId,
+    //   name
+    // }
+  });
+  ApiUtil.get(`/decision_reviews/vha/tasks/${taskId}/${endpoint}`).then((response) => {
+    dispatch({
+      type: ACTIONS.RECEIVED_POWER_OF_ATTORNEY,
+      payload: {
+        response: response.body
+      }
+    });
+  }, (error) => {
+    dispatch({
+      type: ACTIONS.ERROR_ON_RECEIVE_POWER_OF_ATTORNEY_VALUE,
+      payload: {
+        error
+      }
+    });
+  });
+};
+
 export const taskUpdateDefaultPage = (page) => (dispatch) => {
   dispatch({
     type: ACTIONS.TASK_DEFAULT_PAGE,

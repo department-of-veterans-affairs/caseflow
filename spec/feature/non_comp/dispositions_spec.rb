@@ -90,9 +90,13 @@ feature "NonComp Dispositions Task Page", :postgres do
       non_comp_org.add_user(user)
       setup_prior_claim_with_payee_code(decision_review, veteran, "00")
       FeatureToggle.enable!(:decision_review_queue_ssn_column)
+      FeatureToggle.enable!(:poa_button_refresh)
     end
 
-    after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
+    after do
+      FeatureToggle.disable!(:decision_review_queue_ssn_column)
+      FeatureToggle.disable!(:poa_button_refresh)
+    end
 
     context "decision_review is a Supplemental Claim" do
       let(:decision_review) do
@@ -130,6 +134,8 @@ feature "NonComp Dispositions Task Page", :postgres do
       expect(page).to have_content(
         "Prior decision date: #{decision_review.request_issues[0].decision_date.strftime('%m/%d/%Y')}"
       )
+      expect(page).not_to have_content("Appellant's Power of Attorney")
+      expect(page).not_to have_button("Refresh POA")
       expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
     end
 
@@ -143,7 +149,10 @@ feature "NonComp Dispositions Task Page", :postgres do
     context "the complete button enables only after a decision date and disposition are set" do
       before do
         visit dispositions_url
+        FeatureToggle.enable!(:poa_button_refresh)
       end
+
+      after { FeatureToggle.disable!(:poa_button_refresh) }
 
       scenario "neither disposition nor date is set" do
         expect(page).to have_button("Complete", disabled: true)
@@ -266,7 +275,17 @@ feature "NonComp Dispositions Task Page", :postgres do
     let(:decision_date) { Time.zone.now + 10.days }
 
     let!(:in_progress_task) do
-      create(:higher_level_review, :with_vha_issue, :create_business_line, benefit_type: "vha", veteran: veteran)
+      create(:higher_level_review,
+             :with_vha_issue,
+             :with_end_product_establishment,
+             :create_business_line,
+             benefit_type: "vha",
+             veteran: veteran,
+             number_of_claimants: 1)
+    end
+
+    let(:poa_task) do
+      create(:supplemental_claim_poa_task)
     end
 
     let(:business_line_url) { "decision_reviews/vha" }
@@ -301,6 +320,22 @@ feature "NonComp Dispositions Task Page", :postgres do
         expect(disposition_dropdown).to have_css(".cf-select--is-disabled")
         expect(page).to have_text(COPY::DISPOSITION_DECISION_DATE_LABEL)
         expect(page.find_by_id("decision-date").value).to have_content(decision_date.strftime("%Y-%m-%d"))
+      end
+    end
+
+    it "Decision Review should have Power of Attorney Section" do
+      visit dispositions_url
+
+      expect(page).to have_selector("h1", text: "Veterans Health Administration")
+      expect(page).to have_selector("h2", text: "Appellant's Power of Attorney")
+      expect(page).to have_text("Attorney: #{in_progress_task.power_of_attorney.representative_name}")
+      expect(page).to have_text("Email Address: #{in_progress_task.power_of_attorney.representative_email_address}")
+
+      expect(page).to have_text("Address")
+      full_address = in_progress_task.power_of_attorney.representative_address
+      sliced_full_address = full_address.slice!(:country)
+      sliced_full_address.each do |address|
+        expect(page).to have_text(address[1])
       end
     end
   end

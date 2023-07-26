@@ -89,6 +89,10 @@ class DecisionReviewsController < ApplicationController
     }
   end
 
+  def power_of_attorney
+    render json: power_of_attorney_data
+  end
+
   helper_method :task_filter_details, :business_line, :task
 
   private
@@ -173,5 +177,17 @@ class DecisionReviewsController < ApplicationController
       :page,
       decision_issues: [:description, :disposition, :request_issue_id]
     )
+  end
+
+  def power_of_attorney_data
+    {
+      representative_type: task.appeal.power_of_attorney&.representative_type,
+      representative_name: task.appeal.power_of_attorney&.representative_name,
+      representative_address: task.appeal.power_of_attorney&.representative_address,
+      representative_email_address: task.appeal.power_of_attorney&.representative_email_address
+      # needs to add these two data for POA Refresh button.
+      # representative_tz: task.representative_tz,
+      # poa_last_synced_at: task.poa_last_synced_at
+    }
   end
 end

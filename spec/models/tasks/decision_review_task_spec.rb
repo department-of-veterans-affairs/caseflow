@@ -117,7 +117,16 @@ describe DecisionReviewTask, :postgres do
 
     it "includes only key-values within serialize_task[:data][:attributes]" do
       serialized_hash = {
-        appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
+        appeal: {
+          id: hlr.id.to_s,
+          isLegacyAppeal: false,
+          issueCount: 0,
+          activeRequestIssues: [],
+          appellant_type: nil,
+          uuid: hlr.uuid
+        },
+        power_of_attorney: nil,
+        appellant_type: nil,
         started_at: decision_review_task.started_at,
         tasks_url: business_line.tasks_url,
         id: decision_review_task.id,
@@ -133,7 +142,6 @@ describe DecisionReviewTask, :postgres do
         claimant: { name: hlr.veteran_full_name, relationship: "self" },
         business_line: business_line.url
       }
-
       expect(subject).to eq serialized_hash
       expect(subject.key?(:attributes)).to eq false
     end
@@ -150,7 +158,16 @@ describe DecisionReviewTask, :postgres do
         type: :decision_review_task,
         attributes: {
           claimant: { name: hlr.veteran_full_name, relationship: "self" },
-          appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
+          appeal: {
+            id: hlr.id.to_s,
+            isLegacyAppeal: false,
+            issueCount: 0,
+            activeRequestIssues: [],
+            uuid: hlr.uuid,
+            appellant_type: nil
+          },
+          appellant_type: nil,
+          power_of_attorney: nil,
           veteran_participant_id: veteran.participant_id,
           veteran_ssn: veteran.ssn,
           assigned_on: decision_review_task.assigned_at,

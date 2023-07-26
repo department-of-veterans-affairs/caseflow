@@ -14,6 +14,11 @@
       },
       baseTasksUrl: business_line.tasks_url,
       taskFilterDetails: task_filter_details
+    },
+    ui: {
+      featureToggles: {
+        poa_button_refresh: FeatureToggle.enabled?(:poa_button_refresh)
+      }
     }
   }) %>
 <% end %>
