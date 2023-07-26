@@ -349,9 +349,10 @@ class AddIssuesPage extends React.Component {
     );
 
     if (shouldAddPoAField) {
+      const noPoaText = intakeData.benefitType == 'vha' ? COPY.VHA_NO_POA : COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA
       fieldsForFormType = fieldsForFormType.concat({
         field: 'Claimant\'s POA',
-        content: intakeData.powerOfAttorneyName || COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA
+        content: intakeData.powerOfAttorneyName || noPoaText
       });
     }
 

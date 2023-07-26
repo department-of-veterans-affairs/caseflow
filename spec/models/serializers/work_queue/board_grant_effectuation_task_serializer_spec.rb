@@ -16,7 +16,21 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
         type: :board_grant_effectuation_task,
         attributes: {
           claimant: { name: appeal.veteran_full_name, relationship: "self" },
-          appeal: { id: appeal.external_id, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
+          appeal: {
+            id: appeal.external_id,
+            isLegacyAppeal: false,
+            issueCount: 0,
+            activeRequestIssues: [],
+            uuid: appeal.uuid,
+            appellant_type: appeal.claimant.type
+          },
+          power_of_attorney: {
+            representative_address: appeal.power_of_attorney&.representative_address,
+            representative_email_address: appeal.power_of_attorney&.representative_email_address,
+            representative_name: appeal.power_of_attorney&.representative_name,
+            representative_type: appeal.power_of_attorney&.representative_type
+          },
+          appellant_type: nil,
           veteran_participant_id: veteran.participant_id,
           veteran_ssn: veteran.ssn,
           assigned_on: task.assigned_at,
@@ -51,7 +65,21 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
           type: :board_grant_effectuation_task,
           attributes: {
             claimant: { name: "claimant", relationship: "Unknown" },
-            appeal: { id: appeal.external_id, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
+            appeal: {
+              id: appeal.external_id,
+              isLegacyAppeal: false,
+              issueCount: 0,
+              activeRequestIssues: [],
+              uuid: appeal.uuid,
+              appellant_type: appeal.claimant.type
+            },
+            appellant_type: nil,
+            power_of_attorney: {
+              representative_address: appeal.power_of_attorney&.representative_address,
+              representative_email_address: appeal.power_of_attorney&.representative_email_address,
+              representative_name: appeal.power_of_attorney&.representative_name,
+              representative_type: appeal.power_of_attorney&.representative_type
+            },
             veteran_participant_id: veteran.participant_id,
             veteran_ssn: veteran.ssn,
             assigned_on: task.assigned_at,
@@ -91,7 +119,21 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
           type: :board_grant_effectuation_task,
           attributes: {
             claimant: { name: claimant.name, relationship: "Veteran" },
-            appeal: { id: appeal.external_id, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
+            appeal: {
+              id: appeal.external_id,
+              isLegacyAppeal: false,
+              issueCount: 0,
+              activeRequestIssues: [],
+              uuid: appeal.uuid,
+              appellant_type: appeal.claimant.type
+            },
+            appellant_type: nil,
+            power_of_attorney: {
+              representative_address: appeal.power_of_attorney&.representative_address,
+              representative_email_address: appeal.power_of_attorney&.representative_email_address,
+              representative_name: appeal.power_of_attorney&.representative_name,
+              representative_type: appeal.power_of_attorney&.representative_type
+            },
             veteran_participant_id: veteran.participant_id,
             veteran_ssn: veteran.ssn,
             assigned_on: task.assigned_at,
