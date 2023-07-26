@@ -24,6 +24,21 @@ FactoryBot.define do
       established_at { 5.days.ago }
     end
 
+    trait :cleared_hlr_with_canceled_vbms_ext_claim do
+      cleared
+      established_at { 5.days.ago }
+      modifier { "030" }
+      code { "030HLRR" }
+      source { create(:higher_level_review, veteran_file_number: veteran_file_number) }
+      after(:build) do |end_product_establishment, _evaluator|
+        # create(:vbms_ext_claim, :hlr, :cleared, claim_id: end_product_establishment.reference_id)
+        ep = end_product_establishment.result
+        ep_store = Fakes::EndProductStore.new
+        ep_store.update_ep_status(end_product_establishment.veteran_file_number,
+                                  ep.claim_id, "CLR")
+      end
+    end
+
     after(:build) do |end_product_establishment, _evaluator|
       Generators::EndProduct.build(
         veteran_file_number: end_product_establishment.veteran_file_number,

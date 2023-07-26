@@ -2111,6 +2111,90 @@ describe RequestIssue, :all_dbs do
             expect(nonrating_request_issue.processed?).to eq(false)
           end
         end
+
+        context "#hlr_sync_lock" do
+          let(:ep_code) { "030HLRR" }
+          let!(:epe) do
+            epe = create(:end_product_establishment, :cleared_hlr_with_canceled_vbms_ext_claim)
+            EndProductEstablishment.find epe.id
+          end
+          let!(:review) do
+            epe.source
+          end
+
+          let!(:contention_hlr1) do
+            Generators::Contention.build(
+              id: "123456789",
+              claim_id: epe.reference_id,
+              disposition: "allowed"
+            )
+          end
+          let!(:contention_hlr2) do
+            Generators::Contention.build(
+              id: "00123456789",
+              claim_id: epe.reference_id,
+              disposition: "allowed"
+            )
+          end
+
+          let(:original_decision_sync_last_submitted_at) { Time.zone.now - 1.hour }
+          let(:original_decision_sync_submitted_at) { Time.zone.now - 1.hour }
+
+          let(:request_issue0) do
+            create(
+              :request_issue,
+              decision_review: review,
+              nonrating_issue_description: "some description",
+              nonrating_issue_category: "a category",
+              decision_date: 1.day.ago,
+              end_product_establishment: epe,
+              contention_reference_id: contention_hlr1.id,
+              benefit_type: review.benefit_type,
+              decision_sync_last_submitted_at: original_decision_sync_last_submitted_at,
+              decision_sync_submitted_at: original_decision_sync_submitted_at
+            )
+          end
+
+          let(:request_issue1) do
+            create(
+              :request_issue,
+              decision_review: review,
+              nonrating_issue_description: "some description",
+              nonrating_issue_category: "a category",
+              decision_date: 1.day.ago,
+              end_product_establishment: epe,
+              contention_reference_id: contention_hlr2.id,
+              benefit_type: review.benefit_type,
+              decision_sync_last_submitted_at: original_decision_sync_last_submitted_at,
+              decision_sync_submitted_at: original_decision_sync_submitted_at
+            )
+          end
+
+          let!(:claimant) do
+            Claimant.create!(decision_review: epe.source,
+                             participant_id: epe.veteran.participant_id,
+                             payee_code: "00")
+          end
+          let(:sync_lock_err) { Caseflow::Error::SyncLockFailed.new("#{Time.zone.now}") }
+          it "confirms that hlr_sync_lock works as expected" do
+            # request_issue2 not to be picked up
+            redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
+            lock_key = "hlr_sync_lock:#{epe.id}"
+            redis.setnx(lock_key, true)
+
+            # expect(request_issue0.sync_decision_issues!).to raise_error(sync_lock_err)
+            expect(request_issue0.sync_decision_issues!).to eq(false)
+            # threads = []
+            # 1.times do |i|
+            #   threads << Thread.new do
+            #     request_issue0.sync_decision_issues!
+            #   end
+            # end
+            # expect(request_issue1.sync_decision_issues!).to receive(:hlr_sync_lock)
+            # expect(request_issue1.sync_decision_issues!).to eq(true)
+            # expect(request_issue2.sync_decision_issues!).to eq(true)
+          end
+        end
       end
     end
   end
