@@ -803,6 +803,7 @@
   "APPEAL_WITHDRAWAL_MAIL_TASK_LABEL": "Withdrawal of appeal",
   "CAVC_CORRESPONDENCE_MAIL_TASK_LABEL": "CAVC Correspondence",
   "CLEAR_AND_UNMISTAKABLE_ERROR_MAIL_TASK_LABEL": "CUE-related",
+  "COMPLETE_HEARING_POSTPONEMENT_REQUEST": "What is the Judge’s ruling on the motion to postpone?",
   "CONGRESSIONAL_INTEREST_MAIL_TASK_LABEL": "Congressional interest",
   "CONTROLLED_CORRESPONDENCE_MAIL_TASK_LABEL": "Controlled correspondence",
   "DEATH_CERTIFICATE_MAIL_TASK_LABEL": "Death certificate",

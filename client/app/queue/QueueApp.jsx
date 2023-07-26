@@ -67,7 +67,8 @@ import SetOvertimeStatusModal from './SetOvertimeStatusModal';
 import StartHoldModal from './components/StartHoldModal';
 import EndHoldModal from './components/EndHoldModal';
 import BulkAssignModal from './components/BulkAssignModal';
-
+import CompleteHearingPostponementRequestModal
+  from './components/hearingMailRequestModals/CompleteHearingPostponementRequestModal';
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
@@ -652,6 +653,10 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="vha_caregiver_support_return_to_board_intake" {...props.match.params} />
   );
 
+  routedCompleteHearingPostponementRequest = (props) => (
+    <CompleteHearingPostponementRequestModal {...props.match.params} />
+  );
+
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
       'Your Queue' :
@@ -1201,6 +1206,12 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.COMPLETE_AND_POSTPONE.value}`}
+              title={`${PAGE_TITLES.COMPLETE_HEARING_POSTPONEMENT_REQUEST} | Caseflow`}
+              render={this.routedCompleteHearingPostponementRequest}
+            />
+            <PageRoute
+              exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.value
                 }`}
               title={`${PAGE_TITLES.ASSIGN_TO_PULAC_CERULLO} | Caseflow`}
@@ -1215,7 +1226,7 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.
-                  CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.value
+                CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.value
                 }`}
               title={`${PAGE_TITLES.CANCEL_AND_ASSIGN_TO_RO} | Caseflow`}
               render={this.routedUpdateTaskAndAssignRegionalOfficeModal(
