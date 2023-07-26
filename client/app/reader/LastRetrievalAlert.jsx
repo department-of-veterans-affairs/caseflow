@@ -50,5 +50,5 @@ class LastRetrievalAlert extends React.PureComponent {
 }
 
 export default connect(
-  (state) => _.pick(state.documentList, ['manifestVbmsFetchedAt'])
+  (state) => _.pick(state.documentList, 'manifestVbmsFetchedAt')
 )(LastRetrievalAlert);
