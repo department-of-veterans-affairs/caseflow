@@ -134,6 +134,8 @@ class SelectSpecialIssuesView extends React.PureComponent {
   renderSpecialIssuesPage = (appeal, sections, specialIssues) => {
     const {
       error,
+      mstIdentification,
+      legacyMstIdentification,
       ...otherProps
     } = this.props;
     const { allIssuesDisabled } = this.state;
@@ -146,7 +148,8 @@ class SelectSpecialIssuesView extends React.PureComponent {
       <p>
         {this.getPageNote()}
       </p>
-      <Alert type="info" title=" " message={COPY.SPECIAL_ISSUES_BANNER_TEXT} styling={infoBannerStyling} />
+      {(mstIdentification || legacyMstIdentification) &&
+      <Alert type="info" title=" " message={COPY.SPECIAL_ISSUES_BANNER_TEXT} styling={infoBannerStyling} />}
       {error && <Alert type="error" title={error.title} message={error.detail} />}
       <div {...flexContainer}>
         <div {...flexColumn}>
