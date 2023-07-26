@@ -12,7 +12,7 @@ class AttorneyLegacyTask < LegacyTask
         [
           Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY.to_h
         ]
-      elsif %w[81 33].include?(appeal.case_record.reload.bfcurloc) || appeal.case_record.reload.bfcurloc == "CASEFLOW"
+      elsif %w[81 33].include?(appeal.case_record.reload.bfcurloc)
         [
           Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.to_h
         ]
