@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { css } from 'glamor';
+
 import RadioField from '../components/RadioField';
 import COPY from '../../COPY';
 
@@ -13,7 +15,7 @@ const SelectConferenceTypeRadioField = ({name}) => {
   const [value, setValue] = useState("1")
 
   return (
-    <div >
+    <div>
       <RadioField
         label={COPY.USER_MANAGEMENT_SELECT_HEARINGS_CONFERENCE_TYPE}
         name={name}
