@@ -15,6 +15,11 @@ const alertStyling = css({
   marginTop: 0,
 });
 
+const messageStyling = css({
+  color: COLORS.GREY,
+  fontSize: '17px !important',
+});
+
 const nonEditableIssueStyling = css({
   color: COLORS.GREY,
   fontStyle: 'Italic'
@@ -118,8 +123,12 @@ export default class IssuesList extends React.Component {
               </div>
             </div>
             {showNoDecisionDateBanner ?
-              <Alert message={COPY.VHA_NO_DECISION_DATE_BANNER} styling={alertStyling} type="warning" /> :
-              null}
+              <Alert
+                message={COPY.VHA_NO_DECISION_DATE_BANNER}
+                messageStyling={messageStyling}
+                styling={alertStyling}
+                type="warning"
+              /> : null}
             {editableContentionText && <EditContentionTitle
               issue= {issue}
               issueIdx={issue.index} />}
