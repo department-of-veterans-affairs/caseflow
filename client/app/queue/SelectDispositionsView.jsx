@@ -582,7 +582,7 @@ class SelectDispositionsView extends React.PureComponent {
             }
           })}
         />
-        <QueueCheckboxGroup
+        { (mstFeatureToggle || pactFeatureToggle) && <QueueCheckboxGroup
           name={COPY.INTAKE_EDIT_ISSUE_SELECT_SPECIAL_ISSUES}
           options={(mstFeatureToggle || pactFeatureToggle) ? DECISION_SPECIAL_ISSUES : DECISION_SPECIAL_ISSUES_NO_MST_PACT}
           values={specialIssuesValues}
@@ -602,16 +602,16 @@ class SelectDispositionsView extends React.PureComponent {
               id: 'mst_status',
               justification: decisionIssue.mst_justification,
               onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, 'mst_status'),
-              hasChanged: this.state.decisionIssue.mstOriginalStatus != this.state.decisionIssue.mst_status
+              hasChanged: this.state.decisionIssue.mstOriginalStatus !== this.state.decisionIssue.mst_status
             },
             {
               id: 'pact_status',
               justification: decisionIssue.pact_justification,
               onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, 'pact_status'),
-              hasChanged: this.state.decisionIssue.pactOriginalStatus != this.state.decisionIssue.pact_status
+              hasChanged: this.state.decisionIssue.pactOriginalStatus !== this.state.decisionIssue.pact_status
             },
           ]}
-        />
+        />}
         <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_DESCRIPTION}</h3>
         <p {...exampleDiv} {...paragraphH3SiblingStyle}>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_EXAMPLE}</p>
         <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_TITLE}</h3>
