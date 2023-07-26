@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import TextField from '../components/TextField';
 import ValidatorsUtil from '../util/ValidatorsUtil';
 import COPY from '../../COPY';
+import { marginBottom } from '../queue/constants';
 
 const DEFAULT_TEXT = 'mm/dd/yyyy';
 
@@ -21,6 +22,7 @@ export const DateSelector = (props) => {
     value,
     dateErrorMessage,
     noFutureDates = false,
+    inputStyling,
     ...passthroughProps
   } = props;
 
@@ -64,6 +66,7 @@ export const DateSelector = (props) => {
       {...passthroughProps}
       max={max}
       dateErrorMessage={dateErrorMessage}
+      inputStyling={inputStyling}
     />
   );
 };
