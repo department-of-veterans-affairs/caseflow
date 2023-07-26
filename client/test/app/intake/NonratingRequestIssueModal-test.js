@@ -83,7 +83,7 @@ describe('NonratingRequestIssueModal', () => {
   });
 
   describe('on appeal, with EMO Pre-Docket', () => {
-    const benefitType = wrapperEMOPreDocket.find('.cf-is-predocket-needed');
+    const preDocketRadioField = wrapperEMOPreDocket.find('.cf-is-predocket-needed');
 
     wrapperEMOPreDocket.setState({
       benefitType: 'education',
@@ -99,7 +99,7 @@ describe('NonratingRequestIssueModal', () => {
 
     it(' enabled selecting benefit type of "education" renders PreDocketRadioField', () => {
       // Benefit type isn't education, so it should not be rendered
-      expect(benefitType).toHaveLength(0);
+      expect(preDocketRadioField).toHaveLength(0);
 
       wrapperEMOPreDocket.setState({
         benefitType: 'education'
@@ -111,7 +111,7 @@ describe('NonratingRequestIssueModal', () => {
 
     it('Decision date does not have an optional label ', () => {
       // Since this is a non vha benifit type the decision date is required, so the optional label should not be visible
-      const optionalLabel = wrapperEMOPreDocket.find('.cf-optional');
+      const optionalLabel = wrapperEMOPreDocket.find('.decision-date .cf-optional');
       const submitButton = wrapperEMOPreDocket.find('.cf-modal-controls .add-issue');
 
       expect(optionalLabel).not.toBe();
@@ -144,7 +144,7 @@ describe('NonratingRequestIssueModal', () => {
       description: 'test'
     });
 
-    const optionalLabel = wrapperNoSkip.find('.cf-optional');
+    const optionalLabel = wrapperNoSkip.find('.decision-date .cf-optional');
     const submitButton = wrapperNoSkip.find('.cf-modal-controls .add-issue');
 
     it('renders modal with decision date field being optional', () => {
