@@ -16,7 +16,7 @@ class TaskPageUnconnected extends React.PureComponent {
   handleSave = (data) => {
     const successHandler = () => {
       // update to the completed tab
-      const completedTabIndex = (this.props.businessLineConfig?.tabs?.length - 1) || 1;
+      const completedTabIndex = this.props.businessLineConfig?.tabs?.indexOf('completed') || 1;
 
       this.props.taskUpdateDefaultPage(completedTabIndex);
       this.props.history.push(`/${this.props.businessLineUrl}`);

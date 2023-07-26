@@ -123,16 +123,17 @@ class BusinessLine < Organization
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/AbcSize
     def issue_type_count
+      shared_select_statement = "tasks.id as tasks_id, request_issues.nonrating_issue_category as issue_category"
       appeals_query = Task.send(parent.tasks_query_type[query_type])
-        .select("tasks.id as tasks_id, request_issues.nonrating_issue_category as issue_category")
+        .select(shared_select_statement)
         .joins(ama_appeal: :request_issues)
         .where(query_constraints)
       hlr_query = Task.send(parent.tasks_query_type[query_type])
-        .select("tasks.id as tasks_id, request_issues.nonrating_issue_category as issue_category")
+        .select(shared_select_statement)
         .joins(supplemental_claim: :request_issues)
         .where(query_constraints)
       sc_query = Task.send(parent.tasks_query_type[query_type])
-        .select("tasks.id as tasks_id, request_issues.nonrating_issue_category as issue_category")
+        .select(shared_select_statement)
         .joins(higher_level_review: :request_issues)
         .where(query_constraints)
 
@@ -509,3 +510,5 @@ class BusinessLine < Organization
     end
   end
 end
+
+require_dependency "vha_business_line"
