@@ -1,20 +1,21 @@
 import React, { useReducer } from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import COPY from '../../../../COPY';
 
 import QueueFlowModal from '../QueueFlowModal';
 import RadioField from '../../../components/RadioField';
+import Alert from '../../../components/Alert';
 
 const CompleteHearingPostponementRequestModal = (props) => {
   const formReducer = (state, action) => {
     switch (action.type) {
-      case 'granted':
-        return {
-          ...state,
-          granted: action.payload
-        };
-      default:
-        throw new Error("Unknown action type");
+    case 'granted':
+      return {
+        ...state,
+        granted: action.payload
+      };
+    default:
+      throw new Error('Unknown action type');
     }
   };
 
@@ -29,8 +30,6 @@ const CompleteHearingPostponementRequestModal = (props) => {
 
   const submit = () => console.log(props);
 
-  console.log(state);
-
   return (
     <QueueFlowModal
       title="Mark as complete"
@@ -42,7 +41,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
     >
       <RadioField
         id="grantedOrDeniedField"
-        label={COPY.COMPLETE_HEARING_POSTPONEMENT_REQUEST}
+        label={COPY.COMPLETE_HEARING_POSTPONEMENT_REQUEST.RADIO_LABEL}
         inputRef={props.register}
         onChange={(value) => dispatch({ type: 'granted', payload: value === 'true' })}
         value={state.granted}
@@ -51,8 +50,17 @@ const CompleteHearingPostponementRequestModal = (props) => {
           { displayText: 'Denied', value: false }
         ]}
       />
+      {state.granted && <Alert
+        message={COPY.COMPLETE_HEARING_POSTPONEMENT_REQUEST.ALERT}
+        type="info"
+        lowerMargin
+      />}
     </QueueFlowModal>
   );
+};
+
+CompleteHearingPostponementRequestModal.propTypes = {
+  register: PropTypes.func
 };
 
 export default CompleteHearingPostponementRequestModal;

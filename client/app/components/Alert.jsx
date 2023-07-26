@@ -25,6 +25,8 @@ export default class Alert extends React.Component {
       'usa-alert-slim': !title,
       fixed,
       'cf-margin-bottom-2rem': lowerMargin,
+      // TODO:There was note in Prototype Branch to fix margin top. Confirm desired changes
+      'cf-margin-top-0rem': lowerMargin,
     });
 
     return (
