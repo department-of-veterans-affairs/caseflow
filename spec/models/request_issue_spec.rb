@@ -2175,15 +2175,13 @@ describe RequestIssue, :all_dbs do
                              participant_id: epe.veteran.participant_id,
                              payee_code: "00")
           end
-          let(:sync_lock_err) { Caseflow::Error::SyncLockFailed.new("#{Time.zone.now}") }
+          let(:sync_lock_err) { Caseflow::Error::SyncLockFailed }
           it "confirms that hlr_sync_lock works as expected" do
             # request_issue2 not to be picked up
             redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
             lock_key = "hlr_sync_lock:#{epe.id}"
             redis.setnx(lock_key, true)
-
-            # expect(request_issue0.sync_decision_issues!).to raise_error(sync_lock_err)
-            expect(request_issue0.sync_decision_issues!).to eq(false)
+            expect { request_issue0.sync_decision_issues! }.to raise_error(sync_lock_err)
             # threads = []
             # 1.times do |i|
             #   threads << Thread.new do
@@ -2191,7 +2189,6 @@ describe RequestIssue, :all_dbs do
             #   end
             # end
             # expect(request_issue1.sync_decision_issues!).to receive(:hlr_sync_lock)
-            # expect(request_issue1.sync_decision_issues!).to eq(true)
             # expect(request_issue2.sync_decision_issues!).to eq(true)
           end
         end
