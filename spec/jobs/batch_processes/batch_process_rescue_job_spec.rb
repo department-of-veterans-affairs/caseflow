@@ -132,5 +132,47 @@ describe BatchProcessRescueJob, type: :job do
         expect(batch_process_two.reload.state).to eq(Constants.BATCH_PROCESS.completed)
       end
     end
+
+    context "when an error occurs during the job" do
+      before do
+        batch_process_one.update!(state: Constants.BATCH_PROCESS.processing, created_at: Time.zone.now - 16.hours)
+        batch_process_two.update!(state: Constants.BATCH_PROCESS.processing, created_at: Time.zone.now - 16.hours)
+        allow(Rails.logger).to receive(:error)
+        allow(Raven).to receive(:capture_exception)
+        allow(BatchProcess).to receive(:needs_reprocessing).and_return([batch_process_one, batch_process_two])
+        allow(batch_process_one).to receive(:process_batch!).and_raise(StandardError, "Some unexpected error occured.")
+        subject
+      end
+      it "the error will be logged" do
+        expect(Rails.logger).to have_received(:error).with(
+          "Error: #<StandardError: Some unexpected error occured.>, Job ID: #{BatchProcessRescueJob::JOB_ATTR.job_id}, Job Time: #{Time.zone.now}"
+        )
+      end
+
+      it "the error will be sent to Sentry" do
+        expect(Raven).to have_received(:capture_exception)
+          .with(instance_of(StandardError),
+                extra: {
+                  job_id: BatchProcessRescueJob::JOB_ATTR.job_id.to_s,
+                  job_time: Time.zone.now.to_s
+                })
+      end
+
+      it "the job will continue after the error and process the next batch until it is completed" do
+        expect(batch_process_two.state).to eq(Constants.BATCH_PROCESS.completed)
+      end
+    end
+
+    context "when there are NO batch processes that need to be reprocessed" do
+      before do
+        allow(Rails.logger).to receive(:info)
+        subject
+      end
+      it "a message will be logged stating that NO batch processes needed reprocessing" do
+        expect(Rails.logger).to have_received(:info).with(
+          "No Unfinished Batches Could Be Identified.  Time: #{Time.zone.now}."
+        )
+      end
+    end
   end
 end
