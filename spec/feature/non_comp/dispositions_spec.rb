@@ -283,7 +283,7 @@ feature "NonComp Dispositions Task Page", :postgres do
              :create_business_line,
              benefit_type: "vha",
              veteran: veteran,
-             number_of_claimants: 1)
+             claimant_type: :veteran_claimant)
     end
 
     let(:poa_task) do
@@ -325,7 +325,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       end
     end
 
-    it "Decision Review should have Power of Attorney Section" do
+    it "VHA Decision Review should have Power of Attorney Section" do
       visit dispositions_url
 
       expect(page).to have_selector("h1", text: "Veterans Health Administration")

@@ -314,7 +314,7 @@ FactoryBot.define do
                  :with_vha_issue,
                  :with_end_product_establishment,
                  benefit_type: "vha",
-                 number_of_claimants: 1)
+                 claimant_type: :veteran_claimant)
         end
         assigned_by { nil }
 

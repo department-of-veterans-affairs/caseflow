@@ -124,11 +124,16 @@ describe DecisionReviewTask, :postgres do
           isLegacyAppeal: false,
           issueCount: 0,
           activeRequestIssues: [],
-          appellant_type: nil,
+          appellant_type: "VeteranClaimant",
           uuid: hlr.uuid
         },
-        power_of_attorney: nil,
-        appellant_type: nil,
+        power_of_attorney: {
+          representative_type: decision_review_task.appeal.claimant.power_of_attorney.representative_type,
+          representative_name: decision_review_task.appeal.claimant.power_of_attorney.representative_name,
+          representative_address: decision_review_task.appeal.claimant.power_of_attorney.representative_address,
+          representative_email_address: decision_review_task.appeal.claimant.power_of_attorney.representative_email_address
+        },
+        appellant_type: "VeteranClaimant",
         started_at: decision_review_task.started_at,
         tasks_url: business_line.tasks_url,
         id: decision_review_task.id,
@@ -166,10 +171,15 @@ describe DecisionReviewTask, :postgres do
             issueCount: 0,
             activeRequestIssues: [],
             uuid: hlr.uuid,
-            appellant_type: nil
+            appellant_type: "VeteranClaimant"
           },
-          appellant_type: nil,
-          power_of_attorney: nil,
+          appellant_type: "VeteranClaimant",
+          power_of_attorney: {
+            representative_type: decision_review_task.appeal.claimant.power_of_attorney.representative_type,
+            representative_name: decision_review_task.appeal.claimant.power_of_attorney.representative_name,
+            representative_address: decision_review_task.appeal.claimant.power_of_attorney.representative_address,
+            representative_email_address: decision_review_task.appeal.claimant.power_of_attorney.representative_email_address
+          },
           veteran_participant_id: veteran.participant_id,
           veteran_ssn: veteran.ssn,
           assigned_on: decision_review_task.assigned_at,

@@ -533,7 +533,6 @@ describe DecisionReviewsController, :postgres, type: :controller do
       end
 
       it "returns a successful response" do
-        # subject
         expect(JSON.parse(subject.body)["representative_type"]).to eq "Attorney"
         expect(JSON.parse(subject.body)["representative_name"]).to eq "Clarence Darrow"
         expect(JSON.parse(subject.body)["representative_email_address"]).to eq "jamie.fakerton@caseflowdemo.com"
