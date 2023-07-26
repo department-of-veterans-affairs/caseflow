@@ -1,11 +1,11 @@
 import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
-import COPY from '../../../../COPY';
 
 import QueueFlowModal from '../QueueFlowModal';
 import RadioField from '../../../components/RadioField';
 import Alert from '../../../components/Alert';
 import DateSelector from '../../../components/DateSelector';
+import TextareaField from '../../../components/TextareaField';
 
 const CompleteHearingPostponementRequestModal = (props) => {
   const formReducer = (state, action) => {
@@ -19,7 +19,12 @@ const CompleteHearingPostponementRequestModal = (props) => {
       return {
         ...state,
         date: action.payload
-      }
+      };
+    case 'instructions':
+      return {
+        ...state,
+        instructions: action.payload
+      };
     default:
       throw new Error('Unknown action type');
     }
@@ -29,13 +34,24 @@ const CompleteHearingPostponementRequestModal = (props) => {
     formReducer,
     {
       granted: null,
-      date: null
+      date: null,
+      instructions: null
     }
   );
 
   const validateForm = () => false;
 
   const submit = () => console.log(props);
+
+  const GRANTED_OR_DENIED_OPTIONS = [
+    { displayText: 'Granted', value: true },
+    { displayText: 'Denied', value: false }
+  ];
+
+  const RESCHEDULE_HEARING_OPTIONS = [
+    { displayText: 'Reschedule immediately', value: 'schedule_now' },
+    { displayText: 'Send to Schedule Veteran list', value: 'schedule_later' }
+  ];
 
   return (
     <QueueFlowModal
@@ -49,20 +65,19 @@ const CompleteHearingPostponementRequestModal = (props) => {
 
       <RadioField
         id="grantedOrDeniedField"
+        name="grantedOrDeniedField"
         label="What is the Judge’s ruling on the motion to postpone?"
         inputRef={props.register}
         onChange={(value) => dispatch({ type: 'granted', payload: value === 'true' })}
         value={state.granted}
-        options={[
-          { displayText: 'Granted', value: true },
-          { displayText: 'Denied', value: false }
-        ]}
+        options={GRANTED_OR_DENIED_OPTIONS}
       />
 
       {state.granted && <Alert
         message="By marking this task as complete, you will postpone the hearing"
         type="info"
         lowerMargin
+        lowerMarginTop
       />}
 
       <DateSelector
@@ -72,6 +87,23 @@ const CompleteHearingPostponementRequestModal = (props) => {
         value={state.date}
         type="date"
         noFutureDates
+      />
+
+      {state.granted && <RadioField
+        id="scheduleOptionField"
+        name="schedulOptionField"
+        label="How would you like to proceed?:"
+        inputRef={props.register}
+        options={RESCHEDULE_HEARING_OPTIONS}
+        vertical
+      />}
+
+      <TextareaField
+        label="Provide instructions and context for this action:"
+        name="instructionsField"
+        id="completePostponementInstructions"
+        onChange={(value) => dispatch({ type: 'instructions', payload: value })}
+
       />
     </QueueFlowModal>
   );

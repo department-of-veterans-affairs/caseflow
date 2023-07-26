@@ -17,7 +17,7 @@ export default class Alert extends React.Component {
   }
 
   render() {
-    const { fixed, title, type, styling, lowerMargin } = this.props;
+    const { fixed, title, type, styling, lowerMargin, lowerMarginTop } = this.props;
 
     const typeClass = `usa-alert-${type}`;
 
@@ -26,7 +26,7 @@ export default class Alert extends React.Component {
       fixed,
       'cf-margin-bottom-2rem': lowerMargin,
       // TODO:There was note in Prototype Branch to fix margin top. Confirm desired changes
-      'cf-margin-top-0rem': lowerMargin,
+      'cf-margin-top-0rem': lowerMarginTop,
     });
 
     return (
@@ -57,6 +57,7 @@ Alert.propTypes = {
    * Sets `.cf-margin-bottom-2rem` class
    */
   lowerMargin: PropTypes.bool,
+  lowerMarginTop: PropTypes.bool,
   message: PropTypes.node,
 
   /**
