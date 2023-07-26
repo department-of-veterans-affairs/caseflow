@@ -44,8 +44,16 @@ class PriorityEndProductSyncQueue < CaseflowRecord
   # for later manual review.
   def declare_record_stuck!
     update!(status: Constants.PRIORITY_EP_SYNC.stuck)
-    CaseflowStuckRecord.create!(stuck_record: self,
-                                error_messages: error_messages,
-                                determined_stuck_at: Time.zone.now)
+    stuck_record = CaseflowStuckRecord.create!(stuck_record: self,
+                                               error_messages: error_messages,
+                                               determined_stuck_at: Time.zone.now)
+    msg = "StuckRecordAlert::SyncFailed End Product Establishment ID: #{end_product_establishment_id}."
+    Raven.capture_message(msg, level: "error", extra: { caseflow_stuck_record_id: stuck_record.id,
+                                                        batch_process_type: batch_process.class.name,
+                                                        batch_id: batch_id,
+                                                        queue_type: self.class.name,
+                                                        queue_id: id,
+                                                        end_product_establishment_id: end_product_establishment_id,
+                                                        determined_stuck_at: stuck_record.determined_stuck_at })
   end
 end
