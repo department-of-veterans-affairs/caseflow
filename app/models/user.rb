@@ -148,8 +148,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def can_schedule_webex_virtual?
-    @vc_user = User.where(css_id: normalize_css_ids)
-    conference_selection = @vc_user.conference_selection
+    @vc_user = User.where(css_id: normalize_css_id)
+    # conference_selection = @vc_user.conference_selection
   end
 
   def administer_org_users?
