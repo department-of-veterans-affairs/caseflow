@@ -5,6 +5,7 @@ import COPY from '../../../../COPY';
 import QueueFlowModal from '../QueueFlowModal';
 import RadioField from '../../../components/RadioField';
 import Alert from '../../../components/Alert';
+import DateSelector from '../../../components/DateSelector';
 
 const CompleteHearingPostponementRequestModal = (props) => {
   const formReducer = (state, action) => {
@@ -14,6 +15,11 @@ const CompleteHearingPostponementRequestModal = (props) => {
         ...state,
         granted: action.payload
       };
+    case 'rulingDate':
+      return {
+        ...state,
+        date: action.payload
+      }
     default:
       throw new Error('Unknown action type');
     }
@@ -23,6 +29,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
     formReducer,
     {
       granted: null,
+      date: null
     }
   );
 
@@ -39,9 +46,10 @@ const CompleteHearingPostponementRequestModal = (props) => {
       submit={submit}
       pathAfterSubmit="/organizations/hearing-admin"
     >
+
       <RadioField
         id="grantedOrDeniedField"
-        label={COPY.COMPLETE_HEARING_POSTPONEMENT_REQUEST.RADIO_LABEL}
+        label="What is the Judge’s ruling on the motion to postpone?"
         inputRef={props.register}
         onChange={(value) => dispatch({ type: 'granted', payload: value === 'true' })}
         value={state.granted}
@@ -50,11 +58,21 @@ const CompleteHearingPostponementRequestModal = (props) => {
           { displayText: 'Denied', value: false }
         ]}
       />
+
       {state.granted && <Alert
-        message={COPY.COMPLETE_HEARING_POSTPONEMENT_REQUEST.ALERT}
+        message="By marking this task as complete, you will postpone the hearing"
         type="info"
         lowerMargin
       />}
+
+      <DateSelector
+        label="Date of ruling:"
+        name="rulingDateSelector"
+        onChange={(value) => dispatch({ type: 'rulingDate', payload: value })}
+        value={state.date}
+        type="date"
+        noFutureDates
+      />
     </QueueFlowModal>
   );
 };
