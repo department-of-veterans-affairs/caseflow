@@ -170,10 +170,16 @@ class SelectDispositionsView extends React.PureComponent {
 
   getPrevStepUrl = () => {
     const {
-      appealId
+      appealId,
+      taskId,
+      checkoutFlow,
+      mstFeatureToggle,
+      pactFeatureToggle
     } = this.props;
 
-    return `/queue/appeals/${appealId}`;
+    // route to case details instead of special issues for MST/PACT
+    return (mstFeatureToggle || pactFeatureToggle) ? `/queue/appeals/${appealId}` :
+      `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
   }
 
   validateForm = () => {
@@ -483,6 +489,8 @@ class SelectDispositionsView extends React.PureComponent {
         pactFeatureToggle={pactFeatureToggle}
         errorMessages={issueErrors}>
         <DecisionIssues
+          mstFeatureToggle={mstFeatureToggle}
+          pactFeatureToggle={pactFeatureToggle}
           decisionIssues={appeal.decisionIssues}
           openDecisionHandler={this.openDecisionHandler}
           openDeleteAddedDecisionIssueHandler={this.openDeleteAddedDecisionIssueHandler} />
