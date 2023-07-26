@@ -227,7 +227,7 @@ class NonCompDispositions extends React.PureComponent {
       </div>}
       <div className="cf-decisions">
         <div className="cf-decision">
-          <hr />
+          {displayPOAComponent && <hr />}
           <div className="usa-grid-full">
             <div className="usa-width-one-half">
               <h2>Decision</h2>
