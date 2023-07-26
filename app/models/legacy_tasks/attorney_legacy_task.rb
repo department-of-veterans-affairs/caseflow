@@ -7,11 +7,16 @@ class AttorneyLegacyTask < LegacyTask
     # so we use the absence of this value to indicate that there is no case assignment and return no actions.
     return [] unless task_id
 
-    if current_user&.can_act_on_behalf_of_judges? && FeatureToggle.enabled?(:vlj_legacy_appeal) &&
-       (appeal.case_record.reload.bfcurloc == "57" || appeal.case_record.reload.bfcurloc == "CASEFLOW")
-      [
-        Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY.to_h
-      ]
+    if current_user&.can_act_on_behalf_of_judges? && FeatureToggle.enabled?(:vlj_legacy_appeal)
+      if appeal.case_record.reload.bfcurloc == "57" || appeal.case_record.reload.bfcurloc == "CASEFLOW"
+        [
+          Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY.to_h
+        ]
+      elsif %w[81 33].include?(appeal.case_record.reload.bfcurloc) || appeal.case_record.reload.bfcurloc == "CASEFLOW"
+        [
+          Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.to_h
+        ]
+       end
     elsif (current_user&.judge_in_vacols? || current_user&.can_act_on_behalf_of_judges?) &&
           FeatureToggle.enabled?(:vlj_legacy_appeal)
       [
@@ -36,7 +41,7 @@ class AttorneyLegacyTask < LegacyTask
   def label
     return false if appeal.case_record.nil?
 
-    if (appeal.case_record.reload.bfcurloc == "57" || appeal.case_record.reload.bfcurloc == "CASEFLOW") && FeatureToggle.enabled?(:vlj_legacy_appeal)
+    if (%w[81 57 33].include?(appeal.case_record.reload.bfcurloc) || appeal.case_record.reload.bfcurloc == "CASEFLOW") && FeatureToggle.enabled?(:vlj_legacy_appeal)
       COPY::ATTORNEY_REWRITE_TASK_LEGACY_LABEL
     else
       COPY::ATTORNEY_REWRITE_TASK_LABEL
