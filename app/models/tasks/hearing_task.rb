@@ -21,6 +21,27 @@ class HearingTask < Task
     [COPY::HEARING_TASK_DEFAULT_INSTRUCTIONS]
   end
 
+  def available_actions(user)
+    return [] unless user
+
+    if !appeal.is_a?(Appeal)
+      if !any_active_distribution_task_legacy
+        return [Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT.to_h]
+      end
+    end
+  end
+
+  def any_active_distribution_task_legacy
+    tasks = Task.where(appeal_type: "LegacyAppeal", appeal_id: appeal.id)
+    tasks.active.of_type(:DistributionTask).any?
+  end
+
+  def visible_blocking_tasks
+    visible_descendants = descendants.reject(&:hide_from_case_timeline).select(&:open?)
+
+    visible_descendants - [self]
+  end
+
   def cancel_and_recreate
     hearing_task = HearingTask.create!(
       appeal: appeal,

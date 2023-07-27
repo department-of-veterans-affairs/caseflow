@@ -123,7 +123,7 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
             assigned_to_id: this.state.selectedAssignee,
             assigned_to_type: 'User',
             // cancellation_reason: `${this.state.selectedReason.trim()}: ${this.state.cancellationInstructions.trim()}`,
-            instructions: [this.state.instructions, 
+            instructions: [this.state.instructions,
               `${this.state.selectedReason.trim()}: ${this.state.cancellationInstructions.trim()}`]
           }
         ]
@@ -132,7 +132,7 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
 
     const assignedByListItem = () => {
       const assignor = task.assignedBy.firstName ?
-        this.getAbbrevName(task.assignedBy) :
+      `${task.assignedBy.firstName.substring(0, 1)}. ${task.assignedBy.lastName}` :
         null;
 
       return assignor;
@@ -161,22 +161,22 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
       });
   };
 
-  blockingTaskListItem = (blockingTask) =>
-    <li key={blockingTask.id}>{blockingTask.type} - assigned to: {this.blockingTaskAssigneeLink(blockingTask)}</li>;
+  // blockingTaskListItem = (blockingTask) =>
+  //   <li key={blockingTask.id}>{blockingTask.type} - assigned to: {this.blockingTaskAssigneeLink(blockingTask)}</li>;
 
-  blockingTaskAssigneeLink = (blockingTask) => {
-    const { appeal } = this.props;
+  // blockingTaskAssigneeLink = (blockingTask) => {
+  //   const { appeal } = this.props;
 
-    if (blockingTask.assigned_to_email) {
-      const body = `Case Link: ${window.location.origin}/queue/appeals/${appeal.externalId}`,
-        emailAddress = blockingTask.assigned_to_email,
-        subject = `${blockingTask.type}: ${appeal.veteranFullName}`;
+  //   if (blockingTask.assigned_to_email) {
+  //     const body = `Case Link: ${window.location.origin}/queue/appeals/${appeal.externalId}`,
+  //       emailAddress = blockingTask.assigned_to_email,
+  //       subject = `${blockingTask.type}: ${appeal.veteranFullName}`;
 
-      return <a href={`mailto:${emailAddress}?subject=${subject}&body=${body}`}>{blockingTask.assigned_to_name}</a>;
-    }
+  //     return <a href={`mailto:${emailAddress}?subject=${subject}&body=${body}`}>{blockingTask.assigned_to_name}</a>;
+  //   }
 
-    return blockingTask.assigned_to_name;
-  }
+  //   return blockingTask.assigned_to_name;
+  // }
 
   modalAlert = () => {
     if (!this.state.error) {
@@ -241,7 +241,7 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
   render = () => {
     const { highlightFormItems, appeal } = this.props;
 
-    const blockingTasks = this.actionData().blocking_tasks;
+    // const blockingTasks = this.actionData().blocking_tasks;
 
     return <React.Fragment>
       {this.warningModal()}
@@ -259,7 +259,7 @@ class BlockedAdvanceToJudgeLegacyView extends React.Component {
         </div>
         <div {...bottomMarginStyling}>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_SUBTITLE}</div>
         <h3>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_TASKS_HEADER}</h3>
-        <ul>{blockingTasks.map((blockingTask) => this.blockingTaskListItem(blockingTask))}</ul>
+        {/* <ul>{blockingTasks.map((blockingTask) => this.blockingTaskListItem(blockingTask))}</ul> */}
         <h3>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_REASONING_HEADER}</h3>
         <RadioField
           required

@@ -11,7 +11,7 @@ import COPY from '../../COPY';
 import { onReceiveAmaTasks } from './QueueActions';
 import { requestSave, resetSuccessMessages, highlightInvalidFormItems } from './uiReducer/uiActions';
 import { taskActionData } from './utils';
-import { taskById, appealWithDetailSelector } from './selectors';
+import { taskById, appealWithDetailSelector, allHearingTasksForAppeal } from './selectors';
 
 import QueueFlowPage from './components/QueueFlowPage';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -51,7 +51,9 @@ class BlockedAdvanceToJudgeView extends React.Component {
       instructions: '',
       selectedAssignee: null,
       selectedReason: null,
-      showModal: false
+      showModal: false,
+      disableButton: true,
+      modalDisableButton: true
     };
   }
 
@@ -81,6 +83,27 @@ class BlockedAdvanceToJudgeView extends React.Component {
     return assignee;
   };
 
+  setOnChangeValue = (stateValue, value) => {
+    this.setState({ [stateValue]: value }, function () {
+      if ((this.state.selectedReason !== null && this.state.cancellationInstructions.trim().length > 0)) {
+        this.setState({ disableButton: false });
+      }
+      if ((this.state.cancellationInstructions.trim().length === 0 && this.state.selectedReason !== null)) {
+        this.setState({ disableButton: true });
+      }
+    });
+  }
+
+  setModalOnChangeValue = (stateValue, value) => {
+    this.setState({ [stateValue]: value }, function () {
+      if (this.state.selectedAssignee !== null && this.state.instructions.trim().length > 0) {
+        this.setState({ modalDisableButton: false });
+      } else {
+        this.setState({ modalDisableButton: true });
+      }
+    });
+  };
+
   submit = () => {
     if (!this.validateModal()) {
       this.props.highlightInvalidFormItems(true);
@@ -88,7 +111,9 @@ class BlockedAdvanceToJudgeView extends React.Component {
       return;
     }
 
-    const { appeal, task } = this.props;
+    const { appeal, task, allHearingTasks } = this.props;
+
+    const hearingTaskId = allHearingTasks[0].id;
 
     const payload = {
       data: {
@@ -96,11 +121,11 @@ class BlockedAdvanceToJudgeView extends React.Component {
           {
             type: this.actionData().type,
             external_id: appeal.externalId,
-            parent_id: task.taskId,
+            parent_id: task.appealType === 'LegacyAppeal' ? hearingTaskId : task.taskId,
             assigned_to_id: this.state.selectedAssignee,
             assigned_to_type: 'User',
             instructions: [
-              `${this.state.selectedReason}: ${this.state.cancellationInstructions}`,
+              `${this.state.selectedReason.trim()}: ${this.state.cancellationInstructions}`,
               this.state.instructions
             ]
           }
@@ -108,16 +133,37 @@ class BlockedAdvanceToJudgeView extends React.Component {
       }
     };
 
-    const successMessage = {
-      title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssigneeLabel()),
-      detail: this.actionData().message_detail
+    const assignedByListItem = () => {
+      const assignor = task.assignedBy.firstName ?
+      `${task.assignedBy.firstName.substring(0, 1)}. ${task.assignedBy.lastName}` :
+        null;
+
+      return assignor;
     };
+
+    let successMessage = '';
+
+    if (appeal.isLegacyAppeal) {
+      successMessage = {
+        title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE_MOVE_LEGACY_APPEALS_VLJ,
+          assignedByListItem(),
+          this.getAssigneeLabel()),
+        detail: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE_MOVE_LEGACY_APPEALS_VLJ_MESSAGE_DETAIL)
+      };
+    } else {
+      successMessage = {
+        title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssigneeLabel()),
+        detail: this.actionData().message_detail
+      };
+    }
 
     return this.props.
       requestSave('/tasks', payload, successMessage).
       then((resp) => {
         this.props.history.replace(`/queue/appeals/${appeal.externalId}`);
-        this.props.onReceiveAmaTasks(resp.body.tasks.data);
+        if (resp.body !== null) {
+          this.props.onReceiveAmaTasks(resp.body.tasks.data);
+        }
       }).
       catch((err) => {
         this.setState({
@@ -169,15 +215,15 @@ class BlockedAdvanceToJudgeView extends React.Component {
         title={COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_TITLE}
         buttons={[{
           classNames: ['usa-button', 'cf-btn-link'],
-          name: 'Close',
+          name: 'Cancel',
           onClick: () => this.setState({ showModal: false })
         }, {
-          classNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
+          classNames: ['usa-button-hover', 'usa-button-warning'],
           name: COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_SUBMIT,
+          disabled: this.state.modalDisableButton,
           onClick: this.submit
         }]}
         closeHandler={() => this.setState({ showModal: false })}
-        icon="warning"
       >
         {this.modalAlert()}
         <div {...bottomBorderStyling}>
@@ -191,7 +237,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
           hideLabel
           errorMessage={this.props.highlightFormItems && !this.validAssignee() ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
           value={this.state.selectedAssignee}
-          onChange={(option) => this.setState({ selectedAssignee: option ? option.value : null })}
+          onChange={(option) => this.setModalOnChangeValue('selectedAssignee', option ? option.value : null)}
           options={options}
         />
         <h3>{sprintf(COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_INSTRUCTIONS_HEADER, selectedJudgeName)}</h3>
@@ -199,7 +245,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
           required
           errorMessage={highlightFormItems && !this.validInstructions() ? 'Judge instructions field is required' : null}
           id="judgeInstructions"
-          onChange={(value) => this.setState({ instructions: value })}
+          onChange={(value) => this.setModalOnChangeValue('instructions', value)}
           value={this.state.instructions}
         />
       </Modal>
@@ -208,8 +254,11 @@ class BlockedAdvanceToJudgeView extends React.Component {
 
   render = () => {
     const { highlightFormItems, appeal } = this.props;
+    let blockingTasks;
 
-    const blockingTasks = this.actionData().blocking_tasks;
+    if (!appeal.isLegacyAppeal) {
+      blockingTasks = this.actionData().blocking_tasks;
+    }
 
     return <React.Fragment>
       {this.warningModal()}
@@ -218,6 +267,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
         validateForm={this.validatePage}
         appealId={appeal.externalId}
         hideCancelButton
+        disableNext={this.state.disableButton}
       >
         <h1>{sprintf(COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_TITLE, appeal.veteranFullName)}</h1>
         <div className="cf-sg-subsection" {...caseInfoStyling} {...bottomBorderStyling}>
@@ -226,7 +276,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
         </div>
         <div {...bottomMarginStyling}>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_SUBTITLE}</div>
         <h3>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_TASKS_HEADER}</h3>
-        <ul>{blockingTasks.map((blockingTask) => this.blockingTaskListItem(blockingTask))}</ul>
+        {(!appeal.isLegacyAppeal) && <ul>{blockingTasks.map((blockingTask) => this.blockingTaskListItem(blockingTask))}</ul>}
         <h3>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_REASONING_HEADER}</h3>
         <RadioField
           required
@@ -236,7 +286,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
           })}
           id="advancementReason"
           value={this.state.selectedReason}
-          onChange={(value) => this.setState({ selectedReason: value })}
+          onChange={(value) => this.setOnChangeValue('selectedReason', value)}
           vertical={false}
         />
         <TextareaField
@@ -245,7 +295,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
             highlightFormItems && !this.validCancellationInstructions() ? 'Instructions field is required' : null
           }
           id="cancellationInstructions"
-          onChange={(value) => this.setState({ cancellationInstructions: value })}
+          onChange={(value) => this.setOnChangeValue('cancellationInstructions', value)}
           value={this.state.cancellationInstructions}
         />
       </QueueFlowPage>
@@ -259,23 +309,31 @@ BlockedAdvanceToJudgeView.propTypes = {
     id: PropTypes.string,
     veteranFullName: PropTypes.string,
     veteranFileNumber: PropTypes.string,
+    isLegacyAppeal: PropTypes.bool
   }),
   highlightInvalidFormItems: PropTypes.func,
   highlightFormItems: PropTypes.bool,
   history: PropTypes.object,
   onReceiveAmaTasks: PropTypes.func,
   requestSave: PropTypes.func,
+  rootTask: PropTypes.object,
   resetSuccessMessages: PropTypes.func,
+  allHearingTasks: PropTypes.array,
   task: PropTypes.shape({
     instructions: PropTypes.string,
-    taskId: PropTypes.string
+    taskId: PropTypes.string,
+    assignedBy: PropTypes.string,
+    appealType: PropTypes.string
   })
 };
 
 const mapStateToProps = (state, ownProps) => {
+  const appeal = appealWithDetailSelector(state, ownProps);
+
   return {
     highlightFormItems: state.ui.highlightFormItems,
     task: taskById(state, { taskId: ownProps.taskId }),
+    allHearingTasks: allHearingTasksForAppeal(state, { appealId: appeal?.externalId }),
     appeal: appealWithDetailSelector(state, ownProps)
   };
 };
