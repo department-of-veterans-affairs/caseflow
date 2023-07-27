@@ -15,7 +15,8 @@ const CompleteHearingPostponementRequestModal = (props) => {
     case 'granted':
       return {
         ...state,
-        granted: action.payload
+        granted: action.payload,
+        scheduledOption: null
       };
     case 'rulingDate':
       return {
@@ -27,6 +28,11 @@ const CompleteHearingPostponementRequestModal = (props) => {
         ...state,
         instructions: action.payload
       };
+    case 'scheduledOption':
+      return {
+        ...state,
+        scheduledOption: action.payload
+      }
     default:
       throw new Error('Unknown action type');
     }
@@ -36,12 +42,21 @@ const CompleteHearingPostponementRequestModal = (props) => {
     formReducer,
     {
       granted: null,
-      date: null,
-      instructions: null
+      date: '',
+      instructions: '',
+      scheduledOption: null
     }
   );
 
-  const validateForm = () => false;
+  const validateForm = () => {
+    const { granted, date, instructions, scheduledOption } = state;
+
+    if (granted) {
+      return date !== '' && instructions !== '' && scheduledOption !== '';
+    }
+
+    return granted !== null && date !== '' && instructions !== '';
+  };
 
   const submit = () => console.log(props);
 
@@ -59,7 +74,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
     <QueueFlowModal
       title="Mark as complete"
       button="Mark as complete"
-      submitDisabled={!validateForm}
+      submitDisabled={!validateForm()}
       validateForm={validateForm}
       submit={submit}
       pathAfterSubmit="/organizations/hearing-admin"
@@ -97,6 +112,8 @@ const CompleteHearingPostponementRequestModal = (props) => {
           name="schedulOptionField"
           label="How would you like to proceed?:"
           inputRef={props.register}
+          onChange={(value) => dispatch({ type: 'scheduledOption', payload: value })}
+          value={state.scheduledOption}
           options={RESCHEDULE_HEARING_OPTIONS}
           vertical
           styling={marginBottom(1)}
