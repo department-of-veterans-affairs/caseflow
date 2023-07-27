@@ -6,9 +6,9 @@ class BatchProcess < CaseflowRecord
   has_many :end_product_establishments, through: :priority_end_product_sync_queue
   after_initialize :init_counters
 
-  ERROR_LIMIT = ENV["MAX_ERRORS_BEFORE_STUCK"].to_i
-  ERROR_DELAY = ENV["ERROR_DELAY"].to_i
-  BATCH_LIMIT = ENV["BATCH_LIMIT"].to_i
+  ERROR_LIMIT = ENV["BATCH_PROCESS_MAX_ERRORS_BEFORE_STUCK"].to_i
+  ERROR_DELAY = ENV["BATCH_PROCESS_ERROR_DELAY"].to_i
+  BATCH_LIMIT = ENV["BATCH_PROCESS_BATCH_LIMIT"].to_i
 
   scope :completed_batch_process_ids, -> { where(state: Constants.BATCH_PROCESS.completed).select(:batch_id) }
   scope :needs_reprocessing, lambda {
