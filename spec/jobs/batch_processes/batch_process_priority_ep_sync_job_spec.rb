@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require "./app/jobs/batch_processes/batch_process_priority_ep_sync_job.rb"
-require 'simplecov'
-SimpleCov.start
 
 describe BatchProcessPriorityEpSyncJob, type: :job do
   let!(:syncable_end_product_establishments) do
