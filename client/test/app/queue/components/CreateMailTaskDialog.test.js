@@ -4,16 +4,11 @@ import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore, compose } from 'redux';
 import thunk from 'redux-thunk';
-import COPY from '../../../../COPY';
 import CreateMailTaskDialog from '../../../../app/queue/CreateMailTaskDialog';
 import {
   createQueueReducer,
   getAppealId,
-  getTaskId,
-  enterTextFieldOptions,
-  enterModalRadioOptions,
-  selectFromDropdown,
-  clickSubmissionButton
+  getTaskId
 } from './modalUtils';
 import { rootTaskData } from '../../../data/queue/taskActionModals/taskActionModalData';
 import userEvent from '@testing-library/user-event';
@@ -66,7 +61,7 @@ describe('CreateMailTaskDialog', () => {
 
       userEvent.type(screen.getByRole('combobox'), 'Hearing postponement request{enter}');
 
-      expect(screen.getByLabelText('Include Caseflow Reader document hyperlink to request hearing postponement')).
+      expect(screen.getByLabelText('Include Caseflow Reader document hyperlink to request a hearing postponement')).
         toBeTruthy();
     });
 
