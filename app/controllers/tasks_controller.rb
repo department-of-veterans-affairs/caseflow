@@ -93,8 +93,12 @@ class TasksController < ApplicationController
       tasks << valid_task_classes[task_type.to_sym].create_many_from_params(param_group, current_user)
     end
     modified_tasks = [parent_tasks_from_params, tasks].flatten.uniq
+    if modified_tasks[0].appeal_type != "LegacyAppeal"
+      render json: { tasks: json_tasks(modified_tasks) }
+    else
+      render json: {}
+    end
 
-    render json: { tasks: json_tasks(modified_tasks) }
   rescue ActiveRecord::RecordInvalid => error
     invalid_record_error(error.record)
   rescue Caseflow::Error::MailRoutingError => error
