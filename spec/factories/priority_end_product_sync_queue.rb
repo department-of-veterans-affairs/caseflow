@@ -23,7 +23,5 @@ FactoryBot.define do
     trait :stuck do
       status { "STUCK" }
     end
-
-
   end
 end
