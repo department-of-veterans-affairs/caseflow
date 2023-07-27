@@ -2126,14 +2126,14 @@ describe RequestIssue, :all_dbs do
             Generators::Contention.build(
               id: "123456789",
               claim_id: epe.reference_id,
-              disposition: "allowed"
+              disposition: "Difference of Opinion"
             )
           end
           let!(:contention_hlr2) do
             Generators::Contention.build(
-              id: "00123456789",
+              id: "555566660",
               claim_id: epe.reference_id,
-              disposition: "allowed"
+              disposition: "DTA Error"
             )
           end
 
@@ -2187,7 +2187,35 @@ describe RequestIssue, :all_dbs do
           end
 
           it "allows a request issue to sync if there is no existing lock using the EPE's ID" do
-            expect { request_issue2.sync_decision_issues! }.to_not raise_error(sync_lock_err)
+            expect(request_issue2.sync_decision_issues!).to eq(true)
+            expect(request_issue2.processed?).to eq(true)
+
+            expect(SupplementalClaim.count).to eq(1)
+          end
+
+          it "multiple request issues can sync and a remand_supplemental_claim is created" do
+            expect(request_issue1.sync_decision_issues!).to eq(true)
+            expect(request_issue2.sync_decision_issues!).to eq(true)
+            expect(request_issue1.processed?).to eq(true)
+            expect(request_issue2.processed?).to eq(true)
+
+            expect(SupplementalClaim.count).to eq(1)
+            sc = SupplementalClaim.first
+            expect(sc.request_issues.count).to eq(2)
+            supplemental_claim_request_issue1 = sc.request_issues.first
+            supplemental_claim_request_issue2= sc.request_issues.last
+
+            # both request issues link to the same SupplementalClaim
+            expect(sc.id).to eq (request_issue1.end_product_establishment.source.remand_supplemental_claims.first.id)
+            expect(sc.id).to eq (request_issue2.end_product_establishment.source.remand_supplemental_claims.first.id)
+
+            # DecisionIssue ID should match contested_decision_issue_id
+            expect(DecisionIssue.count).to eq(2)
+            decision_issue1 = DecisionIssue.first
+            decision_issue2 = DecisionIssue.last
+
+            expect(decision_issue1.id).to eq(supplemental_claim_request_issue1.contested_decision_issue_id)
+            expect(decision_issue2.id).to eq(supplemental_claim_request_issue2.contested_decision_issue_id)
           end
 
         end
