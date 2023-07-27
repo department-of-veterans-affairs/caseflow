@@ -1,18 +1,5 @@
 Rails.application.configure do
-  config.after_initialize do
-    Bullet.enable        = true
-    Bullet.bullet_logger = true
-    Bullet.console       = true
-    Bullet.rails_logger  = true
-    Bullet.unused_eager_loading_enable = false
-  end
   # Settings specified here will take precedence over those in config/application.rb.
-
-  # Disable SqlTracker from creating tmp/sql_tracker-*.json files -- https://github.com/steventen/sql_tracker/pull/10
-  SqlTracker::Config.enabled = false
-
-  # workaround https://groups.google.com/forum/#!topic/rubyonrails-security/IsQKvDqZdKw
-  config.secret_key_base = SecureRandom.hex(64)
 
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
@@ -42,6 +29,20 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options)
   config.active_storage.service = :local
 
+  if ENV["WITH_TEST_EMAIL_SERVER"]
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = {
+      port: ENV["TEST_MAIL_SERVER_PORT"] || 1025,
+      address: 'localhost'
+    }
+  else
+    # Don't care if the mailer can't send.
+    config.action_mailer.raise_delivery_errors = false
+
+    config.action_mailer.perform_caching = false
+    config.action_mailer.delivery_method = :test
+  end
+
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 
@@ -62,6 +63,25 @@ Rails.application.configure do
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+
+  #=====================================================================================================================
+  # Please keep custom config settings below this comment.
+  #   This will ensure cleaner diffs when generating config file changes during Rails upgrades.
+  #=====================================================================================================================
+
+  config.after_initialize do
+    Bullet.enable        = true
+    Bullet.bullet_logger = true
+    Bullet.console       = true
+    Bullet.rails_logger  = true
+    Bullet.unused_eager_loading_enable = false
+  end
+
+  # Disable SqlTracker from creating tmp/sql_tracker-*.json files -- https://github.com/steventen/sql_tracker/pull/10
+  SqlTracker::Config.enabled = false
+
+  # workaround https://groups.google.com/forum/#!topic/rubyonrails-security/IsQKvDqZdKw
+  config.secret_key_base = SecureRandom.hex(64)
 
   # Setup S3
   config.s3_enabled = !ENV['AWS_BUCKET_NAME'].nil?
@@ -107,20 +127,6 @@ Rails.application.configure do
   ENV["PACMAN_API_TOKEN_ISSUER"] ||= "issuer-of-our-token"
   ENV["PACMAN_API_SYS_ACCOUNT"] ||= "CSS_ID_OF_OUR_ACCOUNT"
   ENV["PACMAN_API_URL"] ||= "https://pacman-uat.dev.bip.va.gov/"
-
-  if ENV["WITH_TEST_EMAIL_SERVER"]
-    config.action_mailer.delivery_method = :smtp
-    config.action_mailer.smtp_settings = {
-      port: ENV["TEST_MAIL_SERVER_PORT"] || 1025,
-      address: 'localhost'
-    }
-  else
-    # Don't care if the mailer can't send.
-    config.action_mailer.raise_delivery_errors = false
-
-    config.action_mailer.perform_caching = false
-    config.action_mailer.delivery_method = :test
-  end
 
   # eFolder API URL to retrieve appeal documents
   config.efolder_url = "http://localhost:4000"
