@@ -21,7 +21,7 @@ class BatchProcessPriorityEpSyncJob < CaseflowJob
       if batch
         batch.process_batch!
       else
-        Rails.logger.info("No Records Available to Batch.  Time: #{Time.zone.now}")
+        Rails.logger.info("No Records Available to Batch.  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
       end
     rescue StandardError => error
       Rails.logger.error("Error: #{error.inspect}, Job ID: #{JOB_ATTR&.job_id}, Job Time: #{Time.zone.now}")
