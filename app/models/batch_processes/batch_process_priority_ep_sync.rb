@@ -36,9 +36,9 @@ class BatchProcessPriorityEpSync < BatchProcess
         epe.reload
 
         if epe.vbms_ext_claim.nil?
-          fail Caseflow::Error::PriorityEndProductSyncError, "Claim Not In VBMS_EXT_CLAIM."
+          fail Caseflow::Error::PriorityEndProductSyncError, "Claim ID: #{epe.reference_id} not In VBMS_EXT_CLAIM."
         elsif epe.synced_status != epe.vbms_ext_claim&.level_status_code
-          fail Caseflow::Error::PriorityEndProductSyncError, "EPE synced_status does not match VBMS."
+          fail Caseflow::Error::PriorityEndProductSyncError, "EPE ID: #{epe&.id} synced_status does not match VBMS."
         end
       rescue StandardError => error
         error_out_record!(record, error)
