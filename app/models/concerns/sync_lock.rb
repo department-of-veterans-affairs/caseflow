@@ -14,7 +14,7 @@ module SyncLock
       begin
         sync_lock_acquired = redis.setnx(lock_key, true)
 
-        fail Caseflow::Error::SyncLockFailed, "#{Time.zone.now}." unless sync_lock_acquired
+        fail Caseflow::Error::SyncLockFailed, message: "#{Time.zone.now}" unless sync_lock_acquired
 
         redis.expire(lock_key, LOCK_TIMEOUT.to_i)
         yield

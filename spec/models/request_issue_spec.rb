@@ -2112,7 +2112,7 @@ describe RequestIssue, :all_dbs do
           end
         end
 
-        context "#hlr_sync_lock" do
+        context "when hlr_sync_lock is applied to the sync method" do
           let(:ep_code) { "030HLRR" }
           let!(:epe) do
             epe = create(:end_product_establishment, :cleared_hlr_with_canceled_vbms_ext_claim)
@@ -2140,7 +2140,7 @@ describe RequestIssue, :all_dbs do
           let(:original_decision_sync_last_submitted_at) { Time.zone.now - 1.hour }
           let(:original_decision_sync_submitted_at) { Time.zone.now - 1.hour }
 
-          let(:request_issue0) do
+          let(:request_issue1) do
             create(
               :request_issue,
               decision_review: review,
@@ -2155,7 +2155,7 @@ describe RequestIssue, :all_dbs do
             )
           end
 
-          let(:request_issue1) do
+          let(:request_issue2) do
             create(
               :request_issue,
               decision_review: review,
@@ -2175,22 +2175,21 @@ describe RequestIssue, :all_dbs do
                              participant_id: epe.veteran.participant_id,
                              payee_code: "00")
           end
+
           let(:sync_lock_err) { Caseflow::Error::SyncLockFailed }
-          it "confirms that hlr_sync_lock works as expected" do
-            # request_issue2 not to be picked up
+
+          it "prevents a request issue from acquiring the SyncLock when there is already a lock using the EPE's ID" do
             redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
             lock_key = "hlr_sync_lock:#{epe.id}"
             redis.setnx(lock_key, true)
-            expect { request_issue0.sync_decision_issues! }.to raise_error(sync_lock_err)
-            # threads = []
-            # 1.times do |i|
-            #   threads << Thread.new do
-            #     request_issue0.sync_decision_issues!
-            #   end
-            # end
-            # expect(request_issue1.sync_decision_issues!).to receive(:hlr_sync_lock)
-            # expect(request_issue2.sync_decision_issues!).to eq(true)
+            expect { request_issue1.sync_decision_issues! }.to raise_error(sync_lock_err)
+            redis.del(lock_key)
           end
+
+          it "allows a request issue to sync if there is no existing lock using the EPE's ID" do
+            expect { request_issue2.sync_decision_issues! }.to_not raise_error(sync_lock_err)
+          end
+
         end
       end
     end
