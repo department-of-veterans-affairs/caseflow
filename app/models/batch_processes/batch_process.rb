@@ -19,7 +19,6 @@ class BatchProcess < CaseflowRecord
     Constants.BATCH_PROCESS.pre_processing.to_sym => Constants.BATCH_PROCESS.pre_processing,
     Constants.BATCH_PROCESS.processing.to_sym => Constants.BATCH_PROCESS.processing,
     Constants.BATCH_PROCESS.completed.to_sym => Constants.BATCH_PROCESS.completed
-
   }
 
   class << self
