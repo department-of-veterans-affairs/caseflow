@@ -80,9 +80,6 @@ Rails.application.configure do
   # Disable SqlTracker from creating tmp/sql_tracker-*.json files -- https://github.com/steventen/sql_tracker/pull/10
   SqlTracker::Config.enabled = false
 
-  # workaround https://groups.google.com/forum/#!topic/rubyonrails-security/IsQKvDqZdKw
-  config.secret_key_base = SecureRandom.hex(64)
-
   # Setup S3
   config.s3_enabled = !ENV['AWS_BUCKET_NAME'].nil?
   config.s3_bucket_name = "caseflow-cache"
