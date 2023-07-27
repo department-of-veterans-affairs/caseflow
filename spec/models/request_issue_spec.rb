@@ -2115,7 +2115,17 @@ describe RequestIssue, :all_dbs do
         context "when hlr_sync_lock is applied to the sync method" do
           let(:ep_code) { "030HLRR" }
           let!(:epe) do
-            epe = create(:end_product_establishment, :cleared_hlr_with_canceled_vbms_ext_claim)
+            epe = create(
+              :end_product_establishment,
+              :cleared,
+              established_at: 5.days.ago,
+              modifier: "030",
+              code: "030HLRR",
+              source: create(
+                :higher_level_review,
+                veteran_file_number: veteran.file_number
+              )
+            )
             EndProductEstablishment.find epe.id
           end
           let!(:review) do
