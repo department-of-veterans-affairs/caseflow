@@ -212,6 +212,7 @@ class Task < CaseflowRecord
     end
 
     def create_from_params(params, user)
+
       parent_task = Task.find(params[:parent_id])
       fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
 
@@ -219,37 +220,39 @@ class Task < CaseflowRecord
 
       params = modify_params_for_create(params)
       if (parent_task.appeal_type === "LegacyAppeal" && parent_task.type === "HearingTask")
-        tasks = []
-        tasks.push(parent_task)
-        parent_task.children.each{|current_task| tasks.push(current_task)}
-
-        transaction do
-          tasks.each { |task|
-            task.update!(
-              status: Constants.TASK_STATUSES.cancelled,
-              cancelled_by_id: RequestStore[:current_user]&.id,
-              closed_at: Time.zone.now
-            )
-          }
-        end
-
-        legacy_appeal = LegacyAppeal.find(tasks[0].appeal_id)
-        judge = User.find(params["assigned_to_id"])
-
-        JudgeAssignTask.create!(appeal: legacy_appeal,
-          parent: legacy_appeal.root_task,
-          assigned_to: judge,
-          # cancellation_reason: params[:instructions][0],
-          instructions: params[:instructions],
-          assigned_by: params["assigned_by"])
-
-        AppealRepository.update_location!(legacy_appeal, judge)
+        cancel_blocking_task_legacy(params, parent_task)
       else
         child = create_child_task(parent_task, user, params)
         parent_task.update!(status: params[:status]) if params[:status]
         child
       end
+    end
 
+    def cancel_blocking_task_legacy(params, parent_task)
+      tasks = []
+      tasks.push(parent_task)
+      parent_task.children.each{|current_task| tasks.push(current_task)}
+
+      transaction do
+        tasks.each { |task|
+          task.update!(
+            status: Constants.TASK_STATUSES.cancelled,
+            cancelled_by_id: RequestStore[:current_user]&.id,
+            closed_at: Time.zone.now
+          )
+        }
+      end
+
+      legacy_appeal = LegacyAppeal.find(tasks[0].appeal_id)
+      judge = User.find(params["assigned_to_id"])
+
+      JudgeAssignTask.create!(appeal: legacy_appeal,
+        parent: legacy_appeal.root_task,
+        assigned_to: judge,
+        # cancellation_reason: params[:instructions][0],
+        instructions: params[:instructions],
+        assigned_by: params["assigned_by"])
+      AppealRepository.update_location!(legacy_appeal, judge)
     end
 
     def parent_of_same_type_has_same_assignee(parent_task, params)
@@ -772,8 +775,6 @@ class Task < CaseflowRecord
   def previous_task
     nil
   end
-
-
 
   # :reek:FeatureEnvy
   def version_summary
