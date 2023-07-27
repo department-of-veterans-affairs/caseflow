@@ -59,7 +59,7 @@ export const DateSelector = (props) => {
       type={type}
       value={value}
       validationError={dateValidationError(value)}
-      onChange={(value) => console.log(value)}
+      onChange={onChange}
       placeholder={DEFAULT_TEXT}
       required={required}
       {...passthroughProps}

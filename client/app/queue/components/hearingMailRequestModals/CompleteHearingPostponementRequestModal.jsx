@@ -1,5 +1,6 @@
 import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
+import ValidatorsUtil from '../../../util/ValidatorsUtil';
 
 import QueueFlowModal from '../QueueFlowModal';
 import RadioField from '../../../components/RadioField';
@@ -10,6 +11,8 @@ import TextareaField from '../../../components/TextareaField';
 import { marginTop, marginBottom } from '../../constants';
 
 const CompleteHearingPostponementRequestModal = (props) => {
+  const { futureDate } = ValidatorsUtil;
+
   const formReducer = (state, action) => {
     switch (action.type) {
     case 'granted':
@@ -48,14 +51,16 @@ const CompleteHearingPostponementRequestModal = (props) => {
     }
   );
 
+  const validateDate = (date) => date !== '' && !futureDate(date);
+
   const validateForm = () => {
     const { granted, date, instructions, scheduledOption } = state;
 
     if (granted) {
-      return date !== '' && instructions !== '' && scheduledOption !== '';
+      return validateDate(date) && instructions !== '' && scheduledOption !== '';
     }
 
-    return granted !== null && date !== '' && instructions !== '';
+    return granted !== null && validateDate(date) && instructions !== '';
   };
 
   const submit = () => console.log(props);
@@ -104,7 +109,6 @@ const CompleteHearingPostponementRequestModal = (props) => {
           value={state.date}
           type="date"
           noFutureDates
-          inputStyling={marginBottom(0)}
         />
 
         {state.granted && <RadioField
