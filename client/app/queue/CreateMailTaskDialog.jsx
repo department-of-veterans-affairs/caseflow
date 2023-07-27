@@ -115,6 +115,7 @@ export class CreateMailTaskDialog extends React.Component {
         title={COPY.CREATE_MAIL_TASK_TITLE}
         pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
         submitDisabled={!this.validateForm()}
+        submitButtonClassNames={['usa-button']}
       >
         <SearchableDropdown
           name="Correspondence type selector"
