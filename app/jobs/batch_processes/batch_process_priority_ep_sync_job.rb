@@ -10,8 +10,6 @@ class BatchProcessPriorityEpSyncJob < CaseflowJob
   def perform
     begin
       batch = ActiveRecord::Base.transaction do
-        # The find records method NEEDS to remain within the transation block.
-        # to ensure that the table lock is not released until records have been batched.
         records_to_batch = BatchProcessPriorityEpSync.find_records
         next if records_to_batch.empty?
 

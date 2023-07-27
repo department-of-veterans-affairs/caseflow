@@ -5,7 +5,7 @@ class BatchProcessPriorityEpSync < BatchProcess
     # Finds the records within the PEPSQ table that need to be batched and returns
     # a total number of records equal to the BATCH_LIMIT constant
     def find_records
-      PriorityEndProductSyncQueue.completed_or_unbatched.not_synced_or_stuck.batchable.batch_limit.lock
+      PriorityEndProductSyncQueue.completed_or_unbatched.not_synced_or_stuck.batchable.batch_limit
     end
 
     # This method takes the records from find_records as an agrument.
