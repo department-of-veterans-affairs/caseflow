@@ -123,8 +123,16 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
     <<-SQL
       SELECT n1.* FROM appeals a
       JOIN notifications n1 on n1.appeals_id = a."uuid"::text AND n1.appeals_type = 'Appeal'
-      LEFT OUTER JOIN notifications n2 ON (n2.appeals_id = a."uuid"::text AND n1.appeals_type = 'Appeal' AND
-          (n1.notified_at < n2.notified_at OR (n1.notified_at = n2.notified_at AND n1.id < n2.id)))
+      AND (n1.email_notification_status IS NULL OR
+        n1.email_notification_status NOT IN ('No Participant Id Found', 'No Claimant Found', 'No External Id'))
+      AND (n1.sms_notification_status IS NULL OR
+          n1.sms_notification_status NOT IN ('No Participant Id Found', 'No Claimant Found', 'No External Id'))
+      LEFT OUTER JOIN notifications n2 ON (n2.appeals_id = a."uuid"::text AND n1.appeals_type = 'Appeal'
+        AND (n2.email_notification_status IS NULL OR
+          n2.email_notification_status NOT IN ('No Participant Id Found', 'No Claimant Found', 'No External Id'))
+        AND (n2.sms_notification_status IS NULL OR
+            n2.sms_notification_status NOT IN ('No Participant Id Found', 'No Claimant Found', 'No External Id'))
+        AND (n1.notified_at < n2.notified_at OR (n1.notified_at = n2.notified_at AND n1.id < n2.id)))
       WHERE n2.id IS NULL
         AND n1.id IS NOT NULL
         AND (n1.email_notification_status <> 'Failure Due to Deceased'
