@@ -22,7 +22,7 @@ describe WorkQueue::VeteranRecordRequestSerializer, :postgres do
             representative_name: appeal.power_of_attorney&.representative_name,
             representative_type: appeal.power_of_attorney&.representative_type
           },
-          appellant_type: nil,
+          appellant_type: appeal.claimant.type,
           veteran_ssn: veteran.ssn,
           veteran_participant_id: veteran.participant_id,
           assigned_on: task.assigned_at,
