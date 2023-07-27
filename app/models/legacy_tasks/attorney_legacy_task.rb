@@ -13,6 +13,11 @@ class AttorneyLegacyTask < LegacyTask
       [
         Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY.to_h
       ]
+    elsif current_user&.can_act_on_behalf_of_judges? && FeatureToggle.enabled?(:vlj_legacy_appeal) &&
+          %w[81 33].include?(appeal.case_record.reload.bfcurloc)
+      [
+        Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.to_h
+      ]
     elsif (current_user&.judge_in_vacols? || current_user&.can_act_on_behalf_of_judges?) &&
           FeatureToggle.enabled?(:vlj_legacy_appeal)
       [
@@ -37,7 +42,9 @@ class AttorneyLegacyTask < LegacyTask
   def label
     return false if appeal.case_record.nil?
 
-    if (appeal.case_record.reload.bfcurloc == "57" || appeal.case_record.reload.bfcurloc == "CASEFLOW") && FeatureToggle.enabled?(:vlj_legacy_appeal)
+    if (%w[81 57
+           33].include?(appeal.case_record.reload.bfcurloc) || appeal.case_record.reload.bfcurloc == "CASEFLOW") &&
+       FeatureToggle.enabled?(:vlj_legacy_appeal)
       COPY::ATTORNEY_REWRITE_TASK_LEGACY_LABEL
     else
       COPY::ATTORNEY_REWRITE_TASK_LABEL
