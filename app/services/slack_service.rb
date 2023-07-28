@@ -15,7 +15,7 @@ class SlackService
   attr_reader :url
 
   def send_notification(msg, title = "", channel = DEFAULT_CHANNEL)
-    return unless url && (aws_env != "uat")
+    return unless url && (aws_env == "uat" || aws_env == "prod")
 
     slack_msg = format_slack_msg(msg, title, channel)
 
