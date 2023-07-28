@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SlackService
-  DEFAULT_CHANNEL = "#appeals-job-alerts"
+  DEFAULT_CHANNEL = Rails.deploy_env?(:prod) ? "#appeals-job-alerts" : "#appeals-uat-alerts"
   COLORS = {
     error: "#ff0000",
     info: "#cccccc",
