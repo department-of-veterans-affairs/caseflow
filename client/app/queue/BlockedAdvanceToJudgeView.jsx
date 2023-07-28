@@ -125,8 +125,9 @@ class BlockedAdvanceToJudgeView extends React.Component {
             assigned_to_id: this.state.selectedAssignee,
             assigned_to_type: 'User',
             instructions: [
-              `${this.state.selectedReason.trim()}: ${this.state.cancellationInstructions}`,
-              this.state.instructions
+              this.state.instructions,
+              `${this.state.selectedReason.trim()}: ${this.state.cancellationInstructions}`
+
             ]
           }
         ]
