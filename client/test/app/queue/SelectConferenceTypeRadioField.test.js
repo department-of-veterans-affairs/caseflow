@@ -7,8 +7,10 @@ const defaults = {
   name: 'field1',
   value: 'option2',
   options: [
-    { displayText: 'Option 1', value: 'option1' },
-    { displayText: 'Option 2', value: 'option2' },
+    { displayText: 'Option 1',
+      value: 'option1' },
+    { displayText: 'Option 2',
+      value: 'option2' },
   ],
 };
 
