@@ -27,9 +27,12 @@ class RatingDecision
                 :promulgation_date,
                 :rating_sequence_number,
                 :rating_issue_reference_id,
-                :type_name
+                :type_name,
+                :special_issues,
+                :rba_contentions_data
 
   class << self
+    # rubocop:disable Metrics/MethodLength
     def from_bgs_disability(rating, disability)
       latest_evaluation = RatingProfileDisability.new(disability).most_recent_evaluation || {}
       new(
@@ -49,13 +52,46 @@ class RatingDecision
         profile_date: rating.profile_date,
         promulgation_date: rating.promulgation_date,
         participant_id: rating.participant_id,
-        benefit_type: rating.pension? ? :pension : :compensation
+        benefit_type: rating.pension? ? :pension : :compensation,
+        special_issues: disability[:special_issues],
+        rba_contentions_data: disability[:rba_contentions_data]
       )
     end
+    # rubocop:enable Metrics/MethodLength
 
     def deserialize(hash)
-      new(hash)
+      # reject unknown attributes to prevent UnknownAttribute errors
+      new(hash.merge(special_issues: deserialize_special_issues(hash))
+      .reject { |k, _| !rating_decision.attribute_present?(k) })
     end
+
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
+    def deserialize_special_issues(serialized_hash)
+      data = []
+      if serialized_hash[:special_issues].present?
+        filtered_special_issues = serialized_hash[:special_issues].map do |special_issue|
+          special_issue.with_indifferent_access if special_issue.with_indifferent_access[:dis_sn] == serialized_hash[:disability_id] # rubocop:disable Layout/LineLength
+        end.compact
+
+        filtered_special_issues.each do |special_issue|
+          data << { mst_available: true } if Rating.special_issue_has_mst?(special_issue)
+
+          data << { pact_available: true } if Rating.special_issue_has_pact?(special_issue)
+        end
+      end
+
+      if serialized_hash[:rba_contentions_data]
+        # get the contentions from the rating by the participant id
+        contentions = Rating.participant_contentions(serialized_hash)
+        data << { mst_available: true } if Rating.mst_from_contentions_for_rating?(contentions)
+
+        data << { pact_available: true } if Rating.pact_from_contentions_for_rating?(contentions)
+      end
+      data
+    end
+    # rubocop:enable Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/CyclomaticComplexity
   end
 
   def decision_text

@@ -60,6 +60,7 @@ disabled_flags = %w[
   poa_auto_refresh
   interface_version_2
   cc_vacatur_visibility,
+  justification_reason,
   acd_disable_legacy_distributions,
   acd_disable_nonpriority_distributions,
   acd_disable_legacy_lock_ready_appeals
