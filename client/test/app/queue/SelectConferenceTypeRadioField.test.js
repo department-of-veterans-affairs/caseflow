@@ -1,16 +1,17 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import SelectConferenceTypeRadioField from 'app/queue/SelectConferenceTypeRadioField';
 
 const defaults = {
   name: 'field1',
-  value: 'option2',
+  value: '1',
   options: [
-    { displayText: 'Option 1',
-      value: 'option1' },
-    { displayText: 'Option 2',
-      value: 'option2' },
+    { displayText: 'Pexip',
+      value: '1' },
+    { displayText: 'Webex',
+      value: '2' },
   ],
 };
 
@@ -21,7 +22,7 @@ describe('SelectConferenceTypeRadioField', () => {
     jest.clearAllMocks();
   });
 
-  const setup = (props = {}) => {
+  const setupComponent = (props = {}) => {
     const utils = render(
       <SelectConferenceTypeRadioField
         name={defaults.name}
@@ -39,8 +40,21 @@ describe('SelectConferenceTypeRadioField', () => {
   };
 
   it('renders correctly', async () => {
-    const { container } = setup();
+    const { container } = setupComponent();
 
     expect(container).toMatchSnapshot();
   });
+
+  it('has the correct default value', async () => {
+    expect(defaults.value) === "1";
+  })
+
+  it('changes values by radio button selected', async () => {
+    setupComponent();
+    const webexRadioButton = screen.getByText('Webex');
+
+    await userEvent.click(webexRadioButton);
+
+    expect(defaults.value) === "2";
+  })
 });
