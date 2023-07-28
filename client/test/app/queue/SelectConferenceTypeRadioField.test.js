@@ -45,12 +45,10 @@ describe('SelectConferenceTypeRadioField', () => {
     expect(container).toMatchSnapshot();
   });
 
-  it('has the correct default value', async () => {
-    expect(defaults.value) === "1";
-  })
-
   it('changes values by radio button selected', async () => {
     setupComponent();
+    expect (defaults.value) === "1";
+
     const webexRadioButton = screen.getByText('Webex');
 
     await userEvent.click(webexRadioButton);
