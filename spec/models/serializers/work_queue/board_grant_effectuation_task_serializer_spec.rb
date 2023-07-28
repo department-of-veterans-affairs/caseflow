@@ -30,7 +30,7 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
             representative_name: appeal.power_of_attorney&.representative_name,
             representative_type: appeal.power_of_attorney&.representative_type
           },
-          appellant_type: nil,
+          appellant_type: appeal.claimant.type,
           veteran_participant_id: veteran.participant_id,
           veteran_ssn: veteran.ssn,
           assigned_on: task.assigned_at,
@@ -73,7 +73,7 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
               uuid: appeal.uuid,
               appellant_type: appeal.claimant.type
             },
-            appellant_type: nil,
+            appellant_type: appeal.claimant.type,
             power_of_attorney: {
               representative_address: appeal.power_of_attorney&.representative_address,
               representative_email_address: appeal.power_of_attorney&.representative_email_address,
@@ -127,7 +127,7 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
               uuid: appeal.uuid,
               appellant_type: appeal.claimant.type
             },
-            appellant_type: nil,
+            appellant_type: appeal.claimant.type,
             power_of_attorney: {
               representative_address: appeal.power_of_attorney&.representative_address,
               representative_email_address: appeal.power_of_attorney&.representative_email_address,
