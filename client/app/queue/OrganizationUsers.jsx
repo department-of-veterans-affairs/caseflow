@@ -49,7 +49,7 @@ const listStyle = css({
 });
 const radioContainerStyle = css({
   padding: '-5rem 5rem 2rem 2rem',
-  marginTop: '-3.8rem'
+  // marginTop: '-3.5rem'
 })
 
 export default class OrganizationUsers extends React.PureComponent {
@@ -68,7 +68,7 @@ export default class OrganizationUsers extends React.PureComponent {
       addingUser: null,
       changingAdminRights: {},
       removingUser: {},
-      isVhaOrg: false,
+      isVhaOrg: false
     };
   }
 
@@ -270,9 +270,11 @@ export default class OrganizationUsers extends React.PureComponent {
                   { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
                   { this.removeUserButton(user) }
                 </div>
+              { this.state.organizationName === "Hearing Admin" &&
                 <div {...radioContainerStyle}>
                   <SelectConferenceTypeRadioField key={`${user.id}-conference-selection`} name={user.id}/>
                 </div>
+              }
             </div> }
           </div>
       </React.Fragment>;
