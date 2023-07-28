@@ -257,25 +257,27 @@ export default class OrganizationUsers extends React.PureComponent {
 
       return <React.Fragment key={user.id}>
           <div>
-            <li key={user.id} {...style}>{this.formatName(user)}
-              { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
-              { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
-              { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
-              { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
-            </li>
-            { (judgeTeam || dvcTeam) && admin ?
-              <div {...topUserBorder}></div > :
-              <div {...buttonContainerStyle}>
-                <div>
-                  { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
-                  { this.removeUserButton(user) }
-                </div>
-              { this.state.organizationName === "Hearing Admin" &&
-                <div {...radioContainerStyle}>
-                  <SelectConferenceTypeRadioField key={`${user.id}-conference-selection`} name={user.id}/>
-                </div>
-              }
-            </div> }
+            <ul>
+              <li key={user.id} {...style}>{this.formatName(user)}
+                { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
+                { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
+                { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
+                { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
+              </li>
+              { (judgeTeam || dvcTeam) && admin ?
+                <div {...topUserBorder}></div > :
+                <div {...buttonContainerStyle}>
+                  <div>
+                    { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
+                    { this.removeUserButton(user) }
+                  </div>
+                { this.state.organizationName === "Hearing Admin" &&
+                  <div {...radioContainerStyle}>
+                    <SelectConferenceTypeRadioField key={`${user.id}-conference-selection`} name={user.id}/>
+                  </div>
+                }
+              </div> }
+            </ul>
           </div>
       </React.Fragment>;
     });
@@ -302,10 +304,10 @@ export default class OrganizationUsers extends React.PureComponent {
         <div>
           <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
           <ul {...listStyle}>
-            { (judgeTeam || dvcTeam) ? '' : <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li> }
-            <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{ judgeTeam ?
+            { (judgeTeam || dvcTeam) ? '' : <ul><li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li></ul> }
+            <ul><li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{ judgeTeam ?
               COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
-              COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION }</li>
+              COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION }</li></ul>
           </ul>
         </div>
         <ul>{listOfUsers}</ul>
