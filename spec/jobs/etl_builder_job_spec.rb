@@ -25,8 +25,7 @@ describe ETLBuilderJob, :etl, :all_dbs do
 
       expect(slack_service).to have_received(:send_notification).with(
         "Error running ETLBuilderJob. See Sentry event sentry_12345",
-        "ETLBuilderJob",
-        "#appeals-data-workgroup"
+        "ETLBuilderJob"
       )
       expect(@raven_called).to eq(true)
     end
