@@ -4,8 +4,8 @@ class BatchProcessPriorityEpSync < BatchProcess
   class << self
     # Finds the records within the PEPSQ table that need to be batched and returns
     # a total number of records equal to the BATCH_LIMIT constant
-    def find_records
-      PriorityEndProductSyncQueue.completed_or_unbatched.not_synced_or_stuck.batchable.batch_limit
+    def find_records_to_batch
+      PriorityEndProductSyncQueue.batchable.syncable.ready_to_batch.batch_limit
     end
 
     # This method takes the records from find_records as an agrument.
@@ -52,7 +52,7 @@ class BatchProcessPriorityEpSync < BatchProcess
     batch_complete!
   end
 
-  # Assigns the batch_id (line 20) to every record that needs to be associated with the batch
+  # Assigns the batch_id to records associated with the batch process
   def assign_batch_to_queued_records!(records)
     records.each do |pepsq_record|
       pepsq_record.update!(batch_id: batch_id,

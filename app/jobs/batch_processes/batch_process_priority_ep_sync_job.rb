@@ -10,7 +10,7 @@ class BatchProcessPriorityEpSyncJob < CaseflowJob
   def perform
     begin
       batch = ActiveRecord::Base.transaction do
-        records_to_batch = BatchProcessPriorityEpSync.find_records
+        records_to_batch = BatchProcessPriorityEpSync.find_records_to_batch
         next if records_to_batch.empty?
 
         BatchProcessPriorityEpSync.create_batch!(records_to_batch)

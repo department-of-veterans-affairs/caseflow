@@ -7,7 +7,7 @@ describe BatchProcessPriorityEpSync, :postgres do
     Timecop.freeze(Time.utc(2022, 1, 1, 12, 0, 0))
   end
 
-  describe ".find_records" do
+  describe ".find_records_to_batch" do
     # Normal records
     let!(:pepsq_records) { create_list(:priority_end_product_sync_queue, BatchProcess::BATCH_LIMIT - 10) }
 
@@ -40,9 +40,9 @@ describe BatchProcessPriorityEpSync, :postgres do
     let!(:pepsq_additional_records) { create_list(:priority_end_product_sync_queue, 6) }
 
     # Apply sql filter
-    subject { BatchProcessPriorityEpSync.find_records }
+    subject { BatchProcessPriorityEpSync.find_records_to_batch }
 
-    context "verifying that find_records method filters records accurately" do
+    context "verifying that find_records_to_batch method filters records accurately" do
       it "checking that the batch_id is only null or batch state: COMPLETED" do
         expect(subject.any? { |r| r.batch_id.nil? }).to eq(true)
         expect(subject.any? { |r| r&.batch_process&.state == "COMPLETED" }).to eq(true)

@@ -24,7 +24,7 @@ class BatchProcess < CaseflowRecord
   class << self
     # A method for overriding, for the purpose of finding the records that
     # need to be batched. This method should return the records found.
-    def find_records
+    def find_records_to_batch
       # no-op, can be overwritten
     end
 

@@ -60,9 +60,9 @@ describe BatchProcess, :postgres do
     end
   end
 
-  describe ".find_records" do
+  describe ".find_records_to_batch" do
     it "is a no-op method that does nothing and returns nil" do
-      expect(BatchProcess.find_records).to eq(nil)
+      expect(BatchProcess.find_records_to_batch).to eq(nil)
     end
   end
 
