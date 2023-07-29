@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe PriorityEndProductSyncQueue, :postgres do
-  describe ".completed_or_unbatched" do
+  describe ".batchable" do
     before do
       Timecop.freeze(Time.utc(2022, 1, 1, 12, 0, 0))
     end
@@ -22,7 +22,7 @@ describe PriorityEndProductSyncQueue, :postgres do
       create(:priority_end_product_sync_queue, batch_id: pre_processing_batch_process.batch_id)
     end
 
-    subject { PriorityEndProductSyncQueue.completed_or_unbatched.to_a }
+    subject { PriorityEndProductSyncQueue.batchable.to_a }
 
     it "will return a Priority End Product Sync Queue record that has never been batched" do
       expect(subject).to include(queued_record_never_batched)
@@ -41,7 +41,7 @@ describe PriorityEndProductSyncQueue, :postgres do
     end
   end
 
-  describe ".batchable" do
+  describe ".ready_to_batch" do
     before do
       Timecop.freeze(Time.utc(2022, 1, 1, 12, 0, 0))
     end
@@ -55,13 +55,13 @@ describe PriorityEndProductSyncQueue, :postgres do
       create(:priority_end_product_sync_queue, last_batched_at: Time.zone.now - (BatchProcess::ERROR_DELAY + 1).hours)
     end
 
-    subject { PriorityEndProductSyncQueue.batchable.to_a }
+    subject { PriorityEndProductSyncQueue.ready_to_batch.to_a }
 
     it "will return a Priority End Product Sync Queue record that has never been batched" do
       expect(subject).to include(queued_record_never_batched)
     end
 
-    it "will return a Priority End Product Sync Queue record that was batched after the ERROR_DELAY" do
+    it "will return a Priority End Product Sync Queue record that was batched outside of the ERROR_DELAY" do
       expect(subject).to include(queued_record_batched_after_error_delay)
     end
 
@@ -74,7 +74,7 @@ describe PriorityEndProductSyncQueue, :postgres do
     end
   end
 
-  describe ".not_synced_or_stuck" do
+  describe ".syncable" do
     let!(:not_processed_record) { create(:priority_end_product_sync_queue) }
     let!(:pre_processing_record) { create(:priority_end_product_sync_queue, :pre_processing) }
     let!(:processing_record) { create(:priority_end_product_sync_queue, :processing) }
@@ -82,7 +82,7 @@ describe PriorityEndProductSyncQueue, :postgres do
     let!(:synced_record) { create(:priority_end_product_sync_queue, :synced) }
     let!(:stuck_record) { create(:priority_end_product_sync_queue, :stuck) }
 
-    subject { PriorityEndProductSyncQueue.not_synced_or_stuck.to_a }
+    subject { PriorityEndProductSyncQueue.syncable.to_a }
 
     it "will return a Priority End Product Sync Queue records with a status of NOT_PROCESSED" do
       expect(not_processed_record.status).to eq(Constants.PRIORITY_EP_SYNC.not_processed)
