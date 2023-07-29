@@ -187,10 +187,32 @@ paths:
             schema:
               oneOf:
                 - $ref: '#/components/schemas/UploadDocumentRequestWithRecipientInformation'
+                - $ref: '#/components/schemas/UploadDocumentRequestWithRoColocatedRecipientInformation'
                 - $ref: '#/components/schemas/UploadDocumentRequest'
             examples:
               "With recipient information for Package Manager":
                 $ref: '#/components/schemas/UploadDocumentRequestWithRecipientInformation'
+              "With ro-colocated recipient information for Package Manager":
+                value:
+                  veteran_identifier: '555555555'
+                  document_type: 'BVA Decision'
+                  document_subject: 'Test'
+                  document_name: 'Test Doc'
+                  file: 'VGhpcyBpcyBhIHRlc3QuIERvIG5vdCBiZSBhbGFybWVkLgo='
+                  recipient_info:
+                   - {
+                     recipient_type: "ro-colocated",
+                     name: "POA Name",
+                     claimant_station_of_jurisdiction: "123",
+                     poa_code: "02A",
+                     destination_type: "domesticAddress",
+                     address_line_1: "123 N. Main St.",
+                     postal_code: "29601",
+                     city: "Greenville",
+                     state: "SC",
+                     county_code: "US",
+                     copies: 1
+                   }
               "Without recipient information for Package Manager":
                 value:
                   veteran_identifier: '555555555'
@@ -389,10 +411,32 @@ paths:
             schema:
               oneOf:
                 - $ref: '#/components/schemas/UploadDocumentRequestWithRecipientInformation'
+                - $ref: '#/components/schemas/UploadDocumentRequestWithRoColocatedRecipientInformation'
                 - $ref: '#/components/schemas/UploadDocumentRequest'
             examples:
               "With recipient information for Package Manager":
                 $ref: '#/components/schemas/UploadDocumentRequestWithRecipientInformation'
+              "With ro-colocated recipient information for Package Manager":
+                value:
+                  veteran_identifier: '555555555'
+                  document_type: 'BVA Decision'
+                  document_subject: 'Test'
+                  document_name: 'Test Doc'
+                  file: 'VGhpcyBpcyBhIHRlc3QuIERvIG5vdCBiZSBhbGFybWVkLgo='
+                  recipient_info:
+                   - {
+                     recipient_type: "ro-colocated",
+                     name: "POA Name",
+                     claimant_station_of_jurisdiction: "123",
+                     poa_code: "02A",
+                     destination_type: "domesticAddress",
+                     address_line_1: "123 N. Main St.",
+                     postal_code: "29601",
+                     city: "Greenville",
+                     state: "SC",
+                     county_code: "US",
+                     copies: 1
+                   }
               "Without recipient information for Package Manager":
                 value:
                   veteran_identifier: '555555555'
@@ -600,10 +644,31 @@ paths:
             schema:
               oneOf:
                 - $ref: '#/components/schemas/OutcodeRequestWithRecipientInformation'
+                - $ref: '#/components/schemas/OutcodeRequestWithRoColocatedRecipientInformation'
                 - $ref: '#/components/schemas/OutcodeRequest'
             examples:
               "With recipient information for Package Manager":
                 $ref: '#/components/schemas/OutcodeRequestWithRecipientInformation'
+              "With ro-colocated recipient information for Package Manager":
+                value:
+                  citation_number: "A19062122"
+                  decision_date: "December 21, 2022"
+                  redacted_document_location: "\\path.va.gov\\archdata$\\some-file.pdf"
+                  file: "VGVzdGluZyAxMjMK"
+                  recipient_info:
+                   - {
+                     recipient_type: "ro-colocated",
+                     name: "POA Name",
+                     claimant_station_of_jurisdiction: "123",
+                     poa_code: "02A",
+                     destination_type: "domesticAddress",
+                     address_line_1: "123 N. Main St.",
+                     postal_code: "29601",
+                     city: "Greenville",
+                     state: "SC",
+                     county_code: "US",
+                     copies: 1
+                   }
               "Without recipient information for Package Manager":
                 value:
                   citation_number: "A19062122"
@@ -960,6 +1025,16 @@ components:
               items:
                 type: object
                 $ref: '#/components/schemas/RecipientRequestInformation'
+    UploadDocumentRequestWithRoColocatedRecipientInformation:
+      allOf:
+        - $ref: '#/components/schemas/UploadDocumentRequest'
+        - type: object
+          properties:
+            recipient_info:
+              type: array
+              items:
+                type: object
+                $ref: '#/components/schemas/RoColocatedRecipientRequestInformation'
     UploadDocumentRequest:
       type: object
       properties:
@@ -992,6 +1067,62 @@ components:
               items:
                 type: object
                 $ref: '#/components/schemas/RecipientRequestInformation'
+    OutcodeRequestWithRoColocatedRecipientInformation:
+      allOf:
+        - $ref: '#/components/schemas/OutcodeRequest'
+        - type: object
+          properties:
+            recipient_info:
+              type: array
+              items:
+                type: object
+                $ref: '#/components/schemas/RoColocatedRecipientRequestInformation'
+    RoColocatedRecipientRequestInformation:
+      type: object
+      properties:
+        recipient_type:
+          type: string
+          example: 'ro-colocated'
+        name:
+          description: 'Required if recipient_type is organization, system, or ro-colocated. Unused for people.'
+          type: string
+          example: "POA Name"
+        claimant_station_of_jurisdiction:
+          type: string
+          description: 'Required if recipient_type is ro-colocated.'
+          example: "123"
+        postal_code:
+          type: string
+        destination_type:
+          type: string
+          enum: ['domesticAddress', 'internationalAddress', 'militaryAddress']
+        address_line_1:
+          type: string
+        address_line_2:
+          type: string
+        address_line_3:
+          type: string
+        address_line_4:
+          type: string
+        address_line_5:
+          type: string
+        address_line_6:
+          type: string
+        treat_line_2_as_addressee:
+          type: boolean
+        treat_line_3_as_addressee:
+          type: boolean
+        city:
+          type: string
+        state:
+          type: string
+        country_name:
+          type: string
+        country_code:
+          type: string
+        copies:
+          type: integer
+          example: 1
     RecipientRequestInformation:
       type: object
       properties:
