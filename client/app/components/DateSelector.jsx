@@ -45,9 +45,11 @@ export const DateSelector = (props) => {
   };
 
   useEffect(() => {
-    const dateIsValid = dateValidationError(value) === null && value !== '';
+    if (validateDate) {
+      const dateIsValid = dateValidationError(value) === null && value !== '';
 
-    validateDate?.(dateIsValid);
+      validateDate(dateIsValid);
+    }
   }, [value]);
 
   let max = '9999-12-31';
