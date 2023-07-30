@@ -1,6 +1,5 @@
 import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
-import ValidatorsUtil from '../../../util/ValidatorsUtil';
 
 import QueueFlowModal from '../QueueFlowModal';
 import RadioField from '../../../components/RadioField';
@@ -10,9 +9,17 @@ import TextareaField from '../../../components/TextareaField';
 
 import { marginTop, marginBottom } from '../../constants';
 
-const CompleteHearingPostponementRequestModal = (props) => {
-  const { futureDate } = ValidatorsUtil;
+const RULING_OPTIONS = [
+  { displayText: 'Granted', value: true },
+  { displayText: 'Denied', value: false }
+];
 
+const POSTPONEMENT_ACTIONS = [
+  { displayText: 'Reschedule immediately', value: 'reschedule' },
+  { displayText: 'Send to Schedule Veteran list', value: 'schedule_later' }
+];
+
+const CompleteHearingPostponementRequestModal = (props) => {
   const formReducer = (state, action) => {
     switch (action.type) {
     case 'granted':
@@ -24,7 +31,12 @@ const CompleteHearingPostponementRequestModal = (props) => {
     case 'rulingDate':
       return {
         ...state,
-        date: action.payload
+        rulingDate: { ...state.rulingDate, value: action.payload }
+      };
+    case 'dateIsValid':
+      return {
+        ...state,
+        rulingDate: { ...state.rulingDate, valid: action.payload }
       };
     case 'instructions':
       return {
@@ -45,35 +57,23 @@ const CompleteHearingPostponementRequestModal = (props) => {
     formReducer,
     {
       granted: null,
-      date: '',
+      rulingDate: { value: '', valid: false },
       instructions: '',
       scheduledOption: null
     }
   );
 
-  const validateDate = (date) => date !== '' && !futureDate(date);
-
   const validateForm = () => {
-    const { granted, date, instructions, scheduledOption } = state;
+    const { granted, rulingDate, instructions, scheduledOption } = state;
 
     if (granted) {
-      return validateDate(date) && instructions !== '' && scheduledOption !== '';
+      return rulingDate.valid && instructions !== '' && scheduledOption !== '';
     }
 
-    return granted !== null && validateDate(date) && instructions !== '';
+    return granted !== null && rulingDate.valid && instructions !== '';
   };
 
   const submit = () => console.log(props);
-
-  const GRANTED_OR_DENIED_OPTIONS = [
-    { displayText: 'Granted', value: true },
-    { displayText: 'Denied', value: false }
-  ];
-
-  const RESCHEDULE_HEARING_OPTIONS = [
-    { displayText: 'Reschedule immediately', value: 'schedule_now' },
-    { displayText: 'Send to Schedule Veteran list', value: 'schedule_later' }
-  ];
 
   return (
     <QueueFlowModal
@@ -92,7 +92,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
           inputRef={props.register}
           onChange={(value) => dispatch({ type: 'granted', payload: value === 'true' })}
           value={state.granted}
-          options={GRANTED_OR_DENIED_OPTIONS}
+          options={RULING_OPTIONS}
         />
 
         {state.granted && <Alert
@@ -106,9 +106,10 @@ const CompleteHearingPostponementRequestModal = (props) => {
           label="Date of ruling:"
           name="rulingDateSelector"
           onChange={(value) => dispatch({ type: 'rulingDate', payload: value })}
-          value={state.date}
+          value={state.rulingDate.value}
           type="date"
           noFutureDates
+          validateDate={(value) => dispatch({ type: 'dateIsValid', payload: value })}
         />
 
         {state.granted && <RadioField
@@ -118,7 +119,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
           inputRef={props.register}
           onChange={(value) => dispatch({ type: 'scheduledOption', payload: value })}
           value={state.scheduledOption}
-          options={RESCHEDULE_HEARING_OPTIONS}
+          options={POSTPONEMENT_ACTIONS}
           vertical
           styling={marginBottom(1)}
         />}

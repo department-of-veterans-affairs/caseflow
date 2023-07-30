@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import TextField from '../components/TextField';
 import ValidatorsUtil from '../util/ValidatorsUtil';
@@ -22,6 +22,7 @@ export const DateSelector = (props) => {
     dateErrorMessage,
     noFutureDates = false,
     inputStyling,
+    validateDate,
     ...passthroughProps
   } = props;
 
@@ -42,6 +43,12 @@ export const DateSelector = (props) => {
 
     return null;
   };
+
+  useEffect(() => {
+    const dateIsValid = dateValidationError(value) === null && value !== '';
+
+    validateDate?.(dateIsValid);
+  }, [value]);
 
   let max = '9999-12-31';
 
@@ -140,7 +147,12 @@ DateSelector.propTypes = {
   /**
    * Disables future dates from being selected or entered
    */
-  noFutureDates: PropTypes.bool
+  noFutureDates: PropTypes.bool,
+
+  /**
+   * Disables form submission if date is empty or invalid
+   */
+  validateDate: PropTypes.func
 };
 
 export default DateSelector;
