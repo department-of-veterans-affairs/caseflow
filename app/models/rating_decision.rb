@@ -62,7 +62,7 @@ class RatingDecision
     def deserialize(hash)
       # reject unknown attributes to prevent UnknownAttribute errors
       new(hash.merge(special_issues: deserialize_special_issues(hash))
-      .reject { |k, _| !rating_decision.attribute_present?(k) })
+      .reject { |k, _| !RatingDecision.attribute_method?(k) })
     end
 
     # rubocop:disable Metrics/CyclomaticComplexity
