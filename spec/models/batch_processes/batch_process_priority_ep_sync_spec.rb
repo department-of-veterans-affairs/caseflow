@@ -7,66 +7,76 @@ describe BatchProcessPriorityEpSync, :postgres do
     Timecop.freeze(Time.utc(2022, 1, 1, 12, 0, 0))
   end
 
-  describe ".find_records" do
-    # Normal records
-    let!(:pepsq_records) { create_list(:priority_end_product_sync_queue, BatchProcess::BATCH_LIMIT - 10)}
+  describe ".find_records_to_batch" do
+    # Bulk creation of Pepsq records
+    let!(:pepsq_records) { create_list(:priority_end_product_sync_queue, BatchProcess::BATCH_LIMIT - 10) }
 
-    # Pepsq Status Checks
-    let!(:pepsq_pre_processing) {create(:priority_end_product_sync_queue, :pre_processing) }
-    let!(:pepsq_processing) {create(:priority_end_product_sync_queue, :processing)}
-    let!(:pepsq_synced) {create(:priority_end_product_sync_queue, :synced)}
-    let!(:pepsq_error) {create(:priority_end_product_sync_queue, :error)}
-    let!(:pepsq_stuck) {create(:priority_end_product_sync_queue, :stuck)}
+    # Pepsq Records for Status Checks
+    let!(:pepsq_pre_processing) { create(:priority_end_product_sync_queue, :pre_processing) }
+    let!(:pepsq_processing) { create(:priority_end_product_sync_queue, :processing) }
+    let!(:pepsq_synced) { create(:priority_end_product_sync_queue, :synced) }
+    let!(:pepsq_error) { create(:priority_end_product_sync_queue, :error) }
+    let!(:pepsq_stuck) { create(:priority_end_product_sync_queue, :stuck) }
 
-    # Creating batches for state check
-    let!(:bp_pre_processing) {BatchProcessPriorityEpSync.create(state: "PRE_PROCESSING")}
-    let!(:bp_processing) {BatchProcessPriorityEpSync.create(state: "PROCESSING")}
-    let!(:bp_complete) {BatchProcessPriorityEpSync.create(state: "COMPLETED")}
+    # Batch Processes for state check
+    let!(:bp_pre_processing) { BatchProcessPriorityEpSync.create(state: "PRE_PROCESSING") }
+    let!(:bp_processing) { BatchProcessPriorityEpSync.create(state: "PROCESSING") }
+    let!(:bp_complete) { BatchProcessPriorityEpSync.create(state: "COMPLETED") }
 
-    # Batch_id of nil or batch_process.state of complete
-    let!(:pepsq_batch_complete) {create(:priority_end_product_sync_queue, batch_id: bp_pre_processing.batch_id)}
-    let!(:pepsq_batch_processing) {create(:priority_end_product_sync_queue, batch_id: bp_processing.batch_id)}
-    let!(:pepsq_batch_pre_processing) {create(:priority_end_product_sync_queue, batch_id: bp_complete.batch_id)}
+    # Batch_id of nil or batch_process.state of COMPLETED
+    let!(:pepsq_batch_complete) { create(:priority_end_product_sync_queue, batch_id: bp_pre_processing.batch_id) }
+    let!(:pepsq_batch_processing) { create(:priority_end_product_sync_queue, batch_id: bp_processing.batch_id) }
+    let!(:pepsq_batch_pre_processing) { create(:priority_end_product_sync_queue, batch_id: bp_complete.batch_id) }
 
-    # last_batched_at checks
-    let!(:pepsq_lba_before_error_delay_ends) {create(:priority_end_product_sync_queue, last_batched_at: Time.zone.now )}
-    let!(:pepsq_lba_aftere_error_delay_ends) {create(:priority_end_product_sync_queue, last_batched_at: Time.zone.now - 14.hours )}
+    # Additional records for last_batched_at checks
+    let!(:pepsq_lba_before_error_delay_ends) do
+      create(:priority_end_product_sync_queue, last_batched_at: Time.zone.now)
+    end
+    let!(:pepsq_lba_aftere_error_delay_ends) do
+      create(:priority_end_product_sync_queue, last_batched_at: Time.zone.now - 14.hours)
+    end
 
-    # testing BATCH_LIMIT
+    # Additional records to test the BATCH_LIMIT
     let!(:pepsq_additional_records) { create_list(:priority_end_product_sync_queue, 6) }
 
-    # Apply sql filter
-    let(:recs) {BatchProcessPriorityEpSync.find_records}
+    subject { BatchProcessPriorityEpSync.find_records_to_batch }
 
-    context "verifying that find_records method filters records accurately" do
-      it "checking that the batch_id is only null or batch state: complete" do
-        expect(recs.any? {|r| r.batch_id == nil}).to eq(true)
-        expect(recs.any? {|r| r&.batch_process&.state == "COMPLETED"}).to eq(true)
-        expect(recs.any? {|r| r&.batch_process&.state == "PRE_PROCESSING"}).to eq(false)
-        expect(recs.any? {|r| r&.batch_process&.state == "PROCESSING"}).to eq(false)
-      end
+    it "will only return records that have a NULL batch_id OR have a batch_id tied to a COMPLETED batch process" do
+      expect(subject.all? { |r| r.batch_id.nil? || r.batch_process.state == "COMPLETED" }).to eq(true)
+      expect(subject.all? { |r| r&.batch_process&.state == "PRE_PROCESSING" }).to eq(false)
+      expect(subject.all? { |r| r&.batch_process&.state == "PROCESSING" }).to eq(false)
+    end
 
-      it "checking that synced or stuck records are ignored" do
-        expect(recs.any? {|r| r.status == "SYNCED"}).to eq(false)
-        expect(recs.any? {|r| r.status == "STUCK"}).to eq(false)
-      end
+    it "will NOT return records that have a status of SYNCED OR STUCK" do
+      expect(subject.all? { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }).to eq(false)
+      expect(subject.all? { |r| r.status == Constants.PRIORITY_EP_SYNC.stuck }).to eq(false)
+    end
 
-      it "checking that last_batched at is only ever null or over ERROR_DELAY hours old" do
-        expect(recs.any? {|r| r.last_batched_at == nil}).to eq(true)
-        expect(recs.include?(pepsq_lba_aftere_error_delay_ends)).to eq(true)
-        expect(recs.include?(pepsq_lba_before_error_delay_ends)).to eq(false)
-      end
+    it "will return records that have a status of NOT_PROCESSED, PRE_PROCESSING, PROCESSING, or ERROR" do
+      expect(subject.all? do |r|
+        r.status == Constants.PRIORITY_EP_SYNC.not_processed ||
+        r.status == Constants.PRIORITY_EP_SYNC.pre_processing ||
+        r.status == Constants.PRIORITY_EP_SYNC.processing ||
+        r.status == Constants.PRIORITY_EP_SYNC.error
+      end).to eq(true)
+    end
 
-      context "checking that the number of records in a batch doesn't exceed BATCH_LIMIT" do
-        it "number of records in queue should equal size of BATCH_LIMIT + 1" do
-          expect(PriorityEndProductSyncQueue.count).to eq(BatchProcess::BATCH_LIMIT + 6)
-        end
+    it "will only return records with a last_batched_at that is NULL OR outside of the ERROR_DELAY" do
+      expect(subject.all? { |r| r.last_batched_at.nil? || r.last_batched_at <= BatchProcess::ERROR_DELAY.hours.ago })
+        .to eq(true)
+      expect(subject.include?(pepsq_lba_aftere_error_delay_ends)).to eq(true)
+      expect(subject.include?(pepsq_lba_before_error_delay_ends)).to eq(false)
+    end
 
-        it "the number of returned PEPSQ records should match the BATCH_LIMIT" do
-          expect(recs.count).to eq(BatchProcess::BATCH_LIMIT)
-        end
+    it "will NOT return records with a last_batched_at that is within the ERROR_DELAY" do
+      expect(subject.none? do |r|
+        r.last_batched_at.present? && r.last_batched_at > BatchProcess::ERROR_DELAY.hours.ago
+      end).to eq(true)
+    end
 
-      end
+    it "number of records returned will not exceed the BATCH_LIMIT when available records exceed the BATCH_LIMIT" do
+      expect(PriorityEndProductSyncQueue.count).to eq(BatchProcess::BATCH_LIMIT + 6)
+      expect(subject.count).to eq(BatchProcess::BATCH_LIMIT)
     end
   end
 
@@ -74,8 +84,12 @@ describe BatchProcessPriorityEpSync, :postgres do
     let!(:pepsq_records) { create_list(:priority_end_product_sync_queue, 10) }
     subject { BatchProcessPriorityEpSync.create_batch!(pepsq_records) }
 
-    it "will create a new batch_process" do
+    before do
       subject
+    end
+
+    it "will create a new batch_process" do
+      expect(subject.class).to be(BatchProcessPriorityEpSync)
       expect(BatchProcess.all.count).to eq(1)
     end
 
@@ -92,19 +106,16 @@ describe BatchProcessPriorityEpSync, :postgres do
     end
 
     it "will assign the newly created batch_process batch_id to all newly batched records" do
-      subject
       all_pepsq_batch_ids = pepsq_records.map(&:batch_id)
       expect(all_pepsq_batch_ids).to all(eq(subject.batch_id))
     end
 
     it "will set the status of each newly batched record to 'PRE_PROCESSING'" do
-      subject
       all_pepsq_statuses = pepsq_records.map(&:status)
       expect(all_pepsq_statuses).to all(eq(Constants.PRIORITY_EP_SYNC.pre_processing))
     end
 
     it "will set the last_batched_at Date/Time of each newly batched record to the current Date/Time" do
-      subject
       all_pepsq_last_batched_at_times = pepsq_records.map(&:last_batched_at)
       expect(all_pepsq_last_batched_at_times).to all(eq(Time.zone.now))
     end
@@ -153,12 +164,11 @@ describe BatchProcessPriorityEpSync, :postgres do
 
     let!(:batch_process) { BatchProcessPriorityEpSync.create_batch!(pepsq_records) }
 
-    subject { batch_process }
+    subject { batch_process.process_batch! }
 
     context "when all batched records in the queue are able to sync successfully" do
       before do
-        subject.process_batch!
-        subject.reload
+        subject
         pepsq_records.each(&:reload)
       end
       it "each batched record in the queue will have a status of 'SYNCED'" do
@@ -189,8 +199,7 @@ describe BatchProcessPriorityEpSync, :postgres do
       before do
         active_hlr_epe_w_cleared_vbms_ext_claim.vbms_ext_claim.update!(level_status_code: "CAN")
         allow(Rails.logger).to receive(:error)
-        subject.process_batch!
-        subject.reload
+        subject
         pepsq_records.each(&:reload)
       end
 
@@ -207,26 +216,30 @@ describe BatchProcessPriorityEpSync, :postgres do
       end
 
       it "the failed batched record will raise and log error" do
+        active_hlr_epe_w_cleared_vbms_ext_claim.reload
         expect(Rails.logger).to have_received(:error)
-          .with("#<Caseflow::Error::PriorityEndProductSyncError: EPE synced_status does not match VBMS.>")
+          .with("#<Caseflow::Error::PriorityEndProductSyncError: EPE ID: #{active_hlr_epe_w_cleared_vbms_ext_claim.id}"\
+                ".  EPE synced_status of #{active_hlr_epe_w_cleared_vbms_ext_claim.synced_status} does not match the"\
+                " VBMS_EXT_CLAIM level_status_code of"\
+                " #{active_hlr_epe_w_cleared_vbms_ext_claim.vbms_ext_claim.level_status_code}.>")
       end
 
       it "the batch process will have a state of 'COMPLETED'" do
-        expect(subject.state).to eq(Constants.BATCH_PROCESS.completed)
+        expect(batch_process.state).to eq(Constants.BATCH_PROCESS.completed)
       end
 
       it "the number of records_attempted for the batch process will match the number of PEPSQ records batched" do
-        expect(subject.records_attempted).to eq(pepsq_records.count)
+        expect(batch_process.records_attempted).to eq(pepsq_records.count)
       end
 
       it "the number of records_completed for the batch process will match the number of successfully synced records" do
         synced_pepsq_records = pepsq_records.select { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
-        expect(subject.records_completed).to eq(synced_pepsq_records.count)
+        expect(batch_process.records_completed).to eq(synced_pepsq_records.count)
       end
 
       it "the number of records_failed for the batch process will match the number of errored records" do
         failed_sync_pepsq_records = pepsq_records.reject { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
-        expect(subject.records_failed).to eq(failed_sync_pepsq_records.count)
+        expect(batch_process.records_failed).to eq(failed_sync_pepsq_records.count)
       end
     end
 
@@ -234,8 +247,7 @@ describe BatchProcessPriorityEpSync, :postgres do
       before do
         active_hlr_epe_w_cleared_vbms_ext_claim.vbms_ext_claim.destroy!
         allow(Rails.logger).to receive(:error)
-        subject.process_batch!
-        subject.reload
+        subject
         pepsq_records.each(&:reload)
       end
 
@@ -258,25 +270,27 @@ describe BatchProcessPriorityEpSync, :postgres do
 
       it "the failed batched record will raise and log error" do
         expect(Rails.logger).to have_received(:error)
-          .with("#<Caseflow::Error::PriorityEndProductSyncError: Claim Not In VBMS_EXT_CLAIM.>")
+          .with("#<Caseflow::Error::PriorityEndProductSyncError: Claim ID:"\
+                " #{active_hlr_epe_w_cleared_vbms_ext_claim.reference_id}"\
+                " not In VBMS_EXT_CLAIM.>")
       end
 
       it "the batch process will have a state of 'COMPLETED'" do
-        expect(subject.state).to eq(Constants.BATCH_PROCESS.completed)
+        expect(batch_process.state).to eq(Constants.BATCH_PROCESS.completed)
       end
 
       it "the number of records_attempted for the batch process will match the number of PEPSQ records batched" do
-        expect(subject.records_attempted).to eq(pepsq_records.count)
+        expect(batch_process.records_attempted).to eq(pepsq_records.count)
       end
 
       it "the number of records_completed for the batch process will match the number of successfully synced records" do
         synced_pepsq_records = pepsq_records.select { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
-        expect(subject.records_completed).to eq(synced_pepsq_records.count)
+        expect(batch_process.records_completed).to eq(synced_pepsq_records.count)
       end
 
       it "the number of records_failed for the batch process will match the number of errored records" do
         failed_sync_pepsq_records = pepsq_records.reject { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
-        expect(subject.records_failed).to eq(failed_sync_pepsq_records.count)
+        expect(batch_process.records_failed).to eq(failed_sync_pepsq_records.count)
       end
     end
 
@@ -285,8 +299,7 @@ describe BatchProcessPriorityEpSync, :postgres do
         epe = EndProductEstablishment.find active_hlr_epe_w_cleared_vbms_ext_claim.id
         Fakes::EndProductStore.cache_store.redis.del("end_product_records_test:#{epe.veteran_file_number}")
         allow(Rails.logger).to receive(:error)
-        subject.process_batch!
-        subject.reload
+        subject
         pepsq_records.each(&:reload)
       end
 
@@ -311,21 +324,21 @@ describe BatchProcessPriorityEpSync, :postgres do
       end
 
       it "the batch process will have a state of 'COMPLETED'" do
-        expect(subject.state).to eq(Constants.BATCH_PROCESS.completed)
+        expect(batch_process.state).to eq(Constants.BATCH_PROCESS.completed)
       end
 
       it "the number of records_attempted for the batch process will match the number of PEPSQ records batched" do
-        expect(subject.records_attempted).to eq(pepsq_records.count)
+        expect(batch_process.records_attempted).to eq(pepsq_records.count)
       end
 
       it "the number of records_completed for the batch process will match the number of successfully synced records" do
         synced_pepsq_records = pepsq_records.select { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
-        expect(subject.records_completed).to eq(synced_pepsq_records.count)
+        expect(batch_process.records_completed).to eq(synced_pepsq_records.count)
       end
 
       it "the number of records_failed for the batch process will match the number of errored records" do
         failed_sync_pepsq_records = pepsq_records.reject { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
-        expect(subject.records_failed).to eq(failed_sync_pepsq_records.count)
+        expect(batch_process.records_failed).to eq(failed_sync_pepsq_records.count)
       end
     end
   end

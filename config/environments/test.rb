@@ -91,9 +91,9 @@ Rails.application.configure do
 
 # BatchProcess ENVs
   # priority_end_product_sync
-  ENV["BATCH_LIMIT"] ||= "100" # Max number of records in a batch
-  ENV["ERROR_DELAY"] ||= "12" # In number of hours
-  ENV["MAX_ERRORS_BEFORE_STUCK"] ||= "3" # When record errors for X time, it's declared stuck
+  ENV["BATCH_PROCESS_BATCH_LIMIT"]||= "100" # Max number of records in a batch
+  ENV["BATCH_PROCESS_ERROR_DELAY"] ||= "12" # In number of hours
+  ENV["BATCH_PROCESS_MAX_ERRORS_BEFORE_STUCK"] ||= "3" # When record errors for X time, it's declared stuck
 
 
   config.active_job.queue_adapter = :test
