@@ -20,7 +20,7 @@ Rails.application.configure do
 
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
-  config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
+  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
 
   # Compress JavaScripts and CSS.
   config.assets.js_compressor = :uglifier
@@ -98,6 +98,11 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  #=====================================================================================================================
+  # Please keep custom config settings below this comment.
+  #   This will ensure cleaner diffs when generating config file changes during Rails upgrades.
+  #=====================================================================================================================
 
   # Setup S3
   config.s3_enabled = ENV["AWS_BUCKET_NAME"].present?
