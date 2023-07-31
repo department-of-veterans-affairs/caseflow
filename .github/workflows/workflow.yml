@@ -84,10 +84,10 @@ jobs:
         id: cache-yarn-cache
         uses: actions/cache/restore@v3
         with:
-          key: yarn-cache-${{ GITHUB_BASE_REF }}
+          key: yarn-cache-${{ env.GITHUB_BASE_REF }}
           path: ${{ steps.get-yarn-cache-dir }}
           restore-keys:
-            yarn-cache-${{ GITHUB_BASE_REF }}
+            yarn-cache-${{ env.GITHUB_BASE_REF }}
             yarn-cache-master
 
       - name: Install Node Dependencies
@@ -97,7 +97,7 @@ jobs:
         if: steps.cache-yarn-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v3
         with:
-          key: yarn-cache-${{ GITHUB_BASE_REF }}
+          key: yarn-cache-${{ env.GITHUB_BASE_REF }}
           path: ${{ steps.get-yarn-cache-dir }}
 
       - name: setup testfiles directory
