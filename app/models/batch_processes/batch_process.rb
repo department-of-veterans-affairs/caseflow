@@ -53,7 +53,7 @@ class BatchProcess < CaseflowRecord
 
   private
 
-  # Instialize Counters
+  # Initialize Counters
   def init_counters
     @completed_count = 0
     @failed_count = 0
