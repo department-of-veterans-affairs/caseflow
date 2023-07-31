@@ -33,6 +33,13 @@ module CaseflowCertification
     # Default (starting v5.0): true
     config.active_record.belongs_to_required_by_default = false
     # ==================================================================================================================
+    # Rails 5.1 config overrides
+    # ------------------------------------------------------------------------------------------------------------------
+    # Make `form_with` generate non-remote forms.
+    # Default (starting v5.1): true
+    # Default (starting v6.1): false
+    Rails.application.config.action_view.form_with_generates_remote_forms = false
+    # ==================================================================================================================
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
