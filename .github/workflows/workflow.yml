@@ -81,8 +81,7 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           key: dot-cache-yarn-v2-${{ arch }}-${{ checksum "client/yarn.lock" }}
-          path: |
-            ~/.cache/yarn
+          path: ~/.cache/yarn
           restore-keys:
             dot-cache-yarn-v2-${{ arch }}-${{ checksum "client/yarn.lock" }}
 
@@ -94,8 +93,7 @@ jobs:
         uses: actions/cache/save@v3
         with:
           key: dot-cache-yarn-v2-${{ arch }}-${{ checksum "client/yarn.lock" }}
-          path: |
-            ~/.cache/yarn
+          path: ~/.cache/yarn
 
       - name: setup testfiles directory
         run: ./ci-bin/capture-log "mkdir -p tmp/testfiles"
