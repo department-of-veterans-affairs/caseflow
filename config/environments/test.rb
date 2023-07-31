@@ -1,12 +1,5 @@
 require "fileutils"
 Rails.application.configure do
-  config.after_initialize do
-    Bullet.enable        = false
-    Bullet.bullet_logger = true
-    Bullet.rails_logger  = true
-    Bullet.raise = true
-    Bullet.unused_eager_loading_enable = false
-  end
   # Settings specified here will take precedence over those in config/application.rb.
 
   # The test environment is used exclusively to run your application's
@@ -53,23 +46,6 @@ Rails.application.configure do
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 
-  # Setup S3
-  config.s3_enabled = false
-
-  config.vacols_db_name = "VACOLS_TEST"
-
-  if ENV['TEST_SUBCATEGORY']
-    assets_cache_path = Rails.root.join("tmp/cache/assets/#{ENV['TEST_SUBCATEGORY']}")
-    config.assets.configure do |env|
-      env.cache = Sprockets::Cache::FileStore.new(assets_cache_path)
-    end
-  end
-
-  # Allows rake scripts to be run without querying VACOLS on startup
-  if ENV['DISABLE_FACTORY_BOT_INITIALIZERS']
-    config.factory_bot.definition_file_paths = []
-  end
-
   unless ENV['RAILS_ENABLE_TEST_LOG']
     config.logger = Logger.new(nil)
     config.log_level = :error
@@ -79,6 +55,19 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  #=====================================================================================================================
+  # Please keep custom config settings below this comment.
+  #   This will ensure cleaner diffs when generating config file changes during Rails upgrades.
+  #=====================================================================================================================
+
+  config.after_initialize do
+    Bullet.enable        = false
+    Bullet.bullet_logger = true
+    Bullet.rails_logger  = true
+    Bullet.raise = true
+    Bullet.unused_eager_loading_enable = false
+  end
 
   ENV["VA_DOT_GOV_API_URL"] = "https://sandbox-api.va.gov/"
 
@@ -95,6 +84,23 @@ Rails.application.configure do
 
   # Disable SqlTracker from creating tmp/sql_tracker-*.json files -- https://github.com/steventen/sql_tracker/pull/10
   SqlTracker::Config.enabled = false
+
+  # Setup S3
+  config.s3_enabled = false
+
+  config.vacols_db_name = "VACOLS_TEST"
+
+  if ENV["TEST_SUBCATEGORY"]
+    assets_cache_path = Rails.root.join("tmp/cache/assets/#{ENV['TEST_SUBCATEGORY']}")
+    config.assets.configure do |env|
+      env.cache = Sprockets::Cache::FileStore.new(assets_cache_path)
+    end
+  end
+
+  # Allows rake scripts to be run without querying VACOLS on startup
+  if ENV["DISABLE_FACTORY_BOT_INITIALIZERS"]
+    config.factory_bot.definition_file_paths = []
+  end
 
   # VA Notify evnironment variables
   ENV["VA_NOTIFY_API_URL"] ||= "https://staging-api.va.gov/vanotify"
