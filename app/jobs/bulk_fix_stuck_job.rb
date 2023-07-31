@@ -6,9 +6,9 @@ class BulkFixStuckJob < ApplicationJob
   def perform
     RequestStore[:current_user] = User.system_user
 
-    Warroom::StuckJobsFix.new("DecisionDocument", "Claim not established.").claim_not_established
-    Warroom::StuckJobsFix.new("DecisionDocument", "ClaimDateDt").claim_date_dt
-    Warroom::StuckJobsFix.new("HigherLevelReview", "DTA SC Creation Failed").dta_sc_creation_failed
+    Warroom::StuckJobsFix.new("DecisionDocument", "Claim not established.").claim_not_established_fix
+    Warroom::StuckJobsFix.new("DecisionDocument", "ClaimDateDt").claim_date_dt_fix
+    Warroom::StuckJobsFix.new("HigherLevelReview", "DTA SC Creation Failed").dta_sc_creation_failed_fix
 
   rescue StandardError => error
     log_error(error)
