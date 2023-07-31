@@ -14,6 +14,26 @@ module CaseflowCertification
     # Initialize configuration defaults for originally generated Rails version.
     # config.load_defaults 5.1
 
+    # ==================================================================================================================
+    # Rails 5.0 config overrides
+    # ------------------------------------------------------------------------------------------------------------------
+    # Enable per-form CSRF tokens.
+    # Default (starting v5.0): true
+    config.action_controller.per_form_csrf_tokens = false
+
+    # Enable origin-checking CSRF mitigation.
+    # Default (starting v5.0): true
+    config.action_controller.forgery_protection_origin_check = false
+
+    # Make Ruby 2.4 preserve the timezone of the receiver when calling `to_time`.
+    # Default (starting v5.0): true
+    ActiveSupport.to_time_preserves_timezone = false
+
+    # Require `belongs_to` associations by default.
+    # Default (starting v5.0): true
+    config.active_record.belongs_to_required_by_default = false
+    # ==================================================================================================================
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
