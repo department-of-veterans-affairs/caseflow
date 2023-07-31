@@ -41,7 +41,6 @@ import TeamAssignTaskListView from './TeamAssignTaskListView';
 import EvaluateDecisionView from './caseEvaluation/EvaluateDecisionView';
 import AddColocatedTaskView from './colocatedTasks/AddColocatedTaskView';
 import BlockedAdvanceToJudgeView from './BlockedAdvanceToJudgeView';
-import BlockedAdvanceToJudgeLegacyView from './BlockedAdvanceToJudgeLegacyView';
 import AddCavcRemandView from './cavc/AddCavcRemandView';
 import AddCavcDatesModal from './cavc/AddCavcDatesModal';
 import CompleteTaskModal from './components/CompleteTaskModal';
@@ -272,10 +271,6 @@ class QueueApp extends React.PureComponent {
 
   routedBlockedCaseMovement = (props) => (
     <BlockedAdvanceToJudgeView {...props.match.params} />
-  );
-
-  routedBlockedCaseMovementLegacy = (props) => (
-    <BlockedAdvanceToJudgeLegacyView {...props.match.params} />
   );
 
   routedAddCavcRemand = (props) => (
@@ -849,7 +844,7 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY.value
                 }`}
-              render={this.routedBlockedCaseMovementLegacy}
+              render={this.routedBlockedCaseMovement}
             />
 
             <PageRoute

@@ -573,10 +573,18 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     end
 
     def blocked_special_case_movement_data_legacy(task, _user = nil)
-      {
-        options: users_to_options(Judge.list_all),
-        type: BlockedSpecialCaseMovementTask.name
-      }
+      if task.appeal.is_a?(LegacyAppeal)
+        {
+          options: users_to_options(Judge.list_all),
+          type: BlockedSpecialCaseMovementTask.name
+        }
+      else
+        {
+          options: users_to_options(Judge.list_all),
+          type: BlockedSpecialCaseMovementTask.name,
+          blocking_tasks: task.visible_blocking_tasks.map(&:serialize_for_cancellation)
+        }
+      end
     end
 
     def toggle_timed_hold(task, user)

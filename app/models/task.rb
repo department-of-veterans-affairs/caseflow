@@ -218,9 +218,40 @@ class Task < CaseflowRecord
       verify_user_can_create!(user, parent_task)
 
       params = modify_params_for_create(params)
-      child = create_child_task(parent_task, user, params)
-      parent_task.update!(status: params[:status]) if params[:status]
-      child
+      if parent_task.appeal_type == "LegacyAppeal" && parent_task.type == "HearingTask"
+        cancel_blocking_task_legacy(params, parent_task)
+      else
+        child = create_child_task(parent_task, user, params)
+        parent_task.update!(status: params[:status]) if params[:status]
+        child
+      end
+    end
+
+    def cancel_blocking_task_legacy(params, parent_task)
+      tasks = []
+      tasks.push(parent_task)
+      parent_task.children.each { |current_task| tasks.push(current_task) }
+
+      transaction do
+        tasks.each do |task|
+          task.update!(
+            status: Constants.TASK_STATUSES.cancelled,
+            cancelled_by_id: RequestStore[:current_user]&.id,
+            closed_at: Time.zone.now
+          )
+        end
+      end
+
+      legacy_appeal = LegacyAppeal.find(tasks[0].appeal_id)
+      judge = User.find(params["assigned_to_id"])
+
+      JudgeAssignTask.create!(appeal: legacy_appeal,
+                              parent: legacy_appeal.root_task,
+                              assigned_to: judge,
+                              # cancellation_reason: params[:instructions][0],
+                              instructions: params[:instructions],
+                              assigned_by: params["assigned_by"])
+      AppealRepository.update_location!(legacy_appeal, judge.vacols_uniq_id)
     end
 
     def parent_of_same_type_has_same_assignee(parent_task, params)
@@ -714,16 +745,6 @@ class Task < CaseflowRecord
     [self, children.map(&:descendants)].flatten
   end
 
-  def ancestor_task_of_type(task_type)
-    return nil unless parent
-
-    parent.is_a?(task_type) ? parent : parent.ancestor_task_of_type(task_type)
-  end
-
-  def previous_task
-    nil
-  end
-
   def cancel_task_and_child_subtasks
     # Cancel all descendants at the same time to avoid after_update hooks marking some tasks as completed.
     # it would be better if we could allow the callbacks to happen sanely
@@ -732,7 +753,6 @@ class Task < CaseflowRecord
     # by avoiding callbacks, we aren't saving PaperTrail versions
     # Manually save the state before and after.
     tasks = Task.open.where(id: descendant_ids)
-
     transaction do
       tasks.each { |task| task.paper_trail.save_with_version }
       tasks.update_all(
@@ -742,6 +762,16 @@ class Task < CaseflowRecord
       )
       tasks.each { |task| task.reload.paper_trail.save_with_version }
     end
+  end
+
+  def ancestor_task_of_type(task_type)
+    return nil unless parent
+
+    parent.is_a?(task_type) ? parent : parent.ancestor_task_of_type(task_type)
+  end
+
+  def previous_task
+    nil
   end
 
   # :reek:FeatureEnvy
