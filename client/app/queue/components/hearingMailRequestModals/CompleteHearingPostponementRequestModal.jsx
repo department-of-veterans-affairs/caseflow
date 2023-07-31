@@ -14,9 +14,14 @@ const RULING_OPTIONS = [
   { displayText: 'Denied', value: false }
 ];
 
+const ACTIONS = {
+  RESCHEDULE: 'reschedule',
+  SCHEDULE_LATER: 'schedule_later'
+};
+
 const POSTPONEMENT_ACTIONS = [
-  { displayText: 'Reschedule immediately', value: 'reschedule' },
-  { displayText: 'Send to Schedule Veteran list', value: 'schedule_later' }
+  { displayText: 'Reschedule immediately', value: ACTIONS.RESCHEDULE },
+  { displayText: 'Send to Schedule Veteran list', value: ACTIONS.SCHEDULE_LATER }
 ];
 
 const CompleteHearingPostponementRequestModal = (props) => {
