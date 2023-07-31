@@ -216,9 +216,12 @@ describe BatchProcessPriorityEpSync, :postgres do
       end
 
       it "the failed batched record will raise and log error" do
+        active_hlr_epe_w_cleared_vbms_ext_claim.reload
         expect(Rails.logger).to have_received(:error)
           .with("#<Caseflow::Error::PriorityEndProductSyncError: EPE ID: #{active_hlr_epe_w_cleared_vbms_ext_claim.id}"\
-                " synced_status does not match VBMS.>")
+                ".  EPE synced_status of #{active_hlr_epe_w_cleared_vbms_ext_claim.synced_status} does not match the"\
+                " VBMS_EXT_CLAIM level_status_code of"\
+                " #{active_hlr_epe_w_cleared_vbms_ext_claim.vbms_ext_claim.level_status_code}.>")
       end
 
       it "the batch process will have a state of 'COMPLETED'" do

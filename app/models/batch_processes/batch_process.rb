@@ -22,29 +22,38 @@ class BatchProcess < CaseflowRecord
   }
 
   class << self
-    # A method for overriding, for the purpose of finding the records that
-    # need to be batched. This method should return the records found.
+    # Purpose: A no-op method for overriding, intended to find records to batch from a Queue table
+    #
+    # Params: None
+    #
+    # Response: Records to Batch
     def find_records_to_batch
       # no-op, can be overwritten
     end
 
-    # A method for orverriding, for the purpose of creating the batch and
-    # associating the batch_id with the records gathered by the find_records method.
+    # Purpose: A no-op method for overriding, intended to create a Batch Process record and assign its batch_id
+    # to the records gathered by the find_records_to_batch method.
+    #
+    # Params: Records retrieved from a Queue table that need to be assigned to a Batch Process
+    #
+    # Response: Newly Created Batch Process
     def create_batch!(record)
       # no-op, can be overwritten
     end
   end
 
-  # A method for overriding, for the purpose of processing the batch created
-  # in the create_batch method. Processing can be anything, an example of which
-  # is syncing up the records within the batch between caseflow and vbms.
+  # Purpose: A no-op method for overriding, intended to process all records assinged to a Batch Process
+  #
+  # Params: None
+  #
+  # Response: Returns True if batch is processed successfully
   def process_batch!
     # no-op, can be overwritten
   end
 
   private
 
-  # Instance var methods
+  # Instialize Counters
   def init_counters
     @completed_count = 0
     @failed_count = 0
