@@ -74,7 +74,7 @@ describe BatchProcessPriorityEpSyncJob, type: :job do
       before do
         allow(Rails.logger).to receive(:error)
         allow(Raven).to receive(:capture_exception)
-        allow(BatchProcessPriorityEpSync).to receive(:find_records_to_batch)
+        allow(PriorityEpSyncBatchProcess).to receive(:find_records_to_batch)
           .and_raise(StandardError, "Oh no!  This is bad!")
         subject
       end
