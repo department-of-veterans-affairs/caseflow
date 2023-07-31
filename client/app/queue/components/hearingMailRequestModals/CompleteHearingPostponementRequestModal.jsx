@@ -1,6 +1,7 @@
 import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
 
+import COPY from '../../../../COPY';
 import QueueFlowModal from '../QueueFlowModal';
 import RadioField from '../../../components/RadioField';
 import Alert from '../../../components/Alert';
@@ -132,7 +133,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
         />}
 
         <TextareaField
-          label="Provide instructions and context for this action:"
+          label={`${COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}:`}
           name="instructionsField"
           id="completePostponementInstructions"
           onChange={(value) => dispatch({ type: 'instructions', payload: value })}
