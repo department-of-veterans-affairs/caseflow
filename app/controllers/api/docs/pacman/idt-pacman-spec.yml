@@ -205,12 +205,7 @@ paths:
                      name: "POA Name",
                      claimant_station_of_jurisdiction: "123",
                      poa_code: "02A",
-                     destination_type: "domesticAddress",
-                     address_line_1: "123 N. Main St.",
-                     postal_code: "29601",
-                     city: "Greenville",
-                     state: "SC",
-                     county_code: "US",
+                     destination_type: "derived",
                      copies: 1
                    }
               "Without recipient information for Package Manager":
@@ -429,12 +424,7 @@ paths:
                      name: "POA Name",
                      claimant_station_of_jurisdiction: "123",
                      poa_code: "02A",
-                     destination_type: "domesticAddress",
-                     address_line_1: "123 N. Main St.",
-                     postal_code: "29601",
-                     city: "Greenville",
-                     state: "SC",
-                     county_code: "US",
+                     destination_type: "derived",
                      copies: 1
                    }
               "Without recipient information for Package Manager":
@@ -661,12 +651,7 @@ paths:
                      name: "POA Name",
                      claimant_station_of_jurisdiction: "123",
                      poa_code: "02A",
-                     destination_type: "domesticAddress",
-                     address_line_1: "123 N. Main St.",
-                     postal_code: "29601",
-                     city: "Greenville",
-                     state: "SC",
-                     county_code: "US",
+                     destination_type: "derived",
                      copies: 1
                    }
               "Without recipient information for Package Manager":
@@ -1095,31 +1080,7 @@ components:
           type: string
         destination_type:
           type: string
-          enum: ['domesticAddress', 'internationalAddress', 'militaryAddress']
-        address_line_1:
-          type: string
-        address_line_2:
-          type: string
-        address_line_3:
-          type: string
-        address_line_4:
-          type: string
-        address_line_5:
-          type: string
-        address_line_6:
-          type: string
-        treat_line_2_as_addressee:
-          type: boolean
-        treat_line_3_as_addressee:
-          type: boolean
-        city:
-          type: string
-        state:
-          type: string
-        country_name:
-          type: string
-        country_code:
-          type: string
+          example: "derived"
         copies:
           type: integer
           example: 1
