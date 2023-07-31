@@ -1,5 +1,9 @@
 class AddMeetingTypeToConferenceLinks < Caseflow::Migration
-  def change
-    add_column :conference_links, :meeting_type, :varChar, comment: "Video Conferencing Application Type"
+  def up
+    add_column :conference_links, :meeting_type, :varChar, default: "pexip", comment: "Video Conferencing Application Type"
+  end
+
+  def down
+    remove_column :conference_links, :meeting_type
   end
 end
