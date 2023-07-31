@@ -80,13 +80,12 @@ jobs:
         id: cache-yarn-cache
         uses: actions/cache/restore@v3
         with:
-          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          key: node-dependencies
           path: |
             ~/.cache/yarn
             public/assets
             tmp/cache/assets/sprockets
-          restore-keys:
-            dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          restore-keys: node-dependencies
 
       - name: Install Node Dependencies
         run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
@@ -95,7 +94,7 @@ jobs:
         if: steps.cache-yarn-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v3
         with:
-          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          key: node-dependencies
           path: |
             ~/.cache/yarn
             public/assets
