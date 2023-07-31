@@ -9,10 +9,10 @@ class PriorityEndProductSyncQueue < CaseflowRecord
   belongs_to :batch_process, foreign_key: "batch_id", primary_key: "batch_id"
   has_many :caseflow_stuck_records, as: :stuck_record
 
-  scope :completed_or_unbatched, -> { where(batch_id: [nil, BatchProcess.completed_batch_process_ids]) }
-  scope :batchable, -> { where("last_batched_at IS NULL OR last_batched_at <= ?", BatchProcess::ERROR_DELAY.hours.ago) }
+  scope :batchable, -> { where(batch_id: [nil, BatchProcess.completed_batch_process_ids]) }
+  scope :ready_to_batch, -> { where("last_batched_at IS NULL OR last_batched_at <= ?", BatchProcess::ERROR_DELAY.hours.ago) }
   scope :batch_limit, -> { limit(BatchProcess::BATCH_LIMIT) }
-  scope :not_synced_or_stuck, lambda {
+  scope :syncable, lambda {
     where.not(status: [Constants.PRIORITY_EP_SYNC.synced, Constants.PRIORITY_EP_SYNC.stuck])
   }
 
@@ -44,8 +44,16 @@ class PriorityEndProductSyncQueue < CaseflowRecord
   # for later manual review.
   def declare_record_stuck!
     update!(status: Constants.PRIORITY_EP_SYNC.stuck)
-    CaseflowStuckRecord.create!(stuck_record: self,
-                                error_messages: error_messages,
-                                determined_stuck_at: Time.zone.now)
+    stuck_record = CaseflowStuckRecord.create!(stuck_record: self,
+                                               error_messages: error_messages,
+                                               determined_stuck_at: Time.zone.now)
+    msg = "StuckRecordAlert::SyncFailed End Product Establishment ID: #{end_product_establishment_id}."
+    Raven.capture_message(msg, level: "error", extra: { caseflow_stuck_record_id: stuck_record.id,
+                                                        batch_process_type: batch_process.class.name,
+                                                        batch_id: batch_id,
+                                                        queue_type: self.class.name,
+                                                        queue_id: id,
+                                                        end_product_establishment_id: end_product_establishment_id,
+                                                        determined_stuck_at: stuck_record.determined_stuck_at })
   end
 end
