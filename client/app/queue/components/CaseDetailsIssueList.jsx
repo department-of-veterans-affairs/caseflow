@@ -53,6 +53,8 @@ export default function CaseDetailsIssueList(props) {
       mstFeatureToggle={props.featureToggles.mst_identification}
       pactFeatureToggle={props.featureToggles.pact_identification}>
       <DecisionIssues
+        mstFeatureToggle={props.featureToggles.mst_identification}
+        pactFeatureToggle={props.featureToggles.pact_identification}
         decisionIssues={updatedDecisionIssues} />
     </AmaIssueList>;
   }

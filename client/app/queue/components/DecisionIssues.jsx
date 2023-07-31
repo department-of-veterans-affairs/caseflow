@@ -72,7 +72,13 @@ const specialIssuesFormatting = (mstStatus, pactStatus) => {
 
 export default class DecisionIssues extends React.PureComponent {
   static generateDecisionIssues = (requestIssue, props) => {
-    const { decisionIssues, openDecisionHandler, openDeleteAddedDecisionIssueHandler, hideDelete, hideEdit } = props;
+    const { decisionIssues,
+      openDecisionHandler,
+      openDeleteAddedDecisionIssueHandler,
+      hideDelete,
+      hideEdit,
+      mstFeatureToggle,
+      pactFeatureToggle } = props;
 
     return decisionIssues.
       filter((decisionIssue) => {
@@ -117,7 +123,9 @@ export default class DecisionIssues extends React.PureComponent {
                   {decisionIssue.description}
                   {decisionIssue.diagnostic_code && <div>Diagnostic code: {decisionIssue.diagnostic_code}</div>}
                   {decisionIssue.benefit_type && <div>Benefit Type: {BENEFIT_TYPES[decisionIssue.benefit_type]}</div>}
-                  <div>Special Issues: {specialIssuesFormatting(decisionIssue.mst_status, decisionIssue.pact_status)}</div>
+                  {(pactFeatureToggle || mstFeatureToggle) &&
+                  <div>Special Issues: {specialIssuesFormatting(decisionIssue.mst_status, decisionIssue.pact_status)}
+                  </div>}
                 </span>
                 <span>{ISSUE_DISPOSITIONS_BY_ID[decisionIssue.disposition]}</span>
               </div>
