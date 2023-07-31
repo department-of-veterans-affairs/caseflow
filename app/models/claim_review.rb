@@ -98,8 +98,31 @@ class ClaimReview < DecisionReview
     business_line.add_user(RequestStore.store[:current_user])
   end
 
+  def handle_issues_with_no_decision_date!
+    # TODO: Might need to check if this assigned to VHA for this too?
+    # TODO: Might also need to scope the tasks to currently active tasks?
+    # TODO: Also can this have more than one DecisionReviewTask probably not but still need to check?
+    # TODO: Should this be limited for HLRs and SCs or also Appeals
+    if request_issues_without_decision_dates?
+      review_task = tasks.find { |task| task.type == "DecisionReviewTask" }
+      review_task&.on_hold!
+    elsif !request_issues_without_decision_dates?
+      review_task = tasks.find { |task| task.type == "DecisionReviewTask" }
+      # TODO: Should this be in progress or assigned? I think it's typically assigned when created in intake
+      # Should it depend on edited vs intake?
+      review_task&.in_progress!
+    end
+  end
+
+  def request_issues_without_decision_dates?
+    request_issues.active.any? { |issue| issue.decision_date.blank? }
+  end
+
   def create_business_line_tasks!
     create_decision_review_task! if processed_in_caseflow?
+
+    # TODO: Make sure this works here for intake?
+    handle_issues_with_no_decision_date!
   end
 
   # Idempotent method to create all the artifacts for this claim.

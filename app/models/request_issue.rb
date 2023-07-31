@@ -495,6 +495,9 @@ class RequestIssue < CaseflowRecord
 
       # If the decision issue is not associated with any other request issue, also delete
       decision_issues.each(&:soft_delete_on_removed_request_issue)
+      # TODO: Should this all be scoped to Vha somehow? I don't know a good way to do that yet.
+      # Removing a request issue should also set the status of the decision review task
+      decision_review.handle_issues_with_no_decision_date!
       # Removing a request issue also deletes the associated request_decision_issue
       request_decision_issues.update_all(deleted_at: Time.zone.now)
       canceled! if submitted_not_processed?
@@ -803,6 +806,13 @@ class RequestIssue < CaseflowRecord
     matching_rating_issues.each do |rating_issue|
       transaction { decision_issues << find_or_create_decision_issue_from_rating_issue(rating_issue) }
     end
+  end
+
+  def save_edited_decision_date!(new_decision_date)
+    update!(decision_date: new_decision_date)
+
+    # I don't know if it's safe to do this here since it's async and a job. I guess it is though.
+    decision_review.handle_issues_with_no_decision_date!
   end
 
   # One rating issue can be made as a decision for many request issues. However, we trust the disposition of the
