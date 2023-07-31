@@ -98,6 +98,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
           onChange={(value) => dispatch({ type: 'granted', payload: value === 'true' })}
           value={state.granted}
           options={RULING_OPTIONS}
+          styling={marginBottom(1)}
         />
 
         {state.granted && <Alert
@@ -115,6 +116,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
           type="date"
           noFutureDates
           validateDate={(value) => dispatch({ type: 'dateIsValid', payload: value })}
+          inputStyling={marginBottom(1)}
         />
 
         {state.granted && <RadioField
@@ -126,7 +128,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
           value={state.scheduledOption}
           options={POSTPONEMENT_ACTIONS}
           vertical
-          styling={marginBottom(1)}
+          styling={marginBottom(1.5)}
         />}
 
         <TextareaField
@@ -134,6 +136,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
           name="instructionsField"
           id="completePostponementInstructions"
           onChange={(value) => dispatch({ type: 'instructions', payload: value })}
+          styling={marginBottom(0)}
         />
       </>
     </QueueFlowModal>
