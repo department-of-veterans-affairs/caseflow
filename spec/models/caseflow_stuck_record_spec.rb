@@ -9,7 +9,7 @@ describe CaseflowStuckRecord, :postgres do
       PopulateEndProductSyncQueueJob.perform_now
       3.times do
         PriorityEndProductSyncQueue.first.update!(last_batched_at: nil)
-        BatchProcessPriorityEpSyncJob.perform_now
+        PriorityEpSyncBatchProcessJob.perform_now
       end
       CaseflowStuckRecord.first
     end

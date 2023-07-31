@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class BatchProcessPriorityEpSync < BatchProcess
+class PriorityEpSyncBatchProcess < BatchProcess
   class << self
     # Purpose: Finds records to batch from the Priority End Product Sync Queue (PEPSQ) table that
     # have NO batch_id OR have a batch_id tied to a COMPLETED Batch Process (BATCHABLE),
@@ -21,7 +21,7 @@ class BatchProcessPriorityEpSync < BatchProcess
     #
     # Response: Newly Created Batch Process
     def create_batch!(records)
-      new_batch = BatchProcessPriorityEpSync.create!(batch_type: name,
+      new_batch = PriorityEpSyncBatchProcess.create!(batch_type: name,
                                                      state: Constants.BATCH_PROCESS.pre_processing,
                                                      records_attempted: records.count)
 

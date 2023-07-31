@@ -7,10 +7,10 @@ describe PriorityEndProductSyncQueue, :postgres do
     end
 
     let!(:pre_processing_batch_process) do
-      BatchProcessPriorityEpSync.create(state: Constants.BATCH_PROCESS.pre_processing)
+      PriorityEpSyncBatchProcess.create(state: Constants.BATCH_PROCESS.pre_processing)
     end
-    let!(:processing_batch_process) { BatchProcessPriorityEpSync.create(state: Constants.BATCH_PROCESS.processing) }
-    let!(:completed_batch_process) { BatchProcessPriorityEpSync.create(state: Constants.BATCH_PROCESS.completed) }
+    let!(:processing_batch_process) { PriorityEpSyncBatchProcess.create(state: Constants.BATCH_PROCESS.processing) }
+    let!(:completed_batch_process) { PriorityEpSyncBatchProcess.create(state: Constants.BATCH_PROCESS.completed) }
     let!(:queued_record_never_batched) { create(:priority_end_product_sync_queue, last_batched_at: nil) }
     let!(:queued_record_batched_and_completed) do
       create(:priority_end_product_sync_queue, batch_id: completed_batch_process.batch_id)
@@ -147,7 +147,7 @@ describe PriorityEndProductSyncQueue, :postgres do
   end
 
   describe "#declare_record_stuck" do
-    let!(:batch_process) { BatchProcessPriorityEpSync.create }
+    let!(:batch_process) { PriorityEpSyncBatchProcess.create }
 
     let!(:record) do
       create(:priority_end_product_sync_queue,
@@ -197,7 +197,7 @@ describe PriorityEndProductSyncQueue, :postgres do
     )
   end
 
-  let!(:batch_process) { BatchProcessPriorityEpSync.create }
+  let!(:batch_process) { PriorityEpSyncBatchProcess.create }
 
   let!(:pepsq) do
     PriorityEndProductSyncQueue.create(

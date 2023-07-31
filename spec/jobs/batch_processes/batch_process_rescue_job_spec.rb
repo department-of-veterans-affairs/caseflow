@@ -16,7 +16,7 @@ describe BatchProcessRescueJob, type: :job do
   end
 
   let!(:first_batch_process) do
-    BatchProcessPriorityEpSyncJob.perform_now
+    PriorityEpSyncBatchProcessJob.perform_now
   end
 
   let!(:end_product_establishments_two) do
@@ -28,7 +28,7 @@ describe BatchProcessRescueJob, type: :job do
   end
 
   let!(:second_batch_process) do
-    BatchProcessPriorityEpSyncJob.perform_now
+    PriorityEpSyncBatchProcessJob.perform_now
   end
 
   let!(:batch_process_one) do
