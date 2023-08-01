@@ -1787,4 +1787,543 @@ export const camoToProgramOfficeToCamoData = {
   },
   ...uiData,
 };
+
+const hearingPostponementRequestMailTaskData = {
+  12570: {
+    uniqueId: '12570',
+    isLegacy: false,
+    type: 'HearingPostponementRequestMailTask',
+    appealType: 'Appeal',
+    addedByCssId: null,
+    appealId: 1161,
+    externalAppealId: '2f316d14-7ae6-4255-8f83-e0489ad5005d',
+    assignedOn: '2023-07-28T14:20:26.457-04:00',
+    closestRegionalOffice: null,
+    createdAt: '2023-07-28T14:20:26.457-04:00',
+    closedAt: null,
+    startedAt: null,
+    assigneeName: 'Hearing Admin',
+    assignedTo: {
+      cssId: null,
+      name: 'Hearing Admin',
+      id: 37,
+      isOrganization: true,
+      type: 'HearingAdmin'
+    },
+    assignedBy: {
+      firstName: 'Huan',
+      lastName: 'Tiryaki',
+      cssId: 'JOLLY_POSTMAN',
+      pgId: 81
+    },
+    completedBy: {
+      cssId: null
+    },
+    cancelledBy: {
+      cssId: null
+    },
+    cancelReason: null,
+    convertedBy: {
+      cssId: null
+    },
+    convertedOn: null,
+    taskId: '12570',
+    parentId: 12569,
+    label: 'Hearing postponement request',
+    documentId: null,
+    externalHearingId: null,
+    workProduct: null,
+    caseType: 'Original',
+    aod: false,
+    previousTaskAssignedOn: null,
+    placedOnHoldAt: null,
+    status: 'assigned',
+    onHoldDuration: null,
+    instructions: [
+      'test'
+    ],
+    decisionPreparedBy: null,
+    availableActions: [
+      {
+        label: 'Change task type',
+        func: 'change_task_type_data',
+        value: 'modal/change_task_type',
+        data: {
+          options: [
+            {
+              value: 'CavcCorrespondenceMailTask',
+              label: 'CAVC Correspondence'
+            },
+            {
+              value: 'ClearAndUnmistakeableErrorMailTask',
+              label: 'CUE-related'
+            },
+            {
+              value: 'AddressChangeMailTask',
+              label: 'Change of address'
+            },
+            {
+              value: 'CongressionalInterestMailTask',
+              label: 'Congressional interest'
+            },
+            {
+              value: 'ControlledCorrespondenceMailTask',
+              label: 'Controlled correspondence'
+            },
+            {
+              value: 'DeathCertificateMailTask',
+              label: 'Death certificate'
+            },
+            {
+              value: 'EvidenceOrArgumentMailTask',
+              label: 'Evidence or argument'
+            },
+            {
+              value: 'ExtensionRequestMailTask',
+              label: 'Extension request'
+            },
+            {
+              value: 'FoiaRequestMailTask',
+              label: 'FOIA request'
+            },
+            {
+              value: 'HearingPostponementRequestMailTask',
+              label: 'Hearing postponement request'
+            },
+            {
+              value: 'HearingRelatedMailTask',
+              label: 'Hearing-related'
+            },
+            {
+              value: 'ReconsiderationMotionMailTask',
+              label: 'Motion for reconsideration'
+            },
+            {
+              value: 'AodMotionMailTask',
+              label: 'Motion to Advance on Docket'
+            },
+            {
+              value: 'OtherMotionMailTask',
+              label: 'Other motion'
+            },
+            {
+              value: 'PowerOfAttorneyRelatedMailTask',
+              label: 'Power of attorney-related'
+            },
+            {
+              value: 'PrivacyActRequestMailTask',
+              label: 'Privacy act request'
+            },
+            {
+              value: 'PrivacyComplaintMailTask',
+              label: 'Privacy complaint'
+            },
+            {
+              value: 'ReturnedUndeliverableCorrespondenceMailTask',
+              label: 'Returned or undeliverable mail'
+            },
+            {
+              value: 'StatusInquiryMailTask',
+              label: 'Status inquiry'
+            },
+            {
+              value: 'AppealWithdrawalMailTask',
+              label: 'Withdrawal of appeal'
+            }
+          ]
+        }
+      },
+      {
+        label: 'Mark as complete',
+        value: 'modal/complete_and_postpone'
+      },
+      {
+        label: 'Assign to team',
+        func: 'assign_to_organization_data',
+        value: 'modal/assign_to_team',
+        data: {
+          selected: null,
+          options: [
+            {
+              label: 'Board Dispatch',
+              value: 1
+            },
+            {
+              label: 'Case Review',
+              value: 2
+            },
+            {
+              label: 'Case Movement Team',
+              value: 3
+            },
+            {
+              label: 'BVA Intake',
+              value: 4
+            },
+            {
+              label: 'VLJ Support Staff',
+              value: 6
+            },
+            {
+              label: 'Transcription',
+              value: 7
+            },
+            {
+              label: 'National Cemetery Administration',
+              value: 11
+            },
+            {
+              label: 'Translation',
+              value: 12
+            },
+            {
+              label: 'Quality Review',
+              value: 13
+            },
+            {
+              label: 'AOD',
+              value: 14
+            },
+            {
+              label: 'Mail',
+              value: 15
+            },
+            {
+              label: 'Privacy Team',
+              value: 16
+            },
+            {
+              label: 'Litigation Support',
+              value: 17
+            },
+            {
+              label: 'Office of Assessment and Improvement',
+              value: 18
+            },
+            {
+              label: 'Office of Chief Counsel',
+              value: 19
+            },
+            {
+              label: 'CAVC Litigation Support',
+              value: 20
+            },
+            {
+              label: 'Pulac-Cerullo',
+              value: 21
+            },
+            {
+              label: 'Hearings Management',
+              value: 36
+            },
+            {
+              label: 'VLJ Support Staff',
+              value: 2000000023
+            },
+            {
+              label: 'Education',
+              value: 2000000219
+            },
+            {
+              label: 'Veterans Readiness and Employment',
+              value: 2000000220
+            },
+            {
+              label: 'Loan Guaranty',
+              value: 2000000221
+            },
+            {
+              label: 'Veterans Health Administration',
+              value: 2000000222
+            },
+            {
+              label: 'Pension & Survivor\'s Benefits',
+              value: 2000000590
+            },
+            {
+              label: 'Fiduciary',
+              value: 2000000591
+            },
+            {
+              label: 'Compensation',
+              value: 2000000592
+            },
+            {
+              label: 'Insurance',
+              value: 2000000593
+            },
+            {
+              label: 'Executive Management Office',
+              value: 64
+            }
+          ],
+          type: 'HearingPostponementRequestMailTask'
+        }
+      },
+      {
+        label: 'Assign to person',
+        func: 'assign_to_user_data',
+        value: 'modal/assign_to_person',
+        data: {
+          selected: {
+            id: 125,
+            last_login_at: '2023-07-31T15:10:08.273-04:00',
+            station_id: '101',
+            full_name: 'Stacy BuildAndEditHearingSchedule Yellow',
+            email: null,
+            roles: [
+              'Edit HearSched',
+              'Build HearSched'
+            ],
+            created_at: '2023-07-26T08:53:05.164-04:00',
+            css_id: 'BVASYELLOW',
+            efolder_documents_fetched_at: null,
+            selected_regional_office: null,
+            status: 'active',
+            status_updated_at: null,
+            updated_at: '2023-07-31T15:10:08.277-04:00',
+            display_name: 'BVASYELLOW (VACO)'
+          },
+          options: [
+            {
+              label: 'Theresa BuildHearingSchedule Warner',
+              value: 10
+            },
+            {
+              label: 'Felicia BuildAndEditHearingSchedule Orange',
+              value: 126
+            },
+            {
+              label: 'Gail Maggio V',
+              value: 2000001601
+            },
+            {
+              label: 'Amb. Cherelle Crist',
+              value: 2000001881
+            },
+            {
+              label: 'LETITIA SCHUSTER',
+              value: 2000014300
+            },
+            {
+              label: 'Manie Bahringer',
+              value: 2000000784
+            },
+            {
+              label: 'Young Metz',
+              value: 2000001481
+            },
+            {
+              label: 'Tena Green DDS',
+              value: 2000001607
+            },
+            {
+              label: 'Horace Paucek',
+              value: 2000001608
+            },
+            {
+              label: 'Angelo Harvey',
+              value: 2000001752
+            },
+            {
+              label: 'Shu Wilkinson II',
+              value: 2000001822
+            },
+            {
+              label: 'Eugene Waelchi JD',
+              value: 2000001944
+            },
+            {
+              label: 'Bernadine Lindgren',
+              value: 2000002011
+            },
+            {
+              label: 'Lenna Roberts',
+              value: 2000002061
+            },
+            {
+              label: 'Dedra Kassulke',
+              value: 2000002114
+            },
+            {
+              label: 'Judy Douglas',
+              value: 2000002117
+            },
+            {
+              label: 'Yuki Green',
+              value: 2000002170
+            },
+            {
+              label: 'Hassan Considine',
+              value: 2000002309
+            },
+            {
+              label: 'Cecilia Feeney',
+              value: 2000002311
+            },
+            {
+              label: 'Shizue Orn',
+              value: 2000002324
+            },
+            {
+              label: 'Marcia Turcotte DDS',
+              value: 2000003937
+            },
+            {
+              label: 'Mrs. Roderick Boyle',
+              value: 2000008710
+            },
+            {
+              label: 'Rep. Trey Leuschke',
+              value: 2000009340
+            },
+            {
+              label: 'Malka Lind MD',
+              value: 2000010066
+            },
+            {
+              label: 'Derrick Abernathy',
+              value: 2000011140
+            },
+            {
+              label: 'Ramon Bode',
+              value: 2000011189
+            },
+            {
+              label: 'Consuelo Rice VM',
+              value: 2000011783
+            },
+            {
+              label: 'Robt Reinger',
+              value: 2000013679
+            },
+            {
+              label: 'Cruz Kulas',
+              value: 2000014113
+            },
+            {
+              label: 'Jeremy Abbott',
+              value: 2000014115
+            },
+            {
+              label: 'Lexie Kunze',
+              value: 2000014117
+            },
+            {
+              label: 'Jenny Kiehn',
+              value: 2000014742
+            },
+            {
+              label: 'Justin Greenholt',
+              value: 2000016249
+            },
+            {
+              label: 'Tiffani Heller',
+              value: 2000016344
+            },
+            {
+              label: 'Cris Kris',
+              value: 2000016552
+            },
+            {
+              label: 'The Hon. Collin Johnston',
+              value: 2000016711
+            },
+            {
+              label: 'Susanna Bahringer DDS',
+              value: 2000020664
+            },
+            {
+              label: 'Rev. Eric Howell',
+              value: 2000021430
+            },
+            {
+              label: 'Anthony Greenfelder',
+              value: 2000021431
+            },
+            {
+              label: 'Sen. Bradley Lehner',
+              value: 2000021462
+            },
+            {
+              label: 'Arden Boyle',
+              value: 2000021472
+            },
+            {
+              label: 'Millard Dach CPA',
+              value: 2000021486
+            },
+            {
+              label: 'Phung Reichert DC',
+              value: 2000021537
+            },
+            {
+              label: 'Harvey Jenkins',
+              value: 2000021577
+            },
+            {
+              label: 'DINO VONRUEDEN',
+              value: 2000003482
+            },
+            {
+              label: 'ISREAL D\'AMORE',
+              value: 2000003782
+            },
+            {
+              label: 'MAMMIE TREUTEL',
+              value: 2000014114
+            },
+            {
+              label: 'Stacy BuildAndEditHearingSchedule Yellow',
+              value: 125
+            }
+          ],
+          type: 'HearingPostponementRequestMailTask'
+        }
+      },
+      {
+        label: 'Cancel task',
+        func: 'cancel_task_data',
+        value: 'modal/cancel_task',
+        data: {
+          modal_title: 'Cancel task',
+          modal_body: 'Cancelling this task will return it to Huan MailUser Tiryaki',
+          message_title: 'Task for Isaiah Davis\'s case has been cancelled',
+          message_detail: 'If you have made a mistake, please email Huan MailUser Tiryaki to manage any changes.'
+        }
+      }
+    ],
+    timelineTitle: 'HearingPostponementRequestMailTask completed',
+    hideFromQueueTableView: false,
+    hideFromTaskSnapshot: false,
+    hideFromCaseTimeline: false,
+    availableHearingLocations: [],
+    latestInformalHearingPresentationTask: {},
+    canMoveOnDocketSwitch: true,
+    timerEndsAt: null,
+    unscheduledHearingNotes: {},
+    ownedBy: 'Hearing Admin',
+    daysSinceLastStatusChange: 3,
+    daysSinceBoardIntake: 3,
+    id: '12570',
+    claimant: {},
+    appeal_receipt_date: '2023-07-02'
+  }
+};
+
+export const completeHearingPostponementRequestData = {
+  queue: {
+    amaTasks: {
+      ...hearingPostponementRequestMailTaskData,
+    },
+    appeals: {
+      '2f316d14-7ae6-4255-8f83-e0489ad5005d': {
+        id: '1161',
+        externalId: '2f316d14-7ae6-4255-8f83-e0489ad5005d',
+      },
+    },
+  },
+  ...uiData
+};
+
 /* eslint-enable max-lines */

@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import { screen } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import * as uiActions from 'app/queue/uiReducer/uiActions';
 
 /**
@@ -45,6 +45,17 @@ export const enterTextFieldOptions = (instructionsFieldName, instructions) => {
   const instructionsField = screen.getByRole('textbox', { name: instructionsFieldName });
 
   userEvent.type(instructionsField, instructions);
+};
+
+/**
+ * Finds an input in the component and enters the specified text
+ * @param {string} inputLabelName -- Label name of the input field to be populated
+ * @param {string} textValue -- The string to enter into the input field
+ */
+export const enterInputValue = (inputLabelName, textValue) => {
+  const inputField = screen.getByLabelText(inputLabelName);
+
+  fireEvent.change(inputField, { target: { value: textValue }});
 };
 
 /**
