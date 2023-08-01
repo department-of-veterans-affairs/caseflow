@@ -174,7 +174,7 @@ class NonratingRequestIssueModal extends React.Component {
     return (
       !description ||
       !category ||
-      !decisionDate ||
+      (benefitType !== 'vha' && !decisionDate) ||
       (formType === 'appeal' && !benefitType) ||
       enforcePreDocketRequirement
     );
@@ -191,7 +191,7 @@ class NonratingRequestIssueModal extends React.Component {
         classNames: ['usa-button', 'add-issue'],
         name: this.props.submitText,
         onClick: this.onAddIssue,
-        disabled: this.requiredFieldsMissing() || this.state.decisionDate.length < 10 || Boolean(this.state.dateError)
+        disabled: this.requiredFieldsMissing() || Boolean(this.state.dateError)
       }
     ];
 
@@ -266,6 +266,7 @@ class NonratingRequestIssueModal extends React.Component {
             errorMessage={this.state.dateError}
             onChange={this.decisionDateOnChange}
             type="date"
+            optional={this.state.benefitType === 'vha'}
           />
         </div>
 
