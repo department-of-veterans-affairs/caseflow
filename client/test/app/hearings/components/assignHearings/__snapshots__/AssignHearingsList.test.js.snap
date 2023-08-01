@@ -238,6 +238,12 @@ Object {
             </span>
              
             <span
+              style="margin: 0px 5px;"
+            >
+              ·
+            </span>
+             
+            <span
               aria-describedby="tooltip-id"
               aria-label=""
               currentitem="false"
@@ -528,6 +534,12 @@ Object {
             </span>
              
             <span
+              style="margin: 0px 5px;"
+            >
+              ·
+            </span>
+             
+            <span
               aria-describedby="tooltip-id"
               aria-label=""
               currentitem="false"
@@ -810,6 +822,12 @@ Object {
             </span>
              
             200624-614
+             
+            <span
+              style="margin: 0px 5px;"
+            >
+              ·
+            </span>
              
             <span
               style="margin: 0px 5px;"
@@ -1114,6 +1132,12 @@ Object {
           </span>
            
           <span
+            style="margin: 0px 5px;"
+          >
+            ·
+          </span>
+           
+          <span
             aria-describedby="tooltip-id"
             aria-label=""
             currentitem="false"
@@ -1404,6 +1428,12 @@ Object {
           </span>
            
           <span
+            style="margin: 0px 5px;"
+          >
+            ·
+          </span>
+           
+          <span
             aria-describedby="tooltip-id"
             aria-label=""
             currentitem="false"
@@ -1686,6 +1716,12 @@ Object {
           </span>
            
           200624-614
+           
+          <span
+            style="margin: 0px 5px;"
+          >
+            ·
+          </span>
            
           <span
             style="margin: 0px 5px;"
