@@ -20,7 +20,7 @@ module CaseflowCertification
     # the framework and any gems in your application.
 
     # ==================================================================================================================
-    # Rails 5.0 config overrides
+    # Rails 5.0 default overrides
     # ------------------------------------------------------------------------------------------------------------------
     # Enable per-form CSRF tokens.
     # Default (starting v5.0): true
@@ -38,14 +38,14 @@ module CaseflowCertification
     # Default (starting v5.0): true
     config.active_record.belongs_to_required_by_default = false
     # ==================================================================================================================
-    # Rails 5.1 config overrides
+    # Rails 5.1 default overrides
     # ------------------------------------------------------------------------------------------------------------------
     # Make `form_with` generate non-remote forms.
     # Default (starting v5.1): true
     # Default (starting v6.1): false
     Rails.application.config.action_view.form_with_generates_remote_forms = false
     # ==================================================================================================================
-    # Rails 5.2 config overrides
+    # Rails 5.2 default overrides
     # ------------------------------------------------------------------------------------------------------------------
     # Use AES-256-GCM authenticated encryption for encrypted cookies.
     # Also, embed cookie expiry in signed or encrypted cookies for increased security.
