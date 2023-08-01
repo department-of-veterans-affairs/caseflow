@@ -334,10 +334,22 @@ feature "NonComp Dispositions Task Page", :postgres do
       expect(page).to have_text("Email Address: #{in_progress_task.power_of_attorney.representative_email_address}")
 
       expect(page).to have_text("Address")
+      expect(page).to have_content(COPY::CASE_DETAILS_POA_EXPLAINER_VHA)
       full_address = in_progress_task.power_of_attorney.representative_address
       sliced_full_address = full_address.slice!(:country)
       sliced_full_address.each do |address|
         expect(page).to have_text(address[1])
+      end
+    end
+
+    context "with no POA" do
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return({})
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return({})
+      end
+      it "should display the VHA-specific text" do
+        visit dispositions_url
+        expect(page).to have_content(COPY::CASE_DETAILS_NO_POA_VHA)
       end
     end
   end
