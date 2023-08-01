@@ -76,16 +76,30 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # See: https://github.com/actions/setup-node/issues/32#issuecomment-525791142
-      - name: Read .nvmrc
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-        id: nvm
-
-      - uses: actions/setup-node@v3
+      - name: restore yarn cache
+        id: cache-yarn-cache
+        uses: actions/cache/restore@v3
         with:
-          node-version: '${{ steps.nvm.outputs.NVMRC }}'
-          cache: 'yarn'
-      - run: yarn install --frozen-lockfile
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          path: |
+            ~/.cache/yarn
+            public/assets
+            tmp/cache/assets/sprockets
+          restore-keys:
+            dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+
+      - name: Install Node Dependencies
+        run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+
+      - name: Save Yarn Cache
+        if: steps.cache-yarn-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v3
+        with:
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          path: |
+            ~/.cache/yarn
+            public/assets
+            tmp/cache/assets/sprockets
 
       - name: setup testfiles directory
         run: ./ci-bin/capture-log "mkdir -p tmp/testfiles"
@@ -254,15 +268,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y python2
 
-      - name: Read .nvmrc
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-        id: nvm
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '${{ steps.nvm.outputs.NVMRC }}'
-          cache: 'yarn'
-      - run: yarn install --frozen-lockfile
+      - name: install_node_dependencies
+        run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
       - name: jest
         shell: bash
@@ -307,16 +314,8 @@ jobs:
           echo $BUNDLER_V
           gem install bundler:$BUNDLER_V
           bundle install --path vendor/bundle
-
-      - name: Read .nvmrc
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-        id: nvm
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '${{ steps.nvm.outputs.NVMRC }}'
-          cache: 'yarn'
-      - run: yarn install --frozen-lockfile
+      - name: Install Node Dependencies
+        run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
       - name: Danger
         run: ./ci-bin/capture-log "bundle exec danger"
@@ -330,3 +329,4 @@ jobs:
       - name: Security
         run:  ./ci-bin/capture-log "bundle exec rake security"
         if: ${{ always() }}
+
