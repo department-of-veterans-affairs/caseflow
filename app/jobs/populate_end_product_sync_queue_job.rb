@@ -10,6 +10,10 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
   JOB_DURATION = 1.hour
   SLEEP_DURATION = 60.seconds
 
+  before_perform do |job|
+    JOB_ATTR = job
+  end
+
   # Attempts to find and create PriorityEndProductSyncQueue records for 1 hour
   # There will be a 1 minute rest between each iteration
   def perform
@@ -17,14 +21,19 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
     loop do
       break if job_running_past_expected_end_time?
 
-      RequestStore.store[:current_user] = User.system_user
-
       begin
-        ActiveRecord::Base.transaction do
-          batch = find_priority_end_product_establishments_to_sync
-          batch.empty? ? return : insert_into_priority_sync_queue(batch)
+        batch = ActiveRecord::Base.transaction do
+          priority_epes = find_priority_end_product_establishments_to_sync
+          next if priority_epes.empty?
 
+          priority_epes
+        end
+
+        if batch
+          insert_into_priority_sync_queue(batch)
           Rails.logger.info("PopulateEndProductSyncQueueJob EPEs processed: #{batch} - Time: #{Time.zone.now}")
+        else
+          Rails.logger.info("No Priority EPE Records Available.  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
         end
       rescue StandardError => error
         capture_exception(error: error)
