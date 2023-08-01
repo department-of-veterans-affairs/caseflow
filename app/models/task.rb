@@ -216,11 +216,15 @@ class Task < CaseflowRecord
       fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
 
       verify_user_can_create!(user, parent_task)
-
       params = modify_params_for_create(params)
-      if parent_task.appeal_type == "LegacyAppeal" && parent_task.type == "HearingTask"
-        cancel_blocking_task_legacy(params, parent_task)
-      else
+
+      if parent_task.appeal_type == "LegacyAppeal"
+        if (params[:type] == "SpecialCaseMovementTask") && (parent_task.type == "RootTask")
+          create_jugde_assigned_task_for_legacy(params, parent_task)
+        elsif (params[:type] == "BlockedSpecialCaseMovementTask") && (parent_task.type == "HearingTask")
+          cancel_blocking_task_legacy(params, parent_task)
+        end
+      else # regular appeal
         child = create_child_task(parent_task, user, params)
         parent_task.update!(status: params[:status]) if params[:status]
         child
@@ -248,7 +252,18 @@ class Task < CaseflowRecord
       JudgeAssignTask.create!(appeal: legacy_appeal,
                               parent: legacy_appeal.root_task,
                               assigned_to: judge,
-                              # cancellation_reason: params[:instructions][0],
+                              instructions: params[:instructions],
+                              assigned_by: params["assigned_by"])
+      AppealRepository.update_location!(legacy_appeal, judge.vacols_uniq_id)
+    end
+
+    def create_jugde_assigned_task_for_legacy(params, parent_task)
+      legacy_appeal = LegacyAppeal.find(parent_task.appeal_id)
+      judge = User.find(params["assigned_to_id"])
+
+      JudgeAssignTask.create!(appeal: legacy_appeal,
+                              parent: legacy_appeal.root_task,
+                              assigned_to: judge,
                               instructions: params[:instructions],
                               assigned_by: params["assigned_by"])
       AppealRepository.update_location!(legacy_appeal, judge.vacols_uniq_id)
