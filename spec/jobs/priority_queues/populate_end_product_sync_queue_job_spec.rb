@@ -21,6 +21,16 @@ describe PopulateEndProductSyncQueueJob, type: :job do
   end
   let!(:not_found_vec) { create(:vbms_ext_claim, :rdc, claimant_person_id: veteran.participant_id) }
 
+  before do
+    # Force the job to only run long enough to iterate through the loop once.
+    # This overrides the default job duration which is supposed to continue
+    # iterating through the job for an hour.
+    #
+    # Changing the sleep duration to 0 prevents mismatching times.
+    stub_const("PopulateEndProductSyncQueueJob::JOB_DURATION", 0.0001.seconds)
+    stub_const("PopulateEndProductSyncQueueJob::SLEEP_DURATION", 0.seconds)
+  end
+
   describe "#perform" do
     context "when job is able to run successfully" do
       it "adds the unsynced epe to the end product synce queue" do
