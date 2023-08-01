@@ -144,4 +144,26 @@ RSpec.feature "MailTasks", :postgres do
       expect(page).to have_content(new_instructions)
     end
   end
+
+  describe "Hearing Postponement Request Mail Task" do
+    let(:distribution_task) { create(:distribution_task) }
+    let!(:schedule_hearing_task) do
+      ScheduleHearingTask.create(
+        appeal: distribution_task.appeal,
+        parent_id: distribution_task.id,
+        assigned_to: Bva.singleton
+      )
+    end
+    let(:hpr_task) { create(:hearing_postponement_request_mail_task, :with_unscheduled_hearing) }
+
+    it "change task type" do
+      HearingAdmin.singleton.add_user(User.current_user)
+      visit("queue/appeals/#{hpr_task.appeal.uuid}")
+      click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: COPY::CHANGE_TASK_TYPE_SUBHEAD)
+      find(".cf-select__control", text: "Select an action type").click
+      find(".cf-select__option", text: "Change of address").click
+      fill_in(name: "Provide instructions and context for this change:", with: "instructions")
+      click_button("Change task type")
+    end
+  end
 end
