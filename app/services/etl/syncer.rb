@@ -38,7 +38,7 @@ class ETL::Syncer
     return unless target_class.messages
 
     slack_msg = target_class.messages.join("\n")
-    slack_service.send_notification(slack_msg, target_class.name, "#appeals-data-workgroup")
+    slack_service.send_notification(slack_msg, target_class.name)
     target_class.clear_messages
   end
 

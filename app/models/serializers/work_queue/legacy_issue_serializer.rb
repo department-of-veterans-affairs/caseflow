@@ -16,4 +16,6 @@ class WorkQueue::LegacyIssueSerializer
   attribute :labels
   attribute(:readjudication) { false }
   attribute :remand_reasons
+  attribute :mst_status
+  attribute :pact_status
 end
