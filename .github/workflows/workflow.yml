@@ -85,7 +85,9 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           key: yarn-cache-${{ github.base_ref }}
-          path: ~/.cache/yarn
+          path: |
+            node_modules
+            ~/.cache/yarn
           restore-keys:
             yarn-cache-${{ github.base_ref }}
             yarn-cache-master
@@ -98,7 +100,9 @@ jobs:
         uses: actions/cache/save@v3
         with:
           key: yarn-cache-${{ github.base_ref }}
-          path: ~/.cache/yarn
+          path: |
+            node_modules
+            ~/.cache/yarn
 
       - name: setup testfiles directory
         run: ./ci-bin/capture-log "mkdir -p tmp/testfiles"
