@@ -85,7 +85,7 @@ jobs:
         with:
           node-version: '${{ steps.nvm.outputs.NVMRC }}'
           cache: 'yarn'
-      - run: yarn install --frozen-lockfile
+      - run: (cd && yarn install --frozen-lockfile)
 
       - name: setup testfiles directory
         run: ./ci-bin/capture-log "mkdir -p tmp/testfiles"
@@ -260,7 +260,7 @@ jobs:
         with:
           node-version: '${{ steps.nvm.outputs.NVMRC }}'
           cache: 'yarn'
-      - run: yarn install --frozen-lockfile
+      - run: (cd && yarn install --frozen-lockfile)
 
       - name: jest
         shell: bash
@@ -298,9 +298,6 @@ jobs:
         with:
           fetch-depth: '0'
 
-      - name: Print out node
-        run: node -v
-
       - name: Install Ruby Dependencies
         run: |
           ruby -v
@@ -317,7 +314,7 @@ jobs:
         with:
           node-version: '${{ steps.nvm.outputs.NVMRC }}'
           cache: 'yarn'
-      - run: yarn install --frozen-lockfile
+      - run: (cd && yarn install --frozen-lockfile)
 
       - name: Danger
         run: ./ci-bin/capture-log "bundle exec danger"
