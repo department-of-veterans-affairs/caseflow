@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 import RadioField from '../components/RadioField';
 import COPY from '../../COPY';
 
 const radioOptions = [
   { displayText: 'Pexip',
-    value: '1'},
+    value: '1' },
   { displayText: 'Webex',
-    value: '2'}
+    value: '2' }
 ];
 
-const SelectConferenceTypeRadioField = ({name}) => {
-  const [value, setValue] = useState("1")
+const SelectConferenceTypeRadioField = ({ name }) => {
+  const [value, setValue] = useState('1');
 
   return (
     <>
@@ -22,8 +23,12 @@ const SelectConferenceTypeRadioField = ({name}) => {
         value={value}
         onChange={(newValue) => setValue(newValue)}
         vertical
-    /></>
+      /></>
   );
-}
+};
+
+SelectConferenceTypeRadioField.propTypes = {
+  name: PropTypes.string
+};
 
 export default SelectConferenceTypeRadioField;
