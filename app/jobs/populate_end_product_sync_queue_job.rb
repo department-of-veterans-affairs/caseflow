@@ -7,22 +7,36 @@
 class PopulateEndProductSyncQueueJob < CaseflowJob
   queue_with_priority :low_priority
 
+  JOB_DURATION = 1.hour
+  SLEEP_DURATION = 60.seconds
+
+  # Attempts to find and create PriorityEndProductSyncQueue records for 1 hour
+  # There will be a 1 minute rest between each iteration
   def perform
-    RequestStore.store[:current_user] = User.system_user
+    setup_job
+    loop do
+      break if job_running_past_expected_end_time?
 
-    begin
-      ActiveRecord::Base.transaction do
-        batch = find_priority_end_product_establishments_to_sync
-        batch.empty? ? return : insert_into_priority_sync_queue(batch)
+      RequestStore.store[:current_user] = User.system_user
 
-        Rails.logger.info("PopulateEndProductSyncQueueJob EPEs processed: #{batch} - Time: #{Time.zone.now}")
+      begin
+        ActiveRecord::Base.transaction do
+          batch = find_priority_end_product_establishments_to_sync
+          batch.empty? ? return : insert_into_priority_sync_queue(batch)
+
+          Rails.logger.info("PopulateEndProductSyncQueueJob EPEs processed: #{batch} - Time: #{Time.zone.now}")
+        end
+      rescue StandardError => error
+        capture_exception(error: error)
       end
-    rescue StandardError => error
-      capture_exception(error: error)
+
+      sleep(SLEEP_DURATION)
     end
   end
 
   private
+
+  attr_accessor :job_expected_end_time
 
   def find_priority_end_product_establishments_to_sync
     get_batch = <<-SQL
@@ -45,5 +59,15 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
         end_product_establishment_id: ep_id
       )
     end
+  end
+
+  def setup_job
+    RequestStore.store[:current_user] = User.system_user
+
+    @job_expected_end_time = Time.zone.now + JOB_DURATION
+  end
+
+  def job_running_past_expected_end_time?
+    Time.zone.now > job_expected_end_time
   end
 end
