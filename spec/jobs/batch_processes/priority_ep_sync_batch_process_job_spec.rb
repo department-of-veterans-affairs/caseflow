@@ -16,17 +16,17 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
     PriorityEndProductSyncQueue.all
   end
 
-  subject { PriorityEpSyncBatchProcessJob.perform_now }
-
   before do
     # Force the job to only run long enough to iterate through the loop once.
     # This overrides the default job duration which is supposed to continue
     # iterating through the job for an hour.
     #
-    # Changing the sleep duration to 0 prevents mismatching times.
+    # Changing the sleep duration to 0 prevents mismatching 'ended_at' times.
     stub_const("PriorityEpSyncBatchProcessJob::JOB_DURATION", 0.001.seconds)
     stub_const("PriorityEpSyncBatchProcessJob::SLEEP_DURATION", 0.seconds)
   end
+
+  subject { PriorityEpSyncBatchProcessJob.perform_now }
 
   describe "#perform" do
     context "when 99 records can sync successfully and 1 cannot" do
