@@ -24,7 +24,6 @@
     canEditCavcDashboards: current_user.can_edit_cavc_dashboards?,
     canViewCavcDashboards: current_user.can_view_cavc_dashboards?,
     userIsCobAdmin: ClerkOfTheBoard.singleton.admins.include?(current_user),
-    userCanScheduleWebexVirtual: current_user.can_schedule_webex_virtual?,
     featureToggles: {
       collect_video_and_central_emails: FeatureToggle.enabled?(:collect_video_and_central_emails, user: current_user),
       enable_hearing_time_slots: FeatureToggle.enabled?(:enable_hearing_time_slots, user: current_user),
@@ -54,8 +53,7 @@
       cavc_remand_granted_substitute_appellant: FeatureToggle.enabled?(:cavc_remand_granted_substitute_appellant, user: current_user),
       cavc_dashboard_workflow: FeatureToggle.enabled?(:cavc_dashboard_workflow, user: current_user),
       cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user),
-      cc_vacatur_visibility: FeatureToggle.enabled?(:cc_vacatur_visibility, user: current_user),
-      conference_selection: FeatureToggle.enabled?(:conference_selection, user: current_user)
+      cc_vacatur_visibility: FeatureToggle.enabled?(:cc_vacatur_visibility, user: current_user)
     }
   }) %>
 <% end %>

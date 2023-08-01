@@ -147,11 +147,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     BvaIntake.singleton.users.include?(self)
   end
 
-  def can_schedule_webex_virtual?
-    @vc_user = User.where(css_id: normalize_css_id)
-    # conference_selection = @vc_user.meeting_type
-  end
-
   def administer_org_users?
     admin? || granted?("Admin Intake") || roles.include?("Admin Intake") || member_of_organization?(Bva.singleton)
   end
