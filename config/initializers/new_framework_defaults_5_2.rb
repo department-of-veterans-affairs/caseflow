@@ -6,19 +6,6 @@
 #
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 
-# Use AES-256-GCM authenticated encryption for encrypted cookies.
-# Also, embed cookie expiry in signed or encrypted cookies for increased security.
-#
-# This option is not backwards compatible with earlier Rails versions.
-# It's best enabled when your entire app is migrated and stable on 5.2.
-#
-# Existing cookies will be converted on read then written with the new scheme.
-# Rails.application.config.action_dispatch.use_authenticated_cookie_encryption = true
-
-# Use AES-256-GCM authenticated encryption as default cipher for encrypting messages
-# instead of AES-256-CBC, when use_authenticated_message_encryption is set to true.
-# Rails.application.config.active_support.use_authenticated_message_encryption = true
-
 # Add default protection from forgery to ActionController::Base instead of in
 # ApplicationController.
 # Rails.application.config.action_controller.default_protect_from_forgery = true

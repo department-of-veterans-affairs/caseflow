@@ -40,6 +40,22 @@ module CaseflowCertification
     # Default (starting v6.1): false
     Rails.application.config.action_view.form_with_generates_remote_forms = false
     # ==================================================================================================================
+    # Rails 5.2 config overrides
+    # ------------------------------------------------------------------------------------------------------------------
+    # Use AES-256-GCM authenticated encryption for encrypted cookies.
+    # Also, embed cookie expiry in signed or encrypted cookies for increased security.
+    #
+    # This option is not backwards compatible with earlier Rails versions.
+    # It's best enabled when your entire app is migrated and stable on 5.2.
+    #
+    # Existing cookies will be converted on read then written with the new scheme.
+    # Rails.application.config.action_dispatch.use_authenticated_cookie_encryption = true
+    #
+    # Use AES-256-GCM authenticated encryption as default cipher for encrypting messages
+    # instead of AES-256-CBC, when use_authenticated_message_encryption is set to true.
+    # Default (starting v5.2): true
+    Rails.application.config.active_support.use_authenticated_message_encryption = false
+    # ==================================================================================================================
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
