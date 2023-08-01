@@ -13,6 +13,7 @@ import _ from 'lodash';
 
 const alertStyling = css({
   marginTop: 0,
+  marginBottom: '20px'
 });
 
 const messageStyling = css({
