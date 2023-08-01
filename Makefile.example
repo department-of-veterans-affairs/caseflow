@@ -184,6 +184,7 @@ external-db-create-test: ## Creates table in caseflow_certification_test DB for 
 
 remove-vbms-ext-claim-seeds: ## Drops audit tables, removes all PriorityEndProductSyncQueue, BatchProcess, and seed-vbms-ext-claim records, then rebuilds audit tables
 	make audit-remove
+	make external-db-create
 	bundle exec rails r db/scripts/external/remove_vbms_ext_claim_seeds.rb
 	make audit
 
