@@ -55,6 +55,10 @@ module CaseflowCertification
     # instead of AES-256-CBC, when use_authenticated_message_encryption is set to true.
     # Default (starting v5.2): true
     Rails.application.config.active_support.use_authenticated_message_encryption = false
+
+    # Add default protection from forgery to ActionController::Base instead of in ApplicationController.
+    # Default (starting v5.2): true
+    Rails.application.config.action_controller.default_protect_from_forgery = false
     # ==================================================================================================================
 
     # Settings in config/environments/* take precedence over those specified here.

@@ -6,10 +6,6 @@
 #
 # Read the Guide for Upgrading Ruby on Rails for more info on each option.
 
-# Add default protection from forgery to ActionController::Base instead of in
-# ApplicationController.
-# Rails.application.config.action_controller.default_protect_from_forgery = true
-
 # Store boolean values are in sqlite3 databases as 1 and 0 instead of 't' and
 # 'f' after migrating old data.
 # Rails.application.config.active_record.sqlite3.represent_boolean_as_integer = true
