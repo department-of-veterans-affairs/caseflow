@@ -171,7 +171,7 @@
     "label": "Ready for Dispatch",
     "value": "dispatch_decision/dispositions"
   },
-  "JUDGE_AMA_CHECKOUT_SP_ISSUES": {
+  "JUDGE_AMA_CHECKOUT_SPECIAL_ISSUES": {
     "label": "Ready for Dispatch",
     "value": "dispatch_decision/special_issues"
   },

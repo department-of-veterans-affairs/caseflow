@@ -24,6 +24,10 @@ const flexColumn = css({
   width: '50%'
 });
 
+const infoBannerStyling = css({
+  marginBottom: '2rem',
+});
+
 class SelectSpecialIssuesView extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -85,19 +89,23 @@ class SelectSpecialIssuesView extends React.PureComponent {
   }
 
   legacySpecialIssuesSections = () => {
+    const mstIdentification = this.props.mstIdentification || this.props.legacyMstIdentification;
+
     return [
       specialIssueFilters(true).noneSection(),
       specialIssueFilters(true).aboutSection(),
       specialIssueFilters(true).residenceSection(),
       specialIssueFilters(true).benefitTypeSection(),
-      specialIssueFilters(true).issuesOnAppealSection(),
-      specialIssueFilters(true).dicOrPensionSection()
+      specialIssueFilters(true, mstIdentification).issuesOnAppealSection(),
+      specialIssueFilters(true).dicOrPensionSection(),
     ];
   };
   amaSpecialIssuesSections = () => {
+    const mstIdentification = this.props.mstIdentification || this.props.legacyMstIdentification;
+
     return [
       specialIssueFilters(true).noneSection(),
-      specialIssueFilters(true).amaIssuesOnAppealSection()
+      specialIssueFilters(true, mstIdentification).amaIssuesOnAppealSection(),
     ];
   };
 
@@ -126,6 +134,8 @@ class SelectSpecialIssuesView extends React.PureComponent {
   renderSpecialIssuesPage = (appeal, sections, specialIssues) => {
     const {
       error,
+      mstIdentification,
+      legacyMstIdentification,
       ...otherProps
     } = this.props;
     const { allIssuesDisabled } = this.state;
@@ -138,6 +148,8 @@ class SelectSpecialIssuesView extends React.PureComponent {
       <p>
         {this.getPageNote()}
       </p>
+      {(mstIdentification || legacyMstIdentification) &&
+      <Alert type="info" title=" " message={COPY.SPECIAL_ISSUES_BANNER_TEXT} styling={infoBannerStyling} />}
       {error && <Alert type="error" title={error.title} message={error.detail} />}
       <div {...flexContainer}>
         <div {...flexColumn}>
@@ -236,7 +248,9 @@ SelectSpecialIssuesView.propTypes = {
   setSpecialIssues: PropTypes.func,
   clearSpecialIssues: PropTypes.func,
   showErrorMessage: PropTypes.func,
-  specialIssues: PropTypes.object
+  specialIssues: PropTypes.object,
+  mstIdentification: PropTypes.bool,
+  legacyMstIdentification: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => ({
