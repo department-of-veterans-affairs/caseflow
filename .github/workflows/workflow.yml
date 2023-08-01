@@ -76,14 +76,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # See: https://github.com/actions/setup-node/issues/32#issuecomment-525791142
-      - name: Read .nvmrc
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-        id: nvm
-
       - uses: actions/setup-node@v3
         with:
-          node-version: '${{ steps.nvm.outputs.NVMRC }}'
+          node-version: '14'
           cache: 'yarn'
       - run: (cd && yarn install --frozen-lockfile)
 
@@ -252,13 +247,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y python2
 
-      - name: Read .nvmrc
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-        id: nvm
-
       - uses: actions/setup-node@v3
         with:
-          node-version: '${{ steps.nvm.outputs.NVMRC }}'
+          node-version: "$(node -v)"
           cache: 'yarn'
       - run: (cd && yarn install --frozen-lockfile)
 
@@ -312,7 +303,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '${{ steps.nvm.outputs.NVMRC }}'
+          node-version: "$(node -v)"
           cache: 'yarn'
       - run: (cd && yarn install --frozen-lockfile)
 
