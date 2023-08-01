@@ -79,7 +79,6 @@ jobs:
       - name: Set yarn cache directory
         id: set-yarn-cache-dir
         run:  mkdir -p ~/.cache/yarn && yarn config set cache-folder ~/.cache/yarn
-        # run: echo "path=$(yarn cache dir)" >> "$GITHUB_OUTPUT"
 
       - name: restore yarn cache
         id: cache-yarn-cache
