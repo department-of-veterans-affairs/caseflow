@@ -131,6 +131,10 @@ class ClaimReview < DecisionReview
     request_issues_without_decision_dates? ? "#{business_line.tasks_url}?tab=incomplete" : business_line.tasks_url
   end
 
+  def success_message
+    request_issues_without_decision_dates? ? "You have successfully saved #{claimants.name}'s #{self.class.review_title}" : nil
+  end
+
   # Idempotent method to create all the artifacts for this claim.
   # If any external calls fail, it is safe to call this multiple times until
   # establishment_processed_at is successfully set.
