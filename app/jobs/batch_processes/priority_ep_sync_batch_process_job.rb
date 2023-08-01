@@ -29,8 +29,9 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
       break if job_running_past_expected_end_time?
 
       begin
+        batch = nil
         RedisMutex.with_lock("PriorityEpSyncBatchProcessJob", block: 30, expire: 60) do # key => "PriorityEpSyncBatchProcessJob"
-          @batch = ActiveRecord::Base.transaction do
+          batch = ActiveRecord::Base.transaction do
             records_to_batch = PriorityEpSyncBatchProcess.find_records_to_batch
             next if records_to_batch.empty?
 
@@ -38,16 +39,16 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
           end
         end
 
-        if @batch
-          @batch.process_batch!
+        if batch
+          batch.process_batch!
         else
           Rails.logger.info("No Records Available to Batch.  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
         end
       rescue StandardError => error
         Rails.logger.error("Error: #{error.inspect}, Job ID: #{JOB_ATTR&.job_id}, Job Time: #{Time.zone.now}")
         capture_exception(error: error,
-                          extra: { job_id: JOB_ATTR&.job_id.to_s,
-                                  job_time: Time.zone.now.to_s })
+          extra: { job_id: JOB_ATTR&.job_id.to_s,
+            job_time: Time.zone.now.to_s })
       end
 
       sleep(SLEEP_DURATION)
