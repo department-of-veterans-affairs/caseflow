@@ -2,25 +2,17 @@
 
 describe Metrics::V2::LogsController, type: :controller do
   let(:current_user) { create(:user) }
-  let(:request_params_performance) do
+  let(:request_params) do
     {
       metric: {
+        uuid: SecureRandom.uuid,
         method: "123456789",
-        uuid: "PAT123456^CFL200^A",
-        message: '',
-        type: "performance"
-      }
-    }
-  end
-
-  let(:request_params_error) do
-    {
-      metric: {
-        method: "123456789",
-        uuid: "PAT123456^CFL200^A",
-        message: '',
-        type: "error"
-      }
+        name: 'log',
+        group: 'service',
+        message: 'This is a test',
+        type: 'performance',
+        product: 'reader',
+       }
     }
   end
 
@@ -31,7 +23,7 @@ describe Metrics::V2::LogsController, type: :controller do
 
   context "with good request" do
     it "returns 200 for request params" do
-      post :create, params: request_params_performance
+      post :create, params: request_params
       expect(@raven_called).to eq(false)
       expect(response.status).to eq(200)
     end
@@ -40,7 +32,8 @@ describe Metrics::V2::LogsController, type: :controller do
   context "With error type record to sentry" do
     it "Records to Sentry" do
       capture_raven_log
-      post :create, params: request_params_error
+      request_params[:metric][:type] = 'error'
+      post :create, params: request_params
       expect(@raven_called).to eq(true)
     end
   end

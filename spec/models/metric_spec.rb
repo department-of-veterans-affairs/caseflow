@@ -3,14 +3,18 @@
 describe Metric do
   let(:user) { create(:user) }
 
+  before { User.authenticate!(user: user) }
+
   describe "create_metric" do
     let!(:params) do
        {
+        uuid: SecureRandom.uuid,
         method: "123456789",
-        uuid: "PAT123456^CFL200^A",
-        url: '',
-        message: '',
-        type: 'performance'
+        name: 'log',
+        group: 'service',
+        message: 'This is a test',
+        type: 'performance',
+        product: 'reader',
        }
     end
 
