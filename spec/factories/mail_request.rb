@@ -19,6 +19,24 @@ FactoryBot.define do
       recipient_type { nil }
     end
 
+    trait :ro_colocated_recipient do
+      recipient_type { "ro-colocated" }
+      first_name { nil }
+      last_name  { nil}
+      name { "WYOMING VETERANS COMMISSION" }
+      poa_code { "869" }
+      claimant_station_of_jurisdiction { "329" }
+      participant_id { nil }
+      destination_type { "derived" }
+      address_line_1 { nil }
+      city { nil}
+      country_code { nil }
+      postal_code { nil }
+      state { nil }
+      treat_line_2_as_addressee { nil }
+      treat_line_3_as_addressee { nil }
+    end
+
     initialize_with { new(attributes) }
   end
 end
