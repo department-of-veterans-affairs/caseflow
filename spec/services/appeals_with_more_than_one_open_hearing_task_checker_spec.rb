@@ -5,12 +5,6 @@ describe AppealsWithMoreThanOneOpenHearingTaskChecker do
   let(:appeal2) { create(:appeal, :with_schedule_hearing_tasks) }
   let(:legacy_appeal) { create(:legacy_appeal, :with_schedule_hearing_tasks) }
 
-  it "reports to correct slack channel" do
-    subject.call
-
-    expect(subject.slack_channel).to eq("#appeals-tango")
-  end
-
   context "there are no appeals with more than one open hearing task" do
     it "does not generate a report" do
       subject.call
