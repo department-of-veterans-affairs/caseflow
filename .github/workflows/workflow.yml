@@ -104,230 +104,230 @@ jobs:
             client/node_modules
             ~/.cache/yarn
 
-      # - name: setup testfiles directory
-      #   run: ./ci-bin/capture-log "mkdir -p tmp/testfiles"
+      - name: setup testfiles directory
+        run: ./ci-bin/capture-log "mkdir -p tmp/testfiles"
 
-  #     - name: Install Chrome
-  #       run: |
-  #         CHROME_VERSION="106.0.5249.119-1"
-  #         apt-get update
-  #         wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
-  #         && apt install -y /tmp/chrome.deb \
-  #         && rm /tmp/chrome.deb
-  #         echo "Chrome exe name: $(ls /usr/bin | chrome)"
-  #         echo "Chrome version: $(google-chrome --version)"
+      - name: Install Chrome
+        run: |
+          CHROME_VERSION="106.0.5249.119-1"
+          apt-get update
+          wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
+          && apt install -y /tmp/chrome.deb \
+          && rm /tmp/chrome.deb
+          echo "Chrome exe name: $(ls /usr/bin | chrome)"
+          echo "Chrome version: $(google-chrome --version)"
 
-  #     # wkhtmltopdf is a required library for certain rspec tests to pass
-  #     - name: Restore wkhtmltopdf
-  #       id: cache-wkhtmltopdf
-  #       uses: actions/cache/restore@v3
-  #       with:
-  #         key: ${{ runner.os }}-wkhtmltopdf
-  #         path: wkhtmltox_0.12.6-1.focal_amd64.deb
+      # wkhtmltopdf is a required library for certain rspec tests to pass
+      - name: Restore wkhtmltopdf
+        id: cache-wkhtmltopdf
+        uses: actions/cache/restore@v3
+        with:
+          key: ${{ runner.os }}-wkhtmltopdf
+          path: wkhtmltox_0.12.6-1.focal_amd64.deb
 
-  #     - name: Download wkhtmltopdf
-  #       if: steps.cache-wkhtmltopdf.outputs.cache-hit != 'true'
-  #       run: wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_amd64.deb
+      - name: Download wkhtmltopdf
+        if: steps.cache-wkhtmltopdf.outputs.cache-hit != 'true'
+        run: wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_amd64.deb
 
-  #     - name: Install wkhtmltopdf
-  #       run: apt install ./wkhtmltox_0.12.6-1.focal_amd64.deb
+      - name: Install wkhtmltopdf
+        run: apt install ./wkhtmltox_0.12.6-1.focal_amd64.deb
 
-  #     - name: Cache wkhtmltopdf
-  #       if: steps.cache-wkhtmltopdf.outputs.cache-hit != 'true'
-  #       uses: actions/cache/save@v3
-  #       with:
-  #         key: ${{ runner.os }}-wkhtmltopdf
-  #         path: wkhtmltox_0.12.6-1.focal_amd64.deb
+      - name: Cache wkhtmltopdf
+        if: steps.cache-wkhtmltopdf.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v3
+        with:
+          key: ${{ runner.os }}-wkhtmltopdf
+          path: wkhtmltox_0.12.6-1.focal_amd64.deb
 
-  #     - name: Restore Ruby Dependencies
-  #       id: cache-ruby-dependencies
-  #       uses: actions/cache/restore@v3
-  #       with:
-  #         key: bundler-gems
-  #         path: vendor/bundle
-  #         restore-keys: bundler-gems
+      - name: Restore Ruby Dependencies
+        id: cache-ruby-dependencies
+        uses: actions/cache/restore@v3
+        with:
+          key: bundler-gems
+          path: vendor/bundle
+          restore-keys: bundler-gems
 
-  #     - name: Install/Update Ruby Dependencies
-  #       run: |
-  #         ruby -v
-  #         BASH_ENV="Bash"
-  #         echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> "$BASH_ENV"
-  #         export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")
-  #         gem install bundler
-  #         bundle install --path vendor/bundle
+      - name: Install/Update Ruby Dependencies
+        run: |
+          ruby -v
+          BASH_ENV="Bash"
+          echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> "$BASH_ENV"
+          export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")
+          gem install bundler
+          bundle install --path vendor/bundle
 
-  #     - name: Cache Ruby Dependencies
-  #       if: steps.cache-ruby-dependencies.outputs.cache-hit != 'true'
-  #       uses: actions/cache/save@v3
-  #       with:
-  #         key: bundler-gems
-  #         path: vendor/bundle
+      - name: Cache Ruby Dependencies
+        if: steps.cache-ruby-dependencies.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v3
+        with:
+          key: bundler-gems
+          path: vendor/bundle
 
-  #     - name: Install Dockerize
-  #       run: |
-  #         DOCKERIZE_VERSION="v0.6.1"
-  #         wget https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
-  #         && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
-  #         && rm dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz
+      - name: Install Dockerize
+        run: |
+          DOCKERIZE_VERSION="v0.6.1"
+          wget https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
+          && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
+          && rm dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz
 
-  #     - name: "Wait for database"
-  #       run: dockerize -wait tcp://postgres:5432 -timeout 1m
+      - name: "Wait for database"
+        run: dockerize -wait tcp://postgres:5432 -timeout 1m
 
-  #     - name: "Wait for FACOLS"
-  #       run: ./ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
+      - name: "Wait for FACOLS"
+        run: ./ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
 
-  #     - name: Database setup
-  #       run: |
-  #         ./ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate"
-  #         ./ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate"
+      - name: Database setup
+        run: |
+          ./ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate"
+          ./ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate"
 
-  #     - name: make seed-dbs
-  #       run: |
-  #         ./ci-bin/capture-log "make -f Makefile.example seed-dbs"
+      - name: make seed-dbs
+        run: |
+          ./ci-bin/capture-log "make -f Makefile.example seed-dbs"
 
-  #     - name: Assets Precompile
-  #       run: |
-  #         ./ci-bin/capture-log "bundle exec rake assets:precompile"
+      - name: Assets Precompile
+        run: |
+          ./ci-bin/capture-log "bundle exec rake assets:precompile"
 
-  #     # Changing the user and permissions as Chrome/Chromedriver can't run as root
-  #     - name: RSpec via knapsack_pro Queue Mode
-  #       run: |
-  #         mkdir -p ./test-results/rspec
-  #         mkdir .webdrivers
-  #         touch log/selenium-chrome.log
-  #         chmod -R 777 ${GITHUB_WORKSPACE}
-  #         export GHA_NODE_INDEX=${{matrix.ci_node_index}}
-  #         runuser -u circleci bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RSpec::Github::Formatter --tty]"
-  #     # --format RSpec::Github::Formatter use in Rspec-github gem, adds more detailed info to GHA "Annotations"
-  #     # --tty forces Rspec to produce color
-  #     # circleci is the USER
-
-
-  #   # Artifacts --- circleci is the USER
-  #     - run: (cd /home/circleci && tar -zcvf coverage-${{matrix.ci_node_index}}.tar.gz coverage-${{matrix.ci_node_index}})
-  #     - uses: actions/upload-artifact@v3
-  #       if: success()
-  #       with:
-  #         path: /home/circleci/coverage-${{matrix.ci_node_index}}.tar.gz #circleci is the USER
-
-  #     - uses: actions/upload-artifact@v3
-  #       # Run even if there is a failure in the previous steps, but not if the run is cancelled
-  #       if: success() || failure()
-  #       name: capybara-artifacts
-  #       with:
-  #         path: ./tmp/capybara
-
-  #     - name: Compress test logs
-  #       if: failure()
-  #       run: tar -czvf ./log/test-${{matrix.ci_node_index}}.log.tar.gz ./log/test.log
-  #     - uses: actions/upload-artifact@v3
-  #       if: failure()
-  #       name: Upload test logs if failure
-  #       with:
-  #         path: ./log/test-${{matrix.ci_node_index}}.log.tar.gz
-
-  #     - run: cp ./log/bullet.log ./log/bullet-${{matrix.ci_node_index}}.log
-  #     - uses: actions/upload-artifact@v3
-  #       if: success() || failure()
-  #       name: bullet-${{matrix.ci_node_index}}.log
-  #       with:
-  #         path: ./log/bullet-${{matrix.ci_node_index}}.log
+      # Changing the user and permissions as Chrome/Chromedriver can't run as root
+      - name: RSpec via knapsack_pro Queue Mode
+        run: |
+          mkdir -p ./test-results/rspec
+          mkdir .webdrivers
+          touch log/selenium-chrome.log
+          chmod -R 777 ${GITHUB_WORKSPACE}
+          export GHA_NODE_INDEX=${{matrix.ci_node_index}}
+          runuser -u circleci bundle exec rake "knapsack_pro:queue:rspec[--format documentation --format RSpec::Github::Formatter --tty]"
+      # --format RSpec::Github::Formatter use in Rspec-github gem, adds more detailed info to GHA "Annotations"
+      # --tty forces Rspec to produce color
+      # circleci is the USER
 
 
+    # Artifacts --- circleci is the USER
+      - run: (cd /home/circleci && tar -zcvf coverage-${{matrix.ci_node_index}}.tar.gz coverage-${{matrix.ci_node_index}})
+      - uses: actions/upload-artifact@v3
+        if: success()
+        with:
+          path: /home/circleci/coverage-${{matrix.ci_node_index}}.tar.gz #circleci is the USER
 
-  # caseflow_jest_job:
-  #   # This job will run the jest, change the value below to false if you wish to turn it off.
-  #   if: true
-  #   runs-on: ubuntu-latest
-  #   container:
-  #     image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
-  #     credentials:
-  #         username: AWS
-  #         password: ${{ secrets.ECR_PASSWORD }}
-  #     env:
-  #         DBUS_SESSION_BUS_ADDRESS: /dev/null
-  #         RAILS_ENV: test
-  #         NODE_ENV: test
-  #         JEST_DIR: /home/circleci/test-results/jest #circleci is the USER
-  #         TEST_REPORTER: jest-junit
-  #         JEST_JUNIT_OUTPUT_DIR: /home/circleci/test-results/jest #circleci is the USER
-  #         COVERAGE_DIR: /home/circleci/coverage #circleci is the USER
+      - uses: actions/upload-artifact@v3
+        # Run even if there is a failure in the previous steps, but not if the run is cancelled
+        if: success() || failure()
+        name: capybara-artifacts
+        with:
+          path: ./tmp/capybara
 
-  #   steps:
-  #     - name: Install chromium
-  #       run: |
-  #         CHROME_VERSION="106.0.5249.119-1"
-  #         apt-get update
-  #         wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
-  #         && apt install -y /tmp/chrome.deb \
-  #         && rm /tmp/chrome.deb
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
+      - name: Compress test logs
+        if: failure()
+        run: tar -czvf ./log/test-${{matrix.ci_node_index}}.log.tar.gz ./log/test.log
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        name: Upload test logs if failure
+        with:
+          path: ./log/test-${{matrix.ci_node_index}}.log.tar.gz
 
-  #     - name: Install Python-2
-  #       run: |
-  #         sudo apt-get update
-  #         sudo apt-get install -y python2
-
-  #     - name: install_node_dependencies
-  #       run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
-
-  #     - name: jest
-  #       shell: bash
-  #       run: |
-  #         npm install --save-dev jest
-  #         mkdir -p ./test-results/jest
-  #         pushd client
-  #         ../ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
-
-  #     - name: store_test_results
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         path: ./test-results
-
-  #     - name: store logs
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         path: ./all_logs.log
+      - run: cp ./log/bullet.log ./log/bullet-${{matrix.ci_node_index}}.log
+      - uses: actions/upload-artifact@v3
+        if: success() || failure()
+        name: bullet-${{matrix.ci_node_index}}.log
+        with:
+          path: ./log/bullet-${{matrix.ci_node_index}}.log
 
 
 
-  # caseflow_lint_job:
-  #   # This job will run the security lint checker, change the value below to false if you wish to turn it off.
-  #   if: true
-  #   runs-on: ubuntu-latest
-  #   container:
-  #     image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
-  #     credentials:
-  #         username: AWS
-  #         password: ${{ secrets.ECR_PASSWORD }}
+  caseflow_jest_job:
+    # This job will run the jest, change the value below to false if you wish to turn it off.
+    if: true
+    runs-on: ubuntu-latest
+    container:
+      image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
+      credentials:
+          username: AWS
+          password: ${{ secrets.ECR_PASSWORD }}
+      env:
+          DBUS_SESSION_BUS_ADDRESS: /dev/null
+          RAILS_ENV: test
+          NODE_ENV: test
+          JEST_DIR: /home/circleci/test-results/jest #circleci is the USER
+          TEST_REPORTER: jest-junit
+          JEST_JUNIT_OUTPUT_DIR: /home/circleci/test-results/jest #circleci is the USER
+          COVERAGE_DIR: /home/circleci/coverage #circleci is the USER
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: '0'
+    steps:
+      - name: Install chromium
+        run: |
+          CHROME_VERSION="106.0.5249.119-1"
+          apt-get update
+          wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
+          && apt install -y /tmp/chrome.deb \
+          && rm /tmp/chrome.deb
+      - name: Checkout
+        uses: actions/checkout@v3
 
-  #     - name: Install Ruby Dependencies
-  #       run: |
-  #         ruby -v
-  #         BUNDLER_V=$(cat ./Gemfile.lock | tail -1 | tr -d " ")
-  #         echo $BUNDLER_V
-  #         gem install bundler:$BUNDLER_V
-  #         bundle install --path vendor/bundle
-  #     - name: Install Node Dependencies
-  #       run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+      - name: Install Python-2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python2
 
-  #     - name: Danger
-  #       run: ./ci-bin/capture-log "bundle exec danger"
-  #       env:
-  #         DANGER_GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
+      - name: install_node_dependencies
+        run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
-  #     - name: Lint
-  #       run:  ./ci-bin/capture-log "bundle exec rake lint"
-  #       if: ${{ always() }}
+      - name: jest
+        shell: bash
+        run: |
+          npm install --save-dev jest
+          mkdir -p ./test-results/jest
+          pushd client
+          ../ci-bin/capture-log "node_modules/.bin/jest --ci --reporters=default --reporters=jest-junit --maxWorkers=4"
 
-  #     - name: Security
-  #       run:  ./ci-bin/capture-log "bundle exec rake security"
-  #       if: ${{ always() }}
+      - name: store_test_results
+        uses: actions/upload-artifact@v3
+        with:
+          path: ./test-results
+
+      - name: store logs
+        uses: actions/upload-artifact@v3
+        with:
+          path: ./all_logs.log
+
+
+
+  caseflow_lint_job:
+    # This job will run the security lint checker, change the value below to false if you wish to turn it off.
+    if: true
+    runs-on: ubuntu-latest
+    container:
+      image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
+      credentials:
+          username: AWS
+          password: ${{ secrets.ECR_PASSWORD }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+
+      - name: Install Ruby Dependencies
+        run: |
+          ruby -v
+          BUNDLER_V=$(cat ./Gemfile.lock | tail -1 | tr -d " ")
+          echo $BUNDLER_V
+          gem install bundler:$BUNDLER_V
+          bundle install --path vendor/bundle
+      - name: Install Node Dependencies
+        run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+
+      - name: Danger
+        run: ./ci-bin/capture-log "bundle exec danger"
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
+
+      - name: Lint
+        run:  ./ci-bin/capture-log "bundle exec rake lint"
+        if: ${{ always() }}
+
+      - name: Security
+        run:  ./ci-bin/capture-log "bundle exec rake security"
+        if: ${{ always() }}
 
