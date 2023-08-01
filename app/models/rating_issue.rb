@@ -17,7 +17,8 @@ class RatingIssue
     :promulgation_date,
     :rba_contentions_data,
     :reference_id,
-    :subject_text
+    :subject_text,
+    :special_issues
     # adding another field? *
   )
 
@@ -48,7 +49,8 @@ class RatingIssue
         promulgation_date: rating.promulgation_date,
         rba_contentions_data: ensure_array_of_hashes(bgs_data.dig(:rba_issue_contentions)),
         reference_id: bgs_data[:rba_issue_id],
-        subject_text: bgs_data[:subjct_txt]
+        subject_text: bgs_data[:subjct_txt],
+        special_issues: bgs_data[:special_issues]
       )
     end
 
@@ -66,6 +68,7 @@ class RatingIssue
           :reference_id,
           :subject_text
         ).merge(associated_end_products: deserialize_end_products(serialized_hash))
+         .merge(special_issues: deserialize_special_issues(serialized_hash))
       )
     end
 
@@ -81,6 +84,27 @@ class RatingIssue
       serialized_hash[:associated_end_products].map do |end_product_hash|
         EndProduct.deserialize(end_product_hash)
       end
+    end
+
+    def deserialize_special_issues(serialized_hash)
+      # guard for MST/PACT feature toggle
+      return [] unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
+                       FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
+
+      data = []
+      serialized_hash[:special_issues]&.each do |special_issue|
+        data << { mst_available: true } if Rating.special_issue_has_mst?(special_issue)
+
+        data << { pact_available: true } if Rating.special_issue_has_pact?(special_issue)
+      end
+      if serialized_hash[:rba_contentions_data]
+        # get the contentinons from the rating by the participant id
+        contentions = Rating.participant_contentions(serialized_hash)
+        data << { mst_available: true } if Rating.mst_from_contentions_for_rating?(contentions)
+
+        data << { pact_available: true } if Rating.pact_from_contentions_for_rating?(contentions)
+      end
+      data
     end
   end
 
