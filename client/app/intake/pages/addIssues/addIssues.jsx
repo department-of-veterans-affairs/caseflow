@@ -20,7 +20,7 @@ import DateSelector from '../../../components/DateSelector';
 import ErrorAlert from '../../components/ErrorAlert';
 import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../../constants';
 import EP_CLAIM_TYPES from '../../../../constants/EP_CLAIM_TYPES';
-import { formatAddedIssues, formatRequestIssues,getAddIssuesFields, formatIssuesBySection } from '../../util/issues';
+import { formatAddedIssues, formatRequestIssues, getAddIssuesFields, formatIssuesBySection } from '../../util/issues';
 import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
 
