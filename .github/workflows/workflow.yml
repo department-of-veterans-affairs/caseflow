@@ -85,24 +85,20 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           key: yarn-cache-${{ github.base_ref }}
-          path: |
-            node_modules
-            ~/.cache/yarn
+          path: ~/.cache/yarn
           restore-keys:
             yarn-cache-${{ github.base_ref }}
-            yarn-cache-
+            yarn-cache-master
 
       - name: Install Node Dependencies
-        run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+        run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile --prefer-offline"
 
       - name: Save Yarn Cache
         if: steps.cache-yarn-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v3
         with:
           key: yarn-cache-${{ github.base_ref }}
-          path: |
-            node_modules
-            ~/.cache/yarn
+          path: ~/.cache/yarn
 
       - name: setup testfiles directory
         run: ./ci-bin/capture-log "mkdir -p tmp/testfiles"
