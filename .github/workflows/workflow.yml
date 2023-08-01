@@ -84,17 +84,14 @@ jobs:
         id: cache-yarn-cache
         uses: actions/cache/restore@v3
         with:
-          key: yarn-cache-${{ github.base_ref }}
+          key: yarn-cache-${{ hashFiles('client/yarn.lock') }}
           path: |
             node_modules
             client/node_modules
             ~/.cache/yarn
-          restore-keys:
-            yarn-cache-${{ github.base_ref }}
-            yarn-cache-master
+          restore-keys: yarn-cache-${{ hashFiles('client/yarn.lock') }}
 
       - name: Install Node Dependencies
-        # if: steps.cache-yarn-cache.outputs.cache-hit != 'true'
         run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile --prefer-offline"
 
       - name: Save Yarn Cache
