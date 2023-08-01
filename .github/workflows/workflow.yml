@@ -299,7 +299,7 @@ jobs:
           fetch-depth: '0'
 
       - name: Print out node
-        run: echo "::debug::$(node -v)"
+        run: node -v
 
       - name: Install Ruby Dependencies
         run: |
