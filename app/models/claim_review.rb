@@ -104,13 +104,13 @@ class ClaimReview < DecisionReview
     # TODO: Also can this have more than one DecisionReviewTask probably not but still need to check?
     # TODO: Should this be limited for HLRs and SCs or also Appeals
     if request_issues_without_decision_dates?
-      review_task = tasks.find { |task| task.type == "DecisionReviewTask" }
+      review_task = tasks.find { |task| task.is_a?(DecisionReviewTask) }
       review_task&.on_hold!
     elsif !request_issues_without_decision_dates?
-      review_task = tasks.find { |task| task.type == "DecisionReviewTask" }
+      review_task = tasks.find { |task| task.is_a?(DecisionReviewTask) }
       # TODO: Should this be in progress or assigned? I think it's typically assigned when created in intake
-      # Should it depend on edited vs intake?
-      review_task&.in_progress!
+      # TODO: Should it depend on edited vs intake?
+      review_task&.assigned!
     end
   end
 
@@ -121,8 +121,14 @@ class ClaimReview < DecisionReview
   def create_business_line_tasks!
     create_decision_review_task! if processed_in_caseflow?
 
+    tasks.reload
+
     # TODO: Make sure this works here for intake?
     handle_issues_with_no_decision_date!
+  end
+
+  def redirect_url_from_intake
+    request_issues_without_decision_dates? ? "#{business_line.tasks_url}?tab=incomplete" : business_line.tasks_url
   end
 
   # Idempotent method to create all the artifacts for this claim.

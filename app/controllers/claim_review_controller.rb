@@ -94,7 +94,7 @@ class ClaimReviewController < ApplicationController
     if claim_review.processed_in_caseflow?
       set_flash_success_message
 
-      render json: { redirect_to: claim_review.business_line.tasks_url,
+      render json: { redirect_to: claim_review.redirect_url_from_intake,
                      beforeIssues: request_issues_update.before_issues.map(&:serialize),
                      afterIssues: request_issues_update.after_issues.map(&:serialize),
                      withdrawnIssues: request_issues_update.withdrawn_issues.map(&:serialize) }
