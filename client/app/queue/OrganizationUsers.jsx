@@ -49,7 +49,6 @@ const listStyle = css({
 });
 const radioContainerStyle = css({
   padding: '-5rem 5rem 2rem 2rem',
-  // marginTop: '-3.5rem'
 })
 
 export default class OrganizationUsers extends React.PureComponent {
