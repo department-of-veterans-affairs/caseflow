@@ -101,7 +101,7 @@ jobs:
         if: steps.cache-yarn-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v3
         with:
-          key: yarn-cache-${{ github.base_ref }}
+          key: yarn-cache-${{ hashFiles('client/yarn.lock') }}
           path: |
             node_modules
             client/node_modules
