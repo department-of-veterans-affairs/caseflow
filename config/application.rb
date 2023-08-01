@@ -12,7 +12,7 @@ require "vbms"
 module CaseflowCertification
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    # config.load_defaults 5.1
+    config.load_defaults 5.2
 
     # ==================================================================================================================
     # Rails 5.0 config overrides
