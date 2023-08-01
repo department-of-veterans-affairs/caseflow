@@ -106,7 +106,7 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
       end
     end
 
-    context "when an there are no records available to batch" do
+    context "when there are no records available to batch" do
       before do
         PriorityEndProductSyncQueue.destroy_all
         allow(Rails.logger).to receive(:info)

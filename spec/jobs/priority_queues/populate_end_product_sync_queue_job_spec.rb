@@ -74,6 +74,16 @@ describe PopulateEndProductSyncQueueJob, type: :job do
         expect(PriorityEndProductSyncQueue.count).to eq 1
         found_epe.update!(synced_status: "PEND")
       end
+
+      it "logs a message that says 'No Priority EPE Records Available'" do
+        found_epe.update!(synced_status: "CAN")
+        allow(Rails.logger).to receive(:info)
+        PopulateEndProductSyncQueueJob.perform_now
+        expect(Rails.logger).to have_received(:info).with(
+          "No Priority EPE Records Available.  Job ID: #{PopulateEndProductSyncQueueJob::JOB_ATTR&.job_id}."\
+          "  Time: #{Time.zone.now}"
+        )
+      end
     end
 
     context "when an error is raised during the job" do
