@@ -20,6 +20,10 @@ class MailTask < Task
   def verify_org_task_unique; end
   prepend PrivacyActPending
 
+  LEGACY_MAIL_TASKS = [
+    { label: "Hearing postponement request", value: "HearingPostponementRequestMailTask" }
+  ].freeze
+
   class << self
     def blocking?
       # Some open mail tasks should block distribution of an appeal to judges.
