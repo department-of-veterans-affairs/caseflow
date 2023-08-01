@@ -96,6 +96,9 @@ Rails.application.configure do
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
   end
 
+  # Don't colorize logging in production (for easier to read log files)
+  config.colorize_logging = false
+
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
