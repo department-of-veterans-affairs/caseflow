@@ -13,7 +13,7 @@ export default class Alert extends React.Component {
   messageDiv() {
     const message = this.props.children || this.props.message;
 
-    return <div className="usa-alert-text">{message}</div>;
+    return <div className="usa-alert-text" {...this.props.messageStyling}>{message}</div>;
   }
 
   render() {
@@ -56,6 +56,7 @@ Alert.propTypes = {
    */
   lowerMargin: PropTypes.bool,
   message: PropTypes.node,
+  messageStyling: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 
   /**
    * If empty, a "slim" alert is displayed

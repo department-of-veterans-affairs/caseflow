@@ -3,12 +3,23 @@ import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { FORM_TYPES } from '../constants';
 import AddedIssue from './AddedIssue';
+import Alert from 'app/components/Alert';
 import Button from '../../components/Button';
 import Dropdown from '../../components/Dropdown';
 import EditContentionTitle from '../components/EditContentionTitle';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
 import _ from 'lodash';
+
+const alertStyling = css({
+  marginTop: 0,
+  marginBottom: '20px'
+});
+
+const messageStyling = css({
+  color: COLORS.GREY,
+  fontSize: '17px !important',
+});
 
 const nonEditableIssueStyling = css({
   color: COLORS.GREY,
@@ -73,6 +84,8 @@ export default class IssuesList extends React.Component {
             issue, userCanWithdrawIssues, intakeData.isDtaError
           );
 
+          const showNoDecisionDateBanner = !issue.date;
+
           return <div className="issue-container" key={`issue-container-${issue.index}`}>
             <div
               className="issue"
@@ -110,6 +123,13 @@ export default class IssuesList extends React.Component {
 
               </div>
             </div>
+            {showNoDecisionDateBanner ?
+              <Alert
+                message={COPY.VHA_NO_DECISION_DATE_BANNER}
+                messageStyling={messageStyling}
+                styling={alertStyling}
+                type="warning"
+              /> : null}
             {editableContentionText && <EditContentionTitle
               issue= {issue}
               issueIdx={issue.index} />}

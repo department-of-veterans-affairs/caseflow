@@ -10,20 +10,19 @@ import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-import RemoveIssueModal from '../components/RemoveIssueModal';
-import CorrectionTypeModal from '../components/CorrectionTypeModal';
-import AddIssueManager from '../components/AddIssueManager';
+import RemoveIssueModal from '../../components/RemoveIssueModal';
+import CorrectionTypeModal from '../../components/CorrectionTypeModal';
+import AddIssueManager from '../../components/AddIssueManager';
 
-import Button from '../../components/Button';
-import InlineForm from '../../components/InlineForm';
-import DateSelector from '../../components/DateSelector';
-import ErrorAlert from '../components/ErrorAlert';
-import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../constants';
-import EP_CLAIM_TYPES from '../../../constants/EP_CLAIM_TYPES';
-import { formatAddedIssues, formatRequestIssues, getAddIssuesFields, formatIssuesBySection } from '../util/issues';
-import Table from '../../components/Table';
-import IssueList from '../components/IssueList';
-import Alert from 'app/components/Alert';
+import Button from '../../../components/Button';
+import InlineForm from '../../../components/InlineForm';
+import DateSelector from '../../../components/DateSelector';
+import ErrorAlert from '../../components/ErrorAlert';
+import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../../constants';
+import EP_CLAIM_TYPES from '../../../../constants/EP_CLAIM_TYPES';
+import { formatAddedIssues, formatRequestIssues, getAddIssuesFields, formatIssuesBySection } from '../../util/issues';
+import Table from '../../../components/Table';
+import issueSectionRow from './issueSectionRow/issueSectionRow';
 
 import {
   toggleAddingIssue,
@@ -39,11 +38,11 @@ import {
   toggleIssueRemoveModal,
   toggleLegacyOptInModal,
   toggleCorrectionTypeModal
-} from '../actions/addIssues';
-import { editEpClaimLabel } from '../../intakeEdit/actions/edit';
-import COPY from '../../../COPY';
-import { EditClaimLabelModal } from '../../intakeEdit/components/EditClaimLabelModal';
-import { ConfirmClaimLabelModal } from '../../intakeEdit/components/ConfirmClaimLabelModal';
+} from '../../actions/addIssues';
+import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
+import COPY from '../../../../COPY';
+import { EditClaimLabelModal } from '../../../intakeEdit/components/EditClaimLabelModal';
+import { ConfirmClaimLabelModal } from '../../../intakeEdit/components/ConfirmClaimLabelModal';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
@@ -219,14 +218,13 @@ class AddIssuesPage extends React.Component {
       return this.redirect(intakeData, hasClearedEp);
     }
 
-    if (intakeData && this.requestIssuesWithoutDecisionDates(intakeData)) {
+    if (intakeData && intakeData.benefitType !== 'vha' && this.requestIssuesWithoutDecisionDates(intakeData)) {
       return <Redirect to={PAGE_PATHS.REQUEST_ISSUE_MISSING_DECISION_DATE} />;
     }
 
     const requestStatus = intakeData.requestStatus;
     const requestState =
       requestStatus.completeIntake || requestStatus.requestIssuesUpdate || requestStatus.editClaimLabelUpdate;
-    const endProductWithError = intakeData.editEpUpdateError;
 
     const requestErrorCode =
       intakeData.requestStatus.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
@@ -370,38 +368,6 @@ class AddIssuesPage extends React.Component {
       additionalRowClasses = (rowObj) => (rowObj.field === '' ? 'intake-issue-flash' : '');
     }
 
-    let rowObjects = fieldsForFormType;
-
-    const issueSectionRow = (sectionIssues, fieldTitle) => {
-      const reviewHasPredocketVhaIssues = sectionIssues.some(
-        (issue) => issue.benefitType === 'vha' && issue.isPreDocketNeeded === 'true'
-      );
-      const showPreDocketBanner = !editPage && formType === 'appeal' && reviewHasPredocketVhaIssues;
-
-      return {
-        field: fieldTitle,
-        content: (
-          <div>
-            {endProductWithError && (
-              <ErrorAlert errorCode="unable_to_edit_ep" />
-            )}
-            { !fieldTitle.includes('issues') && <span><strong>Requested issues</strong></span> }
-            <IssueList
-              onClickIssueAction={this.onClickIssueAction}
-              withdrawReview={withdrawReview}
-              issues={sectionIssues}
-              intakeData={intakeData}
-              formType={formType}
-              featureToggles={featureToggles}
-              userCanWithdrawIssues={userCanWithdrawIssues}
-              editPage={editPage}
-            />
-            {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />}
-          </div>
-        )
-      };
-    };
-
     const endProductLabelRow = (endProductCode, editDisabled) => {
       return {
         field: 'EP Claim Label',
@@ -424,18 +390,45 @@ class AddIssuesPage extends React.Component {
       };
     };
 
+    let rowObjects = fieldsForFormType;
+
     Object.keys(issuesBySection).sort().
       map((key) => {
         const sectionIssues = issuesBySection[key];
         const endProductCleared = sectionIssues[0]?.endProductCleared;
+        const issueSectionRowProps = {
+          editPage,
+          featureToggles,
+          formType,
+          intakeData,
+          onClickIssueAction: this.onClickIssueAction,
+          sectionIssues,
+          userCanWithdrawIssues,
+          withdrawReview,
+        };
 
         if (key === 'requestedIssues') {
-          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Requested issues'));
+          rowObjects = rowObjects.concat(
+            issueSectionRow({
+              ...issueSectionRowProps,
+              fieldTitle: 'Requested issues',
+            }),
+          );
         } else if (key === 'withdrawnIssues') {
-          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, 'Withdrawn issues'));
+          rowObjects = rowObjects.concat(
+            issueSectionRow({
+              ...issueSectionRowProps,
+              fieldTitle: 'Withdrawn issues',
+            }),
+          );
         } else {
           rowObjects = rowObjects.concat(endProductLabelRow(key, endProductCleared || issuesChanged));
-          rowObjects = rowObjects.concat(issueSectionRow(sectionIssues, ' ', key));
+          rowObjects = rowObjects.concat(
+            issueSectionRow({
+              ...issueSectionRowProps,
+              fieldTitle: ' ',
+            }),
+          );
         }
 
         return rowObjects;
