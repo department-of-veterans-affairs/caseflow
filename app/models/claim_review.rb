@@ -128,11 +128,29 @@ class ClaimReview < DecisionReview
   end
 
   def redirect_url_from_intake
-    request_issues_without_decision_dates? ? "#{business_line.tasks_url}?tab=incomplete" : business_line.tasks_url
+    if benefit_type == "vha" && request_issues_without_decision_dates?
+      "#{business_line.tasks_url}?tab=incomplete"
+    else
+      business_line.tasks_url
+    end
   end
 
+  def claimant_name
+    if veteran_is_not_claimant
+      veteran_full_name
+    else
+      claimant.try(:name)
+    end
+  end
+
+  # TODO: Should this be on the review level or on the controller level?
   def success_message
-    request_issues_without_decision_dates? ? "You have successfully saved #{claimants.name}'s #{self.class.review_title}" : nil
+    # TODO: This replaces the current message entirely??
+    if request_issues_without_decision_dates?
+      "You have successfully saved #{claimant_name}'s #{self.class.review_title}"
+    else
+      "You have successfully established #{claimant_name}'s #{self.class.review_title}"
+    end
   end
 
   # Idempotent method to create all the artifacts for this claim.
