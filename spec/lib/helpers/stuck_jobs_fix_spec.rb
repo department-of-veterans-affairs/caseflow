@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
-require "./lib/helpers/stuck_jobs_fix.rb"
+require "./lib/helpers/stuck_jobs_fix"
 
 describe WarRoom::StuckJobsFix, :postgres do
   subject { WarRoom::StuckJobFix.new }
 
   let(:dta_error) { "DTA SC creation failed" }
-  let(:claim_not_established_error) { "Claim not established" }
+  let(:claim_not_established_error) { "Claim not established." }
   let(:claim_date_dt_error) { "ClaimDateDt" }
+  let(:sc_dta_for_appeal_error) { "Can't create a SC DTA for appeal" }
   let!(:veteran_file_number) { "111223333" }
   let!(:veteran) { create(:veteran, file_number: veteran_file_number) }
   let(:appeal) { create(:appeal, veteran_file_number: veteran_file_number) }
@@ -40,13 +41,15 @@ describe WarRoom::StuckJobsFix, :postgres do
   end
 
   let(:expected_logs) do
-    "\n #{Time.zone.now} ClaimDateInvalidRemediationJob::Log - Found 1 Decision Document(s) with errors"
+    "\n#{Time.zone.now} ClaimDateInvalidRemediationJob::Log - Found 1 Decision Document(s) with errors"
   end
 
   context "#claim_date_dt_fix" do
     subject { described_class.new("decision_document", "ClaimDateDt") }
 
-    let!(:expected_logs) { "#{Time.zone.now} Claimdatedt::Log - Summary Report. Total number of Records with Errors: 0" }
+    let!(:expected_logs) do
+      " #{Time.zone.now} ClaimDateDt::Log - Summary Report. Total number of Records with Errors: 0"
+    end
 
     before do
       create_list(:decision_document, 5)
@@ -186,6 +189,58 @@ describe WarRoom::StuckJobsFix, :postgres do
           subject.dta_sc_creation_failed_fix
           expect(hlr.reload.establishment_error).to eql(dta_error)
         end
+      end
+    end
+  end
+
+  context "#sc_dta_for_appeal_fix" do
+    before do
+      decision_doc_with_error.update(error: sc_dta_for_appeal_error)
+    end
+
+    subject { described_class.new("decision_document", sc_dta_for_appeal_error) }
+
+    context "when payee_code is nil" do
+      before do
+        decision_doc_with_error.appeal.claimant.update(payee_code: nil)
+      end
+      # we need to manipulate the claimant.type for these describes
+      describe "claimant.type is VeteranClaimant" do
+        it "updates payee_code to 00" do
+          subject.sc_dta_for_appeal_fix
+          expect(decision_doc_with_error.appeal.claimant.payee_code).to eq("00")
+        end
+
+        it "clears error column" do
+          subject.sc_dta_for_appeal_fix
+          expect(decision_doc_with_error.reload.error).to be_nil
+        end
+      end
+
+      describe "claimant.type is DependentClaimant" do
+        it "updates payee_code to 10" do
+          decision_doc_with_error.appeal.claimant.update(type: "DependentClaimant")
+          subject.sc_dta_for_appeal_fix
+          expect(decision_doc_with_error.appeal.claimant.payee_code).to eq("10")
+        end
+
+        it "clears error column" do
+          decision_doc_with_error.appeal.claimant.update(type: "DependentClaimant")
+          subject.sc_dta_for_appeal_fix
+          expect(decision_doc_with_error.reload.error).to be_nil
+        end
+      end
+    end
+
+    context "when payee_code is populated" do
+      it "does not update payee_code" do
+        expect(decision_doc_with_error.appeal.claimant.payee_code).to eq("00")
+        subject.sc_dta_for_appeal_fix
+        expect(decision_doc_with_error.appeal.claimant.payee_code).to eq("00")
+      end
+      it "does not clear error field" do
+        subject.sc_dta_for_appeal_fix
+        expect(decision_doc_with_error.error).to eq(sc_dta_for_appeal_error)
       end
     end
   end

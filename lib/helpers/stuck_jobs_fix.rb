@@ -80,6 +80,29 @@ module WarRoom
       create_s3_log_report
     end
 
+    def sc_dta_for_appeal_fix
+      return if records_with_errors.blank?
+
+      s3_record_count
+
+      records_with_errors.each do |decision_doc|
+        claimant = decision_doc.appeal.claimant
+
+        return unless claimant.payee_code.nil?
+
+        if claimant.type == "VeteranClaimant"
+          claimant.update!(payee_code: "00")
+        elsif claimant.type == "DependentClaimant"
+          claimant.update!(payee_code: "10")
+        end
+        single_s3_record_log(decision_doc)
+        clear_error_on_record(decision_doc)
+      end
+
+      s3_record_count
+      create_s3_log_report
+    end
+
     private
 
     def format_record_s3_log_text
