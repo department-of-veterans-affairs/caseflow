@@ -3,6 +3,10 @@ import { issueByIndex } from '../util/issues';
 
 const analytics = true;
 
+export const toggleAddDecisionDateModal = () => ({
+  type: ACTIONS.TOGGLE_ADD_DECISION_DATE_MODAL,
+});
+
 export const toggleAddingIssue = () => ({
   type: ACTIONS.TOGGLE_ADDING_ISSUE,
   meta: { analytics }

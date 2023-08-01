@@ -8,6 +8,12 @@ export const commonReducers = (state, action) => {
   let actionsMap = {};
   let listOfIssues = state.addedIssues ? state.addedIssues : [];
 
+  actionsMap[ACTIONS.TOGGLE_ADD_DECISION_DATE_MODAL] = () => {
+    return update(state, {
+      $toggle: ['addDecisionDateModalVisible']
+    });
+  };
+
   actionsMap[ACTIONS.TOGGLE_ADDING_ISSUE] = () => {
     return update(state, {
       $toggle: ['addingIssue']
