@@ -76,18 +76,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # - name: Get yarn cache directory
-      #   id: get-yarn-cache-dir
-      #   run: echo "path=$(yarn cache dir)" >> "$GITHUB_OUTPUT"
+      - name: Set yarn cache directory
+        id: set-yarn-cache-dir
+        run: mkdir ~/.cache/yarn && yarn config set cache-folder ~/.cache/yarn
+        # run: echo "path=$(yarn cache dir)" >> "$GITHUB_OUTPUT"
 
       - name: restore yarn cache
         id: cache-yarn-cache
         uses: actions/cache/restore@v3
         with:
-          key: yarn-cache-${GITHUB_BASE_REF}
-          path: /usr/local/share/.cache/yarn/v6
+          key: yarn-cache-${{ github.base_ref }}
+          path: ~/.cache/yarn
           restore-keys:
-            yarn-cache-${GITHUB_BASE_REF}
+            yarn-cache-${{ github.base_ref }}
             yarn-cache-master
 
       - name: Install Node Dependencies
@@ -97,8 +98,8 @@ jobs:
         if: steps.cache-yarn-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v3
         with:
-          key: yarn-cache-${GITHUB_BASE_REF}
-          path: /usr/local/share/.cache/yarn/v6
+          key: yarn-cache-${{ github.base_ref }}
+          path: ~/.cache/yarn
 
       - name: setup testfiles directory
         run: ./ci-bin/capture-log "mkdir -p tmp/testfiles"
