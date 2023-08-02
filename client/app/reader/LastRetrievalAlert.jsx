@@ -15,7 +15,7 @@ class LastRetrievalAlert extends React.PureComponent {
 
   render() {
 
-    // Check that document manifests have been recieved from VBMS
+    // Check that document manifests have been recieved from VBMS -- red banner
     if (!this.props.manifestVbmsFetchedAt) {
       return <div {...alertStyling}>
         <Alert title="Error" type="error">
@@ -24,7 +24,7 @@ class LastRetrievalAlert extends React.PureComponent {
           <br />
           <br />
           Please visit at a later point to view a complete list of documents in the claims
-          folder.
+          folder or force a sync by visiting eFolder and downloading the documents.
         </Alert>
       </div>;
     }
@@ -32,7 +32,7 @@ class LastRetrievalAlert extends React.PureComponent {
     const staleCacheTime = moment().subtract(CACHE_TIMEOUT_HOURS, 'h'),
       vbmsManifestTimestamp = moment(this.props.manifestVbmsFetchedAt, 'MM/DD/YY HH:mma Z');
 
-    // Check that manifest results are fresh
+    // Check that manifest results are fresh -- yellow banner
     if (vbmsManifestTimestamp.isBefore(staleCacheTime)) {
       const now = moment(),
         vbmsDiff = now.diff(vbmsManifestTimestamp, 'hours');
@@ -40,7 +40,7 @@ class LastRetrievalAlert extends React.PureComponent {
       return <div {...alertStyling}>
         <Alert title="Warning" type="warning">
           We last synced with VBMS {vbmsDiff} hours ago. If you'd like to check for new
-          documents, visit later.
+          documents, visit later or force a sync by visiting eFolder and downloading the documents.
         </Alert>
       </div>;
     }
