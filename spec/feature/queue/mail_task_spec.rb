@@ -151,30 +151,87 @@ RSpec.feature "MailTasks", :postgres do
     end
     let(:hpr_task) { create(:hearing_postponement_request_mail_task, :with_unscheduled_hearing) }
 
-    it "change task type" do
-      visit("queue/appeals/#{hpr_task.appeal.uuid}")
-      click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: COPY::CHANGE_TASK_TYPE_SUBHEAD)
-      find(".cf-select__control", text: "Select an action type").click
-      find(".cf-select__option", text: "Change of address").click
-      fill_in(name: "Provide instructions and context for this change:", with: "instructions")
-      click_button("Change task type")
-      most_recent_task = find("tr", text: "TASK", match: :first)
-      expect(most_recent_task).to have_content("TASK\nChange of address")
-      expect(most_recent_task).to have_content("ASSIGNED ON\n" + Time.zone.today.strftime("%m/%d/%Y").to_s)
+    context "changing task type" do
+      it "current tasks should have new task" do
+        visit("queue/appeals/#{hpr_task.appeal.uuid}")
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: COPY::CHANGE_TASK_TYPE_SUBHEAD)
+        find(".cf-select__control", text: "Select an action type").click
+        find(".cf-select__option", text: "Change of address").click
+        fill_in(name: "Provide instructions and context for this change:", with: "instructions")
+        click_button("Change task type")
+        most_recent_task = find("tr", text: "TASK", match: :first)
+        expect(most_recent_task).to have_content("ASSIGNED ON\n#{Time.zone.today.strftime('%m/%d/%Y')}")
+        expect(most_recent_task).to have_content("TASK\nChange of address")
+      end
+
+      it "case timeline should cancel old task" do
+        visit("queue/appeals/#{hpr_task.appeal.uuid}")
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: COPY::CHANGE_TASK_TYPE_SUBHEAD)
+        find(".cf-select__control", text: "Select an action type").click
+        find(".cf-select__option", text: "Change of address").click
+        fill_in(name: "Provide instructions and context for this change:", with: "instructions")
+        click_button("Change task type")
+        first_task_item = find("#case-timeline-table tr:nth-child(2)")
+        expect(first_task_item).to have_content("CANCELLED ON\n#{Time.zone.today.strftime('%m/%d/%Y')}")
+        expect(first_task_item).to have_content("HearingPostponementRequestMailTask cancelled")
+        expect(first_task_item).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+      end
     end
 
-    it "assign to team" do
+    it "assigning to new team" do
       page = "queue/appeals/#{hpr_task.appeal.uuid}"
       visit(page)
       click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.label)
       find(".cf-select__control", text: "Select a team").click
-      find(".cf-select__option", text: "Case Review").click
+      find(".cf-select__option", text: "BVA Intake").click
       fill_in(name: "Provide instructions and context for this action:", with: "instructions")
       click_button("Submit")
       visit(page)
       most_recent_task = find("tr", text: "TASK", match: :first)
-      expect(most_recent_task).to have_content("ASSIGNED TO\nCase Review")
-      expect(most_recent_task).to have_content(Time.zone.today.strftime("%m/%d/%Y").to_s)
+      expect(most_recent_task).to have_content("ASSIGNED ON\n#{Time.zone.today.strftime('%m/%d/%Y')}")
+      expect(most_recent_task).to have_content("ASSIGNED TO\nBVA Intake")
+    end
+
+    it "assign to person" do
+      new_user = User.create!(css_id: "NEW_USER", full_name: "John Smith", station_id: "101")
+      HearingAdmin.singleton.add_user(new_user)
+      page = "queue/appeals/#{hpr_task.appeal.uuid}"
+      visit(page)
+      click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label)
+      find(".cf-select__control", text: User.current_user.full_name).click
+      find(".cf-select__option", text: new_user.full_name).click
+      fill_in(name: "Provide instructions and context for this action:", with: "instructions")
+      click_button("Submit")
+      visit(page)
+      most_recent_task = find("tr", text: "TASK", match: :first)
+      expect(most_recent_task).to have_content("ASSIGNED ON\n#{Time.zone.today.strftime('%m/%d/%Y')}")
+      expect(most_recent_task).to have_content("ASSIGNED TO\n#{new_user.css_id}")
+    end
+
+    context "cancelling task" do
+      it "should remove HearingPostponementRequestTask from current tasks" do
+        page = "queue/appeals/#{hpr_task.appeal.uuid}"
+        visit(page)
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: Constants.TASK_ACTIONS.CANCEL_TASK.label)
+        fill_in(name: "Provide instructions and context for this action:", with: "instructions")
+        click_button("Submit")
+        visit(page)
+        most_recent_task = find("tr", text: "TASK", match: :first)
+        expect(most_recent_task).to have_content("TASK\nAll hearing-related tasks")
+      end
+
+      it "case timeline should cancel task" do
+        page = "queue/appeals/#{hpr_task.appeal.uuid}"
+        visit(page)
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: Constants.TASK_ACTIONS.CANCEL_TASK.label)
+        fill_in(name: "Provide instructions and context for this action:", with: "instructions")
+        click_button("Submit")
+        visit(page)
+        first_task_item = find("#case-timeline-table tr:nth-child(2)")
+        expect(first_task_item).to have_content("CANCELLED ON\n#{Time.zone.today.strftime('%m/%d/%Y')}")
+        expect(first_task_item).to have_content("HearingPostponementRequestMailTask cancelled")
+        expect(first_task_item).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+      end
     end
   end
 end
