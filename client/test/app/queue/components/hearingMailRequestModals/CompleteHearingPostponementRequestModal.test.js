@@ -16,7 +16,7 @@ import {
   enterInputValue
 } from '../modalUtils';
 import COPY from '../../../../../COPY';
-import { add } from 'date-fns';
+import { add, format } from 'date-fns';
 
 const renderCompleteHprModal = (storeValues) => {
   const appealId = getAppealId(storeValues);
@@ -134,15 +134,32 @@ describe('CompleteHearingPostponementRequestModal', () => {
   });
 
   describe('on entering a decision date into date selector', () => {
+    const dateErrorMessage = 'Dates cannot be in the future';
+    const formatDate = (date) => format(date, 'yyyy-MM-dd').toString();
+
     describe('date is in the future', () => {
-      const dateErrorMessage = 'Dates cannot be in the future';
-      const tomorrow = add(new Date(), { days: 1 });
+      const tomorrow = formatDate(add(new Date(), { days: 1 }));
 
       test('date error message appears', () => {
         renderCompleteHprModal(completeHearingPostponementRequestData);
 
-        enterInputValue(datePrompt, tomorrow.toString());
+        enterInputValue(datePrompt, tomorrow);
         expect(screen.getByText(dateErrorMessage)).toBeInTheDocument();
+
+        // TEST THAT BUTTON IS DISABLED IF ALL OTHER FIELDS VALID
+      });
+    });
+
+    describe('date is not in the future', () => {
+      const today = formatDate(new Date());
+
+      test('date error message is not present', () => {
+        renderCompleteHprModal(completeHearingPostponementRequestData);
+
+        enterInputValue(datePrompt, today);
+        expect(screen.queryByText(dateErrorMessage)).not.toBeInTheDocument();
+
+        // TEST THAT BUTTON IS ENABLED IF ALL OTHER FIELDS VALID
       });
     });
   });
