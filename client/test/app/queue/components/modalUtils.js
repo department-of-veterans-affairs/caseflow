@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import { screen, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import * as uiActions from 'app/queue/uiReducer/uiActions';
 
 /**
@@ -59,7 +59,7 @@ export const enterTextFieldOptions = (instructionsFieldName, instructions) => {
 export const enterInputValue = (inputLabelName, inputValue) => {
   const inputField = screen.getByLabelText(inputLabelName);
 
-  fireEvent.change(inputField, { target: { value: inputValue } });
+  userEvent.type(inputField, inputValue);
 };
 
 /**
@@ -103,7 +103,6 @@ export const selectFromDropdown = async (dropdownName, dropdownSelection) => {
 export const clickSubmissionButton = (buttonText) => {
   userEvent.click(screen.getByRole('button', { name: buttonText }));
 };
-
 
 /**
  * Extracts the modal type from a TASK_ACTIONS.json entry
