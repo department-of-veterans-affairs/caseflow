@@ -138,7 +138,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
         "[#{virtual_hearing.hearing_id}])..."
       )
 
-      pexip_response = create_pexip_conference
+      pexip_response = create_new_conference
 
       Rails.logger.info("Pexip response: #{pexip_response.inspect}")
 
@@ -176,7 +176,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     "(#{response.error.code}) #{response.error.message}"
   end
 
-  def create_pexip_conference
+  def create_new_conference
     client.create_conference(
       host_pin: virtual_hearing.host_pin,
       guest_pin: virtual_hearing.guest_pin,
