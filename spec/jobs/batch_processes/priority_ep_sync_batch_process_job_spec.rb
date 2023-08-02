@@ -12,21 +12,15 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
   end
 
   let!(:pepsq_records) do
+    stub_const("PopulateEndProductSyncQueueJob::SLEEP_DURATION", 0)
     PopulateEndProductSyncQueueJob.perform_now
     PriorityEndProductSyncQueue.all
   end
 
-  before do
-    # Force the job to only run long enough to iterate through the loop once.
-    # This overrides the default job duration which is supposed to continue
-    # iterating through the job for an hour.
-    #
-    # Changing the sleep duration to 0 prevents mismatching 'ended_at' times.
-    stub_const("PriorityEpSyncBatchProcessJob::JOB_DURATION", 0.001.seconds)
-    stub_const("PriorityEpSyncBatchProcessJob::SLEEP_DURATION", 0.seconds)
+  subject do
+    stub_const("PriorityEpSyncBatchProcessJob::SLEEP_DURATION", 0)
+    PriorityEpSyncBatchProcessJob.perform_now
   end
-
-  subject { PriorityEpSyncBatchProcessJob.perform_now }
 
   describe "#perform" do
     context "when 99 records can sync successfully and 1 cannot" do
@@ -115,7 +109,7 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
 
       it "a message that says 'No Records Available to Batch' will be logged" do
         expect(Rails.logger).to have_received(:info).with(
-          "No Records Available to Batch.  Job ID: #{PriorityEpSyncBatchProcessJob::JOB_ATTR&.job_id}."\
+          "No Records Available to Batch.  Job will be enqueued again once 1-hour mark is hit.  Job ID: #{PriorityEpSyncBatchProcessJob::JOB_ATTR&.job_id}."\
           "  Time: #{Time.zone.now}"
         )
       end

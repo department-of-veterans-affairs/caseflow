@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe PopulateEndProductSyncQueueJob, type: :job do
+  before do
+    stub_const("PopulateEndProductSyncQueueJob::SLEEP_DURATION", 0)
+  end
+
   let!(:veteran) { create(:veteran) }
   let!(:found_vec) do
     create(:vbms_ext_claim, :canceled, claimant_person_id: veteran.participant_id)
@@ -20,16 +24,6 @@ describe PopulateEndProductSyncQueueJob, type: :job do
            reference_id: found_vec.claim_id.to_s)
   end
   let!(:not_found_vec) { create(:vbms_ext_claim, :rdc, claimant_person_id: veteran.participant_id) }
-
-  before do
-    # Force the job to only run long enough to iterate through the loop once.
-    # This overrides the default job duration which is supposed to continue
-    # iterating through the job for an hour.
-    #
-    # Changing the sleep duration to 0 prevents mismatching times.
-    stub_const("PopulateEndProductSyncQueueJob::JOB_DURATION", 0.0001.seconds)
-    stub_const("PopulateEndProductSyncQueueJob::SLEEP_DURATION", 0.seconds)
-  end
 
   describe "#perform" do
     context "when job is able to run successfully" do
@@ -75,12 +69,12 @@ describe PopulateEndProductSyncQueueJob, type: :job do
         found_epe.update!(synced_status: "PEND")
       end
 
-      it "logs a message that says 'No Priority EPE Records Available'" do
+      it "logs a message that says 'PopulateEndProductSyncQueueJob is not able to find any batchable EPE records.'" do
         found_epe.update!(synced_status: "CAN")
         allow(Rails.logger).to receive(:info)
         PopulateEndProductSyncQueueJob.perform_now
         expect(Rails.logger).to have_received(:info).with(
-          "No Priority EPE Records Available.  Job ID: #{PopulateEndProductSyncQueueJob::JOB_ATTR&.job_id}."\
+          "PopulateEndProductSyncQueueJob is not able to find any batchable EPE records.  Job will be enqueued again once 1-hour mark is hit.  Job ID: #{PopulateEndProductSyncQueueJob::JOB_ATTR&.job_id}."\
           "  Time: #{Time.zone.now}"
         )
       end
