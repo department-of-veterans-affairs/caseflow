@@ -759,10 +759,6 @@ class Appeal < DecisionReview
     issues_report
   end
 
-  def bgs_power_of_attorney
-    claimant&.is_a?(BgsRelatedClaimant) ? power_of_attorney : nil
-  end
-
   # Note: Currently Caseflow only supports one claimant per decision review
   def power_of_attorneys
     claimants.map(&:power_of_attorney).compact

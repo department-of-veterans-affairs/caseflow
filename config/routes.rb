@@ -252,6 +252,7 @@ Rails.application.routes.draw do
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
       member do
         get :power_of_attorney
+        patch :update_power_of_attorney
       end
     end
   end

@@ -55,7 +55,7 @@ const powerOfAttorneyDecisionReviewWrapper = (WrappedComponent) => {
 
     return <WrappedComponent
       powerOfAttorney={powerOfAttorney}
-      appealId={appealId}
+      appealId={taskId}
       poaAlert={poaAlert}
       appellantType={appellantType}
     />;

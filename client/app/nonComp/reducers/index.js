@@ -78,6 +78,14 @@ export const nonCompReducer = (state = mapDataToInitialState(), action) => {
         $set: { error: action.payload.error }
       }
     });
+  case ACTIONS.SET_POA_REFRESH_ALERT:
+    return update(state, {
+      poaAlert: {
+        alertType: { $set: action.payload.alertType },
+        message: { $set: action.payload.message },
+        powerOfAttorney: { $set: action.payload.powerOfAttorney }
+      }
+    });
   default:
     return state;
   }

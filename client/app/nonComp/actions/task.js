@@ -74,3 +74,11 @@ export const taskUpdateDefaultPage = (page) => (dispatch) => {
   });
 };
 
+export const setPoaRefreshAlertDecisionReview = (alertType, message, powerOfAttorney) => ({
+  type: ACTIONS.SET_POA_REFRESH_ALERT,
+  payload: {
+    alertType,
+    message,
+    powerOfAttorney
+  }
+});

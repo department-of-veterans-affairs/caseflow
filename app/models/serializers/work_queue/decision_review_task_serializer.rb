@@ -77,7 +77,9 @@ class WorkQueue::DecisionReviewTaskSerializer
         representative_type: power_of_attorney(object)&.representative_type,
         representative_name: power_of_attorney(object)&.representative_name,
         representative_address: power_of_attorney(object)&.representative_address,
-        representative_email_address: power_of_attorney(object)&.representative_email_address
+        representative_email_address: power_of_attorney(object)&.representative_email_address,
+        poa_last_synced_at: power_of_attorney(object)&.poa_last_synced_at
+        # representative_tz: power_of_attorney(object)&.representative_tz
       }
     end
   end
