@@ -590,7 +590,9 @@ class QueueApp extends React.PureComponent {
   };
 
   routedOrganizationUsers = (props) => (
-    <OrganizationUsers {...props.match.params} />
+    <OrganizationUsers {...props.match.params}
+      conferenceSelectionVisibility = {this.props.featureToggles.conference_selection_visibility}
+    />
   );
 
   routedTeamManagement = (props) => <TeamManagement {...props.match.params} />;
