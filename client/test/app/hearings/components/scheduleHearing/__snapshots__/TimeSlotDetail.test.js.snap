@@ -128,12 +128,6 @@ Object {
         </span>
          
         <span
-          style="margin: 0px 0px;"
-        >
-          ·
-        </span>
-         
-        <span
           aria-describedby="tooltip-id"
           aria-label=""
           currentitem="false"
@@ -353,12 +347,6 @@ Object {
         </div>
       </span>
        
-       
-      <span
-        style="margin: 0px 0px;"
-      >
-        ·
-      </span>
        
       <span
         style="margin: 0px 0px;"
@@ -652,12 +640,6 @@ Object {
         </span>
          
         <span
-          style="margin: 0px 0px;"
-        >
-          ·
-        </span>
-         
-        <span
           aria-describedby="tooltip-id"
           aria-label=""
           currentitem="false"
@@ -908,12 +890,6 @@ Object {
       </span>
        
       200624-614
-       
-      <span
-        style="margin: 0px 0px;"
-      >
-        ·
-      </span>
        
       <span
         style="margin: 0px 0px;"
