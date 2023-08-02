@@ -23,10 +23,8 @@ class InitialTasksFactory
 
   def create_root_and_sub_tasks!
     # if changes to mst or pact, create IssueUpdateTask
-    if @appeal.mst? ||
-       @appeal.pact? &&
-       FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
-       FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
+    if (@appeal.mst? && FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])) ||
+       (@appeal.pact? && FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user]))
       create_establishment_task
     end
     create_vso_tracking_tasks
