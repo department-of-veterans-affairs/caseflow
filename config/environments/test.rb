@@ -113,7 +113,7 @@ Rails.application.configure do
   ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"] ||= "1000"
 
   # End Product Sync Queue Batch Sizes
-  ENV["END_PRODUCT_QUEUE_BATCH_LIMIT"] ||= "1000"
+  ENV["END_PRODUCT_QUEUE_BATCH_LIMIT"] ||= "500"
 
   # Travel Board Sync Batch Size
   ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"] ||= "250"
