@@ -12,10 +12,12 @@ describe BatchProcessRescueJob, type: :job do
   end
 
   let!(:pepsq_records_one) do
+    stub_const("PopulateEndProductSyncQueueJob::SLEEP_DURATION", 0)
     PopulateEndProductSyncQueueJob.perform_now
   end
 
   let!(:first_batch_process) do
+    stub_const("PriorityEpSyncBatchProcessJob::SLEEP_DURATION", 0)
     PriorityEpSyncBatchProcessJob.perform_now
   end
 
@@ -24,10 +26,12 @@ describe BatchProcessRescueJob, type: :job do
   end
 
   let!(:pepsq_records_two) do
+    stub_const("PopulateEndProductSyncQueueJob::SLEEP_DURATION", 0)
     PopulateEndProductSyncQueueJob.perform_now
   end
 
   let!(:second_batch_process) do
+    stub_const("PriorityEpSyncBatchProcessJob::SLEEP_DURATION", 0)
     PriorityEpSyncBatchProcessJob.perform_now
   end
 
