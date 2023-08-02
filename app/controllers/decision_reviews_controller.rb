@@ -6,12 +6,16 @@ class DecisionReviewsController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
   before_action :verify_veteran_record_access, only: [:show]
 
-  delegate :in_progress_tasks,
+  delegate :incomplete_tasks,
+           :incomplete_tasks_type_counts,
+           :incomplete_tasks_issue_type_counts,
+           :in_progress_tasks,
            :in_progress_tasks_type_counts,
            :in_progress_tasks_issue_type_counts,
            :completed_tasks,
            :completed_tasks_type_counts,
            :completed_tasks_issue_type_counts,
+           :included_tabs,
            to: :business_line
 
   SORT_COLUMN_MAPPINGS = {
@@ -81,15 +85,32 @@ class DecisionReviewsController < ApplicationController
   end
 
   def task_filter_details
+    task_filter_hash = {}
+    included_tabs.each do |tab_name|
+      case tab_name
+      when :incomplete
+        task_filter_hash[:incomplete] = incomplete_tasks_type_counts
+        task_filter_hash[:incomplete_issue_types] = incomplete_tasks_issue_type_counts
+      when :in_progress
+        task_filter_hash[:in_progress] = in_progress_tasks_type_counts
+        task_filter_hash[:in_progress_issue_types] = in_progress_tasks_issue_type_counts
+      when :completed
+        task_filter_hash[:completed] = completed_tasks_type_counts
+        task_filter_hash[:completed_issue_types] = completed_tasks_issue_type_counts
+      else
+        fail NotImplementedError "Tab name type not implemented for this business line: #{business_line}"
+      end
+    end
+    task_filter_hash
+  end
+
+  def business_line_config_options
     {
-      in_progress: in_progress_tasks_type_counts,
-      completed: completed_tasks_type_counts,
-      in_progress_issue_types: in_progress_tasks_issue_type_counts,
-      completed_issue_types: completed_tasks_issue_type_counts
+      tabs: included_tabs
     }
   end
 
-  helper_method :task_filter_details, :business_line, :task
+  helper_method :task_filter_details, :business_line, :task, :business_line_config_options
 
   private
 
@@ -110,13 +131,14 @@ class DecisionReviewsController < ApplicationController
   def queue_tasks
     tab_name = allowed_params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM.to_sym]
 
-    return missing_tab_parameter_error unless tab_name
-
     sort_by_column = SORT_COLUMN_MAPPINGS[allowed_params[Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM.to_sym]]
 
     tasks = case tab_name
+            when "incomplete" then incomplete_tasks(pagination_query_params(sort_by_column))
             when "in_progress" then in_progress_tasks(pagination_query_params(sort_by_column))
             when "completed" then completed_tasks(pagination_query_params(sort_by_column))
+            when nil
+              return missing_tab_parameter_error
             else
               return unrecognized_tab_name_error
             end

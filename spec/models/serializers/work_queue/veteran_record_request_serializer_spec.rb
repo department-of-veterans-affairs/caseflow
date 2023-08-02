@@ -28,8 +28,9 @@ describe WorkQueue::VeteranRecordRequestSerializer, :postgres do
           issue_count: 0,
           issue_types: "",
           type: "Record Request",
-          business_line: non_comp_org.url
-
+          business_line: non_comp_org.url,
+          external_appeal_id: appeal.uuid,
+          appeal_type: "Appeal"
         }
       }
       expect(subject.serializable_hash[:data]).to eq(serializable_hash)

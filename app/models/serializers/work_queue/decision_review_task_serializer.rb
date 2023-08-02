@@ -97,6 +97,12 @@ class WorkQueue::DecisionReviewTaskSerializer
     decision_review(object).is_a?(Appeal) ? "Board Grant" : decision_review(object).class.review_title
   end
 
+  attribute :external_appeal_id do |object|
+    object[:external_appeal_id] || decision_review(object).uuid
+  end
+
+  attribute :appeal_type
+
   attribute :business_line do |object|
     assignee = object.assigned_to
 

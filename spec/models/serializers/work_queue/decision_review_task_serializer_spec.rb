@@ -28,6 +28,8 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
           issue_count: 0,
           issue_types: "",
           type: "Higher-Level Review",
+          external_appeal_id: task.appeal.uuid,
+          appeal_type: "HigherLevelReview",
           business_line: non_comp_org.url
         }
       }
@@ -58,6 +60,8 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             issue_count: 0,
             issue_types: "",
             type: "Higher-Level Review",
+            external_appeal_id: task.appeal.uuid,
+            appeal_type: "HigherLevelReview",
             business_line: non_comp_org.url
           }
         }
@@ -98,6 +102,8 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             issue_count: 0,
             issue_types: "",
             type: "Higher-Level Review",
+            external_appeal_id: task.appeal.uuid,
+            appeal_type: "HigherLevelReview",
             business_line: non_comp_org.url
           }
         }
@@ -106,7 +112,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
     end
 
     context "decision review with multiple issues with multiple issue categories" do
-      let!(:vha_org) { create(:business_line, name: "Veterans Health Administration", url: "vha") }
+      let!(:vha_org) { VhaBusinessLine.singleton }
       let(:hlr) do
         create(:higher_level_review_vha_task).appeal
       end
@@ -141,6 +147,8 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             issue_count: 3,
             issue_types: hlr.request_issues.active.pluck(:nonrating_issue_category).join(","),
             type: "Higher-Level Review",
+            external_appeal_id: task.appeal.uuid,
+            appeal_type: "HigherLevelReview",
             business_line: non_comp_org.url
           }
         }

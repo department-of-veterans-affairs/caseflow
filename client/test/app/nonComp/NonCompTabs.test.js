@@ -4,24 +4,43 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import '@testing-library/jest-dom';
 
-import { taskFilterDetails } from '../../data/taskFilterDetails';
+import { vhaTaskFilterDetails, genericTaskFilterDetails } from '../../data/taskFilterDetails';
 import NonCompTabsUnconnected from 'app/nonComp/components/NonCompTabs';
 import ApiUtil from '../../../app/util/ApiUtil';
+import { VHA_INCOMPLETE_TAB_DESCRIPTION } from '../../../COPY';
 
-const basicProps = {
+const basicVhaProps = {
   businessLine: 'Veterans Health Administration',
   businessLineUrl: 'vha',
   baseTasksUrl: '/decision_reviews/vha',
   selectedTask: null,
   decisionIssuesStatus: {},
-  taskFilterDetails,
+  taskFilterDetails: vhaTaskFilterDetails,
   featureToggles: {
     decisionReviewQueueSsnColumn: true
+  },
+  businessLineConfig: {
+    tabs: ['incomplete', 'in_progress', 'completed']
+  },
+};
+
+const basicGenericProps = {
+  businessLine: 'Generic',
+  businessLineUrl: 'generic',
+  baseTasksUrl: '/decision_reviews/generic',
+  selectedTask: null,
+  decisionIssuesStatus: {},
+  taskFilterDetails: genericTaskFilterDetails,
+  featureToggles: {
+    decisionReviewQueueSsnColumn: true
+  },
+  businessLineConfig: {
+    tabs: ['in_progress', 'completed']
   },
 };
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  // jest.clearAllMocks();
 
   // Mock ApiUtil get so the tasks will appear in the queues.
   ApiUtil.get = jest.fn().mockResolvedValue({
@@ -63,9 +82,9 @@ const checkFilterableHeaders = (expectedHeaders) => {
   });
 };
 
-const renderNonCompTabs = () => {
+const renderNonCompTabs = (props) => {
 
-  const nonCompTabsReducer = createReducer(basicProps);
+  const nonCompTabsReducer = createReducer(props);
 
   const store = createStore(nonCompTabsReducer);
 
@@ -80,13 +99,12 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-describe('NonCompTabs', () => {
+describe('NonCompTabsVha', () => {
   beforeEach(() => {
-    renderNonCompTabs(basicProps);
+    renderNonCompTabs(basicVhaProps);
   });
 
   it('renders a tab titled "In progress tasks"', () => {
-
     expect(screen.getAllByText('In progress tasks')).toBeTruthy();
 
     // Check for the correct in progress tasks header values
@@ -98,6 +116,83 @@ describe('NonCompTabs', () => {
     checkSortableHeaders(sortableHeaders);
     checkFilterableHeaders(filterableHeaders);
 
+  });
+
+  it('renders a tab titled "Incomplete tasks"', async () => {
+    expect(screen.getAllByText('Incomplete tasks')).toBeTruthy();
+
+    const tabs = screen.getAllByRole('tab');
+
+    await tabs[0].click();
+
+    await waitFor(() => {
+      expect(screen.getByText(VHA_INCOMPLETE_TAB_DESCRIPTION)).toBeInTheDocument();
+    });
+
+    // Check for the correct completed tasks header values
+    const expectedHeaders = ['Claimant', 'Veteran SSN', 'Issues', 'Issue Type', 'Days Waiting', 'Type'];
+    const sortableHeaders = expectedHeaders.filter((header) => header !== 'Type');
+    const filterableHeaders = ['type', 'issue type'];
+
+    checkTableHeaders(expectedHeaders);
+    checkSortableHeaders(sortableHeaders);
+    checkFilterableHeaders(filterableHeaders);
+
+  });
+
+  it('renders a tab titled "Completed tasks"', async () => {
+
+    expect(screen.getAllByText('Completed tasks')).toBeTruthy();
+
+    const tabs = screen.getAllByRole('tab');
+
+    await tabs[2].click();
+
+    await waitFor(() => {
+      expect(screen.getByText('Cases completed (last 7 days):')).toBeInTheDocument();
+    });
+
+    // Check for the correct completed tasks header values
+    const expectedHeaders = ['Claimant', 'Veteran SSN', 'Issues', 'Issue Type', 'Date Completed', 'Type'];
+    const sortableHeaders = expectedHeaders.filter((header) => header !== 'Type');
+    const filterableHeaders = ['type', 'issue type'];
+
+    checkTableHeaders(expectedHeaders);
+    checkSortableHeaders(sortableHeaders);
+    checkFilterableHeaders(filterableHeaders);
+
+  });
+});
+
+describe('NonCompTabsGeneric', () => {
+  beforeEach(() => {
+    renderNonCompTabs(basicGenericProps);
+  });
+
+  it('renders a tab titled "In progress tasks"', async () => {
+    expect(screen.getAllByText('In progress tasks')).toBeTruthy();
+
+    const tabs = screen.getAllByRole('tab');
+
+    // The async from the first describe block is interferring with this test so wait for the tab to reload apparently.
+    await tabs[0].click();
+    await waitFor(() => {
+      expect(screen.getByText('Days Waiting')).toBeInTheDocument();
+    });
+
+    // Check for the correct in progress tasks header values
+    const expectedHeaders = ['Claimant', 'Veteran SSN', 'Issues', 'Issue Type', 'Days Waiting', 'Type'];
+    const sortableHeaders = expectedHeaders.filter((header) => header !== 'Type');
+    const filterableHeaders = ['type', 'issue type'];
+
+    checkTableHeaders(expectedHeaders);
+    checkSortableHeaders(sortableHeaders);
+    checkFilterableHeaders(filterableHeaders);
+
+  });
+
+  it('does not render a tab titled "Incomplete tasks"', () => {
+    expect(screen.queryByText('Incomplete tasks')).toBeNull();
   });
 
   it('renders a tab titled "Completed tasks"', async () => {
