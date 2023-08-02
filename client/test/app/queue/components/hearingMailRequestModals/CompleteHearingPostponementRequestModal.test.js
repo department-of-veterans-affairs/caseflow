@@ -169,6 +169,17 @@ describe('CompleteHearingPostponementRequestModal', () => {
       }
     };
 
+    const testValidForm = (eventSequence) => {
+      describe('all requried fields are valid', () => {
+        test('submit button is enabled', () => {
+          renderCompleteHprModal(completeHearingPostponementRequestData);
+
+          completeValidForm(eventSequence);
+          expect(submitButton()).not.toBeDisabled();
+        });
+      });
+    };
+
     const completeInvalidForm = (eventSequence, invalidEvent) => {
       for (const event in eventSequence) {
         if (
@@ -202,14 +213,7 @@ describe('CompleteHearingPostponementRequestModal', () => {
         instructions: () => enterTextFieldOptions(instructions, 'test')
       };
 
-      describe('all requried fields are valid', () => {
-        test('submit button is enabled', () => {
-          renderCompleteHprModal(completeHearingPostponementRequestData);
-
-          completeValidForm(validModalEvents);
-          expect(submitButton()).not.toBeDisabled();
-        });
-      });
+      testValidForm(validModalEvents);
 
       describe('any field is invalid', () => {
         runInvalidationTestOnEachField(validModalEvents);
@@ -223,14 +227,7 @@ describe('CompleteHearingPostponementRequestModal', () => {
         instructions: () => enterTextFieldOptions(instructions, 'test')
       };
 
-      describe('all requried fields are valid', () => {
-        test('submit button is enabled', () => {
-          renderCompleteHprModal(completeHearingPostponementRequestData);
-
-          completeValidForm(validModalEvents);
-          expect(submitButton()).not.toBeDisabled();
-        });
-      });
+      testValidForm(validModalEvents);
 
       describe('any field is invalid', () => {
         runInvalidationTestOnEachField(validModalEvents);
