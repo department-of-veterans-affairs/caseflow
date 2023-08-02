@@ -102,12 +102,6 @@ const editAppellantInformationLinkStyling = css({
   margin: '5px',
 });
 
-//  both const updatePOALink and editPOAInformation needs to be changed when working
-// refreshPOA botton story.
-
-const updatePOALink = true;
-const editPOAInformation = true;
-
 class NonCompDispositions extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -209,18 +203,6 @@ class NonCompDispositions extends React.PureComponent {
             <h2>{COPY.CASE_DETAILS_POA_SUBSTITUTE} </h2>
             <PowerOfAttorneyDecisionReview
               appealId={task.appeal.uuid}
-              additionalHeaderContent={
-                editPOAInformation && (
-                  <span
-                    className="cf-push-right"
-                    {...editAppellantInformationLinkStyling}
-                  >
-                    <Link to={`/queue/appeals/${task.appeal.uuid}/edit_poa_information`}>
-                      {updatePOALink}
-                    </Link>
-                  </span>
-                )
-              }
             />
           </div>
         </div>

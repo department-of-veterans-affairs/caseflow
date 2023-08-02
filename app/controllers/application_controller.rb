@@ -248,6 +248,7 @@ class ApplicationController < ApplicationBaseController
   def update_poa_information(appeal)
     clear_poa_not_found_cache(appeal)
     cooldown_period = cooldown_period_remaining(appeal)
+    byebug
     if cooldown_period > 0
       render json: {
         alert_type: "info",

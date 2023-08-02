@@ -9,7 +9,7 @@ require "securerandom"
 
 # rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
-  include AppealConcern
+  # include AppealConcern
   include BeaamAppealConcern
   include BgsService
   include Taskable
