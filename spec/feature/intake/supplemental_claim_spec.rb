@@ -383,8 +383,7 @@ feature "Supplemental Claim Intake", :all_dbs do
 
     VeteranClaimant.create!(
       decision_review: supplemental_claim,
-      participant_id: test_veteran.participant_id,
-      payee_code: "11"
+      participant_id: test_veteran.participant_id
     )
 
     supplemental_claim.start_review!

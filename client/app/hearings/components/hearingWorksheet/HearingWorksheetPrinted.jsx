@@ -51,18 +51,6 @@ const getLegacyHearingWorksheetDocsSection = (appeal) => {
   );
 };
 
-const specialIssuesFormatting = (mstStatus, pactStatus) => {
-  if (!mstStatus && !pactStatus) {
-    return 'None';
-  } else if (mstStatus && pactStatus) {
-    return 'MST, PACT';
-  } else if (mstStatus) {
-    return 'MST';
-  } else if (pactStatus) {
-    return 'PACT';
-  }
-};
-
 export class HearingWorksheetPrinted extends React.Component {
 
   componentDidMount() {
@@ -136,10 +124,6 @@ export class HearingWorksheetPrinted extends React.Component {
                   <p>{issue.disposition}</p>
                 </div>
                 }
-                <div className="cf-hearing-worksheet-issue-field">
-                  <h4>Special Issues</h4>
-                  <p>{specialIssuesFormatting(issue.mst_status, issue.pact_status)}</p>
-                </div>
                 {
                   issue.notes &&
                 <div className="cf-hearing-worksheet-issue-field">
