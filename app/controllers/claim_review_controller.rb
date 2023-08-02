@@ -136,11 +136,20 @@ class ClaimReviewController < ApplicationController
     "You have successfully " + [added_issues, removed_issues, withdrawn_issues].compact.to_sentence + "."
   end
 
+  def edited_decision_date_message
+    "You have successfully updated an issue's decision date"
+  end
+
   def set_flash_success_message
+    # TODO: Changing this message is a bit complicated.
     flash[:edited] = if request_issues_update.after_issues.empty?
                        decisions_removed_message
                      elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
                        review_withdrawn_message
+                     # TODO: This is pretty janky. Maybe check the before issues and claim review issues afterwords.
+                     # Claim review check might not work because it might be async?
+                     elsif claim_review.benefit_type == "vha" && !claim_review.request_issues_without_decision_dates?
+                       edited_decision_date_message
                      else
                        review_edited_message
                      end
