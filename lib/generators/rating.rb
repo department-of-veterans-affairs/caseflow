@@ -80,13 +80,7 @@ class Generators::Rating
           decn_tn: decision[:type_name],
           dis_sn: decision[:disability_id],
           dis_dt: decision[:disability_date],
-          orig_denial_dt: decision[:original_denial_date],
-          disability_special_issues: {
-            dist_dt: decision[:dis_dt],
-            dis_sn: decision[:dis_sn],
-            spis_basis_tn: decision[:spis_basis_tn],
-            spis_tn: decision[:spis_tn]
-          }
+          orig_denial_dt: decision[:original_denial_date]
         }
       end
 
