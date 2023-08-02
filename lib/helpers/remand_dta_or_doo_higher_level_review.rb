@@ -5,6 +5,7 @@ module WarRoom
   # Purpose: to find Higher Level Reviews with Duty to Assist (DTA) or Difference of Opinion (DOO)
   # decision issues and remand them to generate Supplemental Claims
   class RemandDtaOrDooHigherLevelReview
+    S3_FOLDER_NAME = "appeals-dbas"
 
     # Currently, HLRs missing SCs are tracked in OAR report loads that are sent over and then
     # uploaded to the EP Establishment Workaround table
@@ -14,6 +15,7 @@ module WarRoom
       RequestStore[:current_user] = User.system_user
 
       @logs = ["\nReport Load #{report_load}: Remand DTA or DOO Higher Level Review Log"]
+      @folder_name = (Rails.deploy_env == :prod) ? S3_FOLDER_NAME : "#{S3_FOLDER_NAME}-#{Rails.deploy_env}"
 
       # Establish connection
       conn = ActiveRecord::Base.connection
@@ -111,26 +113,8 @@ module WarRoom
     # Save Logs to S3 Bucket
     def store_logs_in_s3_bucket(report_load, env)
       # Set Client Resources for AWS
-      Aws.config.update(region: "us-gov-west-1")
-      s3client = Aws::S3::Client.new
-      s3resource = Aws::S3::Resource.new(client: s3client)
-      s3bucket = s3resource.bucket("appeals-dbas")
-
-      # Path to folder and file name
       file_name = "ep_establishment_workaround/#{env}/remand_hlr_logs/remand_dta_or_doo_hlr_report_load_#{report_load}-#{Time.zone.now}"
-
-      # Store contents of logs array in a temporary file
-      content = @logs.join("\n")
-      temporary_file = Tempfile.new("remand_hlr_log.txt")
-      filepath = temporary_file.path
-      temporary_file.write(content)
-      temporary_file.flush
-
-      # Store File in S3 bucket
-      s3bucket.object(file_name).upload_file(filepath, acl: "private", server_side_encryption: "AES256")
-
-      # Delete Temporary File
-      temporary_file.close!
+      S3Service.store_file("#{@folder_name}/#{file_name}", @logs)
     end
   end
 end
