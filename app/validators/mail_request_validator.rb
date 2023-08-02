@@ -72,11 +72,12 @@ module MailRequestValidator
     end
 
     def ro_colocated?
-      return recipient_type == "ro-colocated" if self.class == MailRequest
-
-      return vbms_distribution&.recipient_type == "ro-colocated" if self.class == VbmsDistributionDestination
-
-      false
+      case self
+      when MailRequest then recipient_type == "ro-colocated"
+      when VbmsDistributionDestination then vbms_distribution&.recipient_type == "ro-colocated"
+      else
+        false
+      end
     end
 
     def recipient_type_ro_colocated?
