@@ -4,7 +4,7 @@ class DecisionReviewIntake < Intake
   include RunAsyncable
 
   def ui_hash
-    Intake::DecisionReviewIntakeSerializer.new(self).serializable_hash[:data][:attributes]
+    Intake::DecisionReviewIntakeSerializer.new(self, special_issues: true).serializable_hash[:data][:attributes]
   rescue Rating::NilRatingProfileListError, PromulgatedRating::LockedRatingError
     cancel!(reason: "system_error")
     raise

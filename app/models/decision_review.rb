@@ -388,8 +388,8 @@ class DecisionReview < CaseflowRecord
 
   private
 
-  def contestable_issue_generator
-    @contestable_issue_generator ||= ContestableIssueGenerator.new(self)
+  def contestable_issue_generator(special_issues)
+    @contestable_issue_generator ||= ContestableIssueGenerator.new(self, special_issues: special_issues)
   end
 
   def can_contest_rating_issues?

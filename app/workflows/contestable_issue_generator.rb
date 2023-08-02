@@ -5,6 +5,8 @@ class ContestableIssueGenerator
     @review = review
   end
 
+  attr_accessor special_issues
+
   delegate :finalized_decision_issues_before_receipt_date, to: :review
   delegate :receipt_date, to: :review
 

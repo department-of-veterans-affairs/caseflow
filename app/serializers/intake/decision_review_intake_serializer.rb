@@ -2,6 +2,9 @@
 
 class Intake::DecisionReviewIntakeSerializer < Intake::IntakeSerializer
   include FastJsonapi::ObjectSerializer
+
+  attr_accessor special_issues
+
   set_key_transform :camel_lower
 
   attribute :receipt_date do |object|
@@ -56,7 +59,7 @@ class Intake::DecisionReviewIntakeSerializer < Intake::IntakeSerializer
   end
 
   attribute :contestable_issues_by_date do |object|
-    object.detail&.contestable_issues&.map(&:serialize)
+    object.detail&.contestable_issues(special_issues)&.map(&:serialize)
   end
 
   attribute :veteran_valid do |object|
