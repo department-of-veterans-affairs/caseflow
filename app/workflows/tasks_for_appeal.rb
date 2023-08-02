@@ -79,7 +79,7 @@ class TasksForAppeal
   end
 
   def legacy_appeal_tasks
-    # return [] unless user_is_judge_or_attorney? || user.can_act_on_behalf_of_judges?
+    return [] unless user_is_judge_or_attorney? || user.can_act_on_behalf_of_judges?
 
     LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id)
   end
