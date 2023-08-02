@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_08_01_195738) do
+ActiveRecord::Schema.define(version: 2023_08_02_192733) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -352,6 +352,7 @@ ActiveRecord::Schema.define(version: 2023_08_01_195738) do
     t.text "remediation_notes", comment: "Brief description of the encountered issue and remediation strategy"
     t.bigint "stuck_record_id", null: false, comment: "The id / primary key of the stuck record and the type / where the record came from"
     t.string "stuck_record_type", null: false
+    t.datetime "updated_at", comment: "The time an update occurred on the record"
     t.index ["stuck_record_type", "stuck_record_id"], name: "index_caseflow_stuck_records_on_stuck_record_id_and_type"
   end
 
