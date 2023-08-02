@@ -70,6 +70,7 @@ class WorkQueue::DecisionReviewTaskSerializer
   end
 
   attribute :power_of_attorney do |object|
+    # byebug
     if power_of_attorney(object).nil?
       nil
     else
@@ -79,7 +80,7 @@ class WorkQueue::DecisionReviewTaskSerializer
         representative_address: power_of_attorney(object)&.representative_address,
         representative_email_address: power_of_attorney(object)&.representative_email_address,
         poa_last_synced_at: power_of_attorney(object)&.poa_last_synced_at
-        # representative_tz: power_of_attorney(object)&.representative_tz
+        # representative_tz: representative_tz(power_of_attorney(object))
       }
     end
   end

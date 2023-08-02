@@ -192,7 +192,7 @@ class DecisionReviewsController < ApplicationController
       representative_name: task.appeal.power_of_attorney&.representative_name,
       representative_address: task.appeal.power_of_attorney&.representative_address,
       representative_email_address: task.appeal.power_of_attorney&.representative_email_address,
-      # representative_tz: task.appeal.power_of_attorney&.representative_tz,
+      representative_tz: task.appeal.power_of_attorney&.representative_tz,
       poa_last_synced_at: task.appeal.power_of_attorney&.poa_last_synced_at
     }
   end
