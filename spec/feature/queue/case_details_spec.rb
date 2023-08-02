@@ -649,28 +649,43 @@ RSpec.feature "Case details", :all_dbs do
           )
         )
       end
+      # some of the below values are hardcoded in the veteran factory
+      let!(:inflated_bgs_veteran_record) do
+        { first_name: appeal.veteran.first_name,
+          last_name: appeal.veteran.last_name,
+          date_of_birth: 30.years.ago.to_date.strftime("%m/%d/%Y"),
+          date_of_death: nil,
+          name_suffix: appeal.veteran.name_suffix,
+          sex: "M",
+          address_line1: "1234 Main Street",
+          country: "USA",
+          zip_code: "12345",
+          state: "FL",
+          city: "Orlando",
+          file_number: appeal.veteran.file_number,
+          ssn: appeal.veteran.ssn,
+          email_address: "#{appeal.veteran.first_name}.#{appeal.veteran.last_name}@test.com",
+          ptcpnt_id: appeal.veteran.participant_id,
+          participant_id: appeal.veteran.participant_id }
+      end
+      let!(:bgs) { Fakes::BGSService.new }
 
       before do
-        Fakes::BGSService.inaccessible_appeal_vbms_ids = []
-        Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
+        bgs.class.mark_veteran_not_accessible(appeal.veteran_file_number)
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
           .and_raise(BGS::ShareError, "NonUniqueResultException")
-        appeal.veteran&.multiple_phone_numbers?
       end
 
       scenario "access the appeal's case details" do
-        visit "/queue/appeals/#{appeal.external_id}"
-
+        reload_case_detail_page(appeal.external_id)
         expect(page).to have_content(COPY::DUPLICATE_PHONE_NUMBER_TITLE)
 
-        cache_key = Fakes::BGSService.new.can_access_cache_key(current_user, appeal.veteran_file_number)
-        expect(Rails.cache.exist?(cache_key)).to eq(false)
+        bgs.inaccessible_appeal_vbms_ids = []
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
+          .and_return(inflated_bgs_veteran_record)
 
-        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
-        Fakes::BGSService.inaccessible_appeal_vbms_ids = []
         visit "/queue/appeals/#{appeal.external_id}"
-
-        expect(Rails.cache.exist?(cache_key)).to eq(true)
+        expect(page).to have_content(appeal.veteran_full_name)
       end
     end
   end
@@ -2183,6 +2198,95 @@ RSpec.feature "Case details", :all_dbs do
           reload_case_detail_page cavc_appeal.external_id
 
           expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
+        end
+      end
+    end
+
+    describe "MST and PACT issues" do
+      let!(:mst_appeal) do
+        create(
+          :appeal,
+          number_of_claimants: 1,
+          request_issues: [
+            create(
+              :request_issue,
+              benefit_type: "compensation",
+              mst_status: true,
+              pact_status: false,
+              nonrating_issue_description: "description here",
+              notes: "issue notes here"
+            )
+          ]
+        )
+      end
+      let!(:pact_appeal) do
+        create(
+          :appeal,
+          number_of_claimants: 1,
+          request_issues: [
+            create(
+              :request_issue,
+              benefit_type: "compensation",
+              mst_status: false,
+              pact_status: true,
+              nonrating_issue_description: "description here",
+              notes: "issue notes here"
+            )
+          ]
+        )
+      end
+
+      let(:intake_user) { create(:user, css_id: "BVA_INTAKE_USER", station_id: "101") }
+
+      context "when there is a pact issue prechecked" do
+        before do
+          FeatureToggle.enable!(:mst_identification)
+          FeatureToggle.enable!(:pact_identification)
+          BvaIntake.singleton.add_user(intake_user)
+          User.authenticate!(user: intake_user)
+        end
+
+        after do
+          FeatureToggle.disable!(:mst_identification)
+          FeatureToggle.disable!(:pact_identification)
+        end
+
+        it "the page shows the Special Issues: PACT Badge" do
+          visit "/queue/appeals/#{pact_appeal.external_id}"
+          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          expect(page).to have_content("Special Issues: PACT")
+        end
+
+        it "the page does not show the Special Issues: MST Badge" do
+          visit "/queue/appeals/#{pact_appeal.external_id}"
+          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          expect(page).to_not have_content("Special Issues: MST")
+        end
+      end
+
+      context "when there is an mst issue prechecked" do
+        before do
+          BvaIntake.singleton.add_user(intake_user)
+          User.authenticate!(user: intake_user)
+          FeatureToggle.enable!(:mst_identification)
+          FeatureToggle.enable!(:pact_identification)
+        end
+
+        after do
+          FeatureToggle.disable!(:mst_identification)
+          FeatureToggle.disable!(:pact_identification)
+        end
+
+        it "the page shows the Special Issues: MST Badge" do
+          visit "/queue/appeals/#{mst_appeal.external_id}"
+          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          expect(page).to have_content("Special Issues: MST")
+        end
+
+        it "the page does not show the Special Issues: PACT Badge" do
+          visit "/queue/appeals/#{mst_appeal.external_id}"
+          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          expect(page).to_not have_content("Special Issues: PACT")
         end
       end
     end

@@ -82,12 +82,16 @@ class AddedIssue extends React.PureComponent {
   };
 
   render() {
-    const { issue, issueIdx, legacyAppeals } = this.props;
+    const { issue, issueIdx, legacyAppeals, featureToggles} = this.props;
 
     let eligibleState = {
       errorMsg: '',
       cssKlasses: ['issue-desc']
     };
+
+    const mstFeatureToggle = featureToggles.mst_identification || featureToggles.mstIdentification;
+    const pactFeatureToggle = featureToggles.pact_identification || featureToggles.pactIdentification;
+    const legacyMstPactFeatureToggle = featureToggles.legacy_mst_pact_identification || featureToggles.legacyMstPactIdentification;
 
     const vacolsIssue = legacyIssue(issue, legacyAppeals);
 
@@ -107,6 +111,16 @@ class AddedIssue extends React.PureComponent {
       eligibleState.cssKlasses.push('withdrawn-issue');
     }
 
+    let specialIssuesMessage = 'None';
+
+    if (issue.mstChecked && issue.pactChecked) {
+      specialIssuesMessage = `${COPY.MST_SHORT_LABEL}, ${COPY.PACT_SHORT_LABEL}`;
+    } else if (issue.mstChecked) {
+      specialIssuesMessage = COPY.MST_SHORT_LABEL;
+    } else if (issue.pactChecked) {
+      specialIssuesMessage = COPY.PACT_SHORT_LABEL;
+    }
+
     return (
       <div className={eligibleState.cssKlasses.join(' ')}>
         <span className="issue-num">{issueIdx + 1}.&nbsp;</span>
@@ -119,6 +133,8 @@ class AddedIssue extends React.PureComponent {
         {issue.benefitType && <span className="issue-date">Benefit type: {BENEFIT_TYPES[issue.benefitType]}</span>}
         {issue.date && <span className="issue-date">Decision date: {formatDateStr(issue.date)}</span>}
         {issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span>}
+        { (mstFeatureToggle || pactFeatureToggle || legacyMstPactFeatureToggle) &&
+          <span className="special-issue-notes">{COPY.INTAKE_ADD_EDIT_SPECIAL_ISSUES_LABEL}{specialIssuesMessage}</span>}
         {issue.untimelyExemptionNotes && (
           <span className="issue-notes">Untimely Exemption Notes:&nbsp;{issue.untimelyExemptionNotes}</span>
         )}
@@ -168,8 +184,11 @@ AddedIssue.propTypes = {
     untimelyExemptionNotes: PropTypes.string,
     vacolsId: PropTypes.string,
     withdrawalPending: PropTypes.string,
-    withdrawalDate: PropTypes.string
+    withdrawalDate: PropTypes.string,
+    mstChecked: PropTypes.bool,
+    pactChecked: PropTypes.bool,
   }).isRequired,
+  featureToggles: PropTypes.object,
   issueIdx: PropTypes.number.isRequired,
   legacyAppeals: PropTypes.array,
   legacyOptInApproved: PropTypes.bool.isRequired,
