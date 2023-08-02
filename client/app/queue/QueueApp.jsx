@@ -231,6 +231,8 @@ class QueueApp extends React.PureComponent {
         <SelectSpecialIssuesView
           appealId={appealId}
           taskId={taskId}
+          legacyMstIdentification={this.props.featureToggles.legacy_mst_pact_identification}
+          mstIdentification={this.props.featureToggles.mst_identification}
           prevStep={`/queue/appeals/${appealId}`}
           nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         />

@@ -60,7 +60,9 @@ class RatingDecision
     # rubocop:enable Metrics/MethodLength
 
     def deserialize(hash)
-      new(hash.merge(special_issues: deserialize_special_issues(hash)))
+      # reject unknown attributes to prevent UnknownAttribute errors
+      new(hash.merge(special_issues: deserialize_special_issues(hash))
+      .reject { |k, _| !RatingDecision.attribute_method?(k) })
     end
 
     # rubocop:disable Metrics/CyclomaticComplexity
@@ -80,7 +82,7 @@ class RatingDecision
       end
 
       if serialized_hash[:rba_contentions_data]
-        # get the contentinons from the rating by the participant id
+        # get the contentions from the rating by the participant id
         contentions = Rating.participant_contentions(serialized_hash)
         data << { mst_available: true } if Rating.mst_from_contentions_for_rating?(contentions)
 
