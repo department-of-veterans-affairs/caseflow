@@ -1201,6 +1201,7 @@
   "VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VAMC": "VA Medical Center",
   "VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VISN": "VISN",
   "VHA_CAREGIVER_LABEL": "CSP",
+  "VHA_INCOMPLETE_TAB_DESCRIPTION": "Cases that have been only saved and not yet established. Select the claimant name if you need to edit issues.",
   "EDUCATION_LABEL": "Education Service",
   "PRE_DOCKET_TASK_LABEL": "Pre-Docket",
   "DOCKET_APPEAL_MODAL_TITLE": "Docket appeal",

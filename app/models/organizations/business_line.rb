@@ -5,11 +5,30 @@ class BusinessLine < Organization
     "/decision_reviews/#{url}"
   end
 
+  def included_tabs
+    [:in_progress, :completed]
+  end
+
+  def tasks_query_type
+    {
+      in_progress: "open",
+      completed: "recently_completed"
+    }
+  end
+
   # Example Params:
   # sort_order: 'desc',
   # sort_by: 'assigned_at',
   # filters: [],
   # search_query: 'Bob'
+  def incomplete_tasks(pagination_params = {})
+    QueryBuilder.new(
+      query_type: :incomplete,
+      query_params: pagination_params,
+      parent: self
+    ).build_query
+  end
+
   def in_progress_tasks(pagination_params = {})
     QueryBuilder.new(
       query_type: :in_progress,
@@ -24,6 +43,14 @@ class BusinessLine < Organization
       query_params: pagination_params,
       parent: self
     ).build_query
+  end
+
+  def incomplete_tasks_type_counts
+    QueryBuilder.new(query_type: :incomplete, parent: self).task_type_count
+  end
+
+  def incomplete_tasks_issue_type_counts
+    QueryBuilder.new(query_type: :incomplete, parent: self).issue_type_count
   end
 
   def in_progress_tasks_type_counts
@@ -56,12 +83,10 @@ class BusinessLine < Organization
         .and(Task.arel_table[:type].eq(DecisionReviewTask.name))
     }.freeze
 
-    TASKS_QUERY_TYPE = {
-      in_progress: "open",
-      completed: "recently_completed"
-    }.freeze
-
     DEFAULT_ORDERING_HASH = {
+      incomplete: {
+        sort_by: :assigned_at
+      },
       in_progress: {
         sort_by: :assigned_at
       },
@@ -96,56 +121,38 @@ class BusinessLine < Organization
     end
 
     # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
     def issue_type_count
-      query_type_predicate = if query_type == :in_progress
-                               "AND tasks.status IN ('assigned', 'in_progress', 'on_hold')
-                               AND request_issues.closed_at IS NULL
-                               AND request_issues.ineligible_reason IS NULL"
-                             else
-                               "AND tasks.status = 'completed'
-                                AND #{Task.arel_table[:closed_at].between(7.days.ago..Time.zone.now).to_sql}"
-                             end
+      shared_select_statement = "tasks.id as tasks_id, request_issues.nonrating_issue_category as issue_category"
+      appeals_query = Task.send(parent.tasks_query_type[query_type])
+        .select(shared_select_statement)
+        .joins(ama_appeal: :request_issues)
+        .where(query_constraints)
+      hlr_query = Task.send(parent.tasks_query_type[query_type])
+        .select(shared_select_statement)
+        .joins(supplemental_claim: :request_issues)
+        .where(query_constraints)
+      sc_query = Task.send(parent.tasks_query_type[query_type])
+        .select(shared_select_statement)
+        .joins(higher_level_review: :request_issues)
+        .where(query_constraints)
 
       nonrating_issue_count = ActiveRecord::Base.connection.execute <<-SQL
         WITH task_review_issues AS (
-          SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
-          FROM tasks
-          INNER JOIN higher_level_reviews ON tasks.appeal_id = higher_level_reviews.id
-        AND tasks.appeal_type = 'HigherLevelReview'
-          INNER JOIN request_issues ON higher_level_reviews.id = request_issues.decision_review_id
-        AND request_issues.decision_review_type = 'HigherLevelReview'
-          WHERE request_issues.nonrating_issue_category IS NOT NULL
-        AND tasks.assigned_to_id = #{business_line_id}
-        AND tasks.assigned_to_type = 'Organization'
-        #{query_type_predicate}
-        UNION ALL
-        SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
-          FROM tasks
-          INNER JOIN supplemental_claims ON tasks.appeal_id = supplemental_claims.id
-        AND tasks.appeal_type = 'SupplementalClaim'
-          INNER JOIN request_issues ON supplemental_claims.id = request_issues.decision_review_id
-        AND request_issues.decision_review_type = 'SupplementalClaim'
-        WHERE tasks.assigned_to_id = #{business_line_id}
-        AND tasks.assigned_to_type = 'Organization'
-        #{query_type_predicate}
-        UNION ALL
-        SELECT tasks.id as task_id, request_issues.nonrating_issue_category as issue_category
-          FROM tasks
-          INNER JOIN appeals ON tasks.appeal_id = appeals.id
-        AND tasks.appeal_type = 'Appeal'
-          INNER JOIN request_issues ON appeals.id = request_issues.decision_review_id
-        AND request_issues.decision_review_type = 'Appeal'
-        WHERE tasks.assigned_to_id = #{business_line_id}
-        AND tasks.assigned_to_type = 'Organization'
-        #{query_type_predicate}
+            #{hlr_query.to_sql}
+          UNION ALL
+            #{sc_query.to_sql}
+          UNION ALL
+            #{appeals_query.to_sql}
         )
-        SELECT issue_category, COUNT(issue_category) AS nonrating_issue_count
+        SELECT issue_category, COUNT(1) AS nonrating_issue_count
         FROM task_review_issues
         GROUP BY issue_category;
       SQL
 
       issue_count_options = nonrating_issue_count.reduce({}) do |acc, hash|
-        acc.merge(hash["issue_category"] => hash["nonrating_issue_count"])
+        key = hash["issue_category"] || "None"
+        acc.merge(key => hash["nonrating_issue_count"])
       end
 
       # Merge in all of the possible issue types for businessline. Guess that the key is the snakecase url
@@ -158,6 +165,7 @@ class BusinessLine < Organization
       issue_count_options
     end
     # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
 
     private
 
@@ -177,7 +185,8 @@ class BusinessLine < Organization
         participant_id_alias,
         veteran_ssn_alias,
         issue_types,
-        issue_types_lower
+        issue_types_lower,
+        appeal_unique_id_alias
       ]
     end
 
@@ -226,6 +235,10 @@ class BusinessLine < Organization
       "veterans.participant_id as veteran_participant_id"
     end
 
+    def appeal_unique_id_alias
+      "uuid as external_appeal_id"
+    end
+
     # All join clauses
 
     # NOTE: .left_joins(ama_appeal: :request_issues)
@@ -262,6 +275,17 @@ class BusinessLine < Organization
       "LEFT JOIN bgs_attorneys ON claimants.participant_id = bgs_attorneys.participant_id"
     end
 
+    def union_query_join_clauses
+      [
+        veterans_join,
+        claimants_join,
+        people_join,
+        unrecognized_appellants_join,
+        party_details_join,
+        bgs_attorneys_join
+      ]
+    end
+
     # These values reflect the number of searchable fields in search_all_clause for where interpolation later
     def number_of_search_fields
       FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: RequestStore[:current_user]) ? 4 : 2
@@ -286,7 +310,7 @@ class BusinessLine < Organization
     end
 
     def group_by_columns
-      "tasks.id, veterans.participant_id, veterans.ssn, veterans.first_name, veterans.last_name, "\
+      "tasks.id, uuid, veterans.participant_id, veterans.ssn, veterans.first_name, veterans.last_name, "\
       "unrecognized_party_details.name, unrecognized_party_details.last_name, people.first_name, people.last_name, "\
       "veteran_is_not_claimant, bgs_attorneys.name"
     end
@@ -329,14 +353,9 @@ class BusinessLine < Organization
 
     def decision_reviews_on_request_issues(join_constraint, where_constraints = query_constraints)
       Task.select(union_select_statements)
-        .send(TASKS_QUERY_TYPE[query_type])
+        .send(parent.tasks_query_type[query_type])
         .joins(join_constraint)
-        .joins(veterans_join)
-        .joins(claimants_join)
-        .joins(people_join)
-        .joins(unrecognized_appellants_join)
-        .joins(party_details_join)
-        .joins(bgs_attorneys_join)
+        .joins(*union_query_join_clauses)
         .where(where_constraints)
         .where(search_all_clause, *search_values)
         .where(issue_type_filter_predicate(query_params[:filters]))
@@ -358,21 +377,27 @@ class BusinessLine < Organization
 
     def query_constraints
       {
+        incomplete: {
+          # Don't retrieve any tasks with closed issues or issues with ineligible reasons for incomplete
+          assigned_to: parent,
+          "request_issues.closed_at": nil,
+          "request_issues.ineligible_reason": nil
+        },
         in_progress: {
           # Don't retrieve any tasks with closed issues or issues with ineligible reasons for in progress
-          assigned_to: business_line_id,
+          assigned_to: parent,
           "request_issues.closed_at": nil,
           "request_issues.ineligible_reason": nil
         },
         completed: {
-          assigned_to: business_line_id
+          assigned_to: parent
         }
       }[query_type]
     end
 
     def board_grant_effectuation_task_constraints
       {
-        assigned_to: business_line_id,
+        assigned_to: parent,
         'tasks.type': BoardGrantEffectuationTask.name
       }
     end
@@ -443,9 +468,12 @@ class BusinessLine < Organization
     def build_issue_type_filter_predicates(tasks_to_include)
       first_task_name, *remaining_task_names = tasks_to_include
 
+      first_task_name = nil if first_task_name == "None"
+
       filter = RequestIssue.arel_table[:nonrating_issue_category].eq(first_task_name)
 
       remaining_task_names.each do |task_name|
+        task_name = nil if task_name == "None"
         filter = filter.or(RequestIssue.arel_table[:nonrating_issue_category].eq(task_name))
       end
 
@@ -455,7 +483,7 @@ class BusinessLine < Organization
     end
 
     def decision_review_requests_union_subquery(filter)
-      base_query = Task.select("tasks.id").send(TASKS_QUERY_TYPE[query_type])
+      base_query = Task.select("tasks.id").send(parent.tasks_query_type[query_type])
       union_query = Arel::Nodes::UnionAll.new(
         Arel::Nodes::UnionAll.new(
           base_query
@@ -482,3 +510,5 @@ class BusinessLine < Organization
     end
   end
 end
+
+require_dependency "vha_business_line"

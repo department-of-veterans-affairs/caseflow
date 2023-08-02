@@ -491,7 +491,7 @@ feature "Intake Review Page", :postgres do
     end
 
     context "Current user is a member of the VHA business line" do
-      let(:vha_business_line) { create(:business_line, name: benefit_type_label, url: "vha") }
+      let(:vha_business_line) { VhaBusinessLine.singleton }
       let(:current_user) { create(:user, roles: ["Admin Intake"]) }
 
       before do

@@ -84,9 +84,9 @@ module Seeds
 
     def create_high_level_reviews
       business_line_list = BusinessLine.all
-      business_line_list.each do |bussiness_line|
-        benefit_claim_type = { benefit_type: bussiness_line.url.underscore, claim_type: "HLR" }
-        create_list(:higher_level_review_vha_task, 5, assigned_to: bussiness_line)
+      business_line_list.each do |business_line|
+        benefit_claim_type = { benefit_type: business_line.url.underscore, claim_type: "HLR" }
+        create_list(:higher_level_review_vha_task, 5, assigned_to: business_line)
         create_claims_with_dependent_claimants(benefit_claim_type)
         create_claims_with_attorney_claimants(benefit_claim_type)
         create_claims_with_other_claimants(benefit_claim_type)
@@ -95,10 +95,10 @@ module Seeds
     end
 
     def create_supplemental_claims
-      business_line_list = Organization.where(type: "BusinessLine")
-      business_line_list.each do |bussiness_line|
-        benefit_claim_type = { benefit_type: bussiness_line.url.underscore, claim_type: "supplemental" }
-        create_list(:supplemental_claim_vha_task, 5, assigned_to: bussiness_line)
+      business_line_list = BusinessLine.all
+      business_line_list.each do |business_line|
+        benefit_claim_type = { benefit_type: business_line.url.underscore, claim_type: "supplemental" }
+        create_list(:supplemental_claim_vha_task, 5, assigned_to: business_line)
         create_claims_with_dependent_claimants(benefit_claim_type)
         create_claims_with_attorney_claimants(benefit_claim_type)
         create_claims_with_other_claimants(benefit_claim_type)
@@ -324,7 +324,8 @@ module Seeds
         .where("o.type like ?", "Vha%")
         .distinct
       # organization = BusinessLine.where(name:)
-      organization = Organization.find_by_name_or_url("Veterans Health Administration")
+      # organization = Organization.find_by_name_or_url("Veterans Health Administration")
+      organization = VhaBusinessLine.singleton
       user_list.each do |user|
         organization.add_user(user)
       end

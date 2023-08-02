@@ -412,7 +412,7 @@ describe ClaimReview, :postgres do
         expect(DecisionReviewTask.last).to have_attributes(
           appeal: claim_review,
           assigned_at: Time.zone.now,
-          assigned_to: BusinessLine.find_by(url: "vha")
+          assigned_to: VhaBusinessLine.singleton
         )
       end
 

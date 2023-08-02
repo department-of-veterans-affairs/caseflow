@@ -4,7 +4,7 @@ describe MembershipRequest do
   before do
     ActiveJob::Base.queue_adapter.enqueued_jobs.clear
   end
-  let(:vha_business_line) { create(:business_line, name: "Veterans Health Administration", url: "vha") }
+  let(:vha_business_line) { VhaBusinessLine.singleton }
 
   describe "#save" do
     let(:requestor) { create(:user) }
