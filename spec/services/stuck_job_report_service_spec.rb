@@ -71,15 +71,15 @@ describe StuckJobReportService, :postres do
     it "names uat bucket" do
       allow(Rails).to receive(:deploy_env).and_return(:uat)
 
-      subject.upload_logs_to_s3(FILEPATH, CREATE_FILE_NAME)
-      expect(subject.bucket_name).to eq("data-remediation-output-uat")
+      subject.upload_logs_to_s3(CREATE_FILE_NAME)
+      expect(subject.folder_name).to eq("data-remediation-output-uat")
     end
 
     it "names prod bucket" do
       allow(Rails).to receive(:deploy_env).and_return(:prod)
 
-      subject.upload_logs_to_s3(FILEPATH, CREATE_FILE_NAME)
-      expect(subject.bucket_name).to eq("data-remediation-output")
+      subject.upload_logs_to_s3(CREATE_FILE_NAME)
+      expect(subject.folder_name).to eq("data-remediation-output")
     end
   end
 end
