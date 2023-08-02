@@ -174,10 +174,17 @@ class NonratingRequestIssueModal extends React.Component {
     return (
       !description ||
       !category ||
-      (benefitType !== 'vha' && !decisionDate) ||
+      (!this.vhaHlrOrSC() && !decisionDate) ||
       (formType === 'appeal' && !benefitType) ||
       enforcePreDocketRequirement
     );
+  }
+
+  vhaHlrOrSC() {
+    const { benefitType } = this.state;
+    const { formType } = this.props;
+
+    return ((formType === 'higher_level_review' || formType === 'supplemental_claim') && benefitType === 'vha');
   }
 
   getModalButtons() {
@@ -266,7 +273,7 @@ class NonratingRequestIssueModal extends React.Component {
             errorMessage={this.state.dateError}
             onChange={this.decisionDateOnChange}
             type="date"
-            optional={this.state.benefitType === 'vha'}
+            optional={this.vhaHlrOrSC()}
           />
         </div>
 
