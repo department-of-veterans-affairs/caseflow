@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-require "./lib/helpers/claim_date_dt_fix"
+# require "./jobs/claim_date_dt_fix_job"
+# "/lib/helpers/claim_date_dt_fix.rb"
 
-describe ClaimDateDtFix, :postres do
+describe ClaimDateDtFixJob, :postres do
   let(:claim_date_dt_error) { "ClaimDateDt" }
 
   let!(:decision_doc_with_error) do
@@ -12,6 +13,10 @@ describe ClaimDateDtFix, :postres do
       processed_at: 7.days.ago,
       uploaded_to_vbms_at: 7.days.ago
     )
+  end
+
+  before do
+    allow(StuckJobHelper).to receive(:upload_logs_to_s3).and_return("logs")
   end
 
   subject { described_class.new("decision_document", "ClaimDateDt") }
