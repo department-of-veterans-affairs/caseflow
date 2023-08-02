@@ -75,7 +75,7 @@ describe PopulateEndProductSyncQueueJob, type: :job do
         PopulateEndProductSyncQueueJob.perform_now
         expect(Rails.logger).to have_received(:info).with(
           "PopulateEndProductSyncQueueJob is not able to find any batchable EPE records."\
-          "  Job will be enqueued again after 1-hour mark passes.  Job ID: #{PopulateEndProductSyncQueueJob::JOB_ATTR&.job_id}."\
+          "  Job ID: #{PopulateEndProductSyncQueueJob::JOB_ATTR&.job_id}."\
           "  Time: #{Time.zone.now}"
         )
       end

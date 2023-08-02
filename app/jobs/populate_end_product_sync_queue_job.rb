@@ -3,32 +3,21 @@
 # This job will find deltas between the end product establishment table and the VBMS ext claim table
 # where VBMS ext claim level status code is CLR or CAN. If EP is already in the queue it will be skipped.
 # Job will populate queue ENV["END_PRODUCT_QUEUE_BATCH_LIMIT"] records at a time.
-# This job will run on a 1-hr loop, sleeping 1 minute between iterations.
+# This job will run on a 1-hr loop, sleeping for 15 seconds between iterations.
 class PopulateEndProductSyncQueueJob < CaseflowJob
   queue_with_priority :low_priority
 
   JOB_DURATION = 1.hour
-  SLEEP_DURATION = 30.seconds
+  SLEEP_DURATION = 5.seconds
 
   before_perform do |job|
     JOB_ATTR = job
   end
 
-  attr_accessor :should_stop_job
-
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def perform
-    @should_stop_job = false
-
     setup_job
     loop do
-      if job_running_past_expected_end_time?
-        Rails.logger.info("PopulateEndProductSyncQueueJob has finished 1-hour loop."\
-          "  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
-        break
-      elsif should_stop_job
-        break
-      end
+      break if job_running_past_expected_end_time? || should_stop_job
 
       begin
         batch = ActiveRecord::Base.transaction do
@@ -38,15 +27,7 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
           priority_epes
         end
 
-        if batch
-          insert_into_priority_sync_queue(batch)
-          Rails.logger.info("PopulateEndProductSyncQueueJob EPEs processed: #{batch} - Time: #{Time.zone.now}")
-        else
-          Rails.logger.info("PopulateEndProductSyncQueueJob is not able to find any batchable EPE records."\
-            "  Job will be enqueued again after 1-hour mark passes."\
-            "  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
-          stop_job
-        end
+        batch ? insert_into_priority_sync_queue(batch) : stop_job(log_no_records_found: true)
 
         sleep(SLEEP_DURATION)
       rescue StandardError => error
@@ -58,7 +39,7 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
 
   private
 
-  attr_accessor :job_expected_end_time
+  attr_accessor :job_expected_end_time, :should_stop_job
 
   def find_priority_end_product_establishments_to_sync
     get_batch = <<-SQL
@@ -81,11 +62,12 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
         end_product_establishment_id: ep_id
       )
     end
+    Rails.logger.info("PopulateEndProductSyncQueueJob EPEs processed: #{batch} - Time: #{Time.zone.now}")
   end
 
   def setup_job
     RequestStore.store[:current_user] = User.system_user
-
+    @should_stop_job = false
     @job_expected_end_time = Time.zone.now + JOB_DURATION
   end
 
@@ -93,7 +75,11 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
     Time.zone.now > job_expected_end_time
   end
 
-  def stop_job
+  def stop_job(log_no_records_found: false)
     self.should_stop_job = true
+    if log_no_records_found
+      Rails.logger.info("PopulateEndProductSyncQueueJob is not able to find any batchable EPE records."\
+        "  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
+    end
   end
 end
