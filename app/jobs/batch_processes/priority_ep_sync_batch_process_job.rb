@@ -3,7 +3,8 @@
 class PriorityEpSyncBatchProcessJob < CaseflowJob
   queue_with_priority :low_priority
 
-  # Using macro-style definition. The locking scope will be TheClass#method and only one method can run at any given time.
+  # Using macro-style definition. The locking scope will be TheClass#method and only one method can run at any
+  # given time.
   include RedisMutex::Macro
 
   # Default options for RedisMutex#with_lock
@@ -24,23 +25,14 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
     JOB_ATTR = job
   end
 
-  attr_accessor :should_stop_job
-
   # Attempts to create & process batches for an hour
   # There will be a 1 minute rest between each iteration
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def perform
-    @should_stop_job = false
-
     setup_job
     loop do
-      if job_running_past_expected_end_time?
-        Rails.logger.info("PopulateEndProductSyncQueueJob has finished 1-hour loop.  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
-        break
-      elsif should_stop_job
-        break
-      end
+      break if job_running_past_expected_end_time? || should_stop_job
 
       begin
         batch = nil
@@ -53,13 +45,7 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
           end
         end
 
-        if batch
-          batch.process_batch!
-        else
-          Rails.logger.info("No Records Available to Batch.  Job will be enqueued again once 1-hour mark is hit."\
-            "  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
-          stop_job
-        end
+        batch ? batch.process_batch! : stop_job(log_no_records_found: true)
 
         sleep(SLEEP_DURATION)
       rescue StandardError => error
@@ -71,14 +57,15 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 
-  attr_accessor :job_expected_end_time
+  attr_accessor :job_expected_end_time, :should_stop_job
 
   def setup_job
     RequestStore.store[:current_user] = User.system_user
-
+    @should_stop_job = false
     @job_expected_end_time = Time.zone.now + JOB_DURATION
   end
 
@@ -86,7 +73,11 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
     Time.zone.now > job_expected_end_time
   end
 
-  def stop_job
+  def stop_job(log_no_records_found: false)
     self.should_stop_job = true
+    if log_no_records_found
+      Rails.logger.info("No Records Available to Batch.  Job will be enqueued again once 1-hour mark is hit."\
+        "  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
+    end
   end
 end
