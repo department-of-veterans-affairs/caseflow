@@ -116,6 +116,7 @@ plugins:
 exclude_patterns:
   - 'db/schema.rb'
   - 'db/seeds.rb'
+  - 'db/scripts/*'
   - 'node_modules/**/*'
   - 'app/mappers/zip_code_to_lat_lng_mapper.rb'
   - 'tmp/**/*'
