@@ -13,6 +13,9 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
   #                 # It is NOT recommended to go below 0.01. (default: 0.1)
   # :expire => 10   # Specify in seconds when the lock should be considered stale when something went wrong
   #                 # with the one who held the lock and failed to unlock. (default: 10)
+  #
+  # RedisMutex.with_lock("PriorityEpSyncBatchProcessJob", block: 60, expire: 100)
+  # Key => "PriorityEpSyncBatchProcessJob"
 
   JOB_DURATION = 1.hour
   SLEEP_DURATION = 60.seconds
@@ -21,16 +24,27 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
     JOB_ATTR = job
   end
 
+  attr_accessor :should_stop_job
+
   # Attempts to create & process batches for an hour
   # There will be a 1 minute rest between each iteration
+
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def perform
+    @should_stop_job = false
+
     setup_job
     loop do
-      break if job_running_past_expected_end_time?
+      if job_running_past_expected_end_time?
+        Rails.logger.info("PopulateEndProductSyncQueueJob has finished 1-hour loop.  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
+        break
+      elsif should_stop_job
+        break
+      end
 
       begin
         batch = nil
-        RedisMutex.with_lock("PriorityEpSyncBatchProcessJob", block: 30, expire: 60) do # key => "PriorityEpSyncBatchProcessJob"
+        RedisMutex.with_lock("PriorityEpSyncBatchProcessJob", block: 60, expire: 100) do
           batch = ActiveRecord::Base.transaction do
             records_to_batch = PriorityEpSyncBatchProcess.find_records_to_batch
             next if records_to_batch.empty?
@@ -42,16 +56,19 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
         if batch
           batch.process_batch!
         else
-          Rails.logger.info("No Records Available to Batch.  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
+          Rails.logger.info("No Records Available to Batch.  Job will be enqueued again once 1-hour mark is hit."\
+            "  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
+          stop_job
         end
+
+        sleep(SLEEP_DURATION)
       rescue StandardError => error
         Rails.logger.error("Error: #{error.inspect}, Job ID: #{JOB_ATTR&.job_id}, Job Time: #{Time.zone.now}")
         capture_exception(error: error,
-          extra: { job_id: JOB_ATTR&.job_id.to_s,
-            job_time: Time.zone.now.to_s })
+                          extra: { job_id: JOB_ATTR&.job_id.to_s,
+                                   job_time: Time.zone.now.to_s })
+        stop_job
       end
-
-      sleep(SLEEP_DURATION)
     end
   end
 
@@ -67,5 +84,9 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
 
   def job_running_past_expected_end_time?
     Time.zone.now > job_expected_end_time
+  end
+
+  def stop_job
+    self.should_stop_job = true
   end
 end

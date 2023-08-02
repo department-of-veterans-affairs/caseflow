@@ -8,16 +8,27 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
   queue_with_priority :low_priority
 
   JOB_DURATION = 1.hour
-  SLEEP_DURATION = 60.seconds
+  SLEEP_DURATION = 30.seconds
 
   before_perform do |job|
     JOB_ATTR = job
   end
 
+  attr_accessor :should_stop_job
+
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def perform
+    @should_stop_job = false
+
     setup_job
     loop do
-      break if job_running_past_expected_end_time?
+      if job_running_past_expected_end_time?
+        Rails.logger.info("PopulateEndProductSyncQueueJob has finished 1-hour loop."\
+          "  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
+        break
+      elsif should_stop_job
+        break
+      end
 
       begin
         batch = ActiveRecord::Base.transaction do
@@ -31,13 +42,17 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
           insert_into_priority_sync_queue(batch)
           Rails.logger.info("PopulateEndProductSyncQueueJob EPEs processed: #{batch} - Time: #{Time.zone.now}")
         else
-          Rails.logger.info("No Priority EPE Records Available.  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
+          Rails.logger.info("PopulateEndProductSyncQueueJob is not able to find any batchable EPE records."\
+            "  Job will be enqueued again after 1-hour mark passes."\
+            "  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
+          stop_job
         end
+
+        sleep(SLEEP_DURATION)
       rescue StandardError => error
         capture_exception(error: error)
+        stop_job
       end
-
-      sleep(SLEEP_DURATION)
     end
   end
 
@@ -76,5 +91,9 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
 
   def job_running_past_expected_end_time?
     Time.zone.now > job_expected_end_time
+  end
+
+  def stop_job
+    self.should_stop_job = true
   end
 end
