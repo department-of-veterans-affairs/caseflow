@@ -444,7 +444,7 @@ module Caseflow::Error
   class VANotifyApiError < StandardError; end
   class VANotifyUnauthorizedError < VANotifyApiError; end
   class VANotifyForbiddenError < VANotifyApiError; end
-  class VANotifyNotFoundError < VANotifyApiError; end
+  class ClaimEvidenceNotFoundErrorVANotifyNotFoundError < VANotifyApiError; end
   class VANotifyInternalServerError < VANotifyApiError; end
   class VANotifyRateLimitError < VANotifyApiError; end
   class EmptyQueueError < StandardError; end
@@ -458,4 +458,12 @@ module Caseflow::Error
   class PacmanForbiddenError < PacmanApiError; end
   class PacmanNotFoundError < PacmanApiError; end
   class PacmanInternalServerError < PacmanApiError; end
+
+  # ClaimEvidence Errors
+  class ClaimEvidenceApiError < StandardError; end
+  class ClaimEvidenceUnauthorizedError < ClaimEvidenceApiError; end
+  class ClaimEvidenceForbiddenError < ClaimEvidenceApiError; end
+  class ClaimEvidenceNotFoundError < ClaimEvidenceApiError; end
+  class ClaimEvidenceInternalServerError < ClaimEvidenceApiError; end
+  class ClaimEvidenceRateLimitError < ClaimEvidenceApiError; end
 end
