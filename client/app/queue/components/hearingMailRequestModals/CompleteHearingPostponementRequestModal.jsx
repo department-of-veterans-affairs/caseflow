@@ -1,5 +1,10 @@
 import React, { useReducer } from 'react';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
+import { taskById } from '../../selectors';
+import { taskActionData } from '../../utils';
 
 import COPY from '../../../../COPY';
 import QueueFlowModal from '../QueueFlowModal';
@@ -7,7 +12,6 @@ import RadioField from '../../../components/RadioField';
 import Alert from '../../../components/Alert';
 import DateSelector from '../../../components/DateSelector';
 import TextareaField from '../../../components/TextareaField';
-
 import { marginTop, marginBottom } from '../../constants';
 
 const RULING_OPTIONS = [
@@ -79,7 +83,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
     return granted !== null && rulingDate.valid && instructions !== '';
   };
 
-  const submit = () => console.log(props);
+  const submit = () => { console.log('submit') };
 
   return (
     <QueueFlowModal
@@ -101,6 +105,11 @@ const CompleteHearingPostponementRequestModal = (props) => {
           options={RULING_OPTIONS}
           styling={marginBottom(1)}
         />
+
+        <button onClick={() => {
+          console.clear();
+          console.log(props);
+        }}>CLICK</button>
 
         {state.granted && <Alert
           message="By marking this task as complete, you will postpone the hearing"
@@ -148,4 +157,12 @@ CompleteHearingPostponementRequestModal.propTypes = {
   register: PropTypes.func
 };
 
-export default CompleteHearingPostponementRequestModal;
+const mapStateToProps = (state, ownProps) => ({
+  task: taskById(state, { taskId: ownProps.taskId })
+});
+
+export default withRouter(
+  connect(
+    mapStateToProps
+  )(CompleteHearingPostponementRequestModal)
+);
