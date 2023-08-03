@@ -977,7 +977,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
           expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
         end
 
-        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions
+        fill_in COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: instructions
 
         click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
 
@@ -985,7 +985,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         within all("div.admin-action-item")[1] do
           click_dropdown(text: selected_opt_0)
-          fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions
+          fill_in COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: instructions
         end
 
         expect(page).to have_content("Duplicate admin actions detected")

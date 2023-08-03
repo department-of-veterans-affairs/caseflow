@@ -344,7 +344,7 @@ class AssignToView extends React.Component {
         {!isPulacCerullo && (
           <TextareaField
             name="Task instructions"
-            label={actionData.instructions_label || COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+            label={actionData.instructions_label || COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
             errorMessage={highlightFormItems && !actionData.body_optional && !this.state.instructions ?
               COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
             id="taskInstructions"

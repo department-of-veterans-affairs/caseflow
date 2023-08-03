@@ -113,7 +113,7 @@ export class CreateMailTaskDialog extends React.Component {
         />
         <br />
         <TextareaField
-          name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+          name={COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
           errorMessage={
             highlightFormItems && !this.state.instructions ?
               COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED :
