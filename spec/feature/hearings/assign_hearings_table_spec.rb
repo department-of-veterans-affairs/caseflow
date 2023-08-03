@@ -19,6 +19,7 @@ RSpec.feature "Assign Hearings Table" do
   context "No upcoming hearing days" do
     scenario "Show status message for empty upcoming hearing days" do
       visit "hearings/schedule/assign"
+      expect(page).to have_content("Regional Office")
       click_dropdown(text: "Winston-Salem, NC")
       expect(page).to have_content("No upcoming hearing days")
     end
