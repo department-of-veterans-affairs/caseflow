@@ -99,11 +99,11 @@ class ClaimReview < DecisionReview
   end
 
   def handle_issues_with_no_decision_date!
-    # TODO: Might need to check if this assigned to VHA for this too?
-    # TODO: Might also need to scope the tasks to currently active tasks?
-    # TODO: Also can this have more than one DecisionReviewTask probably not but still need to check?
-    # TODO: Should this be limited for HLRs and SCs or also Appeals
+    # Guard clause to nnly perform this update for VHA claim reviews for now
+    return nil if benefit_type != "vha"
+
     if request_issues_without_decision_dates?
+      # TODO: Might also need to scope the tasks to currently active tasks?
       review_task = tasks.find { |task| task.is_a?(DecisionReviewTask) }
       review_task&.on_hold!
     elsif !request_issues_without_decision_dates?

@@ -401,18 +401,19 @@ describe ClaimReview, :postgres do
 
   context "#create_business_line_tasks!" do
     subject { claim_review.create_business_line_tasks! }
-    let!(:request_issue) { create(:request_issue, decision_review: claim_review) }
+    let!(:request_issue) { create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now) }
 
     context "when processed in caseflow" do
       let(:benefit_type) { "vha" }
 
-      it "creates a decision review task" do
+      it "creates a decision review task with a status of assigned" do
         expect { subject }.to change(DecisionReviewTask, :count).by(1)
 
         expect(DecisionReviewTask.last).to have_attributes(
           appeal: claim_review,
           assigned_at: Time.zone.now,
-          assigned_to: VhaBusinessLine.singleton
+          assigned_to: VhaBusinessLine.singleton,
+          status: "assigned"
         )
       end
 
@@ -432,6 +433,21 @@ describe ClaimReview, :postgres do
 
         it "does nothing" do
           expect { subject }.to_not change(DecisionReviewTask, :count)
+        end
+      end
+
+      context "when one of a vha review's issues has no decision date" do
+        let!(:request_issue) { create(:request_issue, decision_review: claim_review) }
+
+        it "creates a decision review task with a status of on_hold" do
+          expect { subject }.to change(DecisionReviewTask, :count).by(1)
+
+          expect(DecisionReviewTask.last).to have_attributes(
+            appeal: claim_review,
+            assigned_at: Time.zone.now,
+            assigned_to: VhaBusinessLine.singleton,
+            status: "on_hold"
+          )
         end
       end
     end
