@@ -67,6 +67,12 @@ class Organizations::UsersController < OrganizationsController
     end
   end
 
+  def update_user_meeting_type
+    if params[:admin] == true
+      OrganizationsUser.update_user_to_webex_conference_type(user_to_modify, organization)
+    end
+  end
+
   def organization_url
     params[:organization_url]
   end
