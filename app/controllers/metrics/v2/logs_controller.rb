@@ -4,7 +4,6 @@ class Metrics::V2::LogsController < ApplicationController
   skip_before_action :verify_authentication
 
   def create
-    byebug
     metric = Metric.create_metric_from_rest(self, allowed_params, current_user)
     failed_metric_info = metric&.errors.inspect || allowed_params[:message]
     Rails.logger.info("Failed to create metric #{failed_metric_info}") unless metric&.valid?
