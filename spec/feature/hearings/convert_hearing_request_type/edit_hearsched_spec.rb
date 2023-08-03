@@ -242,7 +242,7 @@ RSpec.feature "Convert hearing request type" do
         visit "queue/appeals/#{video_appeal.uuid}"
 
         # Select the Convert hearing to Central action
-        click_dropdown(text: Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_CENTRAL.label)
+        click_dropdown(text: Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_CENTRAL.label, wait: 3)
 
         # CHeck the Modal content and confirm the conversion
         expect(page).to have_content("Central Office")
@@ -292,7 +292,7 @@ RSpec.feature "Convert hearing request type" do
         convert_label = COPY::CONVERT_HEARING_TYPE_DEFAULT_REGIONAL_OFFICE_TEXT
         visit "queue/appeals/#{central_office_appeal.uuid}"
 
-        click_dropdown(text: Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO.label)
+        click_dropdown(text: Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO.label, wait: 3)
 
         # CHeck the Modal content and confirm the conversion
         expect(page).to have_content(convert_label)
