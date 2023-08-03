@@ -92,7 +92,8 @@ class WorkQueue::DecisionReviewTaskSerializer
     end
   end
 
-  attribute :appellant_type do |appeal|
+  attribute :appellant_type do |object|
+    decision_review(object).claimant&.type
   end
 
   attribute :issue_count do |object|

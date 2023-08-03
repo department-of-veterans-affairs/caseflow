@@ -46,10 +46,11 @@ feature "NonComp Dispositions Task Page", :postgres do
     let(:decision_review) do
       create(
         :higher_level_review,
-        number_of_claimants: 1,
         end_product_establishments: [epe],
         veteran_file_number: veteran.file_number,
-        benefit_type: non_comp_org.url
+        benefit_type: non_comp_org.url,
+        veteran_is_not_claimant: false,
+        claimant_type: :veteran_claimant
       )
     end
 
@@ -102,10 +103,11 @@ feature "NonComp Dispositions Task Page", :postgres do
       let(:decision_review) do
         create(
           :supplemental_claim,
-          number_of_claimants: 1,
           end_product_establishments: [epe],
           veteran_file_number: veteran.file_number,
-          benefit_type: non_comp_org.url
+          benefit_type: non_comp_org.url,
+          veteran_is_not_claimant: false,
+          claimant_type: :veteran_claimant
         )
       end
 
@@ -281,7 +283,7 @@ feature "NonComp Dispositions Task Page", :postgres do
              :create_business_line,
              benefit_type: "vha",
              veteran: veteran,
-             number_of_claimants: 1)
+             claimant_type: :veteran_claimant)
     end
 
     let(:poa_task) do
@@ -323,7 +325,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       end
     end
 
-    it "Decision Review should have Power of Attorney Section" do
+    it "VHA Decision Review should have Power of Attorney Section" do
       visit dispositions_url
 
       expect(page).to have_selector("h1", text: "Veterans Health Administration")
