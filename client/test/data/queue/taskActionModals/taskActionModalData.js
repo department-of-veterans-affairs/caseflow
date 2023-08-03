@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 import COPY from '../../../../COPY';
+import { initialState } from '../../../../app/reader/CaseSelect/CaseSelectReducer';
 export const uiData = {
   ui: {
     highlightFormItems: false,
@@ -1784,6 +1785,180 @@ export const camoToProgramOfficeToCamoData = {
         externalId: '419ce568-387c-4ac6-a5f5-00a1554cea36',
       },
     },
+  },
+  ...uiData,
+};
+
+export const rootTaskData = {
+  caseList: {
+    caseListCriteria: {
+      searchQuery: ''
+    },
+    isRequestingAppealsUsingVeteranId: false,
+    search: {
+      errorType: null,
+      queryResultingInError: null,
+      errorMessage: null
+    },
+    fetchedAllCasesFor: {}
+  },
+  caseSelect: {
+    initialState
+  },
+  queue: {
+    judges: {},
+    tasks: {},
+    amaTasks: {
+      7162: {
+        uniqueId: '7162',
+        isLegacy: false,
+        type: 'RootTask',
+        appealType: 'Appeal',
+        addedByCssId: null,
+        appealId: 1647,
+        externalAppealId: 'adfd7d18-f848-4df5-9df2-9ca43c58dd13',
+        assignedOn: '2023-06-21T10:15:02.830-04:00',
+        closestRegionalOffice: null,
+        createdAt: '2023-07-25T10:15:02.836-04:00',
+        closedAt: null,
+        startedAt: null,
+        assigneeName: 'Board of Veterans\' Appeals',
+        assignedTo: {
+          cssId: null,
+          name: 'Board of Veterans\' Appeals',
+          id: 5,
+          isOrganization: true,
+          type: 'Bva'
+        },
+        assignedBy: {
+          firstName: '',
+          lastName: '',
+          cssId: null,
+          pgId: null
+        },
+        cancelledBy: {
+          cssId: null
+        },
+        convertedOn: null,
+        taskId: '7162',
+        parentId: null,
+        label: 'Root Task',
+        documentId: null,
+        externalHearingId: null,
+        workProduct: null,
+        placedOnHoldAt: '2023-07-25T10:15:02.851-04:00',
+        status: 'on_hold',
+        onHoldDuration: null,
+        instructions: [],
+        decisionPreparedBy: null,
+        availableActions: [
+          {
+            func: 'mail_assign_to_organization_data',
+            label: 'Create mail task',
+            value: 'modal/create_mail_task',
+            data: {
+              options: [
+                {
+                  value: 'CavcCorrespondenceMailTask',
+                  label: 'CAVC Correspondence'
+                },
+                {
+                  value: 'ClearAndUnmistakeableErrorMailTask',
+                  label: 'CUE-related'
+                },
+                {
+                  value: 'AddressChangeMailTask',
+                  label: 'Change of address'
+                },
+                {
+                  value: 'CongressionalInterestMailTask',
+                  label: 'Congressional interest'
+                },
+                {
+                  value: 'ControlledCorrespondenceMailTask',
+                  label: 'Controlled correspondence'
+                },
+                {
+                  value: 'DeathCertificateMailTask',
+                  label: 'Death certificate'
+                },
+                {
+                  value: 'EvidenceOrArgumentMailTask',
+                  label: 'Evidence or argument'
+                },
+                {
+                  value: 'ExtensionRequestMailTask',
+                  label: 'Extension request'
+                },
+                {
+                  value: 'FoiaRequestMailTask',
+                  label: 'FOIA request'
+                },
+                {
+                  value: 'HearingPostponementRequestMailTask',
+                  label: 'Hearing postponement request'
+                },
+                {
+                  value: 'HearingRelatedMailTask',
+                  label: 'Hearing-related'
+                },
+                {
+                  value: 'ReconsiderationMotionMailTask',
+                  label: 'Motion for reconsideration'
+                },
+                {
+                  value: 'AodMotionMailTask',
+                  label: 'Motion to Advance on Docket'
+                },
+                {
+                  value: 'OtherMotionMailTask',
+                  label: 'Other motion'
+                },
+                {
+                  value: 'PowerOfAttorneyRelatedMailTask',
+                  label: 'Power of attorney-related'
+                },
+                {
+                  value: 'PrivacyActRequestMailTask',
+                  label: 'Privacy act request'
+                },
+                {
+                  value: 'PrivacyComplaintMailTask',
+                  label: 'Privacy complaint'
+                },
+                {
+                  value: 'ReturnedUndeliverableCorrespondenceMailTask',
+                  label: 'Returned or undeliverable mail'
+                },
+                {
+                  value: 'StatusInquiryMailTask',
+                  label: 'Status inquiry'
+                },
+                {
+                  value: 'AppealWithdrawalMailTask',
+                  label: 'Withdrawal of appeal'
+                }
+              ]
+            }
+          }
+        ],
+        timelineTitle: 'RootTask completed',
+        hideFromQueueTableView: false,
+        hideFromTaskSnapshot: true,
+        hideFromCaseTimeline: true,
+        availableHearingLocations: [],
+        latestInformalHearingPresentationTask: {},
+        canMoveOnDocketSwitch: false,
+        timerEndsAt: null,
+        unscheduledHearingNotes: {}
+      }
+    },
+    appeals: {
+      'adfd7d18-f848-4df5-9df2-9ca43c58dd13': {
+        id: 1647,
+        externalAppealId: 'adfd7d18-f848-4df5-9df2-9ca43c58dd13'
+      },
+    }
   },
   ...uiData,
 };
