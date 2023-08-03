@@ -20,6 +20,7 @@ describe('IssuesList', () => {
     setup(mockedIssueListProps);
 
     expect(screen.getByText(COPY.VHA_NO_DECISION_DATE_BANNER)).toBeInTheDocument();
+    expect(screen.getByText('Decision date: No date entered')).toBeInTheDocument();
 
   });
 
