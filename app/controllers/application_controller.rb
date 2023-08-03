@@ -373,15 +373,14 @@ class ApplicationController < ApplicationBaseController
   def update_or_delete_power_of_attorney!(appeal)
     appeal.power_of_attorney&.try(:clear_bgs_power_of_attorney!) # clear memoization on legacy appeals
     poa = appeal.bgs_power_of_attorney
-
     if poa.blank?
-      ["Successfully refreshed. No power of attorney information was found at this time.", "success", "blank"]
+      [COPY::POA_SUCCESSFULLY_REFRESH_MESSAGE, "success", "blank"]
     elsif poa.bgs_record == :not_found
       poa.destroy!
-      ["Successfully refreshed. No power of attorney information was found at this time.", "success", "deleted"]
+      [COPY::POA_SUCCESSFULLY_REFRESH_MESSAGE, "success", "deleted"]
     else
       poa.save_with_updated_bgs_record!
-      ["POA Updated Successfully", "success", "updated"]
+      [COPY::POA_UPDATED_SUCCESSFULLY, "success", "updated"]
     end
   rescue StandardError => error
     [error, "error", "error"]
