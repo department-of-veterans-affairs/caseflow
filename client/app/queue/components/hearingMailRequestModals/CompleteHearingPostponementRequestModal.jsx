@@ -73,7 +73,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
     const { granted, rulingDate, instructions, scheduledOption } = state;
 
     if (granted) {
-      return rulingDate.valid && instructions !== '' && scheduledOption !== '';
+      return rulingDate.valid && instructions !== '' && scheduledOption !== null;
     }
 
     return granted !== null && rulingDate.valid && instructions !== '';
