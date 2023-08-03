@@ -9,7 +9,7 @@ namespace :db do
       class << self
         # Stamping out appeals like mufflers!
         def stamp_out_legacy_appeals(num_appeals_to_create, file_number, user, docket_number, task_type)
-          # Changes location of vacols based on if you want a hearing task or only a distribution task
+          # Changes location of vacols based on if you want a hearing task or only a legacy task in location 81
           # Assign to BVA?
           if task_type == "HEARINGTASK"
             bfcurloc = 57
@@ -50,7 +50,7 @@ namespace :db do
                 sattyid: sattyid,
                 sdomainid: sdomainid
               },
-              decass_attrs: custom_decass_attributes(key, user)
+              decass_attrs: custom_decass_attributes(key, user, task_type)
             )
           end.compact
 
@@ -66,15 +66,16 @@ namespace :db do
           }
         end
 
-        def custom_decass_attributes(key, user)
-          if !user&.attorney_in_vacols?
-            {}
-          else
+        def custom_decass_attributes(key, user, task_type)
+          byebug
+          if task_type == "ATTORNEYTASK" && user&.attorney_in_vacols?
             {
               defolder: key,
               deatty: user.id,
               dereceive: "2020-11-17 00:00:00 UTC"
             }
+          else
+            {}
           end
         end
 
@@ -167,6 +168,11 @@ namespace :db do
           $stdout.puts("You have created a Review task")
         end
 
+        def initialize_root_task_for_legacy_appeals(appeal)
+          RootTask.find_or_create_by!(appeal: appeal)
+          $stdout.puts("You have set the Location to 81")
+        end
+
         def create_task(task_type, appeal, user)
           if task_type == "HEARINGTASK"
             create_hearing_task_for_legacy_appeals(appeal)
@@ -176,6 +182,8 @@ namespace :db do
             create_judge_task_for_legacy_appeals(appeal, user)
           elsif task_type == "REVIEWTASK" && user.judge_in_vacols?
             create_review_task_for_legacy_appeals(appeal, user)
+          elsif task_type == "BRIEFF_CURLOC_81_TASK"
+            initialize_root_task_for_legacy_appeals(appeal)
           end
           # rubocop:enable
         end
@@ -219,14 +227,16 @@ namespace :db do
       task_type = $stdin.gets.chomp.upcase
       if task_type == "JUDGETASK" || task_type == "REVIEWTASK"
         $stdout.puts("Enter the CSS ID of a judge user that you want to assign these appeals to")
-        $stdout.puts("Hint: Judge Options include 'BVAAABSHIRE'")
+        $stdout.puts("Hint: Judge Options include 'BVAAABSHIRE', 'BVARERDMAN'")
         css_id = $stdin.gets.chomp.upcase
         user = User.find_by_css_id(css_id)
+        fail ArgumentError, "User must be a Judge in Vacols for a #{task_type}", caller unless user.judge_in_vacols?
       elsif task_type == "ATTORNEYTASK"
         $stdout.puts("Which attorney do you want to assign the Attorney Task to?")
         $stdout.puts("Hint: Attorney Options include 'BVASCASPER1', 'BVARERDMAN', 'BVALSHIELDS'")
         css_id = $stdin.gets.chomp.upcase
         user = User.find_by_css_id(css_id)
+        fail ArgumentError, "User must be an Attorney in Vacols for a #{task_type}", caller unless user.attorney_in_vacols?
       else
         user = User.find_by_css_id("FAKE USER")
       end
