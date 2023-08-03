@@ -145,7 +145,6 @@ class BgsPowerOfAttorney < CaseflowRecord
   alias_attribute :poa_last_synced_at, :last_synced_at
 
   def save_with_updated_bgs_record!
-    byebug
     return save! unless found?
 
     stale_attributes.each do |attr|

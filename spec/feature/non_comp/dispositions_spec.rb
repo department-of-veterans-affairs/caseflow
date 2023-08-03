@@ -134,7 +134,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       expect(page).to have_content(
         "Prior decision date: #{decision_review.request_issues[0].decision_date.strftime('%m/%d/%Y')}"
       )
-      expect(page).not_to have_content("Appellant's Power of Attorney")
+      expect(page).should have_no_content("Appellant's Power of Attorney")
       expect(page).not_to have_button("Refresh POA")
       expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
     end
