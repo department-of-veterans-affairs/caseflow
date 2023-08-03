@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "./app/jobs/batch_processes/priority_ep_sync_batch_process_job.rb"
+require "./app/models/batch_processes/batch_process.rb"
 
 describe PriorityEpSyncBatchProcessJob, type: :job do
   let!(:syncable_end_product_establishments) do
@@ -12,13 +13,19 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
   end
 
   let!(:pepsq_records) do
+    # Changing the sleep duration to 0 enables suite to run faster
     stub_const("PopulateEndProductSyncQueueJob::SLEEP_DURATION", 0)
+
     PopulateEndProductSyncQueueJob.perform_now
     PriorityEndProductSyncQueue.all
   end
 
   subject do
+    # Changing the sleep duration to 0 enables suite to run faster
     stub_const("PriorityEpSyncBatchProcessJob::SLEEP_DURATION", 0)
+    # Batch limit changes to 50 to test PriorityEpSyncBatchProcessJob loop
+    stub_const("BatchProcess::BATCH_LIMIT", 50)
+
     PriorityEpSyncBatchProcessJob.perform_now
   end
 
@@ -28,24 +35,54 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
         end_product_establishment.vbms_ext_claim.destroy!
         subject
       end
-      it "the batch process has a state of 'COMPLETED'" do
-        expect(BatchProcess.first.state).to eq(Constants.BATCH_PROCESS.completed)
+
+      let(:first_batch_process) do
+        bp1 = BatchProcess.first
+        bp2 = BatchProcess.second
+
+        (bp1.created_at < bp2.created_at) ? bp1 : bp2
       end
 
-      it "the batch process has a 'started_at' date/time" do
-        expect(BatchProcess.first.started_at).not_to be_nil
+      let(:second_batch_process) do
+        bp1 = BatchProcess.first
+        bp2 = BatchProcess.second
+
+        (bp1.created_at > bp2.created_at) ? bp1 : bp2
       end
 
-      it "the batch process has a 'ended_at' date/time" do
-        expect(BatchProcess.first.ended_at).not_to be_nil
+      it "creates two batch process records" do
+        expect(BatchProcess.count).to eq(2)
       end
 
-      it "the batch process has 99 records_completed" do
-        expect(BatchProcess.first.records_completed).to eq(syncable_end_product_establishments.count)
+      it "both batch processes have a state of 'COMPLETED'" do
+        expect(first_batch_process.state).to eq(Constants.BATCH_PROCESS.completed)
+        expect(second_batch_process.state).to eq(Constants.BATCH_PROCESS.completed)
       end
 
-      it "the batch process has 1 records_failed" do
-        expect(BatchProcess.first.records_failed).to eq(1)
+      it "both batch processes have a 'started_at' date/time" do
+        expect(first_batch_process.started_at).not_to be_nil
+        expect(second_batch_process.started_at).not_to be_nil
+      end
+
+      it "both batch processes have a 'ended_at' date/time" do
+        expect(first_batch_process.ended_at).not_to be_nil
+        expect(second_batch_process.ended_at).not_to be_nil
+      end
+
+      it "the first batch process has 49 records_completed" do
+        expect(first_batch_process.records_completed).to eq(49)
+      end
+
+      it "the second batch process has 50 records_completed" do
+        expect(second_batch_process.records_completed).to eq(50)
+      end
+
+      it "the first batch process has 1 records_failed" do
+        expect(first_batch_process.records_failed).to eq(1)
+      end
+
+      it "the second batch process has 0 records_failed" do
+        expect(second_batch_process.records_failed).to eq(0)
       end
     end
 
@@ -53,24 +90,47 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
       before do
         subject
       end
-      it "the batch process has a state of 'COMPLETED'" do
-        expect(BatchProcess.first.state).to eq(Constants.BATCH_PROCESS.completed)
+
+      let!(:first_batch_process) do
+        bp1 = BatchProcess.first
+        bp2 = BatchProcess.second
+
+        (bp1.created_at < bp2.created_at) ? bp1 : bp2
       end
 
-      it "the batch process has a 'started_at' date/time" do
-        expect(BatchProcess.first.started_at).not_to be_nil
+      let!(:second_batch_process) do
+        bp1 = BatchProcess.first
+        bp2 = BatchProcess.second
+
+        (bp1.created_at > bp2.created_at) ? bp1 : bp2
       end
 
-      it "the batch process has a 'ended_at' date/time" do
-        expect(BatchProcess.first.ended_at).not_to be_nil
+      it "both batch processes have a state of 'COMPLETED'" do
+        expect(first_batch_process.state).to eq(Constants.BATCH_PROCESS.completed)
+        expect(second_batch_process.state).to eq(Constants.BATCH_PROCESS.completed)
       end
 
-      it "the batch process has 100 records_completed" do
-        expect(BatchProcess.first.records_completed).to eq(PriorityEndProductSyncQueue.all.count)
+      it "both batch processes have a 'started_at' date/time" do
+        expect(first_batch_process.started_at).not_to be_nil
+        expect(second_batch_process.started_at).not_to be_nil
       end
 
-      it "the batch process has 0 records_failed" do
-        expect(BatchProcess.first.records_failed).to eq(0)
+      it "both batch processes have a 'ended_at' date/time" do
+        expect(first_batch_process.ended_at).not_to be_nil
+        expect(second_batch_process.ended_at).not_to be_nil
+      end
+
+      it "the first batch process has 50 records_completed" do
+        expect(first_batch_process.records_completed).to eq(BatchProcess::BATCH_LIMIT)
+      end
+
+      it "the second batch process has 50 records_completed" do
+        expect(second_batch_process.records_completed).to eq(BatchProcess::BATCH_LIMIT)
+      end
+
+      it "both batch processes have 0 records_failed" do
+        expect(first_batch_process.records_failed).to eq(0)
+        expect(second_batch_process.records_failed).to eq(0)
       end
     end
 
