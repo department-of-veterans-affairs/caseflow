@@ -128,10 +128,12 @@ describe DecisionReviewTask, :postgres do
           uuid: hlr.uuid
         },
         power_of_attorney: {
-          representative_type: decision_review_task.appeal.claimant.power_of_attorney.representative_type,
-          representative_name: decision_review_task.appeal.claimant.power_of_attorney.representative_name,
-          representative_address: decision_review_task.appeal.claimant.power_of_attorney.representative_address,
-          representative_email_address: decision_review_task.appeal.claimant.power_of_attorney.representative_email_address
+          representative_type: decision_review_task.appeal.representative_type,
+          representative_name: decision_review_task.appeal.representative_name,
+          representative_address: decision_review_task.appeal.representative_address,
+          representative_email_address: decision_review_task.appeal.representative_email_address,
+          representative_tz: decision_review_task.appeal.representative_tz,
+          poa_last_synced_at: decision_review_task.appeal.poa_last_synced_at
         },
         appellant_type: "VeteranClaimant",
         started_at: decision_review_task.started_at,
@@ -147,7 +149,8 @@ describe DecisionReviewTask, :postgres do
         issue_types: "",
         type: "Higher-Level Review",
         claimant: { name: hlr.veteran_full_name, relationship: "self" },
-        business_line: business_line.url
+        business_line: business_line.url,
+        has_poa: true
       }
       expect(subject).to eq serialized_hash
       expect(subject.key?(:attributes)).to eq false
@@ -175,10 +178,12 @@ describe DecisionReviewTask, :postgres do
           },
           appellant_type: "VeteranClaimant",
           power_of_attorney: {
-            representative_type: decision_review_task.appeal.claimant.power_of_attorney.representative_type,
-            representative_name: decision_review_task.appeal.claimant.power_of_attorney.representative_name,
-            representative_address: decision_review_task.appeal.claimant.power_of_attorney.representative_address,
-            representative_email_address: decision_review_task.appeal.claimant.power_of_attorney.representative_email_address
+            representative_type: decision_review_task.appeal.representative_type,
+            representative_name: decision_review_task.appeal.representative_name,
+            representative_address: decision_review_task.appeal.representative_address,
+            representative_email_address: decision_review_task.appeal.representative_email_address,
+            representative_tz: decision_review_task.appeal.representative_tz,
+            poa_last_synced_at: decision_review_task.appeal.poa_last_synced_at
           },
           veteran_participant_id: veteran.participant_id,
           veteran_ssn: veteran.ssn,
@@ -192,7 +197,8 @@ describe DecisionReviewTask, :postgres do
           issue_count: 0,
           issue_types: "",
           type: "Higher-Level Review",
-          business_line: business_line.url
+          business_line: business_line.url,
+          has_poa: true
         }
       }
 

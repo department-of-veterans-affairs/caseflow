@@ -188,12 +188,12 @@ class DecisionReviewsController < ApplicationController
 
   def power_of_attorney_data
     {
-      representative_type: task.appeal.power_of_attorney&.representative_type,
-      representative_name: task.appeal.power_of_attorney&.representative_name,
-      representative_address: task.appeal.power_of_attorney&.representative_address,
-      representative_email_address: task.appeal.power_of_attorney&.representative_email_address,
-      representative_tz: task.appeal.power_of_attorney&.representative_tz,
-      poa_last_synced_at: task.appeal.power_of_attorney&.poa_last_synced_at
+      representative_type: task.appeal&.representative_type,
+      representative_name: task.appeal&.representative_name,
+      representative_address: task.appeal&.representative_address,
+      representative_email_address: task.appeal&.representative_email_address,
+      representative_tz: task.appeal&.representative_tz,
+      poa_last_synced_at: task.appeal&.poa_last_synced_at
     }
   end
 end

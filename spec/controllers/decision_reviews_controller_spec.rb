@@ -536,8 +536,13 @@ describe DecisionReviewsController, :postgres, type: :controller do
         expect(JSON.parse(subject.body)["representative_type"]).to eq "Attorney"
         expect(JSON.parse(subject.body)["representative_name"]).to eq "Clarence Darrow"
         expect(JSON.parse(subject.body)["representative_email_address"]).to eq "jamie.fakerton@caseflowdemo.com"
-        # expect(JSON.parse(subject.body)["representative_tz"]).to eq "America/Los_Angeles"
+        expect(JSON.parse(subject.body)["representative_tz"]).to eq "America/Los_Angeles"
+        expect(JSON.parse(subject.body)["poa_last_synced_at"]).to eq "2018-01-01T07:00:00.000-05:00"
       end
+    end
+
+    context "update POA Information" do
+      it "update and return POA information successfully"
     end
   end
 
