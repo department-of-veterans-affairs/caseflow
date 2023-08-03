@@ -99,7 +99,7 @@ class ClaimReview < DecisionReview
   end
 
   def handle_issues_with_no_decision_date!
-    # Guard clause to nnly perform this update for VHA claim reviews for now
+    # Guard clause to only perform this update for VHA claim reviews for now
     return nil if benefit_type != "vha"
 
     if request_issues_without_decision_dates?
@@ -123,7 +123,6 @@ class ClaimReview < DecisionReview
 
     tasks.reload
 
-    # TODO: Make sure this works here for intake?
     handle_issues_with_no_decision_date!
   end
 
@@ -137,9 +136,9 @@ class ClaimReview < DecisionReview
 
   def claimant_name
     if veteran_is_not_claimant
-      veteran_full_name
-    else
       claimant.try(:name)
+    else
+      veteran_full_name
     end
   end
 

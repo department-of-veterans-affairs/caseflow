@@ -182,7 +182,8 @@ class RequestIssuesUpdate < CaseflowRecord
         RequestIssue.find(
           edited_issue[:request_issue_id].to_s
         ).save_edited_contention_text!(edited_issue[:edited_description])
-      # TODO: This is not an ideal way to check this imo.
+      # TODO: This is not an ideal way to check this imo. Since there is no edited_decision_date DB field
+      # Because of that the actual check for this happens based on the params in another method
       elsif edited_issue[:decision_date]
         RequestIssue.find(
           edited_issue[:request_issue_id].to_s

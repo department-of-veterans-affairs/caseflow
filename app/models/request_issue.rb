@@ -495,8 +495,8 @@ class RequestIssue < CaseflowRecord
 
       # If the decision issue is not associated with any other request issue, also delete
       decision_issues.each(&:soft_delete_on_removed_request_issue)
-      # TODO: Should this all be scoped to Vha somehow? I don't know a good way to do that yet.
-      # Removing a request issue should also set the status of the decision review task
+
+      # Special handling for issues without a decision date
       decision_review.handle_issues_with_no_decision_date!
       # Removing a request issue also deletes the associated request_decision_issue
       request_decision_issues.update_all(deleted_at: Time.zone.now)
@@ -811,7 +811,7 @@ class RequestIssue < CaseflowRecord
   def save_edited_decision_date!(new_decision_date)
     update!(decision_date: new_decision_date)
 
-    # I don't know if it's safe to do this here since it's async and a job. I guess it is though.
+    # Special handling for reviews that contain issues without a decision date
     decision_review.handle_issues_with_no_decision_date!
   end
 

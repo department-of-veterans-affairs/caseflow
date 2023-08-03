@@ -461,6 +461,38 @@ describe ClaimReview, :postgres do
     end
   end
 
+  context "#request_issues_without_decision_dates?" do
+    let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
+
+    subject { claim_review.request_issues_without_decision_dates? }
+
+    context "it should return true if there are any issues without a decision date" do
+      let!(:request_issues) do
+        [
+          create(:request_issue, decision_review: claim_review),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
+        ]
+      end
+
+      it "should return true" do
+        expect(subject).to be_truthy
+      end
+    end
+
+    context "it should return false if there are not any issues without a decision date" do
+      let!(:request_issues) do
+        [
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
+        ]
+      end
+
+      it "should return false" do
+        expect(subject).to be_falsey
+      end
+    end
+  end
+
   describe "#create_issues!" do
     before { claim_review.save! }
     subject { claim_review.create_issues!(issues) }
