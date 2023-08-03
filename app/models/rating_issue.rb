@@ -77,7 +77,7 @@ class RatingIssue
     end
 
     def deserialize(serialized_hash)
-      DataDogService.increment_counter(metric_name: "bgs_service.previous_service_call")
+      DataDogService.increment_counter(metric_name: "bgs_service.previous_service_call.rating_issue")
       new(
         serialized_hash.slice(
           :benefit_type,

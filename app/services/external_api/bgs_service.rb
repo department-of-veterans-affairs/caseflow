@@ -460,7 +460,6 @@ class ExternalApi::BGSService
     Rails.logger.info("fetching contention info for participant #{participant_id}")
     DataDogService.increment_counter(metric_name: "bgs_service.service_fetched_from_cache")
     Rails.cache.fetch("find_contentions_by_participant_id_#{participant_id}", expires_in: 24.hours) do
-      DataDogService.increment_counter(metric_name: "bgs_service.service_called")
       Rails.logger.info("calling BGS and caching contention info for participant #{participant_id}")
       DBService.release_db_connections
       MetricsService.record("BGS: find contentions for veteran by participant_id #{participant_id}",

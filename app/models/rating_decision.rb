@@ -60,7 +60,7 @@ class RatingDecision
     # rubocop:enable Metrics/MethodLength
 
     def deserialize(hash)
-      DataDogService.increment_counter(metric_name: "bgs_service.previous_service_call")
+      DataDogService.increment_counter(metric_name: "bgs_service.previous_service_call.rating_decision")
       new(hash)
     end
 
