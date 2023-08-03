@@ -420,8 +420,7 @@ class RequestIssue < CaseflowRecord
     contested_decision_issue&.request_issues&.first
   end
 
-  def sync_decision_issues!(target_time = Time.now)
-    sleep_until(target_time)
+  def sync_decision_issues!
     return if processed?
 
     fail NotYetSubmitted unless submitted_and_ready?
@@ -449,14 +448,6 @@ class RequestIssue < CaseflowRecord
         processed!
       end
     end
-  end
-
-  def sleep_until(target_time)
-    current_time = Time.now
-    # Calculate the time difference
-    time_difference = target_time - current_time
-    # Sleep until the desired time is reached
-    sleep(time_difference) if time_difference > 0
   end
 
   def vacols_issue
