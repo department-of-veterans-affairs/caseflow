@@ -93,20 +93,42 @@ class AssignToView extends React.Component {
     const actionData = taskActionData(this.props);
     const taskType = actionData.type || 'Task';
 
-    const payload = {
-      data: {
-        tasks: [
-          {
-            type: taskType,
-            external_id: appeal.externalId,
-            parent_id: task.appealType === 'LegacyAppeal' ? rootTask : actionData.parent_id || task.taskId,
-            assigned_to_id: this.isVHAAssignToRegional() ? this.getVisn().value : this.state.selectedValue,
-            assigned_to_type: isTeamAssign ? 'Organization' : 'User',
-            instructions: this.state.instructions,
-          }
-        ]
-      }
-    };
+    let payload = {};
+
+    if (task.appealType === 'LegacyAppeal' && taskType === 'SpecialCaseMovementTask' &&
+     task.type === 'AttorneyLegacyTask') {
+      payload = {
+        data: {
+          tasks: [
+            {
+              type: taskType,
+              external_id: appeal.externalId,
+              legacy_task_type: task.type,
+              appeal_type: task.appealType,
+              parent_id: rootTask,
+              assigned_to_id: this.isVHAAssignToRegional() ? this.getVisn().value : this.state.selectedValue,
+              assigned_to_type: isTeamAssign ? 'Organization' : 'User',
+              instructions: this.state.instructions,
+            }
+          ]
+        }
+      };
+    } else {
+      payload = {
+        data: {
+          tasks: [
+            {
+              type: taskType,
+              external_id: appeal.externalId,
+              parent_id: actionData.parent_id || task.taskId,
+              assigned_to_id: this.isVHAAssignToRegional() ? this.getVisn().value : this.state.selectedValue,
+              assigned_to_type: isTeamAssign ? 'Organization' : 'User',
+              instructions: this.state.instructions,
+            }
+          ]
+        }
+      };
+    }
 
     const caseNameListItem = () => {
       const caseName = appeal.veteranFullName || null;
@@ -391,11 +413,11 @@ class AssignToView extends React.Component {
             {this.isVHAAssignToRegional() &&
               this.state.assignToVHARegionalOfficeSelection === 'vamc' &&
               this.state.selectedValue !== null && (
-                <div className="assign-vamc-visn-display">
-                  <u>VISN</u>
-                  <div>{this.getVisn().label}</div>
-                </div>
-              )}
+              <div className="assign-vamc-visn-display">
+                <u>VISN</u>
+                <div>{this.getVisn().label}</div>
+              </div>
+            )}
             <br />
           </React.Fragment>
         )}

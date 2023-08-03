@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class AttorneyLegacyTask < LegacyTask
-
   def available_actions(current_user, role)
     # AttorneyLegacyTasks are drawn from the VACOLS.BRIEFF table but should not be actionable unless there is a case
     # assignment in the VACOLS.DECASS table. task_id is created using the created_at field from the VACOLS.DECASS table
@@ -37,6 +36,10 @@ class AttorneyLegacyTask < LegacyTask
 
   def timeline_title
     COPY::CASE_TIMELINE_ATTORNEY_TASK
+  end
+
+  def actions_allowable?(_user)
+    true
   end
 
   def label

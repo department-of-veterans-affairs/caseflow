@@ -77,19 +77,9 @@ class RootTask < Task
   end
 
   def available_actions(user)
-    if !appeal.is_a?(Appeal)
-      if !any_active_distribution_task_legacy
-        return [Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.to_h]
-      end
-    else
-      return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h] if RootTask.user_can_create_mail_task?(user) && ama?
-    end
-    []
-  end
+    return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h] if RootTask.user_can_create_mail_task?(user) && ama?
 
-  def any_active_distribution_task_legacy
-    tasks = Task.where(appeal_type: "LegacyAppeal", appeal_id: appeal.id)
-    tasks.active.of_type(:DistributionTask).any?
+    []
   end
 
   def self.user_can_create_mail_task?(user)
