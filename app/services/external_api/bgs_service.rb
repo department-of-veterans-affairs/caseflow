@@ -458,7 +458,11 @@ class ExternalApi::BGSService
 
     # find contention info in cache; if not there, call to BGS and cache it
     Rails.logger.info("fetching contention info for participant #{participant_id}")
-    DataDogService.increment_counter(metric_name: "bgs_service.service_fetched_from_cache")
+    DataDogService.increment_counter(
+      metric_group: "mst_pact_group",
+      metric_name: "bgs_service.service_fetched_from_cache",
+      app_name: RequestStore[:application]
+    )
     Rails.cache.fetch("find_contentions_by_participant_id_#{participant_id}", expires_in: 24.hours) do
       Rails.logger.info("calling BGS and caching contention info for participant #{participant_id}")
       DBService.release_db_connections
