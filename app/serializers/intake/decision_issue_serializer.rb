@@ -9,8 +9,6 @@ class Intake::DecisionIssueSerializer
   attribute :description
   attribute :disposition
   attribute :approx_decision_date
-  attribute :mst_status
-  attribute :pact_status
   attribute :request_issue_id do |object|
     object.request_issues&.first&.id
   end
