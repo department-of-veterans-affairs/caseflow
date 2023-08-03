@@ -158,7 +158,8 @@ describe User, :all_dbs do
         :display_name => css_id.upcase,
         "name" => "Tom Brady",
         "status" => Constants.USER_STATUSES.active,
-        "status_updated_at" => nil
+        "status_updated_at" => nil,
+        "meeting_type" => "pexip"
       }
     end
 
