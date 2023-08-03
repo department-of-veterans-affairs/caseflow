@@ -668,7 +668,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         scenario "can schedule a veteran without an error" do
           visit "hearings/schedule/assign"
 
-          click_dropdown(text: "Denver", wait: 5)
+          click_dropdown(text: "Denver")
           click_button("AMA Veterans Waiting", exact: true)
           click_on "Bob"
 
