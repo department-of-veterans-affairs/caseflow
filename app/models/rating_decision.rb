@@ -60,9 +60,8 @@ class RatingDecision
     # rubocop:enable Metrics/MethodLength
 
     def deserialize(hash)
-      # reject unknown attributes to prevent UnknownAttribute errors
-      new(hash.merge(special_issues: deserialize_special_issues(hash))
-      .reject { |k, _| !RatingDecision.attribute_method?(k) })
+      DataDogService.increment_counter(metric_name: "bgs_service.previous_service_call.rating_decision")
+      new(hash)
     end
 
     # rubocop:disable Metrics/CyclomaticComplexity
