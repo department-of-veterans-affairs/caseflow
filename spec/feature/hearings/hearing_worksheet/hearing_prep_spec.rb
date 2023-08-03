@@ -107,9 +107,7 @@ RSpec.feature "Hearing worksheet for Hearing Prep", :all_dbs do
     end
   end
 
-  # skipping due to RSpec::Core::MultipleExceptionError
-  # https://circleci.com/gh/department-of-veterans-affairs/caseflow/53676
-  xscenario "Can click from hearing worksheet to reader" do
+  scenario "Can click from hearing worksheet to reader" do
     visit "/hearings/" + legacy_hearing.external_id.to_s + "/worksheet"
     link = find("#review-claims-folder")
     link_href = link[:href]
