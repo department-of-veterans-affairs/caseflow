@@ -208,7 +208,7 @@ RSpec.describe IntakesController, :postgres do
         ]
       end
 
-      it "should return a JSON payload with a redirect_to path" do
+      it "should return a JSON payload with a redirect_to path to the incomplete tab and the task should be on hold" do
         intake = create(:intake,
                         user: current_user,
                         detail: create(:higher_level_review,
@@ -220,6 +220,7 @@ RSpec.describe IntakesController, :postgres do
 
         expect(resp[:serverIntake]).to eq(redirect_to: "/decision_reviews/vha?tab=incomplete")
         expect(flash[:success]).to be_present
+        expect(intake.reload.detail.reload.tasks.first.status).to eq("on_hold")
       end
     end
   end
