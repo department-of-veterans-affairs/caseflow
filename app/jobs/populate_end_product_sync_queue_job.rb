@@ -7,8 +7,9 @@
 class PopulateEndProductSyncQueueJob < CaseflowJob
   queue_with_priority :low_priority
 
-  JOB_DURATION = 1.hour
-  SLEEP_DURATION = 5.seconds
+  JOB_DURATION = ENV["END_PRODUCT_QUEUE_JOB_DURATION"].to_i.hour
+  SLEEP_DURATION = ENV["END_PRODUCT_QUEUE_SLEEP_DURATION"].to_i
+  BATCH_LIMIT = ENV["END_PRODUCT_QUEUE_BATCH_LIMIT"].to_i
 
   before_perform do |job|
     JOB_ATTR = job
@@ -50,7 +51,7 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
       where (end_product_establishments.synced_status <> vbms_ext_claim."LEVEL_STATUS_CODE" or end_product_establishments.synced_status is null)
         and vbms_ext_claim."LEVEL_STATUS_CODE" in ('CLR','CAN')
         and end_product_establishments.id not in (select end_product_establishment_id from priority_end_product_sync_queue)
-      limit #{ENV['END_PRODUCT_QUEUE_BATCH_LIMIT']};
+      limit #{BATCH_LIMIT};
     SQL
 
     ActiveRecord::Base.connection.exec_query(ActiveRecord::Base.sanitize_sql(get_batch)).rows.flatten
