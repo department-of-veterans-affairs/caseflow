@@ -489,6 +489,13 @@ class RequestIssue < CaseflowRecord
     update!(edited_description: new_description, contention_updated_at: nil)
   end
 
+  def save_edited_decision_date!(new_decision_date)
+    update!(decision_date: new_decision_date)
+
+    # Special handling for reviews that contain issues without a decision date
+    decision_review.handle_issues_with_no_decision_date!
+  end
+
   def remove!
     close!(status: :removed) do
       legacy_issue_optin&.flag_for_rollback!
@@ -806,13 +813,6 @@ class RequestIssue < CaseflowRecord
     matching_rating_issues.each do |rating_issue|
       transaction { decision_issues << find_or_create_decision_issue_from_rating_issue(rating_issue) }
     end
-  end
-
-  def save_edited_decision_date!(new_decision_date)
-    update!(decision_date: new_decision_date)
-
-    # Special handling for reviews that contain issues without a decision date
-    decision_review.handle_issues_with_no_decision_date!
   end
 
   # One rating issue can be made as a decision for many request issues. However, we trust the disposition of the
