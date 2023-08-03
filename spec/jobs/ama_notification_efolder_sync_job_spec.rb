@@ -2,15 +2,16 @@
 
 describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
   include ActiveJob::TestHelper
-  let!(:current_user) { create(:user, roles: ["System Admin"]) }
-  let!(:appeals) { create_list(:appeal, 10, :active) }
-  let!(:job) { AmaNotificationEfolderSyncJob.new }
+
+  self.use_transactional_tests = false
+
+  let(:current_user) { create(:user, roles: ["System Admin"]) }
+  let(:appeals) { create_list(:appeal, 10, :active) }
+  let(:job) { AmaNotificationEfolderSyncJob.new }
 
   BATCH_LIMIT_SIZE = 5
 
   describe "perform" do
-    before { Seeds::NotificationEvents.new.seed! }
-
     let!(:today) { Time.now.utc.iso8601 }
     let!(:notifications) do
       appeals.each_with_index do |appeal, index|
@@ -33,12 +34,15 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
     end
 
     let!(:first_run_outcoded_appeals) { [appeals[6]] }
-    let!(:first_run_never_synced_appeals) { appeals.first(3) + [appeals[4]] + appeals.last(2) }
+    let(:first_run_never_synced_appeals) { appeals.first(3) + [appeals[4]] + appeals.last(2) }
 
-    before(:all) { AmaNotificationEfolderSyncJob::BATCH_LIMIT = BATCH_LIMIT_SIZE }
+    before(:all) do
+      AmaNotificationEfolderSyncJob::BATCH_LIMIT = BATCH_LIMIT_SIZE
+      Seeds::NotificationEvents.new.seed!
+    end
 
     context "first run" do
-      before { VbmsUploadedDocument.delete_all }
+      after(:all) { clean_up_after_threads }
 
       it "get all ama appeals that have been recently outcoded" do
         expect(job.send(:appeals_recently_outcoded)).to match_array(first_run_outcoded_appeals)
@@ -52,7 +56,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
         expect(job.send(:ready_for_resync)).to eq([])
       end
 
-      it "running the perform" do
+      it "running the perform", bypass_cleaner: true do
         perform_enqueued_jobs { AmaNotificationEfolderSyncJob.perform_later }
 
         expect(find_appeal_ids_from_first_document_sync.size).to eq BATCH_LIMIT_SIZE
@@ -65,7 +69,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
       let(:first_run_vbms_document_appeal_indexes) { find_appeal_ids_from_first_document_sync }
 
       # These appeals do not have notifications, or were outcoded too long ago.
-      let(:will_not_sync_appeal_ids) { [appeals[3].id, appeals[5].id, appeals[7].id] }
+      let(:will_not_sync_appeal_ids) { [appeals[3].id, appeals[5].id, appeals[7].id, appeals[6].id] }
 
       # There are no more appeals that have been outcoded within the last 24 hours
       let(:second_run_outcoded_appeals) { [] }
@@ -81,29 +85,34 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
       # These appeals should be all that have had notification reports generated for them after two
       # runs with BATCH_LIMIT_SIZE number of appeals processed each time.
       let(:second_run_vbms_document_appeal_ids) do
-        first_run_vbms_document_appeal_ids(first_run_vbms_document_appeal_indexes) +
+        (first_run_vbms_document_appeal_ids(first_run_vbms_document_appeal_indexes) +
           [appeals[4].id] -
           will_not_sync_appeal_ids +
-          second_run_never_synced_appeals_ids
+          second_run_never_synced_appeals_ids).uniq
       end
 
-      before do
+      before { RootTask.find_by(appeal_id: appeals[6].id).update!(closed_at: 25.hours.ago) }
+      after { clean_up_after_threads }
+
+      it "get all ama appeals that have been recently outcoded", bypass_cleaner: true do
+        # Leave the perform_enqueued_jobs inside of the test blocks with 'bypass_cleaner: true'
+        # to allow all of the threads created within the test subjects to access the seed data.
         perform_enqueued_jobs { AmaNotificationEfolderSyncJob.perform_later }
 
-        RootTask.find_by(appeal_id: appeals[6].id).update!(closed_at: 25.hours.ago)
-      end
-
-      it "get all ama appeals that have been recently outcoded" do
         expect(job.send(:appeals_recently_outcoded)).to match_array(second_run_outcoded_appeals)
       end
 
-      it "get all ama appeals that have never been synced yet" do
+      it "get all ama appeals that have never been synced yet", bypass_cleaner: true do
+        perform_enqueued_jobs { AmaNotificationEfolderSyncJob.perform_later }
+
         expect(
           job.send(:appeals_never_synced).map(&:id)
         ).to match_array(second_run_never_synced_appeals_ids)
       end
 
-      it "get all ama appeals that must be resynced" do
+      it "get all ama appeals that must be resynced", bypass_cleaner: true do
+        perform_enqueued_jobs { AmaNotificationEfolderSyncJob.perform_later }
+
         create(:notification,
                appeals_id: appeals[4].uuid,
                appeals_type: "Appeal",
@@ -113,10 +122,13 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
                notified_at: 2.minutes.ago,
                email_notification_status: "delivered")
 
-        expect(job.send(:ready_for_resync)).to eq([appeals[4]])
+        expect(job.send(:ready_for_resync)).to match_array([appeals[4]])
       end
 
-      it "ignore appeals that need to be resynced if latest notification status is 'Failure Due to Deceased" do
+      it "ignore appeals that need to be resynced if latest notification status is" \
+        "'Failure Due to Deceased", bypass_cleaner: true do
+        perform_enqueued_jobs { AmaNotificationEfolderSyncJob.perform_later }
+
         create(:notification,
                appeals_id: appeals[4].uuid,
                appeals_type: "Appeal",
@@ -129,7 +141,9 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
         expect(job.send(:ready_for_resync)).to eq([])
       end
 
-      it "running the perform" do
+      it "running the perform", bypass_cleaner: true do
+        perform_enqueued_jobs { AmaNotificationEfolderSyncJob.perform_later }
+
         create(:notification,
                appeals_id: appeals[4].uuid,
                appeals_type: "Appeal",
@@ -146,6 +160,7 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
             .where(document_type: "BVA Case Notifications")
             .order(:id)
             .pluck(:appeal_id)
+            .uniq
         ).to match_array(second_run_vbms_document_appeal_ids)
       end
     end
@@ -163,6 +178,10 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
         .pluck(:appeal_id)
         .map { |appeal_id| find_appeal_index_by_id(appeal_id) }
         .compact
+    end
+
+    def clean_up_after_threads
+      DatabaseCleaner.clean_with(:truncation, except: %w[notification_events vftypes issref])
     end
   end
 end
