@@ -190,18 +190,18 @@ class RequestIssuesUpdate < CaseflowRecord
   end
 
   def edit_contention_text(edited_issue)
-    if edited_issue[:description_date]
+    if edited_issue[:edited_description]
       RequestIssue.find(
         edited_issue[:request_issue_id].to_s
-      ).save_edited_contention_text!(edited_issue[:description_date])
+      ).save_edited_contention_text!(edited_issue[:edited_description])
     end
   end
 
   def edit_decision_date(edited_issue)
-    if edited_issue[:decision_date]
+    if edited_issue[:edited_decision_date]
       RequestIssue.find(
         edited_issue[:request_issue_id].to_s
-      ).save_edited_decision_date!(edited_issue[:decision_date])
+      ).save_edited_decision_date!(edited_issue[:edited_decision_date])
     end
   end
 

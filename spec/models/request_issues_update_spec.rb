@@ -267,8 +267,7 @@ describe RequestIssuesUpdate, :all_dbs do
         let(:request_issues_data) do
           [{ request_issue_id: existing_legacy_opt_in_request_issue.id },
            { request_issue_id: existing_request_issue.id,
-             edited_decision_date: edited_decision_date,
-             decision_date: edited_decision_date }]
+             edited_decision_date: edited_decision_date }]
         end
 
         it "updates the request issue's decision date" do
