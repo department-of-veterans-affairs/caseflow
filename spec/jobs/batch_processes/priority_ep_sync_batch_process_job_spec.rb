@@ -129,8 +129,7 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
         # Job duration of 0.01 seconds limits the job's loop to one iteration
         stub_const("PriorityEpSyncBatchProcessJob::JOB_DURATION", 0.01.seconds)
 
-        pepsq_records_to_destroy = syncable_end_product_establishments.last(97).map(&:id)
-        PriorityEndProductSyncQueue.destroy(pepsq_records_to_destroy)
+        PriorityEndProductSyncQueue.last(97).each(&:destroy)
         subject
       end
 
