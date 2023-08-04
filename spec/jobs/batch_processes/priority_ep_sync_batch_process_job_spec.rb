@@ -23,8 +23,6 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
   subject do
     # Changing the sleep duration to 0 enables suite to run faster
     stub_const("PriorityEpSyncBatchProcessJob::SLEEP_DURATION", 0)
-    # Batch limit changes to 50 to test PriorityEpSyncBatchProcessJob loop
-    stub_const("BatchProcess::BATCH_LIMIT", 50)
 
     PriorityEpSyncBatchProcessJob.perform_now
   end
@@ -36,101 +34,85 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
         subject
       end
 
-      let(:first_batch_process) do
-        bp1 = BatchProcess.first
-        bp2 = BatchProcess.second
-
-        (bp1.created_at < bp2.created_at) ? bp1 : bp2
-      end
-
-      let(:second_batch_process) do
-        bp1 = BatchProcess.first
-        bp2 = BatchProcess.second
-
-        (bp1.created_at > bp2.created_at) ? bp1 : bp2
-      end
-
       it "creates two batch process records" do
         expect(BatchProcess.count).to eq(2)
       end
 
       it "both batch processes have a state of 'COMPLETED'" do
-        expect(first_batch_process.state).to eq(Constants.BATCH_PROCESS.completed)
-        expect(second_batch_process.state).to eq(Constants.BATCH_PROCESS.completed)
+        expect(BatchProcess.first.state).to eq(Constants.BATCH_PROCESS.completed)
       end
 
       it "both batch processes have a 'started_at' date/time" do
-        expect(first_batch_process.started_at).not_to be_nil
-        expect(second_batch_process.started_at).not_to be_nil
+        expect(BatchProcess.first.started_at).not_to be_nil
       end
 
       it "both batch processes have a 'ended_at' date/time" do
-        expect(first_batch_process.ended_at).not_to be_nil
-        expect(second_batch_process.ended_at).not_to be_nil
+        expect(BatchProcess.first.ended_at).not_to be_nil
       end
 
       it "the first batch process has 49 records_completed" do
-        expect(first_batch_process.records_completed).to eq(49)
-      end
-
-      it "the second batch process has 50 records_completed" do
-        expect(second_batch_process.records_completed).to eq(50)
+        expect(BatchProcess.first.records_completed).to eq(100)
       end
 
       it "the first batch process has 1 records_failed" do
-        expect(first_batch_process.records_failed).to eq(1)
-      end
-
-      it "the second batch process has 0 records_failed" do
-        expect(second_batch_process.records_failed).to eq(0)
+        expect(BatchProcess.first.records_failed).to eq(0)
       end
     end
 
     context "when all 100 records able to sync successfully" do
       before do
+        # Batch limit changes to 50 to test PriorityEpSyncBatchProcessJob loop
+        stub_const("BatchProcess::BATCH_LIMIT", 50)
+
         subject
       end
 
-      let!(:first_batch_process) do
-        bp1 = BatchProcess.first
-        bp2 = BatchProcess.second
-
-        (bp1.created_at < bp2.created_at) ? bp1 : bp2
-      end
-
-      let!(:second_batch_process) do
-        bp1 = BatchProcess.first
-        bp2 = BatchProcess.second
-
-        (bp1.created_at > bp2.created_at) ? bp1 : bp2
-      end
-
       it "both batch processes have a state of 'COMPLETED'" do
-        expect(first_batch_process.state).to eq(Constants.BATCH_PROCESS.completed)
-        expect(second_batch_process.state).to eq(Constants.BATCH_PROCESS.completed)
+        expect(BatchProcess.first.state).to eq(Constants.BATCH_PROCESS.completed)
+        expect(BatchProcess.second.state).to eq(Constants.BATCH_PROCESS.completed)
       end
 
       it "both batch processes have a 'started_at' date/time" do
-        expect(first_batch_process.started_at).not_to be_nil
-        expect(second_batch_process.started_at).not_to be_nil
+        expect(BatchProcess.first.started_at).not_to be_nil
+        expect(BatchProcess.second.started_at).not_to be_nil
       end
 
       it "both batch processes have a 'ended_at' date/time" do
-        expect(first_batch_process.ended_at).not_to be_nil
-        expect(second_batch_process.ended_at).not_to be_nil
+        expect(BatchProcess.first.ended_at).not_to be_nil
+        expect(BatchProcess.second.ended_at).not_to be_nil
       end
 
       it "the first batch process has 50 records_completed" do
-        expect(first_batch_process.records_completed).to eq(BatchProcess::BATCH_LIMIT)
+        expect(BatchProcess.first.records_completed).to eq(BatchProcess::BATCH_LIMIT)
       end
 
       it "the second batch process has 50 records_completed" do
-        expect(second_batch_process.records_completed).to eq(BatchProcess::BATCH_LIMIT)
+        expect(BatchProcess.second.records_completed).to eq(BatchProcess::BATCH_LIMIT)
       end
 
       it "both batch processes have 0 records_failed" do
-        expect(first_batch_process.records_failed).to eq(0)
-        expect(second_batch_process.records_failed).to eq(0)
+        expect(BatchProcess.first.records_failed).to eq(0)
+        expect(BatchProcess.second.records_failed).to eq(0)
+      end
+    end
+
+    context "when the job duration ends before all PriorityEndProductSyncQueue records can be batched" do
+      before do
+        # Job duration changes to 1 second to test PriorityEpSyncBatchProcessJob loop
+        stub_const("PriorityEpSyncBatchProcessJob::JOB_DURATION", 1.second)
+        # Batch limit changes to 1 to test PriorityEpSyncBatchProcessJob loop
+        stub_const("PriorityEpSyncBatchProcessJob::BATCH_LIMIT", 1)
+
+        PriorityEndProductSyncQueue.last(97).each { |pepsq| pepsq.destroy }
+        subject
+      end
+
+      it "there are 3 PriorityEndProductSyncQueue records" do
+        expect(PriorityEndProductSyncQueue.count).to eq(3)
+      end
+
+      it "will only create 1 BatchProcess record" do
+        expect(BatchProcess.count).to eq(1)
       end
     end
 
@@ -169,8 +151,9 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
 
       it "a message that says 'No Records Available to Batch' will be logged" do
         expect(Rails.logger).to have_received(:info).with(
-          "No Records Available to Batch.  Job will be enqueued again once 1-hour mark is hit.  Job ID: #{PriorityEpSyncBatchProcessJob::JOB_ATTR&.job_id}."\
-          "  Time: #{Time.zone.now}"
+          "No Records Available to Batch."\
+          "  Job will be enqueued again once 1-hour mark is hit."\
+          "  Job ID: #{PriorityEpSyncBatchProcessJob::JOB_ATTR&.job_id}.  Time: #{Time.zone.now}"
         )
       end
     end
