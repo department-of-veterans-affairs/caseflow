@@ -265,7 +265,6 @@ feature "NonComp Dispositions Task Page", :postgres do
       User.stub = user
       vha_org.add_user(user)
       Timecop.travel(Time.zone.local(2023, 0o2, 0o1))
-
     end
 
     after do
@@ -348,15 +347,15 @@ feature "NonComp Dispositions Task Page", :postgres do
     scenario "When feature toggle is enabled Refresh button should be visible." do
       enable_feature_flag_and_redirect_to_disposition
 
-      last_synced_date = in_progress_task.poa_last_synced_at.to_date.strftime('%m/%d/%Y')
+      last_synced_date = in_progress_task.poa_last_synced_at.to_date.strftime("%m/%d/%Y")
       expect(page).to have_text("POA last refreshed on #{last_synced_date}")
       expect(page).to have_button(COPY::REFRESH_POA)
     end
 
     scenario "when cooldown time is greater than 0 it should return Alert message" do
-
       cooldown_period = 7
-      allow_any_instance_of(DecisionReviewsController).to receive(:cooldown_period_remaining).and_return(cooldown_period)
+      instance_decision_reviews = allow_any_instance_of(DecisionReviewsController)
+      instance_decision_reviews.to receive(:cooldown_period_remaining).and_return(cooldown_period)
       enable_feature_flag_and_redirect_to_disposition
       expect(page).to have_text(COPY::CASE_DETAILS_POA_SUBSTITUTE)
       expect(page).to have_button(COPY::REFRESH_POA)
@@ -364,7 +363,6 @@ feature "NonComp Dispositions Task Page", :postgres do
       click_on COPY::REFRESH_POA
       expect(page).to have_text("Power of Attorney (POA) data comes from VBMS")
       expect(page).to have_text("Information is current at this time. Please try again in #{cooldown_period} minutes")
-
     end
 
     scenario "when cooldown time is 0, it should update POA" do
