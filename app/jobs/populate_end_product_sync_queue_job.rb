@@ -12,7 +12,7 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
   BATCH_LIMIT = ENV["END_PRODUCT_QUEUE_BATCH_LIMIT"].to_i
 
   before_perform do |job|
-    JOB_ATTR = job
+    JOB_ATTR ||= job
   end
 
   def perform
