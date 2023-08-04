@@ -352,5 +352,16 @@ feature "NonComp Dispositions Task Page", :postgres do
         expect(page).to have_content(COPY::CASE_DETAILS_NO_POA_VHA)
       end
     end
+
+    context "with an unrecognized POA" do
+      let(:poa) { in_progress_task.power_of_attorney }
+      before do
+        poa.update(representative_type: "Unrecognized representative")
+      end
+      it "should display the VHA-specific text" do
+        visit dispositions_url
+        expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA_VHA)
+      end
+    end
   end
 end
