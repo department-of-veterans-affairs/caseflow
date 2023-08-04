@@ -34,32 +34,58 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
         subject
       end
 
-      it "creates two batch process records" do
-        expect(BatchProcess.count).to eq(2)
+      it "creates one batch process record" do
+        expect(BatchProcess.count).to eq(1)
       end
 
-      it "both batch processes have a state of 'COMPLETED'" do
+      it "the batch process has a state of 'COMPLETED'" do
         expect(BatchProcess.first.state).to eq(Constants.BATCH_PROCESS.completed)
       end
 
-      it "both batch processes have a 'started_at' date/time" do
+      it "the batch process has a 'started_at' date/time" do
         expect(BatchProcess.first.started_at).not_to be_nil
       end
 
-      it "both batch processes have a 'ended_at' date/time" do
+      it "the batch process has a 'ended_at' date/time" do
         expect(BatchProcess.first.ended_at).not_to be_nil
       end
 
-      it "the first batch process has 49 records_completed" do
-        expect(BatchProcess.first.records_completed).to eq(100)
+      it "the batch process has 99 records_completed" do
+        expect(BatchProcess.first.records_completed).to eq(99)
       end
 
-      it "the first batch process has 1 records_failed" do
-        expect(BatchProcess.first.records_failed).to eq(0)
+      it "the batch process has 1 records_failed" do
+        expect(BatchProcess.first.records_failed).to eq(1)
       end
     end
 
     context "when all 100 records able to sync successfully" do
+      before do
+        subject
+      end
+
+      it "the batch process has a state of 'COMPLETED'" do
+        expect(BatchProcess.first.state).to eq(Constants.BATCH_PROCESS.completed)
+      end
+
+      it "the batch process has a 'started_at' date/time" do
+        expect(BatchProcess.first.started_at).not_to be_nil
+      end
+
+      it "the batch process has a 'ended_at' date/time" do
+        expect(BatchProcess.first.ended_at).not_to be_nil
+      end
+
+      it "the batch process has 100 records_completed" do
+        expect(BatchProcess.first.records_completed).to eq(BatchProcess::BATCH_LIMIT)
+      end
+
+      it "the batch process has 0 records_failed" do
+        expect(BatchProcess.first.records_failed).to eq(0)
+      end
+    end
+
+    context "when the job creates multiple batches" do
       before do
         # Batch limit changes to 50 to test PriorityEpSyncBatchProcessJob loop
         stub_const("BatchProcess::BATCH_LIMIT", 50)
@@ -98,10 +124,10 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
 
     context "when the job duration ends before all PriorityEndProductSyncQueue records can be batched" do
       before do
-        # Job duration changes to 1 second to test PriorityEpSyncBatchProcessJob loop
-        stub_const("PriorityEpSyncBatchProcessJob::JOB_DURATION", 1.second)
-        # Batch limit changes to 1 to test PriorityEpSyncBatchProcessJob loop
-        stub_const("PriorityEpSyncBatchProcessJob::BATCH_LIMIT", 1)
+        # Batch limit of 1 limits the number of priority end product sync queue records per batch
+        stub_const("BatchProcess::BATCH_LIMIT", 1)
+        # Job duration of 0.01 seconds limits the job's loop to one iteration
+        stub_const("PriorityEpSyncBatchProcessJob::JOB_DURATION", 0.01.seconds)
 
         PriorityEndProductSyncQueue.last(97).each { |pepsq| pepsq.destroy }
         subject
@@ -111,8 +137,28 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
         expect(PriorityEndProductSyncQueue.count).to eq(3)
       end
 
-      it "will only create 1 BatchProcess record" do
+      it "creates 1 batch process record" do
         expect(BatchProcess.count).to eq(1)
+      end
+
+      it "the batch process has a state of 'COMPLETED'" do
+        expect(BatchProcess.first.state).to eq(Constants.BATCH_PROCESS.completed)
+      end
+
+      it "the batch process has a 'started_at' date/time" do
+        expect(BatchProcess.first.started_at).not_to be_nil
+      end
+
+      it "the batch process has a 'ended_at' date/time" do
+        expect(BatchProcess.first.ended_at).not_to be_nil
+      end
+
+      it "the batch process has 1 records_attempted" do
+        expect(BatchProcess.first.records_attempted).to eq(1)
+      end
+
+      it "the batch process has 0 records_failed" do
+        expect(BatchProcess.first.records_failed).to eq(0)
       end
     end
 
