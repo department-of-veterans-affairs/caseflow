@@ -186,7 +186,6 @@ class RequestIssuesUpdate < CaseflowRecord
     edited_issue_data.each do |edited_issue|
       edit_contention_text(edited_issue)
       edit_decision_date(edited_issue)
-      end
     end
   end
 
