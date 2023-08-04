@@ -280,22 +280,6 @@ class AppealsController < ApplicationController
     !search.nil? && search.match?(/\d{6}-{1}\d+$/)
   end
 
-  # def update_or_delete_power_of_attorney!
-  #   byebug
-  #   appeal.power_of_attorney&.try(:clear_bgs_power_of_attorney!) # clear memoization on legacy appeals
-  #   poa = appeal.bgs_power_of_attorney
-
-  #   if poa.blank?
-  #     ["Successfully refreshed. No power of attorney information was found at this time.", "success", "blank"]
-  #   elsif poa.bgs_record == :not_found
-  #     poa.destroy!
-  #     ["Successfully refreshed. No power of attorney information was found at this time.", "success", "deleted"]
-  #   else
-  #     poa.save_with_updated_bgs_record!
-  #     ["POA Updated Successfully", "success", "updated"]
-  #   end
-  # end
-
   def send_initial_notification_letter
     # depending on the docket type, create cooresponding task as parent task
     case appeal.docket_type
