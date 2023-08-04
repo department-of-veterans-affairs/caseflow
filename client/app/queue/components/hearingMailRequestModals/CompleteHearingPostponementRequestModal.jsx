@@ -3,16 +3,21 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { taskById } from '../../selectors';
+import { taskById, appealWithDetailSelector } from '../../selectors';
 import { taskActionData } from '../../utils';
 
+
 import COPY from '../../../../COPY';
+import TASK_STATUSES from '../../../../constants/TASK_STATUSES';
+import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
+
 import QueueFlowModal from '../QueueFlowModal';
 import RadioField from '../../../components/RadioField';
 import Alert from '../../../components/Alert';
 import DateSelector from '../../../components/DateSelector';
 import TextareaField from '../../../components/TextareaField';
 import { marginTop, marginBottom } from '../../constants';
+
 
 const RULING_OPTIONS = [
   { displayText: 'Granted', value: true },
@@ -58,6 +63,25 @@ const CompleteHearingPostponementRequestModal = (props) => {
         ...state,
         scheduledOption: action.payload
       };
+    case 'isPosting':
+      return {
+        ...state,
+        isPosting: action.payload
+      };
+    case 'completeForm':
+      return {
+        granted: true,
+        rulingDate: { value: '2023-08-01', valid: true },
+        instructions: 'test',
+        scheduledOption: 'reschedule'
+      };
+    case 'clearForm':
+      return {
+        granted: null,
+        rulingDate: { value: '', valid: false },
+        instructions: '',
+        scheduledOption: null
+      };
     default:
       throw new Error('Unknown action type');
     }
@@ -69,7 +93,8 @@ const CompleteHearingPostponementRequestModal = (props) => {
       granted: null,
       rulingDate: { value: '', valid: false },
       instructions: '',
-      scheduledOption: null
+      scheduledOption: null,
+      isPosting: false
     }
   );
 
@@ -83,7 +108,44 @@ const CompleteHearingPostponementRequestModal = (props) => {
     return granted !== null && rulingDate.valid && instructions !== '';
   };
 
-  const submit = () => { console.log('submit') };
+  const getPayload = () => {
+    const { scheduledOption } = state;
+
+    return {
+      data: {
+        task: {
+          status: TASK_STATUSES.cancelled,
+          business_payloads: {
+            values: {
+              disposition: HEARING_DISPOSITION_TYPES.postponed,
+              after_disposition_update:
+                scheduledOption === ACTIONS.RESCHEDULE ?
+                  /* LOGIC FOR 24998 */ null : ACTIONS.SCHEDULE_LATER
+            },
+          },
+        },
+      },
+    };
+  };
+
+  const submit = () => {
+    const { userCanScheduleVirtualHearings, task, appeal } = props;
+    const { isPosting } = state;
+    const taskData = taskActionData(props);
+
+    // If user opts to reschedule immediately, redirect to the full page schedule veteran flow
+    if (state.scheduledOption === ACTIONS.RESCHEDULE && userCanScheduleVirtualHearings) {
+      // LOGIC FOR 24998
+    }
+
+    if (isPosting) {
+      return;
+    }
+
+    const payload = getPayload();
+
+
+  };
 
   return (
     <QueueFlowModal
@@ -106,10 +168,9 @@ const CompleteHearingPostponementRequestModal = (props) => {
           styling={marginBottom(1)}
         />
 
-        <button onClick={() => {
-          console.clear();
-          console.log(props);
-        }}>CLICK</button>
+        <button onClick={() => dispatch({ type: 'completeForm' })}>COMPLETE FORM</button>
+        <button onClick={() => console.log(props)}>PROPS</button>
+        <button onClick={() => console.clear()}>CLEAR CONSOLE</button>
 
         {state.granted && <Alert
           message="By marking this task as complete, you will postpone the hearing"
@@ -155,11 +216,19 @@ const CompleteHearingPostponementRequestModal = (props) => {
 };
 
 CompleteHearingPostponementRequestModal.propTypes = {
+  appeal: PropTypes.shape({
+    externalId: PropTypes.string,
+  }),
+  task: PropTypes.shape({
+    taskId: PropTypes.string,
+  }),
+  userCanScheduleVirtualHearings: PropTypes.bool,
   register: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  task: taskById(state, { taskId: ownProps.taskId })
+  task: taskById(state, { taskId: ownProps.taskId }),
+  appeal: appealWithDetailSelector(state, ownProps),
 });
 
 export default withRouter(
