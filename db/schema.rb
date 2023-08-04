@@ -348,7 +348,7 @@ ActiveRecord::Schema.define(version: 2023_08_01_195310) do
   create_table "caseflow_stuck_records", comment: "This is a polymorphic table consisting of records that have repeatedly errored out of the syncing process. Currently, the only records on this table come from the PriorityEndProductSyncQueue table.", force: :cascade do |t|
     t.datetime "determined_stuck_at", null: false, comment: "The date/time at which the record in question was determined to be stuck."
     t.string "error_messages", default: [], comment: "Array of Error Message(s) containing Batch ID and specific error if a failure occurs", array: true
-    t.boolean "remediated", default: false, comment: "Reflects if the stuck record has been reviewed and fixed"
+    t.boolean "remediated", default: false, null: false, comment: "Reflects if the stuck record has been reviewed and fixed"
     t.text "remediation_notes", comment: "Brief description of the encountered issue and remediation strategy"
     t.bigint "stuck_record_id", null: false, comment: "The id / primary key of the stuck record and the type / where the record came from"
     t.string "stuck_record_type", null: false
