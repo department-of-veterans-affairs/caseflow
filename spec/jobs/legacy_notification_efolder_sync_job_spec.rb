@@ -52,7 +52,10 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
     let(:first_run_vbms_document_ids) { [appeals[6].id, appeals[0].id, appeals[1].id, appeals[2].id, appeals[4].id] }
     let(:second_run_vbms_document_ids) { first_run_vbms_document_ids + [appeals[8].id, appeals[9].id, appeals[4].id] }
 
-    before(:all) { ensure_notification_events_exist }
+    before(:all) do
+      ensure_notification_events_exist
+      FeatureToggle.enable!(:full_notification_job_sync_scope)
+    end
     before(:each) { stub_const("LegacyNotificationEfolderSyncJob::BATCH_LIMIT", BATCH_LIMIT_SIZE) }
 
     context "first run" do
@@ -186,7 +189,6 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
       # runs with BATCH_LIMIT_SIZE number of appeals processed each time.
       let(:second_run_vbms_document_appeal_ids) do
         first_run_vbms_document_appeal_ids(first_run_vbms_document_appeal_indexes) +
-          [appeals[4].id] +
           second_run_never_synced_appeals_ids -
           will_not_sync_appeal_ids
       end

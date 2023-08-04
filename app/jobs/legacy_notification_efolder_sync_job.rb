@@ -15,9 +15,13 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   def perform
     RequestStore[:current_user] = User.system_user
 
-    all_active_legacy_appeals = (appeals_recently_outcoded + appeals_never_synced + ready_for_resync).uniq
+    all_active_legacy_appeals = if FeatureToggle.enabled?(:full_notification_job_sync_scope)
+                                  appeals_recently_outcoded + appeals_never_synced + ready_for_resync
+                                else
+                                  appeals_never_synced
+                                end
 
-    sync_notification_reports(all_active_legacy_appeals.first(BATCH_LIMIT.to_i))
+    sync_notification_reports(all_active_legacy_appeals.uniq.first(BATCH_LIMIT.to_i))
   end
 
   private
