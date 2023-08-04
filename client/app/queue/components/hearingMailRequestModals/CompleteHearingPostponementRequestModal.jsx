@@ -1,11 +1,12 @@
 import React, { useReducer } from 'react';
-import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import { taskById, appealWithDetailSelector } from '../../selectors';
-import { taskActionData } from '../../utils';
-
+import { requestPatch, showErrorMessage } from '../../uiReducer/uiActions';
+import { onReceiveAmaTasks } from '../../QueueActions';
 
 import COPY from '../../../../COPY';
 import TASK_STATUSES from '../../../../constants/TASK_STATUSES';
@@ -17,7 +18,6 @@ import Alert from '../../../components/Alert';
 import DateSelector from '../../../components/DateSelector';
 import TextareaField from '../../../components/TextareaField';
 import { marginTop, marginBottom } from '../../constants';
-
 
 const RULING_OPTIONS = [
   { displayText: 'Granted', value: true },
@@ -68,20 +68,6 @@ const CompleteHearingPostponementRequestModal = (props) => {
         ...state,
         isPosting: action.payload
       };
-    case 'completeForm':
-      return {
-        granted: true,
-        rulingDate: { value: '2023-08-01', valid: true },
-        instructions: 'test',
-        scheduledOption: 'reschedule'
-      };
-    case 'clearForm':
-      return {
-        granted: null,
-        rulingDate: { value: '', valid: false },
-        instructions: '',
-        scheduledOption: null
-      };
     default:
       throw new Error('Unknown action type');
     }
@@ -128,10 +114,24 @@ const CompleteHearingPostponementRequestModal = (props) => {
     };
   };
 
+  const getSuccessMsg = () => {
+    const { scheduledOption } = state;
+    const { appeal } = props;
+
+    if (scheduledOption === ACTIONS.RESCHEDULE) {
+      // LOGIC FOR 24998
+    }
+
+    return {
+      title: `${
+        appeal.veteranFullName
+      } was successfully added back to the schedule veteran list.`,
+    };
+  };
+
   const submit = () => {
-    const { userCanScheduleVirtualHearings, task, appeal } = props;
+    const { userCanScheduleVirtualHearings, task } = props;
     const { isPosting } = state;
-    const taskData = taskActionData(props);
 
     // If user opts to reschedule immediately, redirect to the full page schedule veteran flow
     if (state.scheduledOption === ACTIONS.RESCHEDULE && userCanScheduleVirtualHearings) {
@@ -144,7 +144,25 @@ const CompleteHearingPostponementRequestModal = (props) => {
 
     const payload = getPayload();
 
+    dispatch({ type: 'isPosting', payload: true });
 
+    return props.
+      requestPatch(`/tasks/${task.taskId}`, payload, getSuccessMsg()).
+      then(
+        (resp) => {
+          dispatch({ type: 'isPosting', payload: false });
+          props.onReceiveAmaTasks(resp.body.tasks.data);
+        },
+        () => {
+          dispatch({ type: 'isPosting', payload: false });
+
+          props.showErrorMessage({
+            title: 'Unable to postpone hearing.',
+            detail:
+              'Please retry submitting again and contact support if errors persist.',
+          });
+        }
+      );
   };
 
   return (
@@ -167,10 +185,6 @@ const CompleteHearingPostponementRequestModal = (props) => {
           options={RULING_OPTIONS}
           styling={marginBottom(1)}
         />
-
-        <button onClick={() => dispatch({ type: 'completeForm' })}>COMPLETE FORM</button>
-        <button onClick={() => console.log(props)}>PROPS</button>
-        <button onClick={() => console.clear()}>CLEAR CONSOLE</button>
 
         {state.granted && <Alert
           message="By marking this task as complete, you will postpone the hearing"
@@ -218,11 +232,15 @@ const CompleteHearingPostponementRequestModal = (props) => {
 CompleteHearingPostponementRequestModal.propTypes = {
   appeal: PropTypes.shape({
     externalId: PropTypes.string,
+    veteranFullName: PropTypes.string
   }),
   task: PropTypes.shape({
     taskId: PropTypes.string,
   }),
   userCanScheduleVirtualHearings: PropTypes.bool,
+  requestPatch: PropTypes.func,
+  onReceiveAmaTasks: PropTypes.func,
+  showErrorMessage: PropTypes.func,
   register: PropTypes.func
 };
 
@@ -231,8 +249,19 @@ const mapStateToProps = (state, ownProps) => ({
   appeal: appealWithDetailSelector(state, ownProps),
 });
 
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      requestPatch,
+      onReceiveAmaTasks,
+      showErrorMessage
+    },
+    dispatch
+  );
+
 export default withRouter(
   connect(
-    mapStateToProps
+    mapStateToProps,
+    mapDispatchToProps
   )(CompleteHearingPostponementRequestModal)
 );
