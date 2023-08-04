@@ -60,7 +60,7 @@ describe('CompleteHearingPostponementRequestModal', () => {
 
   const formatDate = (date) => format(date, 'yyyy-MM-dd').toString();
   const today = formatDate(new Date());
-  const tomorrow = formatDate(add(new Date(), { days: 2 }));
+  const futureDate = formatDate(add(new Date(), { days: 2 }));
 
   describe('on modal open', () => {
     test('modal title: "Mark as complete"', () => {
@@ -150,7 +150,7 @@ describe('CompleteHearingPostponementRequestModal', () => {
       test('date error message appears', () => {
         renderCompleteHprModal(completeHearingPostponementRequestData);
 
-        enterInputValue(datePrompt, tomorrow);
+        enterInputValue(datePrompt, futureDate);
         expect(screen.getByText(dateErrorMessage)).toBeInTheDocument();
       });
     });
