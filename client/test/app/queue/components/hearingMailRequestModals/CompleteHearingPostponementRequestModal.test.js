@@ -191,7 +191,7 @@ describe('CompleteHearingPostponementRequestModal', () => {
 
     const runInvalidationTestOnEachField = (eventSequences) => {
       describe('any field is invalid', () => {
-        describe.each(eventSequences)('$invalidField field is invalid', (invalidField, eventSequence) => {
+        describe.each(eventSequences)('%s field is invalid', (invalidField, eventSequence) => {
           test('submit button is disabled', () => {
             renderCompleteHprModal(completeHearingPostponementRequestData);
 
