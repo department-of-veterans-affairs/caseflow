@@ -16,6 +16,7 @@ import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES';
 import { validateDateNotInFuture, isTimely } from '../util/issues';
 import { formatDateStr } from 'app/util/DateUtil';
 import { VHA_PRE_DOCKET_ISSUE_BANNER } from 'app/../COPY';
+import { generateSkipButton } from '../util/buttonUtils';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -202,13 +203,7 @@ class NonratingRequestIssueModal extends React.Component {
       }
     ];
 
-    if (this.props.onSkip) {
-      btns.push({
-        classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
-        name: this.props.skipText,
-        onClick: this.props.onSkip
-      });
-    }
+    generateSkipButton(btns, this.props);
 
     return btns;
   }

@@ -184,19 +184,25 @@ class RequestIssuesUpdate < CaseflowRecord
     return if edited_issues.empty?
 
     edited_issue_data.each do |edited_issue|
-      edited_description = edited_issue[:edited_description]
-      edited_decision_date = edited_issue[:decision_date]
-      if edited_description
-        RequestIssue.find(
-          edited_issue[:request_issue_id].to_s
-        ).save_edited_contention_text!(edited_description)
-      # TODO: This is not an ideal way to check this imo. Since there is no edited_decision_date DB field
-      # Because of that the actual check for this happens based on the params in another method
-      elsif edited_decision_date
-        RequestIssue.find(
-          edited_issue[:request_issue_id].to_s
-        ).save_edited_decision_date!(edited_decision_date)
+      edit_contention_text(edited_issue)
+      edit_decision_date(edited_issue)
       end
+    end
+  end
+
+  def edit_contention_text(edited_issue)
+    if edited_issue[:description_date]
+      RequestIssue.find(
+        edited_issue[:request_issue_id].to_s
+      ).save_edited_contention_text!(edited_issue[:description_date])
+    end
+  end
+
+  def edit_decision_date(edited_issue)
+    if edited_issue[:decision_date]
+      RequestIssue.find(
+        edited_issue[:request_issue_id].to_s
+      ).save_edited_decision_date!(edited_issue[:decision_date])
     end
   end
 
