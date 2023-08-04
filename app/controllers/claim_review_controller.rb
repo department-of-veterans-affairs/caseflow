@@ -141,7 +141,6 @@ class ClaimReviewController < ApplicationController
   end
 
   def set_flash_success_message
-    # TODO: Changing this message is a bit complicated.
     flash[:edited] = if request_issues_update.after_issues.empty?
                        decisions_removed_message
                      elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?

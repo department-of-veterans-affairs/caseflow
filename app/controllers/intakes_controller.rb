@@ -56,12 +56,10 @@ class IntakesController < ApplicationController
 
   def complete
     intake.complete!(params)
-    # TODO: See if this errors for Ramp intakes? Idk what model ramp intakes use
+    # TODO: See if this errors for Ramp intakes? Idk what model ramp intakes use or how to intake them
     if !detail.is_a?(Appeal) && detail.try(:processed_in_caseflow?)
-      # TODO: Ask if they want this message changed for intake as well
-      # TODO: This might not work because of the async job....
       flash[:success] = (detail.benefit_type == "vha") ? detail.try(:success_message) : success_message
-      render json: { serverIntake: { redirect_to: detail.redirect_url_from_intake } }
+      render json: { serverIntake: { redirect_to: detail.try(:redirect_url_from_intake) || business_line.tasks_url } }
     else
       render json: intake.ui_hash
     end

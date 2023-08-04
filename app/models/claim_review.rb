@@ -103,13 +103,10 @@ class ClaimReview < DecisionReview
     return nil if benefit_type != "vha"
 
     if request_issues_without_decision_dates?
-      # TODO: Might also need to scope the tasks to currently active tasks?
       review_task = tasks.find { |task| task.is_a?(DecisionReviewTask) }
       review_task&.on_hold!
     elsif !request_issues_without_decision_dates?
       review_task = tasks.find { |task| task.is_a?(DecisionReviewTask) }
-      # TODO: Should this be in progress or assigned? I think it's typically assigned when created in intake
-      # TODO: Should it depend on edited vs intake?
       review_task&.assigned!
     end
   end
@@ -144,7 +141,6 @@ class ClaimReview < DecisionReview
 
   # TODO: Should this be on the review level or on the controller level?
   def success_message
-    # TODO: This replaces the current message entirely??
     if request_issues_without_decision_dates?
       "You have successfully saved #{claimant_name}'s #{self.class.review_title}"
     else
