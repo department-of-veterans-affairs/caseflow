@@ -18,8 +18,8 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
   # RedisMutex.with_lock("PriorityEpSyncBatchProcessJob", block: 60, expire: 100)
   # Key => "PriorityEpSyncBatchProcessJob"
 
-  JOB_DURATION = ENV["BATCH_PROCESS_JOB_DURATION"].to_i.hour
-  SLEEP_DURATION = ENV["BATCH_PROCESS_SLEEP_DURATION"].to_i
+  JOB_DURATION ||= ENV["BATCH_PROCESS_JOB_DURATION"].to_i.hour
+  SLEEP_DURATION ||= ENV["BATCH_PROCESS_SLEEP_DURATION"].to_i
 
   before_perform do |job|
     JOB_ATTR ||= job

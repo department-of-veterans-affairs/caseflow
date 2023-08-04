@@ -7,9 +7,9 @@
 class PopulateEndProductSyncQueueJob < CaseflowJob
   queue_with_priority :low_priority
 
-  JOB_DURATION = ENV["END_PRODUCT_QUEUE_JOB_DURATION"].to_i.hour
-  SLEEP_DURATION = ENV["END_PRODUCT_QUEUE_SLEEP_DURATION"].to_i
-  BATCH_LIMIT = ENV["END_PRODUCT_QUEUE_BATCH_LIMIT"].to_i
+  JOB_DURATION ||= ENV["END_PRODUCT_QUEUE_JOB_DURATION"].to_i.hour
+  SLEEP_DURATION ||= ENV["END_PRODUCT_QUEUE_SLEEP_DURATION"].to_i
+  BATCH_LIMIT ||= ENV["END_PRODUCT_QUEUE_BATCH_LIMIT"].to_i
 
   before_perform do |job|
     JOB_ATTR ||= job
