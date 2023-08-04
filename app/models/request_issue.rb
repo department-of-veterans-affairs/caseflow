@@ -503,6 +503,7 @@ class RequestIssue < CaseflowRecord
       # If the decision issue is not associated with any other request issue, also delete
       decision_issues.each(&:soft_delete_on_removed_request_issue)
 
+      # TODO: Should this be a save hook for withdrawl, remove, update, and others?
       # Special handling for issues without a decision date
       decision_review.handle_issues_with_no_decision_date!
       # Removing a request issue also deletes the associated request_decision_issue
