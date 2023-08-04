@@ -17,6 +17,7 @@ import {
   setCanEditCavcDashboards,
   setCanViewCavcDashboards,
   setFeatureToggles,
+  setMeetingType,
   setUserId,
   setUserRole,
   setUserCssId,
@@ -111,6 +112,7 @@ class QueueApp extends React.PureComponent {
     this.props.setCanEditAod(this.props.canEditAod);
     this.props.setCanEditNodDate(this.props.userCanViewEditNodDate);
     this.props.setUserIsCobAdmin(this.props.userIsCobAdmin);
+    this.props.setMeetingType(this.props.meetingType);
     this.props.setCanEditCavcRemands(this.props.canEditCavcRemands);
     this.props.setCanEditCavcDashboards(this.props.canEditCavcDashboards);
     this.props.setCanViewCavcDashboards(this.props.canViewCavcDashboards);
@@ -1225,7 +1227,7 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.
-                  CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.value
+                CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.value
                 }`}
               title={`${PAGE_TITLES.CANCEL_AND_ASSIGN_TO_RO} | Caseflow`}
               render={this.routedUpdateTaskAndAssignRegionalOfficeModal(
@@ -1428,6 +1430,7 @@ QueueApp.propTypes = {
   canEditCavcDashboards: PropTypes.bool,
   canViewCavcDashboards: PropTypes.bool,
   userIsCobAdmin: PropTypes.bool,
+  setMeetingType: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
@@ -1440,6 +1443,7 @@ const mapDispatchToProps = (dispatch) =>
       setCanEditAod,
       setCanEditNodDate,
       setUserIsCobAdmin,
+      setMeetingType,
       setCanEditCavcRemands,
       setCanEditCavcDashboards,
       setCanViewCavcDashboards,
