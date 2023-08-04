@@ -119,8 +119,14 @@ class RequestIssuesUpdate < CaseflowRecord
     return [] unless @request_issues_data
 
     @request_issues_data.select do |ri|
-      (ri[:edited_description].present? || ri[:edited_decision_date].present?) && ri[:request_issue_id]
+      # (ri[:edited_description].present? || ri[:edited_decision_date].present?) && ri[:request_issue_id]
+      edited_issue?(ri)
     end
+  end
+
+  def edited_issue?(request_issue)
+    (request_issue[:edited_description].present? || request_issue[:edited_decision_date].present?) &&
+      request_issue[:request_issue_id]
   end
 
   def calculate_before_issues
@@ -178,16 +184,18 @@ class RequestIssuesUpdate < CaseflowRecord
     return if edited_issues.empty?
 
     edited_issue_data.each do |edited_issue|
-      if edited_issue[:edited_description]
+      edited_description = edited_issue[:edited_description]
+      edited_decision_date = edited_issue[:decision_date]
+      if edited_description
         RequestIssue.find(
           edited_issue[:request_issue_id].to_s
-        ).save_edited_contention_text!(edited_issue[:edited_description])
+        ).save_edited_contention_text!(edited_description)
       # TODO: This is not an ideal way to check this imo. Since there is no edited_decision_date DB field
       # Because of that the actual check for this happens based on the params in another method
-      elsif edited_issue[:decision_date]
+      elsif edited_decision_date
         RequestIssue.find(
           edited_issue[:request_issue_id].to_s
-        ).save_edited_decision_date!(edited_issue[:decision_date])
+        ).save_edited_decision_date!(edited_decision_date)
       end
     end
   end
