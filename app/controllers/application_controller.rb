@@ -367,7 +367,6 @@ class ApplicationController < ApplicationBaseController
     end
 
     0
-    # 1 # this needs to be changed back to 0
   end
 
   def update_or_delete_power_of_attorney!(appeal)
