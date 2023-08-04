@@ -53,7 +53,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
       return {
         ...state,
         scheduledOption: action.payload
-      }
+      };
     default:
       throw new Error('Unknown action type');
     }
@@ -137,6 +137,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
           name="instructionsField"
           id="completePostponementInstructions"
           onChange={(value) => dispatch({ type: 'instructions', payload: value })}
+          value={state.instructions}
           styling={marginBottom(0)}
         />
       </>
