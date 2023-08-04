@@ -53,14 +53,6 @@ export const DateSelector = (props) => {
     validateDate?.(value !== '' && errorMsg === null);
   }, [value]);
 
-  useEffect(() => {
-    if (validateDate) {
-      const dateIsValid = dateValidationError(value) === null && value !== '';
-
-      validateDate(dateIsValid);
-    }
-  }, [value]);
-
   let max = '9999-12-31';
 
   if (noFutureDates) {
