@@ -492,8 +492,8 @@ class RequestIssue < CaseflowRecord
   def save_edited_decision_date!(new_decision_date)
     update!(decision_date: new_decision_date)
 
-    # Special handling for reviews that contain issues without a decision date
-    decision_review.handle_issues_with_no_decision_date!
+    # Special handling for claim reviews that contain issues without a decision date
+    decision_review.try(:handle_issues_with_no_decision_date!)
   end
 
   def remove!
@@ -504,8 +504,8 @@ class RequestIssue < CaseflowRecord
       decision_issues.each(&:soft_delete_on_removed_request_issue)
 
       # TODO: Should this be a save hook for withdrawl, remove, update, and others?
-      # Special handling for issues without a decision date
-      decision_review.handle_issues_with_no_decision_date!
+      # Special handling for claim reviews that contain issues without a decision date
+      decision_review.try(:handle_issues_with_no_decision_date!)
       # Removing a request issue also deletes the associated request_decision_issue
       request_decision_issues.update_all(deleted_at: Time.zone.now)
       canceled! if submitted_not_processed?
