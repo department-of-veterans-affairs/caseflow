@@ -48,14 +48,19 @@ describe('CompleteHearingPostponementRequestModal', () => {
   const [reschedule, scheduleLater] = ['Reschedule immediately', 'Send to Schedule Veteran list'];
   const instructions = `${COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}:`;
 
-  const rescheduleBtn = () => screen.queryByRole('radio', { name: reschedule });
-  const scheduleLaterBtn = () => screen.queryByRole('radio', { name: scheduleLater });
-  const instructionsTextArea = () => screen.getByRole('textbox', { name: instructions });
-  const submitButton = () => screen.getByRole('button', { name: modalAction });
+  const fields = {
+    granted: () => screen.getByRole('radio', { name: granted }),
+    denied: () => screen.getByRole('radio', { name: denied }),
+    reschedule: () => screen.queryByRole('radio', { name: reschedule }),
+    scheduleLater: () => screen.queryByRole('radio', { name: scheduleLater }),
+    date: () => screen.getByLabelText(datePrompt),
+    instructions: () => screen.getByRole('textbox', { name: instructions }),
+    submit: () => screen.getByRole('button', { name: modalAction })
+  };
 
   const formatDate = (date) => format(date, 'yyyy-MM-dd').toString();
   const today = formatDate(new Date());
-  const tomorrow = formatDate(add(new Date(), { days: 1 }));
+  const tomorrow = formatDate(add(new Date(), { days: 2 }));
 
   describe('on modal open', () => {
     test('modal title: "Mark as complete"', () => {
@@ -77,8 +82,8 @@ describe('CompleteHearingPostponementRequestModal', () => {
         renderCompleteHprModal(completeHearingPostponementRequestData);
 
         expect(screen.getAllByRole('radio')).toHaveLength(2);
-        expect(screen.getByRole('radio', { name: granted })).toBeInTheDocument();
-        expect(screen.getByRole('radio', { name: denied })).toBeInTheDocument();
+        expect(fields.granted()).toBeInTheDocument();
+        expect(fields.denied()).toBeInTheDocument();
       });
     });
 
@@ -86,7 +91,7 @@ describe('CompleteHearingPostponementRequestModal', () => {
       test('has date input with text prompt "Date of ruling:"', () => {
         renderCompleteHprModal(completeHearingPostponementRequestData);
 
-        expect(screen.getByLabelText(datePrompt)).toBeInTheDocument();
+        expect(fields.date()).toBeInTheDocument();
       });
     });
 
@@ -94,7 +99,7 @@ describe('CompleteHearingPostponementRequestModal', () => {
       test('has text prompt "Provide instructions and context for this action:"', () => {
         renderCompleteHprModal(completeHearingPostponementRequestData);
 
-        expect(instructionsTextArea()).toBeInTheDocument();
+        expect(fields.instructions()).toBeInTheDocument();
       });
     });
 
@@ -102,8 +107,8 @@ describe('CompleteHearingPostponementRequestModal', () => {
       test('are not present', () => {
         renderCompleteHprModal(completeHearingPostponementRequestData);
 
-        expect(rescheduleBtn()).not.toBeInTheDocument();
-        expect(scheduleLaterBtn()).not.toBeInTheDocument();
+        expect(screen.queryByRole('radio', { name: reschedule })).not.toBeInTheDocument();
+        expect(screen.queryByRole('radio', { name: scheduleLater })).not.toBeInTheDocument();
       });
     });
 
@@ -111,7 +116,7 @@ describe('CompleteHearingPostponementRequestModal', () => {
       test('submit button is initially disabled', () => {
         renderCompleteHprModal(completeHearingPostponementRequestData);
 
-        expect(submitButton()).toBeDisabled();
+        expect(fields.submit()).toBeDisabled();
       });
     });
   });
@@ -122,8 +127,8 @@ describe('CompleteHearingPostponementRequestModal', () => {
         renderCompleteHprModal(completeHearingPostponementRequestData);
 
         enterModalRadioOptions(granted);
-        expect(rescheduleBtn()).toBeInTheDocument();
-        expect(scheduleLaterBtn()).toBeInTheDocument();
+        expect(fields.reschedule()).toBeInTheDocument();
+        expect(fields.scheduleLater()).toBeInTheDocument();
       });
     });
 
@@ -132,8 +137,8 @@ describe('CompleteHearingPostponementRequestModal', () => {
         renderCompleteHprModal(completeHearingPostponementRequestData);
 
         enterModalRadioOptions(denied);
-        expect(rescheduleBtn()).not.toBeInTheDocument();
-        expect(scheduleLaterBtn()).not.toBeInTheDocument();
+        expect(screen.queryByRole('radio', { name: reschedule })).not.toBeInTheDocument();
+        expect(screen.queryByRole('radio', { name: scheduleLater })).not.toBeInTheDocument();
       });
     });
   });
@@ -161,12 +166,16 @@ describe('CompleteHearingPostponementRequestModal', () => {
   });
 
   describe('on validate form', () => {
-    const completeValidForm = (eventSequence) => {
-      for (const event in eventSequence) {
-        if (eventSequence[event]) {
-          eventSequence[event].call();
-        }
-      }
+    const modalEvents = {
+      granted: () => enterModalRadioOptions(granted),
+      denied: () => enterModalRadioOptions(denied),
+      date: () => enterInputValue(datePrompt, today),
+      reschedule: () => enterModalRadioOptions(reschedule),
+      instructions: () => enterTextFieldOptions(instructions, 'test')
+    };
+
+    const completeForm = (eventSequence) => {
+      eventSequence.forEach((event) => modalEvents[event].call());
     };
 
     const testValidForm = (eventSequence) => {
@@ -174,64 +183,47 @@ describe('CompleteHearingPostponementRequestModal', () => {
         test('submit button is enabled', () => {
           renderCompleteHprModal(completeHearingPostponementRequestData);
 
-          completeValidForm(eventSequence);
-          expect(submitButton()).not.toBeDisabled();
+          completeForm(eventSequence);
+          expect(fields.submit()).not.toBeDisabled();
         });
       });
     };
 
-    const completeInvalidForm = (eventSequence, invalidEvent) => {
-      for (const event in eventSequence) {
-        if (
-          eventSequence[event] &&
-          event !== invalidEvent &&
-          (invalidEvent === 'granted' && event !== 'reschedule')
-        ) {
-          eventSequence[event].call();
-        }
-      }
-    };
-
-    const runInvalidationTestOnEachField = (eventSequence) => {
-      Object.keys(eventSequence).forEach((key) => {
-        describe(`${key} field is invalid`, () => {
+    const runInvalidationTestOnEachField = (eventSequences) => {
+      describe('any field is invalid', () => {
+        describe.each(eventSequences)('$invalidField field is invalid', (invalidField, eventSequence) => {
           test('submit button is disabled', () => {
             renderCompleteHprModal(completeHearingPostponementRequestData);
 
-            completeInvalidForm(eventSequence, key);
-            expect(submitButton()).toBeDisabled();
+            completeForm(eventSequence);
+            expect(fields[invalidField].call()).toBeInTheDocument();
+            expect(fields.submit()).toBeDisabled();
           });
         });
       });
     };
 
     describe('judge ruling is "Granted"', () => {
-      const validModalEvents = {
-        granted: () => enterModalRadioOptions(granted),
-        date: () => enterInputValue(datePrompt, today),
-        reschedule: () => enterModalRadioOptions(reschedule),
-        instructions: () => enterTextFieldOptions(instructions, 'test')
-      };
+      const eventSequences = [
+        ['granted', ['date', 'instructions']],
+        ['date', ['granted', 'reschedule', 'instructions']],
+        ['reschedule', ['granted', 'date', 'instructions']],
+        ['instructions', ['granted', 'date', 'reschedule']]
+      ];
 
-      testValidForm(validModalEvents);
-
-      describe('any field is invalid', () => {
-        runInvalidationTestOnEachField(validModalEvents);
-      });
+      testValidForm(['granted', 'date', 'reschedule', 'instructions']);
+      runInvalidationTestOnEachField(eventSequences);
     });
 
     describe('judge ruling is "Denied"', () => {
-      const validModalEvents = {
-        denied: () => enterModalRadioOptions(denied),
-        date: () => enterInputValue(datePrompt, today),
-        instructions: () => enterTextFieldOptions(instructions, 'test')
-      };
+      const eventSequences = [
+        ['denied', ['date', 'instructions']],
+        ['date', ['denied', 'instructions']],
+        ['instructions', ['denied', 'date']]
+      ];
 
-      testValidForm(validModalEvents);
-
-      describe('any field is invalid', () => {
-        runInvalidationTestOnEachField(validModalEvents);
-      });
+      testValidForm(['denied', 'date', 'instructions']);
+      runInvalidationTestOnEachField(eventSequences);
     });
   });
 });
