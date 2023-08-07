@@ -37,9 +37,6 @@ checks:
       threshold: # language-specific defaults. an override will affect all languages.
     exclude_patterns:
     - 'client/app/queue/cavc/utils.js'
-    - 'client/app/nonComp/reducers/index.js'
-
-
 
 plugins:
   brakeman:
@@ -52,7 +49,7 @@ plugins:
       languages:
         ruby:
         javascript:
-          mass_threshold: 50
+          mass_threshold: 81
     exclude_patterns:
     - 'db/migrate/*'
     - 'app/controllers/idt/api/v2/appeals_controller.rb'
