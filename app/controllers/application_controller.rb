@@ -382,7 +382,7 @@ class ApplicationController < ApplicationBaseController
       [COPY::POA_UPDATED_SUCCESSFULLY, "success", "updated"]
     end
   rescue StandardError => error
-    [error, "error", "error"]
+    [error, "error", "updated"]
   end
 
   # Set a flag to say the page has routing managed by React
