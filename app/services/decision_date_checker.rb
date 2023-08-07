@@ -5,10 +5,6 @@ class DecisionDateChecker < DataIntegrityChecker
     build_report
   end
 
-  def slack_channel
-    "#appeals-foxtrot"
-  end
-
   private
 
   def request_issues_without_decision_date
