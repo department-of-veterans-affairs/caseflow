@@ -5,7 +5,7 @@ require "./app/models/batch_processes/batch_process.rb"
 
 describe PriorityEpSyncBatchProcessJob, type: :job do
   let!(:syncable_end_product_establishments) do
-    create_list(:end_product_establishment, 99, :active_hlr_with_cleared_vbms_ext_claim)
+    create_list(:end_product_establishment, 2, :active_hlr_with_cleared_vbms_ext_claim)
   end
 
   let!(:end_product_establishment) do
@@ -28,7 +28,7 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
   end
 
   describe "#perform" do
-    context "when 99 records can sync successfully and 1 cannot" do
+    context "when 2 records can sync successfully and 1 cannot" do
       before do
         end_product_establishment.vbms_ext_claim.destroy!
         subject
@@ -50,8 +50,8 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
         expect(BatchProcess.first.ended_at).not_to be_nil
       end
 
-      it "the batch process has 99 records_completed" do
-        expect(BatchProcess.first.records_completed).to eq(99)
+      it "the batch process has 2 records_completed" do
+        expect(BatchProcess.first.records_completed).to eq(2)
       end
 
       it "the batch process has 1 records_failed" do
@@ -59,7 +59,7 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
       end
     end
 
-    context "when all 100 records able to sync successfully" do
+    context "when all 3 records able to sync successfully" do
       before do
         subject
       end
@@ -76,8 +76,8 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
         expect(BatchProcess.first.ended_at).not_to be_nil
       end
 
-      it "the batch process has 100 records_completed" do
-        expect(BatchProcess.first.records_completed).to eq(BatchProcess::BATCH_LIMIT)
+      it "the batch process has 2 records_completed" do
+        expect(BatchProcess.first.records_completed).to eq(3)
       end
 
       it "the batch process has 0 records_failed" do
@@ -87,9 +87,10 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
 
     context "when the job creates multiple batches" do
       before do
-        # Batch limit changes to 50 to test PriorityEpSyncBatchProcessJob loop
-        stub_const("BatchProcess::BATCH_LIMIT", 50)
+        # Batch limit changes to 1 to test PriorityEpSyncBatchProcessJob loop
+        stub_const("BatchProcess::BATCH_LIMIT", 1)
 
+        PriorityEndProductSyncQueue.last.destroy!
         subject
       end
 
@@ -108,11 +109,11 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
         expect(BatchProcess.second.ended_at).not_to be_nil
       end
 
-      it "the first batch process has 50 records_completed" do
+      it "the first batch process has 1 records_completed" do
         expect(BatchProcess.first.records_completed).to eq(BatchProcess::BATCH_LIMIT)
       end
 
-      it "the second batch process has 50 records_completed" do
+      it "the second batch process has 1 records_completed" do
         expect(BatchProcess.second.records_completed).to eq(BatchProcess::BATCH_LIMIT)
       end
 
@@ -129,12 +130,12 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
         # Job duration of 0.01 seconds limits the job's loop to one iteration
         stub_const("PriorityEpSyncBatchProcessJob::JOB_DURATION", 0.01.seconds)
 
-        PriorityEndProductSyncQueue.last(97).each(&:destroy)
+        PriorityEndProductSyncQueue.last.destroy!
         subject
       end
 
       it "there are 3 PriorityEndProductSyncQueue records" do
-        expect(PriorityEndProductSyncQueue.count).to eq(3)
+        expect(PriorityEndProductSyncQueue.count).to eq(2)
       end
 
       it "creates 1 batch process record" do
