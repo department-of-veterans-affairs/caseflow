@@ -1919,6 +1919,13 @@ describe RequestIssue, :all_dbs do
     end
   end
 
+  context "#remove_rs_claims_decision_issues_and_request_decision_issues" do
+    it "runs method" do
+      request_issue.remove_rs_claims_decision_issues_and_request_decision_issues
+      expect(request_issue.decision_issue).to eq(nil)
+    end
+  end
+
   context "#sync_decision_issues!" do
     let(:request_issue) { rating_request_issue.tap(&:submit_for_processing!) }
     subject { request_issue.sync_decision_issues! }
