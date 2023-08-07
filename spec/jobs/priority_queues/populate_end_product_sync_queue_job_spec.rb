@@ -144,7 +144,11 @@ describe PopulateEndProductSyncQueueJob, type: :job do
       it "the error will be sent to Sentry" do
         subject
         expect(Raven).to have_received(:capture_exception)
-          .with(error, extra: {})
+          .with(instance_of(StandardError),
+                extra: {
+                  job_id: PopulateEndProductSyncQueueJob::JOB_ATTR&.job_id.to_s,
+                  job_time: Time.zone.now.to_s
+                })
       end
     end
   end
