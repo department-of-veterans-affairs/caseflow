@@ -267,7 +267,7 @@ class AssignToView extends React.Component {
   }
 
   render = () => {
-    const { assigneeAlreadySelected, highlightFormItems, task } = this.props;
+    const { assigneeAlreadySelected, task } = this.props;
 
     const action = getAction(this.props);
     const actionData = taskActionData(this.props);
@@ -324,7 +324,6 @@ class AssignToView extends React.Component {
                 searchable
                 hideLabel={actionData.drop_down_label ? null : true}
                 label={this.determineDropDownLabel(actionData)}
-                errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
                 placeholder={this.determinePlaceholder(this.props, actionData)}
                 value={this.state.selectedValue}
                 onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
@@ -346,8 +345,6 @@ class AssignToView extends React.Component {
           <TextareaField
             name="Task instructions"
             label={actionData.instructions_label || COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
-            errorMessage={highlightFormItems && !actionData.body_optional && !this.state.instructions ?
-              COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
             id="taskInstructions"
             onChange={(value) => this.setState({ instructions: value })}
             value={this.state.instructions}
@@ -372,7 +369,6 @@ AssignToView.propTypes = {
     veteranFullName: PropTypes.string
   }),
   assigneeAlreadySelected: PropTypes.bool,
-  highlightFormItems: PropTypes.bool,
   isReassignAction: PropTypes.bool,
   isTeamAssign: PropTypes.bool,
   onReceiveAmaTasks: PropTypes.func,
@@ -391,10 +387,7 @@ AssignToView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const { highlightFormItems } = state.ui;
-
   return {
-    highlightFormItems,
     task: taskById(state, { taskId: ownProps.taskId }),
     appeal: appealWithDetailSelector(state, ownProps)
   };

@@ -69,14 +69,12 @@ class ChangeTaskTypeModal extends React.PureComponent {
   }
 
   actionForm = () => {
-    const { highlightFormItems } = this.props;
     const { instructions, typeOption } = this.state;
 
     return <React.Fragment>
       <div>
         <div {...marginTop(4)}>
           <SearchableDropdown
-            errorMessage={highlightFormItems && !typeOption ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
             name={COPY.CHANGE_TASK_TYPE_ACTION_LABEL}
             placeholder="Select an action type"
             options={taskActionData(this.props).options}
@@ -85,7 +83,6 @@ class ChangeTaskTypeModal extends React.PureComponent {
         </div>
         <div {...marginTop(4)}>
           <TextareaField
-            errorMessage={highlightFormItems && !instructions ? COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
             name={COPY.CHANGE_TASK_TYPE_INSTRUCTIONS_LABEL}
             onChange={(value) => this.setState({ instructions: value })}
             value={instructions} />
@@ -120,7 +117,6 @@ ChangeTaskTypeModal.propTypes = {
     title: PropTypes.string,
     detail: PropTypes.string
   }),
-  highlightFormItems: PropTypes.bool,
   highlightInvalidFormItems: PropTypes.func,
   onReceiveAmaTasks: PropTypes.func,
   requestPatch: PropTypes.func,
@@ -132,7 +128,6 @@ ChangeTaskTypeModal.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  highlightFormItems: state.ui.highlightFormItems,
   error: state.ui.messages.error,
   appeal: appealWithDetailSelector(state, ownProps),
   task: taskById(state, { taskId: ownProps.taskId })
