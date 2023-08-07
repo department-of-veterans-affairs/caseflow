@@ -7,7 +7,7 @@ class BatchProcessRescueJob < CaseflowJob
   queue_with_priority :low_priority
 
   before_perform do |job|
-    JOB_ATTR = job
+    JOB_ATTR ||= job
   end
 
   def perform
