@@ -76,6 +76,7 @@ class RootTask < Task
     true
   end
 
+  # :reek:UtilityFunction
   def available_actions(user)
     return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h] if RootTask.user_can_create_mail_task?(user)
 
