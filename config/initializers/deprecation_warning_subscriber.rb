@@ -4,7 +4,7 @@
 #   Whenever a “deprecation.rails” notification is published, it will dispatch the event
 #   (ActiveSupport::Notifications::Event) to method #deprecation.
 class DeprecationWarningSubscriber < ActiveSupport::Subscriber
-  SLACK_ALERT_TITLE = "Deprecation Warning"
+  APP_NAME = "caseflow"
   SLACK_ALERT_CHANNEL = "#appeals-deprecation-alerts"
 
   attach_to :rails
@@ -34,8 +34,10 @@ class DeprecationWarningSubscriber < ActiveSupport::Subscriber
   end
 
   def emit_warning_to_slack_alerts_channel(event)
+    slack_alert_title = "Deprecation Warning - #{APP_NAME} (#{ENV['DEPLOY_ENV']})"
+    
     SlackService
       .new(url: ENV["SLACK_DISPATCH_ALERT_URL"])
-      .send_notification(event.payload[:message], SLACK_ALERT_TITLE, SLACK_ALERT_CHANNEL)
+      .send_notification(event.payload[:message], slack_alert_title, SLACK_ALERT_CHANNEL)
   end
 end
