@@ -1,10 +1,10 @@
-require "./app/jobs/batch_processes/batch_process_priority_ep_sync_job.rb"
+require "./app/jobs/batch_processes/priority_ep_sync_batch_process_job.rb"
 require "./app/jobs/batch_processes/batch_process_rescue_job.rb"
 
 SCHEDULED_JOBS = {
     "amo_metrics_report" => AMOMetricsReportJob,
     "annual_metrics" => AnnualMetricsReportJob,
-    "batch_process_priority_ep_sync" => BatchProcessPriorityEpSyncJob,
+    "priority_ep_sync_batch_process_job" => PriorityEpSyncBatchProcessJob,
     "batch_process_rescue_job" => BatchProcessRescueJob,
     "calculate_dispatch_stats" => CalculateDispatchStatsJob,
     "create_establish_claim" => CreateEstablishClaimTasksJob,
