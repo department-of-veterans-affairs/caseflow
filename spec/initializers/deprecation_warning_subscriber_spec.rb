@@ -15,7 +15,7 @@ describe "DeprecationWarningSubscriber" do
   end
 
   context "when a 'deprecation.rails' event is instrumented" do
-    let(:app_name") { "caseflow" }
+    let(:app_name) { "caseflow" }
     let(:deploy_env) { "test" }
     let(:payload) { { message: "test message", callstack: "test callstack" } }
 
