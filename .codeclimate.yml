@@ -31,10 +31,10 @@ checks:
   similar-code:
     enabled: false
     config:
-      threshold: # language-specific defaults. an override will affect all languages.
+      threshold: 4 # language-specific defaults. an override will affect all languages.
   identical-code:
     config:
-      threshold: # language-specific defaults. an override will affect all languages.
+      threshold: 4 # language-specific defaults. an override will affect all languages.
     exclude_patterns:
     - 'client/app/queue/cavc/utils.js'
 
@@ -122,3 +122,4 @@ exclude_patterns:
   - 'tmp/**/*'
   - 'app/assets/**/*'
   - 'client/test/data/camoQueueConfigData.js'
+  - 'db/seeds/veterans_health_administration.rb'
