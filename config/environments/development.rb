@@ -78,7 +78,7 @@ Rails.application.configure do
   ENV["AWS_ACCESS_KEY_ID"] ||= "dummykeyid"
   ENV["AWS_SECRET_ACCESS_KEY"] ||= "dummysecretkey"
 
-# BatchProcess ENVs
+  # BatchProcess ENVs
   # priority_ep_sync
   ENV["BATCH_PROCESS_JOB_DURATION"] ||= "1" # Number of hours the job will run for
   ENV["BATCH_PROCESS_SLEEP_DURATION"] ||= "5" # Number of seconds between loop iterations
