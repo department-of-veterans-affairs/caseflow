@@ -12,11 +12,13 @@ describe BatchProcessRescueJob, type: :job do
   end
 
   let!(:pepsq_records_one) do
+    # Changing the sleep duration to 0 enables suite to run faster
     stub_const("PopulateEndProductSyncQueueJob::SLEEP_DURATION", 0)
     PopulateEndProductSyncQueueJob.perform_now
   end
 
   let!(:first_batch_process) do
+    # Changing the sleep duration to 0 enables suite to run faster
     stub_const("PriorityEpSyncBatchProcessJob::SLEEP_DURATION", 0)
     PriorityEpSyncBatchProcessJob.perform_now
   end
@@ -26,11 +28,13 @@ describe BatchProcessRescueJob, type: :job do
   end
 
   let!(:pepsq_records_two) do
+    # Changing the sleep duration to 0 enables suite to run faster
     stub_const("PopulateEndProductSyncQueueJob::SLEEP_DURATION", 0)
     PopulateEndProductSyncQueueJob.perform_now
   end
 
   let!(:second_batch_process) do
+    # Changing the sleep duration to 0 enables suite to run faster
     stub_const("PriorityEpSyncBatchProcessJob::SLEEP_DURATION", 0)
     PriorityEpSyncBatchProcessJob.perform_now
   end
