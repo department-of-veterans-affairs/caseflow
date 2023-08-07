@@ -9,26 +9,26 @@ describe BatchProcess, :postgres do
     end
 
     let!(:pre_processing_batch_process_within_error_delay) do
-      BatchProcessPriorityEpSync.create(state: Constants.BATCH_PROCESS.pre_processing, created_at: Time.zone.now)
+      PriorityEpSyncBatchProcess.create(state: Constants.BATCH_PROCESS.pre_processing, created_at: Time.zone.now)
     end
     let!(:pre_processing_batch_process_outside_error_delay) do
-      BatchProcessPriorityEpSync.create(
+      PriorityEpSyncBatchProcess.create(
         state: Constants.BATCH_PROCESS.pre_processing, created_at: Time.zone.now - (BatchProcess::ERROR_DELAY + 1).hours
       )
     end
     let!(:processing_batch_process_within_error_delay) do
-      BatchProcessPriorityEpSync.create(state: Constants.BATCH_PROCESS.processing, created_at: Time.zone.now)
+      PriorityEpSyncBatchProcess.create(state: Constants.BATCH_PROCESS.processing, created_at: Time.zone.now)
     end
     let!(:processing_batch_process_outside_error_delay) do
-      BatchProcessPriorityEpSync.create(
+      PriorityEpSyncBatchProcess.create(
         state: Constants.BATCH_PROCESS.processing, created_at: Time.zone.now - (BatchProcess::ERROR_DELAY + 1).hours
       )
     end
     let!(:completed_batch_process_within_error_delay) do
-      BatchProcessPriorityEpSync.create(state: Constants.BATCH_PROCESS.completed, created_at: Time.zone.now)
+      PriorityEpSyncBatchProcess.create(state: Constants.BATCH_PROCESS.completed, created_at: Time.zone.now)
     end
     let!(:completed_batch_process_outside_error_delay) do
-      BatchProcessPriorityEpSync.create(
+      PriorityEpSyncBatchProcess.create(
         state: Constants.BATCH_PROCESS.completed, created_at: Time.zone.now - (BatchProcess::ERROR_DELAY + 1).hours
       )
     end
@@ -97,7 +97,7 @@ describe BatchProcess, :postgres do
   end
 
   describe "#batch_processing!" do
-    let(:batch) { BatchProcessPriorityEpSync.new }
+    let(:batch) { PriorityEpSyncBatchProcess.new }
 
     before do
       Timecop.freeze(Time.utc(2022, 1, 1, 12, 0, 0))
@@ -115,7 +115,7 @@ describe BatchProcess, :postgres do
   end
 
   describe "#batch_complete!" do
-    let(:batch) { BatchProcessPriorityEpSync.new }
+    let(:batch) { PriorityEpSyncBatchProcess.new }
 
     before do
       Timecop.freeze(Time.utc(2022, 1, 1, 12, 0, 0))
