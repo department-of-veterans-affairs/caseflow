@@ -59,8 +59,6 @@ plugins:
     - 'spec/controllers/tasks_controller_spec.rb'
     - 'spec/controllers/decision_reviews_controller_spec.rb'
     - 'spec/models/hearings/conference_link_spec.rb'
-    - 'client/app/nonComp/reducers/index.js'
-    - 'db/seeds/veterans_health_administration.rb'
   eslint:
     enabled: true
   fixme:
@@ -125,3 +123,4 @@ exclude_patterns:
   - 'tmp/**/*'
   - 'app/assets/**/*'
   - 'client/test/data/camoQueueConfigData.js'
+  - 'db/seeds/veterans_health_administration.rb'
