@@ -33,7 +33,7 @@ const powerOfAttorneyFromNonCompState = () =>
  * @returns {Component} -- HOC component.
  */
 const powerOfAttorneyDecisionReviewWrapper = (WrappedComponent) => {
-  const wrappedComponent = ({ appealId, getPoAValue: getPoAValueRedux }) => {
+  const wrappedComponent = ({ getPoAValue: getPoAValueRedux }) => {
     const { error, loading, powerOfAttorney, appellantType, poaAlert, taskId } = useSelector(
       powerOfAttorneyFromNonCompState(),
       shallowEqual
