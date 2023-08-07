@@ -22,7 +22,7 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
   SLEEP_DURATION ||= ENV["BATCH_PROCESS_SLEEP_DURATION"].to_i
 
   before_perform do |job|
-    JOB_ATTR ||= job
+    JOB_ATTR = job
   end
 
   # Attempts to create & process batches for an hour
