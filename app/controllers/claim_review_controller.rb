@@ -94,7 +94,7 @@ class ClaimReviewController < ApplicationController
     if claim_review.processed_in_caseflow?
       set_flash_success_message
 
-      render json: { redirect_to: claim_review.redirect_url_from_intake,
+      render json: { redirect_to: claim_review.redirect_url,
                      beforeIssues: request_issues_update.before_issues.map(&:serialize),
                      afterIssues: request_issues_update.after_issues.map(&:serialize),
                      withdrawnIssues: request_issues_update.withdrawn_issues.map(&:serialize) }
@@ -145,16 +145,15 @@ class ClaimReviewController < ApplicationController
   end
 
   def vha_flash_message
-    added_issues_without_decision_date = request_issues_update.added_issues.select do |issue|
-      issue.decision_date.blank?
-    end
-    edited_issues_without_decision_date = request_issues_update.edited_issues.select do |issue|
-      issue.decision_date.blank? && issue.edited_decision_date.blank?
-    end
-    if added_issues_without_decision_date || edited_issues_without_decision_date
-      vha_edited_decision_date_message
-    else
+    issues_without_decision_date = (request_issues_update.after_issues - request_issues_update.edited_issues)
+      .select do |issue|
+        issue.decision_date.blank?
+      end
+
+    if issues_without_decision_date.empty?
       vha_established_message
+    else
+      vha_edited_decision_date_message
     end
   end
 
@@ -163,9 +162,6 @@ class ClaimReviewController < ApplicationController
                        decisions_removed_message
                      elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
                        review_withdrawn_message
-                     # TODO: This is pretty janky. Maybe check the before issues and claim review issues afterwords.
-                     # Claim review check might not work because it might be async?
-                     #  elsif claim_review.benefit_type == "vha" && !claim_review.request_issues_without_decision_dates?
                      elsif claim_review.benefit_type == "vha"
                        vha_flash_message
                      else
