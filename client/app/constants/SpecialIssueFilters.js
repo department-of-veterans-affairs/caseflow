@@ -1,6 +1,6 @@
 import { enabledSpecialIssues } from './SpecialIssueEnabler.js';
 
-const specialIssueFilters = (isFeatureToggled, mstIdentification) => ({
+const specialIssueFilters = (isFeatureToggled) => ({
 
   unhandledSpecialIssues() {
     return enabledSpecialIssues(isFeatureToggled).filter((issue) => {
@@ -43,14 +43,8 @@ const specialIssueFilters = (isFeatureToggled, mstIdentification) => ({
     return enabledSpecialIssues(isFeatureToggled).filter((issue) => issue.queueSection === 'benefitType');
   },
 
-  // hide mst section on the special issues list if mst_identification feature toggle is enabled
   issuesOnAppealSection () {
-
-    return mstIdentification ?
-      enabledSpecialIssues(isFeatureToggled).filter((issue) =>
-        issue.queueSection === 'issuesOnAppeal' && issue.specialIssue !== 'militarySexualTrauma') :
-      enabledSpecialIssues(isFeatureToggled).filter((issue) =>
-        issue.queueSection === 'issuesOnAppeal');
+    return enabledSpecialIssues(isFeatureToggled).filter((issue) => issue.queueSection === 'issuesOnAppeal');
   },
 
   dicOrPensionSection () {
@@ -58,8 +52,7 @@ const specialIssueFilters = (isFeatureToggled, mstIdentification) => ({
   },
 
   amaIssuesOnAppealSection () {
-    return enabledSpecialIssues(isFeatureToggled).filter((issue) =>
-      issue.isAmaRelevant && issue.queueSection === 'issuesOnAppeal');
+    return enabledSpecialIssues(isFeatureToggled).filter((issue) => issue.isAmaRelevant && issue.queueSection === 'issuesOnAppeal');
   }
 });
 

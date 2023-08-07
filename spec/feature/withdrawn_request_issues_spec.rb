@@ -13,6 +13,10 @@ feature "attorney checkout flow when appeal has withdrawn request issues", :all_
     expect(page).to have_content("Disposition: Withdrawn", wait: 10)
 
     select_decision_ready_for_review
+    if !find("#no_special_issues", visible: false).checked?
+      find("label", text: "No Special Issues").click
+    end
+    click_on "Continue"
     click_add_decision_on_first_issue
 
     expect_disposition_dropdown_to_be_preselected_with_withdrawn
