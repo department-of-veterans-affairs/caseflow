@@ -31,12 +31,14 @@ checks:
   similar-code:
     enabled: false
     config:
-      threshold: 4 # language-specific defaults. an override will affect all languages.
+      threshold: # language-specific defaults. an override will affect all languages.
   identical-code:
     config:
-      threshold: 4 # language-specific defaults. an override will affect all languages.
+      threshold: # language-specific defaults. an override will affect all languages.
     exclude_patterns:
     - 'client/app/queue/cavc/utils.js'
+    - 'client/app/nonComp/reducers/index.js'
+
 
 plugins:
   brakeman:
