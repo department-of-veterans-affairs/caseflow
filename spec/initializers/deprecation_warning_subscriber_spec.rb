@@ -15,6 +15,8 @@ describe "DeprecationWarningSubscriber" do
   end
 
   context "when a 'deprecation.rails' event is instrumented" do
+    let(:app_name") { "caseflow" }
+    let(:deploy_env) { "test" }
     let(:payload) { { message: "test message", callstack: "test callstack" } }
 
     before { ActiveSupport::Notifications.instrument("deprecation.rails", payload) }
@@ -36,9 +38,10 @@ describe "DeprecationWarningSubscriber" do
     end
 
     it "emits a warning to Slack channel" do
+      slack_alert_title = "Deprecation Warning - #{app_name} (#{deploy_env})"
       expect(slack_service).to have_received(:send_notification).with(
         payload[:message],
-        "Deprecation Warning",
+        slack_alert_title,
         "#appeals-deprecation-alerts"
       )
     end
