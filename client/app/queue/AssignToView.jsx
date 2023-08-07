@@ -53,7 +53,7 @@ class AssignToView extends React.Component {
     this.state = {
       selectedValue: action ? action.value : null,
       assignToVHARegionalOfficeSelection: null,
-      instructions: existingInstructions
+      instructions: this?.props?.task?.type === 'HearingPostponementRequestMailTask' ? '' : existingInstructions
     };
   }
 

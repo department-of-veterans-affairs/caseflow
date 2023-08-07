@@ -104,6 +104,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
       button={COPY.CHANGE_TASK_TYPE_SUBHEAD}
       pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
       submitButtonClassNames={['usa-button']}
+      submitDisabled={!this.validateForm()}
     >
       {error && <Alert title={error.title} type="error">
         {error.detail}
