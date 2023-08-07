@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class AppealsController < ApplicationController
+  include UpdatePOAConcern
   before_action :react_routed
   before_action :set_application, only: [:document_count, :power_of_attorney, :update_power_of_attorney]
   # Only whitelist endpoints VSOs should have access to.
@@ -308,15 +309,6 @@ class AppealsController < ApplicationController
       representative_tz: appeal.representative_tz,
       poa_last_synced_at: appeal.poa_last_synced_at
     }
-  end
-
-  def render_error(error)
-    Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-    Raven.capture_exception(error, extra: { appeal_type: appeal.type, appeal_id: appeal.id })
-    render json: {
-      alert_type: "error",
-      message: "Something went wrong"
-    }, status: :unprocessable_entity
   end
 
   # Purpose: Fetches all notifications for an appeal

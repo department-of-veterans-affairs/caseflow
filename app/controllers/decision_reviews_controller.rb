@@ -2,6 +2,7 @@
 
 class DecisionReviewsController < ApplicationController
   include GenericTaskPaginationConcern
+  include UpdatePOAConcern
 
   before_action :verify_access, :react_routed, :set_application
   before_action :verify_veteran_record_access, only: [:show]
