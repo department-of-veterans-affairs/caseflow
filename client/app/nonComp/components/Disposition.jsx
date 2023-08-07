@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import update from 'immutability-helper';
 import moment from 'moment';
 import { css } from 'glamor';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
@@ -95,12 +94,6 @@ class NonCompDecisionIssue extends React.PureComponent {
     </div>;
   }
 }
-
-const editAppellantInformationLinkStyling = css({
-  fontSize: '2rem',
-  fontWeight: 'normal',
-  margin: '5px',
-});
 
 class NonCompDispositions extends React.PureComponent {
   constructor(props) {
