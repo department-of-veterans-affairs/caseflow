@@ -116,7 +116,7 @@ const CancelTaskModal = (props) => {
             //   COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
             id="taskInstructions"
             onChange={setInstructions}
-            placeholder="This is a description of instuctions and context for this action."
+            placeholder="This is a description of instructions and context for this action."
             value={instructions}
           />
         }
