@@ -117,14 +117,11 @@ RSpec.feature "MailTasks", :postgres do
 
       # Attempt to change task type without including instuctions.
       find("div", class: "cf-select__option", text: new_task_type.label).click
-      find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
-
-      # Instructions field is required
-      expect(page).to have_content(COPY::INSTRUCTIONS_ERROR_FIELD_REQUIRED)
+      find_button(text: COPY::CHANGE_TASK_TYPE_SUBHEAD, disabled: true)
 
       # Add instructions and try again
       new_instructions = generate_words(5)
-      fill_in("instructions", with: new_instructions)
+      fill_in("Provide instructions and context for this change:", with: new_instructions)
       find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
       # We should see a success message but remain on the case details page
@@ -142,6 +139,136 @@ RSpec.feature "MailTasks", :postgres do
       page.find("#currently-active-tasks button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
       expect(page).to have_content(old_instructions)
       expect(page).to have_content(new_instructions)
+    end
+  end
+
+  describe "Hearing Postponement Request Mail Task" do
+    before do
+      HearingAdmin.singleton.add_user(User.current_user)
+    end
+    let(:hpr_task) { create(:hearing_postponement_request_mail_task, :with_unscheduled_hearing) }
+
+    context "changing task type" do
+      it "submit button starts out disabled" do
+        visit("queue/appeals/#{hpr_task.appeal.uuid}")
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: COPY::CHANGE_TASK_TYPE_SUBHEAD)
+        modal = find(".cf-modal-body")
+        expect(modal).to have_button("Change task type", disabled: true)
+      end
+
+      it "current tasks should have new task" do
+        appeal = hpr_task.appeal
+        visit("queue/appeals/#{appeal.uuid}")
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: COPY::CHANGE_TASK_TYPE_SUBHEAD)
+        find(".cf-select__control", text: "Select an action type").click
+        find(".cf-select__option", text: "Change of address").click
+        fill_in("Provide instructions and context for this change:", with: "instructions")
+        click_button("Change task type")
+        new_task = appeal.tasks.last
+        most_recent_task = find("tr", text: "TASK", match: :first)
+        expect(most_recent_task).to have_content("ASSIGNED ON\n#{new_task.assigned_at.strftime('%m/%d/%Y')}")
+        expect(most_recent_task).to have_content("TASK\nChange of address")
+      end
+
+      it "case timeline should cancel old task" do
+        visit("queue/appeals/#{hpr_task.appeal.uuid}")
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: COPY::CHANGE_TASK_TYPE_SUBHEAD)
+        find(".cf-select__control", text: "Select an action type").click
+        find(".cf-select__option", text: "Change of address").click
+        fill_in("Provide instructions and context for this change:", with: "instructions")
+        click_button("Change task type")
+        first_task_item = find("#case-timeline-table tr:nth-child(2)")
+        expect(first_task_item).to have_content("CANCELLED ON\n#{hpr_task.updated_at.strftime('%m/%d/%Y')}")
+        expect(first_task_item).to have_content("HearingPostponementRequestMailTask cancelled")
+        expect(first_task_item).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+      end
+    end
+
+    context "assigning to new team" do
+      it "submit button starts out disabled" do
+        visit("queue/appeals/#{hpr_task.appeal.uuid}")
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.label)
+        modal = find(".cf-modal-body")
+        expect(modal).to have_button("Submit", disabled: true)
+      end
+
+      it "assigns to new team" do
+        appeal = hpr_task.appeal
+        page = "queue/appeals/#{appeal.uuid}"
+        visit(page)
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.label)
+        find(".cf-select__control", text: "Select a team").click
+        find(".cf-select__option", text: "BVA Intake").click
+        fill_in("taskInstructions", with: "instructions")
+        click_button("Submit")
+        new_task = appeal.tasks.last
+        visit(page)
+        most_recent_task = find("tr", text: "TASK", match: :first)
+        expect(most_recent_task).to have_content("ASSIGNED ON\n#{new_task.assigned_at.strftime('%m/%d/%Y')}")
+        expect(most_recent_task).to have_content("ASSIGNED TO\nBVA Intake")
+      end
+    end
+
+    context "assigning to person" do
+      it "submit button starts out disabled" do
+        visit("queue/appeals/#{hpr_task.appeal.uuid}")
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                       text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label)
+        modal = find(".cf-modal-body")
+        expect(modal).to have_button("Submit", disabled: true)
+      end
+
+      it "assigns to person" do
+        new_user = User.create!(css_id: "NEW_USER", full_name: "John Smith", station_id: "101")
+        HearingAdmin.singleton.add_user(new_user)
+        appeal = hpr_task.appeal
+        page = "queue/appeals/#{appeal.uuid}"
+        visit(page)
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                       text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label)
+        find(".cf-select__control", text: User.current_user.full_name).click
+        find(".cf-select__option", text: new_user.full_name).click
+        fill_in("taskInstructions", with: "instructions")
+        click_button("Submit")
+        new_task = appeal.tasks.last
+        visit(page)
+        most_recent_task = find("tr", text: "TASK", match: :first)
+        expect(most_recent_task).to have_content("ASSIGNED ON\n#{new_task.assigned_at.strftime('%m/%d/%Y')}")
+        expect(most_recent_task).to have_content("ASSIGNED TO\n#{new_user.css_id}")
+      end
+    end
+
+    context "cancelling task" do
+      it "submit button starts out disabled" do
+        visit("queue/appeals/#{hpr_task.appeal.uuid}")
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: Constants.TASK_ACTIONS.CANCEL_TASK.label)
+        modal = find(".cf-modal-body")
+        expect(modal).to have_button("Submit", disabled: true)
+      end
+
+      it "should remove HearingPostponementRequestTask from current tasks" do
+        page = "queue/appeals/#{hpr_task.appeal.uuid}"
+        visit(page)
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: Constants.TASK_ACTIONS.CANCEL_TASK.label)
+        fill_in("taskInstructions", with: "instructions")
+        click_button("Submit")
+        visit(page)
+        most_recent_task = find("tr", text: "TASK", match: :first)
+        expect(most_recent_task).to have_content("TASK\nAll hearing-related tasks")
+      end
+
+      it "case timeline should cancel task" do
+        page = "queue/appeals/#{hpr_task.appeal.uuid}"
+        visit(page)
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: Constants.TASK_ACTIONS.CANCEL_TASK.label)
+        fill_in("taskInstructions", with: "instructions")
+        click_button("Submit")
+        visit(page)
+        first_task_item = find("#case-timeline-table tr:nth-child(2)")
+        expect(first_task_item).to have_content("CANCELLED ON\n#{hpr_task.updated_at.strftime('%m/%d/%Y')}")
+        expect(first_task_item).to have_content("HearingPostponementRequestMailTask cancelled")
+        expect(first_task_item).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+      end
     end
   end
 end
