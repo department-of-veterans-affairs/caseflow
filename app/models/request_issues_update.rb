@@ -119,7 +119,6 @@ class RequestIssuesUpdate < CaseflowRecord
     return [] unless @request_issues_data
 
     @request_issues_data.select do |ri|
-      # (ri[:edited_description].present? || ri[:edited_decision_date].present?) && ri[:request_issue_id]
       edited_issue?(ri)
     end
   end
@@ -189,6 +188,7 @@ class RequestIssuesUpdate < CaseflowRecord
     end
   end
 
+  # TODO: This kind of sucks since it could potentially do 2 database lookups for the same issue if both are saved.
   def edit_contention_text(edited_issue)
     if edited_issue[:edited_description]
       RequestIssue.find(
