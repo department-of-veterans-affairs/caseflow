@@ -136,8 +136,26 @@ class ClaimReviewController < ApplicationController
     "You have successfully " + [added_issues, removed_issues, withdrawn_issues].compact.to_sentence + "."
   end
 
-  def edited_decision_date_message
+  def vha_edited_decision_date_message
     "You have successfully updated an issue's decision date"
+  end
+
+  def vha_established_message
+    "You have successfully established #{claim_review.claimant_name}'s #{claim_review.class.review_title}"
+  end
+
+  def vha_flash_message
+    added_issues_without_decision_date = request_issues_update.added_issues.select do |issue|
+      issue.decision_date.blank?
+    end
+    edited_issues_without_decision_date = request_issues_update.edited_issues.select do |issue|
+      issue.decision_date.blank? && issue.edited_decision_date.blank?
+    end
+    if added_issues_without_decision_date || edited_issues_without_decision_date
+      vha_edited_decision_date_message
+    else
+      vha_established_message
+    end
   end
 
   def set_flash_success_message
@@ -147,8 +165,9 @@ class ClaimReviewController < ApplicationController
                        review_withdrawn_message
                      # TODO: This is pretty janky. Maybe check the before issues and claim review issues afterwords.
                      # Claim review check might not work because it might be async?
-                     elsif claim_review.benefit_type == "vha" && !claim_review.request_issues_without_decision_dates?
-                       edited_decision_date_message
+                     #  elsif claim_review.benefit_type == "vha" && !claim_review.request_issues_without_decision_dates?
+                     elsif claim_review.benefit_type == "vha"
+                       vha_flash_message
                      else
                        review_edited_message
                      end
