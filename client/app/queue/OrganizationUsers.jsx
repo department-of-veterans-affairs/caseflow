@@ -214,6 +214,20 @@ export default class OrganizationUsers extends React.PureComponent {
     });
   }
 
+  modifyConferenceType = (user, conferenceFlag) => () => {
+    const flagName = 'changingConferenceType';
+
+    this.modifyUser(user, flagName);
+
+    const payload = { data: { admin: conferenceFlag } };
+
+    ApiUtil.patch(`/organizations/${this.props.organization}/users/${user.id}`, payload).then((response) => {
+      this.modifyUserSuccess(response, user, flagName);
+    }, (error) => {
+      this.modifyUserError(COPY.USER_MANAGEMENT_ADMIN_RIGHTS_CHANGE_ERROR_TITLE, error.message, user, flagName);
+    });
+  }
+
   asyncLoadUser = (inputValue) => {
     // don't search till we have min length input
     if (inputValue.length < 2) {

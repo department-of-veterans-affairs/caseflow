@@ -34,6 +34,12 @@ class OrganizationsUser < CaseflowRecord
       end
     end
 
+    def update_user_to_pexip_conference_type(user, organization)
+      if user.roles.include?("HearingCoordinator")
+        user.update!(pexip: true)
+      end
+    end
+
     def remove_user_from_organization(user, organization)
       if user_is_judge_of_team?(user, organization)
         fail Caseflow::Error::ActionForbiddenError, message: COPY::JUDGE_TEAM_REMOVE_JUDGE_ERROR
