@@ -79,7 +79,7 @@ class RatingIssue
       return [] unless serialized_hash[:associated_end_products]
 
       serialized_hash[:associated_end_products].map do |end_product_hash|
-        EndProduct.deserialize(end_product_hash).slice(:claim_id, :claim_type_code)
+        EndProduct.deserialize(end_product_hash)
       end
     end
   end
