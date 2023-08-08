@@ -95,7 +95,7 @@ class AppealsController < ApplicationController
   # series_id is lowercase, no curly braces because it comes from url
   def document_lookup
     series_id = "{#{params[:series_id]}}".upcase
-    appeal = Appeal.find_by_uuid(params[:appeal_id]) || LegacyAppeal.find_by_vacols_id(params[:appeal_id])
+    # appeal = Appeal.find_by_uuid(params[:appeal_id]) || LegacyAppeal.find_by_vacols_id(params[:appeal_id])
     document = Document.find_by_series_id(series_id)
 
     if !document
