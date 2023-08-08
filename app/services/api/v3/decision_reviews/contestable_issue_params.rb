@@ -84,6 +84,12 @@ class Api::V3::DecisionReviews::ContestableIssueParams
   private
 
   def contestable_issue_finder
+    # log for potential MST/PACT rating/contention BGS call location
+    DataDogService.increment_counter(
+      metric_group: "mst_pact_group",
+      metric_name: "bgs_service.potential_mst_pact_bgs_call_location",
+      app_name: RequestStore[:application]
+    )
     @contestable_issue_finder ||= Api::V3::DecisionReviews::ContestableIssueFinder.new(
       {
         decision_review_class: @decision_review_class,
