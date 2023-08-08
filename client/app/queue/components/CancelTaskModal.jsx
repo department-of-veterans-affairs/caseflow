@@ -115,7 +115,7 @@ const CancelTaskModal = (props) => {
             name={COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
             id="taskInstructions"
             onChange={setInstructions}
-            placeholder="This is a description of instuctions and context for this action."
+            placeholder="This is a description of instructions and context for this action."
             value={instructions}
           />
         }
