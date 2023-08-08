@@ -55,7 +55,6 @@ Alert.propTypes = {
    * Sets `.cf-margin-bottom-2rem` class
    */
   lowerMargin: PropTypes.bool,
-  lowerMarginTop: PropTypes.bool,
   message: PropTypes.node,
 
   /**
