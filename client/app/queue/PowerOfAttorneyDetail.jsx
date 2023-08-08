@@ -139,18 +139,18 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
     }
   };
   const renderBottomMessage = () => {
-    const poa_explainer_text = vha ? COPY.CASE_DETAILS_POA_EXPLAINER_VHA : COPY.CASE_DETAILS_POA_EXPLAINER
-    const no_poa_text = vha ? COPY.CASE_DETAILS_NO_POA_VHA : COPY.CASE_DETAILS_NO_POA
-    const unrecognized_poa_text = vha ? COPY.CASE_DETAILS_UNRECOGNIZED_POA_VHA : COPY.CASE_DETAILS_UNRECOGNIZED_POA
+    const poaExplainerText = vha ? COPY.CASE_DETAILS_POA_EXPLAINER_VHA : COPY.CASE_DETAILS_POA_EXPLAINER;
+    const noPoaText = vha ? COPY.CASE_DETAILS_NO_POA_VHA : COPY.CASE_DETAILS_NO_POA;
+    const unrecognizedPoaText = vha ? COPY.CASE_DETAILS_UNRECOGNIZED_POA_VHA : COPY.CASE_DETAILS_UNRECOGNIZED_POA;
 
     if (!showPoaDetails && !poaAlert.powerOfAttorney) {
-      return no_poa_text;
+      return noPoaText;
     }
     if (isRecognizedPoa) {
-      return poa_explainer_text;
+      return poaExplainerText;
     }
 
-    return unrecognized_poa_text;
+    return unrecognizedPoaText;
   };
 
   return (

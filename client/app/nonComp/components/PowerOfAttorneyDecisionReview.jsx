@@ -58,7 +58,7 @@ const powerOfAttorneyDecisionReviewWrapper = (WrappedComponent) => {
       appealId={appealId}
       poaAlert={poaAlert}
       appellantType={appellantType}
-      vha={true}
+      vha
     />;
   };
 
