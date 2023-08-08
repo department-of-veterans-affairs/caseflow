@@ -1,20 +1,20 @@
+/* eslint-disable max-lines */
 import _ from 'lodash';
 import { formatDateStr } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES';
 import { FORM_TYPES } from '../constants';
 
-const getClaimantField = (veteran, intakeData) => {
+const getClaimantField = (intakeData) => {
   const {
     claimantName,
     claimantRelationship,
-    claimantType,
     payeeCode
   } = intakeData;
 
   let claimantDisplayText = [claimantName, claimantRelationship].filter(Boolean).join(', ');
 
   if (payeeCode) {
-    claimantDisplayText += ` (payee code ${payeeCode})`
+    claimantDisplayText += ` (payee code ${payeeCode})`;
   }
 
   return [{
@@ -54,7 +54,7 @@ export const legacyIssue = (issue, legacyAppeals) => {
       throw new Error(`No legacyAppeal found for '${issue.vacolsId}'`);
     }
 
-    return _.find(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })
+    return _.find(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) });
   }
 };
 
@@ -328,7 +328,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
   // If a field is to be conditionally rendered, set field = null to have it not show.
   fields = fields.filter((field) => field !== null);
 
-  let claimantField = getClaimantField(veteran, intakeData);
+  let claimantField = getClaimantField(intakeData);
 
   return fields.concat(claimantField);
 };
