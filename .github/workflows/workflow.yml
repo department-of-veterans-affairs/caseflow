@@ -10,6 +10,10 @@ env:
   rspec_active: true
   FORCE_COLOR: "1" #Forces color within GHA - Note RSPEC still won't use color see line 199 --tty for rspec color
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # This job runs the main deployment of caseflow
   caseflow_rspec_job:
