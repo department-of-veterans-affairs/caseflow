@@ -89,6 +89,13 @@ export const getAllTasksForAppeal = createSelector(
   }
 );
 
+export const getRootTaskLegacyAppealSCM = createSelector(
+  [getAmaTasks],
+  (amaTasks) => {
+    return filter(amaTasks, (task) => task);
+  }
+);
+
 export const appealsByCaseflowVeteranId = createSelector(
   [appealsWithDetailsSelector, getCaseflowVeteranId],
   (appeals, caseflowVeteranId) =>

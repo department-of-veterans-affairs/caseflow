@@ -7,7 +7,7 @@ import { sprintf } from 'sprintf-js';
 import COPY from '../../COPY';
 import VHA_VAMCS from '../../constants/VHA_VAMCS';
 
-import { taskById, appealWithDetailSelector } from './selectors';
+import { taskById, appealWithDetailSelector, getRootTaskLegacyAppealSCM } from './selectors';
 
 import { onReceiveAmaTasks, legacyReassignToJudge, setOvertime, legacyReassignToAttorney } from './QueueActions';
 
@@ -85,28 +85,48 @@ class AssignToView extends React.Component {
   }
 
   submit = () => {
-    const { appeal, task, isReassignAction, isTeamAssign } = this.props;
-
+    const { appeal, task, isReassignAction, isTeamAssign, rootTask } = this.props;
     const action = getAction(this.props);
     const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
 
     const actionData = taskActionData(this.props);
     const taskType = actionData.type || 'Task';
+    let payload = {};
 
-    const payload = {
-      data: {
-        tasks: [
-          {
-            type: taskType,
-            external_id: appeal.externalId,
-            parent_id: actionData.parent_id || task.taskId,
-            assigned_to_id: this.isVHAAssignToRegional() ? this.getVisn().value : this.state.selectedValue,
-            assigned_to_type: isTeamAssign ? 'Organization' : 'User',
-            instructions: this.state.instructions,
-          }
-        ]
-      }
-    };
+    if (task.appealType === 'LegacyAppeal' && taskType === 'SpecialCaseMovementTask' &&
+     task.type === 'AttorneyLegacyTask') {
+      payload = {
+        data: {
+          tasks: [
+            {
+              type: taskType,
+              external_id: appeal.externalId,
+              legacy_task_type: task.type,
+              appeal_type: task.appealType,
+              parent_id: rootTask,
+              assigned_to_id: this.isVHAAssignToRegional() ? this.getVisn().value : this.state.selectedValue,
+              assigned_to_type: isTeamAssign ? 'Organization' : 'User',
+              instructions: this.state.instructions,
+            }
+          ]
+        }
+      };
+    } else {
+      payload = {
+        data: {
+          tasks: [
+            {
+              type: taskType,
+              external_id: appeal.externalId,
+              parent_id: actionData.parent_id || task.taskId,
+              assigned_to_id: this.isVHAAssignToRegional() ? this.getVisn().value : this.state.selectedValue,
+              assigned_to_type: isTeamAssign ? 'Organization' : 'User',
+              instructions: this.state.instructions,
+            }
+          ]
+        }
+      };
+    }
 
     const caseNameListItem = () => {
       const caseName = appeal.veteranFullName || null;
@@ -126,7 +146,7 @@ class AssignToView extends React.Component {
       detail: sprintf(COPY.PULAC_CERULLO_SUCCESS_DETAIL, appeal.veteranFullName)
     };
 
-    if (taskType == 'AttorneyRewriteTask' && task.isLegacy == true) {
+    if (taskType === 'AttorneyRewriteTask' && task.isLegacy === true) {
       return this.reassignTask(false, true);
     }
 
@@ -422,6 +442,7 @@ AssignToView.propTypes = {
   appeal: PropTypes.shape({
     externalId: PropTypes.string,
     id: PropTypes.string,
+    appealId: PropTypes.string,
     veteranFullName: PropTypes.string
   }),
   assigneeAlreadySelected: PropTypes.bool,
@@ -433,6 +454,7 @@ AssignToView.propTypes = {
   legacyReassignToAttorney: PropTypes.func,
   requestPatch: PropTypes.func,
   requestSave: PropTypes.func,
+  rootTask: PropTypes.func,
   task: PropTypes.shape({
     instructions: PropTypes.string,
     taskId: PropTypes.string,
@@ -449,11 +471,13 @@ AssignToView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const { highlightFormItems } = state.ui;
+  const appeal = appealWithDetailSelector(state, ownProps);
 
   return {
     highlightFormItems,
     task: taskById(state, { taskId: ownProps.taskId }),
-    appeal: appealWithDetailSelector(state, ownProps)
+    appeal: appealWithDetailSelector(state, ownProps),
+    rootTask: getRootTaskLegacyAppealSCM(state, { appealId: appeal.id })[0].id
   };
 };
 
