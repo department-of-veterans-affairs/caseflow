@@ -485,6 +485,10 @@ class RequestIssue < CaseflowRecord
     close!(status: :withdrawn, closed_at_value: withdrawal_date.to_datetime)
   end
 
+  def save_decision_date!(new_date)
+    update!(decision_date: new_date)
+  end
+
   def save_edited_contention_text!(new_description)
     update!(edited_description: new_description, contention_updated_at: nil)
   end

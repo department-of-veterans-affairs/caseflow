@@ -118,7 +118,10 @@ class RequestIssuesUpdate < CaseflowRecord
   def edited_issue_data
     return [] unless @request_issues_data
 
-    @request_issues_data.select { |ri| ri[:edited_description].present? && ri[:request_issue_id] }
+    @request_issues_data.select do |issue|
+      (issue[:edited_description].present? && issue[:request_issue_id]) ||
+        issue[:edited_decision_date].present? && issue[:request_issue_id]
+    end
   end
 
   def calculate_before_issues
@@ -176,9 +179,15 @@ class RequestIssuesUpdate < CaseflowRecord
     return if edited_issues.empty?
 
     edited_issue_data.each do |edited_issue|
-      RequestIssue.find(
-        edited_issue[:request_issue_id].to_s
-      ).save_edited_contention_text!(edited_issue[:edited_description])
+      if edited_issue[:edited_decision_date].present?
+        RequestIssue.find(
+          edited_issue[:request_issue_id].to_s
+        ).save_decision_date!(edited_issue[:edited_decision_date])
+      else
+        RequestIssue.find(
+          edited_issue[:request_issue_id].to_s
+        ).save_edited_contention_text!(edited_issue[:edited_description])
+      end
     end
   end
 
