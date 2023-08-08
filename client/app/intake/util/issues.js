@@ -239,6 +239,7 @@ const formatNonratingRequestIssues = (state) => {
         nonrating_issue_category: issue.category,
         decision_text: issue.description,
         decision_date: issue.decisionDate,
+        edited_decision_date: issue.editedDecisionDate,
         untimely_exemption: issue.untimelyExemption,
         untimely_exemption_notes: issue.untimelyExemptionNotes,
         untimely_exemption_covid: issue.untimelyExemptionCovid,

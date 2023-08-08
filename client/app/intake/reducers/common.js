@@ -95,6 +95,18 @@ export const commonReducers = (state, action) => {
     });
   };
 
+  actionsMap[ACTIONS.ADD_DECISION_DATE] = () => {
+    const { decisionDate, index } = action.payload;
+
+    listOfIssues[index].decisionDate = decisionDate;
+    listOfIssues[index].editedDecisionDate = decisionDate;
+
+    return {
+      ...state,
+      editedIssues: listOfIssues
+    };
+  };
+
   actionsMap[ACTIONS.ADD_ISSUE] = () => {
     let addedIssues = [...listOfIssues, action.payload];
 

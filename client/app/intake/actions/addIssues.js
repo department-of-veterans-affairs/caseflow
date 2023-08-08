@@ -47,6 +47,11 @@ export const toggleLegacyOptInModal = (currentIssueAndNotes = {}) => ({
   payload: { currentIssueAndNotes }
 });
 
+export const addDecisionDate = ({ decisionDate, index }) => ({
+  type: ACTIONS.ADD_DECISION_DATE,
+  payload: { decisionDate, index }
+});
+
 export const removeIssue = (index) => ({
   type: ACTIONS.REMOVE_ISSUE,
   payload: { index }
