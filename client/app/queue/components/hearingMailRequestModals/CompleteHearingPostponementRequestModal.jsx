@@ -122,7 +122,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
 
         {state.granted && <RadioField
           id="scheduleOptionField"
-          name="schedulOptionField"
+          name="scheduleOptionField"
           label="How would you like to proceed?:"
           inputRef={props.register}
           onChange={(value) => dispatch({ type: 'scheduledOption', payload: value })}
