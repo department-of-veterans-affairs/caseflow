@@ -245,6 +245,32 @@ jobs:
           path: ./log/bullet-${{matrix.ci_node_index}}.log
 
 
+  caseflow_rspec_coverage_report:
+    runs-on: ubuntu-8-cores-latest
+    if: ${{ success() }}
+    needs: caseflow_rspec_job
+    container:
+      image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
+      credentials:
+        username: AWS
+        password: ${{ secrets.ECR_PASSWORD }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@v3
+
+      - name: Inflate Coverage tar.gz files
+        run: |
+          (cd artifact && for  file in coverage-*.tar.gz ; do tar -xvf "$file"; done)
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7.3'
+          bundler-cache: true
+      - name: Run coverage analysis
+        run: bundle exec rake ci:gha_verify_code_coverage
+
 
   caseflow_jest_job:
     # This job will run the jest, change the value below to false if you wish to turn it off.
