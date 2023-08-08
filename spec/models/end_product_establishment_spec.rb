@@ -1439,4 +1439,59 @@ describe EndProductEstablishment, :postgres do
                                                                                   ))
     end
   end
+
+  let!(:queued_end_product_establishment) do
+    EndProductEstablishment.create(
+      payee_code: "10",
+      source_id: 1,
+      source_type: "HigherLevelReview",
+      veteran_file_number: 1
+    )
+  end
+  let!(:non_queued_end_product_establishment) do
+    EndProductEstablishment.create(
+      payee_code: "10",
+      source_id: 2,
+      source_type: "HigherLevelReview",
+      veteran_file_number: 1
+    )
+  end
+  let!(:priority_end_product_sync_queue) do
+    PriorityEndProductSyncQueue.create(
+      batch_id: nil,
+      created_at: Time.zone.now,
+      end_product_establishment_id: queued_end_product_establishment.id,
+      error_messages: [],
+      last_batched_at: nil,
+      status: "NOT_PROCESSED"
+    )
+  end
+
+  context "#priority_end_product_sync_queue" do
+    context "if the End Product Establishment is not enqueued in the Priority End Product Sync Queue" do
+      it "will return nil" do
+        expect(non_queued_end_product_establishment.priority_end_product_sync_queue).to eq(nil)
+      end
+    end
+
+    context "if the End Product Establishment is enqueued in the Priority End Product Sync Queue" do
+      it "will return the record that is enqueued to sync from the Priority End Product Sync Queue" do
+        expect(non_queued_end_product_establishment.priority_end_product_sync_queue).to eq(nil)
+      end
+    end
+  end
+
+  context "#priority_queued?" do
+    context "if the End Product Establishment is not enqueued in the Priority End Product Sync Queue" do
+      it "will return False" do
+        expect(non_queued_end_product_establishment.priority_queued?).to eq(false)
+      end
+    end
+
+    context "if the End Product Establishment is enqueued in the Priority End Product Sync Queue" do
+      it "will return True" do
+        expect(queued_end_product_establishment.priority_queued?).to eq(true)
+      end
+    end
+  end
 end
