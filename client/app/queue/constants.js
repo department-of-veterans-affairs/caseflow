@@ -211,8 +211,7 @@ export const PAGE_TITLES = {
   CONVERT_HEARING_TO_VIRTUAL: 'Change Hearing Request Type to Virtual',
   CONVERT_HEARING_TO_VIDEO: 'Change Hearing Request Type to Video',
   CONVERT_HEARING_TO_CENTRAL: 'Change Hearing Request Type to Central',
-  // Confirm with UX title for HPR
-  COMPLETE_HEARING_POSTPONEMENT_REQUEST: 'Complete Heaering Postponement Request'
+  COMPLETE_HEARING_POSTPONEMENT_REQUEST: 'Complete Hearing Postponement Request'
 };
 
 export const CUSTOM_HOLD_DURATION_TEXT = 'Custom';
