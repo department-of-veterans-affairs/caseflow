@@ -1,0 +1,1 @@
+DROP TRIGGER IF EXISTS priority_end_product_sync_queue_audit_trigger ON public.priority_end_product_sync_queue;

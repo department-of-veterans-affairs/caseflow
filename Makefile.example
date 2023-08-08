@@ -166,9 +166,9 @@ audit: ## Create caseflow_audit schema, tables, and triggers in postgres
 	bundle exec rails r db/scripts/audit/triggers/create_vbms_distributions_audit_trigger.rb
 	bundle exec rails r db/scripts/audit/triggers/create_vbms_distribution_destinations_audit_trigger.rb
 	bundle exec rails r db/scripts/audit/triggers/create_vbms_uploaded_documents_audit_trigger.rb
-	bundle exec rails r db/scripts/audit/create_priority_end_product_sync_queue_audit.rb
-	bundle exec rails r db/scripts/audit/add_row_to_priority_end_product_sync_queue_audit_table_function.rb
-	bundle exec rails r db/scripts/audit/create_priority_end_product_sync_queue_audit_trigger.rb
+	bundle exec rails r db/scripts/audit/tables/create_priority_end_product_sync_queue_audit.rb
+	bundle exec rails r db/scripts/audit/functions/add_row_to_priority_end_product_sync_queue_audit_table_function.rb
+	bundle exec rails r db/scripts/audit/triggers/create_priority_end_product_sync_queue_audit_trigger.rb
 
 audit-remove: ## Remove caseflow_audit schema, tables and triggers in postgres
 	bundle exec rails r db/scripts/audit/remove_caseflow_audit_schema.rb
