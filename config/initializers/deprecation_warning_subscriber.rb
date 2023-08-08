@@ -33,6 +33,8 @@ class DeprecationWarningSubscriber < ActiveSupport::Subscriber
       level: "warning",
       extra: {
         message: event.payload[:message],
+        gem_name: event.payload[:gem_name],
+        deprecation_horizon: event.payload[:deprecation_horizon],
         callstack: callstack_strings,
         environment: Rails.env
       }
