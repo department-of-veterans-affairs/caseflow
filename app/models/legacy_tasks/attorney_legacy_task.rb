@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class AttorneyLegacyTask < LegacyTask
-
   def available_actions(current_user, role)
     # AttorneyLegacyTasks are drawn from the VACOLS.BRIEFF table but should not be actionable unless there is a case
     # assignment in the VACOLS.DECASS table. task_id is created using the created_at field from the VACOLS.DECASS table
@@ -47,7 +46,7 @@ class AttorneyLegacyTask < LegacyTask
        FeatureToggle.enabled?(:vlj_legacy_appeal)
       COPY::ATTORNEY_REWRITE_TASK_LEGACY_LABEL
     else
-      COPY::ATTORNEY_REWRITE_TASK_LABEL
+      COPY::ATTORNEY_TASK_LABEL
     end
   end
 end

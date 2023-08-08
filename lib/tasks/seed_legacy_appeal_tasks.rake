@@ -1,29 +1,22 @@
 # frozen_string_literal: true
 
 # to create legacy appeals with AMA Tasks added, run "bundle exec rake db:generate_legacy_appeals_with_tasks"
+# then select an option between 'HearingTask', 'JudgeTask', 'AttorneyTask', 'ReviewTask', and 'Brieff_Curloc_81_Task'
 
 namespace :db do
   desc "Generates a smattering of legacy appeals with VACOLS cases that have special issues assocaited with them"
   task generate_legacy_appeals_with_tasks: :environment do
     class LegacyAppealFactory
       class << self
-        # Stamping out appeals like mufflers!
         def stamp_out_legacy_appeals(num_appeals_to_create, file_number, user, docket_number, task_type)
           # Changes location of vacols based on if you want a hearing task or only a legacy task in location 81
-          # Assign to BVA?
-          if task_type == "HEARINGTASK"
-            bfcurloc = 57
-            sattyid = 5
-            sdomainid = Bva.singleton.type
-          elsif task_type == "BRIEFF_CURLOC_81_TASK"
-            bfcurloc = 81
-            sattyid = 5
-            sdomainid = Bva.singleton.type
-          else
-            bfcurloc = VACOLS::Staff.find_by(sdomainid: user.css_id).slogid
-            sattyid = user.id
-            sdomainid = user.css_id
-          end
+          bfcurloc = if task_type == "HEARINGTASK"
+                       57
+                     elsif task_type == "BRIEFF_CURLOC_81_TASK"
+                       81
+                     else
+                       VACOLS::Staff.find_by(sdomainid: user.css_id).slogid
+                     end
 
           veteran = Veteran.find_by_file_number(file_number)
 
@@ -46,10 +39,6 @@ namespace :db do
                 bfmpro: "ACT",
                 bfddec: nil
               },
-              staff_attrs: {
-                sattyid: sattyid,
-                sdomainid: sdomainid
-              },
               decass_attrs: custom_decass_attributes(key, user, task_type)
             )
           end.compact
@@ -67,7 +56,6 @@ namespace :db do
         end
 
         def custom_decass_attributes(key, user, task_type)
-          byebug
           if task_type == "ATTORNEYTASK" && user&.attorney_in_vacols?
             {
               defolder: key,
@@ -213,12 +201,9 @@ namespace :db do
 
         veterans_with_like_45_appeals = vets[0..12].pluck(:file_number)
 
-        # veterans_with_250_appeals = vets.last(3).pluck(:file_number)
-
       else
         veterans_with_like_45_appeals = %w[011899917 011899918]
 
-        # veterans_with_250_appeals = %w[011899906 011899999]
       end
 
       $stdout.puts("Which type of tasks do you want to add to these Legacy Appeals?")
