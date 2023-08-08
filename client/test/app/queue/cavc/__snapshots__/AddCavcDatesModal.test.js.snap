@@ -525,7 +525,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                             characterLimitTopRight={false}
                             disabled={false}
                             errorMessage={null}
-                            label="Provide context and instructions for this action"
+                            label="Provide instructions and context for this action"
                             name="context-and-instructions-textBox"
                             onChange={[Function]}
                             optional={false}
@@ -541,13 +541,13 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                               >
                                 <strong>
                                   <FormLabel
-                                    label="Provide context and instructions for this action"
+                                    label="Provide instructions and context for this action"
                                     name="context-and-instructions-textBox"
                                     optional={false}
                                     required={false}
                                   >
                                     <span>
-                                      Provide context and instructions for this action
+                                      Provide instructions and context for this action
                                     </span>
                                   </FormLabel>
                                 </strong>
@@ -1180,7 +1180,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                             characterLimitTopRight={false}
                             disabled={false}
                             errorMessage={null}
-                            label="Provide context and instructions for this action"
+                            label="Provide instructions and context for this action"
                             name="context-and-instructions-textBox"
                             onChange={[Function]}
                             optional={false}
@@ -1197,13 +1197,13 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                               >
                                 <strong>
                                   <FormLabel
-                                    label="Provide context and instructions for this action"
+                                    label="Provide instructions and context for this action"
                                     name="context-and-instructions-textBox"
                                     optional={false}
                                     required={false}
                                   >
                                     <span>
-                                      Provide context and instructions for this action
+                                      Provide instructions and context for this action
                                     </span>
                                   </FormLabel>
                                 </strong>
