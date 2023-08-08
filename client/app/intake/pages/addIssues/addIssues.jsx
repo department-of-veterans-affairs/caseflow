@@ -25,6 +25,7 @@ import Table from '../../../components/Table';
 import issueSectionRow from './issueSectionRow/issueSectionRow';
 
 import {
+  toggleAddDecisionDateModal,
   toggleAddingIssue,
   toggleAddIssuesModal,
   toggleUntimelyExemptionModal,
@@ -56,6 +57,7 @@ class AddIssuesPage extends React.Component {
 
     this.state = {
       originalIssueLength,
+      issueAddDecisionDateIndex: 0,
       issueRemoveIndex: 0,
       issueIndex: 0,
       addingIssue: false,
@@ -69,6 +71,10 @@ class AddIssuesPage extends React.Component {
 
   onClickIssueAction = (index, option = 'remove') => {
     switch (option) {
+    case 'add_decision_date':
+      this.props.toggleAddDecisionDateModal();
+      this.setState({ issueAddDecisionDateIndex: index });
+      break;
     case 'remove':
       if (this.props.toggleIssueRemoveModal) {
         // on the edit page, so show the remove modal
@@ -543,6 +549,7 @@ AddIssuesPage.propTypes = {
   intakeForms: PropTypes.object,
   removeIssue: PropTypes.func,
   setIssueWithdrawalDate: PropTypes.func,
+  toggleAddDecisionDateModal: PropTypes.func,
   toggleAddingIssue: PropTypes.func,
   toggleAddIssuesModal: PropTypes.func,
   toggleCorrectionTypeModal: PropTypes.func,
@@ -610,6 +617,7 @@ export const EditAddIssuesPage = connect(
   (dispatch) =>
     bindActionCreators(
       {
+        toggleAddDecisionDateModal,
         toggleAddingIssue,
         toggleIssueRemoveModal,
         toggleCorrectionTypeModal,
