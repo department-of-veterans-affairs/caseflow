@@ -19,12 +19,12 @@ class LastRetrievalAlert extends React.PureComponent {
     if (!this.props.manifestVbmsFetchedAt) {
       return <div {...alertStyling}>
         <Alert title="Error" type="error">
-          Some of {this.props.appeal.veteran_full_name}'s documents are not available at the moment due to
-          a loading error from VBMS. As a result, you may be viewing a partial list of claims folder documents.
+          Some of {this.props.appeal.veteran_full_name}'s documents are unavailable at the moment due to
+          a loading error from their eFolder. As a result, you may be viewing a partial list of eFolder documents.
           <br />
           <br />
-          Please visit at a later point to view a complete list of documents in the claims
-          folder or force a sync by visiting eFolder and downloading the documents.
+          Please visit <a href="https://efolder.cf.ds.va.gov/" target="_blank"> eFolder Express </a> to fetch the
+          latest list of documents or submit a support ticket to sync their eFolder with Reader.
         </Alert>
       </div>;
     }
@@ -39,8 +39,10 @@ class LastRetrievalAlert extends React.PureComponent {
 
       return <div {...alertStyling}>
         <Alert title="Warning" type="warning">
-          We last synced with VBMS {vbmsDiff} hours ago. If you'd like to check for new
-          documents, visit later or force a sync by visiting eFolder and downloading the documents.
+          Reader last synced the list of documents with {this.props.appeal.veteran_full_name}'s eFolder
+          {vbmsDiff} hours ago. If you'd like to view documents in Reader uploaded to their eFolder since
+          the last sync, please visit <a href="https://efolder.cf.ds.va.gov/" target="_blank"> eFolder Express </a>
+          to fetch the latest list of documents or submit a support ticket to sync their eFolder with Reader.
         </Alert>
       </div>;
     }

@@ -76,7 +76,7 @@ export class PdfListView extends React.Component {
           {tableView}
         </div>
       </AppSegment>
-      <LastRetrievalInfo />
+      <LastRetrievalInfo appeal={this.props.appeal} />
     </div>;
   }
 }
