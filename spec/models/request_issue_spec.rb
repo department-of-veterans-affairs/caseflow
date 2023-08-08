@@ -2114,4 +2114,30 @@ describe RequestIssue, :all_dbs do
       end
     end
   end
+
+  context "#save_decision_date" do
+    subject { rating_request_issue }
+
+    context "when the decision date is in the past" do
+      let(:past_date) { 2.days.ago.to_date }
+
+      it "calls update!" do
+        allow(subject).to receive(:update!)
+        subject.save_decision_date!(past_date)
+
+        expect(subject).to have_received(:update!).with(decision_date: past_date)
+      end
+    end
+
+    context "when the decision date is in the future" do
+      let(:future_date) { 2.days.from_now.to_date }
+
+      it "throws DecisionDateInFutureError" do
+        allow(subject).to receive(:update!)
+
+        expect { subject.save_decision_date!(future_date) }.to raise_error(RequestIssue::DecisionDateInFutureError)
+        expect(subject).to_not have_received(:update!)
+      end
+    end
+  end
 end
