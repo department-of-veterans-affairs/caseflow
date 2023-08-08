@@ -268,7 +268,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
               submit={[Function]}
               submitButtonClassNames={
                 Array [
-                  "usa-button-secondary",
+                  "usa-button",
                   "usa-button-hover",
                   "usa-button-warning",
                 ]
@@ -290,7 +290,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                     },
                     Object {
                       "classNames": Array [
-                        "usa-button-secondary",
+                        "usa-button",
                         "usa-button-hover",
                         "usa-button-warning",
                       ],
@@ -600,7 +600,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                       <Button
                         classNames={
                           Array [
-                            "usa-button-secondary",
+                            "usa-button",
                             "usa-button-hover",
                             "usa-button-warning",
                             "cf-push-right",
@@ -618,7 +618,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                       >
                         <span>
                           <button
-                            className="usa-button-secondary usa-button-hover usa-button-warning cf-push-right usa-button"
+                            className="usa-button usa-button-hover usa-button-warning cf-push-right usa-button"
                             disabled={false}
                             id="Add-Court-dates-button-id-1"
                             onClick={[Function]}
@@ -909,7 +909,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
               submit={[Function]}
               submitButtonClassNames={
                 Array [
-                  "usa-button-secondary",
+                  "usa-button",
                   "usa-button-hover",
                   "usa-button-warning",
                 ]
@@ -931,7 +931,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                     },
                     Object {
                       "classNames": Array [
-                        "usa-button-secondary",
+                        "usa-button",
                         "usa-button-hover",
                         "usa-button-warning",
                       ],
@@ -1257,7 +1257,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                       <Button
                         classNames={
                           Array [
-                            "usa-button-secondary",
+                            "usa-button",
                             "usa-button-hover",
                             "usa-button-warning",
                             "cf-push-right",
