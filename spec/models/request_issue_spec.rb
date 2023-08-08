@@ -2127,4 +2127,27 @@ describe RequestIssue, :all_dbs do
       expect(nonrating_request_issue.decision_date).to eq(new_decision_date.to_date)
     end
   end
+
+  context "vha handle issues with no decision date" do
+    let(:new_decision_date) { Time.zone.now }
+    let(:benefit_type) { "vha" }
+
+    context("#remove!") do
+      subject { nonrating_request_issue.remove! }
+
+      it "should call the review's handle_issues_with_no_decision_date! method for removal" do
+        expect(review).to receive(:handle_issues_with_no_decision_date!).once
+        subject
+      end
+    end
+
+    context("#withdraw!") do
+      subject { nonrating_request_issue.withdraw!(Time.zone.now) }
+
+      it "should call the review's handle_issues_with_no_decision_date! method for removal" do
+        expect(review).to receive(:handle_issues_with_no_decision_date!).once
+        subject
+      end
+    end
+  end
 end
