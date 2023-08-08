@@ -102,7 +102,7 @@ export class CreateMailTaskDialog extends React.Component {
   isHearingRequestMailTask = () => (this.state.selectedValue || '').match(/Hearing.*RequestMailTask/);
 
   render = () => {
-    const { highlightFormItems, task } = this.props;
+    const { task } = this.props;
 
     if (!task || task.availableActions.length === 0) {
       return null;
@@ -121,11 +121,6 @@ export class CreateMailTaskDialog extends React.Component {
           name="Correspondence type selector"
           searchable
           hideLabel
-          errorMessage={
-            highlightFormItems && !this.state.selectedValue ?
-              'Choose one' :
-              null
-          }
           placeholder={COPY.MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL}
           value={this.state.selectedValue}
           onChange={(option) =>
@@ -138,23 +133,12 @@ export class CreateMailTaskDialog extends React.Component {
           this.isHearingRequestMailTask() &&
           <EfolderUrlField
             requestType={this.state.selectedValue}
-            errorMessage={
-              highlightFormItems && !this.state.eFolderUrl ?
-                'You need one of these' :
-                null
-            }
-            // does not work ^
             onChange={(value) => this.setState({ eFolderUrl: value })}
             value={this.state.eFolderUrl}
           />
         }
         <TextareaField
           name={COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
-          errorMessage={
-            highlightFormItems && !this.state.instructions ?
-              COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED :
-              null
-          }
           id="taskInstructions"
           onChange={(value) => this.setState({ instructions: value })}
           value={this.state.instructions}
@@ -169,7 +153,6 @@ CreateMailTaskDialog.propTypes = {
     externalId: PropTypes.string,
   }),
   appealId: PropTypes.string,
-  highlightFormItems: PropTypes.bool,
   history: PropTypes.shape({
     location: PropTypes.shape({
       pathname: PropTypes.string,
@@ -184,10 +167,7 @@ CreateMailTaskDialog.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const { highlightFormItems } = state.ui;
-
   return {
-    highlightFormItems,
     task: taskById(state, { taskId: ownProps.taskId }),
     appeal: appealWithDetailSelector(state, ownProps),
   };

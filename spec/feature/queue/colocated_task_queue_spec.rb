@@ -185,10 +185,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
 
       # Attempt to change task type without including instuctions.
       find("div", class: "cf-select__option", text: new_task_type.label).click
-      find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
-
-      # Instructions field is required
-      expect(page).to have_content(COPY::INSTRUCTIONS_ERROR_FIELD_REQUIRED)
+      find_button(text: COPY::CHANGE_TASK_TYPE_SUBHEAD, disabled: true)
 
       # Add instructions and try again
       instructions = generate_words(5)
