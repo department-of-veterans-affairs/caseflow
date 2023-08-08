@@ -19,17 +19,17 @@ import DateSelector from '../../../components/DateSelector';
 import TextareaField from '../../../components/TextareaField';
 import { marginTop, marginBottom } from '../../constants';
 
-const RULING_OPTIONS = [
-  { displayText: 'Granted', value: true },
-  { displayText: 'Denied', value: false }
-];
-
 const ACTIONS = {
   RESCHEDULE: 'reschedule',
   SCHEDULE_LATER: 'schedule_later'
 };
 
-const POSTPONEMENT_ACTIONS = [
+const RULING_OPTIONS = [
+  { displayText: 'Granted', value: true },
+  { displayText: 'Denied', value: false }
+];
+
+const POSTPONEMENT_OPTIONS = [
   { displayText: 'Reschedule immediately', value: ACTIONS.RESCHEDULE },
   { displayText: 'Send to Schedule Veteran list', value: ACTIONS.SCHEDULE_LATER }
 ];
@@ -95,18 +95,24 @@ const CompleteHearingPostponementRequestModal = (props) => {
   };
 
   const getPayload = () => {
-    const { scheduledOption } = state;
+    const { granted, rulingDate, scheduledOption, instructions } = state;
+
+    const afterDispositionPayload = scheduledOption === ACTIONS.RESCHEDULE ?
+      /* LOGIC FOR 24998 INSTEAD OF NULL */ null : ACTIONS.SCHEDULE_LATER;
 
     return {
       data: {
         task: {
+          // TO DO: BUSINESS TO DECIDE WHETHER CANCELLED OR COMPLETED
           status: TASK_STATUSES.cancelled,
+          instructions,
+          // If request is denied, do not assign new disposition to hearing
           business_payloads: {
             values: {
-              disposition: HEARING_DISPOSITION_TYPES.postponed,
-              after_disposition_update:
-                scheduledOption === ACTIONS.RESCHEDULE ?
-                  /* LOGIC FOR 24998 */ null : ACTIONS.SCHEDULE_LATER
+              disposition: granted ? HEARING_DISPOSITION_TYPES.postponed : null,
+              after_disposition_update: granted ? afterDispositionPayload : null,
+              granted,
+              date_of_ruling: rulingDate.value,
             },
           },
         },
@@ -132,6 +138,11 @@ const CompleteHearingPostponementRequestModal = (props) => {
   const submit = () => {
     const { userCanScheduleVirtualHearings, task } = props;
     const { isPosting } = state;
+
+    // If user judge ruling is denied...
+    if (!state.granted) {
+      // LOGIC FOR DENIED FUNCTIONALITY
+    }
 
     // If user opts to reschedule immediately, redirect to the full page schedule veteran flow
     if (state.scheduledOption === ACTIONS.RESCHEDULE && userCanScheduleVirtualHearings) {
@@ -206,12 +217,12 @@ const CompleteHearingPostponementRequestModal = (props) => {
 
         {state.granted && <RadioField
           id="scheduleOptionField"
-          name="schedulOptionField"
+          name="scheduleOptionField"
           label="How would you like to proceed?:"
           inputRef={props.register}
           onChange={(value) => dispatch({ type: 'scheduledOption', payload: value })}
           value={state.scheduledOption}
-          options={POSTPONEMENT_ACTIONS}
+          options={POSTPONEMENT_OPTIONS}
           vertical
           styling={marginBottom(1.5)}
         />}
