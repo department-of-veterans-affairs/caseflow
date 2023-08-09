@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+class VirtualHearingNotCreatedError < StandardError; end
 module VirtualHearings::ConferenceClient
   def client
     case RequestStore.store[:current_user].meeting_type
@@ -19,6 +20,8 @@ module VirtualHearings::ConferenceClient
         password: ENV["WEBEX_PASSWORD"],
         client_host: ENV["WEBEX_CLIENT_HOST"]
       )
+    else
+      fail VirtualHearingNotCreatedError, "Invalid meeting type"
     end
   end
 end
