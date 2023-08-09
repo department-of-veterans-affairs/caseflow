@@ -342,6 +342,87 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     end
   end
 
+  describe "GET appeals/:appeal_id/document/:series_id" do
+    let(:series_id) { SecureRandom.uuid }
+    let(:document) { create(:document) }
+
+    before do
+      User.authenticate!(roles: ["System Admin"])
+    end
+
+    shared_examples "document present" do
+      it "returns true in the JSON" do
+        get :document_lookup, params: { appeal_id: appeal.external_id, series_id: series_id }
+        response_body = JSON.parse(response.body)
+        expect(response_body["document_presence"]).to eq(true)
+      end
+    end
+
+    shared_examples "document not present" do
+      it "returns false in the JSON" do
+        get :document_lookup, params: { appeal_id: appeal.external_id, series_id: series_id }
+        response_body = JSON.parse(response.body)
+        expect(response_body["document_presence"]).to eq(false)
+      end
+    end
+
+    context "Appeal" do
+      let(:appeal) { create(:appeal) }
+      context "when document exists in the documents table" do
+        let!(:document) { create(:document, series_id: "{#{series_id.upcase}}") }
+        include_examples "document present"
+      end
+
+      context "when document exists in VBMS" do
+        before do
+          allow(VBMSService)
+            .to receive(:fetch_document_series_for)
+            .with(appeal)
+            .and_return([OpenStruct.new(series_id: "{#{series_id.upcase}}")])
+        end
+        include_examples "document present"
+      end
+
+      context "when document does not exist" do
+        before do
+          allow(VBMSService)
+            .to receive(:fetch_document_series_for)
+            .with(appeal)
+            .and_return([])
+        end
+        include_examples "document not present"
+      end
+    end
+
+    context "LegacyAppeal" do
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
+      context "when document exists in the documents table" do
+        let!(:document) { create(:document, series_id: "{#{series_id.upcase}}") }
+        include_examples "document present"
+      end
+
+      context "when document exists in VBMS" do
+        before do
+          allow(VBMSService)
+            .to receive(:fetch_document_series_for)
+            .with(appeal)
+            .and_return([OpenStruct.new(series_id: "{#{series_id.upcase}}")])
+        end
+        include_examples "document present"
+      end
+
+      context "when document does not exist" do
+        before do
+          allow(VBMSService)
+            .to receive(:fetch_document_series_for)
+            .with(appeal)
+            .and_return([])
+        end
+        include_examples "document not present"
+      end
+    end
+  end
+
   describe "GET cases/:id" do
     context "Legacy Appeal" do
       let(:the_case) { create(:case) }
