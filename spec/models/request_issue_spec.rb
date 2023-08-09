@@ -2115,11 +2115,11 @@ describe RequestIssue, :all_dbs do
     end
   end
 
-  context "#save_edited_decision_date!" do
+  context "#save_decision_date!" do
     let(:new_decision_date) { Time.zone.now }
     let(:benefit_type) { "vha" }
 
-    subject { nonrating_request_issue.save_edited_decision_date!(new_decision_date) }
+    subject { nonrating_request_issue.save_decision_date!(new_decision_date) }
 
     it "should update the decision date and call the review's handle_issues_with_no_decision_date! method" do
       expect(review).to receive(:handle_issues_with_no_decision_date!).once

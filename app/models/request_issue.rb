@@ -493,7 +493,7 @@ class RequestIssue < CaseflowRecord
     update!(edited_description: new_description, contention_updated_at: nil)
   end
 
-  def save_edited_decision_date!(new_decision_date)
+  def save_decision_date!(new_decision_date)
     update!(decision_date: new_decision_date)
 
     # Special handling for claim reviews that contain issues without a decision date

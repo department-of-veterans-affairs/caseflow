@@ -183,25 +183,21 @@ class RequestIssuesUpdate < CaseflowRecord
     return if edited_issues.empty?
 
     edited_issue_data.each do |edited_issue|
-      edit_contention_text(edited_issue)
-      edit_decision_date(edited_issue)
+      request_issue = RequestIssue.find(edited_issue[:request_issue_id].to_s)
+      edit_contention_text(edited_issue, request_issue)
+      edit_decision_date(edited_issue, request_issue)
     end
   end
 
-  # TODO: This kind of sucks since it could potentially do 2 database lookups for the same issue if both are saved.
-  def edit_contention_text(edited_issue)
-    if edited_issue[:edited_description]
-      RequestIssue.find(
-        edited_issue[:request_issue_id].to_s
-      ).save_edited_contention_text!(edited_issue[:edited_description])
+  def edit_contention_text(edited_issue_params, request_issue)
+    if edited_issue_params[:edited_description]
+      request_issue.save_edited_contention_text!(edited_issue_params[:edited_description])
     end
   end
 
-  def edit_decision_date(edited_issue)
-    if edited_issue[:edited_decision_date]
-      RequestIssue.find(
-        edited_issue[:request_issue_id].to_s
-      ).save_edited_decision_date!(edited_issue[:edited_decision_date])
+  def edit_decision_date(edited_issue_params, request_issue)
+    if edited_issue_params[:edited_decision_date]
+      request_issue.save_decision_date!(edited_issue_params[:edited_decision_date])
     end
   end
 
