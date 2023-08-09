@@ -187,7 +187,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
       submitDisabled={!validateForm()}
       validateForm={validateForm}
       submit={submit}
-      pathAfterSubmit="/organizations/hearing-admin"
+      pathAfterSubmit={`/queue/appeals/${props.appeal.externalId}`}
     >
       <>
         <RadioField
