@@ -95,7 +95,7 @@ class AppealsController < ApplicationController
   # series_id is lowercase, no curly braces because it comes from url
   def document_lookup
     series_id = "{#{params[:series_id]}}".upcase
-    document = Document.find_by_series_id(series_id)
+    document = Document.find_by(series_id: series_id, file_number: appeal.veteran_file_number)
 
     if !document
       document = VBMSService.fetch_document_series_for(appeal).map(&:series_id).include?(series_id)
