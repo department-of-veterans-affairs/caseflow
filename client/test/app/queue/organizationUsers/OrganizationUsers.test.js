@@ -10,7 +10,7 @@ describe('Conference Selection Visibility Feature Toggle', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  it('Finds component by fieldset (Role) when conferenceSelectionVisibility is false', async () => {
+  it('Finds component by Text (Webex and Pexip) when conferenceSelectionVisibility is false', async () => {
     const conferenceSelectionVisibilityValue = false;
 
     ApiUtil.get.mockResolvedValue({
@@ -54,12 +54,14 @@ describe('Conference Selection Visibility Feature Toggle', () => {
         conferenceSelectionVisibility={conferenceSelectionVisibilityValue}
       />
     );
-    const nestedText= await findAllByText('Webex');
+    const nestedTextWebex = await findAllByText('Webex');
+    const nestedTextPexip = await findAllByText('Pexip');
 
-    expect(nestedText[0]).toBeInTheDocument();
+    expect(nestedTextWebex[0]).toBeInTheDocument();
+    expect(nestedTextPexip[0]).toBeInTheDocument();
   });
 
-  it('Component does not render when conferenceSelectionVisibility is true', async () => {
+  it('Finds component by Text (Webex and Pexip) when conferenceSelectionVisibility is true', async () => {
     const conferenceSelectionVisibilityValue = true;
 
     ApiUtil.get.mockResolvedValue({
@@ -103,9 +105,11 @@ describe('Conference Selection Visibility Feature Toggle', () => {
         conferenceSelectionVisibility={conferenceSelectionVisibilityValue}
       />
     );
-    const nestedText = await queryAllByText('group');
+    const nestedTextWebex = await queryAllByText('Webex');
+    const nestedTextPexip = await queryAllByText('Pexip');
 
-    expect(nestedText).toHaveLength(0);
+    expect(nestedTextWebex).toHaveLength(0);
+    expect(nestedTextPexip).toHaveLength(0);
   });
 
   it('Component does not render when orginization_name is  ot Hearing Admin', async () => {
@@ -152,8 +156,11 @@ describe('Conference Selection Visibility Feature Toggle', () => {
         conferenceSelectionVisibility={conferenceSelectionVisibilityValue}
       />
     );
-    const nestedText = await queryAllByText('Webex');
+    const nestedTextWebex = await queryAllByText('Webex');
+    const nestedTextPexip = await queryAllByText('Pexip');
 
-    expect(nestedText).toHaveLength(0);
+    expect(nestedTextWebex).toHaveLength(0);
+    expect(nestedTextPexip).toHaveLength(0);
+
   });
 });
