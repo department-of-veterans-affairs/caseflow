@@ -11,7 +11,7 @@ import COPY from '../../COPY';
 import { onReceiveAmaTasks } from './QueueActions';
 import { requestSave, resetSuccessMessages, highlightInvalidFormItems } from './uiReducer/uiActions';
 import { taskActionData } from './utils';
-import { taskById, appealWithDetailSelector, allHearingTasksForAppeal } from './selectors';
+import { taskById, appealWithDetailSelector, allHearingTasksForAppeal, getAllHiaringChildren } from './selectors';
 
 import QueueFlowPage from './components/QueueFlowPage';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -254,12 +254,8 @@ class BlockedAdvanceToJudgeView extends React.Component {
   }
 
   render = () => {
-    const { highlightFormItems, appeal } = this.props;
-    let blockingTasks;
-
-    if (!appeal.isLegacyAppeal) {
-      blockingTasks = this.actionData().blocking_tasks;
-    }
+    const { highlightFormItems, appeal, currentChildren } = this.props;
+    const blockingTasks = appeal.isLegacyAppeal ? currentChildren : this.actionData().blocking_tasks;
 
     return <React.Fragment>
       {this.warningModal()}
@@ -277,7 +273,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
         </div>
         <div {...bottomMarginStyling}>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_SUBTITLE}</div>
         <h3>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_TASKS_HEADER}</h3>
-        {(!appeal.isLegacyAppeal) && <ul>{blockingTasks.map((blockingTask) => this.blockingTaskListItem(blockingTask))}</ul>}
+        <ul>{blockingTasks.map((blockingTask) => this.blockingTaskListItem(blockingTask))}</ul>
         <h3>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_REASONING_HEADER}</h3>
         <RadioField
           required
@@ -317,8 +313,8 @@ BlockedAdvanceToJudgeView.propTypes = {
   history: PropTypes.object,
   onReceiveAmaTasks: PropTypes.func,
   requestSave: PropTypes.func,
-  rootTask: PropTypes.object,
   resetSuccessMessages: PropTypes.func,
+  currentChildren: PropTypes.array,
   allHearingTasks: PropTypes.array,
   task: PropTypes.shape({
     instructions: PropTypes.string,
@@ -335,7 +331,8 @@ const mapStateToProps = (state, ownProps) => {
     highlightFormItems: state.ui.highlightFormItems,
     task: taskById(state, { taskId: ownProps.taskId }),
     allHearingTasks: allHearingTasksForAppeal(state, { appealId: appeal?.externalId }),
-    appeal: appealWithDetailSelector(state, ownProps)
+    appeal: appealWithDetailSelector(state, ownProps),
+    currentChildren: getAllHiaringChildren(state, ownProps)
   };
 };
 
