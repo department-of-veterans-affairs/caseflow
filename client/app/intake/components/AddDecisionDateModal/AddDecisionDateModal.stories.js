@@ -11,9 +11,9 @@ const ReduxDecorator = (Story) => (
 );
 
 export default {
-  title: 'Intake/Edit Issues/Add Decision Date Modal',
   component: AddDecisionDateModal,
   decorators: [ReduxDecorator],
+  title: 'Intake/Edit Issues/Add Decision Date Modal',
 };
 
 export const Basic = () => {
