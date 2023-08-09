@@ -3,11 +3,12 @@ module Types
     # Add root-level fields here.
     # They will be entry points for queries on your schema.
 
-    # TODO: remove me
-    field :test_field, String, null: false,
-      description: "An example field added by the generator"
-    def test_field
-      "Hello World!"
+    field :hearing, Types::HearingType, null: false, description: "Returns a single AMA Hearing" do
+      argument :id, ID, required: true
+    end
+
+    def hearing(id:)
+      Hearing.find(id)
     end
   end
 end
