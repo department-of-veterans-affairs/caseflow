@@ -39,7 +39,7 @@ RSpec.feature "ColocatedTask", :all_dbs do
       action = Constants.CO_LOCATED_ADMIN_ACTIONS.poa_clarification
       find(".cf-select__control", text: "Select an action").click
       find("div", class: "cf-select__option", text: action).click
-      fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
+      fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "note")
       find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
 
       # Redirected to personal queue page. Assignment succeeds.

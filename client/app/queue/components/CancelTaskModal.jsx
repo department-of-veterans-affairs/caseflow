@@ -112,10 +112,10 @@ const CancelTaskModal = (props) => {
         }
         {get(taskData, 'show_instructions', true) &&
           <TextareaField
-            name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+            name={COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
             id="taskInstructions"
             onChange={setInstructions}
-            placeholder="This is a description of instuctions and context for this action."
+            placeholder="This is a description of instructions and context for this action."
             value={instructions}
           />
         }
@@ -140,7 +140,7 @@ const CancelTaskModal = (props) => {
       }
       {shouldShowTaskInstructions &&
         <TextareaField
-          name={taskData?.instructions_label ?? COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+          name={taskData?.instructions_label ?? COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
           id="taskInstructions"
           onChange={setInstructions}
           value={instructions}

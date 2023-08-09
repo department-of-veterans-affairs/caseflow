@@ -462,7 +462,7 @@ feature "AmaQueue", :all_dbs do
 
       click_dropdown(prompt: "Select an action", text: "Assign to attorney")
       click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
-      fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
+      fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "note")
 
       click_on "Submit"
 
@@ -776,7 +776,7 @@ feature "AmaQueue", :all_dbs do
 
           click_dropdown(prompt: "Select an action", text: "Assign to attorney")
           click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
-          fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
+          fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "note")
 
           click_on "Submit"
 

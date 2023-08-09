@@ -639,7 +639,7 @@ describe('CompleteTaskModal', () => {
       expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
       enterTextFieldOptions(
-        COPY.PRE_DOCKET_MODAL_BODY,
+        COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         'EMO Return to Board Intake'
       );
 

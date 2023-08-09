@@ -138,7 +138,7 @@ export class CreateMailTaskDialog extends React.Component {
           />
         }
         <TextareaField
-          name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+          name={COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
           id="taskInstructions"
           onChange={(value) => this.setState({ instructions: value })}
           value={this.state.instructions}
