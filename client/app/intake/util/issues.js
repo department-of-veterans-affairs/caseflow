@@ -118,6 +118,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       benefitType: issue.benefit_type,
       decisionIssueId: issue.contested_decision_issue_id,
       description: issue.description,
+      nonRatingIssueDescription: issue.nonrating_issue_description,
       decisionDate: issue.approx_decision_date,
       ineligibleReason: issue.ineligible_reason,
       ineligibleDueToId: issue.ineligible_due_to_id,

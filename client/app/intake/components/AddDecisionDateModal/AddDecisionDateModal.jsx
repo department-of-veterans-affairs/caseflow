@@ -61,13 +61,19 @@ const AddDecisionDateModal = ({ closeHandler, currentIssue, index }) => {
           <strong {...labelStyling}>
             Issue:
           </strong>
-          {currentIssue.description}
+          {currentIssue.category}
         </div>
         <div>
           <strong {...labelStyling}>
             Benefit Type:
           </strong>
           {BENEFIT_TYPES[currentIssue.benefitType]}
+        </div>
+        <div>
+          <strong {...labelStyling}>
+            Issue decription:
+          </strong>
+          {currentIssue.nonRatingIssueDescription || currentIssue.description}
         </div>
         <div {...dateInputStyling}>
           <DateSelector
