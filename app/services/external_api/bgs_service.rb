@@ -324,6 +324,11 @@ class ExternalApi::BGSService
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
     DBService.release_db_connections
 
+    DataDogService.increment_counter(
+      metric_group: "mst_pact_group",
+      metric_name: "bgs_service.fetch_ratings_in_range_called",
+      app_name: RequestStore[:application]
+    )
     start_date, end_date = formatted_start_and_end_dates(start_date, end_date)
 
     MetricsService.record("BGS: fetch ratings in range: \
@@ -342,6 +347,12 @@ class ExternalApi::BGSService
 
   def fetch_rating_profile(participant_id:, profile_date:)
     DBService.release_db_connections
+
+    DataDogService.increment_counter(
+      metric_group: "mst_pact_group",
+      metric_name: "bgs_service.fetch_rating_profile_called",
+      app_name: RequestStore[:application]
+    )
 
     MetricsService.record("BGS: fetch rating profile: \
                            participant_id = #{participant_id}, \
@@ -466,11 +477,17 @@ class ExternalApi::BGSService
     Rails.cache.fetch("find_contentions_by_participant_id_#{participant_id}", expires_in: 24.hours) do
       Rails.logger.info("calling BGS and caching contention info for participant #{participant_id}")
       DBService.release_db_connections
-      MetricsService.record("BGS: find contentions for veteran by participant_id #{participant_id}",
-                            service: :bgs,
-                            name: "contention.find_contention_by_participant_id") do
-        client.contention.find_contention_by_participant_id(participant_id)
-      end
+      # commented out service call for testing
+      # MetricsService.record("BGS: find contentions for veteran by participant_id #{participant_id}",
+      #                       service: :bgs,
+      #                       name: "contention.find_contention_by_participant_id") do
+      #   client.contention.find_contention_by_participant_id(participant_id)
+      # end
+      DataDogService.increment_counter(
+        metric_group: "mst_pact_group",
+        metric_name: "bgs_service.service_call_from_cache",
+        app_name: RequestStore[:application]
+      )
     end
   end
 
