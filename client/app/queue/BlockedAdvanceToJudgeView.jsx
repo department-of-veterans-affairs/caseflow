@@ -141,14 +141,11 @@ class BlockedAdvanceToJudgeView extends React.Component {
     };
 
     let successMessage = '';
-    const assigneeFullName = this.getAssigneeLabel().split(' ');
-    const assigneeFirstLastName = `${assigneeFullName[0]} ${assigneeFullName.slice(-1)}`;
 
     if (appeal.isLegacyAppeal) {
       successMessage = {
         title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE_MOVE_LEGACY_APPEALS_VLJ,
-          assignedByListItem(), assigneeFirstLastName
-        ),
+          assignedByListItem(), this.getAssigneeLabel()),
         detail: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE_MOVE_LEGACY_APPEALS_VLJ_MESSAGE_DETAIL)
       };
     } else {
