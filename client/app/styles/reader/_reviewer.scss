@@ -118,6 +118,11 @@
 .cf-issue-tag-sidebar {
   overflow: visible;
 
+  .cf-generate-tag-button {
+    margin-bottom: 10px;
+    width: 100%;
+  }
+
   .Select-menu-outer {
     position: relative;
   }
