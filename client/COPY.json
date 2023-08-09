@@ -208,7 +208,6 @@
   "CAVC_ALL_ISSUES_ERROR": "Please select all issues to proceed",
   "CAVC_FEDERAL_CIRCUIT_HEADER": "Notice of Appeal to the Federal Circuit",
   "CAVC_FEDERAL_CIRCUIT_LABEL": "Yes, this case has been appealed to the Federal Circuit",
-  "CAVC_INSTRUCTIONS_LABEL": "Provide context and instructions for this action",
   "CAVC_INSTRUCTIONS_ERROR": "Please provide context and instructions for the remand",
   "CAVC_REMAND_CREATED_TITLE": "You have successfully created a CAVC remand case",
   "CAVC_DASHBOARD_ENTRY_CREATED_TITLE": "You have successfully created an entry in the CAVC dashboard",
@@ -360,7 +359,6 @@
   "JUDGE_ADDRESS_MTV_SUCCESS_DETAIL_DENIED": "This task will be completed by the original motions attorney or placed in the team's queue",
   "RETURN_TO_LIT_SUPPORT_MODAL_TITLE": "Return to Litigation Support",
   "RETURN_TO_LIT_SUPPORT_MODAL_CONTENT": "Use this action to return the Motion to Vacate task to the previous Motions Attorney in order to request changes to the ruling letter draft, or if the ruling letter draft is missing.\n\nIf the previous attorney is inactive, this will return to the Litigation Support team queue for reassignment.",
-  "RETURN_TO_LIT_SUPPORT_MODAL_INSTRUCTIONS_LABEL": "Provide context and instructions for this action",
   "RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS": "I am missing a link to the draft ruling letter. Please resubmit so I can review and sign.",
   "RETURN_TO_LIT_SUPPORT_SUCCESS_TITLE": "%s's Motion to Vacate has been returned to Litigation Support",
   "RETURN_TO_LIT_SUPPORT_SUCCESS_DETAIL": "This task will be completed by the original Motions Attorney or placed in the team's queue",
@@ -383,7 +381,6 @@
   "MTV_CHECKOUT_RETURN_TO_JUDGE_ALERT_TITLE": "Prior decision issues marked for vacatur",
   "MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_TITLE": "Return to Judge",
   "MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_DESCRIPTION": "Use this action to return the Motion to Vacate task to your judge if you believe there is an error in the issues that have been marked for vacatur.\n\nIf your judge is unavailable, this will return to the Litigation Support team queue for reassignment.",
-  "MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_INSTRUCTIONS_LABEL": "Provide instructions and context for this action",
   "MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_TITLE": "%s's Motion to Vacate has been returned to %s",
   "MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_DETAILS": "If you made a mistake, please email your judge to resolve the issue.",
 
@@ -597,7 +594,6 @@
   "SCHEDULE_LATER_DISPLAY_TEXT": "Send to Schedule Veteran list",
   "ADD_COLOCATED_TASK_SUBHEAD": "Submit admin action",
   "ADD_COLOCATED_TASK_ACTION_TYPE_LABEL": "Select the type of administrative action you'd like to assign:",
-  "ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL": "Provide instructions and context for this action",
   "ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL": "+ Add another action",
   "ADD_COLOCATED_TASK_REMOVE_BUTTON_LABEL": "Remove this action",
   "ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL": "Assign Action",
@@ -1215,7 +1211,6 @@
   "VHA_ASSIGN_TO_REGIONAL_OFFICE_MODAL_TITLE": "Assign to VAMC/VISN",
   "VHA_ASSIGN_TO_REGIONAL_OFFICE_RADIO_LABEL": "Find the VISN by:",
   "VHA_ASSIGN_TO_REGIONAL_OFFICE_INSTRUCTIONS_LABEL": "Provide additional context for this action",
-  "PRE_DOCKET_MODAL_BODY": "Provide instructions and context for this action",
   "VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER": "Select Program Office",
   "VHA_REGIONAL_OFFICE_SELECTOR_PLACEHOLDER": "Select VISN/VA Medical Center",
   "VHA_COMPLETE_TASK_MODAL_TITLE": "Where were documents regarding this appeal stored?",
@@ -1382,5 +1377,6 @@
   "DATE_SELECTOR_INVALID_DATE_ERROR": "Please select a valid date",
   "VHA_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold (Value must be between 1 and 45 for VHA users)",
   "VHA_CANCEL_TASK_INSTRUCTIONS_LABEL": "Why are you returning? Provide any important context",
-  "DISPOSITION_DECISION_DATE_LABEL": "Thank you for completing your decision in Caseflow. Please indicate the decision date."
+  "DISPOSITION_DECISION_DATE_LABEL": "Thank you for completing your decision in Caseflow. Please indicate the decision date.",
+  "PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL": "Provide instructions and context for this action"
 }
