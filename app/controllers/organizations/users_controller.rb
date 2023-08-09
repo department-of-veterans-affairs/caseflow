@@ -30,6 +30,8 @@ class Organizations::UsersController < OrganizationsController
 
     if params.key?(:admin)
       adjust_admin_rights
+    elsif params.key?(:user)
+      update_user_meeting_type
     end
 
     render json: { users: json_administered_users([user_to_modify]) }, status: :ok

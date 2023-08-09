@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+// import ApiUtil from '../util/ApiUtil';
 
 import RadioField from '../components/RadioField';
 import COPY from '../../COPY';
@@ -11,8 +12,16 @@ const radioOptions = [
     value: '2' }
 ];
 
-const SelectConferenceTypeRadioField = ({ name }) => {
+const SelectConferenceTypeRadioField = ({ name, onClick }) => {
   const [value, setValue] = useState('1');
+
+  // const modifyConferenceType = (user) => {
+  //   const payload = { data: { user } };
+
+  //   console.log('hi');
+
+  //   ApiUtil.patch(`/organizations/${this.props.organization}/users/${user.id}`, payload);
+  // };
 
   return (
     <>
@@ -21,14 +30,15 @@ const SelectConferenceTypeRadioField = ({ name }) => {
         name={name}
         options={radioOptions}
         value={value}
-        onChange={(newValue) => setValue(newValue)}
+        onChange={((newValue) => setValue(newValue) && onClick)}
         vertical
       /></>
   );
 };
 
 SelectConferenceTypeRadioField.propTypes = {
-  name: PropTypes.string
+  name: PropTypes.string,
+  onClick: PropTypes.func
 };
 
 export default SelectConferenceTypeRadioField;

@@ -214,26 +214,13 @@ export default class OrganizationUsers extends React.PureComponent {
     });
   }
 
-  // modifyConference = (user, flagName) => {
-  //   this.setState({
-  //     [flagName]: { ...this.state[flagName],
-  //       [user.id]: true }
-  //   });
-  // }
+  modifyConferenceType = (user) => () => {
+    console.log('hi');
 
-  // modifyConferenceType = (user, conferenceFlag) => () => {
-  //   const flagName = 'changingConferenceType';
+    const payload = { data: { user } };
 
-  //   this.modifyConference(user, flagName);
-
-  //   const payload = { data: { admin: conferenceFlag } };
-
-  //   ApiUtil.patch(`/organizations/${this.props.organization}/users/${user.id}`, payload).then((response) => {
-  //     this.modifyUserSuccess(response, user, flagName);
-  //   }, (error) => {
-  //     this.modifyUserError(COPY.USER_MANAGEMENT_ADMIN_RIGHTS_CHANGE_ERROR_TITLE, error.message, user, flagName);
-  //   });
-  // }
+    ApiUtil.patch(`/organizations/${this.props.organization}/users/${user.id}`, payload);
+  }
 
   asyncLoadUser = (inputValue) => {
     // don't search till we have min length input
@@ -293,7 +280,7 @@ export default class OrganizationUsers extends React.PureComponent {
                 </div>
                 { this.state.organizationName === 'Hearing Admin' &&
                   <div {...radioContainerStyle}>
-                    <SelectConferenceTypeRadioField key={`${user.id}-conference-selection`} name={user.id} />
+                    <SelectConferenceTypeRadioField key={`${user.id}-conference-selection`} name={user.id} onClick={this.modifyConferenceType(user)} />
                   </div>
                 }
               </div> }
