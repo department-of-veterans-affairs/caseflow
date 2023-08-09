@@ -425,7 +425,7 @@ class RequestIssue < CaseflowRecord
     if (end_product_establishment_id == 4142 || [16606, 16607, 16608, 16609, 16610].include?(id))
       target_time = Time.new(2023, 8, 10, 13, 30, 0)
     elsif (end_product_establishment_id == 4143 || [16611, 16612, 16613, 16614, 16615].include?(id))
-      target_time = Time.new(2023, 8, 10, 31, 40, 0)
+      target_time = Time.new(2023, 8, 10, 13, 40, 0)
     elsif (end_product_establishment_id == 4144 || [16616, 16617, 16618, 16619, 16620].include?(id))
       target_time = Time.new(2023, 8, 10, 13, 50, 0)
     elsif (end_product_establishment_id == 4145 || [16621, 16622, 16623, 16624, 16625].include?(id))
