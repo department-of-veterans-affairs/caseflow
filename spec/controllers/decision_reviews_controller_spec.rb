@@ -536,7 +536,26 @@ describe DecisionReviewsController, :postgres, type: :controller do
         expect(JSON.parse(subject.body)["representative_type"]).to eq "Attorney"
         expect(JSON.parse(subject.body)["representative_name"]).to eq "Clarence Darrow"
         expect(JSON.parse(subject.body)["representative_email_address"]).to eq "jamie.fakerton@caseflowdemo.com"
-        # expect(JSON.parse(subject.body)["representative_tz"]).to eq "America/Los_Angeles"
+        expect(JSON.parse(subject.body)["representative_tz"]).to eq "America/Los_Angeles"
+        expect(JSON.parse(subject.body)["poa_last_synced_at"]).to eq "2018-01-01T07:00:00.000-05:00"
+      end
+    end
+
+    context "update POA Information" do
+      subject do
+        patch :update_power_of_attorney,
+              params: { use_route: "decision_reviews/#{non_comp_org.url}/tasks", task_id: poa_task.id },
+              format: :json
+      end
+
+      it "update and return POA information successfully" do
+        subject
+        assert_response(:success)
+        expect(JSON.parse(subject.body)["power_of_attorney"]["representative_type"]).to eq "Attorney"
+        expect(JSON.parse(subject.body)["power_of_attorney"]["representative_name"]).to eq "Clarence Darrow"
+        expected_email = "jamie.fakerton@caseflowdemo.com"
+        expect(JSON.parse(subject.body)["power_of_attorney"]["representative_email_address"]).to eq expected_email
+        expect(JSON.parse(subject.body)["power_of_attorney"]["representative_tz"]).to eq "America/Los_Angeles"
       end
     end
   end

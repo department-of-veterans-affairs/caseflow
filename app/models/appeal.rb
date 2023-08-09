@@ -9,7 +9,6 @@ require "securerandom"
 
 # rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
-  include AppealConcern
   include BeaamAppealConcern
   include BgsService
   include Taskable
@@ -757,10 +756,6 @@ class Appeal < DecisionReview
     }
 
     issues_report
-  end
-
-  def bgs_power_of_attorney
-    claimant&.is_a?(BgsRelatedClaimant) ? power_of_attorney : nil
   end
 
   # Note: Currently Caseflow only supports one claimant per decision review

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class DecisionReview < CaseflowRecord
+  include AppealConcern
   include CachedAttributes
   include Asyncable
 
@@ -99,6 +100,10 @@ class DecisionReview < CaseflowRecord
     else
       Constants::DATES["AMA_ACTIVATION_TEST"].to_date
     end
+  end
+
+  def bgs_power_of_attorney
+    claimant&.is_a?(BgsRelatedClaimant) ? power_of_attorney : nil
   end
 
   def serialized_ratings

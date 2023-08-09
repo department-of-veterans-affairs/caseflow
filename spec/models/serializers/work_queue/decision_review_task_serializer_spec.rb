@@ -21,6 +21,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
         id: task.id.to_s,
         type: :decision_review_task,
         attributes: {
+          has_poa: true,
           claimant: { name: hlr.veteran_full_name, relationship: "self" },
           appeal: {
             id: hlr.id.to_s,
@@ -31,10 +32,12 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             appellant_type: "VeteranClaimant"
           },
           power_of_attorney: {
-            representative_type: hlr.claimant.power_of_attorney.representative_type,
-            representative_name: hlr.claimant.power_of_attorney.representative_name,
-            representative_address: hlr.claimant.power_of_attorney.representative_address,
-            representative_email_address: hlr.claimant.power_of_attorney.representative_email_address
+            representative_address: hlr&.representative_address,
+            representative_email_address: hlr&.representative_email_address,
+            representative_name: hlr&.representative_name,
+            representative_type: hlr&.representative_type,
+            representative_tz: hlr&.representative_tz,
+            poa_last_synced_at: hlr&.poa_last_synced_at
           },
           veteran_ssn: veteran.ssn,
           veteran_participant_id: veteran.participant_id,
@@ -65,6 +68,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
           id: task.id.to_s,
           type: :decision_review_task,
           attributes: {
+            has_poa: false,
             claimant: { name: "claimant", relationship: "Unknown" },
             appeal: {
               id: hlr.id.to_s,
@@ -114,6 +118,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
           id: task.id.to_s,
           type: :decision_review_task,
           attributes: {
+            has_poa: true,
             claimant: { name: claimant.name, relationship: "Veteran" },
             appeal: {
               id: hlr.id.to_s,
@@ -125,10 +130,12 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             },
             veteran_ssn: veteran.ssn,
             power_of_attorney: {
-              representative_address: hlr.claimant.power_of_attorney&.representative_address,
-              representative_email_address: hlr.claimant.power_of_attorney&.representative_email_address,
-              representative_name: hlr.claimant.power_of_attorney&.representative_name,
-              representative_type: hlr.claimant.power_of_attorney&.representative_type
+              representative_address: hlr&.representative_address,
+              representative_email_address: hlr&.representative_email_address,
+              representative_name: hlr&.representative_name,
+              representative_type: hlr&.representative_type,
+              representative_tz: hlr&.representative_tz,
+              poa_last_synced_at: hlr&.poa_last_synced_at
             },
             veteran_participant_id: veteran.participant_id,
             assigned_on: task.assigned_at,
@@ -145,7 +152,6 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             business_line: non_comp_org.url
           }
         }
-
         expect(subject.serializable_hash[:data]).to eq(serializable_hash)
       end
     end
@@ -171,6 +177,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
           id: task.id.to_s,
           type: :decision_review_task,
           attributes: {
+            has_poa: true,
             claimant: { name: hlr.veteran_full_name, relationship: "self" },
             appeal: {
               id: hlr.id.to_s,
@@ -182,10 +189,12 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             },
             veteran_ssn: hlr.veteran.ssn,
             power_of_attorney: {
-              representative_type: hlr.claimant.power_of_attorney.representative_type,
-              representative_name: hlr.claimant.power_of_attorney.representative_name,
-              representative_address: hlr.claimant.power_of_attorney.representative_address,
-              representative_email_address: hlr.claimant.power_of_attorney.representative_email_address
+              representative_address: hlr&.representative_address,
+              representative_email_address: hlr&.representative_email_address,
+              representative_name: hlr&.representative_name,
+              representative_type: hlr&.representative_type,
+              representative_tz: hlr&.representative_tz,
+              poa_last_synced_at: hlr&.poa_last_synced_at
             },
             veteran_participant_id: hlr.veteran.participant_id,
             assigned_on: task.assigned_at,
