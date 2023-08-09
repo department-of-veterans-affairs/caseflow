@@ -52,7 +52,7 @@ export class CreateMailTaskDialog extends React.Component {
   prependUrlToInstructions = () => {
 
     if (this.isHearingRequestMailTask()) {
-      return (`**LINK TO DOCUMENT:** \n ${this.state.eFolderUrl} \n **DETAILS:** \n ${this.state.instructions}`);
+      return (`**LINK TO DOCUMENT:** \n ${this.state.eFolderUrl} \n\n **DETAILS:** \n ${this.state.instructions}`);
     }
 
     return this.state.instructions;
