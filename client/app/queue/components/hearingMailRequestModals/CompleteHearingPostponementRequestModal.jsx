@@ -7,16 +7,16 @@ import RadioField from '../../../components/RadioField';
 import Alert from '../../../components/Alert';
 import DateSelector from '../../../components/DateSelector';
 import TextareaField from '../../../components/TextareaField';
-
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { taskById, appealWithDetailSelector} from '../../selectors';
-
 import { marginTop, marginBottom } from '../../constants';
-
 import { setScheduledHearing } from '../../../components/common/actions';
-
 import { bindActionCreators } from 'redux';
+import { requestPatch, showErrorMessage } from '../../uiReducer/uiActions';
+import { onReceiveAmaTasks } from '../../QueueActions';
+import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
+import { taskActionData } from '../../utils';
 
 const RULING_OPTIONS = [
   { displayText: 'Granted', value: true },
@@ -35,6 +35,7 @@ const POSTPONEMENT_ACTIONS = [
 
 const CompleteHearingPostponementRequestModal = (props) => {
   const { appealId, taskId } = props;
+  const taskData = taskActionData(props);
   const formReducer = (state, action) => {
     switch (action.type) {
     case 'granted':
@@ -89,10 +90,18 @@ const CompleteHearingPostponementRequestModal = (props) => {
   };
 
   const submit = () => {
+    props.setScheduledHearing({
+      action: ACTIONS.RESCHEDULE,
+      taskId,
+      disposition: HEARING_DISPOSITION_TYPES.postponed
+    });
+
     props.history.push(
       `/queue/appeals/${appealId}/tasks/${taskId}/schedule_veteran`
     );
-  }
+
+    return Promise.reject();
+  };
 
   return (
     <QueueFlowModal
@@ -101,7 +110,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
       submitDisabled={!validateForm()}
       validateForm={validateForm}
       submit={submit}
-      pathAfterSubmit="/organizations/hearing-admin"
+      pathAfterSubmit={(taskData && taskData.redirect_after) || '/queue'}
     >
       <>
         <RadioField
@@ -161,26 +170,27 @@ const CompleteHearingPostponementRequestModal = (props) => {
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
   appeal: appealWithDetailSelector(state, ownProps),
-  // scheduleHearingLaterWithAdminAction:
-  //   state.components.forms.scheduleHearingLaterWithAdminAction || {}
+  scheduleHearingLaterWithAdminAction:
+    state.components.forms.scheduleHearingLaterWithAdminAction || {}
 });
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       setScheduledHearing,
-      // requestPatch,
-      // onReceiveAmaTasks,
-      // showErrorMessage
+      requestPatch,
+      onReceiveAmaTasks,
+      showErrorMessage
     },
     dispatch
   );
 
 CompleteHearingPostponementRequestModal.propTypes = {
   register: PropTypes.func,
-  appeal: PropTypes.string.isRequired,
-  task: PropTypes.string.isRequired,
-  history: PropTypes.object
+  appealId: PropTypes.string.isRequired,
+  taskId: PropTypes.string.isRequired,
+  history: PropTypes.object,
+  setScheduledHearing: PropTypes.func
 };
 
 export default withRouter(
