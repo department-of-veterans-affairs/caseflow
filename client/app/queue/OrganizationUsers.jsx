@@ -279,13 +279,12 @@ export default class OrganizationUsers extends React.PureComponent {
               ) : (
                 <div {...buttonContainerStyle}>
                   <div>
-                    {judgeTeam || dvcTeam ? "" : this.adminButton(user, admin)}
+                    {judgeTeam || dvcTeam ? '' : this.adminButton(user, admin)}
                     {this.removeUserButton(user)}
                   </div>
-                  {this.state.organizationName === "Hearing Admin" &&
+                  {this.state.organizationName === 'Hearing Admin' &&
                     !conferenceSelectionVisibility && (
                     <div
-                      data-testid="conference-radio-button"
                       {...radioContainerStyle}
                     >
                       <SelectConferenceTypeRadioField
