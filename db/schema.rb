@@ -1850,7 +1850,7 @@ ActiveRecord::Schema.define(version: 2023_08_01_195310) do
   end
 
   create_table "vbms_distribution_destinations", force: :cascade do |t|
-    t.string "address_line_1", null: false, comment: "PII. If destination_type is domestic, international, or military then Must not be null."
+    t.string "address_line_1", comment: "PII. If destination_type is domestic, international, or military then Must not be null."
     t.string "address_line_2", comment: "PII. If treatLine2AsAddressee is [true] then must not be null"
     t.string "address_line_3", comment: "PII. If treatLine3AsAddressee is [true] then must not be null"
     t.string "address_line_4", comment: "PII."
