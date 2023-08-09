@@ -71,8 +71,8 @@ describe('Conference Selection Visibility Feature Toggle', () => {
     expect(nestedText).toHaveLength(0);
   });
 
-  it('Component does not render when orginization_name is  ot Hearing Admin', async () => {
-    const conferenceSelectionVisibilityValue = true;
+  it('Component does not render when orginization_name is not Hearing Admin', async () => {
+    const conferenceSelectionVisibilityValue = false;
 
     ApiUtil.get.mockResolvedValue({
       body: {
