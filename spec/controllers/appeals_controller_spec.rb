@@ -350,6 +350,20 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       User.authenticate!(roles: ["System Admin"])
     end
 
+    def allow_vbms_to_return_doc
+      allow(VBMSService)
+        .to receive(:fetch_document_series_for)
+        .with(appeal)
+        .and_return([OpenStruct.new(series_id: "{#{series_id.upcase}}")])
+    end
+
+    def allow_vbms_to_return_empty_array
+      allow(VBMSService)
+        .to receive(:fetch_document_series_for)
+        .with(appeal)
+        .and_return([])
+    end
+
     shared_examples "document present" do
       it "returns true in the JSON" do
         get :document_lookup, params: { appeal_id: appeal.external_id, series_id: series_id }
@@ -374,22 +388,12 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       end
 
       context "when document exists in VBMS" do
-        before do
-          allow(VBMSService)
-            .to receive(:fetch_document_series_for)
-            .with(appeal)
-            .and_return([OpenStruct.new(series_id: "{#{series_id.upcase}}")])
-        end
+        before { allow_vbms_to_return_doc }
         include_examples "document present"
       end
 
       context "when document does not exist" do
-        before do
-          allow(VBMSService)
-            .to receive(:fetch_document_series_for)
-            .with(appeal)
-            .and_return([])
-        end
+        before { allow_vbms_to_return_empty_array }
         include_examples "document not present"
       end
     end
@@ -402,22 +406,12 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       end
 
       context "when document exists in VBMS" do
-        before do
-          allow(VBMSService)
-            .to receive(:fetch_document_series_for)
-            .with(appeal)
-            .and_return([OpenStruct.new(series_id: "{#{series_id.upcase}}")])
-        end
+        before { allow_vbms_to_return_doc }
         include_examples "document present"
       end
 
       context "when document does not exist" do
-        before do
-          allow(VBMSService)
-            .to receive(:fetch_document_series_for)
-            .with(appeal)
-            .and_return([])
-        end
+        before { allow_vbms_to_return_empty_array }
         include_examples "document not present"
       end
     end
