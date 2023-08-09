@@ -8,7 +8,15 @@ import Alert from '../../../components/Alert';
 import DateSelector from '../../../components/DateSelector';
 import TextareaField from '../../../components/TextareaField';
 
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { taskById, appealWithDetailSelector} from '../../selectors';
+
 import { marginTop, marginBottom } from '../../constants';
+
+import { setScheduledHearing } from '../../../components/common/actions';
+
+import { bindActionCreators } from 'redux';
 
 const RULING_OPTIONS = [
   { displayText: 'Granted', value: true },
@@ -26,6 +34,7 @@ const POSTPONEMENT_ACTIONS = [
 ];
 
 const CompleteHearingPostponementRequestModal = (props) => {
+  const { appealId, taskId } = props;
   const formReducer = (state, action) => {
     switch (action.type) {
     case 'granted':
@@ -79,7 +88,11 @@ const CompleteHearingPostponementRequestModal = (props) => {
     return granted !== null && rulingDate.valid && instructions !== '';
   };
 
-  const submit = () => console.log(props);
+  const submit = () => {
+    props.history.push(
+      `/queue/appeals/${appealId}/tasks/${taskId}/schedule_veteran`
+    );
+  }
 
   return (
     <QueueFlowModal
@@ -145,8 +158,34 @@ const CompleteHearingPostponementRequestModal = (props) => {
   );
 };
 
+const mapStateToProps = (state, ownProps) => ({
+  task: taskById(state, { taskId: ownProps.taskId }),
+  appeal: appealWithDetailSelector(state, ownProps),
+  // scheduleHearingLaterWithAdminAction:
+  //   state.components.forms.scheduleHearingLaterWithAdminAction || {}
+});
+
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      setScheduledHearing,
+      // requestPatch,
+      // onReceiveAmaTasks,
+      // showErrorMessage
+    },
+    dispatch
+  );
+
 CompleteHearingPostponementRequestModal.propTypes = {
-  register: PropTypes.func
+  register: PropTypes.func,
+  appeal: PropTypes.string.isRequired,
+  task: PropTypes.string.isRequired,
+  history: PropTypes.object
 };
 
-export default CompleteHearingPostponementRequestModal;
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(CompleteHearingPostponementRequestModal)
+);

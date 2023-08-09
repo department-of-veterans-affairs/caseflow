@@ -654,7 +654,8 @@ class QueueApp extends React.PureComponent {
   );
 
   routedCompleteHearingPostponementRequest = (props) => (
-    <CompleteHearingPostponementRequestModal {...props.match.params} />
+    <CompleteHearingPostponementRequestModal {...props.match.params} userCanScheduleVirtualHearings={
+      this.props.featureToggles.schedule_veteran_virtual_hearing} />
   );
 
   queueName = () =>
