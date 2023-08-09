@@ -329,6 +329,22 @@ export const addTag = createAsyncThunk(
 );
 
 /**
+ * Dispatcher to Generate Auto-Tags for a Document
+ */
+export const generateAutoTags = createAsyncThunk(
+  'documentViewer/generateTags',
+  async ({ doc }) => {
+    // Request for auto generated tags
+    const { body } = await ApiUtil.get(
+      `/document/${doc.id}/tag/auto_tag`, {}, ENDPOINT_NAMES.TAG
+    );
+
+    // Return the selected document and tag to the next Dispatcher
+    return { doc };
+  }
+);
+
+/**
  * Dispatcher to Save Description for a Document
  */
 export const saveDescription = createAsyncThunk(
@@ -508,6 +524,24 @@ const documentViewerSlice = createSlice({
         state.selected.tags = action.payload.tags;
       }).
       addCase(addTag.rejected, (state, action) => {
+        // Set the error state
+        state.errors.tag = {
+          visible: true,
+          message: action.error.message,
+        };
+      }).
+      addCase(generateAutoTags.pending, (state) => {
+        state.pendingTag = true;
+      }).
+      addCase(generateAutoTags.fulfilled, (state, action) => {
+        // Reset the state
+        state.pendingTag = false;
+        state.editingTag = false;
+
+        // Update the tags
+        state.selected.tags = [];
+      }).
+      addCase(generateAutoTags.rejected, (state, action) => {
         // Set the error state
         state.errors.tag = {
           visible: true,

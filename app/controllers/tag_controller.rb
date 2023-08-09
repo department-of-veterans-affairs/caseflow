@@ -36,6 +36,11 @@ class TagController < ApplicationController
     render(json: { status: :no_content })
   end
 
+  def auto_tag
+    # looking for Tags 
+  render(json: { status: :no_content })
+end
+
   private
 
   def tag_params
