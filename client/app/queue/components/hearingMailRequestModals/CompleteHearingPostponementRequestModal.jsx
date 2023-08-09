@@ -34,7 +34,7 @@ const POSTPONEMENT_ACTIONS = [
 ];
 
 const CompleteHearingPostponementRequestModal = (props) => {
-  const { appealId, taskId } = props;
+  const { appealId, taskId, userCanScheduleVirtualHearings } = props;
   const taskData = taskActionData(props);
   const formReducer = (state, action) => {
     switch (action.type) {
@@ -90,17 +90,21 @@ const CompleteHearingPostponementRequestModal = (props) => {
   };
 
   const submit = () => {
-    props.setScheduledHearing({
-      action: ACTIONS.RESCHEDULE,
-      taskId,
-      disposition: HEARING_DISPOSITION_TYPES.postponed
-    });
+    const { granted, scheduledOption } = state;
 
-    props.history.push(
-      `/queue/appeals/${appealId}/tasks/${taskId}/schedule_veteran`
-    );
+    if (granted && scheduledOption === ACTIONS.RESCHEDULE && userCanScheduleVirtualHearings) {
+      props.setScheduledHearing({
+        action: ACTIONS.RESCHEDULE,
+        taskId,
+        disposition: HEARING_DISPOSITION_TYPES.postponed
+      });
 
-    return Promise.reject();
+      props.history.push(
+        `/queue/appeals/${appealId}/tasks/${taskId}/schedule_veteran`
+      );
+
+      return Promise.reject();
+    }
   };
 
   return (
@@ -190,7 +194,8 @@ CompleteHearingPostponementRequestModal.propTypes = {
   appealId: PropTypes.string.isRequired,
   taskId: PropTypes.string.isRequired,
   history: PropTypes.object,
-  setScheduledHearing: PropTypes.func
+  setScheduledHearing: PropTypes.func,
+  userCanScheduleVirtualHearings: PropTypes.bool
 };
 
 export default withRouter(
