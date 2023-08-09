@@ -108,7 +108,7 @@ class Rating
       contentions_data = []
       response = fetch_contentions_by_participant_id(serialized_hash[:participant_id])
 
-      return if response.nil?
+      return if response.blank?
 
       serialized_hash[:rba_contentions_data].each do |rba|
         rba_contention = rba.with_indifferent_access
