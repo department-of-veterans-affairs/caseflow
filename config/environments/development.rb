@@ -93,6 +93,9 @@ Rails.application.configure do
   # Travel Board Sync Batch Size
   ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"] ||= "250"
 
+  # Time in seconds before the sync lock expires
+  LOCK_TIMEOUT = ENV["SYNC_LOCK_MAX_DURATION"] ||= "60"
+
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
   # Notifications page eFolder link

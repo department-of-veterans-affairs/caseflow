@@ -2111,6 +2111,124 @@ describe RequestIssue, :all_dbs do
             expect(nonrating_request_issue.processed?).to eq(false)
           end
         end
+
+        context "when hlr_sync_lock is applied to the sync method" do
+          let(:ep_code) { "030HLRR" }
+          let!(:epe) do
+            epe = create(
+              :end_product_establishment,
+              :cleared,
+              established_at: 5.days.ago,
+              modifier: "030",
+              code: "030HLRR",
+              source: create(
+                :higher_level_review,
+                veteran_file_number: veteran.file_number
+              )
+            )
+            EndProductEstablishment.find epe.id
+          end
+          let!(:review) do
+            epe.source
+          end
+
+          let!(:contention_hlr1) do
+            Generators::Contention.build(
+              id: "123456789",
+              claim_id: epe.reference_id,
+              disposition: "Difference of Opinion"
+            )
+          end
+          let!(:contention_hlr2) do
+            Generators::Contention.build(
+              id: "555566660",
+              claim_id: epe.reference_id,
+              disposition: "DTA Error"
+            )
+          end
+
+          let(:original_decision_sync_last_submitted_at) { Time.zone.now - 1.hour }
+          let(:original_decision_sync_submitted_at) { Time.zone.now - 1.hour }
+
+          let(:request_issue1) do
+            create(
+              :request_issue,
+              decision_review: review,
+              nonrating_issue_description: "some description",
+              nonrating_issue_category: "a category",
+              decision_date: 1.day.ago,
+              end_product_establishment: epe,
+              contention_reference_id: contention_hlr1.id,
+              benefit_type: review.benefit_type,
+              decision_sync_last_submitted_at: original_decision_sync_last_submitted_at,
+              decision_sync_submitted_at: original_decision_sync_submitted_at
+            )
+          end
+
+          let(:request_issue2) do
+            create(
+              :request_issue,
+              decision_review: review,
+              nonrating_issue_description: "some description",
+              nonrating_issue_category: "a category",
+              decision_date: 1.day.ago,
+              end_product_establishment: epe,
+              contention_reference_id: contention_hlr2.id,
+              benefit_type: review.benefit_type,
+              decision_sync_last_submitted_at: original_decision_sync_last_submitted_at,
+              decision_sync_submitted_at: original_decision_sync_submitted_at
+            )
+          end
+
+          let!(:claimant) do
+            Claimant.create!(decision_review: epe.source,
+                             participant_id: epe.veteran.participant_id,
+                             payee_code: "00")
+          end
+
+          let(:sync_lock_err) { Caseflow::Error::SyncLockFailed }
+
+          it "prevents a request issue from acquiring the SyncLock when there is already a lock using the EPE's ID" do
+            redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
+            lock_key = "hlr_sync_lock:#{epe.id}"
+            redis.set(lock_key, "lock is set", :nx => true, :ex => 5.seconds)
+            expect { request_issue1.sync_decision_issues! }.to raise_error(sync_lock_err)
+            redis.del(lock_key)
+          end
+
+          it "allows a request issue to sync if there is no existing lock using the EPE's ID" do
+            expect(request_issue2.sync_decision_issues!).to eq(true)
+            expect(request_issue2.processed?).to eq(true)
+
+            expect(SupplementalClaim.count).to eq(1)
+          end
+
+          it "multiple request issues can sync and a remand_supplemental_claim is created" do
+            expect(request_issue1.sync_decision_issues!).to eq(true)
+            expect(request_issue2.sync_decision_issues!).to eq(true)
+            expect(request_issue1.processed?).to eq(true)
+            expect(request_issue2.processed?).to eq(true)
+
+            expect(SupplementalClaim.count).to eq(1)
+            sc = SupplementalClaim.first
+            expect(sc.request_issues.count).to eq(2)
+            supplemental_claim_request_issue1 = sc.request_issues.first
+            supplemental_claim_request_issue2= sc.request_issues.last
+
+            # both request issues link to the same SupplementalClaim
+            expect(sc.id).to eq (request_issue1.end_product_establishment.source.remand_supplemental_claims.first.id)
+            expect(sc.id).to eq (request_issue2.end_product_establishment.source.remand_supplemental_claims.first.id)
+
+            # DecisionIssue ID should match contested_decision_issue_id
+            expect(DecisionIssue.count).to eq(2)
+            decision_issue1 = DecisionIssue.first
+            decision_issue2 = DecisionIssue.last
+
+            expect(decision_issue1.id).to eq(supplemental_claim_request_issue1.contested_decision_issue_id)
+            expect(decision_issue2.id).to eq(supplemental_claim_request_issue2.contested_decision_issue_id)
+          end
+
+        end
       end
     end
   end
