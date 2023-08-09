@@ -152,3 +152,7 @@ end
 # rubocop:enable Metrics/LineLength
 
 gem "json_schemer", "~> 0.2.16"
+
+gem "graphql", "= 1.9"
+
+gem 'graphiql-rails', group: :development

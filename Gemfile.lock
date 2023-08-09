@@ -315,6 +315,7 @@ GEM
       faraday
       faraday_middleware
       mime-types
+    graphql (1.9.0)
     guard (2.14.2)
       formatador (>= 0.2.4)
       listen (>= 2.7, < 4.0)
@@ -752,6 +753,7 @@ DEPENDENCIES
   foreman
   fuzzy_match
   govdelivery-tms
+  graphql (= 1.9)
   guard-rspec
   holidays (~> 6.4)
   icalendar
