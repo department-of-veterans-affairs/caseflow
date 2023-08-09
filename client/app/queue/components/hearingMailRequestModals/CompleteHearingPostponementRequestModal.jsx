@@ -1,26 +1,35 @@
 import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
+import { taskById, appealWithDetailSelector } from '../../selectors';
+import { requestPatch, showErrorMessage } from '../../uiReducer/uiActions';
+import { onReceiveAmaTasks } from '../../QueueActions';
 
 import COPY from '../../../../COPY';
+import TASK_STATUSES from '../../../../constants/TASK_STATUSES';
+import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
+
 import QueueFlowModal from '../QueueFlowModal';
 import RadioField from '../../../components/RadioField';
 import Alert from '../../../components/Alert';
 import DateSelector from '../../../components/DateSelector';
 import TextareaField from '../../../components/TextareaField';
-
 import { marginTop, marginBottom } from '../../constants';
-
-const RULING_OPTIONS = [
-  { displayText: 'Granted', value: true },
-  { displayText: 'Denied', value: false }
-];
 
 const ACTIONS = {
   RESCHEDULE: 'reschedule',
   SCHEDULE_LATER: 'schedule_later'
 };
 
-const POSTPONEMENT_ACTIONS = [
+const RULING_OPTIONS = [
+  { displayText: 'Granted', value: true },
+  { displayText: 'Denied', value: false }
+];
+
+const POSTPONEMENT_OPTIONS = [
   { displayText: 'Reschedule immediately', value: ACTIONS.RESCHEDULE },
   { displayText: 'Send to Schedule Veteran list', value: ACTIONS.SCHEDULE_LATER }
 ];
@@ -54,6 +63,11 @@ const CompleteHearingPostponementRequestModal = (props) => {
         ...state,
         scheduledOption: action.payload
       };
+    case 'isPosting':
+      return {
+        ...state,
+        isPosting: action.payload
+      };
     default:
       throw new Error('Unknown action type');
     }
@@ -65,7 +79,8 @@ const CompleteHearingPostponementRequestModal = (props) => {
       granted: null,
       rulingDate: { value: '', valid: false },
       instructions: '',
-      scheduledOption: null
+      scheduledOption: null,
+      isPosting: false
     }
   );
 
@@ -79,7 +94,91 @@ const CompleteHearingPostponementRequestModal = (props) => {
     return granted !== null && rulingDate.valid && instructions !== '';
   };
 
-  const submit = () => console.log(props);
+  const getPayload = () => {
+    const { granted, rulingDate, scheduledOption, instructions } = state;
+
+    const afterDispositionPayload = scheduledOption === ACTIONS.RESCHEDULE ?
+      /* LOGIC FOR APPEALS-24998 INSTEAD OF NULL */ null : ACTIONS.SCHEDULE_LATER;
+
+    return {
+      data: {
+        task: {
+          // TO DO: BUSINESS TO DECIDE WHETHER CANCELLED OR COMPLETED
+          status: TASK_STATUSES.cancelled,
+          instructions,
+          // If request is denied, do not assign new disposition to hearing
+          business_payloads: {
+            values: {
+              disposition: granted ? HEARING_DISPOSITION_TYPES.postponed : null,
+              after_disposition_update: granted ? afterDispositionPayload : null,
+              granted,
+              date_of_ruling: rulingDate.value,
+            },
+          },
+        },
+      },
+    };
+  };
+
+  const getSuccessMsg = () => {
+    const { granted, scheduledOption } = state;
+    const { appeal } = props;
+
+    if (!granted) {
+      // LOGIC FOR APPEALS-27763
+    }
+
+    if (scheduledOption === ACTIONS.RESCHEDULE) {
+      // LOGIC FOR APPEALS-24998
+    }
+
+    return {
+      title: `${
+        appeal.veteranFullName
+      } was successfully added back to the schedule veteran list.`,
+    };
+  };
+
+  const submit = () => {
+    const { userCanScheduleVirtualHearings, task } = props;
+    const { isPosting } = state;
+
+    // If user judge ruling is denied...
+    if (!state.granted) {
+      // LOGIC FOR APPEALS-27763
+    }
+
+    // If user opts to reschedule immediately, redirect to the full page schedule veteran flow
+    if (state.scheduledOption === ACTIONS.RESCHEDULE && userCanScheduleVirtualHearings) {
+      // LOGIC FOR APPEALS-24998
+    }
+
+    if (isPosting) {
+      return;
+    }
+
+    const payload = getPayload();
+
+    dispatch({ type: 'isPosting', payload: true });
+
+    return props.
+      requestPatch(`/tasks/${task.taskId}`, payload, getSuccessMsg()).
+      then(
+        (resp) => {
+          dispatch({ type: 'isPosting', payload: false });
+          props.onReceiveAmaTasks(resp.body.tasks.data);
+        },
+        () => {
+          dispatch({ type: 'isPosting', payload: false });
+
+          props.showErrorMessage({
+            title: 'Unable to postpone hearing.',
+            detail:
+              'Please retry submitting again and contact support if errors persist.',
+          });
+        }
+      );
+  };
 
   return (
     <QueueFlowModal
@@ -127,7 +226,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
           inputRef={props.register}
           onChange={(value) => dispatch({ type: 'scheduledOption', payload: value })}
           value={state.scheduledOption}
-          options={POSTPONEMENT_ACTIONS}
+          options={POSTPONEMENT_OPTIONS}
           vertical
           styling={marginBottom(1.5)}
         />}
@@ -146,7 +245,38 @@ const CompleteHearingPostponementRequestModal = (props) => {
 };
 
 CompleteHearingPostponementRequestModal.propTypes = {
+  appeal: PropTypes.shape({
+    externalId: PropTypes.string,
+    veteranFullName: PropTypes.string
+  }),
+  task: PropTypes.shape({
+    taskId: PropTypes.string,
+  }),
+  userCanScheduleVirtualHearings: PropTypes.bool,
+  requestPatch: PropTypes.func,
+  onReceiveAmaTasks: PropTypes.func,
+  showErrorMessage: PropTypes.func,
   register: PropTypes.func
 };
 
-export default CompleteHearingPostponementRequestModal;
+const mapStateToProps = (state, ownProps) => ({
+  task: taskById(state, { taskId: ownProps.taskId }),
+  appeal: appealWithDetailSelector(state, ownProps),
+});
+
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      requestPatch,
+      onReceiveAmaTasks,
+      showErrorMessage
+    },
+    dispatch
+  );
+
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(CompleteHearingPostponementRequestModal)
+);
