@@ -315,6 +315,9 @@ GEM
       faraday
       faraday_middleware
       mime-types
+    graphiql-rails (1.9.0)
+      railties
+      sprockets-rails
     graphql (1.9.0)
     guard (2.14.2)
       formatador (>= 0.2.4)
@@ -753,6 +756,7 @@ DEPENDENCIES
   foreman
   fuzzy_match
   govdelivery-tms
+  graphiql-rails
   graphql (= 1.9)
   guard-rspec
   holidays (~> 6.4)
