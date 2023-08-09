@@ -49,16 +49,25 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     if params[:status] == Constants.TASK_STATUSES.cancelled
       # If request to postpone hearing is granted
       if payload_values[:granted]
-        created_tasks = update_hearing_and_self(params: params, payload_values: payload_values)
+        created_tasks = update_hearing_and_create_hearing_tasks(params: params, payload_values: payload_values)
+        update_self_and_parent_mail_task(
+          status: Constants.TASK_STATUSES.completed,
+          completed_by: user
+        )
 
         [self] + created_tasks
-      # If request to ponstpone hearing is denied
+      # If request to postpone hearing is denied
       else
         "TO-DO: LOGIC FOR APPEALS-27763"
       end
     else
       super(params, user)
     end
+  end
+
+  # Only show HPR mail task assigned to "HearingAdmin" on the Case Timeline
+  def hide_from_case_timeline
+    assigned_to.type == "MailTeam"
   end
 
   private
@@ -88,21 +97,27 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     !open_task.hearing.scheduled_for_past?
   end
 
-  def update_hearing_and_self(params:, payload_values:)
-    mark_hearing_with_disposition(
-      payload_values: payload_values,
-      instructions: params["instructions"]
-    )
-  end
-
-  def mark_hearing_with_disposition(payload_values:, instructions:)
+  # Purpose:
+  #   - Update disposition of existing hearing
+  #   - Run DeleteConferencesJob if hearing is virtual
+  #   - Cancel and recreate hearing task
+  #   - Create ScheduleHearingTask
+  def update_hearing_and_create_hearing_tasks(params:, payload_values:)
     multi_transaction do
       update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
       clean_up_virtual_hearing
       reschedule_or_schedule_later(
-        instructions: instructions,
+        instructions: params["instructions"],
         after_disposition_update: payload_values[:after_disposition_update]
       )
+    end
+  end
+
+  # Set status of self and parent HPR mail task to completed
+  def update_self_and_parent_mail_task(task_hash)
+    multi_transaction do
+      update!(task_hash)
+      update_parent_status
     end
   end
 
