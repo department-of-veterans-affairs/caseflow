@@ -65,7 +65,7 @@ const AddDecisionDateModal = ({ closeHandler, currentIssue, index }) => {
         </div>
         <div>
           <strong {...labelStyling}>
-            Benefit Type:
+            Benefit type:
           </strong>
           {BENEFIT_TYPES[currentIssue.benefitType]}
         </div>
@@ -77,7 +77,7 @@ const AddDecisionDateModal = ({ closeHandler, currentIssue, index }) => {
         </div>
         <div {...dateInputStyling}>
           <DateSelector
-            label="Decision Date"
+            label="Decision date"
             name="decision-date"
             noFutureDates
             onChange={(value) => setDecisionDate(value)}
