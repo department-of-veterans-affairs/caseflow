@@ -120,4 +120,7 @@ Rails.application.configure do
   ENV["PACMAN_API_TOKEN_SECRET"] ||= "client-secret"
   ENV["PACMAN_API_TOKEN_ISSUER"] ||= "issuer-of-our-token"
   ENV["PACMAN_API_SYS_ACCOUNT"] ||= "CSS_ID_OF_OUR_ACCOUNT"
+
+  ENV["CLAIM_EVIDENCE_API_URL"] ||= "https://vefs-claimevidence-int.dev8.bip.va.gov"
+  ENV["CLAIM_EVIDENCE_JWT_TOKEN"] ||= "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NmQxOWE2OC03MDA1LTRhNjgtOWEzNC03MzEzZmI0MjMzNzMiLCJpYXQiOjE1MTYyMzkwMjIsImlzcyI6ImRldmVsb3BlclRlc3RpbmciLCJhcHBsaWNhdGlvbklEIjoiVkJNUy1VSSIsInVzZXJJRCI6ImNob3dhcl9zc3VwZXIiLCJzdGF0aW9uSUQiOiIzMTcifQ.33CyN4lq3WnyON2F4m4SlctTBtonBaySjf_7NDCBLl4"
 end
