@@ -13,10 +13,6 @@ class MultipleOpenRootChildTaskChecker < DataIntegrityChecker
     build_report(appeals_with_multiple_open_root_child_task)
   end
 
-  def slack_channel
-    "#appeals-echo"
-  end
-
   def self.open_exclusive_root_children_tasks(appeal)
     appeal.tasks.open.of_type(EXCLUSIVE_OPEN_TASKS).where(parent: appeal.root_task)
   end
