@@ -8,6 +8,7 @@ begin
    select
      nextval('caseflow_audit.priority_end_product_sync_queue_audit_id_seq'::regclass),
      'D',
+     OLD.id,
      OLD.end_product_establishment_id,
      OLD.batch_id,
      OLD.status,
@@ -20,6 +21,7 @@ begin
    select
      nextval('caseflow_audit.priority_end_product_sync_queue_audit_id_seq'::regclass),
      'U',
+     NEW.id,
      NEW.end_product_establishment_id,
      NEW.batch_id,
      NEW.status,
@@ -32,6 +34,7 @@ begin
    select
      nextval('caseflow_audit.priority_end_product_sync_queue_audit_id_seq'::regclass),
      'I',
+     NEW.id,
      NEW.end_product_establishment_id,
      NEW.batch_id,
      NEW.status,
