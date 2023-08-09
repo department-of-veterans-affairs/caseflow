@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Alert from '../components/Alert';
 import { css } from 'glamor';
@@ -23,7 +24,7 @@ class LastRetrievalAlert extends React.PureComponent {
           a loading error from their eFolder. As a result, you may be viewing a partial list of eFolder documents.
           <br />
           <br />
-          Please visit <a href="https://efolder.cf.ds.va.gov/" target="_blank"> eFolder Express </a> to fetch the
+          Please visit <a href={this.props.appeal.efolderLink} target="_blank" rel="noopener noreferrer"> eFolder Express </a> to fetch the
           latest list of documents or submit a support ticket to sync their eFolder with Reader.
         </Alert>
       </div>;
@@ -39,9 +40,9 @@ class LastRetrievalAlert extends React.PureComponent {
 
       return <div {...alertStyling}>
         <Alert title="Warning" type="warning">
-          Reader last synced the list of documents with {this.props.appeal.veteran_full_name}'s eFolder 
+          Reader last synced the list of documents with {this.props.appeal.veteran_full_name}'s eFolder
           {vbmsDiff} hours ago. If you'd like to view documents in Reader uploaded to their eFolder since
-          the last sync, please visit <a href="https://efolder.cf.ds.va.gov/" target="_blank"> eFolder Express </a>
+          the last sync, please visit <a href={this.props.appeal.efolderLink} target="_blank" rel="noopener noreferrer"> eFolder Express </a>
           to fetch the latest list of documents or submit a support ticket to sync their eFolder with Reader.
         </Alert>
       </div>;
@@ -50,6 +51,11 @@ class LastRetrievalAlert extends React.PureComponent {
     return null;
   }
 }
+
+LastRetrievalAlert.propTypes = {
+  manifestVbmsFetchedAt: PropTypes.string,
+  appeal: PropTypes.object,
+};
 
 export default connect(
   (state) => _.pick(state.documentList, 'manifestVbmsFetchedAt')
