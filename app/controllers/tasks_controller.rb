@@ -93,12 +93,7 @@ class TasksController < ApplicationController
       tasks << valid_task_classes[task_type.to_sym].create_many_from_params(param_group, current_user)
     end
     modified_tasks = [parent_tasks_from_params, tasks].flatten.uniq
-    if modified_tasks[0].appeal_type != "LegacyAppeal"
-      render json: { tasks: json_tasks(modified_tasks) }
-    else
-      render json: {}
-    end
-
+    render json: { tasks: json_tasks(modified_tasks) }
   rescue ActiveRecord::RecordInvalid => error
     invalid_record_error(error.record)
   rescue Caseflow::Error::MailRoutingError => error
@@ -369,6 +364,14 @@ class TasksController < ApplicationController
         .merge(appeal: appeal)
 
       task = task.merge(assigned_to_type: User.name) if !task[:assigned_to_type]
+
+      if appeal.is_a?(LegacyAppeal)
+        if task[:type] == "BlockedSpecialCaseMovementTask" || task[:type] == "SpecialCaseMovementTask"
+          task = task.merge(external_id: params["tasks"][0]["external_id"],
+                            legacy_task_type: params["tasks"][0]["legacy_task_type"],
+                            appeal_type: params["tasks"][0]["appeal_type"])
+        end
+      end
       task
     end
   end
