@@ -586,7 +586,7 @@ describe ClaimReview, :postgres do
     context "it should return the decision review url if there are not any issues without a decision date" do
       let!(:request_issues) do
         [
-          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now - 1.day),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now - 1.week),
           create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
         ]
       end
