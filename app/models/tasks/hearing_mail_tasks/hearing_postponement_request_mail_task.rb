@@ -45,15 +45,11 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   def update_from_params(params, user)
     payload_values = params.delete(:business_payloads)&.dig(:values)
 
-    # TO DO: BUSINESS TO DECIDE WHETHER CANCELLED OR COMPLETED
-    if params[:status] == Constants.TASK_STATUSES.cancelled
+    if params[:status] == Constants.TASK_STATUSES.completed
       # If request to postpone hearing is granted
       if payload_values[:granted]
-        created_tasks = update_hearing_and_create_hearing_tasks(params: params, payload_values: payload_values)
-        update_self_and_parent_mail_task(
-          status: Constants.TASK_STATUSES.completed,
-          completed_by: user
-        )
+        created_tasks = update_hearing_and_create_hearing_tasks(payload_values[:after_disposition_update])
+        update_self_and_parent_mail_task(user: user, params: params, payload_values: payload_values)
 
         [self] + created_tasks
       # If request to postpone hearing is denied
@@ -97,27 +93,11 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     !open_task.hearing.scheduled_for_past?
   end
 
-  # Purpose:
-  #   - Update disposition of existing hearing
-  #   - Run DeleteConferencesJob if hearing is virtual
-  #   - Cancel and recreate hearing task
-  #   - Create ScheduleHearingTask
-  def update_hearing_and_create_hearing_tasks(params:, payload_values:)
+  def update_hearing_and_create_hearing_tasks(after_disposition_update)
     multi_transaction do
       update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
       clean_up_virtual_hearing
-      reschedule_or_schedule_later(
-        instructions: params["instructions"],
-        after_disposition_update: payload_values[:after_disposition_update]
-      )
-    end
-  end
-
-  # Set status of self and parent HPR mail task to completed
-  def update_self_and_parent_mail_task(task_hash)
-    multi_transaction do
-      update!(task_hash)
-      update_parent_status
+      reschedule_or_schedule_later(after_disposition_update)
     end
   end
 
@@ -132,32 +112,68 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     end
   end
 
+  # TO DO: AFFECTED BY WEBEX/PEXIP?
   def clean_up_virtual_hearing
     if hearing.virtual?
       perform_later_or_now(VirtualHearings::DeleteConferencesJob)
     end
   end
 
-  def reschedule_or_schedule_later(instructions:, after_disposition_update:)
+  def reschedule_or_schedule_later(after_disposition_update)
     case after_disposition_update
     when "reschedule"
       "TO-DO: LOGIC FOR APPEALS-24998"
     when "schedule_later"
-      schedule_later(instructions)
+      schedule_later
     else
       fail ArgumentError, "unknown disposition action"
     end
   end
 
-  def schedule_later(instructions)
+  def schedule_later
     new_hearing_task = hearing_task.cancel_and_recreate
 
-    schedule_task = ScheduleHearingTask.create!(
-      appeal: appeal,
-      instructions: instructions,
-      parent: new_hearing_task
-    )
+    schedule_task = ScheduleHearingTask.create!(appeal: appeal, parent: new_hearing_task)
 
     [new_hearing_task, schedule_task].compact
+  end
+
+  def update_self_and_parent_mail_task(user:, params:, payload_values:)
+    updated_instructions = format_instructions_on_completion(
+      admin_context: params[:instructions],
+      granted: payload_values[:granted],
+      date_of_ruling: payload_values[:date_of_ruling]
+    )
+
+    multi_transaction do
+      update!(
+        completed_by: user,
+        status: Constants.TASK_STATUSES.completed,
+        instructions: updated_instructions
+      )
+      update_parent_status
+    end
+  end
+
+  def format_instructions_on_completion(admin_context:, granted:, date_of_ruling:)
+    formatted_date = date_of_ruling.to_date.strftime("%m/%d/%Y")
+
+    text_to_append = <<~TEXT
+
+      ***
+
+      **Marked as complete:**
+
+      **DECISION**
+      Motion to postpone #{granted ? 'GRANTED' : 'DENIED'}
+
+      **DATE OF RULING**
+      #{formatted_date}
+
+      **DETAILS**
+      #{admin_context}
+    TEXT
+
+    [instructions[0] + text_to_append]
   end
 end

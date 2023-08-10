@@ -103,8 +103,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
     return {
       data: {
         task: {
-          // TO DO: BUSINESS TO DECIDE WHETHER CANCELLED OR COMPLETED
-          status: TASK_STATUSES.cancelled,
+          status: TASK_STATUSES.completed,
           instructions,
           // If request is denied, do not assign new disposition to hearing
           business_payloads: {
