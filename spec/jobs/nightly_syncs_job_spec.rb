@@ -155,5 +155,17 @@ describe NightlySyncsJob, :all_dbs do
         expect(board_grant_effectuation_task.reload).to be_assigned
       end
     end
+
+    # our BgsService fake returns five records in the poas_list, this creates one of the records
+    # before the job and verifies that the job creates the remaining four records
+    context "with BGS attorneys" do
+      before { create(:bgs_attorney, participant_id: "12345678") }
+
+      it "creates new attorney records if they do not exist" do
+        subject
+
+        expect(BgsAttorney.count).to eq 5
+      end
+    end
   end
 end
