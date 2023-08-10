@@ -85,7 +85,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
 
       expect(page).to have_content("You have successfully updated")
       expect(page).to have_content("No Show")
-      expect(page).to have_content("This is a note about the hearing!", wait: 10) # flake
+      expect(page).to have_content("This is a note about the hearing!", wait: 10) # flake?
       expect(find_field("Transcript Requested", visible: false)).to be_checked
       expect(find_field("9:00 AM", visible: false)).to be_checked
     end
