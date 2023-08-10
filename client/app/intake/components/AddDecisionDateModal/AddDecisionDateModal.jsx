@@ -71,7 +71,7 @@ const AddDecisionDateModal = ({ closeHandler, currentIssue, index }) => {
         </div>
         <div>
           <strong {...labelStyling}>
-            Issue decription:
+            Issue description:
           </strong>
           {currentIssue.nonRatingIssueDescription || currentIssue.description}
         </div>
