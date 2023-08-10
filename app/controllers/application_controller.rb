@@ -381,7 +381,7 @@ class ApplicationController < ApplicationBaseController
   helper_method :feedback_url
 
   def efolder_express_url
-    ENV["EFOLDER_EXPRESS_URL"]
+    Rails.application.config.efolder_url.to_s
   end
   helper_method :efolder_express_url
 
