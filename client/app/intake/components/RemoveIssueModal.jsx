@@ -1,6 +1,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { removeIssue } from '../actions/addIssues';
 import Modal from '../../components/Modal';
@@ -59,6 +60,13 @@ class RemoveIssueModal extends React.PureComponent {
     </div>;
   }
 }
+
+RemoveIssueModal.propTypes = {
+  closeHandler: PropTypes.func.isRequired,
+  intakeData: PropTypes.object.isRequired,
+  removeIndex: PropTypes.number.isRequired,
+  removeIssue: PropTypes.func.isRequired,
+};
 
 export default connect(
   null,
