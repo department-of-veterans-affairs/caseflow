@@ -6,7 +6,7 @@ describe Certification, :all_dbs do
   end
 
   let(:vacols_case) do
-    create(:case_with_ssoc)
+    create(:case_with_ssoc, :representative_american_legion)
   end
 
   let(:certification) do
@@ -356,9 +356,7 @@ describe Certification, :all_dbs do
 
   context "#fetch_power_of_attorney!" do
     subject { certification }
-
-    it "returns true when bgs address is found",
-       skip: "VACOLS rep test fails sometimes, will be changed with #5185 so ignoring it for now" do
+    it "fetches the power of attorney from bgs and vacols" do
       certification.async_start!
       expect(subject.bgs_rep_city).to eq "SAN FRANCISCO"
       expect(subject.bgs_representative_type).to eq "Attorney"
