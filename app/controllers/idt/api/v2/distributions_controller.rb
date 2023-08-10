@@ -38,9 +38,8 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
 
   def format_response(response)
     response_body = response.raw_body
-
     begin
-      parsed_response = JSON.parse(response_body)
+      parsed_response = JSON.parse(response_body.to_json)
 
       # Convert keys from camelCase to snake_case
       parsed_response.deep_transform_keys do |key|
