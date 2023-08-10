@@ -164,6 +164,17 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     });
   };
 
+  // Example function showing how we can check for remand type
+  showAOJRadioFields = (checkboxValue) => {
+    const val = checkboxValue.charAt(2);
+
+    if (val === 'E') {
+      return false;
+    }
+
+    return true;
+  }
+
   getCheckbox = (option, onChange, checkboxValues) => {
     const rowOptId = `${String(this.props.issue.id)}-${option.id}`;
     const { appeal } = this.props;
@@ -178,7 +189,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
           label={option.label}
           unpadded
         />
-        {checkboxValues[option.id].checked && (
+        {checkboxValues[option.id].checked && this.showAOJRadioFields(rowOptId) && (
           <RadioField
             errorMessage={
               this.props.highlight &&
