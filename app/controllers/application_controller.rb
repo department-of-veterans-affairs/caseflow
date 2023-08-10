@@ -380,6 +380,11 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :feedback_url
 
+  def efolder_express_url
+    ENV["EFOLDER_EXPRESS_URL"]
+  end
+  helper_method :efolder_express_url
+
   def help_url
     {
       "certification" => certification_help_path,
