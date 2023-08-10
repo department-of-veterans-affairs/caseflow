@@ -883,6 +883,7 @@
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
   "CORRECT_REQUEST_ISSUES_WITHDRAW": "Withdraw",
   "CORRECT_REQUEST_ISSUES_SAVE": "Save",
+  "CORRECT_REQUEST_ISSUES_ESTABLISH": "Establish",
   "CORRECT_REQUEST_ISSUES_SPLIT_APPEAL": "Split appeal",
   "CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TITLE": "Remove review?",
   "CORRECT_REQUEST_ISSUES_REMOVE_VBMS_TEXT": "This will remove the review and cancel all the End Products associated with it.",
@@ -925,6 +926,7 @@
   "UPDATE_POA_PAGE_DESCRIPTION": "Add the appellant’s POA information based on the VA Form 21-22, so they can be notified of any correspondence sent to the claimant. If you are unable to find their name in the list of options, please select \"Name not listed\" and add their information accordingly.",
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
   "INTAKE_WITHDRAWN_BANNER": "This review will be withdrawn. You can intake these issues as a different type of decision review, if that was requested.",
+  "CLAIM_REVIEW_WITHDRAWN_MESSAGE": "You have successfully withdrawn a review.",
   "INTAKE_RATING_MAY_BE_PROCESS": "Rating may be in progress",
   "INTAKE_VETERAN_PAY_GRADE_INVALID": "Please check the Veteran's pay grade data in VBMS or SHARE to ensure all values are valid and try again.",
   "INTAKE_CONTENTION_HAS_EXAM_REQUESTED": "A medical exam is requested. Issue cannot be removed.",
@@ -1383,5 +1385,7 @@
   "DATE_SELECTOR_INVALID_DATE_ERROR": "Please select a valid date",
   "VHA_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold (Value must be between 1 and 45 for VHA users)",
   "VHA_CANCEL_TASK_INSTRUCTIONS_LABEL": "Why are you returning? Provide any important context",
-  "DISPOSITION_DECISION_DATE_LABEL": "Thank you for completing your decision in Caseflow. Please indicate the decision date."
+  "DISPOSITION_DECISION_DATE_LABEL": "Thank you for completing your decision in Caseflow. Please indicate the decision date.",
+  "VHA_ADD_DECISION_DATE_TO_ISSUE_SUCCESS_MESSAGE": "You have successfully updated an issue's decision date",
+  "NO_DATE_ENTERED": "No date entered"
 }

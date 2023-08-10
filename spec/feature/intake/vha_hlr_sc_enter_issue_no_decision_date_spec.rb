@@ -51,41 +51,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       expect(page).to have_content("Decision date: No date entered")
       expect(page).to have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
 
-      # TODO: Add more stuff after editing is working
-      # Hit the first and add a decision date
       expect(page).to have_button("Save", disabled: true)
-
-      # within "#issue-0" do
-      #   select("Add decision date", from: "issue-action-0")
-      # end
-
-      # future_date = Time.zone.now + 1.week.to_s
-      # past_date = Time.zone.now - 1.week
-
-      # fill_in "decision_date", with: future_date
-
-      # # This should be the decision date modal button instead of the previous button
-      # # The button should be disabled since the date is in the future
-      # expect(page).to have_button("Save", disabled: true)
-
-      # fill_in "decision date", with: past_date
-
-      # # Make sure this is the correct button
-      # click_on("Save")
-
-      # # Check that the Edit Issues save button is now establish
-      # expect(page).to have_content("Decision date: #{past_date.to_date}")
-      # expect(page).to have_button("Establish", disabled: false)
-
-      # click_on("Establish")
-
-      # # task should now be assigned and on the in progress tab
-      # expect(page).to_not have_content(COPY::VHA_INCOMPLETE_TAB_DESCRIPTION)
-      # expect(page).to have_content(edit_establish_success_message_text)
-      # expect(current_url).to include("/decision_reviews/vha?tab=in_progress")
-
-      # task.reload
-      # expect(task.status).to eq("assigned")
     end
   end
 

@@ -137,7 +137,7 @@ class SaveButtonUnconnected extends React.Component {
     let saveButtonText;
 
     if (benefitType === 'vha' && _.every(addedIssues, (issue) => issue.decisionDate)) {
-      saveButtonText = 'Establish';
+      saveButtonText = COPY.CORRECT_REQUEST_ISSUES_ESTABLISH;
     } else {
       saveButtonText = withdrawReview ? COPY.CORRECT_REQUEST_ISSUES_WITHDRAW : COPY.CORRECT_REQUEST_ISSUES_SAVE;
     }

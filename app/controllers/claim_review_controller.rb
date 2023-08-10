@@ -137,7 +137,7 @@ class ClaimReviewController < ApplicationController
   end
 
   def vha_edited_decision_date_message
-    "You have successfully updated an issue's decision date"
+    COPY::VHA_ADD_DECISION_DATE_TO_ISSUE_SUCCESS_MESSAGE
   end
 
   def vha_established_message
@@ -176,7 +176,7 @@ class ClaimReviewController < ApplicationController
   end
 
   def review_withdrawn_message
-    "You have successfully withdrawn a review."
+    COPY::CLAIM_REVIEW_WITHDRAWN_MESSAGE
   end
 
   def claim_label_edit_params
