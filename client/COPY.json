@@ -134,7 +134,7 @@
   "CASE_DETAILS_UNRECOGNIZED_APPELLANT": "This appellant is not listed in VBMS. To update this information, please edit directly in Caseflow.",
   "CASE_DETAILS_UNRECOGNIZED_ATTORNEY_APPELLANT": "This appellant data comes from VBMS. To edit this information, please submit an action to the VLJ Support team.",
   "CASE_DETAILS_NO_POA": "VA Form 21-22 was not received at Intake. To add the appellant's POA, please submit an admin action to the VLJ Support team.",
-  "CASE_DETAILS_NO_POA_VHA": "No known POA",
+  "CASE_DETAILS_NO_POA_VHA": "No known POA.",
   "CASE_DETAILS_VETERAN_ADDRESS_SOURCE": "Veteran information comes from VBMS. To update the veteran's information, please send a request to the VLJ support staff.",
   "CASE_DETAILS_UNABLE_TO_LOAD": "We're unable to load this information. If the problem persists, please submit feedback through Caseflow",
   "CASE_DETAILS_LOADING": "Loading...",
