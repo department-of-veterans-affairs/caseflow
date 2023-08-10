@@ -68,7 +68,7 @@ export class PdfListView extends React.Component {
       <AppSegment filledBackground>
         <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
-          <LastRetrievalAlert appeal={this.props.appeal} />
+          <LastRetrievalAlert efolderExpressUrl={this.props.efolderExpressUrl} appeal={this.props.appeal} />
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}
@@ -108,6 +108,8 @@ export default connect(
 
 PdfListView.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.object).isRequired,
+  efolderExpressUrl: PropTypes.string,
   onJumpToComment: PropTypes.func,
-  sortBy: PropTypes.string
+  sortBy: PropTypes.string,
+  appeal: PropTypes.object,
 };
