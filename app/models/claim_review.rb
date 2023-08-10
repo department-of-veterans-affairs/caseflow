@@ -123,9 +123,6 @@ class ClaimReview < DecisionReview
     handle_issues_with_no_decision_date!
   end
 
-  # TODO: I don't know if this will have problems because request_issues_update might be async?
-  # Should it check this or just task status?
-  # If task status is always set at this point, it's better to check that
   def redirect_url
     if benefit_type == "vha" && request_issues_without_decision_dates?
       "#{business_line.tasks_url}?tab=incomplete"
