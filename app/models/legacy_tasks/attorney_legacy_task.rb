@@ -50,7 +50,7 @@ class AttorneyLegacyTask < LegacyTask
        FeatureToggle.enabled?(:vlj_legacy_appeal)
       COPY::ATTORNEY_REWRITE_TASK_LEGACY_LABEL
     else
-      COPY::ATTORNEY_REWRITE_TASK_LABEL
+      COPY::ATTORNEY_TASK_LABEL
     end
   end
 end
