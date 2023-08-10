@@ -92,7 +92,8 @@ const DocumentViewer = (props) => {
       return dispatch(toggleTagEdit(false));
     },
     generateTags: () => {
-      dispatch(generateAutoTags({doc: state.currentDocument}))
+      if(!state.currentDocument.auto_tagged)
+        dispatch(generateAutoTags({doc: state.currentDocument}))
     },
     changeTags: (values, deleted) => {
       // Delete tags if there are any removed
