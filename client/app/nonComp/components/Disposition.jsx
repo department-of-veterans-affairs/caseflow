@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import update from 'immutability-helper';
 import moment from 'moment';
-import { css } from 'glamor';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
@@ -95,18 +93,6 @@ class NonCompDecisionIssue extends React.PureComponent {
     </div>;
   }
 }
-
-const editAppellantInformationLinkStyling = css({
-  fontSize: '2rem',
-  fontWeight: 'normal',
-  margin: '5px',
-});
-
-//  both const updatePOALink and editPOAInformation needs to be changed when working
-// refreshPOA botton story.
-
-const updatePOALink = true;
-const editPOAInformation = true;
 
 class NonCompDispositions extends React.PureComponent {
   constructor(props) {
@@ -209,18 +195,6 @@ class NonCompDispositions extends React.PureComponent {
             <h2>{COPY.CASE_DETAILS_POA_SUBSTITUTE} </h2>
             <PowerOfAttorneyDecisionReview
               appealId={task.appeal.uuid}
-              additionalHeaderContent={
-                editPOAInformation && (
-                  <span
-                    className="cf-push-right"
-                    {...editAppellantInformationLinkStyling}
-                  >
-                    <Link to={`/queue/appeals/${task.appeal.uuid}/edit_poa_information`}>
-                      {updatePOALink}
-                    </Link>
-                  </span>
-                )
-              }
             />
           </div>
         </div>

@@ -184,6 +184,7 @@ module Seeds
       end
     end
 
+    # :reek:FeatureEnvy
     def create_vha_program_office
       # on_hold and ready_for_review tabs are populated by populating the VISN queues linked to PO orgs
       tabs = [:assigned, :in_progress, :completed]

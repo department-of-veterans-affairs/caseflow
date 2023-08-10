@@ -15,6 +15,7 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
         id: task.id.to_s,
         type: :board_grant_effectuation_task,
         attributes: {
+          has_poa: true,
           claimant: { name: appeal.veteran_full_name, relationship: "self" },
           appeal: {
             id: appeal.external_id,
@@ -25,10 +26,12 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
             appellant_type: appeal.claimant.type
           },
           power_of_attorney: {
-            representative_address: appeal.power_of_attorney&.representative_address,
-            representative_email_address: appeal.power_of_attorney&.representative_email_address,
-            representative_name: appeal.power_of_attorney&.representative_name,
-            representative_type: appeal.power_of_attorney&.representative_type
+            representative_address: appeal&.representative_address,
+            representative_email_address: appeal&.representative_email_address,
+            representative_name: appeal&.representative_name,
+            representative_type: appeal&.representative_type,
+            representative_tz: appeal&.representative_tz,
+            poa_last_synced_at: appeal&.poa_last_synced_at
           },
           appellant_type: appeal.claimant.type,
           veteran_participant_id: veteran.participant_id,
@@ -64,6 +67,7 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
           id: task.id.to_s,
           type: :board_grant_effectuation_task,
           attributes: {
+            has_poa: true,
             claimant: { name: "claimant", relationship: "Unknown" },
             appeal: {
               id: appeal.external_id,
@@ -75,10 +79,12 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
             },
             appellant_type: appeal.claimant.type,
             power_of_attorney: {
-              representative_address: appeal.power_of_attorney&.representative_address,
-              representative_email_address: appeal.power_of_attorney&.representative_email_address,
-              representative_name: appeal.power_of_attorney&.representative_name,
-              representative_type: appeal.power_of_attorney&.representative_type
+              representative_address: appeal&.representative_address,
+              representative_email_address: appeal&.representative_email_address,
+              representative_name: appeal&.representative_name,
+              representative_type: appeal&.representative_type,
+              representative_tz: appeal&.representative_tz,
+              poa_last_synced_at: appeal&.poa_last_synced_at
             },
             veteran_participant_id: veteran.participant_id,
             veteran_ssn: veteran.ssn,
@@ -118,6 +124,7 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
           id: task.id.to_s,
           type: :board_grant_effectuation_task,
           attributes: {
+            has_poa: true,
             claimant: { name: claimant.name, relationship: "Veteran" },
             appeal: {
               id: appeal.external_id,
@@ -129,10 +136,12 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
             },
             appellant_type: appeal.claimant.type,
             power_of_attorney: {
-              representative_address: appeal.power_of_attorney&.representative_address,
-              representative_email_address: appeal.power_of_attorney&.representative_email_address,
-              representative_name: appeal.power_of_attorney&.representative_name,
-              representative_type: appeal.power_of_attorney&.representative_type
+              representative_address: appeal&.representative_address,
+              representative_email_address: appeal&.representative_email_address,
+              representative_name: appeal&.representative_name,
+              representative_type: appeal&.representative_type,
+              representative_tz: appeal&.representative_tz,
+              poa_last_synced_at: appeal&.poa_last_synced_at
             },
             veteran_participant_id: veteran.participant_id,
             veteran_ssn: veteran.ssn,
