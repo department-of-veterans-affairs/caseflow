@@ -32,7 +32,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   def available_actions(user)
     return [] unless user.in_hearing_admin_team?
 
-    if active_schedule_hearing_task? || open_assign_hearing_disposition_task?
+    if active_schedule_hearing_tasks.any? || open_assign_disposition_task_for_upcoming_hearing?
       TASK_ACTIONS
     else
       [
@@ -68,53 +68,63 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
   private
 
-  def hearing
-    # TO-DO: Is this acceptable? Especially in case of request recieved after hearing held?
-    #   - On that note, #available_actions might also fail?
-    @hearing ||= appeal.hearings.last
+  # TO-DO: Edge case of request recieved after hearing held?
+  #   - On that note, #available_actions might also fail?
+  def open_hearing
+    return nil unless open_assign_disposition_task_for_upcoming_hearing?
+
+    @open_hearing ||= open_assign_hearing_disposition_task.hearing
   end
 
   def hearing_task
-    @hearing_task ||= hearing.hearing_task
+    @hearing_task ||= open_hearing&.hearing_task ||
+                      active_schedule_hearing_tasks[0].parent
   end
 
-  def active_schedule_hearing_task?
-    appeal.tasks.where(type: ScheduleHearingTask.name).active.any?
+  def active_schedule_hearing_tasks
+    appeal.tasks.where(type: ScheduleHearingTask.name).active
   end
 
-  def open_assign_hearing_disposition_task?
-    # ChangeHearingDispositionTask is a subclass of AssignHearingDispositionTask
-    disposition_task_names = [AssignHearingDispositionTask.name, ChangeHearingDispositionTask.name]
-    open_task = appeal.tasks.where(type: disposition_task_names).open.first
+  def open_assign_disposition_task_for_upcoming_hearing?
+    return false unless open_assign_hearing_disposition_task&.hearing
 
-    return false unless open_task&.hearing
+    !open_assign_hearing_disposition_task.hearing.scheduled_for_past?
+  end
 
-    # Ensure hearing associated with AssignHearingDispositionTask is not scheduled in the past
-    !open_task.hearing.scheduled_for_past?
+  # ChangeHearingDispositionTask is a subclass of AssignHearingDispositionTask
+  ASSIGN_HEARING_DISPOSITION_TASKS = [
+    AssignHearingDispositionTask.name,
+    ChangeHearingDispositionTask.name
+  ].freeze
+
+  def open_assign_hearing_disposition_task
+    @open_assign_hearing_disposition_task ||= appeal.tasks.where(type: ASSIGN_HEARING_DISPOSITION_TASKS).open.first
   end
 
   def update_hearing_and_create_hearing_tasks(after_disposition_update)
     multi_transaction do
-      update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
-      clean_up_virtual_hearing
+      unless open_hearing.nil?
+        update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
+        clean_up_virtual_hearing
+      end
       reschedule_or_schedule_later(after_disposition_update)
     end
   end
 
   def update_hearing(hearing_hash)
     # Ensure the hearing exists
-    fail HearingAssociationMissing, hearing_task&.id if hearing.nil?
+    fail HearingAssociationMissing, hearing_task&.id if open_hearing.nil?
 
-    if hearing.is_a?(LegacyHearing)
-      hearing.update_caseflow_and_vacols(hearing_hash)
+    if open_hearing.is_a?(LegacyHearing)
+      open_hearing.update_caseflow_and_vacols(hearing_hash)
     else
-      hearing.update(hearing_hash)
+      open_hearing.update(hearing_hash)
     end
   end
 
   # TO DO: AFFECTED BY WEBEX/PEXIP?
   def clean_up_virtual_hearing
-    if hearing.virtual?
+    if open_hearing.virtual?
       perform_later_or_now(VirtualHearings::DeleteConferencesJob)
     end
   end
@@ -132,7 +142,6 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
   def schedule_later
     new_hearing_task = hearing_task.cancel_and_recreate
-
     schedule_task = ScheduleHearingTask.create!(appeal: appeal, parent: new_hearing_task)
 
     [new_hearing_task, schedule_task].compact
