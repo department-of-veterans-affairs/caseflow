@@ -27,12 +27,6 @@ const CancelTaskModal = (props) => {
   const isVhaOffice = () => props.task.assignedTo.type === 'VhaRegionalOffice' ||
     props.task.assignedTo.type === 'VhaProgramOffice';
 
-  const isNotificationLetterTask = () => [
-    'SendInitialNotificationLetterTask',
-    'PostSendInitialNotificationLetterHoldingTask',
-    'SendFinalNotificationLetterTask'
-  ];
-
   const formatInstructions = () => {
     const reason_text = isVhaOffice() ?
       '##### REASON FOR RETURN:' :
@@ -97,7 +91,9 @@ const CancelTaskModal = (props) => {
     modalProps.submitDisabled = !validateForm();
   }
 
-  if (isNotificationLetterTask.includes(props.task.type)) {
+  if (props.task.type === 'SendInitialNotificationLetterTask' ||
+    props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ||
+    props.task.type === 'SendFinalNotificationLetterTask') {
     return (
       <QueueFlowModal
         title={taskData?.modal_title ?? ''}
