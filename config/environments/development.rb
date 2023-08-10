@@ -82,10 +82,10 @@ Rails.application.configure do
 
   # BatchProcess ENVs
   # priority_ep_sync
-  ENV["BATCH_PROCESS_JOB_DURATION"] ||= "1" # Number of hours the job will run for
+  ENV["BATCH_PROCESS_JOB_DURATION"] ||= "50" # Number of minutes the job will run for
   ENV["BATCH_PROCESS_SLEEP_DURATION"] ||= "5" # Number of seconds between loop iterations
   ENV["BATCH_PROCESS_BATCH_LIMIT"]||= "100" # Max number of records in a batch
-  ENV["BATCH_PROCESS_ERROR_DELAY"] ||= "12" # In number of hours
+  ENV["BATCH_PROCESS_ERROR_DELAY"] ||= "3" # In number of hours
   ENV["BATCH_PROCESS_MAX_ERRORS_BEFORE_STUCK"] ||= "3" # When record errors for X time, it's declared stuck
 
   # Necessary vars needed to create virtual hearing links
@@ -101,7 +101,7 @@ Rails.application.configure do
   ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"] ||= "1000"
 
   # Populate End Product Sync Queue ENVs
-  ENV["END_PRODUCT_QUEUE_JOB_DURATION"] ||= "1" # Number of hours the job will run for
+  ENV["END_PRODUCT_QUEUE_JOB_DURATION"] ||= "50" # Number of minutes the job will run for
   ENV["END_PRODUCT_QUEUE_SLEEP_DURATION"] ||= "5" # Number of seconds between loop iterations
   ENV["END_PRODUCT_QUEUE_BATCH_LIMIT"] ||= "500" # Max number of records in a batch
 

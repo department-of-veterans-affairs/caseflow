@@ -18,15 +18,16 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
   # RedisMutex.with_lock("PriorityEpSyncBatchProcessJob", block: 60, expire: 100)
   # Key => "PriorityEpSyncBatchProcessJob"
 
-  JOB_DURATION ||= ENV["BATCH_PROCESS_JOB_DURATION"].to_i.hour
+  JOB_DURATION ||= ENV["BATCH_PROCESS_JOB_DURATION"].to_i.minutes
   SLEEP_DURATION ||= ENV["BATCH_PROCESS_SLEEP_DURATION"].to_i
 
   before_perform do |job|
     JOB_ATTR = job
   end
 
-  # Attempts to create & process batches for an hour
-  # There will be a 1 minute rest between each iteration
+  # Attempts to create & process batches for 50 minutes
+  # There will be a 5 second rest between each iteration
+  # Job will end if there are no records are left to batch
 
   # rubocop:disable Metrics/MethodLength
   def perform
