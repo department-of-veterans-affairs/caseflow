@@ -91,6 +91,15 @@
   margin: 1em 0 0;
   font-size: 15px;
   font-weight: 900;
+  margin-bottom: 2.4rem;
+}
+
+.task-instructions > h6 {
+  margin: 1em 0 0;
+  font-size: 17px;
+  font-weight: 900;
+  margin-bottom: 2.4rem;
+  text-transform: none;
 }
 
 .task-instructions > p {
@@ -102,5 +111,5 @@
 }
 
 .task-instructions > hr {
-  margin-bottom: 2rem;
+  margin-bottom: 2.4rem;
 }

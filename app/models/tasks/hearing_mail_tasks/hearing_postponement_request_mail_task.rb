@@ -158,11 +158,11 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   def format_instructions_on_completion(admin_context:, granted:, date_of_ruling:)
     formatted_date = date_of_ruling.to_date.strftime("%m/%d/%Y")
 
-    text_to_append = <<~TEXT
+    markdown_to_append = <<~EOS
 
       ***
 
-      **Marked as complete:**
+      ###### Marked as complete:
 
       **DECISION**
       Motion to postpone #{granted ? 'GRANTED' : 'DENIED'}
@@ -172,8 +172,8 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
       **DETAILS**
       #{admin_context}
-    TEXT
+    EOS
 
-    [instructions[0] + text_to_append]
+    [instructions[0] + markdown_to_append]
   end
 end
