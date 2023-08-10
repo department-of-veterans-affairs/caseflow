@@ -97,11 +97,11 @@ class AppealsController < ApplicationController
     series_id = "{#{params[:series_id]}}".upcase
     document = Document.find_by(series_id: series_id, file_number: appeal.veteran_file_number)
 
-    if !document
+    unless document
       document = VBMSService.fetch_document_series_for(appeal).map(&:series_id).include?(series_id)
     end
 
-    render json: { document_presence: !!document }
+    render json: { document_presence: document.present? }
   end
 
   def power_of_attorney
