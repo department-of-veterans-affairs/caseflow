@@ -58,6 +58,7 @@ const powerOfAttorneyDecisionReviewWrapper = (WrappedComponent) => {
       appealId={taskId}
       poaAlert={poaAlert}
       appellantType={appellantType}
+      vha
     />;
   };
 
@@ -69,7 +70,8 @@ const powerOfAttorneyDecisionReviewWrapper = (WrappedComponent) => {
       alertType: PropTypes.string,
       message: PropTypes.string,
       powerOfAttorney: PropTypes.object
-    })
+    }),
+    vha: PropTypes.bool
   };
 
   return wrappedComponent;

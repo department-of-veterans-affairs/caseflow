@@ -97,7 +97,7 @@ export const PowerOfAttorneyNameUnconnected = ({ powerOfAttorney }) => (
 /**
  * Component that displays details about the power of attorney.
  */
-export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, poaAlert, appellantType }) => {
+export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, poaAlert, appellantType, vha }) => {
   let poa = powerOfAttorney;
 
   if (poaAlert.powerOfAttorney) {
@@ -139,14 +139,18 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
     }
   };
   const renderBottomMessage = () => {
+    const poaExplainerText = vha ? COPY.CASE_DETAILS_POA_EXPLAINER_VHA : COPY.CASE_DETAILS_POA_EXPLAINER;
+    const noPoaText = vha ? COPY.CASE_DETAILS_NO_POA_VHA : COPY.CASE_DETAILS_NO_POA;
+    const unrecognizedPoaText = vha ? COPY.CASE_DETAILS_UNRECOGNIZED_POA_VHA : COPY.CASE_DETAILS_UNRECOGNIZED_POA;
+
     if (!showPoaDetails && !poaAlert.powerOfAttorney) {
-      return COPY.CASE_DETAILS_NO_POA;
+      return noPoaText;
     }
     if (isRecognizedPoa) {
-      return COPY.CASE_DETAILS_POA_EXPLAINER;
+      return poaExplainerText;
     }
 
-    return COPY.CASE_DETAILS_UNRECOGNIZED_POA;
+    return unrecognizedPoaText;
   };
 
   return (
@@ -182,7 +186,8 @@ PowerOfAttorneyNameUnconnected.propTypes = PowerOfAttorneyDetailUnconnected.prop
     powerOfAttorney: PropTypes.object
   }),
   appealId: PropTypes.string,
-  appellantType: PropTypes.string
+  appellantType: PropTypes.string,
+  vha: PropTypes.bool
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators(

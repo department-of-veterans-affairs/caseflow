@@ -335,6 +335,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       expect(page).to have_text("Email Address: #{in_progress_task.representative_email_address}")
 
       expect(page).to have_text("Address")
+      expect(page).to have_content(COPY::CASE_DETAILS_POA_EXPLAINER_VHA)
       full_address = in_progress_task.power_of_attorney.representative_address
       sliced_full_address = full_address.slice!(:country)
       sliced_full_address.each do |address|
@@ -383,6 +384,28 @@ feature "NonComp Dispositions Task Page", :postgres do
       click_on COPY::REFRESH_POA
       expect(page).to have_text("Power of Attorney (POA) data comes from VBMS")
       expect(page).to have_text(COPY::POA_SUCCESSFULLY_REFRESH_MESSAGE)
+    end
+
+    context "with no POA" do
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return({})
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return({})
+      end
+      it "should display the VHA-specific text" do
+        visit dispositions_url
+        expect(page).to have_content(COPY::CASE_DETAILS_NO_POA_VHA)
+      end
+    end
+
+    context "with an unrecognized POA" do
+      let(:poa) { in_progress_task.power_of_attorney }
+      before do
+        poa.update(representative_type: "Unrecognized representative")
+      end
+      it "should display the VHA-specific text" do
+        visit dispositions_url
+        expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA_VHA)
+      end
     end
   end
 
