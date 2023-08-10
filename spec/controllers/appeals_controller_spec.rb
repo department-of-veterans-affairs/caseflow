@@ -383,11 +383,11 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     context "Appeal" do
       let(:appeal) { create(:appeal) }
       context "when document exists in the documents table" do
-        let!(:document) {
+        let!(:document) do
           create(:document,
                  series_id: "{#{series_id.upcase}}",
                  file_number: appeal.veteran_file_number)
-        }
+        end
         include_examples "document present"
       end
 
@@ -405,11 +405,11 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
     context "LegacyAppeal" do
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
       context "when document exists in the documents table" do
-        let!(:document) {
+        let!(:document) do
           create(:document,
                  series_id: "{#{series_id.upcase}}",
                  file_number: appeal.veteran_file_number)
-        }
+        end
         include_examples "document present"
       end
 
