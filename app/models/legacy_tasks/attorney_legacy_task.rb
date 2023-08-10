@@ -38,6 +38,10 @@ class AttorneyLegacyTask < LegacyTask
     COPY::CASE_TIMELINE_ATTORNEY_TASK
   end
 
+  def actions_allowable?(_user)
+    true
+  end
+
   def label
     return false if appeal.case_record.nil?
 
