@@ -75,7 +75,7 @@ class AssignToView extends React.Component {
   };
 
   setModalOnChangeValue = (stateValue, value) => {
-    this.setState({ [stateValue]: value }, function() {
+    this.setState({ [stateValue]: value }, function () {
       if (this.state.instructions.trim().length > 0) {
         this.setState({ modalDisableButton: false });
       } else {
@@ -185,7 +185,7 @@ class AssignToView extends React.Component {
     const splitAssignee = assignee.split(' ');
 
     if (splitAssignee.length >= 3) {
-      assignee = `${splitAssignee[0] } ${ splitAssignee[2]}`;
+      assignee = `${splitAssignee[0]} ${splitAssignee[2]}`;
     }
 
     return assignee;
@@ -308,10 +308,14 @@ class AssignToView extends React.Component {
   }
 
   assignToVHARegionalOfficeRadioOptions = [
-    { displayText: COPY.VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VAMC,
-      value: 'vamc' },
-    { displayText: COPY.VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VISN,
-      value: 'visn' }
+    {
+      displayText: COPY.VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VAMC,
+      value: 'vamc'
+    },
+    {
+      displayText: COPY.VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VISN,
+      value: 'visn'
+    }
   ]
 
   assignToVHARegionalOfficeRadioChanged = (option) => {
@@ -405,11 +409,11 @@ class AssignToView extends React.Component {
               />
             )}
             {this.isVHAAssignToRegional() &&
-            this.state.assignToVHARegionalOfficeSelection === 'vamc' &&
-            this.state.selectedValue !== null && (
+              this.state.assignToVHARegionalOfficeSelection === 'vamc' &&
+              this.state.selectedValue !== null && (
               <div className="assign-vamc-visn-display">
                 <u>VISN</u>
-                <div>{ this.getVisn().label }</div>
+                <div>{this.getVisn().label}</div>
               </div>
             )}
             <br />
