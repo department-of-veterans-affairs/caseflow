@@ -13,6 +13,8 @@ class DeprecationWarningSubscriber < ActiveSupport::Subscriber
     emit_warning_to_application_logs(event)
     emit_warning_to_sentry(event)
     emit_warning_to_slack_alerts_channel(event)
+  rescue StandardError => error
+    Raven.capture_exception(error)
   end
 
   private
