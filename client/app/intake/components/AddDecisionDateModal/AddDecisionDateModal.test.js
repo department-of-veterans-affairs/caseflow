@@ -21,8 +21,9 @@ describe('AddDecisionDateModal', () => {
     );
 
   it('renders', () => {
-    setup(mockData);
+    const modal = setup(mockData);
 
+    expect(modal).toMatchSnapshot();
     expect(screen.getByText('Add Decision Date')).toBeInTheDocument();
   });
 
@@ -31,6 +32,5 @@ describe('AddDecisionDateModal', () => {
     const save = screen.getByText('Save');
 
     expect(save).toHaveAttribute('disabled');
-
   });
 });
