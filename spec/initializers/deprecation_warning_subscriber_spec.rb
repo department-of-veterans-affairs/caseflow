@@ -67,7 +67,7 @@ describe "DeprecationWarningSubscriber" do
       )
     end
 
-    context "when an exeption ocurrs" do
+    context "when an exception occurs" do
       before { allow(slack_service).to receive(:send_notification).and_raise(StandardError) }
 
       it "logs error to Sentry" do
