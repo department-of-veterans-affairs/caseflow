@@ -26,7 +26,6 @@ const updateFromServerIntake = (state, serverIntake) => {
 
 export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
-    addDecisionDateModalVisible: false,
     addIssuesModalVisible: false,
     nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
