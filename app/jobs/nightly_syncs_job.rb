@@ -30,7 +30,11 @@ class NightlySyncsJob < CaseflowJob
 
       # delete pure danglers
       if any_task?(legacy_appeal)
-        legacy_appeal.destroy!
+        begin
+          legacy_appeal.destroy!
+        rescue ActiveRecord::InvalidForeignKey => error
+          capture_exception(error: error, extra: { legacy_appeal_id: legacy_appeal.id })
+        end
       else
         # if we have tasks and no case_record, then we need to cancel all the tasks,
         # but we do not delete the dangling LegacyAppeal record.

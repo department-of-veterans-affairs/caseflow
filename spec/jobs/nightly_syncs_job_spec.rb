@@ -117,6 +117,21 @@ describe NightlySyncsJob, :all_dbs do
           expect(legacy_appeal.reload.tasks.open).to be_empty
         end
       end
+
+      context "with existing FK associations" do
+        let!(:legacy_appeal) { create(:legacy_appeal) }
+        let!(:legacy_hearing) { create(:legacy_hearing, appeal: legacy_appeal) }
+        let!(:snapshot) { AppealStreamSnapshot.create!(appeal: legacy_appeal, hearing: legacy_hearing) }
+
+        it "handles the error and doesn't delete record" do
+          allow(Raven).to receive(:capture_exception)
+          subject
+
+          expect(legacy_appeal.reload).to_not be_nil
+          expect(Raven).to have_received(:capture_exception)
+            .with(anything, extra: { legacy_appeal_id: legacy_appeal.id })
+        end
+      end
     end
 
     context "open DecisionReviewTasks" do
