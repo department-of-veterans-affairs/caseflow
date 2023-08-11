@@ -8,7 +8,7 @@ class NightlySyncsJob < CaseflowJob
 
   def perform
     RequestStore.store[:current_user] = User.system_user
-    @slack_report = []
+    @slack_report ||= []
 
     sync_vacols_cases
     sync_vacols_users
@@ -64,6 +64,7 @@ class NightlySyncsJob < CaseflowJob
     legacy_appeal.tasks.none? && legacy_appeal.dispatch_tasks.none?
   end
 
+  # :reek:FeatureEnvy
   def sync_decision_review_tasks
     # tasks that went unfinished while the case was completed should be cancelled
     checker = DecisionReviewTasksForInactiveAppealsChecker.new
