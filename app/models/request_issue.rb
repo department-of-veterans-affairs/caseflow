@@ -501,7 +501,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def save_decision_date!(new_decision_date)
-    fail DecisionDateInFutureError, id if new_date.to_date > Time.zone.today
+    fail DecisionDateInFutureError, id if new_decision_date.to_date > Time.zone.today
 
     update!(decision_date: new_decision_date)
 
