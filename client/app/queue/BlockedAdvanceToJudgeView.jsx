@@ -11,7 +11,7 @@ import COPY from '../../COPY';
 import { onReceiveAmaTasks } from './QueueActions';
 import { requestSave, resetSuccessMessages, highlightInvalidFormItems } from './uiReducer/uiActions';
 import { taskActionData } from './utils';
-import { taskById, appealWithDetailSelector, allHearingTasksForAppeal, getAllHiaringChildren } from './selectors';
+import { taskById, appealWithDetailSelector, allHearingTasksForAppeal, getAllHiringChildren } from './selectors';
 
 import QueueFlowPage from './components/QueueFlowPage';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -329,7 +329,7 @@ const mapStateToProps = (state, ownProps) => {
     task: taskById(state, { taskId: ownProps.taskId }),
     allHearingTasks: allHearingTasksForAppeal(state, { appealId: appeal?.externalId }),
     appeal: appealWithDetailSelector(state, ownProps),
-    currentChildren: getAllHiaringChildren(state, ownProps)
+    currentChildren: getAllHiringChildren(state, ownProps)
   };
 };
 
