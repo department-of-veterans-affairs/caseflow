@@ -89,6 +89,13 @@ export const getAllTasksForAppeal = createSelector(
   }
 );
 
+export const getRootTaskLegacyAppealSCM = createSelector(
+  [getAmaTasks],
+  (amaTasks) => {
+    return filter(amaTasks, (task) => task);
+  }
+);
+
 export const appealsByCaseflowVeteranId = createSelector(
   [appealsWithDetailsSelector, getCaseflowVeteranId],
   (appeals, caseflowVeteranId) =>
@@ -331,8 +338,8 @@ export const getLegacyTaskTree = createSelector(
           moment(judgeDecisionReviewTask.assignedOn));
 
         return task.uniqueId !== judgeDecisionReviewTask.uniqueId &&
-        timelineRange.contains(taskCreatedAt) &&
-        timelineRange.contains(taskClosedAt);
+          timelineRange.contains(taskCreatedAt) &&
+          timelineRange.contains(taskClosedAt);
       })
 );
 
