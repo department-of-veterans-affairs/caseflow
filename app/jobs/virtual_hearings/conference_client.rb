@@ -14,10 +14,18 @@ module VirtualHearings::ConferenceClient
     when "webex"
       msg = "You hit the Webex Service!"
       fail Caseflow::Error::WebexApiError, message: msg
+      # @client ||= WebexService.new(
+      #   host: ENV["WEBEX_MANAGEMENT_NODE_HOST"],
+      #   port: ENV["WEBEX_MANAGEMENT_NODE_PORT"],
+      #   user_name: ENV["WEBEX_USERNAME"],
+      #   password: ENV["WEBEX_PASSWORD"],
+      #   client_host: ENV["WEBEX_CLIENT_HOST"]
+      # )
     else
       begin
-        fail ConferenceCreationError::MeetingTypeNotFoundError
-      rescue ConferenceCreationError::MeetingTypeNotFoundError => error
+        msg = "Meeting type for the user is invalid"
+        fail Caseflow::Error::MeetingTypeNotFoundError, message: msg
+      rescue Caseflow::Error::MeetingTypeNotFoundError => error
         Rails.logger.error(error)
         Raven.capture_exception(error)
       end
