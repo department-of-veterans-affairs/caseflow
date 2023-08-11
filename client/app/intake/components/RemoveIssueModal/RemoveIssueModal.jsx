@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { removeIssue } from '../actions/addIssues';
-import Modal from '../../components/Modal';
-import { benefitTypeProcessedInVBMS } from '../util';
+import { removeIssue } from '../../actions/addIssues';
+import Modal from '../../../components/Modal';
+import { benefitTypeProcessedInVBMS } from '../../util';
 
 const removeIssueMessage = (intakeData) => {
   if (intakeData.benefitType && !benefitTypeProcessedInVBMS(intakeData.benefitType)) {
