@@ -2,7 +2,7 @@ import React from 'react';
 import ReduxBase from 'app/components/ReduxBase';
 import { reducer, generateInitialState } from 'app/intake';
 import mockProps from './mockProps';
-import RemoveIssueModal from '../RemoveIssueModal';
+import RemoveIssueModal from './RemoveIssueModal';
 
 const ReduxDecorator = (Story) => (
   <ReduxBase reducer={reducer} initialState={generateInitialState()}>

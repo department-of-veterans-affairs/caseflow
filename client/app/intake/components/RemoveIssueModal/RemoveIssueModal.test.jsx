@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import mockProps from './mockProps';
-import RemoveIssueModal from '../RemoveIssueModal';
+import RemoveIssueModal from './RemoveIssueModal';
 import rootReducer from 'app/queue/reducers';
 
 jest.mock('redux', () => ({
