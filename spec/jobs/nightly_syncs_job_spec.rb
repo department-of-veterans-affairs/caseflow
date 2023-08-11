@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe NightlySyncsJob, :all_dbs do
+  subject { described_class.perform_now }
+
   context "when the job runs successfully" do
     before do
       5.times { create(:staff) }
@@ -10,8 +12,6 @@ describe NightlySyncsJob, :all_dbs do
         @emitted_gauges.push(args)
       end
     end
-
-    subject { described_class.perform_now }
 
     it "updates cached_user_attributes table" do
       subject
@@ -37,9 +37,13 @@ describe NightlySyncsJob, :all_dbs do
       context "with zero tasks" do
         let!(:legacy_appeal) { create(:legacy_appeal) }
 
-        it "deletes the legacy appeal" do
+        it "deletes the legacy appeal and does not include it in slack report" do
+          slack_msg = ""
+          slack_msg_error_text = "VACOLS cases which cannot be deleted by sync_vacols_cases:"
+          allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
           subject
 
+          expect(slack_msg.include?(slack_msg_error_text)).to be false
           expect { legacy_appeal.reload }.to raise_error(ActiveRecord::RecordNotFound)
         end
 
@@ -117,21 +121,6 @@ describe NightlySyncsJob, :all_dbs do
           expect(legacy_appeal.reload.tasks.open).to be_empty
         end
       end
-
-      context "with existing FK associations" do
-        let!(:legacy_appeal) { create(:legacy_appeal) }
-        let!(:legacy_hearing) { create(:legacy_hearing, appeal: legacy_appeal) }
-        let!(:snapshot) { AppealStreamSnapshot.create!(appeal: legacy_appeal, hearing: legacy_hearing) }
-
-        it "handles the error and doesn't delete record" do
-          allow(Raven).to receive(:capture_exception)
-          subject
-
-          expect(legacy_appeal.reload).to_not be_nil
-          expect(Raven).to have_received(:capture_exception)
-            .with(anything, extra: { legacy_appeal_id: legacy_appeal.id })
-        end
-      end
     end
 
     context "open DecisionReviewTasks" do
@@ -165,6 +154,54 @@ describe NightlySyncsJob, :all_dbs do
         subject
 
         expect(BgsAttorney.count).to eq 5
+      end
+    end
+  end
+
+  context "when errors occur" do
+    context "in the sync_vacols_cases step" do
+      context "due to existing FK associations" do
+        let!(:legacy_appeal) { create(:legacy_appeal) }
+        let!(:legacy_hearing) { create(:legacy_hearing, appeal: legacy_appeal) }
+        let!(:snapshot) { AppealStreamSnapshot.create!(appeal: legacy_appeal, hearing: legacy_hearing) }
+
+        it "handles the error and doesn't delete record" do
+          slack_msg = ""
+          expected_slack_msg = "VACOLS cases which cannot be deleted by sync_vacols_cases:"
+          allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+          allow(Raven).to receive(:capture_exception)
+          subject
+
+          expect(legacy_appeal.reload).to_not be_nil
+          expect(Raven).to have_received(:capture_exception)
+            .with(anything, extra: { legacy_appeal_id: legacy_appeal.id })
+          expect(slack_msg.include?(expected_slack_msg)).to be true
+          # BgsAttorney.count verifies that the rest of the job ran as expected based on our service fake
+          expect(BgsAttorney.count).to eq 5
+        end
+      end
+    end
+
+    context "in any step due to miscellaneous errors" do
+      it "skips step and continues job" do
+        # raises error during sync_vacols_users step
+        allow(CachedUser).to receive(:sync_from_vacols).and_raise(StandardError)
+
+        # raises error during sync_vacols_cases step
+        allow_any_instance_of(LegacyAppealsWithNoVacolsCase).to receive(:call).and_raise(StandardError)
+
+        # raises error during sync_decision_review_tasks
+        allow_any_instance_of(DecisionReviewTasksForInactiveAppealsChecker).to receive(:call).and_raise(StandardError)
+
+        # raises error during sync_bgs_attorneys
+        allow(BgsAttorney).to receive(:sync_bgs_attorneys).and_raise(StandardError)
+
+        slack_msg = ""
+        allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+        subject
+
+        # one result for each of the four steps in the job
+        expect(slack_msg.split("StandardError").count).to eq 4
       end
     end
   end
