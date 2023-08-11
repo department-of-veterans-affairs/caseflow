@@ -12,10 +12,11 @@ import Button from 'app/components/Button';
  * Issue Tags Component for searching Document Issue Tags
  * @param {Object} props -- Contains details to search for document tags
  */
-export const IssueTags = ({ errors, pendingTag, changeTags, tagOptions, currentDocument, handleTagEdit, autoTaggingEnabled, generateTags }) => {
+export const IssueTags = ({ errors, pendingTag, changeTags, tagOptions, currentDocument, handleTagEdit, autoTaggingEnabled, generateTags, currentDocument: { auto_tagged }}) => {
+  const isVisible = autoTaggingEnabled && (process.env.NODE_ENV === "production" ? !auto_tagged : true)
   return (
     <div className="cf-issue-tag-sidebar">
-      {autoTaggingEnabled && <span className="cf-right-side cf-generate-tag-button">
+      {isVisible && <span className="cf-right-side cf-generate-tag-button">
         <Button onClick={generateTags} role="button">Generate auto-tags</Button>
       </span>}
       {errors?.tag?.visible && <CannotSaveAlert />}
