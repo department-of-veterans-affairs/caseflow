@@ -3,5 +3,5 @@
 require "pg"
 
 conn = CaseflowRecord.connection
-conn.execute("DROP FUNCTION IF EXISTS caseflow_audit.add_row_to_priority_end_product_sync_queue_audit();")
+conn.execute("DROP TRIGGER IF EXISTS priority_end_product_sync_queue_audit_trigger ON public.priority_end_product_sync_queue;")
 conn.close

@@ -3,11 +3,11 @@
 # This job will find deltas between the end product establishment table and the VBMS ext claim table
 # where VBMS ext claim level status code is CLR or CAN. If EP is already in the queue it will be skipped.
 # Job will populate queue ENV["END_PRODUCT_QUEUE_BATCH_LIMIT"] records at a time.
-# This job will run on a 1-hr loop, sleeping for 5 seconds between iterations.
+# This job will run on a 50 minute loop, sleeping for 5 seconds between iterations.
 class PopulateEndProductSyncQueueJob < CaseflowJob
   queue_with_priority :low_priority
 
-  JOB_DURATION ||= ENV["END_PRODUCT_QUEUE_JOB_DURATION"].to_i.hour
+  JOB_DURATION ||= ENV["END_PRODUCT_QUEUE_JOB_DURATION"].to_i.minutes
   SLEEP_DURATION ||= ENV["END_PRODUCT_QUEUE_SLEEP_DURATION"].to_i
   BATCH_LIMIT ||= ENV["END_PRODUCT_QUEUE_BATCH_LIMIT"].to_i
 

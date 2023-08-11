@@ -489,6 +489,9 @@ class ExternalApi::BGSService
         app_name: RequestStore[:application]
       )
     end
+
+    # return nil for testing with contention call commented out
+    return nil
   end
 
   def find_current_rating_profile_by_ptcpnt_id(participant_id)
