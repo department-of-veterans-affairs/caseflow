@@ -1,5 +1,3 @@
-
-
 class CreateCaseflowStuckRecords < Caseflow::Migration
   def change
     create_table :caseflow_stuck_records do |t|
