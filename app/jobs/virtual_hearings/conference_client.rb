@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-class VirtualHearingNotCreatedError < StandardError; end
 module VirtualHearings::ConferenceClient
   def client
     case RequestStore.store[:current_user].meeting_type
@@ -13,15 +12,15 @@ module VirtualHearings::ConferenceClient
         client_host: ENV["PEXIP_CLIENT_HOST"]
       )
     when "webex"
-      @client ||= WebexService.new(
-        host: ENV["WEBEX_MANAGEMENT_NODE_HOST"],
-        port: ENV["WEBEX_MANAGEMENT_NODE_PORT"],
-        user_name: ENV["WEBEX_USERNAME"],
-        password: ENV["WEBEX_PASSWORD"],
-        client_host: ENV["WEBEX_CLIENT_HOST"]
-      )
+      msg = "You hit the Webex Service!"
+      fail Caseflow::Error::WebexApiError, message: msg
     else
-      fail VirtualHearingNotCreatedError, "Invalid meeting type"
+      begin
+        fail ConferenceCreationError::MeetingTypeNotFoundError
+      rescue ConferenceCreationError::MeetingTypeNotFoundError => error
+        Rails.logger.error(error)
+        Raven.capture_exception(error)
+      end
     end
   end
 end
