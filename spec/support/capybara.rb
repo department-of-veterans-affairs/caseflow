@@ -19,9 +19,57 @@ else
   Dir.mkdir cache_directory
 end
 
-Capybara.register_driver(:parallel_sniffybara) do |app|
-  chrome_options = ::Selenium::WebDriver::Chrome::Options.new
+# Source: https://jtway.co/optimize-your-chrome-options-for-testing-to-get-x1-25-impact-4f19f071bf45
+BASE_CHROME_ARGS = {
+  "allow-running-insecure-content" => nil,
+  "autoplay-policy" => "user-gesture-required",
+  "disable-add-to-shelf" => nil,
+  "disable-background-networking" => nil,
+  "disable-background-timer-throttling" => nil,
+  "disable-backgrounding-occluded-windows" => nil,
+  "disable-breakpad" => nil,
+  "disable-checker-imaging" => nil,
+  "disable-client-side-phishing-detection" => nil,
+  "disable-component-extensions-with-background-pages" => nil,
+  "disable-datasaver-prompt" => nil,
+  "disable-default-apps" => nil,
+  "disable-desktop-notifications" => nil,
+  "disable-dev-shm-usage" => nil,
+  "disable-domain-reliability" => nil,
+  "disable-extensions" => nil,
+  "disable-features" => "TranslateUI,BlinkGenPropertyTrees",
+  "disable-hang-monitor" => nil,
+  "disable-infobars" => nil,
+  "disable-ipc-flooding-protection" => nil,
+  "disable-notifications" => nil,
+  "disable-popup-blocking" => nil,
+  "disable-prompt-on-repost" => nil,
+  "disable-renderer-backgrounding" => nil,
+  "disable-setuid-sandbox" => nil,
+  "disable-site-isolation-trials" => nil,
+  "disable-sync" => nil,
+  "disable-web-security" => nil,
+  "enable-automation" => nil,
+  "force-color-profile" => "srgb",
+  "force-device-scale-factor" => "1",
+  "ignore-certificate-errors" => nil,
+  "js-flags" => "--random-seed=1157259157",
+  "disable-logging" => nil,
+  "metrics-recording-only" => nil,
+  "mute-audio" => nil,
+  "no-default-browser-check" => nil,
+  "no-first-run" => nil,
+  "no-sandbox" => nil,
+  "password-store" => "basic",
+  "test-type" => nil,
+  "use-mock-keychain" => nil
+}.map { |k, v| ["--#{k}", v].compact.join("=") }.freeze
 
+chrome_options = ::Selenium::WebDriver::Chrome::Options.new
+
+BASE_CHROME_ARGS.each { |arg| chrome_options.args << arg }
+
+Capybara.register_driver(:parallel_sniffybara) do |app|
   chrome_options.add_preference(:download,
                                 prompt_for_download: false,
                                 default_directory: download_directory)
@@ -41,8 +89,6 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
 end
 
 Capybara.register_driver(:sniffybara_headless) do |app|
-  chrome_options = ::Selenium::WebDriver::Chrome::Options.new
-
   chrome_options.add_preference(:download,
                                 prompt_for_download: false,
                                 default_directory: download_directory)
