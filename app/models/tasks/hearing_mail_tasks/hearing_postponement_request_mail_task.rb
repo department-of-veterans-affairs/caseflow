@@ -9,6 +9,8 @@
 #   - A child task of the same name is created and assigned to the HearingAdmin organization
 ##
 class HearingPostponementRequestMailTask < HearingRequestMailTask
+  include RunAsyncable
+
   class << self
     def label
       COPY::HEARING_POSTPONEMENT_REQUEST_MAIL_TASK_LABEL
@@ -30,7 +32,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   def available_actions(user)
     return [] unless user.in_hearing_admin_team?
 
-    if active_schedule_hearing_task? || open_assign_hearing_disposition_task?
+    if active_schedule_hearing_task || hearing_scheduled_and_awaiting_disposition?
       TASK_ACTIONS
     else
       [
@@ -40,20 +42,180 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     end
   end
 
-  private
+  def update_from_params(params, user)
+    payload_values = params.delete(:business_payloads)&.dig(:values)
+    # If request to postpone hearing is granted
+    if payload_values[:disposition].present?
+      created_tasks = update_hearing_and_create_tasks(payload_values[:after_disposition_update])
+    end
+    update_self_and_parent_mail_task(user: user, params: params, payload_values: payload_values)
 
-  def active_schedule_hearing_task?
-    appeal.tasks.where(type: ScheduleHearingTask.name).active.any?
+    [self] + (created_tasks || [])
   end
 
-  def open_assign_hearing_disposition_task?
-    # ChangeHearingDispositionTask is a subclass of AssignHearingDispositionTask
-    disposition_task_names = [AssignHearingDispositionTask.name, ChangeHearingDispositionTask.name]
-    open_task = appeal.tasks.where(type: disposition_task_names).open.first
+  # Only show HPR mail task assigned to "HearingAdmin" on the Case Timeline
+  def hide_from_case_timeline
+    assigned_to.type == "MailTeam"
+  end
 
-    return false unless open_task&.hearing
+  def recent_hearing
+    # appeal.is_a?(LegacyAppeal)
+    #   @hearing ||= appeal.hearings.max_by(&:created_at)
+    # else
+    @recent_hearing ||= open_assign_hearing_disposition_task&.hearing
+  end
 
-    # Ensure hearing associated with AssignHearingDispositionTask is not scheduled in the past
-    !open_task.hearing.scheduled_for_past?
+  def hearing_task
+    @hearing_task ||= recent_hearing&.hearing_task || active_schedule_hearing_task&.parent
+  end
+
+  private
+
+  # TO-DO: Edge case of request recieved after hearing held?
+  #   - On that note, #available_actions might also fail?
+  # def hearing
+  #   @hearing ||= open_assign_hearing_disposition_task&.hearing
+  # end
+
+  # def hearing_task
+  #   @hearing_task ||= recent_hearing&.hearing_task || active_schedule_hearing_task&.parent
+  # end
+
+  def active_schedule_hearing_task
+    appeal.tasks.where(type: ScheduleHearingTask.name).active.first
+  end
+
+  # ChangeHearingDispositionTask is a subclass of AssignHearingDispositionTask
+  ASSIGN_HEARING_DISPOSITION_TASKS = [
+    AssignHearingDispositionTask.name,
+    ChangeHearingDispositionTask.name
+  ].freeze
+
+  def open_assign_hearing_disposition_task
+    @open_assign_hearing_disposition_task ||= appeal.tasks.where(type: ASSIGN_HEARING_DISPOSITION_TASKS).open.first
+  end
+
+  def hearing_scheduled_and_awaiting_disposition?
+    return false if recent_hearing.nil?
+
+    # Ensure associated hearing is not scheduled for the past
+    !recent_hearing.scheduled_for_past?
+  end
+
+  def update_hearing_and_create_tasks(after_disposition_update)
+    multi_transaction do
+      unless recent_hearing.nil?
+        update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
+        clean_up_virtual_hearing
+      end
+      reschedule_or_schedule_later(after_disposition_update)
+    end
+  end
+
+  def update_hearing(hearing_hash)
+    if recent_hearing.is_a?(LegacyHearing)
+      recent_hearing.update_caseflow_and_vacols(hearing_hash)
+    else
+      recent_hearing.update(hearing_hash)
+    end
+  end
+
+  def clean_up_virtual_hearing
+    if recent_hearing.virtual?
+      perform_later_or_now(VirtualHearings::DeleteConferencesJob)
+    end
+  end
+
+  def reschedule_or_schedule_later(after_disposition_update)
+    case after_disposition_update[:action]
+    when "reschedule"
+      new_hearing_attrs = after_disposition_update[:new_hearing_attrs]
+      reschedule(
+        hearing_day_id: new_hearing_attrs[:hearing_day_id],
+        scheduled_time_string: new_hearing_attrs[:scheduled_time_string],
+        hearing_location: new_hearing_attrs[:hearing_location],
+        virtual_hearing_attributes: new_hearing_attrs[:virtual_hearing_attributes],
+        notes: new_hearing_attrs[:notes],
+        email_recipients_attributes: new_hearing_attrs[:email_recipients]
+      )
+    when "schedule_later"
+      schedule_later
+    else
+      fail ArgumentError, "unknown disposition action"
+    end
+  end
+
+  def reschedule(
+      hearing_day_id:,
+      scheduled_time_string:,
+      hearing_location: nil,
+      virtual_hearing_attributes: nil,
+      notes: nil,
+      email_recipients_attributes: nil
+    )
+      multi_transaction do
+        new_hearing_task = hearing_task.cancel_and_recreate
+
+        new_hearing = HearingRepository.slot_new_hearing(hearing_day_id: hearing_day_id,
+                                                         appeal: appeal,
+                                                         hearing_location_attrs: hearing_location&.to_hash,
+                                                         scheduled_time_string: scheduled_time_string,
+                                                         notes: notes)
+        if virtual_hearing_attributes.present?
+          @alerts = VirtualHearings::ConvertToVirtualHearingService
+            .convert_hearing_to_virtual(new_hearing, virtual_hearing_attributes)
+        elsif email_recipients_attributes.present?
+          create_or_update_email_recipients(new_hearing, email_recipients_attributes)
+        end
+
+        disposition_task = AssignHearingDispositionTask
+          .create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
+
+        [new_hearing_task, disposition_task]
+      end
+    end
+
+  def schedule_later
+    new_hearing_task = hearing_task.cancel_and_recreate
+    schedule_task = ScheduleHearingTask.create!(appeal: appeal, parent: new_hearing_task)
+
+    [new_hearing_task, schedule_task].compact
+  end
+
+  def update_self_and_parent_mail_task(user:, params:, payload_values:)
+    # updated_instructions = format_instructions_on_completion(
+    #   admin_context: params[:instructions],
+    #   granted: payload_values[:disposition].present?,
+    #   date_of_ruling: payload_values[:date_of_ruling]
+    # )
+
+    update!(
+      completed_by: user,
+      status: Constants.TASK_STATUSES.completed,
+      # instructions: updated_instructions
+    )
+    update_parent_status
+  end
+
+  def format_instructions_on_completion(admin_context:, granted:, date_of_ruling:)
+    formatted_date = date_of_ruling.to_date.strftime("%m/%d/%Y")
+
+    markdown_to_append = <<~EOS
+
+      ***
+
+      ###### Marked as complete:
+
+      **DECISION**
+      Motion to postpone #{granted ? 'GRANTED' : 'DENIED'}
+
+      **DATE OF RULING**
+      #{formatted_date}
+
+      **DETAILS**
+      #{admin_context}
+    EOS
+
+    [instructions[0] + markdown_to_append]
   end
 end
