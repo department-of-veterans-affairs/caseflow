@@ -8,9 +8,20 @@ jest.mock('react-redux', () => ({
   useDispatch: () => jest.fn().mockImplementation(() => Promise.resolve(true)),
 }));
 
+// Ensures the snapshot always matches the same date.
+const fakeDate = new Date(2023, 7, 10, 0, 0, 0, 0);
+
 describe('AddDecisionDateModal', () => {
-  afterEach(() => {
+
+  beforeAll(() => {
+    // Ensure consistent handling of dates across tests
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(fakeDate);
+  });
+
+  afterAll(() => {
     jest.clearAllMocks();
+    jest.useRealTimers();
   });
 
   const setup = (testProps) =>
