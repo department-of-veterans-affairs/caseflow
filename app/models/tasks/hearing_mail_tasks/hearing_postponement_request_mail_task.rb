@@ -32,7 +32,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   def available_actions(user)
     return [] unless user.in_hearing_admin_team?
 
-    if active_schedule_hearing_tasks.any? || open_assign_disposition_task_for_upcoming_hearing?
+    if active_schedule_hearing_task || hearing_scheduled_and_awaiting_disposition?
       TASK_ACTIONS
     else
       [
@@ -48,7 +48,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     if params[:status] == Constants.TASK_STATUSES.completed
       # If request to postpone hearing is granted
       if payload_values[:granted]
-        created_tasks = update_hearing_and_create_hearing_tasks(payload_values[:after_disposition_update])
+        created_tasks = update_hearing_and_create_tasks(payload_values[:after_disposition_update])
         update_self_and_parent_mail_task(user: user, params: params, payload_values: payload_values)
 
         [self] + created_tasks
@@ -70,25 +70,16 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
   # TO-DO: Edge case of request recieved after hearing held?
   #   - On that note, #available_actions might also fail?
-  def open_hearing
-    return nil unless open_assign_disposition_task_for_upcoming_hearing?
-
-    @open_hearing ||= open_assign_hearing_disposition_task.hearing
+  def hearing
+    @hearing ||= open_assign_hearing_disposition_task&.hearing
   end
 
   def hearing_task
-    @hearing_task ||= open_hearing&.hearing_task ||
-                      active_schedule_hearing_tasks[0].parent
+    @hearing_task ||= hearing&.hearing_task || active_schedule_hearing_task&.parent
   end
 
-  def active_schedule_hearing_tasks
-    appeal.tasks.where(type: ScheduleHearingTask.name).active
-  end
-
-  def open_assign_disposition_task_for_upcoming_hearing?
-    return false unless open_assign_hearing_disposition_task&.hearing
-
-    !open_assign_hearing_disposition_task.hearing.scheduled_for_past?
+  def active_schedule_hearing_task
+    appeal.tasks.where(type: ScheduleHearingTask.name).active.first
   end
 
   # ChangeHearingDispositionTask is a subclass of AssignHearingDispositionTask
@@ -101,9 +92,16 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     @open_assign_hearing_disposition_task ||= appeal.tasks.where(type: ASSIGN_HEARING_DISPOSITION_TASKS).open.first
   end
 
-  def update_hearing_and_create_hearing_tasks(after_disposition_update)
+  def hearing_scheduled_and_awaiting_disposition?
+    return false if hearing.nil?
+
+    # Ensure associated hearing is not scheduled for the past
+    !hearing.scheduled_for_past?
+  end
+
+  def update_hearing_and_create_tasks(after_disposition_update)
     multi_transaction do
-      unless open_hearing.nil?
+      unless hearing.nil?
         update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
         clean_up_virtual_hearing
       end
@@ -112,19 +110,16 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   end
 
   def update_hearing(hearing_hash)
-    # Ensure the hearing exists
-    fail HearingAssociationMissing, hearing_task&.id if open_hearing.nil?
-
-    if open_hearing.is_a?(LegacyHearing)
-      open_hearing.update_caseflow_and_vacols(hearing_hash)
+    if hearing.is_a?(LegacyHearing)
+      hearing.update_caseflow_and_vacols(hearing_hash)
     else
-      open_hearing.update(hearing_hash)
+      hearing.update(hearing_hash)
     end
   end
 
-  # TO DO: AFFECTED BY WEBEX/PEXIP?
+  # TO DO: Affected by webex/pexip?
   def clean_up_virtual_hearing
-    if open_hearing.virtual?
+    if hearing.virtual?
       perform_later_or_now(VirtualHearings::DeleteConferencesJob)
     end
   end
@@ -154,14 +149,12 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
       date_of_ruling: payload_values[:date_of_ruling]
     )
 
-    multi_transaction do
-      update!(
-        completed_by: user,
-        status: Constants.TASK_STATUSES.completed,
-        instructions: updated_instructions
-      )
-      update_parent_status
-    end
+    update!(
+      completed_by: user,
+      status: Constants.TASK_STATUSES.completed,
+      instructions: updated_instructions
+    )
+    update_parent_status
   end
 
   def format_instructions_on_completion(admin_context:, granted:, date_of_ruling:)
