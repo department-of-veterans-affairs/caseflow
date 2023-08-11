@@ -23,7 +23,6 @@ class LastRetrievalAlert extends React.PureComponent {
           Some of {this.props.appeal.veteran_full_name}'s documents are unavailable at the moment due to
           a loading error from their eFolder. As a result, you may be viewing a partial list of eFolder documents.
           <br />
-          <br />
           Please visit <a href={this.props.efolderExpressUrl} target="_blank" rel="noopener noreferrer"> eFolder Express </a> to fetch the
           latest list of documents or submit a support ticket to sync their eFolder with Reader.
         </Alert>
