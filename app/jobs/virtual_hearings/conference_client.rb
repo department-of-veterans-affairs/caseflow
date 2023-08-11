@@ -22,13 +22,8 @@ module VirtualHearings::ConferenceClient
       #   client_host: ENV["WEBEX_CLIENT_HOST"]
       # )
     else
-      begin
-        msg = "Meeting type for the user is invalid"
-        fail Caseflow::Error::MeetingTypeNotFoundError, message: msg
-      rescue Caseflow::Error::MeetingTypeNotFoundError => error
-        Rails.logger.error(error)
-        Raven.capture_exception(error)
-      end
+      msg = "Meeting type for the user is invalid"
+      fail Caseflow::Error::MeetingTypeNotFoundError, message: msg
     end
   end
 end
