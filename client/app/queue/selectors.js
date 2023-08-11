@@ -259,7 +259,7 @@ export const getAttorneyTasksForJudgeTask = createSelector(
   }
 );
 
-export const getAllHiaringChildren = createSelector(
+export const getAllHiringChildren = createSelector(
   [getAmaTasks],
   (amaTasks) => {
     const legacyAttorneyJudgeTaskTypes = [
