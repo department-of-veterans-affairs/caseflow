@@ -232,7 +232,7 @@ class Task < CaseflowRecord
       params = modify_params_for_create(params)
 
       if parent_task.appeal_type == "LegacyAppeal"
-        speacial_case_for_legacy(parent_task, params)
+        special_case_for_legacy(parent_task, params)
       else #regular appeal
         child = create_child_task(parent_task, user, params)
         parent_task.update!(status: params[:status]) if params[:status]
@@ -259,7 +259,7 @@ class Task < CaseflowRecord
     end
 
 
-    def speacial_case_for_legacy(parent_task, params)
+    def special_case_for_legacy(parent_task, params)
       if (params[:type] == "SpecialCaseMovementTask" and  parent_task.type == "RootTask")
         create_judge_assigned_task_for_legacy(params, parent_task)
       elsif (params[:type] == "BlockedSpecialCaseMovementTask" and  parent_task.type == "HearingTask")
