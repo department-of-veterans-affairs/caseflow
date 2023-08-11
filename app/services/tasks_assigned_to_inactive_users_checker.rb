@@ -4,10 +4,6 @@
 # Checks for all open tasks assigned to inactive users.
 
 class TasksAssignedToInactiveUsersChecker < DataIntegrityChecker
-  def slack_channel
-    "#appeals-echo"
-  end
-
   def call
     return if tasks_for_inactive_users.count == 0
 
