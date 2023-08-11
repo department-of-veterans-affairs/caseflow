@@ -103,8 +103,8 @@ class SubmitDecisionView extends React.PureComponent {
       judges
     } = this.props;
     const issuesToPass = (typeof decisionIssues === 'undefined') ? issues : decisionIssues;
-
     const payload = buildCaseReviewPayload(checkoutFlow, decision, true, issuesToPass, { isLegacyAppeal: isLegacyAppeal });
+
 
     const fields = {
       type: checkoutFlow === DECISION_TYPES.DRAFT_DECISION ? 'decision' : 'outside medical opinion (OMO) request',
@@ -113,7 +113,6 @@ class SubmitDecisionView extends React.PureComponent {
     };
     const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
     been sent to ${fields.judge} for review.`;
-
 
     try {
       const res = await this.props.requestSave(`/case_reviews/${taskId}/complete`, payload, { title: successMsg });
