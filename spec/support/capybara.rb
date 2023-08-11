@@ -67,7 +67,7 @@ BASE_CHROME_ARGS = {
 
 chrome_options = ::Selenium::WebDriver::Chrome::Options.new
 
-BASE_CHROME_ARGS.each { |arg| chrome_options.args << arg }
+chrome_options.args.merge(BASE_CHROME_ARGS)
 
 Capybara.register_driver(:parallel_sniffybara) do |app|
   chrome_options.add_preference(:download,
