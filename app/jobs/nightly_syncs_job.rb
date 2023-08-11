@@ -2,13 +2,14 @@
 
 # run once a day, overnight, to synchronize systems
 
+# :reek:InstanceVariableAssumption
 class NightlySyncsJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :queue # arbitrary
 
   def perform
     RequestStore.store[:current_user] = User.system_user
-    @slack_report ||= []
+    @slack_report = []
 
     sync_vacols_cases
     sync_vacols_users
