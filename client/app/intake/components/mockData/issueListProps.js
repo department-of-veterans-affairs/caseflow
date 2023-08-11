@@ -141,15 +141,15 @@ export const mockedIssueListProps = {
     unidentifiedIssuesModalVisible: false,
     addedIssues: [
       {
-        id: '6292',
+        id: '6291',
         benefitType: 'vha',
         decisionIssueId: null,
-        description: 'Other - stuff and things',
+        description: 'Other - Other description',
         decisionDate: null,
         ineligibleReason: null,
         ineligibleDueToId: null,
         decisionReviewTitle: 'Higher-Level Review',
-        contentionText: 'Other - stuff and things',
+        contentionText: 'Other - Other description',
         vacolsId: null,
         vacolsSequenceId: null,
         vacolsIssue: null,

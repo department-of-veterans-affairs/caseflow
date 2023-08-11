@@ -2126,6 +2126,17 @@ describe RequestIssue, :all_dbs do
       subject
       expect(nonrating_request_issue.decision_date).to eq(new_decision_date.to_date)
     end
+
+    context "when the decision date is in the future" do
+      let(:future_date) { 2.days.from_now.to_date }
+
+      it "throws DecisionDateInFutureError" do
+        allow(subject).to receive(:update!)
+
+        expect { subject.save_decision_date!(future_date) }.to raise_error(RequestIssue::DecisionDateInFutureError)
+        expect(subject).to_not have_received(:update!)
+      end
+    end
   end
 
   context "vha handle issues with no decision date" do

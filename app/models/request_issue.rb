@@ -74,6 +74,13 @@ class RequestIssue < CaseflowRecord
     exclude_association :decision_review_id
     exclude_association :request_decision_issues
   end
+
+  class DecisionDateInFutureError < StandardError
+    def initialize(request_issue_id)
+      super("Request Issue #{request_issue_id} cannot edit issue decision date " \
+        "due to decision date being in the future")
+    end
+  end
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
       super("Request Issue #{request_issue_id} cannot create decision issue " \
@@ -494,6 +501,8 @@ class RequestIssue < CaseflowRecord
   end
 
   def save_decision_date!(new_decision_date)
+    fail DecisionDateInFutureError, id if new_date.to_date > Time.zone.today
+
     update!(decision_date: new_decision_date)
 
     # Special handling for claim reviews that contain issues without a decision date

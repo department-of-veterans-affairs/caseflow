@@ -1,20 +1,20 @@
+/* eslint-disable max-lines */
 import _ from 'lodash';
 import { formatDateStr } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES';
 import { FORM_TYPES } from '../constants';
 
-const getClaimantField = (veteran, intakeData) => {
+const getClaimantField = (intakeData) => {
   const {
     claimantName,
     claimantRelationship,
-    claimantType,
     payeeCode
   } = intakeData;
 
   let claimantDisplayText = [claimantName, claimantRelationship].filter(Boolean).join(', ');
 
   if (payeeCode) {
-    claimantDisplayText += ` (payee code ${payeeCode})`
+    claimantDisplayText += ` (payee code ${payeeCode})`;
   }
 
   return [{
@@ -54,7 +54,7 @@ export const legacyIssue = (issue, legacyAppeals) => {
       throw new Error(`No legacyAppeal found for '${issue.vacolsId}'`);
     }
 
-    return _.find(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })
+    return _.find(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) });
   }
 };
 
@@ -118,6 +118,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       benefitType: issue.benefit_type,
       decisionIssueId: issue.contested_decision_issue_id,
       description: issue.description,
+      nonRatingIssueDescription: issue.nonrating_issue_description,
       decisionDate: issue.approx_decision_date,
       ineligibleReason: issue.ineligible_reason,
       ineligibleDueToId: issue.ineligible_due_to_id,
@@ -239,6 +240,7 @@ const formatNonratingRequestIssues = (state) => {
         nonrating_issue_category: issue.category,
         decision_text: issue.description,
         decision_date: issue.decisionDate,
+        edited_decision_date: issue.editedDecisionDate,
         untimely_exemption: issue.untimelyExemption,
         untimely_exemption_notes: issue.untimelyExemptionNotes,
         untimely_exemption_covid: issue.untimelyExemptionCovid,
@@ -327,7 +329,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
   // If a field is to be conditionally rendered, set field = null to have it not show.
   fields = fields.filter((field) => field !== null);
 
-  let claimantField = getClaimantField(veteran, intakeData);
+  let claimantField = getClaimantField(intakeData);
 
   return fields.concat(claimantField);
 };
