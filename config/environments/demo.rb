@@ -95,6 +95,9 @@ Rails.application.configure do
   ENV["END_PRODUCT_QUEUE_SLEEP_DURATION"] ||= "5" # Number of seconds between loop iterations
   ENV["END_PRODUCT_QUEUE_BATCH_LIMIT"] ||= "500" # Max number of records in a batch
 
+  # eFolder Express URL
+  ENV["EFOLDER_EXPRESS_URL"] ||= "http://localhost:4000"
+
   # Setup S3
   config.s3_enabled = ENV["AWS_BUCKET_NAME"].present?
   config.s3_bucket_name = ENV["AWS_BUCKET_NAME"]
