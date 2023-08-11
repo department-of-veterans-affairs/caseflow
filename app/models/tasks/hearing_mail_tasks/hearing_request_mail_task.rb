@@ -33,8 +33,12 @@ class HearingRequestMailTask < MailTask
     []
   end
 
-  def hearing
-    appeal.hearings.order(created_at: :desc).first
+  def recent_hearing
+    if appeal.is_a?(LegacyAppeal)
+      appeal.hearings.max_by(&:created_at)
+    else
+      appeal.hearings.order(created_at: :desc).first
+    end
   end
 
   def hearing_task
@@ -77,7 +81,7 @@ class HearingRequestMailTask < MailTask
 
   def mark_hearing_with_disposition(payload_values:, instructions: nil)
     multi_transaction do
-      if hearing
+      if recent_hearing
         if payload_values[:disposition] == Constants.HEARING_DISPOSITION_TYPES.postponed
           update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
         end
@@ -93,7 +97,7 @@ class HearingRequestMailTask < MailTask
   end
 
   def update_hearing(hearing_hash)
-    hearing = self.hearing
+    hearing = recent_hearing
     fail HearingAssociationMissing, hearing_task&.id if hearing.nil?
 
     if hearing.is_a?(LegacyHearing)
@@ -151,7 +155,7 @@ class HearingRequestMailTask < MailTask
   end
 
   def clean_up_virtual_hearing
-    if hearing.virtual?
+    if recent_hearing.virtual?
       perform_later_or_now(VirtualHearings::DeleteConferencesJob)
     end
   end
