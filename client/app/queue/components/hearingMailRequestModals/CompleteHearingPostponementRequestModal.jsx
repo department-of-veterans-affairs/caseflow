@@ -34,8 +34,9 @@ const POSTPONEMENT_OPTIONS = [
 ];
 
 const CompleteHearingPostponementRequestModal = (props) => {
-  const { appealId, taskId, userCanScheduleVirtualHearings } = props;
   const taskData = taskActionData(props);
+  const { appealId, appeal, taskId, task, userCanScheduleVirtualHearings } = props;
+
   const formReducer = (state, action) => {
     switch (action.type) {
     case 'granted':
@@ -96,22 +97,18 @@ const CompleteHearingPostponementRequestModal = (props) => {
   };
 
   const getPayload = () => {
-    const { granted, rulingDate, scheduledOption, instructions } = state;
-
-    const afterDispositionPayload = scheduledOption === ACTIONS.RESCHEDULE ?
-      /* LOGIC FOR APPEALS-24998 INSTEAD OF NULL */ null : ACTIONS.SCHEDULE_LATER;
+    const { granted, rulingDate, instructions } = state;
 
     return {
       data: {
         task: {
           status: TASK_STATUSES.completed,
           instructions,
-          // If request is denied, do not assign new disposition to hearing
           business_payloads: {
             values: {
+              // If request is denied, do not assign new disposition to hearing
               disposition: granted ? HEARING_DISPOSITION_TYPES.postponed : null,
-              after_disposition_update: granted ? afterDispositionPayload : null,
-              granted,
+              after_disposition_update: granted ? { action: ACTIONS.SCHEDULE_LATER } : null,
               date_of_ruling: rulingDate.value,
             },
           },
@@ -121,8 +118,6 @@ const CompleteHearingPostponementRequestModal = (props) => {
   };
 
   const getSuccessMsg = () => {
-    const { appeal } = props;
-
     return {
       title: `${
         appeal.veteranFullName
@@ -131,7 +126,6 @@ const CompleteHearingPostponementRequestModal = (props) => {
   };
 
   const submit = () => {
-    const { userCanScheduleVirtualHearings, task } = props;
     const { isPosting, granted, scheduledOption } = state;
 
     if (granted && scheduledOption === ACTIONS.RESCHEDULE && userCanScheduleVirtualHearings) {
