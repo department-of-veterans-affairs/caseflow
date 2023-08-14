@@ -33,9 +33,6 @@ class MetricsService
           uuid: uuid
         }
       }
-      DataDogService.emit_gauge(sent_to_info)
-
-      sent_to << Metric::LOG_SYSTEMS[:datadog]
     end
 
     Rails.logger.info("FINISHED #{description}: #{stopwatch}")
