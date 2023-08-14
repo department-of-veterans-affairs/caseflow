@@ -45,13 +45,17 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   def update_from_params(params, user)
     payload_values = params.delete(:business_payloads)&.dig(:values)
 
-    # If request to postpone hearing is granted
-    if payload_values[:granted]
-      created_tasks = update_hearing_and_create_tasks(payload_values[:after_disposition_update])
-    end
-    update_self_and_parent_mail_task(user: user, payload_values: payload_values)
+    if params[:status] == Constants.TASK_STATUSES.completed
+      # If request to postpone hearing is granted
+      if payload_values[:disposition].present?
+        created_tasks = update_hearing_and_create_tasks(payload_values[:after_disposition_update])
+      end
+      update_self_and_parent_mail_task(user: user, payload_values: payload_values)
 
-    [self] + (created_tasks || [])
+      [self] + (created_tasks || [])
+    else
+      super(params, user)
+    end
   end
 
   # Only show HPR mail task assigned to "HearingAdmin" on the Case Timeline
