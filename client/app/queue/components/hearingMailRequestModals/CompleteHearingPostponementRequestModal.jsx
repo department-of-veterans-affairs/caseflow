@@ -237,9 +237,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
-  appeal: appealWithDetailSelector(state, ownProps),
-  scheduleHearingLaterWithAdminAction:
-    state.components.forms.scheduleHearingLaterWithAdminAction || {}
+  appeal: appealWithDetailSelector(state, ownProps)
 });
 
 const mapDispatchToProps = (dispatch) =>
