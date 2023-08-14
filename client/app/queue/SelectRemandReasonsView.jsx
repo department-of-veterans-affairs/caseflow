@@ -120,7 +120,8 @@ class SelectRemandReasonsView extends React.Component {
         issueId={this.props.issues[idx].id}
         key={`remand-reasons-options-${idx}`}
         ref={this.getChildRef}
-        idx={idx} />
+        idx={idx}
+        featureToggles={this.props.featureToggles} />
     )}
   </QueueFlowPage>;
 }
