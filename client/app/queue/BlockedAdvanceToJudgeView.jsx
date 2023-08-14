@@ -112,27 +112,55 @@ class BlockedAdvanceToJudgeView extends React.Component {
     }
 
     const { appeal, task, allHearingTasks } = this.props;
+    const actionData = taskActionData(this.props);
+    const taskType = actionData.type || 'Task';
 
     const hearingTaskId = allHearingTasks[0].id;
 
-    const payload = {
-      data: {
-        tasks: [
-          {
-            type: this.actionData().type,
-            external_id: appeal.externalId,
-            parent_id: task.appealType === 'LegacyAppeal' ? hearingTaskId : task.taskId,
-            assigned_to_id: this.state.selectedAssignee,
-            assigned_to_type: 'User',
-            instructions: [
-              this.state.instructions,
-              `${this.state.selectedReason.trim()}: ${this.state.cancellationInstructions}`
+    let payload = {};
 
-            ]
-          }
-        ]
-      }
-    };
+    if (task.appealType === 'LegacyAppeal' && taskType === 'BlockedSpecialCaseMovementTask' &&
+    task.type === 'AttorneyLegacyTask') {
+      payload = {
+        data: {
+          tasks: [
+            {
+              type: this.actionData().type,
+              external_id: appeal.externalId,
+              legacy_task_type: task.type,
+              appeal_type: task.appealType,
+              parent_id: hearingTaskId,
+              assigned_to_id: this.state.selectedAssignee,
+              assigned_to_type: 'User',
+              instructions: [
+                this.state.instructions,
+                `${this.state.selectedReason.trim()}: ${this.state.cancellationInstructions}`
+
+              ]
+            }
+          ]
+        }
+      };
+    } else {
+      payload = {
+        data: {
+          tasks: [
+            {
+              type: this.actionData().type,
+              external_id: appeal.externalId,
+              parent_id: task.appealType === 'LegacyAppeal' ? hearingTaskId : task.taskId,
+              assigned_to_id: this.state.selectedAssignee,
+              assigned_to_type: 'User',
+              instructions: [
+                this.state.instructions,
+                `${this.state.selectedReason.trim()}: ${this.state.cancellationInstructions}`
+
+              ]
+            }
+          ]
+        }
+      };
+    }
 
     const assignedByListItem = () => {
       const assignor = appeal.veteranFullName || null;
@@ -274,7 +302,8 @@ class BlockedAdvanceToJudgeView extends React.Component {
         </div>
         <div {...bottomMarginStyling}>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_SUBTITLE}</div>
         <h3>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_TASKS_HEADER}</h3>
-        {(!appeal.isLegacyAppeal) && <ul>{blockingTasks.map((blockingTask) => this.blockingTaskListItem(blockingTask))}</ul>}
+        {(!appeal.isLegacyAppeal) && <ul>{blockingTasks.map((blockingTask) =>
+          this.blockingTaskListItem(blockingTask))}</ul>}
         <h3>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_REASONING_HEADER}</h3>
         <RadioField
           required
@@ -321,7 +350,8 @@ BlockedAdvanceToJudgeView.propTypes = {
     instructions: PropTypes.string,
     taskId: PropTypes.string,
     assignedBy: PropTypes.string,
-    appealType: PropTypes.string
+    appealType: PropTypes.string,
+    type: PropTypes.string,
   })
 };
 
