@@ -60,9 +60,6 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   end
 
   def recent_hearing
-    # appeal.is_a?(LegacyAppeal)
-    #   @hearing ||= appeal.hearings.max_by(&:created_at)
-    # else
     @recent_hearing ||= open_assign_hearing_disposition_task&.hearing
   end
 
@@ -136,35 +133,37 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     end
   end
 
+  # rubocop:disable Metrics/ParameterLists
   def reschedule(
-      hearing_day_id:,
-      scheduled_time_string:,
-      hearing_location: nil,
-      virtual_hearing_attributes: nil,
-      notes: nil,
-      email_recipients_attributes: nil
-    )
-      multi_transaction do
-        new_hearing_task = hearing_task.cancel_and_recreate
+    hearing_day_id:,
+    scheduled_time_string:,
+    hearing_location: nil,
+    virtual_hearing_attributes: nil,
+    notes: nil,
+    email_recipients_attributes: nil
+  )
+    multi_transaction do
+      new_hearing_task = hearing_task.cancel_and_recreate
 
-        new_hearing = HearingRepository.slot_new_hearing(hearing_day_id: hearing_day_id,
-                                                         appeal: appeal,
-                                                         hearing_location_attrs: hearing_location&.to_hash,
-                                                         scheduled_time_string: scheduled_time_string,
-                                                         notes: notes)
-        if virtual_hearing_attributes.present?
-          @alerts = VirtualHearings::ConvertToVirtualHearingService
-            .convert_hearing_to_virtual(new_hearing, virtual_hearing_attributes)
-        elsif email_recipients_attributes.present?
-          create_or_update_email_recipients(new_hearing, email_recipients_attributes)
-        end
-
-        disposition_task = AssignHearingDispositionTask
-          .create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
-
-        [new_hearing_task, disposition_task]
+      new_hearing = HearingRepository.slot_new_hearing(hearing_day_id: hearing_day_id,
+                                                       appeal: appeal,
+                                                       hearing_location_attrs: hearing_location&.to_hash,
+                                                       scheduled_time_string: scheduled_time_string,
+                                                       notes: notes)
+      if virtual_hearing_attributes.present?
+        @alerts = VirtualHearings::ConvertToVirtualHearingService
+          .convert_hearing_to_virtual(new_hearing, virtual_hearing_attributes)
+      elsif email_recipients_attributes.present?
+        create_or_update_email_recipients(new_hearing, email_recipients_attributes)
       end
+
+      disposition_task = AssignHearingDispositionTask
+        .create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
+
+      [new_hearing_task, disposition_task]
     end
+  end
+  # rubocop:enable Metrics/ParameterLists
 
   def schedule_later
     new_hearing_task = hearing_task.cancel_and_recreate

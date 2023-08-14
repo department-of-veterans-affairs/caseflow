@@ -116,10 +116,14 @@ const CompleteHearingPostponementRequestModal = (props) => {
   };
 
   const getSuccessMsg = () => {
+    const { granted } = state;
+
+    const message = granted ?
+      `${appeal.veteranFullName} was successfully added back to the schedule veteran list.` :
+      'You have successfully marked hearing postponement request task as complete.';
+
     return {
-      title: `${
-        appeal.veteranFullName
-      } was successfully added back to the schedule veteran list.`,
+      title: message
     };
   };
 
