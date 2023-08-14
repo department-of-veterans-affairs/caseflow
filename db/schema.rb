@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_07_26_203750) do
+ActiveRecord::Schema.define(version: 2023_07_31_194341) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1811,7 +1811,7 @@ ActiveRecord::Schema.define(version: 2023_07_26_203750) do
   end
 
   create_table "vbms_distribution_destinations", force: :cascade do |t|
-    t.string "address_line_1", null: false, comment: "PII. If destination_type is domestic, international, or military then Must not be null."
+    t.string "address_line_1", comment: "PII. If destination_type is domestic, international, or military then Must not be null."
     t.string "address_line_2", comment: "PII. If treatLine2AsAddressee is [true] then must not be null"
     t.string "address_line_3", comment: "PII. If treatLine3AsAddressee is [true] then must not be null"
     t.string "address_line_4", comment: "PII."

@@ -99,6 +99,10 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     return update(state, {
       userIsCobAdmin: { $set: action.payload.userIsCobAdmin }
     });
+  case ACTIONS.SET_MEETING_TYPE:
+    return update(state, {
+      meetingType: { $set: action.payload.meetingType }
+    });
   case ACTIONS.SET_CAN_EDIT_CAVC_REMANDS:
     return update(state, {
       canEditCavcRemands: { $set: action.payload.canEditCavcRemands }
