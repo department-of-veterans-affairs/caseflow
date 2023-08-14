@@ -34,7 +34,7 @@ class DocumentListHeader extends React.Component {
     return <div>
       <div className="document-list-header">
         <div className="search-bar-and-doc-count cf-search-ahead-parent">
-          <SearchBar
+          <div><SearchBar
             id="searchBar"
             onChange={props.setSearch}
             onClearSearch={props.clearSearch}
@@ -44,6 +44,10 @@ class DocumentListHeader extends React.Component {
             value={props.docFilterCriteria.searchQuery}
             size="small"
           />
+          <ul>
+            <b>Results for:</b> {props.docFilterCriteria.searchQuery}
+          </ul>
+          </div>
           <div className="num-of-documents">
             {props.numberOfDocuments} Documents
           </div>
