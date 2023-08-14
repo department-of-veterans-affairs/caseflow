@@ -29,10 +29,12 @@ import { SortArrowUpIcon } from '../components/icons/SortArrowUpIcon';
 import { DoubleArrowIcon } from '../components/icons/DoubleArrowIcon';
 
 import DocCategoryPicker from './DocCategoryPicker';
-import DocTagPicker from './DocTagPicker';
 import FilterIcon from '../components/icons/FilterIcon';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
+import SearchBar from '../components/SearchBar';
+
+import FilterOption from '../components/FilterOption';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -53,6 +55,15 @@ export const getRowObjects = (documents, annotationsPerDocument) => {
 };
 
 class DocumentsTable extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      filterText: ''
+    };
+  }
+
   componentDidMount() {
     if (this.props.pdfList.scrollTop) {
       this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
@@ -164,6 +175,48 @@ class DocumentsTable extends React.Component {
         'descending'
     }`;
 
+    let debugDataUnfiltered = [
+      {
+        id: 1,
+        value: 'dbg data',
+        displayText: 'Aaron' },
+      {
+        id: 2,
+        value: 'dbg data',
+        displayText: 'Aardvark' },
+      {
+        id: 3,
+        value: 'dbg data',
+        displayText: 'Aandy' },
+      {
+        id: 4,
+        value: 'dbg data',
+        displayText: 'Aardwolf' },
+      {
+        id: 5,
+        value: 'dbg data',
+        displayText: 'Aaronic' },
+      {
+        id: 6,
+        value: 'dbg data',
+        displayText: 'AAardandy' },
+    ];
+
+    const getFilteredData = () => {
+      if (this.state.filterText.length < 3) {
+        return debugDataUnfiltered;
+      }
+      const filteredData = debugDataUnfiltered.filter(
+        (tag) => tag.displayText.toLowerCase().includes(this.state.filterText.toLowerCase())
+      );
+
+      return filteredData;
+    };
+
+    const updateFilterTextState = (newState) => {
+      this.setState({ filterText: newState });
+    };
+
     return [
       {
         cellClass: 'last-read-column',
@@ -202,6 +255,7 @@ class DocumentsTable extends React.Component {
               >
                 <DocCategoryPicker
                   categoryToggleStates={this.props.docFilterCriteria.category}
+
                   handleCategoryToggle={this.props.setCategoryFilter}
                 />
               </DropdownFilter>
@@ -286,11 +340,11 @@ class DocumentsTable extends React.Component {
                 handleClose={this.toggleTagDropdownFilterVisiblity}
                 addClearFiltersRow
               >
-                <DocTagPicker
-                  tags={this.props.tagOptions}
-                  tagToggleStates={this.props.docFilterCriteria.tag}
-                  handleTagToggle={this.props.setTagFilter}
-                />
+                <div>
+                  <SearchBar onChange={updateFilterTextState} value={this.state.filterText} />
+                  <FilterOption
+                    options={getFilteredData()} />
+                </div>
               </DropdownFilter>
             )}
           </div>
