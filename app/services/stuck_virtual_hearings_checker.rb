@@ -10,11 +10,6 @@ class StuckVirtualHearingsChecker < DataIntegrityChecker
     build_report(stuck_virtual_hearings)
   end
 
-  # sending to appeals-tango for now, might later change to #appeals-hearings
-  def slack_channel
-    "#appeals-tango"
-  end
-
   private
 
   TRACKING_DOCUMENT_LINK = "https://hackmd.io/DKPyLFB7QHuw6JuuTfc_8A"
