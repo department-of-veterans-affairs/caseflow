@@ -100,7 +100,8 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
         click_on("Save")
       end
 
-      # Check that the Edit Issues save button is now Establish
+      # Check that the Edit Issues save button is now Establish, the decision date is added, and the banner is gone
+      expect(page).to_not have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
       expect(page).to have_content("Decision date: #{past_date}")
       expect(page).to have_button("Establish", disabled: false)
 
