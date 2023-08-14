@@ -44,6 +44,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
   def update_from_params(params, user)
     payload_values = params.delete(:business_payloads)&.dig(:values)
+
     # If request to postpone hearing is granted
     if payload_values[:disposition].present?
       created_tasks = update_hearing_and_create_tasks(payload_values[:after_disposition_update])
@@ -70,16 +71,6 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   end
 
   private
-
-  # TO-DO: Edge case of request recieved after hearing held?
-  #   - On that note, #available_actions might also fail?
-  # def hearing
-  #   @hearing ||= open_assign_hearing_disposition_task&.hearing
-  # end
-
-  # def hearing_task
-  #   @hearing_task ||= recent_hearing&.hearing_task || active_schedule_hearing_task&.parent
-  # end
 
   def active_schedule_hearing_task
     appeal.tasks.where(type: ScheduleHearingTask.name).active.first
