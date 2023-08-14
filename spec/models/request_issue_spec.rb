@@ -2130,6 +2130,8 @@ describe RequestIssue, :all_dbs do
     context "when the decision date is in the future" do
       let(:future_date) { 2.days.from_now.to_date }
 
+      subject { nonrating_request_issue }
+
       it "throws DecisionDateInFutureError" do
         allow(subject).to receive(:update!)
 
