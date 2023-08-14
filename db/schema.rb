@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_07_31_194341) do
+ActiveRecord::Schema.define(version: 2023_07_26_203750) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -556,6 +556,7 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
     t.string "host_link", comment: "Conference link generated from external conference service"
     t.integer "host_pin", comment: "Pin for the host of the conference to get into the conference"
     t.string "host_pin_long", limit: 8, comment: "Generated host pin stored as a string"
+    t.string "meeting_type", default: "pexip", comment: "Video Conferencing Application Type"
     t.datetime "updated_at", comment: "Date and Time record was last updated"
     t.bigint "updated_by_id", comment: "user id of the user to last update the record. FK on the User table"
     t.index ["created_by_id"], name: "index_created_by_id"
@@ -1779,6 +1780,7 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
     t.string "email"
     t.string "full_name"
     t.datetime "last_login_at", comment: "The last time the user-agent (browser) provided session credentials; see User.from_session for precision"
+    t.string "meeting_type", default: "pexip", comment: "Video Conferencing Application Type"
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
@@ -1944,6 +1946,7 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
     t.string "host_pin_long", limit: 8, comment: "Change the host pin to store a longer pin with the # sign trailing"
     t.string "judge_email", comment: "Judge's email address"
     t.boolean "judge_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the judge"
+    t.string "meeting_type", default: "pexip", comment: "Video Conferencing Application Type"
     t.string "representative_email", comment: "Veteran's representative's email address"
     t.boolean "representative_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran's representative"
     t.datetime "representative_reminder_sent_at", comment: "The datetime the last reminder email was sent to the representative."
