@@ -16,7 +16,6 @@ import DateSelector from '../../../components/DateSelector';
 import TextareaField from '../../../components/TextareaField';
 import { marginTop, marginBottom } from '../../constants';
 import { setScheduledHearing } from '../../../components/common/actions';
-import { taskActionData } from '../../utils';
 
 const ACTIONS = {
   RESCHEDULE: 'reschedule',
@@ -34,7 +33,6 @@ const POSTPONEMENT_OPTIONS = [
 ];
 
 const CompleteHearingPostponementRequestModal = (props) => {
-  const taskData = taskActionData(props);
   const { appealId, appeal, taskId, task, userCanScheduleVirtualHearings } = props;
 
   const formReducer = (state, action) => {
@@ -176,7 +174,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
       submitDisabled={!validateForm()}
       validateForm={validateForm}
       submit={submit}
-      pathAfterSubmit={(taskData && taskData.redirect_after) || '/queue'}
+      pathAfterSubmit={`/queue/appeals/${appealId}`}
     >
       <>
         <RadioField

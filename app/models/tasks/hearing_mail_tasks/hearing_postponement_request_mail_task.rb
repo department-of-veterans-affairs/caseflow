@@ -174,16 +174,16 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   end
 
   def update_self_and_parent_mail_task(user:, params:, payload_values:)
-    # updated_instructions = format_instructions_on_completion(
-    #   admin_context: params[:instructions],
-    #   granted: payload_values[:disposition].present?,
-    #   date_of_ruling: payload_values[:date_of_ruling]
-    # )
+    updated_instructions = format_instructions_on_completion(
+      admin_context: params[:instructions],
+      granted: payload_values[:disposition].present?,
+      date_of_ruling: payload_values[:date_of_ruling]
+    )
 
     update!(
       completed_by: user,
       status: Constants.TASK_STATUSES.completed,
-      # instructions: updated_instructions
+      instructions: updated_instructions
     )
     update_parent_status
   end
