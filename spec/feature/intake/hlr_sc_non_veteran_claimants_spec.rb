@@ -60,7 +60,8 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
       state: "CA",
       zip: "94123",
       country: "United States",
-      email: "claimant@example.com"
+      email: "claimant@example.com",
+      ein: "11-0999001"
     }
   end
 
@@ -89,7 +90,8 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
       full_state: "New York",
       zip: "10001",
       country: "United States",
-      email: "attorney@example.com"
+      email: "attorney@example.com",
+      ein: '123456789'
     }
   end
 
@@ -142,6 +144,7 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
 
   def add_new_organization_claimant
     fill_in "Organization name", with: new_organization_claimant[:organization_name]
+    fill_in "Employer Identification Number", with: new_organization_claimant[:ein]
     fill_in "Street address 1", with: new_organization_claimant[:address1]
     fill_in "City", with: new_organization_claimant[:city]
     fill_in("State", with: new_organization_claimant[:state]).send_keys :enter
@@ -158,6 +161,7 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
     fill_in("Zip", with: new_organization_attorney[:zip]).send_keys :enter
     fill_in("Country", with: new_organization_attorney[:country]).send_keys :enter
     fill_in "Representative email", with: new_organization_attorney[:email]
+    fill_in "Employer Identification Number", with: new_organization_claimant[:ein]
   end
 
   def add_new_individual_attorney
@@ -281,7 +285,10 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
   end
 
   def verify_organization_claimant_on_add_issues
+    expect(page).to have_current_path("/intake/add_issues")
     expect(page).to have_content("Add / Remove Issues")
+    expect(page).to have_text("Ed Merica (123412345)")
+    expect(page).to have_text("Education")
     # Fix the attorney string for the test
     claimant_type_string = (claimant_type == "Attorney (previously or currently)") ? "Attorney" : claimant_type
     claimant_string = "#{new_organization_claimant[:organization_name]}, #{claimant_type_string}"
