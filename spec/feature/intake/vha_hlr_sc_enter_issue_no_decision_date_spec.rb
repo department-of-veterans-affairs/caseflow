@@ -16,7 +16,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
   end
 
   shared_examples "Vha HLR/SC Issue without decision date" do
-    it "Allows Vha to save a claim review with an issue without a decision date" do
+    it "Allows Vha to intake, edit, and establish a claim review with an issue without a decision date" do
       intake_type
 
       visit "/intake"
@@ -52,6 +52,67 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       expect(page).to have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
 
       expect(page).to have_button("Save", disabled: true)
+
+      issue_id = RequestIssue.last.id
+
+      # Click the first issue actions button and select Add a decision date
+      within "#issue-#{issue_id}" do
+        select("Add decision date", from: "issue-action-0")
+      end
+
+      # Check modal text
+      expect(page).to have_content("Add Decision Date")
+      expect(page).to have_content("Issue:Beneficiary Travel")
+      expect(page).to have_content("Benefit type:Veterans Health Administration")
+      expect(page).to have_content("Issue description:Travel for VA meeting")
+
+      future_date = (Time.zone.now + 1.week).strftime("%m/%d/%Y")
+      past_date = (Time.zone.now - 1.week).strftime("%m/%d/%Y")
+
+      fill_in "decision-date", with: future_date
+
+      expect(page).to have_content("Dates cannot be in the future")
+
+      # The button should be disabled since the date is in the future
+      within ".cf-modal-controls" do
+        expect(page).to have_button("Save", disabled: true)
+      end
+
+      # Test the modal cancel button
+      within ".cf-modal-controls" do
+        click_on "Cancel"
+      end
+
+      expect(page).to_not have_content("Add Decision Date")
+
+      # Open the modal again
+      # Click the first issue actions button and select Add a decision date
+      within "#issue-#{issue_id}" do
+        select("Add decision date", from: "issue-action-0")
+      end
+
+      expect(page).to have_content("Add Decision Date")
+
+      fill_in "decision-date", with: past_date
+
+      within ".cf-modal-controls" do
+        expect(page).to have_button("Save", disabled: false)
+        click_on("Save")
+      end
+
+      # Check that the Edit Issues save button is now Establish
+      expect(page).to have_content("Decision date: #{past_date}")
+      expect(page).to have_button("Establish", disabled: false)
+
+      click_on("Establish")
+
+      # the task should now be assigned and on the in progress tab
+      expect(page).to_not have_content(COPY::VHA_INCOMPLETE_TAB_DESCRIPTION)
+      expect(page).to have_content(edit_establish_success_message_text)
+      expect(current_url).to include("/decision_reviews/vha?tab=in_progress")
+
+      task.reload
+      expect(task.status).to eq("assigned")
     end
   end
 
