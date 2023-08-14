@@ -141,7 +141,15 @@ class ClaimReviewController < ApplicationController
   end
 
   def vha_established_message
-    "You have successfully established #{claim_review.claimant_name}'s #{claim_review.class.review_title}"
+    "You have successfully established #{claimant_name}'s #{claim_review.class.review_title}"
+  end
+
+  def claimant_name
+    if claim_review.veteran_is_not_claimant
+      claim_review.claimant.try(:name)
+    else
+      claim_review.veteran_full_name
+    end
   end
 
   def vha_flash_message
@@ -170,7 +178,6 @@ class ClaimReviewController < ApplicationController
   end
 
   def decisions_removed_message
-    claimant_name = claim_review.veteran_full_name
     "You have successfully removed #{claim_review.class.review_title} for #{claimant_name}
     (ID: #{claim_review.veteran.ssn})."
   end
