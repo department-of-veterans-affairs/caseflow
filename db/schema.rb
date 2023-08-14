@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_06_29_184615) do
+ActiveRecord::Schema.define(version: 2023_07_31_194341) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1293,7 +1293,7 @@ ActiveRecord::Schema.define(version: 2023_06_29_184615) do
     t.string "appeals_type", null: false, comment: "Type of Appeal"
     t.datetime "created_at", comment: "Timestamp of when Noticiation was Created"
     t.boolean "email_enabled", default: true, null: false
-    t.text "email_notification_content", comment: "Full Email Text Content of Notification"
+    t.string "email_notification_content", comment: "Full Email Text Content of Notification"
     t.string "email_notification_external_id", comment: "VA Notify Notification Id for the email notification send through their API "
     t.string "email_notification_status", comment: "Status of the Email Notification"
     t.date "event_date", null: false, comment: "Date of Event"
@@ -1304,7 +1304,7 @@ ActiveRecord::Schema.define(version: 2023_06_29_184615) do
     t.string "participant_id", comment: "ID of Participant"
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
-    t.text "sms_notification_content", comment: "Full SMS Text Content of Notification"
+    t.string "sms_notification_content", comment: "Full SMS Text Content of Notification"
     t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
@@ -1836,7 +1836,7 @@ ActiveRecord::Schema.define(version: 2023_06_29_184615) do
   end
 
   create_table "vbms_distribution_destinations", force: :cascade do |t|
-    t.string "address_line_1", null: false, comment: "PII. If destination_type is domestic, international, or military then Must not be null."
+    t.string "address_line_1", comment: "PII. If destination_type is domestic, international, or military then Must not be null."
     t.string "address_line_2", comment: "PII. If treatLine2AsAddressee is [true] then must not be null"
     t.string "address_line_3", comment: "PII. If treatLine3AsAddressee is [true] then must not be null"
     t.string "address_line_4", comment: "PII."

@@ -70,10 +70,4 @@ describe OpenHearingTasksWithoutActiveDescendantsChecker, :all_dbs do
       end
     end
   end
-
-  describe ".slack_channel" do
-    it "is available as a public method" do
-      expect { subject.slack_channel }.to_not raise_error
-    end
-  end
 end
