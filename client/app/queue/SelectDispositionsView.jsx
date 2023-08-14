@@ -13,6 +13,7 @@ import SelectIssueDispositionDropdown from './components/SelectIssueDispositionD
 import Modal from '../components/Modal';
 import TextareaField from '../components/TextareaField';
 import SearchableDropdown from '../components/SearchableDropdown';
+import QueueCheckboxGroup from './components/QueueCheckboxGroup';
 import COPY from '../../COPY';
 import { COLORS } from '../constants/AppConstants';
 
@@ -23,8 +24,11 @@ import {
 import { hideSuccessMessage } from './uiReducer/uiActions';
 import {
   VACOLS_DISPOSITIONS,
-  ISSUE_DISPOSITIONS
+  ISSUE_DISPOSITIONS,
+  DECISION_SPECIAL_ISSUES,
+  DECISION_SPECIAL_ISSUES_NO_MST_PACT
 } from './constants';
+import ApiUtil from '../util/ApiUtil';
 
 import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS';
@@ -48,6 +52,18 @@ const textAreaStyle = css({
   maxWidth: '100%'
 });
 
+const specialIssuesCheckboxStyling = css({
+  columnCount: '1',
+  marginTop: '2%',
+  maxWidth: '70%',
+  '& legend': {
+    marginBottom: '2%',
+  },
+  '& .checkbox': {
+    marginTop: '0',
+  },
+});
+
 class SelectDispositionsView extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -57,17 +73,70 @@ class SelectDispositionsView extends React.PureComponent {
       decisionIssue: null,
       editingExistingIssue: false,
       highlightModal: false,
-      deleteAddedDecisionIssue: null
+      deleteAddedDecisionIssue: null,
+      specialIssues: null,
+      mstJustification: '',
+      pactJustification: ''
     };
   }
-
   decisionReviewCheckoutFlow = () => this.props.checkoutFlow === 'dispatch_decision';
 
   componentDidMount = () => {
     if (!this.decisionReviewCheckoutFlow()) {
       this.props.setDecisionOptions({ work_product: 'Decision' });
     }
+    ApiUtil.get(
+      `/appeals/${this.props.appealId}/special_issues`).then(
+      (response) => {
+        const { ...specialIssues } = response.body;
+
+        this.editStagedAppeal({ specialIssues });
+        this.setState({ specialIssues });
+      }
+    );
   }
+
+  stageSpecialIssues = (decisionIssues) => {
+    const appealIsBlueWater = decisionIssues.filter(
+      // eslint-disable-next-line camelcase, no-unneeded-ternary
+      (decision) => decision.decisionSpecialIssue?.blue_water).length > 0;
+
+    const appealIsBurnPit = decisionIssues.filter(
+      // eslint-disable-next-line camelcase, no-unneeded-ternary
+      (decision) => decision.decisionSpecialIssue?.burn_pit).length > 0;
+
+    this.setState({ specialIssues: {
+      ...this.state.specialIssues,
+      blue_water: appealIsBlueWater,
+      burn_pit: appealIsBurnPit
+    } });
+
+    this.props.editStagedAppeal(
+      this.props.appeal.externalId, {
+        specialIssues: {
+          ...this.state.specialIssues,
+          blue_water: appealIsBlueWater,
+          burn_pit: appealIsBurnPit
+        }
+      }
+    );
+  }
+
+  createSpecialIssueList = (decisionIssues) => {
+    const blueWater = decisionIssues.filter(
+      // eslint-disable-next-line camelcase, no-unneeded-ternary
+      (decision) => decision.decisionSpecialIssue?.blue_water);
+
+    const burnPit = decisionIssues.filter(
+      // eslint-disable-next-line camelcase, no-unneeded-ternary
+      (decision) => decision.decisionSpecialIssue?.burn_pit);
+
+    return {
+      ...this.state.specialIssues,
+      blue_water: _.some(blueWater, (bW) => bW.decisionSpecialIssue.blue_water === true),
+      burn_pit: _.some(burnPit, (bP) => bP.decisionSpecialIssue.burn_pit === true)
+    };
+  };
 
   getNextStepUrl = () => {
     const {
@@ -76,6 +145,11 @@ class SelectDispositionsView extends React.PureComponent {
       checkoutFlow,
       appeal: { decisionIssues }
     } = this.props;
+
+    ApiUtil.post(`/appeals/${appealId}/special_issues`,
+      {
+        data: { special_issues: this.createSpecialIssueList(decisionIssues) }
+      });
 
     let nextStep;
     const dispositions = decisionIssues.map((issue) => issue.disposition);
@@ -98,10 +172,14 @@ class SelectDispositionsView extends React.PureComponent {
     const {
       appealId,
       taskId,
-      checkoutFlow
+      checkoutFlow,
+      mstFeatureToggle,
+      pactFeatureToggle
     } = this.props;
 
-    return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
+    // route to case details instead of special issues for MST/PACT
+    return (mstFeatureToggle || pactFeatureToggle) ? `/queue/appeals/${appealId}` :
+      `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
   }
 
   validateForm = () => {
@@ -123,6 +201,10 @@ class SelectDispositionsView extends React.PureComponent {
     const benefitType = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).program;
     const diagnosticCode = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).diagnostic_code;
     const closedStatus = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).closed_status;
+    const mst_justification = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).mst_justification;
+    const pact_justification = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).pact_justification;
+    const mst_status = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).mst_status;
+    const pact_status = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).pact_status;
 
     const newDecisionIssue = {
       id: `temporary-id-${uuid.v4()}`,
@@ -130,14 +212,30 @@ class SelectDispositionsView extends React.PureComponent {
       disposition: closedStatus,
       benefit_type: benefitType,
       diagnostic_code: diagnosticCode,
-      request_issue_ids: [requestIssueId]
+      request_issue_ids: [requestIssueId],
+      mst_justification,
+      pact_justification,
+      mst_status,
+      mstOriginalStatus: mst_status,
+      pact_status,
+      pactOriginalStatus: pact_status,
+
+      /*
+        Burn Pit and Blue Water will still be tracked on the appeal level but,
+        SelectSpecialIssuesView.jsx is no longer utilized for AMA appeals.
+        So we must temporarily track it on the issue level. As long as one
+        decision has the issue checked, it will be applied to whole appeal.
+      */
+      decisionSpecialIssue: null,
     };
 
     this.setState({
       openRequestIssueId: requestIssueId,
       decisionIssue: decisionIssue || newDecisionIssue,
       editingExistingIssue: Boolean(decisionIssue),
-      deleteAddedDecisionIssue: null
+      deleteAddedDecisionIssue: null,
+      mstJustification: mst_justification,
+      pactJustification: pact_justification,
     });
   }
 
@@ -160,8 +258,33 @@ class SelectDispositionsView extends React.PureComponent {
     return this.validBenefitType(decisionIssue.benefit_type) && decisionIssue.disposition && decisionIssue.description;
   }
 
+  validateJustification = (justificationFeatureToggle) => {
+    const { decisionIssue } = this.state;
+    const mstHasChanged = decisionIssue.mstOriginalStatus !== decisionIssue.mst_status;
+    const pactHasChanged = decisionIssue.pactOriginalStatus !== decisionIssue.pact_status;
+
+    if (mstHasChanged && (decisionIssue.mst_justification === '' || decisionIssue.mst_justification === null) &&
+      justificationFeatureToggle) {
+      return false;
+    }
+    if (pactHasChanged && (decisionIssue.pact_justification === '' || decisionIssue.pact_justification === null) &&
+      justificationFeatureToggle) {
+      return false;
+    }
+
+    return true;
+  }
+
   saveDecision = () => {
     if (!this.validate()) {
+      this.setState({
+        highlightModal: true
+      });
+
+      return;
+    }
+
+    if (!this.validateJustification()) {
       this.setState({
         highlightModal: true
       });
@@ -187,6 +310,7 @@ class SelectDispositionsView extends React.PureComponent {
       this.props.appeal.externalId, { decisionIssues: newDecisionIssues }
     );
 
+    this.stageSpecialIssues(this.props.appeal.decisionIssues);
     this.handleModalClose();
   }
 
@@ -199,7 +323,21 @@ class SelectDispositionsView extends React.PureComponent {
       this.props.appeal.externalId, { decisionIssues: remainingDecisionIssues }
     );
 
+    // Reverts special issues view to their original status when deleting decision
+    this.selectedIssuesToDelete()[0].mst_status = this.state.decisionIssue.mstOriginalStatus;
+    this.selectedIssuesToDelete()[0].pact_status = this.state.decisionIssue.pactOriginalStatus;
+
     this.handleModalClose();
+  }
+
+  selectedIssuesToDelete = () => {
+    if (!this.state.requestIdToDelete) {
+      return [];
+    }
+
+    return this.props.appeal.issues.filter((issue) => {
+      return this.state.requestIdToDelete === issue.id;
+    });
   }
 
   selectedIssues = () => {
@@ -240,21 +378,88 @@ class SelectDispositionsView extends React.PureComponent {
     });
   }
 
+  onJustificationChange = (event, decision, type) => {
+
+    if (type === 'mst_status') {
+      this.setState({
+        decisionIssue: {
+          ...decision,
+          mst_justification: event
+        }
+      });
+      this.setState({ mstJustification: event });
+    } else if (type === 'pact_status') {
+      this.setState({
+        decisionIssue: {
+          ...decision,
+          pact_justification: event
+        }
+      });
+      this.setState({ pactJustification: event });
+    }
+  }
+
+  filterIssuesForJustification = (issues, idToFilter) => {
+    return issues.filter((issue) => {
+      return issue.id === idToFilter;
+    });
+  }
+
+  onCheckboxChange = (event, decision) => {
+    const checkboxId = event.target.getAttribute('id');
+
+    if (checkboxId === 'mst_status' || checkboxId === 'pact_status') {
+      this.setState({
+        decisionIssue: {
+          ...decision,
+          [checkboxId]: event.target.checked,
+        }
+      });
+    }
+    if (checkboxId === 'blue_water' || checkboxId === 'burn_pit') {
+      this.setState({
+        decisionIssue: {
+          ...decision,
+          decisionSpecialIssue: {
+            ...decision.decisionSpecialIssue,
+            [checkboxId]: event.target.checked,
+          }
+        }
+      });
+    }
+  };
+
   render = () => {
-    const { appeal, highlight, ...otherProps } = this.props;
+    const {
+      appeal,
+      highlight,
+      justificationFeatureToggle,
+      mstFeatureToggle,
+      pactFeatureToggle,
+      ...otherProps
+    } = this.props;
     const {
       highlightModal,
       decisionIssue,
       openRequestIssueId,
       editingExistingIssue,
       deleteAddedDecisionIssue,
-      requestIdToDelete
+      requestIdToDelete,
     } = this.state;
     const connectedRequestIssues = appeal.issues.filter((issue) => {
       return decisionIssue && decisionIssue.request_issue_ids.includes(issue.id);
     });
     const connectedIssues = this.connectedRequestIssuesWithoutCurrentId(connectedRequestIssues, requestIdToDelete);
     const toDeleteHasConnectedIssue = connectedIssues.length > 0;
+
+    const specialIssuesValues = {
+      // eslint-disable-next-line camelcase
+      blue_water: decisionIssue?.decisionSpecialIssue?.blue_water,
+      // eslint-disable-next-line camelcase
+      burn_pit: decisionIssue?.decisionSpecialIssue?.burn_pit,
+      mst_status: decisionIssue?.mst_status,
+      pact_status: decisionIssue?.pact_status
+    };
 
     // In order to determine whether or not to display error styling and an error message for each issue,
     // determine if highlight is set to true and if there is not a decision issue
@@ -280,8 +485,12 @@ class SelectDispositionsView extends React.PureComponent {
       <hr />
       <AmaIssueList
         requestIssues={appeal.issues}
+        mstFeatureToggle={mstFeatureToggle}
+        pactFeatureToggle={pactFeatureToggle}
         errorMessages={issueErrors}>
         <DecisionIssues
+          mstFeatureToggle={mstFeatureToggle}
+          pactFeatureToggle={pactFeatureToggle}
           decisionIssues={appeal.decisionIssues}
           openDecisionHandler={this.openDecisionHandler}
           openDeleteAddedDecisionIssueHandler={this.openDeleteAddedDecisionIssueHandler} />
@@ -381,6 +590,36 @@ class SelectDispositionsView extends React.PureComponent {
             }
           })}
         />
+        { (mstFeatureToggle || pactFeatureToggle) && <QueueCheckboxGroup
+          name={COPY.INTAKE_EDIT_ISSUE_SELECT_SPECIAL_ISSUES}
+          options={(mstFeatureToggle || pactFeatureToggle) ? DECISION_SPECIAL_ISSUES : DECISION_SPECIAL_ISSUES_NO_MST_PACT}
+          values={specialIssuesValues}
+          styling={specialIssuesCheckboxStyling}
+          onChange={(event) => this.onCheckboxChange(event, decisionIssue)}
+          errorState={{
+            highlightModal,
+            invalid: !this.validateJustification(justificationFeatureToggle),
+          }
+          }
+          filterIssuesForJustification={this.filterIssuesForJustification}
+          justificationFeatureToggle={justificationFeatureToggle}
+          mstFeatureToggle={mstFeatureToggle}
+          pactFeatureToggle={pactFeatureToggle}
+          justifications={[
+            {
+              id: 'mst_status',
+              justification: decisionIssue.mst_justification,
+              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, 'mst_status'),
+              hasChanged: this.state.decisionIssue.mstOriginalStatus !== this.state.decisionIssue.mst_status
+            },
+            {
+              id: 'pact_status',
+              justification: decisionIssue.pact_justification,
+              onJustificationChange: (event) => this.onJustificationChange(event, decisionIssue, 'pact_status'),
+              hasChanged: this.state.decisionIssue.pactOriginalStatus !== this.state.decisionIssue.pact_status
+            },
+          ]}
+        />}
         <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_DESCRIPTION}</h3>
         <p {...exampleDiv} {...paragraphH3SiblingStyle}>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_EXAMPLE}</p>
         <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_TITLE}</h3>
@@ -432,6 +671,7 @@ class SelectDispositionsView extends React.PureComponent {
 SelectDispositionsView.propTypes = {
   appeal: PropTypes.shape({
     decisionIssues: PropTypes.array,
+    specialIssues: PropTypes.object,
     externalId: PropTypes.string,
     isLegacyAppeal: PropTypes.bool,
     issues: PropTypes.array
@@ -442,7 +682,10 @@ SelectDispositionsView.propTypes = {
   hideSuccessMessage: PropTypes.func,
   highlight: PropTypes.bool,
   setDecisionOptions: PropTypes.func,
-  taskId: PropTypes.string
+  taskId: PropTypes.string,
+  justificationFeatureToggle: PropTypes.bool,
+  mstFeatureToggle: PropTypes.bool,
+  pactFeatureToggle: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => ({
@@ -458,3 +701,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(SelectDispositionsView);
+

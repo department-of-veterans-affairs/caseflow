@@ -166,9 +166,29 @@ audit: ## Create caseflow_audit schema, tables, and triggers in postgres
 	bundle exec rails r db/scripts/audit/triggers/create_vbms_distributions_audit_trigger.rb
 	bundle exec rails r db/scripts/audit/triggers/create_vbms_distribution_destinations_audit_trigger.rb
 	bundle exec rails r db/scripts/audit/triggers/create_vbms_uploaded_documents_audit_trigger.rb
+	bundle exec rails r db/scripts/audit/tables/create_priority_end_product_sync_queue_audit.rb
+	bundle exec rails r db/scripts/audit/functions/add_row_to_priority_end_product_sync_queue_audit_table_function.rb
+	bundle exec rails r db/scripts/audit/triggers/create_priority_end_product_sync_queue_audit_trigger.rb
 
 audit-remove: ## Remove caseflow_audit schema, tables and triggers in postgres
 	bundle exec rails r db/scripts/audit/remove_caseflow_audit_schema.rb
+
+external-db-create: ## Creates external_vbms_ext_claim table
+	bundle exec rails r db/scripts/external/create_vbms_ext_claim_table.rb
+
+external-db-remove:  ## Remove external_vbms_ext_claim table
+	bundle exec rails r db/scripts/external/remove_vbms_ext_claim_table.rb
+
+external-db-create-test: ## Creates table in caseflow_certification_test DB for local RSPEC
+	bundle exec rails r -e test db/scripts/external/create_vbms_ext_claim_table.rb
+
+remove-vbms-ext-claim-seeds: ## Drops audit tables, removes all PriorityEndProductSyncQueue, BatchProcess, and seed-vbms-ext-claim records, then rebuilds audit tables
+	make audit-remove
+	make external-db-create
+	bundle exec rails r db/scripts/external/remove_vbms_ext_claim_seeds.rb
+	make audit
+
+reseed-vbms-ext-claim: remove-vbms-ext-claim-seeds seed-vbms-ext-claim ## Re-seeds database with records created from seed-vbms-ext-claim
 
 c:  ## Start rails console
 	bundle exec rails console
@@ -188,7 +208,7 @@ db-migrate:	## Migrate main Caseflow db
 db-rollback:	## Rollback main Caseflow db
 	bundle exec rake db:rollback
 
-migrate: etl-migrate etl-test-prepare db-migrate ## Migrate all Rails databases
+migrate: external-db-remove etl-migrate etl-test-prepare db-migrate ## Migrate all non-external Rails databases
 
 rollback: etl-rollback db-rollback	## Rollback all Rails databases
 
@@ -199,9 +219,14 @@ reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable fe
 
 reset-dbs: ## Resets Caseflow and ETL database schemas
 	make audit-remove
+	make external-db-remove
 	DB=etl bundle exec rake db:drop db:create db:schema:load
 	bundle exec rake db:drop db:create db:schema:load
 	make audit
+	make external-db-create
+
+seed-vbms-ext-claim: ## Seed only vbms_ext_claim
+	bundle exec rake db:seed:vbms_ext_claim
 
 seed-dbs:	## Seed all databases
 	bundle exec rake local:vacols:seed

@@ -189,6 +189,8 @@ jobs:
         run: |
           ./ci-bin/capture-log "DB=etl bundle exec rake db:create db:schema:load db:migrate"
           ./ci-bin/capture-log "bundle exec rake db:create db:schema:load db:migrate"
+          ./ci-bin/capture-log "make -f Makefile.example external-db-create"
+        # added line to create external table(s) that are needed for tests
 
       # We don't want to seed DBs here because DatabaseCleaner just truncates it anyway. The setup_vacols
       # rake task needs to be run because it adds data to two tables that are ignored by DBCleaner
@@ -244,6 +246,32 @@ jobs:
         with:
           path: ./log/bullet-${{matrix.ci_node_index}}.log
 
+
+  caseflow_rspec_coverage_report:
+    runs-on: ubuntu-8-cores-latest
+    if: ${{ success() }}
+    needs: caseflow_rspec_job
+    container:
+      image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
+      credentials:
+        username: AWS
+        password: ${{ secrets.ECR_PASSWORD }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@v3
+
+      - name: Inflate Coverage tar.gz files
+        run: |
+          (cd artifact && for  file in coverage-*.tar.gz ; do tar -xvf "$file"; done)
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7.3'
+          bundler-cache: true
+      - name: Run coverage analysis
+        run: bundle exec rake ci:gha_verify_code_coverage
 
 
   caseflow_jest_job:
