@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-# require "./jobs/claim_date_dt_fix_job"
-# "/lib/helpers/claim_date_dt_fix.rb"
-
 describe ClaimDateDtFixJob, :postres do
   let(:claim_date_dt_error) { "ClaimDateDt" }
 
@@ -15,15 +12,55 @@ describe ClaimDateDtFixJob, :postres do
     )
   end
 
-  before do
-    allow(StuckJobHelper).to receive(:upload_logs_to_s3).and_return("logs")
-  end
+# lets wrap all calls to the stuck job reporter with a stub and we can eliminate this before block
+  # before do
+  #   allow_any_instance_of(StuckJobReportService).to receive(:upload_logs_to_s3)
+  # end
+
+
+  # let(:stuck_job_service) { instance_double("StuckJobService") }
+
+  # before do
+  #   allow(stuck_job_service).to receive(:upload_logs_to_s3) { stuck_job_service }
+  # end
+
+  # policy = instance_double(WithdrawnDecisionReviewPolicy)
+  # allow(WithdrawnDecisionReviewPolicy).to receive(:new).with(caseflow_appeal).and_return policy
+  # allow(policy).to receive(:satisfied?).and_return true
+
+
+# let(:blah) { instance_double(StuckJobReportService) }
+ blah =  instance_double(StuckJobReporervice)
+
+
+    before  do
+
+      allow(StuckJobReportService).to receive(:new).and_return(blah)
+      allow(blah).to receive(:upload_logs_to_s3)
+      # expect(StuckJobService).to receive(:upload_logs_to_s3).and_return("blah")
+    end
+
+
+
+
+
+    # policy = instance_double(WithdrawnDecisionReviewPolicy)
+    # allow(WithdrawnDecisionReviewPolicy).to receive(:new).with(caseflow_appeal).and_return policy
+    # allow(policy).to receive(:satisfied?).and_return true
+
+
+
+
+
+
+
+
+
+
+
+
 
   subject { described_class.new("decision_document", "ClaimDateDt") }
-
-  let!(:expected_logs) do
-    " #{Time.zone.now} ClaimDateDt::Log - Summary Report. Total number of Records with Errors: 0"
-  end
 
   before do
     create_list(:decision_document, 5)
@@ -36,7 +73,6 @@ describe ClaimDateDtFixJob, :postres do
       expect(subject.decision_docs_with_errors.count).to eq(3)
       subject.perform
 
-      # expect(subject.logs.last).to include(expected_logs)
       expect(decision_doc_with_error.reload.error).to be_nil
       expect(subject.decision_docs_with_errors.count).to eq(0)
     end
