@@ -32,9 +32,8 @@ import DocCategoryPicker from './DocCategoryPicker';
 import FilterIcon from '../components/icons/FilterIcon';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
-import SearchBar from '../components/SearchBar';
-
-import FilterOption from '../components/FilterOption';
+import DocTagPicker from './DocTagPicker';
+import ReaderTableDropdownFilter from '../components/ReaderTableDropdownFilter';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -179,43 +178,28 @@ class DocumentsTable extends React.Component {
       {
         id: 1,
         value: 'dbg data',
-        displayText: 'Aaron' },
+        text: 'Aaron' },
       {
         id: 2,
         value: 'dbg data',
-        displayText: 'Aardvark' },
+        text: 'Aardvark' },
       {
         id: 3,
         value: 'dbg data',
-        displayText: 'Aandy' },
+        text: 'Aandy' },
       {
         id: 4,
         value: 'dbg data',
-        displayText: 'Aardwolf' },
+        text: 'Aardwolf' },
       {
         id: 5,
         value: 'dbg data',
-        displayText: 'Aaronic' },
+        text: 'Aaronic' },
       {
         id: 6,
         value: 'dbg data',
-        displayText: 'AAardandy' },
+        text: 'AAardandy' },
     ];
-
-    const getFilteredData = () => {
-      if (this.state.filterText.length < 3) {
-        return debugDataUnfiltered;
-      }
-      const filteredData = debugDataUnfiltered.filter(
-        (tag) => tag.displayText.toLowerCase().includes(this.state.filterText.toLowerCase())
-      );
-
-      return filteredData;
-    };
-
-    const updateFilterTextState = (newState) => {
-      this.setState({ filterText: newState });
-    };
 
     return [
       {
@@ -333,19 +317,22 @@ class DocumentsTable extends React.Component {
               handleActivate={this.toggleTagDropdownFilterVisiblity}
             />
             {isTagDropdownFilterOpen && (
-              <DropdownFilter
+              <ReaderTableDropdownFilter
                 clearFilters={this.props.clearTagFilters}
                 name="tag"
                 isClearEnabled={anyTagFiltersAreSet}
                 handleClose={this.toggleTagDropdownFilterVisiblity}
                 addClearFiltersRow
               >
-                <div>
-                  <SearchBar onChange={updateFilterTextState} value={this.state.filterText} />
-                  <FilterOption
-                    options={getFilteredData()} />
-                </div>
-              </DropdownFilter>
+
+                <DocTagPicker
+                  // This is the original props : tags={this.props.tagOptions}
+                  // using debug filtering just for testing
+                  tags={debugDataUnfiltered}
+                  tagToggleStates={this.props.docFilterCriteria.tag}
+                  handleTagToggle={this.props.setTagFilter}
+                />
+              </ReaderTableDropdownFilter>
             )}
           </div>
         ),
