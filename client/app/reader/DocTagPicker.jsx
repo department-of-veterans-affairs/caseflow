@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Checkbox from '../components/Checkbox';
 import { css } from 'glamor';
+import SearchBar from '../components/SearchBar';
 
 const TagSelector = (props) => {
   const { tag, handleTagToggle, tagToggleStates } = props;
@@ -24,8 +25,13 @@ TagSelector.propTypes = {
     text: PropTypes.string.isRequired
   }).isRequired,
   handleTagToggle: PropTypes.func,
-  tagToggleStates: PropTypes.object
+  tagToggleStates: PropTypes.object,
+  searchOnChange: PropTypes.func
 };
+
+// const updateFilterTextState = (newState) => {
+//   this.setState({ filterText: newState });
+// };
 
 const tagListStyling = css({
   paddingBottom: 0,
@@ -48,23 +54,41 @@ const tagListItemStyling = css({
 });
 
 const DocTagPicker = ({ tags, tagToggleStates, handleTagToggle,
-  dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {
-  return <ul {...dropdownFilterViewListStyle} {...tagListStyling}>
-    {tags.map((tag, index) => {
-      return <li key={index} {...dropdownFilterViewListItemStyle} {...tagListItemStyling}>
-        <TagSelector
-          tag={tag}
-          handleTagToggle={handleTagToggle}
-          tagToggleStates={tagToggleStates}
-        />
-      </li>;
-    })}
-  </ul>;
+  dropdownFilterViewListStyle, dropdownFilterViewListItemStyle, debugData }) => {
+  const [filterText, updateFilterText] = useState('');
+
+  const getFilteredData = () => {
+    if (filterText.length < 3) {
+      return tags;
+    }
+    const filteredData = tags.filter(
+      (tag) => tag.text.toLowerCase().includes(filterText.toLowerCase())
+    );
+
+    return filteredData;
+  };
+
+  return (
+    <div>
+      <SearchBar onChange={updateFilterText} value={filterText} />
+      <ul {...dropdownFilterViewListStyle} {...tagListStyling}>
+        {getFilteredData().map((tag, index) => {
+          return <li key={index} {...dropdownFilterViewListItemStyle} {...tagListItemStyling}>
+            <TagSelector
+              tag={tag}
+              handleTagToggle={handleTagToggle}
+              tagToggleStates={tagToggleStates}
+            />
+          </li>;
+        })}
+      </ul>
+    </div>);
 };
 
 DocTagPicker.propTypes = {
   handleTagToggle: PropTypes.func.isRequired,
-  tagToggleStates: PropTypes.object
+  tagToggleStates: PropTypes.object,
+  searchOnChange: PropTypes.func
 };
 
 export default DocTagPicker;
