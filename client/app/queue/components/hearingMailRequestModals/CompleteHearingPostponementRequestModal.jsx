@@ -101,13 +101,14 @@ const CompleteHearingPostponementRequestModal = (props) => {
       data: {
         task: {
           status: TASK_STATUSES.completed,
-          instructions,
           business_payloads: {
             values: {
               // If request is denied, do not assign new disposition to hearing
               disposition: granted ? HEARING_DISPOSITION_TYPES.postponed : null,
               after_disposition_update: granted ? { action: ACTIONS.SCHEDULE_LATER } : null,
               date_of_ruling: rulingDate.value,
+              instructions,
+              granted
             },
           },
         },
@@ -134,7 +135,8 @@ const CompleteHearingPostponementRequestModal = (props) => {
       props.setScheduledHearing({
         action: ACTIONS.RESCHEDULE,
         taskId,
-        disposition: HEARING_DISPOSITION_TYPES.postponed
+        disposition: HEARING_DISPOSITION_TYPES.postponed,
+        ...state
       });
 
       props.history.push(

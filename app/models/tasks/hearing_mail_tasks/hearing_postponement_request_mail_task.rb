@@ -46,10 +46,10 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     payload_values = params.delete(:business_payloads)&.dig(:values)
 
     # If request to postpone hearing is granted
-    if payload_values[:disposition].present?
+    if payload_values[:granted]
       created_tasks = update_hearing_and_create_tasks(payload_values[:after_disposition_update])
     end
-    update_self_and_parent_mail_task(user: user, params: params, payload_values: payload_values)
+    update_self_and_parent_mail_task(user: user, payload_values: payload_values)
 
     [self] + (created_tasks || [])
   end
@@ -172,10 +172,10 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     [new_hearing_task, schedule_task].compact
   end
 
-  def update_self_and_parent_mail_task(user:, params:, payload_values:)
+  def update_self_and_parent_mail_task(user:, payload_values:)
     updated_instructions = format_instructions_on_completion(
-      admin_context: params[:instructions],
-      granted: payload_values[:disposition].present?,
+      admin_context: payload_values[:instructions],
+      granted: payload_values[:granted],
       date_of_ruling: payload_values[:date_of_ruling]
     )
 

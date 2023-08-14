@@ -146,7 +146,7 @@ RSpec.feature "MailTasks", :postgres do
     before do
       HearingAdmin.singleton.add_user(User.current_user)
     end
-    let(:hpr_task) { create(:hearing_postponement_request_mail_task, :with_unscheduled_hearing) }
+    let(:hpr_task) { create(:hearing_postponement_request_mail_task, :with_unscheduled_hearing, assigned_by_id: User.system_user.id) }
 
     context "changing task type" do
       it "submit button starts out disabled" do
@@ -269,6 +269,28 @@ RSpec.feature "MailTasks", :postgres do
         expect(first_task_item).to have_content("HearingPostponementRequestMailTask cancelled")
         expect(first_task_item).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
       end
+    end
+
+    context "Ruling is Granted" do
+      context "scheduling a veteran immediately" do
+        it "schedule a veteran" do
+          p = "queue/appeals/#{hpr_task.appeal.uuid}"
+          visit(p)
+          click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                         text: "Mark as complete")
+
+          expect(page.current_path).to eq("/queue/appeals/#{hpr_task.appeal.uuid}/tasks/#{hpr_task.id}/modal/complete_and_postpone")
+        end
+
+      end
+
+      context "sending to schedule veteran list" do
+
+      end
+    end
+
+    context "Ruling is Denied" do
+
     end
   end
 end
