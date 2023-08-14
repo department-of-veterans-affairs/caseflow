@@ -45,20 +45,13 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   def update_from_params(params, user)
     payload_values = params.delete(:business_payloads)&.dig(:values)
 
-    if params[:status] == Constants.TASK_STATUSES.completed
-      # If request to postpone hearing is granted
-      if payload_values[:granted]
-        created_tasks = update_hearing_and_create_tasks(payload_values[:after_disposition_update])
-        update_self_and_parent_mail_task(user: user, params: params, payload_values: payload_values)
-
-        [self] + created_tasks
-      # If request to postpone hearing is denied
-      else
-        "TO-DO: LOGIC FOR APPEALS-27763"
-      end
-    else
-      super(params, user)
+    # If request to postpone hearing is granted
+    if payload_values[:disposition].present?
+      created_tasks = update_hearing_and_create_tasks(payload_values[:after_disposition_update])
     end
+    update_self_and_parent_mail_task(user: user, params: params, payload_values: payload_values)
+
+    [self] + (created_tasks || [])
   end
 
   # Only show HPR mail task assigned to "HearingAdmin" on the Case Timeline
@@ -66,17 +59,15 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     assigned_to.type == "MailTeam"
   end
 
-  private
-
-  # TO-DO: Edge case of request recieved after hearing held?
-  #   - On that note, #available_actions might also fail?
-  def hearing
-    @hearing ||= open_assign_hearing_disposition_task&.hearing
+  def recent_hearing
+    @recent_hearing ||= open_assign_hearing_disposition_task&.hearing
   end
 
   def hearing_task
-    @hearing_task ||= hearing&.hearing_task || active_schedule_hearing_task&.parent
+    @hearing_task ||= recent_hearing&.hearing_task || active_schedule_hearing_task&.parent
   end
+
+  private
 
   def active_schedule_hearing_task
     appeal.tasks.where(type: ScheduleHearingTask.name).active.first
@@ -93,15 +84,15 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   end
 
   def hearing_scheduled_and_awaiting_disposition?
-    return false if hearing.nil?
+    return false if recent_hearing.nil?
 
     # Ensure associated hearing is not scheduled for the past
-    !hearing.scheduled_for_past?
+    !recent_hearing.scheduled_for_past?
   end
 
   def update_hearing_and_create_tasks(after_disposition_update)
     multi_transaction do
-      unless hearing.nil?
+      unless recent_hearing.nil?
         update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
         clean_up_virtual_hearing
       end
@@ -110,30 +101,69 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   end
 
   def update_hearing(hearing_hash)
-    if hearing.is_a?(LegacyHearing)
-      hearing.update_caseflow_and_vacols(hearing_hash)
+    if recent_hearing.is_a?(LegacyHearing)
+      recent_hearing.update_caseflow_and_vacols(hearing_hash)
     else
-      hearing.update(hearing_hash)
+      recent_hearing.update(hearing_hash)
     end
   end
 
-  # TO DO: Affected by webex/pexip?
   def clean_up_virtual_hearing
-    if hearing.virtual?
+    if recent_hearing.virtual?
       perform_later_or_now(VirtualHearings::DeleteConferencesJob)
     end
   end
 
   def reschedule_or_schedule_later(after_disposition_update)
-    case after_disposition_update
+    case after_disposition_update[:action]
     when "reschedule"
-      "TO-DO: LOGIC FOR APPEALS-24998"
+      new_hearing_attrs = after_disposition_update[:new_hearing_attrs]
+      reschedule(
+        hearing_day_id: new_hearing_attrs[:hearing_day_id],
+        scheduled_time_string: new_hearing_attrs[:scheduled_time_string],
+        hearing_location: new_hearing_attrs[:hearing_location],
+        virtual_hearing_attributes: new_hearing_attrs[:virtual_hearing_attributes],
+        notes: new_hearing_attrs[:notes],
+        email_recipients_attributes: new_hearing_attrs[:email_recipients]
+      )
     when "schedule_later"
       schedule_later
     else
       fail ArgumentError, "unknown disposition action"
     end
   end
+
+  # rubocop:disable Metrics/ParameterLists
+  def reschedule(
+    hearing_day_id:,
+    scheduled_time_string:,
+    hearing_location: nil,
+    virtual_hearing_attributes: nil,
+    notes: nil,
+    email_recipients_attributes: nil
+  )
+    multi_transaction do
+      new_hearing_task = hearing_task.cancel_and_recreate
+
+      new_hearing = HearingRepository.slot_new_hearing(hearing_day_id: hearing_day_id,
+                                                       appeal: appeal,
+                                                       hearing_location_attrs: hearing_location&.to_hash,
+                                                       scheduled_time_string: scheduled_time_string,
+                                                       notes: notes)
+      if virtual_hearing_attributes.present?
+        @alerts = VirtualHearings::ConvertToVirtualHearingService
+          .convert_hearing_to_virtual(new_hearing, virtual_hearing_attributes)
+      elsif email_recipients_attributes.present?
+        create_or_update_email_recipients(new_hearing, email_recipients_attributes)
+      end
+
+      disposition_task = AssignHearingDispositionTask
+        .create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
+
+      [new_hearing_task, disposition_task]
+    end
+  end
+  # rubocop:enable Metrics/ParameterLists
 
   def schedule_later
     new_hearing_task = hearing_task.cancel_and_recreate
@@ -145,7 +175,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   def update_self_and_parent_mail_task(user:, params:, payload_values:)
     updated_instructions = format_instructions_on_completion(
       admin_context: params[:instructions],
-      granted: payload_values[:granted],
+      granted: payload_values[:disposition].present?,
       date_of_ruling: payload_values[:date_of_ruling]
     )
 

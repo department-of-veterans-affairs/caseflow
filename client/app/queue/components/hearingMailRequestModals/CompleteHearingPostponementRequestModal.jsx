@@ -3,21 +3,19 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
 import { taskById, appealWithDetailSelector } from '../../selectors';
 import { requestPatch, showErrorMessage } from '../../uiReducer/uiActions';
 import { onReceiveAmaTasks } from '../../QueueActions';
-
 import COPY from '../../../../COPY';
 import TASK_STATUSES from '../../../../constants/TASK_STATUSES';
 import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
-
 import QueueFlowModal from '../QueueFlowModal';
 import RadioField from '../../../components/RadioField';
 import Alert from '../../../components/Alert';
 import DateSelector from '../../../components/DateSelector';
 import TextareaField from '../../../components/TextareaField';
 import { marginTop, marginBottom } from '../../constants';
+import { setScheduledHearing } from '../../../components/common/actions';
 
 const ACTIONS = {
   RESCHEDULE: 'reschedule',
@@ -35,6 +33,8 @@ const POSTPONEMENT_OPTIONS = [
 ];
 
 const CompleteHearingPostponementRequestModal = (props) => {
+  const { appealId, appeal, taskId, task, userCanScheduleVirtualHearings } = props;
+
   const formReducer = (state, action) => {
     switch (action.type) {
     case 'granted':
@@ -95,22 +95,18 @@ const CompleteHearingPostponementRequestModal = (props) => {
   };
 
   const getPayload = () => {
-    const { granted, rulingDate, scheduledOption, instructions } = state;
-
-    const afterDispositionPayload = scheduledOption === ACTIONS.RESCHEDULE ?
-      /* LOGIC FOR APPEALS-24998 INSTEAD OF NULL */ null : ACTIONS.SCHEDULE_LATER;
+    const { granted, rulingDate, instructions } = state;
 
     return {
       data: {
         task: {
           status: TASK_STATUSES.completed,
           instructions,
-          // If request is denied, do not assign new disposition to hearing
           business_payloads: {
             values: {
+              // If request is denied, do not assign new disposition to hearing
               disposition: granted ? HEARING_DISPOSITION_TYPES.postponed : null,
-              after_disposition_update: granted ? afterDispositionPayload : null,
-              granted,
+              after_disposition_update: granted ? { action: ACTIONS.SCHEDULE_LATER } : null,
               date_of_ruling: rulingDate.value,
             },
           },
@@ -120,36 +116,32 @@ const CompleteHearingPostponementRequestModal = (props) => {
   };
 
   const getSuccessMsg = () => {
-    const { granted, scheduledOption } = state;
-    const { appeal } = props;
+    const { granted } = state;
 
-    if (!granted) {
-      // LOGIC FOR APPEALS-27763
-    }
-
-    if (scheduledOption === ACTIONS.RESCHEDULE) {
-      // LOGIC FOR APPEALS-24998
-    }
+    const message = granted ?
+      `${appeal.veteranFullName} was successfully added back to the schedule veteran list.` :
+      'You have successfully marked hearing postponement request task as complete.';
 
     return {
-      title: `${
-        appeal.veteranFullName
-      } was successfully added back to the schedule veteran list.`,
+      title: message
     };
   };
 
   const submit = () => {
-    const { userCanScheduleVirtualHearings, task } = props;
-    const { isPosting } = state;
+    const { isPosting, granted, scheduledOption } = state;
 
-    // If user judge ruling is denied...
-    if (!state.granted) {
-      // LOGIC FOR APPEALS-27763
-    }
+    if (granted && scheduledOption === ACTIONS.RESCHEDULE && userCanScheduleVirtualHearings) {
+      props.setScheduledHearing({
+        action: ACTIONS.RESCHEDULE,
+        taskId,
+        disposition: HEARING_DISPOSITION_TYPES.postponed
+      });
 
-    // If user opts to reschedule immediately, redirect to the full page schedule veteran flow
-    if (state.scheduledOption === ACTIONS.RESCHEDULE && userCanScheduleVirtualHearings) {
-      // LOGIC FOR APPEALS-24998
+      props.history.push(
+        `/queue/appeals/${appealId}/tasks/${taskId}/schedule_veteran`
+      );
+
+      return Promise.reject();
     }
 
     if (isPosting) {
@@ -186,7 +178,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
       submitDisabled={!validateForm()}
       validateForm={validateForm}
       submit={submit}
-      pathAfterSubmit={`/queue/appeals/${props.appeal.externalId}`}
+      pathAfterSubmit={`/queue/appeals/${appealId}`}
     >
       <>
         <RadioField
@@ -243,7 +235,31 @@ const CompleteHearingPostponementRequestModal = (props) => {
   );
 };
 
+const mapStateToProps = (state, ownProps) => ({
+  task: taskById(state, { taskId: ownProps.taskId }),
+  appeal: appealWithDetailSelector(state, ownProps),
+  scheduleHearingLaterWithAdminAction:
+    state.components.forms.scheduleHearingLaterWithAdminAction || {}
+});
+
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      setScheduledHearing,
+      requestPatch,
+      onReceiveAmaTasks,
+      showErrorMessage
+    },
+    dispatch
+  );
+
 CompleteHearingPostponementRequestModal.propTypes = {
+  register: PropTypes.func,
+  appealId: PropTypes.string.isRequired,
+  taskId: PropTypes.string.isRequired,
+  history: PropTypes.object,
+  setScheduledHearing: PropTypes.func,
+  userCanScheduleVirtualHearings: PropTypes.bool,
   appeal: PropTypes.shape({
     externalId: PropTypes.string,
     veteranFullName: PropTypes.string
@@ -251,27 +267,10 @@ CompleteHearingPostponementRequestModal.propTypes = {
   task: PropTypes.shape({
     taskId: PropTypes.string,
   }),
-  userCanScheduleVirtualHearings: PropTypes.bool,
   requestPatch: PropTypes.func,
   onReceiveAmaTasks: PropTypes.func,
   showErrorMessage: PropTypes.func,
-  register: PropTypes.func
 };
-
-const mapStateToProps = (state, ownProps) => ({
-  task: taskById(state, { taskId: ownProps.taskId }),
-  appeal: appealWithDetailSelector(state, ownProps),
-});
-
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    {
-      requestPatch,
-      onReceiveAmaTasks,
-      showErrorMessage
-    },
-    dispatch
-  );
 
 export default withRouter(
   connect(
