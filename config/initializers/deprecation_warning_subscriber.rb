@@ -50,14 +50,4 @@ class DeprecationWarningSubscriber < ActiveSupport::Subscriber
       .new(url: ENV["SLACK_DISPATCH_ALERT_URL"])
       .send_notification(event.payload[:message], slack_alert_title, SLACK_ALERT_CHANNEL)
   end
-
-  def raise_if_fixed_deprecation_triggered(event)
-    # Checking for deprecated message in development and test environments
-    if Rails.env.development? || Rails.env.test?
-      if event.payload[:message].include?("The success? predicate is deprecated")
-        message = "Fixed deprecation warning triggered: #{event.payload[:message]}"
-        raise DeprecationWarning, message
-      end
-    end
-  end
 end
