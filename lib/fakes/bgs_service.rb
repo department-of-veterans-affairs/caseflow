@@ -139,6 +139,10 @@ class Fakes::BGSService
     end
   end
 
+  def find_contentions_by_participant_id(participant_id)
+    []
+  end
+
   def find_contentions_by_claim_id(claim_id)
     contentions = self.class.end_product_store.inflated_bgs_contentions_for(claim_id)
 

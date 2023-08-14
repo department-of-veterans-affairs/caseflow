@@ -373,6 +373,7 @@ const HearingDetails = (props) => {
               veteranFileNumber={hearing?.veteranFileNumber}
               veteranFirstName={hearing?.veteranFirstName}
               veteranLastName={hearing?.veteranLastName}
+              hearing={hearing}
             />
             <DetailsForm
               hearing={hearing}

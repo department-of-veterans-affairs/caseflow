@@ -41,6 +41,10 @@ export class DailyDocketPrinted extends React.Component {
           <div>
             <strong>Number:</strong> {hearing.docketNumber}<br />
             <strong>Disposition:</strong> {disposition}<br />
+            <strong>Special Issues:</strong>
+              {hearing.mst && <span className="cf-red-text">&nbsp;&nbsp;MST</span>}
+              {hearing.pact && <span className="cf-red-text">&nbsp;&nbsp;PACT</span>}
+              <br />
             {this.isUserJudge() &&
               <span>
                 <strong>AOD:</strong> {hearing.aod ? AOD_CODE_TO_LABEL_MAP[hearing.aod] : 'None'}
