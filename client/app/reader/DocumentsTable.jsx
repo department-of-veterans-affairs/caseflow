@@ -174,33 +174,6 @@ class DocumentsTable extends React.Component {
         'descending'
     }`;
 
-    let debugDataUnfiltered = [
-      {
-        id: 1,
-        value: 'dbg data',
-        text: 'Aaron' },
-      {
-        id: 2,
-        value: 'dbg data',
-        text: 'Aardvark' },
-      {
-        id: 3,
-        value: 'dbg data',
-        text: 'Aandy' },
-      {
-        id: 4,
-        value: 'dbg data',
-        text: 'Aardwolf' },
-      {
-        id: 5,
-        value: 'dbg data',
-        text: 'Aaronic' },
-      {
-        id: 6,
-        value: 'dbg data',
-        text: 'AAardandy' },
-    ];
-
     return [
       {
         cellClass: 'last-read-column',
@@ -328,7 +301,7 @@ class DocumentsTable extends React.Component {
                 <DocTagPicker
                   // This is the original props : tags={this.props.tagOptions}
                   // using debug filtering just for testing
-                  tags={debugDataUnfiltered}
+                  tags={this.props.tagOptions}
                   tagToggleStates={this.props.docFilterCriteria.tag}
                   handleTagToggle={this.props.setTagFilter}
                 />
