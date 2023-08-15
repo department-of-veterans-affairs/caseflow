@@ -1,7 +1,4 @@
 # frozen_string_literal: true
-
-# require "./app/services/stuck_job_report_service.rb"
-
 class ClaimDateDtFixJob < CaseflowJob
   ERROR_TEXT = "ClaimDateDt"
 

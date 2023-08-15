@@ -12,54 +12,6 @@ describe ClaimDateDtFixJob, :postres do
     )
   end
 
-# lets wrap all calls to the stuck job reporter with a stub and we can eliminate this before block
-  # before do
-  #   allow_any_instance_of(StuckJobReportService).to receive(:upload_logs_to_s3)
-  # end
-
-
-  # let(:stuck_job_service) { instance_double("StuckJobService") }
-
-  # before do
-  #   allow(stuck_job_service).to receive(:upload_logs_to_s3) { stuck_job_service }
-  # end
-
-  # policy = instance_double(WithdrawnDecisionReviewPolicy)
-  # allow(WithdrawnDecisionReviewPolicy).to receive(:new).with(caseflow_appeal).and_return policy
-  # allow(policy).to receive(:satisfied?).and_return true
-
-
-# let(:blah) { instance_double(StuckJobReportService) }
- blah =  instance_double(StuckJobReporervice)
-
-
-    before  do
-
-      allow(StuckJobReportService).to receive(:new).and_return(blah)
-      allow(blah).to receive(:upload_logs_to_s3)
-      # expect(StuckJobService).to receive(:upload_logs_to_s3).and_return("blah")
-    end
-
-
-
-
-
-    # policy = instance_double(WithdrawnDecisionReviewPolicy)
-    # allow(WithdrawnDecisionReviewPolicy).to receive(:new).with(caseflow_appeal).and_return policy
-    # allow(policy).to receive(:satisfied?).and_return true
-
-
-
-
-
-
-
-
-
-
-
-
-
   subject { described_class.new("decision_document", "ClaimDateDt") }
 
   before do
