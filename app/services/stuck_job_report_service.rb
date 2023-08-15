@@ -40,11 +40,19 @@ class StuckJobReportService
   end
 
   def upload_logs_to_s3(filepath, create_file_name)
-    s3client = Aws::S3::Client.new
+    file_name = "#{create_file_name}-logs/#{create_file_name}-log-#{Time.zone.now}"
+    s3client = aws_client
     s3resource = Aws::S3::Resource.new(client: s3client)
     s3bucket = s3resource.bucket(BUCKET_NAME)
-    file_name = "#{create_file_name}-logs/#{create_file_name}-log-#{Time.zone.now}"
 
     s3bucket.object(file_name).upload_file(filepath, acl: "private", server_side_encryption: "AES256")
+  end
+
+  def aws_client
+    if Rails.env.test?
+      Aws::S3::Client.new(stub_responses: true) # Use stub responses for tests
+    else
+      Aws::S3::Client.new # Use actual AWS client for production or other environments
+    end
   end
 end
