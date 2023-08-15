@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SelectConferenceTypeRadioField renders correctly 1`] = `
+<div>
+  <fieldset
+    class="usa-fieldset-inputs cf-form-radio "
+  >
+    <legend
+      class=""
+    >
+      <span>
+        Schedule hearings using:
+         
+      </span>
+    </legend>
+    <div
+      class="cf-form-radio-options"
+    >
+      <div
+        class="cf-form-radio-option"
+      >
+        <input
+          checked=""
+          id="field1_1"
+          name="field1"
+          type="radio"
+          value="1"
+        />
+        <label
+          class=""
+          for="field1_1"
+        >
+          Pexip
+        </label>
+      </div>
+      <div
+        class="cf-form-radio-option"
+      >
+        <input
+          id="field1_2"
+          name="field1"
+          type="radio"
+          value="2"
+        />
+        <label
+          class=""
+          for="field1_2"
+        >
+          Webex
+        </label>
+      </div>
+    </div>
+  </fieldset>
+</div>
+`;

@@ -138,12 +138,12 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
         "[#{virtual_hearing.hearing_id}])..."
       )
 
-      pexip_response = create_pexip_conference
+      create_conference_response = create_new_conference
 
-      Rails.logger.info("Pexip response: #{pexip_response.inspect}")
+      Rails.logger.info("Create Conference Response: #{create_conference_response.inspect}")
 
-      if pexip_response.error
-        error_display = pexip_error_display(pexip_response)
+      if create_conference_response.error
+        error_display = error_display(create_conference_response)
 
         Rails.logger.error("CreateConferenceJob failed: #{error_display}")
 
@@ -151,12 +151,12 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
         DataDogService.increment_counter(metric_name: "created_conference.failed", **create_conference_datadog_tags)
 
-        fail pexip_response.error
+        fail create_conference_response.error
       end
 
       DataDogService.increment_counter(metric_name: "created_conference.successful", **create_conference_datadog_tags)
 
-      virtual_hearing.update(conference_id: pexip_response.data[:conference_id])
+      virtual_hearing.update(conference_id: create_conference_response.data[:conference_id])
     end
   end
 
@@ -172,11 +172,11 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     end
   end
 
-  def pexip_error_display(response)
+  def error_display(response)
     "(#{response.error.code}) #{response.error.message}"
   end
 
-  def create_pexip_conference
+  def create_new_conference
     client.create_conference(
       host_pin: virtual_hearing.host_pin,
       guest_pin: virtual_hearing.guest_pin,
