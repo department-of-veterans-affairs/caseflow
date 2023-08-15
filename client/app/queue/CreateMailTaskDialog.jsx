@@ -132,6 +132,7 @@ export class CreateMailTaskDialog extends React.Component {
         {
           this.isHearingRequestMailTask() &&
           <EfolderUrlField
+            appealId={this.props.appealId}
             requestType={this.state.selectedValue}
             onChange={(value) => this.setState({ eFolderUrl: value })}
             value={this.state.eFolderUrl}

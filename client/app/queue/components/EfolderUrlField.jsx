@@ -30,7 +30,7 @@ const EfolderUrlField = (props) => {
           console.log('Valid regex match');
           // start loading spinner
           const seriesId = captureDocumentSeriesId(value);
-          const appealId = () => '1234';
+          const appealId = props.appealId;
 
           ApiUtil.get(`/appeals/${appealId}/document/${seriesId}`).
             then((response) => {
