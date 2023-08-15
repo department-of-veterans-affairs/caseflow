@@ -45,9 +45,10 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   def update_from_params(params, user)
     payload_values = params.delete(:business_payloads)&.dig(:values)
 
-    if params[:status] == Constants.TASK_STATUSES.completed
+    # If the request is to mark HPR mail task complete
+    if payload_values[:granted]&.to_s.present?
       # If request to postpone hearing is granted
-      if payload_values[:disposition].present?
+      if payload_values[:granted]
         created_tasks = update_hearing_and_create_tasks(payload_values[:after_disposition_update])
       end
       update_self_and_parent_mail_task(user: user, payload_values: payload_values)
@@ -87,6 +88,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     @open_assign_hearing_disposition_task ||= appeal.tasks.where(type: ASSIGN_HEARING_DISPOSITION_TASKS).open.first
   end
 
+  # Associated appeal has an upcoming hearing with an open status
   def hearing_scheduled_and_awaiting_disposition?
     return false if recent_hearing.nil?
 
@@ -96,13 +98,16 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
   def update_hearing_and_create_tasks(after_disposition_update)
     multi_transaction do
+      # If hearing exists, postpone previous hearing and handle conference links
       unless recent_hearing.nil?
         update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
         clean_up_virtual_hearing
       end
+      # Schedule hearing or create new ScheduleHearingTask depending on after disposition action
       reschedule_or_schedule_later(after_disposition_update)
     end
   end
+
 
   def update_hearing(hearing_hash)
     if recent_hearing.is_a?(LegacyHearing)
@@ -177,17 +182,20 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   end
 
   def update_self_and_parent_mail_task(user:, payload_values:)
+    # Append instructions/context provided by HearingAdmin to original details from MailTeam
     updated_instructions = format_instructions_on_completion(
       admin_context: payload_values[:instructions],
       granted: payload_values[:granted],
       date_of_ruling: payload_values[:date_of_ruling]
     )
 
+    # Complete HPR mail task assigned to HearingAdmin
     update!(
       completed_by: user,
       status: Constants.TASK_STATUSES.completed,
       instructions: updated_instructions
     )
+    # Complete parent HPR mail task assigned to MailTeam
     update_parent_status
   end
 
