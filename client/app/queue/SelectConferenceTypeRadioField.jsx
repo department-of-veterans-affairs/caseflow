@@ -1,27 +1,30 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-// import ApiUtil from '../util/ApiUtil';
+import ApiUtil from '../util/ApiUtil';
 
 import RadioField from '../components/RadioField';
 import COPY from '../../COPY';
 
 const radioOptions = [
   { displayText: 'Pexip',
-    value: '1' },
+    value: 'pexip' },
   { displayText: 'Webex',
-    value: '2' }
+    value: 'webex' }
 ];
 
-const SelectConferenceTypeRadioField = ({ name, onClick }) => {
-  const [value, setValue] = useState('1');
+const SelectConferenceTypeRadioField = ({ name, meetingType, organization, user }) => {
+  const [value, setValue] = useState(meetingType);
 
-  // const modifyConferenceType = (user) => {
-  //   const payload = { data: { user } };
+  const modifyConferenceType = (newMeetingType) => {
+    const payload = { data: { ...user, attributes: { ...user.attributes, meeting_type: newMeetingType } } };
+    console.log(newMeetingType);
 
-  //   console.log('hi');
+    ApiUtil.patch(`/organizations/${organization}/users/${user.id}`, payload).then((response) => {
+      console.log(response);
+    });
 
-  //   ApiUtil.patch(`/organizations/${this.props.organization}/users/${user.id}`, payload);
-  // };
+  console.log(newMeetingType);
+  };
 
   return (
     <>
@@ -30,15 +33,21 @@ const SelectConferenceTypeRadioField = ({ name, onClick }) => {
         name={name}
         options={radioOptions}
         value={value}
-        onChange={((newValue) => setValue(newValue) && onClick)}
+        onChange={((newValue) => setValue(newValue) || modifyConferenceType(newValue))}
         vertical
       /></>
   );
 };
 
 SelectConferenceTypeRadioField.propTypes = {
-  name: PropTypes.string,
-  onClick: PropTypes.func
+  name: PropTypes.number,
+  onClick: PropTypes.func,
+  meetingType: PropTypes.string,
+  organization: PropTypes.string,
+  user: PropTypes.shape({
+    id: PropTypes.number,
+    attributes: PropTypes.object
+  })
 };
 
 export default SelectConferenceTypeRadioField;

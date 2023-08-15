@@ -214,12 +214,13 @@ export default class OrganizationUsers extends React.PureComponent {
     });
   }
 
-  modifyConferenceType = (user) => () => {
-    console.log('hi');
+  modifyConferenceType = (user, newMeetingType) => () => {
+    const payload = { data: { ...user, meeting_type: newMeetingType } };
+    console.log(newMeetingType);
 
-    const payload = { data: { user } };
-
-    ApiUtil.patch(`/organizations/${this.props.organization}/users/${user.id}`, payload);
+    ApiUtil.patch(`/organizations/${this.props.organization}/users/${user.id}`, payload).then((response) => {
+      console.log(response);
+    });
   }
 
   asyncLoadUser = (inputValue) => {
@@ -280,7 +281,12 @@ export default class OrganizationUsers extends React.PureComponent {
                 </div>
                 { this.state.organizationName === 'Hearing Admin' &&
                   <div {...radioContainerStyle}>
-                    <SelectConferenceTypeRadioField key={`${user.id}-conference-selection`} name={user.id} onClick={this.modifyConferenceType(user)} />
+                    <SelectConferenceTypeRadioField
+                      key={`${user.id}-conference-selection`}
+                      name={user.id}
+                      meetingType={user.attributes.meeting_type}
+                      organization={this.props.organization}
+                      user={user}/>
                   </div>
                 }
               </div> }

@@ -30,10 +30,9 @@ class Organizations::UsersController < OrganizationsController
 
     if params.key?(:admin)
       adjust_admin_rights
-    elsif params.key?(:user)
-      update_user_meeting_type
     end
 
+    update_user_meeting_type
     render json: { users: json_administered_users([user_to_modify]) }, status: :ok
   end
 
@@ -70,9 +69,11 @@ class Organizations::UsersController < OrganizationsController
   end
 
   def update_user_meeting_type
-    if params[:admin] == true
-      OrganizationsUser.update_user_to_webex_conference_type(user_to_modify, organization)
+    byebug
+    if params[:user]
+      OrganizationsUser.update_user_conference_type(user_to_modify, organization)
     end
+    byebug
   end
 
   def organization_url
