@@ -17,7 +17,7 @@ const labelStyling = css({
 });
 
 const AddDecisionDateModal = ({ closeHandler, currentIssue, index }) => {
-  const [decisionDate, setDecisionDate] = useState('');
+  const [decisionDate, setDecisionDate] = useState(currentIssue.editedDecisionDate);
   const dispatch = useDispatch();
 
   // We should disable the save button if there has been no date selected
@@ -55,7 +55,7 @@ const AddDecisionDateModal = ({ closeHandler, currentIssue, index }) => {
         ]}
         visible
         closeHandler={closeHandler}
-        title="Add Decision Date"
+        title={currentIssue.editedDecisionDate ? 'Edit Decision Date' : 'Add Decision Date'}
       >
         <div>
           <strong {...labelStyling}>

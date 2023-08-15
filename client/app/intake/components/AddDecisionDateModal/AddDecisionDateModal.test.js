@@ -38,6 +38,12 @@ describe('AddDecisionDateModal', () => {
     expect(screen.getByText('Add Decision Date')).toBeInTheDocument();
   });
 
+  it('displays Edit Decision Date if the issue has an editedDecisionDate', () => {
+    setup({ ...mockData, currentIssue: { ...mockData.currentIssue, editedDecisionDate: '12/7/2017' } });
+
+    expect(screen.getByText('Edit Decision Date')).toBeInTheDocument();
+  });
+
   it('disables save button if no date is present', () => {
     setup(mockData);
     const save = screen.getByText('Save');

@@ -54,8 +54,13 @@ export default class IssuesList extends React.Component {
       );
     }
 
-    if (!issue.date) {
-      options.push({ displayText: 'Add decision date', value: 'add_decision_date' });
+    if (!issue.date || issue.editedDecisionDate) {
+      options.push(
+        {
+          displayText: issue.editedDecisionDate ? 'Edit decision date' : 'Add decision date',
+          value: 'add_decision_date'
+        }
+      );
     }
 
     return options;

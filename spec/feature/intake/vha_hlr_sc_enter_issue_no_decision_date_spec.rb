@@ -78,6 +78,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
       future_date = (Time.zone.now + 1.week).strftime("%m/%d/%Y")
       past_date = (Time.zone.now - 1.week).strftime("%m/%d/%Y")
+      another_past_date = (Time.zone.now - 2.weeks).strftime("%m/%d/%Y")
 
       fill_in "decision-date", with: future_date
 
@@ -110,9 +111,24 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
         click_on("Save")
       end
 
+      # Test functionality for editing a decision date once one has been selected
+      # Click the first issue actions button and select Edit decision date
+      within "#issue-#{issue_id}" do
+        select("Edit decision date", from: "issue-action-0")
+      end
+
+      expect(page).to have_content("Edit Decision Date")
+
+      fill_in "decision-date", with: another_past_date
+
+      within ".cf-modal-controls" do
+        expect(page).to have_button("Save", disabled: false)
+        click_on("Save")
+      end
+
       # Check that the Edit Issues save button is now Establish, the decision date is added, and the banner is gone
       expect(page).to_not have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
-      expect(page).to have_content("Decision date: #{past_date}")
+      expect(page).to have_content("Decision date: #{another_past_date}")
       expect(page).to have_button("Establish", disabled: false)
 
       click_on("Establish")
