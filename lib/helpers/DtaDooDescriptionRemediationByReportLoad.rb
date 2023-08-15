@@ -2,20 +2,30 @@
 
 module WarRoom
 
-  # Purpose:
-  class DtaDooDescriptionRemediation
+  # Purpose: This remediation is intended to resolve an ongoing issue where a user in VBMS
+  # will inadvertantly set the disposition on a contention incorecctly when dealing with
+  # DTA Errors and Difference of Opinion.
+  class DtaDooDescriptionRemediationByReportLoad
 
-    def run_by_report_load(report_load, di_ids = [], env='prod')
-      logs = ["DtaDooDescriptionRemediation::Log\n"];
-      no_remand_generated = [];
-      remand_generated = [];
+    S3_FILE_NAME = "dta-doo-description-remediation-logs/dta-doo-description-remediation-log"
+    S3_ACL = "private"
+    S3_ENCRYPTION = "AES256"
+    S3_BUCKET = "data-remediation-output"
+
+    def run_by_report_load(report_load, env='prod')
+      logs = ["DtaDooDescriptionRemediation::Log\n"]
+      no_remand_generated = []
+      remand_generated = []
 
       # Set the user
       RequestStore[:current_user] = User.system_user
 
-      decision_issues = DecisionIssue.where(id: di_ids)
+      decision_issue_ids = get_decision_issue_ids(rep_load)
 
-      higher_levels_reviews = decision_issues.map { |di| di.decision_review if di.decision_review.is_a?(HigherLevelReview) }.compact.uniq
+      decision_issues = DecisionIssue.where(id: decision_issue_ids)
+
+      # higher_levels_reviews = decision_issues.map { |di| di.decision_review if di.decision_review.is_a?(HigherLevelReview) }.compact.uniq
+      higher_levels_reviews = decision_issues.where(type: HigherLevelReview).map(&:decision_review).compact.uniq
 
       higher_levels_reviews.each do |hlr|
         decision_issues = decision_issues.select { |di| di.decision_review_id == hlr.id && di.decision_review_type == 'HigherLevelReview' }
@@ -45,7 +55,7 @@ module WarRoom
             new_disp = "Difference of Opinion"
             di.update!(disposition: new_disp)
 
-            log_message <<-TEXT
+            log_message = <<-TEXT
               #{Time.zone.now} DtaDooDescriptionRemediation::Log
               HLR ID: #{di.decision_review.id}.  DI ID: #{di.id}
               Previous Disposition: '#{prev_disp}'.
@@ -90,26 +100,110 @@ module WarRoom
       logs = logs + remand_generated + no_remand_generated;
       upload_logs_to_aws_s3 logs
 
-    rescue => StandardError => error
-      logs.push("DtaDooDescriptionRemediation::Error -- Reference id #{ep_ref}"\
+      # return report to user running remediation
+      logs
+    rescue StandardError => e
+      logs.push("DtaDooDescriptionRemediation::Error -- #{e.message}"\
         "Time: #{Time.zone.now}"\
-        "#{error.backtrace}")
+        "#{e.backtrace}")
+
+      upload_logs_to_aws_s3 logs
+      logs
     end
 
     private
 
     def upload_logs_to_aws_s3(logs)
-      s3client = Aws::S3::Client.new;
-      s3resource = Aws::S3::Resource.new(client: s3client);
-      s3bucket = s3resource.bucket("data-remediation-output");
-      file_name = "dta-doo-description-remediation-logs/dta-doo-description-remediation-log-#{Time.zone.now}";
-      content = logs.join("\n");
-      temporary_file = Tempfile.new("dta-log.txt");
-      filepath = temporary_file.path;
-      temporary_file.write(content);
-      temporary_file.flush;
-      s3bucket.object(file_name).upload_file(filepath, acl: "private", server_side_encryption: "AES256");
-      temporary_file.close!;
+      s3client = Aws::S3::Client.new
+      s3resource = Aws::S3::Resource.new(client: s3client)
+      s3bucket = s3resource.bucket(S3_BUCKET)
+      content = logs.join("\n")
+      temporary_file = Tempfile.new("dta-log.txt")
+      filepath = temporary_file.path
+      temporary_file.write(content)
+      temporary_file.flush
+      s3bucket.object("#{S3_FILE_NAME}-#{Time.zone.now}").upload_file(filepath, acl: S3_ACL, server_side_encryption: S3_ENCRYPTION)
+      temporary_file.close!
+    end
+
+    # Grab qualifying descision issue IDs so we know what to remediate
+    def get_decision_issue_ids(rep_load, conn)
+      # Establish connection
+      conn = ActiveRecord::Base.connection
+
+      raw_sql = <<~SQL
+        WITH oar_epe_ids as (
+          SELECT DISTINCT epe.id as epe_id
+          FROM end_product_establishments epe
+          WHERE epe.reference_id in (SELECT DISTINCT reference_id
+                                   FROM ep_establishment_workaround
+                                   WHERE report_load = #{rep_load}
+                                   )
+        ),
+        di_id_list as (
+          SELECT DISTINCT di.id as decision_issue_ids
+          FROM end_product_establishments epe
+          JOIN request_issues ri
+            ON epe.id = ri.end_product_establishment_id
+          JOIN request_decision_issues rdi
+            ON ri.id = rdi.request_issue_id
+          JOIN decision_issues di
+            ON rdi.decision_issue_id = di.id
+          JOIN higher_level_reviews hlr
+            ON epe.source_type = 'HigherLevelReview' AND epe.source_id = hlr.id
+          WHERE epe.id IN (SELECT epe_id FROM oar_epe_ids)
+            AND (di.description ilike'%duty to assist%' OR di.description ilike '%Difference of Opinion%')
+            AND di.disposition not like '%DTA Error%'
+            AND di.disposition not like '%Difference of Opinion%'
+            AND epe.source_type = 'HigherLevelReview'
+            AND epe.synced_status = 'CLR'
+        ),
+        hlr_id_list as (
+          SELECT DISTINCT hlr.id as hlr_ids
+          FROM end_product_establishments epe
+          JOIN request_issues ri
+            ON epe.id = ri.end_product_establishment_id
+          JOIN request_decision_issues rdi
+            ON ri.id = rdi.request_issue_id
+          JOIN decision_issues di
+            ON rdi.decision_issue_id = di.id
+          JOIN higher_level_reviews hlr
+            ON epe.source_type = 'HigherLevelReview' AND epe.source_id = hlr.id
+          WHERE epe.id IN (SELECT epe_id FROM oar_epe_ids)
+            AND (di.description ilike'%duty to assist%' OR di.description ilike '%Difference of Opinion%')
+            AND di.disposition not like '%DTA Error%'
+            AND di.disposition not like '%Difference of Opinion%'
+            AND epe.source_type = 'HigherLevelReview'
+        ),
+        remanded_hlr_ids as(
+          SELECT supplemental_claims.decision_review_remanded_id as hlr_ids_with_remand
+          FROM supplemental_claims
+          WHERE supplemental_claims.decision_review_remanded_id in (SELECT hlr_ids FROM hlr_id_list)
+        )
+        SELECT DISTINCT di.id as decision_issue_ids, di.description, di.disposition, epe.id as epe_id, hlr.id as higher_level_review_id
+        FROM end_product_establishments epe
+        JOIN request_issues ri
+          ON epe.id = ri.end_product_establishment_id
+        JOIN request_decision_issues rdi
+          ON ri.id = rdi.request_issue_id
+        JOIN decision_issues di
+          ON rdi.decision_issue_id = di.id
+        JOIN higher_level_reviews hlr
+          ON epe.source_type = 'HigherLevelReview' AND epe.source_id = hlr.id
+        WHERE epe.id IN (SELECT epe_id FROM oar_epe_ids)
+          AND (di.description ilike'%duty to assist%' OR di.description ilike '%Difference of Opinion%')
+          AND di.disposition not like '%DTA Error%'
+          AND di.disposition not like '%Difference of Opinion%'
+          AND epe.source_type = 'HigherLevelReview'
+          AND hlr.id not in (SELECT hlr_ids_with_remand FROM remanded_hlr_ids)
+      SQL
+
+      response = conn.execute(raw_sql)
+
+      # Close the connection
+      conn.close
+
+      response
     end
 
   end
