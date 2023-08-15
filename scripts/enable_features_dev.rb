@@ -59,10 +59,11 @@ disabled_flags = %w[
   cavc_dashboard_workflow
   poa_auto_refresh
   interface_version_2
-  cc_vacatur_visibility,
-  acd_disable_legacy_distributions,
-  acd_disable_nonpriority_distributions,
+  cc_vacatur_visibility
+  acd_disable_legacy_distributions
+  acd_disable_nonpriority_distributions
   acd_disable_legacy_lock_ready_appeals
+  justification_reason
 ]
 
 all_features = AllFeatureToggles.new.call.flatten.uniq
