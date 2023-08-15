@@ -145,7 +145,8 @@ SelectRemandReasonsView.propTypes = {
   taskId: PropTypes.string.isRequired,
   checkoutFlow: PropTypes.string.isRequired,
   userRole: PropTypes.string.isRequired,
-  editStagedAppeal: PropTypes.func
+  editStagedAppeal: PropTypes.func,
+  featureToggles: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => {
