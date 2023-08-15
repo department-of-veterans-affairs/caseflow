@@ -4,8 +4,12 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
   include IntakeHelpers
 
   let!(:current_user) do
-    User.authenticate!(roles: ["Mail Intake"])
+    create(:user, roles: ["Mail Intake"])
   end
+
+  # let!(:current_user) do
+  #   User.authenticate!(roles: ["Mail Intake"])
+  # end
 
   let(:veteran_file_number) { "123412345" }
 
@@ -13,6 +17,12 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
     Generators::Veteran.build(file_number: veteran_file_number,
                               first_name: "Ed",
                               last_name: "Merica")
+  end
+
+  before do
+    VhaBusinessLine.singleton.add_user(current_user)
+    current_user.save
+    User.authenticate!(user: current_user)
   end
 
   shared_examples "Vha HLR/SC Issue without decision date" do
@@ -40,7 +50,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       expect(page).to have_content(COPY::VHA_INCOMPLETE_TAB_DESCRIPTION)
       expect(page).to have_content(success_message_text)
 
-      # Check to make sure that the task that was created is on hold?
+      # Verify that the task has a status of on_hold
       task = DecisionReviewTask.last
       expect(task.status).to eq("on_hold")
 
@@ -57,7 +67,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
       # Click the first issue actions button and select Add a decision date
       within "#issue-#{issue_id}" do
-        select("Add decision date", from: "issue-action-0")
+        first("select").select("Add decision date")
       end
 
       # Check modal text
@@ -88,7 +98,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       # Open the modal again
       # Click the first issue actions button and select Add a decision date
       within "#issue-#{issue_id}" do
-        select("Add decision date", from: "issue-action-0")
+        first("select").select("Add decision date")
       end
 
       expect(page).to have_content("Add Decision Date")
@@ -114,6 +124,65 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
       task.reload
       expect(task.status).to eq("assigned")
+    end
+  end
+
+  shared_examples "Vha HLR/SC adding issue without decision date to existing claim review" do
+    it "Allows Vha to add an issue without a decision date to an existing claim review and remove the issue" do
+      visit edit_url
+
+      expect(task.status).to eq("assigned")
+      expect(page).to have_button("Establish", disabled: true)
+
+      click_intake_add_issue
+      add_intake_nonrating_issue(
+        category: "Beneficiary Travel",
+        description: "Travel for VA meeting",
+        date: nil
+      )
+
+      expect(page).to have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
+
+      click_button "Save"
+
+      expect(page).to have_content(COPY::CORRECT_REQUEST_ISSUES_CHANGED_MODAL_TITLE)
+
+      click_button "Yes, save"
+
+      expect(page).to have_content(COPY::VHA_INCOMPLETE_TAB_DESCRIPTION)
+      expect(current_url).to include("/decision_reviews/vha?tab=incomplete")
+      expect(page).to have_content(edit_save_success_message_text)
+      expect(task.reload.status).to eq("on_hold")
+
+      # Go back to the Edit issues page
+      click_link task.appeal.veteran.name.to_s
+
+      # Next we want to remove that issue and check the task status and message again.
+      expect(page).to have_button("Save", disabled: true)
+
+      expect(page).to have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
+
+      # Remove the issue
+      request_issue_id = task.appeal.request_issues.reload.find { |issue| issue.decision_date.blank? }.id
+
+      within "#issue-#{request_issue_id}" do
+        first("select").select("Remove issue")
+      end
+
+      click_on("Yes, remove issue")
+
+      expect(page).to have_button("Establish", disabled: false)
+      expect(page).to_not have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
+
+      click_button "Establish"
+
+      expect(page).to have_content(COPY::CORRECT_REQUEST_ISSUES_CHANGED_MODAL_TITLE)
+
+      click_button "Yes, save"
+
+      expect(page).to have_content(edit_establish_success_message_text)
+      expect(current_url).to include("/decision_reviews/vha?tab=in_progress")
+      expect(task.reload.status).to eq("assigned")
     end
   end
 
@@ -143,5 +212,51 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
     end
 
     it_behaves_like "Vha HLR/SC Issue without decision date"
+  end
+
+  context "adding an issue without a decision date to an existing HLR/SC" do
+    before do
+      task.appeal.establish!
+    end
+
+    let(:claim_review) do
+      task.appeal
+    end
+
+    let(:edit_save_success_message_text) do
+      "You have successfully updated an issue's decision date"
+    end
+
+    context "an existing Higher-Level Review" do
+      let(:task) do
+        FactoryBot.create(:higher_level_review_vha_task, assigned_to: VhaBusinessLine.singleton)
+      end
+
+      let(:edit_url) do
+        "/higher_level_reviews/#{claim_review.uuid}/edit"
+      end
+
+      let(:edit_establish_success_message_text) do
+        "You have successfully established #{claim_review.veteran.name}'s #{HigherLevelReview.review_title}"
+      end
+
+      it_behaves_like "Vha HLR/SC adding issue without decision date to existing claim review"
+    end
+
+    context "an existing Supplmental Claim" do
+      let(:task) do
+        FactoryBot.create(:supplemental_claim_vha_task, assigned_to: VhaBusinessLine.singleton)
+      end
+
+      let(:edit_url) do
+        "/supplemental_claims/#{claim_review.uuid}/edit"
+      end
+
+      let(:edit_establish_success_message_text) do
+        "You have successfully established #{claim_review.veteran.name}'s #{SupplementalClaim.review_title}"
+      end
+
+      it_behaves_like "Vha HLR/SC adding issue without decision date to existing claim review"
+    end
   end
 end
