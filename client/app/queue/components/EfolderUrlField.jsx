@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { debounce } from 'lodash';
+// import { debounce } from 'lodash';
+import _ from 'lodash';
 
 import TextField from '../../components/TextField';
 import ApiUtil from '../../util/ApiUtil';
@@ -20,42 +21,46 @@ const EfolderUrlField = (props) => {
     return url.match(/\S{8}-\S{4}-\S{4}-\S{4}-\S{12}/)?.[0];
   };
 
+  const delayedValidation = function(value) {
+    console.log('Debounced!');
+
+    if (efolderLinkRegexMatch(value)) {
+      console.log('Valid regex match');
+      // start loading spinner
+      const seriesId = captureDocumentSeriesId(value);
+      const appealId = props.appealId;
+
+      ApiUtil.get(`/appeals/${appealId}/document/${seriesId}`).
+        then((response) => {
+          // stop loading spinner
+
+          // if true
+          // set own valid prop to true
+          // if false
+          // set own valid prop to false
+          // show error message (doen't exist in efolder)
+        }).
+        catch((response) => {
+          // stop loading spinner
+          // handle errors
+        });
+
+      // stop loading spinner
+    } else {
+      console.log('Invalid efolder regex match');
+      // https://benefits-int-delivery.slack.com/archives/C03NCPYRXK2/p1687881917481399?thread_ts=1687878651.089549&cid=C03NCPYRXK2
+      // Show error message as described in thread ^^ (invalid link format)
+      // Block form submission until resolved
+    }
+  };
+
+  const debouncedFunc = (value) => _.debounce(() => delayedValidation(value), 2000)();
+
   const handleChange = useCallback(
     (value) => {
+      // debouncedFunc.cancel();
       props?.onChange?.(value);
-
-      debounce((value) => {
-        console.log('Debounced!');
-        if (efolderLinkRegexMatch(value)) {
-          console.log('Valid regex match');
-          // start loading spinner
-          const seriesId = captureDocumentSeriesId(value);
-          const appealId = props.appealId;
-
-          ApiUtil.get(`/appeals/${appealId}/document/${seriesId}`).
-            then((response) => {
-              // stop loading spinner
-
-              // if true
-              // set own valid prop to true
-              // if false
-              // set own valid prop to false
-              // show error message (doen't exist in efolder)
-            }).
-            catch((response) => {
-              // stop loading spinner
-              // handle errors
-            });
-
-          // stop loading spinner
-        } else {
-          console.log('Invalid efolder regex match');
-          // https://benefits-int-delivery.slack.com/archives/C03NCPYRXK2/p1687881917481399?thread_ts=1687878651.089549&cid=C03NCPYRXK2
-          // Show error message as described in thread ^^ (invalid link format)
-          // Block form submission until resolved
-        }
-        // We'll need to dial in this delay a bit.
-      }, 500);
+      debouncedFunc(value);
     }
   );
 
@@ -71,6 +76,7 @@ const EfolderUrlField = (props) => {
 };
 
 EfolderUrlField.propTypes = {
+  appealId: PropTypes.string.isRequired,
   requestType: PropTypes.string,
   value: PropTypes.string,
   errorMessage: PropTypes.string,
