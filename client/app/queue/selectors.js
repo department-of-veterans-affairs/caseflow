@@ -259,6 +259,34 @@ export const getAttorneyTasksForJudgeTask = createSelector(
   }
 );
 
+export const getAllHiringChildren = createSelector(
+  [getAmaTasks],
+  (amaTasks) => {
+    const legacyAttorneyJudgeTaskTypes = [
+      'HearingTask',
+      'ScheduleHearingTask'
+    ];
+    const childrenTasks = [];
+
+    for (const key in amaTasks) {
+      // eslint-disable-next-line no-prototype-builtins
+      if (amaTasks.hasOwnProperty(key)) {
+        if (legacyAttorneyJudgeTaskTypes.includes(amaTasks[key].type)) {
+          amaTasks[key].assigned_to_name = amaTasks[key].assignedTo.isOrganization ?
+            amaTasks[key].assignedTo.name :
+            amaTasks[key].ownedBy;
+          amaTasks[key].assigned_to_email = amaTasks[key].assignedTo.isOrganization ?
+            amaTasks[key].assignedTo.name :
+            amaTasks[key].assignedBy.firstName;
+
+          childrenTasks.push(amaTasks[key]);
+        }
+      }
+    }
+
+    return childrenTasks;
+  });
+
 // Get all task trees for all Attorney Type Tasks found with the JudgeDecisionReviewTaskId as their parentId
 export const getTaskTreesForAttorneyTasks = createSelector(
   [getAllTasksForAppeal, getAttorneyTasksForJudgeTask],
