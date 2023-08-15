@@ -286,7 +286,7 @@ export default class OrganizationUsers extends React.PureComponent {
                       name={user.id}
                       meetingType={user.attributes.meeting_type}
                       organization={this.props.organization}
-                      user={user}/>
+                      user={user} />
                   </div>
                 }
               </div> }

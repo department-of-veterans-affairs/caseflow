@@ -69,11 +69,11 @@ class Organizations::UsersController < OrganizationsController
   end
 
   def update_user_meeting_type
-    byebug
-    if params[:user]
-      OrganizationsUser.update_user_conference_type(user_to_modify, organization)
+    new_meeting_type = params.dig(:attributes, :meeting_type)
+
+    if organization["url"] == HearingAdmin.singleton.url && new_meeting_type
+      OrganizationsUser.update_user_conference_type(user_to_modify, new_meeting_type)
     end
-    byebug
   end
 
   def organization_url

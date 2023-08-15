@@ -28,21 +28,11 @@ class OrganizationsUser < CaseflowRecord
       existing_record(user, organization)&.update!(admin: false)
     end
 
-    def update_user_conference_type(user, organization)
-      byebug
-
+    def update_user_conference_type(user, new_meeting_type)
       if user.meeting_type
-        user.update!(meeting_type)
+        user.update!(meeting_type: new_meeting_type)
       end
-
-      byebug
     end
-
-    # def update_user_to_pexip_conference_type(user, organization)
-    #   if user.roles.include?("HearingCoordinator")
-    #     user.update!(pexip: true)
-    #   end
-    # end
 
     def remove_user_from_organization(user, organization)
       if user_is_judge_of_team?(user, organization)
