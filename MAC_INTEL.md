@@ -118,7 +118,7 @@
 
     3. `docker pull metabase/metabase:latest`
 
-    4. `docker run -d -p `port number to run metabase`:3000 --name metabase metabase/metabase`
+    4. `docker run -d -p port number to run metabase:3000 --name metabase metabase/metabase`
 
     5. `http://localhost:port_number/`
 
