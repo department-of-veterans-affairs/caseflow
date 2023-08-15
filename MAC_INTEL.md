@@ -111,4 +111,15 @@
 
 30. Navigate to localhost:3000 in browser to see the application
 
+31. Local Metabase setup with Docker
+    1. Make sure you have Docker Desktop installed if not Navigate to [docker website](https://docs.docker.com/desktop/install/mac-install/)
+
+    2. Open terminal and run
+
+    3. `docker pull metabase/metabase:latest`
+
+    4. `docker run -d -p `port number to run metabase`:3000 --name metabase metabase/metabase`
+
+    5. `http://localhost:port_number/`
+
 [<< Back](README.md)
