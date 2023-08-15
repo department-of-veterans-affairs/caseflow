@@ -29,10 +29,11 @@ import { SortArrowUpIcon } from '../components/icons/SortArrowUpIcon';
 import { DoubleArrowIcon } from '../components/icons/DoubleArrowIcon';
 
 import DocCategoryPicker from './DocCategoryPicker';
-import DocTagPicker from './DocTagPicker';
 import FilterIcon from '../components/icons/FilterIcon';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
+import DocTagPicker from './DocTagPicker';
+import ReaderTableDropdownFilter from '../components/ReaderTableDropdownFilter';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -53,6 +54,15 @@ export const getRowObjects = (documents, annotationsPerDocument) => {
 };
 
 class DocumentsTable extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      filterText: ''
+    };
+  }
+
   componentDidMount() {
     if (this.props.pdfList.scrollTop) {
       this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
@@ -202,6 +212,7 @@ class DocumentsTable extends React.Component {
               >
                 <DocCategoryPicker
                   categoryToggleStates={this.props.docFilterCriteria.category}
+
                   handleCategoryToggle={this.props.setCategoryFilter}
                 />
               </DropdownFilter>
@@ -279,19 +290,22 @@ class DocumentsTable extends React.Component {
               handleActivate={this.toggleTagDropdownFilterVisiblity}
             />
             {isTagDropdownFilterOpen && (
-              <DropdownFilter
+              <ReaderTableDropdownFilter
                 clearFilters={this.props.clearTagFilters}
                 name="tag"
                 isClearEnabled={anyTagFiltersAreSet}
                 handleClose={this.toggleTagDropdownFilterVisiblity}
                 addClearFiltersRow
               >
+
                 <DocTagPicker
+                  // This is the original props : tags={this.props.tagOptions}
+                  // using debug filtering just for testing
                   tags={this.props.tagOptions}
                   tagToggleStates={this.props.docFilterCriteria.tag}
                   handleTagToggle={this.props.setTagFilter}
                 />
-              </DropdownFilter>
+              </ReaderTableDropdownFilter>
             )}
           </div>
         ),
