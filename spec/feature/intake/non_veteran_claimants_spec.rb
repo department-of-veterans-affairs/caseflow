@@ -646,5 +646,4 @@ feature "Non-veteran claimants", :postgres do
     select_agree_to_withdraw_legacy_issues(false)
     click_intake_continue
   end
-
 end
