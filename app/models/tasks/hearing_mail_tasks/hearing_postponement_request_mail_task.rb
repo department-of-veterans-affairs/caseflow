@@ -64,12 +64,12 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     assigned_to.type == "MailTeam"
   end
 
-  def recent_hearing
-    @recent_hearing ||= open_assign_hearing_disposition_task&.hearing
+  def open_hearing
+    @open_hearing ||= open_assign_hearing_disposition_task&.hearing
   end
 
   def hearing_task
-    @hearing_task ||= recent_hearing&.hearing_task || active_schedule_hearing_task&.parent
+    @hearing_task ||= open_hearing&.hearing_task || active_schedule_hearing_task&.parent
   end
 
   private
@@ -90,16 +90,16 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
   # Associated appeal has an upcoming hearing with an open status
   def hearing_scheduled_and_awaiting_disposition?
-    return false if recent_hearing.nil?
+    return false if open_hearing.nil?
 
     # Ensure associated hearing is not scheduled for the past
-    !recent_hearing.scheduled_for_past?
+    !open_hearing.scheduled_for_past?
   end
 
   def update_hearing_and_create_tasks(after_disposition_update)
     multi_transaction do
       # If hearing exists, postpone previous hearing and handle conference links
-      unless recent_hearing.nil?
+      unless open_hearing.nil?
         update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
         clean_up_virtual_hearing
       end
@@ -108,17 +108,16 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     end
   end
 
-
   def update_hearing(hearing_hash)
-    if recent_hearing.is_a?(LegacyHearing)
-      recent_hearing.update_caseflow_and_vacols(hearing_hash)
+    if open_hearing.is_a?(LegacyHearing)
+      open_hearing.update_caseflow_and_vacols(hearing_hash)
     else
-      recent_hearing.update(hearing_hash)
+      open_hearing.update(hearing_hash)
     end
   end
 
   def clean_up_virtual_hearing
-    if recent_hearing.virtual?
+    if open_hearing.virtual?
       perform_later_or_now(VirtualHearings::DeleteConferencesJob)
     end
   end
