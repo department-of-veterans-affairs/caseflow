@@ -43,7 +43,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   end
 
   def update_from_params(params, user)
-    payload_values = params.delete(:business_payloads)&.dig(:values)
+    payload_values = params.delete(:business_payloads)&.dig(:values) || params
 
     # If the request is to mark HPR mail task complete
     if payload_values[:granted]&.to_s.present?
@@ -61,7 +61,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
   # Only show HPR mail task assigned to "HearingAdmin" on the Case Timeline
   def hide_from_case_timeline
-    assigned_to.type == "MailTeam"
+    assigned_to.is_a?(MailTeam)
   end
 
   def open_hearing
