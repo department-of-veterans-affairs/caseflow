@@ -11,19 +11,17 @@
 class JudgeTask < Task
   def available_actions(user)
     # Only the current assignee of a judge task should have actions available to them on the judge task.
-    if assigned_to == user
+    if (appeal.is_a?(LegacyAppeal) && assigned_to == user && FeatureToggle.enabled?(:vlj_legacy_appeal)) ||
+       (assigned_to == user && appeal.is_a?(Appeal))
       [
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
         Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
-        Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h,
+        Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
         additional_available_actions(user)
       ].flatten
-    elsif user&.can_act_on_behalf_of_judges? && assigned_to.judge_in_vacols?
-      [
-        Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h,
-        additional_available_actions(user)
-      ].flatten
-    elsif user&.can_act_on_behalf_of_judges?
+    elsif (user&.can_act_on_behalf_of_judges? &&
+        assigned_to.judge_in_vacols? && FeatureToggle.enabled?(:vlj_legacy_appeal)) ||
+          (user&.can_act_on_behalf_of_judges? && appeal.is_a?(Appeal))
       [
         Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
         additional_available_actions(user)
