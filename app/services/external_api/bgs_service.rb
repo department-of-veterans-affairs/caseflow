@@ -471,12 +471,15 @@ class ExternalApi::BGSService
     MetricsService.record("BGS: find contentions for veteran by participant_id #{participant_id}",
       service: :bgs,
       name: "contention.find_contention_by_participant_id") do
-        DataDogService.increment_counter(
-          metric_group: "mst_pact_group",
-          metric_name: "bgs_service.service_call_from_cache",
-          app_name: RequestStore[:application]
-        )
-        client.contention.find_contention_by_participant_id(participant_id)
+        Rails.cache.fetch("find_contentions_by_participant_id_#{participant_id}", expires_in: 24.hours) do
+          DataDogService.increment_counter(
+            metric_group: "mst_pact_group",
+            metric_name: "bgs_service.service_call_from_cache",
+            app_name: RequestStore[:application]
+          )
+          # client.contention.find_contention_by_participant_id(participant_id)
+          nil
+        end
     end
   end
 
