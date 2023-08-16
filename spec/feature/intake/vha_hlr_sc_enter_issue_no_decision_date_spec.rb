@@ -140,6 +140,54 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
       task.reload
       expect(task.status).to eq("assigned")
+
+      # Test adding a new issue without decision date then adding one
+      # Click the links and get to the edit issues page
+      click_link veteran.name.to_s
+      click_link "Edit Issues"
+      expect(page).to have_content("Edit Issues")
+
+      # Open Add Issues modal and add issue
+      click_on("Add issue")
+
+      fill_in "Issue category", with: "Beneficiary Travel"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "Test description"
+
+      expect(page).to have_button("Add this issue", disabled: false)
+      click_on("Add this issue")
+
+      # Test that the banner and text is present for added issues with no decision dates
+      expect(page).to have_content("Decision date: No date entered")
+      expect(page).to have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
+
+      # Edit the decision date for added issue
+      # this is issue-undefined because the issue has not yet been created and does not have an id
+      within "#issue-undefined" do
+        select("Add decision date", from: "issue-action-1")
+      end
+
+      fill_in "decision-date", with: past_date
+
+      within ".cf-modal-controls" do
+        expect(page).to have_button("Save", disabled: false)
+        click_on("Save")
+      end
+
+      # Check that the date gets saved and shows establish for added issue
+      expect(page).to_not have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
+      expect(page).to have_content("Decision date: #{past_date}")
+      expect(page).to have_button("Establish", disabled: false)
+
+      click_on("Establish")
+      expect(page).to have_content("Number of issues has changed")
+      click_on("Yes, save")
+
+      expect(page).to have_content(edit_establish_success_message_text)
+      expect(current_url).to include("/decision_reviews/vha?tab=in_progress")
+
+      task.reload
+      expect(task.status).to eq("assigned")
     end
   end
 
