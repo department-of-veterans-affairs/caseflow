@@ -188,6 +188,51 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
       task.reload
       expect(task.status).to eq("assigned")
+
+      # Check that removing all issues without a decision date will now show Establish
+      # Click the links and get to the edit issues page
+      click_link veteran.name.to_s
+      click_link "Edit Issues"
+      expect(page).to have_content("Edit Issues")
+
+      # Open Add Issues modal and add an additional issue to be removed
+      click_on("Add issue")
+
+      fill_in "Issue category", with: "Beneficiary Travel"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "This will be removed"
+
+      expect(page).to have_button("Add this issue", disabled: false)
+      click_on("Add this issue")
+
+      # Test that the banner and text is present for added issues with no decision dates
+      expect(page).to have_content("Decision date: No date entered")
+      expect(page).to have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
+      expect(page).to have_button("Save")
+      expect(page).to_not have_button("Establish")
+
+      # Save issue without decision date to be removed after
+      click_on("Save")
+      click_on("Yes, save")
+      expect(page).to have_content("You have successfully updated an issue's decision date")
+
+      # Navigate back to edit issues page to remove issue without decision date
+      click_link veteran.name.to_s
+
+      # Remove issue
+      within "#issue-#{RequestIssue.last.id}" do
+        select("Remove issue", from: "issue-action-2")
+      end
+
+      expect(page).to have_content("Are you sure you want to remove this issue?")
+      click_on("Yes, remove issue")
+
+      expect(page).to_not have_button("Save")
+      expect(page).to have_button("Establish")
+
+      click_on("Establish")
+      expect(page).to have_content("Number of issues has changed")
+      click_on("Yes, save")
     end
   end
 
