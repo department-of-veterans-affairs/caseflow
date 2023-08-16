@@ -45,6 +45,75 @@ server.get('/error-410', (req, res) => {
   });
 });
 
+server.get('/error-415', (req, res) => {
+  res.status(415).json({
+    message:
+      'The request was made to a resource without specifying a media type or used a media type that is not supported.',
+  });
+});
+
+server.get('/error-423', (req, res) => {
+  res.status(423).json({
+    message: 'The requested resource is temporarily unavailable',
+  });
+});
+
+server.get('/error-428', (req, res) => {
+  res.status(428).json({
+    message:
+      'File(s) cannot be scanned for malware and need to be force downloaded.',
+  });
+});
+
+server.get('/error-429', (req, res) => {
+  res.status(429).json({
+    message:
+      'Too many requests have been sent in a given amount of time and the request has been rate limited.',
+  });
+});
+
+server.get('/error-500', (req, res) => {
+  res.status(500).json({
+    message: 'Something went wrong on the server.',
+  });
+});
+
+server.get('/error-502', (req, res) => {
+  res.status(502).json({
+    message: 'The server received an invalid response from an upstream server while processing the request.',
+  });
+});
+
+server.get('/error-503', (req, res) => {
+  res.status(503).json({
+    message: 'Server is overloaded with requests. Try again later.',
+  });
+});
+
+server.get('/error-504', (req, res) => {
+  res.status(504).json({
+    message: 'An upstream server failed to respond on time. If your query uses max parameter, please try to reduce it.',
+  });
+});
+
+server.get('/health-check-yellow', (req, res) => {
+  res.status(200).json({
+    status: 'yellow',
+  });
+});
+
+server.get('/health-check-red', (req, res) => {
+  res.status(200).json({
+    status: 'red',
+  });
+});
+
+server.get('/health-check-green', (req, res) => {
+  res.status(200).json({
+    status: 'green',
+  });
+});
+
 // ... Similarly, add routes for other error codes ...
 
 // To handle the default behavior, use the router middleware last
@@ -60,18 +129,26 @@ server.use((req, res, next) => {
 });
 
 const errorRoutes = [
-  {
-    path: '/error-400',
-    description: 'The request was invalid or cannot be otherwise served.'
-  },
-  {
-    path: '/error-401',
-    description: 'Authentication credentials were missing or incorrect.'
-  }
-  // ... Add other error routes here
-];
+  '/error-400',
+  '/error-401',
+  '/error-403',
+  '/error-404',
+  '/error-405',
+  '/error-409',
+  '/error-410',
+  '/error-415',
+  '/error-423',
+  '/error-428',
+  '/error-429',
+  '/error-500',
+  '/error-502',
+  '/error-503',
+  '/error-504',
+  '/health-check-yellow',
+  '/health-check-red',
+  '/health-check-green',
 
-// ...
+];
 
 server.listen(3050, () => {
   console.log(' \\{^_^}/ hi!\n');
@@ -86,8 +163,8 @@ server.listen(3050, () => {
   });
 
   console.log('\n Error Routes:');
-  errorRoutes.forEach(route => {
-    console.log(` ${route.path} - ${route.description}`);
+  errorRoutes.forEach((route) => {
+    console.log(` ${route}`);
   });
 
   console.log('\n Home');
