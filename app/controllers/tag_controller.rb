@@ -37,24 +37,8 @@ class TagController < ApplicationController
   end
 
   def auto_tag
-    # Returns array of words filtered by score for document uuid
-    document = Document.find(tag_params[:document_id])
-    errors = []
+    # Runs Scheduled Job with document id
 
-    # Iterate through auto-generated key_phrases and look for existing tags
-    key_phrases = ExternalApi::ClaimEvidenceService.get_key_phrases_from_document(tag_params[:document_id])
-    key_phrases.each do |key_phrase|
-      new_tag = find_existing_tag(key_phrase)
-      begin
-        document.tags << new_tag unless new_tag.nil?
-      rescue ActiveRecord::RecordNotUnique
-        errors.push(new_tag.text => "This tag already exists for the document.")
-      end
-    end
-
-    document.auto_tagged = true
-
-    errors.any? && response_json[:errors] = errors
     render({ json: response_json }, status: :ok)
   end
 
@@ -70,5 +54,14 @@ class TagController < ApplicationController
 
   def find_existing_tag(text)
     Tag.find_by("lower(text) = ?", text.downcase)
+  end
+
+  def generate_auto_tags_for_document(document_id, key_phrases = [])
+    document = Document.find(document_id)
+    key_phrases.each do |key_phrase|
+      new_tag = find_existing_tag(key_phrase)
+      document.tags << new_tag unless new_tag.nil? || document.tags.includes?(new_tag)
+    end
+    document.auto_tagged = true
   end
 end
