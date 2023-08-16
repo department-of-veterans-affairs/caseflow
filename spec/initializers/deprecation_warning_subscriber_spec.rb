@@ -1,8 +1,51 @@
 # frozen_string_literal: true
 
-describe "DeprecationWarningSubscriber" do
+describe DeprecationWarningSubscriber do
+  shared_examples "raises DisallowedDeprecationError in dev/test envs when deprecation is disallowed" do
+    context "when event does not correspond to a disallowed deprecation" do
+      let(:payload_message) { "DEPRECATION WARNING: allowed deprecation message" }
+
+      it "does not raise error" do
+        expect { instrument_deprecation_warning }.not_to raise_error
+      end
+    end
+
+    context "when event corresponds to a disallowed deprecation" do
+      let(:payload_message) { "DEPRECATION WARNING: disallowed deprecation message" }
+
+      before do
+        stub_const("#{described_class}::DISALLOWED_DEPRECATION_WARNING_REGEXES", [/disallowed deprecation message/])
+      end
+
+      context "when Rails environment is 'production'" do
+        before { allow(Rails).to receive(:env) { "production".inquiry } }
+
+        it "does not raise error" do
+          expect { instrument_deprecation_warning }.not_to raise_error
+        end
+      end
+
+      context "when Rails environment is 'development'" do
+        before { allow(Rails).to receive(:env) { "development".inquiry } }
+
+        it "raises DisallowedDeprecationError" do
+          expect { instrument_deprecation_warning }.to raise_error(described_class::DisallowedDeprecationError)
+        end
+      end
+
+      context "when Rails environment is 'test'" do
+        before { allow(Rails).to receive(:env) { "test".inquiry } }
+
+        it "raises DisallowedDeprecationError" do
+          expect { instrument_deprecation_warning }.to raise_error(described_class::DisallowedDeprecationError)
+        end
+      end
+    end
+  end
+
   let(:rails_logger) { Rails.logger }
   let(:slack_service) { SlackService.new(url: "dummy-url") }
+  let(:payload_message) { "DEPRECATION WARNING: dummy deprecation message" }
 
   before do
     allow(Rails).to receive(:logger).and_return(rails_logger)
@@ -20,7 +63,7 @@ describe "DeprecationWarningSubscriber" do
     let(:deploy_env) { ENV["DEPLOY_ENV"] }
     let(:payload) do
       {
-        message: "test message",
+        message: payload_message,
         gem_name: "Rails",
         deprecation_horizon: "6.0",
         callstack: [location_1, location_2]
@@ -67,6 +110,8 @@ describe "DeprecationWarningSubscriber" do
       )
     end
 
+    it_behaves_like "raises DisallowedDeprecationError in dev/test envs when deprecation is disallowed"
+
     context "when an exception occurs" do
       before { allow(slack_service).to receive(:send_notification).and_raise(StandardError) }
 
@@ -79,6 +124,8 @@ describe "DeprecationWarningSubscriber" do
       it "does not raise error" do
         expect { instrument_deprecation_warning }.not_to raise_error
       end
+
+      it_behaves_like "raises DisallowedDeprecationError in dev/test envs when deprecation is disallowed"
     end
   end
 end
