@@ -11,7 +11,7 @@ gem "acts_as_tree"
 # amoeba gem for cloning appeals
 gem "amoeba"
 # BGS
-gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "f25d6538c03d633567e2937258b912cdbf822c56"
+gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "f975667e0c4e0079692b916a00b954e4afe4643e"
 gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "5f47e7b2656ef347d314ef43c93d38a9f20816ec"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
