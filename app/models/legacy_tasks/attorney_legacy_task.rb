@@ -18,7 +18,8 @@ class AttorneyLegacyTask < LegacyTask
         Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.to_h
       ]
     elsif (current_user&.judge_in_vacols? || current_user&.can_act_on_behalf_of_judges?) &&
-          FeatureToggle.enabled?(:vlj_legacy_appeal)
+          FeatureToggle.enabled?(:vlj_legacy_appeal) &&
+          !%w[81 33 57 CASEFLOW].include?(appeal.case_record.reload.bfcurloc)
       [
         Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY_LEGACY.to_h
