@@ -278,57 +278,43 @@ RSpec.feature "MailTasks", :postgres do
 
       shared_examples "whether granted or denied" do
         it "completes HearingPostponementRequestMailTask on Case Timeline" do
-          hpr_task = find("#case-timeline-table tr:nth-child(1)")
+          mail_task = find("#case-timeline-table tr:nth-child(2)")
 
-          expect(hpr_task).to have_content("COMPLETED ON\n#{hpr_task.updated_at.strftime('%m/%d/%Y')}")
-          expect(hpr_task).to have_content("HearingPostponementRequestMailTask completed")
-          expect(hpr_task).to have_content("COMPLETED BY\n#{User.current_user.css_id}")
+          expect(mail_task).to have_content("COMPLETED ON\n#{hpr_task.updated_at.strftime('%m/%d/%Y')}")
+          expect(mail_task).to have_content("HearingPostponementRequestMailTask completed")
+          expect(mail_task).to have_content("COMPLETED BY\n#{User.current_user.css_id}")
         end
 
         it "updates instructions of HearingPostponementRequestMailTask on Case Timeline" do
           find(:css, "#case-timeline-table .cf-btn-link", text: "View task instructions", match: :first).click
-          instructions = find("div", class: ".task-instructions")
+          instructions_div = find("div", class: "task-instructions")
 
-          expect(instructions).to have_content("Motion to postpone #{ruling}")
-          expect(instructions).to have_content("DATE OF RULING\n#{ruling_date}")
-          expect(instructions).to have_content("INSTRUCTIONS\n#{instructions}")
+          expect(instructions_div).to have_content("Motion to postpone #{ruling.upcase}")
+          expect(instructions_div).to have_content("DATE OF RULING\n#{ruling_date}")
+          expect(instructions_div).to have_content("DETAILS\n#{instructions}")
         end
       end
 
       context "ruling is granted" do
-        let(:ruling) { "GRANTED"}
-
-        context "scheduling a veteran immediately" do
-          it "schedule a veteran" do
-            FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
-            p = "queue/appeals/#{hpr_task.appeal.uuid}"
-            visit(p)
-            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                           text: "Mark as complete")
-            find(".cf-form-radio-option", text: "Granted").click
-            fill_in("rulingDateSelector", with: "08/15/2023")
-            find(:css, ".cf-form-radio-option label", text: "Reschedule immediately").click
-            fill_in("instructionsField", with: "instructions")
-            click_button("Mark as complete")
-            expect(page.current_path).to eq("/queue/appeals/#{hpr_task.appeal.uuid}/tasks/#{hpr_task.id}/schedule_veteran")
-          end
-        end
+        let(:ruling) { "Granted" }
 
         context "send to schedule veteran list" do
           before :each do
             FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
             page = "queue/appeals/#{appeal.uuid}"
             visit(page)
-            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                           text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label)
-            find(".cf-form-radio-option", text: "Granted").click
+            within("tr", text: "TASK", match: :first) do
+              click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                             text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label)
+            end
+            find(".cf-form-radio-option", text: ruling).click
             fill_in("rulingDateSelector", with: ruling_date)
             find(:css, ".cf-form-radio-option label", text: "Send to Schedule Veteran list").click
             fill_in("instructionsField", with: instructions)
             click_button("Mark as complete")
           end
 
-          shared_examples "whether or not appeal has scheduled hearing" do
+          shared_examples "whether hearing is scheduled or unscheduled" do
             it "creates new ScheduleHearing task under Task Actions" do
               new_task = appeal.tasks.last
               most_recent_task = find("tr", text: "TASK", match: :first)
@@ -337,7 +323,7 @@ RSpec.feature "MailTasks", :postgres do
             end
 
             it "cancels Hearing task on Case Timeline" do
-              hearing_task = find("#case-timeline-table tr:nth-child(2)")
+              hearing_task = find("#case-timeline-table tr:nth-child(3)")
 
               expect(hearing_task).to have_content("CANCELLED ON\n#{hpr_task.updated_at.strftime('%m/%d/%Y')}")
               expect(hearing_task).to have_content("HearingTask cancelled")
@@ -346,17 +332,11 @@ RSpec.feature "MailTasks", :postgres do
           end
 
           context "appeal has unscheduled hearing" do
-            let(:hpr_task) do
-              create(:hearing_postponement_request_mail_task,
-                     :with_unscheduled_hearing,
-                     assigned_by_id: User.system_user.id)
-            end
-
             include_examples "whether granted or denied"
-            include_examples "whether or not appeal has scheduled hearing"
+            include_examples "whether hearing is scheduled or unscheduled"
 
             it "cancels ScheduleHearing task on Case Timeline" do
-              schedule_task = find("#case-timeline-table tr:nth-child(3)")
+              schedule_task = find("#case-timeline-table tr:nth-child(4)")
 
               expect(schedule_task).to have_content("CANCELLED ON\n#{hpr_task.updated_at.strftime('%m/%d/%Y')}")
               expect(schedule_task).to have_content("ScheduleHearingTask cancelled")
@@ -372,10 +352,10 @@ RSpec.feature "MailTasks", :postgres do
             end
 
             include_examples "whether granted or denied"
-            include_examples "whether or not appeal has scheduled hearing"
+            include_examples "whether hearing is scheduled or unscheduled"
 
             it "cancels AssignHearingDisposition task on Case Timeline" do
-              disposition_task = find("#case-timeline-table tr:nth-child(3)")
+              disposition_task = find("#case-timeline-table tr:nth-child(4)")
 
               expect(disposition_task).to have_content("CANCELLED ON\n#{hpr_task.updated_at.strftime('%m/%d/%Y')}")
               expect(disposition_task).to have_content("AssignHearingDispositionTask cancelled")
@@ -386,7 +366,7 @@ RSpec.feature "MailTasks", :postgres do
       end
 
       context "ruling is denied" do
-        let(:ruling) { "DENIED" }
+        let(:ruling) { "Denied" }
 
         before do
           FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
