@@ -92,6 +92,7 @@ export class DecisionReviewer extends React.PureComponent {
       annotations={this.props.annotations}
       vacolsId={vacolsId}>
       <PdfListView
+        efolderExpressUrl={this.props.efolderExpressUrl}
         showPdf={this.showPdf(props.history, vacolsId)}
         sortBy={this.state.sortBy}
         selectedLabels={this.state.selectedLabels}
@@ -173,6 +174,7 @@ DecisionReviewer.propTypes = {
   dropdownUrls: PropTypes.array,
   featureToggles: PropTypes.any,
   feedbackUrl: PropTypes.any,
+  efolderExpressUrl: PropTypes.any,
   isPlacingAnnotation: PropTypes.any,
   onScrollToComment: PropTypes.func,
   setCategoryFilter: PropTypes.func,
