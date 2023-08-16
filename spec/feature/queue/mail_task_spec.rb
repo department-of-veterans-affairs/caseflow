@@ -299,19 +299,19 @@ RSpec.feature "MailTasks", :postgres do
         let(:ruling) { "GRANTED"}
 
         context "scheduling a veteran immediately" do
-          # it "schedule a veteran" do
-          #   FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
-          #   p = "queue/appeals/#{hpr_task.appeal.uuid}"
-          #   visit(p)
-          #   click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-          #                  text: "Mark as complete")
-          #   find(".cf-form-radio-option", text: "Granted").click
-          #   fill_in("rulingDateSelector", with: "08/15/2023")
-          #   find(:css, ".cf-form-radio-option label", text: "Reschedule immediately").click
-          #   fill_in("instructionsField", with: "instructions")
-          #   click_button("Mark as complete")
-          #   expect(page.current_path).to eq("/queue/appeals/#{hpr_task.appeal.uuid}/tasks/#{hpr_task.id}/modal/complete_and_postpone")
-          # end
+          it "schedule a veteran" do
+            FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
+            p = "queue/appeals/#{hpr_task.appeal.uuid}"
+            visit(p)
+            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                           text: "Mark as complete")
+            find(".cf-form-radio-option", text: "Granted").click
+            fill_in("rulingDateSelector", with: "08/15/2023")
+            find(:css, ".cf-form-radio-option label", text: "Reschedule immediately").click
+            fill_in("instructionsField", with: "instructions")
+            click_button("Mark as complete")
+            expect(page.current_path).to eq("/queue/appeals/#{hpr_task.appeal.uuid}/tasks/#{hpr_task.id}/schedule_veteran")
+          end
         end
 
         context "send to schedule veteran list" do
