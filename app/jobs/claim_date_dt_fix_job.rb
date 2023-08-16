@@ -1,8 +1,7 @@
 # frozen_string_literal: true
+
 class ClaimDateDtFixJob < CaseflowJob
   ERROR_TEXT = "ClaimDateDt"
-
-  attr_reader :error_text, :object_type
 
   def perform
     stuck_job_report_service = StuckJobReportService.new
