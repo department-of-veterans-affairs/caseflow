@@ -95,8 +95,10 @@ FactoryBot.define do
         distro_task = task.parent
         task.update!(parent: root_task)
         ScheduleHearingTask.create!(appeal: appeal, parent: distro_task, assigned_to: Bva.singleton)
-        HearingPostponementRequestMailTask.create!(appeal: appeal, parent: task,
-                                                   assigned_to: HearingAdmin.singleton)
+        HearingPostponementRequestMailTask.create!(appeal: appeal,
+                                                   parent: task,
+                                                   assigned_to: HearingAdmin.singleton,
+                                                   instructions: task.instructions)
       end
     end
 
@@ -114,7 +116,10 @@ FactoryBot.define do
         AssignHearingDispositionTask.create!(appeal: appeal, parent: schedule_hearing_task.parent,
                                              assigned_to: Bva.singleton)
         HearingTaskAssociation.create!(hearing: hearing, hearing_task: schedule_hearing_task.parent)
-        HearingPostponementRequestMailTask.create!(appeal: appeal, parent: task, assigned_to: HearingAdmin.singleton)
+        HearingPostponementRequestMailTask.create!(appeal: appeal,
+                                                   parent: task,
+                                                   assigned_to: HearingAdmin.singleton,
+                                                   instructions: task.instructions)
       end
     end
 
@@ -662,6 +667,9 @@ FactoryBot.define do
       factory :hearing_postponement_request_mail_task, class: HearingPostponementRequestMailTask do
         parent { create(:distribution_task, appeal: appeal) }
         assigned_to { MailTeam.singleton }
+        instructions do
+          ["**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"]
+        end
       end
     end
   end
