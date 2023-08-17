@@ -463,12 +463,10 @@ class ExternalApi::BGSService
   end
 
   def find_contentions_by_participant_id(participant_id)
-    # commented out for testing
-    # DBService.release_db_connections
+    DBService.release_db_connections
     # return [] unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
     #                  FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
 
-    # find contention info in cache; if not there, call to BGS and cache it
     DataDogService.increment_counter(
       metric_group: "mst_pact_group",
       metric_name: "bgs_service.contention_special_issue_call",
@@ -479,9 +477,6 @@ class ExternalApi::BGSService
                           name: "contention.find_contention_by_participant_id") do
       client.contention.find_contention_by_participant_id(participant_id)
     end
-
-    # return nil for testing with contention call commented out
-    nil
   end
 
   def find_current_rating_profile_by_ptcpnt_id(participant_id)
