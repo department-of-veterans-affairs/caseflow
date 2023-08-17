@@ -4,6 +4,8 @@ import userEvent from '@testing-library/user-event';
 
 import SelectConferenceTypeRadioField from 'app/queue/SelectConferenceTypeRadioField';
 
+jest.mock('app/util/ApiUtil');
+
 const defaults = {
   name: 'field1',
   value: '1',
@@ -16,6 +18,7 @@ const defaults = {
 };
 
 describe('SelectConferenceTypeRadioField', () => {
+  // the patch response change is being tested in the organizations_user_spec.rb test file
   const handleChange = jest.fn();
 
   beforeEach(() => {
@@ -47,12 +50,12 @@ describe('SelectConferenceTypeRadioField', () => {
 
   it('changes values by radio button selected', async () => {
     setupComponent();
-    expect (defaults.value) === "1";
+    expect(defaults.value) === '1';
 
     const webexRadioButton = screen.getByText('Webex');
 
     await userEvent.click(webexRadioButton);
 
-    expect(defaults.value) === "2";
-  })
+    expect(defaults.value) === '2';
+  });
 });
