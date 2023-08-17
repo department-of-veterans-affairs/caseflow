@@ -44,6 +44,7 @@ const initialState = {
     },
     category: {},
     tag: {},
+    document: {},
     searchQuery: ''
   },
   pdfList: {
@@ -113,8 +114,6 @@ const documentListReducer = (state = initialState, action = {}) => {
       });
     })();
 
-
-
     // Tag Filters
   case Constants.SET_TAG_FILTER:
     return update(state, {
@@ -126,6 +125,7 @@ const documentListReducer = (state = initialState, action = {}) => {
         }
       }
     });
+
   case Constants.CLEAR_TAG_FILTER:
     return update(state, {
       docFilterCriteria: {
@@ -149,6 +149,20 @@ const documentListReducer = (state = initialState, action = {}) => {
         $set: action.payload.documentsOrComments
       }
     });
+
+    // Document filters
+
+  case Constants.SET_DOC_FILTER:
+    return update(state, {
+      docFilterCriteria: {
+        document: {
+          [action.payload.text]: {
+            $set: action.payload.checked
+          }
+        }
+      }
+    });
+
   // Document header
   case Constants.SET_SEARCH:
     return update(state, {

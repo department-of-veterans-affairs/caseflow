@@ -289,7 +289,7 @@ class DocumentsTable extends React.Component {
               >
                 <DocTagPicker
                   tags={this.props.tagOptions}
-                  tagToggleStates={this.props.docFilterCriteria.tag}
+                  tagToggleStates={this.props.docFilterCriteria.document}
                   handleTagToggle={this.props.setDocFilter}
                 />
               </DropdownFilter>
