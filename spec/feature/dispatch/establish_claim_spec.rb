@@ -623,7 +623,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
           )
         end
 
-        scenario "Assigning it to complete the claims establishment", skip: "flakey hang" do
+        scenario "Assigning it to complete the claims establishment" do
           visit "/dispatch/establish-claim"
           click_on "Establish next claim"
 
@@ -854,6 +854,8 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
           click_on "Route claim"
           click_on "Create new EP"
           click_on "Create End Product"
+
+          expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
 
           expect(page).to have_content("Success!")
 
