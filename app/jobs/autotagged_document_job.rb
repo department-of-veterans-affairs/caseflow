@@ -8,9 +8,8 @@ class AutotaggedDocumentJob < CaseflowJob
 
     document_ids_not_auto_tagged
 
-    auto_tagged_document_ids.each do |id|
-      key_phrases = ExternalApi::ClaimEvidenceService.get_key_phrases_from_document(:id)
-      # 19824 card need to call here
+    auto_tagged_document_ids.each do |uuid|
+      key_phrases = ExternalApi::ClaimEvidenceService.get_key_phrases_from_document(:uuid)
     end
 
   end
@@ -22,6 +21,6 @@ class AutotaggedDocumentJob < CaseflowJob
   end
 
   def auto_tagged_document_ids
-    Document.where(auto_tagged: true).pluck(:id)
+    Document.where(auto_tagged: true).pluck(:series_id).compact
   end
 end
