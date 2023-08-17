@@ -56,7 +56,9 @@ class TagController < ApplicationController
     Tag.find_by("lower(text) = ?", text.downcase)
   end
 
-  def generate_auto_tags_for_document(doc_uuid, key_phrases = [])
+  def associate_auto_tags_for_document(doc_uuid, key_phrases = [])
+    # Given a list of key_phrases returne from AWS Comprehend and the document uuid (document.series_id)
+    # Associates currently existing tags to the document
     document = Document.find(doc_uuid)
     key_phrases.each do |key_phrase|
       new_tag = find_existing_tag(key_phrase)
