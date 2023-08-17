@@ -11,7 +11,7 @@ module DisallowedDeprecations
     /Dangerous query method \(method whose arguments are used as raw SQL\) called with non\-attribute argument\(s\)/
   ]
 
-  # Regular expressions for deprecation warnings that should raise exceptions in `development` and `test` environments
+  # Regular expressions for deprecation warnings that should raise an exception on detection
   DISALLOWED_DEPRECATION_WARNING_REGEXES = [
     *RAILS_5_2_FIXED_DEPRECATION_WARNING_REGEXES
   ]
