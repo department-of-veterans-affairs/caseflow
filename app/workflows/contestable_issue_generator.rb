@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class ContestableIssueGenerator
-  def initialize(review)
+  def initialize(review, get_special_issues: false)
     @review = review
+    @get_special_issues = get_special_issues
   end
 
   delegate :finalized_decision_issues_before_receipt_date, to: :review
@@ -81,7 +82,11 @@ class ContestableIssueGenerator
 
   def rating_hash_deserialize(from:, to:)
     ratings.inject([]) do |result, rating_hash|
-      result + rating_hash[from].map { |hash| to.deserialize(hash) }
+      result + rating_hash[from].map do |hash|
+        # merge in special issues to the hash
+        hash = hash.merge(special_issues: to.deserialize_special_issues(hash)) if @get_special_issues
+        to.deserialize(hash)
+      end
     end
   end
 
