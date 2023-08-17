@@ -3,8 +3,6 @@
 # copy of decision_issues
 
 class ETL::DecisionIssue < ETL::Record
-  attr_accessor :mst_status, :pact_status
-
   class << self
     private
 

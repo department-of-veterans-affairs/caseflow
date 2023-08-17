@@ -53,82 +53,17 @@ class Fakes::BGSServiceRecordMaker
   end
 
   # rubocop:disable Naming/PredicateName
-  # rubocop:disable Metrics/MethodLength
   def has_rating(veteran)
     Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: Date.new(2019, 10, 11),
       profile_date: Date.new(2019, 10, 11),
       issues: [
-        {
-          decision_text: "Service connection is granted for PTSD at 10 percent, effective 10/11/2019.",
-          dis_sn: "1224780"
-        },
+        { decision_text: "Service connection is granted for PTSD at 10 percent, effective 10/11/2019." },
         { decision_text: "Service connection is denied for right knee condition." }
-      ],
-      disabilities: [
-        {
-          name: "Disability",
-          parent_name: "CP_RBA_PRFIL2",
-          dis_dt: "Wed, 29 Mar 2023 10:28:11 -0500",
-          dis_sn: "1224780",
-          prfl_dt: "Wed, 29 Mar 2023 10:26:14 -0500",
-          ptcpnt_id_a: veteran.participant_id,
-          disability_special_issues: [
-            {
-              spis_basis_tc: "PTSD/10",
-              spis_basis_tn: "Sexual Trauma/Assault",
-              spis_tc: "PTSD/3",
-              spis_tn: "PTSD - Personal Trauma",
-              dis_sn: "1224780"
-            },
-            {
-              spis_basis_tc: "AO/14",
-              spis_basis_tn: "Peripheral Neuropathy",
-              spis_tc: "AOOV",
-              spis_tn: "Agent Orange - outside Vietnam or unknown",
-              dis_sn: "1224780"
-            }
-          ]
-        },
-        {
-          name: "Disability",
-          parent_name: "CP_RBA_PRFIL2",
-          dis_dt: "Wed, 14 Jun 2023 10:18:08 -0500",
-          dis_sn: "1230647",
-          disability_evaluations: {
-            name: "DisabilityEvaluation",
-            dgnstc_tc: "5000",
-            dgnstc_tn: "Osteomyelitis",
-            dgnstc_txt: "Adenocarcinoma, respiratory",
-            dgnstc_txt_clob: "Adenocarcinoma, respiratory",
-            dis_dt: "Wed, 14 Jun 2023 10:18:08 -0500",
-            dis_sn: "1230647",
-            prfl_dt: "Wed, 14 Jun 2023 09:28:22 -0500"
-          },
-          disability_special_issues: [
-            {
-              name: "DisabilitySpecialIssue",
-              dis_sn: "1230647",
-              spis_basis_tc: "PTSD/12",
-              spis_basis_tn: "Sexual Harassment",
-              spis_tc: "PTSD/3",
-              spis_tn: "PTSD - Personal Trauma"
-            },
-            {
-              spis_basis_tc: "AO/14",
-              spis_basis_tn: "Peripheral Neuropathy",
-              spis_tc: "AOOV",
-              spis_tn: "Agent Orange - outside Vietnam or unknown",
-              dis_sn: "1224780"
-            }
-          ],
-          ptcpnt_id_a: veteran.participant_id
-        }
       ]
     )
   end
-  # rubocop:enable Metrics/MethodLength
 
   def has_two_ratings(veteran)
     Generators::PromulgatedRating.build(
@@ -151,7 +86,7 @@ class Fakes::BGSServiceRecordMaker
     in_active_review_receipt_date = Time.zone.parse("2018-04-01")
     completed_review_receipt_date = in_active_review_receipt_date - 30.days
     completed_review_reference_id = "cleared-review-ref-id"
-    contention = Generators::BgsContention.build
+    contention = Generators::Contention.build
 
     Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id
@@ -165,7 +100,7 @@ class Fakes::BGSServiceRecordMaker
         { decision_text: "Right knee" },
         { decision_text: "PTSD" },
         { decision_text: "This rating is in active review", reference_id: in_active_review_reference_id },
-        { decision_text: "I am on a completed Higher Level Review", contention_reference_id: contention.reference_id }
+        { decision_text: "I am on a completed Higher Level Review", contention_reference_id: contention.id }
       ]
     )
     Generators::PromulgatedRating.build(
@@ -237,7 +172,7 @@ class Fakes::BGSServiceRecordMaker
       benefit_type: "compensation",
       end_product_establishment: cleared_epe,
       contested_rating_issue_reference_id: completed_review_reference_id,
-      contention_reference_id: contention.reference_id
+      contention_reference_id: contention.id
     ) do |reqi|
       reqi.contested_rating_issue_profile_date = Time.zone.today - 100
     end
@@ -287,108 +222,6 @@ class Fakes::BGSServiceRecordMaker
       bgs_attrs: { benefit_claim_id: claim_id }
     )
     sc
-  end
-
-  def generate_mst_and_pact_contentions(veteran)
-    has_hlr_with_mst_contention(veteran)
-    has_hlr_with_pact_contention(veteran)
-  end
-
-  def has_hlr_with_mst_contention(veteran)
-    claim_id = "600118959"
-    mst_contention = Generators::BgsContention.build_mst_contention(
-      claim_id: claim_id
-    )
-    contention_reference_id = mst_contention.reference_id
-
-    # if contention ID is already linked to a RequestIssue, generate a new contention
-    while !RequestIssue.find_by(contention_reference_id: contention_reference_id).nil?
-      mst_contention = Generators::BgsContention.build_mst_contention(
-        claim_id: claim_id
-      )
-      contention_reference_id = mst_contention.reference_id
-    end
-
-    hlr = HigherLevelReview.find_or_create_by!(
-      veteran_file_number: veteran.file_number
-    )
-    epe = EndProductEstablishment.find_or_create_by!(
-      reference_id: claim_id,
-      veteran_file_number: veteran.file_number,
-      source: hlr,
-      payee_code: EndProduct::DEFAULT_PAYEE_CODE
-    )
-    RequestIssue.find_or_create_by!(
-      decision_review: hlr,
-      benefit_type: "compensation",
-      end_product_establishment: epe,
-      contention_reference_id: contention_reference_id
-    )
-    Generators::PromulgatedRating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Time.zone.today - 40,
-      profile_date: Time.zone.today - 30,
-      issues: [
-        {
-          decision_text: "Higher Level Review was denied",
-          contention_reference_id: contention_reference_id
-        }
-      ]
-    )
-    Generators::EndProduct.build(
-      veteran_file_number: veteran.file_number,
-      bgs_attrs: { benefit_claim_id: claim_id }
-    )
-    hlr
-  end
-
-  def has_hlr_with_pact_contention(veteran)
-    claim_id = "600118960"
-    pact = Generators::BgsContention.build_pact_contention(
-      claim_id: claim_id
-    )
-    contention_reference_id = pact.id
-    # if contention ID is already linked to a RequestIssue, generate a new contention
-    while !RequestIssue.find_by(contention_reference_id: contention_reference_id).nil?
-      mst_contention = Generators::BgsContention.build_mst_contention(
-        claim_id: claim_id
-      )
-      contention_reference_id = mst_contention.reference_id
-    end
-    hlr = HigherLevelReview.find_or_create_by!(
-      veteran_file_number: veteran.file_number
-    )
-    epe = EndProductEstablishment.find_or_create_by!(
-      reference_id: claim_id,
-      veteran_file_number: veteran.file_number,
-      source: hlr,
-      payee_code: EndProduct::DEFAULT_PAYEE_CODE
-    )
-    RequestIssue.find_or_create_by!(
-      decision_review: hlr,
-      benefit_type: "compensation",
-      end_product_establishment: epe,
-      contention_reference_id: contention_reference_id
-    )
-    Generators::PromulgatedRating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Time.zone.today - 40,
-      profile_date: Time.zone.today - 30,
-      issues: [
-        {
-          decision_text: "Higher Level Review was denied",
-          contention_reference_id: contention_reference_id
-        }
-      ]
-    )
-    Generators::EndProduct.build(
-      veteran_file_number: veteran.file_number,
-      bgs_attrs: { benefit_claim_id: claim_id }
-    )
-    Generators::BgsContention.build_pact_contention(
-      claim_id: claim_id
-    )
-    hlr
   end
 
   # rubocop:disable Metrics/MethodLength

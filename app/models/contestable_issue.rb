@@ -11,11 +11,10 @@ class ContestableIssue
                 :decision_issue, :rating_issue_profile_date, :source_request_issues,
                 :rating_issue_diagnostic_code, :source_decision_review,
                 :rating_decision_reference_id, :rating_issue_subject_text,
-                :rating_issue_percent_number, :special_issues
+                :rating_issue_percent_number
 
   class << self
     def from_rating_issue(rating_issue, contesting_decision_review)
-      # epe = EndProductEstablishment.find_by(reference_id: rating_issue.reference_id)
       new(
         rating_issue_reference_id: rating_issue.reference_id,
         rating_issue_profile_date: rating_issue.profile_date.to_date,
@@ -31,8 +30,7 @@ class ContestableIssue
         # TODO: These should never be set unless there is a decision issue. We should refactor this to
         # account for that.
         source_request_issues: rating_issue.source_request_issues,
-        source_decision_review: rating_issue.source_request_issues.first&.decision_review,
-        special_issues: rating_issue.special_issues
+        source_decision_review: rating_issue.source_request_issues.first&.decision_review
       )
     end
 
@@ -50,7 +48,7 @@ class ContestableIssue
         source_request_issues: decision_issue.request_issues.active,
         source_decision_review: source,
         contesting_decision_review: contesting_decision_review,
-        is_rating: decision_issue.rating?,
+        is_rating: decision_issue.rating?
       )
     end
 
@@ -63,8 +61,7 @@ class ContestableIssue
         description: rating_decision.decision_text,
         contesting_decision_review: contesting_decision_review,
         rating_issue_diagnostic_code: rating_decision.diagnostic_code,
-        special_issues: rating_decision.special_issues,
-        is_rating: true, # true even if rating_reference_id is nil
+        is_rating: true # true even if rating_reference_id is nil
       )
     end
   end
@@ -83,9 +80,7 @@ class ContestableIssue
       sourceReviewType: source_review_type,
       timely: timely?,
       latestIssuesInChain: serialize_latest_decision_issues,
-      isRating: is_rating,
-      mstAvailable: mst_available?,
-      pactAvailable: pact_available?
+      isRating: is_rating
     }
   end
 
@@ -115,29 +110,6 @@ class ContestableIssue
 
   def timely?
     approx_decision_date && contesting_decision_review.timely_issue?(approx_decision_date)
-  end
-
-  # cycle the issues to see if the past decision had any mst codes on contentions
-  def mst_available?
-    source_request_issues.try(:each) do |issue|
-      return true if issue.mst_contention_status? || issue.mst_status?
-    end
-    special_issues&.each do |special_issue|
-      return true if special_issue[:mst_available]
-    end
-    false
-  end
-
-  # cycle the issues to see if the past decision had any pact codes on contentions
-  def pact_available?
-    source_request_issues.try(:each) do |issue|
-      return true if issue.pact_contention_status? || issue.pact_status?
-    end
-    special_issues&.each do |special_issue|
-      return true if special_issue[:pact_available]
-    end
-
-    false
   end
 
   private
