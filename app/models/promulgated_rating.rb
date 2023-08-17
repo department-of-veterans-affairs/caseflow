@@ -69,7 +69,7 @@ class PromulgatedRating < Rating
     )
   rescue Savon::Error
     {}
-  rescue BGS::ShareError
+  rescue BGS::ShareError => error
     Raven.capture_exception(error)
 
     DataDogService.increment_counter(
