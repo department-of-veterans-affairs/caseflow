@@ -82,6 +82,9 @@ Rails.application.configure do
 
   ENV["DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL"] ||= "true"
 
+  # eFolder Express URL for demo environment used as a mock link
+  ENV["EFOLDER_EXPRESS_URL"] ||= "http://localhost:4000"
+
   # Setup S3
   config.s3_enabled = ENV["AWS_BUCKET_NAME"].present?
   config.s3_bucket_name = ENV["AWS_BUCKET_NAME"]
