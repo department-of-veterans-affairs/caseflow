@@ -144,5 +144,6 @@ Pdf.propTypes = {
   scale: PropTypes.number,
   selectedAnnotationId: PropTypes.number,
   stopPlacingAnnotation: PropTypes.func,
-  togglePdfSidebar: PropTypes.func
+  togglePdfSidebar: PropTypes.func,
+  featureToggles: PropTypes.object
 };

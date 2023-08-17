@@ -27,6 +27,7 @@
   "CASE_LIST_TABLE_APPEAL_BOARD_INTAKE_COLUMN_TITLE": "Board Intake",
   "CASE_LIST_TABLE_APPEAL_LAST_ACTION_COLUMN_TITLE": "Last Action",
   "CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE": "Issues",
+  "CASE_LIST_TABLE_APPEAL_ISSUE_CATEGORIES_COLUMN_TITLE": "Issue Type",
   "CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE": "Veteran Documents",
   "CASE_LIST_TABLE_TASK_ACTION_COLUMN_TITLE": "Action",
   "CASE_LIST_TABLE_REGIONAL_OFFICE_COLUMN_TITLE": "Regional office",
@@ -385,6 +386,12 @@
   "MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_INSTRUCTIONS_LABEL": "Provide instructions and context for this action",
   "MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_TITLE": "%s's Motion to Vacate has been returned to %s",
   "MTV_CHECKOUT_RETURN_TO_JUDGE_SUCCESS_DETAILS": "If you made a mistake, please email your judge to resolve the issue.",
+
+  "MTV_TASK_INSTRUCTIONS": "**Motion To Vacate:**  \n",
+  "MTV_TASK_INSTRUCTIONS_TYPE": "**Type:**  ",
+  "MTV_TASK_INSTRUCTIONS_DETAIL": "**Detail:**  ",
+  "MTV_TASK_INSTRUCTIONS_HYPERLINK": "**Hyperlink:**  ",
+
   "VACATE_AND_DE_NOVO_TASK_LABEL": "Vacate and De Novo",
   "VACATE_AND_READJUDICATION_TASK_LABEL": "Vacate and Readjudication",
   "STRAIGHT_VACATE_TASK_LABEL": "Straight Vacate",
