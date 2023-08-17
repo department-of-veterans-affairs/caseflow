@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { debounce } from 'lodash';
 
+import COPY from '../../../COPY';
+import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import ApiUtil from '../../util/ApiUtil';
 
@@ -9,6 +11,7 @@ const EfolderUrlField = (props) => {
 
   const [valid, setValid] = useState(false);
   const [loading, setloading] = useState(false);
+  const [error, setError] = useState('');
   const valueRef = useRef(props.value);
 
   const extractRequestType = () => (
@@ -29,7 +32,6 @@ const EfolderUrlField = (props) => {
   };
 
   const handleDebounce = debounce((value) => {
-    console.log('Debounced!');
 
     if (valueRef.current === value) {
       handleChange(props.value);
@@ -38,8 +40,6 @@ const EfolderUrlField = (props) => {
     }
 
     if (efolderLinkRegexMatch(value)) {
-      console.log('Valid regex match, spinner on');
-      // start loading spinner
       setloading(true);
       const seriesId = captureDocumentSeriesId(value);
       const appealId = props.appealId;
@@ -48,25 +48,22 @@ const EfolderUrlField = (props) => {
         then((response) => {
           if (response.body.document_presence === true) {
             setValid(true);
+            setError('');
           } else {
             setValid(false);
-            // show error message
+            setError(COPY.EFOLDER_DOCUMENT_NOT_FOUND);
           }
-          console.log('Response received')
         }).
-        catch((response) => {
-          // handle errors
+        catch(() => {
+          setValid(false);
+          setError(COPY.EFOLDER_CONNECTION_ERROR);
         }).
         finally(() => {
-          console.log('loading spinner off')
           setloading(false);
         });
     } else {
-      console.log('Invalid efolder regex match');
       setValid(false);
-      // https://benefits-int-delivery.slack.com/archives/C03NCPYRXK2/p1687881917481399?thread_ts=1687878651.089549&cid=C03NCPYRXK2
-      // Show error message as described in thread ^^ (invalid link format)
-      // Block form submission until resolved
+      setError(COPY.EFOLDER_INVALID_LINK_FORMAT);
     }
     valueRef.current = value
     handleChange(props.value);
@@ -86,9 +83,19 @@ const EfolderUrlField = (props) => {
       name="eFolderUrlField"
       value={props.value}
       onChange={handleChange}
-      errorMessage={props.errorMessage}
+      errorMessage={error}
       loading={loading}
     />
+
+    {
+      error === COPY.EFOLDER_CONNECTION_ERROR &&
+      <Button
+        onClick={() => handleDebounce(props.value)}
+        linkStyling id="eFolderLinkRetry"
+        classNames={['cf-push-right']}>
+          Retry
+      </Button>
+    }
   </>;
 };
 

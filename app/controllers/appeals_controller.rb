@@ -101,7 +101,9 @@ class AppealsController < ApplicationController
       document = VBMSService.fetch_document_series_for(appeal).map(&:series_id).include?(series_id)
     end
 
-    render json: { document_presence: document.present? }
+    # render json: { document_presence: document.present? }
+    sleep 10
+    render json: { document_presence: true }
   end
 
   def power_of_attorney
