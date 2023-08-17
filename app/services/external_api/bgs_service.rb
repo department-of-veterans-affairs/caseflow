@@ -476,6 +476,8 @@ class ExternalApi::BGSService
                           service: :bgs,
                           name: "contention.find_contention_by_participant_id") do
       client.contention.find_contention_by_participant_id(participant_id)
+    rescue BGS::ShareError => error
+      Raven.capture_exception(error)
     end
   end
 
