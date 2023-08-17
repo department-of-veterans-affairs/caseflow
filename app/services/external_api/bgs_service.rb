@@ -464,7 +464,6 @@ class ExternalApi::BGSService
 
   def find_contentions_by_participant_id(participant_id)
     # commented out for testing
-    # DBService.release_db_connections
     # return [] unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
     #                  FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
 
@@ -474,16 +473,18 @@ class ExternalApi::BGSService
       metric_name: "bgs_service.contention_special_issue_call",
       app_name: RequestStore[:application]
     )
-    # MetricsService.record("BGS: find contentions for veteran by participant_id #{participant_id}",
-    #   service: :bgs,
-    #   name: "contention.find_contention_by_participant_id") do
-    #     Rails.cache.fetch("find_contentions_by_participant_id_#{participant_id}", expires_in: 24.hours) do
-    #       client.contention.find_contention_by_participant_id(participant_id)
-    #     end
+    # Rails.cache.fetch("find_contentions_by_participant_id_#{participant_id}", expires_in: 24.hours) do
+    #   DBService.release_db_connections
+    #   MetricsService.record("BGS: find contentions for veteran by participant_id #{participant_id}",
+    #                         service: :bgs,
+    #                         name: "contention.find_contention_by_participant_id") do
+    #     client.contention.find_contention_by_participant_id(participant_id)
+    #   rescue BGS::ShareError
+    #     []
     #   end
+    # end
 
-    # return nil for testing with contention call commented out
-    nil
+    []
   end
 
   def find_current_rating_profile_by_ptcpnt_id(participant_id)
