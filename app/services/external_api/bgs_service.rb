@@ -468,6 +468,12 @@ class ExternalApi::BGSService
     # return [] unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
     #                  FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
 
+    # find contention info in cache; if not there, call to BGS and cache it
+    DataDogService.increment_counter(
+      metric_group: "mst_pact_group",
+      metric_name: "bgs_service.contention_special_issue_call",
+      app_name: RequestStore[:application]
+    )
     # MetricsService.record("BGS: find contentions for veteran by participant_id #{participant_id}",
     #   service: :bgs,
     #   name: "contention.find_contention_by_participant_id") do
@@ -475,13 +481,6 @@ class ExternalApi::BGSService
     #       client.contention.find_contention_by_participant_id(participant_id)
     #     end
     #   end
-
-    # find contention info in cache; if not there, call to BGS and cache it
-    DataDogService.increment_counter(
-      metric_group: "mst_pact_group",
-      metric_name: "bgs_service.service_call_from_cache",
-      app_name: RequestStore[:application]
-    )
 
     # return nil for testing with contention call commented out
     nil
