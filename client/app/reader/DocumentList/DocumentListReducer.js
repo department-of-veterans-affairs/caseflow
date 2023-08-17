@@ -51,7 +51,8 @@ const initialState = {
     lastReadDocId: null,
     dropdowns: {
       tag: false,
-      category: false
+      category: false,
+      document: false
     }
   },
   manifestVbmsFetchedAt: null,
@@ -111,6 +112,8 @@ const documentListReducer = (state = initialState, action = {}) => {
         }
       });
     })();
+
+
 
     // Tag Filters
   case Constants.SET_TAG_FILTER:

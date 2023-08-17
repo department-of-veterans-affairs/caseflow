@@ -22,6 +22,7 @@ import {
   setTagFilter,
   setCategoryFilter,
   toggleDropdownFilterVisibility,
+  setDocFilter
 } from '../reader/DocumentList/DocumentListActions';
 import { getAnnotationsPerDocument } from './selectors';
 import { SortArrowDownIcon } from '../components/icons/SortArrowDownIcon';
@@ -33,6 +34,7 @@ import DocTagPicker from './DocTagPicker';
 import FilterIcon from '../components/icons/FilterIcon';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
+import DocTypePicker from './DocTypePicker';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -85,10 +87,14 @@ class DocumentsTable extends React.Component {
   getCategoryFilterIconRef = (categoryFilterIcon) =>
     (this.categoryFilterIcon = categoryFilterIcon);
   getTagFilterIconRef = (tagFilterIcon) => (this.tagFilterIcon = tagFilterIcon);
+  getDocumentFilterIconRef = (documentFilterIcon) => (this.documentFilterIcon = documentFilterIcon);
   toggleCategoryDropdownFilterVisiblity = () =>
     this.props.toggleDropdownFilterVisibility('category');
   toggleTagDropdownFilterVisiblity = () =>
     this.props.toggleDropdownFilterVisibility('tag');
+
+  toggleDocumentDropdownFilterVisiblity = () =>
+    this.props.toggleDropdownFilterVisibility('document');
 
   getKeyForRow = (index, { isComment, id }) => {
     return isComment ? `${id}-comment` : id;
@@ -156,6 +162,11 @@ class DocumentsTable extends React.Component {
     const isTagDropdownFilterOpen = _.get(this.props.pdfList, [
       'dropdowns',
       'tag',
+    ]);
+
+    const isDocumentDropdownFilterOpen = _.get(this.props.pdfList, [
+      'dropdowns',
+      'document',
     ]);
 
     const sortDirectionAriaLabel = `${
@@ -242,18 +253,52 @@ class DocumentsTable extends React.Component {
           'aria-sort': sortDirectionAriaLabel,
         },
         header: (
-          <Button
-            id="type-header"
-            styling={{ 'aria-roledescription': 'sort button' }}
-            name="Document Type"
-            classNames={['cf-document-list-button-header']}
-            onClick={() => this.props.changeSortState('type')}
-          >
-            <span id="type-header-label">Document Type</span>
-            {this.props.docFilterCriteria.sort.sortBy === 'type' ?
-              sortArrowIcon :
-              notSortedIcon}
-          </Button>
+          <div>
+            <Button
+              id="type-header"
+              styling={{ 'aria-roledescription': 'sort button' }}
+              name="Document Type"
+              classNames={['cf-document-list-button-header']}
+              onClick={() => this.props.changeSortState('type')}
+            >
+              <span id="type-header-label">Document Type</span>
+
+
+
+
+
+              {this.props.docFilterCriteria.sort.sortBy === 'type' ?
+                sortArrowIcon :
+                notSortedIcon}
+            </Button>
+            <FilterIcon
+              label="Filter by Document"
+              idPrefix="document"
+              getRef={this.getDocumentFilterIconRef}
+              selected={isDocumentDropdownFilterOpen}
+              handleActivate={this.toggleDocumentDropdownFilterVisiblity}
+            />
+
+            {isDocumentDropdownFilterOpen && (
+              <DropdownFilter
+                clearFilters={this.props.clearTagFilters}
+                name="Document"
+                isClearEnabled={anyTagFiltersAreSet}
+                handleClose={this.toggleDocumentDropdownFilterVisiblity}
+                addClearFiltersRow
+              >
+                <DocTagPicker
+                  tags={this.props.tagOptions}
+                  tagToggleStates={() => {}}
+                  handleTagToggle={this.props.setDocFilter}
+                />
+              </DropdownFilter>
+            )}</div>
+
+
+
+
+
         ),
         valueFunction: (doc) => (
           <DocTypeColumn
@@ -355,6 +400,7 @@ DocumentsTable.propTypes = {
   setDocListScrollPosition: PropTypes.func.isRequired,
   toggleDropdownFilterVisibility: PropTypes.func.isRequired,
   tagOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  setDocFilter: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) =>
@@ -367,6 +413,7 @@ const mapDispatchToProps = (dispatch) =>
       changeSortState,
       toggleDropdownFilterVisibility,
       setCategoryFilter,
+      setDocFilter
     },
     dispatch
   );
