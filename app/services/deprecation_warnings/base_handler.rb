@@ -7,8 +7,10 @@ module DeprecationWarnings
     class << self
       # Subclasses must respond to `.call` to play nice with `ActiveSupport::Deprecation.behavior=`.
       #   https://github.com/rails/rails/blob/a4581b53aae93a8dd3205abae0630398cbce9204/activesupport/lib/active_support/deprecation/behaviors.rb#L70-L71
+      # :reek:LongParameterList
+      # :reek:UnusedParameters
       def call(message, callstack, deprecation_horizon, gem_name)
-        raise NotImplementedError
+        fail NotImplementedError
       end
 
       # Subclasses must respond to `.arity` to play nice with `ActiveSupport::Deprecation.behavior=`.

@@ -8,7 +8,8 @@ module DeprecationWarnings
     extend DisallowedDeprecations
 
     class << self
-      def call(message, callstack, deprecation_horizon, gem_name)
+      # :reek:LongParameterList
+      def call(message, _callstack, _deprecation_horizon, _gem_name)
         raise_if_disallowed_deprecation!(message)
         emit_error_to_stderr(message)
       end

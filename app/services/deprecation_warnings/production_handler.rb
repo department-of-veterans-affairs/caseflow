@@ -7,6 +7,7 @@ module DeprecationWarnings
     SLACK_ALERT_CHANNEL = "#appeals-deprecation-alerts"
 
     class << self
+      # :reek:LongParameterList
       def call(message, callstack, deprecation_horizon, gem_name)
         emit_warning_to_application_logs(message)
         emit_warning_to_sentry(message, callstack, deprecation_horizon, gem_name)
@@ -21,6 +22,7 @@ module DeprecationWarnings
         Rails.logger.warn(message)
       end
 
+      # :reek:LongParameterList
       def emit_warning_to_sentry(message, callstack, deprecation_horizon, gem_name)
         # Pre-emptive bugfix for future versions of the `sentry-raven` gem:
         #   Need to convert callstack elements from `Thread::Backtrace::Location` objects to `Strings`

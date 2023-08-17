@@ -43,7 +43,8 @@ module DeprecationWarnings
         let(:message) { "disallowed deprecation message" }
 
         before do
-          stub_const("DisallowedDeprecations::DISALLOWED_DEPRECATION_WARNING_REGEXES", [Regexp.new(Regexp.escape(message))])
+          stub_const("DisallowedDeprecations::DISALLOWED_DEPRECATION_WARNING_REGEXES",
+                     [Regexp.new(Regexp.escape(message))])
         end
 
         it "raises DisallowedDeprecationError" do
