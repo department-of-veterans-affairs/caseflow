@@ -35,7 +35,8 @@ export class CreateMailTaskDialog extends React.Component {
     this.state = {
       selectedValue: null,
       instructions: '',
-      eFolderUrl: ''
+      eFolderUrl: '',
+      eFolderUrlValid: false
     };
   }
 
@@ -134,8 +135,9 @@ export class CreateMailTaskDialog extends React.Component {
           <EfolderUrlField
             appealId={this.props.appealId}
             requestType={this.state.selectedValue}
-            onChange={(value) => this.setState({ eFolderUrl: value })}
+            onChange={(value, valid) => this.setState({ eFolderUrl: value, eFolderUrlValid: valid })}
             value={this.state.eFolderUrl}
+            valid={this.state.eFolderUrlValid}
           />
         }
         <TextareaField
