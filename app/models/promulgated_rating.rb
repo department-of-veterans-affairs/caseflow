@@ -74,7 +74,7 @@ class PromulgatedRating < Rating
 
     DataDogService.increment_counter(
       metric_group: "errors",
-      metric_name: "rating_fetch_retires",
+      metric_name: "rating_fetch_retries",
       app_name: RequestStore[:application]
     )
 
