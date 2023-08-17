@@ -26,7 +26,8 @@
     "dev:hot": "webpack-dev-server",
     "storybook": "start-storybook -p 6006",
     "build:storybook": "build-storybook -o ../public/storybook",
-    "webex-server": "node mocks/webex-mocks/webex-mock-server"
+    "webex-server": "node mocks/webex-mocks/webex-mock-server",
+    "generate-webex": "node mocks/webex-mocks/webex-mock-generator.js"
   },
   "cacheDirectories": [
     "node_modules",

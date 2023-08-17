@@ -1,334 +1,70 @@
 {
-  "conference-links": [
+  "conferenceLinks": [
     {
       "id": 1,
-      "title": "CASEFLOW_MOCK_SERVICE_<>",
-      "start": "2019-11-01 20:00:00",
-      "end": "2019-11-01 21:00:00",
-      "timezone": "Asia/Shanghai",
-      "enabledAutoRecordMeeting": false,
-      "allowAnyUserToBeCoHost": false,
-      "enabledJoinBeforeHost": false,
-      "enableConnectAudioBeforeHost": false,
-      "joinBeforeHostMinutes": 0,
-      "excludePassword": false,
-      "publicMeeting": false,
-      "reminderTime": 0,
-      "unlockedMeetingJoinSecurity": "allowJoinWithLobby",
-      "enabledWebCastView": false,
-      "enableAutomaticLock": false,
-      "automaticLockMinutes": 0,
-      "allowFirstUserToBeCoHost": false,
-      "allowAuthenticatedDevices": true,
-      "sendEmail": false,
-      "siteUrl": "",
-      "meetingOptions": [
-        {
-          "enabledChat": true,
-          "enableVideo": true
-        }
-      ],
-      "attendeePrivileges": {
-        "enableShareContent": true
-      },
-      "enabledBreakoutSessions": false,
-      "audioConnectionOptions": [
-        {
-          "audioConnectionType": "webexAudio",
-          "enabledTollFreeCallIn": true,
-          "enabledGlobalCallIn": true,
-          "enabledAudianceCallBack": false,
-          "entryAndExitTone": "beep",
-          "allowHosttoUnmuteParticipants": true,
-          "allowAttendeeToUnmuteSelf": true,
-          "muteAttendeeUponEntry": true
-        }
-      ]
-    },
-    {
-      "id": "2",
-      "title": "CASEFLOW_MOCK_SERVICE_<>",
-      "start": "2019-11-01 20:00:00",
-      "end": "2019-11-01 21:00:00",
-      "timezone": "Asia/Shanghai",
-      "enabledAutoRecordMeeting": false,
-      "allowAnyUserToBeCoHost": false,
-      "enabledJoinBeforeHost": false,
-      "enableConnectAudioBeforeHost": false,
-      "joinBeforeHostMinutes": 0,
-      "excludePassword": false,
-      "publicMeeting": false,
-      "reminderTime": 0,
-      "unlockedMeetingJoinSecurity": "allowJoinWithLobby",
-      "enabledWebCastView": false,
-      "enableAutomaticLock": false,
-      "automaticLockMinutes": 0,
-      "allowFirstUserToBeCoHost": false,
-      "allowAuthenticatedDevices": true,
-      "sendEmail": false,
-      "siteUrl": "",
-      "meetingOptions": [
-        {
-          "enabledChat": true,
-          "enableVideo": true
-        }
-      ],
-      "attendeePrivileges": {
-        "enableShareContent": true
-      },
-      "enabledBreakoutSessions": false,
-      "audioConnectionOptions": [
-        {
-          "audioConnectionType": "webexAudio",
-          "enabledTollFreeCallIn": true,
-          "enabledGlobalCallIn": true,
-          "enabledAudianceCallBack": false,
-          "entryAndExitTone": "beep",
-          "allowHosttoUnmuteParticipants": true,
-          "allowAttendeeToUnmuteSelf": true,
-          "muteAttendeeUponEntry": true
-        }
-      ]
-    },
-    {
-      "id": "3",
-      "title": "CASEFLOW_MOCK_SERVICE_<>",
-      "start": "2019-11-01 20:00:00",
-      "end": "2019-11-01 21:00:00",
-      "timezone": "Asia/Shanghai",
-      "enabledAutoRecordMeeting": false,
-      "allowAnyUserToBeCoHost": false,
-      "enabledJoinBeforeHost": false,
-      "enableConnectAudioBeforeHost": false,
-      "joinBeforeHostMinutes": 0,
-      "excludePassword": false,
-      "publicMeeting": false,
-      "reminderTime": 0,
-      "unlockedMeetingJoinSecurity": "allowJoinWithLobby",
-      "enabledWebCastView": false,
-      "enableAutomaticLock": false,
-      "automaticLockMinutes": 0,
-      "allowFirstUserToBeCoHost": false,
-      "allowAuthenticatedDevices": true,
-      "sendEmail": false,
-      "siteUrl": "",
-      "meetingOptions": [
-        {
-          "enabledChat": true,
-          "enableVideo": true
-        }
-      ],
-      "attendeePrivileges": {
-        "enableShareContent": true
-      },
-      "enabledBreakoutSessions": false,
-      "audioConnectionOptions": [
-        {
-          "audioConnectionType": "webexAudio",
-          "enabledTollFreeCallIn": true,
-          "enabledGlobalCallIn": true,
-          "enabledAudianceCallBack": false,
-          "entryAndExitTone": "beep",
-          "allowHosttoUnmuteParticipants": true,
-          "allowAttendeeToUnmuteSelf": true,
-          "muteAttendeeUponEntry": true
-        }
-      ]
-    },
-    {
-      "id": "4",
-      "title": "CASEFLOW_MOCK_SERVICE_<>",
-      "start": "2019-11-01 20:00:00",
-      "end": "2019-11-01 21:00:00",
-      "timezone": "Asia/Shanghai",
-      "enabledAutoRecordMeeting": false,
-      "allowAnyUserToBeCoHost": false,
-      "enabledJoinBeforeHost": false,
-      "enableConnectAudioBeforeHost": false,
-      "joinBeforeHostMinutes": 0,
-      "excludePassword": false,
-      "publicMeeting": false,
-      "reminderTime": 0,
-      "unlockedMeetingJoinSecurity": "allowJoinWithLobby",
-      "enabledWebCastView": false,
-      "enableAutomaticLock": false,
-      "automaticLockMinutes": 0,
-      "allowFirstUserToBeCoHost": false,
-      "allowAuthenticatedDevices": true,
-      "sendEmail": false,
-      "siteUrl": "",
-      "meetingOptions": [
-        {
-          "enabledChat": true,
-          "enableVideo": true
-        }
-      ],
-      "attendeePrivileges": {
-        "enableShareContent": true
-      },
-      "enabledBreakoutSessions": false,
-      "audioConnectionOptions": [
-        {
-          "audioConnectionType": "webexAudio",
-          "enabledTollFreeCallIn": true,
-          "enabledGlobalCallIn": true,
-          "enabledAudianceCallBack": false,
-          "entryAndExitTone": "beep",
-          "allowHosttoUnmuteParticipants": true,
-          "allowAttendeeToUnmuteSelf": true,
-          "muteAttendeeUponEntry": true
-        }
-      ]
-    },
-    {
-      "id": "5",
-      "title": "CASEFLOW_MOCK_SERVICE_<>",
-      "start": "2019-11-01 20:00:00",
-      "end": "2019-11-01 21:00:00",
-      "timezone": "Asia/Shanghai",
-      "enabledAutoRecordMeeting": false,
-      "allowAnyUserToBeCoHost": false,
-      "enabledJoinBeforeHost": false,
-      "enableConnectAudioBeforeHost": false,
-      "joinBeforeHostMinutes": 0,
-      "excludePassword": false,
-      "publicMeeting": false,
-      "reminderTime": 0,
-      "unlockedMeetingJoinSecurity": "allowJoinWithLobby",
-      "enabledWebCastView": false,
-      "enableAutomaticLock": false,
-      "automaticLockMinutes": 0,
-      "allowFirstUserToBeCoHost": false,
-      "allowAuthenticatedDevices": true,
-      "sendEmail": false,
-      "siteUrl": "fakerdomain.com",
-      "meetingOptions": [
-        {
-          "enabledChat": true,
-          "enableVideo": true
-        }
-      ],
-      "attendeePrivileges": {
-        "enableShareContent": true
-      },
-      "enabledBreakoutSessions": false,
-      "audioConnectionOptions": [
-        {
-          "audioConnectionType": "webexAudio",
-          "enabledTollFreeCallIn": true,
-          "enabledGlobalCallIn": true,
-          "enabledAudianceCallBack": false,
-          "entryAndExitTone": "beep",
-          "allowHosttoUnmuteParticipants": true,
-          "allowAttendeeToUnmuteSelf": true,
-          "muteAttendeeUponEntry": true
-        }
-      ]
-    },
-    {
-      "title": "CASEFLOW_MOCK_SERVICE_<>",
-      "start": "2019-11-01 20:00:00",
-      "end": "2019-11-01 21:00:00",
-      "timezone": "Asia/Shanghai",
-      "enabledAutoRecordMeeting": false,
-      "allowAnyUserToBeCoHost": false,
-      "enabledJoinBeforeHost": false,
-      "enableConnectAudioBeforeHost": false,
-      "joinBeforeHostMinutes": 0,
-      "excludePassword": false,
-      "publicMeeting": false,
-      "reminderTime": 0,
-      "unlockedMeetingJoinSecurity": "allowJoinWithLobby",
-      "enabledWebCastView": false,
-      "enableAutomaticLock": false,
-      "automaticLockMinutes": 0,
-      "allowFirstUserToBeCoHost": false,
-      "allowAuthenticatedDevices": true,
-      "sendEmail": false,
-      "siteUrl": "fakerdomain.com",
-      "meetingOptions": [
-        {
-          "enabledChat": true,
-          "enableVideo": true
-        }
-      ],
-      "attendeePrivileges": {
-        "enableShareContent": true
-      },
-      "enabledBreakoutSessions": false,
-      "audioConnectionOptions": [
-        {
-          "audioConnectionType": "webexAudio",
-          "enabledTollFreeCallIn": true,
-          "enabledGlobalCallIn": true,
-          "enabledAudianceCallBack": false,
-          "entryAndExitTone": "beep",
-          "allowHosttoUnmuteParticipants": true,
-          "allowAttendeeToUnmuteSelf": true,
-          "muteAttendeeUponEntry": true
-        }
-      ],
-      "id": "kN94iPM"
-    },
-    {
-      "title": "CASEFLOW_MOCK_SERVICE_<>",
-      "start": "2019-11-01 20:00:00",
-      "end": "2019-11-01 21:00:00",
-      "timezone": "Asia/Shanghai",
-      "enabledAutoRecordMeeting": false,
-      "allowAnyUserToBeCoHost": false,
-      "enabledJoinBeforeHost": false,
-      "enableConnectAudioBeforeHost": false,
-      "joinBeforeHostMinutes": 0,
-      "excludePassword": false,
-      "publicMeeting": false,
-      "reminderTime": 0,
-      "unlockedMeetingJoinSecurity": "allowJoinWithLobby",
-      "enabledWebCastView": false,
-      "enableAutomaticLock": false,
-      "automaticLockMinutes": 0,
-      "allowFirstUserToBeCoHost": false,
-      "allowAuthenticatedDevices": true,
-      "sendEmail": false,
-      "siteUrl": "fakerdomain.com",
-      "meetingOptions": [
-        {
-          "enabledChat": true,
-          "enableVideo": true
-        }
-      ],
-      "attendeePrivileges": {
-        "enableShareContent": true
-      },
-      "enabledBreakoutSessions": false,
-      "audioConnectionOptions": [
-        {
-          "audioConnectionType": "webexAudio",
-          "enabledTollFreeCallIn": true,
-          "enabledGlobalCallIn": true,
-          "enabledAudianceCallBack": false,
-          "entryAndExitTone": "beep",
-          "allowHosttoUnmuteParticipants": true,
-          "allowAttendeeToUnmuteSelf": true,
-          "muteAttendeeUponEntry": true
-        }
-      ],
-      "id": "mv06qEy"
-    }
-  ],
-  "comments": [
-    {
-      "id": 1,
-      "body": "some comment",
-      "postId": 1
+      "name": "Karson",
+      "email": "Pierre_Erdman34@hotmail.com",
+      "address": "151 Dawson Lights"
     },
     {
       "id": 2,
-      "body": "some comment",
-      "postId": 1
+      "name": "Dell",
+      "email": "Diana95@yahoo.com",
+      "address": "327 Kyra Springs"
+    },
+    {
+      "id": 3,
+      "name": "Libby",
+      "email": "Dillon_Pollich56@hotmail.com",
+      "address": "7687 Kovacek Fork"
+    },
+    {
+      "id": 4,
+      "name": "Anastasia",
+      "email": "Kendall.Dare26@yahoo.com",
+      "address": "752 Nicholas Underpass"
+    },
+    {
+      "id": 5,
+      "name": "Velda",
+      "email": "Sheila.Wehner7@gmail.com",
+      "address": "9119 Jeremie Grove"
+    },
+    {
+      "id": 6,
+      "name": "Jillian",
+      "email": "Albertha_Parker47@hotmail.com",
+      "address": "151 Hyman Orchard"
+    },
+    {
+      "id": 7,
+      "name": "Ruthe",
+      "email": "Jamar.Bins@yahoo.com",
+      "address": "479 Larue Stravenue"
+    },
+    {
+      "id": 8,
+      "name": "Cristal",
+      "email": "Oswald54@hotmail.com",
+      "address": "904 Nikolaus Canyon"
+    },
+    {
+      "id": 9,
+      "name": "Bernita",
+      "email": "Stella.Schumm@yahoo.com",
+      "address": "824 Jena Unions"
+    },
+    {
+      "id": 10,
+      "name": "Alexzander",
+      "email": "Mavis59@gmail.com",
+      "address": "7734 Burdette Forest"
+    },
+    {
+      "id": 20,
+      "name": "Karson",
+      "email": "Pierre_Erdman34@hotmail.com",
+      "address": "151 Dawson Lights"
     }
-  ],
-  "profile": {
-    "name": "typicode"
-  }
+  ]
 }

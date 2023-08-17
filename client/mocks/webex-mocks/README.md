@@ -8,11 +8,15 @@ step 3: Run command: npm install json-server
 
 step 4: Run command: npm run webex-server
 
+step 5: If you would like to autogenerate test data, run this command: npm run generate-webex
+
 \*info: You will recieve all available routes within the terminal under 'Resources'
 
 \*info: port must be set on a different port to run due to caseflow running on port 3000
 
-step 5: Open a browser window in chrome and navigate to localhost:3001 [You will get the default page]
+step 5: Open a browser window in chrome and navigate to localhost:3050 [You will get the default page]
+
+\*info: You can use any api endpoint software you want like Postman, but a good lightweight vs code ext. is [Thunder Client]
 
 \*info: reference guides
 [https://github.com/typicode/json-server/blob/master/README.md]

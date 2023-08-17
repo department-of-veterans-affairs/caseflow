@@ -1,0 +1,6 @@
+{
+  
+  "/api/conference-links/:id": "/conferencelinks/:id",
+  "/api/conference-links": "/conferenceLinks"
+
+}
