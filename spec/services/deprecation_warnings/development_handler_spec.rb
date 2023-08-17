@@ -3,26 +3,15 @@
 module DeprecationWarnings
   describe DevelopmentHandler do
     context ".call" do
-      subject(:call) { described_class.call(message, callstack, deprecation_horizon, gem_name) }
+      subject(:call) { described_class.call(message, callstack = [], deprecation_horizon = "6.0", gem_name = "Rails") }
 
       let(:message) { "dummy deprecation message" }
-      let(:callstack) { [] }
-      let(:deprecation_horizon) { "6.0" }
-      let(:gem_name) { "Rails" }
 
       let(:rails_logger) { Rails.logger }
-      let(:slack_service) { SlackService.new(url: "dummy-url") }
-      let(:deploy_env) { ENV["DEPLOY_ENV"] }
 
       before do
         allow(Rails).to receive(:logger).and_return(rails_logger)
         allow(rails_logger).to receive(:warn)
-
-        allow(Raven).to receive(:capture_message)
-        allow(Raven).to receive(:capture_exception)
-
-        allow(SlackService).to receive(:new).with(url: anything).and_return(slack_service)
-        allow(slack_service).to receive(:send_notification)
       end
 
       it "emits a warning to the application logs" do
