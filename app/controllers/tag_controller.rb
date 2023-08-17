@@ -37,7 +37,7 @@ class TagController < ApplicationController
   end
 
   def auto_tag
-    # Runs Scheduled Job with document id
+    # Runs Scheduled Job with document uuid
 
     render({ json: response_json }, status: :ok)
   end
@@ -56,8 +56,8 @@ class TagController < ApplicationController
     Tag.find_by("lower(text) = ?", text.downcase)
   end
 
-  def generate_auto_tags_for_document(document_id, key_phrases = [])
-    document = Document.find(document_id)
+  def generate_auto_tags_for_document(doc_uuid, key_phrases = [])
+    document = Document.find(doc_uuid)
     key_phrases.each do |key_phrase|
       new_tag = find_existing_tag(key_phrase)
       document.tags << new_tag unless new_tag.nil? || document.tags.includes?(new_tag)
