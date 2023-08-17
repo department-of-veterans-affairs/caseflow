@@ -8,6 +8,7 @@ import ApiUtil from '../../util/ApiUtil';
 const EfolderUrlField = (props) => {
 
   const [valid, setValid] = useState(false);
+  const [loading, setloading] = useState(false);
   const valueRef = useRef(props.value);
 
   const extractRequestType = () => (
@@ -27,8 +28,6 @@ const EfolderUrlField = (props) => {
     props?.onChange?.(value, valid);
   };
 
-  let isLoading = false;
-
   const handleDebounce = debounce((value) => {
     console.log('Debounced!');
 
@@ -39,9 +38,9 @@ const EfolderUrlField = (props) => {
     }
 
     if (efolderLinkRegexMatch(value)) {
-      console.log('Valid regex match');
+      console.log('Valid regex match, spinner on');
       // start loading spinner
-      isLoading = true;
+      setloading(true);
       const seriesId = captureDocumentSeriesId(value);
       const appealId = props.appealId;
 
@@ -53,12 +52,15 @@ const EfolderUrlField = (props) => {
             setValid(false);
             // show error message
           }
+          console.log('Response received')
         }).
         catch((response) => {
           // handle errors
+        }).
+        finally(() => {
+          console.log('loading spinner off')
+          setloading(false);
         });
-
-      isLoading = false;
     } else {
       console.log('Invalid efolder regex match');
       setValid(false);
@@ -85,7 +87,7 @@ const EfolderUrlField = (props) => {
       value={props.value}
       onChange={handleChange}
       errorMessage={props.errorMessage}
-      loading={isLoading}
+      loading={loading}
     />
   </>;
 };
