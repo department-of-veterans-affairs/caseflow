@@ -81,11 +81,7 @@ class ContestableIssueGenerator
 
   def rating_hash_deserialize(from:, to:)
     ratings.inject([]) do |result, rating_hash|
-      result + rating_hash[from].map do |hash|
-        # merge in special issues to the hash
-        hash = hash.merge(special_issues: to.deserialize_special_issues(hash))
-        to.deserialize(hash)
-      end
+      result + rating_hash[from].map { |hash| to.deserialize(hash) }
     end
   end
 

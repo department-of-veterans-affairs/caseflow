@@ -7,10 +7,10 @@ describe Seeds::Intake do
     before do
       Fakes::BGSServiceRecordMaker.new.call
     end
+
     it "creates all kinds of decision reviews" do
       expect { subject }.to_not raise_error
-
-      expect(HigherLevelReview.count).to be >=(10)
+      expect(HigherLevelReview.count).to eq(10)
     end
   end
 end
