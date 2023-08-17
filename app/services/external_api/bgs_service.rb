@@ -290,7 +290,8 @@ class ExternalApi::BGSService
         # persist cache for other objects
         Rails.cache.write(fetch_veteran_info_cache_key(vbms_id), record, expires_in: 10.minutes)
         true
-      rescue BGS::ShareError
+      rescue BGS::ShareError => error
+        Raven.capture_exception(error)
         false
       end
     end
@@ -302,7 +303,8 @@ class ExternalApi::BGSService
     # sometimes find_flashes works
     begin
       client.claimants.find_flashes(vbms_id)
-    rescue BGS::ShareError
+    rescue BGS::ShareError => error
+      Raven.capture_exception(error)
       return true
     end
 
@@ -468,30 +470,24 @@ class ExternalApi::BGSService
     #                  FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
 
     # find contention info in cache; if not there, call to BGS and cache it
-    Rails.logger.info("fetching contention info for participant #{participant_id}")
     DataDogService.increment_counter(
       metric_group: "mst_pact_group",
-      metric_name: "bgs_service.service_fetched_from_cache",
+      metric_name: "bgs_service.contention_special_issue_call",
       app_name: RequestStore[:application]
     )
-    Rails.cache.fetch("find_contentions_by_participant_id_#{participant_id}", expires_in: 24.hours) do
-      Rails.logger.info("calling BGS and caching contention info for participant #{participant_id}")
-      DBService.release_db_connections
-      # commented out service call for testing
-      # MetricsService.record("BGS: find contentions for veteran by participant_id #{participant_id}",
-      #                       service: :bgs,
-      #                       name: "contention.find_contention_by_participant_id") do
-      #   client.contention.find_contention_by_participant_id(participant_id)
-      # end
-      DataDogService.increment_counter(
-        metric_group: "mst_pact_group",
-        metric_name: "bgs_service.service_call_from_cache",
-        app_name: RequestStore[:application]
-      )
-    end
+    # Rails.cache.fetch("find_contentions_by_participant_id_#{participant_id}", expires_in: 24.hours) do
+    #   DBService.release_db_connections
+    #   MetricsService.record("BGS: find contentions for veteran by participant_id #{participant_id}",
+    #                         service: :bgs,
+    #                         name: "contention.find_contention_by_participant_id") do
+    #     client.contention.find_contention_by_participant_id(participant_id)
+    #   rescue BGS::ShareError => error
+    #     Raven.capture_exception(error)
+    #     []
+    #   end
+    # end
 
-    # return nil for testing with contention call commented out
-    return nil
+    []
   end
 
   def find_current_rating_profile_by_ptcpnt_id(participant_id)
