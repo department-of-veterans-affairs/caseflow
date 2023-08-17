@@ -29,7 +29,7 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
   # There will be a 5 second rest between each iteration
   # Job will end if there are no records are left to batch
 
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
   def perform
     setup_job
     loop do
@@ -51,14 +51,15 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
         sleep(SLEEP_DURATION)
       rescue StandardError => error
         Rails.logger.error("Error: #{error.inspect}, Job ID: #{JOB_ATTR&.job_id}, Job Time: #{Time.zone.now}")
-        capture_exception(error: error,
-                          extra: { job_id: JOB_ATTR&.job_id.to_s,
-                                   job_time: Time.zone.now.to_s })
+        capture_exception(error: error, extra: { job_id: JOB_ATTR&.job_id.to_s, job_time: Time.zone.now.to_s })
+        slack_msg = "Error running #{self.class.name}.  Job ID: #{JOB_ATTR&.job_id}.  Job Time: #{Time.zone.now}."
+        slack_msg += "  See Sentry event #{Raven.last_event_id}." if Raven.last_event_id.present?
+        slack_service.send_notification("[ERROR] #{slack_msg}", self.class.to_s)
         stop_job
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
 
   private
 
@@ -77,8 +78,8 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
   def stop_job(log_no_records_found: false)
     self.should_stop_job = true
     if log_no_records_found
-      Rails.logger.info("No Records Available to Batch.  Job will be enqueued again once 1-hour mark is hit."\
-        "  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
+      Rails.logger.info("#{self.class} Cannot Find Any Records to Batch."\
+        "  Job will be enqueued again at the top of the hour.  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
     end
   end
 end
