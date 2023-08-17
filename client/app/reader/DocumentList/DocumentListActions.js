@@ -102,6 +102,11 @@ export const setTagFilter = (text, checked, tagId) => (dispatch) => {
   dispatch(updateFilteredIdsAndDocs());
 };
 
+export const setDocFilter = (text, checked, tagId) => ({
+  type: Constants.SET_DOC_FILTER,
+  payload: { text, checked, tagId }
+});
+
 export const clearTagFilters = () => (dispatch) => {
   dispatch({
     type: Constants.CLEAR_TAG_FILTER,
@@ -187,3 +192,4 @@ export const onReceiveManifests = (manifestVbmsFetchedAt, manifestVvaFetchedAt) 
   payload: { manifestVbmsFetchedAt,
     manifestVvaFetchedAt }
 });
+
