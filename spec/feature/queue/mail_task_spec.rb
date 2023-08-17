@@ -146,23 +146,58 @@ RSpec.feature "MailTasks", :postgres do
     before do
       HearingAdmin.singleton.add_user(User.current_user)
     end
-    let(:hpr_task) { create(:hearing_postponement_request_mail_task, :with_unscheduled_hearing, assigned_by_id: User.system_user.id) }
-    let(:appeal) { hpr_task.appeal }
+    let!(:video_hearing_day) do
+      create(
+        :hearing_day,
+        request_type: HearingDay::REQUEST_TYPES[:video],
+        scheduled_for: Time.zone.today + 160.days,
+        regional_office: "RO39"
+      )
+    end
+    let!(:virtual_hearing_day) do
+      create(
+        :hearing_day,
+        request_type: HearingDay::REQUEST_TYPES[:virtual],
+        scheduled_for: Time.zone.today + 160.days,
+        regional_office: "RO39"
+      )
+    end
+    let!(:appeal) do
+      create(
+        :appeal,
+        docket_type: Constants.AMA_DOCKETS.hearing,
+        closest_regional_office: "RO39",
+        veteran: create(:veteran)
+      )
+    end
+
+    let!(:hpr_task) do
+      create(:hearing_postponement_request_mail_task,
+             :with_unscheduled_hearing,
+             assigned_by_id: User.system_user.id,
+             appeal: appeal)
+    end
 
     context "changing task type" do
       it "submit button starts out disabled" do
-        visit("queue/appeals/#{hpr_task.appeal.uuid}")
-        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: COPY::CHANGE_TASK_TYPE_SUBHEAD)
+        visit("queue/appeals/#{appeal.uuid}")
+        within("tr", text: "TASK", match: :first) do
+          click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                         text: COPY::CHANGE_TASK_TYPE_SUBHEAD,
+                         match: :first)
+        end
         modal = find(".cf-modal-body")
         expect(modal).to have_button("Change task type", disabled: true)
       end
 
       it "current tasks should have new task" do
-        appeal = hpr_task.appeal
         visit("queue/appeals/#{appeal.uuid}")
-        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: COPY::CHANGE_TASK_TYPE_SUBHEAD)
-        find(".cf-select__control", text: "Select an action type").click
-        find(".cf-select__option", text: "Change of address").click
+        within("tr", text: "TASK", match: :first) do
+          click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                         text: COPY::CHANGE_TASK_TYPE_SUBHEAD,
+                         match: :first)
+        end
+        click_dropdown(prompt: "Select an action type", text: "Change of address")
         fill_in("Provide instructions and context for this change:", with: "instructions")
         click_button("Change task type")
         new_task = appeal.tasks.last
@@ -172,10 +207,13 @@ RSpec.feature "MailTasks", :postgres do
       end
 
       it "case timeline should cancel old task" do
-        visit("queue/appeals/#{hpr_task.appeal.uuid}")
-        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: COPY::CHANGE_TASK_TYPE_SUBHEAD)
-        find(".cf-select__control", text: "Select an action type").click
-        find(".cf-select__option", text: "Change of address").click
+        visit("queue/appeals/#{appeal.uuid}")
+        within("tr", text: "TASK", match: :first) do
+          click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                         text: COPY::CHANGE_TASK_TYPE_SUBHEAD,
+                         match: :first)
+        end
+        click_dropdown(prompt: "Select an action_type", text: "Change of address")
         fill_in("Provide instructions and context for this change:", with: "instructions")
         click_button("Change task type")
         first_task_item = find("#case-timeline-table tr:nth-child(2)")
@@ -187,18 +225,25 @@ RSpec.feature "MailTasks", :postgres do
 
     context "assigning to new team" do
       it "submit button starts out disabled" do
-        visit("queue/appeals/#{hpr_task.appeal.uuid}")
-        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.label)
+        visit("queue/appeals/#{appeal.uuid}")
+        within("tr", text: "TASK", match: :first) do
+          click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                         text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.label,
+                         match: :first)
+        end
         modal = find(".cf-modal-body")
         expect(modal).to have_button("Submit", disabled: true)
       end
 
       it "assigns to new team" do
-        appeal = hpr_task.appeal
         page = "queue/appeals/#{appeal.uuid}"
         visit(page)
-        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.label)
-        find(".cf-select__control", text: "Select a team").click
+        within("tr", text: "TASK", match: :first) do
+          click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                         text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.label,
+                         match: :first)
+        end
+        find(".cf-select__control", text: "Select a team", match: :first).click
         find(".cf-select__option", text: "BVA Intake").click
         fill_in("taskInstructions", with: "instructions")
         click_button("Submit")
@@ -212,9 +257,12 @@ RSpec.feature "MailTasks", :postgres do
 
     context "assigning to person" do
       it "submit button starts out disabled" do
-        visit("queue/appeals/#{hpr_task.appeal.uuid}")
-        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                       text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label)
+        visit("queue/appeals/#{appeal.uuid}")
+        within("tr", text: "TASK", match: :first) do
+          click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                         text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label,
+                         match: :first)
+        end
         modal = find(".cf-modal-body")
         expect(modal).to have_button("Submit", disabled: true)
       end
@@ -222,11 +270,13 @@ RSpec.feature "MailTasks", :postgres do
       it "assigns to person" do
         new_user = User.create!(css_id: "NEW_USER", full_name: "John Smith", station_id: "101")
         HearingAdmin.singleton.add_user(new_user)
-        appeal = hpr_task.appeal
         page = "queue/appeals/#{appeal.uuid}"
         visit(page)
-        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                       text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label)
+        within("tr", text: "TASK", match: :first) do
+          click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                         text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label,
+                         match: :first)
+        end
         find(".cf-select__control", text: User.current_user.full_name).click
         find(".cf-select__option", text: new_user.full_name).click
         fill_in("taskInstructions", with: "instructions")
@@ -242,15 +292,23 @@ RSpec.feature "MailTasks", :postgres do
     context "cancelling task" do
       it "submit button starts out disabled" do
         visit("queue/appeals/#{hpr_task.appeal.uuid}")
-        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: Constants.TASK_ACTIONS.CANCEL_TASK.label)
+        within("tr", text: "TASK", match: :first) do
+          click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                         text: Constants.TASK_ACTIONS.CANCEL_TASK.label,
+                         match: :first)
+        end
         modal = find(".cf-modal-body")
         expect(modal).to have_button("Submit", disabled: true)
       end
 
       it "should remove HearingPostponementRequestTask from current tasks" do
-        page = "queue/appeals/#{hpr_task.appeal.uuid}"
+        page = "queue/appeals/#{appeal.uuid}"
         visit(page)
-        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: Constants.TASK_ACTIONS.CANCEL_TASK.label)
+        within("tr", text: "TASK", match: :first) do
+          click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                         text: Constants.TASK_ACTIONS.CANCEL_TASK.label,
+                         match: :first)
+        end
         fill_in("taskInstructions", with: "instructions")
         click_button("Submit")
         visit(page)
@@ -259,9 +317,13 @@ RSpec.feature "MailTasks", :postgres do
       end
 
       it "case timeline should cancel task" do
-        page = "queue/appeals/#{hpr_task.appeal.uuid}"
+        page = "queue/appeals/#{appeal.uuid}"
         visit(page)
-        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: Constants.TASK_ACTIONS.CANCEL_TASK.label)
+        within("tr", text: "TASK", match: :first) do
+          click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                         text: Constants.TASK_ACTIONS.CANCEL_TASK.label,
+                         match: :first)
+        end
         fill_in("taskInstructions", with: "instructions")
         click_button("Submit")
         visit(page)
@@ -298,6 +360,52 @@ RSpec.feature "MailTasks", :postgres do
       context "ruling is granted" do
         let(:ruling) { "Granted" }
 
+        context "schedule immediately" do
+          before do
+            HearingsManagement.singleton.add_user(User.current_user)
+            User.current_user.update!(roles: ["Build HearSched"])
+          end
+          let(:email) { "test@caseflow.com" }
+          before :each do
+            FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
+            page = "queue/appeals/#{appeal.uuid}"
+            visit(page)
+            within("tr", text: "TASK", match: :first) do
+              click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                             text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label,
+                             match: :first)
+            end
+            find(".cf-form-radio-option", text: ruling).click
+            fill_in("rulingDateSelector", with: ruling_date)
+            find(:css, ".cf-form-radio-option label", text: "Reschedule immediately").click
+            fill_in("instructionsField", with: instructions)
+            click_button("Mark as complete")
+          end
+
+          context "AMA appeal" do
+            it "page redirects to schedule veteran form" do
+              expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{hpr_task.children.first.id}/schedule_veteran")
+            end
+
+            it "video hearing gets scheduled" do
+              within(:css, ".dropdown-appealHearingLocation") { click_dropdown(index: 0) }
+              within(:css, ".dropdown-hearingDate") { click_dropdown(index: 0) }
+              find("label", text: "12:30 PM Mountain Time (US & Canada) / 2:30 PM Eastern Time (US & Canada)").click
+              click_button("Schedule")
+              expect(page).to have_content("You have successfully")
+            end
+
+            it "virtual hearing gets scheduled" do
+              within(:css, ".dropdown-hearingType") { click_dropdown(text: COPY::VIRTUAL_HEARING_REQUEST_TYPE) }
+              within(:css, ".dropdown-hearingDate") { click_dropdown(index: 0) }
+              within(:css, "#email-section") { fill_in("Veteran Email (for these notifications only)", with: email) }
+              find("label", text: "12:30 PM Mountain Time (US & Canada) / 2:30 PM Eastern Time (US & Canada)").click
+              click_button("Schedule")
+              expect(page).to have_content("You have successfully")
+            end
+          end
+        end
+
         context "send to schedule veteran list" do
           before :each do
             FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
@@ -305,7 +413,8 @@ RSpec.feature "MailTasks", :postgres do
             visit(page)
             within("tr", text: "TASK", match: :first) do
               click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                             text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label)
+                             text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label,
+                             match: :first)
             end
             find(".cf-form-radio-option", text: ruling).click
             fill_in("rulingDateSelector", with: ruling_date)
@@ -316,6 +425,7 @@ RSpec.feature "MailTasks", :postgres do
 
           shared_examples "whether hearing is scheduled or unscheduled" do
             it "creates new ScheduleHearing task under Task Actions" do
+              appeal
               new_task = appeal.tasks.last
               most_recent_task = find("tr", text: "TASK", match: :first)
               expect(most_recent_task).to have_content("ASSIGNED ON\n#{new_task.assigned_at.strftime('%m/%d/%Y')}")
@@ -373,7 +483,8 @@ RSpec.feature "MailTasks", :postgres do
           page = "queue/appeals/#{appeal.uuid}"
           visit(page)
           click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                         text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label)
+                         text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label,
+                         match: :first)
           find(".cf-form-radio-option", text: "Denied").click
           fill_in("rulingDateSelector", with: ruling_date)
           fill_in("instructionsField", with: instructions)
