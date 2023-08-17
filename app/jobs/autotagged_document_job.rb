@@ -3,18 +3,32 @@
 class AutotaggedDocumentJob < CaseflowJob
   queue_with_priority :low_priority
 
-  def perform
+  def perform(doc_id = nil)
     return unless FeatureToggle.enabled?(:auto_tagging_ability)
 
-    Document.where(auto_tagged: false).each do |doc|
-      list_of_tags = ExternalApi::ClaimEvidenceService.get_key_phrases_from_document(doc.series_id)
-      list_of_tags.each do |tag|
-        new_tag = Tag.find_or_create_by(tag)
-        begin
-          doc.tags << new_tag
-        rescue ActiveRecord::RecordNotUnique
-          errors.push(new_tag.text => "This tag already exists for the document.")
-        end
+    if doc_id.present?
+      add_tags_to_doc(Document.find(doc_id))
+    else
+      Document.where(auto_tagged: false).each do |doc|
+        add_tags_to_doc(doc)
+      end
     end
+  end
+
+  private
+
+  def add_tags_to_doc(doc)
+    get_tags(doc).each do |tag_text|
+      new_tag = find_existing_tag(tag_text) || Tag.find_or_create_by(tag_text)
+      doc.tags << new_tag
+    end
+  end
+
+  def get_tags(doc)
+    ExternalApi::ClaimEvidenceService.get_key_phrases_from_document(doc.series_id)
+  end
+
+  def find_existing_tag(tag_text)
+    Tag.find_by("lower(text) = ?", text.downcase)
   end
 end

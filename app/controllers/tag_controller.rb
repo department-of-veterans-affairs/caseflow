@@ -37,33 +37,17 @@ class TagController < ApplicationController
   end
 
   def auto_tag
-    # Runs Scheduled Job with document uuid
-
+    AutotaggedDocumentJob.perform_later(params[:document_id])
     render({ json: response_json }, status: :ok)
   end
 
   private
 
   def tag_params
-    params.permit(:document_id, tags: [:text])
+    params.permit(tags: [:text])
   end
 
   def verify_access
     verify_authorized_roles("Reader")
-  end
-
-  def find_existing_tag(text)
-    Tag.find_by("lower(text) = ?", text.downcase)
-  end
-
-  def associate_auto_tags_for_document(doc_uuid, key_phrases = [])
-    # Given a list of key_phrases returne from AWS Comprehend and the document uuid (document.series_id)
-    # Associates currently existing tags to the document
-    document = Document.find(doc_uuid)
-    key_phrases.each do |key_phrase|
-      new_tag = find_existing_tag(key_phrase)
-      document.tags << new_tag unless new_tag.nil? || document.tags.includes?(new_tag)
-    end
-    document.auto_tagged = true
   end
 end
