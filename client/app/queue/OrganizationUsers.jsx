@@ -214,15 +214,6 @@ export default class OrganizationUsers extends React.PureComponent {
     });
   }
 
-  modifyConferenceType = (user, newMeetingType) => () => {
-    const payload = { data: { ...user, meeting_type: newMeetingType } };
-    console.log(newMeetingType);
-
-    ApiUtil.patch(`/organizations/${this.props.organization}/users/${user.id}`, payload).then((response) => {
-      console.log(response);
-    });
-  }
-
   asyncLoadUser = (inputValue) => {
     // don't search till we have min length input
     if (inputValue.length < 2) {

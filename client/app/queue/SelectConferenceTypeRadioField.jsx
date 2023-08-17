@@ -17,13 +17,8 @@ const SelectConferenceTypeRadioField = ({ name, meetingType, organization, user 
 
   const modifyConferenceType = (newMeetingType) => {
     const payload = { data: { ...user, attributes: { ...user.attributes, meeting_type: newMeetingType } } };
-    console.log(newMeetingType);
 
-    ApiUtil.patch(`/organizations/${organization}/users/${user.id}`, payload).then((response) => {
-      console.log(response);
-    });
-
-  console.log(newMeetingType);
+    ApiUtil.patch(`/organizations/${organization}/users/${user.id}`, payload);
   };
 
   return (
