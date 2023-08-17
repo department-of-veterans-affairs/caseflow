@@ -56,9 +56,10 @@ class IntakesController < ApplicationController
 
   def complete
     intake.complete!(params)
+
     if !detail.is_a?(Appeal) && detail.try(:processed_in_caseflow?)
-      flash[:success] = success_message
-      render json: { serverIntake: { redirect_to: detail.business_line.tasks_url } }
+      flash[:success] = (detail.benefit_type == "vha") ? vha_success_message : success_message
+      render json: { serverIntake: { redirect_to: detail.try(:redirect_url) || business_line.tasks_url } }
     else
       render json: intake.ui_hash
     end
@@ -188,9 +189,23 @@ class IntakesController < ApplicationController
     @detail ||= intake&.detail
   end
 
+  def claimant_name
+    if detail.veteran_is_not_claimant
+      detail.claimant.try(:name)
+    else
+      detail.veteran_full_name
+    end
+  end
+
   def success_message
-    claimant_name = detail.veteran_full_name
-    claimant_name = detail.claimant.try(:name) if detail.veteran_is_not_claimant
     "#{claimant_name} (Veteran SSN: #{detail.veteran.ssn}) #{detail.class.review_title} has been processed."
+  end
+
+  def vha_success_message
+    if detail.request_issues_without_decision_dates?
+      "You have successfully saved #{claimant_name}'s #{detail.class.review_title}"
+    else
+      "You have successfully established #{claimant_name}'s #{detail.class.review_title}"
+    end
   end
 end

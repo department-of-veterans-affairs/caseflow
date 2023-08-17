@@ -110,7 +110,8 @@ class SaveButtonUnconnected extends React.Component {
       veteranValid,
       processedInCaseflow,
       withdrawalDate,
-      receiptDate
+      receiptDate,
+      benefitType
     } = this.props;
 
     const invalidVeteran = !veteranValid && (_.some(
@@ -133,7 +134,13 @@ class SaveButtonUnconnected extends React.Component {
       addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate
     );
 
-    const saveButtonText = withdrawReview ? COPY.CORRECT_REQUEST_ISSUES_WITHDRAW : COPY.CORRECT_REQUEST_ISSUES_SAVE;
+    let saveButtonText;
+
+    if (benefitType === 'vha' && _.every(addedIssues, (issue) => issue.decisionDate)) {
+      saveButtonText = COPY.CORRECT_REQUEST_ISSUES_ESTABLISH;
+    } else {
+      saveButtonText = withdrawReview ? COPY.CORRECT_REQUEST_ISSUES_WITHDRAW : COPY.CORRECT_REQUEST_ISSUES_SAVE;
+    }
 
     const originalIssueNumberCopy = sprintf(COPY.CORRECT_REQUEST_ISSUES_ORIGINAL_NUMBER, this.state.originalIssueNumber,
       pluralize('issue', this.state.originalIssueNumber), this.props.state.addedIssues.length);
@@ -211,6 +218,7 @@ SaveButtonUnconnected.propTypes = {
   receiptDate: PropTypes.string,
   requestIssuesUpdate: PropTypes.func,
   formType: PropTypes.string,
+  benefitType: PropTypes.string,
   claimId: PropTypes.string,
   history: PropTypes.object,
   state: PropTypes.shape({
@@ -222,6 +230,7 @@ const SaveButton = connect(
   (state) => ({
     claimId: state.claimId,
     formType: state.formType,
+    benefitType: state.benefitType,
     addedIssues: state.addedIssues,
     originalIssues: state.originalIssues,
     requestStatus: state.requestStatus,

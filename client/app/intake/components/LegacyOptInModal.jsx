@@ -13,6 +13,7 @@ import {
 } from '../actions/addIssues';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
+import { generateSkipButton } from '../util/buttonUtils';
 
 const NO_MATCH_TEXT = 'None of these match';
 const noneMatchOpt = (issue) => ({
@@ -133,13 +134,7 @@ class LegacyOptInModal extends React.Component {
       }
     ];
 
-    if (this.props.onSkip) {
-      btns.push({
-        classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
-        name: this.props.skipText,
-        onClick: this.props.onSkip
-      });
-    }
+    generateSkipButton(btns, this.props);
 
     return btns;
   }

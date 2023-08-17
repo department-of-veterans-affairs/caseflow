@@ -94,7 +94,7 @@ class ClaimReviewController < ApplicationController
     if claim_review.processed_in_caseflow?
       set_flash_success_message
 
-      render json: { redirect_to: claim_review.business_line.tasks_url,
+      render json: { redirect_to: claim_review.redirect_url,
                      beforeIssues: request_issues_update.before_issues.map(&:serialize),
                      afterIssues: request_issues_update.after_issues.map(&:serialize),
                      withdrawnIssues: request_issues_update.withdrawn_issues.map(&:serialize) }
@@ -136,24 +136,54 @@ class ClaimReviewController < ApplicationController
     "You have successfully " + [added_issues, removed_issues, withdrawn_issues].compact.to_sentence + "."
   end
 
+  def vha_edited_decision_date_message
+    COPY::VHA_ADD_DECISION_DATE_TO_ISSUE_SUCCESS_MESSAGE
+  end
+
+  def vha_established_message
+    "You have successfully established #{claimant_name}'s #{claim_review.class.review_title}"
+  end
+
+  def claimant_name
+    if claim_review.veteran_is_not_claimant
+      claim_review.claimant.try(:name)
+    else
+      claim_review.veteran_full_name
+    end
+  end
+
+  def vha_flash_message
+    issues_without_decision_date = (request_issues_update.after_issues - request_issues_update.edited_issues)
+      .select do |issue|
+        issue.decision_date.blank?
+      end
+
+    if issues_without_decision_date.empty?
+      vha_established_message
+    else
+      vha_edited_decision_date_message
+    end
+  end
+
   def set_flash_success_message
     flash[:edited] = if request_issues_update.after_issues.empty?
                        decisions_removed_message
                      elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
                        review_withdrawn_message
+                     elsif claim_review.benefit_type == "vha"
+                       vha_flash_message
                      else
                        review_edited_message
                      end
   end
 
   def decisions_removed_message
-    claimant_name = claim_review.veteran_full_name
     "You have successfully removed #{claim_review.class.review_title} for #{claimant_name}
     (ID: #{claim_review.veteran.ssn})."
   end
 
   def review_withdrawn_message
-    "You have successfully withdrawn a review."
+    COPY::CLAIM_REVIEW_WITHDRAWN_MESSAGE
   end
 
   def claim_label_edit_params

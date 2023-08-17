@@ -74,6 +74,13 @@ class RequestIssue < CaseflowRecord
     exclude_association :decision_review_id
     exclude_association :request_decision_issues
   end
+
+  class DecisionDateInFutureError < StandardError
+    def initialize(request_issue_id)
+      super("Request Issue #{request_issue_id} cannot edit issue decision date " \
+        "due to decision date being in the future")
+    end
+  end
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
       super("Request Issue #{request_issue_id} cannot create decision issue " \
@@ -459,6 +466,10 @@ class RequestIssue < CaseflowRecord
 
     transaction do
       update!(closed_at: closed_at_value, closed_status: status)
+
+      # Special handling for claim reviews that contain issues without a decision date
+      decision_review.try(:handle_issues_with_no_decision_date!)
+
       yield if block_given?
     end
   end
@@ -489,12 +500,22 @@ class RequestIssue < CaseflowRecord
     update!(edited_description: new_description, contention_updated_at: nil)
   end
 
+  def save_decision_date!(new_decision_date)
+    fail DecisionDateInFutureError, id if new_decision_date.to_date > Time.zone.today
+
+    update!(decision_date: new_decision_date)
+
+    # Special handling for claim reviews that contain issues without a decision date
+    decision_review.try(:handle_issues_with_no_decision_date!)
+  end
+
   def remove!
     close!(status: :removed) do
       legacy_issue_optin&.flag_for_rollback!
 
       # If the decision issue is not associated with any other request issue, also delete
       decision_issues.each(&:soft_delete_on_removed_request_issue)
+
       # Removing a request issue also deletes the associated request_decision_issue
       request_decision_issues.update_all(deleted_at: Time.zone.now)
       canceled! if submitted_not_processed?

@@ -5,6 +5,7 @@ import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 import { INTAKE_CORRECTION_TYPE_MODAL_TITLE, INTAKE_CORRECTION_TYPE_MODAL_COPY } from '../../../COPY';
 import { CORRECTION_TYPE_OPTIONS } from '../constants';
+import { generateSkipButton } from '../util/buttonUtils';
 
 class CorrectionTypeModal extends React.Component {
   constructor(props) {
@@ -39,13 +40,7 @@ class CorrectionTypeModal extends React.Component {
       }
     ];
 
-    if (this.props.onSkip) {
-      btns.push({
-        classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
-        name: this.props.skipText,
-        onClick: this.props.onSkip
-      });
-    }
+    generateSkipButton(btns, this.props);
 
     return btns;
   }

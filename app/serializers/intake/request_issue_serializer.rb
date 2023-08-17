@@ -8,6 +8,7 @@ class Intake::RequestIssueSerializer
   attribute :rating_issue_profile_date, &:contested_rating_issue_profile_date
   attribute :rating_decision_reference_id, &:contested_rating_decision_reference_id
   attribute :description
+  attribute :nonrating_issue_description
   attribute :contention_text
   attribute :approx_decision_date, &:approx_decision_date_of_issue_being_contested
   attribute :category, &:nonrating_issue_category

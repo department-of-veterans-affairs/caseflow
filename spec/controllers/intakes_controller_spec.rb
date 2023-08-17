@@ -190,6 +190,39 @@ RSpec.describe IntakesController, :postgres do
         expect(flash[:success]).to be_present
       end
     end
+
+    context "when intaking a vha processed_in_caseflow AMA HLR/SC with a missing decision date" do
+      let(:veteran) { create(:veteran) }
+      let(:request_issue_params) do
+        [
+          {
+            "benefit_type" => "vha",
+            "nonrating_issue_category" => "Beneficiary Travel",
+            "decision_text" => "Beneficiary testing",
+            "decision_date" => "",
+            "ineligible_due_to_id" => nil,
+            "ineligible_reason" => nil,
+            "withdrawal_date" => nil,
+            "is_predocket_needed" => nil
+          }
+        ]
+      end
+
+      it "should return a JSON payload with a redirect_to path to the incomplete tab and the task should be on hold" do
+        intake = create(:intake,
+                        user: current_user,
+                        detail: create(:higher_level_review,
+                                       benefit_type: "vha",
+                                       veteran_file_number: veteran.file_number))
+
+        post :complete, params: { id: intake.id, request_issues: request_issue_params }
+        resp = JSON.parse(response.body, symbolize_names: true)
+
+        expect(resp[:serverIntake]).to eq(redirect_to: "/decision_reviews/vha?tab=incomplete")
+        expect(flash[:success]).to be_present
+        expect(intake.reload.detail.reload.tasks.first.status).to eq("on_hold")
+      end
+    end
   end
 
   describe "#attorneys" do
@@ -202,13 +235,13 @@ RSpec.describe IntakesController, :postgres do
       expect(resp).to eq [
         {
           "address": {
-              "address_line_1": "9999 MISSION ST",
-              "address_line_2": "UBER",
-              "address_line_3": "APT 2",
-              "city": "SAN FRANCISCO",
-              "country": "USA",
-              "state": "CA",
-              "zip": "94103"
+            "address_line_1": "9999 MISSION ST",
+            "address_line_2": "UBER",
+            "address_line_3": "APT 2",
+            "city": "SAN FRANCISCO",
+            "country": "USA",
+            "state": "CA",
+            "zip": "94103"
             },
           "name": "JOHN SMITH",
           "participant_id": "123"

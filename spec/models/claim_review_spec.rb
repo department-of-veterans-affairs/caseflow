@@ -401,18 +401,19 @@ describe ClaimReview, :postgres do
 
   context "#create_business_line_tasks!" do
     subject { claim_review.create_business_line_tasks! }
-    let!(:request_issue) { create(:request_issue, decision_review: claim_review) }
+    let!(:request_issue) { create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now) }
 
     context "when processed in caseflow" do
       let(:benefit_type) { "vha" }
 
-      it "creates a decision review task" do
+      it "creates a decision review task with a status of assigned" do
         expect { subject }.to change(DecisionReviewTask, :count).by(1)
 
         expect(DecisionReviewTask.last).to have_attributes(
           appeal: claim_review,
           assigned_at: Time.zone.now,
-          assigned_to: VhaBusinessLine.singleton
+          assigned_to: VhaBusinessLine.singleton,
+          status: "assigned"
         )
       end
 
@@ -434,6 +435,21 @@ describe ClaimReview, :postgres do
           expect { subject }.to_not change(DecisionReviewTask, :count)
         end
       end
+
+      context "when one of a vha review's issues has no decision date" do
+        let!(:request_issue) { create(:request_issue, decision_review: claim_review) }
+
+        it "creates a decision review task with a status of on_hold" do
+          expect { subject }.to change(DecisionReviewTask, :count).by(1)
+
+          expect(DecisionReviewTask.last).to have_attributes(
+            appeal: claim_review,
+            assigned_at: Time.zone.now,
+            assigned_to: VhaBusinessLine.singleton,
+            status: "on_hold"
+          )
+        end
+      end
     end
 
     context "when processed in VBMS" do
@@ -441,6 +457,142 @@ describe ClaimReview, :postgres do
 
       it "does nothing" do
         expect { subject }.to_not change(DecisionReviewTask, :count)
+      end
+    end
+  end
+
+  describe "#request_issues_without_decision_dates?" do
+    let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
+
+    subject { claim_review.request_issues_without_decision_dates? }
+
+    context "it should return true if there are any issues without a decision date" do
+      let!(:request_issues) do
+        [
+          create(:request_issue, decision_review: claim_review),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
+        ]
+      end
+
+      it "should return true" do
+        expect(subject).to be_truthy
+      end
+    end
+
+    context "it should return false if there are not any issues without a decision date" do
+      let!(:request_issues) do
+        [
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
+        ]
+      end
+
+      it "should return false" do
+        expect(subject).to be_falsey
+      end
+    end
+  end
+
+  describe "handle_issues_with_no_decision_date!" do
+    let(:benefit_type) { "vha" }
+    let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
+    let!(:decision_review_task) do
+      create(:higher_level_review_vha_task, appeal: claim_review, assigned_to: VhaBusinessLine.singleton)
+    end
+
+    subject { claim_review.handle_issues_with_no_decision_date! }
+
+    context "while it has any request issues without a decision date" do
+      let!(:request_issues) do
+        [
+          create(:request_issue, decision_review: claim_review),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
+        ]
+      end
+
+      it "the task should have a status of on_hold" do
+        subject
+        expect(decision_review_task.reload.status).to eq "on_hold"
+      end
+    end
+
+    context "while all request issues have a decision date" do
+      let!(:request_issues) do
+        [
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now - 1.day),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
+        ]
+      end
+
+      it "the task should have a status of assigned" do
+        subject
+        expect(decision_review_task.reload.status).to eq "assigned"
+      end
+    end
+
+    context "while it has any request issues without a decision date and is not vha benefit type" do
+      let(:benefit_type) { "compensation" }
+      let(:comp_org) { BusinessLine.find_or_create_by(name: Constants::BENEFIT_TYPES[benefit_type], url: benefit_type) }
+      let!(:decision_review_task) do
+        create(:higher_level_review_vha_task, appeal: claim_review, assigned_to: comp_org)
+      end
+      let!(:request_issues) do
+        [
+          create(:request_issue, decision_review: claim_review),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
+        ]
+      end
+
+      it "the task should have a status of assigned" do
+        subject
+        expect(decision_review_task.reload.status).to eq "assigned"
+      end
+    end
+  end
+
+  describe "redirect_url" do
+    let(:benefit_type) { "vha" }
+    let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
+
+    subject { claim_review.redirect_url }
+
+    context "it should return the incomplete tab url if there are any issues without a decision date" do
+      let!(:request_issues) do
+        [
+          create(:request_issue, decision_review: claim_review),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
+        ]
+      end
+
+      it "should return the incomplete tasks tab route" do
+        expect(subject).to eq "/decision_reviews/vha?tab=incomplete"
+      end
+    end
+
+    context "it should return the decision review url if the benefit type is not vha" do
+      let(:benefit_type) { "compensation" }
+      let!(:request_issues) do
+        [
+          create(:request_issue, decision_review: claim_review),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
+        ]
+      end
+
+      it "should return the normal decision tasks url" do
+        expect(subject).to eq "/decision_reviews/compensation"
+      end
+    end
+
+    context "it should return the decision review url if there are not any issues without a decision date" do
+      let!(:request_issues) do
+        [
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now - 1.week),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
+        ]
+      end
+
+      it "should return the normal decision tasks url" do
+        expect(subject).to eq "/decision_reviews/vha"
       end
     end
   end

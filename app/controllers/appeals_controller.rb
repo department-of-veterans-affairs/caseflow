@@ -240,7 +240,7 @@ class AppealsController < ApplicationController
   end
 
   def review_withdrawn_message
-    "You have successfully withdrawn a review."
+    COPY::CLAIM_REVIEW_WITHDRAWN_MESSAGE
   end
 
   def withdrawn_issues

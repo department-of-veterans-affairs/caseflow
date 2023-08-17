@@ -16,6 +16,7 @@ import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES';
 import { validateDateNotInFuture, isTimely } from '../util/issues';
 import { formatDateStr } from 'app/util/DateUtil';
 import { VHA_PRE_DOCKET_ISSUE_BANNER } from 'app/../COPY';
+import { generateSkipButton } from '../util/buttonUtils';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -174,10 +175,17 @@ class NonratingRequestIssueModal extends React.Component {
     return (
       !description ||
       !category ||
-      (benefitType !== 'vha' && !decisionDate) ||
+      (!this.vhaHlrOrSC() && !decisionDate) ||
       (formType === 'appeal' && !benefitType) ||
       enforcePreDocketRequirement
     );
+  }
+
+  vhaHlrOrSC() {
+    const { benefitType } = this.state;
+    const { formType } = this.props;
+
+    return ((formType === 'higher_level_review' || formType === 'supplemental_claim') && benefitType === 'vha');
   }
 
   getModalButtons() {
@@ -195,13 +203,7 @@ class NonratingRequestIssueModal extends React.Component {
       }
     ];
 
-    if (this.props.onSkip) {
-      btns.push({
-        classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
-        name: this.props.skipText,
-        onClick: this.props.onSkip
-      });
-    }
+    generateSkipButton(btns, this.props);
 
     return btns;
   }
@@ -266,7 +268,7 @@ class NonratingRequestIssueModal extends React.Component {
             errorMessage={this.state.dateError}
             onChange={this.decisionDateOnChange}
             type="date"
-            optional={this.state.benefitType === 'vha'}
+            optional={this.vhaHlrOrSC()}
           />
         </div>
 
