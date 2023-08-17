@@ -290,7 +290,8 @@ class ExternalApi::BGSService
         # persist cache for other objects
         Rails.cache.write(fetch_veteran_info_cache_key(vbms_id), record, expires_in: 10.minutes)
         true
-      rescue BGS::ShareError
+      rescue BGS::ShareError => error
+        Raven.capture_exception(error)
         false
       end
     end
@@ -302,7 +303,8 @@ class ExternalApi::BGSService
     # sometimes find_flashes works
     begin
       client.claimants.find_flashes(vbms_id)
-    rescue BGS::ShareError
+    rescue BGS::ShareError => error
+      Raven.capture_exception(error)
       return true
     end
 
@@ -479,7 +481,8 @@ class ExternalApi::BGSService
     #                         service: :bgs,
     #                         name: "contention.find_contention_by_participant_id") do
     #     client.contention.find_contention_by_participant_id(participant_id)
-    #   rescue BGS::ShareError
+    #   rescue BGS::ShareError => error
+    #     Raven.capture_exception(error)
     #     []
     #   end
     # end
