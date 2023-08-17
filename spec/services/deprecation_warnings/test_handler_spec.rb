@@ -3,7 +3,9 @@
 module DeprecationWarnings
   describe TestHandler do
     context ".call" do
-      subject(:call) { described_class.call(message, callstack = [], deprecation_horizon = "6.0", gem_name = "Rails") }
+      subject(:call) do
+        described_class.call(message, _callstack = [], _deprecation_horizon = "6.0", _gem_name = "Rails")
+      end
 
       let(:message) { "dummy deprecation message" }
 
