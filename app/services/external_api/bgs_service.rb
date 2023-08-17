@@ -474,13 +474,11 @@ class ExternalApi::BGSService
       metric_name: "bgs_service.contention_special_issue_call",
       app_name: RequestStore[:application]
     )
-    # MetricsService.record("BGS: find contentions for veteran by participant_id #{participant_id}",
-    #   service: :bgs,
-    #   name: "contention.find_contention_by_participant_id") do
-    #     Rails.cache.fetch("find_contentions_by_participant_id_#{participant_id}", expires_in: 24.hours) do
-    #       client.contention.find_contention_by_participant_id(participant_id)
-    #     end
-    #   end
+    MetricsService.record("BGS: find contentions for veteran by participant_id #{participant_id}",
+                          service: :bgs,
+                          name: "contention.find_contention_by_participant_id") do
+      client.contention.find_contention_by_participant_id(participant_id)
+    end
 
     # return nil for testing with contention call commented out
     nil
