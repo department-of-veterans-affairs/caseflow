@@ -164,16 +164,10 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     });
   };
 
-  // Example function showing how we can check for remand type
-  showAOJRadioFields = (checkboxValue) => {
-    const val = checkboxValue.charAt(2);
-
-    if (val === 'E') {
-      return false;
-    }
-
-    return true;
-  }
+  // Allow only certain AMA remand reasons to show pre/post AOJ subselections
+  showAMASubSelections = (checkboxValue) => {
+    return checkboxValue.includes(REMAND_REASONS.other[1].id);
+  };
 
   getCheckbox = (option, onChange, checkboxValues) => {
     const rowOptId = `${String(this.props.issue.id)}-${option.id}`;
@@ -189,7 +183,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
           label={option.label}
           unpadded
         />
-        {checkboxValues[option.id].checked && this.showAOJRadioFields(rowOptId) && (
+        {checkboxValues[option.id].checked && this.showAMASubSelections(rowOptId) && (
           <RadioField
             errorMessage={
               this.props.highlight &&
@@ -288,16 +282,16 @@ class IssueRemandReasonsOptions extends React.PureComponent {
         </div>
         <div {...flexColumn}>
           <CheckboxGroup
-            label={<h3>Medical examination</h3>}
+            label={<h3>Medical examination and opinion</h3>}
             name="medical-exam"
             options={REMAND_REASONS.medicalExam}
             {...checkboxGroupProps}
           />
           <br />
           <CheckboxGroup
-            label={<h3>Due Process</h3>}
-            name="due-process"
-            options={REMAND_REASONS.dueProcess}
+            label={<h3>Other</h3>}
+            name="other"
+            options={REMAND_REASONS.other}
             {...checkboxGroupProps}
           />
         </div>
@@ -360,7 +354,8 @@ IssueRemandReasonsOptions.propTypes = {
   issue: PropTypes.object,
   issueId: PropTypes.number,
   highlight: PropTypes.bool,
-  idx: PropTypes.number
+  idx: PropTypes.number,
+  valid: PropTypes.bool
 };
 
 export default connect(
