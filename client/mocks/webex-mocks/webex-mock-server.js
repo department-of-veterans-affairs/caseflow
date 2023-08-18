@@ -4,8 +4,10 @@ const path = require('path');
 const router = jsonServer.router(
   path.join('mocks/webex-mocks/webex-mock.json')
 );
+
 const middlewares = jsonServer.defaults();
 const routesRewrite = require('./routes.json');
+const faker = require("faker");
 
 server.use(middlewares);
 server.use(jsonServer.bodyParser);
@@ -124,62 +126,150 @@ server.get('/health-check-green', (req, res) => {
   });
 });
 
-// Middleware to handle duplication and not-found items
-server.use((req, res, next) => {
-  const db = router.db; // Get the lowdb instance
+const requiredKeys = [
+  "title",
+  "start",
+  "end",
+  "timezone",
+  "enabledAutoRecordMeeting",
+  "allowAnyUserToBeCoHost",
+  "enabledJoinBeforeHost",
+  "enableConnectAudioBeforeHost",
+  "joinBeforeHostMinutes",
+  "excludePassword",
+  "publicMeeting",
+  "reminderTime",
+  "unlockedMeetingJoinSecurity",
+  "enabledWebCastView",
+  "enableAutomaticLock",
+  "automaticLockMinutes",
+  "allowFirstUserToBeCoHost",
+  "allowAuthenticatedDevices",
+  "sendEmail",
+  "siteUrl",
+  "meetingOptions",
+  "attendeePrivileges",
+  "enabledBreakoutSessions",
+  "audioConnectionOptions",
+];
 
-  // Handle POST requests: Check for duplicate items by ID across all collections
-  if (req.method === 'POST') {
-    const collections = Object.keys(db.getState());
+const generateMeetingData = {
+  id: faker.random.uuid(),
+  meetingNumber: faker.random.number(),
+  title: faker.company.catchPhrase(),
+  password: faker.internet.password(),
+  meetingType: "meetingSeries",
+  state: "active",
+  timezone: "Asia/Shanghai",
+  start: "2023-11-01T20:00:00+08:00",
+  end: "2023-11-01T21:00:00+08:00",
+  hostUserId: faker.finance.account(),
+  hostDisplayName: faker.name.findName(),
+  hostEmail: faker.internet.email(),
+  hostKey: faker.random.number(),
+  siteUrl: "ciscofedsales.webex.com",
+  webLink: faker.internet.url(),
+  sipAddress: faker.internet.email(),
+  dialInIpAddress: faker.internet.ip(),
+  enabledAutoRecordMeeting: faker.random.boolean(),
+  allowAnyUserToBeCoHost: faker.random.boolean(),
+  allowFirstUserToBeCoHost: faker.random.boolean(),
+  allowAuthenticatedDevices: faker.random.boolean(),
+  enabledJoinBeforeHost: faker.random.boolean(),
+  joinBeforeHostMinutes: faker.random.number({ min: 0, max: 10 }),
+  enableConnectAudioBeforeHost: faker.random.boolean(),
+  excludePassword: faker.random.boolean(),
+  publicMeeting: faker.random.boolean(),
+  enableAutomaticLock: faker.random.boolean(),
+  automaticLockMinutes: faker.random.number({ min: 1, max: 10 }),
+  unlockedMeetingJoinSecurity: "allowJoinWithLobby",
+  telephony: {
+    accessCode: faker.random.number({ min: 100000, max: 999999 }).toString(),
+    callInNumbers: [
+      {
+        label: "United States Toll",
+        callInNumber: "+1-415-527-5035",
+        tollType: "toll",
+      },
+      {
+        label: "United States Toll (Washington D.C.)",
+        callInNumber: "+1-202-600-2533",
+        tollType: "toll",
+      },
+    ],
+    links: [
+      {
+        rel: "globalCallinNumbers",
+        href: "/v1/meetings/" + faker.random.uuid() + "/globalCallinNumbers",
+        method: "GET",
+      },
+    ],
+  },
+  meetingOptions: {
+    enabledChat: faker.random.boolean(),
+    enabledVideo: faker.random.boolean(),
+    enabledNote: faker.random.boolean(),
+    noteType: "allowAll",
+    enabledFileTransfer: faker.random.boolean(),
+    enabledUCFRichMedia: faker.random.boolean(),
+  },
+  attendeePrivileges: {
+    enabledShareContent: faker.random.boolean(),
+    enabledSaveDocument: faker.random.boolean(),
+    enabledPrintDocument: faker.random.boolean(),
+    enabledAnnotate: faker.random.boolean(),
+    enabledViewParticipantList: faker.random.boolean(),
+    enabledViewThumbnails: faker.random.boolean(),
+    enabledRemoteControl: faker.random.boolean(),
+    enabledViewAnyDocument: faker.random.boolean(),
+    enabledViewAnyPage: faker.random.boolean(),
+    enabledContactOperatorPrivately: faker.random.boolean(),
+    enabledChatHost: faker.random.boolean(),
+    enabledChatPresenter: faker.random.boolean(),
+    enabledChatOtherParticipants: faker.random.boolean(),
+  },
+  sessionTypeId: faker.random.number({ min: 1, max: 5 }),
+  scheduledType: "meeting",
+  simultaneousInterpretation: {
+    enabled: faker.random.boolean(),
+  },
+  enabledBreakoutSessions: faker.random.boolean(),
+  audioConnectionOptions: {
+    audioConnectionType: "webexAudio",
+    enabledTollFreeCallIn: faker.random.boolean(),
+    enabledGlobalCallIn: faker.random.boolean(),
+    enabledAudienceCallBack: faker.random.boolean(),
+    entryAndExitTone: "beep",
+    allowHostToUnmuteParticipants: faker.random.boolean(),
+    allowAttendeeToUnmuteSelf: faker.random.boolean(),
+    muteAttendeeUponEntry: faker.random.boolean(),
+  },
+};
 
-    for (const collectionName of collections) {
-      const collection = db.get(collectionName);
-      const existingItem = collection.find({ id: req.body.id }).value();
+server.post("/fake.api-usgov.webex.com/v1/meetings", (req, res) => {
+  const requestBody = req.body;
 
-      if (existingItem) {
-        res.status(409).json({
-          error: true,
-          message: `Item with the same id already exists in ${collectionName}`
-        });
+  // Check if all required keys are present
+  const missingKeys = requiredKeys.filter((key) => !(key in requestBody));
 
-        return;
-      }
-    }
-  }
+  if (missingKeys.length > 0) {
+    res.status(400).json({ message: "Missing required keys", missingKeys });
+  } else {
+          // Access conferenceLinks from database
+          const db = router.db; // Get lowdb instance
+          const conferenceLinks = db.get("conferenceLinks");
 
-  // Handle GET requests: Check if the item exists across all collections
-  if (req.method === 'GET') {
-    // Extract the id from the path. This assumes the path format is always consistent.
-    const pathParts = req.path.split('/');
-    const potentialId = parseInt(pathParts.pop());
+          // Add generateMeetingData object to conferenceLinks
+          conferenceLinks.push(generateMeetingData).write();
 
-    if (!isNaN(potentialId)) {
-      const collections = Object.keys(db.getState());
-      let itemFound = false;
-
-      for (const collectionName of collections) {
-        const collection = db.get(collectionName);
-        const item = collection.find({ id: potentialId }).value();
-
-        if (item) {
-          itemFound = true;
-          break;
+          res
+            .status(200)
+            .json({ message: "Request is valid and data added!" });
         }
-      }
-
-      if (!itemFound) {
-        res.status(404).json({
-          error: true,
-          message: 'Item not found'
-        });
-
-        return;
-      }
-    }
-  }
-
-  next();
 });
+
+// Sample object to be added
+
 
 server.use(router);
 
