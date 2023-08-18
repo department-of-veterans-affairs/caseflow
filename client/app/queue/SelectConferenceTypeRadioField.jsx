@@ -35,12 +35,12 @@ const SelectConferenceTypeRadioField = ({ name, meetingType, organization, user 
 };
 
 SelectConferenceTypeRadioField.propTypes = {
-  name: PropTypes.number,
+  name: PropTypes.string,
   onClick: PropTypes.func,
   meetingType: PropTypes.string,
   organization: PropTypes.string,
   user: PropTypes.shape({
-    id: PropTypes.number,
+    id: PropTypes.string,
     attributes: PropTypes.object
   })
 };
