@@ -153,7 +153,7 @@ RSpec.feature "MailTasks", :postgres do
              assigned_by_id: User.system_user.id)
     end
 
-    let(:appeal) { hpr_task.appeal }
+    let!(:appeal) { hpr_task.appeal }
 
     context "changing task type" do
       it "submit button starts out disabled" do
@@ -348,14 +348,6 @@ RSpec.feature "MailTasks", :postgres do
         let(:ruling) { "Granted" }
 
         context "schedule immediately" do
-          let!(:video_hearing_day) do
-            create(
-              :hearing_day,
-              request_type: HearingDay::REQUEST_TYPES[:video],
-              scheduled_for: Time.zone.today + 160.days,
-              regional_office: "RO39"
-            )
-          end
           let!(:virtual_hearing_day) do
             create(
               :hearing_day,
@@ -372,21 +364,6 @@ RSpec.feature "MailTasks", :postgres do
           end
 
           let(:email) { "test@caseflow.com" }
-          before :each do
-            FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
-            page = "queue/appeals/#{appeal.uuid}"
-            visit(page)
-            within("tr", text: "TASK", match: :first) do
-              click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                             text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label,
-                             match: :first)
-            end
-            find(".cf-form-radio-option", text: ruling).click
-            fill_in("rulingDateSelector", with: ruling_date)
-            find(:css, ".cf-form-radio-option label", text: "Reschedule immediately").click
-            fill_in("instructionsField", with: instructions)
-            click_button("Mark as complete")
-          end
 
           shared_examples "scheduling hearing" do
             before do
@@ -405,15 +382,100 @@ RSpec.feature "MailTasks", :postgres do
 
           context "appeal has unscheduled hearing" do
             describe "AMA appeal" do
+              let(:appeal) { hpr_task.appeal }
+              before :each do
+                FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
+                page = "queue/appeals/#{appeal.uuid}"
+                visit(page)
+                within("tr", text: "TASK", match: :first) do
+                  click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                                 text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label,
+                                 match: :first)
+                end
+                find(".cf-form-radio-option", text: ruling).click
+                fill_in("rulingDateSelector", with: ruling_date)
+                find(:css, ".cf-form-radio-option label", text: "Reschedule immediately").click
+                fill_in("instructionsField", with: instructions)
+                click_button("Mark as complete")
+              end
               it "page redirects to schedule veteran form" do
                 expect(page.current_path)
                   .to eq("/queue/appeals/#{appeal.uuid}/tasks/#{hpr_task.children.first.id}/schedule_veteran")
               end
 
-              context "video hearing" do
+              context "virtual hearing" do
                 include_examples "scheduling hearing"
               end
+            end
 
+            describe "Legacy appeal" do
+              let(:legacy_appeal) do
+                create(:legacy_appeal,
+                       :with_veteran,
+                       vacols_case: create(:case))
+              end
+              let!(:hpr_task) do
+                create(:hearing_postponement_request_mail_task,
+                       :with_unscheduled_hearing,
+                       assigned_by_id: User.system_user.id,
+                       appeal: legacy_appeal)
+              end
+              let(:appeal) { hpr_task.appeal }
+
+              before :each do
+                FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
+                page = "queue/appeals/#{legacy_appeal.vacols_id}"
+                visit(page)
+                within("tr", text: "TASK", match: :first) do
+                  click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                                 text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label,
+                                 match: :first)
+                end
+                find(".cf-form-radio-option", text: ruling).click
+                fill_in("rulingDateSelector", with: ruling_date)
+                find(:css, ".cf-form-radio-option label", text: "Reschedule immediately").click
+                fill_in("instructionsField", with: instructions)
+                click_button("Mark as complete")
+              end
+
+              it "page redirects to schedule veteran form" do
+                expect(page.current_path)
+                  .to eq("/queue/appeals/#{legacy_appeal.vacols_id}/tasks/#{hpr_task.children.first.id}/schedule_veteran")
+              end
+
+              context "virtual hearing" do
+                include_examples "scheduling hearing"
+              end
+            end
+          end
+
+          context "appeal has scheduled hearing" do
+            describe "AMA appeal" do
+              let!(:hpr_task) do
+                create(:hearing_postponement_request_mail_task,
+                       :with_scheduled_hearing,
+                       assigned_by_id: User.system_user.id)
+              end
+              let(:appeal) { hpr_task.appeal }
+              before :each do
+                FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
+                page = "queue/appeals/#{appeal.uuid}"
+                visit(page)
+                within("tr", text: "TASK", match: :first) do
+                  click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                                 text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label,
+                                 match: :first)
+                end
+                find(".cf-form-radio-option", text: ruling).click
+                fill_in("rulingDateSelector", with: ruling_date)
+                find(:css, ".cf-form-radio-option label", text: "Reschedule immediately").click
+                fill_in("instructionsField", with: instructions)
+                click_button("Mark as complete")
+              end
+              it "page redirects to schedule veteran form" do
+                expect(page.current_path)
+                  .to eq("/queue/appeals/#{appeal.uuid}/tasks/#{hpr_task.children.first.id}/schedule_veteran")
+              end
               context "virtual hearing" do
                 include_examples "scheduling hearing"
               end
