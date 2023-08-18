@@ -183,7 +183,8 @@ class IssueRemandReasonsOptions extends React.PureComponent {
           label={option.label}
           unpadded
         />
-        {checkboxValues[option.id].checked && this.showAMASubSelections(rowOptId, appeal.isLegacyAppeal) && (
+        {checkboxValues[option.id].checked && this.props.featureToggles.additional_remand_reasons &&
+        this.showAMASubSelections(rowOptId, appeal.isLegacyAppeal) && (
           <RadioField
             errorMessage={
               this.props.highlight &&
