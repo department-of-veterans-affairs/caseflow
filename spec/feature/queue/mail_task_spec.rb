@@ -439,8 +439,10 @@ RSpec.feature "MailTasks", :postgres do
               end
 
               it "page redirects to schedule veteran form" do
+                task_id = hpr_task.children.first.id
+
                 expect(page.current_path)
-                  .to eq("/queue/appeals/#{legacy_appeal.vacols_id}/tasks/#{hpr_task.children.first.id}/schedule_veteran")
+                  .to eq("/queue/appeals/#{legacy_appeal.vacols_id}/tasks/#{task_id}/schedule_veteran")
               end
 
               context "virtual hearing" do

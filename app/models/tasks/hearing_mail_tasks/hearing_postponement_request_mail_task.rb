@@ -184,7 +184,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     # Append instructions/context provided by HearingAdmin to original details from MailTeam
     updated_instructions = format_instructions_on_completion(
       admin_context: payload_values[:instructions],
-      granted: payload_values[:granted],
+      ruilng: payload_values[:granted] ? "GRANTED" : "DENIED",
       date_of_ruling: payload_values[:date_of_ruling]
     )
 
@@ -198,7 +198,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     update_parent_status
   end
 
-  def format_instructions_on_completion(admin_context:, granted:, date_of_ruling:)
+  def format_instructions_on_completion(admin_context:, ruling:, date_of_ruling:)
     formatted_date = date_of_ruling.to_date.strftime("%m/%d/%Y")
 
     markdown_to_append = <<~EOS
@@ -208,7 +208,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
       ###### Marked as complete:
 
       **DECISION**
-      Motion to postpone #{granted ? 'GRANTED' : 'DENIED'}
+      Motion to postpone #{ruling}
 
       **DATE OF RULING**
       #{formatted_date}
