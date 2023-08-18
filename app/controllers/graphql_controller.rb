@@ -1,17 +1,27 @@
+# frozen_string_literal: true
+
 class GraphqlController < ApplicationController
+  # How much do we need to restrict this controller?
+
   def execute
     variables = ensure_hash(params[:variables])
     query = params[:query]
     operation_name = params[:operationName]
     context = {
-      # Query context goes here, for example:
-      # current_user: current_user,
+      current_user: current_user,
+      request_url: request.referer
     }
-    result = CaseflowCertificationSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
+    result = CaseflowCertificationSchema.execute(
+      query,
+      variables: variables,
+      context: context,
+      operation_name: operation_name
+    )
     render json: result
-  rescue => e
-    raise e unless Rails.env.development?
-    handle_error_in_development e
+  rescue StandardError => error
+    raise error unless Rails.env.development?
+
+    handle_error_in_development error
   end
 
   private
@@ -30,14 +40,17 @@ class GraphqlController < ApplicationController
     when nil
       {}
     else
-      raise ArgumentError, "Unexpected parameter: #{ambiguous_param}"
+      fail ArgumentError, "Unexpected parameter: #{ambiguous_param}"
     end
   end
 
-  def handle_error_in_development(e)
-    logger.error e.message
-    logger.error e.backtrace.join("\n")
+  def handle_error_in_development(error)
+    logger.error error.message
+    logger.error error.backtrace.join("\n")
 
-    render json: { error: { message: e.message, backtrace: e.backtrace }, data: {} }, status: 500
+    render json: {
+      error: { message: e.message, backtrace: e.backtrace },
+      data: {}
+    }, status: :internal_server_error
   end
 end
