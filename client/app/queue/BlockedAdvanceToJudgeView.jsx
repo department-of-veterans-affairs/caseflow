@@ -11,7 +11,7 @@ import COPY from '../../COPY';
 import { onReceiveAmaTasks } from './QueueActions';
 import { requestSave, resetSuccessMessages, highlightInvalidFormItems } from './uiReducer/uiActions';
 import { taskActionData } from './utils';
-import { taskById, appealWithDetailSelector, allHearingTasksForAppeal } from './selectors';
+import { taskById, appealWithDetailSelector, allHearingTasksForAppeal, getAllHiringChildren } from './selectors';
 
 import QueueFlowPage from './components/QueueFlowPage';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -112,27 +112,55 @@ class BlockedAdvanceToJudgeView extends React.Component {
     }
 
     const { appeal, task, allHearingTasks } = this.props;
+    const actionData = taskActionData(this.props);
+    const taskType = actionData.type || 'Task';
 
     const hearingTaskId = allHearingTasks[0].id;
 
-    const payload = {
-      data: {
-        tasks: [
-          {
-            type: this.actionData().type,
-            external_id: appeal.externalId,
-            parent_id: task.appealType === 'LegacyAppeal' ? hearingTaskId : task.taskId,
-            assigned_to_id: this.state.selectedAssignee,
-            assigned_to_type: 'User',
-            instructions: [
-              this.state.instructions,
-              `${this.state.selectedReason.trim()}: ${this.state.cancellationInstructions}`
+    let payload = {};
 
-            ]
-          }
-        ]
-      }
-    };
+    if (task.appealType === 'LegacyAppeal' && taskType === 'BlockedSpecialCaseMovementTask' &&
+    task.type === 'AttorneyLegacyTask') {
+      payload = {
+        data: {
+          tasks: [
+            {
+              type: this.actionData().type,
+              external_id: appeal.externalId,
+              legacy_task_type: task.type,
+              appeal_type: task.appealType,
+              parent_id: hearingTaskId,
+              assigned_to_id: this.state.selectedAssignee,
+              assigned_to_type: 'User',
+              instructions: [
+                this.state.instructions,
+                `${this.state.selectedReason.trim()}: ${this.state.cancellationInstructions}`
+
+              ]
+            }
+          ]
+        }
+      };
+    } else {
+      payload = {
+        data: {
+          tasks: [
+            {
+              type: this.actionData().type,
+              external_id: appeal.externalId,
+              parent_id: task.appealType === 'LegacyAppeal' ? hearingTaskId : task.taskId,
+              assigned_to_id: this.state.selectedAssignee,
+              assigned_to_type: 'User',
+              instructions: [
+                this.state.instructions,
+                `${this.state.selectedReason.trim()}: ${this.state.cancellationInstructions}`
+
+              ]
+            }
+          ]
+        }
+      };
+    }
 
     const assignedByListItem = () => {
       const assignor = appeal.veteranFullName || null;
@@ -251,12 +279,8 @@ class BlockedAdvanceToJudgeView extends React.Component {
   }
 
   render = () => {
-    const { highlightFormItems, appeal } = this.props;
-    let blockingTasks;
-
-    if (!appeal.isLegacyAppeal) {
-      blockingTasks = this.actionData().blocking_tasks;
-    }
+    const { highlightFormItems, appeal, currentChildren } = this.props;
+    const blockingTasks = appeal.isLegacyAppeal ? currentChildren : this.actionData().blocking_tasks;
 
     return <React.Fragment>
       {this.warningModal()}
@@ -274,7 +298,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
         </div>
         <div {...bottomMarginStyling}>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_SUBTITLE}</div>
         <h3>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_TASKS_HEADER}</h3>
-        {(!appeal.isLegacyAppeal) && <ul>{blockingTasks.map((blockingTask) => this.blockingTaskListItem(blockingTask))}</ul>}
+        <ul>{blockingTasks.map((blockingTask) => this.blockingTaskListItem(blockingTask))}</ul>
         <h3>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_REASONING_HEADER}</h3>
         <RadioField
           required
@@ -314,14 +338,15 @@ BlockedAdvanceToJudgeView.propTypes = {
   history: PropTypes.object,
   onReceiveAmaTasks: PropTypes.func,
   requestSave: PropTypes.func,
-  rootTask: PropTypes.object,
   resetSuccessMessages: PropTypes.func,
+  currentChildren: PropTypes.array,
   allHearingTasks: PropTypes.array,
   task: PropTypes.shape({
     instructions: PropTypes.string,
     taskId: PropTypes.string,
     assignedBy: PropTypes.string,
-    appealType: PropTypes.string
+    appealType: PropTypes.string,
+    type: PropTypes.string,
   })
 };
 
@@ -332,7 +357,8 @@ const mapStateToProps = (state, ownProps) => {
     highlightFormItems: state.ui.highlightFormItems,
     task: taskById(state, { taskId: ownProps.taskId }),
     allHearingTasks: allHearingTasksForAppeal(state, { appealId: appeal?.externalId }),
-    appeal: appealWithDetailSelector(state, ownProps)
+    appeal: appealWithDetailSelector(state, ownProps),
+    currentChildren: getAllHiringChildren(state, ownProps)
   };
 };
 

@@ -86,13 +86,11 @@ class AssignToView extends React.Component {
 
   submit = () => {
     const { appeal, task, isReassignAction, isTeamAssign, rootTask } = this.props;
-
     const action = getAction(this.props);
     const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
 
     const actionData = taskActionData(this.props);
     const taskType = actionData.type || 'Task';
-
     let payload = {};
 
     if (task.appealType === 'LegacyAppeal' && taskType === 'SpecialCaseMovementTask' &&
