@@ -113,8 +113,11 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
         select("Edit decision date", from: "issue-action-0")
       end
 
-      expect(page).to have_content("Edit Decision Date")
-      expect(page).to have_content(past_date)
+      formatted_past_date = (Time.zone.now - 1.week).strftime("%Y-%m-%d")
+      within ".cf-modal-body" do
+        expect(page).to have_content("Edit Decision Date")
+        expect(page).to have_field(type: "date", with: formatted_past_date)
+      end
 
       fill_in "decision-date", with: another_past_date
 
