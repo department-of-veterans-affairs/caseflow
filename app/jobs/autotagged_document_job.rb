@@ -15,6 +15,7 @@ class AutotaggedDocumentJob < CaseflowJob
         rescue ActiveRecord::RecordNotUnique
           errors.push(new_tag.text => "This tag already exists for the document.")
         end
+      end
     end
   end
 end
