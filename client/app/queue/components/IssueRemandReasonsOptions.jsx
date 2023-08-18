@@ -60,12 +60,14 @@ class IssueRemandReasonsOptions extends React.PureComponent {
 
     const { appeal } = this.props;
 
-    const options = flatten(values(appeal.isLegacyAppeal ? LEGACY_REMAND_REASONS : REMAND_REASONS));
+    const options = flatten(
+      values(appeal.isLegacyAppeal ? LEGACY_REMAND_REASONS : REMAND_REASONS)
+    );
     const pairs = zip(
-      map(options, 'id'),
+      map(options, "id"),
       map(options, () => ({
         checked: false,
-        post_aoj: null
+        post_aoj: null,
       }))
     );
 
@@ -74,11 +76,13 @@ class IssueRemandReasonsOptions extends React.PureComponent {
 
   updateIssue = (remandReasons) => {
     const { appeal, issueId } = this.props;
-    const issues = appeal.isLegacyAppeal ? appeal.issues : appeal.decisionIssues;
+    const issues = appeal.isLegacyAppeal
+      ? appeal.issues
+      : appeal.decisionIssues;
 
     return {
       ...find(issues, (issue) => issue.id === issueId),
-      remand_reasons: remandReasons
+      remand_reasons: remandReasons,
     };
   };
 
@@ -87,7 +91,10 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   validate = () => {
     const chosenOptions = this.getChosenOptions();
 
-    return chosenOptions.length >= 1 && every(chosenOptions, (opt) => !isNull(opt.post_aoj));
+    return (
+      chosenOptions.length >= 1 &&
+      every(chosenOptions, (opt) => !isNull(opt.post_aoj))
+    );
   };
 
   // todo: make scrollTo util function that also sets focus
@@ -96,29 +103,29 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     scrollToComponent(
       dest,
       defaults(opts, {
-        align: 'top',
+        align: "top",
         duration: 1500,
-        ease: 'outCube',
-        offset: -35
+        ease: "outCube",
+        offset: -35,
       })
     );
 
   componentDidMount = () => {
     const {
       issue: { id: issueId, remand_reasons: remandReasons },
-      issues
+      issues,
     } = this.props;
 
     each(remandReasons, (reason) =>
       this.setState({
         [reason.code]: {
           checked: true,
-          post_aoj: reason.post_aoj.toString()
-        }
+          post_aoj: reason.post_aoj.toString(),
+        },
       })
     );
 
-    if (map(issues, 'id').indexOf(issueId) > 0) {
+    if (map(issues, "id").indexOf(issueId) > 0) {
       this.scrollTo();
     }
   };
@@ -129,16 +136,18 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     //   {"code": "AB", "post_aoj": true},
     //   {"code": "AC", "post_aoj": false}
     // ]
-    const remandReasons = compact(map(this.state, (val, key) => {
-      if (!val.checked) {
-        return false;
-      }
+    const remandReasons = compact(
+      map(this.state, (val, key) => {
+        if (!val.checked) {
+          return false;
+        }
 
-      return {
-        code: key,
-        post_aoj: val.post_aoj === 'true'
-      };
-    }));
+        return {
+          code: key,
+          post_aoj: val.post_aoj === "true",
+        };
+      })
+    );
 
     return this.updateIssue(remandReasons);
   };
@@ -149,30 +158,32 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     // it won't scroll to the correct position: scroll to where the element will be.
     this.scrollTo(this.elTopOfWarning, {
       offset: 25,
-      duration: 1000
+      duration: 1000,
     });
   };
 
   toggleRemandReason = (checked, event) => {
-    const splitId = event.target.id.split('-');
+    const splitId = event.target.id.split("-");
 
     this.setState({
       [splitId[splitId.length - 1]]: {
         checked,
-        post_aoj: null
-      }
+        post_aoj: null,
+      },
     });
   };
 
   // Allow only certain AMA remand reasons to show pre/post AOJ subselections
   showAMASubSelections = (checkboxValue, legacyAppeal) => {
-    return legacyAppeal ? true : checkboxValue.includes(REMAND_REASONS.other[1].id);
+    if (this.props.featureToggles.additional_remand_reasons) {
+      return legacyAppeal ? true : checkboxValue.includes(REMAND_REASONS.other[1].id);
+    }
   };
 
   getCheckbox = (option, onChange, checkboxValues) => {
     const rowOptId = `${String(this.props.issue.id)}-${option.id}`;
     const { appeal } = this.props;
-    const copyPrefix = appeal.isLegacyAppeal ? 'LEGACY' : 'AMA';
+    const copyPrefix = appeal.isLegacyAppeal ? "LEGACY" : "AMA";
 
     return (
       <React.Fragment key={option.id}>
@@ -183,41 +194,45 @@ class IssueRemandReasonsOptions extends React.PureComponent {
           label={option.label}
           unpadded
         />
-        {checkboxValues[option.id].checked && this.props.featureToggles.additional_remand_reasons &&
-        this.showAMASubSelections(rowOptId, appeal.isLegacyAppeal) && (
-          <RadioField
-            errorMessage={
-              this.props.highlight &&
-              isNull(this.state[option.id].post_aoj) &&
-              'Choose one'
-            }
-            styling={css(smallLeftMargin, smallBottomMargin, errorNoTopMargin)}
-            name={rowOptId}
-            vertical
-            hideLabel
-            options={[
-              {
-                displayText:
-                  COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_BEFORE`],
-                value: 'false',
-              },
-              {
-                displayText:
-                  COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_AFTER`],
-                value: 'true',
-              },
-            ]}
-            value={this.state[option.id].post_aoj}
-            onChange={(postAoj) =>
-              this.setState({
-                [option.id]: {
-                  checked: true,
-                  post_aoj: postAoj,
+        {checkboxValues[option.id].checked &&
+          this.showAMASubSelections(rowOptId, appeal.isLegacyAppeal) && (
+            <RadioField
+              errorMessage={
+                this.props.highlight &&
+                isNull(this.state[option.id].post_aoj) &&
+                "Choose one"
+              }
+              styling={css(
+                smallLeftMargin,
+                smallBottomMargin,
+                errorNoTopMargin
+              )}
+              name={rowOptId}
+              vertical
+              hideLabel
+              options={[
+                {
+                  displayText:
+                    COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_BEFORE`],
+                  value: "false",
                 },
-              })
-            }
-          />
-        )}
+                {
+                  displayText:
+                    COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_AFTER`],
+                  value: "true",
+                },
+              ]}
+              value={this.state[option.id].post_aoj}
+              onChange={(postAoj) =>
+                this.setState({
+                  [option.id]: {
+                    checked: true,
+                    post_aoj: postAoj,
+                  },
+                })
+              }
+            />
+          )}
       </React.Fragment>
     );
   };
@@ -226,7 +241,6 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   //  and filters it out of selectable checkboxes.
   filterSelectableLegacyRemandReasons = (sectionName, index) => {
     delete LEGACY_REMAND_REASONS[sectionName][index];
-
   };
 
   getCheckboxGroup = () => {
@@ -234,14 +248,13 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     const checkboxGroupProps = {
       onChange: this.toggleRemandReason,
       getCheckbox: this.getCheckbox,
-      values: this.state
+      values: this.state,
     };
 
     if (appeal.isLegacyAppeal) {
-
       //  If feature flag is true, filter out the chosen remand reasons.
       if (this.props.featureToggles.additional_remand_reasons) {
-        this.filterSelectableLegacyRemandReasons('dueProcess', 0);
+        this.filterSelectableLegacyRemandReasons("dueProcess", 0);
       }
 
       return (
@@ -319,26 +332,40 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     return (
       <div key={`remand-reasons-${String(issue.id)}`}>
         <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
-          Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ''}
+          Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ""}
         </h2>
         <div {...smallBottomMargin}>
-          {appeal.isLegacyAppeal ?
-            `Program: ${getIssueProgramDescription(issue)}` :
-            `Benefit type: ${BENEFIT_TYPES[issue.benefit_type]}`}
+          {appeal.isLegacyAppeal
+            ? `Program: ${getIssueProgramDescription(issue)}`
+            : `Benefit type: ${BENEFIT_TYPES[issue.benefit_type]}`}
         </div>
-        {!appeal.isLegacyAppeal && <div {...smallBottomMargin}>Issue description: {issue.description}</div>}
+        {!appeal.isLegacyAppeal && (
+          <div {...smallBottomMargin}>
+            Issue description: {issue.description}
+          </div>
+        )}
         {appeal.isLegacyAppeal && (
           <React.Fragment>
-            <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
-            <div {...smallBottomMargin}>Code: {getIssueDiagnosticCodeLabel(last(issue.codes))}</div>
-            <div {...smallBottomMargin} ref={(node) => (this.elTopOfWarning = node)}>
+            <div {...smallBottomMargin}>
+              Issue: {getIssueTypeDescription(issue)}
+            </div>
+            <div {...smallBottomMargin}>
+              Code: {getIssueDiagnosticCodeLabel(last(issue.codes))}
+            </div>
+            <div
+              {...smallBottomMargin}
+              ref={(node) => (this.elTopOfWarning = node)}
+            >
               Certified: {formatDateStr(appeal.certificationDate)}
             </div>
             <div {...smallBottomMargin}>Note: {issue.note}</div>
           </React.Fragment>
         )}
         {highlight && !this.getChosenOptions().length && (
-          <div className="usa-input-error" {...css(redText, boldText, errorNoTopMargin)}>
+          <div
+            className="usa-input-error"
+            {...css(redText, boldText, errorNoTopMargin)}
+          >
             Choose at least one
           </div>
         )}
