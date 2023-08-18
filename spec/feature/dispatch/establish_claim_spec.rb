@@ -548,7 +548,6 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
         click_on "Finish routing claim"
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-
         expect(page).to have_content("Success!")
         expect(page).to have_content("Reviewed Full Grant decision")
         expect(page).to have_content("Established EP: 070BVAGR - BVA Grant (070) for Station 351 - Muskogee")
@@ -583,9 +582,8 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
         click_label("confirmNote")
         click_on "Finish routing claim"
 
-        expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-
         # Confirmation Page
+        expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
         expect(page).to have_content("Success!")
         expect(page).to have_content("Added VBMS Note on Rice Compliance")
 
@@ -641,7 +639,6 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
           click_on "Assign to Claim" # unknown reason sometimes hangs here
 
           expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-
           expect(page).to have_content("Success!")
 
           expect(task.reload.outgoing_reference_id).to eq(end_product.claim_id)
@@ -679,9 +676,8 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
         click_label("gulfWarRegistry")
         click_on "Create End Product"
 
-        expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-
         # Confirmation Page
+        expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
         expect(page).to have_content("Success!")
         expect(page).to have_content("Established EP: 070RMBVAGARC - ARC Remand with BVA Grant for Station 397 - ARC")
         expect(page).to have_content("VACOLS Updated: Changed Location to 98")
@@ -780,7 +776,6 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
         safe_click "#button-Finish-routing-claim"
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-
         expect(page).to have_content("Success!")
         expect(page).to have_content("VACOLS Updated: Changed Location to 50")
         expect(page).to have_content("Added VBMS Note on Rice Compliance")
@@ -838,7 +833,6 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
         click_on "Finish routing claim"
 
         expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-
         expect(page).to have_content("Success!")
         expect(task.reload.completion_status).to eq("special_issue_vacols_routed")
       end
@@ -871,7 +865,6 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
           click_on "Create End Product"
 
           expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
-
           expect(page).to have_content("Success!")
 
           expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
