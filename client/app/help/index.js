@@ -9,6 +9,7 @@ import HelpRootView from './HelpRootView';
 import CertificationHelp from './components/CertificationHelp';
 import HearingsHelp from './components/HearingsHelp';
 import ReaderHelp from './components/ReaderHelp';
+import HearingsTest from './components/HearingsTest';
 import DispatchHelp from './components/DispatchHelp';
 import IntakeHelp from './components/IntakeHelp';
 import QueueHelp from './components/QueueHelp';
@@ -22,15 +23,26 @@ import helpReducers, {
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 
+// Apollo Client and GraphQL
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+
+const apolloClient = new ApolloClient({
+  uri: 'http://localhost:3000/graphql',
+  cache: new InMemoryCache()
+});
+
 const Help = (props) => {
 
-  return <ReduxBase
-    reducer={helpReducers}
-  >
-    <BrowserRouter>
-      <HelpApp {...props} />
-    </BrowserRouter>
-  </ReduxBase>;
+  return <ApolloProvider client={apolloClient}>
+    <ReduxBase
+      reducer={helpReducers}
+    >
+      <BrowserRouter>
+        <HelpApp {...props} />
+      </BrowserRouter>
+    </ReduxBase>
+  </ApolloProvider>;
+
 };
 
 const HelpApp = (props) => {
@@ -103,6 +115,10 @@ const HelpApp = (props) => {
             path="/vha/help"
             title="Vha Help"
             component={VhaHelp} />
+          <PageRoute exact
+            path="/hearings_query/test"
+            title="Hearings Query Test"
+            component={HearingsTest} />
         </div>
       </AppFrame>
       <Footer

@@ -2,6 +2,7 @@
 
 class GraphqlController < ApplicationController
   # How much do we need to restrict this controller?
+  protect_from_forgery with: :null_session, only: :execute
 
   def execute
     variables = ensure_hash(params[:variables])

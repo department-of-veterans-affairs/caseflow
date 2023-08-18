@@ -19,6 +19,8 @@ const HelpRootView = () => {
       url: '/queue/help' },
     { name: 'VHA Help',
       url: '/vha/help' },
+    { name: 'Hearings Query Test',
+      url: '/hearings_query/test' }
   ];
 
   return <div className="cf-help-content">

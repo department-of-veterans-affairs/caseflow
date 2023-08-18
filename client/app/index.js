@@ -17,6 +17,9 @@ import { BrowserRouter, Switch } from 'react-router-dom';
 import ReduxBase from 'app/components/ReduxBase';
 import rootReducer from 'store/root';
 
+// Apollo Client and GraphQL
+import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
+
 // Shared Component Dependencies
 import { ErrorBoundary } from 'components/shared/ErrorBoundary';
 import Loadable from 'components/shared/Loadable';
@@ -92,20 +95,27 @@ const COMPONENTS = {
   Admin
 };
 
+const apolloClient = new ApolloClient({
+  uri: 'http://localhost:3000',
+  cache: new InMemoryCache()
+});
+
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
   /* eslint-disable */
   const wrapComponent = (Component) => (
     <ErrorBoundary>
       {props.featureToggles?.interfaceVersion2 ? (
-        <ReduxBase reducer={rootReducer}>
-          <BrowserRouter>
-            <Switch>
-              <Loadable spinnerColor={LOGO_COLORS[props.appName.toUpperCase()].ACCENT}>
-                <Component {...props} />
-              </Loadable>
-            </Switch>
-          </BrowserRouter>
-        </ReduxBase>
+        <ApolloProvider client={apolloClient}>
+          <ReduxBase reducer={rootReducer}>
+            <BrowserRouter>
+              <Switch>
+                <Loadable spinnerColor={LOGO_COLORS[props.appName.toUpperCase()].ACCENT}>
+                  <Component {...props} />
+                </Loadable>
+              </Switch>
+            </BrowserRouter>
+          </ReduxBase>
+        </ApolloProvider>
       ) : (
         <Suspense fallback={<div />}>
           <Component {...props} />
