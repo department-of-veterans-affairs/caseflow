@@ -374,7 +374,7 @@ RSpec.feature "MailTasks", :postgres do
           visit(page)
           click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
                          text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label)
-          find(".cf-form-radio-option", text: "Denied").click
+          find(".cf-form-radio-option", text: ruling).click
           fill_in("rulingDateSelector", with: ruling_date)
           fill_in("instructionsField", with: instructions)
           click_button("Mark as complete")
