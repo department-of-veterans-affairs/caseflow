@@ -54,9 +54,8 @@ describe Idt::Token do
     it "returns false after a token expires" do
       key, token = key_token_pair
       Idt::Token.activate_proposed_token(key, css_id)
-      Idt::Token.client.expire("valid_tokens_key" + token, 1)
       expect(Idt::Token.active?(token)).to eq(true)
-      sleep 2
+      Idt::Token.client.expire("valid_tokens_key" + token, -1)
       expect(Idt::Token.active?(token)).to eq(false)
     end
   end
