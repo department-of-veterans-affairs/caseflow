@@ -107,6 +107,19 @@ export const setDocFilter = (text, checked, tagId) => ({
   payload: { text, checked, tagId }
 });
 
+export const clearDocFilters = () => (dispatch) => {
+  dispatch({
+    type: Constants.CLEAR_DOC_FILTER,
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'clear-doc-filters'
+      }
+    }
+  });
+  dispatch(updateFilteredIdsAndDocs());
+};
+
 export const clearTagFilters = () => (dispatch) => {
   dispatch({
     type: Constants.CLEAR_TAG_FILTER,

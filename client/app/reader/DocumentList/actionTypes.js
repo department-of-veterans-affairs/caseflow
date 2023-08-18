@@ -18,8 +18,9 @@ export const SET_CATEGORY_FILTER = 'SET_CATEGORY_FILTER';
 export const UPDATE_FILTERED_RESULTS = 'UPDATE_FILTERED_RESULTS';
 export const TOGGLE_FILTER_DROPDOWN = 'TOGGLE_FILTER_DROPDOWN';
 
-// Document filter specific
+// Document filter
 export const SET_DOC_FILTER = 'SET_DOC_FILTER';
+export const CLEAR_DOC_FILTER = 'CLEAR_DOC_FILTER';
 
 // Constants
 export const DOCUMENTS_OR_COMMENTS_ENUM = {

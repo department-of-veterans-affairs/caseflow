@@ -150,8 +150,7 @@ const documentListReducer = (state = initialState, action = {}) => {
       }
     });
 
-    // Document filters
-
+    // Document filter
   case Constants.SET_DOC_FILTER:
     return update(state, {
       docFilterCriteria: {
@@ -159,6 +158,15 @@ const documentListReducer = (state = initialState, action = {}) => {
           [action.payload.text]: {
             $set: action.payload.checked
           }
+        }
+      }
+    });
+
+  case Constants.CLEAR_DOC_FILTER:
+    return update(state, {
+      docFilterCriteria: {
+        document: {
+          $set: {}
         }
       }
     });

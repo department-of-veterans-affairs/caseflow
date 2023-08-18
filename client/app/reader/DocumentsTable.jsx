@@ -22,7 +22,8 @@ import {
   setTagFilter,
   setCategoryFilter,
   toggleDropdownFilterVisibility,
-  setDocFilter
+  setDocFilter,
+  clearDocFilters
 } from '../reader/DocumentList/DocumentListActions';
 import { getAnnotationsPerDocument } from './selectors';
 import { SortArrowDownIcon } from '../components/icons/SortArrowDownIcon';
@@ -34,7 +35,6 @@ import DocTagPicker from './DocTagPicker';
 import FilterIcon from '../components/icons/FilterIcon';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
-import DocTypePicker from './DocTypePicker';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -114,6 +114,7 @@ class DocumentsTable extends React.Component {
 
     const anyCategoryFiltersAreSet = anyFiltersSet('category');
     const anyTagFiltersAreSet = anyFiltersSet('tag');
+    const anyDocFiltersAreSet = anyFiltersSet('document');
 
     // We have blank headers for the comment indicator and label indicator columns.
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
@@ -263,10 +264,6 @@ class DocumentsTable extends React.Component {
             >
               <span id="type-header-label">Document Type</span>
 
-
-
-
-
               {this.props.docFilterCriteria.sort.sortBy === 'type' ?
                 sortArrowIcon :
                 notSortedIcon}
@@ -281,9 +278,9 @@ class DocumentsTable extends React.Component {
 
             {isDocumentDropdownFilterOpen && (
               <DropdownFilter
-                clearFilters={this.props.clearTagFilters}
+                clearFilters={this.props.clearDocFilters}
                 name="Document"
-                isClearEnabled={anyTagFiltersAreSet}
+                isClearEnabled={anyDocFiltersAreSet}
                 handleClose={this.toggleDocumentDropdownFilterVisiblity}
                 addClearFiltersRow
               >
@@ -294,10 +291,6 @@ class DocumentsTable extends React.Component {
                 />
               </DropdownFilter>
             )}</div>
-
-
-
-
 
         ),
         valueFunction: (doc) => (
@@ -400,7 +393,8 @@ DocumentsTable.propTypes = {
   setDocListScrollPosition: PropTypes.func.isRequired,
   toggleDropdownFilterVisibility: PropTypes.func.isRequired,
   tagOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
-  setDocFilter: PropTypes.func
+  setDocFilter: PropTypes.func,
+  clearDocFilters: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) =>
@@ -413,7 +407,8 @@ const mapDispatchToProps = (dispatch) =>
       changeSortState,
       toggleDropdownFilterVisibility,
       setCategoryFilter,
-      setDocFilter
+      setDocFilter,
+      clearDocFilters
     },
     dispatch
   );
