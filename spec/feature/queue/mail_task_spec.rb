@@ -146,37 +146,14 @@ RSpec.feature "MailTasks", :postgres do
     before do
       HearingAdmin.singleton.add_user(User.current_user)
     end
-    let!(:video_hearing_day) do
-      create(
-        :hearing_day,
-        request_type: HearingDay::REQUEST_TYPES[:video],
-        scheduled_for: Time.zone.today + 160.days,
-        regional_office: "RO39"
-      )
-    end
-    let!(:virtual_hearing_day) do
-      create(
-        :hearing_day,
-        request_type: HearingDay::REQUEST_TYPES[:virtual],
-        scheduled_for: Time.zone.today + 160.days,
-        regional_office: "RO39"
-      )
-    end
-    let!(:appeal) do
-      create(
-        :appeal,
-        docket_type: Constants.AMA_DOCKETS.hearing,
-        closest_regional_office: "RO39",
-        veteran: create(:veteran)
-      )
-    end
 
     let!(:hpr_task) do
       create(:hearing_postponement_request_mail_task,
              :with_unscheduled_hearing,
-             assigned_by_id: User.system_user.id,
-             appeal: appeal)
+             assigned_by_id: User.system_user.id)
     end
+
+    let(:appeal) { hpr_task.appeal }
 
     context "changing task type" do
       it "submit button starts out disabled" do
@@ -213,7 +190,7 @@ RSpec.feature "MailTasks", :postgres do
                          text: COPY::CHANGE_TASK_TYPE_SUBHEAD,
                          match: :first)
         end
-        click_dropdown(prompt: "Select an action_type", text: "Change of address")
+        click_dropdown(prompt: "Select an action type", text: "Change of address")
         fill_in("Provide instructions and context for this change:", with: "instructions")
         click_button("Change task type")
         first_task_item = find("#case-timeline-table tr:nth-child(2)")
@@ -357,14 +334,43 @@ RSpec.feature "MailTasks", :postgres do
         end
       end
 
+      shared_examples "postponement granted" do
+        it "previous hearing disposition is postponed" do
+          visit "queue/appeals/#{appeal.uuid}"
+          within(:css, "#hearing-details") do
+            hearing = find(:css, ".cf-bare-list ul:nth-child(2)")
+            expect(hearing).to have_content("Disposition: Postponed")
+          end
+        end
+      end
+
       context "ruling is granted" do
         let(:ruling) { "Granted" }
 
         context "schedule immediately" do
+          let!(:video_hearing_day) do
+            create(
+              :hearing_day,
+              request_type: HearingDay::REQUEST_TYPES[:video],
+              scheduled_for: Time.zone.today + 160.days,
+              regional_office: "RO39"
+            )
+          end
+          let!(:virtual_hearing_day) do
+            create(
+              :hearing_day,
+              request_type: HearingDay::REQUEST_TYPES[:virtual],
+              scheduled_for: Time.zone.today + 160.days,
+              regional_office: "RO39"
+            )
+          end
+
           before do
             HearingsManagement.singleton.add_user(User.current_user)
             User.current_user.update!(roles: ["Build HearSched"])
+            appeal.update!(closest_regional_office: "RO39")
           end
+
           let(:email) { "test@caseflow.com" }
           before :each do
             FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
@@ -382,26 +388,35 @@ RSpec.feature "MailTasks", :postgres do
             click_button("Mark as complete")
           end
 
-          context "AMA appeal" do
-            it "page redirects to schedule veteran form" do
-              expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}/tasks/#{hpr_task.children.first.id}/schedule_veteran")
-            end
-
-            it "video hearing gets scheduled" do
+          shared_examples "scheduling hearing" do
+            before do
               within(:css, ".dropdown-appealHearingLocation") { click_dropdown(index: 0) }
               within(:css, ".dropdown-hearingDate") { click_dropdown(index: 0) }
               find("label", text: "12:30 PM Mountain Time (US & Canada) / 2:30 PM Eastern Time (US & Canada)").click
               click_button("Schedule")
+            end
+
+            it "gets scheduled" do
               expect(page).to have_content("You have successfully")
             end
 
-            it "virtual hearing gets scheduled" do
-              within(:css, ".dropdown-hearingType") { click_dropdown(text: COPY::VIRTUAL_HEARING_REQUEST_TYPE) }
-              within(:css, ".dropdown-hearingDate") { click_dropdown(index: 0) }
-              within(:css, "#email-section") { fill_in("Veteran Email (for these notifications only)", with: email) }
-              find("label", text: "12:30 PM Mountain Time (US & Canada) / 2:30 PM Eastern Time (US & Canada)").click
-              click_button("Schedule")
-              expect(page).to have_content("You have successfully")
+            include_examples "whether granted or denied"
+          end
+
+          context "appeal has unscheduled hearing" do
+            describe "AMA appeal" do
+              it "page redirects to schedule veteran form" do
+                expect(page.current_path)
+                  .to eq("/queue/appeals/#{appeal.uuid}/tasks/#{hpr_task.children.first.id}/schedule_veteran")
+              end
+
+              context "video hearing" do
+                include_examples "scheduling hearing"
+              end
+
+              context "virtual hearing" do
+                include_examples "scheduling hearing"
+              end
             end
           end
         end
@@ -463,6 +478,7 @@ RSpec.feature "MailTasks", :postgres do
 
             include_examples "whether granted or denied"
             include_examples "whether hearing is scheduled or unscheduled"
+            include_examples "postponement granted"
 
             it "cancels AssignHearingDisposition task on Case Timeline" do
               disposition_task = find("#case-timeline-table tr:nth-child(4)")
@@ -483,9 +499,8 @@ RSpec.feature "MailTasks", :postgres do
           page = "queue/appeals/#{appeal.uuid}"
           visit(page)
           click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                         text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label,
-                         match: :first)
-          find(".cf-form-radio-option", text: "Denied").click
+                         text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label)
+          find(".cf-form-radio-option", text: ruling).click
           fill_in("rulingDateSelector", with: ruling_date)
           fill_in("instructionsField", with: instructions)
           click_button("Mark as complete")
