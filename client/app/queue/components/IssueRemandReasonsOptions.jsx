@@ -173,11 +173,13 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     });
   };
 
-  // Allow only certain AMA remand reasons to show pre/post AOJ subselections
-  showAMASubSelections = (checkboxValue, legacyAppeal) => {
+  // Allow only certain remand reasons to show pre/post AOJ subselections
+  showSubSelections = (checkboxValue, legacyAppeal) => {
     if (this.props.featureToggles.additional_remand_reasons) {
       return legacyAppeal ? true : checkboxValue.includes(REMAND_REASONS.other[1].id);
     }
+
+    return true;
   };
 
   getCheckbox = (option, onChange, checkboxValues) => {
@@ -194,8 +196,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
           label={option.label}
           unpadded
         />
-        {checkboxValues[option.id].checked &&
-          this.showAMASubSelections(rowOptId, appeal.isLegacyAppeal) && (
+        {checkboxValues[option.id].checked && this.showSubSelections(rowOptId, appeal.isLegacyAppeal) && (
             <RadioField
               errorMessage={
                 this.props.highlight &&
