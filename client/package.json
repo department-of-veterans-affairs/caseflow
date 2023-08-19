@@ -88,6 +88,7 @@
     "font-awesome": "^4.7.0",
     "glamor": "^2.20.40",
     "graphql": "^16.8.0",
+    "graphql-scalars": "^1.22.2",
     "history": "^4.5.1",
     "immutability-helper": "^3.0.1",
     "immutable": "^3.8.2",
