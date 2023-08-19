@@ -21,10 +21,6 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
   JOB_DURATION ||= ENV["BATCH_PROCESS_JOB_DURATION"].to_i.minutes
   SLEEP_DURATION ||= ENV["BATCH_PROCESS_SLEEP_DURATION"].to_i
 
-  before_perform do |job|
-    JOB_ATTR = job
-  end
-
   # Attempts to create & process batches for 50 minutes
   # There will be a 5 second rest between each iteration
   # Job will end if there are no records are left to batch
@@ -50,9 +46,8 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
 
         sleep(SLEEP_DURATION)
       rescue StandardError => error
-        Rails.logger.error("Error: #{error.inspect}, Job ID: #{JOB_ATTR&.job_id}, Job Time: #{Time.zone.now}")
-        capture_exception(error: error, extra: { job_id: JOB_ATTR&.job_id.to_s, job_time: Time.zone.now.to_s })
-        slack_msg = "Error running #{self.class.name}.  Job ID: #{JOB_ATTR&.job_id}.  Job Time: #{Time.zone.now}."
+        log_error(error, extra: { job_id: job_id.to_s, job_time: Time.zone.now.to_s })
+        slack_msg = "Error running #{self.class.name}.  Error: #{error.message}.  Active Job ID: #{job_id}."
         slack_msg += "  See Sentry event #{Raven.last_event_id}." if Raven.last_event_id.present?
         slack_service.send_notification("[ERROR] #{slack_msg}", self.class.to_s)
         stop_job
@@ -79,7 +74,7 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
     self.should_stop_job = true
     if log_no_records_found
       Rails.logger.info("#{self.class} Cannot Find Any Records to Batch."\
-        "  Job will be enqueued again at the top of the hour.  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
+        "  Job will be enqueued again at the top of the hour.  Active Job ID: #{job_id}.  Time: #{Time.zone.now}")
     end
   end
 end
