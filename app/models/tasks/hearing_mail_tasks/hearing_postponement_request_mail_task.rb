@@ -184,7 +184,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     # Append instructions/context provided by HearingAdmin to original details from MailTeam
     updated_instructions = format_instructions_on_completion(
       admin_context: payload_values[:instructions],
-      ruilng: payload_values[:granted] ? "GRANTED" : "DENIED",
+      ruling: payload_values[:granted] ? "GRANTED" : "DENIED",
       date_of_ruling: payload_values[:date_of_ruling]
     )
 
