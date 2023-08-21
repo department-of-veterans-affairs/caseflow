@@ -267,14 +267,21 @@ describe BatchProcessRescueJob, type: :job do
     context "when there are NO batch processes that need to be reprocessed" do
       before do
         allow(Rails.logger).to receive(:info)
+        allow(SlackService).to receive(:new).with(url: anything).and_return(slack_service)
+        allow(slack_service).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
         perform_enqueued_jobs do
           subject
         end
       end
+
       it "a message will be logged stating that NO batch processes needed reprocessing" do
         expect(Rails.logger).to have_received(:info).with(
           "No Unfinished Batches Could Be Identified.  Time: #{Time.zone.now}."
         )
+      end
+
+      it "slack will NOT be notified when job runs successfully" do
+        expect(slack_service).to_not have_received(:send_notification)
       end
     end
   end
