@@ -51,6 +51,7 @@ module Seeds
 	    @file_number ||= 300_000
 	    # this seed file creates 200 new veterans on each run, 250 is sufficient margin to add more data
 	    @file_number += 250 while Veteran.find_by(file_number: format("%<n>09d", n: @file_number))
+      @file_number
     end
 
     ##
