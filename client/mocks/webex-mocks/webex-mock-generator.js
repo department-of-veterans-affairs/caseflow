@@ -1,5 +1,5 @@
 const fs = require('fs');
-const generateMeetingData = require("./meetingData.js");
+const generateMeetingData = require('./meetingData.js');
 
 const generateConferenceLinks = () => {
   let webexLinks = [];
