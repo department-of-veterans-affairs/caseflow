@@ -118,7 +118,7 @@ const HearingsTest = () => {
       <p>Use the buttons below to compare request times between our REST
         HearingDayController#index route and using GraphQL</p>
       <p>For these tests, we want to be able to pull information related to
-        where and when a hearing will be head, and the presiding judge.</p>
+        where and when a hearing will be held, and the presiding judge.</p>
       <table>
         <tbody className="query-test-table">
           {requestTypes.map((reqType) =>
