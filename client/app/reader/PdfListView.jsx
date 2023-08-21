@@ -67,8 +67,13 @@ export class PdfListView extends React.Component {
         vbmsId={this.props.appeal.vbms_id} />}
       <AppSegment filledBackground>
         <div className="section--document-list">
-          <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
-          <LastRetrievalAlert efolderExpressUrl={this.props.efolderExpressUrl} appeal={this.props.appeal} />
+          <ClaimsFolderDetails
+            appeal={this.props.appeal}
+            documents={this.props.documents} />
+          <LastRetrievalAlert
+            efolderExpressUrl={this.props.efolderExpressUrl}
+            userCanDownloadEfolder={this.props.userCanDownloadEfolder}
+            appeal={this.props.appeal} />
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}
@@ -89,7 +94,6 @@ const mapStateToProps = (state, props) => {
       state.pdfViewer.loadedAppeal,
     caseSelectedAppeal: state.caseSelect.selectedAppeal,
     manifestVbmsFetchedAt: state.documentList.manifestVbmsFetchedAt,
-    manifestVvaFetchedAt: state.documentList.manifestVvaFetchedAt,
     queueRedirectUrl: state.documentList.queueRedirectUrl,
     queueTaskType: state.documentList.queueTaskType
   };
@@ -109,7 +113,18 @@ export default connect(
 PdfListView.propTypes = {
   documents: PropTypes.arrayOf(PropTypes.object).isRequired,
   efolderExpressUrl: PropTypes.string,
+  userCanDownloadEfolder: PropTypes.bool,
   onJumpToComment: PropTypes.func,
   sortBy: PropTypes.string,
   appeal: PropTypes.object,
+  match: PropTypes.object,
+  caseSelectedAppeal: PropTypes.object,
+  queueRedirectUrl: PropTypes.string,
+  documentPathBase: PropTypes.string,
+  docFilterCriteria: PropTypes.object,
+  onReceiveAppealDetails: PropTypes.func,
+  fetchAppealDetails: PropTypes.func,
+  showPdf: PropTypes.func,
+  queueTaskType: PropTypes.string,
+  viewingDocumentsOrComments: PropTypes.string
 };

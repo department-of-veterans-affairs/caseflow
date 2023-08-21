@@ -7,6 +7,7 @@
     applicationUrls: application_urls,
     page: "DecisionReviewer",
     feedbackUrl: feedback_url,
+    userCanDownloadEfolder: current_user.can?('Download eFolder'),
     efolderExpressUrl: efolder_express_url,
     featureToggles: {
       interfaceVersion2: FeatureToggle.enabled?(:interface_version_2, user: current_user),

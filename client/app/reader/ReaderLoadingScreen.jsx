@@ -25,10 +25,10 @@ export class ReaderLoadingScreen extends React.Component {
       then((response) => {
         const returnedObject = response.body;
         const documents = returnedObject.appealDocuments;
-        const { annotations, manifestVbmsFetchedAt, manifestVvaFetchedAt } = returnedObject;
+        const { annotations, manifestVbmsFetchedAt } = returnedObject;
 
         this.props.onReceiveDocs(documents, this.props.vacolsId);
-        this.props.onReceiveManifests(manifestVbmsFetchedAt, manifestVvaFetchedAt);
+        this.props.onReceiveManifests(manifestVbmsFetchedAt);
         this.props.onReceiveAnnotations(annotations);
       }).
       catch((err) => {

@@ -174,6 +174,7 @@ DecisionReviewer.propTypes = {
   dropdownUrls: PropTypes.array,
   featureToggles: PropTypes.any,
   feedbackUrl: PropTypes.any,
+  userCanDownloadEfolder: PropTypes.bool,
   efolderExpressUrl: PropTypes.any,
   isPlacingAnnotation: PropTypes.any,
   onScrollToComment: PropTypes.func,
