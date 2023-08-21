@@ -85,17 +85,16 @@ export class Pdf extends React.PureComponent {
     });
   }
   loadCurrentDoc = () => {
-      return <PdfFile
-        documentId={this.props.documentId}
-        key={`${this.props.file}`}
-        file={this.props.file}
-        onPageChange={this.props.onPageChange}
-        isVisible
-        scale={this.props.scale}
-        documentType={this.props.documentType}
-        featureToggles={this.props.featureToggles}
-      />;
-
+    return <PdfFile
+      documentId={this.props.documentId}
+      key={`${this.props.file}`}
+      file={this.props.file}
+      onPageChange={this.props.onPageChange}
+      isVisible
+      scale={this.props.scale}
+      documentType={this.props.documentType}
+      featureToggles={this.props.featureToggles}
+    />;
   }
 
   componentDidMount() {
@@ -110,10 +109,8 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   render() {
-    if (this.props.featureToggles.prefetchDisabled) {
-      console.log('-----------------------------------prefetched disabled');
-    }
-    const pages = !this.props.featureToggles.prefetchDisabled ? this.loadPrefetchedDocs() : this.loadCurrentDoc();
+    const pages = this.props.featureToggles.prefetchDisabled ?
+      this.loadCurrentDoc() : this.loadPrefetchedDocs();
 
     return <div className="cf-pdf-scroll-view">
       <div
