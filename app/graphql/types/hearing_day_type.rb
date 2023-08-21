@@ -82,7 +82,11 @@ module Types
       description "User to have last updated this hearing day"
     end
 
-    delegate :judge, :created_by, :updated_by, to: :object
+    field :hearings, Types::HearingType.connection_type, null: true do
+      description "Hearings scheduled to take place on this hearing day"
+    end
+
+    delegate :judge, :created_by, :updated_by, :hearings, to: :object
 
     def notes
       # Restrict access to docket notes
