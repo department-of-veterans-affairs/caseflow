@@ -42,7 +42,7 @@ class UnrecognizedAppellantsController < ApplicationController
   def unrecognized_party_details
     [
       :party_type, :name, :middle_name, :last_name, :suffix, :address_line_1, :address_line_2, :date_of_birth,
-      :address_line_3, :city, :state, :zip, :country, :phone_number, :email_address
+      :address_line_3, :city, :state, :zip, :country, :phone_number, :email_address, :ein, :ssn
     ]
   end
 end
