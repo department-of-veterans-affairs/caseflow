@@ -1,5 +1,5 @@
-const fs = require("fs");
-const faker = require("faker");
+const fs = require('fs');
+const faker = require('faker');
 
 const generateConferenceLinks = () => {
   let webexLinks = [];
@@ -10,16 +10,16 @@ const generateConferenceLinks = () => {
       meetingNumber: faker.random.number(),
       title: faker.company.catchPhrase(),
       password: faker.internet.password(),
-      meetingType: "meetingSeries",
-      state: "active",
-      timezone: "Asia/Shanghai",
-      start: "2023-11-01T20:00:00+08:00",
-      end: "2023-11-01T21:00:00+08:00",
+      meetingType: 'meetingSeries',
+      state: 'active',
+      timezone: 'Asia/Shanghai',
+      start: '2023-11-01T20:00:00+08:00',
+      end: '2023-11-01T21:00:00+08:00',
       hostUserId: faker.finance.account(),
       hostDisplayName: faker.name.findName(),
       hostEmail: faker.internet.email(),
       hostKey: faker.random.number(),
-      siteUrl: "ciscofedsales.webex.com",
+      siteUrl: 'ciscofedsales.webex.com',
       webLink: faker.internet.url(),
       sipAddress: faker.internet.email(),
       dialInIpAddress: faker.internet.ip(),
@@ -34,29 +34,27 @@ const generateConferenceLinks = () => {
       publicMeeting: faker.random.boolean(),
       enableAutomaticLock: faker.random.boolean(),
       automaticLockMinutes: faker.random.number({ min: 1, max: 10 }),
-      unlockedMeetingJoinSecurity: "allowJoinWithLobby",
+      unlockedMeetingJoinSecurity: 'allowJoinWithLobby',
       telephony: {
-        accessCode: faker.random
-          .number({ min: 100000, max: 999999 })
-          .toString(),
+        accessCode: faker.random.number({ min: 100000, max: 999999 }).toString(),
         callInNumbers: [
           {
-            label: "United States Toll",
-            callInNumber: "+1-415-527-5035",
-            tollType: "toll",
+            label: 'United States Toll',
+            callInNumber: '+1-415-527-5035',
+            tollType: 'toll',
           },
           {
-            label: "United States Toll (Washington D.C.)",
-            callInNumber: "+1-202-600-2533",
-            tollType: "toll",
+            label: 'United States Toll (Washington D.C.)',
+            callInNumber: '+1-202-600-2533',
+            tollType: 'toll',
           },
         ],
         links: [
           {
-            rel: "globalCallinNumbers",
+            rel: 'globalCallinNumbers',
             href:
-              "/v1/meetings/" + faker.random.uuid() + "/globalCallinNumbers",
-            method: "GET",
+              '/v1/meetings/' + faker.random.uuid() + '/globalCallinNumbers',
+            method: 'GET',
           },
         ],
       },
@@ -64,7 +62,7 @@ const generateConferenceLinks = () => {
         enabledChat: faker.random.boolean(),
         enabledVideo: faker.random.boolean(),
         enabledNote: faker.random.boolean(),
-        noteType: "allowAll",
+        noteType: 'allowAll',
         enabledFileTransfer: faker.random.boolean(),
         enabledUCFRichMedia: faker.random.boolean(),
       },
@@ -84,17 +82,17 @@ const generateConferenceLinks = () => {
         enabledChatOtherParticipants: faker.random.boolean(),
       },
       sessionTypeId: faker.random.number({ min: 1, max: 5 }),
-      scheduledType: "meeting",
+      scheduledType: 'meeting',
       simultaneousInterpretation: {
         enabled: faker.random.boolean(),
       },
       enabledBreakoutSessions: faker.random.boolean(),
       audioConnectionOptions: {
-        audioConnectionType: "webexAudio",
+        audioConnectionType: 'webexAudio',
         enabledTollFreeCallIn: faker.random.boolean(),
         enabledGlobalCallIn: faker.random.boolean(),
         enabledAudienceCallBack: faker.random.boolean(),
-        entryAndExitTone: "beep",
+        entryAndExitTone: 'beep',
         allowHostToUnmuteParticipants: faker.random.boolean(),
         allowAttendeeToUnmuteSelf: faker.random.boolean(),
         muteAttendeeUponEntry: faker.random.boolean(),
@@ -113,7 +111,7 @@ const data = {
 
 // Check if the script is being run directly
 if (require.main === module) {
-  fs.writeFileSync("mocks/webex-mocks/webex-mock.json", JSON.stringify(data, null, 2));
-  console.log("Generated new data in webex-mock.json");
+  fs.writeFileSync('mocks/webex-mocks/webex-mock.json', JSON.stringify(data, null, 2));
+  console.log('Generated new data in webex-mock.json');
 }
 
