@@ -10,7 +10,9 @@ class PriorityEndProductSyncQueue < CaseflowRecord
   has_many :caseflow_stuck_records, as: :stuck_record
 
   scope :batchable, -> { where(batch_id: [nil, BatchProcess.completed_batch_process_ids]) }
-  scope :ready_to_batch, -> { where("last_batched_at IS NULL OR last_batched_at <= ?", BatchProcess::ERROR_DELAY.hours.ago) }
+  scope :ready_to_batch, lambda {
+    where("last_batched_at IS NULL OR last_batched_at <= ?", BatchProcess::ERROR_DELAY.hours.ago)
+  }
   scope :batch_limit, -> { limit(BatchProcess::BATCH_LIMIT) }
   scope :syncable, lambda {
     where.not(status: [Constants.PRIORITY_EP_SYNC.synced, Constants.PRIORITY_EP_SYNC.stuck])
