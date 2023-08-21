@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { useQuery, gql } from '@apollo/client';
 
+import Alert from 'app/components/Alert';
 import ApiUtil from 'app/util/ApiUtil';
 import Button from 'app/components/Button';
 
 const HearingsTest = () => {
+  const [errorBannerText, setErrorBannerText] = useState(null);
+
   const [restValue, setRestValue] = useState('');
   const [graphqlValue, setGraphqlValue] = useState('');
 
@@ -32,14 +35,22 @@ const HearingsTest = () => {
     `, { enabled: false });
 
   const performRestRequest = async () => {
+    setErrorBannerText(null);
+
     const requestUrl = `/hearings/hearing_day/${HEARING_DAY_ID}`;
 
-    return ApiUtil.get(requestUrl).then((response) => {
-      setRestValue(JSON.stringify(response.body));
-    });
+    return ApiUtil.get(requestUrl).
+      then((response) => {
+        setRestValue(JSON.stringify(response.body));
+      }).
+      catch((error) => {
+        setErrorBannerText(`Error while processing your REST request: "${error}"`);
+      });
   };
 
   const performGraphQLRequest = async () => {
+    setErrorBannerText(null);
+
     refetch();
 
     setGraphqlValue(JSON.stringify(data));
@@ -74,7 +85,9 @@ const HearingsTest = () => {
 
   return (
     <>
+      {errorBannerText && <Alert type="error" title="Request Error" message={errorBannerText} />}
       <h1>REST vs. GraphQL</h1>
+      <h3>Please log in as a hearings coordinator user (ex: BVASYELLOW)</h3>
       <p>Use the buttons below to compare request times between our REST
         HearingDayController#index route and using GraphQL</p>
       <p>For these tests, we want to be able to pull information related to
