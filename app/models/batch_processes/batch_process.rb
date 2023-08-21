@@ -53,6 +53,8 @@ class BatchProcess < CaseflowRecord
 
   private
 
+  attr_accessor :completed_count, :failed_count
+
   # Initialize Counters
   def init_counters
     @completed_count = 0
@@ -60,11 +62,11 @@ class BatchProcess < CaseflowRecord
   end
 
   def increment_completed
-    @completed_count += 1
+    self.completed_count += 1
   end
 
   def increment_failed
-    @failed_count += 1
+    self.failed_count += 1
   end
 
   # State update Methods
@@ -74,8 +76,8 @@ class BatchProcess < CaseflowRecord
 
   def batch_complete!
     update!(state: Constants.BATCH_PROCESS.completed,
-            records_failed: @failed_count,
-            records_completed: @completed_count,
+            records_failed: failed_count,
+            records_completed: completed_count,
             ended_at: Time.zone.now)
   end
 
