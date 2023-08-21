@@ -14,6 +14,8 @@ import CommentIndicator from './CommentIndicator';
 import DropdownFilter from '../components/DropdownFilter';
 import { bindActionCreators } from 'redux';
 import Highlight from '../components/Highlight';
+import DateSelector from '../components/DateSelector';
+import Dropdown from '../components/Dropdown';
 import {
   setDocListScrollPosition,
   changeSortState,
@@ -114,6 +116,13 @@ class DocumentsTable extends React.Component {
     const anyTagFiltersAreSet = anyFiltersSet('tag');
 
     const anyDateFiltersAreSet = anyFiltersSet('receiptDate');
+
+    const dateDropdownMap = [
+      { key: 1, displayText: 'Between these dates' },
+      { key: 2, displayText: 'Before this date' },
+      { key: 3, displayText: 'After this date' },
+      { key: 4, displayText: 'On this date' }
+    ];
 
     // We have blank headers for the comment indicator and label indicator columns.
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
@@ -255,11 +264,13 @@ class DocumentsTable extends React.Component {
                 handleClose={this.toggleRecieptDataDropdownFilterVisibility}
                 addClearFiltersRow
               >
-                <p>Placeholder.</p>
+                <Dropdown
+                  name="aaaaa"
+                  options={dateDropdownMap}
+                  label="Date filter parameters" />
               </DropdownFilter>
             )}
           </>
-
         ),
         valueFunction: (doc) => (
           <span className="document-list-receipt-date">
