@@ -19,6 +19,13 @@ module CaseflowCertification
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
 
+    #===================================================================================================================
+    # Rails default overrides
+    #   These settings override the defaults set by `config.load_defaults`. If and as appropriate, we can transition
+    #   these overrides one-by-one to migrate to their respective defaults.
+    #   See the Rails Guides: Configuring Rails Applications for more info on each option.
+    #   https://guides.rubyonrails.org/configuring.html
+    #
     # ==================================================================================================================
     # Rails 5.0 default overrides
     # ------------------------------------------------------------------------------------------------------------------
