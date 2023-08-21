@@ -185,8 +185,9 @@ module Seeds
       create(:end_product_establishment,
               trait,
               veteran: veteran,
-              # veteran_file_number: veteran.file_number,
-              claimant_participant_id: veteran.participant_id)
+              veteran_file_number: veteran.file_number,
+              claimant_participant_id: veteran.participant_id
+            )
     end
 
     # 'trait' will specify if the RI is rating or nonrating
