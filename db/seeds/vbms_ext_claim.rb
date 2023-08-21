@@ -14,7 +14,10 @@ module Seeds
   class VbmsExtClaim < Base
 
     def initialize
-      file_number_initial_value
+      @file_number ||= 300_000
+	    # this seed file creates 200 new veterans on each run, 250 is sufficient margin to add more data
+	    @file_number += 250 while Veteran.find_by(file_number: format("%<n>09d", n: @file_number))
+      @file_number
     end
 
     ################# records created ##################
@@ -45,14 +48,15 @@ module Seeds
     end
 
     private
+    attr_reader :file_number
 
     # maintains previous file number values while allowing for reseeding
-    def file_number_initial_value
-	    @file_number ||= 300_000
-	    # this seed file creates 200 new veterans on each run, 250 is sufficient margin to add more data
-	    @file_number += 250 while Veteran.find_by(file_number: format("%<n>09d", n: @file_number))
-      @file_number
-    end
+    # def file_number_initial_value
+	  #   @file_number ||= 300_000
+	  #   # this seed file creates 200 new veterans on each run, 250 is sufficient margin to add more data
+	  #   @file_number += 250 while Veteran.find_by(file_number: format("%<n>09d", n: @file_number))
+    #   @file_number
+    # end
 
     ##
     # this out_of_sync method creates and seeds Vbms_Ext_Claims that have a Level_Status_Code DIFFERENT then the
