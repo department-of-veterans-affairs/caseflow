@@ -10,7 +10,7 @@ step 4: Make sure casfelow application is running
 
 step 4: Run command: npm run webex-server
 
-step 5: If you would like to autogenerate test data, run this command: npm run generate-webex
+step 5: Autogenerate test data, run this command: npm run generate-webex(This will also create the json file)
 
 \*info: You will recieve all available routes within the terminal under 'Resources'
 
