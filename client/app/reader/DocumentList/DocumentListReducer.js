@@ -51,7 +51,8 @@ const initialState = {
     lastReadDocId: null,
     dropdowns: {
       tag: false,
-      category: false
+      category: false,
+      receiptDate: false
     }
   },
   manifestVbmsFetchedAt: null,

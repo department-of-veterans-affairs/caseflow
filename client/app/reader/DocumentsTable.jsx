@@ -90,6 +90,10 @@ class DocumentsTable extends React.Component {
   toggleTagDropdownFilterVisiblity = () =>
     this.props.toggleDropdownFilterVisibility('tag');
 
+    toggleRecieptDataDropdownFilterVisibility = () => this.props.toggleDropdownFilterVisibility('receiptDate');
+
+    getRecieptDateFilterIconRef = (recieptDataFilterIcon) => (this.recieptDataFilterIcon = recieptDataFilterIcon);
+
   getKeyForRow = (index, { isComment, id }) => {
     return isComment ? `${id}-comment` : id;
   };
@@ -108,6 +112,8 @@ class DocumentsTable extends React.Component {
 
     const anyCategoryFiltersAreSet = anyFiltersSet('category');
     const anyTagFiltersAreSet = anyFiltersSet('tag');
+
+    const anyDateFiltersAreSet = anyFiltersSet('receiptDate');
 
     // We have blank headers for the comment indicator and label indicator columns.
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
@@ -156,6 +162,11 @@ class DocumentsTable extends React.Component {
     const isTagDropdownFilterOpen = _.get(this.props.pdfList, [
       'dropdowns',
       'tag',
+    ]);
+
+    const isRecipetDateFilterOpen = _.get(this.props.pdfList, [
+      'dropdowns',
+      'receiptDate',
     ]);
 
     const sortDirectionAriaLabel = `${
@@ -216,18 +227,39 @@ class DocumentsTable extends React.Component {
         sortProps: this.props.docFilterCriteria.sort.sortBy ===
           'receivedAt' && { 'aria-sort': sortDirectionAriaLabel },
         header: (
-          <Button
-            styling={{ 'aria-roledescription': 'sort button' }}
-            name="Receipt Date"
-            id="receipt-date-header"
-            classNames={['cf-document-list-button-header']}
-            onClick={() => this.props.changeSortState('receivedAt')}
-          >
-            <span id="receipt-date-header-label">Receipt Date</span>
-            {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ?
-              sortArrowIcon :
-              notSortedIcon}
-          </Button>
+          <>
+            <Button
+              styling={{ 'aria-roledescription': 'sort button' }}
+              name="Receipt Date"
+              id="receipt-date-header"
+              classNames={['cf-document-list-button-header']}
+              onClick={() => this.props.changeSortState('receivedAt')}
+            >
+              <span id="receipt-date-header-label">Receipt Date</span>
+              {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ?
+                sortArrowIcon :
+                notSortedIcon}
+            </Button>
+            <FilterIcon
+              label="Filter by dates"
+              idPrefix="receiptDate"
+              getRef={this.getRecieptDateFilterIconRef}
+              selected={isRecipetDateFilterOpen || anyDateFiltersAreSet}
+              handleActivate={this.toggleRecieptDataDropdownFilterVisibility}
+            />
+            {isRecipetDateFilterOpen && (
+              <DropdownFilter
+                clearFilters={this.props.clearTagFilters}
+                name="Reciept Date"
+                isClearEnabled={anyTagFiltersAreSet}
+                handleClose={this.toggleRecieptDataDropdownFilterVisibility}
+                addClearFiltersRow
+              >
+                <p>Placeholder.</p>
+              </DropdownFilter>
+            )}
+          </>
+
         ),
         valueFunction: (doc) => (
           <span className="document-list-receipt-date">
