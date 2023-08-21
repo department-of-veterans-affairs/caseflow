@@ -1,4 +1,6 @@
+# frozen_string_literal: true
+
 module Types
-  class JudgeType < Types::BaseObject
+  class JudgeType < UserType
   end
 end

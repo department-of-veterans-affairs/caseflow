@@ -223,6 +223,7 @@ Rails.application.routes.draw do
   get 'intake/help' => 'help#intake'
   get 'queue/help' => 'help#queue'
   get 'vha/help' => 'help#vha'
+  get 'hearings_query/test' => 'help#index'
 
   root 'home#index'
 
