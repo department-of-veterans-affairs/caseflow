@@ -9,9 +9,11 @@ const HearingsTest = () => {
   const [errorBannerText, setErrorBannerText] = useState(null);
 
   const [restValue, setRestValue] = useState('');
+  const [slimRestValue, setSlimRestValue] = useState('');
   const [graphqlValue, setGraphqlValue] = useState('');
 
   const [restExecutionTime, setRestExecutionTime] = useState(0);
+  const [slimRestExecutionTime, setSlimRestExecutionTime] = useState(0);
   const [graphqlExecutionTime, setGraphqlExecutionTime] = useState(0);
 
   const HEARING_DAY_ID = 35;
@@ -46,6 +48,18 @@ const HearingsTest = () => {
       });
   };
 
+  const performSlimRestRequest = async () => {
+    setErrorBannerText(null);
+
+    return ApiUtil.get(`/hearings/hearing_day/${HEARING_DAY_ID}?slim=true`).
+      then((response) => {
+        setSlimRestValue(JSON.stringify(response.body));
+      }).
+      catch((error) => {
+        setErrorBannerText(`Error while processing your REST request: "${error}"`);
+      });
+  };
+
   const performGraphQLRequest = async () => {
     setErrorBannerText(null);
 
@@ -63,7 +77,16 @@ const HearingsTest = () => {
 
     const execTime = endTime - startTime;
 
-    return serviceType === 'REST' ? setRestExecutionTime(execTime) : setGraphqlExecutionTime(execTime);
+    switch (serviceType) {
+    case 'REST':
+      setRestExecutionTime(execTime);
+      break;
+    case 'Slim REST':
+      setSlimRestExecutionTime(execTime);
+      break;
+    default:
+      setGraphqlExecutionTime(execTime);
+    }
   };
 
   const requestTypes = [
@@ -72,6 +95,12 @@ const HearingsTest = () => {
       time: restExecutionTime,
       value: restValue,
       requestMethod: performRestRequest
+    },
+    {
+      name: 'Slim REST',
+      time: slimRestExecutionTime,
+      value: slimRestValue,
+      requestMethod: performSlimRestRequest
     },
     {
       name: 'GraphQL',

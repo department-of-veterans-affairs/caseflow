@@ -39,24 +39,21 @@ class Hearings::HearingDayController < HearingsApplicationController
 
   def show
     begin
-      render json: {
-        hearing_day: hearing_day.to_hash(include_conference_link: true).merge(
-          hearings: hearing_day.hearings_for_user(current_user).map { |hearing| hearing.quick_to_hash(current_user.id) }
-        )
-      }
-    rescue VirtualHearings::LinkService::PINKeyMissingError, 
-    VirtualHearings::LinkService::URLHostMissingError, 
-    VirtualHearings::LinkService::URLPathMissingError => error
+      if params[:slim]
+        render json: hearing_day_attributes_with_judge_name.to_json(only: desired_slim_fields)
+      else
+        serialize_hearing_day
+      end
+    rescue VirtualHearings::LinkService::PINKeyMissingError,
+           VirtualHearings::LinkService::URLHostMissingError,
+           VirtualHearings::LinkService::URLPathMissingError => error
       log_error(error)
-      render json: {
-        hearing_day: hearing_day.to_hash(include_conference_link: false).merge(
-          hearings: hearing_day.hearings_for_user(current_user).map do |hearing|
-                      hearing.quick_to_hash(current_user.id)
-                    end
-        ),
-        conference_link_generate_error: true,
-        conference_link_generate_error_message: error.message
-      }
+
+      if params[:slim]
+        render json: hearing_day_attributes_with_judge_name.to_json(only: desired_slim_fields)
+      else
+        serialize_hearing_day_with_errors
+      end
     end
   end
 
@@ -99,6 +96,37 @@ class Hearings::HearingDayController < HearingsApplicationController
   end
 
   private
+
+  def hearing_day_attributes_with_judge_name
+    hearing_day.attributes.merge(
+      "judge_first_name" => hearing_day.judge_first_name,
+      "judge_last_name" => hearing_day.judge_last_name
+    )
+  end
+
+  def desired_slim_fields
+    %w[id scheduled_for room regional_office request_type notes judge_first_name judge_last_name]
+  end
+
+  def serialize_hearing_day
+    render json: {
+      hearing_day: hearing_day.to_hash(include_conference_link: true).merge(
+        hearings: hearing_day.hearings_for_user(current_user).map { |hearing| hearing.quick_to_hash(current_user.id) }
+      )
+    }
+  end
+
+  def serialize_hearing_day_with_errors
+    render json: {
+      hearing_day: hearing_day.to_hash(include_conference_link: false).merge(
+        hearings: hearing_day.hearings_for_user(current_user).map do |hearing|
+                    hearing.quick_to_hash(current_user.id)
+                  end
+      ),
+      conference_link_generate_error: true,
+      conference_link_generate_error_message: error.message
+    }
+  end
 
   def hearing_day
     @hearing_day ||= HearingDay.find(params[:id])
