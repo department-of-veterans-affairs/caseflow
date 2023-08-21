@@ -52,6 +52,7 @@ module CaseReviewConcern
   def vacols_id
     # use column values if they exist
     return appeal.vacols_id if appeal_association?
+    return task.appeal.vacols_id if task && task.appeal&.is_a?(LegacyAppeal)
 
     # fall back to original implementation
     task_id&.split("-", 2)&.first
