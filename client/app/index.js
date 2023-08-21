@@ -18,7 +18,7 @@ import ReduxBase from 'app/components/ReduxBase';
 import rootReducer from 'store/root';
 
 // Apollo Client and GraphQL
-import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 // Shared Component Dependencies
 import { ErrorBoundary } from 'components/shared/ErrorBoundary';
@@ -96,7 +96,7 @@ const COMPONENTS = {
 };
 
 const apolloClient = new ApolloClient({
-  uri: 'http://localhost:3000',
+  uri: '/graphql',
   cache: new InMemoryCache()
 });
 

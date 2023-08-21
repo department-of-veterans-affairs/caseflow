@@ -27,7 +27,7 @@ import { useDispatch } from 'react-redux';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 const apolloClient = new ApolloClient({
-  uri: 'http://localhost:3000/graphql',
+  uri: '/graphql',
   cache: new InMemoryCache()
 });
 

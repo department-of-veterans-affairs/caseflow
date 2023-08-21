@@ -54,7 +54,7 @@ const HearingsTest = () => {
     setGraphqlValue(JSON.stringify(data));
   };
 
-  const benchmarkRequest = async (reqFn) => {
+  const benchmarkRequest = async (reqFn, serviceType) => {
     const startTime = performance.now();
 
     await reqFn.apply(this);
@@ -63,7 +63,7 @@ const HearingsTest = () => {
 
     const execTime = endTime - startTime;
 
-    return reqFn.name === 'performRestRequest' ? setRestExecutionTime(execTime) : setGraphqlExecutionTime(execTime);
+    return serviceType === 'REST' ? setRestExecutionTime(execTime) : setGraphqlExecutionTime(execTime);
   };
 
   const requestTypes = [
@@ -101,7 +101,7 @@ const HearingsTest = () => {
                 <Button
                   name={`start-${reqType.name}-query`}
                   onClick={
-                    () => benchmarkRequest(reqType.requestMethod)
+                    () => benchmarkRequest(reqType.requestMethod, reqType.name)
                   }
                 >
                   Start {reqType.name} Request
