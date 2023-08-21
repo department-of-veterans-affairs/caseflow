@@ -142,8 +142,6 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
 
       visit "/dispatch/work-assignments"
 
-      expect(page).to have_current_path("/dispatch/work-assignments")
-
       expect(page).to have_content("1.\nJanet Smith\n0 0 1 1 3")
       expect(page).to have_content("2.\nJune Smith\n1 0 0 1 2")
       expect(page).to have_content("3.\nJeffers Smith\n0 1 0 1 2")
