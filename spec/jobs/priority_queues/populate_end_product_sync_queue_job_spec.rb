@@ -201,6 +201,8 @@ describe PopulateEndProductSyncQueueJob, type: :job do
       before do
         VbmsExtClaim.destroy_all
         allow(Rails.logger).to receive(:info)
+        allow(SlackService).to receive(:new).with(url: anything).and_return(slack_service)
+        allow(slack_service).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
         perform_enqueued_jobs do
           subject
         end
@@ -211,6 +213,10 @@ describe PopulateEndProductSyncQueueJob, type: :job do
           "PopulateEndProductSyncQueueJob is not able to find any batchable EPE records."\
           "  Active Job ID: #{@job.job_id}.  Time: #{Time.zone.now}"
         )
+      end
+
+      it "slack will NOT be notified when job runs successfully" do
+        expect(slack_service).to_not have_received(:send_notification)
       end
     end
   end
