@@ -7,15 +7,22 @@ class UnconnectedLastRetrievalInfo extends React.PureComponent {
     return [
       this.props.manifestVbmsFetchedAt ?
         <div id="vbms-manifest-retrieved-at" key="vbms">
-          Last synced with {this.props.appeal.veteran_full_name}'s eFolder: {this.props.manifestVbmsFetchedAt.slice(0, -5)}
+          Last VBMS retrieval: {this.props.manifestVbmsFetchedAt.slice(0, -5)}
         </div> :
         <div className="cf-red-text" key="vbms">
-          Unable to display eFolder documents at this time
+          Unable to display VBMS documents at this time
+        </div>,
+      this.props.manifestVvaFetchedAt ?
+        <div id="vva-manifest-retrieved-at" key="vva">
+          Last VVA retrieval: {this.props.manifestVvaFetchedAt.slice(0, -5)}
+        </div> :
+        <div className="cf-red-text" key="vva">
+          Unable to display VVA documents at this time
         </div>
     ];
   }
 }
 
 export default connect(
-  (state) => _.pick(state.documentList, 'manifestVbmsFetchedAt')
+  (state) => _.pick(state.documentList, ['manifestVvaFetchedAt', 'manifestVbmsFetchedAt'])
 )(UnconnectedLastRetrievalInfo);
