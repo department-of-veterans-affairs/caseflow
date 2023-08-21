@@ -1,5 +1,1016 @@
 {
   "conferenceLinks": [
-    
+    {
+      "id": "e3fafcc8-4aac-4b11-822e-bc8e8f55fbab",
+      "meetingNumber": 47482,
+      "title": "Phased bifurcated contingency",
+      "password": "9WcETihSp6EzDFz",
+      "meetingType": "meetingSeries",
+      "state": "active",
+      "timezone": "Asia/Shanghai",
+      "start": "2023-11-01T20:00:00+08:00",
+      "end": "2023-11-01T21:00:00+08:00",
+      "hostUserId": "69728606",
+      "hostDisplayName": "Cathryn Huel II",
+      "hostEmail": "Monserrate.Shanahan90@gmail.com",
+      "hostKey": 72954,
+      "siteUrl": "ciscofedsales.webex.com",
+      "webLink": "https://ariane.net",
+      "sipAddress": "Lola.Douglas20@hotmail.com",
+      "dialInIpAddress": "204.13.184.133",
+      "enabledAutoRecordMeeting": false,
+      "allowAnyUserToBeCoHost": true,
+      "allowFirstUserToBeCoHost": true,
+      "allowAuthenticatedDevices": true,
+      "enabledJoinBeforeHost": false,
+      "joinBeforeHostMinutes": 2,
+      "enableConnectAudioBeforeHost": true,
+      "excludePassword": false,
+      "publicMeeting": true,
+      "enableAutomaticLock": true,
+      "automaticLockMinutes": 1,
+      "unlockedMeetingJoinSecurity": "allowJoinWithLobby",
+      "telephony": {
+        "accessCode": "793131",
+        "callInNumbers": [
+          {
+            "label": "United States Toll",
+            "callInNumber": "+1-415-527-5035",
+            "tollType": "toll"
+          },
+          {
+            "label": "United States Toll (Washington D.C.)",
+            "callInNumber": "+1-202-600-2533",
+            "tollType": "toll"
+          }
+        ],
+        "links": [
+          {
+            "rel": "globalCallinNumbers",
+            "href": "/v1/meetings/4a45b8b9-b19c-4e49-886a-4e07cb052124/globalCallinNumbers",
+            "method": "GET"
+          }
+        ]
+      },
+      "meetingOptions": {
+        "enabledChat": true,
+        "enabledVideo": true,
+        "enabledNote": false,
+        "noteType": "allowAll",
+        "enabledFileTransfer": true,
+        "enabledUCFRichMedia": true
+      },
+      "attendeePrivileges": {
+        "enabledShareContent": true,
+        "enabledSaveDocument": false,
+        "enabledPrintDocument": true,
+        "enabledAnnotate": false,
+        "enabledViewParticipantList": false,
+        "enabledViewThumbnails": true,
+        "enabledRemoteControl": true,
+        "enabledViewAnyDocument": true,
+        "enabledViewAnyPage": true,
+        "enabledContactOperatorPrivately": false,
+        "enabledChatHost": false,
+        "enabledChatPresenter": true,
+        "enabledChatOtherParticipants": false
+      },
+      "sessionTypeId": 5,
+      "scheduledType": "meeting",
+      "simultaneousInterpretation": {
+        "enabled": false
+      },
+      "enabledBreakoutSessions": false,
+      "audioConnectionOptions": {
+        "audioConnectionType": "webexAudio",
+        "enabledTollFreeCallIn": false,
+        "enabledGlobalCallIn": true,
+        "enabledAudienceCallBack": true,
+        "entryAndExitTone": "beep",
+        "allowHostToUnmuteParticipants": true,
+        "allowAttendeeToUnmuteSelf": true,
+        "muteAttendeeUponEntry": false
+      }
+    },
+    {
+      "id": "e18a14fc-6451-47b7-a66a-114d610d1fb3",
+      "meetingNumber": 67089,
+      "title": "Robust non-volatile utilisation",
+      "password": "YlGyunVBgLF7ybb",
+      "meetingType": "meetingSeries",
+      "state": "active",
+      "timezone": "Asia/Shanghai",
+      "start": "2023-11-01T20:00:00+08:00",
+      "end": "2023-11-01T21:00:00+08:00",
+      "hostUserId": "49632136",
+      "hostDisplayName": "Reba Johnson",
+      "hostEmail": "Jensen_Schoen3@yahoo.com",
+      "hostKey": 29203,
+      "siteUrl": "ciscofedsales.webex.com",
+      "webLink": "https://karine.com",
+      "sipAddress": "Edison.Senger@hotmail.com",
+      "dialInIpAddress": "210.145.135.132",
+      "enabledAutoRecordMeeting": false,
+      "allowAnyUserToBeCoHost": false,
+      "allowFirstUserToBeCoHost": false,
+      "allowAuthenticatedDevices": false,
+      "enabledJoinBeforeHost": true,
+      "joinBeforeHostMinutes": 3,
+      "enableConnectAudioBeforeHost": false,
+      "excludePassword": false,
+      "publicMeeting": false,
+      "enableAutomaticLock": true,
+      "automaticLockMinutes": 9,
+      "unlockedMeetingJoinSecurity": "allowJoinWithLobby",
+      "telephony": {
+        "accessCode": "473819",
+        "callInNumbers": [
+          {
+            "label": "United States Toll",
+            "callInNumber": "+1-415-527-5035",
+            "tollType": "toll"
+          },
+          {
+            "label": "United States Toll (Washington D.C.)",
+            "callInNumber": "+1-202-600-2533",
+            "tollType": "toll"
+          }
+        ],
+        "links": [
+          {
+            "rel": "globalCallinNumbers",
+            "href": "/v1/meetings/ab413b66-16a0-4176-ac4d-f5d55d15d775/globalCallinNumbers",
+            "method": "GET"
+          }
+        ]
+      },
+      "meetingOptions": {
+        "enabledChat": false,
+        "enabledVideo": true,
+        "enabledNote": true,
+        "noteType": "allowAll",
+        "enabledFileTransfer": true,
+        "enabledUCFRichMedia": false
+      },
+      "attendeePrivileges": {
+        "enabledShareContent": true,
+        "enabledSaveDocument": true,
+        "enabledPrintDocument": true,
+        "enabledAnnotate": false,
+        "enabledViewParticipantList": true,
+        "enabledViewThumbnails": true,
+        "enabledRemoteControl": true,
+        "enabledViewAnyDocument": false,
+        "enabledViewAnyPage": false,
+        "enabledContactOperatorPrivately": false,
+        "enabledChatHost": true,
+        "enabledChatPresenter": true,
+        "enabledChatOtherParticipants": false
+      },
+      "sessionTypeId": 1,
+      "scheduledType": "meeting",
+      "simultaneousInterpretation": {
+        "enabled": false
+      },
+      "enabledBreakoutSessions": false,
+      "audioConnectionOptions": {
+        "audioConnectionType": "webexAudio",
+        "enabledTollFreeCallIn": false,
+        "enabledGlobalCallIn": true,
+        "enabledAudienceCallBack": true,
+        "entryAndExitTone": "beep",
+        "allowHostToUnmuteParticipants": true,
+        "allowAttendeeToUnmuteSelf": true,
+        "muteAttendeeUponEntry": true
+      }
+    },
+    {
+      "id": "4417685c-5f2b-44b5-9623-e5b500043a0c",
+      "meetingNumber": 10956,
+      "title": "Virtual mobile implementation",
+      "password": "uV4K24gq2zRgtDV",
+      "meetingType": "meetingSeries",
+      "state": "active",
+      "timezone": "Asia/Shanghai",
+      "start": "2023-11-01T20:00:00+08:00",
+      "end": "2023-11-01T21:00:00+08:00",
+      "hostUserId": "90742575",
+      "hostDisplayName": "Kris Corkery",
+      "hostEmail": "Dedric.Pagac26@hotmail.com",
+      "hostKey": 25185,
+      "siteUrl": "ciscofedsales.webex.com",
+      "webLink": "http://emerald.com",
+      "sipAddress": "Peyton23@hotmail.com",
+      "dialInIpAddress": "128.170.63.147",
+      "enabledAutoRecordMeeting": false,
+      "allowAnyUserToBeCoHost": true,
+      "allowFirstUserToBeCoHost": false,
+      "allowAuthenticatedDevices": false,
+      "enabledJoinBeforeHost": true,
+      "joinBeforeHostMinutes": 7,
+      "enableConnectAudioBeforeHost": true,
+      "excludePassword": false,
+      "publicMeeting": false,
+      "enableAutomaticLock": true,
+      "automaticLockMinutes": 1,
+      "unlockedMeetingJoinSecurity": "allowJoinWithLobby",
+      "telephony": {
+        "accessCode": "100945",
+        "callInNumbers": [
+          {
+            "label": "United States Toll",
+            "callInNumber": "+1-415-527-5035",
+            "tollType": "toll"
+          },
+          {
+            "label": "United States Toll (Washington D.C.)",
+            "callInNumber": "+1-202-600-2533",
+            "tollType": "toll"
+          }
+        ],
+        "links": [
+          {
+            "rel": "globalCallinNumbers",
+            "href": "/v1/meetings/1c2c1e96-1fd5-4ca3-92ea-43db6d56f81c/globalCallinNumbers",
+            "method": "GET"
+          }
+        ]
+      },
+      "meetingOptions": {
+        "enabledChat": true,
+        "enabledVideo": true,
+        "enabledNote": true,
+        "noteType": "allowAll",
+        "enabledFileTransfer": true,
+        "enabledUCFRichMedia": true
+      },
+      "attendeePrivileges": {
+        "enabledShareContent": false,
+        "enabledSaveDocument": true,
+        "enabledPrintDocument": false,
+        "enabledAnnotate": true,
+        "enabledViewParticipantList": true,
+        "enabledViewThumbnails": false,
+        "enabledRemoteControl": true,
+        "enabledViewAnyDocument": true,
+        "enabledViewAnyPage": false,
+        "enabledContactOperatorPrivately": true,
+        "enabledChatHost": true,
+        "enabledChatPresenter": false,
+        "enabledChatOtherParticipants": false
+      },
+      "sessionTypeId": 4,
+      "scheduledType": "meeting",
+      "simultaneousInterpretation": {
+        "enabled": false
+      },
+      "enabledBreakoutSessions": false,
+      "audioConnectionOptions": {
+        "audioConnectionType": "webexAudio",
+        "enabledTollFreeCallIn": true,
+        "enabledGlobalCallIn": true,
+        "enabledAudienceCallBack": false,
+        "entryAndExitTone": "beep",
+        "allowHostToUnmuteParticipants": true,
+        "allowAttendeeToUnmuteSelf": true,
+        "muteAttendeeUponEntry": false
+      }
+    },
+    {
+      "id": "f2e00d03-8e9d-4385-822d-73a0b934c6ce",
+      "meetingNumber": 59205,
+      "title": "Open-architected even-keeled encryption",
+      "password": "CiXgRg61OA57ZAT",
+      "meetingType": "meetingSeries",
+      "state": "active",
+      "timezone": "Asia/Shanghai",
+      "start": "2023-11-01T20:00:00+08:00",
+      "end": "2023-11-01T21:00:00+08:00",
+      "hostUserId": "65047964",
+      "hostDisplayName": "Frieda Collier",
+      "hostEmail": "Korbin_Kuvalis@hotmail.com",
+      "hostKey": 21009,
+      "siteUrl": "ciscofedsales.webex.com",
+      "webLink": "http://maynard.net",
+      "sipAddress": "Destin.Braun@yahoo.com",
+      "dialInIpAddress": "24.16.174.2",
+      "enabledAutoRecordMeeting": false,
+      "allowAnyUserToBeCoHost": false,
+      "allowFirstUserToBeCoHost": true,
+      "allowAuthenticatedDevices": false,
+      "enabledJoinBeforeHost": false,
+      "joinBeforeHostMinutes": 10,
+      "enableConnectAudioBeforeHost": false,
+      "excludePassword": true,
+      "publicMeeting": true,
+      "enableAutomaticLock": false,
+      "automaticLockMinutes": 7,
+      "unlockedMeetingJoinSecurity": "allowJoinWithLobby",
+      "telephony": {
+        "accessCode": "967669",
+        "callInNumbers": [
+          {
+            "label": "United States Toll",
+            "callInNumber": "+1-415-527-5035",
+            "tollType": "toll"
+          },
+          {
+            "label": "United States Toll (Washington D.C.)",
+            "callInNumber": "+1-202-600-2533",
+            "tollType": "toll"
+          }
+        ],
+        "links": [
+          {
+            "rel": "globalCallinNumbers",
+            "href": "/v1/meetings/2cbdc33e-b179-4b6f-927a-aff6fd1007dc/globalCallinNumbers",
+            "method": "GET"
+          }
+        ]
+      },
+      "meetingOptions": {
+        "enabledChat": false,
+        "enabledVideo": false,
+        "enabledNote": true,
+        "noteType": "allowAll",
+        "enabledFileTransfer": false,
+        "enabledUCFRichMedia": false
+      },
+      "attendeePrivileges": {
+        "enabledShareContent": false,
+        "enabledSaveDocument": true,
+        "enabledPrintDocument": false,
+        "enabledAnnotate": true,
+        "enabledViewParticipantList": false,
+        "enabledViewThumbnails": false,
+        "enabledRemoteControl": false,
+        "enabledViewAnyDocument": false,
+        "enabledViewAnyPage": false,
+        "enabledContactOperatorPrivately": true,
+        "enabledChatHost": true,
+        "enabledChatPresenter": true,
+        "enabledChatOtherParticipants": true
+      },
+      "sessionTypeId": 5,
+      "scheduledType": "meeting",
+      "simultaneousInterpretation": {
+        "enabled": false
+      },
+      "enabledBreakoutSessions": true,
+      "audioConnectionOptions": {
+        "audioConnectionType": "webexAudio",
+        "enabledTollFreeCallIn": false,
+        "enabledGlobalCallIn": false,
+        "enabledAudienceCallBack": false,
+        "entryAndExitTone": "beep",
+        "allowHostToUnmuteParticipants": true,
+        "allowAttendeeToUnmuteSelf": true,
+        "muteAttendeeUponEntry": true
+      }
+    },
+    {
+      "id": "392c5958-3a92-4e3f-b591-dd80fc1af6d2",
+      "meetingNumber": 29893,
+      "title": "Automated stable artificial intelligence",
+      "password": "GWoP8waZ2azWE2o",
+      "meetingType": "meetingSeries",
+      "state": "active",
+      "timezone": "Asia/Shanghai",
+      "start": "2023-11-01T20:00:00+08:00",
+      "end": "2023-11-01T21:00:00+08:00",
+      "hostUserId": "19263574",
+      "hostDisplayName": "Augustine Schinner IV",
+      "hostEmail": "Maurice11@hotmail.com",
+      "hostKey": 53145,
+      "siteUrl": "ciscofedsales.webex.com",
+      "webLink": "http://wilber.net",
+      "sipAddress": "Kadin15@gmail.com",
+      "dialInIpAddress": "116.146.215.231",
+      "enabledAutoRecordMeeting": false,
+      "allowAnyUserToBeCoHost": true,
+      "allowFirstUserToBeCoHost": true,
+      "allowAuthenticatedDevices": true,
+      "enabledJoinBeforeHost": false,
+      "joinBeforeHostMinutes": 2,
+      "enableConnectAudioBeforeHost": false,
+      "excludePassword": true,
+      "publicMeeting": false,
+      "enableAutomaticLock": false,
+      "automaticLockMinutes": 2,
+      "unlockedMeetingJoinSecurity": "allowJoinWithLobby",
+      "telephony": {
+        "accessCode": "540893",
+        "callInNumbers": [
+          {
+            "label": "United States Toll",
+            "callInNumber": "+1-415-527-5035",
+            "tollType": "toll"
+          },
+          {
+            "label": "United States Toll (Washington D.C.)",
+            "callInNumber": "+1-202-600-2533",
+            "tollType": "toll"
+          }
+        ],
+        "links": [
+          {
+            "rel": "globalCallinNumbers",
+            "href": "/v1/meetings/8be32614-1f61-447a-9277-d4ddf50d9e05/globalCallinNumbers",
+            "method": "GET"
+          }
+        ]
+      },
+      "meetingOptions": {
+        "enabledChat": true,
+        "enabledVideo": false,
+        "enabledNote": true,
+        "noteType": "allowAll",
+        "enabledFileTransfer": false,
+        "enabledUCFRichMedia": true
+      },
+      "attendeePrivileges": {
+        "enabledShareContent": false,
+        "enabledSaveDocument": false,
+        "enabledPrintDocument": true,
+        "enabledAnnotate": true,
+        "enabledViewParticipantList": false,
+        "enabledViewThumbnails": false,
+        "enabledRemoteControl": true,
+        "enabledViewAnyDocument": true,
+        "enabledViewAnyPage": true,
+        "enabledContactOperatorPrivately": false,
+        "enabledChatHost": false,
+        "enabledChatPresenter": true,
+        "enabledChatOtherParticipants": false
+      },
+      "sessionTypeId": 1,
+      "scheduledType": "meeting",
+      "simultaneousInterpretation": {
+        "enabled": false
+      },
+      "enabledBreakoutSessions": false,
+      "audioConnectionOptions": {
+        "audioConnectionType": "webexAudio",
+        "enabledTollFreeCallIn": true,
+        "enabledGlobalCallIn": false,
+        "enabledAudienceCallBack": true,
+        "entryAndExitTone": "beep",
+        "allowHostToUnmuteParticipants": true,
+        "allowAttendeeToUnmuteSelf": true,
+        "muteAttendeeUponEntry": true
+      }
+    },
+    {
+      "id": "56725652-ca96-462a-b213-f7833c4bb496",
+      "meetingNumber": 37140,
+      "title": "Reactive client-driven access",
+      "password": "wWDxYPLLjrARWva",
+      "meetingType": "meetingSeries",
+      "state": "active",
+      "timezone": "Asia/Shanghai",
+      "start": "2023-11-01T20:00:00+08:00",
+      "end": "2023-11-01T21:00:00+08:00",
+      "hostUserId": "48131198",
+      "hostDisplayName": "Johnathan Conn",
+      "hostEmail": "Isidro.Morissette63@gmail.com",
+      "hostKey": 2293,
+      "siteUrl": "ciscofedsales.webex.com",
+      "webLink": "http://domingo.net",
+      "sipAddress": "Richmond64@gmail.com",
+      "dialInIpAddress": "40.246.34.158",
+      "enabledAutoRecordMeeting": true,
+      "allowAnyUserToBeCoHost": true,
+      "allowFirstUserToBeCoHost": true,
+      "allowAuthenticatedDevices": true,
+      "enabledJoinBeforeHost": true,
+      "joinBeforeHostMinutes": 9,
+      "enableConnectAudioBeforeHost": false,
+      "excludePassword": false,
+      "publicMeeting": false,
+      "enableAutomaticLock": true,
+      "automaticLockMinutes": 2,
+      "unlockedMeetingJoinSecurity": "allowJoinWithLobby",
+      "telephony": {
+        "accessCode": "749299",
+        "callInNumbers": [
+          {
+            "label": "United States Toll",
+            "callInNumber": "+1-415-527-5035",
+            "tollType": "toll"
+          },
+          {
+            "label": "United States Toll (Washington D.C.)",
+            "callInNumber": "+1-202-600-2533",
+            "tollType": "toll"
+          }
+        ],
+        "links": [
+          {
+            "rel": "globalCallinNumbers",
+            "href": "/v1/meetings/35eb7c92-1ed1-4a65-b618-bea5124627e7/globalCallinNumbers",
+            "method": "GET"
+          }
+        ]
+      },
+      "meetingOptions": {
+        "enabledChat": false,
+        "enabledVideo": true,
+        "enabledNote": false,
+        "noteType": "allowAll",
+        "enabledFileTransfer": true,
+        "enabledUCFRichMedia": true
+      },
+      "attendeePrivileges": {
+        "enabledShareContent": true,
+        "enabledSaveDocument": true,
+        "enabledPrintDocument": true,
+        "enabledAnnotate": true,
+        "enabledViewParticipantList": true,
+        "enabledViewThumbnails": true,
+        "enabledRemoteControl": false,
+        "enabledViewAnyDocument": true,
+        "enabledViewAnyPage": true,
+        "enabledContactOperatorPrivately": false,
+        "enabledChatHost": false,
+        "enabledChatPresenter": false,
+        "enabledChatOtherParticipants": true
+      },
+      "sessionTypeId": 5,
+      "scheduledType": "meeting",
+      "simultaneousInterpretation": {
+        "enabled": false
+      },
+      "enabledBreakoutSessions": false,
+      "audioConnectionOptions": {
+        "audioConnectionType": "webexAudio",
+        "enabledTollFreeCallIn": true,
+        "enabledGlobalCallIn": false,
+        "enabledAudienceCallBack": false,
+        "entryAndExitTone": "beep",
+        "allowHostToUnmuteParticipants": false,
+        "allowAttendeeToUnmuteSelf": false,
+        "muteAttendeeUponEntry": true
+      }
+    },
+    {
+      "id": "0d3c9510-9634-494f-bf4e-38517813cb74",
+      "meetingNumber": 78490,
+      "title": "Advanced client-driven matrices",
+      "password": "2ELAzEbSkzrPg3b",
+      "meetingType": "meetingSeries",
+      "state": "active",
+      "timezone": "Asia/Shanghai",
+      "start": "2023-11-01T20:00:00+08:00",
+      "end": "2023-11-01T21:00:00+08:00",
+      "hostUserId": "03941178",
+      "hostDisplayName": "Helene McKenzie",
+      "hostEmail": "Idella_Ondricka12@hotmail.com",
+      "hostKey": 15585,
+      "siteUrl": "ciscofedsales.webex.com",
+      "webLink": "https://nikolas.info",
+      "sipAddress": "Helga_MacGyver96@yahoo.com",
+      "dialInIpAddress": "160.147.247.171",
+      "enabledAutoRecordMeeting": true,
+      "allowAnyUserToBeCoHost": false,
+      "allowFirstUserToBeCoHost": true,
+      "allowAuthenticatedDevices": false,
+      "enabledJoinBeforeHost": false,
+      "joinBeforeHostMinutes": 10,
+      "enableConnectAudioBeforeHost": false,
+      "excludePassword": false,
+      "publicMeeting": false,
+      "enableAutomaticLock": false,
+      "automaticLockMinutes": 9,
+      "unlockedMeetingJoinSecurity": "allowJoinWithLobby",
+      "telephony": {
+        "accessCode": "918071",
+        "callInNumbers": [
+          {
+            "label": "United States Toll",
+            "callInNumber": "+1-415-527-5035",
+            "tollType": "toll"
+          },
+          {
+            "label": "United States Toll (Washington D.C.)",
+            "callInNumber": "+1-202-600-2533",
+            "tollType": "toll"
+          }
+        ],
+        "links": [
+          {
+            "rel": "globalCallinNumbers",
+            "href": "/v1/meetings/756e8261-b660-49a7-9502-b2166767fb1e/globalCallinNumbers",
+            "method": "GET"
+          }
+        ]
+      },
+      "meetingOptions": {
+        "enabledChat": false,
+        "enabledVideo": false,
+        "enabledNote": true,
+        "noteType": "allowAll",
+        "enabledFileTransfer": false,
+        "enabledUCFRichMedia": true
+      },
+      "attendeePrivileges": {
+        "enabledShareContent": false,
+        "enabledSaveDocument": true,
+        "enabledPrintDocument": true,
+        "enabledAnnotate": false,
+        "enabledViewParticipantList": false,
+        "enabledViewThumbnails": true,
+        "enabledRemoteControl": false,
+        "enabledViewAnyDocument": false,
+        "enabledViewAnyPage": false,
+        "enabledContactOperatorPrivately": false,
+        "enabledChatHost": true,
+        "enabledChatPresenter": true,
+        "enabledChatOtherParticipants": false
+      },
+      "sessionTypeId": 5,
+      "scheduledType": "meeting",
+      "simultaneousInterpretation": {
+        "enabled": true
+      },
+      "enabledBreakoutSessions": true,
+      "audioConnectionOptions": {
+        "audioConnectionType": "webexAudio",
+        "enabledTollFreeCallIn": true,
+        "enabledGlobalCallIn": true,
+        "enabledAudienceCallBack": false,
+        "entryAndExitTone": "beep",
+        "allowHostToUnmuteParticipants": false,
+        "allowAttendeeToUnmuteSelf": true,
+        "muteAttendeeUponEntry": false
+      }
+    },
+    {
+      "id": "f5d131ce-c8b3-4e2f-8f61-311d912da8a9",
+      "meetingNumber": 82623,
+      "title": "Function-based interactive throughput",
+      "password": "EESLHbhLMue1et7",
+      "meetingType": "meetingSeries",
+      "state": "active",
+      "timezone": "Asia/Shanghai",
+      "start": "2023-11-01T20:00:00+08:00",
+      "end": "2023-11-01T21:00:00+08:00",
+      "hostUserId": "36075676",
+      "hostDisplayName": "Enrico Wyman",
+      "hostEmail": "Buddy.Gislason97@gmail.com",
+      "hostKey": 1212,
+      "siteUrl": "ciscofedsales.webex.com",
+      "webLink": "https://megane.info",
+      "sipAddress": "Sid17@yahoo.com",
+      "dialInIpAddress": "114.88.134.243",
+      "enabledAutoRecordMeeting": false,
+      "allowAnyUserToBeCoHost": true,
+      "allowFirstUserToBeCoHost": false,
+      "allowAuthenticatedDevices": false,
+      "enabledJoinBeforeHost": false,
+      "joinBeforeHostMinutes": 5,
+      "enableConnectAudioBeforeHost": false,
+      "excludePassword": true,
+      "publicMeeting": false,
+      "enableAutomaticLock": true,
+      "automaticLockMinutes": 5,
+      "unlockedMeetingJoinSecurity": "allowJoinWithLobby",
+      "telephony": {
+        "accessCode": "442338",
+        "callInNumbers": [
+          {
+            "label": "United States Toll",
+            "callInNumber": "+1-415-527-5035",
+            "tollType": "toll"
+          },
+          {
+            "label": "United States Toll (Washington D.C.)",
+            "callInNumber": "+1-202-600-2533",
+            "tollType": "toll"
+          }
+        ],
+        "links": [
+          {
+            "rel": "globalCallinNumbers",
+            "href": "/v1/meetings/c20b96a8-dca7-4e26-bffd-5cd6d3579d62/globalCallinNumbers",
+            "method": "GET"
+          }
+        ]
+      },
+      "meetingOptions": {
+        "enabledChat": false,
+        "enabledVideo": false,
+        "enabledNote": true,
+        "noteType": "allowAll",
+        "enabledFileTransfer": false,
+        "enabledUCFRichMedia": false
+      },
+      "attendeePrivileges": {
+        "enabledShareContent": true,
+        "enabledSaveDocument": false,
+        "enabledPrintDocument": false,
+        "enabledAnnotate": false,
+        "enabledViewParticipantList": false,
+        "enabledViewThumbnails": false,
+        "enabledRemoteControl": true,
+        "enabledViewAnyDocument": true,
+        "enabledViewAnyPage": false,
+        "enabledContactOperatorPrivately": true,
+        "enabledChatHost": true,
+        "enabledChatPresenter": false,
+        "enabledChatOtherParticipants": true
+      },
+      "sessionTypeId": 3,
+      "scheduledType": "meeting",
+      "simultaneousInterpretation": {
+        "enabled": false
+      },
+      "enabledBreakoutSessions": true,
+      "audioConnectionOptions": {
+        "audioConnectionType": "webexAudio",
+        "enabledTollFreeCallIn": true,
+        "enabledGlobalCallIn": true,
+        "enabledAudienceCallBack": false,
+        "entryAndExitTone": "beep",
+        "allowHostToUnmuteParticipants": true,
+        "allowAttendeeToUnmuteSelf": true,
+        "muteAttendeeUponEntry": true
+      }
+    },
+    {
+      "id": "0463e7ab-f5e3-4501-bad4-080b5c1692ba",
+      "meetingNumber": 52131,
+      "title": "Synergistic radical capability",
+      "password": "J3lpVAWwcC9vOPJ",
+      "meetingType": "meetingSeries",
+      "state": "active",
+      "timezone": "Asia/Shanghai",
+      "start": "2023-11-01T20:00:00+08:00",
+      "end": "2023-11-01T21:00:00+08:00",
+      "hostUserId": "27351129",
+      "hostDisplayName": "Hunter Wilderman Jr.",
+      "hostEmail": "Leatha.Predovic@yahoo.com",
+      "hostKey": 76480,
+      "siteUrl": "ciscofedsales.webex.com",
+      "webLink": "http://marlene.net",
+      "sipAddress": "Abbey_Hills77@yahoo.com",
+      "dialInIpAddress": "193.211.228.35",
+      "enabledAutoRecordMeeting": true,
+      "allowAnyUserToBeCoHost": true,
+      "allowFirstUserToBeCoHost": false,
+      "allowAuthenticatedDevices": true,
+      "enabledJoinBeforeHost": true,
+      "joinBeforeHostMinutes": 3,
+      "enableConnectAudioBeforeHost": true,
+      "excludePassword": false,
+      "publicMeeting": false,
+      "enableAutomaticLock": true,
+      "automaticLockMinutes": 4,
+      "unlockedMeetingJoinSecurity": "allowJoinWithLobby",
+      "telephony": {
+        "accessCode": "308889",
+        "callInNumbers": [
+          {
+            "label": "United States Toll",
+            "callInNumber": "+1-415-527-5035",
+            "tollType": "toll"
+          },
+          {
+            "label": "United States Toll (Washington D.C.)",
+            "callInNumber": "+1-202-600-2533",
+            "tollType": "toll"
+          }
+        ],
+        "links": [
+          {
+            "rel": "globalCallinNumbers",
+            "href": "/v1/meetings/5ca4c68b-26fd-4a9c-8e70-01f392b483ae/globalCallinNumbers",
+            "method": "GET"
+          }
+        ]
+      },
+      "meetingOptions": {
+        "enabledChat": false,
+        "enabledVideo": false,
+        "enabledNote": true,
+        "noteType": "allowAll",
+        "enabledFileTransfer": true,
+        "enabledUCFRichMedia": false
+      },
+      "attendeePrivileges": {
+        "enabledShareContent": true,
+        "enabledSaveDocument": true,
+        "enabledPrintDocument": true,
+        "enabledAnnotate": false,
+        "enabledViewParticipantList": true,
+        "enabledViewThumbnails": false,
+        "enabledRemoteControl": true,
+        "enabledViewAnyDocument": false,
+        "enabledViewAnyPage": true,
+        "enabledContactOperatorPrivately": false,
+        "enabledChatHost": true,
+        "enabledChatPresenter": false,
+        "enabledChatOtherParticipants": false
+      },
+      "sessionTypeId": 5,
+      "scheduledType": "meeting",
+      "simultaneousInterpretation": {
+        "enabled": false
+      },
+      "enabledBreakoutSessions": false,
+      "audioConnectionOptions": {
+        "audioConnectionType": "webexAudio",
+        "enabledTollFreeCallIn": true,
+        "enabledGlobalCallIn": false,
+        "enabledAudienceCallBack": false,
+        "entryAndExitTone": "beep",
+        "allowHostToUnmuteParticipants": true,
+        "allowAttendeeToUnmuteSelf": false,
+        "muteAttendeeUponEntry": true
+      }
+    },
+    {
+      "id": "ac5d73a8-5194-4344-9e84-cec7510d5d77",
+      "meetingNumber": 45733,
+      "title": "Virtual scalable task-force",
+      "password": "yxej_vtIadcY3Na",
+      "meetingType": "meetingSeries",
+      "state": "active",
+      "timezone": "Asia/Shanghai",
+      "start": "2023-11-01T20:00:00+08:00",
+      "end": "2023-11-01T21:00:00+08:00",
+      "hostUserId": "14611038",
+      "hostDisplayName": "Breana Stehr",
+      "hostEmail": "Dave.Corkery5@hotmail.com",
+      "hostKey": 47941,
+      "siteUrl": "ciscofedsales.webex.com",
+      "webLink": "https://ryleigh.biz",
+      "sipAddress": "Kevon.Jacobson@gmail.com",
+      "dialInIpAddress": "162.16.32.58",
+      "enabledAutoRecordMeeting": false,
+      "allowAnyUserToBeCoHost": false,
+      "allowFirstUserToBeCoHost": true,
+      "allowAuthenticatedDevices": false,
+      "enabledJoinBeforeHost": false,
+      "joinBeforeHostMinutes": 7,
+      "enableConnectAudioBeforeHost": true,
+      "excludePassword": true,
+      "publicMeeting": false,
+      "enableAutomaticLock": false,
+      "automaticLockMinutes": 2,
+      "unlockedMeetingJoinSecurity": "allowJoinWithLobby",
+      "telephony": {
+        "accessCode": "897918",
+        "callInNumbers": [
+          {
+            "label": "United States Toll",
+            "callInNumber": "+1-415-527-5035",
+            "tollType": "toll"
+          },
+          {
+            "label": "United States Toll (Washington D.C.)",
+            "callInNumber": "+1-202-600-2533",
+            "tollType": "toll"
+          }
+        ],
+        "links": [
+          {
+            "rel": "globalCallinNumbers",
+            "href": "/v1/meetings/c771ba6e-2c61-47f7-8a8f-fc2b64e84041/globalCallinNumbers",
+            "method": "GET"
+          }
+        ]
+      },
+      "meetingOptions": {
+        "enabledChat": true,
+        "enabledVideo": false,
+        "enabledNote": false,
+        "noteType": "allowAll",
+        "enabledFileTransfer": true,
+        "enabledUCFRichMedia": true
+      },
+      "attendeePrivileges": {
+        "enabledShareContent": false,
+        "enabledSaveDocument": false,
+        "enabledPrintDocument": true,
+        "enabledAnnotate": false,
+        "enabledViewParticipantList": true,
+        "enabledViewThumbnails": false,
+        "enabledRemoteControl": false,
+        "enabledViewAnyDocument": false,
+        "enabledViewAnyPage": true,
+        "enabledContactOperatorPrivately": true,
+        "enabledChatHost": false,
+        "enabledChatPresenter": true,
+        "enabledChatOtherParticipants": true
+      },
+      "sessionTypeId": 2,
+      "scheduledType": "meeting",
+      "simultaneousInterpretation": {
+        "enabled": false
+      },
+      "enabledBreakoutSessions": false,
+      "audioConnectionOptions": {
+        "audioConnectionType": "webexAudio",
+        "enabledTollFreeCallIn": true,
+        "enabledGlobalCallIn": true,
+        "enabledAudienceCallBack": false,
+        "entryAndExitTone": "beep",
+        "allowHostToUnmuteParticipants": true,
+        "allowAttendeeToUnmuteSelf": false,
+        "muteAttendeeUponEntry": true
+      }
+    },
+    {
+      "id": "572400cd-1661-4deb-8c9a-8ba0210340de",
+      "meetingNumber": 74244,
+      "title": "Fully-configurable homogeneous algorithm",
+      "password": "HVfUgzMLD9Z8gl8",
+      "meetingType": "meetingSeries",
+      "state": "active",
+      "timezone": "Asia/Shanghai",
+      "start": "2023-11-01T20:00:00+08:00",
+      "end": "2023-11-01T21:00:00+08:00",
+      "hostUserId": "38475615",
+      "hostDisplayName": "Teresa Walsh",
+      "hostEmail": "Garnett92@yahoo.com",
+      "hostKey": 60679,
+      "siteUrl": "ciscofedsales.webex.com",
+      "webLink": "http://gertrude.org",
+      "sipAddress": "Henriette_Parker76@yahoo.com",
+      "dialInIpAddress": "209.186.73.185",
+      "enabledAutoRecordMeeting": true,
+      "allowAnyUserToBeCoHost": false,
+      "allowFirstUserToBeCoHost": false,
+      "allowAuthenticatedDevices": false,
+      "enabledJoinBeforeHost": false,
+      "joinBeforeHostMinutes": 5,
+      "enableConnectAudioBeforeHost": true,
+      "excludePassword": true,
+      "publicMeeting": true,
+      "enableAutomaticLock": false,
+      "automaticLockMinutes": 7,
+      "unlockedMeetingJoinSecurity": "allowJoinWithLobby",
+      "telephony": {
+        "accessCode": "776239",
+        "callInNumbers": [
+          {
+            "label": "United States Toll",
+            "callInNumber": "+1-415-527-5035",
+            "tollType": "toll"
+          },
+          {
+            "label": "United States Toll (Washington D.C.)",
+            "callInNumber": "+1-202-600-2533",
+            "tollType": "toll"
+          }
+        ],
+        "links": [
+          {
+            "rel": "globalCallinNumbers",
+            "href": "/v1/meetings/bd8a1b5f-5654-4b17-b3cd-91193ede5aac/globalCallinNumbers",
+            "method": "GET"
+          }
+        ]
+      },
+      "meetingOptions": {
+        "enabledChat": true,
+        "enabledVideo": false,
+        "enabledNote": true,
+        "noteType": "allowAll",
+        "enabledFileTransfer": false,
+        "enabledUCFRichMedia": true
+      },
+      "attendeePrivileges": {
+        "enabledShareContent": false,
+        "enabledSaveDocument": true,
+        "enabledPrintDocument": false,
+        "enabledAnnotate": true,
+        "enabledViewParticipantList": true,
+        "enabledViewThumbnails": true,
+        "enabledRemoteControl": false,
+        "enabledViewAnyDocument": true,
+        "enabledViewAnyPage": false,
+        "enabledContactOperatorPrivately": true,
+        "enabledChatHost": false,
+        "enabledChatPresenter": true,
+        "enabledChatOtherParticipants": false
+      },
+      "sessionTypeId": 5,
+      "scheduledType": "meeting",
+      "simultaneousInterpretation": {
+        "enabled": false
+      },
+      "enabledBreakoutSessions": false,
+      "audioConnectionOptions": {
+        "audioConnectionType": "webexAudio",
+        "enabledTollFreeCallIn": false,
+        "enabledGlobalCallIn": false,
+        "enabledAudienceCallBack": false,
+        "entryAndExitTone": "beep",
+        "allowHostToUnmuteParticipants": false,
+        "allowAttendeeToUnmuteSelf": false,
+        "muteAttendeeUponEntry": true
+      }
+    }
   ]
 }

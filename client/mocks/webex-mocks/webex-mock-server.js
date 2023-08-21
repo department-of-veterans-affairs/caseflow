@@ -255,17 +255,15 @@ server.post("/fake.api-usgov.webex.com/v1/meetings", (req, res) => {
   if (missingKeys.length > 0) {
     res.status(400).json({ message: "Missing required keys", missingKeys });
   } else {
-          // Access conferenceLinks from database
-          const db = router.db; // Get lowdb instance
-          const conferenceLinks = db.get("conferenceLinks");
+    // Access conferenceLinks from database
+    const db = router.db; // Get lowdb instance
+    const conferenceLinks = db.get("conferenceLinks");
 
-          // Add generateMeetingData object to conferenceLinks
-          conferenceLinks.push(generateMeetingData).write();
+    // Add generateMeetingData object to conferenceLinks
+    conferenceLinks.push(generateMeetingData).write();
 
-          res
-            .status(200)
-            .json({ message: "Request is valid and data added!" });
-        }
+    res.status(200).json(generateMeetingData);
+  }
 });
 
 // Sample object to be added
