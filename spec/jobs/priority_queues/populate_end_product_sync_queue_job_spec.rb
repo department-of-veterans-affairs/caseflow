@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe PopulateEndProductSyncQueueJob, type: :job do
+describe PopulateEndProductSyncQueueJob, :pr_28544, type: :job do
   let!(:epes_to_be_queued) do
     create_list(:end_product_establishment, 2, :active_hlr_with_cleared_vbms_ext_claim)
   end

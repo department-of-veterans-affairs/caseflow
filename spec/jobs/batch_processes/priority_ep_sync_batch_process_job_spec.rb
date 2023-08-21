@@ -3,7 +3,7 @@
 require "./app/jobs/batch_processes/priority_ep_sync_batch_process_job.rb"
 require "./app/models/batch_processes/batch_process.rb"
 
-describe PriorityEpSyncBatchProcessJob, type: :job do
+describe PriorityEpSyncBatchProcessJob, :pr_28544, type: :job do
   let!(:syncable_end_product_establishments) do
     create_list(:end_product_establishment, 2, :active_hlr_with_cleared_vbms_ext_claim)
   end

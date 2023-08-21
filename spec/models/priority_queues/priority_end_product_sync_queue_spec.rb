@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe PriorityEndProductSyncQueue, :postgres do
+describe PriorityEndProductSyncQueue, :pr_28544, :postgres do
   describe ".batchable" do
     before do
       Timecop.freeze(Time.utc(2022, 1, 1, 12, 0, 0))

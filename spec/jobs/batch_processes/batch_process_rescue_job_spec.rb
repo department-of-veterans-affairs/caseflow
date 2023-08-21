@@ -2,7 +2,7 @@
 
 require "./app/jobs/batch_processes/batch_process_rescue_job.rb"
 
-describe BatchProcessRescueJob, type: :job do
+describe BatchProcessRescueJob, :pr_28544, type: :job do
   before do
     Timecop.freeze(Time.utc(2022, 1, 1, 12, 0, 0))
   end

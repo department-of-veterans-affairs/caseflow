@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Seeds::VbmsExtClaim do
+describe Seeds::VbmsExtClaim, :pr_28544 do
   let(:seed) { Seeds::VbmsExtClaim.new }
 
   context "#seed!" do
