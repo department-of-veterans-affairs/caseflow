@@ -65,11 +65,13 @@ class Rating
     issues.map do |issue|
       most_recent_disability_hash_for_issue = map_of_dis_sn_to_most_recent_disability_hash[issue[:dis_sn]]
       most_recent_evaluation_for_issue = most_recent_disability_hash_for_issue&.most_recent_evaluation
+      special_issues = most_recent_disability_hash_for_issue&.special_issues
 
       if most_recent_evaluation_for_issue
         issue[:dgnstc_tc] = most_recent_evaluation_for_issue[:dgnstc_tc]
         issue[:prcnt_no] = most_recent_evaluation_for_issue[:prcnt_no]
       end
+      issue[:special_issues] = special_issues if special_issues
       RatingIssue.from_bgs_hash(self, issue)
     end
   end
@@ -80,6 +82,9 @@ class Rating
     disability_data = Array.wrap(rating_profile[:disabilities] || rating_profile.dig(:disability_list, :disability))
 
     disability_data.map do |disability|
+      most_recent_disability_hash_for_issue = map_of_dis_sn_to_most_recent_disability_hash[disability[:dis_sn]]
+      special_issues = most_recent_disability_hash_for_issue&.special_issues
+      disability[:special_issues] = special_issues if special_issues
       RatingDecision.from_bgs_disability(self, disability)
     end
   end

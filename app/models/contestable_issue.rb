@@ -31,7 +31,7 @@ class ContestableIssue
         # account for that.
         source_request_issues: rating_issue.source_request_issues,
         source_decision_review: rating_issue.source_request_issues.first&.decision_review,
-        # special_issues: rating_issue.special_issues
+        special_issues: SpecialIssuesComparator.new(rating_issue).special_issues
       )
     end
 
@@ -62,7 +62,7 @@ class ContestableIssue
         description: rating_decision.decision_text,
         contesting_decision_review: contesting_decision_review,
         rating_issue_diagnostic_code: rating_decision.diagnostic_code,
-        # special_issues: rating_decision.special_issues,
+        special_issues: SpecialIssuesComparator.new(rating_decision).special_issues,
         is_rating: true # true even if rating_reference_id is nil
       )
     end
