@@ -97,7 +97,7 @@ const HearingsTest = () => {
                 </Button>
               </td>
               <td>
-                <div style={{ maxWidth: '800px', maxHeight: '600px', overflowX: 'scroll', overflowY: 'scroll' }}>
+                <div style={{ maxWidth: '600px', maxHeight: '600px', overflowX: 'scroll', overflowY: 'scroll' }}>
                   {reqType.value}
                 </div>
               </td>
