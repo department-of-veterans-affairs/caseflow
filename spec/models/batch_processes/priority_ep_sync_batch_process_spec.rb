@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "./app/models/batch_processes/priority_ep_sync_batch_process.rb"
+require "test_prof/recipes/rspec/let_it_be"
 
 describe PriorityEpSyncBatchProcess, :postgres do
   before do
@@ -81,42 +82,34 @@ describe PriorityEpSyncBatchProcess, :postgres do
   end
 
   describe ".create_batch!" do
-    let!(:pepsq_records) { create_list(:priority_end_product_sync_queue, 10) }
+    let_it_be(:pepsq_records) { create_list(:priority_end_product_sync_queue, 10) }
     subject { PriorityEpSyncBatchProcess.create_batch!(pepsq_records) }
 
     before do
       subject
     end
 
-    it "will create a new batch_process" do
+    it "will create a new batch_process and \n
+        will set the batch_type of the new batch_process to 'PriorityEpSyncBatchProcess'" do
       expect(subject.class).to be(PriorityEpSyncBatchProcess)
       expect(BatchProcess.all.count).to eq(1)
-    end
-
-    it "will set the batch_type of the new batch_process to 'PriorityEpSyncBatchProcess'" do
       expect(subject.batch_type).to eq(PriorityEpSyncBatchProcess.name)
     end
 
-    it "will set the state of the new batch_process to 'PRE_PROCESSING'" do
+    it "will set the state of the new batch_process to 'PRE_PROCESSING' and \n
+        will set records_attempted of the new batch_process to the number of records batched" do
       expect(subject.state).to eq(Constants.BATCH_PROCESS.pre_processing)
-    end
-
-    it "will set records_attempted of the new batch_process to the number of records batched" do
       expect(subject.records_attempted).to eq(pepsq_records.count)
     end
 
-    it "will assign the newly created batch_process batch_id to all newly batched records" do
-      all_pepsq_batch_ids = pepsq_records.map(&:batch_id)
+    it "will assign the newly created batch_process batch_id to all newly batched records, \n
+        will set the status of each newly batched record to 'PRE_PROCESSING', \n
+        and will set the last_batched_at Date/Time of each newly batched record to the current Date/Time " do
+      all_pepsq_batch_ids = pepsq_records.pluck(:batch_id)
       expect(all_pepsq_batch_ids).to all(eq(subject.batch_id))
-    end
-
-    it "will set the status of each newly batched record to 'PRE_PROCESSING'" do
-      all_pepsq_statuses = pepsq_records.map(&:status)
+      all_pepsq_statuses = pepsq_records.pluck(:status)
       expect(all_pepsq_statuses).to all(eq(Constants.PRIORITY_EP_SYNC.pre_processing))
-    end
-
-    it "will set the last_batched_at Date/Time of each newly batched record to the current Date/Time" do
-      all_pepsq_last_batched_at_times = pepsq_records.map(&:last_batched_at)
+      all_pepsq_last_batched_at_times = pepsq_records.pluck(:last_batched_at)
       expect(all_pepsq_last_batched_at_times).to all(eq(Time.zone.now))
     end
   end
