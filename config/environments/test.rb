@@ -99,7 +99,7 @@ Rails.application.configure do
     config.factory_bot.definition_file_paths = []
   end
 
-  # VA Notify evnironment variables
+  # VA Notify environment variables
   ENV["VA_NOTIFY_API_URL"] ||= "https://staging-api.va.gov/vanotify"
   ENV["VA_NOTIFY_API_KEY"] ||= "secret-key"
   ENV["VA_NOTIFY_SERVICE_ID"] ||= "fake-service-id"
