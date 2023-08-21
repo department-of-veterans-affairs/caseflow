@@ -53,7 +53,7 @@ const generateConferenceLinks = () => {
           {
             rel: 'globalCallinNumbers',
             href:
-              '/v1/meetings/' + faker.random.uuid() + '/globalCallinNumbers',
+              `/v1/meetings/${faker.random.uuid()}/globalCallinNumbers`,
             method: 'GET',
           },
         ],
@@ -112,6 +112,7 @@ const data = {
 // Check if the script is being run directly
 if (require.main === module) {
   fs.writeFileSync('mocks/webex-mocks/webex-mock.json', JSON.stringify(data, null, 2));
+  // eslint-disable-next-line no-console
   console.log('Generated new data in webex-mock.json');
 }
 

@@ -200,7 +200,7 @@ const generateMeetingData = {
     links: [
       {
         rel: 'globalCallinNumbers',
-        href: '/v1/meetings/' + faker.random.uuid() + '/globalCallinNumbers',
+        href: `/v1/meetings/${faker.random.uuid()}/globalCallinNumbers`,
         method: 'GET',
       },
     ],
@@ -290,6 +290,7 @@ const errorRoutes = [
 ];
 
 server.listen(3050, () => {
+  /* eslint-disable no-console */
   console.log(' \\{^_^}/ hi!\n');
   console.log(' Loading mocks/webex-mocks/webex-mock.json');
   console.log(' Done\n');
@@ -303,10 +304,12 @@ server.listen(3050, () => {
   const rewrittenRoutes = originalRoutes.map((route) => {
     for (let key in routesRewrite) {
       if (routesRewrite[key] === `/${route}`) {
-        return key; // returning the custom path
+        // returning the custom path
+        return key;
       }
     }
-    return `/${route}`; // returning the original path if no custom path found
+
+    return `/${route}`;
   });
 
   rewrittenRoutes.forEach((route) => {
@@ -325,4 +328,5 @@ server.listen(3050, () => {
     '\n Type s + enter at any time to create a snapshot of the database'
   );
   console.log('Watching...');
+  /* eslint-enable no-console */
 });
