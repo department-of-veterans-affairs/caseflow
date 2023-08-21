@@ -39,7 +39,7 @@ class RatingProfileDisability < SimpleDelegator
     end
   end
 
-  def special_issues
-    @special_issues ||= Array.wrap(self[:disability_special_issues])
-  end
+  # def special_issues
+  #   @special_issues ||= Array.wrap(self[:disability_special_issues])
+  # end
 end

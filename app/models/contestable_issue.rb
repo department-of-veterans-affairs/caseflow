@@ -15,7 +15,6 @@ class ContestableIssue
 
   class << self
     def from_rating_issue(rating_issue, contesting_decision_review)
-      # epe = EndProductEstablishment.find_by(reference_id: rating_issue.reference_id)
       new(
         rating_issue_reference_id: rating_issue.reference_id,
         rating_issue_profile_date: rating_issue.profile_date.to_date,
@@ -32,7 +31,7 @@ class ContestableIssue
         # account for that.
         source_request_issues: rating_issue.source_request_issues,
         source_decision_review: rating_issue.source_request_issues.first&.decision_review,
-        special_issues: rating_issue.special_issues
+        # special_issues: rating_issue.special_issues
       )
     end
 
@@ -50,7 +49,7 @@ class ContestableIssue
         source_request_issues: decision_issue.request_issues.active,
         source_decision_review: source,
         contesting_decision_review: contesting_decision_review,
-        is_rating: decision_issue.rating?,
+        is_rating: decision_issue.rating?
       )
     end
 
@@ -63,8 +62,8 @@ class ContestableIssue
         description: rating_decision.decision_text,
         contesting_decision_review: contesting_decision_review,
         rating_issue_diagnostic_code: rating_decision.diagnostic_code,
-        special_issues: rating_decision.special_issues,
-        is_rating: true, # true even if rating_reference_id is nil
+        # special_issues: rating_decision.special_issues,
+        is_rating: true # true even if rating_reference_id is nil
       )
     end
   end
