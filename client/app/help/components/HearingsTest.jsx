@@ -37,9 +37,7 @@ const HearingsTest = () => {
   const performRestRequest = async () => {
     setErrorBannerText(null);
 
-    const requestUrl = `/hearings/hearing_day/${HEARING_DAY_ID}`;
-
-    return ApiUtil.get(requestUrl).
+    return ApiUtil.get(`/hearings/hearing_day/${HEARING_DAY_ID}`).
       then((response) => {
         setRestValue(JSON.stringify(response.body));
       }).
