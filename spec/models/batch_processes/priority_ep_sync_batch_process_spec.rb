@@ -10,24 +10,24 @@ describe PriorityEpSyncBatchProcess, :postgres do
 
   describe ".find_records_to_batch" do
     # Bulk creation of Pepsq records
-    let!(:pepsq_records) { create_list(:priority_end_product_sync_queue, BatchProcess::BATCH_LIMIT - 10) }
+    let_it_be(:pepsq_records) { create_list(:priority_end_product_sync_queue, BatchProcess::BATCH_LIMIT - 10) }
 
     # Pepsq Records for Status Checks
-    let!(:pepsq_pre_processing) { create(:priority_end_product_sync_queue, :pre_processing) }
-    let!(:pepsq_processing) { create(:priority_end_product_sync_queue, :processing) }
-    let!(:pepsq_synced) { create(:priority_end_product_sync_queue, :synced) }
-    let!(:pepsq_error) { create(:priority_end_product_sync_queue, :error) }
-    let!(:pepsq_stuck) { create(:priority_end_product_sync_queue, :stuck) }
+    let_it_be(:pepsq_pre_processing) { create(:priority_end_product_sync_queue, :pre_processing) }
+    let_it_be(:pepsq_processing) { create(:priority_end_product_sync_queue, :processing) }
+    let_it_be(:pepsq_synced) { create(:priority_end_product_sync_queue, :synced) }
+    let_it_be(:pepsq_error) { create(:priority_end_product_sync_queue, :error) }
+    let_it_be(:pepsq_stuck) { create(:priority_end_product_sync_queue, :stuck) }
 
     # Batch Processes for state check
-    let!(:bp_pre_processing) { PriorityEpSyncBatchProcess.create(state: "PRE_PROCESSING") }
-    let!(:bp_processing) { PriorityEpSyncBatchProcess.create(state: "PROCESSING") }
-    let!(:bp_complete) { PriorityEpSyncBatchProcess.create(state: "COMPLETED") }
+    let_it_be(:bp_pre_processing) { PriorityEpSyncBatchProcess.create(state: "PRE_PROCESSING") }
+    let_it_be(:bp_processing) { PriorityEpSyncBatchProcess.create(state: "PROCESSING") }
+    let_it_be(:bp_complete) { PriorityEpSyncBatchProcess.create(state: "COMPLETED") }
 
     # Batch_id of nil or batch_process.state of COMPLETED
-    let!(:pepsq_batch_complete) { create(:priority_end_product_sync_queue, batch_id: bp_pre_processing.batch_id) }
-    let!(:pepsq_batch_processing) { create(:priority_end_product_sync_queue, batch_id: bp_processing.batch_id) }
-    let!(:pepsq_batch_pre_processing) { create(:priority_end_product_sync_queue, batch_id: bp_complete.batch_id) }
+    let_it_be(:pepsq_batch_complete) { create(:priority_end_product_sync_queue, batch_id: bp_pre_processing.batch_id) }
+    let_it_be(:pepsq_batch_processing) { create(:priority_end_product_sync_queue, batch_id: bp_processing.batch_id) }
+    let_it_be(:pepsq_batch_pre_processing) { create(:priority_end_product_sync_queue, batch_id: bp_complete.batch_id) }
 
     # Additional records for last_batched_at checks
     let!(:pepsq_lba_before_error_delay_ends) do
@@ -42,18 +42,11 @@ describe PriorityEpSyncBatchProcess, :postgres do
 
     subject { PriorityEpSyncBatchProcess.find_records_to_batch }
 
-    it "will only return records that have a NULL batch_id OR have a batch_id tied to a COMPLETED batch process" do
+    it "will only return records that have a NULL batch_id OR have a batch_id tied to a COMPLETED batch process \n
+        and will return records that have a status of NOT_PROCESSED, PRE_PROCESSING, PROCESSING, or ERROR" do
       expect(subject.all? { |r| r.batch_id.nil? || r.batch_process.state == "COMPLETED" }).to eq(true)
       expect(subject.all? { |r| r&.batch_process&.state == "PRE_PROCESSING" }).to eq(false)
       expect(subject.all? { |r| r&.batch_process&.state == "PROCESSING" }).to eq(false)
-    end
-
-    it "will NOT return records that have a status of SYNCED OR STUCK" do
-      expect(subject.all? { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }).to eq(false)
-      expect(subject.all? { |r| r.status == Constants.PRIORITY_EP_SYNC.stuck }).to eq(false)
-    end
-
-    it "will return records that have a status of NOT_PROCESSED, PRE_PROCESSING, PROCESSING, or ERROR" do
       expect(subject.all? do |r|
         r.status == Constants.PRIORITY_EP_SYNC.not_processed ||
         r.status == Constants.PRIORITY_EP_SYNC.pre_processing ||
@@ -62,20 +55,21 @@ describe PriorityEpSyncBatchProcess, :postgres do
       end).to eq(true)
     end
 
-    it "will only return records with a last_batched_at that is NULL OR outside of the ERROR_DELAY" do
-      expect(subject.all? { |r| r.last_batched_at.nil? || r.last_batched_at <= BatchProcess::ERROR_DELAY.hours.ago })
-        .to eq(true)
-      expect(subject.include?(pepsq_lba_aftere_error_delay_ends)).to eq(true)
-      expect(subject.include?(pepsq_lba_before_error_delay_ends)).to eq(false)
-    end
-
-    it "will NOT return records with a last_batched_at that is within the ERROR_DELAY" do
+    it "will NOT return records that have a status of SYNCED OR STUCK \n
+        and will NOT return records with a last_batched_at that is within the ERROR_DELAY" do
+      expect(subject.all? { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }).to eq(false)
+      expect(subject.all? { |r| r.status == Constants.PRIORITY_EP_SYNC.stuck }).to eq(false)
       expect(subject.none? do |r|
         r.last_batched_at.present? && r.last_batched_at > BatchProcess::ERROR_DELAY.hours.ago
       end).to eq(true)
     end
 
-    it "number of records returned will not exceed the BATCH_LIMIT when available records exceed the BATCH_LIMIT" do
+    it "will only return records with a last_batched_at that is NULL OR outside of the ERROR_DELAY \n
+        and number of records returned will not exceed the BATCH_LIMIT when available records exceed the BATCH_LIMIT" do
+      expect(subject.all? { |r| r.last_batched_at.nil? || r.last_batched_at <= BatchProcess::ERROR_DELAY.hours.ago })
+        .to eq(true)
+      expect(subject.include?(pepsq_lba_aftere_error_delay_ends)).to eq(true)
+      expect(subject.include?(pepsq_lba_before_error_delay_ends)).to eq(false)
       expect(PriorityEndProductSyncQueue.count).to eq(BatchProcess::BATCH_LIMIT + 6)
       expect(subject.count).to eq(BatchProcess::BATCH_LIMIT)
     end
