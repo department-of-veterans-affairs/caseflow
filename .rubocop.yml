@@ -4,6 +4,7 @@ require:
 
 AllCops:
   Exclude:
+    - 'bin/**/*'
     - 'db/migrate/*'
     - 'db/schema.rb'
     - 'db/etl/migrate/*'
