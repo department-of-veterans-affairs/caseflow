@@ -35,6 +35,8 @@ module WarRoom
                        "DTA Error"
                      elsif di.description.downcase.include?("difference of opinion")
                        "Difference of Opinion"
+                     else
+                       next
                      end
 
           logs.push <<-TEXT
