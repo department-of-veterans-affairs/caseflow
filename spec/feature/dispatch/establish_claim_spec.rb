@@ -636,7 +636,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
           expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
           expect(page).to have_content("Route Claim")
           expect(page).to have_selector(:link_or_button, "Assign to Claim")
-          click_on "Assign to Claim" # unknown reason sometimes hangs here
+          click_on "Assign to Claim"
 
           expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
           expect(page).to have_content("Success!")
