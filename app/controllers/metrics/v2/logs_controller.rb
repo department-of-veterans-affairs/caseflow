@@ -9,18 +9,6 @@ class Metrics::V2::LogsController < ApplicationController
     failed_metric_info = metric&.errors.inspect || allowed_params[:message]
     Rails.logger.info("Failed to create metric #{failed_metric_info}") unless metric&.valid?
 
-    if (metric.metric_type === 'error')
-      error_info = {
-        name: metric.metric_name,
-        class: metric.metric_class,
-        attrs: metric.metric_attributes,
-        created_at: metric.created_at,
-        uuid: metric.uuid,
-      }
-      error = StandardError.new(error_info)
-      Raven.capture_exception(error)
-    end
-
     head :ok
   end
 
