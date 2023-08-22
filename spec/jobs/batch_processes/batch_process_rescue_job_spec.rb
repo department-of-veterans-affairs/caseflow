@@ -152,6 +152,7 @@ describe BatchProcessRescueJob, type: :job do
         subject
       end
       it "the error will be logged" do
+        # rubocop:disable Layout/LineLength
         expect(Rails.logger).to have_received(:error).with(
           "Error: #<StandardError: Some unexpected error occured.>, Job ID: #{BatchProcessRescueJob::JOB_ATTR.job_id}, Job Time: #{Time.zone.now}"
         )
