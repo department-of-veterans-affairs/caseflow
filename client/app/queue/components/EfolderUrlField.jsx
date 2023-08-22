@@ -65,7 +65,7 @@ const EfolderUrlField = (props) => {
       setValid(false);
       setError(COPY.EFOLDER_INVALID_LINK_FORMAT);
     }
-    valueRef.current = value
+    valueRef.current = value;
     handleChange(props.value);
   }, 500);
 
