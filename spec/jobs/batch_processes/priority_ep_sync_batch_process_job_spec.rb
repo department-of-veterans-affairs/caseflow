@@ -22,18 +22,12 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
   end
 
   let!(:pepsq_records) do
-    # Changing the sleep duration to 0 enables suite to run faster
-    stub_const("PopulateEndProductSyncQueueJob::SLEEP_DURATION", 0)
-
     PopulateEndProductSyncQueueJob.perform_now
     PriorityEndProductSyncQueue.all
   end
 
   subject do
-    # Changing the sleep duration to 0 enables suite to run faster
-    stub_const("PriorityEpSyncBatchProcessJob::SLEEP_DURATION", 0)
-
-    @job = PriorityEpSyncBatchProcessJob.perform_later
+    PriorityEpSyncBatchProcessJob.perform_later
   end
 
   describe "#perform" do
@@ -218,7 +212,7 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
         expect(Raven).to have_received(:capture_exception)
           .with(instance_of(StandardError),
                 extra: {
-                  job_id: @job.job_id,
+                  job_id: subject.job_id,
                   job_time: Time.zone.now.to_s
                 })
       end
@@ -226,7 +220,7 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
       it "slack will be notified when job fails" do
         expect(slack_service).to have_received(:send_notification).with(
           "[ERROR] Error running PriorityEpSyncBatchProcessJob.  Error: #{standard_error.message}."\
-          "  Active Job ID: #{@job.job_id}.  See Sentry event sentry_123.", "PriorityEpSyncBatchProcessJob"
+          "  Active Job ID: #{subject.job_id}.  See Sentry event sentry_123.", "PriorityEpSyncBatchProcessJob"
         )
       end
     end
@@ -244,7 +238,7 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
         expect(Rails.logger).to have_received(:info).with(
           "PriorityEpSyncBatchProcessJob Cannot Find Any Records to Batch."\
           "  Job will be enqueued again at the top of the hour."\
-          "  Active Job ID: #{@job.job_id}.  Time: #{Time.zone.now}"
+          "  Active Job ID: #{subject.job_id}.  Time: #{Time.zone.now}"
         )
       end
 

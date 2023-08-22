@@ -13,13 +13,13 @@ describe PopulateEndProductSyncQueueJob, type: :job do
     create(:end_product_establishment, :active_hlr_with_active_vbms_ext_claim)
   end
 
-  subject do
-    # Changing the sleep duration to 0 enables suite to run faster
-    stub_const("PopulateEndProductSyncQueueJob::SLEEP_DURATION", 0)
+  before do
     # Batch limit changes to 1 to test PopulateEndProductSyncQueueJob loop
     stub_const("PopulateEndProductSyncQueueJob::BATCH_LIMIT", 1)
+  end
 
-    @job = PopulateEndProductSyncQueueJob.perform_later
+  subject do
+    PopulateEndProductSyncQueueJob.perform_later
   end
 
   describe "#perform" do
@@ -46,8 +46,10 @@ describe PopulateEndProductSyncQueueJob, type: :job do
       end
 
       it "the epes are associated with a vbms_ext_claim record" do
-        expect(EndProductEstablishment.find(PriorityEndProductSyncQueue.first.end_product_establishment_id).reference_id).to eq (epes_to_be_queued.first.vbms_ext_claim.claim_id.to_s)
-        expect(EndProductEstablishment.find(PriorityEndProductSyncQueue.second.end_product_establishment_id).reference_id).to eq (epes_to_be_queued.second.vbms_ext_claim.claim_id.to_s)
+        expect(EndProductEstablishment.find(PriorityEndProductSyncQueue.first.end_product_establishment_id)
+          .reference_id).to eq epes_to_be_queued.first.vbms_ext_claim.claim_id.to_s
+        expect(EndProductEstablishment.find(PriorityEndProductSyncQueue.second.end_product_establishment_id)
+          .reference_id).to eq epes_to_be_queued.second.vbms_ext_claim.claim_id.to_s
       end
 
       it "the priority end product sync queue records have a status of 'NOT_PROCESSED'" do
@@ -127,7 +129,8 @@ describe PopulateEndProductSyncQueueJob, type: :job do
       end
 
       it "the epes are associated with a vbms_ext_claim record" do
-        expect(EndProductEstablishment.find(PriorityEndProductSyncQueue.first.end_product_establishment_id).reference_id).to eq (epes_to_be_queued.first.vbms_ext_claim.claim_id.to_s)
+        expect(EndProductEstablishment.find(PriorityEndProductSyncQueue.first.end_product_establishment_id)
+          .reference_id).to eq epes_to_be_queued.first.vbms_ext_claim.claim_id.to_s
       end
 
       it "the priority end product sync queue record has a status of 'NOT_PROCESSED'" do
@@ -155,7 +158,7 @@ describe PopulateEndProductSyncQueueJob, type: :job do
       it "logs a message that says 'PopulateEndProductSyncQueueJob is not able to find any batchable EPE records'" do
         expect(Rails.logger).to have_received(:info).with(
           "PopulateEndProductSyncQueueJob is not able to find any batchable EPE records."\
-          "  Active Job ID: #{@job.job_id}."\
+          "  Active Job ID: #{subject.job_id}."\
           "  Time: #{Time.zone.now}"
         )
       end
@@ -184,7 +187,7 @@ describe PopulateEndProductSyncQueueJob, type: :job do
         expect(Raven).to have_received(:capture_exception)
           .with(instance_of(StandardError),
                 extra: {
-                  active_job_id: @job.job_id,
+                  active_job_id: subject.job_id,
                   job_time: Time.zone.now.to_s
                 })
       end
@@ -192,7 +195,7 @@ describe PopulateEndProductSyncQueueJob, type: :job do
       it "slack will be notified when job fails" do
         expect(slack_service).to have_received(:send_notification).with(
           "[ERROR] Error running PopulateEndProductSyncQueueJob.  Error: #{standard_error.message}."\
-          "  Active Job ID: #{@job.job_id}.  See Sentry event sentry_123.", "PopulateEndProductSyncQueueJob"
+          "  Active Job ID: #{subject.job_id}.  See Sentry event sentry_123.", "PopulateEndProductSyncQueueJob"
         )
       end
     end
@@ -211,7 +214,7 @@ describe PopulateEndProductSyncQueueJob, type: :job do
       it "a message that says 'Cannot Find Any Records to Batch' will be logged" do
         expect(Rails.logger).to have_received(:info).with(
           "PopulateEndProductSyncQueueJob is not able to find any batchable EPE records."\
-          "  Active Job ID: #{@job.job_id}.  Time: #{Time.zone.now}"
+          "  Active Job ID: #{subject.job_id}.  Time: #{Time.zone.now}"
         )
       end
 

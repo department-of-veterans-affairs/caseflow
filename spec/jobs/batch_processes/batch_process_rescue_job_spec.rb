@@ -18,14 +18,10 @@ describe BatchProcessRescueJob, type: :job do
   end
 
   let!(:pepsq_records_one) do
-    # Changing the sleep duration to 0 enables suite to run faster
-    stub_const("PopulateEndProductSyncQueueJob::SLEEP_DURATION", 0)
     PopulateEndProductSyncQueueJob.perform_now
   end
 
   let!(:first_batch_process) do
-    # Changing the sleep duration to 0 enables suite to run faster
-    stub_const("PriorityEpSyncBatchProcessJob::SLEEP_DURATION", 0)
     PriorityEpSyncBatchProcessJob.perform_now
   end
 
@@ -34,14 +30,10 @@ describe BatchProcessRescueJob, type: :job do
   end
 
   let!(:pepsq_records_two) do
-    # Changing the sleep duration to 0 enables suite to run faster
-    stub_const("PopulateEndProductSyncQueueJob::SLEEP_DURATION", 0)
     PopulateEndProductSyncQueueJob.perform_now
   end
 
   let!(:second_batch_process) do
-    # Changing the sleep duration to 0 enables suite to run faster
-    stub_const("PriorityEpSyncBatchProcessJob::SLEEP_DURATION", 0)
     PriorityEpSyncBatchProcessJob.perform_now
   end
 
@@ -53,7 +45,7 @@ describe BatchProcessRescueJob, type: :job do
     BatchProcess.second
   end
 
-  subject { @job = BatchProcessRescueJob.perform_later }
+  subject { BatchProcessRescueJob.perform_later }
 
   describe "#perform" do
     context "when all batch processes are 'COMPLETED'" do
@@ -247,7 +239,7 @@ describe BatchProcessRescueJob, type: :job do
         expect(Raven).to have_received(:capture_exception)
           .with(instance_of(StandardError),
                 extra: {
-                  active_job_id: @job.job_id.to_s,
+                  active_job_id: subject.job_id.to_s,
                   job_time: Time.zone.now.to_s
                 })
       end
@@ -255,7 +247,7 @@ describe BatchProcessRescueJob, type: :job do
       it "slack will be notified when job fails" do
         expect(slack_service).to have_received(:send_notification).with(
           "[ERROR] Error running BatchProcessRescueJob.  Error: #{standard_error.message}."\
-          "  Active Job ID: #{@job.job_id}.  See Sentry event sentry_123.", "BatchProcessRescueJob"
+          "  Active Job ID: #{subject.job_id}.  See Sentry event sentry_123.", "BatchProcessRescueJob"
         )
       end
 
