@@ -50,7 +50,8 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
 
         sleep(SLEEP_DURATION)
       rescue StandardError => error
-        Rails.logger.error("Error: #{error.inspect}, Job ID: #{JOB_ATTR&.job_id}, Job Time: #{Time.zone.now}")
+        Rails.logger.error("PriorityEpSyncBatchProcessJob::Error: #{error.inspect},
+           Job ID: #{JOB_ATTR&.job_id}, Job Time: #{Time.zone.now}")
         capture_exception(error: error,
                           extra: { job_id: JOB_ATTR&.job_id.to_s,
                                    job_time: Time.zone.now.to_s })
