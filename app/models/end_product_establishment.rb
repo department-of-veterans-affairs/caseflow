@@ -211,23 +211,20 @@ class EndProductEstablishment < CaseflowRecord
   end
 
   def sync!
-    RedisMutex.with_lock("EndProductEstablishment:#{id}", block: 60, expire: 100) do    # key => "EndProductEstablishment:id"
+    RedisMutex.with_lock("EndProductEstablishment:#{id}", block: 60, expire: 100) do
+      # key => "EndProductEstablishment:id"
       # There is no need to sync end_product_status if the status
       # is already inactive since an EP can never leave that state
       return true unless status_active?
-
       fail EstablishedEndProductNotFound, id unless result
 
       # load contentions now, in case "source" needs them.
-      # this VBMS call is slow and will cause the transaction below
-      # to timeout in some cases.
+      # this VBMS call is slow and will cause the transaction below to timeout in some cases.
       contentions unless result.status_type_code == EndProduct::STATUSES.key("Canceled")
 
       transaction do
-        update!(
-          synced_status: result.status_type_code,
-          last_synced_at: Time.zone.now
-        )
+        update!(synced_status: result.status_type_code,
+                last_synced_at: Time.zone.now)
         status_cancelled? ? handle_cancelled_ep! : sync_source!
         close_request_issues_with_no_decision!
       end
@@ -235,7 +232,7 @@ class EndProductEstablishment < CaseflowRecord
       save_updated_end_product_code!
     end
   rescue RedisMutex::LockError
-    Rails.logger.error('failed to acquire lock! EPE sync is being called by another process. Please try again later.')
+    Rails.logger.error("failed to acquire lock! EPE sync is being called by another process. Please try again later.")
   rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => error
     raise error
   rescue StandardError => error
