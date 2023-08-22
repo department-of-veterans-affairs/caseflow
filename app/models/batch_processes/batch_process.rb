@@ -87,6 +87,7 @@ class BatchProcess < CaseflowRecord
   #
   # As a general method, it's assumed the record has a batch_id and error_messages
   # column within the associated table.
+  # :reek:FeatureEnvy
   def error_out_record!(record, error)
     increment_failed
     error_array = record.error_messages || []

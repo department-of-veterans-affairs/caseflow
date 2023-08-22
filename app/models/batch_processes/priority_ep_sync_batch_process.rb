@@ -38,6 +38,7 @@ class PriorityEpSyncBatchProcess < BatchProcess
   #
   # Response: Returns True if batch is processed successfully
   # rubocop:disable Metrics/MethodLength
+  # :reek:FeatureEnvy
   def process_batch!
     batch_processing!
 

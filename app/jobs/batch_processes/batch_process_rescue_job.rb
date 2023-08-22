@@ -10,6 +10,7 @@ class BatchProcessRescueJob < CaseflowJob
     JOB_ATTR = job
   end
 
+  # :reek:FeatureEnvy
   def perform
     batches = BatchProcess.needs_reprocessing
     if batches.any?
