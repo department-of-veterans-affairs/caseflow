@@ -71,7 +71,7 @@ class Organizations::UsersController < OrganizationsController
   def update_user_meeting_type
     new_meeting_type = params.dig(:attributes, :meeting_type)
 
-    if organization["url"] == HearingAdmin.singleton.url && new_meeting_type
+    if organization["url"] == HearingsManagement.singleton.url && new_meeting_type
       OrganizationsUser.update_user_conference_type(user_to_modify, new_meeting_type)
     end
   end
