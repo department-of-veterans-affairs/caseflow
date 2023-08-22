@@ -66,7 +66,7 @@ describe BatchProcess, :postgres do
     end
   end
 
-  describe ".create_batch!(record)" do
+  describe ".create_batch!(_records)" do
     it "is a no-op method that does nothing and returns nil" do
       expect(BatchProcess.create_batch!(nil)).to eq(nil)
     end

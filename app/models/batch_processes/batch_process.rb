@@ -37,7 +37,7 @@ class BatchProcess < CaseflowRecord
     # Params: Records retrieved from a Queue table that need to be assigned to a Batch Process
     #
     # Response: Newly Created Batch Process
-    def create_batch!(record)
+    def create_batch!(_records)
       # no-op, can be overwritten
     end
   end
