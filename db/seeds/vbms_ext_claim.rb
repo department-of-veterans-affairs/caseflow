@@ -184,9 +184,8 @@ module Seeds
     def create_end_product_establishment(trait, veteran)
       create(:end_product_establishment,
               trait,
-              veteran: veteran,
-              veteran_file_number: veteran.file_number,
-              claimant_participant_id: veteran.participant_id
+              veteran_file_number: veteran.file_number
+              # claimant_participant_id: veteran.participant_id
             )
     end
 
