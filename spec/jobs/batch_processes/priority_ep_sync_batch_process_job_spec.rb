@@ -13,7 +13,7 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
   end
 
   let!(:pepsq_records) do
-    # Changing the sleep duration to 0 enables suite to run faster
+    # Changing the duration to 0 enables suite to run faster
     stub_const("PopulateEndProductSyncQueueJob::SLEEP_DURATION", 0)
 
     PopulateEndProductSyncQueueJob.perform_now
@@ -21,7 +21,7 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
   end
 
   subject do
-    # Changing the sleep duration to 0 enables suite to run faster
+    # Changing the duration to 0 enables suite to run faster
     stub_const("PriorityEpSyncBatchProcessJob::SLEEP_DURATION", 0)
 
     PriorityEpSyncBatchProcessJob.perform_now
