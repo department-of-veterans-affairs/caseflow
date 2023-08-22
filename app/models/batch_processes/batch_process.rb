@@ -37,7 +37,8 @@ class BatchProcess < CaseflowRecord
     # Params: Records retrieved from a Queue table that need to be assigned to a Batch Process
     #
     # Response: Newly Created Batch Process
-    def create_batch!(record)
+    # :reek:UnusedParameters
+    def create_batch!(_records)
       # no-op, can be overwritten
     end
   end
@@ -53,6 +54,8 @@ class BatchProcess < CaseflowRecord
 
   private
 
+  attr_accessor :completed_count, :failed_count
+
   # Initialize Counters
   def init_counters
     @completed_count = 0
@@ -60,11 +63,11 @@ class BatchProcess < CaseflowRecord
   end
 
   def increment_completed
-    @completed_count += 1
+    self.completed_count += 1
   end
 
   def increment_failed
-    @failed_count += 1
+    self.failed_count += 1
   end
 
   # State update Methods
@@ -74,8 +77,8 @@ class BatchProcess < CaseflowRecord
 
   def batch_complete!
     update!(state: Constants.BATCH_PROCESS.completed,
-            records_failed: @failed_count,
-            records_completed: @completed_count,
+            records_failed: failed_count,
+            records_completed: completed_count,
             ended_at: Time.zone.now)
   end
 

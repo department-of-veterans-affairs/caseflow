@@ -11,10 +11,7 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
   SLEEP_DURATION ||= ENV["END_PRODUCT_QUEUE_SLEEP_DURATION"].to_i
   BATCH_LIMIT ||= ENV["END_PRODUCT_QUEUE_BATCH_LIMIT"].to_i
 
-  before_perform do |job|
-    JOB_ATTR = job
-  end
-
+  # rubocop:disable Metrics/CyclomaticComplexity
   def perform
     setup_job
     loop do
@@ -32,15 +29,15 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
 
         sleep(SLEEP_DURATION)
       rescue StandardError => error
-        Rails.logger.error("PopulateEndProductSyncQueueJob::Error: #{error.inspect},
-           Job ID: #{JOB_ATTR&.job_id}, Job Time: #{Time.zone.now}")
-        capture_exception(error: error,
-                          extra: { job_id: JOB_ATTR&.job_id.to_s,
-                                   job_time: Time.zone.now.to_s })
+        log_error(error, extra: { active_job_id: job_id.to_s, job_time: Time.zone.now.to_s })
+        slack_msg = "Error running #{self.class.name}.  Error: #{error.message}.  Active Job ID: #{job_id}."
+        slack_msg += "  See Sentry event #{Raven.last_event_id}." if Raven.last_event_id.present?
+        slack_service.send_notification("[ERROR] #{slack_msg}", self.class.to_s)
         stop_job
       end
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   private
 
@@ -80,11 +77,13 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
     Time.zone.now > job_expected_end_time
   end
 
+  # :reek:BooleanParameter
+  # :reek:ControlParameter
   def stop_job(log_no_records_found: false)
     self.should_stop_job = true
     if log_no_records_found
       Rails.logger.info("PopulateEndProductSyncQueueJob is not able to find any batchable EPE records."\
-        "  Job ID: #{JOB_ATTR&.job_id}.  Time: #{Time.zone.now}")
+        "  Active Job ID: #{job_id}.  Time: #{Time.zone.now}")
     end
   end
 end

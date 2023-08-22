@@ -18,10 +18,10 @@ class BatchProcessRescueJob < CaseflowJob
         begin
           batch.process_batch!
         rescue StandardError => error
-          Rails.logger.error("Error: #{error.inspect}, Job ID: #{JOB_ATTR&.job_id}, Job Time: #{Time.zone.now}")
-          capture_exception(error: error,
-                            extra: { job_id: JOB_ATTR&.job_id.to_s,
-                                     job_time: Time.zone.now.to_s })
+          log_error(error, extra: { active_job_id: job_id.to_s, job_time: Time.zone.now.to_s })
+          slack_msg = "Error running #{self.class.name}.  Error: #{error.message}.  Active Job ID: #{job_id}."
+          slack_msg += "  See Sentry event #{Raven.last_event_id}." if Raven.last_event_id.present?
+          slack_service.send_notification("[ERROR] #{slack_msg}", self.class.to_s)
           next
         end
       end
