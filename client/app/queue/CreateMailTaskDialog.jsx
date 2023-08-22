@@ -44,7 +44,7 @@ export class CreateMailTaskDialog extends React.Component {
     const instructionsAndValue = () => this.state.selectedValue !== null && this.state.instructions !== '';
 
     if (this.isHearingRequestMailTask()) {
-      return instructionsAndValue() && this.state.eFolderUrl !== '';
+      return instructionsAndValue() && this.state.eFolderUrlValid === true;
     }
 
     return instructionsAndValue();
