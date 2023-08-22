@@ -51,7 +51,7 @@ describe('CreateMailTaskDialog', () => {
       expect(screen.getByText(modalTitle)).toBeTruthy();
     });
 
-    test('submit button is initially disabled', () =>{
+    test('submit button is initially disabled', () => {
       setUpMailTaskDialog();
 
       expect(screen.getByText('Submit')).toBeDisabled();
