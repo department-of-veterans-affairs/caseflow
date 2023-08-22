@@ -79,7 +79,7 @@ const EfolderUrlField = (props) => {
 
   return <>
     <TextField
-      label={`Include Caseflow Reader document hyperlink to request a hearing ${extractRequestType()}`}
+      label={`Include eFolder document hyperlink to request a hearing ${extractRequestType()}`}
       name="eFolderUrlField"
       value={props.value}
       onChange={handleChange}
