@@ -147,7 +147,6 @@ export const documentScreenMemoized = (state) => {
     currentPageIndex: state.reader.documentViewer.currentPageIndex,
     pendingTag: state.reader.documentViewer.pendingTag,
     editingTag: state.reader.documentViewer.editingTag,
-    isAutoTagPending: state.reader.documentViewer.isAutoTagPending,
     pendingCategory: state.reader.documentViewer.pendingCategory,
     documentTags: state.reader.documentViewer.tags,
     tagOptions,

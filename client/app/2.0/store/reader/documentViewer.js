@@ -39,7 +39,6 @@ const initialErrorState = {
  */
 export const initialState = {
   pendingTag: false,
-  isAutoTagPending: false,
   pendingCategory: false,
   currentPageIndex: 0,
   viewport: {
@@ -533,7 +532,7 @@ const documentViewerSlice = createSlice({
       }).
       addCase(generateAutoTags.pending, (state) => {
         state.pendingTag = true;
-        state.isAutoTagPending = true
+        state.selected.isAutoTagPending = true
       }).
       addCase(generateAutoTags.fulfilled, (state, action) => {
         // Reset the state
@@ -541,7 +540,7 @@ const documentViewerSlice = createSlice({
         state.editingTag = false;
 
         // Update the tags
-        state.selected.tags = [];
+        state.selected.tags = state.selected.tags;
       }).
       addCase(generateAutoTags.rejected, (state, action) => {
         // Set the error state

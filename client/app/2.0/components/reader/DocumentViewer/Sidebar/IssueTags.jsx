@@ -13,8 +13,8 @@ import Alert from 'app/components/Alert';
  * Issue Tags Component for searching Document Issue Tags
  * @param {Object} props -- Contains details to search for document tags
  */
-export const IssueTags = ({ errors, pendingTag, changeTags, tagOptions, handleTagEdit, autoTaggingEnabled, generateTags, currentDocument, isAutoTagPending }) => {
-  const { auto_tagged } = currentDocument
+export const IssueTags = ({ errors, pendingTag, changeTags, tagOptions, handleTagEdit, autoTaggingEnabled, generateTags, currentDocument }) => {
+  const { auto_tagged, isAutoTagPending } = currentDocument
   const isVisible = autoTaggingEnabled && (process.env.NODE_ENV === "production" ? !auto_tagged : true)
   return (
     <div className="cf-issue-tag-sidebar">
