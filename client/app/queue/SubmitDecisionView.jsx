@@ -102,9 +102,9 @@ class SubmitDecisionView extends React.PureComponent {
       decision,
       judges
     } = this.props;
-
-    const issuesToPass = decisionIssues;
+    const issuesToPass = isLegacyAppeal ? issues : decisionIssues;
     const payload = buildCaseReviewPayload(checkoutFlow, decision, true, issuesToPass, { isLegacyAppeal });
+
 
     const fields = {
       type: checkoutFlow === DECISION_TYPES.DRAFT_DECISION ? 'decision' : 'outside medical opinion (OMO) request',
