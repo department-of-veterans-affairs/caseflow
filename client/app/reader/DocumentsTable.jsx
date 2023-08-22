@@ -264,10 +264,17 @@ class DocumentsTable extends React.Component {
                 handleClose={this.toggleRecieptDataDropdownFilterVisibility}
                 addClearFiltersRow
               >
-                <Dropdown
-                  name="aaaaa"
-                  options={dateDropdownMap}
-                  label="Date filter parameters" />
+                <>
+                  <Dropdown
+                    name="aaaaa"
+                    options={dateDropdownMap}
+                    label="Date filter parameters" />
+
+                  <DateSelector type="date" name="Before this date" />
+                  <DateSelector type="date" name="After this date" />
+                  <DateSelector type="date" name="On this date" />
+
+                </>
               </DropdownFilter>
             )}
           </>
