@@ -10,6 +10,7 @@
 # => removes the audit tables; removes all PriorityEndProductSyncQueue, BatchProcess, and seed records; recreates audit tables
 #
 # To destroy the records mentioned above and re-seed, run 'make reseed-vbms-ext-claim'
+# Disable :reek:InstanceVariableAssumption
 module Seeds
   class VbmsExtClaim < Base
 
