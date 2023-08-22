@@ -116,6 +116,8 @@ class Task < CaseflowRecord
 
   scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
 
+  scope :active_schedule_hearing_tasks, -> { where(type: ScheduleHearingTask.name).active }
+
   attr_accessor :skip_check_for_only_open_task_of_type
 
   prepend AppealDocketed

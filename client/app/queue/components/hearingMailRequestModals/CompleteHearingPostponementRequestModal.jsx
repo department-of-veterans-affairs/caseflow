@@ -15,7 +15,7 @@ import Alert from '../../../components/Alert';
 import DateSelector from '../../../components/DateSelector';
 import TextareaField from '../../../components/TextareaField';
 import { marginTop, marginBottom } from '../../constants';
-import { setScheduledHearing } from '../../../components/common/actions';
+import { setScheduledHearing } from 'app/components/common/actions';
 
 const ACTIONS = {
   RESCHEDULE: 'reschedule',
