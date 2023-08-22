@@ -285,7 +285,7 @@ namespace :db do
         user = User.find_by_css_id(css_id)
         fail ArgumentError, "User must be an Attorney in Vacols for a #{task_type}", caller unless user.attorney_in_vacols?
       else
-        user = User.find_by_css_id("FAKE USER") # need to update for an UAT User if UAT environment
+        user = User.find_by_css_id("FAKE USER") || User.find_by_css_id("CASEFLOW_397") # need to update for an UAT User if UAT environment
       end
 
       fail ActiveRecord::RecordNotFound unless user
