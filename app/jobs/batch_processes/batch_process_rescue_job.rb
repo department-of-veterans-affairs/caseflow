@@ -6,6 +6,7 @@
 class BatchProcessRescueJob < CaseflowJob
   queue_with_priority :low_priority
 
+  # :reek:FeatureEnvy
   def perform
     batches = BatchProcess.needs_reprocessing
     if batches.any?

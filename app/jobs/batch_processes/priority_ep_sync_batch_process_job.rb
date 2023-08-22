@@ -70,6 +70,8 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
     Time.zone.now > job_expected_end_time
   end
 
+  # :reek:BooleanParameter
+  # :reek:ControlParameter
   def stop_job(log_no_records_found: false)
     self.should_stop_job = true
     if log_no_records_found

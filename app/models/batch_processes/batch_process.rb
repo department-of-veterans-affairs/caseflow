@@ -37,6 +37,7 @@ class BatchProcess < CaseflowRecord
     # Params: Records retrieved from a Queue table that need to be assigned to a Batch Process
     #
     # Response: Newly Created Batch Process
+    # :reek:UnusedParameters
     def create_batch!(_records)
       # no-op, can be overwritten
     end
@@ -89,6 +90,7 @@ class BatchProcess < CaseflowRecord
   #
   # As a general method, it's assumed the record has a batch_id and error_messages
   # column within the associated table.
+  # :reek:FeatureEnvy
   def error_out_record!(record, error)
     increment_failed
     error_array = record.error_messages || []
