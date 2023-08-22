@@ -198,11 +198,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
         />
         {checkboxValues[option.id].checked && this.showSubSelections(rowOptId, appeal.isLegacyAppeal) && (
             <RadioField
-              errorMessage={
-                this.props.highlight &&
-                isNull(this.state[option.id].post_aoj) &&
-                "Choose one"
-              }
+              errorMessage={this.props.highlight && isNull(this.state[option.id].post_aoj) ? 'Choose one' : null}
               styling={css(
                 smallLeftMargin,
                 smallBottomMargin,
