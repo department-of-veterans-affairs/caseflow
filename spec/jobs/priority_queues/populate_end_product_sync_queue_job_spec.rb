@@ -10,7 +10,7 @@ describe PopulateEndProductSyncQueueJob, type: :job do
   end
 
   subject do
-    # Changing the sleep duration to 0 enables suite to run faster
+    # Changing the duration to 0 enables suite to run faster
     stub_const("PopulateEndProductSyncQueueJob::SLEEP_DURATION", 0)
     # Batch limit changes to 1 to test PopulateEndProductSyncQueueJob loop
     stub_const("PopulateEndProductSyncQueueJob::BATCH_LIMIT", 1)
