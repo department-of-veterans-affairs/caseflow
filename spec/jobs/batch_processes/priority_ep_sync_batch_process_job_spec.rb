@@ -8,6 +8,11 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
 
   let(:slack_service) { SlackService.new(url: "http://www.example.com") }
 
+  before do
+    allow(SlackService).to receive(:new).with(url: anything).and_return(slack_service)
+    allow(slack_service).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
+  end
+
   let!(:syncable_end_product_establishments) do
     create_list(:end_product_establishment, 2, :active_hlr_with_cleared_vbms_ext_claim)
   end
@@ -34,8 +39,6 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
   describe "#perform" do
     context "when 2 records can sync successfully and 1 cannot" do
       before do
-        allow(SlackService).to receive(:new).with(url: anything).and_return(slack_service)
-        allow(slack_service).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
         end_product_establishment.vbms_ext_claim.destroy!
         perform_enqueued_jobs do
           subject
@@ -73,8 +76,6 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
 
     context "when all 3 records able to sync successfully" do
       before do
-        allow(SlackService).to receive(:new).with(url: anything).and_return(slack_service)
-        allow(slack_service).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
         perform_enqueued_jobs do
           subject
         end
@@ -92,7 +93,7 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
         expect(BatchProcess.first.ended_at).not_to be_nil
       end
 
-      it "the batch process has 2 records_completed" do
+      it "the batch process has 3 records_completed" do
         expect(BatchProcess.first.records_completed).to eq(3)
       end
 
@@ -107,8 +108,6 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
 
     context "when the job creates multiple batches" do
       before do
-        allow(SlackService).to receive(:new).with(url: anything).and_return(slack_service)
-        allow(slack_service).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
         # Batch limit changes to 1 to test PriorityEpSyncBatchProcessJob loop
         stub_const("BatchProcess::BATCH_LIMIT", 1)
 
@@ -153,8 +152,6 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
 
     context "when the job duration ends before all PriorityEndProductSyncQueue records can be batched" do
       before do
-        allow(SlackService).to receive(:new).with(url: anything).and_return(slack_service)
-        allow(slack_service).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
         # Batch limit of 1 limits the number of priority end product sync queue records per batch
         stub_const("BatchProcess::BATCH_LIMIT", 1)
         # Job duration of 0.01 seconds limits the job's loop to one iteration
@@ -206,8 +203,6 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
         allow(Rails.logger).to receive(:error)
         allow(Raven).to receive(:capture_exception)
         allow(Raven).to receive(:last_event_id) { "sentry_123" }
-        allow(SlackService).to receive(:new).with(url: anything).and_return(slack_service)
-        allow(slack_service).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
         allow(PriorityEpSyncBatchProcess).to receive(:find_records_to_batch)
           .and_raise(StandardError, "Oh no!  This is bad!")
         perform_enqueued_jobs do
@@ -240,8 +235,6 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
       before do
         PriorityEndProductSyncQueue.destroy_all
         allow(Rails.logger).to receive(:info)
-        allow(SlackService).to receive(:new).with(url: anything).and_return(slack_service)
-        allow(slack_service).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
         perform_enqueued_jobs do
           subject
         end
