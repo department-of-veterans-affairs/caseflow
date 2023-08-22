@@ -38,8 +38,10 @@ describe PopulateEndProductSyncQueueJob, type: :job do
       end
 
       it "the epes are associated with a vbms_ext_claim record" do
-        expect(EndProductEstablishment.find(PriorityEndProductSyncQueue.first.end_product_establishment_id).reference_id).to eq (epes_to_be_queued.first.vbms_ext_claim.claim_id.to_s)
-        expect(EndProductEstablishment.find(PriorityEndProductSyncQueue.second.end_product_establishment_id).reference_id).to eq (epes_to_be_queued.second.vbms_ext_claim.claim_id.to_s)
+        expect(EndProductEstablishment.find(PriorityEndProductSyncQueue.first.end_product_establishment_id)
+        .reference_id).to eq epes_to_be_queued.first.vbms_ext_claim.claim_id.to_s
+        expect(EndProductEstablishment.find(PriorityEndProductSyncQueue.second.end_product_establishment_id)
+        .reference_id).to eq epes_to_be_queued.second.vbms_ext_claim.claim_id.to_s
       end
 
       it "the priority end product sync queue records have a status of 'NOT_PROCESSED'" do
@@ -105,7 +107,8 @@ describe PopulateEndProductSyncQueueJob, type: :job do
       end
 
       it "the epes are associated with a vbms_ext_claim record" do
-        expect(EndProductEstablishment.find(PriorityEndProductSyncQueue.first.end_product_establishment_id).reference_id).to eq (epes_to_be_queued.first.vbms_ext_claim.claim_id.to_s)
+        expect(EndProductEstablishment.find(PriorityEndProductSyncQueue.first.end_product_establishment_id)
+        .reference_id).to eq epes_to_be_queued.first.vbms_ext_claim.claim_id.to_s
       end
 
       it "the priority end product sync queue record has a status of 'NOT_PROCESSED'" do
