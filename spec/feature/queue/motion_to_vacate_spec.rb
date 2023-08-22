@@ -691,7 +691,6 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         expect(page.current_path).to eq(review_decisions_path)
 
-        # find(".usa-alert-text").find("a1").click
         within find(".usa-alert-text") do
           click_link("please return to the judge")
         end
