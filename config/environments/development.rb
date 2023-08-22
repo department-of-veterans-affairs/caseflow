@@ -67,7 +67,7 @@ Rails.application.configure do
   config.vacols_db_name = "VACOLS_DEV"
 
   # Set to true to get the documents from efolder running locally on port 4000.
-  config.use_efolder_locally = false
+  config.use_efolder_locally = true
 
   # set to true to create queues and override the sqs endpiont
   config.sqs_create_queues = true
@@ -120,7 +120,7 @@ Rails.application.configure do
   end
 
   # eFolder API URL to retrieve appeal documents
-  config.efolder_url = "http://localhost:4000"
+  config.efolder_url = "http://localhost:3001"
   config.efolder_key = "token"
 
   config.google_analytics_account = "UA-74789258-5"
