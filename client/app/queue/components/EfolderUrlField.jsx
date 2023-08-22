@@ -91,8 +91,8 @@ const EfolderUrlField = (props) => {
       error === COPY.EFOLDER_CONNECTION_ERROR &&
       <Button
         onClick={() => handleDebounce(props.value)}
-        linkStyling id="eFolderLinkRetry"
-        classNames={['cf-push-right']}>
+        linkStyling
+        classNames={['cf-push-right', 'cf-retry']}>
           Retry
       </Button>
     }
