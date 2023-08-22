@@ -151,7 +151,7 @@ class SpecialIssuesComparator
   def contentions_tied_to_issue
     @veteran_contentions_from_bgs ||= fetch_contentions_by_participant_id(@issue.participant_id)
 
-    return nil if @veteran_contentions.blank?
+    return false if @veteran_contentions.blank?
 
     @issue.rba_contentions_data.each do |rba|
       rba_contention = rba.with_indifferent_access
