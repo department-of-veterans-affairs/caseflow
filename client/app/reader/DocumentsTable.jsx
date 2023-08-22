@@ -55,6 +55,12 @@ export const getRowObjects = (documents, annotationsPerDocument) => {
 };
 
 class DocumentsTable extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      recieptFilter: 0
+    };
+  }
   componentDidMount() {
     if (this.props.pdfList.scrollTop) {
       this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
@@ -92,6 +98,13 @@ class DocumentsTable extends React.Component {
   toggleTagDropdownFilterVisiblity = () =>
     this.props.toggleDropdownFilterVisibility('tag');
 
+  updateRecieptFilter = (selectedKey) => {
+    this.setState({
+      ...this.state,
+      recieptFilter: selectedKey
+    });
+  }
+
     toggleRecieptDataDropdownFilterVisibility = () => this.props.toggleDropdownFilterVisibility('receiptDate');
 
     getRecieptDateFilterIconRef = (recieptDataFilterIcon) => (this.recieptDataFilterIcon = recieptDataFilterIcon);
@@ -118,10 +131,10 @@ class DocumentsTable extends React.Component {
     const anyDateFiltersAreSet = anyFiltersSet('receiptDate');
 
     const dateDropdownMap = [
-      { key: 1, displayText: 'Between these dates' },
-      { key: 2, displayText: 'Before this date' },
-      { key: 3, displayText: 'After this date' },
-      { key: 4, displayText: 'On this date' }
+      { value: 0, displayText: 'Between these dates' },
+      { value: 1, displayText: 'Before this date' },
+      { value: 2, displayText: 'After this date' },
+      { value: 3, displayText: 'On this date' }
     ];
 
     // We have blank headers for the comment indicator and label indicator columns.
@@ -266,9 +279,13 @@ class DocumentsTable extends React.Component {
               >
                 <>
                   <Dropdown
-                    name="aaaaa"
+                    name="dateDropdownText"
                     options={dateDropdownMap}
-                    label="Date filter parameters" />
+                    label="Date filter parameters"
+                    value="dateDropdownVal"
+                    onChange={(newKey) => this.updateRecieptFilter(newKey)}
+                    defaultText={dateDropdownMap[this.state.recieptFilter].displayText}
+                    />
 
                   <DateSelector type="date" name="Before this date" />
                   <DateSelector type="date" name="After this date" />
