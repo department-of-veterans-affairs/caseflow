@@ -88,12 +88,28 @@ class IssueRemandReasonsOptions extends React.PureComponent {
 
   getChosenOptions = () => filter(this.state, (val) => val.checked);
 
+  getValidChosenOptions = () => {
+
+    if (this.state.error.checked === true && this.state.error.post_aoj === null) {
+      return false;
+    }
+
+    return true;
+  };
+
   validate = () => {
     const chosenOptions = this.getChosenOptions();
 
+    if (this.props.appeal.isLegacyAppeal) {
+      return (
+        chosenOptions.length >= 1 &&
+        every(chosenOptions, (opt) => !isNull(opt.post_aoj))
+      );
+    }
+
     return (
       chosenOptions.length >= 1 &&
-      every(chosenOptions, (opt) => !isNull(opt.post_aoj))
+      this.getValidChosenOptions()
     );
   };
 
@@ -120,7 +136,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       this.setState({
         [reason.code]: {
           checked: true,
-          post_aoj: reason.post_aoj.toString(),
+          post_aoj: reason.post_aoj ? reason.post_aoj.toString() : null,
         },
       })
     );
@@ -142,9 +158,16 @@ class IssueRemandReasonsOptions extends React.PureComponent {
           return false;
         }
 
+        if (val.post_aoj) {
+          return {
+            code: key,
+            post_aoj: val.post_aoj === 'true',
+          };
+        }
+
         return {
           code: key,
-          post_aoj: val.post_aoj === "true",
+          post_aoj: null,
         };
       })
     );
