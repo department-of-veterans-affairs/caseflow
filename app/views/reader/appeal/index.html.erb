@@ -18,6 +18,7 @@
       metricsReaderRenderText: FeatureToggle.enabled_metric?(:metrics_reader_render_text, user: current_user),
       metricsLogRestSuccess: FeatureToggle.enabled_metric?(:metrics_log_rest_success, user: current_user),
       metricsPdfStorePages: FeatureToggle.enabled_metric?(:metrics_pdf_store_pages, user: current_user),
+      readerGetDocumentLogging: FeatureToggle.enabled?(:reader_get_document_logging, user: current_user)
     },
     buildDate: build_date
   }) %>

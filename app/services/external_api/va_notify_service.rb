@@ -4,6 +4,8 @@ require "json"
 require "base64"
 require "digest"
 class ExternalApi::VANotifyService
+  include JwtGenerator
+
   BASE_URL = ENV["VA_NOTIFY_API_URL"]
   CLIENT_SECRET = ENV["VA_NOTIFY_API_KEY"]
   SERVICE_ID = ENV["VA_NOTIFY_SERVICE_ID"]
@@ -98,19 +100,6 @@ class ExternalApi::VANotifyService
       signature = base64url(signature)
       signed_token = "#{token}.#{signature}"
       signed_token
-    end
-
-    # Purpose: Remove any illegal characters and keeps source at proper format
-    #
-    # Params: string
-    #
-    # Return: sanitized string
-    def base64url(source)
-      encoded_source = Base64.encode64(source)
-      encoded_source = encoded_source.sub(/=+$/, "")
-      encoded_source = encoded_source.tr("+", "-")
-      encoded_source = encoded_source.tr("/", "_")
-      encoded_source
     end
 
     # Purpose: Build an email request object

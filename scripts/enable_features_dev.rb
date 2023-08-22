@@ -54,11 +54,15 @@ end
 #   - they make significantly drastic changes in Dev/Demo compared to Production
 #   - the work around the feature has been paused
 #   - the flag is only being used to disable functionality
-disabled_flags = [
-  "legacy_das_deprecation",
-  "cavc_dashboard_workflow",
-  "poa_auto_refresh",
-  "interface_version_2"
+disabled_flags = %w[
+  legacy_das_deprecation
+  cavc_dashboard_workflow
+  poa_auto_refresh
+  interface_version_2
+  cc_vacatur_visibility,
+  acd_disable_legacy_distributions,
+  acd_disable_nonpriority_distributions,
+  acd_disable_legacy_lock_ready_appeals
 ]
 
 all_features = AllFeatureToggles.new.call.flatten.uniq
