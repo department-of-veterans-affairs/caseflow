@@ -159,6 +159,7 @@ describe BatchProcessRescueJob, type: :job do
       end
 
       it "the error will be sent to Sentry" do
+        # rubocop:enable Layout/LineLength
         expect(Raven).to have_received(:capture_exception)
           .with(instance_of(StandardError),
                 extra: {
