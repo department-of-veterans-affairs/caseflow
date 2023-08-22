@@ -43,21 +43,6 @@ export const toggleLegacyOptInModal = (currentIssueAndNotes = {}) => ({
   payload: { currentIssueAndNotes }
 });
 
-export const toggleEditIntakeIssueModal = (index) => ({
-  type: ACTIONS.TOGGLE_EDIT_INTAKE_ISSUES_MODAL,
-  payload: { index }
-});
-
-export const setMstPactDetails = (editIssuesDetails) => ({
-  type: ACTIONS.SET_MST_PACT_DETAILS,
-  payload: { editIssuesDetails }
-});
-
-export const setMstPactIssue = (mstPactValues) => ({
-  type: ACTIONS.SET_MST_PACT_ISSUE,
-  payload: { mstPactValues }
-});
-
 export const removeIssue = (index) => ({
   type: ACTIONS.REMOVE_ISSUE,
   payload: { index }
