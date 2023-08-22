@@ -101,7 +101,7 @@ class DocumentsTable extends React.Component {
   updateRecieptFilter = (selectedKey) => {
     this.setState({
       ...this.state,
-      recieptFilter: selectedKey
+      recieptFilter: Number(selectedKey)
     });
   }
 
@@ -285,11 +285,14 @@ class DocumentsTable extends React.Component {
                     value="dateDropdownVal"
                     onChange={(newKey) => this.updateRecieptFilter(newKey)}
                     defaultText={dateDropdownMap[this.state.recieptFilter].displayText}
-                    />
+                    defaultValue="On this date"
+                  />
 
-                  <DateSelector type="date" name="Before this date" />
-                  <DateSelector type="date" name="After this date" />
-                  <DateSelector type="date" name="On this date" />
+                  {(this.state.recieptFilter === 0 || this.state.recieptFilter === 1) &&
+                  <DateSelector type="date" name="Before this date" />}
+                  {(this.state.recieptFilter === 0 || this.state.recieptFilter === 2) &&
+                  <DateSelector type="date" name="After this date" />}
+                  {this.state.recieptFilter === 3 && <DateSelector type="date" name="On this date" />}
 
                 </>
               </DropdownFilter>
@@ -422,6 +425,9 @@ DocumentsTable.propTypes = {
   setDocListScrollPosition: PropTypes.func.isRequired,
   toggleDropdownFilterVisibility: PropTypes.func.isRequired,
   tagOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  state: PropTypes.shape({
+    recieptFilter: PropTypes.number
+  })
 };
 
 const mapDispatchToProps = (dispatch) =>
