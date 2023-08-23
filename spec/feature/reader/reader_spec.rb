@@ -155,6 +155,32 @@ RSpec.feature "Reader", :all_dbs do
         expect(page.has_no_content?("Filtering by:")).to eq(true)
         expect(find("#button-documents")["class"]).to have_content("usa-button")
       end
+
+      it "can filter by document type" do
+        # select two filters
+        expect(page).to have_content("Filtering by:")
+        expect(page).to have_content("Document Type (2)")
+
+        # deselect one filter
+        expect(page).to have_content("Document Type (1)")
+
+        # clear the filter
+        find("#clear-filters").click
+        expect(page.has_no_content?("Filtering by:")).to eq(true)
+      end
+
+      it "can filter by request date" do
+        # select two filters
+        expect(page).to have_content("Filtering by:")
+        expect(page).to have_content("Request Date (2)")
+
+        # deselect one filter
+        expect(page).to have_content("Request Date (1)")
+
+        # clear the filter
+        find("#clear-filters").click
+        expect(page.has_no_content?("Filtering by:")).to eq(true)
+      end
     end
 
     context "Appeals without any issues" do
