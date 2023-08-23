@@ -155,23 +155,24 @@ class DocumentsTable extends React.Component {
       ];
     }
 
-    let uniqueVals = [];
+    const populateDocumentFilter = () => {
+      // fake data
+      let docsArray = [];
 
-    const buildDropdownHash = (val) => {
+      // looks through all document types, and only adds them into docsArray if they are unique
+      this.props.documents.map((x) => docsArray.includes(x.type) ? true : docsArray.push(x.type));
 
-      let duplicateVal;
+      // convert each item to a hash for use in the filter
+      let filterItems = [];
 
-      uniqueVals.forEach((docHash) => docHash.displayText === val.type ? duplicateVal = true : duplicateVal = false);
+      docsArray.forEach((x) => filterItems.push({
+        value: docsArray.indexOf(x),
+        text: x
+      }));
 
-      if (!duplicateVal) {
-        uniqueVals.push({
-          value: val.id,
-          text: val.type
-        });
-      }
-
+      return filterItems;
     };
-    this.props.documents.map(x => (buildDropdownHash(x)));
+
     const isCategoryDropdownFilterOpen = _.get(this.props.pdfList, [
       'dropdowns',
       'category',
@@ -301,7 +302,7 @@ class DocumentsTable extends React.Component {
                 addClearFiltersRow
               >
                 <DocTagPicker
-                  tags={uniqueVals}
+                  tags={populateDocumentFilter()}
                   tagToggleStates={this.props.docFilterCriteria.document}
                   handleTagToggle={this.props.setDocFilter}
                 />
@@ -410,7 +411,8 @@ DocumentsTable.propTypes = {
   toggleDropdownFilterVisibility: PropTypes.func.isRequired,
   tagOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
   setDocFilter: PropTypes.func,
-  clearDocFilters: PropTypes.func
+  clearDocFilters: PropTypes.func,
+  secretDebug: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) =>
