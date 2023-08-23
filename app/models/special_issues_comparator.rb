@@ -4,9 +4,12 @@
 # built for MST/PACT release
 
 class SpecialIssuesComparator
+
+  attr_accessor :issue, :rating_special_issues, :bgs_client, :veteran_contentions
   def initialize(issue)
     @issue = issue
     @rating_special_issues = issue&.special_issues
+    @bgs_client = BGSService.new
   end
 
   MST_SPECIAL_ISSUES = ["sexual assault trauma", "sexual trauma/assault", "sexual harassment"].freeze
@@ -45,40 +48,43 @@ class SpecialIssuesComparator
 
   # check rating for existing mst status; if none, search contentions
   def mst_from_rating_or_contention
-    return mst_from_rating? if mst_from_rating?
-    return mst_from_contention? if mst_from_contention?
+    return true if mst_from_rating?
+    return true if mst_from_contention?
 
     false
   end
 
   # check rating for existing pact status; if none, search contentions
   def pact_from_rating_or_contention
-    return pact_from_rating? if pact_from_rating?
-    return pact_from_contention? if pact_from_contention?
+    return true if pact_from_rating?
+    return true if pact_from_contention?
 
     false
   end
 
+  # cycles rating special issues and returns if a special issue is MST
   def mst_from_rating?
-    return false if @rating_special_issues.blank?
+    return false if rating_special_issues.blank?
 
-    @rating_special_issues.each do |special_issue|
-      return special_issue_has_mst?(special_issue) if special_issue_has_mst?(special_issue)
+    rating_special_issues.each do |special_issue|
+      return true if special_issue_has_mst?(special_issue)
     end
 
     false
   end
 
+    # cycles rating special issues and returns if a special issue is PACT
   def pact_from_rating?
-    return false if @rating_special_issues.blank?
+    return false if rating_special_issues.blank?
 
-    @rating_special_issues.each do |special_issue|
-      return special_issue_has_pact?(special_issue) if special_issue_has_pact?(special_issue)
+    rating_special_issues.each do |special_issue|
+      return true if special_issue_has_pact?(special_issue)
     end
 
     false
   end
 
+  # checks if rating special issue meets MST criteria
   def special_issue_has_mst?(special_issue)
     special_issue.transform_keys!(&:to_s)
     if special_issue["spis_tn"]&.casecmp("ptsd - personal trauma")&.zero?
@@ -90,6 +96,7 @@ class SpecialIssuesComparator
     end
   end
 
+    # checks if rating special issue meets PACT criteria
   def special_issue_has_pact?(special_issue)
     special_issue.transform_keys!(&:to_s)
     if special_issue["spis_tn"]&.casecmp("gulf war presumptive 3.320")&.zero?
@@ -104,7 +111,7 @@ class SpecialIssuesComparator
     return false if contentions_tied_to_issue.blank?
 
     contentions_tied_to_issue.each do |contention|
-      return mst_contention_status?(contention) if mst_contention_status?(contention)
+      return true if mst_contention_status?(contention)
     end
 
     false
@@ -115,12 +122,13 @@ class SpecialIssuesComparator
     return false if contentions_tied_to_issue.blank?
 
     contentions_tied_to_issue.each do |contention|
-      return pact_contention_status(contention) if pact_contention_status(contention)
+      return true if pact_contention_status(contention)
     end
 
     false
   end
 
+  # checks single contention special issue status for MST
   def mst_contention_status?(bgs_contention)
     bgs_contention.transform_keys!(&:to_s)
     return false if bgs_contention.nil? || bgs_contention["special_issues"].blank?
@@ -134,6 +142,7 @@ class SpecialIssuesComparator
     false
   end
 
+  # checks single contention special issue status for PACT
   def pact_contention_status?(bgs_contention)
     bgs_contention.transform_keys!(&:to_s)
     return false if bgs_contention.nil? || bgs_contention["special_issues"].blank?
@@ -149,40 +158,59 @@ class SpecialIssuesComparator
 
   # get the contentions for the veteran, find the contentions that are tied to the rating issue
   def contentions_tied_to_issue
-    @veteran_contentions_from_bgs ||= fetch_contentions_by_participant_id(@issue.participant_id)
+    # establish veteran contentions
+    @veteran_contentions ||= fetch_contentions_by_participant_id(issue.participant_id)
 
-    return false if @veteran_contentions.blank?
+    return nil if veteran_contentions.blank?
 
-    @issue.rba_contentions_data.each do |rba|
-      rba_contention = rba.with_indifferent_access
-      @veteran_contentions.each do |vc|
-        next unless vc.is_a?(Hash)
-
-        # if only one contention, check the contention info
-        if vc.dig(:contentions).is_a?(Hash)
-          # get the single contention from the response
-          cntn = vc.dig(:contentions)
-
-          next if cntn.blank?
-
-          # see if the contetion ties to the rating
-          contentions_data << cntn if cntn.dig(:cntntn_id) == rba_contention.dig(:cntntn_id)
-
-        # if the response contains an array of contentions, unpack each one and compare
-        elsif vc.dig(:contentions).is_a?(Array)
-
-          vc.dig(:contentions).each do |contention|
-            next if contention.dig(:cntntn_id).blank?
-
-            contentions_data << contention if contention.dig(:cntntn_id) == rba_contention.dig(:cntntn_id)
-          end
-        end
-      end
-    end
-    contentions_data.compact
+    match_ratings_with_contentions
   end
 
   def fetch_contentions_by_participant_id(participant_id)
-    BGSService.new.find_contentions_by_participant_id(participant_id)
+    bgs_client.find_contentions_by_participant_id(participant_id)
+  end
+
+  # cycles list of rba_contentions on the rating issue and matches them with
+  # contentions tied to the veteran
+  def match_ratings_with_contentions
+    # cycle contentions tied to rating issue
+    issue.rba_contentions_data.each do |rba|
+      # grab contention on the rating
+      rba_contention = rba.with_indifferent_access
+      # cycle through the list of contentions from the BGS call (all contentions tied to veteran)
+      veteran_contentions.each do |contention|
+        next unless contention.is_a?(Hash)
+
+        # store any matches that are found
+        contention_matches << link_contention_to_rating(contention, rba_contention)
+      end
+    end
+    contention_matches.compact
+  end
+
+  # takes the contention given and tries to match it to the current rating issue (issue)
+  def link_contention_to_rating(contention, rba_contention)
+    # if only one contention, check the contention info
+    if contention.dig(:contentions).is_a?(Hash)
+      # get the single contention from the response
+      single_contention_info = contention.dig(:contentions)
+
+      return if single_contention_info.blank?
+
+      # see if the contention ties to the rating
+      contention_matches << single_contention_info if single_contention_info.dig(:cntntn_id) == rba_contention.dig(:cntntn_id)
+
+    # if the response contains an array of contentions, unpack each one and compare
+    elsif contention.dig(:contentions).is_a?(Array)
+
+      # cycle the contentions within the array to make the comparison to the rba_contention
+      contention.dig(:contentions).each do |contention_info|
+        next if contention_info.dig(:cntntn_id).blank?
+
+        contention_matches << contention_info if contention_info.dig(:cntntn_id) == rba_contention.dig(:cntntn_id)
+      end
+    end
+
+    contention_matches
   end
 end
