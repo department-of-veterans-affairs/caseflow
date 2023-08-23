@@ -7,13 +7,9 @@ describe CaseflowStuckRecord, :pr_28544, :postgres do
     end
 
     let!(:caseflow_stuck_record) do
-      # Changing the sleep duration to 0 enables suite to run faster
-      stub_const("PopulateEndProductSyncQueueJob::SLEEP_DURATION", 0)
       PopulateEndProductSyncQueueJob.perform_now
 
       3.times do
-        # Changing the sleep duration to 0 enables suite to run faster
-        stub_const("PriorityEpSyncBatchProcessJob::SLEEP_DURATION", 0)
         PriorityEndProductSyncQueue.first.update!(last_batched_at: nil)
         PriorityEpSyncBatchProcessJob.perform_now
       end

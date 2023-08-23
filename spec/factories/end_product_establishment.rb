@@ -210,7 +210,6 @@ FactoryBot.define do
       end
     end
 
-
     after(:build) do |end_product_establishment, _evaluator|
       Generators::EndProduct.build(
         veteran_file_number: end_product_establishment.veteran_file_number,
