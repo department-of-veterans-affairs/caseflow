@@ -2,9 +2,6 @@
 
 require "rails_helper"
 
-# This is the command to run rspec in the console
-# bundle exec rspec spec/controllers/idt/api/v2/distributions_controller_spec.rb
-
 RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
   describe "#distribution" do
     let(:user) { create(:user) }
@@ -141,6 +138,20 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
         expect(JSON.parse(response.body)).to eq(
           "message" => error_message + " #{error_uuid}"
         )
+      end
+    end
+
+    context "format_response" do
+      it "handles JSON parser errors" do
+        invalid_json_response = double("response", raw_body: "invalid_json")
+
+        allow(JSON).to receive(:parse).and_raise(JSON::ParserError)
+
+        expect(controller).to receive(:log_error)
+
+        result = controller.send(:format_response, invalid_json_response)
+
+        expect(result).to eq("invalid_json")
       end
     end
   end

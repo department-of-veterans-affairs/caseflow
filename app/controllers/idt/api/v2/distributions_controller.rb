@@ -40,14 +40,15 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
     response_body = response.raw_body
 
     begin
-      parsed_response = JSON.parse(response_body)
+      json_response = response_body.is_a?(Hash) ? response_body.to_json : response_body
+      parsed_response = JSON.parse(json_response)
 
       # Convert keys from camelCase to snake_case
       parsed_response.deep_transform_keys do |key|
         key.to_s.underscore.gsub(/e(\d)/, 'e_\1')
       end
-    rescue JSON::ParseError => error
-      log_error(error + " Distribution ID: #{params[:distribution_id]}")
+    rescue JSON::ParserError => error
+      log_error(error.message + " Distribution ID: #{params[:distribution_id]}")
 
       response_body
     end
