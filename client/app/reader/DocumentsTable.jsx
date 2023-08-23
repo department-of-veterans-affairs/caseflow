@@ -54,6 +54,32 @@ export const getRowObjects = (documents, annotationsPerDocument) => {
   }, []);
 };
 
+// Takes the string date returned by the date picker, compares it to a today
+// and returns true if the new date was before the current day
+const validateDateIsNotAfter = (pickedDate) => {
+  if (new Date(pickedDate) < new Date()) {
+    console.log('date was before.');
+  }
+};
+
+const validateDateIsAfter = (pickedDate) => {
+  if (new Date(pickedDate) > new Date()) {
+    console.log('date was After.');
+  }
+};
+
+const validateDayIsToday = (pickedDate) => {
+  if (new Date(pickedDate).toDateString() === new Date().toDateString()) {
+    console.log('date was today.');
+  }
+    else {
+      console.log(pickedDate);
+      console.log(new Date(pickedDate).toDateString());
+      console.log(new Date().toDateString());
+    }
+
+};
+
 class DocumentsTable extends React.Component {
   constructor() {
     super();
@@ -286,13 +312,14 @@ class DocumentsTable extends React.Component {
                     onChange={(newKey) => this.updateRecieptFilter(newKey)}
                     defaultText={dateDropdownMap[this.state.recieptFilter].displayText}
                     defaultValue="On this date"
+                    style='appearance: none;'
                   />
 
                   {(this.state.recieptFilter === 0 || this.state.recieptFilter === 1) &&
-                  <DateSelector type="date" name="Before this date" />}
+                  <DateSelector type="date" name="Before this date" onChange={validateDateIsNotAfter} />}
                   {(this.state.recieptFilter === 0 || this.state.recieptFilter === 2) &&
-                  <DateSelector type="date" name="After this date" />}
-                  {this.state.recieptFilter === 3 && <DateSelector type="date" name="On this date" />}
+                  <DateSelector type="date" name="After this date" onChange={validateDateIsAfter} />}
+                  {this.state.recieptFilter === 3 && <DateSelector type="date" name="On this date" onChange={validateDayIsToday} />}
 
                 </>
               </DropdownFilter>
