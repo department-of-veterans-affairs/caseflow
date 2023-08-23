@@ -30,10 +30,6 @@ describe ScDtaForAppealFixJob, :postgres do
 
   subject { described_class.new }
 
-  before do
-    allow(StuckJobHelper).to receive(:upload_logs_to_s3).and_return("logs")
-  end
-
   context "#sc_dta_for_appeal_fix" do
     context "when payee_code is nil" do
       before do
