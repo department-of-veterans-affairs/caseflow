@@ -224,7 +224,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(appeal.tasks.last.parent.status).to eq Constants.TASK_STATUSES.assigned
 
           # Navigate to the appeal that was just returned to board intake and verify the timeline
-          visit "/queue/appeals/#{appeal.external_id}"
+          reload_case_detail_page(appeal.external_id)
           expect(page).to have_content("Case Timeline")
           # Click the timeline display link
           find("#case-timeline-table .cf-submit", text: "View task instructions").click
