@@ -37,19 +37,6 @@ export class Pdf extends React.PureComponent {
     this.props.stopPlacingAnnotation('from-back-to-documents');
     this.props.history.push(this.props.documentPathBase);
   }
-  prefetchDocs = () => {
-    return [...this.props.prefetchFiles, this.props.file].map((file) => {
-      return <PdfFile
-        documentId={this.props.documentId}
-        key={`${file}`}
-        file={file}
-        onPageChange={this.props.onPageChange}
-        isVisible={this.props.file === file}
-        scale={this.props.scale}
-        documentType={this.props.documentType}
-      />;
-    });
-  }
 
   keyListener = (event) => {
     if (isUserEditingText()) {
