@@ -225,8 +225,10 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           # Navigate to the appeal that was just returned to board intake and verify the timeline
           visit "/queue/appeals/#{appeal.external_id}"
+          expect(page).to have_content("Case Timeline")
           # Click the timeline display link
-          find(".cf-submit", text: "View task instructions").click
+          find("#case-timeline-table .cf-submit", text: "View task instructions").click
+          expect(page).to have_content("Hide task instructions")
           # Verify the text in the timeline to match the other text field and optional text field.
           expect(page).to have_content("Other - #{other_text_field_text}")
           expect(page).to have_content(optional_text_field_text)
