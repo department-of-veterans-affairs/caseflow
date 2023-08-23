@@ -26,10 +26,6 @@ describe ClaimNotEstablishedFixJob, :postgres do
     )
   end
 
-  before do
-    allow(StuckJobHelper).to receive(:upload_logs_to_s3).and_return("logs")
-  end
-
   context "#claim_not_established" do
     subject { described_class.new("decision_document", claim_not_established_error) }
 
