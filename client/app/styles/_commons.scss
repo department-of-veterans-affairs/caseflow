@@ -1286,7 +1286,9 @@ button {
   }
 }
 
-.button-back-button {
-  margin-left: 76%;
-}
+@media screen and (max-width: 2560px) { .button-back-button { margin-left: 74%; } }
+@media screen and (max-width: 1440px) { .button-back-button { margin-left: 72%; } }
+@media screen and (max-width: 1366px) { .button-back-button { margin-left: 63%; } }
+@media screen and (max-width: 1024px) { .button-back-button { margin-left: 55%; } }
+@media screen and (max-width: 768px) { .button-back-button { margin-left: 24%; } }
 
