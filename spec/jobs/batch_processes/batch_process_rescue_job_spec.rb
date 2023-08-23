@@ -2,7 +2,7 @@
 
 require "./app/jobs/batch_processes/batch_process_rescue_job.rb"
 
-describe BatchProcessRescueJob, :pr_28544, type: :job do
+describe BatchProcessRescueJob, type: :job do
   include ActiveJob::TestHelper
 
   before do

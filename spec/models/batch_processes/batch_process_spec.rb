@@ -2,7 +2,7 @@
 
 require "./app/models/batch_processes/batch_process.rb"
 
-describe BatchProcess, :pr_28544, :postgres do
+describe BatchProcess, :postgres do
   describe ".needs_reprocessing" do
     before do
       Timecop.freeze(Time.utc(2022, 1, 1, 12, 0, 0))

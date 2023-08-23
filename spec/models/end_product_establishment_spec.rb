@@ -1467,7 +1467,7 @@ describe EndProductEstablishment, :postgres do
     )
   end
 
-  context "#priority_end_product_sync_queue", :pr_28544 do
+  context "#priority_end_product_sync_queue" do
     context "if the End Product Establishment is not enqueued in the Priority End Product Sync Queue" do
       it "will return nil" do
         expect(non_queued_end_product_establishment.priority_end_product_sync_queue).to eq(nil)
@@ -1481,7 +1481,7 @@ describe EndProductEstablishment, :postgres do
     end
   end
 
-  context "#priority_queued?", :pr_28544 do
+  context "#priority_queued?" do
     context "if the End Product Establishment is not enqueued in the Priority End Product Sync Queue" do
       it "will return False" do
         expect(non_queued_end_product_establishment.priority_queued?).to eq(false)

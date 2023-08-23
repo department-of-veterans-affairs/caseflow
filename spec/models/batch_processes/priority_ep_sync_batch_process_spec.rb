@@ -3,7 +3,7 @@
 require "./app/models/batch_processes/priority_ep_sync_batch_process.rb"
 require "test_prof/recipes/rspec/let_it_be"
 
-describe PriorityEpSyncBatchProcess, :pr_28544, :postgres do
+describe PriorityEpSyncBatchProcess, :postgres do
   before do
     Timecop.freeze(Time.utc(2022, 1, 1, 12, 0, 0))
   end

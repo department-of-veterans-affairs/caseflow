@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe PopulateEndProductSyncQueueJob, :pr_28544, type: :job do
+describe PopulateEndProductSyncQueueJob, type: :job do
   include ActiveJob::TestHelper
 
   let(:slack_service) { SlackService.new(url: "http://www.example.com") }

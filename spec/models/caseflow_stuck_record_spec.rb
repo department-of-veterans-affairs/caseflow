@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe CaseflowStuckRecord, :pr_28544, :postgres do
+describe CaseflowStuckRecord, :postgres do
   describe "#end_product_establishment" do
     let!(:end_product_establishment) do
       create(:end_product_establishment, :canceled_hlr_with_cleared_vbms_ext_claim)
