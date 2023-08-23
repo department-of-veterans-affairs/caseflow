@@ -22,21 +22,21 @@ describe BgsShareErrorFixJob, :postgres do
       context "when the error exists on HigherLevelReview"
       describe "when EPE has established_at date" do
         it "clears the BGS::ShareError on the HLR" do
-          subject.share_error
+          subject.perform
           expect(hlr.reload.establishment_error).to be_nil
         end
       end
       describe "when EPE does not have established_at date" do
         it "does not clear the BGS::ShareError on the HLR" do
           epe.update(established_at: nil)
-          subject.share_error
+          subject.perform
           expect(hlr.reload.establishment_error).to eq(share_error)
         end
       end
       context "when the hlr does not have the BGS::ShareError" do
         it "does not attempt to clear the error" do
           hlr.update(establishment_error: nil)
-          subject.share_error
+          subject.perform
           expect(hlr.reload.establishment_error).to eq(nil)
         end
       end
@@ -61,21 +61,21 @@ describe BgsShareErrorFixJob, :postgres do
       context "when the error exists on  RIU"
       describe "when EPE has established_at date" do
         it "clears the BGS::ShareError on the RIU" do
-          subject.share_error
+          subject.perform
           expect(riu.reload.error).to be_nil
         end
       end
       describe "when EPE does not have established_at date" do
         it "does not clear the BGS::ShareError on the HLR" do
           epe_2.update(established_at: nil)
-          subject.share_error
+          subject.perform
           expect(riu.reload.error).to eq(share_error)
         end
       end
       context "when the RIU does not have the BGS::ShareError" do
         it "does not attempt to clear the error" do
           riu.update(error: nil)
-          subject.share_error
+          subject.perform
           expect(riu.reload.error).to eq(nil)
         end
       end
@@ -95,23 +95,24 @@ describe BgsShareErrorFixJob, :postgres do
       context "when the error exists on RIU"
       describe "when EPE has established_at date" do
         it "clear_error!" do
-          subject.share_error
+          subject.perform
           expect(bge.reload.decision_sync_error).to be_nil
         end
       end
       describe "if EPE does not have established_at" do
         it "clears the BGS::ShareError on the HLR" do
           epe_3.update(established_at: nil)
-          subject.share_error
+          subject.perform
           expect(bge.reload.decision_sync_error).to eq(share_error)
         end
       end
       context "when the BGE does not have the BGS::ShareError" do
         it "does not attempt to clear the error" do
           bge.update(decision_sync_error: nil)
-          subject.share_error
+          subject.perform
           expect(bge.reload.decision_sync_error).to eq(nil)
         end
       end
     end
   end
+end

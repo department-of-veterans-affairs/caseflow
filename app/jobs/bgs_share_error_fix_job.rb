@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require "./lib/helpers/stuck_job_helper"
 class BgsShareErrorFixJob < CaseflowJob
   ERROR_TEXT = "ShareError"
+  STUCK_JOB_REPORT_SERVICE = StuckJobReportService.new
 
-  def share_error
+  def perform
     clear_hlr_errors if hlrs_with_errors.present?
     clear_rius_errors if rius_with_errors.present?
     clear_bge_errors if bges_with_errors.present?
@@ -15,12 +15,12 @@ class BgsShareErrorFixJob < CaseflowJob
       object_type.clear_error!
     rescue StandardError => error
       log_error(error)
-      # LOG Errors S3
+      STUCK_JOB_REPORT_SERVICE.append_errors(object_type.class.name, object_type.id, error)
     end
   end
 
   def clear_rius_errors
-    StuckJobHelper.s3_record_count(rius_with_errors, ERROR_TEXT)
+    STUCK_JOB_REPORT_SERVICE.append_record_count(rius_with_errors.count, ERROR_TEXT)
     rius_with_errors.each do |riu|
       epe = EndProductEstablishment.find_by(
         id: riu.review_id
@@ -28,13 +28,13 @@ class BgsShareErrorFixJob < CaseflowJob
       return if epe.established_at.blank?
 
       resolve_error_on_records(riu)
-      StuckJobHelper.single_s3_record_log(riu)
+      STUCK_JOB_REPORT_SERVICE.append_single_record(riu.class.name, riu.id)
     end
-    StuckJobHelper.s3_record_count(rius_with_errors, ERROR_TEXT)
+    STUCK_JOB_REPORT_SERVICE.append_record_count(rius_with_errors.count, ERROR_TEXT)
   end
 
   def clear_hlr_errors
-    StuckJobHelper.s3_record_count(hlrs_with_errors, ERROR_TEXT)
+    STUCK_JOB_REPORT_SERVICE.append_record_count(hlrs_with_errors.count, ERROR_TEXT)
 
     hlrs_with_errors.each do |hlr|
       epe = EndProductEstablishment.find_by(
@@ -43,21 +43,21 @@ class BgsShareErrorFixJob < CaseflowJob
       return if epe.established_at.blank?
 
       resolve_error_on_records(hlr)
-      StuckJobHelper.single_s3_record_log(hlr)
+      STUCK_JOB_REPORT_SERVICE.append_single_record(hlr.class.name, hlr.id)
     end
-    StuckJobHelper.s3_record_count(hlrs_with_errors, ERROR_TEXT)
+    STUCK_JOB_REPORT_SERVICE.append_record_count(hlrs_with_errors.count, ERROR_TEXT)
   end
 
-  def  clear_bge_errors
-    StuckJobHelper.s3_record_count(bges_with_errors, ERROR_TEXT)
+  def clear_bge_errors
+    STUCK_JOB_REPORT_SERVICE.append_record_count(bges_with_errors.count, ERROR_TEXT)
 
     bges_with_errors.each do |bge|
       return if bge.end_product_establishment.established_at.blank?
 
       resolve_error_on_records(bge)
-      StuckJobHelper.single_s3_record_log(bge)
+      STUCK_JOB_REPORT_SERVICE.append_single_record(bge.class.name, bge.id)
     end
-    StuckJobHelper.s3_record_count(bges_with_errors, ERROR_TEXT)
+    STUCK_JOB_REPORT_SERVICE.append_record_count(bges_with_errors.count, ERROR_TEXT)
   end
 
   def hlrs_with_errors
