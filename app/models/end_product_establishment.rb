@@ -233,14 +233,14 @@ class EndProductEstablishment < CaseflowRecord
         else
           sync_source!
         end
-        
+
         close_request_issues_with_no_decision!
       end
 
       save_updated_end_product_code!
     end
   rescue RedisMutex::LockError
-    Rails.logger.error('Failed to acquire lock! EPE sync is being called by another process. Please try again later.')
+    Rails.logger.error("Failed to acquire lock for EPE ID: #{id}! EPE sync is being called by another process. Please try again later.")
   rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => error
     raise error
   rescue StandardError => error
