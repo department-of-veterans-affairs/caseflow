@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
-require "./lib/helpers/stuck_job_helper"
 class DtaScCreationFailedFixJob < CaseflowJob
   ERROR_TEXT = "DTA SC Creation Failed"
-  attr_reader :error_text, :object_type, :logs
 
   def perform
+    stuck_job_report_service = StuckJobReportService.new
     return if hlrs_with_errors.blank?
 
-    StuckJobHelper.s3_record_count(hlrs_with_errors, ERROR_TEXT)
+    stuck_job_report_service.append_record_count(hlrs_with_errors.count, ERROR_TEXT)
 
     hlrs_with_errors.each do |hlr|
       return unless SupplementalClaim.find_by(
@@ -16,17 +15,18 @@ class DtaScCreationFailedFixJob < CaseflowJob
         decision_review_remanded_type: "HigherLevelReview"
       )
 
-      StuckJobHelper.single_s3_record_log(hlr)
+      stuck_job_report_service.append_single_record(hlr.class.name, hlr.id)
 
       ActiveRecord::Base.transaction do
         hlr.clear_error!
-      rescue StandardError
-        raise ActiveRecord::Rollback
+      rescue StandardError => error
+        log_error(error)
+        stuck_job_report_service.append_error(hlr.class.name, hlr.id, error)
       end
     end
 
-    StuckJobHelper.s3_record_count(hlrs_with_errors, ERROR_TEXT)
-    StuckJobHelper.create_s3_log_report(ERROR_TEXT)
+    stuck_job_report_service.append_record_count(hlrs_with_errors.count, ERROR_TEXT)
+    stuck_job_report_service.write_log_report(ERROR_TEXT)
   end
 
   def hlrs_with_errors

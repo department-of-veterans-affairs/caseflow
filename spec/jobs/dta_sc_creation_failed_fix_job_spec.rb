@@ -8,10 +8,6 @@ describe DtaScCreationFailedFixJob, :postgres do
   let!(:hlr) { create(:higher_level_review, veteran_file_number: veteran_file_number, establishment_error: dta_error) }
   let!(:sc) { create(:supplemental_claim, veteran_file_number: veteran_file_number, decision_review_remanded: hlr) }
 
-  before do
-    allow(StuckJobHelper).to receive(:upload_logs_to_s3).and_return("logs")
-  end
-
   context "#dta_sc_creation_failed_fix" do
     subject { described_class.new("higher_level_review", dta_error) }
 
@@ -22,7 +18,7 @@ describe DtaScCreationFailedFixJob, :postgres do
       end
     end
 
-    context "When SC has decision_review_remanded_id and decision_review_remanded_type are nil" do
+    context "When either decision_review_remanded_id or decision_review_remanded_type values are nil" do
       describe "when decision_review_remanded_id is nil" do
         it "does not clear error field on related HLR" do
           sc.update(decision_review_remanded_id: nil)
