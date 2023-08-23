@@ -437,6 +437,7 @@ export const formatAddedIssues = (issues = [], useAmaActivationDate = false) => 
       text: issue.id ? issue.description : `${issue.category} - ${issue.description}`,
       benefitType: issue.benefitType,
       date: issue.decisionDate,
+      editedDecisionDate: issue.editedDecisionDate,
       timely: issue.timely,
       beforeAma: decisionDate < amaActivationDate,
       untimelyExemption: issue.untimelyExemption,

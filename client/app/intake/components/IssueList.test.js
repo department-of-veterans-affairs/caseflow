@@ -57,4 +57,16 @@ describe('IssuesList', () => {
     expect(screen.queryByText(COPY.VHA_NO_DECISION_DATE_BANNER)).not.toBeInTheDocument();
 
   });
+
+  it('renders the "Edit decision date" list action if an issue originally has an editedDecisionDate', () => {
+    const propsWithEditedDecisionDate = {
+      ...mockedIssueListProps,
+    };
+
+    propsWithEditedDecisionDate.issues[0].editedDecisionDate = '2023-07-20';
+
+    setup(propsWithEditedDecisionDate);
+
+    expect(screen.getByText('Edit decision date')).toBeInTheDocument();
+  });
 });
