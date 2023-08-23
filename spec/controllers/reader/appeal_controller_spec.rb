@@ -10,6 +10,13 @@ describe Reader::AppealController, :postgres, type: :controller do
 
   subject { get(:show, params: request_params, format: :json) }
 
+  describe "#index" do
+    it "redirects to /queue" do
+      get :index
+      assert_redirected_to "/queue"
+    end
+  end
+
   describe "#show" do
     context "when the request has a json format" do
       it "returns a successful response" do

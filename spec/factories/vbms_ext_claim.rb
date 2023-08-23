@@ -4,10 +4,10 @@ FactoryBot.define do
   factory :vbms_ext_claim do
     # prevents vbms_ext_claim from having a duplicate key
     sequence(:claim_id) do
-      if VbmsExtClaim.last
+      if VbmsExtClaim.any?
         (VbmsExtClaim.last.claim_id + 1).to_s
       else
-        (10_000 + 1).to_s
+        "300000"
       end
     end
     claim_date { Time.zone.now - 1.day }

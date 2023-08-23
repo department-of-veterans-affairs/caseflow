@@ -54,7 +54,8 @@ FactoryBot.define do
     end
 
     factory :vha_regional_office do
-      type { VhaRegionalOffice.name }
+      type { VhaRegionalOffice }
+      name { Constants.VISN_ORG_NAMES.visn_orgs.name.sample }
     end
 
     factory :education_emo do
@@ -67,6 +68,11 @@ FactoryBot.define do
 
     factory :business_line, class: BusinessLine do
       type { "BusinessLine" }
+    end
+
+    factory :vre_business_line, class: BusinessLine do
+      type { "BusinessLine" }
+      name { Constants::BENEFIT_TYPES["voc_rehab"] }
     end
 
     factory :hearings_management do

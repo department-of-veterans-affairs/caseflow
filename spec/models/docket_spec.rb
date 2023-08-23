@@ -213,8 +213,7 @@ describe Docket, :all_dbs do
         end
 
         context "blocking mail tasks with status completed or cancelled" do
-          it "includes those appeals",
-             skip: "https://github.com/department-of-veterans-affairs/caseflow/issues/10516#issuecomment-503269122" do
+          it "includes those appeals" do
             with_blocking_but_closed_tasks = create(:appeal,
                                                     :with_post_intake_tasks,
                                                     docket_type: Constants.AMA_DOCKETS.direct_review)
@@ -554,12 +553,11 @@ describe Docket, :all_dbs do
     end
 
     it "sets the case ids when a redistribution occurs" do
-      distributed_case.id
       ymd = Time.zone.today.strftime("%F")
       result = subject
 
       expect(DistributedCase.find(distributed_case.id).case_id).to eq("#{distributed_appeal.uuid}-redistributed-#{ymd}")
-      expect(result[0].case_id).to eq(distributed_appeal.uuid)
+      expect(result.any? { |item| item.case_id == distributed_appeal.uuid }).to be_truthy
     end
   end
 

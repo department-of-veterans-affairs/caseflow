@@ -137,11 +137,13 @@
   },
   "COLOCATED_RETURN_TO_ATTORNEY": {
     "label": "Send back to attorney",
-    "value": "modal/mark_task_complete"
+    "value": "modal/mark_task_complete",
+    "func": "mark_task_complete_data"
   },
   "COLOCATED_RETURN_TO_JUDGE": {
     "label": "Send back to judge",
-    "value": "modal/mark_task_complete"
+    "value": "modal/mark_task_complete",
+    "func": "mark_task_complete_data"
   },
   "COMPLETE_TRANSCRIPTION": {
     "label": "Mark as complete: Transcribed",
@@ -201,10 +203,17 @@
     "value": "modal/mark_task_complete",
     "func": "complete_data"
   },
-  "READY_FOR_REVIEW": {
-    "label": "Ready for Review",
+  "VHA_PO_SEND_TO_CAMO_FOR_REVIEW": {
+    "label": "Documents ready for VHA CAMO review",
     "value": "modal/ready_for_review",
-    "func": "vha_complete_data"
+    "func": "vha_complete_data",
+    "sort_order": 4
+  },
+  "VHA_VISN_SEND_TO_VHA_PO_FOR_REVIEW": {
+    "label": "Documents ready for Program Office review",
+    "value": "modal/ready_for_review",
+    "func": "vha_complete_data",
+    "sort_order": 4
   },
   "PLACE_TIMED_HOLD": {
     "label": "Put task on hold",
@@ -237,7 +246,8 @@
     "func": "blocked_special_case_movement_data"
   },
   "TOGGLE_TIMED_HOLD": {
-    "func": "toggle_timed_hold"
+    "func": "toggle_timed_hold",
+    "sort_order": 2
   },
   "REASSIGN_TO_JUDGE": {
     "label": "Re-assign to a judge",
@@ -295,7 +305,8 @@
   },
   "SCHEDULE_HEARING_SEND_TO_TEAM": {
     "label": "Hearing does need to be scheduled, create schedule hearing task",
-    "value": "modal/send_colocated_task"
+    "value": "modal/send_colocated_task",
+    "func": "send_colocated_task"
   },
   "SCHEDULE_VETERAN": {
     "label": "Schedule Veteran",
@@ -366,7 +377,7 @@
     "func": "docket_appeal_data"
   },
   "BVA_INTAKE_RETURN_TO_CAMO": {
-    "label": "Return appeal to VHA",
+    "label": "Return appeal to VHA CAMO",
     "value": "modal/bva_intake_return_to_camo",
     "func": "bva_intake_return_to_camo"
   },
@@ -387,22 +398,26 @@
   "VHA_ASSIGN_TO_PROGRAM_OFFICE": {
     "label": "Assign to Program Office",
     "value": "modal/assign_to_program_office",
-    "func": "vha_assign_to_program_office_data"
+    "func": "vha_assign_to_program_office_data",
+    "sort_order": 3
   },
   "VHA_ASSIGN_TO_REGIONAL_OFFICE": {
     "label": "Assign to VISN",
     "value": "modal/assign_to_regional_office",
-    "func": "vha_assign_to_regional_office_data"
+    "func": "vha_assign_to_regional_office_data",
+    "sort_order": 3
   },
   "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO": {
-    "label": "Return to CAMO team",
+    "label": "Return to VHA CAMO",
     "value": "modal/return_to_camo",
-    "func": "vha_program_office_return_to_camo"
+    "func": "vha_program_office_return_to_camo",
+    "sort_order": 5
   },
   "VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE": {
     "label": "Return to Program Office",
     "value": "modal/return_to_program_office",
-    "func": "vha_regional_office_return_to_program_office"
+    "func": "vha_regional_office_return_to_program_office",
+    "sort_order": 5
   },
   "VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW": {
     "label": "Documents ready for Board Intake review",
@@ -417,10 +432,11 @@
   "VHA_MARK_TASK_IN_PROGRESS": {
     "label": "Mark task in progress",
     "value": "modal/mark_task_in_progress",
-    "func": "vha_mark_task_in_progress"
+    "func": "vha_mark_task_in_progress",
+    "sort_order": 1
   },
   "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS": {
-    "label": "Mark task as in progress",
+    "label": "Mark task in progress",
     "value": "modal/mark_task_in_progress",
     "func": "vha_caregiver_support_mark_task_in_progress"
   },
@@ -435,7 +451,7 @@
     "func": "vha_caregiver_support_send_to_board_intake_for_review"
   },
   "EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW": {
-    "label": "Ready for Review",
+    "label": "Documents ready for Board Intake review",
     "value": "modal/emo_send_to_board_intake_for_review",
     "func": "emo_send_to_board_intake_for_review"
   },
@@ -445,7 +461,7 @@
     "func": "emo_assign_to_education_rpo_data"
   },
   "EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW": {
-    "label": "Ready for Review",
+    "label": "Documents ready for Board Intake review",
     "value": "modal/rpo_send_to_board_intake_for_review",
     "func": "education_rpo_send_to_board_intake_for_review"
   },
@@ -484,7 +500,6 @@
     "value": "modal/mark_task_complete_contested_claim",
     "func": "mark_final_notification_letter"
   },
-
   "CANCEL_CONTESTED_CLAIM_INITIAL_LETTER_TASK": {
     "label": "Cancel task",
     "value": "modal/cancel_initial_letter_task",
@@ -500,7 +515,6 @@
     "value": "modal/cancel_final_letter_task",
     "func": "cancel_final_letter_task_data"
   },
-
   "MARK_TASK_AS_COMPLETE_CONTESTED_CLAIM": {
     "label": "Mark task complete",
     "value": "modal/mark_task_complete_contested_claim",

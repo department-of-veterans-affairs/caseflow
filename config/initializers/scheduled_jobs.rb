@@ -1,10 +1,10 @@
-require "./app/jobs/batch_processes/batch_process_priority_ep_sync_job.rb"
+require "./app/jobs/batch_processes/priority_ep_sync_batch_process_job.rb"
 require "./app/jobs/batch_processes/batch_process_rescue_job.rb"
 
 SCHEDULED_JOBS = {
     "amo_metrics_report" => AMOMetricsReportJob,
     "annual_metrics" => AnnualMetricsReportJob,
-    "batch_process_priority_ep_sync" => BatchProcessPriorityEpSyncJob,
+    "priority_ep_sync_batch_process_job" => PriorityEpSyncBatchProcessJob,
     "batch_process_rescue_job" => BatchProcessRescueJob,
     "calculate_dispatch_stats" => CalculateDispatchStatsJob,
     "create_establish_claim" => CreateEstablishClaimTasksJob,
@@ -13,6 +13,7 @@ SCHEDULED_JOBS = {
     "dependencies_check" => DependenciesCheckJob,
     "dependencies_report_service_log" => DependenciesReportServiceLogJob,
     "docket_range_job" => DocketRangeJob,
+    "duplicate_ep_remediation_job" => DuplicateEpRemediationJob,
     "etl_builder" => ETLBuilderJob,
     "fetch_hearing_locations_for_veterans_job" => FetchHearingLocationsForVeteransJob,
     "foreign_key_polymorphic_association_job" => ForeignKeyPolymorphicAssociationJob,
@@ -46,7 +47,8 @@ SCHEDULED_JOBS = {
     "fetch_all_active_legacy_appeals_job" => FetchAllActiveLegacyAppealsJob,
     "retrieve_and_cache_reader_documents_job" => RetrieveAndCacheReaderDocumentsJob,
     "travel_board_hearing_sync_job" => Hearings::TravelBoardHearingSyncJob,
-    "notification_efolder_sync_job" => NotificationEfolderSyncJob,
+    "ama_notification_efolder_sync_job" => AmaNotificationEfolderSyncJob,
+    "legacy_notification_efolder_sync_job" => LegacyNotificationEfolderSyncJob,
     "change_hearing_request_type_task_cancellation_job" => ChangeHearingRequestTypeTaskCancellationJob,
     "cannot_delete_contention_remediation_job" => CannotDeleteContentionRemediationJob,
     "contention_not_found_remediation_job" => ContentionNotFoundRemediationJob

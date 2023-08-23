@@ -113,7 +113,7 @@ describe BvaDispatchTask, :all_dbs do
         decision_document = DecisionDocument.find_by(appeal_id: root_task.appeal.id)
 
         expect(ProcessDecisionDocumentJob).to have_received(:perform_later)
-          .with(decision_document.id).exactly(:once)
+          .with(decision_document.id, nil).exactly(:once)
         expect(decision_document).to_not eq nil
         expect(decision_document.document_type).to eq "BVA Decision"
         expect(decision_document.source).to eq "BVA"
@@ -144,7 +144,7 @@ describe BvaDispatchTask, :all_dbs do
           decision_document = DecisionDocument.find_by(appeal_id: legacy_appeal.id)
 
           expect(ProcessDecisionDocumentJob).to have_received(:perform_later)
-            .with(decision_document.id).exactly(:once)
+            .with(decision_document.id, nil).exactly(:once)
           expect(decision_document).to_not eq nil
           expect(decision_document.document_type).to eq "BVA Decision"
           expect(decision_document.source).to eq "BVA"
@@ -248,7 +248,7 @@ describe BvaDispatchTask, :all_dbs do
           decision_document = DecisionDocument.find_by(appeal_id: root_task.appeal.id)
 
           expect(ProcessDecisionDocumentJob).to have_received(:perform_later)
-            .with(decision_document.id).exactly(:once)
+            .with(decision_document.id, nil).exactly(:once)
           expect(decision_document).to_not eq nil
           expect(decision_document.document_type).to eq "BVA Decision"
           expect(decision_document.source).to eq "BVA"

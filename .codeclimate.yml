@@ -87,7 +87,7 @@ plugins:
   scss-lint:
     enabled: true
   grep:
-    enabled: true  
+    enabled: true
     config:
       patterns:
         tests-sleep:
@@ -116,7 +116,9 @@ plugins:
 exclude_patterns:
   - 'db/schema.rb'
   - 'db/seeds.rb'
+  - 'db/scripts/*'
   - 'node_modules/**/*'
   - 'app/mappers/zip_code_to_lat_lng_mapper.rb'
   - 'tmp/**/*'
   - 'app/assets/**/*'
+  - 'client/test/data/camoQueueConfigData.js'
