@@ -155,11 +155,27 @@ class DocumentsTable extends React.Component {
       ];
     }
 
+    let uniqueVals = [];
+
+    const buildDropdownHash = (val) => {
+
+      let duplicateVal;
+
+      uniqueVals.forEach((docHash) => docHash.displayText === val.type ? duplicateVal = true : duplicateVal = false);
+
+      if (!duplicateVal) {
+        uniqueVals.push({
+          value: val.id,
+          text: val.type
+        });
+      }
+
+    };
+    this.props.documents.map(x => (buildDropdownHash(x)));
     const isCategoryDropdownFilterOpen = _.get(this.props.pdfList, [
       'dropdowns',
       'category',
     ]);
-
     const isTagDropdownFilterOpen = _.get(this.props.pdfList, [
       'dropdowns',
       'tag',
@@ -285,7 +301,7 @@ class DocumentsTable extends React.Component {
                 addClearFiltersRow
               >
                 <DocTagPicker
-                  tags={this.props.tagOptions}
+                  tags={uniqueVals}
                   tagToggleStates={this.props.docFilterCriteria.document}
                   handleTagToggle={this.props.setDocFilter}
                 />
