@@ -772,7 +772,6 @@
   "USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT": "Add admin rights",
   "USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT": "Remove admin rights",
   "USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT": "Remove from team",
-  "USER_MANAGEMENT_SELECT_HEARINGS_CONFERENCE_TYPE": "Schedule hearings using:",
   "MEMBERSHIP_REQUEST_ACTION_SUCCESS_TITLE": "You successfully %s %s's request",
   "MEMBERSHIP_REQUEST_ACTION_SUCCESS_MESSAGE": "The user was %s regular member access to %s.",
   "VHA_MEMBERSHIP_REQUEST_AUTOMATIC_VHA_ACCESS_NOTE": "Note: If you are requesting specialized access and are not a member of the general VHA group, you will automatically be given access to the general VHA group if your request is approved.",
