@@ -402,7 +402,7 @@ end
           :ama_remand_reason,
           code: "no_notice_sent",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -414,7 +414,7 @@ end
           :ama_remand_reason,
           code: "incorrect_notice_sent",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -426,7 +426,7 @@ end
           :ama_remand_reason,
           code: "legally_inadequate_notice",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -438,7 +438,7 @@ end
           :ama_remand_reason,
           code: "va_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -450,7 +450,7 @@ end
           :ama_remand_reason,
           code: "private_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -462,7 +462,7 @@ end
           :ama_remand_reason,
           code: "service_personnel_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -474,7 +474,7 @@ end
           :ama_remand_reason,
           code: "service_treatment_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -486,7 +486,7 @@ end
           :ama_remand_reason,
           code: "other_government_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -498,7 +498,7 @@ end
           :ama_remand_reason,
           code: "medical_examinations",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -510,7 +510,7 @@ end
           :ama_remand_reason,
           code: "medical_opinions",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -522,7 +522,7 @@ end
           :ama_remand_reason,
           code: "advisory_medical_opinion",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -534,7 +534,7 @@ end
           :ama_remand_reason,
           code: "due_process_deficiency",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -551,7 +551,7 @@ end
           :ama_remand_reason,
           code: "no_notice_sent",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -563,7 +563,7 @@ end
           :ama_remand_reason,
           code: "incorrect_notice_sent",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -575,7 +575,7 @@ end
           :ama_remand_reason,
           code: "legally_inadequate_notice",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -587,7 +587,7 @@ end
           :ama_remand_reason,
           code: "va_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -599,7 +599,7 @@ end
           :ama_remand_reason,
           code: "private_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -611,7 +611,7 @@ end
           :ama_remand_reason,
           code: "service_personnel_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -623,7 +623,7 @@ end
           :ama_remand_reason,
           code: "service_treatment_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -635,7 +635,7 @@ end
           :ama_remand_reason,
           code: "other_government_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -647,7 +647,7 @@ end
           :ama_remand_reason,
           code: "medical_examinations",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -659,7 +659,7 @@ end
           :ama_remand_reason,
           code: "medical_opinions",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -671,7 +671,7 @@ end
           :ama_remand_reason,
           code: "advisory_medical_opinion",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -683,7 +683,7 @@ end
           :ama_remand_reason,
           code: "due_process_deficiency",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -701,7 +701,7 @@ end
           :ama_remand_reason,
           code: "no_notice_sent",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -713,7 +713,7 @@ end
           :ama_remand_reason,
           code: "incorrect_notice_sent",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -725,7 +725,7 @@ end
           :ama_remand_reason,
           code: "legally_inadequate_notice",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -737,7 +737,7 @@ end
           :ama_remand_reason,
           code: "va_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -749,7 +749,7 @@ end
           :ama_remand_reason,
           code: "private_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -761,7 +761,7 @@ end
           :ama_remand_reason,
           code: "service_personnel_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -773,7 +773,7 @@ end
           :ama_remand_reason,
           code: "service_treatment_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -785,7 +785,7 @@ end
           :ama_remand_reason,
           code: "other_government_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -797,7 +797,7 @@ end
           :ama_remand_reason,
           code: "medical_examinations",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -809,7 +809,7 @@ end
           :ama_remand_reason,
           code: "medical_opinions",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -821,7 +821,7 @@ end
           :ama_remand_reason,
           code: "advisory_medical_opinion",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -833,7 +833,7 @@ end
           :ama_remand_reason,
           code: "due_process_deficiency",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -850,7 +850,7 @@ end
           :ama_remand_reason,
           code: "no_notice_sent",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -862,7 +862,7 @@ end
           :ama_remand_reason,
           code: "incorrect_notice_sent",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -874,7 +874,7 @@ end
           :ama_remand_reason,
           code: "legally_inadequate_notice",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -886,7 +886,7 @@ end
           :ama_remand_reason,
           code: "va_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -898,7 +898,7 @@ end
           :ama_remand_reason,
           code: "private_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -910,7 +910,7 @@ end
           :ama_remand_reason,
           code: "service_personnel_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -922,7 +922,7 @@ end
           :ama_remand_reason,
           code: "service_treatment_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -934,7 +934,7 @@ end
           :ama_remand_reason,
           code: "other_government_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -946,7 +946,7 @@ end
           :ama_remand_reason,
           code: "medical_examinations",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -958,7 +958,7 @@ end
           :ama_remand_reason,
           code: "medical_opinions",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -970,7 +970,7 @@ end
           :ama_remand_reason,
           code: "advisory_medical_opinion",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -982,7 +982,7 @@ end
           :ama_remand_reason,
           code: "due_process_deficiency",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -999,7 +999,7 @@ end
           :ama_remand_reason,
           code: "no_notice_sent",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1011,7 +1011,7 @@ end
           :ama_remand_reason,
           code: "incorrect_notice_sent",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1023,7 +1023,7 @@ end
           :ama_remand_reason,
           code: "legally_inadequate_notice",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1035,7 +1035,7 @@ end
           :ama_remand_reason,
           code: "va_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1047,7 +1047,7 @@ end
           :ama_remand_reason,
           code: "private_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1059,7 +1059,7 @@ end
           :ama_remand_reason,
           code: "service_personnel_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1071,7 +1071,7 @@ end
           :ama_remand_reason,
           code: "service_treatment_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1083,7 +1083,7 @@ end
           :ama_remand_reason,
           code: "other_government_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1095,7 +1095,7 @@ end
           :ama_remand_reason,
           code: "medical_examinations",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1107,7 +1107,7 @@ end
           :ama_remand_reason,
           code: "medical_opinions",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1119,7 +1119,7 @@ end
           :ama_remand_reason,
           code: "advisory_medical_opinion",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1131,7 +1131,7 @@ end
           :ama_remand_reason,
           code: "due_process_deficiency",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1149,7 +1149,7 @@ end
           :ama_remand_reason,
           code: "no_notice_sent",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1161,7 +1161,7 @@ end
           :ama_remand_reason,
           code: "incorrect_notice_sent",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1173,7 +1173,7 @@ end
           :ama_remand_reason,
           code: "legally_inadequate_notice",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1185,7 +1185,7 @@ end
           :ama_remand_reason,
           code: "va_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1197,7 +1197,7 @@ end
           :ama_remand_reason,
           code: "private_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1209,7 +1209,7 @@ end
           :ama_remand_reason,
           code: "service_personnel_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1221,7 +1221,7 @@ end
           :ama_remand_reason,
           code: "service_treatment_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1233,7 +1233,7 @@ end
           :ama_remand_reason,
           code: "other_government_records",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1245,7 +1245,7 @@ end
           :ama_remand_reason,
           code: "medical_examinations",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1257,7 +1257,7 @@ end
           :ama_remand_reason,
           code: "medical_opinions",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1269,7 +1269,7 @@ end
           :ama_remand_reason,
           code: "advisory_medical_opinion",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
@@ -1281,7 +1281,7 @@ end
           :ama_remand_reason,
           code: "due_process_deficiency",
           associated_judge: User.find_by_css_id("BVAAABSHIRE"),
-          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          associated_attorney: User.find_by_css_id("BVASCASPER1")
           issue_count: 3,
           veteran: create_veteran)
 
