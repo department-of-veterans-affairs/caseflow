@@ -59,7 +59,7 @@
     "AGE_MAX_ERR": "Appellant cannot be older than 118 years of age."
   },
   "SSN_INVALID_ERR": "Please enter a valid social security number that follows the format: 123-45-6789 or 123456789",
-  "EIN_INVALID_ERR": "Please enter a valid employer identification number that follows the format: 00-1111111 or 123456789",
+  "EIN_INVALID_ERR": "Please enter a valid employer identification number that follows the format: 12-3456789 or 123456789",
   "NULL_FILTER_LABEL": "<<blank>>",
   "OTHER_REVIEWS_TABLE_TITLE": "Higher Level Reviews & Supplemental Claims",
   "OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE": "EP Codes",

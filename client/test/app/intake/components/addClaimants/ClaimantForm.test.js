@@ -169,7 +169,7 @@ describe('HlrScClaimantForm', () => {
     });
   };
 
-  const validatePresenceOFEin = async (optionNum) => {
+  const validatePresenceOfEin = async (optionNum) => {
     await selectRelationship(optionNum);
 
     await userEvent.click(
@@ -249,8 +249,8 @@ describe('HlrScClaimantForm', () => {
 
   it('validate the presence of Employer Identification number for Organizations', async () => {
     setup();
-    validatePresenceOFEin(relationshipOptsHlrSc.map((r) => r.value).indexOf('healthcare_provider'));
-    validatePresenceOFEin(relationshipOptsHlrSc.map((r) => r.value).indexOf('other'));
+    validatePresenceOfEin(relationshipOptsHlrSc.map((r) => r.value).indexOf('healthcare_provider'));
+    validatePresenceOfEin(relationshipOptsHlrSc.map((r) => r.value).indexOf('other'));
   }, 15000);
 
 });
