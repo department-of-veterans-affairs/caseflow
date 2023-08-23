@@ -16,6 +16,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
+import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
 
 const userStyle = css({
   margin: '.5rem 0 .5rem',
@@ -38,10 +39,16 @@ const buttonStyle = css({
 const buttonContainerStyle = css({
   borderBottom: '1rem solid gray',
   borderWidth: '1px',
-  padding: '.5rem 0 2rem',
+  padding: '.5rem 7rem 2rem 0',
+  display: 'flex',
+  justifyContent: 'space-between',
+  flexWrap: 'wrap'
 });
 const listStyle = css({
   listStyle: 'none'
+});
+const radioContainerStyle = css({
+  padding: '-5rem 5rem 2rem 2rem',
 });
 
 export default class OrganizationUsers extends React.PureComponent {
@@ -248,18 +255,34 @@ export default class OrganizationUsers extends React.PureComponent {
       const style = i === 0 ? topUserStyle : userStyle;
 
       return <React.Fragment key={user.id}>
-        <li key={user.id} {...style}>{this.formatName(user)}
-          { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
-          { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
-          { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
-          { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
-        </li>
-        { (judgeTeam || dvcTeam) && admin ?
-          <div {...topUserBorder}></div> :
-          <div {...buttonContainerStyle}>
-            { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
-            { this.removeUserButton(user) }
-          </div> }
+        <div>
+          <ul>
+            <li key={user.id} {...style}>{this.formatName(user)}
+              { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
+              { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
+              { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
+              { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
+            </li>
+            { (judgeTeam || dvcTeam) && admin ?
+              <div {...topUserBorder}></div > :
+              <div {...buttonContainerStyle}>
+                <div>
+                  { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
+                  { this.removeUserButton(user) }
+                </div>
+                { this.state.organizationName === 'Hearings Management' &&
+                  <div {...radioContainerStyle}>
+                    <SelectConferenceTypeRadioField
+                      key={`${user.id}-conference-selection`}
+                      name={user.id}
+                      meetingType={user.attributes.meeting_type}
+                      organization={this.props.organization}
+                      user={user} />
+                  </div>
+                }
+              </div> }
+          </ul>
+        </div>
       </React.Fragment>;
     });
 
@@ -285,10 +308,10 @@ export default class OrganizationUsers extends React.PureComponent {
         <div>
           <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
           <ul {...listStyle}>
-            { (judgeTeam || dvcTeam) ? '' : <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li> }
-            <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{ judgeTeam ?
+            { (judgeTeam || dvcTeam) ? '' : <ul><li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li></ul> }
+            <ul><li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{ judgeTeam ?
               COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
-              COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION }</li>
+              COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION }</li></ul>
           </ul>
         </div>
         <ul>{listOfUsers}</ul>
