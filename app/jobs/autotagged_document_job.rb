@@ -11,6 +11,7 @@ class AutotaggedDocumentJob < CaseflowJob
     else
       Document.where(auto_tagged: false).each do |doc|
         add_tags_to_doc(doc)
+        doc.update(auto_tagged: true)
       end
     end
   end
@@ -22,7 +23,6 @@ class AutotaggedDocumentJob < CaseflowJob
       new_tag = find_existing_tag(tag_text) || Tag.find_or_create_by(tag_text)
       doc.tags << new_tag
     end
-    doc.update(auto_tagged: true)
   end
 
   def get_tags(doc)
