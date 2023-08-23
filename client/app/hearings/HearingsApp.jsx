@@ -68,18 +68,12 @@ export default class HearingsApp extends React.PureComponent {
   propsForAssignHearingsContainer = () => {
     const {
       userId,
-      userCssId,
-      mstIdentification,
-      pactIdentification,
-      legacyMstPactIdentification
+      userCssId
     } = this.props;
 
     return Object.freeze({
       userId,
-      userCssId,
-      mstIdentification,
-      pactIdentification,
-      legacyMstPactIdentification
+      userCssId
     });
   };
 
@@ -244,8 +238,5 @@ HearingsApp.propTypes = {
   userIsDvc: PropTypes.bool,
   userIsHearingManagement: PropTypes.bool,
   userIsBoardAttorney: PropTypes.bool,
-  userIsHearingAdmin: PropTypes.bool,
-  mstIdentification: PropTypes.bool,
-  pactIdentification: PropTypes.bool,
-  legacyMstPactIdentification: PropTypes.bool
+  userIsHearingAdmin: PropTypes.bool
 };
