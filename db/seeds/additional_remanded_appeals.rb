@@ -70,6 +70,7 @@ module Seeds
           create(
             :decision_issue,
             :nonrating,
+            :ama_remand_reason,
             disposition: "allowed",
             decision_review: board_grant_task.appeal,
             request_issues: [request_issue],
@@ -102,6 +103,7 @@ module Seeds
           create(
             :decision_issue,
             :nonrating,
+            :ama_remand_reason,
             disposition: "allowed",
             decision_review: board_grant_task.appeal,
             request_issues: [request_issue],
@@ -134,6 +136,7 @@ module Seeds
           create(
             :decision_issue,
             :nonrating,
+            :ama_remand_reason,
             disposition: "remanded",
             decision_review: board_grant_task.appeal,
             request_issues: [request_issue],
@@ -166,6 +169,7 @@ module Seeds
           create(
             :decision_issue,
             :nonrating,
+            :ama_remand_reason,
             disposition: "remanded",
             decision_review: board_grant_task.appeal,
             request_issues: [request_issue],
@@ -178,189 +182,206 @@ module Seeds
 
     def decision_reason_remand_list
       [
-        { decision_reason: "No notice sent" },
-        { decision_reason: "Incorrect notice sent" },
-        { decision_reason: "Legally inadequate notice" },
-        { decision_reason: "VA records" },
-        { decision_reason: "Private records" },
-        { decision_reason: "Service personnel records" },
-        { decision_reason: "Service treatment records" },
-        { decision_reason: "Other government records" },
-        { decision_reason: "Medical examinations" },
-        { decision_reason: "Medical opinions" },
-        { decision_reason: "Advisory medical opinion" },
-        { decision_reason: "Other due process deficiency" },
-#New Remand Reasons not implemented yet
+        "no_notice_sent",
+        "incorrect_notice_sent",
+        "legally_inadequate_notice",
+        "va_records",
+        "private_records",
+        "service_personnel_records",
+        "service_treatment_records",
+        "other_government_records",
+        "medical_examinations",
+        "medical_opinions",
+        "advisory_medical_opinion",
+        "due_process_deficiency",
+#New Remand Reasons not implemented yet - need actual IDs, not just text output
 =begin
-        { decision_reason: "No medical examination" },
-        { decision_reason: "Inadequate medical examination" },
-        { decision_reason: "No medical opinion" },
-        { decision_reason: "Inadequate medical opinion" },
-        { decision_reason: "Advisory medical opinion" },
-        { decision_reason: "Inextricably intertwined" },
-        { decision_reason: "Error satisfying regulatory or statutory duty" },
-        { decision_reason: "Other" },
-
+        "No medical examination",
+        "Inadequate medical examination",
+        "No medical opinion",
+        "Inadequate medical opinion",
+        "Advisory medical opinion",
+        "Inextricably intertwined",
+        "Error satisfying regulatory or statutory duty",
+        "Other",
 =end
       ]
     end
 
-
+    #Appeals Ready for Decision - Attorney Step
+    #Evidence Submission
     def create_ama_appeals_decision_ready_es
       Timecop.travel(30.days.ago)
-        1.time do
+        15.times do
           appeal = create(:appeal,
                           :evidence_submission_docket,
                           :at_attorney_drafting,
-                          associated_judge: set_judge,
-                          associated_attorney: set_attorney,
+                          associated_judge: judge,
+                          associated_attorney: attorney,
                           issue_count: 3,
                           veteran: create_veteran)
         end
       Timecop.return
     end
 
+    #Hearing
     def create_ama_appeals_decision_ready_hr
       Timecop.travel(90.days.ago)
-        1.time do
+        15.times do
           appeal = create(:appeal,
                           :hearing_docket,
                           :with_request_issues,
                           :at_attorney_drafting,
-                          associated_judge: set_judge,
-                          associated_attorney: set_attorney,
+                          associated_judge: judge,
+                          associated_attorney: attorney,
                           issue_count: 3,
                           veteran: create_veteran)
         end
       Timecop.return
     end
 
+    #Direct Review
     def create_ama_appeals_decision_ready_dr
       Timecop.travel(60.days.ago)
-        1.time do
+        15.times do
           appeal = create(:appeal,
                           :direct_review_docket,
                           :with_request_issues,
                           :at_attorney_drafting,
-                          associated_judge: set_judge,
-                          associated_attorney: set_attorney,
+                          associated_judge: judge,
+                          associated_attorney: attorney,
                           issue_count: 3,
                           veteran: create_veteran)
         end
       Timecop.return
     end
 
+    #Appeals Ready for Decision with 1 Remand
+    #Evidence Submission
     def create_ama_appeals_ready_to_dispatch_remanded_es
       Timecop.travel(30.days.ago)
         (1..12).each do |i|
           appeal = create(:appeal,
                           :evidence_submission_docket,
-                          :create_allowed_request_issue_1,
-                          :create_allowed_request_issue_2,
-                          :create_remanded_request_issue_1,
                           :with_decision_issue,
                           :at_judge_review,
-                          decision_reason: decision_reason_remand_list.at(i-1),
-                          associated_judge: set_judge,
-                          associated_attorney: set_attorney,
+                          request_issues: create_list(
+                            create_allowed_request_issue_1,
+                            create_allowed_request_issue_2,
+                            create_remanded_request_issue_1),
+                          code: decision_reason_remand_list.at(i-1),
+                          associated_judge: judge,
+                          associated_attorney: attorney,
                           issue_count: 3,
                           veteran: create_veteran)
         end
       Timecop.return
     end
 
+    #Hearing
     def create_ama_appeals_ready_to_dispatch_remanded_hr
       Timecop.travel(90.days.ago)
         (1..12).each do |i|
           appeal = create(:appeal,
                           :hearing_docket,
-                          :create_allowed_request_issue_1,
-                          :create_allowed_request_issue_2,
-                          :create_remanded_request_issue_1,
                           :with_decision_issue,
                           :at_judge_review,
-                          decision_reason: decision_reason_remand_list.at(i-1),
-                          associated_judge: set_judge,
-                          associated_attorney: set_attorney,
+                          request_issues: create_list(
+                            create_allowed_request_issue_1,
+                            create_allowed_request_issue_2,
+                            create_remanded_request_issue_1),
+                          code: decision_reason_remand_list.at(i-1),
+                          associated_judge: judge,
+                          associated_attorney: attorney,
                           issue_count: 3,
                           veteran: create_veteran)
         end
       Timecop.return
     end
 
+    #Direct Review
     def create_ama_appeals_ready_to_dispatch_remanded_dr
       Timecop.travel(60.days.ago)
         (1..12).each do |i|
           appeal = create(:appeal,
                           :direct_review_docket,
-                          :create_allowed_request_issue_1,
-                          :create_allowed_request_issue_2,
-                          :create_remanded_request_issue_1,
                           :with_decision_issue,
                           :at_judge_review,
-                          decision_reason: decision_reason_remand_list.at(i-1),
-                          associated_judge: set_judge,
-                          associated_attorney: set_attorney,
+                          request_issues: create_list(
+                            create_allowed_request_issue_1,
+                            create_allowed_request_issue_2,
+                            create_remanded_request_issue_1),
+                          code: decision_reason_remand_list.at(i-1),
+                          associated_judge: judge,
+                          associated_attorney: attorney,
                           issue_count: 3,
                           veteran: create_veteran)
         end
       Timecop.return
     end
 
+
+    #Appeals Ready for Decision with Multiple(2) Remands
+    #Evidence Submission
     def create_ama_appeals_ready_to_dispatch_remanded_multiple_es
       Timecop.travel(30.days.ago)
         (1..12).each do |i|
           appeal = create(:appeal,
                           :evidence_submission_docket,
-                          :create_allowed_request_issue_1,
-                          :create_allowed_request_issue_2,
-                          :create_remanded_request_issue_1,
-                          :create_remanded_request_issue_2,
                           :with_decision_issue,
                           :at_judge_review,
-                          decision_reason: decision_reason_remand_list.at(i-1),
-                          associated_judge: set_judge,
-                          associated_attorney: set_attorney,
+                          request_issues: create_list(
+                            create_allowed_request_issue_1,
+                            create_allowed_request_issue_2,
+                            create_remanded_request_issue_1,
+                            create_remanded_request_issue_2),
+                          code: decision_reason_remand_list.at(i-1),
+                          associated_judge: judge,
+                          associated_attorney: attorney,
                           issue_count: 4,
                           veteran: create_veteran)
         end
       Timecop.return
     end
 
+    #Hearing
     def create_ama_appeals_ready_to_dispatch_remanded_multiple_hr
       Timecop.travel(90.days.ago)
         (1..12).each do |i|
           appeal = create(:appeal,
                           :hearing_docket,
-                          :create_allowed_request_issue_1,
-                          :create_allowed_request_issue_2,
-                          :create_remanded_request_issue_1,
-                          :create_remanded_request_issue_2,
                           :with_decision_issue,
                           :at_judge_review,
-                          decision_reason: decision_reason_remand_list.at(i-1),
-                          associated_judge: set_judge,
-                          associated_attorney: set_attorney,
+                          request_issues: create_list(
+                            create_allowed_request_issue_1,
+                            create_allowed_request_issue_2,
+                            create_remanded_request_issue_1,
+                            create_remanded_request_issue_2),
+                          code: decision_reason_remand_list.at(i-1),
+                          associated_judge: judge,
+                          associated_attorney: attorney,
                           issue_count: 4,
                           veteran: create_veteran)
         end
       Timecop.return
     end
 
+    #Direct Review
     def create_ama_appeals_ready_to_dispatch_remanded_multiple_dr
       Timecop.travel(60.days.ago)
         (1..12).each do |i|
           appeal = create(:appeal,
                           :direct_review_docket,
-                          :create_allowed_request_issue_1,
-                          :create_allowed_request_issue_2,
-                          :create_remanded_request_issue_1,
-                          :create_remanded_request_issue_2,
                           :with_decision_issue,
                           :at_judge_review,
-                          decision_reason: decision_reason_remand_list.at(i-1),
-                          associated_judge: set_judge,
-                          associated_attorney: set_attorney,
+                          request_issues: create_list(
+                            create_allowed_request_issue_1,
+                            create_allowed_request_issue_2,
+                            create_remanded_request_issue_1,
+                            create_remanded_request_issue_2),
+                          code: decision_reason_remand_list.at(i-1),
+                          associated_judge: judge,
+                          associated_attorney: attorney,
                           issue_count: 4,
                           veteran: create_veteran)
         end
@@ -368,3 +389,902 @@ module Seeds
     end
   end
 end
+
+#Building each appeal individually instead (Lengthy, repetitive.)
+=begin
+    create_ama_appeals_ready_to_dispatch_remanded_es
+      Timecop.travel(30.days.ago)
+        appeal1 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "no_notice_sent",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal2 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "incorrect_notice_sent",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal3 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "legally_inadequate_notice",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal4 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "va_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal5 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "private_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal6 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "service_personnel_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal7 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "service_treatment_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal8 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "other_government_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal9 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "medical_examinations",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal10 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "medical_opinions",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal11 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "advisory_medical_opinion",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal12 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "due_process_deficiency",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+      Timecop.return
+    end
+
+    create_ama_appeals_ready_to_dispatch_remanded_hr
+      Timecop.travel(90.days.ago)
+        appeal1 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "no_notice_sent",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal2 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "incorrect_notice_sent",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal3 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "legally_inadequate_notice",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal4 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "va_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal5 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "private_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal6 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "service_personnel_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal7 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "service_treatment_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal8 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "other_government_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal9 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "medical_examinations",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal10 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "medical_opinions",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal11 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "advisory_medical_opinion",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal12 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "due_process_deficiency",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+      Timecop.return
+
+      end
+
+    create_ama_appeals_ready_to_dispatch_remanded_dr
+      Timecop.travel(60.days.ago)
+        appeal1 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "no_notice_sent",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal2 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "incorrect_notice_sent",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal3 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "legally_inadequate_notice",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal4 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "va_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal5 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "private_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal6 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "service_personnel_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal7 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "service_treatment_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal8 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "other_government_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal9 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "medical_examinations",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal10 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "medical_opinions",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal11 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "advisory_medical_opinion",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal12 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "due_process_deficiency",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+      Timecop.return
+    end
+
+    create_ama_appeals_ready_to_dispatch_remanded_multiple_es
+      Timecop.travel(30.days.ago)
+        appeal1 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "no_notice_sent",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal2 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "incorrect_notice_sent",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal3 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "legally_inadequate_notice",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal4 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "va_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal5 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "private_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal6 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "service_personnel_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal7 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "service_treatment_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal8 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "other_government_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal9 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "medical_examinations",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal10 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "medical_opinions",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal11 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "advisory_medical_opinion",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal12 = create(:appeal,
+          :evidence_submission_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "due_process_deficiency",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+      Timecop.return
+    end
+
+    create_ama_appeals_ready_to_dispatch_remanded_multiple_hr
+      Timecop.travel(90.days.ago)
+        appeal1 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "no_notice_sent",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal2 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "incorrect_notice_sent",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal3 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "legally_inadequate_notice",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal4 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "va_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal5 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "private_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal6 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "service_personnel_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal7 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "service_treatment_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal8 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "other_government_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal9 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "medical_examinations",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal10 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "medical_opinions",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal11 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "advisory_medical_opinion",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal12 = create(:appeal,
+          :hearing_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "due_process_deficiency",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+      Timecop.return
+
+      end
+
+    create_ama_appeals_ready_to_dispatch_remanded_multiple_dr
+      Timecop.travel(60.days.ago)
+        appeal1 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "no_notice_sent",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal2 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "incorrect_notice_sent",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal3 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "legally_inadequate_notice",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal4 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "va_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal5 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "private_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal6 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "service_personnel_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal7 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "service_treatment_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal8 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "other_government_records",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal9 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "medical_examinations",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal10 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "medical_opinions",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal11 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "advisory_medical_opinion",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+        appeal12 = create(:appeal,
+          :direct_review_docket,
+          :with_request_issues,
+          :remand_reasons
+          :at_judge_review,
+          :ama_remand_reason,
+          code: "due_process_deficiency",
+          associated_judge: User.find_by_css_id("BVAAABSHIRE"),
+          associated_attorney: User.find_by_css_id("BVAGSPORER")
+          issue_count: 3,
+          veteran: create_veteran)
+
+      Timecop.return
+    end
+=end
