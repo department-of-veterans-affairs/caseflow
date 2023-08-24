@@ -39,11 +39,6 @@ class TranscriptionTask < Task
     end
   end
 
-  ## Tag to determine if this task is considered a blocking task for Legacy Appeal Distribution
-  def legacy_blocking
-    true
-  end
-
   def update_from_params(params, current_user)
     multi_transaction do
       verify_user_can_update!(current_user)
