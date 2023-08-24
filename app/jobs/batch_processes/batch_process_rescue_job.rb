@@ -6,10 +6,6 @@
 class BatchProcessRescueJob < CaseflowJob
   queue_with_priority :low_priority
 
-  before_perform do |job|
-    JOB_ATTR = job
-  end
-
   # :reek:FeatureEnvy
   def perform
     batches = BatchProcess.needs_reprocessing
