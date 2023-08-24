@@ -8,7 +8,6 @@ const generateMeetingData = require('./meetingData.js');
 
 const middlewares = jsonServer.defaults();
 const routesRewrite = require('./routes.json');
-// const faker = require('faker');
 
 server.use(middlewares);
 server.use(jsonServer.bodyParser);

@@ -32,6 +32,7 @@ class Organizations::UsersController < OrganizationsController
       adjust_admin_rights
     end
 
+    update_user_meeting_type
     render json: { users: json_administered_users([user_to_modify]) }, status: :ok
   end
 
@@ -64,6 +65,14 @@ class Organizations::UsersController < OrganizationsController
       OrganizationsUser.make_user_admin(user_to_modify, organization)
     else
       OrganizationsUser.remove_admin_rights_from_user(user_to_modify, organization)
+    end
+  end
+
+  def update_user_meeting_type
+    new_meeting_type = params.dig(:attributes, :meeting_type)
+
+    if organization["url"] == HearingsManagement.singleton.url && new_meeting_type
+      OrganizationsUser.update_user_conference_type(user_to_modify, new_meeting_type)
     end
   end
 
