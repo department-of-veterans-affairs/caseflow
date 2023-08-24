@@ -1130,6 +1130,50 @@ module Seeds
         )
       end
     end
+
+    def create_ama_hpr_tasks
+      hpr_index = @ama_appeals.size
+      es = Constants.AMA_DOCKETS.evidence_submission
+      dr = Constants.AMA_DOCKETS.direct_review
+      [
+        { number_of_claimants: nil, docket_type: es, request_issue_count: 1 },
+        { number_of_claimants: 1, docket_type: es, request_issue_count: 2 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 3 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 4 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 5 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 6 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 7 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 8 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 5 },
+        { number_of_claimants: 1, docket_type: dr, request_issue_count: 1 }
+      ].each do |params|
+        @ama_appeals << create(
+          :appeal,
+          number_of_claimants: params[:number_of_claimants],
+          docket_type: params[:docket_type],
+          request_issues: create_list(
+            :request_issue, params[:request_issue_count], :nonrating
+          )
+        )
+      end
+      @ama_appeals.each_with_index(hpr_index) do |appeal, idx|
+        if idx >= hpr_index + 4
+          create_scheduled_hearing_postponement_request_task
+        else
+          create_unscheduled_hearing_postponement_request_task
+        end
+      end
+    end
+
+    def create_unscheduled_hearing_postponement_request_task(appeal)
+        create(:hearing_postponement_request_mail_task, :with_unscheduled_hearing, appeal: appeal)
+    end
+
+    def create_scheduled_hearing_postponement_request_task(appeal)
+        create(:hearing_postponement_request_mail_task, :with_scheduled_hearing, appeal: appeal)
+    end
+
+
   end
   # rubocop:enable Metrics/ClassLength
   # rubocop:enable Metrics/AbcSize
