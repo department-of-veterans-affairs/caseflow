@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 end_product_establishment_ids = [4142, 4143, 4144, 4145]
 
 # :reek:FeatureEnvy
