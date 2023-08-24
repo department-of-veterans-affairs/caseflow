@@ -182,11 +182,12 @@ module Seeds
     # additionally, the following records will be created:
     # an HLR or SC
     # a VbmsExtClaim
+    # :reek:FeatureEnvy
     def create_end_product_establishment(trait, veteran)
       create(:end_product_establishment,
               trait,
               veteran_file_number: veteran.file_number
-              # claimant_participant_id: veteran.participant_id
+              claimant_participant_id: veteran.participant_id
             )
     end
 
