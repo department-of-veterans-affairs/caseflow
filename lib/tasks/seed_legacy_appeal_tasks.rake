@@ -192,9 +192,24 @@ namespace :db do
               assigned_to: Bva.singleton
             )
           when 67..100
-            TranscriptionTask.create!(
+            hearing_task = HearingTask.create!(
               appeal: appeal,
               parent: root_task,
+              assigned_to: Bva.singleton
+            )
+            ScheduleHearingTask.create!(
+              appeal: appeal,
+              parent: hearing_task,
+              assigned_to: Bva.singleton
+            ).update(status: 'completed')
+            AssignHearingDispositionTask.create!(
+              appeal: appeal,
+              parent: hearing_task,
+              assigned_to: Bva.singleton
+            ).update(status: 'completed')
+            TranscriptionTask.create!(
+              appeal: appeal,
+              parent: hearing_task,
               assigned_to: Bva.singleton
             )
           end
