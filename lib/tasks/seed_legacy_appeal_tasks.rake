@@ -161,45 +161,47 @@ namespace :db do
         # Scenario 1
         def create_edge_case_task_for_legacy_appeals(appeal)
           root_task = RootTask.find_or_create_by!(appeal: appeal)
-          randVal = rand(100)
+          rand_val = rand(100)
 
-          case randVal
-            when 0..33
-              hearing_task = HearingTask.create!(
-                appeal: appeal,
-                parent: root_task,
-                assigned_to: Bva.singleton
-              )
-              ScheduleHearingTask.create!(
-                appeal: appeal,
-                parent: hearing_task,
-                assigned_to: Bva.singleton
-              )
-            when 34..66
-              hearing_task = HearingTask.create!(
-                appeal: appeal,
-                parent: root_task,
-                assigned_to: Bva.singleton
-              )
-              ScheduleHearingTask.create!(
-                appeal: appeal,
-                parent: hearing_task,
-                assigned_to: Bva.singleton
-              ).update(status: 'completed')
-              AssignHearingDispositionTask.create!(
-                appeal: appeal,
-                parent: hearing_task,
-                assigned_to: Bva.singleton
-              )
-            when 67..100
-              transcription_task = TranscriptionTask.create!(
-                appeal: appeal,
-                parent: root_task,
-                assigned_to: Bva.singleton
-              )
+          case rand_val
+          when 0..33
+            hearing_task = HearingTask.create!(
+              appeal: appeal,
+              parent: root_task,
+              assigned_to: Bva.singleton
+            )
+            ScheduleHearingTask.create!(
+              appeal: appeal,
+              parent: hearing_task,
+              assigned_to: Bva.singleton
+            )
+          when 34..66
+            hearing_task = HearingTask.create!(
+              appeal: appeal,
+              parent: root_task,
+              assigned_to: Bva.singleton
+            )
+            ScheduleHearingTask.create!(
+              appeal: appeal,
+              parent: hearing_task,
+              assigned_to: Bva.singleton
+            ).update(status: 'completed')
+            AssignHearingDispositionTask.create!(
+              appeal: appeal,
+              parent: hearing_task,
+              assigned_to: Bva.singleton
+            )
+          when 67..100
+            TranscriptionTask.create!(
+              appeal: appeal,
+              parent: root_task,
+              assigned_to: Bva.singleton
+            )
           end
 
-          case randVal
+          rand_val = rand(100)
+
+          case rand_val
           when 0..20
             FoiaTask.create!(
               appeal: appeal,
@@ -230,9 +232,7 @@ namespace :db do
               parent: root_task,
               assigned_to: Bva.singleton
             )
-        end
-
-          randval = rand(100)
+          end
 
           $stdout.puts("You have created a Hearing Task")
         end
