@@ -5,7 +5,7 @@ describe DecisionIssueSyncJob, :postgres do
   let(:request_issue) { create(:request_issue, end_product_establishment: epe) }
   let(:no_ratings_err) { Rating::NilRatingProfileListError.new("none!") }
   let(:bgs_transport_err) { BGS::ShareError.new("network!") }
-  let(:sync_lock_err) { Caseflow::Error::SyncLockFailed.new("#{Time.zone.now}") }
+  let(:sync_lock_err) { Caseflow::Error::SyncLockFailed.new(Time.zone.now.to_s) }
 
   subject { described_class.perform_now(request_issue) }
 
