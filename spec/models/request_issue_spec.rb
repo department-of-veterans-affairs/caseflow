@@ -2213,11 +2213,11 @@ describe RequestIssue, :all_dbs do
             sc = SupplementalClaim.first
             expect(sc.request_issues.count).to eq(2)
             supplemental_claim_request_issue1 = sc.request_issues.first
-            supplemental_claim_request_issue2= sc.request_issues.last
+            supplemental_claim_request_issue2 = sc.request_issues.last
 
             # both request issues link to the same SupplementalClaim
-            expect(sc.id).to eq (request_issue1.end_product_establishment.source.remand_supplemental_claims.first.id)
-            expect(sc.id).to eq (request_issue2.end_product_establishment.source.remand_supplemental_claims.first.id)
+            expect(sc.id).to eq(request_issue1.end_product_establishment.source.remand_supplemental_claims.first.id)
+            expect(sc.id).to eq(request_issue2.end_product_establishment.source.remand_supplemental_claims.first.id)
 
             # DecisionIssue ID should match contested_decision_issue_id
             expect(DecisionIssue.count).to eq(2)
@@ -2227,7 +2227,6 @@ describe RequestIssue, :all_dbs do
             expect(decision_issue1.id).to eq(supplemental_claim_request_issue1.contested_decision_issue_id)
             expect(decision_issue2.id).to eq(supplemental_claim_request_issue2.contested_decision_issue_id)
           end
-
         end
       end
     end
