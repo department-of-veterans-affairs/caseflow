@@ -53,9 +53,22 @@ export const getRowObjects = (documents, annotationsPerDocument) => {
     return acc;
   }, []);
 };
-
 class DocumentsTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      frozenDocs: ""
+    };
+  }
   componentDidMount() {
+    if (this.state.frozenDocs === "") {
+      const frozenDocs = this.props.documents;
+
+      Object.freeze(frozenDocs);
+      this.setState({
+        frozenDocs
+      });
+    }
     if (this.props.pdfList.scrollTop) {
       this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
 
@@ -156,11 +169,10 @@ class DocumentsTable extends React.Component {
     }
 
     const populateDocumentFilter = () => {
-      // fake data
       let docsArray = [];
 
       // looks through all document types, and only adds them into docsArray if they are unique
-      this.props.documents.map((x) => docsArray.includes(x.type) ? true : docsArray.push(x.type));
+      this.state.frozenDocs.map((x) => docsArray.includes(x.type) ? true : docsArray.push(x.type));
 
       // convert each item to a hash for use in the filter
       let filterItems = [];
