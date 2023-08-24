@@ -9,80 +9,93 @@ import ApiUtil from '../../util/ApiUtil';
 
 const EfolderUrlField = (props) => {
 
+  const [url, setUrl] = useState('');
   const [valid, setValid] = useState(false);
   const [loading, setloading] = useState(false);
   const [error, setError] = useState('');
-  const valueRef = useRef(props.value);
+  const valueRef = useRef(url);
 
   const extractRequestType = () => (
     props.requestType.replace('Hearing', '').replace('RequestMailTask', '').
       toLowerCase()
   );
 
-  const efolderLinkRegexMatch = (url) => {
-    return url.match(/https:\/\/vefs-claimevidence.*\.bip\.va\.gov\/file\/\S{8}-\S{4}-\S{4}-\S{4}-\S{12}/)?.[0] === url.split('?')[0];
+  const efolderLinkRegexMatch = (inputValue) => {
+    return inputValue.match(/https:\/\/vefs-claimevidence.*\.bip\.va\.gov\/file\/\S{8}-\S{4}-\S{4}-\S{4}-\S{12}/)?.[0] === inputValue.split('?')[0];
   };
 
-  const captureDocumentSeriesId = (url) => {
-    return url.match(/\S{8}-\S{4}-\S{4}-\S{4}-\S{12}/)?.[0];
+  const captureDocumentSeriesId = (validUrl) => {
+    return validUrl.match(/\S{8}-\S{4}-\S{4}-\S{4}-\S{12}/)?.[0];
   };
 
-  const handleChange = (value) => {
-    props?.onChange?.(value, valid);
+  const checkIfDocumentExists = () => {
+    setloading(true);
+    const seriesId = captureDocumentSeriesId(url);
+    const appealId = props.appealId;
+
+    ApiUtil.get(`/appeals/${appealId}/document/${seriesId}`).
+      then((response) => {
+        if (response.body.document_presence === true) {
+          console.log('valid')
+          setValid(true);
+          setError('');
+        } else {
+          setValid(false);
+          setError(COPY.EFOLDER_DOCUMENT_NOT_FOUND);
+        }
+      }).
+      catch(() => {
+        setValid(false);
+        setError(COPY.EFOLDER_CONNECTION_ERROR);
+      }).
+      finally(() => {
+        console.log('stop loading spinner')
+        setloading(false);
+        console.log('update ref and parent onchange')
+        valueRef.current = url;
+        props?.onChange?.(url, valid);
+      });
   };
 
   const handleDebounce = debounce((value) => {
-
+    console.log('debounced');
     if (valueRef.current === value) {
-      handleChange(props.value);
-
+      console.log(valid)
+      props?.onChange?.(url, valid);
+      console.log('same value')
       return;
     }
 
     if (efolderLinkRegexMatch(value)) {
-      setloading(true);
-      const seriesId = captureDocumentSeriesId(value);
-      const appealId = props.appealId;
-
-      ApiUtil.get(`/appeals/${appealId}/document/${seriesId}`).
-        then((response) => {
-          if (response.body.document_presence === true) {
-            setValid(true);
-            setError('');
-          } else {
-            setValid(false);
-            setError(COPY.EFOLDER_DOCUMENT_NOT_FOUND);
-          }
-        }).
-        catch(() => {
-          setValid(false);
-          setError(COPY.EFOLDER_CONNECTION_ERROR);
-        }).
-        finally(() => {
-          setloading(false);
-        });
+      console.log('api call')
+      checkIfDocumentExists();
     } else {
       setValid(false);
       setError(COPY.EFOLDER_INVALID_LINK_FORMAT);
+      valueRef.current = value;
+      props?.onChange?.(url, valid);
     }
-    valueRef.current = value;
-    handleChange(props.value);
+
+
+    // console.log('update ref and parent onchange')
   }, 500);
 
   useEffect(() => {
-    handleDebounce(props.value);
+    console.log('useEffect');
+    props?.onChange?.(url, false);
+    handleDebounce(url);
 
     return () => {
       handleDebounce.cancel();
     };
-  }, [props.value, valid]);
+  }, [url, valid]);
 
   return <>
     <TextField
       label={`Include eFolder document hyperlink to request a hearing ${extractRequestType()}`}
       name="eFolderUrlField"
-      value={props.value}
-      onChange={handleChange}
+      value={url}
+      onChange={(newUrl) => setUrl(newUrl)}
       errorMessage={error}
       loading={loading}
     />
@@ -90,7 +103,7 @@ const EfolderUrlField = (props) => {
     {
       error === COPY.EFOLDER_CONNECTION_ERROR &&
       <Button
-        onClick={() => handleDebounce(props.value)}
+        onClick={() => checkIfDocumentExists()}
         linkStyling
         classNames={['cf-push-right', 'cf-retry']}>
           Retry
