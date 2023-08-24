@@ -2191,7 +2191,7 @@ describe RequestIssue, :all_dbs do
           it "prevents a request issue from acquiring the SyncLock when there is already a lock using the EPE's ID" do
             redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
             lock_key = "hlr_sync_lock:#{epe.id}"
-            redis.set(lock_key, "lock is set", :nx => true, :ex => 5.seconds)
+            redis.set(lock_key, "lock is set", nx: true, ex: 5.seconds)
             expect { request_issue1.sync_decision_issues! }.to raise_error(sync_lock_err)
             redis.del(lock_key)
           end

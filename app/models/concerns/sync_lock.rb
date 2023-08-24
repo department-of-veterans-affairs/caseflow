@@ -10,6 +10,7 @@ module SyncLock
     if decision_review.is_a?(HigherLevelReview) && block_given?
       redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
       lock_key = "hlr_sync_lock:#{end_product_establishment.id}"
+      Rails.logger.info(lock_key + " has been created")
 
       begin
         # create the sync lock with a key, value pair only IF it doesn't already exist
