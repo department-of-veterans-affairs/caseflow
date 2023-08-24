@@ -178,7 +178,6 @@ module Seeds
 
     # 'trait' will update the following EPE columns:
     # synced_status, established_at, modifier, code
-
     # additionally, the following records will be created:
     # an HLR or SC
     # a VbmsExtClaim
