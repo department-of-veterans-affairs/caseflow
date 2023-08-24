@@ -61,6 +61,8 @@ class NoShowHearingTask < Task
       ScheduleHearingTask.create!(appeal: appeal, parent: ancestor_task_of_type(HearingTask)&.parent)
 
       update!(status: Constants.TASK_STATUSES.completed)
+
+      cancel_redundant_postponement_req_mail_tasks(type)
     end
   end
 
