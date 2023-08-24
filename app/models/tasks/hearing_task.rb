@@ -21,6 +21,10 @@ class HearingTask < Task
     [COPY::HEARING_TASK_DEFAULT_INSTRUCTIONS]
   end
 
+  ## Tag to determine if this task is considered a blocking task for Legacy Appeal Distribution
+  def legacy_blocking
+    true
+  end
 
   def cancel_and_recreate
     hearing_task = HearingTask.create!(
