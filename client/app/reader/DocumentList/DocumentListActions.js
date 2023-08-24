@@ -102,10 +102,20 @@ export const setTagFilter = (text, checked, tagId) => (dispatch) => {
   dispatch(updateFilteredIdsAndDocs());
 };
 
-export const setDocFilter = (text, checked, tagId) => ({
-  type: Constants.SET_DOC_FILTER,
-  payload: { text, checked, tagId }
-});
+export const setDocFilter = (text, checked) => (dispatch) => {
+  dispatch({
+    type: Constants.SET_DOC_FILTER,
+    payload: { text, checked },
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: `${checked ? 'set' : 'unset'}-docType-filter`,
+        label: text
+      }
+    }
+  });
+  dispatch(updateFilteredIdsAndDocs());
+};
 
 export const clearDocFilters = () => (dispatch) => {
   dispatch({
