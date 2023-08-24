@@ -2197,9 +2197,12 @@ describe RequestIssue, :all_dbs do
           end
 
           it "allows a request issue to sync if there is no existing lock using the EPE's ID" do
+            epe_id = request_issue2.end_product_establishment.id.to_s
+            allow(Rails.logger).to receive(:info)
             expect(request_issue2.sync_decision_issues!).to eq(true)
+            expect(Rails.logger).to have_received(:info).with("hlr_sync_lock:" + epe_id + " has been created")
             expect(request_issue2.processed?).to eq(true)
-
+            expect(Rails.logger).to have_received(:info).with("hlr_sync_lock:" + epe_id + " has been released")
             expect(SupplementalClaim.count).to eq(1)
           end
 
