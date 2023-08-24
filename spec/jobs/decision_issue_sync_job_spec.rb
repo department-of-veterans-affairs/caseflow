@@ -5,7 +5,7 @@ describe DecisionIssueSyncJob, :postgres do
   let(:request_issue) { create(:request_issue, end_product_establishment: epe) }
   let(:no_ratings_err) { Rating::NilRatingProfileListError.new("none!") }
   let(:bgs_transport_err) { BGS::ShareError.new("network!") }
-  let(:sync_lock_err) {Caseflow::Error::SyncLockFailed.new("#{Time.zone.now}")}
+  let(:sync_lock_err) { Caseflow::Error::SyncLockFailed.new("#{Time.zone.now}") }
 
   subject { described_class.perform_now(request_issue) }
 
@@ -47,11 +47,13 @@ describe DecisionIssueSyncJob, :postgres do
   it "logs SyncLock errors" do
     capture_raven_log
     allow(request_issue).to receive(:sync_decision_issues!).and_raise(sync_lock_err)
+    allow(Rails.logger).to receive(:error)
 
     subject
     expect(request_issue.decision_sync_error).to eq("#<Caseflow::Error::SyncLockFailed: #{Time.zone.now}>")
     expect(request_issue.decision_sync_attempted_at).to be_within(5.minutes).of 12.hours.ago
     expect(@raven_called).to eq(false)
+    expect(Rails.logger).to have_received(:error).with(sync_lock_err)
   end
 
   it "ignores error on success" do
