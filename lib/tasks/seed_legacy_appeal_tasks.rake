@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # to create legacy appeals with AMA Tasks added, run "bundle exec rake db:generate_legacy_appeals_with_tasks"
-# then select an option between 'HearingTask', 'JudgeTask', 'AttorneyTask', 'ReviewTask', 'Scenario1edge' and 'Brieff_Curloc_81_Task'
+# then select an option between 'HearingTask', 'JudgeTask', 'AttorneyTask', 'ReviewTask', and 'Brieff_Curloc_81_Task'
 
 namespace :db do
   desc "Generates a smattering of legacy appeals with VACOLS cases that have special issues assocaited with them"
@@ -10,7 +10,7 @@ namespace :db do
       class << self
         def stamp_out_legacy_appeals(num_appeals_to_create, file_number, user, docket_number, task_type)
           # Changes location of vacols based on if you want a hearing task or only a legacy task in location 81
-          bfcurloc = if task_type == "HEARINGTASK" || task_type == "SCENARIO1EDGE"
+          bfcurloc = if task_type == "HEARINGTASK"
                        57
                      elsif task_type == "BRIEFF_CURLOC_81_TASK"
                        81
@@ -156,87 +156,6 @@ namespace :db do
           $stdout.puts("You have created a Review task")
         end
 
-        ########################################################
-        # Creates Edge case data for the LegacyAppeals that have just been generated
-        # Scenario 1
-        def create_edge_case_task_for_legacy_appeals(appeal)
-          root_task = RootTask.find_or_create_by!(appeal: appeal)
-          rand_val = rand(100)
-
-          case rand_val
-          when 0..33
-            hearing_task = HearingTask.create!(
-              appeal: appeal,
-              parent: root_task,
-              assigned_to: Bva.singleton
-            )
-            ScheduleHearingTask.create!(
-              appeal: appeal,
-              parent: hearing_task,
-              assigned_to: Bva.singleton
-            )
-          when 34..66
-            hearing_task = HearingTask.create!(
-              appeal: appeal,
-              parent: root_task,
-              assigned_to: Bva.singleton
-            )
-            ScheduleHearingTask.create!(
-              appeal: appeal,
-              parent: hearing_task,
-              assigned_to: Bva.singleton
-            ).update(status: 'completed')
-            AssignHearingDispositionTask.create!(
-              appeal: appeal,
-              parent: hearing_task,
-              assigned_to: Bva.singleton
-            )
-          when 67..100
-            TranscriptionTask.create!(
-              appeal: appeal,
-              parent: root_task,
-              assigned_to: Bva.singleton
-            )
-          end
-
-          rand_val = rand(100)
-
-          case rand_val
-          when 0..20
-            FoiaTask.create!(
-              appeal: appeal,
-              parent: root_task,
-              assigned_to: Bva.singleton
-            )
-          when 21..40
-            PrivacyActTask.create!(
-              appeal: appeal,
-              parent: root_task,
-              assigned_to: Bva.singleton
-            )
-          when 41..60
-            PowerOfAttorneyRelatedMailTask.create!(
-              appeal: appeal,
-              parent: root_task,
-              assigned_to: Bva.singleton
-            )
-          when 61..80
-            TranslationTask.create!(
-              appeal: appeal,
-              parent: root_task,
-              assigned_to: Bva.singleton
-            )
-          when 81..100
-            CongressionalInterestMailTask.create!(
-              appeal: appeal,
-              parent: root_task,
-              assigned_to: Bva.singleton
-            )
-          end
-
-          $stdout.puts("You have created a Hearing Task")
-        end
-
         def initialize_root_task_for_legacy_appeals(appeal)
           RootTask.find_or_create_by!(appeal: appeal)
           $stdout.puts("You have set the Location to 81")
@@ -253,8 +172,6 @@ namespace :db do
             create_review_task_for_legacy_appeals(appeal, user)
           elsif task_type == "BRIEFF_CURLOC_81_TASK"
             initialize_root_task_for_legacy_appeals(appeal)
-          elsif task_type == "SCENARIO1EDGE"
-            create_edge_case_task_for_legacy_appeals(appeal)
           end
           # rubocop:enable
         end
@@ -291,7 +208,7 @@ namespace :db do
 
       $stdout.puts("Which type of tasks do you want to add to these Legacy Appeals?")
       $stdout.puts("Hint: Options include 'HearingTask', 'JudgeTask', 'AttorneyTask',
-                     'ReviewTask', 'Scenario1edge' and 'Brieff_Curloc_81_Task'")
+                     'ReviewTask', and 'Brieff_Curloc_81_Task'")
       task_type = $stdin.gets.chomp.upcase
       if task_type == "JUDGETASK" || task_type == "REVIEWTASK"
         $stdout.puts("Enter the CSS ID of a judge user that you want to assign these appeals to")

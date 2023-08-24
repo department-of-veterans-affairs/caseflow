@@ -6,11 +6,6 @@
 class PrivacyActTask < Task
   include CavcAdminActionConcern
 
-  ## Tag to determine if this task is considered a blocking task for Legacy Appeal Distribution
-  def legacy_blocking
-    true
-  end
-
   def available_actions(user)
     return [] unless user
 

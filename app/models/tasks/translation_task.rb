@@ -8,11 +8,6 @@
 class TranslationTask < Task
   include CavcAdminActionConcern
 
-  ## Tag to determine if this task is considered a blocking task for Legacy Appeal Distribution
-  def legacy_blocking
-    true
-  end
-
   def self.create_from_root_task(root_task)
     create!(assigned_to: Translation.singleton, parent_id: root_task.id, appeal: root_task.appeal)
   end
