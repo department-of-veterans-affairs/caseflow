@@ -47,8 +47,8 @@ gem "paranoia", "~> 2.2"
 gem "pdf-forms"
 # Used in Caseflow Dispatch
 gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git", ref: "a4249eacbf70175db63b57e9f364d0a9a79e2b43"
-#Used to build out PDF files on the backend
-#https://github.com/pdfkit/pdfkit
+# Used to build out PDF files on the backend
+# https://github.com/pdfkit/pdfkit
 gem "pdfkit"
 gem "pg", platforms: :ruby
 # Application server: Puma
@@ -61,9 +61,9 @@ gem "rails", "5.2.4.6"
 gem "rainbow"
 # React
 gem "react_on_rails", "11.3.0"
+gem "redis-mutex"
 gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
-gem 'redis-mutex'
 gem "request_store"
 gem "roo", "~> 2.7"
 # Use SCSS for stylesheets
