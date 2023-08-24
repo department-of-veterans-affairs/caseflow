@@ -228,12 +228,7 @@ class EndProductEstablishment < CaseflowRecord
           synced_status: result.status_type_code,
           last_synced_at: Time.zone.now
         )
-        if status_cancelled?
-          handle_cancelled_ep!
-        else
-          sync_source!
-        end
-
+        status_cancelled? ? handle_cancelled_ep! : sync_source!
         close_request_issues_with_no_decision!
       end
 
