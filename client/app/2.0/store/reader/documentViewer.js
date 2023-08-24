@@ -532,6 +532,7 @@ const documentViewerSlice = createSlice({
       }).
       addCase(generateAutoTags.pending, (state) => {
         state.pendingTag = true;
+        state.selected.isAutoTagPending = true
       }).
       addCase(generateAutoTags.fulfilled, (state, action) => {
         // Reset the state
@@ -539,7 +540,7 @@ const documentViewerSlice = createSlice({
         state.editingTag = false;
 
         // Update the tags
-        state.selected.tags = [];
+        state.selected.tags = state.selected.tags;
       }).
       addCase(generateAutoTags.rejected, (state, action) => {
         // Set the error state

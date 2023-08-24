@@ -11,6 +11,7 @@ class AutotaggedDocumentJob < CaseflowJob
     else
       Document.where(auto_tagged: false).each do |doc|
         add_tags_to_doc(doc)
+        doc.update(auto_tagged: true)
       end
     end
   end
