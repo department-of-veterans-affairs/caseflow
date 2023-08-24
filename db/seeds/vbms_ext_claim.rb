@@ -10,6 +10,7 @@
 # => removes the audit tables; removes all PriorityEndProductSyncQueue, BatchProcess, and seed records; recreates audit tables
 #
 # To destroy the records mentioned above and re-seed, run 'make reseed-vbms-ext-claim'
+# Disable :reek:InstanceVariableAssumption
 module Seeds
   class VbmsExtClaim < Base
 
@@ -66,8 +67,8 @@ module Seeds
         @file_number += 1
 
         end_product_establishment = create_end_product_establishment(:active_hlr_with_cleared_vbms_ext_claim, veteran)
-        request_issue1 = create_request_issue(:rating, end_product_establishment)
-        request_issue2 = create_request_issue(:nonrating, end_product_establishment)
+        created_request_issue_one = create_request_issue(:rating, end_product_establishment)
+        created_request_issue_two = create_request_issue(:nonrating, end_product_establishment)
       end
 
       # 25 High Level Review, End Product Establishments that have a sync_status of "CAN" and are out_of_sync with
@@ -77,8 +78,8 @@ module Seeds
         @file_number += 1
 
         end_product_establishment = create_end_product_establishment(:canceled_hlr_with_cleared_vbms_ext_claim, veteran)
-        request_issue1 = create_request_issue(:rating, end_product_establishment)
-        request_issue2 = create_request_issue(:nonrating, end_product_establishment)
+        created_request_issue_one = create_request_issue(:rating, end_product_establishment)
+        created_request_issue_two = create_request_issue(:nonrating, end_product_establishment)
       end
 
       # 25 Supplemental Claims, End Product Establishments that have a sync_status of "CLR" and are out_of_sync with
@@ -88,8 +89,8 @@ module Seeds
         @file_number += 1
 
         end_product_establishment = create_end_product_establishment(:cleared_supp_with_canceled_vbms_ext_claim, veteran)
-        request_issue1 = create_request_issue(:rating, end_product_establishment)
-        request_issue2 = create_request_issue(:nonrating, end_product_establishment)
+        created_request_issue_one = create_request_issue(:rating, end_product_establishment)
+        created_request_issue_two = create_request_issue(:nonrating, end_product_establishment)
       end
 
       # 25 Supplemental Claims, End Product Establishments that have a sync_status of "PEND" and are out_of_sync with
@@ -99,8 +100,8 @@ module Seeds
         @file_number += 1
 
         end_product_establishment = create_end_product_establishment(:active_supp_with_canceled_vbms_ext_claim, veteran)
-        request_issue1 = create_request_issue(:rating, end_product_establishment)
-        request_issue2 = create_request_issue(:nonrating, end_product_establishment)
+        created_request_issue_one = create_request_issue(:rating, end_product_establishment)
+        created_request_issue_two = create_request_issue(:nonrating, end_product_establishment)
       end
 	  end
 
@@ -118,8 +119,8 @@ module Seeds
         @file_number += 1
 
         end_product_establishment = create_end_product_establishment(:canceled_hlr_with_canceled_vbms_ext_claim, veteran)
-        request_issue1 = create_request_issue(:rating, end_product_establishment)
-        request_issue2 = create_request_issue(:nonrating, end_product_establishment)
+        created_request_issue_one = create_request_issue(:rating, end_product_establishment)
+        created_request_issue_two = create_request_issue(:nonrating, end_product_establishment)
       end
 
       # 25 High Level Review, End Product Establishments that have a sync_status of "CLR"" and are in_sync with
@@ -129,8 +130,8 @@ module Seeds
         @file_number += 1
 
         end_product_establishment = create_end_product_establishment(:cleared_hlr_with_cleared_vbms_ext_claim, veteran)
-        request_issue1 = create_request_issue(:rating, end_product_establishment)
-        request_issue2 = create_request_issue(:nonrating, end_product_establishment)
+        created_request_issue_one = create_request_issue(:rating, end_product_establishment)
+        created_request_issue_two = create_request_issue(:nonrating, end_product_establishment)
       end
 
       # 25 Supplemental Claims, End Product Establishments that have a sync_status of "CLR" and are in_sync with
@@ -140,8 +141,8 @@ module Seeds
         @file_number += 1
 
         end_product_establishment = create_end_product_establishment(:cleared_supp_with_cleared_vbms_ext_claim, veteran)
-        request_issue1 = create_request_issue(:rating, end_product_establishment)
-        request_issue2 = create_request_issue(:nonrating, end_product_establishment)
+        created_request_issue_one = create_request_issue(:rating, end_product_establishment)
+        created_request_issue_two = create_request_issue(:nonrating, end_product_establishment)
       end
 
       # 25 Supplemental Claims, End Product Establishments that have a sync_status of "CAN" and are in sync with
@@ -151,8 +152,8 @@ module Seeds
         @file_number += 1
 
         end_product_establishment = create_end_product_establishment(:canceled_supp_with_canceled_vbms_ext_claim, veteran)
-        request_issue1 = create_request_issue(:rating, end_product_establishment)
-        request_issue2 = create_request_issue(:nonrating, end_product_establishment)
+        created_request_issue_one = create_request_issue(:rating, end_product_establishment)
+        created_request_issue_two = create_request_issue(:nonrating, end_product_establishment)
       end
     end
 
@@ -177,10 +178,10 @@ module Seeds
 
     # 'trait' will update the following EPE columns:
     # synced_status, established_at, modifier, code
-
     # additionally, the following records will be created:
     # an HLR or SC
     # a VbmsExtClaim
+    # :reek:FeatureEnvy
     def create_end_product_establishment(trait, veteran)
       create(:end_product_establishment,
               trait,

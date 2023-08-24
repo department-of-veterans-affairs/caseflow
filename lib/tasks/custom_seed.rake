@@ -14,11 +14,5 @@ namespace :db do
         Seeds.const_get(class_name).new.seed!
       end
     end
-
-    task :all => :environment do
-      Dir[File.join(Rails.root, "db", "seeds", "*.rb")].sort.each do |filename|
-        load(filename)
-      end
-    end
   end
 end
