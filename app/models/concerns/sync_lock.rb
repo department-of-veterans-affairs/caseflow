@@ -24,6 +24,7 @@ module SyncLock
         yield
       ensure
         redis.del(lock_key)
+        Rails.logger.info(lock_key + " has been deleted")
       end
     elsif block_given?
       yield
