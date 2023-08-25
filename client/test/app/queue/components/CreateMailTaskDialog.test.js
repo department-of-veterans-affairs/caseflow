@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore, compose } from 'redux';
 import thunk from 'redux-thunk';
@@ -130,6 +130,42 @@ describe('CreateMailTaskDialog', () => {
       userEvent.type(screen.getByRole('combobox'), 'Hearing postponement request{enter}');
       userEvent.type(screen.getByLabelText(instructionsLabel), 'test instructions');
       userEvent.type(screen.getByLabelText(label), validInput);
+
+      // wait for debounce to finish, which triggers re-render
+      await act(async() => jest.runAllTimers());
+      // wait for second debounce to get to "same value" guard clause
+      jest.runAllTimers();
+
+      expect(await screen.findByText('Submit')).toBeEnabled();
+    });
+
+    test('submit button becomes disabled after changing and already valid input', async () => {
+      jest.useFakeTimers('modern');
+      setUpMailTaskDialog();
+
+      const response = { status: 200, body: { document_presence: true } };
+
+      ApiUtil.get.mockResolvedValue(response);
+
+      userEvent.type(screen.getByRole('combobox'), 'Hearing postponement request{enter}');
+      userEvent.type(screen.getByLabelText(instructionsLabel), 'test instructions');
+      userEvent.type(screen.getByLabelText(label), validInput);
+
+      // wait for debounce to finish, which triggers re-render
+      await act(async() => jest.runAllTimers());
+      // wait for second debounce to get to "same value" guard clause
+      jest.runAllTimers();
+
+      expect(await screen.findByText('Submit')).toBeEnabled();
+
+      userEvent.type(screen.getByLabelText(label), 'a{backspace}');
+
+      expect(await screen.findByText('Submit')).toBeDisabled();
+
+      // wait for debounce to finish, which triggers re-render
+      await act(async() => jest.runAllTimers());
+      // wait for second debounce to get to "same value" guard clause
+      jest.runAllTimers();
 
       expect(await screen.findByText('Submit')).toBeEnabled();
     });

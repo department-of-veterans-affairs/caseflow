@@ -11,7 +11,7 @@ const EfolderUrlField = (props) => {
 
   const [url, setUrl] = useState('');
   const [valid, setValid] = useState(false);
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const valueRef = useRef(url);
 
@@ -29,45 +29,42 @@ const EfolderUrlField = (props) => {
   };
 
   const checkIfDocumentExists = () => {
-    setloading(true);
+    setLoading(true);
     const seriesId = captureDocumentSeriesId(url);
     const appealId = props.appealId;
+
+    let newValidityResult = false;
 
     ApiUtil.get(`/appeals/${appealId}/document/${seriesId}`).
       then((response) => {
         if (response.body.document_presence === true) {
-          console.log('valid')
-          setValid(true);
+          newValidityResult = true;
           setError('');
         } else {
-          setValid(false);
           setError(COPY.EFOLDER_DOCUMENT_NOT_FOUND);
         }
       }).
       catch(() => {
-        setValid(false);
+        newValidityResult = false;
         setError(COPY.EFOLDER_CONNECTION_ERROR);
       }).
       finally(() => {
-        console.log('stop loading spinner')
-        setloading(false);
-        console.log('update ref and parent onchange')
+        setLoading(false);
+
         valueRef.current = url;
-        props?.onChange?.(url, valid);
+        setValid(newValidityResult);
+        props?.onChange?.(url, newValidityResult);
       });
   };
 
   const handleDebounce = debounce((value) => {
-    console.log('debounced');
     if (valueRef.current === value) {
-      console.log(valid)
       props?.onChange?.(url, valid);
-      console.log('same value')
+
       return;
     }
 
     if (efolderLinkRegexMatch(value)) {
-      console.log('api call')
       checkIfDocumentExists();
     } else {
       setValid(false);
@@ -75,13 +72,9 @@ const EfolderUrlField = (props) => {
       valueRef.current = value;
       props?.onChange?.(url, valid);
     }
-
-
-    // console.log('update ref and parent onchange')
   }, 500);
 
   useEffect(() => {
-    console.log('useEffect');
     props?.onChange?.(url, false);
     handleDebounce(url);
 
