@@ -29,6 +29,10 @@ TagSelector.propTypes = {
   searchOnChange: PropTypes.func
 };
 
+// const updateFilterTextState = (newState) => {
+//   this.setState({ filterText: newState });
+// };
+
 const tagListStyling = css({
   paddingBottom: 0,
   margin: 0,
@@ -50,6 +54,7 @@ const tagListItemStyling = css({
 });
 
 const DocTagPicker = ({ tags, tagToggleStates, handleTagToggle,
+
   dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {
   const [filterText, updateFilterText] = useState('');
 

@@ -31,10 +31,11 @@ import { SortArrowUpIcon } from '../components/icons/SortArrowUpIcon';
 import { DoubleArrowIcon } from '../components/icons/DoubleArrowIcon';
 
 import DocCategoryPicker from './DocCategoryPicker';
-import DocTagPicker from './DocTagPicker';
 import FilterIcon from '../components/icons/FilterIcon';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
+import DocTagPicker from './DocTagPicker';
+import ReaderTableDropdownFilter from '../components/ReaderTableDropdownFilter';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -54,12 +55,14 @@ export const getRowObjects = (documents, annotationsPerDocument) => {
   }, []);
 };
 class DocumentsTable extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
       frozenDocs: ''
     };
   }
+
   componentDidMount() {
     if (this.state.frozenDocs === '') {
       const frozenDocs = this.props.documents;
@@ -243,6 +246,7 @@ class DocumentsTable extends React.Component {
               >
                 <DocCategoryPicker
                   categoryToggleStates={this.props.docFilterCriteria.category}
+
                   handleCategoryToggle={this.props.setCategoryFilter}
                 />
               </DropdownFilter>
