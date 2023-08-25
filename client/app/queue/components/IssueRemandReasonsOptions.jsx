@@ -100,7 +100,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   validate = () => {
     const chosenOptions = this.getChosenOptions();
 
-    if (this.props.appeal.isLegacyAppeal) {
+    if (this.props.appeal.isLegacyAppeal || !this.props.featureToggles.additional_remand_reasons) {
       return (
         chosenOptions.length >= 1 &&
         every(chosenOptions, (opt) => !isNull(opt.post_aoj))
