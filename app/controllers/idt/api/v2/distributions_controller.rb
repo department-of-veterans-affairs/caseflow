@@ -50,8 +50,8 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
       parsed_response.deep_transform_keys do |key|
         key.to_s.underscore.gsub(/e(\d)/, 'e_\1')
       end
-    rescue JSON::ParserError => error
-      log_error(error)
+    rescue StandardError => error
+      log_error(error + " Distribution ID: #{params[:distribution_id]}")
 
       response_body
     end
