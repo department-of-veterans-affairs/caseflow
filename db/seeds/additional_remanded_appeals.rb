@@ -71,7 +71,6 @@ module Seeds
           create(
             :decision_issue,
             :nonrating,
-            # :ama_remand_reason,
             disposition: "allowed",
             decision_review: board_grant_task.appeal,
             request_issues: [request_issue],
@@ -105,7 +104,6 @@ module Seeds
           create(
             :decision_issue,
             :nonrating,
-            # :ama_remand_reason,
             disposition: "allowed",
             decision_review: board_grant_task.appeal,
             request_issues: [request_issue],
@@ -139,7 +137,7 @@ module Seeds
           create(
             :decision_issue,
             :nonrating,
-            # :ama_remand_reason, no trait is found, create a trait in decision_issues factory and use
+            :ama_remand_reason,
             disposition: "remanded",
             decision_review: board_grant_task.appeal,
             request_issues: [request_issue],
@@ -173,7 +171,7 @@ module Seeds
           create(
             :decision_issue,
             :nonrating,
-            # :ama_remand_reason,
+            :ama_remand_reason,
             disposition: "remanded",
             decision_review: board_grant_task.appeal,
             request_issues: [request_issue],
@@ -216,7 +214,7 @@ module Seeds
     #Evidence Submission
     def create_ama_appeals_decision_ready_es
       Timecop.travel(30.days.ago)
-        15.times do
+        5.times do
           appeal = create(:appeal,
                           :evidence_submission_docket,
                           :at_attorney_drafting,
@@ -227,7 +225,7 @@ module Seeds
         end
       Timecop.return
     end
-
+=begin
     #Hearing
     def create_ama_appeals_decision_ready_hr
       Timecop.travel(90.days.ago)
@@ -275,11 +273,13 @@ module Seeds
                           :evidence_submission_docket,
                           :with_decision_issue,
                           :at_judge_review,
-                          # code: decision_reason_remand_list.at(i-1),
+                          :imo,
                           associated_judge: judge,
                           associated_attorney: attorney,
                           issue_count: 3,
-                          veteran: create_veteran)
+                          veteran: create_veteran,
+                          custom_args: {code: decision_reason_remand_list.at(i-1)}
+                        )
           link_request_issues(appeal)
         end
       Timecop.return
@@ -293,11 +293,13 @@ module Seeds
                           :hearing_docket,
                           :with_decision_issue,
                           :at_judge_review,
-                          # code: decision_reason_remand_list.at(i-1),
+                          :ama_remand_reason,
+                          code: decision_reason_remand_list.at(i-1),
                           associated_judge: judge,
                           associated_attorney: attorney,
                           issue_count: 3,
-                          veteran: create_veteran)
+                          veteran: create_veteran,
+                        )
           link_request_issues(appeal)
         end
       Timecop.return
@@ -311,7 +313,8 @@ module Seeds
                           :direct_review_docket,
                           :with_decision_issue,
                           :at_judge_review,
-                          # code: decision_reason_remand_list.at(i-1), code is not related to appeal you need to create ama_remand_reason trait and add code to it and link it decision_issues
+                          :ama_remand_reason,
+                          :decision_issue.code: decision_reason_remand_list.at(i-1)
                           associated_judge: judge,
                           associated_attorney: attorney,
                           issue_count: 3,
@@ -331,7 +334,8 @@ module Seeds
                           :evidence_submission_docket,
                           :with_decision_issue,
                           :at_judge_review,
-                          # code: decision_reason_remand_list.at(i-1),
+                          :ama_remand_reason,
+                          code: decision_reason_remand_list.at(i-1),
                           associated_judge: judge,
                           associated_attorney: attorney,
                           issue_count: 4,
@@ -350,7 +354,8 @@ module Seeds
                           :hearing_docket,
                           :with_decision_issue,
                           :at_judge_review,
-                          # code: decision_reason_remand_list.at(i-1),
+                          :ama_remand_reason,
+                          code: decision_reason_remand_list.at(i-1),
                           associated_judge: judge,
                           associated_attorney: attorney,
                           issue_count: 4,
@@ -369,7 +374,8 @@ module Seeds
                           :direct_review_docket,
                           :with_decision_issue,
                           :at_judge_review,
-                          # code: decision_reason_remand_list.at(i-1),
+                          :ama_remand_reason,
+                          code: decision_reason_remand_list.at(i-1),
                           associated_judge: judge,
                           associated_attorney: attorney,
                           issue_count: 4,
@@ -1280,3 +1286,5 @@ end
       Timecop.return
     end
 =end
+  end
+end
