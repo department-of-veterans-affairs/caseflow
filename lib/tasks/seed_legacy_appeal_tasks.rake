@@ -29,7 +29,13 @@ namespace :db do
                             end
           cases = Array.new(num_appeals_to_create).each_with_index.map do
             key = VACOLS::Folder.maximum(:ticknum).next
-            staff = VACOLS::Staff.find_by(sdomainid: user.css_id) # grabs the staff object
+
+            if task_type == "ATTORNEYTASK" || task_type == "REVIEWTASK" || task_type == "SCENARIO1EDGE"
+              staff = VACOLS::Staff.find_by(sdomainid: "BVACABSHIRE")
+            else
+              staff = VACOLS::Staff.find_by(sdomainid: user.css_id) # UAT
+            end
+
             Generators::Vacols::Case.create(
               decass_creation: decass_creation,
               corres_exists: true,
