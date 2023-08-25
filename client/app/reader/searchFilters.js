@@ -19,6 +19,11 @@ export const getUpdatedFilteredResults = (state) => {
     ([key]) => key
   );
 
+  const activeDocTypeFilter = map(
+    filter(toPairs(docFilterCriteria.document), ([key, value]) => value), // eslint-disable-line no-unused-vars
+    ([key]) => key
+  );
+
   const searchQuery = get(docFilterCriteria, 'searchQuery', '').toLowerCase();
 
   // ensure we have a deep clone so we are not mutating the original state
@@ -27,7 +32,10 @@ export const getUpdatedFilteredResults = (state) => {
       filter(
         filter(
           filter(
-            updatedNextState.documents,
+            filter(
+              updatedNextState.documents,
+              (doc) => !activeDocTypeFilter.length || some(activeDocTypeFilter, (docType) => docType === doc.type)
+            ),
             (doc) => !activeCategoryFilters.length ||
               some(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])
           ),

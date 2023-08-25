@@ -44,6 +44,7 @@ const initialState = {
     },
     category: {},
     tag: {},
+    document: {},
     searchQuery: ''
   },
   pdfList: {
@@ -51,7 +52,8 @@ const initialState = {
     lastReadDocId: null,
     dropdowns: {
       tag: false,
-      category: false
+      category: false,
+      document: false
     }
   },
   manifestVbmsFetchedAt: null,
@@ -123,6 +125,7 @@ const documentListReducer = (state = initialState, action = {}) => {
         }
       }
     });
+
   case Constants.CLEAR_TAG_FILTER:
     return update(state, {
       docFilterCriteria: {
@@ -146,6 +149,28 @@ const documentListReducer = (state = initialState, action = {}) => {
         $set: action.payload.documentsOrComments
       }
     });
+
+    // Document filter
+  case Constants.SET_DOC_FILTER:
+    return update(state, {
+      docFilterCriteria: {
+        document: {
+          [action.payload.text]: {
+            $set: action.payload.checked
+          }
+        }
+      }
+    });
+
+  case Constants.CLEAR_DOC_FILTER:
+    return update(state, {
+      docFilterCriteria: {
+        document: {
+          $set: {}
+        }
+      }
+    });
+
   // Document header
   case Constants.SET_SEARCH:
     return update(state, {
