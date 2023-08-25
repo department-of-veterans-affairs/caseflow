@@ -57,8 +57,8 @@ class DocumentListHeader extends React.Component {
             submitUsingEnterKey
           />
           { props.docFilterCriteria.searchQuery && (
-            <ul>
-              <b text>Results for:</b> {props.docFilterCriteria.searchQuery}
+            <ul style={{textAlign: 'left'}}>
+              <b>Results for:</b> {props.docFilterCriteria.searchQuery}
             </ul>
           )
           }
