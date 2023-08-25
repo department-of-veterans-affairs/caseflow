@@ -306,7 +306,7 @@ class DocumentsTable extends React.Component {
             />
 
             {isDocumentDropdownFilterOpen && (
-              <div style={{ position: 'relative', right: '6vw' }}>
+              <div style={{ position: 'relative', right: '14vw' }}>
                 <DropdownFilter
                   clearFilters={this.props.clearDocFilters}
                   name="Document"
@@ -349,19 +349,21 @@ class DocumentsTable extends React.Component {
               handleActivate={this.toggleTagDropdownFilterVisiblity}
             />
             {isTagDropdownFilterOpen && (
-              <DropdownFilter
-                clearFilters={this.props.clearTagFilters}
-                name="tag"
-                isClearEnabled={anyTagFiltersAreSet}
-                handleClose={this.toggleTagDropdownFilterVisiblity}
-                addClearFiltersRow
-              >
-                <DocTagPicker
-                  tags={this.props.tagOptions}
-                  tagToggleStates={this.props.docFilterCriteria.tag}
-                  handleTagToggle={this.props.setTagFilter}
-                />
-              </DropdownFilter>
+              <div style={{ position: 'relative', right: '10vw' }}>
+                <DropdownFilter
+                  clearFilters={this.props.clearTagFilters}
+                  name="tag"
+                  isClearEnabled={anyTagFiltersAreSet}
+                  handleClose={this.toggleTagDropdownFilterVisiblity}
+                  addClearFiltersRow
+                >
+                  <DocTagPicker
+                    tags={this.props.tagOptions}
+                    tagToggleStates={this.props.docFilterCriteria.tag}
+                    handleTagToggle={this.props.setTagFilter}
+                  />
+                </DropdownFilter>
+              </div>
             )}
           </div>
         ),
