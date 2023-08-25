@@ -15,10 +15,12 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   def perform
     RequestStore[:current_user] = User.system_user
 
-    all_active_ama_appeals = if FeatureToggle.enabled?(:full_notification_job_sync_scope)
-                               appeals_recently_outcoded + appeals_never_synced + ready_for_resync
-                             else
+    all_active_ama_appeals = if FeatureToggle.enabled?(:phase_1_notification_sync_job_rollout)
                                appeals_never_synced
+                             elsif FeatureToggle.enabled?(:phase_2_notification_sync_job_rollout)
+                               appeals_never_synced + ready_for_resync
+                             else
+                               appeals_recently_outcoded + appeals_never_synced + ready_for_resync
                              end
 
     sync_notification_reports(all_active_ama_appeals.uniq.first(BATCH_LIMIT.to_i))
