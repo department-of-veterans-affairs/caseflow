@@ -53,7 +53,7 @@ module Seeds
       description = "Service connection for pain disorder is granted with an evaluation of 25\% effective August 1 2020"
       notes = "Pain disorder with 25\% evaluation per examination"
 
-      1.time do |index|
+      1.times do |index|
         board_grant_task = create(:board_grant_effectuation_task,
                                   status: "assigned",
                                   assigned_to: nca)
@@ -86,7 +86,7 @@ module Seeds
       description = "Service connection for pain disorder is granted with an evaluation of 50\% effective August 2 2021"
       notes = "Pain disorder with 50\% evaluation per examination"
 
-      1.time do |index|
+      1.times do |index|
         board_grant_task = create(:board_grant_effectuation_task,
                                   status: "assigned",
                                   assigned_to: education)
@@ -119,7 +119,7 @@ module Seeds
       description = "Service connection for pain disorder is granted with an evaluation of 75\% effective February 3 2021"
       notes = "Pain disorder with 75\% evaluation per examination"
 
-      1.time do |index|
+      1.times do |index|
         board_grant_task = create(:board_grant_effectuation_task,
                                   status: "assigned",
                                   assigned_to: compensation)
@@ -152,7 +152,7 @@ module Seeds
       description = "Service connection for pain disorder is granted with an evaluation of 100\% effective February 4 2021"
       notes = "Pain disorder with 100\% evaluation per examination"
 
-      1.time do |index|
+      1.times do |index|
         board_grant_task = create(:board_grant_effectuation_task,
                                   status: "assigned",
                                   assigned_to: compensation)
