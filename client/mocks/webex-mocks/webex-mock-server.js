@@ -127,30 +127,18 @@ server.get('/health-check-green', (req, res) => {
 });
 
 const requiredKeys = [
-  'title',
-  'start',
-  'end',
-  'timezone',
-  'enabledAutoRecordMeeting',
-  'allowAnyUserToBeCoHost',
-  'enabledJoinBeforeHost',
-  'enableConnectAudioBeforeHost',
-  'joinBeforeHostMinutes',
-  'excludePassword',
-  'publicMeeting',
-  'reminderTime',
-  'unlockedMeetingJoinSecurity',
-  'enabledWebCastView',
-  'enableAutomaticLock',
-  'automaticLockMinutes',
-  'allowFirstUserToBeCoHost',
-  'allowAuthenticatedDevices',
-  'sendEmail',
-  'siteUrl',
-  'meetingOptions',
-  'attendeePrivileges',
-  'enabledBreakoutSessions',
-  'audioConnectionOptions',
+  'jwt',
+  'aud',
+  'numGuest',
+  'numHost',
+  'provideShortUrls',
+  'verticalType',
+  'loginUrlForHost',
+  'jweAlg',
+  'saltLength',
+  'iterations',
+  'enc',
+  'jwsAlg'
 ];
 
 server.post('/fake.api-usgov.webex.com/v1/meetings', (req, res) => {
@@ -167,9 +155,15 @@ server.post('/fake.api-usgov.webex.com/v1/meetings', (req, res) => {
     const conferenceLinks = db.get('conferenceLinks');
 
     // Add generateMeetingData object to conferenceLinks
-    conferenceLinks.push(generateMeetingData).write();
+    conferenceLinks.push(
+      generateMeetingData(
+        requestBody.jwt.sub,
+        requestBody.jwt.Nbf,
+        requestBody.jwt.Exp
+      )
+    ).write();
 
-    res.status(200).json(generateMeetingData);
+    res.status(200).json(generateMeetingData(requestBody.jwt.sub, requestBody.jwt.Nbf, requestBody.jwt.Exp));
   }
 });
 

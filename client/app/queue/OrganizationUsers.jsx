@@ -17,7 +17,6 @@ import COPY from '../../COPY';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
 import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
-import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
 
 const userStyle = css({
   margin: '.5rem 0 .5rem',

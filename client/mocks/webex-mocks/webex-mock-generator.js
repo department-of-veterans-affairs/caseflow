@@ -5,7 +5,7 @@ const generateConferenceLinks = () => {
   let webexLinks = [];
 
   for (let id = 1; id <= 10; id++) {
-    webexLinks.push(generateMeetingData);
+    webexLinks.push(generateMeetingData());
   }
 
   return webexLinks;
