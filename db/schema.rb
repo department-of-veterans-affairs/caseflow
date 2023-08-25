@@ -709,6 +709,7 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
   end
 
   create_table "documents", id: :serial, force: :cascade do |t|
+    t.boolean "auto_tagged", default: false
     t.boolean "category_medical"
     t.boolean "category_other"
     t.boolean "category_procedural"
