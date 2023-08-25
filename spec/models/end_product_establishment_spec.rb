@@ -851,6 +851,19 @@ describe EndProductEstablishment, :postgres do
       ]
     end
 
+    context "when lock acquisition fails" do
+      before do
+        allow(RedisMutex).to receive(:with_lock).and_raise(RedisMutex::LockError)
+      end
+
+      it "logs the error message" do
+        expect(Rails.logger).to receive(:error)
+          .with("Failed to acquire lock for EPE ID: #{end_product_establishment.id}!"\
+                "  #sync! is being called by another process. Please try again later.")
+        end_product_establishment.sync!
+      end
+    end
+
     context "when matching end product has not yet been established" do
       it "raises EstablishedEndProductNotFound error" do
         expect { subject }.to raise_error(EndProductEstablishment::EstablishedEndProductNotFound)
