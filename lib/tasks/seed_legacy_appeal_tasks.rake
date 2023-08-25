@@ -31,10 +31,11 @@ namespace :db do
             key = VACOLS::Folder.maximum(:ticknum).next
 
             if task_type == "ATTORNEYTASK" || task_type == "REVIEWTASK" || task_type == "SCENARIO1EDGE"
-              staff = VACOLS::Staff.find_by(sdomainid: "BVACABSHIRE")
+              staff = VACOLS::Staff.find_by(sdomainid: "BVACABSHIRE") || VACOLS::Staff.find_by(sdomainid: "CF_VLJTHREE_283") # user for local/demo || UAT
             else
-              staff = VACOLS::Staff.find_by(sdomainid: user.css_id) # UAT
+              staff = VACOLS::Staff.find_by(sdomainid: user.css_id) || VACOLS::Staff.find_by(sdomainid: "CF_VLJTHREE_283") # user for local/demo || UAT
             end
+          end
 
             Generators::Vacols::Case.create(
               decass_creation: decass_creation,
@@ -363,18 +364,25 @@ namespace :db do
       task_type = $stdin.gets.chomp.upcase
       if task_type == "JUDGETASK" || task_type == "REVIEWTASK"
         $stdout.puts("Enter the CSS ID of a judge user that you want to assign these appeals to")
-        $stdout.puts("Hint: Judge Options include 'BVAAABSHIRE', 'BVARERDMAN'") # Add UAT Options
+        $stdout.puts("Hint: Judge Options include 'BVAAABSHIRE', 'BVARERDMAN'") if Rails.env.development? || Rails.env.test?
+        $stdout.puts("Hint: Judge Options include 'CF_VLJ_283', 'CF_VLJTWO_283'") if Rails.env.uat?
+
         css_id = $stdin.gets.chomp.upcase
-        user = User.find_by_css_id(css_id)
+        user = User.find_by_css_id(css_id) if Rails.env.development? || Rails.env.test?
+        user = User.find_by_css_id('CF_VLJ_283') if Rails.env.uat?
+
         fail ArgumentError, "User must be a Judge in Vacols for a #{task_type}", caller unless user.judge_in_vacols?
       elsif task_type == "ATTORNEYTASK"
         $stdout.puts("Which attorney do you want to assign the Attorney Task to?")
-        $stdout.puts("Hint: Attorney Options include 'BVASCASPER1', 'BVARERDMAN', 'BVALSHIELDS'") # Add UAT Options
+        $stdout.puts("Hint: Attorney Options include 'BVASCASPER1', 'BVARERDMAN', 'BVALSHIELDS'") if Rails.env.development? || Rails.env.test?
+        $stdout.puts("Hint: Judge Options include 'CF_ATTN_283', 'CF_ATTNTWO_283'") if Rails.env.uat?
+
         css_id = $stdin.gets.chomp.upcase
         user = User.find_by_css_id(css_id)
+
         fail ArgumentError, "User must be an Attorney in Vacols for a #{task_type}", caller unless user.attorney_in_vacols?
       else
-        user = User.find_by_css_id("FAKE USER") || User.find_by_css_id("CASEFLOW_397") # need to update for an UAT User if UAT environment
+        user = User.find_by_css_id("FAKE USER") || User.find_by_css_id("CF_VLJTHREE_283") # need to update for an UAT User if UAT environment # works
       end
 
       fail ActiveRecord::RecordNotFound unless user
