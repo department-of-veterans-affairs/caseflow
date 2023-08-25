@@ -20,7 +20,6 @@ module Seeds
       create_tasks
       create_legacy_issues_eligible_for_opt_in # to do: move to Seeds::Intake
       create_attorney_case_review_for_legacy_appeals
-      create_ama_hpr_tasks
     end
 
     private
@@ -218,6 +217,8 @@ module Seeds
       create_ama_tasks
       create_board_grant_tasks
       create_veteran_record_request_tasks
+      create_ama_hpr_tasks
+      create_legacy_hpr_tasks
     end
 
     def create_ama_distribution_tasks
@@ -1133,22 +1134,21 @@ module Seeds
     end
 
     def create_ama_hpr_tasks
-      hpr_index = @ama_appeals.size
-      es = Constants.AMA_DOCKETS.evidence_submission
-      dr = Constants.AMA_DOCKETS.direct_review
+      created_appeals = []
+      hear = Constants.AMA_DOCKETS.hearing
       [
-        { number_of_claimants: nil, docket_type: es, request_issue_count: 1 },
-        { number_of_claimants: 1, docket_type: es, request_issue_count: 2 },
-        { number_of_claimants: 1, docket_type: dr, request_issue_count: 3 },
-        { number_of_claimants: 1, docket_type: dr, request_issue_count: 4 },
-        { number_of_claimants: 1, docket_type: dr, request_issue_count: 5 },
-        { number_of_claimants: 1, docket_type: dr, request_issue_count: 6 },
-        { number_of_claimants: 1, docket_type: dr, request_issue_count: 7 },
-        { number_of_claimants: 1, docket_type: dr, request_issue_count: 8 },
-        { number_of_claimants: 1, docket_type: dr, request_issue_count: 5 },
-        { number_of_claimants: 1, docket_type: dr, request_issue_count: 1 }
+        { number_of_claimants: nil, docket_type: hear, request_issue_count: 1 },
+        { number_of_claimants: 1, docket_type: hear, request_issue_count: 2 },
+        { number_of_claimants: 1, docket_type: hear, request_issue_count: 3 },
+        { number_of_claimants: 1, docket_type: hear, request_issue_count: 4 },
+        { number_of_claimants: 1, docket_type: hear, request_issue_count: 5 },
+        { number_of_claimants: 1, docket_type: hear, request_issue_count: 6 },
+        { number_of_claimants: 1, docket_type: hear, request_issue_count: 7 },
+        { number_of_claimants: 1, docket_type: hear, request_issue_count: 8 },
+        { number_of_claimants: 1, docket_type: hear, request_issue_count: 5 },
+        { number_of_claimants: 1, docket_type: hear, request_issue_count: 1 }
       ].each do |params|
-        @ama_appeals << create(
+        created_appeals << create(
           :appeal,
           number_of_claimants: params[:number_of_claimants],
           docket_type: params[:docket_type],
@@ -1157,9 +1157,32 @@ module Seeds
           )
         )
       end
-      byebug
-      @ama_appeals.each.to_enum.with_index(hpr_index).each do |appeal, idx|
-        if idx >= hpr_index + 4
+      created_appeals.each_with_index do |appeal, idx|
+        if idx >= 4
+          create_scheduled_hearing_postponement_request_task(appeal)
+        else
+          create_unscheduled_hearing_postponement_request_task(appeal)
+        end
+      end
+    end
+
+    def create_legacy_hpr_tasks
+      created_legacy_appeals = []
+      offsets = (300..310).to_a
+      user = User.find_by_css_id("BVASYELLOW")
+      RequestStore[:current_user] = user
+      offsets.each do |offset|
+        docket_number = "180000#{offset}"
+        next unless VACOLS::Folder.find_by(tinum: docket_number).nil?
+        veteran = create_veteran
+        vacols_titrnum = veteran.file_number
+        type = offset.even? ? "travel" : "video"
+        regional_office = "RO17"
+        created_legacy_appeals << create_vacols_entries(vacols_titrnum, docket_number, regional_office, type)
+      end
+
+      created_legacy_appeals.each_with_index do |appeal, idx|
+        if idx >= 4
           create_scheduled_hearing_postponement_request_task(appeal)
         else
           create_unscheduled_hearing_postponement_request_task(appeal)
