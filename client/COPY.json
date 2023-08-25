@@ -59,6 +59,7 @@
     "AGE_MAX_ERR": "Appellant cannot be older than 118 years of age."
   },
   "SSN_INVALID_ERR": "Please enter a valid social security number that follows the format: 123-45-6789 or 123456789",
+  "EIN_INVALID_ERR": "Please enter a valid employer identification number that follows the format: 12-3456789 or 123456789",
   "NULL_FILTER_LABEL": "<<blank>>",
   "OTHER_REVIEWS_TABLE_TITLE": "Higher Level Reviews & Supplemental Claims",
   "OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE": "EP Codes",
@@ -1381,5 +1382,6 @@
   "DATE_SELECTOR_INVALID_DATE_ERROR": "Please select a valid date",
   "VHA_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold (Value must be between 1 and 45 for VHA users)",
   "VHA_CANCEL_TASK_INSTRUCTIONS_LABEL": "Why are you returning? Provide any important context",
-  "DISPOSITION_DECISION_DATE_LABEL": "Thank you for completing your decision in Caseflow. Please indicate the decision date."
+  "DISPOSITION_DECISION_DATE_LABEL": "Thank you for completing your decision in Caseflow. Please indicate the decision date.",
+  "EMPLOYER_IDENTIFICATION_NUMBER": "Employer Identification Number"
 }
