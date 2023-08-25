@@ -857,9 +857,9 @@ describe EndProductEstablishment, :postgres do
       end
 
       it "logs the error message" do
-        expect(Rails.logger).to receive(:error).with("Failed to acquire lock for EPE ID:"\
-        " #{end_product_establishment.id}! EPE sync is being called by another process. Please try again later.")
-
+        expect(Rails.logger).to receive(:error)
+          .with("Failed to acquire lock for EPE ID: #{end_product_establishment.id}!"\
+                "  #sync! is being called by another process. Please try again later.")
         end_product_establishment.sync!
       end
     end
