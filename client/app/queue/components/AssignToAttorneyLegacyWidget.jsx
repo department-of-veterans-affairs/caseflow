@@ -236,19 +236,19 @@ export class AssignToAttorneyLegacyWidget extends React.PureComponent {
 
     const Widget = <React.Fragment>
       <SearchableDropdown
-        name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY}
-        hideLabel
+        name={COPY.JUDGE_LEGACY_DECISION_REVIEW_TITLE}
         searchable
         errorMessage={isModal && highlightFormItems && !selectedOption ? 'Choose one' : null}
         options={options}
         placeholder={COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER}
         onChange={(option) => option && this.props.setSelectedAssignee({ assigneeId: option.value })}
-        value={selectedOption}
-        styling={css({ width: '30rem' })} />
+        value={selectedOption} />
       {selectedAssignee === OTHER &&
         <React.Fragment>
           <div {...fullWidth} {...css({ marginBottom: '0' })} />
-          <p>{COPY.ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL}</p>
+          <label className="question-label" {...css({ paddingTop: '2rem' })}>
+            <span>{COPY.ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL}</span>
+          </label>
           <SearchableDropdown
             name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY}
             hideLabel
@@ -257,8 +257,7 @@ export class AssignToAttorneyLegacyWidget extends React.PureComponent {
             options={optionsOther}
             placeholder={placeholderOther}
             onChange={(option) => option && this.props.setSelectedAssigneeSecondary({ assigneeId: option.value })}
-            value={selectedOptionOther}
-            styling={css({ width: '30rem' })} />
+            value={selectedOptionOther} />
         </React.Fragment>}
       {isModal && <React.Fragment>
         <br />
@@ -266,8 +265,9 @@ export class AssignToAttorneyLegacyWidget extends React.PureComponent {
           name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
           errorMessage={highlightFormItems && instructions.length === 0 ? COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
           id="taskInstructions"
+          placeholder = {COPY.MORE_INFO}
           onChange={(value) => this.setState({ instructions: value })}
-          value={this.state.instructions} />
+          value = {this.state.instructions ? null : this.state.instructions} />
       </React.Fragment> }
       {!isModal && <Button
         onClick={this.submit}

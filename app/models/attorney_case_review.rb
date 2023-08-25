@@ -44,6 +44,20 @@ class AttorneyCaseReview < CaseflowRecord
     update_issue_dispositions_in_caseflow!
   end
 
+  def update_in_vacols_and_caseflow!
+    update_in_vacols!
+    task.update!(status: Constants.TASK_STATUSES.completed)
+
+    if task.assigned_by_id != reviewing_judge_id
+      task.parent.update(assigned_to_id: reviewing_judge_id)
+    end
+    task.parent.update(assigned_by_id: task.assigned_to_id)
+    if note && !note.nil?
+      labeled_note = note_label + note
+      task.parent.append_instruction(labeled_note)
+    end
+  end
+
   def written_by_name
     attorney.full_name
   end
@@ -88,7 +102,11 @@ class AttorneyCaseReview < CaseflowRecord
       ActiveRecord::Base.multi_transaction do
         record = create(params)
         if record.valid?
-          record.legacy? ? record.update_in_vacols! : record.update_in_caseflow!
+          if record.legacy? && record.task.type == "AttorneyTask"
+            record.update_in_vacols_and_caseflow!
+          else
+            record.legacy? ? record.update_in_vacols! : record.update_in_caseflow!
+          end
           record.associate_with_appeal
         end
         record
