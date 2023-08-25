@@ -298,7 +298,7 @@
   "NO_CASES_IN_QUEUE_MESSAGE": "You have no cases assigned to you. You can ",
   "NO_CASES_IN_QUEUE_LINK_TEXT": "search for cases",
   "ATTORNEY_QUEUE_TABLE_TITLE": "Your cases",
-  "ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you made a mistake, please email your judge to resolve the issue.",
+  "ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS",
   "ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE": "Please ask your judge to assign this case to you in DAS",
   "ATTORNEY_QUEUE_TABLE_TASK_NO_DOCUMENTS_READER_LINK": "View in Reader",
   "ORGANIZATION_QUEUE_TABLE_TITLE": "%s cases",
