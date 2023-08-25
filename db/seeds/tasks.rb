@@ -20,6 +20,7 @@ module Seeds
       create_tasks
       create_legacy_issues_eligible_for_opt_in # to do: move to Seeds::Intake
       create_attorney_case_review_for_legacy_appeals
+      create_ama_hpr_tasks
     end
 
     private
@@ -1156,11 +1157,12 @@ module Seeds
           )
         )
       end
-      @ama_appeals.each_with_index(hpr_index) do |appeal, idx|
+      byebug
+      @ama_appeals.each.to_enum.with_index(hpr_index).each do |appeal, idx|
         if idx >= hpr_index + 4
-          create_scheduled_hearing_postponement_request_task
+          create_scheduled_hearing_postponement_request_task(appeal)
         else
-          create_unscheduled_hearing_postponement_request_task
+          create_unscheduled_hearing_postponement_request_task(appeal)
         end
       end
     end
