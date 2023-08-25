@@ -324,10 +324,10 @@ class DocumentsTable extends React.Component {
                   />
 
                   {(this.state.recieptFilter === 0 || this.state.recieptFilter === 1) &&
-                  <DateSelector type="date" name="Before this date" onChange={this.validateDateIsNotAfter} />}
+                  <DateSelector value={this.state.beforeDate} type="date" name="Before this date" onChange={this.validateDateIsNotAfter} />}
                   {(this.state.recieptFilter === 0 || this.state.recieptFilter === 2) &&
-                  <DateSelector type="date" name="After this date" onChange={this.validateDateIsAfter} />}
-                  {this.state.recieptFilter === 3 && <DateSelector type="date" name="On this date" onChange={this.validateDayIsToday} />}
+                  <DateSelector value={this.state.afterDate} type="date" name="After this date" onChange={this.validateDateIsAfter} />}
+                  {this.state.recieptFilter === 3 && <DateSelector value={this.state.onDate} type="date" name="On this date" onChange={this.validateDayIsToday} />}
                   <div style={{ width: '100%', display: 'flex' }}>
                     <div style={{ display: 'flex', margin: 'flex-end', justifyContent: 'end' }}>
                       <Button onClick={() => this.props.setRecieptDateFilter(this.state.recieptFilter,
