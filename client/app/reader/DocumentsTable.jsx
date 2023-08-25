@@ -174,7 +174,7 @@ class DocumentsTable extends React.Component {
       // looks through all document types, and only adds them into docsArray if they are unique
       this.state.frozenDocs.map((x) => docsArray.includes(x.type) ? true : docsArray.push(x.type));
 
-      // convert each item to a hash for use in the filter
+      // convert each item to a hash for use in the document filter
       let filterItems = [];
 
       docsArray.forEach((x) => filterItems.push({
