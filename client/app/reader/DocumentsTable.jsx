@@ -57,11 +57,11 @@ class DocumentsTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      frozenDocs: ""
+      frozenDocs: ''
     };
   }
   componentDidMount() {
-    if (this.state.frozenDocs === "") {
+    if (this.state.frozenDocs === '') {
       const frozenDocs = this.props.documents;
 
       Object.freeze(frozenDocs);
@@ -283,7 +283,7 @@ class DocumentsTable extends React.Component {
           'aria-sort': sortDirectionAriaLabel,
         },
         header: (
-          <div>
+          <>
             <Button
               id="type-header"
               styling={{ 'aria-roledescription': 'sort button' }}
@@ -306,20 +306,23 @@ class DocumentsTable extends React.Component {
             />
 
             {isDocumentDropdownFilterOpen && (
-              <DropdownFilter
-                clearFilters={this.props.clearDocFilters}
-                name="Document"
-                isClearEnabled={anyDocFiltersAreSet}
-                handleClose={this.toggleDocumentDropdownFilterVisiblity}
-                addClearFiltersRow
-              >
-                <DocTagPicker
-                  tags={populateDocumentFilter()}
-                  tagToggleStates={this.props.docFilterCriteria.document}
-                  handleTagToggle={this.props.setDocFilter}
-                />
-              </DropdownFilter>
-            )}</div>
+              <div style={{ position: 'relative', right: '6vw' }}>
+                <DropdownFilter
+                  clearFilters={this.props.clearDocFilters}
+                  name="Document"
+                  isClearEnabled={anyDocFiltersAreSet}
+                  handleClose={this.toggleDocumentDropdownFilterVisiblity}
+                  addClearFiltersRow
+                >
+                  <DocTagPicker
+                    tags={populateDocumentFilter()}
+                    tagToggleStates={this.props.docFilterCriteria.document}
+                    handleTagToggle={this.props.setDocFilter}
+                  />
+                </DropdownFilter>
+              </div>
+            )}
+          </>
 
         ),
         valueFunction: (doc) => (
