@@ -663,6 +663,7 @@
   "PULAC_CERULLO_REMINDER_MODAL_OPT_FALSE": "No, continue sending to Dispatch",
   "PULAC_CERULLO_REMINDER_MODAL_OPT_TRUE": "Yes, notify Pulac Cerullo team of jurisdictional conflict",
   "ASSIGN_TASK_SUCCESS_MESSAGE": "Task assigned to %s",
+  "REASSIGN_TASK_SUCCESS_MESSAGE_SCM": "You have successfully assigned %s’s case to %s",
   "REASSIGN_TASK_SUCCESS_MESSAGE": "You have successfully reassigned this task to %s",
   "HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL": "You can continue to assign tasks to yourself and others using this queue.",
   "ASSIGN_TASK_SUCCESS_MESSAGE_MOVE_LEGACY_APPEALS_VLJ": "You have successfully reassigned %s’s case to %s",
