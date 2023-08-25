@@ -21,7 +21,7 @@ const EfolderUrlField = (props) => {
   );
 
   const efolderLinkRegexMatch = (inputValue) => {
-    return inputValue.match(/https:\/\/vefs-claimevidence.*\.bip\.va\.gov\/file\/\S{8}-\S{4}-\S{4}-\S{4}-\S{12}/)?.[0] === inputValue.split('?')[0];
+    return inputValue.match(/https:\/\/vefs-claimevidence.*\.bip\.va\.gov\/file\/\S{8}-\S{4}-\S{4}-\S{4}-\S{12}/)?.[0] === inputValue.split('?')[0]; // eslint-disable-line
   };
 
   const captureDocumentSeriesId = (validUrl) => {
