@@ -868,6 +868,13 @@ describe EndProductEstablishment, :postgres do
       it "raises EstablishedEndProductNotFound error" do
         expect { subject }.to raise_error(EndProductEstablishment::EstablishedEndProductNotFound)
       end
+
+      it "last_synced_at updates upon error to ensure SyncReviewsJob allows other EPEs to sync before re-attempt" do
+        expect(end_product_establishment.last_synced_at).to eq(nil)
+        expect { subject }.to raise_error(EndProductEstablishment::EstablishedEndProductNotFound)
+        end_product_establishment.reload
+        expect(end_product_establishment.last_synced_at).to eq(Time.zone.now)
+      end
     end
 
     context "when a matching end product has been established" do
@@ -894,6 +901,13 @@ describe EndProductEstablishment, :postgres do
 
         it "re-raises error" do
           expect { subject }.to raise_error(BGS::ShareError)
+        end
+
+        it "last_synced_at updates upon error to ensure SyncReviewsJob allows other EPEs to sync before re-attempt" do
+          expect(end_product_establishment.last_synced_at).to eq(nil)
+          expect { subject }.to raise_error(BGS::ShareError)
+          end_product_establishment.reload
+          expect(end_product_establishment.last_synced_at).to eq(Time.zone.now)
         end
       end
 
