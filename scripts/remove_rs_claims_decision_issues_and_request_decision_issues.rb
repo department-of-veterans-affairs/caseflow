@@ -1,7 +1,3 @@
-# frozen_string_literal: true
-
-end_product_establishment_ids = [4142, 4143, 4144, 4145]
-
 # :reek:FeatureEnvy
 def remove_rs_claims_decision_issues_and_request_decision_issues(end_product_establishment_ids)
   request_issues = RequestIssue.where(end_product_establishment_id: end_product_establishment_ids)
