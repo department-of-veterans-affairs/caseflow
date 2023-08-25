@@ -40,12 +40,12 @@ module Seeds
       create(:veteran, params.merge(options))
     end
 
-    def set_judge
-      judge = User.find_by_css_id("BVAAABSHIRE")
+    def judge
+      @judge ||= User.find_by_css_id("BVAAABSHIRE")
     end
 
-    def set_attorney
-      attorney = User.find_by_css_id("BVASCASPER1")
+    def attorney
+      @attorney ||= User.find_by_css_id("BVASCASPER1")
     end
 
     def create_allowed_request_issue_1
