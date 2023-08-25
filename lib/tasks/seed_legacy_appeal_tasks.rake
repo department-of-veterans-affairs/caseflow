@@ -35,7 +35,7 @@ namespace :db do
             else
               staff = VACOLS::Staff.find_by(sdomainid: user.css_id) || VACOLS::Staff.find_by(sdomainid: "CF_VLJTHREE_283") # user for local/demo || UAT
             end
-          end
+
 
             Generators::Vacols::Case.create(
               decass_creation: decass_creation,
@@ -364,8 +364,12 @@ namespace :db do
       task_type = $stdin.gets.chomp.upcase
       if task_type == "JUDGETASK" || task_type == "REVIEWTASK"
         $stdout.puts("Enter the CSS ID of a judge user that you want to assign these appeals to")
-        $stdout.puts("Hint: Judge Options include 'BVAAABSHIRE', 'BVARERDMAN'") if Rails.env.development? || Rails.env.test?
-        $stdout.puts("Hint: Judge Options include 'CF_VLJ_283', 'CF_VLJTWO_283'") if Rails.env.uat?
+
+        if Rails.env.development? || Rails.env.test?
+          $stdout.puts("Hint: Judge Options include 'BVAAABSHIRE', 'BVARERDMAN'") # local / test option
+        else
+          $stdout.puts("Hint: Judge Options include 'CF_VLJ_283', 'CF_VLJTWO_283'") # UAT option
+        end
 
         css_id = $stdin.gets.chomp.upcase
         user = User.find_by_css_id(css_id) if Rails.env.development? || Rails.env.test?
@@ -374,8 +378,12 @@ namespace :db do
         fail ArgumentError, "User must be a Judge in Vacols for a #{task_type}", caller unless user.judge_in_vacols?
       elsif task_type == "ATTORNEYTASK"
         $stdout.puts("Which attorney do you want to assign the Attorney Task to?")
-        $stdout.puts("Hint: Attorney Options include 'BVASCASPER1', 'BVARERDMAN', 'BVALSHIELDS'") if Rails.env.development? || Rails.env.test?
-        $stdout.puts("Hint: Judge Options include 'CF_ATTN_283', 'CF_ATTNTWO_283'") if Rails.env.uat?
+
+        if Rails.env.development? || Rails.env.test?
+          $stdout.puts("Hint: Attorney Options include 'BVASCASPER1', 'BVARERDMAN', 'BVALSHIELDS'") # local / test option
+        else
+          $stdout.puts("Hint: Judge Options include 'CF_ATTN_283', 'CF_ATTNTWO_283'") # UAT option
+        end
 
         css_id = $stdin.gets.chomp.upcase
         user = User.find_by_css_id(css_id)
