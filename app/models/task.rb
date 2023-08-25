@@ -116,12 +116,12 @@ class Task < CaseflowRecord
 
   scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
 
-  scope :open_postponement_req_mail_tasks, lambda {
-                                             where(
-                                               type: HearingPostponementRequestMailTask.name,
-                                               assigned_to: HearingAdmin.singleton
-                                             ).open
-                                           }
+  scope :hearing_postponement_req_tasks, lambda {
+                                                where(
+                                                  type: HearingPostponementRequestMailTask.name,
+                                                  assigned_to: HearingAdmin.singleton
+                                                )
+                                              }
 
   attr_accessor :skip_check_for_only_open_task_of_type
 
@@ -989,19 +989,12 @@ class Task < CaseflowRecord
     true
   end
 
-  def cancel_redundant_postponement_req_mail_tasks(type)
-    hpr_tasks = appeal.tasks.open_postponement_req_mail_tasks
-
-    return if hpr_tasks.empty?
-
-    cancellation_reason = format_cancellation_reason(type)
-    params = { status: Constants.TASK_STATUSES.cancelled, instructions: cancellation_reason }
-    hpr_tasks.each { |t| t.update_from_params(params, RequestStore[:current_user]) }
+  def cancel_redundant_hearing_postponement_req_tasks
+    open_hearing_postponement_requests.each { |t| t.cancel_when_made_redundant(self, updated_at) }
   end
 
-  def format_cancellation_reason(type)
-    "##### REASON FOR CANCELLATION:\n" \
-    "Hearing postponed when #{type} was completed on #{updated_at.strftime('%m/%d/%Y')}"
+  def open_hearing_postponement_requests
+    appeal.tasks.hearing_postponement_req_tasks.open
   end
 end
 # rubocop:enable Metrics/ClassLength

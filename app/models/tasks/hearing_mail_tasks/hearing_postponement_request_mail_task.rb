@@ -40,6 +40,12 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     end
   end
 
+  def cancel_when_made_redundant(completed_task, updated_at)
+    user = ensure_user_can_cancel_task(completed_task.hearing.updated_by)
+    params = build_redundant_task_params(completed_task.type, updated_at)
+    update_from_params(params, user)
+  end
+
   private
 
   def active_schedule_hearing_task?
@@ -55,5 +61,21 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
     # Ensure hearing associated with AssignHearingDispositionTask is not scheduled in the past
     !open_task.hearing.scheduled_for_past?
+  end
+
+  def build_redundant_task_params(task_name, updated_at)
+    {
+      status: Constants.TASK_STATUSES.cancelled,
+      instructions: format_cancellation_reason(task_name, updated_at)
+    }
+  end
+
+  def format_cancellation_reason(task_name, updated_at)
+    "##### REASON FOR CANCELLATION:\n" \
+    "Hearing postponed when #{task_name} was completed on #{updated_at.strftime('%m/%d/%Y')}"
+  end
+
+  def ensure_user_can_cancel_task(backup_user)
+    RequestStore[:current_user].in_hearing_admin_team? ? Requestore[:current_user] : backup_user
   end
 end

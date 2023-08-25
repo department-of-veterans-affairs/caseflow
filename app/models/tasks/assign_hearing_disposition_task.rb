@@ -107,7 +107,13 @@ class AssignHearingDispositionTask < Task
       fail HearingDispositionNotPostponed
     end
 
-    schedule_later
+    multi_transaction do
+      created_tasks = schedule_later
+
+      cancel_redundant_hearing_postponement_req_tasks
+
+      created_tasks
+    end
   end
 
   def no_show!

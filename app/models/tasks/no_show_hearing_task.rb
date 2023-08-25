@@ -62,7 +62,7 @@ class NoShowHearingTask < Task
 
       update!(status: Constants.TASK_STATUSES.completed)
 
-      cancel_redundant_postponement_req_mail_tasks(type)
+      cancel_redundant_hearing_postponement_req_tasks
     end
   end
 
