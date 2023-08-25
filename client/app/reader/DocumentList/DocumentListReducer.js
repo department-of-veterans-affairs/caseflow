@@ -45,7 +45,12 @@ const initialState = {
     category: {},
     tag: {},
     searchQuery: '',
-    recieptFilterType: ''
+    recieptFilterType: '',
+    recieptFilterDates: {
+      beforeDate: '',
+      afterDate: '',
+      onDate: ''
+    }
   },
   pdfList: {
     scrollTop: null,
@@ -141,6 +146,10 @@ const documentListReducer = (state = initialState, action = {}) => {
         recieptFilterType: {
           $set: action.payload.recieptFilterType
         }
+      },
+      recieptFilterDates: {
+        $set: action.payload.recieptDatesHash
+
       }
     });
     // Scrolling

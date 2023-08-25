@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 import React from 'react';
 import PropTypes from 'prop-types';
-import _, { pick } from 'lodash';
+import _, { before } from 'lodash';
 import { connect } from 'react-redux';
 
 import { formatDateStr } from '../util/DateUtil';
@@ -55,70 +55,73 @@ export const getRowObjects = (documents, annotationsPerDocument) => {
   }, []);
 };
 
-// Takes the string date returned by the date picker, compares it to a today
-// and returns true if the new date was before the current day
-const validateDateIsNotAfter = (pickedDate) => {
-  if (new Date(pickedDate) < new Date()) {
-    console.log('date was before.');
-  }
-};
-
-const validateDateIsAfter = (pickedDate) => {
-  if (new Date(pickedDate) > new Date()) {
-    console.log('date was After.');
-  }
-};
-
-const validateDayIsToday = (pickedDate) => {
-
-  const today = new Date();
-  const todaysDay = today.getDate();
-  // Add 1 because months start at 0. uses padStart to turn something like 8 into 08
-  const todaysMonth = String(today.getMonth() + 1).padStart(2, '0');
-  const todaysYear = today.getFullYear();
-
-  // build a date that matches the format the datetime input hands to us (YYYY-MM-DD)
-  const todaysString = `${todaysYear}-${todaysMonth}-${todaysDay}`;
-
-  if (pickedDate === todaysString) {
-    console.log('date was today.');
-  }
-
-};
-
 class DocumentsTable extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      recieptFilter: 0
-    };
-  }
-  componentDidMount() {
-    if (this.props.pdfList.scrollTop) {
-      this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
+  // Takes the string date returned by the date picker, compares it to a today
+// and returns true if the new date was before the current day
+ validateDateIsNotAfter = (pickedDate) => {
+   if (new Date(pickedDate) < new Date()) {
+     console.log('date was before.');
+     this.setState({ beforeDate: pickedDate });
+   }
+ };
 
-      if (this.lastReadIndicatorElem) {
-        const lastReadBoundingRect = this.lastReadIndicatorElem.getBoundingClientRect();
-        const tbodyBoundingRect = this.tbodyElem.getBoundingClientRect();
-        const lastReadIndicatorIsInView =
+ validateDateIsAfter = (pickedDate) => {
+   if (new Date(pickedDate) > new Date()) {
+     this.setState({ afterDate: pickedDate });
+   }
+ };
+
+ validateDayIsToday = (pickedDate) => {
+
+  //  const today = new Date();
+  //  const todaysDay = today.getDate();
+  //  // Add 1 because months start at 0. uses padStart to turn something like 8 into 08
+  //  const todaysMonth = String(today.getMonth() + 1).padStart(2, '0');
+  //  const todaysYear = today.getFullYear();
+
+  //  // build a date that matches the format the datetime input hands to us (YYYY-MM-DD)
+  //  const todaysString = `${todaysYear}-${todaysMonth}-${todaysDay}`;
+
+  //  if (pickedDate === todaysString) {
+     this.setState({ onDate: pickedDate });
+  //  }
+
+ };
+ constructor() {
+   super();
+   this.state = {
+     recieptFilter: 0,
+     beforeDate: '',
+     afterDate: '',
+     onDate: ''
+   };
+ }
+ componentDidMount() {
+   if (this.props.pdfList.scrollTop) {
+     this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
+
+     if (this.lastReadIndicatorElem) {
+       const lastReadBoundingRect = this.lastReadIndicatorElem.getBoundingClientRect();
+       const tbodyBoundingRect = this.tbodyElem.getBoundingClientRect();
+       const lastReadIndicatorIsInView =
           tbodyBoundingRect.top <= lastReadBoundingRect.top &&
           lastReadBoundingRect.bottom <= tbodyBoundingRect.bottom;
 
-        if (!lastReadIndicatorIsInView) {
-          const rowWithLastRead = _.find(this.tbodyElem.children, (tr) =>
-            tr.querySelector(`#${this.lastReadIndicatorElem.id}`)
-          );
+       if (!lastReadIndicatorIsInView) {
+         const rowWithLastRead = _.find(this.tbodyElem.children, (tr) =>
+           tr.querySelector(`#${this.lastReadIndicatorElem.id}`)
+         );
 
-          this.tbodyElem.scrollTop +=
+         this.tbodyElem.scrollTop +=
             rowWithLastRead.getBoundingClientRect().top - tbodyBoundingRect.top;
-        }
-      }
-    }
-  }
+       }
+     }
+   }
+ }
 
-  componentWillUnmount() {
-    this.props.setDocListScrollPosition(this.tbodyElem.scrollTop);
-  }
+ componentWillUnmount() {
+   this.props.setDocListScrollPosition(this.tbodyElem.scrollTop);
+ }
 
   getTbodyRef = (elem) => (this.tbodyElem = elem);
   getLastReadIndicatorRef = (elem) => (this.lastReadIndicatorElem = elem);
@@ -321,13 +324,16 @@ class DocumentsTable extends React.Component {
                   />
 
                   {(this.state.recieptFilter === 0 || this.state.recieptFilter === 1) &&
-                  <DateSelector type="date" name="Before this date" onChange={validateDateIsNotAfter} />}
+                  <DateSelector type="date" name="Before this date" onChange={this.validateDateIsNotAfter} />}
                   {(this.state.recieptFilter === 0 || this.state.recieptFilter === 2) &&
-                  <DateSelector type="date" name="After this date" onChange={validateDateIsAfter} />}
-                  {this.state.recieptFilter === 3 && <DateSelector type="date" name="On this date" onChange={validateDayIsToday} />}
-                  <div style={{ width: '100%', display:'flex'}}>
-                    <div style={{display:'flex', margin:'flex-end', justifyContent:'end'}}>
-                      <Button onClick={() => this.props.setRecieptDateFilter(this.state.recieptFilter)} title="apply filter">
+                  <DateSelector type="date" name="After this date" onChange={this.validateDateIsAfter} />}
+                  {this.state.recieptFilter === 3 && <DateSelector type="date" name="On this date" onChange={this.validateDayIsToday} />}
+                  <div style={{ width: '100%', display: 'flex' }}>
+                    <div style={{ display: 'flex', margin: 'flex-end', justifyContent: 'end' }}>
+                      <Button onClick={() => this.props.setRecieptDateFilter(this.state.recieptFilter,
+                        { beforeDate: this.state.beforeDate,
+                          afterDate: this.state.afterDate,
+                          onDate: this.state.onDate })} title="apply filter">
                         <span>text</span>
                       </Button>
                     </div>

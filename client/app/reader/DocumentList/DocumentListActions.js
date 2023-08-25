@@ -116,11 +116,12 @@ export const clearTagFilters = () => (dispatch) => {
   dispatch(updateFilteredIdsAndDocs());
 };
 
-export const setRecieptDateFilter = (recieptFilterType) => (dispatch) => {
+export const setRecieptDateFilter = (recieptFilterType, recieptDatesHash) => (dispatch) => {
   dispatch({
     type: Constants.SET_RECIEPT_DATE_FILTER,
     payload: {
-      recieptFilterType
+      recieptFilterType,
+      recieptDatesHash
     },
     meta: {
       analytics: {
