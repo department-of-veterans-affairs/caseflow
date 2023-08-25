@@ -22,6 +22,8 @@ import {
   setTagFilter,
   setCategoryFilter,
   toggleDropdownFilterVisibility,
+  setDocFilter,
+  clearDocFilters
 } from '../reader/DocumentList/DocumentListActions';
 import { getAnnotationsPerDocument } from './selectors';
 import { SortArrowDownIcon } from '../components/icons/SortArrowDownIcon';
@@ -52,18 +54,24 @@ export const getRowObjects = (documents, annotationsPerDocument) => {
     return acc;
   }, []);
 };
-
 class DocumentsTable extends React.Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
-      filterText: ''
+      frozenDocs: ''
     };
   }
 
   componentDidMount() {
+    if (this.state.frozenDocs === '') {
+      const frozenDocs = this.props.documents;
+
+      Object.freeze(frozenDocs);
+      this.setState({
+        frozenDocs
+      });
+    }
     if (this.props.pdfList.scrollTop) {
       this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
 
@@ -95,10 +103,14 @@ class DocumentsTable extends React.Component {
   getCategoryFilterIconRef = (categoryFilterIcon) =>
     (this.categoryFilterIcon = categoryFilterIcon);
   getTagFilterIconRef = (tagFilterIcon) => (this.tagFilterIcon = tagFilterIcon);
+  getDocumentFilterIconRef = (documentFilterIcon) => (this.documentFilterIcon = documentFilterIcon);
   toggleCategoryDropdownFilterVisiblity = () =>
     this.props.toggleDropdownFilterVisibility('category');
   toggleTagDropdownFilterVisiblity = () =>
     this.props.toggleDropdownFilterVisibility('tag');
+
+  toggleDocumentDropdownFilterVisiblity = () =>
+    this.props.toggleDropdownFilterVisibility('document');
 
   getKeyForRow = (index, { isComment, id }) => {
     return isComment ? `${id}-comment` : id;
@@ -118,6 +130,7 @@ class DocumentsTable extends React.Component {
 
     const anyCategoryFiltersAreSet = anyFiltersSet('category');
     const anyTagFiltersAreSet = anyFiltersSet('tag');
+    const anyDocFiltersAreSet = anyFiltersSet('document');
 
     // We have blank headers for the comment indicator and label indicator columns.
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
@@ -158,14 +171,35 @@ class DocumentsTable extends React.Component {
       ];
     }
 
+    const populateDocumentFilter = () => {
+      let docsArray = [];
+
+      // looks through all document types, and only adds them into docsArray if they are unique
+      this.state.frozenDocs.map((x) => docsArray.includes(x.type) ? true : docsArray.push(x.type));
+
+      // convert each item to a hash for use in the document filter
+      let filterItems = [];
+
+      docsArray.forEach((x) => filterItems.push({
+        value: docsArray.indexOf(x),
+        text: x
+      }));
+
+      return filterItems;
+    };
+
     const isCategoryDropdownFilterOpen = _.get(this.props.pdfList, [
       'dropdowns',
       'category',
     ]);
-
     const isTagDropdownFilterOpen = _.get(this.props.pdfList, [
       'dropdowns',
       'tag',
+    ]);
+
+    const isDocumentDropdownFilterOpen = _.get(this.props.pdfList, [
+      'dropdowns',
+      'document',
     ]);
 
     const sortDirectionAriaLabel = `${
@@ -253,18 +287,47 @@ class DocumentsTable extends React.Component {
           'aria-sort': sortDirectionAriaLabel,
         },
         header: (
-          <Button
-            id="type-header"
-            styling={{ 'aria-roledescription': 'sort button' }}
-            name="Document Type"
-            classNames={['cf-document-list-button-header']}
-            onClick={() => this.props.changeSortState('type')}
-          >
-            <span id="type-header-label">Document Type</span>
-            {this.props.docFilterCriteria.sort.sortBy === 'type' ?
-              sortArrowIcon :
-              notSortedIcon}
-          </Button>
+          <>
+            <Button
+              id="type-header"
+              styling={{ 'aria-roledescription': 'sort button' }}
+              name="Document Type"
+              classNames={['cf-document-list-button-header']}
+              onClick={() => this.props.changeSortState('type')}
+            >
+              <span id="type-header-label">Document Type</span>
+
+              {this.props.docFilterCriteria.sort.sortBy === 'type' ?
+                sortArrowIcon :
+                notSortedIcon}
+            </Button>
+            <FilterIcon
+              label="Filter by Document"
+              idPrefix="document"
+              getRef={this.getDocumentFilterIconRef}
+              selected={isDocumentDropdownFilterOpen}
+              handleActivate={this.toggleDocumentDropdownFilterVisiblity}
+            />
+
+            {isDocumentDropdownFilterOpen && (
+              <div style={{ position: 'relative', right: '14vw' }}>
+                <DropdownFilter
+                  clearFilters={this.props.clearDocFilters}
+                  name="Document"
+                  isClearEnabled={anyDocFiltersAreSet}
+                  handleClose={this.toggleDocumentDropdownFilterVisiblity}
+                  addClearFiltersRow
+                >
+                  <DocTagPicker
+                    tags={populateDocumentFilter()}
+                    tagToggleStates={this.props.docFilterCriteria.document}
+                    handleTagToggle={this.props.setDocFilter}
+                  />
+                </DropdownFilter>
+              </div>
+            )}
+          </>
+
         ),
         valueFunction: (doc) => (
           <DocTypeColumn
@@ -290,22 +353,21 @@ class DocumentsTable extends React.Component {
               handleActivate={this.toggleTagDropdownFilterVisiblity}
             />
             {isTagDropdownFilterOpen && (
-              <ReaderTableDropdownFilter
-                clearFilters={this.props.clearTagFilters}
-                name="tag"
-                isClearEnabled={anyTagFiltersAreSet}
-                handleClose={this.toggleTagDropdownFilterVisiblity}
-                addClearFiltersRow
-              >
-
-                <DocTagPicker
-                  // This is the original props : tags={this.props.tagOptions}
-                  // using debug filtering just for testing
-                  tags={this.props.tagOptions}
-                  tagToggleStates={this.props.docFilterCriteria.tag}
-                  handleTagToggle={this.props.setTagFilter}
-                />
-              </ReaderTableDropdownFilter>
+              <div style={{ position: 'relative', right: '10vw' }}>
+                <DropdownFilter
+                  clearFilters={this.props.clearTagFilters}
+                  name="tag"
+                  isClearEnabled={anyTagFiltersAreSet}
+                  handleClose={this.toggleTagDropdownFilterVisiblity}
+                  addClearFiltersRow
+                >
+                  <DocTagPicker
+                    tags={this.props.tagOptions}
+                    tagToggleStates={this.props.docFilterCriteria.tag}
+                    handleTagToggle={this.props.setTagFilter}
+                  />
+                </DropdownFilter>
+              </div>
             )}
           </div>
         ),
@@ -369,6 +431,9 @@ DocumentsTable.propTypes = {
   setDocListScrollPosition: PropTypes.func.isRequired,
   toggleDropdownFilterVisibility: PropTypes.func.isRequired,
   tagOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  setDocFilter: PropTypes.func,
+  clearDocFilters: PropTypes.func,
+  secretDebug: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) =>
@@ -381,6 +446,8 @@ const mapDispatchToProps = (dispatch) =>
       changeSortState,
       toggleDropdownFilterVisibility,
       setCategoryFilter,
+      setDocFilter,
+      clearDocFilters
     },
     dispatch
   );
