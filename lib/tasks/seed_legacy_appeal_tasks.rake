@@ -36,7 +36,6 @@ namespace :db do
               staff = VACOLS::Staff.find_by(sdomainid: user.css_id) || VACOLS::Staff.find_by(sdomainid: "CF_VLJTHREE_283") # user for local/demo || UAT
             end
 
-
             Generators::Vacols::Case.create(
               decass_creation: decass_creation,
               corres_exists: true,
@@ -261,9 +260,24 @@ namespace :db do
               assigned_to: Bva.singleton
             )
           when 67..100
-            TranscriptionTask.create!(
+            hearing_task = HearingTask.create!(
               appeal: appeal,
               parent: root_task,
+              assigned_to: Bva.singleton
+            )
+            ScheduleHearingTask.create!(
+              appeal: appeal,
+              parent: hearing_task,
+              assigned_to: Bva.singleton
+            ).update(status: 'completed')
+            AssignHearingDispositionTask.create!(
+              appeal: appeal,
+              parent: hearing_task,
+              assigned_to: Bva.singleton
+            ).update(status: 'completed')
+            TranscriptionTask.create!(
+              appeal: appeal,
+              parent: hearing_task,
               assigned_to: Bva.singleton
             )
           end
@@ -370,7 +384,7 @@ namespace :db do
         else
           $stdout.puts("Hint: Judge Options include 'CF_VLJ_283', 'CF_VLJTWO_283'") # UAT option
         end
-
+        
         css_id = $stdin.gets.chomp.upcase
         user = User.find_by_css_id(css_id) || User.find_by_css_id('CF_VLJ_283') # local,test / UAT
 
