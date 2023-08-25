@@ -102,7 +102,7 @@ export const setTagFilter = (text, checked, tagId) => (dispatch) => {
   dispatch(updateFilteredIdsAndDocs());
 };
 
-export const clearTagFilters = () => (dispatch, recieptState) => {
+export const clearTagFilters = () => (dispatch) => {
   console.log(dispatch);
   dispatch({
     type: Constants.CLEAR_TAG_FILTER,
@@ -116,15 +116,17 @@ export const clearTagFilters = () => (dispatch, recieptState) => {
   dispatch(updateFilteredIdsAndDocs());
 };
 
-export const setRecieptDateFilter = () => (dispatch) => {
-  console.log(dispatch);
-  console.log('doc list actions hit')
+export const setRecieptDateFilter = (recieptFilterType) => (dispatch) => {
   dispatch({
     type: Constants.SET_RECIEPT_DATE_FILTER,
+    payload: {
+      recieptFilterType
+    },
     meta: {
       analytics: {
         category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-        action: 'set_reciept_date_filter'
+        action: 'set RecieptFilterType-' + recieptFilterType,
+        label: 'setRecieptFilter'
       }
     }
   });

@@ -327,7 +327,7 @@ class DocumentsTable extends React.Component {
                   {this.state.recieptFilter === 3 && <DateSelector type="date" name="On this date" onChange={validateDayIsToday} />}
                   <div style={{ width: '100%', display:'flex'}}>
                     <div style={{display:'flex', margin:'flex-end', justifyContent:'end'}}>
-                      <Button onClick={this.props.setRecieptDateFilter} title="apply filter">
+                      <Button onClick={() => this.props.setRecieptDateFilter(this.state.recieptFilter)} title="apply filter">
                         <span>text</span>
                       </Button>
                     </div>

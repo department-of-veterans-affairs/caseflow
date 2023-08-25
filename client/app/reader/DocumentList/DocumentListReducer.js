@@ -44,7 +44,8 @@ const initialState = {
     },
     category: {},
     tag: {},
-    searchQuery: ''
+    searchQuery: '',
+    recieptFilterType: ''
   },
   pdfList: {
     scrollTop: null,
@@ -137,10 +138,8 @@ const documentListReducer = (state = initialState, action = {}) => {
   case Constants.SET_RECIEPT_DATE_FILTER:
     return update(state, {
       docFilterCriteria: {
-        tag: {
-          [action.payload.text]: {
-            $set: action.payload.checked
-          }
+        recieptFilterType: {
+          $set: action.payload.recieptFilterType
         }
       }
     });
