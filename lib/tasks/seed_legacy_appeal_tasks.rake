@@ -30,7 +30,7 @@ namespace :db do
           cases = Array.new(num_appeals_to_create).each_with_index.map do
             key = VACOLS::Folder.maximum(:ticknum).next
 
-            if task_type == "ATTORNEYTASK" || task_type == "REVIEWTASK" || task_type == "SCENARIO1EDGE"
+            if task_type == "ATTORNEYTASK" || task_type == "REVIEWTASK"
               staff = VACOLS::Staff.find_by(sdomainid: "BVACABSHIRE") || VACOLS::Staff.find_by(sdomainid: "CF_VLJTHREE_283") # user for local/demo || UAT
             else
               staff = VACOLS::Staff.find_by(sdomainid: user.css_id) || VACOLS::Staff.find_by(sdomainid: "CF_VLJTHREE_283") # user for local/demo || UAT
