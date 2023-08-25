@@ -28,50 +28,55 @@ const EfolderUrlField = (props) => {
     return validUrl.match(/\S{8}-\S{4}-\S{4}-\S{4}-\S{12}/)?.[0];
   };
 
-  const checkIfDocumentExists = () => {
+  const checkIfDocumentExists = async () => {
     setLoading(true);
     const seriesId = captureDocumentSeriesId(url);
     const appealId = props.appealId;
 
-    let newValidityResult = false;
+    let apiValidity = false;
 
-    ApiUtil.get(`/appeals/${appealId}/document/${seriesId}`).
+    await ApiUtil.get(`/appeals/${appealId}/document/${seriesId}`).
       then((response) => {
         if (response.body.document_presence === true) {
-          newValidityResult = true;
+          apiValidity = true;
+          // setValid(true);
           setError('');
         } else {
+          apiValidity = false;
+          setValid(false);
           setError(COPY.EFOLDER_DOCUMENT_NOT_FOUND);
         }
       }).
       catch(() => {
-        newValidityResult = false;
+        apiValidity = false;
+        // setValid(false);
         setError(COPY.EFOLDER_CONNECTION_ERROR);
       }).
       finally(() => {
         setLoading(false);
-
-        valueRef.current = url;
-        setValid(newValidityResult);
-        props?.onChange?.(url, newValidityResult);
       });
+
+    return apiValidity;
   };
 
-  const handleDebounce = debounce((value) => {
+  const handleDebounce = debounce(async (value) => {
     if (valueRef.current === value) {
       props?.onChange?.(url, valid);
 
       return;
     }
 
+    let newValidity;
+
     if (efolderLinkRegexMatch(value)) {
-      checkIfDocumentExists();
+      newValidity = await checkIfDocumentExists();
     } else {
-      setValid(false);
+      newValidity = false;
       setError(COPY.EFOLDER_INVALID_LINK_FORMAT);
-      valueRef.current = value;
-      props?.onChange?.(url, valid);
     }
+    valueRef.current = value;
+    props?.onChange?.(url, newValidity);
+    setValid(newValidity);
   }, 500);
 
   useEffect(() => {
