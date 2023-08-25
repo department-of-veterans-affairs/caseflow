@@ -39,7 +39,6 @@ const EfolderUrlField = (props) => {
       then((response) => {
         if (response.body.document_presence === true) {
           apiValidity = true;
-          // setValid(true);
           setError('');
         } else {
           apiValidity = false;
@@ -49,7 +48,6 @@ const EfolderUrlField = (props) => {
       }).
       catch(() => {
         apiValidity = false;
-        // setValid(false);
         setError(COPY.EFOLDER_CONNECTION_ERROR);
       }).
       finally(() => {
@@ -79,6 +77,13 @@ const EfolderUrlField = (props) => {
     setValid(newValidity);
   }, 500);
 
+  const retryOnClick = async () => {
+    const retryValidity = await checkIfDocumentExists();
+
+    setValid(retryValidity);
+    props?.onChange?.(url, retryValidity);
+  };
+
   useEffect(() => {
     props?.onChange?.(url, false);
     handleDebounce(url);
@@ -101,7 +106,7 @@ const EfolderUrlField = (props) => {
     {
       error === COPY.EFOLDER_CONNECTION_ERROR &&
       <Button
-        onClick={() => checkIfDocumentExists()}
+        onClick={retryOnClick}
         linkStyling
         classNames={['cf-push-right', 'cf-retry']}>
           Retry
@@ -113,9 +118,7 @@ const EfolderUrlField = (props) => {
 EfolderUrlField.propTypes = {
   appealId: PropTypes.string.isRequired,
   requestType: PropTypes.string,
-  value: PropTypes.string,
-  errorMessage: PropTypes.string,
-  valid: PropTypes.bool
+  errorMessage: PropTypes.string
 };
 
 export default EfolderUrlField;
