@@ -206,7 +206,13 @@ class RequestIssue < CaseflowRecord
         edited_description: data[:edited_description],
         correction_type: data[:correction_type],
         verified_unidentified_issue: data[:verified_unidentified_issue],
-        is_predocket_needed: data[:is_predocket_needed]
+        is_predocket_needed: data[:is_predocket_needed],
+        mst_status: data[:mst_status],
+        vbms_mst_status: data[:vbms_mst_status],
+        mst_status_update_reason_notes: data[:mst_status_update_reason_notes],
+        pact_status: data[:pact_status],
+        vbms_pact_status: data[:vbms_pact_status],
+        pact_status_update_reason_notes: data[:pact_status_update_reason_notes]
       }
     end
     # rubocop:enable Metrics/MethodLength
@@ -244,6 +250,30 @@ class RequestIssue < CaseflowRecord
     return false unless end_product_establishment
 
     end_product_establishment.status_active?
+  end
+
+  def mst_contention_status?
+    return false if bgs_contention.nil?
+    if bgs_contention.special_issues.is_a?(Hash)
+      return bgs_contention.special_issues[:spis_tc] == 'MST' if bgs_contention&.special_issues
+    elsif bgs_contention.special_issues.is_a?(Array)
+      bgs_contention.special_issues.each do |issue|
+        return true if issue[:spis_tc] == 'MST'
+      end
+    end
+    false
+  end
+
+  def pact_contention_status?
+    return false if bgs_contention.nil?
+    if bgs_contention.special_issues.is_a?(Hash)
+      return ["PACT", "PACTDICRE", "PEES1"].include?(bgs_contention.special_issues[:spis_tc]) if bgs_contention&.special_issues
+    elsif bgs_contention.special_issues.is_a?(Array)
+      bgs_contention.special_issues.each do |issue|
+        return true if ["PACT", "PACTDICRE", "PEES1"].include?(issue[:spis_tc])
+      end
+    end
+    false
   end
 
   def rating?
@@ -609,7 +639,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def contention
-    end_product_establishment.contention_for_object(self)
+    end_product_establishment&.contention_for_object(self)
   end
 
   def bgs_contention
