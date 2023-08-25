@@ -11,7 +11,6 @@ import DocumentsCommentsButton from './DocumentsCommentsButton';
 import HeaderFilterMessage from './HeaderFilterMessage';
 import SearchBar from '../components/SearchBar';
 
-
 class DocumentListHeader extends React.Component {
   constructor() {
     super();
