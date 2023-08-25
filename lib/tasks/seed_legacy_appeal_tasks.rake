@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # to create legacy appeals with AMA Tasks added, run "bundle exec rake db:generate_legacy_appeals_with_tasks"
-# then select an option between 'HearingTask', 'JudgeTask', 'AttorneyTask', 'ReviewTask', and 'Brieff_Curloc_81_Task'
+# then select an option between 'HearingTask', 'JudgeTask', 'AttorneyTask', 'ReviewTask', 'Scenario1edge' and 'Brieff_Curloc_81_Task'
 
 namespace :db do
   desc "Generates a smattering of legacy appeals with VACOLS cases that have special issues assocaited with them"
@@ -10,7 +10,7 @@ namespace :db do
       class << self
         def stamp_out_legacy_appeals(num_appeals_to_create, file_number, user, docket_number, task_type)
           # Changes location of vacols based on if you want a hearing task or only a legacy task in location 81
-          bfcurloc = if task_type == "HEARINGTASK"
+          bfcurloc = if task_type == "HEARINGTASK" || task_type == "SCENARIO1EDGE"
                        57
                      elsif task_type == "BRIEFF_CURLOC_81_TASK"
                        81
@@ -23,10 +23,15 @@ namespace :db do
           fail ActiveRecord::RecordNotFound unless veteran
 
           vacols_veteran_record = find_or_create_vacols_veteran(veteran)
-
+          decass_creation = if task_type == "ATTORNEYTASK" && user&.attorney_in_vacols?
+                              true
+                            else false
+                            end
           cases = Array.new(num_appeals_to_create).each_with_index.map do
             key = VACOLS::Folder.maximum(:ticknum).next
+            staff = VACOLS::Staff.find_by(sdomainid: user.css_id) # grabs the staff object
             Generators::Vacols::Case.create(
+              decass_creation: decass_creation,
               corres_exists: true,
               folder_attrs: Generators::Vacols::Folder.folder_attrs.merge(
                 custom_folder_attributes(vacols_veteran_record, docket_number.to_s)
@@ -39,7 +44,58 @@ namespace :db do
                 bfmpro: "ACT",
                 bfddec: nil
               },
-              decass_attrs: custom_decass_attributes(key, user, task_type)
+              # Clean this up
+              staff_attrs: {
+                stafkey: staff.stafkey,
+                susrpw: staff.susrpw || nil,
+                susrsec: staff.susrsec || nil,
+                susrtyp: staff.susrtyp || nil,
+                ssalut: staff.ssalut || nil,
+                snamef: staff.snamef,
+                snamemi: staff.snamemi,
+                snamel: staff.snamel,
+                slogid: staff.slogid,
+                stitle: staff.stitle,
+                sorg: staff.sorg || nil,
+                sdept: staff.sdept || nil,
+                saddrnum: staff.saddrnum || nil,
+                saddrst1: staff.saddrst1 || nil,
+                saddrst2: staff.saddrst2 || nil,
+                saddrcty: staff.saddrcty || nil,
+                saddrstt: staff.saddrstt || nil,
+                saddrcnty: staff.saddrcnty || nil,
+                saddrzip: staff.saddrzip || nil,
+                stelw: staff.stelw || nil,
+                stelwex: staff.stelwex || nil,
+                stelfax: staff.stelfax || nil,
+                stelh: staff.stelh || nil,
+                staduser: staff.staduser || nil,
+                stadtime: staff.stadtime || nil,
+                stmduser: staff.stmduser || nil,
+                stmdtime: staff.stmdtime || nil,
+                stc1: staff.stc1 || nil,
+                stc2: staff.stc2 || nil,
+                stc3: staff.stc3 || nil,
+                stc4: staff.stc4 || nil,
+                snotes: staff.snotes || nil,
+                sorc1: staff.sorc1 || nil,
+                sorc2: staff.sorc2 || nil,
+                sorc3: staff.sorc3 || nil,
+                sorc4: staff.sorc4 || nil,
+                sactive: staff.sactive || nil,
+                ssys: staff.ssys || nil,
+                sspare1: staff.sspare1 || nil,
+                sspare2: staff.sspare2 || nil,
+                sspare3: staff.sspare3 || nil,
+                smemgrp: staff.smemgrp || nil,
+                sfoiasec: staff.sfoiasec || nil,
+                srptsec: staff.srptsec || nil,
+                sattyid: staff.sattyid || nil,
+                svlj: staff.svlj || nil,
+                sinvsec: staff.sinvsec || nil,
+                sdomainid: staff.sdomainid || nil
+              },
+              decass_attrs: custom_decass_attributes(key, user, decass_creation)
             )
           end.compact
 
@@ -55,12 +111,18 @@ namespace :db do
           }
         end
 
-        def custom_decass_attributes(key, user, task_type)
-          if task_type == "ATTORNEYTASK" && user&.attorney_in_vacols?
+        def custom_decass_attributes(key, user, decass_creation)
+          if decass_creation
             {
               defolder: key,
               deatty: user.id,
-              dereceive: "2020-11-17 00:00:00 UTC"
+              deteam: "SBO",
+              deassign: VacolsHelper.local_date_with_utc_timezone - 7.days,
+              dereceive: VacolsHelper.local_date_with_utc_timezone,
+              deadtim: VacolsHelper.local_date_with_utc_timezone - 7.days,
+              demdtim: VacolsHelper.local_date_with_utc_timezone,
+              decomp: VacolsHelper.local_date_with_utc_timezone,
+              dedeadline: VacolsHelper.local_date_with_utc_timezone + 120.days
             }
           else
             {}
@@ -156,6 +218,102 @@ namespace :db do
           $stdout.puts("You have created a Review task")
         end
 
+        ########################################################
+        # Creates Edge case data for the LegacyAppeals that have just been generated
+        # Scenario 1
+        def create_edge_case_task_for_legacy_appeals(appeal)
+          root_task = RootTask.find_or_create_by!(appeal: appeal)
+          rand_val = rand(100)
+
+          case rand_val
+          when 0..33
+            hearing_task = HearingTask.create!(
+              appeal: appeal,
+              parent: root_task,
+              assigned_to: Bva.singleton
+            )
+            ScheduleHearingTask.create!(
+              appeal: appeal,
+              parent: hearing_task,
+              assigned_to: Bva.singleton
+            )
+          when 34..66
+            hearing_task = HearingTask.create!(
+              appeal: appeal,
+              parent: root_task,
+              assigned_to: Bva.singleton
+            )
+            ScheduleHearingTask.create!(
+              appeal: appeal,
+              parent: hearing_task,
+              assigned_to: Bva.singleton
+            ).update(status: 'completed')
+            AssignHearingDispositionTask.create!(
+              appeal: appeal,
+              parent: hearing_task,
+              assigned_to: Bva.singleton
+            )
+          when 67..100
+            hearing_task = HearingTask.create!(
+              appeal: appeal,
+              parent: root_task,
+              assigned_to: Bva.singleton
+            )
+            ScheduleHearingTask.create!(
+              appeal: appeal,
+              parent: hearing_task,
+              assigned_to: Bva.singleton
+            ).update(status: 'completed')
+            AssignHearingDispositionTask.create!(
+              appeal: appeal,
+              parent: hearing_task,
+              assigned_to: Bva.singleton
+            ).update(status: 'completed')
+            TranscriptionTask.create!(
+              appeal: appeal,
+              parent: hearing_task,
+              assigned_to: Bva.singleton
+            )
+          end
+
+          rand_val = rand(100)
+
+          case rand_val
+          when 0..20
+            FoiaTask.create!(
+              appeal: appeal,
+              parent: root_task,
+              assigned_to: Bva.singleton
+            )
+          when 21..40
+            PrivacyActTask.create!(
+              appeal: appeal,
+              parent: root_task,
+              assigned_to: Bva.singleton
+            )
+          when 41..60
+            PowerOfAttorneyRelatedMailTask.create!(
+              appeal: appeal,
+              parent: root_task,
+              assigned_to: Bva.singleton
+            )
+          when 61..80
+            TranslationTask.create!(
+              appeal: appeal,
+              parent: root_task,
+              assigned_to: Bva.singleton
+            )
+          when 81..100
+            CongressionalInterestMailTask.create!(
+              appeal: appeal,
+              parent: root_task,
+              assigned_to: Bva.singleton
+            )
+          end
+
+          $stdout.puts("You have created a Hearing Task")
+        end
+
         def initialize_root_task_for_legacy_appeals(appeal)
           RootTask.find_or_create_by!(appeal: appeal)
           $stdout.puts("You have set the Location to 81")
@@ -172,6 +330,8 @@ namespace :db do
             create_review_task_for_legacy_appeals(appeal, user)
           elsif task_type == "BRIEFF_CURLOC_81_TASK"
             initialize_root_task_for_legacy_appeals(appeal)
+          elsif task_type == "SCENARIO1EDGE"
+            create_edge_case_task_for_legacy_appeals(appeal)
           end
           # rubocop:enable
         end
@@ -208,22 +368,22 @@ namespace :db do
 
       $stdout.puts("Which type of tasks do you want to add to these Legacy Appeals?")
       $stdout.puts("Hint: Options include 'HearingTask', 'JudgeTask', 'AttorneyTask',
-                     'ReviewTask', and 'Brieff_Curloc_81_Task'")
+                     'ReviewTask', 'Scenario1edge' and 'Brieff_Curloc_81_Task'")
       task_type = $stdin.gets.chomp.upcase
       if task_type == "JUDGETASK" || task_type == "REVIEWTASK"
         $stdout.puts("Enter the CSS ID of a judge user that you want to assign these appeals to")
-        $stdout.puts("Hint: Judge Options include 'BVAAABSHIRE', 'BVARERDMAN'")
+        $stdout.puts("Hint: Judge Options include 'BVAAABSHIRE', 'BVARERDMAN'") # Add UAT Options
         css_id = $stdin.gets.chomp.upcase
         user = User.find_by_css_id(css_id)
         fail ArgumentError, "User must be a Judge in Vacols for a #{task_type}", caller unless user.judge_in_vacols?
       elsif task_type == "ATTORNEYTASK"
         $stdout.puts("Which attorney do you want to assign the Attorney Task to?")
-        $stdout.puts("Hint: Attorney Options include 'BVASCASPER1', 'BVARERDMAN', 'BVALSHIELDS'")
+        $stdout.puts("Hint: Attorney Options include 'BVASCASPER1', 'BVARERDMAN', 'BVALSHIELDS'") # Add UAT Options
         css_id = $stdin.gets.chomp.upcase
         user = User.find_by_css_id(css_id)
         fail ArgumentError, "User must be an Attorney in Vacols for a #{task_type}", caller unless user.attorney_in_vacols?
       else
-        user = User.find_by_css_id("FAKE USER")
+        user = User.find_by_css_id("FAKE USER") || User.find_by_css_id("CASEFLOW_397") # need to update for an UAT User if UAT environment
       end
 
       fail ActiveRecord::RecordNotFound unless user

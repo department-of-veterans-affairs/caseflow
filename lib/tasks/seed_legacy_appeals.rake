@@ -20,6 +20,7 @@ namespace :db do
             key = VACOLS::Folder.maximum(:ticknum).next
             Generators::Vacols::Case.create(
               corres_exists: true,
+              decass_creation: true,
               case_issue_attrs: [
                 Generators::Vacols::CaseIssue.case_issue_attrs.merge(ADD_SPECIAL_ISSUES ? special_issue_types(idx) : {}),
                 Generators::Vacols::CaseIssue.case_issue_attrs.merge(ADD_SPECIAL_ISSUES ? special_issue_types(idx) : {}),
