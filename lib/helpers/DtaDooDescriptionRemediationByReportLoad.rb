@@ -18,7 +18,8 @@ module WarRoom
       # Set the user
       RequestStore[:current_user] = User.system_user
 
-      decision_issues = DecisionIssue.where(id: get_decision_issue_ids(report_load))
+      di_ids = get_decision_issue_ids(report_load).map(&:decision_issue_ids)
+      decision_issues = DecisionIssue.where(id: di_ids)
 
       higher_levels_reviews = decision_issues.where(type: HigherLevelReview).map(&:decision_review).compact.uniq
 
