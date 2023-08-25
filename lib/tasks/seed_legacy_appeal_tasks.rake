@@ -372,8 +372,7 @@ namespace :db do
         end
 
         css_id = $stdin.gets.chomp.upcase
-        user = User.find_by_css_id(css_id) if Rails.env.development? || Rails.env.test?
-        user = User.find_by_css_id('CF_VLJ_283') if Rails.env.uat?
+        user = User.find_by_css_id(css_id) || User.find_by_css_id('CF_VLJ_283') # local,test / UAT
 
         fail ArgumentError, "User must be a Judge in Vacols for a #{task_type}", caller unless user.judge_in_vacols?
       elsif task_type == "ATTORNEYTASK"
@@ -386,7 +385,7 @@ namespace :db do
         end
 
         css_id = $stdin.gets.chomp.upcase
-        user = User.find_by_css_id(css_id)
+        user = User.find_by_css_id(css_id) || User.find_by_css_id('CF_VLJ_283') # local,test / UAT
 
         fail ArgumentError, "User must be an Attorney in Vacols for a #{task_type}", caller unless user.attorney_in_vacols?
       else
