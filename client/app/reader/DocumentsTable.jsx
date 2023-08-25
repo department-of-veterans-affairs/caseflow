@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
+import _, { pick } from 'lodash';
 import { connect } from 'react-redux';
 
 import { formatDateStr } from '../util/DateUtil';
@@ -24,6 +24,7 @@ import {
   setTagFilter,
   setCategoryFilter,
   toggleDropdownFilterVisibility,
+  setRecieptDateFilter
 } from '../reader/DocumentList/DocumentListActions';
 import { getAnnotationsPerDocument } from './selectors';
 import { SortArrowDownIcon } from '../components/icons/SortArrowDownIcon';
@@ -69,14 +70,19 @@ const validateDateIsAfter = (pickedDate) => {
 };
 
 const validateDayIsToday = (pickedDate) => {
-  if (new Date(pickedDate).toDateString() === new Date().toDateString()) {
+
+  const today = new Date();
+  const todaysDay = today.getDate();
+  // Add 1 because months start at 0. uses padStart to turn something like 8 into 08
+  const todaysMonth = String(today.getMonth() + 1).padStart(2, '0');
+  const todaysYear = today.getFullYear();
+
+  // build a date that matches the format the datetime input hands to us (YYYY-MM-DD)
+  const todaysString = `${todaysYear}-${todaysMonth}-${todaysDay}`;
+
+  if (pickedDate === todaysString) {
     console.log('date was today.');
   }
-    else {
-      console.log(pickedDate);
-      console.log(new Date(pickedDate).toDateString());
-      console.log(new Date().toDateString());
-    }
 
 };
 
@@ -275,7 +281,7 @@ class DocumentsTable extends React.Component {
         sortProps: this.props.docFilterCriteria.sort.sortBy ===
           'receivedAt' && { 'aria-sort': sortDirectionAriaLabel },
         header: (
-          <>
+          <div style={{ minWidth: '250px' }}>
             <Button
               styling={{ 'aria-roledescription': 'sort button' }}
               name="Receipt Date"
@@ -312,7 +318,6 @@ class DocumentsTable extends React.Component {
                     onChange={(newKey) => this.updateRecieptFilter(newKey)}
                     defaultText={dateDropdownMap[this.state.recieptFilter].displayText}
                     defaultValue="On this date"
-                    style='appearance: none;'
                   />
 
                   {(this.state.recieptFilter === 0 || this.state.recieptFilter === 1) &&
@@ -320,11 +325,17 @@ class DocumentsTable extends React.Component {
                   {(this.state.recieptFilter === 0 || this.state.recieptFilter === 2) &&
                   <DateSelector type="date" name="After this date" onChange={validateDateIsAfter} />}
                   {this.state.recieptFilter === 3 && <DateSelector type="date" name="On this date" onChange={validateDayIsToday} />}
-
+                  <div style={{ width: '100%', display:'flex'}}>
+                    <div style={{display:'flex', margin:'flex-end', justifyContent:'end'}}>
+                      <Button onClick={this.props.setRecieptDateFilter} title="apply filter">
+                        <span>text</span>
+                      </Button>
+                    </div>
+                  </div>
                 </>
               </DropdownFilter>
             )}
-          </>
+          </div>
         ),
         valueFunction: (doc) => (
           <span className="document-list-receipt-date">
@@ -449,6 +460,7 @@ DocumentsTable.propTypes = {
   docFilterCriteria: PropTypes.object,
   setCategoryFilter: PropTypes.func.isRequired,
   setTagFilter: PropTypes.func.isRequired,
+  setRecieptDateFilter: PropTypes.func,
   setDocListScrollPosition: PropTypes.func.isRequired,
   toggleDropdownFilterVisibility: PropTypes.func.isRequired,
   tagOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -467,6 +479,7 @@ const mapDispatchToProps = (dispatch) =>
       changeSortState,
       toggleDropdownFilterVisibility,
       setCategoryFilter,
+      setRecieptDateFilter
     },
     dispatch
   );

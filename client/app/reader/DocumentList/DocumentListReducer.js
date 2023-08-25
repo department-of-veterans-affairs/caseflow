@@ -132,6 +132,18 @@ const documentListReducer = (state = initialState, action = {}) => {
         }
       }
     });
+
+    // Reciept date filter
+  case Constants.SET_RECIEPT_DATE_FILTER:
+    return update(state, {
+      docFilterCriteria: {
+        tag: {
+          [action.payload.text]: {
+            $set: action.payload.checked
+          }
+        }
+      }
+    });
     // Scrolling
   case Constants.SET_DOC_LIST_SCROLL_POSITION:
     return update(state, {

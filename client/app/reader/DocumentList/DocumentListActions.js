@@ -102,7 +102,8 @@ export const setTagFilter = (text, checked, tagId) => (dispatch) => {
   dispatch(updateFilteredIdsAndDocs());
 };
 
-export const clearTagFilters = () => (dispatch) => {
+export const clearTagFilters = () => (dispatch, recieptState) => {
+  console.log(dispatch);
   dispatch({
     type: Constants.CLEAR_TAG_FILTER,
     meta: {
@@ -115,6 +116,20 @@ export const clearTagFilters = () => (dispatch) => {
   dispatch(updateFilteredIdsAndDocs());
 };
 
+export const setRecieptDateFilter = () => (dispatch) => {
+  console.log(dispatch);
+  console.log('doc list actions hit')
+  dispatch({
+    type: Constants.SET_RECIEPT_DATE_FILTER,
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'set_reciept_date_filter'
+      }
+    }
+  });
+  dispatch(updateFilteredIdsAndDocs());
+}
 // Scrolling
 
 export const setDocListScrollPosition = (scrollTop) => ({
