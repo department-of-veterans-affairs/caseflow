@@ -48,7 +48,7 @@ module Seeds
       @attorney ||= User.find_by_css_id("BVASCASPER1")
     end
 
-    def create_allowed_request_issue_1
+    def create_allowed_request_issue_1(appeal)
       nca = BusinessLine.find_by(name: "National Cemetery Administration")
       description = "Service connection for pain disorder is granted with an evaluation of 25\% effective August 1 2020"
       notes = "Pain disorder with 25\% evaluation per examination"
@@ -56,13 +56,14 @@ module Seeds
       1.times do |index|
         board_grant_task = create(:board_grant_effectuation_task,
                                   status: "assigned",
-                                  assigned_to: nca)
+                                  assigned_to: nca,
+                                  appeal: appeal)
 
         request_issues = create_list(:request_issue, 1,
                                      :nonrating,
                                      contested_issue_description: "#{index} #{description}",
                                      notes: "#{index} #{notes}",
-                                     benefit_type: nca.url,
+                                     benefit_type: "nca",
                                      decision_review: board_grant_task.appeal)
 
         request_issues.each do |request_issue|
@@ -70,18 +71,18 @@ module Seeds
           create(
             :decision_issue,
             :nonrating,
-            :ama_remand_reason,
+            # :ama_remand_reason,
             disposition: "allowed",
             decision_review: board_grant_task.appeal,
             request_issues: [request_issue],
             rating_promulgation_date: 2.months.ago,
-            benefit_type: request_issue.benefit_type
+            benefit_type: "nca"
           )
         end
       end
     end
 
-    def create_allowed_request_issue_2
+    def create_allowed_request_issue_2(appeal)
       education = BusinessLine.find_by(name: "Education")
       description = "Service connection for pain disorder is granted with an evaluation of 50\% effective August 2 2021"
       notes = "Pain disorder with 50\% evaluation per examination"
@@ -89,13 +90,14 @@ module Seeds
       1.times do |index|
         board_grant_task = create(:board_grant_effectuation_task,
                                   status: "assigned",
-                                  assigned_to: education)
+                                  assigned_to: education,
+                                  appeal: appeal)
 
         request_issues = create_list(:request_issue, 1,
                                      :nonrating,
                                      contested_issue_description: "#{index} #{description}",
                                      notes: "#{index} #{notes}",
-                                     benefit_type: nca.url,
+                                     benefit_type: "education",
                                      decision_review: board_grant_task.appeal)
 
         request_issues.each do |request_issue|
@@ -103,18 +105,18 @@ module Seeds
           create(
             :decision_issue,
             :nonrating,
-            :ama_remand_reason,
+            # :ama_remand_reason,
             disposition: "allowed",
             decision_review: board_grant_task.appeal,
             request_issues: [request_issue],
             rating_promulgation_date: 1.month.ago,
-            benefit_type: request_issue.benefit_type
+            benefit_type: "education"
           )
         end
       end
     end
 
-    def create_remanded_request_issue_1
+    def create_remanded_request_issue_1(appeal)
       compensation = BusinessLine.find_by(name: "Compensation")
       description = "Service connection for pain disorder is granted with an evaluation of 75\% effective February 3 2021"
       notes = "Pain disorder with 75\% evaluation per examination"
@@ -122,13 +124,14 @@ module Seeds
       1.times do |index|
         board_grant_task = create(:board_grant_effectuation_task,
                                   status: "assigned",
-                                  assigned_to: compensation)
+                                  assigned_to: compensation,
+                                  appeal: appeal)
 
         request_issues = create_list(:request_issue, 1,
                                      :nonrating,
                                      contested_issue_description: "#{index} #{description}",
                                      notes: "#{index} #{notes}",
-                                     benefit_type: comp.url,
+                                     benefit_type: "compensation",
                                      decision_review: board_grant_task.appeal)
 
         request_issues.each do |request_issue|
@@ -136,18 +139,18 @@ module Seeds
           create(
             :decision_issue,
             :nonrating,
-            :ama_remand_reason,
+            # :ama_remand_reason, no trait is found, create a trait in decision_issues factory and use
             disposition: "remanded",
             decision_review: board_grant_task.appeal,
             request_issues: [request_issue],
             rating_promulgation_date: 1.month.ago,
-            benefit_type: request_issue.benefit_type
+            benefit_type: "compensation"
           )
         end
       end
     end
 
-    def create_remanded_request_issue_2
+    def create_remanded_request_issue_2(appeal)
       compensation = BusinessLine.find_by(name: "Compensation")
       description = "Service connection for pain disorder is granted with an evaluation of 100\% effective February 4 2021"
       notes = "Pain disorder with 100\% evaluation per examination"
@@ -155,13 +158,14 @@ module Seeds
       1.times do |index|
         board_grant_task = create(:board_grant_effectuation_task,
                                   status: "assigned",
-                                  assigned_to: compensation)
+                                  assigned_to: compensation,
+                                  appeal: appeal)
 
         request_issues = create_list(:request_issue, 1,
                                      :nonrating,
                                      contested_issue_description: "#{index} #{description}",
                                      notes: "#{index} #{notes}",
-                                     benefit_type: comp.url,
+                                     benefit_type: "compensation",
                                      decision_review: board_grant_task.appeal)
 
         request_issues.each do |request_issue|
@@ -169,12 +173,12 @@ module Seeds
           create(
             :decision_issue,
             :nonrating,
-            :ama_remand_reason,
+            # :ama_remand_reason,
             disposition: "remanded",
             decision_review: board_grant_task.appeal,
             request_issues: [request_issue],
             rating_promulgation_date: 1.month.ago,
-            benefit_type: request_issue.benefit_type
+            benefit_type: "compensation"
           )
         end
       end
@@ -256,6 +260,12 @@ module Seeds
       Timecop.return
     end
 
+    def link_request_issues(appeal)
+      create_allowed_request_issue_1(appeal)
+      create_allowed_request_issue_2(appeal)
+      create_remanded_request_issue_1(appeal)
+    end
+
     #Appeals Ready for Decision with 1 Remand
     #Evidence Submission
     def create_ama_appeals_ready_to_dispatch_remanded_es
@@ -265,15 +275,12 @@ module Seeds
                           :evidence_submission_docket,
                           :with_decision_issue,
                           :at_judge_review,
-                          request_issues: create_list(
-                            create_allowed_request_issue_1,
-                            create_allowed_request_issue_2,
-                            create_remanded_request_issue_1),
-                          code: decision_reason_remand_list.at(i-1),
+                          # code: decision_reason_remand_list.at(i-1),
                           associated_judge: judge,
                           associated_attorney: attorney,
                           issue_count: 3,
                           veteran: create_veteran)
+          link_request_issues(appeal)
         end
       Timecop.return
     end
@@ -286,15 +293,12 @@ module Seeds
                           :hearing_docket,
                           :with_decision_issue,
                           :at_judge_review,
-                          request_issues: create_list(
-                            create_allowed_request_issue_1,
-                            create_allowed_request_issue_2,
-                            create_remanded_request_issue_1),
-                          code: decision_reason_remand_list.at(i-1),
+                          # code: decision_reason_remand_list.at(i-1),
                           associated_judge: judge,
                           associated_attorney: attorney,
                           issue_count: 3,
                           veteran: create_veteran)
+          link_request_issues(appeal)
         end
       Timecop.return
     end
@@ -307,15 +311,12 @@ module Seeds
                           :direct_review_docket,
                           :with_decision_issue,
                           :at_judge_review,
-                          request_issues: create_list(
-                            create_allowed_request_issue_1,
-                            create_allowed_request_issue_2,
-                            create_remanded_request_issue_1),
-                          code: decision_reason_remand_list.at(i-1),
+                          # code: decision_reason_remand_list.at(i-1), code is not related to appeal you need to create ama_remand_reason trait and add code to it and link it decision_issues
                           associated_judge: judge,
                           associated_attorney: attorney,
                           issue_count: 3,
                           veteran: create_veteran)
+          link_request_issues(appeal)
         end
       Timecop.return
     end
@@ -330,16 +331,13 @@ module Seeds
                           :evidence_submission_docket,
                           :with_decision_issue,
                           :at_judge_review,
-                          request_issues: create_list(
-                            create_allowed_request_issue_1,
-                            create_allowed_request_issue_2,
-                            create_remanded_request_issue_1,
-                            create_remanded_request_issue_2),
-                          code: decision_reason_remand_list.at(i-1),
+                          # code: decision_reason_remand_list.at(i-1),
                           associated_judge: judge,
                           associated_attorney: attorney,
                           issue_count: 4,
                           veteran: create_veteran)
+          link_request_issues(appeal)
+          create_remanded_request_issue_2(appeal)
         end
       Timecop.return
     end
@@ -352,16 +350,13 @@ module Seeds
                           :hearing_docket,
                           :with_decision_issue,
                           :at_judge_review,
-                          request_issues: create_list(
-                            create_allowed_request_issue_1,
-                            create_allowed_request_issue_2,
-                            create_remanded_request_issue_1,
-                            create_remanded_request_issue_2),
-                          code: decision_reason_remand_list.at(i-1),
+                          # code: decision_reason_remand_list.at(i-1),
                           associated_judge: judge,
                           associated_attorney: attorney,
                           issue_count: 4,
                           veteran: create_veteran)
+          link_request_issues(appeal)
+          create_remanded_request_issue_2(appeal)
         end
       Timecop.return
     end
@@ -374,16 +369,13 @@ module Seeds
                           :direct_review_docket,
                           :with_decision_issue,
                           :at_judge_review,
-                          request_issues: create_list(
-                            create_allowed_request_issue_1,
-                            create_allowed_request_issue_2,
-                            create_remanded_request_issue_1,
-                            create_remanded_request_issue_2),
-                          code: decision_reason_remand_list.at(i-1),
+                          # code: decision_reason_remand_list.at(i-1),
                           associated_judge: judge,
                           associated_attorney: attorney,
                           issue_count: 4,
                           veteran: create_veteran)
+          link_request_issues(appeal)
+          create_remanded_request_issue_2(appeal)
         end
       Timecop.return
     end
