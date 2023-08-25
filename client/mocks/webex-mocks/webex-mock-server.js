@@ -149,21 +149,19 @@ server.post('/fake.api-usgov.webex.com/v1/meetings', (req, res) => {
 
   if (missingKeys.length > 0) {
     res.status(400).json({ message: 'Missing required keys', missingKeys });
+  } else if (!requestBody.jwt.sub || !requestBody.jwt.Nbf || !requestBody.jwt.Exp) {
+    res.status(400).json({
+      message: 'Missing required params',
+    });
   } else {
-    // Access conferenceLinks from database
+
     const db = router.db;
     const conferenceLinks = db.get('conferenceLinks');
 
     // Add generateMeetingData object to conferenceLinks
-    conferenceLinks.push(
-      generateMeetingData(
-        requestBody.jwt.sub,
-        requestBody.jwt.Nbf,
-        requestBody.jwt.Exp
-      )
-    ).write();
+    conferenceLinks.push(generateMeetingData(requestBody)).write();
 
-    res.status(200).json(generateMeetingData(requestBody.jwt.sub, requestBody.jwt.Nbf, requestBody.jwt.Exp));
+    res.status(200).json(generateMeetingData(requestBody));
   }
 });
 

@@ -1,26 +1,13 @@
 const faker = require('faker');
 
-const generateMeetingData = (subject, startTime, endTime) => {
-  const undefinedValue = undefined;
-
-  if (
-    startTime === undefinedValue &&
-    endTime === undefinedValue &&
-    subject === undefinedValue
-  ) {
-    startTime = faker.date.recent().toTimeString().
-      split(' ')[0];
-    endTime = faker.date.future().toTimeString().
-      split(' ')[0];
-    subject = faker.lorem.words();
-  }
+const generateMeetingData = (response) => {
 
   return {
     id: faker.random.uuid(),
     jwt: {
-      sub: subject,
-      Nbf: startTime,
-      Exp: endTime,
+      sub: response.jwt.sub,
+      Nbf: response.jwt.Nbf,
+      Exp: response.jwt.Exp,
       flow: {
         id: faker.random.uuid(),
         data: [
