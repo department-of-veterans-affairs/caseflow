@@ -15,13 +15,20 @@ module Seeds
       import_json_seed_data
     end
 
+    def business_line_seeds
+      import_json("db/seeds/sanitized_business_line_json/business_line.json")
+    end
+
     private
 
     def import_json_seed_data
       # appeal_ready_for_substitution_3.json requires this to exist
       FactoryBot.create(:higher_level_review, id: 2_000_050_893)
+      import_json("db/seeds/sanitized_json/*.json")
+    end
 
-      Dir.glob("db/seeds/sanitized_json/*.json").each do |json_seed|
+    def import_json(file_path)
+      Dir.glob(file_path).each do |json_seed|
         sji = SanitizedJsonImporter.from_file(json_seed, verbosity: 0)
         sji.import
       end

@@ -14,6 +14,7 @@ describe Seeds::SanitizedJsonSeeds do
     end
 
     it "invokes SanitizedJsonImporter for each matching file" do
+      byebug
       expect(Dir).to receive(:glob).with("db/seeds/sanitized_json/*.json")
         .and_return(%w[a_file.json another_file.json])
 
