@@ -30,11 +30,7 @@ namespace :db do
           cases = Array.new(num_appeals_to_create).each_with_index.map do
             key = VACOLS::Folder.maximum(:ticknum).next
 
-            if task_type == "ATTORNEYTASK" || task_type == "REVIEWTASK"
-              staff = VACOLS::Staff.find_by(sdomainid: "BVACABSHIRE") || VACOLS::Staff.find_by(sdomainid: "CF_VLJTHREE_283") # user for local/demo || UAT
-            else
-              staff = VACOLS::Staff.find_by(sdomainid: user.css_id) || VACOLS::Staff.find_by(sdomainid: "CF_VLJTHREE_283") # user for local/demo || UAT
-            end
+              staff = VACOLS::Staff.find_by(sdomainid: user.css_id) || VACOLS::Staff.find_by(sdomainid: "FAKE USER") || VACOLS::Staff.find_by(sdomainid: "CF_VLJTHREE_283") # user for local/demo || UAT
 
             Generators::Vacols::Case.create(
               decass_creation: decass_creation,
@@ -384,7 +380,7 @@ namespace :db do
         else
           $stdout.puts("Hint: Judge Options include 'CF_VLJ_283', 'CF_VLJTWO_283'") # UAT option
         end
-        
+
         css_id = $stdin.gets.chomp.upcase
         user = User.find_by_css_id(css_id) || User.find_by_css_id('CF_VLJ_283') # local,test / UAT
 
@@ -403,7 +399,7 @@ namespace :db do
 
         fail ArgumentError, "User must be an Attorney in Vacols for a #{task_type}", caller unless user.attorney_in_vacols?
       else
-        user = User.find_by_css_id("FAKE USER") || User.find_by_css_id("CF_VLJTHREE_283") # need to update for an UAT User if UAT environment # works
+        user =  User.find_by_css_id("BVACABSHIRE") || User.find_by_css_id("FAKE USER") ||  User.find_by_css_id("CF_VLJTHREE_283") # local / demo / uat
       end
 
       fail ActiveRecord::RecordNotFound unless user
