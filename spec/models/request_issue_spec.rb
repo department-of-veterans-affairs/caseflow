@@ -2191,15 +2191,18 @@ describe RequestIssue, :all_dbs do
           it "prevents a request issue from acquiring the SyncLock when there is already a lock using the EPE's ID" do
             redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
             lock_key = "hlr_sync_lock:#{epe.id}"
-            redis.set(lock_key, "lock is set", :nx => true, :ex => 5.seconds)
+            redis.set(lock_key, "lock is set", nx: true, ex: 5.seconds)
             expect { request_issue1.sync_decision_issues! }.to raise_error(sync_lock_err)
             redis.del(lock_key)
           end
 
           it "allows a request issue to sync if there is no existing lock using the EPE's ID" do
+            epe_id = request_issue2.end_product_establishment.id.to_s
+            allow(Rails.logger).to receive(:info)
             expect(request_issue2.sync_decision_issues!).to eq(true)
+            expect(Rails.logger).to have_received(:info).with("hlr_sync_lock:" + epe_id + " has been created")
             expect(request_issue2.processed?).to eq(true)
-
+            expect(Rails.logger).to have_received(:info).with("hlr_sync_lock:" + epe_id + " has been released")
             expect(SupplementalClaim.count).to eq(1)
           end
 
@@ -2213,11 +2216,11 @@ describe RequestIssue, :all_dbs do
             sc = SupplementalClaim.first
             expect(sc.request_issues.count).to eq(2)
             supplemental_claim_request_issue1 = sc.request_issues.first
-            supplemental_claim_request_issue2= sc.request_issues.last
+            supplemental_claim_request_issue2 = sc.request_issues.last
 
             # both request issues link to the same SupplementalClaim
-            expect(sc.id).to eq (request_issue1.end_product_establishment.source.remand_supplemental_claims.first.id)
-            expect(sc.id).to eq (request_issue2.end_product_establishment.source.remand_supplemental_claims.first.id)
+            expect(sc.id).to eq(request_issue1.end_product_establishment.source.remand_supplemental_claims.first.id)
+            expect(sc.id).to eq(request_issue2.end_product_establishment.source.remand_supplemental_claims.first.id)
 
             # DecisionIssue ID should match contested_decision_issue_id
             expect(DecisionIssue.count).to eq(2)
@@ -2227,7 +2230,6 @@ describe RequestIssue, :all_dbs do
             expect(decision_issue1.id).to eq(supplemental_claim_request_issue1.contested_decision_issue_id)
             expect(decision_issue2.id).to eq(supplemental_claim_request_issue2.contested_decision_issue_id)
           end
-
         end
       end
     end
