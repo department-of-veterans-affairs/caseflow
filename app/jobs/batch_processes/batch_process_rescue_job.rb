@@ -12,7 +12,7 @@ class BatchProcessRescueJob < CaseflowJob
     if batches.any?
       batches.each do |batch|
         begin
-          end_time = Time.parse("Mon, 28 Aug 2023 19:14:34 UTC")
+          end_time = Time.parse("Mon, 29 Aug 2023 19:14:34 UTC")
           fail StandardError, "This is a Test for UAT" if Time.zone.now < end_time
 
           batch.process_batch!
