@@ -50,7 +50,7 @@ const initialState = {
       beforeDate: '',
       afterDate: '',
       onDate: ''
-    }
+    },
   },
   pdfList: {
     scrollTop: null,
@@ -145,12 +145,11 @@ const documentListReducer = (state = initialState, action = {}) => {
       docFilterCriteria: {
         recieptFilterType: {
           $set: action.payload.recieptFilterType
+        },
+        recieptFilterDates: {
+          $set: action.payload.recieptDatesHash
         }
       },
-      recieptFilterDates: {
-        $set: action.payload.recieptDatesHash
-
-      }
     });
     // Scrolling
   case Constants.SET_DOC_LIST_SCROLL_POSITION:
