@@ -56,7 +56,7 @@ gem "pg", platforms: :ruby
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "5.6.4"
 gem "rack", "~> 2.2.6.2"
-gem "rails", "5.2.8.1"
+gem "rails", "6.0.6.1"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
@@ -85,7 +85,7 @@ gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
-  gem "activerecord-oracle_enhanced-adapter", "~> 5.2.0"
+  gem "activerecord-oracle_enhanced-adapter", "~> 6.0.0"
   gem "ruby-oci8", "~> 2.2"
 end
 
