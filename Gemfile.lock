@@ -66,17 +66,6 @@ GIT
       savon (~> 2.12)
 
 GIT
-  remote: https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git
-  revision: 6ad02b0b9fbfea68c6cb571e56830297cb76407b
-  ref: 6ad02b0b9fbfea68c6cb571e56830297cb76407b
-  specs:
-    ruby_claim_evidence_api (0.0.1)
-      activesupport
-      faraday
-      httpi
-      railties
-
-GIT
   remote: https://github.com/department-of-veterans-affairs/sniffybara.git
   revision: 351560b5789ca638ba7c9b093c2bb1a9a6fda4b3
   specs:
@@ -814,7 +803,6 @@ DEPENDENCIES
   ruby-debug-ide
   ruby-oci8 (~> 2.2)
   ruby-prof (~> 1.4)
-  ruby_claim_evidence_api!
   sass-rails (~> 5.0)
   scss_lint
   sentry-raven
