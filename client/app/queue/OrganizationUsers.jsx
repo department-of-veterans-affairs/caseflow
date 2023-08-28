@@ -280,7 +280,7 @@ export default class OrganizationUsers extends React.PureComponent {
                       user={user} />
                   </div>
                 }
-              </div> }
+              </div>}
           </ul>
         </div>
       </React.Fragment>;
