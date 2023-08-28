@@ -111,12 +111,14 @@ FactoryBot.define do
         schedule_hearing_task = ScheduleHearingTask.create!(appeal: appeal, parent: distro_task,
                                                             assigned_to: Bva.singleton)
         schedule_hearing_task.update(status: "completed", closed_at: Time.zone.now)
-        hearing = if appeal.is_a?(Appeal)
-                    create(:hearing, disposition: nil, judge: nil, appeal: appeal)
-                  else
-                    create(:legacy_hearing, appeal: appeal)
-                  end
-
+        if appeal.is_a?(Appeal)
+          hearing = create(:hearing, disposition: nil, judge: nil, appeal: appeal)
+          HearingTaskAssociation.create!(hearing: hearing, hearing_task: schedule_hearing_task.parent)
+        else
+          case_hearing = create(:case_hearing, folder_nr: appeal.vacols_id)
+          hearing = create(:legacy_hearing, disposition: nil, case_hearing: case_hearing, appeal_id: appeal.id)
+          appeal.update!(hearings: [hearing])
+        end
         distro_task.update!(status: "on_hold")
         AssignHearingDispositionTask.create!(appeal: appeal,
                                              parent: schedule_hearing_task.parent,
