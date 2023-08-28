@@ -8,6 +8,13 @@ import { update } from '../util/ReducerUtil';
 // this switch takes the filterType stored in redux as a number 0-4, and runs the required
 // validation on it, then returns the result.
 const filterDates = (docDate, validationDates, filterType) => {
+
+  const FILTER_TYPES = {
+    BETWEEN: 0,
+    BEFORE: 1,
+    AFTER: 2,
+    ON: 3
+  };
   const beforeDate = (validationDates.beforeDate);
   const afterDate = (validationDates.afterDate);
   const onDate = (validationDates.onDate);
@@ -15,23 +22,23 @@ const filterDates = (docDate, validationDates, filterType) => {
   let validDate = false;
 
   switch (filterType) {
-  case 0:
-    if (docDate < beforeDate && docDate > afterDate) {
+  case FILTER_TYPES.BETWEEN:
+    if (docDate <= beforeDate && docDate >= afterDate) {
       validDate = true;
     }
     break;
-  case 1:
-    if (docDate < beforeDate) {
+  case FILTER_TYPES.BEFORE:
+    if (docDate <= beforeDate) {
       validDate = true;
     }
     break;
-  case 2:
-    if (docDate > afterDate) {
+  case FILTER_TYPES.AFTER:
+    if (docDate >= afterDate) {
       validDate = true;
     }
     break;
-  case 3:
-    if (docDate == onDate) {
+  case FILTER_TYPES.ON:
+    if (docDate === onDate) {
       validDate = true;
     }
     break;
@@ -49,9 +56,6 @@ export const getUpdatedFilteredResults = (state) => {
 
   const { docFilterCriteria } = state.documentList;
 
-  console.log(state.documentList);
-  console.log(docFilterCriteria.recieptFilterDates);
-  console.log(docFilterCriteria.recieptFilterDates.beforeDate);
   const activeCategoryFilters = map(
     filter(toPairs(docFilterCriteria.category), ([key, value]) => value), // eslint-disable-line no-unused-vars
     ([key]) => categoryFieldNameOfCategoryName(key)
@@ -63,7 +67,8 @@ export const getUpdatedFilteredResults = (state) => {
   );
 
   const activeRecieptFilters = map(
-    filter(toPairs(docFilterCriteria.recieptFilterDates), ([key, value]) => value), // eslint-disable-line no-unused-vars
+    filter(toPairs(docFilterCriteria.recieptFilterDates), ([key, value]) => // eslint-disable-line no-unused-vars
+      value),
     ([key]) => key
   );
 
@@ -79,8 +84,8 @@ export const getUpdatedFilteredResults = (state) => {
               updatedNextState.documents,
 
               (doc) => !activeRecieptFilters.length || some(activeRecieptFilters, () =>
-                (filterDates(doc.receivedAt, docFilterCriteria.recieptFilterDates, docFilterCriteria.recieptFilterType)))
-
+                (filterDates(doc.receivedAt, docFilterCriteria.recieptFilterDates,
+                  docFilterCriteria.recieptFilterType)))
             ),
             (doc) => !activeCategoryFilters.length ||
               some(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])

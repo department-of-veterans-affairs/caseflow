@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 import React from 'react';
 import PropTypes from 'prop-types';
-import _, { before } from 'lodash';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import { formatDateStr } from '../util/DateUtil';
@@ -55,23 +55,11 @@ export const getRowObjects = (documents, annotationsPerDocument) => {
   }, []);
 };
 
-// made because theres occasional automagic things happening when I convert the string to date
-const convertStringToDate = (stringDate) => {
-  let date = new Date();
-  const splitVals = stringDate.split('-');
-
-  date.setFullYear(Number(splitVals[0]));
-  date.setMonth(Number(splitVals[1] - 1));
-  date.setDate(Number(splitVals[2]));
-
-  return date;
-};
-
 class DocumentsTable extends React.Component {
   // Takes the string date returned by the date picker, compares it to a today
 // and returns true if the new date was before the current day
  validateDateIsNotAfter = (pickedDate) => {
-   if (this.state.afterDate != '' && pickedDate <= this.state.afterDate) {
+   if (this.state.afterDate !== '' && pickedDate <= this.state.afterDate) {
      this.setState({ beforeDate: this.state.beforeDate });
 
      return;
@@ -80,7 +68,7 @@ class DocumentsTable extends React.Component {
  };
 
  validateDateIsAfter = (pickedDate) => {
-   if (this.state.afterDate != '' && pickedDate >= this.state.afterDate) {
+   if (this.state.afterDate !== '' && pickedDate >= this.state.afterDate) {
      this.setState({ afterDate: this.state.afterDate });
 
      return;
@@ -152,7 +140,7 @@ class DocumentsTable extends React.Component {
     getRecieptDateFilterIconRef = (recieptDataFilterIcon) => (this.recieptDataFilterIcon = recieptDataFilterIcon);
 
     resetRecieptPicker = () => {
-      this.setState({beforeDate: '', afterDate: '', onDate: '' });
+      this.setState({ beforeDate: '', afterDate: '', onDate: '' });
     };
   getKeyForRow = (index, { isComment, id }) => {
     return isComment ? `${id}-comment` : id;
@@ -318,7 +306,7 @@ class DocumentsTable extends React.Component {
               <DropdownFilter
                 clearFilters={this.resetRecieptPicker}
                 name="Reciept Date"
-                isClearEnabled={true}
+                isClearEnabled
                 handleClose={this.toggleRecieptDataDropdownFilterVisibility}
                 addClearFiltersRow
               >
@@ -329,22 +317,30 @@ class DocumentsTable extends React.Component {
                     label="Date filter parameters"
                     value="dateDropdownVal"
                     onChange={(newKey) => this.updateRecieptFilter(newKey)}
-                    defaultText={this.state.recieptFilter === '' ? 'Select...' : dateDropdownMap[this.state.recieptFilter].displayText}
+                    defaultText={this.state.recieptFilter === '' ? 'Select...' :
+                      dateDropdownMap[this.state.recieptFilter].displayText}
                     defaultValue="On this date"
                   />
 
-                  {(this.state.recieptFilter === 0 || this.state.recieptFilter === 1) &&
-                  <DateSelector value={this.state.beforeDate} type="date" name="Before this date" onChange={this.validateDateIsNotAfter} />}
+
                   {(this.state.recieptFilter === 0 || this.state.recieptFilter === 2) &&
-                  <DateSelector value={this.state.afterDate} type="date" name="After this date" onChange={this.validateDateIsAfter} />}
-                  {this.state.recieptFilter === 3 && <DateSelector value={this.state.onDate} type="date" name="On this date" onChange={this.setOnDate} />}
+                  <DateSelector value={this.state.afterDate} type="date" name="From"
+                    onChange={this.validateDateIsAfter} />}
+                                      {(this.state.recieptFilter === 0 || this.state.recieptFilter === 1) &&
+                  <div><DateSelector value={this.state.beforeDate} type="date" name="To"
+                    onChange={this.validateDateIsNotAfter} />  </div>}
+                  {this.state.recieptFilter === '' && <DateSelector readOnly type="date" name="Receipt date"
+                    onChange={this.validateDateIsAfter} />}
+
+                  {this.state.recieptFilter === 3 && <DateSelector value={this.state.onDate} type="date"
+                    name="On this date" onChange={this.setOnDate} />}
                   <div style={{ width: '100%', display: 'flex' }}>
-                    <div style={{ display: 'flex', margin: 'flex-end', justifyContent: 'end' }}>
+                    <div style={{ display: 'flex', margin: 'flex-end', justifyContent: 'end', width: '100%' }}>
                       <Button onClick={() => this.props.setRecieptDateFilter(this.state.recieptFilter,
                         { beforeDate: this.state.beforeDate,
                           afterDate: this.state.afterDate,
                           onDate: this.state.onDate })} title="apply filter">
-                        <span>text</span>
+                        <span>Apply filter</span>
                       </Button>
                     </div>
                   </div>
