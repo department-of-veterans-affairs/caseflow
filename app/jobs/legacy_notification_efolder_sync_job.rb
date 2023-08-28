@@ -15,9 +15,15 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   def perform
     RequestStore[:current_user] = User.system_user
 
-    all_active_legacy_appeals = appeals_recently_outcoded + appeals_never_synced + ready_for_resync
+    all_active_legacy_appeals = if FeatureToggle.enabled?(:phase_1_notification_sync_job_rollout)
+                                  appeals_never_synced
+                                elsif FeatureToggle.enabled?(:phase_2_notification_sync_job_rollout)
+                                  appeals_never_synced + ready_for_resync
+                                else
+                                  appeals_recently_outcoded + appeals_never_synced + ready_for_resync
+                                end
 
-    sync_notification_reports(all_active_legacy_appeals.first(BATCH_LIMIT.to_i))
+    sync_notification_reports(all_active_legacy_appeals.uniq.first(BATCH_LIMIT.to_i))
   end
 
   private
@@ -71,7 +77,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   end
 
   def open_root_task_join_clause
-    "JOIN tasks t ON t.appeal_type = 'LegacyAppeal' AND t.id = legacy_appeals.id \
+    "JOIN tasks t ON t.appeal_type = 'LegacyAppeal' AND t.appeal_id = legacy_appeals.id \
       AND t.type = 'RootTask' AND t.status NOT IN ('completed', 'cancelled')"
   end
 
@@ -99,22 +105,24 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   # Return: Array of active appeals
   def get_appeals_from_prev_synced_ids(appeal_ids)
     appeal_ids.in_groups_of(1000, false).flat_map do |ids|
-      LegacyAppeal.where(id: RootTask.open.where(appeal_type: "LegacyAppeal").pluck(:appeal_id))
-        .find_by_sql(
-          <<-SQL
-              SELECT la.*
-              FROM legacy_appeals la
+      LegacyAppeal.find_by_sql(
+        <<-SQL
+              SELECT la.* FROM legacy_appeals la
+              JOIN tasks t ON la.id = t.appeal_id
+              AND t.appeal_type = 'LegacyAppeal'
               JOIN (#{appeals_on_latest_notifications(ids)}) AS notifs ON
                 notifs.appeals_id = la.vacols_id AND notifs.appeals_type = 'LegacyAppeal'
               JOIN (#{appeals_on_latest_doc_uploads(ids)}) AS vbms_uploads ON
                 vbms_uploads.appeal_id = la.id AND vbms_uploads.appeal_type = 'LegacyAppeal'
-              WHERE
+              WHERE (
                 notifs.notified_at > vbms_uploads.attempted_at
               OR
                 notifs.created_at > vbms_uploads.attempted_at
+              )
+              AND t.type = 'RootTask' AND t.status NOT IN ('completed', 'cancelled')
               GROUP BY la.id
-          SQL
-        )
+        SQL
+      )
     end
   end
 
@@ -122,8 +130,16 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
     <<-SQL
       SELECT n1.* FROM legacy_appeals a
       JOIN notifications n1 on n1.appeals_id = a.vacols_id AND n1.appeals_type = 'LegacyAppeal'
-      LEFT OUTER JOIN notifications n2 ON (n2.appeals_id = a.vacols_id AND n1.appeals_type = 'LegacyAppeal' AND
-          (n1.notified_at < n2.notified_at OR (n1.notified_at = n2.notified_at AND n1.id < n2.id)))
+      AND (n1.email_notification_status IS NULL OR
+        n1.email_notification_status NOT IN ('No Participant Id Found', 'No Claimant Found', 'No External Id'))
+      AND (n1.sms_notification_status IS NULL OR
+          n1.sms_notification_status NOT IN ('No Participant Id Found', 'No Claimant Found', 'No External Id'))
+      LEFT OUTER JOIN notifications n2 ON (n2.appeals_id = a.vacols_id AND n1.appeals_type = 'LegacyAppeal'
+        AND (n2.email_notification_status IS NULL OR
+          n2.email_notification_status NOT IN ('No Participant Id Found', 'No Claimant Found', 'No External Id'))
+        AND (n2.sms_notification_status IS NULL OR
+            n2.sms_notification_status NOT IN ('No Participant Id Found', 'No Claimant Found', 'No External Id'))
+        AND (n1.notified_at < n2.notified_at OR (n1.notified_at = n2.notified_at AND n1.id < n2.id)))
       WHERE n2.id IS NULL
         AND n1.id IS NOT NULL
         AND (n1.email_notification_status <> 'Failure Due to Deceased'

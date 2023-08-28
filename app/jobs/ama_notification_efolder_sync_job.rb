@@ -15,9 +15,15 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   def perform
     RequestStore[:current_user] = User.system_user
 
-    all_active_ama_appeals = appeals_recently_outcoded + appeals_never_synced + ready_for_resync
+    all_active_ama_appeals = if FeatureToggle.enabled?(:phase_1_notification_sync_job_rollout)
+                               appeals_never_synced
+                             elsif FeatureToggle.enabled?(:phase_2_notification_sync_job_rollout)
+                               appeals_never_synced + ready_for_resync
+                             else
+                               appeals_recently_outcoded + appeals_never_synced + ready_for_resync
+                             end
 
-    sync_notification_reports(all_active_ama_appeals.first(BATCH_LIMIT.to_i))
+    sync_notification_reports(all_active_ama_appeals.uniq.first(BATCH_LIMIT.to_i))
   end
 
   private
@@ -98,18 +104,21 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
   # Return: Array of active appeals
   def get_appeals_from_prev_synced_ids(appeal_ids)
     appeal_ids.in_groups_of(1000, false).flat_map do |ids|
-      Appeal.active.find_by_sql(
+      Appeal.find_by_sql(
         <<-SQL
-          SELECT appeals.*
-          FROM appeals
+          SELECT appeals.* FROM appeals
+          JOIN tasks t ON appeals.id = t.appeal_id
+          AND t.appeal_type = 'Appeal'
           JOIN (#{appeals_on_latest_notifications(ids)}) AS notifs ON
             notifs.appeals_id = appeals."uuid"::text AND notifs.appeals_type = 'Appeal'
           JOIN (#{appeals_on_latest_doc_uploads(ids)}) AS vbms_uploads ON
             vbms_uploads.appeal_id = appeals.id AND vbms_uploads.appeal_type = 'Appeal'
-          WHERE
+          WHERE (
             notifs.notified_at > vbms_uploads.attempted_at
           OR
             notifs.created_at > vbms_uploads.attempted_at
+          )
+          AND t.TYPE = 'RootTask' AND t.status NOT IN ('completed', 'cancelled')
           GROUP BY appeals.id
         SQL
       )
@@ -120,8 +129,16 @@ class AmaNotificationEfolderSyncJob < CaseflowJob
     <<-SQL
       SELECT n1.* FROM appeals a
       JOIN notifications n1 on n1.appeals_id = a."uuid"::text AND n1.appeals_type = 'Appeal'
-      LEFT OUTER JOIN notifications n2 ON (n2.appeals_id = a."uuid"::text AND n1.appeals_type = 'Appeal' AND
-          (n1.notified_at < n2.notified_at OR (n1.notified_at = n2.notified_at AND n1.id < n2.id)))
+      AND (n1.email_notification_status IS NULL OR
+        n1.email_notification_status NOT IN ('No Participant Id Found', 'No Claimant Found', 'No External Id'))
+      AND (n1.sms_notification_status IS NULL OR
+          n1.sms_notification_status NOT IN ('No Participant Id Found', 'No Claimant Found', 'No External Id'))
+      LEFT OUTER JOIN notifications n2 ON (n2.appeals_id = a."uuid"::text AND n1.appeals_type = 'Appeal'
+        AND (n2.email_notification_status IS NULL OR
+          n2.email_notification_status NOT IN ('No Participant Id Found', 'No Claimant Found', 'No External Id'))
+        AND (n2.sms_notification_status IS NULL OR
+            n2.sms_notification_status NOT IN ('No Participant Id Found', 'No Claimant Found', 'No External Id'))
+        AND (n1.notified_at < n2.notified_at OR (n1.notified_at = n2.notified_at AND n1.id < n2.id)))
       WHERE n2.id IS NULL
         AND n1.id IS NOT NULL
         AND (n1.email_notification_status <> 'Failure Due to Deceased'
