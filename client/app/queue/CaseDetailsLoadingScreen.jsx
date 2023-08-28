@@ -130,7 +130,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 CaseDetailsLoadingScreen.propTypes = {
-  children: PropTypes.array,
+  children: PropTypes.element,
   appealId: PropTypes.string,
   userId: PropTypes.number,
   onReceiveTasks: PropTypes.func,
