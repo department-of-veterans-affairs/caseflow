@@ -118,7 +118,7 @@ OpenSSL
 ---
 1. Download openssl@1.1 and openssl@3 from this [link](https://boozallen.sharepoint.com/teams/VABID/appeals/Documents/Forms/AllItems.aspx?id=%2Fteams%2FVABID%2Fappeals%2FDocuments%2FDevelopment%2FDeveloper%20Setup%20Resources%2FM1%20Mac%20Developer%20Setup&viewid=8a8eaf3e%2D2c12%2D4c87%2Db95f%2D4eab3428febd)
 2. Open “Finder” and find the two folders under “Downloads”
-3. Extract the `.tar.gz` files
+3. Extract the `.tar.gz` or `.zip` archives
 4. In each of the extracted folders:
     1. Navigate to the `/usr/local/homebrew/Cellar` subfolder
     2. Copy the openssl folder to your local machine's `/usr/local/homebrew/Cellar` folder
@@ -168,22 +168,26 @@ Run dev setup scripts in Caseflow repo
 1. Open a **Rosetta** terminal and navigate to /usr/local, run the command ```sudo spctl --global-disable```
 2. In the **Rosetta** terminal, install pyenv and the required python2 version:
     1. `brew install pyenv`
-    2. `pyenv install 2.7.18`
-    3. In the caseflow directory, run `pyenv local 2.7.18` to set the version
+    2. `pyenv rehash`
+    3. `pyenv install 2.7.18`
+    4. In the caseflow directory, run `pyenv local 2.7.18` to set the version
 3. In the **Rosetta** terminal navigate to caseflow folder:
-    1. set ```RUBY_CONFIGURE_OPTS="--with-openssl-dir=/usr/local/homebrew/Cellar/openssl@1.1"```
-    2. run `rbenv install 2.7.3`
-    3. run `gem install pg:1.1.4 -- --with-pg-config=/Applications/Postgres.app/Contents/Versions/latest/bin/pg_config`
-    4. Install v8@3.15 by doing the following (these steps assume that vi/vim is the default editor):
+    1. set ```export RUBY_CONFIGURE_OPTS="--with-openssl-dir=/usr/local/homebrew/Cellar/openssl@1.1"```
+    2. run `rbenv install $(cat .ruby-version)`
+    3. run `rbenv rehash`
+    4. run `gem install bundler -v $(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)`
+    5. run `gem install pg:1.1.4 -- --with-pg-config=/Applications/Postgres.app/Contents/Versions/latest/bin/pg_config`
+    6. Install v8@3.15 by doing the following (these steps assume that vi/vim is the default editor):
         1. run `brew edit v8@3.15`
         2. go to line 21 in the editor by typing `:21`
       Note: the line being removed is `disable! date: "2023-06-19", because: "depends on Python 2 to build"`
         3. delete the line by pressing `d` twice
         4. save and quit by typing `:x`
-    5. Configure build opts for gem `therubyracer`:
+        5. run `HOMEBREW_NO_INSTALL_FROM_API=1 brew install v8@3.15`
+    7. Configure build opts for gem `therubyracer`:
         1. `bundle config build.libv8 --with-system-v8`
         2. `bundle config build.therubyracer --with-v8-dir=$(brew --prefix v8@3.15)`
-    6. run ```./scripts/dev_env_setup_step2.sh```
+    8. run ```./scripts/dev_env_setup_step2.sh```
   If you get a permission error while running gem install or bundle install, **do not run using sudo.**
   Set the permissions back to you for every directory under /.rbenv
       * Enter command: `sudo chown -R <your name under /Users> /Users/<your name>/.rbenv`
