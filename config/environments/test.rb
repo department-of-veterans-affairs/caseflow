@@ -44,7 +44,7 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :test
 
   # Print deprecation notices to the stderr.
-  config.active_support.deprecation = :stderr
+  config.active_support.deprecation = :raise
 
   unless ENV['RAILS_ENABLE_TEST_LOG']
     config.logger = Logger.new(nil)
