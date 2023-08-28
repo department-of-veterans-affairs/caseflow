@@ -244,6 +244,7 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
       it "running the perform", bypass_cleaner: true do
         perform_enqueued_jobs { LegacyNotificationEfolderSyncJob.perform_later }
 
+        # Appeal at index 4 will be ready for resync
         create(:notification,
                appeals_id: appeals[4].vacols_id,
                appeals_type: "LegacyAppeal",
@@ -260,7 +261,7 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
             .where(document_type: "BVA Case Notifications")
             .order(:id)
             .pluck(:appeal_id)
-        ).to match_array(second_run_vbms_document_appeal_ids)
+        ).to match_array(second_run_vbms_document_appeal_ids + [appeals[4].id])
       end
     end
 
