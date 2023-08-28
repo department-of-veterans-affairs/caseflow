@@ -202,14 +202,14 @@ namespace :db do
               parent: hearing_task,
               assigned_to: Bva.singleton
             ).update(status: 'completed')
-            AssignHearingDispositionTask.create!(
+            assign_hearing_task = AssignHearingDispositionTask.create!(
               appeal: appeal,
               parent: hearing_task,
               assigned_to: Bva.singleton
-            ).update(status: 'completed')
+            )
             TranscriptionTask.create!(
               appeal: appeal,
-              parent: hearing_task,
+              parent: assign_hearing_task,
               assigned_to: Bva.singleton
             )
           end
@@ -217,31 +217,25 @@ namespace :db do
           rand_val = rand(100)
 
           case rand_val
-          when 0..20
+          when 0..25
             FoiaTask.create!(
               appeal: appeal,
               parent: root_task,
               assigned_to: Bva.singleton
             )
-          when 21..40
-            PrivacyActTask.create!(
-              appeal: appeal,
-              parent: root_task,
-              assigned_to: Bva.singleton
-            )
-          when 41..60
+          when 26..50
             PowerOfAttorneyRelatedMailTask.create!(
               appeal: appeal,
               parent: root_task,
               assigned_to: Bva.singleton
             )
-          when 61..80
+          when 51..75
             TranslationTask.create!(
               appeal: appeal,
               parent: root_task,
               assigned_to: Bva.singleton
             )
-          when 81..100
+          when 76..100
             CongressionalInterestMailTask.create!(
               appeal: appeal,
               parent: root_task,
