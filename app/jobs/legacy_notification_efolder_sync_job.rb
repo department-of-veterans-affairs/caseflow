@@ -23,7 +23,7 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
                                   appeals_recently_outcoded + appeals_never_synced + ready_for_resync
                                 end
 
-    sync_notification_reports(all_active_legacy_appeals.uniq.first(BATCH_LIMIT.to_i))
+    sync_notification_reports(all_active_legacy_appeals.uniq(&:id).first(BATCH_LIMIT.to_i))
   end
 
   private
