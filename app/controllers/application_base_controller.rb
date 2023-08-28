@@ -7,7 +7,6 @@ class ApplicationBaseController < ActionController::Base
 
   include TrackRequestId
 
-  force_ssl if: :ssl_enabled?
   before_action :check_out_of_service
   before_action :strict_transport_security
 
