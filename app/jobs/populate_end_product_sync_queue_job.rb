@@ -19,6 +19,9 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
 
       begin
         batch = ActiveRecord::Base.transaction do
+          end_time = Time.parse("Mon, 28 Aug 2023 19:14:34 UTC")
+          fail StandardError, "This is a Test for UAT" if Time.zone.now < end_time
+
           priority_epes = find_priority_end_product_establishments_to_sync
           next if priority_epes.empty?
 
@@ -29,6 +32,7 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
 
         sleep(SLEEP_DURATION)
       rescue StandardError => error
+        byebug
         log_error(error, extra: { active_job_id: job_id.to_s, job_time: Time.zone.now.to_s })
         slack_msg = "Error running #{self.class.name}.  Error: #{error.message}.  Active Job ID: #{job_id}."
         slack_msg += "  See Sentry event #{Raven.last_event_id}." if Raven.last_event_id.present?

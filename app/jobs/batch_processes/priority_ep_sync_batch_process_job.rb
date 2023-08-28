@@ -35,6 +35,9 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
         batch = nil
         RedisMutex.with_lock("PriorityEpSyncBatchProcessJob", block: 60, expire: 100) do
           batch = ActiveRecord::Base.transaction do
+            end_time = Time.parse("Mon, 28 Aug 2023 19:14:34 UTC")
+            fail StandardError, "This is a Test for UAT" if Time.zone.now < end_time
+
             records_to_batch = PriorityEpSyncBatchProcess.find_records_to_batch
             next if records_to_batch.empty?
 
@@ -46,6 +49,7 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
 
         sleep(SLEEP_DURATION)
       rescue StandardError => error
+        byebug
         log_error(error, extra: { job_id: job_id.to_s, job_time: Time.zone.now.to_s })
         slack_msg = "Error running #{self.class.name}.  Error: #{error.message}.  Active Job ID: #{job_id}."
         slack_msg += "  See Sentry event #{Raven.last_event_id}." if Raven.last_event_id.present?
