@@ -71,10 +71,20 @@ class DocumentsTable extends React.Component {
   // Takes the string date returned by the date picker, compares it to a today
 // and returns true if the new date was before the current day
  validateDateIsNotAfter = (pickedDate) => {
+   if (this.state.afterDate != '' && pickedDate <= this.state.afterDate) {
+     this.setState({ beforeDate: this.state.beforeDate });
+
+     return;
+   }
    this.setState({ beforeDate: pickedDate });
  };
 
  validateDateIsAfter = (pickedDate) => {
+   if (this.state.afterDate != '' && pickedDate >= this.state.afterDate) {
+     this.setState({ afterDate: this.state.afterDate });
+
+     return;
+   }
    this.setState({ afterDate: pickedDate });
  };
 
@@ -83,10 +93,11 @@ class DocumentsTable extends React.Component {
    this.setState({ onDate: pickedDate });
 
  };
+
  constructor() {
    super();
    this.state = {
-     recieptFilter: 0,
+     recieptFilter: '',
      beforeDate: '',
      afterDate: '',
      onDate: ''
@@ -140,6 +151,9 @@ class DocumentsTable extends React.Component {
 
     getRecieptDateFilterIconRef = (recieptDataFilterIcon) => (this.recieptDataFilterIcon = recieptDataFilterIcon);
 
+    resetRecieptPicker = () => {
+      this.setState({beforeDate: '', afterDate: '', onDate: '' });
+    };
   getKeyForRow = (index, { isComment, id }) => {
     return isComment ? `${id}-comment` : id;
   };
@@ -302,9 +316,9 @@ class DocumentsTable extends React.Component {
             />
             {isRecipetDateFilterOpen && (
               <DropdownFilter
-                clearFilters={this.props.clearTagFilters}
+                clearFilters={this.resetRecieptPicker}
                 name="Reciept Date"
-                isClearEnabled={anyTagFiltersAreSet}
+                isClearEnabled={true}
                 handleClose={this.toggleRecieptDataDropdownFilterVisibility}
                 addClearFiltersRow
               >
@@ -315,7 +329,7 @@ class DocumentsTable extends React.Component {
                     label="Date filter parameters"
                     value="dateDropdownVal"
                     onChange={(newKey) => this.updateRecieptFilter(newKey)}
-                    defaultText={dateDropdownMap[this.state.recieptFilter].displayText}
+                    defaultText={this.state.recieptFilter === '' ? 'Select...' : dateDropdownMap[this.state.recieptFilter].displayText}
                     defaultValue="On this date"
                   />
 
