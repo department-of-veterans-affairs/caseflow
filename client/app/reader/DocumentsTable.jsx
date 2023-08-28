@@ -55,36 +55,32 @@ export const getRowObjects = (documents, annotationsPerDocument) => {
   }, []);
 };
 
+// made because theres occasional automagic things happening when I convert the string to date
+const convertStringToDate = (stringDate) => {
+  let date = new Date();
+  const splitVals = stringDate.split('-');
+
+  date.setFullYear(Number(splitVals[0]));
+  date.setMonth(Number(splitVals[1] - 1));
+  date.setDate(Number(splitVals[2]));
+
+  return date;
+};
+
 class DocumentsTable extends React.Component {
   // Takes the string date returned by the date picker, compares it to a today
 // and returns true if the new date was before the current day
  validateDateIsNotAfter = (pickedDate) => {
-   if (new Date(pickedDate) < new Date()) {
-     console.log('date was before.');
-     this.setState({ beforeDate: pickedDate });
-   }
+   this.setState({ beforeDate: pickedDate });
  };
 
  validateDateIsAfter = (pickedDate) => {
-   if (new Date(pickedDate) > new Date()) {
-     this.setState({ afterDate: pickedDate });
-   }
+   this.setState({ afterDate: pickedDate });
  };
 
- validateDayIsToday = (pickedDate) => {
+ setOnDate = (pickedDate) => {
 
-  //  const today = new Date();
-  //  const todaysDay = today.getDate();
-  //  // Add 1 because months start at 0. uses padStart to turn something like 8 into 08
-  //  const todaysMonth = String(today.getMonth() + 1).padStart(2, '0');
-  //  const todaysYear = today.getFullYear();
-
-  //  // build a date that matches the format the datetime input hands to us (YYYY-MM-DD)
-  //  const todaysString = `${todaysYear}-${todaysMonth}-${todaysDay}`;
-
-  //  if (pickedDate === todaysString) {
-     this.setState({ onDate: pickedDate });
-  //  }
+   this.setState({ onDate: pickedDate });
 
  };
  constructor() {
@@ -327,7 +323,7 @@ class DocumentsTable extends React.Component {
                   <DateSelector value={this.state.beforeDate} type="date" name="Before this date" onChange={this.validateDateIsNotAfter} />}
                   {(this.state.recieptFilter === 0 || this.state.recieptFilter === 2) &&
                   <DateSelector value={this.state.afterDate} type="date" name="After this date" onChange={this.validateDateIsAfter} />}
-                  {this.state.recieptFilter === 3 && <DateSelector value={this.state.onDate} type="date" name="On this date" onChange={this.validateDayIsToday} />}
+                  {this.state.recieptFilter === 3 && <DateSelector value={this.state.onDate} type="date" name="On this date" onChange={this.setOnDate} />}
                   <div style={{ width: '100%', display: 'flex' }}>
                     <div style={{ display: 'flex', margin: 'flex-end', justifyContent: 'end' }}>
                       <Button onClick={() => this.props.setRecieptDateFilter(this.state.recieptFilter,
