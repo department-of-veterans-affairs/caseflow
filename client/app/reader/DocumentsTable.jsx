@@ -91,15 +91,15 @@ class DocumentsTable extends React.Component {
      this.setState({ fromDate: pickedDate,
        fromDateErrors: [] });
    } else {
-     this.setState({ fromDateErrors: foundErrors});
+     this.setState({ fromDateErrors: foundErrors });
    }
  };
 
  validateDateTo = (pickedDate) => {
    let foundErrors = [];
+
    // Prevent setting the to date before the from date
    if (this.state.fromDate !== '' && pickedDate < this.state.fromDate) {
-    console.log('before date error');
      foundErrors = [...foundErrors, 'To date cannot occur before from date.'];
    }
 
@@ -114,13 +114,11 @@ class DocumentsTable extends React.Component {
    }
 
    if (foundErrors.length === 0) {
-
      this.setState({ toDate: pickedDate,
        toDateErrors: []
      });
    } else {
-    console.log('we took the error path');
-     this.setState({ toDateErrors: [foundErrors]});
+     this.setState({ toDateErrors: [foundErrors] });
    }
  }
 
@@ -161,11 +159,11 @@ class DocumentsTable extends React.Component {
      return true;
    }
 
-   if (this.state.recieptFilter === 1 && (this.state.fromDate === '' || this.state.fromDateErrors.length > 0)) {
+   if (this.state.recieptFilter === 1 && (this.state.toDate === '' || this.state.fromDateErrors.length > 0)) {
      return true;
    }
 
-   if (this.state.recieptFilter === 2 && (this.state.toDate === '' || this.state.toDateErrors.length > 0)) {
+   if (this.state.recieptFilter === 2 && (this.state.fromDate === '' || this.state.toDateErrors.length > 0)) {
      return true;
    }
 
@@ -173,7 +171,7 @@ class DocumentsTable extends React.Component {
      return true;
    }
 
-   if(this.state.recieptFilter === '') {
+   if (this.state.recieptFilter === '') {
      return true;
    }
 
@@ -228,7 +226,7 @@ class DocumentsTable extends React.Component {
     getRecieptDateFilterIconRef = (recieptDataFilterIcon) => (this.recieptDataFilterIcon = recieptDataFilterIcon);
 
     resetRecieptPicker = () => {
-      this.setState({ fromDate: '', toDate: '', onDate: '' });
+      this.setState({ fromDate: '', toDate: '', onDate: '', fromDateErrors:[], toDateErrors:[], onDateErrors:[]});
     };
   getKeyForRow = (index, { isComment, id }) => {
     return isComment ? `${id}-comment` : id;
@@ -607,3 +605,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(DocumentsTable);
+

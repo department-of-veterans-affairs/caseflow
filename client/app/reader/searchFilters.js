@@ -23,17 +23,17 @@ const filterDates = (docDate, validationDates, filterType) => {
 
   switch (filterType) {
   case FILTER_TYPES.BETWEEN:
-    if (docDate <= beforeDate && docDate >= afterDate) {
+    if (docDate >= beforeDate && docDate <= afterDate) {
       validDate = true;
     }
     break;
   case FILTER_TYPES.BEFORE:
-    if (docDate <= beforeDate) {
+    if (docDate >= beforeDate) {
       validDate = true;
     }
     break;
   case FILTER_TYPES.AFTER:
-    if (docDate >= afterDate) {
+    if (docDate <= afterDate) {
       validDate = true;
     }
     break;
