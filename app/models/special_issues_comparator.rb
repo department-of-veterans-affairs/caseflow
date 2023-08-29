@@ -5,7 +5,7 @@
 
 class SpecialIssuesComparator
 
-  attr_accessor :issue, :rating_special_issues, :bgs_client, :veteran_contentions
+  attr_accessor :issue, :rating_special_issues, :bgs_client, :veteran_contentions, :linked_contentions
   def initialize(issue)
     @issue = issue
     @rating_special_issues = issue&.special_issues
@@ -96,7 +96,7 @@ class SpecialIssuesComparator
     end
   end
 
-    # checks if rating special issue meets PACT criteria
+  # checks if rating special issue meets PACT criteria
   def special_issue_has_pact?(special_issue)
     special_issue.transform_keys!(&:to_s)
     if special_issue["spis_tn"]&.casecmp("gulf war presumptive 3.320")&.zero?
@@ -108,9 +108,10 @@ class SpecialIssuesComparator
 
   # cycle contentions tied to the rating issue/decision and return true if there is a match for mst
   def mst_from_contention?
-    return false if contentions_tied_to_issue.blank?
+    self.linked_contentions ||= contentions_tied_to_issue
+    return false if linked_contentions.blank?
 
-    contentions_tied_to_issue.each do |contention|
+    linked_contentions.each do |contention|
       return true if mst_contention_status?(contention)
     end
 
@@ -119,10 +120,11 @@ class SpecialIssuesComparator
 
   # cycle contentions tied to the rating issue/decision and return true if there is a match for pact
   def pact_from_contention?
-    return false if contentions_tied_to_issue.blank?
+    self.linked_contentions ||= contentions_tied_to_issue
+    return false if linked_contentions.blank?
 
-    contentions_tied_to_issue.each do |contention|
-      return true if pact_contention_status(contention)
+    linked_contentions.each do |contention|
+      return true if pact_contention_status?(contention)
     end
 
     false
@@ -134,12 +136,10 @@ class SpecialIssuesComparator
     return false if bgs_contention.nil? || bgs_contention["special_issues"].blank?
 
     if bgs_contention["special_issues"].is_a?(Hash)
-      CONTENTION_MST_ISSUES.include?(bgs_contention["special_issues"]["spis_tc"]&.downcase)
+      CONTENTION_MST_ISSUES.include?(bgs_contention["special_issues"][:spis_tc]&.downcase)
     elsif bgs_contention["special_issues"].is_a?(Array)
-      bgs_contention["special_issues"].any? { |issue| CONTENTION_MST_ISSUES.include?(issue["spis_tc"]&.downcase) }
+      bgs_contention["special_issues"].any? { |issue| CONTENTION_MST_ISSUES.include?(issue[:spis_tc]&.downcase) }
     end
-
-    false
   end
 
   # checks single contention special issue status for PACT
@@ -148,18 +148,16 @@ class SpecialIssuesComparator
     return false if bgs_contention.nil? || bgs_contention["special_issues"].blank?
 
     if bgs_contention["special_issues"].is_a?(Hash)
-      CONTENTION_PACT_ISSUES.include?(bgs_contention["special_issues"]["spis_tc"]&.downcase)
+      CONTENTION_PACT_ISSUES.include?(bgs_contention["special_issues"][:spis_tc]&.downcase)
     elsif bgs_contention["special_issues"].is_a?(Array)
-      bgs_contention["special_issues"].any? { |issue| CONTENTION_PACT_ISSUES.include?(issue["spis_tc"]&.downcase) }
+      bgs_contention["special_issues"].any? { |issue| CONTENTION_PACT_ISSUES.include?(issue[:spis_tc]&.downcase) }
     end
-
-    false
   end
 
   # get the contentions for the veteran, find the contentions that are tied to the rating issue
   def contentions_tied_to_issue
     # establish veteran contentions
-    @veteran_contentions ||= fetch_contentions_by_participant_id(issue.participant_id)
+    self.veteran_contentions ||= fetch_contentions_by_participant_id(issue.participant_id)
 
     return nil if veteran_contentions.blank?
 
@@ -173,6 +171,7 @@ class SpecialIssuesComparator
   # cycles list of rba_contentions on the rating issue and matches them with
   # contentions tied to the veteran
   def match_ratings_with_contentions
+    contention_matches = []
     # cycle contentions tied to rating issue
     issue.rba_contentions_data.each do |rba|
       # grab contention on the rating
@@ -182,14 +181,14 @@ class SpecialIssuesComparator
         next unless contention.is_a?(Hash)
 
         # store any matches that are found
-        contention_matches << link_contention_to_rating(contention, rba_contention)
+        link_contention_to_rating(contention, rba_contention, contention_matches)
       end
     end
-    contention_matches.compact
+    contention_matches&.compact
   end
 
   # takes the contention given and tries to match it to the current rating issue (issue)
-  def link_contention_to_rating(contention, rba_contention)
+  def link_contention_to_rating(contention, rba_contention, contention_matches)
     # if only one contention, check the contention info
     if contention.dig(:contentions).is_a?(Hash)
       # get the single contention from the response
@@ -197,7 +196,7 @@ class SpecialIssuesComparator
 
       return if single_contention_info.blank?
 
-      # see if the contention ties to the rating
+      # see if the contention ties to the rating. if it does, add it to the matches list
       contention_matches << single_contention_info if single_contention_info.dig(:cntntn_id) == rba_contention.dig(:cntntn_id)
 
     # if the response contains an array of contentions, unpack each one and compare
@@ -207,10 +206,10 @@ class SpecialIssuesComparator
       contention.dig(:contentions).each do |contention_info|
         next if contention_info.dig(:cntntn_id).blank?
 
+        # see if the contention ties to the rating. if it does, add it to the matches list
         contention_matches << contention_info if contention_info.dig(:cntntn_id) == rba_contention.dig(:cntntn_id)
       end
     end
-
     contention_matches
   end
 end
