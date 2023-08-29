@@ -35,9 +35,6 @@ class PriorityEpSyncBatchProcessJob < CaseflowJob
         batch = nil
         RedisMutex.with_lock("PriorityEpSyncBatchProcessJob", block: 60, expire: 100) do
           batch = ActiveRecord::Base.transaction do
-            end_time = Time.parse("Tue, 29 Aug 2023 19:14:34 UTC")
-            fail StandardError, "This is a Test for UAT" if Time.zone.now < end_time
-
             records_to_batch = PriorityEpSyncBatchProcess.find_records_to_batch
             next if records_to_batch.empty?
 
