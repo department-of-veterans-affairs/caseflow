@@ -73,40 +73,11 @@ class DocumentsTable extends React.Component {
    let foundErrors = [];
 
    // Prevent the from date from being after the To date.
-   if (this.state.fromDate !== '' && pickedDate > this.state.fromDate) {
+   if (this.state.fromDate !== '' && pickedDate > this.state.toDate) {
      foundErrors = [...foundErrors, 'From date cannot occur after to date.'];
    }
    // Prevent the To date and From date from being the same date.
-   if (this.state.fromDate !== '' && pickedDate === this.state.fromDate) {
-     foundErrors = [...foundErrors, 'From date and To date cannot be the same.'];
-   }
-
-   // Prevent the date from being picked past the current day.
-   if (convertStringToDate(pickedDate) > new Date()) {
-     foundErrors = [...foundErrors, 'Reciept date cannot be in the future.'];
-   }
-
-   if (foundErrors.length === 0) {
-
-     this.setState({ toDate: pickedDate,
-       toDateErrors: [] });
-   } else {
-     this.setState({ toDateErrors: foundErrors,
-    fromDate: '' });
-   }
- };
-
- validateDateTo = (pickedDate) => {
-
-   let foundErrors = [];
-
-   // Prevent setting the to date before the from date
-   if (this.state.toDate !== '' && pickedDate < this.state.toDate) {
-     foundErrors = [...foundErrors, 'To date cannot occur before after date.'];
-   }
-
-   // Prevent setting the To and From dates to the same date.
-   if (pickedDate === this.state.toDate) {
+   if (this.state.fromDate !== '' && pickedDate === this.state.toDate) {
      foundErrors = [...foundErrors, 'From date and To date cannot be the same.'];
    }
 
@@ -118,10 +89,38 @@ class DocumentsTable extends React.Component {
    if (foundErrors.length === 0) {
 
      this.setState({ fromDate: pickedDate,
-       fromDateErrors: []
+       fromDateErrors: [] });
+   } else {
+     this.setState({ fromDateErrors: foundErrors});
+   }
+ };
+
+ validateDateTo = (pickedDate) => {
+   let foundErrors = [];
+   // Prevent setting the to date before the from date
+   if (this.state.fromDate !== '' && pickedDate < this.state.fromDate) {
+    console.log('before date error');
+     foundErrors = [...foundErrors, 'To date cannot occur before from date.'];
+   }
+
+   // Prevent setting the To and From dates to the same date.
+   if (pickedDate === this.state.fromDate) {
+     foundErrors = [...foundErrors, 'From date and To date cannot be the same.'];
+   }
+
+   // Prevent the date from being picked past the current day.
+   if (convertStringToDate(pickedDate) > new Date()) {
+     foundErrors = [...foundErrors, 'Reciept date cannot be in the future.'];
+   }
+
+   if (foundErrors.length === 0) {
+
+     this.setState({ toDate: pickedDate,
+       toDateErrors: []
      });
    } else {
-     this.setState({ fromDateErrors: [foundErrors] });
+    console.log('we took the error path');
+     this.setState({ toDateErrors: [foundErrors]});
    }
  }
 
@@ -414,17 +413,17 @@ class DocumentsTable extends React.Component {
                       defaultValue="On this date"
                     />
                     {(this.state.recieptFilter === 0 || this.state.recieptFilter === 2) &&
-                  this.state.toDateErrors.map((error, index) =>
+                  this.state.fromDateErrors.map((error, index) =>
                     <p id={index} key={index} style={{ color: 'red' }}>{error}</p>)}
                     {(this.state.recieptFilter === 0 || this.state.recieptFilter === 2) &&
-                  <DateSelector value={this.state.toDate} type="date" name="From"
+                  <DateSelector value={this.state.fromDate} type="date" name="From"
                     onChange={this.validateDateFrom} />}
 
                     {(this.state.recieptFilter === 0 || this.state.recieptFilter === 1) &&
-                  this.state.fromDateErrors.map((error) =>
+                  this.state.toDateErrors.map((error) =>
                     <p style={{ color: 'red' }}>{error}</p>)}
                     {(this.state.recieptFilter === 0 || this.state.recieptFilter === 1) &&
-                  <DateSelector value={this.state.fromDate} type="date" name="To"
+                  <DateSelector value={this.state.toDate} type="date" name="To"
                     onChange={this.validateDateTo} />}
 
                     {this.state.recieptFilter === '' && <DateSelector readOnly type="date" name="Receipt date"
