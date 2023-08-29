@@ -19,6 +19,7 @@ class Fakes::BGSService
   attr_accessor :client
 
   DEFAULT_VSO_POA_FILE_NUMBER = 216_979_849
+  NO_POA_FILE_NUMBER = 111_111_113
   VSO_PARTICIPANT_ID = "4623321"
   DEFAULT_PARTICIPANT_ID = "781162"
 
@@ -625,6 +626,7 @@ class Fakes::BGSService
   # TODO: add more test cases
   def fetch_poa_by_file_number(file_number)
     return {} if file_number == "no-such-file-number"
+    return {} if file_number == NO_POA_FILE_NUMBER || file_number == NO_POA_FILE_NUMBER.to_s
 
     record = (self.class.power_of_attorney_records || {})[file_number]
     record ||= default_vso_power_of_attorney_record if file_number == DEFAULT_VSO_POA_FILE_NUMBER
@@ -658,6 +660,8 @@ class Fakes::BGSService
                   org_type_nm: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
                   ptcpnt_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
                 }
+              elsif participant_id.starts_with?("NO_POA")
+                {}
               else
                 {
                   legacy_poa_cd: "100",
