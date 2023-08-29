@@ -708,16 +708,14 @@ class Fakes::BGSService
   end
 
   def generate_random_file_number
-    Kernel.srand(1)
     value = rand(700_000_000...733_792_224).to_s
 
     # make sure the value is unique for both file number and participant id
-    while BgsPowerOfAttorney.find_by(file_number: value).nil? == false &&
-          BgsPowerOfAttorney.find_by(poa_participant_id: value).nil? == false
+    value = while BgsPowerOfAttorney.find_by(file_number: value).nil? == false &&
+                  BgsPowerOfAttorney.find_by(claimant_participant_id: value).nil? == false
+              rand(700_000_000...733_792_224).to_s
+            end
 
-      value = rand(700_000_000...733_792_224).to_s
-    end
-    # return the value
     value
   end
 
@@ -725,10 +723,10 @@ class Fakes::BGSService
     # generate random file number and participant id to prevent unique id collisions
     # with test data
     file_number = generate_random_file_number
-    poa_participant_id = generate_random_file_number
+    # poa_participant_id = generate_random_file_number
 
     {
-      file_number: "633792224",
+      file_number: file_number,
       power_of_attorney:
         {
           legacy_poa_cd: "3QQ",
