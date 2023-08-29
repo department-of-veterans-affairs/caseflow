@@ -16,7 +16,7 @@ import { getPoAValue } from '../actions/task';
 const powerOfAttorneyFromNonCompState = () =>
   (state) => {
     return {
-      appellantType: state.appeal?.claimantType,
+      appellantType: state.task?.appellant_type,
       /* eslint-disable-next-line camelcase */
       powerOfAttorney: state.task?.power_of_attorney,
       loading: state?.loadingPowerOfAttorney?.loading,
