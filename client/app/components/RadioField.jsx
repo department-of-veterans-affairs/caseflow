@@ -102,7 +102,6 @@ export const RadioField = (props) => {
       <div className="cf-form-radio-options">
         {options.map((option, i) => {
           const optionDisabled = isDisabled(option);
-
           const radioField = (<div
             className="cf-form-radio-option"
             key={`${idPart}-${option.value}-${i}`}
@@ -204,7 +203,7 @@ RadioField.propTypes = {
   /**
    * The value of the named `input` element(s); required for a controlled component
    */
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 
   /**
    * Stack `input` elements vertically (automatic for more than two options)

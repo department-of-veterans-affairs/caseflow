@@ -88,6 +88,36 @@ FactoryBot.define do
       end
     end
 
+    trait :with_unscheduled_hearing do
+      after(:create) do |task|
+        appeal = task.appeal
+        root_task = appeal.root_task
+        distro_task = task.parent
+        task.update!(parent: root_task)
+        ScheduleHearingTask.create!(appeal: appeal, parent: distro_task, assigned_to: Bva.singleton)
+        HearingPostponementRequestMailTask.create!(appeal: appeal, parent: task,
+                                                   assigned_to: HearingAdmin.singleton)
+      end
+    end
+
+    trait :with_scheduled_hearing do
+      after(:create) do |task|
+        appeal = task.appeal
+        root_task = appeal.root_task
+        distro_task = task.parent
+        task.update!(parent: root_task)
+        schedule_hearing_task = ScheduleHearingTask.create!(appeal: appeal, parent: distro_task,
+                                                            assigned_to: Bva.singleton)
+        schedule_hearing_task.update(status: "completed", closed_at: Time.zone.now)
+        hearing = create(:hearing, disposition: nil, judge: nil, appeal: appeal)
+        distro_task.update!(status: "on_hold")
+        AssignHearingDispositionTask.create!(appeal: appeal, parent: schedule_hearing_task.parent,
+                                             assigned_to: Bva.singleton)
+        HearingTaskAssociation.create!(hearing: hearing, hearing_task: schedule_hearing_task.parent)
+        HearingPostponementRequestMailTask.create!(appeal: appeal, parent: task, assigned_to: HearingAdmin.singleton)
+      end
+    end
+
     # Colocated tasks for Legacy appeals
     factory :colocated_task, traits: [ColocatedTask.actions_assigned_to_colocated.sample.to_sym] do
       # don't expect to have a parent for LegacyAppeals
@@ -307,6 +337,22 @@ FactoryBot.define do
         assigned_by { nil }
       end
 
+      factory :supplemental_claim_poa_task, class: DecisionReviewTask do
+        appeal do
+          create(:supplemental_claim,
+                 :processed,
+                 :with_vha_issue,
+                 :with_end_product_establishment,
+                 benefit_type: "vha",
+                 claimant_type: :veteran_claimant)
+        end
+        assigned_by { nil }
+
+        after(:create) do |task|
+          task.appeal.create_business_line_tasks!
+        end
+      end
+
       factory :higher_level_review_vha_task, class: DecisionReviewTask do
         appeal { create(:higher_level_review, :with_vha_issue, benefit_type: "vha") }
         assigned_by { nil }
@@ -523,12 +569,7 @@ FactoryBot.define do
 
       factory :assess_documentation_task, class: AssessDocumentationTask do
         parent { create(:vha_document_search_task, appeal: appeal) }
-        assigned_by { nil }
-      end
-
-      factory :assess_documentation_task_predocket, class: AssessDocumentationTask do
-        parent { create(:pre_docket_task, assigned_to: assigned_to, appeal: appeal) }
-        assigned_by { nil }
+        assigned_by { parent.assigned_by }
       end
 
       factory :vha_document_search_task, class: VhaDocumentSearchTask do
@@ -538,12 +579,6 @@ FactoryBot.define do
           User.find_by_css_id("INTAKE_USER") ||
             create(:user, css_id: "INTAKE_USER").tap { |user| BvaIntake.singleton.add_user(user) }
         end
-      end
-
-      factory :vha_document_search_task_with_assigned_to, class: VhaDocumentSearchTask do
-        parent { create(:pre_docket_task, assigned_to: assigned_to, appeal: appeal) }
-        assigned_to { :assigned_to }
-        assigned_by { nil }
       end
 
       factory :education_document_search_task, class: EducationDocumentSearchTask do
@@ -627,6 +662,11 @@ FactoryBot.define do
           User.find_by_css_id("LIT_SUPPORT_ATTY_1") ||
             create(:user, full_name: "Motions Attorney", css_id: "LIT_SUPPORT_ATTY_1")
         end
+      end
+
+      factory :hearing_postponement_request_mail_task, class: HearingPostponementRequestMailTask do
+        parent { create(:distribution_task, appeal: appeal) }
+        assigned_to { MailTeam.singleton }
       end
     end
   end

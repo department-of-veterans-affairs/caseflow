@@ -48,7 +48,7 @@ RSpec.feature "Case Assignment flows", :all_dbs do
         expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
       end
 
-      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions
+      fill_in COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: instructions
 
       click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
 
@@ -56,7 +56,7 @@ RSpec.feature "Case Assignment flows", :all_dbs do
 
       within all('div[id^="action_"]')[1] do
         click_dropdown(text: selected_opt_0)
-        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions
+        fill_in COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: instructions
       end
 
       click_on COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL
@@ -90,7 +90,7 @@ RSpec.feature "Case Assignment flows", :all_dbs do
       selected_opt_1 = Constants::CO_LOCATED_ADMIN_ACTIONS[action]
 
       click_dropdown(text: selected_opt_1)
-      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: generate_words(4)
+      fill_in COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: generate_words(4)
 
       # step "adds another admin action"
       click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
@@ -102,7 +102,7 @@ RSpec.feature "Case Assignment flows", :all_dbs do
 
       within all('div[id^="action_"]')[1] do
         click_dropdown(text: selected_opt_2)
-        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: generate_words(5)
+        fill_in COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: generate_words(5)
       end
 
       # step "adds a third admin action with no instructions"
@@ -132,7 +132,7 @@ RSpec.feature "Case Assignment flows", :all_dbs do
       expect(page).to have_content COPY::INSTRUCTIONS_ERROR_FIELD_REQUIRED
 
       within all('div[id^="action_"]')[1] do
-        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: generate_words(4)
+        fill_in COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: generate_words(4)
       end
 
       # step "submits two admin actions"

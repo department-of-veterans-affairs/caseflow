@@ -14,7 +14,7 @@ import {
   getQueueRedirectUrl,
   getQueueTaskType
 } from 'utils/reader';
-import { showPdf, handleCategoryToggle, addTag, removeTag } from 'store/reader/documentViewer';
+import { showPdf, handleCategoryToggle, addTag, removeTag, generateAutoTags } from 'store/reader/documentViewer';
 
 /**
  * PDF Initial State
@@ -257,6 +257,14 @@ const documentListSlice = createSlice({
         ].includes(action.type),
         (state, action) => {
           state.documents[action.payload.doc.id].tags = action.payload.tags;
+        }
+      ).
+      addMatcher(
+        (action) => [
+          generateAutoTags.pending.toString()
+        ].includes(action.type),
+        (state, action) => {
+          state.documents[action.meta.arg.doc.id].isAutoTagPending = true;
         }
       ).
       addMatcher(
