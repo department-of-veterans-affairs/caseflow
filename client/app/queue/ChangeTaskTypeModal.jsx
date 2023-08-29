@@ -21,6 +21,7 @@ import COPY from '../../COPY';
 
 import { taskActionData } from './utils';
 import QueueFlowModal from './components/QueueFlowModal';
+import EfolderUrlField from './components/EfolderUrlField';
 
 class ChangeTaskTypeModal extends React.PureComponent {
 
@@ -68,6 +69,8 @@ class ChangeTaskTypeModal extends React.PureComponent {
       });
   }
 
+  isHearingRequestMailTask = () => (this.state.typeOption?.value || '').match(/Hearing.*RequestMailTask/);
+
   actionForm = () => {
     const { instructions, typeOption } = this.state;
 
@@ -81,6 +84,17 @@ class ChangeTaskTypeModal extends React.PureComponent {
             onChange={(option) => option && this.setState({ typeOption: option })}
             value={typeOption && typeOption.value} />
         </div>
+        {
+          this.isHearingRequestMailTask() &&
+          <div>
+            <br />
+            <EfolderUrlField
+              appealId={this.props.appealId}
+              requestType={'test'}
+              onChange={() => console.log('changed')}
+            />
+          </div>
+        }
         <div {...marginTop(4)}>
           <TextareaField
             name={COPY.CHANGE_TASK_TYPE_INSTRUCTIONS_LABEL}
