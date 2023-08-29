@@ -17,7 +17,8 @@ class RatingIssue
     :promulgation_date,
     :rba_contentions_data,
     :reference_id,
-    :subject_text
+    :subject_text,
+    :special_issues
     # adding another field? *
   )
 
@@ -48,11 +49,17 @@ class RatingIssue
         promulgation_date: rating.promulgation_date,
         rba_contentions_data: ensure_array_of_hashes(bgs_data.dig(:rba_issue_contentions)),
         reference_id: bgs_data[:rba_issue_id],
-        subject_text: bgs_data[:subjct_txt]
+        subject_text: bgs_data[:subjct_txt],
+        special_issues: bgs_data[:special_issues]
       )
     end
 
     def deserialize(serialized_hash)
+      DataDogService.increment_counter(
+        metric_group: "mst_pact_group",
+        metric_name: "bgs_service.previous_service_call.rating_issue",
+        app_name: RequestStore[:application]
+      )
       new(
         serialized_hash.slice(
           :benefit_type,
@@ -64,7 +71,8 @@ class RatingIssue
           :promulgation_date,
           :rba_contentions_data,
           :reference_id,
-          :subject_text
+          :subject_text,
+          :special_issues
         ).merge(associated_end_products: deserialize_end_products(serialized_hash))
       )
     end

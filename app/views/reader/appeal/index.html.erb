@@ -18,7 +18,8 @@
       metricsRecordPDFJSGetDocument: FeatureToggle.enabled_metric?(:metrics_get_pdfjs_doc, user: current_user),
       metricsReaderRenderText: FeatureToggle.enabled_metric?(:metrics_reader_render_text, user: current_user),
       metricsLogRestSuccess: FeatureToggle.enabled_metric?(:metrics_log_rest_success, user: current_user),
-      metricsPdfStorePages: FeatureToggle.enabled_metric?(:metrics_pdf_store_pages, user: current_user)
+      metricsPdfStorePages: FeatureToggle.enabled_metric?(:metrics_pdf_store_pages, user: current_user),
+      auto_tagging_ability: FeatureToggle.enabled?(:auto_tagging_ability, user: current_user)
     },
     buildDate: build_date
   }) %>
