@@ -143,7 +143,7 @@ export const PowerOfAttorneyDetailUnconnected = ({ powerOfAttorney, appealId, po
     const noPoaText = vha ? COPY.CASE_DETAILS_NO_POA_VHA : COPY.CASE_DETAILS_NO_POA;
     const unrecognizedPoaText = vha ? COPY.CASE_DETAILS_UNRECOGNIZED_POA_VHA : COPY.CASE_DETAILS_UNRECOGNIZED_POA;
 
-    if (!showPoaDetails && !poaAlert.powerOfAttorney) {
+    if (!showPoaDetails && _.isEmpty(poaAlert.powerOfAttorney)) {
       return noPoaText;
     }
     if (isRecognizedPoa) {
