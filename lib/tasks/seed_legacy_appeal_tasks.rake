@@ -373,7 +373,7 @@ namespace :db do
         $stdout.puts("Enter the CSS ID of a judge user that you want to assign these appeals to")
 
         if Rails.env.development? || Rails.env.test?
-          $stdout.puts("Hint: Judge Options include 'BVAAABSHIRE', 'BVARERDMAN'") # local / test option
+          $stdout.puts("Hint: Judge Options include 'BVARERDMAN'") # local / test option
         else
           $stdout.puts("Hint: Judge Options include 'CF_VLJ_283', 'CF_VLJTWO_283'") # UAT option
         end
@@ -386,7 +386,7 @@ namespace :db do
         $stdout.puts("Which attorney do you want to assign the Attorney Task to?")
 
         if Rails.env.development? || Rails.env.test?
-          $stdout.puts("Hint: Attorney Options include 'BVASCASPER1', 'BVARERDMAN', 'BVALSHIELDS'") # local / test option
+          $stdout.puts("Hint: Attorney Options include 'BVALSHIELDS'") # local / test option
         else
           $stdout.puts("Hint: Judge Options include 'CF_ATTN_283', 'CF_ATTNTWO_283'") # UAT option
         end
