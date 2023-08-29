@@ -15,8 +15,8 @@ const filterDates = (docDate, validationDates, filterType) => {
     AFTER: 2,
     ON: 3
   };
-  const beforeDate = (validationDates.beforeDate);
-  const afterDate = (validationDates.afterDate);
+  const beforeDate = (validationDates.fromDate);
+  const afterDate = (validationDates.toDate);
   const onDate = (validationDates.onDate);
 
   let validDate = false;

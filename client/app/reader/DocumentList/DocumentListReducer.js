@@ -47,8 +47,8 @@ const initialState = {
     searchQuery: '',
     recieptFilterType: '',
     recieptFilterDates: {
-      beforeDate: '',
-      afterDate: '',
+      fromDate: '',
+      toDate: '',
       onDate: ''
     },
   },
