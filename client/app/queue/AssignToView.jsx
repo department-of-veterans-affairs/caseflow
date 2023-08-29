@@ -341,6 +341,7 @@ class AssignToView extends React.Component {
 
     const action = getAction(this.props);
     const actionData = taskActionData(this.props);
+    actionData.drop_down_label = COPY.JUDGE_LEGACY_DECISION_REVIEW_TITLE
     const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
 
     if (!task || task.availableActions.length === 0) {
@@ -354,6 +355,7 @@ class AssignToView extends React.Component {
       submit: this.submit,
       submitButtonClassNames: ['usa-button'],
       submitDisabled: !this.validateForm(),
+      button: 'Assign',
       validateForm: isPulacCerullo ?
         () => {
           return true;
@@ -362,7 +364,6 @@ class AssignToView extends React.Component {
     };
 
     if (task.type === 'JudgeLegacyDecisionReviewTask') {
-      modalProps.button = 'Assign';
       modalProps.submitButtonClassNames = ['usa-button', 'usa-button-hover', 'usa-button-warning'];
       modalProps.submitDisabled = this.state.modalDisableButton;
     }
