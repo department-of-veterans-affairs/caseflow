@@ -101,7 +101,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq judge_user.full_name
         fill_in "taskInstructions", with: qr_instructions
 
-        click_on "Submit"
+        click_on "Assign"
 
         expect(page).to have_content("On hold (1)")
       end
