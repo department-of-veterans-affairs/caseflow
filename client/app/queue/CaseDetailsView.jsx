@@ -234,8 +234,15 @@ export const CaseDetailsView = (props) => {
 
   localStorage.removeItem('SplitAppealSuccess');
 
+  // Retrieve Special case movement user with legacy Appeal, success and remove from the store
+  const scmLegacyStorage = localStorage.getItem('SCMLegacyMsg');
+
+  localStorage.removeItem('SCMLegacyMsg');
+
   // if null, leave null, if true, check if value is true with reg expression.
   const splitAppealSuccess = (splitStorage === null ? null : (/true/i).test(splitStorage));
+
+  const SCMSuccessLegacyAppeal = (scmLegacyStorage === null ? null : JSON.parse(scmLegacyStorage));
 
   return (
     <React.Fragment>
@@ -253,6 +260,15 @@ export const CaseDetailsView = (props) => {
           <Alert title="Unable to Process Request" type="error">
             Something went wrong and the appeal was not split.
           </Alert>
+        </div>
+      )}
+      {(SCMSuccessLegacyAppeal && props.featureToggles.vlj_legacy_appeal) && (
+        <div>
+          <Alert
+            type="success"
+            title={SCMSuccessLegacyAppeal.title}
+            message={SCMSuccessLegacyAppeal.detail}
+          />
         </div>
       )}
       {!modalIsOpen && error && (

@@ -176,6 +176,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
           assignedByListItem(), this.getAssigneeLabel()),
         detail: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE_MOVE_LEGACY_APPEALS_VLJ_MESSAGE_DETAIL)
       };
+      localStorage.setItem('SCMLegacyMsg', JSON.stringify(successMessage));
     } else {
       successMessage = {
         title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssigneeLabel()),
@@ -188,7 +189,11 @@ class BlockedAdvanceToJudgeView extends React.Component {
       then((resp) => {
         this.props.history.replace(`/queue/appeals/${appeal.externalId}`);
         if (resp.body !== null) {
-          this.props.onReceiveAmaTasks(resp.body.tasks.data);
+          if (appeal.isLegacyAppeal) {
+            window.location.reload();
+          } else {
+            this.props.onReceiveAmaTasks(resp.body.tasks.data);
+          }
         }
       }).
       catch((err) => {
