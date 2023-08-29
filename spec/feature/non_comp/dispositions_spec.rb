@@ -287,6 +287,16 @@ feature "NonComp Dispositions Task Page", :postgres do
              claimant_type: :veteran_claimant)
     end
 
+    let!(:in_progress_task_with_other_claimant) do
+      create(:higher_level_review,
+             :with_vha_issue,
+             :with_end_product_establishment,
+             :create_business_line,
+             benefit_type: "vha",
+             veteran: veteran,
+             claimant_type: :other_claimant)
+    end
+
     let(:poa_task) do
       create(:supplemental_claim_poa_task)
     end
@@ -382,7 +392,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       enable_feature_flag_and_redirect_to_disposition
       expect(page).to have_content(COPY::REFRESH_POA)
       click_on COPY::REFRESH_POA
-      expect(page).to have_text("Power of Attorney (POA) data comes from VBMS")
+      expect(page).to have_text(COPY::VHA_NO_POA)
       expect(page).to have_text(COPY::POA_SUCCESSFULLY_REFRESH_MESSAGE)
     end
 
