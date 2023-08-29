@@ -30,11 +30,30 @@ class ChangeTaskTypeModal extends React.PureComponent {
 
     this.state = {
       typeOption: null,
-      instructions: ''
+      instructions: '',
+      eFolderUrl: '',
+      eFolderUrlValid: false
     };
   }
 
-  validateForm = () => Boolean(this.state.typeOption) && Boolean(this.state.instructions);
+  validateForm = () => {
+    const instructionsAndValue = () => this.state.typeOption?.value !== null && this.state.instructions !== '';
+
+    if (this.isHearingRequestMailTask()) {
+      return instructionsAndValue() && this.state.eFolderUrlValid === true;
+    }
+
+    return instructionsAndValue();
+  }
+
+  prependUrlToInstructions = () => {
+
+    if (this.isHearingRequestMailTask()) {
+      return (`**LINK TO DOCUMENT:** \n ${this.state.eFolderUrl} \n **DETAILS:** \n ${this.state.instructions}`);
+    }
+
+    return this.state.instructions;
+  };
 
   buildPayload = () => {
     const { typeOption, instructions } = this.state;
@@ -43,7 +62,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
       data: {
         task: {
           type: typeOption.value,
-          instructions
+          instructions: this.prependUrlToInstructions()
         }
       }
     };
@@ -90,8 +109,8 @@ class ChangeTaskTypeModal extends React.PureComponent {
             <br />
             <EfolderUrlField
               appealId={this.props.appealId}
-              requestType={'test'}
-              onChange={() => console.log('changed')}
+              requestType={this.state.typeOption?.value}
+              onChange={(value, valid) => this.setState({ eFolderUrl: value, eFolderUrlValid: valid })}
             />
           </div>
         }
