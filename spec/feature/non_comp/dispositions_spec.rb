@@ -287,16 +287,6 @@ feature "NonComp Dispositions Task Page", :postgres do
              claimant_type: :veteran_claimant)
     end
 
-    let!(:in_progress_task_with_other_claimant) do
-      create(:higher_level_review,
-             :with_vha_issue,
-             :with_end_product_establishment,
-             :create_business_line,
-             benefit_type: "vha",
-             veteran: veteran,
-             claimant_type: :other_claimant)
-    end
-
     let(:poa_task) do
       create(:supplemental_claim_poa_task)
     end
