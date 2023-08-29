@@ -384,7 +384,7 @@ class DocumentsTable extends React.Component {
             <FilterIcon
               label="Filter by dates"
               idPrefix="receiptDate"
-              getRef={this.getRecieptDateFilterIconRef}
+              getRef={this.getreceiptDateFilterIconRef}
               selected={isRecipetDateFilterOpen || anyDateFiltersAreSet}
               handleActivate={this.toggleRecieptDataDropdownFilterVisibility}
             />
