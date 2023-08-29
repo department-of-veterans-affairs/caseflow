@@ -253,37 +253,52 @@ export default class OrganizationUsers extends React.PureComponent {
     const listOfUsers = this.state.organizationUsers.map((user, i) => {
       const { dvc, admin } = user.attributes;
       const style = i === 0 ? topUserStyle : userStyle;
+      const { conferenceSelectionVisibility } = this.props;
 
-      return <React.Fragment key={user.id}>
-        <div>
-          <ul>
-            <li key={user.id} {...style}>{this.formatName(user)}
-              {judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong>}
-              {dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong>}
-              {judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong>}
-              {(judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong>}
-            </li>
-            {(judgeTeam || dvcTeam) && admin ?
-              <div {...topUserBorder} /> :
-              <div {...buttonContainerStyle}>
-                <div>
-                  {(judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin)}
-                  {this.removeUserButton(user)}
-                </div>
-                {this.state.organizationName === 'Hearings Management' &&
-                  <div {...radioContainerStyle}>
-                    <SelectConferenceTypeRadioField
-                      key={`${user.id}-conference-selection`}
-                      name={user.id}
-                      meetingType={user.attributes.meeting_type}
-                      organization={this.props.organization}
-                      user={user} />
+      return (
+        <React.Fragment key={user.id}>
+          <div>
+            <ul>
+              <li key={user.id} {...style}>
+                {this.formatName(user)}
+                {judgeTeam && admin && (
+                  <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong>
+                )}
+                {dvcTeam && dvc && (
+                  <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong>
+                )}
+                {judgeTeam && !admin && (
+                  <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong>
+                )}
+                {(judgeTeam || dvcTeam) && admin && (
+                  <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong>
+                )}
+              </li>
+              {(judgeTeam || dvcTeam) && admin ? (
+                <div {...topUserBorder} />
+              ) : (
+                <div {...buttonContainerStyle}>
+                  <div>
+                    {judgeTeam || dvcTeam ? '' : this.adminButton(user, admin)}
+                    {this.removeUserButton(user)}
                   </div>
-                }
-              </div>}
-          </ul>
-        </div>
-      </React.Fragment>;
+                  {this.state.organizationName === 'Hearings Management' &&
+                    !conferenceSelectionVisibility && (
+                    <div
+                      {...radioContainerStyle}
+                    >
+                      <SelectConferenceTypeRadioField
+                        key={`${user.id}-conference-selection`}
+                        name={user.id}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+            </ul>
+          </div>
+        </React.Fragment>
+      );
     });
 
     return <React.Fragment>
