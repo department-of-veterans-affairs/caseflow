@@ -575,9 +575,6 @@ DocumentsTable.propTypes = {
   setDocListScrollPosition: PropTypes.func.isRequired,
   toggleDropdownFilterVisibility: PropTypes.func.isRequired,
   tagOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
-  state: PropTypes.shape({
-    recieptFilter: PropTypes.number
-  })
 };
 
 const mapDispatchToProps = (dispatch) =>
