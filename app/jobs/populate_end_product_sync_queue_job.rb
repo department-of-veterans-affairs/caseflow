@@ -19,9 +19,6 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
 
       begin
         batch = ActiveRecord::Base.transaction do
-          end_time = Time.parse("Tue, 29 Aug 2023 19:14:34 UTC")
-          fail StandardError, "This is a Test for UAT" if Time.zone.now < end_time
-
           priority_epes = find_priority_end_product_establishments_to_sync
           next if priority_epes.empty?
 
