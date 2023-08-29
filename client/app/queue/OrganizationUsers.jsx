@@ -258,19 +258,19 @@ export default class OrganizationUsers extends React.PureComponent {
         <div>
           <ul>
             <li key={user.id} {...style}>{this.formatName(user)}
-              { judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong> }
-              { dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong> }
-              { judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong> }
-              { (judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong> }
+              {judgeTeam && admin && <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong>}
+              {dvcTeam && dvc && <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong>}
+              {judgeTeam && !admin && <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong>}
+              {(judgeTeam || dvcTeam) && admin && <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong>}
             </li>
-            { (judgeTeam || dvcTeam) && admin ?
-              <div {...topUserBorder}></div > :
+            {(judgeTeam || dvcTeam) && admin ?
+              <div {...topUserBorder} /> :
               <div {...buttonContainerStyle}>
                 <div>
-                  { (judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin) }
-                  { this.removeUserButton(user) }
+                  {(judgeTeam || dvcTeam) ? '' : this.adminButton(user, admin)}
+                  {this.removeUserButton(user)}
                 </div>
-                { this.state.organizationName === 'Hearings Management' &&
+                {this.state.organizationName === 'Hearings Management' &&
                   <div {...radioContainerStyle}>
                     <SelectConferenceTypeRadioField
                       key={`${user.id}-conference-selection`}
@@ -279,23 +279,11 @@ export default class OrganizationUsers extends React.PureComponent {
                       organization={this.props.organization}
                       user={user} />
                   </div>
-                  {this.state.organizationName === 'Hearing Admin' &&
-                    !conferenceSelectionVisibility && (
-                    <div
-                      {...radioContainerStyle}
-                    >
-                      <SelectConferenceTypeRadioField
-                        key={`${user.id}-conference-selection`}
-                        name={user.id}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
-            </ul>
-          </div>
-        </React.Fragment>
-      );
+                }
+              </div>}
+          </ul>
+        </div>
+      </React.Fragment>;
     });
 
     return <React.Fragment>
