@@ -55,31 +55,88 @@ export const getRowObjects = (documents, annotationsPerDocument) => {
   }, []);
 };
 
+// made because theres occasional automagic things happening when I convert the string to date
+const convertStringToDate = (stringDate) => {
+  let date = new Date();
+  const splitVals = stringDate.split('-');
+
+  date.setFullYear(Number(splitVals[0]));
+  date.setMonth(Number(splitVals[1] - 1));
+  date.setDate(Number(splitVals[2]));
+
+  return date;
+};
+
 class DocumentsTable extends React.Component {
-  // Takes the string date returned by the date picker, compares it to a today
-// and returns true if the new date was before the current day
- validateDateIsNotAfter = (pickedDate) => {
-   if (this.state.afterDate !== '' && pickedDate <= this.state.afterDate) {
-     this.setState({ beforeDate: this.state.beforeDate });
 
-     return;
+ validateDateFrom = (pickedDate) => {
+   let foundErrors = [];
+
+   // Prevent the from date from being after the To date.
+   if (this.state.beforeDate !== '' && pickedDate > this.state.beforeDate) {
+     foundErrors.push('From date cannot occur after to date.');
    }
-   this.setState({ beforeDate: pickedDate });
+   // Prevent the To date and From date from being the same date.
+   if (this.state.beforeDate !== '' && pickedDate == this.state.beforeDate) {
+     foundErrors.push('From date and To date cannot be the same.');
+   }
+
+   // Prevent the date from being picked past the current day.
+   if (convertStringToDate(pickedDate) > new Date()) {
+     foundErrors.push('Reciept date cannot be in the future.');
+   }
+
+   if (foundErrors.length === 0) {
+
+     this.setState({ afterDate: pickedDate });
+     this.setState({ afterDateErrors: [] });
+   } else {
+     this.setState({ afterDateErrors: [foundErrors] });
+   }
  };
 
- validateDateIsAfter = (pickedDate) => {
-   if (this.state.afterDate !== '' && pickedDate >= this.state.afterDate) {
-     this.setState({ afterDate: this.state.afterDate });
+ validateDateTo = (pickedDate) => {
 
-     return;
+   let foundErrors = [];
+
+   // Prevent setting the to date before the from date
+   if (this.state.afterDate !== '' && pickedDate < this.state.afterDate) {
+     foundErrors.push('To date cannot occur before after date.');
    }
-   this.setState({ afterDate: pickedDate });
- };
+
+   // Prevent setting the To and From dates to the same date.
+   if (pickedDate === this.state.afterDate) {
+     foundErrors.push('From date and To date cannot be the same.');
+   }
+
+   // Prevent the date from being picked past the current day.
+   if (convertStringToDate(pickedDate) > new Date()) {
+     foundErrors.push('Reciept date cannot be in the future.');
+   }
+
+   if (foundErrors.length === 0) {
+
+     this.setState({ beforeDate: pickedDate });
+     this.setState({ beforeDateErrors: [] });
+   } else {
+     this.setState({ beforeDateErrors: [foundErrors] });
+   }
+ }
 
  setOnDate = (pickedDate) => {
+   let foundErrors = [];
 
-   this.setState({ onDate: pickedDate });
+   if (convertStringToDate(pickedDate) > new Date()) {
+     foundErrors.push('Reciept date cannot be in the future.');
+   }
 
+   if (foundErrors.length === 0) {
+
+     this.setState({ onDate: pickedDate });
+     this.setState({ onDateErrors: [] });
+   } else {
+     this.setState({ onDateErrors: [foundErrors] });
+   }
  };
 
  constructor() {
@@ -88,7 +145,10 @@ class DocumentsTable extends React.Component {
      recieptFilter: '',
      beforeDate: '',
      afterDate: '',
-     onDate: ''
+     onDate: '',
+     beforeDateErrors: [''],
+     afterDateErrors: [''],
+     onDateErrors: []
    };
  }
  componentDidMount() {
@@ -164,10 +224,10 @@ class DocumentsTable extends React.Component {
     const anyDateFiltersAreSet = anyFiltersSet('receiptDate');
 
     const dateDropdownMap = [
-      { value: 0, displayText: 'Between these dates' },
-      { value: 1, displayText: 'Before this date' },
-      { value: 2, displayText: 'After this date' },
-      { value: 3, displayText: 'On this date' }
+      { value: 0, displayText: 'Between these dates'},
+      { value: 1, displayText: 'Before this date'},
+      { value: 2, displayText: 'After this date'},
+      { value: 3, displayText: 'On this date'}
     ];
 
     // We have blank headers for the comment indicator and label indicator columns.
@@ -311,27 +371,41 @@ class DocumentsTable extends React.Component {
                 addClearFiltersRow
               >
                 <>
-                  <Dropdown
-                    name="dateDropdownText"
-                    options={dateDropdownMap}
-                    label="Date filter parameters"
-                    value="dateDropdownVal"
-                    onChange={(newKey) => this.updateRecieptFilter(newKey)}
-                    defaultText={this.state.recieptFilter === '' ? 'Select...' :
-                      dateDropdownMap[this.state.recieptFilter].displayText}
-                    defaultValue="On this date"
-                  />
+                  <div style={{
+                    WebkitAppearance: 'none',
+                    MozAppearance: 'none',
+                    appearance: 'none',
 
+                  }}>
+                    <Dropdown
+                      name="dateDropdownText"
+                      options={dateDropdownMap}
+                      label="Date filter parameters"
+                      value="dateDropdownVal"
+                      onChange={(newKey) => this.updateRecieptFilter(newKey)}
+                      defaultText={this.state.recieptFilter === '' ? 'Select...' :
+                        dateDropdownMap[this.state.recieptFilter].displayText}
+                      defaultValue="On this date"
+                    />
+                  </div>
 
+                  {(this.state.recieptFilter === 0 || this.state.recieptFilter === 2) && this.state.afterDateErrors.map((error, index) =>
+                    <span key={index}><p key={index} style={{ color: 'red' }}>{error}</p></span>)}
                   {(this.state.recieptFilter === 0 || this.state.recieptFilter === 2) &&
                   <DateSelector value={this.state.afterDate} type="date" name="From"
-                    onChange={this.validateDateIsAfter} />}
-                                      {(this.state.recieptFilter === 0 || this.state.recieptFilter === 1) &&
-                  <div><DateSelector value={this.state.beforeDate} type="date" name="To"
-                    onChange={this.validateDateIsNotAfter} />  </div>}
-                  {this.state.recieptFilter === '' && <DateSelector readOnly type="date" name="Receipt date"
-                    onChange={this.validateDateIsAfter} />}
+                    onChange={this.validateDateFrom} />}
 
+                  {(this.state.recieptFilter === 0 || this.state.recieptFilter === 1) && this.state.beforeDateErrors.map((error) =>
+                    <p style={{ color: 'red' }}>{error}</p>)}
+                  {(this.state.recieptFilter === 0 || this.state.recieptFilter === 1) &&
+                  <DateSelector value={this.state.beforeDate} type="date" name="To"
+                    onChange={this.validateDateTo} />}
+
+                  {this.state.recieptFilter === 3 && <DateSelector readOnly type="date" name="Receipt date"
+                    onChange={this.validateDateIsAfter} comment="This is a read only component used as a dummy" />}
+
+                  {(this.state.recieptFilter === 3) && this.state.onDateErrors.map((error) =>
+                    <p style={{ color: 'red' }}>{error}</p>)}
                   {this.state.recieptFilter === 3 && <DateSelector value={this.state.onDate} type="date"
                     name="On this date" onChange={this.setOnDate} />}
                   <div style={{ width: '100%', display: 'flex' }}>
