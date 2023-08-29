@@ -662,6 +662,9 @@ FactoryBot.define do
       factory :hearing_postponement_request_mail_task, class: HearingPostponementRequestMailTask do
         parent { create(:distribution_task, appeal: appeal) }
         assigned_to { MailTeam.singleton }
+        instructions do
+          ["**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"]
+        end
       end
     end
   end

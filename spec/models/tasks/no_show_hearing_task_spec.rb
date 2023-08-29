@@ -128,6 +128,25 @@ describe NoShowHearingTask, :postgres do
 
         expect(distribution_task.appeal.ready_for_distribution?).to eq(false)
       end
+
+      context "when associated appeal has open HearingPostponementRequestMailTasks" do
+        let!(:parent_hpr_task) do
+          create(:hearing_postponement_request_mail_task,
+                 parent: distribution_task)
+        end
+        let!(:child_hpr_task) do
+          create(:hearing_postponement_request_mail_task,
+                 parent: parent_hpr_task,
+                 assigned_to: HearingAdmin.singleton)
+        end
+
+        it "cancels cancels open HearingPostponementRequestMailTasks" do
+          no_show_hearing_task.reschedule_hearing
+          expect(parent_hpr_task.status).to eq(Constants.TASK_STATUSES.cancelled)
+          expect(child_hpr_task.status).to eq(Constants.TASK_STATUSES.cancelled)
+          # expect(child_hpr_task.cancelled_by).to eq(Constants.TASK_STATUSES.cancelled)
+        end
+      end
     end
 
     context "when an operation fails" do
