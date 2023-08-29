@@ -178,9 +178,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
   def create_new_conference
     client.create_conference(
-      host_pin: virtual_hearing.host_pin,
-      guest_pin: virtual_hearing.guest_pin,
-      name: virtual_hearing.alias
+      virtual_hearing
     )
   end
 

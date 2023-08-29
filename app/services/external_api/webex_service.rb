@@ -3,8 +3,7 @@
 require "json"
 
 class ExternalApi::WebexService
-  CONFERENCES_ENDPOINT = "api/admin/configuration/v1/conference/"
-  # POST https://api-usgov.webex.com/v1/meetings
+  CREATE_CONFERENCE_ENDPOINT = "api-usgov.webex.com/v1/meetings"
 
   def initialize(host:, port: 443, user_name:, password:, client_host:)
     @host = host
@@ -14,14 +13,24 @@ class ExternalApi::WebexService
     @client_host = client_host
   end
 
-  def create_conference(host_pin:, guest_pin:, name:)
+  def create_conference(virtual_hearing)
+    title
+    # where can we get this from
+    hearing_day = HearingDay.find(virtual_hearing.hearing.hearing_day_id)
+    start_date_time = hearing_day.scheduled_for
+    # does not give timezone
+    # method to ensure correct formatting
+    # begins_at in hearing_day auto creates time zone to America/New York...but can be nil
+    end_date_time
+    # slot_length_minutes can be nil but relevant?
+
     body = {
-      "title": "TBD",
-      "start": "TBD",
-      "end": "TBD",
+      "title": title,
+      "start": start_date_time,
+      "end": end_date_time,
       # Formatting >> "2019-11-01 21:00:00",
-      "timezone": "TBD",
-      # Formatting >> "Asia/Shanghai",
+      "timezone": "Asia/Shanghai",
+      # not required
       "enabledAutoRecordMeeting": "false",
       "allowAnyUserToBeCoHost": "false",
       "enabledJoinBeforeHost": "false",
@@ -60,34 +69,22 @@ class ExternalApi::WebexService
           "muteAttendeeUponEntry": true
         }
       ]
-      # "aliases": [{ "alias": "BVA#{name}" }, { "alias": VirtualHearing.formatted_alias(name) }, { "alias": name }],
-      # "allow_guests": true,
-      # "description": "Created by Caseflow",
-      # "enable_chat": "yes",
-      # "enable_overlay_text": true,
-      # # Theme ID is hard coded for now because it's the same in both environments.
-      # "ivr_theme": "/api/admin/configuration/v1/ivr_theme/13/",
-      # "force_presenter_into_main": true,
-      # "guest_pin": guest_pin.to_s,
-      # "name": "BVA#{name}",
-      # "pin": host_pin.to_s,
-      # "tag": "CASEFLOW"
     }
 
-    resp = send_pexip_request(CONFERENCES_ENDPOINT, :post, body: body)
+    resp = send_webex_request(CREATE_CONFERENCE_ENDPOINT, :post, body: body)
     return if resp.nil?
 
-    ExternalApi::PexipService::CreateResponse.new(resp)
+    ExternalApi::WebexService::CreateResponse.new(resp)
   end
 
   def delete_conference(conference_id:)
     return if conference_id.nil?
 
-    delete_endpoint = "#{CONFERENCES_ENDPOINT}#{conference_id}/"
-    resp = send_pexip_request(delete_endpoint, :delete)
+    delete_endpoint = "#{CREATE_CONFERENCE_ENDPOINT}#{conference_id}/"
+    resp = send_webex_request(delete_endpoint, :delete)
     return if resp.nil?
 
-    ExternalApi::PexipService::DeleteResponse.new(resp)
+    ExternalApi::WebexService::DeleteResponse.new(resp)
   end
 
   private
@@ -95,7 +92,7 @@ class ExternalApi::WebexService
   attr_reader :host, :port, :user_name, :password, :client_host
 
   # :nocov:
-  def send_pexip_request(endpoint, method, body: nil)
+  def send_webex_request(endpoint, method, body: nil)
     url = "https://#{host}:#{port}/#{endpoint}"
     request = HTTPI::Request.new(url)
     request.auth.basic(user_name, password)
