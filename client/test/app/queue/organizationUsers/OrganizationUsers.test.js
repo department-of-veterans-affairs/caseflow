@@ -12,7 +12,7 @@ describe('Conference Selection Visibility Feature Toggle', () => {
   });
   ApiUtil.get.mockResolvedValue({
     body: {
-      organization_name: 'Hearing Admin',
+      organization_name: 'Hearings Management',
       judge_team: false,
       dvc_team: false,
       organization_users: {
