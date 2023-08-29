@@ -173,13 +173,17 @@ audit: ## Create caseflow_audit schema, tables, and triggers in postgres
 audit-remove: ## Remove caseflow_audit schema, tables and triggers in postgres
 	bundle exec rails r db/scripts/audit/remove_caseflow_audit_schema.rb
 
+# The external-db make commands create/remove replicas (for local environment only) of external db tables that exist in Prod
+# These tables should not be included as part of migrations
 external-db-create: ## Creates external_vbms_ext_claim table
 	bundle exec rails r db/scripts/external/create_vbms_ext_claim_table.rb
 
 external-db-remove:  ## Remove external_vbms_ext_claim table
 	bundle exec rails r db/scripts/external/remove_vbms_ext_claim_table.rb
 
-external-db-create-test: ## Creates table in caseflow_certification_test DB for local RSPEC
+# This needs to be manually run after make reset/migrate in order for local tests involving external tables to pass.
+# Otherwise the caseflow_certification_test schema will not create these tables and will error out.
+external-db-create-test: ## Creates table in caseflow_certification_test DB for local RSPEC tests
 	bundle exec rails r -e test db/scripts/external/create_vbms_ext_claim_table.rb
 
 remove-vbms-ext-claim-seeds: ## Drops audit tables, removes all PriorityEndProductSyncQueue, BatchProcess, and seed-vbms-ext-claim records, then rebuilds audit tables
