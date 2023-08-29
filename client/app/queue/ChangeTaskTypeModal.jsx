@@ -56,7 +56,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
   };
 
   buildPayload = () => {
-    const { typeOption, instructions } = this.state;
+    const { typeOption } = this.state;
 
     return {
       data: {
