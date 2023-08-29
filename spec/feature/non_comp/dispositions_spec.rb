@@ -382,7 +382,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       enable_feature_flag_and_redirect_to_disposition
       expect(page).to have_content(COPY::REFRESH_POA)
       click_on COPY::REFRESH_POA
-      expect(page).to have_text("Power of Attorney (POA) data comes from VBMS")
+      expect(page).to have_text(COPY::VHA_NO_POA)
       expect(page).to have_text(COPY::POA_SUCCESSFULLY_REFRESH_MESSAGE)
     end
 
