@@ -46,10 +46,11 @@ feature "NonComp Dispositions Task Page", :postgres do
     let(:decision_review) do
       create(
         :higher_level_review,
-        number_of_claimants: 1,
         end_product_establishments: [epe],
         veteran_file_number: veteran.file_number,
-        benefit_type: non_comp_org.url
+        benefit_type: non_comp_org.url,
+        veteran_is_not_claimant: false,
+        claimant_type: :veteran_claimant
       )
     end
 
@@ -90,18 +91,23 @@ feature "NonComp Dispositions Task Page", :postgres do
       non_comp_org.add_user(user)
       setup_prior_claim_with_payee_code(decision_review, veteran, "00")
       FeatureToggle.enable!(:decision_review_queue_ssn_column)
+      FeatureToggle.enable!(:poa_button_refresh)
     end
 
-    after { FeatureToggle.disable!(:decision_review_queue_ssn_column) }
+    after do
+      FeatureToggle.disable!(:decision_review_queue_ssn_column)
+      FeatureToggle.disable!(:poa_button_refresh)
+    end
 
     context "decision_review is a Supplemental Claim" do
       let(:decision_review) do
         create(
           :supplemental_claim,
-          number_of_claimants: 1,
           end_product_establishments: [epe],
           veteran_file_number: veteran.file_number,
-          benefit_type: non_comp_org.url
+          benefit_type: non_comp_org.url,
+          veteran_is_not_claimant: false,
+          claimant_type: :veteran_claimant
         )
       end
 
@@ -130,6 +136,8 @@ feature "NonComp Dispositions Task Page", :postgres do
       expect(page).to have_content(
         "Prior decision date: #{decision_review.request_issues[0].decision_date.strftime('%m/%d/%Y')}"
       )
+      expect(page).to have_no_content(COPY::CASE_DETAILS_POA_SUBSTITUTE)
+      expect(page).not_to have_button(COPY::REFRESH_POA)
       expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
     end
 
@@ -143,7 +151,10 @@ feature "NonComp Dispositions Task Page", :postgres do
     context "the complete button enables only after a decision date and disposition are set" do
       before do
         visit dispositions_url
+        FeatureToggle.enable!(:poa_button_refresh)
       end
+
+      after { FeatureToggle.disable!(:poa_button_refresh) }
 
       scenario "neither disposition nor date is set" do
         expect(page).to have_button("Complete", disabled: true)
@@ -258,6 +269,7 @@ feature "NonComp Dispositions Task Page", :postgres do
 
     after do
       Timecop.return
+      FeatureToggle.disable!(:poa_button_refresh)
     end
 
     let!(:vha_org) { create(:business_line, name: "Veterans Health Administration", url: "vha") }
@@ -266,7 +278,17 @@ feature "NonComp Dispositions Task Page", :postgres do
     let(:decision_date) { Time.zone.now + 10.days }
 
     let!(:in_progress_task) do
-      create(:higher_level_review, :with_vha_issue, :create_business_line, benefit_type: "vha", veteran: veteran)
+      create(:higher_level_review,
+             :with_vha_issue,
+             :with_end_product_establishment,
+             :create_business_line,
+             benefit_type: "vha",
+             veteran: veteran,
+             claimant_type: :veteran_claimant)
+    end
+
+    let(:poa_task) do
+      create(:supplemental_claim_poa_task)
     end
 
     let(:business_line_url) { "decision_reviews/vha" }
@@ -303,5 +325,92 @@ feature "NonComp Dispositions Task Page", :postgres do
         expect(page.find_by_id("decision-date").value).to have_content(decision_date.strftime("%Y-%m-%d"))
       end
     end
+
+    it "VHA Decision Review should have Power of Attorney Section" do
+      visit dispositions_url
+
+      expect(page).to have_selector("h1", text: "Veterans Health Administration")
+      expect(page).to have_selector("h2", text: COPY::CASE_DETAILS_POA_SUBSTITUTE)
+      expect(page).to have_text("Attorney: #{in_progress_task.representative_name}")
+      expect(page).to have_text("Email Address: #{in_progress_task.representative_email_address}")
+
+      expect(page).to have_text("Address")
+      expect(page).to have_content(COPY::CASE_DETAILS_POA_EXPLAINER_VHA)
+      full_address = in_progress_task.power_of_attorney.representative_address
+      sliced_full_address = full_address.slice!(:country)
+      sliced_full_address.each do |address|
+        expect(page).to have_text(address[1])
+      end
+
+      expect(page).not_to have_button(COPY::REFRESH_POA)
+    end
+
+    scenario "When feature toggle is enabled Refresh button should be visible." do
+      enable_feature_flag_and_redirect_to_disposition
+
+      last_synced_date = in_progress_task.poa_last_synced_at.to_date.strftime("%m/%d/%Y")
+      expect(page).to have_text("POA last refreshed on #{last_synced_date}")
+      expect(page).to have_button(COPY::REFRESH_POA)
+    end
+
+    scenario "when cooldown time is greater than 0 it should return Alert message" do
+      cooldown_period = 7
+      instance_decision_reviews = allow_any_instance_of(DecisionReviewsController)
+      instance_decision_reviews.to receive(:cooldown_period_remaining).and_return(cooldown_period)
+      enable_feature_flag_and_redirect_to_disposition
+      expect(page).to have_text(COPY::CASE_DETAILS_POA_SUBSTITUTE)
+      expect(page).to have_button(COPY::REFRESH_POA)
+
+      click_on COPY::REFRESH_POA
+      expect(page).to have_text("Power of Attorney (POA) data comes from VBMS")
+      expect(page).to have_text("Information is current at this time. Please try again in #{cooldown_period} minutes")
+    end
+
+    scenario "when cooldown time is 0, it should update POA" do
+      allow_any_instance_of(DecisionReviewsController).to receive(:cooldown_period_remaining).and_return(0)
+      enable_feature_flag_and_redirect_to_disposition
+      expect(page).to have_content(COPY::REFRESH_POA)
+      click_on COPY::REFRESH_POA
+      expect(page).to have_text("Power of Attorney (POA) data comes from VBMS")
+      expect(page).to have_content(COPY::POA_UPDATED_SUCCESSFULLY)
+    end
+
+    scenario "when POA record is blank, Refresh button should return not found message" do
+      allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return({})
+      allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return({})
+
+      enable_feature_flag_and_redirect_to_disposition
+      expect(page).to have_content(COPY::REFRESH_POA)
+      click_on COPY::REFRESH_POA
+      expect(page).to have_text("Power of Attorney (POA) data comes from VBMS")
+      expect(page).to have_text(COPY::POA_SUCCESSFULLY_REFRESH_MESSAGE)
+    end
+
+    context "with no POA" do
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return({})
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return({})
+      end
+      it "should display the VHA-specific text" do
+        visit dispositions_url
+        expect(page).to have_content(COPY::CASE_DETAILS_NO_POA_VHA)
+      end
+    end
+
+    context "with an unrecognized POA" do
+      let(:poa) { in_progress_task.power_of_attorney }
+      before do
+        poa.update(representative_type: "Unrecognized representative")
+      end
+      it "should display the VHA-specific text" do
+        visit dispositions_url
+        expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA_VHA)
+      end
+    end
+  end
+
+  def enable_feature_flag_and_redirect_to_disposition
+    FeatureToggle.enable!(:poa_button_refresh)
+    visit dispositions_url
   end
 end

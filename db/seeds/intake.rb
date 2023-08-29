@@ -94,11 +94,8 @@ module Seeds
                                    informal_conference: false,
                                    same_office: false,
                                    benefit_type: "compensation",
+                                   veteran_is_not_claimant: true,
                                    number_of_claimants: 1)
-      higher_level_review.claimants.first.update!(
-        payee_code: "10",
-        type: "DependentClaimant"
-      )
 
       create(:end_product_establishment,
              source: higher_level_review,

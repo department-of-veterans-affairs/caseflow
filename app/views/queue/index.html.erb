@@ -52,8 +52,13 @@
       split_appeal_workflow: FeatureToggle.enabled?(:split_appeal_workflow, user: current_user),
       cavc_remand_granted_substitute_appellant: FeatureToggle.enabled?(:cavc_remand_granted_substitute_appellant, user: current_user),
       cavc_dashboard_workflow: FeatureToggle.enabled?(:cavc_dashboard_workflow, user: current_user),
+      mst_identification: FeatureToggle.enabled?(:mst_identification, user: current_user),
+      pact_identification: FeatureToggle.enabled?(:pact_identification, user: current_user),
+      legacy_mst_pact_identification: FeatureToggle.enabled?(:legacy_mst_pact_identification, user: current_user),
+      justification_reason: FeatureToggle.enabled?(:justification_reason, user: current_user),
       cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user),
-      cc_vacatur_visibility: FeatureToggle.enabled?(:cc_vacatur_visibility, user: current_user)
+      cc_vacatur_visibility: FeatureToggle.enabled?(:cc_vacatur_visibility, user: current_user),
+      auto_tagging_ability: FeatureToggle.enabled?(:auto_tagging_ability, user: current_user)
     }
   }) %>
 <% end %>
