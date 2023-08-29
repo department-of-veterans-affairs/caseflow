@@ -366,8 +366,8 @@ class DocumentsTable extends React.Component {
             />
             {isRecipetDateFilterOpen && (
               <div style={{
-                position:'relative',
-                right:'7vw'}}>
+                position: 'relative',
+                right: '7vw' }}>
                 <DropdownFilter
                   clearFilters={this.resetRecieptPicker}
                   name="Reciept Date"
@@ -407,8 +407,10 @@ class DocumentsTable extends React.Component {
                       <p style={{ color: 'red' }}>{error}</p>)}
                     {this.state.recieptFilter === 3 && <DateSelector value={this.state.onDate} type="date"
                       name="On this date" onChange={this.setOnDate} />}
+
                     <div style={{ width: '100%', display: 'flex' }}>
-                      <div style={{ display: 'flex', margin: 'flex-end', justifyContent: 'end', width: '100%' }}>
+                      <span style={{ height: '1px', position: 'absolute', width: '100%', backgroundColor: 'gray' }}></span>
+                      <div style={{ display: 'flex', marginTop: '10px', marginRight: '10px', marginBottom: '10px', justifyContent: 'end', width: '100%' }}>
                         <Button onClick={() => this.props.setRecieptDateFilter(this.state.recieptFilter,
                           { fromDate: this.state.fromDate,
                             toDate: this.state.toDate,
