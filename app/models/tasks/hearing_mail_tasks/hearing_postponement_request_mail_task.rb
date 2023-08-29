@@ -40,9 +40,20 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     end
   end
 
+  # Purpose: When a hearing is postponed through the completion of a NoShowHearingTask, AssignHearingDispositionTask,
+  #          or ChangeHearingDispositionTask, cancel any open HearingPostponementRequestMailTasks in that appeal's
+  #          task tree, as the HPR mail tasks have become redundant.
+  #
+  # Params: completed_task - task object of the completed task through which the hearing was postponed
+  #         updated_at - datetime when the task was completed
+  #
+  # Return: The cancelled HPR mail tasks
   def cancel_when_made_redundant(completed_task, updated_at)
-    user = ensure_user_can_cancel_task(completed_task.hearing.updated_by)
-    params = build_redundant_task_params(completed_task.type, updated_at)
+    user = ensure_user_can_cancel_task(completed_task)
+    params = {
+      status: Constants.TASK_STATUSES.cancelled,
+      instructions: format_cancellation_reason(completed_task.type, updated_at)
+    }
     update_from_params(params, user)
   end
 
@@ -63,19 +74,37 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     !open_task.hearing.scheduled_for_past?
   end
 
-  def build_redundant_task_params(task_name, updated_at)
-    {
-      status: Constants.TASK_STATUSES.cancelled,
-      instructions: format_cancellation_reason(task_name, updated_at)
-    }
+  # Purpose: If hearing postponed by a member of HearingAdminTeam, return that user. Otherwise,
+  #          in case that hearing in postponed by HearingChangeDispositionJob, return a backup
+  #          user with HearingAdmin privileges to pass validation checks in Task#update_from_params
+  #
+  # Params: completed_task - Task object of task through which heairng was postponed
+  def ensure_user_can_cancel_task(completed_task)
+    current_user = RequestStore[:current_user]
+
+    return current_user if current_user.in_hearing_admin_team?
+
+    provide_backup_user(completed_task)
   end
 
+  # Purpose: Return user who last updated hearing. If NoShowHearingTask, find hearing by calling #hearing
+  #          on parent AssignHearingDispositionTask
+  #
+  # Params: completed_task - Task object of task through which heairng was postponed
+  #
+  # Return: User object
+  def provide_backup_user(completed_task)
+    completed_task&.hearing&.updated_by || completed_task.parent.hearing.updated_by
+  end
+
+  # Purpose: Format context to be appended to HPR mail tasks instructions upon task cancellation
+  #
+  # Params: task_name - string of name of completed task through which hearing was postponed
+  #         updated_at - datetime when the task was completed
+  #
+  # Return: String to be submitted in instructions field of task
   def format_cancellation_reason(task_name, updated_at)
     "##### REASON FOR CANCELLATION:\n" \
     "Hearing postponed when #{task_name} was completed on #{updated_at.strftime('%m/%d/%Y')}"
-  end
-
-  def ensure_user_can_cancel_task(backup_user)
-    RequestStore[:current_user].in_hearing_admin_team? ? Requestore[:current_user] : backup_user
   end
 end

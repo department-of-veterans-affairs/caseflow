@@ -989,10 +989,14 @@ class Task < CaseflowRecord
     true
   end
 
+  # Purpose: When a hearing is postponed through the completion of a NoShowHearingTask, AssignHearingDispositionTask,
+  #          or ChangeHearingDispositionTask, cancel any open HearingPostponementRequestMailTasks associated with the
+  #          appeal, as they have become redundant.
   def cancel_redundant_hearing_postponement_req_tasks
     open_hearing_postponement_requests.each { |t| t.cancel_when_made_redundant(self, updated_at) }
   end
 
+  # Purpose: Finds open HearingPostponementRequestMailTasks in the task tree of the current task
   def open_hearing_postponement_requests
     appeal.tasks.hearing_postponement_req_tasks.open
   end
