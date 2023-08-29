@@ -560,7 +560,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label])
         end
 
-        click_on "Submit"
+        click_on "Assign"
 
         # Your queue
         visit "/queue"
@@ -573,7 +573,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
         click_dropdown({ text: other_user.full_name }, find(".cf-modal-body"))
         fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Reassign"
-        click_on "Submit"
+        click_on "Assign"
 
         # Case should exist in other users' queue
         User.authenticate!(user: other_user)
@@ -605,7 +605,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           expect(page).to have_content("You have assigned an administrative action")
 
           click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label])
-          click_on "Submit"
+          click_on "Assign"
 
           # Your queue
           visit "/queue"

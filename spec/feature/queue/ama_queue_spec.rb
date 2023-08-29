@@ -548,7 +548,7 @@ feature "AmaQueue", :all_dbs do
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
         fill_in "taskInstructions", with: "Please fix this"
 
-        click_on "Submit"
+        click_on "Assign"
 
         expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
       end
@@ -672,7 +672,7 @@ feature "AmaQueue", :all_dbs do
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
         fill_in "taskInstructions", with: "Please fix this"
 
-        click_on "Submit"
+        click_on "Assign"
 
         expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
       end

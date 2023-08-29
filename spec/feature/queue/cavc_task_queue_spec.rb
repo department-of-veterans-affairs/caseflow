@@ -596,7 +596,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
 
         click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label)
         fill_in "taskInstructions", with: "Please translate the documents in spanish"
-        click_on "Submit"
+        click_on "Assign"
         expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Translation.singleton.name
       end
     end
