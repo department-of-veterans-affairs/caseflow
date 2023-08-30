@@ -266,14 +266,14 @@ namespace :db do
               parent: hearing_task,
               assigned_to: Bva.singleton
             ).update(status: 'completed')
-            AssignHearingDispositionTask.create!(
+            assign_hearing_task = AssignHearingDispositionTask.create!(
               appeal: appeal,
               parent: hearing_task,
               assigned_to: Bva.singleton
-            ).update(status: 'completed')
+            )
             TranscriptionTask.create!(
               appeal: appeal,
-              parent: hearing_task,
+              parent: assign_hearing_task,
               assigned_to: Bva.singleton
             )
           end
@@ -281,31 +281,28 @@ namespace :db do
           rand_val = rand(100)
 
           case rand_val
-          when 0..20
+          when 0..25
             FoiaTask.create!(
               appeal: appeal,
               parent: root_task,
               assigned_to: Bva.singleton
             )
-          when 21..40
-            PrivacyActTask.create!(
-              appeal: appeal,
-              parent: root_task,
-              assigned_to: Bva.singleton
-            )
-          when 41..60
+
+          when 26..50
             PowerOfAttorneyRelatedMailTask.create!(
               appeal: appeal,
               parent: root_task,
               assigned_to: Bva.singleton
             )
-          when 61..80
+
+          when 51..75
             TranslationTask.create!(
               appeal: appeal,
               parent: root_task,
               assigned_to: Bva.singleton
             )
-          when 81..100
+
+          when 76..100
             CongressionalInterestMailTask.create!(
               appeal: appeal,
               parent: root_task,
@@ -376,7 +373,7 @@ namespace :db do
         $stdout.puts("Enter the CSS ID of a judge user that you want to assign these appeals to")
 
         if Rails.env.development? || Rails.env.test?
-          $stdout.puts("Hint: Judge Options include 'BVAAABSHIRE', 'BVARERDMAN'") # local / test option
+          $stdout.puts("Hint: Judge Options include 'BVARERDMAN'") # local / test option
         else
           $stdout.puts("Hint: Judge Options include 'CF_VLJ_283', 'CF_VLJTWO_283'") # UAT option
         end
@@ -389,7 +386,7 @@ namespace :db do
         $stdout.puts("Which attorney do you want to assign the Attorney Task to?")
 
         if Rails.env.development? || Rails.env.test?
-          $stdout.puts("Hint: Attorney Options include 'BVASCASPER1', 'BVARERDMAN', 'BVALSHIELDS'") # local / test option
+          $stdout.puts("Hint: Attorney Options include 'BVALSHIELDS'") # local / test option
         else
           $stdout.puts("Hint: Judge Options include 'CF_ATTN_283', 'CF_ATTNTWO_283'") # UAT option
         end
