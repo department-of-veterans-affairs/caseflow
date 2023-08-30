@@ -144,8 +144,7 @@ describe HearingPostponementRequestMailTask, :postgres do
       include_examples "cancels hpr mail tasks"
     end
 
-    context "hearing postponed through ChangeHearingDispositionTask#update_from_params" do
-      let(:task) { create(:change_hearing_disposition_task, parent: disposition_task.parent) }
+    context "hearing postponed through #update_from_params" do
       let(:params) do
         {
           status: Constants.TASK_STATUSES.cancelled,
@@ -164,7 +163,17 @@ describe HearingPostponementRequestMailTask, :postgres do
         hpr.reload
       end
 
-      include_examples "cancels hpr mail tasks"
+      context "hearing postponed through AssignHearingDispositionTask#update_from_params" do
+        let(:task) { disposition_task }
+
+        include_examples "cancels hpr mail tasks"
+      end
+
+      context "hearing postponed through ChangeHearingDispositionTask#update_from_params" do
+        let(:task) { create(:change_hearing_disposition_task, parent: disposition_task.parent) }
+
+        include_examples "cancels hpr mail tasks"
+      end
     end
   end
 end

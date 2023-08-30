@@ -117,11 +117,11 @@ class Task < CaseflowRecord
   scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
 
   scope :hearing_postponement_req_tasks, lambda {
-                                                  where(
-                                                    type: HearingPostponementRequestMailTask.name,
-                                                    assigned_to: HearingAdmin.singleton
-                                                  )
-                                                }
+                                           where(
+                                             type: HearingPostponementRequestMailTask.name,
+                                             assigned_to: HearingAdmin.singleton
+                                           )
+                                         }
 
   attr_accessor :skip_check_for_only_open_task_of_type
 
@@ -993,7 +993,7 @@ class Task < CaseflowRecord
   #          or ChangeHearingDispositionTask, cancel any open HearingPostponementRequestMailTasks associated with the
   #          appeal, as they have become redundant.
   def cancel_redundant_hearing_postponement_req_tasks
-    open_hearing_postponement_requests.each { |t| t.cancel_when_made_redundant(self, updated_at) }
+    open_hearing_postponement_requests.each { |task| task.cancel_when_redundant(self, updated_at) }
   end
 
   # Purpose: Finds open HearingPostponementRequestMailTasks in the task tree of the current task

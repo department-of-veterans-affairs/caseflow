@@ -48,7 +48,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   #         updated_at - datetime when the task was completed
   #
   # Return: The cancelled HPR mail tasks
-  def cancel_when_made_redundant(completed_task, updated_at)
+  def cancel_when_redundant(completed_task, updated_at)
     # TO-DO when changes merged you don't need to pass in completed task, can call #open_hearing
     user = ensure_user_can_cancel_task(completed_task)
     params = {
