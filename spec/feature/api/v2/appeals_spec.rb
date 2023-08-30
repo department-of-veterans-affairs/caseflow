@@ -86,6 +86,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
         json = JSON.parse(response.body)
         expect(json["errors"].length).to eq(1)
         expect(json["errors"].first["title"]).to eq("Veteran not found")
+        expect(ApiView.count).to eq(0)
       end
     end
 
