@@ -729,7 +729,7 @@ feature "Task queue", :all_dbs do
 
       it "should be actionable" do
         visit("/queue/appeals/#{appeal.external_id}")
-        find(".cf-select__control", text: "Select an actin…").click
+        find(".cf-select__control", text: "Select an action…").click
         find("div .cf-select__option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_JUDGE.label).click
         expect(page).to have_content("Instructions:")
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
