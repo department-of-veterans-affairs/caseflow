@@ -56,7 +56,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
 
   return (
     <div style={containerStyle}>
-      <h3>{GUEST_LINK_LABELS.GUEST_LINK_SECTION_LABEL}</h3>
+      <h3>{GUEST_LINK_LABELS.PEXIP_GUEST_LINK_SECTION_LABEL}</h3>
       {renderRoomInfo(alias, guestPin)}
     </div>
   );

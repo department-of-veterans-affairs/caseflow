@@ -23,6 +23,7 @@ import UserAlerts from '../../../components/UserAlerts';
 import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
 import { ScheduledInErrorModal } from '../ScheduledInErrorModal';
 import { DailyDocketGuestLinkSection } from './DailyDocketGuestLinkSection';
+import { WebexDailyDocketGuestLink } from "./WebexDailyDocketGuestLink";
 
 const alertStyling = css({
   marginBottom: '30px',
@@ -229,7 +230,6 @@ export default class DailyDocket extends React.Component {
             }
           />
         )}
-
         {displayRemoveHearingDayModal && (
           <RemoveHearingModal
             dailyDocket={dailyDocket}
@@ -238,7 +238,6 @@ export default class DailyDocket extends React.Component {
             deleteHearingDay={deleteHearingDay}
           />
         )}
-
         {displayLockModal && (
           <LockModal
             dailyDocket={dailyDocket}
@@ -246,7 +245,6 @@ export default class DailyDocket extends React.Component {
             onCancelDisplayLockModal={onCancelDisplayLockModal}
           />
         )}
-
         <Alerts
           dailyDocket={dailyDocket}
           saveSuccessful={this.props.saveSuccessful}
@@ -255,7 +253,6 @@ export default class DailyDocket extends React.Component {
           onErrorHearingDayLock={this.props.onErrorHearingDayLock}
           conferenceLinkError={this.props.conferenceLinkError}
         />
-
         <div className="cf-app-segment">
           <div className="cf-push-left">
             <DailyDocketEditLinks
@@ -282,7 +279,6 @@ export default class DailyDocket extends React.Component {
             Room number: {dailyDocket.room}
           </div>
         </div>
-
         <div className="cf-app-segment">
           <div className="cf-push-left">
             <Button onClick={() => navigateToPrintPage()}>
@@ -292,7 +288,7 @@ export default class DailyDocket extends React.Component {
           <div className="cf-push-right">
             {user.userHasHearingPrepRole && (
               <Button
-                classNames={['usa-button-secondary']}
+                classNames={["usa-button-secondary"]}
                 onClick={this.navigateToPrintAllPage}
                 disabled={_.isEmpty(docketHearings)}
               >
@@ -301,8 +297,12 @@ export default class DailyDocket extends React.Component {
             )}
           </div>
         </div>
-        {(user.userIsHearingManagement || user.userIsHearingAdmin) &&
-          <DailyDocketGuestLinkSection linkInfo={dailyDocket.conferenceLink} />}
+        {(user.userIsHearingManagement || user.userIsHearingAdmin) && (
+          <DailyDocketGuestLinkSection linkInfo={dailyDocket.conferenceLink} />
+        )}
+        {(user.userIsHearingManagement || user.userIsHearingAdmin) && (
+          <WebexDailyDocketGuestLink linkInfo={dailyDocket.conferenceLink} />
+        )}
         <DailyDocketRows
           hearings={this.props.hearings}
           hidePreviouslyScheduled
@@ -314,22 +314,20 @@ export default class DailyDocket extends React.Component {
           regionalOffice={regionalOffice}
           user={user}
         />
-
         {!hasDocketHearings && (
-          <div {...css({ marginTop: '75px' })}>
+          <div {...css({ marginTop: "75px" })}>
             <StatusMessage
               title={
-                user.userHasHearingPrepRole ?
-                  COPY.HEARING_SCHEDULE_DOCKET_JUDGE_WITH_NO_HEARINGS :
-                  COPY.HEARING_SCHEDULE_DOCKET_NO_VETERANS
+                user.userHasHearingPrepRole
+                  ? COPY.HEARING_SCHEDULE_DOCKET_JUDGE_WITH_NO_HEARINGS
+                  : COPY.HEARING_SCHEDULE_DOCKET_NO_VETERANS
               }
               type="status"
             />
           </div>
         )}
-
         {hasPrevHearings && (
-          <div {...css({ marginTop: '75px' })}>
+          <div {...css({ marginTop: "75px" })}>
             <h1>Previously Scheduled</h1>
             <DailyDocketRows
               hidePreviouslyScheduled={false}
