@@ -93,7 +93,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   # Params: None
   # Return: The latest active hearing task
   def active_schedule_hearing_task
-    appeal.tasks.active_schedule_hearing_tasks.first
+    appeal.tasks.of_type(ScheduleHearingTask.name).active.first
   end
 
   # ChangeHearingDispositionTask is a subclass of AssignHearingDispositionTask
