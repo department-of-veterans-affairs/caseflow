@@ -362,7 +362,7 @@ exports[`EditCavcRemandForm adding new all feature toggles enabled renders corre
         >
           <strong>
             <span>
-              Provide context and instructions for this action
+              Provide instructions and context for this action
             </span>
           </strong>
         </label>
@@ -841,7 +841,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
         >
           <strong>
             <span>
-              Provide context and instructions for this action
+              Provide instructions and context for this action
             </span>
           </strong>
         </label>
@@ -1320,7 +1320,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
         >
           <strong>
             <span>
-              Provide context and instructions for this action
+              Provide instructions and context for this action
             </span>
           </strong>
         </label>
@@ -1814,7 +1814,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
         >
           <strong>
             <span>
-              Provide context and instructions for this action
+              Provide instructions and context for this action
             </span>
           </strong>
         </label>
@@ -2263,7 +2263,7 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
         >
           <strong>
             <span>
-              Provide context and instructions for this action
+              Provide instructions and context for this action
             </span>
           </strong>
         </label>
@@ -2726,7 +2726,7 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
         >
           <strong>
             <span>
-              Provide context and instructions for this action
+              Provide instructions and context for this action
             </span>
           </strong>
         </label>
@@ -3094,7 +3094,7 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
         >
           <strong>
             <span>
-              Provide context and instructions for this action
+              Provide instructions and context for this action
             </span>
           </strong>
         </label>

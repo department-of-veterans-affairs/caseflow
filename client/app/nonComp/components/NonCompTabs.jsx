@@ -33,7 +33,7 @@ const NonCompTabsUnconnected = (props) => {
     [QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.SEARCH_QUERY_REQUEST_PARAM),
     [QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM) || 'desc',
     [QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM]: queryParams.get(QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM) ||
-        defaultSortColumn,
+      defaultSortColumn,
     [`${QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM}[]`]: filter,
   };
   const tabArray = ['in_progress', 'completed'];
@@ -51,8 +51,10 @@ const NonCompTabsUnconnected = (props) => {
       {...(isVhaBusinessLine ? { onHistoryUpdate } : {})}
       filterableTaskTypes={props.taskFilterDetails.in_progress}
       filterableTaskIssueTypes={props.taskFilterDetails.in_progress_issue_types}
-      predefinedColumns={{ includeDaysWaiting: true,
-        defaultSortIdx: 3 }} />
+      predefinedColumns={{
+        includeDaysWaiting: true,
+        defaultSortIdx: 3
+      }} />
   }, {
     label: 'Completed tasks',
     page: <TaskTableTab {...props}
@@ -63,8 +65,10 @@ const NonCompTabsUnconnected = (props) => {
       filterableTaskTypes={props.taskFilterDetails.completed}
       filterableTaskIssueTypes={props.taskFilterDetails.completed_issue_types}
       description={COPY.QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION}
-      predefinedColumns={{ includeCompletedDate: true,
-        defaultSortIdx: 3 }} />
+      predefinedColumns={{
+        includeCompletedDate: true,
+        defaultSortIdx: 3
+      }} />
   }];
 
   return (<TabWindow

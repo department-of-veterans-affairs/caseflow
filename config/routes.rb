@@ -158,6 +158,8 @@ Rails.application.routes.draw do
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
 
+  get '/appeals/:appeal_id/document/:series_id' => 'appeals#document_lookup'
+
   get '/appeals/:appeals_id/notifications' => 'appeals#fetch_notification_list'
 
   get '/task_tree/:appeal_type/:appeal_id' => 'task_tree#show'
@@ -250,6 +252,10 @@ Rails.application.routes.draw do
 
   resources :decision_reviews, param: :business_line_slug, only: [] do
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
+      member do
+        get :power_of_attorney
+        patch :update_power_of_attorney
+      end
     end
   end
   match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
