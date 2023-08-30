@@ -49,6 +49,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   #
   # Return: The cancelled HPR mail tasks
   def cancel_when_made_redundant(completed_task, updated_at)
+    # TO-DO when changes merged you don't need to pass in completed task, can call #open_hearing
     user = ensure_user_can_cancel_task(completed_task)
     params = {
       status: Constants.TASK_STATUSES.cancelled,
@@ -84,17 +85,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
     return current_user if current_user&.in_hearing_admin_team?
 
-    provide_backup_user(completed_task)
-  end
-
-  # Purpose: Return user who last updated hearing. If NoShowHearingTask, you can call #hearing
-  #          on parent AssignHearingDispositionTask
-  #
-  # Params: completed_task - Task object of task through which heairng was postponed
-  #
-  # Return: User object
-  def provide_backup_user(completed_task)
-    byebug
+    completed_task.hearing.updated_by
   end
 
   # Purpose: Format context to be appended to HPR mail tasks instructions upon task cancellation
