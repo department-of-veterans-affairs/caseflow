@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
+import { css } from 'glamor';
 
 import { ContentSection } from '../../../components/ContentSection';
 import { HearingLinks } from './HearingLinks';
@@ -13,11 +14,16 @@ export const VirtualHearingFields = (
   }
 
   const user = useContext(HearingsUserContext);
+  const meetingType = hearing.judge.meetingType;
+  const formattedMeetingType = meetingType.charAt(0).toUpperCase() + meetingType.slice(1);
 
   return (
     <ContentSection
       header={`${hearing?.wasVirtual ? 'Previous ' : ''}Virtual Hearing Links`}
     >
+      <div {...css({ marginTop: '1.5rem' })}>
+        <strong>{formattedMeetingType} Conference</strong>
+      </div>
       <HearingLinks
         user={user}
         hearing={hearing}
@@ -37,7 +43,10 @@ VirtualHearingFields.propTypes = {
     appellantIsNotVeteran: PropTypes.bool,
     scheduledForIsPast: PropTypes.bool,
     wasVirtual: PropTypes.bool,
-    isVirtual: PropTypes.bool
+    isVirtual: PropTypes.bool,
+    judge: PropTypes.shape({
+      meetingType: PropTypes.string
+    })
   }),
   initialHearing: PropTypes.shape({
     virtualHearing: PropTypes.object
