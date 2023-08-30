@@ -43,6 +43,14 @@ def add_comment(text)
   click_on "Save"
 end
 
+def clear_filters
+  # When the "clear filters" button is clicked, the filtering message is reset,
+  # and focus goes back on the Document toggle.
+  find("#clear-filters").click
+  expect(page.has_no_content?("Filtering by:")).to eq(true)
+  expect(find("#button-documents")["class"]).to have_content("usa-button")
+end
+
 RSpec.feature "Reader", :all_dbs do
   before do
     FeatureToggle.enable!(:interface_version_2)
@@ -109,7 +117,7 @@ RSpec.feature "Reader", :all_dbs do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
       end
 
-      it "can filter by categories, tags, and comments" do
+      it "can filter by categories" do
         # filter by category
         find("#categories-header .table-icon").click
         find(".checkbox-wrapper-procedural").click
@@ -121,8 +129,11 @@ RSpec.feature "Reader", :all_dbs do
         # deselect medical filter
         find(".checkbox-wrapper-medical").click
         expect(page).to have_content("Categories (1)")
-        find("#clear-filters").click
 
+        clear_filters
+      end
+
+      it "can filter by tags" do
         # filter by tag
         find("#tags-header .table-icon").click
         tags_checkboxes = page.find("#tags-header").all(".cf-form-checkbox")
@@ -137,6 +148,10 @@ RSpec.feature "Reader", :all_dbs do
         tags_checkboxes[1].click
         expect(page).to_not have_content("Issue tags")
 
+        clear_filters
+      end
+
+      it "can filter by comments" do
         # filter by comments
         click_on "Comments"
         expect(page).to have_content("Sorted by relevant date")
@@ -149,11 +164,7 @@ RSpec.feature "Reader", :all_dbs do
         click_on "Comments"
         expect(page).to have_content("Sorted by relevant date")
 
-        # When the "clear filters" button is clicked, the filtering message is reset,
-        # and focus goes back on the Document toggle.
-        find("#clear-filters").click
-        expect(page.has_no_content?("Filtering by:")).to eq(true)
-        expect(find("#button-documents")["class"]).to have_content("usa-button")
+        clear_filters
       end
     end
 
