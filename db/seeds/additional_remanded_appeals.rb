@@ -7,15 +7,15 @@ module Seeds
     end
 
     def seed!
-      create_ama_appeals_decision_ready_es
-      create_ama_appeals_decision_ready_hr
-      create_ama_appeals_decision_ready_dr
+      #create_ama_appeals_decision_ready_es
+      #create_ama_appeals_decision_ready_hr
+      #create_ama_appeals_decision_ready_dr
       create_ama_appeals_ready_to_dispatch_remanded_es
       create_ama_appeals_ready_to_dispatch_remanded_hr
       create_ama_appeals_ready_to_dispatch_remanded_dr
-      create_ama_appeals_ready_to_dispatch_remanded_multiple_es
-      create_ama_appeals_ready_to_dispatch_remanded_multiple_hr
-      create_ama_appeals_ready_to_dispatch_remanded_multiple_dr
+      #create_ama_appeals_ready_to_dispatch_remanded_multiple_es
+      #create_ama_appeals_ready_to_dispatch_remanded_multiple_hr
+      #create_ama_appeals_ready_to_dispatch_remanded_multiple_dr
     end
 
     private
@@ -23,8 +23,7 @@ module Seeds
     def initial_id_values
       @file_number ||= 500_000_000
       @participant_id ||= 900_000_000
-      while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1)) ||
-            VACOLS::Correspondent.find_by(ssn: format("%<n>09d", n: @file_number + 1))
+      while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1))
         @file_number += 2000
         @participant_id += 2000
       end
@@ -63,7 +62,7 @@ module Seeds
                                      :nonrating,
                                      contested_issue_description: "#{index} #{description}",
                                      notes: "#{index} #{notes}",
-                                     benefit_type: "nca",
+                                     benefit_type: nca.url,
                                      decision_review: board_grant_task.appeal)
 
         request_issues.each do |request_issue|
@@ -75,7 +74,7 @@ module Seeds
             decision_review: board_grant_task.appeal,
             request_issues: [request_issue],
             rating_promulgation_date: 2.months.ago,
-            benefit_type: "nca"
+            benefit_type: request_issue.benefit_type
           )
         end
       end
@@ -90,13 +89,14 @@ module Seeds
         board_grant_task = create(:board_grant_effectuation_task,
                                   status: "assigned",
                                   assigned_to: education,
-                                  appeal: appeal)
+                                  appeal: appeal,
+                                )
 
         request_issues = create_list(:request_issue, 1,
                                      :nonrating,
                                      contested_issue_description: "#{index} #{description}",
                                      notes: "#{index} #{notes}",
-                                     benefit_type: "education",
+                                     benefit_type: education.url,
                                      decision_review: board_grant_task.appeal)
 
         request_issues.each do |request_issue|
@@ -108,77 +108,76 @@ module Seeds
             decision_review: board_grant_task.appeal,
             request_issues: [request_issue],
             rating_promulgation_date: 1.month.ago,
-            benefit_type: "education"
+            benefit_type: request_issue.benefit_type
           )
         end
       end
     end
 
-    def create_remanded_request_issue_1(appeal)
-      compensation = BusinessLine.find_by(name: "Compensation")
+    def create_ama_remand_reason_variable(remand_code)
+      create(:ama_remand_reason, {code: remand_code})
+    end
+
+    def create_remanded_request_issue_1(appeal, num)
+      vha = BusinessLine.find_by(name: "Veterans Health Administration")
       description = "Service connection for pain disorder is granted with an evaluation of 75\% effective February 3 2021"
       notes = "Pain disorder with 75\% evaluation per examination"
 
-      1.times do |index|
-        board_grant_task = create(:board_grant_effectuation_task,
-                                  status: "assigned",
-                                  assigned_to: compensation,
-                                  appeal: appeal)
+      board_grant_task = create(:board_grant_effectuation_task,
+                                status: "assigned",
+                                assigned_to: vha,
+                                appeal: appeal)
 
-        request_issues = create_list(:request_issue, 1,
-                                     :nonrating,
-                                     contested_issue_description: "#{index} #{description}",
-                                     notes: "#{index} #{notes}",
-                                     benefit_type: "compensation",
-                                     decision_review: board_grant_task.appeal)
+      request_issues = create_list(:request_issue, 1,
+                                    :nonrating,
+                                    contested_issue_description: "#{description}",
+                                    notes: "#{notes}",
+                                    benefit_type: vha.url,
+                                    decision_review: board_grant_task.appeal)
 
-        request_issues.each do |request_issue|
-          # create matching decision issue
-          create(
-            :decision_issue,
-            :nonrating,
-            :ama_remand_reason,
-            disposition: "remanded",
-            decision_review: board_grant_task.appeal,
-            request_issues: [request_issue],
-            rating_promulgation_date: 1.month.ago,
-            benefit_type: "compensation"
-          )
-        end
+      request_issues.each do |request_issue|
+        # create matching decision issue
+        create(
+          :decision_issue,
+          :nonrating,
+          create_ama_remand_reason_variable(decision_reason_remand_list[num]),
+          decision_review: board_grant_task.appeal,
+          request_issues: [request_issue],
+          rating_promulgation_date: 1.month.ago,
+          benefit_type: request_issue.benefit_type,
+        )
       end
     end
 
-    def create_remanded_request_issue_2(appeal)
-      compensation = BusinessLine.find_by(name: "Compensation")
+    def create_remanded_request_issue_2(appeal, num)
+      insurance = BusinessLine.find_by(name: "Insurance")
       description = "Service connection for pain disorder is granted with an evaluation of 100\% effective February 4 2021"
       notes = "Pain disorder with 100\% evaluation per examination"
 
-      1.times do |index|
-        board_grant_task = create(:board_grant_effectuation_task,
-                                  status: "assigned",
-                                  assigned_to: compensation,
-                                  appeal: appeal)
+      board_grant_task = create(:board_grant_effectuation_task,
+                                status: "assigned",
+                                assigned_to: insurance,
+                                appeal: appeal)
 
-        request_issues = create_list(:request_issue, 1,
-                                     :nonrating,
-                                     contested_issue_description: "#{index} #{description}",
-                                     notes: "#{index} #{notes}",
-                                     benefit_type: "compensation",
-                                     decision_review: board_grant_task.appeal)
+      request_issues = create_list(:request_issue, 1,
+                                    :nonrating,
+                                    contested_issue_description: "#{description}",
+                                    notes: "#{notes}",
+                                    benefit_type: insurance.url,
+                                    decision_review: board_grant_task.appeal)
 
-        request_issues.each do |request_issue|
-          # create matching decision issue
-          create(
-            :decision_issue,
-            :nonrating,
-            :ama_remand_reason,
-            disposition: "remanded",
-            decision_review: board_grant_task.appeal,
-            request_issues: [request_issue],
-            rating_promulgation_date: 1.month.ago,
-            benefit_type: "compensation"
-          )
-        end
+      request_issues.each do |request_issue|
+        # create matching decision issue
+        create(
+          :decision_issue,
+          :nonrating,
+          create_ama_remand_reason_variable(decision_reason_remand_list[num]),
+          disposition: "remanded",
+          decision_review: board_grant_task.appeal,
+          request_issues: [request_issue],
+          rating_promulgation_date: 1.month.ago,
+          benefit_type: request_issue.benefit_type,
+        )
       end
     end
 
@@ -214,7 +213,7 @@ module Seeds
     #Evidence Submission
     def create_ama_appeals_decision_ready_es
       Timecop.travel(30.days.ago)
-        5.times do
+        15.times do
           appeal = create(:appeal,
                           :evidence_submission_docket,
                           :at_attorney_drafting,
@@ -225,7 +224,7 @@ module Seeds
         end
       Timecop.return
     end
-=begin
+
     #Hearing
     def create_ama_appeals_decision_ready_hr
       Timecop.travel(90.days.ago)
@@ -258,68 +257,62 @@ module Seeds
       Timecop.return
     end
 
-    def link_request_issues(appeal)
+    def link_request_issues(appeal, num)
       create_allowed_request_issue_1(appeal)
       create_allowed_request_issue_2(appeal)
-      create_remanded_request_issue_1(appeal)
+      create_remanded_request_issue_1(appeal, num)
     end
 
     #Appeals Ready for Decision with 1 Remand
     #Evidence Submission
     def create_ama_appeals_ready_to_dispatch_remanded_es
-      Timecop.travel(30.days.ago)
-        (1..12).each do |i|
+      Timecop.travel(35.days.ago)
+       (0..11).each do |num|
           appeal = create(:appeal,
                           :evidence_submission_docket,
                           :with_decision_issue,
                           :at_judge_review,
-                          :imo,
                           associated_judge: judge,
                           associated_attorney: attorney,
                           issue_count: 3,
                           veteran: create_veteran,
-                          custom_args: {code: decision_reason_remand_list.at(i-1)}
-                        )
-          link_request_issues(appeal)
+          )
+          link_request_issues(appeal, num)
         end
       Timecop.return
     end
 
     #Hearing
     def create_ama_appeals_ready_to_dispatch_remanded_hr
-      Timecop.travel(90.days.ago)
-        (1..12).each do |i|
+      Timecop.travel(95.days.ago)
+       (0..11).each do |num|
           appeal = create(:appeal,
                           :hearing_docket,
                           :with_decision_issue,
                           :at_judge_review,
-                          :ama_remand_reason,
-                          code: decision_reason_remand_list.at(i-1),
                           associated_judge: judge,
                           associated_attorney: attorney,
                           issue_count: 3,
                           veteran: create_veteran,
                         )
-          link_request_issues(appeal)
+          link_request_issues(appeal, num)
         end
       Timecop.return
     end
 
     #Direct Review
     def create_ama_appeals_ready_to_dispatch_remanded_dr
-      Timecop.travel(60.days.ago)
-        (1..12).each do |i|
+      Timecop.travel(65.days.ago)
+       (0..11).each do |num|
           appeal = create(:appeal,
                           :direct_review_docket,
                           :with_decision_issue,
                           :at_judge_review,
-                          :ama_remand_reason,
-                          :decision_issue.code: decision_reason_remand_list.at(i-1)
                           associated_judge: judge,
                           associated_attorney: attorney,
                           issue_count: 3,
                           veteran: create_veteran)
-          link_request_issues(appeal)
+          link_request_issues(appeal, num)
         end
       Timecop.return
     end
@@ -328,60 +321,54 @@ module Seeds
     #Appeals Ready for Decision with Multiple(2) Remands
     #Evidence Submission
     def create_ama_appeals_ready_to_dispatch_remanded_multiple_es
-      Timecop.travel(30.days.ago)
-        (1..12).each do |i|
+      Timecop.travel(40.days.ago)
+       (0..11).each do |num|
           appeal = create(:appeal,
                           :evidence_submission_docket,
                           :with_decision_issue,
                           :at_judge_review,
-                          :ama_remand_reason,
-                          code: decision_reason_remand_list.at(i-1),
                           associated_judge: judge,
                           associated_attorney: attorney,
                           issue_count: 4,
                           veteran: create_veteran)
-          link_request_issues(appeal)
-          create_remanded_request_issue_2(appeal)
+          link_request_issues(appeal, num)
+          create_remanded_request_issue_2(appeal, num)
         end
       Timecop.return
     end
 
     #Hearing
     def create_ama_appeals_ready_to_dispatch_remanded_multiple_hr
-      Timecop.travel(90.days.ago)
-        (1..12).each do |i|
+      Timecop.travel(100.days.ago)
+       (0..11).each do |num|
           appeal = create(:appeal,
                           :hearing_docket,
                           :with_decision_issue,
                           :at_judge_review,
-                          :ama_remand_reason,
-                          code: decision_reason_remand_list.at(i-1),
                           associated_judge: judge,
                           associated_attorney: attorney,
                           issue_count: 4,
                           veteran: create_veteran)
-          link_request_issues(appeal)
-          create_remanded_request_issue_2(appeal)
+          link_request_issues(appeal, num)
+          create_remanded_request_issue_2(appeal, num)
         end
       Timecop.return
     end
 
     #Direct Review
     def create_ama_appeals_ready_to_dispatch_remanded_multiple_dr
-      Timecop.travel(60.days.ago)
-        (1..12).each do |i|
+      Timecop.travel(70.days.ago)
+       (0..11).each do |num|
           appeal = create(:appeal,
                           :direct_review_docket,
                           :with_decision_issue,
                           :at_judge_review,
-                          :ama_remand_reason,
-                          code: decision_reason_remand_list.at(i-1),
                           associated_judge: judge,
                           associated_attorney: attorney,
                           issue_count: 4,
                           veteran: create_veteran)
-          link_request_issues(appeal)
-          create_remanded_request_issue_2(appeal)
+          link_request_issues(appeal, num)
+          create_remanded_request_issue_2(appeal, num)
         end
       Timecop.return
     end
@@ -1286,5 +1273,3 @@ end
       Timecop.return
     end
 =end
-  end
-end
