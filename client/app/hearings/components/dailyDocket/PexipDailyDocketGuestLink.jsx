@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { GUEST_LINK_LABELS } from '../../constants';
 
-export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
+export const PexipDailyDocketGuestLink = ({ linkInfo }) => {
 
   // Conference Link Information
   const { alias, guestLink, guestPin } = linkInfo || {};
@@ -62,7 +62,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
   );
 };
 
-DailyDocketGuestLinkSection.propTypes = {
+PexipDailyDocketGuestLink.propTypes = {
   linkInfo: PropTypes.shape({
     guestLink: PropTypes.string,
     guestPin: PropTypes.string,
