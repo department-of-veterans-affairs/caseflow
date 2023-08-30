@@ -279,11 +279,23 @@ export default class OrganizationUsers extends React.PureComponent {
                       organization={this.props.organization}
                       user={user} />
                   </div>
-                }
-              </div>}
-          </ul>
-        </div>
-      </React.Fragment>;
+                  {this.state.organizationName === 'Hearing Admin' &&
+                    !conferenceSelectionVisibility && (
+                    <div
+                      {...radioContainerStyle}
+                    >
+                      <SelectConferenceTypeRadioField
+                        key={`${user.id}-conference-selection`}
+                        name={user.id}
+                      />
+                    </div>
+                  )}
+                </div>
+              }
+            </ul>
+          </div>
+        </React.Fragment>
+      );
     });
 
     return <React.Fragment>
