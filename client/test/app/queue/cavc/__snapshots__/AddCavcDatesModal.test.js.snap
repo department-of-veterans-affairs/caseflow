@@ -268,7 +268,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
               submit={[Function]}
               submitButtonClassNames={
                 Array [
-                  "usa-button-secondary",
+                  "usa-button",
                   "usa-button-hover",
                   "usa-button-warning",
                 ]
@@ -290,7 +290,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                     },
                     Object {
                       "classNames": Array [
-                        "usa-button-secondary",
+                        "usa-button",
                         "usa-button-hover",
                         "usa-button-warning",
                       ],
@@ -525,7 +525,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                             characterLimitTopRight={false}
                             disabled={false}
                             errorMessage={null}
-                            label="Provide context and instructions for this action"
+                            label="Provide instructions and context for this action"
                             name="context-and-instructions-textBox"
                             onChange={[Function]}
                             optional={false}
@@ -541,13 +541,13 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                               >
                                 <strong>
                                   <FormLabel
-                                    label="Provide context and instructions for this action"
+                                    label="Provide instructions and context for this action"
                                     name="context-and-instructions-textBox"
                                     optional={false}
                                     required={false}
                                   >
                                     <span>
-                                      Provide context and instructions for this action
+                                      Provide instructions and context for this action
                                     </span>
                                   </FormLabel>
                                 </strong>
@@ -600,7 +600,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                       <Button
                         classNames={
                           Array [
-                            "usa-button-secondary",
+                            "usa-button",
                             "usa-button-hover",
                             "usa-button-warning",
                             "cf-push-right",
@@ -618,7 +618,7 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                       >
                         <span>
                           <button
-                            className="usa-button-secondary usa-button-hover usa-button-warning cf-push-right usa-button"
+                            className="usa-button usa-button-hover usa-button-warning cf-push-right usa-button"
                             disabled={false}
                             id="Add-Court-dates-button-id-1"
                             onClick={[Function]}
@@ -909,7 +909,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
               submit={[Function]}
               submitButtonClassNames={
                 Array [
-                  "usa-button-secondary",
+                  "usa-button",
                   "usa-button-hover",
                   "usa-button-warning",
                 ]
@@ -931,7 +931,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                     },
                     Object {
                       "classNames": Array [
-                        "usa-button-secondary",
+                        "usa-button",
                         "usa-button-hover",
                         "usa-button-warning",
                       ],
@@ -1180,7 +1180,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                             characterLimitTopRight={false}
                             disabled={false}
                             errorMessage={null}
-                            label="Provide context and instructions for this action"
+                            label="Provide instructions and context for this action"
                             name="context-and-instructions-textBox"
                             onChange={[Function]}
                             optional={false}
@@ -1197,13 +1197,13 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                               >
                                 <strong>
                                   <FormLabel
-                                    label="Provide context and instructions for this action"
+                                    label="Provide instructions and context for this action"
                                     name="context-and-instructions-textBox"
                                     optional={false}
                                     required={false}
                                   >
                                     <span>
-                                      Provide context and instructions for this action
+                                      Provide instructions and context for this action
                                     </span>
                                   </FormLabel>
                                 </strong>
@@ -1257,7 +1257,7 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                       <Button
                         classNames={
                           Array [
-                            "usa-button-secondary",
+                            "usa-button",
                             "usa-button-hover",
                             "usa-button-warning",
                             "cf-push-right",

@@ -120,6 +120,36 @@ describe TaskActionRepository, :all_dbs do
     end
   end
 
+  describe "#mail_assign_to_organization_data" do
+    context "outcoded Appeal" do
+      let(:appeal) { create(:appeal, :outcoded) }
+      subject { TaskActionRepository.mail_assign_to_organization_data(appeal.root_task) }
+
+      it "returns all of the options when outcoded" do
+        expect(subject[:options]).to eq(MailTask.descendant_routing_options)
+      end
+    end
+
+    context "active Appeal" do
+      let(:appeal) { create(:appeal, :active) }
+      subject { TaskActionRepository.mail_assign_to_organization_data(appeal.root_task) }
+
+      it "returns all of the options except VacateMotionMailTask when not outcoded" do
+        expect(subject[:options]).to eq(MailTask.descendant_routing_options.reject do |opt|
+          opt[:value] == "VacateMotionMailTask"
+        end)
+      end
+    end
+
+    context "LegacyAppeal" do
+      let(:appeal) { create(:legacy_appeal, :with_root_task) }
+      subject { TaskActionRepository.mail_assign_to_organization_data(appeal.root_task) }
+      it "returns only the HPR and HWR options" do
+        expect(subject[:options]).to eq(MailTask::LEGACY_MAIL_TASKS)
+      end
+    end
+  end
+
   describe "#vha caregiver support task actions" do
     describe "#vha_caregiver_support_return_to_board_intake" do
       let(:user) { create(:user) }

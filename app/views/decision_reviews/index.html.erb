@@ -13,8 +13,14 @@
         decisionReviewQueueSsnColumn: FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: current_user),
         metricsBrowserError: FeatureToggle.enabled_metric?(:metrics_browser_error, user: current_user)
       },
+      poaAlert: {},
       baseTasksUrl: business_line.tasks_url,
       taskFilterDetails: task_filter_details
+    },
+    ui: {
+      featureToggles: {
+        poa_button_refresh: FeatureToggle.enabled?(:poa_button_refresh)
+      }
     }
   }) %>
 <% end %>

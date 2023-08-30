@@ -210,10 +210,46 @@ export const PAGE_TITLES = {
   CHANGE_TASK_TYPE: 'Change Task Type',
   CONVERT_HEARING_TO_VIRTUAL: 'Change Hearing Request Type to Virtual',
   CONVERT_HEARING_TO_VIDEO: 'Change Hearing Request Type to Video',
-  CONVERT_HEARING_TO_CENTRAL: 'Change Hearing Request Type to Central'
-
+  CONVERT_HEARING_TO_CENTRAL: 'Change Hearing Request Type to Central',
+  COMPLETE_HEARING_POSTPONEMENT_REQUEST: 'Complete Hearing Postponement Request'
 };
 
 export const CUSTOM_HOLD_DURATION_TEXT = 'Custom';
 export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, CUSTOM_HOLD_DURATION_TEXT];
 export const VHA_HOLD_DURATIONS = [15, 30, 45, CUSTOM_HOLD_DURATION_TEXT];
+
+export const DECISION_SPECIAL_ISSUES = [
+  {
+    id: 'blue_water',
+    label: 'Blue Water',
+    requiresJustification: false
+  },
+  {
+    id: 'burn_pit',
+    label: 'Burn Pit',
+    requiresJustification: false
+  },
+  {
+    id: 'mst_status',
+    label: 'Military Sexual Trauma (MST)',
+    requiresJustification: true
+  },
+  {
+    id: 'pact_status',
+    label: 'PACT Act',
+    requiresJustification: true
+  },
+];
+
+export const DECISION_SPECIAL_ISSUES_NO_MST_PACT = [
+  {
+    id: 'blue_water',
+    label: 'Blue Water',
+    requiresJustification: false
+  },
+  {
+    id: 'burn_pit',
+    label: 'Burn Pit',
+    requiresJustification: false
+  }
+];

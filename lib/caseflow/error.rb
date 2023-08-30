@@ -104,6 +104,14 @@ module Caseflow::Error
     end
   end
 
+  class InvalidTaskTypeOnTaskCreate < SerializableError
+    def initialize(args)
+      @task_type = args[:task_type]
+      @code = args[:code] || 400
+      @message = args[:message] || "#{@task_type} is not an assignable task type"
+    end
+  end
+
   # :reek:TooManyInstanceVariables
   class MultipleOpenTasksOfSameTypeError < SerializableError
     def initialize(args)

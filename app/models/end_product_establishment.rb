@@ -35,7 +35,7 @@ class EndProductEstablishment < CaseflowRecord
 
   class << self
     def order_by_sync_priority
-      active.order("last_synced_at IS NOT NULL, last_synced_at ASC")
+      active.order(Arel.sql("last_synced_at IS NOT NULL, last_synced_at ASC"))
     end
 
     def established
@@ -210,10 +210,7 @@ class EndProductEstablishment < CaseflowRecord
     contentions unless result.status_type_code == EndProduct::STATUSES.key("Canceled")
 
     transaction do
-      update!(
-        synced_status: result.status_type_code,
-        last_synced_at: Time.zone.now
-      )
+      update!(synced_status: result.status_type_code)
       status_cancelled? ? handle_cancelled_ep! : sync_source!
       close_request_issues_with_no_decision!
     end
@@ -224,6 +221,11 @@ class EndProductEstablishment < CaseflowRecord
   rescue StandardError => error
     Raven.extra_context(end_product_establishment_id: id)
     raise error
+  ensure
+    # Always update last_synced_at to ensure that SyncReviewsJob does not immediately re-enqueue
+    # End Product Establishments that fail to sync with BGS into the EndProductSyncJob.
+    # This will allow for other End Product Establishments to sync first before re-attempting.
+    update!(last_synced_at: Time.zone.now)
   end
 
   def fetch_dispositions_from_vbms
