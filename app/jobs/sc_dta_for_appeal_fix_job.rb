@@ -17,7 +17,7 @@ class ScDtaForAppealFixJob < CaseflowJob
     records_with_errors.each do |decision_doc|
       claimant = decision_doc.appeal.claimant
 
-      return unless claimant.payee_code.nil?
+      next unless claimant.payee_code.nil?
 
       if claimant.type == "VeteranClaimant"
         claimant.update!(payee_code: "00")

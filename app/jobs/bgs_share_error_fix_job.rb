@@ -25,7 +25,7 @@ class BgsShareErrorFixJob < CaseflowJob
       epe = EndProductEstablishment.find_by(
         id: riu.review_id
       )
-      return if epe.established_at.blank?
+      next if epe.established_at.blank?
 
       resolve_error_on_records(riu)
       STUCK_JOB_REPORT_SERVICE.append_single_record(riu.class.name, riu.id)
@@ -40,7 +40,7 @@ class BgsShareErrorFixJob < CaseflowJob
       epe = EndProductEstablishment.find_by(
         veteran_file_number: hlr.veteran_file_number
       )
-      return if epe.established_at.blank?
+      next if epe.established_at.blank?
 
       resolve_error_on_records(hlr)
       STUCK_JOB_REPORT_SERVICE.append_single_record(hlr.class.name, hlr.id)
@@ -52,7 +52,7 @@ class BgsShareErrorFixJob < CaseflowJob
     STUCK_JOB_REPORT_SERVICE.append_record_count(bges_with_errors.count, ERROR_TEXT)
 
     bges_with_errors.each do |bge|
-      return if bge.end_product_establishment.established_at.blank?
+      next if bge.end_product_establishment.established_at.blank?
 
       resolve_error_on_records(bge)
       STUCK_JOB_REPORT_SERVICE.append_single_record(bge.class.name, bge.id)

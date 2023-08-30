@@ -10,7 +10,7 @@ class DtaScCreationFailedFixJob < CaseflowJob
     stuck_job_report_service.append_record_count(hlrs_with_errors.count, ERROR_TEXT)
 
     hlrs_with_errors.each do |hlr|
-      return unless SupplementalClaim.find_by(
+      next unless SupplementalClaim.find_by(
         decision_review_remanded_id: hlr.id,
         decision_review_remanded_type: "HigherLevelReview"
       )

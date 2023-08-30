@@ -13,7 +13,7 @@ class ClaimNotEstablishedFixJob < CaseflowJob
     decision_docs_with_errors.each do |single_decision_document|
       file_number = single_decision_document.veteran.file_number
       epe = EndProductEstablishment.find_by(veteran_file_number: file_number)
-      return unless validate_epe(epe)
+      next unless validate_epe(epe)
 
       stuck_job_report_service.append_single_record(single_decision_document.class.name, single_decision_document.id)
 
