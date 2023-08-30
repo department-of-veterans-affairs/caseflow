@@ -47,7 +47,9 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :test
 
   # Print deprecation notices to the stderr.
-  config.active_support.deprecation = :stderr
+  # config.active_support.deprecation = :stderr
+  require_relative "../../app/services/deprecation_warnings/test_handler"
+  ActiveSupport::Deprecation.behavior = DeprecationWarnings::TestHandler
 
   # Setup S3
   config.s3_enabled = false
