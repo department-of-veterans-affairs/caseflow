@@ -172,6 +172,9 @@ class SpecialIssuesComparator
   # contentions tied to the veteran
   def match_ratings_with_contentions
     contention_matches = []
+
+    return [] if issue.rba_contentions_data.blank?
+
     # cycle contentions tied to rating issue
     issue.rba_contentions_data.each do |rba|
       # grab contention on the rating
