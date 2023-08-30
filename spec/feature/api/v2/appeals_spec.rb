@@ -66,7 +66,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
       expect(ApiView.count).to eq(0)
     end
 
-    it "returns 404 if veteran with that SSN isn't found", skip: "I believe this just returns an empty array" do
+    it "returns an empty array if veteran with that SSN isn't found" do
       headers = {
         "ssn": "444444444",
         "Authorization": "Token token=#{api_key.key_string}"
@@ -74,12 +74,10 @@ describe "Appeals API v2", :all_dbs, type: :request do
 
       get "/api/v2/appeals", headers: headers
 
-      expect(response.code).to eq("404")
+      expect(response.code).to eq("200")
 
       json = JSON.parse(response.body)
-      expect(json["errors"].length).to eq(1)
-      expect(json["errors"].first["title"]).to eq("Veteran not found")
-
+      expect(json["data"]).to eq([])
       expect(ApiView.count).to eq(1)
     end
 
