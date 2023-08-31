@@ -77,7 +77,7 @@ class Metric < CaseflowRecord
   def self.default_object(klass, params, user)
     {
       uuid: params[:uuid],
-      user: user || User.new(full_name: "Stand in user for testing", css_id: SecureRandom.uuid, station_id: 'Metrics'),
+      user: user || RequestStore.store[:current_user] || User.system_user,
       metric_name: params[:name] || METRIC_TYPES[:log],
       metric_class: klass&.try(:name) || klass&.class.name || self.name,
       metric_group: params[:group] || METRIC_GROUPS[:service],
