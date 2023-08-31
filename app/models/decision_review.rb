@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class DecisionReview < CaseflowRecord
+  include AppealConcern
   include CachedAttributes
   include Asyncable
 
@@ -15,6 +16,16 @@ class DecisionReview < CaseflowRecord
   has_many :tasks, as: :appeal, dependent: :destroy
   has_many :request_issues_updates, as: :review, dependent: :destroy
   has_one :intake, as: :detail
+
+  delegate :power_of_attorney, to: :claimant, allow_nil: true
+  delegate :representative_name,
+           :representative_type,
+           :representative_address,
+           :representative_email_address,
+           :poa_last_synced_at,
+           :update_cached_attributes!,
+           :save_with_updated_bgs_record!,
+           to: :power_of_attorney, allow_nil: true
 
   cache_attribute :cached_serialized_ratings, cache_key: :ratings_cache_key, expires_in: 1.day do
     ratings_with_issues_or_decisions.map(&:serialize)
@@ -89,6 +100,10 @@ class DecisionReview < CaseflowRecord
     else
       Constants::DATES["AMA_ACTIVATION_TEST"].to_date
     end
+  end
+
+  def bgs_power_of_attorney
+    claimant&.is_a?(BgsRelatedClaimant) ? power_of_attorney : nil
   end
 
   def serialized_ratings
