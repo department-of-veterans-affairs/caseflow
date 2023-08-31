@@ -61,7 +61,7 @@ ReceiptDateInput.propTypes = {
   receiptDate: PropTypes.string,
   setReceiptDate: PropTypes.func,
   receiptDateError: PropTypes.string,
-  errors: PropTypes.array,
+  errors: PropTypes.object,
   register: PropTypes.func
 };
 
