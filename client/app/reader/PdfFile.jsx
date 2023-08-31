@@ -71,7 +71,6 @@ export class PdfFile extends React.PureComponent {
 
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
-
         const metricData = {
           message: `Getting PDF document id: "${this.props.documentId}"`,
           type: 'performance',
