@@ -46,7 +46,8 @@ const recieptDateFilterStates = {
   FROM: 2,
   ON: 3
 
-}
+};
+
 export const getRowObjects = (documents, annotationsPerDocument) => {
   return documents.reduce((acc, doc) => {
     acc.push(doc);
@@ -69,6 +70,8 @@ const convertStringToDate = (stringDate) => {
   const splitVals = stringDate.split('-');
 
   date.setFullYear(Number(splitVals[0]));
+  // the datepicker component returns months from 1-12. Javascript dates count months from 0-11
+  // this offsets it so they match.
   date.setMonth(Number(splitVals[1] - 1));
   date.setDate(Number(splitVals[2]));
 
@@ -235,7 +238,7 @@ class DocumentsTable extends React.Component {
 
     resetRecieptPicker = () => {
       this.props.setRecieptDateFilter({});
-      this.setState({ fromDate: '', toDate: '', onDate: '', fromDateErrors:[], toDateErrors:[], onDateErrors:[]});
+      this.setState({ fromDate: '', toDate: '', onDate: '', fromDateErrors: [], toDateErrors: [], onDateErrors: [] });
     };
   getKeyForRow = (index, { isComment, id }) => {
     return isComment ? `${id}-comment` : id;
