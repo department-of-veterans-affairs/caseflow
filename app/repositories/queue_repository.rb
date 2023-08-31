@@ -222,9 +222,9 @@ class QueueRepository
 
     def update_decass_record(decass_record, decass_attrs)
       decass_attrs = QueueMapper.new(decass_attrs).rename_and_validate_decass_attrs
-      VACOLS::Decass.where(defolder: decass_record.defolder, deadtim: decass_record.deadtim)
+      VACOLS::Decass.where(defolder: decass_record&.defolder, deadtim: decass_record&.deadtim)
         .update_all(decass_attrs)
-      decass_record.reload
+      decass_record&.reload
     end
 
     def create_decass_record(decass_attrs)
