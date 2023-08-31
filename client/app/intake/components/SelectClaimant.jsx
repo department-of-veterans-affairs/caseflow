@@ -271,7 +271,7 @@ SelectClaimant.propTypes = {
   payeeCodeError: PropTypes.string,
   setPayeeCode: PropTypes.func,
   register: PropTypes.func,
-  errors: PropTypes.array,
+  errors: PropTypes.object,
   featureToggles: PropTypes.shape({
     hlrScUnrecognizedClaimants: PropTypes.bool
   })
