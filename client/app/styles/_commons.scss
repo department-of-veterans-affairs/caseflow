@@ -508,6 +508,10 @@ svg title {
   table {
     margin: 0 0 2em;
   }
+
+  .cf-retry {
+    margin-top: -1.5em;
+  }
 }
 
 .cf-modal-close {
@@ -1248,6 +1252,46 @@ button {
     .cf-loading-icon-front {
       &::after {
         @include animation(backwardspin 5s linear infinite);
+        opacity: 0.5;
+      }
+    }
+  }
+}
+
+.input-container {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+
+  .cf-loading-icon-container {
+    position: absolute;
+    padding-right: 23px;
+    top: 30%;
+    left: 90%;
+
+    .cf-loading-icon-back,
+    .cf-loading-icon-front {
+      &::after {
+        content: ' ';
+        // container for preloaded images was 0x0, but now...
+        // scss-lint:disable ImportantRule
+        width: 20px !important;
+        height: 20px !important;
+        // scss-lint:enable ImportantRule
+        box-sizing: border-box;
+        font-size: 99em;
+        position: absolute;
+        right: 0;
+        top: -0.1rem;
+        @include animation(spin 5s linear infinite);
+        background: url(#{$image-url}/icons/loading-pill.svg) center center no-repeat;
+      }
+    }
+
+    .cf-loading-icon-front {
+      &::after {
+        @include animation(backwardspin 5s linear infinite);
+        background: url(#{$image-url}/icons/loading-pill.svg) center center no-repeat;
         opacity: 0.5;
       }
     }
