@@ -249,3 +249,4 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
   end
 end
+
