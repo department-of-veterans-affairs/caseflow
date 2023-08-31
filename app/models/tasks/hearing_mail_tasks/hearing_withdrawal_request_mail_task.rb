@@ -39,21 +39,4 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
       ]
     end
   end
-
-  private
-
-  def active_schedule_hearing_task?
-    appeal.tasks.where(type: ScheduleHearingTask.name).active.any?
-  end
-
-  def open_assign_hearing_disposition_task?
-    # ChangeHearingDispositionTask is a subclass of AssignHearingDispositionTask
-    disposition_task_names = [AssignHearingDispositionTask.name, ChangeHearingDispositionTask.name]
-    open_task = appeal.tasks.where(type: disposition_task_names).open.first
-
-    return false unless open_task&.hearing
-
-    # Ensure hearing associated with AssignHearingDispositionTask is not scheduled in the past
-    !open_task.hearing.scheduled_for_past?
-  end
 end
