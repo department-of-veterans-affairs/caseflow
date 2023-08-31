@@ -9,8 +9,8 @@
 #   - A child task of the same name is created and assigned to the HearingAdmin organization
 ##
 class HearingPostponementRequestMailTask < HearingRequestMailTask
+  prepend HearingPostponed
   include RunAsyncable
-
   class << self
     def label
       COPY::HEARING_POSTPONEMENT_REQUEST_MAIL_TASK_LABEL
