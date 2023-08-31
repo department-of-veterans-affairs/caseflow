@@ -285,7 +285,6 @@ class HearingDay < CaseflowRecord
 
   # Method to get the associated conference link record if exists and if not create  new one
   def find_or_create_pexip_conference_link!
-    # conference_link = ConferenceLink.find_by_hearing_day_id(id)
     conference_link = ConferenceLink.find_by(hearing_day_id: id, meeting_type: "Pexip")
     if conference_link.nil?
       conference_link = ConferenceLink.create(hearing_day_id: id)
@@ -294,14 +293,12 @@ class HearingDay < CaseflowRecord
   end
 
   def find_or_create_webex_conference_link!
-    # conference_link = ConferenceLink.find_by_hearing_day_id(id)
     conference_link = ConferenceLink.find_by(hearing_day_id: id, meeting_type: "Webex")
     if conference_link.nil?
       conference_link = ConferenceLink.create(hearing_day_id: id)
     end
     conference_link
   end
-
 
   class << self
     def create_schedule(scheduled_hearings)
