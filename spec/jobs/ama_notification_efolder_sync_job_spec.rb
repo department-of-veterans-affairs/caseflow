@@ -11,8 +11,9 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
 
   BATCH_LIMIT_SIZE = 5
 
-  after do
-    DatabaseCleaner.clean_with(:truncation)
+  after(:all) do
+    DatabaseCleaner[:active_record, { connection: caseflow }].strategy = :truncation
+    DatabaseCleaner.clean
   end
 
   describe "perform" do
