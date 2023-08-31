@@ -59,6 +59,7 @@ class HearingSerializer
   attribute :judge_id
   attribute :location
   attribute :military_service, if: for_full
+  attribute :meeting_type
   attribute :notes
   attribute :paper_case do
     false

@@ -60,6 +60,7 @@ class LegacyHearingSerializer
   attribute :judge_id
   attribute :location
   attribute :military_service, if: for_worksheet
+  attribute :meeting_type
   attribute :notes
   attribute :paper_case do |object|
     object.appeal.paper_case?
