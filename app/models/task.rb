@@ -116,13 +116,6 @@ class Task < CaseflowRecord
 
   scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
 
-  scope :hearing_postponement_req_tasks, lambda {
-                                           where(
-                                             type: HearingPostponementRequestMailTask.name,
-                                             assigned_to: HearingAdmin.singleton
-                                           )
-                                         }
-
   attr_accessor :skip_check_for_only_open_task_of_type
 
   prepend AppealDocketed
@@ -996,9 +989,12 @@ class Task < CaseflowRecord
     open_hearing_postponement_requests.each { |task| task.cancel_when_redundant(self, updated_at) }
   end
 
-  # Purpose: Finds open HearingPostponementRequestMailTasks in the task tree of the current task
+  # Purpose: Finds open HearingPostponementRequestMailTasks (assigned to HearingAdmin and not MailTeam) in task tree
   def open_hearing_postponement_requests
-    appeal.tasks.hearing_postponement_req_tasks.open
+    appeal.tasks.where(
+      type: HearingPostponementRequestMailTask.name,
+      assigned_to: HearingAdmin.singleton
+    ).open
   end
 end
 # rubocop:enable Metrics/ClassLength
