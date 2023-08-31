@@ -855,6 +855,13 @@ describe EndProductEstablishment, :postgres do
       it "raises EstablishedEndProductNotFound error" do
         expect { subject }.to raise_error(EndProductEstablishment::EstablishedEndProductNotFound)
       end
+
+      it "last_synced_at updates upon error to ensure SyncReviewsJob allows other EPEs to sync before re-attempt" do
+        expect(end_product_establishment.last_synced_at).to eq(nil)
+        expect { subject }.to raise_error(EndProductEstablishment::EstablishedEndProductNotFound)
+        end_product_establishment.reload
+        expect(end_product_establishment.last_synced_at).to eq(Time.zone.now)
+      end
     end
 
     context "when a matching end product has been established" do
@@ -881,6 +888,13 @@ describe EndProductEstablishment, :postgres do
 
         it "re-raises error" do
           expect { subject }.to raise_error(BGS::ShareError)
+        end
+
+        it "last_synced_at updates upon error to ensure SyncReviewsJob allows other EPEs to sync before re-attempt" do
+          expect(end_product_establishment.last_synced_at).to eq(nil)
+          expect { subject }.to raise_error(BGS::ShareError)
+          end_product_establishment.reload
+          expect(end_product_establishment.last_synced_at).to eq(Time.zone.now)
         end
       end
 
@@ -1068,7 +1082,46 @@ describe EndProductEstablishment, :postgres do
       )
     end
 
+    let(:veteran_assoc_rating) do
+      Generators::Veteran.create(
+        file_number: "43214321"
+      )
+    end
+
+    let(:epe) do
+      EndProductEstablishment.new(
+        source: source,
+        veteran_file_number: veteran_assoc_rating.file_number,
+        code: code,
+        payee_code: payee_code,
+        claim_date: 2.days.ago,
+        station: "397",
+        reference_id: reference_id,
+        claimant_participant_id: veteran_assoc_rating.participant_id,
+        synced_status: synced_status,
+        committed_at: committed_at,
+        benefit_type_code: benefit_type_code,
+        doc_reference_id: doc_reference_id,
+        development_item_reference_id: development_item_reference_id,
+        established_at: 30.days.ago,
+        user: current_user,
+        limited_poa_code: limited_poa_code,
+        limited_poa_access: limited_poa_access,
+        last_synced_at: last_synced_at
+      )
+    end
+
     context "when ep is one of many associated to the rating" do
+      subject { epe.associated_rating }
+
+      let!(:rating) do
+        Generators::PromulgatedRating.build(
+          participant_id: veteran_assoc_rating.participant_id,
+          promulgation_date: epe.established_at,
+          associated_claims: associated_claims
+        )
+      end
+
       let(:associated_claims) do
         [
           { clm_id: "09123", bnft_clm_tc: end_product_establishment.code },
@@ -1085,6 +1138,16 @@ describe EndProductEstablishment, :postgres do
     end
 
     context "when associated rating only has 1 ep" do
+      subject { epe.associated_rating }
+
+      let!(:rating) do
+        Generators::PromulgatedRating.build(
+          participant_id: veteran_assoc_rating.participant_id,
+          promulgation_date: epe.established_at,
+          associated_claims: associated_claims
+        )
+      end
+
       let(:associated_claims) do
         [
           { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code }
@@ -1099,6 +1162,7 @@ describe EndProductEstablishment, :postgres do
       }
 
       context "when rating is before established_at date" do
+        subject { end_product_establishment.associated_rating }
         let!(:another_rating) do
           Generators::PromulgatedRating.build(
             profile_date: end_product_establishment.established_at + 1.day,
