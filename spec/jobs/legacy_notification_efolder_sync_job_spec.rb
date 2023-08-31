@@ -15,7 +15,15 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
     # DatabaseCleaner.clean
     # DatabaseCleaner[:active_record, { connection: caseflow }].strategy = :transaction
     # self.use_transactional_tests = true
-    DatabaseCleaner.clean_with(:truncation)
+    # DatabaseCleaner.clean_with(:truncation)
+    # vacols = "#{Rails.env}_vacols".to_sym
+    caseflow = Rails.env.to_s.to_sym
+    # DatabaseCleaner[:active_record, { connection: vacols }].clean_with(:truncation)
+    # DatabaseCleaner[:active_record, { connection: vacols }].strategy =
+      # :deletion, { except: vacols_tables_to_preserve }
+    # DatabaseCleaner[:active_record, { connection: vacols }].clean
+    DatabaseCleaner[:active_record, { connection: caseflow }].clean_with(:truncation)
+    # self.use_transactional_tests = true
   end
 
   describe "perform" do
