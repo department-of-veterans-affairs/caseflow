@@ -42,7 +42,8 @@ export const RadioField = (props) => {
     strongLabel,
     hideLabel,
     styling,
-    vertical
+    vertical,
+    optionsStyling
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -99,7 +100,7 @@ export const RadioField = (props) => {
         <span className="usa-input-error-message" tabIndex={0}>{errorMessage}</span>
       )}
 
-      <div className="cf-form-radio-options">
+      <div className="cf-form-radio-options" style={optionsStyling}>
         {options.map((option, i) => {
           const optionDisabled = isDisabled(option);
 

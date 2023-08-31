@@ -192,6 +192,7 @@ const CompleteHearingPostponementRequestModal = (props) => {
           value={state.granted}
           options={RULING_OPTIONS}
           styling={marginBottom(1)}
+          optionsStyling={{ marginTop: 0 }}
         />
 
         {state.granted && <Alert
