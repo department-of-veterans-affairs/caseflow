@@ -19,7 +19,7 @@ namespace :db do
                      end
 
           veteran = Veteran.find_by_file_number(file_number)
-          scenario1 = task_type == ("HEARINGTASK" || "SCENARIO1EDGE" || "BRIEFF_CURLOC_81_TASK")
+          scenario1 = task_type == "HEARINGTASK" || task_type == "SCENARIO1EDGE" || task_type == "BRIEFF_CURLOC_81_TASK"
           fail ActiveRecord::RecordNotFound unless veteran
 
           vacols_veteran_record = find_or_create_vacols_veteran(veteran)
@@ -31,7 +31,6 @@ namespace :db do
             key = VACOLS::Folder.maximum(:ticknum).next
 
             staff = VACOLS::Staff.find_by(sdomainid: user.css_id) # user for local/demo || UAT
-
             Generators::Vacols::Case.create(
               decass_creation: decass_creation,
               corres_exists: true,
