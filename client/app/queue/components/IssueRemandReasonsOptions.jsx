@@ -274,7 +274,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     if (appeal.isLegacyAppeal) {
       //  If feature flag is true, filter out the chosen remand reasons.
       if (this.props.featureToggles.additional_remand_reasons) {
-        this.filterSelectableLegacyRemandReasons("dueProcess", 0);
+        this.filterSelectableLegacyRemandReasons('dueProcess', 0);
       }
 
       return (
