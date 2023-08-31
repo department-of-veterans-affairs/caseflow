@@ -10,6 +10,10 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
 
   BATCH_LIMIT_SIZE = 5
 
+  after do
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
   describe "perform" do
     let(:today) { Time.now.utc.iso8601 }
 
