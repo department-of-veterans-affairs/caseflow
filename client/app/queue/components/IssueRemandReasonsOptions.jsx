@@ -216,6 +216,13 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     );
   };
 
+  //  Selects the section and index of Remand Reason from Legacy Active Remand Reasons JSON list,
+  //  and filters it out of selectable checkboxes.
+  filterSelectableLegacyRemandReasons = (sectionName, index) => {
+    delete LEGACY_REMAND_REASONS[sectionName][index];
+
+  };
+
   getCheckboxGroup = () => {
     const { appeal } = this.props;
     const checkboxGroupProps = {
@@ -225,6 +232,12 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     };
 
     if (appeal.isLegacyAppeal) {
+
+      //  If feature flag is true, filter out the chosen remand reasons.
+      if (this.props.featureToggles.additional_remand_reasons) {
+        this.filterSelectableLegacyRemandReasons('dueProcess', 0);
+      }
+
       return (
         <div {...flexContainer}>
           <div {...flexColumn}>
@@ -349,7 +362,8 @@ IssueRemandReasonsOptions.propTypes = {
   issue: PropTypes.object,
   issueId: PropTypes.number,
   highlight: PropTypes.bool,
-  idx: PropTypes.number
+  idx: PropTypes.number,
+  featureToggles: PropTypes.object,
 };
 
 export default connect(
