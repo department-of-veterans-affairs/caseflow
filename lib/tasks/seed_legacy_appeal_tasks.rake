@@ -19,18 +19,18 @@ namespace :db do
                      end
 
           veteran = Veteran.find_by_file_number(file_number)
-
+          scenario1 = task_type == ("HEARINGTASK" || "SCENARIO1EDGE" || "BRIEFF_CURLOC_81_TASK")
           fail ActiveRecord::RecordNotFound unless veteran
 
           vacols_veteran_record = find_or_create_vacols_veteran(veteran)
-          decass_creation = if task_type == "ATTORNEYTASK" && user&.attorney_in_vacols?
+          decass_creation = if scenario1 || (task_type == "ATTORNEYTASK" && user&.attorney_in_vacols?) # {Creates decass for scenario1/2 tasks as they require an assigned_by field which is grabbed from the Decass table (b/c it is an AttorneyLegacyTask)}
                               true
                             else false
                             end
           cases = Array.new(num_appeals_to_create).each_with_index.map do
             key = VACOLS::Folder.maximum(:ticknum).next
 
-              staff = VACOLS::Staff.find_by(sdomainid: user.css_id) || VACOLS::Staff.find_by(sdomainid: "FAKE USER") || VACOLS::Staff.find_by(sdomainid: "CF_VLJTHREE_283") # user for local/demo || UAT
+            staff = VACOLS::Staff.find_by(sdomainid: user.css_id) # user for local/demo || UAT
 
             Generators::Vacols::Case.create(
               decass_creation: decass_creation,
@@ -47,56 +47,7 @@ namespace :db do
                 bfddec: nil
               },
               # Clean this up
-              staff_attrs: {
-                stafkey: staff.stafkey,
-                susrpw: staff.susrpw || nil,
-                susrsec: staff.susrsec || nil,
-                susrtyp: staff.susrtyp || nil,
-                ssalut: staff.ssalut || nil,
-                snamef: staff.snamef,
-                snamemi: staff.snamemi,
-                snamel: staff.snamel,
-                slogid: staff.slogid,
-                stitle: staff.stitle,
-                sorg: staff.sorg || nil,
-                sdept: staff.sdept || nil,
-                saddrnum: staff.saddrnum || nil,
-                saddrst1: staff.saddrst1 || nil,
-                saddrst2: staff.saddrst2 || nil,
-                saddrcty: staff.saddrcty || nil,
-                saddrstt: staff.saddrstt || nil,
-                saddrcnty: staff.saddrcnty || nil,
-                saddrzip: staff.saddrzip || nil,
-                stelw: staff.stelw || nil,
-                stelwex: staff.stelwex || nil,
-                stelfax: staff.stelfax || nil,
-                stelh: staff.stelh || nil,
-                staduser: staff.staduser || nil,
-                stadtime: staff.stadtime || nil,
-                stmduser: staff.stmduser || nil,
-                stmdtime: staff.stmdtime || nil,
-                stc1: staff.stc1 || nil,
-                stc2: staff.stc2 || nil,
-                stc3: staff.stc3 || nil,
-                stc4: staff.stc4 || nil,
-                snotes: staff.snotes || nil,
-                sorc1: staff.sorc1 || nil,
-                sorc2: staff.sorc2 || nil,
-                sorc3: staff.sorc3 || nil,
-                sorc4: staff.sorc4 || nil,
-                sactive: staff.sactive || nil,
-                ssys: staff.ssys || nil,
-                sspare1: staff.sspare1 || nil,
-                sspare2: staff.sspare2 || nil,
-                sspare3: staff.sspare3 || nil,
-                smemgrp: staff.smemgrp || nil,
-                sfoiasec: staff.sfoiasec || nil,
-                srptsec: staff.srptsec || nil,
-                sattyid: staff.sattyid || nil,
-                svlj: staff.svlj || nil,
-                sinvsec: staff.sinvsec || nil,
-                sdomainid: staff.sdomainid || nil
-              },
+              staff_attrs: custom_staff_attributes(staff),
               decass_attrs: custom_decass_attributes(key, user, decass_creation)
             )
           end.compact
@@ -113,6 +64,61 @@ namespace :db do
           }
         end
 
+        def custom_staff_attributes(staff)
+          if staff
+            {
+              stafkey: staff.stafkey,
+              susrpw: staff.susrpw || nil,
+              susrsec: staff.susrsec || nil,
+              susrtyp: staff.susrtyp || nil,
+              ssalut: staff.ssalut || nil,
+              snamef: staff.snamef,
+              snamemi: staff.snamemi,
+              snamel: staff.snamel,
+              slogid: staff.slogid,
+              stitle: staff.stitle,
+              sorg: staff.sorg || nil,
+              sdept: staff.sdept || nil,
+              saddrnum: staff.saddrnum || nil,
+              saddrst1: staff.saddrst1 || nil,
+              saddrst2: staff.saddrst2 || nil,
+              saddrcty: staff.saddrcty || nil,
+              saddrstt: staff.saddrstt || nil,
+              saddrcnty: staff.saddrcnty || nil,
+              saddrzip: staff.saddrzip || nil,
+              stelw: staff.stelw || nil,
+              stelwex: staff.stelwex || nil,
+              stelfax: staff.stelfax || nil,
+              stelh: staff.stelh || nil,
+              staduser: staff.staduser || nil,
+              stadtime: staff.stadtime || nil,
+              stmduser: staff.stmduser || nil,
+              stmdtime: staff.stmdtime || nil,
+              stc1: staff.stc1 || nil,
+              stc2: staff.stc2 || nil,
+              stc3: staff.stc3 || nil,
+              stc4: staff.stc4 || nil,
+              snotes: staff.snotes || nil,
+              sorc1: staff.sorc1 || nil,
+              sorc2: staff.sorc2 || nil,
+              sorc3: staff.sorc3 || nil,
+              sorc4: staff.sorc4 || nil,
+              sactive: staff.sactive || nil,
+              ssys: staff.ssys || nil,
+              sspare1: staff.sspare1 || nil,
+              sspare2: staff.sspare2 || nil,
+              sspare3: staff.sspare3 || nil,
+              smemgrp: staff.smemgrp || nil,
+              sfoiasec: staff.sfoiasec || nil,
+              srptsec: staff.srptsec || nil,
+              sattyid: staff.sattyid || nil,
+              svlj: staff.svlj || nil,
+              sinvsec: staff.sinvsec || nil,
+              sdomainid: staff.sdomainid || nil
+            }
+          end
+        end
+
         def custom_decass_attributes(key, user, decass_creation)
           if decass_creation
             {
@@ -126,8 +132,6 @@ namespace :db do
               decomp: VacolsHelper.local_date_with_utc_timezone,
               dedeadline: VacolsHelper.local_date_with_utc_timezone + 120.days
             }
-          else
-            {}
           end
         end
 
@@ -249,7 +253,7 @@ namespace :db do
               appeal: appeal,
               parent: hearing_task,
               assigned_to: Bva.singleton
-            ).update(status: 'completed')
+            ).update(status: "completed")
             AssignHearingDispositionTask.create!(
               appeal: appeal,
               parent: hearing_task,
@@ -265,7 +269,7 @@ namespace :db do
               appeal: appeal,
               parent: hearing_task,
               assigned_to: Bva.singleton
-            ).update(status: 'completed')
+            ).update(status: "completed")
             assign_hearing_task = AssignHearingDispositionTask.create!(
               appeal: appeal,
               parent: hearing_task,
@@ -358,10 +362,10 @@ namespace :db do
       if Rails.env.development? || Rails.env.test?
         vets = Veteran.first(5)
 
-        veterans_with_like_45_appeals = vets[0..12].pluck(:file_number)
+        veterans_with_like_45_appeals = vets[0..12].pluck(:file_number) # local / test option for veterans
 
       else
-        veterans_with_like_45_appeals = %w[011899917 011899918]
+        veterans_with_like_45_appeals = %w[011899917 011899918] # UAT option for veterans
 
       end
 
@@ -379,7 +383,7 @@ namespace :db do
         end
 
         css_id = $stdin.gets.chomp.upcase
-        user = User.find_by_css_id(css_id) || User.find_by_css_id('CF_VLJ_283') # local,test / UAT
+        user = User.find_by_css_id(css_id)
 
         fail ArgumentError, "User must be a Judge in Vacols for a #{task_type}", caller unless user.judge_in_vacols?
       elsif task_type == "ATTORNEYTASK"
@@ -392,11 +396,15 @@ namespace :db do
         end
 
         css_id = $stdin.gets.chomp.upcase
-        user = User.find_by_css_id(css_id) || User.find_by_css_id('CF_VLJ_283') # local,test / UAT
+        user = User.find_by_css_id(css_id)
 
         fail ArgumentError, "User must be an Attorney in Vacols for a #{task_type}", caller unless user.attorney_in_vacols?
-      else
-        user =  User.find_by_css_id("BVACABSHIRE") || User.find_by_css_id("FAKE USER") ||  User.find_by_css_id("CF_VLJTHREE_283") # local / demo / uat
+      else # {Chooses default user to use for HearingTasks, Bfcurloc_81_Tasks, and Scenario1Edge Tasks}
+        user = if Rails.env.development? || Rails.env.test?
+                 User.find_by_css_id("FAKE USER") # local / test option
+               else
+                 User.find_by_css_id("CF_VLJTHREE_283") # UAT option
+               end
       end
 
       fail ActiveRecord::RecordNotFound unless user
@@ -409,8 +417,6 @@ namespace :db do
         LegacyAppealFactory.stamp_out_legacy_appeals(1, file_number, user, docket_number, task_type)
       end
       $stdout.puts("You have created Legacy Appeals")
-      # veterans_with_250_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals
-      #                                  (250, file_number, user) }
     end
   end
 end
