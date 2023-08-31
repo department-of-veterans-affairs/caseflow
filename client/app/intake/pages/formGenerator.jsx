@@ -272,7 +272,7 @@ const FormGenerator = (props) => {
 
   return (
     <div>
-      <h1>{props.formHeader(props.veteranName)}</h1>
+      {props.formHeader(props.veteranName)}
       {toggleIneligibleError(props.hasInvalidOption, props.optionSelected) && (
         <Alert title="Ineligible for Higher-Level Review" type="error">
           {COPY.INELIGIBLE_HIGHER_LEVEL_REVIEW_ALERT} <br />
