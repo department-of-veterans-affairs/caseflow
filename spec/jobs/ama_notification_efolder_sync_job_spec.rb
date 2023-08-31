@@ -12,10 +12,12 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
   BATCH_LIMIT_SIZE = 5
 
   after(:all) do
-    caseflow = Rails.env.to_s.to_sym
-    DatabaseCleaner.clean
-    DatabaseCleaner[:active_record, { connection: caseflow }].strategy = :transaction
-    self.use_transactional_tests = true
+    # caseflow = Rails.env.to_s.to_sym
+    # DatabaseCleaner[:active_record, { connection: caseflow }].strategy = :truncation
+    DatabaseCleaner.clean_with(:truncation)
+    # clean_up_after_threads
+    # DatabaseCleaner[:active_record, { connection: caseflow }].strategy = :transaction
+    # self.use_transactional_tests = true
   end
 
   describe "perform" do
@@ -282,9 +284,8 @@ describe AmaNotificationEfolderSyncJob, :postgres, type: :job do
         .map { |appeal_id| find_appeal_index_by_id(appeal_id) }
         .compact
     end
-
-    def clean_up_after_threads
-      DatabaseCleaner.clean_with(:truncation, except: %w[notification_events vftypes issref])
-    end
+  end
+  def clean_up_after_threads
+    DatabaseCleaner.clean_with(:truncation, except: %w[notification_events vftypes issref])
   end
 end

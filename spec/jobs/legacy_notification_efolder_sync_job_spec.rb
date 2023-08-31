@@ -11,10 +11,11 @@ describe LegacyNotificationEfolderSyncJob, :all_dbs, type: :job do
   BATCH_LIMIT_SIZE = 5
 
   after(:all) do
-    caseflow = Rails.env.to_s.to_sym
-    DatabaseCleaner.clean
-    DatabaseCleaner[:active_record, { connection: caseflow }].strategy = :transaction
-    self.use_transactional_tests = true
+    # caseflow = Rails.env.to_s.to_sym
+    # DatabaseCleaner.clean
+    # DatabaseCleaner[:active_record, { connection: caseflow }].strategy = :transaction
+    # self.use_transactional_tests = true
+    DatabaseCleaner.clean_with(:truncation)
   end
 
   describe "perform" do
