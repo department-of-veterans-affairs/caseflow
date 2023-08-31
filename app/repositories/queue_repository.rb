@@ -199,6 +199,7 @@ class QueueRepository
       vacols_case = VACOLS::Case.find(vacols_id)
       fail VACOLS::Case::InvalidLocationError, "Invalid location \"#{judge.vacols_uniq_id}\"" unless
         judge.vacols_uniq_id
+        
       vacols_case.update_vacols_location!(judge.vacols_uniq_id)
     end
 
