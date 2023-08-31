@@ -11,7 +11,7 @@ module WarRoom
   class PreDocketIhpTasks
     def run(appeal_uuid)
       @appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(appeal_uuid)
-      if appeal.appeal_state.appeal_docketed
+      if @appeal.appeal_state&.appeal_docketed
         puts("Appeal has been docketed. Aborting...")
         fail Interrupt
       end
@@ -20,44 +20,61 @@ module WarRoom
 
       ihp_task.update!(parent_id: distribution_task.id)
       ihp_task.on_hold!
+    rescue ActiveRecord::RecordNotFound => _error
+      puts("Appeal was not found. Aborting...")
+      raise Interrupt
+    rescue StandardError => error
+      puts("Something went wrong. Requires manual remediation. Error: #{error} Aborting...")
+      raise Interrupt
     end
 
     private
 
     def root_task
-      @root_task = appeal.root_task
+      @root_task = @appeal.root_task
     end
 
     def distribution_task
       @distribution_task ||=
-        if (dt = @appeal.tasks.where(type: "DistributionTask").first).blank?
-          distribution_task = DistributionTask.create!(appeal: @appeal, parent: root_task)
-          distribution_task.on_hold!
-          distribution_task
-        else
+        if (distribution_tasks = @appeal.tasks.where(type: "DistributionTask").all).count > 1
+          puts("Duplicate DistributionTask found. Remove the erroneous task and retry. Aborting...")
+          fail Interrupt
+        elsif distribution_tasks.count == 1
+          distribution_tasks[0]
+        elsif distribution_tasks.empty?
+          dt = DistributionTask.create!(appeal: @appeal, parent: root_task)
           dt.on_hold!
           dt
+        else
+          puts("DistributionTask failed to inflate. Aborting...")
+          fail Interrupt
         end
     end
 
     def predocket_task
-      @predocket_task ||=
-        if (predocket_tasks = appeal.tasks.where(type: "PreDocketTask").all).count > 1
-          puts("Duplicate PredocketTask found. Aborting...")
-          fail Interrupt
-        end
+      return @predocket_task unless @predocket_task.nil?
 
-      predocket_tasks[0]
+      if (predocket_tasks = @appeal.tasks.where(type: "PreDocketTask").all).count > 1
+        puts("Duplicate PredocketTask found. Remove the erroneous task and retry. Aborting...")
+        fail Interrupt
+      end
+
+      @predocket_task = predocket_tasks[0]
     end
 
     def ihp_task
-      @ihp_task ||=
-        if (ihp_tasks = appeal.tasks.where(type: "InformalHearingPresentationTask").all).count > 1
-          puts("Duplicate InformalHearingPresentationTask found. Aborting...")
-          fail Interrupt
-        end
+      return @ihp_task unless @ihp_task.nil?
 
-      ihp_tasks[0]
+      ihp_tasks = @appeal.tasks.where(type: "InformalHearingPresentationTask").all
+      if ihp_tasks.count > 1
+        puts("Duplicate InformalHearingPresentationTask found. Remove the erroneous task and retry. Aborting...")
+        fail Interrupt
+      elsif ihp_tasks.count <= 0
+        puts("No InformalHearingPresentationTask found. Aborting...")
+        fail Interrupt
+      end
+
+      @ihp_task = ihp_tasks[0]
     end
   end
 end
