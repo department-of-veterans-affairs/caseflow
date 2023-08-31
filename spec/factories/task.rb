@@ -88,19 +88,21 @@ FactoryBot.define do
       end
     end
 
-    trait :with_unscheduled_hearing do
+    trait :postponement_request_with_unscheduled_hearing do
       after(:create) do |task|
         appeal = task.appeal
         root_task = appeal.root_task
         distro_task = task.parent
         task.update!(parent: root_task)
         ScheduleHearingTask.create!(appeal: appeal, parent: distro_task, assigned_to: Bva.singleton)
-        HearingPostponementRequestMailTask.create!(appeal: appeal, parent: task,
-                                                   assigned_to: HearingAdmin.singleton)
+        HearingPostponementRequestMailTask.create!(appeal: appeal,
+                                                   parent: task,
+                                                   assigned_to: HearingAdmin.singleton,
+                                                   instructions: task.instructions)
       end
     end
 
-    trait :with_scheduled_hearing do
+    trait :postponement_request_with_scheduled_hearing do
       after(:create) do |task|
         appeal = task.appeal
         root_task = appeal.root_task
@@ -114,7 +116,45 @@ FactoryBot.define do
         AssignHearingDispositionTask.create!(appeal: appeal, parent: schedule_hearing_task.parent,
                                              assigned_to: Bva.singleton)
         HearingTaskAssociation.create!(hearing: hearing, hearing_task: schedule_hearing_task.parent)
-        HearingPostponementRequestMailTask.create!(appeal: appeal, parent: task, assigned_to: HearingAdmin.singleton)
+        HearingPostponementRequestMailTask.create!(appeal: appeal,
+                                                   parent: task,
+                                                   assigned_to: HearingAdmin.singleton,
+                                                   instructions: task.instructions)
+      end
+    end
+
+    trait :withdrawal_request_with_unscheduled_hearing do
+      after(:create) do |task|
+        appeal = task.appeal
+        root_task = appeal.root_task
+        distro_task = task.parent
+        task.update!(parent: root_task)
+        ScheduleHearingTask.create!(appeal: appeal, parent: distro_task, assigned_to: Bva.singleton)
+        HearingWithdrawalRequestMailTask.create!(appeal: appeal,
+                                                 parent: task,
+                                                 assigned_to: HearingAdmin.singleton,
+                                                 instructions: task.instructions)
+      end
+    end
+
+    trait :withdrawal_request_with_scheduled_hearing do
+      after(:create) do |task|
+        appeal = task.appeal
+        root_task = appeal.root_task
+        distro_task = task.parent
+        task.update!(parent: root_task)
+        schedule_hearing_task = ScheduleHearingTask.create!(appeal: appeal, parent: distro_task,
+                                                            assigned_to: Bva.singleton)
+        schedule_hearing_task.update(status: "completed", closed_at: Time.zone.now)
+        hearing = create(:hearing, disposition: nil, judge: nil, appeal: appeal)
+        distro_task.update!(status: "on_hold")
+        AssignHearingDispositionTask.create!(appeal: appeal, parent: schedule_hearing_task.parent,
+                                             assigned_to: Bva.singleton)
+        HearingTaskAssociation.create!(hearing: hearing, hearing_task: schedule_hearing_task.parent)
+        HearingWithdrawalRequestMailTask.create!(appeal: appeal,
+                                                 parent: task,
+                                                 assigned_to: HearingAdmin.singleton,
+                                                 instructions: task.instructions)
       end
     end
 
@@ -662,6 +702,17 @@ FactoryBot.define do
       factory :hearing_postponement_request_mail_task, class: HearingPostponementRequestMailTask do
         parent { create(:distribution_task, appeal: appeal) }
         assigned_to { MailTeam.singleton }
+        instructions do
+          ["**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"]
+        end
+      end
+
+      factory :hearing_withdrawal_request_mail_task, class: HearingWithdrawalRequestMailTask do
+        parent { create(:distribution_task, appeal: appeal) }
+        assigned_to { MailTeam.singleton }
+        instructions do
+          ["**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"]
+        end
       end
     end
   end

@@ -45,13 +45,13 @@ describe HearingPostponementRequestMailTask, :postgres do
         end
 
         context "when there is an active ScheduleHearingTask in the appeal's task tree" do
-          let(:hpr) { create(:hearing_postponement_request_mail_task, :with_unscheduled_hearing) }
+          let(:hpr) { create(:hearing_postponement_request_mail_task, :postponement_request_with_unscheduled_hearing) }
 
           include_examples "returns appropriate task actions"
         end
 
         context "when there is an open AssignHearingDispositionTask in the appeal's task tree" do
-          let(:hpr) { create(:hearing_postponement_request_mail_task, :with_scheduled_hearing) }
+          let(:hpr) { create(:hearing_postponement_request_mail_task, :postponement_request_with_scheduled_hearing) }
 
           context "when the hearing is scheduled in the past" do
             before do
@@ -86,7 +86,7 @@ describe HearingPostponementRequestMailTask, :postgres do
 
         context "when there is neither an active ScheduleHearingTask " \
                 "nor an open AssignHearingDispositionTask in the appeal's task tree" do
-          let(:hpr) { create(:hearing_postponement_request_mail_task, :with_unscheduled_hearing) }
+          let(:hpr) { create(:hearing_postponement_request_mail_task, :postponement_request_with_unscheduled_hearing) }
           let(:schedul_hearing_task) { hpr.appeal.tasks.find_by(type: ScheduleHearingTask.name) }
 
           before do
