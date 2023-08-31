@@ -20,14 +20,14 @@ namespace :db do
                      end
 
           veteran = Veteran.find_by_file_number(file_number)
-          scenario1 = task_type == "HEARINGTASK" || task_type == "SCENARIO1EDGE" || task_type == "BRIEFF_CURLOC_81_TASK"
+          decass_scenarios = task_type == "HEARINGTASK" || task_type == "SCENARIO1EDGE" || task_type == "BRIEFF_CURLOC_81_TASK"
           fail ActiveRecord::RecordNotFound unless veteran
 
           vacols_veteran_record = find_or_create_vacols_veteran(veteran)
 
           # Creates decass for scenario1/2/4 tasks as they require an assigned_by field
           # which is grabbed from the Decass table (b/c it is an AttorneyLegacyTask)
-          decass_creation = if scenario1 || (task_type == "ATTORNEYTASK" && user&.attorney_in_vacols?)
+          decass_creation = if decass_scenarios || (task_type == "ATTORNEYTASK" && user&.attorney_in_vacols?)
                               true
                             else false
                             end
