@@ -7,7 +7,6 @@ class UpdateAppellantRepresentationJob < CaseflowJob
   include ActionView::Helpers::DateHelper
   queue_with_priority :low_priority
   application_attr :queue
-
   APP_NAME = "caseflow_job"
   METRIC_GROUP_NAME = UpdateAppellantRepresentationJob.name.underscore
   TOTAL_NUMBER_OF_APPEALS_TO_UPDATE = 1000
