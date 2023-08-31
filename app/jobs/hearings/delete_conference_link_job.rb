@@ -26,13 +26,14 @@ class DeleteConferenceLinkJob < CaseflowJob
       updated_by_id: RequestStore[:current_user],
       updated_at: Time.zone.now,
       guest_hearing_link: nil,
-      # guest_pin: nil,
       guest_pin_long: nil,
       host_link: nil,
       host_pin: nil,
       host_pin_long: nil
     }
   end
-
-  # TODO Create a Hearing Day scheduled in the future. Given that the link is created, that would allow me to test the job and see how many it receives.
 end
+
+  ## TODO Implement use of the paranoia gems macros.
+  ## TODO set macro on the conference_link class, acts_as_paranoid
+  ## TODO create AddDeletedAtComlumnToConferenceLinks migration
