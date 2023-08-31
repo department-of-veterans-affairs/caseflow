@@ -73,11 +73,11 @@ class DocumentsTable extends React.Component {
    let foundErrors = [];
 
    // Prevent the from date from being after the To date.
-   if (this.state.fromDate !== '' && pickedDate > this.state.toDate) {
+   if (this.state.toDate !== '' && pickedDate > this.state.toDate) {
      foundErrors = [...foundErrors, 'From date cannot occur after to date.'];
    }
    // Prevent the To date and From date from being the same date.
-   if (this.state.fromDate !== '' && pickedDate === this.state.toDate) {
+   if (this.state.toDate !== '' && pickedDate === this.state.toDate) {
      foundErrors = [...foundErrors, 'From date and To date cannot be the same.'];
    }
 
@@ -226,6 +226,7 @@ class DocumentsTable extends React.Component {
     getRecieptDateFilterIconRef = (recieptDataFilterIcon) => (this.recieptDataFilterIcon = recieptDataFilterIcon);
 
     resetRecieptPicker = () => {
+      this.props.setRecieptDateFilter({});
       this.setState({ fromDate: '', toDate: '', onDate: '', fromDateErrors:[], toDateErrors:[], onDateErrors:[]});
     };
   getKeyForRow = (index, { isComment, id }) => {
