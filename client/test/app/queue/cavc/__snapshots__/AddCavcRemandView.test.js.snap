@@ -317,19 +317,23 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                         </FormLabel>
                       </strong>
                     </label>
-                    <input
-                      className={
-                        Array [
-                          "cf-form-textinput",
-                        ]
-                      }
-                      id="docket-number"
-                      name="docket-number"
-                      onBlur={[Function]}
-                      onChange={[Function]}
-                      type="text"
-                      value=""
-                    />
+                    <div
+                      className="input-container"
+                    >
+                      <input
+                        className={
+                          Array [
+                            "cf-form-textinput",
+                          ]
+                        }
+                        id="docket-number"
+                        name="docket-number"
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        type="text"
+                        value=""
+                      />
+                    </div>
                   </div>
                 </TextField>
                 <RadioField
@@ -3827,21 +3831,25 @@ exports[`AddCavcRemandView renders correctly 1`] = `
                           </FormLabel>
                         </strong>
                       </label>
-                      <input
-                        className={
-                          Array [
-                            "cf-form-textinput",
-                          ]
-                        }
-                        id="decision-date"
-                        max="9999-12-31"
-                        name="decision-date"
-                        onBlur={[Function]}
-                        onChange={[Function]}
-                        placeholder="mm/dd/yyyy"
-                        type="date"
-                        value=""
-                      />
+                      <div
+                        className="input-container"
+                      >
+                        <input
+                          className={
+                            Array [
+                              "cf-form-textinput",
+                            ]
+                          }
+                          id="decision-date"
+                          max="9999-12-31"
+                          name="decision-date"
+                          onBlur={[Function]}
+                          onChange={[Function]}
+                          placeholder="mm/dd/yyyy"
+                          type="date"
+                          value=""
+                        />
+                      </div>
                     </div>
                   </TextField>
                 </DateSelector>
