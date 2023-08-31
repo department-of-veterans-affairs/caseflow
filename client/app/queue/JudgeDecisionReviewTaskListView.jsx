@@ -46,7 +46,7 @@ class JudgeDecisionReviewTaskListView extends React.PureComponent {
         {messages.error.detail}
       </Alert>}
       {messages.success && <Alert type="success" title={messages.success.title}>
-        {messages.success.detail || COPY.JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
+        {messages.success.detail || (messages.success.title.includes('You have successfully reassigned ') && COPY.JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL)}
       </Alert>}
       <QueueTableBuilder assignedTasks={tasks} />
     </AppSegment>;

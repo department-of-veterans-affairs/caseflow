@@ -19,7 +19,7 @@ describe JudgeDispatchReturnTask, :postgres do
         [
           Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
           Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
-          Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
+          Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h,
           Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h,
           Constants.TASK_ACTIONS.JUDGE_DISPATCH_RETURN_TO_ATTORNEY.to_h,
           Constants.TASK_ACTIONS.CANCEL_TASK.to_h
