@@ -32,10 +32,6 @@ FactoryBot.define do
       remand_reasons { [create(:ama_remand_reason, code: "advisory_medical_opinion")] }
     end
 
-    trait :ama_remand_reason_variable do
-      remand_reasons { [create(:ama_remand_reason, code: remand_code)] }
-    end
-
     after(:create) do |decision_issue, evaluator|
       if evaluator.request_issues
         decision_issue.request_issues << evaluator.request_issues
