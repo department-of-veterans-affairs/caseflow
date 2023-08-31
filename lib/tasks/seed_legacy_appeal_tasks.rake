@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 # to create legacy appeals with AMA Tasks added, run "bundle exec rake db:generate_legacy_appeals_with_tasks"
-# then select an option between 'HearingTask', 'JudgeTask', 'AttorneyTask', 'ReviewTask', 'Scenario1edge' and 'Brieff_Curloc_81_Task'
+# then select an option between 'HearingTask', 'JudgeTask', 'AttorneyTask', 'ReviewTask', 'Scenario1edge'
+# and 'Brieff_Curloc_81_Task'
 
 namespace :db do
   desc "Generates a smattering of legacy appeals with VACOLS cases that have special issues assocaited with them"
@@ -23,7 +24,10 @@ namespace :db do
           fail ActiveRecord::RecordNotFound unless veteran
 
           vacols_veteran_record = find_or_create_vacols_veteran(veteran)
-          decass_creation = if scenario1 || (task_type == "ATTORNEYTASK" && user&.attorney_in_vacols?) # {Creates decass for scenario1/2 tasks as they require an assigned_by field which is grabbed from the Decass table (b/c it is an AttorneyLegacyTask)}
+
+          # Creates decass for scenario1/2/4 tasks as they require an assigned_by field
+          # which is grabbed from the Decass table (b/c it is an AttorneyLegacyTask)
+          decass_creation = if scenario1 || (task_type == "ATTORNEYTASK" && user&.attorney_in_vacols?)
                               true
                             else false
                             end
