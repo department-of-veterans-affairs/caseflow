@@ -7,11 +7,12 @@
 # The logs also contain the Id of the record that has been updated
 
 class StuckJobReportService
-  BUCKET_NAME = "data-remediation-output"
-  attr_reader :logs
+  # BUCKET_NAME = "data-remediation-output-#{Rails.deploy_env}"
+  attr_reader :logs, :bucket_name
 
   def initialize
     @logs = ["#{Time.zone.now} ********** Remediation Log Report **********"]
+    @bucket_name = "data-remediation-output-#{Rails.deploy_env}"
   end
 
   # Logs the Id and the object that is being updated
@@ -20,7 +21,8 @@ class StuckJobReportService
   end
 
   def append_error(class_name, id, error)
-    logs.push("\n#{Time.zone.now} Record Type: #{class_name} - Record ID: #{id}. Encountered #{error}, record not updated.")
+    logs.push("\n#{Time.zone.now} Record Type: #{class_name}"\
+      " - Record ID: #{id}. Encountered #{error}, record not updated.")
   end
 
   # Gets the record count of the record type passed in.
@@ -43,8 +45,8 @@ class StuckJobReportService
     file_name = "#{create_file_name}-logs/#{create_file_name}-log-#{Time.zone.now}"
     s3client = aws_client
     s3resource = Aws::S3::Resource.new(client: s3client)
-    s3bucket = s3resource.bucket(BUCKET_NAME)
 
+    s3bucket = s3resource.bucket(bucket_name)
     s3bucket.object(file_name).upload_file(filepath, acl: "private", server_side_encryption: "AES256")
   end
 
