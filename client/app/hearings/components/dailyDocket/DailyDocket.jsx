@@ -308,10 +308,10 @@ export default class DailyDocket extends React.Component {
           </div>
         </div>
         {(user.userIsHearingManagement || user.userIsHearingAdmin) && (
-          <PexipDailyDocketGuestLink linkInfo={dailyDocket.conferenceLink} />
+          <PexipDailyDocketGuestLink linkInfo={dailyDocket.pexipConferenceLink} />
         )}
         {(user.userIsHearingManagement || user.userIsHearingAdmin) && (
-          <WebexDailyDocketGuestLink linkInfo={dailyDocket.conferenceLink} />
+          <WebexDailyDocketGuestLink linkInfo={dailyDocket.webexConferenceLink} />
         )}
         <DailyDocketRows
           hearings={this.props.hearings}
