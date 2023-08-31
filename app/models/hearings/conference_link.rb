@@ -83,3 +83,18 @@ class ConferenceLink < CaseflowRecord
     end
   end
 end
+
+# ConferenceLink.create!(alias: "0000027",
+#   alias_with_host:"BVA0000027@example.va.gov",
+#   created_by_id: 125 ,
+#   guest_hearing_link: "https://example.va.gov/sample/?conference=BVA0000027@example.va.gov&pin=7470125632&callType=video",
+#   guest_pin_long: "7470125632",
+#   hearing_day_id: 92 ,
+#   host_link: "https://example.va.gov/sample/?conference=BVA0000001@example.va.gov&pin=3998495&callType=video",
+#   host_pin_long: "3998495",
+#   updated_by_id: 125 ,
+#   meeting_type: "Webex" )
+
+# ConferenceLink.where(hearing_day_id: 92, meeting_type: "Webex")
+
+
