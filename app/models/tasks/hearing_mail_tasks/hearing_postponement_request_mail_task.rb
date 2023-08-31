@@ -106,7 +106,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   # Params: None
   # Return: The latest active assign hearing disposition task
   def open_assign_hearing_disposition_task
-    @open_assign_hearing_disposition_task ||= appeal.tasks.where(type: ASSIGN_HEARING_DISPOSITION_TASKS).open&.first
+    @open_assign_hearing_disposition_task ||= appeal.tasks.of_type(ASSIGN_HEARING_DISPOSITION_TASKS).open&.first
   end
 
   # Purpose: Associated appeal has an upcoming hearing with an open status
