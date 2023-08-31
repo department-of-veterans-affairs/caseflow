@@ -335,12 +335,22 @@ class IssueRemandReasonsOptions extends React.PureComponent {
             {...checkboxGroupProps}
           />
           <br />
-          <CheckboxGroup
-            label={<h3>Other</h3>}
-            name="other"
-            options={REMAND_REASONS.other}
-            {...checkboxGroupProps}
-          />
+          { !this.props.featureToggles.additional_remand_reasons &&
+            <CheckboxGroup
+             label={<h3>Due Process</h3>}
+             name="due-process"
+             options={REMAND_REASONS.dueProcess}
+             {...checkboxGroupProps}
+            />
+          }
+          { this.props.featureToggles.additional_remand_reasons &&
+              <CheckboxGroup
+              label={<h3>Other</h3>}
+              name="other"
+              options={REMAND_REASONS.other}
+              {...checkboxGroupProps}
+            />
+          }
         </div>
       </div>
     );
