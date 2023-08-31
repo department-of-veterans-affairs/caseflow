@@ -1,4 +1,4 @@
-import { get, pickBy, sortBy, toPairs, map, forEach, some, find, filter } from 'lodash';
+import { get, pickBy, sortBy, toPairs, map, forEach, some, find, filter, before } from 'lodash';
 import { categoryFieldNameOfCategoryName } from './utils';
 import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { update } from '../util/ReducerUtil';
@@ -28,12 +28,12 @@ const filterDates = (docDate, validationDates, filterType) => {
     }
     break;
   case FILTER_TYPES.BEFORE:
-    if (docDate >= beforeDate) {
+    if (docDate <= afterDate) {
       validDate = true;
     }
     break;
   case FILTER_TYPES.AFTER:
-    if (docDate <= afterDate) {
+    if (docDate >= beforeDate) {
       validDate = true;
     }
     break;
