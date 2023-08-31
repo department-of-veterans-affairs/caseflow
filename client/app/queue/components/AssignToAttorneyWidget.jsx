@@ -42,7 +42,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    if (props.selectedTasks[0].appealType === 'LegacyAppeal') {
+    if (props.selectedTasks.length > 0 && props.selectedTasks[0].appealType === 'LegacyAppeal') {
       const instructions = (props.selectedTasks[0].instructions.length === 0 ? null :
         props.selectedTasks[0].instructions.filter((instructionData) => instructionData));
       const isInstructionArray = (instructions === null ? null : instructions);
@@ -50,7 +50,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
       this.state = {
 
-        instructions: ((this.props.isModal &&
+        instructions: ((this.props.isModal && props.selectedTasks.length > 0 &&
           props.selectedTasks[0].appealType === 'LegacyAppeal' ? instructionType : null) || null)
       };
 
@@ -258,16 +258,16 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
     const Widget = <React.Fragment>
       <SearchableDropdown
-        name={selectedTasks[0].appealType === 'LegacyAppeal' ?
+        name={(selectedTasks.length > 0 && selectedTasks[0].appealType === 'LegacyAppeal') ?
           COPY.JUDGE_LEGACY_DECISION_REVIEW_TITLE :
           COPY.ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY}
         // hideLabel= {true}
-        hideLabel= {!selectedTasks[0].appealType === 'LegacyAppeal'}
+        hideLabel= {(selectedTasks.length > 0 && !selectedTasks[0].appealType === 'LegacyAppeal')}
         searchable
         errorMessage={isModal && highlightFormItems && !selectedOption ? 'Choose one' : null}
         options={options}
         placeholder={COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER}
-        onChange={selectedTasks[0].appealType === 'LegacyAppeal' ?
+        onChange={(selectedTasks.length > 0 && selectedTasks[0].appealType === 'LegacyAppeal') ?
           (option) => option && this.props.setSelectedAssignee({ assigneeId: option.value }) &&
           this.setModalOnChangeValue('assignedTo', option ? option.value : null) :
           (option) => option && this.props.setSelectedAssignee({ assigneeId: option.value })}
@@ -287,7 +287,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
             errorMessage={isModal && highlightFormItems && !selectedOptionOther ? 'Choose one' : null}
             options={optionsOther}
             placeholder={placeholderOther}
-            onChange={selectedTasks[0].appealType === 'LegacyAppeal' ?
+            onChange={(selectedTasks.length > 0 && selectedTasks[0].appealType === 'LegacyAppeal') ?
               (option) => option && this.props.setSelectedAssigneeSecondary({ assigneeId: option.value }) :
               (option) => option && this.props.setSelectedAssigneeSecondary({ assigneeId: option.value }) &&
               this.setModalOnChangeValue('assignedTo', option ? option.value : null)}
@@ -301,11 +301,11 @@ export class AssignToAttorneyWidget extends React.PureComponent {
           errorMessage={highlightFormItems && instructions.length === 0 ? COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
           id="taskInstructions"
           placeholder = {COPY.MORE_INFO}
-          onChange={selectedTasks[0].appealType === 'LegacyAppeal' ?
+          onChange={(selectedTasks.length > 0 && selectedTasks[0].appealType === 'LegacyAppeal') ?
             (value) => this.setState({ instructions: value }) :
             (value) => this.setModalOnChangeValue('instructions', value)
           }
-          value = {selectedTasks[0].appealType === 'LegacyAppeal' ? null : this.state.instructions}
+          value = {(selectedTasks.length > 0 && selectedTasks[0].appealType === 'LegacyAppeal') ? null : this.state.instructions}
         />
 
       </React.Fragment> }
@@ -320,7 +320,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         styling={css({ margin: '1.5rem 0' })} /> }
     </React.Fragment>;
 
-    if (selectedTasks[0].appealType === 'LegacyAppeal') {
+    if (selectedTasks.length > 0 && selectedTasks[0].appealType === 'LegacyAppeal') {
       return isModal ? <QueueFlowModal title={COPY.ASSIGN_TASK_TITLE}
         submit={this.submit} validateForm={this.validateForm} onCancel={onCancel} button = "Assign"
         submitButtonClassNames = {['usa-button-hover', 'usa-button-warning']}
