@@ -437,21 +437,25 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                                     </FormLabel>
                                   </strong>
                                 </label>
-                                <input
-                                  className={
-                                    Array [
-                                      "cf-form-textinput",
-                                    ]
-                                  }
-                                  id="judgement-date"
-                                  max="9999-12-31"
-                                  name="judgement-date"
-                                  onBlur={[Function]}
-                                  onChange={[Function]}
-                                  placeholder="mm/dd/yyyy"
-                                  type="date"
-                                  value=""
-                                />
+                                <div
+                                  className="input-container"
+                                >
+                                  <input
+                                    className={
+                                      Array [
+                                        "cf-form-textinput",
+                                      ]
+                                    }
+                                    id="judgement-date"
+                                    max="9999-12-31"
+                                    name="judgement-date"
+                                    onBlur={[Function]}
+                                    onChange={[Function]}
+                                    placeholder="mm/dd/yyyy"
+                                    type="date"
+                                    value=""
+                                  />
+                                </div>
                               </div>
                             </TextField>
                           </DateSelector>
@@ -503,21 +507,25 @@ exports[`AddCavcDatesModal renders correctly 1`] = `
                                     </FormLabel>
                                   </strong>
                                 </label>
-                                <input
-                                  className={
-                                    Array [
-                                      "cf-form-textinput",
-                                    ]
-                                  }
-                                  id="mandate-date"
-                                  max="9999-12-31"
-                                  name="mandate-date"
-                                  onBlur={[Function]}
-                                  onChange={[Function]}
-                                  placeholder="mm/dd/yyyy"
-                                  type="date"
-                                  value=""
-                                />
+                                <div
+                                  className="input-container"
+                                >
+                                  <input
+                                    className={
+                                      Array [
+                                        "cf-form-textinput",
+                                      ]
+                                    }
+                                    id="mandate-date"
+                                    max="9999-12-31"
+                                    name="mandate-date"
+                                    onBlur={[Function]}
+                                    onChange={[Function]}
+                                    placeholder="mm/dd/yyyy"
+                                    type="date"
+                                    value=""
+                                  />
+                                </div>
                               </div>
                             </TextField>
                           </DateSelector>
@@ -1078,21 +1086,25 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                                     </FormLabel>
                                   </strong>
                                 </label>
-                                <input
-                                  className={
-                                    Array [
-                                      "cf-form-textinput",
-                                    ]
-                                  }
-                                  id="judgement-date"
-                                  max="9999-12-31"
-                                  name="judgement-date"
-                                  onBlur={[Function]}
-                                  onChange={[Function]}
-                                  placeholder="mm/dd/yyyy"
-                                  type="date"
-                                  value="03/27/2020"
-                                />
+                                <div
+                                  className="input-container"
+                                >
+                                  <input
+                                    className={
+                                      Array [
+                                        "cf-form-textinput",
+                                      ]
+                                    }
+                                    id="judgement-date"
+                                    max="9999-12-31"
+                                    name="judgement-date"
+                                    onBlur={[Function]}
+                                    onChange={[Function]}
+                                    placeholder="mm/dd/yyyy"
+                                    type="date"
+                                    value="03/27/2020"
+                                  />
+                                </div>
                                 <div
                                   className="cf-validation"
                                 >
@@ -1151,21 +1163,25 @@ exports[`AddCavcDatesModal submits succesfully 1`] = `
                                     </FormLabel>
                                   </strong>
                                 </label>
-                                <input
-                                  className={
-                                    Array [
-                                      "cf-form-textinput",
-                                    ]
-                                  }
-                                  id="mandate-date"
-                                  max="9999-12-31"
-                                  name="mandate-date"
-                                  onBlur={[Function]}
-                                  onChange={[Function]}
-                                  placeholder="mm/dd/yyyy"
-                                  type="date"
-                                  value="03/31/2019"
-                                />
+                                <div
+                                  className="input-container"
+                                >
+                                  <input
+                                    className={
+                                      Array [
+                                        "cf-form-textinput",
+                                      ]
+                                    }
+                                    id="mandate-date"
+                                    max="9999-12-31"
+                                    name="mandate-date"
+                                    onBlur={[Function]}
+                                    onChange={[Function]}
+                                    placeholder="mm/dd/yyyy"
+                                    type="date"
+                                    value="03/31/2019"
+                                  />
+                                </div>
                                 <div
                                   className="cf-validation"
                                 >
