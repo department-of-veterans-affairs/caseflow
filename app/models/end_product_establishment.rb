@@ -35,7 +35,7 @@ class EndProductEstablishment < CaseflowRecord
 
   class << self
     def order_by_sync_priority
-      active.order("last_synced_at IS NOT NULL, last_synced_at ASC")
+      active.order(Arel.sql("last_synced_at IS NOT NULL, last_synced_at ASC"))
     end
 
     def established
