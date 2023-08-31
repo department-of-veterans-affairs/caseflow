@@ -88,7 +88,11 @@ class QueueFlowPage extends React.PureComponent {
     } = this.props;
 
     this.props.hideModal('cancelCheckout');
-    this.props.resetDecisionOptions();
+    if (location.href.includes("dispositions")) {
+      this.props.resetDecisionOptions();
+    } else {
+      this.props.goToNextStep();
+    }
     _.each(stagedAppeals, this.props.checkoutStagedAppeal);
 
     this.withUnblockedTransition(

@@ -279,6 +279,7 @@ IntakeEditFrame.propTypes = {
   appeal: PropTypes.object,
   claimId: PropTypes.string,
   user: PropTypes.string,
+  isLegacy: PropTypes.bool,
   routerTestProps: PropTypes.object,
   router: PropTypes.object
 };
