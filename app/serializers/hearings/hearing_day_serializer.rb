@@ -38,12 +38,16 @@ class HearingDaySerializer
   attribute :begins_at
   attribute :updated_by_id
   attribute :updated_at
-  attribute :conference_link do |hearing_day, params|
+  attribute :pexip_conference_link do |hearing_day, params|
     if params[:include_conference_link].present? && params[:include_conference_link][:include_conference_link]
-      serialize_conference_link(hearing_day.conference_link)
+      serialize_conference_link(hearing_day.pexip_conference_link)
     end
   end
-
+  attribute :webex_conference_link do |hearing_day, params|
+    if params[:include_conference_link].present? && params[:include_conference_link][:include_conference_link]
+      serialize_conference_link(hearing_day.webex_conference_link)
+    end
+  end
   def self.get_judge_first_name(hearing_day, params)
     if params[:judge_names].present?
       params[:judge_names].dig(hearing_day.id, :first_name) || ""
