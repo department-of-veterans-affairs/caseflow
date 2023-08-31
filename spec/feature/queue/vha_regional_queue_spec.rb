@@ -116,4 +116,47 @@ feature "VhaRegionalQueue", :all_dbs do
       expect(num_table_rows).to eq(num_completed_rows)
     end
   end
+
+  context "VhaRegional Queue can send back task to Program office" do
+    let(:visn_org) { create(:vha_regional_office) }
+    let(:visn_user) { create(:user) }
+    before do
+      User.authenticate!(user: visn_user)
+    end
+
+    let!(:visn_task) do
+      create(
+        :assess_documentation_task_predocket,
+        :assigned,
+        assigned_to: visn_org
+      )
+    end
+
+    before do
+      visn_org.add_user(visn_user)
+    end
+
+    scenario "Assign task to Program Office" do
+      visit visn_org.path
+      # navigate_from_camo_queue_to_case_details
+      reload_case_detail_page(visn_task.appeal.uuid)
+      find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find(
+        "div",
+        class: "cf-select__option",
+        text: Constants.TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.label
+      ).click
+      expect(page).to have_content(COPY::VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_MODAL_TITLE)
+      expect(page).to have_content(COPY::VHA_CANCEL_TASK_INSTRUCTIONS_LABEL)
+      fill_in("taskInstructions", with: "Testing this Cancellation flow")
+      find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON).click
+
+      expect(page).to have_current_path("#{visn_org.path}?tab=po_assigned&page=1&sort_by=typeColumn&order=asc")
+      expect(page).to have_content(COPY::VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_TITLE)
+      expect(page).to have_content(COPY::VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE_CONFIRMATION_DETAIL)
+
+      visn_task.reload
+      expect(visn_task.status).to eq "cancelled"
+    end
+  end
 end

@@ -105,8 +105,7 @@ RSpec.feature "CAMO can recommend cancellation to BVA Intake", :all_dbs do
       expect(page).to have_content(COPY::VHA_PROGRAM_OFFICE_RETURN_TO_CAMO_CONFIRMATION_DETAIL)
 
       po_task.reload
-      expect(po_task.status).to eq 'cancelled'
-
+      expect(po_task.status).to eq "cancelled"
     end
   end
 
