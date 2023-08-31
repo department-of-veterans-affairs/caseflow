@@ -115,7 +115,7 @@ module Seeds
     end
 
     def create_ama_remand_reason_variable(remand_code)
-      create(:ama_remand_reason, {code: remand_code})
+      [create(:ama_remand_reason, code: remand_code)]
     end
 
     def create_remanded_request_issue_1(appeal, num)
