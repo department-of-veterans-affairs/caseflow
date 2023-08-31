@@ -39,6 +39,7 @@ export const TextField = (props) => {
     inputStyling,
     inputProps,
     inputRef,
+    loading
   } = props;
 
   const textInputClass = className.
@@ -78,27 +79,37 @@ export const TextField = (props) => {
       {props.fixedInput ? (
         <p>{value}</p>
       ) : (
-        <input
-          ref={inputRef}
-          className={className}
-          name={name}
-          id={name}
-          onChange={handleChange}
-          onKeyPress={onKeyPress}
-          onBlur={handleBlur}
-          type={type}
-          defaultValue={defaultValue}
-          value={adjustedVal}
-          readOnly={readOnly}
-          placeholder={placeholder}
-          title={title}
-          maxLength={maxLength}
-          max={max}
-          autoComplete={autoComplete}
-          {...inputProps}
-          {...ariaLabelObj}
-          {...inputStyling}
-        />
+        <div className="input-container">
+          <input
+            ref={inputRef}
+            className={className}
+            name={name}
+            id={name}
+            onChange={handleChange}
+            onKeyPress={onKeyPress}
+            onBlur={handleBlur}
+            type={type}
+            defaultValue={defaultValue}
+            value={adjustedVal}
+            readOnly={readOnly}
+            placeholder={placeholder}
+            title={title}
+            maxLength={maxLength}
+            max={max}
+            autoComplete={autoComplete}
+            {...inputProps}
+            {...ariaLabelObj}
+            {...inputStyling}
+          />
+
+          { loading &&
+              <span className="cf-loading-icon-container">
+                <span className="cf-loading-icon-front">
+                  <span className="cf-loading-icon-back" />
+                </span>
+              </span>
+          }
+        </div>
       )}
 
       {validationError && (
@@ -181,6 +192,7 @@ TextField.propTypes = {
   optional: PropTypes.bool.isRequired,
   type: PropTypes.string,
   validationError: PropTypes.string,
+  loading: PropTypes.bool,
 
   /**
    * The value of the `input` element; required for a controlled component
