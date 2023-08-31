@@ -67,6 +67,8 @@ export class PdfFile extends React.PureComponent {
    * different domain (eFolder), and still need to pass our credentials to authenticate.
    */
   getDocument = (requestOptions) => {
+    const logId = uuid.v4();
+
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
 
@@ -81,7 +83,6 @@ export class PdfFile extends React.PureComponent {
 
         /* The feature toggle reader_get_document_logging adds the progress of the file being loaded in console */
         if (this.props.featureToggles.readerGetDocumentLogging) {
-          const logId = uuid.v4();
           const src = {
             data: resp.body,
             verbosity: 5,
@@ -119,15 +120,14 @@ export class PdfFile extends React.PureComponent {
         return this.props.setPdfDocument(this.props.file, this.pdfDocument);
       }, (reason) => this.onRejected(reason, 'setPdfDocument')).
       catch((error) => {
-        const id = uuid.v4();
         const data = {
           file: this.props.file
         };
-        const message = `${id} : GET ${this.props.file} : ${error}`;
+        const message = `${logId} : GET ${this.props.file} : ${error}`;
 
         console.error(message);
         storeMetrics(
-          id,
+          logId,
           data,
           { message,
             type: 'error',
