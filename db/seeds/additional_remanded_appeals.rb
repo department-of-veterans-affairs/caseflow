@@ -11,8 +11,8 @@ module Seeds
       #create_ama_appeals_decision_ready_hr
       #create_ama_appeals_decision_ready_dr
       create_ama_appeals_ready_to_dispatch_remanded_es
-      create_ama_appeals_ready_to_dispatch_remanded_hr
-      create_ama_appeals_ready_to_dispatch_remanded_dr
+      #create_ama_appeals_ready_to_dispatch_remanded_hr
+      #create_ama_appeals_ready_to_dispatch_remanded_dr
       #create_ama_appeals_ready_to_dispatch_remanded_multiple_es
       #create_ama_appeals_ready_to_dispatch_remanded_multiple_hr
       #create_ama_appeals_ready_to_dispatch_remanded_multiple_dr
@@ -140,7 +140,7 @@ module Seeds
         create(
           :decision_issue,
           :nonrating,
-          create_ama_remand_reason_variable(decision_reason_remand_list[num]),
+          remand_reasons: create_ama_remand_reason_variable(decision_reason_remand_list[num]),
           decision_review: board_grant_task.appeal,
           request_issues: [request_issue],
           rating_promulgation_date: 1.month.ago,
@@ -171,7 +171,7 @@ module Seeds
         create(
           :decision_issue,
           :nonrating,
-          create_ama_remand_reason_variable(decision_reason_remand_list[num]),
+          remand_reasons: create_ama_remand_reason_variable(decision_reason_remand_list[num]),
           disposition: "remanded",
           decision_review: board_grant_task.appeal,
           request_issues: [request_issue],
