@@ -851,6 +851,19 @@ describe EndProductEstablishment, :postgres do
       ]
     end
 
+    context "when lock acquisition fails" do
+      before do
+        allow(RedisMutex).to receive(:with_lock).and_raise(RedisMutex::LockError)
+      end
+
+      it "logs the error message" do
+        expect(Rails.logger).to receive(:error)
+          .with("Failed to acquire lock for EPE ID: #{end_product_establishment.id}!"\
+                "  #sync! is being called by another process. Please try again later.")
+        end_product_establishment.sync!
+      end
+    end
+
     context "when matching end product has not yet been established" do
       it "raises EstablishedEndProductNotFound error" do
         expect { subject }.to raise_error(EndProductEstablishment::EstablishedEndProductNotFound)
@@ -1451,6 +1464,61 @@ describe EndProductEstablishment, :postgres do
       expect([*end_product_establishment].map(&:search_table_ui_hash)).to include(hash_including(
                                                                                     modifier: ""
                                                                                   ))
+    end
+  end
+
+  let!(:queued_end_product_establishment) do
+    EndProductEstablishment.create(
+      payee_code: "10",
+      source_id: 1,
+      source_type: "HigherLevelReview",
+      veteran_file_number: 1
+    )
+  end
+  let!(:non_queued_end_product_establishment) do
+    EndProductEstablishment.create(
+      payee_code: "10",
+      source_id: 2,
+      source_type: "HigherLevelReview",
+      veteran_file_number: 1
+    )
+  end
+  let!(:priority_end_product_sync_queue) do
+    PriorityEndProductSyncQueue.create(
+      batch_id: nil,
+      created_at: Time.zone.now,
+      end_product_establishment_id: queued_end_product_establishment.id,
+      error_messages: [],
+      last_batched_at: nil,
+      status: "NOT_PROCESSED"
+    )
+  end
+
+  context "#priority_end_product_sync_queue" do
+    context "if the End Product Establishment is not enqueued in the Priority End Product Sync Queue" do
+      it "will return nil" do
+        expect(non_queued_end_product_establishment.priority_end_product_sync_queue).to eq(nil)
+      end
+    end
+
+    context "if the End Product Establishment is enqueued in the Priority End Product Sync Queue" do
+      it "will return the record that is enqueued to sync from the Priority End Product Sync Queue" do
+        expect(non_queued_end_product_establishment.priority_end_product_sync_queue).to eq(nil)
+      end
+    end
+  end
+
+  context "#priority_queued?" do
+    context "if the End Product Establishment is not enqueued in the Priority End Product Sync Queue" do
+      it "will return False" do
+        expect(non_queued_end_product_establishment.priority_queued?).to eq(false)
+      end
+    end
+
+    context "if the End Product Establishment is enqueued in the Priority End Product Sync Queue" do
+      it "will return True" do
+        expect(queued_end_product_establishment.priority_queued?).to eq(true)
+      end
     end
   end
 end
