@@ -8,6 +8,7 @@
     page: "DecisionReviewer",
     feedbackUrl: feedback_url,
     efolderExpressUrl: efolder_express_url,
+    userHasEfolderRole: current_user.can?('Download eFolder'),
     featureToggles: {
       interfaceVersion2: FeatureToggle.enabled?(:interface_version_2, user: current_user),
       windowSlider: FeatureToggle.enabled?(:window_slider, user: current_user),
