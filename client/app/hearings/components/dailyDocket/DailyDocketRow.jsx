@@ -380,6 +380,8 @@ class DailyDocketRow extends React.Component {
           type="button"
           disabled={this.props.conferenceLinkError}
           onClick={this.conferenceLinkOnClick} > Connect to Recording System</Button> }
+        {hearing?.isVirtual !== true && userJudgeOrCoordinator(user, hearing) && <div ><b>Pexip hearing</b></div>}
+        {hearing?.isVirtual == true && userJudgeOrCoordinator(user, hearing) && <div ><b>Webex hearing</b></div>}
         <DispositionDropdown
           {...inputProps}
           cancelUpdate={this.cancelUpdate}
