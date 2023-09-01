@@ -36,6 +36,12 @@ class TagController < ApplicationController
     render(json: { status: :no_content })
   end
 
+  def auto_tag
+    Document.find(params[:document_id]).update(auto_tagged: true)
+    AutotaggedDocumentJob.perform_later(params[:document_id])
+    render(json: { status: :ok })
+  end
+
   private
 
   def tag_params

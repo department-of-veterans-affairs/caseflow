@@ -14,6 +14,9 @@
   applicationUrls: application_urls,
   feedbackUrl: feedback_url,
   buildDate: build_date,
+  mstIdentification: FeatureToggle.enabled?(:mst_identification, user: current_user),
+  pactIdentification: FeatureToggle.enabled?(:pact_identification, user: current_user),
+  legacyMstPactIdentification: FeatureToggle.enabled?(:legacy_mst_pact_identification, user: current_user),
   userCanAddVirtualHearingDays: FeatureToggle.enabled?(:national_vh_queue, user: current_user),
   userCanAssignHearingSchedule: current_user.can_assign_hearing_schedule?,
   userCanBuildHearingSchedule: current_user.can?('Build HearSched'),
@@ -29,6 +32,9 @@
   userIsDvc: current_user.can_view_judge_team_management?,
   userIsHearingManagement: current_user.in_hearing_management_team?,
   userIsBoardAttorney: current_user.attorney?,
-  userIsHearingAdmin: current_user.in_hearing_admin_team?
+  userIsHearingAdmin: current_user.in_hearing_admin_team?,
+  featureToggles: {
+    metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user)
+  }
 }) %>
 <% end %>

@@ -38,7 +38,9 @@ Rails.application.configure do
   end
 
   # Print deprecation notices to the Rails logger.
-  config.active_support.deprecation = :log
+  # config.active_support.deprecation = :log
+  require_relative "../../app/services/deprecation_warnings/development_handler"
+  ActiveSupport::Deprecation.behavior = DeprecationWarnings::DevelopmentHandler
 
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load
@@ -78,6 +80,14 @@ Rails.application.configure do
   ENV["AWS_ACCESS_KEY_ID"] ||= "dummykeyid"
   ENV["AWS_SECRET_ACCESS_KEY"] ||= "dummysecretkey"
 
+  # BatchProcess ENVs
+  # priority_ep_sync
+  ENV["BATCH_PROCESS_JOB_DURATION"] ||= "50" # Number of minutes the job will run for
+  ENV["BATCH_PROCESS_SLEEP_DURATION"] ||= "5" # Number of seconds between loop iterations
+  ENV["BATCH_PROCESS_BATCH_LIMIT"]||= "100" # Max number of records in a batch
+  ENV["BATCH_PROCESS_ERROR_DELAY"] ||= "3" # In number of hours
+  ENV["BATCH_PROCESS_MAX_ERRORS_BEFORE_STUCK"] ||= "3" # When record errors for X time, it's declared stuck
+
   # Necessary vars needed to create virtual hearing links
   # Used by VirtualHearings::LinkService
   ENV["VIRTUAL_HEARING_PIN_KEY"] ||= "mysecretkey"
@@ -89,6 +99,11 @@ Rails.application.configure do
 
   # Quarterly Notifications Batch Sizes
   ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"] ||= "1000"
+
+  # Populate End Product Sync Queue ENVs
+  ENV["END_PRODUCT_QUEUE_JOB_DURATION"] ||= "50" # Number of minutes the job will run for
+  ENV["END_PRODUCT_QUEUE_SLEEP_DURATION"] ||= "5" # Number of seconds between loop iterations
+  ENV["END_PRODUCT_QUEUE_BATCH_LIMIT"] ||= "500" # Max number of records in a batch
 
   # Travel Board Sync Batch Size
   ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"] ||= "250"
@@ -104,6 +119,9 @@ Rails.application.configure do
   ENV["PACMAN_API_TOKEN_ISSUER"] ||= "issuer-of-our-token"
   ENV["PACMAN_API_SYS_ACCOUNT"] ||= "CSS_ID_OF_OUR_ACCOUNT"
   ENV["PACMAN_API_URL"] ||= "https://pacman-uat.dev.bip.va.gov/"
+
+  ENV["CLAIM_EVIDENCE_API_URL"] ||= "https://vefs-claimevidence-int.dev8.bip.va.gov"
+  ENV["CLAIM_EVIDENCE_JWT_TOKEN"] ||= "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NmQxOWE2OC03MDA1LTRhNjgtOWEzNC03MzEzZmI0MjMzNzMiLCJpYXQiOjE1MTYyMzkwMjIsImlzcyI6ImRldmVsb3BlclRlc3RpbmciLCJhcHBsaWNhdGlvbklEIjoiVkJNUy1VSSIsInVzZXJJRCI6ImNob3dhcl9zc3VwZXIiLCJzdGF0aW9uSUQiOiIzMTcifQ.33CyN4lq3WnyON2F4m4SlctTBtonBaySjf_7NDCBLl4"
 
   if ENV["WITH_TEST_EMAIL_SERVER"]
     config.action_mailer.delivery_method = :smtp

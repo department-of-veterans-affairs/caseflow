@@ -9,12 +9,27 @@
 # the current status of the EP when the EndProductEstablishment is synced.
 
 class EndProductEstablishment < CaseflowRecord
+  # Using macro-style definition. The locking scope will be TheClass
+  # method and only one method can run at any given time.
+  include RedisMutex::Macro
+
   belongs_to :source, polymorphic: true
   belongs_to :user
   has_many :request_issues
   has_many :end_product_code_updates
   has_many :effectuations, class_name: "BoardGrantEffectuation"
   has_many :end_product_updates
+  has_one :priority_end_product_sync_queue
+  belongs_to :vbms_ext_claim, foreign_key: "reference_id", primary_key: "claim_id", optional: true
+
+  # :block  => 1    # Specify in seconds how long you want to wait for the lock to be released.
+  #                 # Specify 0 if you need non-blocking sematics and return false immediately. (default: 1)
+  # :sleep  => 0.1  # Specify in seconds how long the polling interval should be when :block is given.
+  #                 # It is NOT recommended to go below 0.01. (default: 0.1)
+  # :expire => 10   # Specify in seconds when the lock should be considered stale when something went wrong
+  #                 # with the one who held the lock and failed to unlock. (default: 10)
+  # auto_mutex :sync!, block: 60, expire: 100, after_failure: lambda { Rails.logger.error('failed to acquire lock!
+  # EPE sync is being called by another process. Please try again later.') }
 
   # allow @veteran to be assigned to save upstream calls
   attr_writer :veteran
@@ -35,7 +50,7 @@ class EndProductEstablishment < CaseflowRecord
 
   class << self
     def order_by_sync_priority
-      active.order("last_synced_at IS NOT NULL, last_synced_at ASC")
+      active.order(Arel.sql("last_synced_at IS NOT NULL, last_synced_at ASC"))
     end
 
     def established
@@ -46,7 +61,7 @@ class EndProductEstablishment < CaseflowRecord
       # We only know the set of inactive EP statuses
       # We also only know the EP status after fetching it from BGS
       # Therefore, our definition of active is when the EP is either
-      #   not known or not known to be inactive
+      # not known or not known to be inactive
       established.where("synced_status NOT IN (?) OR synced_status IS NULL", EndProduct::INACTIVE_STATUSES)
     end
   end
@@ -197,25 +212,31 @@ class EndProductEstablishment < CaseflowRecord
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def sync!
-    # There is no need to sync end_product_status if the status
-    # is already inactive since an EP can never leave that state
-    return true unless status_active?
+    RedisMutex.with_lock("EndProductEstablishment:#{id}", block: 60, expire: 100) do
+      # key => "EndProductEstablishment:id"
+      # There is no need to sync end_product_status if the status
+      # is already inactive since an EP can never leave that state
+      return true unless status_active?
 
-    fail EstablishedEndProductNotFound, id unless result
+      fail EstablishedEndProductNotFound, id unless result
 
-    # load contentions now, in case "source" needs them.
-    # this VBMS call is slow and will cause the transaction below
-    # to timeout in some cases.
-    contentions unless result.status_type_code == EndProduct::STATUSES.key("Canceled")
+      # load contentions now, in case "source" needs them.
+      # this VBMS call is slow and will cause the transaction below to timeout in some cases.
+      contentions unless result.status_type_code == EndProduct::STATUSES.key("Canceled")
 
-    transaction do
-      update!(synced_status: result.status_type_code)
-      status_cancelled? ? handle_cancelled_ep! : sync_source!
-      close_request_issues_with_no_decision!
+      transaction do
+        update!(synced_status: result.status_type_code)
+        status_cancelled? ? handle_cancelled_ep! : sync_source!
+        close_request_issues_with_no_decision!
+      end
+
+      save_updated_end_product_code!
     end
-
-    save_updated_end_product_code!
+  rescue RedisMutex::LockError
+    Rails.logger.error("Failed to acquire lock for EPE ID: #{id}!  #sync! is being"\
+                       " called by another process. Please try again later.")
   rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => error
     raise error
   rescue StandardError => error
@@ -227,6 +248,8 @@ class EndProductEstablishment < CaseflowRecord
     # This will allow for other End Product Establishments to sync first before re-attempting.
     update!(last_synced_at: Time.zone.now)
   end
+
+  # rubocop:enable Metrics/MethodLength
 
   def fetch_dispositions_from_vbms
     VBMSService.get_dispositions!(claim_id: reference_id)
@@ -290,6 +313,15 @@ class EndProductEstablishment < CaseflowRecord
 
   def associated_rating
     @associated_rating ||= fetch_associated_rating
+  end
+
+  # Purpose: Check if End Product Establishment is enqueued in the Priority End Product Sync Queue.
+  #
+  # Params: NONE
+  #
+  # Response: True if End Product Establishment is queued to sync.  False if not.
+  def priority_queued?
+    priority_end_product_sync_queue ? true : false
   end
 
   def sync_decision_issues!
