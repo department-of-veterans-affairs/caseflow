@@ -93,6 +93,18 @@ class AppealsController < ApplicationController
     handle_non_critical_error("document_count", error)
   end
 
+  # series_id is lowercase, no curly braces because it comes from url
+  def document_lookup
+    series_id = "{#{params[:series_id]}}".upcase
+    document = Document.find_by(series_id: series_id, file_number: appeal.veteran_file_number)
+
+    unless document
+      document = VBMSService.fetch_document_series_for(appeal).map(&:series_id).include?(series_id)
+    end
+
+    render json: { document_presence: document.present? }
+  end
+
   def power_of_attorney
     render json: power_of_attorney_data
   end

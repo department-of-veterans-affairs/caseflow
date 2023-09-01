@@ -203,7 +203,7 @@ RadioField.propTypes = {
   /**
    * The value of the named `input` element(s); required for a controlled component
    */
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 
   /**
    * Stack `input` elements vertically (automatic for more than two options)
