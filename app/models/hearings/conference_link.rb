@@ -3,6 +3,7 @@
 class ConferenceLink < CaseflowRecord
   class NoAliasWithHostPresentError < StandardError; end
   class LinkMismatchError < StandardError; end
+  acts_as_paranoid
 
   include UpdatedByUserConcern
   include CreatedByUserConcern
