@@ -7,7 +7,6 @@
 # The logs also contain the Id of the record that has been updated
 
 class StuckJobReportService
-  # BUCKET_NAME = "data-remediation-output-#{Rails.deploy_env}"
   attr_reader :logs, :bucket_name
 
   def initialize
