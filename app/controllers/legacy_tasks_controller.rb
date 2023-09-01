@@ -109,10 +109,12 @@ class LegacyTasksController < ApplicationController
   end
 
   def update
+    byebug
     if DasDeprecation::AssignTaskToAttorney.should_perform_workflow?(legacy_task_params[:appeal_id])
       return reassign_with_das
     end
 
+    byebug
     task = JudgeCaseAssignmentToAttorney.update(legacy_task_params.merge(task_id: params[:id]))
     task_instruction
 
