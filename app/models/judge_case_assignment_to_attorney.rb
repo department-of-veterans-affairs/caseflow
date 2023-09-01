@@ -68,9 +68,7 @@ class JudgeCaseAssignmentToAttorney
     end
 
     def update(task_attrs)
-      byebug
       task = new(task_attrs)
-      byebug
       task.reassign_to_attorney! if task.valid?
       task
     end
