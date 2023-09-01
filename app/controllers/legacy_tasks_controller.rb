@@ -98,7 +98,7 @@ class LegacyTasksController < ApplicationController
   def assign_to_judge
     # If the user being assigned to is a judge, do not create a DECASS record, just
     # update the location to the assigned judge.
-    QueueRepository.update_location_to_judge(appeal.vacols_id, assigned_to, current_user)
+    QueueRepository.update_location_to_judge(appeal.vacols_id, assigned_to)
 
     # Remove overtime status of an appeal when reassigning to a judge
     appeal.overtime = false if appeal.overtime?
