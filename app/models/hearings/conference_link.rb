@@ -8,7 +8,6 @@ class ConferenceLink < CaseflowRecord
   include CreatedByUserConcern
 
   after_create :generate_links_and_pins
-  acts_as_paranoid
 
   class << self
     def client_host_or_default
