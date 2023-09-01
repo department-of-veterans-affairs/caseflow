@@ -44,8 +44,8 @@ class LastRetrievalAlert extends React.PureComponent {
 
       return <div {...alertStyling}>
         <Alert title="Warning" type="warning">
-          Reader last synced the list of documents with {this.props.appeal.veteran_full_name}'s eFolder
-          {vbmsDiff} hours ago.
+          Reader last synced the list of documents with {this.props.appeal.veteran_full_name}'s
+          eFolder {vbmsDiff} hours ago.
           <br />
           {this.displaySupportMessage()}
         </Alert>
