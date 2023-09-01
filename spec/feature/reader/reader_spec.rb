@@ -158,11 +158,17 @@ RSpec.feature "Reader", :all_dbs do
 
       it "can filter by document type" do
         # select two filters
+        find("#type-header .table-icon").click
+        type_checkboxes = page.find("#type-header").all(".cf-form-checkbox")
+        type_checkboxes[0].click
+        type_checkboxes[1].click
+
         expect(page).to have_content("Filtering by:")
-        expect(page).to have_content("Document Type (2)")
+        expect(page).to have_content("Document Types (2)")
 
         # deselect one filter
-        expect(page).to have_content("Document Type (1)")
+        type_checkboxes[0].click
+        expect(page).to have_content("Document Types (1)")
 
         # clear the filter
         find("#clear-filters").click

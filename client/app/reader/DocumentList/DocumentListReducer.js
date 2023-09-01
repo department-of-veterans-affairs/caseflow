@@ -196,6 +196,9 @@ const documentListReducer = (state = initialState, action = {}) => {
         },
         tag: {
           $set: {}
+        },
+        document: {
+          $set: {}
         }
       },
       viewingDocumentsOrComments: {
