@@ -13,7 +13,7 @@ FactoryBot.define do
     end
 
     transient do
-      claimant_type { :none }
+      claimant_type { nil }
     end
 
     transient do
