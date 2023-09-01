@@ -29,8 +29,7 @@ class JudgeCaseAssignmentToAttorney
       self.class.repository.reassign_case_to_attorney!(
         judge: assigned_by,
         attorney: assigned_to,
-        vacols_id: vacols_id,
-        created_in_vacols_date: created_in_vacols_date
+        vacols_id: vacols_id
       )
     end
   end

@@ -153,7 +153,7 @@ class QueueRepository
         ).first
     end
 
-    def reassign_case_to_attorney!(judge:, attorney:, vacols_id:, created_in_vacols_date:)
+    def reassign_case_to_attorney!(judge:, attorney:, vacols_id:)
       transaction do
         #update_location_to_attorney(vacols_id, attorney)
         # decass_record = find_decass_record(vacols_id, created_in_vacols_date)
@@ -165,7 +165,7 @@ class QueueRepository
         #                       modifying_user: judge.vacols_uniq_id)
 
         # For some reason we aren't hitting this group of methods when returning to an attorney
-        attrs = assign_to_attorney_attrs(vacols_id, attorney, judge.vacols_uniq_id)
+        attrs = assign_to_attorney_attrs(vacols_id, attorney, judge)
         create_decass_record(attrs.merge(adding_user: judge.vacols_uniq_id))
       end
     end
