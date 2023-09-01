@@ -6,7 +6,7 @@ FactoryBot.define do
     receipt_date { 1.month.ago }
     benefit_type { "compensation" }
     uuid { SecureRandom.uuid }
-    veteran_is_not_claimant { false }
+    veteran_is_not_claimant { true }
 
     transient do
       number_of_claimants { nil }
