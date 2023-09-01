@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { taskActionData } from './utils';
 import { sprintf } from 'sprintf-js';
 
-import { AssignToAttorneyLegacyWidgetModal } from './components/AssignToAttorneyLegacyWidget';
+import { AssignToAttorneyWidgetModal } from './components/AssignToAttorneyWidget';
 import { taskById } from './selectors';
 import COPY from '../../COPY';
 
@@ -87,7 +87,7 @@ class AssignToAttorneyLegacyModalView extends React.PureComponent {
       return null;
     }
 
-    return (<AssignToAttorneyLegacyWidgetModal
+    return (<AssignToAttorneyWidgetModal
       isModal
       match={match}
       userId={userId}
