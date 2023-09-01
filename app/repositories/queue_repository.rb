@@ -195,11 +195,13 @@ class QueueRepository
       end
     end
 
-    def update_location_to_judge(vacols_id, judge)
+    def update_location_to_judge(vacols_id, judge, assigned_by)
       vacols_case = VACOLS::Case.find(vacols_id)
       fail VACOLS::Case::InvalidLocationError, "Invalid location \"#{judge.vacols_uniq_id}\"" unless
         judge.vacols_uniq_id
 
+      decass_record = incomplete_decass_record(vacols_id)
+      update_decass_record(decass_record, modifying_user: assigned_by.vacols_uniq_id)
       vacols_case.update_vacols_location!(judge.vacols_uniq_id)
     end
 
