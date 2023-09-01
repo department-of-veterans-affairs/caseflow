@@ -266,7 +266,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
           onChange={(option) => this.setModalOnChangeValue('selectedAssignee', option ? option.value : null)}
           options={options}
         />
-        <h3>{sprintf(COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_INSTRUCTIONS_HEADER, selectedJudgeName)}</h3>
+        <h3 className="blocked-advanced-h3">{sprintf(COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_INSTRUCTIONS_HEADER, selectedJudgeName)}</h3>
         <TextareaField
           required
           errorMessage={highlightFormItems && !this.validInstructions() ? 'Judge instructions field is required' : null}
