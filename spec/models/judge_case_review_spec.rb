@@ -152,8 +152,9 @@ describe JudgeCaseReview, :all_dbs do
                dedeadline: 6.days.ago)
       end
       let!(:vacols_case) { create(:case, bfkey: "123456") }
-      let(:vacols_issue1) { create(:case_issue, isskey: vacols_case.bfkey) }
-      let(:vacols_issue2) { create(:case_issue, isskey: vacols_case.bfkey) }
+      let(:vacols_issue1) { create(:case_issue, isskey: vacols_case.bfkey, issmst: "Y", isspact: "Y")}
+      let(:vacols_issue2) { create(:case_issue, isskey: vacols_case.bfkey, issmst: "N", isspact: "N")}
+      let!(:judge_staff) { create(:staff, :judge_role, slogid: "CFS456", sdomainid: judge.css_id, sattyid: "AA") }
 
       context "when all parameters are present to sign a decision and VACOLS update is successful" do
         before do
