@@ -534,7 +534,7 @@ export const initialAssignTasksToUser = ({
 
   let paramsArray = amaParams.requestParams.data.tasks.length ? legacyParams.concat(amaParams) : legacyParams;
 
-  paramsArray = legacyAMATasksParams.requestParams.data.tasks.length ? legacyParams.concat(legacyAMATasksParams) : legacyParams;
+  paramsArray = legacyAMATasksParams.requestParams.data.tasks.length ? paramsArray.concat(legacyAMATasksParams) : paramsArray;
 
   return Promise.all(paramsArray.map((params) => {
     const { requestParams, url, taskIds } = params;
