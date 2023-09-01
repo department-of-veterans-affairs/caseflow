@@ -155,16 +155,6 @@ class QueueRepository
 
     def reassign_case_to_attorney!(judge:, attorney:, vacols_id:)
       transaction do
-        #update_location_to_attorney(vacols_id, attorney)
-        # decass_record = find_decass_record(vacols_id, created_in_vacols_date)
-        # update_decass_record(decass_record,
-        #                       attorney_id: attorney.vacols_attorney_id,
-        #                       group_name: attorney.vacols_group_id[0..2],
-        #                       assigned_to_attorney_date: VacolsHelper.local_time_with_utc_timezone,
-        #                       deadline_date: VacolsHelper.local_date_with_utc_timezone + 30.days,
-        #                       modifying_user: judge.vacols_uniq_id)
-
-        # For some reason we aren't hitting this group of methods when returning to an attorney
         attrs = assign_to_attorney_attrs(vacols_id, attorney, judge)
         create_decass_record(attrs.merge(adding_user: judge.vacols_uniq_id))
       end
