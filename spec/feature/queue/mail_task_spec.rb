@@ -41,7 +41,7 @@ RSpec.feature "MailTasks", :postgres do
         text = Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label
         click_dropdown(prompt: prompt, text: text)
         fill_in("taskInstructions", with: "instructions")
-        click_button("Submit")
+        click_button("Assign")
 
         expect(page).to have_content(format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, user.full_name))
         expect(page.current_path).to eq("/queue")
