@@ -96,7 +96,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   #
   # Return: The cancelled HPR mail tasks
   def cancel_when_redundant(completed_task, updated_at)
-    user = ensure_user_can_cancel_task
+    user = ensure_user_can_cancel_task(completed_task)
     params = {
       status: Constants.TASK_STATUSES.cancelled,
       instructions: format_cancellation_reason(completed_task.type, updated_at)
@@ -299,17 +299,18 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     [instructions[0] + markdown_to_append]
   end
 
-  # Purpose: If hearing postponed by a member of HearingAdminTeam, return that user. Otherwise,
-  #          in the case that hearing in postponed by HearingChangeDispositionJob, return a backup
-  #          user with HearingAdmin privileges to pass validation checks in Task#update_from_params
+  # Purpose: If hearing postponed by a member of HearingAdminTeam, return that user. Otherwise, in the
+  #          case that hearing in postponed by HearingChangeDispositionJob, current_user is system_user
+  #          and will not have permission to call Task#update_from_params. Instead, return a user with
+  #          with HearingAdmin privileges.
   #
   # Params: completed_task - Task object of task through which heairng was postponed
-  def ensure_user_can_cancel_task
+  def ensure_user_can_cancel_task(completed_task)
     current_user = RequestStore[:current_user]
 
     return current_user if current_user&.in_hearing_admin_team?
 
-    open_hearing.updated_by
+    completed_task.hearing.updated_by
   end
 
   # Purpose: Format context to be appended to HPR mail tasks instructions upon task cancellation

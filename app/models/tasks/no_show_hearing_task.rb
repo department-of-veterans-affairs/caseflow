@@ -18,6 +18,8 @@
 class NoShowHearingTask < Task
   before_validation :set_assignee
 
+  delegate :hearing, to: :parent, allow_nil: true
+
   DAYS_ON_HOLD = 15
 
   def self.create_with_hold(parent_task)
