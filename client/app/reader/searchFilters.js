@@ -3,12 +3,59 @@ import { categoryFieldNameOfCategoryName } from './utils';
 import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { update } from '../util/ReducerUtil';
 
+// In order to filter by reciept date, we have to handle 4 different scenarios.
+// It can be filtered between two dates, before a date, after a date, and on a date.
+// this switch takes the filterType stored in redux as a number 0-4, and runs the required
+// validation on it, then returns the result.
+const filterDates = (docDate, validationDates, filterType) => {
+
+  const FILTER_TYPES = {
+    BETWEEN: 0,
+    BEFORE: 1,
+    AFTER: 2,
+    ON: 3
+  };
+  const beforeDate = (validationDates.fromDate);
+  const afterDate = (validationDates.toDate);
+  const onDate = (validationDates.onDate);
+
+  let validDate = false;
+
+  switch (filterType) {
+  case FILTER_TYPES.BETWEEN:
+    if (docDate >= beforeDate && docDate <= afterDate) {
+      validDate = true;
+    }
+    break;
+  case FILTER_TYPES.BEFORE:
+    if (docDate <= afterDate) {
+      validDate = true;
+    }
+    break;
+  case FILTER_TYPES.AFTER:
+    if (docDate >= beforeDate) {
+      validDate = true;
+    }
+    break;
+  case FILTER_TYPES.ON:
+    if (docDate === onDate) {
+      validDate = true;
+    }
+    break;
+  default:
+    validDate = false;
+  }
+
+  return validDate;
+};
+
 export const getUpdatedFilteredResults = (state) => {
   const updatedNextState = update(state, {});
   const documents = update(state.documents, {});
   const searchCategoryHighlights = update(state.documentList.searchCategoryHighlights, {});
 
   const { docFilterCriteria } = state.documentList;
+
   const activeCategoryFilters = map(
     filter(toPairs(docFilterCriteria.category), ([key, value]) => value), // eslint-disable-line no-unused-vars
     ([key]) => categoryFieldNameOfCategoryName(key)
@@ -24,6 +71,12 @@ export const getUpdatedFilteredResults = (state) => {
     ([key]) => key
   );
 
+  const activeRecieptFilters = map(
+    filter(toPairs(docFilterCriteria.recieptFilterDates), ([key, value]) => // eslint-disable-line no-unused-vars
+      value),
+    ([key]) => key
+  );
+
   const searchQuery = get(docFilterCriteria, 'searchQuery', '').toLowerCase();
 
   // ensure we have a deep clone so we are not mutating the original state
@@ -33,8 +86,12 @@ export const getUpdatedFilteredResults = (state) => {
         filter(
           filter(
             filter(
-              updatedNextState.documents,
-              (doc) => !activeDocTypeFilter.length || some(activeDocTypeFilter, (docType) => docType === doc.type)
+              filter(
+                updatedNextState.documents,
+                (doc) => !activeDocTypeFilter.length || some(activeDocTypeFilter, (docType) => docType === doc.type)),
+              (doc) => !activeRecieptFilters.length || some(activeRecieptFilters, () =>
+                (filterDates(doc.receivedAt, docFilterCriteria.recieptFilterDates,
+                  docFilterCriteria.recieptFilterType)))
             ),
             (doc) => !activeCategoryFilters.length ||
               some(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])

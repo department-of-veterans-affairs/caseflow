@@ -143,6 +143,23 @@ export const clearTagFilters = () => (dispatch) => {
   dispatch(updateFilteredIdsAndDocs());
 };
 
+export const setRecieptDateFilter = (recieptFilterType, recieptDatesHash) => (dispatch) => {
+  dispatch({
+    type: Constants.SET_RECIEPT_DATE_FILTER,
+    payload: {
+      recieptFilterType,
+      recieptDatesHash
+    },
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'set RecieptFilterType-' + recieptFilterType,
+        label: 'setRecieptFilter'
+      }
+    }
+  });
+  dispatch(updateFilteredIdsAndDocs());
+}
 // Scrolling
 
 export const setDocListScrollPosition = (scrollTop) => ({
