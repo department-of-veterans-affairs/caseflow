@@ -44,7 +44,7 @@ class JudgeCaseAssignmentToAttorney
   end
 
   def last_case_assignment
-    VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
+    VACOLS::CaseAssignment.latest_task_for_appeal(LegacyAppeal.find(appeal_id).vacols_id)
   end
 
   private
