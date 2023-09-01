@@ -30,6 +30,6 @@ class AutotaggedDocumentJob < CaseflowJob
   end
 
   def find_existing_tag(tag_text)
-    Tag.find_by("lower(text) = ?", text.downcase)
+    Tag.find_by("lower(text) = ?", tag_text.downcase)
   end
 end
