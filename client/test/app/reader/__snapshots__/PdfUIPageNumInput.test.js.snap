@@ -18,14 +18,18 @@ Object {
               Page
             </span>
           </label>
-          <input
-            class="page-progress-indicator-input"
-            id="page-progress-indicator-input"
-            maxlength="4"
-            name="page-progress-indicator-input"
-            type="text"
-            value="1"
-          />
+          <div
+            class="input-container"
+          >
+            <input
+              class="page-progress-indicator-input"
+              id="page-progress-indicator-input"
+              maxlength="4"
+              name="page-progress-indicator-input"
+              type="text"
+              value="1"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -44,14 +48,18 @@ Object {
             Page
           </span>
         </label>
-        <input
-          class="page-progress-indicator-input"
-          id="page-progress-indicator-input"
-          maxlength="4"
-          name="page-progress-indicator-input"
-          type="text"
-          value="1"
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="page-progress-indicator-input"
+            id="page-progress-indicator-input"
+            maxlength="4"
+            name="page-progress-indicator-input"
+            type="text"
+            value="1"
+          />
+        </div>
       </div>
     </div>
   </div>,
