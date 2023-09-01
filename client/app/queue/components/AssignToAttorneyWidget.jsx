@@ -106,7 +106,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
   setModalOnChangeValue = (stateValue, value) => {
     this.setState({ [stateValue]: value }, function () {
-      if (this.state.assignedTo !== null && this.state.instructions.length > 0) {
+      if (this.state.assignedTo !== null && this.state.instructions?.length > 0) {
         this.setState({ modalDisableButton: false });
       } else {
         this.setState({ modalDisableButton: true });
