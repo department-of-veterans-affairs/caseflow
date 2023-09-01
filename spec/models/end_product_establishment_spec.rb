@@ -851,9 +851,29 @@ describe EndProductEstablishment, :postgres do
       ]
     end
 
+    context "when lock acquisition fails" do
+      before do
+        allow(RedisMutex).to receive(:with_lock).and_raise(RedisMutex::LockError)
+      end
+
+      it "logs the error message" do
+        expect(Rails.logger).to receive(:error)
+          .with("Failed to acquire lock for EPE ID: #{end_product_establishment.id}!"\
+                "  #sync! is being called by another process. Please try again later.")
+        end_product_establishment.sync!
+      end
+    end
+
     context "when matching end product has not yet been established" do
       it "raises EstablishedEndProductNotFound error" do
         expect { subject }.to raise_error(EndProductEstablishment::EstablishedEndProductNotFound)
+      end
+
+      it "last_synced_at updates upon error to ensure SyncReviewsJob allows other EPEs to sync before re-attempt" do
+        expect(end_product_establishment.last_synced_at).to eq(nil)
+        expect { subject }.to raise_error(EndProductEstablishment::EstablishedEndProductNotFound)
+        end_product_establishment.reload
+        expect(end_product_establishment.last_synced_at).to eq(Time.zone.now)
       end
     end
 
@@ -881,6 +901,13 @@ describe EndProductEstablishment, :postgres do
 
         it "re-raises error" do
           expect { subject }.to raise_error(BGS::ShareError)
+        end
+
+        it "last_synced_at updates upon error to ensure SyncReviewsJob allows other EPEs to sync before re-attempt" do
+          expect(end_product_establishment.last_synced_at).to eq(nil)
+          expect { subject }.to raise_error(BGS::ShareError)
+          end_product_establishment.reload
+          expect(end_product_establishment.last_synced_at).to eq(Time.zone.now)
         end
       end
 
@@ -1068,7 +1095,46 @@ describe EndProductEstablishment, :postgres do
       )
     end
 
+    let(:veteran_assoc_rating) do
+      Generators::Veteran.create(
+        file_number: "43214321"
+      )
+    end
+
+    let(:epe) do
+      EndProductEstablishment.new(
+        source: source,
+        veteran_file_number: veteran_assoc_rating.file_number,
+        code: code,
+        payee_code: payee_code,
+        claim_date: 2.days.ago,
+        station: "397",
+        reference_id: reference_id,
+        claimant_participant_id: veteran_assoc_rating.participant_id,
+        synced_status: synced_status,
+        committed_at: committed_at,
+        benefit_type_code: benefit_type_code,
+        doc_reference_id: doc_reference_id,
+        development_item_reference_id: development_item_reference_id,
+        established_at: 30.days.ago,
+        user: current_user,
+        limited_poa_code: limited_poa_code,
+        limited_poa_access: limited_poa_access,
+        last_synced_at: last_synced_at
+      )
+    end
+
     context "when ep is one of many associated to the rating" do
+      subject { epe.associated_rating }
+
+      let!(:rating) do
+        Generators::PromulgatedRating.build(
+          participant_id: veteran_assoc_rating.participant_id,
+          promulgation_date: epe.established_at,
+          associated_claims: associated_claims
+        )
+      end
+
       let(:associated_claims) do
         [
           { clm_id: "09123", bnft_clm_tc: end_product_establishment.code },
@@ -1085,6 +1151,16 @@ describe EndProductEstablishment, :postgres do
     end
 
     context "when associated rating only has 1 ep" do
+      subject { epe.associated_rating }
+
+      let!(:rating) do
+        Generators::PromulgatedRating.build(
+          participant_id: veteran_assoc_rating.participant_id,
+          promulgation_date: epe.established_at,
+          associated_claims: associated_claims
+        )
+      end
+
       let(:associated_claims) do
         [
           { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code }
@@ -1099,6 +1175,7 @@ describe EndProductEstablishment, :postgres do
       }
 
       context "when rating is before established_at date" do
+        subject { end_product_establishment.associated_rating }
         let!(:another_rating) do
           Generators::PromulgatedRating.build(
             profile_date: end_product_establishment.established_at + 1.day,
@@ -1437,6 +1514,61 @@ describe EndProductEstablishment, :postgres do
       expect([*end_product_establishment].map(&:search_table_ui_hash)).to include(hash_including(
                                                                                     modifier: ""
                                                                                   ))
+    end
+  end
+
+  let!(:queued_end_product_establishment) do
+    EndProductEstablishment.create(
+      payee_code: "10",
+      source_id: 1,
+      source_type: "HigherLevelReview",
+      veteran_file_number: 1
+    )
+  end
+  let!(:non_queued_end_product_establishment) do
+    EndProductEstablishment.create(
+      payee_code: "10",
+      source_id: 2,
+      source_type: "HigherLevelReview",
+      veteran_file_number: 1
+    )
+  end
+  let!(:priority_end_product_sync_queue) do
+    PriorityEndProductSyncQueue.create(
+      batch_id: nil,
+      created_at: Time.zone.now,
+      end_product_establishment_id: queued_end_product_establishment.id,
+      error_messages: [],
+      last_batched_at: nil,
+      status: "NOT_PROCESSED"
+    )
+  end
+
+  context "#priority_end_product_sync_queue" do
+    context "if the End Product Establishment is not enqueued in the Priority End Product Sync Queue" do
+      it "will return nil" do
+        expect(non_queued_end_product_establishment.priority_end_product_sync_queue).to eq(nil)
+      end
+    end
+
+    context "if the End Product Establishment is enqueued in the Priority End Product Sync Queue" do
+      it "will return the record that is enqueued to sync from the Priority End Product Sync Queue" do
+        expect(non_queued_end_product_establishment.priority_end_product_sync_queue).to eq(nil)
+      end
+    end
+  end
+
+  context "#priority_queued?" do
+    context "if the End Product Establishment is not enqueued in the Priority End Product Sync Queue" do
+      it "will return False" do
+        expect(non_queued_end_product_establishment.priority_queued?).to eq(false)
+      end
+    end
+
+    context "if the End Product Establishment is enqueued in the Priority End Product Sync Queue" do
+      it "will return True" do
+        expect(queued_end_product_establishment.priority_queued?).to eq(true)
+      end
     end
   end
 end

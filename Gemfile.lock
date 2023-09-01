@@ -57,13 +57,25 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: 7d7c67f7bad5e5aa03e257f0d8e57a4aa1a6cbbf
-  ref: 7d7c67f7bad5e5aa03e257f0d8e57a4aa1a6cbbf
+  revision: 5f47e7b2656ef347d314ef43c93d38a9f20816ec
+  ref: 5f47e7b2656ef347d314ef43c93d38a9f20816ec
   specs:
-    bgs (0.2)
+    bgs (0.3)
       httpclient
       nokogiri (>= 1.11.0.rc4)
       savon (~> 2.12)
+
+GIT
+  remote: https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git
+  revision: f8f528855d39a4349682e8b10c8e6fa17e22a950
+  ref: f8f528855d39a4349682e8b10c8e6fa17e22a950
+  specs:
+    ruby_claim_evidence_api (0.0.1)
+      activesupport
+      base64
+      faraday
+      httpi
+      railties
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/sniffybara.git
@@ -153,6 +165,7 @@ GEM
       aws-sdk-core (= 2.10.112)
     aws-sigv4 (1.0.2)
     backport (1.2.0)
+    base64 (0.1.1)
     benchmark-ips (2.7.2)
     bootsnap (1.7.5)
       msgpack (~> 1.0)
@@ -198,7 +211,7 @@ GEM
     coderay (1.1.3)
     colored2 (3.1.2)
     colorize (0.8.1)
-    concurrent-ruby (1.1.8)
+    concurrent-ruby (1.2.2)
     connection_pool (2.2.3)
     cork (0.3.0)
       colored2 (~> 3.1)
@@ -278,7 +291,7 @@ GEM
       dry-logic (~> 1.0, >= 1.0.2)
     ecma-re-validator (0.2.1)
       regexp_parser (~> 1.2)
-    erubi (1.10.0)
+    erubi (1.12.0)
     execjs (2.7.0)
     factory_bot (5.2.0)
       activesupport (>= 4.2.0)
@@ -287,7 +300,7 @@ GEM
       railties (>= 4.2.0)
     faker (2.15.1)
       i18n (>= 1.6, < 2)
-    faraday (0.15.4)
+    faraday (0.17.6)
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (2.4.1)
       faraday (>= 0.8)
@@ -336,10 +349,10 @@ GEM
     heapy (0.1.4)
     holidays (6.6.1)
     httpclient (2.8.3)
-    httpi (2.4.4)
+    httpi (2.5.0)
       rack
       socksify
-    i18n (1.8.10)
+    i18n (1.14.1)
       concurrent-ruby (~> 1.0)
     i18n_data (0.10.0)
     icalendar (2.6.1)
@@ -391,9 +404,9 @@ GEM
     logstasher (2.1.5)
       activesupport (>= 5.2)
       request_store
-    loofah (2.9.1)
+    loofah (2.21.3)
       crass (~> 1.0.2)
-      nokogiri (>= 1.5.9)
+      nokogiri (>= 1.12.0)
     lumberjack (1.0.13)
     mail (2.7.1)
       mini_mime (>= 0.1.1)
@@ -412,14 +425,14 @@ GEM
       nokogiri (~> 1)
       rake
     mini_mime (1.1.0)
-    mini_portile2 (2.7.1)
-    minitest (5.14.4)
+    mini_portile2 (2.8.4)
+    minitest (5.19.0)
     moment_timezone-rails (0.5.0)
     momentjs-rails (2.29.4.1)
       railties (>= 3.1)
     msgpack (1.4.2)
     multi_json (1.12.2)
-    multipart-post (2.1.1)
+    multipart-post (2.3.0)
     multiverse (0.2.2)
       activerecord (>= 4.2)
       activesupport (>= 4.2)
@@ -431,8 +444,8 @@ GEM
     newrelic_rpm (6.5.0.357)
     nio4r (2.5.8)
     no_proxy_fix (0.1.2)
-    nokogiri (1.13.1)
-      mini_portile2 (~> 2.7.0)
+    nokogiri (1.15.4)
+      mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     nori (2.6.0)
     notiffany (0.1.1)
@@ -467,12 +480,12 @@ GEM
     public_suffix (4.0.6)
     puma (5.6.4)
       nio4r (~> 2.0)
-    racc (1.6.0)
-    rack (2.2.6.2)
+    racc (1.7.1)
+    rack (2.2.6.4)
     rack-contrib (2.1.0)
       rack (~> 2.0)
-    rack-test (1.1.0)
-      rack (>= 1.0, < 3)
+    rack-test (2.1.0)
+      rack (>= 1.3)
     rails (5.2.4.6)
       actioncable (= 5.2.4.6)
       actionmailer (= 5.2.4.6)
@@ -486,16 +499,18 @@ GEM
       bundler (>= 1.3.0)
       railties (= 5.2.4.6)
       sprockets-rails (>= 2.0.0)
-    rails-dom-testing (2.0.3)
-      activesupport (>= 4.2.0)
+    rails-dom-testing (2.2.0)
+      activesupport (>= 5.0.0)
+      minitest
       nokogiri (>= 1.6)
     rails-erd (1.6.0)
       activerecord (>= 4.2)
       activesupport (>= 4.2)
       choice (~> 0.2.0)
       ruby-graphviz (~> 1.2)
-    rails-html-sanitizer (1.3.0)
-      loofah (~> 2.3)
+    rails-html-sanitizer (1.6.0)
+      loofah (~> 2.21)
+      nokogiri (~> 1.14)
     railties (5.2.4.6)
       actionpack (= 5.2.4.6)
       activesupport (= 5.2.4.6)
@@ -523,6 +538,10 @@ GEM
     redis-activesupport (5.0.4)
       activesupport (>= 3, < 6)
       redis-store (>= 1.3, < 2)
+    redis-classy (2.4.1)
+      redis-namespace (~> 1.0)
+    redis-mutex (4.0.2)
+      redis-classy (~> 2.0)
     redis-namespace (1.6.0)
       redis (>= 3.0.4)
     redis-rack (2.0.4)
@@ -783,6 +802,7 @@ DEPENDENCIES
   rainbow
   rb-readline
   react_on_rails (= 11.3.0)
+  redis-mutex
   redis-namespace
   redis-rails (~> 5.0.2)
   request_store
@@ -798,6 +818,7 @@ DEPENDENCIES
   ruby-debug-ide
   ruby-oci8 (~> 2.2)
   ruby-prof (~> 1.4)
+  ruby_claim_evidence_api!
   sass-rails (~> 5.0)
   scss_lint
   sentry-raven

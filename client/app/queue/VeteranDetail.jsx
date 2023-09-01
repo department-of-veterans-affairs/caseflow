@@ -92,7 +92,7 @@ export const VeteranDetail = ({
         <BareList ListElementComponent="ul" items={details.map(getDetailField)} />
         <p><em>{COPY.CASE_DETAILS_VETERAN_ADDRESS_SOURCE}</em></p>
         {showPostCavcStreamMsg &&
-         <CavcAppealHasSubstitutionAlert targetAppealId={substitutionAppealId} />
+          <CavcAppealHasSubstitutionAlert targetAppealId={substitutionAppealId} />
         }
 
         {!showPostCavcStreamMsg && !hasSameAppealSubstitution && (

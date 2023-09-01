@@ -9,7 +9,6 @@ require "securerandom"
 
 # rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
-  include AppealConcern
   include BeaamAppealConcern
   include BgsService
   include Taskable
@@ -61,16 +60,6 @@ class Appeal < DecisionReview
            :available_hearing_locations,
            :email_address,
            :country, to: :veteran, prefix: true
-
-  delegate :power_of_attorney, to: :claimant
-  delegate :representative_name,
-           :representative_type,
-           :representative_address,
-           :representative_email_address,
-           :poa_last_synced_at,
-           :update_cached_attributes!,
-           :save_with_updated_bgs_record!,
-           to: :power_of_attorney, allow_nil: true
 
   enum stream_type: {
     Constants.AMA_STREAM_TYPES.original.to_sym => Constants.AMA_STREAM_TYPES.original,
@@ -264,6 +253,26 @@ class Appeal < DecisionReview
     request_issues.active.any? do |request_issue|
       category_substrings.any? { |substring| self.request_issues.active.include?(request_issue) && request_issue.nonrating_issue_category&.include?(substring) }
     end
+  end
+
+  # decision issue status overrules request issues/special issue list for both mst and pact
+  def mst?
+    return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])
+
+    return decision_issues.any?(&:mst_status) unless decision_issues.empty?
+
+    request_issues.active.any?(&:mst_status) ||
+      (special_issue_list &&
+        special_issue_list.created_at < "2023-06-01".to_date &&
+        special_issue_list.military_sexual_trauma)
+  end
+
+  def pact?
+    return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
+
+    return decision_issues.any?(&:pact_status) unless decision_issues.empty?
+
+    request_issues.active.any?(&:pact_status)
   end
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
@@ -769,10 +778,6 @@ class Appeal < DecisionReview
     issues_report
   end
 
-  def bgs_power_of_attorney
-    claimant&.is_a?(BgsRelatedClaimant) ? power_of_attorney : nil
-  end
-
   # Note: Currently Caseflow only supports one claimant per decision review
   def power_of_attorneys
     claimants.map(&:power_of_attorney).compact
@@ -929,6 +934,10 @@ class Appeal < DecisionReview
     end
     return false if relevant_tasks.any?(&:open?)
     return true if relevant_tasks.all?(&:closed?)
+  end
+
+  def is_legacy?
+    false
   end
 
   private
