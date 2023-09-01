@@ -50,7 +50,8 @@ import {
 import { editEpClaimLabel } from '../../../intakeEdit/actions/edit';
 import COPY from '../../../../COPY';
 import { EditClaimLabelModal } from '../../../intakeEdit/components/EditClaimLabelModal';
-import { ConfirmClaimLabelModal, EditIntakeIssueModal } from '../../../intakeEdit/components/ConfirmClaimLabelModal';
+import { EditIntakeIssueModal } from '../../../intakeEdit/components/EditIntakeIssueModal';
+import { ConfirmClaimLabelModal } from '../../../intakeEdit/components/ConfirmClaimLabelModal';
 
 class AddIssuesPage extends React.Component {
   constructor(props) {
