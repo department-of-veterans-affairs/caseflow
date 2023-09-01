@@ -369,7 +369,7 @@ FormGenerator.propTypes = {
   register: PropTypes.func,
   errors: PropTypes.object,
   intakeId: PropTypes.number,
-  homelessness: PropTypes.string,
+  homelessness: PropTypes.bool,
   setHomelessnessType: PropTypes.func,
   homelessnessError: PropTypes.string,
   isReviewed: PropTypes.bool,
