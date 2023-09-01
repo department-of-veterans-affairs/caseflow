@@ -105,7 +105,7 @@ class AppealsController < ApplicationController
   end
 
   def power_of_attorney
-    render json: power_of_attorney_datas
+    render json: power_of_attorney_data
   end
 
   def update_power_of_attorney
@@ -407,4 +407,3 @@ class AppealsController < ApplicationController
     end
   end
 end
-
