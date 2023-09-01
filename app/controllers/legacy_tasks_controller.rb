@@ -173,7 +173,6 @@ class LegacyTasksController < ApplicationController
   end
 
   def json_task(task)
-    byebug
     ::WorkQueue::LegacyTaskSerializer.new(task)
   end
 
