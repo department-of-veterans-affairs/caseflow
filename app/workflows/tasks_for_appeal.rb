@@ -66,11 +66,6 @@ class TasksForAppeal
     end
   end
 
-  def only_root_task?
-    !appeal.tasks.active.where(type: RootTask.name).empty? ||
-      !appeal.tasks.active.where(type: ScheduleHearingTask.name).empty?
-  end
-
   def all_tasks_except_for_decision_review_tasks
     appeal.tasks.not_decisions_review.includes(*task_includes)
   end
@@ -95,9 +90,7 @@ class TasksForAppeal
   end
 
   def hide_legacy_tasks?
-    active_tasks = all_tasks_except_for_decision_review_tasks.active
-    legacy_tasks = legacy_appeal_tasks
-    (active_tasks && legacy_tasks && !only_root_task?) ? true : false
+    (!appeal.tasks.where(type: JudgeAssignTask.name).empty? || !appeal.tasks.where(type: AttorneyTask.name).empty? || !appeal.tasks.where(type: JudgeDecisionReviewTask.name).empty?) ? true : false
   end
 
   def task_includes
