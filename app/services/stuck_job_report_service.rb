@@ -11,7 +11,7 @@ class StuckJobReportService
 
   def initialize
     @logs = ["#{Time.zone.now} ********** Remediation Log Report **********"]
-    @bucket_name = "data-remediation-output-#{Rails.deploy_env}"
+    @bucket_name = (Rails.deploy_env == :prod) ? "data-remediation-output" : "data-remediation-output-#{Rails.deploy_env}"
   end
 
   # Logs the Id and the object that is being updated
@@ -29,12 +29,12 @@ class StuckJobReportService
     logs.push("\n#{Time.zone.now} #{text}::Log - Total number of Records with Errors: #{records_with_errors_count}")
   end
 
-  def write_log_report(error_text)
+  def write_log_report(report_text)
     temporary_file = Tempfile.new("cdc-log.txt")
     filepath = temporary_file.path
     temporary_file.write(logs)
     temporary_file.flush
-    create_file_name = error_text.split.join("-").downcase
+    create_file_name = report_text.split.join("-").downcase
     upload_logs_to_s3(filepath, create_file_name)
 
     temporary_file.close!
