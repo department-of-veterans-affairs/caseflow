@@ -9,7 +9,6 @@ require "securerandom"
 
 # rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
-  include AppealConcern
   include BeaamAppealConcern
   include BgsService
   include Taskable
@@ -61,16 +60,6 @@ class Appeal < DecisionReview
            :available_hearing_locations,
            :email_address,
            :country, to: :veteran, prefix: true
-
-  delegate :power_of_attorney, to: :claimant
-  delegate :representative_name,
-           :representative_type,
-           :representative_address,
-           :representative_email_address,
-           :poa_last_synced_at,
-           :update_cached_attributes!,
-           :save_with_updated_bgs_record!,
-           to: :power_of_attorney, allow_nil: true
 
   enum stream_type: {
     Constants.AMA_STREAM_TYPES.original.to_sym => Constants.AMA_STREAM_TYPES.original,
@@ -787,10 +776,6 @@ class Appeal < DecisionReview
     }
 
     issues_report
-  end
-
-  def bgs_power_of_attorney
-    claimant&.is_a?(BgsRelatedClaimant) ? power_of_attorney : nil
   end
 
   # Note: Currently Caseflow only supports one claimant per decision review

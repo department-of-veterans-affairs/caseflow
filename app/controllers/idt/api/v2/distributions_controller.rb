@@ -38,7 +38,6 @@ class Idt::Api::V2::DistributionsController < Idt::Api::V1::BaseController
 
   def format_response(response)
     response_body = response.raw_body
-
     begin
       parsed_response = if [ActiveSupport::HashWithIndifferentAccess, Hash].include?(response_body.class)
                           response_body

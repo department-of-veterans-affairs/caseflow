@@ -13,8 +13,18 @@
       taskFilterDetails: task_filter_details,
       task: task.ui_hash,
       appeal: task.appeal_ui_hash,
+      poaAlert: {},
       featureToggles: {
         decisionReviewQueueSsnColumn: FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: current_user)
+      },
+      loadingPowerOfAttorney: {
+        loading: false,
+        error: false
+     },
+      ui: {
+        featureToggles: {
+          poa_button_refresh: FeatureToggle.enabled?(:poa_button_refresh)
+        }
       }
     }
   }) %>

@@ -89,7 +89,12 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :histogram, only: :create
     end
+    namespace :v2 do
+      resources :logs, only: :create
+    end
+    get 'dashboard' => 'dashboard#show'
   end
+
 
   namespace :dispatch do
     get "/", to: redirect("/dispatch/establish-claim")
@@ -123,7 +128,9 @@ Rails.application.routes.draw do
     get :pdf, on: :member
     patch 'mark-as-read', on: :member
     resources :annotation, only: [:create, :destroy, :update]
-    resources :tag, only: [:create, :destroy]
+    resources :tag, only: [:create, :destroy] do
+      get :auto_tag, on: :collection
+    end
   end
 
   namespace :reader do
@@ -250,6 +257,10 @@ Rails.application.routes.draw do
 
   resources :decision_reviews, param: :business_line_slug, only: [] do
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
+      member do
+        get :power_of_attorney
+        patch :update_power_of_attorney
+      end
     end
   end
   match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
