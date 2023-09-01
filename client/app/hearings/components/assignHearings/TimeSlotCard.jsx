@@ -6,7 +6,13 @@ import { HearingAppellantName } from './AssignHearingsFields';
 import { HearingTime } from '../HearingTime';
 import { Dot } from '../../../components/Dot';
 
-export const TimeSlotCard = ({ hearing, hearingDay, regionalOffice }) => {
+export const TimeSlotCard = ({
+  hearing,
+  hearingDay,
+  regionalOffice,
+  mstIdentification,
+  pactIdentification,
+  legacyMstPactIdentification }) => {
   return (
     <div className="usa-grid time-slot-card">
       <div className="usa-width-one-fourth">
@@ -27,6 +33,10 @@ export const TimeSlotCard = ({ hearing, hearingDay, regionalOffice }) => {
           showType
           showDetails
           itemSpacing={5}
+          hearing={hearing}
+          mstIdentification={mstIdentification}
+          pactIdentification={pactIdentification}
+          legacyMstPactIdentification={legacyMstPactIdentification}
           label={
             <span className="time-slot-card-label">
               <HearingAppellantName
@@ -48,4 +58,7 @@ TimeSlotCard.propTypes = {
   hearing: PropTypes.object,
   hearingDay: PropTypes.object,
   regionalOffice: PropTypes.string,
+  mstIdentification: PropTypes.bool,
+  pactIdentification: PropTypes.bool,
+  legacyMstPactIdentification: PropTypes.bool
 };
