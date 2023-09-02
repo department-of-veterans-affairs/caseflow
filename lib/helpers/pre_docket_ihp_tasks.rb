@@ -31,7 +31,12 @@ module WarRoom
     private
 
     def root_task
-      @root_task = @appeal.root_task
+      if @appeal.root_task
+        @root_task = @appeal.root_task
+      else
+        puts("No RootTask found. Aborting...")
+        fail Interrupt
+      end
     end
 
     def distribution_task
@@ -40,6 +45,7 @@ module WarRoom
           puts("Duplicate DistributionTask found. Remove the erroneous task and retry. Aborting...")
           fail Interrupt
         elsif distribution_tasks.count == 1
+          distribution_tasks[0].on_hold!
           distribution_tasks[0]
         elsif distribution_tasks.empty?
           dt = DistributionTask.create!(appeal: @appeal, parent: root_task)
@@ -51,17 +57,31 @@ module WarRoom
         end
     end
 
+    # we look for only 1 PredocketTask.
+    #   * If multiples are found we bail.
+    #   * If none are found we bail.
     def predocket_task
       return @predocket_task unless @predocket_task.nil?
 
-      if (predocket_tasks = @appeal.tasks.where(type: "PreDocketTask").all).count > 1
-        puts("Duplicate PredocketTask found. Remove the erroneous task and retry. Aborting...")
+      predocket_tasks = @appeal.tasks.where(type: "PreDocketTask").all
+      if predocket_tasks.count > 1
+        puts("Multiple PredocketTask found. Remove the erroneous task and retry. Aborting...")
         fail Interrupt
+      elsif predocket_tasks.count < 1
+        puts("No PredocketTask found. This may already be fixed. Aborting...")
+        fail Interrupt
+      else
+        @predocket_task = predocket_tasks[0]
       end
-
-      @predocket_task = predocket_tasks[0]
     end
 
+    # we look for only 1 InformalHearingPresentationTask.
+    #   * If multiples are found we bail.
+    #   * If none are found we bail.
+    # The status of the InformalHearingPresentationTask must be
+    #   * assigned
+    #   * on_hold
+    # If the status is anything else we bail.
     def ihp_task
       return @ihp_task unless @ihp_task.nil?
 
@@ -74,7 +94,18 @@ module WarRoom
         fail Interrupt
       end
 
-      @ihp_task = ihp_tasks[0]
+      # TODO: Need to determine the branch for cancelled status'
+      # If the status is cancelled does the InformalHearingPresentationTask reopen after docketing the appeal?
+      possible_ihp_task = ihp_tasks[0]
+      if possible_ihp_task.status.include?([Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.on_hold])
+        @ihp_task = possible_ihp_task
+      elsif possible_ihp_task.status.include?([Constants.TASK_STATUSES.cancelled])
+        puts("InformalHearingPresentationTask has a status of cancelled. This is not supported for automated remediation yet. Aborting...")
+        fail Interrupt
+      else
+        puts("InformalHearingPresentationTask is not in the correct status for remediation. Aborting...")
+        fail Interrupt
+      end
     end
   end
 end
