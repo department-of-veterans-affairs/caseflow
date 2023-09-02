@@ -54,7 +54,7 @@ class RatingDecision
     end
 
     def deserialize(hash)
-      new(hash.select { |k, v| RatingDecision.attribute_method?(k) })
+      new(hash)
     end
   end
 
