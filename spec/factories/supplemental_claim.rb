@@ -88,13 +88,13 @@ FactoryBot.define do
         end
       elsif !Claimant.exists?(participant_id: sc.veteran.participant_id, decision_review: sc)
         sc.update!(veteran_is_not_claimant: false)
-        create(
-          :claimant,
-          participant_id: sc.veteran.participant_id,
-          decision_review: sc,
-          payee_code: payee_code,
-          type: "VeteranClaimant"
-        )
+        # create(
+        #   :claimant,
+        #   participant_id: sc.veteran.participant_id,
+        #   decision_review: sc,
+        #   payee_code: payee_code,
+        #   type: "VeteranClaimant"
+        # )
       end
     end
 
