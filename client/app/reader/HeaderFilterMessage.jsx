@@ -18,13 +18,13 @@ class HeaderFilterMessage extends React.PureComponent {
     const categoryCount = getTruthyCount(props.docFilterCriteria.category);
     const tagCount = getTruthyCount(props.docFilterCriteria.tag);
     const docTypeCount = getTruthyCount(props.docFilterCriteria.document);
-    // TODO: receipt date
+    const receiptDateCount = getTruthyCount(props.docFilterCriteria.recieptFilterDates);
 
     const filteredCategories = compact([
       categoryCount && `Categories (${categoryCount})`,
       tagCount && `Issue tags (${tagCount})`,
-      docTypeCount && `Document Types (${docTypeCount})`
-      // TODO: receipt date
+      docTypeCount && `Document Types (${docTypeCount})`,
+      receiptDateCount && `Receipt Date (${receiptDateCount})`
     ]).join(', ');
 
     const className = classNames('document-list-filter-message', {

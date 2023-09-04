@@ -176,13 +176,20 @@ RSpec.feature "Reader", :all_dbs do
         expect(page.has_no_content?("Filtering by:")).to eq(true)
       end
 
-      it "can filter by request date" do
-        # select two filters
-        expect(page).to have_content("Filtering by:")
-        expect(page).to have_content("Request Date (2)")
+      it "can filter by receipt date" do
+        FeatureToggle.disable!(:interface_version_2)
 
-        # deselect one filter
-        expect(page).to have_content("Request Date (1)")
+        # find and fill in date filter with today's date
+        page.refresh
+        sleep 10
+
+        find(".receipt-date-column .unselected-filter-icon").click
+        select("After this date", from: "dateDropdownText")
+        fill_in("From", with: Date.current.strftime("%m/%d/%Y"))
+        click_button("apply filter")
+
+        expect(page).to have_content("Filtering by:")
+        expect(page).to have_content("Receipt Date (1)")
 
         # clear the filter
         find("#clear-filters").click

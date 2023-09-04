@@ -219,6 +219,9 @@ const documentListReducer = (state = initialState, action = {}) => {
         },
         document: {
           $set: {}
+        },
+        recieptFilterDates: {
+          $set: {}
         }
       },
       viewingDocumentsOrComments: {
