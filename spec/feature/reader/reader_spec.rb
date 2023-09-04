@@ -157,17 +157,18 @@ RSpec.feature "Reader", :all_dbs do
       end
 
       it "can filter by document type" do
+        FeatureToggle.disable!(:interface_version_2)
+
         # select two filters
-        find("#type-header .table-icon").click
-        type_checkboxes = page.find("#type-header").all(".cf-form-checkbox")
-        type_checkboxes[0].click
-        type_checkboxes[1].click
+        find(".doc-type-column .unselected-filter-icon").click
+        find(:label, "NOD").click
+        find(:label, "Form 9").click
 
         expect(page).to have_content("Filtering by:")
         expect(page).to have_content("Document Types (2)")
 
         # deselect one filter
-        type_checkboxes[0].click
+        find(:label, "NOD").click
         expect(page).to have_content("Document Types (1)")
 
         # clear the filter
