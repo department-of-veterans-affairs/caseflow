@@ -45,7 +45,13 @@ const initialState = {
     category: {},
     tag: {},
     document: {},
-    searchQuery: ''
+    searchQuery: '',
+    recieptFilterType: '',
+    recieptFilterDates: {
+      fromDate: '',
+      toDate: '',
+      onDate: ''
+    },
   },
   pdfList: {
     scrollTop: null,
@@ -53,7 +59,8 @@ const initialState = {
     dropdowns: {
       tag: false,
       category: false,
-      document: false
+      document: false,
+      receiptDate: false
     }
   },
   manifestVbmsFetchedAt: null,
@@ -133,6 +140,19 @@ const documentListReducer = (state = initialState, action = {}) => {
           $set: {}
         }
       }
+    });
+
+    // Reciept date filter
+  case Constants.SET_RECIEPT_DATE_FILTER:
+    return update(state, {
+      docFilterCriteria: {
+        recieptFilterType: {
+          $set: action.payload.recieptFilterType
+        },
+        recieptFilterDates: {
+          $set: action.payload.recieptDatesHash
+        }
+      },
     });
     // Scrolling
   case Constants.SET_DOC_LIST_SCROLL_POSITION:
