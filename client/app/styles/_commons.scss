@@ -512,6 +512,10 @@ svg title {
   .cf-retry {
     margin-top: -1.5em;
   }
+
+  .cf-form-textinput[name="eFolderUrlField"] {
+    padding-right: 30px;
+  }
 }
 
 .cf-modal-close {
@@ -1267,7 +1271,7 @@ button {
     position: absolute;
     padding-right: 23px;
     top: 30%;
-    left: 90%;
+    left: 93%;
 
     .cf-loading-icon-back,
     .cf-loading-icon-front {
