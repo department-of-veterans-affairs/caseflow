@@ -204,7 +204,7 @@ class QueueRepository
     end
 
     def find_decass_record(vacols_id, created_in_vacols_date)
-      decass_record = VACOLS::Decass.find_by(defolder: vacols_id)
+      decass_record = VACOLS::Decass.find_by(defolder: vacols_id, deadtim: created_in_vacols_date)
       unless decass_record
         msg = "Decass record does not exist for vacols_id: #{vacols_id} and date created: #{created_in_vacols_date}"
         fail Caseflow::Error::QueueRepositoryError, msg
