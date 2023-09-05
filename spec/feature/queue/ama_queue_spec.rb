@@ -520,6 +520,9 @@ feature "AmaQueue", :all_dbs do
       judgeteam.add_user(attorney_user)
 
       User.authenticate!(user: judge_user)
+
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
     end
 
     def judge_assign_to_attorney
@@ -912,7 +915,11 @@ feature "AmaQueue", :all_dbs do
   it_behaves_like "Judge has a case to assign to an attorney"
 
   context "overtime_revamp feature enabled with different overtime values" do
-    before { FeatureToggle.enable!(:overtime_revamp) }
+    before do
+      FeatureToggle.enable!(:overtime_revamp)
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
+    end
     after { FeatureToggle.disable!(:overtime_revamp) }
     it_behaves_like "Judge has a case to assign to an attorney" do
       let(:overtime) { true }
@@ -938,6 +945,8 @@ feature "AmaQueue", :all_dbs do
     before do
       org.add_user(user)
       User.authenticate!(user: user)
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
     end
 
     it "successfully loads the individual queue " do
