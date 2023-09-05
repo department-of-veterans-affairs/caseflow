@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe HearingPostponementRequestMailTask, :postgres do
+describe HearingWithdrawalRequestMailTask, :postgres do
   let(:user) { create(:user) }
 
   context "The hearing is associated with an AMA appeal" do
@@ -8,7 +8,7 @@ describe HearingPostponementRequestMailTask, :postgres do
       let(:task_actions) do
         [
           Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
-          Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.to_h,
+          Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.to_h,
           Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
           Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
           Constants.TASK_ACTIONS.CANCEL_TASK.to_h
@@ -45,13 +45,13 @@ describe HearingPostponementRequestMailTask, :postgres do
         end
 
         context "when there is an active ScheduleHearingTask in the appeal's task tree" do
-          let(:hpr) { create(:hearing_postponement_request_mail_task, :postponement_request_with_unscheduled_hearing) }
+          let(:hpr) { create(:hearing_withdrawal_request_mail_task, :withdrawal_request_with_unscheduled_hearing) }
 
           include_examples "returns appropriate task actions"
         end
 
         context "when there is an open AssignHearingDispositionTask in the appeal's task tree" do
-          let(:hpr) { create(:hearing_postponement_request_mail_task, :postponement_request_with_scheduled_hearing) }
+          let(:hpr) { create(:hearing_withdrawal_request_mail_task, :withdrawal_request_with_scheduled_hearing) }
 
           context "when the hearing is scheduled in the past" do
             before do
@@ -86,7 +86,7 @@ describe HearingPostponementRequestMailTask, :postgres do
 
         context "when there is neither an active ScheduleHearingTask " \
                 "nor an open AssignHearingDispositionTask in the appeal's task tree" do
-          let(:hpr) { create(:hearing_postponement_request_mail_task, :postponement_request_with_unscheduled_hearing) }
+          let(:hpr) { create(:hearing_withdrawal_request_mail_task, :withdrawal_request_with_unscheduled_hearing) }
           let(:schedule_hearing_task) { hpr.appeal.tasks.find_by(type: ScheduleHearingTask.name) }
 
           before do
