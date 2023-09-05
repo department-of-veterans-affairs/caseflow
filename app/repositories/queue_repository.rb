@@ -152,6 +152,7 @@ class QueueRepository
 
     def reassign_case_to_attorney!(judge:, attorney:, vacols_id:)
       transaction do
+        update_location_to_attorney(vacols_id, attorney)
         attrs = assign_to_attorney_attrs(vacols_id, attorney, judge)
         create_decass_record(attrs.merge(adding_user: judge.vacols_uniq_id))
       end
