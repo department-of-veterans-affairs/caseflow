@@ -146,7 +146,7 @@ RSpec.feature "MailTasks", :postgres do
     before do
       HearingAdmin.singleton.add_user(User.current_user)
     end
-    let(:hpr_task) { create(:hearing_postponement_request_mail_task, :with_unscheduled_hearing) }
+    let(:hpr_task) { create(:hearing_postponement_request_mail_task, :postponement_request_with_unscheduled_hearing) }
 
     context "changing task type" do
       it "submit button starts out disabled" do
