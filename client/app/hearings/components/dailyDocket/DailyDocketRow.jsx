@@ -5,6 +5,7 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { isUndefined, isNil, isEmpty, omitBy, get } from 'lodash';
+import StringUtil from 'app/util/StringUtil';
 
 import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
 
@@ -380,8 +381,7 @@ class DailyDocketRow extends React.Component {
           type="button"
           disabled={this.props.conferenceLinkError}
           onClick={this.conferenceLinkOnClick} > Connect to Recording System</Button> }
-        {hearing?.isVirtual !== true && userJudgeOrCoordinator(user, hearing) && <div ><b>Pexip hearing</b></div>}
-        {hearing?.isVirtual == true && userJudgeOrCoordinator(user, hearing) && <div ><b>Webex hearing</b></div>}
+        {userJudgeOrCoordinator(user, hearing) && <div ><b>{StringUtil.capitalizeFirst(hearing?.meetingType)} hearing</b></div>}
         <DispositionDropdown
           {...inputProps}
           cancelUpdate={this.cancelUpdate}

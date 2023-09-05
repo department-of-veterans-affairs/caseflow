@@ -59,7 +59,9 @@ class HearingSerializer
   attribute :judge_id
   attribute :location
   attribute :military_service, if: for_full
-  attribute :meeting_type
+  attribute :meeting_type do |hearing|
+    hearing.created_by.meeting_type
+  end
   attribute :notes
   attribute :paper_case do
     false
