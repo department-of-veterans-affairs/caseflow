@@ -180,9 +180,6 @@ RSpec.feature "Reader", :all_dbs do
         FeatureToggle.disable!(:interface_version_2)
 
         # find and fill in date filter with today's date
-        page.refresh
-        sleep 10
-
         find(".receipt-date-column .unselected-filter-icon").click
         select("After this date", from: "dateDropdownText")
         fill_in("From", with: Date.current.strftime("%m/%d/%Y"))
