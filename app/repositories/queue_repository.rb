@@ -3,10 +3,8 @@
 class QueueRepository
   class << self
     # :nocov:
-    def transaction
-      VACOLS::Record.transaction do
-        yield
-      end
+    def transaction(&block)
+      VACOLS::Record.transaction(&block)
     end
 
     def tasks_for_user(css_id)
@@ -57,21 +55,16 @@ class QueueRepository
     end
 
     def reassign_case_to_judge!(vacols_id:, assigned_by:, created_in_vacols_date:, judge_vacols_user_id:, decass_attrs:)
-      begin
-        decass_record = find_decass_record(vacols_id, created_in_vacols_date)
-        # In attorney checkout, we are automatically selecting the judge who
-        # assigned the attorney the case. But we also have a drop down for the
-        # attorney to select a different judge if they are checking it out to someone else
-        if decass_record.deadusr != judge_vacols_user_id.vacols_uniq_id
-          BusinessMetrics.record(service: :queue, name: "reassign_case_to_different_judge")
-        end
-        update_decass_record(decass_record, decass_attrs)
-        # update location with the judge's slogid
-        decass_record.update_vacols_location!(judge_vacols_user_id.vacols_uniq_id)
-      rescue Caseflow::Error::QueueRepositoryError => error
-        attrs = assign_to_attorney_attrs(vacols_id, assigned_by, judge_vacols_user_id)
-        decass_record = create_decass_record(attrs.merge(adding_user: judge_vacols_user_id.vacols_uniq_id))
+      decass_record = find_decass_record(vacols_id, created_in_vacols_date)
+      # In attorney checkout, we are automatically selecting the judge who
+      # assigned the attorney the case. But we also have a drop down for the
+      # attorney to select a different judge if they are checking it out to someone else
+      if decass_record.deadusr != judge_vacols_user_id.vacols_uniq_id
+        BusinessMetrics.record(service: :queue, name: "reassign_case_to_different_judge")
       end
+      update_decass_record(decass_record, decass_attrs)
+      # update location with the judge's slogid
+      decass_record.update_vacols_location!(judge_vacols_user_id.vacols_uniq_id)
       true
     end
 
@@ -157,16 +150,10 @@ class QueueRepository
         ).first
     end
 
-    def reassign_case_to_attorney!(judge:, attorney:, vacols_id:, created_in_vacols_date:)
+    def reassign_case_to_attorney!(judge:, attorney:, vacols_id:)
       transaction do
-        update_location_to_attorney(vacols_id, attorney)
-        decass_record = find_decass_record(vacols_id, created_in_vacols_date)
-        update_decass_record(decass_record,
-                             attorney_id: attorney.vacols_attorney_id,
-                             group_name: attorney.vacols_group_id[0..2],
-                             assigned_to_attorney_date: VacolsHelper.local_time_with_utc_timezone,
-                             deadline_date: VacolsHelper.local_date_with_utc_timezone + 30.days,
-                             modifying_user: judge.vacols_uniq_id)
+        attrs = assign_to_attorney_attrs(vacols_id, attorney, judge)
+        create_decass_record(attrs.merge(adding_user: judge.vacols_uniq_id))
       end
     end
 

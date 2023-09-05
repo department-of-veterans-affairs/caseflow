@@ -137,7 +137,7 @@ class AssignToView extends React.Component {
     const assignTaskSuccessMessage = {
       title: taskActionData(this.props).message_title ? sprintf(taskActionData(this.props).message_title,
         caseNameListItem(),
-        this.getAssignee()) : sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()),
+        this.getAssignee()) : sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE_LEGACY_SUCCESS_TITLE, this.getAssignee()),
       detail: taskActionData(this.props).message_detail || null
     };
 
