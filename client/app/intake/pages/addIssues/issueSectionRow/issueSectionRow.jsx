@@ -42,9 +42,9 @@ const issueSectionRow = (
           userCanWithdrawIssues={userCanWithdrawIssues}
           withdrawReview={withdrawReview}
           userCanEditIntakeIssues={userCanEditIntakeIssues &&
-              (this.props.featureToggles.mst_identification ||
-              this.props.featureToggles.pact_identification ||
-              this.props.featureToggles.legacy_mst_pact_identification)}
+              (featureToggles.mst_identification ||
+              featureToggles.pact_identification ||
+              featureToggles.legacy_mst_pact_identification)}
         />
         {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />}
       </div>
