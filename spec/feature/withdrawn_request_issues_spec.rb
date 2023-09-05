@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 feature "attorney checkout flow when appeal has withdrawn request issues", :all_dbs do
+  before do
+    FeatureToggle.enable!(:mst_identification)
+    FeatureToggle.enable!(:pact_identification)
+  end
   it "displays withdrawn status on case details page" do
     appeal = create(:appeal)
     judge = create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge")
