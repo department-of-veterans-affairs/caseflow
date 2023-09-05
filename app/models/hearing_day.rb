@@ -52,6 +52,7 @@ class HearingDay < CaseflowRecord
   before_create :assign_created_by_user
   after_update :update_children_records
   after_create :generate_link_on_create
+  before_destroy :kickoff_link_cleanup
 
   # Validates if the judge id maps to an actual record.
   validates :judge, presence: true, if: -> { judge_id.present? }
@@ -221,6 +222,9 @@ class HearingDay < CaseflowRecord
   end
 
   private
+  def kickoff_link_cleanup
+    VirtualHearings::DeleteConferenceLinkJob.new.perform
+  end
 
   def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]

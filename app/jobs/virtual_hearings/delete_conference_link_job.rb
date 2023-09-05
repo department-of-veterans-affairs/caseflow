@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-##
-#
+# The DeleteConferenceLinkJob is a job thats collects conference_links from past hearing days.
+# It then iterates through that collection and adjusts attribute values for each link.
+# Afterwards each link then has `.destroy` called on it to issue a [soft delete].
 
 class VirtualHearings::DeleteConferenceLinkJob < CaseflowJob
   queue_with_priority :low_priority
@@ -10,7 +11,7 @@ class VirtualHearings::DeleteConferenceLinkJob < CaseflowJob
     begin
       links_for_past_date = retreive_stale_conference_links
       links_soft_removal(links_for_past_date)
-    rescue ActiveRecordError => error
+    rescue StandardError => error
       log_error(error)
     end
   end
@@ -21,7 +22,7 @@ class VirtualHearings::DeleteConferenceLinkJob < CaseflowJob
   #
   # Params: None
   #
-  # Return: A collection of links that have passed.
+  # Return: A collection of links for hearing days that have passed.
   def retreive_stale_conference_links
     ConferenceLink.joins(:hearing_day).where("scheduled_for < ?", Date.today)
   end
@@ -33,7 +34,8 @@ class VirtualHearings::DeleteConferenceLinkJob < CaseflowJob
   # Return: None
   def links_soft_removal(collection)
     collection.each do |old_link|
-      # old_link.update!(update_conf_links)
+      #keep below line for pulling info to the front-end.
+      old_link.update!(update_conf_links)
       old_link.destroy
     end
   end
@@ -55,6 +57,4 @@ class VirtualHearings::DeleteConferenceLinkJob < CaseflowJob
       host_pin_long: nil
     }
   end
-
-  # TODO
 end
