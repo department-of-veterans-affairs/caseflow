@@ -37,6 +37,7 @@ export const mapDataToInitialState = function(props = {}) {
     userCanWithdrawIssues,
     userCanEditIntakeIssues,
     userCanSplitAppeal,
+    addDecisionDateModalVisible: false,
     isLegacy,
     addIssuesModalVisible: false,
     nonRatingRequestIssueModalVisible: false,
@@ -97,7 +98,7 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
     });
   case ACTIONS.EDIT_EP_CLAIM_LABEL_FAILED:
     return update(state, {
-      editEpUpdateError: { $set: action.payload.errorCode}
+      editEpUpdateError: { $set: action.payload.errorCode }
     });
   default:
     return applyCommonReducers(state, action);
