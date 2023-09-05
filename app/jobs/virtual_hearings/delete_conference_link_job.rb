@@ -3,7 +3,7 @@
 ##
 #
 
-class DeleteConferenceLinkJob < CaseflowJob
+class VirtualHearings::DeleteConferenceLinkJob < CaseflowJob
   queue_with_priority :low_priority
 
   def perform
