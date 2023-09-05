@@ -54,6 +54,35 @@ Get all conferencelinks with this endpoint
 Javascript API call Fetch/Axios examples
 [https://jsonplaceholder.typicode.com/]
 
-
+example request body:
+{
+  "jwt": {
+      "sub": "0006370",
+      "Nbf": "2023-09-05T09:00:00-10:00",
+      "Exp": "2023-09-05T23:59:59-10:00",
+      "flow": {
+          "id": "6a78ea67-220a-4f9f-9271-a76989ff1f5e",
+          "data": [
+              {
+                  "uri": "Allan.Mosciski@intadmin.room.wbx2.com"
+              },
+              {
+                  "uri": "Uriah.Reinger34@intadmin.room.wbx2.com"
+              }
+          ]
+      }
+  },
+  "aud": "some stuff",
+  "numGuest": 10,
+  "numHost": 1,
+  "provideShortUrls": false,
+  "verticalType": "Stand-alone contextually-based pricing structure",
+  "loginUrlForHost": true,
+  "jweAlg": "PBES2-HS512+A256KW",
+  "saltLength": 5,
+  "iterations": 713,
+  "enc": "A256GCM",
+  "jwsAlg": "HS512"
+}
 
 
