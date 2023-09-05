@@ -57,6 +57,9 @@ RSpec.feature "Quality Review workflow", :all_dbs do
     let!(:qr_instructions) { "Fix this case!" }
 
     before do
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
+
       ["Reba Janowiec", "Lee Jiang", "Pearl Jurs"].each do |judge_name|
         create(
           :staff,
