@@ -564,6 +564,43 @@ export const reassignTasksToUser = ({
 }) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   let params, url;
 
+  if (oldTask.appealType === 'LegacyAppeal' && oldTask.type === 'AttorneyTask') {
+    url = `/tasks/${oldTask.taskId}`;
+    params = {
+      data: {
+        task: {
+          reassign: {
+            assigned_to_id: assigneeId,
+            assigned_to_type: 'User',
+            instructions
+          }
+        }
+      }
+    };
+
+    ApiUtil.patch(url, params).
+      then((resp) => resp.body).
+      then((resp) => {
+        dispatchOldTasks(dispatch, oldTask, resp);
+
+        dispatch(setSelectionOfTaskOfUser({
+          userId: previousAssigneeId,
+          taskId: oldTask.uniqueId,
+          selected: false
+        }));
+
+        dispatch(incrementTaskCountForAttorney({
+          id: assigneeId
+        }));
+
+        dispatch(decrementTaskCountForAttorney({
+          id: previousAssigneeId
+        }));
+
+        dispatch(setOvertime(oldTask.externalAppealId, false));
+      });
+  }
+
   if (oldTask.appealType === 'Appeal') {
     url = `/tasks/${oldTask.taskId}`;
     params = {
