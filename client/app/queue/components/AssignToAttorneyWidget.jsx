@@ -43,20 +43,20 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     super(props);
 
     if (props.selectedTasks.length > 0 && props.selectedTasks[0].appealType === 'LegacyAppeal') {
-      const instructions = (props.selectedTasks[0].instructions.length === 0 ? null :
+      const instructions = (props.selectedTasks[0].instructions.length === 0 ? [] :
         props.selectedTasks[0].instructions.filter((instructionData) => instructionData));
-      const isInstructionArray = (instructions === null ? null : instructions);
-      const instructionType = Array.isArray(props.selectedTasks[0].instructions) ? isInstructionArray : null;
+      const isInstructionArray = (instructions === [] ? [] : instructions);
+      const instructionType = Array.isArray(props.selectedTasks[0].instructions) ? isInstructionArray : [];
 
       this.state = {
 
         instructions: ((this.props.isModal && props.selectedTasks.length > 0 &&
-          props.selectedTasks[0].appealType === 'LegacyAppeal' ? instructionType : null) || null)
+          props.selectedTasks[0].appealType === 'LegacyAppeal' ? instructionType : []) || [])
       };
 
     } else {
       this.state = {
-        instructions: (this.props.isModal ? this.props.selectedTasks[0].instructions : null) || '',
+        instructions: (this.props.isModal ? this.props.selectedTasks[0].instructions : []) || '',
         assignedTo: null,
         modalDisableButton: true
       };
