@@ -66,15 +66,11 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       FeatureToggle.enable!(:pact_identification)
     end
 
-    after do
-      FeatureToggle.enable!(:mst_identification)
-      FeatureToggle.enable!(:pact_identification)
-    end
-
     scenario "submits draft decision" do
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
+      sleep(2)
       # Ensure the issue is on the case details screen
       expect(page).to have_content(issue_description)
       expect(page).to have_content(issue_note)
@@ -85,6 +81,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
       click_on "Continue"
 
+      sleep(2)
       # Ensure the issue is on the select disposition screen
       expect(page).to have_content(issue_description)
       expect(page).to have_content(issue_note)
@@ -300,7 +297,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       expect(appeal.decision_issues.count).to eq 3
       expect(appeal.request_decision_issues.count).to eq(4)
       # The decision issue should have the new content the judge added
-      expect(appeal.decision_issues.first.description).to eq(updated_decision_issue_text)
+      expect(appeal.decision_issues.reload.first.description).to eq(updated_decision_issue_text)
 
       remand_reasons = appeal.decision_issues.where(disposition: "remanded").map do |decision|
         decision.remand_reasons.first.code
