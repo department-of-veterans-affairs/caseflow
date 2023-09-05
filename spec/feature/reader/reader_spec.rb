@@ -166,6 +166,43 @@ RSpec.feature "Reader", :all_dbs do
 
         clear_filters
       end
+
+      it "can filter by document type" do
+        FeatureToggle.disable!(:interface_version_2)
+
+        # select two filters
+        find(".doc-type-column .unselected-filter-icon").click
+        find(:label, "NOD").click
+        find(:label, "Form 9").click
+
+        expect(page).to have_content("Filtering by:")
+        expect(page).to have_content("Document Types (2)")
+
+        # deselect one filter
+        find(:label, "NOD").click
+        expect(page).to have_content("Document Types (1)")
+
+        # clear the filter
+        find("#clear-filters").click
+        expect(page.has_no_content?("Filtering by:")).to eq(true)
+      end
+
+      it "can filter by receipt date" do
+        FeatureToggle.disable!(:interface_version_2)
+
+        # find and fill in date filter with today's date
+        find(".receipt-date-column .unselected-filter-icon").click
+        select("After this date", from: "dateDropdownText")
+        fill_in("From", with: Date.current.strftime("%m/%d/%Y"))
+        click_button("apply filter")
+
+        expect(page).to have_content("Filtering by:")
+        expect(page).to have_content("Receipt Date (1)")
+
+        # clear the filter
+        find("#clear-filters").click
+        expect(page.has_no_content?("Filtering by:")).to eq(true)
+      end
     end
 
     context "Appeals without any issues" do
