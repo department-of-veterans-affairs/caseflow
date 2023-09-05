@@ -214,7 +214,8 @@ RadioField.propTypes = {
   errorMessage: PropTypes.string,
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  optionsStyling: PropTypes.object
 };
 
 export default RadioField;
