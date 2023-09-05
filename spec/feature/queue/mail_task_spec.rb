@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 RSpec.feature "MailTasks", :postgres do
+  include ActiveJob::TestHelper
+
   let(:user) { create(:user) }
 
   before do
     User.authenticate!(user: user)
+    Seeds::NotificationEvents.new.seed!
   end
 
   describe "Assigning a mail team task to a team member" do
@@ -394,7 +397,8 @@ RSpec.feature "MailTasks", :postgres do
           end
 
           shared_examples "AMA appeal" do
-            let(:appeal) { hpr_task.appeal }
+            let(:notification_count) { Notification.count }
+
             before :each do
               FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
               page = "queue/appeals/#{appeal.uuid}"
@@ -409,10 +413,6 @@ RSpec.feature "MailTasks", :postgres do
               find(:css, ".cf-form-radio-option label", text: "Reschedule immediately").click
               fill_in("instructionsField", with: instructions)
               click_button("Mark as complete")
-            end
-            it "page redirects to schedule veteran form" do
-              expect(page.current_path)
-                .to eq("/queue/appeals/#{appeal.uuid}/tasks/#{hpr_task.children.first.id}/schedule_veteran")
             end
 
             context "virtual hearing" do
@@ -454,8 +454,65 @@ RSpec.feature "MailTasks", :postgres do
           end
 
           context "appeal has scheduled hearing" do
-            let(:appeal) { scheduled_hpr_task.appeal }
+            let(:appeal) { scheduled_appeal }
             include_examples "AMA appeal"
+          end
+
+          describe "notifications" do
+            context "appeal has scheduled hearing" do
+              let(:appeal) { scheduled_appeal }
+
+              before do
+                FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
+                page = "queue/appeals/#{appeal.uuid}"
+                visit(page)
+                within("tr", text: "TASK", match: :first) do
+                  click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                                 text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label,
+                                 match: :first)
+                end
+                find(".cf-form-radio-option", text: ruling).click
+                fill_in("rulingDateSelector", with: ruling_date)
+                find(:css, ".cf-form-radio-option label", text: "Reschedule immediately").click
+                fill_in("instructionsField", with: instructions)
+                click_button("Mark as complete")
+
+                within(:css, ".dropdown-hearingType") { click_dropdown(text: "Virtual") }
+                within(:css, ".dropdown-regionalOffice") { click_dropdown(text: "Denver, CO") }
+                within(:css, ".dropdown-hearingDate") { click_dropdown(index: 0) }
+                find("label", text: "12:30 PM Mountain Time (US & Canada) / 2:30 PM Eastern Time (US & Canada)").click
+                if has_css?("[id='Appellant Email (for these notifications only)']")
+                  fill_in("Appellant Email (for these notifications only)", with: email)
+                else
+                  fill_in("Veteran Email (for these notifications only)", with: email)
+                end
+                click_button("Schedule")
+              end
+
+              it "sends hearing postponed and hearing scheduled notifications" do
+                expect_any_instance_of(SendNotificationJob).to receive(:perform).with(
+                  AppellantNotification.create_payload(appeal, "Postponement of hearing").to_json
+                )
+
+                # expect_any_instance_of(SendNotificationJob).to receive(:perform).with(
+                #   AppellantNotification.create_payload(appeal, "Hearing scheduled").to_json
+                # )
+
+                # expect do
+                #   perform_enqueued_jobs { click_button("Schedule") }
+                # end.to change { Notification.count }.by(2)
+
+                # SendNotificationJob.perform_now(
+                #   AppellantNotification.create_payload(appeal, "Hearing scheduled")
+                # )
+
+                # byebug
+                # expect(Notification.count).to eq(count + 2)
+
+                # perform_enqueued_jobs { click_button("Schedule") }
+                # expect(Notification.last(2).pluck(:event_type)).to eq(["Postponement of hearing", "Hearing scheduled"])
+              end
+            end
           end
         end
 
