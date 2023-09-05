@@ -51,7 +51,9 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
       on end_product_establishments.reference_id = vbms_ext_claim."CLAIM_ID"::varchar
       where (end_product_establishments.synced_status <> vbms_ext_claim."LEVEL_STATUS_CODE" or end_product_establishments.synced_status is null)
         and vbms_ext_claim."LEVEL_STATUS_CODE" in ('CLR','CAN')
-        and end_product_establishments.id not in (select end_product_establishment_id from priority_end_product_sync_queue)
+        and end_product_establishments.id not in (select end_product_establishment_id
+                                                  from priority_end_product_sync_queue
+                                                  where end_product_establishments.id = priority_end_product_sync_queue.end_product_establishment_id)
       limit #{BATCH_LIMIT};
     SQL
 
