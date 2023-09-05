@@ -59,6 +59,10 @@ module CaseReviewConcern
   end
 
   def created_in_vacols_date
+    if task&.appeal&.is_a?(LegacyAppeal)
+      return VACOLS::Decass.where(defolder: task.appeal.vacols_id).max_by(&:deadtim).deadtim
+    end
+
     task_id&.split("-", 2)&.second&.to_date
   end
 
