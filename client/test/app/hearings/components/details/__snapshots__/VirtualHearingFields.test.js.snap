@@ -156,6 +156,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
         "fullName": "Aaron Judge_HearingsAndCases Abshire",
         "id": 3,
         "lastLoginAt": null,
+        "meetingType": "pexip",
         "roles": Object {},
         "selectedRegionalOffice": null,
         "stationId": "101",
@@ -247,6 +248,14 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
       <div
         data-css-1571z6o=""
       >
+        <div
+          data-css-tx10g=""
+        >
+          <strong>
+            Pexip
+             Conference
+          </strong>
+        </div>
         <HearingLinks
           hearing={
             Object {
@@ -304,6 +313,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                 "fullName": "Aaron Judge_HearingsAndCases Abshire",
                 "id": 3,
                 "lastLoginAt": null,
+                "meetingType": "pexip",
                 "roles": Object {},
                 "selectedRegionalOffice": null,
                 "stationId": "101",
@@ -452,6 +462,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                     "fullName": "Aaron Judge_HearingsAndCases Abshire",
                     "id": 3,
                     "lastLoginAt": null,
+                    "meetingType": "pexip",
                     "roles": Object {},
                     "selectedRegionalOffice": null,
                     "stationId": "101",
@@ -609,6 +620,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                         "fullName": "Aaron Judge_HearingsAndCases Abshire",
                         "id": 3,
                         "lastLoginAt": null,
+                        "meetingType": "pexip",
                         "roles": Object {},
                         "selectedRegionalOffice": null,
                         "stationId": "101",
@@ -757,6 +769,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                           "fullName": "Aaron Judge_HearingsAndCases Abshire",
                           "id": 3,
                           "lastLoginAt": null,
+                          "meetingType": "pexip",
                           "roles": Object {},
                           "selectedRegionalOffice": null,
                           "stationId": "101",
@@ -1157,6 +1170,7 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
         "fullName": "Aaron Judge_HearingsAndCases Abshire",
         "id": 3,
         "lastLoginAt": null,
+        "meetingType": "pexip",
         "roles": Object {},
         "selectedRegionalOffice": null,
         "stationId": "101",
@@ -1231,6 +1245,14 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
       <div
         data-css-1571z6o=""
       >
+        <div
+          data-css-tx10g=""
+        >
+          <strong>
+            Pexip
+             Conference
+          </strong>
+        </div>
         <HearingLinks
           hearing={
             Object {
@@ -1288,6 +1310,7 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
                 "fullName": "Aaron Judge_HearingsAndCases Abshire",
                 "id": 3,
                 "lastLoginAt": null,
+                "meetingType": "pexip",
                 "roles": Object {},
                 "selectedRegionalOffice": null,
                 "stationId": "101",
@@ -1419,6 +1442,7 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
                     "fullName": "Aaron Judge_HearingsAndCases Abshire",
                     "id": 3,
                     "lastLoginAt": null,
+                    "meetingType": "pexip",
                     "roles": Object {},
                     "selectedRegionalOffice": null,
                     "stationId": "101",

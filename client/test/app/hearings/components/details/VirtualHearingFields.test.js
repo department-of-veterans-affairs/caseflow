@@ -33,7 +33,6 @@ describe('VirtualHearingFields', () => {
     // Assertions
     expect(virtualHearingForm.children()).toHaveLength(0);
     expect(virtualHearingForm).toMatchSnapshot();
-
   });
 
   test('Shows only hearing links with no virtualHearing', () => {
@@ -72,9 +71,13 @@ describe('VirtualHearingFields', () => {
       }
     );
 
+    const hearingMeetingType = amaHearing.judge.meetingType;
+
     // Assertions
     expect(virtualHearingForm.find(ContentSection)).toHaveLength(1);
     expect(virtualHearingForm.find(HearingLinks)).toHaveLength(1);
+    expect(hearingMeetingType).toBeTruthy();
+    expect(hearingMeetingType).toStrictEqual('pexip' || 'webex');
 
     expect(virtualHearingForm).toMatchSnapshot();
   });

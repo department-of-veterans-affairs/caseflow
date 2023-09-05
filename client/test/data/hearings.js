@@ -89,6 +89,7 @@ export const amaHearing = {
     statusUpdatedAt: null,
     updatedAt: '2020-06-25T11:00:43.257-04:00',
     displayName: 'BVAAABSHIRE (VACO)',
+    meetingType: 'pexip'
   },
   location: null,
   militaryService: '',
