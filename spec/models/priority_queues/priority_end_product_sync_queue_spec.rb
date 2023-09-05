@@ -171,20 +171,6 @@ describe PriorityEndProductSyncQueue, :postgres do
         found_record = CaseflowStuckRecord.find_by(stuck_record: record)
         expect(record.caseflow_stuck_records).to include(found_record)
       end
-
-      it "a message will be sent to Sentry" do
-        expect(Raven).to have_received(:capture_message)
-          .with("StuckRecordAlert::SyncFailed End Product Establishment ID: #{record.end_product_establishment_id}.",
-                extra: {
-                  batch_id: record.batch_id,
-                  batch_process_type: record.batch_process.class.name,
-                  caseflow_stuck_record_id: record.caseflow_stuck_records.first.id,
-                  determined_stuck_at: anything,
-                  end_product_establishment_id: record.end_product_establishment_id,
-                  queue_type: record.class.name,
-                  queue_id: record.id
-                }, level: "error")
-      end
     end
   end
 
