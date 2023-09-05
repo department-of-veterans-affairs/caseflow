@@ -15,6 +15,7 @@ class DecisionIssueSyncJob < CaseflowJob
       request_issue_or_effectuation.update_error!(error.inspect)
       request_issue_or_effectuation.update!(decision_sync_attempted_at: Time.zone.now - 11.hours - 55.minutes)
       capture_exception(error: error)
+      Rails.logger.error error.inspect
     rescue Errno::ETIMEDOUT => error
       # no Raven report. We'll try again later.
       Rails.logger.error error
