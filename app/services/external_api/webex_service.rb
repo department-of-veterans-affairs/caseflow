@@ -4,14 +4,8 @@ require "json"
 
 class ExternalApi::WebexService
   CREATE_CONFERENCE_ENDPOINT = "api-usgov.webex.com/v1/meetings"
-
-  def initialize(host:, port: 443, user_name:, password:, client_host:)
-    @host = host
-    @port = port
-    @user_name = user_name
-    @password = password
-    @client_host = client_host
-  end
+  MOCK_ENDPOINT = "localhost:3050/fake.#{CREATE_CONFERENCE_ENDPOINT}"
+  # ENDPOINT = ApplicationController.dependencies_faked? ? MOCK_ENDPOINT : CREATE_CONFERENCE_ENDPOINT
 
   def create_conference(virtual_hearing)
     title
@@ -26,6 +20,7 @@ class ExternalApi::WebexService
 
     body = {
       "title": title,
+      # the mock uses 'subject' which is the one we need?
       "start": start_date_time,
       "end": end_date_time,
       # Formatting >> "2019-11-01 21:00:00",
@@ -71,16 +66,16 @@ class ExternalApi::WebexService
       ]
     }
 
-    resp = send_webex_request(CREATE_CONFERENCE_ENDPOINT, :post, body: body)
+    resp = send_webex_request(MOCK_ENDPOINT, :post, body: body)
     return if resp.nil?
 
     ExternalApi::WebexService::CreateResponse.new(resp)
   end
 
-  def delete_conference(conference_id:)
-    return if conference_id.nil?
+  def delete_conference(virtual_hearing)
+    return if virtual_hearing.conference_id.nil?
 
-    delete_endpoint = "#{CREATE_CONFERENCE_ENDPOINT}#{conference_id}/"
+    delete_endpoint = "#{MOCK_ENDPOINT}#{conference_id}/"
     resp = send_webex_request(delete_endpoint, :delete)
     return if resp.nil?
 
@@ -89,23 +84,19 @@ class ExternalApi::WebexService
 
   private
 
-  attr_reader :host, :port, :user_name, :password, :client_host
-
   # :nocov:
   def send_webex_request(endpoint, method, body: nil)
-    url = "https://#{host}:#{port}/#{endpoint}"
+    url = endpoint
     request = HTTPI::Request.new(url)
-    request.auth.basic(user_name, password)
     request.open_timeout = 300
     request.read_timeout = 300
-    request.auth.ssl.ca_cert_file = ENV["SSL_CERT_FILE"]
     request.body = body.to_json unless body.nil?
 
     request.headers["Content-Type"] = "application/json" if method == :post
 
     MetricsService.record(
-      "#{host} #{method.to_s.upcase} request to #{url}",
-      service: :pexip,
+      "api-usgov.webex #{method.to_s.upcase} request to #{url}",
+      service: :webex,
       name: endpoint
     ) do
       case method
