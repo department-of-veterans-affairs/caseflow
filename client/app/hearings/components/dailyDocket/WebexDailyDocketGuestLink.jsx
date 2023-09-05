@@ -15,13 +15,15 @@ export const WebexDailyDocketGuestLink = ({ linkInfo }) => {
     padding: "1em 0 0 1em",
     marginLeft: "-40px",
     marginRight: "-40px",
-    marginBottom: "20px"
+    marginBottom: "20px",
   };
 
   const roomInfoContainerStyle = {
     display: "flex",
     flexWrap: "wrap",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
+    paddingLeft: "40px",
+    paddingRight: "40px",
   };
 
   // Props needed for the copy text button component
@@ -33,13 +35,14 @@ export const WebexDailyDocketGuestLink = ({ linkInfo }) => {
 
   // Takes pin from guestLink
   const usePinFromLink = () => guestLink?.match(/pin=\d+/)[0]?.split("=")[1];
-
   // Takes alias from guestLink
   const useAliasFromLink = () =>
     guestLink
       ?.split("&")[0]
       ?.match(/conference=.+/)[0]
       ?.split("=")[1];
+
+  const linkIsPresent = linkInfo;
 
   /**
    * Render information about the guest link
@@ -53,14 +56,25 @@ export const WebexDailyDocketGuestLink = ({ linkInfo }) => {
       <div style={roomInfoContainerStyle}>
         <h3>
           {GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}:
-          <span style={{ fontWeight: "normal" }}>
-            {alias || useAliasFromLink()}
-          </span>
+          {linkIsPresent ? (
+            <span style={{ fontWeight: "normal" }}>
+              {alias || useAliasFromLink()}
+            </span>
+          ) : (
+            <span style={{ fontWeight: "normal" }}>N/A</span>
+          )}
         </h3>
-        <h3>
-          {GUEST_LINK_LABELS.GUEST_PIN}:
-          <span style={{ fontWeight: "normal" }}>{usePinFromLink()}#</span>
-        </h3>
+        {linkIsPresent ? (
+          <h3>
+            {GUEST_LINK_LABELS.GUEST_PIN}:
+            <span style={{ fontWeight: "normal" }}>{usePinFromLink()}#</span>
+          </h3>
+        ) : (
+          <h3 style={{ paddingLeft: "130px" }}>
+            {GUEST_LINK_LABELS.GUEST_PIN}:
+            <span style={{ fontWeight: "normal" }}>N/A</span>
+          </h3>
+        )}
         <h3>
           <CopyTextButton {...CopyTextButtonProps} />
         </h3>
