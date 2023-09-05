@@ -128,7 +128,6 @@ class QueueRepository
         update_location_to_attorney(vacols_id, attorney)
 
         attrs = assign_to_attorney_attrs(vacols_id, attorney, assigned_by)
-
         incomplete_record = incomplete_decass_record(vacols_id)
         if incomplete_record.present?
           return update_decass_record(incomplete_record, attrs.merge(work_product: nil))
@@ -205,7 +204,7 @@ class QueueRepository
     end
 
     def find_decass_record(vacols_id, created_in_vacols_date)
-      decass_record = VACOLS::Decass.find_by(defolder: vacols_id, deadtim: created_in_vacols_date)
+      decass_record = VACOLS::Decass.find_by(defolder: vacols_id)
       unless decass_record
         msg = "Decass record does not exist for vacols_id: #{vacols_id} and date created: #{created_in_vacols_date}"
         fail Caseflow::Error::QueueRepositoryError, msg
