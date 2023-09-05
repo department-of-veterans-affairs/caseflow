@@ -6,29 +6,36 @@ const HelpRootView = () => {
 
   const pages = [
     { name: 'Certification Help',
-      url: '/certification/help' },
+      url: '/certification/help',
+      ariaLabel: 'Click for help resources/frequently asked questions on using Caseflow Certification' },
     { name: 'Dispatch Help',
-      url: '/dispatch/help' },
+      url: '/dispatch/help',
+      ariaLabel: 'Click for help resources/frequently asked questions on using Caseflow Dispatch' },
     { name: 'Reader Help',
-      url: '/reader/help' },
+      url: '/reader/help',
+      ariaLabel: 'Click for help resources/frequently asked questions on using Caseflow Reader' },
     { name: 'Hearings Help',
-      url: '/hearing_prep/help' },
+      url: '/hearing_prep/help',
+      ariaLabel: 'Click for help resources/frequently asked questions on using Caseflow Hearings' },
     { name: 'Intake Help',
-      url: '/intake/help' },
+      url: '/intake/help',
+      ariaLabel: 'Click for help resources/frequently asked questions on using Caseflow Intake' },
     { name: 'Queue Help',
-      url: '/queue/help' },
+      url: '/queue/help',
+      ariaLabel: 'Click for help resources/frequently asked questions on using Caseflow Queue' },
     { name: 'VHA Help',
-      url: '/vha/help' },
+      url: '/vha/help',
+      ariaLabel: 'Click for help resources/frequently asked questions on using Caseflow VHA' },
   ];
 
   return <div className="cf-help-content">
 
     <p><CaseFlowLink href="/search">Go Back</CaseFlowLink></p>
 
-    <h1>Caseflow Help</h1>
+    <h1 aria-label="Caseflow help resources page. Choose one of the links below" tabIndex={0}>Caseflow Help</h1>
     <ul id="toc" className="usa-unstyled-list">
-      {pages.map(({ name, url }) =>
-        <li key={name}><Link to={url}>{name}</Link></li>
+      {pages.map(({ name, url, ariaLabel }) =>
+        <li key={name}><Link to={url} aria-label={ariaLabel}>{name}</Link></li>
       )}
     </ul>
   </div>;
