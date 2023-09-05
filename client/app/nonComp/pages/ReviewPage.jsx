@@ -24,7 +24,6 @@ const linkButtonStyling = css({
 });
 
 const compReviewButtonStyling = css({
-  whiteSpace: 'nowrap',
   margin: '12px'
 });
 
@@ -56,7 +55,7 @@ class NonCompReviewsPage extends React.PureComponent {
           <Button onClick={() => {
             window.location.href = '/intake';
           }}
-          classNames={compReviewButtonStyling}
+          styling={compReviewButtonStyling}
           >
             + Intake new form
           </Button>
