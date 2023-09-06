@@ -38,35 +38,10 @@ export const genericRow = css({
   marginBottom: 30
 });
 
-// Row element specifically for VirtualHearingFields.jsx
-export const bottomRow = css({
-  marginTop: 15,
-  marginBottom: 30
-});
-
-// Container element for a row with 3 columns.
-export const rowThirdsVirtual = css(bottomRow, {
-  display: 'flex',
-  '& > *': {
-    paddingTop: -100,
-    paddingLeft: 15,
-    paddingRight: 15,
-    flex: 1,
-    margin: 0
-  },
-  '& > :first-child': {
-    paddingLeft: 0
-  },
-  '& > :last-child': {
-    paddingRight: 0
-  }
-});
-
 // Container element for a row with 3 columns.
 export const rowThirds = css(genericRow, {
   display: 'flex',
   '& > *': {
-    paddingTop: -100,
     paddingLeft: 15,
     paddingRight: 15,
     flex: 1,

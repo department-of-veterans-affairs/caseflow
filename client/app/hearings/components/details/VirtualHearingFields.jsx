@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
-import StringUtil from 'app/util/StringUtil';
 
 import { ContentSection } from '../../../components/ContentSection';
 import { HearingLinks } from './HearingLinks';
@@ -19,7 +18,6 @@ export const VirtualHearingFields = (
     <ContentSection
       header={`${hearing?.wasVirtual ? 'Previous ' : ''}Virtual Hearing Links`}
     >
-      <div style={{ marginTop: '1%' }}><b>{StringUtil.capitalizeFirst(hearing?.meetingType)} hearing</b></div>
       <HearingLinks
         user={user}
         hearing={hearing}
