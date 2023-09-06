@@ -21,6 +21,7 @@ import COPY from '../../COPY';
 
 import { taskActionData } from './utils';
 import QueueFlowModal from './components/QueueFlowModal';
+import EfolderUrlField from './components/EfolderUrlField';
 
 class ChangeTaskTypeModal extends React.PureComponent {
 
@@ -29,20 +30,39 @@ class ChangeTaskTypeModal extends React.PureComponent {
 
     this.state = {
       typeOption: null,
-      instructions: ''
+      instructions: '',
+      eFolderUrl: '',
+      eFolderUrlValid: false
     };
   }
 
-  validateForm = () => Boolean(this.state.typeOption) && Boolean(this.state.instructions);
+  validateForm = () => {
+    const instructionsAndValue = () => this.state.typeOption?.value !== null && this.state.instructions !== '';
+
+    if (this.isHearingRequestMailTask()) {
+      return instructionsAndValue() && this.state.eFolderUrlValid === true;
+    }
+
+    return instructionsAndValue();
+  }
+
+  prependUrlToInstructions = () => {
+
+    if (this.isHearingRequestMailTask()) {
+      return (`**LINK TO DOCUMENT:** \n ${this.state.eFolderUrl} \n **DETAILS:** \n ${this.state.instructions}`);
+    }
+
+    return this.state.instructions;
+  };
 
   buildPayload = () => {
-    const { typeOption, instructions } = this.state;
+    const { typeOption } = this.state;
 
     return {
       data: {
         task: {
           type: typeOption.value,
-          instructions
+          instructions: this.prependUrlToInstructions()
         }
       }
     };
@@ -68,6 +88,8 @@ class ChangeTaskTypeModal extends React.PureComponent {
       });
   }
 
+  isHearingRequestMailTask = () => (this.state.typeOption?.value || '').match(/Hearing.*RequestMailTask/);
+
   actionForm = () => {
     const { instructions, typeOption } = this.state;
 
@@ -81,6 +103,17 @@ class ChangeTaskTypeModal extends React.PureComponent {
             onChange={(option) => option && this.setState({ typeOption: option })}
             value={typeOption && typeOption.value} />
         </div>
+        {
+          this.isHearingRequestMailTask() &&
+          <div>
+            <br />
+            <EfolderUrlField
+              appealId={this.props.appealId}
+              requestType={this.state.typeOption?.value}
+              onChange={(value, valid) => this.setState({ eFolderUrl: value, eFolderUrlValid: valid })}
+            />
+          </div>
+        }
         <div {...marginTop(4)}>
           <TextareaField
             name={COPY.CHANGE_TASK_TYPE_INSTRUCTIONS_LABEL}
