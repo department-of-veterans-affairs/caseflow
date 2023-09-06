@@ -565,7 +565,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           find(".cf-select__control", text: org_admin.full_name).click
           find("div", class: "cf-select__option", text: org_nonadmin.full_name).click
           fill_in "taskInstructions", with: "Confirm info and send letter to Veteran."
-          click_on "Submit"
+          click_on "Assign"
           expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin.full_name
         end
 
@@ -597,7 +597,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label)
         fill_in "taskInstructions", with: "Please translate the documents in spanish"
         click_on "Assign"
-        expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Translation.singleton.name
+        expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % Translation.singleton.name
       end
     end
 
@@ -610,12 +610,12 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
 
         click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.label)
         fill_in "taskInstructions", with: "Please transcribe the hearing on record for this appeal"
-        click_on "Submit"
+        click_on "Assign"
         expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % TranscriptionTeam.singleton.name
 
         click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION.label)
         fill_in "taskInstructions", with: "Please handle the freedom of intformation act request for this appeal"
-        click_on "Submit"
+        click_on "Assign"
         expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % PrivacyTeam.singleton.name
 
         click_dropdown(text: Constants.TASK_ACTIONS.SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION.label)
@@ -793,7 +793,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           find(".cf-select__control", text: org_admin.full_name).click
           find("div", class: "cf-select__option", text: org_nonadmin.full_name).click
           fill_in "taskInstructions", with: "Assigning to user."
-          click_on "Submit"
+          click_on "Assign"
           expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin.full_name
         end
 
