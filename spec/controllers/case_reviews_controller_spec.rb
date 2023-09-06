@@ -82,11 +82,15 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
             "issues": [{ "disposition": disposition,
                          "description": "wonderful life",
                          "benefit_type": "pension",
+                         "mst_status": true,
+                         "pact_status": false,
                          "diagnostic_code": diagnostic_code,
                          "request_issue_ids": request_issue_ids },
                        { "disposition": "remanded",
                          "description": "great moments",
                          "benefit_type": "vha",
+                         "mst_status": false,
+                         "pact_status": true,
                          "diagnostic_code": "5002",
                          "request_issue_ids": [request_issue2.id],
                          "remand_reasons": [{ "code": "va_records", "post_aoj": true }] }]
@@ -126,6 +130,20 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
 
           context "when all parameters are present" do
             it_behaves_like "valid params"
+          end
+
+          context "when mst or pact status are passed in params" do
+            it "it create the decision issues with the correct mst and pact status" do
+              subject
+
+              decision_issues_from_response = JSON.parse(response.body, symbolize_names: true)[:issues][:decision_issues]
+              .sort_by { |issue| issue[:id] }
+
+              expect(decision_issues_from_response[0][:mst_status]).to be(true)
+              expect(decision_issues_from_response[0][:pact_status]).to be(false)
+              expect(decision_issues_from_response[1][:mst_status]).to be(false)
+              expect(decision_issues_from_response[1][:pact_status]).to be(true)
+            end
           end
         end
       end

@@ -11,8 +11,7 @@ gem "acts_as_tree"
 # amoeba gem for cloning appeals
 gem "amoeba"
 # BGS
-
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "7d7c67f7bad5e5aa03e257f0d8e57a4aa1a6cbbf"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "5f47e7b2656ef347d314ef43c93d38a9f20816ec"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "browser"
@@ -47,8 +46,8 @@ gem "paranoia", "~> 2.2"
 gem "pdf-forms"
 # Used in Caseflow Dispatch
 gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git", ref: "a4249eacbf70175db63b57e9f364d0a9a79e2b43"
-#Used to build out PDF files on the backend
-#https://github.com/pdfkit/pdfkit
+# Used to build out PDF files on the backend
+# https://github.com/pdfkit/pdfkit
 gem "pdfkit"
 gem "pg", platforms: :ruby
 # Application server: Puma
@@ -61,10 +60,12 @@ gem "rails", "5.2.4.6"
 gem "rainbow"
 # React
 gem "react_on_rails", "11.3.0"
+gem "redis-mutex"
 gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
+gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "b5227ac9468a47295e30d30ec31b1d792354b848"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry

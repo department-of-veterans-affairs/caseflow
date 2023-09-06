@@ -268,6 +268,17 @@ class LegacyHearing < CaseflowRecord
     end
   end
 
+  def prepare_worksheet_issues
+    worksheet_issues = []
+    appeal.worksheet_issues.each_with_index do |wi, idx|
+      worksheet_issues.push(wi.attributes)
+      issue = appeal.issues.find { |i| i.vacols_sequence_id.to_i == wi[:vacols_sequence_id].to_i }
+      worksheet_issues[idx][:mst_status] = issue&.mst_status
+      worksheet_issues[idx][:pact_status] = issue&.pact_status
+    end
+    worksheet_issues
+  end
+
   def quick_to_hash(current_user_id)
     ::LegacyHearingSerializer.quick(
       self,
@@ -324,7 +335,9 @@ class LegacyHearing < CaseflowRecord
   # we want to fetch it from BGS, save it to the DB, then return it
   def military_service
     super || begin
-      update(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
+      if !HearingDay.find_by(id: hearing_day_vacols_id).nil? || !HearingDay.find_by(id: hearing_day_id).nil?
+        update(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
+      end
       super
     end
   end

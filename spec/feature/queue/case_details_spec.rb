@@ -569,7 +569,7 @@ RSpec.feature "Case details", :all_dbs do
         visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("Refresh POA")
         click_on "Refresh POA"
-        expect(page).to have_content("POA Updated Successfully")
+        expect(page).to have_content(COPY::POA_UPDATED_SUCCESSFULLY)
         expect(page).to have_content("POA last refreshed on 01/01/2020")
       end
 
@@ -2198,6 +2198,95 @@ RSpec.feature "Case details", :all_dbs do
           reload_case_detail_page cavc_appeal.external_id
 
           expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
+        end
+      end
+    end
+
+    describe "MST and PACT issues" do
+      let!(:mst_appeal) do
+        create(
+          :appeal,
+          number_of_claimants: 1,
+          request_issues: [
+            create(
+              :request_issue,
+              benefit_type: "compensation",
+              mst_status: true,
+              pact_status: false,
+              nonrating_issue_description: "description here",
+              notes: "issue notes here"
+            )
+          ]
+        )
+      end
+      let!(:pact_appeal) do
+        create(
+          :appeal,
+          number_of_claimants: 1,
+          request_issues: [
+            create(
+              :request_issue,
+              benefit_type: "compensation",
+              mst_status: false,
+              pact_status: true,
+              nonrating_issue_description: "description here",
+              notes: "issue notes here"
+            )
+          ]
+        )
+      end
+
+      let(:intake_user) { create(:user, css_id: "BVA_INTAKE_USER", station_id: "101") }
+
+      context "when there is a pact issue prechecked" do
+        before do
+          FeatureToggle.enable!(:mst_identification)
+          FeatureToggle.enable!(:pact_identification)
+          BvaIntake.singleton.add_user(intake_user)
+          User.authenticate!(user: intake_user)
+        end
+
+        after do
+          FeatureToggle.disable!(:mst_identification)
+          FeatureToggle.disable!(:pact_identification)
+        end
+
+        it "the page shows the Special Issues: PACT Badge" do
+          visit "/queue/appeals/#{pact_appeal.external_id}"
+          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          expect(page).to have_content("Special Issues: PACT")
+        end
+
+        it "the page does not show the Special Issues: MST Badge" do
+          visit "/queue/appeals/#{pact_appeal.external_id}"
+          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          expect(page).to_not have_content("Special Issues: MST")
+        end
+      end
+
+      context "when there is an mst issue prechecked" do
+        before do
+          BvaIntake.singleton.add_user(intake_user)
+          User.authenticate!(user: intake_user)
+          FeatureToggle.enable!(:mst_identification)
+          FeatureToggle.enable!(:pact_identification)
+        end
+
+        after do
+          FeatureToggle.disable!(:mst_identification)
+          FeatureToggle.disable!(:pact_identification)
+        end
+
+        it "the page shows the Special Issues: MST Badge" do
+          visit "/queue/appeals/#{mst_appeal.external_id}"
+          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          expect(page).to have_content("Special Issues: MST")
+        end
+
+        it "the page does not show the Special Issues: PACT Badge" do
+          visit "/queue/appeals/#{mst_appeal.external_id}"
+          page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+          expect(page).to_not have_content("Special Issues: PACT")
         end
       end
     end

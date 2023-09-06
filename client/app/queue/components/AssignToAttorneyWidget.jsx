@@ -257,7 +257,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
       {isModal && <React.Fragment>
         <br />
         <TextareaField
-          name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+          name={COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
           errorMessage={highlightFormItems && instructions.length === 0 ? COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
           id="taskInstructions"
           onChange={(value) => this.setState({ instructions: value })}

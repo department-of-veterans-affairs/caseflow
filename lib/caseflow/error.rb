@@ -31,6 +31,12 @@ module Caseflow::Error
   class EfolderAccessForbidden < EfolderError; end
   class ClientRequestError < EfolderError; end
 
+  class PriorityEndProductSyncError < StandardError
+    def ignorable?
+      true
+    end
+  end
+
   class VaDotGovAPIError < SerializableError; end
   class VaDotGovRequestError < VaDotGovAPIError; end
   class VaDotGovServerError < VaDotGovAPIError; end
@@ -101,6 +107,14 @@ module Caseflow::Error
       @task_type = args[:task_type]
       @code = args[:code] || 400
       @message = args[:message] || "Task status has to be 'assigned' on create for #{@task_type}"
+    end
+  end
+
+  class InvalidTaskTypeOnTaskCreate < SerializableError
+    def initialize(args)
+      @task_type = args[:task_type]
+      @code = args[:code] || 400
+      @message = args[:message] || "#{@task_type} is not an assignable task type"
     end
   end
 
