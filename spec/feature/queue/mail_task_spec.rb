@@ -3,6 +3,10 @@
 RSpec.feature "MailTasks", :postgres do
   include ActiveJob::TestHelper
 
+  def clean_up_after_threads
+    DatabaseCleaner.clean_with(:truncation, except: %w[notification_events vftypes issref])
+  end
+
   let(:user) { create(:user) }
 
   before do
@@ -152,6 +156,9 @@ RSpec.feature "MailTasks", :postgres do
     let(:legacy_appeal) do
       create(:legacy_appeal, :with_veteran, vacols_case: create(:case))
     end
+    let(:scheduled_legacy_appeal) do
+      create(:legacy_appeal, :with_veteran, vacols_case: create(:case))
+    end
     let(:hpr_task) do
       create(:hearing_postponement_request_mail_task,
              :with_unscheduled_hearing, assigned_by_id: User.system_user.id)
@@ -164,6 +171,11 @@ RSpec.feature "MailTasks", :postgres do
       create(:hearing_postponement_request_mail_task,
              :with_unscheduled_hearing,
              assigned_by_id: User.system_user.id, appeal: legacy_appeal)
+    end
+    let!(:legacy_scheduled_hpr_task) do
+      create(:hearing_postponement_request_mail_task,
+             :with_scheduled_hearing,
+             assigned_by_id: User.system_user.id, appeal: scheduled_legacy_appeal)
     end
     let(:appeal) { hpr_task.appeal }
     let(:scheduled_appeal) { scheduled_hpr_task.appeal }
@@ -390,6 +402,8 @@ RSpec.feature "MailTasks", :postgres do
             end
 
             it "gets scheduled" do
+              p = "queue/appeals/#{appeal.uuid}"
+              visit(p)
               expect(page).to have_content("You have successfully")
             end
 
@@ -459,8 +473,10 @@ RSpec.feature "MailTasks", :postgres do
           end
 
           describe "notifications" do
-            context "appeal has scheduled hearing" do
-              let(:appeal) { scheduled_appeal }
+            context "AMA appeal has scheduled hearing", perform_enqueued_jobs: true do
+              let(:unscheduled_appeal) { appeal }
+              let(:scheduled_appeal) { scheduled_appeal }
+              FeatureToggle.enable!(:va_notify_email)
 
               before do
                 FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
@@ -486,31 +502,71 @@ RSpec.feature "MailTasks", :postgres do
                 else
                   fill_in("Veteran Email (for these notifications only)", with: email)
                 end
-                click_button("Schedule")
               end
 
-              it "sends hearing postponed and hearing scheduled notifications" do
-                expect_any_instance_of(SendNotificationJob).to receive(:perform).with(
-                  AppellantNotification.create_payload(appeal, "Postponement of hearing").to_json
-                )
+              it "sends hearing postponed and hearing scheduled notifications", bypass_cleaner: true do
+                first_payload = AppellantNotification.create_payload(scheduled_appeal, "Postponement of hearing").to_json
+                second_payload = AppellantNotification.create_payload(scheduled_appeal, "Hearing scheduled").to_json
+                expect(SendNotificationJob).to receive(:perform_later).with(first_payload)
+                expect(SendNotificationJob).to receive(:perform_later).with(second_payload)
+                perform_enqueued_jobs do
+                  click_button("Schedule")
+                end
+              end
 
-                # expect_any_instance_of(SendNotificationJob).to receive(:perform).with(
-                #   AppellantNotification.create_payload(appeal, "Hearing scheduled").to_json
-                # )
+              it "sends only hearing scheduled notification", bypass_cleaner: true do
+                payload = AppellantNotification.create_payload(unscheduled_appeal, "Hearing scheduled").to_json
+                expect(SendNotificationJob).to receive(:perform_later).with(payload)
+                perform_enqueued_jobs do
+                  click_button("Schedule")
+                end
+              end
+            end
 
-                # expect do
-                #   perform_enqueued_jobs { click_button("Schedule") }
-                # end.to change { Notification.count }.by(2)
+            context "Legacy appeal has scheduled hearing", perform_enqueued_jobs: true do
+              FeatureToggle.enable!(:va_notify_email)
+              before do
+                FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
+                page = "queue/appeals/#{appeal.uuid}"
+                visit(page)
+                within("tr", text: "TASK", match: :first) do
+                  click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                                 text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label,
+                                 match: :first)
+                end
+                find(".cf-form-radio-option", text: ruling).click
+                fill_in("rulingDateSelector", with: ruling_date)
+                find(:css, ".cf-form-radio-option label", text: "Reschedule immediately").click
+                fill_in("instructionsField", with: instructions)
+                click_button("Mark as complete")
 
-                # SendNotificationJob.perform_now(
-                #   AppellantNotification.create_payload(appeal, "Hearing scheduled")
-                # )
+                within(:css, ".dropdown-hearingType") { click_dropdown(text: "Virtual") }
+                within(:css, ".dropdown-regionalOffice") { click_dropdown(text: "Denver, CO") }
+                within(:css, ".dropdown-hearingDate") { click_dropdown(index: 0) }
+                find("label", text: "12:30 PM Mountain Time (US & Canada) / 2:30 PM Eastern Time (US & Canada)").click
+                if has_css?("[id='Appellant Email (for these notifications only)']")
+                  fill_in("Appellant Email (for these notifications only)", with: email)
+                else
+                  fill_in("Veteran Email (for these notifications only)", with: email)
+                end
+              end
 
-                # byebug
-                # expect(Notification.count).to eq(count + 2)
+              it "sends hearing postponed and hearing scheduled notifications", bypass_cleaner: true do
+                first_payload = AppellantNotification.create_payload(scheduled_legacy_appeal, "Postponement of hearing").to_json
+                second_payload = AppellantNotification.create_payload(scheduled_legacy_appeal, "Hearing scheduled").to_json
+                expect(SendNotificationJob).to receive(:perform_later).with(first_payload)
+                expect(SendNotificationJob).to receive(:perform_later).with(second_payload)
+                perform_enqueued_jobs do
+                  click_button("Schedule")
+                end
+              end
 
-                # perform_enqueued_jobs { click_button("Schedule") }
-                # expect(Notification.last(2).pluck(:event_type)).to eq(["Postponement of hearing", "Hearing scheduled"])
+              it "sends only hearing scheduled notification", bypass_cleaner: true do
+                payload = AppellantNotification.create_payload(legacy_appeal, "Hearing scheduled").to_json
+                expect(SendNotificationJob).to receive(:perform_later).with(payload)
+                perform_enqueued_jobs do
+                  click_button("Schedule")
+                end
               end
             end
           end

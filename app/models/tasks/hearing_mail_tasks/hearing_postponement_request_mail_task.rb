@@ -221,8 +221,6 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
       AppellantNotification.notify_appellant(appeal, "Hearing scheduled")
 
-      byebug
-
       [new_hearing_task, disposition_task]
     end
   end
