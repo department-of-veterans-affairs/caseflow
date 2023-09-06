@@ -10,19 +10,24 @@ export const PexipDailyDocketGuestLink = ({ linkInfo }) => {
   const { alias, guestLink, guestPin } = linkInfo || {};
 
   const containerStyle = {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1.8fr',
-    backgroundColor: '#f1f1f1',
-    padding: '1em 0 0 1em',
-    marginLeft: '-40px',
-    marginRight: '-40px'
+    display: "grid",
+    gridTemplateColumns: "1fr 1.8fr",
+    backgroundColor: "#f1f1f1",
+    padding: "1em 0 0 1em",
+    marginLeft: "-40px",
+    marginRight: "-40px",
+    marginBottom: "20px",
   };
 
   const roomInfoContainerStyle = {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around'
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    paddingLeft: "40px",
+    paddingRight: "40px",
   };
+
+  // backgroundColor: '#f1f1f1',
 
   // Props needed for the copy text button component
   const CopyTextButtonProps = {
@@ -37,6 +42,9 @@ export const PexipDailyDocketGuestLink = ({ linkInfo }) => {
   // Takes alias from guestLink
   const useAliasFromLink = () => guestLink?.split('&')[0]?.match(/conference=.+/)[0]?.split('=')[1];
 
+  const linkIsPresent = linkInfo;
+  const buttonDisabled = true;
+
   /**
    * Render information about the guest link
    * @param {conferenceRoom} - The conference link alias
@@ -47,9 +55,40 @@ export const PexipDailyDocketGuestLink = ({ linkInfo }) => {
   const renderRoomInfo = () => {
     return (
       <div style={roomInfoContainerStyle}>
-        <h3>{GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}:<span style={{ fontWeight: 'normal' }}>{alias || useAliasFromLink()}</span></h3>
-        <h3>{GUEST_LINK_LABELS.GUEST_PIN}:<span style={{ fontWeight: 'normal' }}>{usePinFromLink()}#</span></h3>
-        <h3><CopyTextButton {...CopyTextButtonProps} /></h3>
+        <h3>
+          {GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}:
+          {linkIsPresent ? (
+            <span style={{ fontWeight: "normal" }}>
+              {alias || useAliasFromLink()}
+            </span>
+          ) : (
+            <span style={{ fontWeight: "normal" }}>N/A</span>
+          )}
+        </h3>
+        {linkIsPresent ? (
+          <>
+            <h3>
+              {GUEST_LINK_LABELS.GUEST_PIN}:
+              <span style={{ fontWeight: "normal" }}>{usePinFromLink()}#</span>
+            </h3>
+            <h3>
+              <CopyTextButton {...CopyTextButtonProps} />
+            </h3>
+          </>
+        ) : (
+          <>
+            <h3 style={{ paddingLeft: "130px" }}>
+              {GUEST_LINK_LABELS.GUEST_PIN}:
+              <span style={{ fontWeight: "normal" }}>N/A</span>
+            </h3>
+            <h3>
+              <CopyTextButton
+                {...CopyTextButtonProps}
+                disabled={buttonDisabled}
+              />
+            </h3>
+          </>
+        )}
       </div>
     );
   };
