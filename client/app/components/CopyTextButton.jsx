@@ -27,6 +27,7 @@ export default class CopyTextButton extends React.PureComponent {
       ariaLabel,
       disabled,
     } = this.props;
+
     const buttonStyles = isEmpty(styling) ? {
       borderColor: COLORS.GREY_LIGHT,
       borderWidth: '1px',
