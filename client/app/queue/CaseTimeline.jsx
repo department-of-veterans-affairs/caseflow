@@ -31,5 +31,5 @@ export const CaseTimeline = ({ appeal }) => {
 CaseTimeline.propTypes = {
   appeal: PropTypes.object,
   statusSplit: PropTypes.bool,
-  VLJ_featureToggles: PropTypes.string,
+  VLJ_featureToggles: PropTypes.bool,
 };
