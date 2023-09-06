@@ -14,40 +14,66 @@ export const clipboardButtonStyling = (defaults) =>
     padding: '0.75rem',
     // Offset the additional padding so when this component appears in an unordered list of items its baseline matches.
     margin: '-0.75rem 0',
-    overflowWrap: 'break-word'
+    overflowWrap: 'break-word',
   });
 
 export default class CopyTextButton extends React.PureComponent {
   render = () => {
-    const { text, textToCopy, label, styling, ariaLabel } = this.props;
-    const buttonStyles = isEmpty(styling) ?
-      {
-        borderColor: COLORS.GREY_LIGHT,
-        borderWidth: '1px',
+    const {
+      text,
+      textToCopy,
+      label,
+      styling,
+      ariaLabel,
+      disabled,
+    } = this.props;
+    const buttonStyles = isEmpty(styling) ? {
+      borderColor: COLORS.GREY_LIGHT,
+      borderWidth: '1px',
+      color: COLORS.GREY_DARK,
+      ':hover': {
+        backgroundColor: 'transparent',
         color: COLORS.GREY_DARK,
-        ':hover': {
-          backgroundColor: 'transparent',
-          color: COLORS.GREY_DARK,
-          borderColor: COLORS.PRIMARY,
-          borderBottomWidth: '1px'
-        },
-        '& > svg path': { fill: COLORS.GREY_LIGHT },
-        '&:hover > svg path': { fill: COLORS.PRIMARY }
-      } :
-      styling;
+        borderColor: COLORS.PRIMARY,
+        borderBottomWidth: '1px',
+      },
+      '& > svg path': { fill: COLORS.GREY_LIGHT },
+      '&:hover > svg path': { fill: COLORS.PRIMARY },
+    } : styling;
+
+    const disabledButtonStyles = isEmpty(styling) ? {
+      borderColor: COLORS.GREY_LIGHT,
+      borderWidth: '1px',
+      color: COLORS.GREY_LIGHT,
+      pointerEvents: 'none',
+      '& > svg path': { fill: COLORS.GREY_LIGHT },
+      '&:hover > svg path': { fill: COLORS.PRIMARY },
+    } : styling;
 
     return (
       <Tooltip id={`tooltip-${text}`} text="Click to copy" position="bottom">
         <CopyToClipboard text={textToCopy || text}>
-          <button
-            type="submit"
-            className="cf-apppeal-id"
-            aria-label={ariaLabel || `Copy ${label} ${text}`}
-            {...clipboardButtonStyling(buttonStyles)}
-          >
-            {text}&nbsp;
-            <ClipboardIcon />
-          </button>
+          {disabled ? (
+            <button
+              type="submit"
+              className="cf-apppeal-id"
+              aria-label={ariaLabel || `Copy ${label} ${text}`}
+              {...clipboardButtonStyling(disabledButtonStyles)}
+            >
+              {text}&nbsp;
+              <ClipboardIcon />
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="cf-apppeal-id"
+              aria-label={ariaLabel || `Copy ${label} ${text}`}
+              {...clipboardButtonStyling(buttonStyles)}
+            >
+              {text}&nbsp;
+              <ClipboardIcon />
+            </button>
+          )}
         </CopyToClipboard>
       </Tooltip>
     );
@@ -57,7 +83,7 @@ export default class CopyTextButton extends React.PureComponent {
 CopyTextButton.defaultProps = {
   styling: {},
   label: '',
-  textToCopy: null
+  textToCopy: null,
 };
 
 CopyTextButton.propTypes = {
@@ -77,5 +103,6 @@ CopyTextButton.propTypes = {
    * If ariaLabel not set, populates the aria-label as `Copy ${label} ${text}`
    */
   label: PropTypes.string,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  disabled: PropTypes.bool,
 };

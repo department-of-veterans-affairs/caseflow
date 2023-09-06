@@ -65,19 +65,26 @@ export const WebexDailyDocketGuestLink = ({ linkInfo }) => {
           )}
         </h3>
         {linkIsPresent ? (
-          <h3>
-            {GUEST_LINK_LABELS.GUEST_PIN}:
-            <span style={{ fontWeight: "normal" }}>{usePinFromLink()}#</span>
-          </h3>
+          <>
+            <h3>
+              {GUEST_LINK_LABELS.GUEST_PIN}:
+              <span style={{ fontWeight: "normal" }}>{usePinFromLink()}#</span>
+            </h3>
+            <h3>
+              <CopyTextButton {...CopyTextButtonProps} />
+            </h3>
+          </>
         ) : (
-          <h3 style={{ paddingLeft: "130px" }}>
-            {GUEST_LINK_LABELS.GUEST_PIN}:
-            <span style={{ fontWeight: "normal" }}>N/A</span>
-          </h3>
+          <>
+            <h3 style={{ paddingLeft: "130px" }}>
+              {GUEST_LINK_LABELS.GUEST_PIN}:
+              <span style={{ fontWeight: "normal" }}>N/A</span>
+            </h3>
+            <h3>
+              <CopyTextButton {...CopyTextButtonProps} disabled={true}/>
+            </h3>
+          </>
         )}
-        <h3>
-          <CopyTextButton {...CopyTextButtonProps} />
-        </h3>
       </div>
     );
   };
