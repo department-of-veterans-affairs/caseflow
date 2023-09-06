@@ -527,7 +527,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         click_on "Correct issues"
         expect(appeal.request_issues.count).to eq 1
         click_on "+ Add issue"
-        add_intake_nonrating_issue(
+        add_intake_nonrating_issue( 
           category: "Unknown issue category",
           description: new_issue_description,
           date: (Time.zone.now - 100.days).mdY
@@ -566,7 +566,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           find("div", class: "cf-select__option", text: org_nonadmin.full_name).click
           fill_in "taskInstructions", with: "Confirm info and send letter to Veteran."
           click_on "Assign"
-          expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin.full_name
+          expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin.full_name
         end
 
         step "assigned user can reassign task" do
@@ -583,7 +583,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           find("div", class: "cf-select__option", text: org_nonadmin2.full_name).click
           fill_in "taskInstructions", with: "Going fishing. Handing off to you."
           click_on "Submit"
-          expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin2.full_name
+          expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin2.full_name
         end
       end
     end
@@ -708,7 +708,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           # Assign an admin action that DOES block the sending of the 90 day letter
           click_dropdown(text: Constants.TASK_ACTIONS.CLARIFY_POA_BLOCKING_CAVC.label)
           fill_in "taskInstructions", with: "Please find out the POA for this veteran"
-          click_on "Submit"
+          click_on "Assign"
           expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % CavcLitigationSupport.singleton.name
 
           # Ensure there are no actions on the send letter task as it is blocked by poa clarification
@@ -794,7 +794,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           find("div", class: "cf-select__option", text: org_nonadmin.full_name).click
           fill_in "taskInstructions", with: "Assigning to user."
           click_on "Assign"
-          expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin.full_name
+          expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin.full_name
         end
 
         step "assigned user adds schedule hearing task" do
