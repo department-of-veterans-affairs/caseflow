@@ -13,9 +13,9 @@ import Alert from 'app/components/Alert';
  * Issue Tags Component for searching Document Issue Tags
  * @param {Object} props -- Contains details to search for document tags
  */
-export const IssueTags = ({ errors, pendingTag, changeTags, tagOptions, handleTagEdit, autoTaggingEnabled, generateTags, currentDocument }) => {
+export const IssueTags = ({ errors, pendingTag, changeTags, tagOptions, handleTagEdit, autoTaggingEnabled, generateTags, currentDocument, canManuallyAutoTag }) => {
   const { auto_tagged, isAutoTagPending } = currentDocument
-  const isVisible = autoTaggingEnabled && (process.env.NODE_ENV === "production" ? !auto_tagged : true)
+  const isVisible = autoTaggingEnabled && canManuallyAutoTag
   return (
     <div className="cf-issue-tag-sidebar">
       {isAutoTagPending && <Alert type="info" message="Auto-tags generating. Please wait a moment." />}
@@ -48,5 +48,6 @@ IssueTags.propTypes = {
   errors: PropTypes.object,
   tagOptions: PropTypes.array,
   currentDocument: PropTypes.object,
-  autoTaggingEnabled: PropTypes.bool
+  autoTaggingEnabled: PropTypes.bool,
+  canManuallyAutoTag: PropTypes.bool
 };
