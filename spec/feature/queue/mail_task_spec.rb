@@ -153,12 +153,7 @@ RSpec.feature "MailTasks", :postgres do
     before do
       HearingAdmin.singleton.add_user(User.current_user)
     end
-    let(:legacy_appeal) do
-      create(:legacy_appeal, :with_veteran, vacols_case: create(:case))
-    end
-    let(:scheduled_legacy_appeal) do
-      create(:legacy_appeal, :with_veteran, vacols_case: create(:case))
-    end
+    let(:appeal) { hpr_task.appeal }
     let(:hpr_task) do
       create(:hearing_postponement_request_mail_task,
              :with_unscheduled_hearing, assigned_by_id: User.system_user.id)
@@ -167,18 +162,23 @@ RSpec.feature "MailTasks", :postgres do
       create(:hearing_postponement_request_mail_task,
              :with_scheduled_hearing, assigned_by_id: User.system_user.id)
     end
+    let(:scheduled_appeal) { scheduled_hpr_task.appeal }
+    let(:legacy_appeal) do
+      create(:legacy_appeal, :with_veteran, vacols_case: create(:case))
+    end
     let!(:legacy_hpr_task) do
       create(:hearing_postponement_request_mail_task,
              :with_unscheduled_hearing,
              assigned_by_id: User.system_user.id, appeal: legacy_appeal)
     end
-    let!(:legacy_scheduled_hpr_task) do
+    let(:scheduled_legacy_appeal) do
+      create(:legacy_appeal, :with_veteran, vacols_case: create(:case))
+    end
+    let!(:scheduled_legacy_hpr_task) do
       create(:hearing_postponement_request_mail_task,
              :with_scheduled_hearing,
              assigned_by_id: User.system_user.id, appeal: scheduled_legacy_appeal)
     end
-    let(:appeal) { hpr_task.appeal }
-    let(:scheduled_appeal) { scheduled_hpr_task.appeal }
 
     context "changing task type" do
       it "submit button starts out disabled" do
@@ -473,14 +473,12 @@ RSpec.feature "MailTasks", :postgres do
           end
 
           describe "notifications" do
-            context "AMA appeal has scheduled hearing", perform_enqueued_jobs: true do
-              let(:unscheduled_appeal) { appeal }
-              let(:scheduled_appeal) { scheduled_appeal }
+            context "appeal has scheduled hearing", perform_enqueued_jobs: true do
               FeatureToggle.enable!(:va_notify_email)
 
               before do
                 FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
-                page = "queue/appeals/#{appeal.uuid}"
+                page = "queue/appeals/#{scheduled_appeal.uuid}"
                 visit(page)
                 within("tr", text: "TASK", match: :first) do
                   click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
@@ -513,18 +511,11 @@ RSpec.feature "MailTasks", :postgres do
                   click_button("Schedule")
                 end
               end
-
-              it "sends only hearing scheduled notification", bypass_cleaner: true do
-                payload = AppellantNotification.create_payload(unscheduled_appeal, "Hearing scheduled").to_json
-                expect(SendNotificationJob).to receive(:perform_later).with(payload)
-                perform_enqueued_jobs do
-                  click_button("Schedule")
-                end
-              end
             end
 
-            context "Legacy appeal has scheduled hearing", perform_enqueued_jobs: true do
+            context "appeal has unscheduled hearing", perform_enqueued_jobs: true do
               FeatureToggle.enable!(:va_notify_email)
+
               before do
                 FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
                 page = "queue/appeals/#{appeal.uuid}"
@@ -551,21 +542,90 @@ RSpec.feature "MailTasks", :postgres do
                 end
               end
 
-              it "sends hearing postponed and hearing scheduled notifications", bypass_cleaner: true do
-                first_payload = AppellantNotification.create_payload(scheduled_legacy_appeal, "Postponement of hearing").to_json
-                second_payload = AppellantNotification.create_payload(scheduled_legacy_appeal, "Hearing scheduled").to_json
-                expect(SendNotificationJob).to receive(:perform_later).with(first_payload)
-                expect(SendNotificationJob).to receive(:perform_later).with(second_payload)
+              it "sends only hearing scheduled notification", bypass_cleaner: true do
+                payload = AppellantNotification.create_payload(appeal, "Hearing scheduled").to_json
+                expect(SendNotificationJob).to receive(:perform_later).with(payload)
                 perform_enqueued_jobs do
                   click_button("Schedule")
                 end
               end
 
-              it "sends only hearing scheduled notification", bypass_cleaner: true do
-                payload = AppellantNotification.create_payload(legacy_appeal, "Hearing scheduled").to_json
-                expect(SendNotificationJob).to receive(:perform_later).with(payload)
-                perform_enqueued_jobs do
-                  click_button("Schedule")
+              context "legacy appeal has scheduled hearing", perform_enqueued_jobs: true do
+                FeatureToggle.enable!(:va_notify_email)
+
+                before do
+                  FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
+                  page = "queue/appeals/#{scheduled_legacy_appeal.vacols_id}"
+                  visit(page)
+                  within("tr", text: "TASK", match: :first) do
+                    click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                                   text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label,
+                                   match: :first)
+                  end
+                  find(".cf-form-radio-option", text: ruling).click
+                  fill_in("rulingDateSelector", with: ruling_date)
+                  find(:css, ".cf-form-radio-option label", text: "Reschedule immediately").click
+                  fill_in("instructionsField", with: instructions)
+                  click_button("Mark as complete")
+
+                  within(:css, ".dropdown-hearingType") { click_dropdown(text: "Virtual") }
+                  within(:css, ".dropdown-regionalOffice") { click_dropdown(text: "Denver, CO") }
+                  within(:css, ".dropdown-hearingDate") { click_dropdown(index: 0) }
+                  find("label", text: "12:30 PM Mountain Time (US & Canada) / 2:30 PM Eastern Time (US & Canada)").click
+                  if has_css?("[id='Appellant Email (for these notifications only)']")
+                    fill_in("Appellant Email (for these notifications only)", with: email)
+                  else
+                    fill_in("Veteran Email (for these notifications only)", with: email)
+                  end
+                end
+
+                it "sends hearing postponed and hearing scheduled notifications", bypass_cleaner: true do
+                  first_payload = AppellantNotification
+                    .create_payload(scheduled_legacy_appeal, "Postponement of hearing").to_json
+                  second_payload = AppellantNotification.create_payload(scheduled_legacy_appeal, "Hearing scheduled")
+                    .to_json
+                  expect(SendNotificationJob).to receive(:perform_later).with(first_payload)
+                  expect(SendNotificationJob).to receive(:perform_later).with(second_payload)
+                  perform_enqueued_jobs do
+                    click_button("Schedule")
+                  end
+                end
+              end
+
+              context "legacy appeal has unscheduled hearing", perform_enqueued_jobs: true do
+                FeatureToggle.enable!(:va_notify_email)
+
+                before do
+                  FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
+                  page = "queue/appeals/#{legacy_appeal.vacols_id}"
+                  visit(page)
+                  within("tr", text: "TASK", match: :first) do
+                    click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                                   text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label,
+                                   match: :first)
+                  end
+                  find(".cf-form-radio-option", text: ruling).click
+                  fill_in("rulingDateSelector", with: ruling_date)
+                  find(:css, ".cf-form-radio-option label", text: "Reschedule immediately").click
+                  fill_in("instructionsField", with: instructions)
+                  click_button("Mark as complete")
+
+                  within(:css, ".dropdown-hearingType") { click_dropdown(text: "Virtual") }
+                  within(:css, ".dropdown-regionalOffice") { click_dropdown(text: "Denver, CO") }
+                  within(:css, ".dropdown-hearingDate") { click_dropdown(index: 0) }
+                  find("label", text: "12:30 PM Mountain Time (US & Canada) / 2:30 PM Eastern Time (US & Canada)").click
+                  if has_css?("[id='Appellant Email (for these notifications only)']")
+                    fill_in("Appellant Email (for these notifications only)", with: email)
+                  else
+                    fill_in("Veteran Email (for these notifications only)", with: email)
+                  end
+                end
+                it "sends only hearing scheduled notification", bypass_cleaner: true do
+                  payload = AppellantNotification.create_payload(legacy_appeal, "Hearing scheduled").to_json
+                  expect(SendNotificationJob).to receive(:perform_later).with(payload)
+                  perform_enqueued_jobs do
+                    click_button("Schedule")
+                  end
                 end
               end
             end
