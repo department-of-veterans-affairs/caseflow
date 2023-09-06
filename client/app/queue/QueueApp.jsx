@@ -54,7 +54,6 @@ import ChangeHearingDispositionModal from './ChangeHearingDispositionModal';
 import CreateChangeHearingDispositionTaskModal from './CreateChangeHearingDispositionTaskModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
-import AssignToAttorneyLegacyModalView from './AssignToAttorneyLegacyModalView';
 import AssignToView from './AssignToView';
 import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
@@ -293,7 +292,7 @@ class QueueApp extends React.PureComponent {
   );
 
   routedAssignToAttorneyLegacy = (props) => (
-    <AssignToAttorneyLegacyModalView userId={this.props.userId} match={props.match} />
+    <AssignToAttorneyModalView userId={this.props.userId} match={props.match} />
   );
 
   routedAssignToSingleTeam = (props) => (
