@@ -19,8 +19,8 @@ export const VirtualHearingFields = (
     <ContentSection
       header={`${hearing?.wasVirtual ? 'Previous ' : ''}Virtual Hearing Links`}
     >
-      <div><b>{StringUtil.capitalizeFirst(hearing?.meetingType)} hearing</b></div>
-      <HearingLinks style={{display: 'inline-block'}}
+      <div style={{ marginTop: '1%' }}><b>{StringUtil.capitalizeFirst(hearing?.meetingType)} hearing</b></div>
+      <HearingLinks
         user={user}
         hearing={hearing}
         virtualHearing={virtualHearing}

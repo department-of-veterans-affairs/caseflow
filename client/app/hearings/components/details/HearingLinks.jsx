@@ -5,7 +5,7 @@ import React from 'react';
 import { COLORS } from '../../../constants/AppConstants';
 import { VIRTUAL_HEARING_HOST, virtualHearingRoleForUser } from '../../utils';
 import {
-  rowThirds,
+  rowThirdsVirtual,
   labelPadding,
   labelPaddingFirst,
   hearingLinksContainer
@@ -113,7 +113,7 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
   const showHostLink = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST;
 
   return (
-    <div {...rowThirds} {...hearingLinksContainer}>
+    <div {...rowThirdsVirtual} {...hearingLinksContainer}>
       {showHostLink && <LinkContainer
         hearing={hearing}
         isVirtual={isVirtual}
