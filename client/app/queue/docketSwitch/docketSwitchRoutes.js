@@ -14,8 +14,9 @@ const PageRoutes = [
       TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.value
     }`}
     title={`${TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.label} | Caseflow`}
+    key={crypto.randomUUID()}
   >
-    <RecommendDocketSwitchContainer />
+    <RecommendDocketSwitchContainer  />
   </PageRoute>,
 
   <PageRoute
@@ -23,12 +24,13 @@ const PageRoutes = [
       TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.value
     }`}
     title={`${TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.label} | Caseflow`}
+    key={crypto.randomUUID()}
   >
     <DocketSwitchRulingContainer />
   </PageRoute>,
 
   // This route handles the remaining checkout flow
-  <Route path="/queue/appeals/:appealId/tasks/:taskId/docket_switch/checkout">
+  <Route path="/queue/appeals/:appealId/tasks/:taskId/docket_switch/checkout" key={crypto.randomUUID()}>
     {/* The component here will add additional `Switch` and child routes */}
     <Switch>
       <PageRoute
@@ -36,6 +38,7 @@ const PageRoutes = [
       TASK_ACTIONS.DOCKET_SWITCH_DENIED.value
     }`}
         title={`${TASK_ACTIONS.DOCKET_SWITCH_DENIED.label} | Caseflow`}
+        key={crypto.randomUUID()}
       >
         <DocketSwitchDenialContainer />
       </PageRoute>
@@ -44,6 +47,7 @@ const PageRoutes = [
       TASK_ACTIONS.DOCKET_SWITCH_GRANTED.value
     }`}
         title={`${TASK_ACTIONS.DOCKET_SWITCH_GRANTED.label} | Caseflow`}
+        key={crypto.randomUUID()}
       >
         <DocketSwitchGrantContainer />
       </PageRoute>
