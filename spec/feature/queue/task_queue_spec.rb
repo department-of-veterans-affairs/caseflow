@@ -1008,7 +1008,7 @@ feature "Task queue", :all_dbs do
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
         fill_in "taskInstructions", with: "Please fix this"
 
-        click_on COPY::MODAL_SUBMIT_BUTTON
+        click_on COPY::MODAL_ASSIGN_BUTTON
 
         expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % attorney_user.full_name)
 
