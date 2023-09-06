@@ -259,7 +259,7 @@ class AddIssuesPage extends React.Component {
 
       // if an new issue was added or an issue was edited
       const newOrChangedIssue =
-        issues.filter((issue) => !issue.id || issue.editedDescription || issue.correctionType).length > 0;
+        issues.filter((issue) => !issue.id || issue.editedDescription || issue.editedDecisionDate || issue.correctionType).length > 0;
 
       if (issueCountChanged || partialWithdrawal || newOrChangedIssue) {
         return true;
@@ -366,11 +366,12 @@ class AddIssuesPage extends React.Component {
 
     if (editPage && haveIssuesChanged()) {
       // flash a save message if user is on the edit page & issues have changed
-      const establishText =
-        intakeData.benefitType === 'vha' && _.every(intakeData.addedIssues, (issue) => issue.decisionDate) ?
-          'Establish' :
-          'Save';
-      const issuesChangedBanner = <p>{`When you finish making changes, click ${establishText} to continue.`}</p>;
+      const isAllIssuesReadyToBeEstablished = _.every(intakeData.addedIssues, (issue) => (
+        issue.withdrawalDate || issue.withdrawalPending) || issue.decisionDate
+      );
+
+      const establishText = intakeData.benefitType === 'vha' && isAllIssuesReadyToBeEstablished ? 'Establish' : 'Save';
+      const issuesChangedBanner = <p>{`When you finish making changes, click "${establishText}" to continue.`}</p>;
 
       fieldsForFormType = fieldsForFormType.concat({
         field: '',
