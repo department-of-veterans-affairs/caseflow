@@ -18,21 +18,12 @@ class AttorneyLegacyTask < LegacyTask
       ]
     elsif task_id.nil?
       []
-    elsif (current_user&.judge_in_vacols? || current_user&.can_act_on_behalf_of_judges?) &&
-          FeatureToggle.enabled?(:vlj_legacy_appeal) &&
-          !%w[81 33 57 CASEFLOW].include?(appeal.case_record.reload.bfcurloc)
-      [
-        Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
-        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY_LEGACY.to_h
-      ]
     elsif role == "attorney" && current_user == assigned_to
       [
         Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h,
         Constants.TASK_ACTIONS.SUBMIT_OMO_REQUEST_FOR_REVIEW.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h
       ]
-    else
-      []
     end
   end
 
