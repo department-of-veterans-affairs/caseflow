@@ -24,6 +24,8 @@ class AttorneyLegacyTask < LegacyTask
         Constants.TASK_ACTIONS.SUBMIT_OMO_REQUEST_FOR_REVIEW.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h
       ]
+    else
+      []
     end
   end
 
