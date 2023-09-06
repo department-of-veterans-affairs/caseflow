@@ -21,14 +21,14 @@ exports[`SelectConferenceTypeRadioField renders correctly 1`] = `
       >
         <input
           checked=""
-          id="field1_1"
+          id="field1_pexip"
           name="field1"
           type="radio"
-          value="1"
+          value="pexip"
         />
         <label
           class=""
-          for="field1_1"
+          for="field1_pexip"
         >
           Pexip
         </label>
@@ -37,14 +37,14 @@ exports[`SelectConferenceTypeRadioField renders correctly 1`] = `
         class="cf-form-radio-option"
       >
         <input
-          id="field1_2"
+          id="field1_webex"
           name="field1"
           type="radio"
-          value="2"
+          value="webex"
         />
         <label
           class=""
-          for="field1_2"
+          for="field1_webex"
         >
           Webex
         </label>
