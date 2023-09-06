@@ -4,7 +4,7 @@ import { render, screen, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore, compose } from 'redux';
 import thunk from 'redux-thunk';
-import CreateMailTaskDialog from '../../../../app/queue/CreateMailTaskDialog';
+import ChangeTaskTypeModal from '../../../../app/queue/ChangeTaskTypeModal';
 import {
   createQueueReducer,
   getAppealId,
@@ -16,7 +16,7 @@ import COPY from '../../../../COPY';
 import ApiUtil from '../../../../app/util/ApiUtil';
 jest.mock('../../../../app/util/ApiUtil');
 
-const renderCreateMailTaskDialog = (storeValues, taskType) => {
+const renderChangeTaskTypeModal = (storeValues, taskType) => {
   const appealId = getAppealId(storeValues);
   const taskId = getTaskId(storeValues, taskType);
 
@@ -32,39 +32,37 @@ const renderCreateMailTaskDialog = (storeValues, taskType) => {
     <Provider store={store}>
       <MemoryRouter initialEntries={[path]}>
         <Route component={(props) => {
-          return <CreateMailTaskDialog {...props.match.params} />;
+          return <ChangeTaskTypeModal {...props.match.params} />;
         }} path="/queue/appeals/:appealId/tasks/:taskId/modal/create_mail_task" />
       </MemoryRouter>
     </Provider>
   );
 };
 
-describe('CreateMailTaskDialog', () => {
-  const setUpMailTaskDialog = () => renderCreateMailTaskDialog(rootTaskData, 'RootTask');
+describe('ChangeTaskTypeModal', () => {
+  const setUpModal = () => renderChangeTaskTypeModal(rootTaskData, 'RootTask');
 
   describe('on modal open', () => {
-    const modalTitle = 'Create new mail task';
+    test('modal title: "Change task type"', () => {
+      setUpModal();
 
-    test('modal title: "Create new mail task"', () => {
-      setUpMailTaskDialog();
-
-      expect(screen.getByText(modalTitle)).toBeTruthy();
+      expect(screen.getByRole('heading', { level: 1 })).toBeTruthy();
     });
 
     test('submit button is initially disabled', () => {
-      setUpMailTaskDialog();
+      setUpModal();
 
-      expect(screen.getByText('Submit')).toBeDisabled();
+      expect(screen.getByText('Change task type', { selector: 'button' })).toBeDisabled();
     });
   });
 
   describe('after selecting Hearing Postponement Request', () => {
     const label = 'Include eFolder document hyperlink to request a hearing postponement';
     const validInput = 'https://vefs-claimevidence-ui-uat.stage.bip.va.gov/pdf/12345678-1234-1234-1234-twelvetwelve';
-    const instructionsLabel = 'Provide instructions and context for this action';
+    const instructionsLabel = 'Provide instructions and context for this change:';
 
     test('efolder url link field is present', () => {
-      setUpMailTaskDialog();
+      setUpModal();
 
       userEvent.type(screen.getByRole('combobox'), 'Hearing postponement request{enter}');
 
@@ -72,7 +70,7 @@ describe('CreateMailTaskDialog', () => {
     });
 
     test('instructions field is present', () => {
-      setUpMailTaskDialog();
+      setUpModal();
 
       userEvent.type(screen.getByRole('combobox'), 'Hearing postponement request{enter}');
 
@@ -81,7 +79,7 @@ describe('CreateMailTaskDialog', () => {
 
     test('efolder url link field displays error with invalid link format', async () => {
       jest.useFakeTimers('modern');
-      setUpMailTaskDialog();
+      setUpModal();
 
       userEvent.type(screen.getByRole('combobox'), 'Hearing postponement request{enter}');
       userEvent.type(screen.getByLabelText(label), 'asdf');
@@ -91,7 +89,7 @@ describe('CreateMailTaskDialog', () => {
 
     test('efolder url link field displays error with vbms when appropriate', async () => {
       jest.useFakeTimers('modern');
-      setUpMailTaskDialog();
+      setUpModal();
 
       const response = { status: 500, statusText: 'Error', ok: false };
 
@@ -106,7 +104,7 @@ describe('CreateMailTaskDialog', () => {
 
     test('document not found message appears when no document exists', async () => {
       jest.useFakeTimers('modern');
-      setUpMailTaskDialog();
+      setUpModal();
 
       const response = { status: 200, body: { document_presence: false } };
 
@@ -121,7 +119,7 @@ describe('CreateMailTaskDialog', () => {
 
     test('submit button becomes enabled when required fields are complete', async () => {
       jest.useFakeTimers('modern');
-      setUpMailTaskDialog();
+      setUpModal();
 
       const response = { status: 200, body: { document_presence: true } };
 
@@ -136,12 +134,12 @@ describe('CreateMailTaskDialog', () => {
       // wait for second debounce to get to "same value" guard clause
       jest.runAllTimers();
 
-      expect(await screen.findByText('Submit')).toBeEnabled();
+      expect(await screen.findByText('Change task type', { selector: 'button' })).toBeEnabled();
     });
 
     test('submit button becomes disabled after changing and already valid input', async () => {
       jest.useFakeTimers('modern');
-      setUpMailTaskDialog();
+      setUpModal();
 
       const response = { status: 200, body: { document_presence: true } };
 
@@ -156,18 +154,18 @@ describe('CreateMailTaskDialog', () => {
       // wait for second debounce to get to "same value" guard clause
       jest.runAllTimers();
 
-      expect(await screen.findByText('Submit')).toBeEnabled();
+      expect(await screen.findByText('Change task type', { selector: 'button' })).toBeEnabled();
 
       userEvent.type(screen.getByLabelText(label), 'a{backspace}');
 
-      expect(await screen.findByText('Submit')).toBeDisabled();
+      expect(await screen.findByText('Change task type', { selector: 'button' })).toBeDisabled();
 
       // wait for debounce to finish, which triggers re-render
       await act(async() => jest.runAllTimers());
       // wait for second debounce to get to "same value" guard clause
       jest.runAllTimers();
 
-      expect(await screen.findByText('Submit')).toBeEnabled();
+      expect(await screen.findByText('Change task type', { selector: 'button' })).toBeEnabled();
     });
   });
 });
