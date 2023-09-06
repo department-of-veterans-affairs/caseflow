@@ -2,8 +2,7 @@
 
 class ExternalApi::WebexService::CreateResponse < ExternalApi::WebexService::Response
   def data
-    return if resp.headers["Location"].nil?
-
-    { "conference_id": resp.headers["Location"].split("/")[-1].to_s }
+    response = JSON.parse(resp.body)
+    { "conference_id": response.first.last }
   end
 end

@@ -12,7 +12,7 @@ module VirtualHearings::ConferenceClient
         client_host: ENV["PEXIP_CLIENT_HOST"]
       )
     when "webex"
-      @client ||= WebexService.new
+      @client ||= ExternalApi::WebexService.new
     else
       msg = "Meeting type for the user is invalid"
       fail Caseflow::Error::MeetingTypeNotFoundError, message: msg

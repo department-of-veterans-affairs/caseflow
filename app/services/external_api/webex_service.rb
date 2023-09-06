@@ -7,6 +7,16 @@ class ExternalApi::WebexService
   MOCK_ENDPOINT = "localhost:3050/fake.#{CREATE_CONFERENCE_ENDPOINT}"
   # ENDPOINT = ApplicationController.dependencies_faked? ? MOCK_ENDPOINT : CREATE_CONFERENCE_ENDPOINT
 
+  # :reek:UtilityFunction
+  def combine_time_and_date(time, timezone, date)
+    time_with_zone = time.in_time_zone(timezone)
+    time_and_date_string = "#{date.strftime('%F')} #{time_with_zone.strftime('%T')}"
+    combined_datetime = time_and_date_string.in_time_zone(timezone)
+    formatted_datetime_string = combined_datetime.iso8601
+
+    formatted_datetime_string
+  end
+
   # rubocop:disable Metrics/MethodLength
   def create_conference(virtual_hearing)
     title = virtual_hearing.alias
@@ -16,7 +26,7 @@ class ExternalApi::WebexService
     timezone = hearing.regional_office&.timezone
     end_date = hearing_day.scheduled_for
     end_time = "23:59:59"
-    end_date_time = HearingDay.combine_time_and_date(end_time, timezone, end_date)
+    end_date_time = combine_time_and_date(end_time, timezone, end_date)
 
     body = {
       "jwt": {
@@ -69,7 +79,7 @@ class ExternalApi::WebexService
 
   # :nocov:
   def send_webex_request(endpoint, method, body: nil)
-    url = endpoint
+    url = "http://#{endpoint}"
     request = HTTPI::Request.new(url)
     request.open_timeout = 300
     request.read_timeout = 300

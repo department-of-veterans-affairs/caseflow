@@ -99,7 +99,6 @@ describe VirtualHearings::CreateConferenceJob do
 
     it "fails when meeting type is webex" do
       current_user.update!(meeting_type: "webex")
-
       expect { subject.perform_now }.to raise_exception(Caseflow::Error::WebexApiError)
     end
 
