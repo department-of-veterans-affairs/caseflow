@@ -9,6 +9,7 @@
 #   - A child task of the same name is created and assigned to the HearingAdmin organization
 ##
 class HearingPostponementRequestMailTask < HearingRequestMailTask
+  prepend HearingPostponed
   include RunAsyncable
 
   class << self
@@ -149,6 +150,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   def update_hearing_and_create_tasks(after_disposition_update)
     multi_transaction do
       # If hearing exists, postpone previous hearing and handle conference links
+
       if open_hearing
         postpone_previous_hearing
         clean_up_virtual_hearing
@@ -234,6 +236,8 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
       disposition_task = AssignHearingDispositionTask
         .create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)
+
+      AppellantNotification.notify_appellant(appeal, "Hearing scheduled")
 
       [new_hearing_task, disposition_task]
     end
