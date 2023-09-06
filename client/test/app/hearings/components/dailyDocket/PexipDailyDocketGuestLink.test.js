@@ -2,9 +2,9 @@ import React from "react";
 import { screen, render } from "@testing-library/react";
 import { axe } from "jest-axe";
 // eslint-disable-next-line max-len
-import { DailyDocketGuestLinkSection } from "../../../../../app/hearings/components/dailyDocket/PexipDailyDocketGuestLink";
+import { PexipDailyDocketGuestLink } from "../../../../../app/hearings/components/dailyDocket/PexipDailyDocketGuestLink";
 
-describe("DailyDocketGuestLinkSection", () => {
+describe("PexipDailyDocketGuestLink", () => {
   const linkInfo = {
     alias: "BVA0000001@caseflow.va.gov",
     guestLink:
@@ -14,7 +14,7 @@ describe("DailyDocketGuestLinkSection", () => {
 
   it("renders correctly for hearing admins and hearing management users", () => {
     const { container } = render(
-      <DailyDocketGuestLinkSection linkInfo={linkInfo} />
+      <PexipDailyDocketGuestLink linkInfo={linkInfo} />
     );
 
     expect(container).toMatchSnapshot();
@@ -22,7 +22,7 @@ describe("DailyDocketGuestLinkSection", () => {
 
   it("renders correctly for non hearing admins and hearing management users", () => {
     const { container } = render(
-      <DailyDocketGuestLinkSection linkInfo={linkInfo} />
+      <PexipDailyDocketGuestLink linkInfo={linkInfo} />
     );
 
     expect(container).toMatchSnapshot();
@@ -30,7 +30,7 @@ describe("DailyDocketGuestLinkSection", () => {
 
   it("passes a11y testing", async () => {
     const { container } = render(
-      <DailyDocketGuestLinkSection linkInfo={linkInfo} />
+      <PexipDailyDocketGuestLink linkInfo={linkInfo} />
     );
 
     const results = await axe(container);
@@ -39,7 +39,7 @@ describe("DailyDocketGuestLinkSection", () => {
   });
 
   it("renders conference room correctly", () => {
-    render(<DailyDocketGuestLinkSection linkInfo={linkInfo} />);
+    render(<PexipDailyDocketGuestLink linkInfo={linkInfo} />);
 
     expect(
       screen.getByRole("heading", {
@@ -49,8 +49,9 @@ describe("DailyDocketGuestLinkSection", () => {
   });
 
   it("renders guest pin correctly", () => {
-    render(<DailyDocketGuestLinkSection linkInfo={linkInfo} />);
+    render(<PexipDailyDocketGuestLink linkInfo={linkInfo} />);
 
     expect(screen.getByRole("heading", { name: "PIN: 3998472#" })).toBeTruthy();
   });
 });
+

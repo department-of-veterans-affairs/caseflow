@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DailyDocketGuestLinkSection renders correctly for hearing admins and hearing management users 1`] = `
+exports[`PexipDailyDocketGuestLink renders correctly for hearing admins and hearing management users 1`] = `
 <div>
   <div
     style="display: grid; grid-template-columns: 1fr 1.8fr; background-color: rgb(241, 241, 241); padding: 1em 0px 0px 1em; margin-left: -40px; margin-right: -40px;"
   >
     <h3>
-      Guest links for non-virtual hearings
+      Pexip guest link for non-virtual hearings
     </h3>
     <div
       style="display: flex; flex-wrap: wrap; justify-content: space-around;"
@@ -69,7 +69,7 @@ exports[`DailyDocketGuestLinkSection renders correctly for hearing admins and he
             role="tooltip"
           >
             <style>
-              
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -143,7 +143,7 @@ exports[`DailyDocketGuestLinkSection renders correctly for hearing admins and he
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
             </style>
             Click to copy
           </div>
@@ -154,13 +154,13 @@ exports[`DailyDocketGuestLinkSection renders correctly for hearing admins and he
 </div>
 `;
 
-exports[`DailyDocketGuestLinkSection renders correctly for non hearing admins and hearing management users 1`] = `
+exports[`PexipDailyDocketGuestLink renders correctly for non hearing admins and hearing management users 1`] = `
 <div>
   <div
     style="display: grid; grid-template-columns: 1fr 1.8fr; background-color: rgb(241, 241, 241); padding: 1em 0px 0px 1em; margin-left: -40px; margin-right: -40px;"
   >
     <h3>
-      Guest links for non-virtual hearings
+      Pexip guest link for non-virtual hearings
     </h3>
     <div
       style="display: flex; flex-wrap: wrap; justify-content: space-around;"
@@ -223,7 +223,7 @@ exports[`DailyDocketGuestLinkSection renders correctly for non hearing admins an
             role="tooltip"
           >
             <style>
-              
+
   	.t00000000-0000-0000-0000-000000000000 {
 	    color: #fff;
 	    background: #222;
@@ -297,7 +297,7 @@ exports[`DailyDocketGuestLinkSection renders correctly for non hearing admins an
         border-right-style: solid;
         border-right-width: 6px;
     }
-  
+
             </style>
             Click to copy
           </div>
