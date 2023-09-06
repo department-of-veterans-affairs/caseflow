@@ -75,7 +75,7 @@ TaskSnapshot.propTypes = {
   appeal: PropTypes.object,
   hideDropdown: PropTypes.bool,
   showPulacCerulloAlert: PropTypes.bool,
-  VLJ_featureToggles: PropTypes.string,
+  VLJ_featureToggles: PropTypes.bool,
 };
 
 const mapStateToProps = (state, ownProps) => {
