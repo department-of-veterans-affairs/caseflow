@@ -54,7 +54,10 @@ export default class IssuesList extends React.Component {
       );
     }
 
-    if (!issue.date || issue.editedDecisionDate) {
+    const isIssueWithdrawn = issue.withdrawalDate || issue.withdrawalPending;
+
+    // Do not show the Add Decision Date action if the issue is pending or is fully withdrawn
+    if ((!issue.date || issue.editedDecisionDate) && !isIssueWithdrawn) {
       options.push(
         {
           displayText: issue.editedDecisionDate ? 'Edit decision date' : 'Add decision date',
@@ -93,7 +96,8 @@ export default class IssuesList extends React.Component {
             issue, userCanWithdrawIssues, intakeData.isDtaError
           );
 
-          const showNoDecisionDateBanner = !issue.date;
+          const isIssueWithdrawn = issue.withdrawalDate || issue.withdrawalPending;
+          const showNoDecisionDateBanner = !issue.date && !isIssueWithdrawn;
 
           return <div className="issue-container" key={`issue-container-${issue.index}`}>
             <div
