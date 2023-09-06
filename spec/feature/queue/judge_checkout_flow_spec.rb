@@ -16,6 +16,8 @@ RSpec.feature "Judge checkout flow", :all_dbs do
     # the BVA dispatch team so that the creation of that task (which round robin assigns org tasks) does not fail.
     BvaDispatch.singleton.add_user(create(:user))
     FeatureToggle.enable!(:das_case_timeliness)
+    FeatureToggle.enable!(:mst_identification)
+    FeatureToggle.enable!(:pact_identification)
   end
 
   after { FeatureToggle.disable!(:das_case_timeliness) }

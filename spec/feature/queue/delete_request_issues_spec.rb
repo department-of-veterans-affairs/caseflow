@@ -43,6 +43,10 @@ feature "correcting issues", :postgres do
   end
 
   context "deleting a request issue that has a decision issue shared with another request issue" do
+    before do
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
+    end
     it "deletes the request issue but not the shared decision issue" do
       appeal = appeal_with_shared_decision_issues
       create_judge_decision_review_task_for(appeal)

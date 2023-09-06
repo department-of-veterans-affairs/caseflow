@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 class ContestableIssueGenerator
-  def initialize(review, get_special_issues: false)
+  def initialize(review)
     @review = review
-    @get_special_issues = get_special_issues
   end
 
   delegate :finalized_decision_issues_before_receipt_date, to: :review
