@@ -120,4 +120,10 @@ Rails.application.configure do
   ENV["PACMAN_API_TOKEN_SECRET"] ||= "client-secret"
   ENV["PACMAN_API_TOKEN_ISSUER"] ||= "issuer-of-our-token"
   ENV["PACMAN_API_SYS_ACCOUNT"] ||= "CSS_ID_OF_OUR_ACCOUNT"
+
+  # Necessary vars needed to create virtual hearing links
+  # Used by VirtualHearings::LinkService
+  ENV["VIRTUAL_HEARING_PIN_KEY"] ||= "mysecretkey"
+  ENV["VIRTUAL_HEARING_URL_HOST"] ||= "example.va.gov"
+  ENV["VIRTUAL_HEARING_URL_PATH"] ||= "/sample"
 end

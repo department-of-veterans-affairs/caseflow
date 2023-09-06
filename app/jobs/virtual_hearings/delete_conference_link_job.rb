@@ -34,7 +34,6 @@ class VirtualHearings::DeleteConferenceLinkJob < CaseflowJob
   # Return: None
   def links_soft_removal(collection)
     collection.each do |old_link|
-      #keep below line for pulling info to the front-end.
       old_link.update!(update_conf_links)
       old_link.destroy
     end
