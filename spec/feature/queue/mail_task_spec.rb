@@ -402,8 +402,6 @@ RSpec.feature "MailTasks", :postgres do
             end
 
             it "gets scheduled" do
-              p = "queue/appeals/#{appeal.uuid}"
-              visit(p)
               expect(page).to have_content("You have successfully")
             end
 
