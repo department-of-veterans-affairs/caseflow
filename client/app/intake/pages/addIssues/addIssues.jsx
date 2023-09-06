@@ -366,7 +366,11 @@ class AddIssuesPage extends React.Component {
 
     if (editPage && haveIssuesChanged()) {
       // flash a save message if user is on the edit page & issues have changed
-      const issuesChangedBanner = <p>When you finish making changes, click "Save" to continue.</p>;
+      const establishText =
+        intakeData.benefitType === 'vha' && _.every(intakeData.addedIssues, (issue) => issue.decisionDate) ?
+          'Establish' :
+          'Save';
+      const issuesChangedBanner = <p>{`When you finish making changes, click ${establishText} to continue.`}</p>;
 
       fieldsForFormType = fieldsForFormType.concat({
         field: '',
