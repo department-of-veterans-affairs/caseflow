@@ -43,22 +43,32 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
 
   attr_accessor :job_expected_end_time, :should_stop_job
 
+  # rubocop:disable Metrics/MethodLength
   def find_priority_end_product_establishments_to_sync
-    get_batch = <<-SQL
-    select id
-      from end_product_establishments
-      inner join vbms_ext_claim
-      on end_product_establishments.reference_id = vbms_ext_claim."CLAIM_ID"::varchar
-      where (end_product_establishments.synced_status <> vbms_ext_claim."LEVEL_STATUS_CODE" or end_product_establishments.synced_status is null)
-        and vbms_ext_claim."LEVEL_STATUS_CODE" in ('CLR','CAN')
-        and end_product_establishments.id not in (select end_product_establishment_id
-                                                  from priority_end_product_sync_queue
-                                                  where end_product_establishments.id = priority_end_product_sync_queue.end_product_establishment_id)
-      limit #{BATCH_LIMIT};
+    get_sql = <<-SQL
+      WITH priority_ep_ids AS (
+        SELECT vec."CLAIM_ID"::varchar, vec."LEVEL_STATUS_CODE"
+        FROM vbms_ext_claim vec
+        WHERE vec."LEVEL_STATUS_CODE" in ('CLR', 'CAN')
+          AND (vec."EP_CODE" LIKE '04%' OR vec."EP_CODE" LIKE '03%')
+      ),
+      priority_queued_ids AS (
+        SELECT end_product_establishment_id
+        FROM priority_end_product_sync_queue)
+      SELECT id
+      FROM end_product_establishments epe
+      INNER JOIN priority_ep_ids
+      ON epe.reference_id = priority_ep_ids."CLAIM_ID"
+      WHERE (epe.synced_status is null or epe.synced_status <> priority_ep_ids."LEVEL_STATUS_CODE")
+        AND NOT EXISTS (SELECT end_product_establishment_id
+                        FROM priority_queued_ids
+                        WHERE priority_queued_ids.end_product_establishment_id = epe.id)
+      LIMIT #{BATCH_LIMIT};
     SQL
 
-    ActiveRecord::Base.connection.exec_query(ActiveRecord::Base.sanitize_sql(get_batch)).rows.flatten
+    ActiveRecord::Base.connection.exec_query(ActiveRecord::Base.sanitize_sql(get_sql)).rows.flatten
   end
+  # rubocop:enable Metrics/MethodLength
 
   def insert_into_priority_sync_queue(batch)
     batch.each do |ep_id|
