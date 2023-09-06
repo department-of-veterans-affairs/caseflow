@@ -91,10 +91,6 @@ class LegacyTasksController < ApplicationController
     }
   end
 
-  def assign_to_attorney
-    assign_to_judge
-  end
-
   def assign_to_judge
     # If the user being assigned to is a judge, do not create a DECASS record, just
     # update the location to the assigned judge.
@@ -124,11 +120,10 @@ class LegacyTasksController < ApplicationController
 
     # Remove overtime status of an appeal when reassigning to another attorney
     appeal.overtime = false if appeal.overtime?
-
     render json: {
       task: json_task(AttorneyLegacyTask.from_vacols(
                         task.last_case_assignment,
-                        LegacyAppeal.find_or_create_by_vacols_id(task.vacols_id),
+                        LegacyAppeal.find_or_create_by_vacols_id(appeal.vacols_id),
                         task.assigned_to
                       ))
     }
