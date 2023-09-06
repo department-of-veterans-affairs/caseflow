@@ -686,7 +686,7 @@ TaskRows.propTypes = {
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
   timeline: PropTypes.bool,
-  VLJ_featureToggles: PropTypes.string,
+  VLJ_featureToggles: PropTypes.bool,
 };
 
 export default TaskRows;
