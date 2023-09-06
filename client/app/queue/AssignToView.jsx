@@ -9,7 +9,7 @@ import VHA_VAMCS from '../../constants/VHA_VAMCS';
 
 import { taskById, appealWithDetailSelector, getRootTaskLegacyAppealSCM } from './selectors';
 
-import { onReceiveAmaTasks, legacyReassignToJudge, setOvertime, legacyReassignToAttorney } from './QueueActions';
+import { onReceiveAmaTasks, legacyReassignToJudge, setOvertime } from './QueueActions';
 
 import RadioField from '../components/RadioField';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -137,7 +137,7 @@ class AssignToView extends React.Component {
     const assignTaskSuccessMessage = {
       title: taskActionData(this.props).message_title ? sprintf(taskActionData(this.props).message_title,
         caseNameListItem(),
-        this.getAssignee()) : sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()),
+        this.getAssignee()) : sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE_LEGACY_SUCCESS_TITLE, this.getAssignee()),
       detail: taskActionData(this.props).message_detail || null
     };
 
@@ -341,6 +341,7 @@ class AssignToView extends React.Component {
 
     const action = getAction(this.props);
     const actionData = taskActionData(this.props);
+    actionData.drop_down_label = COPY.JUDGE_LEGACY_DECISION_REVIEW_TITLE
     const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
 
     if (!task || task.availableActions.length === 0) {
@@ -354,6 +355,7 @@ class AssignToView extends React.Component {
       submit: this.submit,
       submitButtonClassNames: ['usa-button'],
       submitDisabled: !this.validateForm(),
+      button: 'Assign',
       validateForm: isPulacCerullo ?
         () => {
           return true;
@@ -362,7 +364,6 @@ class AssignToView extends React.Component {
     };
 
     if (task.type === 'JudgeLegacyDecisionReviewTask') {
-      modalProps.button = 'Assign';
       modalProps.submitButtonClassNames = ['usa-button', 'usa-button-hover', 'usa-button-warning'];
       modalProps.submitDisabled = this.state.modalDisableButton;
     }
@@ -461,7 +462,6 @@ AssignToView.propTypes = {
   isTeamAssign: PropTypes.bool,
   onReceiveAmaTasks: PropTypes.func,
   legacyReassignToJudge: PropTypes.func,
-  legacyReassignToAttorney: PropTypes.func,
   requestPatch: PropTypes.func,
   requestSave: PropTypes.func,
   rootTask: PropTypes.func,
@@ -498,7 +498,6 @@ const mapDispatchToProps = (dispatch) =>
       requestSave,
       onReceiveAmaTasks,
       legacyReassignToJudge,
-      legacyReassignToAttorney,
       setOvertime,
       resetSuccessMessages
     },

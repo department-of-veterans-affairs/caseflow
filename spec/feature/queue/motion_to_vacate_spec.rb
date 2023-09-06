@@ -99,7 +99,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       find("div", class: "cf-select__option", text: "Assign to person").click
       find(".cf-modal .cf-select__control").click
       find("div", class: "cf-select__option", text: "Motions attorney").click
-      click_button(text: "Submit")
+      click_button(text: "Assign")
       expect(page).to have_content("Task assigned to Motions attorney")
       motions_attorney_task = VacateMotionMailTask.find_by(assigned_to: motions_attorney)
       expect(motions_attorney_task).to_not be_nil

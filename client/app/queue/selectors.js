@@ -187,12 +187,14 @@ export const distributionTasksForAppeal = createSelector(
 
 export const caseTimelineTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
-  (tasks) => orderBy(filter(completeTasksSelector(tasks), (task) => !task.hideFromCaseTimeline), ['completedAt'], ['desc'])
+  (tasks) => orderBy(filter(completeTasksSelector(tasks), (task) =>
+    !task.hideFromCaseTimeline), ['completedAt'], ['desc'])
 );
 
 export const taskSnapshotTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
-  (tasks) => orderBy(filter(incompleteTasksSelector(tasks), (task) => !task.hideFromTaskSnapshot), ['createdAt'], ['desc'])
+  (tasks) => orderBy(filter(incompleteTasksSelector(tasks), (task) =>
+    !task.hideFromTaskSnapshot), ['createdAt'], ['desc'])
 );
 
 const taskIsLegacyAttorneyJudgeTask = (task) => {

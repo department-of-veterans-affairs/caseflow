@@ -93,6 +93,16 @@ class TasksController < ApplicationController
       tasks << valid_task_classes[task_type.to_sym].create_many_from_params(param_group, current_user)
     end
 
+    # This should be the JudgeDecisionReviewTask
+    parent_task = Task.find_by(id: params[:tasks].first[:parent_id]) if params[:tasks].first[:type] == "AttorneyRewriteTask"
+    if parent_task&.appeal&.is_a?(LegacyAppeal)
+      QueueRepository.reassign_case_to_attorney!(
+        judge: parent_task.assigned_to,
+        attorney: User.find(params[:tasks].first[:assigned_to_id]),
+        vacols_id: parent_task.appeal.external_id
+      )
+    end
+
     modified_tasks = [parent_tasks_from_params, tasks].flatten.uniq
     render json: { tasks: json_tasks(modified_tasks) }
 
