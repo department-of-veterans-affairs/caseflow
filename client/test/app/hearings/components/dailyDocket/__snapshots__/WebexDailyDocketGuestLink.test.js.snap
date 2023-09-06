@@ -6,7 +6,7 @@ exports[`WebexDailyDocketGuestLink renders correctly for hearing admins and hear
     style="display: grid; grid-template-columns: 1fr 1.8fr; background-color: white; padding: 1em 0px 0px 1em; margin-left: -40px; margin-right: -40px; margin-bottom: 20px;"
   >
     <h3>
-      Webex guest link for non-virtual hearings
+      Webex Guest link for non-virtual hearings
     </h3>
     <div
       style="display: flex; flex-wrap: wrap; justify-content: space-between; padding-left: 40px; padding-right: 40px;"
@@ -160,7 +160,7 @@ exports[`WebexDailyDocketGuestLink renders correctly for non hearing admins and 
     style="display: grid; grid-template-columns: 1fr 1.8fr; background-color: white; padding: 1em 0px 0px 1em; margin-left: -40px; margin-right: -40px; margin-bottom: 20px;"
   >
     <h3>
-      Webex guest link for non-virtual hearings
+      Webex Guest link for non-virtual hearings
     </h3>
     <div
       style="display: flex; flex-wrap: wrap; justify-content: space-between; padding-left: 40px; padding-right: 40px;"
