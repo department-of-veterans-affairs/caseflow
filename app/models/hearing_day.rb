@@ -297,7 +297,7 @@ class HearingDay < CaseflowRecord
     # if conference_link.nil?
     #   conference_link = ConferenceLink.create(hearing_day_id: id)
     # end
-    # conference_link
+    conference_link
   end
 
   class << self
