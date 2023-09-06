@@ -10,21 +10,21 @@ export const PexipDailyDocketGuestLink = ({ linkInfo }) => {
   const { alias, guestLink, guestPin } = linkInfo || {};
 
   const containerStyle = {
-    display: "grid",
-    gridTemplateColumns: "1fr 1.8fr",
-    backgroundColor: "#f1f1f1",
-    padding: "1em 0 0 1em",
-    marginLeft: "-40px",
-    marginRight: "-40px",
-    marginBottom: "20px",
+    display: 'grid',
+    gridTemplateColumns: '1fr 1.8fr',
+    backgroundColor: '#f1f1f1',
+    padding: '1em 0 0 1em',
+    marginLeft: '-40px',
+    marginRight: '-40px',
+    marginBottom: '20px',
   };
 
   const roomInfoContainerStyle = {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    paddingLeft: "40px",
-    paddingRight: "40px",
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    paddingLeft: '40px',
+    paddingRight: '40px',
   };
 
   // backgroundColor: '#f1f1f1',
@@ -58,18 +58,18 @@ export const PexipDailyDocketGuestLink = ({ linkInfo }) => {
         <h3>
           {GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}:
           {linkIsPresent ? (
-            <span style={{ fontWeight: "normal" }}>
+            <span style={{ fontWeight: 'normal' }}>
               {alias || useAliasFromLink()}
             </span>
           ) : (
-            <span style={{ fontWeight: "normal" }}>N/A</span>
+            <span style={{ fontWeight: 'normal' }}>N/A</span>
           )}
         </h3>
         {linkIsPresent ? (
           <>
             <h3>
               {GUEST_LINK_LABELS.GUEST_PIN}:
-              <span style={{ fontWeight: "normal" }}>{usePinFromLink()}#</span>
+              <span style={{ fontWeight: 'normal' }}>{usePinFromLink()}#</span>
             </h3>
             <h3>
               <CopyTextButton {...CopyTextButtonProps} />
@@ -77,9 +77,9 @@ export const PexipDailyDocketGuestLink = ({ linkInfo }) => {
           </>
         ) : (
           <>
-            <h3 style={{ paddingLeft: "130px" }}>
+            <h3 style={{ paddingLeft: '130px' }}>
               {GUEST_LINK_LABELS.GUEST_PIN}:
-              <span style={{ fontWeight: "normal" }}>N/A</span>
+              <span style={{ fontWeight: 'normal' }}>N/A</span>
             </h3>
             <h3>
               <CopyTextButton
