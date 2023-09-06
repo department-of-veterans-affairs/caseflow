@@ -294,7 +294,7 @@ describe JudgeTask, :all_dbs do
 
         it "merges instruction text" do
           subject
-          expect(jqr_task.reload.instructions).to eq([[new_instructions]])
+          expect(jqr_task.reload.instructions).to eq([existing_instructions,new_instructions])
         end
       end
 
