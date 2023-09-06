@@ -501,7 +501,8 @@ RSpec.feature "MailTasks", :postgres do
               end
 
               it "sends hearing postponed and hearing scheduled notifications", bypass_cleaner: true do
-                first_payload = AppellantNotification.create_payload(scheduled_appeal, "Postponement of hearing").to_json
+                first_payload = AppellantNotification.create_payload(scheduled_appeal, "Postponement of hearing")
+                  .to_json
                 second_payload = AppellantNotification.create_payload(scheduled_appeal, "Hearing scheduled").to_json
                 expect(SendNotificationJob).to receive(:perform_later).with(first_payload)
                 expect(SendNotificationJob).to receive(:perform_later).with(second_payload)
