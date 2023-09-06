@@ -27,12 +27,11 @@ class TagController < ApplicationController
   end
 
   def destroy
-    document_id = params[:document_id]
-    tag_id = params[:id]
+    document = Document.find(params[:document_id])
+    tag = Tag.find(params[:id])
 
-    document = Document.find(document_id)
-
-    document.tags.destroy(tag_id)
+    document.tags.destroy(tag)
+    tag.destroy if tag.documents.empty?
     render(json: { status: :no_content })
   end
 
