@@ -8,7 +8,7 @@ conn.execute("create table caseflow_audit.vbms_distribution_destinations_audit (
               type_of_change CHAR(1) not null,
               vbms_distribution_destinations_id bigint not null,
               destination_type varchar NOT NULL,
-              address_line_1 varchar NOT NULL,
+              address_line_1 varchar NULL,
               address_line_2 varchar NULL,
               address_line_3 varchar NULL,
               address_line_4 varchar NULL,
