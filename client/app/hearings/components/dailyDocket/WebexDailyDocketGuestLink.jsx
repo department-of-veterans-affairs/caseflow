@@ -43,6 +43,7 @@ export const WebexDailyDocketGuestLink = ({ linkInfo }) => {
       ?.split('=')[1];
 
   const linkIsPresent = linkInfo;
+  const buttonDisabled = true;
 
   /**
    * Render information about the guest link
@@ -81,7 +82,7 @@ export const WebexDailyDocketGuestLink = ({ linkInfo }) => {
               <span style={{ fontWeight: 'normal' }}>N/A</span>
             </h3>
             <h3>
-              <CopyTextButton {...CopyTextButtonProps} disabled={true}/>
+              <CopyTextButton {...CopyTextButtonProps} disabled={buttonDisabled} />
             </h3>
           </>
         )}
