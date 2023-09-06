@@ -566,7 +566,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           find("div", class: "cf-select__option", text: org_nonadmin.full_name).click
           fill_in "taskInstructions", with: "Confirm info and send letter to Veteran."
           click_on "Assign"
-          expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin.full_name
+          expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM % org_nonadmin.full_name
         end
 
         step "assigned user can reassign task" do
@@ -583,7 +583,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           find("div", class: "cf-select__option", text: org_nonadmin2.full_name).click
           fill_in "taskInstructions", with: "Going fishing. Handing off to you."
           click_on "Assign"
-          expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin2.full_name
+          expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM % org_nonadmin2.full_name
         end
       end
     end
@@ -611,17 +611,17 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.label)
         fill_in "taskInstructions", with: "Please transcribe the hearing on record for this appeal"
         click_on "Assign"
-        expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % TranscriptionTeam.singleton.name
+        expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM % TranscriptionTeam.singleton.name
 
         click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION.label)
         fill_in "taskInstructions", with: "Please handle the freedom of intformation act request for this appeal"
         click_on "Assign"
-        expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % PrivacyTeam.singleton.name
+        expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM % PrivacyTeam.singleton.name
 
         click_dropdown(text: Constants.TASK_ACTIONS.SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION.label)
         fill_in "taskInstructions", with: "Have veteran's POA write an informal hearing presentation for this appeal"
-        click_on "Submit"
-        expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Colocated.singleton.name
+        click_on "Assign"
+        expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM % Colocated.singleton.name
       end
     end
 
