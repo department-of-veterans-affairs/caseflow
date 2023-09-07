@@ -251,27 +251,28 @@ namespace :db do
               parent: root_task,
               assigned_to: Bva.singleton
             )
-            ScheduleHearingTask.create!(
+            sched_hearing = ScheduleHearingTask.create!(
               appeal: appeal,
               parent: hearing_task,
               assigned_to: Bva.singleton
-            ).update(status: "completed")
+            )
             AssignHearingDispositionTask.create!(
               appeal: appeal,
               parent: hearing_task,
               assigned_to: Bva.singleton
             )
+            sched_hearing.update(status: "completed")
           when 67..100
             hearing_task = HearingTask.create!(
               appeal: appeal,
               parent: root_task,
               assigned_to: Bva.singleton
             )
-            ScheduleHearingTask.create!(
+            sched_hearing = ScheduleHearingTask.create!(
               appeal: appeal,
               parent: hearing_task,
               assigned_to: Bva.singleton
-            ).update(status: "completed")
+            )
             assign_hearing_task = AssignHearingDispositionTask.create!(
               appeal: appeal,
               parent: hearing_task,
@@ -282,6 +283,7 @@ namespace :db do
               parent: assign_hearing_task,
               assigned_to: Bva.singleton
             )
+            sched_hearing.update(status: "completed")
           end
 
           rand_val = rand(100)
