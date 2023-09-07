@@ -71,11 +71,12 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
   # rubocop:enable Metrics/MethodLength
 
   def insert_into_priority_sync_queue(batch)
-    batch.each do |ep_id|
-      PriorityEndProductSyncQueue.create!(
-        end_product_establishment_id: ep_id
-      )
+    priority_end_product_sync_queue_records = batch.map do |ep_id|
+      PriorityEndProductSyncQueue.new(end_product_establishment_id: ep_id)
     end
+
+    # Bulk insert PriorityEndProductSyncQueue records in a single SQL statement
+    PriorityEndProductSyncQueue.import(priority_end_product_sync_queue_records)
     Rails.logger.info("PopulateEndProductSyncQueueJob EPEs processed: #{batch} - Time: #{Time.zone.now}")
   end
 
