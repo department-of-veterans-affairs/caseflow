@@ -380,11 +380,6 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :feedback_url
 
-  def efolder_express_url
-    Rails.application.config.efolder_url.to_s
-  end
-  helper_method :efolder_express_url
-
   def help_url
     {
       "certification" => certification_help_path,

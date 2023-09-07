@@ -82,9 +82,6 @@ Rails.application.configure do
 
   ENV["DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL"] ||= "true"
 
-  # eFolder Express URL for demo environment used as a mock link
-  ENV["EFOLDER_EXPRESS_URL"] ||= "http://localhost:4000"
-
   # BatchProcess ENVs
   # priority_ep_sync
   ENV["BATCH_PROCESS_JOB_DURATION"] ||= "1" # Number of hours the job will run for
