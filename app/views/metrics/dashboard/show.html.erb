@@ -1,0 +1,83 @@
+<head>
+<style>
+body {
+  overflow: scroll; /* Show scrollbars */
+}
+
+.outer_div {
+  overflow-x: auto;
+  transform: rotateX(180deg);
+  width: 100%;
+}
+
+.inner_div {
+  max-height: 2000px;
+  overflow-y: auto;
+
+  /* ::-webkit-scrollbar {
+    transform: rotateX(180deg);
+  } */
+}
+
+.metric_table {
+  transform: rotateX(180deg);
+}
+
+</style>
+</head>
+<h1>Metrics Dashboard</h1>
+<h2>Shows metrics created in past hour</h2>
+<br>
+<div class="outer_div">
+  <div class="inner_div">
+    <table class="metric_table">
+      <thead>
+        <tr>
+          <th>uuid</th>
+          <th>name</th>
+          <th>class</th>
+          <th>group</th>
+          <th>message</th>
+          <th>type</th>
+          <th>product</th>
+          <th>app</th>
+          <th>attributes</th>
+          <th>additional_info</th>
+          <th>sent_to</th>
+          <th>sent_to_info</th>
+          <th>relevant_tables_info</th>
+          <th>start</th>
+          <th>end</th>
+          <th>duration (ms)</th>
+          <th>css_id</th>
+          <th>created_at</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @metrics.each do |metric| %>
+          <tr>
+            <td><%= metric.uuid %></td>
+            <td><%= metric.metric_name %></td>
+            <td><%= metric.metric_class %></td>
+            <td><%= metric.metric_group %></td>
+            <td><%= metric.metric_message %></td>
+            <td><%= metric.metric_type %></td>
+            <td><%= metric.metric_product %></td>
+            <td><%= metric.app_name %></td>
+            <td><%= metric.metric_attributes %></td>
+            <td><%= metric.additional_info %></td>
+            <td><%= metric.sent_to %></td>
+            <td><%= metric.sent_to_info %></td>
+            <td><%= metric.relevant_tables_info %></td>
+            <td><%= metric.start %></td>
+            <td><%= metric.end %></td>
+            <td><%= metric.duration %></td>
+            <td><%= metric.css_id %></td>
+            <td><%= metric.created_at %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

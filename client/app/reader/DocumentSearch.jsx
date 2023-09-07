@@ -14,6 +14,7 @@ import { searchText, getDocumentText, updateSearchIndex, setSearchIndexToHighlig
 import _ from 'lodash';
 import classNames from 'classnames';
 import { LOGO_COLORS } from '../constants/AppConstants';
+import { recordMetrics } from '../util/Metrics';
 
 export class DocumentSearch extends React.PureComponent {
   constructor() {
@@ -41,8 +42,19 @@ export class DocumentSearch extends React.PureComponent {
 
     this.getText();
 
+    const metricData = {
+      message: `Searching within Reader document ${this.props.file} for "${this.searchTerm}"`,
+      type: 'performance',
+      product: 'reader',
+      data: {
+        searchTerm: this.searchTerm,
+        file: this.props.file,
+      },
+    };
+
     // todo: add guard to PdfActions.searchText to abort if !searchTerm.length
-    this.props.searchText(this.searchTerm);
+    recordMetrics(this.props.searchText(this.searchTerm), metricData,
+      this.props.featureToggles.metricsRecordDocumentSearch);
   }
 
   updateSearchIndex = (iterateForwards) => {
@@ -198,7 +210,8 @@ DocumentSearch.propTypes = {
   setSearchIsLoading: PropTypes.func,
   showSearchBar: PropTypes.func,
   totalMatchesInFile: PropTypes.number,
-  updateSearchIndex: PropTypes.func
+  updateSearchIndex: PropTypes.func,
+  featureToggles: PropTypes.object,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -209,7 +222,8 @@ const mapStateToProps = (state, props) => ({
   currentMatchIndex: getCurrentMatchIndex(state, props),
   matchIndexToHighlight: state.searchActionReducer.indexToHighlight,
   hidden: state.pdfViewer.hideSearchBar,
-  textExtracted: !_.isEmpty(state.searchActionReducer.extractedText)
+  textExtracted: !_.isEmpty(state.searchActionReducer.extractedText),
+  featureToggles: props.featureToggles,
 });
 
 const mapDispatchToProps = (dispatch) => ({
