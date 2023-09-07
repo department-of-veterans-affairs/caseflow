@@ -91,12 +91,26 @@
   margin: 1em 0 0;
   font-size: 15px;
   font-weight: 900;
+  margin-bottom: 2.4rem;
+}
+
+.task-instructions > h6 {
+  margin: 1em 0 0;
+  font-size: 17px;
+  font-weight: 900;
+  margin-bottom: 2.4rem;
+  text-transform: none;
 }
 
 .task-instructions > p {
   margin-top: 0;
+  word-wrap: break-word;
 
   strong {
     font-size: 15px;
   }
+}
+
+.task-instructions > hr {
+  margin-bottom: 2.4rem;
 }
