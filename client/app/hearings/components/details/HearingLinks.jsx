@@ -27,8 +27,11 @@ export const VirtualHearingLinkDetails = ({
   virtualHearing
 }) => (
   <React.Fragment>
-    {hearing?.scheduledForIsPast || wasVirtual ? (
-      <span>Expired</span>
+    {hearing.scheduledForIsPast || hearing.wasVirtual ? (
+      <div>
+        <span>N/A</span>
+        <span>Expired</span>
+      </div>
     ) : (
       <VirtualHearingLink
         label={label}
