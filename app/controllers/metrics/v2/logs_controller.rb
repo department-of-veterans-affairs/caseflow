@@ -11,6 +11,7 @@ class Metrics::V2::LogsController < ApplicationController
     if (metric.metric_type === 'error')
       error_info = {
         name: metric.metric_name,
+        message: metric.metric_message,
         class: metric.metric_class,
         attrs: metric.metric_attributes,
         created_at: metric.created_at,
