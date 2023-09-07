@@ -104,7 +104,6 @@ class Task < CaseflowRecord
     )
   }
 
-
   scope :not_decisions_review, lambda {
                                  where.not(
                                    type: DecisionReviewTask.descendants.map(&:name) + ["DecisionReviewTask"]
