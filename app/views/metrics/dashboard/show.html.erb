@@ -13,7 +13,6 @@ body {
 .inner_div {
   max-height: 2000px;
   overflow-y: auto;
-
   /* ::-webkit-scrollbar {
     transform: rotateX(180deg);
   } */
@@ -22,8 +21,14 @@ body {
 .metric_table {
   transform: rotateX(180deg);
 }
-
 </style>
+
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    document.getElementsByClassName('metric_table')[0].scrollIntoView(false);
+  })
+</script>
+
 </head>
 <h1>Metrics Dashboard</h1>
 <h2>Shows metrics created in past hour</h2>
