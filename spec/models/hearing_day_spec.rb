@@ -565,7 +565,7 @@ describe HearingDay, :all_dbs do
       )
     end
 
-    subject { hearing_day.conference_link }
+    subject { hearing_day.pexip_conference_link }
 
     it "Does not have a existing conference link so creates a new one" do
       expect(subject.hearing_day_id).to eq(hearing_day.id)
