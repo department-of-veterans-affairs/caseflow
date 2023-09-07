@@ -168,6 +168,15 @@ class DocumentsTable extends React.Component {
    };
  }
 
+ executeRecieptFilter = () => {
+  this.props.setRecieptDateFilter(this.state.recieptFilter,
+    { fromDate: this.state.fromDate,
+      toDate: this.state.toDate,
+      onDate: this.state.onDate});
+
+      this.toggleRecieptDataDropdownFilterVisibility();
+ }
+
  isRecieptFilterButtonEnabled = () => {
    if (this.state.recieptFilter === recieptDateFilterStates.BETWEEN && (this.state.toDate === '' || this.state.fromDate === '' ||
   this.state.toDateErrors.length > 0 || this.state.fromDateErrors.length > 0)) {
@@ -486,10 +495,7 @@ class DocumentsTable extends React.Component {
                     <div style={{ width: '100%', display: 'flex' }}>
                       <span style={{ height: '1px', position: 'absolute', width: '100%', backgroundColor: 'gray' }}></span>
                       <div style={{ display: 'flex', marginTop: '10px', marginRight: '10px', marginBottom: '10px', justifyContent: 'end', width: '100%' }}>
-                        <Button disabled={this.isRecieptFilterButtonEnabled()} onClick={() => this.props.setRecieptDateFilter(this.state.recieptFilter,
-                          { fromDate: this.state.fromDate,
-                            toDate: this.state.toDate,
-                            onDate: this.state.onDate })} title="apply filter">
+                        <Button disabled={this.isRecieptFilterButtonEnabled()} onClick={() => this.executeRecieptFilter()} title="apply filter">
                           <span>Apply filter</span>
                         </Button>
                       </div>
@@ -689,4 +695,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(DocumentsTable);
-
