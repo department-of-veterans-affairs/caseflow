@@ -300,6 +300,10 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       expect(page).to have_button("Establish", disabled: false)
       expect(page).to_not have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
 
+      within "#issue-#{third_issue_id}" do
+        expect(page).to_not have_content("Select action")
+      end
+
       click_button "Establish"
 
       expect(page).to have_content(COPY::CORRECT_REQUEST_ISSUES_CHANGED_MODAL_TITLE)
