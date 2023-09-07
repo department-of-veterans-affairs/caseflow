@@ -92,14 +92,14 @@ const formFieldMapping = (props, i) => {
       onChange={props.setHomelessnessType}
       errorMessage={props.homelessnessError || props.errors?.['homelessness']?.message}
       register={props.register}
-      key={i}
+      key={`form-generator-${i}`}
     />
   );
 
   return ({
-    'receipt-date': <ReceiptDateInput {...props} key={i} />,
+    'receipt-date': <ReceiptDateInput {...props} key={`form-generator-${i}`} />,
     'docket-type': (
-      <div className="cf-docket-type" style={{ marginTop: '10px' }} key={i}>
+      <div className="cf-docket-type" style={{ marginTop: '10px' }} key={`form-generator-${i}`}>
         <RadioField
           name="docket-type"
           label="Which review option did the Veteran request?"
@@ -114,12 +114,12 @@ const formFieldMapping = (props, i) => {
           }
           value={props.docketType}
           inputRef={props.register}
-          key={i}
+          key={`form-generator-${i}`}
         />
       </div>
     ),
     'original-hearing-request-type':
-     props.docketType === 'hearing' && props.featureToggles.updatedAppealForm ? hearingTypeDropdown : <Fragment key={i} />,
+     props.docketType === 'hearing' && props.featureToggles.updatedAppealForm ? hearingTypeDropdown : <Fragment key={`form-generator-${i}`} />,
     'legacy-opt-in': (
       <LegacyOptInApproved
         value={props.legacyOptInApproved}
@@ -129,7 +129,7 @@ const formFieldMapping = (props, i) => {
           props.errors?.['legacy-opt-in']?.message
         }
         register={props.register}
-        key={i}
+        key={`form-generator-${i}`}
       />
     ),
     'different-claimant-option': (
@@ -137,7 +137,7 @@ const formFieldMapping = (props, i) => {
         register={props.register}
         errors={props.errors}
         formName={props.formName}
-        key={i}
+        key={`form-generator-${i}`}
       />
     ),
     'benefit-type-options': (
@@ -152,7 +152,7 @@ const formFieldMapping = (props, i) => {
         formName={props.formName}
         featureToggles={props.featureToggles}
         userCanSelectVha={props.userIsVhaEmployee}
-        key={i}
+        key={`form-generator-${i}`}
       />
     ),
     'informal-conference': (
@@ -171,7 +171,7 @@ const formFieldMapping = (props, i) => {
         }
         value={renderBooleanValue('informalConference')}
         inputRef={props.register}
-        key={i}
+        key={`form-generator-${i}`}
       />
     ),
     'same-office': (
@@ -189,7 +189,7 @@ const formFieldMapping = (props, i) => {
         }
         value={renderBooleanValue('sameOffice')}
         inputRef={props.register}
-        key={i}
+        key={`form-generator-${i}`}
       />
     ),
     'filed-by-va-gov': (
@@ -211,7 +211,7 @@ const formFieldMapping = (props, i) => {
         }
         value={renderVaGovValue()}
         inputRef={props.register}
-        key={i}
+        key={`form-generator-${i}`}
       />
     ),
     'homelessness-type': props.featureToggles.updatedAppealForm ? homelessnessRadioField : <></>,
@@ -233,7 +233,7 @@ const formFieldMapping = (props, i) => {
           }
           value={props.optionSelected}
           inputRef={props.register}
-          key={i}
+          key={`form-generator-${i}`}
         />
         {props.optionSelected === REVIEW_OPTIONS.APPEAL.key && (
           <RadioField
@@ -248,7 +248,7 @@ const formFieldMapping = (props, i) => {
             }
             value={props.appealDocket}
             inputRef={props.register}
-            key={i}
+            key={`form-generator-${i}`}
           />
         )}
       </Fragment>
