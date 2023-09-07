@@ -112,7 +112,7 @@ describe HearingPostponementRequestMailTask, :postgres do
         expect(hpr.status).to eq(Constants.TASK_STATUSES.cancelled)
         expect(child_hpr.status).to eq(Constants.TASK_STATUSES.cancelled)
         expect(child_hpr.cancelled_by).to eq(user)
-        expect(child_hpr.instructions[0]).to eq(
+        expect(child_hpr.instructions.last).to eq(
           "##### REASON FOR CANCELLATION:\n" \
           "Hearing postponed when #{task.type} was completed on #{formatted_date}"
         )
