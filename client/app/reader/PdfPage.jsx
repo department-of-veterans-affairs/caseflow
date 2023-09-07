@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Mark from 'mark.js';
+import uuid, { v4 as uuidv4 } from 'uuid';
 
 import CommentLayer from './CommentLayer';
 import { connect } from 'react-redux';
@@ -12,12 +13,11 @@ import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import * as PDFJS from 'pdfjs-dist';
-import { collectHistogram } from '../util/Metrics';
+import { collectHistogram, recordMetrics, recordAsyncMetrics, storeMetrics } from '../util/Metrics';
 
 import { css } from 'glamor';
 import classNames from 'classnames';
 import { COLORS } from '../constants/AppConstants';
-import uuid from 'uuid';
 
 const markStyle = css({
   '& mark': {
@@ -183,6 +183,7 @@ export class PdfPage extends React.PureComponent {
   };
 
   drawText = (page, text) => {
+
     if (!this.textLayer) {
       return;
     }
@@ -212,32 +213,88 @@ export class PdfPage extends React.PureComponent {
   setUpPage = () => {
     // eslint-disable-next-line no-underscore-dangle
     if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
-      this.props.pdfDocument.
-        getPage(pageNumberOfPageIndex(this.props.pageIndex)).
-        then((page) => {
-          this.page = page;
+      const pageMetricData = {
+        message: 'Storing PDF page',
+        product: 'pdfjs.document.pages',
+        type: 'performance',
+        data: {
+          file: this.props.file,
+          documentId: this.props.documentId,
+          pageIndex: this.props.pageIndex,
+          numPagesInDoc: this.props.pdfDocument.numPages,
+        },
+      };
 
-          this.getText(page).then((text) => {
-            this.drawText(page, text);
-          });
+      const textMetricData = {
+        message: 'Storing PDF page text',
+        product: 'pdfjs.document.pages',
+        type: 'performance',
+        data: {
+          file: this.props.file,
+          documentId: this.props.documentId,
+        },
+      };
 
-          this.drawPage(page).then(() => {
-            collectHistogram({
-              group: 'front_end',
-              name: 'pdf_page_render_time_in_ms',
-              value: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0,
-              appName: 'Reader',
-              attrs: {
-                overscan: this.props.windowingOverscan,
-                documentType: this.props.documentType,
-                pageCount: this.props.pdfDocument.pdfInfo?.numPages
-              }
-            });
-          });
-        }).
-        catch((error) => {
-          console.error(`${uuid.v4()} : setUpPage ${this.props.file} : ${error}`);
+      const pageAndTextFeatureToggle = this.props.featureToggles.metricsPdfStorePages;
+      const document = this.props.pdfDocument;
+      const pageIndex = pageNumberOfPageIndex(this.props.pageIndex);
+      const pageResult = recordAsyncMetrics(document.getPage(pageIndex), pageMetricData, pageAndTextFeatureToggle);
+
+      pageResult.then((page) => {
+        this.page = page;
+
+        const readerRenderText = {
+          uuid: uuidv4(),
+          message: 'Searching within Reader document text',
+          type: 'performance',
+          product: 'reader',
+          data: {
+            documentId: this.props.documentId,
+            documentType: this.props.documentType,
+            file: this.props.file
+          },
+        };
+
+        const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);
+
+        textResult.then((text) => {
+          recordMetrics(this.drawText(page, text), readerRenderText,
+            this.props.featureToggles.metricsReaderRenderText);
         });
+
+        this.drawPage(page).then(() => {
+          collectHistogram({
+            group: 'front_end',
+            name: 'pdf_page_render_time_in_ms',
+            value: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0,
+            appName: 'Reader',
+            attrs: {
+              documentId: this.props.documentId,
+              overscan: this.props.windowingOverscan,
+              documentType: this.props.documentType,
+              pageCount: this.props.pdfDocument.numPages
+            }
+          });
+        });
+      }).catch((error) => {
+        const id = uuid.v4();
+        const data = {
+          documentId: this.props.documentId,
+          documentType: this.props.documentType,
+          file: this.props.file
+        };
+        const message = `${id} : setUpPage ${this.props.file} : ${error}`;
+
+        console.error(message);
+        storeMetrics(
+          id,
+          data,
+          { message,
+            type: 'error',
+            product: 'browser',
+          }
+        );
+      });
     }
   };
 
@@ -358,7 +415,8 @@ PdfPage.propTypes = {
   searchText: PropTypes.string,
   setDocScrollPosition: PropTypes.func,
   setSearchIndexToHighlight: PropTypes.func,
-  windowingOverscan: PropTypes.string
+  windowingOverscan: PropTypes.string,
+  featureToggles: PropTypes.object
 };
 
 const mapDispatchToProps = (dispatch) => ({
