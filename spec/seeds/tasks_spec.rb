@@ -26,6 +26,7 @@ describe Seeds::Tasks, :all_dbs do
       end
 
       it "created hpr tasks for legacy appeals" do
+        FeatureToggle.enable!(:metrics_monitoring)
         described_class.new.send(:create_legacy_hpr_tasks)
         expect(HearingPostponementRequestMailTask.where(appeal_type: "LegacyAppeal").count).to be >= 20
       end
