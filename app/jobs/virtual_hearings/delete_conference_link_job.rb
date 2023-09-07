@@ -24,7 +24,7 @@ class VirtualHearings::DeleteConferenceLinkJob < CaseflowJob
   #
   # Return: A collection of links for hearing days that have passed.
   def retreive_stale_conference_links
-    ConferenceLink.joins(:hearing_day).where("scheduled_for < ?", Date.today)
+    ConferenceLink.joins(:hearing_day).where("scheduled_for < ?", query_date_formatted)
   end
 
   # Purpose: Iterates through a collection of links, updating each item and then soft_deleting.
@@ -55,5 +55,14 @@ class VirtualHearings::DeleteConferenceLinkJob < CaseflowJob
       host_pin: nil,
       host_pin_long: nil
     }
+  end
+
+  # Purpose: Simple date formatting work to be done outside of the query.
+  #
+  # Params: None
+  #
+  # Return: "YYYY-mm-dd" formatted date from the Time object.
+  def query_date_formatted
+    Time.zone.now.to_formatted_s.split(" ")[0]
   end
 end
