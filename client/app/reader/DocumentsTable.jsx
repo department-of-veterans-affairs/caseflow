@@ -382,8 +382,7 @@ class DocumentsTable extends React.Component {
         header: (
           <div id="categories-header">
             <span id="categories-header-label">
-              Categories{' '}
-              {anyCategoryFiltersAreSet ? 'Filtering by Category' : ''}
+              Categories
             </span>
             <FilterIcon
               label="Filter by category"
@@ -568,7 +567,6 @@ class DocumentsTable extends React.Component {
           <div id="tags-header" className="document-list-header-issue-tags">
             <span id="tag-header-label">
               Issue Tags
-              {anyTagFiltersAreSet ? 'Filtering by Issue Tags' : ''}
             </span>
             <FilterIcon
               label="Filter by tag"
