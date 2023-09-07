@@ -7,9 +7,16 @@
 # HearingRequestMailTask is itself not an assignable task type
 ##
 class HearingRequestMailTask < MailTask
+  include RunAsyncable
   validates :parent, presence: true, on: :create
 
   before_validation :verify_request_type_designated
+
+  class HearingAssociationMissing < StandardError
+    def initialize
+      super(format(COPY::HEARING_TASK_ASSOCIATION_MISSING_MESSAGE, hearing_task_id))
+    end
+  end
 
   class << self
     def allow_creation?(*)
@@ -24,10 +31,6 @@ class HearingRequestMailTask < MailTask
 
   def available_actions(_user)
     []
-  end
-
-  def update_from_params(params, current_user)
-    super(params, current_user)
   end
 
   private

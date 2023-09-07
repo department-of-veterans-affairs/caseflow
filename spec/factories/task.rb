@@ -146,15 +146,89 @@ FactoryBot.define do
         schedule_hearing_task = ScheduleHearingTask.create!(appeal: appeal, parent: distro_task,
                                                             assigned_to: Bva.singleton)
         schedule_hearing_task.update(status: "completed", closed_at: Time.zone.now)
-        hearing = create(:hearing, disposition: nil, judge: nil, appeal: appeal)
+        scheduled_time = Time.zone.today + 1.month
+        if appeal.is_a?(Appeal)
+          hearing = create(:hearing,
+                           disposition: nil,
+                           judge: nil,
+                           appeal: appeal,
+                           scheduled_time: scheduled_time)
+        else
+          case_hearing = create(:case_hearing, folder_nr: appeal.vacols_id, hearing_date: scheduled_time)
+          hearing_day = create(:hearing_day,
+                               request_type: HearingDay::REQUEST_TYPES[:video],
+                               regional_office: "RO19",
+                               scheduled_for: scheduled_time)
+          hearing = create(:legacy_hearing,
+                           disposition: nil,
+                           case_hearing: case_hearing,
+                           appeal_id: appeal.id,
+                           appeal: appeal,
+                           hearing_day: hearing_day)
+          appeal.update!(hearings: [hearing])
+        end
+        HearingTaskAssociation.create!(hearing: hearing, hearing_task: schedule_hearing_task.parent)
         distro_task.update!(status: "on_hold")
-        AssignHearingDispositionTask.create!(appeal: appeal, parent: schedule_hearing_task.parent,
+        AssignHearingDispositionTask.create!(appeal: appeal,
+                                             parent: schedule_hearing_task.parent,
                                              assigned_to: Bva.singleton)
         HearingTaskAssociation.create!(hearing: hearing, hearing_task: schedule_hearing_task.parent)
         HearingWithdrawalRequestMailTask.create!(appeal: appeal,
-                                                 parent: task,
-                                                 assigned_to: HearingAdmin.singleton,
-                                                 instructions: task.instructions)
+                                                   parent: task,
+                                                   assigned_to: HearingAdmin.singleton,
+                                                   instructions: task.instructions)
+      end
+    end
+
+    trait :withdrawal_request_with_unscheduled_hearing do
+      after(:create) do |task|
+        appeal = task.appeal
+        root_task = appeal.root_task
+        distro_task = task.parent
+        task.update!(parent: root_task)
+        ScheduleHearingTask.create!(appeal: appeal, parent: distro_task, assigned_to: Bva.singleton)
+        HearingWithdrawalRequestMailTask.create!(appeal: appeal, parent: task,
+                                                   assigned_to: HearingAdmin.singleton)
+      end
+    end
+
+    trait :withdrawal_request_with_scheduled_hearing do
+      after(:create) do |task|
+        appeal = task.appeal
+        root_task = appeal.root_task
+        distro_task = task.parent
+        task.update!(parent: root_task)
+        schedule_hearing_task = ScheduleHearingTask.create!(appeal: appeal, parent: distro_task,
+                                                            assigned_to: Bva.singleton)
+        schedule_hearing_task.update(status: "completed", closed_at: Time.zone.now)
+        scheduled_time = Time.zone.today + 1.month
+        if appeal.is_a?(Appeal)
+          hearing = create(:hearing,
+                           disposition: nil,
+                           judge: nil,
+                           appeal: appeal,
+                           scheduled_time: scheduled_time)
+        else
+          case_hearing = create(:case_hearing, folder_nr: appeal.vacols_id, hearing_date: scheduled_time)
+          hearing_day = create(:hearing_day,
+                               request_type: HearingDay::REQUEST_TYPES[:video],
+                               regional_office: "RO19",
+                               scheduled_for: scheduled_time)
+          hearing = create(:legacy_hearing,
+                           disposition: nil,
+                           case_hearing: case_hearing,
+                           appeal_id: appeal.id,
+                           appeal: appeal,
+                           hearing_day: hearing_day)
+          appeal.update!(hearings: [hearing])
+        end
+        HearingTaskAssociation.create!(hearing: hearing, hearing_task: schedule_hearing_task.parent)
+        distro_task.update!(status: "on_hold")
+        AssignHearingDispositionTask.create!(appeal: appeal,
+                                             parent: schedule_hearing_task.parent,
+                                             assigned_to: Bva.singleton)
+        HearingTaskAssociation.create!(hearing: hearing, hearing_task: schedule_hearing_task.parent)
+        HearingPostponementRequestMailTask.create!(appeal: appeal, parent: task, assigned_to: HearingAdmin.singleton)
       end
     end
 

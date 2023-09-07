@@ -60,7 +60,7 @@ describe('CreateMailTaskDialog', () => {
 
   describe('after selecting Hearing Postponement Request', () => {
     const label = 'Include eFolder document hyperlink to request a hearing postponement';
-    const validInput = 'https://vefs-claimevidence-ui-uat.stage.bip.va.gov/file/12345678-1234-1234-1234-twelvetwelve';
+    const validInput = 'https://vefs-claimevidence-ui-uat.stage.bip.va.gov/pdf/12345678-1234-1234-1234-twelvetwelve';
     const instructionsLabel = 'Provide instructions and context for this action';
 
     test('efolder url link field is present', () => {
