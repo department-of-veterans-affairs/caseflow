@@ -7,7 +7,7 @@ describe "SSL Redirects" do
     @app_with_production_ssl_config ||= Class.new(Rails.application.class) do
       config.force_ssl = true
       config.ssl_options = {
-         hsts: { 
+         hsts: {
            subdomains: true
          },
          redirect: { exclude: SslRedirectExclusionPolicy }
@@ -18,7 +18,7 @@ describe "SSL Redirects" do
   # `app´ is what RSpec tests against in request specs. Think `controller´
   # for controller specs. Override it with our modified app.
   def app
-    @app ||= app_with_production_ssl_config 
+    @app ||= app_with_production_ssl_config
   end
 
   before { allow(SslRedirectExclusionPolicy).to receive(:call).and_call_original }
