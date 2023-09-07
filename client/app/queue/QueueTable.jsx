@@ -265,14 +265,9 @@ export default class QueueTable extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    const { useTaskPagesApi } = this.props;
     const validatedPaginationOptions = this.validatedPaginationOptions();
 
     this.state = this.initialState(validatedPaginationOptions);
-
-    if (useTaskPagesApi && validatedPaginationOptions.needsTaskRequest) {
-      this.requestTasks();
-    }
 
     this.updateAddressBar();
   }
@@ -341,6 +336,11 @@ export default class QueueTable extends React.PureComponent {
   };
 
   componentDidMount = () => {
+    const { useTaskPagesApi } = this.props;
+    const validatedPaginationOptions = this.validatedPaginationOptions();
+    if (useTaskPagesApi && validatedPaginationOptions.needsTaskRequest) {
+      this.requestTasks();
+    }
     const firstResponse = {
       task_page_count: this.props.numberOfPages,
       tasks_per_page: this.props.casesPerPage,
@@ -619,7 +619,7 @@ export default class QueueTable extends React.PureComponent {
       return Promise.resolve(true);
     }
 
-    this.state.loadingComponent = <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />
+    this.setState({ loadingComponent: <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} /> });
 
     return ApiUtil.get(endpointUrl).
       then((response) => {
