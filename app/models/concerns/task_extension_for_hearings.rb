@@ -123,6 +123,6 @@ module TaskExtensionForHearings
     appeal.tasks.where(
       type: HearingPostponementRequestMailTask.name,
       assigned_to: HearingAdmin.singleton
-    ).open
+    )&.open
   end
 end
