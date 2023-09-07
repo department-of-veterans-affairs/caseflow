@@ -302,7 +302,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
     [instructions[0] + markdown_to_append]
   end
-  
+
   # Purpose: If hearing postponed by a member of HearingAdminTeam, return that user. Otherwise, in the
   #          case that hearing in postponed by HearingChangeDispositionJob, current_user is system_user
   #          and will not have permission to call Task#update_from_params. Instead, return a user with
@@ -328,4 +328,5 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
     "##### REASON FOR CANCELLATION:\n" \
     "Hearing postponed when #{task_name} was completed on #{formatted_date}"
+  end
 end
