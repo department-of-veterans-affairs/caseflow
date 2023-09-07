@@ -153,15 +153,17 @@ class ClaimReviewController < ApplicationController
   end
 
   def vha_flash_message
-    issues_without_decision_date = (request_issues_update.after_issues - request_issues_update.edited_issues)
-      .select do |issue|
-        issue.decision_date.blank?
-      end
+    issues_without_decision_date = (request_issues_update.after_issues -
+                                request_issues_update.edited_issues -
+                                request_issues_update.removed_or_withdrawn_issues)
+      .select { |issue| issue.decision_date.blank? && !issue.withdrawn? }
 
     if issues_without_decision_date.empty?
       vha_established_message
-    else
+    elsif request_issues_update.edited_issues.any?
       vha_edited_decision_date_message
+    else
+      review_edited_message
     end
   end
 

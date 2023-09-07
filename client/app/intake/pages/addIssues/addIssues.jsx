@@ -259,7 +259,8 @@ class AddIssuesPage extends React.Component {
 
       // if an new issue was added or an issue was edited
       const newOrChangedIssue =
-        issues.filter((issue) => !issue.id || issue.editedDescription || issue.editedDecisionDate || issue.correctionType).length > 0;
+        issues.filter((issue) => !issue.id || issue.editedDescription ||
+          issue.editedDecisionDate || issue.correctionType).length > 0;
 
       if (issueCountChanged || partialWithdrawal || newOrChangedIssue) {
         return true;
