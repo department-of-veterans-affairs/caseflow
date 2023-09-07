@@ -7,14 +7,16 @@ describe VirtualHearings::DeleteConferenceLinkJob do
   let!(:judge) { Judge.new(create(:user)) }
   let!(:single_hearing_day) { FactoryBot.create(:hearing_day) }
 
-  let!(:future_hearing_day_with_link) { FactoryBot.create(:hearing_day, :virtual, :future_with_link) }
-  let!(:past_hearing_day_with_link) { FactoryBot.create(:hearing_day, :virtual, :past_with_link) }
+  describe ".perform" do
+    context "When conference links in the DB are past the date of the date the job is run" do
+      let!(:future_hearing_day_with_link) { FactoryBot.create(:hearing_day, :virtual, :future_with_link) }
+      let!(:past_hearing_day_with_link) { FactoryBot.create(:hearing_day, :virtual, :past_with_link) }
 
-  context ".perform" do
-    it "When conference links in the DB are past the date of the date the job is run" do
-      expect(ConferenceLink.count).to be(2)
-      perform_enqueued_jobs { VirtualHearings::DeleteConferenceLinkJob.perform_now }
-      expect(ConferenceLink.count).to be(1)
+      it "Soft deletes the qualifying links." do
+        expect(ConferenceLink.count).to be(2)
+        perform_enqueued_jobs { VirtualHearings::DeleteConferenceLinkJob.perform_now }
+        expect(ConferenceLink.count).to be(1)
+      end
     end
   end
 end
