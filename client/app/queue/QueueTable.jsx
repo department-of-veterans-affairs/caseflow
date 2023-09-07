@@ -338,6 +338,7 @@ export default class QueueTable extends React.PureComponent {
   componentDidMount = () => {
     const { useTaskPagesApi } = this.props;
     const validatedPaginationOptions = this.validatedPaginationOptions();
+
     if (useTaskPagesApi && validatedPaginationOptions.needsTaskRequest) {
       this.requestTasks();
     }
