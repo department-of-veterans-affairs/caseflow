@@ -27,10 +27,13 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
     Constants.TASK_ACTIONS.CANCEL_TASK.to_h
   ].freeze
 
+  # Purpose: Determines the actions a user can take depending on their permissions and the state of the appeal
+  # Params: user - The current user object
+  # Return: The task actions array of objects
   def available_actions(user)
     return [] unless user.in_hearing_admin_team?
 
-    if active_schedule_hearing_task? || open_assign_hearing_disposition_task?
+    if active_schedule_hearing_task || hearing_scheduled_and_awaiting_disposition?
       TASK_ACTIONS
     else
       [
