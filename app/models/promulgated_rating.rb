@@ -69,15 +69,7 @@ class PromulgatedRating < Rating
     )
   rescue Savon::Error
     {}
-  rescue BGS::ShareError => error
-    Raven.capture_exception(error)
-
-    DataDogService.increment_counter(
-      metric_group: "errors",
-      metric_name: "rating_fetch_retries",
-      app_name: RequestStore[:application]
-    )
-
+  rescue BGS::ShareError
     retry_fetching_rating_profile
   end
 

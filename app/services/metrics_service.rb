@@ -30,8 +30,7 @@ class MetricsService
 
     Rails.logger.info("FINISHED #{description}: #{stopwatch}")
     return_value
-  rescue StandardError => error
-    Raven.capture_exception(error)
+  rescue StandardError
     increment_datadog_counter("request_error", service, name, app) if service
 
     # Re-raise the same error. We don't want to interfere at all in normal error handling.
