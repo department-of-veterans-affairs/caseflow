@@ -284,12 +284,13 @@ export default class OrganizationUsers extends React.PureComponent {
                   </div>
                   {this.state.organizationName === 'Hearings Management' &&
                     !conferenceSelectionVisibility && (
-                    <div
-                      {...radioContainerStyle}
-                    >
+                    <div {...radioContainerStyle}>
                       <SelectConferenceTypeRadioField
                         key={`${user.id}-conference-selection`}
                         name={user.id}
+                        meetingType={user.attributes.meeting_type}
+                        organization={this.props.organization}
+                        user={user}
                       />
                     </div>
                   )}
