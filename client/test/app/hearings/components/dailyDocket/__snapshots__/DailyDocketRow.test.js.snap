@@ -4,6 +4,7 @@ exports[`DailyDocketRow renders banner correctly for conference link error 1`] =
 <div>
   <section
     class="cf-app-segment cf-app-segment--alt"
+    role="main"
   >
     <div
       data-css-1ogvp9u=""
@@ -257,6 +258,12 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
              Connect to Recording System
           </button>
         </span>
+        <div>
+          <b>
+            Pexip
+             hearing
+          </b>
+        </div>
         <div>
           <div
             class=""
@@ -843,6 +850,12 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
              Connect to Recording System
           </button>
         </span>
+        <div>
+          <b>
+            Webex
+             hearing
+          </b>
+        </div>
         <div>
           <div
             class=""
@@ -1983,6 +1996,12 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
           </button>
         </span>
         <div>
+          <b>
+            Pexip
+             hearing
+          </b>
+        </div>
+        <div>
           <div
             class=""
           >
@@ -2568,6 +2587,12 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
              Connect to Recording System
           </button>
         </span>
+        <div>
+          <b>
+            Webex
+             hearing
+          </b>
+        </div>
         <div>
           <div
             class=""
@@ -3182,6 +3207,12 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
              Connect to Recording System
           </button>
         </span>
+        <div>
+          <b>
+            Webex
+             hearing
+          </b>
+        </div>
         <div>
           <div
             class=""
