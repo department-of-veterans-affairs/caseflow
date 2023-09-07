@@ -46,10 +46,14 @@ const Alerts = ({
         type="success"
         styling={alertStyling}
         title={
-          dailyDocket.lock ? 'You have successfully locked this Hearing Day' : 'You have successfully unlocked this Hearing Day'
+          dailyDocket.lock ?
+            'You have successfully locked this Hearing Day' :
+            'You have successfully unlocked this Hearing Day'
         }
         message={
-          dailyDocket.lock ? 'You cannot add more veterans to this hearing day, but you can edit existing entries' : 'You can now add more veterans to this hearing day'
+          dailyDocket.lock ?
+            'You cannot add more veterans to this hearing day, but you can edit existing entries' :
+            'You can now add more veterans to this hearing day'
         }
       />
     )}
@@ -302,10 +306,14 @@ export default class DailyDocket extends React.Component {
           </div>
         </div>
         {(user.userIsHearingManagement || user.userIsHearingAdmin) && (
-          <PexipDailyDocketGuestLink linkInfo={dailyDocket.pexipConferenceLink} />
+          <PexipDailyDocketGuestLink
+            linkInfo={dailyDocket.pexipConferenceLink}
+          />
         )}
         {(user.userIsHearingManagement || user.userIsHearingAdmin) && (
-          <WebexDailyDocketGuestLink linkInfo={dailyDocket.webexConferenceLink} />
+          <WebexDailyDocketGuestLink
+            linkInfo={dailyDocket.webexConferenceLink}
+          />
         )}
         <DailyDocketRows
           hearings={this.props.hearings}
@@ -322,7 +330,9 @@ export default class DailyDocket extends React.Component {
           <div {...css({ marginTop: '75px' })}>
             <StatusMessage
               title={
-                user.userHasHearingPrepRole ? COPY.HEARING_SCHEDULE_DOCKET_JUDGE_WITH_NO_HEARINGS : COPY.HEARING_SCHEDULE_DOCKET_NO_VETERANS
+                user.userHasHearingPrepRole ?
+                  COPY.HEARING_SCHEDULE_DOCKET_JUDGE_WITH_NO_HEARINGS :
+                  COPY.HEARING_SCHEDULE_DOCKET_NO_VETERANS
               }
               type="status"
             />
