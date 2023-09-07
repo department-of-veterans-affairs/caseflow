@@ -106,7 +106,9 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
   setModalOnChangeValue = (stateValue, value) => {
     this.setState({ [stateValue]: value }, function () {
-      if (this.state.assignedTo !== null && this.state.instructions.length > 0) {
+      if (stateValue === 'assignedTo' && value === 'OTHER') {
+        this.setState({ modalDisableButton: true });
+      } else if (this.state.assignedTo !== null && this.state.instructions.length > 0) {
         this.setState({ modalDisableButton: false });
       } else {
         this.setState({ modalDisableButton: true });
@@ -270,7 +272,8 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         onChange={(selectedTasks.length > 0 && selectedTasks[0].appealType === 'LegacyAppeal') ?
           (option) => option && this.props.setSelectedAssignee({ assigneeId: option.value }) &&
           this.setModalOnChangeValue('assignedTo', option ? option.value : null) :
-          (option) => option && this.props.setSelectedAssignee({ assigneeId: option.value })}
+          (option) => option && this.props.setSelectedAssignee({ assigneeId: option.value }) &&
+           this.setModalOnChangeValue('assignedTo', option ? option.value : null)}
         value={selectedOption}
 
       />
