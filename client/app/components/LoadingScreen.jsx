@@ -15,7 +15,7 @@ const LoadingScreen = (props) =>
     <div {...centerTextStyling}>
       <LoadingIcon
         text=""
-        size={150}
+        size="150px"
         color={props.spinnerColor}
       />
       <p>{props.message}</p>

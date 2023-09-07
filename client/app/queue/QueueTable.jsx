@@ -619,7 +619,7 @@ export default class QueueTable extends React.PureComponent {
       return Promise.resolve(true);
     }
 
-    this.setState({ loadingComponent: <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} /> });
+    this.state.loadingComponent = <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />
 
     return ApiUtil.get(endpointUrl).
       then((response) => {
