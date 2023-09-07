@@ -102,6 +102,34 @@ export const setTagFilter = (text, checked, tagId) => (dispatch) => {
   dispatch(updateFilteredIdsAndDocs());
 };
 
+export const setDocFilter = (text, checked) => (dispatch) => {
+  dispatch({
+    type: Constants.SET_DOC_FILTER,
+    payload: { text, checked },
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: `${checked ? 'set' : 'unset'}-docType-filter`,
+        label: text
+      }
+    }
+  });
+  dispatch(updateFilteredIdsAndDocs());
+};
+
+export const clearDocFilters = () => (dispatch) => {
+  dispatch({
+    type: Constants.CLEAR_DOC_FILTER,
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'clear-doc-filters'
+      }
+    }
+  });
+  dispatch(updateFilteredIdsAndDocs());
+};
+
 export const clearTagFilters = () => (dispatch) => {
   dispatch({
     type: Constants.CLEAR_TAG_FILTER,
@@ -115,6 +143,23 @@ export const clearTagFilters = () => (dispatch) => {
   dispatch(updateFilteredIdsAndDocs());
 };
 
+export const setRecieptDateFilter = (recieptFilterType, recieptDatesHash) => (dispatch) => {
+  dispatch({
+    type: Constants.SET_RECIEPT_DATE_FILTER,
+    payload: {
+      recieptFilterType,
+      recieptDatesHash
+    },
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'set RecieptFilterType-' + recieptFilterType,
+        label: 'setRecieptFilter'
+      }
+    }
+  });
+  dispatch(updateFilteredIdsAndDocs());
+}
 // Scrolling
 
 export const setDocListScrollPosition = (scrollTop) => ({
@@ -188,3 +233,4 @@ export const onReceiveManifests = (manifestVbmsFetchedAt) => ({
     manifestVbmsFetchedAt,
   }
 });
+
