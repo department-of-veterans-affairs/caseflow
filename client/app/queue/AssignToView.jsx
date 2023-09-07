@@ -217,12 +217,6 @@ class AssignToView extends React.Component {
       if (task.type === 'JudgeAssignTask') {
         this.props.setOvertime(task.externalAppealId, false);
       }
-      if (task.appealType === 'LegacyAppeal') {
-        this.props.legacyReassignToJudge({
-          tasks: [task],
-          assigneeId: this.state.selectedValue
-        }, successMsg);
-      }
     });
   };
 

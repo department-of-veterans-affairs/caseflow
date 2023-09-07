@@ -94,8 +94,8 @@ class TasksController < ApplicationController
     end
 
     # This should be the JudgeDecisionReviewTask
-    parent_task = Task.find_by(id: params[:tasks].first[:parent_id]) if params[:tasks].first[:type]
-    if parent_task&.appeal&.is_a?(LegacyAppeal) && params[:tasks].first[:type] == "AttorneyRewriteTask"
+    parent_task = Task.find_by(id: params[:tasks].first[:parent_id]) if params[:tasks].first[:type] == "AttorneyRewriteTask"
+    if parent_task&.appeal&.is_a?(LegacyAppeal)
       QueueRepository.reassign_case_to_attorney!(
         judge: parent_task.assigned_to,
         attorney: User.find(params[:tasks].first[:assigned_to_id]),
@@ -122,7 +122,10 @@ class TasksController < ApplicationController
       tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
       tasks_hash = json_tasks(tasks.uniq)
-      if task.appeal.class != LegacyAppeal
+      if task.appeal.class == LegacyAppeal
+        assigned_to = (task.type == "AttorneyTask" || task.type == "AttorneyRewriteTask") ? User.find(Task.find_by(id: task.parent_id).assigned_to_id) : User.find(update_params[:reassign][:assigned_to_id])
+        QueueRepository.update_location_to_judge(task.appeal.vacols_id, assigned_to)
+      else
         modified_task_contested_claim
       end
       # currently alerts are only returned by ScheduleHearingTask
