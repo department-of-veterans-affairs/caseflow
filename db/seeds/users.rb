@@ -383,17 +383,22 @@ module Seeds
         station_id: 101,
         css_id: "COB_USER",
         full_name: "Clark ClerkOfTheBoardUser Bard",
-        roles: ["Hearing Prep"]
+        roles: ["Hearing Prep", "Mail Intake"]
       )
       ClerkOfTheBoard.singleton.add_user(atty)
 
-      judge = create(:user, full_name: "Judith COTB Judge", css_id: "BVACOTBJUDGE", roles: ["Hearing Prep"])
+      judge = create(:user, full_name: "Judith COTB Judge", css_id: "BVACOTBJUDGE", roles: ["Hearing Prep", "Mail Intake"])
       create(:staff, :judge_role, sdomainid: judge.css_id)
       ClerkOfTheBoard.singleton.add_user(judge)
 
-      admin = create(:user, full_name: "Ty ClerkOfTheBoardAdmin Cobb", css_id: "BVATCOBB", roles: ["Hearing Prep"])
+      admin = create(:user, full_name: "Ty ClerkOfTheBoardAdmin Cobb", css_id: "BVATCOBB", roles: ["Hearing Prep", "Mail Intake"])
       ClerkOfTheBoard.singleton.add_user(admin)
       OrganizationsUser.make_user_admin(admin, ClerkOfTheBoard.singleton)
+
+      # added to Bva Intake so they can intake
+      BvaIntake.singleton.add_user(atty)
+      BvaIntake.singleton.add_user(judge)
+      BvaIntake.singleton.add_user(admin)
     end
 
     def create_case_search_only_user
