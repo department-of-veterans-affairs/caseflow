@@ -73,9 +73,10 @@ describe AppealConcern do
           attrs: {
             country_code: "AU"
           }
-        )
+        ).once
 
-        expect(subject).to be_nil
+        timezone = subject
+        expect(timezone).to be_nil
       end
     end
   end

@@ -183,10 +183,9 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
       go_to_dashboard(cavc_remand.remand_appeal.uuid)
 
-      expect(page).to have_text `CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}`
+      expect(page).to have_text "CAVC appeals for #{cavc_remand.remand_appeal.veteran.name}"
 
-      dropdowns = page.all("div.cf-select__placeholder", exact_text: /Select option/)
-      dropdowns.first.click
+      page.all("div.cf-select__placeholder", exact_text: /Select option/).first.click
       page.find("div.cf-select__menu").find("div", exact_text: "Reversed").click
 
       reversed_section = page.all("div.usa-accordion-bordered").first
@@ -196,10 +195,10 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       reversed_section.find("span", exact_text: "Treatment records").click
       expect(page).to have_content "Decision Reasons (2)"
       reversed_section.find("div", exact_text: "Decision Reasons (2)").click
-      reversed_section.click
       expect(page).to have_css('div[aria-expanded="false"]')
 
-      dropdowns.last.click
+      scroll_to page.find("button.cf-submit", text: "Save Changes")
+      page.all("div.cf-select__placeholder", exact_text: /Select option/).last.click
       page.find("div.cf-select__menu").find("div", exact_text: "Vacated and Remanded").click
 
       v_and_r_section = page.all("div.usa-accordion-bordered").last
@@ -217,6 +216,7 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
       expect(page).to have_content "Decision Reasons (1)"
       v_and_r_section.find("div", exact_text: "Decision Reasons (1)").click
 
+      scroll_to page.find("button", text: "Save Changes")
       click_button "Save Changes"
       reload_case_detail_page(cavc_remand.remand_appeal.uuid)
       expect(page).to have_current_path "/queue/appeals/#{cavc_remand.remand_appeal.uuid}"
@@ -224,13 +224,14 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
 
       expect(page).to have_content "Decision Reasons (2)"
       expect(page).to have_content "Decision Reasons (1)"
-      expect(CavcSelectionBasis.last.basis_for_selection).to eq "Test New Basis"
+      page.all("div", text: "Decision Reasons (1)").last.click
+      scroll_to page.find("button", text: "Remove basis")
+      expect(page).to have_content "Test New Basis"
     end
   end
 end
 
 def go_to_dashboard(appeal_uuid)
-  visit "/queue/appeals/#{appeal_uuid}/"
   reload_case_detail_page(appeal_uuid)
   click_button "CAVC Dashboard"
   expect(page).to have_current_path("/queue/appeals/#{appeal_uuid}/cavc_dashboard", ignore_query: true)

@@ -435,6 +435,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
         expect(new_task.available_actions(motions_attorney)).to include(
           Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h
         )
+
         expect(new_task.instructions.join("")).to eq(instructions)
       end
     end
@@ -677,7 +678,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       it "correctly handles return to judge" do
         User.authenticate!(user: drafting_attorney)
 
-        visit "/queue/appeals/#{vacate_stream.uuid}"
+        reload_case_detail_page(vacate_stream.uuid)
 
         check_cavc_alert
         verify_cavc_conflict_action
@@ -690,7 +691,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         expect(page.current_path).to eq(review_decisions_path)
 
-        find(".usa-alert-text").find("a").click
+        within find(".usa-alert-text") do
+          click_link("please return to the judge")
+        end
 
         expect(page).to have_content(COPY::MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_TITLE)
         expect(page).to have_content(COPY::MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_DESCRIPTION)

@@ -218,11 +218,8 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       end
 
       context "when request header contains nonexistent Veteran file number" do
-        it "returns 404 error", skip: "flake" do
-          appeal = create(:appeal, claimants: [build(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")])
-          create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)
-
-          request.headers["HTTP_CASE_SEARCH"] = "123"
+        it "returns 404 error" do
+          request.headers["HTTP_CASE_SEARCH"] = "123456789"
 
           expect_any_instance_of(Fakes::BGSService).to_not receive(:fetch_poas_by_participant_id)
 

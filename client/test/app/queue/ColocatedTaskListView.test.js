@@ -31,8 +31,9 @@ const WrapperComponent = ({ children }) => (
   </MemoryRouter>
 );
 
-// Date constructor uses zero-based offset for months — this is 2021-03-17
-const fakeDate = new Date(2021, 2, 17, 12);
+// Date constructor uses zero-based offset for months — this is 2021-03-17. The time (11:30pm) is to ensure
+// that the crossover between days doesn't affect the front end calculations for when tasks were assigned
+const fakeDate = new Date(2021, 2, 17, 23, 30, 0, 0);
 
 beforeAll(() => {
   // Ensure consistent handling of dates across tests

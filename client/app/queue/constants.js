@@ -179,7 +179,7 @@ export const PAGE_TITLES = {
     ATTORNEY: 'Select Remand Reasons'
   },
   REVIEW_CASES: 'Review Cases',
-  UNASSIGED_CASES: 'Unassgined Cases',
+  UNASSIGNED_CASES: 'Unassigned Cases',
   CASE_DETAILS: 'Case Details',
   DRAFT_DECISION: 'Draft Decision',
   EVALUATE_DECISION: 'Evaluate Decision',
