@@ -5428,7 +5428,7 @@ exports[`QueueTable render() Renders loading component instead of body when load
             <LoadingIcon
               className="cf-loading-button-symbol cf-small-loader-symbol"
               color="#844e9f"
-              size="150px"
+              size={150}
               text=""
             >
               <div>
