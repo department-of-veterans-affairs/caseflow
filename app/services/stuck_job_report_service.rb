@@ -7,11 +7,13 @@
 # The logs also contain the Id of the record that has been updated
 
 class StuckJobReportService
-  attr_reader :logs, :bucket_name
+  attr_reader :logs, :folder_name
+
+  S3_FOLDER_NAME = "data-remediation-output"
 
   def initialize
     @logs = ["#{Time.zone.now} ********** Remediation Log Report **********"]
-    @bucket_name = (Rails.deploy_env == :prod) ? "data-remediation-output" : "data-remediation-output-#{Rails.deploy_env}"
+    @folder_name = (Rails.deploy_env == :prod) ? S3_FOLDER_NAME : "#{S3_FOLDER_NAME}-#{Rails.deploy_env}"
   end
 
   # Logs the Id and the object that is being updated
@@ -30,30 +32,12 @@ class StuckJobReportService
   end
 
   def write_log_report(report_text)
-    temporary_file = Tempfile.new("cdc-log.txt")
-    filepath = temporary_file.path
-    temporary_file.write(logs)
-    temporary_file.flush
     create_file_name = report_text.split.join("-").downcase
-    upload_logs_to_s3(filepath, create_file_name)
-
-    temporary_file.close!
+    upload_logs_to_s3(create_file_name)
   end
 
-  def upload_logs_to_s3(filepath, create_file_name)
+  def upload_logs_to_s3(create_file_name)
     file_name = "#{create_file_name}-logs/#{create_file_name}-log-#{Time.zone.now}"
-    s3client = aws_client
-    s3resource = Aws::S3::Resource.new(client: s3client)
-
-    s3bucket = s3resource.bucket(bucket_name)
-    s3bucket.object(file_name).upload_file(filepath, acl: "private", server_side_encryption: "AES256")
-  end
-
-  def aws_client
-    if Rails.env.test?
-      Aws::S3::Client.new(stub_responses: true) # Use stub responses for tests
-    else
-      Aws::S3::Client.new # Use actual AWS client for production or other environments
-    end
+    S3Service.store_file("#{folder_name}/#{file_name}", logs)
   end
 end
