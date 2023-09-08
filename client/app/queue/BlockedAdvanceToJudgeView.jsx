@@ -258,8 +258,8 @@ class BlockedAdvanceToJudgeView extends React.Component {
       >
         {this.modalAlert()}
         <div {...bottomBorderStyling}>
-          <strong>Please Note:</strong> {COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_SUBTITLE}<br />
-          <strong>Cancellation of task(s) are final.</strong>
+          <strong>Please Note:</strong> {COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_SUBTITLE} &nbsp;
+          <strong>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_LABEL}</strong>
         </div>
         <h3>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_JUDGE_HEADER}</h3>
         <SearchableDropdown
