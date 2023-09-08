@@ -109,6 +109,7 @@ describe VirtualHearings::CreateConferenceJob do
     end
 
     it "raises error when webex conference creation fails" do
+      # must comment out line 48 in webex_service.rb
       current_user.update!(meeting_type: "webex")
 
       expect { subject.perform_now }.to raise_exception(Caseflow::Error::WebexApiError)
