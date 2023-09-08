@@ -276,7 +276,7 @@ export class PdfPage extends React.PureComponent {
               message: 'pdf_page_render_time_in_ms',
               type: 'performance',
               product: 'reader',
-              start: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0
+              duration: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0
             }
           );
         });
