@@ -13,7 +13,7 @@ FactoryBot.define do
     end
 
     transient do
-      claimant_type { :none }
+      claimant_type { nil }
     end
 
     transient do
@@ -31,7 +31,6 @@ FactoryBot.define do
 
     after(:create) do |hlr, evaluator|
       payee_code = ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(hlr.benefit_type) ? "00" : nil
-
       if !evaluator.claimants.empty?
         evaluator.claimants.each do |claimant|
           claimant.decision_review = hlr
@@ -87,14 +86,14 @@ FactoryBot.define do
           )
         end
       elsif !Claimant.exists?(participant_id: hlr.veteran.participant_id, decision_review: hlr)
-        hlr.update!(veteran_is_not_claimant: false)
-        create(
-          :claimant,
-          participant_id: hlr.veteran.participant_id,
-          decision_review: hlr,
-          payee_code: payee_code,
-          type: "VeteranClaimant"
-        )
+        # hlr.update!(veteran_is_not_claimant: false)
+        # create(
+        #   :claimant,
+        #   participant_id: hlr.veteran.participant_id,
+        #   decision_review: hlr,
+        #   payee_code: payee_code,
+        #   type: "VeteranClaimant"
+        # )
       end
     end
 
