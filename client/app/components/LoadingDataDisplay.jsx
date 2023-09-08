@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import LoadingScreen from './LoadingScreen';
 import StatusMessage from './StatusMessage';
 import COPY from '../../COPY';
-import { recordAsyncMetrics } from '../util/Metrics';
 
 const PROMISE_RESULTS = {
   SUCCESS: 'SUCCESS',
@@ -43,24 +42,10 @@ class LoadingDataDisplay extends React.PureComponent {
 
     this.setState({ promiseStartTimeMs: Date.now() });
 
-    const metricData = {
-      message: this.props.loadingComponentProps?.message || 'loading screen',
-      type: 'performance',
-      data: {
-        failStatusMessageProps: this.props.failStatusMessageProps,
-        loadingComponentProps: this.props.loadingComponentProps,
-        slowLoadMessage: this.props.slowLoadMessage,
-        slowLoadThresholdMs: this.props.slowLoadThresholdMs,
-        timeoutMs: this.props.timeoutMs
-      }
-    };
-
-    const shouldRecordMetrics = this.props.metricsLoadScreen;
-
     // Promise does not give us a way to "un-then" and stop listening
     // when the component unmounts. So we'll leave this reference dangling,
     // but at least we can use this._isMounted to avoid taking action if necessary.
-    recordAsyncMetrics(promise, metricData, shouldRecordMetrics).then(
+    promise.then(
       () => {
         if (!this._isMounted) {
           return;
@@ -177,8 +162,7 @@ LoadingDataDisplay.propTypes = {
   loadingComponentProps: PropTypes.object,
   slowLoadMessage: PropTypes.string,
   slowLoadThresholdMs: PropTypes.number,
-  timeoutMs: PropTypes.number,
-  metricsLoadScreen: PropTypes.bool,
+  timeoutMs: PropTypes.number
 };
 
 LoadingDataDisplay.defaultProps = {
@@ -189,8 +173,7 @@ LoadingDataDisplay.defaultProps = {
   errorComponent: StatusMessage,
   loadingComponentProps: {},
   failStatusMessageProps: {},
-  failStatusMessageChildren: DEFAULT_UNKNOWN_ERROR_MSG,
-  metricsLoadScreen: false,
+  failStatusMessageChildren: DEFAULT_UNKNOWN_ERROR_MSG
 };
 
 export default LoadingDataDisplay;

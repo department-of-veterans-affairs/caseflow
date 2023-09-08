@@ -24,7 +24,6 @@ import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, getSearchTerm } from './selectors';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import uuid from 'uuid';
-import { storeMetrics, recordAsyncMetrics } from '../util/Metrics';
 
 PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -50,14 +49,16 @@ export class PdfFile extends React.PureComponent {
       cache: true,
       withCredentials: true,
       timeout: true,
-      responseType: 'arraybuffer',
-      metricsLogRestError: this.props.featureToggles.metricsLogRestError,
-      metricsLogRestSuccess: this.props.featureToggles.metricsLogRestSuccess
+      responseType: 'arraybuffer'
     };
 
     window.addEventListener('keydown', this.keyListener);
 
     this.props.clearDocumentLoadError(this.props.file);
+
+    if (this.props.featureToggles.readerGetDocumentLogging) {
+      return this.getDocumentWithLogging(requestOptions);
+    }
 
     return this.getDocument(requestOptions);
   }
@@ -67,41 +68,11 @@ export class PdfFile extends React.PureComponent {
    * different domain (eFolder), and still need to pass our credentials to authenticate.
    */
   getDocument = (requestOptions) => {
-    const logId = uuid.v4();
-
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
-        const metricData = {
-          message: `Getting PDF document id: "${this.props.documentId}"`,
-          type: 'performance',
-          product: 'reader',
-          data: {
-            file: this.props.file,
-          }
-        };
+        this.loadingTask = PDFJS.getDocument({ data: resp.body });
 
-        /* The feature toggle reader_get_document_logging adds the progress of the file being loaded in console */
-        if (this.props.featureToggles.readerGetDocumentLogging) {
-          const src = {
-            data: resp.body,
-            verbosity: 5,
-            stopAtErrors: false,
-            pdfBug: true,
-          };
-
-          this.loadingTask = PDFJS.getDocument(src);
-
-          this.loadingTask.onProgress = (progress) => {
-            // eslint-disable-next-line no-console
-            console.log(`${logId} : Progress of ${this.props.file} reached ${progress.loaded} / ${progress.total}`);
-          };
-        } else {
-          this.loadingTask = PDFJS.getDocument({ data: resp.body });
-        }
-
-        return recordAsyncMetrics(this.loadingTask.promise, metricData,
-          this.props.featureToggles.metricsRecordPDFJSGetDocument);
-
+        return this.loadingTask.promise;
       }, (reason) => this.onRejected(reason, 'getDocument')).
       then((pdfDocument) => {
         this.pdfDocument = pdfDocument;
@@ -119,20 +90,59 @@ export class PdfFile extends React.PureComponent {
         return this.props.setPdfDocument(this.props.file, this.pdfDocument);
       }, (reason) => this.onRejected(reason, 'setPdfDocument')).
       catch((error) => {
-        const data = {
-          file: this.props.file
-        };
-        const message = `${logId} : GET ${this.props.file} : ${error}`;
+        console.error(`${uuid.v4()} : GET ${this.props.file} : ${error}`);
+        this.loadingTask = null;
+        this.props.setDocumentLoadError(this.props.file);
+      });
+  }
 
-        console.error(message);
-        storeMetrics(
-          logId,
-          data,
-          { message,
-            type: 'error',
-            product: 'browser',
-          }
-        );
+  /**
+   * This version of the method has additional logging and debugging configuration
+   * It is behind the feature toggle reader_get_document_logging
+   *
+   * We have to set withCredentials to true since we're requesting the file from a
+   * different domain (eFolder), and still need to pass our credentials to authenticate.
+   */
+  getDocumentWithLogging = (requestOptions) => {
+    const logId = uuid.v4();
+
+    return ApiUtil.get(this.props.file, requestOptions).
+      then((resp) => {
+        const src = {
+          data: resp.body,
+          verbosity: 5,
+          stopAtErrors: false,
+          pdfBug: true,
+        };
+
+        this.loadingTask = PDFJS.getDocument(src);
+
+        this.loadingTask.onProgress = (progress) => {
+          // eslint-disable-next-line no-console
+          console.log(`${logId} : Progress of ${this.props.file} reached ${progress}`);
+          // eslint-disable-next-line no-console
+          console.log(`${logId} : Progress of ${this.props.file} reached ${progress.loaded} / ${progress.total}`);
+        };
+
+        return this.loadingTask.promise;
+      }, (reason) => this.onRejected(reason, 'getDocument')).
+      then((pdfDocument) => {
+        this.pdfDocument = pdfDocument;
+
+        return this.getPages(pdfDocument);
+      }, (reason) => this.onRejected(reason, 'getPages')).
+      then((pages) => this.setPageDimensions(pages)
+        , (reason) => this.onRejected(reason, 'setPageDimensions')).
+      then(() => {
+        if (this.loadingTask.destroyed) {
+          return this.pdfDocument.destroy();
+        }
+        this.loadingTask = null;
+
+        return this.props.setPdfDocument(this.props.file, this.pdfDocument);
+      }, (reason) => this.onRejected(reason, 'setPdfDocument')).
+      catch((error) => {
+        console.error(`${logId} : GET ${this.props.file} : ${error}`);
         this.loadingTask = null;
         this.props.setDocumentLoadError(this.props.file);
       });
@@ -207,7 +217,6 @@ export class PdfFile extends React.PureComponent {
         isFileVisible={this.props.isVisible}
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
-        featureToggles={this.props.featureToggles}
       />
     </div>;
   }
