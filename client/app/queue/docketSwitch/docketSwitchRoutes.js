@@ -8,46 +8,52 @@ import { DocketSwitchRulingContainer } from './judgeRuling/DocketSwitchRulingCon
 import { DocketSwitchDenialContainer } from './denial/DocketSwitchDenialContainer';
 import { DocketSwitchGrantContainer } from './grant/DocketSwitchGrantContainer';
 
+const basePath = "/queue/appeals/:appealId/tasks/:taskId"
 const PageRoutes = [
   <PageRoute
-    path={`/queue/appeals/:appealId/tasks/:taskId/${
+    path={`${basePath}/${
       TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.value
     }`}
     title={`${TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.label} | Caseflow`}
-    key={crypto.randomUUID()}
+    key={`${basePath}/${
+      TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.value
+    }`.replace(/[^\w\s]/gi, '_')}
   >
-    <RecommendDocketSwitchContainer  />
+    <RecommendDocketSwitchContainer />
   </PageRoute>,
 
   <PageRoute
-    path={`/queue/appeals/:appealId/tasks/:taskId/${
+    path={`${basePath}/${
       TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.value
     }`}
     title={`${TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.label} | Caseflow`}
-    key={crypto.randomUUID()}
+    key={`${basePath}/${
+      TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.value
+    }`.replace(/[^\w\s]/gi, '_')}
   >
     <DocketSwitchRulingContainer />
   </PageRoute>,
 
   // This route handles the remaining checkout flow
-  <Route path="/queue/appeals/:appealId/tasks/:taskId/docket_switch/checkout" key={crypto.randomUUID()}>
+  <Route
+    path={`${basePath}/docket_switch/checkout`}
+    key={`${basePath}/docket_switch/checkout`.replace(/[^\w\s]/gi, '_')}
+  >
     {/* The component here will add additional `Switch` and child routes */}
     <Switch>
       <PageRoute
-        path={`/queue/appeals/:appealId/tasks/:taskId/${
+        path={`/${basePath}/${
       TASK_ACTIONS.DOCKET_SWITCH_DENIED.value
     }`}
         title={`${TASK_ACTIONS.DOCKET_SWITCH_DENIED.label} | Caseflow`}
-        key={crypto.randomUUID()}
       >
         <DocketSwitchDenialContainer />
       </PageRoute>
       <PageRoute
-        path={`/queue/appeals/:appealId/tasks/:taskId/${
+        path={`${basePath}/${
       TASK_ACTIONS.DOCKET_SWITCH_GRANTED.value
     }`}
         title={`${TASK_ACTIONS.DOCKET_SWITCH_GRANTED.label} | Caseflow`}
-        key={crypto.randomUUID()}
       >
         <DocketSwitchGrantContainer />
       </PageRoute>

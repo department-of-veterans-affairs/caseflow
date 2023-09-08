@@ -38,23 +38,25 @@ const RoutedReturnToLitSupport = (props) => {
   );
 };
 
+const basePath = `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`;
+
 const PageRoutes = [
   <PageRoute
-    path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`}
+    path={basePath}
     title={`${PAGE_TITLES.MOTION_TO_VACATE.ADDRESS_MOTION_TO_VACATE} | Caseflow`}
     component={AddressMotionToVacateView}
-    key={crypto.randomUUID()}
-
+    key={basePath.replace(/[^\w\s]/gi,'_')}
   />,
 
   // This route handles the remaining checkout flow
   <Route
     path="/queue/appeals/:appealId/tasks/:taskId/motion_to_vacate_checkout"
     component={MotionToVacateFlowContainer}
-    key={crypto.randomUUID()}
-
+    key={`/queue/appeals/:appealId/tasks/:taskId/motion_to_vacate_checkout`.replace(/[^\w\s]/gi,'_')}
   />
 ];
+
+const path = `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SEND_MOTION_TO_VACATE_TO_JUDGE.value}`;
 
 const ModalRoutes = [
   <PageRoute
@@ -66,13 +68,12 @@ const ModalRoutes = [
     ].join('/')}
     title={`${PAGE_TITLES.MOTION_TO_VACATE.RETURN_TO_LITIGATION_SUPPORT} | Caseflow`}
     component={RoutedReturnToLitSupport}
-    key={crypto.randomUUID()}
+    key={`/queue/appeals/:appealId/tasks/:taskId`.replace(/[^\w\s]/gi,'_')}
   />,
-
   <Route
-    path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SEND_MOTION_TO_VACATE_TO_JUDGE.value}`}
+    path={path}
     component={ReviewMotionToVacateView}
-    key={crypto.randomUUID()}
+    key={path.replace(/[^\w\s]/gi,'_')}
   />
 ];
 
