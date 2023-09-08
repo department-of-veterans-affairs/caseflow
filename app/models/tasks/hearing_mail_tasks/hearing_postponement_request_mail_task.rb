@@ -11,6 +11,7 @@
 class HearingPostponementRequestMailTask < HearingRequestMailTask
   prepend HearingPostponed
   include RunAsyncable
+
   class << self
     def label
       COPY::HEARING_POSTPONEMENT_REQUEST_MAIL_TASK_LABEL
@@ -85,6 +86,23 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   # Return: The hearing task
   def hearing_task
     @hearing_task ||= open_hearing&.hearing_task || active_schedule_hearing_task.parent
+  end
+
+  # Purpose: When a hearing is postponed through the completion of a NoShowHearingTask, AssignHearingDispositionTask,
+  #          or ChangeHearingDispositionTask, cancel any open HearingPostponementRequestMailTasks in that appeal's
+  #          task tree, as the HPR mail tasks have become redundant.
+  #
+  # Params: completed_task - task object of the completed task through which the hearing was postponed
+  #         updated_at - datetime when the task was completed
+  #
+  # Return: The cancelled HPR mail tasks
+  def cancel_when_redundant(completed_task, updated_at)
+    user = ensure_user_can_cancel_task(completed_task)
+    params = {
+      status: Constants.TASK_STATUSES.cancelled,
+      instructions: format_cancellation_reason(completed_task.type, updated_at)
+    }
+    update_from_params(params, user)
   end
 
   private
@@ -283,5 +301,32 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     EOS
 
     [instructions[0] + markdown_to_append]
+  end
+
+  # Purpose: If hearing postponed by a member of HearingAdminTeam, return that user. Otherwise, in the
+  #          case that hearing in postponed by HearingChangeDispositionJob, current_user is system_user
+  #          and will not have permission to call Task#update_from_params. Instead, return a user with
+  #          with HearingAdmin privileges.
+  #
+  # Params: completed_task - Task object of task through which heairng was postponed
+  def ensure_user_can_cancel_task(completed_task)
+    current_user = RequestStore[:current_user]
+
+    return current_user if current_user&.in_hearing_admin_team?
+
+    completed_task.hearing.updated_by
+  end
+
+  # Purpose: Format context to be appended to HPR mail tasks instructions upon task cancellation
+  #
+  # Params: task_name - string of name of completed task through which hearing was postponed
+  #         updated_at - datetime when the task was completed
+  #
+  # Return: String to be submitted in instructions field of task
+  def format_cancellation_reason(task_name, updated_at)
+    formatted_date = updated_at.strftime("%m/%d/%Y")
+
+    "##### REASON FOR CANCELLATION:\n" \
+    "Hearing postponed when #{task_name} was completed on #{formatted_date}"
   end
 end
