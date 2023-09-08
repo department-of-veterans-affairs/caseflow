@@ -222,6 +222,7 @@ class HearingDay < CaseflowRecord
   end
 
   private
+
   def kickoff_link_cleanup
     VirtualHearings::DeleteConferenceLinkJob.new.perform
   end

@@ -18,7 +18,7 @@ class VirtualHearings::DeleteConferenceLinkJob < CaseflowJob
 
   private
 
-  # Purpose: Queries the database table of conference_links that are associated with a hearing_day that has already passed.
+  # Purpose: Queries the DB table of conference_links that are associated with a hearing_day that has already passed.
   #
   # Params: None
   #
