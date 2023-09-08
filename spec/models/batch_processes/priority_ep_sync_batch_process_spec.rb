@@ -305,15 +305,16 @@ describe PriorityEpSyncBatchProcess, :postgres do
   end
 
   describe "#destroy_synced_records!" do
-    let!(:synced_pepsq_1) { create(:priority_end_product_sync_queue, :synced) }
-    let!(:synced_pepsq_2) { create(:priority_end_product_sync_queue, :synced) }
-    let!(:batch_process) { PriorityEpSyncBatchProcess.new }
+    let!(:batch_process) { PriorityEpSyncBatchProcess.create(batch_type: 'PriorityEpSyncBatchProcess') }
+    let!(:synced_pepsq_1) { create(:priority_end_product_sync_queue, :synced, batch_id: batch_process.id) }
+    let!(:synced_pepsq_2) { create(:priority_end_product_sync_queue, :synced, batch_id: batch_process.id) }
+    let!(:synced_pepsq_3) { create(:priority_end_product_sync_queue, :synced) }
 
     subject { batch_process.destroy_synced_records! }
 
     context "when priority_ep_sync_batch_process destroys synced pepsq records" do
       before do
-        @synced_pepsq_size = PriorityEndProductSyncQueue.where(status: "SYNCED").size
+        @synced_pepsq_size = PriorityEndProductSyncQueue.where(status: "SYNCED", batch_id: batch_process.id).size
         allow(Rails.logger).to receive(:info)
         subject
       end
