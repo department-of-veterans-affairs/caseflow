@@ -14,6 +14,8 @@ import CommentIndicator from './CommentIndicator';
 import DropdownFilter from '../components/DropdownFilter';
 import { bindActionCreators } from 'redux';
 import Highlight from '../components/Highlight';
+import DateSelector from '../components/DateSelector';
+import Dropdown from '../components/Dropdown';
 import {
   setDocListScrollPosition,
   changeSortState,
@@ -22,6 +24,9 @@ import {
   setTagFilter,
   setCategoryFilter,
   toggleDropdownFilterVisibility,
+  setDocFilter,
+  clearDocFilters,
+  setRecieptDateFilter
 } from '../reader/DocumentList/DocumentListActions';
 import { getAnnotationsPerDocument } from './selectors';
 import { SortArrowDownIcon } from '../components/icons/SortArrowDownIcon';
@@ -29,12 +34,22 @@ import { SortArrowUpIcon } from '../components/icons/SortArrowUpIcon';
 import { DoubleArrowIcon } from '../components/icons/DoubleArrowIcon';
 
 import DocCategoryPicker from './DocCategoryPicker';
-import DocTagPicker from './DocTagPicker';
 import FilterIcon from '../components/icons/FilterIcon';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
+import DocTagPicker from './DocTagPicker';
+import ReaderTableDropdownFilter from '../components/ReaderTableDropdownFilter';
 
 const NUMBER_OF_COLUMNS = 6;
+
+const recieptDateFilterStates = {
+  UNINITIALIZED: '',
+  BETWEEN: 0,
+  TO: 1,
+  FROM: 2,
+  ON: 3
+
+};
 
 export const getRowObjects = (documents, annotationsPerDocument) => {
   return documents.reduce((acc, doc) => {
@@ -52,44 +67,204 @@ export const getRowObjects = (documents, annotationsPerDocument) => {
   }, []);
 };
 
-class DocumentsTable extends React.Component {
-  componentDidMount() {
-    if (this.props.pdfList.scrollTop) {
-      this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
+// made because theres occasional automagic things happening when I convert the string to date
+const convertStringToDate = (stringDate) => {
+  let date = new Date();
+  const splitVals = stringDate.split('-');
 
-      if (this.lastReadIndicatorElem) {
-        const lastReadBoundingRect = this.lastReadIndicatorElem.getBoundingClientRect();
-        const tbodyBoundingRect = this.tbodyElem.getBoundingClientRect();
-        const lastReadIndicatorIsInView =
+  date.setFullYear(Number(splitVals[0]));
+  // the datepicker component returns months from 1-12. Javascript dates count months from 0-11
+  // this offsets it so they match.
+  date.setMonth(Number(splitVals[1] - 1));
+  date.setDate(Number(splitVals[2]));
+
+  return date;
+};
+
+class DocumentsTable extends React.Component {
+
+ validateDateFrom = (pickedDate) => {
+   let foundErrors = [];
+
+   // Prevent the from date from being after the To date.
+   if (this.state.toDate !== '' && pickedDate > this.state.toDate) {
+     foundErrors = [...foundErrors, 'From date cannot occur after to date.'];
+   }
+   // Prevent the To date and From date from being the same date.
+   if (this.state.toDate !== '' && pickedDate === this.state.toDate) {
+     foundErrors = [...foundErrors, 'From date and To date cannot be the same.'];
+   }
+
+   // Prevent the date from being picked past the current day.
+   if (convertStringToDate(pickedDate) > new Date()) {
+     foundErrors = [...foundErrors, 'Reciept date cannot be in the future.'];
+   }
+
+   if (foundErrors.length === 0) {
+
+     this.setState({ fromDate: pickedDate,
+       fromDateErrors: [] });
+   } else {
+     this.setState({ fromDateErrors: foundErrors });
+   }
+ };
+
+ validateDateTo = (pickedDate) => {
+   let foundErrors = [];
+
+   // Prevent setting the to date before the from date
+   if (this.state.fromDate !== '' && pickedDate < this.state.fromDate) {
+     foundErrors = [...foundErrors, 'To date cannot occur before from date.'];
+   }
+
+   // Prevent setting the To and From dates to the same date.
+   if (pickedDate === this.state.fromDate) {
+     foundErrors = [...foundErrors, 'From date and To date cannot be the same.'];
+   }
+
+   // Prevent the date from being picked past the current day.
+   if (convertStringToDate(pickedDate) > new Date()) {
+     foundErrors = [...foundErrors, 'Reciept date cannot be in the future.'];
+   }
+
+   if (foundErrors.length === 0) {
+     this.setState({ toDate: pickedDate,
+       toDateErrors: []
+     });
+   } else {
+     this.setState({ toDateErrors: [foundErrors] });
+   }
+ }
+
+ setOnDate = (pickedDate) => {
+   let foundErrors = [];
+
+   if (convertStringToDate(pickedDate) > new Date()) {
+     foundErrors = [...foundErrors, 'Reciept date cannot be in the future.'];
+   }
+
+   if (foundErrors.length === 0) {
+
+     this.setState({ onDate: pickedDate,
+       onDateErrors: []
+     });
+   } else {
+     this.setState({ onDateErrors: [foundErrors] });
+   }
+ };
+
+ constructor() {
+   super();
+   this.state = {
+     frozenDocs: '',
+     recieptFilter: '',
+     fromDate: '',
+     toDate: '',
+     onDate: '',
+     fromDateErrors: [],
+     toDateErrors: [],
+     onDateErrors: [],
+     recipetFilterEnabled: true
+   };
+ }
+
+ executeRecieptFilter = () => {
+  this.props.setRecieptDateFilter(this.state.recieptFilter,
+    { fromDate: this.state.fromDate,
+      toDate: this.state.toDate,
+      onDate: this.state.onDate});
+
+      this.toggleRecieptDataDropdownFilterVisibility();
+ }
+
+ isRecieptFilterButtonEnabled = () => {
+   if (this.state.recieptFilter === recieptDateFilterStates.BETWEEN && (this.state.toDate === '' || this.state.fromDate === '' ||
+  this.state.toDateErrors.length > 0 || this.state.fromDateErrors.length > 0)) {
+     return true;
+   }
+
+   if (this.state.recieptFilter === recieptDateFilterStates.TO && (this.state.toDate === '' || this.state.fromDateErrors.length > 0)) {
+     return true;
+   }
+
+   if (this.state.recieptFilter === recieptDateFilterStates.FROM && (this.state.fromDate === '' || this.state.toDateErrors.length > 0)) {
+     return true;
+   }
+
+   if (this.state.recieptFilter === recieptDateFilterStates.ON && (this.state.onDate === '' || this.state.onDateErrors.length > 0)) {
+     return true;
+   }
+
+   if (this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED) {
+     return true;
+   }
+
+   return false;
+ }
+ componentDidMount() {
+   if (this.state.frozenDocs === '') {
+     const frozenDocs = this.props.documents;
+
+     Object.freeze(frozenDocs);
+     this.setState({
+       frozenDocs
+     });
+   }
+   if (this.props.pdfList.scrollTop) {
+     this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
+
+     if (this.lastReadIndicatorElem) {
+       const lastReadBoundingRect = this.lastReadIndicatorElem.getBoundingClientRect();
+       const tbodyBoundingRect = this.tbodyElem.getBoundingClientRect();
+       const lastReadIndicatorIsInView =
           tbodyBoundingRect.top <= lastReadBoundingRect.top &&
           lastReadBoundingRect.bottom <= tbodyBoundingRect.bottom;
 
-        if (!lastReadIndicatorIsInView) {
-          const rowWithLastRead = _.find(this.tbodyElem.children, (tr) =>
-            tr.querySelector(`#${this.lastReadIndicatorElem.id}`)
-          );
+       if (!lastReadIndicatorIsInView) {
+         const rowWithLastRead = _.find(this.tbodyElem.children, (tr) =>
+           tr.querySelector(`#${this.lastReadIndicatorElem.id}`)
+         );
 
-          this.tbodyElem.scrollTop +=
+         this.tbodyElem.scrollTop +=
             rowWithLastRead.getBoundingClientRect().top - tbodyBoundingRect.top;
-        }
-      }
-    }
-  }
+       }
+     }
+   }
+ }
 
-  componentWillUnmount() {
-    this.props.setDocListScrollPosition(this.tbodyElem.scrollTop);
-  }
+ componentWillUnmount() {
+   this.props.setDocListScrollPosition(this.tbodyElem.scrollTop);
+ }
 
   getTbodyRef = (elem) => (this.tbodyElem = elem);
   getLastReadIndicatorRef = (elem) => (this.lastReadIndicatorElem = elem);
   getCategoryFilterIconRef = (categoryFilterIcon) =>
     (this.categoryFilterIcon = categoryFilterIcon);
   getTagFilterIconRef = (tagFilterIcon) => (this.tagFilterIcon = tagFilterIcon);
+  getDocumentFilterIconRef = (documentFilterIcon) => (this.documentFilterIcon = documentFilterIcon);
   toggleCategoryDropdownFilterVisiblity = () =>
     this.props.toggleDropdownFilterVisibility('category');
   toggleTagDropdownFilterVisiblity = () =>
     this.props.toggleDropdownFilterVisibility('tag');
 
+  toggleDocumentDropdownFilterVisiblity = () =>
+    this.props.toggleDropdownFilterVisibility('document');
+
+  updateRecieptFilter = (selectedKey) => {
+    this.resetRecieptPicker();
+    this.setState({
+      recieptFilter: Number(selectedKey)
+    });
+  }
+
+    toggleRecieptDataDropdownFilterVisibility = () => this.props.toggleDropdownFilterVisibility('receiptDate');
+
+    getRecieptDateFilterIconRef = (recieptDataFilterIcon) => (this.recieptDataFilterIcon = recieptDataFilterIcon);
+
+    resetRecieptPicker = () => {
+      this.props.setRecieptDateFilter({});
+      this.setState({ fromDate: '', toDate: '', onDate: '', fromDateErrors: [], toDateErrors: [], onDateErrors: [] });
+    };
   getKeyForRow = (index, { isComment, id }) => {
     return isComment ? `${id}-comment` : id;
   };
@@ -108,6 +283,16 @@ class DocumentsTable extends React.Component {
 
     const anyCategoryFiltersAreSet = anyFiltersSet('category');
     const anyTagFiltersAreSet = anyFiltersSet('tag');
+    const anyDocFiltersAreSet = anyFiltersSet('document');
+
+    const anyDateFiltersAreSet = anyFiltersSet('receiptDate');
+
+    const dateDropdownMap = [
+      { value: 0, displayText: 'Between these dates' },
+      { value: 1, displayText: 'Before this date' },
+      { value: 2, displayText: 'After this date' },
+      { value: 3, displayText: 'On this date' }
+    ];
 
     // We have blank headers for the comment indicator and label indicator columns.
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
@@ -148,14 +333,40 @@ class DocumentsTable extends React.Component {
       ];
     }
 
+    const populateDocumentFilter = () => {
+      let docsArray = [];
+
+      // looks through all document types, and only adds them into docsArray if they are unique
+      this.state.frozenDocs.map((x) => docsArray.includes(x.type) ? true : docsArray.push(x.type));
+
+      // convert each item to a hash for use in the document filter
+      let filterItems = [];
+
+      docsArray.forEach((x) => filterItems.push({
+        value: docsArray.indexOf(x),
+        text: x
+      }));
+
+      return filterItems;
+    };
+
     const isCategoryDropdownFilterOpen = _.get(this.props.pdfList, [
       'dropdowns',
       'category',
     ]);
-
     const isTagDropdownFilterOpen = _.get(this.props.pdfList, [
       'dropdowns',
       'tag',
+    ]);
+
+    const isDocumentDropdownFilterOpen = _.get(this.props.pdfList, [
+      'dropdowns',
+      'document',
+    ]);
+
+    const isRecipetDateFilterOpen = _.get(this.props.pdfList, [
+      'dropdowns',
+      'receiptDate',
     ]);
 
     const sortDirectionAriaLabel = `${
@@ -180,8 +391,7 @@ class DocumentsTable extends React.Component {
         header: (
           <div id="categories-header">
             <span id="categories-header-label">
-              Categories{' '}
-              {anyCategoryFiltersAreSet ? 'Filtering by Category' : ''}
+              Categories
             </span>
             <FilterIcon
               label="Filter by category"
@@ -202,6 +412,7 @@ class DocumentsTable extends React.Component {
               >
                 <DocCategoryPicker
                   categoryToggleStates={this.props.docFilterCriteria.category}
+
                   handleCategoryToggle={this.props.setCategoryFilter}
                 />
               </DropdownFilter>
@@ -216,18 +427,82 @@ class DocumentsTable extends React.Component {
         sortProps: this.props.docFilterCriteria.sort.sortBy ===
           'receivedAt' && { 'aria-sort': sortDirectionAriaLabel },
         header: (
-          <Button
-            styling={{ 'aria-roledescription': 'sort button' }}
-            name="Receipt Date"
-            id="receipt-date-header"
-            classNames={['cf-document-list-button-header']}
-            onClick={() => this.props.changeSortState('receivedAt')}
-          >
-            <span id="receipt-date-header-label">Receipt Date</span>
-            {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ?
-              sortArrowIcon :
-              notSortedIcon}
-          </Button>
+          <div style={{ minWidth: '250px' }}>
+            <Button
+              styling={{ 'aria-roledescription': 'sort button' }}
+              name="Receipt Date"
+              id="receipt-date-header"
+              classNames={['cf-document-list-button-header']}
+              onClick={() => this.props.changeSortState('receivedAt')}
+            >
+              <span id="receipt-date-header-label">Receipt Date</span>
+              {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ?
+                sortArrowIcon :
+                notSortedIcon}
+            </Button>
+            <FilterIcon
+              label="Filter by dates"
+              idPrefix="receiptDate"
+              getRef={this.getreceiptDateFilterIconRef}
+              selected={isRecipetDateFilterOpen || anyDateFiltersAreSet}
+              handleActivate={this.toggleRecieptDataDropdownFilterVisibility}
+            />
+            {isRecipetDateFilterOpen && (
+              <div style={{
+                position: 'relative',
+                right: '7vw' }}>
+                <DropdownFilter
+                  clearFilters={this.resetRecieptPicker}
+                  name="Reciept Date"
+                  isClearEnabled
+                  handleClose={this.toggleRecieptDataDropdownFilterVisibility}
+                  addClearFiltersRow
+                >
+                  <>
+                    <Dropdown
+                      name="dateDropdownText"
+                      options={dateDropdownMap}
+                      label="Date filter parameters"
+                      value="dateDropdownVal"
+                      onChange={(newKey) => this.updateRecieptFilter(newKey)}
+                      defaultText={this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED ? 'Select...' :
+                        dateDropdownMap[this.state.recieptFilter].displayText}
+                      defaultValue="On this date"
+                    />
+                    {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.FROM) &&
+                  this.state.fromDateErrors.map((error, index) =>
+                    <p id={index} key={index} style={{ color: 'red' }}>{error}</p>)}
+                    {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.FROM) &&
+                  <DateSelector value={this.state.fromDate} type="date" name="From"
+                    onChange={this.validateDateFrom} />}
+
+                    {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.TO) &&
+                  this.state.toDateErrors.map((error) =>
+                    <p style={{ color: 'red' }}>{error}</p>)}
+                    {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.TO) &&
+                  <DateSelector value={this.state.toDate} type="date" name="To"
+                    onChange={this.validateDateTo} />}
+
+                    {this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED && <DateSelector readOnly type="date" name="Receipt date"
+                      onChange={this.validateDateIsAfter} comment="This is a read only component used as a dummy" />}
+
+                    {(this.state.recieptFilter === recieptDateFilterStates.ON) && this.state.onDateErrors.map((error) =>
+                      <p style={{ color: 'red' }}>{error}</p>)}
+                    {this.state.recieptFilter === recieptDateFilterStates.ON && <DateSelector value={this.state.onDate} type="date"
+                      name="On this date" onChange={this.setOnDate} />}
+
+                    <div style={{ width: '100%', display: 'flex' }}>
+                      <span style={{ height: '1px', position: 'absolute', width: '100%', backgroundColor: 'gray' }}></span>
+                      <div style={{ display: 'flex', marginTop: '10px', marginRight: '10px', marginBottom: '10px', justifyContent: 'end', width: '100%' }}>
+                        <Button disabled={this.isRecieptFilterButtonEnabled()} onClick={() => this.executeRecieptFilter()} title="apply filter">
+                          <span>Apply filter</span>
+                        </Button>
+                      </div>
+                    </div>
+                  </>
+                </DropdownFilter></div>
+            )}
+          </div>
         ),
         valueFunction: (doc) => (
           <span className="document-list-receipt-date">
@@ -242,18 +517,47 @@ class DocumentsTable extends React.Component {
           'aria-sort': sortDirectionAriaLabel,
         },
         header: (
-          <Button
-            id="type-header"
-            styling={{ 'aria-roledescription': 'sort button' }}
-            name="Document Type"
-            classNames={['cf-document-list-button-header']}
-            onClick={() => this.props.changeSortState('type')}
-          >
-            <span id="type-header-label">Document Type</span>
-            {this.props.docFilterCriteria.sort.sortBy === 'type' ?
-              sortArrowIcon :
-              notSortedIcon}
-          </Button>
+          <>
+            <Button
+              id="type-header"
+              styling={{ 'aria-roledescription': 'sort button' }}
+              name="Document Type"
+              classNames={['cf-document-list-button-header']}
+              onClick={() => this.props.changeSortState('type')}
+            >
+              <span id="type-header-label">Document Type</span>
+
+              {this.props.docFilterCriteria.sort.sortBy === 'type' ?
+                sortArrowIcon :
+                notSortedIcon}
+            </Button>
+            <FilterIcon
+              label="Filter by Document"
+              idPrefix="document"
+              getRef={this.getDocumentFilterIconRef}
+              selected={isDocumentDropdownFilterOpen}
+              handleActivate={this.toggleDocumentDropdownFilterVisiblity}
+            />
+
+            {isDocumentDropdownFilterOpen && (
+              <div style={{ position: 'relative', right: '14vw' }}>
+                <DropdownFilter
+                  clearFilters={this.props.clearDocFilters}
+                  name="Document"
+                  isClearEnabled={anyDocFiltersAreSet}
+                  handleClose={this.toggleDocumentDropdownFilterVisiblity}
+                  addClearFiltersRow
+                >
+                  <DocTagPicker
+                    tags={populateDocumentFilter()}
+                    tagToggleStates={this.props.docFilterCriteria.document}
+                    handleTagToggle={this.props.setDocFilter}
+                  />
+                </DropdownFilter>
+              </div>
+            )}
+          </>
+
         ),
         valueFunction: (doc) => (
           <DocTypeColumn
@@ -269,7 +573,6 @@ class DocumentsTable extends React.Component {
           <div id="tags-header" className="document-list-header-issue-tags">
             <span id="tag-header-label">
               Issue Tags
-              {anyTagFiltersAreSet ? 'Filtering by Issue Tags' : ''}
             </span>
             <FilterIcon
               label="Filter by tag"
@@ -279,19 +582,21 @@ class DocumentsTable extends React.Component {
               handleActivate={this.toggleTagDropdownFilterVisiblity}
             />
             {isTagDropdownFilterOpen && (
-              <DropdownFilter
-                clearFilters={this.props.clearTagFilters}
-                name="tag"
-                isClearEnabled={anyTagFiltersAreSet}
-                handleClose={this.toggleTagDropdownFilterVisiblity}
-                addClearFiltersRow
-              >
-                <DocTagPicker
-                  tags={this.props.tagOptions}
-                  tagToggleStates={this.props.docFilterCriteria.tag}
-                  handleTagToggle={this.props.setTagFilter}
-                />
-              </DropdownFilter>
+              <div style={{ position: 'relative', right: '10vw' }}>
+                <DropdownFilter
+                  clearFilters={this.props.clearTagFilters}
+                  name="tag"
+                  isClearEnabled={anyTagFiltersAreSet}
+                  handleClose={this.toggleTagDropdownFilterVisiblity}
+                  addClearFiltersRow
+                >
+                  <DocTagPicker
+                    tags={this.props.tagOptions}
+                    tagToggleStates={this.props.docFilterCriteria.tag}
+                    handleTagToggle={this.props.setTagFilter}
+                  />
+                </DropdownFilter>
+              </div>
             )}
           </div>
         ),
@@ -352,9 +657,13 @@ DocumentsTable.propTypes = {
   docFilterCriteria: PropTypes.object,
   setCategoryFilter: PropTypes.func.isRequired,
   setTagFilter: PropTypes.func.isRequired,
+  setRecieptDateFilter: PropTypes.func,
   setDocListScrollPosition: PropTypes.func.isRequired,
   toggleDropdownFilterVisibility: PropTypes.func.isRequired,
   tagOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  setDocFilter: PropTypes.func,
+  clearDocFilters: PropTypes.func,
+  secretDebug: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) =>
@@ -367,6 +676,9 @@ const mapDispatchToProps = (dispatch) =>
       changeSortState,
       toggleDropdownFilterVisibility,
       setCategoryFilter,
+      setDocFilter,
+      clearDocFilters,
+      setRecieptDateFilter
     },
     dispatch
   );
