@@ -23,13 +23,13 @@ describe UnknownUserFixJob, :postgres do
       expect(riu.reload.error).to eq(nil)
     end
     it "stops if the given date cannot be parsed" do
-      subject.perform("12-21-2001")
+      expect { subject.perform("12-21-2001") }.to raise_error(ArgumentError, "Incorrect date format, use 'YYYY-mm-dd'")
       expect(riu.reload.error).to eq(unknown_error)
 
-      subject.perform("Hello World!")
+      expect { subject.perform("Hello World!") }.to raise_error(ArgumentError, "Incorrect date format, use 'YYYY-mm-dd'")
       expect(riu.reload.error).to eq(unknown_error)
 
-      subject.perform(42)
+      expect { subject.perform(42) }.to raise_error(ArgumentError, "Incorrect date format, use 'YYYY-mm-dd'")
       expect(riu.reload.error).to eq(unknown_error)
     end
   end
