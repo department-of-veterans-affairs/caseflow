@@ -38,21 +38,21 @@ const RoutedReturnToLitSupport = (props) => {
   );
 };
 
-const basePath = `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`;
+const basePath = `/queue/appeals/:appealId/tasks/:taskId`;
 
 const PageRoutes = [
   <PageRoute
-    path={basePath}
+    path={`${basePath}/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`}
     title={`${PAGE_TITLES.MOTION_TO_VACATE.ADDRESS_MOTION_TO_VACATE} | Caseflow`}
     component={AddressMotionToVacateView}
-    key={basePath.replace(/[^\w\s]/gi,'_')}
+    key={`${basePath}/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`.replace(/[^\w\s]/gi,'_')}
   />,
 
   // This route handles the remaining checkout flow
   <Route
-    path="/queue/appeals/:appealId/tasks/:taskId/motion_to_vacate_checkout"
+    path={`${basePath}/motion_to_vacate_checkout`}
     component={MotionToVacateFlowContainer}
-    key={`/queue/appeals/:appealId/tasks/:taskId/motion_to_vacate_checkout`.replace(/[^\w\s]/gi,'_')}
+    key={`${basePath}/motion_to_vacate_checkout`.replace(/[^\w\s]/gi,'_')}
   />
 ];
 
@@ -62,18 +62,18 @@ const ModalRoutes = [
   <PageRoute
     exact
     path={[
-      '/queue/appeals/:appealId/tasks/:taskId',
+      basePath,
       TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value,
       TASK_ACTIONS.JUDGE_RETURN_TO_LIT_SUPPORT.value
     ].join('/')}
     title={`${PAGE_TITLES.MOTION_TO_VACATE.RETURN_TO_LITIGATION_SUPPORT} | Caseflow`}
     component={RoutedReturnToLitSupport}
-    key={`/queue/appeals/:appealId/tasks/:taskId`.replace(/[^\w\s]/gi,'_')}
+    key={`${basePath}/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`.replace(/[^\w\s]/gi,'_')}
   />,
   <Route
-    path={path}
+    path={`${basePath}/${TASK_ACTIONS.SEND_MOTION_TO_VACATE_TO_JUDGE.value}`}
     component={ReviewMotionToVacateView}
-    key={path.replace(/[^\w\s]/gi,'_')}
+    key={`${basePath}/${TASK_ACTIONS.SEND_MOTION_TO_VACATE_TO_JUDGE.value}`.replace(/[^\w\s]/gi,'_')}
   />
 ];
 
