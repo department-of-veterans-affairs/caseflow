@@ -9,12 +9,12 @@ class UnknownUserFixJob < CaseflowJob
 
     begin
       if !date.match?(pattern)
-        raise ArgumentError, "Incorrect date format, use 'YYYY-mm-dd'"
+        fail ArgumentError, "Incorrect date format, use 'YYYY-mm-dd'"
       end
 
       parsed_date = Time.zone.parse(date)
-    rescue ArgumentError => e
-      Rails.logger.error("Error: #{e.message}")
+    rescue ArgumentError => error
+      Rails.logger.error("Error: #{error.message}")
     end
 
     return if rius_with_errors.blank?
