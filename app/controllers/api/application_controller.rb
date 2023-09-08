@@ -50,10 +50,6 @@ class Api::ApplicationController < ActionController::Base
     render json: { status: "unauthorized" }, status: :unauthorized
   end
 
-  def ssl_enabled?
-    Rails.env.production?
-  end
-
   def strict_transport_security
     response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains" if request.ssl?
   end
