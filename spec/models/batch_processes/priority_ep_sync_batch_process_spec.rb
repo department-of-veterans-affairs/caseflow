@@ -326,6 +326,7 @@ describe PriorityEpSyncBatchProcess, :postgres do
           "PriorityEpSyncBatchProcessJob #{@synced_pepsq_size} synced records deleted:"\
           " [#{synced_pepsq_1.id}, #{synced_pepsq_2.id}]  Time: 2022-01-01 07:00:00 -0500"
         )
+        expect(PriorityEndProductSyncQueue.find_by(id: synced_pepsq_3.id)).to_not be nil
       end
     end
   end
