@@ -14,8 +14,10 @@
       windowSlider: FeatureToggle.enabled?(:window_slider, user: current_user),
       readerSelectorsMemoized: FeatureToggle.enabled?(:bulk_upload_documents, user: current_user),
       readerGetDocumentLogging: FeatureToggle.enabled?(:reader_get_document_logging, user: current_user),
+      prefetchDisabled: FeatureToggle.enabled?(:prefetch_disabled, user: current_user),
       auto_tagging_ability: FeatureToggle.enabled?(:auto_tagging_ability, user: current_user),
-      prefetchDisabled: FeatureToggle.enabled?(:prefetch_disabled, user: current_user)
+      can_manually_auto_tag: FeatureToggle.enabled?(:can_manually_auto_tag, user: current_user)
+
     },
     buildDate: build_date
   }) %>
