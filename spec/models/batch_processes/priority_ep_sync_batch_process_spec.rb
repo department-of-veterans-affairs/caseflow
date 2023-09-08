@@ -158,7 +158,7 @@ describe PriorityEpSyncBatchProcess, :postgres do
     context "when all batched records in the queue are able to sync successfully" do
       before do
         subject
-        pepsq_records.load.reset
+        pepsq_records.reload
       end
 
       it "no batched record in the queue will have a status of 'SYNCED' since these are deleted in #process_batch! \n
@@ -182,7 +182,7 @@ describe PriorityEpSyncBatchProcess, :postgres do
         active_hlr_epe_w_cleared_vbms_ext_claim.vbms_ext_claim.update!(level_status_code: "CAN")
         allow(Rails.logger).to receive(:error)
         subject
-        pepsq_records.load.reset
+        pepsq_records.reload
       end
 
       it "all but ONE of the batched records will have synced (therefore removed from the table)" do
@@ -222,7 +222,7 @@ describe PriorityEpSyncBatchProcess, :postgres do
         active_hlr_epe_w_cleared_vbms_ext_claim.vbms_ext_claim.destroy!
         allow(Rails.logger).to receive(:error)
         subject
-        pepsq_records.load.reset
+        pepsq_records.reload
       end
 
       it "all but ONE of the batched records will have a status of 'SYNCED'" do
@@ -266,7 +266,7 @@ describe PriorityEpSyncBatchProcess, :postgres do
         Fakes::EndProductStore.cache_store.redis.del("end_product_records_test:#{epe.veteran_file_number}")
         allow(Rails.logger).to receive(:error)
         subject
-        pepsq_records.load.reset
+        pepsq_records.reload
       end
 
       it "all but ONE of the batched records will have a status of 'SYNCED'" do
