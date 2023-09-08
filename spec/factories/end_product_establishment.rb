@@ -3,7 +3,13 @@
 FactoryBot.define do
   factory :end_product_establishment do
     veteran_file_number { generate :veteran_file_number }
-    sequence(:reference_id, &:to_s)
+    sequence(:reference_id) do
+      if EndProductEstablishment.any?
+        (EndProductEstablishment.last.reference_id.to_i + 1).to_s
+      else
+        "1"
+      end
+    end
     source { create(:ramp_election, veteran_file_number: veteran_file_number) }
     code { "030HLRR" }
     modifier { "030" }
@@ -22,6 +28,186 @@ FactoryBot.define do
     trait :active do
       synced_status { "PEND" }
       established_at { 5.days.ago }
+    end
+
+    trait :active_hlr do
+      synced_status { "PEND" }
+      established_at { 5.days.ago }
+      source { create(:higher_level_review, veteran_file_number: veteran_file_number) }
+    end
+
+    trait :active_supp do
+      synced_status { "PEND" }
+      established_at { 5.days.ago }
+      source { create(:supplemental_claim, veteran_file_number: veteran_file_number) }
+    end
+
+    trait :active_hlr_with_canceled_vbms_ext_claim do
+      active_hlr
+      modifier { "030" }
+      code { "030HLRR" }
+      after(:build) do |end_product_establishment, _evaluator|
+        create(:vbms_ext_claim, :hlr, :canceled, claim_id: end_product_establishment.reference_id)
+        ep = end_product_establishment.result
+        ep_store = Fakes::EndProductStore.new
+        ep_store.update_ep_status(end_product_establishment.veteran_file_number,
+                                  ep.claim_id, "CAN")
+      end
+    end
+
+    trait :active_hlr_with_active_vbms_ext_claim do
+      active_hlr
+      modifier { "030" }
+      code { "030HLRR" }
+      after(:build) do |end_product_establishment, _evaluator|
+        create(:vbms_ext_claim, :hlr, :rdc, claim_id: end_product_establishment.reference_id)
+        ep = end_product_establishment.result
+        ep_store = Fakes::EndProductStore.new
+        ep_store.update_ep_status(end_product_establishment.veteran_file_number,
+                                  ep.claim_id, "RDC")
+      end
+    end
+
+    trait :active_hlr_with_cleared_vbms_ext_claim do
+      active_hlr
+      modifier { "030" }
+      code { "030HLRR" }
+      after(:build) do |end_product_establishment, _evaluator|
+        create(:vbms_ext_claim, :hlr, :cleared, claim_id: end_product_establishment.reference_id)
+        ep = end_product_establishment.result
+        ep_store = Fakes::EndProductStore.new
+        ep_store.update_ep_status(end_product_establishment.veteran_file_number,
+                                  ep.claim_id, "CLR")
+      end
+    end
+
+    trait :canceled_hlr_with_canceled_vbms_ext_claim do
+      canceled
+      established_at { 5.days.ago }
+      modifier { "030" }
+      code { "030HLRR" }
+      source { create(:higher_level_review, veteran_file_number: veteran_file_number) }
+      after(:build) do |end_product_establishment, _evaluator|
+        create(:vbms_ext_claim, :hlr, :canceled, claim_id: end_product_establishment.reference_id)
+        ep = end_product_establishment.result
+        ep_store = Fakes::EndProductStore.new
+        ep_store.update_ep_status(end_product_establishment.veteran_file_number,
+                                  ep.claim_id, "CAN")
+      end
+    end
+
+    trait :cleared_hlr_with_cleared_vbms_ext_claim do
+      cleared
+      established_at { 5.days.ago }
+      modifier { "030" }
+      code { "030HLRR" }
+      source { create(:higher_level_review, veteran_file_number: veteran_file_number) }
+      after(:build) do |end_product_establishment, _evaluator|
+        create(:vbms_ext_claim, :hlr, :cleared, claim_id: end_product_establishment.reference_id)
+        ep = end_product_establishment.result
+        ep_store = Fakes::EndProductStore.new
+        ep_store.update_ep_status(end_product_establishment.veteran_file_number,
+                                  ep.claim_id, "CLR")
+      end
+    end
+
+    trait :active_supp_with_canceled_vbms_ext_claim do
+      active_supp
+      modifier { "040" }
+      code { "040SCR" }
+      after(:build) do |end_product_establishment, _evaluator|
+        create(:vbms_ext_claim, :slc, :canceled, claim_id: end_product_establishment.reference_id)
+        ep = end_product_establishment.result
+        ep_store = Fakes::EndProductStore.new
+        ep_store.update_ep_status(end_product_establishment.veteran_file_number,
+                                  ep.claim_id, "CAN")
+      end
+    end
+
+    trait :active_supp_with_active_vbms_ext_claim do
+      active_supp
+      modifier { "040" }
+      code { "040SCR" }
+      after(:build) do |end_product_establishment, _evaluator|
+        create(:vbms_ext_claim, :slc, :rdc, claim_id: end_product_establishment.reference_id)
+        ep = end_product_establishment.result
+        ep_store = Fakes::EndProductStore.new
+        ep_store.update_ep_status(end_product_establishment.veteran_file_number,
+                                  ep.claim_id, "RDC")
+      end
+    end
+
+    trait :active_supp_with_cleared_vbms_ext_claim do
+      active_supp
+      modifier { "040" }
+      code { "040SCR" }
+      after(:build) do |end_product_establishment, _evaluator|
+        create(:vbms_ext_claim, :slc, :cleared, claim_id: end_product_establishment.reference_id)
+        ep = end_product_establishment.result
+        ep_store = Fakes::EndProductStore.new
+        ep_store.update_ep_status(end_product_establishment.veteran_file_number,
+                                  ep.claim_id, "CLR")
+      end
+    end
+
+    trait :canceled_supp_with_canceled_vbms_ext_claim do
+      canceled
+      established_at { 5.days.ago }
+      modifier { "040" }
+      code { "040SCR" }
+      source { create(:supplemental_claim, veteran_file_number: veteran_file_number) }
+      after(:build) do |end_product_establishment, _evaluator|
+        create(:vbms_ext_claim, :slc, :canceled, claim_id: end_product_establishment.reference_id)
+        ep = end_product_establishment.result
+        ep_store = Fakes::EndProductStore.new
+        ep_store.update_ep_status(end_product_establishment.veteran_file_number,
+                                  ep.claim_id, "CAN")
+      end
+    end
+
+    trait :cleared_supp_with_cleared_vbms_ext_claim do
+      cleared
+      established_at { 5.days.ago }
+      modifier { "040" }
+      code { "040SCR" }
+      source { create(:supplemental_claim, veteran_file_number: veteran_file_number) }
+      after(:build) do |end_product_establishment, _evaluator|
+        create(:vbms_ext_claim, :slc, :cleared, claim_id: end_product_establishment.reference_id)
+        ep = end_product_establishment.result
+        ep_store = Fakes::EndProductStore.new
+        ep_store.update_ep_status(end_product_establishment.veteran_file_number,
+                                  ep.claim_id, "CLR")
+      end
+    end
+
+    trait :canceled_hlr_with_cleared_vbms_ext_claim do
+      canceled
+      established_at { 5.days.ago }
+      modifier { "030" }
+      code { "030HLRR" }
+      source { create(:higher_level_review, veteran_file_number: veteran_file_number) }
+      after(:build) do |end_product_establishment, _evaluator|
+        create(:vbms_ext_claim, :hlr, :cleared, claim_id: end_product_establishment.reference_id)
+        ep = end_product_establishment.result
+        ep_store = Fakes::EndProductStore.new
+        ep_store.update_ep_status(end_product_establishment.veteran_file_number,
+                                  ep.claim_id, "CLR")
+      end
+    end
+
+    trait :cleared_supp_with_canceled_vbms_ext_claim do
+      cleared
+      established_at { 5.days.ago }
+      modifier { "040" }
+      code { "040SCR" }
+      source { create(:supplemental_claim, veteran_file_number: veteran_file_number) }
+      after(:build) do |end_product_establishment, _evaluator|
+        create(:vbms_ext_claim, :slc, :canceled, claim_id: end_product_establishment.reference_id)
+        ep = end_product_establishment.result
+        ep_store = Fakes::EndProductStore.new
+        ep_store.update_ep_status(end_product_establishment.veteran_file_number,
+                                  ep.claim_id, "CAN")
+      end
     end
 
     after(:build) do |end_product_establishment, _evaluator|
