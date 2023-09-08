@@ -69,10 +69,7 @@ module Seeds
 
 
     def create_legacy_tasks
-      # Phoenix and St. Petersburg get legacy hearing requests ("Legacy Veterans Waiting" tab)
-      %w[RO17 RO45].each do |regional_office|
-        create_legacy_appeals(regional_office, 3)
-      end
+        create_legacy_appeals('RO17', 20)
     end
 
     def create_vacols_entries(vacols_titrnum, docket_number, regional_office, type)
@@ -143,7 +140,7 @@ module Seeds
       # Set this for papertrail when creating vacols_case
       # RequestStore[:current_user] = user
       offsets.each do |offset|
-        docket_number = "180000#{offset}"
+        docket_number = "190000#{offset}"
         # Create the veteran for this legacy appeal
         veteran = create_veteran
 
