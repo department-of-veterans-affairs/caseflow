@@ -66,21 +66,28 @@ describe "Appeals API v2", :all_dbs, type: :request do
       expect(ApiView.count).to eq(0)
     end
 
-    it "returns 404 if veteran with that SSN isn't found", skip: "I believe this just returns an empty array" do
-      headers = {
-        "ssn": "444444444",
-        "Authorization": "Token token=#{api_key.key_string}"
-      }
+    context "ssn not found" do
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs, _ssn|
+          nil
+        end
+      end
 
-      get "/api/v2/appeals", headers: headers
+      it "returns 404 if veteran with that SSN isn't found" do
+        headers = {
+          "ssn": "444444444",
+          "Authorization": "Token token=#{api_key.key_string}"
+        }
 
-      expect(response.code).to eq("404")
+        get "/api/v2/appeals", headers: headers
 
-      json = JSON.parse(response.body)
-      expect(json["errors"].length).to eq(1)
-      expect(json["errors"].first["title"]).to eq("Veteran not found")
+        expect(response.code).to eq("404")
 
-      expect(ApiView.count).to eq(1)
+        json = JSON.parse(response.body)
+        expect(json["errors"].length).to eq(1)
+        expect(json["errors"].first["title"]).to eq("Veteran not found")
+        expect(ApiView.count).to eq(0)
+      end
     end
 
     it "records source if sent" do

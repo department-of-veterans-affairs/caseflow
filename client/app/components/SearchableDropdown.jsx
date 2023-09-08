@@ -428,7 +428,7 @@ SearchableDropdown.propTypes = {
   searchable: PropTypes.bool,
   selfManageValueState: PropTypes.bool,
   styling: PropTypes.object,
-  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array]),
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array, PropTypes.number]),
 };
 
 /* eslint-disable no-undefined */

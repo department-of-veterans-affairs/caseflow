@@ -24,7 +24,6 @@ import { INTERACTION_TYPES } from '../reader/analytics';
 import { getCurrentMatchIndex, getMatchesPerPageInFile, getSearchTerm } from './selectors';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import uuid from 'uuid';
-import { storeMetrics, recordAsyncMetrics } from '../util/Metrics';
 
 PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -50,9 +49,7 @@ export class PdfFile extends React.PureComponent {
       cache: true,
       withCredentials: true,
       timeout: true,
-      responseType: 'arraybuffer',
-      metricsLogRestError: this.props.featureToggles.metricsLogRestError,
-      metricsLogRestSuccess: this.props.featureToggles.metricsLogRestSuccess
+      responseType: 'arraybuffer'
     };
 
     window.addEventListener('keydown', this.keyListener);
@@ -73,20 +70,9 @@ export class PdfFile extends React.PureComponent {
   getDocument = (requestOptions) => {
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
-        const metricData = {
-          message: `Getting PDF document id: "${this.props.documentId}"`,
-          type: 'performance',
-          product: 'reader',
-          data: {
-            file: this.props.file,
-          }
-        };
-
         this.loadingTask = PDFJS.getDocument({ data: resp.body });
-        const promise = this.loadingTask.promise;
 
-        return recordAsyncMetrics(promise, metricData,
-          this.props.featureToggles.metricsRecordPDFJSGetDocument);
+        return this.loadingTask.promise;
       }, (reason) => this.onRejected(reason, 'getDocument')).
       then((pdfDocument) => {
         this.pdfDocument = pdfDocument;
@@ -104,21 +90,7 @@ export class PdfFile extends React.PureComponent {
         return this.props.setPdfDocument(this.props.file, this.pdfDocument);
       }, (reason) => this.onRejected(reason, 'setPdfDocument')).
       catch((error) => {
-        const id = uuid.v4();
-        const data = {
-          file: this.props.file
-        };
-        const message = `${id} : GET ${this.props.file} : ${error}`;
-
-        console.error(message);
-        storeMetrics(
-          id,
-          data,
-          { message,
-            type: 'error',
-            product: 'browser',
-          }
-        );
+        console.error(`${uuid.v4()} : GET ${this.props.file} : ${error}`);
         this.loadingTask = null;
         this.props.setDocumentLoadError(this.props.file);
       });
@@ -245,7 +217,6 @@ export class PdfFile extends React.PureComponent {
         isFileVisible={this.props.isVisible}
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
-        featureToggles={this.props.featureToggles}
       />
     </div>;
   }
