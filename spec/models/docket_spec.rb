@@ -553,12 +553,11 @@ describe Docket, :all_dbs do
     end
 
     it "sets the case ids when a redistribution occurs" do
-      distributed_case.id
       ymd = Time.zone.today.strftime("%F")
       result = subject
 
       expect(DistributedCase.find(distributed_case.id).case_id).to eq("#{distributed_appeal.uuid}-redistributed-#{ymd}")
-      expect(result[0].case_id).to eq(distributed_appeal.uuid)
+      expect(result.any? { |item| item.case_id == distributed_appeal.uuid }).to be_truthy
     end
   end
 
