@@ -304,13 +304,13 @@ describe PriorityEpSyncBatchProcess, :postgres do
     end
   end
 
-  describe "#destroy_synced_records!" do
+  describe "#destroy_synced_records_from_queue!" do
     let!(:batch_process) { PriorityEpSyncBatchProcess.create(batch_type: 'PriorityEpSyncBatchProcess') }
     let!(:synced_pepsq_1) { create(:priority_end_product_sync_queue, :synced, batch_id: batch_process.id) }
     let!(:synced_pepsq_2) { create(:priority_end_product_sync_queue, :synced, batch_id: batch_process.id) }
     let!(:synced_pepsq_3) { create(:priority_end_product_sync_queue, :synced) }
 
-    subject { batch_process.destroy_synced_records! }
+    subject { batch_process.destroy_synced_records_from_queue! }
 
     context "when priority_ep_sync_batch_process destroys synced pepsq records" do
       before do

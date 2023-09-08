@@ -67,7 +67,7 @@ class PriorityEpSyncBatchProcess < BatchProcess
     end
 
     batch_complete!
-    destroy_synced_records!
+    destroy_synced_records_from_queue!
   end
   # rubocop:enable Metrics/MethodLength
 
@@ -90,7 +90,7 @@ class PriorityEpSyncBatchProcess < BatchProcess
   # Params: None
   #
   # Response: Log message stating newly destroyed PEPSQ records
-  def destroy_synced_records!
+  def destroy_synced_records_from_queue!
     synced_records = priority_end_product_sync_queue.where(status: "SYNCED")
     log_text = "PriorityEpSyncBatchProcessJob #{synced_records.size} synced records deleted:"\
       " #{synced_records.map(&:id)}  Time: #{Time.zone.now}"
