@@ -67,7 +67,7 @@ class PriorityEpSyncBatchProcess < BatchProcess
     end
 
     batch_complete!
-    destroy_synced_records_from_queue!(self)
+    destroy_synced_records_from_queue!
   end
   # rubocop:enable Metrics/MethodLength
 
@@ -84,13 +84,15 @@ class PriorityEpSyncBatchProcess < BatchProcess
     end
   end
 
+  private
+
   # Purpose: Destroys "SYNCED" PEPSQ records to limit the growing number of table records.
   # This functionality is needed for the PopulateEndProductSyncQueueJob query to be performant.
   #
   # Params: None
   #
   # Response: Log message stating newly destroyed PEPSQ records
-  def destroy_synced_records_from_queue!(batch_process)
-    PriorityEndProductSyncQueue.destroy_batch_process_pepsq_records!(batch_process)
+  def destroy_synced_records_from_queue!
+    PriorityEndProductSyncQueue.destroy_batch_process_pepsq_records!(self)
   end
 end
