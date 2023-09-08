@@ -1,6 +1,7 @@
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router';
 import { render, screen } from '@testing-library/react';
+import { prettyDOM } from '@testing-library/dom';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore, compose } from 'redux';
 import thunk from 'redux-thunk'
@@ -50,6 +51,13 @@ describe('CompleteHearingPostponementRequestModal', () => {
       expect(screen.getByRole('heading', {
         name: 'Mark as complete and withdraw hearing'
       })).toBeInTheDocument();
+    });
+
+    test('modal body has appropiate text', () => {
+      renderCompleteWprModal(completeHearingWithdrawalRequestData);
+
+      expect(screen.getByText('By marking this task as complete, you will withdraw the hearing')).toBeInTheDocument();
+      expect(screen.getByText(COPY.WITHDRAW_HEARING.AMA.MODAL_BODY)).toBeInTheDocument();
     });
 
     test('textarea field has text prompt "Provide instructions and context for this action:"', () => {
