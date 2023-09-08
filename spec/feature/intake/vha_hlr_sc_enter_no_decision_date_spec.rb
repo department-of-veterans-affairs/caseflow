@@ -15,8 +15,17 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
                               last_name: "Merica")
   end
 
+  let(:changed_issue_banner_save_text) do
+    "When you finish making changes, click \"Save\" to continue."
+  end
+
+  let(:changed_issue_banner_establish_text) do
+    "When you finish making changes, click \"Establish\" to continue."
+  end
+
   before do
     VhaBusinessLine.singleton.add_user(current_user)
+    CaseReview.singleton.add_user(current_user)
     current_user.save
     User.authenticate!(user: current_user)
   end
@@ -126,6 +135,8 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
         click_on("Save")
       end
 
+      expect(page).to have_content(changed_issue_banner_establish_text)
+
       # Check that the Edit Issues save button is now Establish, the decision date is added, and the banner is gone
       expect(page).to_not have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
       expect(page).to have_content("Decision date: #{another_past_date}")
@@ -203,6 +214,20 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
         date: nil
       )
 
+      click_intake_add_issue
+      add_intake_nonrating_issue(
+        category: "CHAMPVA",
+        description: "CHAMPVA issue",
+        date: nil
+      )
+
+      click_intake_add_issue
+      add_intake_nonrating_issue(
+        category: "Clothing Allowance",
+        description: "Clothes for dependent",
+        date: nil
+      )
+
       expect(page).to have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
 
       click_button "Save"
@@ -219,22 +244,65 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       # Go back to the Edit issues page
       click_link task.appeal.veteran.name.to_s
 
-      # Next we want to remove that issue and check the task status and message again.
       expect(page).to have_button("Save", disabled: true)
 
       expect(page).to have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
 
-      # Remove the issue
-      request_issue_id = task.appeal.request_issues.reload.find { |issue| issue.decision_date.blank? }.id
+      # Add a decision date, remove an issue, and withdraw an issue
+      new_issues = task.appeal.request_issues.reload.select { |issue| issue.decision_date.blank? }
+      request_issue_id = new_issues.first.id
+      second_issue_id = new_issues.second.id
+      third_issue_id = new_issues.third.id
 
       within "#issue-#{request_issue_id}" do
+        first("select").select("Add decision date")
+      end
+
+      fill_in "decision-date", with: (Time.zone.now - 1.week).strftime("%m/%d/%Y")
+
+      within ".cf-modal-controls" do
+        expect(page).to have_button("Save", disabled: false)
+        click_on("Save")
+      end
+
+      expect(page).to have_content(changed_issue_banner_save_text)
+
+      click_button "Save"
+
+      expect(page).to have_content(edit_decision_date_success_message_text)
+      expect(current_url).to include("/decision_reviews/vha?tab=incomplete")
+      expect(task.reload.status).to eq("on_hold")
+
+      # Go back to the Edit issues page
+      click_link task.appeal.veteran.name.to_s
+
+      expect(page).to have_button("Save", disabled: true)
+      expect(page).to have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
+
+      within "#issue-#{second_issue_id}" do
         first("select").select("Remove issue")
       end
 
       click_on("Yes, remove issue")
 
+      expect(page).to have_content(changed_issue_banner_save_text)
+      expect(page).to have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
+
+      within "#issue-#{third_issue_id}" do
+        first("select").select("Withdraw issue")
+      end
+
+      expect(page).to have_content(changed_issue_banner_establish_text)
+      expect(page).to have_button("Establish", disabled: true)
+
+      fill_in "withdraw-date", with: (Time.zone.now - 1.week).strftime("%m/%d/%Y")
+
       expect(page).to have_button("Establish", disabled: false)
       expect(page).to_not have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
+
+      within "#issue-#{third_issue_id}" do
+        expect(page).to_not have_content("Select action")
+      end
 
       click_button "Establish"
 
@@ -285,8 +353,12 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       task.appeal
     end
 
-    let(:edit_save_success_message_text) do
+    let(:edit_decision_date_success_message_text) do
       "You have successfully updated an issue's decision date"
+    end
+
+    let(:edit_save_success_message_text) do
+      "You have successfully added 3 issues."
     end
 
     context "an existing Higher-Level Review" do
