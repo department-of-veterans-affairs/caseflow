@@ -302,7 +302,6 @@ export class AssignToAttorneyWidget extends React.PureComponent {
           name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
           errorMessage={highlightFormItems && instructions.length === 0 ? COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
           id="taskInstructions"
-          placeholder = {COPY.MORE_INFO}
           onChange={(value) => this.setModalOnChangeValue('instructions', value)
           }
           value = {this.state.instructions}
