@@ -185,6 +185,6 @@ export const setViewingDocumentsOrComments = (documentsOrComments) => ({
 export const onReceiveManifests = (manifestVbmsFetchedAt) => ({
   type: Constants.RECEIVE_MANIFESTS,
   payload: {
-    manifestVbmsFetchedAt
+    manifestVbmsFetchedAt,
   }
 });
