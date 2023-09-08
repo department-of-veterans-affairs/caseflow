@@ -15,7 +15,7 @@ import Alert from 'app/components/Alert';
  */
 export const IssueTags = ({ errors, pendingTag, changeTags, tagOptions, handleTagEdit, autoTaggingEnabled, generateTags, currentDocument, canManuallyAutoTag }) => {
   const { auto_tagged, isAutoTagPending } = currentDocument
-  const isVisible = autoTaggingEnabled && canManuallyAutoTag
+  const isVisible = autoTaggingEnabled && canManuallyAutoTag && !auto_tagged
   return (
     <div className="cf-issue-tag-sidebar">
       {isAutoTagPending && <Alert type="info" message="Auto-tags generating. Please wait a moment." />}
