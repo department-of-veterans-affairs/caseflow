@@ -51,6 +51,12 @@ class PriorityEndProductSyncQueue < CaseflowRecord
                                 determined_stuck_at: Time.zone.now)
   end
 
+  # Purpose: Destroys "SYNCED" PEPSQ records to limit the growing number of table records.
+  # This functionality is needed for the PopulateEndProductSyncQueueJob query to be performant.
+  #
+  # Params: The batch process the synced records belong to
+  #
+  # Response: Log message stating newly destroyed PEPSQ records
   def self.destroy_batch_process_pepsq_records!(batch_process)
     synced_records = batch_process.priority_end_product_sync_queue.where(status: "SYNCED")
     log_text = "PriorityEpSyncBatchProcessJob #{synced_records.size} synced records deleted:"\

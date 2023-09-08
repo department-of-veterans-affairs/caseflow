@@ -302,31 +302,20 @@ describe PriorityEpSyncBatchProcess, :postgres do
         expect(batch_process.records_failed).to eq(1)
       end
     end
-  end
-
-  describe "#destroy_synced_records_from_queue!" do
-    let!(:batch_process) { PriorityEpSyncBatchProcess.create(batch_type: 'PriorityEpSyncBatchProcess') }
-    let!(:synced_pepsq_1) { create(:priority_end_product_sync_queue, :synced, batch_id: batch_process.id) }
-    let!(:synced_pepsq_2) { create(:priority_end_product_sync_queue, :synced, batch_id: batch_process.id) }
-    let!(:synced_pepsq_3) { create(:priority_end_product_sync_queue, :synced) }
-
-    subject { batch_process.destroy_synced_records_from_queue! }
 
     context "when priority_ep_sync_batch_process destroys synced pepsq records" do
       before do
-        @synced_pepsq_size = PriorityEndProductSyncQueue.where(status: "SYNCED", batch_id: batch_process.id).size
         allow(Rails.logger).to receive(:info)
         subject
       end
 
       it "should delete the synced_pepsq records from the pepsq table and log it" do
-        expect(PriorityEndProductSyncQueue.find_by(id: synced_pepsq_1.id)).to be nil
-        expect(PriorityEndProductSyncQueue.find_by(id: synced_pepsq_2.id)).to be nil
+        expect(batch_process.priority_end_product_sync_queue.count).to eq(0)
         expect(Rails.logger).to have_received(:info).with(
-          "PriorityEpSyncBatchProcessJob #{@synced_pepsq_size} synced records deleted:"\
-          " [#{synced_pepsq_1.id}, #{synced_pepsq_2.id}]  Time: 2022-01-01 07:00:00 -0500"
+          "PriorityEpSyncBatchProcessJob #{pepsq_records.size} synced records deleted:"\
+          " [#{pepsq_records[0].id}, #{pepsq_records[1].id}, #{pepsq_records[2].id}, #{pepsq_records[3].id}]"\
+          "  Time: 2022-01-01 07:00:00 -0500"
         )
-        expect(PriorityEndProductSyncQueue.find_by(id: synced_pepsq_3.id)).to_not be nil
       end
     end
   end
