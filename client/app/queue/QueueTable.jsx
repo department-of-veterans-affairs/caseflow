@@ -796,7 +796,7 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   tbodyId: PropTypes.string,
   tbodyRef: PropTypes.func,
   columns: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.object), PropTypes.func]).isRequired,
-  rowObjects: PropTypes.arrayOf(PropTypes.object).isRequired,
+  rowObjects: PropTypes.arrayOf(PropTypes.object),
   rowClassNames: PropTypes.func,
   keyGetter: PropTypes.func,
   slowReRendersAreOk: PropTypes.bool,
