@@ -8,7 +8,7 @@ import { DocketSwitchRulingContainer } from './judgeRuling/DocketSwitchRulingCon
 import { DocketSwitchDenialContainer } from './denial/DocketSwitchDenialContainer';
 import { DocketSwitchGrantContainer } from './grant/DocketSwitchGrantContainer';
 
-const basePath = "/queue/appeals/:appealId/tasks/:taskId"
+const basePath = "/queue/appeals/:appealId/tasks/:taskId";
 const PageRoutes = [
   <PageRoute
     path={`${basePath}/${
