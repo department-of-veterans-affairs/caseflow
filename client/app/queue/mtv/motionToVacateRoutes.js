@@ -45,14 +45,14 @@ const PageRoutes = [
     path={`${basePath}/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`}
     title={`${PAGE_TITLES.MOTION_TO_VACATE.ADDRESS_MOTION_TO_VACATE} | Caseflow`}
     component={AddressMotionToVacateView}
-    key={`${basePath}/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`.replace(/[^\w\s]/gi,'_')}
+    key={`${basePath}/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`.replace(/[^\w\s]/gi, '_')}
   />,
 
   // This route handles the remaining checkout flow
   <Route
     path={`${basePath}/motion_to_vacate_checkout`}
     component={MotionToVacateFlowContainer}
-    key={`${basePath}/motion_to_vacate_checkout`.replace(/[^\w\s]/gi,'_')}
+    key={`${basePath}/motion_to_vacate_checkout`.replace(/[^\w\s]/gi, '_')}
   />
 ];
 
@@ -68,12 +68,12 @@ const ModalRoutes = [
     ].join('/')}
     title={`${PAGE_TITLES.MOTION_TO_VACATE.RETURN_TO_LITIGATION_SUPPORT} | Caseflow`}
     component={RoutedReturnToLitSupport}
-    key={`${basePath}/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`.replace(/[^\w\s]/gi,'_')}
+    key={`${basePath}/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`.replace(/[^\w\s]/gi, '_')}
   />,
   <Route
     path={`${basePath}/${TASK_ACTIONS.SEND_MOTION_TO_VACATE_TO_JUDGE.value}`}
     component={ReviewMotionToVacateView}
-    key={`${basePath}/${TASK_ACTIONS.SEND_MOTION_TO_VACATE_TO_JUDGE.value}`.replace(/[^\w\s]/gi,'_')}
+    key={`${basePath}/${TASK_ACTIONS.SEND_MOTION_TO_VACATE_TO_JUDGE.value}`.replace(/[^\w\s]/gi, '_')}
   />
 ];
 

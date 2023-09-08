@@ -6,7 +6,7 @@ import { EditCavcRemandContainer } from './editCavcRemandContainer';
 const basePath = '/queue/appeals/:appealId/edit_cavc_remand';
 
 const PageRoutes = [
-  <PageRoute path={basePath} title="Edit Cavc Remand | Caseflow" key={basePath.replace(/[^\w\s]/gi,'_')} >
+  <PageRoute path={basePath} title="Edit Cavc Remand | Caseflow" key={basePath.replace(/[^\w\s]/gi, '_')} >
     <EditCavcRemandContainer />
   </PageRoute>,
 ];

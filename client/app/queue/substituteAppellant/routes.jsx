@@ -7,7 +7,10 @@ import { SubstituteAppellantContainer } from './SubstituteAppellantContainer';
 const basePath = '/queue/appeals/:appealId/substitute_appellant';
 
 const PageRoutes = [
-  <PageRoute path={basePath} title={`${PAGE_TITLES.SUBSTITUTE_APPELLANT} | Caseflow`} key={basePath.replaceAll('/','_').replace(':','')} >
+  <PageRoute
+    path={basePath}
+    title={`${PAGE_TITLES.SUBSTITUTE_APPELLANT} | Caseflow`}
+    key={basePath.replace(/[^\w\s]/gi, '_')} >
     <SubstituteAppellantContainer />
   </PageRoute>,
 ];

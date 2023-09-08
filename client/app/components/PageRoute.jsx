@@ -34,7 +34,7 @@ const PageRoute = (props) => {
     <LoadingScreen
       spinnerColor={LOGO_COLORS[props.appName.toUpperCase()].ACCENT}
       message={loadingMessage}
-      /> :
+    /> :
     <Route {...routeProps} />;
 };
 
