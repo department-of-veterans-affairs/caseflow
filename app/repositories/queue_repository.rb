@@ -160,6 +160,13 @@ class QueueRepository
       end
     end
 
+    def reassign_decass_to_attorney!(judge:, attorney:, vacols_id:)
+      transaction do
+        attrs = assign_to_attorney_attrs(vacols_id, attorney, judge)
+        create_decass_record(attrs.merge(adding_user: judge.vacols_uniq_id))
+      end
+    end
+
     def any_task_assigned_by_user?(appeal, user)
       VACOLS::Decass.where(defolder: appeal.vacols_id, demdusr: user.vacols_uniq_id).exists?
     end
