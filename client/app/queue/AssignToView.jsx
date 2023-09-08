@@ -9,7 +9,7 @@ import VHA_VAMCS from '../../constants/VHA_VAMCS';
 
 import { taskById, appealWithDetailSelector, getRootTaskLegacyAppealSCM } from './selectors';
 
-import { onReceiveAmaTasks, legacyReassignToJudge, setOvertime } from './QueueActions';
+import { onReceiveAmaTasks, legacyReassignToJudge, setOvertime, initialAssignTasksToUser } from './QueueActions';
 
 import RadioField from '../components/RadioField';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -146,12 +146,16 @@ class AssignToView extends React.Component {
       detail: sprintf(COPY.PULAC_CERULLO_SUCCESS_DETAIL, appeal.veteranFullName)
     };
 
+    //Return to attorney on legacy appeals with legacy tasks
     if (taskType === 'AttorneyRewriteTask' && task.isLegacy === true) {
-      return this.reassignTask();
+      return this.props.initialAssignTasksToUser({
+        tasks: [task],
+        assigneeId: this.state.selectedValue
+      }, assignTaskSuccessMessage);
     }
 
     if (isReassignAction) {
-      return this.reassignTask();
+      return this.reassignTask(taskType === 'JudgeLegacyAssignTask');
     }
 
     return this.props.
@@ -185,7 +189,7 @@ class AssignToView extends React.Component {
     return assignee;
   };
 
-  reassignTask = () => {
+  reassignTask = (isLegacyReassignToJudge = false) => {
     const task = this.props.task;
     const payload = {
       data: {
@@ -211,6 +215,13 @@ class AssignToView extends React.Component {
     };
 
     const successMsg = { title: sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE_SCM, assignedByListItem(), this.getAssignee()) };
+
+    if (isLegacyReassignToJudge) {
+      return this.props.legacyReassignToJudge({
+        tasks: [task],
+        assigneeId: this.state.selectedValue
+      }, successMsg);
+    }
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).then((resp) => {
       this.props.onReceiveAmaTasks(resp.body.tasks.data);
@@ -330,7 +341,7 @@ class AssignToView extends React.Component {
     const action = getAction(this.props);
     const actionData = taskActionData(this.props);
 
-    actionData.drop_down_label = COPY.JUDGE_LEGACY_DECISION_REVIEW_TITLE
+    actionData.drop_down_label = COPY.JUDGE_LEGACY_DECISION_REVIEW_TITLE;
     const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
 
     if (!task || task.availableActions.length === 0) {
@@ -451,6 +462,7 @@ AssignToView.propTypes = {
   isTeamAssign: PropTypes.bool,
   onReceiveAmaTasks: PropTypes.func,
   legacyReassignToJudge: PropTypes.func,
+  initialAssignTasksToUser: PropTypes.func,
   requestPatch: PropTypes.func,
   requestSave: PropTypes.func,
   rootTask: PropTypes.func,
@@ -487,6 +499,7 @@ const mapDispatchToProps = (dispatch) =>
       requestSave,
       onReceiveAmaTasks,
       legacyReassignToJudge,
+      initialAssignTasksToUser,
       setOvertime,
       resetSuccessMessages
     },
