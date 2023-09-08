@@ -96,7 +96,7 @@ class TasksController < ApplicationController
     # This should be the JudgeDecisionReviewTask
     parent_task = Task.find_by(id: params[:tasks].first[:parent_id]) if params[:tasks].first[:type] == "AttorneyRewriteTask"
     if parent_task&.appeal&.is_a?(LegacyAppeal)
-      QueueRepository.reassign_case_to_attorney!(
+      QueueRepository.reassign_decass_to_attorney!(
         judge: parent_task.assigned_to,
         attorney: User.find(params[:tasks].first[:assigned_to_id]),
         vacols_id: parent_task.appeal.external_id
@@ -123,12 +123,11 @@ class TasksController < ApplicationController
 
       tasks_hash = json_tasks(tasks.uniq)
       if task.appeal.class == LegacyAppeal
-        assigned_to =
-          if task.type == "AttorneyTask" || task.type == "AttorneyRewriteTask"
-            User.find(Task.find_by(id: task.parent_id).assigned_to_id)
-          elsif update_params&.[](:reassign)&.[](:assigned_to_id)
-            User.find(update_params[:reassign][:assigned_to_id])
-          end
+        assigned_to = if task.type == "AttorneyTask" || task.type == "AttorneyRewriteTask"
+                        User.find(Task.find_by(id: task.parent_id).assigned_to_id)
+                      elsif update_params&.[](:reassign)&.[](:assigned_to_id)
+                        User.find(update_params[:reassign][:assigned_to_id])
+                      end
         QueueRepository.update_location_to_judge(task.appeal.vacols_id, assigned_to) if assigned_to
       else
         modified_task_contested_claim
