@@ -43,7 +43,7 @@ class ExternalApi::WebexService::Response
     return "No error message from Webex" if resp.raw_body.empty?
 
     begin
-      JSON.parse(resp.raw_body)["conference"]["name"].first
+      JSON.parse(resp.raw_body)["message"]
     rescue JSON::ParserError
       "No error message from Webex"
     end

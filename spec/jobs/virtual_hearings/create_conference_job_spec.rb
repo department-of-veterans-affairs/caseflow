@@ -97,8 +97,20 @@ describe VirtualHearings::CreateConferenceJob do
       expect(virtual_hearing.guest_pin.to_s.length).to eq(11)
     end
 
-    it "fails when meeting type is webex" do
+    it "creates a conference when meeting type is webex" do
       current_user.update!(meeting_type: "webex")
+      subject.perform_now
+      virtual_hearing.reload
+
+      expect(virtual_hearing.status).to eq(:active)
+      expect(virtual_hearing.alias).to eq("0000001")
+      expect(virtual_hearing.alias_with_host).to eq("BVA0000001@#{pexip_url}")
+      # alias with host will change with either link service or real webex server
+    end
+
+    it "raises error when webex conference creation fails" do
+      current_user.update!(meeting_type: "webex")
+
       expect { subject.perform_now }.to raise_exception(Caseflow::Error::WebexApiError)
     end
 

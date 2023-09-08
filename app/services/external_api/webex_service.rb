@@ -45,7 +45,7 @@ class ExternalApi::WebexService
           ]
         }
       },
-      "aud": "some stuff",
+      # "aud": "some stuff",
       "numGuest": 1,
       "numHost": 1,
       "provideShortUrls": true,

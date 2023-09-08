@@ -141,7 +141,6 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       create_conference_response = create_new_conference
 
       Rails.logger.info("Create Conference Response: #{create_conference_response.inspect}")
-
       if create_conference_response.error
         error_display = error_display(create_conference_response)
 
