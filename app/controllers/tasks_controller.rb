@@ -123,11 +123,10 @@ class TasksController < ApplicationController
 
       tasks_hash = json_tasks(tasks.uniq)
       if task.appeal.class == LegacyAppeal
-        assigned_to = if (task.type == "AttorneyTask" || task.type == "AttorneyRewriteTask") &&
-                         !update_params&.[](:reassign)&.[](:assigned_to_id)
-                        User.find(Task.find_by(id: task.parent_id).assigned_to_id)
-                      elsif update_params&.[](:reassign)&.[](:assigned_to_id)
+        assigned_to = if update_params&.[](:reassign)&.[](:assigned_to_id)
                         User.find(update_params[:reassign][:assigned_to_id])
+                      elsif task.type == "AttorneyTask" || task.type == "AttorneyRewriteTask"
+                        User.find(Task.find_by(id: task.parent_id).assigned_to_id)
                       end
         QueueRepository.update_location_to_judge(task.appeal.vacols_id, assigned_to) if assigned_to
       else
