@@ -50,4 +50,12 @@ class PriorityEndProductSyncQueue < CaseflowRecord
                                 error_messages: error_messages,
                                 determined_stuck_at: Time.zone.now)
   end
+
+  def self.destroy_batch_process_pepsq_records!(batch_process)
+    synced_records = batch_process.priority_end_product_sync_queue.where(status: "SYNCED")
+    log_text = "PriorityEpSyncBatchProcessJob #{synced_records.size} synced records deleted:"\
+      " #{synced_records.map(&:id)}  Time: #{Time.zone.now}"
+    synced_records.delete_all
+    Rails.logger.info(log_text)
+  end
 end
