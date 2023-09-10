@@ -2,8 +2,6 @@
 
 module Seeds
   class AdditionalLegacyRemandedAppeals < Base
-
-
     def initialize
       @legacy_appeals = []
       initial_file_number_and_participant_id
@@ -144,7 +142,7 @@ module Seeds
         # Create the veteran for this legacy appeal
         veteran = create_veteran
 
-        vacols_titrnum = veteran.file_number
+        vacols_titrnum = "#{veteran.file_number}S"
 
         # Create some video and some travel hearings
         type = offset.even? ? "travel" : "video"
