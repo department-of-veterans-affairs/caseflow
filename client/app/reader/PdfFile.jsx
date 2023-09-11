@@ -66,8 +66,15 @@ export class PdfFile extends React.PureComponent {
    * We have to set withCredentials to true since we're requesting the file from a
    * different domain (eFolder), and still need to pass our credentials to authenticate.
    */
+
   getDocument = (requestOptions) => {
     const logId = uuid.v4();
+
+    const documentData = {
+      documentId: this.props.documentId,
+      documentType: this.props.documentType,
+      file: this.props.file,
+    };
 
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
@@ -75,9 +82,7 @@ export class PdfFile extends React.PureComponent {
           message: `Getting PDF document id: "${this.props.documentId}"`,
           type: 'performance',
           product: 'reader',
-          data: {
-            file: this.props.file,
-          }
+          data: documentData,
         };
 
         /* The feature toggle reader_get_document_logging adds the progress of the file being loaded in console */
@@ -93,7 +98,7 @@ export class PdfFile extends React.PureComponent {
 
           this.loadingTask.onProgress = (progress) => {
             // eslint-disable-next-line no-console
-            console.log(`${logId} : Progress of ${this.props.file} reached ${progress.loaded} / ${progress.total}`);
+            console.log(`UUID: ${logId} : Progress of ${this.props.file}: ${progress.loaded} / ${progress.total}`);
           };
         } else {
           this.loadingTask = PDFJS.getDocument({ data: resp.body });
@@ -119,15 +124,12 @@ export class PdfFile extends React.PureComponent {
         return this.props.setPdfDocument(this.props.file, this.pdfDocument);
       }, (reason) => this.onRejected(reason, 'setPdfDocument')).
       catch((error) => {
-        const data = {
-          file: this.props.file
-        };
-        const message = `${logId} : GET ${this.props.file} : ${error}`;
+        const message = `UUID: ${logId} : Getting PDF failed for document id ${this.props.documentId} : ${error}`;
 
         console.error(message);
         storeMetrics(
           logId,
-          data,
+          documentData,
           { message,
             type: 'error',
             product: 'browser',
