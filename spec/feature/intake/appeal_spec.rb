@@ -43,7 +43,7 @@ feature "Appeal Intake", :all_dbs do
       promulgation_date: promulgation_date,
       profile_date: profile_date,
       issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted"},
+        { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" },
         { reference_id: "def789", decision_text: "Looks like a VACOLS issue" }
       ],
@@ -112,7 +112,7 @@ feature "Appeal Intake", :all_dbs do
     # fill_in "What is the Receipt Date of this form?", with: future_date.mdY
     # click_intake_continue
     # expect(page).to have_content("Receipt date cannot be in the future.")
-    #expect(page).to have_content("Please select an option.")
+    # expect(page).to have_content("Please select an option.")
 
     fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
@@ -753,7 +753,6 @@ feature "Appeal Intake", :all_dbs do
     end
 
     context "with legacy_opt_in_approved" do
-
       scenario "adding issues" do
         start_appeal(veteran_with_ratings, legacy_opt_in_approved: true)
         visit "/intake/add_issues"

@@ -106,7 +106,7 @@ class IssuesController < ApplicationController
       [
         "Benefit Type: #{param_issue['description']}\n",
         "Issue: #{iss}\n",
-        "Code: #{[level_1_code, level_1_description].join(" - ")}\n",
+        "Code: #{[level_1_code, level_1_description].join(' - ')}\n",
         "Note: #{note}\n",
         "Disposition: #{disposition}\n"
       ].compact.join("\r\n"),

@@ -4,7 +4,6 @@
 # built for MST/PACT release
 
 class SpecialIssuesComparator
-
   attr_accessor :issue, :rating_special_issues, :bgs_client, :veteran_contentions, :linked_contentions
   def initialize(issue)
     @issue = issue
@@ -22,15 +21,14 @@ class SpecialIssuesComparator
     "gulf war presumptive",
     "radiation"
   ].freeze
-  CONTENTION_PACT_ISSUES = [
-    "pact",
-    "pactdicre",
-    "pees1"
+  CONTENTION_PACT_ISSUES = %w[
+    pact
+    pactdicre
+    pees1
   ].freeze
   CONTENTION_MST_ISSUES = [
     "mst"
   ].freeze
-
 
   # returns a hash with mst_available and pact_available values
   # values generated from ratings special issues and contentions
@@ -73,7 +71,7 @@ class SpecialIssuesComparator
     false
   end
 
-    # cycles rating special issues and returns if a special issue is PACT
+  # cycles rating special issues and returns if a special issue is PACT
   def pact_from_rating?
     return false if rating_special_issues.blank?
 

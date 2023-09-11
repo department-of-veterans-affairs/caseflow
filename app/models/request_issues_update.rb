@@ -312,7 +312,7 @@ class RequestIssuesUpdate < CaseflowRecord
     after_issues = fetch_after_issues
     added_issues = after_issues - before_issues
     added_issues.reverse_each do |issue|
-      if (issue.mst_status) || (issue.pact_status)
+      if issue.mst_status || issue.pact_status
         create_issue_update_task("Added Issue", issue)
       end
     end

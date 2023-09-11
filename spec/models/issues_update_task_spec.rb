@@ -22,7 +22,7 @@ describe IssuesUpdateTask do
       let(:distribution_task) { nil }
 
       it "throws an error" do
-        expect {
+        expect do
           task_class.create!(
             appeal: root_task.appeal,
             parent_id: distribution_task&.id,
@@ -30,13 +30,13 @@ describe IssuesUpdateTask do
             assigned_to: bva_intake,
             assigned_by: user
           )
-        }.to raise_error(ActiveRecord::RecordInvalid)
+        end.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
 
     context "proper params are sent" do
       it "creates the new task" do
-        expect {
+        expect do
           task_class.create!(
             appeal: root_task.appeal,
             parent_id: distribution_task&.id,
@@ -44,7 +44,7 @@ describe IssuesUpdateTask do
             assigned_to: bva_intake,
             assigned_by: user
           )
-        }.to change { IssuesUpdateTask.count }.by(1)
+        end.to change { IssuesUpdateTask.count }.by(1)
       end
     end
 

@@ -137,7 +137,7 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
               subject
 
               decision_issues_from_response = JSON.parse(response.body, symbolize_names: true)[:issues][:decision_issues]
-              .sort_by { |issue| issue[:id] }
+                .sort_by { |issue| issue[:id] }
 
               expect(decision_issues_from_response[0][:mst_status]).to be(true)
               expect(decision_issues_from_response[0][:pact_status]).to be(false)

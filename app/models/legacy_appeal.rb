@@ -936,10 +936,10 @@ class LegacyAppeal < CaseflowRecord
     hearing_date = Hearing.find_by(appeal_id: id)
 
     if hearing_date.nil?
-      return nil
+      nil
 
     else
-      return hearing_date.hearing_day.scheduled_for
+      hearing_date.hearing_day.scheduled_for
     end
   end
 

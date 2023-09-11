@@ -64,7 +64,7 @@ class AppealsController < ApplicationController
             pdf = PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal)
             send_data pdf, filename: "Notification Report " + appeals_id + " " + date + ".pdf", type: "application/pdf", disposition: :attachment
           else
-            raise ActionController::RoutingError.new('Appeal Not Found')
+            fail ActionController::RoutingError, "Appeal Not Found"
           end
         rescue StandardError => error
           uuid = SecureRandom.uuid
@@ -74,10 +74,10 @@ class AppealsController < ApplicationController
         end
       end
       format.csv do
-        raise ActionController::ParameterMissing.new('Bad Format')
+        fail ActionController::ParameterMissing, "Bad Format"
       end
       format.html do
-        raise ActionController::ParameterMissing.new('Bad Format')
+        fail ActionController::ParameterMissing, "Bad Format"
       end
     end
   end
@@ -363,28 +363,28 @@ class AppealsController < ApplicationController
       issue = appeal.issues.find { |i| i.vacols_sequence_id == current_issue[:vacols_sequence_id].to_i }
 
       # Check for changes in mst/pact status
-      if issue.mst_status != current_issue[:mst_status] || issue.pact_status != current_issue[:pact_status]
-        # If there is a change :
-        # Create issue_update_task to populate casetimeline if there is a change
-        create_legacy_issue_update_task(issue, current_issue)
+      next unless issue.mst_status != current_issue[:mst_status] || issue.pact_status != current_issue[:pact_status]
 
-        # Grab record from Vacols database to issue.
-        # When updating an Issue, method in IssueMapper and IssueRepo requires the attrs show below in issue_attrs:{}
-        record = VACOLS::CaseIssue.find_by(isskey: appeal.vacols_id, issseq: current_issue[:vacols_sequence_id])
-        Issue.update_in_vacols!(
-          vacols_id: appeal.vacols_id,
-          vacols_sequence_id: current_issue[:vacols_sequence_id],
-          issue_attrs: {
-            mst_status: current_issue[:mst_status] ? "Y" : "N",
-            pact_status: current_issue[:pact_status] ? "Y" : "N",
-            program: record[:issprog],
-            issue: record[:isscode],
-            level_1: record[:isslev1],
-            level_2: record[:isslev2],
-            level_3: record[:isslev3]
-          }
-        )
-      end
+      # If there is a change :
+      # Create issue_update_task to populate casetimeline if there is a change
+      create_legacy_issue_update_task(issue, current_issue)
+
+      # Grab record from Vacols database to issue.
+      # When updating an Issue, method in IssueMapper and IssueRepo requires the attrs show below in issue_attrs:{}
+      record = VACOLS::CaseIssue.find_by(isskey: appeal.vacols_id, issseq: current_issue[:vacols_sequence_id])
+      Issue.update_in_vacols!(
+        vacols_id: appeal.vacols_id,
+        vacols_sequence_id: current_issue[:vacols_sequence_id],
+        issue_attrs: {
+          mst_status: current_issue[:mst_status] ? "Y" : "N",
+          pact_status: current_issue[:pact_status] ? "Y" : "N",
+          program: record[:issprog],
+          issue: record[:isscode],
+          level_1: record[:isslev1],
+          level_2: record[:isslev2],
+          level_3: record[:isslev3]
+        }
+      )
     end
     set_flash_mst_edit_message
     render json: { issues: json_issues }, status: :ok
@@ -405,7 +405,7 @@ class AppealsController < ApplicationController
       issue = appeal.issues.find { |i| i.vacols_sequence_id == current_issue[:vacols_sequence_id].to_i }
       issue.pact_status != current_issue[:pact_status]
     end
-    {mst_edited: mst_edited, pact_edited: pact_edited}
+    { mst_edited: mst_edited, pact_edited: pact_edited }
   end
 
   def legacy_issue_params
@@ -454,7 +454,7 @@ class AppealsController < ApplicationController
       [
         "Benefit Type: #{before_issue.labels[0]}\n",
         "Issue: #{before_issue.labels[1..-2].join("\n")}\n",
-        "Code: #{[before_issue.codes[-1], before_issue.labels[-1]].join(" - ")}\n",
+        "Code: #{[before_issue.codes[-1], before_issue.labels[-1]].join(' - ')}\n",
         "Note: #{before_issue.note}\n",
         "Disposition: #{before_issue.readable_disposition}\n"
       ].compact.join("\r\n"),
@@ -546,13 +546,15 @@ class AppealsController < ApplicationController
     when "direct_review"
       parent_task = @appeal.tasks.find_by(type: "DistributionTask")
     end
-    @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
-                                          SendInitialNotificationLetterTask.create!(
-                                            appeal: @appeal,
-                                            parent: parent_task,
-                                            assigned_to: Organization.find_by_url("clerk-of-the-board"),
-                                            assigned_by: RequestStore[:current_user]
-                                          ) unless parent_task.nil?
+    unless parent_task.nil?
+      @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
+                                            SendInitialNotificationLetterTask.create!(
+                                              appeal: @appeal,
+                                              parent: parent_task,
+                                              assigned_to: Organization.find_by_url("clerk-of-the-board"),
+                                              assigned_by: RequestStore[:current_user]
+                                            )
+    end
   end
 
   def power_of_attorney_data

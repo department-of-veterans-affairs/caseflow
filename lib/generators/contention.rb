@@ -55,7 +55,7 @@ class Generators::Contention
           issue_id: generate_external_id,
           narrative: "Military Sexual Trauma (MST)",
           code: "MST"
-        },{
+        }, {
           issue_id: generate_external_id,
           narrative: "PACT",
           code: "PACT"

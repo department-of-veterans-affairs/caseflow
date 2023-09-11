@@ -189,19 +189,19 @@ module IntakeHelpers
       user: intake_user,
       started_at: 5.minutes.ago,
       detail: appeal
+    )
+
+    BvaIntake.singleton.add_user(intake.user)
+
+    unless no_claimant
+      stub_valid_address
+      participant_id = claim_participant_id || test_veteran.participant_id
+      claimant_class = claim_participant_id.present? ? DependentClaimant : VeteranClaimant
+      claimant_class.create!(
+        decision_review: appeal,
+        participant_id: participant_id
       )
-
-      BvaIntake.singleton.add_user(intake.user)
-
-      unless no_claimant
-        stub_valid_address
-        participant_id = claim_participant_id || test_veteran.participant_id
-        claimant_class = claim_participant_id.present? ? DependentClaimant : VeteranClaimant
-        claimant_class.create!(
-          decision_review: appeal,
-          participant_id: participant_id
-          )
-        end
+      end
 
     appeal.start_review!
 

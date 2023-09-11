@@ -302,7 +302,7 @@ class Fakes::BGSServiceRecordMaker
     contention_reference_id = mst_contention.reference_id
 
     # if contention ID is already linked to a RequestIssue, generate a new contention
-    while !RequestIssue.find_by(contention_reference_id: contention_reference_id).nil?
+    until RequestIssue.find_by(contention_reference_id: contention_reference_id).nil?
       mst_contention = Generators::BgsContention.build_mst_contention(
         claim_id: claim_id
       )
@@ -349,7 +349,7 @@ class Fakes::BGSServiceRecordMaker
     )
     contention_reference_id = pact.id
     # if contention ID is already linked to a RequestIssue, generate a new contention
-    while !RequestIssue.find_by(contention_reference_id: contention_reference_id).nil?
+    until RequestIssue.find_by(contention_reference_id: contention_reference_id).nil?
       mst_contention = Generators::BgsContention.build_mst_contention(
         claim_id: claim_id
       )
