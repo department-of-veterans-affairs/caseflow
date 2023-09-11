@@ -47,6 +47,7 @@ module Seeds
       @attorney ||= User.find_by_css_id("BVASCASPER1")
     end
 
+    #New Remand Reasons not implemented yet - need actual IDs, not just text output
     def decision_reason_remand_list
       [
         "no_notice_sent",
@@ -61,7 +62,6 @@ module Seeds
         "medical_opinions",
         "advisory_medical_opinion",
         "due_process_deficiency",
-#New Remand Reasons not implemented yet - need actual IDs, not just text output
 =begin
         "No medical examination",
         "Inadequate medical examination",
@@ -78,6 +78,62 @@ module Seeds
     def create_ama_remand_reason_variable(remand_code)
       [create(:ama_remand_reason, code: remand_code)]
     end
+
+
+    def create_allowed_request_issue_no_decision_1(appeal)
+      nca = BusinessLine.find_by(name: "National Cemetery Administration")
+      description = "Service connection for pain disorder is granted with an evaluation of 25\% effective August 1 2020"
+      notes = "Pain disorder with 25\% evaluation per examination"
+
+      board_grant_task = create(:board_grant_effectuation_task,
+                                  status: "assigned",
+                                  assigned_to: nca,
+                                  appeal: appeal)
+
+      request_issues = create_list(:request_issue, 1,
+                                    :nonrating,
+                                    contested_issue_description: "#{description}",
+                                    notes: "#{notes}",
+                                    benefit_type: nca.url,
+                                    decision_review: board_grant_task.appeal)
+    end
+
+    def create_allowed_request_issue_no_decision_2(appeal)
+      education = BusinessLine.find_by(name: "Education")
+      description = "Service connection for pain disorder is granted with an evaluation of 50\% effective August 2 2021"
+      notes = "Pain disorder with 50\% evaluation per examination"
+
+      board_grant_task = create(:board_grant_effectuation_task,
+                                status: "assigned",
+                                assigned_to: education,
+                                appeal: appeal)
+
+      request_issues = create_list(:request_issue, 1,
+                                    :nonrating,
+                                    contested_issue_description: "#{description}",
+                                    notes: "#{notes}",
+                                    benefit_type: education.url,
+                                    decision_review: board_grant_task.appeal)
+    end
+
+    def create_allowed_request_issue_no_decision_3(appeal)
+      fiduciary = BusinessLine.find_by(name: "Fiduciary")
+      description = "Service connection for pain disorder is granted with an evaluation of 1\% effective August 3 2021"
+      notes = "Pain disorder with 1\% evaluation per examination"
+
+      board_grant_task = create(:board_grant_effectuation_task,
+                                status: "assigned",
+                                assigned_to: fiduciary,
+                                appeal: appeal)
+
+      request_issues = create_list(:request_issue, 1,
+                                    :nonrating,
+                                    contested_issue_description: "#{description}",
+                                    notes: "#{notes}",
+                                    benefit_type: fiduciary.url,
+                                    decision_review: board_grant_task.appeal)
+    end
+
 
     def create_allowed_request_issue_1(appeal)
       nca = BusinessLine.find_by(name: "National Cemetery Administration")
@@ -197,6 +253,25 @@ module Seeds
     end
 
 
+    def link_allowed_request_issues_no_decision(appeal)
+      create_allowed_request_issue_no_decision_1(appeal)
+      create_allowed_request_issue_no_decision_2(appeal)
+      create_allowed_request_issue_no_decision_3(appeal)
+    end
+
+    def link_with_single_remand_request_issues(appeal, num)
+      create_allowed_request_issue_1(appeal)
+      create_allowed_request_issue_2(appeal)
+      create_remanded_request_issue_1(appeal, num)
+    end
+
+    def link_with_multiple_remand_request_issues(appeal, num)
+      create_allowed_request_issue_1(appeal)
+      create_allowed_request_issue_2(appeal)
+      create_remanded_request_issue_1(appeal, num)
+      create_remanded_request_issue_2(appeal, num)
+    end
+
     #Appeals Ready for Decision - Attorney Step
     #Evidence Submission
     def create_ama_appeals_decision_ready_es
@@ -209,6 +284,7 @@ module Seeds
                           associated_attorney: attorney,
                           issue_count: 3,
                           veteran: create_veteran)
+          link_allowed_request_issues_no_decision(appeal)
         end
       Timecop.return
     end
@@ -224,6 +300,7 @@ module Seeds
                           associated_attorney: attorney,
                           issue_count: 3,
                           veteran: create_veteran)
+          link_allowed_request_issues_no_decision(appeal)
         end
       Timecop.return
     end
@@ -239,17 +316,13 @@ module Seeds
                           associated_attorney: attorney,
                           issue_count: 3,
                           veteran: create_veteran)
+          link_allowed_request_issues_no_decision(appeal)
         end
       Timecop.return
     end
 
-    def link_request_issues(appeal, num)
-      create_allowed_request_issue_1(appeal)
-      create_allowed_request_issue_2(appeal)
-      create_remanded_request_issue_1(appeal, num)
-    end
-
     #Appeals Ready for Decision with 1 Remand
+    #NOTE: (0..11).each is the count of different remand reasons being populated
     #Evidence Submission
     def create_ama_appeals_ready_to_dispatch_remanded_es
       Timecop.travel(35.days.ago)
@@ -261,7 +334,7 @@ module Seeds
                           associated_attorney: attorney,
                           issue_count: 3,
                           veteran: create_veteran)
-          link_request_issues(appeal, num)
+          link_with_single_remand_request_issues(appeal, num)
         end
       Timecop.return
     end
@@ -277,7 +350,7 @@ module Seeds
                           associated_attorney: attorney,
                           issue_count: 3,
                           veteran: create_veteran)
-          link_request_issues(appeal, num)
+          link_with_single_remand_request_issues(appeal, num)
         end
       Timecop.return
     end
@@ -293,7 +366,7 @@ module Seeds
                           associated_attorney: attorney,
                           issue_count: 3,
                           veteran: create_veteran)
-          link_request_issues(appeal, num)
+          link_with_single_remand_request_issues(appeal, num)
         end
       Timecop.return
     end
@@ -311,8 +384,7 @@ module Seeds
                           associated_attorney: attorney,
                           issue_count: 4,
                           veteran: create_veteran)
-          link_request_issues(appeal, num)
-          create_remanded_request_issue_2(appeal, num)
+          link_with_multiple_remand_request_issues(appeal, num)
         end
       Timecop.return
     end
@@ -328,8 +400,7 @@ module Seeds
                           associated_attorney: attorney,
                           issue_count: 4,
                           veteran: create_veteran)
-          link_request_issues(appeal, num)
-          create_remanded_request_issue_2(appeal, num)
+          link_with_multiple_remand_request_issues(appeal, num)
         end
       Timecop.return
     end
@@ -345,8 +416,7 @@ module Seeds
                           associated_attorney: attorney,
                           issue_count: 4,
                           veteran: create_veteran)
-          link_request_issues(appeal, num)
-          create_remanded_request_issue_2(appeal, num)
+          link_with_multiple_remand_request_issues(appeal, num)
         end
       Timecop.return
     end
