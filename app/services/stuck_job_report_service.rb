@@ -37,7 +37,8 @@ class StuckJobReportService
   end
 
   def upload_logs_to_s3(create_file_name)
+    content = logs.join("\n")
     file_name = "#{create_file_name}-logs/#{create_file_name}-log-#{Time.zone.now}"
-    S3Service.store_file("#{folder_name}/#{file_name}", logs)
+    S3Service.store_file("#{folder_name}/#{file_name}", content)
   end
 end

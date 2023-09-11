@@ -8,6 +8,7 @@ class BgsShareErrorFixJob < CaseflowJob
     clear_hlr_errors if hlrs_with_errors.present?
     clear_rius_errors if rius_with_errors.present?
     clear_bge_errors if bges_with_errors.present?
+    STUCK_JOB_REPORT_SERVICE.write_log_report(ERROR_TEXT)
   end
 
   def resolve_error_on_records(object_type)
