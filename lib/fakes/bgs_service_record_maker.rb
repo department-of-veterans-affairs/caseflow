@@ -289,11 +289,26 @@ class Fakes::BGSServiceRecordMaker
     sc
   end
 
+  def build_promulgated_rating(veteran, contention_reference_id)
+    Generators::PromulgatedRating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: Time.zone.today - 40,
+      profile_date: Time.zone.today - 30,
+      issues: [
+        {
+          decision_text: "Higher Level Review was denied",
+          contention_reference_id: contention_reference_id
+        }
+      ]
+    )
+  end
+
   def generate_mst_and_pact_contentions(veteran)
     has_hlr_with_mst_contention(veteran)
     has_hlr_with_pact_contention(veteran)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def has_hlr_with_mst_contention(veteran)
     claim_id = "600118959"
     mst_contention = Generators::BgsContention.build_mst_contention(
@@ -324,17 +339,7 @@ class Fakes::BGSServiceRecordMaker
       end_product_establishment: epe,
       contention_reference_id: contention_reference_id
     )
-    Generators::PromulgatedRating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Time.zone.today - 40,
-      profile_date: Time.zone.today - 30,
-      issues: [
-        {
-          decision_text: "Higher Level Review was denied",
-          contention_reference_id: contention_reference_id
-        }
-      ]
-    )
+    build_promulgated_rating(veteran, contention_reference_id)
     Generators::EndProduct.build(
       veteran_file_number: veteran.file_number,
       bgs_attrs: { benefit_claim_id: claim_id }
@@ -370,17 +375,7 @@ class Fakes::BGSServiceRecordMaker
       end_product_establishment: epe,
       contention_reference_id: contention_reference_id
     )
-    Generators::PromulgatedRating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Time.zone.today - 40,
-      profile_date: Time.zone.today - 30,
-      issues: [
-        {
-          decision_text: "Higher Level Review was denied",
-          contention_reference_id: contention_reference_id
-        }
-      ]
-    )
+    build_promulgated_rating(veteran, contention_reference_id)
     Generators::EndProduct.build(
       veteran_file_number: veteran.file_number,
       bgs_attrs: { benefit_claim_id: claim_id }
@@ -391,7 +386,6 @@ class Fakes::BGSServiceRecordMaker
     hlr
   end
 
-  # rubocop:disable Metrics/MethodLength
   def has_higher_level_review_with_vbms_claim_id(veteran)
     claim_id = "600118951"
     contention_reference_id = veteran.file_number[0..4] + "1234"
@@ -410,17 +404,7 @@ class Fakes::BGSServiceRecordMaker
       end_product_establishment: epe,
       contention_reference_id: contention_reference_id
     )
-    Generators::PromulgatedRating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: Time.zone.today - 40,
-      profile_date: Time.zone.today - 30,
-      issues: [
-        {
-          decision_text: "Higher Level Review was denied",
-          contention_reference_id: contention_reference_id
-        }
-      ]
-    )
+    build_promulgated_rating(veteran, contention_reference_id)
     Generators::EndProduct.build(
       veteran_file_number: veteran.file_number,
       bgs_attrs: { benefit_claim_id: claim_id }

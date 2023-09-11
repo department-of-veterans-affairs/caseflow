@@ -62,6 +62,21 @@ describe IssuesUpdateTask do
       )
     end
 
+    subject do
+      issues_update_task.format_instructions(
+        params[:change_type],
+        params[:issue_category],
+        params[:benefit_type],
+        params[:original_mst],
+        params[:original_pact],
+        params[:edit_mst],
+        params[:edit_pact]
+        # params[:_mst_edit_reason],
+        # params[:_pact_edit_reason]
+      )
+      issues_update_task
+    end
+
     # clear the instructions after each run
     after do
       issues_update_task.instructions.clear
@@ -83,21 +98,6 @@ describe IssuesUpdateTask do
           # _mst_edit_reason: "MST reason here",
           # _pact_edit_reason: "PACT reason here"
         }
-      end
-
-      subject do
-        issues_update_task.format_instructions(
-          params[:change_type],
-          params[:issue_category],
-          params[:benefit_type],
-          params[:original_mst],
-          params[:original_pact],
-          params[:edit_mst],
-          params[:edit_pact]
-          # params[:_mst_edit_reason],
-          # params[:_pact_edit_reason]
-        )
-        issues_update_task
       end
 
       it "formats the instructions with MST" do
@@ -126,21 +126,6 @@ describe IssuesUpdateTask do
         }
       end
 
-      subject do
-        issues_update_task.format_instructions(
-          params[:change_type],
-          params[:issue_category],
-          params[:benefit_type],
-          params[:original_mst],
-          params[:original_pact],
-          params[:edit_mst],
-          params[:edit_pact]
-          # params[:mst_reason],
-          # params[:pact_reason]
-        )
-        issues_update_task
-      end
-
       it "formats the instructions with PACT" do
         expect(subject.instructions[0][0]).to eql("test change")
         expect(subject.instructions[0][1]).to eql("test benefit")
@@ -167,21 +152,6 @@ describe IssuesUpdateTask do
         }
       end
 
-      subject do
-        issues_update_task.format_instructions(
-          params[:change_type],
-          params[:issue_category],
-          params[:benefit_type],
-          params[:original_mst],
-          params[:original_pact],
-          params[:edit_mst],
-          params[:edit_pact]
-          # params[:mst_reason],
-          # params[:pact_reason]
-        )
-        issues_update_task
-      end
-
       it "formats the instructions with MST and PACT" do
         expect(subject.instructions[0][0]).to eql("test change")
         expect(subject.instructions[0][1]).to eql("test benefit")
@@ -206,21 +176,6 @@ describe IssuesUpdateTask do
           # mst_reason: "MST reason here",
           # pact_reason: "PACT reason here"
         }
-      end
-
-      subject do
-        issues_update_task.format_instructions(
-          params[:change_type],
-          params[:issue_category],
-          params[:benefit_type],
-          params[:original_mst],
-          params[:original_pact],
-          params[:edit_mst],
-          params[:edit_pact]
-          # params[:mst_reason],
-          # params[:pact_reason]
-        )
-        issues_update_task
       end
 
       it "formats the instructions from MST and PACT to None" do

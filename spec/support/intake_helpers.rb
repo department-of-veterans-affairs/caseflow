@@ -912,10 +912,18 @@ module IntakeHelpers
       promulgation_date: Date.new(2022, 10, 11),
       profile_date: Date.new(2022, 10, 11),
       issues: [
-        { decision_text: "Service connection is granted for PTSD at 10 percent, effective 10/11/2022.", dis_sn: "1224780" },
-        { decision_text: "Service connection is granted for AOOV at 10 percent, effective 10/11/2022.", dis_sn: "1224781" },
-        { decision_text: "Service connection is granted for PTSD, AOOV at 10 percent, effective 10/11/2022.", dis_sn: "1224782" },
-        { decision_text: "Service connection is denied for right knee condition." }
+        {
+          decision_text: "Service connection is granted for PTSD at 10 percent, effective 10/11/2022.", dis_sn: "1224780"
+        },
+        {
+          decision_text: "Service connection is granted for AOOV at 10 percent, effective 10/11/2022.", dis_sn: "1224781"
+        },
+        {
+          decision_text: "Service connection is granted for PTSD, AOOV at 10 percent, effective 10/11/2022.", dis_sn: "1224782"
+        },
+        {
+          decision_text: "Service connection is denied for right knee condition."
+        }
       ],
       disabilities: [
         {
