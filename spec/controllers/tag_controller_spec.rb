@@ -35,11 +35,12 @@ RSpec.describe TagController, :all_dbs, type: :controller do
   end
 
   describe "#destroy" do
-    it "should remove specified tag from document, but doesn't delete" do
+    it "should remove specified tag from document and delete it from the database if not associated with any documents" do
       expect(Tag.count).to eq(1)
       expect(document.tags.size).to eq(1)
       post :destroy, params: { document_id: document.id, id: document.tags[0].id }
-      expect(Tag.count).to eq(1)
+      # delete tag from the database not associated with any other documents
+      expect(Tag.count).to eq(0)
       expect(document.reload.tags.size).to eq(0)
     end
   end
