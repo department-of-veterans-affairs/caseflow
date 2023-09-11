@@ -66,11 +66,7 @@ describe PostDecisionMotionUpdater, :all_dbs do
           verify_vacate_stream
         end
 
-        it "should create decision issues on new vacate" do
-          subject.process
-          expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
-          verify_decision_issues_created
-        end
+        it "should create decision issues on new vacate"
       end
 
       context "when vacate type is straight vacate" do

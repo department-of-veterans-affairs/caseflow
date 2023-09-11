@@ -57,20 +57,6 @@ export class Pdf extends React.PureComponent {
       this.props.stopPlacingAnnotation(INTERACTION_TYPES.KEYBOARD_SHORTCUT);
     }
   }
-  loadDocs = (arr) => {
-    return arr.map((file) => {
-      return <PdfFile
-        documentId={this.props.documentId}
-        key={`${file}`}
-        file={file}
-        onPageChange={this.props.onPageChange}
-        isVisible={this.props.file === file}
-        scale={this.props.scale}
-        documentType={this.props.documentType}
-        featureToggles={this.props.featureToggles}
-      />;
-    });
-  }
 
   componentDidMount() {
     window.addEventListener('keydown', this.keyListener);
@@ -84,8 +70,18 @@ export class Pdf extends React.PureComponent {
 
   // eslint-disable-next-line max-statements
   render() {
-    const files = this.props.featureToggles.prefetchDisabled ?
-      [this.props.file] : [...this.props.prefetchFiles, this.props.file];
+    const pages = [...this.props.prefetchFiles, this.props.file].map((file) => {
+      return <PdfFile
+        documentId={this.props.documentId}
+        key={`${file}`}
+        file={file}
+        onPageChange={this.props.onPageChange}
+        isVisible={this.props.file === file}
+        scale={this.props.scale}
+        documentType={this.props.documentType}
+        featureToggles={this.props.featureToggles}
+      />;
+    });
 
     return <div className="cf-pdf-scroll-view">
       <div
@@ -95,7 +91,7 @@ export class Pdf extends React.PureComponent {
           width: '100%',
           height: '100%'
         }}>
-        {this.loadDocs(files)}
+        {pages}
       </div>
     </div>;
   }

@@ -80,7 +80,6 @@ RSpec.configure do |config|
     Time.zone = @spec_time_zone
     User.unauthenticate!
     RequestStore[:application] = nil
-    Fakes::AuthenticationService.user_session = nil
   end
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your

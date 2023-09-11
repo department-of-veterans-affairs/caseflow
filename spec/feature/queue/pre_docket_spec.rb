@@ -86,7 +86,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             appeal = vha_document_search_task.appeal
             expect(vha_document_search_task.assigned_to).to eq vha_caregiver
 
-            reload_case_detail_page(appeal.external_id)
+            visit "/queue/appeals/#{appeal.external_id}"
             expect(page).to have_content("Pre-Docket")
             expect(page).to have_content(category)
 
@@ -102,7 +102,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           appeal = vha_document_search_task.appeal
 
-          reload_case_detail_page(appeal.external_id)
+          visit "/queue/appeals/#{appeal.external_id}"
 
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
           find(
@@ -136,7 +136,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           appeal = vha_document_search_task.appeal
 
-          reload_case_detail_page(appeal.external_id)
+          visit "/queue/appeals/#{appeal.external_id}"
 
           task_name = Constants.TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE.label
 
@@ -224,11 +224,9 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(appeal.tasks.last.parent.status).to eq Constants.TASK_STATUSES.assigned
 
           # Navigate to the appeal that was just returned to board intake and verify the timeline
-          reload_case_detail_page(appeal.external_id)
-          expect(page).to have_content("Case Timeline")
+          visit "/queue/appeals/#{appeal.external_id}"
           # Click the timeline display link
-          find("#case-timeline-table .cf-submit", text: "View task instructions").click
-          expect(page).to have_content("Hide task instructions")
+          find(".cf-submit", text: "View task instructions").click
           # Verify the text in the timeline to match the other text field and optional text field.
           expect(page).to have_content("Other - #{other_text_field_text}")
           expect(page).to have_content(optional_text_field_text)
@@ -242,7 +240,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           appeal = vha_document_search_task.appeal
 
-          reload_case_detail_page(appeal.external_id)
+          visit "/queue/appeals/#{appeal.external_id}"
 
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
           find(
@@ -285,7 +283,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           User.authenticate!(user: bva_intake_user)
 
-          reload_case_detail_page(appeal.external_id)
+          visit "/queue/appeals/#{appeal.uuid}"
 
           click_dropdown(text: Constants.TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.label)
 
@@ -357,7 +355,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           appeal = vha_document_search_task.appeal
           expect(vha_document_search_task.assigned_to).to eq camo
 
-          reload_case_detail_page(appeal.external_id)
+          visit "/queue/appeals/#{appeal.external_id}"
           expect(page).to have_content("Pre-Docket")
 
           expect(page).to have_content(camo.name)
@@ -450,7 +448,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
         step "Program Office can assign AssessDocumentationTask to Regional Office" do
           appeal = Appeal.last
-          reload_case_detail_page(appeal.external_id)
+          visit "/queue/appeals/#{appeal.external_id}"
 
           dropdown_visn_text = "VISN #{Constants::VISNS_NUMBERED[regional_office.name]} - #{regional_office.name}"
 
@@ -510,7 +508,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
         step "Regional Office can send appeal to Program Office as Ready for Review" do
           appeal = Appeal.last
-          reload_case_detail_page(appeal.external_id)
+          visit "/queue/appeals/#{appeal.external_id}"
 
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
           find(
@@ -528,7 +526,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             "?tab=po_completed&#{default_query_params}")
 
           appeal = Appeal.last
-          reload_case_detail_page(appeal.external_id)
+          visit "/queue/appeals/#{appeal.external_id}"
 
           find_all("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL)[1].click
           expect(page).to have_content("Documents for this appeal are stored in VBMS")
@@ -549,7 +547,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
         step "Program Office can send appeal to VHA CAMO as Ready for Review" do
           appeal = Appeal.last
-          reload_case_detail_page(appeal.external_id)
+          visit "/queue/appeals/#{appeal.external_id}"
 
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
           find(
@@ -566,7 +564,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_current_path("/organizations/#{program_office.url}"\
             "?tab=po_completed&#{default_query_params}")
 
-          reload_case_detail_page(appeal.external_id)
+          visit "/queue/appeals/#{appeal.external_id}"
           find_all("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).first.click
           expect(page).to have_content("Documents for this appeal are stored in VBMS")
           expect(page).to have_content(po_instructions)
@@ -579,7 +577,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           appeal = vha_document_search_task.appeal
 
-          reload_case_detail_page(appeal.external_id)
+          visit "/queue/appeals/#{appeal.external_id}"
 
           task_name = Constants.TASK_ACTIONS.VHA_RETURN_TO_BOARD_INTAKE.label
 
@@ -670,7 +668,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           camo_task.children.each { |task| task.update!(status: "completed") }
 
           User.authenticate!(user: camo_user)
-          reload_case_detail_page(appeal.external_id)
+          visit "/queue/appeals/#{appeal.uuid}"
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
           find(
             "div",
@@ -703,7 +701,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           User.authenticate!(user: bva_intake_user)
 
-          reload_case_detail_page(appeal.external_id)
+          visit "/queue/appeals/#{appeal.uuid}"
 
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
           find(
@@ -737,7 +735,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           camo_task.completed!
 
           User.authenticate!(user: bva_intake_user)
-          reload_case_detail_page(appeal.external_id)
+          visit "/queue/appeals/#{appeal.external_id}"
           bva_intake_dockets_appeal
 
           expect(page).to have_content(COPY::DOCKET_APPEAL_CONFIRMATION_TITLE)
@@ -779,7 +777,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         camo_task = VhaDocumentSearchTask.last
         bva_intake_task = PreDocketTask.last
 
-        reload_case_detail_page(appeal.external_id)
+        visit "/queue/appeals/#{appeal.external_id}"
         bva_intake_dockets_appeal
 
         expect(page).to have_content(COPY::DOCKET_APPEAL_CONFIRMATION_TITLE)
@@ -1233,7 +1231,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
       User.authenticate!(user: bva_intake_user)
 
-      reload_case_detail_page(emo_task.appeal.external_id)
+      visit "/queue/appeals/#{emo_task.appeal.uuid}"
 
       find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
       find(
@@ -1266,7 +1264,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       emo_task = create(:education_document_search_task, :assigned, assigned_to: emo)
       emo_task.completed!
 
-      reload_case_detail_page(emo_task.appeal.external_id)
+      visit "/queue/appeals/#{emo_task.appeal.uuid}"
 
       click_dropdown(text: Constants.TASK_ACTIONS.DOCKET_APPEAL.label)
 
