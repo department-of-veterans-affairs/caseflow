@@ -821,6 +821,34 @@ class Fakes::BGSService
       zip_prefix_nbr: FakeConstants.BGS_SERVICE.DEFAULT_ZIP
     }
   end
+
+  def random_address
+    {
+      addrs_one_txt: Faker::Address.street_address,
+      addrs_three_txt: FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_3,
+      addrs_two_txt: Faker::Address.secondary_address,
+      city_nm: Faker::Address.city,
+      cntry_nm: "USA",
+      efctv_dt: 15.days.ago.to_formatted_s(:short_date),
+      email_addrs_txt: Faker::Internet.email,
+      jrn_dt: 15.days.ago.to_formatted_s(:short_date),
+      jrn_lctn_id: "283",
+      jrn_obj_id: "SHARE  - PCAN",
+      jrn_status_type_cd: "U",
+      jrn_user_id: "CASEFLOW1",
+      postal_cd: Faker::Address.state_abbr,
+      ptcpnt_addrs_id: "15069061",
+      ptcpnt_addrs_type_nm: "Mailing",
+      ptcpnt_id: "600085544",
+      shared_addrs_ind: "N",
+      trsury_addrs_four_txt: "#{Faker::Address.city} #{Faker::Address.state_abbr}",
+      trsury_addrs_one_txt: "Jamie Fakerton",
+      trsury_addrs_three_txt: Faker::Address.secondary_address,
+      trsury_addrs_two_txt: Faker::Address.street_address,
+      trsury_seq_nbr: "5",
+      zip_prefix_nbr: Faker::Address.zip
+    }
+  end
   # rubocop:enable Metrics/MethodLength
 end
 # rubocop:enable Metrics/ClassLength
