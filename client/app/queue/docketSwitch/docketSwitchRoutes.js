@@ -42,7 +42,7 @@ const PageRoutes = [
     {/* The component here will add additional `Switch` and child routes */}
     <Switch>
       <PageRoute
-        path={`/${basePath}/${
+        path={`${basePath}/${
       TASK_ACTIONS.DOCKET_SWITCH_DENIED.value
     }`}
         title={`${TASK_ACTIONS.DOCKET_SWITCH_DENIED.label} | Caseflow`}
