@@ -217,7 +217,12 @@ class BgsPowerOfAttorney < CaseflowRecord
     not_found_flag = "bgs-participant-poa-not-found-#{file_number}"
     return if Rails.cache.fetch(not_found_flag)
 
-    poa = bgs.fetch_poa_by_file_number(file_number)
+    # TODO: I don't really like this but I don't know how else to get the correct claimant participant id to the fake
+    poa = if Rails.env.production? || Rails.env.uat?
+            bgs.fetch_poa_by_file_number(file_number)
+          else
+            bgs.fetch_poa_by_file_number(file_number, self[:claimant_participant_id])
+          end
 
     if poa.blank?
       Rails.cache.write(not_found_flag, true, expires_in: 24.hours)

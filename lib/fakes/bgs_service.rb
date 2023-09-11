@@ -244,6 +244,8 @@ class Fakes::BGSService
   end
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity
   def fetch_person_info(participant_id)
     veteran = Veteran.find_by(participant_id: participant_id)
     # This is a limited set of test data, more fields are available.
@@ -310,6 +312,8 @@ class Fakes::BGSService
     end
   end
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def station_conflict?(vbms_id, _veteran_participant_id)
     (self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
@@ -336,12 +340,12 @@ class Fakes::BGSService
   end
 
   # TODO: add more test cases
-  def fetch_poa_by_file_number(file_number)
+  def fetch_poa_by_file_number(file_number, claimant_participant_id)
     return {} if file_number == "no-such-file-number"
 
     record = (self.class.power_of_attorney_records || {})[file_number]
     record ||= default_vso_power_of_attorney_record if file_number == DEFAULT_VSO_POA_FILE_NUMBER
-    record ||= default_power_of_attorney_record
+    record ||= default_power_of_attorney_record(file_number, claimant_participant_id)
 
     get_claimant_poa_from_bgs_poa(record)
   end
@@ -371,6 +375,8 @@ class Fakes::BGSService
                   org_type_nm: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
                   ptcpnt_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
                 }
+              elsif BgsAttorney.exists? && FeatureToggle.enabled?(:randomize_poa)
+                poa_hash_from_bgs_attorney(random_attorney)
               else
                 {
                   legacy_poa_cd: "100",
@@ -445,6 +451,7 @@ class Fakes::BGSService
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
     address = (self.class.address_records || {})[participant_id]
+    address ||= random_address if FeatureToggle.enabled?(:randomize_poa)
     address ||= default_address
 
     get_address_from_bgs_address(address)
@@ -719,23 +726,36 @@ class Fakes::BGSService
     value
   end
 
-  def default_power_of_attorney_record
-    # generate random file number and participant id to prevent unique id collisions
-    # with test data
-    file_number = generate_random_file_number
-    # poa_participant_id = generate_random_file_number
+  def default_power_of_attorney_record(file_number, claimant_participant_id)
+    poa_hash = if BgsAttorney.exists? && FeatureToggle.enabled?(:randomize_poa)
+                 poa_hash_from_bgs_attorney(random_attorney)
+               else
+                 {
+                   legacy_poa_cd: "3QQ",
+                   nm: FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME,
+                   org_type_nm: "POA Attorney",
+                   ptcpnt_id: "600153863"
+                 }
+               end
 
     {
       file_number: file_number,
-      power_of_attorney:
-        {
-          legacy_poa_cd: "3QQ",
-          nm: FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME,
-          org_type_nm: "POA Attorney",
-          ptcpnt_id: "600153863"
-        },
-      ptcpnt_id: "600085544"
+      power_of_attorney: poa_hash,
+      ptcpnt_id: claimant_participant_id
     }
+  end
+
+  def poa_hash_from_bgs_attorney(bgs_attorney)
+    {
+      legacy_poa_cd: "3QQ",
+      nm: bgs_attorney.name,
+      org_type_nm: bgs_attorney.record_type,
+      ptcpnt_id: bgs_attorney.participant_id
+    }
+  end
+
+  def random_attorney
+    BgsAttorney.find(BgsAttorney.pluck(:id).sample)
   end
 
   def default_vso_power_of_attorney_record
