@@ -264,7 +264,7 @@ class Task < CaseflowRecord
       if (params[:type] == "SpecialCaseMovementTask") && (parent_task.type == "RootTask")
         create_judge_assigned_task_for_legacy(params, parent_task)
       elsif (params[:type] == "BlockedSpecialCaseMovementTask") && (parent_task.type == "HearingTask")
-        cancel_blocking_task_legacy(params, parent_task)
+        cancel_blocking_task_legacy(params, parent_task.parent)
       else
 
         judge = User.find(params[:assigned_to_id])
@@ -293,30 +293,8 @@ class Task < CaseflowRecord
       parent_task
     end
 
-    def speacial_case_for_legacy(parent_task, params)
-      if (params[:type] == "SpecialCaseMovementTask") && (parent_task.type == "RootTask")
-        create_judge_assigned_task_for_legacy(params, parent_task)
-      elsif (params[:type] == "BlockedSpecialCaseMovementTask") && (parent_task.type == "HearingTask")
-        cancel_blocking_task_legacy(params, parent_task)
-      end
-    end
-
     def cancel_blocking_task_legacy(params, parent_task)
-      # tasks = []
-      # tasks.push(parent_task)
-      # parent_task.children.each { |current_task| tasks.push(current_task) }
-      binding.pry
-      parent_task.parent.children.each{ |current_task|  cancel_all_children(current_task) if current_task.legacy_blocking?}
-
-      # transaction do
-      #   tasks.each do |task|
-      #     task.update!(
-      #       status: Constants.TASK_STATUSES.cancelled,
-      #       cancelled_by_id: RequestStore[:current_user]&.id,
-      #       closed_at: Time.zone.now
-      #     )
-      #   end
-      # end
+      parent_task.children.each{ |current_task|  seach_for_blocking(current_task)}
 
       legacy_appeal = LegacyAppeal.find(parent_task.appeal_id)
       judge = User.find(params["assigned_to_id"])
@@ -346,6 +324,12 @@ class Task < CaseflowRecord
       else
         current_task.children.each{ |current_task|  cancel_all_children(current_task) }
       end
+    end
+
+    def seach_for_blocking(current_task)
+      current_task.legacy_blocking? ?
+        cancel_all_children(current_task) :
+        current_task.children.each {|current_task| seach_for_blocking(current_task)}
     end
 
     def create_judge_assigned_task_for_legacy(params, parent_task)
