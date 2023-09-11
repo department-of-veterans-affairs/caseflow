@@ -147,7 +147,7 @@ class AssignToView extends React.Component {
     };
 
     if (taskType === 'AttorneyRewriteTask' && task.isLegacy === true) {
-      return this.reassignTask(false, true);
+      return this.reassignTask();
     }
 
     if (isReassignAction) {
@@ -158,12 +158,6 @@ class AssignToView extends React.Component {
       requestSave('/tasks', payload, isPulacCerullo ? pulacCerulloSuccessMessage : assignTaskSuccessMessage).
       then((resp) => {
         this.props.onReceiveAmaTasks(resp.body.tasks.data);
-        if (task.appealType === 'LegacyAppeal') {
-          this.props.legacyReassignToJudge({
-            tasks: [task],
-            assigneeId: this.state.selectedValue
-          }, assignTaskSuccessMessage);
-        }
       }).
       catch(() => {
         // handle the error from the frontend
@@ -222,12 +216,6 @@ class AssignToView extends React.Component {
       this.props.onReceiveAmaTasks(resp.body.tasks.data);
       if (task.type === 'JudgeAssignTask') {
         this.props.setOvertime(task.externalAppealId, false);
-      }
-      if (task.appealType === 'LegacyAppeal') {
-        this.props.legacyReassignToJudge({
-          tasks: [task],
-          assigneeId: this.state.selectedValue
-        }, successMsg);
       }
     });
   };
@@ -341,6 +329,7 @@ class AssignToView extends React.Component {
 
     const action = getAction(this.props);
     const actionData = taskActionData(this.props);
+
     actionData.drop_down_label = COPY.JUDGE_LEGACY_DECISION_REVIEW_TITLE
     const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
 

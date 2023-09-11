@@ -49,9 +49,10 @@ export class AssignToAttorneyWidget extends React.PureComponent {
       const instructionType = Array.isArray(props.selectedTasks[0].instructions) ? isInstructionArray : [];
 
       this.state = {
-
         instructions: ((this.props.isModal && props.selectedTasks.length > 0 &&
-          props.selectedTasks[0].appealType === 'LegacyAppeal' ? instructionType : []) || [])
+          props.selectedTasks[0].appealType === 'LegacyAppeal' ? instructionType : []) || []),
+        assignedToSecondary: null,
+        modalDisableButton: true
       };
 
     } else {
@@ -106,7 +107,10 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
   setModalOnChangeValue = (stateValue, value) => {
     this.setState({ [stateValue]: value }, function () {
-      if (this.state.assignedTo !== null && this.state.instructions.length > 0) {
+      if (this.state.assignedTo === OTHER && (this.state.assignedToSecondary === null || this.state.instructions.length < 0)){
+        this.setState({ modalDisableButton: true });
+      }
+      else if (this.state.assignedTo !== null && this.state.instructions.length > 0) {
         this.setState({ modalDisableButton: false });
       } else {
         this.setState({ modalDisableButton: true });
@@ -252,7 +256,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     }
 
     if (optionsOther?.length) {
-      placeholderOther = COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
+      placeholderOther = COPY.ASSIGN_WIDGET_USER_DROPDOWN_PLACEHOLDER;
       selectedOptionOther = optionsOther.find((option) => option.value === selectedAssigneeSecondary);
     }
 
@@ -287,10 +291,8 @@ export class AssignToAttorneyWidget extends React.PureComponent {
             errorMessage={isModal && highlightFormItems && !selectedOptionOther ? 'Choose one' : null}
             options={optionsOther}
             placeholder={placeholderOther}
-            onChange={(selectedTasks.length > 0 && selectedTasks[0].appealType === 'LegacyAppeal') ?
-              (option) => option && this.props.setSelectedAssigneeSecondary({ assigneeId: option.value }) :
-              (option) => option && this.props.setSelectedAssigneeSecondary({ assigneeId: option.value }) &&
-              this.setModalOnChangeValue('assignedTo', option ? option.value : null)}
+            onChange={(option) => option && this.props.setSelectedAssigneeSecondary({ assigneeId: option.value }) &&
+              this.setModalOnChangeValue('assignedToSecondary', option ? option.value : null)}
             value={selectedOptionOther}
           />
         </React.Fragment>}
@@ -300,12 +302,9 @@ export class AssignToAttorneyWidget extends React.PureComponent {
           name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
           errorMessage={highlightFormItems && instructions.length === 0 ? COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
           id="taskInstructions"
-          placeholder = {COPY.MORE_INFO}
-          onChange={(selectedTasks.length > 0 && selectedTasks[0].appealType === 'LegacyAppeal') ?
-            (value) => this.setState({ instructions: value }) :
-            (value) => this.setModalOnChangeValue('instructions', value)
+          onChange={(value) => this.setModalOnChangeValue('instructions', value)
           }
-          value = {(selectedTasks.length > 0 && selectedTasks[0].appealType === 'LegacyAppeal') ? null : this.state.instructions}
+          value = {this.state.instructions}
         />
 
       </React.Fragment> }
@@ -318,16 +317,13 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         loading={savePending}
         loadingText={COPY.ASSIGN_WIDGET_LOADING}
         styling={css({ margin: '1.5rem 0' })} /> }
-    </React.Fragment>;
+    </React.Fragment>; 
 
     if (selectedTasks.length > 0 && selectedTasks[0].appealType === 'LegacyAppeal') {
       return isModal ? <QueueFlowModal title={COPY.ASSIGN_TASK_TITLE}
         submit={this.submit} validateForm={this.validateForm} onCancel={onCancel} button = "Assign"
         submitButtonClassNames = {['usa-button-hover', 'usa-button-warning']}
-        submitDisabled={
-          (this.state.instructions === '' || this.state.instructions === null || !selectedAssignee ||
-          (this.props.selectedAssignee === OTHER && !selectedOptionOther))
-        }>
+        submitDisabled={this.state.modalDisableButton}>
         {Widget}
       </QueueFlowModal> : Widget;
     }
