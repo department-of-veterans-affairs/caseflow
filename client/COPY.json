@@ -650,7 +650,7 @@
   "ADVANCE_ON_DOCKET_MOTION_SUCCESS_MESSAGE": "AOD status has been %s due to %s",
   "TASK_ACTION_DROPDOWN_BOX_LABEL": "Select an action…",
   "TASK_ACTION_DROPDOWN_BOX_LABEL_SHORT": "Select...",
-  "ASSIGN_TO_USER_DROPDOWN": "Select a user",
+  "ASSIGN_TO_USER_DROPDOWN": "Select...",
   "ASSIGN_TO_TEAM_DROPDOWN": "Select a team",
   "ASSIGN_TASK_TITLE": "Assign task",
   "ASSIGN_TASK_TO_TITLE": "Assign task to %s",
