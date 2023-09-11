@@ -7,17 +7,18 @@ import { RecommendDocketSwitchContainer } from './recommendDocketSwitch/Recommen
 import { DocketSwitchRulingContainer } from './judgeRuling/DocketSwitchRulingContainer';
 import { DocketSwitchDenialContainer } from './denial/DocketSwitchDenialContainer';
 import { DocketSwitchGrantContainer } from './grant/DocketSwitchGrantContainer';
+import { replaceSpecialCharacters } from '../utils';
 
-const basePath = "/queue/appeals/:appealId/tasks/:taskId";
+const basePath = '/queue/appeals/:appealId/tasks/:taskId';
 const PageRoutes = [
   <PageRoute
     path={`${basePath}/${
       TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.value
     }`}
     title={`${TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.label} | Caseflow`}
-    key={`${basePath}/${
+    key={replaceSpecialCharacters(`${basePath}/${
       TASK_ACTIONS.DOCKET_SWITCH_SEND_TO_JUDGE.value
-    }`.replace(/[^\w\s]/gi, '_')}
+    }`)}
   >
     <RecommendDocketSwitchContainer />
   </PageRoute>,
@@ -27,9 +28,9 @@ const PageRoutes = [
       TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.value
     }`}
     title={`${TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.label} | Caseflow`}
-    key={`${basePath}/${
+    key={replaceSpecialCharacters(`${basePath}/${
       TASK_ACTIONS.DOCKET_SWITCH_JUDGE_RULING.value
-    }`.replace(/[^\w\s]/gi, '_')}
+    }`)}
   >
     <DocketSwitchRulingContainer />
   </PageRoute>,
@@ -37,7 +38,7 @@ const PageRoutes = [
   // This route handles the remaining checkout flow
   <Route
     path={`${basePath}/docket_switch/checkout`}
-    key={`${basePath}/docket_switch/checkout`.replace(/[^\w\s]/gi, '_')}
+    key={replaceSpecialCharacters(`${basePath}/docket_switch/checkout`)}
   >
     {/* The component here will add additional `Switch` and child routes */}
     <Switch>

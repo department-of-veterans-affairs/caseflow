@@ -11,6 +11,7 @@ import { returnToLitSupport } from './mtvActions';
 import { MotionToVacateFlowContainer } from './checkout/MotionToVacateFlowContainer';
 import { appealWithDetailSelector } from '../selectors';
 import { PAGE_TITLES } from '../constants';
+import { replaceSpecialCharacters } from '../utils';
 
 const RoutedReturnToLitSupport = (props) => {
   const { taskId, appealId } = useParams();
@@ -38,25 +39,23 @@ const RoutedReturnToLitSupport = (props) => {
   );
 };
 
-const basePath = `/queue/appeals/:appealId/tasks/:taskId`;
+const basePath = '/queue/appeals/:appealId/tasks/:taskId';
 
 const PageRoutes = [
   <PageRoute
     path={`${basePath}/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`}
     title={`${PAGE_TITLES.MOTION_TO_VACATE.ADDRESS_MOTION_TO_VACATE} | Caseflow`}
     component={AddressMotionToVacateView}
-    key={`${basePath}/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`.replace(/[^\w\s]/gi, '_')}
+    key={replaceSpecialCharacters(`${basePath}/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`)}
   />,
 
   // This route handles the remaining checkout flow
   <Route
     path={`${basePath}/motion_to_vacate_checkout`}
     component={MotionToVacateFlowContainer}
-    key={`${basePath}/motion_to_vacate_checkout`.replace(/[^\w\s]/gi, '_')}
+    key={replaceSpecialCharacters(`${basePath}/motion_to_vacate_checkout`)}
   />
 ];
-
-const path = `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SEND_MOTION_TO_VACATE_TO_JUDGE.value}`;
 
 const ModalRoutes = [
   <PageRoute
@@ -68,12 +67,12 @@ const ModalRoutes = [
     ].join('/')}
     title={`${PAGE_TITLES.MOTION_TO_VACATE.RETURN_TO_LITIGATION_SUPPORT} | Caseflow`}
     component={RoutedReturnToLitSupport}
-    key={`${basePath}/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`.replace(/[^\w\s]/gi, '_')}
+    key={replaceSpecialCharacters(`${basePath}/${TASK_ACTIONS.ADDRESS_MOTION_TO_VACATE.value}`)}
   />,
   <Route
     path={`${basePath}/${TASK_ACTIONS.SEND_MOTION_TO_VACATE_TO_JUDGE.value}`}
     component={ReviewMotionToVacateView}
-    key={`${basePath}/${TASK_ACTIONS.SEND_MOTION_TO_VACATE_TO_JUDGE.value}`.replace(/[^\w\s]/gi, '_')}
+    key={replaceSpecialCharacters(`${basePath}/${TASK_ACTIONS.SEND_MOTION_TO_VACATE_TO_JUDGE.value}`)}
   />
 ];
 
