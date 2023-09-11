@@ -67,8 +67,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git
-  revision: 6d319d7b760860d45a8fd44e3036385fecf64f0f
-  ref: 6d319d7b760860d45a8fd44e3036385fecf64f0f
+  revision: 55e2e9f92dfaab9c309ddbb8d6b8dc676625525a
+  ref: 55e2e9f92dfaab9c309ddbb8d6b8dc676625525a
   specs:
     ruby_claim_evidence_api (0.0.1)
       activesupport
