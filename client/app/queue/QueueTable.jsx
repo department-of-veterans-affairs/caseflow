@@ -796,7 +796,7 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   tbodyId: PropTypes.string,
   tbodyRef: PropTypes.func,
   columns: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.object), PropTypes.func]).isRequired,
-  rowObjects: PropTypes.arrayOf(PropTypes.object),
+  rowObjects: PropTypes.arrayOf(PropTypes.object).isRequired,
   rowClassNames: PropTypes.func,
   keyGetter: PropTypes.func,
   slowReRendersAreOk: PropTypes.bool,
@@ -833,5 +833,8 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   onHistoryUpdate: PropTypes.func,
   preserveFilter: PropTypes.bool,
 };
+
+Row.propTypes.rowObjects = PropTypes.arrayOf(PropTypes.object);
+Row.propTypes = { ...Row.propTypes, rowObject: PropTypes.object.isRequired };
 
 /* eslint-enable max-lines */
