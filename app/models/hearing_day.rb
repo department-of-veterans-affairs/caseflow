@@ -216,12 +216,17 @@ class HearingDay < CaseflowRecord
     total_slots ? total_slots <= 5 : false
   end
 
-  # over write of the .conference_link method from belongs_to :conference_link to add logic to create of not there
+ # over write of the .conference_link method from belongs_to :conference_link to add logic to create of not there
   def conference_link
-    @conference_link ||= find_or_create_conference_link!
+    @conference_link ||= h_day_is_in_past? ? nil : find_or_create_conference_link!
+    # @conference_link ||= find_or_create_conference_link!
   end
 
   private
+
+  def h_day_is_in_past?
+    scheduled_for < Date.current
+  end
 
   def kickoff_link_cleanup
     VirtualHearings::DeleteConferenceLinkJob.new.perform
