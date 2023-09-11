@@ -294,7 +294,7 @@ class Task < CaseflowRecord
     end
 
     def cancel_blocking_task_legacy(params, parent_task)
-      parent_task.children.each{ |current_task|  seach_for_blocking(current_task)}
+      parent_task.children.each { |current_task| seach_for_blocking(current_task) }
 
       legacy_appeal = LegacyAppeal.find(parent_task.appeal_id)
       judge = User.find(params["assigned_to_id"])
@@ -317,19 +317,19 @@ class Task < CaseflowRecord
     end
 
     def cancel_all_children(current_task)
-      if  current_task.children.count() == 0
+      if current_task.children.count == 0
         if current_task.status != "Cancelled" && current_task.status != "completed"
           cancelled_task(current_task)
         end
       else
-        current_task.children.each{ |current_task|  cancel_all_children(current_task) }
+        current_task.children.each { |current_task| cancel_all_children(current_task) }
       end
     end
 
     def seach_for_blocking(current_task)
       current_task.legacy_blocking? ?
         cancel_all_children(current_task) :
-        current_task.children.each {|current_task| seach_for_blocking(current_task)}
+        current_task.children.each { |current_task| seach_for_blocking(current_task) }
     end
 
     def create_judge_assigned_task_for_legacy(params, parent_task)
