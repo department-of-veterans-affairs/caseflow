@@ -68,7 +68,10 @@ export class PdfListView extends React.Component {
       <AppSegment filledBackground>
         <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
-          <LastRetrievalAlert appeal={this.props.appeal} />
+          <LastRetrievalAlert
+            userHasEfolderRole={this.props.userHasEfolderRole}
+            efolderExpressUrl={this.props.efolderExpressUrl}
+            appeal={this.props.appeal} />
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}
@@ -76,7 +79,7 @@ export class PdfListView extends React.Component {
           {tableView}
         </div>
       </AppSegment>
-      <LastRetrievalInfo />
+      <LastRetrievalInfo appeal={this.props.appeal} />
     </div>;
   }
 }
@@ -89,7 +92,6 @@ const mapStateToProps = (state, props) => {
       state.pdfViewer.loadedAppeal,
     caseSelectedAppeal: state.caseSelect.selectedAppeal,
     manifestVbmsFetchedAt: state.documentList.manifestVbmsFetchedAt,
-    manifestVvaFetchedAt: state.documentList.manifestVvaFetchedAt,
     queueRedirectUrl: state.documentList.queueRedirectUrl,
     queueTaskType: state.documentList.queueTaskType
   };
@@ -102,12 +104,17 @@ const mapDispatchToProps = (dispatch) => (
   }, dispatch)
 );
 
+PdfListView.propTypes = {
+  documents: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onJumpToComment: PropTypes.func,
+  sortBy: PropTypes.string,
+  appeal: PropTypes.object,
+  efolderExpressUrl: PropTypes.string,
+  userHasEfolderRole: PropTypes.bool,
+};
+
+
 export default connect(
   mapStateToProps, mapDispatchToProps
 )(PdfListView);
 
-PdfListView.propTypes = {
-  documents: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onJumpToComment: PropTypes.func,
-  sortBy: PropTypes.string
-};
