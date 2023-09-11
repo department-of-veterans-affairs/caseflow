@@ -3,10 +3,6 @@
 RSpec.feature "MailTasks", :postgres do
   include ActiveJob::TestHelper
 
-  def clean_up_after_threads
-    DatabaseCleaner.clean_with(:truncation, except: %w[notification_events vftypes issref])
-  end
-
   let(:user) { create(:user) }
 
   before do
