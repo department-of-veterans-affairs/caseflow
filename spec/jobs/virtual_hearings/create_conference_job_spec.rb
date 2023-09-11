@@ -109,7 +109,8 @@ describe VirtualHearings::CreateConferenceJob do
     end
 
     it "raises error when webex conference creation fails" do
-      # must comment out line 48 in webex_service.rb
+      # must comment out line 48 in webex_service.rb for the mock server to return an error
+      # these tests will need to be updated after GHA workflow is updated
       current_user.update!(meeting_type: "webex")
 
       expect { subject.perform_now }.to raise_exception(Caseflow::Error::WebexApiError)
