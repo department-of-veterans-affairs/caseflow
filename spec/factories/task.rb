@@ -174,10 +174,15 @@ FactoryBot.define do
         schedule_hearing_task.update(status: "completed", closed_at: Time.zone.now)
         scheduled_time = Time.zone.today + 1.month
         if appeal.is_a?(Appeal)
+          hearing_day = create(:hearing_day,
+                               request_type: HearingDay::REQUEST_TYPES[:virtual],
+                               regional_office: "RO19",
+                               scheduled_for: scheduled_time)
           hearing = create(:hearing,
                            disposition: nil,
                            judge: nil,
                            appeal: appeal,
+                           hearing_day: hearing_day,
                            scheduled_time: scheduled_time)
         else
           case_hearing = create(:case_hearing, folder_nr: appeal.vacols_id, hearing_date: scheduled_time)
