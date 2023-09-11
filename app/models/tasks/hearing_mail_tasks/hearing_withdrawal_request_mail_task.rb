@@ -60,16 +60,12 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
 
   def update_hearing_and_cancel_tasks
     multi_transaction do
-      distribution_task = hearing_task.parent
+      maybe_evidence_task = withdraw_hearing(hearing_task.parent)
+      cancel_active_hearing_tasks
+      # Must cancel tasks first, otherwise hearing_task returns nil
+      mark_hearing_cancelled if open_hearing
 
-      if open_hearing
-        mark_hearing_cancelled
-      else
-        cancel_schedule_hearing_task
-      end
-
-      cancel_hearing_related_mail_tasks
-      maybe_create_evidence_submission_task(distribution_task)
+      [maybe_evidence_task].compact
     end
   end
 
@@ -77,16 +73,12 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
     multi_transaction do
       update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
       clean_up_virtual_hearing
-      cancel_assign_disposition_task
     end
   end
 
-  def cancel_assign_disposition_task
-    open_assign_hearing_disposition_task.update!(status: Constants.TASK_STATUSES.cancelled)
-  end
-
-  def cancel_schedule_hearing_task
-    open_assign_hearing_disposition_task.update!(status: Constants.TASK_STATUSES.cancelled)
+  def cancel_active_hearing_tasks
+    hearing_task.cancel_task_and_child_subtasks
+    cancel_hearing_related_mail_tasks
   end
 
   def cancel_hearing_related_mail_tasks
@@ -97,11 +89,6 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
 
   def hearing_related_mail_tasks
     appeal.tasks.where(type: HearingRelatedMailTask.name)&.active
-  end
-
-  def maybe_create_evidence_submission_task(parent)
-    maybe_evidence_task = withdraw_hearing(parent)
-    [maybe_evidence_task].compact
   end
 
   def update_self_and_parent_mail_task(user:, admin_context:)
