@@ -50,10 +50,12 @@ class AssignToView extends React.Component {
 
     const action = selectedAction(this.props);
 
+    const excludeExistingInstructions = ['HearingPostponementRequestMailTask', 'HearingWithdrawalRequestMailTask'];
+
     this.state = {
       selectedValue: action ? action.value : null,
       assignToVHARegionalOfficeSelection: null,
-      instructions: this?.props?.task?.type === 'HearingPostponementRequestMailTask' ? '' : existingInstructions
+      instructions: excludeExistingInstructions.includes(this?.props?.task?.type) ? '' : existingInstructions
     };
   }
 
