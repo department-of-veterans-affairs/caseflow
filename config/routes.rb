@@ -368,9 +368,6 @@ Rails.application.routes.draw do
 
   get 'whats-new' => 'whats_new#show'
 
-  get 'dispatch/stats(/:interval)', to: 'dispatch_stats#show', as: 'dispatch_stats'
-  get 'stats', to: 'stats#show'
-
   match '/intake/:any' => 'intakes#index', via: [:get]
 
   get "styleguide", to: "styleguide#show"
