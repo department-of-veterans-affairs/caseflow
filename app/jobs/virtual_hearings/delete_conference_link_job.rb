@@ -46,16 +46,9 @@ class VirtualHearings::DeleteConferenceLinkJob < CaseflowJob
   # Return: Hash that will update the conference_link
   def update_conf_links
     {
-      alias: nil,
-      alias_with_host: nil,
       conference_deleted: true,
       updated_by_id: RequestStore[:current_user],
-      updated_at: Time.zone.now,
-      guest_hearing_link: nil,
-      guest_pin_long: nil,
-      host_link: nil,
-      host_pin: nil,
-      host_pin_long: nil
+      updated_at: Time.zone.now
     }
   end
 
