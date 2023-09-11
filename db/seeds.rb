@@ -38,6 +38,7 @@ class SeedDB
     call_and_log_seed_step Seeds::Annotations
     call_and_log_seed_step Seeds::Tags
     # These must be ran before others
+    call_and_log_seed_step Seeds::BusinessLineOrg
     call_and_log_seed_step Seeds::Users
     call_and_log_seed_step Seeds::NotificationEvents
     # End of required to exist dependencies
@@ -57,6 +58,8 @@ class SeedDB
     call_and_log_seed_step Seeds::TestCaseData
     call_and_log_seed_step Seeds::Notifications
     call_and_log_seed_step Seeds::CavcDashboardData
+    call_and_log_seed_step Seeds::VbmsExtClaim
+    call_and_log_seed_step Seeds::AdditionalRemandedAppeals
     # Always run this as last one
     call_and_log_seed_step Seeds::StaticTestCaseData
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
