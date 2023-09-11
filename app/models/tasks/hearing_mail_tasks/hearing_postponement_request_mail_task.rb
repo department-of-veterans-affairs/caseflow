@@ -188,14 +188,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
       date_of_ruling: payload_values[:date_of_ruling]
     )
 
-    # Complete HPR mail task assigned to HearingAdmin
-    update!(
-      completed_by: user,
-      status: Constants.TASK_STATUSES.completed,
-      instructions: updated_instructions
-    )
-    # Complete parent HPR mail task assigned to MailTeam
-    update_parent_status
+    super(user: user, instructions: updated_instructions)
   end
 
   # Purpose: Appends instructions on to the instructions provided in the mail task

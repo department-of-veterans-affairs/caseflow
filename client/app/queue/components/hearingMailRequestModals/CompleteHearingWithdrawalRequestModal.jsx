@@ -23,7 +23,18 @@ const CompleteHearingWithdrawalRequestModal = (props) => {
   const getSuccessMsg = () => {
     return {
       title: `You have successfully withdrawn ${appeal.veteranFullName}'s hearing request`,
-      detail: COPY.WITHDRAW_HEARING.AMA.MODAL_BODY
+      detail: COPY.WITHDRAW_HEARING.AMA.MODAL_BODY.split('.')[0]
+    };
+  };
+
+  const getPayload = () => {
+    return {
+      data: {
+        task: {
+          status: TASK_STATUSES.completed,
+          instructions
+        }
+      }
     };
   };
 
@@ -32,14 +43,7 @@ const CompleteHearingWithdrawalRequestModal = (props) => {
       return;
     }
 
-    const payload = {
-      data: {
-        task: {
-          instructions,
-          status: TASK_STATUSES.completed
-        }
-      }
-    };
+    const payload = getPayload();
 
     setIsPosting(true);
 

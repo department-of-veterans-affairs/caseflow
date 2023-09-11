@@ -101,4 +101,26 @@ class HearingRequestMailTask < MailTask
       perform_later_or_now(VirtualHearings::DeleteConferencesJob)
     end
   end
+
+  # Purpose: Sets the previous hearing's disposition
+  # Params: None
+  # Return: Returns a boolean for if the hearing has been updated
+  def update_hearing(hearing_hash)
+    if open_hearing.is_a?(LegacyHearing)
+      open_hearing.update_caseflow_and_vacols(hearing_hash)
+    else
+      open_hearing.update(hearing_hash)
+    end
+  end
+
+  def update_self_and_parent_mail_task(user:, instructions:)
+    # Complete HPR mail task assigned to HearingAdmin
+    update!(
+      completed_by: user,
+      status: Constants.TASK_STATUSES.completed,
+      instructions: instructions
+    )
+    # Complete parent HPR mail task assigned to MailTeam
+    update_parent_status
+  end
 end

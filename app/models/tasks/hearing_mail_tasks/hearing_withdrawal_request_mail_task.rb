@@ -9,6 +9,8 @@
 #   - A child task of the same name is created and assigned to the HearingAdmin organization
 ##
 class HearingWithdrawalRequestMailTask < HearingRequestMailTask
+  prepend HearingWithdrawn
+
   class << self
     def label
       COPY::HEARING_WITHDRAWAL_REQUEST_MAIL_TASK_LABEL
@@ -41,5 +43,84 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
         Constants.TASK_ACTIONS.CANCEL_TASK.to_h
       ]
     end
+  end
+
+  def update_from_params(params, user)
+    if params[:status] == Constants.TASK_STATUSES.completed
+      created_tasks = update_hearing_and_cancel_tasks
+      update_self_and_parent_mail_task(user: user, admin_context: params[:instructions])
+
+      [self] + (created_tasks || [])
+    else
+      super(params, user)
+    end
+  end
+
+  private
+
+  def update_hearing_and_cancel_tasks
+    multi_transaction do
+      distribution_task = hearing_task.parent
+
+      if open_hearing
+        mark_hearing_cancelled
+      else
+        cancel_schedule_hearing_task
+      end
+
+      cancel_hearing_related_mail_tasks
+      maybe_create_evidence_submission_task(distribution_task)
+    end
+  end
+
+  def mark_hearing_cancelled
+    multi_transaction do
+      update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
+      clean_up_virtual_hearing
+      cancel_assign_disposition_task
+    end
+  end
+
+  def cancel_assign_disposition_task
+    open_assign_hearing_disposition_task.update!(status: Constants.TASK_STATUSES.cancelled)
+  end
+
+  def cancel_schedule_hearing_task
+    open_assign_hearing_disposition_task.update!(status: Constants.TASK_STATUSES.cancelled)
+  end
+
+  def cancel_hearing_related_mail_tasks
+    return if hearing_related_mail_tasks.empty?
+
+    hearing_related_mail_tasks.update_all(status: Constants.TASK_STATUSES.cancelled)
+  end
+
+  def hearing_related_mail_tasks
+    appeal.tasks.where(type: HearingRelatedMailTask.name)&.active
+  end
+
+  def maybe_create_evidence_submission_task(parent)
+    maybe_evidence_task = withdraw_hearing(parent)
+    [maybe_evidence_task].compact
+  end
+
+  def update_self_and_parent_mail_task(user:, admin_context:)
+    updated_instructions = format_instructions_on_completion(admin_context)
+
+    super(user: user, instructions: updated_instructions)
+  end
+
+  def format_instructions_on_completion(admin_context)
+    markdown_to_append = <<~EOS
+
+      ***
+
+      ###### Mark as complete and withdraw hearing:
+
+      **DETAILS**
+      #{admin_context}
+    EOS
+
+    [instructions[0] + markdown_to_append]
   end
 end
