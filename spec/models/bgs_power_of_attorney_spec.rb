@@ -360,9 +360,9 @@ describe BgsPowerOfAttorney do
     context "2 records exist with same PID but different FNs" do
       before do
         allow(bgs).to receive(:fetch_poa_by_file_number)
-          .with(poa_2_fn).and_return(poa_2_bgs_response)
+          .with(poa_2_fn, claimant_participant_id).and_return(poa_2_bgs_response)
         allow(bgs).to receive(:fetch_poa_by_file_number)
-          .with(poa_1_fn).and_return(poa_1_bgs_response)
+          .with(poa_1_fn, claimant_participant_id).and_return(poa_1_bgs_response)
         allow(bgs).to receive(:fetch_poas_by_participant_ids)
           .with([claimant_participant_id]).and_return(claimant_participant_id => poa_2_bgs_response)
         allow(BGSService).to receive(:new) { bgs }
@@ -397,8 +397,8 @@ describe BgsPowerOfAttorney do
 
       it "prefers fetch by filenumber over fetch by PID" do
         expect { described_class.find(poa_1.id).save_with_updated_bgs_record! }.to_not raise_error
-        expect(bgs).to have_received(:fetch_poa_by_file_number).with(poa_1_fn).twice
-        expect(bgs).to have_received(:fetch_poa_by_file_number).with(poa_2_fn).once
+        expect(bgs).to have_received(:fetch_poa_by_file_number).with(poa_1_fn, claimant_participant_id).twice
+        expect(bgs).to have_received(:fetch_poa_by_file_number).with(poa_2_fn, claimant_participant_id).once
         expect(bgs).to_not have_received(:fetch_poas_by_participant_ids)
       end
     end

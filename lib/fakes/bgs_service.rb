@@ -375,7 +375,7 @@ class Fakes::BGSService
                   org_type_nm: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
                   ptcpnt_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
                 }
-              elsif BgsAttorney.exists? && FeatureToggle.enabled?(:randomize_poa)
+              elsif FeatureToggle.enabled?(:randomize_poa) && BgsAttorney.exists?
                 poa_hash_from_bgs_attorney(random_attorney)
               else
                 {
@@ -718,16 +718,18 @@ class Fakes::BGSService
     value = rand(700_000_000...733_792_224).to_s
 
     # make sure the value is unique for both file number and participant id
-    value = while BgsPowerOfAttorney.find_by(file_number: value).nil? == false &&
-                  BgsPowerOfAttorney.find_by(claimant_participant_id: value).nil? == false
-              rand(700_000_000...733_792_224).to_s
-            end
+    while BgsPowerOfAttorney.find_by(file_number: value).nil? == false &&
+          BgsPowerOfAttorney.find_by(claimant_participant_id: value).nil? == false
+      value = rand(700_000_000...733_792_224).to_s
+    end
 
     value
   end
 
   def default_power_of_attorney_record(file_number, claimant_participant_id)
-    poa_hash = if BgsAttorney.exists? && FeatureToggle.enabled?(:randomize_poa)
+    # If the Bgs poa object does not have a participant id randomly generate one
+    claimant_participant_id ||= generate_random_file_number
+    poa_hash = if FeatureToggle.enabled?(:randomize_poa) && BgsAttorney.exists?
                  poa_hash_from_bgs_attorney(random_attorney)
                else
                  {
