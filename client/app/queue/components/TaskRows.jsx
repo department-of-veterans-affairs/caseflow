@@ -532,7 +532,6 @@ class TaskRows extends React.PureComponent {
               timeline,
               taskList,
               index,
-              key: `${timelineEvent?.type}-${index}`
             });
           }
 

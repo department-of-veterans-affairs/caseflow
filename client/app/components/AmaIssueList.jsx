@@ -62,7 +62,7 @@ export default class AmaIssueList extends React.PureComponent {
       {requestIssues.map((issue, i) => {
         const error = errorMessages && errorMessages[issue.id];
 
-        return <React.Fragment key={`ama-issue-${i}`}>
+        return <React.Fragment>
           { error &&
             <span className="usa-input-error-message" tabIndex={0}>
               {error}
