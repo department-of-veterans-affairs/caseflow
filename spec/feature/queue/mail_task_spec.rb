@@ -152,11 +152,11 @@ RSpec.feature "MailTasks", :postgres do
     let(:appeal) { hpr_task.appeal }
     let(:hpr_task) do
       create(:hearing_postponement_request_mail_task,
-             :with_unscheduled_hearing, assigned_by_id: User.system_user.id)
+             :postponement_request_with_unscheduled_hearing, assigned_by_id: User.system_user.id)
     end
     let(:scheduled_hpr_task) do
       create(:hearing_postponement_request_mail_task,
-             :with_scheduled_hearing, assigned_by_id: User.system_user.id)
+             :postponement_request_with_scheduled_hearing, assigned_by_id: User.system_user.id)
     end
     let(:scheduled_appeal) { scheduled_hpr_task.appeal }
     let(:legacy_appeal) do
@@ -164,7 +164,7 @@ RSpec.feature "MailTasks", :postgres do
     end
     let!(:legacy_hpr_task) do
       create(:hearing_postponement_request_mail_task,
-             :with_unscheduled_hearing,
+             :postponement_request_with_unscheduled_hearing,
              assigned_by_id: User.system_user.id, appeal: legacy_appeal)
     end
     let(:scheduled_legacy_appeal) do
@@ -172,7 +172,7 @@ RSpec.feature "MailTasks", :postgres do
     end
     let!(:scheduled_legacy_hpr_task) do
       create(:hearing_postponement_request_mail_task,
-             :with_scheduled_hearing,
+             :postponement_request_with_scheduled_hearing,
              assigned_by_id: User.system_user.id, appeal: scheduled_legacy_appeal)
     end
     let(:email) { "test@caseflow.com" }
@@ -505,7 +505,7 @@ RSpec.feature "MailTasks", :postgres do
           context "appeal has scheduled hearing" do
             let(:hpr_task) do
               create(:hearing_postponement_request_mail_task,
-                     :with_scheduled_hearing,
+                     :postponement_request_with_scheduled_hearing,
                      assigned_by_id: User.system_user.id)
             end
 

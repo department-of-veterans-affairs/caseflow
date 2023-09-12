@@ -1191,11 +1191,11 @@ module Seeds
     end
 
     def create_unscheduled_hearing_postponement_request_task(appeal)
-        create(:hearing_postponement_request_mail_task, :with_unscheduled_hearing, appeal: appeal)
+        create(:hearing_postponement_request_mail_task, :postponement_request_with_unscheduled_hearing, appeal: appeal)
     end
 
     def create_scheduled_hearing_postponement_request_task(appeal)
-        create(:hearing_postponement_request_mail_task, :with_scheduled_hearing, appeal: appeal)
+        create(:hearing_postponement_request_mail_task, :postponement_request_with_scheduled_hearing, appeal: appeal)
     end
 
 

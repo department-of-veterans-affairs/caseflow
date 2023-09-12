@@ -67,27 +67,6 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     end
   end
 
-  # Purpose: Only show HPR mail task assigned to "HearingAdmin" on the Case Timeline
-  # Params: None
-  # Return: boolean if task is assigned to MailTeam
-  def hide_from_case_timeline
-    assigned_to.is_a?(MailTeam)
-  end
-
-  # Purpose: Determines if there is an open hearing
-  # Params: None
-  # Return: The hearing if one exists
-  def open_hearing
-    @open_hearing ||= open_assign_hearing_disposition_task&.hearing
-  end
-
-  # Purpose: Gives the latest hearing task
-  # Params: None
-  # Return: The hearing task
-  def hearing_task
-    @hearing_task ||= open_hearing&.hearing_task || active_schedule_hearing_task.parent
-  end
-
   # Purpose: When a hearing is postponed through the completion of a NoShowHearingTask, AssignHearingDispositionTask,
   #          or ChangeHearingDispositionTask, cancel any open HearingPostponementRequestMailTasks in that appeal's
   #          task tree, as the HPR mail tasks have become redundant.
@@ -106,36 +85,6 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   end
 
   private
-
-  # Purpose: Gives the latest active hearing task
-  # Params: None
-  # Return: The latest active hearing task
-  def active_schedule_hearing_task
-    appeal.tasks.of_type(ScheduleHearingTask.name).active.first
-  end
-
-  # ChangeHearingDispositionTask is a subclass of AssignHearingDispositionTask
-  ASSIGN_HEARING_DISPOSITION_TASKS = [
-    AssignHearingDispositionTask.name,
-    ChangeHearingDispositionTask.name
-  ].freeze
-
-  # Purpose: Gives the latest active assign hearing disposition task
-  # Params: None
-  # Return: The latest active assign hearing disposition task
-  def open_assign_hearing_disposition_task
-    @open_assign_hearing_disposition_task ||= appeal.tasks.of_type(ASSIGN_HEARING_DISPOSITION_TASKS).open&.first
-  end
-
-  # Purpose: Associated appeal has an upcoming hearing with an open status
-  # Params: None
-  # Return: Returns a boolean if the appeal has an upcoming hearing
-  def hearing_scheduled_and_awaiting_disposition?
-    return false unless open_hearing
-
-    # Ensure associated hearing is not scheduled for the past
-    !open_hearing.scheduled_for_past?
-  end
 
   # Purpose: Sets the previous hearing's disposition to postponed
   # Params: None
@@ -168,15 +117,6 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
       open_hearing.update_caseflow_and_vacols(hearing_hash)
     else
       open_hearing.update(hearing_hash)
-    end
-  end
-
-  # Purpose: Deletes the old scheduled virtual hearings
-  # Params: None
-  # Return: Returns nil
-  def clean_up_virtual_hearing
-    if open_hearing.virtual?
-      perform_later_or_now(VirtualHearings::DeleteConferencesJob)
     end
   end
 
