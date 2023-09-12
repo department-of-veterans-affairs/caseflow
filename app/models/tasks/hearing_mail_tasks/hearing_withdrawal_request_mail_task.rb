@@ -48,7 +48,7 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
   def update_from_params(params, user)
     if params[:status] == Constants.TASK_STATUSES.completed
       created_tasks = update_hearing_and_cancel_tasks
-      update_self_and_parent_mail_task(user: user, admin_context: params[:instructions])
+      update_self_and_parent_mail_task(user: user, params: params)
 
       [self] + (created_tasks || [])
     else
@@ -88,13 +88,7 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
     appeal.tasks.where(type: HearingRelatedMailTask.name)&.active
   end
 
-  def update_self_and_parent_mail_task(user:, admin_context:)
-    updated_instructions = format_instructions_on_completion(admin_context)
-
-    super(user: user, instructions: updated_instructions)
-  end
-
-  def format_instructions_on_completion(admin_context)
+  def format_instructions_on_completion(params)
     markdown_to_append = <<~EOS
 
       ***
@@ -102,7 +96,7 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
       ###### Mark as complete and withdraw hearing:
 
       **DETAILS**
-      #{admin_context}
+      #{params[:instructions]}
     EOS
 
     [instructions[0] + markdown_to_append]

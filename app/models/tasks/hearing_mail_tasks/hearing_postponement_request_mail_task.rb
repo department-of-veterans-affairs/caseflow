@@ -59,7 +59,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
       if payload_values[:granted]
         created_tasks = update_hearing_and_create_tasks(payload_values[:after_disposition_update])
       end
-      update_self_and_parent_mail_task(user: user, payload_values: payload_values)
+      update_self_and_parent_mail_task(user: user, params: payload_values)
 
       [self] + (created_tasks || [])
     else
@@ -194,28 +194,14 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     [new_hearing_task, schedule_task].compact
   end
 
-  # Purpose: Completes the Mail task assigned to the MailTeam and the one for HearingAdmin
-  # Params: user - The current user object
-  # payload_values - The attributes needed for the update
-  # Return: Boolean for if the tasks have been updated
-  def update_self_and_parent_mail_task(user:, payload_values:)
-    # Append instructions/context provided by HearingAdmin to original details from MailTeam
-    updated_instructions = format_instructions_on_completion(
-      admin_context: payload_values[:instructions],
-      ruling: payload_values[:granted] ? "GRANTED" : "DENIED",
-      date_of_ruling: payload_values[:date_of_ruling]
-    )
-
-    super(user: user, instructions: updated_instructions)
-  end
-
   # Purpose: Appends instructions on to the instructions provided in the mail task
   # Params: admin_context - String for instructions
   # ruling - string for granted or denied
   # date_of_ruling - string for the date of ruling
   # Return: instructions string
-  def format_instructions_on_completion(admin_context:, ruling:, date_of_ruling:)
-    formatted_date = date_of_ruling.to_date&.strftime("%m/%d/%Y")
+  def format_instructions_on_completion(params)
+    formatted_date = params[:date_of_ruling].to_date&.strftime("%m/%d/%Y")
+    ruling = params[:granted] ? "GRANTED" : "DENIED"
 
     markdown_to_append = <<~EOS
 
@@ -230,7 +216,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
       #{formatted_date}
 
       **DETAILS**
-      #{admin_context}
+      #{params[:instructions]}
     EOS
 
     [instructions[0] + markdown_to_append]
