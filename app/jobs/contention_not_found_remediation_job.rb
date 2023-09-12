@@ -66,7 +66,7 @@ class ContentionNotFoundRemediationJob < CaseflowJob
 
   # rubocop:enable all
 
-  # private
+  private
 
   # Find all Contention Not Found error Request Issues Updates
   def find_contention_not_found_request_issues_updates
