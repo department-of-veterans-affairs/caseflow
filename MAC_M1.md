@@ -179,11 +179,14 @@ Run dev setup scripts in Caseflow repo
     5. run `gem install pg:1.1.4 -- --with-pg-config=/Applications/Postgres.app/Contents/Versions/latest/bin/pg_config`
     6. Install v8@3.15 by doing the following (these steps assume that vi/vim is the default editor):
         1. run `brew edit v8@3.15`
-        2. go to line 21 in the editor by typing `:21`
+        2. If the above doesn't work and throws an error Run brew tap --force homebrew/core
+        3. Run brew install v8@3.15, the file download will fail because of step 5
+        4. run brew edit v8@3.15 and continue with next step.
+        5. go to line 21 in the editor by typing `:21`
       Note: the line being removed is `disable! date: "2023-06-19", because: "depends on Python 2 to build"`
-        3. delete the line by pressing `d` twice
-        4. save and quit by typing `:x`
-        5. run `HOMEBREW_NO_INSTALL_FROM_API=1 brew install v8@3.15`
+        6. delete the line by pressing `d` twice
+        7. save and quit by typing `:x`
+        8. run `HOMEBREW_NO_INSTALL_FROM_API=1 brew install v8@3.15`
     7. Configure build opts for gem `therubyracer`:
         1. `bundle config build.libv8 --with-system-v8`
         2. `bundle config build.therubyracer --with-v8-dir=$(brew --prefix v8@3.15)`
