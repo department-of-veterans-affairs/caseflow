@@ -1432,6 +1432,12 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
         data-css-leaxad=""
       >
         <div>
+          <b>
+            Pexip
+             hearing
+          </b>
+        </div>
+        <div>
           <div
             class=""
           >
@@ -3837,6 +3843,12 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
               </svg>
             </span>
           </a>
+        </div>
+        <div>
+          <b>
+            Pexip
+             hearing
+          </b>
         </div>
         <div>
           <div
