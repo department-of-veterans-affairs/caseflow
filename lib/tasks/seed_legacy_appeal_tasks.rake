@@ -20,14 +20,13 @@ namespace :db do
                      end
 
           veteran = Veteran.find_by_file_number(file_number)
-          decass_scenarios = task_type == "HEARINGTASK" || task_type == "SCENARIO1EDGE" || task_type == "BRIEFF_CURLOC_81_TASK"
           fail ActiveRecord::RecordNotFound unless veteran
 
           vacols_veteran_record = find_or_create_vacols_veteran(veteran)
 
           # Creates decass for scenario1/2/4 tasks as they require an assigned_by field
           # which is grabbed from the Decass table (b/c it is an AttorneyLegacyTask)
-          decass_creation = if decass_scenarios || (task_type == "ATTORNEYTASK" && user&.attorney_in_vacols?)
+          decass_creation = if task_type == "ATTORNEYTASK" && user&.attorney_in_vacols?
                               true
                             else false
                             end
@@ -252,27 +251,28 @@ namespace :db do
               parent: root_task,
               assigned_to: Bva.singleton
             )
-            ScheduleHearingTask.create!(
+            sched_hearing = ScheduleHearingTask.create!(
               appeal: appeal,
               parent: hearing_task,
               assigned_to: Bva.singleton
-            ).update(status: "completed")
+            )
             AssignHearingDispositionTask.create!(
               appeal: appeal,
               parent: hearing_task,
               assigned_to: Bva.singleton
             )
+            sched_hearing.update(status: "completed")
           when 67..100
             hearing_task = HearingTask.create!(
               appeal: appeal,
               parent: root_task,
               assigned_to: Bva.singleton
             )
-            ScheduleHearingTask.create!(
+            sched_hearing = ScheduleHearingTask.create!(
               appeal: appeal,
               parent: hearing_task,
               assigned_to: Bva.singleton
-            ).update(status: "completed")
+            )
             assign_hearing_task = AssignHearingDispositionTask.create!(
               appeal: appeal,
               parent: hearing_task,
@@ -283,6 +283,7 @@ namespace :db do
               parent: assign_hearing_task,
               assigned_to: Bva.singleton
             )
+            sched_hearing.update(status: "completed")
           end
 
           rand_val = rand(100)

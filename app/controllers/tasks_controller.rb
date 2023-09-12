@@ -92,11 +92,10 @@ class TasksController < ApplicationController
     param_groups.each do |task_type, param_group|
       tasks << valid_task_classes[task_type.to_sym].create_many_from_params(param_group, current_user)
     end
-
     # This should be the JudgeDecisionReviewTask
     parent_task = Task.find_by(id: params[:tasks].first[:parent_id]) if params[:tasks].first[:type] == "AttorneyRewriteTask"
     if parent_task&.appeal&.is_a?(LegacyAppeal)
-      QueueRepository.reassign_case_to_attorney!(
+      QueueRepository.reassign_decass_to_attorney!(
         judge: parent_task.assigned_to,
         attorney: User.find(params[:tasks].first[:assigned_to_id]),
         vacols_id: parent_task.appeal.external_id
@@ -105,7 +104,6 @@ class TasksController < ApplicationController
 
     modified_tasks = [parent_tasks_from_params, tasks].flatten.uniq
     render json: { tasks: json_tasks(modified_tasks) }
-
   rescue ActiveRecord::RecordInvalid => error
     invalid_record_error(error.record)
   rescue Caseflow::Error::MailRoutingError => error
@@ -118,13 +116,19 @@ class TasksController < ApplicationController
   #   assigned_to_id: 23
   # }
   def update
-
     Task.transaction do
       tasks = task.update_from_params(update_params, current_user)
       tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
       tasks_hash = json_tasks(tasks.uniq)
-      if task.appeal.class != LegacyAppeal
+      if task.appeal.class == LegacyAppeal
+        assigned_to = if update_params&.[](:reassign)&.[](:assigned_to_id)
+                        User.find(update_params[:reassign][:assigned_to_id])
+                      elsif task.type == "AttorneyTask" || task.type == "AttorneyRewriteTask"
+                        User.find(Task.find_by(id: task.parent_id).assigned_to_id)
+                      end
+        QueueRepository.update_location_to_judge(task.appeal.vacols_id, assigned_to) if assigned_to
+      else
         modified_task_contested_claim
       end
       # currently alerts are only returned by ScheduleHearingTask
@@ -379,9 +383,9 @@ class TasksController < ApplicationController
       task = task.merge(assigned_to_type: User.name) if !task[:assigned_to_type]
 
       if appeal.is_a?(LegacyAppeal)
-        if (task[:type] == "BlockedSpecialCaseMovementTask" || task[:type] == "SpecialCaseMovementTask")
+        if task[:type] == "BlockedSpecialCaseMovementTask" || task[:type] == "SpecialCaseMovementTask"
           task = task.merge(external_id: params["tasks"][0]["external_id"], legacy_task_type: params["tasks"][0]["legacy_task_type"],
-             appeal_type: params["tasks"][0]["appeal_type"])
+                            appeal_type: params["tasks"][0]["appeal_type"])
         end
       end
       task

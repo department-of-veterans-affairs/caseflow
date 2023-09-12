@@ -564,7 +564,7 @@ export const reassignTasksToUser = ({
 }) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   let params, url;
 
-  if (oldTask.appealType === 'LegacyAppeal' && oldTask.type === 'AttorneyTask') {
+  if (oldTask.appealType === 'LegacyAppeal' && (oldTask.type === 'AttorneyTask' || oldTask.type === 'AttorneyRewriteTask')) {
     url = `/tasks/${oldTask.taskId}`;
     params = {
       data: {
