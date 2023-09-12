@@ -60,20 +60,17 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
 
   def update_hearing_and_cancel_tasks
     multi_transaction do
-      maybe_evidence_task = withdraw_hearing(hearing_task.parent)
-      cancel_active_hearing_tasks
-      # Must cancel tasks first, otherwise hearing_task returns nil
       mark_hearing_cancelled if open_hearing
+      cancel_active_hearing_tasks
+      maybe_evidence_task = withdraw_hearing(hearing_task.parent)
 
       [maybe_evidence_task].compact
     end
   end
 
   def mark_hearing_cancelled
-    multi_transaction do
-      update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
-      clean_up_virtual_hearing
-    end
+    update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
+    clean_up_virtual_hearing
   end
 
   def cancel_active_hearing_tasks
