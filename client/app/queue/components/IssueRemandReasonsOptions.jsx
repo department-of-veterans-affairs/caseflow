@@ -64,7 +64,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       values(appeal.isLegacyAppeal ? LEGACY_REMAND_REASONS : REMAND_REASONS)
     );
     const pairs = zip(
-      map(options, "id"),
+      map(options, 'id'),
       map(options, () => ({
         checked: false,
         post_aoj: null,
@@ -119,9 +119,9 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     scrollToComponent(
       dest,
       defaults(opts, {
-        align: "top",
+        align: 'top',
         duration: 1500,
-        ease: "outCube",
+        ease: 'outCube',
         offset: -35,
       })
     );
@@ -136,38 +136,49 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       this.setState({
         [reason.code]: {
           checked: true,
-          post_aoj: reason.post_aoj ? reason.post_aoj.toString() : null,
+          post_aoj: reason.post_aoj === null ? null : reason.post_aoj.toString(),
         },
       })
     );
 
-    if (map(issues, "id").indexOf(issueId) > 0) {
+    if (map(issues, 'id').indexOf(issueId) > 0) {
       this.scrollTo();
     }
   };
 
   updateStoreIssue = () => {
     // on going to the next or previous page, update issue attrs from state
-    // "remand_reasons": [
-    //   {"code": "AB", "post_aoj": true},
-    //   {"code": "AC", "post_aoj": false}
+    // 'remand_reasons': [
+    //   {'code': 'AB', 'post_aoj': true},
+    //   {'code': 'AC', 'post_aoj': false}
     // ]
     const remandReasons = compact(
       map(this.state, (val, key) => {
+        if (this.props.featureToggles.additional_remand_reasons) {
+          if (!val.checked) {
+            return false;
+          }
+
+          if (val.post_aoj) {
+            return {
+              code: key,
+              post_aoj: val.post_aoj === 'true',
+            };
+          }
+
+          return {
+            code: key,
+            post_aoj: null,
+          };
+        }
+
         if (!val.checked) {
           return false;
         }
 
-        if (val.post_aoj) {
-          return {
-            code: key,
-            post_aoj: val.post_aoj === 'true',
-          };
-        }
-
         return {
           code: key,
-          post_aoj: null,
+          post_aoj: val.post_aoj === 'true'
         };
       })
     );
@@ -186,7 +197,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   };
 
   toggleRemandReason = (checked, event) => {
-    const splitId = event.target.id.split("-");
+    const splitId = event.target.id.split('-');
 
     this.setState({
       [splitId[splitId.length - 1]]: {
@@ -208,7 +219,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   getCheckbox = (option, onChange, checkboxValues) => {
     const rowOptId = `${String(this.props.issue.id)}-${option.id}`;
     const { appeal } = this.props;
-    const copyPrefix = appeal.isLegacyAppeal ? "LEGACY" : "AMA";
+    const copyPrefix = appeal.isLegacyAppeal ? 'LEGACY' : 'AMA';
 
     return (
       <React.Fragment key={option.id}>
@@ -220,39 +231,39 @@ class IssueRemandReasonsOptions extends React.PureComponent {
           unpadded
         />
         {checkboxValues[option.id].checked && this.showSubSelections(rowOptId, appeal.isLegacyAppeal) && (
-            <RadioField
-              errorMessage={this.props.highlight && isNull(this.state[option.id].post_aoj) ? 'Choose one' : null}
-              styling={css(
-                smallLeftMargin,
-                smallBottomMargin,
-                errorNoTopMargin
-              )}
-              name={rowOptId}
-              vertical
-              hideLabel
-              options={[
-                {
-                  displayText:
+          <RadioField
+            errorMessage={this.props.highlight && isNull(this.state[option.id].post_aoj) ? 'Choose one' : null}
+            styling={css(
+              smallLeftMargin,
+              smallBottomMargin,
+              errorNoTopMargin
+            )}
+            name={rowOptId}
+            vertical
+            hideLabel
+            options={[
+              {
+                displayText:
                     COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_BEFORE`],
-                  value: "false",
-                },
-                {
-                  displayText:
+                value: 'false',
+              },
+              {
+                displayText:
                     COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_AFTER`],
-                  value: "true",
+                value: 'true',
+              },
+            ]}
+            value={this.state[option.id].post_aoj}
+            onChange={(postAoj) =>
+              this.setState({
+                [option.id]: {
+                  checked: true,
+                  post_aoj: postAoj,
                 },
-              ]}
-              value={this.state[option.id].post_aoj}
-              onChange={(postAoj) =>
-                this.setState({
-                  [option.id]: {
-                    checked: true,
-                    post_aoj: postAoj,
-                  },
-                })
-              }
-            />
-          )}
+              })
+            }
+          />
+        )}
       </React.Fragment>
     );
   };
@@ -335,22 +346,22 @@ class IssueRemandReasonsOptions extends React.PureComponent {
             {...checkboxGroupProps}
           />
           <br />
-          { !this.props.featureToggles.additional_remand_reasons &&
+          {!this.props.featureToggles.additional_remand_reasons && (
             <CheckboxGroup
-             label={<h3>Due Process</h3>}
-             name="due-process"
-             options={REMAND_REASONS.dueProcess}
-             {...checkboxGroupProps}
+              label={<h3>Due Process</h3>}
+              name="due-process"
+              options={REMAND_REASONS.dueProcess}
+              {...checkboxGroupProps}
             />
-          }
-          { this.props.featureToggles.additional_remand_reasons &&
-              <CheckboxGroup
-              label={<h3>Other</h3>}
+          )}
+          {this.props.featureToggles.additional_remand_reasons && (
+            <CheckboxGroup
+              label={<h3>Other reasons</h3>}
               name="other"
               options={REMAND_REASONS.other}
               {...checkboxGroupProps}
             />
-          }
+          )}
         </div>
       </div>
     );
@@ -362,7 +373,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     return (
       <div key={`remand-reasons-${String(issue.id)}`}>
         <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
-          Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ""}
+          Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ''}
         </h2>
         <div {...smallBottomMargin}>
           {appeal.isLegacyAppeal
