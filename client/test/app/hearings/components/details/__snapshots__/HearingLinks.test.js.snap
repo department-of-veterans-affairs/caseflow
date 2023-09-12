@@ -229,11 +229,12 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                   aria-describedby="tooltip-Copy VLJ Link"
                   aria-label=""
                   className="cf-apppeal-id"
-                  data-css-cjlnsd=""
+                  data-css-p6dv0b=""
                   data-event="focus mouseenter"
                   data-event-off="mouseleave keydown"
                   data-for="tooltip-Copy VLJ Link"
                   data-tip={true}
+                  disabled={true}
                   onClick={[Function]}
                   tabIndex={0}
                   type="submit"
@@ -569,11 +570,12 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                   aria-describedby="tooltip-Copy Guest Link"
                   aria-label=""
                   className="cf-apppeal-id"
-                  data-css-cjlnsd=""
+                  data-css-p6dv0b=""
                   data-event="focus mouseenter"
                   data-event-off="mouseleave keydown"
                   data-for="tooltip-Copy Guest Link"
                   data-tip={true}
+                  disabled={true}
                   onClick={[Function]}
                   tabIndex={0}
                   type="submit"
@@ -818,9 +820,36 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
           }
           wasVirtual={true}
         >
-          <span>
-            Expired
-          </span>
+          <VirtualHearingLink
+            hearing={
+              Object {
+                "scheduledForIsPast": false,
+              }
+            }
+            isVirtual={false}
+            label="Start Virtual Hearing"
+            newWindow={true}
+            showFullLink={false}
+            user={
+              Object {
+                "addressCity": "Washington",
+                "addressLine1": "123 Fake St.",
+                "addressState": "DC",
+                "addressZip": "20001",
+                "name": "John Smith",
+              }
+            }
+            virtualHearing={
+              Object {
+                "aliasWithHost": "BVA#00000001@localhost",
+                "clientHost": "localhost",
+                "guestPin": "12345678#",
+                "hostPin": "1234567890#",
+                "jobCompleted": true,
+                "status": "active",
+              }
+            }
+          />
           <div
             data-css-1abghdv=""
           >
@@ -909,9 +938,36 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
           }
           wasVirtual={true}
         >
-          <span>
-            Expired
-          </span>
+          <VirtualHearingLink
+            hearing={
+              Object {
+                "scheduledForIsPast": false,
+              }
+            }
+            isVirtual={false}
+            label="Join Virtual Hearing"
+            newWindow={true}
+            showFullLink={false}
+            user={
+              Object {
+                "addressCity": "Washington",
+                "addressLine1": "123 Fake St.",
+                "addressState": "DC",
+                "addressZip": "20001",
+                "name": "John Smith",
+              }
+            }
+            virtualHearing={
+              Object {
+                "aliasWithHost": "BVA#00000001@localhost",
+                "clientHost": "localhost",
+                "guestPin": "12345678#",
+                "hostPin": "1234567890#",
+                "jobCompleted": true,
+                "status": "active",
+              }
+            }
+          />
           <div
             data-css-1abghdv=""
           >
@@ -1648,11 +1704,12 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                   aria-describedby="tooltip-Copy Guest Link"
                   aria-label=""
                   className="cf-apppeal-id"
-                  data-css-cjlnsd=""
+                  data-css-p6dv0b=""
                   data-event="focus mouseenter"
                   data-event-off="mouseleave keydown"
                   data-for="tooltip-Copy Guest Link"
                   data-tip={true}
+                  disabled={false}
                   onClick={[Function]}
                   tabIndex={0}
                   type="submit"

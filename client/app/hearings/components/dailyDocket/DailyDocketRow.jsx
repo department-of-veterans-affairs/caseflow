@@ -375,11 +375,15 @@ class DailyDocketRow extends React.Component {
     return (
       <div {...inputSpacing}>
         {hearing?.isVirtual && <StaticVirtualHearing hearing={hearing} user={user} />}
-        {hearing?.isVirtual !== true && userJudgeOrCoordinator(user, hearing) && <Button
+        {hearing?.isVirtual !== true && !hearing?.scheduledForIsPast && userJudgeOrCoordinator(user, hearing) && <Button
           classNames={['usa-button-secondary']}
           type="button"
           disabled={this.props.conferenceLinkError}
           onClick={this.conferenceLinkOnClick} > Connect to Recording System</Button> }
+        {hearing?.isVirtual !== true && hearing?.scheduledForIsPast && userJudgeOrCoordinator(user, hearing) && <div>
+          <span>
+            Host Link: N/A
+          </span></div> }
         <DispositionDropdown
           {...inputProps}
           cancelUpdate={this.cancelUpdate}
