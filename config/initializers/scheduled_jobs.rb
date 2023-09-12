@@ -6,6 +6,7 @@ SCHEDULED_JOBS = {
     "annual_metrics" => AnnualMetricsReportJob,
     "priority_ep_sync_batch_process_job" => PriorityEpSyncBatchProcessJob,
     "batch_process_rescue_job" => BatchProcessRescueJob,
+    "calculate_dispatch_stats" => CalculateDispatchStatsJob,
     "create_establish_claim" => CreateEstablishClaimTasksJob,
     "data_integrity_checks" => DataIntegrityChecksJob,
     "delete_conferences_job" => VirtualHearings::DeleteConferencesJob,
