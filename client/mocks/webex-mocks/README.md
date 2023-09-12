@@ -16,7 +16,7 @@ for brevity These instructions will follow the happy path.  While in the client 
 [nodenv install 14.21.2]
 [nodenv local 14.21.2]
 
-If for any reason you want to go back to the original nodenv that was used prior to this change you can run, [nodenv local 12.13.0]
+If for any reason you want to go back to the original nodenv that was used prior to this change you can run, [nodenv local 12.22.0]
 
 If it all succeeds you can attempt the [npm install json-server] or [yarn add json-server]  once again.
 
