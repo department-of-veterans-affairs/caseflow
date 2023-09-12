@@ -12,8 +12,6 @@ import COPY from '../../../COPY';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
 
-import PowerOfAttorneyDecisionReview from './PowerOfAttorneyDecisionReview';
-
 import { DISPOSITION_OPTIONS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import {
   formatDecisionIssuesFromRequestIssues,
@@ -169,7 +167,6 @@ class NonCompDispositions extends React.PureComponent {
     }
 
     let editIssuesLink = null;
-    let displayPOAComponent = this.props.task.business_line === 'vha';
 
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
@@ -188,31 +185,16 @@ class NonCompDispositions extends React.PureComponent {
     }
 
     return <div>
-      {displayPOAComponent && <div className="cf-decisions">
-        <div className="cf-decision">
-          <hr />
-          <div className="usa-grid-full">
-            <h2>{COPY.CASE_DETAILS_POA_SUBSTITUTE} </h2>
-            <PowerOfAttorneyDecisionReview
-              appealId={task.appeal.uuid}
-            />
-          </div>
-        </div>
-      </div>}
       <div className="cf-decisions">
-        <div className="cf-decision">
-          {displayPOAComponent && <hr />}
-          <div className="usa-grid-full">
-            <div className="usa-width-one-half">
-              <h2>Decision</h2>
-              <div>Review each issue and assign the appropriate dispositions.</div>
-            </div>
-            <div className="usa-width-one-half cf-txt-r">
-              {editIssuesLink}
-            </div>
+        <div className="usa-grid-full">
+          <div className="usa-width-one-half">
+            <h2>Decision</h2>
+            <div>Review each issue and assign the appropriate dispositions.</div>
+          </div>
+          <div className="usa-width-one-half cf-txt-r">
+            {editIssuesLink}
           </div>
         </div>
-
         <div className="cf-decision-list">
           {
             this.state.requestIssues.map((issue, index) => {

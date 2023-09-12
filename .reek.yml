@@ -252,7 +252,6 @@ detectors:
       - Reporter#percent
       - SanitizedJsonConfiguration
       - ScheduleHearingTaskPager#sorted_tasks
-      - UpdatePOAConcern
       - VBMSCaseflowLogger#log
       - LegacyDocket
   UnusedParameters:

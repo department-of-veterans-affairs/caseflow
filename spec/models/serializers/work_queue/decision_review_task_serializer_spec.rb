@@ -2,50 +2,26 @@
 
 describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
   let(:veteran) { create(:veteran) }
-  let(:claimant_type) { :none }
-  let(:hlr) do
-    create(:higher_level_review,
-           benefit_type: nil,
-           veteran_file_number: veteran.file_number,
-           claimant_type: claimant_type)
-  end
+  let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
   let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
   let(:task) { create(:higher_level_review_task, appeal: hlr, assigned_to: non_comp_org) }
 
   subject { described_class.new(task) }
 
   describe "#as_json" do
-    let(:claimant_type) { :veteran_claimant }
     it "renders ready for client consumption" do
       serializable_hash = {
         id: task.id.to_s,
         type: :decision_review_task,
         attributes: {
-          has_poa: true,
           claimant: { name: hlr.veteran_full_name, relationship: "self" },
-          appeal: {
-            id: hlr.id.to_s,
-            isLegacyAppeal: false,
-            issueCount: 0,
-            activeRequestIssues: [],
-            uuid: task.appeal.uuid,
-            appellant_type: "VeteranClaimant"
-          },
-          power_of_attorney: {
-            representative_address: hlr&.representative_address,
-            representative_email_address: hlr&.representative_email_address,
-            representative_name: hlr&.representative_name,
-            representative_type: hlr&.representative_type,
-            representative_tz: hlr&.representative_tz,
-            poa_last_synced_at: hlr&.poa_last_synced_at
-          },
+          appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
           veteran_ssn: veteran.ssn,
           veteran_participant_id: veteran.participant_id,
           assigned_on: task.assigned_at,
           assigned_at: task.assigned_at,
           closed_at: task.closed_at,
           started_at: task.started_at,
-          appellant_type: "VeteranClaimant",
           tasks_url: "/decision_reviews/nco",
           id: task.id,
           created_at: task.created_at,
@@ -68,17 +44,8 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
           id: task.id.to_s,
           type: :decision_review_task,
           attributes: {
-            has_poa: false,
             claimant: { name: "claimant", relationship: "Unknown" },
-            appeal: {
-              id: hlr.id.to_s,
-              isLegacyAppeal: false,
-              issueCount: 0,
-              activeRequestIssues: [],
-              uuid: task.appeal.uuid,
-              appellant_type: nil
-            },
-            power_of_attorney: hlr.claimant&.power_of_attorney,
+            appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
             veteran_ssn: veteran.ssn,
             veteran_participant_id: veteran.participant_id,
             assigned_on: task.assigned_at,
@@ -88,7 +55,6 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             tasks_url: "/decision_reviews/nco",
             id: task.id,
             created_at: task.created_at,
-            appellant_type: nil,
             issue_count: 0,
             issue_types: "",
             type: "Higher-Level Review",
@@ -118,32 +84,15 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
           id: task.id.to_s,
           type: :decision_review_task,
           attributes: {
-            has_poa: true,
             claimant: { name: claimant.name, relationship: "Veteran" },
-            appeal: {
-              id: hlr.id.to_s,
-              isLegacyAppeal: false,
-              issueCount: 0,
-              activeRequestIssues: [],
-              uuid: task.appeal.uuid,
-              appellant_type: claimant.type
-            },
+            appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
             veteran_ssn: veteran.ssn,
-            power_of_attorney: {
-              representative_address: hlr&.representative_address,
-              representative_email_address: hlr&.representative_email_address,
-              representative_name: hlr&.representative_name,
-              representative_type: hlr&.representative_type,
-              representative_tz: hlr&.representative_tz,
-              poa_last_synced_at: hlr&.poa_last_synced_at
-            },
             veteran_participant_id: veteran.participant_id,
             assigned_on: task.assigned_at,
             assigned_at: task.assigned_at,
             closed_at: task.closed_at,
             started_at: task.started_at,
             tasks_url: "/decision_reviews/nco",
-            appellant_type: "VeteranClaimant",
             id: task.id,
             created_at: task.created_at,
             issue_count: 0,
@@ -157,9 +106,10 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
     end
 
     context "decision review with multiple issues with multiple issue categories" do
-      let(:claimant_type) { :veteran_claimant }
-      let(:benefit_type) { "vha" }
       let!(:vha_org) { create(:business_line, name: "Veterans Health Administration", url: "vha") }
+      let(:hlr) do
+        create(:higher_level_review_vha_task).appeal
+      end
       let(:request_issues) do
         [
           create(:request_issue, benefit_type: "vha", nonrating_issue_category: "Beneficiary Travel"),
@@ -177,25 +127,9 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
           id: task.id.to_s,
           type: :decision_review_task,
           attributes: {
-            has_poa: true,
             claimant: { name: hlr.veteran_full_name, relationship: "self" },
-            appeal: {
-              id: hlr.id.to_s,
-              isLegacyAppeal: false,
-              issueCount: 2,
-              activeRequestIssues: serialized_issues,
-              appellant_type: "VeteranClaimant",
-              uuid: task.appeal.uuid
-            },
+            appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 3, activeRequestIssues: serialized_issues },
             veteran_ssn: hlr.veteran.ssn,
-            power_of_attorney: {
-              representative_address: hlr&.representative_address,
-              representative_email_address: hlr&.representative_email_address,
-              representative_name: hlr&.representative_name,
-              representative_type: hlr&.representative_type,
-              representative_tz: hlr&.representative_tz,
-              poa_last_synced_at: hlr&.poa_last_synced_at
-            },
             veteran_participant_id: hlr.veteran.participant_id,
             assigned_on: task.assigned_at,
             assigned_at: task.assigned_at,
@@ -204,11 +138,10 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             tasks_url: "/decision_reviews/nco",
             id: task.id,
             created_at: task.created_at,
-            issue_count: 2,
+            issue_count: 3,
             issue_types: hlr.request_issues.active.pluck(:nonrating_issue_category).join(","),
             type: "Higher-Level Review",
-            business_line: non_comp_org.url,
-            appellant_type: "VeteranClaimant"
+            business_line: non_comp_org.url
           }
         }
         expect(subject.serializable_hash[:data]).to eq(serializable_hash)

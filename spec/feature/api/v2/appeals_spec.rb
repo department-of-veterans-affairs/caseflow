@@ -309,7 +309,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
 
     let!(:hlr) do
       create(:higher_level_review,
-             veteran: veteran,
+             veteran_file_number: veteran_file_number,
              receipt_date: receipt_date,
              informal_conference: informal_conference,
              same_office: same_office,
@@ -331,7 +331,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
 
     let!(:supplemental_claim_review) do
       create(:supplemental_claim,
-             veteran: veteran,
+             veteran_file_number: veteran_file_number,
              receipt_date: receipt_date,
              benefit_type: "pension",
              legacy_opt_in_approved: legacy_opt_in_approved,
@@ -563,12 +563,11 @@ describe "Appeals API v2", :all_dbs, type: :request do
     let(:veteran_file_number) { "111223333" }
     let(:receipt_date) { Time.zone.today - 20.days }
     let(:benefit_type) { "compensation" }
-    let(:veteran) { create(:veteran, file_number: veteran_file_number) }
 
     let(:hlr_ep_clr_date) { receipt_date + 30 }
     let!(:hlr_with_dta_error) do
       create(:higher_level_review,
-             veteran: veteran,
+             veteran_file_number: veteran_file_number,
              receipt_date: receipt_date)
     end
 
@@ -594,7 +593,7 @@ describe "Appeals API v2", :all_dbs, type: :request do
 
     let!(:dta_sc) do
       create(:supplemental_claim,
-             veteran: veteran,
+             veteran_file_number: veteran_file_number,
              decision_review_remanded: hlr_with_dta_error)
     end
 

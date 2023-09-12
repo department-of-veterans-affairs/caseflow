@@ -55,11 +55,7 @@ describe RequestIssue, :all_dbs do
     )
   end
 
-  let(:veteran_file_number) { "789987789" }
-  let!(:veteran) do
-    Generators::Veteran.build(file_number: veteran_file_number).save!
-    Veteran.find_by(file_number: veteran_file_number)
-  end
+  let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
   let!(:decision_sync_processed_at) { nil }
   let!(:end_product_establishment) { nil }
 

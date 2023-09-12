@@ -305,6 +305,10 @@ describe Claimant, :postgres do
 
   context "delegate name methods" do
     let(:participant_id) { "" }
+    let(:name) { "William Jennings Bryan" }
+    let!(:bgs_attorney) do
+      BgsAttorney.create!(participant_id: participant_id, name: name, record_type: "POA Attorney")
+    end
     let(:attorney_claimant) { create(:claimant, :attorney, participant_id: participant_id) }
     let(:unrecognized_claimant) { create(:claimant, :with_unrecognized_appellant_detail) }
     it "returns a nil for first, middle, and last name for an attorney claimant" do
@@ -321,8 +325,7 @@ describe Claimant, :postgres do
       expect(unrecognized_claimant.name).to eq("Tom Brady")
     end
     it "returns the correct name for an attorney claimant" do
-      # This name value comes from the claimant factory
-      expect(attorney_claimant.name).to eq("Seeded AttyClaimant")
+      expect(attorney_claimant.name).to eq("William Jennings Bryan")
     end
   end
 
