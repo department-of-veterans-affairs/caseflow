@@ -33,7 +33,6 @@ class CannotDeleteContentionRemediationJob < CaseflowJob
       contention_ids = get_contention_ids(rius)
       remediate!(rius, contention_ids, total)
       puts @logs
-      binding.pry
       store_logs_in_s3_bucket
     end
   end
