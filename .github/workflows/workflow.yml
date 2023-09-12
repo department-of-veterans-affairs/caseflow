@@ -275,6 +275,11 @@ jobs:
           COVERAGE_DIR: /home/circleci/coverage #circleci is the USER
 
     steps:
+      - uses: actions/setup-node@v3
+        name: Setup Node
+        with:
+          node-version-file: .nvmrc
+
       - name: Install chromium
         run: |
           CHROME_VERSION="106.0.5249.119-1"
