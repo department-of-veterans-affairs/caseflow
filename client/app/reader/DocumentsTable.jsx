@@ -192,8 +192,7 @@ class DocumentsTable extends React.Component {
  }
 
  isRecieptFilterButtonEnabled = () => {
-   if (this.state.recieptFilter === recieptDateFilterStates.BETWEEN && (this.state.toDate === '' || this.state.fromDate === '' ||
-  this.state.toDateErrors.length > 0 || this.state.fromDateErrors.length > 0)) {
+   if (this.state.recieptFilter === recieptDateFilterStates.BETWEEN && (this.state.toDate === '' || this.state.fromDate === '')) {
      return true;
    }
 
