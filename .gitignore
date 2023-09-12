@@ -26,6 +26,7 @@ client/junit.xml
 !/reports/sql_queries
 !/reports/.keep
 credstash.log
+client/mocks/webex-mocks/webex-mock.json
 # Ignore MS Office temp files
 ~$*
 
