@@ -70,7 +70,7 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
 
   def mark_hearing_cancelled
     update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
-    clean_up_virtual_hearing
+    clean_up_virtual_hearing(open_hearing)
   end
 
   def cancel_active_hearing_tasks

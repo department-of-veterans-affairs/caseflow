@@ -140,12 +140,6 @@ class AssignHearingDispositionTask < Task
 
   private
 
-  def clean_up_virtual_hearing
-    if hearing.virtual?
-      perform_later_or_now(VirtualHearings::DeleteConferencesJob)
-    end
-  end
-
   def update_children_status_after_closed
     children.open.each { |task| task.update!(status: status) }
   end
@@ -218,7 +212,7 @@ class AssignHearingDispositionTask < Task
   def mark_hearing_cancelled
     multi_transaction do
       update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
-      clean_up_virtual_hearing
+      clean_up_virtual_hearing(hearing)
       cancel!
     end
   end
@@ -245,7 +239,7 @@ class AssignHearingDispositionTask < Task
         update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
       end
 
-      clean_up_virtual_hearing
+      clean_up_virtual_hearing(hearing)
       created_tasks = reschedule_or_schedule_later(
         instructions: instructions,
         after_disposition_update: payload_values[:after_disposition_update]

@@ -125,4 +125,13 @@ module TaskExtensionForHearings
       assigned_to: HearingAdmin.singleton
     )&.open
   end
+
+  # Purpose: Deletes the old scheduled virtual hearings
+  # Params: Hearing object
+  # Return: Returns nil
+  def clean_up_virtual_hearing(hearing)
+    if hearing.virtual?
+      perform_later_or_now(VirtualHearings::DeleteConferencesJob)
+    end
+  end
 end

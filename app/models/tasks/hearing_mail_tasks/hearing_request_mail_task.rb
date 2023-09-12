@@ -93,15 +93,6 @@ class HearingRequestMailTask < MailTask
     !open_hearing.scheduled_for_past?
   end
 
-  # Purpose: Deletes the old scheduled virtual hearings
-  # Params: None
-  # Return: Returns nil
-  def clean_up_virtual_hearing
-    if open_hearing.virtual?
-      perform_later_or_now(VirtualHearings::DeleteConferencesJob)
-    end
-  end
-
   # Purpose: Sets the previous hearing's disposition
   # Params: None
   # Return: Returns a boolean for if the hearing has been updated

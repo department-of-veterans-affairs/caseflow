@@ -102,7 +102,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
       if open_hearing
         postpone_previous_hearing
-        clean_up_virtual_hearing
+        clean_up_virtual_hearing(open_hearing)
       end
       # Schedule hearing or create new ScheduleHearingTask depending on after disposition action
       reschedule_or_schedule_later(after_disposition_update)
