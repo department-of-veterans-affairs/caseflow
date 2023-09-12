@@ -6,6 +6,7 @@
 class CannotDeleteContentionRemediationJob < CaseflowJob
   queue_with_priority :low_priority
 
+  # Sub folder name
   S3_FOLDER_NAME = "data-remediation-output"
 
   def initialize
