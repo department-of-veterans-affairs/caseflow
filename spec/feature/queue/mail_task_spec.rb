@@ -669,6 +669,7 @@ RSpec.feature "MailTasks", :postgres do
               expect(first_task_item).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
             end
           end
+          #rerun checks
         end
       end
     end
