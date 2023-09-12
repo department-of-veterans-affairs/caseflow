@@ -284,7 +284,7 @@ class AssignToView extends React.Component {
       return COPY.ASSIGN_TO_TEAM_DROPDOWN;
     }
 
-    return COPY.ASSIGN_TO_USER_DROPDOWN;
+    return COPY.ASSIGN_WIDGET_USER_DROPDOWN_PLACEHOLDER;
 
   };
 
