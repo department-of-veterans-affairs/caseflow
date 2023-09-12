@@ -58,7 +58,7 @@ class PriorityEndProductSyncQueue < CaseflowRecord
   #
   # Response: Log message stating newly destroyed PEPSQ records
   def self.destroy_batch_process_pepsq_records!(batch_process)
-    synced_records = batch_process.priority_end_product_sync_queue.where(status: "SYNCED")
+    synced_records = batch_process.priority_end_product_sync_queue.where(status: Constants.PRIORITY_EP_SYNC.synced)
     log_text = "PriorityEpSyncBatchProcessJob #{synced_records.size} synced records deleted:"\
       " #{synced_records.map(&:id)}  Time: #{Time.zone.now}"
     synced_records.delete_all
