@@ -4,9 +4,9 @@ Step 1: Open a terminal
 
 Step 2: Navigate to the caseflow/client
 
-step 3: Run command: [npm install json-server] or [yarn add json-server]
+step 3: Run command: [yarn add json-server]
 
-If the [npm install json-server] or [yarn add json-server]  returns an error that resembles:
+If the [yarn add json-server] returns an error that resembles:
 
 error standard@17.1.0: The engine "node" is incompatible with this module. Expected version "^12.22.0 || ^14.17.0 || >=16.0.0". Got "15.1.0"
 
@@ -18,7 +18,7 @@ for brevity These instructions will follow the happy path.  While in the client 
 
 If for any reason you want to go back to the original nodenv that was used prior to this change you can run, [nodenv local 12.13.0]
 
-If it all succeeds you can attempt the [npm install json-server] or [yarn add json-server]  once again.
+If it all succeeds you can attempt the [yarn add json-server] once again.
 
 This time with no issue.
 given that the install goes as expected you can continue following the rest of the directions.
@@ -54,6 +54,35 @@ Get all conferencelinks with this endpoint
 Javascript API call Fetch/Axios examples
 [https://jsonplaceholder.typicode.com/]
 
-
+example request body:
+{
+  "jwt": {
+      "sub": "0006370",
+      "Nbf": "2023-09-05T09:00:00-10:00",
+      "Exp": "2023-09-05T23:59:59-10:00",
+      "flow": {
+          "id": "6a78ea67-220a-4f9f-9271-a76989ff1f5e",
+          "data": [
+              {
+                  "uri": "Allan.Mosciski@intadmin.room.wbx2.com"
+              },
+              {
+                  "uri": "Uriah.Reinger34@intadmin.room.wbx2.com"
+              }
+          ]
+      }
+  },
+  "aud": "some stuff",
+  "numGuest": 10,
+  "numHost": 1,
+  "provideShortUrls": false,
+  "verticalType": "Stand-alone contextually-based pricing structure",
+  "loginUrlForHost": true,
+  "jweAlg": "PBES2-HS512+A256KW",
+  "saltLength": 5,
+  "iterations": 713,
+  "enc": "A256GCM",
+  "jwsAlg": "HS512"
+}
 
 
