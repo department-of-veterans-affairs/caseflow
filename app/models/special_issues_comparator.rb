@@ -188,6 +188,7 @@ class SpecialIssuesComparator
     contention_matches&.compact
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   # takes the contention given and tries to match it to the current rating issue (issue)
   def link_contention_to_rating(contention, rba_contention, contention_matches)
     # if only one contention, check the contention info

@@ -947,6 +947,7 @@ class LegacyAppeal < CaseflowRecord
     Intake::LegacyAppealSerializer.new(self).serializable_hash[:data][:attributes]
   end
 
+  # rubocop:disable Naming/PredicateName
   def is_legacy?
     true
   end

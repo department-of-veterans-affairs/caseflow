@@ -300,7 +300,7 @@ class RequestIssuesUpdate < CaseflowRecord
     # cycle each edited issue (before) and compare MST/PACT with (fetch_after_issues)
     # reverse_each to make the issues on the case timeline appear in similar sequence to what user sees the edit issues page
     edited_issues.reverse_each do |before_issue|
-      after_issue = after_issues.find { |i| i.id == before_issue.id }
+      after_issue = after_issues.find { |issue| issue.id == before_issue.id }
       # if before/after has a change in MST/PACT, create issue update task
       if (before_issue.mst_status != after_issue.mst_status) || (before_issue.pact_status != after_issue.pact_status)
         create_issue_update_task("Edited Issue", before_issue, after_issue)
@@ -331,6 +331,7 @@ class RequestIssuesUpdate < CaseflowRecord
     end
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   def create_issue_update_task(change_type, before_issue, after_issue = nil)
     transaction do
       # close out any tasks that might be open
