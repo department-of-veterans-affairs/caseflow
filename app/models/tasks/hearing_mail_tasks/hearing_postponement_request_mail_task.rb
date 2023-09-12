@@ -203,7 +203,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
       ***
 
-      ###### Marked as complete:
+      ###### Mark as complete:
 
       **DECISION**
       Motion to postpone #{ruling}
