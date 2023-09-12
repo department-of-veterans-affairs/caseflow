@@ -334,6 +334,11 @@ jobs:
         with:
           fetch-depth: '0'
 
+      - uses: actions/setup-node@v3
+        name: Setup Node
+        with:
+          node-version-file: .nvmrc
+
       - name: Install Ruby Dependencies
         run: |
           ruby -v
@@ -341,6 +346,7 @@ jobs:
           echo $BUNDLER_V
           gem install bundler:$BUNDLER_V
           bundle install --path vendor/bundle
+
       - name: Install Node Dependencies
         run: ./ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
