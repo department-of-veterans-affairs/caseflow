@@ -156,7 +156,6 @@ class DocumentsTable extends React.Component {
  constructor() {
    super();
    this.state = {
-     frozenDocs: '',
      recieptFilter: '',
      fromDate: '',
      toDate: '',
@@ -170,12 +169,12 @@ class DocumentsTable extends React.Component {
  }
 
  executeRecieptFilter = () => {
-  this.props.setRecieptDateFilter(this.state.recieptFilter,
-    { fromDate: this.state.fromDate,
-      toDate: this.state.toDate,
-      onDate: this.state.onDate});
+   this.props.setRecieptDateFilter(this.state.recieptFilter,
+     { fromDate: this.state.fromDate,
+       toDate: this.state.toDate,
+       onDate: this.state.onDate });
 
-      this.toggleRecieptDataDropdownFilterVisibility();
+   this.toggleRecieptDataDropdownFilterVisibility();
  }
 
  isRecieptFilterButtonEnabled = () => {
@@ -203,35 +202,26 @@ class DocumentsTable extends React.Component {
    return false;
  }
  componentDidMount() {
-   if (this.state.frozenDocs === '') {
-     const frozenDocs = this.props.documents;
 
-     Object.freeze(frozenDocs);
-     this.setState({
-       frozenDocs
-     });
-     let docsArray = []
+   // this if statement is what freezes the values, once it's set, it's set unless manipulated
+   // back to a empty state via redux
+   if (this.props.docFilterCriteria.docTypeList.length === 0) {
+
+     let docsArray = [];
 
      this.props.documents.map((x) => docsArray.includes(x.type) ? true : docsArray.push(x.type));
+     // convert each item to a hash for use in the document filter
+     let filterItems = [];
 
-      // convert each item to a hash for use in the document filter
-      let filterItems = [];
+     docsArray.forEach((x) => filterItems.push({
+       value: docsArray.indexOf(x),
+       text: x
+     }));
 
-      docsArray.forEach((x) => filterItems.push({
-        value: docsArray.indexOf(x),
-        text: x
-      }));
-      if(this.state.fallbackState === '') {
-        this.setState({fallbackState: filterItems});
-
-      }
-      if (this.props.docFilterCriteria.docTypeList.length === 0 )
-      {
-        console.log('setting doc types')
-        this.props.setDocTypes(filterItems)
-      }
-
+     // store the tags in redux
+     this.props.setDocTypes(filterItems);
    }
+
    if (this.props.pdfList.scrollTop) {
      this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
 
@@ -354,31 +344,6 @@ class DocumentsTable extends React.Component {
         },
       ];
     }
-
-    const populateDocumentFilter = () => {
-      console.log(this.props);
-      let docsArray = [];
-      console.log(this.state);
-      console.log(this.props);
-      // looks through all document types, and only adds them into docsArray if they are unique
-      this.state.frozenDocs.map((x) => docsArray.includes(x.type) ? true : docsArray.push(x.type));
-
-      // convert each item to a hash for use in the document filter
-      let filterItems = [];
-
-      docsArray.forEach((x) => filterItems.push({
-        value: docsArray.indexOf(x),
-        text: x
-      }));
-      if(this.state.fallbackState === '') {
-        this.setState({fallbackState: filterItems});
-
-      }
-      console.log(filterItems);
-      console.log(this.props.docFilterCriteria.docTypeList);
-
-      return filterItems;
-    };
 
     const isCategoryDropdownFilterOpen = _.get(this.props.pdfList, [
       'dropdowns',
