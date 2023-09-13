@@ -143,7 +143,7 @@ class DocumentsTable extends React.Component {
      return foundErrors;
 
    }
-   this.setState({ toDateErrors: [foundErrors] });
+   this.setState({ toDateErrors: foundErrors });
 
    return foundErrors;
 
@@ -159,11 +159,12 @@ class DocumentsTable extends React.Component {
 
    if (convertStringToDate(pickedDate) > new Date()) {
      foundErrors = [...foundErrors, 'Reciept date cannot be in the future.'];
+     this.setState({ onDateErrors: foundErrors });
 
      return foundErrors;
    }
 
-   this.setState({ onDateErrors: [foundErrors] });
+   this.setState({ onDateErrors: [] });
 
    return foundErrors;
  }
@@ -192,6 +193,8 @@ class DocumentsTable extends React.Component {
    const toErrors = this.validateDateTo(this.state.toDate);
    const fromErrors = this.validateDateFrom(this.state.fromDate);
    const onErrors = this.validateDateOn(this.state.onDate);
+
+   console.log(onErrors);
 
    if (fromErrors.length === 0 && toErrors.length === 0 && onErrors.length === 0) {
      this.props.setRecieptDateFilter(this.state.recieptFilter,
