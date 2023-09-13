@@ -136,7 +136,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       this.setState({
         [reason.code]: {
           checked: true,
-          post_aoj: reason.post_aoj ? reason.post_aoj.toString() : null,
+          post_aoj: reason.post_aoj === null ? null : reason.post_aoj.toString(),
         },
       })
     );
