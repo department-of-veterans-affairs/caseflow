@@ -14,6 +14,10 @@
     appSelectList: Test::UsersController::APPS,
     userSession: user_session,
     timezone: { getlocal: Time.now.getlocal.zone, zone: Time.zone.name },
-    epTypes: ep_types
+    epTypes: ep_types,
+    featureToggles: {
+      interfaceVersion2: FeatureToggle.enabled?(:interface_version_2, user: current_user),
+      metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user)
+    }
   }) %>
 <% end %>
