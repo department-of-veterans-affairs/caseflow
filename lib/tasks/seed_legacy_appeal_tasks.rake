@@ -122,10 +122,15 @@ namespace :db do
         end
 
         def custom_decass_attributes(key, user, decass_creation)
+          attorney = if Rails.env.development? || Rails.env.test?
+                       User.find_by_css_id("BVALSHIELDS") # local / test option
+                     else
+                       User.find_by_css_id("CF_ATTN_283") # UAT option
+                     end
           if decass_creation
             {
               defolder: key,
-              deatty: user.attorney_in_vacols? ? user.id : User.find_by_css_id("BVALSHIELDS").id,
+              deatty: user.attorney_in_vacols? ? user.id : attorney.id,
               deteam: "SBO",
               deassign: VacolsHelper.local_date_with_utc_timezone - 7.days,
               dereceive: VacolsHelper.local_date_with_utc_timezone,
@@ -182,16 +187,22 @@ namespace :db do
           # Will need a judge user for judge decision review task and an attorney user for the subsequent Attorney Task
           root_task = RootTask.find_or_create_by!(appeal: appeal)
 
+          judge = if Rails.env.development? || Rails.env.test?
+                    User.find_by_css_id("BVAAABSHIRE") # local / test option
+                  else
+                    User.find_by_css_id("CF_VLJ_283") # UAT option
+                  end
+
           review_task = JudgeDecisionReviewTask.create!(
             appeal: appeal,
             parent: root_task,
-            assigned_to: User.find_by_css_id("BVAAABSHIRE")
+            assigned_to: judge
           )
           AttorneyTask.create!(
             appeal: appeal,
             parent: review_task,
             assigned_to: user,
-            assigned_by: User.find_by_css_id("BVAAABSHIRE")
+            assigned_by: judge
           )
           $stdout.puts("You have created an Attorney task")
         end
@@ -221,8 +232,7 @@ namespace :db do
           JudgeDecisionReviewTask.create!(
             appeal: appeal,
             parent: root_task,
-            assigned_to: user,
-            assigned_by: User.find_by_css_id("BVALSHIELDS")
+            assigned_to: user
           )
           $stdout.puts("You have created a Review task")
         end
@@ -397,7 +407,7 @@ namespace :db do
         if Rails.env.development? || Rails.env.test?
           $stdout.puts("Hint: Attorney Options include 'BVALSHIELDS'") # local / test option
         else
-          $stdout.puts("Hint: Judge Options include 'CF_ATTN_283', 'CF_ATTNTWO_283'") # UAT option
+          $stdout.puts("Hint: Attorney Options include 'CF_ATTN_283', 'CF_ATTNTWO_283'") # UAT option
         end
 
         css_id = $stdin.gets.chomp.upcase
@@ -408,7 +418,7 @@ namespace :db do
         user = if Rails.env.development? || Rails.env.test?
                  User.find_by_css_id("FAKE USER") # local / test option
                else
-                 User.find_by_css_id("CF_VLJTHREE_283") # UAT option
+                 User.find_by_css_id("CF_VLJ_283") # UAT option
                end
       end
 
