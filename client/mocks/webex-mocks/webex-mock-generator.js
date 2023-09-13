@@ -62,7 +62,7 @@ const data = {
   // ... other data models
 };
 
-// // Check if the script is being run directly
+// Check if the script is being run directly
 if (require.main === module) {
   fs.writeFileSync(
     MOCK_FILE_PATH,
