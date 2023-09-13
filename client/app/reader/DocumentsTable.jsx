@@ -203,7 +203,6 @@ class DocumentsTable extends React.Component {
    return false;
  }
  componentDidMount() {
-  const dbg = this.props.docFilterCriteria.document;
    if (this.state.frozenDocs === '') {
      const frozenDocs = this.props.documents;
 
@@ -211,6 +210,26 @@ class DocumentsTable extends React.Component {
      this.setState({
        frozenDocs
      });
+     let docsArray = []
+
+     this.props.documents.map((x) => docsArray.includes(x.type) ? true : docsArray.push(x.type));
+
+      // convert each item to a hash for use in the document filter
+      let filterItems = [];
+
+      docsArray.forEach((x) => filterItems.push({
+        value: docsArray.indexOf(x),
+        text: x
+      }));
+      if(this.state.fallbackState === '') {
+        this.setState({fallbackState: filterItems});
+
+      }
+      if (this.props.docFilterCriteria.docTypeList.length === 0 )
+      {
+        console.log('setting doc types')
+        this.props.setDocTypes(filterItems)
+      }
 
    }
    if (this.props.pdfList.scrollTop) {
@@ -337,6 +356,7 @@ class DocumentsTable extends React.Component {
     }
 
     const populateDocumentFilter = () => {
+      console.log(this.props);
       let docsArray = [];
       console.log(this.state);
       console.log(this.props);
@@ -354,6 +374,9 @@ class DocumentsTable extends React.Component {
         this.setState({fallbackState: filterItems});
 
       }
+      console.log(filterItems);
+      console.log(this.props.docFilterCriteria.docTypeList);
+
       return filterItems;
     };
 
@@ -501,7 +524,7 @@ class DocumentsTable extends React.Component {
                     <div style={{ width: '100%', display: 'flex' }}>
                       <span style={{ height: '1px', position: 'absolute', width: '100%', backgroundColor: 'gray' }}></span>
                       <div style={{ display: 'flex', marginTop: '10px', marginRight: '10px', marginBottom: '10px', justifyContent: 'end', width: '100%' }}>
-                        <Button disabled={this.isRecieptFilterButtonEnabled()} onClick={() => this.props.setDocTypes("Testing!")} title="apply filter">
+                        <Button disabled={this.isRecieptFilterButtonEnabled()} onClick={() => this.executeRecieptFilter()} title="apply filter">
                           <span>Apply filter</span>
                         </Button>
                       </div>
@@ -556,7 +579,7 @@ class DocumentsTable extends React.Component {
                   addClearFiltersRow
                 >
                   <DocTagPicker
-                    tags={populateDocumentFilter()}
+                    tags={this.props.docFilterCriteria.docTypeList}
                     tagToggleStates={this.props.docFilterCriteria.document}
                     handleTagToggle={this.props.setDocFilter}
                   />
