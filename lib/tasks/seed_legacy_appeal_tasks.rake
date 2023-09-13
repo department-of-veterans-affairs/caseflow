@@ -26,7 +26,7 @@ namespace :db do
 
           # Creates decass for scenario1/2/4 tasks as they require an assigned_by field
           # which is grabbed from the Decass table (b/c it is an AttorneyLegacyTask)
-          decass_creation = if task_type == "ATTORNEYTASK" && user&.attorney_in_vacols?
+          decass_creation = if (task_type == "ATTORNEYTASK" && user&.attorney_in_vacols?) || task_type == "REVIEWTASK"
                               true
                             else false
                             end
@@ -125,7 +125,7 @@ namespace :db do
           if decass_creation
             {
               defolder: key,
-              deatty: user.id,
+              deatty: user.attorney_in_vacols? ? user.id : User.find_by_css_id("BVALSHIELDS").id,
               deteam: "SBO",
               deassign: VacolsHelper.local_date_with_utc_timezone - 7.days,
               dereceive: VacolsHelper.local_date_with_utc_timezone,
@@ -221,7 +221,8 @@ namespace :db do
           JudgeDecisionReviewTask.create!(
             appeal: appeal,
             parent: root_task,
-            assigned_to: user
+            assigned_to: user,
+            assigned_by: User.find_by_css_id("BVALSHIELDS")
           )
           $stdout.puts("You have created a Review task")
         end
