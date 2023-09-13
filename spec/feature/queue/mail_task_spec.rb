@@ -4,6 +4,7 @@ RSpec.feature "MailTasks", :postgres do
   include ActiveJob::TestHelper
 
   let(:user) { create(:user) }
+  let(:instructions) { "instructions" }
 
   before do
     User.authenticate!(user: user)
@@ -380,7 +381,6 @@ RSpec.feature "MailTasks", :postgres do
 
     context "mark as complete" do
       let(:ruling_date) { "08/15/2023" }
-      let(:instructions) { "instructions" }
 
       shared_examples "whether granted or denied" do
         it "completes HearingPostponementRequestMailTask on Case Timeline" do
@@ -538,6 +538,33 @@ RSpec.feature "MailTasks", :postgres do
           click_button("Mark as complete")
         end
         include_examples "whether granted or denied"
+      end
+    end
+  end
+
+  describe "Hearing Withdrawal Request Mail Task" do
+    before { HearingAdmin.singleton.add_user(User.current_user) }
+
+    let(:hwr_task) do
+      create(:hearing_withdrawal_request_mail_task,
+             :withdrawal_request_with_scheduled_hearing, assigned_by_id: User.system_user.id)
+    end
+    let(:appeal) { hwr_task.appeal }
+
+    describe "mark as complete" do
+      context "appeal has scheduled hearing" do
+        it "marks hearing disposition as cancelled" do
+          page = "queue/appeals/#{appeal.uuid}"
+          visit(page)
+          within("tr", text: "TASK", match: :first) do
+            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                           text: Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.label)
+          end
+          modal = find(".cf-modal-body")
+          expect(modal).to have_content("Mark as complete and withdraw hearing")
+          # fill_in("instructionsField", with: instructions)
+          # click_button("Mark as complete & withdraw hearing")
+        end
       end
     end
   end
