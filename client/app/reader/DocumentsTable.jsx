@@ -205,7 +205,7 @@ class DocumentsTable extends React.Component {
 
    // this if statement is what freezes the values, once it's set, it's set unless manipulated
    // back to a empty state via redux
-   if (this.props.docFilterCriteria.docTypeList.length === 0) {
+   if (this.props.docFilterCriteria.docTypeList === '') {
 
      let docsArray = [];
 
