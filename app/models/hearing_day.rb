@@ -295,7 +295,8 @@ class HearingDay < CaseflowRecord
   def find_or_create_webex_conference_link!
     conference_link = ConferenceLink.find_by(hearing_day_id: id, meeting_type: "Webex")
     if conference_link.nil?
-      conference_link = ConferenceLink.create(hearing_day_id: id, meeting_type: "Webex")
+      hearing_day = HearingDay.find_by(hearing_day_id: id)
+      conference_link = WebexService.guest_webex_link(hearing_day)
     end
     conference_link
   end
