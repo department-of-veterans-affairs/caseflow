@@ -343,7 +343,6 @@ class AssignToView extends React.Component {
     const action = getAction(this.props);
     const actionData = taskActionData(this.props);
 
-    actionData.drop_down_label = COPY.JUDGE_LEGACY_DECISION_REVIEW_TITLE;
     const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
 
     if (!task || task.availableActions.length === 0) {
