@@ -60,14 +60,12 @@ class IssueRemandReasonsOptions extends React.PureComponent {
 
     const { appeal } = this.props;
 
-    const options = flatten(
-      values(appeal.isLegacyAppeal ? LEGACY_REMAND_REASONS : REMAND_REASONS)
-    );
+    const options = flatten(values(appeal.isLegacyAppeal ? LEGACY_REMAND_REASONS : REMAND_REASONS));
     const pairs = zip(
-      map(options, "id"),
+      map(options, 'id'),
       map(options, () => ({
         checked: false,
-        post_aoj: null,
+        post_aoj: null
       }))
     );
 
@@ -76,13 +74,11 @@ class IssueRemandReasonsOptions extends React.PureComponent {
 
   updateIssue = (remandReasons) => {
     const { appeal, issueId } = this.props;
-    const issues = appeal.isLegacyAppeal
-      ? appeal.issues
-      : appeal.decisionIssues;
+    const issues = appeal.isLegacyAppeal ? appeal.issues : appeal.decisionIssues;
 
     return {
       ...find(issues, (issue) => issue.id === issueId),
-      remand_reasons: remandReasons,
+      remand_reasons: remandReasons
     };
   };
 
@@ -119,29 +115,29 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     scrollToComponent(
       dest,
       defaults(opts, {
-        align: "top",
+        align: 'top',
         duration: 1500,
-        ease: "outCube",
-        offset: -35,
+        ease: 'outCube',
+        offset: -35
       })
     );
 
   componentDidMount = () => {
     const {
       issue: { id: issueId, remand_reasons: remandReasons },
-      issues,
+      issues
     } = this.props;
 
     each(remandReasons, (reason) =>
       this.setState({
         [reason.code]: {
           checked: true,
-          post_aoj: reason.post_aoj === null ? null : reason.post_aoj.toString(),
-        },
+          post_aoj: reason.post_aoj === null ? null : reason.post_aoj.toString()
+        }
       })
     );
 
-    if (map(issues, "id").indexOf(issueId) > 0) {
+    if (map(issues, 'id').indexOf(issueId) > 0) {
       this.scrollTo();
     }
   };
@@ -181,18 +177,18 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     // it won't scroll to the correct position: scroll to where the element will be.
     this.scrollTo(this.elTopOfWarning, {
       offset: 25,
-      duration: 1000,
+      duration: 1000
     });
   };
 
   toggleRemandReason = (checked, event) => {
-    const splitId = event.target.id.split("-");
+    const splitId = event.target.id.split('-');
 
     this.setState({
       [splitId[splitId.length - 1]]: {
         checked,
-        post_aoj: null,
-      },
+        post_aoj: null
+      }
     });
   };
 
@@ -208,7 +204,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   getCheckbox = (option, onChange, checkboxValues) => {
     const rowOptId = `${String(this.props.issue.id)}-${option.id}`;
     const { appeal } = this.props;
-    const copyPrefix = appeal.isLegacyAppeal ? "LEGACY" : "AMA";
+    const copyPrefix = appeal.isLegacyAppeal ? 'LEGACY' : 'AMA';
 
     return (
       <React.Fragment key={option.id}>
@@ -268,7 +264,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     const checkboxGroupProps = {
       onChange: this.toggleRemandReason,
       getCheckbox: this.getCheckbox,
-      values: this.state,
+      values: this.state
     };
 
     if (appeal.isLegacyAppeal) {
