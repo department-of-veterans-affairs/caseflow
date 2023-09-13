@@ -3,31 +3,25 @@
 class ClaimNotEstablishedFixJob < CaseflowJob
   ERROR_TEXT = "Claim not established."
   EPECODES = %w[030 040 930 682].freeze
+  STUCK_JOB_REPORT_SERVICE = StuckJobReportService.new
 
   def perform
-    stuck_job_report_service = StuckJobReportService.new
     return if decision_docs_with_errors.blank?
 
-    stuck_job_report_service.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
+    STUCK_JOB_REPORT_SERVICE.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
 
     decision_docs_with_errors.each do |single_decision_document|
       file_number = single_decision_document.veteran.file_number
-      epe = EndProductEstablishment.find_by(veteran_file_number: file_number)
-      next unless validate_epe(epe)
+      epe_array = EndProductEstablishment.where(veteran_file_number: file_number)
+      validated_epes = epe_array.map { |epe| validate_epe(epe) }
 
-      stuck_job_report_service.append_single_record(single_decision_document.class.name, single_decision_document.id)
+      STUCK_JOB_REPORT_SERVICE.append_single_record(single_decision_document.class.name, single_decision_document.id)
 
-      ActiveRecord::Base.transaction do
-        single_decision_document.clear_error!
-      rescue StandardError => error
-        log_error(error)
-        stuck_job_report_service.append_errors(single_decision_document.class.name, single_decision_document.id,
-                                               error)
-      end
+      resolve_error_on_records(single_decision_document, validated_epes)
     end
 
-    stuck_job_report_service.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
-    stuck_job_report_service.write_log_report(ERROR_TEXT)
+    STUCK_JOB_REPORT_SERVICE.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
+    STUCK_JOB_REPORT_SERVICE.write_log_report(ERROR_TEXT)
   end
 
   def decision_docs_with_errors
@@ -37,5 +31,16 @@ class ClaimNotEstablishedFixJob < CaseflowJob
   def validate_epe(epe)
     epe_code = epe&.code&.slice(0, 3)
     EPECODES.include?(epe_code) && epe&.established_at.present?
+  end
+
+  def resolve_error_on_records(object_type, epes_array)
+    ActiveRecord::Base.transaction do
+      if !epes_array.include?(false)
+        object_type.clear_error!
+      end
+    rescue StandardError => error
+      log_error(error)
+      STUCK_JOB_REPORT_SERVICE.append_errors(object_type.class.name, object_type.id, error)
+    end
   end
 end

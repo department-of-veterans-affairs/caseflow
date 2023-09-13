@@ -25,6 +25,24 @@ describe ClaimNotEstablishedFixJob, :postgres do
       established_at: Time.zone.now
     )
   end
+  let!(:epe_2) do
+    create(
+      :end_product_establishment,
+      code: "930AMADOR",
+      source: decision_doc_with_error,
+      veteran_file_number: veteran_file_number,
+      established_at: Time.zone.now
+    )
+  end
+  let!(:epe_3) do
+    create(
+      :end_product_establishment,
+      code: "040SCR",
+      source: decision_doc_with_error,
+      veteran_file_number: veteran_file_number,
+      established_at: Time.zone.now
+    )
+  end
 
   context "#claim_not_established" do
     subject { described_class.new("decision_document", claim_not_established_error) }
