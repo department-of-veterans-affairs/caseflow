@@ -117,21 +117,15 @@ export const addNewTag = (doc, tags) =>
     }
   };
 
-export const generateTagsSuccess = (doc) => (dispatch) => {
-  dispatch({
-    type: Constants.GENERATE_AUTO_TAGS,
-    payload: {
-      docId: doc.id
-    }
-  });
-}
-
 export const generateTags = (doc) => (dispatch) => {
   ApiUtil.get(`/document/${doc.id}/tag/auto_tag`, {}, ENDPOINT_NAMES.TAG).
-    then((_) => {
-      dispatch(generateTagsSuccess(doc))
-    }, () => {
-      dispatch(generateTagsFailure(doc))
+    then(() => {
+      dispatch({
+        type: Constants.GENERATE_AUTO_TAGS,
+        payload: {
+          docId: doc.id
+        }
+      });
     });
 }
 
