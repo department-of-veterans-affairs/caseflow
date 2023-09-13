@@ -103,9 +103,13 @@ class DocumentsTable extends React.Component {
 
      this.setState({ fromDate: pickedDate,
        fromDateErrors: [] });
-   } else {
-     this.setState({ fromDateErrors: foundErrors });
+
+     return foundErrors;
    }
+   this.setState({ fromDateErrors: foundErrors });
+
+   return foundErrors;
+
  };
 
  setDateFrom = (pickedDate) => {
@@ -113,7 +117,7 @@ class DocumentsTable extends React.Component {
    });
  }
 
- validateDateTo = (pickedDate) => {
+ validateDateTo(pickedDate) {
    let foundErrors = [];
 
    // Prevent setting the to date before the from date
@@ -135,9 +139,14 @@ class DocumentsTable extends React.Component {
      this.setState({ toDate: pickedDate,
        toDateErrors: []
      });
-   } else {
-     this.setState({ toDateErrors: [foundErrors] });
+
+     return foundErrors;
+
    }
+   this.setState({ toDateErrors: [foundErrors] });
+
+   return foundErrors;
+
  }
 
  setDateTo = (pickedDate) => {
@@ -150,9 +159,13 @@ class DocumentsTable extends React.Component {
 
    if (convertStringToDate(pickedDate) > new Date()) {
      foundErrors = [...foundErrors, 'Reciept date cannot be in the future.'];
+
+     return foundErrors;
    }
 
    this.setState({ onDateErrors: [foundErrors] });
+
+   return foundErrors;
  }
 
  setOnDate = (pickedDate) => {
@@ -176,15 +189,15 @@ class DocumentsTable extends React.Component {
  }
 
  executeRecieptFilter = () => {
-   this.validateDateTo(this.state.toDate);
-   this.validateDateFrom(this.state.fromDate);
-   this.validateDateOn(this.state.onDate);
-   if (this.state.fromDateErrors.length === 0 && this.state.toDateErrors.length === 0) {
-     this.
-       this.props.setRecieptDateFilter(this.state.recieptFilter,
-         { fromDate: this.state.fromDate,
-           toDate: this.state.toDate,
-           onDate: this.state.onDate });
+   const toErrors = this.validateDateTo(this.state.toDate);
+   const fromErrors = this.validateDateFrom(this.state.fromDate);
+   const onErrors = this.validateDateOn(this.state.onDate);
+
+   if (fromErrors.length === 0 && toErrors.length === 0 && onErrors.length === 0) {
+     this.props.setRecieptDateFilter(this.state.recieptFilter,
+       { fromDate: this.state.fromDate,
+         toDate: this.state.toDate,
+         onDate: this.state.onDate });
      this.toggleRecieptDataDropdownFilterVisibility();
 
    }
