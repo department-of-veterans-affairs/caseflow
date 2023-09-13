@@ -41,10 +41,13 @@ class AssignToView extends React.Component {
     // Autofill the instruction field if assigning to a person on the team. Since they will
     // probably want the instructions from the assigner.
     const instructions = this.props.task.instructions;
+    const taskType = this.props.task.type;
     const instructionLength = instructions ? instructions.length : 0;
     let existingInstructions = '';
 
-    if (instructions && instructionLength > 0 && !this.props.isTeamAssign && !this.props.isReassignAction) {
+    if (taskType === 'JudgeDecisionReviewTask') {
+      existingInstructions = '';
+    } else if (instructions && instructionLength > 0 && !this.props.isTeamAssign && !this.props.isReassignAction) {
       existingInstructions = instructions[instructionLength - 1];
     }
 
@@ -146,7 +149,7 @@ class AssignToView extends React.Component {
       detail: sprintf(COPY.PULAC_CERULLO_SUCCESS_DETAIL, appeal.veteranFullName)
     };
 
-    //Return to attorney on legacy appeals with legacy tasks
+    // Return to attorney on legacy appeals with legacy tasks
     if (taskType === 'AttorneyRewriteTask' && task.isLegacy === true) {
       return this.props.initialAssignTasksToUser({
         tasks: [task],
@@ -214,9 +217,11 @@ class AssignToView extends React.Component {
       return assignor;
     };
 
-    let titleValue = task.type === "JudgeDecisionReviewTask" ? sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) : sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE_SCM, assignedByListItem(), this.getAssignee())
+    let titleValue = task.type === 'JudgeDecisionReviewTask' ?
+      sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) :
+      sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE_SCM, assignedByListItem(), this.getAssignee());
 
-    const successMsg = { title: titleValue }
+    const successMsg = { title: titleValue };
 
     if (isLegacyReassignToJudge) {
       return this.props.legacyReassignToJudge({
@@ -370,7 +375,7 @@ class AssignToView extends React.Component {
       modalProps.submitDisabled = this.state.modalDisableButton;
     }
 
-    if (this.props.location.pathname.includes('distribute_to_judge_legacy')) {
+    if (window.location.pathname.includes('distribute_to_judge_legacy')) {
       modalProps.button = 'Assign';
       modalProps.submitButtonClassNames = ['usa-button', 'usa-button-hover', 'usa-button-warning'];
       modalProps.submitDisabled = this.state.modalDisableButton;
@@ -477,6 +482,7 @@ AssignToView.propTypes = {
     appealType: PropTypes.string,
     assignedBy: PropTypes.string,
     assigneeName: PropTypes.string,
+    isLegacy: PropTypes.bool
   }),
   setOvertime: PropTypes.func,
   resetSuccessMessages: PropTypes.func
