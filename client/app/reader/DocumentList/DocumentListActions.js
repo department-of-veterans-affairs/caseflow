@@ -130,6 +130,15 @@ export const clearDocFilters = () => (dispatch) => {
   dispatch(updateFilteredIdsAndDocs());
 };
 
+export const setDocTypes = (docToAdd) => (dispatch) => {
+  dispatch({
+  type: Constants.SET_DOC_TYPES,
+  payload: {
+    docToAdd
+  }
+  })
+}
+
 export const clearTagFilters = () => (dispatch) => {
   dispatch({
     type: Constants.CLEAR_TAG_FILTER,

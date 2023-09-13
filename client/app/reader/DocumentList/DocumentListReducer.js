@@ -45,6 +45,7 @@ const initialState = {
     category: {},
     tag: {},
     document: {},
+    docTypeList: [],
     searchQuery: '',
     recieptFilterType: '',
     recieptFilterDates: {
@@ -190,6 +191,16 @@ const documentListReducer = (state = initialState, action = {}) => {
         }
       }
     });
+
+    case Constants.SET_DOC_TYPES:
+      console.log("YOUVE HIT DLR!");
+      return update(state, {
+        docFilterCriteria: {
+          docTypeList: {
+            $set: action.payload.docToAdd
+          }
+        }
+      })
 
   // Document header
   case Constants.SET_SEARCH:

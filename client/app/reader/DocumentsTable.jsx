@@ -26,6 +26,7 @@ import {
   toggleDropdownFilterVisibility,
   setDocFilter,
   clearDocFilters,
+  setDocTypes,
   setRecieptDateFilter
 } from '../reader/DocumentList/DocumentListActions';
 import { getAnnotationsPerDocument } from './selectors';
@@ -38,7 +39,6 @@ import FilterIcon from '../components/icons/FilterIcon';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
 import DocTagPicker from './DocTagPicker';
-import ReaderTableDropdownFilter from '../components/ReaderTableDropdownFilter';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -164,7 +164,8 @@ class DocumentsTable extends React.Component {
      fromDateErrors: [],
      toDateErrors: [],
      onDateErrors: [],
-     recipetFilterEnabled: true
+     recipetFilterEnabled: true,
+     fallbackState: ''
    };
  }
 
@@ -202,6 +203,7 @@ class DocumentsTable extends React.Component {
    return false;
  }
  componentDidMount() {
+  const dbg = this.props.docFilterCriteria.document;
    if (this.state.frozenDocs === '') {
      const frozenDocs = this.props.documents;
 
@@ -209,6 +211,7 @@ class DocumentsTable extends React.Component {
      this.setState({
        frozenDocs
      });
+
    }
    if (this.props.pdfList.scrollTop) {
      this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
@@ -335,7 +338,8 @@ class DocumentsTable extends React.Component {
 
     const populateDocumentFilter = () => {
       let docsArray = [];
-
+      console.log(this.state);
+      console.log(this.props);
       // looks through all document types, and only adds them into docsArray if they are unique
       this.state.frozenDocs.map((x) => docsArray.includes(x.type) ? true : docsArray.push(x.type));
 
@@ -346,7 +350,10 @@ class DocumentsTable extends React.Component {
         value: docsArray.indexOf(x),
         text: x
       }));
+      if(this.state.fallbackState === '') {
+        this.setState({fallbackState: filterItems});
 
+      }
       return filterItems;
     };
 
@@ -494,7 +501,7 @@ class DocumentsTable extends React.Component {
                     <div style={{ width: '100%', display: 'flex' }}>
                       <span style={{ height: '1px', position: 'absolute', width: '100%', backgroundColor: 'gray' }}></span>
                       <div style={{ display: 'flex', marginTop: '10px', marginRight: '10px', marginBottom: '10px', justifyContent: 'end', width: '100%' }}>
-                        <Button disabled={this.isRecieptFilterButtonEnabled()} onClick={() => this.executeRecieptFilter()} title="apply filter">
+                        <Button disabled={this.isRecieptFilterButtonEnabled()} onClick={() => this.props.setDocTypes("Testing!")} title="apply filter">
                           <span>Apply filter</span>
                         </Button>
                       </div>
@@ -662,6 +669,7 @@ DocumentsTable.propTypes = {
   toggleDropdownFilterVisibility: PropTypes.func.isRequired,
   tagOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
   setDocFilter: PropTypes.func,
+  setDocTypes: PropTypes.func,
   clearDocFilters: PropTypes.func,
   secretDebug: PropTypes.func
 };
@@ -678,6 +686,7 @@ const mapDispatchToProps = (dispatch) =>
       setCategoryFilter,
       setDocFilter,
       clearDocFilters,
+      setDocTypes,
       setRecieptDateFilter
     },
     dispatch

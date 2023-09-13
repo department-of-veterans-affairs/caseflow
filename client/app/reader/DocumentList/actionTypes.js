@@ -22,7 +22,7 @@ export const SET_RECIEPT_DATE_FILTER = 'SET_RECIEPT_DATE_FILTER';
 // Document filter
 export const SET_DOC_FILTER = 'SET_DOC_FILTER';
 export const CLEAR_DOC_FILTER = 'CLEAR_DOC_FILTER';
-
+export const SET_DOC_TYPES = 'SET_DOC_TYPES';
 // Constants
 export const DOCUMENTS_OR_COMMENTS_ENUM = {
   DOCUMENTS: 'documents',
