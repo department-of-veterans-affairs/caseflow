@@ -214,7 +214,9 @@ class AssignToView extends React.Component {
       return assignor;
     };
 
-    const successMsg = { title: sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE_SCM, assignedByListItem(), this.getAssignee()) };
+    let titleValue = task.type === "JudgeDecisionReviewTask" ? sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) : sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE_SCM, assignedByListItem(), this.getAssignee())
+
+    const successMsg = { title: titleValue }
 
     if (isLegacyReassignToJudge) {
       return this.props.legacyReassignToJudge({
@@ -293,7 +295,7 @@ class AssignToView extends React.Component {
       return COPY.ASSIGN_TO_TEAM_DROPDOWN;
     }
 
-    return COPY.ASSIGN_TO_USER_DROPDOWN;
+    return COPY.ASSIGN_WIDGET_USER_DROPDOWN_PLACEHOLDER;
 
   };
 
