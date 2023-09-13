@@ -36,10 +36,16 @@ const generateConferenceLinks = () => {
   return webexLinks;
 };
 
+const conferencesArePopulated = () => {
+  const fileContents = JSON.parse(fs.readFileSync(MOCK_FILE_PATH, 'utf-8'));
+
+  return fileContents && fileContents.conferenceLinks.length > 0;
+};
+
 if (fs.existsSync(MOCK_FILE_PATH)) {
-  if (FORCE_RECREATE_MOCK) {
+  if (FORCE_RECREATE_MOCK || !conferencesArePopulated()) {
     // eslint-disable-next-line no-console
-    console.log('Forcibly resetting webex-mock.json');
+    console.log('Resetting webex-mock.json');
 
     fs.unlinkSync(MOCK_FILE_PATH);
   } else {
@@ -56,7 +62,7 @@ const data = {
   // ... other data models
 };
 
-// Check if the script is being run directly
+// // Check if the script is being run directly
 if (require.main === module) {
   fs.writeFileSync(
     MOCK_FILE_PATH,
