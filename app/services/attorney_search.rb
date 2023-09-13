@@ -33,6 +33,30 @@ class AttorneySearch
     end
   end
 
+  def correct_spelling(query_text)
+    @query_text = query_text
+    only_result_text = []
+    suggested_spelling = []
+
+    # Array containing the unrefined results
+    fuzzy_arr = FuzzyMatch.new(Tag.all, :read => :text).find_all(@query_text)
+
+    # Pushing only the result text into an array
+    fuzzy_arr.each do |query_arr|
+      only_result_text << query_arr["text"]
+    end
+    # An array that maps each name to [name, Dice's coefficient, Levenshtein distance] depending on the @query_text
+    result_arr = FuzzyMatch.new(only_result_text).find_all_with_score(@query_text)
+    # An array that contains only the results above the RELATIVE_SCORE_THRESHOLD
+    result_arr.each do |dice|
+      if dice[1] >= RELATIVE_SCORE_THRESHOLD
+        suggested_spelling << dice[0]
+      end
+    end
+    suggested_spelling
+
+  end
+
   private
 
   def first_letters
@@ -72,4 +96,6 @@ class AttorneySearch
     threshold = fuzzy_matched_results[0][1] * RELATIVE_SCORE_THRESHOLD
     fuzzy_matched_results.select { |res| res[1] >= threshold }.map(&:first)
   end
+
+
 end
