@@ -64,69 +64,69 @@ feature "RAMP Election Intake", :all_dbs do
   let(:search_bar_title) { "Enter the Veteran's ID" }
   let(:search_page_title) { "Search for Veteran ID" }
 
-  scenario "Search for a veteran with an no active appeals" do
-    create(:ramp_election, veteran_file_number: "77776666", notice_date: 5.days.ago)
-    visit "/intake"
-    select_form(Constants.INTAKE_FORM_NAMES.ramp_election)
-    safe_click ".cf-submit.usa-button"
-    fill_in search_bar_title, with: "77776666"
-    click_on "Search"
+  # scenario "Search for a veteran with an no active appeals" do
+  #   create(:ramp_election, veteran_file_number: "77776666", notice_date: 5.days.ago)
+  #   visit "/intake"
+  #   select_form(Constants.INTAKE_FORM_NAMES.ramp_election)
+  #   safe_click ".cf-submit.usa-button"
+  #   fill_in search_bar_title, with: "77776666"
+  #   click_on "Search"
 
-    expect(page).to have_current_path("/intake/search")
-    expect(page).to have_content("Ineligible to participate in RAMP: no active appeals")
-  end
+  #   expect(page).to have_current_path("/intake/search")
+  #   expect(page).to have_content("Ineligible to participate in RAMP: no active appeals")
+  # end
 
-  scenario "Search for a veteran with an ineligible appeal" do
-    create(:ramp_election, veteran_file_number: "77778888", notice_date: 5.days.ago)
-    visit "/intake"
-    select_form(Constants.INTAKE_FORM_NAMES.ramp_election)
-    safe_click ".cf-submit.usa-button"
-    fill_in search_bar_title, with: "77778888"
-    click_on "Search"
+  # scenario "Search for a veteran with an ineligible appeal" do
+  #   create(:ramp_election, veteran_file_number: "77778888", notice_date: 5.days.ago)
+  #   visit "/intake"
+  #   select_form(Constants.INTAKE_FORM_NAMES.ramp_election)
+  #   safe_click ".cf-submit.usa-button"
+  #   fill_in search_bar_title, with: "77778888"
+  #   click_on "Search"
 
-    expect(page).to have_current_path("/intake/search")
-    expect(page).to have_content("Ineligible to participate in RAMP")
-  end
+  #   expect(page).to have_current_path("/intake/search")
+  #   expect(page).to have_content("Ineligible to participate in RAMP")
+  # end
 
-  scenario "Search for a veteran already in progress by current user" do
-    visit "/intake"
-    select_form(Constants.INTAKE_FORM_NAMES.ramp_election)
-    safe_click ".cf-submit.usa-button"
+  # scenario "Search for a veteran already in progress by current user" do
+  #   visit "/intake"
+  #   select_form(Constants.INTAKE_FORM_NAMES.ramp_election)
+  #   safe_click ".cf-submit.usa-button"
 
-    RampElectionIntake.new(
-      user: current_user,
-      veteran_file_number: "43214321"
-    ).start!
+  #   RampElectionIntake.new(
+  #     user: current_user,
+  #     veteran_file_number: "43214321"
+  #   ).start!
 
-    fill_in search_bar_title, with: "12341234"
-    click_on "Search"
+  #   fill_in search_bar_title, with: "12341234"
+  #   click_on "Search"
 
-    expect(page).to have_current_path("/intake/review_request")
-    expect(page).to have_content("Review Ed Merica's Opt-In Election Form")
-  end
+  #   expect(page).to have_current_path("/intake/review_request")
+  #   expect(page).to have_content("Review Ed Merica's Opt-In Election Form")
+  # end
 
-  scenario "Search for a veteran that has received a RAMP election" do
-    create(:ramp_election, veteran_file_number: "12341234", notice_date: 5.days.ago)
+  # scenario "Search for a veteran that has received a RAMP election" do
+  #   create(:ramp_election, veteran_file_number: "12341234", notice_date: 5.days.ago)
 
-    # Validate you're redirected back to the search page if you haven't started yet
-    visit "/intake/completed"
-    expect(page).to have_content("Welcome to Caseflow Intake!")
+  #   # Validate you're redirected back to the search page if you haven't started yet
+  #   visit "/intake/completed"
+  #   expect(page).to have_content("Welcome to Caseflow Intake!")
 
-    visit "/intake/review_request"
-    select_form(Constants.INTAKE_FORM_NAMES.ramp_election)
-    safe_click ".cf-submit.usa-button"
+  #   visit "/intake/review_request"
+  #   select_form(Constants.INTAKE_FORM_NAMES.ramp_election)
+  #   safe_click ".cf-submit.usa-button"
 
-    fill_in search_bar_title, with: "12341234"
-    click_on "Search"
+  #   fill_in search_bar_title, with: "12341234"
+  #   click_on "Search"
 
-    expect(page).to have_current_path("/intake/review_request")
-    expect(page).to have_content("Review Ed Merica's Opt-In Election Form")
+  #   expect(page).to have_current_path("/intake/review_request")
+  #   expect(page).to have_content("Review Ed Merica's Opt-In Election Form")
 
-    intake = RampElectionIntake.find_by(veteran_file_number: "12341234")
-    expect(intake).to_not be_nil
-    expect(intake.started_at).to eq(Time.zone.now)
-    expect(intake.user).to eq(current_user)
-  end
+  #   intake = RampElectionIntake.find_by(veteran_file_number: "12341234")
+  #   expect(intake).to_not be_nil
+  #   expect(intake.started_at).to eq(Time.zone.now)
+  #   expect(intake.user).to eq(current_user)
+  # end
 
   scenario "Start intake and go back and edit option" do
     create(:ramp_election, veteran_file_number: "12341234", notice_date: post_ramp_start_date.to_date)

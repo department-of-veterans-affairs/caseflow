@@ -3,10 +3,7 @@
 describe RequestIssue, :all_dbs do
   before do
     Timecop.freeze(Time.zone.now)
-    FeatureToggle.enable!(:use_ama_activation_date)
   end
-
-  after { FeatureToggle.disable!(:use_ama_activation_date) }
 
   let(:contested_rating_issue_reference_id) { "abc123" }
   let(:contested_rating_decision_reference_id) { nil }

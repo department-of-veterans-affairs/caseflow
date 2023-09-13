@@ -5,7 +5,6 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
   before do
     Timecop.freeze(post_ama_start_date)
-    FeatureToggle.enable!(:use_ama_activation_date)
   end
 
   let(:veteran) do

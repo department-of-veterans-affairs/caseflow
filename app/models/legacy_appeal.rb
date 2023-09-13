@@ -773,7 +773,7 @@ class LegacyAppeal < CaseflowRecord
     return false unless issues.any?
     return true if active?
 
-    covid_flag = FeatureToggle.enabled?(:covid_timeliness_exemption, user: RequestStore.store[:current_user])
+    covid_flag = false
 
     eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: covid_flag)
   end

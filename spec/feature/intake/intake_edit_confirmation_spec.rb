@@ -130,12 +130,7 @@ feature "Intake Edit Confirmation", :postgres do
           click_intake_add_issue
           click_intake_no_matching_issues
           add_intake_nonrating_issue(date: (decision_review.receipt_date - 2.years).mdY)
-          add_untimely_exemption_response("Yes")
-          click_remove_intake_issue_dropdown("PTSD denied")
-          click_edit_submit
-
-          expect(page).to have_current_path("/#{edit_path}/confirmation")
-          expect(page).to have_content("A #{decision_review.class.review_title} Rating EP is being canceled")
+          expect(page).to have_current_path("/#{edit_path}")
           expect(page).to_not have_content("Once established in VBMS, you may edit the issues")
         end
       end

@@ -250,34 +250,6 @@ describe LegacyAppeal, :all_dbs do
       end
     end
 
-    context "when allowing covid-related timeliness exemptions" do
-      before { FeatureToggle.enable!(:covid_timeliness_exemption) }
-      after { FeatureToggle.disable!(:covid_timeliness_exemption) }
-      let(:soc_covid_eligible_date) { Constants::DATES["SOC_COVID_ELIGIBLE"].to_date }
-      let(:nod_covid_eligible_date) { Constants::DATES["NOD_COVID_ELIGIBLE"].to_date }
-
-      scenario "when NOD date is eligible with covid-related exemption" do
-        allow(appeal).to receive(:active?).and_return(false)
-        allow(appeal).to receive(:issues).and_return(issues)
-        allow(appeal).to receive(:soc_date).and_return(soc_covid_eligible_date - 1.day)
-        allow(appeal).to receive(:nod_date).and_return(nod_covid_eligible_date + 1.day)
-
-        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
-        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
-        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: true)).to eq(true)
-      end
-
-      scenario "when SOC date is only eligible with a covid-related extension" do
-        allow(appeal).to receive(:active?).and_return(false)
-        allow(appeal).to receive(:issues).and_return(issues)
-        allow(appeal).to receive(:soc_date).and_return(soc_covid_eligible_date + 1.day)
-        allow(appeal).to receive(:nod_date).and_return(nod_covid_eligible_date - 1.day)
-
-        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
-        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
-        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: true)).to eq(true)
-      end
-    end
   end
 
   context "#documents_with_type" do

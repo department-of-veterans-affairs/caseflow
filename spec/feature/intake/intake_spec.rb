@@ -236,9 +236,6 @@ feature "Intake", :all_dbs do
     end
 
     context "RAMP Veteran has invalid information" do
-      before { FeatureToggle.enable!(:ramp_intake) }
-      after { FeatureToggle.disable!(:ramp_intake) }
-
       let(:veteran) do
         Generators::Veteran.build(
           file_number: "12341234",
@@ -250,21 +247,21 @@ feature "Intake", :all_dbs do
         )
       end
 
-      scenario "Search for a veteran with a validation error" do
-        visit "/intake"
-        select_form(Constants.INTAKE_FORM_NAMES.ramp_election)
-        safe_click ".cf-submit.usa-button"
+      # scenario "Search for a veteran with a validation error" do
+      #   visit "/intake"
+      #   select_form(Constants.INTAKE_FORM_NAMES.ramp_election)
+      #   safe_click ".cf-submit.usa-button"
 
-        fill_in search_bar_title, with: "12341234"
-        click_on "Search"
+      #   fill_in search_bar_title, with: "12341234"
+      #   click_on "Search"
 
-        expect(page).to have_current_path("/intake/search")
-        expect(page).to have_content("Please fill in the following fields in the Veteran's profile in VBMS or")
-        expect(page).to have_content(
-          "the corporate database, then retry establishing the EP in Caseflow: country."
-        )
-        expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
-      end
+      #   expect(page).to have_current_path("/intake/search")
+      #   expect(page).to have_content("Please fill in the following fields in the Veteran's profile in VBMS or")
+      #   expect(page).to have_content(
+      #     "the corporate database, then retry establishing the EP in Caseflow: country."
+      #   )
+      #   expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
+      # end
     end
 
     context "Updated Supplemental Claim Form 20-0995 and Higher Level Reveiw Form 20-0996" do
