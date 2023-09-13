@@ -47,8 +47,6 @@ export const UntimelyExemptionModal = ({
   onSkip,
   skipText = 'None of these match, see more options'
 }) => {
-  const { covidTimelinessExemption } = useSelector((state) => state.featureToggles);
-
   const [state, setState] = useState({
     untimelyExemption: '',
     untimelyExemptionNotes: '',
@@ -80,18 +78,18 @@ export const UntimelyExemptionModal = ({
     const vacolsIssueIneligible = issue.vacolsId && !issue.eligibleForSocOptIn;
     const requestIssueUntimely = !issue.timely && !(formType === 'supplemental_claim');
 
-    if (covidTimelinessExemption) {
-      if (vacolsIssueIneligible && requestIssueUntimely) {
-        errorMsg = COPY.INTAKE_REQUEST_ISSUE_AND_LEGACY_ISSUE_UNTIMELY;
-      } else if (vacolsIssueIneligible) {
-        errorMsg = COPY.INTAKE_LEGACY_ISSUE_UNTIMELY;
-      } else if (requestIssueUntimely) {
-        errorMsg = COPY.INTAKE_REQUEST_ISSUE_UNTIMELY;
-      }
+    // if (covidTimelinessExemption) {
+    //   if (vacolsIssueIneligible && requestIssueUntimely) {
+    //     errorMsg = COPY.INTAKE_REQUEST_ISSUE_AND_LEGACY_ISSUE_UNTIMELY;
+    //   } else if (vacolsIssueIneligible) {
+    //     errorMsg = COPY.INTAKE_LEGACY_ISSUE_UNTIMELY;
+    //   } else if (requestIssueUntimely) {
+    //     errorMsg = COPY.INTAKE_REQUEST_ISSUE_UNTIMELY;
+    //   }
 
-    } else {
-      errorMsg = COPY.INTAKE_REQUEST_ISSUE_UNTIMELY;
-    }
+    // } else {
+    //   errorMsg = COPY.INTAKE_REQUEST_ISSUE_UNTIMELY;
+    // }
 
     return errorMsg;
   };
@@ -127,15 +125,6 @@ export const UntimelyExemptionModal = ({
 
         {state.untimelyExemption === 'true' && (
           <>
-            {covidTimelinessExemption && (
-              <Checkbox
-                name="untimelyExemptionCovid"
-                label="This request is related to COVID-19"
-                onChange={(val) => setState({ ...state, untimelyExemptionCovid: val })}
-                value={state.untimelyExemptionCovid}
-              />
-            )}
-
             <TextField
               name="Notes"
               optional

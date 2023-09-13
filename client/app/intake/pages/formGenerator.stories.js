@@ -64,12 +64,10 @@ const defaultArgs = {
   schema: reviewAppealSchema,
   featureToggles: {
     correctClaimReviews: false,
-    covidTimelinessExemption: true,
     eduPreDocketAppeals: true,
     filedByVaGovHlr: true,
     updatedAppealForm: true,
     updatedIntakeForms: true,
-    useAmaActivationDate: true,
     vhaClaimReviewEstablishment: true,
   },
 };

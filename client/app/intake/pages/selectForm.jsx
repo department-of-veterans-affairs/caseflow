@@ -21,8 +21,7 @@ class SelectForm extends React.PureComponent {
   render() {
     const { formType, featureToggles, userCanIntakeAppeals } = this.props;
     const unreadMessages = this.props.unreadMessages;
-    const rampEnabled = featureToggles.rampIntake;
-    const enabledFormTypes = rampEnabled ? FORM_TYPES : _.pickBy(FORM_TYPES, { category: 'decisionReview' });
+    const enabledFormTypes = _.pickBy(FORM_TYPES, { category: 'decisionReview' });
     const appealPermissionError = !userCanIntakeAppeals && formType === FORM_TYPES.APPEAL.key;
 
     const radioOptions = _.map(enabledFormTypes, (form) => ({
