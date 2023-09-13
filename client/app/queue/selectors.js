@@ -137,7 +137,10 @@ export const legacyJudgeTasksAssignedToUser = createSelector(
 
 const workTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) => workTasksSelector(tasks)
+  (tasks) =>
+    workTasksSelector(tasks).
+      filter((task, i, arr) => arr.map((id) => (id.externalAppealId)).
+        indexOf(task.externalAppealId) === i),
 );
 
 const workTasksByAssigneeOrgSelector = createSelector(

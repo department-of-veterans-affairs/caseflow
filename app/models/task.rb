@@ -146,6 +146,10 @@ class Task < CaseflowRecord
       name.titlecase
     end
 
+    def legacy_blocking?
+      false
+    end
+
     def closed_statuses
       [Constants.TASK_STATUSES.completed, Constants.TASK_STATUSES.cancelled]
     end
@@ -260,9 +264,10 @@ class Task < CaseflowRecord
       if (params[:type] == "SpecialCaseMovementTask") && (parent_task.type == "RootTask")
         create_judge_assigned_task_for_legacy(params, parent_task)
       elsif (params[:type] == "BlockedSpecialCaseMovementTask") && (parent_task.type == "HearingTask")
-        cancel_blocking_task_legacy(params, parent_task)
+        cancel_blocking_task_legacy(params, parent_task.parent)
       else
-        judge = User.find(params["assigned_to_id"])
+
+        judge = User.find(params[:assigned_to_id])
         legacy_appeal = LegacyAppeal.find(parent_task.appeal_id)
         child = create_child_task(parent_task, user, params)
         parent_task.update!(status: params[:status]) if params[:status]
@@ -288,30 +293,10 @@ class Task < CaseflowRecord
       parent_task
     end
 
-    def speacial_case_for_legacy(parent_task, params)
-      if (params[:type] == "SpecialCaseMovementTask") && (parent_task.type == "RootTask")
-        create_judge_assigned_task_for_legacy(params, parent_task)
-      elsif (params[:type] == "BlockedSpecialCaseMovementTask") && (parent_task.type == "HearingTask")
-        cancel_blocking_task_legacy(params, parent_task)
-      end
-    end
-
     def cancel_blocking_task_legacy(params, parent_task)
-      tasks = []
-      tasks.push(parent_task)
-      parent_task.children.each { |current_task| tasks.push(current_task) }
+      parent_task.children.each { |current_task| seach_for_blocking(current_task) }
 
-      transaction do
-        tasks.each do |task|
-          task.update!(
-            status: Constants.TASK_STATUSES.cancelled,
-            cancelled_by_id: RequestStore[:current_user]&.id,
-            closed_at: Time.zone.now
-          )
-        end
-      end
-
-      legacy_appeal = LegacyAppeal.find(tasks[0].appeal_id)
+      legacy_appeal = LegacyAppeal.find(parent_task.appeal_id)
       judge = User.find(params["assigned_to_id"])
 
       current_child = JudgeAssignTask.create!(appeal: legacy_appeal,
@@ -321,6 +306,30 @@ class Task < CaseflowRecord
                                               assigned_by: params["assigned_by"])
       AppealRepository.update_location!(legacy_appeal, judge.vacols_uniq_id)
       current_child
+    end
+
+    def cancelled_task(task)
+      task.update!(
+        status: Constants.TASK_STATUSES.cancelled,
+        cancelled_by_id: RequestStore[:current_user]&.id,
+        closed_at: Time.zone.now
+      )
+    end
+
+    def cancel_all_children(current_task)
+      if current_task.children.count == 0
+        if current_task.status != "Cancelled" && current_task.status != "completed"
+          cancelled_task(current_task)
+        end
+      else
+        current_task.children.each { |current_task| cancel_all_children(current_task) }
+      end
+    end
+
+    def seach_for_blocking(current_task)
+      current_task.legacy_blocking? ?
+        cancel_all_children(current_task) :
+        current_task.children.each { |current_task| seach_for_blocking(current_task) }
     end
 
     def create_judge_assigned_task_for_legacy(params, parent_task)
@@ -939,6 +948,11 @@ class Task < CaseflowRecord
     update_appeal_state_when_privacy_act_created
     update_appeal_state_when_appeal_docketed
     update_appeal_state_when_ihp_created
+  end
+
+  ## Tag to determine if this task is considered a blocking task for Legacy Appeal Distribution
+  def legacy_blocking?
+    self.class.legacy_blocking?
   end
 
   private

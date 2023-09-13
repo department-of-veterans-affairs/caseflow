@@ -9,7 +9,7 @@ class FoiaTask < Task
   end
 
   ## Tag to determine if this task is considered a blocking task for Legacy Appeal Distribution
-  def legacy_blocking
+  def self.legacy_blocking?
     true
   end
 end
