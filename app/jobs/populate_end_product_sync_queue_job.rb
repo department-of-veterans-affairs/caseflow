@@ -46,23 +46,23 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
   # rubocop:disable Metrics/MethodLength
   def find_priority_end_product_establishments_to_sync
     get_sql = <<-SQL
-      WITH priority_ep_ids AS (
+      WITH priority_eps AS (
         SELECT vec."CLAIM_ID"::varchar, vec."LEVEL_STATUS_CODE"
         FROM vbms_ext_claim vec
         WHERE vec."LEVEL_STATUS_CODE" in ('CLR', 'CAN')
-          AND (vec."EP_CODE" LIKE '04%' OR vec."EP_CODE" LIKE '03%')
+          AND (vec."EP_CODE" LIKE '04%' OR vec."EP_CODE" LIKE '03%' OR vec."EP_CODE" LIKE '93%' OR vec."EP_CODE" LIKE '68%')
       ),
-      priority_queued_ids AS (
+      priority_queued_epe_ids AS (
         SELECT end_product_establishment_id
         FROM priority_end_product_sync_queue)
       SELECT id
       FROM end_product_establishments epe
-      INNER JOIN priority_ep_ids
-      ON epe.reference_id = priority_ep_ids."CLAIM_ID"
-      WHERE (epe.synced_status is null or epe.synced_status <> priority_ep_ids."LEVEL_STATUS_CODE")
+      INNER JOIN priority_eps
+      ON epe.reference_id = priority_eps."CLAIM_ID"
+      WHERE (epe.synced_status is null or epe.synced_status <> priority_eps."LEVEL_STATUS_CODE")
         AND NOT EXISTS (SELECT end_product_establishment_id
-                        FROM priority_queued_ids
-                        WHERE priority_queued_ids.end_product_establishment_id = epe.id)
+                        FROM priority_queued_epe_ids
+                        WHERE priority_queued_epe_ids.end_product_establishment_id = epe.id)
       LIMIT #{BATCH_LIMIT};
     SQL
 
