@@ -216,39 +216,39 @@ class IssueRemandReasonsOptions extends React.PureComponent {
           unpadded
         />
         {checkboxValues[option.id].checked && this.showSubSelections(rowOptId, appeal.isLegacyAppeal) && (
-            <RadioField
-              errorMessage={this.props.highlight && isNull(this.state[option.id].post_aoj) ? 'Choose one' : null}
-              styling={css(
-                smallLeftMargin,
-                smallBottomMargin,
-                errorNoTopMargin
-              )}
-              name={rowOptId}
-              vertical
-              hideLabel
-              options={[
-                {
-                  displayText:
-                    COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_BEFORE`],
-                  value: "false",
+          <RadioField
+            errorMessage={this.props.highlight && isNull(this.state[option.id].post_aoj) ? 'Choose one' : null}
+            styling={css(
+              smallLeftMargin,
+              smallBottomMargin,
+              errorNoTopMargin
+            )}
+            name={rowOptId}
+            vertical
+            hideLabel
+            options={[
+              {
+                displayText:
+                  COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_BEFORE`],
+                value: 'false',
+              },
+              {
+                displayText:
+                  COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_AFTER`],
+                value: 'true',
+              },
+            ]}
+            value={this.state[option.id].post_aoj}
+            onChange={(postAoj) =>
+              this.setState({
+                [option.id]: {
+                  checked: true,
+                  post_aoj: postAoj,
                 },
-                {
-                  displayText:
-                    COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_AFTER`],
-                  value: "true",
-                },
-              ]}
-              value={this.state[option.id].post_aoj}
-              onChange={(postAoj) =>
-                this.setState({
-                  [option.id]: {
-                    checked: true,
-                    post_aoj: postAoj,
-                  },
-                })
-              }
-            />
-          )}
+              })
+            }
+          />
+        )}
       </React.Fragment>
     );
   };
@@ -333,14 +333,14 @@ class IssueRemandReasonsOptions extends React.PureComponent {
           <br />
           { !this.props.featureToggles.additional_remand_reasons &&
             <CheckboxGroup
-             label={<h3>Due Process</h3>}
-             name="due-process"
-             options={REMAND_REASONS.dueProcess}
-             {...checkboxGroupProps}
+              label={<h3>Due Process</h3>}
+              name="due-process"
+              options={REMAND_REASONS.dueProcess}
+              {...checkboxGroupProps}
             />
           }
           { this.props.featureToggles.additional_remand_reasons &&
-              <CheckboxGroup
+            <CheckboxGroup
               label={<h3>Other reasons</h3>}
               name="other"
               options={REMAND_REASONS.other}
