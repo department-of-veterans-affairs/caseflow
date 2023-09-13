@@ -127,7 +127,7 @@ export const generateTags = (doc) => (dispatch) => {
         }
       });
     });
-}
+};
 
 /** Document Description **/
 export const saveDocumentDescription = (docId, description) => (dispatch) => {

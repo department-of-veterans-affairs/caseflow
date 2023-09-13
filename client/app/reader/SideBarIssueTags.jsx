@@ -13,7 +13,7 @@ import Alert from '../components/Alert';
 class SideBarIssueTags extends PureComponent {
   render() {
     const { doc, featureToggles } = this.props;
-    const { auto_tagged, isAutoTagPending } = doc
+    const { auto_tagged, isAutoTagPending } = doc;
     const isVisible = featureToggles.auto_tagging_ability && featureToggles.can_manually_auto_tag && !auto_tagged
 
     let generateOptionsFromTags = (tags) =>
@@ -64,7 +64,8 @@ SideBarIssueTags.propTypes = {
   addNewTag: PropTypes.func,
   generateTags: PropTypes.func,
   error: PropTypes.object,
-  tagOptions: PropTypes.string
+  tagOptions: PropTypes.string,
+  featureToggles: PropTypes.object
 };
 
 const mapStateToProps = (state) => {

@@ -202,7 +202,7 @@ const documentsReducer = (state = initialState, action = {}) => {
           isAutoTagPending: true
         }
       }
-    })
+    });
   default:
     return state;
   }
