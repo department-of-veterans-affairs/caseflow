@@ -358,40 +358,26 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     return (
       <div key={`remand-reasons-${String(issue.id)}`}>
         <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
-          Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ""}
+          Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ''}
         </h2>
         <div {...smallBottomMargin}>
-          {appeal.isLegacyAppeal
-            ? `Program: ${getIssueProgramDescription(issue)}`
-            : `Benefit type: ${BENEFIT_TYPES[issue.benefit_type]}`}
+          {appeal.isLegacyAppeal ?
+            `Program: ${getIssueProgramDescription(issue)}` :
+            `Benefit type: ${BENEFIT_TYPES[issue.benefit_type]}`}
         </div>
-        {!appeal.isLegacyAppeal && (
-          <div {...smallBottomMargin}>
-            Issue description: {issue.description}
-          </div>
-        )}
+        {!appeal.isLegacyAppeal && (<div {...smallBottomMargin}>Issue description: {issue.description}</div>)}
         {appeal.isLegacyAppeal && (
           <React.Fragment>
-            <div {...smallBottomMargin}>
-              Issue: {getIssueTypeDescription(issue)}
-            </div>
-            <div {...smallBottomMargin}>
-              Code: {getIssueDiagnosticCodeLabel(last(issue.codes))}
-            </div>
-            <div
-              {...smallBottomMargin}
-              ref={(node) => (this.elTopOfWarning = node)}
-            >
+            <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
+            <div {...smallBottomMargin}>Code: {getIssueDiagnosticCodeLabel(last(issue.codes))}</div>
+            <div {...smallBottomMargin} ref={(node) => (this.elTopOfWarning = node)}>
               Certified: {formatDateStr(appeal.certificationDate)}
             </div>
             <div {...smallBottomMargin}>Note: {issue.note}</div>
           </React.Fragment>
         )}
         {highlight && !this.getChosenOptions().length && (
-          <div
-            className="usa-input-error"
-            {...css(redText, boldText, errorNoTopMargin)}
-          >
+          <div className="usa-input-error" {...css(redText, boldText, errorNoTopMargin)}>
             Choose at least one
           </div>
         )}
