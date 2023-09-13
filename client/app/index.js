@@ -43,7 +43,6 @@ import Error403 from 'app/errors/Error403';
 import Unauthorized from 'app/containers/Unauthorized';
 import OutOfService from 'app/containers/OutOfService';
 import Feedback from 'app/containers/Feedback';
-import StatsContainer from 'app/containers/stats/StatsContainer';
 import Login from 'app/login';
 import TestUsers from 'app/test/TestUsers';
 import TestData from 'app/test/TestData';
@@ -81,7 +80,6 @@ const COMPONENTS = {
   OutOfService,
   Unauthorized,
   Feedback,
-  StatsContainer,
   Hearings,
   PerformanceDegradationBanner,
   Help,
@@ -165,7 +163,6 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         './login/index',
         './test/TestUsers',
         './test/TestData',
-        './containers/stats/StatsContainer',
         './certification/Certification',
         './manageEstablishClaim/ManageEstablishClaim',
         './hearings/index',
