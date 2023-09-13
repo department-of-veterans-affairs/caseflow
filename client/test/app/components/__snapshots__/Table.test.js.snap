@@ -42,7 +42,6 @@ exports[`Table renders correctly 1`] = `
       <tr
         class=""
         id="table-row-0"
-        tabindex="0"
       >
         <td
           class=""
@@ -66,7 +65,6 @@ exports[`Table renders correctly 1`] = `
       <tr
         class=""
         id="table-row-1"
-        tabindex="0"
       >
         <td
           class=""
@@ -90,7 +88,6 @@ exports[`Table renders correctly 1`] = `
       <tr
         class=""
         id="table-row-2"
-        tabindex="0"
       >
         <td
           class=""
@@ -114,7 +111,6 @@ exports[`Table renders correctly 1`] = `
       <tr
         class=""
         id="table-row-3"
-        tabindex="0"
       >
         <td
           class=""
