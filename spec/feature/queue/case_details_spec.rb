@@ -569,7 +569,7 @@ RSpec.feature "Case details", :all_dbs do
         visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content("Refresh POA")
         click_on "Refresh POA"
-        expect(page).to have_content("POA Updated Successfully")
+        expect(page).to have_content(COPY::POA_UPDATED_SUCCESSFULLY)
         expect(page).to have_content("POA last refreshed on 01/01/2020")
       end
 

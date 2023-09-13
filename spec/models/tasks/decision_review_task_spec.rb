@@ -22,9 +22,9 @@ describe DecisionReviewTask, :postgres do
     let(:hlr) do
       create(
         :higher_level_review,
-        number_of_claimants: 1,
         veteran_file_number: veteran.file_number,
-        benefit_type: benefit_type
+        benefit_type: benefit_type,
+        claimant_type: :veteran_claimant
       )
     end
     let(:trait) { :assigned }
@@ -104,7 +104,9 @@ describe DecisionReviewTask, :postgres do
 
   shared_context "decision review task assigned to business line" do
     let(:veteran) { create(:veteran) }
-    let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+    let(:hlr) do
+      create(:higher_level_review, claimant_type: :veteran_claimant, veteran_file_number: veteran.file_number)
+    end
     let(:business_line) { create(:business_line, name: "National Cemetery Administration", url: "nca") }
 
     let(:decision_review_task) { create(:higher_level_review_task, appeal: hlr, assigned_to: business_line) }
@@ -117,7 +119,16 @@ describe DecisionReviewTask, :postgres do
 
     it "includes only key-values within serialize_task[:data][:attributes]" do
       serialized_hash = {
-        appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
+        appeal: {
+          id: hlr.id.to_s,
+          isLegacyAppeal: false,
+          issueCount: 0,
+          activeRequestIssues: [],
+          appellant_type: "VeteranClaimant",
+          uuid: hlr.uuid
+        },
+        power_of_attorney: power_of_attorney,
+        appellant_type: "VeteranClaimant",
         started_at: decision_review_task.started_at,
         tasks_url: business_line.tasks_url,
         id: decision_review_task.id,
@@ -131,9 +142,9 @@ describe DecisionReviewTask, :postgres do
         issue_types: "",
         type: "Higher-Level Review",
         claimant: { name: hlr.veteran_full_name, relationship: "self" },
-        business_line: business_line.url
+        business_line: business_line.url,
+        has_poa: true
       }
-
       expect(subject).to eq serialized_hash
       expect(subject.key?(:attributes)).to eq false
     end
@@ -150,7 +161,16 @@ describe DecisionReviewTask, :postgres do
         type: :decision_review_task,
         attributes: {
           claimant: { name: hlr.veteran_full_name, relationship: "self" },
-          appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0, activeRequestIssues: [] },
+          appeal: {
+            id: hlr.id.to_s,
+            isLegacyAppeal: false,
+            issueCount: 0,
+            activeRequestIssues: [],
+            uuid: hlr.uuid,
+            appellant_type: "VeteranClaimant"
+          },
+          appellant_type: "VeteranClaimant",
+          power_of_attorney: power_of_attorney,
           veteran_participant_id: veteran.participant_id,
           veteran_ssn: veteran.ssn,
           assigned_on: decision_review_task.assigned_at,
@@ -163,12 +183,24 @@ describe DecisionReviewTask, :postgres do
           issue_count: 0,
           issue_types: "",
           type: "Higher-Level Review",
-          business_line: business_line.url
+          business_line: business_line.url,
+          has_poa: true
         }
       }
 
       expect(subject).to eq serialized_hash
       expect(subject.key?(:attributes)).to eq true
     end
+  end
+
+  def power_of_attorney
+    {
+      representative_type: decision_review_task.appeal.representative_type,
+      representative_name: decision_review_task.appeal.representative_name,
+      representative_address: decision_review_task.appeal.representative_address,
+      representative_email_address: decision_review_task.appeal.representative_email_address,
+      representative_tz: decision_review_task.appeal.representative_tz,
+      poa_last_synced_at: decision_review_task.appeal.poa_last_synced_at
+    }
   end
 end
