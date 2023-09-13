@@ -6,11 +6,15 @@ import { reject, first, pick, size, map, find } from 'lodash';
 
 import CannotSaveAlert from '../reader/CannotSaveAlert';
 import SearchableDropdown from '../components/SearchableDropdown';
-import { addNewTag, removeTag } from '../reader/Documents/DocumentsActions';
+import { addNewTag, removeTag, generateTags } from '../reader/Documents/DocumentsActions';
+import Button from '../components/Button';
+import Alert from '../components/Alert';
 
 class SideBarIssueTags extends PureComponent {
   render() {
-    const { doc } = this.props;
+    const { doc, featureToggles } = this.props;
+    const { auto_tagged, isAutoTagPending } = doc
+    const isVisible = featureToggles.auto_tagging_ability && featureToggles.can_manually_auto_tag && !auto_tagged
 
     let generateOptionsFromTags = (tags) =>
       map(reject(tags, 'pendingRemoval'), (tag) => ({
@@ -32,7 +36,11 @@ class SideBarIssueTags extends PureComponent {
 
     return (
       <div className="cf-issue-tag-sidebar">
+        {isAutoTagPending && <Alert type="info" message="Auto-tags generating. Please wait a moment." />}
         {this.props.error.tag.visible && <CannotSaveAlert />}
+        {isVisible && <span className="cf-right-side cf-generate-tag-button">
+          <Button onClick={() => this.props.generateTags(doc)} role="button" disabled={auto_tagged || isAutoTagPending}>Generate auto-tags</Button>
+        </span>}
         <SearchableDropdown
           key={doc.id}
           name="tags"
@@ -54,6 +62,7 @@ SideBarIssueTags.propTypes = {
   doc: PropTypes.object,
   removeTag: PropTypes.func,
   addNewTag: PropTypes.func,
+  generateTags: PropTypes.func,
   error: PropTypes.object,
   tagOptions: PropTypes.string
 };
@@ -69,7 +78,8 @@ const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators(
     {
       addNewTag,
-      removeTag
+      removeTag,
+      generateTags,
     },
     dispatch
   )
