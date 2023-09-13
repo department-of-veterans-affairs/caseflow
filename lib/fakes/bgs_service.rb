@@ -341,13 +341,13 @@ class Fakes::BGSService
   end
 
   # TODO: add more test cases
-  def fetch_poa_by_file_number(file_number, claimant_participant_id)
+  def fetch_poa_by_file_number(file_number)
     return {} if file_number == "no-such-file-number"
     return {} if file_number == NO_POA_FILE_NUMBER || file_number == NO_POA_FILE_NUMBER.to_s
 
     record = (self.class.power_of_attorney_records || {})[file_number]
     record ||= default_vso_power_of_attorney_record if file_number == DEFAULT_VSO_POA_FILE_NUMBER
-    record ||= default_power_of_attorney_record(file_number, claimant_participant_id)
+    record ||= default_power_of_attorney_record(file_number)
 
     get_claimant_poa_from_bgs_poa(record)
   end
@@ -392,7 +392,8 @@ class Fakes::BGSService
 
         {
           ptcpnt_id: participant_id,
-          file_number: "00001234",
+          # file_number: "00001234",
+          file_number: generate_random_file_number,
           power_of_attorney: vso
         }
       end
@@ -730,8 +731,11 @@ class Fakes::BGSService
     value
   end
 
-  def default_power_of_attorney_record(file_number, claimant_participant_id)
-    # If the Bgs poa object does not have a participant id randomly generate one
+  # TODO: Fetch claimant_participant_id from BgsPowerOfAttorney model by file number here
+  # TODO: Go make sure that the file number is randomly generated in participant_ids
+  def default_power_of_attorney_record(file_number)
+    # Try to guess the claimant participant id based on the file number otherwise assign it to a random one
+    claimant_participant_id = BgsPowerOfAttorney.find_by(file_number: file_number)&.claimant_participant_id
     claimant_participant_id ||= generate_random_file_number
     poa_hash = if FeatureToggle.enabled?(:randomize_poa) && BgsAttorney.exists?
                  poa_hash_from_bgs_attorney(random_attorney)
