@@ -86,7 +86,7 @@ class DocumentsTable extends React.Component {
    let foundErrors = [];
 
    // Prevent the from date from being after the To date.
-   if (this.state.toDate !== '' && pickedDate > this.state.toDate) {
+   if (this.state.toDate !== '' && this.state.recieptFilter == recieptDateFilterStates.BETWEEN && pickedDate > this.state.toDate) {
      foundErrors = [...foundErrors, 'From date cannot occur after to date.'];
    }
    // Prevent the To date and From date from being the same date.
@@ -121,7 +121,7 @@ class DocumentsTable extends React.Component {
    let foundErrors = [];
 
    // Prevent setting the to date before the from date
-   if (this.state.fromDate !== '' && pickedDate < this.state.fromDate) {
+   if (this.state.fromDate !== '' && this.state.recieptFilter == recieptDateFilterStates.BETWEEN && pickedDate < this.state.fromDate) {
      foundErrors = [...foundErrors, 'To date cannot occur before from date.'];
    }
 
@@ -197,6 +197,7 @@ class DocumentsTable extends React.Component {
    console.log(toErrors);
    console.log(fromErrors);
    console.log(onErrors);
+   console.log(this.state.recieptFilter);
    if (fromErrors.length === 0 && toErrors.length === 0 && onErrors.length === 0) {
     console.log('executing filter!');
      this.props.setRecieptDateFilter(this.state.recieptFilter,
