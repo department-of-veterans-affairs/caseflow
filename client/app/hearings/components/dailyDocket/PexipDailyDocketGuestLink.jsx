@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { GUEST_LINK_LABELS } from '../../constants';
 
-export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
+export const PexipDailyDocketGuestLink = ({ linkInfo }) => {
 
   // Conference Link Information
   const { alias, guestLink, guestPin } = linkInfo || {};
@@ -15,14 +15,19 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
     backgroundColor: '#f1f1f1',
     padding: '1em 0 0 1em',
     marginLeft: '-40px',
-    marginRight: '-40px'
+    marginRight: '-40px',
+    marginBottom: '20px',
   };
 
   const roomInfoContainerStyle = {
     display: 'flex',
     flexWrap: 'wrap',
-    justifyContent: 'space-around'
+    justifyContent: 'space-between',
+    paddingLeft: '40px',
+    paddingRight: '40px',
   };
+
+  // backgroundColor: '#f1f1f1',
 
   // Props needed for the copy text button component
   const CopyTextButtonProps = {
@@ -37,6 +42,9 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
   // Takes alias from guestLink
   const useAliasFromLink = () => guestLink?.split('&')[0]?.match(/conference=.+/)[0]?.split('=')[1];
 
+  const linkIsPresent = linkInfo;
+  const buttonDisabled = true;
+
   /**
    * Render information about the guest link
    * @param {conferenceRoom} - The conference link alias
@@ -47,22 +55,53 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
   const renderRoomInfo = () => {
     return (
       <div style={roomInfoContainerStyle}>
-        <h3>{GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}:<span style={{ fontWeight: 'normal' }}>{alias || useAliasFromLink()}</span></h3>
-        <h3>{GUEST_LINK_LABELS.GUEST_PIN}:<span style={{ fontWeight: 'normal' }}>{usePinFromLink()}#</span></h3>
-        <h3><CopyTextButton {...CopyTextButtonProps} /></h3>
+        <h3>
+          {GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}:
+          {linkIsPresent ? (
+            <span style={{ fontWeight: 'normal' }}>
+              {alias || useAliasFromLink()}
+            </span>
+          ) : (
+            <span style={{ fontWeight: 'normal' }}>N/A</span>
+          )}
+        </h3>
+        {linkIsPresent ? (
+          <>
+            <h3>
+              {GUEST_LINK_LABELS.GUEST_PIN}:
+              <span style={{ fontWeight: 'normal' }}>{usePinFromLink()}#</span>
+            </h3>
+            <h3>
+              <CopyTextButton {...CopyTextButtonProps} />
+            </h3>
+          </>
+        ) : (
+          <>
+            <h3 style={{ paddingLeft: '130px' }}>
+              {GUEST_LINK_LABELS.GUEST_PIN}:
+              <span style={{ fontWeight: 'normal' }}>N/A</span>
+            </h3>
+            <h3>
+              <CopyTextButton
+                {...CopyTextButtonProps}
+                disabled={buttonDisabled}
+              />
+            </h3>
+          </>
+        )}
       </div>
     );
   };
 
   return (
     <div style={containerStyle}>
-      <h3>{GUEST_LINK_LABELS.GUEST_LINK_SECTION_LABEL}</h3>
+      <h3>{GUEST_LINK_LABELS.PEXIP_GUEST_LINK_SECTION_LABEL}</h3>
       {renderRoomInfo(alias, guestPin)}
     </div>
   );
 };
 
-DailyDocketGuestLinkSection.propTypes = {
+PexipDailyDocketGuestLink.propTypes = {
   linkInfo: PropTypes.shape({
     guestLink: PropTypes.string,
     guestPin: PropTypes.string,

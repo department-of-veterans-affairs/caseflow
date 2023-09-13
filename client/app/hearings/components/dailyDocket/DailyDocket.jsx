@@ -15,14 +15,18 @@ import Button from '../../../components/Button';
 import StatusMessage from '../../../components/StatusMessage';
 import DailyDocketRows from './DailyDocketRows';
 import DailyDocketEditLinks from './DailyDocketEditLinks';
-import { isPreviouslyScheduledHearing, userJudgeOrCoordinator } from '../../utils';
+import {
+  isPreviouslyScheduledHearing,
+  userJudgeOrCoordinator,
+} from '../../utils';
 import { navigateToPrintPage } from '../../../util/PrintUtil';
 import { encodeQueryParams } from '../../../util/QueryParamsUtil';
 import COPY from '../../../../COPY';
 import UserAlerts from '../../../components/UserAlerts';
 import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
 import { ScheduledInErrorModal } from '../ScheduledInErrorModal';
-import { DailyDocketGuestLinkSection } from './DailyDocketGuestLinkSection';
+import { PexipDailyDocketGuestLink } from './PexipDailyDocketGuestLink';
+import { WebexDailyDocketGuestLink } from './WebexDailyDocketGuestLink';
 
 const alertStyling = css({
   marginBottom: '30px',
@@ -33,7 +37,7 @@ const Alerts = ({
   onErrorHearingDayLock,
   dailyDocket,
   dailyDocketServerError,
-  conferenceLinkError
+  conferenceLinkError,
 }) => (
   <React.Fragment>
     <UserAlerts />
@@ -79,7 +83,7 @@ const Alerts = ({
         title={`VACOLS Hearing Day ${moment(dailyDocket.scheduledFor).format(
           'M/DD/YYYY'
         )}
-           cannot be locked in Caseflow.`}
+          cannot be locked in Caseflow.`}
         message="VACOLS Hearing Day cannot be locked"
       />
     )}
@@ -180,7 +184,9 @@ export default class DailyDocket extends React.Component {
   };
 
   navigateToPrintAllPage = () => {
-    const hearingIds = this.dailyDocketHearings().map((hearing) => hearing.externalId);
+    const hearingIds = this.dailyDocketHearings().map(
+      (hearing) => hearing.externalId
+    );
     const queryString = encodeQueryParams({
       hearing_ids: hearingIds.join(','),
       keep_open: true,
@@ -211,7 +217,10 @@ export default class DailyDocket extends React.Component {
       history,
     } = this.props;
 
-    const { editedDispositionModalProps, scheduledInErrorModalProps } = this.state;
+    const {
+      editedDispositionModalProps,
+      scheduledInErrorModalProps,
+    } = this.state;
 
     return (
       <AppSegment filledBackground>
@@ -229,7 +238,6 @@ export default class DailyDocket extends React.Component {
             }
           />
         )}
-
         {displayRemoveHearingDayModal && (
           <RemoveHearingModal
             dailyDocket={dailyDocket}
@@ -238,7 +246,6 @@ export default class DailyDocket extends React.Component {
             deleteHearingDay={deleteHearingDay}
           />
         )}
-
         {displayLockModal && (
           <LockModal
             dailyDocket={dailyDocket}
@@ -246,7 +253,6 @@ export default class DailyDocket extends React.Component {
             onCancelDisplayLockModal={onCancelDisplayLockModal}
           />
         )}
-
         <Alerts
           dailyDocket={dailyDocket}
           saveSuccessful={this.props.saveSuccessful}
@@ -255,7 +261,6 @@ export default class DailyDocket extends React.Component {
           onErrorHearingDayLock={this.props.onErrorHearingDayLock}
           conferenceLinkError={this.props.conferenceLinkError}
         />
-
         <div className="cf-app-segment">
           <div className="cf-push-left">
             <DailyDocketEditLinks
@@ -282,7 +287,6 @@ export default class DailyDocket extends React.Component {
             Room number: {dailyDocket.room}
           </div>
         </div>
-
         <div className="cf-app-segment">
           <div className="cf-push-left">
             <Button onClick={() => navigateToPrintPage()}>
@@ -301,8 +305,16 @@ export default class DailyDocket extends React.Component {
             )}
           </div>
         </div>
-        {(user.userIsHearingManagement || user.userIsHearingAdmin) &&
-          <DailyDocketGuestLinkSection linkInfo={dailyDocket.conferenceLink} />}
+        {(user.userIsHearingManagement || user.userIsHearingAdmin) && (
+          <PexipDailyDocketGuestLink
+            linkInfo={dailyDocket.pexipConferenceLink}
+          />
+        )}
+        {(user.userIsHearingManagement || user.userIsHearingAdmin) && (
+          <WebexDailyDocketGuestLink
+            linkInfo={dailyDocket.webexConferenceLink}
+          />
+        )}
         <DailyDocketRows
           hearings={this.props.hearings}
           hidePreviouslyScheduled
@@ -314,7 +326,6 @@ export default class DailyDocket extends React.Component {
           regionalOffice={regionalOffice}
           user={user}
         />
-
         {!hasDocketHearings && (
           <div {...css({ marginTop: '75px' })}>
             <StatusMessage
@@ -327,7 +338,6 @@ export default class DailyDocket extends React.Component {
             />
           </div>
         )}
-
         {hasPrevHearings && (
           <div {...css({ marginTop: '75px' })}>
             <h1>Previously Scheduled</h1>

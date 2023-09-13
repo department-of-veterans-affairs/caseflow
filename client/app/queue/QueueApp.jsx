@@ -926,17 +926,20 @@ class QueueApp extends React.PureComponent {
               render={this.routedAssignToSingleTeam}
             />
             <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/$
+              {TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.value
                 }`}
               render={this.routedAssignToSingleTeam}
             />
             <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/$
+              {TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.value
                 }`}
               render={this.routedAssignToSingleTeam}
             />
             <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/$
+              {TASK_ACTIONS.SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION.value
                 }`}
               render={this.routedAssignToSingleTeam}
             />
@@ -1001,7 +1004,8 @@ class QueueApp extends React.PureComponent {
               render={this.routedReturnToCamo}
             />
             <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/$
+              {TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.value
                 }`}
               render={this.routedReturnToProgramOffice}
             />
@@ -1091,7 +1095,8 @@ class QueueApp extends React.PureComponent {
               render={this.routedCavcRemandReceived}
             />
             <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/$
+              {TASK_ACTIONS.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW.value
                 }`}
               render={this.routedCamoDocumentsReadyForBvaIntake}
             />
@@ -1114,14 +1119,16 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.MARK_TASK_AS_COMPLETE_CONTESTED_CLAIM.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/$
+              {TASK_ACTIONS.MARK_TASK_AS_COMPLETE_CONTESTED_CLAIM.value
                 }`}
               title="Mark Task Complete | Caseflow"
               render={this.routedCompleteTaskContestedClaimModal}
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/$
+              {TASK_ACTIONS.MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE.value
                 }`}
               title="Mark Task Complete | Caseflow"
               render={this.routedCompleteTaskContestedClaimModal}
@@ -1135,35 +1142,40 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/$
+              {TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL.value
                 }`}
               title="Letter Task | Caseflow"
               render={this.routedProceedFinalNotificationLetterInitialModal}
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/$
+              {TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING.value
                 }`}
               title="Letter Task | Caseflow"
               render={this.routedProceedFinalNotificationLetterPostHoldingModal}
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.RESEND_FINAL_NOTIFICATION_LETTER.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/$
+              {TASK_ACTIONS.RESEND_FINAL_NOTIFICATION_LETTER.value
                 }`}
               title="Letter Task | Caseflow"
               render={this.routedResendFinalNotificationLetterModal}
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/$
+              {TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING.value
                 }`}
               title="Resend Letter Task | Caseflow"
               render={this.routedResendInitialNotificationLetterPostHoldingModal}
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER_FINAL.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/$
+              {TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER_FINAL.value
                 }`}
               title="Resend Letter Task | Caseflow"
               render={this.routedResendInitialNotificationLetterFinalModal}
@@ -1184,21 +1196,24 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/$
+              {TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW.value
                 }`}
               title={`${PAGE_TITLES.READY_FOR_REVIEW} | Caseflow`}
               render={this.routedVhaCaregiverSupportSendToBoardIntakeForReviewModal}
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/$
+              {TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.value
                 }`}
               title={`${PAGE_TITLES.READY_FOR_REVIEW} | Caseflow`}
               render={this.routedRpoSendToBoardIntakeForReviewModal}
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/$
+              {TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE.value
                 }`}
               title={`${PAGE_TITLES.RETURN_TO_BOARD_INTAKE} | Caseflow`}
               render={this.routedVhaCaregiverSupportReturnToBoardIntake}
@@ -1263,7 +1278,8 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={
-                `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_POST_INITIAL_LETTER_TASK.value
+                `/queue/appeals/:appealId/tasks/:taskId/$
+                {TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_POST_INITIAL_LETTER_TASK.value
                 }`}
               title="Cancel Task"
               render={this.routedCancelLetterTaskModal}

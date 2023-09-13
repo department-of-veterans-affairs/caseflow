@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DailyDocketGuestLinkSection renders correctly for hearing admins and hearing management users 1`] = `
+exports[`PexipDailyDocketGuestLink renders correctly for hearing admins and hearing management users 1`] = `
 <div>
   <div
-    style="display: grid; grid-template-columns: 1fr 1.8fr; background-color: rgb(241, 241, 241); padding: 1em 0px 0px 1em; margin-left: -40px; margin-right: -40px;"
+    style="display: grid; grid-template-columns: 1fr 1.8fr; background-color: rgb(241, 241, 241); padding: 1em 0px 0px 1em; margin-left: -40px; margin-right: -40px; margin-bottom: 20px;"
   >
     <h3>
-      Guest links for non-virtual hearings
+      Pexip Guest link for non-virtual hearings
     </h3>
     <div
-      style="display: flex; flex-wrap: wrap; justify-content: space-around;"
+      style="display: flex; flex-wrap: wrap; justify-content: space-between; padding-left: 40px; padding-right: 40px;"
     >
       <h3>
         Conference Room
@@ -154,16 +154,16 @@ exports[`DailyDocketGuestLinkSection renders correctly for hearing admins and he
 </div>
 `;
 
-exports[`DailyDocketGuestLinkSection renders correctly for non hearing admins and hearing management users 1`] = `
+exports[`PexipDailyDocketGuestLink renders correctly for non hearing admins and hearing management users 1`] = `
 <div>
   <div
-    style="display: grid; grid-template-columns: 1fr 1.8fr; background-color: rgb(241, 241, 241); padding: 1em 0px 0px 1em; margin-left: -40px; margin-right: -40px;"
+    style="display: grid; grid-template-columns: 1fr 1.8fr; background-color: rgb(241, 241, 241); padding: 1em 0px 0px 1em; margin-left: -40px; margin-right: -40px; margin-bottom: 20px;"
   >
     <h3>
-      Guest links for non-virtual hearings
+      Pexip Guest link for non-virtual hearings
     </h3>
     <div
-      style="display: flex; flex-wrap: wrap; justify-content: space-around;"
+      style="display: flex; flex-wrap: wrap; justify-content: space-between; padding-left: 40px; padding-right: 40px;"
     >
       <h3>
         Conference Room
