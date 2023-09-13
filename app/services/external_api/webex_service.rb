@@ -63,7 +63,12 @@ class ExternalApi::WebexService
 
     ExternalApi::WebexService::CreateResponse.new(resp)
   end
+
   # rubocop:enable Metrics/MethodLength
+
+  def guest_webex_link(hearing_day)
+    
+  end
 
   def delete_conference(virtual_hearing)
     return if virtual_hearing.conference_id.nil?
