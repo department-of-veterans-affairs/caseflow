@@ -126,7 +126,7 @@ class DocumentsTable extends React.Component {
    }
 
    // Prevent setting the To and From dates to the same date.
-   if (pickedDate === this.state.fromDate) {
+   if (this.state.fromDate !== '' && pickedDate === this.state.fromDate) {
      foundErrors = [...foundErrors, 'From date and To date cannot be the same.'];
    }
 
@@ -194,9 +194,11 @@ class DocumentsTable extends React.Component {
    const fromErrors = this.validateDateFrom(this.state.fromDate);
    const onErrors = this.validateDateOn(this.state.onDate);
 
+   console.log(toErrors);
+   console.log(fromErrors);
    console.log(onErrors);
-
    if (fromErrors.length === 0 && toErrors.length === 0 && onErrors.length === 0) {
+    console.log('executing filter!');
      this.props.setRecieptDateFilter(this.state.recieptFilter,
        { fromDate: this.state.fromDate,
          toDate: this.state.toDate,
