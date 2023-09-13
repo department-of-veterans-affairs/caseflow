@@ -365,7 +365,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
             `Program: ${getIssueProgramDescription(issue)}` :
             `Benefit type: ${BENEFIT_TYPES[issue.benefit_type]}`}
         </div>
-        {!appeal.isLegacyAppeal && (<div {...smallBottomMargin}>Issue description: {issue.description}</div>)}
+        {!appeal.isLegacyAppeal && <div {...smallBottomMargin}>Issue description: {issue.description}</div>}
         {appeal.isLegacyAppeal && (
           <React.Fragment>
             <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
