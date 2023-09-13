@@ -731,8 +731,6 @@ class Fakes::BGSService
     value
   end
 
-  # TODO: Fetch claimant_participant_id from BgsPowerOfAttorney model by file number here
-  # TODO: Go make sure that the file number is randomly generated in participant_ids
   def default_power_of_attorney_record(file_number)
     # Try to guess the claimant participant id based on the file number otherwise assign it to a random one
     claimant_participant_id = BgsPowerOfAttorney.find_by(file_number: file_number)&.claimant_participant_id
