@@ -194,12 +194,7 @@ class DocumentsTable extends React.Component {
    const fromErrors = this.validateDateFrom(this.state.fromDate);
    const onErrors = this.validateDateOn(this.state.onDate);
 
-   console.log(toErrors);
-   console.log(fromErrors);
-   console.log(onErrors);
-   console.log(this.state.recieptFilter);
    if (fromErrors.length === 0 && toErrors.length === 0 && onErrors.length === 0) {
-    console.log('executing filter!');
      this.props.setRecieptDateFilter(this.state.recieptFilter,
        { fromDate: this.state.fromDate,
          toDate: this.state.toDate,
