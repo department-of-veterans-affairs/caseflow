@@ -271,12 +271,9 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         errorMessage={isModal && highlightFormItems && !selectedOption ? 'Choose one' : null}
         options={options}
         placeholder={COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER}
-        onChange={(selectedTasks.length > 0 && selectedTasks[0].appealType === 'LegacyAppeal') ?
-          (option) => option && this.props.setSelectedAssignee({ assigneeId: option.value }) &&
-          this.setModalOnChangeValue('assignedTo', option ? option.value : null) :
-          (option) => option && this.props.setSelectedAssignee({ assigneeId: option.value })}
+        onChange={(option) => option && this.props.setSelectedAssignee({ assigneeId: option.value }) &&
+          this.setModalOnChangeValue('assignedTo', option ? option.value : null)}
         value={selectedOption}
-
       />
       {selectedAssignee === OTHER &&
         <React.Fragment>
