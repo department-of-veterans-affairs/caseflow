@@ -341,7 +341,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
           }
           { this.props.featureToggles.additional_remand_reasons &&
               <CheckboxGroup
-              label={<h3>Other</h3>}
+              label={<h3>Other reasons</h3>}
               name="other"
               options={REMAND_REASONS.other}
               {...checkboxGroupProps}
