@@ -64,8 +64,7 @@ const initialState = {
       receiptDate: false
     }
   },
-  manifestVbmsFetchedAt: null,
-  manifestVvaFetchedAt: null
+  manifestVbmsFetchedAt: null
 };
 
 const documentListReducer = (state = initialState, action = {}) => {
@@ -243,9 +242,6 @@ const documentListReducer = (state = initialState, action = {}) => {
     return update(state, {
       manifestVbmsFetchedAt: {
         $set: action.payload.manifestVbmsFetchedAt
-      },
-      manifestVvaFetchedAt: {
-        $set: action.payload.manifestVvaFetchedAt
       }
     });
   case Constants.UPDATE_FILTERED_RESULTS:
