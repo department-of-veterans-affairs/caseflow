@@ -5,7 +5,7 @@ class NormalizeMeetingTypes < Caseflow::Migration
 
   def change
     create_table :meeting_types do |table|
-      table.integer :service_type, comment: "Pexip or Webex Instant Connect", default: 0
+      table.integer :service_name, comment: "Pexip or Webex Instant Connect", default: 0
     end
 
     # Create polymorhpic association for other classes to tap into
