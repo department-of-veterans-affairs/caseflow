@@ -140,16 +140,8 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
 
   # Returns whether or not the conference was deleted from Pexip
   def delete_conference(virtual_hearing)
-    #TODO: Update the clients once the webex implementation is completed
-    if virtual_hearing.meeting_type === "pexip"
-      #client = pexip client
-      conference_client = "Pexip"
-    else
-      #client = webex client
-      conference_client = "Webex"
-    end
     response = client.delete_conference(conference_id: virtual_hearing.conference_id)
-    Rails.logger.info("#{conference_client} response: #{response}")
+    Rails.logger.info("#{virtual_hearing.meeting_type.capitalize} response: #{response}")
 
     fail response.error unless response.success?
 

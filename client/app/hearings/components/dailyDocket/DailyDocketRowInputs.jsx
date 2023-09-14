@@ -351,10 +351,9 @@ PreppedCheckbox.propTypes = {
 
 export const StaticVirtualHearing = ({ hearing, user }) => (
   <div>
-    { hearing?.scheduledForIsPast &&
+    { hearing?.scheduledForIsPast ? (
       <span>{virtualHearingScheduledDatePassedLabelFull(virtualHearingRoleForUser(user, hearing))}</span>
-    }
-    { !hearing?.scheduledForIsPast && (
+    ) : (
       <VirtualHearingLink
         label={virtualHearingLinkLabelFull(virtualHearingRoleForUser(user, hearing))}
         user={user}
