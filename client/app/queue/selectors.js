@@ -132,13 +132,14 @@ const tasksByAssigneeOrgSelector = createSelector(
 
 export const legacyJudgeTasksAssignedToUser = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) => filter(tasks, (task) => task.type === 'JudgeLegacyDecisionReviewTask' || task.type === 'JudgeLegacyAssignTask')
+  (tasks) => filter(tasks, (task) =>
+    task.type === 'JudgeLegacyDecisionReviewTask' || task.type === 'JudgeLegacyAssignTask')
 );
 
 const workTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks) =>
-    workTasksSelector(tasks).
+    workTasksSelector(tasks).sort((task1, task2) => task1.isLegacy - task2.isLegacy).
       filter((task, i, arr) => arr.map((id) => (id.externalAppealId)).
         indexOf(task.externalAppealId) === i),
 );
