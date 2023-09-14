@@ -73,7 +73,7 @@ const CompleteHearingWithdrawalRequestModal = (props) => {
       submit={submit}
       pathAfterSubmit={`/queue/appeals/${appealId}`}
     >
-      <div>By marking this task as complete, you will withdraw the hearing</div>
+      <div>By marking this task as complete, you will withdraw the hearing.</div>
       <br />
       <div>{COPY.WITHDRAW_HEARING.AMA.MODAL_BODY}</div>
       <br />
