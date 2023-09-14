@@ -169,12 +169,12 @@ class DocumentsTable extends React.Component {
  }
 
  executeRecieptFilter = () => {
-  this.props.setRecieptDateFilter(this.state.recieptFilter,
-    { fromDate: this.state.fromDate,
-      toDate: this.state.toDate,
-      onDate: this.state.onDate});
+   this.props.setRecieptDateFilter(this.state.recieptFilter,
+     { fromDate: this.state.fromDate,
+       toDate: this.state.toDate,
+       onDate: this.state.onDate });
 
-      this.toggleRecieptDataDropdownFilterVisibility();
+   this.toggleRecieptDataDropdownFilterVisibility();
  }
 
  isRecieptFilterButtonEnabled = () => {
@@ -473,14 +473,16 @@ class DocumentsTable extends React.Component {
                   this.state.fromDateErrors.map((error, index) =>
                     <p id={index} key={index} style={{ color: 'red' }}>{error}</p>)}
                     {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.FROM) &&
-                  <DateSelector value={this.state.fromDate} type="date" name="From"
+                  <DateSelector value={this.state.fromDate} type="date"
+                    name={this.state.recieptFilter === recieptDateFilterStates.BETWEEN ? 'From' : ''}
                     onChange={this.validateDateFrom} />}
 
                     {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.TO) &&
                   this.state.toDateErrors.map((error) =>
                     <p style={{ color: 'red' }}>{error}</p>)}
                     {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.TO) &&
-                  <DateSelector value={this.state.toDate} type="date" name="To"
+                  <DateSelector value={this.state.toDate} type="date"
+                    name={this.state.recieptFilter === recieptDateFilterStates.BETWEEN ? 'To' : ''}
                     onChange={this.validateDateTo} />}
 
                     {this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED && <DateSelector readOnly type="date" name="Receipt date"
@@ -489,7 +491,7 @@ class DocumentsTable extends React.Component {
                     {(this.state.recieptFilter === recieptDateFilterStates.ON) && this.state.onDateErrors.map((error) =>
                       <p style={{ color: 'red' }}>{error}</p>)}
                     {this.state.recieptFilter === recieptDateFilterStates.ON && <DateSelector value={this.state.onDate} type="date"
-                      name="On this date" onChange={this.setOnDate} />}
+                      name="" onChange={this.setOnDate} />}
 
                     <div style={{ width: '100%', display: 'flex' }}>
                       <span style={{ height: '1px', position: 'absolute', width: '100%', backgroundColor: 'gray' }}></span>
