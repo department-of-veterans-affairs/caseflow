@@ -1229,7 +1229,7 @@ ActiveRecord::Schema.define(version: 2023_09_14_210532) do
   create_table "meeting_types", force: :cascade do |t|
     t.bigint "conferenceable_id"
     t.string "conferenceable_type"
-    t.integer "service_type", comment: "Pexip or Webex Instant Connect"
+    t.integer "service_type", default: 0, comment: "Pexip or Webex Instant Connect"
     t.index ["conferenceable_type", "conferenceable_id"], name: "conferenceable_association_idx"
   end
 
