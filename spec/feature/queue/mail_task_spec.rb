@@ -545,25 +545,123 @@ RSpec.feature "MailTasks", :postgres do
   describe "Hearing Withdrawal Request Mail Task" do
     before { HearingAdmin.singleton.add_user(User.current_user) }
 
-    let(:hwr_task) do
-      create(:hearing_withdrawal_request_mail_task,
-             :withdrawal_request_with_scheduled_hearing, assigned_by_id: User.system_user.id)
-    end
-    let(:appeal) { hwr_task.appeal }
-
     describe "mark as complete" do
-      context "appeal has scheduled hearing" do
+      let(:date_completed) { hwr_task.updated_at.strftime("%m/%d/%Y") }
+
+      shared_examples "whether hearing is schedueld or unscheduled" do
+        it "completes HearingWithdrawalRequestMailTask on Case Timeline" do
+          mail_task = find("#case-timeline-table tr:nth-child(2)")
+          expect(mail_task).to have_content("COMPLETED ON\n#{date_completed}")
+          expect(mail_task).to have_content("HearingWithdrawalRequestMailTask completed")
+        end
+
+        it "updates instructions of HearingWithdrawalRequestMailTask on Case Timeline" do
+          find(:css, "#case-timeline-table .cf-btn-link", text: "View task instructions", match: :first).click
+          instructions_div = find("div", class: "task-instructions")
+          expect(instructions_div).to have_content("Mark as complete and withdraw hearing:")
+          expect(instructions_div).to have_content("DETAILS\n#{instructions}")
+        end
+
+        it "cancels Hearing task on Case Timeline" do
+          hearing_task = find("#case-timeline-table tr:nth-child(3)")
+          expect(hearing_task).to have_content("CANCELLED ON\n#{date_completed}")
+          expect(hearing_task).to have_content("HearingTask cancelled")
+          expect(hearing_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+        end
+      end
+
+      shared_examples "hearing scheduled" do
+        include_examples "whether hearing is schedueld or unscheduled"
+
         it "marks hearing disposition as cancelled" do
-          page = "queue/appeals/#{appeal.uuid}"
-          visit(page)
+          hearing = within(:css, "#hearing-details") { find(:css, ".cf-bare-list ul:nth-child(2)") }
+          expect(hearing).to have_content("Disposition: Cancelled")
+        end
+
+        it "cancels AssignHearingDisposition task on Case Timeline" do
+          disposition_task = find("#case-timeline-table tr:nth-child(4)")
+          expect(disposition_task).to have_content("CANCELLED ON\n#{date_completed}")
+          expect(disposition_task).to have_content("AssignHearingDispositionTask cancelled")
+          expect(disposition_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+        end
+      end
+
+      shared_examples "hearing unscheduled" do
+        include_examples "whether hearing is schedueld or unscheduled"
+
+        it "cancels ScheduleHearing task on Case Timeline" do
+          schedule_task = find("#case-timeline-table tr:nth-child(4)")
+          expect(schedule_task).to have_content("CANCELLED ON\n#{date_completed}")
+          expect(schedule_task).to have_content("ScheduleHearingTask cancelled")
+          expect(schedule_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+        end
+      end
+
+      context "AMA appeal" do
+        let(:hwr_task) do
+          create(:hearing_withdrawal_request_mail_task,
+                 :withdrawal_request_with_scheduled_hearing, assigned_by_id: User.system_user.id)
+        end
+        let(:appeal) { hwr_task.appeal }
+
+        before do
+          visit("queue/appeals/#{appeal.uuid}")
           within("tr", text: "TASK", match: :first) do
             click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
                            text: Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.label)
           end
-          modal = find(".cf-modal-body")
-          expect(modal).to have_content("Mark as complete and withdraw hearing")
-          # fill_in("instructionsField", with: instructions)
-          # click_button("Mark as complete & withdraw hearing")
+          fill_in("instructionsField", with: instructions)
+          click_button("Mark as complete & withdraw hearing")
+          visit("queue/appeals/#{appeal.uuid}")
+        end
+
+        context "appeal has scheduled hearing" do
+          include_examples "hearing scheduled"
+        end
+
+        context "appeal has unscheduled hearing" do
+          let(:hwr_task) do
+            create(:hearing_withdrawal_request_mail_task,
+                   :withdrawal_request_with_unscheduled_hearing, assigned_by_id: User.system_user.id)
+          end
+
+          include_examples "hearing unscheduled"
+        end
+      end
+
+      context "Legacy appeal" do
+        let(:legacy_appeal) do
+          create(:legacy_appeal, :with_veteran, vacols_case: create(:case))
+        end
+        let!(:hwr_task) do
+          create(:hearing_withdrawal_request_mail_task,
+                 :withdrawal_request_with_scheduled_hearing,
+                 assigned_by_id: User.system_user.id, appeal: legacy_appeal)
+        end
+
+        before do
+          visit("queue/appeals/#{legacy_appeal.vacols_id}")
+          within("tr", text: "TASK", match: :first) do
+            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                           text: Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.label)
+          end
+          fill_in("instructionsField", with: instructions)
+          click_button("Mark as complete & withdraw hearing")
+          visit("queue/appeals/#{legacy_appeal.vacols_id}")
+        end
+
+        context "appeal has scheduled hearing" do
+          include_examples "hearing scheduled"
+        end
+
+        context "appeal has unscheduled hearing" do
+          let(:hwr_task) do
+            create(:hearing_withdrawal_request_mail_task,
+                   :withdrawal_request_with_unscheduled_hearing,
+                   assigned_by_id: User.system_user.id, appeal: legacy_appeal)
+          end
+
+          include_examples "hearing unscheduled"
         end
       end
     end
