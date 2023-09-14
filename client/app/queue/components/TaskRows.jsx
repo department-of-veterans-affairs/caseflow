@@ -306,7 +306,7 @@ class TaskRows extends React.PureComponent {
 
     // We specify the same 2.4rem margin-bottom as paragraphs to each set of instructions
     // to ensure a consistent margin between instruction content and the "Hide" button
-    const divStyles = { marginBottom: '2.4rem' };
+    const divStyles = { marginBottom: '2.4rem', marginTop: '1em' };
 
     return (
       <React.Fragment key={`${task.uniqueId} fragment`}>

@@ -24,7 +24,7 @@ export const newTagRequestSuccess = (docId, createdTags) =>
 
     dispatch(collectAllTags(documents));
   }
-;
+  ;
 
 export const newTagRequestFailed = (docId, tagsThatWereAttemptedToBeCreated) => (dispatch) => {
   dispatch(showErrorMessage('tag'));
@@ -116,6 +116,18 @@ export const addNewTag = (doc, tags) =>
         });
     }
   };
+
+export const generateTags = (doc) => (dispatch) => {
+  ApiUtil.get(`/document/${doc.id}/tag/auto_tag`, {}, ENDPOINT_NAMES.TAG).
+    then(() => {
+      dispatch({
+        type: Constants.GENERATE_AUTO_TAGS,
+        payload: {
+          docId: doc.id
+        }
+      });
+    });
+};
 
 /** Document Description **/
 export const saveDocumentDescription = (docId, description) => (dispatch) => {
