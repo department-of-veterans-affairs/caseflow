@@ -2,6 +2,7 @@
 
 class DecisionReviewsController < ApplicationController
   include GenericTaskPaginationConcern
+  include UpdatePOAConcern
 
   before_action :verify_access, :react_routed, :set_application
   before_action :verify_veteran_record_access, only: [:show]
@@ -89,6 +90,17 @@ class DecisionReviewsController < ApplicationController
     }
   end
 
+  def power_of_attorney
+    render json: power_of_attorney_data
+  end
+
+  def update_power_of_attorney
+    appeal = task.appeal
+    update_poa_information(appeal)
+  rescue StandardError => error
+    render_error(error)
+  end
+
   helper_method :task_filter_details, :business_line, :task
 
   private
@@ -173,5 +185,16 @@ class DecisionReviewsController < ApplicationController
       :page,
       decision_issues: [:description, :disposition, :request_issue_id]
     )
+  end
+
+  def power_of_attorney_data
+    {
+      representative_type: task.appeal&.representative_type,
+      representative_name: task.appeal&.representative_name,
+      representative_address: task.appeal&.representative_address,
+      representative_email_address: task.appeal&.representative_email_address,
+      representative_tz: task.appeal&.representative_tz,
+      poa_last_synced_at: task.appeal&.poa_last_synced_at
+    }
   end
 end
