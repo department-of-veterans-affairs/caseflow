@@ -11,6 +11,7 @@ class RequestIssue < CaseflowRecord
   include HasBusinessLine
   include DecisionSyncable
   include HasDecisionReviewUpdatedSince
+  include SyncLock
 
   # how many days before we give up trying to sync decisions
   REQUIRES_PROCESSING_WINDOW_DAYS = 30
@@ -419,7 +420,19 @@ class RequestIssue < CaseflowRecord
     contested_decision_issue&.request_issues&.first
   end
 
-  def sync_decision_issues!
+  def sync_decision_issues!(target_time = Time.zone.now)
+    # add sleep timer for uat testing specific RequestIssues tied to certain EPE
+    if (end_product_establishment_id == 4142 || [16606, 16607, 16608, 16609, 16610].include?(id))
+      target_time = Time.zone.new(2023, 9, 14, 18, 00, 0)
+    elsif (end_product_establishment_id == 4143 || [16611, 16612, 16613, 16614, 16615].include?(id))
+      target_time = Time.zone.new(2023, 9, 14, 18, 10, 0)
+    elsif (end_product_establishment_id == 4144 || [16616, 16617, 16618, 16619, 16620].include?(id))
+      target_time = Time.zone.new(2023, 9, 14, 18, 20, 0)
+    elsif (end_product_establishment_id == 4145 || [16621, 16622, 16623, 16624, 16625].include?(id))
+      target_time = Time.zone.new(2023, 9, 14, 18, 30, 0)
+    end
+
+    sleep_until(target_time)
     return if processed?
 
     fail NotYetSubmitted unless submitted_and_ready?
@@ -431,14 +444,30 @@ class RequestIssue < CaseflowRecord
     # to avoid a slow BGS call causing the transaction to timeout
     end_product_establishment.veteran
 
-    transaction do
-      return unless create_decision_issues
+    ### hlr_sync_lock will stop any other request issues associated with the current End Product Establishment
+    ### from syncing with BGS concurrently if the claim is a Higher Level Review. This will ensure that
+    ### the remand supplemental claim generation that occurs within '#on_decision_issue_sync_processed' will
+    ### not be inadvertantly bypassed due to two request issues from the same claim being synced at the same
+    ### time. If this situation does occur, one of the request issues will error out with
+    ### Caseflow::Error:SyncLockFailed and be picked up to sync again later
+    hlr_sync_lock do
+      transaction do
+        return unless create_decision_issues
 
-      end_product_establishment.on_decision_issue_sync_processed(self)
-      clear_error!
-      close_decided_issue!
-      processed!
+        end_product_establishment.on_decision_issue_sync_processed(self)
+        clear_error!
+        close_decided_issue!
+        processed!
+      end
     end
+  end
+
+  def sleep_until(target_time)
+    current_time = Time.now
+    # Calculate the time difference
+    time_difference = target_time - current_time
+    # Sleep until the desired time is reached
+    sleep(time_difference) if time_difference > 0
   end
 
   def vacols_issue
