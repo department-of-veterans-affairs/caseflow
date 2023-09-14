@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import Checkbox from '../components/Checkbox';
 import { css } from 'glamor';
+import SearchBar from '../components/SearchBar';
 
 const TagSelector = (props) => {
   const { tag, handleTagToggle, tagToggleStates } = props;
@@ -69,7 +70,8 @@ const DocTagPicker = ({ tags, tagToggleStates, handleTagToggle,
   };
 
   return (
-    <div style={{width: '217px'}}>
+    <div style={{ width: '217px' }}>
+      <SearchBar onChange={updateFilterText} value={filterText} isSearchAhead />
       <ul {...dropdownFilterViewListStyle} {...tagListStyling}>
         {getFilteredData().map((tag, index) => {
           return <li key={index} {...dropdownFilterViewListItemStyle} {...tagListItemStyling}>
