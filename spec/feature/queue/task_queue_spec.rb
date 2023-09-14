@@ -974,7 +974,6 @@ feature "Task queue", :all_dbs do
         FeatureToggle.enable!(:mst_identification)
         FeatureToggle.enable!(:pact_identification)
 
-
         # Add a user to the Colocated team so the task assignment will suceed.
         Colocated.singleton.add_user(create(:user))
         visit("/queue/appeals/#{appeal.external_id}")

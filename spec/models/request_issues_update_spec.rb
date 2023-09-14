@@ -292,43 +292,43 @@ describe RequestIssuesUpdate, :all_dbs do
           expect(existing_request_issue.reload.edited_description).to eq(edited_description)
         end
 
-      context "when an issue's mst status is updated" do
-        let(:request_issues_data) do
-          [{ request_issue_id: existing_legacy_opt_in_request_issue.id },
-           { request_issue_id: existing_request_issue.id,
-             mst_status: mst_status,
-             mst_status_update_reason_notes: mst_status_update_reason_notes }]
+        context "when an issue's mst status is updated" do
+          let(:request_issues_data) do
+            [{ request_issue_id: existing_legacy_opt_in_request_issue.id },
+             { request_issue_id: existing_request_issue.id,
+               mst_status: mst_status,
+               mst_status_update_reason_notes: mst_status_update_reason_notes }]
+          end
+
+          before { FeatureToggle.enable!(:mst_identification) }
+          after { FeatureToggle.disable!(:mst_identification) }
+
+          it "updates the request issue's mst status and mst status update reason notes" do
+            allow_any_instance_of(RequestIssuesUpdate).to receive(:create_issue_update_task).and_return(true)
+            expect(subject).to be_truthy
+            expect(existing_request_issue.reload.mst_status).to eq(true)
+            expect(existing_request_issue.reload.mst_status_update_reason_notes).to eq("I am the mst status update reason notes")
+          end
         end
 
-        before { FeatureToggle.enable!(:mst_identification) }
-        after { FeatureToggle.disable!(:mst_identification) }
+        context "when an issue's pact status is updated" do
+          let(:request_issues_data) do
+            [{ request_issue_id: existing_legacy_opt_in_request_issue.id },
+             { request_issue_id: existing_request_issue.id,
+               pact_status: pact_status,
+               pact_status_update_reason_notes: pact_status_update_reason_notes }]
+          end
 
-        it "updates the request issue's mst status and mst status update reason notes" do
-          allow_any_instance_of(RequestIssuesUpdate).to receive(:create_issue_update_task).and_return(true)
-          expect(subject).to be_truthy
-          expect(existing_request_issue.reload.mst_status).to eq(true)
-          expect(existing_request_issue.reload.mst_status_update_reason_notes).to eq("I am the mst status update reason notes")
+          before { FeatureToggle.enable!(:pact_identification) }
+          after { FeatureToggle.disable!(:pact_identification) }
+
+          it "updates the request issue's pact status and pact status update reason notes" do
+            allow_any_instance_of(RequestIssuesUpdate).to receive(:create_issue_update_task).and_return(true)
+            expect(subject).to be_truthy
+            expect(existing_request_issue.reload.pact_status).to eq(true)
+            expect(existing_request_issue.reload.pact_status_update_reason_notes).to eq("I am the pact status update reason notes")
+          end
         end
-      end
-
-      context "when an issue's pact status is updated" do
-        let(:request_issues_data) do
-          [{ request_issue_id: existing_legacy_opt_in_request_issue.id },
-           { request_issue_id: existing_request_issue.id,
-             pact_status: pact_status,
-             pact_status_update_reason_notes: pact_status_update_reason_notes }]
-        end
-
-        before { FeatureToggle.enable!(:pact_identification) }
-        after { FeatureToggle.disable!(:pact_identification) }
-
-        it "updates the request issue's pact status and pact status update reason notes" do
-          allow_any_instance_of(RequestIssuesUpdate).to receive(:create_issue_update_task).and_return(true)
-          expect(subject).to be_truthy
-          expect(existing_request_issue.reload.pact_status).to eq(true)
-          expect(existing_request_issue.reload.pact_status_update_reason_notes).to eq("I am the pact status update reason notes")
-        end
-      end
 
         context "if the contention text has been updated in VBMS before" do
           let(:contention_updated_at) { 1.day.ago }

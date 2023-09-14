@@ -8,27 +8,25 @@ class Intake::LegacyAppealSerializer
   attribute :claimant_type do |object|
     object.claimant[:representative][:type]
   end
-  attribute :claimant_name do |object|
-    object.veteran_full_name
-  end
+  attribute :claimant_name, &:veteran_full_name
   attribute :veteran_is_not_claimant
   attribute :request_issues, &:issues
 
   attribute :intake_user
 
-  attribute :processed_in_caseflow do |object|
+  attribute :processed_in_caseflow do |_object|
     true
   end
 
-  attribute :legacy_opt_in_approved do |object|
+  attribute :legacy_opt_in_approved do |_object|
     true
   end
 
-  attribute :legacy_appeals do |object|
+  attribute :legacy_appeals do |_object|
     []
   end
 
-  attribute :ratings do |object|
+  attribute :ratings do |_object|
     []
   end
 
@@ -36,27 +34,27 @@ class Intake::LegacyAppealSerializer
     "/appeals/#{object.id}/edit"
   end
 
-  attribute :processed_at do |object|
+  attribute :processed_at do |_object|
     nil
   end
 
-  attribute :veteran_invalid_fields do |object|
+  attribute :veteran_invalid_fields do |_object|
     nil
   end
 
-  attribute :active_nonrating_request_issues do |object|
+  attribute :active_nonrating_request_issues do |_object|
     []
   end
 
-  attribute :contestable_issues_by_date do |object|
+  attribute :contestable_issues_by_date do |_object|
     []
   end
 
-  attribute :intake_user do |object|
+  attribute :intake_user do |_object|
     nil
   end
 
-  attribute :receipt_date do |object|
+  attribute :receipt_date do |_object|
     nil
   end
 
@@ -81,11 +79,11 @@ class Intake::LegacyAppealSerializer
     }
   end
 
-  attribute :power_of_attorney_name do |object|
+  attribute :power_of_attorney_name do |_object|
     nil
   end
 
-  attribute :claimant_relationship do |object|
+  attribute :claimant_relationship do |_object|
     nil
   end
 

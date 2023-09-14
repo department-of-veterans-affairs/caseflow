@@ -10,7 +10,7 @@ describe Seeds::Intake do
     it "creates all kinds of decision reviews" do
       expect { subject }.to_not raise_error
 
-      expect(HigherLevelReview.count).to be >=(10)
+      expect(HigherLevelReview.count).to be >= 10
     end
   end
 end

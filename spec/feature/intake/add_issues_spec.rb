@@ -31,7 +31,7 @@ feature "Intake Add Issues Page", :all_dbs do
       promulgation_date: promulgation_date,
       profile_date: profile_date,
       issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted"},
+        { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" },
         { reference_id: "def789", decision_text: "Looks like a VACOLS issue" }
       ],
@@ -52,7 +52,6 @@ feature "Intake Add Issues Page", :all_dbs do
   let!(:vbms_rating) do
     generate_rating_with_mst_pact(veteran_vbms_mst_pact)
   end
-
 
   context "not service connected rating decision" do
     before { FeatureToggle.enable!(:contestable_rating_decisions) }
@@ -76,7 +75,7 @@ feature "Intake Add Issues Page", :all_dbs do
       visit "/intake"
       click_intake_continue
       click_intake_add_issue
-      choose('rating-radio_0', allow_label_click:true)
+      choose("rating-radio_0", allow_label_click: true)
       expect(page).to have_no_content("Issue is related to Military Sexual Trauma (MST)")
       expect(page).to have_no_content("Issue is related to PACT Act")
     end
@@ -880,7 +879,7 @@ feature "Intake Add Issues Page", :all_dbs do
 
       appeal_id = Appeal.find_by(veteran_file_number: veteran.file_number).uuid
       visit "/queue/appeals/#{appeal_id}"
-      #to prevent timeout
+      # to prevent timeout
       refresh
       click_on "View task instructions"
       expect(page).to have_content("Special issues: MST")
@@ -898,7 +897,7 @@ feature "Intake Add Issues Page", :all_dbs do
 
       appeal_id = Appeal.find_by(veteran_file_number: veteran_no_ratings.file_number).uuid
       visit "/queue/appeals/#{appeal_id}"
-      #to prevent timeout
+      # to prevent timeout
       visit current_path
       click_on "View task instructions"
 
@@ -918,14 +917,14 @@ feature "Intake Add Issues Page", :all_dbs do
 
       appeal_id = Appeal.find_by(veteran_file_number: veteran_no_ratings.file_number).uuid
       visit "/queue/appeals/#{appeal_id}"
-      #to prevent timeout
+      # to prevent timeout
       visit current_path
       click_on "View task instructions"
 
       expect(page).to have_content("Special issues: MST, PACT")
     end
 
-     scenario "Intake appeal with MST contention from VBMS" do
+    scenario "Intake appeal with MST contention from VBMS" do
       start_appeal_with_mst_pact_from_vbms(veteran_vbms_mst_pact)
       visit "/intake"
       click_intake_continue
@@ -935,7 +934,7 @@ feature "Intake Add Issues Page", :all_dbs do
       click_on "Establish appeal"
       appeal_id = Appeal.find_by(veteran_file_number: veteran_vbms_mst_pact.file_number).uuid
       visit "/queue/appeals/#{appeal_id}"
-      #to prevent timeout
+      # to prevent timeout
       refresh
       click_on "View task instructions"
       expect(page).to have_content("Service connection is granted for PTSD at 10 percent, effective 10/11/2022.")
@@ -952,7 +951,7 @@ feature "Intake Add Issues Page", :all_dbs do
       click_on "Establish appeal"
       appeal_id = Appeal.find_by(veteran_file_number: veteran_vbms_mst_pact.file_number).uuid
       visit "/queue/appeals/#{appeal_id}"
-      #to prevent timeout
+      # to prevent timeout
       refresh
       click_on "View task instructions"
       expect(page).to have_content("Service connection is granted for AOOV at 10 percent, effective 10/11/2022.")
@@ -969,7 +968,7 @@ feature "Intake Add Issues Page", :all_dbs do
       click_on "Establish appeal"
       appeal_id = Appeal.find_by(veteran_file_number: veteran_vbms_mst_pact.file_number).uuid
       visit "/queue/appeals/#{appeal_id}"
-      #to prevent timeout
+      # to prevent timeout
       refresh
       click_on "View task instructions"
       expect(page).to have_content("Service connection is granted for PTSD, AOOV at 10 percent, effective 10/11/2022.")

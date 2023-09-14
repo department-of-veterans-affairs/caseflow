@@ -26,11 +26,11 @@ class Generators::BgsContention
         begin_date: Time.zone.today,
         claim_id: generate_external_id,
         special_issues: {
-          :call_id=>"12345",
-          :jrn_dt=>5.days.ago,
-          :name=>"SpecialIssue",
-          :spis_tc=>"MST",
-          :spis_tn=>"Military Sexual Trauma (MST)"
+          call_id: "12345",
+          jrn_dt: 5.days.ago,
+          name: "SpecialIssue",
+          spis_tc: "MST",
+          spis_tn: "Military Sexual Trauma (MST)"
         }
       }
     end
@@ -45,11 +45,11 @@ class Generators::BgsContention
         begin_date: Time.zone.today,
         claim_id: generate_external_id,
         special_issues: {
-          :call_id=>"12345",
-          :jrn_dt=>5.days.ago,
-          :name=>"SpecialIssue",
-          :spis_tc=>"PACT",
-          :spis_tn=>"PACT"
+          call_id: "12345",
+          jrn_dt: 5.days.ago,
+          name: "SpecialIssue",
+          spis_tc: "PACT",
+          spis_tn: "PACT"
         }
       }
     end

@@ -35,6 +35,7 @@ module IssueUpdater
 
   private
 
+  # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize
   def create_decision_issues!
     ordered_issues = issues.sort_by { |issue| issue[:request_issue_ids]&.first }
     ordered_issues.each do |issue_attrs|
@@ -54,7 +55,6 @@ module IssueUpdater
       )
 
       request_issues.each do |request_issue|
-
         RequestDecisionIssue.create!(decision_issue: decision_issue, request_issue: request_issue)
 
         # compare the MST/PACT status of the orignial issue and decision to create task and record

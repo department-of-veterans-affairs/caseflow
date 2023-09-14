@@ -48,7 +48,6 @@ class InitialTasksFactory
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   def create_subtasks!
     distribution_task # ensure distribution_task exists
     if @appeal.appellant_substitution?
@@ -72,7 +71,6 @@ class InitialTasksFactory
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
 
   def distribution_task
     @distribution_task ||= @appeal.tasks.open.find_by(type: :DistributionTask) ||
@@ -89,13 +87,15 @@ class InitialTasksFactory
     when "direct_review"
       parent_task = distribution_task
     end
-    @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
-                                          SendInitialNotificationLetterTask.create!(
-                                            appeal: @appeal,
-                                            parent: parent_task,
-                                            assigned_to: Organization.find_by_url("clerk-of-the-board"),
-                                            assigned_by: RequestStore[:current_user]
-                                          ) unless parent_task.nil?
+    unless parent_task.nil?
+      @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
+                                            SendInitialNotificationLetterTask.create!(
+                                              appeal: @appeal,
+                                              parent: parent_task,
+                                              assigned_to: Organization.find_by_url("clerk-of-the-board"),
+                                              assigned_by: RequestStore[:current_user]
+                                            )
+    end
   end
 
   def create_ihp_task
