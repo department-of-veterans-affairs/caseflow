@@ -13,9 +13,6 @@ import { render } from 'react-dom';
 import { forOwn } from 'lodash';
 import { BrowserRouter, Switch } from 'react-router-dom';
 
-// Internal Dependencies
-import { storeMetrics } from './util/Metrics';
-
 // Redux Store Dependencies
 import ReduxBase from 'app/components/ReduxBase';
 import rootReducer from 'store/root';
@@ -43,7 +40,6 @@ import Error403 from 'app/errors/Error403';
 import Unauthorized from 'app/containers/Unauthorized';
 import OutOfService from 'app/containers/OutOfService';
 import Feedback from 'app/containers/Feedback';
-import StatsContainer from 'app/containers/stats/StatsContainer';
 import Login from 'app/login';
 import TestUsers from 'app/test/TestUsers';
 import TestData from 'app/test/TestData';
@@ -58,7 +54,6 @@ import Inbox from 'app/inbox';
 import Explain from 'app/explain';
 import MPISearch from 'app/mpi/MPISearch';
 import Admin from 'app/admin';
-import uuid from 'uuid';
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
@@ -81,7 +76,6 @@ const COMPONENTS = {
   OutOfService,
   Unauthorized,
   Feedback,
-  StatsContainer,
   Hearings,
   PerformanceDegradationBanner,
   Help,
@@ -97,36 +91,6 @@ const COMPONENTS = {
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
-  window.onerror = (event, source, lineno, colno, error) => {
-    if (props.featureToggles?.metricsBrowserError) {
-      const id = uuid.v4();
-      const data = {
-        event,
-        source,
-        lineno,
-        colno,
-        error
-      };
-      const t0 = performance.now();
-      const start = Date.now();
-      const t1 = performance.now();
-      const end = Date.now();
-      const duration = t1 - t0;
-
-      storeMetrics(
-        id,
-        data,
-        { type: 'error',
-          product: 'browser',
-          start,
-          end,
-          duration }
-      );
-    }
-
-    return true;
-  };
-
   /* eslint-disable */
   const wrapComponent = (Component) => (
     <ErrorBoundary>
@@ -165,7 +129,6 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         './login/index',
         './test/TestUsers',
         './test/TestData',
-        './containers/stats/StatsContainer',
         './certification/Certification',
         './manageEstablishClaim/ManageEstablishClaim',
         './hearings/index',

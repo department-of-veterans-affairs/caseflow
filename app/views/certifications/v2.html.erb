@@ -4,9 +4,6 @@
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date,
-    vacolsId: @certification.vacols_id,
-    featureToggles: {
-        metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user)
-    }
+    vacolsId: @certification.vacols_id
 }) %>
 <% end %>

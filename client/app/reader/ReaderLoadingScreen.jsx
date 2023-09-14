@@ -52,8 +52,7 @@ export class ReaderLoadingScreen extends React.Component {
       failStatusMessageProps={{
         title: 'Unable to load documents'
       }}
-      failStatusMessageChildren={failStatusMessageChildren}
-      metricsLoadScreen={this.props.featureToggles.metricsLoadScreen}>
+      failStatusMessageChildren={failStatusMessageChildren}>
       {this.props.children}
     </LoadingDataDisplay>;
 
@@ -67,8 +66,7 @@ ReaderLoadingScreen.propTypes = {
   onReceiveAnnotations: PropTypes.func,
   onReceiveDocs: PropTypes.func,
   onReceiveManifests: PropTypes.func,
-  vacolsId: PropTypes.string,
-  featureToggles: PropTypes.object
+  vacolsId: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
