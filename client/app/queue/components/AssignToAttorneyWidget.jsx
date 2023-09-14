@@ -45,12 +45,14 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     if (props.selectedTasks.length > 0 && props.selectedTasks[0].appealType === 'LegacyAppeal') {
       const instructions = (props.selectedTasks[0].instructions.length === 0 ? [] :
         props.selectedTasks[0].instructions.filter((instructionData) => instructionData));
-      const isInstructionArray = (instructions === [] ? [] : instructions);
+      const isInstructionArray = (instructions.length === 0 ? [] : instructions);
       const instructionType = Array.isArray(props.selectedTasks[0].instructions) ? isInstructionArray : [];
 
       this.state = {
         instructions: ((this.props.isModal && props.selectedTasks.length > 0 &&
-          props.selectedTasks[0].appealType === 'LegacyAppeal' ? instructionType : []) || []),
+          props.selectedTasks[0].appealType === 'LegacyAppeal' &&
+          (props.selectedTasks[0].type === 'JudgeAssignTask' || props.selectedTasks[0].type === 'AttorneyTask') ?
+          [] : instructionType) || []),
         assignedToSecondary: null,
         modalDisableButton: true
       };
@@ -107,10 +109,10 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
   setModalOnChangeValue = (stateValue, value) => {
     this.setState({ [stateValue]: value }, function () {
-      if (this.state.assignedTo === OTHER && (this.state.assignedToSecondary === null || this.state.instructions.length < 0)){
+      if (this.state.assignedTo === OTHER &&
+        (this.state.assignedToSecondary === null || this.state.instructions.length < 0)) {
         this.setState({ modalDisableButton: true });
-      }
-      else if (this.state.assignedTo !== null && this.state.instructions.length > 0) {
+      } else if (this.state.assignedTo !== null && this.state.instructions.length > 0) {
         this.setState({ modalDisableButton: false });
       } else {
         this.setState({ modalDisableButton: true });
@@ -184,10 +186,10 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         this.props.resetAssignees();
 
         return this.props.showSuccessMessage({
-          title: sprintf(COPY.ASSIGN_WIDGET_SUCCESS, {
-            verb: isReassign ? 'Reassigned' : 'Assigned',
-            numCases: selectedTasks.length,
-            casePlural: pluralize('tasks', selectedTasks.length),
+          title: sprintf(COPY.ASSIGN_LEGACY_WIDGET_SUCCESS, {
+            verb: isReassign ? 'You have successfully reassigned' : 'You have successfully assigned',
+            assigned: selectedTasks[0].appeal.assignedJudge.full_name,
+            casePlural: pluralize('cases', selectedTasks.length),
             // eslint-disable-next-line camelcase
             assignee: assignee.full_name
           })
@@ -271,12 +273,9 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         errorMessage={isModal && highlightFormItems && !selectedOption ? 'Choose one' : null}
         options={options}
         placeholder={COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER}
-        onChange={(selectedTasks.length > 0 && selectedTasks[0].appealType === 'LegacyAppeal') ?
-          (option) => option && this.props.setSelectedAssignee({ assigneeId: option.value }) &&
-          this.setModalOnChangeValue('assignedTo', option ? option.value : null) :
-          (option) => option && this.props.setSelectedAssignee({ assigneeId: option.value })}
+        onChange={(option) => option && this.props.setSelectedAssignee({ assigneeId: option.value }) &&
+          this.setModalOnChangeValue('assignedTo', option ? option.value : null)}
         value={selectedOption}
-
       />
       {selectedAssignee === OTHER &&
         <React.Fragment>
@@ -317,7 +316,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         loading={savePending}
         loadingText={COPY.ASSIGN_WIDGET_LOADING}
         styling={css({ margin: '1.5rem 0' })} /> }
-    </React.Fragment>; 
+    </React.Fragment>;
 
     if (selectedTasks.length > 0 && selectedTasks[0].appealType === 'LegacyAppeal') {
       return isModal ? <QueueFlowModal title={COPY.ASSIGN_TASK_TITLE}

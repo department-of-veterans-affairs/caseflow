@@ -24,6 +24,10 @@ class AttorneyLegacyTask < LegacyTask
         Constants.TASK_ACTIONS.SUBMIT_OMO_REQUEST_FOR_REVIEW.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h
       ]
+    elsif current_user&.can_act_on_behalf_of_legacy_judges? && FeatureToggle.enabled?(:vlj_legacy_appeal)
+      [
+        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY_LEGACY.to_h
+      ]
     else
       []
     end
