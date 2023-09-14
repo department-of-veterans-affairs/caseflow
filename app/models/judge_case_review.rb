@@ -89,7 +89,8 @@ class JudgeCaseReview < CaseflowRecord
       ActiveRecord::Base.multi_transaction do
         record = create(params)
         if record.valid?
-          if record.legacy? && record.task.type == "JudgeDecisionReviewTask"
+
+          if record.legacy? && record.task&.type == "JudgeDecisionReviewTask"
             record.update_in_vacols_and_caseflow!
           else
             record.legacy? ? record.update_in_vacols! : record.update_in_caseflow!
