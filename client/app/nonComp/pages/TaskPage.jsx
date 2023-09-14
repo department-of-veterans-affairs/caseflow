@@ -51,7 +51,7 @@ class TaskPageUnconnected extends React.PureComponent {
     }
 
     return <div>
-      { errorAlert }
+      {errorAlert}
       <h1>{businessLine}</h1>
       <div className="cf-review-details cf-gray-box">
         <div className="usa-grid-full">
@@ -66,7 +66,7 @@ class TaskPageUnconnected extends React.PureComponent {
         </div>
         <div className="usa-grid-full row-two">
           <div className="usa-width-one-half">
-            { appeal.veteranIsNotClaimant ? `Veteran Name: ${appeal.veteran.name}` : '\u00a0' }
+            {appeal.veteranIsNotClaimant ? `Veteran Name: ${appeal.veteran.name}` : '\u00a0'}
           </div>
           <div className="usa-width-one-half cf-txt-r">
             <div>SSN: {appeal.veteran.ssn || '[unknown]'}</div>
@@ -88,7 +88,7 @@ class TaskPageUnconnected extends React.PureComponent {
           </div>
         </div>
       </div>
-      { detailedTaskView }
+      {detailedTaskView}
     </div>;
   }
 }

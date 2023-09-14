@@ -205,7 +205,7 @@ feature "NonComp Reviews Queue", :postgres do
       expect(page).to have_content(
         Regexp.new(
           /#{veteran_b.name} #{vet_b_id_column_value} 1/,
-          /#{request_issue_b.decision_date.strftime("%m\/%d\/%y")} Higher-Level Review/
+          /#{hlr_b.request_issues.first.decision_date.strftime("%m\/%d\/%y")} Higher-Level Review/
         )
       )
     end
@@ -621,10 +621,9 @@ feature "NonComp Reviews Queue", :postgres do
     let(:veteran_b) { create(:veteran, first_name: "B Veteran", participant_id: "66666", ssn: "140261455") }
     let(:veteran_c) { create(:veteran, first_name: "C Veteran", participant_id: "77777", ssn: "140261456") }
     let(:veteran_d) { create(:veteran, first_name: "D Veteran", participant_id: "88888", ssn: "140261457") }
-    let(:hlr_a) { create(:higher_level_review, veteran_file_number: veteran_a.file_number) }
-    let(:hlr_b) { create(:higher_level_review, veteran_file_number: veteran_b.file_number) }
-    let(:hlr_c) { create(:higher_level_review, veteran_file_number: veteran_c.file_number) }
-    let(:sc_a) { create(:supplemental_claim, veteran_file_number: veteran_d.file_number) }
+    let(:sc_a) do
+      create(:supplemental_claim, claimant_type: :veteran_claimant, veteran_file_number: veteran_d.file_number)
+    end
 
     let!(:hlr_a_request_issues) do
       [
