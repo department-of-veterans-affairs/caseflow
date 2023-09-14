@@ -3,5 +3,5 @@
 class MeetingType < CaseflowRecord
   belongs_to :conferenceable, polymorphic: true
 
-  enum service_type: { pexip: 0, webex: 1 }
+  enum service_name: { pexip: 0, webex: 1 }
 end
