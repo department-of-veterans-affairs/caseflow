@@ -448,7 +448,7 @@ class DocumentsTable extends React.Component {
                 right: '7vw' }}>
                 <DropdownFilter
                   clearFilters={this.resetRecieptPicker}
-                  name="Reciept Date"
+                  name="Receipt Date"
                   isClearEnabled
                   handleClose={this.toggleRecieptDataDropdownFilterVisibility}
                   addClearFiltersRow
