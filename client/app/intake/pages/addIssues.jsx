@@ -212,7 +212,7 @@ class AddIssuesPage extends React.Component {
     } = this.props;
     const intakeData = intakeForms[formType];
     const appealInfo = intakeForms.appeal;
-    const { useAmaActivationDate, hlrScUnrecognizedClaimants } = featureToggles;
+    const { hlrScUnrecognizedClaimants } = featureToggles;
     const hasClearedEp = intakeData && (intakeData.hasClearedRatingEp || intakeData.hasClearedNonratingEp);
 
     if (this.willRedirect(intakeData, hasClearedEp)) {
@@ -238,7 +238,7 @@ class AddIssuesPage extends React.Component {
         (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId
       );
 
-    const issues = formatAddedIssues(intakeData.addedIssues, useAmaActivationDate);
+    const issues = formatAddedIssues(intakeData.addedIssues);
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
     const issuesBySection = formatIssuesBySection(issues);
 

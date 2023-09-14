@@ -143,7 +143,6 @@ class IntakesController < ApplicationController
 
   def feature_toggle_ui_hash
     {
-      useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
       dateOfBirthField: FeatureToggle.enabled?(:date_of_birth_field, user: current_user),
       covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
       filedByVaGovHlr: FeatureToggle.enabled?(:filed_by_va_gov_hlr, user: current_user),
