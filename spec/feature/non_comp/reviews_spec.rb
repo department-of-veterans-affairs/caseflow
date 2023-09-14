@@ -9,10 +9,10 @@ feature "NonComp Reviews Queue", :postgres do
   let(:veteran_a_on_hold) { create(:veteran, first_name: "Douglas", participant_id: "87474", ssn: "999393976") }
   let(:veteran_b_on_hold) { create(:veteran, first_name: "Gaius", participant_id: "601172", ssn: "191039395") }
   let(:veteran_c) { create(:veteran, first_name: "Ccc", participant_id: "1002345", ssn: "128455943") }
-  let(:hlr_a) { create(:higher_level_review, veteran_file_number: veteran_a.file_number) }
-  let(:hlr_b) { create(:higher_level_review, veteran_file_number: veteran_b.file_number) }
   let(:hlr_a_on_hold) { create(:higher_level_review, veteran_file_number: veteran_a_on_hold.file_number) }
   let(:hlr_b_on_hold) { create(:higher_level_review, veteran_file_number: veteran_b_on_hold.file_number) }
+  let(:hlr_a) { create(:higher_level_review, veteran_file_number: veteran_a.file_number) }
+  let(:hlr_b) { create(:higher_level_review, veteran_file_number: veteran_b.file_number) }
   let(:hlr_c) { create(:higher_level_review, veteran_file_number: veteran_c.file_number) }
   let(:appeal) { create(:appeal, veteran: veteran_c) }
 
