@@ -98,7 +98,7 @@ export class PdfFile extends React.PureComponent {
 
           this.loadingTask.onProgress = (progress) => {
             // eslint-disable-next-line no-console
-            console.log(`UUID ${logId} : Progress of ${this.props.file}: ${progress.loaded} / ${progress.total}`);
+            console.log(`UUID: ${logId} : Progress of ${this.props.file}: ${progress.loaded} / ${progress.total}`);
           };
         } else {
           this.loadingTask = PDFJS.getDocument({ data: resp.body });
@@ -124,17 +124,21 @@ export class PdfFile extends React.PureComponent {
         return this.props.setPdfDocument(this.props.file, this.pdfDocument);
       }, (reason) => this.onRejected(reason, 'setPdfDocument')).
       catch((error) => {
-        const message = `UUID ${logId} : Getting PDF document failed for ${this.props.file} : ${error}`;
+        const message = `UUID: ${logId} : Getting PDF document failed for ${this.props.file} : ${error}`;
 
         console.error(message);
-        storeMetrics(
-          logId,
-          documentData,
-          { message,
-            type: 'error',
-            product: 'browser',
-          }
-        );
+
+        if (this.props.featureToggles.metricsRecordPDFJSGetDocument) {
+          storeMetrics(
+            logId,
+            documentData,
+            { message,
+              type: 'error',
+              product: 'browser',
+            }
+          );
+        }
+
         this.loadingTask = null;
         this.props.setDocumentLoadError(this.props.file);
       });
