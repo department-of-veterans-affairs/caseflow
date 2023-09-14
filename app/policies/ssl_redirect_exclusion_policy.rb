@@ -10,7 +10,6 @@ class SslRedirectExclusionPolicy
     %r{^/idt/api/v1/},
     %r{^/idt/api/v2/}
                                  ]).freeze
-  
   def self.call(request)
     # Check if the request path matches any of the exempt patterns
     EXEMPT_PATH_PATTERNS.any? { |pattern| pattern.match?(request.path) }
