@@ -3,7 +3,7 @@
 require "set"
 
 class SslRedirectExclusionPolicy
-  EXEMPT_PATH_PATTERNS = Set.new([  
+  EXEMPT_PATH_PATTERNS = Set.new([
     %r{^/api/metadata$},
     %r{^/health-check$},
     %r{^/idt/api/v1/},
