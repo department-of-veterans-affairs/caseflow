@@ -45,6 +45,7 @@ const initialState = {
     category: {},
     tag: {},
     document: {},
+    docTypeList: '',
     searchQuery: '',
     recieptFilterType: '',
     recieptFilterDates: {
@@ -63,8 +64,7 @@ const initialState = {
       receiptDate: false
     }
   },
-  manifestVbmsFetchedAt: null,
-  manifestVvaFetchedAt: null
+  manifestVbmsFetchedAt: null
 };
 
 const documentListReducer = (state = initialState, action = {}) => {
@@ -191,6 +191,16 @@ const documentListReducer = (state = initialState, action = {}) => {
       }
     });
 
+    // holds the unique different document types for reader.
+  case Constants.SET_DOC_TYPES:
+    return update(state, {
+      docFilterCriteria: {
+        docTypeList: {
+          $set: action.payload.docToAdd
+        }
+      }
+    });
+
   // Document header
   case Constants.SET_SEARCH:
     return update(state, {
@@ -232,9 +242,6 @@ const documentListReducer = (state = initialState, action = {}) => {
     return update(state, {
       manifestVbmsFetchedAt: {
         $set: action.payload.manifestVbmsFetchedAt
-      },
-      manifestVvaFetchedAt: {
-        $set: action.payload.manifestVvaFetchedAt
       }
     });
   case Constants.UPDATE_FILTERED_RESULTS:
