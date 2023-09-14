@@ -71,7 +71,9 @@ const DocTagPicker = ({ tags, tagToggleStates, handleTagToggle,
 
   return (
     <div style={{ width: '217px' }}>
-      <SearchBar onChange={updateFilterText} value={filterText} disableClearSearch isSearchAhead />
+      <div style={{width: '300px'}}>
+        <SearchBar onChange={updateFilterText} value={filterText} disableClearSearch isSearchAhead />
+      </div>
       <ul {...dropdownFilterViewListStyle} {...tagListStyling}>
         {getFilteredData().map((tag, index) => {
           return <li key={index} {...dropdownFilterViewListItemStyle} {...tagListItemStyling}>
