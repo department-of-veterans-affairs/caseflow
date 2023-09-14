@@ -110,7 +110,6 @@ class DocumentsTable extends React.Component {
    this.setState({ fromDateErrors: foundErrors });
 
    return foundErrors;
-
  };
 
  setDateFrom = (pickedDate) => {
@@ -491,20 +490,20 @@ class DocumentsTable extends React.Component {
                       defaultValue="On this date"
                     />
                     {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.FROM) &&
-                  this.state.fromDateErrors.map((error, index) =>
-                    <p id={index} key={index} style={{ color: 'red' }}>{error}</p>)}
-                    {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.FROM) &&
                   <DateSelector value={this.state.fromDate} type="date"
                     name={this.state.recieptFilter === recieptDateFilterStates.BETWEEN ? 'From' : ''}
                     onChange={this.setDateFrom} />}
+                    {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.FROM) &&
+                  this.state.fromDateErrors.map((error, index) =>
+                    <p id={index} key={index} style={{ color: 'red' }}>{error}</p>)}
 
-                    {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.TO) &&
-                  this.state.toDateErrors.map((error) =>
-                    <p style={{ color: 'red' }}>{error}</p>)}
                     {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.TO) &&
                   <DateSelector value={this.state.toDate} type="date"
                     name={this.state.recieptFilter === recieptDateFilterStates.BETWEEN ? 'To' : ''}
                     onChange={this.setDateTo} />}
+                    {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.TO) &&
+                  this.state.toDateErrors.map((error) =>
+                    <p style={{ color: 'red' }}>{error}</p>)}
 
                     {this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED && <DateSelector readOnly type="date" name="Receipt date"
                       onChange={this.validateDateIsAfter} comment="This is a read only component used as a dummy" />}
