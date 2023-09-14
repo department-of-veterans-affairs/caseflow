@@ -31,6 +31,7 @@ class Hearing < CaseflowRecord
   include UpdatedByUserConcern
   include HearingConcern
   include HasHearingEmailRecipientsConcern
+  include ConferenceableConcern
 
   prepend HearingScheduled
   prepend HearingPostponed
@@ -47,7 +48,6 @@ class Hearing < CaseflowRecord
   has_many :hearing_issue_notes
   has_many :email_events, class_name: "SentHearingEmailEvent"
   has_many :email_recipients, class_name: "HearingEmailRecipient"
-  has_one :meeting_type, as: :conferenceable
 
   class HearingDayFull < StandardError; end
 

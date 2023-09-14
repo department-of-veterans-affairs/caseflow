@@ -2,6 +2,7 @@
 
 class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   include BgsService
+  include ConferenceableConcern
 
   has_many :dispatch_tasks, class_name: "Dispatch::Task"
   has_many :document_views
@@ -18,7 +19,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_many :unrecognized_appellants, foreign_key: :created_by_id
   has_one :vacols_user, class_name: "CachedUser", foreign_key: :sdomainid, primary_key: :css_id
   has_one :vacols_staff, class_name: "VACOLS::Staff", foreign_key: :sdomainid, primary_key: :css_id
-  has_one :meeting_type, as: :conferenceable
 
   # Alternative: where("roles @> ARRAY[?]::varchar[]", role)
   scope :with_role, ->(role) { where("? = ANY(roles)", role) }

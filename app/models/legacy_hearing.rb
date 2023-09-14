@@ -35,6 +35,8 @@ class LegacyHearing < CaseflowRecord
   include UpdatedByUserConcern
   include HearingConcern
   include HasHearingEmailRecipientsConcern
+  include ConferenceableConcern
+
   prepend HearingScheduled
   prepend HearingWithdrawn
   prepend HearingPostponed
@@ -72,7 +74,6 @@ class LegacyHearing < CaseflowRecord
   has_one :hearing_location, as: :hearing
   has_many :email_events, class_name: "SentHearingEmailEvent", foreign_key: :hearing_id
   has_many :email_recipients, class_name: "HearingEmailRecipient", foreign_key: :hearing_id
-  has_one :meeting_type, as: :conferenceable
 
   alias_attribute :location, :hearing_location
   accepts_nested_attributes_for :hearing_location, reject_if: proc { |attributes| attributes.blank? }
