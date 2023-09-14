@@ -3,11 +3,11 @@
 require "set"
 
 class SslRedirectExclusionPolicy
-  EXEMPT_PATH_PATTERNS = Set.new([
-    %r{^/api/docs/v3/},
+  EXEMPT_PATH_PATTERNS = Set.new([  
     %r{^/api/metadata$},
     %r{^/health-check$},
     %r{^/idt/api/v1/},
+    %r{^/api/docs/v3/},
     %r{^/idt/api/v2/}
                                  ]).freeze
   def self.call(request)
