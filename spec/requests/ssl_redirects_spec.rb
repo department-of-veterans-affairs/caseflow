@@ -7,10 +7,10 @@ describe "SSL Redirects" do
     @app_with_production_ssl_config ||= Class.new(Rails.application.class) do
       config.force_ssl = true
       config.ssl_options = {
-          hsts: {
-            subdomains:  true
-          },
-          redirect: { exclude: SslRedirectExclusionPolicy }
+        hsts: {
+          subdomains: true
+        },
+        redirect: { exclude: SslRedirectExclusionPolicy }
       }
     end
   end
