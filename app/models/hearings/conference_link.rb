@@ -7,6 +7,8 @@ class ConferenceLink < CaseflowRecord
   include UpdatedByUserConcern
   include CreatedByUserConcern
 
+  has_one :meeting_type, as: :conferenceable
+
   after_create :generate_links_and_pins
 
   class << self

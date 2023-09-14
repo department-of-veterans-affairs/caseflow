@@ -59,6 +59,7 @@ class VirtualHearing < CaseflowRecord
 
   # Tracks the progress of the job that creates the virtual hearing in Pexip.
   has_one :establishment, class_name: "VirtualHearingEstablishment"
+  has_one :meeting_type, as: :conferenceable
 
   before_create :assign_created_by_user
   validate :hearing_is_not_virtual, on: :create
