@@ -3,7 +3,7 @@
 module ConferenceableConcern
   extend ActiveSupport::Concern
 
-  DEFAULT_SERVICE = "pexp"
+  DEFAULT_SERVICE = "pexip"
 
   included do
     has_one :meeting_type, as: :conferenceable
