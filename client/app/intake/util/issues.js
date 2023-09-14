@@ -349,7 +349,7 @@ export const formatIssuesBySection = (issues) => {
 };
 
 export const formatAddedIssues = (issues = []) => {
-  const amaActivationDate = new Date(DATES.AMA_ACTIVATION_TEST);
+  const amaActivationDate = new Date(DATES.AMA_ACTIVATION);
 
   return issues.map((issue, index) => {
     if (issue.isUnidentified || issue.verifiedUnidentifiedIssue) {
