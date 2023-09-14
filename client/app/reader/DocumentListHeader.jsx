@@ -41,6 +41,14 @@ class DocumentListHeader extends React.Component {
     });
   }
 
+  handleSearchClear = () => {
+    this.setState({
+      searchInput: ''
+    });
+
+    this.props.clearSearch();
+  }
+
   render() {
     const props = this.props;
 
@@ -50,7 +58,7 @@ class DocumentListHeader extends React.Component {
           <div><SearchBar
             id="searchBar"
             onSubmit={props.setSearch}
-            onClearSearch={props.clearSearch}
+            onClearSearch={this.handleSearchClear}
             recordSearch={this.recordSearch}
             onChange={this.handleSearchChange}
             value={this.state.searchInput}

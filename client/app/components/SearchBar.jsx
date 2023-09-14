@@ -168,12 +168,14 @@ export default class SearchBar extends React.Component {
             ariaLabel="clear search"
             name="clear search"
             classNames={['cf-pdf-button cf-search-close-icon']}
+            styling={ { style: { marginLeft: '-19px'}} }
             onClick={onClearSearch}
           >
             <CloseIcon
               size={12}
               color="#000"
               className=""
+              style={{ verticalAlign: 'middle' }}
             />
           </Button>
         )}
@@ -182,7 +184,6 @@ export default class SearchBar extends React.Component {
             name={`search-${id}`}
             disabled={searchDisabled}
             onClick={onSubmit ? this.onSubmit : null}
-            on
             type="submit"
             loading={loading}
           >

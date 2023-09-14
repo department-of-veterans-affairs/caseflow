@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { ICON_SIZES, COLORS } from '../../constants/AppConstants';
 
 export const CloseIcon = (props) => {
-  const { size, color, className } = props;
+  const { size, color, className, style } = props;
 
   return (
-    <svg height={size} className={className}
+    <svg height={size} className={className} style={style}
       xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55">
       <title>close</title>
       <g fill={color}>
@@ -36,9 +36,15 @@ CloseIcon.propTypes = {
   Sets the className of the component. Default class is ''.
   */
   className: PropTypes.string,
+
+  /**
+  Sets the style of the component. Default is ''.
+  */
+  style: PropTypes.string,
 };
 CloseIcon.defaultProps = {
   size: ICON_SIZES.XLARGE,
   color: COLORS.BASE,
-  className: 'cf-icon-close'
+  className: 'cf-icon-close',
+  style: ''
 };
