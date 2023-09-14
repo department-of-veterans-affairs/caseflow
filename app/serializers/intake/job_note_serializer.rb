@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Intake::JobNoteSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :id
   attribute :created_at

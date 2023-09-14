@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SentEmailEventSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :sent_to, &:sent_to_role
   attribute :email_type

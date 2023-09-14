@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class HearingSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   include HearingSerializerBase
 
   attribute :aod, &:aod?

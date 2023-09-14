@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::VeteranRecordRequestSerializer < WorkQueue::DecisionReviewTaskSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   def self.claimant_name(object)
     decision_review(object).claimant.try(:name)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class V2::AppealStatusSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   include StatusFieldSerializer
   include IssuesFieldSerializer
 

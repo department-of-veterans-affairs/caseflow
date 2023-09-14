@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Api::V3::ClaimantSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   set_key_transform :camel_lower
 
   self.record_type = "Claimant"

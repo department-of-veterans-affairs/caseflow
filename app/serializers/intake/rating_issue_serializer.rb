@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Intake::RatingIssueSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   set_id(&:reference_id)
 
   attribute :associated_end_products do |object|

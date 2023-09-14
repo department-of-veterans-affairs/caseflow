@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::DecisionReviewTaskSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   def self.decision_review(object)
     object.appeal

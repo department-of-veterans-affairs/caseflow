@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::DocketSwitchSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :disposition
   attribute :docket_type

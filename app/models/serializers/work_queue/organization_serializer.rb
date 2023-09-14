@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::OrganizationSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   attribute :id
   attribute :name
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::CavcDashboardSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :id
   attribute :board_decision_date

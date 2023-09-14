@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Intake::RatingSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   set_id(&:profile_date)
 
   attribute :participant_id

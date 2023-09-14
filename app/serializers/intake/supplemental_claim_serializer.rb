@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Intake::SupplementalClaimSerializer < Intake::ClaimReviewSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   set_key_transform :camel_lower
 
   attribute :is_dta_error, &:decision_review_remanded?

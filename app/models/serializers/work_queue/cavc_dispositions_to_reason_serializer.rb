@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::CavcDispositionsToReasonSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :id
   attribute :cavc_dashboard_disposition_id

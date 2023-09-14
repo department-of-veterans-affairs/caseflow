@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Api::V2::HearingSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :address do |hearing|
     if FeatureToggle.enabled?(:extended_hearing_api_address, user: RequestStore[:current_user])

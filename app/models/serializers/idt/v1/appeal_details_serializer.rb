@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Idt::V1::AppealDetailsSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   set_id do |object|
     object.is_a?(LegacyAppeal) ? object.vacols_id : object.uuid
   end

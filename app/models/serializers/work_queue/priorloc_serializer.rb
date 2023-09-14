@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::PriorlocSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :assigned_by
   attribute :assigned_at

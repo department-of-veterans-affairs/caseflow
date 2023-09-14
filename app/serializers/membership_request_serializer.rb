@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class MembershipRequestSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   attribute :id
   attribute :note
   attribute :status

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class VirtualHearingSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :appellant_tz
   attribute :representative_tz

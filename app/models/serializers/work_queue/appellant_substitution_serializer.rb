@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::AppellantSubstitutionSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :claimant_type
   attribute :substitution_date

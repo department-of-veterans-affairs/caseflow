@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::NotificationSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   attribute :notification_type
   attribute :event_date
   attribute :event_type
