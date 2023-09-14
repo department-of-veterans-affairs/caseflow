@@ -45,6 +45,7 @@ const initialState = {
     category: {},
     tag: {},
     document: {},
+    docTypeList: '',
     searchQuery: '',
     recieptFilterType: '',
     recieptFilterDates: {
@@ -187,6 +188,16 @@ const documentListReducer = (state = initialState, action = {}) => {
       docFilterCriteria: {
         document: {
           $set: {}
+        }
+      }
+    });
+
+    // holds the unique different document types for reader.
+  case Constants.SET_DOC_TYPES:
+    return update(state, {
+      docFilterCriteria: {
+        docTypeList: {
+          $set: action.payload.docToAdd
         }
       }
     });
