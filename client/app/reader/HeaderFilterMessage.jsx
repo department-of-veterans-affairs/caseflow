@@ -17,22 +17,31 @@ class HeaderFilterMessage extends React.PureComponent {
 
     const categoryCount = getTruthyCount(props.docFilterCriteria.category);
     const tagCount = getTruthyCount(props.docFilterCriteria.tag);
+    const docTypeCount = getTruthyCount(props.docFilterCriteria.document);
+    const receiptDateCount = getTruthyCount(props.docFilterCriteria.recieptFilterDates);
 
     const filteredCategories = compact([
       categoryCount && `Categories (${categoryCount})`,
-      tagCount && `Issue tags (${tagCount})`
+      tagCount && `Issue tags (${tagCount})`,
+      docTypeCount && `Document Types (${docTypeCount})`,
+      receiptDateCount && `Receipt Date (${receiptDateCount})`
     ]).join(', ');
 
     const className = classNames('document-list-filter-message', {
       hidden: !filteredCategories.length
     });
 
-    return <p className={className}>Filtering by: {filteredCategories}.<Button
-      id="clear-filters"
-      name="clear-filters"
-      classNames={['cf-btn-link']}
-      onClick={props.clearAllFilters}>
-      Clear all filters.</Button></p>;
+    return (
+      <p className={className}>
+        Filtering by: {filteredCategories}.
+        <Button
+          id="clear-filters"
+          name="clear-filters"
+          classNames={['cf-btn-link']}
+          onClick={props.clearAllFilters}
+        >Clear all filters.</Button>
+      </p>
+    );
   }
 }
 
