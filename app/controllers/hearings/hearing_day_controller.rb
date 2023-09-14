@@ -45,8 +45,8 @@ class Hearings::HearingDayController < HearingsApplicationController
         )
       }
     rescue VirtualHearings::LinkService::PINKeyMissingError,
-    VirtualHearings::LinkService::URLHostMissingError,
-    VirtualHearings::LinkService::URLPathMissingError => error
+           VirtualHearings::LinkService::URLHostMissingError,
+           VirtualHearings::LinkService::URLPathMissingError => error
       log_error(error)
       render json: {
         hearing_day: hearing_day.to_hash(include_conference_link: false).merge(

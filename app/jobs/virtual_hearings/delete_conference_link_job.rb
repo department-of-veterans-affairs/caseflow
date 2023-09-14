@@ -9,6 +9,7 @@ class VirtualHearings::DeleteConferenceLinkJob < CaseflowJob
 
   def perform
     begin
+      RequestStore[:current_user] = User.system_user
       links_for_past_date = retreive_stale_conference_links
       links_soft_removal(links_for_past_date)
     rescue StandardError => error
@@ -24,7 +25,7 @@ class VirtualHearings::DeleteConferenceLinkJob < CaseflowJob
   #
   # Return: A collection of links for hearing days that have passed.
   def retreive_stale_conference_links
-    ConferenceLink.joins(:hearing_day).where("scheduled_for < ?", query_date_formatted)
+    ConferenceLink.joins(:hearing_day).where("scheduled_for < ?", Date.today)
   end
 
   # Purpose: Iterates through a collection of links, updating each item and then soft_deleting.
@@ -50,14 +51,5 @@ class VirtualHearings::DeleteConferenceLinkJob < CaseflowJob
       updated_by_id: RequestStore[:current_user],
       updated_at: Time.zone.now
     }
-  end
-
-  # Purpose: Simple date formatting work to be done outside of the query.
-  #
-  # Params: None
-  #
-  # Return: "YYYY-mm-dd" formatted date from the Time object.
-  def query_date_formatted
-    Time.zone.now.to_formatted_s.split(" ")[0]
   end
 end
