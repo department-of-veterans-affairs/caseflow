@@ -39,15 +39,11 @@ class TagController < ApplicationController
   def auto_tag
     begin
       AutotaggedDocumentJob.perform(params[:document_id])
-      Document.find(params[:document_id]).update(auto_tagged: true)
+      # Document.find(params[:document_id]).update(auto_tagged: true)
       render(json: { status: :ok })
-    rescue ClaimEvidenceApi::Error::ClaimEvidenceNotFound,
-           ClaimEvidenceApi::Error::ClaimEvidenceApiError,
-           ClaimEvidenceApi::Error::ClaimEvidenceUnathorizedError,
-           ClaimEvidenceApi::Error::ClaimEvidenceForbiddenError,
-           ClaimEvidenceApi::Error::ClaimEvidenceInternalServerError,
-           ClaimEvidenceApi::Error::ClaimEvidenceRateLimitError => error
-      Rails.logger.info("Could not generate tag for document #{params[:document_id]}. Error: #{error}")
+    rescue
+      Rails.logger.info("Document is not ready for auto-tagging.")
+      render(json: { status: :not_found })
     end
   end
 
