@@ -8,7 +8,7 @@ describe "SSL Redirects" do
       config.force_ssl = true
       config.ssl_options = {
           hsts: {
-              subdomains: true
+            subdomains:  true
           },
           redirect: { exclude: SslRedirectExclusionPolicy }
       }
