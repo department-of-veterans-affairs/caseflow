@@ -40,7 +40,7 @@ import CaseTitle from './CaseTitle';
 import CaseTitleDetails from './CaseTitleDetails';
 import CavcDetail from './caseDetails/CavcDetail';
 import CaseDetailsPostDispatchActions from './CaseDetailsPostDispatchActions';
-import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
+import { PowerOfAttorneyDetail } from './PowerOfAttorneyDetail';
 import StickyNavContentArea from './StickyNavContentArea';
 import TaskSnapshot from './TaskSnapshot';
 import UserAlerts from '../components/UserAlerts';
@@ -410,8 +410,8 @@ export const CaseDetailsView = (props) => {
                   </span>
                 )
               }
-              appealId = {appealId}
-              canViewCavcDashboards = {canViewCavcDashboards}
+              appealId={appealId}
+              canViewCavcDashboards={canViewCavcDashboards}
               {...appeal.cavcRemand}
             />
           )}
@@ -420,14 +420,14 @@ export const CaseDetailsView = (props) => {
             additionalHeaderContent={
               true && (
                 <span className="cf-push-right" {...anchorEditLinkStyling}>
-                  { appeal.hasNotifications &&
-                  <Link id="notification-link" href={`/queue/appeals/${appealId}/notifications`} target="_blank">
-                    {COPY.VIEW_NOTIFICATION_LINK}
-                    &nbsp;
-                    <span {...ICON_POSITION_FIX}>
-                      <ExternalLinkIcon color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
-                    </span>
-                  </Link>}
+                  {appeal.hasNotifications &&
+                    <Link id="notification-link" href={`/queue/appeals/${appealId}/notifications`} target="_blank">
+                      {COPY.VIEW_NOTIFICATION_LINK}
+                      &nbsp;
+                      <span {...ICON_POSITION_FIX}>
+                        <ExternalLinkIcon color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
+                      </span>
+                    </Link>}
                 </span>
               )
             }
