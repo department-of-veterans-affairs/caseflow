@@ -2,43 +2,52 @@
 
 describe Metrics::V2::LogsController, type: :controller do
   let(:current_user) { create(:user) }
-  let(:request_params) do
+  let(:request_params_javascript) do
     {
       metric: {
-        uuid: SecureRandom.uuid,
-        method: "123456789",
-        name: 'log',
-        group: 'service',
-        message: 'This is a test',
-        type: 'performance',
-        product: 'reader',
-       }
+        uuid: "PAT123456^CFL200^A",
+        name: '',
+        group: '',
+        message: '',
+        type: '',
+        product: '',
+      }
     }
   end
 
-  before do
-    @raven_called = false
+  let(:request_params_min) do
+    {
+      metric: {
+        message: 'min'
+      }
+    }
   end
-  before { User.authenticate!(user: current_user) }
 
-  context "with good request" do
-    it "returns 200 for request params" do
-      post :create, params: request_params
-      expect(@raven_called).to eq(false)
+  context "with good request and metrics_monitoring feature ON" do
+
+    before do
+      FeatureToggle.enable!(:metrics_monitoring)
+    end
+
+    it "creates the metric and returns 200" do
+      expect(Metric).to receive(:create_metric_from_rest)
+      post :create, params: request_params_javascript
+      expect(response.status).to eq(200)
+    end
+
+    it "creates the metric and returns 200 for min params" do
+      expect(Metric).to receive(:create_metric_from_rest)
+      post :create, params: request_params_min
       expect(response.status).to eq(200)
     end
   end
 
-  context "With error type record to sentry" do
-    it "Records to Sentry" do
-      capture_raven_log
-      request_params[:metric][:type] = 'error'
-      post :create, params: request_params
-      expect(@raven_called).to eq(true)
-    end
-  end
+  context "with good request and metrics_monitoring feature OFF" do
 
-  def capture_raven_log
-    allow(Raven).to receive(:capture_exception) { @raven_called = true }
+    it "does not create a metric and returns 204" do
+      expect(Metric).not_to receive(:create_metric_from_rest)
+      post :create, params: request_params_javascript
+      expect(response.status).to eq(204)
+    end
   end
 end
