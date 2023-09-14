@@ -158,7 +158,7 @@ class AssignToView extends React.Component {
     }
 
     if (isReassignAction) {
-      return this.reassignTask(taskType === 'JudgeLegacyAssignTask');
+      return this.reassignTask(task.type === 'JudgeLegacyAssignTask' && taskType === 'JudgeLegacyAssignTask');
     }
 
     return this.props.
