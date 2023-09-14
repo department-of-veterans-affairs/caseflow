@@ -7,7 +7,14 @@ import { formatRequestIssues, formatContestableIssues } from '../../intake/util/
 import { formatRelationships } from '../../intake/util';
 
 export const mapDataToInitialState = function(props = {}) {
-  const { serverIntake, claimId, featureToggles, userCanWithdrawIssues, userCanSplitAppeal} = props;
+  const {
+    serverIntake,
+    claimId,
+    featureToggles,
+    userCanWithdrawIssues,
+    userCanEditIntakeIssues,
+    userCanSplitAppeal,
+    isLegacy } = props;
 
   serverIntake.relationships = formatRelationships(serverIntake.relationships);
   serverIntake.contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
@@ -28,7 +35,10 @@ export const mapDataToInitialState = function(props = {}) {
     claimId,
     featureToggles,
     userCanWithdrawIssues,
+    userCanEditIntakeIssues,
     userCanSplitAppeal,
+    addDecisionDateModalVisible: false,
+    isLegacy,
     addIssuesModalVisible: false,
     nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
@@ -88,7 +98,7 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
     });
   case ACTIONS.EDIT_EP_CLAIM_LABEL_FAILED:
     return update(state, {
-      editEpUpdateError: { $set: action.payload.errorCode}
+      editEpUpdateError: { $set: action.payload.errorCode }
     });
   default:
     return applyCommonReducers(state, action);

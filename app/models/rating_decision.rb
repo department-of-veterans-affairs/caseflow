@@ -27,7 +27,9 @@ class RatingDecision
                 :promulgation_date,
                 :rating_sequence_number,
                 :rating_issue_reference_id,
-                :type_name
+                :type_name,
+                :special_issues,
+                :rba_contentions_data
 
   class << self
     def from_bgs_disability(rating, disability)
@@ -49,7 +51,9 @@ class RatingDecision
         profile_date: rating.profile_date,
         promulgation_date: rating.promulgation_date,
         participant_id: rating.participant_id,
-        benefit_type: rating.pension? ? :pension : :compensation
+        benefit_type: rating.pension? ? :pension : :compensation,
+        special_issues: disability[:special_issues],
+        rba_contentions_data: disability[:rba_contentions_data]
       )
     end
 
