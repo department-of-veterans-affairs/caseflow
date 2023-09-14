@@ -9,7 +9,7 @@ class SslRedirectExclusionPolicy
     %r{^/health-check$},
     %r{^/idt/api/v1/},
     %r{^/idt/api/v2/}
-  ]).freeze
+                                 ]).freeze
 
   def self.call(request)
     # Check if the request path matches any of the exempt patterns
