@@ -87,7 +87,7 @@ class DocumentsTable extends React.Component {
    let foundErrors = [];
 
    // Prevent the from date from being after the To date.
-   if (this.state.toDate !== '' && pickedDate > this.state.toDate) {
+   if (this.state.toDate !== '' && this.state.recieptFilter == recieptDateFilterStates.BETWEEN && pickedDate > this.state.toDate) {
      foundErrors = [...foundErrors, 'From date cannot occur after to date.'];
    }
    // Prevent the To date and From date from being the same date.
@@ -104,21 +104,30 @@ class DocumentsTable extends React.Component {
 
      this.setState({ fromDate: pickedDate,
        fromDateErrors: [] });
-   } else {
-     this.setState({ fromDateErrors: foundErrors });
+
+     return foundErrors;
    }
+   this.setState({ fromDateErrors: foundErrors });
+
+   return foundErrors;
+
  };
 
- validateDateTo = (pickedDate) => {
+ setDateFrom = (pickedDate) => {
+   this.setState({ fromDate: pickedDate
+   });
+ }
+
+ validateDateTo(pickedDate) {
    let foundErrors = [];
 
    // Prevent setting the to date before the from date
-   if (this.state.fromDate !== '' && pickedDate < this.state.fromDate) {
+   if (this.state.fromDate !== '' && this.state.recieptFilter == recieptDateFilterStates.BETWEEN && pickedDate < this.state.fromDate) {
      foundErrors = [...foundErrors, 'To date cannot occur before from date.'];
    }
 
    // Prevent setting the To and From dates to the same date.
-   if (pickedDate === this.state.fromDate) {
+   if (this.state.fromDate !== '' && pickedDate === this.state.fromDate) {
      foundErrors = [...foundErrors, 'From date and To date cannot be the same.'];
    }
 
@@ -131,27 +140,40 @@ class DocumentsTable extends React.Component {
      this.setState({ toDate: pickedDate,
        toDateErrors: []
      });
-   } else {
-     this.setState({ toDateErrors: [foundErrors] });
+
+     return foundErrors;
+
    }
+   this.setState({ toDateErrors: foundErrors });
+
+   return foundErrors;
+
  }
 
- setOnDate = (pickedDate) => {
+ setDateTo = (pickedDate) => {
+   this.setState({ toDate: pickedDate
+   });
+ };
+
+ validateDateOn = (pickedDate) => {
    let foundErrors = [];
 
    if (convertStringToDate(pickedDate) > new Date()) {
      foundErrors = [...foundErrors, 'Reciept date cannot be in the future.'];
+     this.setState({ onDateErrors: foundErrors });
+
+     return foundErrors;
    }
 
-   if (foundErrors.length === 0) {
+   this.setState({ onDateErrors: [] });
 
-     this.setState({ onDate: pickedDate,
-       onDateErrors: []
-     });
-   } else {
-     this.setState({ onDateErrors: [foundErrors] });
-   }
- };
+   return foundErrors;
+ }
+
+ setOnDate = (pickedDate) => {
+
+   this.setState({ onDate: pickedDate });
+ }
 
  constructor() {
    super();
@@ -169,29 +191,33 @@ class DocumentsTable extends React.Component {
  }
 
  executeRecieptFilter = () => {
-   this.props.setRecieptDateFilter(this.state.recieptFilter,
-     { fromDate: this.state.fromDate,
-       toDate: this.state.toDate,
-       onDate: this.state.onDate });
+   const toErrors = this.validateDateTo(this.state.toDate);
+   const fromErrors = this.validateDateFrom(this.state.fromDate);
+   const onErrors = this.validateDateOn(this.state.onDate);
 
-   this.toggleRecieptDataDropdownFilterVisibility();
+   if (fromErrors.length === 0 && toErrors.length === 0 && onErrors.length === 0) {
+     this.props.setRecieptDateFilter(this.state.recieptFilter,
+       { fromDate: this.state.fromDate,
+         toDate: this.state.toDate,
+         onDate: this.state.onDate });
+     this.toggleRecieptDataDropdownFilterVisibility();
+   }
  }
 
  isRecieptFilterButtonEnabled = () => {
-   if (this.state.recieptFilter === recieptDateFilterStates.BETWEEN && (this.state.toDate === '' || this.state.fromDate === '' ||
-  this.state.toDateErrors.length > 0 || this.state.fromDateErrors.length > 0)) {
+   if (this.state.recieptFilter === recieptDateFilterStates.BETWEEN && (this.state.toDate === '' || this.state.fromDate === '')) {
      return true;
    }
 
-   if (this.state.recieptFilter === recieptDateFilterStates.TO && (this.state.toDate === '' || this.state.fromDateErrors.length > 0)) {
+   if (this.state.recieptFilter === recieptDateFilterStates.TO && (this.state.toDate === '')) {
      return true;
    }
 
-   if (this.state.recieptFilter === recieptDateFilterStates.FROM && (this.state.fromDate === '' || this.state.toDateErrors.length > 0)) {
+   if (this.state.recieptFilter === recieptDateFilterStates.FROM && (this.state.fromDate === '')) {
      return true;
    }
 
-   if (this.state.recieptFilter === recieptDateFilterStates.ON && (this.state.onDate === '' || this.state.onDateErrors.length > 0)) {
+   if (this.state.recieptFilter === recieptDateFilterStates.ON && (this.state.onDate === '')) {
      return true;
    }
 
@@ -469,14 +495,14 @@ class DocumentsTable extends React.Component {
                     <p id={index} key={index} style={{ color: 'red' }}>{error}</p>)}
                     {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.FROM) &&
                   <DateSelector value={this.state.fromDate} type="date" name="From"
-                    onChange={this.validateDateFrom} />}
+                    onChange={this.setDateFrom} />}
 
                     {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.TO) &&
                   this.state.toDateErrors.map((error) =>
                     <p style={{ color: 'red' }}>{error}</p>)}
                     {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.TO) &&
                   <DateSelector value={this.state.toDate} type="date" name="To"
-                    onChange={this.validateDateTo} />}
+                    onChange={this.setDateTo} />}
 
                     {this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED && <DateSelector readOnly type="date" name="Receipt date"
                       onChange={this.validateDateIsAfter} comment="This is a read only component used as a dummy" />}
