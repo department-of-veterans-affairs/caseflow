@@ -122,11 +122,11 @@ describe OrganizationsUser, :postgres do
 
     context "when meeting type exists" do
       it "should set meeting type to equal new meeting type" do
-        expect(user.meeting_type.service_name).to eq "pexip"
+        expect(user.conference_service).to eq "pexip"
 
         subject
 
-        expect(user.meeting_type.service_name).to eq new_meeting_type
+        expect(user.conference_service).to eq new_meeting_type
       end
     end
   end
