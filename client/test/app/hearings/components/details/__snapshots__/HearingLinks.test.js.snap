@@ -820,36 +820,9 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
           }
           wasVirtual={true}
         >
-          <VirtualHearingLink
-            hearing={
-              Object {
-                "scheduledForIsPast": false,
-              }
-            }
-            isVirtual={false}
-            label="Start Virtual Hearing"
-            newWindow={true}
-            showFullLink={false}
-            user={
-              Object {
-                "addressCity": "Washington",
-                "addressLine1": "123 Fake St.",
-                "addressState": "DC",
-                "addressZip": "20001",
-                "name": "John Smith",
-              }
-            }
-            virtualHearing={
-              Object {
-                "aliasWithHost": "BVA#00000001@localhost",
-                "clientHost": "localhost",
-                "guestPin": "12345678#",
-                "hostPin": "1234567890#",
-                "jobCompleted": true,
-                "status": "active",
-              }
-            }
-          />
+          <span>
+            N/A
+          </span>
           <div
             data-css-1abghdv=""
           >
@@ -938,36 +911,9 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
           }
           wasVirtual={true}
         >
-          <VirtualHearingLink
-            hearing={
-              Object {
-                "scheduledForIsPast": false,
-              }
-            }
-            isVirtual={false}
-            label="Join Virtual Hearing"
-            newWindow={true}
-            showFullLink={false}
-            user={
-              Object {
-                "addressCity": "Washington",
-                "addressLine1": "123 Fake St.",
-                "addressState": "DC",
-                "addressZip": "20001",
-                "name": "John Smith",
-              }
-            }
-            virtualHearing={
-              Object {
-                "aliasWithHost": "BVA#00000001@localhost",
-                "clientHost": "localhost",
-                "guestPin": "12345678#",
-                "hostPin": "1234567890#",
-                "jobCompleted": true,
-                "status": "active",
-              }
-            }
-          />
+          <span>
+            N/A
+          </span>
           <div
             data-css-1abghdv=""
           >
