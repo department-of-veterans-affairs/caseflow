@@ -5,5 +5,5 @@ class MeetingType < CaseflowRecord
 
   enum service_name: { pexip: 0, webex: 1 }
 
-  alias_attribute :conference_service, :service_name
+  alias_attribute :conference_provider, :service_name
 end

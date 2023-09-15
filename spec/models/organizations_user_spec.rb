@@ -115,18 +115,18 @@ describe OrganizationsUser, :postgres do
     end
   end
 
-  describe ".update_user_conference_type" do
+  describe ".update_user_conference_provider" do
     let(:new_meeting_type) { "webex" }
 
-    subject { OrganizationsUser.update_user_conference_type(user, new_meeting_type) }
+    subject { OrganizationsUser.update_user_conference_provider(user, new_meeting_type) }
 
     context "when meeting type exists" do
       it "should set meeting type to equal new meeting type" do
-        expect(user.conference_service).to eq "pexip"
+        expect(user.conference_provider).to eq "pexip"
 
         subject
 
-        expect(user.conference_service).to eq new_meeting_type
+        expect(user.conference_provider).to eq new_meeting_type
       end
     end
   end

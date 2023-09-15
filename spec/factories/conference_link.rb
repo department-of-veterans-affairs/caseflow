@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :conference_link do
     transient do
-      conference_service { "pexip" }
+      conference_provider { "pexip" }
     end
 
     alias_name { nil }
@@ -17,7 +17,7 @@ FactoryBot.define do
     created_by { create(:user) }
     updated_by { create(:user) }
     meeting_type do
-      create(:meeting_type, service_name: conference_service)
+      create(:meeting_type, service_name: conference_provider)
     end
   end
 end
