@@ -478,7 +478,9 @@ class DocumentsTable extends React.Component {
                   handleClose={this.toggleRecieptDataDropdownFilterVisibility}
                   addClearFiltersRow
                 >
-                  <>
+                  <div style={{
+                    paddingLeft: '10px',
+                    paddingRight: '10px' }}>
                     <Dropdown
                       name="dateDropdownText"
                       options={dateDropdownMap}
@@ -521,7 +523,7 @@ class DocumentsTable extends React.Component {
                         </Button>
                       </div>
                     </div>
-                  </>
+                  </div>
                 </DropdownFilter></div>
             )}
           </div>
