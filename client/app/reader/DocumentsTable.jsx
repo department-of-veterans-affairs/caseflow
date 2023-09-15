@@ -76,9 +76,16 @@ const customSelectStyles = {
   singleValue: (styles) => {
     return {
       ...styles,
-      transform: 'translateY(-2px)'
+      transform: 'translateY(-2px)',
+      alignContent: 'center'
     };
   },
+
+  placeholder: (styles) => ({
+    ...styles,
+    transform: 'translateY(-2px)'
+
+  }),
   // Change the highlight colors in the dropdown to gray
   option: (styles, { isFocused }) => ({
     ...styles,
