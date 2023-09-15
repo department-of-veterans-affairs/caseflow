@@ -32,8 +32,10 @@ class RequestIssuesUpdate < CaseflowRecord
         pact_edited_request_issue_ids: pact_edited_issues.map(&:id),
         corrected_request_issue_ids: corrected_issues.map(&:id)
       )
-      create_mst_pact_issue_update_tasks if FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
-                                            FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
+      if FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
+        FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
+        create_mst_pact_issue_update_tasks
+      end
       create_business_line_tasks! if added_issues.present?
       cancel_active_tasks
       submit_for_processing!
@@ -299,7 +301,7 @@ class RequestIssuesUpdate < CaseflowRecord
     after_issues = fetch_after_issues
     edited_issues = before_issues & after_issues
     # cycle each edited issue (before) and compare MST/PACT with (fetch_after_issues)
-    # reverse_each to make the issues on the case timeline appear in similar sequence to what user sees the edit issues page
+    # reverse_each to make the issues on the case timeline appear in UI in a similar sequence to the edit issues page
     edited_issues.reverse_each do |before_issue|
       after_issue = after_issues.find { |issue| issue.id == before_issue.id }
       # if before/after has a change in MST/PACT, create issue update task
@@ -350,8 +352,17 @@ class RequestIssuesUpdate < CaseflowRecord
       )
 
       # check if change from vbms mst/pact status
-      vbms_mst_edit = before_issue.vbms_mst_status.nil? ? false : !before_issue.vbms_mst_status && before_issue.mst_status
-      vbms_pact_edit = before_issue.vbms_pact_status.nil? ? false : !before_issue.vbms_pact_status && before_issue.pact_status
+      vbms_mst_edit = if before_issue.vbms_mst_status.nil?
+        false
+      else
+        !before_issue.vbms_mst_status && before_issue.mst_status
+      end
+
+      vbms_pact_edit = if before_issue.vbms_pact_status.nil?
+        false
+      else
+        !before_issue.vbms_pact_status && before_issue.pact_status
+      end
 
       # if a new issue is added and VBMS was edited, reference the original status
       if change_type == "Added Issue" && (vbms_mst_edit || vbms_pact_edit)
