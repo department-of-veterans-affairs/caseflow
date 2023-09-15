@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 import React from 'react';
+import Select from 'react-select';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
@@ -39,6 +40,11 @@ import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
 import DocTagPicker from './DocTagPicker';
 import ReaderTableDropdownFilter from '../components/ReaderTableDropdownFilter';
+import { css, optional } from 'glamor';
+import { COLORS } from 'app/constants/AppConstants';
+
+
+
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -50,6 +56,51 @@ const recieptDateFilterStates = {
   ON: 3
 
 };
+
+const customSelectStyles = {
+  // Hide the dropdown arrow on the right side
+  // Set the height of the select component
+  valueContainer: (styles) => ({
+    ...styles,
+    // Cascading lineHeight is 200%, which makes the selected text vertically uncentered
+    lineHeight: 'normal',
+
+    // FIX ME
+    // border: false ? '2px solid red' : styles.border,
+    height: '44px',
+    minHeight: '44px',
+  }),
+  // Fix selected text positioning problem caused by adjusting height
+  // Without this, the text positioning is strange if input is something
+  // long like "12:30pm" (or for testing 12::::30:::::PM)
+  singleValue: (styles) => {
+    return {
+      ...styles,
+      transform: 'translateY(-2px)'
+    };
+  },
+  // Change the highlight colors in the dropdown to gray
+  option: (styles, { isFocused }) => ({
+    ...styles,
+    color: isFocused ? 'black' : 'black',
+    alignContent: 'center',
+    backgroundColor: isFocused ? 'white' : null,
+    ':hover': {
+      ...styles[':hover'],
+      backgroundColor: '#5c9ceb',
+      color: 'white'
+    },
+    ':focus': {
+      backgroundColor:'blue',
+      // color:'blue'
+    }
+  })
+};
+
+const selectContainerStyles = css({
+  width: '100%',
+  display: 'inline-block'
+});
 
 export const getRowObjects = (documents, annotationsPerDocument) => {
   return documents.reduce((acc, doc) => {
@@ -169,12 +220,12 @@ class DocumentsTable extends React.Component {
  }
 
  executeRecieptFilter = () => {
-  this.props.setRecieptDateFilter(this.state.recieptFilter,
-    { fromDate: this.state.fromDate,
-      toDate: this.state.toDate,
-      onDate: this.state.onDate});
+   this.props.setRecieptDateFilter(this.state.recieptFilter,
+     { fromDate: this.state.fromDate,
+       toDate: this.state.toDate,
+       onDate: this.state.onDate });
 
-      this.toggleRecieptDataDropdownFilterVisibility();
+   this.toggleRecieptDataDropdownFilterVisibility();
  }
 
  isRecieptFilterButtonEnabled = () => {
@@ -292,6 +343,13 @@ class DocumentsTable extends React.Component {
       { value: 1, displayText: 'Before this date' },
       { value: 2, displayText: 'After this date' },
       { value: 3, displayText: 'On this date' }
+    ];
+
+    const dateDropdownMap2 = [
+      { value: 0, label: 'Between these dates' },
+      { value: 1, label: 'Before this date' },
+      { value: 2, label: 'After this date' },
+      { value: 3, label: 'On this date' }
     ];
 
     // We have blank headers for the comment indicator and label indicator columns.
@@ -459,6 +517,11 @@ class DocumentsTable extends React.Component {
                   addClearFiltersRow
                 >
                   <>
+                    <div {...selectContainerStyles}>
+                      <Select unstyled options={dateDropdownMap2} dropdownIndicator='true'
+                       styles={customSelectStyles } menuShouldScrollIntoView={false}
+                      />
+                    </div>
                     <Dropdown
                       name="dateDropdownText"
                       options={dateDropdownMap}
