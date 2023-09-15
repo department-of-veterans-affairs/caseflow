@@ -121,5 +121,11 @@ FactoryBot.define do
                appeal: hearing.appeal)
       end
     end
+
+    after(:create) do |hearing, _evaluator|
+      create(:meeting_type, conferenceable: hearing)
+
+      hearing.reload
+    end
   end
 end

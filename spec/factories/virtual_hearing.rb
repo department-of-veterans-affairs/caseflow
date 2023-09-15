@@ -59,6 +59,12 @@ FactoryBot.define do
     end
 
     after(:create) do |virtual_hearing, _evaluator|
+      create(:meeting_type, conferenceable: user)
+
+      virtual_hearing.reload
+    end
+
+    after(:create) do |virtual_hearing, _evaluator|
       # Calling reload after create fixes a problem where calling `virtual_hearing.hearing.virtual_hearing`
       # would return `nil`.
       virtual_hearing.reload

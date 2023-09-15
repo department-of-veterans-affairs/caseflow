@@ -12,6 +12,7 @@ module ConferenceableConcern
   end
 
   def set_default_meeting_type
+    byebug
     MeetingType.create!(service_name: DEFAULT_SERVICE, conferenceable: self) unless meeting_type
   end
 end

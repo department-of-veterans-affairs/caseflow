@@ -233,7 +233,7 @@ class HearingDay < CaseflowRecord
 
   def generate_link_on_create
     begin
-      this.conference_link
+      conference_link
     rescue StandardError => error
       log_error(error)
     end

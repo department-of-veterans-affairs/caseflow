@@ -2,6 +2,10 @@
 
 FactoryBot.define do
   factory :conference_link do
+    transient do
+      conference_service { "pexip" }
+    end
+
     alias_name { nil }
     conference_id { nil }
     conference_deleted { false }
@@ -12,5 +16,8 @@ FactoryBot.define do
     updated_at { Time.zone.now }
     created_by { create(:user) }
     updated_by { create(:user) }
+    meeting_type do
+      create(:meeting_type, service_name: conference_service)
+    end
   end
 end
