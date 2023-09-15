@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'pry'
 
 describe QueueRepository, :all_dbs do
   before do
@@ -138,7 +139,7 @@ describe QueueRepository, :all_dbs do
       QueueRepository.reassign_case_to_judge!(
         vacols_id: vacols_case.bfkey,
         created_in_vacols_date: date_added,
-        judge_vacols_user_id: judge.vacols_uniq_id,
+        judge_vacols_user_id: judge.css_id,
         decass_attrs: decass_attrs
       )
     end
@@ -161,7 +162,7 @@ describe QueueRepository, :all_dbs do
       create(:staff, :judge_role, slogid: "BVABAWS", sdomainid: judge.css_id)
     end
     let!(:attorney_staff) do
-      create(:staff, :attorney_role, slogid: "BVASAMD", sdomainid: attorney.css_id)
+      create(:staff, :attorney_role, stitle: "DF", slogid: "BVASAMD", sdomainid: attorney.css_id)
     end
 
     context "when decass record is found" do
@@ -224,12 +225,12 @@ describe QueueRepository, :all_dbs do
         judge: judge,
         attorney: attorney,
         vacols_id: vacols_case.bfkey,
-        created_in_vacols_date: date_added
+        #created_in_vacols_date: date_added
       )
     end
 
     let(:judge) { User.create(css_id: "BAWS123", station_id: User::BOARD_STATION_ID) }
-    let(:attorney) { User.create(css_id: "FATR456", station_id: User::BOARD_STATION_ID) }
+    let(:attorney) { User.create(css_id: "SAMD456", station_id: User::BOARD_STATION_ID) }
     let(:vacols_case) { create(:case, bfcurloc: judge_staff.slogid) }
     let!(:judge_staff) do
       create(:staff, :judge_role, slogid: "BVABAWS", sdomainid: judge.css_id)
@@ -250,6 +251,7 @@ describe QueueRepository, :all_dbs do
         expect(vacols_case.bfattid).to eq attorney_staff.sattyid
         decass = VACOLS::Decass.where(defolder: vacols_case.bfkey).first
         expect(decass.present?).to eq true
+        binding.pry
         expect(decass.deatty).to eq attorney_staff.sattyid
         expect(decass.deteam).to eq attorney_staff.stitle[0..2]
         expect(decass.demdusr).to eq judge_staff.slogid
