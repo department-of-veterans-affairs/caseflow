@@ -188,7 +188,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         return this.props.showSuccessMessage({
           title: sprintf(COPY.ASSIGN_LEGACY_WIDGET_SUCCESS, {
             verb: isReassign ? 'You have successfully reassigned' : 'You have successfully assigned',
-            assigned: selectedTasks[0].appeal.assignedJudge.full_name,
+            assigned: selectedTasks[0].appeal.appellantFullName,
             casePlural: pluralize('cases', selectedTasks.length),
             // eslint-disable-next-line camelcase
             assignee: assignee.full_name
