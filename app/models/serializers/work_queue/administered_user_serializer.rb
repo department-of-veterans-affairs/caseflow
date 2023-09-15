@@ -11,5 +11,7 @@ class WorkQueue::AdministeredUserSerializer < WorkQueue::UserSerializer
       params[:organization].dvc&.eql?(object)
     end
   end
-  attribute :meeting_type
+  attribute :meeting_type do |object,_params|
+    object.meeting_type.service_name
+  end
 end
