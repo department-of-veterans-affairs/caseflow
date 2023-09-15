@@ -456,8 +456,9 @@ feature "Attorney checkout flow", :all_dbs do
       end
       click_on "Save"
       click_on "Yes, save"
-      sleep(3)
-      expect(page).to have_content("You have successfully added 1 issue and removed 3 issues.")
+      using_wait_time(10) do
+        expect(page).to have_content("You have successfully added 1 issue and removed 3 issues.")
+      end
     end
   end
 end
