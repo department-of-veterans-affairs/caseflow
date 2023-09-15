@@ -13,10 +13,16 @@ module ConferenceableConcern
     delegate :conference_provider, to: :meeting_type, allow_nil: true
   end
 
+  def detremine_service_name
+    return created_by.conference_provider || DEFAULT_SERVICE if respond_to? :created_by
+
+    DEFAULT_SERVICE
+  end
+
   def set_default_meeting_type
     unless meeting_type
       MeetingType.create!(
-        service_name: created_by.conference_provider || DEFAULT_SERVICE,
+        service_name: detremine_service_name,
         conferenceable: self
       )
 
