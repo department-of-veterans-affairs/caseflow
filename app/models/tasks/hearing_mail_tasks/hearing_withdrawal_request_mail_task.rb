@@ -45,6 +45,10 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
     end
   end
 
+  # Purpose: Updates the current state of the appeal
+  # Params: params - The update params object
+  #         user - The current user object
+  # Return: The current hwr task and newly created tasks
   def update_from_params(params, user)
     if params[:status] == Constants.TASK_STATUSES.completed
       created_tasks = update_hearing_and_cancel_tasks
@@ -58,6 +62,9 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
 
   private
 
+  # Purpose: Wrapper for updating hearing, canceling hearing tasks, and creating evidence submission task
+  # Params: None
+  # Return: Returns the newly created evidence submission task if AMA appeal
   def update_hearing_and_cancel_tasks
     multi_transaction do
       mark_hearing_cancelled if open_hearing
@@ -68,26 +75,41 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
     end
   end
 
+  # Purpose: Sets the previous hearing's disposition to cancelled and cleans up virtual hearing
+  # Params: None
+  # Return: Nil
   def mark_hearing_cancelled
     update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
     clean_up_virtual_hearing(open_hearing)
   end
 
+  # Purpose: Cancels HearingTask, either child AssignHearingDispositionTask or ScheduleHearingTask
+  # Params: None
+  # Return: True if HearingRelatedMailTasks cancelled, otherwise nil
   def cancel_active_hearing_tasks
     hearing_task.cancel_task_and_child_subtasks
     cancel_hearing_related_mail_tasks
   end
 
+  # Purpose: Cancels any active HearingRelatedMailTasks on appeal
+  # Params: None
+  # Return: True if HearingRelatedMailTasks cancelled, otherwise nil
   def cancel_hearing_related_mail_tasks
     return if hearing_related_mail_tasks.empty?
 
     hearing_related_mail_tasks.update_all(status: Constants.TASK_STATUSES.cancelled)
   end
 
+  # Purpose: Grabs any active HearingRelatedMailTasks on appeal
+  # Params: None
+  # Return: Array of HearingRelatedMailTask objects
   def hearing_related_mail_tasks
     appeal.tasks.where(type: HearingRelatedMailTask.name)&.active
   end
 
+  # Purpose: Appends instructions on to the instructions provided in the mail task
+  # Params: instructions - String for instructions
+  # Return: instructions string
   def format_instructions_on_completion(params)
     markdown_to_append = <<~EOS
 

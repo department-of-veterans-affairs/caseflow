@@ -195,9 +195,9 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   end
 
   # Purpose: Appends instructions on to the instructions provided in the mail task
-  # Params: admin_context - String for instructions
-  # ruling - string for granted or denied
-  # date_of_ruling - string for the date of ruling
+  # Params: instructions - String for instructions
+  #         granted - boolean for granted or denied
+  #         date_of_ruling - string for the date of ruling
   # Return: instructions string
   def format_instructions_on_completion(params)
     formatted_date = params[:date_of_ruling].to_date&.strftime("%m/%d/%Y")
