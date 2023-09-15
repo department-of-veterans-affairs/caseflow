@@ -174,6 +174,20 @@ class DocumentsTable extends React.Component {
    this.setState({ onDate: pickedDate });
  }
 
+  errorMessagesNode = (errors, errType) => {
+    if (errors.length) {
+      return (
+        <div>
+          {
+            errors.map((error, index) =>
+              <p id={`${errType}Err${index}`} key={index} style={{ color: 'red' }}>{error}</p>
+            )
+          }
+        </div>
+      );
+    }
+  }
+
  constructor() {
    super();
    this.state = {
@@ -470,7 +484,8 @@ class DocumentsTable extends React.Component {
             {isRecipetDateFilterOpen && (
               <div style={{
                 position: 'relative',
-                right: '7vw' }}>
+                right: '7vw'
+              }}>
                 <DropdownFilter
                   clearFilters={this.resetRecieptPicker}
                   name="Receipt Date"
@@ -478,49 +493,57 @@ class DocumentsTable extends React.Component {
                   handleClose={this.toggleRecieptDataDropdownFilterVisibility}
                   addClearFiltersRow
                 >
-                  <div style={{
-                    paddingLeft: '10px',
-                    paddingRight: '10px' }}>
-                    <Dropdown
-                      name="dateDropdownText"
-                      options={dateDropdownMap}
-                      label="Date filter parameters"
-                      value="dateDropdownVal"
-                      onChange={(newKey) => this.updateRecieptFilter(newKey)}
-                      defaultText={this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED ? 'Select...' :
-                        dateDropdownMap[this.state.recieptFilter].displayText}
-                      defaultValue="On this date"
-                    />
-                    {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.FROM) &&
-                  <DateSelector value={this.state.fromDate} type="date"
-                    name={this.state.recieptFilter === recieptDateFilterStates.BETWEEN ? 'From' : ''}
-                    onChange={this.setDateFrom} />}
-                    {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.FROM) &&
-                  this.state.fromDateErrors.map((error, index) =>
-                    <p id={index} key={index} style={{ color: 'red' }}>{error}</p>)}
+                  <div>
+                    <div style={{ padding: '0px 30px' }}>
+                      <Dropdown
+                        name="dateDropdownText"
+                        options={dateDropdownMap}
+                        label="Date filter parameters"
+                        value="dateDropdownVal"
+                        onChange={(newKey) => this.updateRecieptFilter(newKey)}
+                        defaultText={this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED ? 'Select...' :
+                          dateDropdownMap[this.state.recieptFilter].displayText}
+                        defaultValue="On this date"
+                      />
+                      {
+                        (this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.FROM) &&
+                        <DateSelector
+                          value={this.state.fromDate}
+                          type="date"
+                          name={this.state.recieptFilter === recieptDateFilterStates.BETWEEN ? 'From' : ''}
+                          onChange={this.setDateFrom}
+                          errorMessage={this.errorMessagesNode(this.state.fromDateErrors, 'fromDate')}
+                        />
+                      }
 
-                    {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.TO) &&
-                  <DateSelector value={this.state.toDate} type="date"
-                    name={this.state.recieptFilter === recieptDateFilterStates.BETWEEN ? 'To' : ''}
-                    onChange={this.setDateTo} />}
-                    {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.TO) &&
-                  this.state.toDateErrors.map((error) =>
-                    <p style={{ color: 'red' }}>{error}</p>)}
+                      {
+                        (this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.TO) &&
+                        <DateSelector
+                          value={this.state.toDate}
+                          type="date"
+                          name={this.state.recieptFilter === recieptDateFilterStates.BETWEEN ? 'To' : ''}
+                          onChange={this.setDateTo}
+                          errorMessage={this.errorMessagesNode(this.state.toDateErrors, 'toDate')}
+                        />
+                      }
 
-                    {this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED && <DateSelector readOnly type="date" name="Receipt date"
-                      onChange={this.validateDateIsAfter} comment="This is a read only component used as a dummy" />}
+                      {this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED && <DateSelector readOnly type="date" name="Receipt date"
+                        onChange={this.validateDateIsAfter} comment="This is a read only component used as a dummy" />}
 
-                    {(this.state.recieptFilter === recieptDateFilterStates.ON) && this.state.onDateErrors.map((error) =>
-                      <p style={{ color: 'red' }}>{error}</p>)}
-                    {this.state.recieptFilter === recieptDateFilterStates.ON && <DateSelector value={this.state.onDate} type="date"
-                      name="" onChange={this.setOnDate} />}
+                      {(this.state.recieptFilter === recieptDateFilterStates.ON) && this.state.onDateErrors.map((error) =>
+                        <p style={{ color: 'red' }}>{error}</p>)}
+                      {this.state.recieptFilter === recieptDateFilterStates.ON && <DateSelector value={this.state.onDate} type="date"
+                        name="" onChange={this.setOnDate} />}
+                    </div>
 
-                    <div style={{ width: '100%', display: 'flex' }}>
-                      <span style={{ height: '1px', position: 'absolute', width: '100%', backgroundColor: 'gray' }}></span>
-                      <div style={{ display: 'flex', marginTop: '10px', marginRight: '10px', marginBottom: '10px', justifyContent: 'end', width: '100%' }}>
-                        <Button disabled={this.isRecieptFilterButtonEnabled()} onClick={() => this.executeRecieptFilter()} title="apply filter">
-                          <span>Apply filter</span>
-                        </Button>
+                    <div>
+                      <div style={{ width: '100%', display: 'flex' }}>
+                        <span style={{ height: '1px', position: 'absolute', width: '100%', backgroundColor: 'gray' }}></span>
+                        <div style={{ display: 'flex', margin: '10px 0px', justifyContent: 'center', width: '100%' }}>
+                          <Button disabled={this.isRecieptFilterButtonEnabled()} onClick={() => this.executeRecieptFilter()} title="apply filter">
+                            <span>Apply filter</span>
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
