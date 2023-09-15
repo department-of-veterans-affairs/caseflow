@@ -95,10 +95,6 @@ FactoryBot.define do
       if evaluator.vacols_uniq_id
         create(:staff, slogid: evaluator.vacols_uniq_id, user: user)
       end
-
-      create(:meeting_type)
-
-      user.reload
     end
   end
 end

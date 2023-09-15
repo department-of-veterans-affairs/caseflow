@@ -121,11 +121,5 @@ FactoryBot.define do
         }
       end
     end
-
-    after(:create) do |legacy_hearing, _evaluator|
-      create(:meeting_type, conferenceable: legacy_hearing)
-
-      legacy_hearing.reload
-    end
   end
 end
