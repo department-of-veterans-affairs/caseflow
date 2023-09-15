@@ -571,11 +571,6 @@ RSpec.feature "MailTasks", :postgres do
       end
 
       shared_examples "hearing scheduled" do
-        it "sends withdrawal of hearing notification" do
-          withdrawal_payload = AppellantNotification.create_payload(appeal, "Withdrawal of hearing").to_json
-          expect(SendNotificationJob).to receive(:perform_later).with(withdrawal_payload)
-        end
-
         include_examples "whether hearing is schedueld or unscheduled"
 
         it "marks hearing disposition as cancelled" do
@@ -619,15 +614,14 @@ RSpec.feature "MailTasks", :postgres do
         let(:appeal) { hwr_task.appeal }
 
         before do
-          perform_enqueued_jobs do
-            visit("queue/appeals/#{appeal.uuid}")
-            within("tr", text: "TASK", match: :first) do
-              click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                             text: Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.label)
-            end
-            fill_in("instructionsField", with: instructions)
-            click_button("Mark as complete & withdraw hearing")
+          visit("queue/appeals/#{appeal.uuid}")
+          within("tr", text: "TASK", match: :first) do
+            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                           text: Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.label)
           end
+          fill_in("instructionsField", with: instructions)
+          click_button("Mark as complete & withdraw hearing")
+          visit("queue/appeals/#{appeal.uuid}")
         end
 
         context "appeal has scheduled hearing" do
@@ -657,16 +651,14 @@ RSpec.feature "MailTasks", :postgres do
         end
 
         before do
-          perform_enqueued_jobs do
-            visit("queue/appeals/#{appeal.vacols_id}")
-            within("tr", text: "TASK", match: :first) do
-              click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                             text: Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.label)
-            end
-            fill_in("instructionsField", with: instructions)
-            click_button("Mark as complete & withdraw hearing")
-            visit("queue/appeals/#{appeal.vacols_id}")
+          visit("queue/appeals/#{appeal.vacols_id}")
+          within("tr", text: "TASK", match: :first) do
+            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                           text: Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.label)
           end
+          fill_in("instructionsField", with: instructions)
+          click_button("Mark as complete & withdraw hearing")
+          visit("queue/appeals/#{appeal.vacols_id}")
         end
 
         context "appeal has scheduled hearing" do
@@ -681,6 +673,48 @@ RSpec.feature "MailTasks", :postgres do
           end
 
           include_examples "hearing unscheduled"
+        end
+      end
+
+      describe "notifications" do
+        let(:hwr_task) do
+          create(:hearing_withdrawal_request_mail_task,
+                 :withdrawal_request_with_scheduled_hearing, assigned_by_id: User.system_user.id)
+        end
+        let(:appeal) { hwr_task.appeal }
+
+        shared_examples "withdrawal notifications" do
+          it "sends withdrawal of hearing notification" do
+            withdrawal_payload = AppellantNotification.create_payload(appeal, "Withdrawal of hearing").to_json
+            expect(SendNotificationJob).to receive(:perform_later).with(withdrawal_payload)
+
+            perform_enqueued_jobs do
+              visit("queue/appeals/#{appeal.is_a?(Appeal) ? appeal.uuid : appeal.vacols_id}")
+              within("tr", text: "TASK", match: :first) do
+                click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                               text: Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.label)
+              end
+              fill_in("instructionsField", with: instructions)
+              click_button("Mark as complete & withdraw hearing")
+            end
+          end
+        end
+
+        context "AMA appeal" do
+          include_examples "withdrawal notifications"
+        end
+
+        context "Legacy appeal" do
+          let(:appeal) do
+            create(:legacy_appeal, :with_veteran, vacols_case: create(:case))
+          end
+          let!(:hwr_task) do
+            create(:hearing_withdrawal_request_mail_task,
+                   :withdrawal_request_with_scheduled_hearing,
+                   assigned_by_id: User.system_user.id, appeal: appeal)
+          end
+
+          include_examples "withdrawal notifications"
         end
       end
     end
