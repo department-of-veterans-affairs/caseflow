@@ -74,7 +74,7 @@ const customSelectStyles = {
   singleValue: (styles) => {
     return {
       ...styles,
-      transform: 'translateY(-2px)',
+      transform: 'translateY(-0.3vh)',
       alignContent: 'center'
     };
   },
@@ -82,10 +82,12 @@ const customSelectStyles = {
   placeholder: (styles) => ({
     ...styles,
     border: '1 px solid black',
-    transform: 'translateY(-2px)',
+    height:'100%',
+    // transform: 'translateY(-2px)',
+    lineHeight: '6vh'
 
   }),
-  // Change the highlight colors in the dropdown to gray
+  // Change the highlight colors in the dropdown to black and give it the blue background
   option: (styles, { isFocused }) => ({
     ...styles,
     color: isFocused ? 'black' : 'black',
