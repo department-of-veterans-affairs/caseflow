@@ -141,7 +141,11 @@ module IssueUpdater
 
     task.format_instructions(
       "Edited Issue",
-      task_text_helper([original_issue.contested_issue_description, original_issue.nonrating_issue_category, original_issue.nonrating_issue_description]),
+      task_text_helper([
+        original_issue.contested_issue_description,
+        original_issue.nonrating_issue_category,
+        original_issue.nonrating_issue_description
+        ]),
       task_text_benefit_type(original_issue),
       original_issue.mst_status,
       original_issue.pact_status,
