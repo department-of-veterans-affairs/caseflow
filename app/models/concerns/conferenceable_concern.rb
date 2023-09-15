@@ -14,6 +14,8 @@ module ConferenceableConcern
   end
 
   def determine_service_name
+    return hearing&.conference_provider if is_a? VirtualHearing
+
     created_by&.conference_provider if respond_to? :created_by
   end
 
