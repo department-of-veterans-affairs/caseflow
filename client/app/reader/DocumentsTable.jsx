@@ -538,7 +538,6 @@ class DocumentsTable extends React.Component {
               selected={isDocumentDropdownFilterOpen}
               handleActivate={this.toggleDocumentDropdownFilterVisiblity}
             />
-
             {isDocumentDropdownFilterOpen && (
               <div style={{ position: 'relative', right: '14vw' }}>
                 <DropdownFilter
@@ -552,6 +551,7 @@ class DocumentsTable extends React.Component {
                     tags={populateDocumentFilter()}
                     tagToggleStates={this.props.docFilterCriteria.document}
                     handleTagToggle={this.props.setDocFilter}
+                    defaultSearchText="Type to search..."
                   />
                 </DropdownFilter>
               </div>
@@ -594,6 +594,7 @@ class DocumentsTable extends React.Component {
                     tags={this.props.tagOptions}
                     tagToggleStates={this.props.docFilterCriteria.tag}
                     handleTagToggle={this.props.setTagFilter}
+                    defaultSearchText="Type to search..."
                   />
                 </DropdownFilter>
               </div>
