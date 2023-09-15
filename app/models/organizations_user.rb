@@ -28,9 +28,12 @@ class OrganizationsUser < CaseflowRecord
       existing_record(user, organization)&.update!(admin: false)
     end
 
-    def update_user_conference_type(user, new_meeting_type)
+    def update_user_conference_type(user, new_service_name)
+      # This could be an upsert once we get to Rails 6
       if user.meeting_type
-        user.update!(meeting_type: new_meeting_type)
+        user.meeting_type.update!(service_name: new_service_name)
+      else
+        MeetingType.create!(service_name: new_service_name, conferenceable: user)
       end
     end
 
