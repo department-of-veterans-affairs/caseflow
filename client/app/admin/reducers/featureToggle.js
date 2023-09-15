@@ -2,9 +2,6 @@ import { update } from '../../util/ReducerUtil';
 
 const updateFromServerFeatures = (state, featureToggles) => {
   return update(state, {
-    useAmaActivationDate: {
-      $set: true
-    },
     correctClaimReviews: {
       $set: Boolean(featureToggles.correctClaimReviews)
     },
