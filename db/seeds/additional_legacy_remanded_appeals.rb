@@ -119,15 +119,35 @@ module Seeds
       # Create the legacy_appeal, this doesn't fail with index problems, so no need to retry
       legacy_appeal = create(
         :legacy_appeal,
+        :with_root_task,
         vacols_case: vacols_case,
         closest_regional_office: regional_office
       )
       create(:available_hearing_locations, regional_office, appeal: legacy_appeal)
+      create_attorney_task_for_legacy_appeals(legacy_appeal, attorney)
 
       # Return the legacy_appeal
       legacy_appeal
     end
 
+    def create_attorney_task_for_legacy_appeals(appeal, user)
+      # Will need a judge user for judge decision review task and an attorney user for the subsequent Attorney Task
+      root_task = RootTask.find_or_create_by!(appeal: appeal)
+
+      judge = User.find_by_css_id("BVAAABSHIRE") # local / test option
+
+      review_task = JudgeDecisionReviewTask.create!(
+        appeal: appeal,
+        parent: root_task,
+        assigned_to: judge
+      )
+      AttorneyTask.create!(
+        appeal: appeal,
+        parent: review_task,
+        assigned_to: user,
+        assigned_by: judge
+      )
+    end
 
     def create_legacy_appeals(regional_office, number_of_appeals_to_create)
       # The offset should start at 100 to avoid collisions
@@ -164,7 +184,8 @@ module Seeds
         correspondent: correspondent,
         bfcorlid: vacols_titrnum,
         bfcurloc: "CASEFLOW",
-        folder: vacols_folder
+        folder: vacols_folder,
+        case_issues: [create(:case_issue, :compensation), create(:case_issue, :compensation)]
       )
     end
 
@@ -177,7 +198,8 @@ module Seeds
         correspondent: correspondent,
         bfcorlid: vacols_titrnum,
         bfcurloc: "CASEFLOW",
-        folder: vacols_folder
+        folder: vacols_folder,
+        case_issues: [create(:case_issue, :compensation), create(:case_issue, :compensation)]
       )
     end
 
