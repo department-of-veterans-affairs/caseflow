@@ -3,7 +3,7 @@
 module ConferenceableConcern
   extend ActiveSupport::Concern
 
-  DEFAULT_SERVICE = "pexip"
+  DEFAULT_SERVICE = ENV["DEFAULT_CONFERENCE_SERVICE"] || "pexip"
 
   included do
     has_one :meeting_type, as: :conferenceable
@@ -14,7 +14,7 @@ module ConferenceableConcern
   end
 
   def determine_service_name
-    created_by.conference_provider if respond_to? :created_by
+    created_by&.conference_provider if respond_to? :created_by
   end
 
   def set_default_meeting_type
