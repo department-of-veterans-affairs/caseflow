@@ -12,8 +12,10 @@ module ConferenceableConcern
   end
 
   def set_default_meeting_type
-    MeetingType.create!(service_name: DEFAULT_SERVICE, conferenceable: self) unless meeting_type
+    unless meeting_type
+      MeetingType.create!(service_name: DEFAULT_SERVICE, conferenceable: self)
 
-    reload
+      reload_meeting_type
+    end
   end
 end
