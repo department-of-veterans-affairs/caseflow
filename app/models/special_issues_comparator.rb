@@ -199,7 +199,9 @@ class SpecialIssuesComparator
       return if single_contention_info.blank?
 
       # see if the contention ties to the rating. if it does, add it to the matches list
-      contention_matches << single_contention_info if single_contention_info.dig(:cntntn_id) == rba_contention.dig(:cntntn_id)
+      if single_contention_info.dig(:cntntn_id) == rba_contention.dig(:cntntn_id)
+        contention_matches << single_contention_info
+      end
 
     # if the response contains an array of contentions, unpack each one and compare
     elsif contention.dig(:contentions).is_a?(Array)
