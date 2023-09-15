@@ -43,9 +43,6 @@ import ReaderTableDropdownFilter from '../components/ReaderTableDropdownFilter';
 import { css, optional } from 'glamor';
 import { COLORS } from 'app/constants/AppConstants';
 
-
-
-
 const NUMBER_OF_COLUMNS = 6;
 
 const recieptDateFilterStates = {
@@ -69,6 +66,7 @@ const customSelectStyles = {
     // border: false ? '2px solid red' : styles.border,
     height: '44px',
     minHeight: '44px',
+
   }),
   // Fix selected text positioning problem caused by adjusting height
   // Without this, the text positioning is strange if input is something
@@ -83,7 +81,8 @@ const customSelectStyles = {
 
   placeholder: (styles) => ({
     ...styles,
-    transform: 'translateY(-2px)'
+    border: '1 px solid black',
+    transform: 'translateY(-2px)',
 
   }),
   // Change the highlight colors in the dropdown to gray
@@ -96,10 +95,6 @@ const customSelectStyles = {
       ...styles[':hover'],
       backgroundColor: '#5c9ceb',
       color: 'white'
-    },
-    ':focus': {
-      backgroundColor:'blue',
-      // color:'blue'
     }
   })
 };
@@ -525,11 +520,18 @@ class DocumentsTable extends React.Component {
                 >
                   <>
                     <div {...selectContainerStyles}>
-                      <Select unstyled options={dateDropdownMap2} dropdownIndicator='true'
-                       styles={customSelectStyles } menuShouldScrollIntoView={false}
+                      <label style={{ marginTop: '5px', marginBottom: '5px', marginLeft: '1px' }}>Date filter parameters</label>
+                      <Select
+                      // defaultInputValue="zzz"
+                      defaultValue={dateDropdownMap2[this.state.recieptFilter]}
+                        placeholder="select..."
+                        options={dateDropdownMap2}
+                        styles={customSelectStyles}
+                        onChange={(selectedVal) => this.updateRecieptFilter(selectedVal.value)}
+
                       />
                     </div>
-                    <Dropdown
+                    {/* <Dropdown
                       name="dateDropdownText"
                       options={dateDropdownMap}
                       label="Date filter parameters"
@@ -538,7 +540,7 @@ class DocumentsTable extends React.Component {
                       defaultText={this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED ? 'Select...' :
                         dateDropdownMap[this.state.recieptFilter].displayText}
                       defaultValue="On this date"
-                    />
+                    /> */}
                     {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.FROM) &&
                   this.state.fromDateErrors.map((error, index) =>
                     <p id={index} key={index} style={{ color: 'red' }}>{error}</p>)}
