@@ -597,6 +597,15 @@ RSpec.feature "MailTasks", :postgres do
         end
       end
 
+      shared_examples "appeal is AMA" do
+        it "creates EvidenceSubmissionWindow task" do
+          evidence_task = find("tr", text: "TASK", match: :first)
+          expect(evidence_task).to have_content("ASSIGNED ON\n#{date_completed}")
+          expect(evidence_task).to have_content("ASSIGNED TO\nMail")
+          expect(evidence_task).to have_content("Evidence Submission Window Task")
+        end
+      end
+
       context "AMA appeal" do
         let(:hwr_task) do
           create(:hearing_withdrawal_request_mail_task,
@@ -617,6 +626,7 @@ RSpec.feature "MailTasks", :postgres do
 
         context "appeal has scheduled hearing" do
           include_examples "hearing scheduled"
+          include_examples "appeal is AMA"
         end
 
         context "appeal has unscheduled hearing" do
@@ -626,6 +636,7 @@ RSpec.feature "MailTasks", :postgres do
           end
 
           include_examples "hearing unscheduled"
+          include_examples "appeal is AMA"
         end
       end
 

@@ -38,7 +38,7 @@ const renderCompleteWprModal = (storeValues) => {
   );
 };
 
-describe('CompleteHearingPostponementRequestModal', () => {
+describe('CompleteHearingWithdrawalRequestModal', () => {
   const instructions = `${COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}:`;
   const buttonText = 'Mark as complete & withdraw hearing';
   const button = () => screen.getByRole('button', { name: buttonText });
@@ -55,7 +55,7 @@ describe('CompleteHearingPostponementRequestModal', () => {
     test('modal body has appropiate text', () => {
       renderCompleteWprModal(completeHearingWithdrawalRequestData);
 
-      expect(screen.getByText('By marking this task as complete, you will withdraw the hearing')).toBeInTheDocument();
+      expect(screen.getByText('By marking this task as complete, you will withdraw the hearing.')).toBeInTheDocument();
       expect(screen.getByText(COPY.WITHDRAW_HEARING.AMA.MODAL_BODY)).toBeInTheDocument();
     });
 
