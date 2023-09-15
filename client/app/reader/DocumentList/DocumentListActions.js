@@ -130,6 +130,21 @@ export const clearDocFilters = () => (dispatch) => {
   dispatch(updateFilteredIdsAndDocs());
 };
 
+export const setDocTypes = (docToAdd) => (dispatch) => {
+  dispatch({
+    type: Constants.SET_DOC_TYPES,
+    payload: {
+      docToAdd
+    },
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'set-doc-types'
+      }
+    }
+  });
+};
+
 export const clearTagFilters = () => (dispatch) => {
   dispatch({
     type: Constants.CLEAR_TAG_FILTER,
@@ -153,13 +168,13 @@ export const setRecieptDateFilter = (recieptFilterType, recieptDatesHash) => (di
     meta: {
       analytics: {
         category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-        action: 'set RecieptFilterType-' + recieptFilterType,
+        action: `set RecieptFilterType-${ recieptFilterType}`,
         label: 'setRecieptFilter'
       }
     }
   });
   dispatch(updateFilteredIdsAndDocs());
-}
+};
 // Scrolling
 
 export const setDocListScrollPosition = (scrollTop) => ({
@@ -227,9 +242,10 @@ export const setViewingDocumentsOrComments = (documentsOrComments) => ({
   }
 });
 
-export const onReceiveManifests = (manifestVbmsFetchedAt, manifestVvaFetchedAt) => ({
+export const onReceiveManifests = (manifestVbmsFetchedAt) => ({
   type: Constants.RECEIVE_MANIFESTS,
-  payload: { manifestVbmsFetchedAt,
-    manifestVvaFetchedAt }
+  payload: {
+    manifestVbmsFetchedAt,
+  }
 });
 
