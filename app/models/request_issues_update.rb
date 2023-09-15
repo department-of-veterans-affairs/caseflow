@@ -103,7 +103,8 @@ class RequestIssuesUpdate < CaseflowRecord
   end
 
   def all_updated_issues
-    added_issues + removed_issues + withdrawn_issues + edited_issues + correction_issues + mst_edited_issues + pact_edited_issues
+    added_issues + removed_issues + withdrawn_issues + edited_issues +
+    correction_issues + mst_edited_issues + pact_edited_issues
   end
 
   private
