@@ -104,7 +104,7 @@ describe VirtualHearings::CreateConferenceJob do
     end
 
     it "fails when a meeting type is neither pexip nor webex" do
-      current_user.meeting_type.update!(meeting_type: "say whaaaat")
+      current_user.meeting_type.update!(service_name: "say whaaaat")
 
       expect { subject.perform_now }.to raise_exception(Caseflow::Error::MeetingTypeNotFoundError)
     end
