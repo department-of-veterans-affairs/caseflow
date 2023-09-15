@@ -9,8 +9,7 @@
     serverIntake: supplemental_claim.ui_hash,
     claimId: url_claim_id,
     featureToggles: {
-      correctClaimReviews: FeatureToggle.enabled?(:correct_claim_reviews, user: current_user),
-      covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user)
+      correctClaimReviews: FeatureToggle.enabled?(:correct_claim_reviews, user: current_user)
     }
   }) %>
 <% end %>

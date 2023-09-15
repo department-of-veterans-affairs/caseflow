@@ -47,7 +47,7 @@ export const UntimelyExemptionModal = ({
   onSkip,
   skipText = 'None of these match, see more options'
 }) => {
-  const { covidTimelinessExemption } = useSelector((state) => state.featureToggles);
+  // const { covidTimelinessExemption } = useSelector((state) => state.featureToggles);
 
   const [state, setState] = useState({
     untimelyExemption: '',

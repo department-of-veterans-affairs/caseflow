@@ -9,7 +9,7 @@ const updateFromServerFeatures = (state, featureToggles) => {
       $set: Boolean(featureToggles.correctClaimReviews)
     },
     covidTimelinessExemption: {
-      $set: Boolean(featureToggles.covidTimelinessExemption)
+      $set: false
     },
     filedByVaGovHlr: {
       $set: Boolean(featureToggles.filedByVaGovHlr)

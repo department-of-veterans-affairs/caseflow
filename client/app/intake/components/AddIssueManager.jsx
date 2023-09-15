@@ -308,11 +308,11 @@ class AddIssueManager extends React.Component {
   };
 
   requiresTimelyRules = () => {
-    const { covidTimelinessExemption } = this.props.featureToggles;
+    // const { covidTimelinessExemption } = this.props.featureToggles;
 
-    if (covidTimelinessExemption) {
-      return this.requiresUntimelyExemptionWithCovid();
-    }
+    // if (covidTimelinessExemption) {
+    //   return this.requiresUntimelyExemptionWithCovid();
+    // }
 
     return this.requiresUntimelyExemption();
 
