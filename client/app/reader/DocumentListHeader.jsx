@@ -12,13 +12,6 @@ import HeaderFilterMessage from './HeaderFilterMessage';
 import SearchBar from '../components/SearchBar';
 
 class DocumentListHeader extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      searchInput: ''
-    };
-    this.handleSearchChange = this.handleSearchChange.bind(this);
-  }
   // Record the search value for analytics purposes. Don't worry if it fails.
   recordSearch = (query) => {
     ApiUtil.post(
@@ -34,34 +27,22 @@ class DocumentListHeader extends React.Component {
         console.error(error);
       });
   }
-
-  handleSearchChange = (value) => {
-    this.setState({
-      searchInput: value
-    });
-  }
-
   render() {
     const props = this.props;
 
     return <div>
       <div className="document-list-header">
-        <div className="search-bar-and-doc-count">
+        <div className="search-bar-and-doc-count cf-search-ahead-parent">
           <div><SearchBar
             id="searchBar"
-            onSubmit={props.setSearch}
+            onChange={props.setSearch}
+            isSearchAhead
             onClearSearch={props.clearSearch}
             recordSearch={this.recordSearch}
-            onChange={this.handleSearchChange}
-            value={this.state.searchInput}
             placeholder="Type to search..."
-            submitUsingEnterKey
+            value={props.docFilterCriteria.searchQuery}
+            size="small"
           />
-          { props.docFilterCriteria.searchQuery && (
-            <ul style={{position: 'relative', right: '33px'}}>
-              <b>Results for:</b> "{props.docFilterCriteria.searchQuery}"
-            </ul>
-          )}
           </div>
           <div className="num-of-documents">
             {props.numberOfDocuments} Documents
