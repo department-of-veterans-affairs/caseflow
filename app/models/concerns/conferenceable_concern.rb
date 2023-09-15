@@ -9,6 +9,8 @@ module ConferenceableConcern
     has_one :meeting_type, as: :conferenceable
 
     after_create :set_default_meeting_type
+
+    delegate :conference_service, to: :meeting_type
   end
 
   def set_default_meeting_type
