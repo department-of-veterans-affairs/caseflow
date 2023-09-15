@@ -45,7 +45,14 @@ const initialState = {
     category: {},
     tag: {},
     document: {},
-    searchQuery: ''
+    docTypeList: '',
+    searchQuery: '',
+    recieptFilterType: '',
+    recieptFilterDates: {
+      fromDate: '',
+      toDate: '',
+      onDate: ''
+    },
   },
   pdfList: {
     scrollTop: null,
@@ -53,11 +60,11 @@ const initialState = {
     dropdowns: {
       tag: false,
       category: false,
-      document: false
+      document: false,
+      receiptDate: false
     }
   },
-  manifestVbmsFetchedAt: null,
-  manifestVvaFetchedAt: null
+  manifestVbmsFetchedAt: null
 };
 
 const documentListReducer = (state = initialState, action = {}) => {
@@ -134,6 +141,19 @@ const documentListReducer = (state = initialState, action = {}) => {
         }
       }
     });
+
+    // Reciept date filter
+  case Constants.SET_RECIEPT_DATE_FILTER:
+    return update(state, {
+      docFilterCriteria: {
+        recieptFilterType: {
+          $set: action.payload.recieptFilterType
+        },
+        recieptFilterDates: {
+          $set: action.payload.recieptDatesHash
+        }
+      },
+    });
     // Scrolling
   case Constants.SET_DOC_LIST_SCROLL_POSITION:
     return update(state, {
@@ -171,6 +191,16 @@ const documentListReducer = (state = initialState, action = {}) => {
       }
     });
 
+    // holds the unique different document types for reader.
+  case Constants.SET_DOC_TYPES:
+    return update(state, {
+      docFilterCriteria: {
+        docTypeList: {
+          $set: action.payload.docToAdd
+        }
+      }
+    });
+
   // Document header
   case Constants.SET_SEARCH:
     return update(state, {
@@ -196,6 +226,12 @@ const documentListReducer = (state = initialState, action = {}) => {
         },
         tag: {
           $set: {}
+        },
+        document: {
+          $set: {}
+        },
+        recieptFilterDates: {
+          $set: {}
         }
       },
       viewingDocumentsOrComments: {
@@ -206,9 +242,6 @@ const documentListReducer = (state = initialState, action = {}) => {
     return update(state, {
       manifestVbmsFetchedAt: {
         $set: action.payload.manifestVbmsFetchedAt
-      },
-      manifestVvaFetchedAt: {
-        $set: action.payload.manifestVvaFetchedAt
       }
     });
   case Constants.UPDATE_FILTERED_RESULTS:
