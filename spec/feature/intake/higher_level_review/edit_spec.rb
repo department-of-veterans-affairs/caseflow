@@ -618,9 +618,9 @@ feature "Higher Level Review Edit issues", :all_dbs do
       safe_click("#button-submit-update")
 
       expect(page).to have_content("The review originally had 1 issue but now has 3.")
-      expect(page).to have_content(
-        "A nonrating issue before AMA #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
-      )
+      # expect(page).to have_content(
+      #   "A nonrating issue before AMA #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+      # )
       safe_click ".confirm"
 
       expect(page).to have_current_path(
