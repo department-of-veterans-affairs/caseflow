@@ -10,12 +10,15 @@ module ConferenceableConcern
 
     after_create :set_default_meeting_type
 
-    delegate :conference_provider, to: :meeting_type
+    delegate :conference_provider, to: :meeting_type, allow_nil: true
   end
 
   def set_default_meeting_type
     unless meeting_type
-      MeetingType.create!(service_name: DEFAULT_SERVICE, conferenceable: self)
+      MeetingType.create!(
+        service_name: created_by.conference_provider || DEFAULT_SERVICE,
+        conferenceable: self
+      )
 
       reload_meeting_type
     end
