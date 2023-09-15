@@ -411,7 +411,7 @@ class DocumentsTable extends React.Component {
         ariaLabel: 'categories-header-label',
         header: (
           <div id="categories-header">
-            <span id="categories-header-label">
+            <span id="categories-header-label" className="table-header-label">
               Categories
             </span>
             <FilterIcon
@@ -450,13 +450,13 @@ class DocumentsTable extends React.Component {
         header: (
           <div style={{ minWidth: '250px' }}>
             <Button
-              styling={{ 'aria-roledescription': 'sort button' }}
+              styling={{ 'aria-roledescription': 'sort button', style: { display: 'inline' } }}
               name="Receipt Date"
               id="receipt-date-header"
               classNames={['cf-document-list-button-header']}
               onClick={() => this.props.changeSortState('receivedAt')}
             >
-              <span id="receipt-date-header-label">Receipt Date</span>
+              <span id="receipt-date-header-label" className="table-header-label">Receipt Date</span>
               {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ?
                 sortArrowIcon :
                 notSortedIcon}
@@ -545,12 +545,12 @@ class DocumentsTable extends React.Component {
           <>
             <Button
               id="type-header"
-              styling={{ 'aria-roledescription': 'sort button' }}
+              styling={{ 'aria-roledescription': 'sort button', style: { display: 'inline' } }}
               name="Document Type"
               classNames={['cf-document-list-button-header']}
               onClick={() => this.props.changeSortState('type')}
             >
-              <span id="type-header-label">Document Type</span>
+              <span id="type-header-label" className="table-header-label">Document Type</span>
 
               {this.props.docFilterCriteria.sort.sortBy === 'type' ?
                 sortArrowIcon :
@@ -596,7 +596,7 @@ class DocumentsTable extends React.Component {
         ariaLabel: 'tag-header-label',
         header: (
           <div id="tags-header" className="document-list-header-issue-tags">
-            <span id="tag-header-label">
+            <span id="tag-header-label" className="table-header-label">
               Issue Tags
             </span>
             <FilterIcon
@@ -632,7 +632,7 @@ class DocumentsTable extends React.Component {
       {
         cellClass: 'comments-column',
         header: (
-          <div id="comments-header" className="document-list-header-comments">
+          <div id="comments-header" className="document-list-header-comments table-header-label">
             Comments
           </div>
         ),
