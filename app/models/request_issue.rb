@@ -269,7 +269,9 @@ class RequestIssue < CaseflowRecord
     return false if bgs_contention.nil?
 
     if bgs_contention.special_issues.is_a?(Hash)
-      return %w[PACT PACTDICRE PEES1].include?(bgs_contention.special_issues[:spis_tc]) if bgs_contention&.special_issues
+      if bgs_contention&.special_issues
+        return %w[PACT PACTDICRE PEES1].include?(bgs_contention.special_issues[:spis_tc])
+      end
     elsif bgs_contention.special_issues.is_a?(Array)
       bgs_contention.special_issues.each do |issue|
         return true if %w[PACT PACTDICRE PEES1].include?(issue[:spis_tc])
