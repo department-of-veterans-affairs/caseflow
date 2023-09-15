@@ -657,16 +657,16 @@ RSpec.feature "MailTasks", :postgres do
         end
 
         before do
-          visit("queue/appeals/#{appeal.vacols_id}")
-          within("tr", text: "TASK", match: :first) do
-            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                           text: Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.label)
-          end
-          fill_in("instructionsField", with: instructions)
           perform_enqueued_jobs do
+            visit("queue/appeals/#{appeal.vacols_id}")
+            within("tr", text: "TASK", match: :first) do
+              click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                             text: Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.label)
+            end
+            fill_in("instructionsField", with: instructions)
             click_button("Mark as complete & withdraw hearing")
+            visit("queue/appeals/#{appeal.vacols_id}")
           end
-          visit("queue/appeals/#{appeal.vacols_id}")
         end
 
         context "appeal has scheduled hearing" do
