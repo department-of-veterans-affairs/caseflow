@@ -101,21 +101,22 @@ class IssuesController < ApplicationController
     level_1_description = level_1_code.nil? ? "N/A" : param_issue["levels"][issue_code]["levels"][level_1_code]["description"]
 
     # format the task instructions and close out
-    task.format_instructions(
-      change_category,
-      [
+    set = CaseTimelineInstructionSet.new(
+      change_type: change_category,
+      issue_category: [
         "Benefit Type: #{param_issue['description']}\n",
         "Issue: #{iss}\n",
         "Code: #{[level_1_code, level_1_description].join(' - ')}\n",
         "Note: #{note}\n",
         "Disposition: #{disposition}\n"
       ].compact.join("\r\n"),
-      "",
-      issue.mst_status,
-      issue.pact_status,
-      updated_mst_status,
-      updated_pact_status
+      benefit_type: "",
+      original_mst: issue.mst_status,
+      original_pact: issue.pact_status,
+      edit_mst: updated_mst_status,
+      edit_pact: updated_pact_status
     )
+    task.format_instructions(set)
     task.completed!
     # create SpecialIssueChange record to log the changes
     SpecialIssueChange.create!(

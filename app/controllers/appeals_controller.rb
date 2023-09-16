@@ -436,21 +436,22 @@ class AppealsController < ApplicationController
       completed_by: user
     )
     # format the task instructions and close out
-    task.format_instructions(
-      "Edited Issue",
-      [
+    set = CaseTimelineInstructionSet.new(
+      change_type: "Edited Issue",
+      issue_category: [
         "Benefit Type: #{before_issue.labels[0]}\n",
         "Issue: #{before_issue.labels[1..-2].join("\n")}\n",
         "Code: #{[before_issue.codes[-1], before_issue.labels[-1]].join(' - ')}\n",
         "Note: #{before_issue.note}\n",
         "Disposition: #{before_issue.readable_disposition}\n"
       ].compact.join("\r\n"),
-      "",
-      before_issue.mst_status,
-      before_issue.pact_status,
-      current_issue[:mst_status],
-      current_issue[:pact_status]
+      benefit_type: "",
+      original_mst: before_issue.mst_status,
+      original_pact: before_issue.pact_status,
+      edit_mst: current_issue[:mst_status],
+      edit_pact: current_issue[:pact_status]
     )
+    task.format_instructions(set)
     task.completed!
 
     # create SpecialIssueChange record to log the changes
