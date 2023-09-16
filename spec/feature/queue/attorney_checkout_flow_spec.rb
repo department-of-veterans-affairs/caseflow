@@ -70,25 +70,23 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
-      using_wait_time(8) do
-        # Ensure the issue is on the case details screen
-        expect(page).to have_content(issue_description)
-        expect(page).to have_content(issue_note)
-        expect(page).to have_content("Diagnostic code: #{diagnostic_code}")
-        expect(page).to have_content "Correct issues"
-      end
+      sleep(2)
+      # Ensure the issue is on the case details screen
+      expect(page).to have_content(issue_description)
+      expect(page).to have_content(issue_note)
+      expect(page).to have_content("Diagnostic code: #{diagnostic_code}")
+      expect(page).to have_content "Correct issues"
 
       click_dropdown(text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.label)
 
       click_on "Continue"
 
-      using_wait_time(8) do
-        # Ensure the issue is on the select disposition screen
-        expect(page).to have_content(issue_description)
-        expect(page).to have_content(issue_note)
+      sleep(2)
+      # Ensure the issue is on the select disposition screen
+      expect(page).to have_content(issue_description)
+      expect(page).to have_content(issue_note)
 
-        expect(page).to have_content COPY::DECISION_ISSUE_PAGE_TITLE
-      end
+      expect(page).to have_content COPY::DECISION_ISSUE_PAGE_TITLE
 
       click_on "Continue"
       expect(page).to have_content "You must add a decision before you continue."
