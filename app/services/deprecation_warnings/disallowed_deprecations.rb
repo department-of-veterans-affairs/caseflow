@@ -11,9 +11,15 @@ module DisallowedDeprecations
     /Dangerous query method \(method whose arguments are used as raw SQL\) called with non\-attribute argument\(s\)/
   ].freeze
 
+   # Regular expressions for Rails 6.1 deprecation warnings that we have addressed in the codebase
+  RAILS_6_1_FIXED_DEPRECATION_WARNING_REGEXES = [
+     /update_attributes!*\(/
+  ].freeze
+
   # Regular expressions for deprecation warnings that should raise an exception on detection
   DISALLOWED_DEPRECATION_WARNING_REGEXES = [
-    *RAILS_5_2_FIXED_DEPRECATION_WARNING_REGEXES
+    *RAILS_5_2_FIXED_DEPRECATION_WARNING_REGEXES,
+    *RAILS_6_1_FIXED_DEPRECATION_WARNING_REGEXES
   ].freeze
 
   # @param message [String] deprecation warning message to be checked against disallow list
