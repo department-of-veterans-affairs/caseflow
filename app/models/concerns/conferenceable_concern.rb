@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Any model that includes this concern will be able to be assigned a conference provider
+# for use in creating virtual conference links.
+
 module ConferenceableConcern
   extend ActiveSupport::Concern
 
