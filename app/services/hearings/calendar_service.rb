@@ -95,7 +95,8 @@ class Hearings::CalendarService
     end
 
     def render_virtual_hearing_calendar_event_template(email_recipient_info, event_type, locals)
-      template = ActionView::Base.new(ActionMailer::Base.view_paths, {})
+      lookup_context = ActionView::Base.build_lookup_context(ActionController::Base.view_paths)
+      template = ActionView::Base.new(lookup_context), {})
       template.class_eval do
         include Hearings::CalendarTemplateHelper
         include Hearings::AppellantNameHelper
