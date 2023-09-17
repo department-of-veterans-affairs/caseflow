@@ -23,6 +23,7 @@ module ConferenceableConcern
   end
 
   def set_default_meeting_type
+
     unless meeting_type
       MeetingType.create!(
         service_name: determine_service_name || DEFAULT_SERVICE,
