@@ -69,6 +69,8 @@ module IssueUpdater
       create_remand_reasons(decision_issue, issue_attrs[:remand_reasons] || [])
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize
+
 
   def fail_if_not_all_request_issues_have_decision!
     unless appeal.every_request_issue_has_decision?

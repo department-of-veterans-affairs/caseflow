@@ -951,6 +951,7 @@ class LegacyAppeal < CaseflowRecord
   def is_legacy?
     true
   end
+  # rubocop:enable Naming/PredicateName
 
   private
 
