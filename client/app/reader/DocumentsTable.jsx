@@ -476,13 +476,13 @@ class DocumentsTable extends React.Component {
                 sortArrowIcon :
                 notSortedIcon}
             </Button>
-            <FilterIcon
+            {this.props.featureToggles.readerSearchImprovements && <FilterIcon
               label="Filter by dates"
               idPrefix="receiptDate"
               getRef={this.getreceiptDateFilterIconRef}
               selected={isRecipetDateFilterOpen || anyDateFiltersAreSet}
               handleActivate={this.toggleRecieptDataDropdownFilterVisibility}
-            />
+            />}
             {isRecipetDateFilterOpen && (
               <div style={{
                 position: 'relative',
@@ -502,6 +502,7 @@ class DocumentsTable extends React.Component {
                         defaultValue={dateDropdownMap[this.state.recieptFilter]}
                         label="Date filter parameters"
                         onChangeMethod={(selectedOption) => this.updateRecieptFilter(selectedOption.value)}
+                        featureToggles={this.props.featureToggles}
                       />
                       {
                         (this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.FROM) &&
@@ -576,13 +577,13 @@ class DocumentsTable extends React.Component {
                 sortArrowIcon :
                 notSortedIcon}
             </Button>
-            <FilterIcon
+            {this.props.featureToggles.readerSearchImprovements && <FilterIcon
               label="Filter by Document"
               idPrefix="document"
               getRef={this.getDocumentFilterIconRef}
               selected={isDocumentDropdownFilterOpen}
               handleActivate={this.toggleDocumentDropdownFilterVisiblity}
-            />
+            />}
             {isDocumentDropdownFilterOpen && (
               <div style={{ position: 'relative', right: '14vw' }}>
                 <DropdownFilter
@@ -597,6 +598,8 @@ class DocumentsTable extends React.Component {
                     tagToggleStates={this.props.docFilterCriteria.document}
                     handleTagToggle={this.props.setDocFilter}
                     defaultSearchText="Type to search..."
+                    featureToggles={this.props.featureToggles}
+
                   />
                 </DropdownFilter>
               </div>
@@ -640,6 +643,7 @@ class DocumentsTable extends React.Component {
                     tagToggleStates={this.props.docFilterCriteria.tag}
                     handleTagToggle={this.props.setTagFilter}
                     defaultSearchText="Type to search..."
+                    featureToggles={this.props.featureToggles}
                   />
                 </DropdownFilter>
               </div>
@@ -710,6 +714,9 @@ DocumentsTable.propTypes = {
   setDocFilter: PropTypes.func,
   setDocTypes: PropTypes.func,
   clearDocFilters: PropTypes.func,
+  secretDebug: PropTypes.func,
+  featureToggles: PropTypes.object,
+
 };
 
 const mapDispatchToProps = (dispatch) =>
