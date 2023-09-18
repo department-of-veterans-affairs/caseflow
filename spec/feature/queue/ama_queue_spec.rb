@@ -239,7 +239,12 @@ feature "AmaQueue", :all_dbs do
 
         # load in the timeline data
         appeal = appeals[0]
-        iup = IssuesUpdateTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: Organization.find_by_url("bva-intake"), assigned_by: RequestStore[:current_user])
+        iup = IssuesUpdateTask.create!(
+          appeal: appeal,
+          parent: appeal.root_task,
+          assigned_to: Organization.find_by_url("bva-intake"),
+          assigned_by: RequestStore[:current_user]
+          )
         set = CaseTimelineInstructionSet.new(
           change_type: "Edited Issue",
           issue_category: "test category",
