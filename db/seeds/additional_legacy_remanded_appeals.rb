@@ -45,7 +45,6 @@ module Seeds
     end
 
     def create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, judge, attorney)
-
       # We need these retries because the sequence for FactoryBot comes out of
       # sync with what's in the DB. This just essentially updates the FactoryBot
       # sequence to match what's in the DB.
@@ -83,9 +82,10 @@ module Seeds
         retries ||= 0
         if type == "video"
           vacols_case = create_video_vacols_case(vacols_titrnum, vacols_folder, correspondent)
-        end
-        if type == "travel"
+          create(:staff, slogid: vacols_case.bfcurloc, sdomainid: judge.css_id)
+        elsif type == "travel"
           vacols_case = create_travel_vacols_case(vacols_titrnum, vacols_folder, correspondent)
+          create(:staff, slogid: vacols_case.bfcurloc, sdomainid: judge.css_id)
         end
       rescue ActiveRecord::RecordNotUnique
         retry if (retries += 1) < retry_max
@@ -107,19 +107,14 @@ module Seeds
 
     def create_tasks_for_legacy_appeals(appeal, attorney, judge, workflow)
       # Will need a judge user for judge decision review task and an attorney user for the subsequent Attorney Task
-
-      if(workflow === 'ready_for_dispatch')
-        root_task = RootTask.find_or_create_by!(appeal: appeal)
-
+      root_task = RootTask.find_or_create_by!(appeal: appeal)
+      if workflow === 'ready_for_dispatch'
         review_task = JudgeDecisionReviewTask.create!(
           appeal: appeal,
           parent: root_task,
           assigned_to: judge
         )
-      end
-      if(workflow === 'decision_ready_hr')
-        root_task = RootTask.find_or_create_by!(appeal: appeal)
-
+      elsif workflow === 'decision_ready_hr'
         review_task = JudgeDecisionReviewTask.create!(
           appeal: appeal,
           parent: root_task,
@@ -155,8 +150,7 @@ module Seeds
           legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, judge, attorney)
           # Create the task tree, need to create each task like this to avoid user creation and index conflicts
           create_legacy_appeals_decision_ready_hr(legacy_appeal, judge, attorney)
-        end
-        if(workflow === 'ready_for_dispatch')
+        elsif(workflow === 'ready_for_dispatch')
           legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, judge, attorney)
           # Create the task tree, need to create each task like this to avoid user creation and index conflicts
           create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, judge, attorney)
@@ -193,18 +187,17 @@ module Seeds
     end
 
     def create_legacy_appeals_decision_ready_hr(legacy_appeal, judge, attorney)
-          vet = create_veteran(first_name: Faker::Name.first_name, last_name: Faker::Name.last_name)
-          created_at = legacy_appeal[:created_at]
-          task_id = "#{legacy_appeal.vacols_id}-#{VacolsHelper.day_only_str(created_at)}"
-
-          create(
-            :attorney_case_review,
-            appeal: legacy_appeal,
-            reviewing_judge: judge,
-            attorney: attorney,
-            task_id: task_id,
-            note: Faker::Lorem.sentence
-          )
+      vet = create_veteran(first_name: Faker::Name.first_name, last_name: Faker::Name.last_name)
+      created_at = legacy_appeal[:created_at]
+      task_id = "#{legacy_appeal.vacols_id}-#{VacolsHelper.day_only_str(created_at)}"
+      create(
+        :attorney_case_review,
+        appeal: legacy_appeal,
+        reviewing_judge: judge,
+        attorney: attorney,
+        task_id: task_id,
+        note: Faker::Lorem.sentence
+      )
     end
 
     def create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, judge, attorney)
@@ -234,5 +227,5 @@ module Seeds
         ]
       )
     end
-    end
   end
+end
