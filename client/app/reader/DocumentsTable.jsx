@@ -188,20 +188,20 @@ class DocumentsTable extends React.Component {
     }
   }
 
- constructor() {
-   super();
-   this.state = {
-     recieptFilter: '',
-     fromDate: '',
-     toDate: '',
-     onDate: '',
-     fromDateErrors: [],
-     toDateErrors: [],
-     onDateErrors: [],
-     recipetFilterEnabled: true,
-     fallbackState: ''
-   };
- }
+  constructor() {
+    super();
+    this.state = {
+      recieptFilter: '',
+      fromDate: '',
+      toDate: '',
+      onDate: '',
+      fromDateErrors: [],
+      toDateErrors: [],
+      onDateErrors: [],
+      recipetFilterEnabled: true,
+      fallbackState: ''
+    };
+  }
 
  executeRecieptFilter = () => {
    const toErrors = this.validateDateTo(this.state.toDate);
@@ -530,10 +530,14 @@ class DocumentsTable extends React.Component {
                       {this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED && <DateSelector readOnly type="date" name="Receipt date"
                         onChange={this.validateDateIsAfter} comment="This is a read only component used as a dummy" />}
 
-                      {(this.state.recieptFilter === recieptDateFilterStates.ON) && this.state.onDateErrors.map((error) =>
-                        <p style={{ color: 'red' }}>{error}</p>)}
-                      {this.state.recieptFilter === recieptDateFilterStates.ON && <DateSelector value={this.state.onDate} type="date"
-                        name="" onChange={this.setOnDate} />}
+                      {this.state.recieptFilter === recieptDateFilterStates.ON &&
+                        <DateSelector
+                          value={this.state.onDate}
+                          type="date"
+                          name={this.state.recieptFilter === recieptDateFilterStates.BETWEEN ? 'On' : ''}
+                          onChange={this.setOnDate}
+                          errorMessage={this.errorMessagesNode(this.state.onDateErrors, 'onDate')}
+                          />}
                     </div>
 
                     <div>
