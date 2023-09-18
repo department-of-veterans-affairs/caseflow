@@ -79,7 +79,7 @@ const Review = (props) => {
   const formProps = useForm(
     {
       resolver: yupResolver(schemaMappings(props.featureToggles)[props.formType]),
-      context: { selectedForm: props.formType },
+      context: { selectedForm: props.formType, useAmaActivationDate: props.featureToggles.useAmaActivationDate },
       mode: 'onSubmit',
       reValidateMode: 'onSubmit'
     }

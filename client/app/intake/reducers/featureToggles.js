@@ -3,13 +3,13 @@ import { update } from '../../util/ReducerUtil';
 const updateFromServerFeatures = (state, featureToggles) => {
   return update(state, {
     useAmaActivationDate: {
-      $set: true
+      $set: Boolean(featureToggles.useAmaActivationDate)
     },
     correctClaimReviews: {
       $set: Boolean(featureToggles.correctClaimReviews)
     },
     covidTimelinessExemption: {
-      $set: false
+      $set: Boolean(featureToggles.covidTimelinessExemption)
     },
     filedByVaGovHlr: {
       $set: Boolean(featureToggles.filedByVaGovHlr)

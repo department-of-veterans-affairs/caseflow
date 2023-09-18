@@ -69,6 +69,7 @@ const defaultArgs = {
     filedByVaGovHlr: true,
     updatedAppealForm: true,
     updatedIntakeForms: true,
+    useAmaActivationDate: true,
     vhaClaimReviewEstablishment: true,
   },
 };
