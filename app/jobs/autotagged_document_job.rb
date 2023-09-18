@@ -24,23 +24,34 @@ class AutotaggedDocumentJob < CaseflowJob
   private
 
   def add_tags_to_doc(doc)
-    tags = get_tags(doc)
-    return if tags.nil?
+    begin
+      doc.update(auto_tagged: true)
+      tags = get_tags(doc)
+      return if tags.nil?
 
-    tags.each do |tag_text|
-      next if find_existing_tag(tag_text).present?
+      tags.each do |tag_text|
+        existing_tag = find_existing_tag(tag_text)
+        if existing_tag.present?
+          next if doc.tags.include?(existing_tag)
 
-      new_tag = Tag.find_or_create_by(text: tag_text)
-      doc.tags << new_tag
+          doc.tags << existing_tag
+        else
+          new_tag = Tag.find_or_create_by(text: tag_text)
+          doc.tags << new_tag
+        end
+      end
+    rescue StandardError
+      doc.update(auto_tagged: false)
     end
-    doc.update(auto_tagged: true)
   end
 
   def get_tags(doc)
-    ExternalApi::ClaimEvidenceService.get_key_phrases_from_document(doc.series_id[1..-2])
+    tags = ExternalApi::ClaimEvidenceService.get_key_phrases_from_document(doc.series_id[1..-2])
+    tags.uniq!(&:downcase)
+    tags
   end
 
   def find_existing_tag(tag_text)
-    Tag.find_by("lower(text) = ?", tag_text.downcase)
+    Tag.where("text ilike ?", "%#{tag_text}%").first
   end
 end
