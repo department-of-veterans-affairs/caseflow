@@ -18,6 +18,7 @@ class IssuesController < ApplicationController
   end
 
   def create
+  # rubocop:disable Layout/LineLength
     return record_not_found unless appeal
 
     issue = Issue.create_in_vacols!(issue_attrs: create_params)
@@ -31,7 +32,9 @@ class IssuesController < ApplicationController
 
     render json: { issues: json_issues }, status: :created
   end
+  # rubocop:enable Layout/LineLength
 
+  # rubocop:disable Layout/LineLength
   def update
     return record_not_found unless appeal
 
@@ -52,6 +55,7 @@ class IssuesController < ApplicationController
 
     render json: { issues: json_issues }, status: :ok
   end
+  # rubocop:enable Layout/LineLength
 
   def destroy
     return record_not_found unless appeal
@@ -65,6 +69,7 @@ class IssuesController < ApplicationController
 
   private
 
+  # rubocop:disable Layout/LineLength
   def create_legacy_issue_update_task(issue)
     user = current_user
 
@@ -133,6 +138,7 @@ class IssuesController < ApplicationController
       change_category: change_category
     )
   end
+  # rubocop:enable Layout/LineLength
 
   def convert_to_bool(status)
     status == "Y"

@@ -216,4 +216,5 @@ class SpecialIssuesComparator
     end
     contention_matches
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 end

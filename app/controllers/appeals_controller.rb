@@ -271,6 +271,7 @@ class AppealsController < ApplicationController
   end
 
   # format MST/PACT edit success banner message
+  # rubocop:disable Layout/LineLength
   def mst_and_pact_edited_issues
     # list of edit counts
     mst_added = 0
@@ -325,8 +326,11 @@ class AppealsController < ApplicationController
 
     message.flatten
   end
+  # rubocop:enable Layout/LineLength
+
 
   # create MST/PACT message for added/removed issues
+  # rubocop:disable Layout/LineLength
   def create_mst_pact_message_for_new_and_removed_issues(issues, type)
     special_issue_message = []
     # check if any added/removed issues have MST/PACT and get the count
@@ -342,6 +346,7 @@ class AppealsController < ApplicationController
 
     special_issue_message
   end
+  # rubocop:enable Layout/LineLength
 
   # check if there is a change in mst/pact on legacy issue
   # if there is a change, creat an issue update task
@@ -471,6 +476,7 @@ class AppealsController < ApplicationController
   end
 
   # updated flash message to show mst/pact message if mst/pact changes (not to legacy)
+  # rubocop:disable Layout/LineLength
   def set_flash_success_message
     return set_flash_mst_edit_message if mst_pact_changes? &&
                                          (FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
@@ -478,6 +484,7 @@ class AppealsController < ApplicationController
 
     set_flash_edit_message
   end
+  # rubocop:enable Layout/LineLength
 
   # create success message with added and removed issues
   def set_flash_mst_edit_message
@@ -545,6 +552,7 @@ class AppealsController < ApplicationController
   # Params: appeals_id (vacols_id OR uuid)
   #
   # Response: Returns an array of all retrieved notifications
+  # rubocop:disable Layout/LineLength
   def find_notifications_by_appeals_id(appeals_id)
     # Retrieve notifications based on appeals_id, excluding statuses of 'No participant_id' & 'No claimant'
     @all_notifications = Notification.where(appeals_id: appeals_id)
@@ -559,6 +567,7 @@ class AppealsController < ApplicationController
       WorkQueue::NotificationSerializer.new(@allowed_notifications).serializable_hash[:data]
     end
   end
+  # rubocop:enable Layout/LineLength
 
   # Notification report pdf template only accepts the Appeal or Legacy Appeal object
   # Finds appeal object using appeals id passed through url params

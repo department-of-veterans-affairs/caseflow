@@ -391,7 +391,7 @@ class RequestIssuesUpdate < CaseflowRecord
           after_issue&.pact_status
         )
       end
-      # rubocop:enable Layout/LineLength
+      # rubocop:enable Layout/LineLength, Metrics/AbcSize
       task.completed!
 
       # create SpecialIssueChange record to log the changes

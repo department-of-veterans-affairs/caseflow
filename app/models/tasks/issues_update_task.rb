@@ -46,4 +46,5 @@ class IssuesUpdateTask < Task
     return special_issue_status + " MST" if mst_status
     return special_issue_status + " PACT" if pact_status
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 end
