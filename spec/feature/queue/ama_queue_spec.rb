@@ -240,7 +240,18 @@ feature "AmaQueue", :all_dbs do
         # load in the timeline data
         appeal = appeals[0]
         iup = IssuesUpdateTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: Organization.find_by_url("bva-intake"), assigned_by: RequestStore[:current_user])
-        iup.format_instructions("Edited Issue", "test category", "benefit type", false, false, true, true, "MST reason", "PACT reason")
+        set = CaseTimelineInstructionSet.new(
+          change_type: "Edited Issue",
+          issue_category: "test category",
+          benefit_type: "benefit type",
+          original_mst: false,
+          original_pact: false,
+          edit_mst: true,
+          edit_pact: true,
+          mst_edit_reason: "MST reason",
+          pact_edit_reason: "PACT reason"
+        )
+        iup.format_instructions(set)
         iup.completed!
 
         # We reload the page because the page sometimes errors first load for some reason, also ensures that the timeline

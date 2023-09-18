@@ -139,15 +139,20 @@ module IssueUpdater
       completed_by: RequestStore[:current_user]
     )
 
-    task.format_instructions(
-      "Edited Issue",
-      task_text_helper([original_issue.contested_issue_description, original_issue.nonrating_issue_category, original_issue.nonrating_issue_description]),
-      task_text_benefit_type(original_issue),
-      original_issue.mst_status,
-      original_issue.pact_status,
-      decision_issue.mst_status,
-      decision_issue.pact_status
+    set = CaseTimelineInstructionSet.new(
+      change_type: "Edited Issue",
+      issue_category: task_text_helper([
+        original_issue.contested_issue_description,
+        original_issue.nonrating_issue_category,
+        original_issue.nonrating_issue_description
+        ]),
+      benefit_type: task_text_benefit_type(original_issue),
+      original_mst: original_issue.mst_status,
+      original_pact: original_issue.pact_status,
+      edit_mst: decision_issue.mst_status,
+      edit_pact: decision_issue.pact_status
     )
+    task.format_instructions(set)
 
     task.completed!
 

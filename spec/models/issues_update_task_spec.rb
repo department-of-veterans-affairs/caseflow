@@ -63,17 +63,18 @@ describe IssuesUpdateTask do
     end
 
     subject do
-      issues_update_task.format_instructions(
-        params[:change_type],
-        params[:issue_category],
-        params[:benefit_type],
-        params[:original_mst],
-        params[:original_pact],
-        params[:edit_mst],
-        params[:edit_pact]
-        # params[:_mst_edit_reason],
-        # params[:_pact_edit_reason]
+      set = CaseTimelineInstructionSet.new(
+        change_type: params[:change_type],
+        issue_category: params[:issue_category],
+        benefit_type: params[:benefit_type],
+        original_mst: params[:original_mst],
+        original_pact: params[:original_pact],
+        edit_mst: params[:edit_mst],
+        edit_pact: params[:edit_pact]
+        # mst_edit_reason: params[:_mst_edit_reason],
+        # pact_edit_reason: params[:_pact_edit_reason]
       )
+      issues_update_task.format_instructions(set)
       issues_update_task
     end
 
