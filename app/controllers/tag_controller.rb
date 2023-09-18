@@ -39,9 +39,8 @@ class TagController < ApplicationController
   def auto_tag
     begin
       AutotaggedDocumentJob.perform(params[:document_id])
-      # Document.find(params[:document_id]).update(auto_tagged: true)
       render(json: { status: :ok })
-    rescue
+    rescue StandardError
       Rails.logger.info("Document is not ready for auto-tagging.")
       render(json: { status: :not_found })
     end
