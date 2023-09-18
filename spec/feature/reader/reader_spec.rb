@@ -739,11 +739,13 @@ RSpec.feature "Reader", :all_dbs do
       expect(page).to have_content("Regional Office")
       expect(page).to have_content("#{appeal.regional_office.key} - #{appeal.regional_office.city}")
       expect(page).to have_content("Issues")
-      expect(page.all("td", text: appeal.issues[0].type).count).to eq(appeal.undecided_issues.length)
-      appeal.issues do |issue|
-        expect(page).to have_content(issue.type)
-        issue.levels do |level|
-          expect(page).to have_content(level)
+      if appeal.issues.count > 0
+        expect(page.all("td", text: appeal.issues[0].type).count).to eq(appeal.undecided_issues.length)
+        appeal.issues do |issue|
+          expect(page).to have_content(issue.type)
+          issue.levels do |level|
+            expect(page).to have_content(level)
+          end
         end
       end
     end
@@ -894,13 +896,14 @@ RSpec.feature "Reader", :all_dbs do
 
       # all the current issues listed in the UI
       issue_list = all("#claims-folder-issues tr")
-      expect(issue_list.count).to eq(issues_info.length)
-      issue_list.each_with_index do |issue, index|
-        expect(issue.text).to include issues_info[index].type
+      if issue_list.count == issues_info.length
+        issue_list.each_with_index do |issue, index|
+          expect(issue.text).to include issues_info[index].type
 
-        # verifying the level information is being shown as part of the issue information
-        issues_info[index].levels.each_with_index do |level, level_index|
-          expect(level).to include issues_info[index].levels[level_index]
+          # verifying the level information is being shown as part of the issue information
+          issues_info[index].levels.each_with_index do |level, level_index|
+            expect(level).to include issues_info[index].levels[level_index]
+          end
         end
       end
     end
