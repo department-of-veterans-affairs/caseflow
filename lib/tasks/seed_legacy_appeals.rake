@@ -115,10 +115,6 @@ namespace :db do
 
         # veterans_with_250_appeals = vets.last(3).pluck(:file_number)
 
-<<<<<<< HEAD
-
-=======
->>>>>>> feature/APPEALS-24914
       else
         veterans_with_like_45_appeals = %w[011899917 011899918]
 
