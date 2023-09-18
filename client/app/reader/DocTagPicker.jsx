@@ -55,7 +55,7 @@ const DocTagPicker = ({ tags, tagToggleStates, handleTagToggle, defaultSearchTex
   const [filterText, updateFilterText] = useState('');
 
   const getFilteredData = () => {
-    if (filterText.length < 3) {
+    if (filterText.length < 2) {
       return tags;
     }
     const filteredData = tags.filter(
