@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 import React from 'react';
+import Select from 'react-select';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
@@ -39,6 +40,7 @@ import FilterIcon from '../components/icons/FilterIcon';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
 import DocTagPicker from './DocTagPicker';
+import ReactSelectDropdown from '../components/ReactSelectDropdown';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -188,20 +190,20 @@ class DocumentsTable extends React.Component {
     }
   }
 
- constructor() {
-   super();
-   this.state = {
-     recieptFilter: '',
-     fromDate: '',
-     toDate: '',
-     onDate: '',
-     fromDateErrors: [],
-     toDateErrors: [],
-     onDateErrors: [],
-     recipetFilterEnabled: true,
-     fallbackState: ''
-   };
- }
+  constructor() {
+    super();
+    this.state = {
+      recieptFilter: '',
+      fromDate: '',
+      toDate: '',
+      onDate: '',
+      fromDateErrors: [],
+      toDateErrors: [],
+      onDateErrors: [],
+      recipetFilterEnabled: true,
+      fallbackState: ''
+    };
+  }
 
  executeRecieptFilter = () => {
    const toErrors = this.validateDateTo(this.state.toDate);
@@ -339,10 +341,10 @@ class DocumentsTable extends React.Component {
     const anyDateFiltersAreSet = anyFiltersSet('receiptDate');
 
     const dateDropdownMap = [
-      { value: 0, displayText: 'Between these dates' },
-      { value: 1, displayText: 'Before this date' },
-      { value: 2, displayText: 'After this date' },
-      { value: 3, displayText: 'On this date' }
+      { value: 0, label: 'Between these dates' },
+      { value: 1, label: 'Before this date' },
+      { value: 2, label: 'After this date' },
+      { value: 3, label: 'On this date' }
     ];
 
     // We have blank headers for the comment indicator and label indicator columns.
@@ -495,15 +497,11 @@ class DocumentsTable extends React.Component {
                 >
                   <div>
                     <div style={{ padding: '0px 30px' }}>
-                      <Dropdown
-                        name="dateDropdownText"
+                      <ReactSelectDropdown
                         options={dateDropdownMap}
+                        defaultValue={dateDropdownMap[this.state.recieptFilter]}
                         label="Date filter parameters"
-                        value="dateDropdownVal"
-                        onChange={(newKey) => this.updateRecieptFilter(newKey)}
-                        defaultText={this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED ? 'Select...' :
-                          dateDropdownMap[this.state.recieptFilter].displayText}
-                        defaultValue="On this date"
+                        onChangeMethod={(selectedOption) => this.updateRecieptFilter(selectedOption.value)}
                       />
                       {
                         (this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.FROM) &&
@@ -712,7 +710,6 @@ DocumentsTable.propTypes = {
   setDocFilter: PropTypes.func,
   setDocTypes: PropTypes.func,
   clearDocFilters: PropTypes.func,
-  secretDebug: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) =>
