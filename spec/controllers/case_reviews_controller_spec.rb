@@ -136,13 +136,13 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
             it "it create the decision issues with the correct mst and pact status" do
               subject
 
-              decision_issues_from_response = JSON.parse(response.body, symbolize_names: true)[:issues][:decision_issues]
+              decision_issues = JSON.parse(response.body, symbolize_names: true)[:issues][:decision_issues]
                 .sort_by { |issue| issue[:id] }
 
-              expect(decision_issues_from_response[0][:mst_status]).to be(true)
-              expect(decision_issues_from_response[0][:pact_status]).to be(false)
-              expect(decision_issues_from_response[1][:mst_status]).to be(false)
-              expect(decision_issues_from_response[1][:pact_status]).to be(true)
+              expect(decision_issues[0][:mst_status]).to be(true)
+              expect(decision_issues[0][:pact_status]).to be(false)
+              expect(decision_issues[1][:mst_status]).to be(false)
+              expect(decision_issues[1][:pact_status]).to be(true)
             end
           end
         end
