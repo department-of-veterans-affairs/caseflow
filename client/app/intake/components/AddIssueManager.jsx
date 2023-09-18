@@ -308,8 +308,8 @@ class AddIssueManager extends React.Component {
   };
 
   requiresTimelyRules = () => {
-    return this.requiresUntimelyExemptionWithCovid();
-    // return this.requiresUntimelyExemption();
+    // return this.requiresUntimelyExemptionWithCovid();
+    return this.requiresUntimelyExemption();
   }
 
   render() {

@@ -850,7 +850,7 @@ feature "Supplemental Claim Intake", :all_dbs do
           # expect legacy opt in modal
           expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
           # do not show "inactive and ineligible" issues when legacy opt in is true
-          # expect(page).to_not have_content("typhoid arthritis")
+          expect(page).to_not have_content("typhoid arthritis")
 
           add_intake_rating_issue("intervertebral disc syndrome") # ineligible issue
 
