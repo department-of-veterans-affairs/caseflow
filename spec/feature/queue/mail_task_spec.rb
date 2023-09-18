@@ -547,8 +547,25 @@ RSpec.feature "MailTasks", :postgres do
 
     describe "mark as complete" do
       let(:date_completed) { hwr_task.updated_at.strftime("%m/%d/%Y") }
+      let(:distribution_task) { appeal.tasks.of_type(DistributionTask.name).first }
+      let(:mail_task) { create(:hearing_related_mail_task, parent: distribution_task) }
+      let!(:child_mail_task) do
+        create(:hearing_related_mail_task, parent: mail_task, assigned_to: HearingAdmin.singleton)
+      end
 
       shared_examples "whether hearing is schedueld or unscheduled" do
+        before do
+          page = "queue/appeals/#{appeal.is_a?(Appeal) ? appeal.uuid : appeal.vacols_id}"
+          visit(page)
+          within("tr", text: "Hearing withdrawal request", match: :first) do
+            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                           text: Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.label)
+          end
+          fill_in("instructionsField", with: instructions)
+          click_button("Mark as complete & withdraw hearing")
+          visit(page)
+        end
+
         it "completes HearingWithdrawalRequestMailTask on Case Timeline" do
           mail_task = find("#case-timeline-table tr:nth-child(2)")
           expect(mail_task).to have_content("COMPLETED ON\n#{date_completed}")
@@ -562,11 +579,18 @@ RSpec.feature "MailTasks", :postgres do
           expect(instructions_div).to have_content("DETAILS\n#{instructions}")
         end
 
-        it "cancels Hearing task on Case Timeline" do
-          hearing_task = find("#case-timeline-table tr:nth-child(3)")
+        it "cancels HearingTask on Case Timeline" do
+          hearing_task = find("#case-timeline-table tr:nth-child(4)")
           expect(hearing_task).to have_content("CANCELLED ON\n#{date_completed}")
           expect(hearing_task).to have_content("HearingTask cancelled")
           expect(hearing_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+        end
+
+        it "cancels HearingRelatedMailTask on Case Timeline" do
+          mail_task = find("#case-timeline-table tr:nth-child(3)")
+          expect(mail_task).to have_content("CANCELLED ON\n#{date_completed}")
+          expect(mail_task).to have_content("HearingRelatedMailTask cancelled")
+          expect(mail_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
         end
       end
 
@@ -578,31 +602,41 @@ RSpec.feature "MailTasks", :postgres do
           expect(hearing).to have_content("Disposition: Cancelled")
         end
 
-        it "cancels AssignHearingDisposition task on Case Timeline" do
-          disposition_task = find("#case-timeline-table tr:nth-child(4)")
+        it "cancels AssignHearingDispositionTask on Case Timeline" do
+          disposition_task = find("#case-timeline-table tr:nth-child(5)")
           expect(disposition_task).to have_content("CANCELLED ON\n#{date_completed}")
           expect(disposition_task).to have_content("AssignHearingDispositionTask cancelled")
           expect(disposition_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
         end
       end
 
-      shared_examples "hearing unscheduled" do
-        include_examples "whether hearing is schedueld or unscheduled"
+      shared_context "async actions" do
+        context "async actions" do
+          it "sends withdrawal of hearing notification" do
+            withdrawal_payload = AppellantNotification.create_payload(appeal, "Withdrawal of hearing").to_json
+            expect(SendNotificationJob).to receive(:perform_later).with(withdrawal_payload)
 
-        it "cancels ScheduleHearing task on Case Timeline" do
-          schedule_task = find("#case-timeline-table tr:nth-child(4)")
-          expect(schedule_task).to have_content("CANCELLED ON\n#{date_completed}")
-          expect(schedule_task).to have_content("ScheduleHearingTask cancelled")
-          expect(schedule_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+            perform_enqueued_jobs do
+              visit("queue/appeals/#{appeal.is_a?(Appeal) ? appeal.uuid : appeal.vacols_id}")
+              within("tr", text: "Hearing withdrawal request", match: :first) do
+                click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                               text: Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.label)
+              end
+              fill_in("instructionsField", with: instructions)
+              click_button("Mark as complete & withdraw hearing")
+            end
+          end
         end
       end
 
-      shared_examples "appeal is AMA" do
-        it "creates EvidenceSubmissionWindow task" do
-          evidence_task = find("tr", text: "TASK", match: :first)
-          expect(evidence_task).to have_content("ASSIGNED ON\n#{date_completed}")
-          expect(evidence_task).to have_content("ASSIGNED TO\nMail")
-          expect(evidence_task).to have_content("Evidence Submission Window Task")
+      shared_examples "hearing unscheduled" do
+        include_examples "whether hearing is schedueld or unscheduled"
+
+        it "cancels ScheduleHearingTask on Case Timeline" do
+          schedule_task = find("#case-timeline-table tr:nth-child(5)")
+          expect(schedule_task).to have_content("CANCELLED ON\n#{date_completed}")
+          expect(schedule_task).to have_content("ScheduleHearingTask cancelled")
+          expect(schedule_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
         end
       end
 
@@ -613,20 +647,22 @@ RSpec.feature "MailTasks", :postgres do
         end
         let(:appeal) { hwr_task.appeal }
 
-        before do
-          visit("queue/appeals/#{appeal.uuid}")
-          within("tr", text: "TASK", match: :first) do
-            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                           text: Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.label)
+        shared_examples "appeal is AMA" do
+          it "creates EvidenceSubmissionWindowTask" do
+            evidence_task = find("tr", text: "TASK", match: :first)
+            expect(evidence_task).to have_content("ASSIGNED ON\n#{date_completed}")
+            expect(evidence_task).to have_content("ASSIGNED TO\nMail")
+            expect(evidence_task).to have_content("Evidence Submission Window Task")
           end
-          fill_in("instructionsField", with: instructions)
-          click_button("Mark as complete & withdraw hearing")
-          visit("queue/appeals/#{appeal.uuid}")
         end
 
         context "appeal has scheduled hearing" do
-          include_examples "hearing scheduled"
-          include_examples "appeal is AMA"
+          context "sync actions" do
+            include_examples "hearing scheduled"
+            include_examples "appeal is AMA"
+          end
+
+          include_context "async actions"
         end
 
         context "appeal has unscheduled hearing" do
@@ -650,19 +686,12 @@ RSpec.feature "MailTasks", :postgres do
                  assigned_by_id: User.system_user.id, appeal: appeal)
         end
 
-        before do
-          visit("queue/appeals/#{appeal.vacols_id}")
-          within("tr", text: "TASK", match: :first) do
-            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                           text: Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.label)
-          end
-          fill_in("instructionsField", with: instructions)
-          click_button("Mark as complete & withdraw hearing")
-          visit("queue/appeals/#{appeal.vacols_id}")
-        end
-
         context "appeal has scheduled hearing" do
-          include_examples "hearing scheduled"
+          context "sync actions" do
+            include_examples "hearing scheduled"
+          end
+
+          include_context "async actions"
         end
 
         context "appeal has unscheduled hearing" do
@@ -673,48 +702,6 @@ RSpec.feature "MailTasks", :postgres do
           end
 
           include_examples "hearing unscheduled"
-        end
-      end
-
-      describe "notifications" do
-        let(:hwr_task) do
-          create(:hearing_withdrawal_request_mail_task,
-                 :withdrawal_request_with_scheduled_hearing, assigned_by_id: User.system_user.id)
-        end
-        let(:appeal) { hwr_task.appeal }
-
-        shared_examples "withdrawal notifications" do
-          it "sends withdrawal of hearing notification" do
-            withdrawal_payload = AppellantNotification.create_payload(appeal, "Withdrawal of hearing").to_json
-            expect(SendNotificationJob).to receive(:perform_later).with(withdrawal_payload)
-
-            perform_enqueued_jobs do
-              visit("queue/appeals/#{appeal.is_a?(Appeal) ? appeal.uuid : appeal.vacols_id}")
-              within("tr", text: "TASK", match: :first) do
-                click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                               text: Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.label)
-              end
-              fill_in("instructionsField", with: instructions)
-              click_button("Mark as complete & withdraw hearing")
-            end
-          end
-        end
-
-        context "AMA appeal" do
-          include_examples "withdrawal notifications"
-        end
-
-        context "Legacy appeal" do
-          let(:appeal) do
-            create(:legacy_appeal, :with_veteran, vacols_case: create(:case))
-          end
-          let!(:hwr_task) do
-            create(:hearing_withdrawal_request_mail_task,
-                   :withdrawal_request_with_scheduled_hearing,
-                   assigned_by_id: User.system_user.id, appeal: appeal)
-          end
-
-          include_examples "withdrawal notifications"
         end
       end
     end

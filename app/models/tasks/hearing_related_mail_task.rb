@@ -26,4 +26,11 @@ class HearingRelatedMailTask < MailTask
 
     Colocated.singleton
   end
+
+  # Purpose: Only show task assigned to "HearingAdmin" on the Case Timeline
+  # Params: None
+  # Return: boolean if task is assigned to MailTeam
+  def hide_from_case_timeline
+    assigned_to.is_a?(MailTeam)
+  end
 end

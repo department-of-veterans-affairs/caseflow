@@ -771,6 +771,11 @@ FactoryBot.define do
           ["**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"]
         end
       end
+
+      factory :hearing_related_mail_task, class: HearingRelatedMailTask do
+        assigned_to { MailTeam.singleton }
+        parent { create(:root_task, appeal: appeal) }
+      end
     end
   end
 end

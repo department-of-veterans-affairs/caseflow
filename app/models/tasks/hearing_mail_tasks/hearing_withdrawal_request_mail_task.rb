@@ -95,16 +95,20 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
   # Params: None
   # Return: True if HearingRelatedMailTasks cancelled, otherwise nil
   def cancel_hearing_related_mail_tasks
-    return if hearing_related_mail_tasks.empty?
+    return if open_hearing_related_mail_tasks.empty?
 
-    hearing_related_mail_tasks.update_all(status: Constants.TASK_STATUSES.cancelled)
+    open_hearing_related_mail_tasks.update_all(
+      status: Constants.TASK_STATUSES.cancelled,
+      cancelled_by_id: RequestStore[:current_user]&.id,
+      closed_at: Time.zone.now
+    )
   end
 
   # Purpose: Grabs any active HearingRelatedMailTasks on appeal
   # Params: None
   # Return: Array of HearingRelatedMailTask objects
-  def hearing_related_mail_tasks
-    appeal.tasks.where(type: HearingRelatedMailTask.name)&.active
+  def open_hearing_related_mail_tasks
+    appeal.tasks.where(type: HearingRelatedMailTask.name)&.open
   end
 
   # Purpose: Appends instructions on to the instructions provided in the mail task
