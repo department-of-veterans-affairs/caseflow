@@ -23,14 +23,14 @@ class JudgeCaseAssignmentToAttorney
   end
 
   def reassign_to_attorney!
+    vacols_id = LegacyAppeal.find(appeal_id).vacols_id
     MetricsService.record("VACOLS: reassign_case_to_attorney #{vacols_id}",
                           service: :vacols,
                           name: "reassign_case_to_attorney") do
       self.class.repository.reassign_case_to_attorney!(
         judge: assigned_by,
         attorney: assigned_to,
-        vacols_id: vacols_id,
-        created_in_vacols_date: created_in_vacols_date
+        vacols_id: vacols_id
       )
     end
   end
@@ -44,7 +44,7 @@ class JudgeCaseAssignmentToAttorney
   end
 
   def last_case_assignment
-    VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
+    VACOLS::CaseAssignment.latest_task_for_appeal(LegacyAppeal.find(appeal_id).vacols_id)
   end
 
   private

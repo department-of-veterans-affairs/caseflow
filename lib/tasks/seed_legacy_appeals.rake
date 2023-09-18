@@ -20,6 +20,7 @@ namespace :db do
             key = VACOLS::Folder.maximum(:ticknum).next
             Generators::Vacols::Case.create(
               corres_exists: true,
+              decass_creation: true,
               case_issue_attrs: [
                 Generators::Vacols::CaseIssue.case_issue_attrs.merge(ADD_SPECIAL_ISSUES ? special_issue_types(idx) : {}),
                 Generators::Vacols::CaseIssue.case_issue_attrs.merge(ADD_SPECIAL_ISSUES ? special_issue_types(idx) : {}),
@@ -34,7 +35,7 @@ namespace :db do
                 bfkey: key,
                 bfcurloc: VACOLS::Staff.find_by(sdomainid: user.css_id).slogid,
                 bfmpro: "ACT",
-                bfddec: nil,
+                bfddec: nil
               },
               staff_attrs: {
                 sattyid: user.id,
@@ -114,7 +115,10 @@ namespace :db do
 
         # veterans_with_250_appeals = vets.last(3).pluck(:file_number)
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/APPEALS-24914
       else
         veterans_with_like_45_appeals = %w[011899917 011899918]
 

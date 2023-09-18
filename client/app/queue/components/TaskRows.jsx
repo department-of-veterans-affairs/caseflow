@@ -70,13 +70,13 @@ const isCancelled = (task) => {
   return task.status === TASK_STATUSES.cancelled;
 };
 
-const issueUpdateTask = (task) =>{
+const issueUpdateTask = (task) => {
   return task.type === 'IssuesUpdateTask';
-}
+};
 
 const establishmentTask = (task) => {
   return task.type === 'EstablishmentTask';
-}
+};
 
 const tdClassNames = (timeline, task) => {
   const containerClass = timeline ? taskInfoWithIconTimelineContainer : '';
@@ -354,24 +354,24 @@ class TaskRows extends React.PureComponent {
                 </div>
               </React.Fragment>}
             <div style={divStyle}>
-              <div style={{whiteSpace: 'pre-line'}}>
+              <div style={{ whiteSpace: 'pre-line' }}>
                 {text[2]}
               </div>
             </div>
             {text[4] ?
               <React.Fragment>
-              <h5 style={hStyle}>Original:</h5>
-              <div style={divStyle}>
-                <small>{text[3]}</small>
-              </div>
+                <h5 style={hStyle}>Original:</h5>
+                <div style={divStyle}>
+                  <small>{text[3]}</small>
+                </div>
                 <h5 style={hStyle}>Updated:</h5>
                 <div style={divStyle}>
                   <small>{text[4]}</small>
-              </div>
+                </div>
               </React.Fragment> :
-                <div style={divStyle}>
-                  {text[3]}
-                </div>}
+              <div style={divStyle}>
+                {text[3]}
+              </div>}
             {renderMstLabel(text[5], hStyle)}
             {renderPactLabel(text[6], hStyle)}
           </div>
@@ -380,8 +380,9 @@ class TaskRows extends React.PureComponent {
     };
 
     const formatEstablishmentBreaks = (text = '') => {
-      const divStyle = { marginTop: '1rem'};
+      const divStyle = { marginTop: '1rem' };
       const hStyle = { marginTop: '1rem', marginBottom: '0rem', fontWeight: 'bold' };
+
       if (Array.isArray(text)) {
         const content = text.map((issue, index) =>
         // issue array indexes:
@@ -396,7 +397,7 @@ class TaskRows extends React.PureComponent {
             <div style={divStyle}>
               {issue[0]}
             </div>
-            {issue.at(1) != "" &&
+            {issue.at(1) != '' &&
               <React.Fragment>
                 <div style={divStyle}>
                   Benefit type: {issue[1]}
@@ -437,6 +438,7 @@ class TaskRows extends React.PureComponent {
 
     // We specify the same 2.4rem margin-bottom as paragraphs to each set of instructions
     // to ensure a consistent margin between instruction content and the "Hide" button
+
     const divStyles = { marginBottom: '2.4rem', marginTop: '1em' };
 
     const formatInstructions = (task, text) => {
@@ -448,28 +450,98 @@ class TaskRows extends React.PureComponent {
         return (
           <React.Fragment>{formatEstablishmentBreaks(text)}</React.Fragment>
         );
-      } else {
-        return (
-          <ReactMarkdown>{formatBreaks(text)}</ReactMarkdown>
-        );
       }
+
+      return (
+        <ReactMarkdown>{formatBreaks(text)}</ReactMarkdown>
+      );
+
     };
+
+    if ((task.previous.length >= 1) && (task.type === 'JudgeAssignTask')) {
+      return (
+        <React.Fragment key={`${task.uniqueId} fragment`}>
+          {task.previous.toReversed().map((prev) => (
+            <div>
+              {prev.old_judge && (<React.Fragment key={`${task.uniqueId} div`}>
+                <div
+                  key={`${task.uniqueId} old judge`}
+                  style={divStyles}
+                  className="task-instructions"
+                >
+                  <b>{COPY.LEGACY_APPEALS_VLJ_ORIGINAL_JUDGE_INSTRUCTIONS}</b>
+                  <ReactMarkdown>{formatBreaks(prev.old_judge)}</ReactMarkdown>
+                </div>
+              </React.Fragment>
+              )}
+              {prev.new_judge && (<React.Fragment key={`${task.uniqueId} div`}>
+                <div
+                  key={`${task.uniqueId} new judge`}
+                  style={divStyles}
+                  className="task-instructions"
+                >
+                  <b>{COPY.LEGACY_APPEALS_VLJ_NEW_JUDGE_INSTRUCTIONS}</b>
+                  <ReactMarkdown>{formatBreaks(prev.new_judge)}</ReactMarkdown>
+                </div>
+              </React.Fragment>
+              )}
+              {prev.details && (
+                <React.Fragment key={`${task.uniqueId} div`}>
+                  <div
+                    key={`${task.uniqueId} instructions`}
+                    style={divStyles}
+                    className="task-instructions"
+                  >
+                    <b>{COPY.LEGACY_APPEALS_VLJ_DETAILS_INSTRUCTIONS}</b>
+                    <ReactMarkdown>{formatBreaks(prev.details)}</ReactMarkdown>
+                  </div>
+                </React.Fragment>
+              )}
+            </div>
+          ))}
+        </React.Fragment>
+      );
+    }
 
     return (
       <React.Fragment key={`${task.uniqueId} fragment`}>
-        {task.instructions.map((text) => (
-          <React.Fragment key={`${task.uniqueId} div`}>
+        {task.instructions[1] && (<React.Fragment key={`${task.uniqueId} div`}>
+          <div
+            key={`${task.uniqueId} instructions`}
+            style={divStyles}
+            className="task-instructions"
+          >
+            <b>{COPY.LEGACY_APPEALS_VLJ_REASON_INSTRUCTIONS}</b>
+            <ReactMarkdown>{formatBreaks(task.instructions[1])}</ReactMarkdown>
+          </div>
+        </React.Fragment>
+        )}
+        {task.assigneeName && !(task.type === ('AttorneyTask' || 'AttorneyRewriteTask')) &&
+        (<React.Fragment key={`${task.uniqueId} div`}>
+          <div
+            key={`${task.uniqueId} instructions`}
+            style={divStyles}
+            className="task-instructions"
+          >
+            <b>{COPY.LEGACY_APPEALS_VLJ_NEW_JUDGE_INSTRUCTIONS}</b>
+            <ReactMarkdown>{formatBreaks(task.assigneeName)}</ReactMarkdown>
+          </div>
+        </React.Fragment>
+        )}
+        {task.instructions &&
+          (<React.Fragment key={`${task.uniqueId} div`}>
             <div
               key={`${task.uniqueId} instructions`}
               style={divStyles}
               className="task-instructions"
             >
+
               {
                 formatInstructions(task, text)
               }
             </div>
           </React.Fragment>
-        ))}
+          )}
       </React.Fragment>
     );
   };
@@ -495,7 +567,7 @@ class TaskRows extends React.PureComponent {
         )}
         <Button
           linkStyling
-          styling={css({ padding: '0' })}
+          styling={css({ padding: '0', marginTop: '0rem', outline: 'none' })}
           id={task.uniqueId}
           name={
             this.state.taskInstructionsIsVisible[task.uniqueId] ?
@@ -619,7 +691,7 @@ class TaskRows extends React.PureComponent {
         >
           <CaseDetailsDescriptionList>
             {timeline && timelineTitle}
-            {this.showTimelineDescriptionItems(task, timeline)}
+            {this.showTimelineDescriptionItems(task, timeline, appeal)}
           </CaseDetailsDescriptionList>
 
         </td>
@@ -769,6 +841,7 @@ TaskRows.propTypes = {
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
   timeline: PropTypes.bool,
+  VLJ_featureToggles: PropTypes.bool,
 };
 
 export default TaskRows;

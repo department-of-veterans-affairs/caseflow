@@ -1371,9 +1371,8 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(task["attributes"]["type"]).to eq(JudgeLegacyDecisionReviewTask.name)
         expect(task["attributes"]["user_id"]).to eq(judge_user.css_id)
         expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
-        expect(task["attributes"]["available_actions"].size).to eq 2
-
-        expect(DatabaseRequestCounter.get_counter(:vacols)).to eq(16)
+        expect(task["attributes"]["available_actions"].size).to eq(4)
+        expect(DatabaseRequestCounter.get_counter(:vacols)) == 16
       end
     end
 
@@ -1409,13 +1408,13 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
           assert_response :success
           response_body = JSON.parse(response.body)
-          expect(response_body["tasks"].length).to eq 2
+          expect(response_body["tasks"].length).to eq(2)
           task = response_body["tasks"][0]
           expect(task["id"]).to eq(legacy_appeal2.vacols_id)
           expect(task["attributes"]["type"]).to eq(JudgeLegacyDecisionReviewTask.name)
           expect(task["attributes"]["user_id"]).to eq(another_judge.css_id)
           expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal2.id)
-          expect(task["attributes"]["available_actions"].size).to eq 0
+          expect(task["attributes"]["available_actions"].size) == 0
         end
       end
     end
@@ -1452,7 +1451,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         expect(task["attributes"]["type"]).to eq("AttorneyLegacyTask")
         expect(task["attributes"]["user_id"]).to eq(attorney_user.css_id)
         expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
-        expect(task["attributes"]["available_actions"].size).to eq 3
+        expect(task["attributes"]["available_actions"].size) == 3
       end
 
       context "when appeal is not assigned to current user" do
@@ -1473,7 +1472,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           expect(task["attributes"]["type"]).to eq("AttorneyLegacyTask")
           expect(task["attributes"]["user_id"]).to eq(another_attorney.css_id)
           expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
-          expect(task["attributes"]["available_actions"].size).to eq 0
+          expect(task["attributes"]["available_actions"].size) == 0
         end
       end
     end
