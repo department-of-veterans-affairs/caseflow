@@ -12,7 +12,7 @@ class AutotaggedDocumentJob < CaseflowJob
       Document.where(auto_tagged: false).each do |doc|
         begin
           add_tags_to_doc(doc)
-        rescue => error
+        rescue StandardError => error
           Rails.logger.error(error.message)
           Raven.capture_exception(error.message)
           next
