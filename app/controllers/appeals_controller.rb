@@ -27,7 +27,7 @@ class AppealsController < ApplicationController
                    ).call
                  else
                    CaseSearchResultsForVeteranFileNumber.new(
-                     file_number_or_ssn: case_search, user: current_user
+                     file_number_or_ssn: case_search, user: current_user, last_id: params[:last_id]
                    ).call
                  end
 
