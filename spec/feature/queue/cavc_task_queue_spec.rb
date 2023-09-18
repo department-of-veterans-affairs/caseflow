@@ -527,7 +527,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         click_on "Correct issues"
         expect(appeal.request_issues.count).to eq 1
         click_on "+ Add issue"
-        add_intake_nonrating_issue( 
+        add_intake_nonrating_issue(
           category: "Unknown issue category",
           description: new_issue_description,
           date: (Time.zone.now - 100.days).mdY
@@ -565,8 +565,8 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           find(".cf-select__control", text: org_admin.full_name).click
           find("div", class: "cf-select__option", text: org_nonadmin.full_name).click
           fill_in "taskInstructions", with: "Confirm info and send letter to Veteran."
-          click_on "Assign"
-          expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM % org_nonadmin.full_name
+          click_on "Submit"
+          expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin.full_name
         end
 
         step "assigned user can reassign task" do
@@ -582,8 +582,8 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           find(".cf-select__control", text: COPY::ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER).click
           find("div", class: "cf-select__option", text: org_nonadmin2.full_name).click
           fill_in "taskInstructions", with: "Going fishing. Handing off to you."
-          click_on "Assign"
-          expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM % org_nonadmin2.full_name
+          click_on "Submit"
+          expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin2.full_name
         end
       end
     end
@@ -597,7 +597,7 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.label)
         fill_in "taskInstructions", with: "Please translate the documents in spanish"
         click_on "Assign"
-        expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % Translation.singleton.name
+        expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Translation.singleton.name
       end
     end
 
@@ -610,18 +610,18 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
 
         click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.label)
         fill_in "taskInstructions", with: "Please transcribe the hearing on record for this appeal"
-        click_on "Assign"
-        expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM % TranscriptionTeam.singleton.name
+        click_on "Submit"
+        expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % TranscriptionTeam.singleton.name
 
         click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION.label)
         fill_in "taskInstructions", with: "Please handle the freedom of intformation act request for this appeal"
-        click_on "Assign"
-        expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM % PrivacyTeam.singleton.name
+        click_on "Submit"
+        expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % PrivacyTeam.singleton.name
 
         click_dropdown(text: Constants.TASK_ACTIONS.SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION.label)
         fill_in "taskInstructions", with: "Have veteran's POA write an informal hearing presentation for this appeal"
-        click_on "Assign"
-        expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM % Colocated.singleton.name
+        click_on "Submit"
+        expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Colocated.singleton.name
       end
     end
 
@@ -708,8 +708,8 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           # Assign an admin action that DOES block the sending of the 90 day letter
           click_dropdown(text: Constants.TASK_ACTIONS.CLARIFY_POA_BLOCKING_CAVC.label)
           fill_in "taskInstructions", with: "Please find out the POA for this veteran"
-          click_on "Assign"
-          expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % CavcLitigationSupport.singleton.name
+          click_on "Submit"
+          expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % CavcLitigationSupport.singleton.name
 
           # Ensure there are no actions on the send letter task as it is blocked by poa clarification
           active_task_rows = page.find("#currently-active-tasks").find_all("tr")
@@ -793,8 +793,8 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           find(".cf-select__control", text: org_admin.full_name).click
           find("div", class: "cf-select__option", text: org_nonadmin.full_name).click
           fill_in "taskInstructions", with: "Assigning to user."
-          click_on "Assign"
-          expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin.full_name
+          click_on "Submit"
+          expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % org_nonadmin.full_name
         end
 
         step "assigned user adds schedule hearing task" do
@@ -804,8 +804,8 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
 
           click_dropdown(text: Constants.TASK_ACTIONS.SEND_TO_HEARINGS_BLOCKING_DISTRIBUTION.label)
           fill_in "taskInstructions", with: "Please transcribe the hearing on record for this appeal"
-          click_on "Assign"
-          expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % Bva.singleton.name
+          click_on "Submit"
+          expect(page).to have_content COPY::ASSIGN_TASK_SUCCESS_MESSAGE % Bva.singleton.name
         end
 
         step "assigned user adds denied extension request" do
