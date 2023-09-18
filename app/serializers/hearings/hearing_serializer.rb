@@ -46,6 +46,7 @@ class HearingSerializer
   attribute :contested_claim do |hearing|
     hearing.appeal.contested_claim?
   end
+  attribute :conference_provider
   attribute :current_issue_count
   attribute :disposition
   attribute :disposition_editable
@@ -59,9 +60,6 @@ class HearingSerializer
   attribute :judge_id
   attribute :location
   attribute :military_service, if: for_full
-  attribute :meeting_type do |hearing|
-    hearing.created_by.meeting_type
-  end
   attribute :notes
   attribute :paper_case do
     false

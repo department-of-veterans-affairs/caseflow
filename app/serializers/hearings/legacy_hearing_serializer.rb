@@ -39,6 +39,7 @@ class LegacyHearingSerializer
   attribute :contested_claim do |hearing|
     hearing.appeal.contested_claim
   end
+  attribute :conference_provider
   attribute :current_issue_count
   attribute :disposition
   attribute :disposition_editable
@@ -60,9 +61,6 @@ class LegacyHearingSerializer
   attribute :judge_id
   attribute :location
   attribute :military_service, if: for_worksheet
-  attribute :meeting_type do |hearing|
-    hearing.created_by.meeting_type
-  end
   attribute :notes
   attribute :paper_case do |object|
     object.appeal.paper_case?
