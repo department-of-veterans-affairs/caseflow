@@ -27,6 +27,7 @@ import {
   toggleDropdownFilterVisibility,
   setDocFilter,
   clearDocFilters,
+  setDocTypes,
   setRecieptDateFilter
 } from '../reader/DocumentList/DocumentListActions';
 import { getAnnotationsPerDocument } from './selectors';
@@ -88,7 +89,7 @@ class DocumentsTable extends React.Component {
    let foundErrors = [];
 
    // Prevent the from date from being after the To date.
-   if (this.state.toDate !== '' && pickedDate > this.state.toDate) {
+   if (this.state.toDate !== '' && this.state.recieptFilter == recieptDateFilterStates.BETWEEN && pickedDate > this.state.toDate) {
      foundErrors = [...foundErrors, 'From date cannot occur after to date.'];
    }
    // Prevent the To date and From date from being the same date.
@@ -105,21 +106,29 @@ class DocumentsTable extends React.Component {
 
      this.setState({ fromDate: pickedDate,
        fromDateErrors: [] });
-   } else {
-     this.setState({ fromDateErrors: foundErrors });
+
+     return foundErrors;
    }
+   this.setState({ fromDateErrors: foundErrors });
+
+   return foundErrors;
  };
 
- validateDateTo = (pickedDate) => {
+ setDateFrom = (pickedDate) => {
+   this.setState({ fromDate: pickedDate
+   });
+ }
+
+ validateDateTo(pickedDate) {
    let foundErrors = [];
 
    // Prevent setting the to date before the from date
-   if (this.state.fromDate !== '' && pickedDate < this.state.fromDate) {
+   if (this.state.fromDate !== '' && this.state.recieptFilter == recieptDateFilterStates.BETWEEN && pickedDate < this.state.fromDate) {
      foundErrors = [...foundErrors, 'To date cannot occur before from date.'];
    }
 
    // Prevent setting the To and From dates to the same date.
-   if (pickedDate === this.state.fromDate) {
+   if (this.state.fromDate !== '' && pickedDate === this.state.fromDate) {
      foundErrors = [...foundErrors, 'From date and To date cannot be the same.'];
    }
 
@@ -132,67 +141,98 @@ class DocumentsTable extends React.Component {
      this.setState({ toDate: pickedDate,
        toDateErrors: []
      });
-   } else {
-     this.setState({ toDateErrors: [foundErrors] });
+
+     return foundErrors;
+
    }
+   this.setState({ toDateErrors: foundErrors });
+
+   return foundErrors;
+
  }
 
- setOnDate = (pickedDate) => {
+ setDateTo = (pickedDate) => {
+   this.setState({ toDate: pickedDate
+   });
+ };
+
+ validateDateOn = (pickedDate) => {
    let foundErrors = [];
 
    if (convertStringToDate(pickedDate) > new Date()) {
      foundErrors = [...foundErrors, 'Reciept date cannot be in the future.'];
+     this.setState({ onDateErrors: foundErrors });
+
+     return foundErrors;
    }
 
-   if (foundErrors.length === 0) {
+   this.setState({ onDateErrors: [] });
 
-     this.setState({ onDate: pickedDate,
-       onDateErrors: []
-     });
-   } else {
-     this.setState({ onDateErrors: [foundErrors] });
-   }
- };
-
- constructor() {
-   super();
-   this.state = {
-     frozenDocs: '',
-     recieptFilter: '',
-     fromDate: '',
-     toDate: '',
-     onDate: '',
-     fromDateErrors: [],
-     toDateErrors: [],
-     onDateErrors: [],
-     recipetFilterEnabled: true
-   };
+   return foundErrors;
  }
 
- executeRecieptFilter = () => {
-   this.props.setRecieptDateFilter(this.state.recieptFilter,
-     { fromDate: this.state.fromDate,
-       toDate: this.state.toDate,
-       onDate: this.state.onDate });
+ setOnDate = (pickedDate) => {
 
-   this.toggleRecieptDataDropdownFilterVisibility();
+   this.setState({ onDate: pickedDate });
+ }
+
+  errorMessagesNode = (errors, errType) => {
+    if (errors.length) {
+      return (
+        <div>
+          {
+            errors.map((error, index) =>
+              <p id={`${errType}Err${index}`} key={index} style={{ color: 'red' }}>{error}</p>
+            )
+          }
+        </div>
+      );
+    }
+  }
+
+  constructor() {
+    super();
+    this.state = {
+      recieptFilter: '',
+      fromDate: '',
+      toDate: '',
+      onDate: '',
+      fromDateErrors: [],
+      toDateErrors: [],
+      onDateErrors: [],
+      recipetFilterEnabled: true,
+      fallbackState: ''
+    };
+  }
+
+ executeRecieptFilter = () => {
+   const toErrors = this.validateDateTo(this.state.toDate);
+   const fromErrors = this.validateDateFrom(this.state.fromDate);
+   const onErrors = this.validateDateOn(this.state.onDate);
+
+   if (fromErrors.length === 0 && toErrors.length === 0 && onErrors.length === 0) {
+     this.props.setRecieptDateFilter(this.state.recieptFilter,
+       { fromDate: this.state.fromDate,
+         toDate: this.state.toDate,
+         onDate: this.state.onDate });
+     this.toggleRecieptDataDropdownFilterVisibility();
+   }
  }
 
  isRecieptFilterButtonEnabled = () => {
-   if (this.state.recieptFilter === recieptDateFilterStates.BETWEEN && (this.state.toDate === '' || this.state.fromDate === '' ||
-  this.state.toDateErrors.length > 0 || this.state.fromDateErrors.length > 0)) {
+   if (this.state.recieptFilter === recieptDateFilterStates.BETWEEN && (this.state.toDate === '' || this.state.fromDate === '')) {
      return true;
    }
 
-   if (this.state.recieptFilter === recieptDateFilterStates.TO && (this.state.toDate === '' || this.state.fromDateErrors.length > 0)) {
+   if (this.state.recieptFilter === recieptDateFilterStates.TO && (this.state.toDate === '')) {
      return true;
    }
 
-   if (this.state.recieptFilter === recieptDateFilterStates.FROM && (this.state.fromDate === '' || this.state.toDateErrors.length > 0)) {
+   if (this.state.recieptFilter === recieptDateFilterStates.FROM && (this.state.fromDate === '')) {
      return true;
    }
 
-   if (this.state.recieptFilter === recieptDateFilterStates.ON && (this.state.onDate === '' || this.state.onDateErrors.length > 0)) {
+   if (this.state.recieptFilter === recieptDateFilterStates.ON && (this.state.onDate === '')) {
      return true;
    }
 
@@ -203,14 +243,26 @@ class DocumentsTable extends React.Component {
    return false;
  }
  componentDidMount() {
-   if (this.state.frozenDocs === '') {
-     const frozenDocs = this.props.documents;
 
-     Object.freeze(frozenDocs);
-     this.setState({
-       frozenDocs
-     });
+   // this if statement is what freezes the values, once it's set, it's set unless manipulated
+   // back to a empty state via redux
+   if (this.props.docFilterCriteria.docTypeList === '') {
+
+     let docsArray = [];
+
+     this.props.documents.map((x) => docsArray.includes(x.type) ? true : docsArray.push(x.type));
+     // convert each item to a hash for use in the document filter
+     let filterItems = [];
+
+     docsArray.forEach((x) => filterItems.push({
+       value: docsArray.indexOf(x),
+       text: x
+     }));
+
+     // store the tags in redux
+     this.props.setDocTypes(filterItems);
    }
+
    if (this.props.pdfList.scrollTop) {
      this.tbodyElem.scrollTop = this.props.pdfList.scrollTop;
 
@@ -334,23 +386,6 @@ class DocumentsTable extends React.Component {
       ];
     }
 
-    const populateDocumentFilter = () => {
-      let docsArray = [];
-
-      // looks through all document types, and only adds them into docsArray if they are unique
-      this.state.frozenDocs.map((x) => docsArray.includes(x.type) ? true : docsArray.push(x.type));
-
-      // convert each item to a hash for use in the document filter
-      let filterItems = [];
-
-      docsArray.forEach((x) => filterItems.push({
-        value: docsArray.indexOf(x),
-        text: x
-      }));
-
-      return filterItems;
-    };
-
     const isCategoryDropdownFilterOpen = _.get(this.props.pdfList, [
       'dropdowns',
       'category',
@@ -451,52 +486,65 @@ class DocumentsTable extends React.Component {
             {isRecipetDateFilterOpen && (
               <div style={{
                 position: 'relative',
-                right: '7vw' }}>
+                right: '7vw'
+              }}>
                 <DropdownFilter
                   clearFilters={this.resetRecieptPicker}
-                  name="Reciept Date"
+                  name="Receipt Date"
                   isClearEnabled
                   handleClose={this.toggleRecieptDataDropdownFilterVisibility}
                   addClearFiltersRow
                 >
-                  <>
-                    <ReactSelectDropdown
-                      options={dateDropdownMap}
-                      defaultValue={dateDropdownMap[this.state.recieptFilter]}
-                      label="Date filter parameters"
-                      onChangeMethod={(selectedOption) => this.updateRecieptFilter(selectedOption.value)}
-                    />
-                    {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.FROM) &&
-                  this.state.fromDateErrors.map((error, index) =>
-                    <p id={index} key={index} style={{ color: 'red' }}>{error}</p>)}
-                    {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.FROM) &&
-                  <DateSelector value={this.state.fromDate} type="date" name="From"
-                    onChange={this.validateDateFrom} />}
+                  <div>
+                    <div style={{ padding: '0px 30px' }}>
+                      <ReactSelectDropdown
+                        options={dateDropdownMap}
+                        defaultValue={dateDropdownMap[this.state.recieptFilter]}
+                        label="Date filter parameters"
+                        onChangeMethod={(selectedOption) => this.updateRecieptFilter(selectedOption.value)}
+                      />
+                      {
+                        (this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.FROM) &&
+                        <DateSelector
+                          value={this.state.fromDate}
+                          type="date"
+                          name={this.state.recieptFilter === recieptDateFilterStates.BETWEEN ? 'From' : ''}
+                          onChange={this.setDateFrom}
+                          errorMessage={this.errorMessagesNode(this.state.fromDateErrors, 'fromDate')}
+                        />
+                      }
 
-                    {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.TO) &&
-                  this.state.toDateErrors.map((error) =>
-                    <p style={{ color: 'red' }}>{error}</p>)}
-                    {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.TO) &&
-                  <DateSelector value={this.state.toDate} type="date" name="To"
-                    onChange={this.validateDateTo} />}
+                      {
+                        (this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.TO) &&
+                        <DateSelector
+                          value={this.state.toDate}
+                          type="date"
+                          name={this.state.recieptFilter === recieptDateFilterStates.BETWEEN ? 'To' : ''}
+                          onChange={this.setDateTo}
+                          errorMessage={this.errorMessagesNode(this.state.toDateErrors, 'toDate')}
+                        />
+                      }
 
-                    {this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED && <DateSelector readOnly type="date" name="Receipt date"
-                      onChange={this.validateDateIsAfter} comment="This is a read only component used as a dummy" />}
+                      {this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED && <DateSelector readOnly type="date" name="Receipt date"
+                        onChange={this.validateDateIsAfter} comment="This is a read only component used as a dummy" />}
 
-                    {(this.state.recieptFilter === recieptDateFilterStates.ON) && this.state.onDateErrors.map((error) =>
-                      <p style={{ color: 'red' }}>{error}</p>)}
-                    {this.state.recieptFilter === recieptDateFilterStates.ON && <DateSelector value={this.state.onDate} type="date"
-                      name="On this date" onChange={this.setOnDate} />}
+                      {(this.state.recieptFilter === recieptDateFilterStates.ON) && this.state.onDateErrors.map((error) =>
+                        <p style={{ color: 'red' }}>{error}</p>)}
+                      {this.state.recieptFilter === recieptDateFilterStates.ON && <DateSelector value={this.state.onDate} type="date"
+                        name="" onChange={this.setOnDate} />}
+                    </div>
 
-                    <div style={{ width: '100%', display: 'flex' }}>
-                      <span style={{ height: '1px', position: 'absolute', width: '100%', backgroundColor: 'gray' }}></span>
-                      <div style={{ display: 'flex', marginTop: '10px', marginRight: '10px', marginBottom: '10px', justifyContent: 'end', width: '100%' }}>
-                        <Button disabled={this.isRecieptFilterButtonEnabled()} onClick={() => this.executeRecieptFilter()} title="apply filter">
-                          <span>Apply filter</span>
-                        </Button>
+                    <div>
+                      <div style={{ width: '100%', display: 'flex' }}>
+                        <span style={{ height: '1px', position: 'absolute', width: '100%', backgroundColor: 'gray' }}></span>
+                        <div style={{ display: 'flex', margin: '10px 0px', justifyContent: 'center', width: '100%' }}>
+                          <Button disabled={this.isRecieptFilterButtonEnabled()} onClick={() => this.executeRecieptFilter()} title="apply filter">
+                            <span>Apply filter</span>
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </>
+                  </div>
                 </DropdownFilter></div>
             )}
           </div>
@@ -535,7 +583,6 @@ class DocumentsTable extends React.Component {
               selected={isDocumentDropdownFilterOpen}
               handleActivate={this.toggleDocumentDropdownFilterVisiblity}
             />
-
             {isDocumentDropdownFilterOpen && (
               <div style={{ position: 'relative', right: '14vw' }}>
                 <DropdownFilter
@@ -546,9 +593,10 @@ class DocumentsTable extends React.Component {
                   addClearFiltersRow
                 >
                   <DocTagPicker
-                    tags={populateDocumentFilter()}
+                    tags={this.props.docFilterCriteria.docTypeList}
                     tagToggleStates={this.props.docFilterCriteria.document}
                     handleTagToggle={this.props.setDocFilter}
+                    defaultSearchText="Type to search..."
                   />
                 </DropdownFilter>
               </div>
@@ -591,6 +639,7 @@ class DocumentsTable extends React.Component {
                     tags={this.props.tagOptions}
                     tagToggleStates={this.props.docFilterCriteria.tag}
                     handleTagToggle={this.props.setTagFilter}
+                    defaultSearchText="Type to search..."
                   />
                 </DropdownFilter>
               </div>
@@ -659,6 +708,7 @@ DocumentsTable.propTypes = {
   toggleDropdownFilterVisibility: PropTypes.func.isRequired,
   tagOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
   setDocFilter: PropTypes.func,
+  setDocTypes: PropTypes.func,
   clearDocFilters: PropTypes.func,
 };
 
@@ -674,6 +724,7 @@ const mapDispatchToProps = (dispatch) =>
       setCategoryFilter,
       setDocFilter,
       clearDocFilters,
+      setDocTypes,
       setRecieptDateFilter
     },
     dispatch
