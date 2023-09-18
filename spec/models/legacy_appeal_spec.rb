@@ -178,7 +178,7 @@ describe LegacyAppeal, :all_dbs do
         allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
 
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
-        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
       end
     end
 
@@ -251,8 +251,6 @@ describe LegacyAppeal, :all_dbs do
     end
 
     context "when allowing covid-related timeliness exemptions" do
-      before { FeatureToggle.enable!(:covid_timeliness_exemption) }
-      after { FeatureToggle.disable!(:covid_timeliness_exemption) }
       let(:soc_covid_eligible_date) { Constants::DATES["SOC_COVID_ELIGIBLE"].to_date }
       let(:nod_covid_eligible_date) { Constants::DATES["NOD_COVID_ELIGIBLE"].to_date }
 

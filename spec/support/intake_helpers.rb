@@ -9,8 +9,14 @@ module IntakeHelpers
   end
 
   def select_form(form_name)
-    within_fieldset("Which form are you processing?") do
-      find("label", text: form_name).click
+    if FeatureToggle.enabled?(:ramp_intake)
+      safe_click ".cf-select"
+      fill_in "Which form are you processing?", with: form_name
+      find("#intake-form-select").send_keys :enter
+    else
+      within_fieldset("Which form are you processing?") do
+        find("label", text: form_name).click
+      end
     end
   end
 
