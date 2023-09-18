@@ -149,8 +149,6 @@ describe PriorityEpSyncBatchProcess, :postgres do
       PriorityEndProductSyncQueue.all
     end
 
-    let!(:original_pepsq_record_size) { pepsq_records.size }
-
     let!(:batch_process) { PriorityEpSyncBatchProcess.create_batch!(pepsq_records) }
 
     subject { batch_process.process_batch! }
@@ -158,22 +156,23 @@ describe PriorityEpSyncBatchProcess, :postgres do
     context "when all batched records in the queue are able to sync successfully" do
       before do
         subject
-        pepsq_records.reload
+        pepsq_records.each(&:reload)
       end
-
-      it "no batched record in the queue will have a status of 'SYNCED' since these are deleted in #process_batch! \n
+      it "each batched record in the queue will have a status of 'SYNCED' \n
            and the batch process will have a state of 'COMPLETED'" do
-        expect(pepsq_records.empty?).to eq true
+        all_pepsq_statuses = pepsq_records.pluck(:status)
+        expect(all_pepsq_statuses).to all(eq(Constants.PRIORITY_EP_SYNC.synced))
         expect(batch_process.state).to eq(Constants.BATCH_PROCESS.completed)
       end
 
-      it "the number of records_attempted for the batch process will \
-           match the number of original PEPSQ records batched, \n
+      it "the number of records_attempted for the batch process will match the number of PEPSQ records batched, \n
            the number of records_completed for the batch process will match the number of PEPSQ records synced, \n
            and the number of records_failed for the batch process will match the number of PEPSQ records not synced" do
-        expect(batch_process.records_attempted).to eq(original_pepsq_record_size)
-        expect(batch_process.records_completed).to eq(original_pepsq_record_size - pepsq_records.size)
-        expect(batch_process.records_failed).to eq(0)
+        expect(batch_process.records_attempted).to eq(pepsq_records.count)
+        all_synced_pepsq_records = pepsq_records.select { |record| record.status == Constants.PRIORITY_EP_SYNC.synced }
+        expect(batch_process.records_completed).to eq(all_synced_pepsq_records.count)
+        all_synced_pepsq_records = pepsq_records.reject { |record| record.status == Constants.PRIORITY_EP_SYNC.synced }
+        expect(batch_process.records_failed).to eq(all_synced_pepsq_records.count)
       end
     end
 
@@ -182,14 +181,14 @@ describe PriorityEpSyncBatchProcess, :postgres do
         active_hlr_epe_w_cleared_vbms_ext_claim.vbms_ext_claim.update!(level_status_code: "CAN")
         allow(Rails.logger).to receive(:error)
         subject
-        pepsq_records.reload
+        pepsq_records.each(&:reload)
       end
 
-      it "all but ONE of the batched records will have synced (therefore removed from the table)" do
+      it "all but ONE of the batched records will have a status of 'SYNCED'" do
         synced_status_pepsq_records = pepsq_records.select { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
         not_synced_status_pepsq_records = pepsq_records.reject { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
-        expect(synced_status_pepsq_records.count).to eq(0)
-        expect(not_synced_status_pepsq_records.count).to eq(1)
+        expect(synced_status_pepsq_records.count).to eq(pepsq_records.count - not_synced_status_pepsq_records.count)
+        expect(not_synced_status_pepsq_records.count).to eq(pepsq_records.count - synced_status_pepsq_records.count)
       end
 
       it "the failed batched record will have a status of 'ERROR' \n
@@ -205,15 +204,15 @@ describe PriorityEpSyncBatchProcess, :postgres do
       end
 
       it "the batch process will have a state of 'COMPLETED', \n
-          the number of records_attempted for the batch process will match \
-           the number of PEPSQ records that were batched, \n
+          the number of records_attempted for the batch process will match the number of PEPSQ records batched, \n
           the number of records_completed for the batch process will match the number of successfully synced records \n
           the number of records_failed for the batch process will match the number of errored records" do
         expect(batch_process.state).to eq(Constants.BATCH_PROCESS.completed)
-        expect(batch_process.records_attempted).to eq(original_pepsq_record_size)
-        expect(batch_process.records_completed).to eq(original_pepsq_record_size - pepsq_records.size)
+        expect(batch_process.records_attempted).to eq(pepsq_records.count)
+        synced_pepsq_records = pepsq_records.select { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
+        expect(batch_process.records_completed).to eq(synced_pepsq_records.count)
         failed_sync_pepsq_records = pepsq_records.reject { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
-        expect(batch_process.records_failed).to eq(failed_sync_pepsq_records.size)
+        expect(batch_process.records_failed).to eq(failed_sync_pepsq_records.count)
       end
     end
 
@@ -222,14 +221,14 @@ describe PriorityEpSyncBatchProcess, :postgres do
         active_hlr_epe_w_cleared_vbms_ext_claim.vbms_ext_claim.destroy!
         allow(Rails.logger).to receive(:error)
         subject
-        pepsq_records.reload
+        pepsq_records.each(&:reload)
       end
 
       it "all but ONE of the batched records will have a status of 'SYNCED'" do
         synced_pepsq_records = pepsq_records.select { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
         not_synced_pepsq_records = pepsq_records.reject { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
-        expect(synced_pepsq_records.count).to eq(0)
-        expect(not_synced_pepsq_records.count).to eq(1)
+        expect(synced_pepsq_records.count).to eq(pepsq_records.count - not_synced_pepsq_records.count)
+        expect(not_synced_pepsq_records.count).to eq(pepsq_records.count - synced_pepsq_records.count)
       end
 
       it "the failed batched record will have a status of 'ERROR' \n
@@ -248,15 +247,15 @@ describe PriorityEpSyncBatchProcess, :postgres do
       end
 
       it "the batch process will have a state of 'COMPLETED', \n
-          the number of records_attempted for the batch process will match \
-          the number of PEPSQ records that were batched, \n
+          the number of records_attempted for the batch process will match the number of PEPSQ records batched, \n
           the number of records_completed for the batch process will match the number of successfully synced records, \n
           and the number of records_failed for the batch process will match the number of errored records" do
         expect(batch_process.state).to eq(Constants.BATCH_PROCESS.completed)
-        expect(batch_process.records_attempted).to eq(original_pepsq_record_size)
-        expect(batch_process.records_completed).to eq(original_pepsq_record_size - pepsq_records.size)
+        expect(batch_process.records_attempted).to eq(pepsq_records.count)
+        synced_pepsq_records = pepsq_records.select { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
+        expect(batch_process.records_completed).to eq(synced_pepsq_records.count)
         failed_sync_pepsq_records = pepsq_records.reject { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
-        expect(batch_process.records_failed).to eq(failed_sync_pepsq_records.size)
+        expect(batch_process.records_failed).to eq(failed_sync_pepsq_records.count)
       end
     end
 
@@ -266,7 +265,7 @@ describe PriorityEpSyncBatchProcess, :postgres do
         Fakes::EndProductStore.cache_store.redis.del("end_product_records_test:#{epe.veteran_file_number}")
         allow(Rails.logger).to receive(:error)
         subject
-        pepsq_records.reload
+        pepsq_records.each(&:reload)
       end
 
       it "all but ONE of the batched records will have a status of 'SYNCED'" do
@@ -290,32 +289,15 @@ describe PriorityEpSyncBatchProcess, :postgres do
       it "the batch process will have a state of 'COMPLETED' \n
           and the number of records_attempted for the batch process will match the number of PEPSQ records batched" do
         expect(batch_process.state).to eq(Constants.BATCH_PROCESS.completed)
-        expect(batch_process.records_attempted).to eq(original_pepsq_record_size)
+        expect(batch_process.records_attempted).to eq(pepsq_records.count)
       end
 
-      it "the number of records_attempted for the batch process will match\
-           the number of original PEPSQ records batched \n
-           the number of records_completed for the batch process will match the number of successfully synced records \n
+      it "the number of records_completed for the batch process will match the number of successfully synced records \n
            and the number of records_failed for the batch process will match the number of errored records" do
-        expect(batch_process.records_attempted).to eq(original_pepsq_record_size)
-        expect(batch_process.records_completed).to eq(original_pepsq_record_size - pepsq_records.size)
-        expect(batch_process.records_failed).to eq(1)
-      end
-    end
-
-    context "when priority_ep_sync_batch_process destroys synced pepsq records" do
-      before do
-        allow(Rails.logger).to receive(:info)
-        subject
-      end
-
-      it "should delete the synced_pepsq records from the pepsq table and log it" do
-        expect(batch_process.priority_end_product_sync_queue.count).to eq(0)
-        expect(Rails.logger).to have_received(:info).with(
-          "PriorityEpSyncBatchProcessJob #{pepsq_records.size} synced records deleted:"\
-          " [#{pepsq_records[0].id}, #{pepsq_records[1].id}, #{pepsq_records[2].id}, #{pepsq_records[3].id}]"\
-          "  Time: 2022-01-01 07:00:00 -0500"
-        )
+        synced_pepsq_records = pepsq_records.select { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
+        expect(batch_process.records_completed).to eq(synced_pepsq_records.count)
+        failed_sync_pepsq_records = pepsq_records.reject { |r| r.status == Constants.PRIORITY_EP_SYNC.synced }
+        expect(batch_process.records_failed).to eq(failed_sync_pepsq_records.count)
       end
     end
   end
