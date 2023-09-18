@@ -55,6 +55,7 @@ RSpec.feature "Reader", :all_dbs do
   before do
     # commented out to resolve failing tests
     # FeatureToggle.enable!(:interface_version_2)
+    FeatureToggle.enable!(:reader_search_improvements)
     Fakes::Initializer.load!
 
     RequestStore[:current_user] = User.find_or_create_by(css_id: "BVASCASPER1", station_id: 101)
