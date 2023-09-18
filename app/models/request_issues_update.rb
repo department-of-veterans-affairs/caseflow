@@ -366,30 +366,32 @@ class RequestIssuesUpdate < CaseflowRecord
 
       # if a new issue is added and VBMS was edited, reference the original status
       if change_type == "Added Issue" && (vbms_mst_edit || vbms_pact_edit)
-        task.format_instructions(
-          change_type,
-          before_issue.contested_issue_description,
-          before_issue.benefit_type&.capitalize,
-          before_issue.vbms_mst_status,
-          before_issue.vbms_pact_status,
-          before_issue.mst_status,
-          before_issue.pact_status
+        set = CaseTimelineInstructionSet.new(
+          change_type: change_type,
+          issue_category: before_issue.contested_issue_description,
+          benefit_type: before_issue.benefit_type&.capitalize,
+          original_mst: before_issue.vbms_mst_status,
+          original_pact: before_issue.vbms_pact_status,
+          edit_mst: before_issue.mst_status,
+          edit_pact: before_issue.pact_status
         )
+        task.format_instructions(set)
       else
         # format the task instructions and close out
         # use contested issue description if nonrating issue category is nil
         # rubocop:disable Layout/LineLength
         issue_description = "#{before_issue.nonrating_issue_category} - #{before_issue.nonrating_issue_description}" unless before_issue.nonrating_issue_category.nil?
         issue_description = before_issue.contested_issue_description if issue_description.nil?
-        task.format_instructions(
-          change_type,
-          issue_description,
-          before_issue.benefit_type&.capitalize,
-          before_issue.mst_status,
-          before_issue.pact_status,
-          after_issue&.mst_status,
-          after_issue&.pact_status
+        set = CaseTimelineInstructionSet.new(
+          change_type: change_type,
+          issue_category: issue_description,
+          benefit_type: before_issue.benefit_type&.capitalize,
+          original_mst: before_issue.mst_status,
+          original_pact: before_issue.pact_status,
+          edit_mst: after_issue&.mst_status,
+          edit_pact: after_issue&.pact_status
         )
+        task.format_instructions(set)
       end
       # rubocop:enable Layout/LineLength, Metrics/AbcSize
       task.completed!
