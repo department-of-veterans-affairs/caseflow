@@ -39,9 +39,7 @@ import FilterIcon from '../components/icons/FilterIcon';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
 import DocTagPicker from './DocTagPicker';
-import ReaderTableDropdownFilter from '../components/ReaderTableDropdownFilter';
-import { css, optional } from 'glamor';
-import { COLORS } from 'app/constants/AppConstants';
+import ReactSelectDropdown from '../components/ReactSelectDropdown';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -53,58 +51,6 @@ const recieptDateFilterStates = {
   ON: 3
 
 };
-
-const customSelectStyles = {
-  // Hide the dropdown arrow on the right side
-  // Set the height of the select component
-  valueContainer: (styles) => ({
-    ...styles,
-    // Cascading lineHeight is 200%, which makes the selected text vertically uncentered
-    lineHeight: 'normal',
-
-    // FIX ME
-    // border: false ? '2px solid red' : styles.border,
-    height: '44px',
-    minHeight: '44px',
-
-  }),
-  // Fix selected text positioning problem caused by adjusting height
-  // Without this, the text positioning is strange if input is something
-  // long like "12:30pm" (or for testing 12::::30:::::PM)
-  singleValue: (styles) => {
-    return {
-      ...styles,
-      transform: 'translateY(-0.3vh)',
-      alignContent: 'center'
-    };
-  },
-
-  placeholder: (styles) => ({
-    ...styles,
-    border: '1 px solid black',
-    height:'100%',
-    // transform: 'translateY(-2px)',
-    lineHeight: '6vh'
-
-  }),
-  // Change the highlight colors in the dropdown to black and give it the blue background
-  option: (styles, { isFocused }) => ({
-    ...styles,
-    color: isFocused ? 'black' : 'black',
-    alignContent: 'center',
-    backgroundColor: isFocused ? 'white' : null,
-    ':hover': {
-      ...styles[':hover'],
-      backgroundColor: '#5c9ceb',
-      color: 'white'
-    }
-  })
-};
-
-const selectContainerStyles = css({
-  width: '100%',
-  display: 'inline-block'
-});
 
 export const getRowObjects = (documents, annotationsPerDocument) => {
   return documents.reduce((acc, doc) => {
@@ -343,13 +289,6 @@ class DocumentsTable extends React.Component {
     const anyDateFiltersAreSet = anyFiltersSet('receiptDate');
 
     const dateDropdownMap = [
-      { value: 0, displayText: 'Between these dates' },
-      { value: 1, displayText: 'Before this date' },
-      { value: 2, displayText: 'After this date' },
-      { value: 3, displayText: 'On this date' }
-    ];
-
-    const dateDropdownMap2 = [
       { value: 0, label: 'Between these dates' },
       { value: 1, label: 'Before this date' },
       { value: 2, label: 'After this date' },
@@ -521,28 +460,12 @@ class DocumentsTable extends React.Component {
                   addClearFiltersRow
                 >
                   <>
-                    <div {...selectContainerStyles}>
-                      <label style={{ marginTop: '5px', marginBottom: '5px', marginLeft: '1px' }}>Date filter parameters</label>
-                      <Select
-                      // defaultInputValue="zzz"
-                      defaultValue={dateDropdownMap2[this.state.recieptFilter]}
-                        placeholder="select..."
-                        options={dateDropdownMap2}
-                        styles={customSelectStyles}
-                        onChange={(selectedVal) => this.updateRecieptFilter(selectedVal.value)}
-
-                      />
-                    </div>
-                    {/* <Dropdown
-                      name="dateDropdownText"
+                    <ReactSelectDropdown
                       options={dateDropdownMap}
+                      defaultValue={dateDropdownMap[this.state.recieptFilter]}
                       label="Date filter parameters"
-                      value="dateDropdownVal"
-                      onChange={(newKey) => this.updateRecieptFilter(newKey)}
-                      defaultText={this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED ? 'Select...' :
-                        dateDropdownMap[this.state.recieptFilter].displayText}
-                      defaultValue="On this date"
-                    /> */}
+                      onChangeMethod={(selectedOption) => this.updateRecieptFilter(selectedOption.value)}
+                    />
                     {(this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.FROM) &&
                   this.state.fromDateErrors.map((error, index) =>
                     <p id={index} key={index} style={{ color: 'red' }}>{error}</p>)}
@@ -737,7 +660,6 @@ DocumentsTable.propTypes = {
   tagOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
   setDocFilter: PropTypes.func,
   clearDocFilters: PropTypes.func,
-  secretDebug: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) =>
