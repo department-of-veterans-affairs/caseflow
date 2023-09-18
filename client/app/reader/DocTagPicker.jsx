@@ -90,6 +90,9 @@ DocTagPicker.propTypes = {
   tagToggleStates: PropTypes.object,
   searchOnChange: PropTypes.func,
   defaultSearchText: PropTypes.string,
+  tags: PropTypes.array,
+  dropdownFilterViewListStyle: PropTypes.object,
+  dropdownFilterViewListItemStyle: PropTypes.object,
   featureToggles: PropTypes.object
 };
 
