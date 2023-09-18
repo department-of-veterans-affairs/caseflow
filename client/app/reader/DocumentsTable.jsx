@@ -579,13 +579,13 @@ class DocumentsTable extends React.Component {
                 sortArrowIcon :
                 notSortedIcon}
             </Button>
-            <FilterIcon
+            {this.props.featureToggles.readerSearchImprovements && <FilterIcon
               label="Filter by Document"
               idPrefix="document"
               getRef={this.getDocumentFilterIconRef}
               selected={isDocumentDropdownFilterOpen}
               handleActivate={this.toggleDocumentDropdownFilterVisiblity}
-            />
+            />}
             {isDocumentDropdownFilterOpen && (
               <div style={{ position: 'relative', right: '14vw' }}>
                 <DropdownFilter
