@@ -47,7 +47,7 @@ class AutotaggedDocumentJob < CaseflowJob
 
   def get_tags(doc)
     tags = ExternalApi::ClaimEvidenceService.get_key_phrases_from_document(doc.series_id[1..-2])
-    tags.uniq! { |tag| tag.downcase }
+    tags.uniq!(&:downcase)
     tags
   end
 
