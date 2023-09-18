@@ -382,7 +382,7 @@ class DailyDocketRow extends React.Component {
           disabled={this.props.conferenceLinkError}
           onClick={this.conferenceLinkOnClick} > Connect to Recording System</Button> }
         {<div >
-          <b>{StringUtil.capitalizeFirst(hearing?.meetingType || 'Pexip')} hearing</b>
+          <b>{StringUtil.capitalizeFirst(hearing?.conferenceProvider || 'Pexip')} hearing</b>
         </div>}
         <DispositionDropdown
           {...inputProps}
