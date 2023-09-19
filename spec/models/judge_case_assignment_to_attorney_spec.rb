@@ -73,7 +73,8 @@ describe JudgeCaseAssignmentToAttorney, :all_dbs do
       JudgeCaseAssignmentToAttorney.update(
         task_id: task_id,
         assigned_by: assigned_by,
-        assigned_to: assigned_to
+        assigned_to: assigned_to,
+        appeal_id: appeal.id
       )
     end
     context "when all required values are present" do
