@@ -8,6 +8,19 @@ import CannotSaveAlert from '../reader/CannotSaveAlert';
 import SearchableDropdown from '../components/SearchableDropdown';
 import { addNewTag, removeTag } from '../reader/Documents/DocumentsActions';
 
+const fetchSpellingCorrection = (misspelledText) => {
+  let fetchData = { queryText: misspelledText };
+
+  fetch('/fuzzy-search-options',
+    {
+      body: JSON.stringify(fetchData),
+      method: 'POST'
+    }).then((response) => response.json()).
+    then((data) => {
+      console.log(data);
+    });
+};
+
 class SideBarIssueTags extends PureComponent {
   render() {
     const { doc } = this.props;
@@ -42,6 +55,8 @@ class SideBarIssueTags extends PureComponent {
 
       return tagArr;
     };
+
+    fetchSpellingCorrection('Doctre');
 
     return (
       <div className="cf-issue-tag-sidebar">
