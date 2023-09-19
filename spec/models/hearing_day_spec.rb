@@ -547,7 +547,7 @@ describe HearingDay, :all_dbs do
     end
   end
 
-  context "hearing day conference link doesnt exist" do
+  context "hearing day in the past, conference link doesnt exist" do
     before do
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
@@ -560,15 +560,42 @@ describe HearingDay, :all_dbs do
         :hearing_day,
         id: 1,
         request_type: HearingDay::REQUEST_TYPES[:central],
-        scheduled_for: Time.zone.local(2019, 5, 15).to_date,
+        scheduled_for: 1.year.ago,
         room: "1"
       )
     end
 
     subject { hearing_day.conference_link }
 
-    it "Does not have a existing conference link so creates a new one" do
-      expect(subject.hearing_day_id).to eq(hearing_day.id)
+    it "Given that the hearing day does not have a existing conference
+        and is scheduled for the past, no conference link will be created and should return nil" do
+      expect(subject).to eq(nil)
+    end
+  end
+
+  context "hearing day in the future, conference link doesnt exist" do
+    before do
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
+      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
+    end
+
+    let(:hearing_day) do
+      RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
+      create(
+        :hearing_day,
+        id: 1,
+        request_type: HearingDay::REQUEST_TYPES[:central],
+        scheduled_for: 1.year.from_now,
+        room: "1"
+      )
+    end
+
+    subject { hearing_day.conference_link }
+
+    it "Given that the hearing day does not have a existing conference
+        and is scheduled for the future, a conference link will be created" do
+      expect(subject.hearing_day_id).to eq(1)
     end
   end
 end
