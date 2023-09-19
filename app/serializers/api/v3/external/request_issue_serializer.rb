@@ -39,5 +39,9 @@ class Api::V3::External::RequestIssueSerializer
   attribute :verified_unidentified_issue
   attribute :veteran_participant_id
 
-  has_many :decision_issues, serializer: ::Api::V3::External::DecisionIssueSerializer
+  attribute :decision_issues do |request_issue|
+    request_issue.decision_issues do |di|
+      ::Api::V3::External::DecisionIssueSerializer.new(di)
+    end
+  end
 end

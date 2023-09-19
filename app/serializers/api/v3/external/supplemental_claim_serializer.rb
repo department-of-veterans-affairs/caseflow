@@ -4,5 +4,10 @@ class Api::V3::External::SupplementalClaimSerializer
   include FastJsonapi::ObjectSerializer
   set_type :supplemental_claim
   attributes *SupplementalClaim.column_names
-  has_many :end_product_establishments, serializer: ::Api::V3::External::EndProductEstablishmentSerializer
+
+  attribute :end_product_establishments do |sc|
+    sc.end_product_establishments.map do |epe|
+      ::Api::V3::External::EndProductEstablishmentSerializer.new(epe)
+    end
+  end
 end

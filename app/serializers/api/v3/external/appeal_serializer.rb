@@ -4,5 +4,10 @@ class Api::V3::External::AppealSerializer
   include FastJsonapi::ObjectSerializer
   set_type :appeal
   attributes *Appeal.column_names
-  has_many :request_issues, serializer: Api::V3::External::RequestIssueSerializer
+
+  attribute :request_issues do |appeal|
+    appeal.request_issues.map do |ri|
+      ::Api::V3::External::RequestIssueSerializer.new(ri)
+    end
+  end
 end
