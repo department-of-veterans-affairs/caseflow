@@ -548,6 +548,18 @@ RSpec.feature "MailTasks", :postgres do
     describe "mark as complete" do
       let(:date_completed) { hwr_task.updated_at.strftime("%m/%d/%Y") }
 
+      shared_examples "modal body text" do
+        it "renders proper modal body text specific to appeal type" do
+          visit("queue/appeals/#{appeal.is_a?(Appeal) ? appeal.uuid : appeal.vacols_id}")
+          within("tr", text: "Hearing withdrawal request", match: :first) do
+            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                           text: Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.label)
+          end
+          modal = find(".cf-modal-body")
+          expect(modal).to have_content(modal_body_text)
+        end
+      end
+
       shared_examples "whether hearing is schedueld or unscheduled" do
         before do
           page = "queue/appeals/#{appeal.is_a?(Appeal) ? appeal.uuid : appeal.vacols_id}"
@@ -639,6 +651,7 @@ RSpec.feature "MailTasks", :postgres do
         let!(:child_mail_task) do
           create(:hearing_related_mail_task, parent: mail_task, assigned_to: HearingAdmin.singleton)
         end
+        let(:modal_body_text) { COPY::WITHDRAW_HEARING["AMA"]["MODAL_BODY"] }
 
         shared_examples "appeal is AMA" do
           it "creates EvidenceSubmissionWindowTask" do
@@ -655,6 +668,8 @@ RSpec.feature "MailTasks", :postgres do
             expect(mail_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
           end
         end
+
+        include_examples "modal body text"
 
         context "appeal has scheduled hearing" do
           context "sync actions" do
@@ -685,6 +700,12 @@ RSpec.feature "MailTasks", :postgres do
                  :withdrawal_request_with_scheduled_hearing,
                  assigned_by_id: User.system_user.id, appeal: appeal)
         end
+        let(:modal_body_text) do
+          "The appeal will be sent to Location 81 (Case Storage) " \
+          "to await distribution to a judge because the representative is a private attorney."
+        end
+
+        include_examples "modal body text"
 
         context "appeal has scheduled hearing" do
           context "sync actions" do

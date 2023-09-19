@@ -10,11 +10,14 @@ import QueueFlowModal from '../QueueFlowModal';
 import TextareaField from '../../../components/TextareaField';
 import COPY from '../../../../COPY';
 import TASK_STATUSES from '../../../../constants/TASK_STATUSES';
+import { taskActionData } from '../../utils';
 
 const CompleteHearingWithdrawalRequestModal = (props) => {
-  const { appealId, appeal, taskId } = props;
+  const { taskId } = props;
   const [instructions, setInstructions] = useState('');
   const [isPosting, setIsPosting] = useState(false);
+
+  const taskData = taskActionData(props);
 
   const validateForm = () => {
     return instructions !== '';
@@ -22,8 +25,12 @@ const CompleteHearingWithdrawalRequestModal = (props) => {
 
   const getSuccessMsg = () => {
     return {
-      title: `You have successfully withdrawn ${appeal.veteranFullName}'s hearing request`,
-      detail: COPY.WITHDRAW_HEARING.AMA.MODAL_BODY.split('.')[0]
+      title: taskData.message_title,
+      detail: (
+        <span>
+          <span dangerouslySetInnerHTML={{ __html: taskData.message_detail }} />
+        </span>
+      )
     };
   };
 
@@ -71,11 +78,11 @@ const CompleteHearingWithdrawalRequestModal = (props) => {
       submitDisabled={!validateForm()}
       validateForm={validateForm}
       submit={submit}
-      pathAfterSubmit={`/queue/appeals/${appealId}`}
+      pathAfterSubmit={taskData.redirect_after}
     >
       <div>By marking this task as complete, you will withdraw the hearing.</div>
       <br />
-      <div>{COPY.WITHDRAW_HEARING.AMA.MODAL_BODY}</div>
+      <div dangerouslySetInnerHTML={{ __html: taskData.modal_body }} />
       <br />
       <TextareaField
         label={`${COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}:`}

@@ -2502,24 +2502,24 @@ export const rootTaskData = {
 };
 
 const hearingWithdrawalRequestMailTaskData = {
-  12078: {
-    uniqueId: '12078',
+  12673: {
+    uniqueId: '12673',
     isLegacy: false,
     type: 'HearingWithdrawalRequestMailTask',
     appealType: 'Appeal',
     addedByCssId: null,
-    appealId: 1563,
-    externalAppealId: '3f33fe39-dbd7-4cb6-b9dd-c0ead25949fe',
-    assignedOn: '2023-09-08T11:12:50.992-04:00',
+    appealId: 1495,
+    externalAppealId: '42ad2331-a95c-49dc-8828-0258cfe0ca04',
+    assignedOn: '2023-09-19T10:11:11.306-04:00',
     closestRegionalOffice: null,
-    createdAt: '2023-09-08T11:12:50.992-04:00',
+    createdAt: '2023-09-19T10:11:11.306-04:00',
     closedAt: null,
     startedAt: null,
     assigneeName: 'Hearing Admin',
     assignedTo: {
       cssId: null,
       name: 'Hearing Admin',
-      id: 37,
+      id: 36,
       isOrganization: true,
       type: 'HearingAdmin'
     },
@@ -2540,8 +2540,8 @@ const hearingWithdrawalRequestMailTaskData = {
       cssId: null
     },
     convertedOn: null,
-    taskId: '12078',
-    parentId: 12077,
+    taskId: '12673',
+    parentId: 12672,
     label: 'Hearing withdrawal request',
     documentId: null,
     externalHearingId: null,
@@ -2648,7 +2648,17 @@ const hearingWithdrawalRequestMailTaskData = {
       },
       {
         label: 'Mark as complete and withdraw',
-        value: 'modal/complete_and_withdraw'
+        func: 'withdraw_hearing_data',
+        value: 'modal/complete_and_withdraw',
+        data: {
+          redirect_after: '/queue/appeals/42ad2331-a95c-49dc-8828-0258cfe0ca04',
+          modal_title: 'Withdraw hearing',
+          modal_body: 'The appeal will be held open for a 90-day evidence submission period before distribution to a judge.',
+          message_title: 'You have successfully withdrawn Dusty Schoen\'s hearing request',
+          message_detail: 'The appeal will be held open for a 90-day evidence submission period before distribution to a judge.',
+          business_payloads: null,
+          back_to_hearing_schedule: true
+        }
       },
       {
         label: 'Assign to team',
@@ -2657,82 +2667,6 @@ const hearingWithdrawalRequestMailTaskData = {
         data: {
           selected: null,
           options: [
-            {
-              label: 'Board Dispatch',
-              value: 1
-            },
-            {
-              label: 'Case Review',
-              value: 2
-            },
-            {
-              label: 'Case Movement Team',
-              value: 3
-            },
-            {
-              label: 'BVA Intake',
-              value: 4
-            },
-            {
-              label: 'VLJ Support Staff',
-              value: 6
-            },
-            {
-              label: 'Transcription',
-              value: 7
-            },
-            {
-              label: 'National Cemetery Administration',
-              value: 11
-            },
-            {
-              label: 'Translation',
-              value: 12
-            },
-            {
-              label: 'Quality Review',
-              value: 13
-            },
-            {
-              label: 'AOD',
-              value: 14
-            },
-            {
-              label: 'Mail',
-              value: 15
-            },
-            {
-              label: 'Privacy Team',
-              value: 16
-            },
-            {
-              label: 'Litigation Support',
-              value: 17
-            },
-            {
-              label: 'Office of Assessment and Improvement',
-              value: 18
-            },
-            {
-              label: 'Office of Chief Counsel',
-              value: 19
-            },
-            {
-              label: 'CAVC Litigation Support',
-              value: 20
-            },
-            {
-              label: 'Pulac-Cerullo',
-              value: 21
-            },
-            {
-              label: 'Hearings Management',
-              value: 36
-            },
-            {
-              label: 'VLJ Support Staff',
-              value: 2000000023
-            },
             {
               label: 'Education',
               value: 2000000219
@@ -2766,6 +2700,82 @@ const hearingWithdrawalRequestMailTaskData = {
               value: 2000000593
             },
             {
+              label: 'National Cemetery Administration',
+              value: 2000000011
+            },
+            {
+              label: 'Board Dispatch',
+              value: 1
+            },
+            {
+              label: 'Case Review',
+              value: 2
+            },
+            {
+              label: 'Case Movement Team',
+              value: 3
+            },
+            {
+              label: 'BVA Intake',
+              value: 4
+            },
+            {
+              label: 'VLJ Support Staff',
+              value: 6
+            },
+            {
+              label: 'Transcription',
+              value: 7
+            },
+            {
+              label: 'Translation',
+              value: 11
+            },
+            {
+              label: 'Quality Review',
+              value: 12
+            },
+            {
+              label: 'AOD',
+              value: 13
+            },
+            {
+              label: 'Mail',
+              value: 14
+            },
+            {
+              label: 'Privacy Team',
+              value: 15
+            },
+            {
+              label: 'Litigation Support',
+              value: 16
+            },
+            {
+              label: 'Office of Assessment and Improvement',
+              value: 17
+            },
+            {
+              label: 'Office of Chief Counsel',
+              value: 18
+            },
+            {
+              label: 'CAVC Litigation Support',
+              value: 19
+            },
+            {
+              label: 'Pulac-Cerullo',
+              value: 20
+            },
+            {
+              label: 'Hearings Management',
+              value: 35
+            },
+            {
+              label: 'VLJ Support Staff',
+              value: 2000000023
+            },
+            {
               label: 'Executive Management Office',
               value: 64
             }
@@ -2780,7 +2790,7 @@ const hearingWithdrawalRequestMailTaskData = {
         data: {
           selected: {
             id: 125,
-            last_login_at: '2023-09-08T14:33:15.961-04:00',
+            last_login_at: '2023-09-19T10:11:16.800-04:00',
             station_id: '101',
             full_name: 'Stacy BuildAndEditHearingSchedule Yellow',
             email: null,
@@ -2788,13 +2798,13 @@ const hearingWithdrawalRequestMailTaskData = {
               'Edit HearSched',
               'Build HearSched'
             ],
-            created_at: '2023-09-05T08:51:44.314-04:00',
+            created_at: '2023-09-18T21:24:30.918-04:00',
             css_id: 'BVASYELLOW',
             efolder_documents_fetched_at: null,
             selected_regional_office: null,
             status: 'active',
             status_updated_at: null,
-            updated_at: '2023-09-08T14:33:15.964-04:00',
+            updated_at: '2023-09-19T10:11:16.803-04:00',
             meeting_type: 'pexip',
             display_name: 'BVASYELLOW (VACO)'
           },
@@ -3002,7 +3012,7 @@ const hearingWithdrawalRequestMailTaskData = {
         data: {
           modal_title: 'Cancel task',
           modal_body: 'Cancelling this task will return it to Huan MailUser Tiryaki',
-          message_title: 'Task for Rubye Wehner\'s case has been cancelled',
+          message_title: 'Task for Dusty Schoen\'s case has been cancelled',
           message_detail: 'If you have made a mistake, please email Huan MailUser Tiryaki to manage any changes.'
         }
       }
@@ -3019,9 +3029,9 @@ const hearingWithdrawalRequestMailTaskData = {
     ownedBy: 'Hearing Admin',
     daysSinceLastStatusChange: 0,
     daysSinceBoardIntake: 0,
-    id: '12078',
+    id: '12673',
     claimant: {},
-    appeal_receipt_date: '2023-01-23'
+    appeal_receipt_date: '2023-04-06'
   }
 };
 

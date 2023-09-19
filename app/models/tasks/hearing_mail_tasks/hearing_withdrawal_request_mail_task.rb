@@ -83,12 +83,27 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
     clean_up_virtual_hearing(open_hearing)
   end
 
-  # Purpose: Cancels HearingTask, either child AssignHearingDispositionTask or ScheduleHearingTask
+  # Purpose: Cancels either AssignHearingDispositionTask or ScheduleHearingTask and HearingRelatedMailTasks
   # Params: None
   # Return: True if HearingRelatedMailTasks cancelled, otherwise nil
   def cancel_active_hearing_tasks
-    hearing_task.cancel_task_and_child_subtasks
+    cancel_active_child_of_hearing_task
     cancel_hearing_related_mail_tasks
+  end
+
+  # Purpose: Cancels either active AssignHearingDispositionTask or active ScheduleHearingTask. This will kick off
+  #          workflow that cancels HearingTask and, if appeal is legacy, calls AppealRepository#update_location!
+  # Params: None
+  # Return: True if task cancelled, otherwise nil
+  def cancel_active_child_of_hearing_task
+    active_child_of_hearing_task.update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
+  end
+
+  # Purpose: Finds either active ScheduleHearingTask or AssignHearingDispositionTask
+  # Params: None
+  # Return: Task object
+  def active_child_of_hearing_task
+    hearing_task.children.of_type([ScheduleHearingTask.name, AssignHearingDispositionTask.name]).active.first
   end
 
   # Purpose: Cancels any active HearingRelatedMailTasks on appeal
