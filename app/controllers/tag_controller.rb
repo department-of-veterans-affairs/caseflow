@@ -44,8 +44,9 @@ class TagController < ApplicationController
     render(json: { status: :ok })
   end
 
-  def correct_spelling(query_text)
-    @query_text = query_text
+  def correct_spelling
+    # @query_text = query_text
+    query_text = params[:queryText]
     only_result_text = []
     suggested_spelling = []
 
@@ -64,7 +65,8 @@ class TagController < ApplicationController
         suggested_spelling << dice[0]
       end
     end
-    suggested_spelling
+    # suggested_spelling
+    render json:{spelling: suggested_spelling}
 
   end
 
