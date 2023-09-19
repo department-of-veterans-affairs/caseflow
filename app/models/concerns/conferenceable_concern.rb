@@ -17,23 +17,20 @@ module ConferenceableConcern
     delegate :conference_provider, to: :meeting_type, allow_nil: true
   end
 
-  module ClassMethods
-    attr_reader :conference_provider_source
-
-    def derives_conference_provider_from(source)
-      @@conference_provider_source ||= source # rubocop:disable Style/ClassVars
-    end
-  end
-
-  # Determines which conferencing service to use based on the conference_provider_source
-  # class variable.
+  # Determines which associated entity this new item should inherit its conference
+  # provider from.
   #
-  # @return [String] the conference provider/service name to assign to the new object ("webex" or "pexip") or nil
+  # Virtual hearings will inherit their conference providers from the hearing they've
+  # been created for.
+  #
+  # Other items will inherit from the conference provider assigned to the user who is
+  # creating them.
+  #
+  # @return [String] the conference provider/service name to assign to the new object ("webex" or "pexip")
   def determine_service_name
-    if self.class.respond_to?(:conference_provider_source) &&
-       self.class.conference_provider_source.is_a?(Symbol)
-      send(self.class.conference_provider_source)&.conference_provider
-    end
+    return hearing&.conference_provider if is_a? VirtualHearing
+
+    created_by&.conference_provider if respond_to? :created_by
   end
 
   # Creates an associated MeetingType record for the newly created object.

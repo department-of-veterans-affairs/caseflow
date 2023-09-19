@@ -55,8 +55,6 @@ class VirtualHearing < CaseflowRecord
 
   alias_attribute :alias_name, :alias
 
-  derives_conference_provider_from :hearing
-
   belongs_to :hearing, polymorphic: true
   belongs_to :created_by, class_name: "User"
 
