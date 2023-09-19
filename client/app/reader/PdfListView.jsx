@@ -56,6 +56,7 @@ export class PdfListView extends React.Component {
         sortBy={this.props.sortBy}
         docFilterCriteria={this.props.docFilterCriteria}
         showPdf={this.props.showPdf}
+        featureToggles={this.props.featureToggles}
       />;
     }
 
@@ -111,6 +112,8 @@ PdfListView.propTypes = {
   appeal: PropTypes.object,
   efolderExpressUrl: PropTypes.string,
   userHasEfolderRole: PropTypes.bool,
+  readerSearchImprovements: PropTypes.bool,
+  featureToggles: PropTypes.object
 };
 
 
