@@ -242,7 +242,18 @@ class DocumentsTable extends React.Component {
 
    return false;
  }
+ initializeReceiptFilter() {
+   this.setState({
+     fromDate: this.props.docFilterCriteria.recieptFilterDates.fromDate,
+     toDate: this.props.docFilterCriteria.recieptFilterDates.toDate,
+     onDate: this.props.docFilterCriteria.recieptFilterDates.onDate,
+     recieptFilter: this.props.docFilterCriteria.recieptFilterType
+   });
+ }
+
  componentDidMount() {
+
+   this.initializeReceiptFilter();
 
    // this if statement is what freezes the values, once it's set, it's set unless manipulated
    // back to a empty state via redux
