@@ -3,7 +3,7 @@
 class ConferenceLink < CaseflowRecord
   class NoAliasWithHostPresentError < StandardError; end
   class LinkMismatchError < StandardError; end
-  acts_as_paranoid
+  acts_as_paranoid column: :conference_deleted, sentinel_value: true
 
   include UpdatedByUserConcern
   include CreatedByUserConcern
