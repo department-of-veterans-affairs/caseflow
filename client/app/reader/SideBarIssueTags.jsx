@@ -31,7 +31,7 @@ class SideBarIssueTags extends PureComponent {
     };
 
     let spellingCorrection = (currentTagOptions, correctedTagSpelling) => {
-      let tagArr = generateOptionsFromTags(currentTagOptions)
+      let tagArr = generateOptionsFromTags(currentTagOptions);
       let correctedTag = {
         value: correctedTagSpelling,
         label: correctedTagSpelling,
@@ -53,7 +53,8 @@ class SideBarIssueTags extends PureComponent {
           multi
           dropdownStyling={{ position: 'relative' }}
           creatable
-          options={spellingCorrection(this.props.tagOptions, "POW")}
+          options={spellingCorrection(this.props.tagOptions, 'Tester')}
+          // options={spellingCorrection(this.props.tagOptions, TagController.correct_spelling(this.props.tagOptions))}
           placeholder=""
           value={generateOptionsFromTags(doc.tags)}
           onChange={onChange}
