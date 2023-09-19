@@ -338,6 +338,6 @@ class Document < CaseflowRecord
   end
 
   def auto_tag_document
-    AutotaggedDocumentJob.perform(self.id)
+    AutotaggedDocumentJob.perform_now(self.id)
   end
 end
