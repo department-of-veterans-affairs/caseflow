@@ -407,8 +407,8 @@ RSpec.shared_examples "Change hearing disposition" do
         expect(choices).to_not include(*mgmt_full_names)
 
         fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: assign_instructions_text
-        click_on "Submit"
-        expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % other_admin_full_name
+        click_on "Assign"
+        expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, appeal.veteran_full_name, other_admin_full_name))
       end
 
       step "the other user logs in and sees the task in their queue" do
@@ -436,8 +436,8 @@ RSpec.shared_examples "Change hearing disposition" do
         click_dropdown(prompt: "Select an action", text: "Assign to person")
 
         fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: assign_instructions_text
-        click_on "Submit"
-        expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % current_full_name
+        click_on "Assign"
+        expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, appeal.veteran_full_name, current_full_name))
       end
 
       step "the task in my personal queue" do
