@@ -27,23 +27,23 @@ class DocumentListHeader extends React.Component {
         console.error(error);
       });
   }
-
   render() {
     const props = this.props;
 
     return <div>
       <div className="document-list-header">
         <div className="search-bar-and-doc-count cf-search-ahead-parent">
-          <SearchBar
+          <div><SearchBar
             id="searchBar"
             onChange={props.setSearch}
+            isSearchAhead
             onClearSearch={props.clearSearch}
             recordSearch={this.recordSearch}
-            isSearchAhead
             placeholder="Type to search..."
             value={props.docFilterCriteria.searchQuery}
             size="small"
           />
+          </div>
           <div className="num-of-documents">
             {props.numberOfDocuments} Documents
           </div>

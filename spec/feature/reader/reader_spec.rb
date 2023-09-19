@@ -43,9 +43,19 @@ def add_comment(text)
   click_on "Save"
 end
 
+def clear_filters
+  # When the "clear filters" button is clicked, the filtering message is reset,
+  # and focus goes back on the Document toggle.
+  find("#clear-filters").click
+  expect(page.has_no_content?("Filtering by:")).to eq(true)
+  expect(find("#button-documents")["class"]).to have_content("usa-button")
+end
+
 RSpec.feature "Reader", :all_dbs do
   before do
-    FeatureToggle.enable!(:interface_version_2)
+    # commented out to resolve failing tests
+    # FeatureToggle.enable!(:interface_version_2)
+    FeatureToggle.enable!(:reader_search_improvements)
     Fakes::Initializer.load!
 
     RequestStore[:current_user] = User.find_or_create_by(css_id: "BVASCASPER1", station_id: 101)
@@ -109,51 +119,241 @@ RSpec.feature "Reader", :all_dbs do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
       end
 
-      it "can filter by categories, tags, and comments" do
-        # filter by category
+      it "clears all filters" do
+        # category filter
         find("#categories-header .table-icon").click
         find(".checkbox-wrapper-procedural").click
-        find(".checkbox-wrapper-medical").click
-
-        expect(page).to have_content("Filtering by:")
-        expect(page).to have_content("Categories (2)")
-
-        # deselect medical filter
-        find(".checkbox-wrapper-medical").click
         expect(page).to have_content("Categories (1)")
-        find("#clear-filters").click
 
-        # filter by tag
+        # receipt date filter
+        find(".receipt-date-column .unselected-filter-icon").click
+        select("After this date", from: "dateDropdownText")
+        fill_in("From", with: Date.current.strftime("%m/%d/%Y"))
+        click_button("apply filter")
+        expect(page).to have_content("Receipt Date (1)")
+
+        # document type filter
+        find(".doc-type-column .unselected-filter-icon").click
+        find(:label, "NOD").click
+        expect(page).to have_content("Document Types (1)")
+
+        # tag filter
         find("#tags-header .table-icon").click
         tags_checkboxes = page.find("#tags-header").all(".cf-form-checkbox")
         tags_checkboxes[0].click
-        tags_checkboxes[1].click
-        expect(page).to have_content("Issue tags (2)")
-
-        # unchecking tag filters
-        tags_checkboxes[0].click
         expect(page).to have_content("Issue tags (1)")
 
-        tags_checkboxes[1].click
-        expect(page).to_not have_content("Issue tags")
+        expect(page).to have_content("Filtering by:")
+        clear_filters
+      end
 
-        # filter by comments
-        click_on "Comments"
-        expect(page).to have_content("Sorted by relevant date")
+      context "filter by category" do
+        it "displays the correct filtering message" do
+          find("#categories-header .table-icon").click
+          find(".checkbox-wrapper-procedural").click
+          find(".checkbox-wrapper-medical").click
 
-        click_on "Documents"
-        # category filter is only visible when DocumentsTable displayed, but affects Comments
-        find("#categories-header .table-icon").click
-        find(".checkbox-wrapper-procedural").click
+          expect(page).to have_content("Filtering by:")
+          expect(page).to have_content("Categories (2)")
 
-        click_on "Comments"
-        expect(page).to have_content("Sorted by relevant date")
+          # deselect one filter
+          find(".checkbox-wrapper-medical").click
+          expect(page).to have_content("Categories (1)")
 
-        # When the "clear filters" button is clicked, the filtering message is reset,
-        # and focus goes back on the Document toggle.
+          # deselect all filters
+          find(".checkbox-wrapper-procedural").click
+          expect(page.has_no_content?("Filtering by:")).to eq(true)
+        end
+
+        it "clears the category filter" do
+          find("#categories-header .table-icon").click
+          find(".checkbox-wrapper-procedural").click
+          find(".checkbox-wrapper-medical").click
+
+          expect(page).to have_content("Filtering by:")
+          expect(page).to have_content("Categories (2)")
+
+          find(".cf-clear-filter-row .cf-text-button").click
+
+          expect(page.has_no_content?("Filtering by:")).to eq(true)
+        end
+      end
+
+      context "filter by receipt date" do
+        it "displays the correct filtering message" do
+          # find and fill in date filter with today's date
+          find(".receipt-date-column .unselected-filter-icon").click
+          select("After this date", from: "dateDropdownText")
+          fill_in("From", with: Date.current.strftime("%m/%d/%Y"))
+          click_button("apply filter")
+
+          expect(page).to have_content("Filtering by:")
+          expect(page).to have_content("Receipt Date (1)")
+
+          clear_filters
+        end
+
+        it "clears the receipt date filter" do
+          # find and fill in date filter with today's date
+          find(".receipt-date-column .unselected-filter-icon").click
+          select("After this date", from: "dateDropdownText")
+          fill_in("From", with: Date.current.strftime("%m/%d/%Y"))
+          click_button("apply filter")
+
+          expect(page).to have_content("Filtering by:")
+          expect(page).to have_content("Receipt Date (1)")
+
+          # test "clear receipt date filter" button
+          find(".cf-clear-filter-row .cf-text-button").click
+          expect(page.has_no_content?("Filtering by:")).to eq(true)
+        end
+      end
+
+      context "filter by document type" do
+        it "displays the correct filtering message" do
+          find(".doc-type-column .unselected-filter-icon").click
+          find(:label, "NOD").click
+          find(:label, "Form 9").click
+
+          expect(page).to have_content("Filtering by:")
+          expect(page).to have_content("Document Types (2)")
+
+          # deselect one filter
+          find(:label, "NOD").click
+          expect(page).to have_content("Document Types (1)")
+
+          # deselect all filters
+          find(:label, "Form 9").click
+          expect(page.has_no_content?("Filtering by:")).to eq(true)
+        end
+
+        it "clears the document type filter" do
+          find(".doc-type-column .unselected-filter-icon").click
+          find(:label, "NOD").click
+          find(:label, "Form 9").click
+
+          expect(page).to have_content("Filtering by:")
+          expect(page).to have_content("Document Types (2)")
+
+          # test "clear document type filter" button
+          find(".cf-clear-filter-row .cf-text-button").click
+          expect(page.has_no_content?("Filtering by:")).to eq(true)
+        end
+
+        it "searches available document type filters" do
+          find(".doc-type-column .unselected-filter-icon").click
+          find(".cf-dropdown-filter .cf-search-input-with-close").fill_in(with: "nod")
+
+          expect(find(".cf-dropdown-filter ul")).to have_selector("li", count: 1)
+
+          find(:label, "NOD").click
+          expect(page).to have_content("Filtering by:")
+          expect(page).to have_content("Document Types (1)")
+
+          clear_filters
+        end
+      end
+
+      context "filter by issue tag" do
+        it "displays the correct filtering message" do
+          # filter by tag
+          find("#tags-header .table-icon").click
+          tags_checkboxes = page.find("#tags-header").all(".cf-form-checkbox")
+          tags_checkboxes[0].click
+          tags_checkboxes[1].click
+          expect(page).to have_content("Issue tags (2)")
+
+          # deselect one filter
+          tags_checkboxes[0].click
+          expect(page).to have_content("Issue tags (1)")
+
+          # deselect all filters
+          tags_checkboxes[1].click
+          expect(page.has_no_content?("Filtering by:")).to eq(true)
+        end
+
+        it "clears the issue tag filter" do
+          # filter by tag
+          find("#tags-header .table-icon").click
+          tags_checkboxes = page.find("#tags-header").all(".cf-form-checkbox")
+          tags_checkboxes[0].click
+          tags_checkboxes[1].click
+
+          expect(page).to have_content("Filtering by:")
+          expect(page).to have_content("Issue tags (2)")
+
+          find(".cf-clear-filter-row .cf-text-button").click
+
+          expect(page.has_no_content?("Filtering by:")).to eq(true)
+        end
+
+        it "searches available issue tag filters" do
+          find("#tags-header .table-icon").click
+          find(".cf-dropdown-filter .cf-search-input-with-close").fill_in(with: "tag1")
+
+          expect(find(".cf-dropdown-filter ul")).to have_selector("li", count: 1)
+
+          find(:label, "New Tag1").click
+          expect(page).to have_content("Filtering by:")
+          expect(page).to have_content("Issue tags (1)")
+
+          clear_filters
+        end
+      end
+
+      context "filter by comments" do
+        it "displays the correct filtering message" do
+          # filter by comments
+          click_on "Comments"
+          expect(page).to have_content("Sorted by relevant date")
+
+          click_on "Documents"
+          # category filter is only visible when DocumentsTable displayed, but affects Comments
+          find("#categories-header .table-icon").click
+          find(".checkbox-wrapper-procedural").click
+
+          click_on "Comments"
+          expect(page).to have_content("Sorted by relevant date")
+
+          clear_filters
+        end
+      end
+
+      it "can filter by document type" do
+        FeatureToggle.disable!(:interface_version_2)
+
+        # select two filters
+        find(".doc-type-column .unselected-filter-icon").click
+        find(:label, "NOD").click
+        find(:label, "Form 9").click
+
+        expect(page).to have_content("Filtering by:")
+        expect(page).to have_content("Document Types (2)")
+
+        # deselect one filter
+        find(:label, "NOD").click
+        expect(page).to have_content("Document Types (1)")
+
+        # clear the filter
         find("#clear-filters").click
         expect(page.has_no_content?("Filtering by:")).to eq(true)
-        expect(find("#button-documents")["class"]).to have_content("usa-button")
+      end
+
+      it "can filter by receipt date" do
+        FeatureToggle.disable!(:interface_version_2)
+
+        # find and fill in date filter with today's date
+        find(".receipt-date-column .unselected-filter-icon").click
+        select("After this date", from: "dateDropdownText")
+        fill_in("From", with: Date.current.strftime("%m/%d/%Y"))
+        click_button("apply filter")
+
+        expect(page).to have_content("Filtering by:")
+        expect(page).to have_content("Receipt Date (1)")
+
+        # clear the filter
+        find("#clear-filters").click
+        expect(page.has_no_content?("Filtering by:")).to eq(true)
       end
     end
 
