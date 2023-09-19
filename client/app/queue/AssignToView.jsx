@@ -394,6 +394,9 @@ class AssignToView extends React.Component {
       modalProps.submitButtonClassNames = ['usa-button'];
     }
 
+    // modalProps.button = 'Notify';
+    modalProps.submitDisabled = false;
+
     return (
       <QueueFlowModal {...modalProps}>
         <p>{actionData.modal_body ? actionData.modal_body : ''}</p>
