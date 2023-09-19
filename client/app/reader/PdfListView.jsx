@@ -19,6 +19,13 @@ import { shouldFetchAppeal } from '../reader/utils';
 import { DOCUMENTS_OR_COMMENTS_ENUM } from './DocumentList/actionTypes';
 
 export class PdfListView extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      clearAllFiltersCallbacks: []
+    }
+  }
+
   componentDidMount() {
     if (shouldFetchAppeal(this.props.appeal, this.props.match.params.vacolsId)) {
       // if the appeal is fetched through case selected appeals, re-use that existing appeal
@@ -41,6 +48,10 @@ export class PdfListView extends React.Component {
     const noDocuments = !_.size(this.props.documents) && _.size(this.props.docFilterCriteria.searchQuery) > 0;
     let tableView;
 
+    const setClearAllFiltersCallbacks = (callbacks) => {
+      this.state.clearAllFiltersCallbacks = [...this.state.clearAllFiltersCallbacks, ...callbacks];
+    }
+
     if (noDocuments) {
       tableView = <NoSearchResults />;
     } else if (this.props.viewingDocumentsOrComments === DOCUMENTS_OR_COMMENTS_ENUM.COMMENTS) {
@@ -56,6 +67,7 @@ export class PdfListView extends React.Component {
         sortBy={this.props.sortBy}
         docFilterCriteria={this.props.docFilterCriteria}
         showPdf={this.props.showPdf}
+        setClearAllFiltersCallbacks={setClearAllFiltersCallbacks}
       />;
     }
 
@@ -75,6 +87,7 @@ export class PdfListView extends React.Component {
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}
+            clearAllFiltersCallbacks={this.state.clearAllFiltersCallbacks}
           />
           {tableView}
         </div>

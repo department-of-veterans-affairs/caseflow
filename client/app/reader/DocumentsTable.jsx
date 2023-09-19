@@ -314,7 +314,7 @@ class DocumentsTable extends React.Component {
 
     resetRecieptPicker = () => {
       this.props.setRecieptDateFilter({});
-      this.setState({ fromDate: '', toDate: '', onDate: '', fromDateErrors: [], toDateErrors: [], onDateErrors: [] });
+      this.setState({ recieptFilter: '', recieptFilterType: '', fromDate: '', toDate: '', onDate: '', fromDateErrors: [], toDateErrors: [], onDateErrors: [] });
     };
   getKeyForRow = (index, { isComment, id }) => {
     return isComment ? `${id}-comment` : id;
@@ -670,6 +670,8 @@ class DocumentsTable extends React.Component {
       this.props.annotationsPerDocument
     );
 
+    this.props.setClearAllFiltersCallbacks([this.resetRecieptPicker]);
+
     return (
       <div>
         <Table
@@ -712,7 +714,8 @@ DocumentsTable.propTypes = {
   setDocFilter: PropTypes.func,
   setDocTypes: PropTypes.func,
   clearDocFilters: PropTypes.func,
-  secretDebug: PropTypes.func
+  secretDebug: PropTypes.func,
+  setClearAllFiltersCallbacks: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = (dispatch) =>

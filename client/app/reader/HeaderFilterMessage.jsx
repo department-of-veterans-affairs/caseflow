@@ -9,6 +9,12 @@ import { clearAllFilters } from '../reader/DocumentList/DocumentListActions';
 import Button from '../components/Button';
 
 class HeaderFilterMessage extends React.PureComponent {
+  doClearAllFilters = () => {
+    // Call any passed clear functions for page elements
+    this.props.clearAllFiltersCallbacks.forEach((f) => f());
+    this.props.clearAllFilters();
+  }
+
   render() {
     const props = this.props;
 
@@ -38,7 +44,7 @@ class HeaderFilterMessage extends React.PureComponent {
           id="clear-filters"
           name="clear-filters"
           classNames={['cf-btn-link']}
-          onClick={props.clearAllFilters}
+          onClick={this.doClearAllFilters}
         >Clear all filters.</Button>
       </p>
     );
@@ -51,7 +57,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 HeaderFilterMessage.propTypes = {
   docFilterCriteria: PropTypes.object,
-  clearAllFilters: PropTypes.func.isRequired
+  clearAllFilters: PropTypes.func.isRequired,
+  clearAllFiltersCallbacks: PropTypes.array.isRequired
 };
 
 export default connect(null, mapDispatchToProps)(HeaderFilterMessage);
