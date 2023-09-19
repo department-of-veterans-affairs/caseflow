@@ -2,6 +2,7 @@
 
 class Api::V3::External::HigherLevelReviewSerializer
   include FastJsonapi::ObjectSerializer
-  attributes
+  set_type :higher_level_review
+  attributes *HigherLevelReview.column_names
   has_many :end_product_establishments, serializer: ::Api::V3::External::EndProductEstablishmentSerializer
 end
