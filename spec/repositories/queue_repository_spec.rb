@@ -224,13 +224,14 @@ describe QueueRepository, :all_dbs do
       QueueRepository.reassign_case_to_attorney!(
         judge: judge,
         attorney: attorney,
-        vacols_id: vacols_case.bfkey,
+        vacols_id: vacols_case.bfkey
         #created_in_vacols_date: date_added
       )
     end
 
     let(:judge) { User.create(css_id: "BAWS123", station_id: User::BOARD_STATION_ID) }
     let(:attorney) { User.create(css_id: "SAMD456", station_id: User::BOARD_STATION_ID) }
+
     let(:vacols_case) { create(:case, bfcurloc: judge_staff.slogid) }
     let!(:judge_staff) do
       create(:staff, :judge_role, slogid: "BVABAWS", sdomainid: judge.css_id)
@@ -240,8 +241,8 @@ describe QueueRepository, :all_dbs do
     end
 
     context "when vacols ID and date added are valid" do
-      let(:date_added) { "2018-04-18".to_date }
-      let!(:decass) { create(:decass, defolder: vacols_case.bfkey, deadtim: date_added) }
+      #let(:date_added) { "2018-04-18".to_date }
+      let!(:decass) { create(:decass, defolder: vacols_case.bfkey) }
 
       it "should assign a case to attorney" do
         expect(vacols_case.bfcurloc).to eq judge_staff.slogid
@@ -251,13 +252,12 @@ describe QueueRepository, :all_dbs do
         expect(vacols_case.bfattid).to eq attorney_staff.sattyid
         decass = VACOLS::Decass.where(defolder: vacols_case.bfkey).first
         expect(decass.present?).to eq true
-        binding.pry
-        expect(decass.deatty).to eq attorney_staff.sattyid
-        expect(decass.deteam).to eq attorney_staff.stitle[0..2]
-        expect(decass.demdusr).to eq judge_staff.slogid
-        expect(decass.deadtim).to eq date_added
-        expect(decass.dedeadline).to eq VacolsHelper.local_date_with_utc_timezone + 30.days
-        expect(decass.deassign).to eq VacolsHelper.local_time_with_utc_timezone
+       expect(decass.deatty).to eq attorney_staff.sattyid
+       expect(decass.deteam).to eq attorney_staff.stitle[0..2]
+       expect(decass.demdusr).to eq judge_staff.slogid
+       expect(decass.deadtim).to eq date_added
+       expect(decass.dedeadline).to eq VacolsHelper.local_date_with_utc_timezone + 30.days
+       expect(decass.deassign).to eq VacolsHelper.local_time_with_utc_timezone
       end
     end
 
