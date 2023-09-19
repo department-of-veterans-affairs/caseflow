@@ -230,6 +230,7 @@ const documentListReducer = (state = initialState, action = {}) => {
         document: {
           $set: {}
         },
+        recieptFilterType: { $set: '' },
         recieptFilterDates: {
           $set: {}
         }
