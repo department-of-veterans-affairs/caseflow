@@ -36,9 +36,11 @@ class SideBarIssueTags extends PureComponent {
         value: correctedTagSpelling,
         label: correctedTagSpelling,
         tagId: 14
-      }
-      tagArr.push( correctedTag )
-      return tagArr
+      };
+
+      tagArr.push(correctedTag);
+
+      return tagArr;
     };
 
     return (
