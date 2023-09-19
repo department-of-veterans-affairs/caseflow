@@ -14,15 +14,15 @@ export const VirtualHearingFields = (
   }
 
   const user = useContext(HearingsUserContext);
-  const meetingType = hearing.judge.meetingType;
-  const formattedMeetingType = meetingType.charAt(0).toUpperCase() + meetingType.slice(1);
+  const conferenceProvider = virtualHearing.conferenceProvider;
+  const formattedConferenceProvider = conferenceProvider.charAt(0).toUpperCase() + conferenceProvider.slice(1);
 
   return (
     <ContentSection
       header={`${hearing?.wasVirtual ? 'Previous ' : ''}Virtual Hearing Links`}
     >
       <div {...css({ marginTop: '1.5rem' })}>
-        <strong>{formattedMeetingType} Conference</strong>
+        <strong>{formattedConferenceProvider} Conference</strong>
       </div>
       <HearingLinks
         user={user}
