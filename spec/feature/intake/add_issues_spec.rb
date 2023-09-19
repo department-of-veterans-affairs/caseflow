@@ -568,12 +568,12 @@ feature "Intake Add Issues Page", :all_dbs do
         add_intake_rating_issue("osteomyelitis")
 
         # Expect untimely issue modal to show
-        # expect(page).to have_content("Issue 1 is an Untimely Issue")
-        # expect(page).to have_content(
-        #   "The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested"
-        # )
-        # find("label", text: "No").click
-        # safe_click ".add-issue"
+        expect(page).to have_content("Issue 1 is an Untimely Issue")
+        expect(page).to have_content(
+          "The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested"
+        )
+        find("label", text: "No").click
+        safe_click ".add-issue"
 
         expect(page).to have_content("PTSD denied is ineligible")
 
@@ -599,7 +599,7 @@ feature "Intake Add Issues Page", :all_dbs do
 
         # Expect legacy opt in issue modal to show
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-        add_intake_rating_issue("typhoid arthritis")
+        add_intake_rating_issue("lumbosacral strain")
         expect(page).to_not have_content("Issue 1 is an Untimely Issue")
       end
 
@@ -661,7 +661,7 @@ feature "Intake Add Issues Page", :all_dbs do
 
         # Expect legacy opt in issue modal to show
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-        add_intake_rating_issue("osteomyelitis")
+        add_intake_rating_issue("lumbosacral")
 
         # Expect untimely issue modal to show
         expect(page).to have_content("Issue 1 is an Untimely Issue")
@@ -695,7 +695,7 @@ feature "Intake Add Issues Page", :all_dbs do
 
         # Expect legacy opt in issue modal to show
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-        add_intake_rating_issue("typhoid arthritis")
+        add_intake_rating_issue("osteomyelitis")
 
         # Expect untimely issue modal to not show
         expect(page).to_not have_content("Issue 1 is an Untimely Issue")
