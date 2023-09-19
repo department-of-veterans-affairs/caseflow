@@ -35,16 +35,16 @@ module Seeds
 
 
     def create_legacy_tasks
-      Timecop.travel(50.days.ago)
+      Timecop.travel(65.days.ago)
         create_legacy_appeals('RO17', 20, 'decision_ready_hr')
       Timecop.return
 
-      Timecop.travel(40.days.ago)
-        create_legacy_appeals('RO17', 10, 'ready_for_dispatch')
+      Timecop.travel(50.days.ago)
+        create_legacy_appeals('RO17', 30, 'ready_for_dispatch')
       Timecop.return
     end
 
-    def create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, judge, attorney)
+    def create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, judge, attorney, workflow)
       # We need these retries because the sequence for FactoryBot comes out of
       # sync with what's in the DB. This just essentially updates the FactoryBot
       # sequence to match what's in the DB.
@@ -99,7 +99,7 @@ module Seeds
         closest_regional_office: regional_office
       )
       create(:available_hearing_locations, regional_office, appeal: legacy_appeal)
-      create_tasks_for_legacy_appeals(legacy_appeal, attorney, judge, 'ready_for_dispatch')
+      create_tasks_for_legacy_appeals(legacy_appeal, attorney, judge, workflow)
 
       # Return the legacy_appeal
       legacy_appeal
@@ -108,13 +108,7 @@ module Seeds
     def create_tasks_for_legacy_appeals(appeal, attorney, judge, workflow)
       # Will need a judge user for judge decision review task and an attorney user for the subsequent Attorney Task
       root_task = RootTask.find_or_create_by!(appeal: appeal)
-      if workflow === 'ready_for_dispatch'
-        review_task = JudgeDecisionReviewTask.create!(
-          appeal: appeal,
-          parent: root_task,
-          assigned_to: judge
-        )
-      elsif workflow === 'decision_ready_hr'
+      if workflow === 'decision_ready_hr'
         review_task = JudgeDecisionReviewTask.create!(
           appeal: appeal,
           parent: root_task,
@@ -123,8 +117,15 @@ module Seeds
         AttorneyTask.create!(
           appeal: appeal,
           parent: review_task,
-          assigned_to: user,
+          assigned_to: attorney,
           assigned_by: judge
+        )
+      end
+      if workflow === 'ready_for_dispatch'
+        review_task = JudgeDecisionReviewTask.create!(
+          appeal: appeal,
+          parent: root_task,
+          assigned_to: judge
         )
       end
     end
@@ -147,11 +148,12 @@ module Seeds
         type = offset.even? ? "travel" : "video"
 
         if(workflow === 'decision_ready_hr')
-          legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, judge, attorney)
+          legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, judge, attorney, workflow)
           # Create the task tree, need to create each task like this to avoid user creation and index conflicts
           create_legacy_appeals_decision_ready_hr(legacy_appeal, judge, attorney)
-        elsif(workflow === 'ready_for_dispatch')
-          legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, judge, attorney)
+        end
+        if(workflow === 'ready_for_dispatch')
+          legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, judge, attorney, workflow)
           # Create the task tree, need to create each task like this to avoid user creation and index conflicts
           create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, judge, attorney)
         end
@@ -213,18 +215,7 @@ module Seeds
         attorney: attorney,
         task_id: task_id,
         location: "bva_dispatch",
-        issues: [
-          { disposition: :remanded,
-            readable_disposition: "Remanded",
-            close_date: 1.days.ago,
-            vacols_sequence_id: 1
-          },
-          { disposition: :remanded,
-            readable_disposition: "Remanded",
-            close_date: 1.days.ago,
-            vacols_sequence_id: 1
-          },
-        ]
+        issues: []
       )
     end
   end
