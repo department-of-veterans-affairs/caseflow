@@ -30,6 +30,17 @@ class SideBarIssueTags extends PureComponent {
       }
     };
 
+    let spellingCorrection = (currentTagOptions, correctedTagSpelling) => {
+      let tagArr = generateOptionsFromTags(currentTagOptions)
+      let correctedTag = {
+        value: correctedTagSpelling,
+        label: correctedTagSpelling,
+        tagId: 14
+      }
+      tagArr.push( correctedTag )
+      return tagArr
+    };
+
     return (
       <div className="cf-issue-tag-sidebar">
         {this.props.error.tag.visible && <CannotSaveAlert />}
@@ -40,7 +51,7 @@ class SideBarIssueTags extends PureComponent {
           multi
           dropdownStyling={{ position: 'relative' }}
           creatable
-          options={generateOptionsFromTags(this.props.tagOptions)}
+          options={spellingCorrection(this.props.tagOptions, "POW")}
           placeholder=""
           value={generateOptionsFromTags(doc.tags)}
           onChange={onChange}
