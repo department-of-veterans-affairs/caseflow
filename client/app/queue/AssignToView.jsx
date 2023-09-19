@@ -382,6 +382,7 @@ class AssignToView extends React.Component {
 
     if (isPulacCerullo) {
       modalProps.button = 'Notify';
+      modalProps.submitDisabled = false;
     }
 
     if ([
@@ -394,8 +395,7 @@ class AssignToView extends React.Component {
       modalProps.submitButtonClassNames = ['usa-button'];
     }
 
-    // modalProps.button = 'Notify';
-    modalProps.submitDisabled = false;
+   
 
     return (
       <QueueFlowModal {...modalProps}>
