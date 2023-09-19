@@ -225,10 +225,23 @@ class HearingDay < CaseflowRecord
     scheduled_for < Date.current
   end
 
+  def soft_link_removal
+    return unless conference_link
+
+    if conference_link
+      conference_link.update!(update_conf_links)
+      conference_link.destroy
+    end
+  end
+
   private
 
-  def cleanup_conference_links
-    VirtualHearings::DeleteConferenceLinkJob.new.perform
+  def update_conf_links
+    {
+      conference_deleted: true,
+      updated_by_id: RequestStore[:current_user] = User.system_user,
+      updated_at: Time.zone.now
+    }
   end
 
   def assign_created_by_user
