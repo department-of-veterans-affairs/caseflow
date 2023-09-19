@@ -50,7 +50,10 @@ class DocumentListHeader extends React.Component {
         </div>
         <DocumentsCommentsButton />
       </div>
-      <HeaderFilterMessage docFilterCriteria={props.docFilterCriteria} />
+      <HeaderFilterMessage
+        docFilterCriteria={props.docFilterCriteria}
+        clearAllFiltersCallbacks={props.clearAllFiltersCallbacks}
+      />
     </div>;
   }
 }
@@ -62,7 +65,8 @@ DocumentListHeader.propTypes = {
   clearSearch: PropTypes.func,
   docFilterCriteria: PropTypes.object,
   numberOfDocuments: PropTypes.number.isRequired,
-  vacolsId: PropTypes.string
+  vacolsId: PropTypes.string,
+  clearAllFiltersCallbacks: PropTypes.array.isRequired
 };
 
 const mapStateToProps = (state) => ({
