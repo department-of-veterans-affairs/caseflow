@@ -13,15 +13,31 @@ import Alert from 'app/components/Alert';
  * Issue Tags Component for searching Document Issue Tags
  * @param {Object} props -- Contains details to search for document tags
  */
-export const IssueTags = ({ errors, pendingTag, changeTags, tagOptions, handleTagEdit, autoTaggingEnabled, generateTags, currentDocument, canManuallyAutoTag }) => {
-  const { auto_tagged, isAutoTagPending } = currentDocument
-  const isVisible = autoTaggingEnabled && canManuallyAutoTag && !auto_tagged
+export const IssueTags = ({
+  errors,
+  pendingTag,
+  changeTags,
+  tagOptions,
+  handleTagEdit,
+  autoTaggingEnabled,
+  generateTags,
+  currentDocument,
+  canManuallyAutoTag
+}) => {
+  const { autoTagged, isAutoTagPending } = currentDocument;
+  const isVisible = autoTaggingEnabled && canManuallyAutoTag && !autoTagged;
+
   return (
     <div className="cf-issue-tag-sidebar">
       {isAutoTagPending && <Alert type="info" message="Auto-tags generating. Please wait a moment." />}
       {errors?.tag?.visible && <CannotSaveAlert />}
       {isVisible && <span className="cf-right-side cf-generate-tag-button">
-        <Button onClick={generateTags} role="button" disabled={auto_tagged || isAutoTagPending}>Generate auto-tags</Button>
+        <Button
+          onClick={generateTags}
+          role="button"
+          disabled={autoTagged || isAutoTagPending}>
+          Generate auto-tags
+        </Button>
       </span>}
       <SearchableDropdown
         creatableOptions={{ onFocus: handleTagEdit('focus'), onBlur: handleTagEdit('blur') }}
@@ -49,5 +65,6 @@ IssueTags.propTypes = {
   tagOptions: PropTypes.array,
   currentDocument: PropTypes.object,
   autoTaggingEnabled: PropTypes.bool,
+  generateTags: PropTypes.func,
   canManuallyAutoTag: PropTypes.bool
 };
