@@ -52,7 +52,7 @@ class HearingDay < CaseflowRecord
   before_create :assign_created_by_user
   after_update :update_children_records
   after_create :generate_link_on_create
-  before_destroy :cleanup_conference_links
+  before_destroy :soft_link_removal
 
   # Validates if the judge id maps to an actual record.
   validates :judge, presence: true, if: -> { judge_id.present? }
