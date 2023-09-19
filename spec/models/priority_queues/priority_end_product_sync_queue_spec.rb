@@ -171,19 +171,36 @@ describe PriorityEndProductSyncQueue, :postgres do
         found_record = CaseflowStuckRecord.find_by(stuck_record: record)
         expect(record.caseflow_stuck_records).to include(found_record)
       end
+    end
+  end
 
-      it "a message will be sent to Sentry" do
-        expect(Raven).to have_received(:capture_message)
-          .with("StuckRecordAlert::SyncFailed End Product Establishment ID: #{record.end_product_establishment_id}.",
-                extra: {
-                  batch_id: record.batch_id,
-                  batch_process_type: record.batch_process.class.name,
-                  caseflow_stuck_record_id: record.caseflow_stuck_records.first.id,
-                  determined_stuck_at: anything,
-                  end_product_establishment_id: record.end_product_establishment_id,
-                  queue_type: record.class.name,
-                  queue_id: record.id
-                }, level: "error")
+  describe "#self.destroy_batch_process_pepsq_records!(batch_process)" do
+    let!(:bp) { PriorityEpSyncBatchProcess.create }
+
+    let!(:synced_records) { create_list(:priority_end_product_sync_queue, 2, :synced, batch_id: bp.batch_id) }
+    let!(:error_record) { create(:priority_end_product_sync_queue, :error, batch_id: bp.batch_id) }
+
+    subject { PriorityEndProductSyncQueue.destroy_batch_process_pepsq_records!(bp) }
+
+    context "when priority_ep_sync_batch_process destroys synced pepsq records" do
+      before do
+        allow(Rails.logger).to receive(:info)
+        subject
+      end
+
+      it "should delete the synced PEPSQ records from the pepsq table" do
+        expect(PriorityEndProductSyncQueue.all.include?(synced_records)).to be false
+      end
+
+      it "should NOT delete errored PEPSQ records from the pepsq table" do
+        expect(PriorityEndProductSyncQueue.all.include?(error_record)).to be true
+      end
+
+      it "should log a message with the number of deleted records and the deleted record's ID" do
+        expect(Rails.logger).to have_received(:info).with(
+          "PriorityEpSyncBatchProcessJob #{synced_records.size} synced records deleted:"\
+          " [#{synced_records[0].id}, #{synced_records[1].id}]  Time: #{Time.zone.now}"
+        )
       end
     end
   end

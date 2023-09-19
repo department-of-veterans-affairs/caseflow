@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 import React from 'react';
+import Select from 'react-select';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
@@ -39,6 +40,7 @@ import FilterIcon from '../components/icons/FilterIcon';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
 import DocTagPicker from './DocTagPicker';
+import ReactSelectDropdown from '../components/ReactSelectDropdown';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -188,20 +190,20 @@ class DocumentsTable extends React.Component {
     }
   }
 
- constructor() {
-   super();
-   this.state = {
-     recieptFilter: '',
-     fromDate: '',
-     toDate: '',
-     onDate: '',
-     fromDateErrors: [],
-     toDateErrors: [],
-     onDateErrors: [],
-     recipetFilterEnabled: true,
-     fallbackState: ''
-   };
- }
+  constructor() {
+    super();
+    this.state = {
+      recieptFilter: '',
+      fromDate: '',
+      toDate: '',
+      onDate: '',
+      fromDateErrors: [],
+      toDateErrors: [],
+      onDateErrors: [],
+      recipetFilterEnabled: true,
+      fallbackState: ''
+    };
+  }
 
  executeRecieptFilter = () => {
    const toErrors = this.validateDateTo(this.state.toDate);
@@ -339,10 +341,10 @@ class DocumentsTable extends React.Component {
     const anyDateFiltersAreSet = anyFiltersSet('receiptDate');
 
     const dateDropdownMap = [
-      { value: 0, displayText: 'Between these dates' },
-      { value: 1, displayText: 'Before this date' },
-      { value: 2, displayText: 'After this date' },
-      { value: 3, displayText: 'On this date' }
+      { value: 0, label: 'Between these dates' },
+      { value: 1, label: 'Before this date' },
+      { value: 2, label: 'After this date' },
+      { value: 3, label: 'On this date' }
     ];
 
     // We have blank headers for the comment indicator and label indicator columns.
@@ -424,7 +426,7 @@ class DocumentsTable extends React.Component {
         ariaLabel: 'categories-header-label',
         header: (
           <div id="categories-header">
-            <span id="categories-header-label">
+            <span id="categories-header-label" className="table-header-label">
               Categories
             </span>
             <FilterIcon
@@ -463,24 +465,24 @@ class DocumentsTable extends React.Component {
         header: (
           <div style={{ minWidth: '250px' }}>
             <Button
-              styling={{ 'aria-roledescription': 'sort button' }}
+              styling={{ 'aria-roledescription': 'sort button', style: { display: 'inline' } }}
               name="Receipt Date"
               id="receipt-date-header"
               classNames={['cf-document-list-button-header']}
               onClick={() => this.props.changeSortState('receivedAt')}
             >
-              <span id="receipt-date-header-label">Receipt Date</span>
+              <span id="receipt-date-header-label" className="table-header-label">Receipt Date</span>
               {this.props.docFilterCriteria.sort.sortBy === 'receivedAt' ?
                 sortArrowIcon :
                 notSortedIcon}
             </Button>
-            <FilterIcon
+            {this.props.featureToggles.readerSearchImprovements && <FilterIcon
               label="Filter by dates"
               idPrefix="receiptDate"
               getRef={this.getreceiptDateFilterIconRef}
               selected={isRecipetDateFilterOpen || anyDateFiltersAreSet}
               handleActivate={this.toggleRecieptDataDropdownFilterVisibility}
-            />
+            />}
             {isRecipetDateFilterOpen && (
               <div style={{
                 position: 'relative',
@@ -495,15 +497,12 @@ class DocumentsTable extends React.Component {
                 >
                   <div>
                     <div style={{ padding: '0px 30px' }}>
-                      <Dropdown
-                        name="dateDropdownText"
+                      <ReactSelectDropdown
                         options={dateDropdownMap}
+                        defaultValue={dateDropdownMap[this.state.recieptFilter]}
                         label="Date filter parameters"
-                        value="dateDropdownVal"
-                        onChange={(newKey) => this.updateRecieptFilter(newKey)}
-                        defaultText={this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED ? 'Select...' :
-                          dateDropdownMap[this.state.recieptFilter].displayText}
-                        defaultValue="On this date"
+                        onChangeMethod={(selectedOption) => this.updateRecieptFilter(selectedOption.value)}
+                        featureToggles={this.props.featureToggles}
                       />
                       {
                         (this.state.recieptFilter === recieptDateFilterStates.BETWEEN || this.state.recieptFilter === recieptDateFilterStates.FROM) &&
@@ -530,10 +529,14 @@ class DocumentsTable extends React.Component {
                       {this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED && <DateSelector readOnly type="date" name="Receipt date"
                         onChange={this.validateDateIsAfter} comment="This is a read only component used as a dummy" />}
 
-                      {(this.state.recieptFilter === recieptDateFilterStates.ON) && this.state.onDateErrors.map((error) =>
-                        <p style={{ color: 'red' }}>{error}</p>)}
-                      {this.state.recieptFilter === recieptDateFilterStates.ON && <DateSelector value={this.state.onDate} type="date"
-                        name="" onChange={this.setOnDate} />}
+                      {this.state.recieptFilter === recieptDateFilterStates.ON &&
+                        <DateSelector
+                          value={this.state.onDate}
+                          type="date"
+                          name={this.state.recieptFilter === recieptDateFilterStates.BETWEEN ? 'On' : ''}
+                          onChange={this.setOnDate}
+                          errorMessage={this.errorMessagesNode(this.state.onDateErrors, 'onDate')}
+                        />}
                     </div>
 
                     <div>
@@ -567,24 +570,24 @@ class DocumentsTable extends React.Component {
           <>
             <Button
               id="type-header"
-              styling={{ 'aria-roledescription': 'sort button' }}
+              styling={{ 'aria-roledescription': 'sort button', style: { display: 'inline' } }}
               name="Document Type"
               classNames={['cf-document-list-button-header']}
               onClick={() => this.props.changeSortState('type')}
             >
-              <span id="type-header-label">Document Type</span>
+              <span id="type-header-label" className="table-header-label">Document Type</span>
 
               {this.props.docFilterCriteria.sort.sortBy === 'type' ?
                 sortArrowIcon :
                 notSortedIcon}
             </Button>
-            <FilterIcon
+            {this.props.featureToggles.readerSearchImprovements && <FilterIcon
               label="Filter by Document"
               idPrefix="document"
               getRef={this.getDocumentFilterIconRef}
               selected={isDocumentDropdownFilterOpen}
               handleActivate={this.toggleDocumentDropdownFilterVisiblity}
-            />
+            />}
             {isDocumentDropdownFilterOpen && (
               <div style={{ position: 'relative', right: '14vw' }}>
                 <DropdownFilter
@@ -599,6 +602,8 @@ class DocumentsTable extends React.Component {
                     tagToggleStates={this.props.docFilterCriteria.document}
                     handleTagToggle={this.props.setDocFilter}
                     defaultSearchText="Type to search..."
+                    featureToggles={this.props.featureToggles}
+
                   />
                 </DropdownFilter>
               </div>
@@ -618,7 +623,7 @@ class DocumentsTable extends React.Component {
         ariaLabel: 'tag-header-label',
         header: (
           <div id="tags-header" className="document-list-header-issue-tags">
-            <span id="tag-header-label">
+            <span id="tag-header-label" className="table-header-label">
               Issue Tags
             </span>
             <FilterIcon
@@ -642,6 +647,7 @@ class DocumentsTable extends React.Component {
                     tagToggleStates={this.props.docFilterCriteria.tag}
                     handleTagToggle={this.props.setTagFilter}
                     defaultSearchText="Type to search..."
+                    featureToggles={this.props.featureToggles}
                   />
                 </DropdownFilter>
               </div>
@@ -655,7 +661,7 @@ class DocumentsTable extends React.Component {
       {
         cellClass: 'comments-column',
         header: (
-          <div id="comments-header" className="document-list-header-comments">
+          <div id="comments-header" className="document-list-header-comments table-header-label">
             Comments
           </div>
         ),
@@ -715,7 +721,8 @@ DocumentsTable.propTypes = {
   setDocTypes: PropTypes.func,
   clearDocFilters: PropTypes.func,
   secretDebug: PropTypes.func,
-  setClearAllFiltersCallbacks: PropTypes.func.isRequired
+  setClearAllFiltersCallbacks: PropTypes.func.isRequired,
+  featureToggles: PropTypes.object
 };
 
 const mapDispatchToProps = (dispatch) =>
