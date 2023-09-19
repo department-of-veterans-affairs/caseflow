@@ -110,11 +110,15 @@ class HearingRequestMailTask < MailTask
   # Return: Boolean for if the tasks have been updated
   def update_self_and_parent_mail_task(user:, params:)
     updated_instructions = format_instructions_on_completion(params)
-    update!(
-      completed_by: user,
-      status: Constants.TASK_STATUSES.completed,
-      instructions: updated_instructions
-    )
+    begin
+      update!(
+        completed_by: user,
+        status: Constants.TASK_STATUSES.completed,
+        instructions: updated_instructions
+      )
+    rescue StandardError => error
+      log_error(error)
+    end
     update_parent_status
   end
 end

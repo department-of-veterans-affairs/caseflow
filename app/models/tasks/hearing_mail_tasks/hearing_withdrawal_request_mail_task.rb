@@ -112,11 +112,15 @@ class HearingWithdrawalRequestMailTask < HearingRequestMailTask
   def cancel_hearing_related_mail_tasks
     return if open_hearing_related_mail_tasks.empty?
 
-    open_hearing_related_mail_tasks.update_all(
-      status: Constants.TASK_STATUSES.cancelled,
-      cancelled_by_id: RequestStore[:current_user]&.id,
-      closed_at: Time.zone.now
-    )
+    begin
+      open_hearing_related_mail_tasks.update_all(
+        status: Constants.TASK_STATUSES.cancelled,
+        cancelled_by_id: RequestStore[:current_user]&.id,
+        closed_at: Time.zone.now
+      )
+    rescue StandardError => error
+      log_error(error)
+    end
   end
 
   # Purpose: Grabs any active HearingRelatedMailTasks on appeal
