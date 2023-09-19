@@ -27,11 +27,24 @@ class SideBarIssueTags extends PureComponent {
         this.props.removeTag(doc, result);
       } else if (values && values.length) {
         this.props.addNewTag(doc, values);
+        console.log("Hello")
       }
+
+    };
+    let spellingCorrection = (currentTagOptions, correctedTagSpelling) => {
+      let tagArr = generateOptionsFromTags(currentTagOptions)
+      let correctedTag = {
+        value: correctedTagSpelling,
+        label: correctedTagSpelling,
+        tagId: 14
+      }
+      tagArr.push( correctedTag )
+      return tagArr
     };
 
     return (
       <div className="cf-issue-tag-sidebar">
+        {console.log(spellingCorrection(this.props.tagOptions, "POW"))}
         {this.props.error.tag.visible && <CannotSaveAlert />}
         <SearchableDropdown
           key={doc.id}
@@ -40,11 +53,12 @@ class SideBarIssueTags extends PureComponent {
           multi
           dropdownStyling={{ position: 'relative' }}
           creatable
-          options={generateOptionsFromTags(this.props.tagOptions)}
+          options={spellingCorrection(this.props.tagOptions, "POW")}
           placeholder=""
           value={generateOptionsFromTags(doc.tags)}
           onChange={onChange}
-        />
+          />
+          {console.log(this.props)}
       </div>
     );
   }
