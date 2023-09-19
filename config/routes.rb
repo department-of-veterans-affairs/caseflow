@@ -49,6 +49,9 @@ Rails.application.routes.draw do
         resources :intake_statuses, only: :show
         get 'legacy_appeals', to: "legacy_appeals#index"
       end
+      namespace :external do
+        post 'veterans/:veteran_id', to: 'veterans#decision_reviews'
+      end
     end
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do
