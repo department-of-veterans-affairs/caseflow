@@ -24,8 +24,8 @@ export const IssueTags = ({
   currentDocument,
   canManuallyAutoTag
 }) => {
-  const { autoTagged, isAutoTagPending } = currentDocument;
-  const isVisible = autoTaggingEnabled && canManuallyAutoTag && !autoTagged;
+  const { isAutoTagPending } = currentDocument;
+  const isVisible = autoTaggingEnabled && canManuallyAutoTag && !currentDocument.auto_tagged;
 
   return (
     <div className="cf-issue-tag-sidebar">
@@ -35,7 +35,7 @@ export const IssueTags = ({
         <Button
           onClick={generateTags}
           role="button"
-          disabled={autoTagged || isAutoTagPending}>
+          disabled={currentDocument.auto_tagged || isAutoTagPending}>
           Generate auto-tags
         </Button>
       </span>}

@@ -17,7 +17,6 @@ const documentsReducer = (state = initialState, action = {}) => {
         receivedAt: doc.received_at,
         listComments: false,
         wasUpdated: !isNil(doc.previous_document_version_id) && !doc.opened_by_current_user,
-        autoTagged: doc.auto_tagged
       }
     ])
     );

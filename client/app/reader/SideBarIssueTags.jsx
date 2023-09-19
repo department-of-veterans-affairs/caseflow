@@ -13,8 +13,8 @@ import Alert from '../components/Alert';
 class SideBarIssueTags extends PureComponent {
   render() {
     const { doc, featureToggles } = this.props;
-    const { autoTagged, isAutoTagPending } = doc;
-    const isVisible = featureToggles.auto_tagging_ability && featureToggles.can_manually_auto_tag && !autoTagged;
+    const { isAutoTagPending } = doc;
+    const isVisible = featureToggles.auto_tagging_ability && featureToggles.can_manually_auto_tag && !doc.auto_tagged;
 
     let generateOptionsFromTags = (tags) =>
       map(reject(tags, 'pendingRemoval'), (tag) => ({
@@ -42,7 +42,7 @@ class SideBarIssueTags extends PureComponent {
           <Button
             onClick={() => this.props.generateTags(doc)}
             role="button"
-            disabled={autoTagged || isAutoTagPending}
+            disabled={doc.auto_tagged || isAutoTagPending}
           >
             Generate auto-tags
           </Button>
