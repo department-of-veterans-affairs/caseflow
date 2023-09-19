@@ -29,10 +29,6 @@ TagSelector.propTypes = {
   searchOnChange: PropTypes.func
 };
 
-// const updateFilterTextState = (newState) => {
-//   this.setState({ filterText: newState });
-// };
-
 const tagListStyling = css({
   paddingBottom: 0,
   margin: 0,
@@ -53,9 +49,8 @@ const tagListItemStyling = css({
   }
 });
 
-const DocTagPicker = ({ tags, tagToggleStates, handleTagToggle,
-
-  dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {
+const DocTagPicker = ({ tags, tagToggleStates, handleTagToggle, defaultSearchText,
+  dropdownFilterViewListStyle, dropdownFilterViewListItemStyle, featureToggles }) => {
   const [filterText, updateFilterText] = useState('');
 
   const getFilteredData = () => {
@@ -70,10 +65,12 @@ const DocTagPicker = ({ tags, tagToggleStates, handleTagToggle,
   };
 
   return (
+
     <div style={{ width: '217px' }}>
-      <div style={{width: '300px'}}>
-        <SearchBar onChange={updateFilterText} value={filterText} disableClearSearch isSearchAhead />
-      </div>
+      {featureToggles.readerSearchImprovements && <div style={{width: '300px'}}>
+        <SearchBar onChange={updateFilterText} value={filterText} placeholder={defaultSearchText}
+          disableClearSearch isSearchAhead />
+      </div> }
       <ul {...dropdownFilterViewListStyle} {...tagListStyling}>
         {getFilteredData().map((tag, index) => {
           return <li key={index} {...dropdownFilterViewListItemStyle} {...tagListItemStyling}>
@@ -91,7 +88,12 @@ const DocTagPicker = ({ tags, tagToggleStates, handleTagToggle,
 DocTagPicker.propTypes = {
   handleTagToggle: PropTypes.func.isRequired,
   tagToggleStates: PropTypes.object,
-  searchOnChange: PropTypes.func
+  searchOnChange: PropTypes.func,
+  defaultSearchText: PropTypes.string,
+  tags: PropTypes.array,
+  dropdownFilterViewListStyle: PropTypes.object,
+  dropdownFilterViewListItemStyle: PropTypes.object,
+  featureToggles: PropTypes.object
 };
 
 export default DocTagPicker;
