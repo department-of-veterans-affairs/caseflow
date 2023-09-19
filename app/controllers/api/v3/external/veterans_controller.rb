@@ -9,6 +9,6 @@ class Api::V3::External::VeteransController < Api::V3::BaseController
   private
 
   def json_decision_review_details
-    ::Api::V3::External::VeteranSerializer.new(@veteran).serialized_json
+    ::Api::V3::External::VeteranSerializer.new(@veteran)
   end
 end
