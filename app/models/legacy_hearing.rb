@@ -79,6 +79,8 @@ class LegacyHearing < CaseflowRecord
   accepts_nested_attributes_for :hearing_location, reject_if: proc { |attributes| attributes.blank? }
   accepts_nested_attributes_for :email_recipients, reject_if: proc { |attributes| attributes.blank? }
 
+  derives_conference_provider_from :created_by
+
   # this is used to cache appeal stream for hearings
   # when fetched intially.
   has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots

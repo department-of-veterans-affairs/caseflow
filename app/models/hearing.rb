@@ -56,6 +56,8 @@ class Hearing < CaseflowRecord
   accepts_nested_attributes_for :hearing_location, reject_if: proc { |attributes| attributes.blank? }
   accepts_nested_attributes_for :email_recipients, reject_if: proc { |attributes| attributes.blank? }
 
+  derives_conference_provider_from :created_by
+
   alias_attribute :location, :hearing_location
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
