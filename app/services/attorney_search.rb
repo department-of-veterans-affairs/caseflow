@@ -72,4 +72,6 @@ class AttorneySearch
     threshold = fuzzy_matched_results[0][1] * RELATIVE_SCORE_THRESHOLD
     fuzzy_matched_results.select { |res| res[1] >= threshold }.map(&:first)
   end
+
+
 end

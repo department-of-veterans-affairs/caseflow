@@ -35,6 +35,7 @@ import {
   toggleKeyboardInfo,
   addTag,
   removeTag,
+  generateAutoTags,
   clearSearch,
   toggleTagEdit
 } from 'store/reader/documentViewer';
@@ -89,6 +90,9 @@ const DocumentViewer = (props) => {
       }
 
       return dispatch(toggleTagEdit(false));
+    },
+    generateTags: () => {
+      dispatch(generateAutoTags({doc: state.currentDocument}))
     },
     changeTags: (values, deleted) => {
       // Delete tags if there are any removed
