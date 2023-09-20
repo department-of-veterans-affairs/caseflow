@@ -60,6 +60,7 @@ class EstablishmentTask < Task
     return special_issue_status + " MST" if mst_status
     return special_issue_status + " PACT" if pact_status
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def create_special_issue_changes_record(issue)
     # create SpecialIssueChange record to log the changes
