@@ -11,6 +11,7 @@ import { FormLabel } from './FormLabel';
 const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
 const DEFAULT_PLACEHOLDER = 'Select option';
+let valueToCheck = '';
 
 const customStyles = {
   input: () => ({
@@ -29,7 +30,8 @@ const fetchSpellingCorrection = (misspelledText) => {
       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken }
     }).then((response) => response.json()).
     then((data) => {
-      if (data != null) {
+      console.log({ label: data.suggested_spelling, tagId: null, value: data.suggested_spelling });
+      if (data !== null) {
         return [{ label: data.suggested_spelling, tagId: null, value: data.suggested_spelling }];
       }
 
@@ -40,8 +42,8 @@ const fetchSpellingCorrection = (misspelledText) => {
 
 const CustomMenuList = (props) => {
   // const fuzzyResult = fetchSpellingCorrection(props.selectProps.inputValue);
-  console.log(this);
 
+  // valueToCheck
   // console.log(props.selectProps.updateFuzzyValue('fuzzyResult'));
   // props.updateFuzzyValue(fuzzyResult)
   const innerProps = {
@@ -50,6 +52,13 @@ const CustomMenuList = (props) => {
     role: 'listbox',
     'aria-label': `${kebabCase(props.selectProps.name)}-listbox`,
   };
+
+  // console.log(<components.MenuList {...props} innerProps={innerProps} />);
+  // console.log(props.selectProps.inputValue);
+  valueToCheck = props.selectProps.inputValue;
+  console.log(valueToCheck);
+  fetchSpellingCorrection(valueToCheck);
+  console.log(fetchSpellingCorrection({ value: valueToCheck, label: valueToCheck, tagId: null }));
 
   return <components.MenuList {...props} innerProps={innerProps} />;
 };
