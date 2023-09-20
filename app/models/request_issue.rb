@@ -929,12 +929,12 @@ class RequestIssue < CaseflowRecord
   end
 
   def issue_eligible_for_opt_in?
-    vacols_issue.eligible_for_opt_in?
+    vacols_issue.eligible_for_opt_in?(covid_flag: covid_timeliness_exempt)
   end
 
   def legacy_appeal_eligible_for_opt_in?
     vacols_issue.legacy_appeal.eligible_for_opt_in?(
-      receipt_date: decision_review.receipt_date
+      receipt_date: decision_review.receipt_date, covid_flag: covid_timeliness_exempt
     )
   end
 

@@ -773,15 +773,17 @@ class LegacyAppeal < CaseflowRecord
     return false unless issues.any?
     return true if active?
 
-    eligible_for_opt_in?(receipt_date: receipt_date)
+    covid_flag = true
+
+    eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: covid_flag)
   end
 
-  def eligible_for_opt_in?(receipt_date:)
+  def eligible_for_opt_in?(receipt_date:, covid_flag: false)
     return false unless receipt_date
     return false unless soc_date
 
-    soc_eligible_for_opt_in?(receipt_date: receipt_date) ||
-      nod_eligible_for_opt_in?(receipt_date: receipt_date)
+    soc_eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: covid_flag) ||
+      nod_eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: covid_flag)
   end
 
   def serializer_class
@@ -915,15 +917,14 @@ class LegacyAppeal < CaseflowRecord
 
   private
 
-  def soc_eligible_for_opt_in?(receipt_date:)
+  def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)
     return false unless soc_date
 
     # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
     all_dates = ([soc_date] + ssoc_dates).compact
 
     latest_soc_date = all_dates.max
-
-    return true if latest_soc_date >= Constants::DATES["SOC_COVID_ELIGIBLE"].to_date
+    return true if covid_flag && latest_soc_date >= Constants::DATES["SOC_COVID_ELIGIBLE"].to_date
     return false if latest_soc_date < Constants::DATES["AMA_ACTIVATION"].to_date
 
     eligible_until = self.class.next_available_business_day(latest_soc_date + 61.days)
@@ -931,12 +932,11 @@ class LegacyAppeal < CaseflowRecord
     eligible_until >= receipt_date
   end
 
-  def nod_eligible_for_opt_in?(receipt_date:)
+  def nod_eligible_for_opt_in?(receipt_date:, covid_flag: false)
     return false unless nod_date
 
     nod_eligible = receipt_date - 372.days
-
-    eligible_date = [nod_eligible, Constants::DATES["NOD_COVID_ELIGIBLE"].to_date].min
+    eligible_date = covid_flag ? [nod_eligible, Constants::DATES["NOD_COVID_ELIGIBLE"].to_date].min : nod_eligible
     earliest_eligible_date = [eligible_date, Constants::DATES["AMA_ACTIVATION"].to_date].max
 
     nod_date >= earliest_eligible_date
