@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CaseTimelineInstructionSet
   attr_reader :change_type,
               :issue_category,
@@ -9,6 +11,7 @@ class CaseTimelineInstructionSet
               :mst_edit_reason,
               :pact_edit_reason
 
+  # rubocop:disable Metrics/ParameterLists
   def initialize(
     change_type:,
     issue_category:,
@@ -19,7 +22,7 @@ class CaseTimelineInstructionSet
     edit_pact: nil,
     mst_edit_reason: nil,
     pact_edit_reason: nil
-    )
+  )
     @change_type = change_type
     @issue_category = issue_category
     @benefit_type = benefit_type
@@ -30,4 +33,5 @@ class CaseTimelineInstructionSet
     @mst_edit_reason = mst_edit_reason
     @pact_edit_reason = pact_edit_reason
   end
+  # rubocop:enable Metrics/ParameterLists
 end

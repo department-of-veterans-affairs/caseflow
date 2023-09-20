@@ -46,7 +46,7 @@ SuccessAlert.propTypes = {
 
 // method to list MST/PACT edits
 const listChanges = (editList) => {
-  const divStyle = { margin: '.1rem'};
+  const divStyle = { margin: '.1rem' };
 
   return editList.map((value) => <div style={divStyle}><li>{value}</li></div>);
 };
@@ -66,6 +66,7 @@ export class FlashAlerts extends React.PureComponent {
       } else if (flash[0] === 'edited') {
         flashMsg = <Alert key={idx} title="Edit Completed" type="success" lowerMargin>{flash[1]}</Alert>;
       } else if (flash[0] === 'mst_pact_edited') {
+      // eslint-disable-next-line max-len
         flashMsg = <Alert key={idx} title="You have successfully updated issues on this appeal" type="success" lowerMargin>{listChanges(flash[1])}</Alert>;
       } else if (flash[0] === 'show_vha_org_join_info') {
         flashMsg = <VhaJoinOrgAlert />;

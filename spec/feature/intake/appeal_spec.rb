@@ -73,7 +73,9 @@ feature "Appeal Intake", :all_dbs do
 
   let!(:rating) { generate_rating(veteran, promulgation_date, profile_date) }
   let!(:untimely_rating) { generate_untimely_rating(veteran, untimely_promulgation_date, untimely_profile_date) }
+  # rubocop:disable Layout/LineLength
   let!(:untimely_rating2) { generate_untimely_rating(veteran_with_ratings, untimely_promulgation_date, untimely_profile_date) }
+  # rubocop:enable Layout/LineLength
   let!(:before_ama_rating) { generate_pre_ama_rating(veteran) }
   let!(:before_ama_rating2) { generate_pre_ama_rating(veteran_with_ratings) }
 

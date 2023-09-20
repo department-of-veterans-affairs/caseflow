@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types, import/extensions */
 import React from 'react';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
@@ -72,7 +73,7 @@ export default function CaseDetailsIssueList(props) {
 }
 
 const LegacyIssueDetails = (props) => {
-  const legacyMstPactFeatureToggle = props.legacyMstPactFeatureToggle
+  const legacyMstPactFeatureToggle = props.legacyMstPactFeatureToggle;
   const issue = props.children;
   const codes = issue.codes ? issue.codes.slice() : [];
   const diagnosticCode = getIssueDiagnosticCodeLabel(codes[codes.length - 1]) ? codes.pop() : null;

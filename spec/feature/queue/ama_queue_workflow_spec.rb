@@ -7,7 +7,12 @@ feature "Attorney checkout flow", :all_dbs do
   let!(:bva_intake) { BvaIntake.singleton }
 
   let!(:vanilla_vet) do
-    Generators::Veteran.build(file_number: "67845673", first_name: "Bryan", last_name: "Libby", participant_id: "23434565")
+    Generators::Veteran.build(
+      file_number: "67845673",
+      first_name: "Bryan",
+      last_name: "Libby",
+      participant_id: "23434565"
+    )
   end
   let!(:veteran) do
     create(
@@ -51,19 +56,24 @@ feature "Attorney checkout flow", :all_dbs do
   end
   # creation of vet with contention
   let(:file_numbers) { Array.new(3) { Random.rand(999_999_999).to_s } }
-  let! (:appeal) do
+  let!(:appeal) do
     create(
       :appeal,
       :advanced_on_docket_due_to_age,
       created_at: 1.day.ago,
       veteran: veteran,
       documents: create_list(:document, 5, file_number: file_numbers[0], upload_date: 4.days.ago),
-      request_issues: build_list(:request_issue, 3, contested_issue_description: "Knee pain",
-                                                    decision_date: 2.days.ago, veteran_participant_id: veteran.participant_id)
+      request_issues: build_list(
+        :request_issue,
+        3,
+        contested_issue_description: "Knee pain",
+        decision_date: 2.days.ago,
+        veteran_participant_id: veteran.participant_id
+      )
     )
   end
   # Creation of vanilla vet. This is a vet without a contention.
-  let! (:appeal_vanilla_vet) do
+  let!(:appeal_vanilla_vet) do
     create(
       :appeal,
       :advanced_on_docket_due_to_age,
@@ -71,8 +81,13 @@ feature "Attorney checkout flow", :all_dbs do
       veteran:
         vanilla_vet,
       documents: create_list(:document, 5, file_number: file_numbers[0], upload_date: 4.days.ago),
-      request_issues: build_list(:request_issue, 3, contested_issue_description: "Knee pain",
-                                                    decision_date: 2.days.ago, veteran_participant_id: veteran_participant_id)
+      request_issues: build_list(
+        :request_issue,
+        3,
+        contested_issue_description: "Knee pain",
+        decision_date: 2.days.ago,
+        veteran_participant_id: veteran_participant_id
+      )
     )
   end
 
@@ -292,7 +307,7 @@ feature "Attorney checkout flow", :all_dbs do
     end
   end
 
-  context " AC 2.5 It passes the feature tests for adding a new issue appeal MST & PACT coming from a contention, then removing the MST/PACT designation" do
+  context " AC 2.5 adding a new issue appeal MST & PACT coming from a contention, then removing MST/PACT designation" do
     before do
       # creates admin user
       # joins the user with the organization to grant access to role and org permissions

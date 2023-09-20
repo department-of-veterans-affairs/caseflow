@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types, import/extensions */
 import * as React from 'react';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';

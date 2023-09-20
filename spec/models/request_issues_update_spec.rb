@@ -260,7 +260,9 @@ describe RequestIssuesUpdate, :all_dbs do
             allow_any_instance_of(RequestIssuesUpdate).to receive(:create_issue_update_task).and_return(true)
             expect(subject).to be_truthy
             expect(existing_request_issue.reload.mst_status).to eq(true)
-            expect(existing_request_issue.reload.mst_status_update_reason_notes).to eq("I am the mst status update reason notes")
+            expect(
+              existing_request_issue.reload.mst_status_update_reason_notes
+            ).to eq("I am the mst status update reason notes")
           end
         end
 
@@ -279,7 +281,9 @@ describe RequestIssuesUpdate, :all_dbs do
             allow_any_instance_of(RequestIssuesUpdate).to receive(:create_issue_update_task).and_return(true)
             expect(subject).to be_truthy
             expect(existing_request_issue.reload.pact_status).to eq(true)
-            expect(existing_request_issue.reload.pact_status_update_reason_notes).to eq("I am the pact status update reason notes")
+            expect(
+              existing_request_issue.reload.pact_status_update_reason_notes
+            ).to eq("I am the pact status update reason notes")
           end
         end
 

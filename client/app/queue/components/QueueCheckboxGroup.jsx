@@ -25,6 +25,7 @@ const renderCheckbox = (option, onChange, values = {}, disabled = false, justifi
         <TextField
           name={INTAKE_EDIT_ISSUE_CHANGE_MESSAGE}
           defaultValue={filterIssuesForJustification(justifications, option.id)[0].justification}
+          // eslint-disable-next-line max-len
           errorMessage={(errorState.invalid && errorState.highlightModal && !filterIssuesForJustification(justifications, option.id)[0].justification) ? 'Justification field is required' : null}
           required
           onChange={filterIssuesForJustification(justifications, option.id)[0].onJustificationChange}

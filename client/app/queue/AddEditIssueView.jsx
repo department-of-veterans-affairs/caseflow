@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 const PropTypes = require('prop-types');
 
 import * as React from 'react';
@@ -360,7 +361,8 @@ class AddEditIssueView extends React.Component {
         value={_.get(this.props.issue, 'note', '')}
         maxLength={ISSUE_DESCRIPTION_MAX_LENGTH}
         onChange={(value) => this.updateIssue({ note: value })} />
-      {legacyMstPactFeatureToggle && <label style={{ marginBottom: '1rem' }}>Select any special issues that apply</label>}
+      {legacyMstPactFeatureToggle && <label
+        style={{ marginBottom: '1rem' }}>Select any special issues that apply</label>}
       {legacyMstPactFeatureToggle && <Checkbox
         name="MST"
         label="Military Sexual Trauma (MST)"

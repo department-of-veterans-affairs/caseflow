@@ -924,6 +924,7 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Special issues: MST, PACT")
     end
 
+    # rubocop:disable Layout/LineLength
     scenario "Intake appeal with MST contention from VBMS" do
       start_appeal_with_mst_pact_from_vbms(veteran_vbms_mst_pact)
       visit "/intake"
@@ -940,7 +941,9 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Service connection is granted for PTSD at 10 percent, effective 10/11/2022.")
       expect(page).to have_content("Special issues: MST")
     end
+    # rubocop:enable Layout/LineLength
 
+    # rubocop:disable Layout/LineLength
     scenario "Intake appeal with PACT contention from VBMS" do
       start_appeal_with_mst_pact_from_vbms(veteran_vbms_mst_pact)
       visit "/intake"
@@ -957,7 +960,9 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Service connection is granted for AOOV at 10 percent, effective 10/11/2022.")
       expect(page).to have_content("Special issues: PACT")
     end
+    # rubocop:enable Layout/LineLength
 
+    # rubocop:disable Layout/LineLength
     scenario "Intake appeal with MST and PACT contentions from VBMS" do
       start_appeal_with_mst_pact_from_vbms(veteran_vbms_mst_pact)
       visit "/intake"
@@ -974,5 +979,6 @@ feature "Intake Add Issues Page", :all_dbs do
       expect(page).to have_content("Service connection is granted for PTSD, AOOV at 10 percent, effective 10/11/2022.")
       expect(page).to have_content("Special issues: MST, PACT")
     end
+    # rubocop:enable Layout/LineLength
   end
 end

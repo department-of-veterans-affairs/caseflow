@@ -78,8 +78,8 @@ feature "AmaQueue", :all_dbs do
       create(:ama_judge_assign_task, assigned_to: judge_user, parent: root_task)
     end
 
-    # This task is for holding legacy appeals. The factory will create an attached legacy appeal. Attach an attorney task
-    # from :attorney task
+    # This task is for holding legacy appeals. The factory will create an attached legacy appeal.
+    # Attach an attorney task from :attorney task
     let!(:legacy_appeal_task) do
       build(:task, id: "1010", assigned_to: attorney_user, assigned_by_id: "3",
                    assigned_to_id: "2", assigned_to_type: "User", type: "AttorneyTask", created_at: 5.days.ago)
@@ -229,9 +229,9 @@ feature "AmaQueue", :all_dbs do
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
         # Validate that the path changed to the expected location.
-        pathArray = current_path.split("/")
-        expect(pathArray[-1] == "dispositions")
-        expect(pathArray[-2] == "draft_decision")
+        path_array = current_path.split("/")
+        expect(path_array[-1] == "dispositions")
+        expect(path_array[-2] == "draft_decision")
       end
 
       scenario "Appeal contains MST PACT labels in timeline." do
@@ -239,7 +239,12 @@ feature "AmaQueue", :all_dbs do
 
         # load in the timeline data
         appeal = appeals[0]
-        iup = IssuesUpdateTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: Organization.find_by_url("bva-intake"), assigned_by: RequestStore[:current_user])
+        iup = IssuesUpdateTask.create!(
+          appeal: appeal,
+          parent: appeal.root_task,
+          assigned_to: Organization.find_by_url("bva-intake"),
+          assigned_by: RequestStore[:current_user]
+        )
         set = CaseTimelineInstructionSet.new(
           change_type: "Edited Issue",
           issue_category: "test category",
@@ -254,8 +259,8 @@ feature "AmaQueue", :all_dbs do
         iup.format_instructions(set)
         iup.completed!
 
-        # We reload the page because the page sometimes errors first load for some reason, also ensures that the timeline
-        # is refreshed with the current data.
+        # We reload the page because the page sometimes errors first load for some reason,
+        # also ensures that the timeline is refreshed with the current data.
         visit current_path
 
         click_on "View task instructions"
@@ -277,9 +282,9 @@ feature "AmaQueue", :all_dbs do
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
         # Validate that the path changed to the expected location.
-        pathArray = current_path.split("/")
-        expect(pathArray[-1] == "special_issues")
-        expect(pathArray[-2] == "draft_decision")
+        path_array = current_path.split("/")
+        expect(path_array[-1] == "special_issues")
+        expect(path_array[-2] == "draft_decision")
       end
 
       context "when there is an error loading addresses" do

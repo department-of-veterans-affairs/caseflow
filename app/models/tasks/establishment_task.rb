@@ -23,7 +23,12 @@ class EstablishmentTask < Task
       end
 
       special_issue_status = format_special_issues_text(issue.mst_status, issue.pact_status).to_s
-      added_issue_format << [format_description_text(issue), issue.benefit_type.capitalize, original_special_issue_status, special_issue_status]
+      added_issue_format << [
+        format_description_text(issue),
+        issue.benefit_type.capitalize,
+        original_special_issue_status,
+        special_issue_status
+      ]
 
       # create record to log the special issues changes
       create_special_issue_changes_record(issue)
@@ -55,6 +60,7 @@ class EstablishmentTask < Task
     return special_issue_status + " MST" if mst_status
     return special_issue_status + " PACT" if pact_status
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def create_special_issue_changes_record(issue)
     # create SpecialIssueChange record to log the changes
