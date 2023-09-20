@@ -132,7 +132,6 @@ describe LegacyAppeal, :all_dbs do
         allow(appeal).to receive(:soc_date).and_return(ama_start_date - 5.days)
 
         expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
-        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: true)).to eq(false)
         expect(appeal.matchable_to_request_issue?(receipt_date: receipt_date)).to eq(true)
       end
     end
@@ -144,7 +143,7 @@ describe LegacyAppeal, :all_dbs do
         allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date - 3.days)
         allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
 
-        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(true)
         expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
       end
     end
@@ -177,8 +176,8 @@ describe LegacyAppeal, :all_dbs do
         allow(appeal).to receive(:soc_date).and_return(ineligible_soc_date - 3.days)
         allow(appeal).to receive(:nod_date).and_return(ineligible_nod_date)
 
-        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
-        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(true)
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
       end
     end
 
@@ -232,8 +231,8 @@ describe LegacyAppeal, :all_dbs do
 
       scenario "return true" do
         allow(appeal).to receive(:soc_date).and_return(federal_holiday - 61.days)
-        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: false)).to eq(true)
-        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date + 1.day, covid_flag: false)).to eq(false)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(true)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date + 1.day)).to eq(true)
         expect(check_for_federal_holiday(federal_holiday)).to eq(true)
       end
     end
@@ -244,8 +243,8 @@ describe LegacyAppeal, :all_dbs do
 
       scenario "return true" do
         allow(appeal).to receive(:soc_date).and_return(inauguration_date - 61.days)
-        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: false)).to eq(true)
-        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date + 1.day, covid_flag: false)).to eq(false)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(true)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date + 1.day)).to eq(true)
         expect(receipt_date.sunday?).to eq(false)
       end
     end
@@ -260,9 +259,8 @@ describe LegacyAppeal, :all_dbs do
         allow(appeal).to receive(:soc_date).and_return(soc_covid_eligible_date - 1.day)
         allow(appeal).to receive(:nod_date).and_return(nod_covid_eligible_date + 1.day)
 
-        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
-        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
-        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: true)).to eq(true)
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(true)
       end
 
       scenario "when SOC date is only eligible with a covid-related extension" do
@@ -271,9 +269,8 @@ describe LegacyAppeal, :all_dbs do
         allow(appeal).to receive(:soc_date).and_return(soc_covid_eligible_date + 1.day)
         allow(appeal).to receive(:nod_date).and_return(nod_covid_eligible_date - 1.day)
 
-        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
-        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(false)
-        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date, covid_flag: true)).to eq(true)
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+        expect(appeal.eligible_for_opt_in?(receipt_date: receipt_date)).to eq(true)
       end
     end
   end

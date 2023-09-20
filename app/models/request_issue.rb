@@ -196,7 +196,6 @@ class RequestIssue < CaseflowRecord
         is_unidentified: data[:is_unidentified],
         untimely_exemption: data[:untimely_exemption],
         untimely_exemption_notes: data[:untimely_exemption_notes],
-        covid_timeliness_exempt: data[:untimely_exemption_covid],
         ramp_claim_id: data[:ramp_claim_id],
         vacols_id: data[:vacols_id],
         vacols_sequence_id: data[:vacols_sequence_id],
@@ -929,12 +928,12 @@ class RequestIssue < CaseflowRecord
   end
 
   def issue_eligible_for_opt_in?
-    vacols_issue.eligible_for_opt_in?(covid_flag: covid_timeliness_exempt)
+    vacols_issue.eligible_for_opt_in?
   end
 
   def legacy_appeal_eligible_for_opt_in?
     vacols_issue.legacy_appeal.eligible_for_opt_in?(
-      receipt_date: decision_review.receipt_date, covid_flag: covid_timeliness_exempt
+      receipt_date: decision_review.receipt_date
     )
   end
 

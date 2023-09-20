@@ -416,9 +416,8 @@ describe Issue, :all_dbs do
     end
     let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
     let(:issue) { Issue.load_from_vacols(vacols_case_issue.attributes) }
-    let(:covid_flag) { false }
 
-    subject { issue.eligible_for_opt_in?(covid_flag: covid_flag) }
+    subject { issue.eligible_for_opt_in? }
 
     it { is_expected.to be_truthy }
 
@@ -434,11 +433,9 @@ describe Issue, :all_dbs do
       context "parent appeal SOC is later than disposition_date" do
         let(:disposition_date) { Time.zone.today - 1.day }
 
-        it { is_expected.to be_falsey }
+        it { is_expected.to be_truthy }
 
         context "issue has covid timeliness exemption" do
-          let(:covid_flag) { true }
-
           it { is_expected.to be_truthy }
         end
       end

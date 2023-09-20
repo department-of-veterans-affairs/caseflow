@@ -19,12 +19,12 @@ class SelectForm extends React.PureComponent {
   }
 
   render() {
-    const { formType, featureToggles, userCanIntakeAppeals } = this.props;
+    const { formType, userCanIntakeAppeals } = this.props;
     const unreadMessages = this.props.unreadMessages;
-    const enabledFormTypes =  _.pickBy(FORM_TYPES, { category: 'decisionReview' });
+    // const enabledFormTypes = FORM_TYPES;
     const appealPermissionError = !userCanIntakeAppeals && formType === FORM_TYPES.APPEAL.key;
 
-    const radioOptions = _.map(enabledFormTypes, (form) => ({
+    const radioOptions = _.map(FORM_TYPES, (form) => ({
       value: form.key,
       displayText: form.name,
       label: form.name
