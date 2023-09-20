@@ -77,7 +77,9 @@ export class FuzzySearchableDropdown extends React.Component {
         headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken }
       }).then((response) => response.json()).
       then((data) => {
-        this.setState(fuzzySearchReturn:[{ label: data.suggested_spelling, tagId: null, value: data.suggested_spelling }]);
+        this.setState({
+          fuzzySearchReturn: [{ label: data.suggested_spelling, tagId: null, value: data.suggested_spelling }]
+        });
       });
   };
 
