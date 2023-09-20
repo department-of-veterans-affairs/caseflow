@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { reject, first, pick, size, map, find } from 'lodash';
 
 import CannotSaveAlert from '../reader/CannotSaveAlert';
-import FuzzySearchableDropdown from '../components/FuzzySearchableDropdown';
+import FuzzySearchableDropdown from '../components/FuzzySearchableDropdown.jsx';
 import { addNewTag, removeTag } from '../reader/Documents/DocumentsActions';
 
 const fetchSpellingCorrection = (misspelledText) => {
