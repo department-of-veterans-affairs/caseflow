@@ -25,6 +25,12 @@ import { addNewTag, removeTag } from '../reader/Documents/DocumentsActions';
 // };
 
 class SideBarIssueTags extends PureComponent {
+
+  constructor(props) {
+    super(props)
+  }
+
+
   render() {
     const { doc } = this.props;
 
@@ -80,6 +86,7 @@ class SideBarIssueTags extends PureComponent {
           placeholder=""
           value={generateOptionsFromTags(doc.tags)}
           onChange={onChange}
+          updateFuzzyValue={this.updateFuzzySearchValue}
         />
       </div>
     );

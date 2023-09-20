@@ -29,21 +29,28 @@ const fetchSpellingCorrection = (misspelledText) => {
       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken }
     }).then((response) => response.json()).
     then((data) => {
-      this.setState({
-        fuzzySearchReturn: [{ label: data.suggested_spelling, tagId: null, value: data.suggested_spelling }]
-      });
+      if (data != null) {
+        return [{ label: data.suggested_spelling, tagId: null, value: data.suggested_spelling }];
+      }
+
+      return '';
+
     });
 };
 
 const CustomMenuList = (props) => {
-  fetchSpellingCorrection(props.selectProps.inputValue);
+  // const fuzzyResult = fetchSpellingCorrection(props.selectProps.inputValue);
+  console.log(this);
+
+  // console.log(props.selectProps.updateFuzzyValue('fuzzyResult'));
+  // props.updateFuzzyValue(fuzzyResult)
   const innerProps = {
     ...props.innerProps,
     id: `${kebabCase(props.selectProps.name)}-listbox`,
     role: 'listbox',
     'aria-label': `${kebabCase(props.selectProps.name)}-listbox`,
   };
-  console.log(innerProps);
+
   return <components.MenuList {...props} innerProps={innerProps} />;
 };
 
@@ -83,7 +90,13 @@ export class FuzzySearchableDropdown extends React.Component {
     this.wrapperRef = null;
   }
 
+  updateFuzzyValue = (newValue) => {
+    this.setState({
+      fuzzySearchReturn: newValue
+    });
+  }
   componentDidMount = () => {
+
     document.addEventListener('keydown', this.onClickOutside);
     document.addEventListener('mousedown', this.onClickOutside);
   }
@@ -148,7 +161,6 @@ export class FuzzySearchableDropdown extends React.Component {
       deletedValue = _.differenceWith(this.state.value, newValue, _.isEqual);
     }
     if (onChange) {
-      console.log(newValue);
       onChange(newValue, deletedValue);
     }
   };
@@ -176,6 +188,8 @@ export class FuzzySearchableDropdown extends React.Component {
   };
 
   render() {
+    console.log(this.props);
+
     const {
       async,
       options,
@@ -279,6 +293,7 @@ export class FuzzySearchableDropdown extends React.Component {
               defaultValue={defaultValue}
               filterOption={filterOption}
               loadOptions={async}
+              updateFuzzyValue={this.updateFuzzyValue}
               isLoading={loading}
               onChange={this.onChange}
               onInputChange={onInputChange}
