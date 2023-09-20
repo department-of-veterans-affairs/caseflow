@@ -11,8 +11,6 @@ module UpdatedByUserConcern
 
   private
 
-
-
   def assign_updated_by_user
     return if RequestStore.store[:current_user] == User.system_user && updated_by.present?
 
