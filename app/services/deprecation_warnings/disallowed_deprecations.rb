@@ -20,7 +20,7 @@ module DisallowedDeprecations
 
   # Regular expressions for deprecation warnings that should raise an exception on detection
   DISALLOWED_DEPRECATION_WARNING_REGEXES = [
-    *RAILS_5_2_FIXED_DEPRECATION_WARNING_REGEXES
+    *RAILS_5_2_FIXED_DEPRECATION_WARNING_REGEXES,
     *RAILS_6_1_FIXED_DEPRECATION_WARNING_REGEXES
   ].freeze
 
