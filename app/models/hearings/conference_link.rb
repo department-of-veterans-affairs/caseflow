@@ -3,7 +3,8 @@
 class ConferenceLink < CaseflowRecord
   class NoAliasWithHostPresentError < StandardError; end
   class LinkMismatchError < StandardError; end
-  acts_as_paranoid column: :conference_deleted, sentinel_value: true
+
+  acts_as_paranoid
 
   include UpdatedByUserConcern
   include CreatedByUserConcern
@@ -58,6 +59,30 @@ class ConferenceLink < CaseflowRecord
       update!(guest_hearing_link: link_service.guest_link, alias: link_service.get_conference_id)
     end
     guest_hearing_link
+  end
+
+  # Purpose: updates the conf_link and then soft_deletes them.
+  #
+  # Params: None
+  #
+  # Return: None
+  def soft_removal_of_link
+    update!(update_conf_links)
+    destroy
+  end
+
+
+  # Purpose: Updates conference_link attributes when passed into the 'update!' method.
+  #
+  # Params: None
+  #
+  # Return: Hash that will update the conference_link
+  def update_conf_links
+    {
+      conference_deleted: true,
+      updated_by_id: RequestStore[:current_user] = User.system_user,
+      updated_at: Time.zone.now
+    }
   end
 
   private

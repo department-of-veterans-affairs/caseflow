@@ -225,23 +225,11 @@ class HearingDay < CaseflowRecord
     scheduled_for < Date.current
   end
 
-  def soft_link_removal
-    return unless conference_link
-
-    if conference_link
-      conference_link.update!(update_conf_links)
-      conference_link.destroy
-    end
-  end
-
   private
 
-  def update_conf_links
-    {
-      conference_deleted: true,
-      updated_by_id: RequestStore[:current_user] = User.system_user,
-      updated_at: Time.zone.now
-    }
+  #called through the 'before_destroy' callback on the hearing_day object.
+  def soft_link_removal
+    conference_link&.soft_removal_of_link
   end
 
   def assign_created_by_user

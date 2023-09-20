@@ -10,8 +10,7 @@ class VirtualHearings::DeleteConferenceLinkJob < CaseflowJob
   def perform
     begin
       RequestStore[:current_user] = User.system_user
-      links_for_past_date = retreive_stale_conference_links
-      links_soft_removal(links_for_past_date)
+      retreive_stale_conference_links.each(&:soft_removal_of_link)
     rescue StandardError => error
       log_error(error)
     end
@@ -26,30 +25,5 @@ class VirtualHearings::DeleteConferenceLinkJob < CaseflowJob
   # Return: A collection of links for hearing days that have passed.
   def retreive_stale_conference_links
     ConferenceLink.joins(:hearing_day).where("scheduled_for < ?", Date.today)
-  end
-
-  # Purpose: Iterates through a collection of links, updating each item and then soft_deleting.
-  #
-  # Params: An array of conference_links.
-  #
-  # Return: None
-  def links_soft_removal(collection)
-    collection.each do |old_link|
-      old_link.update!(update_conf_links)
-      old_link.destroy
-    end
-  end
-
-  # Purpose: Updates conference_link attributes when passed into the 'update!' method.
-  #
-  # Params: None
-  #
-  # Return: Hash that will update the conference_link
-  def update_conf_links
-    {
-      conference_deleted: true,
-      updated_by_id: RequestStore[:current_user],
-      updated_at: Time.zone.now
-    }
   end
 end
