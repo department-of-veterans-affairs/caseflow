@@ -2,8 +2,7 @@
 
 class Api::V3::External::SupplementalClaimSerializer
   include FastJsonapi::ObjectSerializer
-  set_type :supplemental_claim
-  attributes *SupplementalClaim.column_names
+  attributes(*SupplementalClaim.column_names)
 
   attribute :end_product_establishments do |sc|
     sc.end_product_establishments.map do |epe|
