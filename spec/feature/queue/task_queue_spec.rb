@@ -1010,7 +1010,7 @@ feature "Task queue", :all_dbs do
 
         click_on COPY::MODAL_ASSIGN_BUTTON
 
-        expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % attorney_user.full_name)
+        expect(page).to have_content(COPY::REASSIGN_TASK_SUCCESS_MESSAGE % attorney_user.full_name)
 
         expect(judge_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
         expect(judge_task.children.first).to be_a(AttorneyDispatchReturnTask)
