@@ -158,7 +158,7 @@ class AssignToView extends React.Component {
     }
 
     if (isReassignAction) {
-      return this.reassignTask(task.type === 'JudgeLegacyAssignTask' && taskType === 'JudgeLegacyAssignTask');
+      return this.reassignTask(task.type === 'JudgeLegacyAssignTask' || task.type === 'JudgeLegacyDecisionReviewTask');
     }
 
     return this.props.
@@ -382,6 +382,7 @@ class AssignToView extends React.Component {
 
     if (isPulacCerullo) {
       modalProps.button = 'Notify';
+      modalProps.submitDisabled = false;
     }
 
     if ([
@@ -393,6 +394,8 @@ class AssignToView extends React.Component {
       modalProps.submitDisabled = !this.validateForm();
       modalProps.submitButtonClassNames = ['usa-button'];
     }
+
+   
 
     return (
       <QueueFlowModal {...modalProps}>
