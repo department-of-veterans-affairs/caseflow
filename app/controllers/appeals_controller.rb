@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 class AppealsController < ApplicationController
   include UpdatePOAConcern
   before_action :react_routed
@@ -49,6 +50,7 @@ class AppealsController < ApplicationController
     end
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Layout/LineLength
   def fetch_notification_list
     appeals_id = params[:appeals_id]
     respond_to do |format|
@@ -82,6 +84,7 @@ class AppealsController < ApplicationController
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Layout/LineLength
 
   def document_count
     doc_count = EFolderService.document_count(appeal.veteran_file_number, current_user)
@@ -271,7 +274,7 @@ class AppealsController < ApplicationController
   end
 
   # format MST/PACT edit success banner message
-  # rubocop:disable Layout/LineLength
+  # rubocop:disable Layout/LineLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
   def mst_and_pact_edited_issues
     # list of edit counts
     mst_added = 0
@@ -326,11 +329,10 @@ class AppealsController < ApplicationController
 
     message.flatten
   end
-  # rubocop:enable Layout/LineLength
-
+  # rubocop:enable Layout/LineLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
 
   # create MST/PACT message for added/removed issues
-  # rubocop:disable Layout/LineLength
+  # rubocop:disable Layout/LineLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def create_mst_pact_message_for_new_and_removed_issues(issues, type)
     special_issue_message = []
     # check if any added/removed issues have MST/PACT and get the count
@@ -346,10 +348,11 @@ class AppealsController < ApplicationController
 
     special_issue_message
   end
-  # rubocop:enable Layout/LineLength
+  # rubocop:enable Layout/LineLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # check if there is a change in mst/pact on legacy issue
   # if there is a change, creat an issue update task
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def legacy_mst_pact_updates
     legacy_issue_params[:request_issues].each do |current_issue|
       issue = appeal.issues.find { |i| i.vacols_sequence_id == current_issue[:vacols_sequence_id].to_i }
@@ -381,6 +384,7 @@ class AppealsController < ApplicationController
     set_flash_mst_edit_message
     render json: { issues: json_issues }, status: :ok
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def json_issues
     appeal.issues.map do |issue|
@@ -424,6 +428,7 @@ class AppealsController < ApplicationController
     legacy_issue_params.merge(vacols_id: appeal.vacols_id)
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def create_legacy_issue_update_task(before_issue, current_issue)
     user = RequestStore[:current_user]
 
@@ -475,6 +480,7 @@ class AppealsController < ApplicationController
       change_category: "Edited Issue"
     )
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   # updated flash message to show mst/pact message if mst/pact changes (not to legacy)
   # rubocop:disable Layout/LineLength
@@ -583,3 +589,4 @@ class AppealsController < ApplicationController
     end
   end
 end
+# rubocop:enable Metrics/ClassLength
