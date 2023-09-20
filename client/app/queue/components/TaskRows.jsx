@@ -308,7 +308,7 @@ class TaskRows extends React.PureComponent {
     // to ensure a consistent margin between instruction content and the "Hide" button
     const divStyles = { marginTop: '2rem' };
 
-    if ((task.previous.length >= 1) && (task.type === 'JudgeAssignTask')) {
+    if ((task.previous.length >= 1) && (task.type === 'JudgeAssignTask' || task.type === 'JudgeDecisionReviewTask')) {
       return (
         <React.Fragment key={`${task.uniqueId} fragment`}>
           {task.previous.toReversed().map((prev) => (
