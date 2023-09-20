@@ -36,12 +36,13 @@ module Seeds
 
     def create_legacy_tasks
       Timecop.travel(65.days.ago)
-        create_legacy_appeals('RO17', 20, 'decision_ready_hr')
+        create_legacy_appeals('RO17', 50, 'decision_ready_hr')
       Timecop.return
 
-      Timecop.travel(50.days.ago)
-        create_legacy_appeals('RO17', 30, 'ready_for_dispatch')
-      Timecop.return
+      # Not Needed for Remand Reasons Demo Testing
+      # Timecop.travel(50.days.ago)
+      #   create_legacy_appeals('RO17', 30, 'ready_for_dispatch')
+      # Timecop.return
     end
 
     def create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, judge, attorney, workflow)
@@ -165,6 +166,7 @@ module Seeds
     def create_video_vacols_case(vacols_titrnum, vacols_folder, correspondent)
       create(
         :case,
+        :assigned,
         :video_hearing_requested,
         :type_original,
         correspondent: correspondent,
@@ -179,6 +181,7 @@ module Seeds
     def create_travel_vacols_case(vacols_titrnum, vacols_folder, correspondent)
       create(
         :case,
+        :assigned,
         :travel_board_hearing_requested,
         :type_original,
         correspondent: correspondent,
