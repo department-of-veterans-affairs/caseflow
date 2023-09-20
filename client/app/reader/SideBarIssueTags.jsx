@@ -13,8 +13,8 @@ import Alert from '../components/Alert';
 class SideBarIssueTags extends PureComponent {
   render() {
     const { doc, featureToggles } = this.props;
-    const { auto_tagged, isAutoTagPending } = doc;
-    const isVisible = featureToggles.auto_tagging_ability && featureToggles.can_manually_auto_tag && !auto_tagged
+    const { isAutoTagPending } = doc;
+    const isVisible = featureToggles.auto_tagging_ability && featureToggles.can_manually_auto_tag && !doc.auto_tagged;
 
     let generateOptionsFromTags = (tags) =>
       map(reject(tags, 'pendingRemoval'), (tag) => ({
@@ -39,7 +39,13 @@ class SideBarIssueTags extends PureComponent {
         {isAutoTagPending && <Alert type="info" message="Auto-tags generating. Please wait a moment." />}
         {this.props.error.tag.visible && <CannotSaveAlert />}
         {isVisible && <span className="cf-right-side cf-generate-tag-button">
-          <Button onClick={() => this.props.generateTags(doc)} role="button" disabled={auto_tagged || isAutoTagPending}>Generate auto-tags</Button>
+          <Button
+            onClick={() => this.props.generateTags(doc)}
+            role="button"
+            disabled={doc.auto_tagged || isAutoTagPending}
+          >
+            Generate auto-tags
+          </Button>
         </span>}
         <SearchableDropdown
           key={doc.id}
