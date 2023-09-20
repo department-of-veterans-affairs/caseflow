@@ -19,6 +19,7 @@ const customStyles = {
 };
 
 const CustomMenuList = (props) => {
+  fetchSpellingCorrection(props.selectProps.inputValue);
   const innerProps = {
     ...props.innerProps,
     id: `${kebabCase(props.selectProps.name)}-listbox`,
@@ -58,11 +59,27 @@ export class FuzzySearchableDropdown extends React.Component {
 
     this.state = {
       value: props.value,
-      isExpanded: false
+      isExpanded: false,
+      fuzzySearchReturn: ''
     };
 
     this.wrapperRef = null;
   }
+
+  fetchSpellingCorrection = (misspelledText) => {
+    let fetchData = { queryText: misspelledText };
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    fetch('/fuzzy-search-options',
+      {
+        body: JSON.stringify(fetchData),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken }
+      }).then((response) => response.json()).
+      then((data) => {
+        this.setState(fuzzySearchReturn:[{ label: data.suggested_spelling, tagId: null, value: data.suggested_spelling }]);
+      });
+  };
 
   componentDidMount = () => {
     document.addEventListener('keydown', this.onClickOutside);
@@ -129,6 +146,7 @@ export class FuzzySearchableDropdown extends React.Component {
       deletedValue = _.differenceWith(this.state.value, newValue, _.isEqual);
     }
     if (onChange) {
+      console.log(newValue);
       onChange(newValue, deletedValue);
     }
   };
@@ -254,7 +272,7 @@ export class FuzzySearchableDropdown extends React.Component {
               name={name}
               classNamePrefix="cf-select"
               inputId={`${kebabCase(name)}`}
-              options={options}
+              options={[{ label: 'awegaweg', tagId: 5, value: 'awegaweg' }, ...options]}
               defaultOptions={defaultOptions}
               defaultValue={defaultValue}
               filterOption={filterOption}

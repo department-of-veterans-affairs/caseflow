@@ -8,25 +8,27 @@ import CannotSaveAlert from '../reader/CannotSaveAlert';
 import FuzzySearchableDropdown from '../components/FuzzySearchableDropdown.jsx';
 import { addNewTag, removeTag } from '../reader/Documents/DocumentsActions';
 
-const fetchSpellingCorrection = (misspelledText) => {
-  let fetchData = { queryText: misspelledText };
-  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+// const fetchSpellingCorrection = (misspelledText) => {
+//   let fetchData = { queryText: misspelledText };
+//   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-  fetch('/fuzzy-search-options',
-    {
-      body: JSON.stringify(fetchData),
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken }
-    }).then((response) => response.json()).
-    then((data) => {
-      console.log('A string');
-      console.log(data);
-    });
-};
+//   fetch('/fuzzy-search-options',
+//     {
+//       body: JSON.stringify(fetchData),
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken }
+//     }).then((response) => response.json()).
+//     then((data) => {
+//       console.log('A string');
+//       console.log(data);
+//     });
+// };
 
 class SideBarIssueTags extends PureComponent {
   render() {
     const { doc } = this.props;
+
+    console.log(doc);
 
     let generateOptionsFromTags = (tags) =>
       map(reject(tags, 'pendingRemoval'), (tag) => ({
@@ -36,8 +38,8 @@ class SideBarIssueTags extends PureComponent {
       }));
 
     let onChange = (values, deletedValue) => {
-      console.log(values);
-      fetchSpellingCorrection('Doctre');
+      // console.log(values);
+      // fetchSpellingCorrection('Doctre');
       if (size(deletedValue)) {
         const tagValue = first(deletedValue).label;
         const result = find(doc.tags, { text: tagValue });
