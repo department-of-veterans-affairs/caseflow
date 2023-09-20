@@ -217,11 +217,11 @@ class HearingDay < CaseflowRecord
 
   # over write of the .conference_link method from belongs_to :conference_link to add logic to create of not there
   def pexip_conference_link
-    @pexip_conference_link ||= find_or_create_pexip_conference_link!
+    @pexip_conference_link ||= find_or_create_conference_link!
   end
 
   def webex_conference_link
-    @webex_conference_link ||= find_or_create_webex_conference_link!
+    @webex_conference_link ||= find_or_create_conference_link!
   end
 
   private
