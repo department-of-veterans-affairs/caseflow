@@ -433,10 +433,10 @@ describe Issue, :all_dbs do
       context "parent appeal SOC is later than disposition_date" do
         let(:disposition_date) { Time.zone.today - 1.day }
 
-        it { is_expected.to be_truthy }
+        it { is_expected.to be_falsey }
 
         context "issue has covid timeliness exemption" do
-          it { is_expected.to be_truthy }
+          it { is_expected.to be_falsey }
         end
       end
 
