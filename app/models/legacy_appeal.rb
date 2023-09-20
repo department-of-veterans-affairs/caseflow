@@ -922,6 +922,7 @@ class LegacyAppeal < CaseflowRecord
     all_dates = ([soc_date] + ssoc_dates).compact
 
     latest_soc_date = all_dates.max
+
     return true if latest_soc_date >= Constants::DATES["SOC_COVID_ELIGIBLE"].to_date
     return false if latest_soc_date < Constants::DATES["AMA_ACTIVATION"].to_date
 
@@ -934,6 +935,7 @@ class LegacyAppeal < CaseflowRecord
     return false unless nod_date
 
     nod_eligible = receipt_date - 372.days
+
     eligible_date = [nod_eligible, Constants::DATES["NOD_COVID_ELIGIBLE"].to_date].min
     earliest_eligible_date = [eligible_date, Constants::DATES["AMA_ACTIVATION"].to_date].max
 

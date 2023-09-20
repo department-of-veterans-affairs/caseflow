@@ -563,7 +563,7 @@ feature "Intake Add Issues Page", :all_dbs do
 
         # Expect legacy opt in issue modal to show
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-        add_intake_rating_issue("osteomyelitis")
+        add_intake_rating_issue("typhoid arthritis")
 
         # Expect untimely issue modal to show
         expect(page).to have_content("Issue 1 is an Untimely Issue")
