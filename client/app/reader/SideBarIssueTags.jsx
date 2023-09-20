@@ -5,18 +5,21 @@ import { connect } from 'react-redux';
 import { reject, first, pick, size, map, find } from 'lodash';
 
 import CannotSaveAlert from '../reader/CannotSaveAlert';
-import SearchableDropdown from '../components/SearchableDropdown';
+import FuzzySearchableDropdown from '../components/FuzzySearchableDropdown';
 import { addNewTag, removeTag } from '../reader/Documents/DocumentsActions';
 
 const fetchSpellingCorrection = (misspelledText) => {
   let fetchData = { queryText: misspelledText };
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
   fetch('/fuzzy-search-options',
     {
       body: JSON.stringify(fetchData),
-      method: 'POST'
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken }
     }).then((response) => response.json()).
     then((data) => {
+      console.log('A string');
       console.log(data);
     });
 };
@@ -33,6 +36,8 @@ class SideBarIssueTags extends PureComponent {
       }));
 
     let onChange = (values, deletedValue) => {
+      console.log(values);
+      fetchSpellingCorrection('Doctre');
       if (size(deletedValue)) {
         const tagValue = first(deletedValue).label;
         const result = find(doc.tags, { text: tagValue });
@@ -56,12 +61,12 @@ class SideBarIssueTags extends PureComponent {
       return tagArr;
     };
 
-    fetchSpellingCorrection('Doctre');
+    // fetchSpellingCorrection('Doctre');
 
     return (
       <div className="cf-issue-tag-sidebar">
         {this.props.error.tag.visible && <CannotSaveAlert />}
-        <SearchableDropdown
+        <FuzzySearchableDropdown
           key={doc.id}
           name="tags"
           label="Select or tag issues"
