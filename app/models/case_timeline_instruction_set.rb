@@ -11,6 +11,7 @@ class CaseTimelineInstructionSet
               :mst_edit_reason,
               :pact_edit_reason
 
+  # rubocop:disable Metrics/ParameterLists
   def initialize(
     change_type:,
     issue_category:,
@@ -32,4 +33,5 @@ class CaseTimelineInstructionSet
     @mst_edit_reason = mst_edit_reason
     @pact_edit_reason = pact_edit_reason
   end
+  # rubocop:enable Metrics/ParameterLists
 end

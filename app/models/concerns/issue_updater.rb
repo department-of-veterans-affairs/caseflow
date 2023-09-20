@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ModuleLength
 module IssueUpdater
   extend ActiveSupport::Concern
 
@@ -123,6 +124,7 @@ module IssueUpdater
     end
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def create_issue_update_task(original_issue, decision_issue)
     root_task = RootTask.find_or_create_by!(appeal: appeal)
 
@@ -142,11 +144,13 @@ module IssueUpdater
 
     set = CaseTimelineInstructionSet.new(
       change_type: "Edited Issue",
-      issue_category: task_text_helper([
-        original_issue.contested_issue_description,
-        original_issue.nonrating_issue_category,
-        original_issue.nonrating_issue_description
-      ]),
+      issue_category: task_text_helper(
+        [
+          original_issue.contested_issue_description,
+          original_issue.nonrating_issue_category,
+          original_issue.nonrating_issue_description
+        ]
+      ),
       benefit_type: task_text_benefit_type(original_issue),
       original_mst: original_issue.mst_status,
       original_pact: original_issue.pact_status,
@@ -175,6 +179,7 @@ module IssueUpdater
       decision_issue_id: decision_issue.id
     )
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def task_text_benefit_type(issue)
     issue.benefit_type ? issue.benefit_type.capitalize : ""
@@ -190,3 +195,4 @@ module IssueUpdater
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength
