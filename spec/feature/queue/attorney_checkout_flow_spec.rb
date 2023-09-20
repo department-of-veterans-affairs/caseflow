@@ -99,7 +99,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
       click_on "Save"
 
-      expect(page).to have_content "Text box field is required"
+      expect(page).to have_content "This field is required"
       fill_in "Text Box", with: decision_issue_text
 
       find(".cf-select__control", text: "Select disposition").click
@@ -295,8 +295,8 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
       expect(page).to have_content("Evaluate Decision")
 
-      find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
-      find("label", text: "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}").click
+      assert find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
+      assert find("label", text: "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}").click
       click_on "Continue"
 
       expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)

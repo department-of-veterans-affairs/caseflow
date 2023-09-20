@@ -37,7 +37,7 @@ feature "CaseMovementTeam task actions" do
 
       # Clicking Submit button shows an "Error assigning tasks" error banner in the modal
       # (and an error message in the DevTools console).
-      click_on "Submit"
+      click_on "Assign"
       expect(page).to have_content("Error assigning tasks")
     end
   end

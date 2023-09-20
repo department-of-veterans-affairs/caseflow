@@ -130,6 +130,7 @@ const taskAttributesFromRawTask = (task) => {
     status: task.attributes.status,
     onHoldDuration: task.attributes.on_hold_duration,
     instructions: task.attributes.instructions,
+    previous: task.attributes.previous,
     decisionPreparedBy,
     availableActions: task.attributes.available_actions,
     caseReviewId: task.attributes.attorney_case_review_id,
@@ -889,6 +890,12 @@ export const sortCaseTimelineEvents = (...eventArrays) => {
 
   // Reverse the array for the order we actually want
   // return sortedTimelineEvents.reverse();
+  if (timelineEvents[0]?.appealType === 'LegacyAppeal') {
+    if (timelineEvents[0].assigneeName === '57' || timelineEvents[0].assigneeName === 'CASEFLOW') {
+      return sortedTimelineEvents.reverse();
+    }
+  }
+
   return sortedTimelineEvents;
 };
 
