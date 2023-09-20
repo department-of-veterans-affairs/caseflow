@@ -244,7 +244,7 @@ feature "AmaQueue", :all_dbs do
           parent: appeal.root_task,
           assigned_to: Organization.find_by_url("bva-intake"),
           assigned_by: RequestStore[:current_user]
-          )
+        )
         set = CaseTimelineInstructionSet.new(
           change_type: "Edited Issue",
           issue_category: "test category",

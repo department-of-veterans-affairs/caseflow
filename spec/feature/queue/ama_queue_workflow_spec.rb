@@ -12,7 +12,7 @@ feature "Attorney checkout flow", :all_dbs do
       first_name: "Bryan",
       last_name: "Libby",
       participant_id: "23434565"
-      )
+    )
   end
   let!(:veteran) do
     create(
