@@ -237,7 +237,7 @@ class HearingDay < CaseflowRecord
 
   def generate_link_on_create
     begin
-      this.conference_link
+      conference_link
     rescue StandardError => error
       log_error(error)
     end
@@ -284,20 +284,8 @@ class HearingDay < CaseflowRecord
   end
 
   # Method to get the associated conference link record if exists and if not create  new one
-  def find_or_create_pexip_conference_link!
-    conference_link = ConferenceLink.find_by(hearing_day_id: id, meeting_type: "Pexip")
-    if conference_link.nil?
-      conference_link = ConferenceLink.create(hearing_day_id: id, meeting_type: "Pexip")
-    end
-    conference_link
-  end
-
-  def find_or_create_webex_conference_link!
-    conference_link = ConferenceLink.find_by(hearing_day_id: id, meeting_type: "Webex")
-    if conference_link.nil?
-      conference_link = ConferenceLink.create(hearing_day_id: id, meeting_type: "Webex")
-    end
-    conference_link
+  def find_or_create_conference_link!
+    ConferenceLink.find_or_create_by!(hearing_day_id: id, created_by_id: created_by.id)
   end
 
   class << self
