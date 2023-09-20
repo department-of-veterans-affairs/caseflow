@@ -18,6 +18,23 @@ const customStyles = {
   }),
 };
 
+const fetchSpellingCorrection = (misspelledText) => {
+  let fetchData = { queryText: misspelledText };
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+  fetch('/fuzzy-search-options',
+    {
+      body: JSON.stringify(fetchData),
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken }
+    }).then((response) => response.json()).
+    then((data) => {
+      this.setState({
+        fuzzySearchReturn: [{ label: data.suggested_spelling, tagId: null, value: data.suggested_spelling }]
+      });
+    });
+};
+
 const CustomMenuList = (props) => {
   fetchSpellingCorrection(props.selectProps.inputValue);
   const innerProps = {
@@ -26,7 +43,7 @@ const CustomMenuList = (props) => {
     role: 'listbox',
     'aria-label': `${kebabCase(props.selectProps.name)}-listbox`,
   };
-
+  console.log(innerProps);
   return <components.MenuList {...props} innerProps={innerProps} />;
 };
 
@@ -65,23 +82,6 @@ export class FuzzySearchableDropdown extends React.Component {
 
     this.wrapperRef = null;
   }
-
-  fetchSpellingCorrection = (misspelledText) => {
-    let fetchData = { queryText: misspelledText };
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-    fetch('/fuzzy-search-options',
-      {
-        body: JSON.stringify(fetchData),
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken }
-      }).then((response) => response.json()).
-      then((data) => {
-        this.setState({
-          fuzzySearchReturn: [{ label: data.suggested_spelling, tagId: null, value: data.suggested_spelling }]
-        });
-      });
-  };
 
   componentDidMount = () => {
     document.addEventListener('keydown', this.onClickOutside);
