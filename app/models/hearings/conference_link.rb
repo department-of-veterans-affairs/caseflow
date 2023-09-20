@@ -71,7 +71,6 @@ class ConferenceLink < CaseflowRecord
     destroy
   end
 
-
   # Purpose: Updates conference_link attributes when passed into the 'update!' method.
   #
   # Params: None

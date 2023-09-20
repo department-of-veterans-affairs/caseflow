@@ -229,7 +229,7 @@ class HearingDay < CaseflowRecord
 
   #called through the 'before_destroy' callback on the hearing_day object.
   def soft_link_removal
-    conference_link&.soft_removal_of_link
+    ConferenceLink.where(hearing_day: self).each(&:soft_removal_of_link)
   end
 
   def assign_created_by_user
