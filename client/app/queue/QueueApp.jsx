@@ -1,5 +1,4 @@
-/* eslint-disable max-len */
-/* eslint-disable max-lines */
+/* eslint-disable max-lines, max-len */
 
 import querystring from 'querystring';
 import React from 'react';

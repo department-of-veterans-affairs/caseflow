@@ -70,13 +70,13 @@ const isCancelled = (task) => {
   return task.status === TASK_STATUSES.cancelled;
 };
 
-const issueUpdateTask = (task) =>{
+const issueUpdateTask = (task) => {
   return task.type === 'IssuesUpdateTask';
-}
+};
 
 const establishmentTask = (task) => {
   return task.type === 'EstablishmentTask';
-}
+};
 
 const tdClassNames = (timeline, task) => {
   const containerClass = timeline ? taskInfoWithIconTimelineContainer : '';
@@ -354,24 +354,24 @@ class TaskRows extends React.PureComponent {
                 </div>
               </React.Fragment>}
             <div style={divStyle}>
-              <div style={{whiteSpace: 'pre-line'}}>
+              <div style={{ whiteSpace: 'pre-line' }}>
                 {text[2]}
               </div>
             </div>
             {text[4] ?
               <React.Fragment>
-              <h5 style={hStyle}>Original:</h5>
-              <div style={divStyle}>
-                <small>{text[3]}</small>
-              </div>
+                <h5 style={hStyle}>Original:</h5>
+                <div style={divStyle}>
+                  <small>{text[3]}</small>
+                </div>
                 <h5 style={hStyle}>Updated:</h5>
                 <div style={divStyle}>
                   <small>{text[4]}</small>
-              </div>
+                </div>
               </React.Fragment> :
-                <div style={divStyle}>
-                  {text[3]}
-                </div>}
+              <div style={divStyle}>
+                {text[3]}
+              </div>}
             {renderMstLabel(text[5], hStyle)}
             {renderPactLabel(text[6], hStyle)}
           </div>
@@ -380,14 +380,16 @@ class TaskRows extends React.PureComponent {
     };
 
     const formatEstablishmentBreaks = (text = '') => {
-      const divStyle = { marginTop: '1rem'};
+      const divStyle = { marginTop: '1rem' };
       const hStyle = { marginTop: '1rem', marginBottom: '0rem', fontWeight: 'bold' };
+
       if (Array.isArray(text)) {
         const content = text.map((issue, index) =>
         // issue array indexes:
         // 0: Issue description
         // 1: Benefit Type
-        // 2: Original special issues (empty string unless issue originated in VBMS AND mst/pact designation changes by intake user)
+        // 2: Original special issues (empty string unless issue originated in VBMS
+        //    AND mst/pact designation changes by intake user)
         // 3: Special issues (Either added by intake user or originating in VBMS - if left unaltered during intake)
           <div key={index}>
             <div style={divStyle}>
@@ -396,7 +398,7 @@ class TaskRows extends React.PureComponent {
             <div style={divStyle}>
               {issue[0]}
             </div>
-            {issue.at(1) != "" &&
+            {issue.at(1) !== '' &&
               <React.Fragment>
                 <div style={divStyle}>
                   Benefit type: {issue[1]}
@@ -439,6 +441,7 @@ class TaskRows extends React.PureComponent {
     // to ensure a consistent margin between instruction content and the "Hide" button
     const divStyles = { marginBottom: '2.4rem' };
 
+    // eslint-disable-next-line no-shadow
     const formatInstructions = (task, text) => {
       if (issueUpdateTask(task)) {
         return (
@@ -448,11 +451,11 @@ class TaskRows extends React.PureComponent {
         return (
           <React.Fragment>{formatEstablishmentBreaks(text)}</React.Fragment>
         );
-      } else {
-        return (
-          <ReactMarkdown>{formatBreaks(text)}</ReactMarkdown>
-        );
       }
+
+      return (
+        <ReactMarkdown>{formatBreaks(text)}</ReactMarkdown>
+      );
     };
 
     return (
