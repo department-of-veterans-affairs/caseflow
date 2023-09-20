@@ -82,7 +82,7 @@ class AddedIssue extends React.PureComponent {
   };
 
   render() {
-    const { issue, issueIdx, legacyAppeals, featureToggles} = this.props;
+    const { issue, issueIdx, legacyAppeals, featureToggles } = this.props;
 
     let eligibleState = {
       errorMsg: '',
@@ -91,6 +91,7 @@ class AddedIssue extends React.PureComponent {
 
     const mstFeatureToggle = featureToggles.mst_identification || featureToggles.mstIdentification;
     const pactFeatureToggle = featureToggles.pact_identification || featureToggles.pactIdentification;
+    // eslint-disable-next-line max-len
     const legacyMstPactFeatureToggle = featureToggles.legacy_mst_pact_identification || featureToggles.legacyMstPactIdentification;
 
     const vacolsIssue = legacyIssue(issue, legacyAppeals);
@@ -134,6 +135,7 @@ class AddedIssue extends React.PureComponent {
         {issue.date && <span className="issue-date">Decision date: {formatDateStr(issue.date)}</span>}
         {issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span>}
         { (mstFeatureToggle || pactFeatureToggle || legacyMstPactFeatureToggle) &&
+          // eslint-disable-next-line max-len
           <span className="special-issue-notes">{COPY.INTAKE_ADD_EDIT_SPECIAL_ISSUES_LABEL}{specialIssuesMessage}</span>}
         {issue.untimelyExemptionNotes && (
           <span className="issue-notes">Untimely Exemption Notes:&nbsp;{issue.untimelyExemptionNotes}</span>

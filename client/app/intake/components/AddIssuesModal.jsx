@@ -131,9 +131,7 @@ class AddIssuesModal extends React.Component {
     for (let i = 0; i < sizes.length; i++) {
       if (i === 0) {
         accumulationArr.push(0);
-      }
-
-      else {
+      } else {
         accumulation += sizes[i];
       }
       accumulationArr[i] = accumulation;

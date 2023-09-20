@@ -5,7 +5,7 @@ import LinkToAppeal from '../assignHearings/LinkToAppeal';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
 import MstBadge from 'app/components/badges/MstBadge/MstBadge';
 import PactBadge from 'app/components/badges/PactBadge/PactBadge';
-import { badgeStyle } from 'app/hearings/components/dailyDocket/style';
+// import { badgeStyle } from 'app/hearings/components/dailyDocket/style';
 import { renderAppealType } from '../../../queue/utils';
 import { HearingRequestType } from '../assignHearings/AssignHearingsFields';
 import { Dot } from '../../../components/Dot';

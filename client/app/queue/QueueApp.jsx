@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable max-lines */
 
 import querystring from 'querystring';
@@ -763,15 +764,15 @@ class QueueApp extends React.PureComponent {
 
                 // eslint-disable-next-line default-case
                 switch (this.props.reviewActionType) {
-                  case DECISION_TYPES.OMO_REQUEST:
-                    reviewActionType = 'OMO';
-                    break;
-                  case DECISION_TYPES.DRAFT_DECISION:
-                    reviewActionType = 'Draft Decision';
-                    break;
-                  case DECISION_TYPES.DISPATCH:
-                    reviewActionType = 'to Dispatch';
-                    break;
+                case DECISION_TYPES.OMO_REQUEST:
+                  reviewActionType = 'OMO';
+                  break;
+                case DECISION_TYPES.DRAFT_DECISION:
+                  reviewActionType = 'Draft Decision';
+                  break;
+                case DECISION_TYPES.DISPATCH:
+                  reviewActionType = 'to Dispatch';
+                  break;
                 }
 
                 return `Draft Decision | Submit ${reviewActionType}`;
@@ -1223,7 +1224,7 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.
-                  CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.value
+                CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.value
                 }`}
               title={`${PAGE_TITLES.CANCEL_AND_ASSIGN_TO_RO} | Caseflow`}
               render={this.routedUpdateTaskAndAssignRegionalOfficeModal(

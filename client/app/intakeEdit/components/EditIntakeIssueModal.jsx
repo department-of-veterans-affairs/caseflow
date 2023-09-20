@@ -22,7 +22,9 @@ export class EditIntakeIssueModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      // eslint-disable-next-line max-len
       mstChecked: props.appealIsLegacy ? props.legacyIssues[props.issueIndex]?.mstChecked : props.currentIssue?.mstChecked,
+      // eslint-disable-next-line max-len
       pactChecked: props.appealIsLegacy ? props.legacyIssues[props.issueIndex]?.pactChecked : props.currentIssue?.pactChecked,
       mstJustification: '',
       pactJustification: ''
