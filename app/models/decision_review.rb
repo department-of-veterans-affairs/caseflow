@@ -95,7 +95,7 @@ class DecisionReview < CaseflowRecord
   end
 
   def ama_activation_date
-    if intake && FeatureToggle.enabled?(:use_ama_activation_date, user: intake.user)
+    if intake
       Constants::DATES["AMA_ACTIVATION"].to_date
     else
       Constants::DATES["AMA_ACTIVATION_TEST"].to_date

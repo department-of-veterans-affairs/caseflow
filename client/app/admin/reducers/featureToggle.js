@@ -2,9 +2,6 @@ import { update } from '../../util/ReducerUtil';
 
 const updateFromServerFeatures = (state, featureToggles) => {
   return update(state, {
-    useAmaActivationDate: {
-      $set: Boolean(featureToggles.useAmaActivationDate)
-    },
     correctClaimReviews: {
       $set: Boolean(featureToggles.correctClaimReviews)
     },
@@ -29,7 +26,6 @@ const updateFromServerFeatures = (state, featureToggles) => {
 export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
   updateFromServerFeatures(
     {
-      useAmaActivationDate: false,
       correctClaimReviews: false,
       filedByVaGovHlr: false,
       updatedIntakeForms: false,

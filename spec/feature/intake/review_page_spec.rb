@@ -14,7 +14,6 @@ feature "Intake Review Page", :postgres do
   let(:benefit_type) { "compensation" }
 
   describe "Validating receipt date not blank or before AMA" do
-    before { FeatureToggle.enable!(:use_ama_activation_date) }
 
     it "shows correct error with blank or pre-AMA dates" do
       start_higher_level_review(veteran, receipt_date: nil)
@@ -32,12 +31,10 @@ feature "Intake Review Page", :postgres do
 
   describe "Validating receipt date not blank or before AMA when claimant not listed" do
     before do
-      FeatureToggle.enable!(:use_ama_activation_date)
       FeatureToggle.enable!(:non_veteran_claimants)
       FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)
     end
     after do
-      FeatureToggle.disable!(:use_ama_activation_date)
       FeatureToggle.disable!(:non_veteran_claimants)
       FeatureToggle.disable!(:hlr_sc_unrecognized_claimants)
     end
