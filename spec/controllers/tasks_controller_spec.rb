@@ -493,11 +493,11 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
         context "when one admin action with task type field" do
           let(:params) do
-            {
+            [{
               "external_id": appeal.vacols_id,
               "type": AddressVerificationColocatedTask.name,
               "instructions": "do this"
-            }
+            }]
           end
 
           it "should be successful" do
@@ -515,11 +515,11 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
 
         context "when one admin action with task label field" do
           let(:params) do
-            {
+            [{
               "external_id": appeal.vacols_id,
               "type": AddressVerificationColocatedTask.name,
               "instructions": "do this"
-            }
+            }]
           end
 
           it "should be successful" do
