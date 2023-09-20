@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CaseTimelineInstructionSet
   attr_reader :change_type,
               :issue_category,
@@ -19,7 +21,7 @@ class CaseTimelineInstructionSet
     edit_pact: nil,
     mst_edit_reason: nil,
     pact_edit_reason: nil
-    )
+  )
     @change_type = change_type
     @issue_category = issue_category
     @benefit_type = benefit_type

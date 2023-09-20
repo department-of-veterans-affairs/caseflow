@@ -71,7 +71,6 @@ module IssueUpdater
   end
   # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize
 
-
   def fail_if_not_all_request_issues_have_decision!
     unless appeal.every_request_issue_has_decision?
       fail Caseflow::Error::AttorneyJudgeCheckoutError, message: "Not every request issue has a decision issue"
@@ -147,7 +146,7 @@ module IssueUpdater
         original_issue.contested_issue_description,
         original_issue.nonrating_issue_category,
         original_issue.nonrating_issue_description
-        ]),
+      ]),
       benefit_type: task_text_benefit_type(original_issue),
       original_mst: original_issue.mst_status,
       original_pact: original_issue.pact_status,

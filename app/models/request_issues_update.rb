@@ -16,6 +16,7 @@ class RequestIssuesUpdate < CaseflowRecord
   delegate :withdrawn_issues, to: :withdrawal
   delegate :corrected_issues, :correction_issues, to: :correction
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def perform!
     return false unless validate_before_perform
     return false if processed?
@@ -33,7 +34,7 @@ class RequestIssuesUpdate < CaseflowRecord
         corrected_request_issue_ids: corrected_issues.map(&:id)
       )
       if FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
-        FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
+         FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
         create_mst_pact_issue_update_tasks
       end
       create_business_line_tasks! if added_issues.present?
@@ -45,6 +46,7 @@ class RequestIssuesUpdate < CaseflowRecord
 
     true
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   def process_job
     if run_async?
@@ -106,7 +108,7 @@ class RequestIssuesUpdate < CaseflowRecord
 
   def all_updated_issues
     added_issues + removed_issues + withdrawn_issues + edited_issues +
-    correction_issues + mst_edited_issues + pact_edited_issues
+      correction_issues + mst_edited_issues + pact_edited_issues
   end
 
   private
@@ -353,16 +355,16 @@ class RequestIssuesUpdate < CaseflowRecord
 
       # check if change from vbms mst/pact status
       vbms_mst_edit = if before_issue.vbms_mst_status.nil?
-        false
-      else
-        !before_issue.vbms_mst_status && before_issue.mst_status
-      end
+                        false
+                      else
+                        !before_issue.vbms_mst_status && before_issue.mst_status
+                      end
 
       vbms_pact_edit = if before_issue.vbms_pact_status.nil?
-        false
-      else
-        !before_issue.vbms_pact_status && before_issue.pact_status
-      end
+                         false
+                       else
+                         !before_issue.vbms_pact_status && before_issue.pact_status
+                       end
 
       # if a new issue is added and VBMS was edited, reference the original status
       if change_type == "Added Issue" && (vbms_mst_edit || vbms_pact_edit)
@@ -375,7 +377,6 @@ class RequestIssuesUpdate < CaseflowRecord
           edit_mst: before_issue.mst_status,
           edit_pact: before_issue.pact_status
         )
-        task.format_instructions(set)
       else
         # format the task instructions and close out
         # use contested issue description if nonrating issue category is nil
@@ -391,8 +392,8 @@ class RequestIssuesUpdate < CaseflowRecord
           edit_mst: after_issue&.mst_status,
           edit_pact: after_issue&.pact_status
         )
-        task.format_instructions(set)
       end
+      task.format_instructions(set)
       # rubocop:enable Layout/LineLength, Metrics/AbcSize
       task.completed!
 
@@ -415,4 +416,5 @@ class RequestIssuesUpdate < CaseflowRecord
       )
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 end
