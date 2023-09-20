@@ -53,8 +53,18 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
       </div>
     ) : (
       <div style={roomInfoContainerStyle}>
-        <h3>{GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}:<span style={{ fontWeight: 'normal' }}>{alias || useAliasFromLink()}</span></h3>
-        <h3>{GUEST_LINK_LABELS.GUEST_PIN}:<span style={{ fontWeight: 'normal' }}>{usePinFromLink()}#</span></h3>
+        <h3>
+          {GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}:
+          <span style={{ fontWeight: 'normal' }}>
+            {alias || useAliasFromLink()}
+          </span>
+        </h3>
+        <h3>
+          {GUEST_LINK_LABELS.GUEST_PIN}:
+          <span style={{ fontWeight: 'normal' }}>
+            {usePinFromLink()}#
+          </span>
+        </h3>
         <h3><CopyTextButton {...CopyTextButtonProps} /></h3>
       </div>
     ));
