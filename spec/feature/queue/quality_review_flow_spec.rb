@@ -83,7 +83,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
 
         fill_in "taskInstructions", with: "Review the quality"
-        click_on "Assign"
+        click_on "Submit"
 
         expect(page).to have_content("Task assigned to #{qr_user_name}")
 
@@ -101,7 +101,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq judge_user.full_name
         fill_in "taskInstructions", with: qr_instructions
 
-        click_on "Assign"
+        click_on "Submit"
 
         expect(page).to have_content("On hold (1)")
       end
@@ -251,7 +251,8 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
         click_dropdown(prompt: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL, text: hold_length)
         fill_in("instructions", with: "placing task on hold")
-        click_on(COPY::MODAL_PUT_TASK_ON_HOLD_BUTTON)
+        expect(page).to have_content(COPY::MODAL_PUT_TASK_ON_HOLD_BUTTON)
+        click_on "Submit"
         expect(page).to have_content(format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, veteran_name, hold_length))
       end
 

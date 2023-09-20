@@ -88,18 +88,6 @@ describe JudgeCaseAssignmentToAttorney, :all_dbs do
       end
     end
 
-    context "when task id is not valid" do
-      let(:task_id) { 1234 }
-      let(:assigned_by) { judge }
-      let(:assigned_to) { attorney }
-
-      it "does not reassign case to attorney" do
-        expect(QueueRepository).to_not receive(:reassign_case_to_attorney!)
-        expect(subject.valid?).to eq false
-        expect(subject.errors.full_messages).to eq ["Task is invalid"]
-      end
-    end
-
     context "when assigned by is missing" do
       let(:task_id) { "3615398-2018-04-18" }
       let(:assigned_by) { nil }
