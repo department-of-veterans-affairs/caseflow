@@ -67,6 +67,7 @@ const ReactSelectDropdown = (props) => {
         defaultValue={props.defaultValue}
         onChange={props.onChangeMethod}
         styles={customSelectStyles}
+        className={props.className}
       />
     </div>
 
@@ -81,8 +82,8 @@ ReactSelectDropdown.propTypes = {
   }),
   defaultValue: PropTypes.string,
   label: PropTypes.string,
-  onChangeMethod: PropTypes.func
-
+  onChangeMethod: PropTypes.func,
+  className: PropTypes.string
 };
 
 export default ReactSelectDropdown;

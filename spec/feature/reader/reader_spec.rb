@@ -127,8 +127,9 @@ RSpec.feature "Reader", :all_dbs do
 
         # receipt date filter
         find(".receipt-date-column .unselected-filter-icon").click
-        select("After this date", from: "dateDropdownText")
-        fill_in("From", with: Date.current.strftime("%m/%d/%Y"))
+        find(".date-filter-type-dropdown").click
+        find("div", id: /react-select-2-option-\d/, text: "After this date").click
+        fill_in("receipt-date-from", with: Date.current.strftime("%m/%d/%Y"))
         click_button("apply filter")
         expect(page).to have_content("Receipt Date (1)")
 
@@ -183,8 +184,9 @@ RSpec.feature "Reader", :all_dbs do
         it "displays the correct filtering message" do
           # find and fill in date filter with today's date
           find(".receipt-date-column .unselected-filter-icon").click
-          select("After this date", from: "dateDropdownText")
-          fill_in("From", with: Date.current.strftime("%m/%d/%Y"))
+          find(".date-filter-type-dropdown").click
+          find("div", id: /react-select-2-option-\d/, text: "After this date").click
+          fill_in("receipt-date-from", with: Date.current.strftime("%m/%d/%Y"))
           click_button("apply filter")
 
           expect(page).to have_content("Filtering by:")
@@ -196,8 +198,9 @@ RSpec.feature "Reader", :all_dbs do
         it "clears the receipt date filter" do
           # find and fill in date filter with today's date
           find(".receipt-date-column .unselected-filter-icon").click
-          select("After this date", from: "dateDropdownText")
-          fill_in("From", with: Date.current.strftime("%m/%d/%Y"))
+          find(".date-filter-type-dropdown").click
+          find("div", id: /react-select-2-option-\d/, text: "After this date").click
+          fill_in("receipt-date-from", with: Date.current.strftime("%m/%d/%Y"))
           click_button("apply filter")
 
           expect(page).to have_content("Filtering by:")
@@ -317,43 +320,6 @@ RSpec.feature "Reader", :all_dbs do
 
           clear_filters
         end
-      end
-
-      it "can filter by document type" do
-        FeatureToggle.disable!(:interface_version_2)
-
-        # select two filters
-        find(".doc-type-column .unselected-filter-icon").click
-        find(:label, "NOD").click
-        find(:label, "Form 9").click
-
-        expect(page).to have_content("Filtering by:")
-        expect(page).to have_content("Document Types (2)")
-
-        # deselect one filter
-        find(:label, "NOD").click
-        expect(page).to have_content("Document Types (1)")
-
-        # clear the filter
-        find("#clear-filters").click
-        expect(page.has_no_content?("Filtering by:")).to eq(true)
-      end
-
-      it "can filter by receipt date" do
-        FeatureToggle.disable!(:interface_version_2)
-
-        # find and fill in date filter with today's date
-        find(".receipt-date-column .unselected-filter-icon").click
-        select("After this date", from: "dateDropdownText")
-        fill_in("From", with: Date.current.strftime("%m/%d/%Y"))
-        click_button("apply filter")
-
-        expect(page).to have_content("Filtering by:")
-        expect(page).to have_content("Receipt Date (1)")
-
-        # clear the filter
-        find("#clear-filters").click
-        expect(page.has_no_content?("Filtering by:")).to eq(true)
       end
     end
 
@@ -841,13 +807,13 @@ RSpec.feature "Reader", :all_dbs do
           expect(page).to_not have_field("page-progress-indicator-input", with: "1")
 
           # Click on and set a page number to jump to a page and verify that it renders
-          page.find("input.page-progress-indicator-input").click.set("23")
+          page.find("input.page-progress-indicator-input").click.set("23").send_keys(:return)
 
-          expect(find("#pageContainer23")).to have_content("Rating Decision")
+          expect(find("#pageContainer23", wait: 7)).to have_content("Rating Decision")
           expect(page).to have_field("page-progress-indicator-input", with: "23")
 
           # Entering invalid values leaves the viewer on the same page.
-          page.find("input.page-progress-indicator-input").click.set("abcd")
+          page.find("input.page-progress-indicator-input").click.set("abcd").send_keys(:return)
 
           expect(page).to have_css("#pageContainer23")
           expect(page).to have_field("page-progress-indicator-input", with: "23")
