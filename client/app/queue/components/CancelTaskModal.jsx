@@ -79,13 +79,6 @@ const CancelTaskModal = (props) => {
     return props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg);
   };
 
-  const isLetterTask = (taskType) => {
-    return [
-      'SendInitialNotificationLetterTask',
-      'PostSendInitialNotificationLetterHoldingTask',
-      'SendFinalNotificationLetterTask'].includes(taskType);
-  };
-
   // Additional properties - should be removed later once generic submit buttons are styled the same across all modals
   const modalProps = {};
 
@@ -98,7 +91,9 @@ const CancelTaskModal = (props) => {
     modalProps.submitDisabled = !validateForm();
   }
 
-  if (isLetterTask(props.task.type)) {
+  if (props.task.type === 'SendInitialNotificationLetterTask' ||
+    props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ||
+    props.task.type === 'SendFinalNotificationLetterTask') {
     return (
       <QueueFlowModal
         title={taskData?.modal_title ?? ''}
