@@ -4,7 +4,7 @@ feature "RAMP Election Intake", :all_dbs do
   include IntakeHelpers
 
   before do
-    Timecop.freeze( Time.new(2019, 12, 8).in_time_zone)
+    Timecop.freeze(Time.new(2019, 12, 8).in_time_zone)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
