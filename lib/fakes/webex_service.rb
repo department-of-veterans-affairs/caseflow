@@ -25,11 +25,7 @@ class Fakes::WebexService
         HTTPI::Response.new(
           @status_code,
           {},
-          message: @error_message,
-          errors: [
-            description: @error_message
-          ],
-          trackingId: "ROUTER_#{SecureRandom.uuid}"
+          error_response
         )
       )
     end
@@ -73,5 +69,15 @@ class Fakes::WebexService
       400, 401, 403, 404, 405, 409, 410,
       500, 502, 503, 504
     ].include? @status_code
+  end
+
+  def error_response
+    {
+      message: @error_message,
+      errors: [
+        description: @error_message
+      ],
+      trackingId: "ROUTER_#{SecureRandom.uuid}"
+    }
   end
 end
