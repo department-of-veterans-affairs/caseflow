@@ -109,21 +109,21 @@ feature "VhaRegionalQueue", :all_dbs do
 
     let(:visn_in_progress) do
       create(
-        :assess_documentation_task_predocket,
+        :assess_documentation_task,
         :in_progress,
         assigned_to: visn_org
       )
     end
     let(:visn_task_on_hold) do
       create(
-        :assess_documentation_task_predocket,
+        :assess_documentation_task,
         :on_hold,
         assigned_to: visn_org
       )
     end
     let(:visn_task) do
       create(
-        :assess_documentation_task_predocket,
+        :assess_documentation_task,
         :assigned,
         assigned_to: visn_org
       )
