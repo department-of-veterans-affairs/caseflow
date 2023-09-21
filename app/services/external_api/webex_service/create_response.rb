@@ -2,6 +2,6 @@
 
 class ExternalApi::PexipService::CreateResponse < ExternalApi::PexipService::Response
   def data
-    # Hi data, I'm dad
+    fail NotImplementedError
   end
 end
