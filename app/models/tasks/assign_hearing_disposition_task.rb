@@ -99,6 +99,8 @@ class AssignHearingDispositionTask < Task
 
     update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
 
+    cancel_redundant_hearing_req_mail_tasks_of_type(HearingWithdrawalRequestMailTask)
+
     [maybe_evidence_task].compact
   end
 
@@ -211,14 +213,9 @@ class AssignHearingDispositionTask < Task
 
   def mark_hearing_cancelled
     multi_transaction do
-      byebug
       update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
       clean_up_virtual_hearing(hearing)
-      created_tasks = cancel!
-
-      cancel_redundant_hearing_req_mail_tasks_of_type(HearingWithdrawalRequestMailTask)
-
-      created_tasks
+      cancel!
     end
   end
 
