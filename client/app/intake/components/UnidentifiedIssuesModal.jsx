@@ -6,6 +6,7 @@ import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
 import { validateDateNotInFuture, isTimely } from '../util/issues';
 import Checkbox from '../../components/Checkbox';
+import { generateSkipButton } from '../util/buttonUtils';
 
 class UnidentifiedIssuesModal extends React.Component {
   constructor(props) {
@@ -98,13 +99,7 @@ class UnidentifiedIssuesModal extends React.Component {
       }
     ];
 
-    if (this.props.onSkip) {
-      btns.push({
-        classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
-        name: this.props.skipText,
-        onClick: this.props.onSkip
-      });
-    }
+    generateSkipButton(btns, this.props);
 
     return btns;
   }
