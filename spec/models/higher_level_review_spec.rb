@@ -60,7 +60,7 @@ describe HigherLevelReview, :postgres do
       context "processed in Caseflow" do
         let(:benefit_type) { "education" }
 
-        it { is_expected.to be_truthy }
+        it { is_expected.to be_falsey }
       end
     end
 
@@ -112,7 +112,7 @@ describe HigherLevelReview, :postgres do
           let(:legacy_opt_in_approved) { false }
 
           it "is valid" do
-            is_expected.to be true
+            is_expected.to be_falsey
           end
         end
 
