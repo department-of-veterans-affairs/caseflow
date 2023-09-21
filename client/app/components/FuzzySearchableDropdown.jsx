@@ -76,6 +76,7 @@ export class FuzzySearchableDropdown extends React.Component {
     this.state = {
       value: props.value,
       isExpanded: false,
+      fuzzySearchState: []
     };
 
     this.wrapperRef = null;
@@ -87,20 +88,29 @@ export class FuzzySearchableDropdown extends React.Component {
 
     const newValueArray = newValue.spelling;
     // newValueArray.forEach((x) => console.log(x));
+
+    if(Array.isArray(newValueArray)) {
     newValueArray.forEach((fuzzyTerm) =>
       fuzzyResults.push({
         label: fuzzyTerm,
         tagId: 2948,
         value: fuzzyTerm
       }));
-
-    this.fuzzySearchReturn = fuzzyResults;
+      this.fuzzySearchReturn = fuzzyResults;
+      // this.setState({ fuzzySearchState: fuzzyResults});
+    }
     console.log(this.fuzzySearchReturn);
   }
   componentDidMount = () => {
-
+    this.updateFuzzyValue([]);
     document.addEventListener('keydown', this.onClickOutside);
     document.addEventListener('mousedown', this.onClickOutside);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(this.fuzzySearchReturn !== prevProps.fuzzySearchReturn) {
+      console.log('ref changed.')
+    }
   }
 
   componentWillUnmount = () => {
@@ -269,13 +279,23 @@ export class FuzzySearchableDropdown extends React.Component {
       };
     }
 
-    const mergeTagOptions = (defaultOptions, fuzzyOptions) => {
-      if(fuzzyOptions.length > 0)
+    const mergeTagOptions = (options) => {
+      //[...options, {label: 'fuzzyTerm', tagId: 2948, value: 'fuzzyTerm'}]
+      if(this.state.fuzzySearchState !== this.fuzzySearchReturn)
       {
-        return [defaultOptions, ...fuzzyOptions];
+        this.setState({fuzzySearchState: this.fuzzySearchReturn});
       }
-
-      return defaultOptions;
+      //
+      console.log('executed merge tag options');
+      console.log(options);
+      if(Array.isArray(this.fuzzyOptions) && this.fuzzyOptions.length > 0)
+      {
+        console.log('returned merged options')
+        // return [options, ...this.fuzzySearchState];
+        return options
+      }
+      // console.log('returned defaullt.')
+      return options;
     }
 
     // We will get the "tag already exists" message even when the input is invalid,
@@ -299,7 +319,7 @@ export class FuzzySearchableDropdown extends React.Component {
               name={name}
               classNamePrefix="cf-select"
               inputId={`${kebabCase(name)}`}
-              options={options}
+              options={mergeTagOptions(options)}
               defaultOptions={defaultOptions}
               defaultValue={defaultValue}
               filterOption={filterOption}
