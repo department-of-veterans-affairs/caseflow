@@ -110,26 +110,6 @@ module Seeds
     def create_tasks_for_legacy_appeals(appeal, attorney, judge, workflow)
       # Will need a judge user for judge decision review task and an attorney user for the subsequent Attorney Task
       root_task = RootTask.find_or_create_by!(appeal: appeal)
-      if workflow === 'decision_ready_hr'
-        review_task = JudgeDecisionReviewTask.create!(
-          appeal: appeal,
-          parent: root_task,
-          assigned_to: judge
-        )
-        AttorneyTask.create!(
-          appeal: appeal,
-          parent: review_task,
-          assigned_to: attorney,
-          assigned_by: judge
-        )
-      end
-      if workflow === 'ready_for_dispatch'
-        review_task = JudgeDecisionReviewTask.create!(
-          appeal: appeal,
-          parent: root_task,
-          assigned_to: judge
-        )
-      end
     end
 
     def create_legacy_appeals(regional_office, number_of_appeals_to_create, workflow)
