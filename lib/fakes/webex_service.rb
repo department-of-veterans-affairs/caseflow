@@ -16,12 +16,21 @@ class Fakes::WebexService
 
   def initialize(**args)
     @status_code = args[:status_code]
+    @error_message = args[:error_message] || "Error"
   end
 
   def create_conference(*)
     if error?
       return ExternalApi::WebexService::CreateResponse.new(
-        HTTPI::Response.new(@status_code, {}, error: "Panic!")
+        HTTPI::Response.new(
+          @status_code,
+          {},
+          message: @error_message,
+          errors: [
+            description: @error_message
+          ],
+          trackingId: "ROUTER_#{SecureRandom.uuid}"
+        )
       )
     end
 
@@ -38,9 +47,11 @@ class Fakes::WebexService
 
   def delete_conference(*)
     if error?
-      return ExternalApi::WebexService::DeleteResponse.new(HTTPI::Response.new(
-                                                             @status_code, {}, {}
-                                                           ))
+      return ExternalApi::WebexService::DeleteResponse.new(
+        HTTPI::Response.new(
+          @status_code, {}, {}
+        )
+      )
     end
 
     ExternalApi::WebexService::DeleteResponse.new(HTTPI::Response.new(200, {}, {}))
