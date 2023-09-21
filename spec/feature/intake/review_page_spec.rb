@@ -14,7 +14,6 @@ feature "Intake Review Page", :postgres do
   let(:benefit_type) { "compensation" }
 
   describe "Validating receipt date not blank or before AMA" do
-
     it "shows correct error with blank or pre-AMA dates" do
       start_higher_level_review(veteran, receipt_date: nil)
       visit "/intake"
