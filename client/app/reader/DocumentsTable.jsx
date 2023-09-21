@@ -220,29 +220,31 @@ class DocumentsTable extends React.Component {
  }
 
  isRecieptFilterButtonEnabled = () => {
-   if (this.state.recieptFilter === recieptDateFilterStates.BETWEEN &&
-    (this.state.toDate === '' || this.state.fromDate === '')) {
-     return true;
+   let disabled = false;
+
+   switch (this.state.recieptFilter) {
+   case recieptDateFilterStates.BETWEEN:
+     disabled = this.state.toDate === '' || this.state.fromDate === '';
+     break;
+   case recieptDateFilterStates.TO:
+     disabled = this.state.toDate === '';
+     break;
+   case recieptDateFilterStates.FROM:
+     disabled = this.state.fromDate === '';
+     break;
+   case recieptDateFilterStates.ON:
+     disabled = this.state.onDate === '';
+     break;
+   case recieptDateFilterStates.UNINITIALIZED:
+     disabled = true;
+     break;
+   default:
+     disabled = false;
    }
 
-   if (this.state.recieptFilter === recieptDateFilterStates.TO && (this.state.toDate === '')) {
-     return true;
-   }
+   return disabled;
+ };
 
-   if (this.state.recieptFilter === recieptDateFilterStates.FROM && (this.state.fromDate === '')) {
-     return true;
-   }
-
-   if (this.state.recieptFilter === recieptDateFilterStates.ON && (this.state.onDate === '')) {
-     return true;
-   }
-
-   if (this.state.recieptFilter === recieptDateFilterStates.UNINITIALIZED) {
-     return true;
-   }
-
-   return false;
- }
  initializeReceiptFilter() {
    this.setState({
      fromDate: this.props.docFilterCriteria.recieptFilterDates.fromDate,
