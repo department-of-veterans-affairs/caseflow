@@ -158,8 +158,7 @@ describe User, :all_dbs do
         :display_name => css_id.upcase,
         "name" => "Tom Brady",
         "status" => Constants.USER_STATUSES.active,
-        "status_updated_at" => nil,
-        "meeting_type" => "pexip"
+        "status_updated_at" => nil
       }
     end
 
@@ -1066,6 +1065,22 @@ describe User, :all_dbs do
           end
         end
       end
+    end
+  end
+
+  describe "#conference_provider" do
+    let!(:user) { create(:user, css_id: "HEARINGS_USER") }
+
+    subject { user.conference_provider }
+
+    it "User's initial conference provider is Pexip" do
+      is_expected.to eq "pexip"
+    end
+
+    it "User's conference provider can be swapped" do
+      OrganizationsUser.update_user_conference_provider(user, "webex")
+
+      is_expected.to eq "webex"
     end
   end
 end
