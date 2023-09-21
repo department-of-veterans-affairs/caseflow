@@ -33,6 +33,7 @@ class ExternalApi::PexipService
     return if resp.nil?
 
     ExternalApi::PexipService::CreateResponse.new(resp)
+
   end
 
   def delete_conference(conference_id:)
