@@ -41,14 +41,17 @@ feature "Intake Review Page", :postgres do
     it "shows correct error with blank or pre-AMA dates" do
       start_appeal(veteran, receipt_date: nil)
       visit "/intake"
+
       expect(page).to have_current_path("/intake/review_request")
       click_intake_continue
+
+      expect(page).to have_content("Please enter a valid receipt date.")
 
       fill_in "What is the Receipt Date of this form?", with: "01/01/2019"
       within_fieldset("Is the claimant someone other than the Veteran?") do
         find("label", text: "Yes", match: :prefer_exact).click
       end
-      find("label", text: "Claimant not listed", match: :prefer_exact).click
+      find("label", text: "Bob Vance", match: :prefer_exact).click
       click_intake_continue
 
       expect(page).to have_current_path("/intake/review_request")

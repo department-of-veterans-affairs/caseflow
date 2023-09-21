@@ -4,7 +4,7 @@ feature "Higher-Level Review", :postgres do
   include IntakeHelpers
 
   before do
-    Timecop.freeze(post_ramp_start_date)
+    # Timecop.freeze(post_ramp_start_date)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
@@ -44,8 +44,8 @@ feature "Higher-Level Review", :postgres do
     end
 
     step "EPs use the updated Veteran name" do
+      Fakes::BGSService.get_veteran_record(veteran.file_number)
       veteran.reload
-
       expect(veteran.last_name).to eq("Changed")
 
       expect(Fakes::VBMSService).to have_received(:establish_claim!).with(

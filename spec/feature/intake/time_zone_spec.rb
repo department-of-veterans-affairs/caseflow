@@ -12,7 +12,7 @@ feature "Appeal time zone", :all_dbs do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:now_localtime) { Time.new(2019, 2, 14, 0, 0, 0).in_time_zone }
+  let(:now_localtime) { Time.new(2019, 2, 25, 0, 0, 0).in_time_zone }
   let(:now_utc) { now_localtime.utc }
 
   let!(:veteran) { create(:veteran) }
@@ -59,8 +59,8 @@ feature "Appeal time zone", :all_dbs do
     it "writes all times in UTC" do
       expect(now_localtime.iso8601).to_not eq(now_utc.iso8601)
       expect(now_localtime.to_date).to eq(now_utc.to_date)
-      expect(now_localtime.to_date.mdY).to eq("02/14/2019")
-      expect(now_utc.to_date.mdY).to eq("02/14/2019")
+      expect(now_localtime.to_date.mdY).to eq("02/25/2019")
+      expect(now_utc.to_date.mdY).to eq("02/25/2019")
 
       initiate_appeal_intake
 
