@@ -1,0 +1,37 @@
+drop trigger if exists update_claim_status_trigger on vbms_ext_claim;
+
+truncate table priority_end_product_sync_queue;
+
+create or replace function public.update_claim_status_trigger_function()
+returns trigger as $$
+	begin
+		if (NEW."LEVEL_STATUS_CODE" = 'CLR' OR NEW."LEVEL_STATUS_CODE" = 'CAN')
+			and (NEW."EP_CODE" LIKE '04%'
+				OR NEW."EP_CODE" LIKE '03%'
+				OR NEW."EP_CODE" LIKE '93%'
+				OR NEW."EP_CODE" LIKE '68%') then
+			if exists (
+				select 1
+				from end_product_establishments
+				where (reference_id = cast(NEW."CLAIM_ID" as varchar)
+					and (synced_status is null or synced_status <> NEW."LEVEL_STATUS_CODE"))
+			) then
+				if not exists (
+					select 1
+					from priority_end_product_sync_queue
+					where end_product_establishment_id = (select id from end_product_establishments where reference_id = cast(NEW."CLAIM_ID" as varchar))
+				) then
+					insert into priority_end_product_sync_queue (created_at, end_product_establishment_id, updated_at)
+					values (now(), (select id from end_product_establishments where reference_id = cast(NEW."CLAIM_ID" as varchar)), now());
+				end if;
+			end if;
+		end if;
+		return null;
+	end;
+$$
+language plpgsql;
+
+create trigger update_claim_status_trigger
+after update or insert on vbms_ext_claim
+for each row
+execute procedure public.update_claim_status_trigger_function();
