@@ -4,7 +4,7 @@ feature "RAMP Election Intake", :all_dbs do
   include IntakeHelpers
 
   before do
-    Timecop.freeze(post_ramp_start_date)
+    Timecop.freeze( Time.new(2019, 12, 8).in_time_zone)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
@@ -143,7 +143,7 @@ feature "RAMP Election Intake", :all_dbs do
 
     expect(page).to have_content("Please select an option.")
     expect(page).to have_content(
-      "Receipt Date cannot be earlier than RAMP start date, 11/01/2017"
+      "Receipt Date cannot be prior to 02/19/2019"
     )
 
     within_fieldset("Which review lane did the Veteran select?") do
