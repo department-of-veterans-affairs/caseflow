@@ -91,9 +91,10 @@ const CancelTaskModal = (props) => {
     modalProps.submitDisabled = !validateForm();
   }
 
-  if (props.task.type === 'SendInitialNotificationLetterTask' ||
-    props.task.type === 'PostSendInitialNotificationLetterHoldingTask' ||
-    props.task.type === 'SendFinalNotificationLetterTask') {
+  if ([
+    'SendInitialNotificationLetterTask',
+    'PostSendInitialNotificationLetterHoldingTask',
+    'SendFinalNotificationLetterTask'].includes(props.task.type)) {
     return (
       <QueueFlowModal
         title={taskData?.modal_title ?? ''}
