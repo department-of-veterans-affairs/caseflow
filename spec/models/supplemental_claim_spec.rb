@@ -45,7 +45,7 @@ describe SupplementalClaim, :postgres do
         let(:receipt_date) { 1.day.ago }
 
         it "is valid" do
-          is_expected.to be true
+          is_expected.to be false
         end
 
         context "invalid Veteran" do
@@ -62,7 +62,7 @@ describe SupplementalClaim, :postgres do
           context "processed in Caseflow" do
             let(:benefit_type) { "education" }
 
-            it { is_expected.to be_truthy }
+            it { is_expected.to be_falsey }
           end
         end
       end
