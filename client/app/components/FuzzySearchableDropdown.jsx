@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
 import Select, { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
@@ -11,7 +11,6 @@ import { FormLabel } from './FormLabel';
 const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
 const DEFAULT_PLACEHOLDER = 'Select option';
-let valueToCheck = '';
 
 const customStyles = {
   input: () => ({
@@ -19,46 +18,29 @@ const customStyles = {
   }),
 };
 
-const fetchSpellingCorrection = (misspelledText) => {
+const fetchSpellingCorrection = async (misspelledText) => {
   let fetchData = { queryText: misspelledText };
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-  fetch('/fuzzy-search-options',
+  const foundData = fetch('/fuzzy-search-options',
     {
       body: JSON.stringify(fetchData),
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken }
-    }).then((response) => response.json()).
-    then((data) => {
-      console.log({ label: data.suggested_spelling, tagId: null, value: data.suggested_spelling });
-      if (data !== null) {
-        return [{ label: data.suggested_spelling, tagId: null, value: data.suggested_spelling }];
-      }
+    }).then((response) => response.json());
 
-      return '';
-
-    });
+  return foundData;
 };
 
 const CustomMenuList = (props) => {
-  // const fuzzyResult = fetchSpellingCorrection(props.selectProps.inputValue);
+  fetchSpellingCorrection(props.selectProps.inputValue).then((data) => props.selectProps.updateFuzzyValue(data));
 
-  // valueToCheck
-  // console.log(props.selectProps.updateFuzzyValue('fuzzyResult'));
-  // props.updateFuzzyValue(fuzzyResult)
   const innerProps = {
     ...props.innerProps,
     id: `${kebabCase(props.selectProps.name)}-listbox`,
     role: 'listbox',
     'aria-label': `${kebabCase(props.selectProps.name)}-listbox`,
   };
-
-  // console.log(<components.MenuList {...props} innerProps={innerProps} />);
-  // console.log(props.selectProps.inputValue);
-  valueToCheck = props.selectProps.inputValue;
-  console.log(valueToCheck);
-  fetchSpellingCorrection(valueToCheck);
-  console.log(fetchSpellingCorrection({ value: valueToCheck, label: valueToCheck, tagId: null }));
 
   return <components.MenuList {...props} innerProps={innerProps} />;
 };
@@ -90,19 +72,30 @@ export class FuzzySearchableDropdown extends React.Component {
   constructor(props) {
     super(props);
 
+    this.fuzzySearchReturn = createRef();
     this.state = {
       value: props.value,
       isExpanded: false,
-      fuzzySearchReturn: ''
     };
 
     this.wrapperRef = null;
   }
 
   updateFuzzyValue = (newValue) => {
-    this.setState({
-      fuzzySearchReturn: newValue
-    });
+    // the value comes in as an array of objects that need to be mapped into their own objects
+    let fuzzyResults = [];
+
+    const newValueArray = newValue.spelling;
+    // newValueArray.forEach((x) => console.log(x));
+    newValueArray.forEach((fuzzyTerm) =>
+      fuzzyResults.push({
+        label: fuzzyTerm,
+        tagId: 2948,
+        value: fuzzyTerm
+      }));
+
+    this.fuzzySearchReturn = fuzzyResults;
+    console.log(this.fuzzySearchReturn);
   }
   componentDidMount = () => {
 
@@ -276,6 +269,15 @@ export class FuzzySearchableDropdown extends React.Component {
       };
     }
 
+    const mergeTagOptions = (defaultOptions, fuzzyOptions) => {
+      if(fuzzyOptions.length > 0)
+      {
+        return [defaultOptions, ...fuzzyOptions];
+      }
+
+      return defaultOptions;
+    }
+
     // We will get the "tag already exists" message even when the input is invalid,
     // because if the selector filters the options to be [], it will show the "no results found"
     // message. We can get around this by unsetting `noResultsText`.
@@ -297,7 +299,7 @@ export class FuzzySearchableDropdown extends React.Component {
               name={name}
               classNamePrefix="cf-select"
               inputId={`${kebabCase(name)}`}
-              options={[{ label: 'awegaweg', tagId: 5, value: 'awegaweg' }, ...options]}
+              options={options}
               defaultOptions={defaultOptions}
               defaultValue={defaultValue}
               filterOption={filterOption}
