@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_08_01_195310) do
+ActiveRecord::Schema.define(version: 2023_09_21_034442) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1272,8 +1272,10 @@ ActiveRecord::Schema.define(version: 2023_08_01_195310) do
     t.bigint "user_id", null: false, comment: "The ID of the user who generated metric."
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "Unique ID for the metric, can be used to search within various systems for the logging"
     t.index ["app_name"], name: "index_metrics_on_app_name"
+    t.index ["created_at"], name: "index_metrics_on_created_at"
     t.index ["metric_name"], name: "index_metrics_on_metric_name"
     t.index ["metric_product"], name: "index_metrics_on_metric_product"
+    t.index ["metric_type"], name: "index_metrics_on_metric_type"
     t.index ["sent_to"], name: "index_metrics_on_sent_to"
     t.index ["user_id"], name: "index_metrics_on_user_id"
   end
