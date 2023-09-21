@@ -48,10 +48,10 @@ export const setUserIsCobAdmin = (userIsCobAdmin) => ({
   }
 });
 
-export const setMeetingType = (meetingType) => ({
-  type: ACTIONS.SET_MEETING_TYPE,
+export const setMeetingType = (conferenceProvider) => ({
+  type: ACTIONS.SET_CONFERENCE_PROVIDER,
   payload: {
-    meetingType
+    conferenceProvider
   }
 });
 

@@ -34,7 +34,7 @@ describe('SelectConferenceTypeRadioField', () => {
         id: 1
       }
     },
-    meetingType: 'pexip',
+    conferenceProvider: 'pexip',
     organization: 'my org'
   }) => {
     const utils = render(
@@ -71,10 +71,10 @@ describe('SelectConferenceTypeRadioField', () => {
 
     userEvent.click(webexRadioButton);
 
-    expect(requestPatchSpy.mock.calls[0][1].data.attributes.meeting_type).toBe('webex');
+    expect(requestPatchSpy.mock.calls[0][1].data.attributes.conference_provider).toBe('webex');
 
     userEvent.click(pexipRadioButton);
 
-    expect(requestPatchSpy.mock.calls[1][1].data.attributes.meeting_type).toBe('pexip');
+    expect(requestPatchSpy.mock.calls[1][1].data.attributes.conference_provider).toBe('pexip');
   });
 });

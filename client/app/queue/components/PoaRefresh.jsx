@@ -24,6 +24,10 @@ export const gutterStyling = css({
   width: '5%'
 });
 
+export const marginTopStyling = css({
+  marginTop: '-45px'
+});
+
 export const PoaRefresh = ({ powerOfAttorney, appealId }) => {
   const poaSyncInfo = {
     poaSyncDate: formatDateStr(powerOfAttorney.poa_last_synced_at) || formatDateStr(new Date())
@@ -31,13 +35,14 @@ export const PoaRefresh = ({ powerOfAttorney, appealId }) => {
 
   const lastSyncedCopy = sprintf(COPY.CASE_DETAILS_POA_LAST_SYNC_DATE_COPY, poaSyncInfo);
   const viewPoaRefresh = useSelector((state) => state.ui.featureToggles.poa_button_refresh);
+  const businessLineUrl = useSelector((state) => state.businessLineUrl);
 
   return <React.Fragment>
     {viewPoaRefresh &&
     <div {...textStyling}>
       <em>{ COPY.CASE_DETAILS_POA_REFRESH_BUTTON_EXPLANATION }</em>
       <div {...gutterStyling}></div>
-      <div {...boldText}{...syncStyling}>
+      <div {...boldText}{...syncStyling}{...(businessLineUrl === 'vha' ? marginTopStyling : { })}>
         {poaSyncInfo.poaSyncDate &&
           <em>{lastSyncedCopy}</em>
         }
