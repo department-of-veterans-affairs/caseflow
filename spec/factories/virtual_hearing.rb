@@ -20,7 +20,6 @@ FactoryBot.define do
     representative_tz { nil }
     association :created_by, factory: :user
     association :updated_by, factory: :user
-    establishment { build(:virtual_hearing_establishment) }
     guest_pin_long { nil }
     created_at { Time.zone.now }
     updated_at { Time.zone.now }
@@ -69,7 +68,7 @@ FactoryBot.define do
     end
 
     after(:create) do |virtual_hearing, evaluator|
-      virtual_hearing.establishment.save!
+      build(:virtual_hearing_establishment, virtual_hearing: virtual_hearing).save!
 
       if evaluator.status == :cancelled
         virtual_hearing.cancel!
