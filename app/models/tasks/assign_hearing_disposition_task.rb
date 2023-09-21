@@ -211,9 +211,14 @@ class AssignHearingDispositionTask < Task
 
   def mark_hearing_cancelled
     multi_transaction do
+      byebug
       update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
       clean_up_virtual_hearing(hearing)
-      cancel!
+      created_tasks = cancel!
+
+      cancel_redundant_hearing_req_mail_tasks_of_type(HearingWithdrawalRequestMailTask)
+
+      created_tasks
     end
   end
 
