@@ -6,7 +6,7 @@
 module DisallowedDeprecations
   class ::DisallowedDeprecationError < StandardError; end
 
-  # Regular expressions for Rails 5.2 deprecation warnings that we have addressed in the codebase
+  # Regular expressions for Rails 6.0 deprecation warnings that we have addressed in the codebase
   RAILS_6_0_FIXED_DEPRECATION_WARNING_REGEXES = [
     /Dangerous query method \(method whose arguments are used as raw SQL\) called with non\-attribute argument\(s\)/
   ].freeze
