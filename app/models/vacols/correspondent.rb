@@ -49,7 +49,7 @@ class VACOLS::Correspondent < VACOLS::Record
 
     fmtd_query = sanitize_sql_array([query, last_extract])
 
-    connection.exec_query(fmtd_query).to_hash
+    connection.exec_query(fmtd_query).to_a
   end
 
   # Take in a collection and return a csv friendly format
