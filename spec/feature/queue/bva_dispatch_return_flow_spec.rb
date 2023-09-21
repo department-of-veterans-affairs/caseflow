@@ -52,8 +52,8 @@ feature "BVA Dispatch Return Flow", :all_dbs do
       click_on veteran_full_name
       click_dropdown(prompt: "Select an action", text: "Return to judge")
       fill_in("taskInstructions", with: "Returned from BVA Dispatch to correct error")
-      click_on "Submit"
-      expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % judge_user.full_name)
+      click_on "Assign"
+      expect(page).to have_content(COPY::REASSIGN_TASK_SUCCESS_MESSAGE % judge_user.full_name)
     end
     step "Judge sends the case to the Attorney to fix the decision" do
       User.authenticate!(user: judge_user)
@@ -61,8 +61,8 @@ feature "BVA Dispatch Return Flow", :all_dbs do
       click_on veteran_full_name
       click_dropdown(prompt: "Select an action", text: "Return to attorney")
       fill_in("taskInstructions", with: "Returned from BVA Dispatch to correct error")
-      click_on "Submit"
-      expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % attorney_user.full_name)
+      click_on "Assign"
+      expect(page).to have_content(COPY::REASSIGN_TASK_SUCCESS_MESSAGE % attorney_user.full_name)
     end
     step "Attorney returns the case to the judge" do
       attorney_checkout
