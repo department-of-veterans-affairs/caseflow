@@ -80,7 +80,7 @@ class Fakes::WebexService
   def initialize(**args)
     @status_code = args[:status_code]
     @error_message = args[:error_message] || "Error"
-    @instant_connect = arg[:use_instant_connect]
+    @instant_connect = args[:use_instant_connect]
   end
 
   def create_conference(virtual_hearing)
