@@ -239,7 +239,6 @@ RSpec.feature "Quality Review workflow", :all_dbs do
 
       step "assign task to current user" do
         visit("/queue/appeals/#{appeal.uuid}")
-        page.refresh
         click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label)
         click_dropdown({ text: user.full_name }, find(".cf-modal-body"))
         fill_in("instructions", with: "assigning to QR team member")
