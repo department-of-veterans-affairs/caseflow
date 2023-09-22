@@ -1,5 +1,7 @@
 import React, { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import Select, { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 import CreatableSelect from 'react-select/creatable';
@@ -7,7 +9,9 @@ import _, { isPlainObject, isNull, kebabCase, isEmpty, isString } from 'lodash';
 import classNames from 'classnames';
 import { css } from 'glamor';
 import { FormLabel } from './FormLabel';
+import { addNewTag, removeTag } from '../reader/Documents/DocumentsActions';
 
+// client/app/reader/Documents/DocumentsActions.js
 const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
 const DEFAULT_PLACEHOLDER = 'Select option';
@@ -34,14 +38,14 @@ const fetchSpellingCorrection = async (misspelledText) => {
 
 const CustomMenuList = (props) => {
   fetchSpellingCorrection(props.selectProps.inputValue).then((data) => props.selectProps.updateFuzzyValue(data));
-
+  console.log("change")
+  console.log(props);
   const innerProps = {
     ...props.innerProps,
     id: `${kebabCase(props.selectProps.name)}-listbox`,
     role: 'listbox',
     'aria-label': `${kebabCase(props.selectProps.name)}-listbox`,
   };
-
   return <components.MenuList {...props} innerProps={innerProps} />;
 };
 
@@ -76,7 +80,10 @@ export class FuzzySearchableDropdown extends React.Component {
     this.state = {
       value: props.value,
       isExpanded: false,
-      fuzzySearchState: []
+      fuzzySearchState: [{label:'aaa', docId:103, value:'aaa'}],
+      originalOptions: [],
+      trickState: 0
+
     };
 
     this.wrapperRef = null;
@@ -87,30 +94,35 @@ export class FuzzySearchableDropdown extends React.Component {
     let fuzzyResults = [];
 
     const newValueArray = newValue.spelling;
-    // newValueArray.forEach((x) => console.log(x));
+
 
     if(Array.isArray(newValueArray)) {
+      console.log('HERE');
+      const currentDocId = this.props.doc.id;
     newValueArray.forEach((fuzzyTerm) =>
       fuzzyResults.push({
         label: fuzzyTerm,
-        tagId: 2948,
+        docId: currentDocId,
         value: fuzzyTerm
       }));
       this.fuzzySearchReturn = fuzzyResults;
       // this.setState({ fuzzySearchState: fuzzyResults});
     }
-    console.log(this.fuzzySearchReturn);
+
+    if(JSON.stringify(fuzzyResults) !== JSON.stringify(this.state.fuzzySearchState))
+    {
+      this.setState({
+        fuzzySearchState: fuzzyResults
+      })
+
+      // this.setState({fuzzySearchState: this.state.fuzzySearchState.push({label:'st', value:'st'})})
+    }
   }
   componentDidMount = () => {
+    this.setState({originalOptions: this.props.options});
     this.updateFuzzyValue([]);
     document.addEventListener('keydown', this.onClickOutside);
     document.addEventListener('mousedown', this.onClickOutside);
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if(this.fuzzySearchReturn !== prevProps.fuzzySearchReturn) {
-      console.log('ref changed.')
-    }
   }
 
   componentWillUnmount = () => {
@@ -200,8 +212,6 @@ export class FuzzySearchableDropdown extends React.Component {
   };
 
   render() {
-    console.log(this.props);
-
     const {
       async,
       options,
@@ -279,30 +289,33 @@ export class FuzzySearchableDropdown extends React.Component {
       };
     }
 
-    const mergeTagOptions = (options) => {
-      //[...options, {label: 'fuzzyTerm', tagId: 2948, value: 'fuzzyTerm'}]
-      if(this.state.fuzzySearchState !== this.fuzzySearchReturn)
-      {
-        this.setState({fuzzySearchState: this.fuzzySearchReturn});
-      }
-      //
-      console.log('executed merge tag options');
-      console.log(options);
-      if(Array.isArray(this.fuzzyOptions) && this.fuzzyOptions.length > 0)
-      {
-        console.log('returned merged options')
-        // return [options, ...this.fuzzySearchState];
-        return options
-      }
-      // console.log('returned defaullt.')
-      return options;
-    }
-
     // We will get the "tag already exists" message even when the input is invalid,
     // because if the selector filters the options to be [], it will show the "no results found"
     // message. We can get around this by unsetting `noResultsText`.
     const handleNoOptions = () =>
       noResultsText ?? (creatable ? null : NO_RESULTS_TEXT);
+
+
+      const addFuzzySearchTerm = (index) => {
+        // (this.props.addNewTag)
+        // this.props.addNewTag();
+        value.push(this.state.fuzzySearchState[index]);
+
+        console.log("value");
+        console.log(value);
+        // addNewTag(this.props.doc, value);
+        this.props.onChange(this.props.doc, 90);
+        // setTagFilter(this.props.doc, value);
+        // console.log(this.props.addNewTag);
+        // console.log(this.props.value)
+        // console.log(this.props.doc);
+        // console.log(value);
+        // this.props.addNewTag(this.props.doc, value);
+
+        // this.props.setValue(this.state.fuzzySearchState[index])
+        this.setState({originalOptions: Array.from(this.state.originalOptions)});
+        // this.onChange();
+      }
 
     return (
       <div className={errorMessage ? 'usa-input-error' : ''} ref={this.setWrapperRef}>
@@ -319,7 +332,7 @@ export class FuzzySearchableDropdown extends React.Component {
               name={name}
               classNamePrefix="cf-select"
               inputId={`${kebabCase(name)}`}
-              options={mergeTagOptions(options)}
+              options={this.state.originalOptions}
               defaultOptions={defaultOptions}
               defaultValue={defaultValue}
               filterOption={filterOption}
@@ -349,6 +362,13 @@ export class FuzzySearchableDropdown extends React.Component {
               styles={customStyles}
               {...addCreatableOptions}
             />
+            {this.state.fuzzySearchState.map((item, index) => <p onClick={() => addFuzzySearchTerm(index)}>{item.value}</p>)}
+            {/* <p onClick={() => this.setState({refreshTrick:this.state.refreshTrick + 1})}>reload</p> */}
+            {/* <p onClick={() => this.setState({originalOptions: Array.from(this.state.originalOptions)})}>reload</p> */}
+             {/* <p onClick={() => this.setState({originalOptions: [...this.state.originalOptions]})}>reload</p> */}
+
+
+
           </div>
         </div>
       </div>
@@ -506,4 +526,14 @@ FuzzySearchableDropdown.defaultProps = {
 };
 /* eslint-enable no-undefined */
 
-export default FuzzySearchableDropdown;
+const mapDispatchToProps = (dispatch) => ({
+  ...bindActionCreators({
+    addNewTag
+  }, dispatch)
+});
+
+export default connect(
+   mapDispatchToProps
+)(FuzzySearchableDropdown);
+
+// export default FuzzySearchableDropdown;

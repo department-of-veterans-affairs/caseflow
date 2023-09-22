@@ -27,9 +27,8 @@ import { addNewTag, removeTag } from '../reader/Documents/DocumentsActions';
 class SideBarIssueTags extends PureComponent {
 
   constructor(props) {
-    super(props)
+    super(props);
   }
-
 
   render() {
     const { doc } = this.props;
@@ -46,6 +45,9 @@ class SideBarIssueTags extends PureComponent {
     let onChange = (values, deletedValue) => {
       // console.log(values);
       // fetchSpellingCorrection('Doctre');
+      console.log('sbit')
+      console.log(values);
+      console.log(deletedValue);
       if (size(deletedValue)) {
         const tagValue = first(deletedValue).label;
         const result = find(doc.tags, { text: tagValue });
@@ -68,8 +70,10 @@ class SideBarIssueTags extends PureComponent {
 
       return tagArr;
     };
-
-    // fetchSpellingCorrection('Doctre');
+    const somethingDumb = (doc, values) => {
+      console.log("Should be writing to redux store...");
+      addNewTag(doc, values);
+    }
 
     return (
       <div className="cf-issue-tag-sidebar">
@@ -81,12 +85,14 @@ class SideBarIssueTags extends PureComponent {
           multi
           dropdownStyling={{ position: 'relative' }}
           creatable
-          options={spellingCorrection(this.props.tagOptions, 'Tester')}
+          options={spellingCorrection(this.props.tagOptions)}
           // options={spellingCorrection(this.props.tagOptions, TagController.correct_spelling(this.props.tagOptions))}
           placeholder=""
           value={generateOptionsFromTags(doc.tags)}
           onChange={onChange}
           updateFuzzyValue={this.updateFuzzySearchValue}
+          addNewTag={somethingDumb}
+          doc={this.props.doc}
         />
       </div>
     );
