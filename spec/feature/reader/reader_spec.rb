@@ -21,12 +21,11 @@ def add_comment_without_clicking_save(text)
   3.times do
     # Add a comment
     click_on "button-AddComment"
-    expect(page).to have_css(".canvas-cursor", visible: true)
 
     # text-${pageIndex} is the id of the first page's CommentLayer
     page.execute_script("document.querySelectorAll('[id^=\"comment-layer-0\"]')[0].click()")
 
-    expect(page).to_not have_css(".canvas-cursor")
+    expect(page).to have_css("#addComment", visible: true)
 
     begin
       find("#addComment")
@@ -195,7 +194,23 @@ RSpec.feature "Reader", :all_dbs do
           clear_filters
         end
 
-        it "clears the receipt date filter" do
+        it "clears the receipt date filter using 'clear all filters'" do
+          # find and fill in date filter with today's date
+          find(".receipt-date-column .unselected-filter-icon").click
+          find(".date-filter-type-dropdown").click
+          find("div", id: /react-select-2-option-\d/, text: "After this date").click
+          fill_in("receipt-date-from", with: Date.current.strftime("%m/%d/%Y"))
+          click_button("apply filter")
+
+          expect(page).to have_content("Filtering by:")
+          expect(page).to have_content("Receipt Date (1)")
+
+          # test "clear all filters" button
+          click_on "Clear all filters"
+          expect(page.has_no_content?("Filtering by:")).to eq(true)
+        end
+
+        it "clears the receipt date filter by using receipt date clear filter button" do
           # find and fill in date filter with today's date
           find(".receipt-date-column .unselected-filter-icon").click
           find(".date-filter-type-dropdown").click
@@ -207,7 +222,8 @@ RSpec.feature "Reader", :all_dbs do
           expect(page).to have_content("Receipt Date (1)")
 
           # test "clear receipt date filter" button
-          find(".cf-clear-filter-row .cf-text-button").click
+          find(".receipt-date-column .unselected-filter-icon").click
+          click_on "Clear Receipt Date filter"
           expect(page.has_no_content?("Filtering by:")).to eq(true)
         end
       end
@@ -570,7 +586,8 @@ RSpec.feature "Reader", :all_dbs do
       click_on "Save"
 
       # Delete modal should appear when removing all text from a comment
-      expect(page).to have_content "Delete Comment"
+      expect(page).to have_content "Delete"
+      click_on "Delete"
       click_on "Confirm delete"
 
       # Comment should be removed
