@@ -83,7 +83,7 @@ class Fakes::WebexService
     @instant_connect = arg[:use_instant_connect]
   end
 
-  def create_conference(*)
+  def create_conference(virtual_hearing)
     if error?
       return ExternalApi::WebexService::CreateResponse.new(
         HTTPI::Response.new(
@@ -94,11 +94,17 @@ class Fakes::WebexService
       )
     end
 
+
+
     ExternalApi::WebexService::CreateResponse.new(
       HTTPI::Response.new(
         200,
         {},
-        @instant_connect ? generate_instant_connect_conference : generate_meetings_api_conference
+        if @instant_connect
+          generate_instant_connect_conference(virtual_hearing)
+        else
+          generate_meetings_api_conference(virtual_hearing)
+        end
       )
     )
   end
@@ -143,7 +149,7 @@ class Fakes::WebexService
     end
   end
 
-  def generate_instant_connect_conference
+  def generate_instant_connect_conference(virtual_hearing)
     {
       host: link_info,
       guest: link_info(args[:num_guests]),
@@ -173,20 +179,26 @@ class Fakes::WebexService
     }
   end
 
-  def generate_meetings_api_conference
+  # Contains docket number of appeal, appeal id, appeal type (A/L), and hearing id
+  def conference_title(virtual_hearing)
+    appeal = virtual_hearing.hearing.appeal
+
+    "#{appeal.docket_number}_#{appeal.id}_#{appeal.class}"
+  end
+
+  def generate_meetings_api_conference(virtual_hearing)
     conf_id = Faker::Alphanumeric.alphanumeric(number: 32).downcase
     meeting_num = Faker::Number.number(digits: 11)
 
     {
       id: conf_id,
       meetingNumber: meeting_num,
-      title: "Example Conference", # Contains docket number of appeal, appeal id, appeal type (A/L), and hearing id
-      agenda: "Example Agenda", # Not sure yet
+      title: conference_title(virtual_hearing),
       password: Faker::Alphanumeric.alphanumeric(number: 11, min_alpha: 3, min_numeric: 3),
       phoneAndVideoSystemPassword: Faker::Number.number(digits: 8),
-      start: 30.days.from_now.iso8601, # Start of day hearing is scheduled_for
-      end: 31.days.from_now.iso8601, # End of day hearing is scheduled_for
-      timezone: "America/New_York" # Get from hearing
+      start: virtual_hearing.hearing.scheduled_for.beginning_of_day.iso8601,
+      end: virtual_hearing.hearing.scheduled_for.end_of_day.iso8601,
+      timezone: virtual_hearing.hering.scheduled_for.time_zone.name
     }.merge(telephony_options(conf_id, meeting_num))
       .merge(DEFAULT_CONFERENCE_OPTIONS)
   end
