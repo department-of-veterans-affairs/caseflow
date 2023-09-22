@@ -198,6 +198,6 @@ class Fakes::WebexService
       end: virtual_hearing.hearing.scheduled_for.end_of_day.iso8601,
       timezone: virtual_hearing.hearing.scheduled_for.time_zone.name
     }.merge(telephony_options(conf_id, meeting_num))
-      .merge(DEFAULT_CONFERENCE_OPTIONS)
+      .merge(DEFAULT_MEETING_PROPERTIES)
   end
 end
