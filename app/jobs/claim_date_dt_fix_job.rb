@@ -29,10 +29,13 @@ class ClaimDateDtFixJob < CaseflowJob
     stuck_job_report_service.write_log_report(ERROR_TEXT)
   end
 
+  private
+
   def valid_single_decision_document?(single_decision_document)
     single_decision_document.processed_at.present? &&
       single_decision_document.uploaded_to_vbms_at.present?
   end
+
 
   def process_single_decision_document(single_decision_document)
     ActiveRecord::Base.transaction do
