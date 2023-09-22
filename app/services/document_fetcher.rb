@@ -173,7 +173,7 @@ class DocumentFetcher
 
 
   def auto_tag_documents(docs)
-    docs.each do { |doc| AutotaggedDocumentJob.perform_now(doc.id) }
+    docs.each { |doc| AutotaggedDocumentJob.perform_now(doc.id) }
   end
 
   class DuplicateVbmsDocumentIdError < RuntimeError; end
