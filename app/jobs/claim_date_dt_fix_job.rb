@@ -34,6 +34,7 @@ class ClaimDateDtFixJob < CaseflowJob
       decision_document.uploaded_to_vbms_at.present?
   end
 
+  # :reek:FeatureEnvy
   def process_decision_document(decision_document)
     ActiveRecord::Base.transaction do
       decision_document.clear_error!

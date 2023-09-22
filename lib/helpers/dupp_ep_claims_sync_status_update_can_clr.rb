@@ -124,6 +124,7 @@ module WarRoom
       end
     end
 
+    # :reek:FeatureEnvy
     def log_start_retry(end_product_establishment, veteran)
       @logs.push("#{Time.zone.now} DuplicateEP::Log "\
         "Veteran participant ID: #{veteran.participant_id}. "\
@@ -133,6 +134,7 @@ module WarRoom
         "Status: Starting retry.")
     end
 
+    # :reek:FeatureEnvy
     def log_complete(end_product_establishment, veteran)
       @logs.push("#{Time.zone.now} DuplicateEP::Log "\
         "Veteran participant ID: #{veteran.participant_id}. "\

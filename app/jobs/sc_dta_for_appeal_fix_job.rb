@@ -33,6 +33,7 @@ class ScDtaForAppealFixJob < CaseflowJob
     stuck_job_report_service.write_log_report(ERRORTEXT)
   end
 
+  # :reek:FeatureEnvy
   def clear_error_on_record(decision_doc)
     ActiveRecord::Base.transaction do
       decision_doc.clear_error!

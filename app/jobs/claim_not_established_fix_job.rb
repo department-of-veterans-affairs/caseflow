@@ -40,6 +40,7 @@ class ClaimNotEstablishedFixJob < CaseflowJob
 
   private
 
+  # :reek:FeatureEnvy
   def resolve_error_on_records(object_type, epes_array)
     ActiveRecord::Base.transaction do
       if !epes_array.include?(false)

@@ -66,6 +66,7 @@ class BgsShareErrorFixJob < CaseflowJob
 
   private
 
+  # :reek:FeatureEnvy
   def resolve_error_on_records(object_type)
     ActiveRecord::Base.transaction do
       object_type.clear_error!

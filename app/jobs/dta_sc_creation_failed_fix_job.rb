@@ -3,6 +3,7 @@
 class DtaScCreationFailedFixJob < CaseflowJob
   ERROR_TEXT = "DTA SC Creation Failed"
 
+  # :reek:FeatureEnvy
   def perform
     stuck_job_report_service = StuckJobReportService.new
     return if hlrs_with_errors.blank?
