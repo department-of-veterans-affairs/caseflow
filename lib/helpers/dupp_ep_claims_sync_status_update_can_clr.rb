@@ -138,7 +138,7 @@ module WarRoom
         "Veteran participant ID: #{veteran.participant_id}. "\
         "Review: #{end_product_establishment.class.name}. "\
         "EPE ID: #{end_product_establishment.id}. "\
-        "EP status: #{end_product_establishment.status_type_code}. "\
+        "EP status: #{end_prcloduct_establishment.status_type_code}. "\
         "Status: Complete.")
     end
 

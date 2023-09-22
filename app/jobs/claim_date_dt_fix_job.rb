@@ -19,9 +19,9 @@ class ClaimDateDtFixJob < CaseflowJob
     stuck_job_report_service.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
 
     decision_docs_with_errors.each do |single_decision_document|
-      next unless valid_single_decision_document?(single_decision_document)
+      next unless valid_decision_document?(single_decision_document)
 
-      process_single_decision_document(single_decision_document)
+      process_decision_document(single_decision_document)
     end
 
     stuck_job_report_service.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
@@ -29,20 +29,17 @@ class ClaimDateDtFixJob < CaseflowJob
     stuck_job_report_service.write_log_report(ERROR_TEXT)
   end
 
-  private
-
-  def valid_single_decision_document?(single_decision_document)
-    single_decision_document.processed_at.present? &&
-      single_decision_document.uploaded_to_vbms_at.present?
+  def valid_decision_document?(decision_document)
+    decision_document.processed_at.present? &&
+      decision_document.uploaded_to_vbms_at.present?
   end
 
-
-  def process_single_decision_document(single_decision_document)
+  def process_decision_document(decision_document)
     ActiveRecord::Base.transaction do
-      single_decision_document.clear_error!
+      decision_document.clear_error!
     rescue StandardError => error
       log_error(error)
-      stuck_job_report_service.append_errors(single_decision_document.class.name, single_decision_document.id, error)
+      stuck_job_report_service.append_errors(decision_document.class.name, decision_document.id, error)
     end
   end
 
