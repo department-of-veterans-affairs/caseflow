@@ -38,6 +38,8 @@ class ClaimNotEstablishedFixJob < CaseflowJob
     EPECODES.include?(epe_code) && epe&.established_at.present?
   end
 
+  private
+
   def resolve_error_on_records(object_type, epes_array)
     ActiveRecord::Base.transaction do
       if !epes_array.include?(false)

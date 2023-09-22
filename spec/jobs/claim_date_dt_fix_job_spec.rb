@@ -12,7 +12,7 @@ describe ClaimDateDtFixJob, :postres do
     )
   end
 
-  subject { described_class.new("decision_document", "ClaimDateDt") }
+  subject { described_class.new }
 
   before do
     create_list(:decision_document, 5)
