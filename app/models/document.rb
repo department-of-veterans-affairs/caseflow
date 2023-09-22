@@ -64,8 +64,6 @@ class Document < CaseflowRecord
   # comes from VACOLS DB and set by LegacyAppeal when it references NOD, SOC, or Form9 documents
   attr_accessor :vacols_date
 
-  after_create :auto_tag_document
-
   def type?(type)
     (self.type == type) || (alt_types || []).include?(type)
   end
@@ -337,7 +335,4 @@ class Document < CaseflowRecord
     VBMSService
   end
 
-  def auto_tag_document
-    AutotaggedDocumentJob.perform_now(self.id)
-  end
 end
