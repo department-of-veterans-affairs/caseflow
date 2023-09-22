@@ -256,12 +256,14 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       click_on("#{appeal.veteran_first_name} #{appeal.veteran_last_name}")
 
       click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.label)
-      click_dropdown(prompt: "Select", text: judge_two.full_name)
+      within all(".cf-select")[1] do
+        click_dropdown(prompt: "Select", text: judge_two.full_name)
+      end
       fill_in("taskInstructions", with: "Test")
       appeal.reload.tasks.update_all(status: Constants.TASK_STATUSES.cancelled)
       click_on("Assign")
 
-      expect(page).to have_content("Task reassigned to #{judge_two.full_name}")
+      expect(page).to have_content("You have successfully assigned #{appeal.veteran_first_name} #{appeal.veteran_last_name}’s case to #{judge_two.full_name}")
 
       click_on("Switch views")
       click_on(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.css_id))
@@ -304,7 +306,9 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       click_on("#{appeal_one.veteran_first_name} #{appeal_one.veteran_last_name}")
 
       click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.label)
-      click_dropdown(prompt: "Select", text: judge_two.full_name)
+      within all(".cf-select")[1] do
+        click_dropdown(prompt: "Select", text: judge_two.full_name)
+      end
       fill_in("taskInstructions", with: "Test")
       click_on("Assign")
 
