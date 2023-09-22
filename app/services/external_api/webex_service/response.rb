@@ -1,17 +1,24 @@
 # frozen_string_literal: true
 
-class ExternalApi::PexipService::Response
+class ExternalApi::WebexService::Response
   attr_reader :resp, :code
+
+  DEFAULT_ERROR_BODY = {
+    message: "Either an error message was not provided or one could not be located.",
+    descriptions: []
+  }.freeze
 
   def initialize(resp)
     @resp = resp
     @code = @resp.code
   end
 
-  def data; end
+  def data
+    fail NotImplementedError
+  end
 
   def error
-    check_for_error
+    check_for_errors
   end
 
   def success?
@@ -20,23 +27,30 @@ class ExternalApi::PexipService::Response
 
   private
 
-  def check_for_error
+  def check_for_errors
     return if success?
 
-    # What error codes can we get?
-    msg = error_message
+    parsed_messages = parse_error_message
 
-    case code
-    in (400..499) then "400"
-    in (500..599) then "500"
-    else
-      "Something else"
-    end
+    Caseflow::Error::WebexApiError.new(
+      code: code,
+      message: parsed_messages.dig(:message),
+      descriptions: parsed_messages.dig(:descriptions)
+    )
   end
 
-  def error_message
-    return "No error message from Webex" if resp.raw_body.empty?
+  def parse_error_message
+    return DEFAULT_ERROR_BODY if resp.raw_body.empty?
 
-    "TODO: I need to figure out how Webex IC will present its errors to us"
+    begin
+      body = JSON.parse(resp.raw_body)
+
+      {
+        message: body.dig(:message),
+        descriptions: body.dig(:errors)&.pluck(:description)&.compact
+      }
+    rescue JSON::ParserError
+      DEFAULT_ERROR_BODY
+    end
   end
 end
