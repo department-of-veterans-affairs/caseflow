@@ -19,7 +19,37 @@ RSpec.feature "Reader", :all_dbs do
     User.authenticate!(roles: ["Reader"])
   end
 
-  let(:documents) { [] }
+  let(:documents) do
+    [
+      Generators::Document.create(
+        filename: "My BVA Decision",
+        type: "BVA Decision",
+        received_at: 7.days.ago,
+        vbms_document_id: 6,
+        category_procedural: true,
+        tags: [
+          Generators::Tag.create(text: "New Tag1"),
+          Generators::Tag.create(text: "New Tag2")
+        ],
+        description: Generators::Random.word_characters(50),
+        file_number: file_number
+      ),
+      Generators::Document.create(
+        filename: "My Form 9",
+        type: "Form 9",
+        received_at: 5.days.ago,
+        vbms_document_id: 4,
+        category_medical: true,
+        category_other: true
+      ),
+      Generators::Document.create(
+        filename: "My NOD",
+        type: "NOD",
+        received_at: 1.day.ago,
+        vbms_document_id: 3
+      )
+    ]
+  end
   let(:file_number) { "123456789" }
   let(:ama_appeal) { Appeal.create(veteran_file_number: file_number) }
   let(:appeal) do
