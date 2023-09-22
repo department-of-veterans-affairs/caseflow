@@ -258,6 +258,12 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
           </button>
         </span>
         <div>
+          <b>
+            Pexip
+             hearing
+          </b>
+        </div>
+        <div>
           <div
             class=""
           >
@@ -844,6 +850,12 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
           </button>
         </span>
         <div>
+          <b>
+            Webex
+             hearing
+          </b>
+        </div>
+        <div>
           <div
             class=""
           >
@@ -1419,6 +1431,12 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
         data-css-leaxad=""
       >
         <div>
+          <b>
+            Pexip
+             hearing
+          </b>
+        </div>
+        <div>
           <div
             class=""
           >
@@ -1982,6 +2000,12 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
              Connect to Recording System
           </button>
         </span>
+        <div>
+          <b>
+            Pexip
+             hearing
+          </b>
+        </div>
         <div>
           <div
             class=""
@@ -2568,6 +2592,12 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
              Connect to Recording System
           </button>
         </span>
+        <div>
+          <b>
+            Webex
+             hearing
+          </b>
+        </div>
         <div>
           <div
             class=""
@@ -3182,6 +3212,12 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
              Connect to Recording System
           </button>
         </span>
+        <div>
+          <b>
+            Webex
+             hearing
+          </b>
+        </div>
         <div>
           <div
             class=""
@@ -3806,6 +3842,12 @@ exports[`DailyDocketRow renders correctly for virtual 1`] = `
               </svg>
             </span>
           </a>
+        </div>
+        <div>
+          <b>
+            Pexip
+             hearing
+          </b>
         </div>
         <div>
           <div
