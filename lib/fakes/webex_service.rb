@@ -94,8 +94,6 @@ class Fakes::WebexService
       )
     end
 
-
-
     ExternalApi::WebexService::CreateResponse.new(
       HTTPI::Response.new(
         200,
@@ -198,7 +196,7 @@ class Fakes::WebexService
       phoneAndVideoSystemPassword: Faker::Number.number(digits: 8),
       start: virtual_hearing.hearing.scheduled_for.beginning_of_day.iso8601,
       end: virtual_hearing.hearing.scheduled_for.end_of_day.iso8601,
-      timezone: virtual_hearing.hering.scheduled_for.time_zone.name
+      timezone: virtual_hearing.hearing.scheduled_for.time_zone.name
     }.merge(telephony_options(conf_id, meeting_num))
       .merge(DEFAULT_CONFERENCE_OPTIONS)
   end
