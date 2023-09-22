@@ -21,7 +21,8 @@ const customSelectStyles = {
 
     ...styles,
     lineHeight: 'normal',
-    // this is a hack to fix a problem with changing the height of the dropdown component. Changing the height causes problems with text shifting.
+    // this is a hack to fix a problem with changing the height of the dropdown component.
+    // Changing the height causes problems with text shifting.
     marginTop: '-10%',
     marginBottom: '-10%',
     paddingTop: '-10%',

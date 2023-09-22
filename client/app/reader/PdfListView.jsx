@@ -126,9 +126,18 @@ PdfListView.propTypes = {
   efolderExpressUrl: PropTypes.string,
   userHasEfolderRole: PropTypes.bool,
   readerSearchImprovements: PropTypes.bool,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  match: PropTypes.object,
+  caseSelectedAppeal: PropTypes.object,
+  onReceiveAppealDetails: PropTypes.func,
+  fetchAppealDetails: PropTypes.func,
+  docFilterCriteria: PropTypes.object,
+  viewingDocumentsOrComments: PropTypes.string,
+  documentPathBase: PropTypes.string,
+  showPdf: PropTypes.func,
+  queueRedirectUrl: PropTypes.string,
+  queueTaskType: PropTypes.node
 };
-
 
 export default connect(
   mapStateToProps, mapDispatchToProps
