@@ -11,13 +11,16 @@ namespace :db do
       class << self
         def stamp_out_legacy_appeals(num_appeals_to_create, file_number, user, docket_number, task_type)
           # Changes location of vacols based on if you want a hearing task or only a legacy task in location 81
-          bfcurloc = if task_type == "HEARINGTASK" || task_type == "SCENARIO1EDGE"
-                       57
-                     elsif task_type == "BRIEFF_CURLOC_81_TASK"
-                       81
-                     else
-                       VACOLS::Staff.find_by(sdomainid: user.css_id).slogid
-                     end
+          if task_type == "HEARINGTASK" || task_type == "SCENARIO1EDGE"
+            bfcurloc = 57
+            staff = false
+          elsif task_type == "BRIEFF_CURLOC_81_TASK"
+            bfcurloc = 81
+            staff = false
+          else
+            bfcurloc = VACOLS::Staff.find_by(sdomainid: user.css_id).slogid
+            staff = VACOLS::Staff.find_by(sdomainid: user.css_id) # user for local/demo || UAT
+          end
 
           veteran = Veteran.find_by_file_number(file_number)
           fail ActiveRecord::RecordNotFound unless veteran
@@ -33,7 +36,6 @@ namespace :db do
           cases = Array.new(num_appeals_to_create).each_with_index.map do
             key = VACOLS::Folder.maximum(:ticknum).next
 
-            staff = VACOLS::Staff.find_by(sdomainid: user.css_id) # user for local/demo || UAT
             Generators::Vacols::Case.create(
               decass_creation: decass_creation,
               corres_exists: true,

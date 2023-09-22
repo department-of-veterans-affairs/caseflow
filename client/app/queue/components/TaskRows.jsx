@@ -308,7 +308,7 @@ class TaskRows extends React.PureComponent {
     // to ensure a consistent margin between instruction content and the "Hide" button
     const divStyles = { marginTop: '2rem' };
 
-    if ((task.previous.length >= 1) && (task.type === 'JudgeAssignTask')) {
+    if ((task.previous.length >= 1) && (task.type === 'JudgeAssignTask' || task.type === 'JudgeDecisionReviewTask')) {
       return (
         <React.Fragment key={`${task.uniqueId} fragment`}>
           {task.previous.toReversed().map((prev) => (
@@ -355,7 +355,7 @@ class TaskRows extends React.PureComponent {
 
     return (
       <React.Fragment key={`${task.uniqueId} fragment`}>
-        {task.instructions[1] && (<React.Fragment key={`${task.uniqueId} div`}>
+        {task.instructions[1] && task.type === 'JudgeAssignTask' && (<React.Fragment key={`${task.uniqueId} div`}>
           <div
             key={`${task.uniqueId} instructions`}
             style={divStyles}
@@ -366,7 +366,7 @@ class TaskRows extends React.PureComponent {
           </div>
         </React.Fragment>
         )}
-        {task.assigneeName && !(task.type === ('AttorneyTask' || 'AttorneyRewriteTask')) &&
+        {task.assigneeName && task.type !== 'AttorneyTask' && task.type !== 'AttorneyRewriteTask' &&
         (<React.Fragment key={`${task.uniqueId} div`}>
           <div
             key={`${task.uniqueId} instructions`}
@@ -385,7 +385,7 @@ class TaskRows extends React.PureComponent {
               style={divStyles}
               className="task-instructions"
             >
-              <b>{COPY.LEGACY_APPEALS_VLJ_DETAILS_INSTRUCTIONS}</b>
+              <b>{task.type !== 'JudgeDecisionReviewTask' && COPY.LEGACY_APPEALS_VLJ_DETAILS_INSTRUCTIONS}</b>
               <ReactMarkdown>{formatBreaks(task.instructions[0])}</ReactMarkdown>
             </div>
           </React.Fragment>
