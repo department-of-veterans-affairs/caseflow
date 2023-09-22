@@ -19,31 +19,37 @@ module WarRoom
     end
 
     def resolve_dup_ep
-      if retrieve_problem_reviews.count.zero?
-        Rails.logger.info("No records with errors found.")
-        return false
-      end
+      return unless retrieve_reviews_count >= 1
 
       starting_record_count = retrieve_problem_reviews.count
       @logs.push("#{Time.zone.now} DuplicateEP::Log Job Started .")
       @logs.push("#{Time.zone.now} DuplicateEP::Log"\
         " Records with errors: #{starting_record_count} .")
 
+      resolve_or_throw_error(retrieve_problem_reviews, starting_record_count)
+
+      @logs.push("#{Time.zone.now} DuplicateEP::Log"\
+      " Resolved records: #{resolved_record_count(starting_record_count, retrieve_problem_reviews.count)} .")
+      @logs.push("#{Time.zone.now} DuplicateEP::Log"\
+      " Records with errors: #{retrieve_problem_reviews.count} .")
+      @logs.push("#{Time.zone.now} DuplicateEP::Log Job completed .")
+      Rails.logger.info(@logs)
+    end
+
+    def resolve_or_throw_error(reviews, count)
       ActiveRecord::Base.transaction do
-        resolve_duplicate_end_products(retrieve_problem_reviews, starting_record_count)
+        resolve_duplicate_end_products(reviews, count)
       rescue StandardError => error
         @logs.push("An error occurred: #{error.message}")
         raise error
       end
+    end
 
-      final_count = retrieve_problem_reviews.count
-
-      @logs.push("#{Time.zone.now} DuplicateEP::Log"\
-        " Resolved records: #{resolved_record_count(starting_record_count, final_count)} .")
-      @logs.push("#{Time.zone.now} DuplicateEP::Log"\
-        " Records with errors: #{retrieve_problem_reviews.count} .")
-      @logs.push("#{Time.zone.now} DuplicateEP::Log Job completed .")
-      Rails.logger.info(@logs)
+    def retrieve_reviews_count
+      if retrieve_problem_reviews.count.zero?
+        Rails.logger.info("No records with errors found.")
+      end
+      retrieve_problem_reviews.count
     end
 
     # finding reviews that potentially need resolution
@@ -89,44 +95,62 @@ module WarRoom
 
     def resolve_duplicate_end_products(reviews, _starting_record_count)
       reviews.each do |review|
-        vet = review.veteran
-        verb = "start"
-
-        # get the end products from the veteran
-        end_products = vet.end_products
-        review.end_product_establishments.each do |single_end_product_establishment|
-          next if single_end_product_establishment.reference_id.present?
-
-          # Check if active duplicate exists
-          next if active_duplicates(end_products, single_end_product_establishment).present?
-
-          verb = "established"
-
-          ep2e = single_end_product_establishment.send(:end_product_to_establish)
-          epmf = EndProductModifierFinder.new(single_end_product_establishment, vet)
-          taken = epmf.send(:taken_modifiers).compact
-
-          @logs.push("#{Time.zone.now} DuplicateEP::Log"\
-            " Veteran participant ID: #{vet.participant_id}."\
-            " Review: #{review.class.name}.  EPE ID: #{single_end_product_establishment.id}."\
-            " EP status: #{single_end_product_establishment.status_type_code}."\
-            " Status: Starting retry.")
-
-          # Mark place to start retrying
-          epmf.instance_variable_set(:@taken_modifiers, taken.push(ep2e.modifier))
-          ep2e.modifier = epmf.find
-          single_end_product_establishment.instance_variable_set(:@end_product_to_establish, ep2e)
-          single_end_product_establishment.establish!
-
-          @logs.push("#{Time.zone.now} DuplicateEP::Log"\
-            " Veteran participant ID: #{vet.participant_id}.  Review: #{review.class.name}."\
-            " EPE ID: #{single_end_product_establishment.id}."\
-            " EP status: #{single_end_product_establishment.status_type_code}."\
-            " Status: Complete.")
-        end
-
-        call_decision_review_process_job(review, vet)
+        process_review(review)
       end
+    end
+
+    def process_review(review)
+      veteran = review.veteran
+
+      review.end_product_establishments.each do |end_product_establishment|
+        next if end_product_establishment.reference_id.present?
+
+        next if active_duplicates?(veteran.end_products, end_product_establishment)
+
+        establish_end_product(end_product_establishment, veteran)
+      end
+
+      call_decision_review_process_job(review, veteran)
+    end
+
+    def active_duplicates?(end_products, end_product_establishment)
+      end_products.any? do |end_product|
+        end_product.active? && end_product.duplicate_of?(end_product_establishment)
+      end
+    end
+
+    def establish_end_product(end_product_establishment, veteran)
+      log_start_retry(end_product_establishment, veteran)
+
+      ep_to_establish = end_product_establishment.send(:end_product_to_establish)
+      modifier_finder = EndProductModifierFinder.new(end_product_establishment, veteran)
+      taken_modifiers = modifier_finder.send(:taken_modifiers).compact
+
+      # Mark place to start retrying
+      modifier_finder.instance_variable_set(:@taken_modifiers, taken_modifiers.push(ep_to_establish.modifier))
+      ep_to_establish.modifier = modifier_finder.find
+      end_product_establishment.instance_variable_set(:@end_product_to_establish, ep_to_establish)
+      end_product_establishment.establish!
+
+      log_complete(end_product_establishment, veteran)
+    end
+
+    def log_start_retry(end_product_establishment, veteran)
+      @logs.push("#{Time.zone.now} DuplicateEP::Log "\
+        "Veteran participant ID: #{veteran.participant_id}. "\
+        "Review: #{end_product_establishment.class.name}. "\
+        "EPE ID: #{end_product_establishment.id}. "\
+        "EP status: #{end_product_establishment.status_type_code}. "\
+        "Status: Starting retry.")
+    end
+
+    def log_complete(end_product_establishment, veteran)
+      @logs.push("#{Time.zone.now} DuplicateEP::Log "\
+        "Veteran participant ID: #{veteran.participant_id}. "\
+        "Review: #{end_product_establishment.class.name}. "\
+        "EPE ID: #{end_product_establishment.id}. "\
+        "EP status: #{end_product_establishment.status_type_code}. "\
+        "Status: Complete.")
     end
 
     def resolved_record_count(starting_record_count, final_count)
