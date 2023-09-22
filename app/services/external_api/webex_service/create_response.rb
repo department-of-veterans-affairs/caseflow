@@ -1,7 +1,17 @@
 # frozen_string_literal: true
 
-class ExternalApi::PexipService::CreateResponse < ExternalApi::PexipService::Response
+class ExternalApi::WebexService::CreateResponse < ExternalApi::WebexService::Response
   def data
-    fail NotImplementedError
+    begin
+      JSON.parse(resp.raw_body)
+    rescue JSON::ParserError => error
+      Rails.logger.error(error)
+      Raven.capture_exception(error)
+
+      ConferenceCreationError.new(
+        code: 500,
+        message: "Response received from Webex could not be parsed."
+      ).serialize_response
+    end
   end
 end
