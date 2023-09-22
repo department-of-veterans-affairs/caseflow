@@ -22,7 +22,8 @@ const TagSelector = (props) => {
 
 TagSelector.propTypes = {
   tag: PropTypes.shape({
-    text: PropTypes.string.isRequired
+    text: PropTypes.string.isRequired,
+    id: PropTypes.number
   }).isRequired,
   handleTagToggle: PropTypes.func,
   tagToggleStates: PropTypes.object,
@@ -67,7 +68,7 @@ const DocTagPicker = ({ tags, tagToggleStates, handleTagToggle, defaultSearchTex
   return (
 
     <div style={{ width: '217px' }}>
-      {featureToggles.readerSearchImprovements && <div style={{width: '300px'}}>
+      {featureToggles.readerSearchImprovements && <div style={{ width: '300px' }}>
         <SearchBar onChange={updateFilterText} value={filterText} placeholder={defaultSearchText}
           disableClearSearch isSearchAhead />
       </div> }

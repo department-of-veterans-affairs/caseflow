@@ -23,7 +23,7 @@ export class PdfListView extends React.Component {
     super();
     this.state = {
       clearAllFiltersCallbacks: []
-    }
+    };
   }
 
   componentDidMount() {
@@ -50,7 +50,7 @@ export class PdfListView extends React.Component {
 
     const setClearAllFiltersCallbacks = (callbacks) => {
       this.state.clearAllFiltersCallbacks = [...this.state.clearAllFiltersCallbacks, ...callbacks];
-    }
+    };
 
     if (noDocuments) {
       tableView = <NoSearchResults />;
@@ -126,9 +126,18 @@ PdfListView.propTypes = {
   efolderExpressUrl: PropTypes.string,
   userHasEfolderRole: PropTypes.bool,
   readerSearchImprovements: PropTypes.bool,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  match: PropTypes.object,
+  caseSelectedAppeal: PropTypes.object,
+  onReceiveAppealDetails: PropTypes.func,
+  fetchAppealDetails: PropTypes.func,
+  docFilterCriteria: PropTypes.object,
+  viewingDocumentsOrComments: PropTypes.string,
+  documentPathBase: PropTypes.string,
+  showPdf: PropTypes.func,
+  queueRedirectUrl: PropTypes.string,
+  queueTaskType: PropTypes.node
 };
-
 
 export default connect(
   mapStateToProps, mapDispatchToProps

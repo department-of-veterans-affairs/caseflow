@@ -11,7 +11,7 @@ import Button from '../components/Button';
 class HeaderFilterMessage extends React.PureComponent {
   doClearAllFilters = () => {
     // Call any passed clear functions for page elements
-    this.props.clearAllFiltersCallbacks.forEach((f) => f());
+    this.props.clearAllFiltersCallbacks.forEach((filter) => filter());
     this.props.clearAllFilters();
   }
 
