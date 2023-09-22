@@ -46,6 +46,8 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
           issue_count: 0,
           issue_types: "",
           type: "Board Grant",
+          external_appeal_id: task.appeal.uuid,
+          appeal_type: "Appeal",
           business_line: non_comp_org.url
         }
       }
@@ -98,6 +100,8 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
             issue_count: 0,
             issue_types: "",
             type: "Board Grant",
+            external_appeal_id: task.appeal.uuid,
+            appeal_type: "Appeal",
             business_line: non_comp_org.url
           }
         }
@@ -155,6 +159,8 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
             issue_count: 0,
             issue_types: "",
             type: "Board Grant",
+            external_appeal_id: task.appeal.uuid,
+            appeal_type: "Appeal",
             business_line: non_comp_org.url
           }
         }
