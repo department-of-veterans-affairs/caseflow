@@ -95,44 +95,33 @@ module WarRoom
 
     def resolve_duplicate_end_products(reviews, _starting_record_count)
       reviews.each do |review|
-        process_review(review)
+        vet = review.veteran
+
+        # get the end products from the veteran
+        end_products = vet.end_products
+        review.end_product_establishments.each do |single_end_product_establishment|
+          next if single_end_product_establishment.reference_id.present?
+
+          # Check if active duplicate exists
+          next if active_duplicates(end_products, single_end_product_establishment).present?
+
+          ep2e = single_end_product_establishment.send(:end_product_to_establish)
+          epmf = EndProductModifierFinder.new(single_end_product_establishment, vet)
+          taken = epmf.send(:taken_modifiers).compact
+
+          log_start_retry(single_end_product_establishment, vet)
+
+          # Mark place to start retrying
+          epmf.instance_variable_set(:@taken_modifiers, taken.push(ep2e.modifier))
+          ep2e.modifier = epmf.find
+          single_end_product_establishment.instance_variable_set(:@end_product_to_establish, ep2e)
+          single_end_product_establishment.establish!
+
+          log_complete(single_end_product_establishment, vet)
+        end
+
+        call_decision_review_process_job(review, vet)
       end
-    end
-
-    def process_review(review)
-      veteran = review.veteran
-
-      review.end_product_establishments.each do |end_product_establishment|
-        next if end_product_establishment.reference_id.present?
-
-        next if active_duplicates?(veteran.end_products, end_product_establishment)
-
-        establish_end_product(end_product_establishment, veteran)
-      end
-
-      call_decision_review_process_job(review, veteran)
-    end
-
-    def active_duplicates?(end_products, end_product_establishment)
-      end_products.any? do |end_product|
-        end_product.active? && end_product.duplicate_of?(end_product_establishment)
-      end
-    end
-
-    def establish_end_product(end_product_establishment, veteran)
-      log_start_retry(end_product_establishment, veteran)
-
-      ep_to_establish = end_product_establishment.send(:end_product_to_establish)
-      modifier_finder = EndProductModifierFinder.new(end_product_establishment, veteran)
-      taken_modifiers = modifier_finder.send(:taken_modifiers).compact
-
-      # Mark place to start retrying
-      modifier_finder.instance_variable_set(:@taken_modifiers, taken_modifiers.push(ep_to_establish.modifier))
-      ep_to_establish.modifier = modifier_finder.find
-      end_product_establishment.instance_variable_set(:@end_product_to_establish, ep_to_establish)
-      end_product_establishment.establish!
-
-      log_complete(end_product_establishment, veteran)
     end
 
     def log_start_retry(end_product_establishment, veteran)

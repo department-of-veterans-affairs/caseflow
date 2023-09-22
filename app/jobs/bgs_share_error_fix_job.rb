@@ -11,15 +11,6 @@ class BgsShareErrorFixJob < CaseflowJob
     STUCK_JOB_REPORT_SERVICE.write_log_report(ERROR_TEXT)
   end
 
-  def resolve_error_on_records(object_type)
-    ActiveRecord::Base.transaction do
-      object_type.clear_error!
-    rescue StandardError => error
-      log_error(error)
-      STUCK_JOB_REPORT_SERVICE.append_errors(object_type.class.name, object_type.id, error)
-    end
-  end
-
   def clear_rius_errors
     STUCK_JOB_REPORT_SERVICE.append_record_count(rius_with_errors.count, ERROR_TEXT)
     rius_with_errors.each do |riu|
@@ -71,5 +62,16 @@ class BgsShareErrorFixJob < CaseflowJob
 
   def bges_with_errors
     BoardGrantEffectuation.where("decision_sync_error ILIKE?", "%#{ERROR_TEXT}%")
+  end
+
+  private
+
+  def resolve_error_on_records(object_type)
+    ActiveRecord::Base.transaction do
+      object_type.clear_error!
+    rescue StandardError => error
+      log_error(error)
+      STUCK_JOB_REPORT_SERVICE.append_errors(object_type.class.name, object_type.id, error)
+    end
   end
 end
