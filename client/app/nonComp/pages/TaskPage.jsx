@@ -16,7 +16,9 @@ class TaskPageUnconnected extends React.PureComponent {
   handleSave = (data) => {
     const successHandler = () => {
       // update to the completed tab
-      this.props.taskUpdateDefaultPage(1);
+      const completedTabIndex = this.props.businessLineConfig?.tabs?.indexOf('completed') || 1;
+
+      this.props.taskUpdateDefaultPage(completedTabIndex);
       this.props.history.push(`/${this.props.businessLineUrl}`);
     };
 
@@ -49,7 +51,7 @@ class TaskPageUnconnected extends React.PureComponent {
     }
 
     return <div>
-      { errorAlert }
+      {errorAlert}
       <h1>{businessLine}</h1>
       <div className="cf-review-details cf-gray-box">
         <div className="usa-grid-full">
@@ -64,7 +66,7 @@ class TaskPageUnconnected extends React.PureComponent {
         </div>
         <div className="usa-grid-full row-two">
           <div className="usa-width-one-half">
-            { appeal.veteranIsNotClaimant ? `Veteran Name: ${appeal.veteran.name}` : '\u00a0' }
+            {appeal.veteranIsNotClaimant ? `Veteran Name: ${appeal.veteran.name}` : '\u00a0'}
           </div>
           <div className="usa-width-one-half cf-txt-r">
             <div>SSN: {appeal.veteran.ssn || '[unknown]'}</div>
@@ -86,7 +88,7 @@ class TaskPageUnconnected extends React.PureComponent {
           </div>
         </div>
       </div>
-      { detailedTaskView }
+      {detailedTaskView}
     </div>;
   }
 }
@@ -113,7 +115,8 @@ TaskPageUnconnected.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func
   }),
-  businessLineUrl: PropTypes.string
+  businessLineUrl: PropTypes.string,
+  businessLineConfig: PropTypes.shape({ tabs: PropTypes.array }),
 };
 
 const TaskPage = connect(
@@ -121,6 +124,7 @@ const TaskPage = connect(
     appeal: state.appeal,
     businessLine: state.businessLine,
     businessLineUrl: state.businessLineUrl,
+    businessLineConfig: state.businessLineConfig,
     task: state.task,
     decisionIssuesStatus: state.decisionIssuesStatus
   }),
