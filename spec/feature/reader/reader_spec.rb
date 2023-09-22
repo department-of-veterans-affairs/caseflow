@@ -718,8 +718,7 @@ RSpec.feature "Reader", :all_dbs do
         annotation = documents[1].annotations[0]
 
         click_button("expand-#{documents[1].id}-comments-button")
-
-        click_link("Jump to section")
+        click_button("Jump to section")
 
         # Wait for PDFJS to render the pages
         expect(page).to have_css(".page")
