@@ -8,10 +8,4 @@ class ExternalApi::WebexService
   def delete_conference(*)
     fail NotImplementedError
   end
-
-  private
-
-  def error?
-    [].include? @status_code
-  end
 end
