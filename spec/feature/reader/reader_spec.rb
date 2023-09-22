@@ -52,8 +52,7 @@ end
 
 RSpec.feature "Reader", :all_dbs do
   before do
-    # commented out to resolve failing tests
-    # FeatureToggle.enable!(:interface_version_2)
+    FeatureToggle.enable!(:interface_version_2)
     FeatureToggle.enable!(:reader_search_improvements)
     Fakes::Initializer.load!
 
@@ -114,7 +113,9 @@ RSpec.feature "Reader", :all_dbs do
     end
 
     feature "Document header filtering message" do
-      background do
+      before do
+        FeatureToggle.disable!(:interface_version_2)
+        FeatureToggle.enable!(:reader_search_improvements)
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
       end
 
