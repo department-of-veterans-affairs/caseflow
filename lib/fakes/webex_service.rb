@@ -14,9 +14,73 @@ class Fakes::WebexService
                   "RSe3LXoK78JqRxk6XuaQCDkr6TmG5YjHQ2FFw1tP1ekHpNIL2oJNVAKKPgget7LRuSiM6jg.628e3hFPmZCoqXuyY" \
                   "2OriQ"
 
+  DEFAULT_MEETING_PROPERTIES = {
+    hostUserId: Faker::Alphanumeric.alphanumeric(number: 79),
+    hostDisplayName: "BVA Caseflow",
+    hostEmail: "testaccount@admindomain.com",
+    hostKey: "123456",
+    siteUrl: "test.webex.com",
+    webLink: "https://test.webex.com/not-real/j.php?MTID=m#{Faker::Alphanumeric.alphanumeric(number: 32).downcase}",
+    sipAddress: "12345678910@test.webex.com",
+    dialInIpAddress: "",
+    enabledAutoRecordMeeting: false,
+    allowAnyUserToBeCoHost: false,
+    allowFirstUserToBeCoHost: false,
+    allowAuthenticatedDevices: true,
+    enabledJoinBeforeHost: false,
+    joinBeforeHostMinutes: 0,
+    enableConnectAudioBeforeHost: false,
+    excludePassword: false,
+    publicMeeting: false,
+    enableAutomaticLock: false,
+    meetingType: "meetingSeries",
+    state: "active",
+    unlockedMeetingJoinSecurity: "allowJoinWithLobby",
+    meetingOptions: {
+      enabledChat: true,
+      enabledVideo: true,
+      enabledNote: true,
+      noteType: "allowAll",
+      enabledFileTransfer: true,
+      enabledUCFRichMedia: true
+    },
+    attendeePrivileges: {
+      enabledShareContent: true,
+      enabledSaveDocument: false,
+      enabledPrintDocument: false,
+      enabledAnnotate: false,
+      enabledViewParticipantList: true,
+      enabledViewThumbnails: false,
+      enabledRemoteControl: true,
+      enabledViewAnyDocument: false,
+      enabledViewAnyPage: false,
+      enabledContactOperatorPrivately: false,
+      enabledChatHost: true,
+      enabledChatPresenter: true,
+      enabledChatOtherParticipants: true
+    },
+    sessionTypeId: 3,
+    scheduledType: "meeting",
+    simultaneousInterpretation: {
+      enabled: false
+    },
+    enabledBreakoutSessions: false,
+    audioConnectionOptions: {
+      audioConnectionType: "webexAudio",
+      enabledTollFreeCallIn: false,
+      enabledGlobalCallIn: true,
+      enabledAudienceCallBack: false,
+      entryAndExitTone: "beep",
+      allowHostToUnmuteParticipants: false,
+      allowAttendeeToUnmuteSelf: true,
+      muteAttendeeUponEntry: true
+    }
+  }.freeze
+
   def initialize(**args)
     @status_code = args[:status_code]
     @error_message = args[:error_message] || "Error"
+    @instant_connect = arg[:use_instant_connect]
   end
 
   def create_conference(*)
@@ -34,9 +98,7 @@ class Fakes::WebexService
       HTTPI::Response.new(
         200,
         {},
-        host: link_info,
-        guest: link_info(args[:num_guests]),
-        baseUrl: "https://instant-usgov.webex.com/visit/"
+        @instant_connect ? generate_instant_connect_conference : generate_meetings_api_conference
       )
     )
   end
@@ -55,15 +117,6 @@ class Fakes::WebexService
 
   private
 
-  def link_info(num_links = 1)
-    Array.new(num_links).map do
-      {
-        cipher: SAMPLE_CIPHER,
-        short: Faker::Alphanumeric.alphanumeric(number: 7, min_alpha: 3, min_numeric: 1)
-      }
-    end
-  end
-
   def error?
     [
       400, 401, 403, 404, 405, 409, 410,
@@ -79,5 +132,62 @@ class Fakes::WebexService
       ],
       trackingId: "ROUTER_#{SecureRandom.uuid}"
     }
+  end
+
+  def link_info(num_links = 1)
+    Array.new(num_links).map do
+      {
+        cipher: SAMPLE_CIPHER,
+        short: Faker::Alphanumeric.alphanumeric(number: 7, min_alpha: 3, min_numeric: 1)
+      }
+    end
+  end
+
+  def generate_instant_connect_conference
+    {
+      host: link_info,
+      guest: link_info(args[:num_guests]),
+      baseUrl: "https://instant-usgov.webex.com/visit/"
+    }
+  end
+
+  def telephony_options(conf_id, meeting_num)
+    {
+      telephony: {
+        accessCode: meeting_num,
+        callInNumbers: [
+          {
+            label: "United States Toll",
+            callInNumber: Faker::PhoneNumber.phone_number,
+            tollType: "toll"
+          }
+        ],
+        links: [
+          {
+            rel: "globalCallinNumbers",
+            href: "/v1/meetings/#{conf_id}/globalCallinNumbers",
+            method: "GET"
+          }
+        ]
+      }
+    }
+  end
+
+  def generate_meetings_api_conference
+    conf_id = Faker::Alphanumeric.alphanumeric(number: 32).downcase
+    meeting_num = Faker::Number.number(digits: 11)
+
+    {
+      id: conf_id,
+      meetingNumber: meeting_num,
+      title: "Example Conference", # Contains docket number of appeal, appeal id, appeal type (A/L), and hearing id
+      agenda: "Example Agenda", # Not sure yet
+      password: Faker::Alphanumeric.alphanumeric(number: 11, min_alpha: 3, min_numeric: 3),
+      phoneAndVideoSystemPassword: Faker::Number.number(digits: 8),
+      start: 30.days.from_now.iso8601, # Start of day hearing is scheduled_for
+      end: 31.days.from_now.iso8601, # End of day hearing is scheduled_for
+      timezone: "America/New_York" # Get from hearing
+    }.merge(telephony_options(conf_id, meeting_num))
+      .merge(DEFAULT_CONFERENCE_OPTIONS)
   end
 end
