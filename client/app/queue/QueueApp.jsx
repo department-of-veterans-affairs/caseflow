@@ -112,7 +112,7 @@ class QueueApp extends React.PureComponent {
     this.props.setCanEditAod(this.props.canEditAod);
     this.props.setCanEditNodDate(this.props.userCanViewEditNodDate);
     this.props.setUserIsCobAdmin(this.props.userIsCobAdmin);
-    this.props.setMeetingType(this.props.meetingType);
+    this.props.setMeetingType(this.props.conferenceProvider);
     this.props.setCanEditCavcRemands(this.props.canEditCavcRemands);
     this.props.setCanEditCavcDashboards(this.props.canEditCavcDashboards);
     this.props.setCanViewCavcDashboards(this.props.canViewCavcDashboards);
@@ -1440,7 +1440,7 @@ QueueApp.propTypes = {
   canEditCavcDashboards: PropTypes.bool,
   canViewCavcDashboards: PropTypes.bool,
   userIsCobAdmin: PropTypes.bool,
-  meetingType: PropTypes.string,
+  conferenceProvider: PropTypes.string,
   setMeetingType: PropTypes.string
 };
 

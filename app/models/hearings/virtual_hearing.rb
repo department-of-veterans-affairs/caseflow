@@ -37,6 +37,7 @@ class VirtualHearing < CaseflowRecord
   class LinkMismatchError < StandardError; end
 
   include UpdatedByUserConcern
+  include ConferenceableConcern
 
   class << self
     def client_host_or_default

@@ -12,11 +12,13 @@ const radioOptions = [
     value: 'webex' }
 ];
 
-const SelectConferenceTypeRadioField = ({ name, meetingType, organization, user }) => {
-  const [value, setValue] = useState(meetingType);
+const SelectConferenceTypeRadioField = ({ name, conferenceProvider, organization, user }) => {
+  const [value, setValue] = useState(conferenceProvider);
 
-  const modifyConferenceType = (newMeetingType) => {
-    const payload = { data: { ...user, attributes: { ...user.attributes, meeting_type: newMeetingType } } };
+  const modifyConferenceType = (newConferenceProvider) => {
+    const payload = {
+      data: { ...user, attributes: { ...user.attributes, conference_provider: newConferenceProvider } }
+    };
 
     ApiUtil.patch(`/organizations/${organization}/users/${user.id}`, payload);
   };
@@ -37,7 +39,7 @@ const SelectConferenceTypeRadioField = ({ name, meetingType, organization, user 
 SelectConferenceTypeRadioField.propTypes = {
   name: PropTypes.string,
   onClick: PropTypes.func,
-  meetingType: PropTypes.string,
+  conferenceProvider: PropTypes.string,
   organization: PropTypes.string,
   user: PropTypes.shape({
     id: PropTypes.string,
