@@ -149,20 +149,44 @@ class Fakes::WebexService
     "#{appeal.docket_number}_#{appeal.id}_#{appeal.class}"
   end
 
-  def generate_meetings_api_conference(virtual_hearing)
+  def meeting_details_based_on_type(conferenced_item)
+    return meeting_details_for_hearing_day(conferenced_item) if conferenced_item.is_a?(HearingDay)
+
+    return meeting_details_for_virtual_hearing(conferenced_item) if conferenced_item.is_a?(VirtualHearing)
+
+    fail ArgumentError.new("Argument type passed in is not recognized: #{conferenced_item.class}")
+  end
+
+  def meeting_details_for_hearing_day(hearing_day)
+    {
+      title: "Guest Link for #{hearing_day.scheduled_for}",
+      start: hearing_day.scheduled_for.beginning_of_day.iso8601,
+      end: hearing_day.scheduled_for.end_of_day.iso8601,
+      timezone: "America/New_York"
+    }
+  end
+
+  def meeting_details_for_virtual_hearing(virtual_hearing)
+    {
+      title: conference_title(virtual_hearing),
+      start: virtual_hearing.hearing.scheduled_for.beginning_of_day.iso8601,
+      end: virtual_hearing.hearing.scheduled_for.end_of_day.iso8601,
+      timezone: virtual_hearing.hearing.scheduled_for.time_zone.name
+    }
+  end
+
+  def generate_meetings_api_conference(conferenced_item)
     conf_id = Faker::Alphanumeric.alphanumeric(number: 32).downcase
     meeting_num = Faker::Number.number(digits: 11)
 
     {
       id: conf_id,
       meetingNumber: meeting_num,
-      title: conference_title(virtual_hearing),
       password: Faker::Alphanumeric.alphanumeric(number: 11, min_alpha: 3, min_numeric: 3),
       phoneAndVideoSystemPassword: Faker::Number.number(digits: 8),
-      start: virtual_hearing.hearing.scheduled_for.beginning_of_day.iso8601,
-      end: virtual_hearing.hearing.scheduled_for.end_of_day.iso8601,
-      timezone: virtual_hearing.hearing.scheduled_for.time_zone.name
+
     }.merge(telephony_options(conf_id, meeting_num))
       .merge(DEFAULT_MEETING_PROPERTIES)
+      .merge(meeting_details_based_on_type(conferenced_item))
   end
 end
