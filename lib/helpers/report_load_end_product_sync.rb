@@ -35,12 +35,14 @@ module WarRoom
 
       @error_log = []
       @run_log = []
+      synced_count = 0
 
       error_ids = get_error_ids
 
       eps_queried = get_cleared_eps(batch_limit, error_ids, conn)
       eps_queried.each do |x|
         call_priority_sync(x["reference_id"], conn)
+        synced_count += 1
       end
 
       error_csv = build_csv(@error_log)
@@ -50,6 +52,7 @@ module WarRoom
       final_metrics
 
       conn.close
+      synced_count
     end
 
     # Priority sync for cancelled EPs
@@ -59,12 +62,14 @@ module WarRoom
 
       @error_log = []
       @run_log = []
+      synced_count = 0
 
       error_ids = get_error_ids
 
       eps_queried = get_cancelled_eps(batch_limit, error_ids, conn)
       eps_queried.each do |x|
         call_priority_sync(x["reference_id"], conn)
+        synced_count += 1
       end
 
       error_csv = build_csv(@error_log)
@@ -74,6 +79,7 @@ module WarRoom
       final_metrics
 
       conn.close
+      synced_count
     end
 
 
