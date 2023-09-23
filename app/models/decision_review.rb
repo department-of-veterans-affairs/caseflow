@@ -95,11 +95,7 @@ class DecisionReview < CaseflowRecord
   end
 
   def ama_activation_date
-    if intake
-      Constants::DATES["AMA_ACTIVATION"].to_date
-    else
-      Constants::DATES["AMA_ACTIVATION_TEST"].to_date
-    end
+    Constants::DATES["AMA_ACTIVATION"].to_date
   end
 
   def bgs_power_of_attorney

@@ -2,7 +2,7 @@
 
 describe SupplementalClaim, :postgres do
   before do
-    Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
+    Timecop.freeze(Time.utc(2020, 4, 24, 12, 0, 0))
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -45,7 +45,7 @@ describe SupplementalClaim, :postgres do
         let(:receipt_date) { 1.day.ago }
 
         it "is valid" do
-          is_expected.to be false
+          is_expected.to be true
         end
 
         context "invalid Veteran" do
@@ -62,7 +62,7 @@ describe SupplementalClaim, :postgres do
           context "processed in Caseflow" do
             let(:benefit_type) { "education" }
 
-            it { is_expected.to be_falsey }
+            it { is_expected.to be_truthy }
           end
         end
       end
@@ -200,7 +200,7 @@ describe SupplementalClaim, :postgres do
   end
 
   context "#alerts" do
-    let(:receipt_date) { Time.new("2018", "03", "01").utc }
+    let(:receipt_date) { Time.new("2020", "03", "01").utc }
     let(:benefit_type) { "compensation" }
 
     let!(:sc) do

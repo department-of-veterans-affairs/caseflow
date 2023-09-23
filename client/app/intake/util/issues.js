@@ -350,8 +350,8 @@ export const formatIssuesBySection = (issues) => {
   );
 };
 
-export const formatAddedIssues = (issues = [], useAmaActivationDate = true) => {
-  const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
+export const formatAddedIssues = (issues = []) => {
+  const amaActivationDate = new Date(DATES.AMA_ACTIVATION);
 
   return issues.map((issue, index) => {
     if (issue.isUnidentified || issue.verifiedUnidentifiedIssue) {

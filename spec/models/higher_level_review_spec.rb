@@ -2,7 +2,7 @@
 
 describe HigherLevelReview, :postgres do
   before do
-    Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
+    Timecop.freeze(Time.utc(2020, 4, 24, 12, 0, 0))
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -58,9 +58,10 @@ describe HigherLevelReview, :postgres do
       end
 
       context "processed in Caseflow" do
-        let(:benefit_type) { "education" }
 
-        it { is_expected.to be_falsey }
+        let(:benefit_type) { "education" }
+        let(:receipt_date) { "2020-04-24" }
+        it { is_expected.to be_truthy }
       end
     end
 
@@ -110,9 +111,10 @@ describe HigherLevelReview, :postgres do
           let(:informal_conference) { true }
           let(:same_office) { false }
           let(:legacy_opt_in_approved) { false }
+          let(:receipt_date) { "2020-04-24" }
 
           it "is valid" do
-            is_expected.to be_falsey
+            is_expected.to be true
           end
         end
 
@@ -457,7 +459,7 @@ describe HigherLevelReview, :postgres do
   end
 
   context "#alerts" do
-    let(:receipt_date) { Time.new("2018", "03", "01").utc }
+    let(:receipt_date) { Time.new("2020", "03", "01").utc }
     let(:benefit_type) { "compensation" }
 
     let!(:hlr) do

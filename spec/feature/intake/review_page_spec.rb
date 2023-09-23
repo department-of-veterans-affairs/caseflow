@@ -50,7 +50,7 @@ feature "Intake Review Page", :postgres do
       within_fieldset("Is the claimant someone other than the Veteran?") do
         find("label", text: "Yes", match: :prefer_exact).click
       end
-      find("label", text: "Bob Vance", match: :prefer_exact).click
+      find("label", text: "Claimant not listed", match: :prefer_exact).click
       click_intake_continue
 
       expect(page).to have_current_path("/intake/review_request")

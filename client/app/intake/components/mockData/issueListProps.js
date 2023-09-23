@@ -131,7 +131,6 @@ export const mockedIssueListProps = {
     contestableIssues: {},
     claimId: '6545833b-1a6c-4966-823f-7d0037aa5f6a',
     featureToggles: {
-      useAmaActivationDate: true,
       correctClaimReviews: true,
       covidTimelinessExemption: true
     },
@@ -267,7 +266,6 @@ export const mockedIssueListProps = {
     }
   ],
   featureToggles: {
-    useAmaActivationDate: true,
     correctClaimReviews: true,
     covidTimelinessExemption: true
   },
