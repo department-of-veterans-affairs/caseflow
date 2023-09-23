@@ -23,6 +23,7 @@ class EpPrioritySyncJob < CaseflowJob
       # no Raven report. We'll try again later.
       Rails.logger.error error
     rescue StandardError => error
+      # BOOM 💥
       capture_exception(error: error)
     end
   end
