@@ -142,14 +142,6 @@ class Fakes::WebexService
     }
   end
 
-  def meeting_details_based_on_type(conferenced_item)
-    return meeting_details_for_hearing_day(conferenced_item) if conferenced_item.is_a?(HearingDay)
-
-    return meeting_details_for_virtual_hearing(conferenced_item) if conferenced_item.is_a?(VirtualHearing)
-
-    fail ArgumentError, "Argument type passed in is not recognized: #{conferenced_item.class}"
-  end
-
   def generate_meetings_api_conference(conferenced_item)
     conf_id = Faker::Alphanumeric.alphanumeric(number: 32).downcase
     meeting_num = Faker::Number.number(digits: 11)
