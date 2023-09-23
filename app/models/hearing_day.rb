@@ -303,6 +303,15 @@ class HearingDay < CaseflowRecord
       end
     end
 
+    def meeting_details_for_conference
+      {
+        title: "Guest Link for #{scheduled_for}",
+        start: scheduled_for.beginning_of_day.iso8601,
+        end: scheduled_for.end_of_day.iso8601,
+        timezone: "America/New_York"
+      }
+    end
+
     private
 
     def current_user_css_id

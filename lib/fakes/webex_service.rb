@@ -142,37 +142,12 @@ class Fakes::WebexService
     }
   end
 
-  # Contains docket number of appeal, appeal id, appeal type (A/L), and hearing id
-  def conference_title(virtual_hearing)
-    appeal = virtual_hearing.hearing.appeal
-
-    "#{appeal.docket_number}_#{appeal.id}_#{appeal.class}"
-  end
-
   def meeting_details_based_on_type(conferenced_item)
     return meeting_details_for_hearing_day(conferenced_item) if conferenced_item.is_a?(HearingDay)
 
     return meeting_details_for_virtual_hearing(conferenced_item) if conferenced_item.is_a?(VirtualHearing)
 
     fail ArgumentError, "Argument type passed in is not recognized: #{conferenced_item.class}"
-  end
-
-  def meeting_details_for_hearing_day(hearing_day)
-    {
-      title: "Guest Link for #{hearing_day.scheduled_for}",
-      start: hearing_day.scheduled_for.beginning_of_day.iso8601,
-      end: hearing_day.scheduled_for.end_of_day.iso8601,
-      timezone: "America/New_York"
-    }
-  end
-
-  def meeting_details_for_virtual_hearing(virtual_hearing)
-    {
-      title: conference_title(virtual_hearing),
-      start: virtual_hearing.hearing.scheduled_for.beginning_of_day.iso8601,
-      end: virtual_hearing.hearing.scheduled_for.end_of_day.iso8601,
-      timezone: virtual_hearing.hearing.scheduled_for.time_zone.name
-    }
   end
 
   def generate_meetings_api_conference(conferenced_item)
@@ -186,6 +161,6 @@ class Fakes::WebexService
       phoneAndVideoSystemPassword: Faker::Number.number(digits: 8)
     }.merge(telephony_options(conf_id, meeting_num))
       .merge(DEFAULT_MEETING_PROPERTIES)
-      .merge(meeting_details_based_on_type(conferenced_item))
+      .merge(conferenced_item.meeting_details_for_conference)
   end
 end
