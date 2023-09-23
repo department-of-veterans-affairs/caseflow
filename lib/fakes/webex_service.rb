@@ -154,7 +154,7 @@ class Fakes::WebexService
 
     return meeting_details_for_virtual_hearing(conferenced_item) if conferenced_item.is_a?(VirtualHearing)
 
-    fail ArgumentError.new("Argument type passed in is not recognized: #{conferenced_item.class}")
+    fail ArgumentError, "Argument type passed in is not recognized: #{conferenced_item.class}"
   end
 
   def meeting_details_for_hearing_day(hearing_day)
@@ -183,8 +183,7 @@ class Fakes::WebexService
       id: conf_id,
       meetingNumber: meeting_num,
       password: Faker::Alphanumeric.alphanumeric(number: 11, min_alpha: 3, min_numeric: 3),
-      phoneAndVideoSystemPassword: Faker::Number.number(digits: 8),
-
+      phoneAndVideoSystemPassword: Faker::Number.number(digits: 8)
     }.merge(telephony_options(conf_id, meeting_num))
       .merge(DEFAULT_MEETING_PROPERTIES)
       .merge(meeting_details_based_on_type(conferenced_item))
