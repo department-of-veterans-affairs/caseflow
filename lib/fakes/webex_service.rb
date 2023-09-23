@@ -69,7 +69,7 @@ class Fakes::WebexService
     @error_message = args[:error_message] || "Error"
   end
 
-  def create_conference(virtual_hearing)
+  def create_conference(conferenced_item)
     if error?
       return ExternalApi::WebexService::CreateResponse.new(
         HTTPI::Response.new(
@@ -84,16 +84,16 @@ class Fakes::WebexService
       HTTPI::Response.new(
         200,
         {},
-        generate_meetings_api_conference(virtual_hearing)
+        generate_meetings_api_conference(conferenced_item)
       )
     )
   end
 
-  def delete_conference(*)
+  def delete_conference(conf_id)
     if error?
       return ExternalApi::WebexService::DeleteResponse.new(
         HTTPI::Response.new(
-          @status_code, {}, {}
+          @status_code, {}, error_response
         )
       )
     end
