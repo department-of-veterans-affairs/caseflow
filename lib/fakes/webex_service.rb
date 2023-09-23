@@ -89,7 +89,7 @@ class Fakes::WebexService
     )
   end
 
-  def delete_conference(_conf_id)
+  def delete_conference(conference_id:)
     if error?
       return ExternalApi::WebexService::DeleteResponse.new(
         HTTPI::Response.new(
