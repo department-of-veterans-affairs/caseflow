@@ -40,7 +40,7 @@ class HearingDaySerializer
   attribute :updated_at
   attribute :conference_links do |hearing_day, params|
     if params[:include_conference_links].present? && params[:include_conference_links][:include_conference_links]
-      serialize_conference_link(hearing_day.conference_links)
+      serialize_conference_links(hearing_day.conference_links)
     end
   end
 
