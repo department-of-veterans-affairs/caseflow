@@ -93,15 +93,16 @@ class HearingDaySerializer
         filled_slots_count_for_days: filled_slots_count_for_days,
         judge_names: judge_names
       }
-    ).serializable_hash[:data].map { |hearing_day| hearing_day[:attributes] }
-  end
+    ).serializable_hash[:data]
+     .pluck(:attributes)
 
   def self.serialize_conference_links(conference_links)
-    if !conference_links.nil?
+    if !conference_links.empty?
       ::ConferenceLinkSerializer.new(
         conference_links,
-        collection: false
-      ).serializable_hash[:data][:attributes]
+        collection: true
+      ).serializable_hash[:data]
+        .pluck(:attributes)
     end
   end
 end
