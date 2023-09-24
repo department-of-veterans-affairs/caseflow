@@ -94,10 +94,11 @@ class HearingDaySerializer
         judge_names: judge_names
       }
     ).serializable_hash[:data]
-     .pluck(:attributes)
+      .pluck(:attributes)
+  end
 
   def self.serialize_conference_links(conference_links)
-    if !conference_links.empty?
+    unless conference_links.empty?
       ::ConferenceLinkSerializer.new(
         conference_links,
         collection: true
