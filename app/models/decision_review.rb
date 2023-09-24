@@ -94,6 +94,7 @@ class DecisionReview < CaseflowRecord
     intake&.user
   end
 
+  # :reek:FeatureEnvy
   def ama_activation_date
     Constants::DATES["AMA_ACTIVATION"].to_date
   end

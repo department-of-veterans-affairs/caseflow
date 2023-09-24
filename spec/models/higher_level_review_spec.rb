@@ -58,7 +58,6 @@ describe HigherLevelReview, :postgres do
       end
 
       context "processed in Caseflow" do
-
         let(:benefit_type) { "education" }
         let(:receipt_date) { "2020-04-24" }
         it { is_expected.to be_truthy }
