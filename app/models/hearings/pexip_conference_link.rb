@@ -23,9 +23,9 @@ class PexipConferenceLink < ConferenceLink
   end
 
   def host_link
-    @full_host_link ||= "#{ConferenceLink.base_url}?join=1&media=&escalate=1&" \
-    "conference=#{alias_with_host}&" \
-    "pin=#{host_pin}&role=host"
+    "#{self.class.base_url}?join=1&media=&escalate=1&" \
+      "conference=#{alias_with_host}&" \
+      "pin=#{host_pin}&role=host"
   end
 
   def guest_pin
