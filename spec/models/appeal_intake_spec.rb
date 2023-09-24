@@ -2,7 +2,7 @@
 
 describe AppealIntake, :all_dbs do
   before do
-    Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
+    Timecop.freeze(Time.utc(2020, 1, 1, 12, 0, 0))
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -73,7 +73,7 @@ describe AppealIntake, :all_dbs do
   context "#review!" do
     subject { intake.review!(request_params) }
 
-    let(:receipt_date) { "2018-05-25" }
+    let(:receipt_date) { "2019-05-25" }
     let(:docket_type) { Constants.AMA_DOCKETS.hearing }
     let(:claimant) { nil }
     let(:claimant_type) { "veteran" }
@@ -102,7 +102,7 @@ describe AppealIntake, :all_dbs do
       expect(subject).to be_truthy
 
       expect(intake.detail).to have_attributes(
-        receipt_date: Date.new(2018, 5, 25),
+        receipt_date: Date.new(2019, 5, 25),
         docket_type: Constants.AMA_DOCKETS.hearing,
         legacy_opt_in_approved: true,
         veteran_is_not_claimant: false,
@@ -259,7 +259,7 @@ describe AppealIntake, :all_dbs do
           decision_text: "nonrating request issue decision text",
           nonrating_issue_category: "test issue category",
           benefit_type: "compensation",
-          decision_date: "2018-12-25",
+          decision_date: "2019-12-25",
           is_predocket_needed: false
         }
       ]
@@ -287,7 +287,7 @@ describe AppealIntake, :all_dbs do
       )
       expect(intake.detail.request_issues.second).to have_attributes(
         nonrating_issue_category: "test issue category",
-        decision_date: Date.new(2018, 12, 25),
+        decision_date: Date.new(2019, 12, 25),
         nonrating_issue_description: "nonrating request issue decision text",
         is_predocket_needed: false
       )
