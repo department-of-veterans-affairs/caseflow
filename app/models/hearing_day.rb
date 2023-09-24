@@ -136,7 +136,7 @@ class HearingDay < CaseflowRecord
     caseflow_and_vacols_hearings
   end
 
-  def to_hash(include_conference_link = false)
+  def to_hash(include_conference_links = false)
     judge_names = HearingDayJudgeNameQuery.new([self]).call
     video_hearing_days_request_types = if VirtualHearing::VALID_REQUEST_TYPES.include? request_type
                                          HearingDayRequestTypeQuery
@@ -151,7 +151,7 @@ class HearingDay < CaseflowRecord
       params: {
         video_hearing_days_request_types: video_hearing_days_request_types,
         judge_names: judge_names,
-        include_conference_link: include_conference_link
+        include_conference_links: include_conference_links
       }
     ).serializable_hash[:data][:attributes]
   end
@@ -215,9 +215,9 @@ class HearingDay < CaseflowRecord
     total_slots ? total_slots <= 5 : false
   end
 
-  # over write of the .conference_link method from belongs_to :conference_link to add logic to create of not there
-  def conference_link
-    @conference_link ||= find_or_create_conference_link!
+  # over write of the .conference_links method from belongs_to :conference_links to add logic to create of not there
+  def conference_links
+    @conference_links ||= find_or_create_conference_links!
   end
 
   private
@@ -233,7 +233,7 @@ class HearingDay < CaseflowRecord
 
   def generate_link_on_create
     begin
-      conference_link
+      conference_links
     rescue StandardError => error
       log_error(error)
     end
@@ -279,9 +279,22 @@ class HearingDay < CaseflowRecord
     formatted_datetime_string
   end
 
-  # Method to get the associated conference link record if exists and if not create  new one
-  def find_or_create_conference_link!
-    ConferenceLink.find_or_create_by!(hearing_day_id: id, created_by_id: created_by.id)
+  # Method to get the associated conference link records if they exist and if not create new ones
+  def find_or_create_conference_links!
+    {
+      pexip: (if FeatureToggle.enabled?(:pexip_conference_service)
+                PexipConferenceLink.find_or_create_by!(
+                  hearing_day: self,
+                  created_by: created_by
+                )
+              end),
+      webex: (if FeatureToggle.enabled?(:webex_conference_service)
+                WebexConferenceLink.find_or_create_by!(
+                  hearing_day: self,
+                  created_by: created_by
+                )
+              end)
+    }
   end
 
   class << self

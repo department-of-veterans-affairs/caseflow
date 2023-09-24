@@ -151,17 +151,17 @@ describe ConferenceLink do
 
     let!(:user) { RequestStore.store[:current_user] = User.system_user }
 
-    let(:conference_link) { hearing_day.conference_link }
+    let(:conference_links) { hearing_day.conference_links }
 
     context "guest_pin_long property already has a pin as a value" do
       it "Returns the guest_pin for the conference_link" do
-        expect(conference_link.guest_pin_long).to eq(conference_link.guest_pin)
+        expect(conference_links.guest_pin_long).to eq(conference_links.guest_pin)
       end
     end
     context "guest_pin_long property has a value of nil." do
       it "checks if property is nil. If so, a new pin is created. " do
-        conference_link.update!(guest_pin_long: nil)
-        expect(conference_link.guest_pin).not_to eq(nil)
+        conference_links.update!(guest_pin_long: nil)
+        expect(conference_links.guest_pin).not_to eq(nil)
       end
     end
   end
