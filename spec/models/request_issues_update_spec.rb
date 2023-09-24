@@ -3,7 +3,7 @@
 describe RequestIssuesUpdate, :all_dbs do
   before do
     Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2018, 5, 20))
+    Timecop.freeze(Time.utc(2019, 5, 20))
   end
 
   def allow_associate_rating_request_issues
