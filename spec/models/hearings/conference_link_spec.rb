@@ -21,7 +21,7 @@ describe ConferenceLink do
       it "raises the missing PIN key error" do
         RequestStore[:current_user] = user
         expect do
-          described_class.create(hearing_day_id: hearing_day.id)
+          described_class.create(hearing_day: hearing_day)
         end.to raise_error VirtualHearings::LinkService::PINKeyMissingError
       end
     end
@@ -36,7 +36,7 @@ describe ConferenceLink do
       it "raises the missing host error" do
         RequestStore[:current_user] = user
         expect do
-          described_class.create(hearing_day_id: hearing_day.id)
+          described_class.create(hearing_day: hearing_day)
         end.to raise_error VirtualHearings::LinkService::URLHostMissingError
       end
     end
@@ -51,7 +51,7 @@ describe ConferenceLink do
       it "raises the missing path error" do
         RequestStore[:current_user] = user
         expect do
-          described_class.create(hearing_day_id: hearing_day.id)
+          described_class.create(hearing_day: hearing_day)
         end.to raise_error VirtualHearings::LinkService::URLPathMissingError
       end
     end
@@ -62,7 +62,7 @@ describe ConferenceLink do
       it "raises the missing PIN key error" do
         RequestStore[:current_user] = user
         expect do
-          described_class.create(hearing_day_id: hearing_day.id)
+          described_class.create(hearing_day: hearing_day)
         end.to raise_error VirtualHearings::LinkService::PINKeyMissingError
       end
     end

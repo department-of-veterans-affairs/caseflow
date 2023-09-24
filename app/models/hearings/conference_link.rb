@@ -12,4 +12,10 @@ class ConferenceLink < CaseflowRecord
 
   belongs_to :hearing_day
   belongs_to :created_by, class_name: "User"
+
+  private
+
+  def generate_conference_information
+    fail NotImplementedError
+  end
 end
