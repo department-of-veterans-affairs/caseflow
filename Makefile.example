@@ -177,9 +177,11 @@ audit-remove: ## Remove caseflow_audit schema, tables and triggers in postgres
 # These tables should not be included as part of migrations
 external-db-create: ## Creates external_vbms_ext_claim table
 	bundle exec rails r db/scripts/external/create_vbms_ext_claim_table.rb
+	make add-populate-pepsq-trigger
 
 external-db-remove:  ## Remove external_vbms_ext_claim table
 	bundle exec rails r db/scripts/external/remove_vbms_ext_claim_table.rb
+	make remove-populate-pepsq-trigger
 
 # This needs to be manually run after make reset/migrate in order for local tests involving external tables to pass.
 # Otherwise the caseflow_certification_test schema will not create these tables and will error out.
@@ -193,6 +195,15 @@ remove-vbms-ext-claim-seeds: ## Drops audit tables, removes all PriorityEndProdu
 	make audit
 
 reseed-vbms-ext-claim: remove-vbms-ext-claim-seeds seed-vbms-ext-claim ## Re-seeds database with records created from seed-vbms-ext-claim
+
+# Add trigger to vbms_ext_claim to populate pepsq table
+add-populate-pepsq-trigger:
+	bundle exec rails r db/scripts/add_pepsq_populate_trigger.rb
+
+# Remove populate pepsq trigger from vbms_ext_claim table
+remove-populate-pepsq-trigger:
+	bundle exec rails r db/scripts/drop_pepsq_populate_trigger.rb
+
 
 c:  ## Start rails console
 	bundle exec rails console
