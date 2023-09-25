@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -11,24 +11,18 @@ import ApiUtil from '../../util/ApiUtil';
 
 const DATE_TIME_FORMAT = 'ddd MMM DD YYYY [at] HH:mm';
 
-class InboxMessagesPage extends React.PureComponent {
-  constructor(props) {
-    super(props);
+export const InboxMessagesPage = (props) => {
+  const [markedRead, setMarkedRead] = useState({});
 
-    this.state = {
-      markedRead: {}
-    };
-  }
-
-  markMessageRead = (msg) => {
+  const markMessageRead = (msg) => {
     const markedRead = { ...this.state.markedRead };
 
     markedRead[msg.id] = true;
     this.setState({ markedRead });
     this.sendMessageRead(msg);
-  }
+  };
 
-  sendMessageRead = (msg) => {
+  const sendMessageRead = (msg) => {
     const page = this;
 
     ApiUtil.patch(`/inbox/messages/${msg.id}`, { data: { message_action: 'read' } }).
@@ -50,9 +44,9 @@ class InboxMessagesPage extends React.PureComponent {
         }
       ).
       catch((error) => error);
-  }
+  };
 
-  getButtonText = (msg) => {
+  const getButtonText = (msg) => {
     let txt = 'Mark as read';
 
     if (msg.read_at) {
@@ -60,81 +54,88 @@ class InboxMessagesPage extends React.PureComponent {
     }
 
     return txt;
-  }
+  };
 
-  formatDate = (datetime) => {
+  const formatDate = (datetime) => {
     return moment(datetime).format(DATE_TIME_FORMAT);
-  }
+  };
 
-  markAsReadButtonDisabled = (msg) => {
+  const markAsReadButtonDisabled = (msg) => {
     if (this.state.markedRead[msg.id] || msg.read_at) {
       return true;
     }
 
     return false;
-  }
+  };
 
-  render = () => {
-    const rowObjects = this.props.messages;
+  const rowObjects = props.messages;
 
+  const inboxIsEmpty = () => {
     if (rowObjects.length === 0) {
       return <div>
         <h1>Success! You have no unread messages.</h1>
       </div>;
     }
+  };
 
-    const columns = [
-      {
-        header: 'Received',
-        valueFunction: (msg) => {
-          return this.formatDate(msg.created_at);
-        }
-      },
-      {
-        header: 'Message',
-        valueFunction: (msg) => {
-          // allow raw html since we control message content.
-          return <span className="cf-inbox-message" dangerouslySetInnerHTML={{ __html: msg.text }} />;
-        }
-      },
-      {
-        align: 'right',
-        valueFunction: (msg) => {
-          return <Button
-            id={`inbox-message-${msg.id}`}
-            title={`message ${msg.id}`}
-            disabled={this.markAsReadButtonDisabled(msg)}
-            onClick={() => {
-              this.markMessageRead(msg);
-            }}
-          >{this.getButtonText(msg)}</Button>;
-        }
+  const columns = [
+    {
+      header: 'Received',
+      valueFunction: (msg) => {
+        return formatDate(msg.created_at);
       }
-    ];
-
-    const rowClassNames = (msg) => {
-      if (this.state.markedRead[msg.id] || msg.read_at) {
-        return 'cf-inbox-message-read';
+    },
+    {
+      header: 'Message',
+      valueFunction: (msg) => {
+        // allow raw html since we control message content.
+        return <span className="cf-inbox-message" dangerouslySetInnerHTML={{ __html: msg.text }} />;
       }
+    },
+    {
+      align: 'right',
+      valueFunction: (msg) => {
+        return <Button
+          id={`inbox-message-${msg.id}`}
+          title={`message ${msg.id}`}
+          disabled={markAsReadButtonDisabled(msg)}
+          onClick={() => {
+            markMessageRead(msg);
+          }}
+        >{getButtonText(msg)}</Button>;
+      }
+    }
+  ];
 
-      return 'cf-inbox-message';
-    };
+  const rowClassNames = (msg) => {
+    if (this.state.markedRead[msg.id] || msg.read_at) {
+      return 'cf-inbox-message-read';
+    }
 
-    return <div className="cf-inbox-table">
-      <h1>Inbox</h1>
-      <hr />
-      <div>
-        Messages will remain in the intake box for 120 days. After such time, messages will be removed.
-      </div>
-      <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} slowReRendersAreOk />
-      <EasyPagination currentCases={rowObjects.length} pagination={this.props.pagination} />
-    </div>;
-  }
-}
+    return 'cf-inbox-message';
+  };
+
+  return (
+    <>
+      {inboxIsEmpty}
+      {columns}
+      {rowClassNames}
+      <div className="cf-inbox-table">
+        <h1>Inbox</h1>
+        <hr />
+        <div>
+          Messages will remain in the intake box for 120 days. After such time, messages will be removed.
+        </div>
+        <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} slowReRendersAreOk />
+        <EasyPagination currentCases={rowObjects.length} pagination={props.pagination} />
+      </div>;
+    </>
+  );
+};
 
 InboxMessagesPage.propTypes = {
-  messages: PropTypes.arrayOf(PropTypes.object),
-  pagination: PropTypes.object,
+  messages: PropTypes.arrayOf(PropTypes.object).isRequired,
+  pagination: PropTypes.object.isRequired,
 };
 
 const InboxPage = connect(
