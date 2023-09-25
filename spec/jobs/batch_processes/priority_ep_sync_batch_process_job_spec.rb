@@ -22,7 +22,7 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
   end
 
   let!(:pepsq_records) do
-    PopulateEndProductSyncQueueJob.perform_now
+    #PopulateEndProductSyncQueueJob.perform_now
     PriorityEndProductSyncQueue.all
   end
 

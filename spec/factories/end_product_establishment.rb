@@ -72,7 +72,7 @@ FactoryBot.define do
       active_hlr
       modifier { "030" }
       code { "030HLRR" }
-      after(:build) do |end_product_establishment, _evaluator|
+      after(:create) do |end_product_establishment, _evaluator|
         create(:vbms_ext_claim, :hlr, :cleared, claim_id: end_product_establishment.reference_id)
         ep = end_product_establishment.result
         ep_store = Fakes::EndProductStore.new

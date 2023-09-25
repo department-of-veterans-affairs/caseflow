@@ -30,7 +30,7 @@ describe BatchProcessRescueJob, type: :job do
   end
 
   let!(:pepsq_records_two) do
-    PopulateEndProductSyncQueueJob.perform_now
+    #PopulateEndProductSyncQueueJob.perform_now
   end
 
   let!(:second_batch_process) do
