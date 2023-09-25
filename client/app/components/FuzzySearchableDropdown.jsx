@@ -294,21 +294,13 @@ export class FuzzySearchableDropdown extends React.Component {
 
 
       const addFuzzySearchTerm = (index) => {
-        // (this.props.addNewTag)
-        // this.props.addNewTag();
-        value.push(this.state.fuzzySearchState[index]);
-        // addNewTag(this.props.doc, value);
-        this.props.onChange(value, {});
-        // setTagFilter(this.props.doc, value);
-        // console.log(this.props.addNewTag);
-        // console.log(this.props.value)
-        // console.log(this.props.doc);
-        // console.log(value);
-        // this.props.addNewTag(this.props.doc, value);
 
-        // this.props.setValue(this.state.fuzzySearchState[index])
+        value.push(this.state.fuzzySearchState[index]);
+        this.props.onChange(value, {});
+        this.state.fuzzySearchState.splice(index, 1);
+
         this.setState({originalOptions: Array.from(this.state.originalOptions)});
-        // this.onChange();
+
       }
 
     return (
