@@ -44,6 +44,7 @@ const CustomMenuList = (props) => {
     role: 'listbox',
     'aria-label': `${kebabCase(props.selectProps.name)}-listbox`,
   };
+
   return <components.MenuList {...props} innerProps={innerProps} />;
 };
 
@@ -78,7 +79,7 @@ export class FuzzySearchableDropdown extends React.Component {
     this.state = {
       value: props.value,
       isExpanded: false,
-      fuzzySearchState: [{label:'aaa', docId:103, value:'aaa'}],
+      fuzzySearchState: [{ label: 'aaa', docId: 103, value: 'aaa' }],
       originalOptions: [],
       trickState: 0
 
@@ -93,30 +94,37 @@ export class FuzzySearchableDropdown extends React.Component {
 
     const newValueArray = newValue.spelling;
 
-
-    if(Array.isArray(newValueArray)) {
+    if (Array.isArray(newValueArray)) {
       const currentDocId = this.props.doc.id;
-    newValueArray.forEach((fuzzyTerm) =>
-      fuzzyResults.push({
-        label: fuzzyTerm,
-        docId: currentDocId,
-        value: fuzzyTerm
-      }));
+
+      newValueArray.forEach((fuzzyTerm) => {
+
+        // prevent already existing tags from populating
+        if ((this.props.value.find((item) => item.value === fuzzyTerm))) {
+          return;
+        }
+
+        fuzzyResults.push({
+          label: fuzzyTerm,
+          docId: currentDocId,
+          value: fuzzyTerm
+        });
+      });
+
       this.fuzzySearchReturn = fuzzyResults;
       // this.setState({ fuzzySearchState: fuzzyResults});
     }
 
-    if(JSON.stringify(fuzzyResults) !== JSON.stringify(this.state.fuzzySearchState))
-    {
+    if (JSON.stringify(fuzzyResults) !== JSON.stringify(this.state.fuzzySearchState)) {
       this.setState({
         fuzzySearchState: fuzzyResults
-      })
+      });
 
       // this.setState({fuzzySearchState: this.state.fuzzySearchState.push({label:'st', value:'st'})})
     }
   }
   componentDidMount = () => {
-    this.setState({originalOptions: this.props.options});
+    this.setState({ originalOptions: this.props.options });
     this.updateFuzzyValue([]);
     document.addEventListener('keydown', this.onClickOutside);
     document.addEventListener('mousedown', this.onClickOutside);
@@ -292,16 +300,15 @@ export class FuzzySearchableDropdown extends React.Component {
     const handleNoOptions = () =>
       noResultsText ?? (creatable ? null : NO_RESULTS_TEXT);
 
+    const addFuzzySearchTerm = (index) => {
 
-      const addFuzzySearchTerm = (index) => {
+      value.push(this.state.fuzzySearchState[index]);
+      this.props.onChange(value, {});
+      this.state.fuzzySearchState.splice(index, 1);
 
-        value.push(this.state.fuzzySearchState[index]);
-        this.props.onChange(value, {});
-        this.state.fuzzySearchState.splice(index, 1);
+      this.setState({ originalOptions: Array.from(this.state.originalOptions) });
 
-        this.setState({originalOptions: Array.from(this.state.originalOptions)});
-
-      }
+    };
 
     return (
       <div className={errorMessage ? 'usa-input-error' : ''} ref={this.setWrapperRef}>
@@ -351,9 +358,7 @@ export class FuzzySearchableDropdown extends React.Component {
             {this.state.fuzzySearchState.map((item, index) => <p onClick={() => addFuzzySearchTerm(index)}>{item.value}</p>)}
             {/* <p onClick={() => this.setState({refreshTrick:this.state.refreshTrick + 1})}>reload</p> */}
             {/* <p onClick={() => this.setState({originalOptions: Array.from(this.state.originalOptions)})}>reload</p> */}
-             {/* <p onClick={() => this.setState({originalOptions: [...this.state.originalOptions]})}>reload</p> */}
-
-
+            {/* <p onClick={() => this.setState({originalOptions: [...this.state.originalOptions]})}>reload</p> */}
 
           </div>
         </div>
@@ -519,7 +524,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(
-   mapDispatchToProps
+  mapDispatchToProps
 )(FuzzySearchableDropdown);
 
 // export default FuzzySearchableDropdown;
