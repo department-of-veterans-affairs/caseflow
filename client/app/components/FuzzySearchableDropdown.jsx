@@ -38,8 +38,6 @@ const fetchSpellingCorrection = async (misspelledText) => {
 
 const CustomMenuList = (props) => {
   fetchSpellingCorrection(props.selectProps.inputValue).then((data) => props.selectProps.updateFuzzyValue(data));
-  console.log("change")
-  console.log(props);
   const innerProps = {
     ...props.innerProps,
     id: `${kebabCase(props.selectProps.name)}-listbox`,
@@ -97,7 +95,6 @@ export class FuzzySearchableDropdown extends React.Component {
 
 
     if(Array.isArray(newValueArray)) {
-      console.log('HERE');
       const currentDocId = this.props.doc.id;
     newValueArray.forEach((fuzzyTerm) =>
       fuzzyResults.push({
@@ -300,11 +297,8 @@ export class FuzzySearchableDropdown extends React.Component {
         // (this.props.addNewTag)
         // this.props.addNewTag();
         value.push(this.state.fuzzySearchState[index]);
-
-        console.log("value");
-        console.log(value);
         // addNewTag(this.props.doc, value);
-        this.props.onChange(this.props.doc, 90);
+        this.props.onChange(value, {});
         // setTagFilter(this.props.doc, value);
         // console.log(this.props.addNewTag);
         // console.log(this.props.value)
