@@ -259,9 +259,9 @@ feature "AmaQueue", :all_dbs do
         find("div", class: "cf-select__option", text: other_user.full_name).click
 
         expect(page).to have_content(existing_instruction)
-        click_on "Submit"
+        click_on "Assign"
 
-        expect(page).to have_content("Task assigned to #{other_user_name}")
+        expect(page).to have_content("You have successfully reassigned this task to #{other_user_name}")
         expect(translation_task.reload.status).to eq("on_hold")
 
         visit "/organizations/#{translation_organization.url}"
@@ -272,9 +272,9 @@ feature "AmaQueue", :all_dbs do
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label]).click
 
         fill_in "taskInstructions", with: instructions
-        click_on "Submit"
+        click_on "Assign"
 
-        expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % user_name
+        expect(page).to have_content "You have successfully assigned this task to Translation User"
         old_task = translation_task.reload.children.find { |task| task.assigned_to == other_user }
         expect(old_task.status).to eq(Constants.TASK_STATUSES.cancelled)
 
@@ -743,7 +743,7 @@ feature "AmaQueue", :all_dbs do
           click_dropdown(prompt: "Select a user", text: judge_user2.full_name)
 
           fill_in "taskInstructions", with: "Going on leave, please manage this case"
-          click_on "Submit"
+          click_on "Assign"
 
           expect(page).to have_content("Task reassigned to #{judge_user2.full_name}")
         end
@@ -780,7 +780,9 @@ feature "AmaQueue", :all_dbs do
 
           click_on "Assign"
 
-          expect(page).to have_content("Assigned 1 task to #{attorney_user.full_name}")
+          expect(page).to have_content(
+            format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE_TITLE, attorney_user.full_name)
+          )
         end
 
         step "attorney completes task and returns the case to the judge" do
@@ -908,7 +910,7 @@ feature "AmaQueue", :all_dbs do
           text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label
         )
         fill_in("taskInstructions", with: "instructions here")
-        click_on(COPY::MODAL_SUBMIT_BUTTON)
+        click_on "Assign"
         expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
       end
 
@@ -926,7 +928,7 @@ feature "AmaQueue", :all_dbs do
           text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label
         )
         fill_in("taskInstructions", with: "instructions here")
-        click_on(COPY::MODAL_SUBMIT_BUTTON)
+        click_on(COPY::MODAL_ASSIGN_BUTTON)
         expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
       end
     end

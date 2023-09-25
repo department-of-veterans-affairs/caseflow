@@ -672,6 +672,7 @@
   "ASSIGN_TASK_SUCCESS_MESSAGE_LEGACY_SUCCESS_TITLE": "You have successfully reassigned  this task to %s",
   "REASSIGN_TASK_SUCCESS_MESSAGE_SCM": "You have successfully assigned %s’s case to %s",
   "REASSIGN_TASK_SUCCESS_MESSAGE": "You have successfully reassigned this task to %s",
+  "ASSIGN_TASK_SUCCESS_MESSAGE_TITLE": "You have successfully assigned 1 case to %s",
   "HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL": "You can continue to assign tasks to yourself and others using this queue.",
   "ASSIGN_TASK_SUCCESS_MESSAGE_MOVE_LEGACY_APPEALS_VLJ": "You have successfully reassigned %s’s case to %s",
   "ASSIGN_TASK_SUCCESS_MESSAGE_MOVE_LEGACY_APPEALS_VLJ_MESSAGE_DETAIL": " All blocking tasks have been cancelled.",
