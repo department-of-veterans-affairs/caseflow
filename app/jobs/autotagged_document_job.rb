@@ -40,8 +40,9 @@ class AutotaggedDocumentJob < CaseflowJob
           doc.tags << new_tag
         end
       end
-    rescue StandardError
+    rescue StandardError => e
       doc.update(auto_tagged: false)
+      raise if e.message == "no tags found"
     end
   end
 
@@ -49,6 +50,8 @@ class AutotaggedDocumentJob < CaseflowJob
     tags = ExternalApi::ClaimEvidenceService.get_key_phrases_from_document(doc.series_id[1..-2])
     tags.uniq!(&:downcase)
     tags
+  rescue StandardError
+    raise StandardError, "no tags found"
   end
 
   def find_existing_tag(tag_text)

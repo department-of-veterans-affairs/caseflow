@@ -37,6 +37,7 @@ class SideBarIssueTags extends PureComponent {
     return (
       <div className="cf-issue-tag-sidebar">
         {isAutoTagPending && <Alert type="info" message="Auto-tags generating. Please wait a moment." />}
+        {this.props.error.autoTag.visible && <Alert type="error" message={this.props.error.autoTag.message} />}
         {this.props.error.tag.visible && <CannotSaveAlert />}
         {isVisible && <span className="cf-right-side cf-generate-tag-button">
           <Button
