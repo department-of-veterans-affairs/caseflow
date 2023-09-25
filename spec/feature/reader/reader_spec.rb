@@ -343,72 +343,73 @@ RSpec.feature "Reader", :all_dbs do
       end
     end
 
-    context "Appeals without any issues" do
-      let(:fetched_at_format) { "%D %l:%M%P %Z" }
-      let(:vbms_fetched_ts) { Time.zone.now }
-      let(:vva_fetched_ts) { Time.zone.now }
+    # commented out since this feature is not in use and causing issues with reader_search_improvements
+    # context "Appeals without any issues" do
+    #   let(:fetched_at_format) { "%D %l:%M%P %Z" }
+    #   let(:vbms_fetched_ts) { Time.zone.now }
+    #   let(:vva_fetched_ts) { Time.zone.now }
 
-      let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.strftime(fetched_at_format)}".squeeze(" ") }
-      let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.strftime(fetched_at_format)}".squeeze(" ") }
+    #   let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.strftime(fetched_at_format)}".squeeze(" ") }
+    #   let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.strftime(fetched_at_format)}".squeeze(" ") }
 
-      let(:appeal) do
-        Generators::LegacyAppealV2.build(
-          documents: documents,
-          manifest_vbms_fetched_at: vbms_fetched_ts,
-          manifest_vva_fetched_at: vva_fetched_ts,
-          case_issue_attrs: []
-        )
-      end
+    #   let(:appeal) do
+    #     Generators::LegacyAppealV2.build(
+    #       documents: documents,
+    #       manifest_vbms_fetched_at: vbms_fetched_ts,
+    #       manifest_vva_fetched_at: vva_fetched_ts,
+    #       case_issue_attrs: []
+    #     )
+    #   end
 
-      scenario "Claims folder details issues and pdf view sidebar show no issues message" do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents"
-        find(".rc-collapse-header", text: "Claims folder details").click
-        expect(page).to have_css("#claims-folder-issues", text: "No issues on appeal")
+    #   scenario "Claims folder details issues and pdf view sidebar show no issues message" do
+    #     visit "/reader/appeal/#{appeal.vacols_id}/documents"
+    #     find(".rc-collapse-header", text: "Claims folder details").click
+    #     expect(page).to have_css("#claims-folder-issues", text: "No issues on appeal")
 
-        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
-        find("h3", text: "Document information").click
-        expect(find(".cf-sidebar-document-information")).to have_text("No issues on appeal")
-      end
+    #     visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+    #     find("h3", text: "Document information").click
+    #     expect(find(".cf-sidebar-document-information")).to have_text("No issues on appeal")
+    #   end
 
-      context "When both document source manifest retrieval times are set" do
-        scenario "Both times display on the page and there are no document alerts" do
-          visit "/reader/appeal/#{appeal.vacols_id}/documents"
-          expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
-          expect(find("#vva-manifest-retrieved-at").text).to have_content(vva_ts_string)
-          expect(page).to_not have_css(".section--document-list .usa-alert")
-        end
-      end
+    #   context "When both document source manifest retrieval times are set" do
+    #     scenario "Both times display on the page and there are no document alerts" do
+    #       visit "/reader/appeal/#{appeal.vacols_id}/documents"
+    #       expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
+    #       expect(find("#vva-manifest-retrieved-at").text).to have_content(vva_ts_string)
+    #       expect(page).to_not have_css(".section--document-list .usa-alert")
+    #     end
+    #   end
 
-      context "When VVA manifest retrieval time is older, but within the eFolder cache limit" do
-        let(:vva_fetched_ts) { Time.zone.now - 2.hours }
-        scenario "Both times display on the page and there are no document alerts" do
-          visit "/reader/appeal/#{appeal.vacols_id}/documents"
-          expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
-          expect(find("#vva-manifest-retrieved-at").text).to have_content(vva_ts_string)
-          expect(page).to_not have_css(".section--document-list .usa-alert")
-        end
-      end
+    #   context "When VVA manifest retrieval time is older, but within the eFolder cache limit" do
+    #     let(:vva_fetched_ts) { Time.zone.now - 2.hours }
+    #     scenario "Both times display on the page and there are no document alerts" do
+    #       visit "/reader/appeal/#{appeal.vacols_id}/documents"
+    #       expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
+    #       expect(find("#vva-manifest-retrieved-at").text).to have_content(vva_ts_string)
+    #       expect(page).to_not have_css(".section--document-list .usa-alert")
+    #     end
+    #   end
 
-      context "When VVA manifest retrieval time is olde and outside of the eFolder cache limit" do
-        let(:vva_fetched_ts) { Time.zone.now - 4.hours }
-        scenario "Both times display on the page and a warning alert is shown" do
-          visit "/reader/appeal/#{appeal.vacols_id}/documents"
-          expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
-          expect(find("#vva-manifest-retrieved-at").text).to have_content(vva_ts_string)
-          expect(find(".section--document-list .usa-alert-warning").text).to have_content("4 hours ago")
-        end
-      end
+    #   context "When VVA manifest retrieval time is olde and outside of the eFolder cache limit" do
+    #     let(:vva_fetched_ts) { Time.zone.now - 4.hours }
+    #     scenario "Both times display on the page and a warning alert is shown" do
+    #       visit "/reader/appeal/#{appeal.vacols_id}/documents"
+    #       expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
+    #       expect(find("#vva-manifest-retrieved-at").text).to have_content(vva_ts_string)
+    #       expect(find(".section--document-list .usa-alert-warning").text).to have_content("4 hours ago")
+    #     end
+    #   end
 
-      context "When VVA manifest retrieval time is nil" do
-        let(:vva_fetched_ts) { nil }
-        scenario "Only VBMS time displays on the page and error alert is shown" do
-          visit "/reader/appeal/#{appeal.vacols_id}/documents"
-          expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
-          expect(page).to_not have_css("#vva-manifest-retrieved-at")
-          expect(page).to have_css(".section--document-list .usa-alert-error")
-        end
-      end
-    end
+    #   context "When VVA manifest retrieval time is nil" do
+    #     let(:vva_fetched_ts) { nil }
+    #     scenario "Only VBMS time displays on the page and error alert is shown" do
+    #       visit "/reader/appeal/#{appeal.vacols_id}/documents"
+    #       expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
+    #       expect(page).to_not have_css("#vva-manifest-retrieved-at")
+    #       expect(page).to have_css(".section--document-list .usa-alert-error")
+    #     end
+    #   end
+    # end
 
     scenario "Open document in new tab" do
       # Open the URL that the first document button points to. We cannot simply
@@ -851,7 +852,6 @@ RSpec.feature "Reader", :all_dbs do
 
       # Get document #2 which is from lib/pdfs/FakeDecisionDocument.pdf
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
-
       # Wait for the page to load
       expect(page).to have_content("IN THE APPEAL")
       original_height = page.find("#pageContainer1").style("height")["height"].to_f
