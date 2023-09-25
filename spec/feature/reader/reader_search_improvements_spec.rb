@@ -8,7 +8,7 @@ def clear_filters
   expect(find("#button-documents")["class"]).to have_content("usa-button")
 end
 
-RSpec.feature "Reader", :all_dbs do
+RSpec.feature "Reader Search Improvements (filtering)", :all_dbs do
   before do
     FeatureToggle.enable!(:reader_search_improvements)
     Fakes::Initializer.load!
