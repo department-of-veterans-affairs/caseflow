@@ -1,7 +1,7 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 
 import Button from '../../components/Button';
 import Table from '../../components/Table';
@@ -131,6 +131,11 @@ class InboxMessagesPage extends React.PureComponent {
     </div>;
   }
 }
+
+InboxMessagesPage.propTypes = {
+  messages: PropTypes.arrayOf(PropTypes.object),
+  pagination: PropTypes.object,
+};
 
 const InboxPage = connect(
   (state) => ({
