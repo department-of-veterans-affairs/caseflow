@@ -2136,6 +2136,32 @@ describe RequestIssue, :all_dbs do
             epe.source
           end
 
+          let!(:epe2) do
+            epe = create(
+              :end_product_establishment,
+              :cleared,
+              established_at: 5.days.ago,
+              modifier: "030",
+              code: "030HLRR",
+              source: create(
+                :supplemental_claim,
+                veteran_file_number: veteran.file_number
+              )
+            )
+            EndProductEstablishment.find epe.id
+          end
+          let!(:review2) do
+            epe2.source
+          end
+
+          let!(:contention_sc1) do
+            Generators::Contention.build(
+              id: "111222333",
+              claim_id: epe2.reference_id,
+              disposition: "Difference of Opinion"
+            )
+          end
+
           let!(:contention_hlr1) do
             Generators::Contention.build(
               id: "123456789",
@@ -2184,9 +2210,30 @@ describe RequestIssue, :all_dbs do
             )
           end
 
+          let(:request_issue3) do
+            create(
+              :request_issue,
+              decision_review: review2,
+              nonrating_issue_description: "some description",
+              nonrating_issue_category: "a category",
+              decision_date: 1.day.ago,
+              end_product_establishment: epe2,
+              contention_reference_id: contention_sc1.id,
+              benefit_type: review2.benefit_type,
+              decision_sync_last_submitted_at: original_decision_sync_last_submitted_at,
+              decision_sync_submitted_at: original_decision_sync_submitted_at
+            )
+          end
+
           let!(:claimant) do
             Claimant.create!(decision_review: epe.source,
                              participant_id: epe.veteran.participant_id,
+                             payee_code: "00")
+          end
+
+          let!(:claimant2) do
+            Claimant.create!(decision_review: epe2.source,
+                             participant_id: epe2.veteran.participant_id,
                              payee_code: "00")
           end
 
@@ -2207,7 +2254,12 @@ describe RequestIssue, :all_dbs do
             expect(Rails.logger).to have_received(:info).with("hlr_sync_lock:" + epe_id + " has been created")
             expect(request_issue2.processed?).to eq(true)
             expect(Rails.logger).to have_received(:info).with("hlr_sync_lock:" + epe_id + " has been released")
-            expect(SupplementalClaim.count).to eq(1)
+            expect(SupplementalClaim.count).to eq(2)
+          end
+
+          it "allows non HLRs to sync decision issues" do
+            expect(request_issue3.sync_decision_issues!).to eq(true)
+            expect(request_issue3.processed?).to eq(true)
           end
 
           it "multiple request issues can sync and a remand_supplemental_claim is created" do
@@ -2216,8 +2268,9 @@ describe RequestIssue, :all_dbs do
             expect(request_issue1.processed?).to eq(true)
             expect(request_issue2.processed?).to eq(true)
 
-            expect(SupplementalClaim.count).to eq(1)
-            sc = SupplementalClaim.first
+            # The newly created remand SC will be added to the SC count for a total of 2
+            expect(SupplementalClaim.count).to eq(2)
+            sc = SupplementalClaim.last
             expect(sc.request_issues.count).to eq(2)
             supplemental_claim_request_issue1 = sc.request_issues.first
             supplemental_claim_request_issue2 = sc.request_issues.last
