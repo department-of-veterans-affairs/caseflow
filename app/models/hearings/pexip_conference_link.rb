@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class PexipConferenceLink < ConferenceLink
-  alias_attribute :alias_name, :alias
-
   class << self
     def client_host_or_default
       ENV["VIRTUAL_HEARING_URL_HOST"] || "care.evn.va.gov"
