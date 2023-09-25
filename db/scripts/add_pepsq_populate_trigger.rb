@@ -12,11 +12,11 @@ conn.execute("
       string_claim_id varchar(25);
       epe_id integer;
     begin
-      if (NEW.\"LEVEL_STATUS_CODE\" = 'CLR' OR NEW.\"LEVEL_STATUS_CODE\" = 'CAN')
-        and (NEW.\"EP_CODE\" LIKE '04%'
+      if (NEW.\"EP_CODE\" LIKE '04%'
           OR NEW.\"EP_CODE\" LIKE '03%'
           OR NEW.\"EP_CODE\" LIKE '93%'
-          OR NEW.\"EP_CODE\" LIKE '68%') then
+          OR NEW.\"EP_CODE\" LIKE '68%')
+          and (NEW.\"LEVEL_STATUS_CODE\" = 'CLR' OR NEW.\"LEVEL_STATUS_CODE\" = 'CAN') then
 
         string_claim_id := cast(NEW.\"CLAIM_ID\" as varchar);
 
