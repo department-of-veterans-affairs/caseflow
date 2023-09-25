@@ -98,12 +98,12 @@ class HearingDaySerializer
   end
 
   def self.serialize_conference_links(conference_links)
-    unless conference_links.empty?
-      ::ConferenceLinkSerializer.new(
-        conference_links,
-        collection: true
-      ).serializable_hash[:data]
-        .pluck(:attributes)
-    end
+    return [] if conference_links.empty?
+
+    ::ConferenceLinkSerializer.new(
+      conference_links,
+      collection: true
+    ).serializable_hash[:data]
+      .pluck(:attributes)
   end
 end
