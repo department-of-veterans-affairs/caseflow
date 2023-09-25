@@ -852,6 +852,7 @@ RSpec.feature "Reader", :all_dbs do
 
       # Get document #2 which is from lib/pdfs/FakeDecisionDocument.pdf
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
+      page.driver.browser.manage.window.resize_to(1024, 1024)
       # Wait for the page to load
       expect(page).to have_content("IN THE APPEAL")
       original_height = page.find("#pageContainer1").style("height")["height"].to_f
@@ -862,6 +863,7 @@ RSpec.feature "Reader", :all_dbs do
       expect(ratio).to eq(1 + zoom_rate)
 
       # Reset zoom amount
+      find("#button-fit").click
       find("#button-fit").click
       expect(page.find("#pageContainer1").style("height")["height"].to_f).to eq(original_height)
 
