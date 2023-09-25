@@ -63,6 +63,10 @@ RSpec.feature "Reader", :all_dbs do
     User.authenticate!(roles: ["Reader"])
   end
 
+  after do
+    FeatureToggle.disable!(:reader_search_improvements)
+  end
+
   let(:documents) { [] }
   let(:file_number) { "123456789" }
   let(:ama_appeal) { Appeal.create(veteran_file_number: file_number) }
@@ -717,9 +721,10 @@ RSpec.feature "Reader", :all_dbs do
 
         annotation = documents[1].annotations[0]
 
+        # buttons were getting cut off so resize window to prevent flaky test
+        page.driver.browser.manage.window.resize_to(1024, 1024)
         click_button("expand-#{documents[1].id}-comments-button")
-
-        click_link("Jump to section")
+        click_on("Jump to section")
 
         # Wait for PDFJS to render the pages
         expect(page).to have_css(".page")
