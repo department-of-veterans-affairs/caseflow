@@ -12,10 +12,10 @@ import ApiUtil from '../../util/ApiUtil';
 const DATE_TIME_FORMAT = 'ddd MMM DD YYYY [at] HH:mm';
 
 export const InboxMessagesPage = (props) => {
-  const [markedRead, setMarkedRead] = useState({});
+  const [markedRead, setMarkedRead] = useState([]);
 
   const sendMessageRead = (msg) => {
-    const page = this;
+    // const page = this;
 
     ApiUtil.patch(`/inbox/messages/${msg.id}`, { data: { message_action: 'read' } }).
       then(
@@ -25,10 +25,13 @@ export const InboxMessagesPage = (props) => {
           Object.assign(msg, responseObject);
 
           // const markedRead = { ...page.state.markedRead };
-
-          markedRead[msg.id] = true;
-          page.setState({
-            markedRead
+          // markedRead[msg.id] = true;
+          // page.setState({
+          //   markedRead
+          // });
+          setMarkedRead({
+            ...markedRead,
+            [msg.id]: true
           });
         },
         (error) => {
@@ -41,15 +44,12 @@ export const InboxMessagesPage = (props) => {
   const markMessageRead = (msg) => {
     // const markedRead = { ...this.state.markedRead };
     // markedRead[msg.id] = true;
-
+    // this.setState({ markedRead });
     setMarkedRead({
       ...markedRead,
-      id: msg.id,
-      read: true
+      [msg.id]: true
     });
-
-    // this.setState({ markedRead });
-    // sendMessageRead(msg);
+    sendMessageRead(msg);
   };
 
   const formatDate = (datetime) => {
