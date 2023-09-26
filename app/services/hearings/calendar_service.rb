@@ -114,7 +114,6 @@ class Hearings::CalendarService
       template_filepaths = Dir.glob(Rails.root.join("app/views/hearing_mailer/calendar_events/*"))
       template_name = "#{email_recipient_info.title.downcase}_#{event_type}_event_description"
       absolute_filepath = template_filepaths.find { |path| path.match?(template_name) }
-  
       template.render(file: absolute_filepath, locals: locals)
     end
   end
