@@ -134,7 +134,7 @@ describe PriorityEpSyncBatchProcess, :postgres do
       create(:end_product_establishment, :active_supp_with_active_vbms_ext_claim)
     end
     let!(:active_supp_epe_w_cleared_vbms_ext_claim) do
-      create(:end_product_establishment, :active_supp_with_canceled_vbms_ext_claim)
+      create(:end_product_establishment, :active_supp_with_cleared_vbms_ext_claim)
     end
     let!(:cleared_supp_epes_w_cleared_vbms_ext_claim) do
       create(:end_product_establishment, :cleared_supp_with_cleared_vbms_ext_claim)
@@ -145,9 +145,7 @@ describe PriorityEpSyncBatchProcess, :postgres do
     end
 
     let!(:pepsq_records) do
-      #PopulateEndProductSyncQueueJob.perform_now
       PriorityEndProductSyncQueue.all
-      byebug
     end
 
     let!(:original_pepsq_record_size) { pepsq_records.size }
@@ -309,11 +307,9 @@ describe PriorityEpSyncBatchProcess, :postgres do
         allow(Rails.logger).to receive(:info)
         pepsq_records.reload
         subject
-        #byebug
       end
 
       it "should delete the synced_pepsq records from the pepsq table and log it" do
-        #byebug
         expect(batch_process.priority_end_product_sync_queue.count).to eq(0)
         expect(Rails.logger).to have_received(:info).with(
           "PriorityEpSyncBatchProcessJob #{pepsq_records.size} synced records deleted:"\
