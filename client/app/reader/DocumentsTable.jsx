@@ -41,7 +41,6 @@ import DocTagPicker from './DocTagPicker';
 import ReactSelectDropdown from '../components/ReactSelectDropdown';
 
 const NUMBER_OF_COLUMNS = 6;
-
 const receiptDateFilterStates = {
   UNINITIALIZED: '',
   BETWEEN: 0,
