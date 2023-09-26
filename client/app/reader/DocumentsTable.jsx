@@ -255,6 +255,7 @@ class DocumentsTable extends React.Component {
  }
 
  componentDidMount() {
+   this.props.setClearAllFiltersCallbacks([this.resetRecieptPicker]);
 
    this.initializeReceiptFilter();
 
@@ -334,7 +335,7 @@ class DocumentsTable extends React.Component {
       this.setState({ recieptFilter: '', recieptFilterType: '', fromDate: '', toDate: '', onDate: '', fromDateErrors: [], toDateErrors: [], onDateErrors: [] });
     };
   getKeyForRow = (index, { isComment, id }) => {
-    return isComment ? `${id}-comment` : id;
+    return isComment ? `${id}-comment` : `${id}`;
   };
 
   // eslint-disable-next-line max-statements
@@ -518,6 +519,7 @@ class DocumentsTable extends React.Component {
                         label="Date filter parameters"
                         onChangeMethod={(selectedOption) => this.updateRecieptFilter(selectedOption.value)}
                         featureToggles={this.props.featureToggles}
+                        className="date-filter-type-dropdown"
                       />
                       {
                         (this.state.recieptFilter === recieptDateFilterStates.BETWEEN ||
@@ -528,6 +530,7 @@ class DocumentsTable extends React.Component {
                           name={this.state.recieptFilter === recieptDateFilterStates.BETWEEN ? 'From' : ''}
                           onChange={this.setDateFrom}
                           errorMessage={this.errorMessagesNode(this.state.fromDateErrors, 'fromDate')}
+                          id="receipt-date-from"
                         />
                       }
 
@@ -540,6 +543,7 @@ class DocumentsTable extends React.Component {
                           name={this.state.recieptFilter === recieptDateFilterStates.BETWEEN ? 'To' : ''}
                           onChange={this.setDateTo}
                           errorMessage={this.errorMessagesNode(this.state.toDateErrors, 'toDate')}
+                          id="receipt-date-to"
                         />
                       }
 
@@ -554,6 +558,7 @@ class DocumentsTable extends React.Component {
                           name={this.state.recieptFilter === recieptDateFilterStates.BETWEEN ? 'On' : ''}
                           onChange={this.setOnDate}
                           errorMessage={this.errorMessagesNode(this.state.onDateErrors, 'onDate')}
+                          id="receipt-date-on"
                         />}
                     </div>
 
@@ -699,8 +704,6 @@ class DocumentsTable extends React.Component {
       this.props.documents,
       this.props.annotationsPerDocument
     );
-
-    this.props.setClearAllFiltersCallbacks([this.resetRecieptPicker]);
 
     return (
       <div>
