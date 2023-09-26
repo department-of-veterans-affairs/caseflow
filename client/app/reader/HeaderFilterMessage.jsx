@@ -24,7 +24,7 @@ class HeaderFilterMessage extends React.PureComponent {
     const categoryCount = getTruthyCount(props.docFilterCriteria.category);
     const tagCount = getTruthyCount(props.docFilterCriteria.tag);
     const docTypeCount = getTruthyCount(props.docFilterCriteria.document);
-    const receiptDateCount = getTruthyCount(props.docFilterCriteria.recieptFilterDates);
+    const receiptDateCount = getTruthyCount(props.docFilterCriteria.receiptFilterDates);
 
     const filteredCategories = compact([
       categoryCount && `Categories (${categoryCount})`,
