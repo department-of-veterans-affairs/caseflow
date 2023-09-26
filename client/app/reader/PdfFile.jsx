@@ -183,7 +183,7 @@ export class PdfFile extends React.PureComponent {
   }
 
   // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentDidUpdate(nextProps) {
     if (nextProps.isVisible !== this.props.isVisible) {
       this.currentPage = 0;
     }

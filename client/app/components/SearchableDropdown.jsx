@@ -91,9 +91,10 @@ export class SearchableDropdown extends React.Component {
     }
   }
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps = (nextProps) => {
-    this.setState({ value: nextProps.value });
+  componentDidUpdate = (prevProps, nextProps) => {
+    if (prevProps !== this.props) {
+      this.setState({ value: nextProps.value });
+    }
   };
 
   onChange = (value) => {

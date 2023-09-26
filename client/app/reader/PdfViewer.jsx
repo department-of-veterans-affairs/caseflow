@@ -156,7 +156,7 @@ export class PdfViewer extends React.Component {
   }
 
   /* eslint-disable camelcase */
-  UNSAFE_componentWillReceiveProps = (nextProps) => {
+  componentDidUpdate = (nextProps) => {
     const nextDocId = Number(nextProps.match.params.docId);
 
     if (nextDocId !== this.selectedDocId()) {

@@ -18,7 +18,7 @@ export class PdfUIPageNumInput extends React.PureComponent {
     };
   }
 
-  UNSAFE_componentWillUpdate = (nextProps) => { // eslint-disable-line camelcase
+  componentDidUpdate = (nextProps) => {
     if (nextProps.currentPage !== this.props.currentPage) {
       this.setPageNumber(nextProps.currentPage);
     }

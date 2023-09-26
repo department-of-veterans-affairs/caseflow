@@ -122,18 +122,12 @@ const ERRORS = {
 // TODO: refactor to use shared components where helpful
 
 export class ConfirmHearing extends React.Component {
-  // TODO: updating state in UNSAFE_componentWillMount is
-  // sometimes thought of as an anti-pattern.
-  // is there a better way to do this?
-  UNSAFE_componentWillMount() {
-    this.props.updateProgressBar();
-  }
-
   componentWillUnmount() {
     this.props.resetState();
   }
 
   componentDidMount() {
+    this.props.updateProgressBar();
     window.scrollTo(0, 0);
   }
 

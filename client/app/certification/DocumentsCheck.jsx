@@ -15,11 +15,7 @@ import CertificationProgressBar from './CertificationProgressBar';
 import WindowUtil from '../util/WindowUtil';
 
 export class DocumentsCheck extends React.Component {
-  // TODO: updating state in UNSAFE_componentWillMount is
-  // sometimes thought of as an anti-pattern.
-  // is there a better way to do this?
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     this.props.updateProgressBar();
   }
 

@@ -42,6 +42,7 @@ class LoadingDataDisplay extends React.PureComponent {
 
     this.setState({ promiseStartTimeMs: Date.now() });
 
+
     // Promise does not give us a way to "un-then" and stop listening
     // when the component unmounts. So we'll leave this reference dangling,
     // but at least we can use this._isMounted to avoid taking action if necessary.
@@ -93,8 +94,7 @@ class LoadingDataDisplay extends React.PureComponent {
     this._isMounted = false;
   }
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentDidUpdate(nextProps) {
     if (this.props.createLoadPromise.toString() !== nextProps.createLoadPromise.toString()) {
       throw new Error("Once LoadingDataDisplay is instantiated, you can't change the createLoadPromise function.");
     }
