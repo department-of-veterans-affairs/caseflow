@@ -12,10 +12,11 @@ class WebexConferenceLink < ConferenceLink
   private
 
   def generate_conference_information
-    # These links are just placeholders until the service class(es) is available.
+    conference = WebexService.new.create_conference(hearing_day)
+
     update!(
-      host_link: "https://test.webex.com/meeting/#{Faker::Alphanumeric.alphanumeric(number: 32).downcase}",
-      guest_hearing_link: "https://test.webex.com/meeting/#{Faker::Alphanumeric.alphanumeric(number: 32).downcase}"
+      host_link: conference.data[:webLink],
+      guest_hearing_link: conference.data[:webLink]
     )
   end
 end
