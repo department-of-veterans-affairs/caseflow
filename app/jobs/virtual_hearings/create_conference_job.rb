@@ -177,11 +177,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   end
 
   def create_new_conference
-    client.create_conference(
-      host_pin: virtual_hearing.host_pin,
-      guest_pin: virtual_hearing.guest_pin,
-      name: virtual_hearing.alias
-    )
+    client.create_conference(virtual_hearing)
   end
 
   def should_initialize_alias_and_pins?
