@@ -161,6 +161,9 @@ describe "vbms_ext_claim trigger to populate end_product_sync_que table", :postg
     before(:all) do
       system("make drop-populate-pepsq-trigger-test")
     end
+    before do
+      PriorityEndProductSyncQueue.delete_all
+    end
     after(:all) do
       system("make add-populate-pepsq-trigger-test")
     end
