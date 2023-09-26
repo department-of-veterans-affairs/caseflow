@@ -2,12 +2,12 @@
 
 class JudgeLegacyAssignTask < JudgeLegacyTask
   def available_actions(user, role)
-    if current_user&.can_act_on_behalf_of_judges? && FeatureToggle.enabled?(:vlj_legacy_appeal) &&
+    if user&.can_act_on_behalf_of_judges? && FeatureToggle.enabled?(:vlj_legacy_appeal) &&
        (appeal.case_record.reload.bfcurloc == "57" || appeal.case_record.reload.bfcurloc == "CASEFLOW")
       [
         Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY.to_h
       ]
-    elsif current_user&.can_act_on_behalf_of_judges? && FeatureToggle.enabled?(:vlj_legacy_appeal) &&
+    elsif user&.can_act_on_behalf_of_judges? && FeatureToggle.enabled?(:vlj_legacy_appeal) &&
           %w[81 33].include?(appeal.case_record.reload.bfcurloc)
       [
         Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.to_h
