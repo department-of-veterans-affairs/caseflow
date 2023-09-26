@@ -9,7 +9,7 @@ describe HigherLevelReviewIntake, :all_dbs do
   let(:veteran_file_number) { "64205555" }
   let(:user) { Generators::User.build }
   let(:detail) { nil }
-  let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
+  let!(:veteran) { Generators::Veteran.build(file_number: "64205555").save! }
   let(:completed_at) { nil }
   let(:completion_started_at) { nil }
 
@@ -128,15 +128,8 @@ describe HigherLevelReviewIntake, :all_dbs do
         receipt_date: 3.days.ago,
         legacy_opt_in_approved: legacy_opt_in_approved,
         benefit_type: benefit_type,
-        veteran_is_not_claimant: false
-      )
-    end
-
-    let!(:claimant) do
-      VeteranClaimant.create!(
-        decision_review: detail,
-        participant_id: veteran.participant_id,
-        payee_code: "00"
+        veteran_is_not_claimant: false,
+        claimant_type: :veteran_claimant
       )
     end
 
@@ -165,7 +158,7 @@ describe HigherLevelReviewIntake, :all_dbs do
           end_product_code: "030HLRR",
           gulf_war_registry: false,
           suppress_acknowledgement_letter: false,
-          claimant_participant_id: veteran.participant_id
+          claimant_participant_id: detail.claimant.participant_id
         ),
         veteran_hash: intake.veteran.to_vbms_hash,
         user: user
