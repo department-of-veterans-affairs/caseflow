@@ -93,6 +93,7 @@ FactoryBot.define do
         appeal = task.appeal
         root_task = appeal.root_task
         distro_task = task.parent
+        appeal.update!(closest_regional_office: "RO17")
         task.update!(parent: root_task)
         ScheduleHearingTask.create!(appeal: appeal, parent: distro_task, assigned_to: Bva.singleton)
         HearingPostponementRequestMailTask.create!(appeal: appeal,
@@ -154,6 +155,7 @@ FactoryBot.define do
         appeal = task.appeal
         root_task = appeal.root_task
         distro_task = task.parent
+        appeal.update!(closest_regional_office: "RO17")
         task.update!(parent: root_task)
         ScheduleHearingTask.create!(appeal: appeal, parent: distro_task, assigned_to: Bva.singleton)
         HearingWithdrawalRequestMailTask.create!(appeal: appeal,
