@@ -14,14 +14,6 @@ const DATE_TIME_FORMAT = 'ddd MMM DD YYYY [at] HH:mm';
 export const InboxMessagesPage = (props) => {
   const [markedRead, setMarkedRead] = useState({});
 
-  const markMessageRead = (msg) => {
-    const markedRead = { ...this.state.markedRead };
-
-    markedRead[msg.id] = true;
-    this.setState({ markedRead });
-    this.sendMessageRead(msg);
-  };
-
   const sendMessageRead = (msg) => {
     const page = this;
 
@@ -32,7 +24,7 @@ export const InboxMessagesPage = (props) => {
 
           Object.assign(msg, responseObject);
 
-          const markedRead = { ...page.state.markedRead };
+          // const markedRead = { ...page.state.markedRead };
 
           markedRead[msg.id] = true;
           page.setState({
@@ -46,22 +38,31 @@ export const InboxMessagesPage = (props) => {
       catch((error) => error);
   };
 
-  const getButtonText = (msg) => {
-    let txt = 'Mark as read';
+  const markMessageRead = (msg) => {
+    // const markedRead = { ...this.state.markedRead };
 
-    if (msg.read_at) {
-      txt = `Read ${this.formatDate(msg.read_at)}`;
-    }
-
-    return txt;
+    // markedRead[msg.id] = true;
+    setMarkedRead([msg.id] = true);
+    // this.setState({ markedRead });
+    sendMessageRead(msg);
   };
 
   const formatDate = (datetime) => {
     return moment(datetime).format(DATE_TIME_FORMAT);
   };
 
+  const getButtonText = (msg) => {
+    let txt = 'Mark as read';
+
+    if (msg.read_at) {
+      txt = `Read ${formatDate(msg.read_at)}`;
+    }
+
+    return txt;
+  };
+
   const markAsReadButtonDisabled = (msg) => {
-    if (this.state.markedRead[msg.id] || msg.read_at) {
+    if (markedRead[msg.id] || msg.read_at) {
       return true;
     }
 
@@ -108,7 +109,7 @@ export const InboxMessagesPage = (props) => {
   ];
 
   const rowClassNames = (msg) => {
-    if (this.state.markedRead[msg.id] || msg.read_at) {
+    if (markedRead[msg.id] || msg.read_at) {
       return 'cf-inbox-message-read';
     }
 
@@ -118,8 +119,6 @@ export const InboxMessagesPage = (props) => {
   return (
     <>
       {inboxIsEmpty}
-      {columns}
-      {rowClassNames}
       <div className="cf-inbox-table">
         <h1>Inbox</h1>
         <hr />
