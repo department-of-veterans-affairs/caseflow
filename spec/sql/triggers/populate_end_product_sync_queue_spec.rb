@@ -3,7 +3,8 @@
 describe "vbms_ext_claim trigger to populate end_product_sync_que table", :postgres do
   context "when the trigger is added to the vbms_ext_claim table before the creation new records" do
     before(:all) do
-      system("make add-populate-pepsq-trigger")
+      system("bundle exec rails r -e test db/scripts/drop_pepsq_populate_trigger.rb")
+      system("bundle exec rails r -e test db/scripts/add_pepsq_populate_trigger.rb")
     end
     before do
       PriorityEndProductSyncQueue.delete_all
@@ -93,7 +94,7 @@ describe "vbms_ext_claim trigger to populate end_product_sync_que table", :postg
     before(:all) do
       @logged_epe = create(:end_product_establishment, :active, reference_id: 300_000)
       @logged_ext_claim = create(:vbms_ext_claim, :rdc, :slc, id: 300_000)
-      system("make add-populate-pepsq-trigger")
+      system("bundle exec rails r -e test db/scripts/add_pepsq_populate_trigger.rb")
     end
     before do
       PriorityEndProductSyncQueue.delete_all
@@ -159,13 +160,13 @@ describe "vbms_ext_claim trigger to populate end_product_sync_que table", :postg
 
   context "when the trigger is removed from the vbms_ext_claim table" do
     before(:all) do
-      system("make drop-populate-pepsq-trigger-test")
+      system("bundle exec rails r -e test db/scripts/drop_pepsq_populate_trigger.rb")
     end
     before do
       PriorityEndProductSyncQueue.delete_all
     end
     after(:all) do
-      system("make add-populate-pepsq-trigger-test")
+      system("bundle exec rails r -e test db/scripts/add_pepsq_populate_trigger.rb")
     end
 
     let(:logged_epe) { create(:end_product_establishment, :active, reference_id: 300_000) }
