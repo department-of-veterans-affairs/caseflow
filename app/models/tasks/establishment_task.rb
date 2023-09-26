@@ -53,7 +53,7 @@ class EstablishmentTask < Task
   # rubocop:disable Metrics/CyclomaticComplexity
   def format_special_issues_text(mst_status, pact_status)
     # format the special issues comment to display the change in the special issues status(es)
-    special_issue_status = "Special issues:"
+    special_issue_status = "Special Issues"
 
     return special_issue_status + " None" if !mst_status && !pact_status
     return special_issue_status + " MST, PACT" if mst_status && pact_status

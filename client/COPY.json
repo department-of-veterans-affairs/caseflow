@@ -944,7 +944,7 @@
   "INTAKE_REQUEST_ISSUE_UNTIMELY": "Please note: The issue requested isn't usually eligible because its decision date is older than what's allowed.",
   "INTAKE_LEGACY_ISSUE_UNTIMELY": "Please note: The legacy issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
   "INTAKE_REQUEST_ISSUE_AND_LEGACY_ISSUE_UNTIMELY": "Please note: The issue isn't usually eligible because its decision date is older than what is allowed, and the legacy issue issue isn't eligible for SOC/SSOC opt-in unless an exemption has been requested for reasons related to good cause.",
-  "INTAKE_ADD_EDIT_SPECIAL_ISSUES_LABEL": "Special issues: ",
+  "INTAKE_ADD_EDIT_SPECIAL_ISSUES_LABEL": "Special Issues ",
   "INTAKE_EDIT_ISSUE_TITLE": "Edit issue",
   "INTAKE_EDIT_ISSUE_SELECT_SPECIAL_ISSUES": "Select any special issues that apply",
   "INTAKE_EDIT_ISSUE_CHANGE_MESSAGE": "Why was this change made?",

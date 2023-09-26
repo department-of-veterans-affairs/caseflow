@@ -882,8 +882,8 @@ feature "Intake Add Issues Page", :all_dbs do
       # to prevent timeout
       refresh
       click_on "View task instructions"
-      expect(page).to have_content("Special issues: MST")
-      expect(page).to have_no_content("Special issues: PACT")
+      expect(page).to have_content("Special Issues MST")
+      expect(page).to have_no_content("Special Issues PACT")
     end
 
     scenario "Pact designation added during AMA intake" do
@@ -901,8 +901,8 @@ feature "Intake Add Issues Page", :all_dbs do
       visit current_path
       click_on "View task instructions"
 
-      expect(page).to have_content("Special issues: PACT")
-      expect(page).to have_no_content("Special issues: MST")
+      expect(page).to have_content("Special Issues PACT")
+      expect(page).to have_no_content("Special Issues MST")
     end
 
     scenario "MST and Pact designation added during AMA intake" do
@@ -921,7 +921,7 @@ feature "Intake Add Issues Page", :all_dbs do
       visit current_path
       click_on "View task instructions"
 
-      expect(page).to have_content("Special issues: MST, PACT")
+      expect(page).to have_content("Special Issues MST, PACT")
     end
 
     # rubocop:disable Layout/LineLength
@@ -939,7 +939,7 @@ feature "Intake Add Issues Page", :all_dbs do
       refresh
       click_on "View task instructions"
       expect(page).to have_content("Service connection is granted for PTSD at 10 percent, effective 10/11/2022.")
-      expect(page).to have_content("Special issues: MST")
+      expect(page).to have_content("Special Issues MST")
     end
     # rubocop:enable Layout/LineLength
 
@@ -958,7 +958,7 @@ feature "Intake Add Issues Page", :all_dbs do
       refresh
       click_on "View task instructions"
       expect(page).to have_content("Service connection is granted for AOOV at 10 percent, effective 10/11/2022.")
-      expect(page).to have_content("Special issues: PACT")
+      expect(page).to have_content("Special Issues PACT")
     end
     # rubocop:enable Layout/LineLength
 
@@ -977,7 +977,7 @@ feature "Intake Add Issues Page", :all_dbs do
       refresh
       click_on "View task instructions"
       expect(page).to have_content("Service connection is granted for PTSD, AOOV at 10 percent, effective 10/11/2022.")
-      expect(page).to have_content("Special issues: MST, PACT")
+      expect(page).to have_content("Special Issues MST, PACT")
     end
     # rubocop:enable Layout/LineLength
   end
