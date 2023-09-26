@@ -11,7 +11,7 @@ module DisallowedDeprecations
     /Dangerous query method \(method whose arguments are used as raw SQL\) called with non\-attribute argument\(s\)/
   ].freeze
 
-   # Regular expressions for Rails 6.1 deprecation warnings that we have addressed in the codebase
+  # Regular expressions for Rails 6.1 deprecation warnings that we have addressed in the codebase
   RAILS_6_1_FIXED_DEPRECATION_WARNING_REGEXES = [
     /render file: should be given the absolute path to a file/,
     /ActionView::Base instances should be constructed with a lookup context, assignments, and a controller./
