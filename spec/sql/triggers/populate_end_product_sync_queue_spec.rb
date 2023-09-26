@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# The PriorityEndProductSyncQue is populated via the trigger that is created on creation of the vbms_ext_claim table
+# The trigger is located in:
+#  db/scripts/external/create_vbms_ext_claim_table.rb
+#  db/scripts/
 describe "vbms_ext_claim trigger to populate end_product_sync_que table", :postgres do
   context "when the trigger is added to the vbms_ext_claim table before the creation new records" do
     before(:all) do

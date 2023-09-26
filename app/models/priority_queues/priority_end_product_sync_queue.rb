@@ -2,6 +2,11 @@
 
 # Model for Priority End Product Sync Queue table.
 # This table consists of records of End Product Establishment IDs that need to be synced with VBMS.
+
+# These are populated via the trigger that is created on creation of the vbms_ext_claim table
+# The trigger is located in:
+#  db/scripts/external/create_vbms_ext_claim_table.rb
+#  db/scripts/
 class PriorityEndProductSyncQueue < CaseflowRecord
   self.table_name = "priority_end_product_sync_queue"
 
