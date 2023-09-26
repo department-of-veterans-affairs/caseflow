@@ -30,7 +30,7 @@ conn.execute("
           if not exists (
             select 1
             from priority_end_product_sync_queue
-            where end_product_establishment_id = (select id from end_product_establishments where reference_id = string_claim_id) -- can this sub query be replaced with 'epe_id'?
+            where end_product_establishment_id = epe_id
           ) then
             insert into priority_end_product_sync_queue (created_at, end_product_establishment_id, updated_at)
             values (now(), epe_id, now());
