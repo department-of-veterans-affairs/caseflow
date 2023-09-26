@@ -8,9 +8,6 @@ describe "vbms_ext_claim trigger to populate end_product_sync_que table", :postg
     before do
       PriorityEndProductSyncQueue.delete_all
     end
-    after(:all) do
-      system("remove add-populate-pepsq-trigger")
-    end
 
     context "we only log inserted vbms_ext_claims" do
       let(:logged_epe1) { create(:end_product_establishment, :active, reference_id: 300_000) }
@@ -104,7 +101,6 @@ describe "vbms_ext_claim trigger to populate end_product_sync_que table", :postg
     after(:all) do
       EndProductEstablishment.delete(@logged_epe)
       VbmsExtClaim.delete(@logged_ext_claim)
-      system("remove add-populate-pepsq-trigger")
     end
 
     context "we only log updated vbms_ext_claims" do
