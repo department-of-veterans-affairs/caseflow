@@ -33,4 +33,5 @@ module SyncLock
       yield
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 end
