@@ -783,7 +783,7 @@ RSpec.feature "Reader", :all_dbs do
         original_scroll = scrolled_amount(element_class)
 
         # Click on the off screen comment (0 through 4 are on screen)
-        find("#comment-5").click
+        find("#comment5").click
         after_click_scroll = scrolled_amount(element_class)
 
         expect(after_click_scroll - original_scroll).to be > 0
