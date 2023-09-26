@@ -382,7 +382,7 @@ namespace :db do
         veterans_with_like_45_appeals = vets[0..12].pluck(:file_number) # local / test option for veterans
 
       else
-        veterans_with_like_45_appeals = %w[011899917 011899918] # UAT option for veterans
+        veterans_with_like_45_appeals = %w[583099131 589951227 333313333] # UAT option for veterans
 
       end
 
@@ -430,8 +430,8 @@ namespace :db do
       docket_number = 9_000_000
 
       veterans_with_like_45_appeals.each do |file_number|
-        docket_number += 1
-        LegacyAppealFactory.stamp_out_legacy_appeals(1, file_number, user, docket_number, task_type)
+        docket_number += rand(1000)
+        LegacyAppealFactory.stamp_out_legacy_appeals(3, file_number, user, docket_number, task_type)
       end
       $stdout.puts("You have created Legacy Appeals")
     end

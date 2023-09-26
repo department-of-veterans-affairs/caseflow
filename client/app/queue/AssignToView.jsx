@@ -217,7 +217,7 @@ class AssignToView extends React.Component {
       return assignor;
     };
 
-    let titleValue = task.type === 'JudgeDecisionReviewTask' ?
+    const titleValue = task.type === 'JudgeDecisionReviewTask' ?
       sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) :
       sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE_SCM, assignedByListItem(), this.getAssignee());
 
@@ -394,8 +394,6 @@ class AssignToView extends React.Component {
       modalProps.submitDisabled = !this.validateForm();
       modalProps.submitButtonClassNames = ['usa-button'];
     }
-
-   
 
     return (
       <QueueFlowModal {...modalProps}>
