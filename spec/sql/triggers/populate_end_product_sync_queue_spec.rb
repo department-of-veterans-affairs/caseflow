@@ -159,7 +159,7 @@ describe "vbms_ext_claim trigger to populate end_product_sync_que table", :postg
 
   context "when the trigger is removed from the vbms_ext_claim table" do
     before(:all) do
-      system("make remove-populate-pepsq-trigger-test")
+      system("make drop-populate-pepsq-trigger-test")
     end
     after(:all) do
       system("make add-populate-pepsq-trigger-test")

@@ -203,7 +203,7 @@ add-populate-pepsq-trigger-test:
 	bundle exec rails r -e test db/scripts/add_pepsq_populate_trigger.rb
 
 # Remove populate pepsq trigger from vbms_ext_claim table
-remove-populate-pepsq-trigger-test:
+drop-populate-pepsq-trigger-test:
 	bundle exec rails r -e test db/scripts/drop_pepsq_populate_trigger.rb
 
 c:  ## Start rails console
