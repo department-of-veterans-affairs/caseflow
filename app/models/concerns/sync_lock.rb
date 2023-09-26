@@ -7,7 +7,6 @@ module SyncLock
   LOCK_TIMEOUT = ENV["SYNC_LOCK_MAX_DURATION"]
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def hlr_sync_lock
     if decision_review.is_a?(HigherLevelReview) && block_given?
       redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
@@ -34,4 +33,5 @@ module SyncLock
       yield
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 end
