@@ -158,18 +158,18 @@ export const clearTagFilters = () => (dispatch) => {
   dispatch(updateFilteredIdsAndDocs());
 };
 
-export const setRecieptDateFilter = (recieptFilterType, recieptDatesHash) => (dispatch) => {
+export const setReceiptDateFilter = (receiptFilterType, receiptDatesHash) => (dispatch) => {
   dispatch({
-    type: Constants.SET_RECIEPT_DATE_FILTER,
+    type: Constants.SET_RECEIPT_DATE_FILTER,
     payload: {
-      recieptFilterType,
-      recieptDatesHash
+      receiptFilterType,
+      receiptDatesHash
     },
     meta: {
       analytics: {
         category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-        action: `set RecieptFilterType-${ recieptFilterType}`,
-        label: 'setRecieptFilter'
+        action: `set ReceiptFilterType-${ receiptFilterType}`,
+        label: 'setReceiptFilter'
       }
     }
   });

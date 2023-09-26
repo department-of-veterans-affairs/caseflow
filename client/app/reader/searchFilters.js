@@ -3,7 +3,7 @@ import { categoryFieldNameOfCategoryName } from './utils';
 import { searchString, commentContainsWords, categoryContainsWords } from './search';
 import { update } from '../util/ReducerUtil';
 
-// In order to filter by reciept date, we have to handle 4 different scenarios.
+// In order to filter by receipt date, we have to handle 4 different scenarios.
 // It can be filtered between two dates, before a date, after a date, and on a date.
 // this switch takes the filterType stored in redux as a number 0-4, and runs the required
 // validation on it, then returns the result.
@@ -71,8 +71,8 @@ export const getUpdatedFilteredResults = (state) => {
     ([key]) => key
   );
 
-  const activeRecieptFilters = map(
-    filter(toPairs(docFilterCriteria.recieptFilterDates), ([key, value]) => // eslint-disable-line no-unused-vars
+  const activeReceiptFilters = map(
+    filter(toPairs(docFilterCriteria.receiptFilterDates), ([key, value]) => // eslint-disable-line no-unused-vars
       value),
     ([key]) => key
   );
@@ -89,9 +89,9 @@ export const getUpdatedFilteredResults = (state) => {
               filter(
                 updatedNextState.documents,
                 (doc) => !activeDocTypeFilter.length || some(activeDocTypeFilter, (docType) => docType === doc.type)),
-              (doc) => !activeRecieptFilters.length || some(activeRecieptFilters, () =>
-                (filterDates(doc.receivedAt, docFilterCriteria.recieptFilterDates,
-                  docFilterCriteria.recieptFilterType)))
+              (doc) => !activeReceiptFilters.length || some(activeReceiptFilters, () =>
+                (filterDates(doc.receivedAt, docFilterCriteria.receiptFilterDates,
+                  docFilterCriteria.receiptFilterType)))
             ),
             (doc) => !activeCategoryFilters.length ||
               some(activeCategoryFilters, (categoryFieldName) => doc[categoryFieldName])

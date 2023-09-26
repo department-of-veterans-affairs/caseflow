@@ -47,8 +47,8 @@ const initialState = {
     document: {},
     docTypeList: '',
     searchQuery: '',
-    recieptFilterType: '',
-    recieptFilterDates: {
+    receiptFilterType: '',
+    receiptFilterDates: {
       fromDate: '',
       toDate: '',
       onDate: ''
@@ -142,15 +142,15 @@ const documentListReducer = (state = initialState, action = {}) => {
       }
     });
 
-    // Reciept date filter
-  case Constants.SET_RECIEPT_DATE_FILTER:
+    // Receipt date filter
+  case Constants.SET_RECEIPT_DATE_FILTER:
     return update(state, {
       docFilterCriteria: {
-        recieptFilterType: {
-          $set: action.payload.recieptFilterType
+        receiptFilterType: {
+          $set: action.payload.receiptFilterType
         },
-        recieptFilterDates: {
-          $set: action.payload.recieptDatesHash
+        receiptFilterDates: {
+          $set: action.payload.receiptDatesHash
         }
       },
     });
@@ -230,8 +230,8 @@ const documentListReducer = (state = initialState, action = {}) => {
         document: {
           $set: {}
         },
-        recieptFilterType: { $set: '' },
-        recieptFilterDates: {
+        receiptFilterType: { $set: '' },
+        receiptFilterDates: {
           $set: {}
         }
       },
