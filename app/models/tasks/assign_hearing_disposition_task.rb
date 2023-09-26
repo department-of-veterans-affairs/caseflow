@@ -20,7 +20,6 @@
 # the logic in HearingTask#when_child_task_completed properly handles routing or creating ihp task.
 ##
 class AssignHearingDispositionTask < Task
-  include RunAsyncable
   prepend HearingWithdrawn
   prepend HearingPostponed
   prepend HearingScheduledInError

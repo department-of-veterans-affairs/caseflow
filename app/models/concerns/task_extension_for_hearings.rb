@@ -5,6 +5,8 @@
 # visibility
 
 module TaskExtensionForHearings
+  include RunAsyncable
+
   extend ActiveSupport::Concern
 
   # Implemented in app/models.task.rb

@@ -10,7 +10,6 @@
 ##
 class HearingPostponementRequestMailTask < HearingRequestMailTask
   prepend HearingPostponed
-  include RunAsyncable
 
   class << self
     def label
