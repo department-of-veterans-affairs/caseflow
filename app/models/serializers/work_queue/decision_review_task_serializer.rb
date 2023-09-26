@@ -79,7 +79,7 @@ class WorkQueue::DecisionReviewTaskSerializer
 
   attribute :power_of_attorney do |object|
     # If claimant_name exists on the object then skip this field for speed
-    if object[:issue_count] || power_of_attorney(object).nil?
+    if object[:claimant_name] || power_of_attorney(object).nil?
       nil
     else
       {
