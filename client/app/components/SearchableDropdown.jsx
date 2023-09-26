@@ -91,9 +91,9 @@ export class SearchableDropdown extends React.Component {
     }
   }
 
-  componentDidUpdate = (prevProps, nextProps) => {
+  componentDidUpdate = (prevProps) => {
     if (prevProps !== this.props) {
-      this.setState({ value: nextProps.value });
+      this.setState({ value: this.props.value });
     }
   };
 
