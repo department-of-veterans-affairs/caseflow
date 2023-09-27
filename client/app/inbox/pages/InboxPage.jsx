@@ -106,7 +106,7 @@ export const InboxMessagesPage = (props) => {
   return (
     <>
       {rowObjects.length === 0 ? (
-        <div>
+        <div className="cf-txt-c">
           <h1>Success! You have no unread messages.</h1>
         </div>
       ) : (
