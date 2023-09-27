@@ -682,7 +682,7 @@ RSpec.feature "MailTasks", :postgres do
 
       shared_examples "modal body text" do
         it "renders proper modal body text specific to appeal type" do
-          visit("queue/appeals/#{appeal.is_a?(Appeal) ? appeal.uuid : appeal.vacols_id}")
+          visit("queue/appeals/#{appeal.external_id}")
           within("tr", text: "Hearing withdrawal request", match: :first) do
             click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
                            text: Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.label)
@@ -694,7 +694,7 @@ RSpec.feature "MailTasks", :postgres do
 
       shared_examples "whether hearing is schedueld or unscheduled" do
         before do
-          page = "queue/appeals/#{appeal.is_a?(Appeal) ? appeal.uuid : appeal.vacols_id}"
+          page = "queue/appeals/#{appeal.external_id}"
           visit(page)
           within("tr", text: "Hearing withdrawal request", match: :first) do
             click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
@@ -749,7 +749,7 @@ RSpec.feature "MailTasks", :postgres do
             expect(SendNotificationJob).to receive(:perform_later).with(withdrawal_payload)
 
             perform_enqueued_jobs do
-              visit("queue/appeals/#{appeal.is_a?(Appeal) ? appeal.uuid : appeal.vacols_id}")
+              visit("queue/appeals/#{appeal.external_id}")
               within("tr", text: "Hearing withdrawal request", match: :first) do
                 click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
                                text: Constants.TASK_ACTIONS.COMPLETE_AND_WITHDRAW.label)
