@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe ConferenceLink do
+describe PexipConferenceLink do
   URL_HOST = "example.va.gov"
   URL_PATH = "/sample"
   PIN_KEY = "mysecretkey"
@@ -21,7 +21,7 @@ describe ConferenceLink do
       it "raises the missing PIN key error" do
         RequestStore[:current_user] = user
         expect do
-          described_class.create(hearing_day_id: hearing_day.id)
+          described_class.create(hearing_day: hearing_day)
         end.to raise_error VirtualHearings::LinkService::PINKeyMissingError
       end
     end
@@ -36,7 +36,7 @@ describe ConferenceLink do
       it "raises the missing host error" do
         RequestStore[:current_user] = user
         expect do
-          described_class.create(hearing_day_id: hearing_day.id)
+          described_class.create(hearing_day: hearing_day)
         end.to raise_error VirtualHearings::LinkService::URLHostMissingError
       end
     end
@@ -51,7 +51,7 @@ describe ConferenceLink do
       it "raises the missing path error" do
         RequestStore[:current_user] = user
         expect do
-          described_class.create(hearing_day_id: hearing_day.id)
+          described_class.create(hearing_day: hearing_day)
         end.to raise_error VirtualHearings::LinkService::URLPathMissingError
       end
     end
@@ -62,7 +62,7 @@ describe ConferenceLink do
       it "raises the missing PIN key error" do
         RequestStore[:current_user] = user
         expect do
-          described_class.create(hearing_day_id: hearing_day.id)
+          described_class.create(hearing_day: hearing_day)
         end.to raise_error VirtualHearings::LinkService::PINKeyMissingError
       end
     end
@@ -79,7 +79,7 @@ describe ConferenceLink do
     end
 
     let(:conference_link) do
-      create(:conference_link, hearing_day_id: hearing_day.id)
+      create(:pexip_conference_link, hearing_day_id: hearing_day.id)
     end
 
     subject { conference_link }
@@ -111,7 +111,7 @@ describe ConferenceLink do
     end
 
     let(:conference_link) do
-      create(:conference_link, hearing_day_id: hearing_day.id)
+      create(:pexip_conference_link, hearing_day_id: hearing_day.id)
     end
 
     let(:conference_link_hash) do
@@ -142,6 +142,9 @@ describe ConferenceLink do
 
   describe "#guest_pin" do
     before do
+      FeatureToggle.enable!(:pexip_conference_service)
+      FeatureToggle.enable!(:webex_conference_service)
+
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
@@ -151,17 +154,18 @@ describe ConferenceLink do
 
     let!(:user) { RequestStore.store[:current_user] = User.system_user }
 
-    let(:conference_link) { hearing_day.conference_link }
+    let(:conference_links) { hearing_day.conference_links }
+    let(:pexip_link) { conference_links.detect { |link| link.type == PexipConferenceLink.name } }
 
     context "guest_pin_long property already has a pin as a value" do
       it "Returns the guest_pin for the conference_link" do
-        expect(conference_link.guest_pin_long).to eq(conference_link.guest_pin)
+        expect(pexip_link.guest_pin_long).to eq(pexip_link.guest_pin)
       end
     end
     context "guest_pin_long property has a value of nil." do
       it "checks if property is nil. If so, a new pin is created. " do
-        conference_link.update!(guest_pin_long: nil)
-        expect(conference_link.guest_pin).not_to eq(nil)
+        pexip_link.update!(guest_pin_long: nil)
+        expect(pexip_link.guest_pin).not_to eq(nil)
       end
     end
   end
@@ -181,7 +185,7 @@ describe ConferenceLink do
     let!(:user) { RequestStore.store[:current_user] = User.system_user }
 
     let(:conference_link) do
-      create(:conference_link,
+      create(:pexip_conference_link,
              hearing_day_id: hearing_day.id,
              guest_hearing_link: existing_url,
              guest_pin_long: nil)

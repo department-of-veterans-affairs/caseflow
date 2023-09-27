@@ -419,10 +419,9 @@ module Caseflow::Error
   class PexipBadRequestError < PexipApiError; end
   class PexipMethodNotAllowedError < PexipApiError; end
 
-  class WebexApiError < ConferenceCreationError; end
-  class WebexNotFoundError < WebexApiError; end
-  class WebexBadRequestError < WebexApiError; end
-  class WebexMethodNotAllowedError < WebexApiError; end
+  class WebexApiError < ConferenceCreationError
+    attr_accessor :descriptions
+  end
 
   class WorkModeCouldNotUpdateError < StandardError; end
 
