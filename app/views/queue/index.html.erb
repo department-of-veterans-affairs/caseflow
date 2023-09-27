@@ -56,7 +56,8 @@
       cc_vacatur_visibility: FeatureToggle.enabled?(:cc_vacatur_visibility, user: current_user),
       vlj_legacy_appeal: FeatureToggle.enabled?(:vlj_legacy_appeal, user: current_user),
       legacy_das_deprecation: FeatureToggle.enabled?(:legacy_das_deprecation, user: current_user),
-      auto_tagging_ability: FeatureToggle.enabled?(:auto_tagging_ability, user: current_user)
+      auto_tagging_ability: FeatureToggle.enabled?(:auto_tagging_ability, user: current_user),
+      additional_remand_reasons: FeatureToggle.enabled?(:additional_remand_reasons, user: current_user)
     }
   }) %>
 <% end %>
