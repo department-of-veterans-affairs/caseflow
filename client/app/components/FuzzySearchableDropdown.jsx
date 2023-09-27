@@ -79,7 +79,7 @@ export class FuzzySearchableDropdown extends React.Component {
     this.state = {
       value: props.value,
       isExpanded: false,
-      fuzzySearchState: [{ label: 'aaa', docId: 103, value: 'aaa' }],
+      fuzzySearchState: [],
       originalOptions: [],
       trickState: 0
 
@@ -216,6 +216,14 @@ export class FuzzySearchableDropdown extends React.Component {
     return Select;
   };
 
+   getMergedOptions = () => {
+    console.log('executed get merged options');
+    // merges results found in fuzzy serach and the list of original options, and prevents duplicates
+    let mergedOptions = this.state.originalOptions;
+
+    return this.props.options;
+  }
+
   render() {
     const {
       async,
@@ -300,8 +308,33 @@ export class FuzzySearchableDropdown extends React.Component {
     const handleNoOptions = () =>
       noResultsText ?? (creatable ? null : NO_RESULTS_TEXT);
 
-    const addFuzzySearchTerm = (index) => {
+    const fuzzyInclusiveFilter = (option, searchText) => {
+      console.log(option);
+      console.log(searchText);
 
+      if(searchText === '' || searchText === undefined)
+      {
+        return true;
+      }
+
+      if(option === undefined || option.value === undefined) {
+        return true;
+      }
+      if (
+        option.value.toLowerCase().includes(searchText.toLowerCase() ||
+          option.isFuzzyValue !== undefined
+        )
+      ) {
+        return true;
+      }
+
+      return false;
+
+    };
+
+
+    const addFuzzySearchTerm = (index) => {
+      console.log("executing add fuzzy search term??")
       value.push(this.state.fuzzySearchState[index]);
       this.props.onChange(value, {});
       this.state.fuzzySearchState.splice(index, 1);
@@ -309,6 +342,9 @@ export class FuzzySearchableDropdown extends React.Component {
       this.setState({ originalOptions: Array.from(this.state.originalOptions) });
 
     };
+
+    console.log('filter option????');
+    console.log(filterOption);
 
     return (
       <div className={errorMessage ? 'usa-input-error' : ''} ref={this.setWrapperRef}>
@@ -325,10 +361,10 @@ export class FuzzySearchableDropdown extends React.Component {
               name={name}
               classNamePrefix="cf-select"
               inputId={`${kebabCase(name)}`}
-              options={this.state.originalOptions}
+              options={this.getMergedOptions()}
               defaultOptions={defaultOptions}
               defaultValue={defaultValue}
-              filterOption={filterOption}
+              filterOption={fuzzyInclusiveFilter}
               loadOptions={async}
               updateFuzzyValue={this.updateFuzzyValue}
               isLoading={loading}
