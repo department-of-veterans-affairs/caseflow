@@ -347,6 +347,7 @@ export const CaseDetailsView = (props) => {
         <StickyNavContentArea>
           <CaseDetailsIssueList
             title="Issues"
+            featureToggles={featureToggles}
             isLegacyAppeal={appeal.isLegacyAppeal}
             additionalHeaderContent={
               appeal.canEditRequestIssues && (

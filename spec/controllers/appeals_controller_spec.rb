@@ -1047,4 +1047,65 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       end
     end
   end
+
+  describe "POST update" do
+    context "AMA Appeal" do
+      before do
+        User.authenticate!(roles: ["System Admin"])
+        Fakes::Initializer.load!
+      end
+
+      let(:ssn) { Generators::Random.unique_ssn }
+      let(:options) { { format: :html, appeal_id: appeal_url_identifier } }
+      let(:appeal) { create(:appeal, veteran_file_number: ssn) }
+      let(:appeal_url_identifier) { appeal.is_a?(LegacyAppeal) ? appeal.vacols_id : appeal.uuid }
+      let!(:request_issue1) { create(:request_issue, decision_review: appeal) }
+      let(:request_issue2) { create(:request_issue, decision_review: appeal) }
+      let(:request_issue3) { create(:request_issue, decision_review: appeal) }
+      let(:request_issue4) { create(:request_issue, decision_review: appeal) }
+      let(:organization) { create(:organization) }
+
+      subject do
+        post :update, params: {
+          request_issues: [
+            {
+              request_issue_id: request_issue4.id,
+              mst_status: true,
+              mst_status_update_reason_notes: "MST reason note",
+              pact_status_update_reason_notes: ""
+            },
+            {
+              request_issue_id: request_issue3.id,
+              pact_status: true,
+              mst_status_update_reason_notes: "",
+              pact_status_update_reason_notes: "PACT reason note"
+            },
+            {
+              request_issue_id: request_issue2.id,
+              mst_status: true,
+              pact_status: true,
+              mst_status_update_reason_notes: "MST note",
+              pact_status_update_reason_notes: "Pact note"
+            },
+            {
+              request_issue_id: request_issue1.id,
+              mst_status_update_reason_notes: "",
+              pact_status_update_reason_notes: ""
+            }
+          ],
+          controller: "appeals",
+          action: "update",
+          appeal_id: appeal.id
+        }
+      end
+
+      it "responds with a 200 status" do
+        allow_any_instance_of(AppealsController).to receive(:appeal).and_return(appeal)
+        allow(Organization).to receive(:find_by_url).and_return(organization)
+
+        subject
+        expect(response).to be_successful
+      end
+    end
+  end
 end

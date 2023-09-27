@@ -103,7 +103,6 @@ export const RadioField = (props) => {
       <div className="cf-form-radio-options" style={optionsStyling}>
         {options.map((option, i) => {
           const optionDisabled = isDisabled(option);
-
           const radioField = (<div
             className="cf-form-radio-option"
             key={`${idPart}-${option.value}-${i}`}

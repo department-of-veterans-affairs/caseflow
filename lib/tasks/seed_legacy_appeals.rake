@@ -9,6 +9,7 @@ namespace :db do
     class LegacyAppealFactory
       class << self
         # Stamping out appeals like mufflers!
+        # rubocop:disable Layout/LineLength, Metrics/AbcSize, Metrics/MethodLength
         def stamp_out_legacy_appeals(num_appeals_to_create, file_number, user, docket_number)
           veteran = Veteran.find_by_file_number(file_number)
 
@@ -51,6 +52,7 @@ namespace :db do
 
           build_the_cases_in_caseflow(cases)
         end
+        # rubocop:enable Layout/LineLength, Metrics/AbcSize, Metrics/MethodLength
 
         def custom_folder_attributes(veteran, docket_number)
           {
@@ -136,7 +138,9 @@ namespace :db do
         docket_number += 1
         LegacyAppealFactory.stamp_out_legacy_appeals(5, file_number, user, docket_number)
       end
-      # veterans_with_250_appeals.each { |file_number| LegacyAppealFactory.stamp_out_legacy_appeals(250, file_number, user) }
+      # veterans_with_250_appeals.each do |file_number|
+      #   LegacyAppealFactory.stamp_out_legacy_appeals(250, file_number, user)
+      # end
     end
   end
 end
