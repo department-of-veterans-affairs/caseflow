@@ -1,7 +1,7 @@
 import React from 'react';
-import InboxPage from './InboxPage';
+import { InboxMessagesPage } from './InboxPage';
 
-const msgs = [
+const messages = [
   {
     created_at: '2023-09-22T15:18:39.800-04:00',
     detail_id: 350,
@@ -28,18 +28,25 @@ const msgs = [
   }
 ];
 
+const pagination = {
+  current_page: 1,
+  page_size: 50,
+  total_items: 2,
+  total_pages: 1
+};
+
 export default {
   title: 'Inbox',
-  component: InboxPage,
+  component: InboxMessagesPage,
   decorators: [],
   parameters: {},
-  args: { messages: msgs },
+  args: { messages, pagination },
   argTypes: {
   },
 };
 
 const Template = (args) => {
-  return <InboxPage {...args} />;
+  return <InboxMessagesPage {...args} />;
 };
 
 export const Basic = Template.bind({});
