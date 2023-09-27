@@ -200,7 +200,27 @@ const documentsReducer = (state = initialState, action = {}) => {
       [action.payload.docId]: {
         $merge: {
           isAutoTagPending: true
+        },
+      }
+    });
+  case Constants.GENERATE_AUTO_TAGS_SUCCESS:
+    return update(state, {
+      [action.payload.docId]: {
+        $merge: {
+          isAutoTagPending: false,
+          auto_tagged: true
+        },
+        tags: {
+          $merge: action.payload.tags
         }
+      }
+    });
+  case Constants.GENERATE_AUTO_TAGS_FAILURE:
+    return update(state, {
+      [action.payload.docId]: {
+        $merge: {
+          isAutoTagPending: false
+        },
       }
     });
   default:

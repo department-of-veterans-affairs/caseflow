@@ -117,19 +117,45 @@ export const addNewTag = (doc, tags) =>
     }
   };
 
+export const generateTagsSuccess = (docId, tags) =>
+  (dispatch) => {
+    dispatch({
+      type: Constants.GENERATE_AUTO_TAGS_SUCCESS,
+      payload: {
+        docId,
+        tags
+      }
+    });
+  }
+
+export const generateTagsFailure = (docId, errorMessage) =>
+  (dispatch) => {
+    dispatch(showErrorMessage('autoTag', errorMessage || 'Something went wrong'));
+    dispatch({
+      type: Constants.GENERATE_AUTO_TAGS_FAILURE,
+      payload: {
+        docId
+      }
+    })
+  };
+
 export const generateTags = (doc) => (dispatch) => {
+  dispatch(hideErrorMessage('autoTag'));
+  dispatch({
+    type: Constants.GENERATE_AUTO_TAGS,
+    payload: {
+      docId: doc.id,
+    }
+  })
   ApiUtil.get(`/document/${doc.id}/tag/auto_tag`, {}, ENDPOINT_NAMES.TAG).
     then((data) => {
       if (data.body?.errors?.message) {
-        dispatch(showErrorMessage('autoTag', data.body.errors.message));
+        dispatch(generateTagsFailure(doc.id, data.body.errors.message))
       } else {
-        dispatch({
-          type: Constants.GENERATE_AUTO_TAGS,
-          payload: {
-            docId: doc.id
-          }
-        });
+        dispatch(generateTagsSuccess(doc.id, data.body.tags))
       }
+    }, () => {
+      dispatch(generateTagsFailure(doc.id))
     });
 };
 
