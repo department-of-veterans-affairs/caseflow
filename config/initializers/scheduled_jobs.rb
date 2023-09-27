@@ -23,7 +23,6 @@ SCHEDULED_JOBS = {
     "monthly_metrics" => MonthlyMetricsReportJob,
     "nightly_syncs" => NightlySyncsJob,
     "out_of_service_reminder" => OutOfServiceReminderJob,
-    "populate_end_product_sync_queue" => PopulateEndProductSyncQueueJob,
     "prepare_establish_claim" => PrepareEstablishClaimTasksJob,
     "push_priority_appeals_to_judges" => PushPriorityAppealsToJudgesJob,
     "quarterly_metrics" => QuarterlyMetricsReportJob,
