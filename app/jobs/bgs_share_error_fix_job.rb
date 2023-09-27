@@ -13,13 +13,11 @@ class BgsShareErrorFixJob < CaseflowJob
 
   def clear_rius_errors
     return if rius_with_errors.count < 1
-
     STUCK_JOB_REPORT_SERVICE.append_record_count(rius_with_errors.count, ERROR_TEXT)
     rius_with_errors.each do |riu|
       epe = EndProductEstablishment.find_by(
         id: riu.review_id
       )
-
       next if epe.established_at.blank?
 
       resolve_error_on_records(riu)
@@ -30,7 +28,6 @@ class BgsShareErrorFixJob < CaseflowJob
 
   def clear_hlr_errors
     return if hlrs_with_errors.count < 1
-
     STUCK_JOB_REPORT_SERVICE.append_record_count(hlrs_with_errors.count, ERROR_TEXT)
 
     hlrs_with_errors.each do |hlr|
@@ -47,7 +44,6 @@ class BgsShareErrorFixJob < CaseflowJob
 
   def clear_bge_errors
     return if bges_with_errors.count < 1
-
     STUCK_JOB_REPORT_SERVICE.append_record_count(bges_with_errors.count, ERROR_TEXT)
 
     bges_with_errors.each do |bge|
