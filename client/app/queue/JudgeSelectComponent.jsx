@@ -141,6 +141,7 @@ export default (connect(
 
 JudgeSelectComponent.propTypes = {
   judge: PropTypes.string,
+  judges: PropTypes.object,
   fetchJudges: PropTypes.func,
   judgeSelector: PropTypes.string,
   setDecisionOptions: PropTypes.func,
@@ -148,4 +149,4 @@ JudgeSelectComponent.propTypes = {
   decision: PropTypes.object,
   highlightFormItems: PropTypes.bool,
   setSelectingJudge: PropTypes.func
-}
+};

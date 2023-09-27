@@ -265,7 +265,6 @@ SignAndCertify.propTypes = {
   updateProgressBar: PropTypes.func,
   showValidationErrors: PropTypes.func,
   certificationUpdateStart: PropTypes.func,
-  showValidationErrors: PropTypes.func,
   loading: PropTypes.bool,
   serverError: PropTypes.bool,
   updateSucceeded: PropTypes.bool
