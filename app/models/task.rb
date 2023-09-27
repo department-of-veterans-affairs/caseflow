@@ -321,6 +321,9 @@ class Task < CaseflowRecord
         end
       else
         current_task.children.each { |current_task| cancel_all_children(current_task) }
+        if current_task.status != "Cancelled" && current_task.status != "completed"
+          cancelled_task(current_task)
+        end
       end
     end
 
