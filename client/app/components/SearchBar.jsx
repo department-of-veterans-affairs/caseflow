@@ -41,8 +41,20 @@ export default class SearchBar extends React.Component {
   }
 
   /* eslint-disable camelcase */
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (this.props.value !== nextProps.value) {
+  // UNSAFE_componentWillReceiveProps(nextProps) {
+  //   if (this.props.value !== nextProps.value) {
+  //     this.clearSearchCallback();
+
+  //     this.searchTimeout = setTimeout(() => {
+  //       this.onSearch();
+  //       this.searchTimeout = null;
+  //     }, 500);
+  //   }
+  // }
+  /* eslint-enable camelcase */
+
+  componentDidUpdate(prevProps) {
+    if (this.props.value !== prevProps.value) {
       this.clearSearchCallback();
 
       this.searchTimeout = setTimeout(() => {
@@ -51,7 +63,6 @@ export default class SearchBar extends React.Component {
       }, 500);
     }
   }
-  /* eslint-enable camelcase */
 
   onBlur = () => {
     if (this.clearSearchCallback()) {

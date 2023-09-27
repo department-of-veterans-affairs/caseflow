@@ -13,7 +13,7 @@ import { setSelectingJudge } from './uiReducer/uiActions';
 
 import Button from '../components/Button';
 import SearchableDropdown from '../components/SearchableDropdown';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJudge ? '' : 0 });
 
@@ -38,9 +38,15 @@ class JudgeSelectComponent extends React.PureComponent {
     }
   };
 
-  UNSAFE_componentWillReceiveProps = (nextProps) => {
-    if (nextProps.judges !== this.props.judges) {
-      this.setDefaultJudge(nextProps.judges);
+  // UNSAFE_componentWillReceiveProps = (nextProps) => {
+  //   if (nextProps.judges !== this.props.judges) {
+  //     this.setDefaultJudge(nextProps.judges);
+  //   }
+  // }
+
+  componentDidUpdate = (prevProps) => {
+    if (prevProps.judges !== this.props.judges) {
+      this.setDefaultJudge(prevProps.judges);
     }
   }
 

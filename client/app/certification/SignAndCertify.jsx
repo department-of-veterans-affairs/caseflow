@@ -44,12 +44,13 @@ export class SignAndCertify extends React.Component {
   // TODO: updating state in UNSAFE_componentWillMount is
   // sometimes thought of as an anti-pattern.
   // is there a better way to do this?
-  UNSAFE_componentWillMount() {
-    this.props.updateProgressBar();
-  }
+  // UNSAFE_componentWillMount() {
+  //   this.props.updateProgressBar();
+  // }
 
   /* eslint class-methods-use-this: ["error", { "exceptMethods": ["componentDidMount"] }] */
   componentDidMount() {
+    this.props.updateProgressBar();
     window.scrollTo(0, 0);
   }
 

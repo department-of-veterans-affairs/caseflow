@@ -92,9 +92,26 @@ export class SearchableDropdown extends React.Component {
   }
 
   // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps = (nextProps) => {
-    this.setState({ value: nextProps.value });
-  };
+  // UNSAFE_componentWillReceiveProps = (nextProps) => {
+  //   this.setState({ value: nextProps.value });
+  // };
+
+  // componentDidUpdate(prevProps) {
+  //   if (prevProps.value !== this.props.value) {
+  //     this.setState({ value: this.props.value });
+  //     // this.setState({ value: prevProps.value });
+  //   }
+  //   // this.setState({ value: prevProps.value });
+  // }
+
+  // I have no freaking idea what this is supposed to be doing
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.value !== prevState.value) {
+      return { value: nextProps.value };
+    }
+
+    return null;
+  }
 
   onChange = (value) => {
     let newValue = value;

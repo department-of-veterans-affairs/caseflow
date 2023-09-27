@@ -126,15 +126,16 @@ export class ConfirmCaseDetails extends React.Component {
   // sometimes thought of as an anti-pattern.
   // is there a better way to do this?
   // eslint-disable-next-line camelcase
-  UNSAFE_componentWillMount() {
-    this.props.updateProgressBar();
-  }
+  // UNSAFE_componentWillMount() {
+  //   this.props.updateProgressBar();
+  // }
 
   componentWillUnmount() {
     this.props.resetState();
   }
 
   componentDidMount() {
+    this.props.updateProgressBar();
     window.scrollTo(0, 0);
   }
 
