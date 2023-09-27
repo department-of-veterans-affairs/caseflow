@@ -123,16 +123,21 @@ export const InboxMessagesPage = (props) => {
 
   return (
     <>
-      {inboxIsEmpty}
-      <div className="cf-inbox-table">
-        <h1>Inbox</h1>
-        <hr />
+      {rowObjects.length === 0 ? (
         <div>
-          Messages will remain in the intake box for 120 days. After such time, messages will be removed.
+          <h1>Success! You have no unread messages.</h1>
         </div>
-        <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} slowReRendersAreOk />
-        <EasyPagination currentCases={rowObjects.length} pagination={props.pagination} />
-      </div>;
+      ) : (
+        <div className="cf-inbox-table">
+          <h1>Inbox</h1>
+          <hr />
+          <div>
+            Messages will remain in the intake box for 120 days. After such time, messages will be removed.
+          </div>
+          <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} slowReRendersAreOk />
+          <EasyPagination currentCases={rowObjects.length} pagination={props.pagination} />
+        </div>
+      )}
     </>
   );
 };
