@@ -464,7 +464,7 @@ feature "AmaQueue", :all_dbs do
       click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
       fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "note")
 
-      click_on "Submit"
+      click_on "Assign"
 
       expect(page).to have_content("Assigned 1 task to #{attorney_user.full_name}")
     end
@@ -548,7 +548,7 @@ feature "AmaQueue", :all_dbs do
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
         fill_in "taskInstructions", with: "Please fix this"
 
-        click_on "Submit"
+        click_on "Assign"
 
         expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
       end
@@ -672,7 +672,7 @@ feature "AmaQueue", :all_dbs do
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
         fill_in "taskInstructions", with: "Please fix this"
 
-        click_on "Submit"
+        click_on "Assign"
 
         expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
       end
@@ -778,7 +778,7 @@ feature "AmaQueue", :all_dbs do
           click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
           fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "note")
 
-          click_on "Submit"
+          click_on "Assign"
 
           expect(page).to have_content("Assigned 1 task to #{attorney_user.full_name}")
         end

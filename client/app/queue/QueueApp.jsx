@@ -292,6 +292,10 @@ class QueueApp extends React.PureComponent {
     <AssignToAttorneyModalView userId={this.props.userId} match={props.match} />
   );
 
+  routedAssignToAttorneyLegacy = (props) => (
+    <AssignToAttorneyModalView userId={this.props.userId} match={props.match} />
+  );
+
   routedAssignToSingleTeam = (props) => (
     <AssignToView
       isTeamAssign
@@ -321,6 +325,8 @@ class QueueApp extends React.PureComponent {
   );
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
+
+  routedSpecialCaseMovementLegacy = (props) => <AssignToView {...props.match.params} />;
 
   routedPulacCerulloReminder = (props) => {
     const { appealId, taskId } = props.match.params;
@@ -369,6 +375,10 @@ class QueueApp extends React.PureComponent {
   );
 
   routedReassignToUser = (props) => (
+    <AssignToView isReassignAction {...props.match.params} />
+  );
+
+  routedReassignToJudgeLegacy = (props) => (
     <AssignToView isReassignAction {...props.match.params} />
   );
 
@@ -833,6 +843,14 @@ class QueueApp extends React.PureComponent {
               render={this.routedBlockedCaseMovement}
             />
 
+            <Route
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY.value
+                }`}
+              render={this.routedBlockedCaseMovement}
+            />
+
             <PageRoute
               exact
               path="/queue/appeals/:appealId/add_cavc_remand"
@@ -907,7 +925,14 @@ class QueueApp extends React.PureComponent {
               render={this.routedAssignToAttorney}
             />
             <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_HEARING_ADMIN_MEMBER.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.ASSIGN_TO_ATTORNEY_LEGACY.value
+                }`}
+              render={this.routedAssignToAttorneyLegacy}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.ASSIGN_TO_HEARING_ADMIN_MEMBER.value
                 }`}
               render={this.routedReassignToUser}
             />
@@ -1031,7 +1056,14 @@ class QueueApp extends React.PureComponent {
               render={this.routedReassignToUser}
             />
             <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.REASSIGN_TO_PERSON.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.value
+                }`}
+              render={this.routedReassignToJudgeLegacy}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.REASSIGN_TO_PERSON.value
                 }`}
               render={this.routedReassignToUser}
             />
@@ -1081,7 +1113,14 @@ class QueueApp extends React.PureComponent {
               render={this.routedAssignToUser}
             />
             <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CAVC_EXTENSION_REQUEST.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.value
+                }`}
+              render={this.routedSpecialCaseMovementLegacy}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CAVC_EXTENSION_REQUEST.value
                 }`}
               render={this.routedCavcExtensionRequest}
             />

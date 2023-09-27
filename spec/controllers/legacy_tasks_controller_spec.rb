@@ -303,8 +303,7 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
         allow(QueueRepository).to receive(:reassign_case_to_attorney!).with(
           judge: user,
           attorney: attorney,
-          vacols_id: @appeal.vacols_id,
-          created_in_vacols_date: "2018-04-18".to_date
+          vacols_id: @appeal.vacols_id
         ).and_return(true)
 
         expect(@appeal.overtime?).to be true
@@ -334,8 +333,7 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
           allow(QueueRepository).to receive(:reassign_case_to_attorney!).with(
             judge: user,
             attorney: attorney,
-            vacols_id: @appeal.vacols_id,
-            created_in_vacols_date: "2018-04-18".to_date
+            vacols_id: @appeal.vacols_id
           ).and_return(true)
           today = Time.utc(2018, 4, 18)
           yesterday = Time.utc(2018, 4, 17)
