@@ -3,6 +3,7 @@
 describe BgsShareErrorFixJob, :postgres do
   let(:share_error) { "BGS::ShareError" }
   let(:file_number) { "123456789" }
+  let!(:veteran) { create(:veteran, file_number: file_number) }
   let!(:hlr) do
     create(:higher_level_review,
            establishment_error: share_error,
