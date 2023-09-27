@@ -299,7 +299,9 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       expect(appeal.decision_issues.count).to eq 3
       expect(appeal.request_decision_issues.count).to eq(4)
       # The decision issue should have the new content the judge added
-      expect(appeal.decision_issues.reload.first.description).to eq(updated_decision_issue_text)
+      using_wait_time(5) do
+        expect(appeal.decision_issues.reload.first.description).to eq(updated_decision_issue_text)
+      end
 
       remand_reasons = appeal.decision_issues.where(disposition: "remanded").map do |decision|
         decision.remand_reasons.first.code
