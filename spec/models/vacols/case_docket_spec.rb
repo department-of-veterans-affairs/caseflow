@@ -4,6 +4,7 @@ describe VACOLS::CaseDocket, :all_dbs do
   before do
     FeatureToggle.enable!(:test_facols)
     FeatureToggle.enable!(:acd_disable_legacy_lock_ready_appeals)
+    FeatureToggle.enable!(:legacy_das_deprecation)
   end
 
   after do
@@ -281,8 +282,8 @@ describe VACOLS::CaseDocket, :all_dbs do
 
     it "distributes ready genpop cases" do
       expect(subject.count).to eq(2)
-      expect(nonpriority_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
-      expect(another_nonpriority_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+      expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+      expect(another_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
     end
 
     it "does not distribute non-ready or priority cases" do
@@ -295,7 +296,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       let(:limit) { 1 }
       it "only distributes cases to the limit" do
         expect(subject.count).to eq(1)
-        expect(nonpriority_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+        expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
       end
     end
@@ -304,7 +305,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       let(:range) { 1 }
       it "only distributes cases within the range" do
         expect(subject.count).to eq(1)
-        expect(nonpriority_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+        expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
       end
 
@@ -313,7 +314,7 @@ describe VACOLS::CaseDocket, :all_dbs do
         it "correctly orders the docket" do
           expect(subject.count).to eq(1)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
-          expect(another_nonpriority_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+          expect(another_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         end
       end
     end
@@ -341,7 +342,7 @@ describe VACOLS::CaseDocket, :all_dbs do
         let(:genpop) { "not_genpop" }
         it "distributes the case" do
           expect(subject.count).to eq(1)
-          expect(nonpriority_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+          expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
         end
       end
@@ -349,7 +350,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       context "when genpop is any" do
         it "distributes the case" do
           expect(subject.count).to eq(1)
-          expect(nonpriority_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+          expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
         end
       end
@@ -373,7 +374,7 @@ describe VACOLS::CaseDocket, :all_dbs do
 
         it "distributes the case" do
           expect(subject.count).to eq(1)
-          expect(nonpriority_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+          expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
         end
       end
@@ -401,7 +402,7 @@ describe VACOLS::CaseDocket, :all_dbs do
 
           it "only distributes the one case to get back down to 30" do
             expect(subject.count).to eq(number_of_cases_over_backlog)
-            expect(nonpriority_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+            expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
             expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
           end
         end
@@ -430,7 +431,7 @@ describe VACOLS::CaseDocket, :all_dbs do
 
         it "distributes the case" do
           expect(subject.count).to eq(2)
-          expect(nonpriority_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+          expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         end
       end
     end
@@ -449,7 +450,7 @@ describe VACOLS::CaseDocket, :all_dbs do
 
         it "distributes the case" do
           expect(subject.count).to eq(2)
-          expect(nonpriority_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+          expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         end
       end
     end
@@ -463,8 +464,8 @@ describe VACOLS::CaseDocket, :all_dbs do
 
     it "distributes ready genpop cases" do
       expect(subject.count).to eq(2)
-      expect(aod_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
-      expect(postcavc_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+      expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+      expect(postcavc_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
     end
 
     it "does not distribute non-ready or nonpriority cases" do
@@ -476,7 +477,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       let(:limit) { 1 }
       it "only distributes cases to the limit" do
         expect(subject.count).to eq(1)
-        expect(aod_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+        expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
       end
     end
@@ -505,7 +506,7 @@ describe VACOLS::CaseDocket, :all_dbs do
         let(:genpop) { "not_genpop" }
         it "distributes the case" do
           expect(subject.count).to eq(1)
-          expect(aod_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+          expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
         end
 
@@ -515,8 +516,8 @@ describe VACOLS::CaseDocket, :all_dbs do
 
           it "distributes all cases tied to the judge" do
             expect(subject.count).to eq(2)
-            expect(aod_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
-            expect(postcavc_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+            expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+            expect(postcavc_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           end
         end
       end
@@ -524,7 +525,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       context "when genpop is any" do
         it "distributes the case" do
           expect(subject.count).to eq(1)
-          expect(aod_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+          expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
         end
       end
@@ -548,7 +549,7 @@ describe VACOLS::CaseDocket, :all_dbs do
 
         it "distributes the case" do
           expect(subject.count).to eq(1)
-          expect(aod_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+          expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
         end
       end
@@ -579,7 +580,7 @@ describe VACOLS::CaseDocket, :all_dbs do
 
           it "distributes the case" do
             subject
-            expect(aod_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+            expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           end
         end
 
@@ -590,7 +591,7 @@ describe VACOLS::CaseDocket, :all_dbs do
 
           it "distributes the case" do
             subject
-            expect(aod_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+            expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           end
         end
       end
@@ -618,7 +619,7 @@ describe VACOLS::CaseDocket, :all_dbs do
 
         it "distributes the case" do
           expect(subject.count).to eq(2)
-          expect(aod_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+          expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         end
       end
     end
@@ -637,7 +638,7 @@ describe VACOLS::CaseDocket, :all_dbs do
 
         it "distributes the case" do
           expect(subject.count).to eq(2)
-          expect(aod_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+          expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         end
       end
     end
