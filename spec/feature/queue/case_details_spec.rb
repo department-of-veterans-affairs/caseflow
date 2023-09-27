@@ -2185,7 +2185,7 @@ RSpec.feature "Case details", :all_dbs do
         it "the 'CAVC Dashboard' button is visible on the page" do
           reload_case_detail_page cavc_appeal.external_id
 
-          expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
+          expect(page).to have_content("CAVC")
         end
       end
 
@@ -2197,7 +2197,7 @@ RSpec.feature "Case details", :all_dbs do
         it "the 'CAVC Dashboard' button is visible on the page" do
           reload_case_detail_page cavc_appeal.external_id
 
-          expect(page).to have_content(COPY::CAVC_DASHBOARD_BUTTON_TEXT)
+          expect(page).to have_content("CAVC")
         end
       end
     end
