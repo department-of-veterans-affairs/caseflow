@@ -3,6 +3,10 @@ import { issueByIndex } from '../util/issues';
 
 const analytics = true;
 
+export const toggleAddDecisionDateModal = () => ({
+  type: ACTIONS.TOGGLE_ADD_DECISION_DATE_MODAL,
+});
+
 export const toggleAddingIssue = () => ({
   type: ACTIONS.TOGGLE_ADDING_ISSUE,
   meta: { analytics }
@@ -56,6 +60,11 @@ export const setMstPactDetails = (editIssuesDetails) => ({
 export const setMstPactIssue = (mstPactValues) => ({
   type: ACTIONS.SET_MST_PACT_ISSUE,
   payload: { mstPactValues }
+});
+
+export const addDecisionDate = ({ decisionDate, index }) => ({
+  type: ACTIONS.ADD_DECISION_DATE,
+  payload: { decisionDate, index }
 });
 
 export const removeIssue = (index) => ({

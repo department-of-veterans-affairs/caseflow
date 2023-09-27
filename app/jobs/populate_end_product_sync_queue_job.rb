@@ -43,27 +43,40 @@ class PopulateEndProductSyncQueueJob < CaseflowJob
 
   attr_accessor :job_expected_end_time, :should_stop_job
 
+  # rubocop:disable Metrics/MethodLength
   def find_priority_end_product_establishments_to_sync
-    get_batch = <<-SQL
-    select id
-      from end_product_establishments
-      inner join vbms_ext_claim
-      on end_product_establishments.reference_id = vbms_ext_claim."CLAIM_ID"::varchar
-      where (end_product_establishments.synced_status <> vbms_ext_claim."LEVEL_STATUS_CODE" or end_product_establishments.synced_status is null)
-        and vbms_ext_claim."LEVEL_STATUS_CODE" in ('CLR','CAN')
-        and end_product_establishments.id not in (select end_product_establishment_id from priority_end_product_sync_queue)
-      limit #{BATCH_LIMIT};
+    get_sql = <<-SQL
+      WITH priority_eps AS (
+        SELECT vec."CLAIM_ID"::varchar, vec."LEVEL_STATUS_CODE"
+        FROM vbms_ext_claim vec
+        WHERE vec."LEVEL_STATUS_CODE" in ('CLR', 'CAN')
+          AND (vec."EP_CODE" LIKE '04%' OR vec."EP_CODE" LIKE '03%' OR vec."EP_CODE" LIKE '93%' OR vec."EP_CODE" LIKE '68%')
+      ),
+      priority_queued_epe_ids AS (
+        SELECT end_product_establishment_id
+        FROM priority_end_product_sync_queue)
+      SELECT id
+      FROM end_product_establishments epe
+      INNER JOIN priority_eps
+      ON epe.reference_id = priority_eps."CLAIM_ID"
+      WHERE (epe.synced_status is null or epe.synced_status <> priority_eps."LEVEL_STATUS_CODE")
+        AND NOT EXISTS (SELECT end_product_establishment_id
+                        FROM priority_queued_epe_ids
+                        WHERE priority_queued_epe_ids.end_product_establishment_id = epe.id)
+      LIMIT #{BATCH_LIMIT};
     SQL
 
-    ActiveRecord::Base.connection.exec_query(ActiveRecord::Base.sanitize_sql(get_batch)).rows.flatten
+    ActiveRecord::Base.connection.exec_query(ActiveRecord::Base.sanitize_sql(get_sql)).rows.flatten
   end
+  # rubocop:enable Metrics/MethodLength
 
   def insert_into_priority_sync_queue(batch)
-    batch.each do |ep_id|
-      PriorityEndProductSyncQueue.create!(
-        end_product_establishment_id: ep_id
-      )
+    priority_end_product_sync_queue_records = batch.map do |ep_id|
+      PriorityEndProductSyncQueue.new(end_product_establishment_id: ep_id)
     end
+
+    # Bulk insert PriorityEndProductSyncQueue records in a single SQL statement
+    PriorityEndProductSyncQueue.import(priority_end_product_sync_queue_records)
     Rails.logger.info("PopulateEndProductSyncQueueJob EPEs processed: #{batch} - Time: #{Time.zone.now}")
   end
 
