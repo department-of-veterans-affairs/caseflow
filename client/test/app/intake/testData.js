@@ -875,6 +875,7 @@ export const sample1 = {
       useAmaActivationDate: true,
       correctClaimReviews: true,
     },
+    addDecisionDateModalVisible: false,
     addIssuesModalVisible: false,
     nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
