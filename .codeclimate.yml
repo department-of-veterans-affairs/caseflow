@@ -122,3 +122,4 @@ exclude_patterns:
   - 'tmp/**/*'
   - 'app/assets/**/*'
   - 'client/test/data/camoQueueConfigData.js'
+  - 'client/app/intake/components/mockData/issueListProps.js'
