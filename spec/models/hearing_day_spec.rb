@@ -571,4 +571,26 @@ describe HearingDay, :all_dbs do
       expect(subject.hearing_day_id).to eq(hearing_day.id)
     end
   end
+
+  context "#meeting_details_for_conference" do
+    let(:expected_date) { "Sep 21, 2023" }
+    let(:expected_date_parsed) { Date.parse(expected_date) }
+    let(:hearing_day) do
+      build(
+        :hearing_day,
+        scheduled_for: expected_date_parsed
+      )
+    end
+
+    subject { hearing_day.meeting_details_for_conference }
+
+    it "returns the expected meeting conference details" do
+      is_expected.to eq(
+        title: "Guest Link for #{expected_date}",
+        start: expected_date_parsed.beginning_of_day.iso8601,
+        end: expected_date_parsed.end_of_day.iso8601,
+        timezone: "America/New_York"
+      )
+    end
+  end
 end

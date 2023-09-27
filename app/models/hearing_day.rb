@@ -220,6 +220,15 @@ class HearingDay < CaseflowRecord
     @conference_link ||= find_or_create_conference_link!
   end
 
+  def meeting_details_for_conference
+    {
+      title: "Guest Link for #{scheduled_for.strftime("%b %e, %Y")}",
+      start: scheduled_for.beginning_of_day.iso8601,
+      end: scheduled_for.end_of_day.iso8601,
+      timezone: "America/New_York"
+    }
+  end
+
   private
 
   def assign_created_by_user
