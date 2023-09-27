@@ -21,7 +21,7 @@ exports[`MstBadge renders correctly 1`] = `
   >
     <Badge
       ariaLabel="mst"
-      color="#21827E"
+      color="#21827F"
       displayName="MST"
       id="mst-undefined"
       name="mst"
@@ -39,7 +39,7 @@ exports[`MstBadge renders correctly 1`] = `
           <span
             aria-describedby="badge-mst-undefined"
             aria-label="mst"
-            data-css-hlqwxu=""
+            data-css-cyp2td=""
             data-event="focus mouseenter"
             data-event-off="mouseleave keydown"
             data-for="badge-mst-undefined"
