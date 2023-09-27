@@ -261,5 +261,12 @@ SignAndCertify.propTypes = {
   erroredFields: PropTypes.array,
   scrollToError: PropTypes.bool,
   match: PropTypes.object.isRequired,
-  certificationStatus: PropTypes.string
+  certificationStatus: PropTypes.string,
+  updateProgressBar: PropTypes.func,
+  showValidationErrors: PropTypes.func,
+  certificationUpdateStart: PropTypes.func,
+  showValidationErrors: PropTypes.func,
+  loading: PropTypes.bool,
+  serverError: PropTypes.bool,
+  updateSucceeded: PropTypes.bool
 };

@@ -423,5 +423,12 @@ ConfirmHearing.propTypes = {
   hearingPreference: PropTypes.string,
   onHearingPreferenceChange: PropTypes.func,
   match: PropTypes.object.isRequired,
-  certificationStatus: PropTypes.string
+  certificationStatus: PropTypes.string,
+  resetState: PropTypes.func,
+  updateProgressBar: PropTypes.func,
+  showValidationErrors: PropTypes.func,
+  certificationUpdateStart: PropTypes.func,
+  loading: PropTypes.bool,
+  serverError: PropTypes.bool,
+  updateConfirmHearingSucceeded: PropTypes.func
 };

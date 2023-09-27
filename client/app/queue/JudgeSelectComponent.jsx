@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
@@ -137,3 +138,14 @@ export default (connect(
   mapStateToProps,
   mapDispatchToProps
 )(JudgeSelectComponent));
+
+JudgeSelectComponent.propTypes = {
+  judge: PropTypes.string,
+  fetchJudges: PropTypes.func,
+  judgeSelector: PropTypes.string,
+  setDecisionOptions: PropTypes.func,
+  selectingJudge: PropTypes.bool,
+  decision: PropTypes.object,
+  highlightFormItems: PropTypes.bool,
+  setSelectingJudge: PropTypes.func
+}
