@@ -13,7 +13,7 @@ import { setSelectingJudge } from './uiReducer/uiActions';
 
 import Button from '../components/Button';
 import SearchableDropdown from '../components/SearchableDropdown';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJudge ? '' : 0 });
 
