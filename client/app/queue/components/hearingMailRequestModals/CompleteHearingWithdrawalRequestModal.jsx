@@ -62,7 +62,7 @@ const CompleteHearingWithdrawalRequestModal = (props) => {
           props.onReceiveAmaTasks(resp.body.tasks.data);
         },
         () => {
-          setIsPosting(false)
+          setIsPosting(false);
           props.showErrorMessage({
             title: 'Unable to withdraw hearing.',
             detail: 'Please retry submitting again and contact support if errors persist.',
