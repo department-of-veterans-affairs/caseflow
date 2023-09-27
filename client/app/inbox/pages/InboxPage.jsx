@@ -15,8 +15,6 @@ export const InboxMessagesPage = (props) => {
   const [markedRead, setMarkedRead] = useState([]);
 
   const sendMessageRead = (msg) => {
-    // const page = this;
-
     ApiUtil.patch(`/inbox/messages/${msg.id}`, { data: { message_action: 'read' } }).
       then(
         (response) => {
@@ -24,11 +22,6 @@ export const InboxMessagesPage = (props) => {
 
           Object.assign(msg, responseObject);
 
-          // const markedRead = { ...page.state.markedRead };
-          // markedRead[msg.id] = true;
-          // page.setState({
-          //   markedRead
-          // });
           setMarkedRead({
             ...markedRead,
             [msg.id]: true
@@ -42,9 +35,6 @@ export const InboxMessagesPage = (props) => {
   };
 
   const markMessageRead = (msg) => {
-    // const markedRead = { ...this.state.markedRead };
-    // markedRead[msg.id] = true;
-    // this.setState({ markedRead });
     setMarkedRead({
       ...markedRead,
       [msg.id]: true
@@ -72,16 +62,6 @@ export const InboxMessagesPage = (props) => {
     }
 
     return false;
-  };
-
-  const rowObjects = props.messages;
-
-  const inboxIsEmpty = () => {
-    if (rowObjects.length === 0) {
-      return <div>
-        <h1>Success! You have no unread messages.</h1>
-      </div>;
-    }
   };
 
   const columns = [
@@ -120,6 +100,8 @@ export const InboxMessagesPage = (props) => {
 
     return 'cf-inbox-message';
   };
+
+  const rowObjects = props.messages;
 
   return (
     <>
