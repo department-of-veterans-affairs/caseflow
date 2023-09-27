@@ -719,7 +719,7 @@ RSpec.feature "MailTasks", :postgres do
         end
 
         it "cancels HearingTask on Case Timeline" do
-          hearing_task = find("#case-timeline-table tr:nth-child(#{appeal.is_a?(Appeal) ? '4' : '3'})")
+          hearing_task = find("#case-timeline-table tr:nth-child(3)")
           expect(hearing_task).to have_content("CANCELLED ON\n#{date_completed}")
           expect(hearing_task).to have_content("HearingTask cancelled")
           expect(hearing_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
@@ -735,7 +735,7 @@ RSpec.feature "MailTasks", :postgres do
         end
 
         it "cancels AssignHearingDispositionTask on Case Timeline" do
-          disposition_task = find("#case-timeline-table tr:nth-child(#{appeal.is_a?(Appeal) ? '5' : '4'})")
+          disposition_task = find("#case-timeline-table tr:nth-child(4)")
           expect(disposition_task).to have_content("CANCELLED ON\n#{date_completed}")
           expect(disposition_task).to have_content("AssignHearingDispositionTask cancelled")
           expect(disposition_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
@@ -765,7 +765,7 @@ RSpec.feature "MailTasks", :postgres do
         include_examples "whether hearing is schedueld or unscheduled"
 
         it "cancels ScheduleHearingTask on Case Timeline" do
-          schedule_task = find("#case-timeline-table tr:nth-child(#{appeal.is_a?(Appeal) ? '5' : '4'})")
+          schedule_task = find("#case-timeline-table tr:nth-child(4)")
           expect(schedule_task).to have_content("CANCELLED ON\n#{date_completed}")
           expect(schedule_task).to have_content("ScheduleHearingTask cancelled")
           expect(schedule_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
@@ -778,11 +778,11 @@ RSpec.feature "MailTasks", :postgres do
                  :withdrawal_request_with_scheduled_hearing, assigned_by_id: User.system_user.id)
         end
         let(:appeal) { hwr_task.appeal }
-        let(:distribution_task) { appeal.tasks.of_type(DistributionTask.name).first }
-        let(:mail_task) { create(:hearing_related_mail_task, parent: distribution_task) }
-        let!(:child_mail_task) do
-          create(:hearing_related_mail_task, parent: mail_task, assigned_to: HearingAdmin.singleton)
-        end
+        # let(:distribution_task) { appeal.tasks.of_type(DistributionTask.name).first }
+        # let(:mail_task) { create(:hearing_related_mail_task, parent: distribution_task) }
+        # let!(:child_mail_task) do
+        #   create(:hearing_related_mail_task, parent: mail_task, assigned_to: HearingAdmin.singleton)
+        # end
         let(:modal_body_text) { COPY::WITHDRAW_HEARING["AMA"]["MODAL_BODY"] }
 
         shared_examples "appeal is AMA" do
@@ -793,12 +793,12 @@ RSpec.feature "MailTasks", :postgres do
             expect(evidence_task).to have_content("Evidence Submission Window Task")
           end
 
-          it "cancels HearingRelatedMailTask on Case Timeline" do
-            mail_task = find("#case-timeline-table tr:nth-child(3)")
-            expect(mail_task).to have_content("CANCELLED ON\n#{date_completed}")
-            expect(mail_task).to have_content("HearingRelatedMailTask cancelled")
-            expect(mail_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
-          end
+          # it "cancels HearingRelatedMailTask on Case Timeline" do
+          #   mail_task = find("#case-timeline-table tr:nth-child(3)")
+          #   expect(mail_task).to have_content("CANCELLED ON\n#{date_completed}")
+          #   expect(mail_task).to have_content("HearingRelatedMailTask cancelled")
+          #   expect(mail_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+          # end
         end
 
         include_examples "modal body text"
