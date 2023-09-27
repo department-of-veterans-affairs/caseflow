@@ -158,24 +158,6 @@ namespace :db do
           end
   
           ########################################################
-          # Creates Hearing Tasks for the LegacyAppeals that have just been generated
-          def create_hearing_task_for_legacy_appeals(appeal)
-            root_task = RootTask.find_or_create_by!(appeal: appeal)
-  
-            hearing_task = HearingTask.create!(
-              appeal: appeal,
-              parent: root_task,
-              assigned_to: Bva.singleton
-            )
-            ScheduleHearingTask.create!(
-              appeal: appeal,
-              parent: hearing_task,
-              assigned_to: Bva.singleton
-            )
-            $stdout.puts("You have created a Hearing Task")
-          end
-  
-          ########################################################
           # Creates Attorney Tasks for the LegacyAppeals that have just been generated
           def create_attorney_task_for_legacy_appeals(appeal, user)
             # Will need a judge user for judge decision review task and an attorney user for the subsequent Attorney Task
@@ -200,147 +182,10 @@ namespace :db do
             )
             $stdout.puts("You have created an Attorney task")
           end
-  
-          ########################################################
-          # Creates Judge Assign Tasks for the LegacyAppeals that have just been generated
-          def create_judge_task_for_legacy_appeals(appeal, user)
-            # User should be a judge
-            root_task = RootTask.find_or_create_by!(appeal: appeal)
-  
-            JudgeAssignTask.create!(
-              appeal: appeal,
-              parent: root_task,
-              assigned_to: user
-            )
-            $stdout.puts("You have created a Judge task")
-          end
-  
-          ########################################################
-          # Creates Review Tasks for the LegacyAppeals that have just been generated
-          def create_review_task_for_legacy_appeals(appeal, user)
-            # User should be a judge
-            root_task = RootTask.find_or_create_by!(appeal: appeal)
-  
-            JudgeDecisionReviewTask.create!(
-              appeal: appeal,
-              parent: root_task,
-              assigned_to: user
-            )
-            $stdout.puts("You have created a Review task")
-          end
-  
-          ########################################################
-          # Creates Edge case data for the LegacyAppeals that have just been generated
-          def create_edge_case_task_for_legacy_appeals(appeal)
-            root_task = RootTask.find_or_create_by!(appeal: appeal)
-            rand_val = rand(100)
-  
-            case rand_val
-            when 0..33
-              hearing_task = HearingTask.create!(
-                appeal: appeal,
-                parent: root_task,
-                assigned_to: Bva.singleton
-              )
-              ScheduleHearingTask.create!(
-                appeal: appeal,
-                parent: hearing_task,
-                assigned_to: Bva.singleton
-              )
-            when 34..66
-              hearing_task = HearingTask.create!(
-                appeal: appeal,
-                parent: root_task,
-                assigned_to: Bva.singleton
-              )
-              sched_hearing = ScheduleHearingTask.create!(
-                appeal: appeal,
-                parent: hearing_task,
-                assigned_to: Bva.singleton
-              )
-              AssignHearingDispositionTask.create!(
-                appeal: appeal,
-                parent: hearing_task,
-                assigned_to: Bva.singleton
-              )
-              sched_hearing.update(status: "completed")
-            when 67..100
-              hearing_task = HearingTask.create!(
-                appeal: appeal,
-                parent: root_task,
-                assigned_to: Bva.singleton
-              )
-              sched_hearing = ScheduleHearingTask.create!(
-                appeal: appeal,
-                parent: hearing_task,
-                assigned_to: Bva.singleton
-              )
-              assign_hearing_task = AssignHearingDispositionTask.create!(
-                appeal: appeal,
-                parent: hearing_task,
-                assigned_to: Bva.singleton
-              )
-              TranscriptionTask.create!(
-                appeal: appeal,
-                parent: assign_hearing_task,
-                assigned_to: Bva.singleton
-              )
-              sched_hearing.update(status: "completed")
-            end
-  
-            rand_val = rand(100)
-  
-            case rand_val
-            when 0..25
-              FoiaTask.create!(
-                appeal: appeal,
-                parent: root_task,
-                assigned_to: Bva.singleton
-              )
-  
-            when 26..50
-              PowerOfAttorneyRelatedMailTask.create!(
-                appeal: appeal,
-                parent: root_task,
-                assigned_to: Bva.singleton
-              )
-  
-            when 51..75
-              TranslationTask.create!(
-                appeal: appeal,
-                parent: root_task,
-                assigned_to: Bva.singleton
-              )
-  
-            when 76..100
-              CongressionalInterestMailTask.create!(
-                appeal: appeal,
-                parent: root_task,
-                assigned_to: Bva.singleton
-              )
-            end
-  
-            $stdout.puts("You have created a Hearing Task")
-          end
-  
-          def initialize_root_task_for_legacy_appeals(appeal)
-            RootTask.find_or_create_by!(appeal: appeal)
-            $stdout.puts("You have set the Location to 81")
-          end
-  
+
           def create_task(task_type, appeal, user)
-            if task_type == "HEARINGTASK"
-              create_hearing_task_for_legacy_appeals(appeal)
-            elsif task_type == "ATTORNEYTASK" && user.attorney_in_vacols?
+            if task_type == "ATTORNEYTASK" && user.attorney_in_vacols?
               create_attorney_task_for_legacy_appeals(appeal, user)
-            elsif task_type == "JUDGETASK" && user.judge_in_vacols?
-              create_judge_task_for_legacy_appeals(appeal, user)
-            elsif task_type == "REVIEWTASK" && user.judge_in_vacols?
-              create_review_task_for_legacy_appeals(appeal, user)
-            elsif task_type == "BRIEFF_CURLOC_81_TASK"
-              initialize_root_task_for_legacy_appeals(appeal)
-            elsif task_type == "SCENARIO1EDGE"
-              create_edge_case_task_for_legacy_appeals(appeal)
             end
             # rubocop:enable
           end
@@ -377,20 +222,7 @@ namespace :db do
   
         # set task to ATTORNEYTASK
         task_type = "ATTORNEYTASK"
-        if task_type == "JUDGETASK" || task_type == "REVIEWTASK"
-          $stdout.puts("Enter the CSS ID of a judge user that you want to assign these appeals to")
-  
-          if Rails.env.development? || Rails.env.test?
-            $stdout.puts("Hint: Judge Options include 'BVARERDMAN'") # local / test option
-          else
-            $stdout.puts("Hint: Judge Options include 'CF_VLJ_283', 'CF_VLJTWO_283'") # UAT option
-          end
-  
-          css_id = $stdin.gets.chomp.upcase
-          user = User.find_by_css_id(css_id)
-  
-          fail ArgumentError, "User must be a Judge in Vacols for a #{task_type}", caller unless user.judge_in_vacols?
-        elsif task_type == "ATTORNEYTASK"
+        if task_type == "ATTORNEYTASK"
           $stdout.puts("Which attorney do you want to assign the Attorney Task to?")
   
           if Rails.env.development? || Rails.env.test?
