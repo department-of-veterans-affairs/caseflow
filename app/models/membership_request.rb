@@ -75,9 +75,9 @@ class MembershipRequest < CaseflowRecord
 
   def check_request_for_automatic_addition_to_vha_businessline(deciding_user)
     if requesting_vha_predocket_access?
-      vha_business_line = BusinessLine.find_by(url: "vha")
+      vha_business_line = VhaBusinessLine.singleton
 
-      # If the requestor also has an outstanding membership request to the vha_businessline approve it
+      # If the requestor also has an outstanding membership request to the vha_business_line approve it
       # Also send an approval email
       vha_business_line_request = requestor.membership_requests.assigned.find_by(organization: vha_business_line)
       vha_business_line_request&.update_status_and_send_email("approved", deciding_user, "VHA")
