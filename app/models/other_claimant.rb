@@ -6,7 +6,7 @@
 # Currently used for attorney fee cases when the attorney isn't found in the BGS attorney database.
 
 class OtherClaimant < Claimant
-  delegate :name, :first_name, :middle_name, :last_name, :suffix, :ssn,
+  delegate :name, :first_name, :middle_name, :last_name, :suffix, :ein, :ssn,
            :address, :address_line_1, :address_line_2, :address_line_3,
            :city, :state, :zip, :country, :date_of_birth,
            :email_address, :phone_number,
