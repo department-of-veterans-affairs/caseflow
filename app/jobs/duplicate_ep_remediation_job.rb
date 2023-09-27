@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DuplicateEpRemediationJob < CaseflowJob
+class DuplicateEpRemediationJob < ApplicationJob
   queue_with_priority :low_priority
   application_attr :intake
   def perform

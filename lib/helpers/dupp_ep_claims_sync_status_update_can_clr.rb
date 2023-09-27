@@ -11,45 +11,37 @@
 
 module WarRoom
   class DuppEpClaimsSyncStatusUpdateCanClr
-    S3_FOLDER_NAME = "data-remediation-output"
-    REPORT_TEXT = "duplicate-ep-remediation"
     def initialize
       @logs = ["VBMS::DuplicateEP Remediation Log"]
-      @folder_name = (Rails.deploy_env == :prod) ? S3_FOLDER_NAME : "#{S3_FOLDER_NAME}-#{Rails.deploy_env}"
     end
 
     def resolve_dup_ep
-      return unless retrieve_reviews_count >= 1
+      if retrieve_problem_reviews.count.zero?
+        Rails.logger.info("No records with errors found.")
+        return false
+      end
 
       starting_record_count = retrieve_problem_reviews.count
       @logs.push("#{Time.zone.now} DuplicateEP::Log Job Started .")
       @logs.push("#{Time.zone.now} DuplicateEP::Log"\
         " Records with errors: #{starting_record_count} .")
 
-      resolve_or_throw_error(retrieve_problem_reviews, starting_record_count)
-
-      @logs.push("#{Time.zone.now} DuplicateEP::Log"\
-      " Resolved records: #{resolved_record_count(starting_record_count, retrieve_problem_reviews.count)} .")
-      @logs.push("#{Time.zone.now} DuplicateEP::Log"\
-      " Records with errors: #{retrieve_problem_reviews.count} .")
-      @logs.push("#{Time.zone.now} DuplicateEP::Log Job completed .")
-      Rails.logger.info(@logs)
-    end
-
-    def resolve_or_throw_error(reviews, count)
       ActiveRecord::Base.transaction do
-        resolve_duplicate_end_products(reviews, count)
+        resolve_duplicate_end_products(retrieve_problem_reviews, starting_record_count)
+
       rescue StandardError => error
         @logs.push("An error occurred: #{error.message}")
         raise error
       end
-    end
 
-    def retrieve_reviews_count
-      if retrieve_problem_reviews.count.zero?
-        Rails.logger.info("No records with errors found.")
-      end
-      retrieve_problem_reviews.count
+      final_count = retrieve_problem_reviews.count
+
+      @logs.push("#{Time.zone.now} DuplicateEP::Log"\
+        " Resolved records: #{resolved_record_count(starting_record_count, final_count)} .")
+      @logs.push("#{Time.zone.now} DuplicateEP::Log"\
+        " Records with errors: #{retrieve_problem_reviews.count} .")
+      @logs.push("#{Time.zone.now} DuplicateEP::Log Job completed .")
+      Rails.logger.info(@logs)
     end
 
     # finding reviews that potentially need resolution
@@ -96,6 +88,7 @@ module WarRoom
     def resolve_duplicate_end_products(reviews, _starting_record_count)
       reviews.each do |review|
         vet = review.veteran
+        verb = "start"
 
         # get the end products from the veteran
         end_products = vet.end_products
@@ -105,43 +98,36 @@ module WarRoom
           # Check if active duplicate exists
           next if active_duplicates(end_products, single_end_product_establishment).present?
 
-          ep2e = single_end_product_establishment.send(:end_product_to_establish)
-          epmf = EndProductModifierFinder.new(single_end_product_establishment, vet)
-          taken = epmf.send(:taken_modifiers).compact
-
-          log_start_retry(single_end_product_establishment, vet)
-
-          # Mark place to start retrying
-          epmf.instance_variable_set(:@taken_modifiers, taken.push(ep2e.modifier))
-          ep2e.modifier = epmf.find
-          single_end_product_establishment.instance_variable_set(:@end_product_to_establish, ep2e)
-          single_end_product_establishment.establish!
-
-          log_complete(single_end_product_establishment, vet)
+          verb = "established"
+          single_ep_update(single_end_product_establishment)
         end
 
         call_decision_review_process_job(review, vet)
       end
     end
 
-    # :reek:FeatureEnvy
-    def log_start_retry(end_product_establishment, veteran)
-      @logs.push("#{Time.zone.now} DuplicateEP::Log "\
-        "Veteran participant ID: #{veteran.participant_id}. "\
-        "Review: #{end_product_establishment.class.name}. "\
-        "EPE ID: #{end_product_establishment.id}. "\
-        "EP status: #{end_product_establishment.status_type_code}. "\
-        "Status: Starting retry.")
-    end
+    def single_ep_update(single_end_product_establishment)
+      ep2e = single_end_product_establishment.send(:end_product_to_establish)
+      epmf = EndProductModifierFinder.new(single_end_product_establishment, vet)
+      taken = epmf.send(:taken_modifiers).compact
 
-    # :reek:FeatureEnvy
-    def log_complete(end_product_establishment, veteran)
-      @logs.push("#{Time.zone.now} DuplicateEP::Log "\
-        "Veteran participant ID: #{veteran.participant_id}. "\
-        "Review: #{end_product_establishment.class.name}. "\
-        "EPE ID: #{end_product_establishment.id}. "\
-        "EP status: #{end_prcloduct_establishment.status_type_code}. "\
-        "Status: Complete.")
+      @logs.push("#{Time.zone.now} DuplicateEP::Log"\
+        " Veteran participant ID: #{vet.participant_id}."\
+        " Review: #{review.class.name}.  EPE ID: #{single_end_product_establishment.id}."\
+        " EP status: #{single_end_product_establishment.status_type_code}."\
+        " Status: Starting retry.")
+
+      # Mark place to start retrying
+      epmf.instance_variable_set(:@taken_modifiers, taken.push(ep2e.modifier))
+      ep2e.modifier = epmf.find
+      single_end_product_establishment.instance_variable_set(:@end_product_to_establish, ep2e)
+      single_end_product_establishment.establish!
+
+      @logs.push("#{Time.zone.now} DuplicateEP::Log"\
+        " Veteran participant ID: #{vet.participant_id}.  Review: #{review.class.name}."\
+        " EPE ID: #{single_end_product_establishment.id}."\
+        " EP status: #{single_end_product_establishment.status_type_code}."\
+        " Status: Complete.")
     end
 
     def resolved_record_count(starting_record_count, final_count)
@@ -175,18 +161,30 @@ module WarRoom
         @logs.push(" #{Time.zone.now} | Veteran participant ID: #{vet.participant_id}"\
           " | Review: #{review.class.name} | Review ID: #{review.id} | status: Failed | Error: #{error}")
       else
-        create_log(REPORT_TEXT)
+        create_log
       end
     end
 
-    def create_log(report_text)
-      upload_logs_to_s3_bucket(report_text)
+    def create_log
+      content = @logs.join("\n")
+      temporary_file = Tempfile.new("cdc-log.txt")
+      filepath = temporary_file.path
+      temporary_file.write(content)
+      temporary_file.flush
+
+      upload_logs_to_s3_bucket(filepath)
+
+      temporary_file.close!
     end
 
-    def upload_logs_to_s3_bucket(create_file_name)
-      content = @logs.join("\n")
-      file_name = "#{create_file_name}-logs/#{create_file_name}-log-#{Time.zone.now}"
-      S3Service.store_file("#{@folder_name}/#{file_name}", content)
+    def upload_logs_to_s3_bucket(filepath)
+      s3client = Aws::S3::Client.new
+      s3resource = Aws::S3::Resource.new(client: s3client)
+      s3bucket = s3resource.bucket("data-remediation-output")
+      file_name = "duplicate-ep-remediation-logs/duplicate-ep-remediation-log-#{Time.zone.now}"
+
+      # Store file to S3 bucket
+      s3bucket.object(file_name).upload_file(filepath, acl: "private", server_side_encryption: "AES256")
     end
   end
 end
