@@ -55,7 +55,11 @@ describe RequestIssue, :all_dbs do
     )
   end
 
-  let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
+  let(:veteran_file_number) { "789987789" }
+  let!(:veteran) do
+    Generators::Veteran.build(file_number: veteran_file_number).save!
+    Veteran.find_by(file_number: veteran_file_number)
+  end
   let!(:decision_sync_processed_at) { nil }
   let!(:end_product_establishment) { nil }
 
@@ -2111,6 +2115,55 @@ describe RequestIssue, :all_dbs do
             expect(nonrating_request_issue.processed?).to eq(false)
           end
         end
+      end
+    end
+  end
+
+  context "#save_decision_date!" do
+    let(:new_decision_date) { Time.zone.now }
+    let(:benefit_type) { "vha" }
+
+    subject { nonrating_request_issue.save_decision_date!(new_decision_date) }
+
+    it "should update the decision date and call the review's handle_issues_with_no_decision_date! method" do
+      expect(review).to receive(:handle_issues_with_no_decision_date!).once
+      subject
+      expect(nonrating_request_issue.decision_date).to eq(new_decision_date.to_date)
+    end
+
+    context "when the decision date is in the future" do
+      let(:future_date) { 2.days.from_now.to_date }
+
+      subject { nonrating_request_issue }
+
+      it "throws DecisionDateInFutureError" do
+        allow(subject).to receive(:update!)
+
+        expect { subject.save_decision_date!(future_date) }.to raise_error(RequestIssue::DecisionDateInFutureError)
+        expect(subject).to_not have_received(:update!)
+      end
+    end
+  end
+
+  context "vha handle issues with no decision date" do
+    let(:new_decision_date) { Time.zone.now }
+    let(:benefit_type) { "vha" }
+
+    context("#remove!") do
+      subject { nonrating_request_issue.remove! }
+
+      it "should call the review's handle_issues_with_no_decision_date! method for removal" do
+        expect(review).to receive(:handle_issues_with_no_decision_date!).once
+        subject
+      end
+    end
+
+    context("#withdraw!") do
+      subject { nonrating_request_issue.withdraw!(Time.zone.now) }
+
+      it "should call the review's handle_issues_with_no_decision_date! method for removal" do
+        expect(review).to receive(:handle_issues_with_no_decision_date!).once
+        subject
       end
     end
   end
