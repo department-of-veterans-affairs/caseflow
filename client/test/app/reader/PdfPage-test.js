@@ -22,7 +22,6 @@ jest.mock('uuid', () => ({
 }));
 
 describe('PdfPage', () => {
-
   afterEach(() => {
     cleanup();
     jest.clearAllMocks();
@@ -36,7 +35,7 @@ describe('PdfPage', () => {
     });
   });
 
-  describe('pdfPageRenderTimeInMs is enabled', () => {
+  describe('when pdfPageRenderTimeInMs is enabled', () => {
     beforeAll(() => {
       const wrapper = pdfPageRenderTimeInMsEnabled();
       const instance = wrapper.instance()
@@ -46,8 +45,8 @@ describe('PdfPage', () => {
         new Promise((resolve) => resolve({ data: {} })));
       jest.spyOn(instance, 'drawText').mockReturnValue("Test");
     });
-    it('metrics are stored and recorded', () => {
 
+    it('metrics are stored and recorded', () => {
       expect(recordAsyncMetrics).toHaveBeenCalledTimes(2)
       expect(recordAsyncMetrics).toHaveBeenCalledWith(...pageMetricData);
       expect(recordAsyncMetrics).toHaveBeenCalledWith(...pageMetricData);
@@ -56,21 +55,20 @@ describe('PdfPage', () => {
     });
   });
 
-  describe('metricsPdfStorePages is enabled with error thrown', () => {
+  describe('when pdfPageRenderTimeInMs is disabled with error thrown', () => {
 
     beforeAll(() => {
-      const wrapper = pdfPageRenderTimeInMsEnabled();
+      const wrapper = metricsPdfStorePagesDisabled();
       const instance = wrapper.instance()
       jest.spyOn(instance, 'getText').mockImplementation(() => { throw new Error() });
     });
 
-    it('Error is thrown and browser error metric is stored', () => {
-
-      expect(storeMetrics).toHaveBeenCalledWith(...storeMetricsBrowserError);
+    it('storeMetrics is not called', () => {
+      expect(storeMetrics).not.toBeCalled();
     });
   });
 
-  describe('pdfPageRenderTimeInMs is disabled', () => {
+  describe('when pdfPageRenderTimeInMs is disabled', () => {
     beforeAll(() => {
       const wrapper = pdfPageRenderTimeInMsDisabled();
       const instance = wrapper.instance()
@@ -81,26 +79,21 @@ describe('PdfPage', () => {
       jest.spyOn(instance, 'drawText').mockReturnValue("Test");
     });
 
-    it('metrics are not stored', () => {
-      expect(recordAsyncMetrics).toHaveBeenCalledTimes(2)
-      expect(recordAsyncMetrics).toHaveBeenCalledWith(...pageMetricData);
-      expect(recordAsyncMetrics).toHaveBeenCalledWith(...pageMetricData);
-      expect(recordMetrics).toHaveBeenCalledWith(...recordMetricsArgs);
+    it('storeMetrics is not called', () => {
       expect(storeMetrics).not.toBeCalled();
     });
   });
 
-  describe('pdfPageRenderTimeInMs is disabled with error thrown', () => {
+  describe('when metricsPdfStorePages is enabled and error thrown', () => {
 
     beforeAll(() => {
-      const wrapper = metricsPdfStorePagesDisabled();
+      const wrapper = pdfPageRenderTimeInMsEnabled();
       const instance = wrapper.instance()
       jest.spyOn(instance, 'getText').mockImplementation(() => { throw new Error() });
     });
 
-    it('Error is thrown and browser error metric is not stored', () => {
-
-      expect(storeMetrics).not.toBeCalled();
+    it('storeMetrics is called with browser error', () => {
+      expect(storeMetrics).toHaveBeenCalledWith(...storeMetricsBrowserError);
     });
   });
 });
