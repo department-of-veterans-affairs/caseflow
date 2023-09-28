@@ -5,6 +5,7 @@ import { css } from 'glamor';
 import { ContentSection } from '../../../components/ContentSection';
 import { HearingLinks } from './HearingLinks';
 import { HearingsUserContext } from '../../contexts/HearingsUserContext';
+import StringUtil from '../../../util/StringUtil';
 
 export const VirtualHearingFields = (
   { hearing, virtualHearing }
@@ -14,15 +15,13 @@ export const VirtualHearingFields = (
   }
 
   const user = useContext(HearingsUserContext);
-  const conferenceProvider = virtualHearing.conferenceProvider;
-  const formattedConferenceProvider = conferenceProvider.charAt(0).toUpperCase() + conferenceProvider.slice(1);
 
   return (
     <ContentSection
       header={`${hearing?.wasVirtual ? 'Previous ' : ''}Virtual Hearing Links`}
     >
       <div {...css({ marginTop: '1.5rem' })}>
-        <strong>{formattedConferenceProvider} Conference</strong>
+        <strong>{StringUtil.capitalizeFirst(hearing.conferenceProvider)} Conference</strong>
       </div>
       <HearingLinks
         user={user}
@@ -44,9 +43,7 @@ VirtualHearingFields.propTypes = {
     scheduledForIsPast: PropTypes.bool,
     wasVirtual: PropTypes.bool,
     isVirtual: PropTypes.bool,
-    judge: PropTypes.shape({
-      meetingType: PropTypes.string
-    })
+    conferenceProvider: PropTypes.string
   }),
   initialHearing: PropTypes.shape({
     virtualHearing: PropTypes.object
@@ -55,7 +52,7 @@ VirtualHearingFields.propTypes = {
   virtualHearing: PropTypes.shape({
     appellantEmail: PropTypes.string,
     representativeEmail: PropTypes.string,
-    jobCompleted: PropTypes.bool
+    jobCompleted: PropTypes.bool,
   }),
   errors: PropTypes.shape({
     appellantEmail: PropTypes.string,
