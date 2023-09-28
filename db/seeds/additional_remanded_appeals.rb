@@ -7,15 +7,21 @@ module Seeds
     end
 
     def seed!
-      create_ama_appeals_decision_ready_es
-      create_ama_appeals_decision_ready_hr
-      create_ama_appeals_decision_ready_dr
-      create_ama_appeals_ready_to_dispatch_remanded_es
-      create_ama_appeals_ready_to_dispatch_remanded_hr
-      create_ama_appeals_ready_to_dispatch_remanded_dr
-      create_ama_appeals_ready_to_dispatch_remanded_multiple_es
-      create_ama_appeals_ready_to_dispatch_remanded_multiple_hr
-      create_ama_appeals_ready_to_dispatch_remanded_multiple_dr
+      create_ama_appeals_decision_ready_es(attorney)
+      create_ama_appeals_decision_ready_hr(attorney)
+      create_ama_appeals_decision_ready_dr(attorney)
+      create_ama_appeals_decision_ready_es(attorney2)
+      create_ama_appeals_decision_ready_hr(attorney2)
+      create_ama_appeals_decision_ready_dr(attorney2)
+      create_ama_appeals_decision_ready_es(attorney3)
+      create_ama_appeals_decision_ready_hr(attorney3)
+      create_ama_appeals_decision_ready_dr(attorney3)
+      create_ama_appeals_ready_to_dispatch_remanded_es(attorney)
+      create_ama_appeals_ready_to_dispatch_remanded_hr(attorney)
+      create_ama_appeals_ready_to_dispatch_remanded_dr(attorney)
+      create_ama_appeals_ready_to_dispatch_remanded_multiple_es(attorney)
+      create_ama_appeals_ready_to_dispatch_remanded_multiple_hr(attorney)
+      create_ama_appeals_ready_to_dispatch_remanded_multiple_dr(attorney)
     end
 
     private
@@ -45,6 +51,14 @@ module Seeds
 
     def attorney
       @attorney ||= User.find_by_css_id("BVASCASPER1")
+    end
+
+    def attorney2
+      @attorney2 ||= User.find_by_css_id("BVASRITCHIE")
+    end
+
+    def attorney3
+      @attorney3 ||= User.find_by_css_id("BVARDUBUQUE")
     end
 
     #New Remand Reasons not implemented yet - need actual IDs, not just text output
@@ -266,7 +280,7 @@ module Seeds
 
     #Appeals Ready for Decision - Attorney Step
     #Evidence Submission
-    def create_ama_appeals_decision_ready_es
+    def create_ama_appeals_decision_ready_es(attorney)
       Timecop.travel(30.days.ago)
         15.times do
           appeal = create(:appeal,
@@ -282,7 +296,7 @@ module Seeds
     end
 
     #Hearing
-    def create_ama_appeals_decision_ready_hr
+    def create_ama_appeals_decision_ready_hr(attorney)
       Timecop.travel(90.days.ago)
         15.times do
           appeal = create(:appeal,
@@ -298,7 +312,7 @@ module Seeds
     end
 
     #Direct Review
-    def create_ama_appeals_decision_ready_dr
+    def create_ama_appeals_decision_ready_dr(attorney)
       Timecop.travel(60.days.ago)
         15.times do
           appeal = create(:appeal,
@@ -314,9 +328,8 @@ module Seeds
     end
 
     #Appeals Ready for Decision with 1 Remand
-    #NOTE: (0..11).each is the count of different remand reasons being populated
     #Evidence Submission
-    def create_ama_appeals_ready_to_dispatch_remanded_es
+    def create_ama_appeals_ready_to_dispatch_remanded_es(attorney)
       Timecop.travel(35.days.ago)
        (0..13).each do |num|
           appeal = create(:appeal,
@@ -332,7 +345,7 @@ module Seeds
     end
 
     #Hearing
-    def create_ama_appeals_ready_to_dispatch_remanded_hr
+    def create_ama_appeals_ready_to_dispatch_remanded_hr(attorney)
       Timecop.travel(95.days.ago)
        (0..13).each do |num|
           appeal = create(:appeal,
@@ -348,7 +361,7 @@ module Seeds
     end
 
     #Direct Review
-    def create_ama_appeals_ready_to_dispatch_remanded_dr
+    def create_ama_appeals_ready_to_dispatch_remanded_dr(attorney)
       Timecop.travel(65.days.ago)
         (0..13).each do |num|
           appeal = create(:appeal,
@@ -366,7 +379,7 @@ module Seeds
 
     #Appeals Ready for Decision with Multiple(2) Remands
     #Evidence Submission
-    def create_ama_appeals_ready_to_dispatch_remanded_multiple_es
+    def create_ama_appeals_ready_to_dispatch_remanded_multiple_es(attorney)
       Timecop.travel(40.days.ago)
         (0..13).each do |num|
           appeal = create(:appeal,
@@ -382,7 +395,7 @@ module Seeds
     end
 
     #Hearing
-    def create_ama_appeals_ready_to_dispatch_remanded_multiple_hr
+    def create_ama_appeals_ready_to_dispatch_remanded_multiple_hr(attorney)
       Timecop.travel(100.days.ago)
         (0..13).each do |num|
           appeal = create(:appeal,
@@ -398,7 +411,7 @@ module Seeds
     end
 
     #Direct Review
-    def create_ama_appeals_ready_to_dispatch_remanded_multiple_dr
+    def create_ama_appeals_ready_to_dispatch_remanded_multiple_dr(attorney)
       Timecop.travel(70.days.ago)
         (0..13).each do |num|
           appeal = create(:appeal,
