@@ -227,7 +227,7 @@ class HearingDay < CaseflowRecord
 
   def meeting_details_for_conference
     {
-      title: "Guest Link for #{scheduled_for.strftime("%b %e, %Y")}",
+      title: "Guest Link for #{scheduled_for.strftime('%b %e, %Y')}",
       start: scheduled_for.beginning_of_day.iso8601,
       end: scheduled_for.end_of_day.iso8601,
       timezone: "America/New_York"
@@ -236,7 +236,7 @@ class HearingDay < CaseflowRecord
 
   private
 
-  #called through the 'before_destroy' callback on the hearing_day object.
+  # called through the 'before_destroy' callback on the hearing_day object.
   def soft_link_removal
     ConferenceLink.where(hearing_day: self).each(&:soft_removal_of_link)
   end
