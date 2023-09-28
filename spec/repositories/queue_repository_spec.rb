@@ -224,8 +224,7 @@ describe QueueRepository, :all_dbs do
       QueueRepository.reassign_case_to_attorney!(
         judge: judge,
         attorney: attorney,
-        vacols_id: vacols_case.bfkey,
-        created_in_vacols_date: date_added
+        vacols_id: vacols_case.bfkey
       )
     end
 
