@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 # to create legacy remanded appeals with AMA Tasks added, run "bundle exec rake db:generate_legacy_remanded_appeals_with_tasks"
 
-namespace :db do
+namespace :additional_legacy_remand_reasons do
     desc "Generates legacy remanded appeals with VACOLS cases that have special issues associated with them"
-    task generate_legacy_remanded_appeals_with_tasks: :environment do
+    task generate_appeals_with_tasks: :environment do
       class LegacyAppealFactory
         class << self
           def stamp_out_legacy_appeals_for_attorney(num_appeals_to_create, file_number, user, docket_number, task_type)
@@ -17,7 +17,7 @@ namespace :db do
   
             # Creates decass as they require an assigned_by field
             # which is grabbed from the Decass table (b/c it is an AttorneyLegacyTask)
-            decass_creation = if (task_type == "ATTORNEYTASK" && user&.attorney_in_vacols?) || task_type == "REVIEWTASK"
+            decass_creation = if (task_type == "ATTORNEYTASK" && user&.attorney_in_vacols?)
                                 true
                               else false
                               end
