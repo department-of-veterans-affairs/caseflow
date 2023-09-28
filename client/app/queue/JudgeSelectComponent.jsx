@@ -39,9 +39,9 @@ class JudgeSelectComponent extends React.PureComponent {
     }
   };
 
-  componentDidUpdate = (nextProps) => {
-    if (nextProps.judges !== this.props.judges) {
-      this.setDefaultJudge(nextProps.judges);
+  componentDidUpdate = (prevProps) => {
+    if (prevProps.judges !== this.props.judges) {
+      this.setDefaultJudge(this.props.judges);
     }
   }
 

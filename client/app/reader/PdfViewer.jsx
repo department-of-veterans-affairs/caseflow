@@ -154,10 +154,11 @@ export class PdfViewer extends React.Component {
   }
 
   /* eslint-disable camelcase */
-  componentDidUpdate = (nextProps) => {
-    const nextDocId = Number(nextProps.match.params.docId);
+  componentDidUpdate = (prevProps) => {
+    const nextDocId = Number(this.props.match.params.docId);
+    const prevDocId = Number(prevProps.match.params.docId);
 
-    if (nextDocId !== this.selectedDocId()) {
+    if (nextDocId !== prevDocId) {
       this.props.handleSelectCurrentPdf(nextDocId);
     }
     this.updateWindowTitle();
