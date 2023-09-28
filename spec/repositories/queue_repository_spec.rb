@@ -139,7 +139,7 @@ describe QueueRepository, :all_dbs do
         vacols_id: vacols_case.bfkey,
         assigned_by: judge,
         created_in_vacols_date: date_added,
-        judge_vacols_user_id: judge.vacols_uniq_id,
+        judge_vacols_user_id: judge,
         decass_attrs: decass_attrs
       )
     end
