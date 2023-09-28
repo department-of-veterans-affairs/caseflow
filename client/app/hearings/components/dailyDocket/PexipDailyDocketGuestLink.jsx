@@ -1,13 +1,13 @@
 /* eslint-disable id-length */
-import React from "react";
-import PropTypes from "prop-types";
-import CopyTextButton from "../../../components/CopyTextButton";
-import { GUEST_LINK_LABELS } from "../../constants";
+import React from 'react';
+import PropTypes from 'prop-types';
+import CopyTextButton from '../../../components/CopyTextButton';
+import { GUEST_LINK_LABELS } from '../../constants';
 
 export const PexipDailyDocketGuestLink = ({ linkInfo }) => {
   const containerStyle = {
-    marginLeft: "-40px",
-    marginRight: "-40px",
+    marginLeft: '-40px',
+    marginRight: '-40px',
     // marginBottom: "20px",
   };
 
@@ -36,11 +36,16 @@ export const PexipDailyDocketGuestLink = ({ linkInfo }) => {
   // Takes pin from guestLink
   // const usePinFromLink = () => guestLink?.match(/pin=\d+/)[0]?.split('=')[1];
   // Takes alias from guestLink
-  // const useAliasFromLink = () =>
-  //   guestLink
-  //     ?.split('&')[0]
-  //     ?.match(/conference=.+/)[0]
-  //     ?.split('=')[1];
+  const useAliasFromLink = (link) => {
+    if (link.type === "PexipConferenceLink") {
+      return link.alias || link.guestLink?.match(/pin=\d+/)[0]?.split('=')[1] || null;
+    } else if (link.type === "WebexConferenceLink") {
+      const newLink = "https://test.webex.com/not-real";
+      return link.alias || newLink || null;
+    }
+
+    return null;
+  };
 
   const h3Elements = {
     width: "max-width",
@@ -58,8 +63,11 @@ export const PexipDailyDocketGuestLink = ({ linkInfo }) => {
     return (
       <div style={roomInfoContainerStyle}>
         {Object.values(linkInfo).map((link, index) => {
-          const { alias, guestPin, guestLink } = link;
+          const { guestPin, guestLink } = link;
+
           CopyTextButtonProps.textToCopy = guestLink || "";
+
+          const alias = useAliasFromLink(link);
 
           return (
             <div key={index} style={roomInfoStyle(index)}>
@@ -95,3 +103,22 @@ PexipDailyDocketGuestLink.propTypes = {
     alias: PropTypes.string,
   }),
 };
+
+// {
+//   "0": {
+//     "hostPin": "5509270",
+//     "hostLink": "https://example.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000242@example.va.gov&pin=5509270&role=host",
+//     "alias": "BVA0000242@example.va.gov",
+//     "guestPin": "9150789715",
+//     "guestLink": "https://example.va.gov/sample/?conference=BVA0000242@example.va.gov&pin=9150789715&callType=video",
+//     "type": "PexipConferenceLink"
+//   },
+//   "1": {
+//     "hostPin": null,
+//     "hostLink": "https://test.webex.com/not-real/j.php?MTID=maneah0kewh9en7tpikaa5f0mrm5onpzs",
+//     "alias": null,
+//     "guestPin": null,
+//     "guestLink": "https://test.webex.com/not-real/j.php?MTID=maneah0kewh9en7tpikaa5f0mrm5onpzs",
+//     "type": "WebexConferenceLink"
+//   }
+// }
