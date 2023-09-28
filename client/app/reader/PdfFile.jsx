@@ -184,7 +184,7 @@ export class PdfFile extends React.PureComponent {
 
   // eslint-disable-next-line camelcase
   static getDerivedStateFromProps(nextProps, prevProps) {
-    if (nextProps.isVisible != prevProps.isVisible) {
+    if (nextProps.isVisible !== prevProps.isVisible) {
       if (nextProps.isVisible !== this.props.isVisible) {
         this.currentPage = 0;
       }
