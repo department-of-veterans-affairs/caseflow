@@ -196,6 +196,8 @@ describe PostSendInitialNotificationLetterHoldingTask do
       )
     end
 
+    before { Timecop.travel(Time.zone.local(2020, 9, 1, 18, 0, 0)) }
+
     context "The TaskTimer for the hold period was not created yet" do
       it "returns the end date period" do
         expect((post_task.timer_ends_at - post_task.created_at).to_i / 1.day).to eq(hold_days)
