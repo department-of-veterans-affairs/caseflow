@@ -579,9 +579,7 @@ describe HearingDay, :all_dbs do
       end
 
       it "Both conference links are created whenever requested" do
-        expect(subject.pluck(:type)).to match_array(
-          [PexipConferenceLink.name, WebexConferenceLink.name]
-        )
+        expect(subject).to eq []
       end
     end
 
@@ -595,7 +593,7 @@ describe HearingDay, :all_dbs do
       before { FeatureToggle.enable!(:pexip_conference_service) }
 
       it "Only the Pexip conference link is generated whenever requested" do
-        expect(subject.pluck(:type)).to match_array [PexipConferenceLink.name]
+        expect(subject).to eq []
       end
     end
 
@@ -603,7 +601,7 @@ describe HearingDay, :all_dbs do
       before { FeatureToggle.enable!(:webex_conference_service) }
 
       it "Only the Webex conference link is generated whenever requested" do
-        expect(subject.pluck(:type)).to match_array [WebexConferenceLink.name]
+        expect(subject).to eq []
       end
     end
   end
@@ -644,9 +642,6 @@ describe HearingDay, :all_dbs do
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
-
-      FeatureToggle.enable!(:pexip_conference_service)
-      FeatureToggle.enable!(:webex_conference_service)
     end
 
     let(:hearing_day) do
@@ -662,9 +657,39 @@ describe HearingDay, :all_dbs do
 
     subject { hearing_day.conference_links }
 
-    it "Given that the hearing day does not have a existing conference
-        and is scheduled for the future, a conference link will be created" do
-      expect(subject.count).to eq(2)
+    context "The Pexip and Webex services are both enabled" do
+      before do
+        FeatureToggle.enable!(:pexip_conference_service)
+        FeatureToggle.enable!(:webex_conference_service)
+      end
+
+      it "Both conference links are created whenever requested" do
+        expect(subject.pluck(:type)).to match_array(
+          [PexipConferenceLink.name, WebexConferenceLink.name]
+        )
+      end
+    end
+
+    context "The Pexip and Webex services are both disabled" do
+      it "No links are created whenever they are requested" do
+        expect(subject).to eq []
+      end
+    end
+
+    context "Only the Pexip service is disabled" do
+      before { FeatureToggle.enable!(:pexip_conference_service) }
+
+      it "Only the Pexip conference link is generated whenever requested" do
+        expect(subject.pluck(:type)).to match_array [PexipConferenceLink.name]
+      end
+    end
+
+    context "Only the Webex service is disabled" do
+      before { FeatureToggle.enable!(:webex_conference_service) }
+
+      it "Only the Webex conference link is generated whenever requested" do
+        expect(subject.pluck(:type)).to match_array [WebexConferenceLink.name]
+      end
     end
   end
 end
