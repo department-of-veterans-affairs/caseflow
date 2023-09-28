@@ -209,7 +209,8 @@ module Seeds
         .where("o.type like ?", "Vha%")
         .distinct
       # organization = BusinessLine.where(name:)
-      organization = Organization.find_by_name_or_url("Veterans Health Administration")
+      # organization = Organization.find_by_name_or_url("Veterans Health Administration")
+      organization = VhaBusinessLine.singleton
       user_list.each do |user|
         organization.add_user(user)
       end

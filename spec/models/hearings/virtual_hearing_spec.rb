@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "models/hearings_shared_examples"
+
 describe VirtualHearing do
   URL_HOST = "example.va.gov"
   URL_PATH = "/sample"
@@ -380,6 +382,132 @@ describe VirtualHearing do
 
         include_context "virtual hearing not created with new link generation"
         include_examples "all test link behaviors"
+      end
+    end
+  end
+
+  shared_examples "Hearings inherit conf providers from provider of original scheduler at time of creation" do
+    it "original_scheduler creates the virtual hearing" do
+      virtual_hearing = create(
+        :virtual_hearing,
+        :initialized,
+        hearing: hearing,
+        created_by: original_scheduler
+      )
+
+      expect(virtual_hearing.conference_provider).to eq hearing.conference_provider
+      expect(virtual_hearing.conference_provider).to eq original_scheduler.conference_provider
+    end
+
+    it "User with different conference provider than the original scheduler creates the virtual hearing" do
+      virtual_hearing = create(
+        :virtual_hearing,
+        :initialized,
+        hearing: hearing,
+        created_by: other_user
+      )
+
+      expect(virtual_hearing.conference_provider).to eq hearing.conference_provider
+      expect(virtual_hearing.conference_provider).to_not eq other_user.conference_provider
+    end
+
+    it "Original user's provider changes between time they schedule hearing and a virtual hearing" do
+      original_scheduler.meeting_type.update!(service_name: other_user.conference_provider)
+
+      virtual_hearing = create(
+        :virtual_hearing,
+        :initialized,
+        hearing: hearing,
+        created_by: original_scheduler
+      )
+
+      expect(virtual_hearing.conference_provider).to eq hearing.conference_provider
+      expect(virtual_hearing.conference_provider).to_not eq other_user.conference_provider
+      expect(virtual_hearing.conference_provider).to_not eq original_scheduler.conference_provider
+    end
+  end
+
+  shared_context "Pexip user is original schedulder" do
+    let(:original_scheduler) { pexip_user }
+    let(:other_user) { webex_user }
+    let!(:hearing) { create(hearing_type, adding_user: original_scheduler) }
+  end
+
+  shared_context "Webex user is original schedulder" do
+    let(:original_scheduler) { webex_user }
+    let(:other_user) { pexip_user }
+    let!(:hearing) { create(hearing_type, adding_user: original_scheduler) }
+  end
+
+  context "#conference_provider" do
+    include_context "Pexip and Webex Users"
+
+    context "For a legacy hearing" do
+      let(:hearing_type) { :legacy_hearing }
+
+      context "Pexip hearing begets a Pexip virtual hearing" do
+        include_context "Pexip user is original schedulder"
+
+        include_examples "Hearings inherit conf providers from provider of original scheduler at time of creation"
+      end
+
+      context "Webex hearing begets a Webex virtual hearing" do
+        include_context "Webex user is original schedulder"
+
+        include_examples "Hearings inherit conf providers from provider of original scheduler at time of creation"
+      end
+    end
+
+    context "For an AMA hearing" do
+      let(:hearing_type) { :hearing }
+
+      context "Pexip hearing begets a Pexip virtual hearing" do
+        include_context "Pexip user is original schedulder"
+
+        include_examples "Hearings inherit conf providers from provider of original scheduler at time of creation"
+      end
+
+      context "Webex hearing begets a Webex virtual hearing" do
+        include_context "Webex user is original schedulder"
+
+        include_examples "Hearings inherit conf providers from provider of original scheduler at time of creation"
+      end
+    end
+  end
+
+  context "#meeting_details_for_conference" do
+    let(:expected_date) { "Sep 22, 2023" }
+    let(:expected_date_parsed) { Date.parse(expected_date) }
+    let(:hearing_day) do
+      build(:hearing_day, scheduled_for: expected_date_parsed)
+    end
+    let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
+
+    subject { virtual_hearing.meeting_details_for_conference }
+
+    context "For an AMA Hearing" do
+      let(:hearing) { create(:hearing, hearing_day: hearing_day) }
+
+      it "returns the expected meeting conference details" do
+        is_expected.to eq(
+          title: "#{hearing.appeal.docket_number}_#{hearing.appeal.id}_Appeal",
+          start: "2023-09-22T00:00:00-04:00",
+          end: "2023-09-22T23:59:59-04:00",
+          timezone: "America/New_York"
+        )
+      end
+    end
+
+    context "For a Legacy Hearing" do
+      let(:hearing) { create(:legacy_hearing, hearing_day: hearing_day) }
+
+      it "returns the expected meeting conference details" do
+        is_expected.to eq(
+          title: "#{hearing.appeal.docket_number}_#{hearing.appeal.id}_LegacyAppeal",
+          start: "2023-09-22T00:00:00-04:00",
+          end: "2023-09-22T23:59:59-04:00",
+          timezone: "America/New_York"
+        )
       end
     end
   end

@@ -2,7 +2,7 @@
 
 module VirtualHearings::ConferenceClient
   def client
-    case RequestStore.store[:current_user].meeting_type
+    case RequestStore.store[:current_user].conference_provider
     when "pexip"
       @client ||= PexipService.new(
         host: ENV["PEXIP_MANAGEMENT_NODE_HOST"],
