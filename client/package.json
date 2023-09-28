@@ -167,7 +167,6 @@
     "jest-axe": "^3.5.0",
     "jest-css-modules": "^2.1.0",
     "jest-junit": "^11.1.0",
-    "jsdom": "^16.5.3",
     "prettier": "1.17.1",
     "prettier-eslint": "^9.0.1",
     "react-refresh": "^0.9.0",
