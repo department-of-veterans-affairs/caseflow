@@ -1,49 +1,51 @@
 /* eslint-disable id-length */
-import React from 'react';
-import PropTypes from 'prop-types';
-import CopyTextButton from '../../../components/CopyTextButton';
-import { GUEST_LINK_LABELS } from '../../constants';
+import React from "react";
+import PropTypes from "prop-types";
+import CopyTextButton from "../../../components/CopyTextButton";
+import { GUEST_LINK_LABELS } from "../../constants";
 
 export const PexipDailyDocketGuestLink = ({ linkInfo }) => {
-
-  // Conference Link Information
-  const { alias, guestLink, guestPin } = linkInfo || {};
-
   const containerStyle = {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1.8fr',
-    backgroundColor: '#f1f1f1',
-    padding: '1em 0 0 1em',
-    marginLeft: '-40px',
-    marginRight: '-40px',
-    marginBottom: '20px',
+    marginLeft: "-40px",
+    marginRight: "-40px",
+    // marginBottom: "20px",
   };
 
   const roomInfoContainerStyle = {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    paddingLeft: '40px',
-    paddingRight: '40px',
+    display: "flex",
+    flexDirection: "column",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
   };
 
-  // backgroundColor: '#f1f1f1',
+  const roomInfoStyle = (index) => ({
+    backgroundColor: index === 0 ? "#f1f1f1" : "white",
+    display: "flex",
+    justifyContent: "space-between",
+    width: "100%",
+    padding: "10px 30px 10px 20px",
+  });
 
   // Props needed for the copy text button component
   const CopyTextButtonProps = {
     text: GUEST_LINK_LABELS.COPY_GUEST_LINK,
     label: GUEST_LINK_LABELS.COPY_GUEST_LINK,
-    textToCopy: guestLink
+    textToCopy: "",
   };
 
   // Takes pin from guestLink
-  const usePinFromLink = () => guestLink?.match(/pin=\d+/)[0]?.split('=')[1];
-
+  // const usePinFromLink = () => guestLink?.match(/pin=\d+/)[0]?.split('=')[1];
   // Takes alias from guestLink
-  const useAliasFromLink = () => guestLink?.split('&')[0]?.match(/conference=.+/)[0]?.split('=')[1];
+  // const useAliasFromLink = () =>
+  //   guestLink
+  //     ?.split('&')[0]
+  //     ?.match(/conference=.+/)[0]
+  //     ?.split('=')[1];
 
-  const linkIsPresent = linkInfo;
-  const buttonDisabled = true;
+  const h3Elements = {
+    width: "max-width",
+    display: "flex",
+  };
 
   /**
    * Render information about the guest link
@@ -51,54 +53,39 @@ export const PexipDailyDocketGuestLink = ({ linkInfo }) => {
    * @param {pin} - The guest pin
    * @param {roleAccess} - Boolean for if the current user has access to the guest link
    * @returns The room information
-  */
+   */
   const renderRoomInfo = () => {
     return (
       <div style={roomInfoContainerStyle}>
-        <h3>
-          {GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}:
-          {linkIsPresent ? (
-            <span style={{ fontWeight: 'normal' }}>
-              {alias || useAliasFromLink()}
-            </span>
-          ) : (
-            <span style={{ fontWeight: 'normal' }}>N/A</span>
-          )}
-        </h3>
-        {linkIsPresent ? (
-          <>
-            <h3>
-              {GUEST_LINK_LABELS.GUEST_PIN}:
-              <span style={{ fontWeight: 'normal' }}>{usePinFromLink()}#</span>
-            </h3>
-            <h3>
-              <CopyTextButton {...CopyTextButtonProps} />
-            </h3>
-          </>
-        ) : (
-          <>
-            <h3 style={{ paddingLeft: '130px' }}>
-              {GUEST_LINK_LABELS.GUEST_PIN}:
-              <span style={{ fontWeight: 'normal' }}>N/A</span>
-            </h3>
-            <h3>
-              <CopyTextButton
-                {...CopyTextButtonProps}
-                disabled={buttonDisabled}
-              />
-            </h3>
-          </>
-        )}
+        {Object.values(linkInfo).map((link, index) => {
+          const { alias, guestPin, guestLink } = link;
+          CopyTextButtonProps.textToCopy = guestLink || "";
+
+          return (
+            <div key={index} style={roomInfoStyle(index)}>
+              <h3 style={h3Elements}>
+                {GUEST_LINK_LABELS.PEXIP_GUEST_LINK_SECTION_LABEL}
+              </h3>
+
+              <h3 style={h3Elements}>
+                {GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}:{" "}
+                <span style={{ fontWeight: "normal" }}>{alias || "N/A"}</span>
+              </h3>
+              <h3 style={h3Elements}>
+                {GUEST_LINK_LABELS.GUEST_PIN}:{" "}
+                <span style={{ fontWeight: "normal" }}>{guestPin}#</span>
+              </h3>
+              <h3 style={h3Elements}>
+                <CopyTextButton {...CopyTextButtonProps} />
+              </h3>
+            </div>
+          );
+        })}
       </div>
     );
   };
 
-  return (
-    <div style={containerStyle}>
-      <h3>{GUEST_LINK_LABELS.PEXIP_GUEST_LINK_SECTION_LABEL}</h3>
-      {renderRoomInfo(alias, guestPin)}
-    </div>
-  );
+  return <div style={containerStyle}>{renderRoomInfo()}</div>;
 };
 
 PexipDailyDocketGuestLink.propTypes = {
