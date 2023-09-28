@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import Select, { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
@@ -52,47 +52,69 @@ const CustomInput = (props) => {
   return <components.Input {...props} {...innerProps} />;
 };
 
-export class SearchableDropdown extends React.Component {
-  constructor(props) {
-    super(props);
+export const SearchableDropdown = (props) => {
+  // constructor(props) {
+  //   super(props);
 
-    this.state = {
-      value: props.value,
-      isExpanded: false
-    };
+  //   this.state = {
+  //     value: props.value,
+  //     isExpanded: false
+  //   };
 
-    this.wrapperRef = null;
-  }
+  //   this.wrapperRef = null;
+  // }
 
-  componentDidMount = () => {
-    document.addEventListener('keydown', this.onClickOutside);
-    document.addEventListener('mousedown', this.onClickOutside);
-  }
+  const [stateValue, setStateValue] = useState(props.value);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const wrapperRef = useRef(null);
 
-  componentWillUnmount = () => {
-    document.removeEventListener('keydown', this.onClickOutside);
-    document.removeEventListener('mousedown', this.onClickOutside);
-  }
-  setWrapperRef = (node) => this.wrapperRef = node
+  // componentDidMount = () => {
+  //   document.addEventListener('keydown', this.onClickOutside);
+  //   document.addEventListener('mousedown', this.onClickOutside);
+  // }
 
-  onClickOutside = (event) => {
+  // componentWillUnmount = () => {
+  //   document.removeEventListener('keydown', this.onClickOutside);
+  //   document.removeEventListener('mousedown', this.onClickOutside);
+  // }
+
+  // setWrapperRef = (node) => this.wrapperRef = node
+
+  const setWrapperRef = (node) => {
+    wrapperRef.current = node;
+  };
+
+  const onClickOutside = (event) => {
     // event.composedPath() is [html, document, Window] when clicking the scroll bar and more when clicking content
     // this stops the menu from closing if a user clicks to use the scroll bar with the menu open
-    if ((this.wrapperRef && !this.wrapperRef.contains(event.target) &&
-     event.composedPath()[2] !== window && this.state.isExpanded)) {
-      this.setState({
-        isExpanded: true
-      });
+    if ((wrapperRef && !wrapperRef.contains(event.target) &&
+     event.composedPath()[2] !== window && isExpanded)) {
+      // this.setState({
+      //   isExpanded: true
+      // });
+      setIsExpanded(true);
     } else if (event.key === 'Escape') {
-      this.setState({
-        isExpanded: true
-      });
+      // this.setState({
+      //   isExpanded: true
+      // });
+      setIsExpanded(true);
       event.preventDefault();
     }
-  }
+  };
+
+  useEffect(() => {
+    document.addEventListener('keydown', onClickOutside);
+    document.addEventListener('mousedown', onClickOutside);
+
+    return () => {
+      document.removeEventListener('keydown', onClickOutside);
+      document.removeEventListener('mousedown', onClickOutside);
+    };
+  }, [isExpanded]);
 
   // eslint-disable-next-line camelcase
   // UNSAFE_componentWillReceiveProps = (nextProps) => {
+  //   console.log('in UNSAFE_will receive props');
   //   this.setState({ value: nextProps.value });
   // };
 
@@ -105,18 +127,23 @@ export class SearchableDropdown extends React.Component {
   // }
 
   // I have no freaking idea what this is supposed to be doing
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.value !== prevState.value) {
-      return { value: nextProps.value };
-    }
+  // static getDerivedStateFromProps(nextProps, prevState) {
+  //   console.log('in get drived state from props');
+  //   console.log(prevState);
+  //   console.log(nextProps.value);
+  //   if (nextProps.value !== prevState.value) {
+  //     return { value: nextProps.value };
+  //   }
 
-    return null;
-  }
+  //   return null;
 
-  onChange = (value) => {
+  //   // return { value: nextProps.value };
+  // }
+
+  const internalOnChange = (value) => {
     let newValue = value;
     let deletedValue = null;
-    let { clearOnSelect, multi, onChange, selfManageValueState } = this.props;
+    let { clearOnSelect, multi, onChange, selfManageValueState } = props;
 
     /*
      * this is a temp fix for react-select value backspace
@@ -133,17 +160,18 @@ export class SearchableDropdown extends React.Component {
     }
     // don't set value in state if creatable is true
     if (!selfManageValueState) {
-      this.setState({ value: clearOnSelect ? null : newValue });
+      // this.setState({ value: clearOnSelect ? null : newValue });
+      setStateValue(clearOnSelect ? null : newValue);
     }
 
     if (
-      this.state.value &&
+      stateValue &&
       newValue &&
       Array.isArray(newValue) &&
-      Array.isArray(this.state.value) &&
-      newValue.length < this.state.value.length
+      Array.isArray(stateValue) &&
+      newValue.length < stateValue.length
     ) {
-      deletedValue = _.differenceWith(this.state.value, newValue, _.isEqual);
+      deletedValue = _.differenceWith(stateValue, newValue, _.isEqual);
     }
     if (onChange) {
       onChange(newValue, deletedValue);
@@ -151,7 +179,7 @@ export class SearchableDropdown extends React.Component {
   };
 
   // Override the default keys to create a new tag (allows creating options that contain a comma)
-  shouldKeyDownEventCreateNewOption = ({ keyCode }) => {
+  const shouldKeyDownEventCreateNewOption = ({ keyCode }) => {
     switch (keyCode) {
     // Tab and Enter only
     case 9:
@@ -162,150 +190,149 @@ export class SearchableDropdown extends React.Component {
     }
   };
 
-  getSelectComponent = () => {
-    if (this.props.creatable) {
+  const getSelectComponent = () => {
+    if (props.creatable) {
       return CreatableSelect;
-    } else if (this.props.async) {
+    } else if (props.async) {
       return AsyncSelect;
     }
 
     return Select;
   };
 
-  render() {
-    const {
-      async,
-      options,
-      defaultOptions,
-      defaultValue,
-      filterOption,
-      isClearable,
-      inputRef,
-      loading,
-      placeholder,
-      errorMessage,
-      label,
-      strongLabel,
-      hideLabel,
-      multi,
-      name,
-      noResultsText,
-      required,
-      readOnly,
-      creatable,
-      creatableOptions,
-      searchable,
-      styling,
-      optional,
-      onInputChange
-    } = this.props;
+  const {
+    async,
+    options,
+    defaultOptions,
+    defaultValue,
+    filterOption,
+    isClearable,
+    inputRef,
+    loading,
+    placeholder,
+    errorMessage,
+    label,
+    strongLabel,
+    hideLabel,
+    multi,
+    name,
+    noResultsText,
+    required,
+    readOnly,
+    creatable,
+    creatableOptions,
+    searchable,
+    styling,
+    optional,
+    onInputChange
+  } = props;
 
-    const labelContents = (
-      <FormLabel
-        label={label}
-        name={label || name}
-        required={required}
-        optional={optional}
-      />
-    );
+  const labelContents = (
+    <FormLabel
+      label={label}
+      name={label || name}
+      required={required}
+      optional={optional}
+    />
+  );
 
-    const dropdownStyling = css(styling, {
-      '& .cf-select__menu': this.props.dropdownStyling,
-    });
+  const dropdownStyling = css(styling, {
+    '& .cf-select__menu': props.dropdownStyling,
+  });
 
-    const SelectComponent = this.getSelectComponent();
-    let addCreatableOptions = {};
-    const dropdownClasses = classNames('cf-form-dropdown', `dropdown-${name}`);
-    const labelClasses = classNames('question-label', {
-      'usa-sr-only': hideLabel,
-    });
+  const SelectComponent = getSelectComponent();
+  let addCreatableOptions = {};
+  const dropdownClasses = classNames('cf-form-dropdown', `dropdown-${name}`);
+  const labelClasses = classNames('question-label', {
+    'usa-sr-only': hideLabel,
+  });
 
-    // `react-select` used to accept plain string values, but now requires passing the object
-    // This allows `SearchableDropdown` to still accept the legacy syntax
-    const value =
-      Array.isArray(this.state.value) ||
-      isPlainObject(this.state.value) ||
-      (isString(this.state.value) && isEmpty(this.state.value)) ||
-      isNull(this.state.value) ?
-        this.state.value :
-        (options || []).find(({ value: val }) => val === this.state.value);
+  // `react-select` used to accept plain string values, but now requires passing the object
+  // This allows `SearchableDropdown` to still accept the legacy syntax
+  const value =
+      Array.isArray(stateValue) ||
+      isPlainObject(stateValue) ||
+      (isString(stateValue) && isEmpty(stateValue)) ||
+      isNull(stateValue) ?
+        stateValue :
+        (options || []).find(({ value: val }) => val === stateValue);
 
-    /* If the creatable option is passed in, these additional props are added to
+  /* If the creatable option is passed in, these additional props are added to
      * the select component.
      * noResultsText: This message is used to as a message to show when a
      * custom tag entered already exits.
      * formatCreateLabel: this is a function called to show the text when a tag
      * entered doesn't exist in the current list of options.
      */
-    if (creatable) {
-      addCreatableOptions = {
-        noResultsText: TAG_ALREADY_EXISTS_MSG,
+  if (creatable) {
+    addCreatableOptions = {
+      noResultsText: TAG_ALREADY_EXISTS_MSG,
 
-        // eslint-disable-next-line no-shadow
-        isValidNewOption: (inputValue) => inputValue && (/\S/).test(inputValue),
+      // eslint-disable-next-line no-shadow
+      isValidNewOption: (inputValue) => inputValue && (/\S/).test(inputValue),
 
-        formatCreateLabel: (tagName) => `Create a tag for "${_.trim(tagName)}"`,
+      formatCreateLabel: (tagName) => `Create a tag for "${_.trim(tagName)}"`,
 
-        ...creatableOptions,
-      };
-    }
+      ...creatableOptions,
+    };
+  }
 
-    // We will get the "tag already exists" message even when the input is invalid,
-    // because if the selector filters the options to be [], it will show the "no results found"
-    // message. We can get around this by unsetting `noResultsText`.
-    const handleNoOptions = () =>
-      noResultsText ?? (creatable ? null : NO_RESULTS_TEXT);
+  // We will get the "tag already exists" message even when the input is invalid,
+  // because if the selector filters the options to be [], it will show the "no results found"
+  // message. We can get around this by unsetting `noResultsText`.
+  const handleNoOptions = () =>
+    noResultsText ?? (creatable ? null : NO_RESULTS_TEXT);
 
-    return (
-      <div className={errorMessage ? 'usa-input-error' : ''} ref={this.setWrapperRef}>
-        <div className={dropdownClasses} {...dropdownStyling}>
-          <label className={labelClasses} htmlFor={`${kebabCase(name)}`} id={`${kebabCase(name)}-label`}>
-            {strongLabel ? <strong>{labelContents}</strong> : labelContents}
-          </label>
-          {errorMessage && (
-            <span className="usa-input-error-message" tabIndex={0}>{errorMessage}</span>
-          )}
-          <div className="cf-select">
-            <SelectComponent
-              components={{ Input: CustomInput, MenuList: CustomMenuList, Option: CustomOption }}
-              name={name}
-              classNamePrefix="cf-select"
-              inputId={`${kebabCase(name)}`}
-              options={options}
-              defaultOptions={defaultOptions}
-              defaultValue={defaultValue}
-              filterOption={filterOption}
-              loadOptions={async}
-              isLoading={loading}
-              onChange={this.onChange}
-              onInputChange={onInputChange}
-              value={value}
-              placeholder={
-                placeholder === null ? DEFAULT_PLACEHOLDER : placeholder
-              }
-              isClearable={isClearable}
-              noOptionsMessage={handleNoOptions}
-              searchable={searchable}
-              isDisabled={readOnly}
-              isMulti={multi}
-              isSearchable={!readOnly}
-              cache={false}
-              onBlurResetsInput={false}
-              onMenuOpen={() => this.setState({ isExpanded: true })}
-              onMenuClose={() => this.setState({ isExpanded: false })}
-              ref={inputRef}
-              shouldKeyDownEventCreateNewOption={
-                this.shouldKeyDownEventCreateNewOption
-              }
-              styles={customStyles}
-              {...addCreatableOptions}
-            />
-          </div>
+  return (
+    <div className={errorMessage ? 'usa-input-error' : ''} ref={setWrapperRef}>
+      <div className={dropdownClasses} {...dropdownStyling}>
+        <label className={labelClasses} htmlFor={`${kebabCase(name)}`} id={`${kebabCase(name)}-label`}>
+          {strongLabel ? <strong>{labelContents}</strong> : labelContents}
+        </label>
+        {errorMessage && (
+          <span className="usa-input-error-message" tabIndex={0}>{errorMessage}</span>
+        )}
+        <div className="cf-select">
+          <SelectComponent
+            components={{ Input: CustomInput, MenuList: CustomMenuList, Option: CustomOption }}
+            name={name}
+            classNamePrefix="cf-select"
+            inputId={`${kebabCase(name)}`}
+            options={options}
+            defaultOptions={defaultOptions}
+            defaultValue={defaultValue}
+            filterOption={filterOption}
+            loadOptions={async}
+            isLoading={loading}
+            onChange={internalOnChange}
+            onInputChange={onInputChange}
+            value={value}
+            placeholder={
+              placeholder === null ? DEFAULT_PLACEHOLDER : placeholder
+            }
+            isClearable={isClearable}
+            noOptionsMessage={handleNoOptions}
+            searchable={searchable}
+            isDisabled={readOnly}
+            isMulti={multi}
+            isSearchable={!readOnly}
+            cache={false}
+            onBlurResetsInput={false}
+            onMenuOpen={() => setIsExpanded(true)}
+            onMenuClose={() => setIsExpanded(false)}
+            ref={inputRef}
+            shouldKeyDownEventCreateNewOption={
+              shouldKeyDownEventCreateNewOption
+            }
+            styles={customStyles}
+            {...addCreatableOptions}
+          />
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+
+};
 
 const SelectOpts = PropTypes.arrayOf(
   PropTypes.shape({
