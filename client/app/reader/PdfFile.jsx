@@ -183,22 +183,26 @@ export class PdfFile extends React.PureComponent {
   }
 
   // eslint-disable-next-line camelcase
-  componentDidUpdate(nextProps) {
-    if (nextProps.isVisible !== this.props.isVisible) {
-      this.currentPage = 0;
-    }
+  static getDerivedStateFromProps(nextProps, prevProps) {
+    if (nextProps.isVisible != prevProps.isVisible) {
+      if (nextProps.isVisible !== this.props.isVisible) {
+        this.currentPage = 0;
+      }
 
-    if (this.grid && nextProps.scale !== this.props.scale) {
-      // Set the scroll location based on the current page and where you
-      // are on that page scaled by the zoom factor.
-      const zoomFactor = nextProps.scale / this.props.scale;
-      const nonZoomedLocation = (this.scrollTop - this.getOffsetForPageIndex(this.currentPage).scrollTop);
+      if (this.grid && nextProps.scale !== this.props.scale) {
+        // Set the scroll location based on the current page and where you
+        // are on that page scaled by the zoom factor.
+        const zoomFactor = nextProps.scale / this.props.scale;
+        const nonZoomedLocation = (this.scrollTop - this.getOffsetForPageIndex(this.currentPage).scrollTop);
 
-      this.scrollLocation = {
-        page: this.currentPage,
-        locationOnPage: nonZoomedLocation * zoomFactor
-      };
+        this.scrollLocation = {
+          page: this.currentPage,
+          locationOnPage: nonZoomedLocation * zoomFactor
+        };
+      }
+      return this.scrollLocation;
     }
+    return null;
   }
 
   getPage = ({ rowIndex, columnIndex, style, isVisible }) => {

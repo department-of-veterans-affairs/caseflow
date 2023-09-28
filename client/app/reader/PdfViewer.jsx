@@ -133,8 +133,6 @@ export class PdfViewer extends React.Component {
     document.title = `${(selectedDoc && selectedDoc.type) || ''} | Document Viewer | Caseflow Reader`;
   }
 
-  componentDidUpdate = () => this.updateWindowTitle();
-
   componentDidMount() {
     this.props.handleSelectCurrentPdf(this.selectedDocId());
     window.addEventListener('keydown', this.keyListener);
@@ -162,6 +160,7 @@ export class PdfViewer extends React.Component {
     if (nextDocId !== this.selectedDocId()) {
       this.props.handleSelectCurrentPdf(nextDocId);
     }
+    this.updateWindowTitle();
   }
   /* eslint-enable camelcase */
 

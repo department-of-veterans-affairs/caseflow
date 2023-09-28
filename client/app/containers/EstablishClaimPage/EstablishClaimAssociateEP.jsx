@@ -19,7 +19,9 @@ export class AssociatePage extends React.Component {
       epLoading: null,
       sortedEndProducts: this.props.endProducts.sort(this.sortEndProduct)
     };
+  }
 
+  componentDidMount() {
     if (!this.props.endProducts.length) {
       this.props.history.goBack();
     }
