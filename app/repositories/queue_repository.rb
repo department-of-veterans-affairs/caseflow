@@ -56,17 +56,18 @@ class QueueRepository
       appeals
     end
 
-    def reassign_case_to_judge!(vacols_id:, assigned_by:, created_in_vacols_date:, judge_vacols_user_id:, decass_attrs:)
+    def reassign_case_to_judge!(vacols_id:, created_in_vacols_date:, judge_vacols_user_id:, decass_attrs:)
       decass_record = find_decass_record(vacols_id, created_in_vacols_date)
       # In attorney checkout, we are automatically selecting the judge who
       # assigned the attorney the case. But we also have a drop down for the
       # attorney to select a different judge if they are checking it out to someone else
-      if decass_record.deadusr != judge_vacols_user_id.vacols_uniq_id
+      vacols_uniq_id = User.find_by_css_id(judge_vacols_user_id).vacols_uniq_id
+      if decass_record.deadusr != vacols_uniq_id
         BusinessMetrics.record(service: :queue, name: "reassign_case_to_different_judge")
       end
       update_decass_record(decass_record, decass_attrs)
       # update location with the judge's slogid
-      decass_record.update_vacols_location!(judge_vacols_user_id.vacols_uniq_id)
+      decass_record.update_vacols_location!(vacols_uniq_id)
       true
     end
 
