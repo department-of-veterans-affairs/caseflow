@@ -8,7 +8,7 @@ const errorText = '\nCaseflow is having trouble contacting the virtual hearing s
 
 const supportLink = 'For help, submit a support ticket using <a href="https://yourit.va.gov/">YourIT</a>.\n';
 
-const getRandomUserId = (min, max) => {
+const getRandomNumber = (min, max) => {
   return faker.random.number({ min, max });
 };
 
@@ -17,14 +17,14 @@ export const emptyMessages = [];
 export const allUnreadMessages = [
   {
     created_at: '2023-09-22T15:18:39.800-04:00',
-    detail_id: 350,
+    detail_id: getRandomNumber(100, 1000),
     detail_type: 'LegacyAppeal',
     id: 2,
     message_type: null,
     read_at: null,
     text: `${legacyAppealLink} - Hearing time not updated. ${errorText} ${supportLink}`,
     updated_at: '2023-09-27T09:56:03.747-04:00',
-    user_id: getRandomUserId(100, 150)
+    user_id: getRandomNumber(100, 150)
   },
   {
     created_at: '2023-09-22T15:18:39.782-04:00',
@@ -35,7 +35,7 @@ export const allUnreadMessages = [
     read_at: null,
     text: `${appealLink} - Virtual hearing not scheduled. ${errorText} ${supportLink}`,
     updated_at: '2023-09-27T09:58:44.807-04:00',
-    user_id: getRandomUserId(151, 200)
+    user_id: getRandomNumber(151, 200)
   }
 ];
 
@@ -53,7 +53,7 @@ export const oneReadAndOneUnreadMessages = [
   },
   {
     created_at: '2023-09-22T15:18:39.782-04:00',
-    detail_id: 1704,
+    detail_id: getRandomNumber(1001, 2000),
     detail_type: 'Appeal',
     id: 1,
     message_type: null,
