@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Select, { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 import CreatableSelect from 'react-select/creatable';
-import _, { isPlainObject, isNull, kebabCase, isEmpty, isString } from 'lodash';
+import { isPlainObject, isNull, kebabCase, isEmpty, isString, differenceWith, trim, isEqual } from 'lodash';
 import classNames from 'classnames';
 import { css } from 'glamor';
 import { FormLabel } from './FormLabel';
@@ -87,7 +87,7 @@ export const SearchableDropdown = (props) => {
   const onClickOutside = (event) => {
     // event.composedPath() is [html, document, Window] when clicking the scroll bar and more when clicking content
     // this stops the menu from closing if a user clicks to use the scroll bar with the menu open
-    if ((wrapperRef && !wrapperRef.contains(event.target) &&
+    if ((wrapperRef && !wrapperRef.current.contains(event.target) &&
      event.composedPath()[2] !== window && isExpanded)) {
       // this.setState({
       //   isExpanded: true
@@ -112,11 +112,10 @@ export const SearchableDropdown = (props) => {
     };
   }, [isExpanded]);
 
-  // eslint-disable-next-line camelcase
-  // UNSAFE_componentWillReceiveProps = (nextProps) => {
-  //   console.log('in UNSAFE_will receive props');
-  //   this.setState({ value: nextProps.value });
-  // };
+  useEffect(() => {
+    // Update state when props.value changes
+    setStateValue(props.value);
+  }, [props.value]);
 
   // componentDidUpdate(prevProps) {
   //   if (prevProps.value !== this.props.value) {
@@ -171,7 +170,7 @@ export const SearchableDropdown = (props) => {
       Array.isArray(stateValue) &&
       newValue.length < stateValue.length
     ) {
-      deletedValue = _.differenceWith(stateValue, newValue, _.isEqual);
+      deletedValue = differenceWith(stateValue, newValue, isEqual);
     }
     if (onChange) {
       onChange(newValue, deletedValue);
@@ -271,7 +270,7 @@ export const SearchableDropdown = (props) => {
       // eslint-disable-next-line no-shadow
       isValidNewOption: (inputValue) => inputValue && (/\S/).test(inputValue),
 
-      formatCreateLabel: (tagName) => `Create a tag for "${_.trim(tagName)}"`,
+      formatCreateLabel: (tagName) => `Create a tag for "${trim(tagName)}"`,
 
       ...creatableOptions,
     };
