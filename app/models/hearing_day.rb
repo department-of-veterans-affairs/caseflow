@@ -222,7 +222,7 @@ class HearingDay < CaseflowRecord
 
   # over write of the .conference_links method from belongs_to :conference_links to add logic to create of not there
   def conference_links
-    @conference_links ||= find_or_create_conference_links!
+    @conference_links ||= scheduled_date_passed? ? [] : find_or_create_conference_links!
   end
 
   def meeting_details_for_conference
