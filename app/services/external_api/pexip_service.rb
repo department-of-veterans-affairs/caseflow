@@ -13,7 +13,11 @@ class ExternalApi::PexipService
     @client_host = client_host
   end
 
-  def create_conference(host_pin:, guest_pin:, name:)
+  def create_conference(virtual_hearing)
+    host_pin = virtual_hearing.host_pin
+    guest_pin = virtual_hearing.guest_pin
+    name = virtual_hearing.alias
+
     body = {
       "aliases": [{ "alias": "BVA#{name}" }, { "alias": VirtualHearing.formatted_alias(name) }, { "alias": name }],
       "allow_guests": true,

@@ -373,6 +373,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
             }
           }
           isVirtual={true}
+          scheduledForIsPast={false}
           user={
             Object {
               "addressCity": "Washington",
@@ -960,11 +961,12 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                           aria-describedby="tooltip-Copy Guest Link"
                           aria-label=""
                           className="cf-apppeal-id"
-                          data-css-cjlnsd=""
+                          data-css-p6dv0b=""
                           data-event="focus mouseenter"
                           data-event-off="mouseleave keydown"
                           data-for="tooltip-Copy Guest Link"
                           data-tip={true}
+                          disabled={false}
                           onClick={[Function]}
                           tabIndex={0}
                           type="submit"
@@ -1370,6 +1372,7 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
             }
           }
           isVirtual={true}
+          scheduledForIsPast={false}
           user={
             Object {
               "addressCity": "Washington",

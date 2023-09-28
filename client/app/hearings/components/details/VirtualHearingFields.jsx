@@ -27,6 +27,7 @@ export const VirtualHearingFields = (
         user={user}
         hearing={hearing}
         virtualHearing={virtualHearing}
+        scheduledForIsPast={hearing?.scheduledForIsPast}
         isVirtual={hearing?.isVirtual}
         wasVirtual={hearing?.wasVirtual}
       />
