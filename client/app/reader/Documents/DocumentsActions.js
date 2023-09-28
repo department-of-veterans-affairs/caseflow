@@ -126,7 +126,7 @@ export const generateTagsSuccess = (docId, tags) =>
         tags
       }
     });
-  }
+  };
 
 export const generateTagsFailure = (docId, errorMessage) =>
   (dispatch) => {
@@ -136,7 +136,7 @@ export const generateTagsFailure = (docId, errorMessage) =>
       payload: {
         docId
       }
-    })
+    });
   };
 
 export const generateTags = (doc) => (dispatch) => {
@@ -146,16 +146,16 @@ export const generateTags = (doc) => (dispatch) => {
     payload: {
       docId: doc.id,
     }
-  })
+  });
   ApiUtil.get(`/document/${doc.id}/tag/auto_tag`, {}, ENDPOINT_NAMES.TAG).
     then((data) => {
       if (data.body?.errors?.message) {
-        dispatch(generateTagsFailure(doc.id, data.body.errors.message))
+        dispatch(generateTagsFailure(doc.id, data.body.errors.message));
       } else {
-        dispatch(generateTagsSuccess(doc.id, data.body.tags))
+        dispatch(generateTagsSuccess(doc.id, data.body.tags));
       }
     }, () => {
-      dispatch(generateTagsFailure(doc.id))
+      dispatch(generateTagsFailure(doc.id));
     });
 };
 

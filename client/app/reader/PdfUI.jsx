@@ -409,5 +409,5 @@ PdfUI.propTypes = {
   stopPlacingAnnotation: PropTypes.func,
   togglePdfSidebar: PropTypes.func,
   toggleSearchBar: PropTypes.any,
-  resetSidebarErrors: PropTypes.func,
+  resetSidebarErrors: PropTypes.func
 };
