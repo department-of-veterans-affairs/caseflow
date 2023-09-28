@@ -22,7 +22,6 @@ class DasDeprecation::AssignTaskToAttorney
 
     def should_perform_workflow?(appeal_id)
       return false if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
-
       appeal = LegacyAppeal.find(appeal_id)
       !JudgeAssignTask.find_by(appeal: appeal).nil?
     end
