@@ -26,7 +26,7 @@ import UserAlerts from "../../../components/UserAlerts";
 import HEARING_DISPOSITION_TYPES from "../../../../constants/HEARING_DISPOSITION_TYPES";
 import { ScheduledInErrorModal } from "../ScheduledInErrorModal";
 import { PexipDailyDocketGuestLink } from "./PexipDailyDocketGuestLink";
-import { WebexDailyDocketGuestLink } from "./WebexDailyDocketGuestLink";
+
 
 const alertStyling = css({
   marginBottom: "30px",
@@ -310,11 +310,6 @@ export default class DailyDocket extends React.Component {
         {(user.userIsHearingManagement || user.userIsHearingAdmin) && (
           <PexipDailyDocketGuestLink linkInfo={dailyDocket.conferenceLinks} />
         )}
-        {/* {(user.userIsHearingManagement || user.userIsHearingAdmin) && (
-          <WebexDailyDocketGuestLink
-            linkInfo={dailyDocket.webexConferenceLink}
-          />
-        )} */}
         <DailyDocketRows
           hearings={this.props.hearings}
           hidePreviouslyScheduled
