@@ -98,7 +98,8 @@ describe "vbms_ext_claim trigger to populate end_product_sync_que table", :postg
     before(:all) do
       @logged_epe = create(:end_product_establishment, :active, reference_id: 300_000)
       @logged_ext_claim = create(:vbms_ext_claim, :rdc, :slc, id: 300_000)
-      system("bundle exec rails r -e test db/scripts/add_pepsq_populate_trigger.rb")
+      system("bundle exec rails r -e test db/scripts/drop_pepsq_populate_trigger_from_vbms_ext_claim.rb")
+      system("bundle exec rails r -e test db/scripts/add_pepsq_populate_trigger_to_vbms_ext_claim.rb")
     end
     before do
       PriorityEndProductSyncQueue.delete_all

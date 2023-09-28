@@ -49,18 +49,18 @@ returns trigger as $$
 		string_claim_id varchar(25);
 		epe_id integer;
 	begin
-		if (NEW.\"EP_CODE\" LIKE '04%'
-				OR NEW.\"EP_CODE\" LIKE '03%'
-				OR NEW.\"EP_CODE\" LIKE '93%'
-				OR NEW.\"EP_CODE\" LIKE '68%')
-				and (NEW.\"LEVEL_STATUS_CODE\" = 'CLR' OR NEW.\"LEVEL_STATUS_CODE\" = 'CAN') then
+		if (NEW."EP_CODE" LIKE '04%'
+				OR NEW."EP_CODE" LIKE '03%'
+				OR NEW."EP_CODE" LIKE '93%'
+				OR NEW."EP_CODE" LIKE '68%')
+				and (NEW."LEVEL_STATUS_CODE" = 'CLR' OR NEW."LEVEL_STATUS_CODE" = 'CAN') then
 
-			string_claim_id := cast(NEW.\"CLAIM_ID\" as varchar);
+			string_claim_id := cast(NEW."CLAIM_ID" as varchar);
 
 			select id into epe_id
 			from end_product_establishments
 			where (reference_id = string_claim_id
-			and (synced_status is null or synced_status <> NEW.\"LEVEL_STATUS_CODE\"));
+			and (synced_status is null or synced_status <> NEW."LEVEL_STATUS_CODE"));
 
 			if epe_id > 0
 			then
