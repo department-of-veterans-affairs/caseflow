@@ -1,8 +1,6 @@
 import React from 'react';
 import { InboxMessagesPage } from './InboxPage';
-import { allUnreadMessages, oneReadOneUnreadMessages, emptyMessages } from '../../../test/data/inbox';
-
-// const emptyMessages = [];
+import { allUnreadMessages, oneReadAndOneUnreadMessages, emptyMessages } from '../../../test/data/inbox';
 
 const pagination = {
   current_page: 1,
@@ -34,8 +32,8 @@ AllUnreadMessages.args = {
   messages: allUnreadMessages
 };
 
-export const OneReadOneUnreadMessages = Template.bind({});
+export const OneReadAndOneUnreadMessages = Template.bind({});
 
-OneReadOneUnreadMessages.args = {
-  messages: oneReadOneUnreadMessages
+OneReadAndOneUnreadMessages.args = {
+  messages: oneReadAndOneUnreadMessages
 };
