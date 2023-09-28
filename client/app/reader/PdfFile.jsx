@@ -200,8 +200,10 @@ export class PdfFile extends React.PureComponent {
           locationOnPage: nonZoomedLocation * zoomFactor
         };
       }
+
       return this.scrollLocation;
     }
+
     return null;
   }
 
