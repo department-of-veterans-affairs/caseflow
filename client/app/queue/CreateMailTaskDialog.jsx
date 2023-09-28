@@ -136,6 +136,7 @@ export class CreateMailTaskDialog extends React.Component {
             appealId={this.props.appealId}
             requestType={this.state.selectedValue}
             onChange={(value, valid) => this.setState({ eFolderUrl: value, eFolderUrlValid: valid })}
+            veteranParticipantId={this.props.appeal.veteranParticipantId}
           />
         }
         <TextareaField
@@ -152,6 +153,7 @@ export class CreateMailTaskDialog extends React.Component {
 CreateMailTaskDialog.propTypes = {
   appeal: PropTypes.shape({
     externalId: PropTypes.string,
+    veteranParticipantId: PropTypes.string
   }),
   appealId: PropTypes.string,
   history: PropTypes.shape({

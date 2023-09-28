@@ -6,6 +6,7 @@ import COPY from '../../../COPY';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import ApiUtil from '../../util/ApiUtil';
+import EfolderLink from '../../components/EfolderLink';
 
 const EfolderUrlField = (props) => {
 
@@ -102,7 +103,7 @@ const EfolderUrlField = (props) => {
       errorMessage={error}
       loading={loading}
     />
-
+    <EfolderLink url={url} veteranParticipantId={props.veteranParticipantId} />
     {
       error === COPY.EFOLDER_CONNECTION_ERROR &&
       <Button
@@ -117,6 +118,7 @@ const EfolderUrlField = (props) => {
 
 EfolderUrlField.propTypes = {
   appealId: PropTypes.string.isRequired,
+  veteranParticipantId: PropTypes.string,
   requestType: PropTypes.string,
   errorMessage: PropTypes.string
 };
