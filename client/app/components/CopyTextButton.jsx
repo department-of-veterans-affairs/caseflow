@@ -31,6 +31,12 @@ export default class CopyTextButton extends React.PureComponent {
           borderColor: COLORS.PRIMARY,
           borderBottomWidth: '1px'
         },
+        ':disabled': {
+          backgroundColor: COLORS.GREY_BACKGROUND,
+          borderColor: COLORS.GREY_LIGHT,
+          color: COLORS.GREY_LIGHT,
+          borderBottomWidth: '1px'
+        },
         '& > svg path': { fill: COLORS.GREY_LIGHT },
         '&:hover > svg path': { fill: COLORS.PRIMARY }
       } :
@@ -43,6 +49,7 @@ export default class CopyTextButton extends React.PureComponent {
             type="submit"
             className="cf-apppeal-id"
             aria-label={ariaLabel || `Copy ${label} ${text}`}
+            disabled={textToCopy === null}
             {...clipboardButtonStyling(buttonStyles)}
           >
             {text}&nbsp;

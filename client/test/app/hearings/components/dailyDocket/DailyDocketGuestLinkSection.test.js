@@ -43,4 +43,36 @@ describe('DailyDocketGuestLinkSection', () => {
 
     expect(screen.getByRole('heading', { name: 'PIN: 3998472#' })).toBeTruthy();
   });
+
+  it('renders correctly for hearing admins and hearing management users if the hearing date is passed', () => {
+    const { container } = render(<DailyDocketGuestLinkSection linkInfo={null} />);
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('renders correctly for non hearing admins and hearing management users if the hearing date is passed', () => {
+    const { container } = render(<DailyDocketGuestLinkSection linkInfo={null} />);
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('passes a11y testing if the hearing date is passed', async () => {
+    const { container } = render(<DailyDocketGuestLinkSection linkInfo={null} />);
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+  });
+
+  it('renders conference room correctly if the hearing date is passed', () => {
+    render(<DailyDocketGuestLinkSection linkInfo={null} />);
+
+    expect(screen.getByRole('heading', { name: 'Conference Room: N/A' })).toBeTruthy();
+  });
+
+  it('renders guest pin correctly if the hearing date is passed', () => {
+    render(<DailyDocketGuestLinkSection linkInfo={null} />);
+
+    expect(screen.getByRole('heading', { name: 'PIN: N/A' })).toBeTruthy();
+  });
 });

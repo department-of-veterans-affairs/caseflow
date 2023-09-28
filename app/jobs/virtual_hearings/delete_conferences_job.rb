@@ -141,13 +141,13 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
   # Returns whether or not the conference was deleted from Pexip
   def delete_conference(virtual_hearing)
     response = client.delete_conference(conference_id: virtual_hearing.conference_id)
-    Rails.logger.info("Pexip response: #{response}")
+    Rails.logger.info("#{virtual_hearing.conference_provider.capitalize} response: #{response}")
 
     fail response.error unless response.success?
 
     true
   rescue Caseflow::Error::PexipNotFoundError
-    Rails.logger.info("Conference for hearing (#{virtual_hearing.hearing_id}) was already deleted")
+    Rails.logger.info("Pexip Conference for hearing (#{virtual_hearing.hearing_id}) was already deleted")
 
     # Assume the conference was already deleted if it's no longer in Pexip.
     true

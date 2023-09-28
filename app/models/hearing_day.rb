@@ -52,6 +52,7 @@ class HearingDay < CaseflowRecord
   before_create :assign_created_by_user
   after_update :update_children_records
   after_create :generate_link_on_create
+  before_destroy :soft_link_removal
 
   # Validates if the judge id maps to an actual record.
   validates :judge, presence: true, if: -> { judge_id.present? }
@@ -215,14 +216,18 @@ class HearingDay < CaseflowRecord
     total_slots ? total_slots <= 5 : false
   end
 
+  def scheduled_date_passed?
+    scheduled_for < Date.current
+  end
+
   # over write of the .conference_links method from belongs_to :conference_links to add logic to create of not there
   def conference_links
-    @conference_links ||= find_or_create_conference_links!
+    @conference_links ||= scheduled_date_passed? ? [] : find_or_create_conference_links!
   end
 
   def meeting_details_for_conference
     {
-      title: "Guest Link for #{scheduled_for.strftime("%b %e, %Y")}",
+      title: "Guest Link for #{scheduled_for.strftime('%b %e, %Y')}",
       start: scheduled_for.beginning_of_day.iso8601,
       end: scheduled_for.end_of_day.iso8601,
       timezone: "America/New_York"
@@ -230,6 +235,11 @@ class HearingDay < CaseflowRecord
   end
 
   private
+
+  # called through the 'before_destroy' callback on the hearing_day object.
+  def soft_link_removal
+    ConferenceLink.where(hearing_day: self).each(&:soft_removal_of_link)
+  end
 
   def assign_created_by_user
     self.created_by ||= RequestStore[:current_user]
