@@ -138,7 +138,7 @@ describe QueueRepository, :all_dbs do
       QueueRepository.reassign_case_to_judge!(
         vacols_id: vacols_case.bfkey,
         created_in_vacols_date: date_added,
-        judge_vacols_user_id: judge.vacols_uniq_id,
+        judge_vacols_user_id: judge.css_id,
         decass_attrs: decass_attrs
       )
     end
@@ -224,7 +224,7 @@ describe QueueRepository, :all_dbs do
         judge: judge,
         attorney: attorney,
         vacols_id: vacols_case.bfkey,
-        created_in_vacols_date: date_added
+        #created_in_vacols_date: date_added
       )
     end
 
