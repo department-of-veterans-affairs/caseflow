@@ -190,6 +190,53 @@ describe RequestIssuesUpdate, :all_dbs do
 
         it { is_expected.to contain_exactly(existing_request_issue) }
       end
+
+      context "when issue descision dates were edited as part of the update" do
+        let(:edited_decision_date) { Time.zone.now }
+        let(:request_issues_data) do
+          [{ request_issue_id: existing_legacy_opt_in_request_issue.id },
+           { request_issue_id: existing_request_issue.id,
+             edited_decision_date: edited_decision_date }]
+        end
+
+        it { is_expected.to contain_exactly(existing_request_issue) }
+      end
+
+      context "when decision_date was edited as part of the update" do
+        new_decisision_date = Time.zone.today - 1000.years
+
+        context "when benefit type is vha" do
+          let(:request_issues_data) do
+            existing_request_issue.decision_date = nil
+            [
+              {
+                benefit_type: "vha",
+                edited_decision_date: new_decisision_date,
+                request_issue_id: existing_request_issue.id
+              }
+            ]
+          end
+
+          it "updates the decision date" do
+            expect(existing_request_issue.reload.decision_date).to eq(new_decisision_date)
+          end
+        end
+
+        context "when edited_decision_date is not present" do
+          let(:request_issues_data) do
+            existing_request_issue.decision_date = nil
+            [
+              {
+                request_issue_id: existing_request_issue.id
+              }
+            ]
+          end
+
+          it "does not update the decision date" do
+            expect(existing_request_issue.reload.decision_date).to eq(nil)
+          end
+        end
+      end
     end
 
     context "#corrected_issues" do
@@ -248,6 +295,20 @@ describe RequestIssuesUpdate, :all_dbs do
             subject
             expect(existing_request_issue.reload.contention_updated_at).to be_nil
           end
+        end
+      end
+
+      context "when an issue's decision date is edited" do
+        let(:edited_decision_date) { Time.zone.now }
+        let(:request_issues_data) do
+          [{ request_issue_id: existing_legacy_opt_in_request_issue.id },
+           { request_issue_id: existing_request_issue.id,
+             edited_decision_date: edited_decision_date }]
+        end
+
+        it "updates the request issue's decision date" do
+          expect(subject).to be_truthy
+          expect(existing_request_issue.reload.decision_date).to eq(edited_decision_date.to_date)
         end
       end
 

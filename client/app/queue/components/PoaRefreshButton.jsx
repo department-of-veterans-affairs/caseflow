@@ -59,5 +59,8 @@ export const PoaRefreshButton = ({ appealId }) => {
 };
 
 PoaRefreshButton.propTypes = {
-  appealId: PropTypes.string
+  appealId: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string
+  ])
 };
