@@ -21,25 +21,21 @@ export default {
   },
 };
 
-const EmptyTemplate = (args) => {
+const Template = (args) => {
 
   return <InboxMessagesPage {...args} />;
 };
 
-export const EmptyInbox = EmptyTemplate.bind({});
+export const EmptyInbox = Template.bind({});
 
-const allUnreadMessagesTemplate = (args) => {
-  args.messages = allUnreadMessages;
+export const AllUnreadMessages = Template.bind({});
 
-  return <InboxMessagesPage {...args} />;
+AllUnreadMessages.args = {
+  messages: allUnreadMessages
 };
 
-export const AllUnreadMessages = allUnreadMessagesTemplate.bind({});
+export const OneReadOneUnreadMessages = Template.bind({});
 
-const oneReadOneUnreadMessagesTemplate = (args) => {
-  args.messages = oneReadOneUnreadMessages;
-
-  return <InboxMessagesPage {...args} />;
+OneReadOneUnreadMessages.args = {
+  messages: oneReadOneUnreadMessages
 };
-
-export const OneReadOneUnreadMessages = oneReadOneUnreadMessagesTemplate.bind({});
