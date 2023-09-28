@@ -185,7 +185,10 @@ PowerOfAttorneyNameUnconnected.propTypes = PowerOfAttorneyDetailUnconnected.prop
     alertType: PropTypes.string,
     powerOfAttorney: PropTypes.object
   }),
-  appealId: PropTypes.string,
+  appealId: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string
+  ]),
   appellantType: PropTypes.string,
   vha: PropTypes.bool
 };
