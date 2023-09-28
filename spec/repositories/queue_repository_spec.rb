@@ -137,6 +137,7 @@ describe QueueRepository, :all_dbs do
     subject do
       QueueRepository.reassign_case_to_judge!(
         vacols_id: vacols_case.bfkey,
+        assigned_by: judge,
         created_in_vacols_date: date_added,
         judge_vacols_user_id: judge.vacols_uniq_id,
         decass_attrs: decass_attrs
