@@ -52,8 +52,8 @@ feature "BVA Dispatch Return Flow", :all_dbs do
       click_on veteran_full_name
       click_dropdown(prompt: "Select an action", text: "Return to judge")
       fill_in("taskInstructions", with: "Returned from BVA Dispatch to correct error")
-      click_on "Submit"
-      expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % judge_user.full_name)
+      click_on "Assign"
+      expect(page).to have_content(COPY::REASSIGN_TASK_SUCCESS_MESSAGE % judge_user.full_name)
     end
     step "Judge sends the case to the Attorney to fix the decision" do
       User.authenticate!(user: judge_user)
@@ -61,8 +61,8 @@ feature "BVA Dispatch Return Flow", :all_dbs do
       click_on veteran_full_name
       click_dropdown(prompt: "Select an action", text: "Return to attorney")
       fill_in("taskInstructions", with: "Returned from BVA Dispatch to correct error")
-      click_on "Submit"
-      expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % attorney_user.full_name)
+      click_on "Assign"
+      expect(page).to have_content(COPY::REASSIGN_TASK_SUCCESS_MESSAGE % attorney_user.full_name)
     end
     step "Attorney returns the case to the judge" do
       attorney_checkout
@@ -89,14 +89,14 @@ def attorney_checkout
   visit "/queue"
   click_on veteran_full_name
   click_dropdown(prompt: "Select an action", text: "Decision ready for review")
-  if !find("#no_special_issues", visible: false).checked?
-    find("label", text: "No Special Issues").click
-  end
+  find("#no_special_issues", visible: false).sibling("label").set(true)
   click_on "Continue"
-
+  if page.has_content?("Choose at least one.")
+    find("#no_special_issues", visible: false).sibling("label").set(true)
+    click_on "Continue"
+  end
   click_on "+ Add decision"
   fill_in "Text Box", with: "test"
-
   find(".cf-select__control", text: "Select disposition").click
   find("div", class: "cf-select__option", text: "Allowed").click
   click_on "Save"
@@ -106,13 +106,17 @@ def attorney_checkout
   click_on "Continue"
 end
 
-# rubocop:disable Metrics/AbcSize
 def judge_checkout
   User.authenticate!(user: judge_user)
   visit "/queue"
   click_on "(#{appeal.veteran_file_number})"
   click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
-  click_on "Continue" if page.has_content?("No Special Issues")
+  find("#no_special_issues", visible: false).sibling("label").set(true)
+  click_on "Continue"
+  if page.has_content?("Choose at least one.")
+    find("#no_special_issues", visible: false).sibling("label").set(true)
+    click_on "Continue"
+  end
   click_on "Continue"
   find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
   text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
@@ -124,4 +128,3 @@ def judge_checkout
   fill_in "additional-factors", with: dummy_note
   click_on "Continue"
 end
-# rubocop:enable Metrics/AbcSize

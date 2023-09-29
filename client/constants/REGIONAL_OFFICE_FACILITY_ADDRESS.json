@@ -578,12 +578,12 @@
       "timezone" : "America/Denver"
    },
    "vba_452" : {
-      "address_1" : "5500 E Kellogg",
-      "address_2" : "Bldg. 61",
+      "address_1" : "9111 E. Douglas Ave.",
+      "address_2" : null,
       "address_3" : null,
       "city" : "Wichita",
       "state" : "KS",
-      "zip" : "67218",
+      "zip" : "67207",
       "timezone" : "America/Chicago"
    },
    "vba_459" : {

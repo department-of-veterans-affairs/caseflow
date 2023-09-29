@@ -59,8 +59,7 @@ class Generators::Vacols::Staff
 
     def create(attrs = {})
       merged_attrs = staff_attrs.merge(attrs)
-
-      VACOLS::Staff.create(merged_attrs)
+      VACOLS::Staff.find_or_create_by(merged_attrs)
     end
   end
 end

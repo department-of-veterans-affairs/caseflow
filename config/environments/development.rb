@@ -100,13 +100,11 @@ Rails.application.configure do
   # Quarterly Notifications Batch Sizes
   ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"] ||= "1000"
 
-  # Populate End Product Sync Queue ENVs
-  ENV["END_PRODUCT_QUEUE_JOB_DURATION"] ||= "50" # Number of minutes the job will run for
-  ENV["END_PRODUCT_QUEUE_SLEEP_DURATION"] ||= "5" # Number of seconds between loop iterations
-  ENV["END_PRODUCT_QUEUE_BATCH_LIMIT"] ||= "500" # Max number of records in a batch
-
   # Travel Board Sync Batch Size
   ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"] ||= "250"
+
+  # Time in seconds before the sync lock expires
+  LOCK_TIMEOUT = ENV["SYNC_LOCK_MAX_DURATION"] ||= "60"
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
@@ -119,6 +117,9 @@ Rails.application.configure do
   ENV["PACMAN_API_TOKEN_ISSUER"] ||= "issuer-of-our-token"
   ENV["PACMAN_API_SYS_ACCOUNT"] ||= "CSS_ID_OF_OUR_ACCOUNT"
   ENV["PACMAN_API_URL"] ||= "https://pacman-uat.dev.bip.va.gov/"
+
+  ENV["CLAIM_EVIDENCE_API_URL"] ||= "https://vefs-claimevidence-int.dev8.bip.va.gov"
+  ENV["CLAIM_EVIDENCE_JWT_TOKEN"] ||= "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NmQxOWE2OC03MDA1LTRhNjgtOWEzNC03MzEzZmI0MjMzNzMiLCJpYXQiOjE1MTYyMzkwMjIsImlzcyI6ImRldmVsb3BlclRlc3RpbmciLCJhcHBsaWNhdGlvbklEIjoiVkJNUy1VSSIsInVzZXJJRCI6ImNob3dhcl9zc3VwZXIiLCJzdGF0aW9uSUQiOiIzMTcifQ.33CyN4lq3WnyON2F4m4SlctTBtonBaySjf_7NDCBLl4"
 
   if ENV["WITH_TEST_EMAIL_SERVER"]
     config.action_mailer.delivery_method = :smtp

@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_08_01_195310) do
+ActiveRecord::Schema.define(version: 2023_08_14_133820) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_trgm"
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
@@ -623,6 +624,8 @@ ActiveRecord::Schema.define(version: 2023_08_01_195310) do
     t.string "diagnostic_code", comment: "If a decision resulted in a rating, this is the rating issue's diagnostic code."
     t.string "disposition", comment: "The disposition for a decision issue. Dispositions made in Caseflow and dispositions made in VBMS can have different values."
     t.date "end_product_last_action_date", comment: "After an end product gets synced with a status of CLR (cleared), the end product's last_action_date is saved on any decision issues that are created as a result. This is used as a proxy for decision date for non-rating issues that are processed in VBMS because they don't have a rating profile date, and the exact decision date is not available."
+    t.boolean "mst_status", default: false, comment: "Indicates if decision issue is related to Military Sexual Trauma (MST)"
+    t.boolean "pact_status", default: false, comment: "Indicates if decision issue is related to Promise to Address Comprehensive Toxics (PACT) Act"
     t.string "participant_id", null: false, comment: "The Veteran's participant id."
     t.string "percent_number", comment: "percent_number from RatingIssue (prcntNo from Rating Profile)"
     t.string "rating_issue_reference_id", comment: "Identifies the specific issue on the rating that resulted from the decision issue (a rating issue can be connected to multiple contentions)."
@@ -733,6 +736,7 @@ ActiveRecord::Schema.define(version: 2023_08_01_195310) do
   end
 
   create_table "documents", id: :serial, force: :cascade do |t|
+    t.boolean "auto_tagged", default: false
     t.boolean "category_medical"
     t.boolean "category_other"
     t.boolean "category_procedural"
@@ -1251,6 +1255,33 @@ ActiveRecord::Schema.define(version: 2023_08_01_195310) do
     t.index ["updated_at"], name: "index_messages_on_updated_at"
   end
 
+  create_table "metrics", force: :cascade do |t|
+    t.json "additional_info", comment: "additional data to store for the metric"
+    t.string "app_name", null: false, comment: "Application name: caseflow or efolder"
+    t.datetime "created_at", null: false
+    t.float "duration", comment: "Time in milliseconds from start to end"
+    t.datetime "end", comment: "When metric recording stopped"
+    t.json "metric_attributes", comment: "Store attributes relevant to the metric: OS, browser, etc"
+    t.string "metric_class", null: false, comment: "Class of metric, use reflection to find value to populate this"
+    t.string "metric_group", default: "service", null: false, comment: "Metric group: service, etc"
+    t.string "metric_message", null: false, comment: "Message or log for metric"
+    t.string "metric_name", null: false, comment: "Name of metric"
+    t.string "metric_product", null: false, comment: "Where in application: Queue, Hearings, Intake, VHA, etc"
+    t.string "metric_type", null: false, comment: "Type of metric: ERROR, LOG, PERFORMANCE, etc"
+    t.json "relevant_tables_info", comment: "Store information to tie metric to database table(s)"
+    t.string "sent_to", comment: "Which system metric was sent to: Datadog, Rails Console, Javascript Console, etc ", array: true
+    t.json "sent_to_info", comment: "Additional information for which system metric was sent to"
+    t.datetime "start", comment: "When metric recording started"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false, comment: "The ID of the user who generated metric."
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "Unique ID for the metric, can be used to search within various systems for the logging"
+    t.index ["app_name"], name: "index_metrics_on_app_name"
+    t.index ["metric_name"], name: "index_metrics_on_metric_name"
+    t.index ["metric_product"], name: "index_metrics_on_metric_product"
+    t.index ["sent_to"], name: "index_metrics_on_sent_to"
+    t.index ["user_id"], name: "index_metrics_on_user_id"
+  end
+
   create_table "mpi_update_person_events", force: :cascade do |t|
     t.bigint "api_key_id", null: false, comment: "API Key used to initiate the event"
     t.datetime "completed_at", comment: "Timestamp of when update was completed, regardless of success or failure"
@@ -1513,9 +1544,13 @@ ActiveRecord::Schema.define(version: 2023_08_01_195310) do
     t.string "ineligible_reason", comment: "The reason for a Request Issue being ineligible. If a Request Issue has an ineligible_reason, it is still captured, but it will not get a contention in VBMS or a decision."
     t.boolean "is_predocket_needed", comment: "Indicates whether or not an issue has been selected to go to the pre-docket queue opposed to normal docketing."
     t.boolean "is_unidentified", comment: "Indicates whether a Request Issue is unidentified, meaning it wasn't found in the list of contestable issues, and is not a new nonrating issue. Contentions for unidentified issues are created on a rating End Product if processed in VBMS but without the issue description, and someone is required to edit it in Caseflow before proceeding with the decision."
+    t.boolean "mst_status", default: false, comment: "Indicates if issue is related to Military Sexual Trauma (MST)"
+    t.text "mst_status_update_reason_notes", comment: "The reason for why Request Issue is Military Sexual Trauma (MST)"
     t.string "nonrating_issue_category", comment: "The category selected for nonrating request issues. These vary by business line."
     t.string "nonrating_issue_description", comment: "The user entered description if the issue is a nonrating issue"
     t.text "notes", comment: "Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
+    t.boolean "pact_status", default: false, comment: "Indicates if issue is related to Promise to Address Comprehensive Toxics (PACT) Act"
+    t.text "pact_status_update_reason_notes", comment: "The reason for why Request Issue is Promise to Address Comprehensive Toxics (PACT) Act"
     t.string "ramp_claim_id", comment: "If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
     t.datetime "rating_issue_associated_at", comment: "Timestamp when a contention and its contested rating issue are associated in VBMS."
     t.string "split_issue_status", comment: "If a request issue is part of a split, on_hold status applies to the original request issues while active are request issues on splitted appeals"
@@ -1526,6 +1561,8 @@ ActiveRecord::Schema.define(version: 2023_08_01_195310) do
     t.datetime "updated_at", comment: "Automatic timestamp whenever the record changes."
     t.string "vacols_id", comment: "The vacols_id of the legacy appeal that had an issue found to match the request issue."
     t.integer "vacols_sequence_id", comment: "The vacols_sequence_id, for the specific issue on the legacy appeal which the Claims Assistant determined to match the request issue on the Decision Review. A combination of the vacols_id (for the legacy appeal), and vacols_sequence_id (for which issue on the legacy appeal), is required to identify the issue being opted-in."
+    t.boolean "vbms_mst_status", default: false, comment: "Indicates if issue is related to Military Sexual Trauma (MST) and was imported from VBMS"
+    t.boolean "vbms_pact_status", default: false, comment: "Indicates if issue is related to Promise to Address Comprehensive Toxics (PACT) Act and was imported from VBMS"
     t.boolean "verified_unidentified_issue", comment: "A verified unidentified issue allows an issue whose rating data is missing to be intaken as a regular rating issue. In order to be marked as verified, a VSR needs to confirm that they were able to find the record of the decision for the issue."
     t.string "veteran_participant_id", comment: "The veteran participant ID. This should be unique in upstream systems and used in the future to reconcile duplicates."
     t.index ["closed_at"], name: "index_request_issues_on_closed_at"
@@ -1551,6 +1588,8 @@ ActiveRecord::Schema.define(version: 2023_08_01_195310) do
     t.integer "edited_request_issue_ids", comment: "An array of the request issue IDs that were edited during this request issues update", array: true
     t.string "error", comment: "The error message if the last attempt at processing the request issues update was not successful."
     t.datetime "last_submitted_at", comment: "Timestamp for when the processing for the request issues update was last submitted. Used to determine how long to continue retrying the processing job. Can be reset to allow for additional retries."
+    t.integer "mst_edited_request_issue_ids", comment: "An array of the request issue IDs that were updated to be associated with MST in request issues update", array: true
+    t.integer "pact_edited_request_issue_ids", comment: "An array of the request issue IDs that were updated to be associated with PACT in request issues update", array: true
     t.datetime "processed_at", comment: "Timestamp for when the request issue update successfully completed processing."
     t.bigint "review_id", null: false, comment: "The ID of the decision review edited."
     t.string "review_type", null: false, comment: "The type of the decision review edited."
@@ -1597,6 +1636,26 @@ ActiveRecord::Schema.define(version: 2023_08_01_195310) do
     t.bigint "sent_by_id", null: false, comment: "User who initiated sending the email"
     t.index ["hearing_type", "hearing_id"], name: "index_sent_hearing_email_events_on_hearing_type_and_hearing_id"
     t.index ["sent_by_id"], name: "index_sent_hearing_email_events_on_sent_by_id"
+  end
+
+  create_table "special_issue_changes", force: :cascade do |t|
+    t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID that the issue is tied to"
+    t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
+    t.string "change_category", null: false, comment: "Type of change that occured to the issue (Established Issue, Added Issue, Edited Issue, Removed Issue)"
+    t.datetime "created_at", null: false, comment: "Date the special issue change was made"
+    t.string "created_by_css_id", null: false, comment: "CSS ID of the user that made the special issue change"
+    t.bigint "created_by_id", null: false, comment: "User ID of the user that made the special issue change"
+    t.bigint "decision_issue_id", comment: "ID of the decision issue that had a special issue change from its corresponding request issue"
+    t.bigint "issue_id", null: false, comment: "ID of the issue that was changed"
+    t.boolean "mst_from_vbms", comment: "Indication that the MST status originally came from VBMS on intake"
+    t.string "mst_reason_for_change", comment: "Reason for changing the MST status on an issue"
+    t.boolean "original_mst_status", null: false, comment: "Original MST special issue status of the issue"
+    t.boolean "original_pact_status", null: false, comment: "Original PACT special issue status of the issue"
+    t.boolean "pact_from_vbms"
+    t.string "pact_reason_for_change", comment: "Reason for changing the PACT status on an issue"
+    t.bigint "task_id", null: false, comment: "Task ID of the IssueUpdateTask or EstablishmentTask used to log this issue in the case timeline"
+    t.boolean "updated_mst_status", comment: "Updated MST special issue status of the issue"
+    t.boolean "updated_pact_status", comment: "Updated PACT special issue status of the issue"
   end
 
   create_table "special_issue_lists", comment: "Associates special issues to an AMA or legacy appeal for Caseflow Queue. Caseflow Dispatch uses special issues stored in legacy_appeals. They are intentionally disconnected.", force: :cascade do |t|
@@ -1728,6 +1787,7 @@ ActiveRecord::Schema.define(version: 2023_08_01_195310) do
     t.text "instructions", default: [], array: true
     t.integer "parent_id"
     t.datetime "placed_on_hold_at"
+    t.jsonb "previous", default: [], array: true
     t.datetime "started_at"
     t.string "status", default: "assigned"
     t.string "type"
@@ -1790,6 +1850,7 @@ ActiveRecord::Schema.define(version: 2023_08_01_195310) do
     t.string "country", null: false
     t.datetime "created_at", null: false
     t.date "date_of_birth", comment: "PII"
+    t.string "ein", comment: "PII. Employer Identification Number"
     t.string "email_address", comment: "PII"
     t.string "last_name", comment: "PII"
     t.string "middle_name", comment: "PII"
@@ -1892,6 +1953,46 @@ ActiveRecord::Schema.define(version: 2023_08_01_195310) do
     t.index ["created_by_id"], name: "index_vbms_distributions_on_created_by_id"
     t.index ["updated_by_id"], name: "index_vbms_distributions_on_updated_by_id"
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
+  end
+
+  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
+    t.string "ALLOW_POA_ACCESS", limit: 5
+    t.decimal "CLAIMANT_PERSON_ID", precision: 38
+    t.datetime "CLAIM_DATE"
+    t.string "CLAIM_SOJ", limit: 25
+    t.integer "CONTENTION_COUNT"
+    t.datetime "CREATEDDT", null: false
+    t.string "EP_CODE", limit: 25
+    t.datetime "ESTABLISHMENT_DATE"
+    t.datetime "EXPIRATIONDT"
+    t.string "INTAKE_SITE", limit: 25
+    t.datetime "LASTUPDATEDT", null: false
+    t.string "LEVEL_STATUS_CODE", limit: 25
+    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
+    t.string "LIFECYCLE_STATUS_NAME", limit: 50
+    t.string "ORGANIZATION_NAME", limit: 100
+    t.string "ORGANIZATION_SOJ", limit: 25
+    t.string "PAYEE_CODE", limit: 25
+    t.string "POA_CODE", limit: 25
+    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
+    t.string "PRE_DISCHARGE_IND", limit: 5
+    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
+    t.string "PRIORITY", limit: 10
+    t.string "PROGRAM_TYPE_CODE", limit: 10
+    t.string "RATING_SOJ", limit: 25
+    t.string "SERVICE_TYPE_CODE", limit: 10
+    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
+    t.string "SUBMITTER_ROLE_CODE", limit: 25
+    t.datetime "SUSPENSE_DATE"
+    t.string "SUSPENSE_REASON_CODE", limit: 25
+    t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
+    t.decimal "SYNC_ID", precision: 38, null: false
+    t.string "TEMPORARY_CLAIM_SOJ", limit: 25
+    t.string "TYPE_CODE", limit: 25
+    t.decimal "VERSION", precision: 38, null: false
+    t.decimal "VETERAN_PERSON_ID", precision: 15
+    t.index ["CLAIM_ID"], name: "claim_id_index"
+    t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
@@ -2136,6 +2237,7 @@ ActiveRecord::Schema.define(version: 2023_08_01_195310) do
   add_foreign_key "membership_requests", "users", column: "decider_id"
   add_foreign_key "membership_requests", "users", column: "requestor_id"
   add_foreign_key "messages", "users"
+  add_foreign_key "metrics", "users"
   add_foreign_key "mpi_update_person_events", "api_keys"
   add_foreign_key "nod_date_updates", "appeals"
   add_foreign_key "nod_date_updates", "users"
