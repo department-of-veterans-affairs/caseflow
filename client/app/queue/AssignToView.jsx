@@ -140,7 +140,7 @@ class AssignToView extends React.Component {
     const assignTaskSuccessMessage = {
       title: taskActionData(this.props).message_title ? sprintf(taskActionData(this.props).message_title,
         caseNameListItem(),
-        this.getAssignee()) : sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE_LEGACY_SUCCESS_TITLE, this.getAssignee()),
+        this.getAssignee(isTeamAssign ? 'Organization' : 'User')) : sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE_LEGACY_SUCCESS_TITLE, this.getAssignee(isTeamAssign ? 'Organization' : 'User')),
       detail: taskActionData(this.props).message_detail || null
     };
 
@@ -171,7 +171,7 @@ class AssignToView extends React.Component {
       });
   };
 
-  getAssignee = () => {
+  getAssignee = (AssigneeType) => {
     let assignee = 'person';
 
     if (this.isVHAAssignToRegional()) {
@@ -183,6 +183,12 @@ class AssignToView extends React.Component {
         assignee = opt.label;
       }
     });
+
+    const splitAssignee = assignee.split(' ');
+
+    if (splitAssignee.length === 3 && AssigneeType === 'User') {
+      assignee = `${splitAssignee[0] } ${ splitAssignee[2]}`;
+    }
 
     return assignee;
   };
@@ -213,8 +219,8 @@ class AssignToView extends React.Component {
     };
 
     const titleValue = task.type === 'JudgeDecisionReviewTask' ?
-      sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) :
-      sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE_SCM, assignedByListItem(), this.getAssignee());
+      sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee('User')) :
+      sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE_SCM, assignedByListItem(), this.getAssignee('User'));
 
     const successMsg = { title: titleValue };
 
