@@ -98,6 +98,8 @@ class AssignHearingDispositionTask < Task
 
     update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
 
+    cancel_redundant_hearing_req_mail_tasks_of_type(HearingWithdrawalRequestMailTask)
+
     [maybe_evidence_task].compact
   end
 
@@ -109,7 +111,7 @@ class AssignHearingDispositionTask < Task
     multi_transaction do
       created_tasks = schedule_later
 
-      cancel_redundant_hearing_postponement_req_tasks
+      cancel_redundant_hearing_req_mail_tasks_of_type(HearingPostponementRequestMailTask)
 
       created_tasks
     end
@@ -244,7 +246,7 @@ class AssignHearingDispositionTask < Task
         after_disposition_update: payload_values[:after_disposition_update]
       )
 
-      cancel_redundant_hearing_postponement_req_tasks
+      cancel_redundant_hearing_req_mail_tasks_of_type(HearingPostponementRequestMailTask)
 
       created_tasks
     end
