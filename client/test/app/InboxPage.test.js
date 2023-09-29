@@ -1,8 +1,8 @@
 import React from 'react';
-import {render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 import { InboxMessagesPage } from '../../app/inbox/pages/InboxPage';
-import { emptyMessages } from '../data/inbox';
+import { emptyMessages, allUnreadMessages } from '../data/inbox';
 
 const successMessage = 'Success! You have no unread messages.';
 
@@ -16,16 +16,23 @@ const defaultProps = {
   }
 };
 
-describe('InboxMessagesPage', () => {
+describe('InboxPage rendering success message', () => {
   const setupComponent = (props = {}) => {
     return render(
       <InboxMessagesPage {...defaultProps}{...props} />
     );
   };
 
-  it('renders an empty inbox with a message', () => {
+  it('renders an empty inbox with a the success message', () => {
     setupComponent();
 
-    expect(screen.getByText(successMessage)).toBeInTheDocument();
+    expect(screen.queryByText(successMessage)).toBeInTheDocument();
+  });
+
+  it('renders an inbox with unread messages and no success message', () => {
+    defaultProps.messages = allUnreadMessages;
+    setupComponent();
+
+    expect(screen.queryByText(successMessage)).not.toBeInTheDocument();
   });
 });
