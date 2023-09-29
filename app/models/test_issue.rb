@@ -1,16 +1,18 @@
 # frozen_string_literal: true
 
 class TestIssue
-  # attr_accessor :benefit_type, :closed_status, :contention_reference_id, :contested_decision_issue_id,
-  #               :contested_issue_description, :contested_rating_decision_reference_id,
-  #               :contested_rating_issue_diagnostic_code, :contested_rating_issue_profile_date,
-  #               :contested_rating_issue_reference_id, :corrected_by_request_issue_id, :correction_type,
-  #               :created_at, :decision_date, :decision_review_id, :decision_review_type, :edited_description,
-  #               :end_product_establishment_id, :ineligible_due_to_id, :ineligible_reason, :is_unidentified,
-  #               :nonrating_issue_category, :nonrating_issue_description, :notes, :ramp_claim_id,
-  #               :rating_issue_associated_at, :split_issue_status, :unidentified_issue_text, :untimely_exemption,
-  #               :untimely_exemption_notes, :updated_at, :vacols_id, :vacols_sequence_id,
-  #               :verified_unidentified_issue, :veteran_participant_id
+  attr_accessor :benefit_type, :closed_status, :contention_reference_id, :contested_decision_issue_id,
+                :contested_issue_description, :contested_rating_decision_reference_id,
+                :contested_rating_issue_diagnostic_code, :contested_rating_issue_profile_date,
+                :contested_rating_issue_reference_id, :corrected_by_request_issue_id, :correction_type,
+                :created_at, :decision_date, :decision_review_id, :decision_review_type, :edited_description,
+                :end_product_establishment_id, :ineligible_due_to_id, :ineligible_reason, :is_unidentified,
+                :nonrating_issue_category, :nonrating_issue_description, :notes, :ramp_claim_id,
+                :rating_issue_associated_at, :split_issue_status, :unidentified_issue_text, :untimely_exemption,
+                :untimely_exemption_notes, :updated_at, :vacols_id, :vacols_sequence_id,
+                :verified_unidentified_issue, :veteran_participant_id, :deleted_at,
+                :decision_text, :description, :disposition, :end_product_last_action_date, :percent_number,
+                :rating_issue_reference_id, :rating_profile_date, :rating_promulgation_date, :subject_text
 
   def initialize(attributes = {})
     @benefit_type = attributes[:benefit_type]
@@ -49,7 +51,7 @@ class TestIssue
     @veteran_participant_id = attributes[:veteran_participant_id]
     @deleted_at = attributes[:deleted_at]
     @decision_text = attributes[:decision_text]
-    @description = description[:description]
+    @description = attributes[:description]
     @diagnostic_code = attributes[:diagnostic_code]
     @disposition = attributes[:disposition]
     @end_product_last_action_date = attributes[:end_product_last_action_date]
