@@ -536,6 +536,7 @@
   },
   "COMPLETE_AND_WITHDRAW": {
     "label": "Mark as complete and withdraw",
-    "value": "modal/complete_and_withdraw"
+    "value": "modal/complete_and_withdraw",
+    "func": "withdraw_hearing_data"
   }
 }
