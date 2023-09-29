@@ -3,10 +3,11 @@
 class NoAvailableModifiersFixJob < CaseflowJob
   ERROR_TEXT = "EndProductModifierFinder::NoAvailableModifiers"
 
-  attr_reader :stuck_job_report_service
+  attr_reader :stuck_job_report_service, :decision_review_job
 
   def initialize
     @stuck_job_report_service = StuckJobReportService.new
+    @decision_review_job = DecisionReviewProcessJob.new
     super
   end
 
@@ -28,11 +29,12 @@ class NoAvailableModifiersFixJob < CaseflowJob
       break if available_space <= 0
 
       ActiveRecord::Base.transaction do
-        DecisionReviewProcessJob.new.perform(sc)
+        decision_review_job.perform(sc)
       rescue StandardError => error
         log_error(error)
-        stuck_job_report_service.append_errors(sc.class.name, sc.id, error)
+        # stuck_job_report_service.append_errors(sc.class.name, sc.id, error)
       end
+      available_space -= 1
     end
   end
 

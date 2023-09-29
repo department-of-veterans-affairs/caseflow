@@ -18,6 +18,13 @@ describe NoAvailableModifiersFixJob, :postres do
       establishment_error: error_text
     )
   end
+  let!(:supplemental_claim_with_error_2) do
+    create(
+      :supplemental_claim,
+      veteran_file_number: file_number,
+      establishment_error: error_text
+    )
+  end
 
   let!(:epe) do
     create(
@@ -41,6 +48,7 @@ describe NoAvailableModifiersFixJob, :postres do
   context "when there are fewer than 10 active end products" do
     describe "when there are 0 active end products" do
       it "runs decision_review_process_job on up to 10 Supplemental Claims" do
+        expect(subject.decision_review_job).to receive(:perform).twice.with(anything)
         subject.perform
       end
     end
