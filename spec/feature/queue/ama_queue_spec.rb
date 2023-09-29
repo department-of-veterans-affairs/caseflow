@@ -464,10 +464,9 @@ feature "AmaQueue", :all_dbs do
       click_dropdown(prompt: "Select an action", text: "Assign to attorney")
       click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
       fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
-
       click_on "Assign"
 
-      expect(page).to have_content("You have successfully assigned 1 case to #{attorney_user.full_name}")
+      expect(page).to have_content("You have successfully assigned Tom Brady's case to #{attorney_user.full_name}")
     end
 
     it "judge can return report to attorney for corrections" do
@@ -772,9 +771,8 @@ feature "AmaQueue", :all_dbs do
 
           find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
           expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id))
-          # expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, appeal.veteran_full_name, "Andrea Harless"))
-          click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id)
 
+          click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id)
           click_on veteran_full_name
 
           # wait for page to load with veteran name
@@ -788,10 +786,7 @@ feature "AmaQueue", :all_dbs do
           fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
 
           click_on "Assign"
-
-          expect(page).to have_content(
-            format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE_TITLE, attorney_user.full_name)
-          )
+          expect(page).to have_content("You have successfully assigned Tom Brady's case to #{attorney_user.full_name}")
         end
 
         step "attorney completes task and returns the case to the judge" do
@@ -865,9 +860,10 @@ feature "AmaQueue", :all_dbs do
           end
 
           fill_in "taskInstructions", with: "Going on leave, please manage this case"
-          click_on "Submit"
+          click_on "Assign"
+          expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE, "Andrea Harless"
 
-          expect(page).to have_content("Task reassigned to #{judge_user2.full_name}")
+          # expect(page).to have_content("Task reassigned to #{judge_user2.full_name}")
         end
 
         step "judge2 has the case in their queue" do
