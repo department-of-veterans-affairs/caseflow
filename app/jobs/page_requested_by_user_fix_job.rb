@@ -8,6 +8,7 @@ class PageRequestedByUserFixJob < CaseflowJob
     clear_bge_errors if bges_with_errors.present?
   end
 
+  # :reek:FeatureEnvy
   def resolve_error_on_records(object_type)
     ActiveRecord::Base.transaction do
       object_type.clear_error!
@@ -21,7 +22,7 @@ class PageRequestedByUserFixJob < CaseflowJob
     STUCK_JOB_REPORT_SERVICE.append_record_count(bges_with_errors.count, ERROR_TEXT)
 
     bges_with_errors.each do |bge|
-      return if bge.end_product_establishment.established_at.blank?
+      next if bge.end_product_establishment.established_at.blank?
 
       resolve_error_on_records(bge)
       STUCK_JOB_REPORT_SERVICE.append_single_record(bge.class.name, bge.id)
