@@ -834,4 +834,7 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   preserveFilter: PropTypes.bool,
 };
 
+Row.propTypes.rowObjects = PropTypes.arrayOf(PropTypes.object);
+Row.propTypes = { ...Row.propTypes, rowObject: PropTypes.object.isRequired };
+
 /* eslint-enable max-lines */
