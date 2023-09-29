@@ -248,14 +248,14 @@ describe QueueRepository, :all_dbs do
         subject
         expect(vacols_case.reload.bfcurloc).to eq attorney_staff.slogid
         expect(vacols_case.bfattid).to eq attorney_staff.sattyid
-        decass = VACOLS::Decass.where(defolder: vacols_case.bfkey).first
+        decass = VACOLS::Decass.where(defolder: vacols_case.bfkey)
         expect(decass.present?).to eq true
-        expect(decass.deatty).to eq attorney_staff.sattyid
-        expect(decass.deteam).to eq attorney_staff.stitle[0..2]
-        expect(decass.demdusr).to eq judge_staff.slogid
-        expect(decass.deadtim).to eq date_added
-        expect(decass.dedeadline).to eq VacolsHelper.local_date_with_utc_timezone + 30.days
-        expect(decass.deassign).to eq VacolsHelper.local_time_with_utc_timezone
+        expect(decass.last.deatty).to eq attorney_staff.sattyid
+        expect(decass.last.deteam).to eq attorney_staff.stitle[0..2]
+        expect(decass.last.demdusr).to eq judge_staff.slogid
+        expect(decass.first.deadtim).to eq date_added
+        expect(decass.last.dedeadline).to eq VacolsHelper.local_date_with_utc_timezone + 30.days
+        expect(decass.last.deassign).to eq VacolsHelper.local_time_with_utc_timezone
       end
     end
 
