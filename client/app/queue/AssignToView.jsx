@@ -183,11 +183,6 @@ class AssignToView extends React.Component {
         assignee = opt.label;
       }
     });
-    const splitAssignee = assignee.split(' ');
-
-    if (splitAssignee.length >= 3) {
-      assignee = `${splitAssignee[0]} ${splitAssignee[2]}`;
-    }
 
     return assignee;
   };
