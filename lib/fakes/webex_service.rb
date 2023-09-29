@@ -7,7 +7,7 @@ class Fakes::WebexService
     hostEmail: "testaccount@admindomain.com",
     hostKey: "123456",
     siteUrl: "test.webex.com",
-    webLink: "https://test.webex.com/not-real/j.php?MTID=m#{Faker::Alphanumeric.alphanumeric(number: 32).downcase}",
+    webLink: "https://test.webex.com/not-real/j.php?MTID=m#{Faker::Number.between(from: 100_000_000, to: 999_999_999)}",
     sipAddress: "12345678910@test.webex.com",
     dialInIpAddress: "",
     enabledAutoRecordMeeting: false,
