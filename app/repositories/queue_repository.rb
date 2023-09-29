@@ -61,12 +61,12 @@ class QueueRepository
       # In attorney checkout, we are automatically selecting the judge who
       # assigned the attorney the case. But we also have a drop down for the
       # attorney to select a different judge if they are checking it out to someone else
-      if decass_record.deadusr != judge_vacols_user_id.vacols_uniq_id
+      if decass_record.deadusr != judge_vacols_user_id&.vacols_uniq_id
         BusinessMetrics.record(service: :queue, name: "reassign_case_to_different_judge")
       end
       update_decass_record(decass_record, decass_attrs)
       # update location with the judge's slogid
-      decass_record.update_vacols_location!(judge_vacols_user_id.vacols_uniq_id)
+      decass_record.update_vacols_location!(judge_vacols_user_id&.vacols_uniq_id)
       true
     end
 
