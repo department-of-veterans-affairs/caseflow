@@ -32,8 +32,10 @@ feature "CaseMovementTeam task actions" do
       click_dropdown(prompt: "Select a user", text: "Other")
 
       # Clicking on "Other" and starting to type "TALAM" shows the attorney.
-      click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
-      fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "\nSCM user reassigning to different attorney")
+      within all(".cf-select")[2] do
+        click_dropdown(prompt: "Select", text: attorney_user.full_name)
+      end
+      fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "\nSCM user reassigning to different attorney")
 
       # Clicking Submit button shows an "Error assigning tasks" error banner in the modal
       # (and an error message in the DevTools console).
