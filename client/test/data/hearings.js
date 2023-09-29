@@ -36,10 +36,13 @@ export const virtualHearing = {
     hostPin: '8600030#',
     guestPin: '2684353125#',
     hostLink:
+      // eslint-disable-next-line max-len
       'https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host',
     guestLink:
+      // eslint-disable-next-line max-len
       'https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest',
     jobCompleted: true,
+    conferenceProvider: 'pexip',
   },
 };
 
@@ -65,6 +68,7 @@ export const amaHearingPast = {
   centralOfficeTimeString: '03:30',
   claimantId: 4,
   closestRegionalOffice: null,
+  conferenceProvider: 'pexip',
   disposition: null,
   dispositionEditable: true,
   docketName: 'hearing',
@@ -149,6 +153,7 @@ export const amaHearing = {
   centralOfficeTimeString: '03:30',
   claimantId: 4,
   closestRegionalOffice: null,
+  conferenceProvider: 'pexip',
   disposition: null,
   dispositionEditable: true,
   docketName: 'hearing',
@@ -233,6 +238,7 @@ export const legacyHearing = {
   centralOfficeTimeString: '04:00',
   claimantId: 604,
   closestRegionalOffice: null,
+  conferenceProvider: 'pexip',
   disposition: null,
   dispositionEditable: true,
   docketName: 'legacy',
@@ -314,6 +320,7 @@ export const defaultHearing = {
   centralOfficeTimeString: '04:00',
   claimantId: 604,
   closestRegionalOffice: null,
+  conferenceProvider: 'pexip',
   currentIssueCount: 0,
   disposition: null,
   dispositionEditable: true,
@@ -401,6 +408,7 @@ export const centralHearing = {
   centralOfficeTimeString: '08:30',
   claimantId: 604,
   closestRegionalOffice: null,
+  conferenceProvider: 'pexip',
   currentIssueCount: 0,
   disposition: null,
   dispositionEditable: true,
