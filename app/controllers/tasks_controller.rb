@@ -93,10 +93,9 @@ class TasksController < ApplicationController
       tasks << valid_task_classes[task_type.to_sym].create_many_from_params(param_group, current_user)
     end
     # This should be the JudgeDecisionReviewTask
-    # parent_task = Task.find_by(id: params[:tasks]&.first[:parent_id]) if params[:tasks]&.first[:type] == "AttorneyRewriteTask"
     parent_task = if params[:tasks].is_a?(Array) && params[:tasks]&.first[:type] == "AttorneyRewriteTask"
-                    Task.find_by(id: params[:tasks]&.first[:parent_id])
-                  elsif params[:tasks][:type] == "AttorneyRewriteTask"
+                  Task.find_by(id: params[:tasks].first[:parent_id])
+                  elsif !params[:tasks].is_a?(Array) && params[:tasks][:type] == "AttorneyRewriteTask"
                     Task.find_by(id: params[:tasks][:parent_id])
                   end
     if parent_task&.appeal&.is_a?(LegacyAppeal)
