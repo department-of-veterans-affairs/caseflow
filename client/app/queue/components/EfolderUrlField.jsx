@@ -10,7 +10,8 @@ import EfolderLink from '../../components/EfolderLink';
 
 const eFolderlinkStyling = css({
   position: 'relative',
-  top: '-20px'
+  top: '-20px',
+  display: 'inline-block'
 });
 
 const EfolderUrlField = (props) => {
@@ -109,7 +110,7 @@ const EfolderUrlField = (props) => {
       loading={loading}
     />
     <div {...eFolderlinkStyling}>
-      <EfolderLink url={url} veteranParticipantId={props.veteranParticipantId} />
+      <EfolderLink url={`${props.eFolderLink}/veteran/${props.veteranParticipantId}`} veteranParticipantId={props.veteranParticipantId} eFolderLink={props.eFolderLink} />
     </div>
     {
       error === COPY.EFOLDER_CONNECTION_ERROR &&
@@ -126,6 +127,7 @@ const EfolderUrlField = (props) => {
 EfolderUrlField.propTypes = {
   appealId: PropTypes.string.isRequired,
   veteranParticipantId: PropTypes.string,
+  eFolderLink: PropTypes.string,
   requestType: PropTypes.string,
   errorMessage: PropTypes.string
 };

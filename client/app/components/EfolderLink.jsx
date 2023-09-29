@@ -5,6 +5,7 @@ import { COLORS } from '../constants/AppConstants';
 import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 
 const EfolderLink = ({ url, veteranParticipantId }) => {
+
   return (
     <a href={url} target="_blank" rel="noopener noreferrer">
       {veteranParticipantId ? 'Open eFolder ' : 'Go to eFolder Search '}
