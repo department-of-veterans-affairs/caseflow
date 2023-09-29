@@ -4,6 +4,9 @@ describe StuckJobReportService, :postres do
   ERROR_TEXT = "Descriptive Error Name"
   FAILED_TRANSACTION_ERROR = "great error"
   STUCK_JOB_NAME = "VBMS::UnknownUser"
+  BUCKET_NAME = "data-remediation-output"
+  CREATE_FILE_NAME = "descriptive-error-name"
+  FILEPATH = "/var/folders/fc/8gwfm4251qlb2nzgn3g4kldm0000gp/T/cdc-log.txt20230831-49789-qkyx0t"
 
   before do
     Timecop.freeze
@@ -68,15 +71,15 @@ describe StuckJobReportService, :postres do
     it "names uat bucket" do
       allow(Rails).to receive(:deploy_env).and_return(:uat)
 
-      subject.upload_logs_to_s3(FILEPATH, CREATE_FILE_NAME)
-      expect(subject.bucket_name).to eq("data-remediation-output-uat")
+      subject.upload_logs(CREATE_FILE_NAME)
+      expect(subject.folder_name).to eq("data-remediation-output-uat")
     end
 
     it "names prod bucket" do
       allow(Rails).to receive(:deploy_env).and_return(:prod)
 
-      subject.upload_logs_to_s3(FILEPATH, CREATE_FILE_NAME)
-      expect(subject.bucket_name).to eq("data-remediation-output")
+      subject.upload_logs(CREATE_FILE_NAME)
+      expect(subject.folder_name).to eq("data-remediation-output")
     end
   end
 end
