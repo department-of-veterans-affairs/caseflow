@@ -283,7 +283,7 @@ class AppealsController < ApplicationController
     pact_removed = 0
     # get edited issues from params and reject new issues without id
     if !appeal.is_a?(LegacyAppeal)
-      existing_issues = params[:request_issues].reject { |i| i[:request_issue_id].nil? }
+      existing_issues = params[:request_issues].reject { |iss| iss[:request_issue_id].nil? }
 
       # get added issues
       new_issues = request_issues_update.after_issues - request_issues_update.before_issues
@@ -293,7 +293,7 @@ class AppealsController < ApplicationController
       # calculate edits
       existing_issues.each do |issue_edit|
         # find the original issue and compare MST/PACT changes
-        before_issue = request_issues_update.before_issues.find { |i| i.id == issue_edit[:request_issue_id].to_i }
+        before_issue = request_issues_update.before_issues.find { |b_issue| b_issue.id == issue_edit[:request_issue_id].to_i }
 
         # increment edit counts if they meet the criteria for added/removed
         mst_added += 1 if issue_edit[:mst_status] != before_issue.mst_status && issue_edit[:mst_status]
@@ -355,7 +355,7 @@ class AppealsController < ApplicationController
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def legacy_mst_pact_updates
     legacy_issue_params[:request_issues].each do |current_issue|
-      issue = appeal.issues.find { |i| i.vacols_sequence_id == current_issue[:vacols_sequence_id].to_i }
+      issue = appeal.issues.find { |iss| iss.vacols_sequence_id == current_issue[:vacols_sequence_id].to_i }
 
       # Check for changes in mst/pact status
       next unless issue.mst_status != current_issue[:mst_status] || issue.pact_status != current_issue[:pact_status]
@@ -394,11 +394,11 @@ class AppealsController < ApplicationController
 
   def legacy_issues_with_updated_mst_pact_status
     mst_edited = legacy_issue_params[:request_issues].find_all do |current_issue|
-      issue = appeal.issues.find { |i| i.vacols_sequence_id == current_issue[:vacols_sequence_id].to_i }
+      issue = appeal.issues.find { |iss| iss.vacols_sequence_id == current_issue[:vacols_sequence_id].to_i }
       issue.mst_status != current_issue[:mst_status]
     end
     pact_edited = legacy_issue_params[:request_issues].find_all do |current_issue|
-      issue = appeal.issues.find { |i| i.vacols_sequence_id == current_issue[:vacols_sequence_id].to_i }
+      issue = appeal.issues.find { |iss| iss.vacols_sequence_id == current_issue[:vacols_sequence_id].to_i }
       issue.pact_status != current_issue[:pact_status]
     end
     { mst_edited: mst_edited, pact_edited: pact_edited }

@@ -142,6 +142,7 @@ class Fakes::BGSService
 
   # returns example payload from VBMS dev test data (vet file number 011899903)
   # for testing with vet file number 992190636 on local environment.
+  # rubocop:disable Metrics/MethodLength
   def find_contentions_by_participant_id(participant_id)
     [
       {
@@ -418,6 +419,7 @@ class Fakes::BGSService
         suspns_rsn_txt: "Closed" }
     ]
   end
+  # rubocop:enable Metrics/MethodLength
 
   def find_contentions_by_claim_id(claim_id)
     contentions = self.class.end_product_store.inflated_bgs_contentions_for(claim_id)

@@ -32,6 +32,7 @@ class RatingDecision
                 :rba_contentions_data
 
   class << self
+    # rubocop:disable Metrics/MethodLength
     def from_bgs_disability(rating, disability)
       latest_evaluation = RatingProfileDisability.new(disability).most_recent_evaluation || {}
       new(
@@ -56,6 +57,7 @@ class RatingDecision
         rba_contentions_data: disability[:rba_contentions_data]
       )
     end
+    # rubocop:enable Metrics/MethodLength
 
     def deserialize(hash)
       new(hash)

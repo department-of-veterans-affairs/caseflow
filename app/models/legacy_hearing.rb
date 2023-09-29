@@ -272,7 +272,7 @@ class LegacyHearing < CaseflowRecord
     worksheet_issues = []
     appeal.worksheet_issues.each_with_index do |wi, idx|
       worksheet_issues.push(wi.attributes)
-      issue = appeal.issues.find { |i| i.vacols_sequence_id.to_i == wi[:vacols_sequence_id].to_i }
+      issue = appeal.issues.find { |iss| iss.vacols_sequence_id.to_i == wi[:vacols_sequence_id].to_i }
       worksheet_issues[idx][:mst_status] = issue&.mst_status
       worksheet_issues[idx][:pact_status] = issue&.pact_status
     end

@@ -3,6 +3,7 @@
 require "bgs"
 
 # Thin interface to all things BGS
+# rubocop:disable Metrics/ClassLength
 class ExternalApi::BGSService
   include PowerOfAttorneyMapper
   include AddressMapper
@@ -543,3 +544,4 @@ class ExternalApi::BGSService
   end
   # :nocov:
 end
+# rubocop:enable Metrics/ClassLength

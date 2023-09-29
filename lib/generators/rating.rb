@@ -64,6 +64,7 @@ class Generators::Rating
       }
     end
 
+    # rubocop:disable Metrics/MethodLength
     def bgs_rating_decisions_data(attrs)
       return nil unless attrs[:decisions]
 
@@ -89,6 +90,7 @@ class Generators::Rating
           }
         }
       end
+      # rubocop:enable Metrics/MethodLength
 
       (decisions_data.length == 1) ? decisions_data.first : decisions_data
     end

@@ -184,7 +184,7 @@ class RequestIssue < CaseflowRecord
 
     private
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def attributes_from_intake_data(data)
       contested_issue_present = attributes_look_like_contested_issue?(data)
       issue_text = (data[:is_unidentified] || data[:verified_unidentified_issue]) ? data[:decision_text] : nil
@@ -222,7 +222,7 @@ class RequestIssue < CaseflowRecord
         pact_status_update_reason_notes: data[:pact_status_update_reason_notes]
       }
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     def attributes_look_like_contested_issue?(data)
       data[:rating_issue_reference_id] ||

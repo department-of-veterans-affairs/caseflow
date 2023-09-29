@@ -21,6 +21,7 @@ class InitialTasksFactory
 
   STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def create_root_and_sub_tasks!
     # if changes to mst or pact, create IssueUpdateTask
     if (@appeal.mst? && FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])) ||
@@ -36,6 +37,7 @@ class InitialTasksFactory
     end
     maybe_create_translation_task
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   private
 
