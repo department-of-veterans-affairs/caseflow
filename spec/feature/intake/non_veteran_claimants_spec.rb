@@ -85,6 +85,8 @@ feature "Non-veteran claimants", :postgres do
       within_fieldset("Is the claimant an organization or individual?") do
         find("label", text: "Organization", match: :prefer_exact).click
       end
+
+      expect(page).to have_no_content(COPY::EMPLOYER_IDENTIFICATION_NUMBER)
       fill_in "Organization name", with: "Attorney's Law Firm"
       fill_in "Street address 1", with: "1234 Justice St."
       fill_in "City", with: "Anytown"

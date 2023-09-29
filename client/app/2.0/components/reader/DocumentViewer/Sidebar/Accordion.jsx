@@ -44,7 +44,12 @@ export const SidebarAccordion = ({
         <SidebarCategories {...props} />
       </AccordionSection>
       <AccordionSection title="Issue tags">
-        <IssueTags {...props} />
+        <IssueTags {
+          ...{
+            autoTaggingEnabled: featureToggles.auto_tagging_ability,
+            canManuallyAutoTag: featureToggles.can_manually_auto_tag,
+            ...props }
+        } />
       </AccordionSection>
       <AccordionSection title={COMMENT_ACCORDION_KEY} id="comments-header">
         <SidebarComments {...props} />

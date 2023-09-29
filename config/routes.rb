@@ -123,7 +123,9 @@ Rails.application.routes.draw do
     get :pdf, on: :member
     patch 'mark-as-read', on: :member
     resources :annotation, only: [:create, :destroy, :update]
-    resources :tag, only: [:create, :destroy]
+    resources :tag, only: [:create, :destroy] do
+      get :auto_tag, on: :collection
+    end
   end
 
   namespace :reader do
@@ -157,6 +159,8 @@ Rails.application.routes.draw do
     end
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
+
+  get '/appeals/:appeal_id/document/:series_id' => 'appeals#document_lookup'
 
   get '/appeals/:appeals_id/notifications' => 'appeals#fetch_notification_list'
 
