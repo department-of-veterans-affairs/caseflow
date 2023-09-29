@@ -150,7 +150,7 @@ describe HearingWithdrawalRequestMailTask, :postgres do
         }
       end
 
-      shared_context "not ScheduleHearingTask" do
+      shared_context "call #update_from_params with business_payloads" do
         before do
           params[:business_payloads] = business_payloads
           task.update_from_params(params, user)
@@ -161,14 +161,14 @@ describe HearingWithdrawalRequestMailTask, :postgres do
       context "hearing withdrawn through AssignHearingDispositionTask#update_from_params" do
         let(:task) { disposition_task }
 
-        include_context "not ScheduleHearingTask"
+        include_context "call #update_from_params with business_payloads"
         include_examples "cancels hwr mail tasks"
       end
 
       context "hearing withdrawn through ChangeHearingDispositionTask#update_from_params" do
         let(:task) { create(:change_hearing_disposition_task, parent: disposition_task.parent) }
 
-        include_context "not ScheduleHearingTask"
+        include_context "call #update_from_params with business_payloads"
         include_examples "cancels hwr mail tasks"
       end
 
