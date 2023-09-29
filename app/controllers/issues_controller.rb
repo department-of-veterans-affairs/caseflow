@@ -26,7 +26,7 @@ class IssuesController < ApplicationController
     # create MST/PACT task if issue was created
     if convert_to_bool(create_params[:mst_status]) ||
        convert_to_bool(create_params[:pact_status])
-      issue_in_caseflow = appeal.issues.find { |i| i.vacols_sequence_id == issue.issseq.to_i }
+      issue_in_caseflow = appeal.issues.find { |iss| iss.vacols_sequence_id == issue.issseq.to_i }
       create_legacy_issue_update_task(issue_in_caseflow) if FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
     end
 
@@ -38,7 +38,7 @@ class IssuesController < ApplicationController
   def update
     return record_not_found unless appeal
 
-    issue = appeal.issues.find { |i| i.vacols_sequence_id == params[:vacols_sequence_id].to_i }
+    issue = appeal.issues.find { |iss| iss.vacols_sequence_id == params[:vacols_sequence_id].to_i }
     if issue.mst_status != convert_to_bool(params[:issues][:mst_status]) ||
        issue.pact_status != convert_to_bool(params[:issues][:pact_status])
       create_legacy_issue_update_task(issue) if FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
