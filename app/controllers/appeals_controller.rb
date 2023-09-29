@@ -98,9 +98,7 @@ class AppealsController < ApplicationController
     series_id = "{#{params[:series_id]}}".upcase
     document = Document.find_by(series_id: series_id, file_number: appeal.veteran_file_number)
 
-    unless document
-      document = VBMSService.fetch_document_series_for(appeal).map(&:series_id).include?(series_id)
-    end
+    document ||= VBMSService.fetch_document_series_for(appeal).map(&:series_id).include?(series_id)
 
     render json: { document_presence: document.present? }
   end

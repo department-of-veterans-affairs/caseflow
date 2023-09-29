@@ -122,13 +122,14 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   # Purpose: Either reschedule or send to schedule veteran list
   # Params: None
   # Return: Returns newly created tasks
+  # :reek:FeatureEnvy
   def reschedule_or_schedule_later(after_disposition_update)
     case after_disposition_update[:action]
     when "reschedule"
       new_hearing_attrs = after_disposition_update[:new_hearing_attrs]
       reschedule(
-        hearing_day_id: new_hearing_attrs[:hearing_day_id],
         scheduled_time_string: new_hearing_attrs[:scheduled_time_string],
+        hearing_day_id: new_hearing_attrs[:hearing_day_id],
         hearing_location: new_hearing_attrs[:hearing_location],
         virtual_hearing_attributes: new_hearing_attrs[:virtual_hearing_attributes],
         notes: new_hearing_attrs[:notes],
@@ -150,6 +151,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   #         notes - additional notes for the hearing string
   #         email_recipients_attributes - the object for the email recipients
   # Return: Returns new hearing and assign disposition task
+  # :reek:LongParameterList
   def reschedule(
     hearing_day_id:,
     scheduled_time_string:,
