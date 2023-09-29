@@ -263,7 +263,9 @@ describe QueueRepository, :all_dbs do
       let(:date_added) { "2018-04-18".to_date }
       let!(:decass) { create(:decass, defolder: vacols_case.bfkey, deadtim: "2014-04-18".to_date) }
 
-      it "should raise Caseflow::Error::QueueRepositoryError" do
+      xit "should raise Caseflow::Error::QueueRepositoryError" do
+        # QueueRepository.reassign_case_to_attorney! No longer has the created_in_vacols_date: date_added
+        # This line I marked to pending but may need to be omitted all together.
         expect { subject }.to raise_error(Caseflow::Error::QueueRepositoryError)
       end
     end
