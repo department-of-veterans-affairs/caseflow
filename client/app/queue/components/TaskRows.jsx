@@ -504,7 +504,7 @@ class TaskRows extends React.PureComponent {
     task.type === 'AttorneyTask' || task.type === 'AttorneyRewriteTask')) {
       return (
         <React.Fragment key={`${task.uniqueId} fragment`}>
-          {task.instructions[1] && task.type === 'JudgeAssignTask' && (<React.Fragment key={`${task.uniqueId} div`}>
+          {task.instructions[1] && !(task.type === 'AttorneyTask' || task.type === 'JudgeDecisionReviewTask' || task.type === 'AttorneyRewriteTask') && (<React.Fragment key={`${task.uniqueId} div`}>
             <div
               key={`${task.uniqueId} instructions`}
               style={divStyles}
@@ -515,30 +515,30 @@ class TaskRows extends React.PureComponent {
             </div>
           </React.Fragment>
           )}
-          {task.assigneeName && task.type !== 'AttorneyTask' && task.type !== 'AttorneyRewriteTask' &&
+          {task.assigneeName && (task.type === 'JudgeAssignTask' || task.type === 'JudgeDecisionReviewTask') &&
+        (<React.Fragment key={`${task.uniqueId} div`}>
+          <div
+            key={`${task.uniqueId} instructions`}
+            style={divStyles}
+            className="task-instructions"
+          >
+            <b>{COPY.LEGACY_APPEALS_VLJ_NEW_JUDGE_INSTRUCTIONS}</b>
+            <ReactMarkdown>{formatBreaks(task.assigneeName)}</ReactMarkdown>
+          </div>
+        </React.Fragment>
+        )}
+          {task.instructions &&
           (<React.Fragment key={`${task.uniqueId} div`}>
             <div
               key={`${task.uniqueId} instructions`}
               style={divStyles}
               className="task-instructions"
             >
-              <b>{COPY.LEGACY_APPEALS_VLJ_NEW_JUDGE_INSTRUCTIONS}</b>
-              <ReactMarkdown>{formatBreaks(task.assigneeName)}</ReactMarkdown>
+              <b>{(task.instructions[0].includes('**Reason:**') || task.type === 'JudgeDecisionReviewTask') ? null : COPY.LEGACY_APPEALS_VLJ_DETAILS_INSTRUCTIONS}</b>
+              <ReactMarkdown>{formatBreaks(task.instructions[0])}</ReactMarkdown>
             </div>
           </React.Fragment>
           )}
-          {task.instructions &&
-            (<React.Fragment key={`${task.uniqueId} div`}>
-              <div
-                key={`${task.uniqueId} instructions`}
-                style={divStyles}
-                className="task-instructions"
-              >
-                <b>{task.type !== 'JudgeDecisionReviewTask' && COPY.LEGACY_APPEALS_VLJ_DETAILS_INSTRUCTIONS}</b>
-                <ReactMarkdown>{formatBreaks(task.instructions[0])}</ReactMarkdown>
-              </div>
-            </React.Fragment>
-            )}
         </React.Fragment>
       );
     }
