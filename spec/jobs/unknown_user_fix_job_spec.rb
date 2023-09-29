@@ -26,7 +26,7 @@ describe UnknownUserFixJob, :postgres do
       expect { subject.perform("12-21-2001") }.to raise_error(ArgumentError, "Incorrect date format, use 'YYYY-mm-dd'")
       expect(riu.reload.error).to eq(unknown_error)
 
-      expect { subject.perform("Hello World!") }.to raise_error(ArgumentError, "Incorrect date format, use 'YYYY-mm-dd'")
+      expect { subject.perform("Hello!") }.to raise_error(ArgumentError, "Incorrect date format, use 'YYYY-mm-dd'")
       expect(riu.reload.error).to eq(unknown_error)
 
       expect { subject.perform(42) }.to raise_error(ArgumentError, "Incorrect date format, use 'YYYY-mm-dd'")

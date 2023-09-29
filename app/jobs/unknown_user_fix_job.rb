@@ -30,6 +30,7 @@ class UnknownUserFixJob < CaseflowJob
     stuck_job_report_service.append_record_count(rius_with_errors.count, ERROR_TEXT)
   end
 
+  # :reek:FeatureEnvy
   def resolve_error_on_records(object_type)
     ActiveRecord::Base.transaction do
       object_type.clear_error!
