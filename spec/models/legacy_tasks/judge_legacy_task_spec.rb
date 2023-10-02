@@ -11,11 +11,13 @@ describe JudgeLegacyTask, :postgres do
   let(:assigned_by_last_name) { "Snuffy" }
   let(:reassigned_to_judge_date) { nil }
   let(:assigned_to_attorney_date) { nil }
+  let(:bfcurloc) { "64" }
+  let(:vacols_case) { create(:case, bfcurloc: bfcurloc) }
   let(:legacy_judge_task) do
     JudgeLegacyTask.from_vacols(
       case_assignment,
-      LegacyAppeal.create(vacols_id: vacols_id),
-      judge
+      LegacyAppeal.create(vacols_id: vacols_id, case_record: vacols_case),
+      judge,
     )
   end
   let(:case_assignment) do
