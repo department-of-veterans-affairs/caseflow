@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class NoAvailableModifiersFixJob < CaseflowJob
-  ERROR_TEXT = "EndProductModifierFinder::NoAvailableModifiers"
+  ERROR_TEXT = "NoAvailableModifiers"
 
   attr_reader :stuck_job_report_service, :decision_review_job
 
@@ -12,6 +12,8 @@ class NoAvailableModifiersFixJob < CaseflowJob
   end
 
   def perform
+    stuck_job_report_service.append_record_count(supp_claims_with_errors_count, ERROR_TEXT)
+
     veterans_with_errors.each do |vet_fn|
       active_count = current_active_eps_count(vet_fn) || 0
       available_space = 10 - active_count
@@ -22,17 +24,20 @@ class NoAvailableModifiersFixJob < CaseflowJob
 
       process_supplemental_claims(supp_claims, available_space)
     end
+    stuck_job_report_service.append_record_count(supp_claims_with_errors_count, ERROR_TEXT)
+    stuck_job_report_service.write_log_report(ERROR_TEXT)
   end
 
   def process_supplemental_claims(supp_claims, available_space)
     supp_claims.each do |sc|
       break if available_space <= 0
 
+      stuck_job_report_service.append_single_record(sc.class.name, sc.id)
       ActiveRecord::Base.transaction do
         decision_review_job.perform(sc)
       rescue StandardError => error
         log_error(error)
-        # stuck_job_report_service.append_errors(sc.class.name, sc.id, error)
+        stuck_job_report_service.append_errors(sc.class.name, sc.id, error)
       end
       available_space -= 1
     end
@@ -54,5 +59,9 @@ class NoAvailableModifiersFixJob < CaseflowJob
   def veterans_with_errors
     SupplementalClaim.where("establishment_error ILIKE ?",
                             "%#{ERROR_TEXT}%").pluck(:veteran_file_number).uniq
+  end
+
+  def supp_claims_with_errors_count
+    SupplementalClaim.where("establishment_error ILIKE ?", "%#{ERROR_TEXT}%").count
   end
 end
