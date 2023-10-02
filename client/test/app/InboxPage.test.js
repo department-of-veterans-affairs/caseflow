@@ -74,15 +74,15 @@ describe('renders with data', () => {
     expect(unreadButtons.length).toBe(2);
   });
 
-  // it('renders an inbox with one read and one unread messages', () => {
-  //   defaultProps.messages = oneReadAndOneUnreadMessages;
-  //   setupComponent();
+  it('renders an inbox with one read and one unread messages', () => {
+    defaultProps.messages = oneReadAndOneUnreadMessages;
+    setupComponent();
 
-  //   const trElements = screen.getAllByRole('row');
+    const trElements = screen.getAllByRole('row');
 
-  //   expect(trElements.length - 1).toBe(2);
+    expect(trElements.length - 1).toBe(2);
 
-  //   expect(screen.getByRole('button', 'Read Sat Sep 23 2023 at 15:18')).toBeInTheDocument();
-  //   expect(screen.getByRole('button', { text: 'Mark as read' })).toBeInTheDocument();
-  // });
+    expect(screen.getByText('Read Sat Sep 23 2023 at 15:18')).toBeInTheDocument();
+    expect(screen.getByText('Mark as read')).toBeInTheDocument();
+  });
 });
