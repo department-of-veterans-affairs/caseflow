@@ -1,4 +1,4 @@
-/* eslint-disable max-lines */
+/* eslint-disable max-lines, max-len */
 
 import querystring from 'querystring';
 import React from 'react';
@@ -216,6 +216,10 @@ class QueueApp extends React.PureComponent {
       appealId={props.match.params.appealId}
       taskId={props.match.params.taskId}
       checkoutFlow={props.match.params.checkoutFlow}
+      justificationFeatureToggle={this.props.featureToggles.justification_reason}
+      mstFeatureToggle={this.props.featureToggles.mst_identification}
+      pactFeatureToggle={this.props.featureToggles.pact_identification}
+      legacyMstPactFeatureToggle={this.props.featureToggles.legacy_mst_pact_identification}
     />
   );
 
@@ -227,6 +231,8 @@ class QueueApp extends React.PureComponent {
         <SelectSpecialIssuesView
           appealId={appealId}
           taskId={taskId}
+          legacyMstIdentification={this.props.featureToggles.legacy_mst_pact_identification}
+          mstIdentification={this.props.featureToggles.mst_identification}
           prevStep={`/queue/appeals/${appealId}`}
           nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         />
@@ -241,6 +247,8 @@ class QueueApp extends React.PureComponent {
       <AddEditIssueView
         nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         prevStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
+        justificationFeatureToggle={this.props.featureToggles.justification_reason}
+        legacyMstPactFeatureToggle={this.props.featureToggles.legacy_mst_pact_identification}
         {...props.match.params}
       />
     );
@@ -755,15 +763,15 @@ class QueueApp extends React.PureComponent {
 
                 // eslint-disable-next-line default-case
                 switch (this.props.reviewActionType) {
-                  case DECISION_TYPES.OMO_REQUEST:
-                    reviewActionType = 'OMO';
-                    break;
-                  case DECISION_TYPES.DRAFT_DECISION:
-                    reviewActionType = 'Draft Decision';
-                    break;
-                  case DECISION_TYPES.DISPATCH:
-                    reviewActionType = 'to Dispatch';
-                    break;
+                case DECISION_TYPES.OMO_REQUEST:
+                  reviewActionType = 'OMO';
+                  break;
+                case DECISION_TYPES.DRAFT_DECISION:
+                  reviewActionType = 'Draft Decision';
+                  break;
+                case DECISION_TYPES.DISPATCH:
+                  reviewActionType = 'to Dispatch';
+                  break;
                 }
 
                 return `Draft Decision | Submit ${reviewActionType}`;
@@ -1215,7 +1223,7 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.
-                  CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.value
+                CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.value
                 }`}
               title={`${PAGE_TITLES.CANCEL_AND_ASSIGN_TO_RO} | Caseflow`}
               render={this.routedUpdateTaskAndAssignRegionalOfficeModal(
