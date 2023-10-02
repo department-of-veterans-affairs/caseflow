@@ -141,7 +141,7 @@ RSpec.feature "Colocated checkout flows", :all_dbs do
       click_on COPY::MODAL_ASSIGN_BUTTON
 
       expect(page).to have_current_path("/queue")
-      expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE_LEGACY_SUCCESS_TITLE, 'CAVC Support')
+      expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE_LEGACY_SUCCESS_TITLE, "CAVC Litigation Support")
       expect(translation_action.reload.status).to eq "on_hold"
     end
   end
