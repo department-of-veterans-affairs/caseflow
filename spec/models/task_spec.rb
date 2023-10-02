@@ -1329,7 +1329,9 @@ describe Task, :all_dbs do
     let!(:attorney) { create(:user) }
     let!(:appeal) { create(:appeal) }
     let!(:task) { create(:task, type: Task.name, appeal: appeal) }
-    let(:params) { { assigned_to: judge, assigned_to_id: judge.id, appeal: task.appeal, parent_id: task.id, type: Task.name } }
+    let(:params) do
+      { assigned_to: judge, assigned_to_id: judge.id, appeal: task.appeal, parent_id: task.id, type: Task.name }
+    end
 
     before do
       create(:staff, :judge_role, sdomainid: judge.css_id)
