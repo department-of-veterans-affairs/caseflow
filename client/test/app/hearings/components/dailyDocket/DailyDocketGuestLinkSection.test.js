@@ -5,14 +5,14 @@ import { DailyDocketGuestLinkSection } from '../../../../../app/hearings/compone
 describe('DailyDocketGuestLinkSection', () => {
   const linkInfo = {
     link1: {
-      guestLink: 'https://example.com/guestLink1?pin=1234',
-      guestPin: '1234',
+      guestLink: 'https://example.com/guestLink1?pin=123456',
+      guestPin: '123456',
       alias: 'Room 1',
       type: 'PexipConferenceLink',
     },
     link2: {
       guestLink: 'https://example.com/guestLink2?meetingID=123456789',
-      guestPin: '56789',
+      guestPin: '567891029',
       alias: 'Room 2',
       type: 'WebexConferenceLink',
     },
@@ -22,13 +22,13 @@ describe('DailyDocketGuestLinkSection', () => {
     render(<DailyDocketGuestLinkSection linkInfo={linkInfo} />);
 
     const link1Alias = screen.getAllByText('Conference Room:');
-    const link1Pin = await screen.findByText('1234#');
+    const link1Pin = await screen.findByText('123456#');
     const link1CopyButtons = screen.getAllByRole('button', {
       name: 'Copy Guest Link',
     });
 
     const link2Alias = screen.getAllByText('Conference Room:');
-    const link2Pin = await screen.findByText('56789#');
+    const link2Pin = await screen.findByText('123456789#');
     const link2CopyButton = screen.getAllByRole('button', {
       name: 'Copy Guest Link',
     });
