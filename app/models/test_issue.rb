@@ -12,9 +12,12 @@ class TestIssue
                 :untimely_exemption_notes, :updated_at, :vacols_id, :vacols_sequence_id,
                 :verified_unidentified_issue, :veteran_participant_id, :deleted_at,
                 :decision_text, :description, :disposition, :end_product_last_action_date, :percent_number,
-                :rating_issue_reference_id, :rating_profile_date, :rating_promulgation_date, :subject_text
+                :rating_issue_reference_id, :rating_profile_date, :rating_promulgation_date, :subject_text,
+                :request_issue_id, :decision_issue_id, :nonrating_issue_bgs_id
 
   def initialize(attributes = {})
+    @request_issue_id = attributes[:request_issue_id]
+    @decision_issue_id = attributes[:decision_issue_id]
     @benefit_type = attributes[:benefit_type]
     @closed_status = attributes[:closed_status]
     @contention_reference_id = attributes[:contention_reference_id]
@@ -35,6 +38,7 @@ class TestIssue
     @ineligible_id = attributes[:ineligible_due_to_id]
     @ineligible_reason = attributes[:ineligible_reason]
     @is_unidentified = attributes[:is_unidentified]
+    @nonrating_issue_bgs_id = attributes[:nonrating_issue_bgs_id]
     @nonrating_issue_category = attributes[:nonrating_issue_category]
     @nonrating_issue_description = attributes[:nonrating_issue_description]
     @notes = attributes[:notes]
