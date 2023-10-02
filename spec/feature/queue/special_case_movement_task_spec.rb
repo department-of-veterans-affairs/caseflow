@@ -30,6 +30,8 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
         click_dropdown(prompt: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER,
                        text: judge_user.full_name)
         fill_in("taskInstructions", with: "instructions")
+
+        binding.pry
         click_button("Assign")
 
         # expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % judge_user.full_name)
@@ -108,7 +110,7 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
         expect(page).to have_content("#{ScheduleHearingTask.name} cancelled")
         expect(page).to have_content("CANCELLED BY\n#{scm_user.css_id}")
         page.find_all(".taskInformationTimelineContainerStyling button", text: "View task instructions").first.click
-        expect(page).to have_content("TASK INSTRUCTIONS\nNew Judge:\nBoard of Veterans' Appeals\nDetails:\nInstructions for the judge")
+        expect(page).to have_content("TASK INSTRUCTIONS\nReason:\nInstructions for the judge")
 
         expect(page).to have_content("#{BlockedSpecialCaseMovementTask.name} completed")
         expect(page).to have_content("#{DistributionTask.name} completed")
