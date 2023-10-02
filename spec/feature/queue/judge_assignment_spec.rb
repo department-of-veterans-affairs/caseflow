@@ -342,7 +342,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
 
       click_on("Assign")
-      expect(page).to have_content("You have successfully assigned 1 case to #{judge_two.full_name}")
+      expect(page).to have_content("You have successfully assigned #{appeal_one.veteran_first_name} #{appeal_one.veteran_last_name}'s case to #{judge_two.full_name}")
     end
   end
 
@@ -359,7 +359,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
 
       click_on("Assign")
-      expect(page).to have_content("You have successfully assigned 1 case to #{judge_one.full_name}")
+      expect(page).to have_content("You have successfully assigned #{appeal_one.veteran_first_name} #{appeal_one.veteran_last_name}'s case to #{judge_one.full_name}")
     end
   end
 
