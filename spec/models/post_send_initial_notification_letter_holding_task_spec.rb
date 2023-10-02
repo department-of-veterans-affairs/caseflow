@@ -213,7 +213,6 @@ describe PostSendInitialNotificationLetterHoldingTask do
         )
       end
 
-
       it "returns the same max hold period using the TaskTimer dates" do
         tt = TaskTimer.find_by(task_id: post_task.id)
         expect(tt.task_id).to eq(post_task.id)
