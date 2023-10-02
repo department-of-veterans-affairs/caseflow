@@ -3,10 +3,9 @@
 class PageRequestedByUserFixJob < CaseflowJob
   ERROR_TEXT = "Page requested by the user is unavailable"
 
-  attr_reader :stuck_job_report_service
-
   def initialize
     @stuck_job_report_service = StuckJobReportService.new
+    super
   end
 
   def perform
@@ -18,19 +17,20 @@ class PageRequestedByUserFixJob < CaseflowJob
     object_type.clear_error!
   rescue StandardError => error
     log_error(error)
-    stuck_job_report_service.append_errors(object_type.class.name, object_type.id, error)
+    @stuck_job_report_service.append_errors(object_type.class.name, object_type.id, error)
   end
 
   def clear_bge_errors
-    stuck_job_report_service.append_record_count(bges_with_errors.count, ERROR_TEXT)
+    @stuck_job_report_service.append_record_count(bges_with_errors.count, ERROR_TEXT)
 
     bges_with_errors.each do |bge|
       next if bge.end_product_establishment.established_at.blank?
 
       resolve_error_on_records(bge)
-      stuck_job_report_service.append_single_record(bge.class.name, bge.id)
+      @stuck_job_report_service.append_single_record(bge.class.name, bge.id)
     end
-    stuck_job_report_service.append_record_count(bges_with_errors.count, ERROR_TEXT)
+    @stuck_job_report_service.append_record_count(bges_with_errors.count, ERROR_TEXT)
+    @stuck_job_report_service.write_log_report(ERROR_TEXT)
   end
 
   def bges_with_errors
