@@ -36,6 +36,18 @@ class TagController < ApplicationController
     render(json: { status: :no_content })
   end
 
+  def auto_tag
+    begin
+      AutotaggedDocumentJob.perform_now(params[:document_id])
+      document = Document.find(params[:document_id])
+      render({ json: { tags: document.tags } }, status: :ok)
+    rescue StandardError
+      errors = { 'message' => 'We are unable to generate auto tags for this document' }
+      Rails.logger.info("Document is not ready for auto-tagging.")
+      render({ json: { errors: errors } }, status: :not_found)
+    end
+  end
+
   private
 
   def tag_params

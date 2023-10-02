@@ -120,6 +120,9 @@ Rails.application.configure do
   ENV["PACMAN_API_SYS_ACCOUNT"] ||= "CSS_ID_OF_OUR_ACCOUNT"
   ENV["PACMAN_API_URL"] ||= "https://pacman-uat.dev.bip.va.gov/"
 
+  ENV["CLAIM_EVIDENCE_API_URL"] ||= "https://vefs-claimevidence-int.dev8.bip.va.gov"
+  ENV["CLAIM_EVIDENCE_JWT_TOKEN"] ||= "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NmQxOWE2OC03MDA1LTRhNjgtOWEzNC03MzEzZmI0MjMzNzMiLCJpYXQiOjE1MTYyMzkwMjIsImlzcyI6ImRldmVsb3BlclRlc3RpbmciLCJhcHBsaWNhdGlvbklEIjoiVkJNUy1VSSIsInVzZXJJRCI6ImNob3dhcl9zc3VwZXIiLCJzdGF0aW9uSUQiOiIzMTcifQ.33CyN4lq3WnyON2F4m4SlctTBtonBaySjf_7NDCBLl4"
+
   if ENV["WITH_TEST_EMAIL_SERVER"]
     config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {

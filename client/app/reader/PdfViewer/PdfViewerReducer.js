@@ -11,6 +11,8 @@ const initialPdfSidebarErrorState = {
   annotation: { visible: false,
     message: null },
   description: { visible: false,
+    message: null },
+  autoTag: { visible: false,
     message: null }
 };
 

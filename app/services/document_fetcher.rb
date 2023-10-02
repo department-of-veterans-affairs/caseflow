@@ -66,6 +66,9 @@ class DocumentFetcher
     copy_metadata_from_document(series_id_docs, vbms_doc_ver_ids)
     created_docs = retrieve_created_docs_including_nondb_attributes(docs_to_create)
 
+    # Creating the autotags for newly uploaded documents in VBMS
+    auto_tag_documents(created_docs)
+
     updated_docs + created_docs
   end
 
@@ -166,6 +169,11 @@ class DocumentFetcher
               docs_as_csv: docs_as_csv.join("") }
     error_message = "Document records with duplicate vbms_document_id: #{warning_message}"
     Raven.capture_exception(DuplicateVbmsDocumentIdError.new(error_message), extra: extra)
+  end
+
+
+  def auto_tag_documents(docs)
+    docs.each { |doc| AutotaggedDocumentJob.perform_now(doc.id) }
   end
 
   class DuplicateVbmsDocumentIdError < RuntimeError; end

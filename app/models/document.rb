@@ -334,4 +334,5 @@ class Document < CaseflowRecord
   def vbms
     VBMSService
   end
+
 end

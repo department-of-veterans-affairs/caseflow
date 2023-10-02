@@ -10,7 +10,7 @@ import PdfUIPageNumInput from '../reader/PdfUIPageNumInput';
 import Pdf from './Pdf';
 import DocumentCategoryIcons from './DocumentCategoryIcons';
 import { connect } from 'react-redux';
-import { resetJumpToPage, togglePdfSidebar, toggleSearchBar, setZoomLevel, jumpToPage
+import { resetJumpToPage, resetSidebarErrors, togglePdfSidebar, toggleSearchBar, setZoomLevel, jumpToPage
 } from '../reader/PdfViewer/PdfViewerActions';
 import { selectCurrentPdf, rotateDocument } from '../reader/Documents/DocumentsActions';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
@@ -205,6 +205,7 @@ export class PdfUI extends React.Component {
   onBackToClaimsFolder = () => {
     window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'back-to-claims-folder');
     this.props.stopPlacingAnnotation(INTERACTION_TYPES.VISIBLE_UI);
+    this.props.resetSidebarErrors();
   }
 
   handleClickDocumentTypeLink = () => window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'document-type-link')
@@ -361,7 +362,8 @@ const mapDispatchToProps = (dispatch) => (
     selectCurrentPdf,
     toggleSearchBar,
     setZoomLevel,
-    jumpToPage
+    jumpToPage,
+    resetSidebarErrors,
   }, dispatch)
 );
 
@@ -406,5 +408,6 @@ PdfUI.propTypes = {
   showPdf: PropTypes.func,
   stopPlacingAnnotation: PropTypes.func,
   togglePdfSidebar: PropTypes.func,
-  toggleSearchBar: PropTypes.any
+  toggleSearchBar: PropTypes.any,
+  resetSidebarErrors: PropTypes.func
 };

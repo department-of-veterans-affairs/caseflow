@@ -184,7 +184,7 @@ export class PdfSidebar extends React.Component {
           </AccordionSection>
           <AccordionSection title="Issue tags">
             <SideBarIssueTags
-              doc={this.props.doc} />
+              doc={this.props.doc} featureToggles={this.props.featureToggles} />
           </AccordionSection>
           <AccordionSection title={COMMENT_ACCORDION_KEY} id="comments-header">
             <SideBarComments
