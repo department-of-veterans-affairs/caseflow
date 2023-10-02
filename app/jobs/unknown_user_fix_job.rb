@@ -3,6 +3,12 @@
 class UnknownUserFixJob < CaseflowJob
   ERROR_TEXT = "UnknownUser"
 
+  attr_reader :stuck_job_report_service
+
+  def initialize
+    @stuck_job_report_service = StuckJobReportService.new
+  end
+
   def perform(date = "2023-08-07")
     date = date.to_s
     pattern = /^\d{4}-\d{2}-\d{2}$/
@@ -32,12 +38,10 @@ class UnknownUserFixJob < CaseflowJob
 
   # :reek:FeatureEnvy
   def resolve_error_on_records(object_type)
-    ActiveRecord::Base.transaction do
-      object_type.clear_error!
-    rescue StandardError => error
-      log_error(error)
-      STUCK_JOB_REPORT_SERVICE.append_errors(object_type.class.name, object_type.id, error)
-    end
+    object_type.clear_error!
+  rescue StandardError => error
+    log_error(error)
+    stuck_job_report_service.append_errors(object_type.class.name, object_type.id, error)
   end
 
   def rius_with_errors
