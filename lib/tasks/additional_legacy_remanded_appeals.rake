@@ -24,7 +24,11 @@ namespace :additional_legacy_remand_reasons do
                             else false
                             end
           cases = Array.new(num_appeals_to_create).each_with_index.map do |_element, _idx|
-            key = VACOLS::Folder.maximum(:ticknum).next
+            if Rails.env.development? || Rails.env.test?
+              key = VACOLS::Folder.maximum(:ticknum).next
+            else
+              key = VACOLS::Folder.find_by_sql("SELECT max(to_number(ticknum)) as maxtick FROM FOLDER").first.maxtick.next
+            end
 
             staff = VACOLS::Staff.find_by(sdomainid: user.css_id) # user for local/demo || UAT
             Generators::Vacols::Case.create(
