@@ -1,34 +1,34 @@
-import React from "react";
-import PropTypes from "prop-types";
-import moment from "moment";
-import { css } from "glamor";
-import _ from "lodash";
+import React from 'react';
+import PropTypes from 'prop-types';
+import moment from 'moment';
+import { css } from 'glamor';
+import _ from 'lodash';
 
-import AppSegment from "@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment";
-import Alert from "../../../components/Alert";
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import Alert from '../../../components/Alert';
 import {
   LockModal,
   RemoveHearingModal,
   DispositionModal,
-} from "./DailyDocketModals";
-import Button from "../../../components/Button";
-import StatusMessage from "../../../components/StatusMessage";
-import DailyDocketRows from "./DailyDocketRows";
-import DailyDocketEditLinks from "./DailyDocketEditLinks";
+} from './DailyDocketModals';
+import Button from '../../../components/Button';
+import StatusMessage from '../../../components/StatusMessage';
+import DailyDocketRows from './DailyDocketRows';
+import DailyDocketEditLinks from './DailyDocketEditLinks';
 import {
   isPreviouslyScheduledHearing,
   userJudgeOrCoordinator,
-} from "../../utils";
-import { navigateToPrintPage } from "../../../util/PrintUtil";
-import { encodeQueryParams } from "../../../util/QueryParamsUtil";
-import COPY from "../../../../COPY";
-import UserAlerts from "../../../components/UserAlerts";
-import HEARING_DISPOSITION_TYPES from "../../../../constants/HEARING_DISPOSITION_TYPES";
-import { ScheduledInErrorModal } from "../ScheduledInErrorModal";
-import { DailyDocketGuestLinkSection } from "./DailyDocketGuestLinkSection";
+} from '../../utils';
+import { navigateToPrintPage } from '../../../util/PrintUtil';
+import { encodeQueryParams } from '../../../util/QueryParamsUtil';
+import COPY from '../../../../COPY';
+import UserAlerts from '../../../components/UserAlerts';
+import HEARING_DISPOSITION_TYPES from '../../../../constants/HEARING_DISPOSITION_TYPES';
+import { ScheduledInErrorModal } from '../ScheduledInErrorModal';
+import { DailyDocketGuestLinkSection } from './DailyDocketGuestLinkSection';
 
 const alertStyling = css({
-  marginBottom: "30px",
+  marginBottom: '30px',
 });
 
 const Alerts = ({
@@ -46,13 +46,13 @@ const Alerts = ({
         styling={alertStyling}
         title={
           dailyDocket.lock
-            ? "You have successfully locked this Hearing Day"
-            : "You have successfully unlocked this Hearing Day"
+            ? 'You have successfully locked this Hearing Day'
+            : 'You have successfully unlocked this Hearing Day'
         }
         message={
           dailyDocket.lock
-            ? "You cannot add more veterans to this hearing day, but you can edit existing entries"
-            : "You can now add more veterans to this hearing day"
+            ? 'You cannot add more veterans to this hearing day, but you can edit existing entries'
+            : 'You can now add more veterans to this hearing day'
         }
       />
     )}
@@ -80,7 +80,7 @@ const Alerts = ({
         type="error"
         styling={alertStyling}
         title={`VACOLS Hearing Day ${moment(dailyDocket.scheduledFor).format(
-          "M/DD/YYYY"
+          'M/DD/YYYY'
         )}
           cannot be locked in Caseflow.`}
         message="VACOLS Hearing Day cannot be locked"
@@ -132,8 +132,8 @@ export default class DailyDocket extends React.Component {
 
     // for Central hearing days, return 'C'
     // Otherwise assume it's a video hearing day and return RO key
-    return dailyDocket.requestType === "C"
-      ? "C"
+    return dailyDocket.requestType === 'C'
+      ? 'C'
       : dailyDocket.regionalOfficeKey;
   };
 
@@ -189,7 +189,7 @@ export default class DailyDocket extends React.Component {
       (hearing) => hearing.externalId
     );
     const queryString = encodeQueryParams({
-      hearing_ids: hearingIds.join(","),
+      hearing_ids: hearingIds.join(','),
       keep_open: true,
     });
 
@@ -289,7 +289,7 @@ export default class DailyDocket extends React.Component {
           </div>
         </div>
         <div className="cf-app-segment">
-          <div className="cf-push-left">
+          <div className="cf-push-lef">
             <Button onClick={() => navigateToPrintPage()}>
               Download & Print Page
             </Button>
@@ -297,7 +297,7 @@ export default class DailyDocket extends React.Component {
           <div className="cf-push-right">
             {user.userHasHearingPrepRole && (
               <Button
-                classNames={["usa-button-secondary"]}
+                classNames={['usa-button-secondary']}
                 onClick={this.navigateToPrintAllPage}
                 disabled={_.isEmpty(docketHearings)}
               >
@@ -321,7 +321,7 @@ export default class DailyDocket extends React.Component {
           user={user}
         />
         {!hasDocketHearings && (
-          <div {...css({ marginTop: "75px" })}>
+          <div {...css({ marginTop: '75px' })}>
             <StatusMessage
               title={
                 user.userHasHearingPrepRole
@@ -333,7 +333,7 @@ export default class DailyDocket extends React.Component {
           </div>
         )}
         {hasPrevHearings && (
-          <div {...css({ marginTop: "75px" })}>
+          <div {...css({ marginTop: '75px' })}>
             <h1>Previously Scheduled</h1>
             <DailyDocketRows
               hidePreviouslyScheduled={false}

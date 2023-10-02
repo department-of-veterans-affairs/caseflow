@@ -98,7 +98,7 @@ export const GUEST_LINK_LABELS = {
   WEBEX_GUEST_LINK_SECTION_LABEL: 'Webex Guest link for non-virtual hearings',
   GUEST_CONFERENCE_ROOM: 'Conference Room:',
   GUEST_PIN: 'PIN:',
-}
+};
 
 export const SPREADSHEET_TYPES = {
   RoSchedulePeriod: {
