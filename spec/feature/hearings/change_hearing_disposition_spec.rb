@@ -2,7 +2,8 @@
 
 RSpec.shared_examples "Change hearing disposition" do
   let(:current_full_name) { "Leonela Harbold" }
-  let(:hearing_admin_user) { create(:user, full_name: current_full_name, station_id: 101) }
+  let(:staff_record) { create(:staff) }
+  let(:hearing_admin_user) { create(:user, full_name: current_full_name, station_id: 101, vacols_uniq_id: staff_record.slogid) }
   let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
   let(:root_task) { create(:root_task, appeal: appeal) }
   let(:hearing_task) { create(:hearing_task, parent: root_task) }
@@ -372,7 +373,8 @@ RSpec.shared_examples "Change hearing disposition" do
 
   context "there are other hearing admin and hearings management members" do
     let(:other_admin_full_name) { "Remika Hanisco" }
-    let!(:other_admin_user) { create(:user, full_name: other_admin_full_name, station_id: 101) }
+    let(:staff_record) { create(:staff) }
+    let!(:other_admin_user) { create(:user, full_name: other_admin_full_name, station_id: 101, vacols_uniq_id: staff_record.slogid) }
     let(:admin_full_names) { ["Bisar Helget", "Rose Hidrogo", "Rihab Hancin", "Abby Hudmon"] }
     let(:mgmt_full_names) { ["Claudia Heraty", "Nouf Heigl", "Hayley Houlahan", "Bahiya Haese"] }
     let(:assign_instructions_text) { "This is why I'm assigning this to you." }

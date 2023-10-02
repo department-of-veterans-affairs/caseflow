@@ -94,7 +94,7 @@ class TasksController < ApplicationController
     end
     # This should be the JudgeDecisionReviewTask
     parent_task = if params[:tasks].is_a?(Array) && params[:tasks]&.first[:type] == "AttorneyRewriteTask"
-                  Task.find_by(id: params[:tasks].first[:parent_id])
+                    Task.find_by(id: params[:tasks].first[:parent_id])
                   elsif !params[:tasks].is_a?(Array) && params[:tasks][:type] == "AttorneyRewriteTask"
                     Task.find_by(id: params[:tasks][:parent_id])
                   end
@@ -123,7 +123,6 @@ class TasksController < ApplicationController
     Task.transaction do
       tasks = task.update_from_params(update_params, current_user)
       tasks.each { |t| return invalid_record_error(t) unless t.valid? }
-
       tasks_hash = json_tasks(tasks.uniq)
       if task.appeal.class == LegacyAppeal
         assigned_to = if update_params&.[](:reassign)&.[](:assigned_to_id)
