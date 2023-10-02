@@ -40,7 +40,10 @@ describe NoAvailableModifiersFixJob, :postres do
     create_list(:end_product_establishment, 5, veteran_file_number: file_number, modifier: nil,
                                                source_type: "SupplementalClaim")
     create_list(:end_product_establishment, 2, veteran_file_number: file_number, modifier: "030",
-                                               source_type: "HigherLevelReview")
+                                               source_type: "HigherLevelReview", synced_status: "CLR")
+
+    create_list(:end_product_establishment, 5, veteran_file_number: file_number, modifier: "040",
+                                               source_type: "SupplementalClaim", synced_status: "CAN")
   end
 
   subject { described_class.new }
@@ -48,13 +51,54 @@ describe NoAvailableModifiersFixJob, :postres do
   context "when there are fewer than 10 active end products" do
     describe "when there are 0 active end products" do
       it "runs decision_review_process_job on up to 10 Supplemental Claims" do
-        expect(subject.decision_review_job).to receive(:perform).twice.with(anything)
+        expect(subject.decision_review_job).to receive(:perform).exactly(2).times.with(instance_of(SupplementalClaim))
         subject.perform
       end
     end
 
-    describe "when there are 0 active end products" do
+    describe "when there are 9 active end products" do
+      before do
+        create_list(:end_product_establishment, 4, veteran_file_number: file_number, modifier: "040",
+                                                   source_type: "SupplementalClaim", synced_status: "PEND")
+        create_list(:end_product_establishment, 5, veteran_file_number: file_number, modifier: "040",
+                                                   source_type: "SupplementalClaim", synced_status: "RW")
+      end
+
+      it "runs decision_review_process_job on 1 Supplemental Claim" do
+        expect(subject.decision_review_job).to receive(:perform).exactly(1).times.with(instance_of(SupplementalClaim))
+        subject.perform
+      end
+    end
+    describe "when there are 5 active end products" do
+      before do
+        create_list(:end_product_establishment, 5, veteran_file_number: file_number, modifier: "040",
+                                                   source_type: "SupplementalClaim", synced_status: "PEND")
+        create_list(:supplemental_claim, 4, veteran_file_number: file_number,
+                                            establishment_error: error_text)
+      end
+
       it "runs decision_review_process_job on up to 5 Supplemental Claims" do
+        expect(subject.decision_review_job).to receive(:perform).exactly(5).times.with(instance_of(SupplementalClaim))
+        subject.perform
+      end
+    end
+  end
+
+  context "when there are 10 active end products" do
+    before do
+      create_list(:end_product_establishment, 10, veteran_file_number: file_number, modifier: "040",
+                                                  source_type: "SupplementalClaim", synced_status: "PEND")
+    end
+
+    it "does not run decision_review_process_job on any Supplemental Claims" do
+      expect(subject.decision_review_job).not_to receive(:perform)
+      subject.perform
+    end
+
+    describe "when there are more than 10 active end products" do
+      it "does not run decision_review_process_job on any Supplemental Claims" do
+        epe.update(synced_status: "PEND")
+        expect(subject.decision_review_job).not_to receive(:perform)
         subject.perform
       end
     end

@@ -47,7 +47,8 @@ class NoAvailableModifiersFixJob < CaseflowJob
   end
 
   def current_active_eps_count(file_number)
-    EndProductEstablishment.where(veteran_file_number: file_number).pluck(:synced_status).tally["PEND"]
+    synced_statuses = EndProductEstablishment.where(veteran_file_number: file_number).pluck(:synced_status).compact
+    synced_statuses.count { |status| status != "CAN" && status != "CLR" }
   end
 
   def veterans_with_errors
