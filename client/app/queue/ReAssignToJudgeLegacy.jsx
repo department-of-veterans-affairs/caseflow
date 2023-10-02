@@ -19,10 +19,6 @@ import { requestPatch, requestSave, resetSuccessMessages } from './uiReducer/uiA
 
 import { taskActionData } from './utils';
 
-const validInstructions = (instructions) => {
-  return instructions?.length > 0;
-};
-
 const selectedAction = (props) => {
   const actionData = taskActionData(props);
 
@@ -56,20 +52,6 @@ class ReAssignToJudgeLegacy extends React.Component {
   }
 
   componentDidMount = () => this.props.resetSuccessMessages();
-
-  validateForm = () => {
-    if (this.title === COPY.BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE) {
-      return validInstructions(this.state.instructions);
-    }
-
-    const actionData = taskActionData(this.props);
-
-    if (actionData.body_optional) {
-      return this.state.selectedValue !== null;
-    }
-
-    return this.state.selectedValue !== null && this.state.instructions.trim().length > 0;
-  };
 
   submit = () => {
     const { appeal, task, isReassignAction, isTeamAssign } = this.props;
@@ -127,38 +109,6 @@ class ReAssignToJudgeLegacy extends React.Component {
     });
 
     return assignee;
-  };
-
-  reassignTask = (isLegacyReassignToJudge = false) => {
-    const task = this.props.task;
-    const payload = {
-      data: {
-        task: {
-          reassign: {
-            assigned_to_id: this.state.selectedValue,
-            assigned_to_type: 'User',
-            instructions: this.state.instructions
-          }
-        }
-      }
-    };
-
-    const successMsg = { title: sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) };
-
-    if (isLegacyReassignToJudge) {
-      return this.props.legacyReassignToJudge({
-        tasks: [task],
-        assigneeId: this.state.selectedValue,
-        instructions: this.state.instructions
-      }, successMsg);
-    }
-
-    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).then((resp) => {
-      this.props.onReceiveAmaTasks(resp.body.tasks.data);
-      if (task.type === 'JudgeAssignTask') {
-        this.props.setOvertime(task.externalAppealId, false);
-      }
-    });
   };
 
   determineTitle = () => {

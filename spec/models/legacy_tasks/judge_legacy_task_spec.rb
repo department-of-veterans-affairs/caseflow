@@ -95,17 +95,6 @@ describe JudgeLegacyTask, :postgres do
             Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h,
             Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY_LEGACY.to_h
           ]
-          end
-        end
-
-      context "when the user is on the special case movement team" do
-        let(:user) { create(:user).tap { |scm_user| SpecialCaseMovementTeam.singleton.add_user(scm_user) } }
-
-        it "returns only case movement actions" do
-          expect(subject).to match_array [
-            Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h,
-            Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY_LEGACY.to_h
-          ]
         end
       end
     end
