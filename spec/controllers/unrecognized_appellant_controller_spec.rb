@@ -6,12 +6,14 @@ RSpec.describe UnrecognizedAppellantsController, :postgres, type: :controller do
       let(:updated_relationship) { "updated" }
       let(:updated_address_1) { "updated_address_1" }
       let(:updated_address_2) { "updated_address_2" }
+      let(:ein) { "1234567" }
       let(:params) do
         {
           relationship: updated_relationship,
           unrecognized_party_detail: {
             address_line_1: updated_address_1,
-            address_line_2: updated_address_2
+            address_line_2: updated_address_2,
+            ein: ein
           }
         }
       end
@@ -43,6 +45,7 @@ RSpec.describe UnrecognizedAppellantsController, :postgres, type: :controller do
         expect(response_body["relationship"]).to eq updated_relationship
         expect(response_body["unrecognized_party_detail"]["address_line_1"]).to eq updated_address_1
         expect(response_body["unrecognized_party_detail"]["address_line_2"]).to eq updated_address_2
+        expect(response_body["unrecognized_party_detail"]["ein"]).to eq ein
 
         expect(ua.current_version.relationship).to eq updated_relationship
         expect(ua.first_version.relationship).to eq original_relationship
