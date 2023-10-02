@@ -41,9 +41,9 @@ RSpec.feature "MailTasks", :postgres do
         text = Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label
         click_dropdown(prompt: prompt, text: text)
         fill_in("taskInstructions", with: "instructions")
-        click_button("Submit")
+        click_button("Assign")
 
-        expect(page).to have_content(format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, user.full_name))
+        expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE, user.full_name))
         expect(page.current_path).to eq("/queue")
 
         new_tasks = aod_team_task.children
@@ -120,7 +120,7 @@ RSpec.feature "MailTasks", :postgres do
       find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
       # Instructions field is required
-      expect(page).to have_content(COPY::FORM_ERROR_FIELD_REQUIRED)
+      expect(page).to have_content(COPY::INSTRUCTIONS_ERROR_FIELD_REQUIRED)
 
       # Add instructions and try again
       new_instructions = generate_words(5)
