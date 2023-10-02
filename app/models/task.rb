@@ -190,7 +190,12 @@ class Task < CaseflowRecord
         action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
       end
 
-      check_user_cannot_assign(can_create)
+      if !parent&.actions_allowable?(user) || !can_create
+        user_description = user ? "User #{user.id}" : "nil User"
+        parent_description = parent ? " from #{parent.class.name} #{parent.id}" : ""
+        message = "#{user_description} cannot assign #{name}#{parent_description}."
+        fail Caseflow::Error::ActionForbiddenError, message: message
+      end
     end
 
     def verify_user_can_create_legacy!(user, parent)
@@ -200,10 +205,6 @@ class Task < CaseflowRecord
         action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
       end
 
-      check_user_cannot_assign(can_create)
-    end
-
-    def check_user_cannot_assign(can_create)
       if !parent&.actions_allowable?(user) || !can_create
         user_description = user ? "User #{user.id}" : "nil User"
         parent_description = parent ? " from #{parent.class.name} #{parent.id}" : ""
