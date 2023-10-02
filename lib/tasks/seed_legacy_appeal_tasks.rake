@@ -34,7 +34,11 @@ namespace :db do
                             else false
                             end
           cases = Array.new(num_appeals_to_create).each_with_index.map do
-            key = VACOLS::Folder.find_by_sql("SELECT max(to_number(ticknum)) as maxtick FROM FOLDER").first.maxtick.next
+            if Rails.env.development? || Rails.env.test?
+              key = VACOLS::Folder.maximum(:ticknum).next
+            else
+              key = VACOLS::Folder.find_by_sql("SELECT max(to_number(ticknum)) as maxtick FROM FOLDER").first.maxtick.next
+            end
 
             Generators::Vacols::Case.create(
               decass_creation: decass_creation,
