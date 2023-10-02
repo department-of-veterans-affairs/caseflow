@@ -50,7 +50,7 @@ Rails.application.routes.draw do
         get 'legacy_appeals', to: "legacy_appeals#index"
       end
       namespace :external do
-        get 'veterans/:id', to: 'veterans#decision_reviews'
+        get 'veterans/:id', to: 'veterans#issues'
       end
     end
     namespace :docs do

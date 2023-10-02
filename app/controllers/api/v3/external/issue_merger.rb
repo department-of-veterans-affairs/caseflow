@@ -2,7 +2,8 @@
 
 class Api::V3::External::IssueMerger < Api::V3::BaseController
   def self.merge(veteran)
-    req_issues = RequestIssue.where(veteran_participant_id: veteran.participant_id)
+    req_issues = RequestIssue.where(veteran_participant_id: veteran.participant_id,
+                                    benefit_type: %w[compensation pension fiduciary])
 
     test_issues = []
     req_issues.each do |request_issue|
