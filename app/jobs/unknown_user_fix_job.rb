@@ -3,7 +3,6 @@
 class UnknownUserFixJob < CaseflowJob
   ERROR_TEXT = "UnknownUser"
 
-
   def initialize
     @stuck_job_report_service = StuckJobReportService.new
     super
