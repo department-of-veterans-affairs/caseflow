@@ -96,8 +96,8 @@ export const GUEST_LINK_LABELS = {
   COPY_GUEST_LINK: 'Copy Guest Link',
   PEXIP_GUEST_LINK_SECTION_LABEL: 'Pexip Guest link for non-virtual hearings',
   WEBEX_GUEST_LINK_SECTION_LABEL: 'Webex Guest link for non-virtual hearings',
-  GUEST_CONFERENCE_ROOM: 'Conference Room',
-  GUEST_PIN: 'PIN',
+  GUEST_CONFERENCE_ROOM: 'Conference Room:',
+  GUEST_PIN: 'PIN:',
 }
 
 export const SPREADSHEET_TYPES = {

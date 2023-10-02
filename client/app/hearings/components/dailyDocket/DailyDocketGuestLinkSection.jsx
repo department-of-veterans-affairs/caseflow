@@ -11,7 +11,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
   };
 
   const roomInfoStyle = (index) => ({
-    backgroundColor: index === 0 ? '#f1f1f1" : "white',
+    backgroundColor: index === 0 ? '#f1f1f1' : 'white',
     justifyContent: 'space-between',
     display: 'flex',
     width: '100%',
@@ -35,6 +35,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
       );
     } else if (link.type === 'WebexConferenceLink') {
       const newLink = 'instant-usgov';
+
       return link.alias || newLink || null;
     }
 
@@ -43,11 +44,12 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
 
   const extractPin = (link) => {
     if (link.type === 'PexipConferenceLink') {
-      return link.guestPin +'"#' || link.guestLink?.match(/pin=(\d+)/)?.[1];
+      return link.guestPin || link.guestLink?.match(/pin=(\d+)/)?.[1];
     } else if (link.type === 'WebexConferenceLink') {
       const pinRegex = /(\d{5})$/;
       const match = link.guestLink.match(pinRegex);
-      return match ? match[1] + '#' : 'N/A';
+
+      return match ? match[1] : 'N/A';
     }
 
     return null;
@@ -82,9 +84,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
                   marginLeft: '10px',
                 }}
               >
-                {type === 'PexipConferenceLink'
-                  ? GUEST_LINK_LABELS.PEXIP_GUEST_LINK_SECTION_LABEL
-                  : GUEST_LINK_LABELS.WEBEX_GUEST_LINK_SECTION_LABEL}
+                {type === 'PexipConferenceLink' ? GUEST_LINK_LABELS.PEXIP_GUEST_LINK_SECTION_LABEL : GUEST_LINK_LABELS.WEBEX_GUEST_LINK_SECTION_LABEL}
               </h3>
 
               <h3
@@ -95,7 +95,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
                   width: '400px',
                 }}
               >
-                {GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM + ':'}
+                {GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}
                 <span style={{ fontWeight: 'normal' }}>{alias || 'N/A'}</span>
               </h3>
               <h3
@@ -106,7 +106,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
                   marginBottom: '0px',
                 }}
               >
-                {GUEST_LINK_LABELS.GUEST_PIN + ':'}
+                {GUEST_LINK_LABELS.GUEST_PIN}
                 {linkGuestPin ? (
                   <span
                     style={{
@@ -115,7 +115,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
                       display: 'flex',
                     }}
                   >
-                    {linkGuestPin}
+                    {linkGuestPin + '#'}
                   </span>
                 ) : (
                   <span
