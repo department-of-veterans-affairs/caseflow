@@ -13,7 +13,7 @@ import { bindActionCreators } from 'redux';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, SEARCH_BAR_HEIGHT, PAGE_DIMENSION_SCALE, PAGE_MARGIN } from './constants';
 import { pageNumberOfPageIndex } from './utils';
 import * as PDFJS from 'pdfjs-dist';
-import { collectHistogram, recordMetrics, recordAsyncMetrics, storeMetrics } from '../util/Metrics';
+import { recordMetrics, recordAsyncMetrics, storeMetrics } from '../util/Metrics';
 
 import { css } from 'glamor';
 import classNames from 'classnames';
@@ -225,16 +225,6 @@ export class PdfPage extends React.PureComponent {
         },
       };
 
-      const textMetricData = {
-        message: 'Storing PDF page text',
-        product: 'pdfjs.document.pages',
-        type: 'performance',
-        data: {
-          file: this.props.file,
-          documentId: this.props.documentId,
-        },
-      };
-
       const pageAndTextFeatureToggle = this.props.featureToggles.metricsPdfStorePages;
       const document = this.props.pdfDocument;
       const pageIndex = pageNumberOfPageIndex(this.props.pageIndex);
@@ -242,6 +232,16 @@ export class PdfPage extends React.PureComponent {
 
       pageResult.then((page) => {
         this.page = page;
+
+        const textMetricData = {
+          message: 'Storing PDF page text',
+          product: 'pdfjs.document.pages',
+          type: 'performance',
+          data: {
+            file: this.props.file,
+            documentId: this.props.documentId,
+          },
+        };
 
         const readerRenderText = {
           uuid: uuidv4(),
@@ -263,18 +263,24 @@ export class PdfPage extends React.PureComponent {
         });
 
         this.drawPage(page).then(() => {
-          collectHistogram({
-            group: 'front_end',
-            name: 'pdf_page_render_time_in_ms',
-            value: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0,
-            appName: 'Reader',
-            attrs: {
-              documentId: this.props.documentId,
-              overscan: this.props.windowingOverscan,
-              documentType: this.props.documentType,
-              pageCount: this.props.pdfDocument.numPages
-            }
-          });
+          const data = {
+            overscan: this.props.windowingOverscan,
+            documentType: this.props.documentType,
+            pageCount: this.props.pdfDocument.numPages
+          };
+
+          if (this.props.featureToggles.pdfPageRenderTimeInMs) {
+            storeMetrics(
+              this.props.documentId,
+              data,
+              {
+                message: 'pdf_page_render_time_in_ms',
+                type: 'performance',
+                product: 'reader',
+                duration: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0
+              }
+            );
+          }
         });
       }).catch((error) => {
         const id = uuid.v4();
@@ -286,14 +292,16 @@ export class PdfPage extends React.PureComponent {
         const message = `${id} : setUpPage ${this.props.file} : ${error}`;
 
         console.error(message);
-        storeMetrics(
-          id,
-          data,
-          { message,
-            type: 'error',
-            product: 'browser',
-          }
-        );
+        if (pageAndTextFeatureToggle) {
+          storeMetrics(
+            id,
+            data,
+            { message,
+              type: 'error',
+              product: 'browser',
+            }
+          );
+        }
       });
     }
   };
