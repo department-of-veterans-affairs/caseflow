@@ -183,6 +183,7 @@ class Task < CaseflowRecord
       false
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def verify_user_can_create!(user, parent)
       can_create = parent&.available_actions(user)&.map do |action|
         parent.build_action_hash(action, user)
@@ -190,12 +191,7 @@ class Task < CaseflowRecord
         action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
       end
 
-      if !parent&.actions_allowable?(user) || !can_create
-        user_description = user ? "User #{user.id}" : "nil User"
-        parent_description = parent ? " from #{parent.class.name} #{parent.id}" : ""
-        message = "#{user_description} cannot assign #{name}#{parent_description}."
-        fail Caseflow::Error::ActionForbiddenError, message: message
-      end
+      can_assign_to_parent?(user, parent, can_create)
     end
 
     def verify_user_can_create_legacy!(user, parent)
@@ -205,6 +201,11 @@ class Task < CaseflowRecord
         action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
       end
 
+      can_assign_to_parent?(user, parent, can_create)
+    end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+    def can_assign_to_parent?(user, parent, can_create)
       if !parent&.actions_allowable?(user) || !can_create
         user_description = user ? "User #{user.id}" : "nil User"
         parent_description = parent ? " from #{parent.class.name} #{parent.id}" : ""
