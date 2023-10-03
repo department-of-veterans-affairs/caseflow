@@ -5,9 +5,6 @@ import { axe } from 'jest-axe';
 import { InboxMessagesPage } from '../../app/inbox/pages/InboxPage';
 import { emptyMessages, allUnreadMessages, oneReadAndOneUnreadMessages } from '../data/inbox';
 
-const successMessage = 'Success! You have no unread messages.';
-const messagesRemovedMessage =
-  'Messages will remain in the intake box for 120 days. After such time, messages will be removed.';
 const defaultProps = {
   messages: emptyMessages,
   pagination: {
@@ -18,10 +15,23 @@ const defaultProps = {
   }
 };
 
+const paginationProps = defaultProps.pagination;
+
+const successMessage = 'Success! You have no unread messages.';
+const messagesRemovedMessage =
+  'Messages will remain in the intake box for 120 days. After such time, messages will be removed.';
+const paginationOptions =
+  `Viewing ${paginationProps.current_page}-${paginationProps.total_items} of ${paginationProps.total_items} total`;
+
 const setupComponent = (props = {}) => {
   return render(
     <InboxMessagesPage {...defaultProps}{...props} />
   );
+};
+
+const setupMessages = (messages) => {
+  defaultProps.messages = messages;
+  setupComponent();
 };
 
 describe('InboxPage rendering success message', () => {
@@ -45,19 +55,15 @@ describe('InboxPage rendering success message', () => {
     expect(screen.queryByText(successMessage)).toBeInTheDocument();
   });
 
-  it('renders an inbox with unread messages and no success message', () => {
-    defaultProps.messages = allUnreadMessages;
-    setupComponent();
 
-    expect(screen.queryByText(successMessage)).not.toBeInTheDocument();
-  });
 });
 
 describe('renders with data', () => {
-  const setupMessages = (messages) => {
-    defaultProps.messages = messages;
-    setupComponent();
-  };
+  it('renders an inbox with unread messages and no success message', () => {
+    setupMessages(allUnreadMessages);
+
+    expect(screen.queryByText(successMessage)).not.toBeInTheDocument();
+  });
 
   it('has a message about when the messages are removed', () => {
     setupMessages(allUnreadMessages);
@@ -67,11 +73,6 @@ describe('renders with data', () => {
 
   it('renders the correct pagination options', () => {
     setupMessages(allUnreadMessages);
-
-    const paginationProps = defaultProps.pagination;
-
-    const paginationOptions =
-      `Viewing ${paginationProps.current_page}-${paginationProps.total_items} of ${paginationProps.total_items} total`;
 
     expect(screen.queryByText(paginationOptions)).toBeInTheDocument();
   });
