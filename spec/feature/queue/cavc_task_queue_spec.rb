@@ -585,7 +585,8 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           end
           fill_in "taskInstructions", with: "Going fishing. Handing off to you."
           click_on "Assign"
-          expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, task.appeal.veteran_full_name, org_nonadmin2.full_name))
+          expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, task.appeal.veteran_full_name,
+                                              org_nonadmin2.full_name))
         end
       end
     end
@@ -862,7 +863,8 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           find("div", class: "cf-select__option", text: org_nonadmin2.full_name).click
           fill_in "taskInstructions", with: "Reassigning to org_nonadmin3 to check that TimedHoldTask moves."
           click_on "Assign"
-          expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, task.appeal.veteran_full_name, org_nonadmin2.full_name))
+          expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, task.appeal.veteran_full_name,
+                                              org_nonadmin2.full_name))
 
           # open timed_hold_task is moved to new parent task assigned to org_nonadmin2
           expect(timed_hold_task.reload.parent.assigned_to).to eq org_nonadmin2
