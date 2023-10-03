@@ -22,20 +22,27 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
     context "With the Appeal in the right state" do
       it "successfully assigns the task to judge" do
         visit("queue/appeals/#{appeal.external_id}")
+        refresh while page.has_text?("Unable to load")
         prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
         text = Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.label
-        click_dropdown(prompt: prompt, text: text)
-
+        expect(page).to have_content(prompt.to_s)
+        within all(".cf-select")[0] do
+          click_dropdown(prompt: prompt, text: text)
+        end
         # Select a judge, fill in instructions, submit
-        click_dropdown(prompt: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER,
-                       text: judge_user.full_name)
+        within all(".cf-select")[1] do
+          click_dropdown(prompt: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER,
+                         text: judge_user.full_name)
+        end
+
         fill_in("taskInstructions", with: "instructions")
 
-        binding.pry
         click_button("Assign")
 
         # expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % judge_user.full_name)
-        expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, appeal.veteran_full_name, judge_user.full_name))
+        expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM,
+                                            appeal.veteran_full_name,
+                                            judge_user.full_name))
         # Auth as judge user
         User.authenticate!(user: judge_user)
         visit "/queue"
