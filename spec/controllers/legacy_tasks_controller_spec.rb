@@ -353,11 +353,9 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
 
   describe "Das Deprecation" do
     before do
-      FeatureToggle.enable!(:legacy_das_deprecation)
       User.authenticate!(user: judge)
     end
 
-    after { FeatureToggle.disable!(:legacy_das_deprecation) }
     let(:task_type) { :attorney_task }
     let!(:vacols_case) { create(:case) }
     let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
