@@ -34,7 +34,7 @@ const setupMessages = (messages) => {
   setupComponent();
 };
 
-describe('InboxPage rendering success message', () => {
+describe('InboxPage rendering with an empty inbox', () => {
   it('renders correctly', async () => {
     const { container } = setupComponent();
 
@@ -49,15 +49,15 @@ describe('InboxPage rendering success message', () => {
     expect(results).toHaveNoViolations();
   });
 
-  it('renders an empty inbox with a the success message', () => {
+  it('renders a the success message', () => {
     setupComponent();
 
     expect(screen.queryByText(successMessage)).toBeInTheDocument();
   });
 });
 
-describe('renders with data', () => {
-  it('renders an inbox with unread messages and no success message', () => {
+describe('InboxPage rendering with data', () => {
+  it('renders no success message', () => {
     setupMessages(allUnreadMessages);
 
     expect(screen.queryByText(successMessage)).not.toBeInTheDocument();
