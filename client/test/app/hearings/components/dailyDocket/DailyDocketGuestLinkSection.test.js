@@ -21,22 +21,30 @@ describe('DailyDocketGuestLinkSection', () => {
   it('renders the guest link information', async () => {
     render(<DailyDocketGuestLinkSection linkInfo={linkInfo} />);
 
-    const link1Alias = screen.getAllByText('Conference Room:');
+    const link1Alias = await screen.getAllByText('Conference Room:');
+    const pexipLinkText = await screen.findByText(
+      'Pexip Guest link for non-virtual hearings'
+    );
     const link1Pin = await screen.findByText('123456#');
     const link1CopyButtons = screen.getAllByRole('button', {
       name: 'Copy Guest Link',
     });
 
-    const link2Alias = screen.getAllByText('Conference Room:');
+    const webexLinkText = await screen.findByText(
+      'Webex Guest link for non-virtual hearings'
+    );
+    const link2Alias = await screen.getAllByText('Conference Room:');
     const link2Pin = await screen.findByText('123456789#');
     const link2CopyButton = screen.getAllByRole('button', {
       name: 'Copy Guest Link',
     });
 
+    expect(pexipLinkText).toBeInTheDocument();
     expect(link1Alias[0]).toBeInTheDocument();
     expect(link1Pin).toBeInTheDocument();
     expect(link1CopyButtons[0]).toBeInTheDocument();
 
+    expect(webexLinkText).toBeInTheDocument();
     expect(link2Alias[1]).toBeInTheDocument();
     expect(link2Pin).toBeInTheDocument();
     expect(link2CopyButton[1]).toBeInTheDocument();
