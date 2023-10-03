@@ -5,13 +5,19 @@ class Metrics::V2::LogsController < ApplicationController
 
   def create
 
-    return nil unless FeatureToggle.enabled?(:metrics_monitoring, user: RequestStore[:current_user])
+    return metrics_not_saved unless FeatureToggle.enabled?(:metrics_monitoring, user: RequestStore[:current_user])
 
     metric = Metric.create_metric_from_rest(self, allowed_params, current_user)
     failed_metric_info = metric&.errors.inspect || allowed_params[:message]
     Rails.logger.info("Failed to create metric #{failed_metric_info}") unless metric&.valid?
 
     head :ok
+  end
+
+  private
+
+  def metrics_not_saved
+    render json: { error_code: "Metrics not saved for user" }, status: :unprocessable_entity
   end
 
   def allowed_params
