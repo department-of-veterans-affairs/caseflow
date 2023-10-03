@@ -1,27 +1,16 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import ApiUtil from '../util/ApiUtil';
 
 import RadioField from '../components/RadioField';
 import COPY from '../../COPY';
 
 const radioOptions = [
-  { displayText: 'Pexip',
-    value: 'pexip' },
-  { displayText: 'Webex',
-    value: 'webex' }
+  { displayText: 'Pexip', value: '1' },
+  { displayText: 'Webex', value: '2' },
 ];
 
-const SelectConferenceTypeRadioField = ({ name, conferenceProvider, organization, user }) => {
-  const [value, setValue] = useState(conferenceProvider);
-
-  const modifyConferenceType = (newConferenceProvider) => {
-    const payload = {
-      data: { ...user, attributes: { ...user.attributes, conference_provider: newConferenceProvider } }
-    };
-
-    ApiUtil.patch(`/organizations/${organization}/users/${user.id}`, payload);
-  };
+const SelectConferenceTypeRadioField = ({ name }) => {
+  const [value, setValue] = useState('1');
 
   return (
     <>
@@ -30,21 +19,15 @@ const SelectConferenceTypeRadioField = ({ name, conferenceProvider, organization
         name={name}
         options={radioOptions}
         value={value}
-        onChange={((newValue) => setValue(newValue) || modifyConferenceType(newValue))}
+        onChange={(newValue) => setValue(newValue)}
         vertical
-      /></>
+      />
+    </>
   );
 };
 
 SelectConferenceTypeRadioField.propTypes = {
   name: PropTypes.string,
-  onClick: PropTypes.func,
-  conferenceProvider: PropTypes.string,
-  organization: PropTypes.string,
-  user: PropTypes.shape({
-    id: PropTypes.string,
-    attributes: PropTypes.object
-  })
 };
 
 export default SelectConferenceTypeRadioField;
