@@ -100,6 +100,11 @@ Rails.application.configure do
   # Quarterly Notifications Batch Sizes
   ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"] ||= "1000"
 
+  # Populate End Product Sync Queue ENVs
+  ENV["END_PRODUCT_QUEUE_JOB_DURATION"] ||= "50" # Number of minutes the job will run for
+  ENV["END_PRODUCT_QUEUE_SLEEP_DURATION"] ||= "5" # Number of seconds between loop iterations
+  ENV["END_PRODUCT_QUEUE_BATCH_LIMIT"] ||= "500" # Max number of records in a batch
+
   # Travel Board Sync Batch Size
   ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"] ||= "250"
 

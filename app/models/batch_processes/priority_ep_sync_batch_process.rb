@@ -87,6 +87,7 @@ class PriorityEpSyncBatchProcess < BatchProcess
   private
 
   # Purpose: Destroys "SYNCED" PEPSQ records to limit the growing number of table records.
+  # This functionality is needed for the PopulateEndProductSyncQueueJob query to be performant.
   #
   # Params: None
   #
