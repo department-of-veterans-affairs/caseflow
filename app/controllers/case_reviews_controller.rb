@@ -10,8 +10,7 @@ class CaseReviewsController < ApplicationController
   end
 
   def complete
-    new_complete_case_review = CompleteCaseReview.new(case_review_class: case_review_class, params: complete_params)
-    result = new_complete_case_review.call
+    result = CompleteCaseReview.new(case_review_class: case_review_class, params: complete_params).call
     if result.success?
       case_review = result.extra[:case_review]
       render json: {

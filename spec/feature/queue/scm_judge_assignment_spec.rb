@@ -143,7 +143,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(prompt: "Select a user", text: judge_two.full_name)
           instructions = "#{judge_one.full_name} is on leave. Please take over this case"
           fill_in("taskInstructions", with: instructions)
-          click_on("Submit")
+          click_on("Assign")
 
           expect(page).to have_content("Task reassigned to #{judge_two.full_name}")
 
@@ -234,7 +234,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(propmt: "Select an action...", text: "Re-assign to a judge")
           click_dropdown(prompt: "Select a user", text: judge_two.full_name)
           fill_in("taskInstructions", with: "#{judge_one.full_name} is on leave. Please take over this case")
-          click_on("Submit")
+          click_on("Assign")
 
           expect(page).to have_content("Task reassigned to #{judge_two.full_name}")
 
