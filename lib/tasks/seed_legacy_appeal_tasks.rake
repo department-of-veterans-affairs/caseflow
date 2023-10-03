@@ -127,7 +127,6 @@ namespace :db do
           end
         end
 
-
         def custom_decass_attributes(key, user, decass_creation)
           attorney = if Rails.env.development? || Rails.env.test?
                        User.find_by_css_id("BVALSHIELDS") # local / test option
