@@ -26,19 +26,14 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
         prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
         text = Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.label
         expect(page).to have_content(prompt.to_s)
-        within all(".cf-select")[0] do
-          click_dropdown(prompt: prompt, text: text)
-        end
+        click_dropdown(prompt: prompt, text: text)
         # Select a judge, fill in instructions, submit
-        within all(".cf-select")[1] do
-          click_dropdown(prompt: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER,
-                         text: judge_user.full_name)
-        end
+        click_dropdown(prompt: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER,
+                       text: judge_user.full_name)
 
         fill_in("taskInstructions", with: "instructions")
 
         click_button("Assign")
-
         # expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % judge_user.full_name)
         expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM,
                                             appeal.veteran_full_name,
@@ -117,7 +112,7 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
         expect(page).to have_content("#{ScheduleHearingTask.name} cancelled")
         expect(page).to have_content("CANCELLED BY\n#{scm_user.css_id}")
         page.find_all(".taskInformationTimelineContainerStyling button", text: "View task instructions").first.click
-        expect(page).to have_content("TASK INSTRUCTIONS\nReason:\nInstructions for the judge")
+        expect(page).to have_content("TASK INSTRUCTIONS\nReason:\nDeath dismissal: Instructions for cancellation")
 
         expect(page).to have_content("#{BlockedSpecialCaseMovementTask.name} completed")
         expect(page).to have_content("#{DistributionTask.name} completed")
