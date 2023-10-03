@@ -17,7 +17,7 @@ describe JudgeLegacyTask, :postgres do
     JudgeLegacyTask.from_vacols(
       case_assignment,
       LegacyAppeal.create(vacols_id: vacols_id, case_record: vacols_case),
-      judge,
+      judge
     )
   end
   let(:case_assignment) do
