@@ -11,7 +11,6 @@ class CaseReviewsController < ApplicationController
 
   def complete
     result = CompleteCaseReview.new(case_review_class: case_review_class, params: complete_params).call
-
     if result.success?
       case_review = result.extra[:case_review]
       render json: {
@@ -74,6 +73,7 @@ class CaseReviewsController < ApplicationController
 
   def issues_params
     # This is a combined list of params for ama and legacy appeals
+    # Reprsents the information the front end is sending to create a decision issue object
     [
       :id,
       :disposition,
@@ -81,6 +81,8 @@ class CaseReviewsController < ApplicationController
       :readjudication,
       :benefit_type,
       :diagnostic_code,
+      :mst_status,
+      :pact_status,
       request_issue_ids: [],
       remand_reasons: [
         :code,

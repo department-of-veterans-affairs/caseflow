@@ -30,6 +30,7 @@ class TasksController < ApplicationController
     EducationDocumentSearchTask: EducationDocumentSearchTask,
     FoiaTask: FoiaTask,
     HearingAdminActionTask: HearingAdminActionTask,
+    HearingPostponementRequestMailTask: HearingPostponementRequestMailTask,
     InformalHearingPresentationTask: InformalHearingPresentationTask,
     JudgeAddressMotionToVacateTask: JudgeAddressMotionToVacateTask,
     JudgeAssignTask: JudgeAssignTask,
@@ -92,8 +93,21 @@ class TasksController < ApplicationController
     param_groups.each do |task_type, param_group|
       tasks << valid_task_classes[task_type.to_sym].create_many_from_params(param_group, current_user)
     end
-    modified_tasks = [parent_tasks_from_params, tasks].flatten.uniq
+    # This should be the JudgeDecisionReviewTask
+    parent_task = if params[:tasks].is_a?(Array) && params[:tasks]&.first[:type] == "AttorneyRewriteTask"
+                  Task.find_by(id: params[:tasks].first[:parent_id])
+                  elsif !params[:tasks].is_a?(Array) && params[:tasks][:type] == "AttorneyRewriteTask"
+                    Task.find_by(id: params[:tasks][:parent_id])
+                  end
+    if parent_task&.appeal&.is_a?(LegacyAppeal)
+      QueueRepository.reassign_decass_to_attorney!(
+        judge: parent_task.assigned_to,
+        attorney: User.find(params[:tasks].first[:assigned_to_id]),
+        vacols_id: parent_task.appeal.external_id
+      )
+    end
 
+    modified_tasks = [parent_tasks_from_params, tasks].flatten.uniq
     render json: { tasks: json_tasks(modified_tasks) }
   rescue ActiveRecord::RecordInvalid => error
     invalid_record_error(error.record)
@@ -112,7 +126,14 @@ class TasksController < ApplicationController
       tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
       tasks_hash = json_tasks(tasks.uniq)
-      if task.appeal.class != LegacyAppeal
+      if task.appeal.class == LegacyAppeal
+        assigned_to = if update_params&.[](:reassign)&.[](:assigned_to_id)
+                        User.find(update_params[:reassign][:assigned_to_id])
+                      elsif task.type == "AttorneyTask" || task.type == "AttorneyRewriteTask"
+                        User.find(Task.find_by(id: task.parent_id).assigned_to_id)
+                      end
+        QueueRepository.update_location_to_judge(task.appeal.vacols_id, assigned_to) if assigned_to
+      else
         modified_task_contested_claim
       end
       # currently alerts are only returned by ScheduleHearingTask
@@ -359,12 +380,19 @@ class TasksController < ApplicationController
     @create_params ||= [params.require("tasks")].flatten.map do |task|
       appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id])
       task = task.merge(instructions: [task[:instructions]].flatten.compact)
-      task = task.permit(:type, { instructions: [] }, :assigned_to_id,
+      task = task.permit(:type, { instructions: [] }, :assigned_to_id, :cancellation_reason,
                          :assigned_to_type, :parent_id, business_payloads: [:description, values: {}])
         .merge(assigned_by: current_user)
         .merge(appeal: appeal)
 
       task = task.merge(assigned_to_type: User.name) if !task[:assigned_to_type]
+
+      if appeal.is_a?(LegacyAppeal)
+        if task[:type] == "BlockedSpecialCaseMovementTask" || task[:type] == "SpecialCaseMovementTask"
+          task = task.merge(external_id: params["tasks"][0]["external_id"], legacy_task_type: params["tasks"][0]["legacy_task_type"],
+                            appeal_type: params["tasks"][0]["appeal_type"])
+        end
+      end
       task
     end
   end
@@ -378,7 +406,7 @@ class TasksController < ApplicationController
       :select_opc,
       :radio_value,
       :parent_id,
-      reassign: [:assigned_to_id, :assigned_to_type, :instructions],
+      reassign: [:assigned_to_id, :assigned_to_type, :instructions, previous: [:details, :old_judge, :new_judge]],
       business_payloads: [:description, values: {}]
     )
   end
