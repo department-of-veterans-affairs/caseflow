@@ -54,8 +54,6 @@ describe('InboxPage rendering success message', () => {
 
     expect(screen.queryByText(successMessage)).toBeInTheDocument();
   });
-
-
 });
 
 describe('renders with data', () => {
@@ -84,9 +82,12 @@ describe('renders with data', () => {
 
     expect(trElements.length - 1).toBe(2);
 
-    const unreadButtons = screen.getAllByRole('button', 'Mark as read');
+    const unreadButtons = screen.getAllByRole('button');
 
     expect(unreadButtons.length).toBe(2);
+    for (let button of unreadButtons) {
+      expect(button).toBeEnabled();
+    }
   });
 
   it('renders an inbox with one read and one unread messages', () => {
@@ -96,7 +97,9 @@ describe('renders with data', () => {
 
     expect(trElements.length - 1).toBe(2);
 
-    expect(screen.getByText('Read Sat Sep 23 2023 at 15:18')).toBeInTheDocument();
-    expect(screen.getByText('Mark as read')).toBeInTheDocument();
+    const allButtons = screen.getAllByRole('button');
+
+    expect(allButtons[0]).toBeInTheDocument();
+    expect(allButtons[0]).not.toBeEnabled();
   });
 });
