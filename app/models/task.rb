@@ -183,6 +183,7 @@ class Task < CaseflowRecord
       false
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def verify_user_can_create!(user, parent)
       can_create = parent&.available_actions(user)&.map do |action|
         parent.build_action_hash(action, user)
@@ -202,6 +203,7 @@ class Task < CaseflowRecord
 
       can_assign_to_parent?(user, parent, can_create)
     end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def can_assign_to_parent?(user, parent, can_create)
       if !parent&.actions_allowable?(user) || !can_create
