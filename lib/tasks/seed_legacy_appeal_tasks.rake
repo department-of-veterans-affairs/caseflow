@@ -7,8 +7,11 @@
 namespace :db do
   desc "Generates a smattering of legacy appeals with VACOLS cases that have special issues assocaited with them"
   task generate_legacy_appeals_with_tasks: :environment do
+    # rubocop:disable Lint/ConstantDefinitionInBlock
     class LegacyAppealFactory
+      # rubocop:enable Lint/ConstantDefinitionInBlock
       class << self
+        # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity
         def stamp_out_legacy_appeals(num_appeals_to_create, file_number, user, docket_number, task_type)
           # Changes location of vacols based on if you want a hearing task or only a legacy task in location 81
           if task_type == "HEARINGTASK" || task_type == "SCENARIO1EDGE"
@@ -31,10 +34,14 @@ namespace :db do
           # which is grabbed from the Decass table (b/c it is an AttorneyLegacyTask)
           decass_creation = if (task_type == "ATTORNEYTASK" && user&.attorney_in_vacols?) || task_type == "REVIEWTASK"
                               true
+                              # rubocop:disable Lint/ElseLayout
                             else false
+                              # rubocop:enable Lint/ElseLayout
                             end
           cases = Array.new(num_appeals_to_create).each_with_index.map do
+            # rubocop:disable Style/ConditionalAssignment
             if Rails.env.development? || Rails.env.test?
+              # rubocop:enable Style/ConditionalAssignment
               key = VACOLS::Folder.maximum(:ticknum).next
             else
               key = VACOLS::Folder.find_by_sql("SELECT max(to_number(ticknum)) as maxtick FROM FOLDER").first.maxtick.next
@@ -61,7 +68,6 @@ namespace :db do
           end.compact
 
           build_the_cases_in_caseflow(cases, task_type, user)
-          # rubocop:enable, Metrics/ParameterLists, Metrics/MethodLength, Metrics/AbcSize, Layout/LineLength
         end
 
         def custom_folder_attributes(veteran, docket_number)
@@ -126,6 +132,7 @@ namespace :db do
             }
           end
         end
+        # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity
 
         def custom_decass_attributes(key, user, decass_creation)
           attorney = if Rails.env.development? || Rails.env.test?
@@ -246,6 +253,7 @@ namespace :db do
         ########################################################
         # Creates Edge case data for the LegacyAppeals that have just been generated
         # Scenario 1
+        # rubocop: disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
         def create_edge_case_task_for_legacy_appeals(appeal)
           root_task = RootTask.find_or_create_by!(appeal: appeal)
           rand_val = rand(100)
@@ -337,12 +345,14 @@ namespace :db do
 
           $stdout.puts("You have created a Hearing Task")
         end
+        # rubocop: enable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
 
         def initialize_root_task_for_legacy_appeals(appeal)
           RootTask.find_or_create_by!(appeal: appeal)
           $stdout.puts("You have set the Location to 81")
         end
 
+        # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         def create_task(task_type, appeal, user)
           if task_type == "HEARINGTASK"
             create_hearing_task_for_legacy_appeals(appeal)
@@ -357,8 +367,8 @@ namespace :db do
           elsif task_type == "SCENARIO1EDGE"
             create_edge_case_task_for_legacy_appeals(appeal)
           end
-          # rubocop:enable
         end
+        # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
         ########################################################
         # Create Postgres LegacyAppeals based on VACOLS Cases
