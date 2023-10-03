@@ -29,14 +29,14 @@ module WarRoom
     # The next two methods are part of the APPEALS-22696 initiative to priority sync
     # all EPs in Caseflow with VBMS
     # The following method is priority syncing cleared EPs
-    def run_for_cleared_eps(batch_limit, env)
+    def run_for_cleared_eps(batch_limit)
       RequestStore[:current_user] = User.system_user
       conn = ActiveRecord::Base.connection
 
       @error_log = []
       @run_log = []
 
-      error_ids = get_error_ids(env)
+      error_ids = get_error_ids
 
       eps_queried = get_cleared_eps(batch_limit, error_ids, conn)
       eps_queried.each do |x|
@@ -53,14 +53,14 @@ module WarRoom
     end
 
     # Priority sync for cancelled EPs
-    def run_for_cancelled_eps(batch_limit, env)
+    def run_for_cancelled_eps(batch_limit)
       RequestStore[:current_user] = User.system_user
       conn = ActiveRecord::Base.connection
 
       @error_log = []
       @run_log = []
 
-      error_ids = get_error_ids(env)
+      error_ids = get_error_ids
 
       eps_queried = get_cancelled_eps(batch_limit, error_ids, conn)
       eps_queried.each do |x|
@@ -128,14 +128,20 @@ module WarRoom
     ####################################################################
 
     # Grab txt file of previously errored EP reference ids from s3 and return as an array
-    def get_error_ids(env)
-      # Set Client Resources for AWS
-      Aws.config.update(region: "us-gov-west-1")
-      s3client = Aws::S3::Client.new
-      key_name = "ep_establishment_workaround/#{env}/ep_priority_sync/error_ids.txt"
+    def get_error_ids
+      error_txt = S3Service.fetch_content(S3_BUCKET_NAME + "/error_ids.txt")
+      error_txt.gsub("\r","").split("\n").map{ |obj| obj[1...-1] }
+    end
 
-      filepath = s3client.get_object(bucket:'appeals-dbas', key:key_name)
-      filepath.body.read.gsub("\r","").split("\n").map{ |obj| obj[1...-1] }
+    # Method to log errors to S3 error_ids txt file in real time in case of
+    # sync failure mid batch processing
+    # S3 does not support appending or modifying files in any way so the current txt file
+    # of errors has to be pulled and stored locally, modified locally, and then re-uploaded
+    def realtime_log_error_to_s3(reference_id)
+      error_txt = S3Service.fetch_content(S3_BUCKET_NAME + "/error_ids.txt")
+      error_txt << "\r\n"
+      error_txt << '"' + "#{reference_id}"+ '"'
+      S3Service.store_file(S3_BUCKET_NAME + "/error_ids.txt", error_txt)
     end
 
     # Grab cleared EPs that are out of sync
@@ -228,6 +234,7 @@ module WarRoom
           prev_synced_status: sync_status_before,
           error: error.message
         )
+        realtime_log_error_to_s3(epe.reference_id)
       end
     end
 

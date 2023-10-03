@@ -56,8 +56,18 @@ export class PdfFile extends React.PureComponent {
 
     this.props.clearDocumentLoadError(this.props.file);
 
-    // We have to set withCredentials to true since we're requesting the file from a
-    // different domain (eFolder), and still need to pass our credentials to authenticate.
+    if (this.props.featureToggles.readerGetDocumentLogging) {
+      return this.getDocumentWithLogging(requestOptions);
+    }
+
+    return this.getDocument(requestOptions);
+  }
+
+  /**
+   * We have to set withCredentials to true since we're requesting the file from a
+   * different domain (eFolder), and still need to pass our credentials to authenticate.
+   */
+  getDocument = (requestOptions) => {
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
         this.loadingTask = PDFJS.getDocument({ data: resp.body });
@@ -81,6 +91,58 @@ export class PdfFile extends React.PureComponent {
       }, (reason) => this.onRejected(reason, 'setPdfDocument')).
       catch((error) => {
         console.error(`${uuid.v4()} : GET ${this.props.file} : ${error}`);
+        this.loadingTask = null;
+        this.props.setDocumentLoadError(this.props.file);
+      });
+  }
+
+  /**
+   * This version of the method has additional logging and debugging configuration
+   * It is behind the feature toggle reader_get_document_logging
+   *
+   * We have to set withCredentials to true since we're requesting the file from a
+   * different domain (eFolder), and still need to pass our credentials to authenticate.
+   */
+  getDocumentWithLogging = (requestOptions) => {
+    const logId = uuid.v4();
+
+    return ApiUtil.get(this.props.file, requestOptions).
+      then((resp) => {
+        const src = {
+          data: resp.body,
+          verbosity: 5,
+          stopAtErrors: false,
+          pdfBug: true,
+        };
+
+        this.loadingTask = PDFJS.getDocument(src);
+
+        this.loadingTask.onProgress = (progress) => {
+          // eslint-disable-next-line no-console
+          console.log(`${logId} : Progress of ${this.props.file} reached ${progress}`);
+          // eslint-disable-next-line no-console
+          console.log(`${logId} : Progress of ${this.props.file} reached ${progress.loaded} / ${progress.total}`);
+        };
+
+        return this.loadingTask.promise;
+      }, (reason) => this.onRejected(reason, 'getDocument')).
+      then((pdfDocument) => {
+        this.pdfDocument = pdfDocument;
+
+        return this.getPages(pdfDocument);
+      }, (reason) => this.onRejected(reason, 'getPages')).
+      then((pages) => this.setPageDimensions(pages)
+        , (reason) => this.onRejected(reason, 'setPageDimensions')).
+      then(() => {
+        if (this.loadingTask.destroyed) {
+          return this.pdfDocument.destroy();
+        }
+        this.loadingTask = null;
+
+        return this.props.setPdfDocument(this.props.file, this.pdfDocument);
+      }, (reason) => this.onRejected(reason, 'setPdfDocument')).
+      catch((error) => {
+        console.error(`${logId} : GET ${this.props.file} : ${error}`);
         this.loadingTask = null;
         this.props.setDocumentLoadError(this.props.file);
       });
@@ -531,7 +593,8 @@ PdfFile.propTypes = {
   togglePdfSidebar: PropTypes.func,
   updateSearchIndexPage: PropTypes.func,
   updateSearchRelativeIndex: PropTypes.func,
-  windowingOverscan: PropTypes.number
+  windowingOverscan: PropTypes.number,
+  featureToggles: PropTypes.object
 };
 
 const mapDispatchToProps = (dispatch) => ({

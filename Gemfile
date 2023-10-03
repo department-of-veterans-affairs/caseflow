@@ -19,7 +19,7 @@ gem "browser"
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "6377b46c2639248574673adc6a708d2568c6958c"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "98b1f9f8aa368189a59af74d91cb0aa4c55006af"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", branch: "master"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
 gem "countries"
 gem "ddtrace"
@@ -45,9 +45,10 @@ gem "parallel"
 gem "paranoia", "~> 2.2"
 # PDF Tools
 gem "pdf-forms"
+# Used in Caseflow Dispatch
 gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git", ref: "a4249eacbf70175db63b57e9f364d0a9a79e2b43"
-#Used to build out PDF files on the backend
-#https://github.com/pdfkit/pdfkit
+# Used to build out PDF files on the backend
+# https://github.com/pdfkit/pdfkit
 gem "pdfkit"
 gem "pg", platforms: :ruby
 # Application server: Puma
@@ -60,6 +61,7 @@ gem "rails", "5.2.4.6"
 gem "rainbow"
 # React
 gem "react_on_rails", "11.3.0"
+gem "redis-mutex"
 gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"

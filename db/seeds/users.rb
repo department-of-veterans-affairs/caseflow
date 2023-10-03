@@ -69,7 +69,6 @@ module Seeds
       BvaIntake.singleton.add_user(bva_intake_user)
 
       Functions.grant!("System Admin", users: User.all.pluck(:css_id))
-
       create_team_admin
       create_colocated_users
       create_transcription_team
@@ -282,7 +281,7 @@ module Seeds
     end
 
     def create_org_queue_users
-      nca = BusinessLine.create!(name: "National Cemetery Administration", url: "nca")
+      nca = BusinessLine.find_or_create_by!(name: "National Cemetery Administration", url: "nca")
       %w[Parveen Chandra Sydney Tai Kennedy].each do |name|
         u = User.create!(station_id: 101, css_id: "NCA_QUEUE_USER_#{name}", full_name: "#{name} NCAUser Carter")
         nca.add_user(u)

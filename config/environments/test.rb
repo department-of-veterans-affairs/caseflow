@@ -47,7 +47,9 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :test
 
   # Print deprecation notices to the stderr.
-  config.active_support.deprecation = :stderr
+  # config.active_support.deprecation = :stderr
+  require_relative "../../app/services/deprecation_warnings/test_handler"
+  ActiveSupport::Deprecation.behavior = DeprecationWarnings::TestHandler
 
   # Setup S3
   config.s3_enabled = false
@@ -87,6 +89,14 @@ Rails.application.configure do
   ENV["AWS_ACCESS_KEY_ID"] ||= "dummykeyid"
   ENV["AWS_SECRET_ACCESS_KEY"] ||= "dummysecretkey"
 
+  # BatchProcess ENVs
+  # priority_ep_sync
+  ENV["BATCH_PROCESS_JOB_DURATION"] ||= "50" # Number of minutes the job will run for
+  ENV["BATCH_PROCESS_SLEEP_DURATION"] ||= "0" # Number of seconds between loop iterations
+  ENV["BATCH_PROCESS_BATCH_LIMIT"]||= "100" # Max number of records in a batch
+  ENV["BATCH_PROCESS_ERROR_DELAY"] ||= "3" # In number of hours
+  ENV["BATCH_PROCESS_MAX_ERRORS_BEFORE_STUCK"] ||= "3" # When record errors for X time, it's declared stuck
+
   config.active_job.queue_adapter = :test
 
   # Disable SqlTracker from creating tmp/sql_tracker-*.json files -- https://github.com/steventen/sql_tracker/pull/10
@@ -105,6 +115,11 @@ Rails.application.configure do
   # Quarterly Notifications Batch Sizes
   ENV["QUARTERLY_NOTIFICATIONS_JOB_BATCH_SIZE"] ||= "1000"
 
+  # Populate End Product Sync Queue ENVs
+  ENV["END_PRODUCT_QUEUE_JOB_DURATION"] ||= "50" # Number of minutes the job will run for
+  ENV["END_PRODUCT_QUEUE_SLEEP_DURATION"] ||= "0" # Number of seconds between loop iterations
+  ENV["END_PRODUCT_QUEUE_BATCH_LIMIT"] ||= "250" # Max number of records in a batch
+
   # Travel Board Sync Batch Size
   ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"] ||= "250"
 
@@ -112,4 +127,12 @@ Rails.application.configure do
   ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"] ||= "https://vefs-claimevidence-ui-uat.stage.bip.va.gov"
 
   ENV['TEST_VACOLS_HOST'] ||= "localhost"
+
+  # Pacman environment variables
+  ENV["PACMAN_API_TOKEN_ALG"] ||= "HS512"
+  ENV["PACMAN_API_URL"] ||= "https://pacman-uat.dev.bip.va.gov"
+  ENV["PACMAN_API_SAML_TOKEN"] ||= "our-saml-token"
+  ENV["PACMAN_API_TOKEN_SECRET"] ||= "client-secret"
+  ENV["PACMAN_API_TOKEN_ISSUER"] ||= "issuer-of-our-token"
+  ENV["PACMAN_API_SYS_ACCOUNT"] ||= "CSS_ID_OF_OUR_ACCOUNT"
 end

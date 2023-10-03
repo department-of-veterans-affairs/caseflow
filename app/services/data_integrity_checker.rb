@@ -30,9 +30,4 @@ class DataIntegrityChecker
   def add_to_buffer(thing)
     @buffer << thing
   end
-
-  def slack_channel
-    "#appeals-job-alerts"
-    # override this to specify a different channel
-  end
 end

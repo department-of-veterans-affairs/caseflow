@@ -80,6 +80,7 @@ Rails.application.routes.draw do
         post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
         get 'appeals/:appeal_id/documents', to: 'appeals#appeal_documents'
         get 'appeals/:appeal_id/documents/:document_id', to: 'appeals#appeals_single_document'
+        get 'distributions/:distribution_id', to: 'distributions#distribution'
       end
     end
   end
@@ -249,6 +250,10 @@ Rails.application.routes.draw do
 
   resources :decision_reviews, param: :business_line_slug, only: [] do
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
+      member do
+        get :power_of_attorney
+        patch :update_power_of_attorney
+      end
     end
   end
   match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
@@ -358,9 +363,6 @@ Rails.application.routes.draw do
   get "logout" => "sessions#destroy"
 
   get 'whats-new' => 'whats_new#show'
-
-  get 'dispatch/stats(/:interval)', to: 'dispatch_stats#show', as: 'dispatch_stats'
-  get 'stats', to: 'stats#show'
 
   match '/intake/:any' => 'intakes#index', via: [:get]
 

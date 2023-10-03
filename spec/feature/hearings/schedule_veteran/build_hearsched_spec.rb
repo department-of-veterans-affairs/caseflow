@@ -667,6 +667,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
         scenario "can schedule a veteran without an error" do
           visit "hearings/schedule/assign"
+          expect(page).to have_content("Regional Office")
 
           click_dropdown(text: "Denver")
           click_button("AMA Veterans Waiting", exact: true)
@@ -691,6 +692,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
         scenario "should not see room displayed under Available Hearing Days and Assign Hearing Tabs" do
           visit "hearings/schedule/assign"
+          expect(page).to have_content("Regional Office")
 
           click_dropdown(text: "Denver")
           click_button("AMA Veterans Waiting", exact: true)
@@ -736,6 +738,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
         scenario "can schedule a veteran without an error" do
           visit "hearings/schedule/assign"
+          expect(page).to have_content("Regional Office")
 
           click_dropdown(text: "Denver")
           click_button("Legacy Veterans Waiting", exact: true)

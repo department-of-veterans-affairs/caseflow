@@ -6,7 +6,7 @@ describe Certification, :all_dbs do
   end
 
   let(:vacols_case) do
-    create(:case_with_ssoc)
+    create(:case_with_ssoc, :representative_american_legion)
   end
 
   let(:certification) do
@@ -79,56 +79,6 @@ describe Certification, :all_dbs do
         expect(certification.ssocs_matching_at).to be_nil
         expect(certification.form8_started_at).to be_nil
       end
-
-      it "is included in the relevant certification_stats" do
-        subject
-
-        expect(Certification.was_missing_doc.count).to eq(1)
-        expect(Certification.was_missing_nod.count).to eq(0)
-        expect(Certification.was_missing_soc.count).to eq(0)
-        expect(Certification.was_missing_ssoc.count).to eq(0)
-        expect(Certification.was_missing_form9.count).to eq(1)
-      end
-    end
-
-    context "when ssocs are mismatched" do
-      let(:certification) do
-        create(:certification, vacols_case: vacols_case_ssoc_mismatch)
-      end
-
-      let(:vacols_case_ssoc_mismatch) do
-        create(:case_with_ssoc, bfssoc1: 1.month.ago)
-      end
-
-      it "is included in the relevant certification_stats" do
-        subject
-
-        expect(Certification.was_missing_doc.count).to eq(1)
-        expect(Certification.was_missing_nod.count).to eq(0)
-        expect(Certification.was_missing_soc.count).to eq(0)
-        expect(Certification.was_missing_ssoc.count).to eq(1)
-        expect(Certification.was_missing_form9.count).to eq(0)
-      end
-    end
-
-    context "when multiple docs are mismatched" do
-      let(:certification) do
-        create(:certification, vacols_case: vacols_case_multiple_mismatch)
-      end
-
-      let(:vacols_case_multiple_mismatch) do
-        create(:case, bfdnod: 1.month.ago, bfdsoc: 1.month.ago, bfd19: 3.months.ago, bfssoc1: 1.month.ago)
-      end
-
-      it "is included in the relevant certification_stats" do
-        subject
-
-        expect(Certification.was_missing_doc.count).to eq(1)
-        expect(Certification.was_missing_nod.count).to eq(1)
-        expect(Certification.was_missing_soc.count).to eq(1)
-        expect(Certification.was_missing_ssoc.count).to eq(1)
-        expect(Certification.was_missing_form9.count).to eq(1)
-      end
     end
 
     context "when appeal is ready to start" do
@@ -150,11 +100,6 @@ describe Certification, :all_dbs do
         expect(certification.ssocs_required).to be_falsey
         expect(certification.ssocs_matching_at).to be_nil
         expect(certification.form8_started_at).to eq(Time.zone.now)
-      end
-
-      it "no ssoc does not trip missing ssoc stat" do
-        subject
-        expect(Certification.was_missing_ssoc.count).to eq(0)
       end
 
       context "when appeal has ssoc" do
@@ -238,34 +183,6 @@ describe Certification, :all_dbs do
 
     it "lazily loads the appeal for the certification" do
       expect(subject.vbms_id).to eq(appeal.vbms_id)
-    end
-  end
-
-  context "#time_to_certify" do
-    subject { certification.time_to_certify }
-
-    context "when not completed" do
-      it { is_expected.to be_nil }
-    end
-
-    context "when completed" do
-      context "when not created (in db)" do
-        let(:certification) do
-          build(:certification, vacols_case: vacols_case)
-        end
-
-        it "is_expected to be_nil" do
-          expect(subject).to eq nil
-        end
-      end
-
-      context "when created" do
-        before { certification.update!(completed_at: 1.hour.from_now) }
-
-        it "returns the time since certification started" do
-          expect(subject).to eq(1.hour)
-        end
-      end
     end
   end
 
@@ -356,9 +273,7 @@ describe Certification, :all_dbs do
 
   context "#fetch_power_of_attorney!" do
     subject { certification }
-
-    it "returns true when bgs address is found",
-       skip: "VACOLS rep test fails sometimes, will be changed with #5185 so ignoring it for now" do
+    it "fetches the power of attorney from bgs and vacols" do
       certification.async_start!
       expect(subject.bgs_rep_city).to eq "SAN FRANCISCO"
       expect(subject.bgs_representative_type).to eq "Attorney"
