@@ -54,16 +54,30 @@ describe('InboxPage rendering success message', () => {
 });
 
 describe('renders with data', () => {
-  it('has a message about when the messages are removed', () => {
-    defaultProps.messages = allUnreadMessages;
+  const setupMessages = (messages) => {
+    defaultProps.messages = messages;
     setupComponent();
+  };
+
+  it('has a message about when the messages are removed', () => {
+    setupMessages(allUnreadMessages);
 
     expect(screen.queryByText(messagesRemovedMessage)).toBeInTheDocument();
   });
 
+  it('renders the correct pagination options', () => {
+    setupMessages(allUnreadMessages);
+
+    const paginationProps = defaultProps.pagination;
+
+    const paginationOptions =
+      `Viewing ${paginationProps.current_page}-${paginationProps.total_items} of ${paginationProps.total_items} total`;
+
+    expect(screen.queryByText(paginationOptions)).toBeInTheDocument();
+  });
+
   it('renders an inbox with two unread messages', () => {
-    defaultProps.messages = allUnreadMessages;
-    setupComponent();
+    setupMessages(allUnreadMessages);
 
     const trElements = screen.getAllByRole('row');
 
@@ -75,8 +89,7 @@ describe('renders with data', () => {
   });
 
   it('renders an inbox with one read and one unread messages', () => {
-    defaultProps.messages = oneReadAndOneUnreadMessages;
-    setupComponent();
+    setupMessages(oneReadAndOneUnreadMessages);
 
     const trElements = screen.getAllByRole('row');
 
