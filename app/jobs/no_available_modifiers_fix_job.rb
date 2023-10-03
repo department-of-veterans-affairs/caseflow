@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class NoAvailableModifiersFixJob < CaseflowJob
-  queue_with_priority :low_priority
-
   ERROR_TEXT = "NoAvailableModifiers"
   SPACE = 10
 
@@ -27,6 +25,7 @@ class NoAvailableModifiersFixJob < CaseflowJob
     @stuck_job_report_service.write_log_report(ERROR_TEXT)
   end
 
+  # :reek:FeatureEnvy
   def process_supplemental_claims(supp_claims, available_space)
     supp_claims.each do |sc|
       next if available_space <= 0
