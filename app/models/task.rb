@@ -189,6 +189,7 @@ class Task < CaseflowRecord
       end&.any? do |action|
         action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
       end
+
       if !parent&.actions_allowable?(user) || !can_create
         user_description = user ? "User #{user.id}" : "nil User"
         parent_description = parent ? " from #{parent.class.name} #{parent.id}" : ""
@@ -276,22 +277,6 @@ class Task < CaseflowRecord
       end
     end
 
-    def create_parent_task(params, user)
-      parent_task = {}
-      if (params[:appeal_type] == "LegacyAppeal") && (params[:legacy_task_type] == "AttorneyLegacyTask")
-        if params[:type] == "SpecialCaseMovementTask" || params[:type] == "BlockedSpecialCaseMovementTask"
-          parent_task = LegacyWorkQueue.tasks_by_appeal_id(params[:external_id])[0]
-          verify_user_can_create_legacy!(user, parent_task)
-          parent_task = Task.find(params[:parent_id])
-        end
-      else
-        parent_task = Task.find(params[:parent_id])
-        fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
-
-        verify_user_can_create!(user, parent_task)
-      end
-      parent_task
-    end
 
     def cancel_blocking_task_legacy(params, parent_task)
       parent_task.children.each { |current_task| search_for_blocking(params[:instructions], current_task) }
