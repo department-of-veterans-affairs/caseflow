@@ -104,7 +104,9 @@ class MetricsService
   private
 
   def self.store_record_metric(uuid, params, caller)
-    return nil unless FeatureToggle.enabled?(:metrics_monitoring, user: current_user)
+
+    return nil unless FeatureToggle.enabled?(:metrics_monitoring, user: RequestStore[:current_user])
+
     name ="caseflow.server.metric.#{params[:name]&.downcase.gsub(/::/, '.')}"
     params = {
       uuid: uuid,
