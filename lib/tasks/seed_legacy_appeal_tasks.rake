@@ -44,7 +44,9 @@ namespace :db do
               # rubocop:enable Style/ConditionalAssignment
               key = VACOLS::Folder.maximum(:ticknum).next
             else
+              # rubocop:disable Layout/LineLength
               key = VACOLS::Folder.find_by_sql("SELECT max(to_number(ticknum)) as maxtick FROM FOLDER").first.maxtick.next
+              # rubocop:enable Layout/LineLength
             end
 
             Generators::Vacols::Case.create(
@@ -429,7 +431,9 @@ namespace :db do
         css_id = $stdin.gets.chomp.upcase
         user = User.find_by_css_id(css_id)
 
+        # rubocop:disable Layout/LineLength
         fail ArgumentError, "User must be an Attorney in Vacols for a #{task_type}", caller unless user.attorney_in_vacols?
+        # rubocop:enable Layout/LineLength
       else # {Chooses default user to use for HearingTasks, Bfcurloc_81_Tasks, and Scenario1Edge Tasks}
         user = if Rails.env.development? || Rails.env.test?
                  User.find_by_css_id("FAKE USER") # local / test option
