@@ -8,11 +8,8 @@
 namespace :db do
   desc "Generates a smattering of legacy appeals with VACOLS cases that have special issues assocaited with them"
   task generate_legacy_appeals_with_tasks: :environment do
-
     class LegacyAppealFactory
-
       class << self
-
         def stamp_out_legacy_appeals(num_appeals_to_create, file_number, user, docket_number, task_type)
           # Changes location of vacols based on if you want a hearing task or only a legacy task in location 81
           if task_type == "HEARINGTASK" || task_type == "SCENARIO1EDGE"
@@ -38,14 +35,10 @@ namespace :db do
                             else false
                             end
           cases = Array.new(num_appeals_to_create).each_with_index.map do
-
             if Rails.env.development? || Rails.env.test?
-
               key = VACOLS::Folder.maximum(:ticknum).next
             else
-
               key = VACOLS::Folder.find_by_sql("SELECT max(to_number(ticknum)) as maxtick FROM FOLDER").first.maxtick.next
-
             end
 
             Generators::Vacols::Case.create(
@@ -389,12 +382,9 @@ namespace :db do
 
       if Rails.env.development? || Rails.env.test?
         vets = Veteran.first(5)
-
         veterans_with_like_45_appeals = vets[0..12].pluck(:file_number) # local / test option for veterans
-
       else
         veterans_with_like_45_appeals = %w[583099131 589951227 333313333] # UAT option for veterans
-
       end
 
       $stdout.puts("Which type of tasks do you want to add to these Legacy Appeals?")
@@ -403,7 +393,6 @@ namespace :db do
       task_type = $stdin.gets.chomp.upcase
       if task_type == "JUDGETASK" || task_type == "REVIEWTASK"
         $stdout.puts("Enter the CSS ID of a judge user that you want to assign these appeals to")
-
         if Rails.env.development? || Rails.env.test?
           $stdout.puts("Hint: Judge Options include 'BVARERDMAN'") # local / test option
         else
