@@ -1,11 +1,11 @@
-import { taskFilterDetails } from '../../../data/taskFilterDetails';
+import { vhaTaskFilterDetails } from '../../../data/taskFilterDetails';
 import { buildDecisionReviewFilterInformation } from 'app/nonComp/util/index';
 
 const subject = (filterData) => buildDecisionReviewFilterInformation(filterData);
 
 describe('Parsing filter data', () => {
   it('From in progress tasks', () => {
-    const results = subject(taskFilterDetails.in_progress);
+    const results = subject(vhaTaskFilterDetails.in_progress);
 
     expect(results.filterOptions).toEqual([
       {
@@ -32,7 +32,7 @@ describe('Parsing filter data', () => {
   });
 
   it('From completed tasks', () => {
-    const results = subject(taskFilterDetails.completed);
+    const results = subject(vhaTaskFilterDetails.completed);
 
     expect(results.filterOptions).toEqual([
       {
