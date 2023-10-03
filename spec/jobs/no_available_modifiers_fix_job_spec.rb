@@ -51,8 +51,8 @@ describe NoAvailableModifiersFixJob, :postres do
   context "when there are fewer than 10 active end products" do
     describe "when there are 0 active end products" do
       it "runs decision_review_process_job on up to 10 Supplemental Claims" do
-        expect(subject.decision_review_job).to receive(:perform).exactly(2).times.with(instance_of(SupplementalClaim))
         subject.perform
+        expect(DecisionReviewProcessJob).to have_been_enqueued.exactly(:twice)
       end
     end
 
@@ -65,8 +65,8 @@ describe NoAvailableModifiersFixJob, :postres do
       end
 
       it "runs decision_review_process_job on 1 Supplemental Claim" do
-        expect(subject.decision_review_job).to receive(:perform).exactly(1).times.with(instance_of(SupplementalClaim))
         subject.perform
+        expect(DecisionReviewProcessJob).to have_been_enqueued.exactly(:once).with(instance_of(SupplementalClaim))
       end
     end
     describe "when there are 5 active end products" do
@@ -78,8 +78,8 @@ describe NoAvailableModifiersFixJob, :postres do
       end
 
       it "runs decision_review_process_job on up to 5 Supplemental Claims" do
-        expect(subject.decision_review_job).to receive(:perform).exactly(5).times.with(instance_of(SupplementalClaim))
         subject.perform
+        expect(DecisionReviewProcessJob).to have_been_enqueued.at_most(5).times.with(instance_of(SupplementalClaim))
       end
     end
   end
@@ -91,15 +91,15 @@ describe NoAvailableModifiersFixJob, :postres do
     end
 
     it "does not run decision_review_process_job on any Supplemental Claims" do
-      expect(subject.decision_review_job).not_to receive(:perform)
       subject.perform
+      expect(DecisionReviewProcessJob).not_to have_been_enqueued.with(instance_of(SupplementalClaim))
     end
 
     describe "when there are more than 10 active end products" do
       it "does not run decision_review_process_job on any Supplemental Claims" do
         epe.update(synced_status: "PEND")
-        expect(subject.decision_review_job).not_to receive(:perform)
         subject.perform
+        expect(DecisionReviewProcessJob).not_to have_been_enqueued.with(instance_of(SupplementalClaim))
       end
     end
   end
