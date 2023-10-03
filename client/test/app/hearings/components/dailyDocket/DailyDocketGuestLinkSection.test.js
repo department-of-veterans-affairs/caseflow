@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+// eslint-disable-next-line max-len
 import { DailyDocketGuestLinkSection } from '../../../../../app/hearings/components/dailyDocket/DailyDocketGuestLinkSection';
 
 describe('DailyDocketGuestLinkSection', () => {
@@ -49,4 +50,4 @@ describe('DailyDocketGuestLinkSection', () => {
     expect(link2Pin).toBeInTheDocument();
     expect(link2CopyButton[1]).toBeInTheDocument();
   });
-});
+});// eslint-enable max-len

@@ -84,7 +84,9 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
                   marginLeft: '10px',
                 }}
               >
-                {type === 'PexipConferenceLink' ? GUEST_LINK_LABELS.PEXIP_GUEST_LINK_SECTION_LABEL : GUEST_LINK_LABELS.WEBEX_GUEST_LINK_SECTION_LABEL}
+                {type === 'PexipConferenceLink' ?
+                  GUEST_LINK_LABELS.PEXIP_GUEST_LINK_SECTION_LABEL :
+                  GUEST_LINK_LABELS.WEBEX_GUEST_LINK_SECTION_LABEL}
               </h3>
 
               <h3
@@ -115,7 +117,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
                       display: 'flex',
                     }}
                   >
-                    {linkGuestPin + '#'}
+                    {linkGuestPin}#
                   </span>
                 ) : (
                   <span
