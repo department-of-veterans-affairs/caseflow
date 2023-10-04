@@ -28,7 +28,6 @@ import { ACTIONS } from '../uiReducer/uiConstants';
 import { taskActionData } from '../utils';
 
 import QueueFlowModal from './QueueFlowModal';
-// import { options } from 'superagent';
 
 const OTHER = 'OTHER';
 
@@ -42,9 +41,11 @@ export class AssignToAttorneyWidget extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    if (props.selectedTasks.length > 0 && props.selectedTasks[0].appealType === 'LegacyAppeal') {
-      const instructions = (props.selectedTasks[0].instructions.length === 0 ? [] :
-        props.selectedTasks[0].instructions.filter((instructionData) => instructionData));
+    const selectedTasks = props.selectedTasks;
+    const doesTaskExistAndIsLegacy = selectedTasks.length > 0 && selectedTasks[0].appealType === 'LegacyAppeal';
+
+    if (doesTaskExistAndIsLegacy) {
+      const instructions = selectedTasks[0]?.instructions?.filter((instructionData) => instructionData) || [];
       const isInstructionArray = (instructions.length === 0 ? [] : instructions);
       const instructionType = Array.isArray(props.selectedTasks[0].instructions) ? isInstructionArray : [];
 
