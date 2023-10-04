@@ -39,6 +39,7 @@ export const TextField = (props) => {
     inputStyling,
     inputProps,
     inputRef,
+    id,
   } = props;
 
   const textInputClass = className.
@@ -61,6 +62,16 @@ export const TextField = (props) => {
   // We allow `undefined` as it indicates uncontrolled usage
   const adjustedVal = useMemo(() => typeof value === 'object' && !value ? '' : value);
 
+  const idVal = () => {
+    if (name !== '') {
+      return name;
+    } else if (id !== '') {
+      return id;
+    }
+
+    return '';
+  };
+
   return (
     <div className={textInputClass.join(' ')}>
       {dateErrorMessage && (
@@ -82,7 +93,7 @@ export const TextField = (props) => {
           ref={inputRef}
           className={className}
           name={name}
-          id={name}
+          id={idVal()}
           onChange={handleChange}
           onKeyPress={onKeyPress}
           onBlur={handleBlur}
@@ -127,6 +138,7 @@ TextField.propTypes = {
   defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   errorMessage: PropTypes.string,
   className: PropTypes.arrayOf(PropTypes.string),
+  id: PropTypes.string,
   inputStyling: PropTypes.object,
 
   /**
