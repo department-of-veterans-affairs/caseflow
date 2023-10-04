@@ -60,17 +60,6 @@ class HearingTask < Task
     end
   end
 
-  def when_scm(appeal)
-    if appeal.tasks.open.where(type: HearingTask.name).empty? &&
-       appeal.tasks.open.where(type: ScheduleHearingTask.name).empty?
-      if !appeal.tasks.open.where(type: JudgeAssignTask.name).empty?
-        process_appeal_scm(appeal)
-      else
-        update_legacy_appeal_location
-      end
-    end
-  end
-
   def process_appeal_scm(appeal)
     current_judge_id = appeal.tasks.find_by(type: "JudgeAssignTask").assigned_to_id
     current_user = User.find(current_judge_id)
@@ -176,5 +165,16 @@ class HearingTask < Task
     end
 
     super
+  end
+
+  def when_scm(appeal)
+    if appeal.tasks.open.where(type: HearingTask.name).empty? &&
+       appeal.tasks.open.where(type: ScheduleHearingTask.name).empty?
+      if !appeal.tasks.open.where(type: JudgeAssignTask.name).empty?
+        process_appeal_scm(appeal)
+      else
+        update_legacy_appeal_location
+      end
+    end
   end
 end

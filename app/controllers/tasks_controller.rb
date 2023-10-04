@@ -104,16 +104,6 @@ class TasksController < ApplicationController
     render(error.serialize_response)
   end
 
-  def parent_legacy_appeal?(parent_task)
-    if parent_task&.appeal.is_a?(LegacyAppeal)
-      QueueRepository.reassign_decass_to_attorney!(
-        judge: parent_task.assigned_to,
-        attorney: User.find(params[:tasks].first[:assigned_to_id]),
-        vacols_id: parent_task.appeal.external_id
-      )
-    end
-  end
-
   def attorney_rewrite_task?
     if params[:tasks].is_a?(Array) && params[:tasks].first[:type] == "AttorneyRewriteTask"
       Task.find_by(id: params[:tasks].first[:parent_id])
@@ -161,24 +151,6 @@ class TasksController < ApplicationController
     render_update_errors(["title": COPY::FAILED_HEARING_UPDATE, "message": error.message, "code": error.code])
   end
   # rubocop:enable Metrics/AbcSize
-
-  def reassign_task?(task, update_params)
-    assigned_to =
-      if update_params&.[](:reassign)&.[](:assigned_to_id)
-        User.find(update_params[:reassign][:assigned_to_id])
-      elsif task.type == "AttorneyTask" || task.type == "AttorneyRewriteTask"
-        User.find(Task.find_by(id: task.parent_id).assigned_to_id)
-      end
-    QueueRepository.update_location_to_judge(task.appeal.vacols_id, assigned_to) if assigned_to
-  end
-
-  def modify_task(task, update_params)
-    if task.appeal.instance_of?(LegacyAppeal)
-      reassign_task?(task, update_params)
-    else
-      modified_task_contested_claim
-    end
-  end
 
   def for_appeal
     no_cache
@@ -324,8 +296,36 @@ class TasksController < ApplicationController
     end
   end
 
+  def reassign_task?(task, update_params)
+    assigned_to =
+      if update_params&.[](:reassign)&.[](:assigned_to_id)
+        User.find(update_params[:reassign][:assigned_to_id])
+      elsif task.type == "AttorneyTask" || task.type == "AttorneyRewriteTask"
+        User.find(Task.find_by(id: task.parent_id).assigned_to_id)
+      end
+    QueueRepository.update_location_to_judge(task.appeal.vacols_id, assigned_to) if assigned_to
+  end
+
   def render_update_errors(errors)
     render json: { "errors": errors }, status: :bad_request
+  end
+
+  def parent_legacy_appeal?(parent_task)
+    if parent_task&.appeal.is_a?(LegacyAppeal)
+      QueueRepository.reassign_decass_to_attorney!(
+        judge: parent_task.assigned_to,
+        attorney: User.find(params[:tasks].first[:assigned_to_id]),
+        vacols_id: parent_task.appeal.external_id
+      )
+    end
+  end
+
+  def modify_task(task, update_params)
+    if task.appeal.instance_of?(LegacyAppeal)
+      reassign_task?(task, update_params)
+    else
+      modified_task_contested_claim
+    end
   end
 
   def queue_config
