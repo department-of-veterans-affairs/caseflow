@@ -234,7 +234,9 @@ class Task < CaseflowRecord
     def create_from_params(params, user)
       parent_task = create_parent_task(params, user)
       params = modify_params_for_create(params)
-      if parent_task.appeal_type == "LegacyAppeal" && parent_task.type != "TranslationTask" && !parent_task.type.is_a?(ColocatedTask)
+      if parent_task.appeal_type == "LegacyAppeal" &&
+         parent_task.type != "TranslationTask" &&
+         !parent_task.type.is_a?(ColocatedTask)
         special_case_for_legacy(parent_task, params, user)
       else # regular appeal
         child = create_child_task(parent_task, user, params)
@@ -277,7 +279,6 @@ class Task < CaseflowRecord
         child
       end
     end
-
 
     def cancel_blocking_task_legacy(params, parent_task)
       parent_task.children.each { |current_task| search_for_blocking(params[:instructions], current_task) }
