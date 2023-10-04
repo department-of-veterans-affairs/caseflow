@@ -50,31 +50,42 @@ export default class CopyTextButton extends React.PureComponent {
       '& > svg path': { fill: COLORS.GREY_LIGHT },
       '&:hover > svg path': { fill: COLORS.PRIMARY },
     } : styling;
+    const { text, textToCopy, label, styling, ariaLabel } = this.props;
+    const buttonStyles = isEmpty(styling) ?
+      {
+        borderColor: COLORS.GREY_LIGHT,
+        borderWidth: '1px',
+        color: COLORS.GREY_DARK,
+        ':hover': {
+          backgroundColor: 'transparent',
+          color: COLORS.GREY_DARK,
+          borderColor: COLORS.PRIMARY,
+          borderBottomWidth: '1px'
+        },
+        ':disabled': {
+          backgroundColor: COLORS.GREY_BACKGROUND,
+          borderColor: COLORS.GREY_LIGHT,
+          color: COLORS.GREY_LIGHT,
+          borderBottomWidth: '1px'
+        },
+        '& > svg path': { fill: COLORS.GREY_LIGHT },
+        '&:hover > svg path': { fill: COLORS.PRIMARY }
+      } :
+      styling;
 
     return (
       <Tooltip id={`tooltip-${text}`} text="Click to copy" position="bottom">
         <CopyToClipboard text={textToCopy || text}>
-          {disabled ? (
-            <button
-              type="submit"
-              className="cf-apppeal-id"
-              aria-label={ariaLabel || `Copy ${label} ${text}`}
-              {...clipboardButtonStyling(disabledButtonStyles)}
-            >
-              {text}&nbsp;
-              <ClipboardIcon />
-            </button>
-          ) : (
-            <button
-              type="submit"
-              className="cf-apppeal-id"
-              aria-label={ariaLabel || `Copy ${label} ${text}`}
-              {...clipboardButtonStyling(buttonStyles)}
-            >
-              {text}&nbsp;
-              <ClipboardIcon />
-            </button>
-          )}
+          <button
+            type="submit"
+            className="cf-apppeal-id"
+            aria-label={ariaLabel || `Copy ${label} ${text}`}
+            disabled={textToCopy === null}
+            {...clipboardButtonStyling(buttonStyles)}
+          >
+            {text}&nbsp;
+            <ClipboardIcon />
+          </button>
         </CopyToClipboard>
       </Tooltip>
     );

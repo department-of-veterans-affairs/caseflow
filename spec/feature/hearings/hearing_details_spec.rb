@@ -73,15 +73,15 @@ RSpec.feature "Hearing Details", :all_dbs do
 
   def check_virtual_hearings_links_expired(virtual_hearing)
     within "#vlj-hearings-link" do
+      find("span", text: "N/A")
       expect(page).to have_content(
-        "VLJ Link: Expired\n" \
         "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
         "PIN: #{virtual_hearing.host_pin}"
       )
     end
     within "#guest-hearings-link" do
+      find("span", text: "N/A")
       expect(page).to have_content(
-        "Guest Link: Expired\n" \
         "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
         "PIN: #{virtual_hearing.guest_pin}"
       )

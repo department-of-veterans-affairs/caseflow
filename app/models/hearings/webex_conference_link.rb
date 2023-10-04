@@ -12,6 +12,8 @@ class WebexConferenceLink < ConferenceLink
   private
 
   def generate_conference_information
+    meeting_type.update!(service_name: "webex")
+
     conference = WebexService.new.create_conference(hearing_day)
 
     update!(

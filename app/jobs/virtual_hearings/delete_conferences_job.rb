@@ -152,7 +152,7 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
 
     true
   rescue Caseflow::Error::PexipNotFoundError
-    Rails.logger.info("Conference for hearing (#{virtual_hearing.hearing_id}) was already deleted")
+    Rails.logger.info("Pexip Conference for hearing (#{virtual_hearing.hearing_id}) was already deleted")
 
   rescue Caseflow::Error::WebexNotFoundError
     Rails.logger.info("Conference for hearing (#{virtual_hearing.hearing_id}) was already deleted")
