@@ -405,11 +405,10 @@ class TasksController < ApplicationController
 
       task = task.merge(assigned_to_type: User.name) if !task[:assigned_to_type]
 
-      if appeal.is_a?(LegacyAppeal)
-        if task[:type] == "BlockedSpecialCaseMovementTask" || task[:type] == "SpecialCaseMovementTask"
-          task = task.merge(external_id: params["tasks"][0]["external_id"], legacy_task_type: params["tasks"][0]["legacy_task_type"],
-                            appeal_type: params["tasks"][0]["appeal_type"])
-        end
+      if appeal.is_a?(LegacyAppeal) && (task[:type] == "BlockedSpecialCaseMovementTask" || task[:type] == "SpecialCaseMovementTask")
+        task = task.merge(external_id: params["tasks"][0]["external_id"],
+                          legacy_task_type: params["tasks"][0]["legacy_task_type"],
+                          appeal_type: params["tasks"][0]["appeal_type"])
       end
       task
     end
