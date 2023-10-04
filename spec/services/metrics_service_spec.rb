@@ -3,9 +3,9 @@
 describe MetricsService do
   let!(:current_user) { User.authenticate! }
   let!(:appeal) { create(:appeal) }
-  let(:description) { "Test description"}
-  let(:service) {"Reader"}
-  let(:name) {"Test"}
+  let(:description) { "Test description" }
+  let(:service) { "Reader" }
+  let(:name) { "Test" }
 
   describe ".record" do
     subject {
@@ -86,8 +86,8 @@ describe MetricsService do
 
         subject
       end
-
     end
+
     context "Recording metric errors" do
       before do
         FeatureToggle.enable!(:metrics_monitoring)
@@ -115,7 +115,7 @@ describe MetricsService do
           }
         )
         expect(Rails.logger).to receive(:info)
-        expect {subject }.to raise_error(StandardError)
+        expect { subject }.to raise_error(StandardError)
       end
     end
   end
