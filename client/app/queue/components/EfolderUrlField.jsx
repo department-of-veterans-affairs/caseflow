@@ -111,6 +111,12 @@ const EfolderUrlField = (props) => {
     />
     <div {...eFolderlinkStyling}>
       <EfolderLink url={`${props.eFolderLink}/veteran/${props.veteranParticipantId}`} veteranParticipantId={props.veteranParticipantId} eFolderLink={props.eFolderLink} />
+    <div {...eFolderlinkStyling}>
+      <EfolderLink
+        url={`${props.eFolderLink}/veteran/${props.veteranParticipantId}`}
+        veteranParticipantId={props.veteranParticipantId}
+        eFolderLink={props.eFolderLink}
+      />
     </div>
     {
       error === COPY.EFOLDER_CONNECTION_ERROR &&
