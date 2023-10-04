@@ -84,7 +84,7 @@ class NonCompDecisionIssue extends React.PureComponent {
           <TextareaField name={`description-issue-${index}`}
             label={`description-issue-${index}`}
             hideLabel
-            value={this.props.decisionDescription}
+            value={this.props.decisionDescription || ''}
             disabled={disabled}
             onChange={this.handleDescriptionChange} />
         </div>
