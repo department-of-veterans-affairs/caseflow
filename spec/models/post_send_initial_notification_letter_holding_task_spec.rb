@@ -219,8 +219,8 @@ describe PostSendInitialNotificationLetterHoldingTask do
         expect((post_task.timer_ends_at - post_task.created_at).round / 1.day).to eq(hold_days)
 
         # confirm the values are being pulled from the TaskTimer
-        calculate_max_hold = (tt.submitted_at - post_task.created_at).to_i / 1.day
-        expect((post_task.timer_ends_at - post_task.created_at).to_i / 1.day).to eq(calculate_max_hold)
+        calculate_max_hold = (tt.submitted_at - post_task.created_at).round / 1.day
+        expect((post_task.timer_ends_at - post_task.created_at).round / 1.day).to eq(calculate_max_hold)
       end
     end
   end
