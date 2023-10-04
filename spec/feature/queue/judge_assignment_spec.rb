@@ -263,8 +263,8 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       appeal.reload.tasks.update_all(status: Constants.TASK_STATUSES.cancelled)
       click_on("Assign")
 
-      expect(page).to have_content("You have successfully assigned #{appeal.veteran_first_name}
-                                   #{appeal.veteran_last_name}’s case to #{judge_two.full_name}")
+      expect(page).to have_content("You have successfully assigned #{appeal.veteran_first_name} " \
+                                   "#{appeal.veteran_last_name}’s case to #{judge_two.full_name}")
 
       click_on("Switch views")
       click_on(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.css_id))
@@ -343,8 +343,8 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
 
       click_on("Assign")
-      expect(page).to have_content("You have successfully assigned #{appeal_one.veteran_first_name}
-                                   #{appeal_one.veteran_last_name}'s case to #{judge_two.full_name}")
+      expect(page).to have_content("You have successfully assigned #{appeal_one.veteran_first_name} " \
+                                   "#{appeal_one.veteran_last_name}'s case to #{judge_two.full_name}")
     end
   end
 
@@ -361,8 +361,8 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
 
       click_on("Assign")
-      expect(page).to have_content("You have successfully assigned #{appeal_one.veteran_first_name}
-                                   #{appeal_one.veteran_last_name}'s case to #{judge_one.full_name}")
+      expect(page).to have_content("You have successfully assigned #{appeal_one.veteran_first_name} " \
+                                   "#{appeal_one.veteran_last_name}'s case to #{judge_one.full_name}")
     end
   end
 
