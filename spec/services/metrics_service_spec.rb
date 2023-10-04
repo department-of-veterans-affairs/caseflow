@@ -8,11 +8,11 @@ describe MetricsService do
   let(:name) { "Test" }
 
   describe ".record" do
-    subject {
+    subject do
       MetricsService.record(description, service: service, name: name) do
         appeal.appeal_views.find_or_create_by(user: current_user).update!(last_viewed_at: Time.zone.now)
       end
-    }
+    end
 
     context "metrics_monitoring is disabled" do
       before { FeatureToggle.disable!(:metrics_monitoring) }
