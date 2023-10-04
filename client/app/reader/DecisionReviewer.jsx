@@ -101,6 +101,7 @@ export class DecisionReviewer extends React.PureComponent {
         isCommentLabelSelected={this.state.isCommentLabelSelected}
         documentPathBase={`/${vacolsId}/documents`}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
+        featureToggles={this.props.featureToggles}
         {...props}
       />
     </ReaderLoadingScreen>;
