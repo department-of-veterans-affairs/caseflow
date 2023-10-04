@@ -93,18 +93,8 @@ class TasksController < ApplicationController
       tasks << valid_task_classes[task_type.to_sym].create_many_from_params(param_group, current_user)
     end
     # This should be the JudgeDecisionReviewTask
-    parent_task = if params[:tasks].is_a?(Array) && params[:tasks]&.first[:type] == "AttorneyRewriteTask"
-                    Task.find_by(id: params[:tasks].first[:parent_id])
-                  elsif !params[:tasks].is_a?(Array) && params[:tasks][:type] == "AttorneyRewriteTask"
-                    Task.find_by(id: params[:tasks][:parent_id])
-                  end
-    if parent_task&.appeal&.is_a?(LegacyAppeal)
-      QueueRepository.reassign_decass_to_attorney!(
-        judge: parent_task.assigned_to,
-        attorney: User.find(params[:tasks].first[:assigned_to_id]),
-        vacols_id: parent_task.appeal.external_id
-      )
-    end
+    parent_task = attorney_rewrite_task?
+    parent_legacy_appeal?(parent_task)
 
     modified_tasks = [parent_tasks_from_params, tasks].flatten.uniq
     render json: { tasks: json_tasks(modified_tasks) }
@@ -114,26 +104,37 @@ class TasksController < ApplicationController
     render(error.serialize_response)
   end
 
+  def parent_legacy_appeal?(parent_task)
+    if parent_task&.appeal.is_a?(LegacyAppeal)
+      QueueRepository.reassign_decass_to_attorney!(
+        judge: parent_task.assigned_to,
+        attorney: User.find(params[:tasks].first[:assigned_to_id]),
+        vacols_id: parent_task.appeal.external_id
+      )
+    end
+  end
+
+  def attorney_rewrite_task?
+    if params[:tasks].is_a?(Array) && params[:tasks].first[:type] == "AttorneyRewriteTask"
+      Task.find_by(id: params[:tasks].first[:parent_id])
+    elsif !params[:tasks].is_a?(Array) && params[:tasks][:type] == "AttorneyRewriteTask"
+      Task.find_by(id: params[:tasks][:parent_id])
+    end
+  end
+
   # To update attorney task
   # e.g, for ama/legacy appeal => PATCH /tasks/:id,
   # {
   #   assigned_to_id: 23
   # }
+
+  # rubocop:disable Metrics/AbcSize
   def update
     Task.transaction do
       tasks = task.update_from_params(update_params, current_user)
       tasks.each { |t| return invalid_record_error(t) unless t.valid? }
       tasks_hash = json_tasks(tasks.uniq)
-      if task.appeal.class == LegacyAppeal
-        assigned_to = if update_params&.[](:reassign)&.[](:assigned_to_id)
-                        User.find(update_params[:reassign][:assigned_to_id])
-                      elsif task.type == "AttorneyTask" || task.type == "AttorneyRewriteTask"
-                        User.find(Task.find_by(id: task.parent_id).assigned_to_id)
-                      end
-        QueueRepository.update_location_to_judge(task.appeal.vacols_id, assigned_to) if assigned_to
-      else
-        modified_task_contested_claim
-      end
+      modify_task(task, update_params)
       # currently alerts are only returned by ScheduleHearingTask
       # and AssignHearingDispositionTask for virtual hearing related updates
       # Start with any alerts on the current task, then find alerts on the tasks
@@ -158,6 +159,25 @@ class TasksController < ApplicationController
     Raven.capture_exception(error, extra: { application: "hearings" })
 
     render_update_errors(["title": COPY::FAILED_HEARING_UPDATE, "message": error.message, "code": error.code])
+  end
+  # rubocop:enable Metrics/AbcSize
+
+  def reassign_task?(task, update_params)
+    assigned_to =
+      if update_params&.[](:reassign)&.[](:assigned_to_id)
+        User.find(update_params[:reassign][:assigned_to_id])
+      elsif task.type == "AttorneyTask" || task.type == "AttorneyRewriteTask"
+        User.find(Task.find_by(id: task.parent_id).assigned_to_id)
+      end
+    QueueRepository.update_location_to_judge(task.appeal.vacols_id, assigned_to) if assigned_to
+  end
+
+  def modify_task(task, update_params)
+    if task.appeal.instance_of?(LegacyAppeal)
+      reassign_task?(task, update_params)
+    else
+      modified_task_contested_claim
+    end
   end
 
   def for_appeal
@@ -373,7 +393,7 @@ class TasksController < ApplicationController
   def parent_tasks_from_params
     Task.where(id: create_params.map { |params| params[:parent_id] })
   end
-
+  # rubocop:disable Metrics/AbcSize
   def create_params
     @create_params ||= [params.require("tasks")].flatten.map do |task|
       appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id])
@@ -394,6 +414,7 @@ class TasksController < ApplicationController
       task
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   def update_params
     params.require("task").permit(

@@ -564,8 +564,8 @@ export const reassignTasksToUser = ({
 }) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   let params, url;
 
-  const makeRequest = () => {
-    ApiUtil.patch(url, params).
+  const makeRequest = async () => {
+    await ApiUtil.patch(url, params).
       then((resp) => resp.body).
       then((resp) => {
         dispatchOldTasks(dispatch, oldTask, resp);
