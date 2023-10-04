@@ -718,7 +718,7 @@ class Task < CaseflowRecord
     end
   end
 
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def reassign(reassign_params, current_user)
     # We do not validate the number of tasks in this scenario because when a
     # task is reassigned, more than one open task of the same type must exist during the reassignment.
@@ -750,7 +750,7 @@ class Task < CaseflowRecord
 
     [replacement, self, replacement.children].flatten
   end
-  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def can_move_on_docket_switch?
     return false unless open_with_no_children?
