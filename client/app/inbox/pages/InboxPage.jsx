@@ -12,7 +12,7 @@ import ApiUtil from '../../util/ApiUtil';
 const DATE_TIME_FORMAT = 'ddd MMM DD YYYY [at] HH:mm';
 
 export const InboxMessagesPage = (props) => {
-  const [markedRead, setMarkedRead] = useState([]);
+  const [markedRead, setMarkedRead] = useState({});
 
   const sendMessageRead = (msg) => {
     ApiUtil.patch(`/inbox/messages/${msg.id}`, { data: { message_action: 'read' } }).
