@@ -29,11 +29,6 @@ const setupComponent = (props = {}) => {
   );
 };
 
-const setupMessages = (messages) => {
-  defaultProps.messages = messages;
-  setupComponent();
-};
-
 describe('InboxPage rendering with an empty inbox', () => {
   it('renders correctly', async () => {
     const { container } = setupComponent();
@@ -52,11 +47,16 @@ describe('InboxPage rendering with an empty inbox', () => {
   it('renders a the success message', () => {
     setupComponent();
 
-    expect(screen.queryByText(successMessage)).toBeInTheDocument();
+    expect(screen.getByText(successMessage)).toBeInTheDocument();
   });
 });
 
 describe('InboxPage rendering with data', () => {
+  const setupMessages = (messages) => {
+    defaultProps.messages = messages;
+    setupComponent();
+  };
+
   it('renders no success message', () => {
     setupMessages(allUnreadMessages);
 
@@ -66,13 +66,13 @@ describe('InboxPage rendering with data', () => {
   it('has a message about when the messages are removed', () => {
     setupMessages(allUnreadMessages);
 
-    expect(screen.queryByText(messagesRemovedMessage)).toBeInTheDocument();
+    expect(screen.getByText(messagesRemovedMessage)).toBeInTheDocument();
   });
 
   it('renders the correct pagination options', () => {
     setupMessages(allUnreadMessages);
 
-    expect(screen.queryByText(paginationOptions)).toBeInTheDocument();
+    expect(screen.getByText(paginationOptions)).toBeInTheDocument();
   });
 
   it('renders an inbox with two unread messages', () => {
