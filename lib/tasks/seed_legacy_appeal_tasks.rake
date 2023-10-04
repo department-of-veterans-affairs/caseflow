@@ -4,6 +4,7 @@
 # then select an option between 'HearingTask', 'JudgeTask', 'AttorneyTask', 'ReviewTask', 'Scenario1edge'
 # and 'Brieff_Curloc_81_Task'
 
+# rubocop:disable all
 namespace :db do
   desc "Generates a smattering of legacy appeals with VACOLS cases that have special issues assocaited with them"
   task generate_legacy_appeals_with_tasks: :environment do
@@ -61,7 +62,6 @@ namespace :db do
           end.compact
 
           build_the_cases_in_caseflow(cases, task_type, user)
-          # rubocop:enable, Metrics/ParameterLists, Metrics/MethodLength, Metrics/AbcSize, Layout/LineLength
         end
 
         def custom_folder_attributes(veteran, docket_number)
@@ -357,7 +357,6 @@ namespace :db do
           elsif task_type == "SCENARIO1EDGE"
             create_edge_case_task_for_legacy_appeals(appeal)
           end
-          # rubocop:enable
         end
 
         ########################################################
@@ -382,12 +381,9 @@ namespace :db do
 
       if Rails.env.development? || Rails.env.test?
         vets = Veteran.first(5)
-
         veterans_with_like_45_appeals = vets[0..12].pluck(:file_number) # local / test option for veterans
-
       else
         veterans_with_like_45_appeals = %w[583099131 589951227 333313333] # UAT option for veterans
-
       end
 
       $stdout.puts("Which type of tasks do you want to add to these Legacy Appeals?")
@@ -396,7 +392,6 @@ namespace :db do
       task_type = $stdin.gets.chomp.upcase
       if task_type == "JUDGETASK" || task_type == "REVIEWTASK"
         $stdout.puts("Enter the CSS ID of a judge user that you want to assign these appeals to")
-
         if Rails.env.development? || Rails.env.test?
           $stdout.puts("Hint: Judge Options include 'BVARERDMAN'") # local / test option
         else
@@ -441,3 +436,4 @@ namespace :db do
     end
   end
 end
+# rubocop:enable all
