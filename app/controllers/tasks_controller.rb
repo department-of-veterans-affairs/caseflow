@@ -399,7 +399,7 @@ class TasksController < ApplicationController
       appeal = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id])
       task = task.merge(instructions: [task[:instructions]].flatten.compact)
       task = task.permit(:type, { instructions: [] }, :assigned_to_id, :cancellation_reason,
-                         :assigned_to_type, :parent_id, business_payloads: [:description, values: {}])
+                         :assigned_to_type, :parent_id, business_payloads: [:description, { values: {} }])
         .merge(assigned_by: current_user)
         .merge(appeal: appeal)
 
