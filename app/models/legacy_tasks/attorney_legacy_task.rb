@@ -3,7 +3,8 @@
 class AttorneyLegacyTask < LegacyTask
   def available_actions(current_user, role)
     # AttorneyLegacyTasks are drawn from the VACOLS.BRIEFF table but should not be actionable unless there is a case
-    # assignment in the VACOLS.DECASS table or is being used as a Case Movement action. task_id is created using the created_at field from the VACOLS.DECASS table
+    # assignment in the VACOLS.DECASS table or is being used as a Case Movement action.
+    # task_id is created using the created_at field from the VACOLS.DECASS table
     # so we use the absence of this value to indicate that there is no case assignment and return no actions.
 
     if case_movement_blocked_for_distribution?(current_user)
@@ -28,6 +29,7 @@ class AttorneyLegacyTask < LegacyTask
   def attorney_user?(current_user, role)
     role == "attorney" && current_user == assigned_to
   end
+
 
   def ssc_legacy_case_movement?(current_user)
     current_user&.can_act_on_behalf_of_legacy_judges? && FeatureToggle.enabled?(:vlj_legacy_appeal)
