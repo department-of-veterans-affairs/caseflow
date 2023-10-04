@@ -134,7 +134,7 @@ export class PdfFile extends React.PureComponent {
             documentData,
             { message,
               type: 'error',
-              product: 'browser',
+              product: 'reader',
             }
           );
         }
@@ -145,7 +145,29 @@ export class PdfFile extends React.PureComponent {
   }
 
   onRejected = (reason, step) => {
-    console.error(`${uuid.v4()} : GET ${this.props.file} : STEP ${step} : ${reason}`);
+    const documentId = this.props.documentId,
+      documentType = this.props.documentType,
+      file = this.props.file,
+      logId = uuid.v4();
+
+    console.error(`${logId} : GET ${file} : STEP ${step} : ${reason}`);
+
+    if (this.props.featureToggles.metricsRecordPDFJSGetDocument) {
+      const documentData = {
+        documentId,
+        documentType,
+        file,
+        step,
+        reason
+      };
+
+      storeMetrics(logId, documentData, {
+        message: `Getting PDF document: "${file}"`,
+        type: 'error',
+        product: 'reader'
+      });
+    }
+
     throw reason;
   }
 
