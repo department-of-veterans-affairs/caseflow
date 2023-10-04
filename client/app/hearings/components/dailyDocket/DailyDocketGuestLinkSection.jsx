@@ -146,7 +146,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
           );
         })}
       </div>
-    ));
+    );
   };
 
   return <div style={containerStyle}>{renderRoomInfo()}</div>;

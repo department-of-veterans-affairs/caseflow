@@ -25,32 +25,32 @@ export default class CopyTextButton extends React.PureComponent {
       label,
       styling,
       ariaLabel,
-      disabled,
+      // disabled,
     } = this.props;
 
-    const buttonStyles = isEmpty(styling) ? {
-      borderColor: COLORS.GREY_LIGHT,
-      borderWidth: '1px',
-      color: COLORS.GREY_DARK,
-      ':hover': {
-        backgroundColor: 'transparent',
-        color: COLORS.GREY_DARK,
-        borderColor: COLORS.PRIMARY,
-        borderBottomWidth: '1px',
-      },
-      '& > svg path': { fill: COLORS.GREY_LIGHT },
-      '&:hover > svg path': { fill: COLORS.PRIMARY },
-    } : styling;
+    // const buttonStyles = isEmpty(styling) ? {
+    //   borderColor: COLORS.GREY_LIGHT,
+    //   borderWidth: '1px',
+    //   color: COLORS.GREY_DARK,
+    //   ':hover': {
+    //     backgroundColor: 'transparent',
+    //     color: COLORS.GREY_DARK,
+    //     borderColor: COLORS.PRIMARY,
+    //     borderBottomWidth: '1px',
+    //   },
+    //   '& > svg path': { fill: COLORS.GREY_LIGHT },
+    //   '&:hover > svg path': { fill: COLORS.PRIMARY },
+    // } : styling;
 
-    const disabledButtonStyles = isEmpty(styling) ? {
-      borderColor: COLORS.GREY_LIGHT,
-      borderWidth: '1px',
-      color: COLORS.GREY_LIGHT,
-      pointerEvents: 'none',
-      '& > svg path': { fill: COLORS.GREY_LIGHT },
-      '&:hover > svg path': { fill: COLORS.PRIMARY },
-    } : styling;
-    const { text, textToCopy, label, styling, ariaLabel } = this.props;
+    // const disabledButtonStyles = isEmpty(styling) ? {
+    //   borderColor: COLORS.GREY_LIGHT,
+    //   borderWidth: '1px',
+    //   color: COLORS.GREY_LIGHT,
+    //   pointerEvents: 'none',
+    //   '& > svg path': { fill: COLORS.GREY_LIGHT },
+    //   '&:hover > svg path': { fill: COLORS.PRIMARY },
+    // } : styling;
+
     const buttonStyles = isEmpty(styling) ?
       {
         borderColor: COLORS.GREY_LIGHT,
