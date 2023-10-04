@@ -306,10 +306,6 @@ class TasksController < ApplicationController
     QueueRepository.update_location_to_judge(task.appeal.vacols_id, assigned_to) if assigned_to
   end
 
-  def render_update_errors(errors)
-    render json: { "errors": errors }, status: :bad_request
-  end
-
   def parent_legacy_appeal?(parent_task)
     if parent_task&.appeal.is_a?(LegacyAppeal)
       QueueRepository.reassign_decass_to_attorney!(
@@ -326,6 +322,10 @@ class TasksController < ApplicationController
     else
       modified_task_contested_claim
     end
+  end
+
+  def render_update_errors(errors)
+    render json: { "errors": errors }, status: :bad_request
   end
 
   def queue_config
