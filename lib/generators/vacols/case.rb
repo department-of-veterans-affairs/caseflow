@@ -121,9 +121,11 @@ class Generators::Vacols::Case
       note_attrs[:tsktknm] = custom_case_attrs[:bfkey]
       Generators::Vacols::Note.create(note_attrs)
 
-      decass_attrs = attrs[:decass_attrs].nil? ? {} : attrs[:decass_attrs]
-      decass_attrs[:defolder] = custom_case_attrs[:bfkey]
-      Generators::Vacols::Decass.create(decass_attrs)
+      if attrs[:decass_creation]
+        decass_attrs = attrs[:decass_attrs].nil? ? {} : attrs[:decass_attrs]
+        decass_attrs[:defolder] = custom_case_attrs[:bfkey]
+        Generators::Vacols::Decass.create(decass_attrs)
+      end
 
       # One to many relationships
 

@@ -86,9 +86,9 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
 
         fill_in "taskInstructions", with: "Review the quality"
-        click_on "Submit"
+        click_on "Assign"
 
-        expect(page).to have_content("Task assigned to #{qr_user_name}")
+        expect(page).to have_content("You have successfully reassigned this task to #{qr_user_name}")
 
         expect(QualityReviewTask.count).to eq 2
       end
@@ -104,7 +104,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq judge_user.full_name
         fill_in "taskInstructions", with: qr_instructions
 
-        click_on "Submit"
+        click_on "Assign"
 
         expect(page).to have_content("On hold (1)")
       end
@@ -129,9 +129,9 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         ).click
 
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
-        click_on "Submit"
+        click_on "Assign"
 
-        expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
+        expect(page).to have_content("You have successfully reassigned this task to #{attorney_user.full_name}")
       end
 
       step "attorney completes task and returns the case to the judge" do
@@ -242,8 +242,8 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label)
         click_dropdown({ text: user.full_name }, find(".cf-modal-body"))
         fill_in("instructions", with: "assigning to QR team member")
-        click_on(COPY::MODAL_SUBMIT_BUTTON)
-        expect(page).to have_content(format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, user.full_name))
+        click_on(COPY::MODAL_ASSIGN_BUTTON)
+        expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE, user.full_name))
       end
 
       step "place the task on hold" do
@@ -251,7 +251,8 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
         click_dropdown(prompt: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL, text: hold_length)
         fill_in("instructions", with: "placing task on hold")
-        click_on(COPY::MODAL_PUT_TASK_ON_HOLD_BUTTON)
+        expect(page).to have_content(COPY::MODAL_PUT_TASK_ON_HOLD_BUTTON)
+        click_on "Put task on hold"
         expect(page).to have_content(format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, veteran_name, hold_length))
       end
 
@@ -265,12 +266,12 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         visit("/queue/appeals/#{appeal.uuid}")
         click_dropdown(text: Constants.TASK_ACTIONS.QR_RETURN_TO_JUDGE.label)
         fill_in("taskInstructions", with: "returning to judge")
-        click_on(COPY::MODAL_SUBMIT_BUTTON)
+        click_on(COPY::MODAL_ASSIGN_BUTTON)
       end
 
       step "confirm that the task is on hold but timed hold is cancelled" do
         qr_person_task = qr_org_task.children.first
-        expect(page).to have_content(format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, judge_user.full_name))
+        expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE, judge_user.full_name))
         expect(qr_person_task.status).to eq(Constants.TASK_STATUSES.on_hold)
         expect(qr_person_task.on_timed_hold?).to eq(false)
       end
