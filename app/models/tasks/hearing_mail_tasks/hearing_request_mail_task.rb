@@ -93,12 +93,32 @@ class HearingRequestMailTask < MailTask
     !open_hearing.scheduled_for_past?
   end
 
-  # Purpose: Deletes the old scheduled virtual hearings
+  # Purpose: Sets the previous hearing's disposition
   # Params: None
-  # Return: Returns nil
-  def clean_up_virtual_hearing
-    if open_hearing.virtual?
-      perform_later_or_now(VirtualHearings::DeleteConferencesJob)
+  # Return: Returns a boolean for if the hearing has been updated
+  def update_hearing(hearing_hash)
+    if open_hearing.is_a?(LegacyHearing)
+      open_hearing.update_caseflow_and_vacols(hearing_hash)
+    else
+      open_hearing.update(hearing_hash)
     end
+  end
+
+  # Purpose: Completes the Mail task assigned to the MailTeam and the one for HearingAdmin
+  # Params: user - The current user object
+  #         params - The attributes needed to update the instructions specific to HPR/HWR
+  # Return: Boolean for if the tasks have been updated
+  def update_self_and_parent_mail_task(user:, params:)
+    updated_instructions = format_instructions_on_completion(params)
+    begin
+      update!(
+        completed_by: user,
+        status: Constants.TASK_STATUSES.completed,
+        instructions: updated_instructions
+      )
+    rescue StandardError => error
+      log_error(error)
+    end
+    update_parent_status
   end
 end

@@ -140,7 +140,7 @@ export class CaseTitleDetails extends React.PureComponent {
     const showHearingRequestType = appeal?.docketName === 'hearing' ||
       (appeal?.docketName === 'legacy' && appeal?.readableHearingRequestType);
     const link = appeal.veteranParticipantId ?
-      appeal.efolderLink + '/veteran/' + appeal.veteranParticipantId :
+      `${appeal.efolderLink }/veteran/${ appeal.veteranParticipantId}` :
       appeal.efolderLink;
 
     return (
