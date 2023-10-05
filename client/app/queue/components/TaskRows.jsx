@@ -313,7 +313,7 @@ class TaskRows extends React.PureComponent {
     if ((task.previous.length >= 1) && (taskIsAssignOrDecisionReview)) {
       return (
         <React.Fragment key={`${task.uniqueId} fragment`}>
-          {task.previous.toReversed().map((prev) => (
+          {(task.previous.length > 1 ? task.previous.toReversed() : task.previous).map((prev) => (
             <div>
               {prev.old_judge && (<React.Fragment key={`${task.uniqueId} div`}>
                 <div
