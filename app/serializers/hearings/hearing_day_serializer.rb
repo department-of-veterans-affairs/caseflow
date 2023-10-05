@@ -43,6 +43,7 @@ class HearingDaySerializer
       serialize_conference_links(hearing_day.conference_links)
     end
   end
+  
   def self.get_judge_first_name(hearing_day, params)
     if params[:judge_names].present?
       params[:judge_names].dig(hearing_day.id, :first_name) || ""

@@ -46,6 +46,3 @@ class ConferenceLink < CaseflowRecord
     fail NotImplementedError
   end
 end
-
-
-
