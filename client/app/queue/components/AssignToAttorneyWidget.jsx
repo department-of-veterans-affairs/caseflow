@@ -45,7 +45,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     const doesTaskExistAndIsLegacy = selectedTasks.length > 0 && selectedTasks[0].appealType === 'LegacyAppeal';
 
     if (doesTaskExistAndIsLegacy) {
-      const instructions = selectedTasks[0]?.instructions?.filter((instructionData) => instructionData) || [];
+      const instructions = selectedTasks[0]?.instructions?.filter(Boolean ?? []);
 
       // check if instruction is array
       const instructionType = this.isInstructionArray(instructions, selectedTasks);
