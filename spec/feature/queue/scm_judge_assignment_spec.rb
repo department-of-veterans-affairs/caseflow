@@ -146,8 +146,8 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           instructions = "#{judge_one.full_name} is on leave. Please take over this case"
           fill_in("taskInstructions", with: instructions)
           click_on("Assign")
-          expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, appeal.veteran_full_name, judge_two.full_name))
-
+          expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, appeal.veteran_full_name,
+                                              judge_two.full_name))
           visit "/queue/appeals/#{appeal.external_id}"
           expect(page).to have_content("ASSIGNED TO\n#{judge_two.css_id}")
           expect(page).to have_content("ASSIGNED BY\n#{assigner_name}")
@@ -166,7 +166,8 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions)
           click_on("Assign")
 
-          expect(page).to have_content("You have successfully assigned #{appeal.veteran_full_name}'s case to #{attorney_one.full_name}")
+          expect(page).to have_content("You have successfully assigned #{appeal.veteran_full_name}'s case to " \
+                                       "#{attorney_one.full_name}")
 
           visit "/queue/appeals/#{appeal.external_id}"
           expect(page).to have_content("ASSIGNED TO\n#{attorney_one.css_id}")
@@ -185,7 +186,8 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
             click_dropdown(prompt: "Select", text: attorney_two.full_name)
           end
           click_on("Assign")
-          expect(page).to have_content("You have successfully reassigned #{appeal.veteran_full_name}'s case to #{attorney_two.full_name}")
+          expect(page).to have_content("You have successfully reassigned #{appeal.veteran_full_name}'s case to " \
+            "#{attorney_two.full_name}")
 
           visit "/queue/appeals/#{appeal.external_id}"
           active_tasks_section = page.find("#currently-active-tasks")
@@ -242,7 +244,8 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           end
           fill_in("taskInstructions", with: "#{judge_one.full_name} is on leave. Please take over this case")
           click_on("Assign")
-          expect(page).to have_content("You have successfully assigned #{legacy_appeal.veteran_full_name}’s case to #{judge_two.full_name}")
+          expect(page).to have_content("You have successfully assigned #{legacy_appeal.veteran_full_name}’s case to " \
+            "#{judge_two.full_name}")
 
           visit "/queue/appeals/#{legacy_appeal.external_id}"
           expect(page).to have_content("ASSIGNED TO\n#{judge_two.vacols_uniq_id}")

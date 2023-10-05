@@ -23,7 +23,7 @@ module CaseReviewConcern
 
   def associate_with_appeal
     # Populate appeal_* column values based on original implementation that uses `task_id`
-    update_attributes(
+    update(
       appeal_id: appeal_through_task_id&.id,
       appeal_type: appeal_through_task_id&.class&.name
     )
@@ -41,7 +41,7 @@ module CaseReviewConcern
     # use column values if they exist
     return appeal.is_a?(LegacyAppeal) if appeal_association?
 
-    return task.appeal.is_a?(LegacyAppeal) if task && task.appeal
+    return task.appeal.is_a?(LegacyAppeal) if task&.appeal
 
     # fall back to original implementation
     (task_id =~ LegacyTask::TASK_ID_REGEX) ? true : false
@@ -52,14 +52,14 @@ module CaseReviewConcern
   def vacols_id
     # use column values if they exist
     return appeal.vacols_id if appeal_association?
-    return task.appeal.vacols_id if task && task.appeal&.is_a?(LegacyAppeal)
+    return task.appeal.vacols_id if task&.appeal.is_a?(LegacyAppeal)
 
     # fall back to original implementation
     task_id&.split("-", 2)&.first
   end
 
   def created_in_vacols_date
-    if task&.appeal&.is_a?(LegacyAppeal)
+    if task&.appeal.is_a?(LegacyAppeal)
       return VACOLS::Decass.where(defolder: task.appeal.vacols_id).max_by(&:deadtim).deadtim
     end
 

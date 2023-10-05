@@ -2,6 +2,8 @@
 
 # to create legacy appeals with MST/PACT issues, run "bundle exec rake 'db:generate_legacy_appeals[true]'""
 # to create without, run "bundle exec rake db:generate_legacy_appeals"
+
+# rubocop:disable all
 namespace :db do
   desc "Generates a smattering of legacy appeals with VACOLS cases that have special issues assocaited with them"
   task :generate_legacy_appeals, [:add_special_issues] => :environment do |_, args|
@@ -140,3 +142,4 @@ namespace :db do
     end
   end
 end
+# rubocop:enable all

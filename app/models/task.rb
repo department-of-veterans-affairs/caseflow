@@ -188,7 +188,7 @@ class Task < CaseflowRecord
       can_create = parent&.available_actions(user)&.map do |action|
         parent.build_action_hash(action, user)
       end&.any? do |action|
-        action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
+        action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option[:value] == name }
       end
 
       can_assign_to_parent?(user, parent, can_create)
@@ -198,7 +198,7 @@ class Task < CaseflowRecord
       can_create = parent&.available_actions(user, "SCM")&.map do |action|
         parent.build_action_hash(action, user)
       end&.any? do |action|
-        action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
+        action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option[:value] == name }
       end
 
       can_assign_to_parent?(user, parent, can_create)
@@ -234,7 +234,8 @@ class Task < CaseflowRecord
     def create_from_params(params, user)
       parent_task = create_parent_task(params, user)
       params = modify_params_for_create(params)
-      if parent_task.appeal_type == "LegacyAppeal" && parent_task.type != "TranslationTask" && !parent_task.type.is_a?(ColocatedTask)
+      if parent_task.appeal_type == "LegacyAppeal" && parent_task.type != "TranslationTask" &&
+         !parent_task.type.is_a?(ColocatedTask)
         special_case_for_legacy(parent_task, params, user)
       else # regular appeal
         child = create_child_task(parent_task, user, params)
@@ -278,7 +279,6 @@ class Task < CaseflowRecord
       end
     end
 
-
     def cancel_blocking_task_legacy(params, parent_task)
       parent_task.children.each { |current_task| search_for_blocking(params[:instructions], current_task) }
 
@@ -303,9 +303,12 @@ class Task < CaseflowRecord
     end
 
     def search_for_blocking(instructions, current_task)
-      current_task.legacy_blocking? ?
-        current_task.cancel_descendants(instructions: "**#{COPY::LEGACY_APPEALS_VLJ_REASON_INSTRUCTIONS}**\n" + instructions[1]) :
+      if current_task.legacy_blocking?
+        current_task.cancel_descendants(instructions: "**#{COPY::LEGACY_APPEALS_VLJ_REASON_INSTRUCTIONS}**\n" +
+                                        instructions[1])
+      else
         current_task.children.each { |current_task| search_for_blocking(current_task) }
+      end
     end
 
     def create_judge_assigned_task_for_legacy(params, parent_task)
@@ -541,7 +544,7 @@ class Task < CaseflowRecord
 
   def calculated_on_hold_duration
     timed_hold_task = active_child_timed_hold_task
-    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i
+    (timed_hold_task&.timer_end_time&.to_date&.- timed_hold_task&.timer_start_time&.to_date)&.to_i
   end
 
   def calculated_last_change_duration
@@ -624,7 +627,7 @@ class Task < CaseflowRecord
   end
 
   def flattened_instructions(params)
-    [instructions, params.dig(:instructions).presence].flatten.compact
+    [instructions, params[:instructions].presence].flatten.compact
   end
 
   def append_instruction(instruction)

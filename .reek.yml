@@ -40,6 +40,8 @@ detectors:
       - VirtualHearing#email_recipient_name
       - JudgeDecisionReviewTask#additional_available_actions
       - LegacyDocket#should_distribute?
+      - AttorneyLegacyTask
+      - JudgeLegacyAssignTask
   UncommunicativeVariableName:
     exclude:
       - Address
@@ -65,6 +67,8 @@ detectors:
       - SanitizedJsonExporter
       - Seeds::Tasks
       - TaskTreeRenderModule
+      - Task#create_from_params
+      - Task#verify_user_can_create!
   DuplicateMethodCall:
     enabled: false
   FeatureEnvy:
@@ -136,6 +140,7 @@ detectors:
       - ExternalApi::PexipService#send_pexip_request
       - ControllerSchema#remove_unknown_keys
       - BusinessLineReporter#as_csv
+      - TasksController#parent_legacy_appeal?
   InstanceVariableAssumption:
     exclude:
       - Appeal
@@ -255,6 +260,9 @@ detectors:
       - UpdatePOAConcern
       - VBMSCaseflowLogger#log
       - LegacyDocket
+      - AttorneyLegacyTask
+      - JudgeLegacyAssignTask
+      - TasksController#reassign_task
   UnusedParameters:
     exclude:
       - Docket#distribute_appeals
