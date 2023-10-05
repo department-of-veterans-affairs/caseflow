@@ -53,25 +53,24 @@ class HearingTask < Task
     super
     if appeal.is_a?(LegacyAppeal)
       if FeatureToggle.enable!(:vlj_legacy_appeal)
-        when_scm(appeal)
+        when_scm
       elsif appeal.tasks.open.where(type: HearingTask.name).empty?
         update_legacy_appeal_location
       end
     end
   end
 
-  def when_scm(appeal)
-    if appeal.tasks.open.where(type: HearingTask.name).empty? &&
-       appeal.tasks.open.where(type: ScheduleHearingTask.name).empty?
+  def when_scm
+    if appeal.tasks.open.where(type: [HearingTask.name, ScheduleHearingTask.name]).empty?
       if !appeal.tasks.open.where(type: JudgeAssignTask.name).empty?
-        process_appeal_scm(appeal)
+        process_appeal_scm
       else
         update_legacy_appeal_location
       end
     end
   end
 
-  def process_appeal_scm(appeal)
+  def process_appeal_scm
     current_judge_id = appeal.tasks.find_by(type: "JudgeAssignTask").assigned_to_id
     current_user = User.find(current_judge_id)
     update_legacy_appeal_location_scm(current_user.vacols_uniq_id)
