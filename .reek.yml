@@ -9,6 +9,7 @@ detectors:
       - PowerOfAttorney
       - QueueConfig
       - RatingDecision
+      - Task#skip_check_for_only_open_task_of_type
   BooleanParameter:
     exclude:
       - AsyncableJobsReporter#initialize
@@ -67,8 +68,7 @@ detectors:
       - SanitizedJsonExporter
       - Seeds::Tasks
       - TaskTreeRenderModule
-      - Task#create_from_params
-      - Task#verify_user_can_create!
+      - Task
   DuplicateMethodCall:
     enabled: false
   FeatureEnvy:
@@ -141,6 +141,7 @@ detectors:
       - ControllerSchema#remove_unknown_keys
       - BusinessLineReporter#as_csv
       - TasksController#parent_legacy_appeal?
+      - Task#cancel_task_and_child_subtasks
   InstanceVariableAssumption:
     exclude:
       - Appeal
@@ -267,7 +268,6 @@ detectors:
     exclude:
       - Docket#distribute_appeals
       - HearingRequestDocket#distribute_appeals
-
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.
