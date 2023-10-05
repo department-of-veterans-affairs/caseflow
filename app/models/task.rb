@@ -188,7 +188,7 @@ class Task < CaseflowRecord
       can_create = parent&.available_actions(user)&.map do |action|
         parent.build_action_hash(action, user)
       end&.any? do |action|
-        action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
+        action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option[:value] == name }
       end
 
       can_assign_to_parent?(user, parent, can_create)
@@ -198,7 +198,7 @@ class Task < CaseflowRecord
       can_create = parent&.available_actions(user, "SCM")&.map do |action|
         parent.build_action_hash(action, user)
       end&.any? do |action|
-        action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
+        action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option[:value] == name }
       end
 
       can_assign_to_parent?(user, parent, can_create)
@@ -235,7 +235,7 @@ class Task < CaseflowRecord
       parent_task = create_parent_task(params, user)
       params = modify_params_for_create(params)
       if parent_task.appeal_type == "LegacyAppeal" && parent_task.type != "TranslationTask" &&
-                                                      !parent_task.type.is_a?(ColocatedTask)
+         !parent_task.type.is_a?(ColocatedTask)
         special_case_for_legacy(parent_task, params, user)
       else # regular appeal
         child = create_child_task(parent_task, user, params)
@@ -544,7 +544,7 @@ class Task < CaseflowRecord
 
   def calculated_on_hold_duration
     timed_hold_task = active_child_timed_hold_task
-    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i
+    (timed_hold_task&.timer_end_time&.to_date&.- timed_hold_task&.timer_start_time&.to_date)&.to_i
   end
 
   def calculated_last_change_duration
@@ -627,7 +627,7 @@ class Task < CaseflowRecord
   end
 
   def flattened_instructions(params)
-    [instructions, params.dig(:instructions).presence].flatten.compact
+    [instructions, params[:instructions].presence].flatten.compact
   end
 
   def append_instruction(instruction)
