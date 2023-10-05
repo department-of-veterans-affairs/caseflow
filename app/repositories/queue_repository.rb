@@ -56,7 +56,7 @@ class QueueRepository
       appeals
     end
 
-    def reassign_case_to_judge!(vacols_id:, assigned_by:, created_in_vacols_date:, judge_vacols_user_id:, decass_attrs:)
+    def reassign_case_to_judge!(vacols_id:, created_in_vacols_date:, judge_vacols_user_id:, decass_attrs:)
       decass_record = find_decass_record(vacols_id, created_in_vacols_date)
       # In attorney checkout, we are automatically selecting the judge who
       # assigned the attorney the case. But we also have a drop down for the

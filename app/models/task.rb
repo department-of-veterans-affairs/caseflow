@@ -183,6 +183,7 @@ class Task < CaseflowRecord
       false
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def verify_user_can_create!(user, parent)
       can_create = parent&.available_actions(user)&.map do |action|
         parent.build_action_hash(action, user)
@@ -190,12 +191,7 @@ class Task < CaseflowRecord
         action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
       end
 
-      if !parent&.actions_allowable?(user) || !can_create
-        user_description = user ? "User #{user.id}" : "nil User"
-        parent_description = parent ? " from #{parent.class.name} #{parent.id}" : ""
-        message = "#{user_description} cannot assign #{name}#{parent_description}."
-        fail Caseflow::Error::ActionForbiddenError, message: message
-      end
+      can_assign_to_parent?(user, parent, can_create)
     end
 
     def verify_user_can_create_legacy!(user, parent)
@@ -205,6 +201,11 @@ class Task < CaseflowRecord
         action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
       end
 
+      can_assign_to_parent?(user, parent, can_create)
+    end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+    def can_assign_to_parent?(user, parent, can_create)
       if !parent&.actions_allowable?(user) || !can_create
         user_description = user ? "User #{user.id}" : "nil User"
         parent_description = parent ? " from #{parent.class.name} #{parent.id}" : ""
@@ -718,7 +719,7 @@ class Task < CaseflowRecord
     end
   end
 
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def reassign(reassign_params, current_user)
     # We do not validate the number of tasks in this scenario because when a
     # task is reassigned, more than one open task of the same type must exist during the reassignment.
@@ -750,7 +751,7 @@ class Task < CaseflowRecord
 
     [replacement, self, replacement.children].flatten
   end
-  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def can_move_on_docket_switch?
     return false unless open_with_no_children?

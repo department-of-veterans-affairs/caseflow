@@ -100,12 +100,16 @@ class AttorneyTask < Task
 
     # Allows SSC, SCM, VLJ's if legacy
     if appeal.is_a?(LegacyAppeal)
-      return parent.assigned_to == user || assigned_by == user || user&.can_act_on_behalf_of_legacy_judges?
+      return current_assignee?(user) || user&.can_act_on_behalf_of_legacy_judges?
     end
 
     # The judge who is assigned the parent review task, the assigning judge, and SpecialCaseMovementTeam members can
     # cancel or reassign this task
-    parent.assigned_to == user || assigned_by == user || user&.can_act_on_behalf_of_judges?
+    current_assignee?(user) || user&.can_act_on_behalf_of_judges?
+  end
+
+  def current_assignee?(user)
+    parent.assigned_to == user || assigned_by == user
   end
 
   # VLJs can assign these to themselves
