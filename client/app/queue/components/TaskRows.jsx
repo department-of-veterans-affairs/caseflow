@@ -307,11 +307,13 @@ class TaskRows extends React.PureComponent {
     // We specify the same 2.4rem margin-bottom as paragraphs to each set of instructions
     // to ensure a consistent margin between instruction content and the "Hide" button
     const divStyles = { marginTop: '2rem' };
+    const taskIsAssignOrDecisionReview = task.type === 'JudgeAssignTask' ||
+      task.type === 'JudgeDecisionReviewTask';
 
-    if ((task.previous.length >= 1) && (task.type === 'JudgeAssignTask' || task.type === 'JudgeDecisionReviewTask')) {
+    if ((task.previous.length >= 1) && (taskIsAssignOrDecisionReview)) {
       return (
         <React.Fragment key={`${task.uniqueId} fragment`}>
-          {task.previous.toReversed().map((prev) => (
+          {(task.previous.length > 1 ? task.previous.toReversed() : task.previous).map((prev) => (
             <div>
               {prev.old_judge && (<React.Fragment key={`${task.uniqueId} div`}>
                 <div
