@@ -30,6 +30,7 @@ class AttorneyLegacyTask < LegacyTask
     role == "attorney" && current_user == assigned_to
   end
 
+
   def ssc_legacy_case_movement?(current_user)
     current_user&.can_act_on_behalf_of_legacy_judges? && FeatureToggle.enabled?(:vlj_legacy_appeal)
   end
