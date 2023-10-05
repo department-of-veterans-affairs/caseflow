@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import ApiUtil from "../util/ApiUtil";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import ApiUtil from '../util/ApiUtil';
 
-import RadioField from "../components/RadioField";
-import COPY from "../../COPY";
+import RadioField from '../components/RadioField';
+import COPY from '../../COPY';
 
 const radioOptions = [
-  { displayText: "Pexip", value: "pexip" },
-  { displayText: "Webex", value: "webex" },
+  { displayText: 'Pexip', value: 'pexip' },
+  { displayText: 'Webex', value: 'webex' },
 ];
 
 const SelectConferenceTypeRadioField = ({
