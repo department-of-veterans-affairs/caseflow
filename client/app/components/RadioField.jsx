@@ -50,6 +50,7 @@ export const RadioField = (props) => {
     options,
   ]);
 
+
   const radioClass = className.
     concat(isVertical ? 'cf-form-radio' : 'cf-form-radio-inline').
     concat(errorMessage ? 'usa-input-error' : '');
@@ -88,6 +89,7 @@ export const RadioField = (props) => {
 
   const handleChange = (event) => onChange?.(event.target.value);
   const controlled = useMemo(() => typeof value !== 'undefined', [value]);
+
 
   return (
     <fieldset className={radioClass.join(' ')} {...styling}>

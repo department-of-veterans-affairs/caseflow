@@ -288,7 +288,7 @@ export default class OrganizationUsers extends React.PureComponent {
                       <SelectConferenceTypeRadioField
                         key={`${user.id}-conference-selection`}
                         name={user.id}
-                        meetingType={user.attributes.meeting_type}
+                        conferenceProvider={user.attributes.conference_provider}
                         organization={this.props.organization}
                         user={user}
                       />
