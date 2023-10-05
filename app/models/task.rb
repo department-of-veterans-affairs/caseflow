@@ -307,7 +307,7 @@ class Task < CaseflowRecord
         current_task.cancel_descendants(instructions: "**#{COPY::LEGACY_APPEALS_VLJ_REASON_INSTRUCTIONS}**\n" +
                                         instructions[1])
       else
-        current_task.children.each { |current_task| search_for_blocking(current_task) }
+        current_task.children.each { |task| search_for_blocking(task) }
       end
     end
 
