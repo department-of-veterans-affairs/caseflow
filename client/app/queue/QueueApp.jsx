@@ -756,6 +756,7 @@ class QueueApp extends React.PureComponent {
                 let reviewActionType = props.match.params.checkoutFlow;
 
                 /* eslint-disable indent */
+                // eslint-disable-next-line default-case
                 switch (this.props.reviewActionType) {
                   case DECISION_TYPES.OMO_REQUEST:
                     reviewActionType = 'OMO';
