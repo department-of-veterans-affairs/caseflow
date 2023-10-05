@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+/* eslint-disable max-len */
 
 import querystring from 'querystring';
 import React from 'react';
@@ -254,6 +255,7 @@ class QueueApp extends React.PureComponent {
       <SelectRemandReasonsView
         prevStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         {...props.match.params}
+        featureToggles={this.props.featureToggles}
       />
     );
   };
@@ -758,6 +760,7 @@ class QueueApp extends React.PureComponent {
               title={(props) => {
                 let reviewActionType = props.match.params.checkoutFlow;
 
+                /* eslint-disable indent */
                 // eslint-disable-next-line default-case
                 switch (this.props.reviewActionType) {
                 case DECISION_TYPES.OMO_REQUEST:
@@ -770,6 +773,7 @@ class QueueApp extends React.PureComponent {
                   reviewActionType = 'to Dispatch';
                   break;
                 }
+                /* eslint-enable indent */
 
                 return `Draft Decision | Submit ${reviewActionType}`;
               }}
