@@ -60,7 +60,6 @@ class MetricsService
     return_value
   rescue StandardError => error
     Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-    Raven.capture_exception(error, extra: { type: "request_error", service: service, name: name, app: app })
 
     increment_datadog_counter("request_error", service, name, app) if service
 
