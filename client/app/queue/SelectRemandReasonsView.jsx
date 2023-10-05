@@ -120,8 +120,7 @@ class SelectRemandReasonsView extends React.Component {
         issueId={this.props.issues[idx].id}
         key={`remand-reasons-options-${idx}`}
         ref={this.getChildRef}
-        idx={idx}
-        featureToggles={this.props.featureToggles} />
+        idx={idx} />
     )}
   </QueueFlowPage>;
 }
@@ -145,8 +144,7 @@ SelectRemandReasonsView.propTypes = {
   taskId: PropTypes.string.isRequired,
   checkoutFlow: PropTypes.string.isRequired,
   userRole: PropTypes.string.isRequired,
-  editStagedAppeal: PropTypes.func,
-  featureToggles: PropTypes.object.isRequired
+  editStagedAppeal: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
