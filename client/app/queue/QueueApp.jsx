@@ -53,8 +53,7 @@ import HearingScheduledInErrorModal from './components/HearingScheduledInErrorMo
 import ChangeHearingDispositionModal from './ChangeHearingDispositionModal';
 import CreateChangeHearingDispositionTaskModal from './CreateChangeHearingDispositionTaskModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
-import AssignToAttorneyModalView
-  from './AssignToAttorneyModalView';
+import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
 import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
@@ -165,6 +164,7 @@ class QueueApp extends React.PureComponent {
     </QueueLoadingScreen>
   );
 
+  // eslint-disable-next-line react/prop-types
   routedTeamQueueList = (label) => ({ match }) => (
     <QueueLoadingScreen
       {...this.propsForQueueLoadingScreen()}
