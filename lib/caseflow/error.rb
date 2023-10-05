@@ -472,10 +472,4 @@ module Caseflow::Error
   class PacmanForbiddenError < PacmanApiError; end
   class PacmanNotFoundError < PacmanApiError; end
   class PacmanInternalServerError < PacmanApiError; end
-
-  class SyncLockFailed < StandardError
-    def ignorable?
-      true
-    end
-  end
 end
