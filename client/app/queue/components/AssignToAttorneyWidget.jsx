@@ -46,8 +46,9 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
     if (doesTaskExistAndIsLegacy) {
       const instructions = selectedTasks[0]?.instructions?.filter((instructionData) => instructionData) || [];
-      const isInstructionArray = (instructions.length === 0 ? [] : instructions);
-      const instructionType = Array.isArray(props.selectedTasks[0].instructions) ? isInstructionArray : [];
+
+      // check if instruction is array
+      const instructionType = this.isInstructionArray(instructions, selectedTasks);
 
       this.state = {
         instructions: ((this.props.isModal && props.selectedTasks.length > 0 &&
@@ -65,6 +66,12 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         modalDisableButton: true
       };
     }
+  }
+
+  isInstructionArray = (instructions, selectedTasks) => {
+    const isArray = (instructions.length === 0 ? [] : instructions);
+
+    return Array.isArray(selectedTasks[0].instructions) ? isArray : [];
   }
 
   componentDidMount = () => this.props.resetSuccessMessages?.();
