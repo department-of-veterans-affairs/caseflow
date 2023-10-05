@@ -27,19 +27,15 @@ Object {
                 </b>
               </span>
             </label>
-            <div
-              class="input-container"
-            >
-              <input
-                class="hearing-day-date"
-                id="hearingDate"
-                max="9999-12-31"
-                name="hearingDate"
-                placeholder="mm/dd/yyyy"
-                type="date"
-                value=""
-              />
-            </div>
+            <input
+              class="hearing-day-date"
+              id="hearingDate"
+              max="9999-12-31"
+              name="hearingDate"
+              placeholder="mm/dd/yyyy"
+              type="date"
+              value=""
+            />
           </div>
           <div
             class=""
@@ -237,19 +233,15 @@ Object {
               </b>
             </span>
           </label>
-          <div
-            class="input-container"
-          >
-            <input
-              class="hearing-day-date"
-              id="hearingDate"
-              max="9999-12-31"
-              name="hearingDate"
-              placeholder="mm/dd/yyyy"
-              type="date"
-              value=""
-            />
-          </div>
+          <input
+            class="hearing-day-date"
+            id="hearingDate"
+            max="9999-12-31"
+            name="hearingDate"
+            placeholder="mm/dd/yyyy"
+            type="date"
+            value=""
+          />
         </div>
         <div
           class=""
@@ -504,19 +496,15 @@ Object {
                 </b>
               </span>
             </label>
-            <div
-              class="input-container"
-            >
-              <input
-                class="hearing-day-date"
-                id="hearingDate"
-                max="9999-12-31"
-                name="hearingDate"
-                placeholder="mm/dd/yyyy"
-                type="date"
-                value=""
-              />
-            </div>
+            <input
+              class="hearing-day-date"
+              id="hearingDate"
+              max="9999-12-31"
+              name="hearingDate"
+              placeholder="mm/dd/yyyy"
+              type="date"
+              value=""
+            />
           </div>
           <div
             class=""
@@ -1115,19 +1103,15 @@ Object {
               </b>
             </span>
           </label>
-          <div
-            class="input-container"
-          >
-            <input
-              class="hearing-day-date"
-              id="hearingDate"
-              max="9999-12-31"
-              name="hearingDate"
-              placeholder="mm/dd/yyyy"
-              type="date"
-              value=""
-            />
-          </div>
+          <input
+            class="hearing-day-date"
+            id="hearingDate"
+            max="9999-12-31"
+            name="hearingDate"
+            placeholder="mm/dd/yyyy"
+            type="date"
+            value=""
+          />
         </div>
         <div
           class=""
@@ -1783,19 +1767,15 @@ Object {
                 </b>
               </span>
             </label>
-            <div
-              class="input-container"
-            >
-              <input
-                class="hearing-day-date"
-                id="hearingDate"
-                max="9999-12-31"
-                name="hearingDate"
-                placeholder="mm/dd/yyyy"
-                type="date"
-                value=""
-              />
-            </div>
+            <input
+              class="hearing-day-date"
+              id="hearingDate"
+              max="9999-12-31"
+              name="hearingDate"
+              placeholder="mm/dd/yyyy"
+              type="date"
+              value=""
+            />
           </div>
           <div
             class=""
@@ -2394,19 +2374,15 @@ Object {
               </b>
             </span>
           </label>
-          <div
-            class="input-container"
-          >
-            <input
-              class="hearing-day-date"
-              id="hearingDate"
-              max="9999-12-31"
-              name="hearingDate"
-              placeholder="mm/dd/yyyy"
-              type="date"
-              value=""
-            />
-          </div>
+          <input
+            class="hearing-day-date"
+            id="hearingDate"
+            max="9999-12-31"
+            name="hearingDate"
+            placeholder="mm/dd/yyyy"
+            type="date"
+            value=""
+          />
         </div>
         <div
           class=""
@@ -3059,19 +3035,15 @@ exports[`AddHearingDay Matches snapshot with default props 1`] = `
             </b>
           </span>
         </label>
-        <div
-          class="input-container"
-        >
-          <input
-            class="hearing-day-date"
-            id="hearingDate"
-            max="9999-12-31"
-            name="hearingDate"
-            placeholder="mm/dd/yyyy"
-            type="date"
-            value=""
-          />
-        </div>
+        <input
+          class="hearing-day-date"
+          id="hearingDate"
+          max="9999-12-31"
+          name="hearingDate"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
       </div>
       <div
         class=""

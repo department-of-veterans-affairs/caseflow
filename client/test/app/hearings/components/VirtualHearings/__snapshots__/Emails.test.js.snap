@@ -51,24 +51,20 @@ exports[`HearingEmails Does not show required when ReadOnly 1`] = `
           </FormLabel>
         </strong>
       </label>
-      <div
-        className="input-container"
-      >
-        <input
-          className={
-            Array [
-              "cf-form-textinput cf-inline-field",
-            ]
-          }
-          id="Appellant Email"
-          name="Appellant Email"
-          onBlur={[Function]}
-          onChange={[Function]}
-          readOnly={true}
-          type="text"
-          value="123@gmail.com"
-        />
-      </div>
+      <input
+        className={
+          Array [
+            "cf-form-textinput cf-inline-field",
+          ]
+        }
+        id="Appellant Email"
+        name="Appellant Email"
+        onBlur={[Function]}
+        onChange={[Function]}
+        readOnly={true}
+        type="text"
+        value="123@gmail.com"
+      />
     </div>
   </TextField>
   <HelperText
@@ -153,23 +149,19 @@ exports[`HearingEmails Respects required prop 1`] = `
           </FormLabel>
         </strong>
       </label>
-      <div
-        className="input-container"
-      >
-        <input
-          className={
-            Array [
-              "cf-form-textinput cf-inline-field",
-            ]
-          }
-          id="Appellant Email"
-          name="Appellant Email"
-          onBlur={[Function]}
-          onChange={[Function]}
-          type="text"
-          value="123@gmail.com"
-        />
-      </div>
+      <input
+        className={
+          Array [
+            "cf-form-textinput cf-inline-field",
+          ]
+        }
+        id="Appellant Email"
+        name="Appellant Email"
+        onBlur={[Function]}
+        onChange={[Function]}
+        type="text"
+        value="123@gmail.com"
+      />
     </div>
   </TextField>
   <HelperText

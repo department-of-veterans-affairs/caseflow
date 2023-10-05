@@ -93,7 +93,7 @@ const AddCavcDatesModal = ({ appealId, decisionType, error, highlightInvalid, hi
   />;
 
   const instructionsTextField = <TextareaField
-    label={COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
+    label={COPY.CAVC_INSTRUCTIONS_LABEL}
     name="context-and-instructions-textBox"
     value={instructions}
     onChange={(val) => setInstructions(val)}

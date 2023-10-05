@@ -5,8 +5,7 @@ module.exports = {
     '^constants/(.*)$': '<rootDir>/constants/$1',
     '^test/(.*)$': '<rootDir>/test/$1',
     '^COPY': '<rootDir>/COPY',
-    '\\.(css|less|scss|sss|styl)$': '<rootDir>/node_modules/jest-css-modules',
-    '^common/(.*)$': '<rootDir>/app/components/common/$1'
+    '\\.(css|less|scss|sss|styl)$': '<rootDir>/node_modules/jest-css-modules'
   },
   // Runs before the environment is configured
   globalSetup: './test/global-setup.js',

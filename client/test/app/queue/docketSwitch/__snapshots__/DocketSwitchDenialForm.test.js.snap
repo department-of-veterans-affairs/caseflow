@@ -29,19 +29,15 @@ exports[`DocketSwitchDenialForm renders correctly 1`] = `
             </span>
           </strong>
         </label>
-        <div
-          class="input-container"
-        >
-          <input
-            class="cf-form-textinput"
-            id="receiptDate"
-            max="9999-12-31"
-            name="receiptDate"
-            placeholder="mm/dd/yyyy"
-            type="date"
-            value=""
-          />
-        </div>
+        <input
+          class="cf-form-textinput"
+          id="receiptDate"
+          max="9999-12-31"
+          name="receiptDate"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
       </div>
       <div
         class="cf-form-textarea"

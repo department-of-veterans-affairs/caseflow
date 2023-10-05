@@ -284,17 +284,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                 </span>
               </strong>
             </label>
-            <div
-              class="input-container"
-            >
-              <input
-                class="cf-form-textinput"
-                id="firstName"
-                name="firstName"
-                type="text"
-                value=""
-              />
-            </div>
+            <input
+              class="cf-form-textinput"
+              id="firstName"
+              name="firstName"
+              type="text"
+              value=""
+            />
           </div>
         </div>
         <div
@@ -317,17 +313,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                 </span>
               </strong>
             </label>
-            <div
-              class="input-container"
-            >
-              <input
-                class="cf-form-textinput"
-                id="middleName"
-                name="middleName"
-                type="text"
-                value=""
-              />
-            </div>
+            <input
+              class="cf-form-textinput"
+              id="middleName"
+              name="middleName"
+              type="text"
+              value=""
+            />
           </div>
         </div>
         <div
@@ -350,17 +342,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                 </span>
               </strong>
             </label>
-            <div
-              class="input-container"
-            >
-              <input
-                class="cf-form-textinput"
-                id="lastName"
-                name="lastName"
-                type="text"
-                value=""
-              />
-            </div>
+            <input
+              class="cf-form-textinput"
+              id="lastName"
+              name="lastName"
+              type="text"
+              value=""
+            />
           </div>
         </div>
         <div
@@ -383,17 +371,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                 </span>
               </strong>
             </label>
-            <div
-              class="input-container"
-            >
-              <input
-                class="cf-form-textinput"
-                id="suffix"
-                name="suffix"
-                type="text"
-                value=""
-              />
-            </div>
+            <input
+              class="cf-form-textinput"
+              id="suffix"
+              name="suffix"
+              type="text"
+              value=""
+            />
           </div>
         </div>
         <div>
@@ -412,17 +396,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="addressLine1"
-                  name="addressLine1"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="addressLine1"
+                name="addressLine1"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
@@ -445,17 +425,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="addressLine2"
-                  name="addressLine2"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="addressLine2"
+                name="addressLine2"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
@@ -473,17 +449,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="city"
-                  name="city"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="city"
+                name="city"
+                type="text"
+                value=""
+              />
             </div>
             <div
               class=""
@@ -609,17 +581,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="zip"
-                  name="zip"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="zip"
+                name="zip"
+                type="text"
+                value=""
+              />
             </div>
             <div
               class="cf-form-textinput   "
@@ -633,17 +601,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="country"
-                  name="country"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="country"
+                name="country"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
@@ -666,17 +630,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="emailAddress"
-                  name="emailAddress"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="emailAddress"
+                name="emailAddress"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
@@ -699,17 +659,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="phoneNumber"
+                name="phoneNumber"
+                type="text"
+                value=""
+              />
             </div>
           </div>
         </div>
@@ -1038,17 +994,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                 </span>
               </strong>
             </label>
-            <div
-              class="input-container"
-            >
-              <input
-                class="cf-form-textinput"
-                id="name"
-                name="name"
-                type="text"
-                value=""
-              />
-            </div>
+            <input
+              class="cf-form-textinput"
+              id="name"
+              name="name"
+              type="text"
+              value=""
+            />
           </div>
         </div>
         <div>
@@ -1067,17 +1019,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="addressLine1"
-                  name="addressLine1"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="addressLine1"
+                name="addressLine1"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
@@ -1100,17 +1048,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="addressLine2"
-                  name="addressLine2"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="addressLine2"
+                name="addressLine2"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
@@ -1133,17 +1077,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="addressLine3"
-                  name="addressLine3"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="addressLine3"
+                name="addressLine3"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
@@ -1161,17 +1101,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="city"
-                  name="city"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="city"
+                name="city"
+                type="text"
+                value=""
+              />
             </div>
             <div
               class=""
@@ -1297,17 +1233,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="zip"
-                  name="zip"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="zip"
+                name="zip"
+                type="text"
+                value=""
+              />
             </div>
             <div
               class="cf-form-textinput   "
@@ -1321,17 +1253,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="country"
-                  name="country"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="country"
+                name="country"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
@@ -1354,17 +1282,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="emailAddress"
-                  name="emailAddress"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="emailAddress"
+                name="emailAddress"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
@@ -1387,17 +1311,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="phoneNumber"
+                name="phoneNumber"
+                type="text"
+                value=""
+              />
             </div>
           </div>
         </div>
@@ -1726,17 +1646,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                 </span>
               </strong>
             </label>
-            <div
-              class="input-container"
-            >
-              <input
-                class="cf-form-textinput"
-                id="firstName"
-                name="firstName"
-                type="text"
-                value=""
-              />
-            </div>
+            <input
+              class="cf-form-textinput"
+              id="firstName"
+              name="firstName"
+              type="text"
+              value=""
+            />
           </div>
         </div>
         <div
@@ -1759,17 +1675,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                 </span>
               </strong>
             </label>
-            <div
-              class="input-container"
-            >
-              <input
-                class="cf-form-textinput"
-                id="middleName"
-                name="middleName"
-                type="text"
-                value=""
-              />
-            </div>
+            <input
+              class="cf-form-textinput"
+              id="middleName"
+              name="middleName"
+              type="text"
+              value=""
+            />
           </div>
         </div>
         <div
@@ -1787,17 +1699,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                 </span>
               </strong>
             </label>
-            <div
-              class="input-container"
-            >
-              <input
-                class="cf-form-textinput"
-                id="lastName"
-                name="lastName"
-                type="text"
-                value=""
-              />
-            </div>
+            <input
+              class="cf-form-textinput"
+              id="lastName"
+              name="lastName"
+              type="text"
+              value=""
+            />
           </div>
         </div>
         <div
@@ -1820,17 +1728,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                 </span>
               </strong>
             </label>
-            <div
-              class="input-container"
-            >
-              <input
-                class="cf-form-textinput"
-                id="suffix"
-                name="suffix"
-                type="text"
-                value=""
-              />
-            </div>
+            <input
+              class="cf-form-textinput"
+              id="suffix"
+              name="suffix"
+              type="text"
+              value=""
+            />
           </div>
         </div>
         <div>
@@ -1854,17 +1758,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="addressLine1"
-                  name="addressLine1"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="addressLine1"
+                name="addressLine1"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
@@ -1887,17 +1787,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="addressLine2"
-                  name="addressLine2"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="addressLine2"
+                name="addressLine2"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
@@ -1920,17 +1816,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="city"
-                  name="city"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="city"
+                name="city"
+                type="text"
+                value=""
+              />
             </div>
             <div
               class=""
@@ -2056,17 +1948,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="zip"
-                  name="zip"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="zip"
+                name="zip"
+                type="text"
+                value=""
+              />
             </div>
             <div
               class="cf-form-textinput   "
@@ -2085,17 +1973,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="country"
-                  name="country"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="country"
+                name="country"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
@@ -2118,17 +2002,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="emailAddress"
-                  name="emailAddress"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="emailAddress"
+                name="emailAddress"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
@@ -2151,17 +2031,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="phoneNumber"
+                name="phoneNumber"
+                type="text"
+                value=""
+              />
             </div>
           </div>
         </div>
@@ -2490,17 +2366,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                 </span>
               </strong>
             </label>
-            <div
-              class="input-container"
-            >
-              <input
-                class="cf-form-textinput"
-                id="firstName"
-                name="firstName"
-                type="text"
-                value=""
-              />
-            </div>
+            <input
+              class="cf-form-textinput"
+              id="firstName"
+              name="firstName"
+              type="text"
+              value=""
+            />
           </div>
         </div>
         <div
@@ -2523,17 +2395,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                 </span>
               </strong>
             </label>
-            <div
-              class="input-container"
-            >
-              <input
-                class="cf-form-textinput"
-                id="middleName"
-                name="middleName"
-                type="text"
-                value=""
-              />
-            </div>
+            <input
+              class="cf-form-textinput"
+              id="middleName"
+              name="middleName"
+              type="text"
+              value=""
+            />
           </div>
         </div>
         <div
@@ -2551,17 +2419,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                 </span>
               </strong>
             </label>
-            <div
-              class="input-container"
-            >
-              <input
-                class="cf-form-textinput"
-                id="lastName"
-                name="lastName"
-                type="text"
-                value=""
-              />
-            </div>
+            <input
+              class="cf-form-textinput"
+              id="lastName"
+              name="lastName"
+              type="text"
+              value=""
+            />
           </div>
         </div>
         <div
@@ -2584,17 +2448,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                 </span>
               </strong>
             </label>
-            <div
-              class="input-container"
-            >
-              <input
-                class="cf-form-textinput"
-                id="suffix"
-                name="suffix"
-                type="text"
-                value=""
-              />
-            </div>
+            <input
+              class="cf-form-textinput"
+              id="suffix"
+              name="suffix"
+              type="text"
+              value=""
+            />
           </div>
         </div>
         <div>
@@ -2618,17 +2478,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="addressLine1"
-                  name="addressLine1"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="addressLine1"
+                name="addressLine1"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
@@ -2651,17 +2507,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="addressLine2"
-                  name="addressLine2"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="addressLine2"
+                name="addressLine2"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
@@ -2684,17 +2536,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="city"
-                  name="city"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="city"
+                name="city"
+                type="text"
+                value=""
+              />
             </div>
             <div
               class=""
@@ -2820,17 +2668,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="zip"
-                  name="zip"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="zip"
+                name="zip"
+                type="text"
+                value=""
+              />
             </div>
             <div
               class="cf-form-textinput   "
@@ -2849,17 +2693,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="country"
-                  name="country"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="country"
+                name="country"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
@@ -2882,17 +2722,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="emailAddress"
-                  name="emailAddress"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="emailAddress"
+                name="emailAddress"
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div
@@ -2915,17 +2751,13 @@ exports[`AddPoaPage Can select Name not listed and it renders individual and org
                   </span>
                 </strong>
               </label>
-              <div
-                class="input-container"
-              >
-                <input
-                  class="cf-form-textinput"
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  type="text"
-                  value=""
-                />
-              </div>
+              <input
+                class="cf-form-textinput"
+                id="phoneNumber"
+                name="phoneNumber"
+                type="text"
+                value=""
+              />
             </div>
           </div>
         </div>

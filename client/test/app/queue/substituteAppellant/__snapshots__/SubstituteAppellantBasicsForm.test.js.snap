@@ -28,19 +28,15 @@ exports[`SubstituteAppellantBasicsForm with blank form renders default state cor
             </span>
           </strong>
         </label>
-        <div
-          class="input-container"
-        >
-          <input
-            class="cf-form-textinput"
-            id="substitutionDate"
-            max="9999-12-31"
-            name="substitutionDate"
-            placeholder="mm/dd/yyyy"
-            type="date"
-            value=""
-          />
-        </div>
+        <input
+          class="cf-form-textinput"
+          id="substitutionDate"
+          max="9999-12-31"
+          name="substitutionDate"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
       </div>
       <fieldset
         class="usa-fieldset-inputs cf-form-radio "
@@ -148,19 +144,15 @@ exports[`SubstituteAppellantBasicsForm with existing form data renders default s
             </span>
           </strong>
         </label>
-        <div
-          class="input-container"
-        >
-          <input
-            class="cf-form-textinput"
-            id="substitutionDate"
-            max="9999-12-31"
-            name="substitutionDate"
-            placeholder="mm/dd/yyyy"
-            type="date"
-            value=""
-          />
-        </div>
+        <input
+          class="cf-form-textinput"
+          id="substitutionDate"
+          max="9999-12-31"
+          name="substitutionDate"
+          placeholder="mm/dd/yyyy"
+          type="date"
+          value=""
+        />
       </div>
       <fieldset
         class="usa-fieldset-inputs cf-form-radio "

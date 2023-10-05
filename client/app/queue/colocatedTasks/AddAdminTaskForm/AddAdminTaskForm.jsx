@@ -8,7 +8,7 @@ import colocatedAdminActions from 'constants/CO_LOCATED_ADMIN_ACTIONS';
 import StringUtil from 'app/util/StringUtil';
 import TextareaField from 'app/components/TextareaField';
 import {
-  PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
+  ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL,
   INSTRUCTIONS_ERROR_FIELD_REQUIRED,
 } from 'app/../COPY';
 import { css } from 'glamor';
@@ -79,7 +79,7 @@ export const AddAdminTaskForm = ({ baseName, item, onRemove }) => {
           }
           name={`${baseName}.instructions`}
           defaultValue={item.instructions}
-          label={PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
+          label={ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
           inputRef={register()}
         />
       </div>

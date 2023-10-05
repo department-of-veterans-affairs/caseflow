@@ -16,7 +16,7 @@ import QueueFlowModal from './QueueFlowModal';
 
 /* eslint-disable camelcase */
 const CancelTaskModal = (props) => {
-  const { task, hearingDay } = props;
+  const { task, hearingDay, highlightFormItems } = props;
   const taskData = taskActionData(props);
 
   // Show task instructions by default
@@ -85,7 +85,6 @@ const CancelTaskModal = (props) => {
   if ([
     'AssessDocumentationTask',
     'EducationAssessDocumentationTask',
-    'HearingPostponementRequestMailTask'
   ].includes(task?.type)) {
     modalProps.submitButtonClassNames = ['usa-button'];
     modalProps.submitDisabled = !validateForm();
@@ -112,10 +111,12 @@ const CancelTaskModal = (props) => {
         }
         {get(taskData, 'show_instructions', true) &&
           <TextareaField
-            name={COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
+            name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+            // errorMessage={highlightFormItems && instructions.length === 0 ?
+            //   COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
             id="taskInstructions"
             onChange={setInstructions}
-            placeholder="This is a description of instructions and context for this action."
+            placeholder="This is a description of instuctions and context for this action."
             value={instructions}
           />
         }
@@ -140,7 +141,8 @@ const CancelTaskModal = (props) => {
       }
       {shouldShowTaskInstructions &&
         <TextareaField
-          name={taskData?.instructions_label ?? COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
+          name={taskData?.instructions_label ?? COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+          errorMessage={highlightFormItems && instructions.length === 0 ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
           id="taskInstructions"
           onChange={setInstructions}
           value={instructions}
@@ -165,11 +167,13 @@ CancelTaskModal.propTypes = {
     type: PropTypes.string,
     onHoldDuration: PropTypes.number
   }),
+  highlightFormItems: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
   hearingDay: state.ui.hearingDay,
+  highlightFormItems: state.ui.highlightFormItems
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

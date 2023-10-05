@@ -97,19 +97,15 @@ Object {
                           Decision date
                         </span>
                       </label>
-                      <div
-                        class="input-container"
-                      >
-                        <input
-                          class="cf-form-textinput"
-                          id="decision-date"
-                          max="2023-08-10"
-                          name="decision-date"
-                          placeholder="mm/dd/yyyy"
-                          type="date"
-                          value=""
-                        />
-                      </div>
+                      <input
+                        class="cf-form-textinput"
+                        id="decision-date"
+                        max="2023-08-10"
+                        name="decision-date"
+                        placeholder="mm/dd/yyyy"
+                        type="date"
+                        value=""
+                      />
                     </div>
                   </div>
                 </div>
@@ -239,19 +235,15 @@ Object {
                         Decision date
                       </span>
                     </label>
-                    <div
-                      class="input-container"
-                    >
-                      <input
-                        class="cf-form-textinput"
-                        id="decision-date"
-                        max="2023-08-10"
-                        name="decision-date"
-                        placeholder="mm/dd/yyyy"
-                        type="date"
-                        value=""
-                      />
-                    </div>
+                    <input
+                      class="cf-form-textinput"
+                      id="decision-date"
+                      max="2023-08-10"
+                      name="decision-date"
+                      placeholder="mm/dd/yyyy"
+                      type="date"
+                      value=""
+                    />
                   </div>
                 </div>
               </div>

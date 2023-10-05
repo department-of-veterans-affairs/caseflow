@@ -516,7 +516,7 @@ const AddCavcRemandView = (props) => {
   </React.Fragment>;
 
   const instructionsField = <TextareaField
-    label={COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
+    label={COPY.CAVC_INSTRUCTIONS_LABEL}
     name="context-and-instructions-textBox"
     value={instructions}
     onChange={(val) => setInstructions(val)}

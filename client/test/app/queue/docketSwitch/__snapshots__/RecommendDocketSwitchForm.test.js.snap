@@ -168,17 +168,13 @@ exports[`RecommendDocketSwitchForm renders correctly 1`] = `
             </span>
           </strong>
         </label>
-        <div
-          class="input-container"
-        >
-          <input
-            class="cf-form-textinput"
-            id="hyperlink"
-            name="hyperlink"
-            type="text"
-            value=""
-          />
-        </div>
+        <input
+          class="cf-form-textinput"
+          id="hyperlink"
+          name="hyperlink"
+          type="text"
+          value=""
+        />
       </div>
       <div
         style="max-width: 35rem;"

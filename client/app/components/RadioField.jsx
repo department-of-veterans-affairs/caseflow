@@ -42,8 +42,7 @@ export const RadioField = (props) => {
     strongLabel,
     hideLabel,
     styling,
-    vertical,
-    optionsStyling
+    vertical
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -100,7 +99,7 @@ export const RadioField = (props) => {
         <span className="usa-input-error-message" tabIndex={0}>{errorMessage}</span>
       )}
 
-      <div className="cf-form-radio-options" style={optionsStyling}>
+      <div className="cf-form-radio-options">
         {options.map((option, i) => {
           const optionDisabled = isDisabled(option);
 
@@ -205,7 +204,7 @@ RadioField.propTypes = {
   /**
    * The value of the named `input` element(s); required for a controlled component
    */
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+  value: PropTypes.string,
 
   /**
    * Stack `input` elements vertically (automatic for more than two options)
@@ -214,8 +213,7 @@ RadioField.propTypes = {
   errorMessage: PropTypes.string,
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
-  styling: PropTypes.object,
-  optionsStyling: PropTypes.object
+  styling: PropTypes.object
 };
 
 export default RadioField;
