@@ -126,7 +126,7 @@ describe('Whenever the EMO assigns an appeal to a Regional Processing Office', (
     expect(screen.getByText(buttonAssign).closest('button')).toBeDisabled();
 
     selectFromDropdown(
-      'Assign to selector',
+      'Assign To',
       'Buffalo RPO'
     );
 
@@ -152,7 +152,7 @@ describe('Whenever VHA CAMO assigns an appeal to a Program Office', () => {
     expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
     selectFromDropdown(
-      'Assign to selector',
+      'Assign To',
       'Prosthetics'
     );
 
