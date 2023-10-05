@@ -123,3 +123,4 @@ exclude_patterns:
   - 'app/assets/**/*'
   - 'client/test/data/camoQueueConfigData.js'
   - 'client/app/intake/components/mockData/issueListProps.js'
+  - 'client/app/queue/components/AssignToAttorneyWidget.jsx'
