@@ -44,12 +44,13 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
 
   const extractPin = (link) => {
     if (link.type === 'PexipConferenceLink') {
-      return link.guestPin || link.guestLink?.match(/pin=(\d+)/)?.[1];
+      return link.guestPin + '#' || link.guestLink?.match(/pin=(\d+)/)?.[1] + '#';
     } else if (link.type === 'WebexConferenceLink') {
-      const pinRegex = /(\d{9})$/;
-      const match = link.guestLink.match(pinRegex);
+      // const pinRegex = /(\d{9})$/;
+      // const match = link.guestLink.match(pinRegex);
 
-      return match ? match[1] : 'N/A';
+      // return match ? match[1] : 'N/A';
+      return 'N/A'
     }
 
     return null;
@@ -117,7 +118,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
                       display: 'flex',
                     }}
                   >
-                    {linkGuestPin}#
+                    {linkGuestPin}
                   </span>
                 ) : (
                   <span
