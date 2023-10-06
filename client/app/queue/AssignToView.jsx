@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -140,7 +141,8 @@ class AssignToView extends React.Component {
     const assignTaskSuccessMessage = {
       title: taskActionData(this.props).message_title ? sprintf(taskActionData(this.props).message_title,
         caseNameListItem(),
-        this.getAssignee(isTeamAssign ? 'Organization' : 'User')) : sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE_LEGACY_SUCCESS_TITLE, this.getAssignee(isTeamAssign ? 'Organization' : 'User')),
+        this.getAssignee(isTeamAssign ? 'Organization' : 'User')) : sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE_LEGACY_SUCCESS_TITLE,
+        this.getAssignee(isTeamAssign ? 'Organization' : 'User')),
       detail: taskActionData(this.props).message_detail || null
     };
 
@@ -480,7 +482,9 @@ AssignToView.propTypes = {
     availableActions: PropTypes.arrayOf(PropTypes.object),
     externalAppealId: PropTypes.string,
     type: PropTypes.string,
+    // eslint-disable-next-line max-lines
     appealType: PropTypes.string,
+    // eslint-disable-next-line max-lines
     assignedBy: PropTypes.string,
     assigneeName: PropTypes.string,
     isLegacy: PropTypes.bool

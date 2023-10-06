@@ -90,7 +90,12 @@ class TasksForAppeal
   end
 
   def hide_legacy_tasks?
-    (!appeal.tasks.where(type: JudgeAssignTask.name).empty? || !appeal.tasks.where(type: AttorneyTask.name).empty? || !appeal.tasks.where(type: JudgeDecisionReviewTask.name).empty?) ? true : false
+    if !appeal.tasks.where(type: JudgeAssignTask.name).empty? || !appeal.tasks.where(type: AttorneyTask.name).empty? ||
+       !appeal.tasks.where(type: JudgeDecisionReviewTask.name).empty?
+      true
+    else
+      false
+    end
   end
 
   def task_includes

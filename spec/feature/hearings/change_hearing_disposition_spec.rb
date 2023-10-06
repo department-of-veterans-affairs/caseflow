@@ -3,7 +3,9 @@
 RSpec.shared_examples "Change hearing disposition" do
   let(:current_full_name) { "Leonela Harbold" }
   let(:staff_record) { create(:staff) }
-  let(:hearing_admin_user) { create(:user, full_name: current_full_name, station_id: 101, vacols_uniq_id: staff_record.slogid) }
+  let(:hearing_admin_user) do
+    create(:user, full_name: current_full_name, station_id: 101, vacols_uniq_id: staff_record.slogid)
+  end
   let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
   let(:root_task) { create(:root_task, appeal: appeal) }
   let(:hearing_task) { create(:hearing_task, parent: root_task) }
@@ -76,14 +78,14 @@ RSpec.shared_examples "Change hearing disposition" do
 
         step "visit and verify that the new hearing disposition is in the hearing schedule daily docket" do
           User.authenticate!(user: hearing_user)
-          visit "/hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+          visit "/hearings/schedule/docket/#{hearing.hearing_day.id}"
           expect(dropdown_selected_value(find(".dropdown-#{hearing.uuid}-disposition"))).to eq(
             Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held
           )
         end
 
         step "visit and verify that the new hearing disposition is on the hearing details page" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
+          visit "hearings/#{hearing.external_id}/details"
           disposition_div = find("p", text: "DISPOSITION").first(:xpath, "ancestor::div")
           expect(disposition_div).to have_css("div", text: Constants.HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.held)
         end
@@ -374,7 +376,9 @@ RSpec.shared_examples "Change hearing disposition" do
   context "there are other hearing admin and hearings management members" do
     let(:other_admin_full_name) { "Remika Hanisco" }
     let(:staff_record) { create(:staff) }
-    let!(:other_admin_user) { create(:user, full_name: other_admin_full_name, station_id: 101, vacols_uniq_id: staff_record.slogid) }
+    let!(:other_admin_user) do
+      create(:user, full_name: other_admin_full_name, station_id: 101, vacols_uniq_id: staff_record.slogid)
+    end
     let(:admin_full_names) { ["Bisar Helget", "Rose Hidrogo", "Rihab Hancin", "Abby Hudmon"] }
     let(:mgmt_full_names) { ["Claudia Heraty", "Nouf Heigl", "Hayley Houlahan", "Bahiya Haese"] }
     let(:assign_instructions_text) { "This is why I'm assigning this to you." }
@@ -410,7 +414,8 @@ RSpec.shared_examples "Change hearing disposition" do
 
         fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: assign_instructions_text
         click_on "Assign"
-        expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, appeal.veteran_full_name, other_admin_full_name))
+        expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, appeal.veteran_full_name,
+                                            other_admin_full_name))
       end
 
       step "the other user logs in and sees the task in their queue" do
@@ -439,7 +444,8 @@ RSpec.shared_examples "Change hearing disposition" do
 
         fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: assign_instructions_text
         click_on "Assign"
-        expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, appeal.veteran_full_name, current_full_name))
+        expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, appeal.veteran_full_name,
+                                            current_full_name))
       end
 
       step "the task in my personal queue" do

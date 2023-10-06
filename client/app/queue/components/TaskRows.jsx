@@ -357,7 +357,8 @@ class TaskRows extends React.PureComponent {
 
     return (
       <React.Fragment key={`${task.uniqueId} fragment`}>
-        {task.instructions[1] && !(task.type === 'AttorneyTask' || task.type === 'JudgeDecisionReviewTask' || task.type === 'AttorneyRewriteTask') && (<React.Fragment key={`${task.uniqueId} div`}>
+        {task.instructions[1] && !(task.type === 'AttorneyTask' || task.type === 'JudgeDecisionReviewTask' ||
+         task.type === 'AttorneyRewriteTask') && (<React.Fragment key={`${task.uniqueId} div`}>
           <div
             key={`${task.uniqueId} instructions`}
             style={divStyles}
@@ -387,7 +388,8 @@ class TaskRows extends React.PureComponent {
               style={divStyles}
               className="task-instructions"
             >
-              <b>{(task.instructions[0].includes('**Reason:**') || task.type === 'JudgeDecisionReviewTask') ? null : COPY.LEGACY_APPEALS_VLJ_DETAILS_INSTRUCTIONS}</b>
+              <b>{(task.instructions[0].includes('**Reason:**') ||
+               task.type === 'JudgeDecisionReviewTask') ? null : COPY.LEGACY_APPEALS_VLJ_DETAILS_INSTRUCTIONS}</b>
               <ReactMarkdown>{formatBreaks(task.instructions[0])}</ReactMarkdown>
             </div>
           </React.Fragment>

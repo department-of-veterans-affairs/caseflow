@@ -274,7 +274,8 @@ feature "AmaQueue", :all_dbs do
         click_on COPY::MODAL_ASSIGN_BUTTON
 
         expect(page).to have_content(
-          format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, appeals[0].veteran.first_name + " " + appeals[0].veteran.last_name, user_name)
+          format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM,
+                 "#{appeals[0].veteran.first_name} #{appeals[0].veteran.last_name}", user_name)
         )
         old_task = translation_task.reload.children.find { |task| task.assigned_to == other_user }
         expect(old_task.status).to eq(Constants.TASK_STATUSES.cancelled)
@@ -748,7 +749,8 @@ feature "AmaQueue", :all_dbs do
           click_on "Assign"
           # binding.pry
           # expect(page).to have_content("Task reassigned to #{judge_user2.full_name}")
-          expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, appeal.veteran_full_name, "Andrea Harless"))
+          expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, appeal.veteran_full_name,
+                                              "Andrea Harless"))
         end
         step "judge2 has the case in their queue" do
           User.authenticate!(user: judge_user2)
