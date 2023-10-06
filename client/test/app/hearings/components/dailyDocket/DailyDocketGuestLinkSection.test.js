@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-// eslint-disable-next-line max-len
-import { DailyDocketGuestLinkSection } from '../../../../../app/hearings/components/dailyDocket/DailyDocketGuestLinkSection';
+import {
+  DailyDocketGuestLinkSection
+} from 'app/hearings/components/dailyDocket/DailyDocketGuestLinkSection';
 
 describe('DailyDocketGuestLinkSection', () => {
   const linkInfo = {
