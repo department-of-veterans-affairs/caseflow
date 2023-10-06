@@ -4,7 +4,7 @@ class Metric < CaseflowRecord
   belongs_to :user
 
   METRIC_TYPES = { error: "error", log: "log", performance: "performance", info: "info" }.freeze
-  LOG_SYSTEMS = { datadog: "datadog", rails_console: "rails_console", javascript_console: "javascript_console" }
+  LOG_SYSTEMS = { datadog: "datadog", rails_console: "rails_console", javascript_console: "javascript_console" }.freeze
   PRODUCT_TYPES = {
     queue: "queue",
     hearings: "hearings",
@@ -21,7 +21,7 @@ class Metric < CaseflowRecord
     pexip: "pexip",
     va_dot_gov: "va_dot_gov",
     va_notify: "va_notify",
-    vbms: "vbms",
+    vbms: "vbms"
   }.freeze
   APP_NAMES = { caseflow: "caseflow", efolder: "efolder" }.freeze
   METRIC_GROUPS = { service: "service" }.freeze
@@ -52,10 +52,8 @@ class Metric < CaseflowRecord
   end
 
   def css_id
-    user.css_id
+    user&.css_id
   end
-
-  private
 
   # Returns an object with defaults set if below symbols are not found in params default object.
   # Looks for these symbols in params parameter
@@ -74,12 +72,12 @@ class Metric < CaseflowRecord
   # - start
   # - end
   # - duration
-  def self.default_object(klass, params, user)
+  private_class_method def self.default_object(klass, params, user)
     {
       uuid: params[:uuid],
-      user: user || RequestStore.store[:current_user] || User.system_user,
+      user: user || User.system_user,
       metric_name: params[:name] || METRIC_TYPES[:log],
-      metric_class: klass&.try(:name) || klass&.class.name || self.name,
+      metric_class: klass&.try(:name) || name,
       metric_group: params[:group] || METRIC_GROUPS[:service],
       metric_message: params[:message] || METRIC_TYPES[:log],
       metric_type: params[:type] || METRIC_TYPES[:log],
@@ -92,14 +90,15 @@ class Metric < CaseflowRecord
       relevant_tables_info: params[:relevant_tables_info],
       start: params[:start],
       end: params[:end],
-      duration: calculate_duration(params[:start], params[:end], params[:duration]),
+      duration: calculate_duration(params[:start], params[:end], params[:duration])
     }
+    # byebug
   end
 
-  def self.calculate_duration(start, end_time, duration)
+
+  private_class_method def self.calculate_duration(start, end_time, duration)
     return duration if duration || !start || !end_time
 
     end_time - start
   end
-
 end

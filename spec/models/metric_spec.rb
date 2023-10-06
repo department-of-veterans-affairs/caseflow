@@ -14,8 +14,14 @@ describe Metric do
         group: "service",
         message: "This is a test",
         type: "performance",
+<<<<<<< HEAD
         product: "reader"
       }
+=======
+        product: "reader",
+        sent_to: "rails_console"
+       }
+>>>>>>> b9a6332b0 (metric and spec file updated)
     end
 
     it "creates a javascript metric for performance" do
@@ -33,8 +39,18 @@ describe Metric do
       expect(metric.metric_type).to eq(Metric::METRIC_TYPES[:log])
     end
 
+    it "user created if no user logged in" do
+      metric = Metric.create_metric(self, params, nil)
+
+      expect(metric.user).to be_present
+    end
+
     it "creates a javascript metric for error" do
+<<<<<<< HEAD
       params[:type] = "error"
+=======
+      params[:type]  = "error"
+>>>>>>> b9a6332b0 (metric and spec file updated)
       metric = Metric.create_metric(self, params, user)
 
       expect(metric.valid?).to be true
@@ -42,7 +58,11 @@ describe Metric do
     end
 
     it "creates a javascript metric with invalid sent_to" do
+<<<<<<< HEAD
       metric = Metric.create_metric(self, params.merge(sent_to: "fake"), user)
+=======
+      metric = Metric.create_metric(self, params.merge({sent_to: "fake"}), user)
+>>>>>>> b9a6332b0 (metric and spec file updated)
 
       expect(metric.valid?).to be false
     end
