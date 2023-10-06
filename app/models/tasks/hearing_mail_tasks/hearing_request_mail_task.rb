@@ -54,6 +54,27 @@ class HearingRequestMailTask < MailTask
     @hearing_task ||= open_hearing&.hearing_task || active_schedule_hearing_task.parent
   end
 
+  # Purpose: Postponement - When a hearing is postponed through the completion of a NoShowHearingTask,
+  #          AssignHearingDispositionTask, or ChangeHearingDispositionTask, cancel any open
+  #          HearingPostponementRequestMailTasks in that appeal's task tree
+  #
+  #          Withdrawal - When a withdraw hearing action is completed through a ScheduleHearingTask,
+  #          AssignHearingDispositionTask, or ChangeHearingDispositionTask, cancel any open
+  #          HearingWithdrawalRequestMailTasks in that appeal's task tree
+  #
+  # Params: completed_task - task object of the completed task through which hearing was postponed/withdrawn
+  #         updated_at - datetime when the task was completed
+  #
+  # Return: The cancelled HPR mail tasks
+  def cancel_when_redundant(completed_task, updated_at)
+    user = ensure_user_can_cancel_task(completed_task)
+    params = {
+      status: Constants.TASK_STATUSES.cancelled,
+      instructions: format_cancellation_reason(completed_task.type, updated_at)
+    }
+    update_from_params(params, user)
+  end
+
   private
 
   # Ensure create is called on a descendant mail task and not directly on the HearingRequestMailTask class
@@ -102,6 +123,52 @@ class HearingRequestMailTask < MailTask
     else
       open_hearing.update(hearing_hash)
     end
+  end
+
+  # Purpose: Completes the Mail task assigned to the MailTeam and the one for HearingAdmin
+  # Params: user - The current user object
+  #         params - The attributes needed to update the instructions specific to HPR/HWR
+  # Return: Boolean for if the tasks have been updated
+  def update_self_and_parent_mail_task(user:, params:)
+    updated_instructions = format_instructions_on_completion(params)
+    begin
+      update!(
+        completed_by: user,
+        status: Constants.TASK_STATUSES.completed,
+        instructions: updated_instructions
+      )
+    rescue StandardError => error
+      log_error(error)
+    end
+    update_parent_status
+  end
+
+  # Purpose: If hearing postponed/withdrawn by a member of HearingAdminTeam, return that user. Otherwise, in
+  #          the case that hearing disposition is changed by HearingChangeDispositionJob, current_user is
+  #          system_user and will not have permission to call Task#update_from_params. Instead, return a user
+  #          with with HearingAdmin privileges.
+  #
+  # Params: completed_task - Task object of task through which heairng was postponed
+  def ensure_user_can_cancel_task(completed_task)
+    current_user = RequestStore[:current_user]
+
+    return current_user if current_user&.in_hearing_admin_team?
+
+    completed_task.hearing.updated_by
+  end
+
+  # Purpose: Format context to be appended to HPR/HWR mail tasks instructions upon task cancellation
+  #
+  # Params: task_name - string of name of completed task through which hearing was postponed/withdrawn
+  #         updated_at - datetime when the task was completed
+  #
+  # Return: String to be submitted in instructions field of task
+  def format_cancellation_reason(task_name, updated_at)
+    request_action = is_a?(HearingPostponementRequestMailTask) ? "postponed" : "withdrawn"
+    formatted_date = updated_at.strftime("%m/%d/%Y")
+
+    "##### REASON FOR CANCELLATION:\n" \
+    "Hearing #{request_action} when #{task_name} was completed on #{formatted_date}"
   end
 
   # Purpose: Completes the Mail task assigned to the MailTeam and the one for HearingAdmin
