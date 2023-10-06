@@ -48,6 +48,21 @@ export const enterTextFieldOptions = (instructionsFieldName, instructions) => {
 };
 
 /**
+ * Finds an input in the component and enters the specified text
+ * @param {string} inputLabelName -- Label name of the input field to be populated
+ * @param {string} textValue -- The string to enter into the input field
+ * Note: The 'inputValue' must use ISO 8601 format when firing a
+ * change event on an input of type "date."
+ * - valid date inputValue: '2020-05-24'
+ * - invalid date inputValue: '24/05/2020'
+ */
+export const enterInputValue = (inputLabelName, inputValue) => {
+  const inputField = screen.getByLabelText(inputLabelName);
+
+  userEvent.type(inputField, inputValue);
+};
+
+/**
  * Enters the specified number of days into a number field
  * @param {string} customFieldName -- Role name of the field to be populated
  * @param {number} days -- The number of days to enter into the specified field
@@ -88,7 +103,6 @@ export const selectFromDropdown = async (dropdownName, dropdownSelection) => {
 export const clickSubmissionButton = (buttonText) => {
   userEvent.click(screen.getByRole('button', { name: buttonText }));
 };
-
 
 /**
  * Extracts the modal type from a TASK_ACTIONS.json entry
