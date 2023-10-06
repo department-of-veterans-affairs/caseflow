@@ -51,4 +51,4 @@ describe('DailyDocketGuestLinkSection', () => {
     expect(link2Pin).toBeInTheDocument();
     expect(link2CopyButton[1]).toBeInTheDocument();
   });
-});// eslint-enable max-len
+});
