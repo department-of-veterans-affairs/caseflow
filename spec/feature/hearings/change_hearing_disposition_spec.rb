@@ -412,7 +412,7 @@ RSpec.shared_examples "Change hearing disposition" do
         expect(choices).to include(*admin_full_names)
         expect(choices).to_not include(*mgmt_full_names)
 
-        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: assign_instructions_text
+        fill_in COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: assign_instructions_text
         click_on "Assign"
         expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, appeal.veteran_full_name,
                                             other_admin_full_name))
@@ -442,7 +442,7 @@ RSpec.shared_examples "Change hearing disposition" do
       step "assign the task to self" do
         click_dropdown(prompt: "Select an action", text: "Assign to person")
 
-        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: assign_instructions_text
+        fill_in COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: assign_instructions_text
         click_on "Assign"
         expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, appeal.veteran_full_name,
                                             current_full_name))
