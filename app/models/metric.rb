@@ -92,9 +92,7 @@ class Metric < CaseflowRecord
       end: params[:end],
       duration: calculate_duration(params[:start], params[:end], params[:duration])
     }
-    # byebug
   end
-
 
   private_class_method def self.calculate_duration(start, end_time, duration)
     return duration if duration || !start || !end_time
