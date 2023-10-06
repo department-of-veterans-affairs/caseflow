@@ -14,7 +14,7 @@ describe('DailyDocketGuestLinkSection', () => {
     },
     link2: {
       guestLink: 'https://example.com/guestLink2?meetingID=123456789',
-      guestPin: 'N/A',
+      guestPin: '',
       alias: 'Room 2',
       type: 'WebexConferenceLink',
     },
