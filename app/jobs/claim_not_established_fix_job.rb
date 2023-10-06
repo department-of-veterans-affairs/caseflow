@@ -1,32 +1,34 @@
 # frozen_string_literal: true
 
 class ClaimNotEstablishedFixJob < CaseflowJob
+  queue_with_priority :low_priority
+
   ERROR_TEXT = "Claim not established."
   EPECODES = %w[030 040 930 682].freeze
 
-  attr_reader :stuck_job_report_service
-
   def initialize
     @stuck_job_report_service = StuckJobReportService.new
+    super
   end
 
   def perform
+    RequestStore[:current_user] = User&.system_user
     return if decision_docs_with_errors.blank?
 
-    stuck_job_report_service.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
+    @stuck_job_report_service.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
 
     decision_docs_with_errors.each do |single_decision_document|
       file_number = single_decision_document.veteran.file_number
       epe_array = EndProductEstablishment.where(veteran_file_number: file_number)
       validated_epes = epe_array.map { |epe| validate_epe(epe) }
 
-      stuck_job_report_service.append_single_record(single_decision_document.class.name, single_decision_document.id)
+      @stuck_job_report_service.append_single_record(single_decision_document.class.name, single_decision_document.id)
 
       resolve_error_on_records(single_decision_document, validated_epes)
     end
 
-    stuck_job_report_service.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
-    stuck_job_report_service.write_log_report(ERROR_TEXT)
+    @stuck_job_report_service.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
+    @stuck_job_report_service.write_log_report(ERROR_TEXT)
   end
 
   def decision_docs_with_errors
@@ -48,7 +50,7 @@ class ClaimNotEstablishedFixJob < CaseflowJob
       end
     rescue StandardError => error
       log_error(error)
-      stuck_job_report_service.append_errors(object_type.class.name, object_type.id, error)
+      @stuck_job_report_service.append_errors(object_type.class.name, object_type.id, error)
     end
   end
 end
