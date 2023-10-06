@@ -64,23 +64,22 @@ class MetricsService
 
     increment_datadog_counter("request_error", service, name, app) if service
 
-    metric_params = {
-      name: "Stand in object if metrics_service.record fails",
-      message: "Variables not initialized before failure",
+    metric_params_error = {
+      name: "metrics_service_record",
+      message: "MetricsService.record encountered an error: #{error.message}",
       type: Metric::METRIC_TYPES[:error],
-      product: "",
+      product: service,
       attrs: {
-        service: "",
-        endpoint: ""
+        service: service,
+        endpoint: name
       },
       sent_to: [[Metric::LOG_SYSTEMS[:rails_console]]],
       sent_to_info: "",
-      start: 'Time not recorded',
-      end: 'Time not recorded',
-      duration: 'Time not recorded'
+      start: "",
+      end: "",
+      duration: ""
     }
-
-    store_record_metric(uuid, metric_params, caller)
+    store_record_metric(uuid, metric_params_error, caller)
 
     # Re-raise the same error. We don't want to interfere at all in normal error handling.
     # This is just to capture the metric.
