@@ -340,7 +340,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       click_dropdown(prompt: "Select a user", text: "Other")
       safe_click ".dropdown-Other"
       click_dropdown({ text: judge_two.full_name }, page.find(".dropdown-Other"))
-      fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
+      fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "note")
 
       click_on("Assign")
       expect(page).to have_content("You have successfully assigned #{appeal_one.veteran_first_name} " \
@@ -358,7 +358,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       refresh
       click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label)
       click_dropdown(prompt: "Select a user", text: judge_one.full_name)
-      fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
+      fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "note")
 
       click_on("Assign")
       expect(page).to have_content("You have successfully assigned #{appeal_one.veteran_first_name} " \

@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+/* eslint-disable max-len */
 
 import querystring from 'querystring';
 import React from 'react';
@@ -67,7 +68,8 @@ import SetOvertimeStatusModal from './SetOvertimeStatusModal';
 import StartHoldModal from './components/StartHoldModal';
 import EndHoldModal from './components/EndHoldModal';
 import BulkAssignModal from './components/BulkAssignModal';
-
+import CompleteHearingPostponementRequestModal
+  from './components/hearingMailRequestModals/CompleteHearingPostponementRequestModal';
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
@@ -257,6 +259,7 @@ class QueueApp extends React.PureComponent {
       <SelectRemandReasonsView
         prevStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         {...props.match.params}
+        featureToggles={this.props.featureToggles}
       />
     );
   };
@@ -668,6 +671,10 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="vha_caregiver_support_return_to_board_intake" {...props.match.params} />
   );
 
+  routedCompleteHearingPostponementRequest = (props) => (
+    <CompleteHearingPostponementRequestModal {...props.match.params} />
+  );
+
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
       'Your Queue' :
@@ -769,6 +776,7 @@ class QueueApp extends React.PureComponent {
               title={(props) => {
                 let reviewActionType = props.match.params.checkoutFlow;
 
+                /* eslint-disable indent */
                 // eslint-disable-next-line default-case
                 switch (this.props.reviewActionType) {
                 case DECISION_TYPES.OMO_REQUEST:
@@ -781,6 +789,7 @@ class QueueApp extends React.PureComponent {
                   reviewActionType = 'to Dispatch';
                   break;
                 }
+                /* eslint-enable indent */
 
                 return `Draft Decision | Submit ${reviewActionType}`;
               }}
@@ -1262,8 +1271,13 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${
-                TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.COMPLETE_AND_POSTPONE.value}`}
+              title={`${PAGE_TITLES.COMPLETE_HEARING_POSTPONEMENT_REQUEST} | Caseflow`}
+              render={this.routedCompleteHearingPostponementRequest}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.value
                 }`}
               title={`${PAGE_TITLES.ASSIGN_TO_PULAC_CERULLO} | Caseflow`}
               render={this.routedAssignToPulacCerullo}
