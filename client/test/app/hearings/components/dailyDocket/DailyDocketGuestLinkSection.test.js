@@ -14,7 +14,7 @@ describe('DailyDocketGuestLinkSection', () => {
     },
     link2: {
       guestLink: 'https://example.com/guestLink2?meetingID=123456789',
-      guestPin: '567891029',
+      guestPin: 'N/A',
       alias: 'Room 2',
       type: 'WebexConferenceLink',
     },
@@ -36,7 +36,7 @@ describe('DailyDocketGuestLinkSection', () => {
       'Webex Guest link for non-virtual hearings'
     );
     const link2Alias = await screen.getAllByText('Conference Room:');
-    const link2Pin = await screen.findByText('123456789#');
+    const link2Pin = await screen.findByText('N/A');
     const link2CopyButton = screen.getAllByRole('button', {
       name: 'Copy Guest Link',
     });
