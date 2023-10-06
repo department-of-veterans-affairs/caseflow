@@ -35,8 +35,7 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
 
         click_button("Assign")
         # expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % judge_user.full_name)
-        expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM,
-                                            appeal.veteran_full_name,
+        expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, appeal.veteran_full_name,
                                             judge_user.full_name))
         # Auth as judge user
         User.authenticate!(user: judge_user)

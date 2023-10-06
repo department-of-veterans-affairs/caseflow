@@ -39,8 +39,8 @@ export const TextField = (props) => {
     inputStyling,
     inputProps,
     inputRef,
-    id,
-    loading
+    loading,
+    id
   } = props;
 
   const textInputClass = className.

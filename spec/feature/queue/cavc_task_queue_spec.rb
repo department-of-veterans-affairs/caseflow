@@ -579,13 +579,14 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           expect(page).to have_content Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label
 
           find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label).click
-        within all(".cf-select")[1] do
-          find(".cf-select__control", text: COPY::ASSIGN_WIDGET_USER_DROPDOWN_PLACEHOLDER).click
-          find("div", class: "cf-select__option", text: org_nonadmin2.full_name).click
-        end
+          within all(".cf-select")[1] do
+            find(".cf-select__control", text: COPY::ASSIGN_WIDGET_USER_DROPDOWN_PLACEHOLDER).click
+            find("div", class: "cf-select__option", text: org_nonadmin2.full_name).click
+          end
           fill_in "taskInstructions", with: "Going fishing. Handing off to you."
           click_on "Assign"
-          expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, task.appeal.veteran_full_name, org_nonadmin2.full_name))
+          expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, task.appeal.veteran_full_name,
+                                              org_nonadmin2.full_name))
         end
       end
     end
@@ -856,13 +857,14 @@ RSpec.feature "CAVC-related tasks queue", :all_dbs do
           expect(timed_hold_task.parent.assigned_to).to eq org_nonadmin
 
           click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label)
-        within all(".cf-select")[1] do
-          find(".cf-select__control", text: COPY::ASSIGN_WIDGET_USER_DROPDOWN_PLACEHOLDER).click
-        end
+          within all(".cf-select")[1] do
+            find(".cf-select__control", text: COPY::ASSIGN_WIDGET_USER_DROPDOWN_PLACEHOLDER).click
+          end
           find("div", class: "cf-select__option", text: org_nonadmin2.full_name).click
           fill_in "taskInstructions", with: "Reassigning to org_nonadmin3 to check that TimedHoldTask moves."
           click_on "Assign"
-          expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, task.appeal.veteran_full_name, org_nonadmin2.full_name))
+          expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, task.appeal.veteran_full_name,
+                                              org_nonadmin2.full_name))
 
           # open timed_hold_task is moved to new parent task assigned to org_nonadmin2
           expect(timed_hold_task.reload.parent.assigned_to).to eq org_nonadmin2

@@ -46,8 +46,9 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
     if (doesTaskExistAndIsLegacy) {
       const instructions = selectedTasks[0]?.instructions?.filter((instructionData) => instructionData) || [];
-      const isInstructionArray = (instructions.length === 0 ? [] : instructions);
-      const instructionType = Array.isArray(props.selectedTasks[0].instructions) ? isInstructionArray : [];
+
+      // check if instruction is array
+      const instructionType = this.isInstructionArray(instructions, selectedTasks);
 
       this.state = {
         instructions: ((this.props.isModal && props.selectedTasks.length > 0 &&
@@ -65,6 +66,12 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         modalDisableButton: true
       };
     }
+  }
+
+  isInstructionArray = (instructions, selectedTasks) => {
+    const isArray = (instructions.length === 0 ? [] : instructions);
+
+    return Array.isArray(selectedTasks[0].instructions) ? isArray : [];
   }
 
   componentDidMount = () => this.props.resetSuccessMessages?.();
@@ -189,7 +196,8 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         return this.props.showSuccessMessage({
           title: sprintf(COPY.ASSIGN_WIDGET_SUCCESS, {
             verb: isReassign ? 'You have successfully reassigned' : 'You have successfully assigned',
-            numCases: selectedTasks.length === 1 && selectedTasks[0].appeal?.appellantFullName ? `${selectedTasks[0].appeal.appellantFullName}'s` : selectedTasks.length,
+            numCases: selectedTasks.length === 1 && selectedTasks[0].appeal?.appellantFullName ?
+             `${selectedTasks[0].appeal.appellantFullName}'s` : selectedTasks.length,
             casePlural: pluralize('cases', selectedTasks.length),
             // eslint-disable-next-line camelcase
             assignee: assignee.full_name
