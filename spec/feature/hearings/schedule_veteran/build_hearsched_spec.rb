@@ -572,7 +572,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         end
 
         click_dropdown({ text: other_user.full_name }, find(".cf-modal-body"))
-        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Reassign"
+        fill_in COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "Reassign"
         click_on "Assign"
 
         # Case should exist in other users' queue
