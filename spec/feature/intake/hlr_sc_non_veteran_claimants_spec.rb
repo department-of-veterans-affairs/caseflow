@@ -60,7 +60,8 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
       state: "CA",
       zip: "94123",
       country: "United States",
-      email: "claimant@example.com"
+      email: "claimant@example.com",
+      ein: "11-0999001"
     }
   end
 
@@ -89,7 +90,8 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
       full_state: "New York",
       zip: "10001",
       country: "United States",
-      email: "attorney@example.com"
+      email: "attorney@example.com",
+      ein: "123456789"
     }
   end
 
@@ -142,6 +144,7 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
 
   def add_new_organization_claimant
     fill_in "Organization name", with: new_organization_claimant[:organization_name]
+    fill_in "Employer Identification Number", with: new_organization_claimant[:ein]
     fill_in "Street address 1", with: new_organization_claimant[:address1]
     fill_in "City", with: new_organization_claimant[:city]
     fill_in("State", with: new_organization_claimant[:state]).send_keys :enter
@@ -150,7 +153,7 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
     fill_in "Claimant email", with: new_organization_claimant[:email]
   end
 
-  def add_new_organization_attorney
+  def add_new_organization_attorney(poa = false)
     fill_in "Organization name", with: new_organization_attorney[:organization_name]
     fill_in "Street address 1", with: new_organization_attorney[:address1]
     fill_in "City", with: new_organization_attorney[:city]
@@ -158,6 +161,7 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
     fill_in("Zip", with: new_organization_attorney[:zip]).send_keys :enter
     fill_in("Country", with: new_organization_attorney[:country]).send_keys :enter
     fill_in "Representative email", with: new_organization_attorney[:email]
+    fill_in "Employer Identification Number", with: new_organization_claimant[:ein] unless poa == true
   end
 
   def add_new_individual_attorney
@@ -281,7 +285,10 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
   end
 
   def verify_organization_claimant_on_add_issues
+    expect(page).to have_current_path("/intake/add_issues")
     expect(page).to have_content("Add / Remove Issues")
+    expect(page).to have_text("Ed Merica (123412345)")
+    expect(page).to have_text("Education")
     # Fix the attorney string for the test
     claimant_type_string = (claimant_type == "Attorney (previously or currently)") ? "Attorney" : claimant_type
     claimant_string = "#{new_organization_claimant[:organization_name]}, #{claimant_type_string}"
@@ -306,6 +313,11 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
   def add_existing_attorney_on_poa_page(attorney)
     fill_in "Representative's name", with: attorney.name
     find("div", class: "cf-select__option", text: attorney.name).click
+  end
+
+  def validate_ein_error_message
+    fill_in "Employer Identification Number", with: "exsdasd"
+    expect(page).to have_content(COPY::EIN_INVALID_ERR)
   end
 
   shared_examples "HLR/SC intake unlisted claimant" do
@@ -355,6 +367,7 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
           fill_in("Claimant's name", with: "Name not listed")
           find("div", class: "cf-select__option", text: "Name not listed").click
           select_organization_party_type
+          validate_ein_error_message
           add_new_organization_claimant
           click_button "Continue to next step"
           expect(page).to have_content("Review and confirm claimant information")
@@ -410,6 +423,7 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
         advance_to_add_unlisted_claimant_page
 
         select_organization_party_type
+        validate_ein_error_message
         add_new_organization_claimant
         click_does_not_have_va_form
         click_button "Continue to next step"
@@ -445,6 +459,7 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
         "healthcare provider with type organization" do
         advance_to_add_unlisted_claimant_page
         select_organization_party_type
+        validate_ein_error_message
         add_new_organization_claimant
         click_does_not_have_va_form
         click_button "Continue to next step"
@@ -601,7 +616,7 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
           fill_in("Representative's name", with: "Name not listed")
           find("div", class: "cf-select__option", text: "Name not listed").click
           select_attorney_organization_party_type
-          add_new_organization_attorney
+          add_new_organization_attorney(true)
           click_button "Continue to next step"
           verify_add_claimant_modal_information_with_new_attorney(claimant_is_individual: true)
           click_button "Confirm"
