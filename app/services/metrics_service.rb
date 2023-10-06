@@ -4,7 +4,7 @@ require "benchmark"
 
 # see https://dropwizard.github.io/metrics/3.1.0/getting-started/ for abstractions on metric types
 class MetricsService
-  def self.record(description, service: nil, name: "unknown")
+  def self.record(description, service: nil, name: "unknown", caller: nil)
     return_value = nil
     app = RequestStore[:application] || "other"
     service ||= app
@@ -55,7 +55,7 @@ class MetricsService
       end: stopped,
       duration: stopwatch.total * 1000 # values is in seconds and we want milliseconds
     }
-    store_record_metric(uuid, metric_params)
+    store_record_metric(uuid, metric_params, caller)
 
     return_value
   rescue StandardError => error
@@ -79,7 +79,7 @@ class MetricsService
       end: "",
       duration: ""
     }
-    store_record_metric(uuid, metric_params_error)
+    store_record_metric(uuid, metric_params_error, caller)
 
     # Re-raise the same error. We don't want to interfere at all in normal error handling.
     # This is just to capture the metric.
@@ -102,7 +102,7 @@ class MetricsService
 
   private
 
-  def self.store_record_metric(uuid, params)
+  def self.store_record_metric(uuid, params, caller)
 
     return nil unless FeatureToggle.enabled?(:metrics_monitoring, user: RequestStore[:current_user])
 
@@ -121,7 +121,7 @@ class MetricsService
       duration: params[:duration],
     }
 
-    metric = Metric.create_metric(self, params, RequestStore[:current_user])
+    metric = Metric.create_metric(caller || self, params, RequestStore[:current_user])
     failed_metric_info = metric&.errors.inspect
     Rails.logger.info("Failed to create metric #{failed_metric_info}") unless metric&.valid?
   end
