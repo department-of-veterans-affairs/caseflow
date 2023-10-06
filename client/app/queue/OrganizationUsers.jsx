@@ -283,7 +283,7 @@ export default class OrganizationUsers extends React.PureComponent {
                     {this.removeUserButton(user)}
                   </div>
                   {this.state.organizationName === 'Hearings Management' &&
-                    !conferenceSelectionVisibility && (
+                    conferenceSelectionVisibility && (
                     <div {...radioContainerStyle}>
                       <SelectConferenceTypeRadioField
                         key={`${user.id}-conference-selection`}
