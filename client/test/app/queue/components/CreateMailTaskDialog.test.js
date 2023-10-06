@@ -169,5 +169,12 @@ describe('CreateMailTaskDialog', () => {
 
       expect(await screen.findByText('Submit')).toBeEnabled();
     });
+
+    test('eFolder link should appear with correct path', () => {
+      setUpMailTaskDialog();
+      userEvent.type(screen.getByRole('combobox'), 'Hearing postponement request{enter}');
+      expect(screen.getByText('Open eFolder')).
+        toHaveAttribute('href', 'https://vefs-claimevidence-ui-uat.stage.bip.va.gov/veteran/700000093');
+    });
   });
 });

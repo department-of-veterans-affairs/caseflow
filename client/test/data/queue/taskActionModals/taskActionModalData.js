@@ -2494,7 +2494,9 @@ export const rootTaskData = {
     appeals: {
       'adfd7d18-f848-4df5-9df2-9ca43c58dd13': {
         id: 1647,
-        externalAppealId: 'adfd7d18-f848-4df5-9df2-9ca43c58dd13'
+        externalAppealId: 'adfd7d18-f848-4df5-9df2-9ca43c58dd13',
+        veteranParticipantId: '700000093',
+        efolderLink: 'https://vefs-claimevidence-ui-uat.stage.bip.va.gov'
       },
     }
   },
