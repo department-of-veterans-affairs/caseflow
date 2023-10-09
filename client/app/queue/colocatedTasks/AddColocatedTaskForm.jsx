@@ -40,7 +40,7 @@ export const AddColocatedTaskForm = ({
         <TextareaField
           errorMessage={highlightFormItems && !instructions ? COPY.INSTRUCTIONS_ERROR_FIELD_REQUIRED : null}
           name="instructions"
-          label={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+          label={COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
           onChange={(val) => setInstructions(val)}
           value={instructions}
         />

@@ -119,7 +119,7 @@ export const CavcReviewExtensionRequestModalUnconnected = ({ onCancel, onSubmit,
 
   const instructionsField = <TextareaField
     name="instructions"
-    label={COPY.CAVC_INSTRUCTIONS_LABEL}
+    label={COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
     errorMessage={highlightFormItems && !validInstructions() ? COPY.CAVC_INSTRUCTIONS_ERROR : null}
     value={instructions}
     onChange={setInstructions}

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class AppealsController < ApplicationController
+  include UpdatePOAConcern
   before_action :react_routed
   before_action :set_application, only: [:document_count, :power_of_attorney, :update_power_of_attorney]
   # Only whitelist endpoints VSOs should have access to.
@@ -92,26 +93,22 @@ class AppealsController < ApplicationController
     handle_non_critical_error("document_count", error)
   end
 
+  # series_id is lowercase, no curly braces because it comes from url
+  def document_lookup
+    series_id = "{#{params[:series_id]}}".upcase
+    document = Document.find_by(series_id: series_id, file_number: appeal.veteran_file_number)
+
+    document ||= VBMSService.fetch_document_series_for(appeal).map(&:series_id).include?(series_id)
+
+    render json: { document_presence: document.present? }
+  end
+
   def power_of_attorney
     render json: power_of_attorney_data
   end
 
   def update_power_of_attorney
-    clear_poa_not_found_cache
-    if cooldown_period_remaining > 0
-      render json: {
-        alert_type: "info",
-        message: "Information is current at this time. Please try again in #{cooldown_period_remaining} minutes",
-        power_of_attorney: power_of_attorney_data
-      }
-    else
-      message, result, status = update_or_delete_power_of_attorney!
-      render json: {
-        alert_type: result,
-        message: message,
-        power_of_attorney: (status == "updated") ? power_of_attorney_data : {}
-      }
-    end
+    update_poa_information(appeal)
   rescue StandardError => error
     render_error(error)
   end
@@ -240,7 +237,7 @@ class AppealsController < ApplicationController
   end
 
   def review_withdrawn_message
-    "You have successfully withdrawn a review."
+    COPY::CLAIM_REVIEW_WITHDRAWN_MESSAGE
   end
 
   def withdrawn_issues
@@ -294,21 +291,6 @@ class AppealsController < ApplicationController
     !search.nil? && search.match?(/\d{6}-{1}\d+$/)
   end
 
-  def update_or_delete_power_of_attorney!
-    appeal.power_of_attorney&.try(:clear_bgs_power_of_attorney!) # clear memoization on legacy appeals
-    poa = appeal.bgs_power_of_attorney
-
-    if poa.blank?
-      ["Successfully refreshed. No power of attorney information was found at this time.", "success", "blank"]
-    elsif poa.bgs_record == :not_found
-      poa.destroy!
-      ["Successfully refreshed. No power of attorney information was found at this time.", "success", "deleted"]
-    else
-      poa.save_with_updated_bgs_record!
-      ["POA Updated Successfully", "success", "updated"]
-    end
-  end
-
   def send_initial_notification_letter
     # depending on the docket type, create cooresponding task as parent task
     case appeal.docket_type
@@ -337,29 +319,6 @@ class AppealsController < ApplicationController
       representative_tz: appeal.representative_tz,
       poa_last_synced_at: appeal.poa_last_synced_at
     }
-  end
-
-  def clear_poa_not_found_cache
-    Rails.cache.delete("bgs-participant-poa-not-found-#{appeal&.veteran&.file_number}")
-    Rails.cache.delete("bgs-participant-poa-not-found-#{appeal&.claimant_participant_id}")
-  end
-
-  def cooldown_period_remaining
-    next_update_allowed_at = appeal.poa_last_synced_at + 10.minutes if appeal.poa_last_synced_at.present?
-    if next_update_allowed_at && next_update_allowed_at > Time.zone.now
-      return ((next_update_allowed_at - Time.zone.now) / 60).ceil
-    end
-
-    0
-  end
-
-  def render_error(error)
-    Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-    Raven.capture_exception(error, extra: { appeal_type: appeal.type, appeal_id: appeal.id })
-    render json: {
-      alert_type: "error",
-      message: "Something went wrong"
-    }, status: :unprocessable_entity
   end
 
   # Purpose: Fetches all notifications for an appeal
@@ -395,4 +354,3 @@ class AppealsController < ApplicationController
     end
   end
 end
-

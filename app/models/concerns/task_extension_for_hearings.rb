@@ -110,4 +110,19 @@ module TaskExtensionForHearings
       )
     end
   end
+
+  # Purpose: When a hearing is postponed through the completion of a NoShowHearingTask, AssignHearingDispositionTask,
+  #          or ChangeHearingDispositionTask, cancel any open HearingPostponementRequestMailTasks associated with the
+  #          appeal, as they have become redundant.
+  def cancel_redundant_hearing_postponement_req_tasks
+    open_hearing_postponement_requests.each { |task| task.cancel_when_redundant(self, updated_at) }
+  end
+
+  # Purpose: Finds open HearingPostponementRequestMailTasks (assigned to HearingAdmin and not MailTeam) in task tree
+  def open_hearing_postponement_requests
+    appeal.tasks.where(
+      type: HearingPostponementRequestMailTask.name,
+      assigned_to: HearingAdmin.singleton
+    )&.open
+  end
 end

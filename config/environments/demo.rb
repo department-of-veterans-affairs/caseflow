@@ -82,6 +82,17 @@ Rails.application.configure do
 
   ENV["DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL"] ||= "true"
 
+  # eFolder Express URL for demo environment used as a mock link
+  ENV["EFOLDER_EXPRESS_URL"] ||= "http://localhost:4000"
+
+  # BatchProcess ENVs
+  # priority_ep_sync
+  ENV["BATCH_PROCESS_JOB_DURATION"] ||= "1" # Number of hours the job will run for
+  ENV["BATCH_PROCESS_SLEEP_DURATION"] ||= "5" # Number of seconds between loop iterations
+  ENV["BATCH_PROCESS_BATCH_LIMIT"]||= "100" # Max number of records in a batch
+  ENV["BATCH_PROCESS_ERROR_DELAY"] ||= "12" # In number of hours
+  ENV["BATCH_PROCESS_MAX_ERRORS_BEFORE_STUCK"] ||= "3" # When record errors for X time, it's declared stuck
+
   # Setup S3
   config.s3_enabled = ENV["AWS_BUCKET_NAME"].present?
   config.s3_bucket_name = ENV["AWS_BUCKET_NAME"]
