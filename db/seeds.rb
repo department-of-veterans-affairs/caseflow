@@ -3,6 +3,8 @@
 require "database_cleaner"
 
 # because db/seeds is not in the autoload path, we must load them explicitly here
+# base.rb needs to be loaded first because the other seeds inherit from it
+require Rails.root.join("db/seeds/base.rb").to_s
 Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
 
 class SeedDB
@@ -31,6 +33,7 @@ class SeedDB
     Rails.logger.debug(msg)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def seed
     RequestStore[:current_user] = User.system_user
     call_and_log_seed_step :clean_db
@@ -63,7 +66,10 @@ class SeedDB
     call_and_log_seed_step Seeds::StaticTestCaseData
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
     call_and_log_seed_step Seeds::BGSServiceRecordMaker
+    call_and_log_seed_step Seeds::AdditionalRemandedAppeals
+    call_and_log_seed_step Seeds::AdditionalLegacyRemandedAppeals
   end
+  # rubocop:enable Metrics/MethodLength
 end
 
 SeedDB.new.seed
