@@ -14,12 +14,19 @@ export const clipboardButtonStyling = (defaults) =>
     padding: '0.75rem',
     // Offset the additional padding so when this component appears in an unordered list of items its baseline matches.
     margin: '-0.75rem 0',
-    overflowWrap: 'break-word'
+    overflowWrap: 'break-word',
   });
 
 export default class CopyTextButton extends React.PureComponent {
   render = () => {
-    const { text, textToCopy, label, styling, ariaLabel } = this.props;
+    const {
+      text,
+      textToCopy,
+      label,
+      styling,
+      ariaLabel,
+    } = this.props;
+
     const buttonStyles = isEmpty(styling) ?
       {
         borderColor: COLORS.GREY_LIGHT,
@@ -64,7 +71,7 @@ export default class CopyTextButton extends React.PureComponent {
 CopyTextButton.defaultProps = {
   styling: {},
   label: '',
-  textToCopy: null
+  textToCopy: null,
 };
 
 CopyTextButton.propTypes = {
@@ -84,5 +91,6 @@ CopyTextButton.propTypes = {
    * If ariaLabel not set, populates the aria-label as `Copy ${label} ${text}`
    */
   label: PropTypes.string,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  disabled: PropTypes.bool,
 };
