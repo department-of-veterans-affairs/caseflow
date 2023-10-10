@@ -53,9 +53,8 @@ class EstablishmentTask < Task
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
-  # :reek:DuplicateMethodCall { max_calls: 2 }
-
   def format_special_issues_text(mst_status, pact_status)
+    # same method as issues_update_task
     # format the special issues comment to display the change in the special issues status(es)
     special_issue_status = "Special Issues:"
 

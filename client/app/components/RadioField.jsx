@@ -66,6 +66,7 @@ export const RadioField = (props) => {
   );
 
   const maybeAddTooltip = (option, radioField) => {
+
     if (option.tooltipText) {
       const idKey = `tooltip-${option.value}`;
 
@@ -107,8 +108,8 @@ export const RadioField = (props) => {
             key={`${idPart}-${option.value}-${i}`}
           >
             <input
-              name={name}
               onChange={handleChange}
+              name={name}
               type="radio"
               id={`${idPart}_${option.value}`}
               value={option.value}
