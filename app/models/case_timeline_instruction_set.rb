@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# :reek:LongParameterList
 class CaseTimelineInstructionSet
   attr_reader :change_type,
               :issue_category,
@@ -12,6 +13,7 @@ class CaseTimelineInstructionSet
               :pact_edit_reason
 
   # rubocop:disable Metrics/ParameterLists
+  # :reek:LongParameterList
   def initialize(
     change_type:,
     issue_category:,

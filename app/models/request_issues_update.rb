@@ -270,6 +270,7 @@ class RequestIssuesUpdate < CaseflowRecord
     end
   end
 
+  # :reek:FeatureEnvy
   def process_mst_edited_issues!
     return if mst_edited_issues.empty?
 
@@ -282,6 +283,7 @@ class RequestIssuesUpdate < CaseflowRecord
     end
   end
 
+  # :reek:FeatureEnvy
   def process_pact_edited_issues!
     return if pact_edited_issues.empty?
 
@@ -356,6 +358,7 @@ class RequestIssuesUpdate < CaseflowRecord
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+  # :reek:FeatureEnvy
   def create_issue_update_task(change_type, before_issue, after_issue = nil)
     transaction do
       # close out any tasks that might be open

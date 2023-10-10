@@ -16,6 +16,7 @@ class JudgeDispatchReturnTask < JudgeTask
     COPY::JUDGE_DISPATCH_RETURN_TASK_LABEL
   end
 
+  # :reek:UtilityFunction
   def ama_issue_checkout
     # bypass special issues page if mst/pact enabled
     return Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h if

@@ -255,6 +255,7 @@ class Appeal < DecisionReview
     end
   end
 
+  # :reek:RepeatedConditional
   # decision issue status overrules request issues/special issue list for both mst and pact
   def mst?
     return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])

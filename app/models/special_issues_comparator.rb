@@ -82,6 +82,7 @@ class SpecialIssuesComparator
     false
   end
 
+  # :reek:UtilityFunction
   # checks if rating special issue meets MST criteria
   def special_issue_has_mst?(special_issue)
     special_issue.transform_keys!(&:to_s)
@@ -94,6 +95,7 @@ class SpecialIssuesComparator
     end
   end
 
+  # :reek:UtilityFunction
   # checks if rating special issue meets PACT criteria
   def special_issue_has_pact?(special_issue)
     special_issue.transform_keys!(&:to_s)
@@ -129,6 +131,7 @@ class SpecialIssuesComparator
   end
 
   # checks single contention special issue status for MST
+  # :reek:UtilityFunction
   def mst_contention_status?(bgs_contention)
     bgs_contention.transform_keys!(&:to_s)
     return false if bgs_contention.nil? || bgs_contention["special_issues"].blank?
@@ -141,6 +144,7 @@ class SpecialIssuesComparator
   end
 
   # checks single contention special issue status for PACT
+  # :reek:UtilityFunction
   def pact_contention_status?(bgs_contention)
     bgs_contention.transform_keys!(&:to_s)
     return false if bgs_contention.nil? || bgs_contention["special_issues"].blank?
@@ -189,6 +193,8 @@ class SpecialIssuesComparator
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # :reek:UtilityFunction
+
   # takes the contention given and tries to match it to the current rating issue (issue)
   def link_contention_to_rating(contention, rba_contention, contention_matches)
     # if only one contention, check the contention info

@@ -7,6 +7,8 @@ class IssuesUpdateTask < Task
     "Issues Update Task"
   end
 
+  # :reek:FeatureEnvy
+  # :reek:DuplicateMethodCall { max_calls: 2 }
   def format_instructions(set)
     # format the instructions by loading an array and adding it to the instructions
     edit_issue_format = []
@@ -36,6 +38,7 @@ class IssuesUpdateTask < Task
   private
 
   # rubocop:disable Metrics/CyclomaticComplexity
+  # :reek:DuplicateMethodCall { max_calls: 2 }
   def format_special_issues_text(mst_status, pact_status)
     # format the special issues comment to display the change in the special issues status(es)
     special_issue_status = "Special Issues:"

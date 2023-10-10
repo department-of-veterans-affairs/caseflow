@@ -429,6 +429,7 @@ class AppealsController < ApplicationController
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # :reek:FeatureEnvy
   def create_legacy_issue_update_task(before_issue, current_issue)
     user = RequestStore[:current_user]
 

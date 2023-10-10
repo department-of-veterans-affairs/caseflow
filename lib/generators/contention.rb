@@ -63,6 +63,7 @@ class Generators::Contention
       }
     end
 
+    # :reek:RepeatedConditional
     def build(attrs = {})
       attrs = default_attrs.merge(attrs)
       claim_id = attrs[:claim_id]

@@ -7,6 +7,8 @@ class EstablishmentTask < Task
     "Establishment Task"
   end
 
+  # :reek:FeatureEnvy
+  # :reek:DuplicateMethodCall { max_calls: 2 }
   def format_instructions(request_issues)
     # format the instructions by loading an array and adding it to the instructions
     added_issue_format = []
@@ -51,6 +53,8 @@ class EstablishmentTask < Task
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
+  # :reek:DuplicateMethodCall { max_calls: 2 }
+
   def format_special_issues_text(mst_status, pact_status)
     # format the special issues comment to display the change in the special issues status(es)
     special_issue_status = "Special Issues:"
@@ -62,6 +66,7 @@ class EstablishmentTask < Task
   end
   # rubocop:enable Metrics/CyclomaticComplexity
 
+  # :reek:FeatureEnvy
   def create_special_issue_changes_record(issue)
     # create SpecialIssueChange record to log the changes
     SpecialIssueChange.create!(

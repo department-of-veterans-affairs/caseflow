@@ -37,6 +37,7 @@ module IssueUpdater
   private
 
   # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize
+  # :reek:FeatureEnvy
   def create_decision_issues!
     ordered_issues = issues.sort_by { |issue| issue[:request_issue_ids]&.first }
     ordered_issues.each do |issue_attrs|

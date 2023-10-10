@@ -2,6 +2,7 @@
 
 module Seeds
   class BGSServiceRecordMaker < Base
+    # :reek:UtilityFunction
     def seed!
       # run the BGSServiceMaker file located in lib/fakes
       # seed data comes from a CSV file called 'bgs_setup.csv' located at local/vacols/bgs_setup.csv

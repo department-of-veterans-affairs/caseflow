@@ -268,6 +268,7 @@ class LegacyHearing < CaseflowRecord
     end
   end
 
+  # :reek:FeatureEnvy
   def prepare_worksheet_issues
     worksheet_issues = []
     appeal.worksheet_issues.each_with_index do |wi, idx|
