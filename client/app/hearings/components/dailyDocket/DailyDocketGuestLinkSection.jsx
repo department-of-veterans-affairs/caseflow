@@ -5,37 +5,54 @@ import CopyTextButton from '../../../components/CopyTextButton';
 import { GUEST_LINK_LABELS } from '../../constants';
 
 export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
-
-  // Conference Link Information
-  const { alias, guestLink, guestPin } = linkInfo || {};
-
   const containerStyle = {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1.8fr',
-    backgroundColor: '#f1f1f1',
-    padding: '1em 0 0 1em',
     marginLeft: '-40px',
-    marginRight: '-40px'
+    marginRight: '-40px',
   };
 
-  const roomInfoContainerStyle = {
+  const roomInfoStyle = (index) => ({
+    backgroundColor: index === 0 ? '#f1f1f1' : 'white',
+    justifyContent: 'space-between',
     display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around'
-  };
+    width: '100%',
+    height: '50px',
+  });
 
   // Props needed for the copy text button component
   const CopyTextButtonProps = {
     text: GUEST_LINK_LABELS.COPY_GUEST_LINK,
     label: GUEST_LINK_LABELS.COPY_GUEST_LINK,
-    textToCopy: guestLink
+    textToCopy: '',
   };
 
   // Takes pin from guestLink
-  const usePinFromLink = () => guestLink?.match(/pin=\d+/)[0]?.split('=')[1];
-
+  // const usePinFromLink = () => guestLink?.match(/pin=\d+/)[0]?.split('=')[1];
   // Takes alias from guestLink
-  const useAliasFromLink = () => guestLink?.split('&')[0]?.match(/conference=.+/)[0]?.split('=')[1];
+  const useAliasFromLink = (link) => {
+    if (link.type === 'PexipConferenceLink') {
+      return (
+        link.alias || link.guestLink?.match(/pin=\d+/)[0]?.split('=')[1] || null
+      );
+    } else if (link.type === 'WebexConferenceLink') {
+      const newLink = 'instant-usgov';
+
+      return link.alias || newLink || null;
+    }
+
+    return null;
+  };
+
+  const extractPin = (link) => {
+    if (link.type === 'PexipConferenceLink') {
+      return (
+        `${link.guestPin}#` || `${link.guestLink?.match(/pin=(\d+)/)?.[1]}#`
+      );
+    } else if (link.type === 'WebexConferenceLink') {
+      return 'N/A';
+    }
+
+    return null;
+  };
 
   /**
    * Render information about the guest link
@@ -43,39 +60,94 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
    * @param {pin} - The guest pin
    * @param {roleAccess} - Boolean for if the current user has access to the guest link
    * @returns The room information
-  */
+   */
   const renderRoomInfo = () => {
-    return (linkInfo === null ? (
-      <div style={roomInfoContainerStyle}>
-        <h3>{GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}:<span style={{ fontWeight: 'normal' }}>N/A</span></h3>
-        <h3>{GUEST_LINK_LABELS.GUEST_PIN}:<span style={{ fontWeight: 'normal' }}>N/A</span></h3>
-        <h3><CopyTextButton {...CopyTextButtonProps} /></h3>
+    return (
+      <div>
+        {Object.values(linkInfo).map((link, index) => {
+          const { guestLink, type } = link;
+
+          CopyTextButtonProps.textToCopy = guestLink;
+
+          const alias = useAliasFromLink(link);
+          const linkGuestPin = extractPin(link);
+
+          return (
+            <div key={index} style={roomInfoStyle(index)}>
+              <h3
+                style={{
+                  width: '350px',
+                  display: 'flex',
+                  marginBottom: '0px',
+                  alignItems: 'center',
+                  marginLeft: '10px',
+                }}
+              >
+                {type === 'PexipConferenceLink' ?
+                  GUEST_LINK_LABELS.PEXIP_GUEST_LINK_SECTION_LABEL :
+                  GUEST_LINK_LABELS.WEBEX_GUEST_LINK_SECTION_LABEL}
+              </h3>
+
+              <h3
+                style={{
+                  display: 'flex',
+                  marginBottom: '0px',
+                  alignItems: 'center',
+                  width: '400px',
+                }}
+              >
+                {GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}
+                <span style={{ fontWeight: 'normal' }}>{alias || 'N/A'}</span>
+              </h3>
+              <h3
+                style={{
+                  width: 'max-content',
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginBottom: '0px',
+                }}
+              >
+                {GUEST_LINK_LABELS.GUEST_PIN}
+                {linkGuestPin ? (
+                  <span
+                    style={{
+                      fontWeight: 'normal',
+                      paddingRight: '10px',
+                      display: 'flex',
+                    }}
+                  >
+                    {linkGuestPin}
+                  </span>
+                ) : (
+                  <span
+                    style={{
+                      fontWeight: 'normal',
+                      paddingRight: '60px',
+                      display: 'flex',
+                    }}
+                  >
+                    N/A
+                  </span>
+                )}
+              </h3>
+              <h3
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginBottom: '0px',
+                  marginRight: '10px',
+                }}
+              >
+                <CopyTextButton {...CopyTextButtonProps} />
+              </h3>
+            </div>
+          );
+        })}
       </div>
-    ) : (
-      <div style={roomInfoContainerStyle}>
-        <h3>
-          {GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}:
-          <span style={{ fontWeight: 'normal' }}>
-            {alias || useAliasFromLink()}
-          </span>
-        </h3>
-        <h3>
-          {GUEST_LINK_LABELS.GUEST_PIN}:
-          <span style={{ fontWeight: 'normal' }}>
-            {usePinFromLink()}#
-          </span>
-        </h3>
-        <h3><CopyTextButton {...CopyTextButtonProps} /></h3>
-      </div>
-    ));
+    );
   };
 
-  return (
-    <div style={containerStyle}>
-      <h3>{GUEST_LINK_LABELS.GUEST_LINK_SECTION_LABEL}</h3>
-      {renderRoomInfo(alias, guestPin)}
-    </div>
-  );
+  return <div style={containerStyle}>{renderRoomInfo()}</div>;
 };
 
 DailyDocketGuestLinkSection.propTypes = {
