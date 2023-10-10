@@ -10,6 +10,7 @@ class ChangeHistoryReporter
     @filters = filters
   end
 
+  # :reek:FeatureEnvy
   def as_csv
     CSV.generate do |csv|
       csv << format_filters_row
