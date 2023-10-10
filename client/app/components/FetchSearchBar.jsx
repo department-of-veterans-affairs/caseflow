@@ -11,7 +11,7 @@ const FetchSearchBar = () => {
 
   const handleClick = (e) => {
     e.preventDefault();
-    ApiUtil.get("/reader/appeal/:appeal_id/document_content_searches").then((response) => console.log(response));
+    ApiUtil.get("/reader/appeal/:appeal_id/document_content_searches?search_term=" + searchText).then((response) => console.log(response));
   }
 
   return (
