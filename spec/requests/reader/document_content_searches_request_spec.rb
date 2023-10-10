@@ -7,7 +7,7 @@ RSpec.describe "Reader::DocumentContentSearchesController", type: :request do
   let(:appeal) { create(:appeal) }
 
   it "is successful" do
-    post "/reader/appeal/#{appeal.id}/document_content_searches"
+    get "/reader/appeal/#{appeal.id}/document_content_searches"
 
     expect(response).to have_http_status(:success)
   end

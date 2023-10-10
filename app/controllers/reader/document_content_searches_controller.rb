@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Reader::DocumentContentSearchesController < Reader::ApplicationController
-  def create
+  def search
     render json: {
       "matches": [
         {
