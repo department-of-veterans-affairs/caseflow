@@ -99,16 +99,37 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
                 {GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}
                 <span style={{ fontWeight: 'normal' }}>{alias || 'N/A'}</span>
               </h3>
-              <h3
-                style={{
-                  width: 'max-content',
-                  display: 'flex',
-                  alignItems: 'center',
-                  marginBottom: '0px',
-                }}
-              >
-                {GUEST_LINK_LABELS.GUEST_PIN}
-                {linkGuestPin ? (
+              {linkGuestPin === 'N/A' ? (
+                <h3
+                  style={{
+                    width: 'max-content',
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginBottom: '0px',
+                    marginRight: '75px',
+                  }}
+                >
+                  {GUEST_LINK_LABELS.GUEST_PIN}
+                  <span
+                    style={{
+                      fontWeight: 'normal',
+                      paddingRight: '10px',
+                      display: 'flex',
+                    }}
+                  >
+                    N/A
+                  </span>
+                </h3>
+              ) : (
+                <h3
+                  style={{
+                    width: 'max-content',
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginBottom: '20px',
+                  }}
+                >
+                  {GUEST_LINK_LABELS.GUEST_PIN}
                   <span
                     style={{
                       fontWeight: 'normal',
@@ -118,18 +139,8 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
                   >
                     {linkGuestPin}
                   </span>
-                ) : (
-                  <span
-                    style={{
-                      fontWeight: 'normal',
-                      paddingRight: '60px',
-                      display: 'flex',
-                    }}
-                  >
-                    N/A
-                  </span>
-                )}
-              </h3>
+                </h3>
+              )}
               <h3
                 style={{
                   display: 'flex',
