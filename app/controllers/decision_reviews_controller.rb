@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "../services/claim_change_history/change_history_reporter.rb"
+
 class DecisionReviewsController < ApplicationController
   include GenericTaskPaginationConcern
   include UpdatePOAConcern
@@ -35,8 +37,7 @@ class DecisionReviewsController < ApplicationController
         format.html { render "index" }
         format.csv do
           jobs_as_csv = BusinessLineReporter.new(business_line).as_csv
-          filename = Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
-          send_data jobs_as_csv, filename: filename
+          send_data jobs_as_csv, filename: csv_filename
         end
         format.json { queue_tasks }
       end
@@ -70,21 +71,27 @@ class DecisionReviewsController < ApplicationController
   end
 
   def generate_report
-    if business_line.user_is_admin?(current_user)
-      respond_to do |format|
-        format.html { render "generate_report" }
-        format.csv do
-          # TODO: Add a return here if report type was not given?
-          events_as_csv = ChangeHistoryReporter.new(business_line, change_history_params).as_csv
-          filename = Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
-          send_data events_as_csv, filename: filename, type: "text/csv", disposition: "attachment"
+    if business_line
+      if business_line.user_is_admin?(current_user)
+        respond_to do |format|
+          format.html { render "generate_report" }
+          format.csv do
+            filter_params = change_history_params
+
+            fail ActionController::ParameterMissing.new(:report), report_missing_message unless filter_params[:report]
+
+            events_as_csv = ChangeHistoryReporter.new(business_line, filter_params.to_h).as_csv
+            send_data events_as_csv, filename: csv_filename, type: "text/csv", disposition: "attachment"
+          end
         end
+      else
+        requires_admin_access_redirect
       end
     else
-      Rails.logger.info("User without admin access to the business line #{business_line} "\
-        "couldn't access #{request.original_url}")
-      redirect_to "/unauthorized"
+      render json: { error: "#{business_line_slug} not found" }, status: :not_found
     end
+  rescue ActionController::ParameterMissing => error
+    render json: { error: error.message }, status: :bad_request
   end
 
   def business_line_slug
@@ -210,6 +217,21 @@ class DecisionReviewsController < ApplicationController
     end
   end
 
+  def csv_filename
+    Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
+  end
+
+  def report_missing_message
+    "param is missing or the value is empty: report"
+  end
+
+  def requires_admin_access_redirect
+    Rails.logger.info("User without admin access to the business line #{business_line} "\
+      "couldn't access #{request.original_url}")
+    session["return_to"] = request.original_url
+    redirect_to "/unauthorized"
+  end
+
   def allowed_params
     params.permit(
       :decision_review_business_line_slug,
@@ -228,11 +250,13 @@ class DecisionReviewsController < ApplicationController
   end
 
   def change_history_params
-    params.require(:report).permit(
+    params.require(:filters).permit(
+      :report,
       events: [],
-      timing: [:end_date, :start_date, :range],
+      timing: [],
+      statuses: [],
       conditions: {
-        days_waiting: [:range, :number_of_days, :start_date, :end_date],
+        days_waiting: [],
         review_type: [],
         issue_type: [],
         disposition: [],

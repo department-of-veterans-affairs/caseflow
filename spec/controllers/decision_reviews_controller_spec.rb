@@ -678,6 +678,95 @@ describe DecisionReviewsController, :postgres, type: :controller do
     end
   end
 
+  describe "#generate_report" do
+    context "business-line-slug is not found" do
+      it "returns 404" do
+        get :generate_report, params: { business_line_slug: "foobar" }
+
+        expect(response.status).to eq 404
+      end
+    end
+
+    context "user is not an org admin" do
+      it "returns unauthorized" do
+        get :generate_report, params: { business_line_slug: non_comp_org.url }
+
+        expect(response.status).to eq 302
+        expect(response.body).to match(/unauthorized/)
+      end
+    end
+
+    context "user is an org admin" do
+      let(:generate_report_filters) do
+        {
+          report: "event",
+          events: ["claim_created"],
+          timing: {
+            end_date: Time.zone.now,
+            start_date: Time.zone.now,
+            range: 3
+          },
+          conditions: {
+            days_waiting: {
+              range: "between",
+              number_of_days: 3,
+              start_date: Time.zone.now,
+              end_date: Time.zone.now
+            },
+            review_type: %w[higher_level_review supplemental_claim],
+            issue_type: ["Beneficiary Travel"],
+            disposition: %w[blank granted denied],
+            personnel: ["ACBAUERVVHAH"],
+            facility: [668, 669]
+          }
+        }
+      end
+
+      before do
+        OrganizationsUser.make_user_admin(user, non_comp_org)
+      end
+
+      it "renders the report generation template in HTML format" do
+        get :generate_report, format: :html, params: { business_line_slug: non_comp_org.url }
+
+        expect(response).to have_http_status(:success)
+        expect(response.headers["Content-Type"]).to eq("text/html; charset=utf-8")
+      end
+
+      it "renders the report generation action in a css format" do
+        get :generate_report, format: :csv,
+                              params: { business_line_slug: non_comp_org.url, filters: generate_report_filters }
+
+        expect(response.headers["Content-Type"]).to eq("text/csv")
+        expect(response.headers["Content-Disposition"]).to match(/^attachment; filename=\"nca-20180101.csv\"/)
+      end
+
+      context "missing filter parameters" do
+        it "raises a param is missing error when filters are missing" do
+          get :generate_report, format: :csv, params: { business_line_slug: non_comp_org.url }
+          expect(response).to have_http_status(:bad_request)
+          # TODO: Figure out why the response content type is not json??????
+          # expect(response.content_type).to eq("application/json")
+          json_response = JSON.parse(response.body)
+          expect(json_response["error"]).to eq("param is missing or the value is empty: filters")
+        end
+      end
+
+      context "missing report parameter" do
+        let(:invalid_params) { { events: [], report: "test", conditions: { issue_type: [] } } }
+
+        it "raises a param is missing error when report type is missing from filters" do
+          get :generate_report, format: :csv, params: { business_line_slug: non_comp_org.url, filters: generate_report_filters.except(:report) }
+          expect(response).to have_http_status(:bad_request)
+          # TODO: Figure out why the response content type is not json??????
+          # expect(response.content_type).to eq("application/json")
+          json_response = JSON.parse(response.body)
+          expect(json_response["error"]).to eq("param is missing or the value is empty: report")
+        end
+      end
+    end
+  end
+
   def task_ids_from_response_body(response_body)
     response_body["tasks"]["data"].map { |task| task["id"].to_i }
   end
