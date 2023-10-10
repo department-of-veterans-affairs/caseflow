@@ -7,8 +7,6 @@ describe CaseflowStuckRecord, :postgres do
     end
 
     let!(:caseflow_stuck_record) do
-      PopulateEndProductSyncQueueJob.perform_now
-
       3.times do
         PriorityEndProductSyncQueue.first.update!(last_batched_at: nil)
         PriorityEpSyncBatchProcessJob.perform_now
