@@ -209,6 +209,21 @@ class DecisionReviewsController < ApplicationController
     )
   end
 
+  def change_history_params
+    params.require(:report).permit(
+      events: [],
+      timing: [:end_date, :start_date, :range],
+      conditions: {
+        days_waiting: [:range, :number_of_days, :start_date, :end_date],
+        review_type: [],
+        issue_type: [],
+        disposition: [],
+        personnel: [],
+        facility: []
+      }
+    )
+  end
+
   def power_of_attorney_data
     {
       representative_type: task.appeal&.representative_type,
