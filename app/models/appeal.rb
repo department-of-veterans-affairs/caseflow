@@ -255,7 +255,7 @@ class Appeal < DecisionReview
     end
   end
 
-  # :reek:RepeatedConditional
+  # :reek:RepeatedConditionals
   # decision issue status overrules request issues/special issue list for both mst and pact
   def mst?
     return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])
@@ -268,7 +268,7 @@ class Appeal < DecisionReview
         special_issue_list.military_sexual_trauma)
   end
 
-  # :reek:RepeatedConditional
+  # :reek:RepeatedConditionals
   def pact?
     return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
 
@@ -303,7 +303,7 @@ class Appeal < DecisionReview
     AppealStatusApiDecorator.new(self)
   end
 
-  # :reek:RepeatedConditional
+  # :reek:RepeatedConditionals
   def active_request_issues_or_decision_issues
     decision_issues.empty? ? active_request_issues : fetch_all_decision_issues
   end
@@ -376,7 +376,7 @@ class Appeal < DecisionReview
   end
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-  # :reek:RepeatedConditional
+  # :reek:RepeatedConditionals
   # clone issues clones request_issues the user selected
   # and anydecision_issues/decision_request_issues tied to the request issue
   def clone_issues(parent_appeal, payload_params)

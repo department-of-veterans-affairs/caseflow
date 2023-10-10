@@ -63,7 +63,7 @@ class Generators::Contention
       }
     end
 
-    # :reek:RepeatedConditional
+    # :reek:RepeatedConditionals
     def build(attrs = {})
       attrs = default_attrs.merge(attrs)
       claim_id = attrs[:claim_id]
@@ -71,8 +71,6 @@ class Generators::Contention
 
       OpenStruct.new(attrs).tap do |contention|
         Fakes::BGSService.end_product_store.create_contention(contention)
-
-        # :reek:RepeatedConditional
         if disposition
           disposition_record = OpenStruct.new(
             claim_id: claim_id,
@@ -84,6 +82,7 @@ class Generators::Contention
       end
     end
 
+    # :reek:RepeatedConditionals
     def build_mst_contention(attrs = {})
       attrs = default_attrs_with_mst.merge(attrs)
       claim_id = attrs[:claim_id]
@@ -103,6 +102,7 @@ class Generators::Contention
       end
     end
 
+    # :reek:RepeatedConditionals
     def build_pact_contention(attrs = {})
       attrs = default_attrs_with_pact.merge(attrs)
       claim_id = attrs[:claim_id]
@@ -122,6 +122,7 @@ class Generators::Contention
       end
     end
 
+    # :reek:RepeatedConditionals
     def build_mst_and_pact_contention(attrs = {})
       attrs = default_attrs_with_mst_and_pact.merge(attrs)
       claim_id = attrs[:claim_id]
