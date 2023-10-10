@@ -5,6 +5,7 @@
     applicationUrls: application_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date,
+
     serverNonComp: {
       businessLine: business_line.name,
       businessLineUrl: business_line.url,
@@ -14,6 +15,7 @@
       task: task.ui_hash,
       appeal: task.appeal_ui_hash,
       poaAlert: {},
+      vhaAdmin:  VhaBusinessLine.singleton.user_is_admin?(current_user),
       featureToggles: {
         decisionReviewQueueSsnColumn: FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: current_user)
       },

@@ -170,7 +170,7 @@ class NonCompDispositions extends React.PureComponent {
 
     let editIssuesLink = null;
     let displayPOAComponent = this.props.task.business_line === 'vha';
-
+    const vhaAdmin = this.props.vhaAdmin;
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
         <div className="cf-txt-r">
@@ -183,7 +183,7 @@ class NonCompDispositions extends React.PureComponent {
       </React.Fragment>;
 
       editIssuesLink = <React.Fragment>
-        <a className="cf-link-btn" href={appeal.editIssuesUrl}>Edit Issues</a>
+        <a className={`cf-link-btn ${ !vhaAdmin ? "disabled" : ""}`} href={appeal.editIssuesUrl}>Edit Issues</a>
       </React.Fragment>;
     }
 
@@ -261,6 +261,7 @@ NonCompDispositions.propTypes = {
   task: PropTypes.object,
   appeal: PropTypes.object,
   decisionIssuesStatus: PropTypes.object,
+  vhaAdmin: PropTypes.bool,
   handleSave: PropTypes.func
 };
 
@@ -268,6 +269,7 @@ export default connect(
   (state) => ({
     appeal: state.appeal,
     task: state.task,
-    decisionIssuesStatus: state.decisionIssuesStatus
+    decisionIssuesStatus: state.decisionIssuesStatus,
+    vhaAdmin: state.vhaAdmin
   })
 )(NonCompDispositions);

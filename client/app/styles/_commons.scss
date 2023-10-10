@@ -774,6 +774,13 @@ form {
     color: $color-primary-darker;
     box-shadow: inset 0 0 0 2px $color-primary-darker;
   }
+
+  &.disabled {
+    background-color: $color-white;
+    color: $color-gray-light;
+    box-shadow: inset 0 0 0 2px $color-gray-light;
+    pointer-events: none;
+  }
 }
 
 // Make a button look like a link */
