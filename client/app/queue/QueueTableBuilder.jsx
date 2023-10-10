@@ -183,7 +183,14 @@ const QueueTableBuilder = (props) => {
     const { isVhaOrg } = props;
 
     if (tabConfig.contains_legacy_tasks) {
-      tasks.unshift(...props.assignedTasks);
+      props.assignedTasks.forEach((assignedTask) => {
+        const i = tasks.findIndex((task) => task.externalAppealId === assignedTask.uniqueId);
+
+        if (i <= -1) {
+          tasks.unshift(assignedTask);
+        }
+      });
+
       totalTaskCount = tasks.length;
 
       noCasesMessage = totalTaskCount === 0 && (
@@ -226,7 +233,7 @@ const QueueTableBuilder = (props) => {
             totalTaskCount={totalTaskCount}
             taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
             tabPaginationOptions={
-              savedPaginationOptions.tab === tabConfig.name && savedPaginationOptions
+              savedPaginationOptions.tab === tabConfig.name ? savedPaginationOptions : {}
             }
             // Limit filter preservation/retention to only VHA orgs for now.
             {...(isVhaOrg ? { preserveFilter: true } : {})}
