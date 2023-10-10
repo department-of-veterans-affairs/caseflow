@@ -72,6 +72,7 @@ class Generators::Contention
       OpenStruct.new(attrs).tap do |contention|
         Fakes::BGSService.end_product_store.create_contention(contention)
 
+        # :reek:RepeatedConditional
         if disposition
           disposition_record = OpenStruct.new(
             claim_id: claim_id,

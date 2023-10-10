@@ -268,6 +268,7 @@ class Appeal < DecisionReview
         special_issue_list.military_sexual_trauma)
   end
 
+  # :reek:RepeatedConditional
   def pact?
     return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
 
@@ -302,6 +303,7 @@ class Appeal < DecisionReview
     AppealStatusApiDecorator.new(self)
   end
 
+  # :reek:RepeatedConditional
   def active_request_issues_or_decision_issues
     decision_issues.empty? ? active_request_issues : fetch_all_decision_issues
   end
@@ -373,6 +375,8 @@ class Appeal < DecisionReview
     dup_remand&.save
   end
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # :reek:RepeatedConditional
   # clone issues clones request_issues the user selected
   # and anydecision_issues/decision_request_issues tied to the request issue
   def clone_issues(parent_appeal, payload_params)
@@ -427,6 +431,7 @@ class Appeal < DecisionReview
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   def clone_aod(parent_appeal)
     # find the appeal AOD
@@ -490,6 +495,7 @@ class Appeal < DecisionReview
     end
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
   def clone_task_tree(parent_appeal, user_css_id)
     # get the task tree from the parent
     parent_ordered_tasks = parent_appeal.tasks.order(:created_at)
@@ -524,6 +530,7 @@ class Appeal < DecisionReview
       break if parent_appeal.tasks.count == tasks.count
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
 
   # clone_task is used for splitting an appeal, tie to css_id for split
   def clone_task(original_task, user_css_id)

@@ -126,6 +126,7 @@ module IssueUpdater
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # :reek:FeatureEnvy
   def create_issue_update_task(original_issue, decision_issue)
     root_task = RootTask.find_or_create_by!(appeal: appeal)
 

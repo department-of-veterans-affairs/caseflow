@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-# :reek:LongParameterList
 class CaseTimelineInstructionSet
+  # :reek:LongParameterList
   attr_reader :change_type,
               :issue_category,
               :benefit_type,
