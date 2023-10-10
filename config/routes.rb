@@ -132,6 +132,7 @@ Rails.application.routes.draw do
     resources :appeal, only: [:show, :index] do
       resources :documents, only: [:show, :index]
       resources :claims_folder_searches, only: :create
+      resources :document_content_searches, only: :create
     end
   end
 
