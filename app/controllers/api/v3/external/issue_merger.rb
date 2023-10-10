@@ -2,8 +2,7 @@
 
 class Api::V3::External::IssueMerger < Api::V3::BaseController
   def self.merge(veteran)
-    req_issues = RequestIssue.where(veteran_participant_id: veteran.participant_id,
-                                    benefit_type: %w[compensation pension fiduciary])
+    req_issues = RequestIssue.active.nonrating.where(veteran_participant_id: veteran.participant_id)
     test_issues = []
     req_issues.each { |request_issue| merge_attributes(request_issue, test_issues) }
     render json: test_issues
