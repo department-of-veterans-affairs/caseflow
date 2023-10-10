@@ -18,8 +18,13 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     end
 
     def mail_assign_to_organization_data(task, user = nil)
-      options = MailTask.subclass_routing_options(user: user, appeal: task.appeal)
-      valid_options = task.appeal.outcoded? ? options : options.reject { |opt| opt[:value] == "VacateMotionMailTask" }
+      if task.appeal.is_a? Appeal
+        options = MailTask.descendant_routing_options(user: user, appeal: task.appeal)
+          .reject { |opt| opt[:value] == task.type }
+        valid_options = task.appeal.outcoded? ? options : options.reject { |opt| opt[:value] == "VacateMotionMailTask" }
+      elsif task.appeal.is_a? LegacyAppeal
+        valid_options = MailTask::LEGACY_MAIL_TASKS
+      end
       { options: valid_options }
     end
 
@@ -149,7 +154,8 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       {
         selected: nil,
         options: users_to_options(Judge.list_all),
-        type: task.appeal_type.eql?(Appeal.name) ? task.type : "JudgeLegacyAssignTask"
+        type: task.appeal_type.eql?(Appeal.name) ? task.type : "JudgeLegacyAssignTask",
+        modal_button_text: COPY::MODAL_ASSIGN_BUTTON
       }
     end
 
@@ -175,6 +181,15 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         selected: nil,
         options: user.can_act_on_behalf_of_judges? ? users_to_options(Attorney.list_all) : nil,
         type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name
+      }
+    end
+
+    def assign_to_attorney_legacy_data(task, user)
+      {
+        selected: nil,
+        options: user.can_act_on_behalf_of_legacy_judges? ? users_to_options(Attorney.list_all) : nil,
+        type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name,
+        message_title: COPY::DISTRIBUTE_TASK_SUCCESS_MESSAGE_NON_BLOCKING
       }
     end
 
@@ -369,12 +384,11 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_button_text: COPY::PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON
       }
 
-      params[:modal_body] =
-        if task.type == "PostSendInitialNotificationLetterHoldingTask"
-          COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
-        else
-          COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
-        end
+      params[:modal_body] = if task.type == "PostSendInitialNotificationLetterHoldingTask"
+                              COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
+                            else
+                              COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
+                            end
 
       if defined? task.completion_contact
         params[:contact] = task.completion_contact
@@ -435,7 +449,11 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     end
 
     def return_to_attorney_data(task, _user = nil)
-      assignee = task.children.select { |child| child.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
+      assignee = if task.appeal_type == "LegacyAppeal"
+                   task.assigned_to
+                 else
+                   task.children.select { |child| child.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
+                 end
 
       judge_team = JudgeTeam.for_judge(task.assigned_to)
 
@@ -532,7 +550,22 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         type: SpecialCaseMovementTask.name,
         modal_title: COPY::SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
         modal_body: COPY::SPECIAL_CASE_MOVEMENT_MODAL_DETAIL,
-        modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER
+        modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER,
+        modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
+        message_title: COPY::DISTRIBUTE_TASK_SUCCESS_MESSAGE_NON_BLOCKING
+      }
+    end
+
+    def special_case_movement_legacy_data(task, _user = nil)
+      {
+        selected: task.appeal.assigned_judge,
+        options: users_to_options(Judge.list_all),
+        type: SpecialCaseMovementTask.name,
+        modal_title: COPY::SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
+        modal_body: COPY::SPECIAL_CASE_MOVEMENT_MODAL_DETAIL,
+        modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER,
+        modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
+        message_title: COPY::DISTRIBUTE_TASK_SUCCESS_MESSAGE_NON_BLOCKING
       }
     end
 
@@ -542,6 +575,21 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         type: BlockedSpecialCaseMovementTask.name,
         blocking_tasks: task.visible_blocking_tasks.map(&:serialize_for_cancellation)
       }
+    end
+
+    def blocked_special_case_movement_data_legacy(task, _user = nil)
+      if task.appeal.is_a?(LegacyAppeal)
+        {
+          options: users_to_options(Judge.list_all),
+          type: BlockedSpecialCaseMovementTask.name
+        }
+      else
+        {
+          options: users_to_options(Judge.list_all),
+          type: BlockedSpecialCaseMovementTask.name,
+          blocking_tasks: task.visible_blocking_tasks.map(&:serialize_for_cancellation)
+        }
+      end
     end
 
     def toggle_timed_hold(task, user)
@@ -586,7 +634,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_body: format(COPY::DOCKET_APPEAL_MODAL_BODY, pre_docket_org),
         modal_button_text: COPY::MODAL_CONFIRM_BUTTON,
         modal_alert: COPY::DOCKET_APPEAL_MODAL_NOTICE,
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         redirect_after: "/organizations/#{BvaIntake.singleton.url}"
       }
     end
@@ -640,7 +688,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_title: COPY::VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE,
         modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
         modal_selector_placeholder: COPY::VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER,
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         drop_down_label: COPY::VHA_CAMO_ASSIGN_TO_PROGRAM_OFFICE_DROPDOWN_LABEL,
         type: AssessDocumentationTask.name,
         redirect_after: "/organizations/#{VhaCamo.singleton.url}"
@@ -708,7 +756,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_title: COPY::BVA_INTAKE_RETURN_TO_CAMO_MODAL_TITLE,
         modal_body: COPY::BVA_INTAKE_RETURN_TO_CAMO_MODAL_BODY,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         message_title: format(COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE, task.appeal.veteran_full_name),
         type: VhaDocumentSearchTask.name,
         redirect_after: "/organizations/#{queue_url}"
@@ -725,7 +773,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_title: COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_TITLE,
         modal_body: COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_MODAL_BODY,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         message_title: format(COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_CONFIRMATION_TITLE, task.appeal.veteran_full_name),
         type: VhaDocumentSearchTask.name,
         redirect_after: "/organizations/#{queue_url}"
@@ -742,7 +790,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_title: COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_TITLE,
         modal_body: COPY::BVA_INTAKE_RETURN_TO_EMO_MODAL_BODY,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         message_title: format(COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_TITLE, task.appeal.veteran_full_name),
         type: EducationDocumentSearchTask.name,
         redirect_after: "/organizations/#{queue_url}"
@@ -766,7 +814,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       {
         modal_title: COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE,
         modal_button_text: COPY::MODAL_RETURN_BUTTON,
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         type: EducationDocumentSearchTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}"
       }
@@ -778,7 +826,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_title: COPY::EMO_ASSIGN_TO_RPO_MODAL_TITLE,
         modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
         modal_selector_placeholder: COPY::EDUCATION_RPO_SELECTOR_PLACEHOLDER,
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         drop_down_label: COPY::EMO_ASSIGN_TO_RPO_MODAL_BODY,
         type: EducationAssessDocumentationTask.name,
         redirect_after: "/organizations/#{EducationEmo.singleton.url}",
@@ -795,7 +843,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
           COPY::EDUCATION_RPO_RETURN_TO_EMO_CONFIRMATION,
           task.appeal.veteran_full_name
         ),
-        instructions_label: COPY::PRE_DOCKET_MODAL_BODY,
+        instructions_label: COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
         type: EducationAssessDocumentationTask.name,
         redirect_after: "/organizations/#{queue_url}",
         modal_button_text: COPY::MODAL_RETURN_BUTTON
@@ -876,6 +924,10 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
 
     def select_ama_review_decision_action(task)
       return Constants.TASK_ACTIONS.REVIEW_VACATE_DECISION.to_h if task.appeal.vacate?
+
+      # route to decision if mst/pact toggles are enabled.
+      return Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h if
+        FeatureToggle.enabled?(:mst_identification) || FeatureToggle.enabled?(:pact_identification)
 
       Constants.TASK_ACTIONS.REVIEW_AMA_DECISION_SP_ISSUES.to_h
     end
