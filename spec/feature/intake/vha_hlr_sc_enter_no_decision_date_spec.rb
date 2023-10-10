@@ -25,6 +25,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
   before do
     VhaBusinessLine.singleton.add_user(current_user)
+    OrganizationsUser.make_user_admin(current_user, VhaBusinessLine.singleton)
     CaseReview.singleton.add_user(current_user)
     current_user.save
     User.authenticate!(user: current_user)
