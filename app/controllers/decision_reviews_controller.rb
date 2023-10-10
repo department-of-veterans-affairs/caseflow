@@ -8,6 +8,7 @@ class DecisionReviewsController < ApplicationController
 
   before_action :verify_access, :react_routed, :set_application
   before_action :verify_veteran_record_access, only: [:show]
+  before_action :verify_business_line, only: [:index, :generate_report]
 
   delegate :incomplete_tasks,
            :incomplete_tasks_type_counts,
@@ -32,18 +33,13 @@ class DecisionReviewsController < ApplicationController
   }.freeze
 
   def index
-    if business_line
-      respond_to do |format|
-        format.html { render "index" }
-        format.csv do
-          jobs_as_csv = BusinessLineReporter.new(business_line).as_csv
-          send_data jobs_as_csv, filename: csv_filename
-        end
-        format.json { queue_tasks }
+    respond_to do |format|
+      format.html { render "index" }
+      format.csv do
+        jobs_as_csv = BusinessLineReporter.new(business_line).as_csv
+        send_data jobs_as_csv, filename: csv_filename
       end
-    else
-      # TODO: make index show error message
-      render json: { error: "#{business_line_slug} not found" }, status: :not_found
+      format.json { queue_tasks }
     end
   end
 
@@ -71,24 +67,20 @@ class DecisionReviewsController < ApplicationController
   end
 
   def generate_report
-    if business_line
-      if business_line.user_is_admin?(current_user)
-        respond_to do |format|
-          format.html { render "generate_report" }
-          format.csv do
-            filter_params = change_history_params
+    if business_line.user_is_admin?(current_user)
+      respond_to do |format|
+        format.html { render "generate_report" }
+        format.csv do
+          filter_params = change_history_params
 
-            fail ActionController::ParameterMissing.new(:report), report_missing_message unless filter_params[:report]
+          fail ActionController::ParameterMissing.new(:report), report_missing_message unless filter_params[:report]
 
-            events_as_csv = ChangeHistoryReporter.new(business_line, filter_params.to_h).as_csv
-            send_data events_as_csv, filename: csv_filename, type: "text/csv", disposition: "attachment"
-          end
+          events_as_csv = ChangeHistoryReporter.new([], filter_params.to_h).as_csv
+          send_data events_as_csv, filename: csv_filename, type: "text/csv", disposition: "attachment"
         end
-      else
-        requires_admin_access_redirect
       end
     else
-      render json: { error: "#{business_line_slug} not found" }, status: :not_found
+      requires_admin_access_redirect
     end
   rescue ActionController::ParameterMissing => error
     render json: { error: error.message }, status: :bad_request
@@ -207,6 +199,12 @@ class DecisionReviewsController < ApplicationController
 
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
+  end
+
+  def verify_business_line
+    unless business_line
+      render json: { error: "#{business_line_slug} not found" }, status: :not_found
+    end
   end
 
   def verify_veteran_record_access

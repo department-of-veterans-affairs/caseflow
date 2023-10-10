@@ -5,8 +5,8 @@ class ChangeHistoryReporter
 
   CHANGE_HISTORY_COLUMNS = %w[].freeze
 
-  def initialize(business_line, filters = {})
-    @business_line = business_line
+  def initialize(events = [], filters = {})
+    @events = events
     @filters = filters
   end
 
@@ -14,6 +14,9 @@ class ChangeHistoryReporter
     CSV.generate do |csv|
       csv << format_filters_row
       csv << CHANGE_HISTORY_COLUMNS
+      @events.each do |event|
+        csv << event.to_csv_row
+      end
     end
   end
 
