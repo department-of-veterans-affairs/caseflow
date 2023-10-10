@@ -259,6 +259,8 @@ Rails.application.routes.draw do
     end
   end
   match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
+  match '/decision_reviews/:business_line_slug/generate_report' => 'decision_reviews#generate_report',
+    via: [:get], format: false
 
   resources :unrecognized_appellants, only: [:update] do
     resource :power_of_attorney, only: [:update], controller: :unrecognized_appellants, action: :update_power_of_attorney

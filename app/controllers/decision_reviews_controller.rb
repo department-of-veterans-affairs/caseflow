@@ -69,6 +69,24 @@ class DecisionReviewsController < ApplicationController
     end
   end
 
+  def generate_report
+    if business_line.user_is_admin?(current_user)
+      respond_to do |format|
+        format.html { render "generate_report" }
+        format.csv do
+          # TODO: Add a return here if report type was not given?
+          events_as_csv = ChangeHistoryReporter.new(business_line, change_history_params).as_csv
+          filename = Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
+          send_data events_as_csv, filename: filename, type: "text/csv", disposition: "attachment"
+        end
+      end
+    else
+      Rails.logger.info("User without admin access to the business line #{business_line} "\
+        "couldn't access #{request.original_url}")
+      redirect_to "/unauthorized"
+    end
+  end
+
   def business_line_slug
     allowed_params[:business_line_slug] || allowed_params[:decision_review_business_line_slug]
   end
