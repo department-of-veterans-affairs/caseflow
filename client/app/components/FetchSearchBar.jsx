@@ -11,8 +11,7 @@ const FetchSearchBar = () => {
 
   const handleClick = (e) => {
     e.preventDefault();
-    ApiUtil.get("https://catfact.ninja/fact").then((response) => console.log(response));
-    console.log("click")
+    ApiUtil.get("/reader/appeal/:appeal_id/document_content_searches").then((response) => console.log(response));
   }
 
   return (
