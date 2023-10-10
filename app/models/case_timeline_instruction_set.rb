@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
+# :reek:TooManyInstanceVariables
 class CaseTimelineInstructionSet
-  # :reek:TooManyInstanceVariables
   attr_reader :change_type,
               :issue_category,
               :benefit_type,
@@ -13,7 +13,7 @@ class CaseTimelineInstructionSet
               :pact_edit_reason
 
   # rubocop:disable Metrics/ParameterLists
-  # :reek:LongParameterList
+  # :reek:LongParameterList and :reek:TooManyInstanceVariables
   def initialize(
     change_type:,
     issue_category:,
