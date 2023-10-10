@@ -45,8 +45,8 @@ describe('Conference Selection Visibility Feature Toggle', () => {
       isVhaOrg: false,
     },
   });
-  it('Finds component by Text when conferenceSelectionVisibility is false', async () => {
-    const conferenceSelectionVisibilityValue = false;
+  it('Finds component by Text when conferenceSelectionVisibility is true', async () => {
+    const conferenceSelectionVisibilityValue = true;
 
     const { findAllByText } = render(
       <OrganizationUsers
@@ -58,8 +58,8 @@ describe('Conference Selection Visibility Feature Toggle', () => {
     expect(nestedText[0]).toBeInTheDocument();
   });
 
-  it('Component does not render when conferenceSelectionVisibility is true', async () => {
-    const conferenceSelectionVisibilityValue = true;
+  it('Component does not render when conferenceSelectionVisibility is false', async () => {
+    const conferenceSelectionVisibilityValue = false;
 
     const { queryAllByText } = render(
       <OrganizationUsers
