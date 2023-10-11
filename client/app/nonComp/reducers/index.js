@@ -9,6 +9,8 @@ export const mapDataToInitialState = function(props = {}) {
   state.selectedTask = null;
   state.decisionIssuesStatus = {};
 
+  state.generateReport = {};
+
   return state;
 };
 
@@ -86,6 +88,12 @@ export const nonCompReducer = (state = mapDataToInitialState(), action) => {
         powerOfAttorney: { $set: action.payload.powerOfAttorney }
       }
     });
+  case ACTIONS.SUBMIT_GENERATE_REPORT_REQUEST:
+    return update(state, { $merge: { creatingCSV: true, csvError: null } });
+  case ACTIONS.SUBMIT_GENERATE_REPORT_SUCCESS:
+    return update(state, { $merge: { creatingCSV: false, csvError: null } });
+  case ACTIONS.SUBMIT_GENERATE_REPORT_FAILURE:
+    return update(state, { $merge: { creatingCSV: false, csvError: action.payload } });
   default:
     return state;
   }
