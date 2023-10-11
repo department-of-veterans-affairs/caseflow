@@ -15,6 +15,11 @@ describe PageRequestedByUserFixJob, :postgres do
            end_product_establishment_id: epe.id,
            decision_sync_error: page_error)
   end
+  let!(:bge_2) do
+    build(:board_grant_effectuation,
+          end_product_establishment_id: nil,
+          decision_sync_error: page_error)
+  end
 
   subject { described_class.new }
 
@@ -31,6 +36,12 @@ describe PageRequestedByUserFixJob, :postgres do
         epe.update(established_at: nil)
         subject.perform
         expect(bge.reload.decision_sync_error).to eq(page_error)
+      end
+    end
+    describe "if EPE does not exist" do
+      it "does not clear the error" do
+        subject.perform
+        expect(bge_2.decision_sync_error).to eq(page_error)
       end
     end
     context "when the BGE does not have the Page requested by the user is unavailable" do

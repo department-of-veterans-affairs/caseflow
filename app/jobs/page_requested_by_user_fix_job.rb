@@ -24,10 +24,10 @@ class PageRequestedByUserFixJob < CaseflowJob
     @stuck_job_report_service.append_record_count(bges_with_errors.count, ERROR_TEXT)
 
     bges_with_errors.each do |bge|
-      next if bge.end_product_establishment.established_at.blank?
+      next if bge.end_product_establishment.nil? || bge.end_product_establishment.established_at.blank?
 
-      resolve_error_on_records(bge)
       @stuck_job_report_service.append_single_record(bge.class.name, bge.id)
+      resolve_error_on_records(bge)
     end
     @stuck_job_report_service.append_record_count(bges_with_errors.count, ERROR_TEXT)
     @stuck_job_report_service.write_log_report(ERROR_TEXT)
