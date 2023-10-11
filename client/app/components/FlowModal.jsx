@@ -84,7 +84,7 @@ export default class FlowModal extends React.PureComponent {
 
 FlowModal.defaultProps = {
   button: COPY.MODAL_SUBMIT_BUTTON,
-  submitButtonClassNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
+  submitButtonClassNames: ['usa-button', 'usa-button-hover', 'usa-button-warning'],
   pathAfterSubmit: '/queue',
   submitDisabled: false,
   title: '',
