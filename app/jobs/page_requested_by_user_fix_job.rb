@@ -2,7 +2,11 @@
 
 class PageRequestedByUserFixJob < CaseflowJob
   ERROR_TEXT = "Page requested by the user is unavailable"
-  STUCK_JOB_REPORT_SERVICE = StuckJobReportService.new
+
+  def initialize
+    @stuck_job_report_service = StuckJobReportService.new
+    super
+  end
 
   def perform
     clear_bge_errors if bges_with_errors.present?
@@ -10,24 +14,23 @@ class PageRequestedByUserFixJob < CaseflowJob
 
   # :reek:FeatureEnvy
   def resolve_error_on_records(object_type)
-    ActiveRecord::Base.transaction do
-      object_type.clear_error!
-    rescue StandardError => error
-      log_error(error)
-      STUCK_JOB_REPORT_SERVICE.append_errors(object_type.class.name, object_type.id, error)
-    end
+    object_type.clear_error!
+  rescue StandardError => error
+    log_error(error)
+    @stuck_job_report_service.append_errors(object_type.class.name, object_type.id, error)
   end
 
   def clear_bge_errors
-    STUCK_JOB_REPORT_SERVICE.append_record_count(bges_with_errors.count, ERROR_TEXT)
+    @stuck_job_report_service.append_record_count(bges_with_errors.count, ERROR_TEXT)
 
     bges_with_errors.each do |bge|
-      next if bge.end_product_establishment.established_at.blank?
+      next if bge.end_product_establishment.nil? || bge.end_product_establishment.established_at.blank?
 
+      @stuck_job_report_service.append_single_record(bge.class.name, bge.id)
       resolve_error_on_records(bge)
-      STUCK_JOB_REPORT_SERVICE.append_single_record(bge.class.name, bge.id)
     end
-    STUCK_JOB_REPORT_SERVICE.append_record_count(bges_with_errors.count, ERROR_TEXT)
+    @stuck_job_report_service.append_record_count(bges_with_errors.count, ERROR_TEXT)
+    @stuck_job_report_service.write_log_report(ERROR_TEXT)
   end
 
   def bges_with_errors
