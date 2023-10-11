@@ -25,7 +25,6 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
   before do
     VhaBusinessLine.singleton.add_user(current_user)
-    # OrganizationsUser.make_user_admin(current_user, VhaBusinessLine.singleton)
     CaseReview.singleton.add_user(current_user)
     current_user.save
     User.authenticate!(user: current_user)
@@ -342,7 +341,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       click_link task.appeal.veteran.name.to_s
       expect(current_url).to include("/decision_reviews/vha/tasks/#{task.id}")
       expect(page).to have_content("Edit Issues")
-      expect(page).to have_css(".cf-link-btn.disabled", text: "Edit Issue1")
+      expect(page).to have_css(".cf-link-btn.disabled", text: "Edit Issues")
     end
   end
 
