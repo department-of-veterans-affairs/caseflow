@@ -25,10 +25,14 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
   before do
     VhaBusinessLine.singleton.add_user(current_user)
-    OrganizationsUser.make_user_admin(current_user, VhaBusinessLine.singleton)
+    # OrganizationsUser.make_user_admin(current_user, VhaBusinessLine.singleton)
     CaseReview.singleton.add_user(current_user)
     current_user.save
     User.authenticate!(user: current_user)
+  end
+
+  after do
+    OrganizationsUser.remove_admin_rights_from_user(current_user, VhaBusinessLine.singleton)
   end
 
   shared_examples "Vha HLR/SC Issue without decision date" do
@@ -62,7 +66,15 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
       # Click the link and check to make sure that we are now on the edit issues page
       click_link veteran.name.to_s
+      expect(current_url).to include("/decision_reviews/vha/tasks/#{task.id}")
+      expect(page).to have_content("Edit Issues")
+      expect(page).to have_css(".cf-link-btn.disabled", text: "Edit Issues")
 
+      OrganizationsUser.make_user_admin(current_user, VhaBusinessLine.singleton)
+      current_user.reload
+      visit "/decision_reviews/vha?tab=incomplete"
+      click_link veteran.name.to_s
+      expect(current_url).to include("/#{part_of_url}/#{task.appeal.uuid}/edit")
       expect(page).to have_content("Edit Issues")
       expect(page).to have_content("Decision date: No date entered")
       expect(page).to have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
@@ -206,6 +218,14 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       visit edit_url
 
       expect(task.status).to eq("assigned")
+
+      expect(current_url).to include("/unauthorized")
+
+      OrganizationsUser.make_user_admin(current_user, VhaBusinessLine.singleton)
+      current_user.reload
+      visit "/decision_reviews/vha?tab=incomplete"
+
+      visit edit_url
       expect(page).to have_button("Establish", disabled: true)
 
       click_intake_add_issue
@@ -314,6 +334,15 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       expect(page).to have_content(edit_establish_success_message_text)
       expect(current_url).to include("/decision_reviews/vha?tab=in_progress")
       expect(task.reload.status).to eq("assigned")
+
+      OrganizationsUser.remove_admin_rights_from_user(current_user, VhaBusinessLine.singleton)
+      current_user.reload
+
+      visit "/decision_reviews/vha?tab=in_progress"
+      click_link task.appeal.veteran.name.to_s
+      expect(current_url).to include("/decision_reviews/vha/tasks/#{task.id}")
+      expect(page).to have_content("Edit Issues")
+      expect(page).to have_css(".cf-link-btn.disabled", text: "Edit Issue1")
     end
   end
 
@@ -321,7 +350,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
     let(:intake_type) do
       start_supplemental_claim(veteran, benefit_type: "vha")
     end
-
+    let(:part_of_url) { "supplemental_claims" }
     let(:intake_button_text) { "Save Supplemental Claim" }
     let(:success_message_text) { "You have successfully saved #{veteran.name}'s #{SupplementalClaim.review_title}" }
     let(:edit_establish_success_message_text) do
@@ -335,7 +364,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
     let(:intake_type) do
       start_higher_level_review(veteran, benefit_type: "vha")
     end
-
+    let(:part_of_url) { "higher_level_reviews" }
     let(:intake_button_text) { "Save Higher-Level Review" }
     let(:success_message_text) { "You have successfully saved #{veteran.name}'s #{HigherLevelReview.review_title}" }
     let(:edit_establish_success_message_text) do
@@ -392,6 +421,39 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       end
 
       it_behaves_like "Vha HLR/SC adding issue without decision date to existing claim review"
+    end
+  end
+
+  context "non-admin users should not have access edit page" do
+    let!(:current_user) do
+      create(:user, roles: ["Mail Intake"])
+    end
+
+    before do
+      hlr.appeal.establish!
+      sc.appeal.establish!
+      VhaBusinessLine.singleton.add_user(current_user)
+      OrganizationsUser.remove_admin_rights_from_user(current_user, VhaBusinessLine.singleton)
+      current_user.save
+      User.authenticate!(user: current_user)
+    end
+
+    let(:hlr) do
+      create(:higher_level_review_vha_task, assigned_to: VhaBusinessLine.singleton)
+    end
+
+    let(:sc) do
+      create(:supplemental_claim_vha_task, assigned_to: VhaBusinessLine.singleton)
+    end
+
+    it "should not be able to go to higher level review's edit page using url" do
+      visit "/higher_level_reviews/#{hlr.appeal.uuid}/edit"
+      expect(current_url).to include("/unauthorized")
+    end
+
+    it "should not have access to suppliemental claim's edit page using url" do
+      visit "/supplemental_claims/#{sc.appeal.uuid}/edit"
+      expect(current_url).to include("/unauthorized")
     end
   end
 end
