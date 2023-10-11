@@ -25,7 +25,7 @@ class UnknownUserFixJob < CaseflowJob
 
     @stuck_job_report_service.append_record_count(rius_with_errors.count, ERROR_TEXT)
     rius_with_errors.each do |single_riu|
-      next if single_riu.created_at > parsed_date
+      next if single_riu.created_at.nil? || single_riu.created_at > parsed_date
 
       @stuck_job_report_service.append_single_record(single_riu.class.name, single_riu.id)
 

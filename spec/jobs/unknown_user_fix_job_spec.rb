@@ -33,4 +33,12 @@ describe UnknownUserFixJob, :postgres do
       expect(riu.reload.error).to eq(unknown_error)
     end
   end
+
+  context "when created_at is nil" do
+    it "does not clear the error" do
+      riu.update(created_at: nil)
+      subject.perform
+      expect(riu.error).to eq(unknown_error)
+    end
+  end
 end
