@@ -43,7 +43,8 @@ class Api::V2::AppealsController < Api::ApplicationController
   def fetch_veteran_file_number
     fail Caseflow::Error::InvalidSSN if !ssn || ssn.length != 9 || ssn.scan(/\D/).any?
 
-    file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
+    # file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
+    file_number = Veteran.find_by_ssn(ssn)&.file_number
     fail ActiveRecord::RecordNotFound unless file_number
 
     file_number

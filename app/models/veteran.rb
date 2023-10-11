@@ -358,7 +358,7 @@ class Veteran < CaseflowRecord
     def find_or_create_by_file_number(file_number, sync_name: false)
       find_by_file_number_and_sync(file_number, sync_name: sync_name) || create_by_file_number(file_number)
     end
-
+    # we could use this to search locally first
     def find_by_ssn(ssn, sync_name: false)
       found_locally = find_by(ssn: ssn)
       if found_locally && sync_name && found_locally.stale_attributes?
