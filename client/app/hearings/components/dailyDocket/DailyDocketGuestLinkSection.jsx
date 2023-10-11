@@ -64,7 +64,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
   const renderRoomInfo = () => {
     return (
       <div>
-        {Object.values(linkInfo).map((link, index) => {
+        {linkInfo && Object.values(linkInfo).map((link, index) => {
           const { guestLink, type } = link;
 
           CopyTextButtonProps.textToCopy = guestLink;
