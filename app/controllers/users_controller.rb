@@ -8,6 +8,7 @@ class UsersController < ApplicationController
   def index
     return filter_by_role if params[:role]
     return filter_by_css_id_or_name if css_id
+    return filter_by_organization if params[:organization]
 
     render json: {}, status: :ok
   end
@@ -77,6 +78,13 @@ class UsersController < ApplicationController
       users -= org.users
     end
     render json: { users: json_users(users) }
+  end
+
+  def filter_by_organization
+    finder = UserFinder.new(organization: params[:organization])
+    users = finder.users || []
+
+    render json: { orgUsers: json_users(users) }
   end
 
   # Depending on the route and the requested resource, the requested user's id could be sent as :id or :user_id
