@@ -1,5 +1,5 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import TabWindow from '../../components/TabWindow';
@@ -7,6 +7,7 @@ import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import COPY from '../../../COPY';
 import TaskTableTab from './TaskTableTab';
 import useLocalFilterStorage from '../hooks/useLocalFilterStorage';
+import { fetchOrgUsersAsync } from '../actions/orgUserSlice';
 
 const NonCompTabsUnconnected = (props) => {
   const [localFilter, setFilter] = useLocalFilterStorage('nonCompFilter', []);
@@ -19,6 +20,12 @@ const NonCompTabsUnconnected = (props) => {
 
     setFilter(filterParams);
   };
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchOrgUsersAsync(props.businessLineUrl));
+  }, [dispatch, props.businessLineUrl]);
 
   const isVhaBusinessLine = props.businessLineUrl === 'vha';
 
@@ -112,11 +119,11 @@ NonCompTabsUnconnected.propTypes = {
 
 const NonCompTabs = connect(
   (state) => ({
-    currentTab: state.currentTab,
-    baseTasksUrl: state.baseTasksUrl,
-    taskFilterDetails: state.taskFilterDetails,
-    businessLineUrl: state.businessLineUrl,
-    businessLineConfig: state.businessLineConfig,
+    currentTab: state.nonComp.currentTab,
+    baseTasksUrl: state.nonComp.baseTasksUrl,
+    taskFilterDetails: state.nonComp.taskFilterDetails,
+    businessLineUrl: state.nonComp.businessLineUrl,
+    businessLineConfig: state.nonComp.businessLineConfig,
   })
 )(NonCompTabsUnconnected);
 

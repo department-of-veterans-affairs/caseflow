@@ -14,14 +14,22 @@ import ReviewPage from './pages/ReviewPage';
 import TaskPage from './pages/TaskPage';
 import { nonCompReducer, mapDataToInitialState } from './reducers';
 
+import orgUserReducer from './actions/orgUserSlice';
+import { combineReducers } from 'redux';
 class NonComp extends React.PureComponent {
   render() {
+    // TODO: Maybe move this into the nonCompReducer file
+    const combinedReducer = combineReducers({
+      nonComp: nonCompReducer,
+      orgUsers: orgUserReducer
+    });
+
     const Router = this.props.router || BrowserRouter;
     const initialState = mapDataToInitialState(this.props);
     const appName = this.props.serverNonComp.businessLine;
 
     return (
-      <ReduxBase initialState={initialState} reducer={nonCompReducer}>
+      <ReduxBase initialState={initialState} reducer={combinedReducer}>
         <Router basename="/decision_reviews" {...this.props.routerTestProps}>
           <div>
             <NavigationBar

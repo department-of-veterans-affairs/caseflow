@@ -84,7 +84,7 @@ class UsersController < ApplicationController
     finder = UserFinder.new(organization: params[:organization])
     users = finder.users || []
 
-    render json: { orgUsers: json_users(users) }
+    render json: { users: json_users(users) }
   end
 
   # Depending on the route and the requested resource, the requested user's id could be sent as :id or :user_id

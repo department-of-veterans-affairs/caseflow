@@ -4,17 +4,20 @@ import { update } from '../../util/ReducerUtil';
 export const mapDataToInitialState = function(props = {}) {
   const { serverNonComp } = props;
 
-  let state = serverNonComp;
+  let state = {};
 
-  state.selectedTask = null;
-  state.decisionIssuesStatus = {};
+  // TODO: Might be the wrong way to do this.
+  // Maybe should return the hash and outside of this function assign it to state: {nonComp: mapDataToInitialState}
+  state.nonComp = serverNonComp;
+  state.nonComp.selectedTask = null;
+  state.nonComp.decisionIssuesStatus = {};
 
-  state.generateReport = {};
+  state.nonComp.generateReport = {};
 
   return state;
 };
 
-export const nonCompReducer = (state = mapDataToInitialState(), action) => {
+export const nonCompReducer = (state = mapDataToInitialState, action) => {
   switch (action.type) {
   case ACTIONS.TASK_UPDATE_DECISION_ISSUES_START:
     return update(state, {
