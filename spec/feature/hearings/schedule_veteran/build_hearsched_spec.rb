@@ -519,13 +519,13 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         # First admin action
         expect(page).to have_content("Submit admin action")
         click_dropdown(text: HearingAdminActionIncarceratedVeteranTask.label)
-        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: incarcerated_veteran_task_instructions
+        fill_in COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: incarcerated_veteran_task_instructions
 
         # Second admin action
         click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
         within all('div[id^="action_"]', count: 2)[1] do
           click_dropdown(text: HearingAdminActionContestedClaimantTask.label)
-          fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: contested_claimant_task_instructions
+          fill_in COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: contested_claimant_task_instructions
         end
 
         click_on "Assign Action"
@@ -560,7 +560,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label])
         end
 
-        click_on "Submit"
+        click_on "Assign"
 
         # Your queue
         visit "/queue"
@@ -572,8 +572,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         end
 
         click_dropdown({ text: other_user.full_name }, find(".cf-modal-body"))
-        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Reassign"
-        click_on "Submit"
+        fill_in COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "Reassign"
+        click_on "Assign"
 
         # Case should exist in other users' queue
         User.authenticate!(user: other_user)
@@ -599,13 +599,13 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           # First admin action
           expect(page).to have_content("Submit admin action")
           click_dropdown(text: HearingAdminActionIncarceratedVeteranTask.label)
-          fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Action 1"
+          fill_in COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "Action 1"
 
           click_on "Assign Action"
           expect(page).to have_content("You have assigned an administrative action")
 
           click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label])
-          click_on "Submit"
+          click_on "Assign"
 
           # Your queue
           visit "/queue"

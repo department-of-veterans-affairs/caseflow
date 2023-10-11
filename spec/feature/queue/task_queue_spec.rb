@@ -825,7 +825,7 @@ feature "Task queue", :all_dbs do
         # On case details page fill in the admin action
         action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
         click_dropdown(text: action)
-        fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
+        fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "Please complete this task")
         find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
 
         # Expect to see a success message, the correct number of remaining tasks and have the task in the database
@@ -1008,9 +1008,9 @@ feature "Task queue", :all_dbs do
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
         fill_in "taskInstructions", with: "Please fix this"
 
-        click_on COPY::MODAL_SUBMIT_BUTTON
+        click_on COPY::MODAL_ASSIGN_BUTTON
 
-        expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % attorney_user.full_name)
+        expect(page).to have_content(COPY::REASSIGN_TASK_SUCCESS_MESSAGE % attorney_user.full_name)
 
         expect(judge_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
         expect(judge_task.children.first).to be_a(AttorneyDispatchReturnTask)
@@ -1069,7 +1069,7 @@ feature "Task queue", :all_dbs do
         # On case details page fill in the admin action
         action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
         click_dropdown(text: action)
-        fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
+        fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "Please complete this task")
         find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
 
         # Expect to see a success message and the correct number of remaining tasks
