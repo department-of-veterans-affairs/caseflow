@@ -56,12 +56,12 @@ class EstablishmentTask < Task
   def format_special_issues_text(mst_status, pact_status)
     # same method as issues_update_task
     # format the special issues comment to display the change in the special issues status(es)
-    special_issue_status = "Special Issues:"
+    special_issue_phrase = "Special Issues:"
 
-    return special_issue_status + " None" if !mst_status && !pact_status
-    return special_issue_status + " MST, PACT" if mst_status && pact_status
-    return special_issue_status + " MST" if mst_status
-    return special_issue_status + " PACT" if pact_status
+    return special_issue_phrase + " None" if !mst_status && !pact_status
+    return special_issue_phrase + " MST, PACT" if mst_status && pact_status
+    return special_issue_phrase + " MST" if mst_status
+    return special_issue_phrase + " PACT" if pact_status
   end
   # rubocop:enable Metrics/CyclomaticComplexity
 
