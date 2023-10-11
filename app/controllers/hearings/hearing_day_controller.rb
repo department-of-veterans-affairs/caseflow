@@ -89,7 +89,9 @@ class Hearings::HearingDayController < HearingsApplicationController
 
   def update
     hearing_day.update!(update_params)
-    render json: hearing_day.to_hash
+    render json: hearing_day.to_hash.merge(
+      conference_links: ::HearingDaySerializer.serialize_conference_links(hearing_day.conference_links)
+    )
   end
 
   def destroy
