@@ -11,7 +11,7 @@ import { setSearch, clearSearch, clearAllFilters } from '../reader/DocumentList/
 import DocumentsCommentsButton from './DocumentsCommentsButton';
 import HeaderFilterMessage from './HeaderFilterMessage';
 import SearchBar from '../components/SearchBar';
-import FetchSearchBar from '../components/FetchSearchBar'
+import FetchSearchBar from '../components/FetchSearchBar';
 
 class DocumentListHeader extends React.Component {
   // Record the search value for analytics purposes. Don't worry if it fails.
