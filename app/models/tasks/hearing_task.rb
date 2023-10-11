@@ -21,6 +21,11 @@ class HearingTask < Task
     [COPY::HEARING_TASK_DEFAULT_INSTRUCTIONS]
   end
 
+  ## Tag to determine if this task is considered a blocking task for Legacy Appeal Distribution
+  def self.legacy_blocking?
+    true
+  end
+
   def cancel_and_recreate
     hearing_task = HearingTask.create!(
       appeal: appeal,
@@ -46,10 +51,29 @@ class HearingTask < Task
     # super call must happen after AMA check to hold distribution,
     # but before the Legacy check to prevent premature location update.
     super
-
-    if appeal.tasks.open.where(type: HearingTask.name).empty? && appeal.is_a?(LegacyAppeal)
-      update_legacy_appeal_location
+    if appeal.is_a?(LegacyAppeal)
+      if FeatureToggle.enable!(:vlj_legacy_appeal)
+        when_scm
+      elsif appeal.tasks.open.where(type: HearingTask.name).empty?
+        update_legacy_appeal_location
+      end
     end
+  end
+
+  def when_scm
+    if appeal.tasks.open.where(type: [HearingTask.name, ScheduleHearingTask.name]).empty?
+      if !appeal.tasks.open.where(type: JudgeAssignTask.name).empty?
+        process_appeal_scm
+      else
+        update_legacy_appeal_location
+      end
+    end
+  end
+
+  def process_appeal_scm
+    current_judge_id = appeal.tasks.find_by(type: "JudgeAssignTask").assigned_to_id
+    current_user = User.find(current_judge_id)
+    update_legacy_appeal_location_scm(current_user.vacols_uniq_id)
   end
 
   def create_change_hearing_disposition_task(instructions = nil)
@@ -111,6 +135,10 @@ class HearingTask < Task
                end
 
     AppealRepository.update_location!(appeal, location)
+  end
+
+  def update_legacy_appeal_location_scm(current_judge)
+    AppealRepository.update_location!(appeal, current_judge)
   end
 
   def create_evidence_or_ihp_task
