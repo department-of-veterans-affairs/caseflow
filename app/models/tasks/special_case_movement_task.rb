@@ -22,7 +22,8 @@ class SpecialCaseMovementTask < Task
                               parent: appeal.root_task,
                               assigned_to: assigned_to,
                               assigned_by: assigned_by,
-                              instructions: instructions)
+                              instructions: instructions,
+                              cancellation_reason: cancellation_reason)
       # We don't want the judge to have to worry about the SpecialCaseMovementTask,
       #   so we assign it to the SCM user that assigned this.
       update!(status: Constants.TASK_STATUSES.completed, assigned_to: assigned_by)
@@ -33,9 +34,15 @@ class SpecialCaseMovementTask < Task
   end
 
   def verify_appeal_distributable
-    if !appeal.ready_for_distribution?
+    if appeal.is_a?(LegacyAppeal)
+      legacy_ready_for_distribution?
+    elsif !appeal.ready_for_distribution?
       fail(Caseflow::Error::IneligibleForSpecialCaseMovement, appeal_id: appeal.id)
     end
+  end
+
+  def legacy_ready_for_distribution?
+    appeal.tasks.active.of_type(:DistributionTask).any?
   end
 
   def verify_user_organization
