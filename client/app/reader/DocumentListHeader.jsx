@@ -55,7 +55,9 @@ class DocumentListHeader extends React.Component {
         <DocumentsCommentsButton />
       </div>
       <WellArea>
-        <FetchSearchBar />
+        <FetchSearchBar
+          vacolsId = {this.props.vacolsId}
+        />
       </WellArea>
       <HeaderFilterMessage
         docFilterCriteria={props.docFilterCriteria}
