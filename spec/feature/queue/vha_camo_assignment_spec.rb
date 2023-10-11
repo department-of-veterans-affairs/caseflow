@@ -69,7 +69,6 @@ RSpec.feature "CAMO assignment to program office", :all_dbs do
       step "page errors when cases aren't selected" do
         safe_click ".cf-select"
         click_dropdown(text: vha_po_org.name)
-
         click_on "Assign 0 cases"
         expect(page).to have_content(COPY::ASSIGN_WIDGET_NO_TASK_TITLE)
         expect(page).to have_content(COPY::ASSIGN_WIDGET_NO_TASK_DETAIL)
@@ -77,6 +76,7 @@ RSpec.feature "CAMO assignment to program office", :all_dbs do
 
       step "page errors when a program office isn't selected" do
         visit "/queue/#{camo_user.css_id}/assign?role=camo"
+        refresh while page.has_text?("Something went wrong")
         scroll_to(".usa-table-borderless")
         page.find(:css, "input[name='#{task_first.id}']", visible: false).execute_script("this.click()")
         page.find(:css, "input[name='#{task_last.id}']", visible: false).execute_script("this.click()")
@@ -89,7 +89,6 @@ RSpec.feature "CAMO assignment to program office", :all_dbs do
       step "cases are assignable when a program office and tasks are selected" do
         safe_click ".cf-select"
         click_dropdown(text: vha_po_org.name)
-
         click_on "Assign 2 cases"
         expect(page).to have_content("Assigned 2 tasks to #{vha_po_org.name}")
         expect(page).to have_content("Assign 3 Cases")
@@ -100,6 +99,7 @@ RSpec.feature "CAMO assignment to program office", :all_dbs do
 
     scenario "It has the correct body text and column headings" do
       visit "/queue/#{camo_user.css_id}/assign?role=camo"
+      refresh while page.has_text?("Something went wrong")
       html_table_headings = all("th").map(&:text).reject(&:empty?).compact
       expect(page).to have_content "Cases to Assign"
       expect(html_table_headings).to eq(column_heading_names)
@@ -111,7 +111,7 @@ RSpec.feature "CAMO assignment to program office", :all_dbs do
     let(:filter_column_label_text) { "Issue Type" }
     scenario "CAMO User can sort by issue types" do
       visit "/queue/#{camo_user.css_id}/assign?role=camo"
-
+      refresh while page.has_text?("Something went wrong")
       # Sort by issue type
       find("[aria-label='Sort by Issue Type']").click
 
@@ -133,6 +133,7 @@ RSpec.feature "CAMO assignment to program office", :all_dbs do
 
     scenario "CAMO User can filter by issue types" do
       visit "/queue/#{camo_user.css_id}/assign?role=camo"
+      refresh while page.has_text?("Something went wrong")
 
       # Verify Spina Bifida is present on the page
       expect(page).to have_content("Spina Bifida Treatment (Non-Compensation)")
