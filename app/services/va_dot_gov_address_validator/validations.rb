@@ -82,4 +82,8 @@ module VaDotGovAddressValidator::Validations
   def veteran_lives_in_texas?
     state_code == "TX"
   end
+
+  def veteran_lives_in_usa?
+    %w[USA US].include? valid_addess[:country_code]
+  end
 end

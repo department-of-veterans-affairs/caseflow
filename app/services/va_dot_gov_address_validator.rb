@@ -71,6 +71,7 @@ class VaDotGovAddressValidator
       # as a valid RO for any veteran living in Texas.
       return "RO62" if closest_regional_office_facility_id_is_san_antonio?
       return "RO49" if closest_regional_office_facility_id_is_el_paso?
+      return "RO71" if veteran_lives_in_usa?
 
       RegionalOffice
         .cities
