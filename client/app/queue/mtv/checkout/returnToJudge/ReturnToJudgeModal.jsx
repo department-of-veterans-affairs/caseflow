@@ -5,7 +5,7 @@ import Modal from '../../../../components/Modal';
 import {
   MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_TITLE,
   MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_DESCRIPTION,
-  MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_INSTRUCTIONS_LABEL,
+  PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
   MODAL_CANCEL_BUTTON
 } from '../../../../../COPY';
 import StringUtil from '../../../../util/StringUtil';
@@ -47,7 +47,7 @@ export const ReturnToJudgeModal = ({
 
       <TextareaField
         name="instructions"
-        label={`${MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_INSTRUCTIONS_LABEL}:`}
+        label={`${PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}:`}
         strongLabel
         onChange={(val) => setInstructions(val)}
         value={instructions}
