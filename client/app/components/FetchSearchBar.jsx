@@ -1,4 +1,4 @@
-import { useState } from React;
+import React, { useState } from 'react';
 import ApiUtil from '../util/ApiUtil';
 
 const FetchSearchBar = () => {
