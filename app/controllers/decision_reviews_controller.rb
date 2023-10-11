@@ -69,7 +69,6 @@ class DecisionReviewsController < ApplicationController
   def generate_report
     if business_line.user_is_admin?(current_user)
       respond_to do |format|
-        puts format.inspect
         format.html { render "generate_report" }
         format.csv do
           filter_params = change_history_params
