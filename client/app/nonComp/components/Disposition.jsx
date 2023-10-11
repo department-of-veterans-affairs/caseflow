@@ -232,7 +232,7 @@ class NonCompDispositions extends React.PureComponent {
                 onDescriptionChange={this.onDecisionIssueDescriptionChange}
                 decisionDescription={issue.decisionIssue.description}
                 decisionDisposition={issue.decisionIssue.disposition}
-                disabled={displayVhaNonAdminContent || Boolean(task.closed_at)}
+                disabled={Boolean(task.closed_at)}
               />;
             })
           }

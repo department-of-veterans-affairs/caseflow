@@ -360,12 +360,6 @@ feature "NonComp Dispositions Task Page", :postgres do
 
           expect(page).to have_selector(".usa-alert", text: "Only VHA admins can make edits to Higher-Level Reviews and Supplemental Claims. If you would like to add, remove, or modify an issue within a claim, please send an email with the requested change.")
         end
-
-        it "should disable disposition selection" do
-          visit dispositions_url
-          expect(page).to have_field("description-issue-0", type: "textarea", disabled: true)
-          expect(page).to have_css("[id='disposition-issue-0'][readonly]", visible: false)
-        end
       end
 
       context "non-VHA" do
