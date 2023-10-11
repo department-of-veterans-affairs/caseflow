@@ -44,9 +44,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
 
   const extractPin = (link) => {
     if (link.type === 'PexipConferenceLink') {
-      return (
-        `${link.guestPin}#` || `${link.guestLink?.match(/pin=(\d+)/)?.[1]}#`
-      );
+      return `${link.guestPin}#`;
     } else if (link.type === 'WebexConferenceLink') {
       return 'N/A';
     }
