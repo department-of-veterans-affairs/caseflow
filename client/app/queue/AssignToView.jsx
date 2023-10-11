@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -7,9 +8,9 @@ import { sprintf } from 'sprintf-js';
 import COPY from '../../COPY';
 import VHA_VAMCS from '../../constants/VHA_VAMCS';
 
-import { taskById, appealWithDetailSelector } from './selectors';
+import { taskById, appealWithDetailSelector, getRootTaskLegacyAppealSCM } from './selectors';
 
-import { onReceiveAmaTasks, legacyReassignToJudge, setOvertime } from './QueueActions';
+import { onReceiveAmaTasks, legacyReassignToJudge, setOvertime, initialAssignTasksToUser } from './QueueActions';
 
 import RadioField from '../components/RadioField';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -41,10 +42,13 @@ class AssignToView extends React.Component {
     // Autofill the instruction field if assigning to a person on the team. Since they will
     // probably want the instructions from the assigner.
     const instructions = this.props.task.instructions;
+    const taskType = this.props.task.type;
     const instructionLength = instructions ? instructions.length : 0;
     let existingInstructions = '';
 
-    if (instructions && instructionLength > 0 && !this.props.isTeamAssign && !this.props.isReassignAction) {
+    if (taskType === 'JudgeDecisionReviewTask') {
+      existingInstructions = '';
+    } else if (instructions && instructionLength > 0 && !this.props.isTeamAssign && !this.props.isReassignAction) {
       existingInstructions = instructions[instructionLength - 1];
     }
 
@@ -52,6 +56,7 @@ class AssignToView extends React.Component {
 
     this.state = {
       selectedValue: action ? action.value : null,
+      modalDisableButton: true,
       assignToVHARegionalOfficeSelection: null,
       instructions: this?.props?.task?.type === 'HearingPostponementRequestMailTask' ? '' : existingInstructions
     };
@@ -70,36 +75,75 @@ class AssignToView extends React.Component {
       return this.state.selectedValue !== null;
     }
 
-    return this.state.selectedValue !== null && this.state.instructions !== '';
+    return this.state.selectedValue !== null && this.state.instructions.trim().length > 0;
   };
 
-  submit = () => {
-    const { appeal, task, isReassignAction, isTeamAssign } = this.props;
+  setModalOnChangeValue = (stateValue, value) => {
+    this.setState({ [stateValue]: value }, function () {
+      if (this.state.instructions.trim().length > 0) {
+        this.setState({ modalDisableButton: false });
+      } else {
+        this.setState({ modalDisableButton: true });
+      }
+    });
+  }
 
+  submit = () => {
+    const { appeal, task, isReassignAction, isTeamAssign, rootTask } = this.props;
     const action = getAction(this.props);
     const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
 
     const actionData = taskActionData(this.props);
     const taskType = actionData.type || 'Task';
+    let payload = {};
 
-    const payload = {
-      data: {
-        tasks: [
-          {
-            type: taskType,
-            external_id: appeal.externalId,
-            parent_id: actionData.parent_id || task.taskId,
-            assigned_to_id: this.isVHAAssignToRegional() ? this.getVisn().value : this.state.selectedValue,
-            assigned_to_type: isTeamAssign ? 'Organization' : 'User',
-            instructions: this.state.instructions
-          }
-        ]
-      }
+    if (task.appealType === 'LegacyAppeal' && taskType === 'SpecialCaseMovementTask' &&
+     task.type === 'AttorneyLegacyTask') {
+      payload = {
+        data: {
+          tasks: [
+            {
+              type: taskType,
+              external_id: appeal.externalId,
+              legacy_task_type: task.type,
+              appeal_type: task.appealType,
+              parent_id: rootTask,
+              assigned_to_id: this.isVHAAssignToRegional() ? this.getVisn().value : this.state.selectedValue,
+              assigned_to_type: isTeamAssign ? 'Organization' : 'User',
+              instructions: this.state.instructions,
+            }
+          ]
+        }
+      };
+    } else {
+      payload = {
+        data: {
+          tasks: [
+            {
+              type: taskType,
+              external_id: appeal.externalId,
+              parent_id: actionData.parent_id || task.taskId,
+              assigned_to_id: this.isVHAAssignToRegional() ? this.getVisn().value : this.state.selectedValue,
+              assigned_to_type: isTeamAssign ? 'Organization' : 'User',
+              instructions: this.state.instructions,
+            }
+          ]
+        }
+      };
+    }
+
+    const caseNameListItem = () => {
+      const caseName = appeal.veteranFullName || null;
+
+      return caseName;
     };
 
     const assignTaskSuccessMessage = {
-      title: taskActionData(this.props).message_title || sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()),
-      detail: taskActionData(this.props).message_detail
+      title: taskActionData(this.props).message_title ? sprintf(taskActionData(this.props).message_title,
+        caseNameListItem(),
+        this.getAssignee(isTeamAssign ? 'Organization' : 'User')) : sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE_LEGACY_SUCCESS_TITLE,
+        this.getAssignee(isTeamAssign ? 'Organization' : 'User')),
+      detail: taskActionData(this.props).message_detail || null
     };
 
     const pulacCerulloSuccessMessage = {
@@ -107,19 +151,29 @@ class AssignToView extends React.Component {
       detail: sprintf(COPY.PULAC_CERULLO_SUCCESS_DETAIL, appeal.veteranFullName)
     };
 
+    // Return to attorney on legacy appeals with legacy tasks
+    if (taskType === 'AttorneyRewriteTask' && task.isLegacy === true) {
+      return this.props.initialAssignTasksToUser({
+        tasks: [task],
+        assigneeId: this.state.selectedValue
+      }, assignTaskSuccessMessage);
+    }
+
     if (isReassignAction) {
-      return this.reassignTask(taskType === 'JudgeLegacyAssignTask');
+      return this.reassignTask(task.type === 'JudgeLegacyAssignTask' || task.type === 'JudgeLegacyDecisionReviewTask');
     }
 
     return this.props.
       requestSave('/tasks', payload, isPulacCerullo ? pulacCerulloSuccessMessage : assignTaskSuccessMessage).
-      then((resp) => this.props.onReceiveAmaTasks(resp.body.tasks.data)).
+      then((resp) => {
+        this.props.onReceiveAmaTasks(resp.body.tasks.data);
+      }).
       catch(() => {
         // handle the error from the frontend
       });
   };
 
-  getAssignee = () => {
+  getAssignee = (AssigneeType) => {
     let assignee = 'person';
 
     if (this.isVHAAssignToRegional()) {
@@ -132,6 +186,12 @@ class AssignToView extends React.Component {
       }
     });
 
+    const splitAssignee = assignee.split(' ');
+
+    if (splitAssignee.length === 3 && AssigneeType === 'User') {
+      assignee = `${splitAssignee[0] } ${ splitAssignee[2]}`;
+    }
+
     return assignee;
   };
 
@@ -143,13 +203,28 @@ class AssignToView extends React.Component {
           reassign: {
             assigned_to_id: this.state.selectedValue,
             assigned_to_type: 'User',
-            instructions: this.state.instructions
+            instructions: this.state.instructions,
+            previous: {
+              details: this.state.instructions,
+              old_judge: task.assigneeName,
+              new_judge: this.state.selectedValue
+            }
           }
         }
       }
     };
 
-    const successMsg = { title: sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) };
+    const assignedByListItem = () => {
+      const assignor = this.props.appeal.veteranFullName || null;
+
+      return assignor;
+    };
+
+    const titleValue = task.type === 'JudgeDecisionReviewTask' ?
+      sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee('User')) :
+      sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE_SCM, assignedByListItem(), this.getAssignee('User'));
+
+    const successMsg = { title: titleValue };
 
     if (isLegacyReassignToJudge) {
       return this.props.legacyReassignToJudge({
@@ -201,7 +276,7 @@ class AssignToView extends React.Component {
       return actionData.drop_down_label[this.state.assignToVHARegionalOfficeSelection];
     }
 
-    return actionData.drop_down_label;
+    return actionData.drop_down_label || 'Assign To';
   };
 
   determineTitle = (props, action, isPulacCerullo, actionData) => {
@@ -228,7 +303,7 @@ class AssignToView extends React.Component {
       return COPY.ASSIGN_TO_TEAM_DROPDOWN;
     }
 
-    return COPY.ASSIGN_TO_USER_DROPDOWN;
+    return COPY.ASSIGN_WIDGET_USER_DROPDOWN_PLACEHOLDER;
 
   };
 
@@ -248,10 +323,14 @@ class AssignToView extends React.Component {
   }
 
   assignToVHARegionalOfficeRadioOptions = [
-    { displayText: COPY.VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VAMC,
-      value: 'vamc' },
-    { displayText: COPY.VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VISN,
-      value: 'visn' }
+    {
+      displayText: COPY.VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VAMC,
+      value: 'vamc'
+    },
+    {
+      displayText: COPY.VHA_CAMO_ASSIGN_TO_REGIONAL_OFFICE_DROPDOWN_LABEL_VISN,
+      value: 'visn'
+    }
   ]
 
   assignToVHARegionalOfficeRadioChanged = (option) => {
@@ -271,6 +350,7 @@ class AssignToView extends React.Component {
 
     const action = getAction(this.props);
     const actionData = taskActionData(this.props);
+
     const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
 
     if (!task || task.availableActions.length === 0) {
@@ -282,6 +362,9 @@ class AssignToView extends React.Component {
       pathAfterSubmit: (actionData && actionData.redirect_after) || '/queue',
       ...(actionData.modal_button_text && { button: actionData.modal_button_text }),
       submit: this.submit,
+      submitButtonClassNames: ['usa-button'],
+      submitDisabled: !this.validateForm(),
+      button: 'Assign',
       validateForm: isPulacCerullo ?
         () => {
           return true;
@@ -289,8 +372,20 @@ class AssignToView extends React.Component {
         this.validateForm
     };
 
+    if (task.type === 'JudgeLegacyDecisionReviewTask') {
+      modalProps.submitButtonClassNames = ['usa-button', 'usa-button-hover', 'usa-button-warning'];
+      modalProps.submitDisabled = this.state.modalDisableButton;
+    }
+
+    if (window.location.pathname.includes('distribute_to_judge_legacy')) {
+      modalProps.button = 'Assign';
+      modalProps.submitButtonClassNames = ['usa-button', 'usa-button-hover', 'usa-button-warning'];
+      modalProps.submitDisabled = this.state.modalDisableButton;
+    }
+
     if (isPulacCerullo) {
       modalProps.button = 'Notify';
+      modalProps.submitDisabled = false;
     }
 
     if ([
@@ -331,11 +426,11 @@ class AssignToView extends React.Component {
               />
             )}
             {this.isVHAAssignToRegional() &&
-            this.state.assignToVHARegionalOfficeSelection === 'vamc' &&
-            this.state.selectedValue !== null && (
+              this.state.assignToVHARegionalOfficeSelection === 'vamc' &&
+              this.state.selectedValue !== null && (
               <div className="assign-vamc-visn-display">
                 <u>VISN</u>
-                <div>{ this.getVisn().label }</div>
+                <div>{this.getVisn().label}</div>
               </div>
             )}
             <br />
@@ -346,8 +441,8 @@ class AssignToView extends React.Component {
             name="Task instructions"
             label={actionData.instructions_label || COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
             id="taskInstructions"
-            onChange={(value) => this.setState({ instructions: value })}
             value={this.state.instructions}
+            onChange={(value) => this.setModalOnChangeValue('instructions', value)}
             optional={actionData.body_optional}
           />
         )}
@@ -366,6 +461,7 @@ AssignToView.propTypes = {
   appeal: PropTypes.shape({
     externalId: PropTypes.string,
     id: PropTypes.string,
+    appealId: PropTypes.string,
     veteranFullName: PropTypes.string
   }),
   assigneeAlreadySelected: PropTypes.bool,
@@ -373,23 +469,34 @@ AssignToView.propTypes = {
   isTeamAssign: PropTypes.bool,
   onReceiveAmaTasks: PropTypes.func,
   legacyReassignToJudge: PropTypes.func,
+  initialAssignTasksToUser: PropTypes.func,
   requestPatch: PropTypes.func,
   requestSave: PropTypes.func,
+  rootTask: PropTypes.func,
   task: PropTypes.shape({
     instructions: PropTypes.string,
     taskId: PropTypes.string,
     availableActions: PropTypes.arrayOf(PropTypes.object),
     externalAppealId: PropTypes.string,
-    type: PropTypes.string
+    type: PropTypes.string,
+    // eslint-disable-next-line max-lines
+    appealType: PropTypes.string,
+    // eslint-disable-next-line max-lines
+    assignedBy: PropTypes.string,
+    assigneeName: PropTypes.string,
+    isLegacy: PropTypes.bool
   }),
   setOvertime: PropTypes.func,
   resetSuccessMessages: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
+  const appeal = appealWithDetailSelector(state, ownProps);
+
   return {
     task: taskById(state, { taskId: ownProps.taskId }),
-    appeal: appealWithDetailSelector(state, ownProps)
+    appeal: appealWithDetailSelector(state, ownProps),
+    rootTask: getRootTaskLegacyAppealSCM(state, { appealId: appeal.id })[0].id
   };
 };
 
@@ -400,6 +507,7 @@ const mapDispatchToProps = (dispatch) =>
       requestSave,
       onReceiveAmaTasks,
       legacyReassignToJudge,
+      initialAssignTasksToUser,
       setOvertime,
       resetSuccessMessages
     },
