@@ -169,6 +169,20 @@ describe('HlrScClaimantForm', () => {
     });
   };
 
+  const validatePresenceOfEin = async (optionNum) => {
+    await selectRelationship(optionNum);
+
+    await userEvent.click(
+      screen.getByRole('radio', { name: /organization/i })
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', { name: /Employer Identification Number/i })
+      ).toBeInTheDocument();
+    });
+  }
+
   it('renders default state correctly', () => {
     const { container } = setup();
 
@@ -201,6 +215,7 @@ describe('HlrScClaimantForm', () => {
       screen.getByRole('radio', { name: /organization/i })
     );
 
+    screen.debug(undefined, Infinity);
     expect(container).toMatchSnapshot();
 
     // Set type to individual
@@ -231,5 +246,11 @@ describe('HlrScClaimantForm', () => {
 
     expect(container).toMatchSnapshot();
   });
+
+  it('validate the presence of Employer Identification number for Organizations', async () => {
+    setup();
+    validatePresenceOfEin(relationshipOptsHlrSc.map((r) => r.value).indexOf('healthcare_provider'));
+    validatePresenceOfEin(relationshipOptsHlrSc.map((r) => r.value).indexOf('other'));
+  }, 15000);
 
 });
