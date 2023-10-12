@@ -11,6 +11,9 @@ export const LoadingIcon = (props) => {
   // if the callee only passed a number, append 'px'
   if (!(/\D/).test(imgSize)) {
     imgSize += 'px';
+    console.warn(
+      'LoadingIcon() size argument', size, 'converted to', imgSize
+    );
   }
 
   const style = { marginLeft: `-${imgSize}` };
