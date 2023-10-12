@@ -117,7 +117,6 @@ const NonCompTabs = connect(
     taskFilterDetails: state.taskFilterDetails,
     businessLineUrl: state.businessLineUrl,
     businessLineConfig: state.businessLineConfig,
-
   })
 )(NonCompTabsUnconnected);
 

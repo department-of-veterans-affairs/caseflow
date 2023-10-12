@@ -187,6 +187,8 @@ feature "NonComp Dispositions Task Page", :postgres do
       visit dispositions_url
       expect(page).to have_button("Complete", disabled: true)
       expect(page).to have_link("Edit Issues")
+      # non-admin NCA user should not have Edit Button Disabled.
+      expect(page).to_not have_css(".cf-link-btn.disabled", text: "Edit Issues")
       expect(page).to_not have_content("ineligible issue")
 
       # set description & disposition for each active request issue
