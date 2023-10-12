@@ -14,7 +14,7 @@ class ExternalApi::VADotGovService::AddressValidationResponse < ExternalApi::VAD
   private
 
   def message_error
-    messages&.find { |message| message.error.present? }&.error
+    messages&.find { |message| message.error.present? && coordinates_invalid? }&.error
   end
 
   def messages
@@ -45,5 +45,11 @@ class ExternalApi::VADotGovService::AddressValidationResponse < ExternalApi::VAD
       state_code: address.state,
       zip_code: address.zip
     }
+  end
+
+  def coordinates_invalid?
+    return true if body[:geocode].nil?
+
+    [body[:geocode][:latitude], body[:geocode][:longitude]] == [0.0, 0.0]
   end
 end
