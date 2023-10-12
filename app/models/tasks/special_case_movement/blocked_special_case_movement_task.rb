@@ -15,7 +15,7 @@ class BlockedSpecialCaseMovementTask < SpecialCaseMovementTask
   end
 
   def cancel_tasks_blocking_distribution
-    parent.cancel_descendants(instructions: instructions.first)
+    parent.cancel_descendants(instructions: "**#{COPY::LEGACY_APPEALS_VLJ_REASON_INSTRUCTIONS}**\n" + instructions[1])
   end
 
   def verify_appeal_distributable
