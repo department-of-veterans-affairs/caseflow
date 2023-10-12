@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "../services/claim_change_history/change_history_reporter.rb"
-
 class DecisionReviewsController < ApplicationController
   include GenericTaskPaginationConcern
   include UpdatePOAConcern
@@ -67,20 +65,18 @@ class DecisionReviewsController < ApplicationController
   end
 
   def generate_report
-    if business_line.user_is_admin?(current_user)
-      respond_to do |format|
-        format.html { render "index" }
-        format.csv do
-          filter_params = change_history_params
+    requires_admin_access_redirect unless business_line.user_is_admin?(current_user)
 
-          fail ActionController::ParameterMissing.new(:report), report_missing_message unless filter_params[:report]
+    respond_to do |format|
+      format.html { render "index" }
+      format.csv do
+        filter_params = change_history_params
 
-          events_as_csv = ChangeHistoryReporter.new([], filter_params.to_h).as_csv
-          send_data events_as_csv, filename: csv_filename, type: "text/csv", disposition: "attachment"
-        end
+        fail ActionController::ParameterMissing.new(:report), report_missing_message unless filter_params[:report]
+
+        events_as_csv = ChangeHistoryReporter.new([], filter_params.to_h).as_csv
+        send_data events_as_csv, filename: csv_filename, type: "text/csv", disposition: "attachment"
       end
-    else
-      requires_admin_access_redirect
     end
   rescue ActionController::ParameterMissing => error
     render json: { error: error.message }, status: :bad_request, content_type: "application/json"

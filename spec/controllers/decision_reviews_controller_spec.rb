@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# This is needed for the generate_report action for a csv format since the testing environment does not eager load files
+require Rails.root.join("app", "services", "claim_change_history", "change_history_reporter.rb")
+
 describe DecisionReviewsController, :postgres, type: :controller do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
