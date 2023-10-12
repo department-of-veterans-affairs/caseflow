@@ -52,11 +52,7 @@ class VaDotGovAddressValidator
   end
 
   def valid_address
-    @valid_address ||= if valid_address_response.success?
-                         valid_address_response.data
-                       else
-                         validate_zip_code
-                       end
+    @valid_address ||= valid_address_response.data if valid_address_response.success?
   end
 
   def state_code
@@ -174,7 +170,7 @@ class VaDotGovAddressValidator
   end
 
   def valid_address_response
-    @valid_address_response ||= VADotGovService.validate_address(address)
+    @valid_address_response ||= VADotGovService.validate_zip_code(address.zip)
   end
 
   def available_hearing_locations_response
