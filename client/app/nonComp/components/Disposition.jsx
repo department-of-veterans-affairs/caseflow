@@ -174,6 +174,7 @@ class NonCompDispositions extends React.PureComponent {
     let editIssuesLink = null;
     let displayVHAContent = this.props.task.business_line === 'vha';
     let displayVhaNonAdminContent = displayVHAContent && !this.props.userIsVhaAdmin;
+    let disableDispositionSelection = displayVhaNonAdminContent && task.status === 'on_hold';
 
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
@@ -232,7 +233,7 @@ class NonCompDispositions extends React.PureComponent {
                 onDescriptionChange={this.onDecisionIssueDescriptionChange}
                 decisionDescription={issue.decisionIssue.description}
                 decisionDisposition={issue.decisionIssue.disposition}
-                disabled={Boolean(task.closed_at)}
+                disabled={disableDispositionSelection || Boolean(task.closed_at)}
               />;
             })
           }

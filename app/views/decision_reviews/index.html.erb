@@ -7,6 +7,7 @@
     buildDate: build_date,
     flash: flash,
     serverNonComp: {
+      userIsVhaAdmin: VhaBusinessLine.singleton.user_is_admin?(current_user),
       businessLine: business_line.name,
       businessLineUrl: business_line.url,
       featureToggles: {
@@ -15,7 +16,7 @@
       poaAlert: {},
       baseTasksUrl: business_line.tasks_url,
       businessLineConfig: business_line_config_options,
-      taskFilterDetails: task_filter_details
+    taskFilterDetails: task_filter_details
     },
     ui: {
       featureToggles: {
