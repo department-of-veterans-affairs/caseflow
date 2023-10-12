@@ -89,13 +89,6 @@ export const getAllTasksForAppeal = createSelector(
   }
 );
 
-export const getRootTaskLegacyAppealSCM = createSelector(
-  [getAmaTasks],
-  (amaTasks) => {
-    return filter(amaTasks, (task) => task);
-  }
-);
-
 export const appealsByCaseflowVeteranId = createSelector(
   [appealsWithDetailsSelector, getCaseflowVeteranId],
   (appeals, caseflowVeteranId) =>
@@ -132,16 +125,12 @@ const tasksByAssigneeOrgSelector = createSelector(
 
 export const legacyJudgeTasksAssignedToUser = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) => filter(tasks, (task) =>
-    task.type === 'JudgeLegacyDecisionReviewTask' || task.type === 'JudgeLegacyAssignTask')
+  (tasks) => filter(tasks, (task) => task.type === 'JudgeLegacyDecisionReviewTask' || task.type === 'JudgeLegacyAssignTask')
 );
 
 const workTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) =>
-    workTasksSelector(tasks).sort((task1, task2) => task1.isLegacy - task2.isLegacy).
-      filter((task, i, arr) => arr.map((id) => (id.externalAppealId)).
-        indexOf(task.externalAppealId) === i),
+  (tasks) => workTasksSelector(tasks)
 );
 
 const workTasksByAssigneeOrgSelector = createSelector(
@@ -191,14 +180,12 @@ export const distributionTasksForAppeal = createSelector(
 
 export const caseTimelineTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
-  (tasks) => orderBy(filter(completeTasksSelector(tasks), (task) =>
-    !task.hideFromCaseTimeline), ['completedAt'], ['desc'])
+  (tasks) => orderBy(filter(completeTasksSelector(tasks), (task) => !task.hideFromCaseTimeline), ['completedAt'], ['desc'])
 );
 
 export const taskSnapshotTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
-  (tasks) => orderBy(filter(incompleteTasksSelector(tasks), (task) =>
-    !task.hideFromTaskSnapshot), ['createdAt'], ['desc'])
+  (tasks) => orderBy(filter(incompleteTasksSelector(tasks), (task) => !task.hideFromTaskSnapshot), ['createdAt'], ['desc'])
 );
 
 const taskIsLegacyAttorneyJudgeTask = (task) => {
@@ -265,34 +252,6 @@ export const getAttorneyTasksForJudgeTask = createSelector(
   }
 );
 
-export const getAllHiringChildren = createSelector(
-  [getAmaTasks],
-  (amaTasks) => {
-    const legacyAttorneyJudgeTaskTypes = [
-      'HearingTask',
-      'ScheduleHearingTask'
-    ];
-    const childrenTasks = [];
-
-    for (const key in amaTasks) {
-      // eslint-disable-next-line no-prototype-builtins
-      if (amaTasks.hasOwnProperty(key)) {
-        if (legacyAttorneyJudgeTaskTypes.includes(amaTasks[key].type)) {
-          amaTasks[key].assigned_to_name = amaTasks[key].assignedTo.isOrganization ?
-            amaTasks[key].assignedTo.name :
-            amaTasks[key].ownedBy;
-          amaTasks[key].assigned_to_email = amaTasks[key].assignedTo.isOrganization ?
-            amaTasks[key].assignedTo.name :
-            amaTasks[key].assignedBy.firstName;
-
-          childrenTasks.push(amaTasks[key]);
-        }
-      }
-    }
-
-    return childrenTasks;
-  });
-
 // Get all task trees for all Attorney Type Tasks found with the JudgeDecisionReviewTaskId as their parentId
 export const getTaskTreesForAttorneyTasks = createSelector(
   [getAllTasksForAppeal, getAttorneyTasksForJudgeTask],
@@ -344,8 +303,8 @@ export const getLegacyTaskTree = createSelector(
           moment(judgeDecisionReviewTask.assignedOn));
 
         return task.uniqueId !== judgeDecisionReviewTask.uniqueId &&
-          timelineRange.contains(taskCreatedAt) &&
-          timelineRange.contains(taskClosedAt);
+        timelineRange.contains(taskCreatedAt) &&
+        timelineRange.contains(taskClosedAt);
       })
 );
 
