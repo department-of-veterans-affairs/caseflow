@@ -358,18 +358,20 @@ feature "NonComp Dispositions Task Page", :postgres do
         it "should display banner for non-admin users" do
           visit dispositions_url
 
-          expect(page).to have_selector(".usa-alert", text: "Only VHA admins can make edits to Higher-Level Reviews and Supplemental Claims. If you would like to add, remove, or modify an issue within a claim, please send an email with the requested change.")
+          expect(page).to have_selector(".usa-alert", text: "Only VHA admins can make edits to Higher-Level \
+            Reviews and Supplemental Claims. If you would like to add, remove, or modify \
+             an issue within a claim, please send an email with the requested change.")
         end
 
         context "incomplete task" do
           let!(:incomplete_task) do
             create(:higher_level_review,
-                    :with_vha_issue,
-                    :with_end_product_establishment,
-                    :create_business_line,
-                    benefit_type: "vha",
-                    veteran: veteran,
-                    claimant_type: :veteran_claimant)
+                   :with_vha_issue,
+                   :with_end_product_establishment,
+                   :create_business_line,
+                   benefit_type: "vha",
+                   veteran: veteran,
+                   claimant_type: :veteran_claimant)
           end
           let(:incomplete_disposition_url) { "#{business_line_url}/tasks/#{incomplete_task.id}" }
 
@@ -397,11 +399,12 @@ feature "NonComp Dispositions Task Page", :postgres do
         it "should not display the banner for non-vha users" do
           visit dispositions_url
 
-          expect(page).not_to have_selector(".usa-alert", text: "Only VHA admins can make edits to Higher-Level Reviews and Supplemental Claims. If you would like to add, remove, or modify an issue within a claim, please send an email with the requested change.")
+          expect(page).not_to have_selector(".usa-alert", text: "Only VHA admins can make edits to Higher-Level \
+            Reviews and Supplemental Claims. If you would like to add, remove, or modify an issue within \
+            a claim, please send an email with the requested change.")
         end
       end
     end
-
 
     scenario "When feature toggle is enabled Refresh button should be visible." do
       enable_feature_flag_and_redirect_to_disposition

@@ -151,7 +151,8 @@ TaskTableTabUnconnected.propTypes = {
   filterableTaskTypes: PropTypes.object,
   filterableTaskIssueTypes: PropTypes.object,
   onHistoryUpdate: PropTypes.func,
-  tabName: PropTypes.string
+  tabName: PropTypes.string,
+  userIsVhaAdmin: PropTypes.bool
 };
 
 const TaskTableTab = connect(
