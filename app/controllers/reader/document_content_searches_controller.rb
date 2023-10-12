@@ -24,7 +24,7 @@ class Reader::DocumentContentSearchesController < Reader::ApplicationController
     matched_docs = []
 
     docs.each do |doc|
-      query = ExternalApi::ClaimEvidenceService.get_ocr_document(doc.series_id)
+      query = ClaimEvidenceService.get_ocr_document(doc.series_id)
 
       if query.downcase.include?(search_term)
         matched_docs << doc

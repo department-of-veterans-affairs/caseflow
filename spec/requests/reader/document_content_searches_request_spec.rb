@@ -13,7 +13,7 @@ RSpec.describe "Reader::DocumentContentSearchesController", type: :request do
 
       context "when matching text exists" do
         before do
-          expect(ExternalApi::ClaimEvidenceService).to receive(:get_ocr_document).twice.and_return("foo bar baz")
+          expect(ClaimEvidenceService).to receive(:get_ocr_document).twice.and_return("foo bar baz")
         end
 
         it "successfully finds matching documents" do
@@ -27,7 +27,7 @@ RSpec.describe "Reader::DocumentContentSearchesController", type: :request do
 
       context "when matching text does not exist" do
         before do
-          expect(ExternalApi::ClaimEvidenceService).to receive(:get_ocr_document).twice.and_return("The quick brown fox")
+          expect(ClaimEvidenceService).to receive(:get_ocr_document).twice.and_return("The quick brown fox")
         end
 
         it "does not return documents that do not match" do
