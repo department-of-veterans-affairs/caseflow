@@ -170,7 +170,7 @@ class NonCompDispositions extends React.PureComponent {
 
     let editIssuesLink = null;
     let displayVHAContent = this.props.task.business_line === 'vha';
-    let vhaAdmin = !this.props.vhaAdmin && displayVHAContent;
+    let disableEditIssues = !this.props.vhaAdmin && displayVHAContent;
 
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
@@ -184,7 +184,7 @@ class NonCompDispositions extends React.PureComponent {
       </React.Fragment>;
 
       editIssuesLink = <React.Fragment>
-        <a className={`cf-link-btn ${ vhaAdmin ? 'disabled' : ''}`} href={appeal.editIssuesUrl}>Edit Issues</a>
+        <a className={`cf-link-btn ${ disableEditIssues ? 'disabled' : ''}`} href={appeal.editIssuesUrl}>Edit Issues</a>
       </React.Fragment>;
     }
 

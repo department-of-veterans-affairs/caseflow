@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import '@testing-library/jest-dom';
@@ -7,7 +7,6 @@ import '@testing-library/jest-dom';
 import {
   genericTaskPageData, genericTaskPageDataWithVhaAdmin, inProgressTaskPageData, inProgressTaskPageDataWithAdmin
 } from '../../../test/data/queue/nonCompTaskPage/nonCompTaskPageData';
-import { vhaTaskFilterDetails, genericTaskFilterDetails } from '../../data/taskFilterDetails';
 import TaskPageUnconnected from 'app/nonComp/pages/TaskPage';
 import ApiUtil from '../../../app/util/ApiUtil';
 
@@ -27,7 +26,7 @@ const basicGenericPropsWithVhaAdminTrue = {
 };
 
 beforeEach(() => {
-  // jest.clearAllMocks();
+  jest.clearAllMocks();
 
   // Mock ApiUtil get so the tasks will appear in the queues.
   ApiUtil.get = jest.fn().mockResolvedValue({
@@ -44,7 +43,6 @@ const createReducer = (storeValues) => {
     return state;
   };
 };
-
 
 const renderTaskPage = (props) => {
 
@@ -64,10 +62,6 @@ afterEach(() => {
 });
 
 describe('TaskPageVha', () => {
-  beforeEach(() => {
-
-  });
-
   it('renders a page with Edit Issue button disabled when vhaAdmin is false and businessLine is vha', () => {
     renderTaskPage(basicVhaProps);
     const submit = screen.getByRole('link', { name: /Edit Issues/i });
@@ -79,7 +73,6 @@ describe('TaskPageVha', () => {
     const submit = screen.getByRole('link', { name: /Edit Issues/i });
     expect(submit).not.toHaveClass('disabled');
   });
-
 });
 
 describe('TaskPageGeneric', () => {
