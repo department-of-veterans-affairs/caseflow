@@ -6,9 +6,12 @@ export const prepareFilters = (filterData) => {
   return filterData;
 };
 
+const analytics = true;
+
 export const submitGenerateReport = (businessLineUrl, filterData) => (dispatch) => {
   dispatch({
     type: ACTIONS.SUBMIT_GENERATE_REPORT_REQUEST,
+    meta: { analytics }
   });
 
   // Data prep/transformation or cleanup, if neccessary.
@@ -44,7 +47,8 @@ export const submitGenerateReport = (businessLineUrl, filterData) => (dispatch) 
 
       // Actions without a payload seem weird, but this is really just about managing the loading state
       dispatch({
-        type: ACTIONS.SUBMIT_GENERATE_REPORT_SUCCESS
+        type: ACTIONS.SUBMIT_GENERATE_REPORT_SUCCESS,
+        meta: { analytics }
       });
 
       return true;
@@ -55,6 +59,7 @@ export const submitGenerateReport = (businessLineUrl, filterData) => (dispatch) 
         payload: {
           error
         },
+        meta: { analytics }
       });
 
       throw error;
