@@ -48,7 +48,8 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
           type: "Board Grant",
           external_appeal_id: task.appeal.uuid,
           appeal_type: "Appeal",
-          business_line: non_comp_org.url
+          business_line: non_comp_org.url,
+          status: "assigned"
         }
       }
       expect(subject.serializable_hash[:data]).to eq(serializable_hash)
@@ -102,7 +103,8 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
             type: "Board Grant",
             external_appeal_id: task.appeal.uuid,
             appeal_type: "Appeal",
-            business_line: non_comp_org.url
+            business_line: non_comp_org.url,
+            status: "assigned"
           }
         }
         expect(subject.serializable_hash[:data]).to eq(serializable_hash)
@@ -161,7 +163,8 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
             type: "Board Grant",
             external_appeal_id: task.appeal.uuid,
             appeal_type: "Appeal",
-            business_line: non_comp_org.url
+            business_line: non_comp_org.url,
+            status: "assigned"
           }
         }
         expect(subject.serializable_hash[:data]).to eq(serializable_hash)
