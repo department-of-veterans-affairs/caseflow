@@ -84,6 +84,10 @@ module VaDotGovAddressValidator::Validations
   end
 
   def veteran_lives_in_usa?
-    %w[USA US].include? valid_addess[:country_code]
+    %w[USA US].include? appeal.veteran&.address&.country
+  end
+
+  def veteran_lives_in_phillipines?
+    %w[PH RP PI].include? appeal.veteran&.address&.country
   end
 end
