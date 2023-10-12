@@ -13,12 +13,12 @@ module DisallowedDeprecations
 
   # Regular expressions for Rails 6.1 deprecation warnings that we have addressed in the codebase
   RAILS_6_1_FIXED_DEPRECATION_WARNING_REGEXES = [
-    /Controller-level force_ssl is deprecated and will be removed from Rails 6\.1/
+    /Controller-level `force_ssl` is deprecated and will be removed from Rails 6\.1/
   ].freeze
   
   # Regular expressions for deprecation warnings that should raise an exception on detection
   DISALLOWED_DEPRECATION_WARNING_REGEXES = [
-    *RAILS_5_2_FIXED_DEPRECATION_WARNING_REGEXES
+    *RAILS_5_2_FIXED_DEPRECATION_WARNING_REGEXES,
     *RAILS_6_1_FIXED_DEPRECATION_WARNING_REGEXES
   ].freeze
 
