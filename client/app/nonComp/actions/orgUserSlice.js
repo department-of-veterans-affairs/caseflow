@@ -10,8 +10,9 @@ const initialState = {
 
 // TODO: Might be able to make this even more generic since a lot of the params are the same
 // so the url/params might be the only thing that would change between all the various fetchUserThunks
-export const fetchOrgUsersAsync = createAsyncThunk('users/fetchOrgUsers', async (businessLineUrl) => {
-  const ORGANIZATION_USERS_URL = `/users?organization=${businessLineUrl}`;
+// TOOD: Figure out how to set meta: analytics for async thunks, if it's even possible
+export const fetchOrgUsers = createAsyncThunk('users/fetchOrgUsers', async (organizationUrlorName) => {
+  const ORGANIZATION_USERS_URL = `/users?organization=${organizationUrlorName}`;
 
   // TOOD: Does this need try catch? or is it already a promise that has pass/fail
   try {
@@ -32,14 +33,14 @@ const orgUserSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.
-      addCase(fetchOrgUsersAsync.pending, (state) => {
+      addCase(fetchOrgUsers.pending, (state) => {
         state.status = 'loading';
       }).
-      addCase(fetchOrgUsersAsync.fulfilled, (state, action) => {
+      addCase(fetchOrgUsers.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.users = action.payload;
       }).
-      addCase(fetchOrgUsersAsync.rejected, (state, action) => {
+      addCase(fetchOrgUsers.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });
