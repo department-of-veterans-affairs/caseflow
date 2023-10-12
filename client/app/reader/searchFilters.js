@@ -71,6 +71,12 @@ export const getUpdatedFilteredResults = (state) => {
     ([key]) => key
   );
 
+  const activeClaimServiceDocsFilter = map(
+    filter(toPairs(docFilterCriteria.claimServiceDocuments),
+      ([key, value]) => value), // eslint-disable-line no-unused-vars
+    ([key]) => key
+  );
+
   const activeReceiptFilters = map(
     filter(toPairs(docFilterCriteria.receiptFilterDates), ([key, value]) => // eslint-disable-line no-unused-vars
       value),
@@ -87,7 +93,10 @@ export const getUpdatedFilteredResults = (state) => {
           filter(
             filter(
               filter(
-                updatedNextState.documents,
+                filter(
+                  updatedNextState.documents,
+                  (doc) => !activeClaimServiceDocsFilter.length || some(activeClaimServiceDocsFilter, (id) =>
+                    Number(id) === doc.id)),
                 (doc) => !activeDocTypeFilter.length || some(activeDocTypeFilter, (docType) => docType === doc.type)),
               (doc) => !activeReceiptFilters.length || some(activeReceiptFilters, () =>
                 (filterDates(doc.receivedAt, docFilterCriteria.receiptFilterDates,

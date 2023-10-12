@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { compact, values, size } from 'lodash';
 import classNames from 'classnames';
 
-import { clearAllFilters } from '../reader/DocumentList/DocumentListActions';
+import { clearAllFilters, clearClaimEvidenceDocs } from '../reader/DocumentList/DocumentListActions';
 import Button from '../components/Button';
 
 class HeaderFilterMessage extends React.PureComponent {
@@ -13,6 +13,7 @@ class HeaderFilterMessage extends React.PureComponent {
     // Call any passed clear functions for page elements
     this.props.clearAllFiltersCallbacks.forEach((filter) => filter());
     this.props.clearAllFilters();
+    this.props.clearClaimEvidenceDocs();
   }
 
   render() {
@@ -25,12 +26,14 @@ class HeaderFilterMessage extends React.PureComponent {
     const tagCount = getTruthyCount(props.docFilterCriteria.tag);
     const docTypeCount = getTruthyCount(props.docFilterCriteria.document);
     const receiptDateCount = getTruthyCount(props.docFilterCriteria.receiptFilterDates);
+    const claimEvidenceCount = getTruthyCount(props.docFilterCriteria.claimServiceDocuments)
 
     const filteredCategories = compact([
       categoryCount && `Categories (${categoryCount})`,
       tagCount && `Issue tags (${tagCount})`,
       docTypeCount && `Document Types (${docTypeCount})`,
-      receiptDateCount && `Receipt Date (${receiptDateCount})`
+      receiptDateCount && `Receipt Date (${receiptDateCount})`,
+      claimEvidenceCount && `Claim Evidence (${claimEvidenceCount})`
     ]).join(', ');
 
     const className = classNames('document-list-filter-message', {
@@ -45,19 +48,21 @@ class HeaderFilterMessage extends React.PureComponent {
           name="clear-filters"
           classNames={['cf-btn-link']}
           onClick={this.doClearAllFilters}
-        >Clear all filters.</Button>
+        ><label>Clear all filters.</label></Button>
       </p>
     );
   }
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  clearAllFilters
+  clearAllFilters,
+  clearClaimEvidenceDocs
 }, dispatch);
 
 HeaderFilterMessage.propTypes = {
   docFilterCriteria: PropTypes.object,
   clearAllFilters: PropTypes.func.isRequired,
+  clearClaimEvidenceDocs: PropTypes.func.isRequired,
   clearAllFiltersCallbacks: PropTypes.array.isRequired
 };
 

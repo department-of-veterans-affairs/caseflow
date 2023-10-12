@@ -45,6 +45,7 @@ const initialState = {
     category: {},
     tag: {},
     document: {},
+    claimServiceDocuments: [],
     docTypeList: '',
     searchQuery: '',
     receiptFilterType: '',
@@ -167,6 +168,27 @@ const documentListReducer = (state = initialState, action = {}) => {
     return update(state, {
       viewingDocumentsOrComments: {
         $set: action.payload.documentsOrComments
+      }
+    });
+
+    // Claim evidence docuemnts
+  case Constants.SET_CLAIM_EVIDENCE_DOCS:
+
+    return update(state, {
+      docFilterCriteria: {
+        claimServiceDocuments: {
+          $set: action.payload.documents
+
+        }
+      }
+    });
+
+  case Constants.CLEAR_CLAIM_EVIDENCE_DOCS:
+    return update(state, {
+      docFilterCriteria: {
+        claimServiceDocuments: {
+          $set: []
+        }
       }
     });
 

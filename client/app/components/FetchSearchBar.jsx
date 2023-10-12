@@ -10,8 +10,9 @@ const FetchSearchBar = (props) => {
 
   const handleClick = (event) => {
     event.preventDefault();
+    props.setClaimEvidenceDocs("");
     ApiUtil.get(`/reader/appeal/${props.vacolsId}/document_content_searches?search_term=${searchText}`)
-      .then((response) => console.log(response));
+      .then((response) => (props.setClaimEvidenceDocs(response.body.appealDocuments)));
   };
 
   return (
