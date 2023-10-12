@@ -71,7 +71,7 @@ export const splitAppeal = (appealId, selectedIssues, reason, otherReason, userC
     catch((error) => console.error(error));
 };
 
-export const doFileNumberSearch = (formType, fileNumberSearch, updateIsWaitingForResponse) => (dispatch) => {
+export const doFileNumberSearch = (formType, fileNumberSearch) => (dispatch) => {
   dispatch({
     type: ACTIONS.FILE_NUMBER_SEARCH_START,
     meta: { analytics }
@@ -110,17 +110,10 @@ export const doFileNumberSearch = (formType, fileNumberSearch, updateIsWaitingFo
           }
         });
 
-        updateIsWaitingForResponse(false);
-
         throw error;
       }
     ).
-    catch((error) => {
-      updateIsWaitingForResponse(false);
-
-      return error;
-    }
-    );
+    catch((error) => error);
 };
 
 export const setFormType = (formType) => ({
