@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class V3::DecisionIssueSerializer
-  include FastJsonapi::ObjectSerializer
+  #include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attributes :caseflow_decision_date, :created_at, :decision_text, :deleted_at,
              :description, :diagnostic_code, :disposition, :end_product_last_action_date,

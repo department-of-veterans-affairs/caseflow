@@ -3,8 +3,10 @@
 # use via `V3::RequestIssueSerializer.new(<request issue obj>, include: [:decision_issues]).serializable_hash.to_json`
 # or for a relation example: `V3::RequestIssueSerializer.new(RequestIssue.includes(:decision_issues).where(veteran_participant_id: "574727696"), include: [:decision_issues]).serializable_hash.to_json`
 # or with pagination: `V3::RequestIssueSerializer.new(RequestIssue.includes(:decision_issues).page(2), include: [:decision_issues]).serializable_hash.to_json`
+# or without this serializer and just use AR: `RequestIssue.includes(:decision_issues).where(veteran_participant_id: "574727696").as_json(root: true, include: :decision_issues)`
 class V3::RequestIssueSerializer
-  include FastJsonapi::ObjectSerializer
+  #include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   has_many :decision_issues, serializer: V3::DecisionIssueSerializer
 

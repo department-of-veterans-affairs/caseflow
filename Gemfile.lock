@@ -293,8 +293,6 @@ GEM
       faraday (>= 0.8)
     faraday_middleware (0.13.1)
       faraday (>= 0.7.4, < 1.0)
-    fast_jsonapi (1.5)
-      activesupport (>= 4.2)
     fasterer (0.6.0)
       colorize (~> 0.7)
       ruby_parser (>= 3.13.0)
@@ -363,6 +361,8 @@ GEM
       hana (~> 1.3)
       regexp_parser (~> 1.5)
       uri_template (~> 0.7)
+    jsonapi-serializer (2.2.0)
+      activesupport (>= 4.2)
     kaminari (1.2.1)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.2.1)
@@ -751,7 +751,6 @@ DEPENDENCIES
   dry-schema (~> 1.4)
   factory_bot_rails (~> 5.2)
   faker
-  fast_jsonapi
   fasterer
   foreman
   fuzzy_match
@@ -762,6 +761,7 @@ DEPENDENCIES
   immigrant
   jshint
   json_schemer (~> 0.2.16)
+  jsonapi-serializer
   kaminari
   knapsack_pro (~> 3.8)
   logstasher
