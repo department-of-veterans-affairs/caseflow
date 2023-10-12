@@ -31,13 +31,8 @@ class TasksForAppeal
     # this task if they have gone to the case details page of this appeal
     tasks.assigned.where(assigned_to: user).each(&:in_progress!)
 
-    if appeal.is_a?(LegacyAppeal)
-      if hide_legacy_tasks?
-        return tasks
-      else
-        return (legacy_appeal_tasks + tasks).uniq
-      end
-    end
+    return (legacy_appeal_tasks + tasks).uniq if appeal.is_a?(LegacyAppeal)
+
     tasks
   end
 
@@ -87,15 +82,6 @@ class TasksForAppeal
     return [] unless user_is_judge_or_attorney? || user.can_act_on_behalf_of_judges?
 
     LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id)
-  end
-
-  def hide_legacy_tasks?
-    if !appeal.tasks.where(type: JudgeAssignTask.name).empty? || !appeal.tasks.where(type: AttorneyTask.name).empty? ||
-       !appeal.tasks.where(type: JudgeDecisionReviewTask.name).empty?
-      true
-    else
-      false
-    end
   end
 
   def task_includes
