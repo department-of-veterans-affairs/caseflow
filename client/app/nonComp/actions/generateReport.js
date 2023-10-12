@@ -1,8 +1,5 @@
 import { ACTIONS } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
-// import { analyticsCallback, submitIntakeCompleteRequest } from './intake';
-
-// const analytics = true;
 
 // Move this to utils or something
 export const prepareFilters = (filterData) => {
@@ -12,24 +9,15 @@ export const prepareFilters = (filterData) => {
 export const submitGenerateReport = (businessLineUrl, filterData) => (dispatch) => {
   dispatch({
     type: ACTIONS.SUBMIT_GENERATE_REPORT_REQUEST,
-    // meta: { analytics }
   });
-
-  // Do validation here or before with react hook forms?
-  // const validationErrors =  validateReportData(filterData);
 
   // Data prep/transformation or cleanup, if neccessary.
   const data = prepareFilters(filterData);
 
-  // TODO: Don't know if we want the analytics stuff that intake/queue has in some places.
-  // Nor do I know how it works
   const getOptions = { query: data, headers: { Accept: 'text/csv' }, responseType: 'arraybuffer' };
 
   return ApiUtil.get(`/decision_reviews/${businessLineUrl}/report`, getOptions).then(
     (response) => {
-      // console.log('getting back a response');
-
-      // console.log(response);
       // Create a Blob from the array buffer
       const blob = new Blob([response.body], { type: 'text/csv' });
 
@@ -54,30 +42,19 @@ export const submitGenerateReport = (businessLineUrl, filterData) => (dispatch) 
       // Remove the link from the document
       document.body.removeChild(link);
 
+      // Actions without a payload seem weird, but this is really just about managing the loading state
       dispatch({
-        type: ACTIONS.SUBMIT_GENERATE_REPORT_SUCCESS,
-        payload: {
-          // intake: response.body
-        },
-        // meta: { analytics }
+        type: ACTIONS.SUBMIT_GENERATE_REPORT_SUCCESS
       });
 
       return true;
     },
     (error) => {
-      console.log(error);
-      // const responseObject = error.response.body;
-      // const responseErrorCodes = responseObject.error_codes;
-
       dispatch({
         type: ACTIONS.SUBMIT_GENERATE_REPORT_FAILURE,
         payload: {
-          // errorUUID: responseObject.error_uuid,
-          // responseErrorCodes
+          error
         },
-        // meta: {
-        //   analytics: analyticsCallback
-        // }
       });
 
       throw error;
