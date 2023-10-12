@@ -512,7 +512,7 @@ class RequestIssue < CaseflowRecord
   def save_decision_date!(new_decision_date)
     fail DecisionDateInFutureError, id if new_decision_date.to_date > Time.zone.today
 
-    update!(decision_date: new_decision_date)
+    update!(decision_date: new_decision_date, decision_date_added_at: Time.zone.now)
 
     # Special handling for claim reviews that contain issues without a decision date
     decision_review.try(:handle_issues_with_no_decision_date!)
