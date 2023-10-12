@@ -46,6 +46,12 @@ class NonComp extends React.PureComponent {
                 />
                 <PageRoute
                   exact
+                  path="/:businessLineSlug/report"
+                  title={`${appName} Generate Task Report | Caseflow`}
+                  component={ReportPage}
+                />
+                <PageRoute
+                  exact
                   path="/:businessLineSlug"
                   title={`${appName} Reviews | Caseflow`}
                   component={ReviewPage}
