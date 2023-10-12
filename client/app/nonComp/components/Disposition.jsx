@@ -22,8 +22,8 @@ import {
   buildDispositionSubmission
 } from '../util';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-
-
+import { renderToString } from 'react-dom/server';
+import { sprintf } from 'sprintf-js';
 class NonCompDecisionIssue extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -211,7 +211,9 @@ class NonCompDispositions extends React.PureComponent {
             {displayVhaNonAdminContent &&
             <Alert
                 type="info">
-                Only VHA admins can make edits to Higher-Level Reviews and Supplemental Claims. If you would like to add, remove, or modify an issue within a claim, please
+                  {disableDispositionSelection && COPY.VHA_DISPOSITION_INCOMPLETE_TASK_BANNER_TEXT}
+
+                  Only VHA admins can make edits to Higher-Level Reviews and Supplemental Claims. If you would like to add, remove, or modify an issue within a claim, please
                 <Link to={"some/email/route"}> send an email</Link> with the requested change.
             </Alert>}
             <div className="usa-width-one-half">
