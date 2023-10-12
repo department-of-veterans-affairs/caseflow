@@ -102,6 +102,7 @@ class SubmitDecisionView extends React.PureComponent {
       decision,
       judges
     } = this.props;
+
     const issuesToPass = isLegacyAppeal ? issues : decisionIssues;
     const payload = buildCaseReviewPayload(checkoutFlow, decision, true, issuesToPass, { isLegacyAppeal });
 
