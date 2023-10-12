@@ -4,21 +4,21 @@ require "benchmark"
 
 # see https://dropwizard.github.io/metrics/3.1.0/getting-started/ for abstractions on metric types
 class MetricsService
-  def self.record(description, service: nil, name: "unknown", caller: nil)
+  def self.record(description, service: nil, name: "unknown")
     return_value = nil
     app = RequestStore[:application] || "other"
     service ||= app
     uuid = SecureRandom.uuid
-    metric_name= 'request_latency'
+    metric_name = "request_latency"
     sent_to = [[Metric::LOG_SYSTEMS[:rails_console]]]
     sent_to_info = nil
 
-    start = Time.now
+    start = Time.zone.now
     Rails.logger.info("STARTED #{description}")
     stopwatch = Benchmark.measure do
       return_value = yield
     end
-    stopped = Time.now
+    stopped = Time.zone.now
 
     if service
       latency = stopwatch.real
@@ -55,12 +55,11 @@ class MetricsService
       end: stopped,
       duration: stopwatch.total * 1000 # values is in seconds and we want milliseconds
     }
-    store_record_metric(uuid, metric_params, caller)
+    store_record_metric(uuid, metric_params)
 
     return_value
   rescue StandardError => error
     Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-    Raven.capture_exception(error, extra: { type: "request_error", service: service, name: name, app: app })
 
     increment_datadog_counter("request_error", service, name, app) if service
 
@@ -75,12 +74,12 @@ class MetricsService
       },
       sent_to: [[Metric::LOG_SYSTEMS[:rails_console]]],
       sent_to_info: "",
-      start: 'Time not recorded',
-      end: 'Time not recorded',
-      duration: 'Time not recorded'
+      start: "Time not recorded",
+      end: "Time not recorded",
+      duration: "Time not recorded"
     }
 
-    store_record_metric(uuid, metric_params, caller)
+    store_record_metric(uuid, metric_params)
 
     # Re-raise the same error. We don't want to interfere at all in normal error handling.
     # This is just to capture the metric.
@@ -101,13 +100,10 @@ class MetricsService
     )
   end
 
-  private
-
-  def self.store_record_metric(uuid, params, caller)
-
+  private_class_method def self.store_record_metric(uuid, params)
     return nil unless FeatureToggle.enabled?(:metrics_monitoring, user: RequestStore[:current_user])
 
-    name ="caseflow.server.metric.#{params[:name]&.downcase.gsub(/::/, '.')}"
+    name = "caseflow.server.metric.#{params[:name]&.downcase&.gsub(/::/, '.')}"
     params = {
       uuid: uuid,
       name: name,
@@ -119,10 +115,10 @@ class MetricsService
       sent_to_info: params[:sent_to_info],
       start: params[:start],
       end: params[:end],
-      duration: params[:duration],
+      duration: params[:duration]
     }
 
-    metric = Metric.create_metric(caller || self, params, RequestStore[:current_user])
+    metric = Metric.create_metric(self, params, RequestStore[:current_user])
     failed_metric_info = metric&.errors.inspect
     Rails.logger.info("Failed to create metric #{failed_metric_info}") unless metric&.valid?
   end
