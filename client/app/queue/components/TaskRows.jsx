@@ -31,9 +31,11 @@ export const grayLineStyling = css({
   bottom: 0
 });
 
-export const grayLineTimelineStyling = css(grayLineStyling, { left: '9%',
+export const grayLineTimelineStyling = css(grayLineStyling, {
+  left: '9%',
   marginLeft: '12px',
-  top: '39px' });
+  top: '39px'
+});
 
 const greyDotAndlineStyling = css({ top: '25px' });
 
@@ -61,21 +63,15 @@ const taskTimeContainerStyling = css(taskContainerStyling, { width: '20%' });
 const taskInformationContainerStyling = css(taskContainerStyling, { width: '25%' });
 const taskTimeTimelineContainerStyling = css(taskContainerStyling, { width: '40%' });
 const taskInfoWithIconTimelineContainer =
-  css(taskInfoWithIconContainer, { textAlign: 'left',
+  css(taskInfoWithIconContainer, {
+    textAlign: 'left',
     marginLeft: '5px',
     width: '10%',
-    paddingLeft: '0px' });
+    paddingLeft: '0px'
+  });
 
 const isCancelled = (task) => {
   return task.status === TASK_STATUSES.cancelled;
-};
-
-const issueUpdateTask = (task) => {
-  return task.type === 'IssuesUpdateTask';
-};
-
-const establishmentTask = (task) => {
-  return task.type === 'EstablishmentTask';
 };
 
 const tdClassNames = (timeline, task) => {
@@ -180,7 +176,7 @@ class TaskRows extends React.PureComponent {
   assignedToListItem = (task) => {
     const assignee = task.assigneeName;
 
-    return assignee && !establishmentTask(task) ? (
+    return assignee ? (
       <div className="cf-row-wrapper">
         <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt>
         <dd>{assignee}</dd>
@@ -312,242 +308,9 @@ class TaskRows extends React.PureComponent {
       return text.replace(/<br>|(?<! {2})\n/g, '  \n');
     };
 
-    const renderMstLabel = (mstText, style) => {
-      if (mstText) {
-        return <React.Fragment>
-          <h5 style={style}>Reason for Change (MST):</h5>
-          <small>{mstText}</small>
-        </React.Fragment>;
-      }
-    };
-
-    const renderPactLabel = (pactText, style) => {
-      if (pactText) {
-        return <React.Fragment>
-          <h5 style={style}>Reason for Change (PACT):</h5>
-          <small>{pactText}</small>
-        </React.Fragment>;
-      }
-    };
-
-    // formatting used for IssueUpdate task instructions.
-    const formatIssueUpdateBreaks = (text = '') => {
-      const divStyle = { marginTop: '1rem' };
-      const hStyle = { marginTop: '1.5rem', marginBottom: '0rem', fontWeight: 'bold' };
-
-      if (Array.isArray(text)) {
-        // text array indexes
-        // 0: change_type,
-        // 1: benefit_type,
-        // 2: issue description,
-        // 3: original special issues list
-        // 4: updated special issues list
-        // 5: mst edit reason (not currently implemented)
-        // 6: pact edit reason (not currently implemented)
-        return (
-          <div style={divStyle}>
-            <b>{text[0]}:</b>
-            {text[1] &&
-              <React.Fragment>
-                <div style={divStyle}>
-                  Benefit type: {text[1]}
-                </div>
-              </React.Fragment>}
-            <div style={divStyle}>
-              <div style={{ whiteSpace: 'pre-line' }}>
-                {text[2]}
-              </div>
-            </div>
-            {text[4] ?
-              <React.Fragment>
-                <h5 style={hStyle}>Original:</h5>
-                <div style={divStyle}>
-                  <small>{text[3]}</small>
-                </div>
-                <h5 style={hStyle}>Updated:</h5>
-                <div style={divStyle}>
-                  <small>{text[4]}</small>
-                </div>
-              </React.Fragment> :
-              <div style={divStyle}>
-                {text[3]}
-              </div>}
-            {renderMstLabel(text[5], hStyle)}
-            {renderPactLabel(text[6], hStyle)}
-          </div>
-        );
-      }
-    };
-
-    const formatEstablishmentBreaks = (text = '') => {
-      const divStyle = { marginTop: '1rem' };
-      const hStyle = { marginTop: '1rem', marginBottom: '0rem', fontWeight: 'bold' };
-
-      if (Array.isArray(text)) {
-        const content = text.map((issue, index) =>
-        // issue array indexes:
-        // 0: Issue description
-        // 1: Benefit Type
-        // 2: Original special issues (empty string unless issue originated in VBMS
-        //    AND mst/pact designation changes by intake user)
-        // 3: Special issues (Either added by intake user or originating in VBMS - if left unaltered during intake)
-          <div key={index}>
-            <div style={divStyle}>
-              <b>Added Issue:</b>
-            </div>
-            <div style={divStyle}>
-              {issue[0]}
-            </div>
-            {issue.at(1) !== '' &&
-              <React.Fragment>
-                <div style={divStyle}>
-                  Benefit type: {issue[1]}
-                </div>
-              </React.Fragment>}
-            {/* Condition where a prior decision from vbms with mst/pact designation was updated in intake process */}
-            {issue[2] ?
-              <React.Fragment>
-                <h5 style={hStyle}>ORIGINAL: </h5>
-                <small>{issue[2]}</small>
-                <h5 style={hStyle}>UPDATED: </h5>
-                <small>{issue[3]}</small>
-                <p></p>
-              </React.Fragment> :
-              <div style={divStyle}>
-                {issue[3]}
-                <p></p>
-              </div>
-            }
-            {/* No horizontal rule after the last issue */}
-            {index !== (text.length - 1) &&
-              <React.Fragment>
-                <div style={divStyle}>
-                  <hr />
-                </div>
-              </React.Fragment>
-            }
-          </div>
-        );
-
-        return (
-          <div>
-            {content}
-          </div>
-        );
-      }
-    };
-
     // We specify the same 2.4rem margin-bottom as paragraphs to each set of instructions
     // to ensure a consistent margin between instruction content and the "Hide" button
-    const divStyles = { marginBottom: '2.4rem' };
-
-    // eslint-disable-next-line no-shadow
-    const formatInstructions = (task, text) => {
-      if (issueUpdateTask(task)) {
-        return (
-          <React.Fragment>{formatIssueUpdateBreaks(text)}</React.Fragment>
-        );
-      } else if (establishmentTask(task)) {
-        return (
-          <React.Fragment>{formatEstablishmentBreaks(text)}</React.Fragment>
-        );
-      }
-
-      return (
-        <ReactMarkdown>{formatBreaks(text)}</ReactMarkdown>
-      );
-    };
-
-    const taskIsAssignOrDecisionReview = task.type === 'JudgeAssignTask' ||
-      task.type === 'JudgeDecisionReviewTask';
-
-    if ((task.previous.length >= 1) && (taskIsAssignOrDecisionReview)) {
-      return (
-        <React.Fragment key={`${task.uniqueId} fragment`}>
-          {(task.previous.length > 1 ? task.previous.toReversed() : task.previous).map((prev) => (
-            <div>
-              {prev.old_judge && (<React.Fragment key={`${task.uniqueId} div`}>
-                <div
-                  key={`${task.uniqueId} old judge`}
-                  style={divStyles}
-                  className="task-instructions"
-                >
-                  <b>{COPY.LEGACY_APPEALS_VLJ_ORIGINAL_JUDGE_INSTRUCTIONS}</b>
-                  <ReactMarkdown>{formatBreaks(prev.old_judge)}</ReactMarkdown>
-                </div>
-              </React.Fragment>
-              )}
-              {prev.new_judge && (<React.Fragment key={`${task.uniqueId} div`}>
-                <div
-                  key={`${task.uniqueId} new judge`}
-                  style={divStyles}
-                  className="task-instructions"
-                >
-                  <b>{COPY.LEGACY_APPEALS_VLJ_NEW_JUDGE_INSTRUCTIONS}</b>
-                  <ReactMarkdown>{formatBreaks(prev.new_judge)}</ReactMarkdown>
-                </div>
-              </React.Fragment>
-              )}
-              {prev.details && (
-                <React.Fragment key={`${task.uniqueId} div`}>
-                  <div
-                    key={`${task.uniqueId} instructions`}
-                    style={divStyles}
-                    className="task-instructions"
-                  >
-                    <b>{COPY.LEGACY_APPEALS_VLJ_DETAILS_INSTRUCTIONS}</b>
-                    <ReactMarkdown>{formatBreaks(prev.details)}</ReactMarkdown>
-                  </div>
-                </React.Fragment>
-              )}
-            </div>
-          ))}
-        </React.Fragment>
-      );
-    } else if ((task.type === 'JudgeAssignTask' || task.type === 'JudgeDecisionReviewTask' ||
-    task.type === 'AttorneyTask' || task.type === 'AttorneyRewriteTask')) {
-      return (
-        <React.Fragment key={`${task.uniqueId} fragment`}>
-          {task.instructions[1] && !(task.type === 'AttorneyTask' || task.type === 'JudgeDecisionReviewTask' ||
-         task.type === 'AttorneyRewriteTask') && (<React.Fragment key={`${task.uniqueId} div`}>
-            <div
-              key={`${task.uniqueId} instructions`}
-              style={divStyles}
-              className="task-instructions"
-            >
-              <b>{COPY.LEGACY_APPEALS_VLJ_REASON_INSTRUCTIONS}</b>
-              <ReactMarkdown>{formatBreaks(task.instructions[1])}</ReactMarkdown>
-            </div>
-          </React.Fragment>
-          )}
-          {task.assigneeName && (task.type === 'JudgeAssignTask' || task.type === 'JudgeDecisionReviewTask') &&
-        (<React.Fragment key={`${task.uniqueId} div`}>
-          <div
-            key={`${task.uniqueId} instructions`}
-            style={divStyles}
-            className="task-instructions"
-          >
-            <b>{COPY.LEGACY_APPEALS_VLJ_NEW_JUDGE_INSTRUCTIONS}</b>
-            <ReactMarkdown>{formatBreaks(task.assigneeName)}</ReactMarkdown>
-          </div>
-        </React.Fragment>
-        )}
-          {task.instructions &&
-          (<React.Fragment key={`${task.uniqueId} div`}>
-            <div
-              key={`${task.uniqueId} instructions`}
-              style={divStyles}
-              className="task-instructions"
-            >
-              <b>{(task.instructions[0].includes('**Reason:**') ||
-               task.type === 'JudgeDecisionReviewTask') ? null : COPY.LEGACY_APPEALS_VLJ_DETAILS_INSTRUCTIONS}</b>
-              <ReactMarkdown>{formatBreaks(task.instructions[0])}</ReactMarkdown>
-            </div>
-          </React.Fragment>
-          )}
-        </React.Fragment>
-      );
-    }
+    const divStyles = { marginBottom: '2.4rem', marginTop: '1em' };
 
     return (
       <React.Fragment key={`${task.uniqueId} fragment`}>
@@ -558,15 +321,12 @@ class TaskRows extends React.PureComponent {
               style={divStyles}
               className="task-instructions"
             >
-              {
-                formatInstructions(task, text)
-              }
+              <ReactMarkdown>{formatBreaks(text)}</ReactMarkdown>
             </div>
           </React.Fragment>
         ))}
       </React.Fragment>
     );
-
   };
 
   taskInstructionsListItem = (task) => {
@@ -578,11 +338,9 @@ class TaskRows extends React.PureComponent {
       <div className="cf-row-wrapper">
         {this.state.taskInstructionsIsVisible[task.uniqueId] && (
           <React.Fragment key={`${task.uniqueId}instructions_text`}>
-            {!establishmentTask(task) &&
             <dt style={{ width: '100%' }}>
               {COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
             </dt>
-            }
             <dd style={{ width: '100%' }}>
               {this.taskInstructionsWithLineBreaks(task)}
             </dd>
@@ -590,7 +348,7 @@ class TaskRows extends React.PureComponent {
         )}
         <Button
           linkStyling
-          styling={css({ padding: '0', marginTop: '0rem', outline: 'none' })}
+          styling={css({ padding: '0' })}
           id={task.uniqueId}
           name={
             this.state.taskInstructionsIsVisible[task.uniqueId] ?
@@ -654,7 +412,7 @@ class TaskRows extends React.PureComponent {
 
     return (
       <React.Fragment>
-        {task.type !== 'IssuesUpdateTask' && this.assignedToListItem(task)}
+        {this.assignedToListItem(task)}
         {this.assignedByListItem(task)}
         {this.cancelledByListItem(task)}
         {this.cancelReasonListItem(task)}
@@ -714,7 +472,7 @@ class TaskRows extends React.PureComponent {
         >
           <CaseDetailsDescriptionList>
             {timeline && timelineTitle}
-            {this.showTimelineDescriptionItems(task, timeline, appeal)}
+            {this.showTimelineDescriptionItems(task, timeline)}
           </CaseDetailsDescriptionList>
 
         </td>
@@ -864,7 +622,6 @@ TaskRows.propTypes = {
   hideDropdown: PropTypes.bool,
   taskList: PropTypes.array,
   timeline: PropTypes.bool,
-  VLJ_featureToggles: PropTypes.bool,
 };
 
 export default TaskRows;
