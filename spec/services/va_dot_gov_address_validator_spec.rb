@@ -35,7 +35,7 @@ describe VaDotGovAddressValidator do
 
     context "when veteran does not live in the us" do
       let(:ro_facility_id) { nil }
-      before { appeal.veteran.instance_variable_set(:@address, non_us_address) }
+      before { appeal.instance_variable_set(:@address, non_us_address) }
       it "returns RO71" do
         expect(subject).to eq("RO71")
       end
