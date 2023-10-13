@@ -45,6 +45,7 @@ const initialState = {
     category: {},
     tag: {},
     document: {},
+    claimServiceSearchTerm: '',
     claimServiceDocuments: [],
     docTypeList: '',
     searchQuery: '',
@@ -178,7 +179,9 @@ const documentListReducer = (state = initialState, action = {}) => {
       docFilterCriteria: {
         claimServiceDocuments: {
           $set: action.payload.documents
-
+        },
+        claimServiceSearchTerm: {
+          $set: action.payload.claimSearchTerm
         }
       }
     });
@@ -188,7 +191,12 @@ const documentListReducer = (state = initialState, action = {}) => {
       docFilterCriteria: {
         claimServiceDocuments: {
           $set: []
+        },
+
+        claimServiceSearchTerm: {
+          $set: ''
         }
+
       }
     });
 

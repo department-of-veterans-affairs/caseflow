@@ -95,8 +95,9 @@ export const getUpdatedFilteredResults = (state) => {
               filter(
                 filter(
                   updatedNextState.documents,
-                  (doc) => activeClaimServiceDocsFilter.length > 0 ? some(activeClaimServiceDocsFilter, (id) =>
-                    Number(id) === doc.id) : false),
+                  (doc) => (!activeClaimServiceDocsFilter.length > 0 && docFilterCriteria.claimServiceSearchTerm === '') ||
+                  some(activeClaimServiceDocsFilter, (id) =>
+                    Number(id) === doc.id)),
                 (doc) => !activeDocTypeFilter.length || some(activeDocTypeFilter, (docType) => docType === doc.type)),
               (doc) => !activeReceiptFilters.length || some(activeReceiptFilters, () =>
                 (filterDates(doc.receivedAt, docFilterCriteria.receiptFilterDates,
