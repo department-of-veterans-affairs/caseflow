@@ -3,6 +3,8 @@
 class Fakes::ClaimEvidenceService
   class << self
     def get_ocr_document(doc_series_id)
+      doc_series_id = Integer(doc_series_id)
+
       if doc_series_id.even?
         ocr_data = <<~OCR_DATA
           The quick brown fox jumps over the lazy dog.
