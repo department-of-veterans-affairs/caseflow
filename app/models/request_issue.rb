@@ -25,6 +25,7 @@ class RequestIssue < CaseflowRecord
   belongs_to :end_product_establishment, dependent: :destroy
   has_many :request_decision_issues, dependent: :destroy
   has_many :decision_issues, through: :request_decision_issues
+  has_many :decision_issues_for_vbms, -> { for_vbms }, class_name: "DecisionIssue", through: :request_decision_issues, source: :decision_issue
   has_many :remand_reasons, through: :decision_issues
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   has_many :hearing_issue_notes
@@ -33,6 +34,18 @@ class RequestIssue < CaseflowRecord
   belongs_to :correction_request_issue, class_name: "RequestIssue", foreign_key: "corrected_by_request_issue_id"
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   belongs_to :contested_decision_issue, class_name: "DecisionIssue"
+
+  scope :for_vbms, -> { select(:id, :benefit_type, :closed_status, :contention_reference_id, :contested_decision_issue_id,
+    :contested_issue_description, :contested_rating_decision_reference_id,
+    :contested_rating_issue_diagnostic_code, :contested_rating_issue_profile_date,
+    :contested_rating_issue_reference_id, :corrected_by_request_issue_id,
+    :correction_type, :created_at, :decision_date, :decision_review_id,
+    :decision_review_type, :edited_description, :end_product_establishment_id,
+    :ineligible_due_to_id, :ineligible_reason, :is_unidentified,
+    :nonrating_issue_category, :nonrating_issue_description,
+    :notes, :ramp_claim_id, :split_issue_status, :unidentified_issue_text,
+    :untimely_exemption, :untimely_exemption_notes, :updated_at, :vacols_id,
+    :vacols_sequence_id, :verified_unidentified_issue, :veteran_participant_id) }
 
   # enum is symbol, but validates requires a string
   validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
