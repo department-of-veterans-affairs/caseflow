@@ -59,7 +59,7 @@ class Fakes::WebexService
     {
       host: link_info(@num_hosts),
       guest: link_info(@num_guests),
-      baseUrl: ENV["WEBEX_API_URL"]
+      baseUrl: "https://instant-usgov.webex.com/visit/"
     }
   end
 
