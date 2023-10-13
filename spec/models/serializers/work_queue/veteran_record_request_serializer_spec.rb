@@ -40,7 +40,8 @@ describe WorkQueue::VeteranRecordRequestSerializer, :postgres do
           type: "Record Request",
           business_line: non_comp_org.url,
           external_appeal_id: appeal.uuid,
-          appeal_type: "Appeal"
+          appeal_type: "Appeal",
+          status: "assigned"
         }
       }
 

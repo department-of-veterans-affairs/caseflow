@@ -54,7 +54,8 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
           type: "Higher-Level Review",
           external_appeal_id: task.appeal.uuid,
           appeal_type: "HigherLevelReview",
-          business_line: non_comp_org.url
+          business_line: non_comp_org.url,
+          status: "assigned"
         }
       }
       expect(subject.serializable_hash[:data]).to eq(serializable_hash)
@@ -96,7 +97,8 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             type: "Higher-Level Review",
             external_appeal_id: task.appeal.uuid,
             appeal_type: "HigherLevelReview",
-            business_line: non_comp_org.url
+            business_line: non_comp_org.url,
+            status: "assigned"
           }
         }
         expect(subject.serializable_hash[:data]).to eq(serializable_hash)
@@ -155,7 +157,8 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             type: "Higher-Level Review",
             external_appeal_id: task.appeal.uuid,
             appeal_type: "HigherLevelReview",
-            business_line: non_comp_org.url
+            business_line: non_comp_org.url,
+            status: "assigned"
           }
         }
         expect(subject.serializable_hash[:data]).to eq(serializable_hash)
@@ -219,7 +222,8 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             external_appeal_id: task.appeal.uuid,
             appeal_type: "HigherLevelReview",
             business_line: non_comp_org.url,
-            appellant_type: "VeteranClaimant"
+            appellant_type: "VeteranClaimant",
+            status: "assigned"
           }
         }
         # The request issues serializer is non-deterministic due to multiple request issues

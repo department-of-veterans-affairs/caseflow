@@ -358,7 +358,7 @@ feature "NonComp Dispositions Task Page", :postgres do
         it "should display banner for non-admin users" do
           visit dispositions_url
 
-          expect(page).to have_selector(".usa-alert", text: "Only VHA admins can make edits to Higher-Level"\
+          expect(page).to have_selector(".usa-alert", text: "Only VHA admins can make edits to Higher-Level "\
             "Reviews and Supplemental Claims. If you would like to add, remove, or modify "\
             "an issue within a claim, please send an email with the requested change.")
         end
