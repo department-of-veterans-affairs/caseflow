@@ -10,8 +10,9 @@ const FetchSearchBar = (props) => {
 
   const handleClick = (event) => {
     event.preventDefault();
-    ApiUtil.get(`/reader/appeal/${props.vacolsId}/document_content_searches?search_term=${searchText}`)
-      .then((response) => console.log(response));
+    // props.setClaimEvidenceDocs('');
+    ApiUtil.get(`/reader/appeal/${props.vacolsId}/document_content_searches?search_term=${searchText}`).
+      then((response) => (props.setClaimEvidenceDocs(response.body.appealDocuments, searchText)));
   };
 
   return (
@@ -23,13 +24,14 @@ const FetchSearchBar = (props) => {
         justifyContent: 'flex-end'
       }}>
         <input value={searchText} onChange={handleSearchTextChange} />
-        <button className='cf-submit usa-button' onClick={handleClick}>Search</button>
+        <button className="cf-submit usa-button" onClick={handleClick}>Search</button>
       </span>
     </div>
   );
 };
 
 FetchSearchBar.propTypes = {
-  vacolsId: PropTypes.string
+  vacolsId: PropTypes.string,
+  setClaimEvidenceDocs: PropTypes.func.isRequired
 };
 export default FetchSearchBar;
