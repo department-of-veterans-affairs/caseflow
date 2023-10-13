@@ -35,7 +35,7 @@ class HeaderFilterMessage extends React.PureComponent {
       docTypeCount && `Document Types (${docTypeCount})`,
       receiptDateCount && `Receipt Date (${receiptDateCount})`,
       claimEvidenceCount && 'Document Contents',
-      (claimEvidenceSearchActive && claimEvidenceCount === 0) && 'Filtering by document contents'
+      (claimEvidenceSearchActive && claimEvidenceCount === 0) && 'document contents'
     ]).join(', ');
 
     const className = classNames('document-list-filter-message', {
