@@ -606,7 +606,7 @@ describe HearingDay, :all_dbs do
     end
   end
 
-  context "#meeting_details_for_conference" do
+  context "#subject_for_conference" do
     before do
       FeatureToggle.enable!(:pexip_conference_service)
       FeatureToggle.enable!(:webex_conference_service)
@@ -625,15 +625,10 @@ describe HearingDay, :all_dbs do
       )
     end
 
-    subject { hearing_day.meeting_details_for_conference }
+    subject { hearing_day.subject_for_conference }
 
     it "returns the expected meeting conference details" do
-      is_expected.to eq(
-        title: "Guest Link for #{expected_date}",
-        start: expected_date_parsed.beginning_of_day.iso8601,
-        end: expected_date_parsed.end_of_day.iso8601,
-        timezone: "America/New_York"
-      )
+      is_expected.to eq("Guest Link for #{expected_date}")
     end
   end
 
