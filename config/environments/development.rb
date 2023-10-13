@@ -139,4 +139,7 @@ Rails.application.configure do
   config.efolder_key = "token"
 
   config.google_analytics_account = "UA-74789258-5"
+
+  # Webex Environmental Variables
+  ENV["WEBEX_API_URL"] ||= "https://instant-usgov.webex.com/visit/"
 end
