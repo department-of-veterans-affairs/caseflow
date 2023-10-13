@@ -12,6 +12,7 @@ export const mapDataToInitialState = function(props = {}) {
   state.nonComp.selectedTask = null;
   state.nonComp.decisionIssuesStatus = {};
 
+  // TODO: Make the reducers and actions actually use this hash instead of the state values
   state.nonComp.generateReport = {};
 
   return state;

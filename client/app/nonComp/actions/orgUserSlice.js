@@ -11,17 +11,27 @@ const initialState = {
 // TODO: Might be able to make this even more generic since a lot of the params are the same
 // so the url/params might be the only thing that would change between all the various fetchUserThunks
 // TOOD: Figure out how to set meta: analytics for async thunks, if it's even possible
-export const fetchOrgUsers = createAsyncThunk('users/fetchOrgUsers', async (organizationUrlorName) => {
-  const ORGANIZATION_USERS_URL = `/users?organization=${organizationUrlorName}`;
+export const fetchOrgUsers = createAsyncThunk('users/fetchOrgUsers', async (organizationUrlOrName) => {
+  const ORGANIZATION_USERS_URL = `/users?organization=${organizationUrlOrName}`;
 
-  // TOOD: Does this need try catch? or is it already a promise that has pass/fail
   try {
     const response = await ApiUtil.get(ORGANIZATION_USERS_URL);
     const orgUserData = response.body.users.data.map(({ attributes, ...rest }) => ({ ...attributes, ...rest }));
 
-    return orgUserData;
+    const meta = { analytics: true };
+    // return { data: orgUserData, meta: { analytics: true } };
+    // return { orgUserData, meta: { analytics: true } };
+
+    // return {orgUserData}
+    // return orgUserData;
+
+    // return thunkApi.fulfillWithValue(orgUserData);
+    return { data: orgUserData, meta };
 
   } catch (error) {
+    // TODO: Should this be a rejectWithValue??
+    // Otherwise why even have a try catch since it would throw and error no matter what
+    // The only thing this does differently is a console log
     console.error(error);
     throw error;
   }
@@ -38,7 +48,7 @@ const orgUserSlice = createSlice({
       }).
       addCase(fetchOrgUsers.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.users = action.payload;
+        state.users = action.payload.data;
       }).
       addCase(fetchOrgUsers.rejected, (state, action) => {
         state.status = 'failed';
