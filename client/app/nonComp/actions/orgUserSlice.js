@@ -10,7 +10,6 @@ const initialState = {
 
 // TODO: Might be able to make this even more generic since a lot of the params are the same
 // so the url/params might be the only thing that would change between all the various fetchUserThunks
-// TOOD: Figure out how to set meta: analytics for async thunks, if it's even possible
 export const fetchOrgUsers = createAsyncThunk('users/fetchOrgUsers', async (organizationUrlOrName) => {
   const ORGANIZATION_USERS_URL = `/users?organization=${organizationUrlOrName}`;
 
@@ -19,13 +18,7 @@ export const fetchOrgUsers = createAsyncThunk('users/fetchOrgUsers', async (orga
     const orgUserData = response.body.users.data.map(({ attributes, ...rest }) => ({ ...attributes, ...rest }));
 
     const meta = { analytics: true };
-    // return { data: orgUserData, meta: { analytics: true } };
-    // return { orgUserData, meta: { analytics: true } };
 
-    // return {orgUserData}
-    // return orgUserData;
-
-    // return thunkApi.fulfillWithValue(orgUserData);
     return { data: orgUserData, meta };
 
   } catch (error) {

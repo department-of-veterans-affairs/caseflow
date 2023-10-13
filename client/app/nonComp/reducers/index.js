@@ -4,16 +4,11 @@ import { update } from '../../util/ReducerUtil';
 export const mapDataToInitialState = function(props = {}) {
   const { serverNonComp } = props;
 
-  let state = {};
+  const state = {};
 
-  // TODO: Might be the wrong way to do this.
-  // Maybe should return the hash and outside of this function assign it to state: {nonComp: mapDataToInitialState}
   state.nonComp = serverNonComp;
   state.nonComp.selectedTask = null;
   state.nonComp.decisionIssuesStatus = {};
-
-  // TODO: Make the reducers and actions actually use this hash instead of the state values
-  state.nonComp.generateReport = {};
 
   return state;
 };
@@ -92,12 +87,6 @@ export const nonCompReducer = (state = mapDataToInitialState, action) => {
         powerOfAttorney: { $set: action.payload.powerOfAttorney }
       }
     });
-  case ACTIONS.SUBMIT_GENERATE_REPORT_REQUEST:
-    return update(state, { $merge: { creatingCSV: true, csvError: null } });
-  case ACTIONS.SUBMIT_GENERATE_REPORT_SUCCESS:
-    return update(state, { $merge: { creatingCSV: false, csvError: null } });
-  case ACTIONS.SUBMIT_GENERATE_REPORT_FAILURE:
-    return update(state, { $merge: { creatingCSV: false, csvError: action.payload } });
   default:
     return state;
   }

@@ -16,12 +16,14 @@ import { nonCompReducer, mapDataToInitialState } from './reducers';
 
 import orgUserReducer from './actions/orgUserSlice';
 import { combineReducers } from 'redux';
+import changeHistoryReducer from './actions/changeHistorySlice';
 class NonComp extends React.PureComponent {
   render() {
     // TODO: Maybe move this into the nonCompReducer file
     const combinedReducer = combineReducers({
       nonComp: nonCompReducer,
-      orgUsers: orgUserReducer
+      orgUsers: orgUserReducer,
+      changeHistory: changeHistoryReducer
     });
 
     const Router = this.props.router || BrowserRouter;
