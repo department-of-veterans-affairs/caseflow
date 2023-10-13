@@ -83,11 +83,11 @@ module VaDotGovAddressValidator::Validations
     state_code == "TX"
   end
 
-  def veteran_lives_in_usa?
+  def appellant_lives_in_usa?
     %w[USA US].include? address.country
   end
 
-  def veteran_lives_in_phillipines?
+  def appellant_lives_in_phillipines?
     %w[PH RP PI].include? address.country
   end
 end
