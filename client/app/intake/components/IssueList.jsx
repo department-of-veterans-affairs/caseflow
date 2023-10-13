@@ -48,7 +48,7 @@ export default class IssuesList extends React.Component {
       options.push({ displayText: 'Correct issue',
         value: 'correct' });
     } else if (!issue.examRequested && !issue.withdrawalDate && !issue.withdrawalPending && !isDtaError) {
-      if (userCanWithdrawIssues) {
+      if (userCanWithdrawIssues && issue.id) {
         options.push(
           { displayText: 'Withdraw issue',
             value: 'withdraw' }
