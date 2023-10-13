@@ -71,11 +71,19 @@ export const getUpdatedFilteredResults = (state) => {
     ([key]) => key
   );
 
-  const activeClaimServiceDocsFilter = map(
-    filter(toPairs(docFilterCriteria.claimServiceDocuments),
-      ([key, value]) => value), // eslint-disable-line no-unused-vars
-    ([key]) => key
-  );
+
+  const activeClaimServiceDocsFilter = () => {
+    let docIds = state.documentList.docFilterCriteria.claimServiceDocuments.map((soid) => soid.id);
+
+    return docIds;
+  };
+  // const activeClaimServiceDocsFilter = map(
+  //   filter(toPairs(docFilterCriteria.claimServiceDocuments),
+  //     ([key, value]) => value), // eslint-disable-line no-unused-vars
+  //   ([key]) => Number(key)
+  // );
+
+  console.log(activeClaimServiceDocsFilter());
 
   const activeReceiptFilters = map(
     filter(toPairs(docFilterCriteria.receiptFilterDates), ([key, value]) => // eslint-disable-line no-unused-vars
@@ -95,8 +103,9 @@ export const getUpdatedFilteredResults = (state) => {
               filter(
                 filter(
                   updatedNextState.documents,
-                  (doc) => activeClaimServiceDocsFilter.length > 0 ? some(activeClaimServiceDocsFilter, (id) =>
-                    Number(id) === doc.id) : false),
+                  (doc) => (!activeClaimServiceDocsFilter().length > 0 && docFilterCriteria.claimServiceSearchTerm === '') ||
+                  some(activeClaimServiceDocsFilter(), (id) =>
+                    Number(id) === doc.id)),
                 (doc) => !activeDocTypeFilter.length || some(activeDocTypeFilter, (docType) => docType === doc.type)),
               (doc) => !activeReceiptFilters.length || some(activeReceiptFilters, () =>
                 (filterDates(doc.receivedAt, docFilterCriteria.receiptFilterDates,

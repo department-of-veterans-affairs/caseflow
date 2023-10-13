@@ -102,10 +102,10 @@ export const setTagFilter = (text, checked, tagId) => (dispatch) => {
   dispatch(updateFilteredIdsAndDocs());
 };
 
-export const setClaimEvidenceDocs = (documents) => (dispatch) => {
+export const setClaimEvidenceDocs = (documents, claimSearchTerm) => (dispatch) => {
   dispatch({
     type: Constants.SET_CLAIM_EVIDENCE_DOCS,
-    payload: { documents },
+    payload: { documents, claimSearchTerm },
     meta: {
       analytics: {
         category: CATEGORIES.CLAIMS_FOLDER_PAGE,
