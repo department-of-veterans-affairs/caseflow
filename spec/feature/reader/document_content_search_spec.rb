@@ -29,8 +29,18 @@ RSpec.feature "Reader", :all_dbs do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
     end
 
-    it "displays the correct filtering message" do
-      expect(page).to have_content("Document Type")
+    context "when search results exist" do
+      before do
+        allow(ClaimEvidenceService).to receive(:get_ocr_document).
+          and_return("the quick brown fox", "peter piper picked")
+      end
+
+      it "displays the correct filtering message" do
+        #page.fill_in("searchDocumentContents").with("fox")
+        #click_button("searchDocumentContentsBtn")
+
+        expect(page).to have_content("Document Type")
+      end
     end
   end
 end
