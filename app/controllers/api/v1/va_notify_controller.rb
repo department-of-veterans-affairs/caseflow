@@ -36,12 +36,13 @@ class Api::V1::VaNotifyController < Api::ApplicationController
   # Response: Update corresponding email Notification status
   def email_update
     # find notification through external id
-    notif = Notification.find_by(email_notification_external_id: required_params[:id])
-    # log external id if notification doesn't exist
-    return log_error(required_params[:notification_type]) unless notif
+    rows_updated = Notification.where(
+      email_notification_external_id: required_params[:id]
+    ).update_all(email_notification_status: required_params[:status])
 
-    # update notification if it exists
-    notif.update!(email_notification_status: required_params[:status])
+    # log external id if notification doesn't exist
+    return log_error(required_params[:notification_type]) if rows_updated.zero?
+
     render json: { message: "Email notification successfully updated: ID " + required_params[:id] }
   end
 
@@ -52,12 +53,13 @@ class Api::V1::VaNotifyController < Api::ApplicationController
   # Response: Update corresponding SMS Notification status
   def sms_update
     # find notification through external id
-    notif = Notification.find_by(sms_notification_external_id: required_params[:id])
-    # log external id if notification doesn't exist
-    return log_error(required_params[:notification_type]) unless notif
+    rows_updated = Notification.where(
+      sms_notification_external_id: required_params[:id]
+    ).update_all(sms_notification_status: required_params[:status])
 
-    # update notification if it exists
-    notif.update!(sms_notification_status: params[:status])
+    # log external id if notification doesn't exist
+    return log_error(required_params[:notification_type]) if rows_updated.zero?
+
     render json: { message: "SMS notification successfully updated: ID " + required_params[:id] }
   end
 
