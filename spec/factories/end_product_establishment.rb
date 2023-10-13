@@ -42,6 +42,12 @@ FactoryBot.define do
       source { create(:supplemental_claim, veteran_file_number: veteran_file_number) }
     end
 
+    trait :cleared_hlr do
+      synced_status { "CLR" }
+      established_at { 5.days.ago }
+      source { create(:higher_level_review, veteran_file_number: veteran_file_number) }
+    end
+
     trait :active_hlr_with_canceled_vbms_ext_claim do
       active_hlr
       modifier { "030" }
