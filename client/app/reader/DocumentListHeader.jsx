@@ -57,6 +57,8 @@ class DocumentListHeader extends React.Component {
       </div>
       <WellArea>
         <FetchSearchBar
+          setClearAllFiltersCallbacks={this.props.setClearAllFiltersCallbacks}
+          clearAllFiltersCallbacks={this.props.clearAllFiltersCallbacks}
           vacolsId = {this.props.vacolsId}
           setClaimEvidenceDocs = {this.props.setClaimEvidenceDocs}
         />
@@ -78,7 +80,8 @@ DocumentListHeader.propTypes = {
   docFilterCriteria: PropTypes.object,
   numberOfDocuments: PropTypes.number.isRequired,
   vacolsId: PropTypes.string,
-  clearAllFiltersCallbacks: PropTypes.array.isRequired
+  clearAllFiltersCallbacks: PropTypes.array.isRequired,
+  setClearAllFiltersCallbacks: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({
