@@ -36,10 +36,26 @@ RSpec.feature "Reader", :all_dbs do
       end
 
       it "displays the correct filtering message" do
-        #page.fill_in("searchDocumentContents").with("fox")
-        #click_button("searchDocumentContentsBtn")
+        page.fill_in("fetchDocumentsInput", with: "fox")
+        click_button("fetchDocumentContentsButton")
 
-        expect(page).to have_content("Document Type")
+        expect(page).to have_content("Filtering by: Document Contents")
+        expect(page.all("table tbody#documents-table-body tr").count).to eq 1
+      end
+    end
+
+    context "when search results do not exist" do
+      before do
+        allow(ClaimEvidenceService).to receive(:get_ocr_document).
+          and_return("In a hole in the ground there lived a hobbit")
+      end
+
+      it "displays the correct filtering message" do
+        page.fill_in("fetchDocumentsInput", with: "balrog")
+        click_button("fetchDocumentContentsButton")
+
+        expect(page).to have_content("Filtering by: Document Contents")
+        expect(page.all("table tbody#documents-table-body tr").count).to eq 0
       end
     end
   end
