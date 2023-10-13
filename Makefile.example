@@ -232,7 +232,10 @@ reset-dbs: ## Resets Caseflow and ETL database schemas
 seed-vbms-ext-claim: ## Seed only vbms_ext_claim
 	bundle exec rake db:seed:vbms_ext_claim
 
-seed-dbs:	## Seed all databases
+seed-ama-intake: ## Seed intake scenarios
+	bundle exec rake db:seed:ama_intake
+
+seed-dbs:	## S eed all databases
 	bundle exec rake local:vacols:seed
 	bundle exec rake spec:setup_vacols
 	bundle exec rake db:seed
