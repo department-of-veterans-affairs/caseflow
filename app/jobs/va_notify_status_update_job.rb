@@ -56,7 +56,7 @@ class VANotifyStatusUpdateJob < CaseflowJob
     end
 
     # queue up email_status_job
-    EmailUpdateJob.perform_later
+    EmailStatusUpdateJob.perform_later
   end
 
   private
