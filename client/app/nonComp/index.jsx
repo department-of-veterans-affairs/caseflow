@@ -14,7 +14,7 @@ import ReviewPage from './pages/ReviewPage';
 import TaskPage from './pages/TaskPage';
 import { nonCompReducer, mapDataToInitialState } from './reducers';
 
-import orgUserReducer from './actions/orgUserSlice';
+import orgUserReducer from './actions/usersSlice';
 import { combineReducers } from 'redux';
 import changeHistoryReducer from './actions/changeHistorySlice';
 class NonComp extends React.PureComponent {

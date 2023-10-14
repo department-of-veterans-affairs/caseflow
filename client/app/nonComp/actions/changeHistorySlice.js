@@ -15,13 +15,13 @@ const prepareFilters = (filterData) => {
 };
 
 export const downloadReportCSV = createAsyncThunk('changeHistory/downloadReport',
-  async (organizationUrl, filterData) => {
+  async ({ organizationUrl, filterData }, thunkApi) => {
   // Prepare data if neccessary. Although that could be reducer logic for filters if we end up using redux for it.
     const data = prepareFilters(filterData);
 
     try {
       const getOptions = { query: data, headers: { Accept: 'text/csv' }, responseType: 'arraybuffer' };
-      const response = await ApiUtil.get(`/decision_reviews/${organizationUrl}.csv`, getOptions);
+      const response = await ApiUtil.get(`/decision_reviews/${organizationUrl}/report`, getOptions);
       // Create a Blob from the array buffer
       const blob = new Blob([response.body], { type: 'text/csv' });
 
@@ -45,10 +45,13 @@ export const downloadReportCSV = createAsyncThunk('changeHistory/downloadReport'
       const meta = { analytics: true };
 
       return { data: 'success', meta };
+      // If RTK is upgraded.
+      // return thunkApi.fulfillWithValue('success', { analytics: true });
 
     } catch (error) {
       console.error(error);
-      throw error;
+
+      return thunkApi.rejectWithValue(`CSV generation failed: ${error.message}`, { analytics: true });
     }
   });
 
