@@ -13,6 +13,8 @@ class Api::V1::VaNotifyController < Api::ApplicationController
     # elsif required_params[:notification_type] == "sms"
     #   sms_update
     # end
+  rescue NoMethodError => error
+    log_error(error.message)
   end
 
   private
