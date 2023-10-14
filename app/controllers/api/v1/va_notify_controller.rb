@@ -7,11 +7,12 @@ class Api::V1::VaNotifyController < Api::ApplicationController
   #
   # Response: Update corresponding Notification status
   def notifications_update
-    if required_params[:notification_type] == "email"
-      email_update
-    elsif required_params[:notification_type] == "sms"
-      sms_update
-    end
+    send "#{required_params[:notification_type]}_update"
+    # if required_params[:notification_type] == "email"
+    #   email_update
+    # elsif required_params[:notification_type] == "sms"
+    #   sms_update
+    # end
   end
 
   private
@@ -36,12 +37,15 @@ class Api::V1::VaNotifyController < Api::ApplicationController
   # Response: Update corresponding email Notification status
   def email_update
     # find notification through external id
-    rows_updated = Notification.where(
-      email_notification_external_id: required_params[:id]
-    ).update_all(email_notification_status: required_params[:status])
+    # rows_updated = Notification.where(
+    #   email_notification_external_id: required_params[:id]
+    # ).update_all(email_notification_status: required_params[:status])
 
-    # log external id if notification doesn't exist
-    return log_error(required_params[:notification_type]) if rows_updated.zero?
+    # # log external id if notification doesn't exist
+    # return log_error(required_params[:notification_type]) if rows_updated.zero?
+
+    # store for later processing
+    redis.set("email_update_#{required_params[:id]}", required_params[:status])
 
     render json: { message: "Email notification successfully updated: ID " + required_params[:id] }
   end
@@ -67,5 +71,9 @@ class Api::V1::VaNotifyController < Api::ApplicationController
     id_param, notification_type_param, status_param = params.require([:id, :notification_type, :status])
 
     { id: id_param, notification_type: notification_type_param, status: status_param }
+  end
+
+  def redis
+    @redis ||= Redis.new(url: Rails.application.secrets.redis_url_cache)
   end
 end
