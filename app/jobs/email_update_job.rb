@@ -6,7 +6,7 @@ class EmailUpdateJob < CaseflowJob
   def perform
     RequestStore[:current_user] = User.system_user
 
-    redis.scan_each(match: "email_update_*") do |key, val|
+    redis.scan_each(match: "email_update:*") do |key, val|
       rows_updated = Notification.where(
         email_notification_external_id: key[/\d+/]
       ).update_all(email_notification_status: val)

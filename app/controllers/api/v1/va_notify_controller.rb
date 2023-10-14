@@ -47,7 +47,7 @@ class Api::V1::VaNotifyController < Api::ApplicationController
     # return log_error(required_params[:notification_type]) if rows_updated.zero?
 
     # store for later processing
-    redis.set("email_update_#{required_params[:id]}", required_params[:status])
+    redis.set("email_update:#{required_params[:id]}", required_params[:status])
 
     render json: { message: "Email notification successfully updated: ID " + required_params[:id] }
   end
