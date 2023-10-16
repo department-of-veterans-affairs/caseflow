@@ -213,7 +213,7 @@ class NonCompDispositions extends React.PureComponent {
 
                 Only VHA admins can make edits to Higher-Level Reviews and Supplemental Claims.
                 If you would like to add, remove, or modify an issue within a claim, please
-              <Link to="some/email/route"> send an email</Link> with the requested change.
+              <Link to="some/email/route"> <b>send an email</b></Link> with the requested change.
             </Alert>}
             <div className="usa-width-one-half">
 
