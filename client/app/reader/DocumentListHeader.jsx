@@ -7,7 +7,7 @@ import { ENDPOINT_NAMES } from './analytics';
 import WellArea from '../components/WellArea';
 
 import ApiUtil from '../util/ApiUtil';
-import { setSearch, clearSearch, clearAllFilters } from '../reader/DocumentList/DocumentListActions';
+import { setSearch, clearSearch, clearAllFilters , clearClaimEvidenceDocs} from '../reader/DocumentList/DocumentListActions';
 import DocumentsCommentsButton from './DocumentsCommentsButton';
 import HeaderFilterMessage from './HeaderFilterMessage';
 import SearchBar from '../components/SearchBar';
@@ -57,6 +57,7 @@ class DocumentListHeader extends React.Component {
       <WellArea>
         <FetchSearchBar
           vacolsId = {this.props.vacolsId}
+          clearClaimEvidenceDocs={clearClaimEvidenceDocs}
         />
       </WellArea>
       <HeaderFilterMessage

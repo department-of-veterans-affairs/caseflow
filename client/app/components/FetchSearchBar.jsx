@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import ApiUtil from '../util/ApiUtil';
-
+import SearchBar from '../components/SearchBar';
+import { style } from 'glamor';
+import { boldText } from '../queue/constants';
 const FetchSearchBar = (props) => {
   const [searchText, setSearchText] = useState('');
   const handleSearchTextChange = (event) => {
-    setSearchText(event.target.value);
+    setSearchText(event);
   };
 
   const handleClick = (event) => {
@@ -13,6 +15,11 @@ const FetchSearchBar = (props) => {
     ApiUtil.get(`/reader/appeal/${props.vacolsId}/document_content_searches?search_term=${searchText}`)
       .then((response) => console.log(response));
   };
+
+  const handleClearSearch = () => {
+    setSearchText('');
+    // clearClaimEvidenceDocs
+  }
 
   return (
     <div style={{ width: '100%' }}>
@@ -22,8 +29,14 @@ const FetchSearchBar = (props) => {
         display: 'flex',
         justifyContent: 'flex-end'
       }}>
-        <input value={searchText} onChange={handleSearchTextChange} />
-        <button className='cf-submit usa-button' onClick={handleClick}>Search</button>
+
+<div style={{justifyContent: 'flex-end', width:'50%', marginRight:0}}>
+<SearchBar value={searchText}
+ onChange={handleSearchTextChange} size="small"
+ onClearSearch={handleClearSearch}
+ isSearchAhead={true}/>
+ </div>
+ <button className='cf-submit usa-button' onClick={handleClick}>Search</button>
       </span>
     </div>
   );
