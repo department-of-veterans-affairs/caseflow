@@ -109,11 +109,11 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
       ],
       "address": {
         "addressLine1": "Address",
-        "city": "Ridgewood",
-        "zipCode5": "11385",
+        "city": "Deltona",
+        "zipCode5": "32738",
         "stateProvince": {
-          "name": "New York",
-          "code": "NY"
+          "name": "Florida",
+          "code": "FL"
         },
         "country": {
           "name": "United States",
@@ -124,15 +124,15 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
         }
       },
       "geocode": {
-        "calcDate": "2023-10-12T15:52:38Z",
-        "latitude": 40.7029,
-        "longitude": -73.8868
+        "calcDate": "2023-10-16T14:59:05Z",
+        "latitude": 28.9075,
+        "longitude": -81.189
       },
       "addressMetaData": {
         "confidenceScore": 0.0,
         "addressType": "Domestic",
         "deliveryPointValidation": "MISSING_ZIP",
-        "validationKey": 360040822
+        "validationKey": 361_921_347
       }
     }
   end
