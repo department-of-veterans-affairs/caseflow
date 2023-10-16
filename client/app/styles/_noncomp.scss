@@ -110,6 +110,12 @@
 
   .usa-alert {
     margin-bottom: 1.5em;
+
+    &.usa-alert-slim {
+      .usa-alert-text {
+        font-size: inherit;
+      }
+    }
   }
 }
 
