@@ -1,7 +1,7 @@
 // client/app/admin/components/CaseflowDistribution/CaseflowDistributionContent.js
 
 import React from 'react';
-import InteractableLeverWrapper from './InteractableLeverWrapper';
+import InteractableLeverWrapper from './InteractableLeversWrapper';
 import StaticLeverWrapper from './StaticLeversWrapper';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
