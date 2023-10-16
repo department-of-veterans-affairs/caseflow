@@ -10,6 +10,7 @@ import {
   createQueueReducer,
   getAppealId,
   getTaskId,
+  enterModalRadioOptions,
   enterTextFieldOptions,
   selectFromDropdown
 } from './modalUtils';
@@ -21,6 +22,7 @@ import {
   vhaPOToCAMOData
 } from '../../../data/queue/taskActionModals/taskActionModalData';
 import userEvent from '@testing-library/user-event';
+
 
 const renderAssignToView = (modalType, storeValues, taskType) => {
   const appealId = getAppealId(storeValues);
@@ -47,13 +49,12 @@ const renderAssignToView = (modalType, storeValues, taskType) => {
 
 describe('Whenever BVA Intake returns an appeal to', () => {
   const taskType = 'PreDocketTask';
-  // const buttonText = COPY.MODAL_RETURN_BUTTON;
-  const buttonAssign = COPY.MODAL_ASSIGN_BUTTON;
+  const buttonText = COPY.MODAL_RETURN_BUTTON;
 
   test('Submission button for BVA Intake to VHA CAMO has correct CSS class', () => {
     renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.value, returnToOrgData, taskType);
 
-    const submissionButton = screen.getByText(buttonAssign).closest('button');
+    const submissionButton = screen.getByText(buttonText).closest('button');
 
     expect(submissionButton).toHaveClass('usa-button');
     expect(submissionButton).not.toHaveClass('usa-button-secondary');
@@ -62,20 +63,20 @@ describe('Whenever BVA Intake returns an appeal to', () => {
   it('VHA CAMO', () => {
     renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAMO.value, returnToOrgData, taskType);
 
-    expect(screen.getByText(buttonAssign).closest('button')).toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
       'Provide instructions and context for this action',
       'Here is the context that you have requested.'
     );
 
-    expect(screen.getByText(buttonAssign).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
   });
 
   test('Submission button for BVA Intake to VHA CSP has correct CSS class', () => {
     renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.value, returnToOrgData, taskType);
 
-    const submissionButton = screen.getByText(buttonAssign).closest('button');
+    const submissionButton = screen.getByText(buttonText).closest('button');
 
     expect(submissionButton).toHaveClass('usa-button');
     expect(submissionButton).not.toHaveClass('usa-button-secondary');
@@ -84,20 +85,20 @@ describe('Whenever BVA Intake returns an appeal to', () => {
   it('VHA Caregiver Support Program (CSP)', () => {
     renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_CAREGIVER.value, returnToOrgData, taskType);
 
-    expect(screen.getByText(buttonAssign).closest('button')).toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
       'Provide instructions and context for this action',
       'Here is the context that you have requested.'
     );
 
-    expect(screen.getByText(buttonAssign).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
   });
 
   test('Submission button for BVA Intake to EMO has correct CSS class', () => {
     renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.value, returnToOrgData, taskType);
 
-    const submissionButton = screen.getByText(buttonAssign).closest('button');
+    const submissionButton = screen.getByText(buttonText).closest('button');
 
     expect(submissionButton).toHaveClass('usa-button');
     expect(submissionButton).not.toHaveClass('usa-button-secondary');
@@ -106,37 +107,37 @@ describe('Whenever BVA Intake returns an appeal to', () => {
   it('Education Service (EMO)', () => {
     renderAssignToView(TASK_ACTIONS.BVA_INTAKE_RETURN_TO_EMO.value, returnToOrgData, taskType);
 
-    expect(screen.getByText(buttonAssign).closest('button')).toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
     enterTextFieldOptions(
       'Provide instructions and context for this action',
       'Here is the context that you have requested.'
     );
 
-    expect(screen.getByText(buttonAssign).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
   });
 });
 
 describe('Whenever the EMO assigns an appeal to a Regional Processing Office', () => {
   const taskType = 'EducationDocumentSearchTask';
-  const buttonAssign = COPY.MODAL_ASSIGN_BUTTON;
+  const buttonText = COPY.MODAL_ASSIGN_BUTTON;
 
   it('Button Disabled until a RPO is chosen from the dropdown', () => {
     renderAssignToView(TASK_ACTIONS.EMO_ASSIGN_TO_RPO.value, emoToBvaIntakeData, taskType);
-    expect(screen.getByText(buttonAssign).closest('button')).toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
     selectFromDropdown(
-      'Assign To',
+      'Assign to selector',
       'Buffalo RPO'
     );
 
-    expect(screen.getByText(buttonAssign).closest('button')).not.toBeDisabled();
+    expect(screen.getByText(buttonText).closest('button')).not.toBeDisabled();
   });
 
   test('Submission button has correct CSS class', () => {
     renderAssignToView(TASK_ACTIONS.EMO_ASSIGN_TO_RPO.value, emoToBvaIntakeData, taskType);
 
-    const submissionButton = screen.getByText(buttonAssign).closest('button');
+    const submissionButton = screen.getByText(buttonText).closest('button');
 
     expect(submissionButton).toHaveClass('usa-button');
     expect(submissionButton).not.toHaveClass('usa-button-secondary');
@@ -152,7 +153,7 @@ describe('Whenever VHA CAMO assigns an appeal to a Program Office', () => {
     expect(screen.getByText(buttonText).closest('button')).toBeDisabled();
 
     selectFromDropdown(
-      'Assign To',
+      'Assign to selector',
       'Prosthetics'
     );
 
