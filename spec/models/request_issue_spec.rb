@@ -2302,6 +2302,7 @@ describe RequestIssue, :all_dbs do
       expect(review).to receive(:handle_issues_with_no_decision_date!).once
       subject
       expect(nonrating_request_issue.decision_date).to eq(new_decision_date.to_date)
+      expect(nonrating_request_issue.decision_date_added_at).to eq(new_decision_date)
     end
 
     context "when the decision date is in the future" do
