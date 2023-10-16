@@ -24,7 +24,11 @@ class Reader::DocumentContentSearchesController < Reader::ApplicationController
     matched_docs = []
 
     docs.each do |doc|
-      query = ClaimEvidenceService.get_ocr_document(doc.series_id)
+      # use fetch to pull from cache or create in cache if not present
+      query = Rails.cache.fetch("claim_evidence_document_content_#{doc.series_id}",
+                                expires_in: 24.hours) do
+        ClaimEvidenceService.get_ocr_document(doc.series_id)
+      end
 
       if query.downcase.include?(search_term)
         matched_docs << doc

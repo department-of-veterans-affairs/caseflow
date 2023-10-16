@@ -53,6 +53,8 @@ class Reader::DocumentsController < Reader::ApplicationController
     tags_by_doc_id = load_tags_by_doc_id
 
     @documents = appeal.document_fetcher.find_or_create_documents!.map do |document|
+      # call out to Claim Evidence API and cache the document contents
+      cache_claim_evidence_document_contents(document.series_id)
       document.to_hash.tap do |object|
         object[:opened_by_current_user] = read_documents_hash[document.id] || false
         object[:tags] = tags_by_doc_id[document.id].to_a
@@ -74,5 +76,14 @@ class Reader::DocumentsController < Reader::ApplicationController
 
   def appeal_id
     params[:appeal_id]
+  end
+
+  # while docs are loaded, this method caches Claim Evidence API doc
+  # contents to be searched by the user
+  def cache_claim_evidence_document_contents(doc_series_id)
+    # use fetch to pull from cache or create in cache if not present
+    Rails.cache.fetch("claim_evidence_document_content_#{doc_series_id}", expires_in: 24.hours) do
+      ClaimEvidenceService.get_ocr_document(doc_series_id)
+    end
   end
 end
