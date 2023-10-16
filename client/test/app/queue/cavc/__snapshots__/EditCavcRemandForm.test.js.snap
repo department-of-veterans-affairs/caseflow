@@ -21,13 +21,17 @@ exports[`EditCavcRemandForm adding new all feature toggles enabled renders corre
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="docketNumber"
-          name="docketNumber"
-          type="text"
-          value=""
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="docketNumber"
+            name="docketNumber"
+            type="text"
+            value=""
+          />
+        </div>
       </div>
       <fieldset
         class="usa-fieldset-inputs cf-form-radio-inline "
@@ -257,15 +261,19 @@ exports[`EditCavcRemandForm adding new all feature toggles enabled renders corre
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="decisionDate"
-          max="9999-12-31"
-          name="decisionDate"
-          placeholder="mm/dd/yyyy"
-          type="date"
-          value=""
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="decisionDate"
+            max="9999-12-31"
+            name="decisionDate"
+            placeholder="mm/dd/yyyy"
+            type="date"
+            value=""
+          />
+        </div>
       </div>
       <div
         class="usa-alert usa-alert-info usa-alert-slim"
@@ -362,7 +370,7 @@ exports[`EditCavcRemandForm adding new all feature toggles enabled renders corre
         >
           <strong>
             <span>
-              Provide context and instructions for this action
+              Provide instructions and context for this action
             </span>
           </strong>
         </label>
@@ -420,13 +428,17 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="docketNumber"
-          name="docketNumber"
-          type="text"
-          value=""
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="docketNumber"
+            name="docketNumber"
+            type="text"
+            value=""
+          />
+        </div>
       </div>
       <fieldset
         class="usa-fieldset-inputs cf-form-radio-inline "
@@ -722,15 +734,19 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="decisionDate"
-          max="9999-12-31"
-          name="decisionDate"
-          placeholder="mm/dd/yyyy"
-          type="date"
-          value=""
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="decisionDate"
+            max="9999-12-31"
+            name="decisionDate"
+            placeholder="mm/dd/yyyy"
+            type="date"
+            value=""
+          />
+        </div>
       </div>
       <legend>
         <strong>
@@ -841,7 +857,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
         >
           <strong>
             <span>
-              Provide context and instructions for this action
+              Provide instructions and context for this action
             </span>
           </strong>
         </label>
@@ -899,13 +915,17 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="docketNumber"
-          name="docketNumber"
-          type="text"
-          value=""
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="docketNumber"
+            name="docketNumber"
+            type="text"
+            value=""
+          />
+        </div>
       </div>
       <fieldset
         class="usa-fieldset-inputs cf-form-radio-inline "
@@ -1201,15 +1221,19 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="decisionDate"
-          max="9999-12-31"
-          name="decisionDate"
-          placeholder="mm/dd/yyyy"
-          type="date"
-          value=""
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="decisionDate"
+            max="9999-12-31"
+            name="decisionDate"
+            placeholder="mm/dd/yyyy"
+            type="date"
+            value=""
+          />
+        </div>
       </div>
       <legend>
         <strong>
@@ -1320,7 +1344,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
         >
           <strong>
             <span>
-              Provide context and instructions for this action
+              Provide instructions and context for this action
             </span>
           </strong>
         </label>
@@ -1378,13 +1402,17 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="docketNumber"
-          name="docketNumber"
-          type="text"
-          value=""
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="docketNumber"
+            name="docketNumber"
+            type="text"
+            value=""
+          />
+        </div>
       </div>
       <fieldset
         class="usa-fieldset-inputs cf-form-radio-inline "
@@ -1680,15 +1708,19 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="decisionDate"
-          max="9999-12-31"
-          name="decisionDate"
-          placeholder="mm/dd/yyyy"
-          type="date"
-          value=""
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="decisionDate"
+            max="9999-12-31"
+            name="decisionDate"
+            placeholder="mm/dd/yyyy"
+            type="date"
+            value=""
+          />
+        </div>
       </div>
       <div
         class="usa-alert usa-alert-info usa-alert-slim"
@@ -1814,7 +1846,7 @@ exports[`EditCavcRemandForm adding new with Remand decision renders correctly wi
         >
           <strong>
             <span>
-              Provide context and instructions for this action
+              Provide instructions and context for this action
             </span>
           </strong>
         </label>
@@ -1872,13 +1904,17 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="docketNumber"
-          name="docketNumber"
-          type="text"
-          value=""
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="docketNumber"
+            name="docketNumber"
+            type="text"
+            value=""
+          />
+        </div>
       </div>
       <fieldset
         class="usa-fieldset-inputs cf-form-radio-inline "
@@ -2158,15 +2194,19 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="decisionDate"
-          max="9999-12-31"
-          name="decisionDate"
-          placeholder="mm/dd/yyyy"
-          type="date"
-          value=""
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="decisionDate"
+            max="9999-12-31"
+            name="decisionDate"
+            placeholder="mm/dd/yyyy"
+            type="date"
+            value=""
+          />
+        </div>
       </div>
       <div
         class="usa-alert usa-alert-info usa-alert-slim"
@@ -2263,7 +2303,7 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
         >
           <strong>
             <span>
-              Provide context and instructions for this action
+              Provide instructions and context for this action
             </span>
           </strong>
         </label>
@@ -2321,13 +2361,17 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="docketNumber"
-          name="docketNumber"
-          type="text"
-          value=""
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="docketNumber"
+            name="docketNumber"
+            type="text"
+            value=""
+          />
+        </div>
       </div>
       <fieldset
         class="usa-fieldset-inputs cf-form-radio-inline "
@@ -2607,15 +2651,19 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="decisionDate"
-          max="9999-12-31"
-          name="decisionDate"
-          placeholder="mm/dd/yyyy"
-          type="date"
-          value=""
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="decisionDate"
+            max="9999-12-31"
+            name="decisionDate"
+            placeholder="mm/dd/yyyy"
+            type="date"
+            value=""
+          />
+        </div>
       </div>
       <legend>
         <strong>
@@ -2726,7 +2774,7 @@ exports[`EditCavcRemandForm adding new with Reversal decision renders correctly 
         >
           <strong>
             <span>
-              Provide context and instructions for this action
+              Provide instructions and context for this action
             </span>
           </strong>
         </label>
@@ -2784,13 +2832,17 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="docketNumber"
-          name="docketNumber"
-          type="text"
-          value=""
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="docketNumber"
+            name="docketNumber"
+            type="text"
+            value=""
+          />
+        </div>
       </div>
       <fieldset
         class="usa-fieldset-inputs cf-form-radio-inline "
@@ -2952,14 +3004,18 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="decisionTypeDisplay"
-          name="decisionTypeDisplay"
-          readonly=""
-          type="text"
-          value="Remand"
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="decisionTypeDisplay"
+            name="decisionTypeDisplay"
+            readonly=""
+            type="text"
+            value="Remand"
+          />
+        </div>
       </div>
       <input
         name="decisionType"
@@ -2978,14 +3034,18 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="remandTypeDisplay"
-          name="remandTypeDisplay"
-          readonly=""
-          type="text"
-          value="Joint Motion for Remand (JMR)"
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="remandTypeDisplay"
+            name="remandTypeDisplay"
+            readonly=""
+            type="text"
+            value="Joint Motion for Remand (JMR)"
+          />
+        </div>
       </div>
       <input
         name="remandType"
@@ -3004,15 +3064,19 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="decisionDate"
-          max="9999-12-31"
-          name="decisionDate"
-          placeholder="mm/dd/yyyy"
-          type="date"
-          value=""
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="decisionDate"
+            max="9999-12-31"
+            name="decisionDate"
+            placeholder="mm/dd/yyyy"
+            type="date"
+            value=""
+          />
+        </div>
       </div>
       <legend>
         <strong>
@@ -3094,7 +3158,7 @@ exports[`EditCavcRemandForm editing existing all feature toggles enabled renders
         >
           <strong>
             <span>
-              Provide context and instructions for this action
+              Provide instructions and context for this action
             </span>
           </strong>
         </label>
