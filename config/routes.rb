@@ -257,10 +257,9 @@ Rails.application.routes.draw do
         patch :update_power_of_attorney
       end
     end
+    get "report", to: "decision_reviews#generate_report", on: :member, as: :report, format: false
   end
   match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
-  match '/decision_reviews/:business_line_slug/report' => 'decision_reviews#generate_report',
-    via: [:get], format: false
 
   resources :unrecognized_appellants, only: [:update] do
     resource :power_of_attorney, only: [:update], controller: :unrecognized_appellants, action: :update_power_of_attorney
