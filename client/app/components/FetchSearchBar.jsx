@@ -12,14 +12,10 @@ const FetchSearchBar = (props) => {
 
   const handleClick = (event) => {
     event.preventDefault();
-    ApiUtil.get(`/reader/appeal/${props.vacolsId}/document_content_searches?search_term=${searchText}`)
-      .then((response) => console.log(response));
+    // props.setClaimEvidenceDocs('');
+    ApiUtil.get(`/reader/appeal/${props.vacolsId}/document_content_searches?search_term=${searchText}`).
+      then((response) => (props.setClaimEvidenceDocs(response.body.appealDocuments, searchText)));
   };
-
-  const handleClearSearch = () => {
-    setSearchText('');
-    // clearClaimEvidenceDocs
-  }
 
   return (
     <div style={{ width: '100%' }}>
@@ -43,6 +39,7 @@ const FetchSearchBar = (props) => {
 };
 
 FetchSearchBar.propTypes = {
-  vacolsId: PropTypes.string
+  vacolsId: PropTypes.string,
+  setClaimEvidenceDocs: PropTypes.func.isRequired
 };
 export default FetchSearchBar;

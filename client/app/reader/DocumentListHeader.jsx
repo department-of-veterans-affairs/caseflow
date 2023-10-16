@@ -7,7 +7,9 @@ import { ENDPOINT_NAMES } from './analytics';
 import WellArea from '../components/WellArea';
 
 import ApiUtil from '../util/ApiUtil';
-import { setSearch, clearSearch, clearAllFilters , clearClaimEvidenceDocs} from '../reader/DocumentList/DocumentListActions';
+import { setSearch, clearSearch, clearAllFilters , setClaimEvidenceDocs,
+  clearClaimEvidenceDocs} from '../reader/DocumentList/DocumentListActions';
+// eslint-disable-next-line max-len
 import DocumentsCommentsButton from './DocumentsCommentsButton';
 import HeaderFilterMessage from './HeaderFilterMessage';
 import SearchBar from '../components/SearchBar';
@@ -58,6 +60,7 @@ class DocumentListHeader extends React.Component {
         <FetchSearchBar
           vacolsId = {this.props.vacolsId}
           clearClaimEvidenceDocs={clearClaimEvidenceDocs}
+          setClaimEvidenceDocs = {this.props.setClaimEvidenceDocs}
         />
       </WellArea>
       <HeaderFilterMessage
@@ -72,6 +75,7 @@ DocumentListHeader.propTypes = {
   setSearch: PropTypes.func.isRequired,
   noDocuments: PropTypes.bool,
   clearAllFilters: PropTypes.func,
+  setClaimEvidenceDocs: PropTypes.func.isRequired,
   clearSearch: PropTypes.func,
   docFilterCriteria: PropTypes.object,
   numberOfDocuments: PropTypes.number.isRequired,
@@ -90,7 +94,9 @@ const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     setSearch,
     clearSearch,
-    clearAllFilters
+    clearAllFilters,
+    setClaimEvidenceDocs,
+    clearClaimEvidenceDocs
   }, dispatch)
 });
 
