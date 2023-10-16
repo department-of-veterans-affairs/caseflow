@@ -9,8 +9,8 @@ module Seeds
 
     # all top level methods
     def seed!
-      # create_two_veterans_with_many_request_and_decision_issues
-      # create_two_veterans_with_request_issue_with_many_decision_issues
+      create_two_veterans_with_many_request_and_decision_issues
+      create_two_veterans_with_request_issue_with_many_decision_issues
       create_two_veterans_with_decision_issue_with_many_request_issues
     end
 
@@ -23,8 +23,8 @@ module Seeds
       @file_number += 10 while Veteran.find_by(file_number: format("%<n>09d", n: @file_number))
     end
 
-    # 1 Veteran with 420 Request Issues and 360 Decision Issues
-    # 1 Veteran with 280 Request Issues and 240 Decision Issues
+    # First Veteran with 420 Request Issues and 360 Decision Issues
+    # Second Veteran with 280 Request Issues and 240 Decision Issues
     def create_two_veterans_with_many_request_and_decision_issues
       # First Veteran with associated Decision Reviews, Request Issues, and Decision Issues
       first_veteran = create_veteran
@@ -69,9 +69,9 @@ module Seeds
       end
     end
 
-    # 1 Veteran with 15 total Request Issues
+    # First Veteran with 15 total Request Issues
     # Each Request Issue contains 1 Decision Issues, except for one outlier containing 68 Decision Issues
-    # 1 Veteran with 3 total Request Issues
+    # Second Veteran with 3 total Request Issues
     # Each Request Issue contains 1 Decision Issues, except for one outlier containing 33 Decision Issues
     def create_two_veterans_with_request_issue_with_many_decision_issues
       # First Veteran with associated Decision Reviews, Request Issues, and Decision Issues
@@ -105,9 +105,9 @@ module Seeds
       create_request_issue_with_many_decision_issues(:rating, hlr_epe, second_veteran, number_of_issues = 33)
     end
 
-    # 1 Veteran with 35 total Request Issues
+    # First Veteran with 35 total Request Issues
     # Each Decision Issue contains 1 Request Issue, except for one outlier containing 31 Request Issues
-    # 1 Veteran with 50 total Request Issues
+    # Second Veteran with 50 total Request Issues
     # Each Decision Issue contains 1 Request Issue, except for one outlier containing 25 Request Issues
     def create_two_veterans_with_decision_issue_with_many_request_issues
       # First Veteran with associated Decision Reviews, Request issues, and Decision Issues
@@ -211,7 +211,6 @@ module Seeds
                                     decision_review: request_issue.decision_review
                                     )
       request_issue.decision_issues << decision_issues
-      request_issue.save
     end
 
     # rubocop:disable Metrics/ParameterLists
@@ -229,8 +228,6 @@ module Seeds
                                     veteran_participant_id: veteran.participant_id
                                   )
       decision_issue.request_issues << request_issues
-      decision_issue.save
     end
-
   end
 end
