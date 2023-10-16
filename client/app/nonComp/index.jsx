@@ -9,29 +9,18 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { LOGO_COLORS } from '../constants/AppConstants';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { FlashAlerts } from './components/Alerts';
-
 import ReviewPage from './pages/ReviewPage';
 import TaskPage from './pages/TaskPage';
-import { nonCompReducer, mapDataToInitialState } from './reducers';
+import CombinedNonCompReducer, { mapDataToInitialState } from './reducers';
 
-import orgUserReducer from './actions/usersSlice';
-import { combineReducers } from 'redux';
-import changeHistoryReducer from './actions/changeHistorySlice';
 class NonComp extends React.PureComponent {
   render() {
-    // TODO: Maybe move this into the nonCompReducer file
-    const combinedReducer = combineReducers({
-      nonComp: nonCompReducer,
-      orgUsers: orgUserReducer,
-      changeHistory: changeHistoryReducer
-    });
-
     const Router = this.props.router || BrowserRouter;
     const initialState = mapDataToInitialState(this.props);
     const appName = this.props.serverNonComp.businessLine;
 
     return (
-      <ReduxBase initialState={initialState} reducer={combinedReducer}>
+      <ReduxBase initialState={initialState} reducer={CombinedNonCompReducer}>
         <Router basename="/decision_reviews" {...this.props.routerTestProps}>
           <div>
             <NavigationBar

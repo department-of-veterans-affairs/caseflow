@@ -1,5 +1,9 @@
 import { ACTIONS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import { update } from '../../util/ReducerUtil';
+import { combineReducers } from 'redux';
+import orgUserReducer from '../actions/usersSlice';
+import changeHistoryReducer from '../actions/changeHistorySlice';
+import { timeFunction } from '../../util/PerfDebug';
 
 export const mapDataToInitialState = function(props = {}) {
   const { serverNonComp } = props;
@@ -91,4 +95,15 @@ export const nonCompReducer = (state = mapDataToInitialState, action) => {
     return state;
   }
 };
+
+const combinedReducer = combineReducers({
+  nonComp: nonCompReducer,
+  orgUsers: orgUserReducer,
+  changeHistory: changeHistoryReducer
+});
+
+export default timeFunction(
+  combinedReducer,
+  (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
+);
 
