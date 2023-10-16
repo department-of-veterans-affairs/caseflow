@@ -9,23 +9,23 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
 const pageStyling = css({
+  display: 'flex',
+  justifyContent: 'space-between',
   marginRight: 0,
   marginLeft: 0,
-  '.usa-grid-full': {
-    maxWidth: '1090px'
-  }
 });
 
 const linkButtonStyling = css({
   marginRight: '7px',
-  '.usa-width-two-thirds': {
-    width: '59.88078%'
-  }
+});
+
+const buttonContainerStyling = css({
+  display: 'flex',
+  gap: '12px'
 });
 
 const compReviewButtonStyling = css({
   whiteSpace: 'nowrap',
-  margin: '12px'
 });
 
 const secondaryButtonClassNames = ['usa-button-secondary'];
@@ -47,16 +47,18 @@ class NonCompReviewsPage extends React.PureComponent {
     return <div>
       { successAlert }
       <h1>{this.props.businessLine}</h1>
-      <div className="usa-grid-full" {...pageStyling} >
+      <div {...pageStyling} >
         <div className="usa-width-one-half" {...linkButtonStyling}>
           <h2>Reviews needing action</h2>
           <div>Review each issue and select a disposition</div>
         </div>
-        <div className="usa-width-one-half cf-txt-r">
-          <Button onClick={() => {
-            window.location.href = '/intake';
-          }}
-          classNames={compReviewButtonStyling}
+        <div className="cf-txt-r" {...buttonContainerStyling}>
+          <Button
+            onClick={() => {
+              window.location.href = '/intake';
+            }}
+            classNames={compReviewButtonStyling}
+            styling={compReviewButtonStyling}
           >
             + Intake new form
           </Button>
@@ -68,6 +70,16 @@ class NonCompReviewsPage extends React.PureComponent {
             Download completed tasks
           </Button>
           }
+          {this.props.businessLineUrl === 'vha' && this.props.isBusinessLineAdmin ? <Button
+            classNames={secondaryButtonClassNames}
+            onClick={() => {
+              this.props.history.push(`${this.props.businessLineUrl}/report`);
+            }}
+            styling={compReviewButtonStyling}
+          >
+            Generate task report
+          </Button> :
+            null }
         </div>
       </div>
       <NonCompTabs />
@@ -78,14 +90,17 @@ class NonCompReviewsPage extends React.PureComponent {
 NonCompReviewsPage.propTypes = {
   businessLine: PropTypes.string,
   decisionIssuesStatus: PropTypes.object,
-  businessLineUrl: PropTypes.string
+  businessLineUrl: PropTypes.string,
+  isBusinessLineAdmin: PropTypes.bool,
+  history: PropTypes.object
 };
 
 const ReviewPage = connect(
   (state) => ({
     businessLine: state.businessLine,
     decisionIssuesStatus: state.decisionIssuesStatus,
-    businessLineUrl: state.businessLineUrl
+    businessLineUrl: state.businessLineUrl,
+    isBusinessLineAdmin: state.isBusinessLineAdmin
   })
 )(NonCompReviewsPage);
 

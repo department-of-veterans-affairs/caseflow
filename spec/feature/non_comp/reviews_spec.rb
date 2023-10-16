@@ -592,6 +592,18 @@ feature "NonComp Reviews Queue", :postgres do
       end
     end
 
+    context "with user as VHA admin" do
+      before do
+        OrganizationsUser.make_user_admin(user, VhaBusinessLine.singleton)
+      end
+
+      scenario "the Generate task report button taskes you to /decision_reviews/vha/report" do
+        visit BASE_URL
+        click_on "Generate task report"
+        expect(page).to have_current_path("/decision_reviews/vha/report")
+      end
+    end
+
     context "with user enabled for intake" do
       scenario "goes back to intake" do
         # allow user to have access to intake
@@ -889,6 +901,11 @@ feature "NonComp Reviews Queue", :postgres do
   context "For a non comp org that is not VHA" do
     after { FeatureToggle.disable!(:board_grant_effectuation_task) }
     let(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+
+    scenario "the Generate task report button does not display for non-vha users" do
+      visit "/decision_reviews/nco"
+      expect(page).to_not have_content("Generate task report")
+    end
 
     scenario "displays tasks page for non VHA" do
       visit "/decision_reviews/nco"
