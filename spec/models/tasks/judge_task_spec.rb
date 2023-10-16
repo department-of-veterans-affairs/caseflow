@@ -206,7 +206,7 @@ describe JudgeTask, :all_dbs do
       it "should show pulac cerullo task action along with special actions" do
         expect(task.additional_available_actions(user)).to eq(
           [Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h,
-           Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT_SP_ISSUES.to_h,
+           Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT_SPECIAL_ISSUES.to_h,
            Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h]
         )
       end

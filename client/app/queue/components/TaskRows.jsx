@@ -31,9 +31,11 @@ export const grayLineStyling = css({
   bottom: 0
 });
 
-export const grayLineTimelineStyling = css(grayLineStyling, { left: '9%',
+export const grayLineTimelineStyling = css(grayLineStyling, {
+  left: '9%',
   marginLeft: '12px',
-  top: '39px' });
+  top: '39px'
+});
 
 const greyDotAndlineStyling = css({ top: '25px' });
 
@@ -61,10 +63,12 @@ const taskTimeContainerStyling = css(taskContainerStyling, { width: '20%' });
 const taskInformationContainerStyling = css(taskContainerStyling, { width: '25%' });
 const taskTimeTimelineContainerStyling = css(taskContainerStyling, { width: '40%' });
 const taskInfoWithIconTimelineContainer =
-  css(taskInfoWithIconContainer, { textAlign: 'left',
+  css(taskInfoWithIconContainer, {
+    textAlign: 'left',
     marginLeft: '5px',
     width: '10%',
-    paddingLeft: '0px' });
+    paddingLeft: '0px'
+  });
 
 const isCancelled = (task) => {
   return task.status === TASK_STATUSES.cancelled;

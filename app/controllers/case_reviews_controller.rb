@@ -74,6 +74,7 @@ class CaseReviewsController < ApplicationController
 
   def issues_params
     # This is a combined list of params for ama and legacy appeals
+    # Reprsents the information the front end is sending to create a decision issue object
     [
       :id,
       :disposition,
@@ -81,6 +82,8 @@ class CaseReviewsController < ApplicationController
       :readjudication,
       :benefit_type,
       :diagnostic_code,
+      :mst_status,
+      :pact_status,
       request_issue_ids: [],
       remand_reasons: [
         :code,
