@@ -76,7 +76,7 @@ describe GeomatchService do
           bfddec: nil
         )
       end
-      let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let(:appeal) { create(:legacy_appeal, :with_veteran_address, vacols_case: vacols_case) }
 
       it "geomatches for the travel board appeal" do
         subject
