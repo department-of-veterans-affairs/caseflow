@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import ApiUtil from '../util/ApiUtil';
 import SearchBar from '../components/SearchBar';
-import { style } from 'glamor';
-import { boldText } from '../queue/constants';
+
 const FetchSearchBar = (props) => {
   const [searchText, setSearchText] = useState('');
   const handleSearchTextChange = (event) => {
     setSearchText(event);
+  };
+
+  const handleClearSearch = () => {
+    setSearchText('');
+    props.clearClaimEvidenceDocs();
   };
 
   const handleClick = (event) => {
@@ -26,13 +30,13 @@ const FetchSearchBar = (props) => {
         justifyContent: 'flex-end'
       }}>
 
-<div style={{justifyContent: 'flex-end', width:'50%', marginRight:0}}>
-<SearchBar value={searchText}
- onChange={handleSearchTextChange} size="small"
- onClearSearch={handleClearSearch}
- isSearchAhead={true}/>
- </div>
- <button className='cf-submit usa-button' onClick={handleClick}>Search</button>
+        <div style={{ justifyContent: 'flex-end', width: '50%', marginRight: 0 }}>
+          <SearchBar value={searchText}
+            onChange={handleSearchTextChange} size="small"
+            onClearSearch={handleClearSearch}
+            isSearchAhead />
+        </div>
+        <button className="cf-submit usa-button" onClick={handleClick}>Search</button>
       </span>
     </div>
   );
@@ -40,6 +44,7 @@ const FetchSearchBar = (props) => {
 
 FetchSearchBar.propTypes = {
   vacolsId: PropTypes.string,
-  setClaimEvidenceDocs: PropTypes.func.isRequired
+  setClaimEvidenceDocs: PropTypes.func.isRequired,
+  clearClaimEvidenceDocs: PropTypes.func.isRequired
 };
 export default FetchSearchBar;
