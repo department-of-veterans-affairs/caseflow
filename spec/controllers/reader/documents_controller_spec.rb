@@ -5,8 +5,13 @@ describe Reader::DocumentsController, :postgres, type: :controller do
   let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
   let!(:appeal) { create(:appeal) }
   let(:params) { { format: :json, appeal_id: appeal.uuid } }
+  let(:document_contents) { "Simulated document contents here!" }
 
-  before { User.authenticate!(user: attorney_user) }
+  before do
+    User.authenticate!(user: attorney_user)
+    # stub CE API response
+    allow(ClaimEvidenceService).to receive(:get_ocr_document).and_return(document_contents)
+  end
   after { User.unauthenticate! }
 
   before do
@@ -102,6 +107,20 @@ describe Reader::DocumentsController, :postgres, type: :controller do
         single_tags_query = "SELECT \"tags\".* FROM \"tags\""
         tag_select_queries = controller_query_data.values.select { |o| o[:sql].start_with?(single_tags_query) }
         expect(tag_select_queries.pluck(:count).max).to be <= 1
+      end
+
+      it "pulls and caches document contents from the claim evidence API" do
+        # simulate controller method call
+        _ = SqlTracker.track do
+          get :index, params: params
+        end
+
+        # check each doc has doc contents contained within the cache
+        documents.each do |doc|
+          cache_key = "claim_evidence_document_content_#{doc.series_id}"
+          expect(Rails.cache.exist?(cache_key))
+          expect(Rails.cache.fetch(cache_key)).to eq(document_contents)
+        end
       end
     end
   end
