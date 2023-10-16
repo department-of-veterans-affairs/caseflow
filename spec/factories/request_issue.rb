@@ -66,9 +66,12 @@ FactoryBot.define do
     end
 
     trait :with_rating_decision_issue do
-      transient do
-        veteran_participant_id { nil }
-      end
+      # decision_issues table has a not null constraint on this column and
+      # a transient attribute is used to create a column on a table that doesn't already exist
+      # any risks to taking this out?
+      # transient do
+      #   veteran_participant_id { nil }
+      # end
 
       after(:create) do |request_issue, evaluator|
         decision_issue = create(
