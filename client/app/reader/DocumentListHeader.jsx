@@ -8,7 +8,7 @@ import WellArea from '../components/WellArea';
 
 import ApiUtil from '../util/ApiUtil';
 // eslint-disable-next-line max-len
-import { setSearch, clearSearch, clearAllFilters, setClaimEvidenceDocs } from '../reader/DocumentList/DocumentListActions';
+import { setSearch, clearSearch, clearAllFilters, setClaimEvidenceDocs, clearClaimEvidenceDocs } from '../reader/DocumentList/DocumentListActions';
 import DocumentsCommentsButton from './DocumentsCommentsButton';
 import HeaderFilterMessage from './HeaderFilterMessage';
 import SearchBar from '../components/SearchBar';
@@ -60,6 +60,7 @@ class DocumentListHeader extends React.Component {
           setClearAllFiltersCallbacks={this.props.setClearAllFiltersCallbacks}
           clearAllFiltersCallbacks={this.props.clearAllFiltersCallbacks}
           vacolsId = {this.props.vacolsId}
+          clearClaimEvidenceDocs={this.props.clearClaimEvidenceDocs}
           setClaimEvidenceDocs = {this.props.setClaimEvidenceDocs}
         />
       </WellArea>
@@ -76,6 +77,7 @@ DocumentListHeader.propTypes = {
   noDocuments: PropTypes.bool,
   clearAllFilters: PropTypes.func,
   setClaimEvidenceDocs: PropTypes.func.isRequired,
+  clearClaimEvidenceDocs: PropTypes.func.isRequired,
   clearSearch: PropTypes.func,
   docFilterCriteria: PropTypes.object,
   numberOfDocuments: PropTypes.number.isRequired,
@@ -97,6 +99,7 @@ const mapDispatchToProps = (dispatch) => ({
     clearSearch,
     clearAllFilters,
     setClaimEvidenceDocs,
+    clearClaimEvidenceDocs
   }, dispatch)
 });
 
