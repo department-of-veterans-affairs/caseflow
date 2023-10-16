@@ -210,7 +210,7 @@ describe VaDotGovAddressValidator do
         let!(:valid_address_error) { error }
 
         before do
-          allow_any_instance_of(VaDotGovAddressValidator).to receive(:validate_zip_code)
+          allow_any_instance_of(VaDotGovAddressValidator).to receive(:manually_validate_zip_code)
             .and_return(nil)
         end
 
