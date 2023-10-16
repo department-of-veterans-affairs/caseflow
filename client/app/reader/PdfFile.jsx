@@ -182,25 +182,6 @@ export class PdfFile extends React.PureComponent {
     }
   }
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (nextProps.isVisible !== this.props.isVisible) {
-      this.currentPage = 0;
-    }
-
-    if (this.grid && nextProps.scale !== this.props.scale) {
-      // Set the scroll location based on the current page and where you
-      // are on that page scaled by the zoom factor.
-      const zoomFactor = nextProps.scale / this.props.scale;
-      const nonZoomedLocation = (this.scrollTop - this.getOffsetForPageIndex(this.currentPage).scrollTop);
-
-      this.scrollLocation = {
-        page: this.currentPage,
-        locationOnPage: nonZoomedLocation * zoomFactor
-      };
-    }
-  }
-
   getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
     const pageIndex = (this.columnCount * rowIndex) + columnIndex;
 
@@ -362,6 +343,22 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentDidUpdate = (prevProps) => {
+    if (prevProps.isVisible !== this.props.isVisible) {
+      this.currentPage = 0;
+    }
+
+    if (this.grid && prevProps.scale !== this.props.scale) {
+      // Set the scroll location based on the current page and where you
+      // are on that page scaled by the zoom factor.
+      const zoomFactor = this.props.scale / prevProps.scale;
+      const nonZoomedLocation = (this.scrollTop - this.getOffsetForPageIndex(this.currentPage).scrollTop);
+
+      this.scrollLocation = {
+        page: this.currentPage,
+        locationOnPage: nonZoomedLocation * zoomFactor
+      };
+    }
+
     if (this.grid && this.props.isVisible) {
       if (!prevProps.isVisible) {
         // eslint-disable-next-line react/no-find-dom-node
