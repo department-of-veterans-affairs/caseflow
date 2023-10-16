@@ -21,8 +21,7 @@ class QueueMapper
     comment: :debmcom,
     completion_date: :decomp,
     timeliness: :detrem,
-    one_touch_initiative: :de1touch,
-    deteam: :deteam
+    one_touch_initiative: :de1touch
   }.freeze
 
   DEFICIENCIES = {

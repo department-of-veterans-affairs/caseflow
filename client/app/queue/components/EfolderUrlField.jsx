@@ -1,11 +1,18 @@
 import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { debounce } from 'lodash';
-
+import { css } from 'glamor';
 import COPY from '../../../COPY';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import ApiUtil from '../../util/ApiUtil';
+import EfolderLink from '../../components/EfolderLink';
+
+const eFolderlinkStyling = css({
+  position: 'relative',
+  top: '-20px',
+  display: 'inline-block'
+});
 
 const EfolderUrlField = (props) => {
 
@@ -102,7 +109,10 @@ const EfolderUrlField = (props) => {
       errorMessage={error}
       loading={loading}
     />
-
+    <div {...eFolderlinkStyling}>
+      <EfolderLink url={`${props.eFolderLink}/veteran/${props.veteranParticipantId}`}
+        veteranParticipantId={props.veteranParticipantId} eFolderLink={props.eFolderLink} />
+    </div>
     {
       error === COPY.EFOLDER_CONNECTION_ERROR &&
       <Button
@@ -117,6 +127,8 @@ const EfolderUrlField = (props) => {
 
 EfolderUrlField.propTypes = {
   appealId: PropTypes.string.isRequired,
+  veteranParticipantId: PropTypes.string,
+  eFolderLink: PropTypes.string,
   requestType: PropTypes.string,
   errorMessage: PropTypes.string
 };
