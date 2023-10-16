@@ -7,9 +7,8 @@ import { ENDPOINT_NAMES } from './analytics';
 import WellArea from '../components/WellArea';
 
 import ApiUtil from '../util/ApiUtil';
-import { setSearch, clearSearch, clearAllFilters, setClaimEvidenceDocs,
-  clearClaimEvidenceDocs } from '../reader/DocumentList/DocumentListActions';
 // eslint-disable-next-line max-len
+import { setSearch, clearSearch, clearAllFilters, setClaimEvidenceDocs, clearClaimEvidenceDocs } from '../reader/DocumentList/DocumentListActions';
 import DocumentsCommentsButton from './DocumentsCommentsButton';
 import HeaderFilterMessage from './HeaderFilterMessage';
 import SearchBar from '../components/SearchBar';
@@ -58,6 +57,8 @@ class DocumentListHeader extends React.Component {
       </div>
       <WellArea>
         <FetchSearchBar
+          setClearAllFiltersCallbacks={this.props.setClearAllFiltersCallbacks}
+          clearAllFiltersCallbacks={this.props.clearAllFiltersCallbacks}
           vacolsId = {this.props.vacolsId}
           clearClaimEvidenceDocs={this.props.clearClaimEvidenceDocs}
           setClaimEvidenceDocs = {this.props.setClaimEvidenceDocs}
@@ -81,7 +82,8 @@ DocumentListHeader.propTypes = {
   docFilterCriteria: PropTypes.object,
   numberOfDocuments: PropTypes.number.isRequired,
   vacolsId: PropTypes.string,
-  clearAllFiltersCallbacks: PropTypes.array.isRequired
+  clearAllFiltersCallbacks: PropTypes.array.isRequired,
+  setClearAllFiltersCallbacks: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import ApiUtil from '../util/ApiUtil';
 import SearchBar from '../components/SearchBar';
@@ -20,6 +20,14 @@ const FetchSearchBar = (props) => {
       then((response) => (props.setClaimEvidenceDocs(response.body.appealDocuments, searchText)));
   };
 
+  const resetFetchBarState = () => {
+    setSearchText('');
+  };
+
+  useEffect(() => {
+    props.setClearAllFiltersCallbacks([resetFetchBarState]);
+  }, resetFetchBarState);
+
   return (
     <div style={{ width: '100%' }}>
       <p style={{ textAlign: 'center' }}>Search document contents</p>
@@ -28,14 +36,13 @@ const FetchSearchBar = (props) => {
         display: 'flex',
         justifyContent: 'flex-end'
       }}>
-
         <div style={{ justifyContent: 'flex-end', width: '50%', marginRight: 0 }}>
           <SearchBar value={searchText}
             onChange={handleSearchTextChange} size="small"
             onClearSearch={handleClearSearch}
             isSearchAhead />
         </div>
-        <button className="cf-submit usa-button" onClick={handleClick}>Search</button>
+        <button id="fetchDocumentContentsButton" className="cf-submit usa-button" onClick={handleClick}>Search</button>
       </span>
     </div>
   );

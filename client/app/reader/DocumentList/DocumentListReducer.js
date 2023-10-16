@@ -200,34 +200,6 @@ const documentListReducer = (state = initialState, action = {}) => {
       }
     });
 
-  // Claim evidence docuemnts
-  case Constants.SET_CLAIM_EVIDENCE_DOCS:
-
-    return update(state, {
-      docFilterCriteria: {
-        claimServiceDocuments: {
-          $set: action.payload.documents
-        },
-        claimServiceSearchTerm: {
-          $set: action.payload.claimSearchTerm
-        }
-      }
-    });
-
-  case Constants.CLEAR_CLAIM_EVIDENCE_DOCS:
-    return update(state, {
-      docFilterCriteria: {
-        claimServiceDocuments: {
-          $set: []
-        },
-
-        claimServiceSearchTerm: {
-          $set: ''
-        }
-
-      }
-    });
-
     // Document filter
   case Constants.SET_DOC_FILTER:
     return update(state, {
