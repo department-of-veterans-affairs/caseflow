@@ -5,7 +5,7 @@ import Modal from '../../components/Modal';
 import {
   RETURN_TO_LIT_SUPPORT_MODAL_TITLE,
   RETURN_TO_LIT_SUPPORT_MODAL_CONTENT,
-  RETURN_TO_LIT_SUPPORT_MODAL_INSTRUCTIONS_LABEL,
+  PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL,
   RETURN_TO_LIT_SUPPORT_MODAL_DEFAULT_INSTRUCTIONS,
   MODAL_CANCEL_BUTTON
 } from '../../../COPY';
@@ -47,7 +47,7 @@ export const ReturnToLitSupportModal = ({
 
       <TextareaField
         name="instructions"
-        label={RETURN_TO_LIT_SUPPORT_MODAL_INSTRUCTIONS_LABEL}
+        label={PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
         onChange={(val) => setInstructions(val)}
         value={instructions}
         className={['mtv-decision-instructions']}

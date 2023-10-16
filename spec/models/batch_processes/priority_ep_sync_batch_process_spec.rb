@@ -134,7 +134,7 @@ describe PriorityEpSyncBatchProcess, :postgres do
       create(:end_product_establishment, :active_supp_with_active_vbms_ext_claim)
     end
     let!(:active_supp_epe_w_cleared_vbms_ext_claim) do
-      create(:end_product_establishment, :active_supp_with_canceled_vbms_ext_claim)
+      create(:end_product_establishment, :active_supp_with_cleared_vbms_ext_claim)
     end
     let!(:cleared_supp_epes_w_cleared_vbms_ext_claim) do
       create(:end_product_establishment, :cleared_supp_with_cleared_vbms_ext_claim)
@@ -145,7 +145,6 @@ describe PriorityEpSyncBatchProcess, :postgres do
     end
 
     let!(:pepsq_records) do
-      PopulateEndProductSyncQueueJob.perform_now
       PriorityEndProductSyncQueue.all
     end
 
@@ -306,6 +305,7 @@ describe PriorityEpSyncBatchProcess, :postgres do
     context "when priority_ep_sync_batch_process destroys synced pepsq records" do
       before do
         allow(Rails.logger).to receive(:info)
+        pepsq_records.reload
         subject
       end
 
