@@ -5,8 +5,8 @@ import SearchBar from '../components/SearchBar';
 
 const FetchSearchBar = (props) => {
   const [searchText, setSearchText] = useState('');
-  const handleSearchTextChange = (event) => {
-    setSearchText(event);
+  const handleSearchTextChange = (newValue) => {
+    setSearchText(newValue);
   };
 
   const handleClearSearch = () => {
@@ -16,7 +16,6 @@ const FetchSearchBar = (props) => {
 
   const handleClick = (event) => {
     event.preventDefault();
-    // props.setClaimEvidenceDocs('');
     ApiUtil.get(`/reader/appeal/${props.vacolsId}/document_content_searches?search_term=${searchText}`).
       then((response) => (props.setClaimEvidenceDocs(response.body.appealDocuments, searchText)));
   };
