@@ -102,6 +102,8 @@ class WorkQueue::DecisionReviewTaskSerializer
 
   attribute :issue_types do |object|
     object[:issue_types] || request_issues(object).active.pluck(:nonrating_issue_category).join(",")
+    # TODO: Possibly display this in the DR queue?
+    # value.delete(",").presence ? value : "Unidentified Issue"
   end
 
   attribute :tasks_url do |object|
