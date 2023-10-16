@@ -70,6 +70,8 @@ import EndHoldModal from './components/EndHoldModal';
 import BulkAssignModal from './components/BulkAssignModal';
 import CompleteHearingPostponementRequestModal
   from './components/hearingMailRequestModals/CompleteHearingPostponementRequestModal';
+import CompleteHearingWithdrawalRequestModal
+  from './components/hearingMailRequestModals/CompleteHearingWithdrawalRequestModal';
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
@@ -659,6 +661,10 @@ class QueueApp extends React.PureComponent {
     <CompleteHearingPostponementRequestModal {...props.match.params} />
   );
 
+  routedCompleteHearingWithdrawalRequest = (props) => (
+    <CompleteHearingWithdrawalRequestModal {...props.match.params} />
+  );
+
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
       'Your Queue' :
@@ -1226,6 +1232,12 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.COMPLETE_AND_POSTPONE.value}`}
               title={`${PAGE_TITLES.COMPLETE_HEARING_POSTPONEMENT_REQUEST} | Caseflow`}
               render={this.routedCompleteHearingPostponementRequest}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.COMPLETE_AND_WITHDRAW.value}`}
+              title={`${PAGE_TITLES.COMPLETE_HEARING_WITHDRAWAL_REQUEST} | Caseflow`}
+              render={this.routedCompleteHearingWithdrawalRequest}
             />
             <PageRoute
               exact
