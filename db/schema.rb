@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_08_14_133820) do
+ActiveRecord::Schema.define(version: 2023_10_16_132819) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -576,16 +576,21 @@ ActiveRecord::Schema.define(version: 2023_08_14_133820) do
     t.integer "conference_id", comment: "Id of the conference"
     t.datetime "created_at", null: false, comment: "Date and Time of creation"
     t.bigint "created_by_id", null: false, comment: "User id of the user who created the record. FK on User table"
+    t.datetime "deleted_at", comment: "Needed column to make use of the paranoia gem."
     t.string "guest_hearing_link", comment: "Guest link for hearing daily docket."
     t.string "guest_pin_long", comment: "Pin provided for the guest, allowing them entry into the video conference."
     t.bigint "hearing_day_id", null: false, comment: "The associated hearing day id"
     t.string "host_link", comment: "Conference link generated from external conference service"
     t.integer "host_pin", comment: "Pin for the host of the conference to get into the conference"
     t.string "host_pin_long", limit: 8, comment: "Generated host pin stored as a string"
+    t.string "meeting_type", default: "pexip", comment: "Video Conferencing Application Type"
+    t.string "type", comment: "Pexip or Webex conference link"
     t.datetime "updated_at", comment: "Date and Time record was last updated"
     t.bigint "updated_by_id", comment: "user id of the user to last update the record. FK on the User table"
     t.index ["created_by_id"], name: "index_created_by_id"
+    t.index ["deleted_at"], name: "index_conference_links_on_deleted_at"
     t.index ["hearing_day_id"], name: "index_conference_links_on_hearing_day_id"
+    t.index ["type"], name: "index_conference_links_on_type"
     t.index ["updated_by_id"], name: "index_updated_by_id"
   end
 
@@ -1226,6 +1231,13 @@ ActiveRecord::Schema.define(version: 2023_08_14_133820) do
     t.index ["request_issue_id"], name: "index_legacy_issues_on_request_issue_id"
   end
 
+  create_table "meeting_types", force: :cascade do |t|
+    t.bigint "conferenceable_id"
+    t.string "conferenceable_type"
+    t.integer "service_name", default: 0, comment: "Pexip or Webex Instant Connect"
+    t.index ["conferenceable_type", "conferenceable_id"], name: "conferenceable_association_idx"
+  end
+
   create_table "membership_requests", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "decided_at", comment: "The date and time when the deider user made a decision about the membership request"
@@ -1338,7 +1350,11 @@ ActiveRecord::Schema.define(version: 2023_08_14_133820) do
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
+    t.index ["email_notification_external_id"], name: "index_notifications_on_email_notification_external_id"
+    t.index ["email_notification_status"], name: "index_notifications_on_email_notification_status"
     t.index ["participant_id"], name: "index_participant_id"
+    t.index ["sms_notification_external_id"], name: "index_notifications_on_sms_notification_external_id"
+    t.index ["sms_notification_status"], name: "index_notifications_on_sms_notification_status"
   end
 
   create_table "organizations", force: :cascade do |t|
@@ -1878,6 +1894,7 @@ ActiveRecord::Schema.define(version: 2023_08_14_133820) do
     t.string "email"
     t.string "full_name"
     t.datetime "last_login_at", comment: "The last time the user-agent (browser) provided session credentials; see User.from_session for precision"
+    t.string "meeting_type", default: "pexip", comment: "Video Conferencing Application Type"
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
@@ -2043,6 +2060,7 @@ ActiveRecord::Schema.define(version: 2023_08_14_133820) do
     t.string "host_pin_long", limit: 8, comment: "Change the host pin to store a longer pin with the # sign trailing"
     t.string "judge_email", comment: "Judge's email address"
     t.boolean "judge_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the judge"
+    t.string "meeting_type", default: "pexip", comment: "Video Conferencing Application Type"
     t.string "representative_email", comment: "Veteran's representative's email address"
     t.boolean "representative_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran's representative"
     t.datetime "representative_reminder_sent_at", comment: "The datetime the last reminder email was sent to the representative."
