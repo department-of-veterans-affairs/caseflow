@@ -43,10 +43,13 @@ def add_comment(text)
 end
 
 def clear_filters
-  # When the "clear filters" button is clicked, the filtering message is reset,
+  # When the "clear filters" button is clicked,
+  # the filtering message is reset,
+  # search inputs are reset,
   # and focus goes back on the Document toggle.
   find("#clear-filters").click
   expect(page.has_no_content?("Filtering by:")).to eq(true)
+  expect(page).to have_field("fetchDocumentsInput", with: "")
   expect(find("#button-documents")["class"]).to have_content("usa-button")
 end
 
@@ -118,11 +121,21 @@ RSpec.feature "Reader", :all_dbs do
     end
 
     feature "Document header filtering message" do
+      before do
+        allow(ClaimEvidenceService).to receive(:get_ocr_document).
+          and_return("the quick brown fox")
+      end
+
       background do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
       end
 
       it "clears all filters" do
+        # document contents search
+        page.fill_in("fetchDocumentsInput", with: "fox")
+        click_button("fetchDocumentContentsButton")
+        expect(page).to have_content("Document Contents")
+
         # category filter
         find("#categories-header .table-icon").click
         find(".checkbox-wrapper-procedural").click
