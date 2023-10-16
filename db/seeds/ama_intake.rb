@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-
+# Disable :reek:InstanceVariableAssumption
 module Seeds
   class AmaIntake < Base
     def initialize
@@ -32,19 +32,19 @@ module Seeds
       # 1 Appeal containing 180 Request Issues each with a Decision Issue
       appeal = create_appeal(first_veteran)
       180.times do
-        create_request_issue(:rating, appeal, first_veteran, :with_rating_decision_issue)
+        create_appeal_request_issue(:rating, appeal, first_veteran, :with_rating_decision_issue)
       end
 
       # 1 Higher Level Review containing 180 Request Issues each with a Decision Issue
       hlr_epe = create_end_product_establishment(:cleared_hlr, first_veteran)
       180.times do
-        create_request_issue(:rating, hlr_epe, first_veteran, :with_rating_decision_issue)
+        create_claim_review_request_issue(:rating, hlr_epe, first_veteran, :with_rating_decision_issue)
       end
 
       # 1 Supplemental Claim containing 60 Request Issues with no Decision Issues
       supp_epe = create_end_product_establishment(:active_supp, first_veteran)
       60.times do
-        create_request_issue(:nonrating, supp_epe, first_veteran)
+        create_claim_review_request_issue(:nonrating, supp_epe, first_veteran)
       end
 
       # Second Veteran with associated Decision Reviews, Request Issues, and Decision Issues
@@ -53,19 +53,19 @@ module Seeds
       # 1 Appeal containing 120 Request Issues each with a Decision Issue
       appeal = create_appeal(second_veteran)
       120.times do
-        create_request_issue(:rating, appeal, second_veteran, :with_rating_decision_issue)
+        create_appeal_request_issue(:rating, appeal, second_veteran, :with_rating_decision_issue)
       end
 
       # 1 Higher Level Review containing 120 Request Issue each with a Decision Issue
       hlr_epe = create_end_product_establishment(:cleared_hlr, second_veteran)
       120.times do
-        create_request_issue(:rating, hlr_epe, second_veteran, :with_rating_decision_issue)
+        create_claim_review_request_issue(:rating, hlr_epe, second_veteran, :with_rating_decision_issue)
       end
 
       # 1 Supplemental Claim containing 40 Request Issues with no Decision Issues
       supp_epe = create_end_product_establishment(:active_supp, second_veteran)
       40.times do
-        create_request_issue(:nonrating, supp_epe, second_veteran)
+        create_claim_review_request_issue(:nonrating, supp_epe, second_veteran)
       end
     end
 
@@ -80,14 +80,14 @@ module Seeds
       # 1 Appeal containing 7 Request Issues each with a Decision Issue
       appeal = create_appeal(first_veteran)
       7.times do
-        create_request_issue(:rating, appeal, first_veteran, :with_rating_decision_issue)
+        create_appeal_request_issue(:rating, appeal, first_veteran, :with_rating_decision_issue)
       end
 
       # 1 Higher Level Review containing 8 total Request Issues
       # Each Request Issue correlates to a single Decision Issue, except for one outlier correlating to 68 Decision Issues
       hlr_epe = create_end_product_establishment(:cleared_hlr, first_veteran)
       7.times do
-        create_request_issue(:rating, hlr_epe, first_veteran, :with_rating_decision_issue)
+        create_claim_review_request_issue(:rating, hlr_epe, first_veteran, :with_rating_decision_issue)
       end
       # Outlier Request Issue with 68 Decision Issues
       create_request_issue_with_many_decision_issues(:nonrating, hlr_epe, first_veteran, number_of_issues = 68)
@@ -99,7 +99,7 @@ module Seeds
       # Each Request Issue correlates to a single Decision Issue, except for one outlier correlating to 33 Decision Issues
       hlr_epe = create_end_product_establishment(:cleared_hlr, second_veteran)
       2.times do
-        create_request_issue(:rating, hlr_epe, second_veteran, :with_rating_decision_issue)
+        create_claim_review_request_issue(:rating, hlr_epe, second_veteran, :with_rating_decision_issue)
       end
       # Outlier Request Issue with 33 Decision Issues
       create_request_issue_with_many_decision_issues(:rating, hlr_epe, second_veteran, number_of_issues = 33)
@@ -116,14 +116,14 @@ module Seeds
       # 1 Appeal containing 17 Request Issues each with a Decision Issue
       appeal = create_appeal(first_veteran)
       17.times do
-        create_request_issue(:rating, appeal, first_veteran, :with_rating_decision_issue)
+        create_appeal_request_issue(:rating, appeal, first_veteran, :with_rating_decision_issue)
       end
 
       # 1 Higher Level Review containing 18 total Request Issues
       # Each Decision Issue correlates to a single Request Issue, except for one outlier correlating to 31 Request Issues
       hlr_epe = create_end_product_establishment(:cleared_hlr, first_veteran)
       17.times do
-        create_request_issue(:rating, hlr_epe, first_veteran, :with_rating_decision_issue)
+        create_claim_review_request_issue(:rating, hlr_epe, first_veteran, :with_rating_decision_issue)
       end
       # Outlier Decision Issue with 31 Request Issues
       create_decision_issue_with_many_request_issues(:nonrating, hlr_epe, first_veteran, number_of_issues = 31)
@@ -134,14 +134,14 @@ module Seeds
       # 1 Appeal containing 25 Request Issues each with a Decision Issue
       appeal = create_appeal(second_veteran)
       25.times do
-        create_request_issue(:rating, appeal, second_veteran, :with_rating_decision_issue)
+        create_appeal_request_issue(:rating, appeal, second_veteran, :with_rating_decision_issue)
       end
 
       # 1 Higher Level Review containing 25 total Request Issues
       # Each Decision Issue correlates to a single Request Issue, except for one outlier correlating to 31 Request Issues
       hlr_epe = create_end_product_establishment(:cleared_hlr, second_veteran)
       24.times do
-        create_request_issue(:rating, hlr_epe, second_veteran, :with_rating_decision_issue)
+        create_claim_review_request_issue(:rating, hlr_epe, second_veteran, :with_rating_decision_issue)
       end
       # Outlier Decision Issue with 25 Request Issues
       create_decision_issue_with_many_request_issues(:nonrating, hlr_epe, second_veteran, number_of_issues = 25)
@@ -157,42 +157,52 @@ module Seeds
       create(:appeal, veteran_file_number: veteran.file_number)
     end
 
-    def create_end_product_establishment(synced_status, veteran)
+    def create_end_product_establishment(synced_status_and_source, veteran)
       create(:end_product_establishment,
-            synced_status,
-            veteran_file_number: veteran.file_number,
-            claimant_participant_id: veteran.participant_id
+            synced_status_and_source,
+            veteran_file_number: veteran.file_number
             )
     end
 
-    def create_request_issue(rating_or_nonrating_trait, decision_review, veteran, rating_decision_issue_trait = nil)
+    # rubocop:disable Metrics/ParameterLists
+    # :reek:LongParameterList
+    def create_claim_review_request_issue(rating_or_nonrating_trait, claim_review, veteran, rating_decision_issue_trait = nil)
       if rating_decision_issue_trait
         create(:request_issue,
               rating_or_nonrating_trait,
               rating_decision_issue_trait,
               veteran_participant_id: veteran.participant_id,
-              decision_review: appeal?(decision_review) ? decision_review : decision_review.source,
-              end_product_establishment: appeal?(decision_review) ? nil : decision_review
+              decision_review: claim_review.source,
+              end_product_establishment: claim_review
               )
       else
         create(:request_issue,
               rating_or_nonrating_trait,
-              decision_review: appeal?(decision_review) ? decision_review : decision_review.source,
-              end_product_establishment: appeal?(decision_review) ? nil : decision_review,
-              veteran_participant_id: veteran.participant_id
+              decision_review: claim_review.source,
+              veteran_participant_id: veteran.participant_id,
+              end_product_establishment: claim_review
               )
       end
     end
 
-    def appeal?(decision_review)
-      decision_review.is_a?(Appeal)
+    # rubocop:disable Metrics/ParameterLists
+    # :reek:LongParameterList
+    def create_appeal_request_issue(rating_trait, appeal, veteran, rating_decision_issue_trait)
+      create(:request_issue,
+            rating_trait,
+            rating_decision_issue_trait,
+            veteran_participant_id: veteran.participant_id,
+            decision_review: appeal
+            )
     end
 
-    def create_request_issue_with_many_decision_issues(rating_or_nonrating_trait, decision_review, veteran, number_of_issues)
+    # rubocop:disable Metrics/ParameterLists
+    # :reek:LongParameterList
+    def create_request_issue_with_many_decision_issues(rating_or_nonrating_trait, hlr_epe, veteran, number_of_issues)
       request_issue = create(:request_issue,
                             rating_or_nonrating_trait,
-                            decision_review: appeal?(decision_review) ? decision_review : decision_review.source,
-                            end_product_establishment: appeal?(decision_review) ? nil : decision_review,
+                            decision_review: hlr_epe.source,
+                            end_product_establishment: hlr_epe,
                             veteran_participant_id: veteran.participant_id,
                             )
       decision_issues = create_list(:decision_issue,
@@ -204,16 +214,18 @@ module Seeds
       request_issue.save
     end
 
-    def create_decision_issue_with_many_request_issues(rating_or_nonrating_trait, decision_review, veteran, number_of_issues)
+    # rubocop:disable Metrics/ParameterLists
+    # :reek:LongParameterList
+    def create_decision_issue_with_many_request_issues(rating_or_nonrating_trait, hlr_epe, veteran, number_of_issues)
       decision_issue = create(:decision_issue,
                               participant_id: veteran.participant_id,
-                              decision_review: appeal?(decision_review) ? decision_review : decision_review.source
+                              decision_review: hlr_epe.source
                               )
       request_issues = create_list(:request_issue,
                                     number_of_issues,
                                     rating_or_nonrating_trait,
-                                    decision_review: decision_issue.decision_review,
-                                    end_product_establishment: appeal?(decision_review) ? nil : decision_review,
+                                    decision_review: hlr_epe.source,
+                                    end_product_establishment: hlr_epe,
                                     veteran_participant_id: veteran.participant_id
                                   )
       decision_issue.request_issues << request_issues
