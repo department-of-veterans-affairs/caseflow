@@ -64,6 +64,9 @@ RSpec.feature "Reader", :all_dbs do
     Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
 
     User.authenticate!(roles: ["Reader"])
+
+    # stub CE API response
+    allow(ClaimEvidenceService).to receive(:get_ocr_document).and_return("test document content!")
   end
 
   after do
@@ -122,8 +125,7 @@ RSpec.feature "Reader", :all_dbs do
 
     feature "Document header filtering message" do
       before do
-        allow(ClaimEvidenceService).to receive(:get_ocr_document).
-          and_return("the quick brown fox")
+        allow(ClaimEvidenceService).to receive(:get_ocr_document).and_return("the quick brown fox")
       end
 
       background do
