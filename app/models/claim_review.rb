@@ -111,9 +111,7 @@ class ClaimReview < DecisionReview
     end
   end
 
-  # TODO: This will still put tasks into on hold for vha if it's an unidentified issue without a decision date
   def request_issues_without_decision_dates?
-    # Perhaps use .nonrating or something like .where(is_unidentified: [nil, false])
     request_issues.active.any? { |issue| issue.decision_date.blank? }
   end
 
