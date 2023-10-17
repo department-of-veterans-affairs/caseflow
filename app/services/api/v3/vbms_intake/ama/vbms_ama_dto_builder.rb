@@ -3,6 +3,7 @@
 class Api::V3::VbmsIntake::Ama::VbmsAmaDtoBuilder
   attr_reader :json_response
 
+  # TODO: add method for legacy
   def initialize(veteran_participant_id, page)
     veteran_participant_id = veteran_participant_id.to_s
     page = page.to_i
