@@ -181,8 +181,6 @@ class ExternalApi::VADotGovService
     # }
     # ```
     def validate_zip_code(zip_code)
-      # Address.validate_zip5_code(zip_code)
-
       response = send_va_dot_gov_request(zip_code_validation_request(zip_code))
 
       ExternalApi::VADotGovService::AddressValidationResponse.new(response)
