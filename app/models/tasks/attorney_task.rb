@@ -26,10 +26,17 @@ class AttorneyTask < Task
       Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
     ].compact
 
-    movement_actions = [
-      Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
-      Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
-    ]
+    movement_actions = if appeal.is_a?(LegacyAppeal) && FeatureToggle.enable!(:vlj_legacy_appeal)
+                         [
+                           Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY_LEGACY.to_h,
+                           Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
+                         ]
+                       else
+                         [
+                           Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
+                           Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
+                         ]
+                       end
 
     actions_based_on_assignment(user, atty_actions, movement_actions)
   end
@@ -65,7 +72,7 @@ class AttorneyTask < Task
   end
 
   def reassign_clears_overtime?
-    FeatureToggle.enabled?(:overtime_persistence, user: RequestStore[:current_user]) ? false : true  
+    FeatureToggle.enabled?(:overtime_persistence, user: RequestStore[:current_user]) ? false : true
   end
 
   def send_back_to_judge_assign!(params = {})
@@ -91,9 +98,18 @@ class AttorneyTask < Task
   def can_be_moved_by_user?(user)
     return false unless parent.is_a?(JudgeTask)
 
+    # Allows SSC, SCM, VLJ's if legacy
+    if appeal.is_a?(LegacyAppeal)
+      return current_assignee?(user) || user&.can_act_on_behalf_of_legacy_judges?
+    end
+
     # The judge who is assigned the parent review task, the assigning judge, and SpecialCaseMovementTeam members can
     # cancel or reassign this task
-    parent.assigned_to == user || assigned_by == user || user&.can_act_on_behalf_of_judges?
+    current_assignee?(user) || user&.can_act_on_behalf_of_judges?
+  end
+
+  def current_assignee?(user)
+    parent.assigned_to == user || assigned_by == user
   end
 
   # VLJs can assign these to themselves
@@ -110,7 +126,8 @@ class AttorneyTask < Task
   end
 
   def assigned_by_role_is_valid
-    if assigned_by && (!assigned_by.judge? && !assigned_by.can_act_on_behalf_of_judges?)
+    if assigned_by && (!assigned_by.judge? && !assigned_by.can_act_on_behalf_of_judges? &&
+      !assigned_by.can_act_on_behalf_of_legacy_judges?)
       errors.add(:assigned_by, "has to be a judge or special case movement team member")
     end
   end
