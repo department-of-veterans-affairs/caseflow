@@ -1,4 +1,4 @@
-class Api::V3::VbmsIntake::VeteransController < Api::V3::BaseController
+class Api::V3::VbmsIntake::Ama::VeteransController < Api::V3::BaseController
   def issues
     @veteran = Veteran.find(params[:id]).id
     @page = params[:page].to_i

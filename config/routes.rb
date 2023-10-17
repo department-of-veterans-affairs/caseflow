@@ -50,7 +50,9 @@ Rails.application.routes.draw do
         get 'legacy_appeals', to: "legacy_appeals#index"
       end
       namespace :vbms_intake do
-        get "veterans/:id", to: "veterans#issues"
+        namespace :ama do
+          get "veterans/:id", to: "veterans#issues"
+        end
       end
     end
     namespace :docs do

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::V3::VbmsIntake::VbmsAmaDtoBuilder
+class Api::V3::VbmsIntake::Ama::VbmsAmaDtoBuilder
   attr_reader :json_response
 
   def initialize(veteran_participant_id, page)
