@@ -202,6 +202,10 @@ class ScheduleHearingTask < Task
     elsif params[:status] == Constants.TASK_STATUSES.cancelled
       # If we are cancelling the schedule hearing task, we need to withdraw the request
       created_tasks << withdraw_hearing(parent)
+
+      cancel_redundant_hearing_req_mail_tasks_of_type(HearingWithdrawalRequestMailTask)
+
+      created_tasks
     end
 
     # Return the created tasks

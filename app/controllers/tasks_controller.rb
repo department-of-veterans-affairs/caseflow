@@ -31,6 +31,7 @@ class TasksController < ApplicationController
     FoiaTask: FoiaTask,
     HearingAdminActionTask: HearingAdminActionTask,
     HearingPostponementRequestMailTask: HearingPostponementRequestMailTask,
+    HearingWithdrawalRequestMailTask: HearingWithdrawalRequestMailTask,
     InformalHearingPresentationTask: InformalHearingPresentationTask,
     JudgeAddressMotionToVacateTask: JudgeAddressMotionToVacateTask,
     JudgeAssignTask: JudgeAssignTask,

@@ -54,11 +54,13 @@ class AssignToView extends React.Component {
 
     const action = selectedAction(this.props);
 
+    const excludeExistingInstructions = ['HearingPostponementRequestMailTask', 'HearingWithdrawalRequestMailTask'];
+
     this.state = {
       selectedValue: action ? action.value : null,
       modalDisableButton: true,
       assignToVHARegionalOfficeSelection: null,
-      instructions: this?.props?.task?.type === 'HearingPostponementRequestMailTask' ? '' : existingInstructions
+      instructions: excludeExistingInstructions.includes(this?.props?.task?.type) ? '' : existingInstructions
     };
   }
 
@@ -393,7 +395,8 @@ class AssignToView extends React.Component {
       'VhaDocumentSearchTask',
       'EducationDocumentSearchTask',
       'AssessDocumentationTask',
-      'HearingPostponementRequestMailTask'
+      'HearingPostponementRequestMailTask',
+      'HearingWithdrawalRequestMailTask'
     ].includes(task.type)) {
       modalProps.submitDisabled = !this.validateForm();
       modalProps.submitButtonClassNames = ['usa-button'];
