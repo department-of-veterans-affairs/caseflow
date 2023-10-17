@@ -3,57 +3,57 @@
 describe Seeds::AmaIntake do
   let!(:seed) { Seeds::AmaIntake.new }
 
-  let!(:first_veteran_appeal_request_issues) do
+  let(:first_veteran_appeal_request_issues) do
     RequestIssue.where(decision_review: Appeal.first,
                        veteran_participant_id: Veteran.first.participant_id)
   end
 
-  let!(:first_veteran_decision_issues_for_appeal_request_issues) do
+  let(:first_veteran_decision_issues_for_appeal_request_issues) do
     first_veteran_appeal_request_issues.map(&:decision_issues)
   end
 
-  let!(:first_veteran_hlr_request_issues) do
+  let(:first_veteran_hlr_request_issues) do
     RequestIssue.where(decision_review: HigherLevelReview.first,
                        veteran_participant_id: Veteran.first.participant_id)
   end
 
-  let!(:first_veteran_decision_issues_for_hlr_request_issues) do
+  let(:first_veteran_decision_issues_for_hlr_request_issues) do
     first_veteran_hlr_request_issues.map(&:decision_issues)
   end
 
-  let!(:first_veteran_sc_request_issues) do
+  let(:first_veteran_sc_request_issues) do
     RequestIssue.where(decision_review: SupplementalClaim.first,
                        veteran_participant_id: Veteran.first.participant_id)
   end
 
-  let!(:first_veteran_decision_issues_for_sc_request_issues) do
+  let(:first_veteran_decision_issues_for_sc_request_issues) do
     first_veteran_sc_request_issues.map(&:decision_issues)
   end
 
-  let!(:second_veteran_appeal_request_issues) do
+  let(:second_veteran_appeal_request_issues) do
     RequestIssue.where(decision_review: Appeal.second,
                        veteran_participant_id: Veteran.second.participant_id)
   end
 
-  let!(:second_veteran_decision_issues_for_appeal_request_issues) do
+  let(:second_veteran_decision_issues_for_appeal_request_issues) do
     second_veteran_appeal_request_issues.map(&:decision_issues)
   end
 
-  let!(:second_veteran_hlr_request_issues) do
+  let(:second_veteran_hlr_request_issues) do
     RequestIssue.where(decision_review: HigherLevelReview.second,
                        veteran_participant_id: Veteran.second.participant_id)
   end
 
-  let!(:second_veteran_decision_issues_for_hlr_request_issues) do
+  let(:second_veteran_decision_issues_for_hlr_request_issues) do
     second_veteran_hlr_request_issues.map(&:decision_issues)
   end
 
-  let!(:second_veteran_sc_request_issues) do
+  let(:second_veteran_sc_request_issues) do
     RequestIssue.where(decision_review: SupplementalClaim.second,
                        veteran_participant_id: Veteran.second.participant_id)
   end
 
-  let!(:second_veteran_decision_issues_for_sc_request_issues) do
+  let(:second_veteran_decision_issues_for_sc_request_issues) do
     second_veteran_sc_request_issues.map(&:decision_issues)
   end
 
