@@ -41,6 +41,7 @@ const FetchSearchBar = (props) => {
 
 FetchSearchBar.propTypes = {
   vacolsId: PropTypes.string,
-  setClaimEvidenceDocs: PropTypes.func.isRequired
+  setClaimEvidenceDocs: PropTypes.func.isRequired,
+  setClearAllFiltersCallbacks: PropTypes.func.isRequired
 };
 export default FetchSearchBar;
