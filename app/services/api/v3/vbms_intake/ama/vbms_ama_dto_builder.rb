@@ -6,10 +6,13 @@ class Api::V3::VbmsIntake::Ama::VbmsAmaDtoBuilder
   # TODO: add method for legacy
   def initialize(veteran_participant_id, page)
     veteran_participant_id = veteran_participant_id.to_s
+    request_issue_count = total_request_issue_size(veteran_participant_id)
+    offset = RequestIssue.default_per_page
     @json_response = {
       "page": page,
-      "offset": 50,
-      "total": total_request_issue_size(veteran_participant_id),
+      "offset": offset,
+      "total_request_issues": request_issue_count,
+      "total_nubmer_of_pages": (request_issue_count / offset.to_f).ceil,
       "veteran_participant_id": veteran_participant_id,
       "legacy_appeals_present": false,
       "data": build_request_issue_decision_issue_json(veteran_participant_id, page)
@@ -19,7 +22,7 @@ class Api::V3::VbmsIntake::Ama::VbmsAmaDtoBuilder
   private
 
   def total_request_issue_size(veteran_participant_id)
-    RequestIssue.where(veteran_participant_id: veteran_participant_id).size
+    RequestIssue.where(veteran_participant_id: veteran_participant_id).size.to_i
   end
 
   def build_request_issue_decision_issue_json(veteran_participant_id, page)
