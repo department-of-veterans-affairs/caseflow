@@ -72,6 +72,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
 
       # Click the first issue actions button and select Add a decision date
       within "#issue-#{issue_id}" do
+        expect("issue-action-0").to_not have_content("Withdraw Issue")
         first("select").select("Add decision date")
       end
 
@@ -174,6 +175,8 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       # Edit the decision date for added issue
       # this is issue-undefined because the issue has not yet been created and does not have an id
       within "#issue-undefined" do
+        # newly made issue should not have withdraw issue as its not yet saved into the database
+        expect("issue-action-1").to_not have_content("Withdraw Issue")
         select("Add decision date", from: "issue-action-1")
       end
 
