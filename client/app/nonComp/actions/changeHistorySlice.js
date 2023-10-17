@@ -42,11 +42,7 @@ export const downloadReportCSV = createAsyncThunk('changeHistory/downloadReport'
       link.click();
       document.body.removeChild(link);
 
-      const meta = { analytics: true };
-
-      return { data: 'success', meta };
-      // If RTK is upgraded.
-      // return thunkApi.fulfillWithValue('success', { analytics: true });
+      return thunkApi.fulfillWithValue('success', { analytics: true });
 
     } catch (error) {
       console.error(error);

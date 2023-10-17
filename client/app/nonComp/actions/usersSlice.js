@@ -9,8 +9,23 @@ const initialState = {
   error: null,
 };
 
-// TODO: I need a better name for this. Maybe the whole slice too
-// TODO: Also need some sort of comment to help display all the possible query values and the call structure
+/**
+ * Asynchronous Redux Thunk for fetching user data based on different query parameters.
+ *
+ * @param {string} queryType - Specifies the type of query ('organization', 'css_id', 'role', etc.).
+ * @param {Object} queryParams - Additional parameters for the query, e.g., { query, judgeID, excludeOrg }.
+ *                 query - The data that is being used in the user query e.g. the org name or url
+ *                   - organization - the query can be the Organization name or url
+ *                   - role - [Attorney, Judge, HearingCoordinator, non_judges, non_dvcs]
+ *                   - css_id - The CSS ID or name of users
+ *                 optional params
+ *                   judgeID - optional parameter that is the id of a judge that can be used during the
+ *                             attorney role query. It returns only attorneys associated with that judge
+ *                   excludeOrg - optional parameter that is the name or url of an organizatoin used during
+ *                                the css_id query. It excludes users that are in that organization
+ * @returns {Promise<Object>} A Promise that resolves with the fetched user data and analytics metadata,
+ *                           or rejects with an error message and analytics information in case of failure.
+ */
 export const fetchUsers = createAsyncThunk('users/fetchUsers', async ({ queryType, queryParams }, thunkApi) => {
   let usersEndpoint = '/users';
   const { query, judgeID, excludeOrg } = queryParams;
@@ -23,7 +38,6 @@ export const fetchUsers = createAsyncThunk('users/fetchUsers', async ({ queryTyp
   } else if (queryType === 'role') {
     usersEndpoint = `${usersEndpoint}?role=${query}`;
   } else {
-    // TODO: The meta tags don't work with our version of rtk
     return thunkApi.rejectWithValue('Invalid query type', { analytics: true });
   }
 
@@ -49,9 +63,8 @@ export const fetchUsers = createAsyncThunk('users/fetchUsers', async ({ queryTyp
 
     // Some of the data contains .attributes and some doesn't so expand all the attributes out to the top level objects
     const preparedData = result.map(({ attributes, ...rest }) => ({ ...attributes, ...rest }));
-    const meta = { analytics: true };
 
-    return { data: preparedData, meta };
+    return thunkApi.fulfillWithValue(preparedData, { analytics: true });
 
   } catch (error) {
     console.error(error);
@@ -72,7 +85,7 @@ const usersSlice = createSlice({
       }).
       addCase(fetchUsers.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.users = action.payload.data;
+        state.users = action.payload;
       }).
       addCase(fetchUsers.rejected, (state, action) => {
         state.status = 'failed';

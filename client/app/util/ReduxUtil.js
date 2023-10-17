@@ -36,10 +36,7 @@ const debounceFns = {};
  */
 export const getReduxAnalyticsMiddleware = (defaultCategory) => (store) => (next) => (action) => {
   const dispatchedAction = next(action);
-  // const { meta } = action;
-
-  // This might be a way to fix this for async thunks???
-  const meta = { ...action.meta, ...action?.payload?.meta };
+  const { meta } = action;
 
   if (meta?.analytics) {
     if (isFunction(meta.analytics)) {
