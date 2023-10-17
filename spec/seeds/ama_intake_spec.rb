@@ -114,7 +114,7 @@ describe Seeds::AmaIntake do
 
     it "the second Veteran's Appeal has 120 Request Issues, each containing a Decision Issue" do
       expect(second_veteran_appeal_request_issues.size).to eq(120)
-      expect(second_veteran_decision_issues_for_appeal_request_issues.all? { |di_array| di_array.size == 1 }).to eq(true)
+      expect(second_veteran_decision_issues_for_appeal_request_issues.all? { |array| array.size == 1 }).to eq(true)
     end
 
     it "the second Veteran's Higher Level Review has 120 Request Issues, each containing a Decision Issue" do
