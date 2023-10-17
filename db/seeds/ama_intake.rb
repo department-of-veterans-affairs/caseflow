@@ -201,7 +201,8 @@ module Seeds
       decision_issues = create_list(:decision_issue,
                                     number_of_issues,
                                     participant_id: veteran.participant_id,
-                                    decision_review: hlr_epe.source                                    )
+                                    decision_review: hlr_epe.source
+                                    )
       request_issue = create(:request_issue,
                             rating_or_nonrating_trait,
                             decision_review: hlr_epe.source,
@@ -220,7 +221,7 @@ module Seeds
                                     decision_review: hlr_epe.source,
                                     end_product_establishment: hlr_epe,
                                     veteran_participant_id: veteran.participant_id
-                                  )
+                                    )
       decision_issue = create(:decision_issue,
                               participant_id: veteran.participant_id,
                               decision_review: hlr_epe.source,
