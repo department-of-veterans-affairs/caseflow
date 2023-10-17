@@ -34,7 +34,8 @@ class HeaderFilterMessage extends React.PureComponent {
       tagCount && `Issue tags (${tagCount})`,
       docTypeCount && `Document Types (${docTypeCount})`,
       receiptDateCount && `Receipt Date (${receiptDateCount})`,
-      (claimEvidenceSearchActive || claimEvidenceCount) && 'Document Contents'
+      claimEvidenceCount && 'Document Contents',
+      (claimEvidenceSearchActive && claimEvidenceCount === 0) && 'document contents'
     ]).join(', ');
 
     const className = classNames('document-list-filter-message', {
