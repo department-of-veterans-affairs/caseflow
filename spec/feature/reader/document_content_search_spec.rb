@@ -22,6 +22,9 @@ RSpec.feature "Reader", :all_dbs do
 
   before do
     User.authenticate!(roles: ["Reader"])
+    # stub OCR document data
+    allow(ClaimEvidenceService).to receive(:get_ocr_document)
+      .and_return("the quick brown fox", "peter piper picked")
   end
 
   feature "Document content search" do
@@ -30,11 +33,6 @@ RSpec.feature "Reader", :all_dbs do
     end
 
     context "when search results exist" do
-      before do
-        allow(ClaimEvidenceService).to receive(:get_ocr_document).
-          and_return("the quick brown fox", "peter piper picked")
-      end
-
       it "displays the correct filtering message" do
         page.fill_in("fetchDocumentsInput", with: "fox")
         click_button("fetchDocumentContentsButton")
@@ -45,11 +43,6 @@ RSpec.feature "Reader", :all_dbs do
     end
 
     context "when search results do not exist" do
-      before do
-        allow(ClaimEvidenceService).to receive(:get_ocr_document).
-          and_return("In a hole in the ground there lived a hobbit")
-      end
-
       it "displays the correct filtering message" do
         page.fill_in("fetchDocumentsInput", with: "balrog")
         click_button("fetchDocumentContentsButton")

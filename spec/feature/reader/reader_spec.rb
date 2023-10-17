@@ -182,6 +182,7 @@ RSpec.feature "Reader", :all_dbs do
         end
 
         it "clears the category filter" do
+          sleep 5
           find("#categories-header .table-icon").click
           find(".checkbox-wrapper-procedural").click
           find(".checkbox-wrapper-medical").click
@@ -246,6 +247,7 @@ RSpec.feature "Reader", :all_dbs do
 
       context "filter by document type" do
         it "displays the correct filtering message" do
+          sleep 5
           find(".doc-type-column .unselected-filter-icon").click
           find(:label, "NOD").click
           find(:label, "Form 9").click
