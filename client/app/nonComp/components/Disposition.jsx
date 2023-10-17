@@ -171,6 +171,10 @@ class NonCompDispositions extends React.PureComponent {
     let editIssuesLink = null;
     let displayPOAComponent = this.props.task.business_line === 'vha';
 
+    let emailTemplate = COPY.VHA_REQUEST_TO_CAMO_EMAIL_TEMPLATE.replace("#__LINK_TO_CLAIM__#", window.location.href);
+    let emailAddressRequestToCamo = process.env.NODE_ENV === 'production' ? COPY.VHA_BENEFIT_EMAIL_ADDRESS : COPY.VHA_UAT_EMAIL_ADDRESS
+    let requestToCamoMailLink = `mailto: ${emailAddressRequestToCamo}?subject=${COPY.VHA_RETURN_TO_CAMO_EMAIL_SUBJECT}&body=${encodeURIComponent(emailTemplate)}`;
+
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
         <div className="cf-txt-r">
@@ -184,6 +188,7 @@ class NonCompDispositions extends React.PureComponent {
 
       editIssuesLink = <React.Fragment>
         <a className="cf-link-btn" href={appeal.editIssuesUrl}>Edit Issues</a>
+        <a className="cf-link-btn" href={requestToCamoMailLink}> Send an Email</a>
       </React.Fragment>;
     }
 
