@@ -66,7 +66,7 @@ RSpec.feature "Reader", :all_dbs do
     User.authenticate!(roles: ["Reader"])
 
     # stub CE API response
-    allow(ClaimEvidenceService).to receive(:get_ocr_document).and_return("test document content!")
+    allow(ClaimEvidenceService).to receive(:get_ocr_document).and_return("the quick brown fox")
   end
 
   after do
@@ -124,9 +124,6 @@ RSpec.feature "Reader", :all_dbs do
     end
 
     feature "Document header filtering message" do
-      before do
-        allow(ClaimEvidenceService).to receive(:get_ocr_document).and_return("the quick brown fox")
-      end
 
       background do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
