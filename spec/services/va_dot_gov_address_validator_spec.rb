@@ -158,7 +158,6 @@ describe VaDotGovAddressValidator do
       include_examples "verify address admin action"
     end
 
-
     context "when veteran state is outside US territories" do
       let(:valid_address) { { country_code: "US", state_code: "AE" } }
 
@@ -187,7 +186,6 @@ describe VaDotGovAddressValidator do
       Caseflow::Error::VaDotGovMultipleAddressError.new(code: 500, message: "")
     ].each do |error|
       context "when va_dot_gov_service throws a #{error.class.name} error and zipcode fallback fails" do
-
         before do
           allow_any_instance_of(ExternalApi::VADotGovService::AddressValidationResponse).to receive(:error)
             .and_return(error)
