@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Seeds::AmaIntake do
-  let!(:seed) { Seeds::AmaIntake.new }
+  let(:seed) { Seeds::AmaIntake.new }
 
   let(:first_veteran_appeal_request_issues) do
     RequestIssue.where(decision_review: Appeal.first,
@@ -57,6 +57,24 @@ describe Seeds::AmaIntake do
     second_veteran_sc_request_issues.map(&:decision_issues)
   end
 
+  let(:first_veteran_hlr_decision_issues) do
+    DecisionIssue.where(decision_review: HigherLevelReview.first,
+                        participant_id: Veteran.first.participant_id)
+  end
+
+  let(:first_veteran_request_issues_for_hlr_decision_issues) do
+    first_veteran_hlr_decision_issues.map(&:request_issues)
+  end
+
+  let(:second_veteran_hlr_decision_issues) do
+    DecisionIssue.where(decision_review: HigherLevelReview.second,
+                        participant_id: Veteran.second.participant_id)
+  end
+
+  let(:second_veteran_request_issues_for_hlr_decision_issues) do
+    second_veteran_hlr_decision_issues.map(&:request_issues)
+  end
+
   context "#seed!" do
     it "seeds total of 6 Veterans, 5 Appeals, 6 Higher Level Reviews End Product Establishments,
       2 Supplemental Claim End Product Establishments, 803 Request Issues, and 748 Decision Issues" do
@@ -101,7 +119,7 @@ describe Seeds::AmaIntake do
       expect(first_veteran_decision_issues_for_hlr_request_issues.all? { |di_array| di_array.size == 1 }).to eq(true)
     end
 
-    it "the first Veteran's Supplemental Claim has 60 Request Issues, none of which containing a Decision Issue" do
+    it "the first Veteran's Supplemental Claim has 60 Request Issues, none of which contain a Decision Issue" do
       expect(first_veteran_sc_request_issues.size).to eq(60)
       expect(first_veteran_decision_issues_for_sc_request_issues.all?(&:empty?)).to eq(true)
     end
@@ -122,7 +140,7 @@ describe Seeds::AmaIntake do
       expect(second_veteran_decision_issues_for_hlr_request_issues.all? { |di_array| di_array.size == 1 }).to eq(true)
     end
 
-    it "the second Veteran's Supplemental Claim has 40 Request Issues, none of which containing a Decision Issue" do
+    it "the second Veteran's Supplemental Claim has 40 Request Issues, none of which contain a Decision Issue" do
       expect(second_veteran_sc_request_issues.size).to eq(40)
       expect(second_veteran_decision_issues_for_sc_request_issues.all?(&:empty?)).to eq(true)
     end
@@ -153,13 +171,13 @@ describe Seeds::AmaIntake do
       expect(first_veteran_decision_issues_for_appeal_request_issues.all? { |di_array| di_array.size == 1 }).to eq(true)
     end
 
-    it "the first Veteran's Higher Level Review has 8 Request Issues, the first 7 containing a single Decision Issue" do
+    it "the first Veteran's Higher Level Review has 8 Request Issues, 7 containing a single Decision Issue" do
       expect(first_veteran_hlr_request_issues.size).to eq(8)
-      expect(first_veteran_decision_issues_for_hlr_request_issues.first(7).all? { |array| array.size == 1 }).to eq(true)
+      expect(first_veteran_decision_issues_for_hlr_request_issues.count { |array| array.size == 1 }).to eq(7)
     end
 
-    it "the last Request Issue on the first Veteran's Higher Level Review is associated with 68 Decision Issues" do
-      expect(first_veteran_decision_issues_for_hlr_request_issues.last.size).to eq(68)
+    it "one Request Issue on the first Veteran's Higher Level Review is associated with 68 Decision Issues" do
+      expect(first_veteran_decision_issues_for_hlr_request_issues.count { |array| array.size == 68 }).to eq(1)
     end
 
     it "the second Veteran has 1 decision review: a Higher Level Review" do
@@ -168,13 +186,13 @@ describe Seeds::AmaIntake do
       expect(HigherLevelReview.where(veteran_file_number: Veteran.second.file_number).size).to eq(1)
     end
 
-    it "the second Veteran's Higher Level Review has 3 Request Issues, the first two containing a Decision Issue" do
+    it "the second Veteran's Higher Level Review has 3 Request Issues, two containing a single Decision Issue" do
       expect(second_veteran_hlr_request_issues.size).to eq(3)
-      expect(second_veteran_decision_issues_for_hlr_request_issues.first(2).all? { |arr| arr.size == 1 }).to eq(true)
+      expect(second_veteran_decision_issues_for_hlr_request_issues.count { |arr| arr.size == 1 }).to eq(2)
     end
 
-    it "the last Request Issue on the second Veteran's Higher Level Review is associated with 33 Decision Issues" do
-      expect(second_veteran_decision_issues_for_hlr_request_issues.last.size).to eq(33)
+    it "one Request Issue on the second Veteran's Higher Level Review is associated with 33 Decision Issues" do
+      expect(second_veteran_decision_issues_for_hlr_request_issues.count { |arr| arr.size == 33 }).to eq(1)
     end
   end
 
@@ -203,13 +221,13 @@ describe Seeds::AmaIntake do
       expect(first_veteran_decision_issues_for_appeal_request_issues.all? { |di_array| di_array.size == 1 }).to eq(true)
     end
 
-    it "the first Veteran's Higher Level Review has 3 Request Issues, the first 2 containing a single Decision Issue" do
+    it "the first Veteran's Higher Level Review has 33 Request Issues, two containing a single Decision Issue" do
       expect(first_veteran_hlr_request_issues.size).to eq(33)
-      expect(first_veteran_decision_issues_for_hlr_request_issues.first(2).all? { |array| array.size == 1 }).to eq(true)
+      expect(first_veteran_request_issues_for_hlr_decision_issues.count { |array| array.size == 1 }).to eq(2)
     end
 
-    it "the last Decision Issue on the first Veteran's Higher Level Review is associated with 31 Request Issues" do
-      expect(first_veteran_decision_issues_for_hlr_request_issues.flatten.last.request_issues.size).to eq(31)
+    it "one Decision Issue on the first Veteran's Higher Level Review is associated with 31 Request Issues" do
+      expect(first_veteran_hlr_decision_issues.count { |di| di.request_issues.size == 31 }).to eq(1)
     end
 
     it "the second Veteran has 2 decision reviews: one Appeal and one Higher Level Review" do
@@ -223,13 +241,13 @@ describe Seeds::AmaIntake do
       expect(second_veteran_decision_issues_for_appeal_request_issues.all? { |arr| arr.size == 1 }).to eq(true)
     end
 
-    it "the second Veteran's Higher Level Review has 38 Request Issues, the first 13 containing a Decision Issue" do
+    it "the second Veteran's Higher Level Review has 38 Request Issues, 13 containing a single Decision Issue" do
       expect(second_veteran_hlr_request_issues.size).to eq(38)
-      expect(second_veteran_decision_issues_for_hlr_request_issues.first(13).all? { |arr| arr.size == 1 }).to eq(true)
+      expect(second_veteran_request_issues_for_hlr_decision_issues.count { |array| array.size == 1 }).to eq(13)
     end
 
-    it "the last Decision Issue on the second Veteran's Higher Level Review is associated with 25 Request Issues" do
-      expect(second_veteran_decision_issues_for_hlr_request_issues.flatten.last.request_issues.size).to eq(25)
+    it "one Decision Issue on the second Veteran's Higher Level Review is associated with 25 Request Issues" do
+      expect(second_veteran_hlr_decision_issues.count { |di| di.request_issues.size == 25 }).to eq(1)
     end
   end
 end
