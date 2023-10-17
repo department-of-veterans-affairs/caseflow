@@ -278,15 +278,10 @@ class VirtualHearing < CaseflowRecord
     update!(host_hearing_link: link_service.host_link, guest_hearing_link: link_service.guest_link)
   end
 
-  def meeting_details_for_conference
+  def subject_for_conference
     appeal = hearing.appeal
 
-    {
-      title: "#{appeal.docket_number}_#{appeal.id}_#{appeal.class}",
-      start: hearing.scheduled_for.beginning_of_day.iso8601,
-      end: hearing.scheduled_for.end_of_day.iso8601,
-      timezone: hearing.scheduled_for.time_zone.name
-    }
+    "#{appeal.docket_number}_#{appeal.id}_#{appeal.class}"
   end
 
   private

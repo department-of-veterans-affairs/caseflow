@@ -475,7 +475,7 @@ describe VirtualHearing do
     end
   end
 
-  context "#meeting_details_for_conference" do
+  context "#subject_for_conference" do
     let(:expected_date) { "Sep 22, 2023" }
     let(:expected_date_parsed) { Date.parse(expected_date) }
     let(:hearing_day) do
@@ -483,17 +483,14 @@ describe VirtualHearing do
     end
     let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
 
-    subject { virtual_hearing.meeting_details_for_conference }
+    subject { virtual_hearing.subject_for_conference }
 
     context "For an AMA Hearing" do
       let(:hearing) { create(:hearing, hearing_day: hearing_day) }
 
       it "returns the expected meeting conference details" do
         is_expected.to eq(
-          title: "#{hearing.appeal.docket_number}_#{hearing.appeal.id}_Appeal",
-          start: "2023-09-22T00:00:00-04:00",
-          end: "2023-09-22T23:59:59-04:00",
-          timezone: "America/New_York"
+          "#{hearing.appeal.docket_number}_#{hearing.appeal.id}_#{hearing.appeal.class.name}"
         )
       end
     end

@@ -16,9 +16,11 @@ class WebexConferenceLink < ConferenceLink
 
     conference = WebexService.new.create_conference(hearing_day)
 
+    base_url = conference.data[:baseUrl]
+
     update!(
-      host_link: conference.data[:webLink],
-      guest_hearing_link: conference.data[:webLink]
+      host_link: "#{base_url}#{conference.data[:host].first[:short]}",
+      guest_hearing_link: "#{base_url}#{conference.data[:guest].first[:short]}",
     )
   end
 end
