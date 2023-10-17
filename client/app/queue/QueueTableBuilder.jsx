@@ -183,14 +183,7 @@ const QueueTableBuilder = (props) => {
     const { isVhaOrg } = props;
 
     if (tabConfig.contains_legacy_tasks) {
-      props.assignedTasks.forEach((assignedTask) => {
-        const i = tasks.findIndex((task) => task.externalAppealId === assignedTask.uniqueId);
-
-        if (i <= -1) {
-          tasks.unshift(assignedTask);
-        }
-      });
-
+      tasks.unshift(...props.assignedTasks);
       totalTaskCount = tasks.length;
 
       noCasesMessage = totalTaskCount === 0 && (

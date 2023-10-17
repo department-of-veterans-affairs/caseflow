@@ -10,7 +10,9 @@ class CompleteCaseReview
 
   def call
     @success = case_review.valid?
+
     create_next_task if success
+
     FormResponse.new(success: success, errors: [response_errors], extra: completed_case_review)
   end
 

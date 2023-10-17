@@ -45,11 +45,6 @@ class JudgeCaseReview < CaseflowRecord
     update_issue_dispositions_in_caseflow!
   end
 
-  def update_in_vacols_and_caseflow!
-    update_in_vacols!
-    task.update!(status: Constants.TASK_STATUSES.completed)
-  end
-
   private
 
   def sign_decision_or_create_omo!
@@ -89,12 +84,7 @@ class JudgeCaseReview < CaseflowRecord
       ActiveRecord::Base.multi_transaction do
         record = create(params)
         if record.valid?
-
-          if record.legacy? && record.task&.type == "JudgeDecisionReviewTask"
-            record.update_in_vacols_and_caseflow!
-          else
-            record.legacy? ? record.update_in_vacols! : record.update_in_caseflow!
-          end
+          record.legacy? ? record.update_in_vacols! : record.update_in_caseflow!
           record.associate_with_appeal
         end
         record
