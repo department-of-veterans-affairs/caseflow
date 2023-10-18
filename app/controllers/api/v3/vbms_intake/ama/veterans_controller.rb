@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# :reek:InstanceVariableAssumption
 class Api::V3::VbmsIntake::Ama::VeteransController < Api::V3::BaseController
   def show
     @veteran = Veteran.find(params[:participant_id]).id
