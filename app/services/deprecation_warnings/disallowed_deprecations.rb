@@ -17,9 +17,9 @@ module DisallowedDeprecations
     /update_attributes is deprecated and will be removed from Rails 6\.1/,
     /ActionView::Base instances should be constructed with a lookup context, assignments, and a controller./,
     /render file: should be given the absolute path to a file/,
-    /`ActiveRecord::Result#to_hash` has been renamed to `to_a`/
+    /`ActiveRecord::Result#to_hash` has been renamed to `to_a`/,
+    /Controller-level `force_ssl` is deprecated and will be removed from Rails 6\.1/
   ].freeze
-
   # Regular expressions for deprecation warnings that should raise an exception on detection
   DISALLOWED_DEPRECATION_WARNING_REGEXES = [
     *RAILS_6_0_FIXED_DEPRECATION_WARNING_REGEXES,
