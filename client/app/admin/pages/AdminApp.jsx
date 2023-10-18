@@ -38,6 +38,7 @@ class AdminApp extends React.PureComponent {
                 title="admin"
                 render={this.admin}
               />
+              {this.props.featureToggles}
               <GenerateButton
                 sendExtractRequest={this.props.sendExtractRequest}
                 {...this.props.extractReducer}

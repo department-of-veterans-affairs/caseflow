@@ -5,6 +5,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     useAmaActivationDate: {
       $set: Boolean(featureToggles.useAmaActivationDate)
     },
+    adminCaseDistribution: {
+      $set: Boolean(featureToggles.adminCaseDistribution)
+    },
     correctClaimReviews: {
       $set: Boolean(featureToggles.correctClaimReviews)
     },
@@ -34,7 +37,8 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) =>
       filedByVaGovHlr: false,
       updatedIntakeForms: false,
       eduPreDocketAppeals: false,
-      updatedAppealForm: false
+      updatedAppealForm: false,
+      adminCaseDistribution: false
     },
     data.featureToggles
   );
