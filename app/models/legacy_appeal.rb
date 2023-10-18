@@ -1172,6 +1172,10 @@ class LegacyAppeal < CaseflowRecord
       )
     end
 
+    def veteran_has_appeals_in_vacols?(file_number)
+      fetch_appeals_by_file_number(file_number).any?
+    end
+
     private
 
     def close_single(appeal:, user:, closed_on:, disposition:)
