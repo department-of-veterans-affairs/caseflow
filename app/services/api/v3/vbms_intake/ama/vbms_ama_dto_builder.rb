@@ -41,7 +41,7 @@ class Api::V3::VbmsIntake::Ama::VbmsAmaDtoBuilder
       "max_request_issues_per_page": @offset,
       "veteran_participant_id": @veteran_participant_id,
       "legacy_appeals_present": @legacy_appeals_present_boolean,
-      "request_issues": @request_issues.to_json
+      "request_issues": @request_issues
     }.to_json
   end
 end
