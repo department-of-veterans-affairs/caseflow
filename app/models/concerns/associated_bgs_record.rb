@@ -41,6 +41,61 @@ module AssociatedBgsRecord
       self::CACHED_BGS_ATTRIBUTES # consumers must define
     end
 
+    def ineligible_judges
+      ineligible_vacols_judges = VACOLS::Staff.find_by_sql(
+        <<-SQL
+          SELECT STAFF.SDOMAINID, STAFF.SACTIVE, STAFF.SVLJ
+          FROM STAFF
+          WHERE ((STAFF.SACTIVE = 'I') OR ((STAFF.SVLJ <> 'A'
+          OR STAFF.SVLJ IS NULL)
+          AND (STAFF.SVLJ <> 'J' OR STAFF.SVLJ IS NULL)))
+          AND STAFF.SDOMAINID IS NOT NULL
+        SQL
+      )
+      ineligible_caseflow_judges(ineligible_vacols_judges)
+    end
+
+    def ineligible_caseflow_judges(ineligible_vacols_judges)
+      # {Use the sdomainid to match with the css_id on the users table. Then check which are inactive and return list}
+      css_ids = ineligible_vacols_judges.filter_map(&:sdomainid).join(", ")
+      User.find_by_sql(
+        <<-SQL
+        SELECT *
+        FROM users
+        LEFT JOIN (#{css_ids}) AS staff ON staff.sdomainid = users.css_id
+        WHERE (users.status <> 'active'
+        OR users.status IS NULL)
+        SQL
+      )
+    end
+
+    def ineligible_vacols_judges2
+      VACOLS::Staff.find_by_sql(
+        <<-SQL
+          SELECT STAFF.SDOMAINID, STAFF.SACTIVE, STAFF.SVLJ
+          FROM STAFF
+          WHERE ((STAFF.SACTIVE = 'I') OR ((STAFF.SVLJ <> 'A'
+          OR STAFF.SVLJ IS NULL)
+          AND (STAFF.SVLJ <> 'J' OR STAFF.SVLJ IS NULL)))
+          AND STAFF.SDOMAINID IS NOT NULL
+        SQL
+      )
+    end
+
+    def ineligible_judges2
+      # {Use the sdomainid to match with the css_id on the users table. Then check which are inactive and return list}
+      User.find_by_sql(
+        <<-SQL
+        SELECT *
+        FROM users
+        LEFT JOIN (#{ineligible_vacols_judges2}) AS ineligible_vacols_judges ON
+        ineligible_vacols_judges.sdomainid = users.css_id
+        WHERE (users.status <> 'active'
+        OR users.status IS NULL)
+        SQL
+      )
+    end
+
     private
 
     def extract_attributes_and_options(attributes)
