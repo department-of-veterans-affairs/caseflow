@@ -38,7 +38,7 @@ gem "moment_timezone-rails"
 gem "multiverse"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.11.0.rc4"
-gem "paper_trail", "~> 10"
+gem "paper_trail", "~> 12.0"
 # Used to speed up reporting
 gem "parallel"
 # soft delete gem
