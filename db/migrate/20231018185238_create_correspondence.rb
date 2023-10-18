@@ -1,4 +1,4 @@
-class CreateCorrespondence < ActiveRecord::Migration[5.2]
+class CreateCorrespondence < Caseflow::Migration
   def change
     create_table :correspondences do |t|
       t.timestamps null: false, comment: "Standard created_at/updated_at timestamps"
