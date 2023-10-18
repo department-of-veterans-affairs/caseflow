@@ -2,6 +2,12 @@
 
 # :reek:InstanceVariableAssumption
 class Api::V3::VbmsIntake::Ama::VeteransController < Api::V3::BaseController
+  include ApiV3FeatureToggleConcern
+
+  before_action do
+    FeatureToggle.enabled?(:api_v3_vbms_intake_ama)
+  end
+
   def show
     @veteran = Veteran.find_by!(participant_id: params[:participant_id])
     @page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]
