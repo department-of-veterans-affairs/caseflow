@@ -6,17 +6,18 @@
 module DisallowedDeprecations
   class ::DisallowedDeprecationError < StandardError; end
 
-  # Regular expressions for Rails 6.0 deprecation warnings that we have addressed in the codebase
+  # Regular expressions for fixed deprecation warnings with a deprecation horizon of Rails 6.0
   RAILS_6_0_FIXED_DEPRECATION_WARNING_REGEXES = [
     /Dangerous query method \(method whose arguments are used as raw SQL\) called with non\-attribute argument\(s\)/,
     /The success\? predicate is deprecated and will be removed in Rails 6\.0/
   ].freeze
 
-  # Regular expressions for Rails 6.1 deprecation warnings that we have addressed in the codebase
+  # Regular expressions for fixed deprecation warnings with a deprecation horizon of Rails 6.1
   RAILS_6_1_FIXED_DEPRECATION_WARNING_REGEXES = [
     /update_attributes is deprecated and will be removed from Rails 6\.1/,
     /ActionView::Base instances should be constructed with a lookup context, assignments, and a controller./,
-    /render file: should be given the absolute path to a file/
+    /render file: should be given the absolute path to a file/,
+    /`ActiveRecord::Result#to_hash` has been renamed to `to_a`/
   ].freeze
 
   # Regular expressions for deprecation warnings that should raise an exception on detection
