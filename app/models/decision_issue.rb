@@ -27,16 +27,6 @@ class DecisionIssue < CaseflowRecord
   has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
   has_many :contesting_request_issues, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"
 
-  # Only specific fields VBMS wants in their response
-  # rubocop:disable Style/Lambda
-  scope :for_vbms, -> {
-    select(:id, :decision_review_id, :caseflow_decision_date, :created_at, :decision_text, :deleted_at,
-           :description, :diagnostic_code, :disposition, :end_product_last_action_date,
-           :percent_number, :rating_issue_reference_id, :rating_profile_date,
-           :rating_promulgation_date, :subject_text, :updated_at)
-  }
-  # rubocop:enable Style/Lambda
-
   # NOTE: These are the string identifiers for remand dispositions returned from VBMS.
   #       The characters and encoding are precise so don't change these unless you
   #       know they match VBMS values.
