@@ -8,25 +8,29 @@ class Api::V3::VbmsIntake::Ama::VbmsAmaDtoBuilder
   def initialize(veteran_participant_id, page)
     @page = page
     @veteran_participant_id = veteran_participant_id.to_s
-    @request_issues = serialized_request_issues(veteran_participant_id)
-    @request_issue_size = @request_issues.size
+    @request_issue_count = total_request_issue_count
+    @request_issues = serialized_request_issues
     @offset = RequestIssue.default_per_page
     @json_response = build_json_response
   end
 
   private
 
-  def serialized_request_issues(veteran_participant_id)
+  def total_request_issue_count
+    RequestIssue.where(veteran_participant_id: @veteran_participant_id).count
+  end
+
+  def serialized_request_issues
     Api::V3::VbmsIntake::Ama::RequestIssueSerializer.new(
-      RequestIssue.includes(:decision_issues).where(veteran_participant_id: veteran_participant_id)
+      RequestIssue.includes(:decision_issues).where(veteran_participant_id: @veteran_participant_id).page(@page)
     ).serializable_hash[:data]
   end
 
   def build_json_response
     {
       "page": @page,
-      "total_nubmer_of_pages": (@request_issue_size / @offset.to_f).ceil,
-      "total_request_issues_for_vet": @request_issue_size,
+      "total_nubmer_of_pages": (@request_issue_count / @offset.to_f).ceil,
+      "total_request_issues_for_vet": @request_issue_count,
       "max_request_issues_per_page": @offset,
       "veteran_participant_id": @veteran_participant_id,
       "legacy_appeals_present": false,
