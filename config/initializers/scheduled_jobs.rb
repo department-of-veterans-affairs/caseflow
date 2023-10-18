@@ -26,7 +26,6 @@ SCHEDULED_JOBS = {
     "prepare_establish_claim" => PrepareEstablishClaimTasksJob,
     "push_priority_appeals_to_judges" => PushPriorityAppealsToJudgesJob,
     "quarterly_metrics" => QuarterlyMetricsReportJob,
-    "process_notification_status_updates_job" => ProcessNotificationStatusUpdatesJob,
     "quarterly_notifications_job" => QuarterlyNotificationsJob,
     "reassign_old_tasks" => ReassignOldTasksJob,
     "retrieve_documents_for_reader" => RetrieveDocumentsForReaderJob,
