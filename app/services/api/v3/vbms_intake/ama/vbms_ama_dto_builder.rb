@@ -36,7 +36,7 @@ class Api::V3::VbmsIntake::Ama::VbmsAmaDtoBuilder
   def build_json_response
     {
       "page": @page,
-      "total_nubmer_of_pages": (@request_issue_count / @offset.to_f).ceil,
+      "total_number_of_pages": (@request_issue_count / @offset.to_f).ceil,
       "total_request_issues_for_vet": @request_issue_count,
       "max_request_issues_per_page": @offset,
       "veteran_participant_id": @veteran_participant_id,
