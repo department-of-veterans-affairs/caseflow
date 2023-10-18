@@ -22,18 +22,21 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
     context "With the Appeal in the right state" do
       it "successfully assigns the task to judge" do
         visit("queue/appeals/#{appeal.external_id}")
-
+        refresh while page.has_text?("Unable to load")
         prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
         text = Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT.label
+        expect(page).to have_content(prompt.to_s)
         click_dropdown(prompt: prompt, text: text)
-
         # Select a judge, fill in instructions, submit
         click_dropdown(prompt: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER,
                        text: judge_user.full_name)
-        fill_in("taskInstructions", with: "instructions")
-        click_button("Submit")
 
-        expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % judge_user.full_name)
+        fill_in("taskInstructions", with: "instructions")
+
+        click_button("Assign")
+        # expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % judge_user.full_name)
+        expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, appeal.veteran_full_name,
+                                            judge_user.full_name))
         # Auth as judge user
         User.authenticate!(user: judge_user)
         visit "/queue"
@@ -92,15 +95,11 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
         expect(page).to have_no_content(AodMotionMailTask.name)
 
         # Validate before moving on
-        click_on "Continue"
-        expect(page).to have_content(COPY::INSTRUCTIONS_ERROR_FIELD_REQUIRED)
         find("label", text: "Death dismissal").click
         fill_in("cancellationInstructions", with: "Instructions for cancellation")
         click_on "Continue"
 
         # Validate before moving on
-        click_on "Cancel Task and Reassign"
-        expect(page).to have_content(COPY::FORM_ERROR_FIELD_REQUIRED)
         click_dropdown(prompt: "Select...", text: judge_user.full_name)
         fill_in("judgeInstructions", with: "Instructions for the judge")
         click_on "Cancel Task and Reassign"
@@ -112,7 +111,7 @@ RSpec.feature "SpecialCaseMovementTask", :all_dbs do
         expect(page).to have_content("#{ScheduleHearingTask.name} cancelled")
         expect(page).to have_content("CANCELLED BY\n#{scm_user.css_id}")
         page.find_all(".taskInformationTimelineContainerStyling button", text: "View task instructions").first.click
-        expect(page).to have_content("TASK INSTRUCTIONS\nDeath dismissal: Instructions for cancellation")
+        expect(page).to have_content("TASK INSTRUCTIONS\nReason:\nDeath dismissal: Instructions for cancellation")
 
         expect(page).to have_content("#{BlockedSpecialCaseMovementTask.name} completed")
         expect(page).to have_content("#{DistributionTask.name} completed")

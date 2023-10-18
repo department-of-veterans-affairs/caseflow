@@ -143,9 +143,11 @@ class QueueApp extends React.PureComponent {
       caseflowVeteranIds = veteranIdsParameter.split(',');
     }
 
-    return <CaseListView caseflowVeteranIds={caseflowVeteranIds} />;
+    return <CaseListView
+      caseflowVeteranIds={caseflowVeteranIds}
+    />;
   };
-
+  /* eslint-enable max-len */
   viewForUserRole = () => {
     const { userRole } = this.props;
 
@@ -164,6 +166,7 @@ class QueueApp extends React.PureComponent {
     </QueueLoadingScreen>
   );
 
+  // eslint-disable-next-line react/prop-types
   routedTeamQueueList = (label) => ({ match }) => (
     <QueueLoadingScreen
       {...this.propsForQueueLoadingScreen()}
@@ -188,7 +191,8 @@ class QueueApp extends React.PureComponent {
       }
       appealId={props.match.params.appealId}
       userCanAccessReader={
-        !this.props.hasCaseDetailsRole && !this.props.userCanViewHearingSchedule
+        !this.props.hasCaseDetailsRole &&
+        !this.props.userCanViewHearingSchedule
       }
       userCanEditUnrecognizedPOA={this.props.userCanEditUnrecognizedPOA}
       vsoVirtualOptIn={this.props.featureToggles.vso_virtual_opt_in}
@@ -302,6 +306,10 @@ class QueueApp extends React.PureComponent {
     <AssignToAttorneyModalView userId={this.props.userId} match={props.match} />
   );
 
+  routedAssignToAttorneyLegacy = (props) => (
+    <AssignToAttorneyModalView userId={this.props.userId} match={props.match} />
+  );
+
   routedAssignToSingleTeam = (props) => (
     <AssignToView
       isTeamAssign
@@ -331,6 +339,8 @@ class QueueApp extends React.PureComponent {
   );
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
+
+  routedSpecialCaseMovementLegacy = (props) => <AssignToView {...props.match.params} />;
 
   routedPulacCerulloReminder = (props) => {
     const { appealId, taskId } = props.match.params;
@@ -382,8 +392,14 @@ class QueueApp extends React.PureComponent {
     <AssignToView isReassignAction {...props.match.params} />
   );
 
+  routedReassignToJudgeLegacy = (props) => (
+    <AssignToView isReassignAction {...props.match.params} />
+  );
+
   routedCompleteTaskModal = (props) => (
-    <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />
+    <CompleteTaskModal
+      modalType="mark_task_complete"
+      {...props.match.params} />
   );
 
   routedCompleteTaskContestedClaimModal = (props) => (
@@ -845,6 +861,14 @@ class QueueApp extends React.PureComponent {
               render={this.routedBlockedCaseMovement}
             />
 
+            <Route
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY.value
+                }`}
+              render={this.routedBlockedCaseMovement}
+            />
+
             <PageRoute
               exact
               path="/queue/appeals/:appealId/add_cavc_remand"
@@ -919,7 +943,14 @@ class QueueApp extends React.PureComponent {
               render={this.routedAssignToAttorney}
             />
             <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_HEARING_ADMIN_MEMBER.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.ASSIGN_TO_ATTORNEY_LEGACY.value
+                }`}
+              render={this.routedAssignToAttorneyLegacy}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.ASSIGN_TO_HEARING_ADMIN_MEMBER.value
                 }`}
               render={this.routedReassignToUser}
             />
@@ -940,13 +971,13 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.value
+                TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.value
                 }`}
               render={this.routedAssignToSingleTeam}
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.value
+                TASK_ACTIONS.SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION.value
                 }`}
               render={this.routedAssignToSingleTeam}
             />
@@ -1018,7 +1049,7 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.value
+                TASK_ACTIONS.VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE.value
                 }`}
               render={this.routedReturnToProgramOffice}
             />
@@ -1043,7 +1074,14 @@ class QueueApp extends React.PureComponent {
               render={this.routedReassignToUser}
             />
             <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.REASSIGN_TO_PERSON.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.value
+                }`}
+              render={this.routedReassignToJudgeLegacy}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.REASSIGN_TO_PERSON.value
                 }`}
               render={this.routedReassignToUser}
             />
@@ -1093,7 +1131,14 @@ class QueueApp extends React.PureComponent {
               render={this.routedAssignToUser}
             />
             <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CAVC_EXTENSION_REQUEST.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.value
+                }`}
+              render={this.routedSpecialCaseMovementLegacy}
+            />
+            <Route
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CAVC_EXTENSION_REQUEST.value
                 }`}
               render={this.routedCavcExtensionRequest}
             />
@@ -1109,7 +1154,7 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW.value
+                TASK_ACTIONS.VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW.value
                 }`}
               render={this.routedCamoDocumentsReadyForBvaIntake}
             />
@@ -1140,7 +1185,7 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE.value
+                TASK_ACTIONS.MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE.value
                 }`}
               title="Mark Task Complete | Caseflow"
               render={this.routedCompleteTaskContestedClaimModal}
@@ -1155,7 +1200,7 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL.value
+                TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL.value
                 }`}
               title="Letter Task | Caseflow"
               render={this.routedProceedFinalNotificationLetterInitialModal}
@@ -1163,14 +1208,15 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING.value
+                TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING.value
                 }`}
               title="Letter Task | Caseflow"
               render={this.routedProceedFinalNotificationLetterPostHoldingModal}
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.RESEND_FINAL_NOTIFICATION_LETTER.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                TASK_ACTIONS.RESEND_FINAL_NOTIFICATION_LETTER.value
                 }`}
               title="Letter Task | Caseflow"
               render={this.routedResendFinalNotificationLetterModal}
@@ -1178,7 +1224,7 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING.value
+                TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING.value
                 }`}
               title="Resend Letter Task | Caseflow"
               render={this.routedResendInitialNotificationLetterPostHoldingModal}
@@ -1186,21 +1232,23 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER_FINAL.value
+                TASK_ACTIONS.RESEND_INITIAL_NOTIFICATION_LETTER_FINAL.value
                 }`}
               title="Resend Letter Task | Caseflow"
               render={this.routedResendInitialNotificationLetterFinalModal}
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.VHA_PO_SEND_TO_CAMO_FOR_REVIEW.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                TASK_ACTIONS.VHA_PO_SEND_TO_CAMO_FOR_REVIEW.value
                 }`}
               title={`${PAGE_TITLES.READY_FOR_REVIEW} | Caseflow`}
               render={this.routedVhaCompleteTaskModal}
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                TASK_ACTIONS.EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.value
                 }`}
               title={`${PAGE_TITLES.READY_FOR_REVIEW} | Caseflow`}
               render={this.routedEmoSendToBoardIntakeForReviewModal}
@@ -1208,7 +1256,7 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW.value
+                TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW.value
                 }`}
               title={`${PAGE_TITLES.READY_FOR_REVIEW} | Caseflow`}
               render={this.routedVhaCaregiverSupportSendToBoardIntakeForReviewModal}
@@ -1216,7 +1264,7 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.value
+                TASK_ACTIONS.EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW.value
                 }`}
               title={`${PAGE_TITLES.READY_FOR_REVIEW} | Caseflow`}
               render={this.routedRpoSendToBoardIntakeForReviewModal}
@@ -1224,7 +1272,7 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE.value
+                TASK_ACTIONS.VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE.value
                 }`}
               title={`${PAGE_TITLES.RETURN_TO_BOARD_INTAKE} | Caseflow`}
               render={this.routedVhaCaregiverSupportReturnToBoardIntake}
@@ -1244,7 +1292,8 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.JUDGE_CHECKOUT_PULAC_CERULLO_REMINDER.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                TASK_ACTIONS.JUDGE_CHECKOUT_PULAC_CERULLO_REMINDER.value
                 }`}
               title={`${PAGE_TITLES.ASSIGN_TO_PULAC_CERULLO} | Caseflow`}
               render={this.routedPulacCerulloReminder}
@@ -1259,7 +1308,8 @@ class QueueApp extends React.PureComponent {
               )}
             />
             <PageRoute
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SEND_TO_SCHEDULE_VETERAN_LIST.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                TASK_ACTIONS.SEND_TO_SCHEDULE_VETERAN_LIST.value
                 }`}
               title={`${PAGE_TITLES.SEND_TO_SCHEDULE_VETERAN_LIST} | Caseflow`}
               render={this.routedUpdateTaskAndAssignRegionalOfficeModal(
@@ -1279,15 +1329,8 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path={
-                `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_FINAL_LETTER_TASK.value
-                }`}
-              title="Cancel Task"
-              render={this.routedCancelLetterTaskModal}
-            />
-            <PageRoute
-              exact
-              path={
-                `/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_INITIAL_LETTER_TASK.value
+                `/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_FINAL_LETTER_TASK.value
                 }`}
               title="Cancel Task"
               render={this.routedCancelLetterTaskModal}
@@ -1296,28 +1339,40 @@ class QueueApp extends React.PureComponent {
               exact
               path={
                 `/queue/appeals/:appealId/tasks/:taskId/${
-                    TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_POST_INITIAL_LETTER_TASK.value
+                  TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_INITIAL_LETTER_TASK.value
                 }`}
               title="Cancel Task"
               render={this.routedCancelLetterTaskModal}
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.value
+              path={
+                `/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.CANCEL_CONTESTED_CLAIM_POST_INITIAL_LETTER_TASK.value
+                }`}
+              title="Cancel Task"
+              render={this.routedCancelLetterTaskModal}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.value
                 }`}
               title={`${PAGE_TITLES.ASSIGN_HEARING} | Caseflow`}
               render={this.routedScheduleVeteran}
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SCHEDULE_VETERAN.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                TASK_ACTIONS.SCHEDULE_VETERAN.value
                 }`}
               title={`${PAGE_TITLES.ASSIGN_HEARING} | Caseflow`}
               render={this.routedAssignHearingModal}
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.REMOVE_HEARING_SCHEDULED_IN_ERROR.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                TASK_ACTIONS.REMOVE_HEARING_SCHEDULED_IN_ERROR.value
                 }`}
               title={`${PAGE_TITLES.REMOVE_HEARING_TO_CORRECT_ERROR} | Caseflow`}
               render={this.routedHearingScheduledInError}
@@ -1487,3 +1542,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(QueueApp);
+

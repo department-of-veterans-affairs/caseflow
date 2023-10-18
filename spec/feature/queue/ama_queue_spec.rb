@@ -341,9 +341,9 @@ feature "AmaQueue", :all_dbs do
         find("div", class: "cf-select__option", text: other_user.full_name).click
 
         expect(page).to have_content(existing_instruction)
-        click_on "Submit"
+        click_on COPY::MODAL_ASSIGN_BUTTON
 
-        expect(page).to have_content("Task assigned to #{other_user_name}")
+        expect(page).to have_content(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, other_user.full_name)
         expect(translation_task.reload.status).to eq("on_hold")
 
         visit "/organizations/#{translation_organization.url}"
@@ -352,11 +352,13 @@ feature "AmaQueue", :all_dbs do
 
         find(".cf-select__control", text: "Select an action").click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label]).click
-
         fill_in "taskInstructions", with: instructions
-        click_on "Submit"
+        click_on COPY::MODAL_ASSIGN_BUTTON
 
-        expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % user_name
+        expect(page).to have_content(
+          format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM,
+                 "#{appeals[0].veteran.first_name} #{appeals[0].veteran.last_name}", user_name)
+        )
         old_task = translation_task.reload.children.find { |task| task.assigned_to == other_user }
         expect(old_task.status).to eq(Constants.TASK_STATUSES.cancelled)
 
@@ -379,9 +381,9 @@ feature "AmaQueue", :all_dbs do
         find("div", class: "cf-select__option", text: other_organization.name).click
         fill_in "taskInstructions", with: instructions
 
-        click_on "Submit"
+        click_on COPY::MODAL_ASSIGN_BUTTON
 
-        expect(page).to have_content("Task assigned to #{other_organization.name}")
+        expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE_LEGACY_SUCCESS_TITLE % other_organization.name)
         expect(Task.last.instructions.first).to eq(instructions)
       end
 
@@ -548,10 +550,9 @@ feature "AmaQueue", :all_dbs do
       click_dropdown(prompt: "Select an action", text: "Assign to attorney")
       click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
       fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "note")
+      click_on "Assign"
 
-      click_on "Submit"
-
-      expect(page).to have_content("Assigned 1 task to #{attorney_user.full_name}")
+      expect(page).to have_content("You have successfully assigned Tom Brady's case to #{attorney_user.full_name}")
     end
 
     it "judge can return report to attorney for corrections" do
@@ -627,9 +628,9 @@ feature "AmaQueue", :all_dbs do
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
         fill_in "taskInstructions", with: "Please fix this"
 
-        click_on "Submit"
+        click_on "Assign"
 
-        expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
+        expect(page).to have_content("You have successfully reassigned this task to #{attorney_user.full_name}")
       end
 
       step "attorney corrects case and returns it to the judge" do
@@ -741,9 +742,9 @@ feature "AmaQueue", :all_dbs do
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
         fill_in "taskInstructions", with: "Please fix this"
 
-        click_on "Submit"
+        click_on "Assign"
 
-        expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
+        expect(page).to have_content("You have successfully reassigned this task to #{attorney_user.full_name}")
       end
 
       step "attorney corrects case and returns it to the judge" do
@@ -804,12 +805,16 @@ feature "AmaQueue", :all_dbs do
           click_on veteran_full_name
 
           click_dropdown(prompt: "Select an action", text: "Re-assign to a judge")
-          click_dropdown(prompt: "Select a user", text: judge_user2.full_name)
+          within all(".cf-select")[1] do
+            click_dropdown(prompt: "Select", text: judge_user2.full_name)
+          end
 
           fill_in "taskInstructions", with: "Going on leave, please manage this case"
-          click_on "Submit"
-
-          expect(page).to have_content("Task reassigned to #{judge_user2.full_name}")
+          click_on "Assign"
+          # binding.pry
+          # expect(page).to have_content("Task reassigned to #{judge_user2.full_name}")
+          expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE_SCM, appeal.veteran_full_name,
+                                              "Andrea Harless"))
         end
         step "judge2 has the case in their queue" do
           User.authenticate!(user: judge_user2)
@@ -827,24 +832,27 @@ feature "AmaQueue", :all_dbs do
       it "judge can reassign the review judge tasks to another judge" do
         step "judge reviews case and assigns a task to an attorney" do
           visit "/queue"
+          # binding.pry
           expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
 
           find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
           expect(page).to have_content(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id))
-          click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id)
 
+          click_on format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_user.css_id)
           click_on veteran_full_name
 
           # wait for page to load with veteran name
           expect(page).to have_content(veteran_full_name)
 
           click_dropdown(prompt: "Select an action", text: "Assign to attorney")
-          click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
+          # click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
+          within all(".cf-select")[1] do
+            click_dropdown(prompt: "Select", text: attorney_user.full_name)
+          end
           fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "note")
 
-          click_on "Submit"
-
-          expect(page).to have_content("Assigned 1 task to #{attorney_user.full_name}")
+          click_on "Assign"
+          expect(page).to have_content("You have successfully assigned Tom Brady's case to #{attorney_user.full_name}")
         end
 
         step "attorney completes task and returns the case to the judge" do
@@ -893,7 +901,6 @@ feature "AmaQueue", :all_dbs do
           expect(page).to have_content("Submit to judge:", wait: 10)
           fill_in "notes", with: "all done"
           click_on "Continue"
-
           expect(page).to have_content(
             "Thank you for drafting #{veteran_full_name}'s decision. It's been "\
             "sent to #{judge_user.full_name} for review."
@@ -908,12 +915,16 @@ feature "AmaQueue", :all_dbs do
           click_on veteran_full_name
 
           click_dropdown(prompt: "Select an action", text: "Re-assign to a judge")
-          click_dropdown(prompt: "Select a user", text: judge_user2.full_name)
+          # click_dropdown(prompt: "Select a user", text: judge_user2.full_name)
+          within all(".cf-select")[1] do
+            click_dropdown(prompt: "Select", text: judge_user2.full_name)
+          end
 
           fill_in "taskInstructions", with: "Going on leave, please manage this case"
-          click_on "Submit"
+          click_on "Assign"
+          expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE, "Andrea Harless"
 
-          expect(page).to have_content("Task reassigned to #{judge_user2.full_name}")
+          # expect(page).to have_content("Task reassigned to #{judge_user2.full_name}")
         end
 
         step "judge2 has the case in their queue" do
@@ -973,7 +984,7 @@ feature "AmaQueue", :all_dbs do
           text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label
         )
         fill_in("taskInstructions", with: "instructions here")
-        click_on(COPY::MODAL_SUBMIT_BUTTON)
+        click_on "Assign"
         expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
       end
 
@@ -991,7 +1002,7 @@ feature "AmaQueue", :all_dbs do
           text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label
         )
         fill_in("taskInstructions", with: "instructions here")
-        click_on(COPY::MODAL_SUBMIT_BUTTON)
+        click_on(COPY::MODAL_ASSIGN_BUTTON)
         expect(page).to have_content(COPY::USER_QUEUE_PAGE_TABLE_TITLE)
       end
     end
