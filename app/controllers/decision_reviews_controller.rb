@@ -65,7 +65,7 @@ class DecisionReviewsController < ApplicationController
   end
 
   def generate_report
-    requires_admin_access_redirect unless business_line.user_is_admin?(current_user)
+    return requires_admin_access_redirect unless business_line.user_is_admin?(current_user)
 
     respond_to do |format|
       format.html { render "index" }
