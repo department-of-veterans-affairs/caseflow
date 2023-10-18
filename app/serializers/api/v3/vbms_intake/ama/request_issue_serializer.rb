@@ -12,7 +12,7 @@
 class Api::V3::VbmsIntake::Ama::RequestIssueSerializer
   include JSONAPI::Serializer
 
-  attributes :benefit_type, :closed_status, :contention_reference_id, :contested_decision_issue_id,
+  attributes :id, :benefit_type, :closed_status, :contention_reference_id, :contested_decision_issue_id,
              :contested_issue_description, :contested_rating_decision_reference_id,
              :contested_rating_issue_diagnostic_code, :contested_rating_issue_profile_date,
              :contested_rating_issue_reference_id, :corrected_by_request_issue_id,

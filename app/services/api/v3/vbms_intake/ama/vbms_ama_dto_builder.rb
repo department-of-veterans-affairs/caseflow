@@ -22,9 +22,11 @@ class Api::V3::VbmsIntake::Ama::VbmsAmaDtoBuilder
   end
 
   def serialized_request_issues
-    Api::V3::VbmsIntake::Ama::RequestIssueSerializer.new(
+    serialized_data = Api::V3::VbmsIntake::Ama::RequestIssueSerializer.new(
       RequestIssue.includes(:decision_issues).where(veteran_participant_id: @veteran_participant_id).page(@page)
     ).serializable_hash[:data]
+
+    serialized_data.map { |issue| issue[:attributes] }
   end
 
   def legacy_appeals_present?(veteran)
