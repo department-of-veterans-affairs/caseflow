@@ -135,7 +135,7 @@ describe Api::V1::VaNotifyController, type: :controller do
 
     it "Update job raises error if UUID is passed in for a non-existant notification" do
       expect_any_instance_of(ProcessNotificationStatusUpdatesJob).to receive(:log_error) do |_job, error|
-        expect(error.message).to eq("No notification matches UUID")
+        expect(error.message).to eq("No notification matches UUID #{payload_fake.dig(:id)}")
       end
 
       request.headers["Authorization"] = "Bearer #{api_key}"

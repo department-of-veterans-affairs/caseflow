@@ -22,12 +22,12 @@ class ProcessNotificationStatusUpdatesJob < CaseflowJob
           "#{notification_type}_notification_external_id" => uuid
         ).update_all("#{notification_type}_notification_status" => status)
 
-        fail StandardError, "No notification matches UUID" if rows_updated.zero?
-
-        # cleanup keys - do first so we don't reporcess any failed keys
-        redis.del key
+        fail StandardError, "No notification matches UUID #{uuid}" if rows_updated.zero?
       rescue StandardError => error
         log_error(error)
+      ensure
+        # cleanup keys - do first so we don't reporcess any failed keys
+        redis.del key
       end
     end
   end

@@ -72,7 +72,7 @@ describe ProcessNotificationStatusUpdatesJob, :postgres do
 
     it "an error is raised if a UUID doesn't match with a notification record, but the job isn't halted" do
       expect_any_instance_of(ProcessNotificationStatusUpdatesJob).to receive(:log_error) do |_job, error|
-        expect(error.message).to eq("No notification matches UUID")
+        expect(error.message).to eq("No notification matches UUID not-going-to-match")
       end.exactly(:once)
 
       # This notification update will cause an error
@@ -88,7 +88,7 @@ describe ProcessNotificationStatusUpdatesJob, :postgres do
       expect(sms_notification.reload.sms_notification_status).to be_nil
       expect(email_notification.reload.email_notification_status).to eq(new_status)
 
-      expect(redis.keys.grep(/(sms|email)_update:/).count).to eq(1)
+      expect(redis.keys.grep(/(sms|email)_update:/).count).to eq(0)
     end
   end
 end
