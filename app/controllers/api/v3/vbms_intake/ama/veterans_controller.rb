@@ -2,7 +2,6 @@
 
 # :reek:InstanceVariableAssumption
 class Api::V3::VbmsIntake::Ama::VeteransController < Api::V3::BaseController
-  include ApiV3FeatureToggleConcern
 
   before_action do
     FeatureToggle.enabled?(:api_v3_vbms_intake_ama)
