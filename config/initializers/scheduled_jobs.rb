@@ -50,5 +50,5 @@ SCHEDULED_JOBS = {
     "change_hearing_request_type_task_cancellation_job" => ChangeHearingRequestTypeTaskCancellationJob,
     "cannot_delete_contention_remediation_job" => CannotDeleteContentionRemediationJob,
     "contention_not_found_remediation_job" => ContentionNotFoundRemediationJob,
-    "va_notify_email_status_update_job" => EmailStatusUpdateJob
+    "process_notification_status_updates_job" => ProcessNotificationStatusUpdatesJob
 }.freeze
