@@ -52,8 +52,6 @@ class VaDotGovAddressValidator
   end
 
   def valid_address
-    return if address&.zip.nil?
-
     @valid_address ||= if valid_address_response.success?
                          valid_address_response.data
                        else
