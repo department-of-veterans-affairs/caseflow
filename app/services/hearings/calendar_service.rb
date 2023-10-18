@@ -95,7 +95,8 @@ class Hearings::CalendarService
     end
 
     def render_virtual_hearing_calendar_event_template(email_recipient_info, event_type, locals)
-      template = ActionView::Base.new(ActionMailer::Base.view_paths, {})
+      lookup_context = ActionView::Base.build_lookup_context(ActionController::Base.view_paths)
+      template = ActionView::Base.new(lookup_context)
       template.class_eval do
         include Hearings::CalendarTemplateHelper
         include Hearings::AppellantNameHelper
@@ -110,12 +111,10 @@ class Hearings::CalendarService
       # representative_changed_to_video_event_description
       #        veteran_changed_to_video_event_description
 
+      template_filepaths = Dir.glob(Rails.root.join("app/views/hearing_mailer/calendar_events/*"))
       template_name = "#{email_recipient_info.title.downcase}_#{event_type}_event_description"
-
-      template.render(
-        file: "hearing_mailer/calendar_events/#{template_name}",
-        locals: locals
-      )
+      absolute_filepath = template_filepaths.find { |path| path.match?(template_name) }
+      template.render(file: absolute_filepath, locals: locals)
     end
   end
 end
