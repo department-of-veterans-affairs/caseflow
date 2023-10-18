@@ -12,6 +12,9 @@ class ProcessNotificationStatusUpdatesJob < CaseflowJob
     # dumping the whole list could cause performance issues when job runs
     redis.scan_each(match: "*_update:*") do |key|
       begin
+        # cleanup keys - do first so we don't reporcess any failed keys
+        redis.del key
+
         raw_notification_type, uuid, status = key.split(":")
 
         notification_type = extract_notification_type(raw_notification_type)
@@ -23,9 +26,6 @@ class ProcessNotificationStatusUpdatesJob < CaseflowJob
         ).update_all("#{notification_type}_notification_status" => status)
 
         fail StandardError, "No notification matches UUID" if rows_updated.zero?
-
-        # cleanup keys
-        redis.del key
       rescue StandardError => error
         log_error(error)
       end
