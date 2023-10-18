@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import * as Constants from '../constants';
 import { fetchAttorneys, formatAddress } from './utils';
-import { ADD_CLAIMANT_PAGE_DESCRIPTION, ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
+import { ADD_CLAIMANT_PAGE_DESCRIPTION, ERROR_EMAIL_INVALID_FORMAT, EMPLOYER_IDENTIFICATION_NUMBER } from 'app/../COPY';
 
 import Address from 'app/queue/components/Address';
 import AddressForm from 'app/components/AddressForm';
@@ -61,6 +61,7 @@ export const ClaimantForm = ({
   const emailValidationError = errors?.emailAddress && ERROR_EMAIL_INVALID_FORMAT;
   const dobValidationError = errors?.dateOfBirth && errors.dateOfBirth.message;
   const ssnValidationError = errors?.ssn && errors.ssn.message;
+  const einValidationError = errors?.ein && errors.ein.message;
 
   const watchRelationship = watch('relationship');
   const dependentRelationship = ['spouse', 'child'].includes(watchRelationship);
@@ -250,6 +251,18 @@ export const ClaimantForm = ({
               label="Organization name"
               inputRef={register}
               strongLabel
+            />
+          </FieldDiv>
+        )}
+        {isOrgPartyType && isHLROrSCForm && (
+          <FieldDiv>
+            <TextField
+              validationError={einValidationError}
+              name="ein"
+              label={EMPLOYER_IDENTIFICATION_NUMBER}
+              inputRef={register}
+              strongLabel
+              optional
             />
           </FieldDiv>
         )}

@@ -18,6 +18,8 @@
 class NoShowHearingTask < Task
   before_validation :set_assignee
 
+  delegate :hearing, to: :parent, allow_nil: true
+
   DAYS_ON_HOLD = 15
 
   def self.create_with_hold(parent_task)
@@ -61,6 +63,8 @@ class NoShowHearingTask < Task
       ScheduleHearingTask.create!(appeal: appeal, parent: ancestor_task_of_type(HearingTask)&.parent)
 
       update!(status: Constants.TASK_STATUSES.completed)
+
+      cancel_redundant_hearing_postponement_req_tasks
     end
   end
 
