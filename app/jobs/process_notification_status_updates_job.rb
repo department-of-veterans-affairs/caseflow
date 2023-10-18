@@ -10,9 +10,11 @@ class ProcessNotificationStatusUpdatesJob < CaseflowJob
 
     # prefer scan so we only load a single record into memory,
     # dumping the whole list could cause performance issues when job runs
-    redis.scan_each(match: "(sms|email)_update:*") do |key|
+    redis.scan_each(match: "*_update:*") do |key|
       begin
-        notification_type, uuid, status = key.split(":")
+        raw_notification_type, uuid, status = key.split(":")
+
+        notification_type = extract_notification_type(raw_notification_type)
 
         fail InvalidNotificationStatusFormat if [notification_type, uuid, status].any?(&:nil?)
 
@@ -26,7 +28,15 @@ class ProcessNotificationStatusUpdatesJob < CaseflowJob
         redis.del key
       rescue StandardError => error
         log_error(error)
+      ensure
+        redis.del key
       end
     end
+  end
+
+  private
+
+  def extract_notification_type(raw_notification_type)
+    raw_notification_type.split("_").first
   end
 end
