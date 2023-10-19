@@ -18,8 +18,8 @@ class ProcessNotificationStatusUpdatesJob < CaseflowJob
 
         fail InvalidNotificationStatusFormat if [notification_type, uuid, status].any?(&:nil?)
 
-        rows_updated = Notification.where(
-          "#{notification_type}_notification_external_id" => uuid
+        rows_updated = Notification.select(Arel.star).where(
+          Notification.arel_table["#{notification_type}_notification_external_id".to_sym].eq(uuid)
         ).update_all("#{notification_type}_notification_status" => status)
 
         fail StandardError, "No notification matches UUID #{uuid}" if rows_updated.zero?
