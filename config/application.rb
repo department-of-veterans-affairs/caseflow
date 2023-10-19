@@ -128,6 +128,14 @@ module CaseflowCertification
     Rails.application.config.active_record.collection_cache_versioning = false
 
     # ==================================================================================================================
+    # Rails 6.1 default overrides
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # Apply random variation to the delay when retrying failed jobs.
+    # Default as of 6.1: 0.15
+    Rails.application.config.active_job.retry_jitter = false
+
+    # ==================================================================================================================
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
