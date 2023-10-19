@@ -37,6 +37,7 @@ class VirtualHearing < CaseflowRecord
   class LinkMismatchError < StandardError; end
 
   include UpdatedByUserConcern
+  include ConferenceableConcern
 
   class << self
     def client_host_or_default
@@ -275,6 +276,12 @@ class VirtualHearing < CaseflowRecord
     end
 
     update!(host_hearing_link: link_service.host_link, guest_hearing_link: link_service.guest_link)
+  end
+
+  def subject_for_conference
+    appeal = hearing.appeal
+
+    "#{appeal.docket_number}_#{appeal.id}_#{appeal.class}"
   end
 
   private

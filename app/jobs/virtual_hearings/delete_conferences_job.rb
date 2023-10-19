@@ -146,7 +146,7 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
   # Returns whether or not the conference was deleted from Pexip or Webex
   def delete_conference(virtual_hearing)
     response = client.delete_conference(conference_id: virtual_hearing.conference_id)
-    Rails.logger.info("Response: #{response}")
+    Rails.logger.info("#{virtual_hearing.conference_provider.capitalize} response: #{response}")
 
     fail response.error unless response.success?
 

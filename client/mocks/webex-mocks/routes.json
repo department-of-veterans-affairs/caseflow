@@ -1,4 +1,0 @@
-{
-    "/api/v1/conference-links": "/conferenceLinks",
-    "/api/v1/conference-links/:id": "/conferenceLinks/:id"
-  }

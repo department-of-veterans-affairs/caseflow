@@ -31,6 +31,12 @@ module Caseflow::Error
   class EfolderAccessForbidden < EfolderError; end
   class ClientRequestError < EfolderError; end
 
+  class PriorityEndProductSyncError < StandardError
+    def ignorable?
+      true
+    end
+  end
+
   class VaDotGovAPIError < SerializableError; end
   class VaDotGovRequestError < VaDotGovAPIError; end
   class VaDotGovServerError < VaDotGovAPIError; end
@@ -413,10 +419,12 @@ module Caseflow::Error
   class PexipBadRequestError < PexipApiError; end
   class PexipMethodNotAllowedError < PexipApiError; end
 
-  class WebexApiError < ConferenceCreationError; end
-  class WebexNotFoundError < WebexApiError; end
-  class WebexBadRequestError < WebexApiError; end
-  class WebexMethodNotAllowedError < WebexApiError; end
+  class WebexApiError < ConferenceCreationError
+    attr_accessor :descriptions
+  end
+  # class WebexNotFoundError < WebexApiError; end
+  # class WebexBadRequestError < WebexApiError; end
+  # class WebexMethodNotAllowedError < WebexApiError; end
 
   class WorkModeCouldNotUpdateError < StandardError; end
 

@@ -2,6 +2,7 @@
 
 class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   include BgsService
+  include ConferenceableConcern
 
   has_many :dispatch_tasks, class_name: "Dispatch::Task"
   has_many :document_views
@@ -270,7 +271,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def vha_employee?
-    member_of_organization?(BusinessLine.find_by(url: "vha"))
+    member_of_organization?(VhaBusinessLine.singleton)
   end
 
   def organization_queue_user?

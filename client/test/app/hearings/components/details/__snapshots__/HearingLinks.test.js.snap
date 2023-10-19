@@ -229,11 +229,12 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                   aria-describedby="tooltip-Copy VLJ Link"
                   aria-label=""
                   className="cf-apppeal-id"
-                  data-css-cjlnsd=""
+                  data-css-p6dv0b=""
                   data-event="focus mouseenter"
                   data-event-off="mouseleave keydown"
                   data-for="tooltip-Copy VLJ Link"
                   data-tip={true}
+                  disabled={true}
                   onClick={[Function]}
                   tabIndex={0}
                   type="submit"
@@ -569,11 +570,12 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                   aria-describedby="tooltip-Copy Guest Link"
                   aria-label=""
                   className="cf-apppeal-id"
-                  data-css-cjlnsd=""
+                  data-css-p6dv0b=""
                   data-event="focus mouseenter"
                   data-event-off="mouseleave keydown"
                   data-for="tooltip-Copy Guest Link"
                   data-tip={true}
+                  disabled={true}
                   onClick={[Function]}
                   tabIndex={0}
                   type="submit"
@@ -819,7 +821,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
           wasVirtual={true}
         >
           <span>
-            Expired
+            N/A
           </span>
           <div
             data-css-1abghdv=""
@@ -910,7 +912,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
           wasVirtual={true}
         >
           <span>
-            Expired
+            N/A
           </span>
           <div
             data-css-1abghdv=""
@@ -961,6 +963,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
       "centralOfficeTimeString": "03:30",
       "claimantId": 4,
       "closestRegionalOffice": null,
+      "conferenceProvider": "pexip",
       "currentIssueCount": 1,
       "disposition": null,
       "dispositionEditable": true,
@@ -996,6 +999,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
         "fullName": "Aaron Judge_HearingsAndCases Abshire",
         "id": 3,
         "lastLoginAt": null,
+        "meetingType": "pexip",
         "roles": Object {},
         "selectedRegionalOffice": null,
         "stationId": "101",
@@ -1039,6 +1043,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
         "appellantEmail": "Bob.Smith@test.com",
         "appellantTz": "America/Denver",
         "clientHost": "care.evn.va.gov",
+        "conferenceProvider": "pexip",
         "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
         "guestPin": "2684353125#",
         "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1073,6 +1078,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
       "appellantEmail": "Bob.Smith@test.com",
       "appellantTz": "America/Denver",
       "clientHost": "care.evn.va.gov",
+      "conferenceProvider": "pexip",
       "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
       "guestPin": "2684353125#",
       "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1111,6 +1117,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
           "centralOfficeTimeString": "03:30",
           "claimantId": 4,
           "closestRegionalOffice": null,
+          "conferenceProvider": "pexip",
           "currentIssueCount": 1,
           "disposition": null,
           "dispositionEditable": true,
@@ -1146,6 +1153,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
             "fullName": "Aaron Judge_HearingsAndCases Abshire",
             "id": 3,
             "lastLoginAt": null,
+            "meetingType": "pexip",
             "roles": Object {},
             "selectedRegionalOffice": null,
             "stationId": "101",
@@ -1189,6 +1197,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
             "appellantEmail": "Bob.Smith@test.com",
             "appellantTz": "America/Denver",
             "clientHost": "care.evn.va.gov",
+            "conferenceProvider": "pexip",
             "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
             "guestPin": "2684353125#",
             "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1227,6 +1236,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
           "appellantEmail": "Bob.Smith@test.com",
           "appellantTz": "America/Denver",
           "clientHost": "care.evn.va.gov",
+          "conferenceProvider": "pexip",
           "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
           "guestPin": "2684353125#",
           "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1270,6 +1280,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
               "centralOfficeTimeString": "03:30",
               "claimantId": 4,
               "closestRegionalOffice": null,
+              "conferenceProvider": "pexip",
               "currentIssueCount": 1,
               "disposition": null,
               "dispositionEditable": true,
@@ -1305,6 +1316,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                 "fullName": "Aaron Judge_HearingsAndCases Abshire",
                 "id": 3,
                 "lastLoginAt": null,
+                "meetingType": "pexip",
                 "roles": Object {},
                 "selectedRegionalOffice": null,
                 "stationId": "101",
@@ -1348,6 +1360,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                 "appellantEmail": "Bob.Smith@test.com",
                 "appellantTz": "America/Denver",
                 "clientHost": "care.evn.va.gov",
+                "conferenceProvider": "pexip",
                 "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                 "guestPin": "2684353125#",
                 "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1386,6 +1399,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
               "appellantEmail": "Bob.Smith@test.com",
               "appellantTz": "America/Denver",
               "clientHost": "care.evn.va.gov",
+              "conferenceProvider": "pexip",
               "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
               "guestPin": "2684353125#",
               "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1420,6 +1434,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                 "centralOfficeTimeString": "03:30",
                 "claimantId": 4,
                 "closestRegionalOffice": null,
+                "conferenceProvider": "pexip",
                 "currentIssueCount": 1,
                 "disposition": null,
                 "dispositionEditable": true,
@@ -1455,6 +1470,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                   "fullName": "Aaron Judge_HearingsAndCases Abshire",
                   "id": 3,
                   "lastLoginAt": null,
+                  "meetingType": "pexip",
                   "roles": Object {},
                   "selectedRegionalOffice": null,
                   "stationId": "101",
@@ -1498,6 +1514,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                   "appellantEmail": "Bob.Smith@test.com",
                   "appellantTz": "America/Denver",
                   "clientHost": "care.evn.va.gov",
+                  "conferenceProvider": "pexip",
                   "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                   "guestPin": "2684353125#",
                   "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1536,6 +1553,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                 "appellantEmail": "Bob.Smith@test.com",
                 "appellantTz": "America/Denver",
                 "clientHost": "care.evn.va.gov",
+                "conferenceProvider": "pexip",
                 "guestLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest",
                 "guestPin": "2684353125#",
                 "hostLink": "https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=8600030#&role=host",
@@ -1648,11 +1666,12 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                   aria-describedby="tooltip-Copy Guest Link"
                   aria-label=""
                   className="cf-apppeal-id"
-                  data-css-cjlnsd=""
+                  data-css-p6dv0b=""
                   data-event="focus mouseenter"
                   data-event-off="mouseleave keydown"
                   data-for="tooltip-Copy Guest Link"
                   data-tip={true}
+                  disabled={false}
                   onClick={[Function]}
                   tabIndex={0}
                   type="submit"

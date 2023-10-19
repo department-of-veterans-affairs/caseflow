@@ -1,10 +1,15 @@
+require "./app/jobs/batch_processes/priority_ep_sync_batch_process_job.rb"
+require "./app/jobs/batch_processes/batch_process_rescue_job.rb"
+
 SCHEDULED_JOBS = {
     "amo_metrics_report" => AMOMetricsReportJob,
     "annual_metrics" => AnnualMetricsReportJob,
-    "calculate_dispatch_stats" => CalculateDispatchStatsJob,
+    "priority_ep_sync_batch_process_job" => PriorityEpSyncBatchProcessJob,
+    "batch_process_rescue_job" => BatchProcessRescueJob,
     "create_establish_claim" => CreateEstablishClaimTasksJob,
     "data_integrity_checks" => DataIntegrityChecksJob,
     "delete_conferences_job" => VirtualHearings::DeleteConferencesJob,
+    "delete_conference_link_job" => VirtualHearings::DeleteConferenceLinkJob,
     "dependencies_check" => DependenciesCheckJob,
     "dependencies_report_service_log" => DependenciesReportServiceLogJob,
     "docket_range_job" => DocketRangeJob,
@@ -19,6 +24,7 @@ SCHEDULED_JOBS = {
     "monthly_metrics" => MonthlyMetricsReportJob,
     "nightly_syncs" => NightlySyncsJob,
     "out_of_service_reminder" => OutOfServiceReminderJob,
+    "populate_end_product_sync_queue" => PopulateEndProductSyncQueueJob,
     "prepare_establish_claim" => PrepareEstablishClaimTasksJob,
     "push_priority_appeals_to_judges" => PushPriorityAppealsToJudgesJob,
     "quarterly_metrics" => QuarterlyMetricsReportJob,
