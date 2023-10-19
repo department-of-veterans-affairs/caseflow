@@ -9,7 +9,7 @@ class CreateCorrespondence < Caseflow::Migration
       t.integer :package_document_type_id, comment: "Represents entire CMP package document type"
       t.string :cmp_packet_number, comment: "Included in CMP mail package"
 
-      t.integer :cmp_queue_id, index: true, foreign_key: true, comment: "Foreign key to CMP queues table"
+      t.references :cmp_queue, index: true, foreign_key: true, comment: "Foreign key to CMP queues table"
 
       t.datetime :va_date_of_receipt, comment: "Date package delivered"
       t.bigint :veteran_id, index: true, foreign_key: true, comment: "Foreign key to veterans table"
