@@ -42,8 +42,13 @@ describe ProcessNotificationStatusUpdatesJob, type: :job do
       expect { job }.to change(ActiveJob::Base.queue_adapter.enqueued_jobs, :size).by(1)
     end
 
-    it "processes sms notifications from redis cache" do
-      expect(sms_notification.sms_notification_status).to_not eq(new_status)
+    it "logs when external id is not present" do
+      job.perform_now
+      expect(notification.sms_notification_status).to eq("No External Id")
+    end
+
+    it "successfully processes notifications from redis cache" do
+      expect(redis.keys.grep(/email_update:/).count).to eq(1)
 
       redis.set("sms_update:#{sms_notification.sms_notification_external_id}:#{new_status}", 0)
 
