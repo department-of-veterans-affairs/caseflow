@@ -417,19 +417,19 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
 
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
-    if use_by_docket_date?
-      query = <<-SQL
+    query = if use_by_docket_date?
+              <<-SQL
         #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
         where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
         and (rownum <= ? or 1 = ?)
-      SQL
-    else
-      query = <<-SQL
+              SQL
+            else
+              <<-SQL
         #{SELECT_PRIORITY_APPEALS}
         where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
         and (rownum <= ? or 1 = ?)
-      SQL
-    end
+              SQL
+            end
 
     fmtd_query = sanitize_sql_array([
                                       query,
@@ -471,5 +471,24 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.use_by_docket_date?
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
+  end
+
+  def self.ineligible_vacols_judges
+    VACOLS::Staff.find_by_sql(
+      <<-SQL
+        SELECT STAFF.SDOMAINID, STAFF.SATTYID, STAFF.SVLJ, STAFF.SACTIVE
+        FROM STAFF
+        WHERE (STAFF.SVLJ IS NOT NULL OR STAFF.SATTYID IS NOT NULL)
+        AND ((STAFF.SACTIVE = 'I') OR (STAFF.SVLJ <> 'A' AND STAFF.SVLJ <> 'J'))
+      SQL
+    ).map do |staff|
+      { sattyid: staff.sattyid, sdomainid: staff.sdomainid, svlj: staff.svlj, sactive: staff.sactive }
+    end
+  end
+
+  def self.ineligible_judges
+    User.inactive.map do |user|
+      { id: user.id, css_id: user.css_id }
+    end
   end
 end

@@ -41,24 +41,6 @@ module AssociatedBgsRecord
       self::CACHED_BGS_ATTRIBUTES # consumers must define
     end
 
-    def ineligible_vacols_judges
-      VACOLS::Staff.find_by_sql(
-        <<-SQL
-          SELECT STAFF.SDOMAINID, STAFF.SACTIVE, STAFF.SVLJ
-          FROM STAFF
-          WHERE ((STAFF.SACTIVE = 'I') OR ((STAFF.SVLJ <> 'A'
-          OR STAFF.SVLJ IS NULL)
-          AND (STAFF.SVLJ <> 'J' OR STAFF.SVLJ IS NULL)))
-          AND STAFF.SDOMAINID IS NOT NULL
-        SQL
-      )
-    end
-
-    def ineligible_judges
-      sdomain_ids = ineligible_vacols_judges.map(&:sdomainid).uniq
-      User.where(css_id: sdomain_ids).where("status != ? OR status IS NULL", "active")
-    end
-
     private
 
     def extract_attributes_and_options(attributes)
