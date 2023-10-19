@@ -31,8 +31,6 @@ describe ProcessNotificationStatusUpdatesJob, type: :job do
                             notification_type: "SMS")
     end
 
-    before { add_cache(notification) }
-
     it "has one message in queue" do
       expect { job }.to change(ActiveJob::Base.queue_adapter.enqueued_jobs, :size).by(1)
     end
@@ -43,6 +41,8 @@ describe ProcessNotificationStatusUpdatesJob, type: :job do
     end
 
     it "successfully processes notifications from redis cache" do
+      create_cache(email_notification)
+
       expect(redis.keys.grep(/email_update:/).count).to eq(1)
 
       redis.set("sms_update:#{sms_notification.sms_notification_external_id}:#{new_status}", 0)
@@ -53,6 +53,8 @@ describe ProcessNotificationStatusUpdatesJob, type: :job do
 
       expect(redis.keys.grep(/sms_update:/).count).to eq(0)
       expect(sms_notification.reload.sms_notification_status).to eq(new_status)
+
+      delete_cache
     end
 
     it "processes a mix of email and sms notifications from redis cache" do
@@ -92,12 +94,16 @@ describe ProcessNotificationStatusUpdatesJob, type: :job do
 
   private
 
-  def add_cache(*notifications)
-    # clean-up any keys left behind
-    redis.scan_each(match: "*_update:*") { |key| redis.del(key) }
-    notifications.each do |notification|
-      redis.set("email_update:#{notification.sms_notification_external_id}:test_status", 0)
+  def create_cache(*keys)
+    delete_cache
+
+    keys.each do |key|
+      redis.set("email_update:#{key.sms_notification_external_id}:test_status", 0)
     end
+  end
+
+  def delete_cache
+    redis.scan_each(match: "*_update:*") { |key| redis.del(key) }
   end
 
   def redis
