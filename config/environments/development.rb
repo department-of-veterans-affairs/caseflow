@@ -70,6 +70,15 @@ Rails.application.configure do
   # number of complex assets.
   config.assets.debug = true
 
+  # Setting `config.action_view.preload_links_header` to `true` will generate a `Link` header that gives a hint to
+  # modern browsers about preloading assets when using `javascript_include_tag` and `stylesheet_link_tag`.
+  #
+  # Typically, `config.assets.debug` is set to `true` in `development` environments. This splits concatenated
+  # assets into their constituent files and includes them all separately, which could result in an exceptionally long
+  # `Link` header that exceeds the maximum 8192 bytes for HTTP response headers. To avoid this situation, we set
+  # `config.action_view.preload_links_header` to `false`.
+  Rails.application.config.action_view.preload_links_header = false
+
   # Suppress logger output for asset requests.
   config.assets.quiet = true
 
