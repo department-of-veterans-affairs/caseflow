@@ -19,7 +19,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
       it "should return 'Not Implemented' error" do
         FeatureToggle.disable!(:api_v3_vbms_intake_ama)
         get(
-          "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
+          "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
           headers: authorization_header
         )
         expect(response).to have_http_status(501)
@@ -35,7 +35,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
       context "when a veteran is not found" do
         it "should return veteran not found error" do
           get(
-            "/api/v3/vbms_intake/ama/veterans/9999999999",
+            "/api/v3/vbms_intake/ama/veteran/9999999999",
             headers: authorization_header
           )
           expect(response).to have_http_status(500)
@@ -60,7 +60,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with legacy_appeals_present true" do
               get(
-                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -71,7 +71,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with the associated request issues" do
               get(
-                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -86,7 +86,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with the multiple decision issues per request issue" do
               get(
-                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -117,7 +117,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with legacy_appeals_present true" do
               get(
-                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -128,7 +128,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with the associated request issues" do
               get(
-                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -142,7 +142,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with the same multiple decision issues per request issue" do
               get(
-                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -173,7 +173,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with legacy_appeals_present false" do
               get(
-                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -184,7 +184,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with the associated request issues" do
               get(
-                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -199,7 +199,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with the multiple decision issues per request issue" do
               get(
-                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -229,7 +229,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with legacy_appeals_present false" do
               get(
-                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -240,7 +240,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with the associated request issues" do
               get(
-                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -254,7 +254,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with the same multiple decision issues per request issue" do
               get(
-                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
