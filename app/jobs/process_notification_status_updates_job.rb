@@ -23,9 +23,6 @@ class ProcessNotificationStatusUpdatesJob < CaseflowJob
         ).update_all("#{notification_type}_notification_status" => status)
 
         fail StandardError, "No notification matches UUID #{uuid}" if rows_updated.zero?
-
-        # cleanup keys
-        redis.del key
       rescue StandardError => error
         log_error(error)
       ensure

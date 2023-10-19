@@ -4,6 +4,7 @@ describe ProcessNotificationStatusUpdatesJob, type: :job do
   include ActiveJob::TestHelper
 
   let(:redis) do
+    # Creates a fresh Redis connection before each tests and deletes all keys in the store
     Redis.new(url: Rails.application.secrets.redis_url_cache).tap(&:flushall)
   end
 
@@ -20,7 +21,7 @@ describe ProcessNotificationStatusUpdatesJob, type: :job do
                             event_date: 6.days.ago,
                             event_type: "Quarterly Notification",
                             notification_type: "Email",
-                            sms_notification_external_id: SecureRandom.uuid)
+                            email_notification_external_id: SecureRandom.uuid)
     end
     let(:sms_notification) do
       create(:notification, appeals_id: appeal.uuid,
@@ -35,17 +36,23 @@ describe ProcessNotificationStatusUpdatesJob, type: :job do
       expect { job }.to change(ActiveJob::Base.queue_adapter.enqueued_jobs, :size).by(1)
     end
 
-    it "logs when external id is not present" do
-      job.perform_now
-      expect(notification.sms_notification_status).to eq("No External Id")
-    end
+    it "processes email notifications from redis cache" do
+      expect(email_notification.email_notification_status).to_not eq(new_status)
 
-    it "successfully processes notifications from redis cache" do
-      create_cache(email_notification)
+      create_cache_entries(email_notification)
 
       expect(redis.keys.grep(/email_update:/).count).to eq(1)
 
-      redis.set("sms_update:#{sms_notification.sms_notification_external_id}:#{new_status}", 0)
+      perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
+
+      expect(redis.keys.grep(/email_update:/).count).to eq(0)
+      expect(email_notification.reload.email_notification_status).to eq(new_status)
+    end
+
+    it "processes sms notifications from redis cache" do
+      expect(sms_notification.sms_notification_status).to_not eq(new_status)
+
+      create_cache_entries(sms_notification)
 
       expect(redis.keys.grep(/sms_update:/).count).to eq(1)
 
@@ -53,13 +60,10 @@ describe ProcessNotificationStatusUpdatesJob, type: :job do
 
       expect(redis.keys.grep(/sms_update:/).count).to eq(0)
       expect(sms_notification.reload.sms_notification_status).to eq(new_status)
-
-      delete_cache
     end
 
     it "processes a mix of email and sms notifications from redis cache" do
-      redis.set("sms_update:#{sms_notification.sms_notification_external_id}:#{new_status}", 0)
-      redis.set("email_update:#{email_notification.email_notification_external_id}:#{new_status}", 0)
+      create_cache_entries(sms_notification, email_notification)
 
       expect(redis.keys.grep(/(sms|email)_update:/).count).to eq(2)
 
@@ -79,7 +83,7 @@ describe ProcessNotificationStatusUpdatesJob, type: :job do
       redis.set("sms_update:not-going-to-match:#{new_status}", 0)
 
       # This notification update should be fine
-      redis.set("email_update:#{email_notification.email_notification_external_id}:#{new_status}", 0)
+      create_cache_entries(email_notification)
 
       expect(redis.keys.grep(/(sms|email)_update:/).count).to eq(2)
 
@@ -94,19 +98,12 @@ describe ProcessNotificationStatusUpdatesJob, type: :job do
 
   private
 
-  def create_cache(*keys)
-    delete_cache
-
+  def create_cache_entries(*keys)
     keys.each do |key|
-      redis.set("email_update:#{key.sms_notification_external_id}:test_status", 0)
+      notification_type = key.notification_type.downcase
+      external_id = key.send("#{notification_type}_notification_external_id".to_sym)
+
+      redis.set("#{notification_type}_update:#{external_id}:#{new_status}", 0)
     end
-  end
-
-  def delete_cache
-    redis.scan_each(match: "*_update:*") { |key| redis.del(key) }
-  end
-
-  def redis
-    Redis.new(url: Rails.application.secrets.redis_url_cache)
   end
 end
