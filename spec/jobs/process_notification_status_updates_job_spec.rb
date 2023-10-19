@@ -4,7 +4,7 @@ describe ProcessNotificationStatusUpdatesJob, type: :job do
   include ActiveJob::TestHelper
 
   let(:redis) do
-    # Creates a fresh Redis connection before each tests and deletes all keys in the store
+    # Creates a fresh Redis connection before each test and deletes all keys in the store
     Redis.new(url: Rails.application.secrets.redis_url_cache).tap(&:flushall)
   end
 
