@@ -2953,15 +2953,15 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
-  describe "#veteran_has_appeals_in_vacols?(file_number)" do
-    subject { LegacyAppeal.veteran_has_appeals_in_vacols?(file_number) }
+  describe "#veteran_has_appeals_in_vacols?(veteran_file_number)" do
+    subject { LegacyAppeal.veteran_has_appeals_in_vacols?(veteran_file_number) }
 
     let!(:vacols_case) do
       create(:case, bfcorlid: "123456789S")
     end
 
     context "when appeals are returned from VACOLS for the given file_number" do
-      let(:file_number) { "123456789" }
+      let(:veteran_file_number) { "123456789" }
 
       it "returns true" do
         expect(subject).to eq(true)
@@ -2969,8 +2969,7 @@ describe LegacyAppeal, :all_dbs do
     end
 
     context "when appeals are NOT returned from VACOLS for the given file_number" do
-      let(:vacols_case) { nil }
-      let(:file_number) { "123456789" }
+      let(:veteran_file_number) { "123456788" }
 
       it "returns false" do
         expect(subject).to eq(false)
@@ -2979,7 +2978,7 @@ describe LegacyAppeal, :all_dbs do
 
     context "when passed an invalid vbms id" do
       context "length greater than 9" do
-        let(:file_number) { "1234567890" }
+        let(:veteran_file_number) { "1234567890" }
 
         it "raises ActiveRecord::RecordNotFound error" do
           expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
@@ -2987,7 +2986,7 @@ describe LegacyAppeal, :all_dbs do
       end
 
       context "length less than 3" do
-        let(:file_number) { "12" }
+        let(:veteran_file_number) { "12" }
 
         it "raises ActiveRecord::RecordNotFound error" do
           expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
