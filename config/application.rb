@@ -98,9 +98,6 @@ module CaseflowCertification
     # Default as of 6.0: true
     Rails.application.config.action_dispatch.use_cookies_with_metadata = false
 
-    # Return false instead of self when enqueuing is aborted from a callback.
-    # Rails.application.config.active_job.return_false_on_aborted_enqueue = true
-
     # Send Active Storage analysis and purge jobs to dedicated queues.
     # Rails.application.config.active_storage.queues.analysis = :active_storage_analysis
     # Rails.application.config.active_storage.queues.purge    = :active_storage_purge
