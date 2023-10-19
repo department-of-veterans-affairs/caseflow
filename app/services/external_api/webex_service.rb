@@ -3,9 +3,7 @@
 require "json"
 
 class ExternalApi::WebexService
-  CREATE_CONFERENCE_ENDPOINT = "api-usgov.webex.com/v1/meetings"
-  MOCK_ENDPOINT = "localhost:3050/fake.#{CREATE_CONFERENCE_ENDPOINT}"
-  # ENDPOINT = ApplicationController.dependencies_faked? ? MOCK_ENDPOINT : CREATE_CONFERENCE_ENDPOINT
+  ENDPOINT = "api-usgov.webex.com/v1/meetings"
 
   # :reek:UtilityFunction
   def combine_time_and_date(time, timezone, date)
@@ -19,46 +17,28 @@ class ExternalApi::WebexService
 
   # rubocop:disable Metrics/MethodLength
   def create_conference(virtual_hearing)
-    title = virtual_hearing.alias
     hearing_day = HearingDay.find(virtual_hearing.hearing.hearing_day_id)
     hearing = Hearing.find(virtual_hearing.hearing.hearing_day_id)
-    start_date_time = hearing.scheduled_for.iso8601
     timezone = hearing.regional_office&.timezone
-    end_date = hearing_day.scheduled_for
+    date = hearing_day.scheduled_for
+    start_time = "00:00:01"
     end_time = "23:59:59"
-    end_date_time = combine_time_and_date(end_time, timezone, end_date)
+    end_date_time = combine_time_and_date(end_time, timezone, date)
+    start_date_time = combine_time_and_date(start_time, timezone, date)
 
     body = {
       "jwt": {
-        "sub": title,
+        "sub": virtual_hearing.subject_for_conference,
         "Nbf": start_date_time,
-        "Exp": end_date_time,
-        "flow": {
-          "id": "sip-no-knock",
-          "data": [
-            {
-              "uri": "example1@intadmin.room.wbx2.com"
-            },
-            {
-              "uri": "example2@intadmin.room.wbx2.com"
-            }
-          ]
-        }
+        "Exp": end_date_time
       },
-      "aud": "some stuff",
+      "aud": "",
       "numGuest": 1,
       "numHost": 1,
-      "provideShortUrls": true,
-      "verticalType": "gen",
-      "loginUrlForHost": false,
-      "jweAlg": "PBES2-HS512+A256KW",
-      "saltLength": 8,
-      "iterations": 1000,
-      "enc": "A256GCM",
-      "jwsAlg": "HS512"
+      "provideShortUrls": true
     }
 
-    resp = send_webex_request(MOCK_ENDPOINT, :post, body: body)
+    resp = send_webex_request(ENDPOINT, :post, body: body)
     return if resp.nil?
 
     ExternalApi::WebexService::CreateResponse.new(resp)
@@ -68,7 +48,7 @@ class ExternalApi::WebexService
   def delete_conference(virtual_hearing)
     return if virtual_hearing.conference_id.nil?
 
-    delete_endpoint = "#{MOCK_ENDPOINT}#{conference_id}/"
+    delete_endpoint = "#{ENDPOINT}#{conference_id}/"
     resp = send_webex_request(delete_endpoint, :delete)
     return if resp.nil?
 
