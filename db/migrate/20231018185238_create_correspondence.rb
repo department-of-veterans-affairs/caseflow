@@ -15,7 +15,7 @@ class CreateCorrespondence < Caseflow::Migration
       t.bigint :veteran_id, index: true, foreign_key: true, comment: "Foreign key to veterans table"
       t.text :notes, comment: "Comes from CMP; can be updated by user"
 
-      t.integer :correspondence_id_type, index: true, foreign_key: true, foreign_key:{to_table: :correspondence_types}, comment: "Foreign key for correspondence_types table"
+      t.integer :correspondence_type_id, index: true, foreign_key: true, foreign_key:{to_table: :correspondence_types}, comment: "Foreign key for correspondence_types table"
 
       t.bigint :assigned_by_id, index: true, foreign_key: true, foreign_key:{to_table: :users}, comment: "Foreign key to users table"
       t.bigint :updated_by_id, index: true, foreign_key: true, foreign_key:{to_table: :users}, comment: "Foreign key to users table"
