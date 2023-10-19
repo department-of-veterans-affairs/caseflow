@@ -14,7 +14,7 @@ class RequestIssue < CaseflowRecord
   include SyncLock
 
   # Pagination for VBMS API
-  paginates_per 100
+  paginates_per ENV["REQUEST_ISSUE_PAGINATION_OFFSET"]
 
   # how many days before we give up trying to sync decisions
   REQUIRES_PROCESSING_WINDOW_DAYS = 30
