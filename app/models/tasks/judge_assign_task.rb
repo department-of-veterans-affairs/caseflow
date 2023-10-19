@@ -18,7 +18,11 @@ class JudgeAssignTask < JudgeTask
                                     unless: :skip_check_for_only_open_task_of_type
 
   def additional_available_actions(_user)
-    [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
+    if appeal.is_a?(LegacyAppeal) && FeatureToggle.enable!(:vlj_legacy_appeal)
+      [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY_LEGACY.to_h]
+    else
+      [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
+    end
   end
 
   def begin_decision_review_phase
