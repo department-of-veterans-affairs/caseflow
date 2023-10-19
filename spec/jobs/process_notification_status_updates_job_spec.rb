@@ -12,11 +12,6 @@ describe ProcessNotificationStatusUpdatesJob, type: :job do
 
     subject(:job) { ProcessNotificationStatusUpdatesJob.perform_later }
 
-    let(:appeal) do
-      create(:appeal, veteran_file_number: "500000102",
-                      receipt_date: 6.months.ago.to_date.mdY)
-    end
-
     let(:new_status) { "test_status" }
     let(:appeal) { create(:appeal, veteran_file_number: "500000102", receipt_date: 6.months.ago.to_date.mdY) }
     let(:email_notification) do
