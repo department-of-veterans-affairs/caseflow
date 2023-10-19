@@ -106,15 +106,6 @@ module CaseflowCertification
     # attachments instead of appending. Use #attach to add new attachments without replacing existing ones.
     # Rails.application.config.active_storage.replace_on_assign_to_many = true
 
-    # Use ActionMailer::MailDeliveryJob for sending parameterized and normal mail.
-    #
-    # The default delivery jobs (ActionMailer::Parameterized::DeliveryJob, ActionMailer::DeliveryJob),
-    # will be removed in Rails 6.1. This setting is not backwards compatible with earlier Rails versions.
-    # If you send mail in the background, job workers need to have a copy of
-    # MailDeliveryJob to ensure all delivery jobs are processed properly.
-    # Make sure your entire app is migrated and stable on 6.0 before using this setting.
-    # Rails.application.config.action_mailer.delivery_job = "ActionMailer::MailDeliveryJob"
-
     # Enable the same cache key to be reused when the object being cached of type
     # `ActiveRecord::Relation` changes by moving the volatile information (max updated at and count)
     # of the relation's cache key into the cache version to support recycling cache key.
