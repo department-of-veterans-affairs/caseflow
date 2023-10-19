@@ -1173,11 +1173,7 @@ class LegacyAppeal < CaseflowRecord
     end
 
     def veteran_has_appeals_in_vacols?(veteran_file_number)
-      vbms_id = LegacyAppeal.convert_file_number_to_vacols(veteran_file_number)
-      cases = VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent, :case_issues)
-      cases.any?
-    rescue Caseflow::Error::InvalidFileNumber
-      raise ActiveRecord::RecordNotFound
+      fetch_appeals_by_file_number(veteran_file_number).any?
     end
 
     private
