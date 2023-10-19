@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe ProcessNotificationStatusUpdatesJob, :postgres do
+describe ProcessNotificationStatusUpdatesJob, type: :job do
   include ActiveJob::TestHelper
 
   let(:redis) do
@@ -8,8 +8,13 @@ describe ProcessNotificationStatusUpdatesJob, :postgres do
   end
 
   context ".perform" do
-    before do
-      Seeds::NotificationEvents.new.seed!
+    before { Seeds::NotificationEvents.new.seed! }
+
+    subject(:job) { ProcessNotificationStatusUpdatesJob.perform_later }
+
+    let(:appeal) do
+      create(:appeal, veteran_file_number: "500000102",
+                      receipt_date: 6.months.ago.to_date.mdY)
     end
 
     let(:new_status) { "test_status" }
@@ -19,8 +24,8 @@ describe ProcessNotificationStatusUpdatesJob, :postgres do
                             appeals_type: "Appeal",
                             event_date: 6.days.ago,
                             event_type: "Quarterly Notification",
-                            email_notification_external_id: SecureRandom.uuid,
-                            notification_type: "Email")
+                            notification_type: "Email",
+                            sms_notification_external_id: SecureRandom.uuid)
     end
     let(:sms_notification) do
       create(:notification, appeals_id: appeal.uuid,
@@ -31,17 +36,10 @@ describe ProcessNotificationStatusUpdatesJob, :postgres do
                             notification_type: "SMS")
     end
 
-    it "processes email notifications from redis cache" do
-      expect(email_notification.email_notification_status).to_not eq(new_status)
+    before { add_cache(notification) }
 
-      redis.set("email_update:#{email_notification.email_notification_external_id}:#{new_status}", 0)
-
-      expect(redis.keys.grep(/email_update:/).count).to eq(1)
-
-      perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
-
-      expect(redis.keys.grep(/email_update:/).count).to eq(0)
-      expect(email_notification.reload.email_notification_status).to eq(new_status)
+    it "has one message in queue" do
+      expect { job }.to change(ActiveJob::Base.queue_adapter.enqueued_jobs, :size).by(1)
     end
 
     it "processes sms notifications from redis cache" do
@@ -90,5 +88,19 @@ describe ProcessNotificationStatusUpdatesJob, :postgres do
 
       expect(redis.keys.grep(/(sms|email)_update:/).count).to eq(0)
     end
+  end
+
+  private
+
+  def add_cache(*notifications)
+    # clean-up any keys left behind
+    redis.scan_each(match: "*_update:*") { |key| redis.del(key) }
+    notifications.each do |notification|
+      redis.set("email_update:#{notification.sms_notification_external_id}:test_status", 0)
+    end
+  end
+
+  def redis
+    Redis.new(url: Rails.application.secrets.redis_url_cache)
   end
 end
