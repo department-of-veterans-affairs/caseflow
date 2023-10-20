@@ -154,8 +154,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       {
         selected: nil,
         options: users_to_options(Judge.list_all),
-        type: task.appeal_type.eql?(Appeal.name) ? task.type : "JudgeLegacyAssignTask",
-        modal_button_text: COPY::MODAL_ASSIGN_BUTTON
+        type: task.appeal_type.eql?(Appeal.name) ? task.type : "JudgeLegacyAssignTask"
       }
     end
 
@@ -181,15 +180,6 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         selected: nil,
         options: user.can_act_on_behalf_of_judges? ? users_to_options(Attorney.list_all) : nil,
         type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name
-      }
-    end
-
-    def assign_to_attorney_legacy_data(task, user)
-      {
-        selected: nil,
-        options: user.can_act_on_behalf_of_legacy_judges? ? users_to_options(Attorney.list_all) : nil,
-        type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name,
-        message_title: COPY::DISTRIBUTE_TASK_SUCCESS_MESSAGE_NON_BLOCKING
       }
     end
 
@@ -384,11 +374,12 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         modal_button_text: COPY::PROCEED_FINAL_NOTIFICATION_LETTER_BUTTON
       }
 
-      params[:modal_body] = if task.type == "PostSendInitialNotificationLetterHoldingTask"
-                              COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
-                            else
-                              COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
-                            end
+      params[:modal_body] =
+        if task.type == "PostSendInitialNotificationLetterHoldingTask"
+          COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_COPY
+        else
+          COPY::PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL_COPY
+        end
 
       if defined? task.completion_contact
         params[:contact] = task.completion_contact
@@ -449,11 +440,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
     end
 
     def return_to_attorney_data(task, _user = nil)
-      assignee = if task.appeal_type == "LegacyAppeal"
-                   task.assigned_to
-                 else
-                   task.children.select { |child| child.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
-                 end
+      assignee = task.children.select { |child| child.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
 
       judge_team = JudgeTeam.for_judge(task.assigned_to)
 
@@ -550,22 +537,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         type: SpecialCaseMovementTask.name,
         modal_title: COPY::SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
         modal_body: COPY::SPECIAL_CASE_MOVEMENT_MODAL_DETAIL,
-        modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER,
-        modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
-        message_title: COPY::DISTRIBUTE_TASK_SUCCESS_MESSAGE_NON_BLOCKING
-      }
-    end
-
-    def special_case_movement_legacy_data(task, _user = nil)
-      {
-        selected: task.appeal.assigned_judge,
-        options: users_to_options(Judge.list_all),
-        type: SpecialCaseMovementTask.name,
-        modal_title: COPY::SPECIAL_CASE_MOVEMENT_MODAL_TITLE,
-        modal_body: COPY::SPECIAL_CASE_MOVEMENT_MODAL_DETAIL,
-        modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER,
-        modal_button_text: COPY::MODAL_ASSIGN_BUTTON,
-        message_title: COPY::DISTRIBUTE_TASK_SUCCESS_MESSAGE_NON_BLOCKING
+        modal_selector_placeholder: COPY::SPECIAL_CASE_MOVEMENT_MODAL_SELECTOR_PLACEHOLDER
       }
     end
 
@@ -575,21 +547,6 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
         type: BlockedSpecialCaseMovementTask.name,
         blocking_tasks: task.visible_blocking_tasks.map(&:serialize_for_cancellation)
       }
-    end
-
-    def blocked_special_case_movement_data_legacy(task, _user = nil)
-      if task.appeal.is_a?(LegacyAppeal)
-        {
-          options: users_to_options(Judge.list_all),
-          type: BlockedSpecialCaseMovementTask.name
-        }
-      else
-        {
-          options: users_to_options(Judge.list_all),
-          type: BlockedSpecialCaseMovementTask.name,
-          blocking_tasks: task.visible_blocking_tasks.map(&:serialize_for_cancellation)
-        }
-      end
     end
 
     def toggle_timed_hold(task, user)

@@ -53,8 +53,7 @@ class AttorneyTaskListView extends React.PureComponent {
         {error.detail}
       </Alert>}
       {success && <Alert type="success" title={success.title}>
-        {success.detail || (success.title.includes('You have successfully reassigned ') &&
-         COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL)}
+        {success.detail || COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
       </Alert>}
       <QueueTableBuilder
         assignedTasks={this.props.workableTasks}
