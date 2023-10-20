@@ -119,10 +119,15 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
+                default_per_page = RequestIssue.default_per_page
                 expect(response).to have_http_status(200)
                 expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
                 expect(response_hash["legacy_appeals_present"]).to eq true
                 expect(response_hash["request_issues"].size).to eq 2
+                expect(response_hash["page"]).to eq 1
+                expect(response_hash["total_number_of_pages"]).to eq (request_issue_for_vet_count / default_per_page.to_f).ceil
+                expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+                expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
                 expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
                 expect(response_hash["request_issues"][1]["id"] == request_issues[1].id).to eq true
               end
@@ -133,10 +138,15 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
+                default_per_page = RequestIssue.default_per_page
                 expect(response).to have_http_status(200)
                 expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
                 expect(response_hash["legacy_appeals_present"]).to eq true
                 expect(response_hash["request_issues"].size).to eq 2
+                expect(response_hash["page"]).to eq 2
+                expect(response_hash["total_number_of_pages"]).to eq (request_issue_for_vet_count / default_per_page.to_f).ceil
+                expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+                expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
                 expect(response_hash["request_issues"][0]["id"] == request_issues[2].id).to eq true
                 expect(response_hash["request_issues"][1]["id"] == request_issues[3].id).to eq true
               end
@@ -147,13 +157,17 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
+                default_per_page = RequestIssue.default_per_page
                 expect(response).to have_http_status(200)
                 expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
                 expect(response_hash["legacy_appeals_present"]).to eq true
                 expect(response_hash["request_issues"].size).to eq 2
+                expect(response_hash["page"]).to eq 1
+                expect(response_hash["total_number_of_pages"]).to eq (request_issue_for_vet_count / default_per_page.to_f).ceil
+                expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+                expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
                 expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
                 expect(response_hash["request_issues"][1]["id"] == request_issues[1].id).to eq true
-                expect(response_hash["page"]).to eq 1
               end
 
               it "should default to page 1" do
@@ -162,13 +176,17 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
+                default_per_page = RequestIssue.default_per_page
                 expect(response).to have_http_status(200)
                 expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
                 expect(response_hash["legacy_appeals_present"]).to eq true
                 expect(response_hash["request_issues"].size).to eq 2
+                expect(response_hash["page"]).to eq 1
+                expect(response_hash["total_number_of_pages"]).to eq (request_issue_for_vet_count / default_per_page.to_f).ceil
+                expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+                expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
                 expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
                 expect(response_hash["request_issues"][1]["id"] == request_issues[1].id).to eq true
-                expect(response_hash["page"]).to eq 1
               end
             end
           end
@@ -239,10 +257,15 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
+                default_per_page = RequestIssue.default_per_page
                 expect(response).to have_http_status(200)
                 expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
                 expect(response_hash["legacy_appeals_present"]).to eq true
                 expect(response_hash["request_issues"].size).to eq 2
+                expect(response_hash["page"]).to eq 1
+                expect(response_hash["total_number_of_pages"]).to eq (request_issue_for_vet_count / default_per_page.to_f).ceil
+                expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+                expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
                 expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
                 expect(response_hash["request_issues"][1]["id"] == request_issues[1].id).to eq true
               end
@@ -253,10 +276,15 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
+                default_per_page = RequestIssue.default_per_page
                 expect(response).to have_http_status(200)
                 expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
                 expect(response_hash["legacy_appeals_present"]).to eq true
                 expect(response_hash["request_issues"].size).to eq 2
+                expect(response_hash["page"]).to eq 2
+                expect(response_hash["total_number_of_pages"]).to eq (request_issue_for_vet_count / default_per_page.to_f).ceil
+                expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+                expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
                 expect(response_hash["request_issues"][0]["id"] == request_issues[2].id).to eq true
                 expect(response_hash["request_issues"][1]["id"] == request_issues[3].id).to eq true
               end
@@ -267,13 +295,17 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
+                default_per_page = RequestIssue.default_per_page
                 expect(response).to have_http_status(200)
                 expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
                 expect(response_hash["legacy_appeals_present"]).to eq true
                 expect(response_hash["request_issues"].size).to eq 2
+                expect(response_hash["page"]).to eq 1
+                expect(response_hash["total_number_of_pages"]).to eq (request_issue_for_vet_count / default_per_page.to_f).ceil
+                expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+                expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
                 expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
                 expect(response_hash["request_issues"][1]["id"] == request_issues[1].id).to eq true
-                expect(response_hash["page"]).to eq 1
               end
 
               it "should default to page 1" do
@@ -282,13 +314,17 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
+                default_per_page = RequestIssue.default_per_page
                 expect(response).to have_http_status(200)
                 expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
                 expect(response_hash["legacy_appeals_present"]).to eq true
                 expect(response_hash["request_issues"].size).to eq 2
+                expect(response_hash["page"]).to eq 1
+                expect(response_hash["total_number_of_pages"]).to eq (request_issue_for_vet_count / default_per_page.to_f).ceil
+                expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+                expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
                 expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
                 expect(response_hash["request_issues"][1]["id"] == request_issues[1].id).to eq true
-                expect(response_hash["page"]).to eq 1
               end
             end
           end
@@ -361,10 +397,15 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
+                default_per_page = RequestIssue.default_per_page
                 expect(response).to have_http_status(200)
                 expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
                 expect(response_hash["legacy_appeals_present"]).to eq false
                 expect(response_hash["request_issues"].size).to eq 2
+                expect(response_hash["page"]).to eq 1
+                expect(response_hash["total_number_of_pages"]).to eq (request_issue_for_vet_count / default_per_page.to_f).ceil
+                expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+                expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
                 expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
                 expect(response_hash["request_issues"][1]["id"] == request_issues[1].id).to eq true
               end
@@ -375,10 +416,15 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
+                default_per_page = RequestIssue.default_per_page
                 expect(response).to have_http_status(200)
                 expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
                 expect(response_hash["legacy_appeals_present"]).to eq false
                 expect(response_hash["request_issues"].size).to eq 2
+                expect(response_hash["page"]).to eq 2
+                expect(response_hash["total_number_of_pages"]).to eq (request_issue_for_vet_count / default_per_page.to_f).ceil
+                expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+                expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
                 expect(response_hash["request_issues"][0]["id"] == request_issues[2].id).to eq true
                 expect(response_hash["request_issues"][1]["id"] == request_issues[3].id).to eq true
               end
@@ -389,13 +435,17 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
+                default_per_page = RequestIssue.default_per_page
                 expect(response).to have_http_status(200)
                 expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
                 expect(response_hash["legacy_appeals_present"]).to eq false
                 expect(response_hash["request_issues"].size).to eq 2
+                expect(response_hash["page"]).to eq 1
+                expect(response_hash["total_number_of_pages"]).to eq (request_issue_for_vet_count / default_per_page.to_f).ceil
+                expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+                expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
                 expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
                 expect(response_hash["request_issues"][1]["id"] == request_issues[1].id).to eq true
-                expect(response_hash["page"]).to eq 1
               end
 
               it "should default to page 1" do
@@ -404,13 +454,17 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
+                default_per_page = RequestIssue.default_per_page
                 expect(response).to have_http_status(200)
                 expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
                 expect(response_hash["legacy_appeals_present"]).to eq false
                 expect(response_hash["request_issues"].size).to eq 2
+                expect(response_hash["page"]).to eq 1
+                expect(response_hash["total_number_of_pages"]).to eq (request_issue_for_vet_count / default_per_page.to_f).ceil
+                expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+                expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
                 expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
                 expect(response_hash["request_issues"][1]["id"] == request_issues[1].id).to eq true
-                expect(response_hash["page"]).to eq 1
               end
             end
           end
@@ -482,10 +536,15 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
+                default_per_page = RequestIssue.default_per_page
                 expect(response).to have_http_status(200)
                 expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
                 expect(response_hash["legacy_appeals_present"]).to eq false
                 expect(response_hash["request_issues"].size).to eq 2
+                expect(response_hash["page"]).to eq 1
+                expect(response_hash["total_number_of_pages"]).to eq (request_issue_for_vet_count / default_per_page.to_f).ceil
+                expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+                expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
                 expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
                 expect(response_hash["request_issues"][1]["id"] == request_issues[1].id).to eq true
               end
@@ -496,9 +555,14 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
+                default_per_page = RequestIssue.default_per_page
                 expect(response).to have_http_status(200)
                 expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
                 expect(response_hash["legacy_appeals_present"]).to eq false
+                expect(response_hash["page"]).to eq 2
+                expect(response_hash["total_number_of_pages"]).to eq (request_issue_for_vet_count / default_per_page.to_f).ceil
+                expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+                expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
                 expect(response_hash["request_issues"].size).to eq 2
                 expect(response_hash["request_issues"][0]["id"] == request_issues[2].id).to eq true
                 expect(response_hash["request_issues"][1]["id"] == request_issues[3].id).to eq true
@@ -510,13 +574,17 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
+                default_per_page = RequestIssue.default_per_page
                 expect(response).to have_http_status(200)
                 expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
                 expect(response_hash["legacy_appeals_present"]).to eq false
                 expect(response_hash["request_issues"].size).to eq 2
+                expect(response_hash["page"]).to eq 1
+                expect(response_hash["total_number_of_pages"]).to eq (request_issue_for_vet_count / default_per_page.to_f).ceil
+                expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+                expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
                 expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
                 expect(response_hash["request_issues"][1]["id"] == request_issues[1].id).to eq true
-                expect(response_hash["page"]).to eq 1
               end
 
               it "should default to page 1" do
@@ -525,13 +593,17 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
+                default_per_page = RequestIssue.default_per_page
                 expect(response).to have_http_status(200)
                 expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
                 expect(response_hash["legacy_appeals_present"]).to eq false
                 expect(response_hash["request_issues"].size).to eq 2
+                expect(response_hash["page"]).to eq 1
+                expect(response_hash["total_number_of_pages"]).to eq (request_issue_for_vet_count / default_per_page.to_f).ceil
+                expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+                expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
                 expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
                 expect(response_hash["request_issues"][1]["id"] == request_issues[1].id).to eq true
-                expect(response_hash["page"]).to eq 1
               end
             end
           end
