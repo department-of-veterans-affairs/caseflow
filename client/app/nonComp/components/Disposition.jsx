@@ -21,7 +21,6 @@ import {
   formatRequestIssuesWithDecisionIssues,
   buildDispositionSubmission
 } from '../util';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 class NonCompDecisionIssue extends React.PureComponent {
   constructor(props) {
@@ -192,7 +191,6 @@ class NonCompDispositions extends React.PureComponent {
 
       editIssuesLink = <React.Fragment>
         <a className="cf-link-btn" href={appeal.editIssuesUrl}>Edit Issues</a>
-        <a className="cf-link-btn" href={requestToCamoMailLink}> Send an Email</a>
       </React.Fragment>;
     }
 
@@ -218,7 +216,7 @@ class NonCompDispositions extends React.PureComponent {
 
                 Only VHA admins can make edits to Higher-Level Reviews and Supplemental Claims.
                 If you would like to add, remove, or modify an issue within a claim, please
-              <Link to="some/email/route"> <u><b>send an email</b></u></Link> with the requested change.
+                <a href={requestToCamoMailLink}> <u><b>send an email</b></u></a> with the requested change.
             </Alert>}
             <div className="usa-width-one-half">
 
