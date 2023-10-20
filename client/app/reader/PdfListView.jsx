@@ -89,6 +89,7 @@ export class PdfListView extends React.Component {
             documents={this.props.documents}
             noDocuments={noDocuments}
             clearAllFiltersCallbacks={this.state.clearAllFiltersCallbacks}
+            setClearAllFiltersCallbacks={this.setClearAllFiltersCallbacks}
           />
           {tableView}
         </div>
