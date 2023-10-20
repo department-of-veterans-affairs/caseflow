@@ -145,7 +145,8 @@ describe DecisionReviewTask, :postgres do
         business_line: business_line.url,
         external_appeal_id: decision_review_task.appeal.uuid,
         appeal_type: "HigherLevelReview",
-        has_poa: true
+        has_poa: true,
+        status: "assigned"
       }
       expect(subject).to eq serialized_hash
       expect(subject.key?(:attributes)).to eq false
@@ -188,7 +189,8 @@ describe DecisionReviewTask, :postgres do
           business_line: business_line.url,
           external_appeal_id: decision_review_task.appeal.uuid,
           appeal_type: "HigherLevelReview",
-          has_poa: true
+          has_poa: true,
+          status: "assigned"
         }
       }
 

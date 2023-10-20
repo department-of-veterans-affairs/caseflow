@@ -62,7 +62,7 @@ class TaskTableTabUnconnected extends React.PureComponent {
     const { tabName } = this.state;
     const claimantColumnObject = claimantColumn();
 
-    if (tabName === 'incomplete') {
+    if (this.props.userIsVhaAdmin && tabName === 'incomplete') {
       claimantColumnObject.valueFunction = (task) => {
         const claimType = pluralize(snakeCase(task.appeal.type));
 
@@ -151,12 +151,14 @@ TaskTableTabUnconnected.propTypes = {
   filterableTaskTypes: PropTypes.object,
   filterableTaskIssueTypes: PropTypes.object,
   onHistoryUpdate: PropTypes.func,
-  tabName: PropTypes.string
+  tabName: PropTypes.string,
+  userIsVhaAdmin: PropTypes.bool
 };
 
 const TaskTableTab = connect(
   (state) => ({
-    featureToggles: state.featureToggles
+    featureToggles: state.featureToggles,
+    userIsVhaAdmin: state.userIsVhaAdmin
   }),
 )(TaskTableTabUnconnected);
 

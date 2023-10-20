@@ -6,6 +6,7 @@
     feedbackUrl: feedback_url,
     buildDate: build_date,
     serverNonComp: {
+      userIsVhaAdmin: VhaBusinessLine.singleton.user_is_admin?(current_user),
       businessLine: business_line.name,
       businessLineUrl: business_line.url,
       businessLineConfig: business_line_config_options,
