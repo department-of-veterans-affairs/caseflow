@@ -7,7 +7,7 @@ class Api::V3::VbmsIntake::Ama::VeteransController < Api::V3::BaseController
   # TODO: investigate roles
   before_action do
     #FeatureToggle.enabled?(:what)
-    api_released?(:api_v3_vbms_intake_ama)
+    #api_released?(:api_v3_vbms_intake_ama)
   end
 
   def show
