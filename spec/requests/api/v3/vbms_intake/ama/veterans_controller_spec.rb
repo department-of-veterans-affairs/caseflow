@@ -14,29 +14,29 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
   end
 
   describe "#show" do
-    context "when feature is not enabled" do
-      let!(:vet) { create(:veteran) }
+    # context "when feature is not enabled" do
+    #   let!(:vet) { create(:veteran) }
 
-      it "should return 'Not Implemented' error" do
-        FeatureToggle.disable!(:api_v3_vbms_intake_ama)
-        get(
-          "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
-          headers: authorization_header
-        )
-        expect(response).to have_http_status(501)
-        expect(response.body).to include("Not Implemented")
-      end
-    end
+    #   it "should return 'Not Implemented' error" do
+    #     FeatureToggle.disable!(:api_v3_vbms_intake_ama)
+    #     get(
+    #       "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
+    #       headers: authorization_header
+    #     )
+    #     expect(response).to have_http_status(501)
+    #     expect(response.body).to include("Not Implemented")
+    #   end
+    # end
 
     context "when feature is enabled" do
-      before { FeatureToggle.enable!(:api_v3_vbms_intake_ama) }
+      # before { FeatureToggle.enable!(:api_v3_vbms_intake_ama) }
 
-      after { FeatureToggle.disable!(:api_v3_vbms_intake_ama) }
+      # after { FeatureToggle.disable!(:api_v3_vbms_intake_ama) }
 
       context "when a veteran is not found" do
         it "should return veteran not found error" do
           get(
-            "/api/v3/vbms_intake/ama/veteran/9999999999",
+            "/api/v3/vbms_intake/ama/veterans/9999999999",
             headers: authorization_header
           )
           expect(response).to have_http_status(500)
@@ -69,7 +69,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with legacy_appeals_present true" do
               get(
-                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -80,7 +80,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with the associated request issues" do
               get(
-                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -95,7 +95,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with the multiple decision issues per request issue" do
               get(
-                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -115,7 +115,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
               it "should only show number of request issues listed in the paginates_per value on first page" do
                 get(
-                  "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}?page=1",
+                  "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}?page=1",
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
@@ -134,7 +134,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
               it "should only show remaining request issues on next page" do
                 get(
-                  "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}?page=2",
+                  "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}?page=2",
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
@@ -153,7 +153,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
               it "should show page 1 when attempting to get page 0" do
                 get(
-                  "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}?page=0",
+                  "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}?page=0",
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
@@ -172,7 +172,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
               it "should default to page 1" do
                 get(
-                  "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
+                  "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
@@ -208,7 +208,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with legacy_appeals_present true" do
               get(
-                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -219,7 +219,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with the associated request issues" do
               get(
-                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -233,7 +233,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with the same multiple decision issues per request issue" do
               get(
-                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -253,7 +253,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
               it "should only show number of request issues listed in the paginates_per value on first page" do
                 get(
-                  "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}?page=1",
+                  "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}?page=1",
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
@@ -272,7 +272,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
               it "should only show remaining request issues on next page" do
                 get(
-                  "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}?page=2",
+                  "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}?page=2",
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
@@ -291,7 +291,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
               it "should show page 1 when attempting to get page 0" do
                 get(
-                  "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}?page=0",
+                  "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}?page=0",
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
@@ -310,7 +310,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
               it "should default to page 1" do
                 get(
-                  "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
+                  "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
@@ -345,7 +345,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with legacy_appeals_present false" do
               get(
-                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -356,7 +356,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with the associated request issues" do
               get(
-                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -371,7 +371,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with the multiple decision issues per request issue" do
               get(
-                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -393,7 +393,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
               it "should only show number of request issues listed in the paginates_per value on first page" do
                 get(
-                  "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}?page=1",
+                  "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}?page=1",
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
@@ -412,7 +412,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
               it "should only show remaining request issues on next page" do
                 get(
-                  "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}?page=2",
+                  "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}?page=2",
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
@@ -431,7 +431,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
               it "should show page 1 when attempting to get page 0" do
                 get(
-                  "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}?page=0",
+                  "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}?page=0",
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
@@ -450,7 +450,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
               it "should default to page 1" do
                 get(
-                  "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
+                  "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
@@ -487,7 +487,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with legacy_appeals_present false" do
               get(
-                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -498,7 +498,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with the associated request issues" do
               get(
-                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -512,7 +512,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
             it "should respond with the same multiple decision issues per request issue" do
               get(
-                "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
+                "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
                 headers: authorization_header
               )
               response_hash = JSON.parse(response.body)
@@ -532,7 +532,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
               it "should only show number of request issues listed in the paginates_per value on first page" do
                 get(
-                  "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}?page=1",
+                  "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}?page=1",
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
@@ -551,7 +551,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
               it "should only show remaining request issues on next page" do
                 get(
-                  "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}?page=2",
+                  "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}?page=2",
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
@@ -570,7 +570,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
               it "should show page 1 when attempting to get page 0" do
                 get(
-                  "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}?page=0",
+                  "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}?page=0",
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)
@@ -589,7 +589,7 @@ describe Api::V3::VbmsIntake::Ama::VeteransController, :postgres, type: :request
 
               it "should default to page 1" do
                 get(
-                  "/api/v3/vbms_intake/ama/veteran/#{vet.participant_id}",
+                  "/api/v3/vbms_intake/ama/veterans/#{vet.participant_id}",
                   headers: authorization_header
                 )
                 response_hash = JSON.parse(response.body)

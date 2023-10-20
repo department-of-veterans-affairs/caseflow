@@ -51,7 +51,7 @@ Rails.application.routes.draw do
       end
       namespace :vbms_intake do
         namespace :ama do
-          get "veteran/:participant_id", to: "veterans#show"
+          get "veterans/:participant_id", to: "veterans#show"
         end
       end
     end
