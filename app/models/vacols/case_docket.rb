@@ -499,7 +499,20 @@ class VACOLS::CaseDocket < VACOLS::Record
       LEFT JOIN organizations ON organizations_users.organization_id = organizations.id
       WHERE users.status <> 'active'
       OR (organizations_users.admin = '1' AND organizations.type = 'JudgeTeam' AND organizations.status <> 'active')
+      OR (users.id NOT IN (#{admin_users_of_judge_teams}))
       SQL
     )
+  end
+
+  def self.admin_users_of_judge_teams
+    User.find_by_sql(
+      <<-SQL
+      SELECT users.id
+      FROM users
+      LEFT JOIN organizations_users ON users.id = organizations_users.user_id
+      LEFT JOIN organizations ON organizations_users.organization_id = organizations.id
+      WHERE (organizations_users.admin = '1' AND organizations.type = 'JudgeTeam')
+      SQL
+    ).map(&:id).join(", ")
   end
 end
