@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReportPage renders correctly 1`] = `
+<div>
+  <div>
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+    >
+      <div>
+        <h1>
+          Generate task report
+        </h1>
+      </div>
+    </section>
+    <div
+      data-css-1rfrm1q=""
+    >
+      <span>
+        <button
+          class="cf-modal-link cf-btn-link usa-button"
+          id="button-cancel-report"
+          type="button"
+        >
+          Cancel
+        </button>
+      </span>
+      <div
+        data-css-cfdlna=""
+      >
+        <span>
+          <button
+            class="usa-button usa-button"
+            id="button-clear-filters"
+            type="button"
+          >
+            Clear filters
+          </button>
+        </span>
+        <span>
+          <button
+            class="usa-button usa-button"
+            id="button-generate-report"
+            type="button"
+          >
+            Generate task report
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;

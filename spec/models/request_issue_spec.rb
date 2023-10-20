@@ -1008,6 +1008,7 @@ describe RequestIssue, :all_dbs do
     it do
       is_expected.to have_attributes(
         decision_date: Time.zone.today,
+        decision_date_added_at: subject.created_at,
         notes: "notes",
         untimely_exemption: true,
         untimely_exemption_notes: "untimely notes",
@@ -1390,6 +1391,7 @@ describe RequestIssue, :all_dbs do
     context "when decision date is missing" do
       it "returns nil" do
         expect(subject).to be_nil
+        expect(rating_request_issue_without_contested_issue.decision_date_added_at).to be_nil
       end
     end
   end
@@ -2302,6 +2304,7 @@ describe RequestIssue, :all_dbs do
       expect(review).to receive(:handle_issues_with_no_decision_date!).once
       subject
       expect(nonrating_request_issue.decision_date).to eq(new_decision_date.to_date)
+      expect(nonrating_request_issue.decision_date_added_at).to eq(new_decision_date)
     end
 
     context "when the decision date is in the future" do

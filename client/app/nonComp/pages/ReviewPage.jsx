@@ -7,6 +7,7 @@ import { SuccessAlert } from '../components/Alerts';
 import { DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
+import NonCompLayout from '../components/NonCompLayout';
 
 const pageStyling = css({
   marginRight: 0,
@@ -44,34 +45,37 @@ class NonCompReviewsPage extends React.PureComponent {
       />;
     }
 
-    return <div>
-      { successAlert }
-      <h1>{this.props.businessLine}</h1>
-      <div className="usa-grid-full" {...pageStyling} >
-        <div className="usa-width-one-half" {...linkButtonStyling}>
-          <h2>Reviews needing action</h2>
-          <div>Review each issue and select a disposition</div>
+    return (
+      <NonCompLayout>
+        { successAlert }
+        <h1>{this.props.businessLine}</h1>
+        <div className="usa-grid-full" {...pageStyling} >
+          <div className="usa-width-one-half" {...linkButtonStyling}>
+            <h2>Reviews needing action</h2>
+            <div>Review each issue and select a disposition</div>
+          </div>
+          <div className="usa-width-one-half cf-txt-r">
+            <Button
+              onClick={() => {
+                window.location.href = '/intake';
+              }}
+              classNames={compReviewButtonStyling}
+            >
+              + Intake new form
+            </Button>
+            {this.props.businessLine &&
+              <Button
+                classNames={secondaryButtonClassNames}
+                onClick={this.downloadCsv}
+                styling={compReviewButtonStyling}>
+                Download completed tasks
+              </Button>
+            }
+          </div>
         </div>
-        <div className="usa-width-one-half cf-txt-r">
-          <Button onClick={() => {
-            window.location.href = '/intake';
-          }}
-          classNames={compReviewButtonStyling}
-          >
-            + Intake new form
-          </Button>
-          {this.props.businessLine &&
-          <Button
-            classNames={secondaryButtonClassNames}
-            onClick={this.downloadCsv}
-            styling={compReviewButtonStyling}>
-            Download completed tasks
-          </Button>
-          }
-        </div>
-      </div>
-      <NonCompTabs />
-    </div>;
+        <NonCompTabs />
+      </NonCompLayout>
+    );
   }
 }
 
