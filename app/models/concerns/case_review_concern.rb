@@ -53,7 +53,7 @@ module CaseReviewConcern
     return task.appeal.vacols_id if task&.appeal.is_a?(LegacyAppeal)
 
     # fall back to original implementation
-    if task_id&.contains("-")
+    if task_id&.include? "-"
       task_id&.split("-", 2)&.first
     else
       task.appeal.vacols_id
