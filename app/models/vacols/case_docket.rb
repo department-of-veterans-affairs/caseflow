@@ -491,8 +491,15 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.ineligible_caseflow_judges
-    User.inactive.map do |user|
-      { id: user.id, css_id: user.css_id }
-    end
+    User.find_by_sql(
+      <<-SQL
+      SELECT users.id, users.css_id
+      FROM users
+      LEFT JOIN organizations_users ON users.id = organizations_users.user_id
+      LEFT JOIN organizations ON organizations_users.organization_id = organizations.id
+      WHERE users.status <> 'active'
+      OR (organizations_users.admin = '1' AND organizations.type = 'JudgeTeam' AND organizations.status <> 'active')
+      SQL
+    )
   end
 end
