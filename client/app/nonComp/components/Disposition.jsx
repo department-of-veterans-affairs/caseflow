@@ -176,8 +176,8 @@ class NonCompDispositions extends React.PureComponent {
     let disableDispositionSelection = displayVhaNonAdminContent && task.status === 'on_hold';
 
     let emailTemplate = COPY.VHA_REQUEST_TO_CAMO_EMAIL_TEMPLATE.replace('#__LINK_TO_CLAIM__#', window.location.href);
-    let requestToCamoMailLink = `mailto: ${this.props.vhaAdminEmailAddress}?`+
-      `subject=${COPY.VHA_RETURN_TO_CAMO_EMAIL_SUBJECT}&`+
+    let requestToCamoMailLink = `mailto: ${this.props.vhaAdminEmailAddress}?` +
+      `subject=${COPY.VHA_RETURN_TO_CAMO_EMAIL_SUBJECT}&` +
       `body=${ encodeURIComponent(emailTemplate) }`;
 
     if (!task.closed_at) {
