@@ -7,23 +7,23 @@ class AttorneyLegacyTask < LegacyTask
     # task_id is created using the created_at field from the VACOLS.DECASS table
     # so we use the absence of this value to indicate that there is no case assignment and return no actions.
 
+    action_array = []
     if case_movement_blocked_for_distribution?(current_user)
-      [Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY.to_h]
+      action_array.push(Constants.TASK_ACTIONS.BLOCKED_SPECIAL_CASE_MOVEMENT_LEGACY.to_h)
     elsif case_movement_ready_for_distribution?(current_user)
-      [Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.to_h]
-    elsif task_id.nil?
-      []
-    elsif attorney_user?(current_user, role)
-      [
-        Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h,
-        Constants.TASK_ACTIONS.SUBMIT_OMO_REQUEST_FOR_REVIEW.to_h,
-        Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h
-      ]
-    elsif ssc_legacy_case_movement?(current_user)
-      [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY_LEGACY.to_h]
-    else
-      []
+      action_array.push(Constants.TASK_ACTIONS.SPECIAL_CASE_MOVEMENT_LEGACY.to_h)
     end
+
+    if task_id.nil?
+
+    elsif attorney_user?(current_user, role)
+      action_array.push(Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h)
+      action_array.push(Constants.TASK_ACTIONS.SUBMIT_OMO_REQUEST_FOR_REVIEW.to_h)
+      action_array.push(Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h)
+    elsif ssc_legacy_case_movement?(current_user)
+      action_array.push(Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY_LEGACY.to_h)
+    end
+    action_array
   end
 
   def attorney_user?(current_user, role)
