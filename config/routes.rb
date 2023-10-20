@@ -257,6 +257,7 @@ Rails.application.routes.draw do
         patch :update_power_of_attorney
       end
     end
+    get "report", to: "decision_reviews#generate_report", on: :member, as: :report, format: false
   end
   match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
 
