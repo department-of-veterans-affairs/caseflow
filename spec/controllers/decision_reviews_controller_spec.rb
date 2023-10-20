@@ -682,6 +682,8 @@ describe DecisionReviewsController, :postgres, type: :controller do
   end
 
   describe "#generate_report" do
+    let(:non_comp_org) { VhaBusinessLine.singleton }
+
     context "business-line-slug is not found" do
       it "returns 404" do
         get :generate_report, params: { business_line_slug: "foobar" }
@@ -741,7 +743,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
                               params: { business_line_slug: non_comp_org.url, filters: generate_report_filters }
 
         expect(response.headers["Content-Type"]).to eq("text/csv")
-        expect(response.headers["Content-Disposition"]).to match(/^attachment; filename=\"nca-20180101.csv\"/)
+        expect(response.headers["Content-Disposition"]).to match(/^attachment; filename=\"vha-20180101.csv\"/)
       end
 
       context "missing filter parameters" do
