@@ -34,9 +34,29 @@ class DocumentListHeader extends React.Component {
     const props = this.props;
 
     return <div>
-      <div className="document-list-header">
-        <div className="search-bar-and-doc-count cf-search-ahead-parent">
-          <div><SearchBar
+      <div className="document-list-header" style={{
+        width: '100%',
+        display: 'flex'
+      }}>
+        <div className="search-bar-and-doc-count cf-search-ahead-parent" style={{
+          width: '100%',
+          display: 'flex'
+        }}>
+          <div>
+
+          </div>
+          <WellArea>
+            <FetchSearchBar
+              setClearAllFiltersCallbacks={this.props.setClearAllFiltersCallbacks}
+              clearAllFiltersCallbacks={this.props.clearAllFiltersCallbacks}
+              vacolsId = {this.props.vacolsId}
+              setClaimEvidenceDocs = {this.props.setClaimEvidenceDocs}
+            />
+          </WellArea>
+          <HeaderFilterMessage
+            docFilterCriteria={props.docFilterCriteria}
+            clearAllFiltersCallbacks={props.clearAllFiltersCallbacks}
+          /><div><SearchBar
             id="searchBar"
             onChange={props.setSearch}
             isSearchAhead
@@ -55,18 +75,6 @@ class DocumentListHeader extends React.Component {
         </div>
         <DocumentsCommentsButton />
       </div>
-      <WellArea>
-        <FetchSearchBar
-          setClearAllFiltersCallbacks={this.props.setClearAllFiltersCallbacks}
-          clearAllFiltersCallbacks={this.props.clearAllFiltersCallbacks}
-          vacolsId = {this.props.vacolsId}
-          setClaimEvidenceDocs = {this.props.setClaimEvidenceDocs}
-        />
-      </WellArea>
-      <HeaderFilterMessage
-        docFilterCriteria={props.docFilterCriteria}
-        clearAllFiltersCallbacks={props.clearAllFiltersCallbacks}
-      />
     </div>;
   }
 }

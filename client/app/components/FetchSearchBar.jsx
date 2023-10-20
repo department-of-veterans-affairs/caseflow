@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import ApiUtil from '../util/ApiUtil';
+import SearchBar from '../components/SearchBar';
 
 const FetchSearchBar = (props) => {
   const [searchText, setSearchText] = useState('');
   const handleSearchTextChange = (event) => {
     setSearchText(event.target.value);
+  };
+
+  const handleClearSearch = () => {
+    setSearchText('');
+    props.clearClaimEvidenceDocs();
   };
 
   const handleClick = (event) => {
@@ -29,11 +35,16 @@ const FetchSearchBar = (props) => {
       <span style={{
         width: '100%',
         display: 'flex',
-        justifyContent: 'flex-end'
-      }}>
-        <input id="fetchDocumentsInput" aria-label="search bar for fetching document conents."
-          value={searchText} onChange={handleSearchTextChange} />
-        <button id="fetchDocumentContentsButton" className="cf-submit usa-button" onClick={handleClick}>Search</button>
+        justifyContent: 'flex-end',
+
+      }}><div style={{ justifyContent: 'flex-end', width: '50%', marginRight: 0 }}>
+          <SearchBar value={searchText}
+            onChange={handleSearchTextChange} size="small"
+            onClearSearch={handleClearSearch}
+            isSearchAhead />
+
+          <button id="fetchDocumentContentsButton" className="cf-submit usa-button" onClick={handleClick}>Search</button>
+        </div>
       </span>
     </div>
   );
