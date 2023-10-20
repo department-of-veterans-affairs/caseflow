@@ -1172,6 +1172,8 @@ class LegacyAppeal < CaseflowRecord
       )
     end
 
+    # fetch_appeals_by_file_number method will retrieve VACOLS cases (appeals) and
+    # build Legacy Appeal records for each one if they don't already exist
     def veteran_has_appeals_in_vacols?(veteran_file_number)
       fetch_appeals_by_file_number(veteran_file_number).any?
     end

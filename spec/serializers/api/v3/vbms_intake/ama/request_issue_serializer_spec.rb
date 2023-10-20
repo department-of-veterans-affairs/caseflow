@@ -45,9 +45,9 @@ describe Api::V3::VbmsIntake::Ama::RequestIssueSerializer, :postgres do
       expect(serialized_request_issue.key?(:vacols_sequence_id)).to eq true
       expect(serialized_request_issue.key?(:verified_unidentified_issue)).to eq true
       expect(serialized_request_issue.key?(:veteran_participant_id)).to eq true
-      expect(serialized_request_issue.key?(:status_active)).to eq true
-      expect(serialized_request_issue.key?(:title_of_active_review)).to eq true
-      expect(serialized_request_issue.key?(:eligible)).to eq true
+      expect(serialized_request_issue.key?(:caseflow_considers_status_active)).to eq true
+      expect(serialized_request_issue.key?(:caseflow_considers_title_of_active_review)).to eq true
+      expect(serialized_request_issue.key?(:caseflow_considers_eligible)).to eq true
       expect(serialized_request_issue.key?(:decision_issues)).to eq true
 
       serialized_decision_issue = serialized_request_issue[:decision_issues].first

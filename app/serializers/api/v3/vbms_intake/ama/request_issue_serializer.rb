@@ -24,9 +24,9 @@ class Api::V3::VbmsIntake::Ama::RequestIssueSerializer
              :untimely_exemption, :untimely_exemption_notes, :updated_at, :vacols_id,
              :vacols_sequence_id, :verified_unidentified_issue, :veteran_participant_id
 
-  attribute :status_active, &:status_active?
-  attribute :title_of_active_review, &:title_of_active_review
-  attribute :eligible, &:eligible?
+  attribute :caseflow_considers_status_active, &:status_active?
+  attribute :caseflow_considers_title_of_active_review, &:title_of_active_review
+  attribute :caseflow_considers_eligible, &:eligible?
 
   attribute :decision_issues do |object|
     object.decision_issues.map do |di|
