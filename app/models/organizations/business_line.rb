@@ -509,6 +509,10 @@ class BusinessLine < Organization
       end
     end
   end
+
+  def can_generate_claim_history
+    false
+  end
 end
 
 require_dependency "vha_business_line"

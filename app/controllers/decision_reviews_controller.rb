@@ -65,6 +65,7 @@ class DecisionReviewsController < ApplicationController
   end
 
   def generate_report
+    return render "errors/404" unless business_line.can_generate_claim_history
     return requires_admin_access_redirect unless business_line.user_is_admin?(current_user)
 
     respond_to do |format|
