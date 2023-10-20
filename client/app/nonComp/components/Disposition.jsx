@@ -170,6 +170,7 @@ class NonCompDispositions extends React.PureComponent {
     }
 
     let editIssuesLink = null;
+    let alertContent = null;
     let displayVHAContent = this.props.task.business_line === 'vha';
     let displayVhaNonAdminContent = displayVHAContent && !this.props.userIsVhaAdmin;
     let disableDispositionSelection = displayVhaNonAdminContent && task.status === 'on_hold';
@@ -190,8 +191,20 @@ class NonCompDispositions extends React.PureComponent {
       </React.Fragment>;
 
       editIssuesLink = <React.Fragment>
-        <a className="cf-link-btn" href={appeal.editIssuesUrl}>Edit Issues</a>
+        <a className={`cf-link-btn ${displayVhaNonAdminContent ? 'disabled' : ''}`}
+          href={appeal.editIssuesUrl}>Edit Issues
+        </a>
       </React.Fragment>;
+
+      alertContent = <>
+        <Alert type="info">
+          {disableDispositionSelection && COPY.VHA_DISPOSITION_INCOMPLETE_TASK_BANNER_TEXT}
+
+            Only VHA admins can make edits to Higher-Level Reviews and Supplemental Claims.
+            If you would like to add, remove, or modify an issue within a claim, please
+            <a href={requestToCamoMailLink}> <u><b>send an email</b></u></a> with the requested change.
+        </Alert>
+      </>
     }
 
     return <div>
@@ -210,14 +223,7 @@ class NonCompDispositions extends React.PureComponent {
         <div className="cf-decision">
           {displayVHAContent && <hr />}
           <div className="usa-grid-full">
-            {displayVhaNonAdminContent &&
-            <Alert type="info">
-              {disableDispositionSelection && COPY.VHA_DISPOSITION_INCOMPLETE_TASK_BANNER_TEXT}
-
-                Only VHA admins can make edits to Higher-Level Reviews and Supplemental Claims.
-                If you would like to add, remove, or modify an issue within a claim, please
-                <a href={requestToCamoMailLink}> <u><b>send an email</b></u></a> with the requested change.
-            </Alert>}
+            {displayVhaNonAdminContent && alertContent}
             <div className="usa-width-one-half">
 
               <h2>Decision</h2>

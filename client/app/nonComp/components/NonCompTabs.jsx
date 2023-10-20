@@ -107,7 +107,7 @@ NonCompTabsUnconnected.propTypes = {
     completed_issue_types: PropTypes.object,
   }),
   businessLineUrl: PropTypes.string,
-  businessLineConfig: PropTypes.shape({ tabs: PropTypes.array })
+  businessLineConfig: PropTypes.shape({ tabs: PropTypes.array }),
 };
 
 const NonCompTabs = connect(

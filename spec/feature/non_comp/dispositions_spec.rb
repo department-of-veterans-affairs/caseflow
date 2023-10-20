@@ -187,6 +187,8 @@ feature "NonComp Dispositions Task Page", :postgres do
       visit dispositions_url
       expect(page).to have_button("Complete", disabled: true)
       expect(page).to have_link("Edit Issues")
+      # non-admin NCA user should not have Edit Button Disabled.
+      expect(page).to_not have_css(".cf-link-btn.disabled", text: "Edit Issues")
       expect(page).to_not have_content("ineligible issue")
 
       # set description & disposition for each active request issue
@@ -298,6 +300,10 @@ feature "NonComp Dispositions Task Page", :postgres do
     it "vha decision Review workflow" do
       step "submit button should be disabled and cancel returns back to business line" do
         visit dispositions_url
+        expect(page).not_to have_link("send an email")
+        expect(page).not_to have_selector(".usa-alert", text: "Only VHA admins can make edits to Higher-Level "\
+          "Reviews and Supplemental Claims. If you would like to add, remove, or modify an issue within "\
+          "a claim, please send an email with the requested change.")
         expect(page).to have_button("Complete", disabled: true)
         click_on "Cancel"
         expect(page).to have_current_path("/#{business_line_url}", ignore_query: true)
@@ -324,6 +330,11 @@ feature "NonComp Dispositions Task Page", :postgres do
         expect(disposition_dropdown).to have_css(".cf-select--is-disabled")
         expect(page).to have_text(COPY::DISPOSITION_DECISION_DATE_LABEL)
         expect(page.find_by_id("decision-date").value).to have_content(decision_date.strftime("%Y-%m-%d"))
+
+        expect(page).not_to have_link("send an email")
+        expect(page).not_to have_selector(".usa-alert", text: "Only VHA admins can make edits to Higher-Level "\
+          "Reviews and Supplemental Claims. If you would like to add, remove, or modify an issue within "\
+          "a claim, please send an email with the requested change.")
       end
     end
 
@@ -348,6 +359,15 @@ feature "NonComp Dispositions Task Page", :postgres do
 
     context "non-admin users" do
       context "VHA" do
+        let(:current_path) do
+          URI.parse(page.current_url).to_s
+        end
+        let(:emailTemplate) { COPY::VHA_REQUEST_TO_CAMO_EMAIL_TEMPLATE.gsub("#__LINK_TO_CLAIM__#", current_path) }
+        let(:link) do
+          "mailto: #{COPY::VHA_UAT_EMAIL_ADDRESS}?subject=#{COPY::VHA_RETURN_TO_CAMO_EMAIL_SUBJECT}"\
+          "&body=#{emailTemplate}"
+        end
+
         before do
           OrganizationsUser.remove_admin_rights_from_user(user, vha_org)
         end
@@ -361,6 +381,16 @@ feature "NonComp Dispositions Task Page", :postgres do
           expect(page).to have_selector(".usa-alert", text: "Only VHA admins can make edits to Higher-Level "\
             "Reviews and Supplemental Claims. If you would like to add, remove, or modify "\
             "an issue within a claim, please send an email with the requested change.")
+        end
+
+        it "should have 'send an email' link with mailto and email template for non-admin users" do
+          visit dispositions_url
+          expect(page).to have_link("send an email")
+          element = page.find_link("send an email")
+          email_content = CGI.unescape(element["href"])
+          expect(email_content).to have_text("mailto: #{COPY::VHA_UAT_EMAIL_ADDRESS}")
+          expect(email_content).to have_text("subject=#{COPY::VHA_RETURN_TO_CAMO_EMAIL_SUBJECT}")
+          expect(email_content).to have_text("&body=#{emailTemplate}")
         end
 
         context "incomplete task" do
@@ -396,9 +426,9 @@ feature "NonComp Dispositions Task Page", :postgres do
           vha_org.add_user(user)
         end
 
-        it "should not display the banner for non-vha users" do
+        scenario "should not see the alert banner and email link" do
           visit dispositions_url
-
+          expect(page).not_to have_link("send an email")
           expect(page).not_to have_selector(".usa-alert", text: "Only VHA admins can make edits to Higher-Level "\
             "Reviews and Supplemental Claims. If you would like to add, remove, or modify an issue within "\
             "a claim, please send an email with the requested change.")
