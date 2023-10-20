@@ -346,7 +346,7 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       expect(current_url).to include("/decision_reviews/vha/tasks/#{task.id}")
       expect(page).to have_content("Edit Issues")
       expect(page).to have_css(".cf-link-btn.disabled", text: "Edit Issues")
-      expect(page).not_to have_content(COPY::VHA_DISPOSITION_INCOMPLETE_TASK_BANNER_TEXT)
+      expect(page.has_no_content?(COPY::VHA_DISPOSITION_INCOMPLETE_TASK_BANNER_TEXT)).to eq(true)
       expect(page).to have_selector(".usa-alert", text: "Only VHA admins can make edits to Higher-Level "\
             "Reviews and Supplemental Claims. If you would like to add, remove, or modify an issue within "\
             "a claim, please send an email with the requested change.")
