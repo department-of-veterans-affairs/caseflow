@@ -107,6 +107,16 @@
       background-color: $color-gray-lighter;
     }
   }
+
+  .usa-alert {
+    margin-bottom: 1.5em;
+
+    &.usa-alert-slim {
+      .usa-alert-text {
+        font-size: inherit;
+      }
+    }
+  }
 }
 
 .cf-decision-date {

@@ -414,7 +414,7 @@ const completedHLRTaskData = {
       poa_button_refresh: true
     }
   },
-  vhaAdmin: false
+  userIsVhaAdmin: false
 };
 
 const genericTaskData = {
@@ -670,7 +670,7 @@ const genericTaskData = {
     formType: 'supplemental_claim'
   },
   poaAlert: {},
-  vhaAdmin: true,
+  userIsVhaAdmin: true,
   featureToggles: {
     decisionReviewQueueSsnColumn: true
   },

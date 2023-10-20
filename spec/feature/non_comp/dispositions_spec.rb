@@ -266,6 +266,7 @@ feature "NonComp Dispositions Task Page", :postgres do
     before do
       User.stub = user
       vha_org.add_user(user)
+      OrganizationsUser.make_user_admin(user, vha_org)
       Timecop.travel(Time.zone.local(2023, 0o2, 0o1))
     end
 
@@ -345,6 +346,66 @@ feature "NonComp Dispositions Task Page", :postgres do
       end
 
       expect(page).not_to have_button(COPY::REFRESH_POA)
+    end
+
+    context "non-admin users" do
+      context "VHA" do
+        before do
+          OrganizationsUser.remove_admin_rights_from_user(user, vha_org)
+        end
+
+        after do
+          OrganizationsUser.make_user_admin(user, vha_org)
+        end
+        it "should display banner for non-admin users" do
+          visit dispositions_url
+
+          expect(page).to have_selector(".usa-alert", text: "Only VHA admins can make edits to Higher-Level "\
+            "Reviews and Supplemental Claims. If you would like to add, remove, or modify "\
+            "an issue within a claim, please send an email with the requested change.")
+        end
+
+        context "incomplete task" do
+          let!(:incomplete_task) do
+            create(:higher_level_review,
+                   :with_vha_issue,
+                   :with_end_product_establishment,
+                   :create_business_line,
+                   benefit_type: "vha",
+                   veteran: veteran,
+                   claimant_type: :veteran_claimant)
+          end
+          let(:incomplete_disposition_url) { "#{business_line_url}/tasks/#{incomplete_task.id}" }
+
+          before do
+            incomplete_task.tasks.last.update(status: "on_hold")
+          end
+
+          it "should disable disposition selection for incomplete tasks" do
+            visit incomplete_disposition_url
+            expect(page).to have_field("description-issue-0", type: "textarea", disabled: true)
+            expect(page).to have_css("[id='disposition-issue-0'][readonly]", visible: false)
+          end
+        end
+      end
+
+      context "non-VHA" do
+        before do
+          OrganizationsUser.remove_user_from_organization(user, vha_org)
+        end
+
+        after do
+          vha_org.add_user(user)
+        end
+
+        it "should not display the banner for non-vha users" do
+          visit dispositions_url
+
+          expect(page).not_to have_selector(".usa-alert", text: "Only VHA admins can make edits to Higher-Level "\
+            "Reviews and Supplemental Claims. If you would like to add, remove, or modify an issue within "\
+            "a claim, please send an email with the requested change.")
+        end
+      end
     end
 
     scenario "When feature toggle is enabled Refresh button should be visible." do
