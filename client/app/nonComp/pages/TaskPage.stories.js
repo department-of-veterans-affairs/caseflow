@@ -19,14 +19,20 @@ const ReduxDecorator = (Story, options) => {
   </ReduxBase>;
 };
 
+const defaultArgs = {
+  decisionReviewQueueSsnColumn: true,
+  poa_button_refresh: true,
+};
+
 export default {
   title: 'Queue/NonComp/TaskPage',
   component: TaskPage,
   decorators: [ReduxDecorator],
   parameters: {},
-  args: {},
+  args: defaultArgs,
   argTypes: {
-
+    decisionReviewQueueSsnColumn: { control: 'boolean' },
+    poa_button_refresh: { control: 'boolean' },
   },
 };
 

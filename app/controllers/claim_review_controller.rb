@@ -11,6 +11,8 @@ class ClaimReviewController < ApplicationController
   }.freeze
 
   def edit
+    redirect_to "/unauthorized" if claim_review.benefit_type == "vha" &&
+                                   !VhaBusinessLine.singleton.user_is_admin?(current_user)
     unless claim_review.veteran.accessible?
       return render "errors/403",
                     layout: "application",
@@ -20,6 +22,7 @@ class ClaimReviewController < ApplicationController
                       error_detail: COPY::VETERAN_NOT_ACCESSIBLE_ERROR_DETAIL
                     }
     end
+
     claim_review.validate_prior_to_edit
   rescue ActiveRecord::RecordNotFound => error
     raise error # re-throw so base controller handles it.
