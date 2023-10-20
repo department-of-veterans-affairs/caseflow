@@ -501,7 +501,9 @@ class VACOLS::CaseDocket < VACOLS::Record
       OR (organizations_users.admin = '1' AND organizations.type = 'JudgeTeam' AND organizations.status <> 'active')
       OR (users.id NOT IN (#{admin_users_of_judge_teams}))
       SQL
-    )
+    ).map do |user|
+      { id: user.id, css_id: user.css_id }
+    end
   end
 
   def self.admin_users_of_judge_teams
