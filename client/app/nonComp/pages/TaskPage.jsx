@@ -124,12 +124,12 @@ TaskPageUnconnected.propTypes = {
 
 const TaskPage = connect(
   (state) => ({
-    appeal: state.appeal,
-    businessLine: state.businessLine,
-    businessLineUrl: state.businessLineUrl,
-    businessLineConfig: state.businessLineConfig,
-    task: state.task,
-    decisionIssuesStatus: state.decisionIssuesStatus
+    appeal: state.nonComp.appeal,
+    businessLine: state.nonComp.businessLine,
+    businessLineUrl: state.nonComp.businessLineUrl,
+    businessLineConfig: state.nonComp.businessLineConfig,
+    task: state.nonComp.task,
+    decisionIssuesStatus: state.nonComp.decisionIssuesStatus
   }),
   (dispatch) => bindActionCreators({
     completeTask,

@@ -87,9 +87,9 @@ NonCompReviewsPage.propTypes = {
 
 const ReviewPage = connect(
   (state) => ({
-    businessLine: state.businessLine,
-    decisionIssuesStatus: state.decisionIssuesStatus,
-    businessLineUrl: state.businessLineUrl
+    businessLine: state.nonComp.businessLine,
+    decisionIssuesStatus: state.nonComp.decisionIssuesStatus,
+    businessLineUrl: state.nonComp.businessLineUrl
   })
 )(NonCompReviewsPage);
 

@@ -8,11 +8,10 @@ import AppFrame from '../components/AppFrame';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { FlashAlerts } from './components/Alerts';
-
 import ReviewPage from './pages/ReviewPage';
 import TaskPage from './pages/TaskPage';
 import ReportPage from './pages/ReportPage';
-import { nonCompReducer, mapDataToInitialState } from './reducers';
+import CombinedNonCompReducer, { mapDataToInitialState } from './reducers';
 
 class NonComp extends React.PureComponent {
   render() {
@@ -21,7 +20,7 @@ class NonComp extends React.PureComponent {
     const appName = this.props.serverNonComp.businessLine;
 
     return (
-      <ReduxBase initialState={initialState} reducer={nonCompReducer}>
+      <ReduxBase initialState={initialState} reducer={CombinedNonCompReducer}>
         <Router basename="/decision_reviews" {...this.props.routerTestProps}>
           <div>
             <NavigationBar
