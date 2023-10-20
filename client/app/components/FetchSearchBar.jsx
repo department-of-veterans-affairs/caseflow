@@ -30,19 +30,21 @@ const FetchSearchBar = (props) => {
 
   return (
     <div style={{ width: '100%' }}>
-      <p style={{ textAlign: 'center' }}>Search document contents</p>
+      <p style={{ textAlign: 'left', marginLeft: '.5%' }}>Search document contents</p>
       <span style={{
         width: '100%',
         display: 'flex',
-        justifyContent: 'flex-end'
+        justifyContent: 'flex-start'
       }}>
-        <div style={{ justifyContent: 'flex-end', width: '50%', marginRight: 0 }}>
+        <div style={{ display:'flex', width: 'fit-content', marginRight: 0, marginLeft: 10, flexDirection: 'column',  }}>
           <SearchBar value={searchText}
             onChange={handleSearchTextChange} size="small"
             onClearSearch={handleClearSearch}
             isSearchAhead />
-        </div>
-        <button id="fetchDocumentContentsButton" className="cf-submit usa-button" onClick={handleClick}>Search</button>
+          <button id="fetchDocumentContentsButton" className="cf-submit usa-button" onClick={handleClick} style={{
+            marginLeft: '0%',
+            display: 'left',
+          }}>Search</button></div>
       </span>
     </div>
   );
