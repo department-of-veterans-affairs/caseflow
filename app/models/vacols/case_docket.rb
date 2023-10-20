@@ -473,20 +473,24 @@ class VACOLS::CaseDocket < VACOLS::Record
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
 
+  def self.ineligible_judges
+    ineligible_vacols_judges.concat ineligible_caseflow_judges
+  end
+
   def self.ineligible_vacols_judges
     VACOLS::Staff.find_by_sql(
       <<-SQL
-        SELECT STAFF.SDOMAINID, STAFF.SATTYID, STAFF.SVLJ, STAFF.SACTIVE
+        SELECT STAFF.SDOMAINID, STAFF.SATTYID, STAFF.SVLJ
         FROM STAFF
         WHERE (STAFF.SVLJ IS NOT NULL OR STAFF.SATTYID IS NOT NULL)
         AND ((STAFF.SACTIVE = 'I') OR (STAFF.SVLJ <> 'A' AND STAFF.SVLJ <> 'J'))
       SQL
     ).map do |staff|
-      { sattyid: staff.sattyid, sdomainid: staff.sdomainid, svlj: staff.svlj, sactive: staff.sactive }
+      { sattyid: staff.sattyid, sdomainid: staff.sdomainid, svlj: staff.svlj }
     end
   end
 
-  def self.ineligible_judges
+  def self.ineligible_caseflow_judges
     User.inactive.map do |user|
       { id: user.id, css_id: user.css_id }
     end
