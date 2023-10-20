@@ -295,6 +295,9 @@ Rails.application.routes.draw do
     get '/appeals/:vacols_id/tasks/:task_id/schedule_veteran', to: 'queue#index' # Allow direct navigation from the Hearings App
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
+    scope path: '/correspondence' do
+      get '/:correspondence_uuid/intake', to: 'correspondence#intake'
+    end
   end
 
   # requests to CAVC Dashboard that don't require an appeal_id should go here
