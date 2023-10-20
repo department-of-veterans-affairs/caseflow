@@ -175,9 +175,8 @@ class NonCompDispositions extends React.PureComponent {
     let displayVhaNonAdminContent = displayVHAContent && !this.props.userIsVhaAdmin;
     let disableDispositionSelection = displayVhaNonAdminContent && task.status === 'on_hold';
 
-    let emailTemplate = COPY.VHA_REQUEST_TO_CAMO_EMAIL_TEMPLATE.replace("#__LINK_TO_CLAIM__#", window.location.href);
-    let emailAddressRequestToCamo = process.env.NODE_ENV === 'production' ? COPY.VHA_BENEFIT_EMAIL_ADDRESS : COPY.VHA_UAT_EMAIL_ADDRESS
-    let requestToCamoMailLink = `mailto: ${emailAddressRequestToCamo}?subject=${COPY.VHA_RETURN_TO_CAMO_EMAIL_SUBJECT}&body=${encodeURIComponent(emailTemplate)}`;
+    let emailTemplate = COPY.VHA_REQUEST_TO_CAMO_EMAIL_TEMPLATE.replace('#__LINK_TO_CLAIM__#', window.location.href);
+    let requestToCamoMailLink = `mailto: ${this.props.vhaAdminEmailAddress}?subject=${COPY.VHA_RETURN_TO_CAMO_EMAIL_SUBJECT}&body=${encodeURIComponent(emailTemplate)}`;
 
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
@@ -200,11 +199,11 @@ class NonCompDispositions extends React.PureComponent {
         <Alert type="info">
           {disableDispositionSelection && COPY.VHA_DISPOSITION_INCOMPLETE_TASK_BANNER_TEXT}
 
-            Only VHA admins can make edits to Higher-Level Reviews and Supplemental Claims.
-            If you would like to add, remove, or modify an issue within a claim, please
-            <a href={requestToCamoMailLink}> <u><b>send an email</b></u></a> with the requested change.
+          Only VHA admins can make edits to Higher-Level Reviews and Supplemental Claims.
+          If you would like to add, remove, or modify an issue within a claim, please
+          <a href={requestToCamoMailLink}> <u><b>send an email</b></u></a> with the requested change.
         </Alert>
-      </>
+      </>;
     }
 
     return <div>
@@ -284,7 +283,8 @@ NonCompDispositions.propTypes = {
   appeal: PropTypes.object,
   decisionIssuesStatus: PropTypes.object,
   handleSave: PropTypes.func,
-  userIsVhaAdmin: PropTypes.bool
+  userIsVhaAdmin: PropTypes.bool,
+  vhaAdminEmailAddress: PropTypes.string
 };
 
 export default connect(
@@ -292,6 +292,7 @@ export default connect(
     appeal: state.appeal,
     task: state.task,
     userIsVhaAdmin: state.userIsVhaAdmin,
-    decisionIssuesStatus: state.decisionIssuesStatus
+    decisionIssuesStatus: state.decisionIssuesStatus,
+    vhaAdminEmailAddress: state.vhaAdminEmailAddress
   })
 )(NonCompDispositions);
