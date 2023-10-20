@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_08_14_133820) do
+ActiveRecord::Schema.define(version: 2023_10_18_192834) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -587,6 +587,36 @@ ActiveRecord::Schema.define(version: 2023_08_14_133820) do
     t.index ["created_by_id"], name: "index_created_by_id"
     t.index ["hearing_day_id"], name: "index_conference_links_on_hearing_day_id"
     t.index ["updated_by_id"], name: "index_updated_by_id"
+  end
+
+  create_table "correspondence_documents", force: :cascade do |t|
+    t.bigint "correspondence_id"
+    t.string "document_file_number", comment: "From CMP documents table"
+    t.uuid "uuid", comment: "Reference to document in AWS S3"
+    t.string "vbms_document_id", comment: "From CMP documents table"
+    t.index ["correspondence_id"], name: "index_correspondence_documents_on_correspondence_id"
+  end
+
+  create_table "correspondences", force: :cascade do |t|
+    t.bigint "assigned_by_id", comment: "Foreign key to users table"
+    t.string "cmp_packet_number", comment: "Included in CMP mail package"
+    t.integer "cmp_queue_id", comment: "Foreign key to CMP queues table"
+    t.integer "correspondence_type_id", comment: "Foreign key for correspondence_types table"
+    t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.text "notes", comment: "Comes from CMP; can be updated by user"
+    t.integer "package_document_type_id", comment: "Represents entire CMP package document type"
+    t.datetime "portal_entry_date", comment: "Time when correspondence is created in Caseflow"
+    t.string "source_type", comment: "An information identifier we get from CMP"
+    t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.bigint "updated_by_id", comment: "Foreign key to users table"
+    t.uuid "uuid", comment: "Unique identifier"
+    t.datetime "va_date_of_receipt", comment: "Date package delivered"
+    t.bigint "veteran_id", comment: "Foreign key to veterans table"
+    t.index ["assigned_by_id"], name: "index_correspondences_on_assigned_by_id"
+    t.index ["cmp_queue_id"], name: "index_correspondences_on_cmp_queue_id"
+    t.index ["correspondence_type_id"], name: "index_correspondences_on_correspondence_type_id"
+    t.index ["updated_by_id"], name: "index_correspondences_on_updated_by_id"
+    t.index ["veteran_id"], name: "index_correspondences_on_veteran_id"
   end
 
   create_table "decision_documents", force: :cascade do |t|
@@ -2090,6 +2120,7 @@ ActiveRecord::Schema.define(version: 2023_08_14_133820) do
   add_foreign_key "conference_links", "hearing_days"
   add_foreign_key "conference_links", "users", column: "created_by_id"
   add_foreign_key "conference_links", "users", column: "updated_by_id"
+  add_foreign_key "correspondence_documents", "correspondences"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "distributed_cases", "distributions"
