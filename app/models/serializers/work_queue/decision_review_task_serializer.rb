@@ -140,4 +140,6 @@ class WorkQueue::DecisionReviewTaskSerializer
 
     assignee.is_a?(BusinessLine) ? assignee.url : nil
   end
+
+  attribute :status
 end

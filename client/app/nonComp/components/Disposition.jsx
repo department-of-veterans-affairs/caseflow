@@ -11,6 +11,7 @@ import Button from '../../components/Button';
 import COPY from '../../../COPY';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
+import Alert from '../../components/Alert';
 
 import PowerOfAttorneyDecisionReview from './PowerOfAttorneyDecisionReview';
 
@@ -20,6 +21,7 @@ import {
   formatRequestIssuesWithDecisionIssues,
   buildDispositionSubmission
 } from '../util';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 class NonCompDecisionIssue extends React.PureComponent {
   constructor(props) {
@@ -169,7 +171,9 @@ class NonCompDispositions extends React.PureComponent {
     }
 
     let editIssuesLink = null;
-    let displayPOAComponent = this.props.task.business_line === 'vha';
+    let displayVHAContent = this.props.task.business_line === 'vha';
+    let displayVhaNonAdminContent = displayVHAContent && !this.props.userIsVhaAdmin;
+    let disableDispositionSelection = displayVhaNonAdminContent && task.status === 'on_hold';
 
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
@@ -188,7 +192,7 @@ class NonCompDispositions extends React.PureComponent {
     }
 
     return <div>
-      {displayPOAComponent && <div className="cf-decisions">
+      {displayVHAContent && <div className="cf-decisions">
         <div className="cf-decision">
           <hr />
           <div className="usa-grid-full">
@@ -201,9 +205,18 @@ class NonCompDispositions extends React.PureComponent {
       </div>}
       <div className="cf-decisions">
         <div className="cf-decision">
-          {displayPOAComponent && <hr />}
+          {displayVHAContent && <hr />}
           <div className="usa-grid-full">
+            {displayVhaNonAdminContent &&
+            <Alert type="info">
+              {disableDispositionSelection && COPY.VHA_DISPOSITION_INCOMPLETE_TASK_BANNER_TEXT}
+
+                Only VHA admins can make edits to Higher-Level Reviews and Supplemental Claims.
+                If you would like to add, remove, or modify an issue within a claim, please
+              <Link to="some/email/route"> <u><b>send an email</b></u></Link> with the requested change.
+            </Alert>}
             <div className="usa-width-one-half">
+
               <h2>Decision</h2>
               <div>Review each issue and assign the appropriate dispositions.</div>
             </div>
@@ -221,7 +234,7 @@ class NonCompDispositions extends React.PureComponent {
                 onDescriptionChange={this.onDecisionIssueDescriptionChange}
                 decisionDescription={issue.decisionIssue.description}
                 decisionDisposition={issue.decisionIssue.disposition}
-                disabled={Boolean(task.closed_at)}
+                disabled={disableDispositionSelection || Boolean(task.closed_at)}
               />;
             })
           }
@@ -261,13 +274,15 @@ NonCompDispositions.propTypes = {
   task: PropTypes.object,
   appeal: PropTypes.object,
   decisionIssuesStatus: PropTypes.object,
-  handleSave: PropTypes.func
+  handleSave: PropTypes.func,
+  userIsVhaAdmin: PropTypes.bool
 };
 
 export default connect(
   (state) => ({
     appeal: state.appeal,
     task: state.task,
+    userIsVhaAdmin: state.userIsVhaAdmin,
     decisionIssuesStatus: state.decisionIssuesStatus
   })
 )(NonCompDispositions);
