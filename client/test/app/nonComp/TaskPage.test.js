@@ -62,13 +62,13 @@ afterEach(() => {
 });
 
 describe('TaskPageVha', () => {
-  it('renders a page with Edit Issue button disabled when vhaAdmin is false and businessLine is vha', () => {
+  it('renders a page with Edit Issue button disabled when userIsVhaAdmin is false and businessLine is vha', () => {
     renderTaskPage(basicVhaProps);
     const submit = screen.getByRole('link', { name: /Edit Issues/i });
     expect(submit).toHaveClass('disabled');
   });
 
-  it('renders active Edit Issue button when vhaAdmin is true and businessLine is not vha', async () => {
+  it('renders active Edit Issue button when userIsVhaAdmin is true and businessLine is not vha', async () => {
     renderTaskPage(basicVhaPropsWithAdmin);
     const submit = screen.getByRole('link', { name: /Edit Issues/i });
     expect(submit).not.toHaveClass('disabled');
@@ -76,13 +76,13 @@ describe('TaskPageVha', () => {
 });
 
 describe('TaskPageGeneric', () => {
-  it('renders active Edit Issue button when vhaAdmin is false and businessLine is not vha', async () => {
+  it('renders active Edit Issue button when userIsVhaAdmin is false and businessLine is not vha', async () => {
     renderTaskPage(basicGenericProps);
     const submit = screen.getByRole('link', { name: /Edit Issues/i });
     expect(submit).not.toHaveClass('disabled');
   });
 
-  it('renders active Edit Issue button when vhaAdmin is true and businessLine is not vha', async () => {
+  it('renders active Edit Issue button when userIsVhaAdmin is true and businessLine is not vha', async () => {
     renderTaskPage(basicGenericPropsWithVhaAdminTrue);
     const submit = screen.getByRole('link', { name: /Edit Issues/i });
     expect(submit).not.toHaveClass('disabled');
