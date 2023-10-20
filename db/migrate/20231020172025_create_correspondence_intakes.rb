@@ -10,8 +10,8 @@ class CreateCorrespondenceIntakes < ActiveRecord::Migration[5.2]
       t.string :canceled_reason, comment: "Details of reason user cancelled correspondence intake"
       t.timestamps
 
-      t.references :user, foreign_key: true
-      t.references :correspondence, foreign_key: true
+      t.references :user, foreign_key: true, comment: "Foreign key on users table"
+      t.references :correspondence, foreign_key: true, comment: "Foreign key on correspondences table"
     end
   end
 end
