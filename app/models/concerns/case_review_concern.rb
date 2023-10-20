@@ -41,10 +41,8 @@ module CaseReviewConcern
     # use column values if they exist
     return appeal.is_a?(LegacyAppeal) if appeal_association?
 
-    return task.appeal.is_a?(LegacyAppeal) if task&.appeal
-
     # fall back to original implementation
-    (task_id =~ LegacyTask::TASK_ID_REGEX) ? true : false
+    (task_id =~ LegacyTask::TASK_ID_REGEX) ? true : (task.appeal.is_a?(LegacyAppeal) if task&.appeal)
   end
 
   # This is actually the appeal's vacols_id, rather than the id for some Case Review record in VACOLS.
@@ -55,7 +53,11 @@ module CaseReviewConcern
     return task.appeal.vacols_id if task&.appeal.is_a?(LegacyAppeal)
 
     # fall back to original implementation
-    task_id&.split("-", 2)&.first
+    if task_id&.include? "-"
+      task_id&.split("-", 2)&.first
+    else
+      task.appeal.vacols_id
+    end
   end
 
   def created_in_vacols_date
