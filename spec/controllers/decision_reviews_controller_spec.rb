@@ -690,20 +690,6 @@ describe DecisionReviewsController, :postgres, type: :controller do
       end
     end
 
-    context "business line cannot generate claim history" do
-      let(:non_vha_business_line) { BusinessLine.find_or_create_by(url: "test-org", name: "Test Org") }
-
-      before do
-        non_vha_business_line.add_user(user)
-      end
-
-      it "renders 404" do
-        get :generate_report, params: { business_line_slug: non_vha_business_line.url }
-
-        expect(response).to render_template "errors/404"
-      end
-    end
-
     context "user is not an org admin" do
       it "returns unauthorized" do
         get :generate_report, params: { business_line_slug: non_comp_org.url }

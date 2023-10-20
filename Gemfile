@@ -149,7 +149,6 @@ group :test do
   gem "rspec-retry"
   gem "webmock"
   gem "rspec-github", require: false
-  gem "rails-controller-testing"
 end
 # rubocop:enable Metrics/LineLength
 
