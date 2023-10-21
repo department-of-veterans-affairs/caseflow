@@ -443,10 +443,6 @@ GEM
     msgpack (1.4.2)
     multi_json (1.12.2)
     multipart-post (2.1.1)
-    multiverse (0.2.2)
-      activerecord (>= 4.2)
-      activesupport (>= 4.2)
-      railties (>= 4.2)
     nap (1.1.0)
     nenv (0.3.0)
     net-imap (0.4.1)
@@ -805,7 +801,6 @@ DEPENDENCIES
   logstasher
   meta_request
   moment_timezone-rails
-  multiverse
   newrelic_rpm
   nokogiri (>= 1.11.0.rc4)
   paper_trail (~> 12.0)
