@@ -110,7 +110,9 @@ const EfolderUrlField = (props) => {
       loading={loading}
     />
     <div {...eFolderlinkStyling}>
-      <EfolderLink url={`${props.eFolderLink}/veteran/${props.veteranParticipantId}`}
+      <EfolderLink
+        url={props.veteranParticipantId ? `${props.eFolderLink}/veteran/${props.veteranParticipantId}` :
+          props.eFolderLink}
         veteranParticipantId={props.veteranParticipantId} eFolderLink={props.eFolderLink} />
     </div>
     {
