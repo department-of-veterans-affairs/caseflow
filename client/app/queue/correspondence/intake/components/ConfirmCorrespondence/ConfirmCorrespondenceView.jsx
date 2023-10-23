@@ -163,9 +163,9 @@ export const ConfirmCorrespondenceView = (props) => {
         <div style={{ display: 'flex' }}>
           <h2 style={{ margin: '1px 0 15px 0',
             display: 'inline-block',
-            marginLeft: '10px' }}>Completed Mail Tasks</h2>
+            marginLeft: '0px' }}>Completed Mail Tasks</h2>
           <div style={{ marginLeft: 'auto' }}>
-            <Button linkStyling onClick={() => props.goToStep(2)}>
+            <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(2)}>
               <span {...css({ position: 'absolute' })}><PencilIcon /></span>
               <span {...css({ marginLeft: '20px' })}>Edit Section</span>
             </Button>
@@ -173,7 +173,7 @@ export const ConfirmCorrespondenceView = (props) => {
         </div>
         <div {...css({ backgroundColor: '#f5f5f5', padding: '20px', marginBottom: '20px' })}>
           <div {...css({ borderBottom: '1px solid #d6d7d9',
-            padding: '10px 10px',
+            padding: '10px 0px',
             marginBottom: '20px',
             fontWeight: 'bold' })}>
             Completed Mail Tasks
@@ -193,7 +193,7 @@ export const ConfirmCorrespondenceView = (props) => {
         </div>
       </div>
       <div>
-        <ConfirmTasksNotRelatedToAnAppeal />
+        <ConfirmTasksNotRelatedToAnAppeal/>
       </div>
     </div>
   );
