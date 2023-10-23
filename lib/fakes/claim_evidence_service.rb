@@ -21,132 +21,101 @@ class Fakes::ClaimEvidenceService
     end
 
     def document_smart_search(veteran_file_number, query, page_number)
-      document_smart_search_response
+      veteran_file = Appeal.find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id(veteran_file_number)
+
+      return document_smart_search_response(veteran_file, page_number)
     end
 
     private
 
-    def document_smart_search_response
-      {
-        "files": [
-          {
-            "owner": {
-              "id": "id",
-              "type": "VETERAN"
-            },
-            "currentVersionUuid": "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
-            "uuid": "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
-            "currentVersion": {
-              "systemData": {
-                "uploadSource": "VBMS-UI",
-                "uploadedDateTime": "2022-03-22T15:24:24",
-                "mimeType": "application/pdf",
-                "contentName": "bf52e49f-5351-4211-b1db-734e3d3c5b64.pdf"
-              },
-              "providerData": {
-                "notes": "This is a note.",
-                "subject": "File contains evidence related to the claim.",
-                "benefitTypeId": 13,
-                "payeeCode": "00",
-                "documentTypeId": 137,
-                "claimantMiddleInitial": "claimantMiddleInitial",
-                "ocrStatus": "Searchable",
-                "endProductCode": "130DPNDCY",
-                "claimantParticipantId": "000000000",
-                "regionalProcessingOffice": "Buffalo",
-                "newMail": true,
-                "hasContentionAnnotation": true,
-                "systemSource": "VBMS-UI",
-                "claimantDateOfBirth": "2020-02-20",
-                "modifiedDateTime": "2022-03-22T15:24:49",
-                "certified": true,
-                "isAnnotated": true,
-                "duplicateInformation": {
-                  "bestCopy": true,
-                  "groupId": 5,
-                  "establishesDate": true,
-                  "certifiedCopy": true
-                },
-                "facilityCode": "Facility",
-                "veteranMiddleName": "veteranMiddleName",
-                "veteranSuffix": "veteranSuffix",
-                "readByCurrentUser": false,
-                "claimantSsn": "123-45-6789",
-                "veteranLastName": "veteranLastName",
-                "dateVaReceivedDocument": "2020-02-20",
-                "claimantFirstName": "claimantFirstName",
-                "veteranFirstName": "veteranFirstName",
-                "contentSource": "VISTA",
-                "actionable": true,
-                "documentCategoryId": 14,
-                "claimantLastName": "claimantLastName",
-                "lastOpenedDocument": false
-              }
-            }
-          },
-          {
-            "owner": {
-              "id": "id",
-              "type": "VETERAN"
-            },
-            "currentVersionUuid": "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
-            "uuid": "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
-            "currentVersion": {
-              "systemData": {
-                "uploadSource": "VBMS-UI",
-                "uploadedDateTime": "2022-03-22T15:24:24",
-                "mimeType": "application/pdf",
-                "contentName": "bf52e49f-5351-4211-b1db-734e3d3c5b64.pdf"
-              },
-              "providerData": {
-                "notes": "This is a note.",
-                "subject": "File contains evidence related to the claim.",
-                "benefitTypeId": 13,
-                "payeeCode": "00",
-                "documentTypeId": 137,
-                "claimantMiddleInitial": "claimantMiddleInitial",
-                "ocrStatus": "Searchable",
-                "endProductCode": "130DPNDCY",
-                "claimantParticipantId": "000000000",
-                "regionalProcessingOffice": "Buffalo",
-                "newMail": true,
-                "hasContentionAnnotation": true,
-                "systemSource": "VBMS-UI",
-                "claimantDateOfBirth": "2020-02-20",
-                "modifiedDateTime": "2022-03-22T15:24:49",
-                "certified": true,
-                "isAnnotated": true,
-                "duplicateInformation": {
-                  "bestCopy": true,
-                  "groupId": 5,
-                  "establishesDate": true,
-                  "certifiedCopy": true
-                },
-                "facilityCode": "Facility",
-                "veteranMiddleName": "veteranMiddleName",
-                "veteranSuffix": "veteranSuffix",
-                "readByCurrentUser": false,
-                "claimantSsn": "123-45-6789",
-                "veteranLastName": "veteranLastName",
-                "dateVaReceivedDocument": "2020-02-20",
-                "claimantFirstName": "claimantFirstName",
-                "veteranFirstName": "veteranFirstName",
-                "contentSource": "VISTA",
-                "actionable": true,
-                "documentCategoryId": 14,
-                "claimantLastName": "claimantLastName",
-                "lastOpenedDocument": false
-              }
-            }
-          }
-        ],
-        "page": {
-          "totalResults": 5,
-          "totalPages": 0,
-          "requestedResultsPerPage": 6,
-          "currentPage": 1
-        }
+    def document_smart_search_response(appeal, page_number)
+      docs = appeal.document_fetcher.find_or_create_documents!
+
+      files = []
+      num_results = 0
+      docs.each do |doc|
+        doc_series_id = Integer(doc.series_id)
+        next if doc_series_id.even?
+
+        doc_data = generate_smart_search_doc_data(doc)
+        files.push(doc_data)
+
+        num_results += 1
+      end
+
+      page_summary = {
+        "totalResults": num_results,
+        "totalPages": num_results + 1,
+        "requestedResultsPerPage": page_number,
+        "currentPage": page_number
+      }
+
+      return {
+        "files": files,
+        "page": page_summary
       }.to_json
+    end
+
+    def generate_smart_search_doc_data(doc)
+      # NOTE: Some of this data isn't correctly mapped
+      # (i.e., using doc.id for the veteran id);
+      # however, it is implemented this way so the data
+      # is deterministic based on data already on hand.
+      return {
+        "owner": {
+          "id": doc.id,
+          "type": "VETERAN"
+        },
+        "currentVersionUuid": doc.vbms_document_id,
+        "uuid": doc.vbms_document_id,
+        "currentVersion": {
+          "systemData": {
+            "uploadSource": "VBMS-UI",
+            "uploadedDateTime": doc.created_at,
+            "mimeType": "application/pdf",
+            "contentName": "#{doc.vbms_document_id}.pdf"
+          },
+          "providerData": {
+            "notes": "This is a note.",
+            "subject": "File contains evidence related to the claim.",
+            "benefitTypeId": 13,
+            "payeeCode": "00",
+            "documentTypeId": 137,
+            "claimantMiddleInitial": "claimantMiddleInitial",
+            "ocrStatus": "Searchable",
+            "endProductCode": "130DPNDCY",
+            "claimantParticipantId": "000000000",
+            "regionalProcessingOffice": "Buffalo",
+            "newMail": true,
+            "hasContentionAnnotation": true,
+            "systemSource": "VBMS-UI",
+            "claimantDateOfBirth": "2020-02-20",
+            "modifiedDateTime": doc.updated_at,
+            "certified": true,
+            "isAnnotated": true,
+            "duplicateInformation": {
+              "bestCopy": true,
+              "groupId": 5,
+              "establishesDate": true,
+              "certifiedCopy": true
+            },
+            "facilityCode": "Facility",
+            "veteranMiddleName": "veteranMiddleName",
+            "veteranSuffix": "veteranSuffix",
+            "readByCurrentUser": false,
+            "claimantSsn": "123-45-6789",
+            "veteranLastName": "veteranLastName",
+            "dateVaReceivedDocument": doc.created_at,
+            "claimantFirstName": "claimantFirstName",
+            "veteranFirstName": "veteranFirstName",
+            "contentSource": "VISTA",
+            "actionable": true,
+            "documentCategoryId": 14,
+            "claimantLastName": "claimantLastName",
+            "lastOpenedDocument": false
+          }
+        }
+      }
     end
   end
 end
