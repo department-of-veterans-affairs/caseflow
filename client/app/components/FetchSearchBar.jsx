@@ -42,16 +42,15 @@ const FetchSearchBar = (props) => {
         justifyContent: 'flex-end'
       }}>
       </span>
-      <div style={{ display: 'flex', paddingLeft: '10px' }}>
+      <div style={{ display: 'flex', paddingLeft: '10px', minWidth:'1500px' }}>
         <SearchBar
-          style={{ display: 'flex', paddingLeft: '25px', height: '0px' }}
           value={searchText}
           onChange={handleSearchTextChange}
           onSubmit={handleClick}
           size="big"
           onClearSearch={handleClearSearch}
           submitUsingEnterKey
-        />
+          inputProps={{ style: { maxWidth: '500px!', minWidth: '500px!', width: '500px'}}}/>
       </div>
     </div>
   );
