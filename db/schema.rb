@@ -1819,6 +1819,7 @@ ActiveRecord::Schema.define(version: 2023_09_21_034442) do
     t.string "country", null: false
     t.datetime "created_at", null: false
     t.date "date_of_birth", comment: "PII"
+    t.string "ein", comment: "PII. Employer Identification Number"
     t.string "email_address", comment: "PII"
     t.string "last_name", comment: "PII"
     t.string "middle_name", comment: "PII"
