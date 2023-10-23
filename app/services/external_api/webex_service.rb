@@ -3,7 +3,14 @@
 require "json"
 
 class ExternalApi::WebexService
-  ENDPOINT = "api-usgov.webex.com/v1/meetings"
+  def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:)
+    @host = host
+    @port = port
+    @aud = aud
+    @apikey = apikey
+    @domain = domain
+    @api_endpoint = api_endpoint
+  end
 
   # :reek:UtilityFunction
   def combine_time_and_date(time, timezone, date)
@@ -32,7 +39,7 @@ class ExternalApi::WebexService
         "Nbf": start_date_time,
         "Exp": end_date_time
       },
-      "aud": "",
+      "aud": aud,
       "numGuest": 1,
       "numHost": 1,
       "provideShortUrls": true
@@ -48,7 +55,7 @@ class ExternalApi::WebexService
   def delete_conference(virtual_hearing)
     return if virtual_hearing.conference_id.nil?
 
-    delete_endpoint = "#{ENDPOINT}#{conference_id}/"
+    delete_endpoint = "#{api_endpoint}#{conference_id}/"
     resp = send_webex_request(delete_endpoint, :delete)
     return if resp.nil?
 
@@ -59,7 +66,7 @@ class ExternalApi::WebexService
 
   # :nocov:
   def send_webex_request(endpoint, method, body: nil)
-    url = "http://#{endpoint}"
+    url = "http://#{host}:#{port}/#{endpoint}"
     request = HTTPI::Request.new(url)
     request.open_timeout = 300
     request.read_timeout = 300
@@ -68,7 +75,7 @@ class ExternalApi::WebexService
     request.headers["Content-Type"] = "application/json" if method == :post
 
     MetricsService.record(
-      "api-usgov.webex #{method.to_s.upcase} request to #{url}",
+      "#{host} #{method.to_s.upcase} request to #{url}",
       service: :webex,
       name: endpoint
     ) do
