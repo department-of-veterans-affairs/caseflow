@@ -142,3 +142,23 @@ export const history = [
     "unit": "cases"
   }
 ]
+
+export const formattedHistory =
+  [
+    {
+      "created_at": "2023-07-01 10:10:01",
+      "user": "john_smith",
+      "titles": ["Lever 1", "Lever 2"],
+      "original_values": ["10", "false"],
+      "current_values": ["23", "true"],
+      "units": ["cases", ""]
+    },
+    {
+      "created_at": "2023-07-01 12:10:01",
+      "user": "jane_smith",
+      "titles": ["Lever 1"],
+      "original_values": ["5"],
+      "current_values": ["42"],
+      "units": ["cases"]
+    }
+  ]
