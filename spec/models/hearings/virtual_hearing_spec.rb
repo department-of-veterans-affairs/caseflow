@@ -500,10 +500,7 @@ describe VirtualHearing do
 
       it "returns the expected meeting conference details" do
         is_expected.to eq(
-          title: "#{hearing.appeal.docket_number}_#{hearing.appeal.id}_LegacyAppeal",
-          start: "2023-09-22T00:00:00-04:00",
-          end: "2023-09-22T23:59:59-04:00",
-          timezone: "America/New_York"
+          "#{hearing.appeal.docket_number}_#{hearing.appeal.id}_LegacyAppeal"
         )
       end
     end
