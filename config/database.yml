@@ -26,7 +26,6 @@ etl_default: &etl_default
   username: <%= ENV["ETL_DB_USER"] || ENV["POSTGRES_USER"] || `whoami` %>
   <% if ENV["ETL_DB_PASSWORD"] || ENV["POSTGRES_PASSWORD"] %>
   password: <%= ENV["ETL_DB_PASSWORD"] || ENV["POSTGRES_PASSWORD"] %>
-  migrations_paths: db/etl_migrate
   <% end %>
 
 development:
