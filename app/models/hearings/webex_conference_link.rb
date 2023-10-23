@@ -4,7 +4,6 @@ class WebexConferenceLink < ConferenceLink
   def guest_pin
     nil
   end
-  # comment to run in code climate
 
   def guest_link
     guest_hearing_link
