@@ -31,17 +31,18 @@ const FetchSearchBar = (props) => {
   }, resetFetchBarState);
 
   return (
-    <div style={{ width: '100%' }}>
-      <p style={{ textAlign: 'center' }}>Search document contents</p>
+    <div style={{ width: '100%', height: '200px', backgroundColor: 'white' }}>
+      <p style={{ backgroundColor: 'lightgrey', width: '100%', height: '50px', textAlign: 'left', paddingLeft: '10px' }}> Search document contents </p>
+      <p style={{ textAlign: 'left', paddingLeft: '10px', height: '5px' }}>Search document contents</p>
       <span style={{
-        width: '100%',
+        width: '75%',
         display: 'flex',
         justifyContent: 'flex-end'
       }}>
       </span>
-      <div style={{display: 'flex'}}>
+      <div style={{ display: 'flex', paddingLeft: '10px' }}>
         <SearchBar
-          style={{display: 'flex', paddingLeft: '25px'}}
+          style={{ display: 'flex', paddingLeft: '25px', height: '0px' }}
           value={searchText}
           onChange={handleSearchTextChange}
           onSubmit={handleClick}
