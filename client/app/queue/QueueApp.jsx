@@ -83,6 +83,8 @@ import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
+// import CorrespondenceIntakeApp from './CorrespondenceIntakeApp';
+import { CorrespondenceIntake } from './correspondence/intake/CorrespondenceIntake';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -659,6 +661,13 @@ class QueueApp extends React.PureComponent {
     <CompleteHearingPostponementRequestModal {...props.match.params} />
   );
 
+  // routedCorrespondenceIntakeApp = () => (
+  //   <CorrespondenceIntakeApp />
+  // );
+  routedCorrespondenceIntake = () => (
+    <CorrespondenceIntake />
+  );
+
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
       'Your Queue' :
@@ -884,6 +893,16 @@ class QueueApp extends React.PureComponent {
               path="/user_management"
               title={`${PAGE_TITLES.USER_MANAGEMENT} | Caseflow`}
               render={this.routedUserManagement}
+            />
+            {/* <PageRoute
+              path="/queue/correspondence/:correspondenceId/intake"
+              title={`${PAGE_TITLES.USER_MANAGEMENT} | Caseflow`}
+              render={this.routedCorrespondenceIntakeApp}
+            /> */}
+            <PageRoute
+              path="/queue/correspondence/:correspondenceId/intake"
+              title={`${PAGE_TITLES.USER_MANAGEMENT} | Caseflow`}
+              render={this.routedCorrespondenceIntake}
             />
 
             {motionToVacateRoutes.page}

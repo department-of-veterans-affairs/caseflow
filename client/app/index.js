@@ -54,6 +54,7 @@ import Inbox from 'app/inbox';
 import Explain from 'app/explain';
 import MPISearch from 'app/mpi/MPISearch';
 import Admin from 'app/admin';
+import { CorrespondenceIntake } from './queue/correspondence/intake/CorrespondenceIntake';
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
@@ -134,6 +135,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         './hearings/index',
         './establishClaimAdmin/index',
         './queue/index',
+        // './queue/correspondence/:correspondenceId/intake',
         './intakeManager/index',
         './intakeEdit/index',
         './nonComp/index',
