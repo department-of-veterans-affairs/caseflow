@@ -14,10 +14,12 @@ const FetchSearchBar = (props) => {
     props.clearClaimEvidenceDocs();
   };
 
-  const handleClick = (event) => {
-    event.preventDefault();
-    ApiUtil.get(`/reader/appeal/${props.vacolsId}/document_content_searches?search_term=${searchText}`).
-      then((response) => (props.setClaimEvidenceDocs(response.body.appealDocuments, searchText)));
+  const handleClick = () => {
+    // nil and empty error handling of input value
+    if (searchText && searchText.trim().length !== 0) {
+      ApiUtil.get(`/reader/appeal/${props.vacolsId}/document_content_searches?search_term=${searchText}`).
+        then((response) => (props.setClaimEvidenceDocs(response.body.appealDocuments, searchText)));
+    }
   };
 
   const resetFetchBarState = () => {
@@ -37,16 +39,17 @@ const FetchSearchBar = (props) => {
         justifyContent: 'flex-end'
       }}>
       </span>
-      <div style={{ justifyContent: 'flex-end', width: '50%', marginRight: 0 }}>
-        <SearchBar value={searchText}
-          onChange={handleSearchTextChange} size="small"
+      <div style={{display: 'flex'}}>
+        <SearchBar
+          style={{display: 'flex', paddingLeft: '25px'}}
+          value={searchText}
+          onChange={handleSearchTextChange}
+          onSubmit={handleClick}
+          size="big"
           onClearSearch={handleClearSearch}
-          isSearchAhead />
+          submitUsingEnterKey
+        />
       </div>
-      <button
-        id="fetchDocumentContentsButton"
-        className="cf-submit usa-button"
-        onClick={handleClick}>Search</button>
     </div>
   );
 };
