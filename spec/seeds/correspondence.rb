@@ -1,13 +1,28 @@
 # frozen_string_literal: true
 
 describe Seeds::Correspondence do
+  let(:seed) { Seeds::Correspondence.new }
+
+  describe "initial values" do
+    it "are set properly" do
+      expect(seed.instance_variable_get(:@file_number)).to eq 500_000_000
+      expect(seed.instance_variable_get(:@participant_id)).to eq 850_000_000
+    end
+
+    it "are set properly when seed has been previously run" do
+      veteran = Veteran.create!(file_number: 500_000_001)
+      create(:correspondence, veteran_id: veteran.id)
+
+      expect(seed.instance_variable_get(:@file_number)).to eq 500_000_100
+      expect(seed.instance_variable_get(:@participant_id)).to eq 850_000_100
+    end
+  end
+
   describe "#seed!" do
-    subject { described_class.new.seed! }
-
-    before { Seeds::Correspondence.new.seed! }
-
     it "creates correspondences" do
-      expect {subject}.to_not raise_error
+      seed.seed!
+      expect(Correspondence.count).to eq(10)
+      expect(CorrespondenceDocument.count).to eq(10)
     end
   end
 end
