@@ -34,6 +34,17 @@ class DocumentListHeader extends React.Component {
     const props = this.props;
 
     return <div>
+      <div style={{paddingBottom: '30px'}}>
+        <WellArea>
+          <FetchSearchBar
+            setClearAllFiltersCallbacks={this.props.setClearAllFiltersCallbacks}
+            clearAllFiltersCallbacks={this.props.clearAllFiltersCallbacks}
+            vacolsId = {this.props.vacolsId}
+            clearClaimEvidenceDocs={this.props.clearClaimEvidenceDocs}
+            setClaimEvidenceDocs = {this.props.setClaimEvidenceDocs}
+          />
+        </WellArea>
+      </div>
       <div className="document-list-header">
         <div className="search-bar-and-doc-count cf-search-ahead-parent">
           <div><SearchBar
@@ -55,15 +66,6 @@ class DocumentListHeader extends React.Component {
         </div>
         <DocumentsCommentsButton />
       </div>
-      <WellArea>
-        <FetchSearchBar
-          setClearAllFiltersCallbacks={this.props.setClearAllFiltersCallbacks}
-          clearAllFiltersCallbacks={this.props.clearAllFiltersCallbacks}
-          vacolsId = {this.props.vacolsId}
-          clearClaimEvidenceDocs={this.props.clearClaimEvidenceDocs}
-          setClaimEvidenceDocs = {this.props.setClaimEvidenceDocs}
-        />
-      </WellArea>
       <HeaderFilterMessage
         docFilterCriteria={props.docFilterCriteria}
         clearAllFiltersCallbacks={props.clearAllFiltersCallbacks}
