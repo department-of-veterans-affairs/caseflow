@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # :reek:InstanceVariableAssumption
-class Api::V3::VbmsIntake::Ama::VeteransController < Api::V3::BaseController
+class Api::V3::AmaIssues::VeteransController < Api::V3::BaseController
   include ApiV3FeatureToggleConcern
 
   # TODO: investigate roles
@@ -15,6 +15,6 @@ class Api::V3::VbmsIntake::Ama::VeteransController < Api::V3::BaseController
     @page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]
     # Disallow page(0) since page(0) == page(1) in kaminari. This is to avoid confusion.
     (@page == 0) ? @page = 1 : @page ||= 1
-    render json: Api::V3::VbmsIntake::Ama::VbmsAmaDtoBuilder.new(@veteran, @page).json_response if @veteran
+    render json: Api::V3::AmaIssues::VbmsAmaDtoBuilder.new(@veteran, @page).json_response if @veteran
   end
 end

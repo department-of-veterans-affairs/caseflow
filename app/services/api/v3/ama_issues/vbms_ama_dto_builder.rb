@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 #:reek:TooManyInstanceVariables
-class Api::V3::VbmsIntake::Ama::VbmsAmaDtoBuilder
+class Api::V3::AmaIssues::VbmsAmaDtoBuilder
   attr_reader :json_response
 
   def initialize(veteran, page)
@@ -21,7 +21,7 @@ class Api::V3::VbmsIntake::Ama::VbmsAmaDtoBuilder
   end
 
   def serialized_request_issues
-    serialized_data = Api::V3::VbmsIntake::Ama::RequestIssueSerializer.new(
+    serialized_data = Api::V3::AmaIssues::RequestIssueSerializer.new(
       RequestIssue.includes(:decision_issues).where(veteran_participant_id: @veteran_participant_id).page(@page)
     ).serializable_hash[:data]
 

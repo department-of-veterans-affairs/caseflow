@@ -49,10 +49,8 @@ Rails.application.routes.draw do
         resources :intake_statuses, only: :show
         get 'legacy_appeals', to: "legacy_appeals#index"
       end
-      namespace :vbms_intake do
-        namespace :ama do
-          get "veterans/:participant_id", to: "veterans#show"
-        end
+      namespace :ama_issues do
+        get "veterans/:participant_id", to: "veterans#show"
       end
     end
     namespace :docs do
