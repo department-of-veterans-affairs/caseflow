@@ -56,7 +56,7 @@ module VaDotGovAddressValidator::Validations
                         error_handler.handle(state_code_error)
                       elsif !closest_ro_response.success?
                         error_handler.handle(closest_ro_response.error)
-                      elsif !available_hearing_locations_response.success?
+                      elsif closest_regional_office != "RO71" && !available_hearing_locations_response.success?
                         error_handler.handle(available_hearing_locations_response.error)
                       end
   end
@@ -84,7 +84,9 @@ module VaDotGovAddressValidator::Validations
   end
 
   def appellant_lives_in_usa?
-    %w[USA US].include? address.country
+    return true if address.country.nil?
+
+    %w[USA US].include? address.country unless address.country.nil?
   end
 
   def appellant_lives_in_phillipines?
