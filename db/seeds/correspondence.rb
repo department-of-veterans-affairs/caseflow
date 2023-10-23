@@ -33,7 +33,9 @@ module Seeds
 
     def create_correspondences
       10.times do
-        create(
+        veteran = create_veteran
+
+        corres = create(
           :correspondence,
           uuid: SecureRandom.uuid,
           portal_entry_date: Time.zone.now,
@@ -41,7 +43,12 @@ module Seeds
           package_document_type_id: 1250,
           cmp_packet_number: rand(1_000_000_000..9_999_999_999),
           va_date_of_receipt: Time.zone.yesterday,
-          veteran_id: create_veteran.id
+          veteran_id: veteran.id
+        )
+        create(
+          :correspondence_document,
+          document_file_number: veteran.file_number,
+          correspondence: corres
         )
       end
     end
