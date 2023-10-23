@@ -18,11 +18,9 @@ ActiveSupport.on_load(:active_record_vacols) do
   next if Rails.env.staging? || Rails.env.ssh_forwarding?
 
   db_config =  Rails.application.config.database_configuration[Rails.env]
-  puts "[debug] db_config"
-  puts db_config
 
   # use specified initial pool size, default to half the maximum size
-  initial_pool_size = (ENV['DB_CONN_POOL_INITIAL_SIZE'] || db_config['primary']['pool'] / 2).to_i
+  initial_pool_size = (ENV['DB_CONN_POOL_INITIAL_SIZE'] || db_config['pool'] / 2).to_i
   Rails.logger.info("creating #{initial_pool_size} initial connections...")
 
   unless ApplicationController.dependencies_faked?

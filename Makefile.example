@@ -214,13 +214,13 @@ c:  ## Start rails console
 	bundle exec rails console
 
 etl-migrate:	## Migrate ETL database
-	bundle exec rake db:migrate:etl
+	DB=etl bundle exec rake db:migrate
 
 etl-test-prepare:
-	bundle exec rake db:test:prepare:etl
+	DB=etl bundle exec rake db:test:prepare
 
 etl-rollback:	## Rollback ETL database
-	bundle exec rake db:rollback:etl
+	DB=etl bundle exec rake db:rollback
 
 db-migrate:	## Migrate main Caseflow db
 	bundle exec rake db:migrate
@@ -240,6 +240,7 @@ reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable fe
 reset-dbs: ## Resets Caseflow and ETL database schemas
 	make audit-remove
 	make external-db-remove
+	DB=etl bundle exec rake db:drop db:create db:schema:load
 	bundle exec rake db:drop db:create db:schema:load
 	make audit
 	make external-db-create
