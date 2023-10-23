@@ -175,6 +175,8 @@ Rails.application.routes.draw do
     resources :hearings, only: [:index]
   end
 
+  resources :correspondences
+
   namespace :hearings do
     resources :appeals, only: [:update], param: :appeal_id
     resources :hearing_day, only: [:index, :show, :destroy, :update]
