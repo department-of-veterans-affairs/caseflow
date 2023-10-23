@@ -67,7 +67,7 @@ end
 # end
 
 # def success?
-# !resp.error?
+# not resp.error?
 # end
 
 # private
