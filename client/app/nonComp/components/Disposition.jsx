@@ -175,8 +175,8 @@ class NonCompDispositions extends React.PureComponent {
     let displayVhaNonAdminContent = displayVHAContent && !this.props.userIsVhaAdmin;
     let disableDispositionSelection = displayVhaNonAdminContent && task.status === 'on_hold';
 
-    let emailTemplate = COPY.VHA_REQUEST_TO_CAMO_EMAIL_TEMPLATE.replace('#__LINK_TO_CLAIM__#', window.location.href);
-    let requestToCamoMailLink = `mailto: ${this.props.vhaAdminEmailAddress}?` +
+    const emailTemplate = COPY.VHA_REQUEST_TO_CAMO_EMAIL_TEMPLATE.replace('#__LINK_TO_CLAIM__#', window.location.href);
+    const requestToCamoMailLink = `mailto: ${this.props.vhaAdminEmailAddress}?` +
       `subject=${COPY.VHA_RETURN_TO_CAMO_EMAIL_SUBJECT}&` +
       `body=${ encodeURIComponent(emailTemplate) }`;
 
@@ -199,7 +199,7 @@ class NonCompDispositions extends React.PureComponent {
 
       alertContent = <>
         <Alert type="info">
-          {disableDispositionSelection && COPY.VHA_DISPOSITION_INCOMPLETE_TASK_BANNER_TEXT}
+          {disableDispositionSelection ? COPY.VHA_DISPOSITION_INCOMPLETE_TASK_BANNER_TEXT : null}
 
           Only VHA admins can make edits to Higher-Level Reviews and Supplemental Claims.
           If you would like to add, remove, or modify an issue within a claim, please
@@ -224,7 +224,7 @@ class NonCompDispositions extends React.PureComponent {
         <div className="cf-decision">
           {displayVHAContent && <hr />}
           <div className="usa-grid-full">
-            {displayVhaNonAdminContent && alertContent}
+            {displayVhaNonAdminContent ? alertContent : null}
             <div className="usa-width-one-half">
 
               <h2>Decision</h2>

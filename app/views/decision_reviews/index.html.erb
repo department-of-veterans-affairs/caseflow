@@ -17,7 +17,7 @@
       baseTasksUrl: business_line.tasks_url,
       businessLineConfig: business_line_config_options,
       taskFilterDetails: task_filter_details,
-      vhaAdminEmailAddress:  Rails.env.production? ? "VHABENEFITAPPEALS@va.gov" : "BID_APPEALS_UAT@bah.com"
+      vhaAdminEmailAddress:  !Rails.deploy_env?(:prod) ? COPY::VHA_UAT_EMAIL_ADDRESS : COPY::VHA_BENEFIT_EMAIL_ADDRESS
     },
     ui: {
       featureToggles: {
