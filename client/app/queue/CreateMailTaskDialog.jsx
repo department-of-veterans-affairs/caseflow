@@ -136,7 +136,7 @@ export class CreateMailTaskDialog extends React.Component {
             appealId={this.props.appealId}
             requestType={this.state.selectedValue}
             onChange={(value, valid) => this.setState({ eFolderUrl: value, eFolderUrlValid: valid })}
-            veteranParticipantId={null}
+            veteranParticipantId={this.props.appeal.veteranParticipantId}
             eFolderLink={this.props.appeal.efolderLink}
           />
         }
