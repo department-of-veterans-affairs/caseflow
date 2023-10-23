@@ -288,10 +288,8 @@ Rails.application.routes.draw do
   get 'cases/:veteran_ids', to: 'appeals#show_case_list'
 
   scope path: '/queue' do
-    scope path: '/correspondence' do
-      get '/:correspondence_uuid/intake', to: 'correspondence#intake'
-    end
     get '/', to: 'queue#index'
+    get '/correspondence/:correspondence_uuid/intake', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:appealId/notifications', to: 'queue#index'
     get '/appeals/:appeal_id/cavc_dashboard', to: 'cavc_dashboard#index'
