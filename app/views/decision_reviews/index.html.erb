@@ -17,7 +17,7 @@
       baseTasksUrl: business_line.tasks_url,
       businessLineConfig: business_line_config_options,
       taskFilterDetails: task_filter_details,
-      vhaAdminEmailAddress:  !Rails.deploy_env?(:prod) ? COPY::VHA_UAT_EMAIL_ADDRESS : COPY::VHA_BENEFIT_EMAIL_ADDRESS
+      vhaAdminEmailAddress: !Rails.deploy_env?(:prod) ? COPY::VHA_UAT_EMAIL_ADDRESS : COPY::VHA_BENEFIT_EMAIL_ADDRESS
     },
     ui: {
       featureToggles: {
