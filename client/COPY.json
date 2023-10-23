@@ -964,7 +964,7 @@
   "INTAKE_VHA_CLAIM_REVIEW_REQUIREMENT": "Only VHA team members can establish Higher Level Reviews and Supplemental Claims with VHA issues. If you have a VHA claim, please return the packet to the main “VHA” queue in the Centralized Mail Portal or send downloaded documents to %s.",
   "VHA_BENEFIT_EMAIL_ADDRESS": "VHABENEFITAPPEALS@va.gov",
   "VHA_UAT_EMAIL_ADDRESS": "BID_APPEALS_UAT@bah.com",
-  "VHA_REQUEST_TO_CAMO_EMAIL_TEMPLATE": "Link to Claim: #__LINK_TO_CLAIM__#\n\nPlease fill out the following information:\n\nIssue type (Benefit program/business line):\n\nIssue description (As listed in the Caseflow claim):\n\nDescription or reason for issue update:\n\n",
+  "VHA_REQUEST_TO_CAMO_EMAIL_TEMPLATE": "Link to Claim: #__LINK_TO_CLAIM__#\n\n\n\nPlease fill out the following information:\n\n\t1.\tIssue type (Benefit program/business line):\n\n\t2.\tIssue description (As listed in the Caseflow claim):\n\n\t3.\tDescription or reason for issue update:\n\n",
   "VHA_CAREGIVER_SUPPORT_EMAIL_ADDRESS": "VHA.CSPAppeals@va.gov",
   "VHA_PAYMENT_OPERATIONS_EMAIL_ADDRESS": "VHA10D1B3R2Appeals@va.gov",
   "VHA_VETERAN_AND_FAMILY_MEMBERS_EMAIL_ADDRESS": "VHA16IVCAppealsHighLevelCorrespondence@va.gov",
