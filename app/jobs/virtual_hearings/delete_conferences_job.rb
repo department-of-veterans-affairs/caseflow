@@ -5,6 +5,8 @@
 # if the hearing type is switched from virtual to original hearing type.
 # It also sends cancellation emails to hearing participants if latter is case.
 
+# add comment to run in code climate
+
 class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
   include Hearings::EnsureCurrentUserIsSet
 
