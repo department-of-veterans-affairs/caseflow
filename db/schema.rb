@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_18_192834) do
+ActiveRecord::Schema.define(version: 2023_10_23_155854) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -599,7 +599,7 @@ ActiveRecord::Schema.define(version: 2023_10_18_192834) do
 
   create_table "correspondences", force: :cascade do |t|
     t.bigint "assigned_by_id", comment: "Foreign key to users table"
-    t.string "cmp_packet_number", comment: "Included in CMP mail package"
+    t.bigint "cmp_packet_number", comment: "Included in CMP mail package"
     t.integer "cmp_queue_id", comment: "Foreign key to CMP queues table"
     t.integer "correspondence_type_id", comment: "Foreign key for correspondence_types table"
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
