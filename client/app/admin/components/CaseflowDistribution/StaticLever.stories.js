@@ -20,21 +20,28 @@ export default {
 
 // const Template = (args) => <StaticLever {...args} />;
 
-export const StaticLevers = (args) => (
+export const StaticLever3 = (args) => (
+
   <>
-    {levers.
-      filter((lever) => !lever.is_active).
-      map((lever, index) => (
-        <StaticLever key={index} {...args} lever={lever} />
-      ))}
+    <StaticLever key={levers[3].item} {...args} lever={levers[3]} />
   </>
 );
-// StaticLevers.args = {
-//   lever: {
-//     title: 'Sample Lever Title',
-//     description: 'Sample Lever Description',
-//     newValue: 42,
-//     unit: 'units',
-//   },
-// };
+export const StaticLever4 = (args) => (
+
+  <>
+    <StaticLever key={levers[4].item} {...args} lever={levers[4]} />
+  </>
+);
+export const StaticLever6 = (args) => (
+
+  <>
+    <StaticLever key={levers[6].item} {...args} lever={levers[6]} />
+  </>
+);
+export const StaticLever8 = (args) => (
+
+  <>
+    <StaticLever key={levers[8].item} {...args} lever={levers[8]} />
+  </>
+);
 

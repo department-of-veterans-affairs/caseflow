@@ -7,7 +7,7 @@ import TextField from 'app/components/TextField';
 import RadioField from 'app/components/RadioField';
 import NumberField from 'app/components/NumberField';
 
-const activeLever = css({
+const staticLever = css({
   width: '100%',
   padding: '15px',
   borderBottom: '1px solid #e4e2e0',
@@ -64,7 +64,7 @@ const radioOnChange = () => {
 
 const StaticLever = ({ lever }) => {
   return (
-    <div className={activeLever}>
+    <div className={staticLever}>
       <strong>{lever.title}</strong>
       <p>{lever.description}</p>
 

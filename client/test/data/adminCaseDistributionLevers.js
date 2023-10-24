@@ -31,9 +31,9 @@ export const levers = [
     title: 'Lever 4',
     description: 'This is the fourth lever. It is a boolean with the default value of false. Therefore there should be a two radio buttons that display true and false as the example with false being the default option chosen. This lever is inactive so it should be in the inactive lever section',
     data_type: 'boolean',
-    value: false,
+    value: true,
     unit: '',
-    is_active: true
+    is_active: false
   },
   {
     item: 'lever_5',
