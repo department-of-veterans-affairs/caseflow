@@ -1,7 +1,12 @@
 import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
+import { Switch } from 'react-router';
 import ProgressBar from 'app/components/ProgressBar';
 import Button from '../../../../components/Button';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+
+let backActive = true;
+let submitActive = true;
 
 const progressBarSections = [
   {
@@ -18,6 +23,10 @@ const progressBarSections = [
   },
 ];
 
+// let activateBack = () => {
+//   !backActive;
+// }
+
 export const CorrespondenceIntake = () => {
   const sections = useMemo(
     () =>
@@ -28,17 +37,35 @@ export const CorrespondenceIntake = () => {
   );
 
   return <div>
-    <ProgressBar sections={sections} />
-    <Button
-      name="Cancel"
-      classNames={['cf-btn-link']} />
-    <Button
-      type="button"
-      name="Continue"
-      classNames={['cf-push-right']}>
-        Continue
-    </Button>
+    <AppSegment>
+      <ProgressBar sections={sections} />
+      <Switch>
+        <div>
+          <Button
+            name="Cancel"
+            classNames={['cf-btn-link']} />
+          {submitActive && <Button
+            type="button"
+            name="Submit"
+            classNames={['cf-push-right']}>
+              Submit
+          </Button> }
+          {!submitActive && <Button
+            type="button"
+            name="Continue"
+            classNames={['cf-push-right']}>
+              Continue
+          </Button> }
+          { backActive && <Button
+            type="button"
+            name="Back"
+            classNames={['padding', 'cf-push-right']}>
+              Back
+          </Button> }
+        </div>
+      </Switch>
+    </AppSegment>
   </div>;
 };
-export default CorrespondenceIntake;
 
+export default CorrespondenceIntake;
