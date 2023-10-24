@@ -7,6 +7,7 @@ import { SuccessAlert } from '../components/Alerts';
 import { DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
+import NonCompLayout from '../components/NonCompLayout';
 
 const pageStyling = css({
   display: 'flex',
@@ -44,33 +45,34 @@ class NonCompReviewsPage extends React.PureComponent {
       />;
     }
 
-    return <div>
-      { successAlert }
-      <h1>{this.props.businessLine}</h1>
-      <div {...pageStyling} >
-        <div className="usa-width-one-half" {...linkButtonStyling}>
-          <h2>Reviews needing action</h2>
-          <div>Review each issue and select a disposition</div>
-        </div>
-        <div className="cf-txt-r" {...buttonContainerStyling}>
-          <Button
-            onClick={() => {
-              window.location.href = '/intake';
-            }}
-            classNames={compReviewButtonStyling}
-            styling={compReviewButtonStyling}
-          >
-            + Intake new form
-          </Button>
-          {this.props.businessLine &&
-          <Button
-            classNames={secondaryButtonClassNames}
-            onClick={this.downloadCsv}
-            styling={compReviewButtonStyling}>
-            Download completed tasks
-          </Button>
-          }
-          {this.props.businessLineUrl === 'vha' && this.props.isBusinessLineAdmin ? <Button
+    return (
+      <NonCompLayout>
+        { successAlert }
+        <h1>{this.props.businessLine}</h1>
+        <div {...pageStyling} >
+          <div className="usa-width-one-half" {...linkButtonStyling}>
+            <h2>Reviews needing action</h2>
+            <div>Review each issue and select a disposition</div>
+          </div>
+          <div className="cf-txt-r" {...buttonContainerStyling}>
+            <Button
+              onClick={() => {
+                window.location.href = '/intake';
+              }}
+              classNames={compReviewButtonStyling}
+              styling={compReviewButtonStyling}
+            >
+              + Intake new form
+            </Button>
+            {this.props.businessLine &&
+              <Button
+                classNames={secondaryButtonClassNames}
+                onClick={this.downloadCsv}
+                styling={compReviewButtonStyling}>
+                Download completed tasks
+              </Button>
+            }
+            {this.props.businessLineUrl === 'vha' && this.props.isBusinessLineAdmin ? <Button
             classNames={secondaryButtonClassNames}
             onClick={() => {
               this.props.history.push(`${this.props.businessLineUrl}/report`);
@@ -80,10 +82,12 @@ class NonCompReviewsPage extends React.PureComponent {
             Generate task report
           </Button> :
             null }
+
+          </div>
         </div>
-      </div>
-      <NonCompTabs />
-    </div>;
+        <NonCompTabs />
+      </NonCompLayout>
+    );
   }
 }
 
@@ -97,10 +101,10 @@ NonCompReviewsPage.propTypes = {
 
 const ReviewPage = connect(
   (state) => ({
-    businessLine: state.businessLine,
-    decisionIssuesStatus: state.decisionIssuesStatus,
-    businessLineUrl: state.businessLineUrl,
-    isBusinessLineAdmin: state.isBusinessLineAdmin
+    isBusinessLineAdmin: state.nonComp.isBusinessLineAdmin,
+    businessLine: state.nonComp.businessLine,
+    decisionIssuesStatus: state.nonComp.decisionIssuesStatus,
+    businessLineUrl: state.nonComp.businessLineUrl
   })
 )(NonCompReviewsPage);
 

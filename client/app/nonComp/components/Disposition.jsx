@@ -266,8 +266,8 @@ NonCompDispositions.propTypes = {
 
 export default connect(
   (state) => ({
-    appeal: state.appeal,
-    task: state.task,
-    decisionIssuesStatus: state.decisionIssuesStatus
+    appeal: state.nonComp.appeal,
+    task: state.nonComp.task,
+    decisionIssuesStatus: state.nonComp.decisionIssuesStatus
   })
 )(NonCompDispositions);

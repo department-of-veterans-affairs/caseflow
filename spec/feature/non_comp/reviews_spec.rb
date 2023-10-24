@@ -949,5 +949,12 @@ feature "NonComp Reviews Queue", :postgres do
         )
       )
     end
+
+    context "navigating to change history report page" do
+      it "shows 404 view" do
+        visit "/decision_reviews/#{non_comp_org.url}/report"
+        expect(page).to have_content("Page not found")
+      end
+    end
   end
 end
