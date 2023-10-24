@@ -1,34 +1,44 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import ProgressBar from 'app/components/ProgressBar';
+import Button from '../../../../components/Button';
 
 const progressBarSections = [
   {
-    title: '1. Select Form'
+    title: '1. Add Related Correspondence',
+    current: false
   },
   {
-    title: '2. Search'
+    title: '2. Review Tasks & Appeals',
+    current: true
   },
   {
-    title: '3. Review'
-  },
-  {
-    title: '4. Add Issues'
-  },
-  {
-    title: '5. Confirmation'
+    title: '3. Confirm',
+    current: false
   },
 ];
 
 export const CorrespondenceIntake = () => {
   const sections = useMemo(
     () =>
-      progressBarSections.map(({ title }) => ({
+      progressBarSections.map(({ title, current }) => ({
         title,
+        current
       })),
   );
 
-  return <ProgressBar sections={sections} />;
+  return <div>
+    <ProgressBar sections={sections} />
+    <Button
+      name="Cancel"
+      classNames={['cf-btn-link']} />
+    <Button
+      type="button"
+      name="Continue"
+      classNames={['cf-push-right']}>
+        Continue
+    </Button>
+  </div>;
 };
 export default CorrespondenceIntake;
 

@@ -893,7 +893,7 @@ class QueueApp extends React.PureComponent {
 
             <PageRoute
               path="/queue/correspondence/:correspondenceId/intake"
-              title="Temporary Title"
+              title={`${PAGE_TITLES.CORRESPONDENCE_INTAKE}`}
               render={this.routedCorrespondenceIntake}
             />
 
