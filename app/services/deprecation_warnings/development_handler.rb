@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative "base_handler"
 require_relative "disallowed_deprecations"
 
 # @note For use with `ActiveSupport::Deprecation.behavior=`.

@@ -1,6 +1,6 @@
-require_relative 'boot'
+require_relative "boot"
 
-require 'rails/all'
+require "rails/all"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -12,16 +12,16 @@ require "vbms"
 module CaseflowCertification
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.0
+    config.load_defaults 6.1
+
+    # Configuration for the application, engines, and railties goes here.
+    #
+    # These settings can be overridden in specific environments using the files
+    # in config/environments, which are processed later.
 
     # Override new 'zeitwerk' autoloading default to preserve 'classic' behavior.
     # We must transition to 'zeitwerk' when upgrading to Rails 7.0.
     config.autoloader = :classic
-
-    # Settings in config/environments/* take precedence over those specified here.
-    # Application configuration can go into files in config/initializers
-    # -- all .rb files in that directory are automatically loaded after loading
-    # the framework and any gems in your application.
 
     #===================================================================================================================
     # Rails default overrides
@@ -51,15 +51,6 @@ module CaseflowCertification
     config.active_record.belongs_to_required_by_default = false
 
     # ==================================================================================================================
-    # Rails 5.1 default overrides
-    # ------------------------------------------------------------------------------------------------------------------
-
-    # Make `form_with` generate non-remote forms.
-    # Default as of 5.1: true
-    # Default as of 6.1: false
-    Rails.application.config.action_view.form_with_generates_remote_forms = false
-
-    # ==================================================================================================================
     # Rails 5.2 default overrides
     # ------------------------------------------------------------------------------------------------------------------
 
@@ -82,10 +73,6 @@ module CaseflowCertification
     # Default as of 5.2: true
     Rails.application.config.action_controller.default_protect_from_forgery = false
 
-    # Store boolean values in sqlite3 databases as 1 and 0 instead of 't' and 'f' after migrating old data.
-    # Default as of 5.2: true
-    Rails.application.config.active_record.sqlite3.represent_boolean_as_integer = false
-
     # ==================================================================================================================
     # Rails 6.0 default overrides
     # ------------------------------------------------------------------------------------------------------------------
@@ -102,12 +89,6 @@ module CaseflowCertification
     # Default as of 6.0: true
     Rails.application.config.action_dispatch.use_cookies_with_metadata = false
 
-    # Change the return value of `ActionDispatch::Response#content_type` to Content-Type header without modification.
-    # Rails.application.config.action_dispatch.return_only_media_type_on_content_type = false
-
-    # Return false instead of self when enqueuing is aborted from a callback.
-    # Rails.application.config.active_job.return_false_on_aborted_enqueue = true
-
     # Send Active Storage analysis and purge jobs to dedicated queues.
     # Rails.application.config.active_storage.queues.analysis = :active_storage_analysis
     # Rails.application.config.active_storage.queues.purge    = :active_storage_purge
@@ -116,20 +97,19 @@ module CaseflowCertification
     # attachments instead of appending. Use #attach to add new attachments without replacing existing ones.
     # Rails.application.config.active_storage.replace_on_assign_to_many = true
 
-    # Use ActionMailer::MailDeliveryJob for sending parameterized and normal mail.
-    #
-    # The default delivery jobs (ActionMailer::Parameterized::DeliveryJob, ActionMailer::DeliveryJob),
-    # will be removed in Rails 6.1. This setting is not backwards compatible with earlier Rails versions.
-    # If you send mail in the background, job workers need to have a copy of
-    # MailDeliveryJob to ensure all delivery jobs are processed properly.
-    # Make sure your entire app is migrated and stable on 6.0 before using this setting.
-    # Rails.application.config.action_mailer.delivery_job = "ActionMailer::MailDeliveryJob"
-
     # Enable the same cache key to be reused when the object being cached of type
     # `ActiveRecord::Relation` changes by moving the volatile information (max updated at and count)
     # of the relation's cache key into the cache version to support recycling cache key.
     # Default as of 6.0: true
     Rails.application.config.active_record.collection_cache_versioning = false
+
+    # ==================================================================================================================
+    # Rails 6.1 default overrides
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # Apply random variation to the delay when retrying failed jobs.
+    # Default as of 6.1: 0.15
+    Rails.application.config.active_job.retry_jitter = false
 
     # ==================================================================================================================
 

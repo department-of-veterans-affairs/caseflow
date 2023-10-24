@@ -1,8 +1,10 @@
+require "active_support/core_ext/integer/time"
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
-  # In the development environment your application's code is reloaded on
-  # every request. This slows down response time but is perfect for development
+  # In the development environment your application's code is reloaded any time
+  # it changes. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
 
@@ -16,6 +18,8 @@ Rails.application.configure do
   # Run rails dev:cache to toggle caching.
   if Rails.root.join('tmp', 'caching-dev.txt').exist?
     config.action_controller.perform_caching = true
+    config.action_controller.enable_fragment_cache_logging = true
+
     config.cache_store = :redis_store, Rails.application.secrets.redis_url_cache, { expires_in: 24.hours }
     config.public_file_server.headers = {
       'Cache-Control' => "public, max-age=#{2.days.to_i}"
@@ -43,10 +47,17 @@ Rails.application.configure do
     config.action_mailer.delivery_method = :test
   end
 
-  # Print deprecation notices to the Rails logger.
-  # config.active_support.deprecation = :log
   require_relative "../../app/services/deprecation_warnings/development_handler"
   ActiveSupport::Deprecation.behavior = DeprecationWarnings::DevelopmentHandler
+
+  # Print deprecation notices to the Rails logger.
+  # config.active_support.deprecation = :log
+
+  # Raise exceptions for disallowed deprecations.
+  # config.active_support.disallowed_deprecation = :raise
+
+  # Tell Active Support which deprecation messages to disallow.
+  # config.active_support.disallowed_deprecation_warnings = []
 
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load
@@ -59,15 +70,30 @@ Rails.application.configure do
   # number of complex assets.
   config.assets.debug = true
 
+  # Setting `config.action_view.preload_links_header` to `true` will generate a `Link` header that gives a hint to
+  # modern browsers about preloading assets when using `javascript_include_tag` and `stylesheet_link_tag`.
+  #
+  # Typically, `config.assets.debug` is set to `true` in `development` environments. This splits concatenated
+  # assets into their constituent files and includes them all separately, which could result in an exceptionally long
+  # `Link` header that exceeds the maximum 8192 bytes for HTTP response headers. To avoid this situation, we set
+  # `config.action_view.preload_links_header` to `false`.
+  Rails.application.config.action_view.preload_links_header = false
+
   # Suppress logger output for asset requests.
   config.assets.quiet = true
 
   # Raises error for missing translations.
-  # config.action_view.raise_on_missing_translations = true
+  # config.i18n.raise_on_missing_translations = true
+
+  # Annotate rendered view with file names.
+  # config.action_view.annotate_rendered_view_with_filenames = true
 
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+
+  # Uncomment if you wish to allow Action Cable access from any origin.
+  # config.action_cable.disable_request_forgery_protection = true
 
   #=====================================================================================================================
   # Please keep custom config settings below this comment.
