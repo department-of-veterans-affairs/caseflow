@@ -42,7 +42,7 @@ const FetchSearchBar = (props) => {
         justifyContent: 'flex-end'
       }}>
       </span>
-      <div style={{ display: 'flex', paddingLeft: '10px', minWidth:'1500px' }}>
+      <div style={{ display: 'flex', paddingLeft: '10px', minWidth: '1500px' }}>
         <SearchBar
           value={searchText}
           onChange={handleSearchTextChange}

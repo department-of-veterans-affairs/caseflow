@@ -50,11 +50,11 @@ class DocumentListHeader extends React.Component {
           <DocumentsCommentsButton />
         </div>
         <div className="search-bar-and-doc-count cf-search-ahead-parent" style={{ paddingTop: '20px', width: '85vw' }}>
-          <div className="num-of-documents" style={{ justifyContent: 'left', paddingLeft: '80px'}}>
-            {props.numberOfDocuments} Documents
+          <div className="num-of-documents" style={{ justifyContent: 'left', paddingLeft: '80px', paddingTop: '7rem', paddingBottom: '0rem'}}>
+            Showing {props.numberOfDocuments} Documents
           </div>
           <div className="table-search-bar">
-            <ul>
+            <ul style={{ paddingLeft: '0px'}}>
             Filter table by receipt date, document type, issue tags, or comments
             </ul>
             <SearchBar
