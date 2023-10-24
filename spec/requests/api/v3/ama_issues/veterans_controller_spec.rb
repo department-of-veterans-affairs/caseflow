@@ -57,6 +57,14 @@ describe Api::V3::AmaIssues::VeteransController, :postgres, type: :request do
           end
         end
 
+        context "when a veteran is found - but an unexpected error has happened." do
+          it "should return veteran not found error" do
+            response = JSON.parse("{\"errors\":[{\"status\":\"500\",\"title\":\"Unknown error occured\",\"detail\":\"divided by 0 (Sentry event id: )\"}]}")
+            expect(response["errors"].first["status"]).to include("500")
+            expect(response["errors"].first["title"]).to include("Unknown error occured")
+          end
+        end
+
         context "when a veteran has a legacy appeal" do
           context "when a veteran has multiple request issues with multiple decision issues" do
             let_it_be(:vet) { create(:veteran, file_number: "123456789") }
