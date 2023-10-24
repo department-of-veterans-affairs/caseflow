@@ -139,7 +139,7 @@ const ConditionContainer = ({control, index, field, remove, determineOptions}) =
             <div className="report-page-variable-select">
               <ConditionDropdown {...{control, determineOptions, name}} />
             </div>
-            <div className="report-page-variable-content">{useWatch({control, name})}</div>
+            <div className="report-page-variable-content">Your cool {useWatch({control, name})} content here!</div>
           </div>
           <Link onClick={() => remove(index)}>Remove condition</Link>
           {shouldShowAnd && <div className="report-page-condition-and">AND</div>}
