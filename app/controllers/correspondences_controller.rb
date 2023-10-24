@@ -4,7 +4,7 @@ class CorrespondencesController < ApplicationController
   # before_action :verify_access
 
   def index
-    render "index"
+
   end
 
   private
