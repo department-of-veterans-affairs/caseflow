@@ -39,12 +39,24 @@ describe Api::V3::AmaIssues::VeteransController, :postgres, type: :request do
             "/api/v3/ama_issues/veterans/9999999999",
             headers: authorization_header
           )
-          expect(response).to have_http_status(500)
-          expect(response.body).to include("Couldn't find Veteran")
+          expect(response).to have_http_status(404)
+          expect(response.body).to include("No Veteran found for the given identifier.")
         end
       end
 
       context "when a veteran is found" do
+        context "when a veteran is found - but has no reqeust issues" do
+          let(:vet) { create(:veteran) }
+          it "should return request issues not found" do
+            get(
+              "/api/v3/ama_issues/veterans/#{vet.participant_id}",
+              headers: authorization_header
+            )
+            expect(response).to have_http_status(404)
+            expect(response.body).to include("No Request Issues found for the given veteran.")
+          end
+        end
+
         context "when a veteran has a legacy appeal" do
           context "when a veteran has multiple request issues with multiple decision issues" do
             let_it_be(:vet) { create(:veteran, file_number: "123456789") }
