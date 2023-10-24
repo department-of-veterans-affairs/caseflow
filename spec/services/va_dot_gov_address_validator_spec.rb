@@ -6,6 +6,8 @@ describe VaDotGovAddressValidator do
   describe "#closest_regional_office" do
     let(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
     let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
+    let(:non_us_address) { Address.new(country: "MX", country_name: "Mexico", city: "Mexico City") }
+    let(:philippines_address) { Address.new(country: "PI", country_name: "Philippines", city: "Manila") }
     let(:closest_ro_facilities) do
       [
         mock_facility_data(id: ro_facility_id)
@@ -28,6 +30,22 @@ describe VaDotGovAddressValidator do
 
       it "returns RO01" do
         expect(subject).to eq("RO01")
+      end
+    end
+
+    context "when appellant does not live in the us" do
+      let(:ro_facility_id) { nil }
+      before { appeal.instance_variable_set(:@address, non_us_address) }
+      it "returns RO11" do
+        expect(subject).to eq("RO11")
+      end
+    end
+
+    context "when appellant lives in the Philippines" do
+      let(:ro_facility_id) { "vba_358" }
+      before { appeal.instance_variable_set(:@address, philippines_address) }
+      it "returns RO58" do
+        expect(subject).to eq("RO58")
       end
     end
 

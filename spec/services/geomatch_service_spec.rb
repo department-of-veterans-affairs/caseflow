@@ -76,16 +76,42 @@ describe GeomatchService do
           bfddec: nil
         )
       end
-      let(:appeal) { create(:legacy_appeal, :with_veteran_address, vacols_case: vacols_case) }
+
+      let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let(:non_us_address) { Address.new(country: "MX", country_name: "Mexico", city: "Mexico City") }
+      let(:philippines_address) { Address.new(country: "PI", country_name: "Philippines", city: "Manila") }
 
       it "geomatches for the travel board appeal" do
         subject
 
         legacy_appeal = LegacyAppeal.find_by(vacols_id: vacols_case.bfkey)
-
         expect(legacy_appeal).not_to be_nil
         expect(legacy_appeal.closest_regional_office).not_to be_nil
         expect(legacy_appeal.available_hearing_locations).not_to be_empty
+      end
+
+      context "foreign appeal" do
+        before { appeal.instance_variable_set(:@address, non_us_address) }
+        it "geomatches for a foreign appeal" do
+          subject
+
+          legacy_appeal = LegacyAppeal.find_by(vacols_id: vacols_case.bfkey)
+          expect(legacy_appeal).not_to be_nil
+          expect(legacy_appeal.closest_regional_office).to eq("RO11")
+          expect(legacy_appeal.available_hearing_locations).not_to be_empty
+        end
+      end
+
+      context "phillipines appeal" do
+        before { appeal.instance_variable_set(:@address, philippines_address) }
+        it "geomatches for a phillipines appeal" do
+          subject
+
+          legacy_appeal = LegacyAppeal.find_by(vacols_id: vacols_case.bfkey)
+          expect(legacy_appeal).not_to be_nil
+          expect(legacy_appeal.closest_regional_office).to eq("RO58")
+          expect(legacy_appeal.available_hearing_locations).not_to be_empty
+        end
       end
     end
   end

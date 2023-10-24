@@ -47,7 +47,6 @@ class VaDotGovAddressValidator
     update_closest_regional_office
     destroy_existing_available_hearing_locations!
     create_available_hearing_locations
-
     { status: :matched_available_hearing_locations }
   end
 
@@ -66,11 +65,12 @@ class VaDotGovAddressValidator
   def closest_regional_office
     @closest_regional_office ||= begin
       return unless closest_ro_response.success?
-
       # Note: In `ro_facility_ids_to_geomatch`, the San Antonio facility ID and Elpaso facility Id is passed
       # as a valid RO for any veteran living in Texas.
       return "RO62" if closest_regional_office_facility_id_is_san_antonio?
       return "RO49" if closest_regional_office_facility_id_is_el_paso?
+      return "RO58" if appellant_lives_in_phillipines?
+      return "RO11" if !appellant_lives_in_usa?
 
       RegionalOffice
         .cities
