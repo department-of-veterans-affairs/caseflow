@@ -54,7 +54,7 @@ class VaDotGovAddressValidator
     @valid_address ||= if valid_address_response.success?
                          valid_address_response.data
                        else
-                         validate_zip_code
+                         manually_validate_zip_code
                        end
   end
 
@@ -174,7 +174,7 @@ class VaDotGovAddressValidator
   end
 
   def valid_address_response
-    @valid_address_response ||= VADotGovService.validate_address(address)
+    @valid_address_response ||= VADotGovService.validate_zip_code(address.zip)
   end
 
   def available_hearing_locations_response
@@ -220,15 +220,13 @@ class VaDotGovAddressValidator
     closest_ro_response.data.first&.dig(:facility_id)
   end
 
-  def validate_zip_code
-    if address.zip_code_not_validatable?
-      nil
-    else
-      lat_lng = ZipCodeToLatLngMapper::MAPPING[address.zip[0..4]]
+  def manually_validate_zip_code
+    return if address.zip_code_not_validatable?
 
-      return nil if lat_lng.nil?
+    lat_lng = ZipCodeToLatLngMapper::MAPPING[address.zip[0..4]]
 
-      { lat: lat_lng[0], long: lat_lng[1], country_code: address.country, state_code: address.state }
-    end
+    return if lat_lng.nil?
+
+    { lat: lat_lng[0], long: lat_lng[1], country_code: address.country, state_code: address.state }
   end
 end

@@ -76,6 +76,7 @@ describe GeomatchService do
           bfddec: nil
         )
       end
+
       let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
       let(:non_us_address) { Address.new(country: "MX", country_name: "Mexico", city: "Mexico City") }
       let(:philippines_address) { Address.new(country: "PI", country_name: "Philippines", city: "Manila") }
