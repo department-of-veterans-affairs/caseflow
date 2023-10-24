@@ -54,6 +54,9 @@ class DocumentListHeader extends React.Component {
             {props.numberOfDocuments} Documents
           </div>
           <div className="table-search-bar">
+            <ul>
+            Filter table by receipt date, document type, issue tags, or comments
+            </ul>
             <SearchBar
               id="searchBar"
               onChange={props.setSearch}
