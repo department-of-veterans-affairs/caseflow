@@ -34,7 +34,7 @@ class DocumentListHeader extends React.Component {
     const props = this.props;
 
     return <div>
-      <div style={{paddingBottom: '30px'}}>
+      <div style={{ paddingBottom: '30px' }}>
         <WellArea>
           <FetchSearchBar
             setClearAllFiltersCallbacks={this.props.setClearAllFiltersCallbacks}
@@ -45,10 +45,12 @@ class DocumentListHeader extends React.Component {
           />
         </WellArea>
       </div>
-      <div className="document-list-header" style={{display: 'grid', justifyContent: 'right'}}>
-        <DocumentsCommentsButton />
-        <div className="search-bar-and-doc-count cf-search-ahead-parent" style={{paddingTop: '20px', width: '100%'}}>
-          <div className="num-of-documents" style={{justifyContent: 'left'}}>
+      <div className="document-list-header" style={{ display: 'grid', justifyContent: 'right' }}>
+        <div>
+          <DocumentsCommentsButton />
+        </div>
+        <div className="search-bar-and-doc-count cf-search-ahead-parent" style={{ paddingTop: '20px', width: '85vw' }}>
+          <div className="num-of-documents" style={{ justifyContent: 'left', paddingLeft: '80px'}}>
             {props.numberOfDocuments} Documents
           </div>
           <div className="table-search-bar">
