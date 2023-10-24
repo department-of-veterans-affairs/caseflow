@@ -96,8 +96,8 @@ describe GeomatchService do
 
           legacy_appeal = LegacyAppeal.find_by(vacols_id: vacols_case.bfkey)
           expect(legacy_appeal).not_to be_nil
-          expect(legacy_appeal.closest_regional_office).to eq("RO71")
-          expect(legacy_appeal.available_hearing_locations).to eq([])
+          expect(legacy_appeal.closest_regional_office).to eq("RO11")
+          expect(legacy_appeal.available_hearing_locations).not_to be_empty
         end
       end
 

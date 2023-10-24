@@ -46,7 +46,7 @@ class VaDotGovAddressValidator
 
     update_closest_regional_office
     destroy_existing_available_hearing_locations!
-    create_available_hearing_locations if closest_regional_office != "RO71"
+    create_available_hearing_locations
     { status: :matched_available_hearing_locations }
   end
 
@@ -70,7 +70,7 @@ class VaDotGovAddressValidator
       return "RO62" if closest_regional_office_facility_id_is_san_antonio?
       return "RO49" if closest_regional_office_facility_id_is_el_paso?
       return "RO58" if appellant_lives_in_phillipines?
-      return "RO71" if !appellant_lives_in_usa?
+      return "RO11" if !appellant_lives_in_usa?
 
       RegionalOffice
         .cities
