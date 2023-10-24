@@ -32,8 +32,8 @@ const FetchSearchBar = (props) => {
 
   return (
     <div style={{ width: '100%', height: '200px', backgroundColor: 'white' }}>
-      <div style={{ backgroundColor : '#f1f1f1', width: '100%', height: '50px', paddingTop: '1.5rem'}}>
-      <b style={{ verticalAlign: 'center', paddingLeft: '10px', paddingTop: '1.5rem', border: '0', paddingBottom: '1.5rem', paddingRight: '5.5rem' }}> Search document contents </b>
+      <div style={{ backgroundColor: '#f1f1f1', width: '100%', height: '50px', paddingTop: '1.5rem'}}>
+        <b style={{ verticalAlign: 'center', paddingLeft: '10px', paddingTop: '1.5rem', border: '0', paddingBottom: '1.5rem', paddingRight: '5.5rem' }}> Search document contents </b>
       </div>
       <p style={{ textAlign: 'left', paddingLeft: '10px', height: '5px' }}>Search document contents</p>
       <span style={{

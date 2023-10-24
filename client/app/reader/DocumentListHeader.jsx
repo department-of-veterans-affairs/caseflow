@@ -45,26 +45,25 @@ class DocumentListHeader extends React.Component {
           />
         </WellArea>
       </div>
-      <div className="document-list-header">
-        <div className="search-bar-and-doc-count cf-search-ahead-parent">
-          <div><SearchBar
-            id="searchBar"
-            onChange={props.setSearch}
-            isSearchAhead
-            onClearSearch={props.clearSearch}
-            recordSearch={this.recordSearch}
-            placeholder="Type to search..."
-            value={props.docFilterCriteria.searchQuery}
-            size="small"
-          />
-          </div>
-
-          <div className="num-of-documents">
+      <div className="document-list-header" style={{display: 'grid', justifyContent: 'right'}}>
+        <DocumentsCommentsButton />
+        <div className="search-bar-and-doc-count cf-search-ahead-parent" style={{paddingTop: '20px', width: '100%'}}>
+          <div className="num-of-documents" style={{justifyContent: 'left'}}>
             {props.numberOfDocuments} Documents
           </div>
-
+          <div className="table-search-bar">
+            <SearchBar
+              id="searchBar"
+              onChange={props.setSearch}
+              isSearchAhead
+              onClearSearch={props.clearSearch}
+              recordSearch={this.recordSearch}
+              placeholder="Type to search..."
+              value={props.docFilterCriteria.searchQuery}
+              size="small"
+            />
+          </div>
         </div>
-        <DocumentsCommentsButton />
       </div>
       <HeaderFilterMessage
         docFilterCriteria={props.docFilterCriteria}
