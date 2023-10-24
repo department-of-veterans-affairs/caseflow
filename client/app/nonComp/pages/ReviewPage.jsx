@@ -72,17 +72,18 @@ class NonCompReviewsPage extends React.PureComponent {
                 Download completed tasks
               </Button>
             }
-            {this.props.businessLineUrl === 'vha' && this.props.isBusinessLineAdmin ? <Button
-            classNames={secondaryButtonClassNames}
-            onClick={() => {
-              this.props.history.push(`${this.props.businessLineUrl}/report`);
-            }}
-            styling={compReviewButtonStyling}
-          >
-            Generate task report
-          </Button> :
-            null }
-
+            {this.props.businessLineUrl === 'vha' && this.props.isBusinessLineAdmin ?
+              <Button
+                classNames={secondaryButtonClassNames}
+                onClick={() => {
+                  this.props.history.push(`${this.props.businessLineUrl}/report`);
+                }}
+                styling={compReviewButtonStyling}
+              >
+                Generate task report
+              </Button> :
+              null
+            }
           </div>
         </div>
         <NonCompTabs />

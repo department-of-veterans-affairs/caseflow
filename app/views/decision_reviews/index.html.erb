@@ -19,10 +19,5 @@
       taskFilterDetails: task_filter_details,
       isBusinessLineAdmin: business_line.user_is_admin?(current_user)
     },
-    ui: {
-      featureToggles: {
-        poa_button_refresh: FeatureToggle.enabled?(:poa_button_refresh)
-      }
-    }
   }) %>
 <% end %>
