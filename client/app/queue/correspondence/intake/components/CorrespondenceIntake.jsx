@@ -41,9 +41,12 @@ export const CorrespondenceIntake = () => {
       <ProgressBar sections={sections} />
       <Switch>
         <div>
-          <Button
-            name="Cancel"
-            classNames={['cf-btn-link']} />
+          <a href="/queue/correspondence">
+            <Button
+              name="Cancel"
+              classNames={['cf-btn-link']}
+            />
+          </a>
           {submitActive && <Button
             type="button"
             name="Submit"
