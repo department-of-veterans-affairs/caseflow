@@ -37,13 +37,13 @@ module Seeds
       end
 
       # 1 Higher Level Review containing 180 Request Issues each with a Decision Issue
-      hlr_epe = create_end_product_establishment(:cleared_hlr, veteran)
+      hlr_epe = create_end_product_establishment(:cleared_hlr_with_veteran_claimant, veteran)
       180.times do
         create_claim_review_request_issue(:rating, hlr_epe, veteran, :with_associated_decision_issue)
       end
 
       # 1 Supplemental Claim containing 60 Request Issues with no Decision Issues
-      supp_epe = create_end_product_establishment(:active_supp, veteran)
+      supp_epe = create_end_product_establishment(:active_supp_with_veteran_claimant, veteran)
       60.times do
         create_claim_review_request_issue(:nonrating, supp_epe, veteran)
       end
@@ -66,13 +66,13 @@ module Seeds
       end
 
       # 1 Higher Level Review containing 180 Request Issues each with a Decision Issue
-      hlr_epe = create_end_product_establishment(:cleared_hlr, veteran)
+      hlr_epe = create_end_product_establishment(:cleared_hlr_with_veteran_claimant, veteran)
       180.times do
         create_claim_review_request_issue(:rating, hlr_epe, veteran, :with_associated_decision_issue)
       end
 
       # 1 Supplemental Claim containing 60 Request Issues with no Decision Issues
-      supp_epe = create_end_product_establishment(:active_supp, veteran)
+      supp_epe = create_end_product_establishment(:active_supp_with_veteran_claimant, veteran)
       60.times do
         create_claim_review_request_issue(:nonrating, supp_epe, veteran)
       end
@@ -92,7 +92,7 @@ module Seeds
 
       # 1 Higher Level Review containing 8 total Request Issues
       # Each Request Issue correlates to a single Decision Issue, except for one outlier correlating to 68 Decision Issues
-      hlr_epe = create_end_product_establishment(:cleared_hlr, veteran)
+      hlr_epe = create_end_product_establishment(:cleared_hlr_with_veteran_claimant, veteran)
       7.times do
         create_claim_review_request_issue(:rating, hlr_epe, veteran, :with_associated_decision_issue)
       end
@@ -119,7 +119,7 @@ module Seeds
 
       # 1 Higher Level Review containing 8 total Request Issues
       # Each Request Issue correlates to a single Decision Issue, except for one outlier correlating to 68 Decision Issues
-      hlr_epe = create_end_product_establishment(:cleared_hlr, veteran)
+      hlr_epe = create_end_product_establishment(:cleared_hlr_with_veteran_claimant, veteran)
       7.times do
         create_claim_review_request_issue(:rating, hlr_epe, veteran, :with_associated_decision_issue)
       end
@@ -141,7 +141,7 @@ module Seeds
 
       # 1 Higher Level Review containing 3 total Request Issues
       # Each Decision Issue correlates to a single Request Issue, except for one outlier correlating to 31 Request Issues
-      hlr_epe = create_end_product_establishment(:cleared_hlr, veteran)
+      hlr_epe = create_end_product_establishment(:cleared_hlr_with_veteran_claimant, veteran)
       2.times do
         create_claim_review_request_issue(:rating, hlr_epe, veteran, :with_associated_decision_issue)
       end
@@ -168,7 +168,7 @@ module Seeds
 
       # 1 Higher Level Review containing 3 total Request Issues
       # Each Decision Issue correlates to a single Request Issue, except for one outlier correlating to 31 Request Issues
-      hlr_epe = create_end_product_establishment(:cleared_hlr, veteran)
+      hlr_epe = create_end_product_establishment(:cleared_hlr_with_veteran_claimant, veteran)
       2.times do
         create_claim_review_request_issue(:rating, hlr_epe, veteran, :with_associated_decision_issue)
       end
