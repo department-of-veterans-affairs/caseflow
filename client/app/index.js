@@ -54,6 +54,7 @@ import Inbox from 'app/inbox';
 import Explain from 'app/explain';
 import MPISearch from 'app/mpi/MPISearch';
 import Admin from 'app/admin';
+import CorrespondenceCasesList from 'app/queue/correspondences';
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
@@ -87,7 +88,8 @@ const COMPONENTS = {
   Inbox,
   Explain,
   MPISearch,
-  Admin
+  Admin,
+  CorrespondenceCasesList
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
