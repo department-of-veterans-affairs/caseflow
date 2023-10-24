@@ -14,10 +14,12 @@ const FetchSearchBar = (props) => {
     props.clearClaimEvidenceDocs();
   };
 
-  const handleClick = (event) => {
-    event.preventDefault();
-    ApiUtil.get(`/reader/appeal/${props.vacolsId}/document_content_searches?search_term=${searchText}`).
-      then((response) => (props.setClaimEvidenceDocs(response.body.appealDocuments, searchText)));
+  const handleClick = () => {
+    // nil and empty error handling of input value
+    if (searchText && searchText.trim().length !== 0) {
+      ApiUtil.get(`/reader/appeal/${props.vacolsId}/document_content_searches?search_term=${searchText}`).
+        then((response) => (props.setClaimEvidenceDocs(response.body.appealDocuments, searchText)));
+    }
   };
 
   const resetFetchBarState = () => {
@@ -29,21 +31,27 @@ const FetchSearchBar = (props) => {
   }, resetFetchBarState);
 
   return (
-    <div style={{ width: '100%' }}>
-      <p style={{ textAlign: 'center' }}>Search document contents</p>
+    <div style={{ width: '100%', height: '200px', backgroundColor: 'white' }}>
+      <div style={{ backgroundColor: '#f1f1f1', width: '100%', height: '50px', paddingTop: '1.5rem'}}>
+        <b style={{ verticalAlign: 'center', paddingLeft: '10px', paddingTop: '1.5rem', border: '0', paddingBottom: '1.5rem', paddingRight: '5.5rem' }}> Search document contents </b>
+      </div>
+      <p style={{ textAlign: 'left', paddingLeft: '10px', height: '5px' }}>Search document contents</p>
       <span style={{
-        width: '100%',
+        width: '75%',
         display: 'flex',
         justifyContent: 'flex-end'
       }}>
-        <div style={{ justifyContent: 'flex-end', width: '50%', marginRight: 0 }}>
-          <SearchBar value={searchText}
-            onChange={handleSearchTextChange} size="small"
-            onClearSearch={handleClearSearch}
-            isSearchAhead />
-        </div>
-        <button id="fetchDocumentContentsButton" className="cf-submit usa-button" onClick={handleClick}>Search</button>
       </span>
+      <div style={{ display: 'flex', paddingLeft: '10px', minWidth: '1500px' }}>
+        <SearchBar
+          value={searchText}
+          onChange={handleSearchTextChange}
+          onSubmit={handleClick}
+          size="big"
+          onClearSearch={handleClearSearch}
+          submitUsingEnterKey
+          inputProps={{ style: { maxWidth: '500px!', minWidth: '500px!', width: '500px'}}}/>
+      </div>
     </div>
   );
 };

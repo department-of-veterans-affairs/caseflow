@@ -34,36 +34,42 @@ class DocumentListHeader extends React.Component {
     const props = this.props;
 
     return <div>
-      <div className="document-list-header">
-        <div className="search-bar-and-doc-count cf-search-ahead-parent">
-          <div><SearchBar
-            id="searchBar"
-            onChange={props.setSearch}
-            isSearchAhead
-            onClearSearch={props.clearSearch}
-            recordSearch={this.recordSearch}
-            placeholder="Type to search..."
-            value={props.docFilterCriteria.searchQuery}
-            size="small"
+      <div style={{ paddingBottom: '30px' }}>
+        <WellArea>
+          <FetchSearchBar
+            setClearAllFiltersCallbacks={this.props.setClearAllFiltersCallbacks}
+            clearAllFiltersCallbacks={this.props.clearAllFiltersCallbacks}
+            vacolsId = {this.props.vacolsId}
+            clearClaimEvidenceDocs={this.props.clearClaimEvidenceDocs}
+            setClaimEvidenceDocs = {this.props.setClaimEvidenceDocs}
           />
-          </div>
-
-          <div className="num-of-documents">
-            {props.numberOfDocuments} Documents
-          </div>
-
-        </div>
-        <DocumentsCommentsButton />
+        </WellArea>
       </div>
-      <WellArea>
-        <FetchSearchBar
-          setClearAllFiltersCallbacks={this.props.setClearAllFiltersCallbacks}
-          clearAllFiltersCallbacks={this.props.clearAllFiltersCallbacks}
-          vacolsId = {this.props.vacolsId}
-          clearClaimEvidenceDocs={this.props.clearClaimEvidenceDocs}
-          setClaimEvidenceDocs = {this.props.setClaimEvidenceDocs}
-        />
-      </WellArea>
+      <div className="document-list-header" style={{ display: 'grid', justifyContent: 'right' }}>
+        <div>
+          <DocumentsCommentsButton />
+        </div>
+        <div className="search-bar-and-doc-count cf-search-ahead-parent" style={{ paddingTop: '20px', width: '85vw' }}>
+          <div className="num-of-documents" style={{ justifyContent: 'left', paddingLeft: '80px', paddingTop: '7rem', paddingBottom: '0rem'}}>
+            Showing {props.numberOfDocuments} Documents
+          </div>
+          <div className="table-search-bar">
+            <ul style={{ paddingLeft: '0px'}}>
+            Filter table by receipt date, document type, issue tags, or comments
+            </ul>
+            <SearchBar
+              id="searchBar"
+              onChange={props.setSearch}
+              isSearchAhead
+              onClearSearch={props.clearSearch}
+              recordSearch={this.recordSearch}
+              placeholder="Type to search..."
+              value={props.docFilterCriteria.searchQuery}
+              size="small"
+            />
+          </div>
+        </div>
+      </div>
       <HeaderFilterMessage
         docFilterCriteria={props.docFilterCriteria}
         clearAllFiltersCallbacks={props.clearAllFiltersCallbacks}
