@@ -11,10 +11,36 @@ class Api::V3::AmaIssues::VeteransController < Api::V3::BaseController
   end
 
   def show
-    @veteran = Veteran.find_by!(participant_id: params[:participant_id])
-    @page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]
+    veteran = find_veteran
+    page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]
     # Disallow page(0) since page(0) == page(1) in kaminari. This is to avoid confusion.
-    (@page == 0) ? @page = 1 : @page ||= 1
-    render json: Api::V3::AmaIssues::VbmsAmaDtoBuilder.new(@veteran, @page).json_response if @veteran
+    (page == 0) ? page = 1 : page ||= 1
+    render_request_issues(Api::V3::AmaIssues::VbmsAmaDtoBuilder.new(veteran, page).hash_response) if veteran
+  end
+
+  private
+
+  def find_veteran
+    begin
+      Veteran.find_by!(participant_id: params[:participant_id])
+    rescue ActiveRecord::RecordNotFound
+      render_errors(
+        status: 404,
+        code: :veteran_not_found,
+        title: "No Veteran found for the given identifier."
+      ) && return
+    end
+  end
+
+  def render_request_issues(request_issues)
+    if request_issues[:request_issues].empty?
+      render_errors(
+        status: 404,
+        code: :no_request_issues_found,
+        title: "No Request Issues found for the given veteran."
+      ) && return
+    else
+      render json: request_issues.to_json
+    end
   end
 end

@@ -2,7 +2,7 @@
 
 #:reek:TooManyInstanceVariables
 class Api::V3::AmaIssues::VbmsAmaDtoBuilder
-  attr_reader :json_response
+  attr_reader :hash_response
 
   def initialize(veteran, page)
     @page = page
@@ -11,7 +11,7 @@ class Api::V3::AmaIssues::VbmsAmaDtoBuilder
     @request_issues = serialized_request_issues
     @offset = RequestIssue.default_per_page
     @legacy_appeals_present_boolean = legacy_appeals_present?(veteran)
-    @json_response = build_json_response
+    @hash_response = build_hash_response
   end
 
   private
@@ -32,7 +32,7 @@ class Api::V3::AmaIssues::VbmsAmaDtoBuilder
     LegacyAppeal.veteran_has_appeals_in_vacols?(veteran.file_number)
   end
 
-  def build_json_response
+  def build_hash_response
     {
       "page": @page,
       "total_number_of_pages": (@request_issue_count / @offset.to_f).ceil,
@@ -41,6 +41,6 @@ class Api::V3::AmaIssues::VbmsAmaDtoBuilder
       "veteran_participant_id": @veteran_participant_id,
       "legacy_appeals_present": @legacy_appeals_present_boolean,
       "request_issues": @request_issues
-    }.to_json
+    }
   end
 end
