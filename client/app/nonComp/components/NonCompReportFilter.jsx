@@ -1,8 +1,9 @@
-import React from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
+import React from "react";
+import { Controller, useFormContext } from "react-hook-form";
+import PropTypes from "prop-types";
 
-import SearchableDropdown from '../../components/SearchableDropdown';
-import COPY from '../../../COPY';
+import SearchableDropdown from "../../components/SearchableDropdown";
+import COPY from "../../../COPY";
 
 const NonCompReportFilter = ({ control }) => (
   <>
@@ -19,7 +20,7 @@ const NonCompReportFilter = ({ control }) => (
           options={COPY.VHA_REPORT_TYPE_OPTIONS}
           searchable={false}
           onChange={(valObj) => onChange(valObj?.value)}
-          defaultValue=''
+          defaultValue=""
         />
       )}
     />

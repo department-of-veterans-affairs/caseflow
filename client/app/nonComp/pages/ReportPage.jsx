@@ -28,8 +28,8 @@ const ReportPageButtons = ({
     <div {...buttonOuterContainerStyling}>
       <Button
         classNames={['cf-modal-link', 'cf-btn-link']}
-        label='cancel-report'
-        name='cancel-report'
+        label="cancel-report"
+        name="cancel-report"
         onClick={() => history.push('/vha')}
       >
         Cancel
@@ -37,8 +37,8 @@ const ReportPageButtons = ({
       <div {...buttonInnerContainerStyle}>
         <Button
           classNames={['usa-button']}
-          label='clear-filters'
-          name='clear-filters'
+          label="clear-filters"
+          name="clear-filters"
           onClick={handleClearFilters}
           disabled={!disableGenerateButton}
         >
@@ -46,8 +46,8 @@ const ReportPageButtons = ({
         </Button>
         <Button
           classNames={['usa-button']}
-          label='generate-report'
-          name='generate-report'
+          label="generate-report"
+          name="generate-report"
           onClick={handleSubmit}
           disabled={!disableGenerateButton}
         >
@@ -67,7 +67,7 @@ const ReportPage = ({ history }) => {
 
   const { reset, formState } = methods;
 
-  const onSubmit = (data) => console.log(data);
+  // const onSubmit = (data) => console.log(data);
 
   return (
     <NonCompLayout
