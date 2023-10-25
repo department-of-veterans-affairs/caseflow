@@ -2,51 +2,67 @@
 
 exports[`ReportPage renders correctly 1`] = `
 <div>
-  <div>
-    <section
-      class="cf-app-segment cf-app-segment--alt"
-    >
-      <div>
-        <h1>
-          Generate task report
-        </h1>
-      </div>
-    </section>
-    <div
-      data-css-1rfrm1q=""
-    >
-      <span>
-        <button
-          class="cf-modal-link cf-btn-link usa-button"
-          id="button-cancel-report"
-          type="button"
-        >
-          Cancel
-        </button>
-      </span>
+  <form>
+    <div>
+      <section
+        class="cf-app-segment cf-app-segment--alt"
+      >
+        <div>
+          <h1>
+            Generate task report
+          </h1>
+          <div>
+            <hr />
+            <h2>
+              Conditions
+            </h2>
+            <span>
+              <button
+                class="cf-submit usa-button"
+                type="button"
+              >
+                Add Condition
+              </button>
+            </span>
+          </div>
+        </div>
+      </section>
       <div
-        data-css-cfdlna=""
+        data-css-1rfrm1q=""
       >
         <span>
           <button
-            class="usa-button usa-button"
-            id="button-clear-filters"
+            class="cf-modal-link cf-btn-link usa-button"
+            id="button-cancel-report"
             type="button"
           >
-            Clear filters
+            Cancel
           </button>
         </span>
-        <span>
-          <button
-            class="usa-button usa-button"
-            id="button-generate-report"
-            type="button"
-          >
-            Generate task report
-          </button>
-        </span>
+        <div
+          data-css-cfdlna=""
+        >
+          <span>
+            <button
+              class="usa-button usa-button"
+              id="button-clear-filters"
+              type="button"
+            >
+              Clear filters
+            </button>
+          </span>
+          <span>
+            <button
+              class="usa-button usa-button"
+              id="button-generate-report"
+              type="button"
+            >
+              Generate task report
+            </button>
+          </span>
+        </div>
       </div>
     </div>
-  </div>
+  </form>
 </div>
 `;
