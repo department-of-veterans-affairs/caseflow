@@ -1396,5 +1396,15 @@
   "REFRESH_POA": "Refresh POA",
   "POA_SUCCESSFULLY_REFRESH_MESSAGE": "Successfully refreshed. No power of attorney information was found at this time.",
   "POA_UPDATED_SUCCESSFULLY": "POA Updated Successfully",
-  "EMPLOYER_IDENTIFICATION_NUMBER": "Employer Identification Number"
+  "EMPLOYER_IDENTIFICATION_NUMBER": "Employer Identification Number",
+  "VHA_REPORT_TYPE_OPTIONS": [
+    {
+      "label": "Event Type/Action",
+      "value": "event_type_action"
+    },
+    {
+      "label": "Status",
+      "value": "status"
+    }
+  ]
 }
