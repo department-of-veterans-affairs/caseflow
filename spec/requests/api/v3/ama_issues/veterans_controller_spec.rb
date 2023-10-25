@@ -14,24 +14,24 @@ describe Api::V3::AmaIssues::VeteransController, :postgres, type: :request do
   end
 
   describe "#show" do
-    context "when feature is not enabled" do
-      before { FeatureToggle.disable!(:api_v3_ama_issues) }
-      let!(:vet) { create(:veteran) }
+    # context "when feature is not enabled" do
+    #   before { FeatureToggle.disable!(:api_v3_ama_issues) }
+    #   let!(:vet) { create(:veteran) }
 
-      it "should return 'Not Implemented' error" do
-        get(
-          "/api/v3/ama_issues/veterans/#{vet.participant_id}",
-          headers: authorization_header
-        )
-        expect(response).to have_http_status(501)
-        expect(response.body).to include("Not Implemented")
-      end
-    end
+    #   it "should return 'Not Implemented' error" do
+    #     get(
+    #       "/api/v3/ama_issues/veterans/#{vet.participant_id}",
+    #       headers: authorization_header
+    #     )
+    #     expect(response).to have_http_status(501)
+    #     expect(response.body).to include("Not Implemented")
+    #   end
+    # end
 
     context "when feature is enabled" do
-      before { FeatureToggle.enable!(:api_v3_ama_issues) }
+      # before { FeatureToggle.enable!(:api_v3_ama_issues) }
 
-      after { FeatureToggle.disable!(:api_v3_ama_issues) }
+      # after { FeatureToggle.disable!(:api_v3_ama_issues) }
 
       context "when a veteran is not found" do
         it "should return veteran not found error" do

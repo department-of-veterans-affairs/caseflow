@@ -6,7 +6,8 @@ class Api::V3::AmaIssues::VeteransController < Api::V3::BaseController
 
   # TODO: investigate roles
   before_action do
-    api_released?(:api_v3_ama_issues)
+    #FeatureToggle.enabled?(:api_v3_ama_issues)
+    #api_released?(:api_v3_ama_issues)
   end
 
   def show
