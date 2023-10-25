@@ -10,13 +10,13 @@ const NonCompReportFilter = ({ control }) => (
     <h2>Type of Report</h2>
     <Controller
       control={control}
-      name='reportType'
+      name="reportType"
       render={({ onChange, ref, ...rest }) => (
         <SearchableDropdown
           inputRef={ref}
           {...rest}
-          name='reportType'
-          label='Report Type'
+          name="reportType"
+          label="Report Type"
           options={COPY.VHA_REPORT_TYPE_OPTIONS}
           searchable={false}
           onChange={(valObj) => onChange(valObj?.value)}
