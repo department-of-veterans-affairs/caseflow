@@ -74,7 +74,6 @@ const ReportPage = ({ history }) => {
           history={history}
           disableGenerateButton={formState.isDirty}
           handleClearFilters={() => reset(defaultFormValues)}
-          handleSubmit={}
         />
       }
     >
