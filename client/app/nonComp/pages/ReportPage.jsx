@@ -67,8 +67,6 @@ const ReportPage = ({ history }) => {
 
   const { reset, formState } = methods;
 
-  // const onSubmit = (data) => console.log(data);
-
   return (
     <NonCompLayout
       buttons={
@@ -76,7 +74,7 @@ const ReportPage = ({ history }) => {
           history={history}
           disableGenerateButton={formState.isDirty}
           handleClearFilters={() => reset(defaultFormValues)}
-          handleSubmit={methods.handleSubmit(onSubmit)}
+          handleSubmit={}
         />
       }
     >

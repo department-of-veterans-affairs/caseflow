@@ -1,9 +1,9 @@
-import React from "react";
-import { Controller, useFormContext } from "react-hook-form";
-import PropTypes from "prop-types";
+import React from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
+import PropTypes from 'prop-types';
 
-import SearchableDropdown from "../../components/SearchableDropdown";
-import COPY from "../../../COPY";
+import SearchableDropdown from '../../components/SearchableDropdown';
+import COPY from '../../../COPY';
 
 const NonCompReportFilter = ({ control }) => (
   <>
