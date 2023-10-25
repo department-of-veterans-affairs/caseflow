@@ -8,6 +8,7 @@ module Seeds
 
     def seed!
       create_correspondences
+      create_various_correspondences
     end
 
     private
@@ -37,6 +38,25 @@ module Seeds
 
         corres = create(
           :correspondence,
+          veteran_id: veteran.id
+        )
+        create(
+          :correspondence_document,
+          document_file_number: veteran.file_number,
+          correspondence: corres
+        )
+      end
+    end
+
+    def create_various_correspondences
+      20.times do
+        veteran = create_veteran
+
+        corres = create(
+          :correspondence,
+          package_document_type_id: rand(1..76),
+          correspondence_type_id: rand(1..24),
+          cmp_queue_id: rand(1..17),
           veteran_id: veteran.id
         )
         create(
