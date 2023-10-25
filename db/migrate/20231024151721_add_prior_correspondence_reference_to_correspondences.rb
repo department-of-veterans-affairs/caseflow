@@ -2,6 +2,7 @@ class AddPriorCorrespondenceReferenceToCorrespondences < Caseflow::Migration
   disable_ddl_transaction!
 
   def change
-    add_reference :correspondences, :prior_correspondence, null: false, foreign_key: { to_table: :correspondences }, index: false, comment: "Foreign key to Correspondences table"
+    add_column :correspondences, :prior_correspondence_id, :integer, null: false
+    add_safe_index :correspondences, [:prior_correspondence_id], name: "index_on_prior_correspondence_id"
   end
 end
