@@ -149,6 +149,8 @@ class VACOLS::CaseDocket < VACOLS::Record
       order by BFD19
     )
   "
+
+  # rubocop:disable Metrics/MethodLength
   def self.counts_by_priority_and_readiness
     query = <<-SQL
       select count(*) N, PRIORITY, READY
@@ -179,6 +181,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     connection.exec_query(query).to_hash
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.genpop_priority_count
     query = <<-SQL
@@ -224,6 +227,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(sanitize_sql_array([query, row_number])).first["bfd19"].to_date
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.docket_counts_by_month
     query = <<-SQL
       select YEAR, MONTH,
@@ -264,6 +268,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     connection.exec_query(query)
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.age_of_n_oldest_genpop_priority_appeals(num)
     conn = connection
@@ -364,6 +369,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(SELECT_PRIORITY_APPEALS).to_hash.map { |appeal| appeal["bfkey"] }
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
 
@@ -408,7 +414,6 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     distribute_appeals(fmtd_query, judge, dry_run)
   end
-  # rubocop:enable
 
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
     query = if use_by_docket_date?
@@ -436,6 +441,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     distribute_appeals(fmtd_query, judge, dry_run)
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
 
   # :nocov:
 
