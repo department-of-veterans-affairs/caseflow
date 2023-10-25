@@ -295,9 +295,7 @@ HeaderRow.propTypes = {
 
 Row.propTypes = {
   footer: PropTypes.bool,
-  rowId: PropTypes.oneOfType([
-    PropTypes.number,
-    PropTypes.string]),
+  rowId: PropTypes.string,
   rowClassNames: PropTypes.func,
   rowObject: PropTypes.object.isRequired
 };
