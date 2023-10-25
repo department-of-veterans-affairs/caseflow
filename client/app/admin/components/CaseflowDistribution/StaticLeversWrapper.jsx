@@ -1,7 +1,7 @@
 // client/app/admin/components/CaseflowDistribution/StaticLeverWrapper.js
 
 import React from 'react';
-import StaticLever from './StaticLever';
+import StaticLever from './FutureLever';
 import PropTypes from 'prop-types';
 
 const StaticLeverWrapper = ({ InteractableLevers, levers }) => {

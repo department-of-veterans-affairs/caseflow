@@ -1,6 +1,5 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import { css } from 'glamor';
 
 import StaticLever from './StaticLever';
 
@@ -21,27 +20,42 @@ export default {
 // const Template = (args) => <StaticLever {...args} />;
 
 export const StaticLever3 = (args) => (
-
-  <>
-    <StaticLever key={levers[3].item} {...args} lever={levers[3]} />
-  </>
+  <table>
+    <tbody>
+      <tr>
+        <StaticLever key={levers[2].item} {...args} lever={levers[2]} />
+      </tr>
+    </tbody>
+  </table>
 );
+
 export const StaticLever4 = (args) => (
-
-  <>
-    <StaticLever key={levers[4].item} {...args} lever={levers[4]} />
-  </>
+  <table>
+    <tbody>
+      <tr>
+        <StaticLever key={levers[3].item} {...args} lever={levers[3]} />
+      </tr>
+    </tbody>
+  </table>
 );
+
 export const StaticLever6 = (args) => (
-
-  <>
-    <StaticLever key={levers[6].item} {...args} lever={levers[6]} />
-  </>
+  <table>
+    <tbody>
+      <tr>
+        <StaticLever key={levers[5].item} {...args} lever={levers[5]} />
+      </tr>
+    </tbody>
+  </table>
 );
-export const StaticLever8 = (args) => (
 
-  <>
-    <StaticLever key={levers[8].item} {...args} lever={levers[8]} />
-  </>
+export const StaticLever8 = (args) => (
+  <table>
+    <tbody>
+      <tr>
+        <StaticLever key={levers[7].item} {...args} lever={levers[7]} />
+      </tr>
+    </tbody>
+  </table>
 );
 
