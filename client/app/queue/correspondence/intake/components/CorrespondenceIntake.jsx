@@ -17,10 +17,6 @@ const progressBarSections = [
   },
 ];
 
-// let activateBack = () => {
-//   !backActive;
-// }
-
 export const CorrespondenceIntake = () => {
   const [currentStep, setCurrentStep] = useState(1);
 
