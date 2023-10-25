@@ -3,11 +3,11 @@
 class CorrespondenceDocument < CaseflowRecord
   belongs_to :correspondence
 
-  def fetch_content
+  # remove after implementing fetch from S3
+  def fetch_document
     if FeatureToggle.enabled?(:correspondence_queue)
       file = File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf")
-      content = File.read(file)
-      content
+      file
     end
   end
 end
