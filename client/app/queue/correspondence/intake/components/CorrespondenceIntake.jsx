@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import ProgressBar from 'app/components/ProgressBar';
 import Button from '../../../../components/Button';
-import { css } from 'glamor';
 
 const progressBarSections = [
   {
@@ -40,28 +39,23 @@ export const CorrespondenceIntake = () => {
   );
 
   return <div>
-    <ProgressBar sections={sections} />
-    <a href="/queue/correspondence">
-      <Button
-        name="cancel"
-        href="/queue/correspondence"
-        classNames={['cf-btn-link']} />
-    </a>
-    <div >
-      {currentStep > 1 &&
-      <Button
-        type="button"
-        onClick={prevStep}
-        name="back-button"
-        classNames={['usa-button-secondary', 'button-back-button']}>
-          Back
-      </Button>}
+    <ProgressBar
+      sections={sections}
+      classNames={['cf-progress-bar', 'cf-']}
+      styling={{ style: { marginBottom: '5rem', float: 'right' } }} />
+    <div>
+      <a href="/queue/correspondence">
+        <Button
+          name="Cancel"
+          styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
+          href="/queue/correspondence"
+          classNames={['cf-btn-link', 'cf-left-side']} />
+      </a>
       {currentStep < 3 &&
       <Button
         type="button"
         onClick={nextStep}
         name="continue"
-        styling={css({ marginLeft: '1rem' })}
         classNames={['cf-right-side']}>
           Continue
       </Button>}
@@ -69,9 +63,17 @@ export const CorrespondenceIntake = () => {
       <Button
         type="button"
         name="Submit"
-        styling={css({ marginLeft: '1rem' })}
         classNames={['cf-right-side']}>
           Submit
+      </Button>}
+      {currentStep > 1 &&
+      <Button
+        type="button"
+        onClick={prevStep}
+        name="back-button"
+        styling={{ style: { marginRight: '2rem' } }}
+        classNames={['usa-button-secondary', 'cf-right-side', 'usa-back-button']}>
+          Back
       </Button>}
     </div>
   </div>;
