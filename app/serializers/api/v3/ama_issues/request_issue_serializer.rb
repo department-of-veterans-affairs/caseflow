@@ -10,7 +10,7 @@
 #      RequestIssue.includes(:decision_issues).page(2), include: [:decision_issues]
 #   ).serializable_hash.to_json`
 class Api::V3::AmaIssues::RequestIssueSerializer
-  include JSONAPI::Serializer
+  include FastJsonapi::ObjectSerializer
 
   attributes :id, :benefit_type, :closed_status, :contention_reference_id, :contested_decision_issue_id,
              :contested_issue_description, :contested_rating_decision_reference_id,

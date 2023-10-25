@@ -363,8 +363,6 @@ GEM
       hana (~> 1.3)
       regexp_parser (~> 1.5)
       uri_template (~> 0.7)
-    jsonapi-serializer (2.2.0)
-      activesupport (>= 4.2)
     kaminari (1.2.1)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.2.1)
@@ -764,7 +762,6 @@ DEPENDENCIES
   immigrant
   jshint
   json_schemer (~> 0.2.16)
-  jsonapi-serializer
   kaminari
   knapsack_pro (~> 3.8)
   logstasher
