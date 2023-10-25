@@ -4,8 +4,9 @@
 # More info at https://github.com/guard/guard#readme
 
 ## Uncomment and set this to only include directories you want to watch
-directories(%w[app lib config spec])\
-  .select { |d| Dir.exist?(d) ? d : UI.warning("Directory #{d} does not exist") }
+directories(%w[app lib config spec]).select do |d|
+  Dir.exist?(d) ? d : UI.warning("Directory #{d} does not exist")
+end
 
 ## Note: if you are using the `directories` clause above and you are not
 ## watching the project directory ('.'), then you will want to move
@@ -26,7 +27,51 @@ directories(%w[app lib config spec])\
 #  * zeus: 'zeus rspec' (requires the server to be started separately)
 #  * 'just' rspec: 'rspec'
 
-guard :rspec, cmd: "bundle exec rspec" do
-  watch(%r{spec/.*/}) { "spec" }
-  watch(%r{app/.*/}) { "spec" }
+# This group skips RuboCop when RSpec fails.
+group :red_green_refactor, halt_on_fail: true do
+  # Note: ENV["ENABLE_SPRING_IN_TEST"] is a flag used to force Rails application
+  # `config.cache_classes` to `false` in the test environment, so that Spring
+  # reloading can work.
+  guard :rspec, cmd: "ENABLE_SPRING_IN_TEST=true bundle exec spring rspec" do
+    require "guard/rspec/dsl"
+    dsl = Guard::RSpec::Dsl.new(self)
+
+    # Feel free to open issues for suggestions and improvements
+
+    # RSpec files
+    rspec = dsl.rspec
+    watch(rspec.spec_helper) { rspec.spec_dir }
+    watch(rspec.spec_support) { rspec.spec_dir }
+    watch(rspec.spec_files)
+
+    # Ruby files
+    ruby = dsl.ruby
+    dsl.watch_spec_files_for(ruby.lib_files)
+
+    # Rails files
+    rails = dsl.rails(view_extensions: %w[erb haml slim])
+    dsl.watch_spec_files_for(rails.app_files)
+    dsl.watch_spec_files_for(rails.views)
+
+    watch(rails.controllers) do |m|
+      [
+        rspec.spec.call("routing/#{m[1]}_routing"),
+        rspec.spec.call("controllers/#{m[1]}_controller")
+      ]
+    end
+
+    # Rails config changes
+    watch(rails.spec_helper)     { rspec.spec_dir }
+    watch(rails.routes)          { "#{rspec.spec_dir}/routing" }
+    watch(rails.app_controller)  { "#{rspec.spec_dir}/controllers" }
+
+    # Capybara features specs
+    watch(rails.view_dirs)     { |m| rspec.spec.call("feature/#{m[1]}") }
+    watch(rails.layouts)       { |m| rspec.spec.call("feature/#{m[1]}") }
+  end
+
+  guard :rubocop, all_on_start: false do
+    watch(%r{.+\.rb$})
+    watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
+  end
 end
