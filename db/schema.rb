@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_20_172025) do
+ActiveRecord::Schema.define(version: 2023_10_24_162133) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -591,7 +591,9 @@ ActiveRecord::Schema.define(version: 2023_10_20_172025) do
 
   create_table "correspondence_documents", force: :cascade do |t|
     t.bigint "correspondence_id"
+    t.datetime "created_at", null: false, comment: "Date and Time of creation."
     t.string "document_file_number", comment: "From CMP documents table"
+    t.datetime "updated_at", null: false, comment: "Date and Time of last update."
     t.uuid "uuid", comment: "Reference to document in AWS S3"
     t.string "vbms_document_id", comment: "From CMP documents table"
     t.index ["correspondence_id"], name: "index_correspondence_documents_on_correspondence_id"
@@ -615,7 +617,7 @@ ActiveRecord::Schema.define(version: 2023_10_20_172025) do
 
   create_table "correspondences", force: :cascade do |t|
     t.bigint "assigned_by_id", comment: "Foreign key to users table"
-    t.string "cmp_packet_number", comment: "Included in CMP mail package"
+    t.bigint "cmp_packet_number", comment: "Included in CMP mail package"
     t.integer "cmp_queue_id", comment: "Foreign key to CMP queues table"
     t.integer "correspondence_type_id", comment: "Foreign key for correspondence_types table"
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
