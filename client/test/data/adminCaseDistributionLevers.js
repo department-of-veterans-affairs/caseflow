@@ -124,7 +124,7 @@ export const history = [
     "original_value": 10,
     "current_value": 23,
     "unit": "cases"
-  }
+  },
   {
     "user": "john_smith",
     "created_at": "2023-07-01 10:10:01",
@@ -132,7 +132,7 @@ export const history = [
     "original_value": false,
     "current_value": true,
     "unit": ""
-  }
+  },
   {
     "user": "jane_smith",
     "created_at": "2023-07-01 12:10:01",
