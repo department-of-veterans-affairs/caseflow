@@ -472,32 +472,18 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.ineligible_vacols_judges
-    VACOLS::Staff.find_by_sql(
-      <<-SQL
-        SELECT STAFF.SDOMAINID, STAFF.SATTYID, STAFF.SVLJ
-        FROM STAFF
-        WHERE (STAFF.SVLJ IS NOT NULL OR STAFF.SATTYID IS NOT NULL)
-        AND ((STAFF.SACTIVE = 'I') OR (STAFF.SVLJ <> 'A' AND STAFF.SVLJ <> 'J'))
-      SQL
-    ).map do |staff|
+    VACOLS::Staff.where("(STAFF.SVLJ IS NOT NULL OR STAFF.SATTYID IS NOT NULL) AND ((STAFF.SACTIVE = 'I') OR
+     (STAFF.SVLJ <> 'A' AND STAFF.SVLJ <> 'J'))").map do |staff|
       { sattyid: staff.sattyid, sdomainid: staff.sdomainid, svlj: staff.svlj }
     end
   end
 
   def self.ineligible_caseflow_judges
-    User.find_by_sql(
-      <<-SQL
-      SELECT users.id, users.css_id
-      FROM users
-      LEFT JOIN organizations_users ON users.id = organizations_users.user_id
-      LEFT JOIN organizations ON organizations_users.organization_id = organizations.id
-      WHERE users.status <> 'active'
-      OR (organizations_users.admin = '1' AND organizations.type = 'JudgeTeam' AND organizations.status <> 'active')
-      OR (users.id NOT IN (#{admin_users_of_judge_teams}))
-      SQL
-    ).map do |user|
-      { id: user.id, css_id: user.css_id }
-    end
+    User.joins("LEFT JOIN organizations_users ON users.id = organizations_users.user_id")
+      .joins("LEFT JOIN organizations ON organizations_users.organization_id = organizations.id")
+      .where("users.status != ? OR (organizations_users.admin = '1' AND organizations.type = 'JudgeTeam' AND
+         organizations.status <> 'active') OR (users.id NOT IN (#{admin_users_of_judge_teams}))", "active")
+      .map { |user| { id: user.id, css_id: user.css_id } }
   end
 
   def self.admin_users_of_judge_teams
