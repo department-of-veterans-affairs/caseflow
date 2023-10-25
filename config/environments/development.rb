@@ -17,6 +17,9 @@ Rails.application.configure do
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
+  #
+  # Note: Reloading is also necessary for Spring to work
+  # https://github.com/rails/spring/blob/e7d88f57eaaeae84ddcdc6cc000874500e812165/README.md#L69-L80
   config.cache_classes = false
 
   # Do not eager load code on boot.
