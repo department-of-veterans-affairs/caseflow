@@ -12,6 +12,10 @@ class QueueController < ApplicationController
     render "queue/index"
   end
 
+  def correspondence_intake
+    render "queue/correspondence_intake"
+  end
+
   def check_queue_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("queue_out_of_service")
   end

@@ -83,9 +83,7 @@ import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
-// import CorrespondenceIntakeApp from './CorrespondenceIntakeApp';
-import { CorrespondenceIntake } from './correspondence/intake/CorrespondenceIntake';
-
+import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
 import COPY from '../../COPY';
@@ -661,9 +659,6 @@ class QueueApp extends React.PureComponent {
     <CompleteHearingPostponementRequestModal {...props.match.params} />
   );
 
-  // routedCorrespondenceIntakeApp = () => (
-  //   <CorrespondenceIntakeApp />
-  // );
   routedCorrespondenceIntake = () => (
     <CorrespondenceIntake />
   );
@@ -902,6 +897,12 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               path="/queue/correspondence/:correspondenceId/intake"
               title={`${PAGE_TITLES.USER_MANAGEMENT} | Caseflow`}
+              render={this.routedCorrespondenceIntake}
+            />
+
+            <PageRoute
+              path="/queue/correspondence/:correspondenceId/intake"
+              title={`${PAGE_TITLES.CORRESPONDENCE_INTAKE}`}
               render={this.routedCorrespondenceIntake}
             />
 

@@ -5,8 +5,10 @@
     userRole: (current_user.vacols_roles.first || "").capitalize,
     userCssId: current_user.css_id,
     organizations: current_user.selectable_organizations.map {|o| o.slice(:name, :url)},
+    userIsVsoEmployee: current_user.vso_employee?,
+    userIsCamoEmployee: current_user.camo_employee?,
     featureToggles: {
-
+      correspondence_queue: FeatureToggle.enabled?(:correspondence_queue, user: current_user)
     }
   }) %>
 <% end %>
