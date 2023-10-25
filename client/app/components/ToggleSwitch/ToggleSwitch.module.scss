@@ -1,0 +1,37 @@
+.toggleButton {
+	min-width: 80px;
+	border: none;
+	padding: 0px;
+	height: 32px;
+	border-radius: 8px;
+    outline: none;
+	&:has(.switchOff) {
+		background: #e4e2e0;
+		border: 3px solid #e4e2e0;
+	}
+	&:has(.switchOn) {
+		background: #2491ff;
+		border: 3px solid #2491ff;
+	}
+}
+.toggleButtonText {
+	padding: 5px;
+	min-width: 40px;
+	color: #fff;
+}
+.switchOn {
+	float: left;
+	background: #2491ff;
+}
+.switchOff {
+	float: right;
+	background: #e4e2e0;
+}
+.toggleButtonSpace {
+	border: 1px solid #fff;
+	border-radius: 4px;
+	width: 28px;
+	height: 24px;
+	display: inline-block;
+	background: #fff;
+}
