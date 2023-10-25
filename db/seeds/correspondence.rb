@@ -38,7 +38,7 @@ module Seeds
 
         corres = create(
           :correspondence,
-          notes: "This is a Correspondence note."
+          notes: "This is a note from CMP.",
           veteran_id: veteran.id
         )
         create(
@@ -58,7 +58,7 @@ module Seeds
           package_document_type_id: rand(1..76),
           correspondence_type_id: rand(1..24),
           cmp_queue_id: rand(1..17),
-          notes: "This is a Correspondence note."
+          notes: "This is a note from CMP.",
           veteran_id: veteran.id
         )
         create(
