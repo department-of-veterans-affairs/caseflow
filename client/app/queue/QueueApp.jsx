@@ -84,7 +84,6 @@ import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
 import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
-
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
 import COPY from '../../COPY';
@@ -889,6 +888,16 @@ class QueueApp extends React.PureComponent {
               path="/user_management"
               title={`${PAGE_TITLES.USER_MANAGEMENT} | Caseflow`}
               render={this.routedUserManagement}
+            />
+            {/* <PageRoute
+              path="/queue/correspondence/:correspondenceId/intake"
+              title={`${PAGE_TITLES.USER_MANAGEMENT} | Caseflow`}
+              render={this.routedCorrespondenceIntakeApp}
+            /> */}
+            <PageRoute
+              path="/queue/correspondence/:correspondenceId/intake"
+              title={`${PAGE_TITLES.USER_MANAGEMENT} | Caseflow`}
+              render={this.routedCorrespondenceIntake}
             />
 
             <PageRoute
