@@ -3,6 +3,5 @@ class AddPriorCorrespondenceReferenceToCorrespondences < Caseflow::Migration
 
   def change
     add_reference :correspondences, :prior_correspondence, null: false, foreign_key: { to_table: :correspondences }, index: false, comment: "Foreign key to Correspondences table"
-    add_index :correspondences, :prior_correspondence_id, algorithm: :concurrently
   end
 end

@@ -616,7 +616,6 @@ ActiveRecord::Schema.define(version: 2023_10_25_143040) do
     t.index ["assigned_by_id"], name: "index_correspondences_on_assigned_by_id"
     t.index ["cmp_queue_id"], name: "index_correspondences_on_cmp_queue_id"
     t.index ["correspondence_type_id"], name: "index_correspondences_on_correspondence_type_id"
-    t.index ["prior_correspondence_id"], name: "index_correspondences_on_prior_correspondence_id"
     t.index ["prior_correspondence_id"], name: "index_on_prior_correspondence_id"
     t.index ["updated_by_id"], name: "index_correspondences_on_updated_by_id"
     t.index ["veteran_id"], name: "index_correspondences_on_veteran_id"
