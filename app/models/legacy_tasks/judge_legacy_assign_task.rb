@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class JudgeLegacyAssignTask < JudgeLegacyTask
+  # rubocop:disable Metrics/AbcSize, :reek:FeatureEnvy
   def available_actions(current_user, role)
     action_array = []
     if case_movement_blocked_for_distribution?(current_user)
@@ -20,6 +21,7 @@ class JudgeLegacyAssignTask < JudgeLegacyTask
 
     action_array
   end
+  # rubocop:enable Metrics/AbcSize
 
   def judge_user?(current_user, role)
     role == "judge" && current_user == assigned_to
