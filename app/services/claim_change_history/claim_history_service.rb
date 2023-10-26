@@ -3,7 +3,6 @@
 # Build out Decision Review change history objects and reports
 
 class ClaimHistoryService
-
   class << self
     def build_events(business_line = VhaBusinessLine.singleton, filters = {})
       # puts "Generating change history events for the: #{business_line.name} business line"
@@ -30,23 +29,23 @@ class ClaimHistoryService
 
         if request_issue_update_id && !processed_request_issue_update_ids.include?(request_issue_update_id)
           processed_request_issue_update_ids.add(request_issue_update_id)
-          events_array.push(*ChangeHistoryEvent.create_issue_events(change_data))
+          events_array.push(*ClaimHistoryEvent.create_issue_events(change_data))
         end
 
         if request_issue_id && !processed_request_issue_ids.include?(request_issue_id)
           processed_request_issue_ids.add(request_issue_id)
-          events_array.push(ChangeHistoryEvent.create_add_issue_event(change_data))
+          events_array.push(ClaimHistoryEvent.create_add_issue_event(change_data))
         end
 
         if !processed_task_ids.include?(task_id)
           processed_task_ids.add(task_id)
-          events_array.push ChangeHistoryEvent.create_claim_creation_event(change_data)
-          events_array.push(*ChangeHistoryEvent.no_database_create_status_events(change_data))
+          events_array.push ClaimHistoryEvent.create_claim_creation_event(change_data)
+          events_array.push(*ClaimHistoryEvent.no_database_create_status_events(change_data))
         end
 
         if decision_issue_id && !processed_decision_issue_ids.include?(decision_issue_id)
           processed_decision_issue_ids.add(decision_issue_id)
-          events_array.push ChangeHistoryEvent.create_completed_disposition_event(change_data)
+          events_array.push ClaimHistoryEvent.create_completed_disposition_event(change_data)
         end
 
         events_array

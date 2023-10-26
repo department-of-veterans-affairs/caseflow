@@ -170,19 +170,10 @@ class BusinessLine < Organization
     end
 
     def change_history_rows
-      # Need to insert a specific task ID based on the query_params: task_id or something
-      # Might also need to insert a specific status but im not sure how that's going to work
-      # Need to also insert the assigned to: parent constraint
-      # Need to also figure out if there are more request issue constraints like invalid or what not
-      # Technically the request issues updates could be inner joined to users
-      # Intakes could also be inner joined to users
-      # TODO: I have no idea how to deal with versions
-      # task_id = query_params["task_id"]
-
       # The request_decision_issues is weird because it's a composite index on request_issue_id and decision_issue_id
       # but in order for it to work correctly it needs to be joined before decision_issues
-      # TODO: Verify how slow this is and possibly use a CTE instead of the joins if it's not using the index
-
+      # TODO: Verify how slow this is and possibly use a CTE/lateral join instead of the joins if it's not using the index
+      # TODO: Remove * from the select statement and only select what we need
       change_history_sql_block = <<-SQL
         SELECT *, tasks.id AS task_id, tasks.status AS task_status, request_issues.id AS request_issue_id,
           request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
@@ -225,7 +216,6 @@ class BusinessLine < Organization
       # Task status and claim type filtering always happens regardless of params
       # Task status filter block
       task_status_predicate = if query_params[:task_status].present?
-                                # " AND tasks.status IN ('#{query_params[:task_status].join("', '")}') "
                                 " AND #{where_clause_from_array(Task, :status, query_params[:task_status]).to_sql}"
                               else
                                 " AND tasks.status IN ('assigned', 'in_progress', 'on_hold', 'completed') "
@@ -235,7 +225,6 @@ class BusinessLine < Organization
 
       # Claim type filter block
       claim_type_predicate = if query_params[:claim_type].present?
-                               #  " AND tasks.appeal_type = '#{query_params[:claim_type]}' "
                                " AND #{where_clause_from_array(Task, :appeal_type, query_params[:claim_type]).to_sql}"
                              else
                                " AND tasks.appeal_type IN ('HigherLevelReview', 'SupplementalClaim') "
@@ -264,23 +253,16 @@ class BusinessLine < Organization
         end
       end
 
-      # TODO: Can maybe write a method that can handle all the query types that are joins like this to be more DRY
       # Issue Types filter block
       # TODO: Can do some validation either here or in the controller to make sure the issue types in the params
       # match the json values in ISSUE_CATEGORIES.json
       if query_params[:issue_types].present?
-        # change_history_sql_block += <<~SQL
-        #   AND request_issues.nonrating_issue_category IN ('#{query_params[:issue_types].join("', '")}')
-        # SQL
         sql = where_clause_from_array(RequestIssue, :nonrating_issue_category, query_params[:issue_types]).to_sql
         change_history_sql_block += " AND #{sql} "
       end
 
       # Dispositions filter block
       if query_params[:dispositions].present?
-        # change_history_sql_block += <<~SQL
-        #   AND decision_issues.disposition IN ('#{query_params[:dispositions].join("', '")}')
-        # SQL
         sql = where_clause_from_array(DecisionIssue, :disposition, query_params[:dispositions]).to_sql
         change_history_sql_block += " AND #{sql} "
       end
@@ -288,10 +270,6 @@ class BusinessLine < Organization
       # Facility filter block
       # TODO: This can only do so much it needs further filtering in the service class
       if query_params[:facilities].present?
-        # User.arel_table.alias(:intake_users)[:station_id].in([1,2,3]).to_sql
-        # sql = User.arel_table.alias(:intake_users)[:station_id].in(query_params[:facilities]).to_sql
-        # sql = where_clause_from_array(User.arel_table.alias(:intake_users), :station_id, query_params[:facilities])
-        # change_history_sql_block += " AND #{sql} "
         change_history_sql_block += <<~SQL
           AND
           (
@@ -305,10 +283,6 @@ class BusinessLine < Organization
       # User filter block
       # TODO: This can only do so much it needs further filtering in the service class
       if query_params[:personnel].present?
-        # User.arel_table.alias(:intake_users)[:station_id].in([1,2,3]).to_sql
-        # sql = User.arel_table.alias(:intake_users)[:station_id].in(query_params[:facilities]).to_sql
-        # sql = where_clause_from_array(User.arel_table.alias(:intake_users), :station_id, query_params[:facilities])
-        # change_history_sql_block += " AND #{sql} "
         change_history_sql_block += <<~SQL
           AND
           (

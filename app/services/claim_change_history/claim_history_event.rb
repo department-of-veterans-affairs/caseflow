@@ -12,7 +12,6 @@ class ClaimHistoryEvent
       new(event_type, change_data)
     end
 
-    # TODO: This is not amazing, but I guess the service class has to manage not creating more than 1 or 2
     def create_completed_disposition_event(change_data)
       if change_data["disposition"]
         from_change_data(:completed_disposition, change_data)
@@ -23,28 +22,21 @@ class ClaimHistoryEvent
       from_change_data(:claim_creation, change_data.merge("event_date" => change_data["intake_completed_at"]))
     end
 
-    # TODO: This method only creates and event for the current state
-    def old_create_status_events(change_data)
-      event_type = task_status_to_event_type(change_data["task_status"])
-      from_change_data(event_type, change_data)
-    end
-
     # TODO: This is not great since it's more DB calls inside of the loop
     def no_database_create_status_events(change_data)
       status_events = []
       task = Task.find(change_data["task_id"])
-      # TODO: Might also need to set the user data to System for all of these
       versions = task.versions
+
       if versions.present?
         first_version, *rest_of_versions = task.versions
 
         # Assume that if the dates are equal then it should be a assigned -> on_hold status event that is recorded
-        # Due to the way intake is processed and shouldn't be recorded
+        # Due to the way intake is processed a task is always created as assigned first
         if first_version.changeset["updated_at"][0].round != first_version.changeset["updated_at"][1].round
           status_events.push event_from_version(first_version, 0, change_data)
         end
 
-        # status_events.push event_from_version(first_version, 0, change_data)
         status_events.push event_from_version(first_version, 1, change_data)
 
         rest_of_versions.map do |version|
@@ -53,7 +45,6 @@ class ClaimHistoryEvent
       else
         # No versions so just make one with the current status?
         event_type = task_status_to_event_type(change_data["task_status"])
-        # Probably need to set event_date here as well to the intake date or created at date?
         status_events.push from_change_data(event_type, change_data)
       end
 
@@ -67,11 +58,6 @@ class ClaimHistoryEvent
 
     def create_issue_events(change_data)
       issue_events = []
-      # puts change_data["request_issue_update_id"].inspect
-      # puts change_data["after_request_issue_ids"].inspect
-      # puts change_data["before_request_issue_ids"].inspect
-      # puts change_data["withdrawn_request_issue_ids"].inspect
-      # puts change_data["edited_request_issue_ids"].inspect
 
       # TODO: before request issue ids does NOT contain withdrawn issues, but after issues does
       # This is definitely not correct
@@ -79,7 +65,6 @@ class ClaimHistoryEvent
       after_request_issue_ids = change_data["after_request_issue_ids"].scan(/\d+/).map(&:to_i)
       withdrawn_request_issue_ids = change_data["withdrawn_request_issue_ids"].scan(/\d+/).map(&:to_i)
       edited_request_issue_ids = change_data["edited_request_issue_ids"].scan(/\d+/).map(&:to_i)
-      # added_request_issue_ids = (after_request_issue_ids - before_request_issue_ids)
       removed_request_issue_ids = (before_request_issue_ids - after_request_issue_ids)
 
       update_user_name = change_data["update_user_name"]
@@ -91,44 +76,11 @@ class ClaimHistoryEvent
                            change_data["update_user_station_id"]
       }
 
-      # Possibly might move this block external to the updates and let each row handle the addition based on the request issues created at date?
-      # added_request_issue_ids.map do |added_issue_id|
-      #   issue_data_hash = retrieve_issue_data(added_issue_id, "adding")
-      #   # puts "should be adding an event for added issue with these values:"
-      #   # puts issue_data_hash.inspect
-      #   # Hack to avoid adding an event for withdrawn issue because of weirdness in request issues updates
-      #   if issue_data_hash
-      #     issue_events.push from_change_data(:added_issue, change_data.merge(issue_data_hash))
-      #   end
-      # end
-
-      # # TODO: Move these blocks into a helper that takes the ids and type and returns an array probably
-      # withdrawn_request_issue_ids.map do |withdrawn_issue_id|
-      #   withdrawn_hash = updates_hash.merge(retrieve_issue_data(withdrawn_issue_id))
-
-      #   # TODO: Withdrawn is possibly special and should be the withdrawn date instead of request issue updates created at?
-
-      #   issue_events.push from_change_data(:withdrew_issue, change_data.merge(withdrawn_hash))
-      # end
-
-      # removed_request_issue_ids.map do |removed_issue_id|
-      #   removed_hash = updates_hash.merge(retrieve_issue_data(removed_issue_id))
-      #   issue_events.push from_change_data(:removed_issue, change_data.merge(removed_hash))
-      # end
-
-      # edited_request_issue_ids.map do |edited_issue_id|
-      #   edited_hash = updates_hash.merge(retrieve_issue_data(edited_issue_id))
-      #   issue_events.push from_change_data(:added_decision_date, change_data.merge(edited_hash))
-      # end
-
       # Adds events to the issue events array
       # TODO: Withdrawn might need to add withdrawn date to the updates hash before sending it in
       process_issue_ids!(withdrawn_request_issue_ids, :withdrew_issue, change_data, updates_hash, issue_events)
       process_issue_ids!(removed_request_issue_ids, :removed_issue, change_data, updates_hash, issue_events)
       process_issue_ids!(edited_request_issue_ids, :added_decision_date, change_data, updates_hash, issue_events)
-
-      # puts "event_types added for request_issue_id: #{change_data['request_issue_update_id']}"
-      # puts issue_events.map(&:event_type).inspect
 
       issue_events
     end
@@ -148,6 +100,7 @@ class ClaimHistoryEvent
       # puts change_data["update_user_name"]
 
       # Make a guess that it was the same transaction as intake. If not it was a probably an update
+      # TODO: Verify that this date comparison is valid/good enough
       same_transaction = (change_data["intake_completed_at"].to_datetime -
                           change_data["request_issue_created_at"].to_datetime).abs < 1
       event_hash = if same_transaction
@@ -165,7 +118,6 @@ class ClaimHistoryEvent
                          change_data["update_user_station_id"]
                      }
                    end
-      # data_hash = { "event_date" => change_data["request_issue_created_at"], "event_user_name" => event_user_name }
 
       from_change_data(:added_issue, change_data.merge(event_hash))
     end
@@ -205,17 +157,11 @@ class ClaimHistoryEvent
     #   attributes
     # end
 
-    def retrieve_issue_data(request_issue_id, type = "not_add")
+    def retrieve_issue_data(request_issue_id)
       # TODO: If this fails for some reason what do I do?
-      # Example: The thing was removed so it's gone now should I just nullsafe and return nulls?
-      # TODO: This also does not work if the issue has changed since the update could
-      # have changed in a different request issue update. So this is a guess at best.
-      request_issue = if type == "not_add"
-                        RequestIssue.find_by(id: request_issue_id)
-                      else
-                        RequestIssue.find_by(id: request_issue_id, closed_status: nil)
-                      end
-      # Gross
+      # Example: The issue was removed so it's gone from the database now should I just return nils for the fields?
+      request_issue = RequestIssue.find_by(id: request_issue_id)
+
       if request_issue
         {
           "nonrating_issue_category" => request_issue.nonrating_issue_category,
@@ -227,13 +173,10 @@ class ClaimHistoryEvent
 
     def task_status_to_event_type(task_status)
       if task_status == "in_progress" || task_status == "assigned"
-        # "Claim Status - In Progress"
         :in_progress
       elsif task_status == "on_hold"
-        # "Claim Status - Incomplete"
         :incomplete
       else
-        # "Claim Closed"
         :completed
       end
     end
@@ -251,18 +194,9 @@ class ClaimHistoryEvent
     set_attributes_from_change_history_data(event_type, change_data)
   end
 
-  # def to_csv_array
-  #   [
-  #     @task_id, @event_type, @event_date, @event_user,
-  #     @benefit_type, @issue_type, @issue_description, @decision_date,
-  #     @disposition, @decision_description, @withdrawal_request_date,
-  #     @task_status, @disposition_date, @intake_completed_date
-  #   ]
-  # end
-
   def to_csv_array
     [
-      @veteran_file_number, @claimant_name, build_task_url, task_status_mapper,
+      @veteran_file_number, @claimant_name, task_url, task_status_mapper,
       days_waiting, readable_claim_type, @facility, user_name_helper, format_date_string(@event_date),
       event_type_to_readable_name, status_information, issue_information, disposition_information
     ]
@@ -286,41 +220,18 @@ class ClaimHistoryEvent
     # Pulled from the person model
     # Probably have to change it to do that stupid abbreviation crap though
     @claimant_name = FullName.new(change_data["first_name"], "", change_data["last_name"]).formatted(:readable_short)
-
-    # Event type might affect the issue fields as well as the decision date and disposition.
-    # TODO: Currently adds another database call to RequestIssue which is bad.
     @issue_type = change_data["nonrating_issue_category"]
     @issue_description = change_data["nonrating_issue_description"]
     @decision_date = change_data["decision_date"]
-
     @benefit_type = change_data["request_issue_benefit_type"]
     @disposition = change_data["disposition"]
     @disposition_date = change_data["caseflow_decision_date"]
     @decision_description = change_data["decision_description"]
 
-    # This is going to be the same for all request issue update events
     # TODO: Should probably use event date instead of this
     @withdrawal_request_date = change_data["request_issue_update_time"]
-
-    # ALL THESE DEPEND ON EVENT TYPE
-
-    # Event Date is going to be interesting and will probably change quite a bit depending on what it is
-    # TODO: Rig this to be the date for every event.
-    # e.g. withdrawl_request_date, added_issue_date, removed_issue_date, intake_completed_date
     @event_date = change_data["event_date"]
-
-    # TODO: Figure out what to do with this Probably depends on event_type.
-    # @event_user = change_data["event_user"]
-
-    # Facility is going to depend on the event user which will depend on the event type
-    # TODO: Figure this out
-    # It will probably be one of these two fields or maybe both idk
-    #  selected_regional_office: nil,
-    #  station_id: "317",
     @facility = change_data["user_facility"] || change_data["selected_regional_office"] || change_data["station_id"]
-
-    # User name is going to depend on the event user
-    # TODO: Same stuff
     @event_user_name = change_data["event_user_name"] || change_data["full_name"]
   end
 
@@ -340,16 +251,13 @@ class ClaimHistoryEvent
     }[@event_type]
   end
 
-  def build_task_url
-    # TODO: idk how to get the base url
-    # Ideas
-    # 1. hard code it based on env
-    # 2. Get the base url from the request and pass it down to this object
+  def task_url
     "https://www.caseflowdemo.com/decision_reviews/vha/tasks/#{@task_id}"
   end
 
   def days_waiting_helper
-    # Should this be based on assigned_at or receipt date
+    # TODO: Should this be based on assigned_at or receipt date
+    # In the ui it is assigned_at on the task so it should probably be the same
     assigned_on = DateTime.parse(@assigned_at)
     (Time.zone.today - assigned_on).to_i
   end
@@ -383,7 +291,6 @@ class ClaimHistoryEvent
     }[@task_status]
   end
 
-  # TODO: Check to see if I should still return blank strings here instead
   def issue_information
     if issue_event?
       [@issue_type, @issue_description, format_date_string(@decision_date)]
@@ -424,8 +331,6 @@ class ClaimHistoryEvent
   end
 
   def format_date_string(date_string)
-    # puts date_string.inspect
-    # puts date_string.class.inspect
     if date_string.class == String
       Time.zone.parse(date_string).strftime("%-m/%-d/%Y")
     elsif date_string.present?
