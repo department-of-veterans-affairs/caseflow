@@ -54,6 +54,9 @@ Rails.application.routes.draw do
           get "veterans/:participant_id", to: "veterans#show"
         end
       end
+      name :legacy_issues do
+        get "veterans/:participant_id", to: "veterans#show"
+      end
     end
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do
