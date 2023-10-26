@@ -3,7 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import PropTypes from 'prop-types';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
-import COPY from '../../../COPY';
+import REPORT_TYPE_OPITIONS from '../../../constants/REPORT_TYPE_OPTIONS.json';
 
 const NonCompReportFilter = ({ control }) => (
   <>
@@ -17,7 +17,7 @@ const NonCompReportFilter = ({ control }) => (
           {...rest}
           name="reportType"
           label="Report Type"
-          options={COPY.VHA_REPORT_TYPE_OPTIONS}
+          options={REPORT_TYPE_OPITIONS}
           searchable={false}
           onChange={(valObj) => onChange(valObj?.value)}
           defaultValue=""

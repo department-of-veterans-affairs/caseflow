@@ -40,7 +40,7 @@ const ReportPageButtons = ({
           label="clear-filters"
           name="clear-filters"
           onClick={handleClearFilters}
-          disabled={!disableGenerateButton}
+          disabled={disableGenerateButton}
         >
           Clear filters
         </Button>
@@ -49,7 +49,7 @@ const ReportPageButtons = ({
           label="generate-report"
           name="generate-report"
           onClick={handleSubmit}
-          disabled={!disableGenerateButton}
+          disabled={disableGenerateButton}
         >
           Generate task report
         </Button>
@@ -72,7 +72,7 @@ const ReportPage = ({ history }) => {
       buttons={
         <ReportPageButtons
           history={history}
-          disableGenerateButton={formState.isDirty}
+          disableGenerateButton={!formState.isDirty}
           handleClearFilters={() => reset(defaultFormValues)}
         />
       }
