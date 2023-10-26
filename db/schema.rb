@@ -220,7 +220,7 @@ ActiveRecord::Schema.define(version: 2023_10_26_123217) do
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
-  create_table "batch_processes", primary_key: "batch_id", id: :uuid, default: -> { "uuid_generate_v4()" }, comment: "A generalized table for batching and processing records within caseflow", force: :cascade do |t|
+  create_table "batch_processes", primary_key: "batch_id", id: :uuid, default: -> { "uuid_generate_v4()" }, comment: "The unique id of the created batch", comment: "A generalized table for batching and processing records within caseflow", force: :cascade do |t|
     t.string "batch_type", null: false, comment: "Indicates what type of record is being batched"
     t.datetime "created_at", null: false, comment: "Date and Time that batch was created."
     t.datetime "ended_at", comment: "The date/time that the batch finsished processing"
@@ -624,6 +624,7 @@ ActiveRecord::Schema.define(version: 2023_10_26_123217) do
     t.text "notes", comment: "Comes from CMP; can be updated by user"
     t.integer "package_document_type_id", comment: "Represents entire CMP package document type"
     t.datetime "portal_entry_date", comment: "Time when correspondence is created in Caseflow"
+    t.bigint "prior_correspondence_id", null: false, comment: "Foreign key to Correspondences table"
     t.string "source_type", comment: "An information identifier we get from CMP"
     t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.bigint "updated_by_id", comment: "Foreign key to users table"
@@ -633,6 +634,7 @@ ActiveRecord::Schema.define(version: 2023_10_26_123217) do
     t.index ["assigned_by_id"], name: "index_correspondences_on_assigned_by_id"
     t.index ["cmp_queue_id"], name: "index_correspondences_on_cmp_queue_id"
     t.index ["correspondence_type_id"], name: "index_correspondences_on_correspondence_type_id"
+    t.index ["prior_correspondence_id"], name: "index_on_prior_correspondence_id"
     t.index ["updated_by_id"], name: "index_correspondences_on_updated_by_id"
     t.index ["veteran_id"], name: "index_correspondences_on_veteran_id"
   end
@@ -2141,6 +2143,7 @@ ActiveRecord::Schema.define(version: 2023_10_26_123217) do
   add_foreign_key "correspondence_documents", "correspondences"
   add_foreign_key "correspondence_intakes", "correspondences"
   add_foreign_key "correspondence_intakes", "users"
+  add_foreign_key "correspondences", "correspondences", column: "prior_correspondence_id"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "distributed_cases", "distributions"
