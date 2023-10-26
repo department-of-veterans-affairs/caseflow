@@ -591,7 +591,9 @@ ActiveRecord::Schema.define(version: 2023_10_25_143040) do
 
   create_table "correspondence_documents", force: :cascade do |t|
     t.bigint "correspondence_id"
+    t.datetime "created_at", null: false, comment: "Date and Time of creation."
     t.string "document_file_number", comment: "From CMP documents table"
+    t.datetime "updated_at", null: false, comment: "Date and Time of last update."
     t.uuid "uuid", comment: "Reference to document in AWS S3"
     t.string "vbms_document_id", comment: "From CMP documents table"
     t.index ["correspondence_id"], name: "index_correspondence_documents_on_correspondence_id"
