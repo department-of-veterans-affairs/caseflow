@@ -7,7 +7,7 @@ RSpec.feature("The Correspondence Intake page") do
       @correspondence_uuid = "123456789"
     end
 
-    it "routes user to /unaithorized if the feature toggle is disabled" do
+    it "routes user to /unauthorized if the feature toggle is disabled" do
       FeatureToggle.disable!(:correspondence_queue)
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
       expect(page).to have_current_path("/unauthorized")
@@ -17,13 +17,14 @@ RSpec.feature("The Correspondence Intake page") do
       it "routes user to /unaithorized if the feature toggle is disabled" do
         FeatureToggle.enable!(:correspondence_queue)
         visit "/queue/correspondence/#{@correspondence_uuid}/intake"
-        expect(page).to have_current_path("/queue/correspondence")
+        expect(page).to have_current_path("/queue/correspondence/#{@correspondence_uuid}/intake")
       end
     end
   end
 
   context "intake form shell" do
     before :each do
+      FeatureToggle.enable!(:correspondence_queue)
       User.authenticate!(roles: ["Mail Intake"])
       @correspondence_uuid = "123456789"
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
