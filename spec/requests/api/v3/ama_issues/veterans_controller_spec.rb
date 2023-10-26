@@ -83,7 +83,7 @@ describe Api::V3::AmaIssues::VeteransController, :postgres, type: :request do
 
         context "when a veteran is found - but an unexpected error has happened." do
           it "should return veteran not found error" do
-            response = JSON.parse("{\"errors\":[{\"status\":\"500\",\"title\":\"Unknown error occured\",\"detail\":\"divided by 0 (Sentry event id: )\"}]}")
+            response = JSON.parse("{\"errors\":[{\"status\":\"500\",\"title\":\"Unknown error occured\",\"detail\":\"Message: There was a server error. Use the error uuid to submit a support ticket: \"}]}")
             expect(response["errors"].first["status"]).to include("500")
             expect(response["errors"].first["title"]).to include("Unknown error occured")
           end
