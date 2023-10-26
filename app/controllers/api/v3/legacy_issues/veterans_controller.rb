@@ -29,7 +29,7 @@ class Api::V3::LegacyIssues::VeteransController < Api::V3::BaseController
     (@page == 0) ? @page = 1 : @page ||= 1
     puts "Legacy Issues API"
     # TODO uncomment when DTO mapper/ serializer is finished
-    # render_request_issues(Api::V3::LegacyIssues::VbmsLegacyDtoBuilder.new(veteran, page).hash_response) if veteran
+    # render_vacols_issues(Api::V3::LegacyIssues::VbmsLegacyDtoBuilder.new(veteran, page).hash_response) if veteran
   end
 
   private
@@ -46,15 +46,15 @@ class Api::V3::LegacyIssues::VeteransController < Api::V3::BaseController
     end
   end
 
-  def render_request_issues(request_issues)
-    if request_issues[:request_issues].empty?
+  def render_vacols_issues(vacols_issues)
+    if vacols_issues[:vacols_issues].empty?
       render_errors(
         status: 404,
-        code: :no_request_issues_found,
-        title: "No Request Issues found for the given veteran."
+        code: :no_vacols_issues_found,
+        title: "No VACOLS Issues found for the given veteran."
       ) && return
     else
-      render json: request_issues.to_json
+      render json: vacols_issues.to_json
     end
   end
 end
