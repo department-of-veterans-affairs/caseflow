@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class AttorneyLegacyTask < LegacyTask
+  # rubocop:disable Metrics/PerceivedComplexity, Metrics/AbcSize, :reek:FeatureEnvy
   def available_actions(current_user, role)
     # AttorneyLegacyTasks are drawn from the VACOLS.BRIEFF table but should not be actionable unless there is a case
     # assignment in the VACOLS.DECASS table or is being used as a Case Movement action.
@@ -25,6 +26,7 @@ class AttorneyLegacyTask < LegacyTask
     end
     action_array
   end
+  # rubocop:enable Metrics/PerceivedComplexity, Metrics/AbcSize
 
   def attorney_user?(current_user, role)
     role == "attorney" && current_user == assigned_to
