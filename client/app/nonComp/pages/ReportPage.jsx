@@ -1,13 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import Button from 'app/components/Button';
 import NonCompLayout from '../components/NonCompLayout';
-import { Controller, useForm, FormProvider, useFormContext, useFieldArray, useWatch } from "react-hook-form"
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import SearchableDropdown from '../../components/SearchableDropdown';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { useForm, FormProvider, useFormContext } from 'react-hook-form';
+import { ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
 
 const buttonInnerContainerStyle = css({
   display: 'flex',
@@ -20,21 +17,21 @@ const buttonOuterContainerStyling = css({
   marginTop: '4rem'
 });
 
-// idk
-const schema = yup.object().shape({
-  reportType: yup.string().required(),
-  conditions: yup.array(
-    yup.object().shape({
-      condition: yup.string().required(),
-      options: yup.object().required(),
-    })
-  ),
-});
+// for later
+// const schema = yup.object().shape({
+//   conditions: yup.array(
+//     yup.object().shape({
+//       condition: yup.string().required(),
+//       options: yup.object().required(),
+//     })
+//   ),
+// });
 
 const ReportPageButtons = ({ history }) => {
-  const { register, handleSubmit } = useFormContext()
+  const { handleSubmit } = useFormContext();
 
-  const onSubmit = (data) => console.log(data)
+  // eslint-disable-next-line no-console
+  const onSubmit = (data) => console.log(data);
 
   return (
     <div {...buttonOuterContainerStyling}>
@@ -67,113 +64,10 @@ const ReportPageButtons = ({ history }) => {
   );
 };
 
-const ReportPageConditions = () => {
-  const {control, watch} = useFormContext()
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "conditions",
-  });
-
-  // TODO: extract to COPY
-  const variableOptions = [
-      { label: "Days Waiting",
-        value: "daysWaiting" },
-        { label: "Decision Review Type",
-        value: "decisionReviewType" },
-        { label: "Issue Type",
-        value: "issueType" },
-        { label: "Issue Disposition",
-        value: "issueDisposition" },
-        { label: "Personnel",
-        value: "personnel" },
-        { label: "Facility",
-        value: "facility" },
-  ]
-
-  const determineOptions = () => {
-    let conds = watch("conditions")
-    let selectedOptions = conds.map((c) => c['condition'] ).filter((c) => c!== null)
-
-    //personnel and facility are mutually exclusive
-    if (selectedOptions.includes("facility")) {
-      selectedOptions = selectedOptions.concat("personnel")
-    }
-    else if (selectedOptions.includes("personnel")) {
-      selectedOptions = selectedOptions.concat("facility")
-    }
-
-    return variableOptions.filter(option => !selectedOptions.some(selectedOption => option.value === selectedOption))
-  }
-
-  const watchFieldArray = watch("conditions");
-  const controlledFields = fields.map((field, index) => {
-    return {
-      ...field,
-      ...watchFieldArray[index]
-    };
-  });
-
-  return (
-    <div>
-      <hr />
-      <h2>Conditions</h2>
-      {controlledFields.map((field, index) => {
-        return <ConditionContainer key={field.id} {... {control, index, field, remove, determineOptions}} />
-      })}
-      <Button
-        disabled={watchFieldArray.length >= 5}
-        onClick={() => append({condition: ''})}>
-      Add Condition</Button>
-    </div>
-  )
-}
-
-const ConditionContainer = ({control, index, field, remove, determineOptions}) => {
-  const name = `conditions.${index}.condition`
-
-  const conditionsLength = useWatch({name: "conditions"}).length
-  const shouldShowAnd = (conditionsLength > 1) && (index !== (conditionsLength - 1))
-
-  return <div className="report-page-segment">
-          <div className="cf-app-segment cf-app-segment--alt report-page-variable-condition" >
-            <div className="report-page-variable-select">
-              <ConditionDropdown {...{control, determineOptions, name}} />
-            </div>
-            <div className="report-page-variable-content">Your cool {useWatch({control, name})} content here!</div>
-          </div>
-          <Link onClick={() => remove(index)}>Remove condition</Link>
-          {shouldShowAnd && <div className="report-page-condition-and">AND</div>}
-        </div>
-}
-const ConditionDropdown = ({ control, determineOptions, name}) => {
-  let [disabled, setDisabled] = useState(false);
-
-  const filteredOptions = determineOptions();
-  return <Controller
-                control={control}
-                name={name}
-                defaultValue={null}
-                render={({ onChange, ...rest }) => (
-                  <SearchableDropdown
-                    {...rest}
-                    label="Variable"
-                    options={filteredOptions}
-                    readOnly={disabled}
-                    onChange={(valObj) => {
-                      setDisabled(true);
-                      onChange(valObj?.value);
-                    }}
-                    placeholder="Select a variable"
-                  />
-
-              )}
-            />
-};
-
 const ReportPage = ({ history }) => {
-  const methods = useForm({defaultValues: {
+  const methods = useForm({ defaultValues: {
     conditions: []
-  }});
+  } });
 
   return (
     <FormProvider {...methods}>
