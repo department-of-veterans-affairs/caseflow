@@ -4,16 +4,16 @@ import PropTypes from 'prop-types';
 const StaticLever = ({ lever }) => {
   const renderValue = () => {
     switch (lever.data_type) {
-      case 'boolean':
-        return lever.value.toString();
-      case 'number':
-        return `${lever.value} ${lever.unit}`;
-      case 'radio':
-        return lever.options.find((option) => option.value === lever.value)?.text;
-      case 'combination':
-        return `${lever.value} ${lever.unit}`;
-      default:
-        return null;
+    case 'boolean':
+      return lever.value.toString();
+    case 'number':
+      return `${lever.value} ${lever.unit}`;
+    case 'radio':
+      return lever.options.find((option) => option.value === lever.value)?.text;
+    case 'combination':
+      return `${lever.value} ${lever.unit}`;
+    default:
+      return null;
     }
   };
 
