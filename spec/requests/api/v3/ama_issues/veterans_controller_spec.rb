@@ -72,22 +72,10 @@ describe Api::V3::AmaIssues::VeteransController, :postgres, type: :request do
             let_it_be(:request_issue_for_vet_count) { RequestIssue.where(veteran_participant_id: vet.participant_id).count }
 
             it_behaves_like :should_respond_with_legacy_present, true
-
             it_behaves_like :should_respond_with_associated_request_issues, true, true
-
             it_behaves_like :should_respond_with_multiple_decision_issues_per_request_issues, true, true
 
-            context "when number of request issues exceeds paginates_per value" do
-              include_context :set_new_page_per
-
-              it_behaves_like :should_show_number_of_paginated_issues, true
-
-              it_behaves_like :should_show_remaining_issues, true
-
-              it_behaves_like :should_show_page_1_when_page_0, true
-
-              it_behaves_like :should_default_to_page_1, true
-            end
+            include_context :number_of_request_issues_exceeds_paginates_per, true
           end
 
           context "when a veteran has multiple decision issues with multiple request issues" do
@@ -98,22 +86,10 @@ describe Api::V3::AmaIssues::VeteransController, :postgres, type: :request do
             let_it_be(:request_issue_for_vet_count) { RequestIssue.where(veteran_participant_id: vet.participant_id).count }
 
             it_behaves_like :should_respond_with_legacy_present, true
-
             it_behaves_like :should_respond_with_associated_request_issues, true, false
-
             it_behaves_like :should_respond_with_same_multiple_decision_issues, true
 
-            context "when number of request issues exceeds paginates_per value" do
-              include_context :set_new_page_per
-
-              it_behaves_like :should_show_number_of_paginated_issues, true
-
-              it_behaves_like :should_show_remaining_issues, true
-
-              it_behaves_like :should_show_page_1_when_page_0, true
-
-              it_behaves_like :should_default_to_page_1, true
-            end
+            include_context :number_of_request_issues_exceeds_paginates_per, true
           end
         end
 
@@ -125,22 +101,10 @@ describe Api::V3::AmaIssues::VeteransController, :postgres, type: :request do
             let_it_be(:request_issue_for_vet_count) { RequestIssue.where(veteran_participant_id: vet.participant_id).count }
 
             it_behaves_like :should_respond_with_legacy_present, false
-
             it_behaves_like :should_respond_with_associated_request_issues, false, true
-
             it_behaves_like :should_respond_with_multiple_decision_issues_per_request_issues, false, true
 
-            context "when number of request issues exceeds paginates_per value" do
-              include_context :set_new_page_per
-
-              it_behaves_like :should_show_remaining_issues, false
-
-              it_behaves_like :should_show_remaining_issues, false
-
-              it_behaves_like :should_show_page_1_when_page_0, false
-
-              it_behaves_like :should_default_to_page_1, false
-            end
+            include_context :number_of_request_issues_exceeds_paginates_per, false
           end
 
           context "when a veteran has multiple decision issues with multiple request issues" do
@@ -150,22 +114,10 @@ describe Api::V3::AmaIssues::VeteransController, :postgres, type: :request do
             let_it_be(:request_issue_for_vet_count) { RequestIssue.where(veteran_participant_id: vet.participant_id).count }
 
             it_behaves_like :should_respond_with_legacy_present, false
-
             it_behaves_like :should_respond_with_associated_request_issues, false, false
-
             it_behaves_like :should_respond_with_same_multiple_decision_issues, false
 
-            context "when number of request issues exceeds paginates_per value" do
-              include_context :set_new_page_per
-
-              it_behaves_like :should_show_remaining_issues, false
-
-              it_behaves_like :should_show_remaining_issues, false
-
-              it_behaves_like :should_show_page_1_when_page_0, false
-
-              it_behaves_like :should_default_to_page_1, false
-            end
+            include_context :number_of_request_issues_exceeds_paginates_per, false
           end
         end
       end
