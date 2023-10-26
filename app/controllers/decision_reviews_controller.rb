@@ -75,8 +75,9 @@ class DecisionReviewsController < ApplicationController
 
         fail ActionController::ParameterMissing.new(:report), report_missing_message unless filter_params[:report]
 
-        events_as_csv = ChangeHistoryReporter.new([], filter_params.to_h).as_csv
-        send_data events_as_csv, filename: csv_filename, type: "text/csv", disposition: "attachment"
+        events_as_csv = create_change_history_csv(filter_params)
+        filename = Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
+        send_data events_as_csv, filename: filename, type: "text/csv", disposition: "attachment"
       end
     end
   rescue ActionController::ParameterMissing => error
@@ -270,5 +271,11 @@ class DecisionReviewsController < ApplicationController
       representative_tz: task.appeal&.representative_tz,
       poa_last_synced_at: task.appeal&.poa_last_synced_at
     }
+  end
+
+  def create_change_history_csv(filter_params)
+    base_url = "#{request.base_url}/decision_reviews/#{business_line.url}/tasks/"
+    events = ClaimHistoryService.build_events(business_line)
+    ChangeHistoryReporter.new(events, base_url, filter_params.to_h).as_csv
   end
 end

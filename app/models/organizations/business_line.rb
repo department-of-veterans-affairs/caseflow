@@ -69,6 +69,10 @@ class BusinessLine < Organization
     QueryBuilder.new(query_type: :completed, parent: self).issue_type_count
   end
 
+  def change_history_rows(filters={})
+    QueryBuilder.new(query_params: filters, parent: self).change_history_rows
+  end
+
   class QueryBuilder
     attr_accessor :query_type, :parent, :query_params
 
@@ -163,6 +167,163 @@ class BusinessLine < Organization
       end
 
       issue_count_options
+    end
+
+    def change_history_rows
+      # Need to insert a specific task ID based on the query_params: task_id or something
+      # Might also need to insert a specific status but im not sure how that's going to work
+      # Need to also insert the assigned to: parent constraint
+      # Need to also figure out if there are more request issue constraints like invalid or what not
+      # Technically the request issues updates could be inner joined to users
+      # Intakes could also be inner joined to users
+      # TODO: I have no idea how to deal with versions
+      # task_id = query_params["task_id"]
+
+      # The request_decision_issues is weird because it's a composite index on request_issue_id and decision_issue_id
+      # but in order for it to work correctly it needs to be joined before decision_issues
+      # TODO: Verify how slow this is and possibly use a CTE instead of the joins if it's not using the index
+
+      change_history_sql_block = <<-SQL
+        SELECT *, tasks.id AS task_id, tasks.status AS task_status, request_issues.id AS request_issue_id,
+          request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
+          request_issues.benefit_type AS request_issue_benefit_type, request_issues_updates.id AS request_issue_update_id,
+          request_issues.id AS actual_request_issue_id, request_issues.created_at AS request_issue_created_at,
+          intakes.completed_at AS intake_completed_at, update_users.full_name AS update_user_name,
+          intake_users.full_name AS intake_user_name, intake_users.selected_regional_office AS intake_user_regional_office,
+          update_users.selected_regional_office AS update_user_regional_office, update_users.station_id AS update_user_station_id,
+          intake_users.station_id AS intake_user_station_id
+        FROM tasks
+        INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
+        AND request_issues.decision_review_id = tasks.appeal_id
+        INNER JOIN intakes ON tasks.appeal_type = intakes.detail_type
+        AND intakes.detail_id = tasks.appeal_id
+        LEFT JOIN request_issues_updates ON request_issues_updates.review_type = tasks.appeal_type
+        AND request_issues_updates.review_id = tasks.appeal_id
+        LEFT JOIN request_decision_issues ON request_decision_issues.request_issue_id = request_issues.id
+        LEFT JOIN decision_issues ON decision_issues.decision_review_id = tasks.appeal_id
+        AND decision_issues.decision_review_type = tasks.appeal_type AND decision_issues.id = request_decision_issues.decision_issue_id
+        LEFT JOIN claimants ON claimants.decision_review_id = tasks.appeal_id
+        AND claimants.decision_review_type = tasks.appeal_type
+        LEFT JOIN people ON claimants.participant_id = people.participant_id
+        LEFT JOIN users intake_users ON intakes.user_id = intake_users.id
+        LEFT JOIN users update_users ON request_issues_updates.user_id = update_users.id
+        WHERE tasks.type = 'DecisionReviewTask'
+        AND tasks.assigned_to_type = 'Organization'
+        AND tasks.assigned_to_id = '#{parent.id.to_i}'
+      SQL
+
+      # puts query_params.inspect
+      # TODO: Brakeman is going to yell so hard about this
+      # TODO: Need to move this into a helper or something because there will be a lot of possible conditions
+      # TODO: Could potentically use the same where clause from array here even though we usually only care
+      # about one task_id to make it more flexible
+      if query_params[:task_id].present?
+        # puts "adding and to block"
+        change_history_sql_block += " AND tasks.id = '#{query_params[:task_id].to_i}'"
+      end
+
+      # Task status and claim type filtering always happens regardless of params
+      # Task status filter block
+      task_status_predicate = if query_params[:task_status].present?
+                                # " AND tasks.status IN ('#{query_params[:task_status].join("', '")}') "
+                                " AND #{where_clause_from_array(Task, :status, query_params[:task_status]).to_sql}"
+                              else
+                                " AND tasks.status IN ('assigned', 'in_progress', 'on_hold', 'completed') "
+                              end
+
+      change_history_sql_block += task_status_predicate
+
+      # Claim type filter block
+      claim_type_predicate = if query_params[:claim_type].present?
+                               #  " AND tasks.appeal_type = '#{query_params[:claim_type]}' "
+                               " AND #{where_clause_from_array(Task, :appeal_type, query_params[:claim_type]).to_sql}"
+                             else
+                               " AND tasks.appeal_type IN ('HigherLevelReview', 'SupplementalClaim') "
+                             end
+
+      change_history_sql_block += claim_type_predicate
+
+      # Days waiting filter block
+      if query_params[:days_waiting].present?
+        number_of_days = query_params[:days_waiting][:number_of_days]
+        operator = query_params[:days_waiting][:range]
+
+        current_time_string = Time.now.iso8601
+
+        case operator
+        when ">", "<", "="
+          change_history_sql_block += <<~SQL
+            AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) #{operator} #{number_of_days.to_i}
+          SQL
+        when "between"
+          end_days = query_params[:days_waiting][:end_days]
+          change_history_sql_block += <<~SQL
+            AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) >= #{number_of_days.to_i}
+            AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) <= #{end_days.to_i}
+          SQL
+        end
+      end
+
+      # TODO: Can maybe write a method that can handle all the query types that are joins like this to be more DRY
+      # Issue Types filter block
+      # TODO: Can do some validation either here or in the controller to make sure the issue types in the params
+      # match the json values in ISSUE_CATEGORIES.json
+      if query_params[:issue_types].present?
+        # change_history_sql_block += <<~SQL
+        #   AND request_issues.nonrating_issue_category IN ('#{query_params[:issue_types].join("', '")}')
+        # SQL
+        sql = where_clause_from_array(RequestIssue, :nonrating_issue_category, query_params[:issue_types]).to_sql
+        change_history_sql_block += " AND #{sql} "
+      end
+
+      # Dispositions filter block
+      if query_params[:dispositions].present?
+        # change_history_sql_block += <<~SQL
+        #   AND decision_issues.disposition IN ('#{query_params[:dispositions].join("', '")}')
+        # SQL
+        sql = where_clause_from_array(DecisionIssue, :disposition, query_params[:dispositions]).to_sql
+        change_history_sql_block += " AND #{sql} "
+      end
+
+      # Facility filter block
+      # TODO: This can only do so much it needs further filtering in the service class
+      if query_params[:facilities].present?
+        # User.arel_table.alias(:intake_users)[:station_id].in([1,2,3]).to_sql
+        # sql = User.arel_table.alias(:intake_users)[:station_id].in(query_params[:facilities]).to_sql
+        # sql = where_clause_from_array(User.arel_table.alias(:intake_users), :station_id, query_params[:facilities])
+        # change_history_sql_block += " AND #{sql} "
+        change_history_sql_block += <<~SQL
+          AND
+          (
+            #{User.arel_table.alias(:intake_users)[:station_id].in(query_params[:facilities]).to_sql}
+            OR
+            #{User.arel_table.alias(:update_users)[:station_id].in(query_params[:facilities]).to_sql}
+          )
+        SQL
+      end
+
+      # User filter block
+      # TODO: This can only do so much it needs further filtering in the service class
+      if query_params[:personnel].present?
+        # User.arel_table.alias(:intake_users)[:station_id].in([1,2,3]).to_sql
+        # sql = User.arel_table.alias(:intake_users)[:station_id].in(query_params[:facilities]).to_sql
+        # sql = where_clause_from_array(User.arel_table.alias(:intake_users), :station_id, query_params[:facilities])
+        # change_history_sql_block += " AND #{sql} "
+        change_history_sql_block += <<~SQL
+          AND
+          (
+            #{User.arel_table.alias(:intake_users)[:id].in(query_params[:personnel]).to_sql}
+            OR
+            #{User.arel_table.alias(:update_users)[:id].in(query_params[:personnel]).to_sql}
+          )
+        SQL
+      end
+
+      # Events filter block
+      # TODO: Idk how much we can actually do on this one for now
+      # Can maybe do things like if no disposition event then don't grab completed tasks?
+
+      ActiveRecord::Base.connection.execute change_history_sql_block
     end
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/AbcSize
@@ -508,10 +669,11 @@ class BusinessLine < Organization
         filter["col"].include?("issueTypesColumn")
       end
     end
-  end
 
-  def can_generate_claim_history
-    false
+    # TODO: Move this to an ArelHelper module or something since it's pretty generic
+    def where_clause_from_array(table_class, column, values_array)
+      table_class.arel_table[column].in(values_array)
+    end
   end
 end
 
