@@ -16,23 +16,26 @@ class Api::V3::VbmsIntake::Legacy::VbmsLegacyDtoBuilder
   private
 
   def total_vacols_issue_count
-    vacols_cases = VACOLS::Case.where(bfcorlid: @veteran_file_number)
+    vacols_veteran_file_number = LegacyAppeal.convert_file_number_to_vacols(@veteran_file_number)
+    vacols_cases = VACOLS::Case.where(bfcorlid: vacols_veteran_file_number)
     vacols_ids = vacols_cases.map(&:bfkey)
     VACOLS::CaseIssue.where(isskey: vacols_ids).size
   end
 
   def serialized_vacols_issues
-    vacols_issues = []
+    # vacols_issues = []
     v_ids = LegacyAppeal.fetch_appeals_by_file_number(@veteran_file_number).map(&:vacols_id)
-    las = LegacyAppeal.where(vacols_id: v_ids)
-    las.each do |la|
-      vacols_issues.concat(la.issues.map(&:vbms_attributes))
-    end
-    serialized_data = Api::V3::VbmsIntake::Legacy::VacolsIssueSerializer.new(
-      vacols_issues
-    ).page(@page).serializable_hash[:data]
 
-    serialized_data.map { |issue| issue[:attributes] }
+    # returns Issue
+    las = v_ids.map do |vi|
+      AppealRepository.issues(vi).map(&:vbms_attributes)
+    end
+
+    Api::V3::VbmsIntake::Legacy::VacolsIssueSerializer.new(
+      Kaminari.paginate_array(las).page(@page)
+      # Kaminari.paginate_array(VACOLS::CaseIssue.where(isskey: v_ids)).page(@page)
+      # Kaminari.paginate_array(AppealRepository.issues(v_ids.map)).page(@page)
+    ).serializable_hash[:data]
   end
 
   def build_json_response

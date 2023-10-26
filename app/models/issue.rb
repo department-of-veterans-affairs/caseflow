@@ -222,6 +222,7 @@ class Issue
 
   def vbms_attributes
     {
+      id: id,
       notice_of_disagreement_date: appeal.nod_date,
       legacy_appeal_status: appeal.status,
       legacy_appeal_soc_date: appeal.soc_date,
