@@ -73,6 +73,7 @@ class BusinessLine < Organization
     QueryBuilder.new(query_params: filters, parent: self).change_history_rows
   end
 
+  # rubocop:disable Metrics/ClassLength
   class QueryBuilder
     attr_accessor :query_type, :parent, :query_params
 
@@ -204,95 +205,8 @@ class BusinessLine < Organization
         AND tasks.assigned_to_id = '#{parent.id.to_i}'
       SQL
 
-      # puts query_params.inspect
       # TODO: Brakeman is going to yell so hard about this
-      # TODO: Need to move this into a helper or something because there will be a lot of possible conditions
-      # TODO: Could potentically use the same where clause from array here even though we usually only care
-      # about one task_id to make it more flexible
-      if query_params[:task_id].present?
-        # puts "adding and to block"
-        change_history_sql_block += " AND tasks.id = '#{query_params[:task_id].to_i}'"
-      end
-
-      # Task status and claim type filtering always happens regardless of params
-      # Task status filter block
-      task_status_predicate = if query_params[:task_status].present?
-                                " AND #{where_clause_from_array(Task, :status, query_params[:task_status]).to_sql}"
-                              else
-                                " AND tasks.status IN ('assigned', 'in_progress', 'on_hold', 'completed') "
-                              end
-
-      change_history_sql_block += task_status_predicate
-
-      # Claim type filter block
-      claim_type_predicate = if query_params[:claim_type].present?
-                               " AND #{where_clause_from_array(Task, :appeal_type, query_params[:claim_type]).to_sql}"
-                             else
-                               " AND tasks.appeal_type IN ('HigherLevelReview', 'SupplementalClaim') "
-                             end
-
-      change_history_sql_block += claim_type_predicate
-
-      # Days waiting filter block
-      if query_params[:days_waiting].present?
-        number_of_days = query_params[:days_waiting][:number_of_days]
-        operator = query_params[:days_waiting][:range]
-
-        current_time_string = Time.now.iso8601
-
-        case operator
-        when ">", "<", "="
-          change_history_sql_block += <<~SQL
-            AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) #{operator} #{number_of_days.to_i}
-          SQL
-        when "between"
-          end_days = query_params[:days_waiting][:end_days]
-          change_history_sql_block += <<~SQL
-            AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) >= #{number_of_days.to_i}
-            AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) <= #{end_days.to_i}
-          SQL
-        end
-      end
-
-      # Issue Types filter block
-      # TODO: Can do some validation either here or in the controller to make sure the issue types in the params
-      # match the json values in ISSUE_CATEGORIES.json
-      if query_params[:issue_types].present?
-        sql = where_clause_from_array(RequestIssue, :nonrating_issue_category, query_params[:issue_types]).to_sql
-        change_history_sql_block += " AND #{sql} "
-      end
-
-      # Dispositions filter block
-      if query_params[:dispositions].present?
-        sql = where_clause_from_array(DecisionIssue, :disposition, query_params[:dispositions]).to_sql
-        change_history_sql_block += " AND #{sql} "
-      end
-
-      # Facility filter block
-      # TODO: This can only do so much it needs further filtering in the service class
-      if query_params[:facilities].present?
-        change_history_sql_block += <<~SQL
-          AND
-          (
-            #{User.arel_table.alias(:intake_users)[:station_id].in(query_params[:facilities]).to_sql}
-            OR
-            #{User.arel_table.alias(:update_users)[:station_id].in(query_params[:facilities]).to_sql}
-          )
-        SQL
-      end
-
-      # User filter block
-      # TODO: This can only do so much it needs further filtering in the service class
-      if query_params[:personnel].present?
-        change_history_sql_block += <<~SQL
-          AND
-          (
-            #{User.arel_table.alias(:intake_users)[:id].in(query_params[:personnel]).to_sql}
-            OR
-            #{User.arel_table.alias(:update_users)[:id].in(query_params[:personnel]).to_sql}
-          )
-        SQL
-      end
+      change_history_sql_block += change_history_sql_filter_array.join(" ")
 
       # Events filter block
       # TODO: Idk how much we can actually do on this one for now
@@ -304,6 +218,123 @@ class BusinessLine < Organization
     # rubocop:enable Metrics/AbcSize
 
     private
+
+    #################### Change history filter helpers ############################
+
+    def change_history_sql_filter_array
+      filtering_sql = []
+
+      # Task status and claim type filtering always happens regardless of params
+      filtering_sql.push task_status_filter
+      filtering_sql.push claim_type_filter
+
+      # All the other filters are optional
+      filtering_sql.push task_id_filter
+      filtering_sql.push dispositions_filter
+      filtering_sql.push issue_types_filter
+      filtering_sql.push days_waiting_filter
+      filtering_sql.push station_id_filter
+      filtering_sql.push user_id_filter
+
+      filtering_sql.compact
+    end
+
+    def task_status_filter
+      if query_params[:task_status].present?
+        " AND #{where_clause_from_array(Task, :status, query_params[:task_status]).to_sql}"
+      else
+        " AND tasks.status IN ('assigned', 'in_progress', 'on_hold', 'completed') "
+      end
+    end
+
+    def claim_type_filter
+      if query_params[:claim_type].present?
+        " AND #{where_clause_from_array(Task, :appeal_type, query_params[:claim_type]).to_sql}"
+      else
+        " AND tasks.appeal_type IN ('HigherLevelReview', 'SupplementalClaim') "
+      end
+    end
+
+    def task_id_filter
+      # TODO: Could potentially use the same where clause from array here even though we usually only care
+      # about one task_id to make it more flexible
+      if query_params[:task_id].present?
+        " AND tasks.id = '#{query_params[:task_id].to_i}'"
+      end
+    end
+
+    def dispositions_filter
+      if query_params[:dispositions].present?
+        sql = where_clause_from_array(DecisionIssue, :disposition, query_params[:dispositions]).to_sql
+        " AND #{sql} "
+      end
+    end
+
+    def issue_types_filter
+      # TODO: Can do some validation either here or in the controller to make sure the issue types in the params
+      # match the json values in ISSUE_CATEGORIES.json
+      if query_params[:issue_types].present?
+        sql = where_clause_from_array(RequestIssue, :nonrating_issue_category, query_params[:issue_types]).to_sql
+        " AND #{sql} "
+      end
+    end
+
+    def days_waiting_filter
+      if query_params[:days_waiting].present?
+        number_of_days = query_params[:days_waiting][:number_of_days]
+        operator = query_params[:days_waiting][:range]
+        current_time_string = Time.now.iso8601
+
+        case operator
+        when ">", "<", "="
+          <<~SQL
+            AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) #{operator} #{number_of_days.to_i}
+          SQL
+        when "between"
+          end_days = query_params[:days_waiting][:end_days]
+          <<~SQL
+            AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) >= #{number_of_days.to_i}
+            AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) <= #{end_days.to_i}
+          SQL
+        end
+      end
+    end
+
+    def station_id_filter
+      # Facility filter block
+      # TODO: This can only do so much it needs further filtering in the service class
+      if query_params[:facilities].present?
+        <<~SQL
+          AND
+          (
+            #{User.arel_table.alias(:intake_users)[:station_id].in(query_params[:facilities]).to_sql}
+            OR
+            #{User.arel_table.alias(:update_users)[:station_id].in(query_params[:facilities]).to_sql}
+            OR
+            #{User.arel_table.alias(:disposition_users)[:station_id].in(query_params[:facilities]).to_sql}
+          )
+        SQL
+      end
+    end
+
+    def user_id_filter
+      # User filter block
+      # TODO: This can only do so much it needs further filtering in the service class
+      if query_params[:personnel].present?
+        <<~SQL
+          AND
+          (
+            #{User.arel_table.alias(:intake_users)[:id].in(query_params[:personnel]).to_sql}
+            OR
+            #{User.arel_table.alias(:update_users)[:id].in(query_params[:personnel]).to_sql}
+            OR
+            #{User.arel_table.alias(:disposition_users)[:station_id].in(query_params[:facilities]).to_sql}
+          )
+        SQL
+      end
+    end
+
+    #################### End of Change history filter helpers ########################
 
     def business_line_id
       parent.id
@@ -650,6 +681,7 @@ class BusinessLine < Organization
       table_class.arel_table[column].in(values_array)
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end
 
 require_dependency "vha_business_line"
