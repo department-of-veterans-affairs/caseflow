@@ -34,9 +34,9 @@ RSpec.shared_context :number_of_request_issues_exceeds_paginates_per do |legacy_
   context "when number of request issues exceeds paginates_per value" do
     include_context :set_new_page_per
 
-    it_behaves_like :should_show_number_of_paginated_issues, legacy_appeals_present
-    it_behaves_like :should_show_remaining_issues, legacy_appeals_present
-    it_behaves_like :should_show_page_1_when_page_0, legacy_appeals_present
-    it_behaves_like :should_default_to_page_1, legacy_appeals_present
+    it_behaves_like :it_should_show_number_of_paginated_issues, legacy_appeals_present
+    it_behaves_like :it_should_show_remaining_issues, legacy_appeals_present
+    it_behaves_like :it_should_show_page_1_when_page_0, legacy_appeals_present
+    it_behaves_like :it_should_default_to_page_1, legacy_appeals_present
   end
 end
