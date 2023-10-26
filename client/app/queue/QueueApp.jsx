@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import StringUtil from '../util/StringUtil';
+import CorrespondenceIntake from '../queue/correspondences/correspondence_cases';
 
 import {
   setCanEditAod,
@@ -659,6 +660,10 @@ class QueueApp extends React.PureComponent {
     <CompleteHearingPostponementRequestModal {...props.match.params} />
   );
 
+  routedCorrespondenceIntake = () => (
+    <CorrespondenceIntake />
+  );
+
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
       'Your Queue' :
@@ -884,6 +889,12 @@ class QueueApp extends React.PureComponent {
               path="/user_management"
               title={`${PAGE_TITLES.USER_MANAGEMENT} | Caseflow`}
               render={this.routedUserManagement}
+            />
+
+            <PageRoute
+              path="/queue/correspondences"
+              title={`${PAGE_TITLES.CORRESPONDENCE_CASES_LIST}`}
+              render={this.routedCorrespondenceIntake}
             />
 
             {motionToVacateRoutes.page}
@@ -1390,7 +1401,6 @@ class QueueApp extends React.PureComponent {
               path="/team_management/lookup_participant_id"
               render={this.routedLookupParticipantIdModal}
             />
-
             {motionToVacateRoutes.modal}
           </Switch>
         </div>

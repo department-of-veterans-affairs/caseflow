@@ -3,8 +3,8 @@
 class CorrespondencesController < ApplicationController
   # before_action :verify_access
 
-  def index
-
+  def correspondence_cases
+    render 'correspondence_cases'
   end
 
   private
