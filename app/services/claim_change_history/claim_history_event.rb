@@ -32,6 +32,9 @@ class ClaimHistoryEvent
 
     # TODO: This is not great since it's more DB calls inside of the loop
     # This is actually terrible. It's beyond not great
+    # Might have to bulk retrieve these somehow if it is too slow. I'm pretty sure it will be.
+    # Might have to do two loops of the records unfortunately and then do this and then loop over that
+    # tasks = Task.where(id: array_of_task_ids).includes(:versions)
     def no_database_create_status_events(change_data)
       status_events = []
       task = Task.find(change_data["task_id"])
@@ -99,7 +102,18 @@ class ClaimHistoryEvent
     def process_issue_ids!(request_issue_ids, event_type, change_data, updates_hash, issue_events)
       request_issue_ids.each do |request_issue_id|
         request_issue_data = updates_hash.merge(retrieve_issue_data(request_issue_id))
-        issue_events.push from_change_data(event_type, change_data.merge(request_issue_data))
+        # After I fetch the issue then compare the two dates
+        # If they are close enough then push the event otherwise don't because it's not decision
+        # TODO: event_type would need to match whatever is the edited event type placeholder
+        if event_type == :added_decision_date
+          if request_issue_data["decision_date_added_at"].present? &&
+             ((request_issue_data["decision_date_added_at"].to_datetime -
+              change_data["request_issue_update_time"].to_datetime).abs * 24 * 60 * 60).to_f < 15
+            issue_events.push from_change_data(:added_decision_date, change_data.merge(request_issue_data))
+          end
+        else
+          issue_events.push from_change_data(event_type, change_data.merge(request_issue_data))
+        end
       end
     end
 
@@ -111,8 +125,14 @@ class ClaimHistoryEvent
 
       # Make a guess that it was the same transaction as intake. If not it was a probably an update
       # TODO: Verify that this date comparison is valid/good enough
-      same_transaction = (change_data["intake_completed_at"].to_datetime -
-                          change_data["request_issue_created_at"].to_datetime).abs < 1
+      # It's not
+      # ((Time.zone.now - 7.days - 2.hours).iso8601.to_datetime -
+      # Time.zone.now.iso8601.to_datetime).abs * 24 * 60 * 60.to_f
+
+      # TODO: Investigate if these values can ever be null or empty strings since it will syntax error
+      # TODO: Move this to a helper method since it is used in two spots
+      same_transaction = ((change_data["intake_completed_at"].to_datetime -
+                          change_data["request_issue_created_at"].to_datetime).abs * 24 * 60 * 60).to_f < 15
       event_hash = if same_transaction
                      intake_event_hash(change_data)
                    else
@@ -171,7 +191,8 @@ class ClaimHistoryEvent
         {
           "nonrating_issue_category" => request_issue.nonrating_issue_category,
           "nonrating_issue_description" => request_issue.nonrating_issue_description,
-          "decision_date" => request_issue.decision_date
+          "decision_date" => request_issue.decision_date,
+          "decision_date_added_at" => request_issue.decision_date_added_at&.iso8601
         }
       end
     end
