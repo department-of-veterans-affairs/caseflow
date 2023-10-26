@@ -27,7 +27,7 @@ const StaticLever = ({ lever }) => {
     fontWeight: 'bold',
     fontSize: '17px',
     lineHeight: '1.5em/33px',
-    borderTop: '1px solid black',
+    borderTop: '1px solid #ccc',
     columnSpan: 'all',
   };
 
@@ -42,7 +42,7 @@ const StaticLever = ({ lever }) => {
     fontWeight: '400',
     fontSize: '16px',
     lineHeight: '1.5em/33px',
-    borderBottom: '1px solid black',
+    borderBottom: '1px solid #ccc',
   };
 
   const valueStyling = {
@@ -57,7 +57,7 @@ const StaticLever = ({ lever }) => {
     fontSize: '16px',
     lineHeight: '1.5em/33px',
     textAlign: 'right',
-    borderBottom: '1px solid black',
+    borderBottom: '1px solid #ccc',
   };
 
   const tableStyling = {
