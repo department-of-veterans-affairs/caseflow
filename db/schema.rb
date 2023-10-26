@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_25_161714) do
+ActiveRecord::Schema.define(version: 2023_10_26_123217) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -600,7 +600,7 @@ ActiveRecord::Schema.define(version: 2023_10_25_161714) do
   end
 
   create_table "correspondence_intakes", force: :cascade do |t|
-    t.jsonb "added_tasks", comment: "Each object in the array will contain all relevant information to create the specific Task for either the Correspondence or the Related Appea", array: true
+    t.jsonb "added_tasks", comment: "Each object in the array will contain all relevant information to create the specific Task for either the Correspondence or the Related Appeal", array: true
     t.datetime "canceled_at", comment: "Timestamp of when user cancelled correspondence intake"
     t.string "canceled_reason", comment: "Details of reason user cancelled correspondence intake"
     t.bigint "correspondence_id", comment: "Foreign key on correspondences table"
