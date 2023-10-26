@@ -184,8 +184,8 @@ class BusinessLine < Organization
           request_issues.id AS actual_request_issue_id, request_issues.created_at AS request_issue_created_at,
           intakes.completed_at AS intake_completed_at, update_users.full_name AS update_user_name,
           intake_users.full_name AS intake_user_name, update_users.station_id AS update_user_station_id,
-          intake_users.station_id AS intake_user_station_id, disposition_users.full_name AS disposition_user_name,
-          disposition_users.station_id AS disposition_user_station_id, decision_issues.created_at AS decision_created_at
+          intake_users.station_id AS intake_user_station_id, decision_users.full_name AS decision_user_name,
+          decision_users.station_id AS decision_user_station_id, decision_issues.created_at AS decision_created_at
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
@@ -201,7 +201,7 @@ class BusinessLine < Organization
         LEFT JOIN people ON claimants.participant_id = people.participant_id
         LEFT JOIN users intake_users ON intakes.user_id = intake_users.id
         LEFT JOIN users update_users ON request_issues_updates.user_id = update_users.id
-        LEFT JOIN users disposition_users ON disposition_users.id = tasks.completed_by_id
+        LEFT JOIN users decision_users ON decision_users.id = tasks.completed_by_id
         WHERE tasks.type = 'DecisionReviewTask'
         AND tasks.assigned_to_type = 'Organization'
         AND tasks.assigned_to_id = '#{parent.id.to_i}'

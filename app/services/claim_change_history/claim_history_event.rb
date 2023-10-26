@@ -19,8 +19,8 @@ class ClaimHistoryEvent
       if change_data["disposition"]
         event_hash = {
           "event_date" => change_data["decision_created_at"],
-          "event_user" => change_data["disposition_user_name"],
-          "user_facility" => change_data["disposition_user_station_id"]
+          "event_user" => change_data["decision_user_name"],
+          "user_facility" => change_data["decision_user_station_id"]
         }
         from_change_data(:completed_disposition, change_data.merge(event_hash))
       end

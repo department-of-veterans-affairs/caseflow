@@ -275,7 +275,7 @@ class DecisionReviewsController < ApplicationController
 
   def create_change_history_csv(filter_params)
     base_url = "#{request.base_url}/decision_reviews/#{business_line.url}/tasks/"
-    events = ClaimHistoryService.build_events(business_line)
+    events = ClaimHistoryService.new(business_line, filter_params).build_events
     ChangeHistoryReporter.new(events, base_url, filter_params.to_h).as_csv
   end
 end
