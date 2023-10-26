@@ -14,11 +14,9 @@ RSpec.feature("The Correspondence Intake page") do
     end
 
     it "routes to intake if feature toggle is enabled" do
-      it "routes user to /unaithorized if the feature toggle is disabled" do
-        FeatureToggle.enable!(:correspondence_queue)
-        visit "/queue/correspondence/#{@correspondence_uuid}/intake"
-        expect(page).to have_current_path("/queue/correspondence/#{@correspondence_uuid}/intake")
-      end
+      FeatureToggle.enable!(:correspondence_queue)
+      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      expect(page).to have_current_path("/queue/correspondence/#{@correspondence_uuid}/intake")
     end
   end
 
