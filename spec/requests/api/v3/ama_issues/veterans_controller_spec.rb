@@ -31,6 +31,32 @@ describe Api::V3::AmaIssues::VeteransController, :postgres, type: :request do
       before { FeatureToggle.enable!(:api_v3_ama_issues) }
       after { FeatureToggle.disable!(:api_v3_ama_issues) }
 
+      context "when api key is missing in the header" do
+        let!(:vet) { create(:veteran) }
+
+        it "should return 'Unauthorized' error" do
+          get(
+            "/api/v3/ama_issues/veterans/#{vet.participant_id}"
+          )
+          expect(response).to have_http_status(401)
+          expect(response.body).to include("unauthorized")
+        end
+      end
+
+      context "when incorrect api key in the header" do
+        let!(:vet) { create(:veteran) }
+        authorization_header = { "Authorization" => "Token 99999999999900000000999999998888111000" }
+
+        it "should return 'Unauthorized' error" do
+          get(
+            "/api/v3/ama_issues/veterans/#{vet.participant_id}",
+            headers: authorization_header
+          )
+          expect(response).to have_http_status(401)
+          expect(response.body).to include("unauthorized")
+        end
+      end
+
       context "when a veteran is not found" do
         it "should return veteran not found error" do
           get(
