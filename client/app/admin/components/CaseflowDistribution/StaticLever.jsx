@@ -1,52 +1,91 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Table from '../../../components/Table';
 
 const StaticLever = ({ lever }) => {
   const renderValue = () => {
     switch (lever.data_type) {
-    case 'boolean':
-      return lever.value.toString();
-    case 'number':
-      return `${lever.value} ${lever.unit}`;
-    case 'radio':
-      return lever.options.find((option) => option.value === lever.value)?.text;
-    case 'combination':
-      return `${lever.value} ${lever.unit}`;
-    default:
-      return null;
+      case 'boolean':
+        return lever.value.toString();
+      case 'number':
+        return `${lever.value} ${lever.unit}`;
+      case 'radio':
+        return lever.options.find((option) => option.value === lever.value)?.text;
+      case 'combination':
+        return `${lever.value} ${lever.unit}`;
+      default:
+        return null;
     }
   };
 
-  const columns = [
-    {
-      header: '',
-      valueName: 'title',
-      align: 'left',
-      rowSpan: 2,
-    },
-    {
-      header: 'Data Elements',
-      valueName: 'description',
-      align: 'left',
-    },
-    {
-      header: 'Value',
-      valueFunction: renderValue,
-      align: 'center',
-    },
-  ];
+  const titleStyling = {
+    border: 'none',
+    paddingTop: '20px',
+    marginTop: '0',
+    paddingBottom: '0',
+    verticalAlign: 'text-top',
+    fontFamily: 'Source Sans Pro',
+    fontWeight: 'bold',
+    fontSize: '17px',
+    lineHeight: '1.5em/33px',
+    borderTop: '1px solid black',
+    columnSpan: 'all',
+  };
 
-  const rowObjects = [
-    {
-      title: lever.title,
-      description: lever.description,
-      value: renderValue(),
-    },
-  ];
+  const descriptionStyling = {
+    border: 'none',
+    paddingTop: '0',
+    marginTop: '0',
+    paddingRight: '20px',
+    paddingBottom: '20px',
+    verticalAlign: 'text-top',
+    fontFamily: 'Source Sans Pro',
+    fontWeight: '400',
+    fontSize: '16px',
+    lineHeight: '1.5em/33px',
+    borderBottom: '1px solid black',
+  };
+
+  const valueStyling = {
+    border: 'none',
+    paddingTop: '0',
+    marginTop: '0',
+    paddingBottom: '20px',
+    paddingRight: '20px',
+    verticalAlign: 'text-top',
+    fontFamily: 'Source Sans Pro',
+    fontWeight: '400',
+    fontSize: '16px',
+    lineHeight: '1.5em/33px',
+    textAlign: 'right',
+    borderBottom: '1px solid black',
+  };
+
+  const tableStyling = {
+    borderCollapse: 'collapse',
+  };
+
+  const valueWithUnit = renderValue();
+  const valueArray = valueWithUnit.split(' ');
+  const value = valueArray[0];
+  const unit = valueArray[1];
 
   return (
-    <Table columns={columns} rowObjects={rowObjects} />
+    <div>
+      <table style={tableStyling}>
+        <tbody>
+          <tr>
+            <td style={titleStyling}>{lever.title}</td>
+          </tr>
+          <tr>
+            <td style={descriptionStyling}>{lever.description}</td>
+            <td style={valueStyling}>
+              <span style={{ marginRight: '5px' }}>{value}</span>
+              <span>{unit}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   );
 };
 
