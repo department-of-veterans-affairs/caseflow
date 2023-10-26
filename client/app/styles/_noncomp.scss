@@ -149,8 +149,9 @@
 .report-page-segment {
   display: flex;
   flex-wrap: wrap;
+
   a {
-    align-self:flex-end;
+    align-self: flex-end;
     margin-left: auto;
   }
 
@@ -161,6 +162,7 @@
     .report-page-variable-select {
       width: 50%;
     }
+
     .report-page-variable-content {
       display: flex;
       justify-content: right;
