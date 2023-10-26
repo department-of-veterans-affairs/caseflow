@@ -93,7 +93,7 @@ class ClaimHistoryEvent
       # TODO: Withdrawn might need to add withdrawn date to the updates hash before sending it in
       process_issue_ids!(withdrawn_request_issue_ids, :withdrew_issue, change_data, updates_hash, issue_events)
       process_issue_ids!(removed_request_issue_ids, :removed_issue, change_data, updates_hash, issue_events)
-      process_issue_ids!(edited_request_issue_ids, :added_decision_date, change_data, updates_hash, issue_events)
+      process_issue_ids!(edited_request_issue_ids, :edited_issue, change_data, updates_hash, issue_events)
 
       issue_events
     end
@@ -105,7 +105,7 @@ class ClaimHistoryEvent
         # After I fetch the issue then compare the two dates
         # If they are close enough then push the event otherwise don't because it's not decision
         # TODO: event_type would need to match whatever is the edited event type placeholder
-        if event_type == :added_decision_date
+        if event_type == :edited_issue
           if request_issue_data["decision_date_added_at"].present? &&
              ((request_issue_data["decision_date_added_at"].to_datetime -
               change_data["request_issue_update_time"].to_datetime).abs * 24 * 60 * 60).to_f < 15
@@ -339,12 +339,6 @@ class ClaimHistoryEvent
     end
   end
 
-  # def status_information
-  #   if status_event?
-  #     [nil, status_description]
-  #   end
-  # end
-
   def issue_or_status_information
     if status_event?
       [nil, status_description]
@@ -363,7 +357,7 @@ class ClaimHistoryEvent
   end
 
   def issue_event?
-    [:completed_disposition, :added_issue, :withdrew_issue, :removed_issue].include?(@event_type)
+    [:completed_disposition, :added_issue, :withdrew_issue, :removed_issue, :added_decision_date].include?(@event_type)
   end
 
   def disposition_event?
