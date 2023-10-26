@@ -169,6 +169,8 @@ class BusinessLine < Organization
 
       issue_count_options
     end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
 
     def change_history_rows
       # The request_decision_issues is weird because it's a composite index on request_issue_id and decision_issue_id
@@ -214,8 +216,6 @@ class BusinessLine < Organization
 
       ActiveRecord::Base.connection.execute change_history_sql_block
     end
-    # rubocop:enable Metrics/MethodLength
-    # rubocop:enable Metrics/AbcSize
 
     private
 
