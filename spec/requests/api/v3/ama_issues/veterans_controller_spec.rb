@@ -31,7 +31,7 @@ describe Api::V3::AmaIssues::VeteransController, :postgres, type: :request do
       before { FeatureToggle.enable!(:api_v3_ama_issues) }
       after { FeatureToggle.disable!(:api_v3_ama_issues) }
 
-      context "when api key is missing in the header" do
+      context "when the api key is missing in the header" do
         let!(:vet) { create(:veteran) }
 
         it "should return 'Unauthorized' error" do
@@ -43,7 +43,7 @@ describe Api::V3::AmaIssues::VeteransController, :postgres, type: :request do
         end
       end
 
-      context "when incorrect api key in the header" do
+      context "when the incorrect api key is present in the header" do
         let!(:vet) { create(:veteran) }
         authorization_header = { "Authorization" => "Token 99999999999900000000999999998888111000" }
 
@@ -113,7 +113,7 @@ describe Api::V3::AmaIssues::VeteransController, :postgres, type: :request do
 
             it_behaves_like :it_should_respond_with_legacy_present, true
             it_behaves_like :it_should_respond_with_associated_request_issues, true, false
-            it_behaves_like :it_should_respond_with_same_multiple_decision_issues, true
+            it_behaves_like :it_should_respond_with_same_multiple_decision_issues_per_request_issue, true
 
             include_context :number_of_request_issues_exceeds_paginates_per, true
           end
@@ -141,7 +141,7 @@ describe Api::V3::AmaIssues::VeteransController, :postgres, type: :request do
 
             it_behaves_like :it_should_respond_with_legacy_present, false
             it_behaves_like :it_should_respond_with_associated_request_issues, false, false
-            it_behaves_like :it_should_respond_with_same_multiple_decision_issues, false
+            it_behaves_like :it_should_respond_with_same_multiple_decision_issues_per_request_issue, false
 
             include_context :number_of_request_issues_exceeds_paginates_per, false
           end

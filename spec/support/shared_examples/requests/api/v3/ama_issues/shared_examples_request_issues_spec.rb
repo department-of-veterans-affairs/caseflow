@@ -73,7 +73,7 @@ RSpec.shared_examples :it_should_respond_with_multiple_decision_issues_per_reque
   end
 end
 
-RSpec.shared_examples :it_should_respond_with_same_multiple_decision_issues do |legacy_appeals_present|
+RSpec.shared_examples :it_should_respond_with_same_multiple_decision_issues_per_request_issue do |legacy_appeals_present|
   it "should respond with the same multiple decision issues per request issue" do
     get(
       "/api/v3/ama_issues/veterans/#{vet.participant_id}",
