@@ -12,17 +12,26 @@ class ClaimHistoryEvent
       new(event_type, change_data)
     end
 
+    # TODO: There's no good way to determine who completed a disposition
+    # There's task.completed_by but it's not being used on dispositions. It also won't be present for past data unless
+    # We could run a job/script to backfill this to the whodunnit on task versions for status -> completed
     def create_completed_disposition_event(change_data)
       if change_data["disposition"]
-        from_change_data(:completed_disposition, change_data)
+        event_hash = {
+          "event_date" => change_data["decision_created_at"],
+          "event_user" => change_data["disposition_user_name"],
+          "user_facility" => change_data["disposition_user_station_id"]
+        }
+        from_change_data(:completed_disposition, change_data.merge(event_hash))
       end
     end
 
     def create_claim_creation_event(change_data)
-      from_change_data(:claim_creation, change_data.merge("event_date" => change_data["intake_completed_at"]))
+      from_change_data(:claim_creation, change_data.merge(intake_event_hash(change_data)))
     end
 
     # TODO: This is not great since it's more DB calls inside of the loop
+    # This is actually terrible. It's beyond not great
     def no_database_create_status_events(change_data)
       status_events = []
       task = Task.find(change_data["task_id"])
@@ -45,7 +54,8 @@ class ClaimHistoryEvent
       else
         # No versions so just make one with the current status?
         event_type = task_status_to_event_type(change_data["task_status"])
-        status_events.push from_change_data(event_type, change_data)
+        event_hash = { "event_date" => change_data["intake_completed_at"], "event_user_name" => "System" }
+        status_events.push from_change_data(event_type, change_data.merge(event_hash))
       end
 
       status_events
@@ -104,12 +114,7 @@ class ClaimHistoryEvent
       same_transaction = (change_data["intake_completed_at"].to_datetime -
                           change_data["request_issue_created_at"].to_datetime).abs < 1
       event_hash = if same_transaction
-                     {
-                       "event_date" => change_data["request_issue_created_at"],
-                       "event_user_name" => change_data["intake_user_name"],
-                       "user_facility" => change_data["intake_user_regional_office"] ||
-                         change_data["intake_user_station_id"]
-                     }
+                     intake_event_hash(change_data)
                    else
                      {
                        "event_date" => change_data["request_issue_created_at"],
@@ -188,7 +193,17 @@ class ClaimHistoryEvent
       event_date_hash = { "event_date" => event_date, "event_user_name" => "System" }
       from_change_data(event_type, change_data.merge(event_date_hash))
     end
+
+    def intake_event_hash(change_data)
+      {
+        "event_date" => change_data["intake_completed_at"],
+        "event_user_name" => change_data["intake_user_name"],
+        "user_facility" => change_data["intake_user_station_id"]
+      }
+    end
   end
+
+  ############### End of Class methods ##################
 
   def initialize(event_type, change_data)
     set_attributes_from_change_history_data(event_type, change_data)
@@ -198,7 +213,7 @@ class ClaimHistoryEvent
     [
       @veteran_file_number, @claimant_name, task_url, task_status_mapper,
       days_waiting, readable_claim_type, @facility, user_name_helper, format_date_string(@event_date),
-      event_type_to_readable_name, status_information, issue_information, disposition_information
+      event_type_to_readable_name, issue_or_status_information, disposition_information
     ]
   end
 
@@ -303,9 +318,17 @@ class ClaimHistoryEvent
     end
   end
 
-  def status_information
+  # def status_information
+  #   if status_event?
+  #     [nil, status_description]
+  #   end
+  # end
+
+  def issue_or_status_information
     if status_event?
       [nil, status_description]
+    else
+      issue_information
     end
   end
 
