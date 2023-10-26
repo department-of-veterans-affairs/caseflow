@@ -4,16 +4,16 @@ import PropTypes from 'prop-types';
 const StaticLever = ({ lever }) => {
   const renderValue = () => {
     switch (lever.data_type) {
-    case 'boolean':
-      return lever.value.toString();
-    case 'number':
-      return `${lever.value} ${lever.unit}`;
-    case 'radio':
-      return lever.options.find((option) => option.value === lever.value)?.text;
-    case 'combination':
-      return `${lever.value} ${lever.unit}`;
-    default:
-      return null;
+      case 'boolean':
+        return lever.value.toString();
+      case 'number':
+        return `${lever.value} ${lever.unit}`;
+      case 'radio':
+        return lever.options.find((option) => option.value === lever.value)?.text;
+      case 'combination':
+        return `${lever.value} ${lever.unit}`;
+      default:
+        return null;
     }
   };
 
@@ -79,7 +79,7 @@ const StaticLever = ({ lever }) => {
           <tr>
             <td style={descriptionStyling}>{lever.description}</td>
             <td style={valueStyling}>
-              <span style={{ marginRight: '5px' }}>{value}</span>
+              <span style={{ marginRight: '5px' }}>{value} </span>
               <span>{unit}</span>
             </td>
           </tr>
