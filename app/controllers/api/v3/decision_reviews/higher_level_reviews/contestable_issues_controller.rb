@@ -5,7 +5,7 @@ module Api
     module DecisionReviews
       module HigherLevelReviews
         class ContestableIssuesController < BaseContestableIssuesController
-          include ApiV3FeatureToggleConcern
+          include ApiFeatureToggleConcern
 
           before_action only: [:index] do
             api_released?(:api_v3_higher_level_reviews_contestable_issues)

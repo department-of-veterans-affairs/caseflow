@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Api::V3::DecisionReviews::LegacyAppealsController < Api::BaseController
-  include ApiV3FeatureToggleConcern
+  include ApiFeatureToggleConcern
 
   SSN_REGEX = /^\d{9}$/.freeze
 
