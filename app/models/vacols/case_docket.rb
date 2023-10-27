@@ -149,6 +149,8 @@ class VACOLS::CaseDocket < VACOLS::Record
       order by BFD19
     )
   "
+
+  # rubocop:disable Metrics/MethodLength
   def self.counts_by_priority_and_readiness
     query = <<-SQL
       select count(*) N, PRIORITY, READY
@@ -224,6 +226,8 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     connection.exec_query(sanitize_sql_array([query, row_number])).first["bfd19"].to_date
   end
+
+  # rubocop:disable Metrics/MethodLength
   def self.docket_counts_by_month
     query = <<-SQL
       select YEAR, MONTH,
@@ -364,6 +368,8 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.priority_ready_appeal_vacols_ids
     connection.exec_query(SELECT_PRIORITY_APPEALS).to_hash.map { |appeal| appeal["bfkey"] }
   end
+
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
 
@@ -466,3 +472,4 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.use_by_docket_date?
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
+end

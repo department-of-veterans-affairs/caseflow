@@ -13,7 +13,7 @@ class CaseDistributionIneligibleJudges
       .joins("LEFT JOIN organizations ON organizations_users.organization_id = organizations.id")
       .where("users.status != ? OR (users.id IN (#{non_admin_users_of_judge_teams}) OR (organizations_users.admin = '1'
       AND organizations.type = 'JudgeTeam' AND organizations.status <> 'active') )", "active")
-      .map { |user| { id: user.id, css_id: user.css_id } }.unique
+      .map { |user| { id: user.id, css_id: user.css_id } }.uniq
   end
 
   def self.non_admin_users_of_judge_teams
