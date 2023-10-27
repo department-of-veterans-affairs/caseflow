@@ -161,6 +161,10 @@
 
     .report-page-variable-select {
       width: 50%;
+
+      .cf-select .cf-select__control {
+        max-width: 100%;
+      }
     }
 
     .report-page-variable-content {
