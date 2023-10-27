@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CorrespondencesController < ApplicationController
+class CorrespondenceController < ApplicationController
   # before_action :verify_access
 
   def correspondence_cases

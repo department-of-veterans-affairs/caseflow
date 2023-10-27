@@ -294,7 +294,7 @@ Rails.application.routes.draw do
     get '/appeals/:appeal_id/cavc_dashboard', to: 'cavc_dashboard#index'
     get '/appeals/:vacols_id/tasks/:task_id/schedule_veteran', to: 'queue#index' # Allow direct navigation from the Hearings App
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
-    get '/correspondences', to: 'correspondences#correspondence_cases'
+    get '/correspondence', to: 'correspondence#correspondence_cases'
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
 

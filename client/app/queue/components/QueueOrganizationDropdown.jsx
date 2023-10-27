@@ -37,7 +37,7 @@ export default class QueueOrganizationDropdown extends React.Component {
     let items = [queueItem, ...organizationItems];
 
     if (/*featureToggles.correspondence_queue && */organizations[0].name === 'Mail') {
-      const orgHref = 'queue/correspondences/';
+      const orgHref = '/queue/correspondence';
 
       correspondenceItems = {
         key: (2).toString(),

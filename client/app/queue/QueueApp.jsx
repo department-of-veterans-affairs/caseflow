@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import StringUtil from '../util/StringUtil';
-import CorrespondenceIntake from '../queue/correspondences/correspondence_cases';
+import CorrespondenceCasesList from './correspondence/correspondence_cases';
 
 import {
   setCanEditAod,
@@ -661,7 +661,7 @@ class QueueApp extends React.PureComponent {
   );
 
   routedCorrespondenceIntake = () => (
-    <CorrespondenceIntake />
+    <CorrespondenceCasesList />
   );
 
   queueName = () =>
@@ -717,6 +717,13 @@ class QueueApp extends React.PureComponent {
               title={`${this.queueName()}  | Caseflow`}
               render={this.routedQueueList}
             />
+
+            <PageRoute
+              path="/queue/correspondence"
+              title={`${PAGE_TITLES.CORRESPONDENCE_CASES_LIST}`}
+              render={this.routedCorrespondenceIntake}
+            />
+
             <PageRoute
               exact
               path="/queue/:userId"
@@ -891,11 +898,7 @@ class QueueApp extends React.PureComponent {
               render={this.routedUserManagement}
             />
 
-            <PageRoute
-              path="/queue/correspondences"
-              title={`${PAGE_TITLES.CORRESPONDENCE_CASES_LIST}`}
-              render={this.routedCorrespondenceIntake}
-            />
+
 
             {motionToVacateRoutes.page}
 
