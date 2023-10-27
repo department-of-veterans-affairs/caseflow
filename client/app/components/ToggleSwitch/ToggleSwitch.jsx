@@ -1,9 +1,51 @@
-import React, { useState } from "react";
-import styles  from "./ToggleSwitch.module.scss"
+import React from "react";
+import PropTypes from "prop-types";
+import cx from 'classnames';
+import styles from "./ToggleSwitch.module.scss";
 
-export default function ToggleSwitch() {
-  const [isOff, setIsOff] = useState(true);
+const ToggleSwitch = ({
+  id,
+  name,
+  selected,
+  toggleSelected,
+  optionLabels,
+  disabled
+}) => {
   return (
-    <button className={styles.toggleButton} onClick={() => setIsOff(!isOff)}><small className={styles.toggleButtonSpace}></small><span className={ `${styles.toggleButtonText} ${isOff ? styles.switchOff : styles.switchOn}` }>{isOff ? "OFF" : "ON"}</span></button>
+    <button
+      className={
+        disabled
+          ? cx(styles.toggleButton, styles.toggleSwitchDisabled)
+          : styles.toggleButton
+      }
+      disabled={disabled}
+      id={id}
+      name={name}
+      onClick={toggleSelected}>
+        <span className={styles.toggleButtonSpace}></span>
+        <h5
+        className={ `${styles.toggleButtonText} ${selected ? styles.switchOn : styles.switchOff} ${disabled ? styles.switchDisabled : ''}` }
+        data-yes={optionLabels[0]}
+        data-no={optionLabels[1]}
+        >
+          {selected ? optionLabels[0] : optionLabels[1]}
+        </h5>
+    </button>
   );
-}
+};
+
+// Set optionLabels for rendering.
+ToggleSwitch.defaultProps = {
+  optionLabels: ["On", "Off"]
+};
+
+ToggleSwitch.propTypes = {
+  selected: PropTypes.bool.isRequired,
+  toggleSelected: PropTypes.func.isRequired,
+  id: PropTypes.string,
+  name: PropTypes.string,
+  optionLabels: PropTypes.array,
+  disabled: PropTypes.bool
+};
+
+export default ToggleSwitch;

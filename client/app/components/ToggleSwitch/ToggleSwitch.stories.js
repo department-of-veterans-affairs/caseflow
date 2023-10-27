@@ -1,9 +1,42 @@
-import React from 'react';
+import React, {useState} from 'react';
 import ToggleSwitch from './ToggleSwitch';
 
 export default {
   title: 'Commons/Components/ToggleSwitch',
-  component: ToggleSwitch
+  component: ToggleSwitch,
+  args: {
+    selected: false,
+    id: 'toggle-switch'
+  }
 };
 
-export const toogleSwitch = (args) => <ToggleSwitch {...args} />;
+export const toggleSwitchOn = (args) => {
+    const [selected, setSelected] = useState(true);
+    return <ToggleSwitch
+        id="toogle-switch-on"
+        selected={selected}
+        toggleSelected={() => {
+            setSelected(!selected);
+        }} />
+};
+
+export const toggleSwitchOff = (args) => {
+    const [selected, setSelected] = useState(false);
+    return <ToggleSwitch
+        id="toogle-switchoff"
+        selected={selected}
+        toggleSelected={() => {
+            setSelected(!selected);
+        }} />
+};
+
+export const toggleSwitchDisabled = (args) => {
+    const [selected, setSelected] = useState(false);
+    return <ToggleSwitch
+        id="toogle-switch-disabled"
+        selected={selected}
+        disabled={true}
+        toggleSelected={() => {
+            setSelected(!selected);
+        }} />
+};
