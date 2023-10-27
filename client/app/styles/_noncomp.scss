@@ -1,4 +1,4 @@
-$form-width: 575px;
+$dropdown-width: 428px;
 
 .cf-gray-box {
   background-color: $color-gray-lightest;
@@ -152,11 +152,11 @@ $form-width: 575px;
 .non-comp-report{
   .cf-select {
     .cf-select__control {
-      max-width: $form-width;
+      max-width: $dropdown-width;
     }
 
     .cf-select__menu {
-      max-width: $form-width;
+      max-width: $dropdown-width;
     }
   }
 }
