@@ -79,7 +79,7 @@ const ReportPage = ({ history }) => {
     >
       <h1>Generate task report</h1>
       <FormProvider {...methods}>
-        <form class="non-comp-report">
+        <form className="non-comp-report">
           <NonCompReportFilterContainer />
         </form>
       </FormProvider>
