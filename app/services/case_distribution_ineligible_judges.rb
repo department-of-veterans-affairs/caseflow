@@ -1,22 +1,24 @@
 # frozen_string_literal: true
 
 class CaseDistributionIneligibleJudges
-  def self.ineligible_vacols_judges
-    VACOLS::Staff.where("(STAFF.SVLJ IS NOT NULL OR STAFF.SATTYID IS NOT NULL) AND ((STAFF.SACTIVE = 'I') OR
+  class << self
+    def self.ineligible_vacols_judges
+      VACOLS::Staff.where("(STAFF.SVLJ IS NOT NULL OR STAFF.SATTYID IS NOT NULL) AND ((STAFF.SACTIVE = 'I') OR
      (STAFF.SVLJ <> 'A' AND STAFF.SVLJ <> 'J'))").map do |staff|
-      { sattyid: staff.sattyid, sdomainid: staff.sdomainid, svlj: staff.svlj }
+        { sattyid: staff.sattyid, sdomainid: staff.sdomainid, svlj: staff.svlj }
+      end
     end
-  end
 
-  def self.ineligible_caseflow_judges
-    User.joins("LEFT JOIN organizations_users ON users.id = organizations_users.user_id")
-      .joins("LEFT JOIN organizations ON organizations_users.organization_id = organizations.id")
-      .where("users.status != ? OR (users.id IN (#{non_admin_users_of_judge_teams}) OR (organizations_users.admin = '1'
+    def self.ineligible_caseflow_judges
+      User.joins("LEFT JOIN organizations_users ON users.id = organizations_users.user_id")
+        .joins("LEFT JOIN organizations ON organizations_users.organization_id = organizations.id")
+        .where("users.status != ? OR (users.id IN (#{non_admin_users_of_judge_teams}) OR (organizations_users.admin = '1'
       AND organizations.type = 'JudgeTeam' AND organizations.status <> 'active') )", "active")
-      .map { |user| { id: user.id, css_id: user.css_id } }.uniq
-  end
+        .map { |user| { id: user.id, css_id: user.css_id } }.uniq
+    end
 
-  def self.non_admin_users_of_judge_teams
-    JudgeTeam.all.map(&:non_admins).flatten.map(&:id).join(", ")
+    def self.non_admin_users_of_judge_teams
+      JudgeTeam.all.map(&:non_admins).flatten.map(&:id).join(", ")
+    end
   end
 end
