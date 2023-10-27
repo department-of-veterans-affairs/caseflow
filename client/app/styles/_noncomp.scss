@@ -1,3 +1,5 @@
+$form-width: 575px;
+
 .cf-gray-box {
   background-color: $color-gray-lightest;
   border: 1px solid $color-gray-lighter;
@@ -19,6 +21,7 @@
     }
 
   }
+
 }
 
 .cf-review-details {
@@ -143,5 +146,17 @@
 
   .cf-pagination-pages {
     padding-top: 65px;
+  }
+}
+
+.non-comp-report{
+  .cf-select {
+    .cf-select__control {
+      max-width: $form-width;
+    }
+
+    .cf-select__menu {
+      max-width: $form-width;
+    }
   }
 }
