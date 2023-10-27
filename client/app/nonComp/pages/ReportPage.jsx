@@ -6,6 +6,7 @@ import Button from 'app/components/Button';
 import NonCompLayout from '../components/NonCompLayout';
 
 import NonCompReportFilterContainer from '../components/NonCompReportFilter';
+import RadioField from '../../components/RadioField';
 
 const buttonInnerContainerStyle = css({
   display: 'flex',
@@ -61,12 +62,28 @@ const ReportPageButtons = ({
 const ReportPage = ({ history }) => {
   const defaultFormValues = {
     reportType: '',
+    radioEventAction: '',
   };
 
   const methods = useForm({ defaultValues: { ...defaultFormValues } });
 
-  const { reset, formState } = methods;
+  const { register, reset, watch, getValues,setvalues, formState } = methods;
 
+  const watchReportType = watch('reportType');
+  const watchEventTypeAction = watch('radioEventAction')
+
+  const onSubmit = (data) => console.log(data);
+
+  const radioEventActionOptions = [
+    {
+      displayText: <span>All Events / Actions</span>,
+      value: 'all_events_action'
+    },
+    {
+      displayText: <span>Specific Events / Actions</span>,
+      value: 'specific_events_action'
+    }
+  ]
   return (
     <NonCompLayout
       buttons={
@@ -74,6 +91,7 @@ const ReportPage = ({ history }) => {
           history={history}
           disableGenerateButton={!formState.isDirty}
           handleClearFilters={() => reset(defaultFormValues)}
+          handleSubmit={methods.handleSubmit(onSubmit)}
         />
       }
     >
@@ -81,6 +99,19 @@ const ReportPage = ({ history }) => {
       <FormProvider {...methods}>
         <form>
           <NonCompReportFilterContainer />
+          {watchReportType === 'event_type_action' ?
+            <>
+              <RadioField
+                {...register('radioEventAction')}
+                name='radioEventAction'
+                label=""
+                options={radioEventActionOptions}
+                vertical
+                // value = {getValues('radioEventAction')}
+                onchange={(valObj) => setvalues('radioEventAction',valObj?.value)}
+              />
+            </>
+            : ''}
         </form>
       </FormProvider>
     </NonCompLayout>
