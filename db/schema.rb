@@ -591,9 +591,7 @@ ActiveRecord::Schema.define(version: 2023_10_25_143040) do
 
   create_table "correspondence_documents", force: :cascade do |t|
     t.bigint "correspondence_id"
-    t.datetime "created_at", null: false, comment: "Date and Time of creation."
     t.string "document_file_number", comment: "From CMP documents table"
-    t.datetime "updated_at", null: false, comment: "Date and Time of last update."
     t.uuid "uuid", comment: "Reference to document in AWS S3"
     t.string "vbms_document_id", comment: "From CMP documents table"
     t.index ["correspondence_id"], name: "index_correspondence_documents_on_correspondence_id"
@@ -608,7 +606,7 @@ ActiveRecord::Schema.define(version: 2023_10_25_143040) do
     t.text "notes", comment: "Comes from CMP; can be updated by user"
     t.integer "package_document_type_id", comment: "Represents entire CMP package document type"
     t.datetime "portal_entry_date", comment: "Time when correspondence is created in Caseflow"
-    t.bigint "prior_correspondence_id", null: false, comment: "Foreign key to Correspondences table"
+    t.integer "prior_correspondence_id"
     t.string "source_type", comment: "An information identifier we get from CMP"
     t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.bigint "updated_by_id", comment: "Foreign key to users table"
