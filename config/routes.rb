@@ -54,7 +54,7 @@ Rails.application.routes.draw do
           get "veterans/:participant_id", to: "veterans#show"
         end
       end
-      name :legacy_issues do
+      namespace :legacy_issues do
         get "veterans/:participant_id", to: "veterans#show"
       end
     end

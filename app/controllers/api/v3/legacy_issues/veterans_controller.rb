@@ -23,10 +23,10 @@ class Api::V3::LegacyIssues::VeteransController < Api::V3::BaseController
   end
 
   def show
-    @veteran = Veteran.find_by!(participant_id: params[:participant_id])
-    @page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]
+    veteran =  veteran = find_veteran
+    page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]
     # Disallow page(0) since page(0) == page(1) in kaminari. This is to avoid confusion.
-    (@page == 0) ? @page = 1 : @page ||= 1
+    (page == 0) ? page = 1 : page ||= 1
     puts "Legacy Issues API"
     # TODO uncomment when DTO mapper/ serializer is finished
     # render_vacols_issues(Api::V3::LegacyIssues::VbmsLegacyDtoBuilder.new(veteran, page).hash_response) if veteran
