@@ -18,13 +18,13 @@ const StaticLever = ({ lever }) => {
   };
 
   const topLineStyle = {
-    borderTop: '1px solid #ccc',
+    borderTop: '2px solid #eee',
     // marginBottom: '-110px',
     position: 'absolute',
   };
 
   const bottomLineStyle = {
-    borderBottom: '1px solid #ccc',
+    borderBottom: '2px solid #eee',
     // marginBottom: '10px',
     marginTop: '-20px',
   };
@@ -33,26 +33,26 @@ const StaticLever = ({ lever }) => {
     border: 'none',
     paddingTop: '10px',
     // marginTop: '20',
-    marginBottom: '10px',
-    paddingBottom: '10px',
+    marginBottom: '6px',
+    paddingBottom: '7px',
     verticalAlign: 'text-top',
     fontFamily: 'Source Sans Pro',
-    fontWeight: 'bold',
-    fontSize: '17px',
+    fontWeight: '700',
+    fontSize: '15px',
     lineHeight: '.25em',
   };
 
   const descriptionStyling = {
     border: 'none',
     paddingTop: '0',
-    marginTop: '0',
+    marginTop: '-5px',
     paddingRight: '20px',
     paddingBottom: '-20px',
     verticalAlign: 'text-top',
     fontFamily: 'Source Sans Pro',
     fontWeight: '400',
-    fontSize: '17px',
-    // lineHeight: '1.5em/33px',
+    fontSize: '15px',
+    lineHeight: '1.5em/26px',
     // borderBottom: '1px solid #ccc',
   };
 
@@ -65,7 +65,7 @@ const StaticLever = ({ lever }) => {
     verticalAlign: 'text-top',
     fontFamily: 'Source Sans Pro',
     fontWeight: '400',
-    fontSize: '17px',
+    fontSize: '15px',
     lineHeight: '1.5em/33px',
     textAlign: 'right',
     // borderBottom: '1px solid #ccc',
