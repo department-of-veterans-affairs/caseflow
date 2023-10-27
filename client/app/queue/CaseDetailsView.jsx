@@ -38,8 +38,6 @@ import CaseHearingsDetail from './CaseHearingsDetail';
 import { CaseTimeline } from './CaseTimeline';
 import CaseTitle from './CaseTitle';
 import CaseTitleDetails from './CaseTitleDetails';
-// TODO: Move to Review page
-import ReviewPackageCaseTitle from './ReviewPackageCaseTitle';
 import CavcDetail from './caseDetails/CavcDetail';
 import CaseDetailsPostDispatchActions from './CaseDetailsPostDispatchActions';
 import { PowerOfAttorneyDetail } from './PowerOfAttorneyDetail';
@@ -290,7 +288,6 @@ export const CaseDetailsView = (props) => {
         </div>
       )}
       <AppSegment filledBackground>
-        <ReviewPackageCaseTitle appeal={appeal} />
         <CaseTitle appeal={appeal} />
         {supportPendingAppealSubstitution && (
           <div {...sectionGap}>
@@ -437,20 +434,6 @@ export const CaseDetailsView = (props) => {
         </StickyNavContentArea >
         {props.pollHearing && pollHearing()}
       </AppSegment>
-      <div className="cf-app-segment">
-        <div className="cf-push-left">
-          <Button
-            name="Cancel"
-            classNames={['cf-btn-link']}
-          />
-        </div>
-        <div className="cf-push-right">
-          <Button
-            name=" Create record"
-            classNames={['usa-button-primary']}
-          />
-        </div>
-      </div>
     </React.Fragment>
   );
 };

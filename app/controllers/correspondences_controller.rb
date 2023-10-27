@@ -6,7 +6,7 @@ class CorrespondencesController < ApplicationController
   def index; end
 
   def review_package
-    # binding.pry
+    render "correspondences/review_package"
   end
 
   private

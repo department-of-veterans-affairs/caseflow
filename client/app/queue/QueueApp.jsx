@@ -83,6 +83,7 @@ import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
+import CorrespondenceReviewPackage from './correspondences/reviewPackage/reviewPackage';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -610,6 +611,10 @@ class QueueApp extends React.PureComponent {
     <PostponeHearingTaskModal {...props.match.params} />
   );
 
+  routedReviewPackage = () => (
+    <CorrespondenceReviewPackage />
+  );
+
   routedStartHoldModal = (props) => <StartHoldModal {...props.match.params} />;
 
   routedEndHoldModal = (props) => <EndHoldModal {...props.match.params} />;
@@ -866,6 +871,12 @@ class QueueApp extends React.PureComponent {
               path="/queue/appeals/:appealId/edit_appellant_information"
               title={`${PAGE_TITLES.EDIT_APPELLANT_INFORMATION} | Caseflow`}
               render={this.routedEditAppellantInformation}
+            />
+
+            <PageRoute
+              path="/queue/correspondences/:correspondenceId/review_package"
+              title={`${PAGE_TITLES.REVIEW_PACKAGE}`}
+              render={this.routedReviewPackage}
             />
 
             <PageRoute
