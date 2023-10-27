@@ -591,9 +591,7 @@ ActiveRecord::Schema.define(version: 2023_10_26_123217) do
 
   create_table "correspondence_documents", force: :cascade do |t|
     t.bigint "correspondence_id"
-    t.datetime "created_at", null: false, comment: "Date and Time of creation."
     t.string "document_file_number", comment: "From CMP documents table"
-    t.datetime "updated_at", null: false, comment: "Date and Time of last update."
     t.uuid "uuid", comment: "Reference to document in AWS S3"
     t.string "vbms_document_id", comment: "From CMP documents table"
     t.index ["correspondence_id"], name: "index_correspondence_documents_on_correspondence_id"
@@ -2140,7 +2138,6 @@ ActiveRecord::Schema.define(version: 2023_10_26_123217) do
   add_foreign_key "conference_links", "hearing_days"
   add_foreign_key "conference_links", "users", column: "created_by_id"
   add_foreign_key "conference_links", "users", column: "updated_by_id"
-  add_foreign_key "correspondence_documents", "correspondences"
   add_foreign_key "correspondence_intakes", "correspondences"
   add_foreign_key "correspondence_intakes", "users"
   add_foreign_key "correspondences", "correspondences", column: "prior_correspondence_id"
