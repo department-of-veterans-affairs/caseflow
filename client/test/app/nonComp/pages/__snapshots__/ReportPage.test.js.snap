@@ -10,9 +10,7 @@ exports[`ReportPage renders correctly 1`] = `
         <h1>
           Generate task report
         </h1>
-        <form
-          class="non-comp-report"
-        >
+        <form>
           <h2>
             Type of Report
           </h2>

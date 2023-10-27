@@ -1,5 +1,3 @@
-$dropdown-width: 428px;
-
 .cf-gray-box {
   background-color: $color-gray-lightest;
   border: 1px solid $color-gray-lighter;
@@ -149,14 +147,3 @@ $dropdown-width: 428px;
   }
 }
 
-.non-comp-report{
-  .cf-select {
-    .cf-select__control {
-      max-width: $dropdown-width;
-    }
-
-    .cf-select__menu {
-      max-width: $dropdown-width;
-    }
-  }
-}
