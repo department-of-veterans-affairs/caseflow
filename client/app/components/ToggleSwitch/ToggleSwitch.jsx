@@ -25,8 +25,6 @@ const ToggleSwitch = ({
         <span className={styles.toggleButtonSpace}></span>
         <h5
         className={ `${styles.toggleButtonText} ${selected ? styles.switchOn : styles.switchOff} ${disabled ? styles.switchDisabled : ''}` }
-        data-yes={optionLabels[0]}
-        data-no={optionLabels[1]}
         >
           {selected ? optionLabels[0] : optionLabels[1]}
         </h5>

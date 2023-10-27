@@ -3,11 +3,7 @@ import ToggleSwitch from './ToggleSwitch';
 
 export default {
   title: 'Commons/Components/ToggleSwitch',
-  component: ToggleSwitch,
-  args: {
-    selected: false,
-    id: 'toggle-switch'
-  }
+  component: ToggleSwitch
 };
 
 export const toggleSwitchOn = (args) => {
