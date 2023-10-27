@@ -3,7 +3,7 @@
 class Api::V3::VbmsIntake::Legacy::VacolsIssueSerializer
   include JSONAPI::Serializer
 
-  attribute :vacols_issue do |object|
-    object.try(:vbms_attributes)
-  end
+  set_type :issue
+
+  attribute :vacols_issue, &:vbms_attributes
 end
