@@ -7,7 +7,6 @@ class ExternalApi::WebexService
   CLIENT_ID = ENV["WEBEX_CLIENT_ID"]
   CLIENT_SECRET = ENV["WEBEX_CLIENT_SECRET"]
   REFRESH_TOKEN = ENV["WEBEX_REFRESH_TOKEN"]
-  SCOPE = ""
   HEADERS = {
     "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json"
   }.freeze

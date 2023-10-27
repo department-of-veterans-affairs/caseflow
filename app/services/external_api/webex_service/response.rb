@@ -53,4 +53,18 @@ class ExternalApi::WebexService::Response
       DEFAULT_ERROR_BODY
     end
   end
+
+  def invalid_token
+    return DEFAULT_ERROR_BODY if resp.raw_body.empty?
+
+    begin
+      body = JSON.parse(resp.raw_body)
+      {
+        message: body["message"],
+        description: body["errors"].first["description"]
+      }
+    rescue JSON::ParserError
+      DEFAULT_ERROR_BODY
+    end
+  end
 end
