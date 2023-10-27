@@ -71,7 +71,7 @@ const ReportPage = ({ history }) => {
 
   return (
     <FormProvider {...methods}>
-      <form>
+      <form className="non-comp-report">
         <NonCompLayout buttons={<ReportPageButtons history={history} />}>
           <h1>Generate task report</h1>
           <ReportPageConditions />

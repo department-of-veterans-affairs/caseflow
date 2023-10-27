@@ -1,3 +1,5 @@
+$form-width: 575px;
+
 .cf-gray-box {
   background-color: $color-gray-lightest;
   border: 1px solid $color-gray-lighter;
@@ -146,6 +148,18 @@
   }
 }
 
+.non-comp-report{
+  .cf-select {
+    .cf-select__control {
+      max-width: $form-width;
+    }
+
+    .cf-select__menu {
+      max-width: $form-width;
+    }
+  }
+}
+
 .report-page-segment {
   display: flex;
   flex-wrap: wrap;
@@ -161,10 +175,6 @@
 
     .report-page-variable-select {
       width: 50%;
-
-      .cf-select .cf-select__control {
-        max-width: 100%;
-      }
     }
 
     .report-page-variable-content {
