@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::V3::DecisionReviews::HigherLevelReviewsController < Api::V3::BaseController
+class Api::V3::DecisionReviews::HigherLevelReviewsController < Api::BaseController
   include ApiV3FeatureToggleConcern
 
   before_action do
