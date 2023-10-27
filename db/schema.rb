@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_24_162133) do
+ActiveRecord::Schema.define(version: 2023_10_26_080814) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 2023_10_24_162133) do
     t.boolean "appeal_docketed", default: false, null: false, comment: "When true, appeal has been docketed"
     t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID"
     t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the table"
     t.bigint "created_by_id", null: false, comment: "User id of the user that inserted the record"
     t.boolean "decision_mailed", default: false, null: false, comment: "When true, appeal has decision mail request complete"
     t.boolean "hearing_postponed", default: false, null: false, comment: "When true, appeal has hearing postponed and no hearings scheduled"
@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 2023_10_24_162133) do
     t.boolean "privacy_act_complete", default: false, null: false, comment: "When true, appeal has a privacy act request completed"
     t.boolean "privacy_act_pending", default: false, null: false, comment: "When true, appeal has a privacy act request still open"
     t.boolean "scheduled_in_error", default: false, null: false, comment: "When true, hearing was scheduled in error and none scheduled"
-    t.datetime "updated_at"
+    t.datetime "updated_at", comment: "Date and time the record was last updated"
     t.bigint "updated_by_id", comment: "User id of the last user that updated the record"
     t.boolean "vso_ihp_complete", default: false, null: false, comment: "When true, appeal has a VSO IHP request completed"
     t.boolean "vso_ihp_pending", default: false, null: false, comment: "When true, appeal has a VSO IHP request pending"
@@ -220,7 +220,7 @@ ActiveRecord::Schema.define(version: 2023_10_24_162133) do
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
-  create_table "batch_processes", primary_key: "batch_id", id: :uuid, default: -> { "uuid_generate_v4()" }, comment: "A generalized table for batching and processing records within caseflow", force: :cascade do |t|
+  create_table "batch_processes", primary_key: "batch_id", id: :uuid, default: -> { "uuid_generate_v4()" }, comment: "The unique id of the created batch", comment: "A generalized table for batching and processing records within caseflow", force: :cascade do |t|
     t.string "batch_type", null: false, comment: "Indicates what type of record is being batched"
     t.datetime "created_at", null: false, comment: "Date and Time that batch was created."
     t.datetime "ended_at", comment: "The date/time that the batch finsished processing"
@@ -597,6 +597,13 @@ ActiveRecord::Schema.define(version: 2023_10_24_162133) do
     t.uuid "uuid", comment: "Reference to document in AWS S3"
     t.string "vbms_document_id", comment: "From CMP documents table"
     t.index ["correspondence_id"], name: "index_correspondence_documents_on_correspondence_id"
+  end
+
+  create_table "correspondence_types", force: :cascade do |t|
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
   end
 
   create_table "correspondences", force: :cascade do |t|
@@ -1325,7 +1332,7 @@ ActiveRecord::Schema.define(version: 2023_10_24_162133) do
     t.string "appeals_type", null: false, comment: "Type of Appeal"
     t.datetime "created_at", comment: "Timestamp of when Noticiation was Created"
     t.boolean "email_enabled", default: true, null: false
-    t.string "email_notification_content", comment: "Full Email Text Content of Notification"
+    t.text "email_notification_content", comment: "Full Email Text Content of Notification"
     t.string "email_notification_external_id", comment: "VA Notify Notification Id for the email notification send through their API "
     t.string "email_notification_status", comment: "Status of the Email Notification"
     t.date "event_date", null: false, comment: "Date of Event"
@@ -1336,8 +1343,8 @@ ActiveRecord::Schema.define(version: 2023_10_24_162133) do
     t.string "participant_id", comment: "ID of Participant"
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
-    t.string "sms_notification_content", comment: "Full SMS Text Content of Notification"
-    t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
+    t.text "sms_notification_content", comment: "Full SMS Text Content of Notification"
+    t.string "sms_notification_external_id"
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
@@ -1926,46 +1933,6 @@ ActiveRecord::Schema.define(version: 2023_10_24_162133) do
     t.index ["created_by_id"], name: "index_vbms_distributions_on_created_by_id"
     t.index ["updated_by_id"], name: "index_vbms_distributions_on_updated_by_id"
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
-  end
-
-  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
-    t.string "ALLOW_POA_ACCESS", limit: 5
-    t.decimal "CLAIMANT_PERSON_ID", precision: 38
-    t.datetime "CLAIM_DATE"
-    t.string "CLAIM_SOJ", limit: 25
-    t.integer "CONTENTION_COUNT"
-    t.datetime "CREATEDDT", null: false
-    t.string "EP_CODE", limit: 25
-    t.datetime "ESTABLISHMENT_DATE"
-    t.datetime "EXPIRATIONDT"
-    t.string "INTAKE_SITE", limit: 25
-    t.datetime "LASTUPDATEDT", null: false
-    t.string "LEVEL_STATUS_CODE", limit: 25
-    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
-    t.string "LIFECYCLE_STATUS_NAME", limit: 50
-    t.string "ORGANIZATION_NAME", limit: 100
-    t.string "ORGANIZATION_SOJ", limit: 25
-    t.string "PAYEE_CODE", limit: 25
-    t.string "POA_CODE", limit: 25
-    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
-    t.string "PRE_DISCHARGE_IND", limit: 5
-    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
-    t.string "PRIORITY", limit: 10
-    t.string "PROGRAM_TYPE_CODE", limit: 10
-    t.string "RATING_SOJ", limit: 25
-    t.string "SERVICE_TYPE_CODE", limit: 10
-    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
-    t.string "SUBMITTER_ROLE_CODE", limit: 25
-    t.datetime "SUSPENSE_DATE"
-    t.string "SUSPENSE_REASON_CODE", limit: 25
-    t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
-    t.decimal "SYNC_ID", precision: 38, null: false
-    t.string "TEMPORARY_CLAIM_SOJ", limit: 25
-    t.string "TYPE_CODE", limit: 25
-    t.decimal "VERSION", precision: 38, null: false
-    t.decimal "VETERAN_PERSON_ID", precision: 15
-    t.index ["CLAIM_ID"], name: "claim_id_index"
-    t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
