@@ -4,31 +4,42 @@ import PropTypes from 'prop-types';
 const StaticLever = ({ lever }) => {
   const renderValue = () => {
     switch (lever.data_type) {
-      case 'boolean':
-        return lever.value.toString();
-      case 'number':
-        return `${lever.value} ${lever.unit}`;
-      case 'radio':
-        return lever.options.find((option) => option.value === lever.value)?.text;
-      case 'combination':
-        return `${lever.value} ${lever.unit}`;
-      default:
-        return null;
+    case 'boolean':
+      return lever.value.toString();
+    case 'number':
+      return `${lever.value} ${lever.unit}`;
+    case 'radio':
+      return lever.options.find((option) => option.value === lever.value)?.text;
+    case 'combination':
+      return `${lever.value} ${lever.unit}`;
+    default:
+      return null;
     }
+  };
+
+  const topLineStyle = {
+    borderTop: '1px solid #ccc',
+    // marginBottom: '-110px',
+    position: 'absolute',
+  };
+
+  const bottomLineStyle = {
+    borderBottom: '1px solid #ccc',
+    // marginBottom: '10px',
+    marginTop: '-20px',
   };
 
   const titleStyling = {
     border: 'none',
-    paddingTop: '20px',
-    marginTop: '0',
-    paddingBottom: '0',
+    paddingTop: '10px',
+    // marginTop: '20',
+    marginBottom: '10px',
+    paddingBottom: '10px',
     verticalAlign: 'text-top',
     fontFamily: 'Source Sans Pro',
     fontWeight: 'bold',
     fontSize: '17px',
-    lineHeight: '1.5em/33px',
-    borderTop: '1px solid #ccc',
-    columnSpan: 'all',
+    lineHeight: '.25em',
   };
 
   const descriptionStyling = {
@@ -36,28 +47,31 @@ const StaticLever = ({ lever }) => {
     paddingTop: '0',
     marginTop: '0',
     paddingRight: '20px',
-    paddingBottom: '20px',
+    paddingBottom: '-20px',
     verticalAlign: 'text-top',
     fontFamily: 'Source Sans Pro',
     fontWeight: '400',
-    fontSize: '16px',
-    lineHeight: '1.5em/33px',
-    borderBottom: '1px solid #ccc',
+    fontSize: '17px',
+    // lineHeight: '1.5em/33px',
+    // borderBottom: '1px solid #ccc',
   };
 
   const valueStyling = {
     border: 'none',
     paddingTop: '0',
     marginTop: '0',
-    paddingBottom: '20px',
-    paddingRight: '20px',
+    paddingBottom: '-20px',
+    // paddingRight: '20px',
     verticalAlign: 'text-top',
     fontFamily: 'Source Sans Pro',
     fontWeight: '400',
-    fontSize: '16px',
+    fontSize: '17px',
     lineHeight: '1.5em/33px',
     textAlign: 'right',
-    borderBottom: '1px solid #ccc',
+    // borderBottom: '1px solid #ccc',
+    display: 'flex',
+    alignItems: 'baseline',
+    justifyContent: 'flex-end',
   };
 
   const tableStyling = {
@@ -71,20 +85,23 @@ const StaticLever = ({ lever }) => {
 
   return (
     <div>
-      <table style={tableStyling}>
-        <tbody>
-          <tr>
-            <td style={titleStyling}>{lever.title}</td>
-          </tr>
-          <tr>
-            <td style={descriptionStyling}>{lever.description}</td>
-            <td style={valueStyling}>
-              <span style={{ marginRight: '5px' }}>{value} </span>
-              <span>{unit}</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div style={topLineStyle}>
+        <table style={tableStyling}>
+          <tbody>
+            <tr>
+              <td style={titleStyling}>{lever.title}</td>
+            </tr>
+            <tr>
+              <td style={descriptionStyling}>{lever.description}</td>
+              <td style={valueStyling}>
+                <span style={{ marginRight: '5px' }}>{value} </span>
+                <span>{unit}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div style={bottomLineStyle}></div>
+      </div>
     </div>
   );
 };
