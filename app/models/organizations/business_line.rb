@@ -69,7 +69,7 @@ class BusinessLine < Organization
     QueryBuilder.new(query_type: :completed, parent: self).issue_type_count
   end
 
-  def change_history_rows(filters={})
+  def change_history_rows(filters = {})
     QueryBuilder.new(query_params: filters, parent: self).change_history_rows
   end
 
@@ -185,7 +185,8 @@ class BusinessLine < Organization
           intakes.completed_at AS intake_completed_at, update_users.full_name AS update_user_name,
           intake_users.full_name AS intake_user_name, update_users.station_id AS update_user_station_id,
           intake_users.station_id AS intake_user_station_id, decision_users.full_name AS decision_user_name,
-          decision_users.station_id AS decision_user_station_id, decision_issues.created_at AS decision_created_at
+          decision_users.station_id AS decision_user_station_id, decision_issues.created_at AS decision_created_at,
+          intake_users.id AS intake_user_id, decision_users.id AS decision_user_id, update_users.id AS update_user_id
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
@@ -280,6 +281,7 @@ class BusinessLine < Organization
     end
 
     def days_waiting_filter
+      # TODO: Make sure this filter gets parsed correctly to use the > < = and between
       if query_params[:days_waiting].present?
         number_of_days = query_params[:days_waiting][:number_of_days]
         operator = query_params[:days_waiting][:range]
@@ -311,7 +313,7 @@ class BusinessLine < Organization
             OR
             #{User.arel_table.alias(:update_users)[:station_id].in(query_params[:facilities]).to_sql}
             OR
-            #{User.arel_table.alias(:disposition_users)[:station_id].in(query_params[:facilities]).to_sql}
+            #{User.arel_table.alias(:decision_users)[:station_id].in(query_params[:facilities]).to_sql}
           )
         SQL
       end
@@ -328,7 +330,7 @@ class BusinessLine < Organization
             OR
             #{User.arel_table.alias(:update_users)[:id].in(query_params[:personnel]).to_sql}
             OR
-            #{User.arel_table.alias(:disposition_users)[:station_id].in(query_params[:facilities]).to_sql}
+            #{User.arel_table.alias(:decision_users)[:station_id].in(query_params[:facilities]).to_sql}
           )
         SQL
       end

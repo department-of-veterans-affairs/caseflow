@@ -2,10 +2,11 @@
 
 class ClaimHistoryEvent
   attr_reader :task_id, :event_type, :event_date, :assigned_at, :days_waiting,
-              :veteran_file_number, :claim_type, :claimant_name, :facility,
+              :veteran_file_number, :claim_type, :claimant_name, :user_facility,
               :benefit_type, :issue_type, :issue_description, :decision_date,
               :disposition, :decision_description, :withdrawal_request_date,
-              :task_status, :disposition_date, :intake_completed_date, :event_user_name
+              :task_status, :disposition_date, :intake_completed_date, :event_user_name,
+              :event_user_id
 
   class << self
     def from_change_data(event_type, change_data)
@@ -19,8 +20,9 @@ class ClaimHistoryEvent
       if change_data["disposition"]
         event_hash = {
           "event_date" => change_data["decision_created_at"],
-          "event_user" => change_data["decision_user_name"],
-          "user_facility" => change_data["decision_user_station_id"]
+          "event_user_name" => change_data["decision_user_name"],
+          "user_facility" => change_data["decision_user_station_id"],
+          "event_user_id" => change_data["decision_user_id"]
         }
         from_change_data(:completed_disposition, change_data.merge(event_hash))
       end
@@ -64,11 +66,6 @@ class ClaimHistoryEvent
       status_events
     end
 
-    # TODO: Implement this based on the database query if possible
-    def database_create_status_events(change_data)
-      change_data
-    end
-
     def create_issue_events(change_data)
       issue_events = []
 
@@ -82,11 +79,13 @@ class ClaimHistoryEvent
 
       update_user_name = change_data["update_user_name"]
       update_time = change_data["request_issue_update_time"]
+      # TODO: Pull this out into a method except event_date
       updates_hash = {
         "event_date" => update_time,
         "event_user_name" => update_user_name,
         "user_facility" => change_data["update_user_regional_office"] ||
-                           change_data["update_user_station_id"]
+                           change_data["update_user_station_id"],
+        "event_user_id" => change_data["update_user_id"]
       }
 
       # Adds events to the issue events array
@@ -140,7 +139,8 @@ class ClaimHistoryEvent
                        "event_date" => change_data["request_issue_created_at"],
                        "event_user_name" => change_data["update_user_name"],
                        "user_facility" => change_data["update_user_regional_office"] ||
-                         change_data["update_user_station_id"]
+                         change_data["update_user_station_id"],
+                       "event_user_id" => change_data["update_user_id"]
                      }
                    end
 
@@ -219,7 +219,8 @@ class ClaimHistoryEvent
       {
         "event_date" => change_data["intake_completed_at"],
         "event_user_name" => change_data["intake_user_name"],
-        "user_facility" => change_data["intake_user_station_id"]
+        "user_facility" => change_data["intake_user_station_id"],
+        "event_user_id" => change_data["intake_user_id"]
       }
     end
   end
@@ -233,7 +234,7 @@ class ClaimHistoryEvent
   def to_csv_array
     [
       @veteran_file_number, @claimant_name, task_url, task_status_mapper,
-      days_waiting, readable_claim_type, @facility, user_name_helper, format_date_string(@event_date),
+      days_waiting, readable_claim_type, @user_facility, user_name_helper, format_date_string(@event_date),
       event_type_to_readable_name, issue_or_status_information, disposition_information
     ]
   end
@@ -266,9 +267,16 @@ class ClaimHistoryEvent
 
     # TODO: Should probably use event date instead of this
     @withdrawal_request_date = change_data["request_issue_update_time"]
-    @event_date = change_data["event_date"]
-    @facility = change_data["user_facility"] || change_data["selected_regional_office"] || change_data["station_id"]
+    # Try to keep all the dates consistent as a iso8601 string if possible
+    @event_date = if change_data["event_date"].is_a?(String)
+                    change_data["event_date"]
+                  else
+                    change_data["event_date"]&.iso8601
+                  end
+    # @event_date = change_data["event_date"].is_a?(String) ? change_data["event_date"] : change_data["event_date"]&.iso8601
+    @user_facility = change_data["user_facility"] || change_data["station_id"]
     @event_user_name = change_data["event_user_name"] || change_data["full_name"]
+    @event_user_id = change_data["event_user_id"]
   end
 
   ############ CSV and Serializer Helpers ############
