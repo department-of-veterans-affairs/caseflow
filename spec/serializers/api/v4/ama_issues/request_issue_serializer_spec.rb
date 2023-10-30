@@ -9,7 +9,7 @@ describe Api::V4::AmaIssues::RequestIssueSerializer, :postgres do
       create(:request_issue, :with_associated_decision_issue, veteran_participant_id: vet.participant_id)
     end
     it "should have all eligiblity fields" do
-      serialized_request_issue = Api::v4::AmaIssues::RequestIssueSerializer.new(request_issue)
+      serialized_request_issue = Api::V4::AmaIssues::RequestIssueSerializer.new(request_issue)
         .serializable_hash[:data][:attributes]
       expect(serialized_request_issue.key?(:id)).to eq true
       expect(serialized_request_issue.key?(:benefit_type)).to eq true
