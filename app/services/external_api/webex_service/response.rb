@@ -55,8 +55,6 @@ class ExternalApi::WebexService::Response
     end
   end
 
-
-  # rerun checks
   def invalid_token
     body = JSON.parse(resp.raw_body)
     if body["error_description"] == "The access token expired"
