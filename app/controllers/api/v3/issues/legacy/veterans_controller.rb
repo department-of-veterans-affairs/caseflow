@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # :reek:InstanceVariableAssumption
-class Api::V3::LegacyIssues::VeteransController < Api::V3::BaseController
+class Api::V3::Issues::Legacy::VeteransController < Api::V3::BaseController
   include ApiV3FeatureToggleConcern
 
   # TODO: investigate roles
