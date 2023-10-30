@@ -11,4 +11,4 @@ const AdminTabs = ({ activeLevers, reorderLevers, updateLeverValue }) => {
   );
 };
 
-export default AdminTabs;
+export default connect(mapStateToProps, mapDispatchToProps)(AdminTabs);
