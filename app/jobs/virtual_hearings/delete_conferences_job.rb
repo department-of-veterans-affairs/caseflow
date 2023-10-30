@@ -145,18 +145,16 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
 
   # Returns whether or not the conference was deleted from Pexip or Webex
   def delete_conference(virtual_hearing)
-    if virtual_hearing.conference_provider == "pexip"
-      response = client(virtual_hearing).delete_conference(virtual_hearing)
-      Rails.logger.info("#{virtual_hearing.conference_provider.capitalize} response: #{response}")
+    response = client(virtual_hearing).delete_conference(virtual_hearing)
+    Rails.logger.info("#{virtual_hearing.conference_provider.capitalize} response: #{response}")
 
-      fail response.error unless response.success?
+    fail response.error unless response.success?
 
-      true
-    end
+    true
   rescue Caseflow::Error::PexipNotFoundError
     Rails.logger.info("Conference for hearing (#{virtual_hearing.hearing_id}) was already deleted")
-  # rescue Caseflow::Error::WebexNotFoundError
-  # Rails.logger.info("Conference for hearing (#{virtual_hearing.hearing_id}) was already deleted")
+  rescue Caseflow::Error::WebexNotFoundError
+    Rails.logger.info("Conference for hearing (#{virtual_hearing.hearing_id}) was already deleted")
 
     # Assume the conference was already deleted if it's no longer in Pexip.
     true
@@ -177,21 +175,21 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
     )
 
     false
-  # rescue Caseflow::Error::WebexApiError => error
-  #   Rails.logger.error("Failed to delete conference from Webex for hearing (#{virtual_hearing.hearing_id})" \
-  #     " with error: (#{error.code}) #{error.message}")
+  rescue Caseflow::Error::WebexApiError => error
+    Rails.logger.error("Failed to delete conference from Webex for hearing (#{virtual_hearing.hearing_id})" \
+      " with error: (#{error.code}) #{error.message}")
 
-  #   (exception_list[Caseflow::Error::WebexApiError] ||= []) << virtual_hearing
+    (exception_list[Caseflow::Error::WebexApiError] ||= []) << virtual_hearing
 
-  #   capture_exception(
-  #     error: error,
-  #     extra: {
-  #       hearing_id: virtual_hearing.hearing_id,
-  #       virtual_hearing_id: virtual_hearing.id,
-  #       webex_conference_Id: virtual_hearing.conference_id
-  #     }
-  #   )
+    capture_exception(
+      error: error,
+      extra: {
+        hearing_id: virtual_hearing.hearing_id,
+        virtual_hearing_id: virtual_hearing.id,
+        webex_conference_Id: virtual_hearing.conference_id
+      }
+    )
 
-  #   false
+    false
   end
 end
