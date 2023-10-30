@@ -40,7 +40,7 @@ export default class QueueOrganizationDropdown extends React.Component {
       const orgHref = '/queue/correspondence';
 
       correspondenceItems = {
-        key: (2).toString(),
+        key: (items.length + 1).toString(),
         href: orgHref,
         label: sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES)
       };

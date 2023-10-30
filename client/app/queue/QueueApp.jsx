@@ -661,7 +661,7 @@ class QueueApp extends React.PureComponent {
   );
 
   routedCorrespondenceIntake = () => (
-    <CorrespondenceCasesList />
+    <CorrespondenceCasesList {...this.props} />
   );
 
   queueName = () =>

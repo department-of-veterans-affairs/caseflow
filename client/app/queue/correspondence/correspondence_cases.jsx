@@ -4,12 +4,15 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { css } from 'glamor';
-import {
-  resetErrorMessages,
-  resetSuccessMessages
-} from '../uiReducer/uiActions';
+import ListCorrespondenceTable from './corrrespondenceList';
+import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
 
-import TaskTable from '../components/TaskTable';
+const rootStyles = css({
+  '.usa-alert + &': {
+    marginTop: '1.5em'
+  }
+});
+
 // import {
 //   initialAssignTasksToUser,
 //   initialCamoAssignTasksToVhaProgramOffice
@@ -21,16 +24,29 @@ class CorrespondenceCasesList extends React.PureComponent {
   //   this.props.resetErrorMessages();
   // }
   render = () => {
-    return <React.Fragment>
-      <h1 {...css({ display: 'inline-block' })}>{COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}</h1>
-      <div>
-        <React.Fragment>
-          'maite'
-        </React.Fragment>
-      </div>
-    </React.Fragment>;
-  }
+    const {
+      organizations,
+      featureToggles
+    } = this.props;
 
+    return <div className={rootStyles}>
+      <h1 {...css({ display: 'inline-block' })}>{COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}</h1>
+      <QueueOrganizationDropdown organizations={organizations} />
+
+      <React.Fragment>
+        <div>
+          <React.Fragment>
+            <ListCorrespondenceTable />
+          </React.Fragment>
+        </div>
+      </React.Fragment>
+    </div>;
+  }
 }
+
+CorrespondenceCasesList.propTypes = {
+  organizations: PropTypes.array,
+  featureToggles: PropTypes.object
+};
 
 export default CorrespondenceCasesList;
