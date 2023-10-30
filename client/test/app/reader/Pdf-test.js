@@ -46,7 +46,7 @@ describe('Pdf', () => {
       // Select all PdfFile components that were created and pull their 'file' prop
       const fileUrls = component.find(PdfFile).map((node) => node.prop('file'));
 
-      // Expect Pdf component to create three PdfFile components
+      // Expect Pdf component to create one PdfFile component
       expect(component.find(PdfFile).length).toBe(1);
       // Expect the file url of the PdfFile component to match the current file
       expect(fileUrls).toEqual([props.file]);
