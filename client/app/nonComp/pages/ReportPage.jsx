@@ -1,12 +1,15 @@
 import React from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import { css } from 'glamor';
+import { css, left } from 'glamor';
 import PropTypes from 'prop-types';
 import Button from 'app/components/Button';
 import NonCompLayout from '../components/NonCompLayout';
 
-import NonCompReportFilterContainer from '../components/NonCompReportFilter';
+import Checkbox from '../../components/Checkbox';
 import RadioField from '../../components/RadioField';
+import NonCompReportFilterContainer from '../components/NonCompReportFilter';
+
+import REPORT_TYPE_CONSTANTS from '../../../constants/REPORT_TYPE_CONSTANTS.json'
 
 const buttonInnerContainerStyle = css({
   display: 'flex',
@@ -59,31 +62,64 @@ const ReportPageButtons = ({
   );
 };
 
+const RHFCheckboxGroup = ({ options, methods }) => {
+  return (
+    <fieldset className="checkbox" style={{ paddingLeft: "30px" }}> {
+      options.map((option) =>
+      <div className="checkbox" key={option.id} >
+        <Checkbox
+          {...methods.register(`specificEventType.${option.id}`)}
+          name={`specificEventType.${option.id}`}
+          key={`specificEventType.${option.id}`}
+          label={option.label}
+          stronglabel
+          value={methods.getValues(`specificEventType.${option.id}`)}
+          onChange={(value) => methods.setValue(`specificEventType.${option.id}`, value)}
+          unpadded
+        />
+      </div>
+      )
+    }
+    </fieldset>
+  );
+};
+
+const RHFRadioButton = ({ options, methods}) => {
+  return (
+    <div style={{marginTop: "20px"}}>
+      <RadioField name=""
+      {...methods.register('radioEventAction')}
+      label=""
+      vertical
+      options={options}
+      value={methods.getValues('radioEventAction')}
+      stronglabel
+      onChange={(value) => methods.setValue('radioEventAction', value)} />
+    </div>
+  );
+};
+
 const ReportPage = ({ history }) => {
   const defaultFormValues = {
     reportType: '',
     radioEventAction: '',
+    specificEventType: [],
   };
 
   const methods = useForm({ defaultValues: { ...defaultFormValues } });
 
-  const { register, reset, watch, getValues,setvalues, formState } = methods;
+  const { register, reset, watch, getValues,setValue, formState } = methods;
 
   const watchReportType = watch('reportType');
-  const watchEventTypeAction = watch('radioEventAction')
+  const watchRadioEventAction = watch('radioEventAction');
+
 
   const onSubmit = (data) => console.log(data);
 
-  const radioEventActionOptions = [
-    {
-      displayText: <span>All Events / Actions</span>,
-      value: 'all_events_action'
-    },
-    {
-      displayText: <span>Specific Events / Actions</span>,
-      value: 'specific_events_action'
-    }
-  ]
+  const handleOnChange = (value) => {
+    console.log(value);
+  }
+
   return (
     <NonCompLayout
       buttons={
@@ -100,18 +136,13 @@ const ReportPage = ({ history }) => {
         <form>
           <NonCompReportFilterContainer />
           {watchReportType === 'event_type_action' ?
-            <>
-              <RadioField
-                {...register('radioEventAction')}
-                name='radioEventAction'
-                label=""
-                options={radioEventActionOptions}
-                vertical
-                // value = {getValues('radioEventAction')}
-                onchange={(valObj) => setvalues('radioEventAction',valObj?.value)}
-              />
-            </>
-            : ''}
+            <RHFRadioButton options={REPORT_TYPE_CONSTANTS.RADIO_EVENT_TYPE_OPTIONS} methods={methods} />
+            : ''
+          }
+          {(watchReportType === 'event_type_action'  && watchRadioEventAction === 'specific_events_action') ?
+              <RHFCheckboxGroup options={REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS} methods={methods} />
+            : ''
+          }
         </form>
       </FormProvider>
     </NonCompLayout>
@@ -127,6 +158,17 @@ ReportPageButtons.propTypes = {
 
 ReportPage.propTypes = {
   history: PropTypes.object,
+};
+
+
+RHFCheckboxGroup.propTypes = {
+  options: PropTypes.array,
+  methods: PropTypes.object
+};
+
+RHFRadioButton.propTypes = {
+  options: PropTypes.array,
+  methods: PropTypes.object
 };
 
 export default ReportPage;
