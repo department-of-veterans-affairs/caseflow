@@ -7,6 +7,7 @@ FactoryBot.define do
     package_document_type_id { 1 }
     cmp_packet_number { "dummy" }
     cmp_queue_id { 1 }
+    uuid { SecureRandom.uuid }
     va_date_of_receipt { Time.zone.today }
     veteran_id { 1 }
     notes { "dummy" }
