@@ -423,6 +423,8 @@ module Caseflow::Error
     attr_accessor :descriptions
   end
 
+  class WebexInvalidTokenError < ConferenceCreationError; end
+
   class WorkModeCouldNotUpdateError < StandardError; end
 
   class VirtualHearingConversionFailed < SerializableError

@@ -22,7 +22,7 @@ class ExternalApi::WebexService
   # Purpose: Refreshing the access token to access the API
   # Return: The response body
   def refresh_access_token
-    url = URI::DEFAULT_PARSER.escape(BASE_URL + GET_TOKEN_ENDPOINT)
+    url = URI::DEFAULT_PARSER.escape(BASE_URL + AUTH_URL)
     params = {
       grant_type: GRANT_TYPE,
       client_id: CLIENT_ID,
@@ -31,6 +31,7 @@ class ExternalApi::WebexService
     }
     encoded_params = URI.encode_www_form(params)
     response = Faraday.post(url, encoded_params)
-    response.body
+    caseflow_res = ExternalApi::WebexService::Response.new(response)
+    caseflow_res.resp unless caseflow_res.error
   end
 end
