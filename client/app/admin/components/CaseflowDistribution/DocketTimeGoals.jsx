@@ -75,7 +75,6 @@ const DocketTimeGoals = ({ docketLevers }) => {
 					</div>
 					<div className={`${styles.leverRight} ${styles.docketLeverRight}`}>
 						<ToggleSwitch
-							id={lever.item}
 							selected={lever.is_active}
 							disabled={lever.is_disable}
 							toggleSelected={toggleLever(index)}
