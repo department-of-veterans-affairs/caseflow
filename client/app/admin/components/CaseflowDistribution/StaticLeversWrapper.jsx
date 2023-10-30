@@ -1,50 +1,39 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { createStore } from 'redux';
+// import { createStore } from 'redux';
 import StaticLever from './StaticLever';
-import leversReducer from 'app/admin/reducers/Levers/leversReducer';
+// import leversReducer from 'app/admin/reducers/Levers/leversReducer';
 import { levers } from 'test/data/adminCaseDistributionLevers';
 
-const activeLevers = levers.filter((lever) => lever.is_active);
+// const activeLevers = levers.filter((lever) => lever.is_active);
 
-const preloadedState = {
-  levers: JSON.parse(JSON.stringify(activeLevers)),
-  initial_levers: JSON.parse(JSON.stringify(activeLevers))
-};
+// const preloadedState = {
+//   levers: JSON.parse(JSON.stringify(activeLevers)),
+//   initial_levers: JSON.parse(JSON.stringify(activeLevers))
+// };
 
-const leverStore = createStore(leversReducer, preloadedState);
+// {levers.map((lever) => (
+//   <StaticLever key={lever.item} lever={lever} />
+// ))}
+// const leverStore = createStore(leversReducer, preloadedState);
+const StaticLeversWrapper = (props) => {
+  const { leverList } = props;
 
-const StaticLeverWrapper = () => {
+  const orderedLeversList = leverList.map((item) => {
+    return levers.find((lever) => lever.item === item);
+  });
+
+  const WrapperList = orderedLeversList.map((lever) => (
+    <StaticLever key={lever.item} lever={lever} />
+  ));
+
   return (
-    <div>
-      {leverStore.getState().levers.map((lever) => (
-        <StaticLever key={lever.item} lever={lever} />
-      ))}
-    </div>
+    <div>{WrapperList}</div>
   );
+
 };
 
-StaticLeverWrapper.propTypes = {
-  levers: PropTypes.arrayOf(
-    PropTypes.shape({
-      item: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-      data_type: PropTypes.string.isRequired,
-      value: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]).isRequired,
-      unit: PropTypes.string.isRequired,
-      is_active: PropTypes.bool.isRequired,
-      options: PropTypes.arrayOf(
-        PropTypes.shape({
-          item: PropTypes.string.isRequired,
-          data_type: PropTypes.string.isRequired,
-          value: PropTypes.oneOfType([PropTypes.bool, PropTypes.number, PropTypes.string]).isRequired,
-          text: PropTypes.string,
-          unit: PropTypes.string,
-        })
-      ),
-    })
-  ).isRequired,
-};
+StaticLeversWrapper.propTypes = {
+  leverList: PropTypes.arrayOf(PropTypes.string).isRequired };
 
-export default StaticLeverWrapper;
+export default StaticLeversWrapper;
