@@ -3,7 +3,8 @@ import { MemoryRouter } from 'react-router';
 
 import StaticLeversWrapper from './StaticLeversWrapper';
 
-import { levers } from 'test/data/adminCaseDistributionLevers';
+// import { levers } from 'test/data/adminCaseDistributionLevers';
+// import StaticLever from './StaticLever';
 
 const RouterDecorator = (Story) => (
   <MemoryRouter initialEntries={['/']}>
@@ -11,19 +12,21 @@ const RouterDecorator = (Story) => (
   </MemoryRouter>
 );
 
+const leverList = ['lever_3', 'lever_2', 'lever_7'];
+
 export default {
-  title: 'Admin/Caseflow Distribution/Static Levers',
+  title: 'Admin/Caseflow Distribution/Static Levers Wrapper',
   component: StaticLeversWrapper,
   decorators: [RouterDecorator]
 };
 
 // const Template = (args) => <StaticLever {...args} />;
 
-export const StaticLever3 = (args) => (
+export const StaticWrapper = () => (
   <table>
     <tbody>
       <tr>
-        <StaticLeversWrapper key={levers[2].item} {...args} lever={levers[2]} />
+        <StaticLeversWrapper leverList={leverList} />
       </tr>
     </tbody>
   </table>
