@@ -9,8 +9,7 @@ const activeLevers = levers.filter((lever) => lever.is_active);
 
 const preloadedState = {
   levers: JSON.parse(JSON.stringify(activeLevers)),
-  initial_levers: JSON.parse(JSON.stringify(activeLevers)),
-  formatted_history: {}
+  initial_levers: JSON.parse(JSON.stringify(activeLevers))
 };
 
 const leverStore = createStore(leversReducer, preloadedState);
