@@ -5,16 +5,23 @@ import QueueTable from '../QueueTable';
 import PropTypes from 'prop-types';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import WindowUtil from '../../util/WindowUtil';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 class ListCorrespondenceTable extends React.Component {
 
   render() {
-
-    const testobj = {
+    const testobj = [{
       veterandetails: 'Rosalie Turner',
+      packagedocumenttype: '1111111',
+      cmpacketnumber: '22222222',
+      correspondeceId: 1,
+    },
+    {
+      veterandetails: 'Ana Turner',
       packagedocumenttype: '12345678',
-      cmpacketnumber: '12345679'
-    };
+      cmpacketnumber: '12345679',
+      correspondeceId: 2,
+    }];
 
     const columns = [
       {
@@ -22,20 +29,30 @@ class ListCorrespondenceTable extends React.Component {
         header: 'Veteran Details',
         align: 'left',
         valueName: 'veterandetails',
-        getSortValue: (row) => row.veterandetails
+        getSortValue: (row) => row.veterandetails,
+        backendCanSort: true,
+        valueFunction: (row) => (
+          <Link href={`queue/correspondence/${row.correspondeceId}`}>
+            {row.veteranDetails}
+          </Link>
+        )
       },
       {
         name: 'packagedocumenttype',
         header: 'Package Document Type ',
         align: 'left',
         valueName: 'packagedocumenttype',
-        enableFilter: true
+        enableFilter: true,
+        getSortValue: (row) => row.packagedocumenttype,
+        backendCanSort: true
       },
       {
         name: 'cmpacketnumber',
         header: 'CM Packet Number ',
         align: 'left',
-        valueName: 'cmpacketnumber'
+        valueName: 'cmpacketnumber',
+        getSortValue: (row) => row.cmpacketnumber,
+        backendCanSort: true
       }
     ];
     const tabPaginationOptions = {
@@ -51,13 +68,13 @@ class ListCorrespondenceTable extends React.Component {
       <QueueTable
         className="assign-correspondence-table"
         columns={columns}
-        rowObjects={[testobj]}
+        rowObjects={testobj}
         // key={tabName}
         summary="scheduled-hearings-table"
         // slowReRendersAreOk
         // bodyStyling={tableNumberStyling}
-        useTaskPagesApi
-        taskPagesApiEndpoint= "/queue/correspondence"
+        // useTaskPagesApi
+        // taskPagesApiEndpoint= "/queue/correspondence"
         enablePagination
         // tabPaginationOptions={tabPaginationOptions}
         // styling={docketStyle}
