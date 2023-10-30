@@ -16,7 +16,6 @@ const StaticLever = ({ lever }) => {
       return null;
     }
   };
-
   const titleStyling = {
     border: 'none',
     paddingTop: '20px',
@@ -27,43 +26,40 @@ const StaticLever = ({ lever }) => {
     fontWeight: 'bold',
     fontSize: '17px',
     lineHeight: '1.5em/33px',
-    borderTop: '1px solid #ccc',
     columnSpan: 'all',
   };
-
   const descriptionStyling = {
     border: 'none',
     paddingTop: '0',
     marginTop: '0',
+    maxWidth: '750px',
     paddingRight: '20px',
     paddingBottom: '20px',
     verticalAlign: 'text-top',
     fontFamily: 'Source Sans Pro',
     fontWeight: '400',
-    fontSize: '16px',
+    fontSize: '15px',
     lineHeight: '1.5em/33px',
     borderBottom: '1px solid #ccc',
   };
-
   const valueStyling = {
     border: 'none',
     paddingTop: '0',
     marginTop: '0',
+    whiteSpace: 'noWrap',
     paddingBottom: '20px',
     paddingRight: '20px',
     verticalAlign: 'text-top',
     fontFamily: 'Source Sans Pro',
     fontWeight: '400',
-    fontSize: '16px',
+    fontSize: '15px',
     lineHeight: '1.5em/33px',
     textAlign: 'right',
     borderBottom: '1px solid #ccc',
   };
-
   const tableStyling = {
     borderCollapse: 'collapse',
   };
-
   const valueWithUnit = renderValue();
   const valueArray = valueWithUnit.split(' ');
   const value = valueArray[0];
@@ -79,7 +75,7 @@ const StaticLever = ({ lever }) => {
           <tr>
             <td style={descriptionStyling}>{lever.description}</td>
             <td style={valueStyling}>
-              <span style={{ marginRight: '5px' }}>{value}</span>
+              <span style={{ marginRight: '5px' }}>{value} </span>
               <span>{unit}</span>
             </td>
           </tr>
@@ -108,5 +104,4 @@ StaticLever.propTypes = {
     ),
   }).isRequired,
 };
-
 export default StaticLever;

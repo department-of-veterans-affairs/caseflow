@@ -58,4 +58,3 @@ export const StaticLever8 = (args) => (
     </tbody>
   </table>
 );
-
