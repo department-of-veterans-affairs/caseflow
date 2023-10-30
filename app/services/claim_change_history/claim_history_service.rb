@@ -41,7 +41,6 @@ class ClaimHistoryService
     @number_of_database_columns = all_data.nfields
     @number_of_database_rows = all_data.count
 
-    # events_array = []
     @event_generation_time = measure_execution_time do
       all_data.entries.map do |change_data|
         # So what if we pass the filter down into the event class and let it decide what to do for filtering
@@ -52,8 +51,7 @@ class ClaimHistoryService
         process_decision_issue_events(change_data)
       end
     end
-    # TODO: Should I still auto compact? or should I just leave nulls and let other classes deal with that
-    # events_array.compact
+
     @events.compact
   end
 
@@ -90,7 +88,7 @@ class ClaimHistoryService
 
   def save_events(new_events)
     filtered_events = matches_filter(new_events)
-    # TODO: This might not be an array so maybe make it one
+
     if filtered_events.present?
       @events.push(*filtered_events)
     end

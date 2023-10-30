@@ -152,5 +152,12 @@ FactoryBot.define do
       establishment_last_submitted_at { (HigherLevelReview.processing_retry_interval_hours + 1).hours.ago }
       establishment_processed_at { nil }
     end
+
+    trait :with_intake do
+      # Should this be after create? Probably should be build
+      after(:create) do |sc|
+        sc.intake = create(:intake, :completed, veteran_file_number: sc.veteran_file_number)
+      end
+    end
   end
 end

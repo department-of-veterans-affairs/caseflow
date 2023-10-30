@@ -289,12 +289,12 @@ class BusinessLine < Organization
 
         case operator
         when ">", "<", "="
-          <<~SQL
+          <<-SQL
             AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) #{operator} #{number_of_days.to_i}
           SQL
         when "between"
           end_days = query_params[:days_waiting][:end_days]
-          <<~SQL
+          <<-SQL
             AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) >= #{number_of_days.to_i}
             AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) <= #{end_days.to_i}
           SQL
@@ -303,10 +303,8 @@ class BusinessLine < Organization
     end
 
     def station_id_filter
-      # Facility filter block
-      # TODO: This can only do so much it needs further filtering in the service class
       if query_params[:facilities].present?
-        <<~SQL
+        <<-SQL
           AND
           (
             #{User.arel_table.alias(:intake_users)[:station_id].in(query_params[:facilities]).to_sql}
@@ -320,17 +318,15 @@ class BusinessLine < Organization
     end
 
     def user_id_filter
-      # User filter block
-      # TODO: This can only do so much it needs further filtering in the service class
       if query_params[:personnel].present?
-        <<~SQL
+        <<-SQL
           AND
           (
             #{User.arel_table.alias(:intake_users)[:id].in(query_params[:personnel]).to_sql}
             OR
             #{User.arel_table.alias(:update_users)[:id].in(query_params[:personnel]).to_sql}
             OR
-            #{User.arel_table.alias(:decision_users)[:station_id].in(query_params[:facilities]).to_sql}
+            #{User.arel_table.alias(:decision_users)[:id].in(query_params[:personnel]).to_sql}
           )
         SQL
       end
