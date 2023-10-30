@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module ApiFeatureToggleConcern
+module ApiV3FeatureToggleConcern
   extend ActiveSupport::Concern
 
   def api_released?(feature)

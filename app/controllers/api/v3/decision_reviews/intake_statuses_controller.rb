@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::V3::DecisionReviews::IntakeStatusesController < Api::BaseController
+class Api::V3::DecisionReviews::IntakeStatusesController < Api::V3::BaseController
   def show
     if !decision_review
       render_no_decision_review_error

@@ -9,7 +9,7 @@
 #   `V3::RequestIssueSerializer.new(
 #      RequestIssue.includes(:decision_issues).page(2), include: [:decision_issues]
 #   ).serializable_hash.to_json`
-class Api::V4::AmaIssues::RequestIssueSerializer
+class Api::V3::Issues::Ama::RequestIssueSerializer
   include FastJsonapi::ObjectSerializer
 
   attributes :id, :benefit_type, :closed_status, :contention_reference_id, :contested_decision_issue_id,

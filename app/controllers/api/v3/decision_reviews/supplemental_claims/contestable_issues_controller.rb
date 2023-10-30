@@ -5,7 +5,7 @@ module Api
     module DecisionReviews
       module SupplementalClaims
         class ContestableIssuesController < BaseContestableIssuesController
-          include ApiFeatureToggleConcern
+          include ApiV3FeatureToggleConcern
 
           before_action only: [:index] do
             api_released?(:api_v3_supplemental_claims_contestable_issues)

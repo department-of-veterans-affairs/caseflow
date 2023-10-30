@@ -3,11 +3,10 @@
 # rubocop:disable Layout/LineLength
 # rubocop:disable Lint/ParenthesesAsGroupedExpression
 
-
 RSpec.shared_examples :it_should_show_last_page_if_page_larger_than_total do |legacy_appeals_present|
   it "should default to page 1" do
     get(
-      "/api/v4/ama_issues_by_veteran/#{vet.participant_id}?page=5",
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=5",
       headers: authorization_header
     )
     response_hash = JSON.parse(response.body)
@@ -29,7 +28,7 @@ end
 RSpec.shared_examples :it_should_default_to_page_1 do |legacy_appeals_present|
   it "should default to page 1" do
     get(
-      "/api/v4/ama_issues_by_veteran/#{vet.participant_id}",
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}",
       headers: authorization_header
     )
     response_hash = JSON.parse(response.body)
@@ -51,7 +50,7 @@ end
 RSpec.shared_examples :it_should_respond_with_legacy_present do |legacy_appeals_present|
   it "should respond with legacy_appeals_present" do
     get(
-      "/api/v4/ama_issues_by_veteran/#{vet.participant_id}",
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}",
       headers: authorization_header
     )
     response_hash = JSON.parse(response.body)
@@ -64,7 +63,7 @@ end
 RSpec.shared_examples :it_should_respond_with_associated_request_issues do |legacy_appeals_present, is_empty|
   it "should respond with the associated request issues" do
     get(
-      "/api/v4/ama_issues_by_veteran/#{vet.participant_id}",
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}",
       headers: authorization_header
     )
     response_hash = JSON.parse(response.body)
@@ -81,7 +80,7 @@ end
 RSpec.shared_examples :it_should_respond_with_multiple_decision_issues_per_request_issues do |legacy_appeals_present, is_empty|
   it "should respond with the multiple decision issues per request issue" do
     get(
-      "/api/v4/ama_issues_by_veteran/#{vet.participant_id}",
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}",
       headers: authorization_header
     )
     response_hash = JSON.parse(response.body)
@@ -101,7 +100,7 @@ end
 RSpec.shared_examples :it_should_respond_with_same_multiple_decision_issues_per_request_issue do |legacy_appeals_present|
   it "should respond with the same multiple decision issues per request issue" do
     get(
-      "/api/v4/ama_issues_by_veteran/#{vet.participant_id}",
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}",
       headers: authorization_header
     )
     response_hash = JSON.parse(response.body)
@@ -119,7 +118,7 @@ end
 RSpec.shared_examples :it_should_show_page_1_when_page_0 do |legacy_appeals_present|
   it "should show page 1 when attempting to get page 0" do
     get(
-      "/api/v4/ama_issues_by_veteran/#{vet.participant_id}?page=0",
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=0",
       headers: authorization_header
     )
     response_hash = JSON.parse(response.body)
@@ -141,7 +140,7 @@ end
 RSpec.shared_examples :it_should_show_remaining_issues do |legacy_appeals_present|
   it "should only show remaining request issues on next page" do
     get(
-      "/api/v4/ama_issues_by_veteran/#{vet.participant_id}?page=2",
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=2",
       headers: authorization_header
     )
     response_hash = JSON.parse(response.body)
@@ -163,7 +162,7 @@ end
 RSpec.shared_examples :it_should_show_number_of_paginated_issues do |legacy_appeals_present|
   it "should only show number of request issues listed in the paginates_per value on first page" do
     get(
-      "/api/v4/ama_issues_by_veteran/#{vet.participant_id}?page=1",
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=1",
       headers: authorization_header
     )
     response_hash = JSON.parse(response.body)

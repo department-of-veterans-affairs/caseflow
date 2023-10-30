@@ -49,10 +49,11 @@ Rails.application.routes.draw do
         resources :intake_statuses, only: :show
         get 'legacy_appeals', to: "legacy_appeals#index"
       end
-
-    end
-    namespace :v4 do
-      get "ama_issues_by_veteran/:participant_id", to: "ama_issues/veterans#show"
+      namespace :issues do
+        namespace :ama do
+          get "find_by_veteran/:participant_id", to: "veterans#show"
+        end
+      end
     end
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do

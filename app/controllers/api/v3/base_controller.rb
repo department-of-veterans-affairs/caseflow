@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::BaseController < Api::ApplicationController
+class Api::V3::BaseController < Api::ApplicationController
   class << self
     def status_from_errors(errors)
       errors.map { |error| error[:status] || error["status"] }.max

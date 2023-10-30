@@ -3,7 +3,7 @@
 require "test_prof/recipes/rspec/let_it_be"
 
 # rubocop:disable Layout/LineLength
-describe Api::V4::AmaIssues::VeteransController, :postgres, type: :request do
+describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
   let_it_be(:api_key) do
     ApiKey.create!(consumer_name: "ApiV3 Test VBMS Consumer").key_string
   end
@@ -14,12 +14,12 @@ describe Api::V4::AmaIssues::VeteransController, :postgres, type: :request do
 
   describe "#show" do
     context "when feature is not enabled" do
-      before { FeatureToggle.disable!(:api_v4_ama_issues) }
+      before { FeatureToggle.disable!(:api_v3_ama_issues) }
       let!(:vet) { create(:veteran) }
 
       it "should return 'Not Implemented' error" do
         get(
-          "/api/v4/ama_issues_by_veteran/#{vet.participant_id}",
+          "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}",
           headers: authorization_header
         )
         expect(response).to have_http_status(501)
@@ -28,15 +28,15 @@ describe Api::V4::AmaIssues::VeteransController, :postgres, type: :request do
     end
 
     context "when feature is enabled" do
-      before { FeatureToggle.enable!(:api_v4_ama_issues) }
-      after { FeatureToggle.disable!(:api_v4_ama_issues) }
+      before { FeatureToggle.enable!(:api_v3_ama_issues) }
+      after { FeatureToggle.disable!(:api_v3_ama_issues) }
 
       context "when the api key is missing in the header" do
         let!(:vet) { create(:veteran) }
 
         it "should return 'Unauthorized' error" do
           get(
-            "/api/v4/ama_issues_by_veteran/#{vet.participant_id}"
+            "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}"
           )
           expect(response).to have_http_status(401)
           expect(response.body).to include("unauthorized")
@@ -49,7 +49,7 @@ describe Api::V4::AmaIssues::VeteransController, :postgres, type: :request do
 
         it "should return 'Unauthorized' error" do
           get(
-            "/api/v4/ama_issues_by_veteran/#{vet.participant_id}",
+            "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}",
             headers: authorization_header
           )
           expect(response).to have_http_status(401)
@@ -60,7 +60,7 @@ describe Api::V4::AmaIssues::VeteransController, :postgres, type: :request do
       context "when a veteran is not found" do
         it "should return veteran not found error" do
           get(
-            "/api/v4/ama_issues_by_veteran/9999999999",
+            "/api/v3/issues/ama/find_by_veteran/9999999999",
             headers: authorization_header
           )
           expect(response).to have_http_status(404)
@@ -73,7 +73,7 @@ describe Api::V4::AmaIssues::VeteransController, :postgres, type: :request do
           let(:vet) { create(:veteran) }
           it "should return empty request issues array for veteran" do
             get(
-              "/api/v4/ama_issues_by_veteran/#{vet.participant_id}",
+              "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}",
               headers: authorization_header
             )
             expect(response).to have_http_status(200)
