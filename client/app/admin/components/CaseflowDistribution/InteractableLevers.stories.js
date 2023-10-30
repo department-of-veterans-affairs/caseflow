@@ -39,7 +39,7 @@ export const tabs = (args) => (
       <div className={styles.leverContainer}>
         <div className={styles.leverContent}>
           <div className={styles.leverHead}>
-            <h3>Active Data Elements</h3>
+          <div className={styles.leverH2}>Active Data Elements</div>
             <p>You may make changes to the Case Distribution algorithm values based on the data elements below. Changes will be applied to the next scheduled case distribution event unless subsequent confirmed changes are made to the same variable.</p>
           </div>
         </div>

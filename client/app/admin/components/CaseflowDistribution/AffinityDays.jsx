@@ -42,7 +42,7 @@ const AffinityDays = ({ affinityLevers }) => {
   return (
     <div className={styles.leverContent}>
       <div className={styles.leverHead}>
-        <h3>Affinity Days</h3>
+        <div className={styles.leverH2}>Affinity Days</div>
         <div className={styles.leverLeft}><strong>Data Elements</strong></div>
         <div className={styles.leverRight}><strong>Value</strong></div>
       </div>

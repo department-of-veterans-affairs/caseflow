@@ -49,7 +49,7 @@ const DocketTimeGoals = ({ docketLevers }) => {
   return (
     <div className={styles.leverContent}>
       <div className={styles.leverHead}>
-        <h3>AMA Non-priority Distribution Goals by Docket​</h3>
+      <div className={styles.leverH2}>AMA Non-priority Distribution Goals by Docket​</div>
         <p><strong>Docket Time Goals</strong> set the completion target for AMA non-priority appeals by docket type. It represents the number of calendar days that are added to the receipt date of the appeal to establish the decision target date.</p>
         <p><strong>Start Distribution Prior to Goals</strong> days sets the number of calendar days prior to the Docket Time Goal for that docket type when appeals become eligible for distribution.</p>
         <p>Please note, if turned on, non-priority appeals of that docket type will not be distributed until eligible, which may disrupt strict docket-date-order distribution across dockets.​​</p>
