@@ -9,16 +9,16 @@ import NumberField from 'app/components/NumberField';
 
 const BatchSize = ({ batchSizeLevers }) => {
 
-	const leverNumberDiv = css({
-		'& .cf-form-int-input' : {width: 'auto', display: 'inline-block'}
-	});
+  const leverNumberDiv = css({
+    '& .cf-form-int-input' : {width: 'auto', display: 'inline-block'}
+  });
 
-	const [lever, setLever] = useState(batchSizeLevers);
+  const [lever, setLever] = useState(batchSizeLevers);
   const updateLever = (index) => (e) => {
     const levers = batchSizeLevers.map((lever, i) => {
       if (index === i) {
-				lever.value = e;
-				return lever;
+        lever.value = e;
+        return lever;
       } else {
         return lever;
       }
@@ -27,31 +27,31 @@ const BatchSize = ({ batchSizeLevers }) => {
   };
 
   return (
-		<div className={styles.leverContent}>
-			<div className={styles.leverHead}>
-				<h3>Batch Size</h3>
-				<div className={styles.leverLeft}><strong>Data Elements</strong></div>
-				<div className={styles.leverRight}><strong>Value</strong></div>
-			</div>
-			{batchSizeLevers && batchSizeLevers.map((lever, index) => (
-				<div className={styles.activeLever} key={`${lever.item}-${index}`}>
-					<div className={styles.leverLeft}>
-						<strong>{lever.title}</strong>
-						<p>{lever.description}</p>
-					</div>
-					<div className={`${styles.leverRight} ${leverNumberDiv}`}>
-						<NumberField
-							name={lever.item}
-							label={false}
-							isInteger
-							value={lever.value}
-							onChange={updateLever(index)}
-						/>
-						<span className={styles.leverUnit}>{lever.unit}</span>
-					</div>
-				</div>
-			))}
-		</div>
+    <div className={styles.leverContent}>
+      <div className={styles.leverHead}>
+        <h3>Batch Size</h3>
+        <div className={styles.leverLeft}><strong>Data Elements</strong></div>
+        <div className={styles.leverRight}><strong>Value</strong></div>
+      </div>
+      {batchSizeLevers && batchSizeLevers.map((lever, index) => (
+        <div className={styles.activeLever} key={`${lever.item}-${index}`}>
+          <div className={styles.leverLeft}>
+            <strong>{lever.title}</strong>
+            <p>{lever.description}</p>
+          </div>
+          <div className={`${styles.leverRight} ${leverNumberDiv}`}>
+            <NumberField
+              name={lever.item}
+              label={false}
+              isInteger
+              value={lever.value}
+              onChange={updateLever(index)}
+            />
+            <span className={styles.leverUnit}>{lever.unit}</span>
+          </div>
+        </div>
+      ))}
+    </div>
 
   );
 };
