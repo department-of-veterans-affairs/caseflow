@@ -9,11 +9,16 @@ class IneligibleJudgesJob < CaseflowJob
     log_error(self.class.name, error)
   end
 
-  # {This only adds both lists into one, but we need it to combine those with a matching CSS_ID/SDOMAINID into one.}
+  # {Grabs both vacols and caseflow ineligible judges then merges duplicates in list if they have the same CSS_ID/SDOMAINID}
   def self.case_distribution_ineligible_judges
     Rails.cache.fetch("case_distribution_ineligible_judges", expires_in: 1.week) do
-      CaseDistributionIneligibleJudges.ineligible_vacols_judges.concat
-      CaseDistributionIneligibleJudges.ineligible_caseflow_judges
+      [*CaseDistributionIneligibleJudges.ineligible_vacols_judges, *CaseDistributionIneligibleJudges.ineligible_caseflow_judges]
+        .group_by { |h| h[:sdomainid] || h[:css_id] }
+        .flat_map do |k, v|
+        next v unless k
+
+        v.reduce(&:merge).tap { |h| h.delete(:css_id) if h.key?(:sdomainid) }
+      end
     end
   end
 
