@@ -4,6 +4,7 @@
 # Serves as a collection of all data related to Correspondence workflow
 class Correspondence < CaseflowRecord
   has_many :correspondence_documents
+  has_many :correspondence_intakes
   belongs_to :prior_correspondence, class_name: "Correspondence", optional: true
 
   # has_many :appeals, through: :correspondence_appeals
