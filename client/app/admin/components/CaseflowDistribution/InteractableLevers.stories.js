@@ -1,5 +1,5 @@
 import React from 'react';
-import InteractableLevers from './InteractableLevers';
+//import InteractableLevers from './InteractableLevers';
 
 import { Tabs } from 'app/components/tabs/Tabs';
 import { Tab } from 'app/components/tabs/Tab';
@@ -14,7 +14,7 @@ import styles from './InteractableLevers.module.scss';
 
 export default {
   title: 'Admin/Caseflow Distribution/InteractableLevers',
-  component: InteractableLevers
+  component: InteractableLever
 };
 
 const batchSizeLevers = levers.filter((lever) => {
