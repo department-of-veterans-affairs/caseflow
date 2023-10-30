@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ProgressBar from 'app/components/ProgressBar';
 import Button from '../../../../components/Button';
+import PropTypes from 'prop-types';
 import AddCorrespondenceView from './AddCorrespondence/AddCorrespondenceView';
 /* import { ReviewCorrespondenceView } from './ReviewCorrespondence/ReviewCorrespondenceView';
 import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView'; */
@@ -20,7 +21,8 @@ const progressBarSections = [
   },
 ];
 
-export const CorrespondenceIntake = () => {
+export const CorrespondenceIntake = ({correspondence_uuid}) => {
+
   const [currentStep, setCurrentStep] = useState(1);
 
   const nextStep = () => {
@@ -47,7 +49,9 @@ export const CorrespondenceIntake = () => {
       classNames={['cf-progress-bar', 'cf-']}
       styling={{ style: { marginBottom: '5rem', float: 'right' } }} />
     {currentStep === 1 &&
-      <AddCorrespondenceView />
+      <AddCorrespondenceView
+        uuid = {correspondence_uuid}
+      />
     }
     {/* currentStep === 2 &&
       <ReviewCorrespondenceView />
@@ -90,6 +94,11 @@ export const CorrespondenceIntake = () => {
       </Button>}
     </div>
   </div>;
+};
+
+CorrespondenceIntake.PropTypes = {
+  uuid: PropTypes.uuid,
+  correspondence_uuid: PropTypes.uuid
 };
 
 export default CorrespondenceIntake;

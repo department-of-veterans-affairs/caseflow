@@ -8,6 +8,8 @@ import { bindActionCreators } from 'redux';
 import Table from '../../../../../components/Table';
 import Checkbox from '../../../../../components/Checkbox';
 import RadioField from '../../../../../components/RadioField';
+import ApiUtil from '../../../../../util/ApiUtil';
+import uuid from 'uuid';
 
 const priorMailAnswer = [
   { displayText: 'Yes',
@@ -32,6 +34,17 @@ const priorMailAnswer = [
   }, []);
 }; */
 
+export const getRowObjects = () => {
+  return ApiUtil.get(`/queue/correspondence/${uuid}/intake?json`).then((response) => {
+    const returnedObject = response.body;
+    const correspondences = returnedObject.correspondence;
+
+  }).
+    catch((err) => {
+      // allow HTTP errors to fall on the floor via the console.
+      console.error(new Error(`Problem with GET /queue/corresondence/${uuid}/intake?json ${err}`));
+    });
+};
 class AddCorrespondenceView extends React.Component {
 
   constructor() {
@@ -44,7 +57,8 @@ class AddCorrespondenceView extends React.Component {
       source_type: '',
       package_document_type: '',
       correspondence_type_id: '',
-      notes: ''
+      notes: '',
+      selectedRadio: 'no',
     };
   }
 
@@ -52,8 +66,10 @@ class AddCorrespondenceView extends React.Component {
     this.setState({ selectedValue: true });
   }
 
-  handleRadioChange = (event) => {
-    this.setSelectedValue(event);
+  handleRadioChange = (selectedRadio) => {
+    this.setState({
+      selected: value
+    });
   };
 
   getKeyForRow = (index, { hasCorrespondence, id }) => {
@@ -129,7 +145,7 @@ class AddCorrespondenceView extends React.Component {
     ];
   };
 
-  render() {
+  render(selectedValue, handleRadioChange) {
     const rowObjects = getRowObjects(
       this.props.correspondence,
     );
@@ -144,9 +160,8 @@ class AddCorrespondenceView extends React.Component {
         <RadioField
           name=""
           options={priorMailAnswer}
-          value={selectedValue}
+          value={this.state.selectedRadio}
           onChange={handleRadioChange} />
-
         {selectedValue === 'yes' && (
           <div className="cf-app-segment cf-app-segment--alt">
             <p>Please select the prior mail to link to this correspondence</p>
@@ -172,7 +187,8 @@ class AddCorrespondenceView extends React.Component {
 
 AddCorrespondenceView.propTypes = {
   correspondence: PropTypes.arrayOf(PropTypes.object).isRequired,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  uuid: PropTypes.uuid,
 };
 
 const mapDispatchToProps = (dispatch) =>
