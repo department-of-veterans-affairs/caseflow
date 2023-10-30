@@ -8,7 +8,6 @@ module Seeds
 
     def seed!
       create_correspondences
-      create_various_correspondences
     end
 
     private
@@ -19,6 +18,11 @@ module Seeds
       while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1))
         @file_number += 100
         @participant_id += 100
+      end
+
+      @cmp_packet_number ||= 1_000_000_000
+      while ::Correspondence.find_by(cmp_packet_number: @cmp_packet_number + 1)
+        @cmp_packet_number += 10000
       end
     end
 
@@ -35,39 +39,98 @@ module Seeds
     def create_correspondences
       10.times do
         veteran = create_veteran
-
-        corres = create(
-          :correspondence,
+        corres = ::Correspondence.create!(
+          uuid: SecureRandom.uuid,
+          portal_entry_date: Time.zone.now,
+          source_type: "Mail",
+          package_document_type_id: 15,
+          correspondence_type_id:  9,
+          cmp_queue_id: 1,
+          cmp_packet_number: @cmp_packet_number,
+          va_date_of_receipt: Time.zone.yesterday,
           notes: "This is a note from CMP.",
           assigned_by_id: 81,
           veteran_id: veteran.id
         )
-        create(
-          :correspondence_document,
+        CorrespondenceDocument.create!(
           document_file_number: veteran.file_number,
+          uuid: SecureRandom.uuid,
+          vbms_document_id: 1250,
           correspondence: corres
         )
+        @cmp_packet_number += 1
       end
-    end
 
-    def create_various_correspondences
-      20.times do
+      for package_doc_id in 1..77 do
         veteran = create_veteran
-
-        corres = create(
-          :correspondence,
-          package_document_type_id: rand(1..76),
-          correspondence_type_id: rand(1..24),
-          cmp_queue_id: rand(1..17),
+        corres = ::Correspondence.create!(
+          uuid: SecureRandom.uuid,
+          portal_entry_date: Time.zone.now,
+          source_type: "Mail",
+          package_document_type_id: package_doc_id,
+          correspondence_type_id:  9,
+          cmp_queue_id: 1,
+          cmp_packet_number: @cmp_packet_number,
+          va_date_of_receipt: Time.zone.yesterday,
           notes: "This is a note from CMP.",
           assigned_by_id: 81,
           veteran_id: veteran.id
         )
-        create(
-          :correspondence_document,
+        CorrespondenceDocument.create!(
           document_file_number: veteran.file_number,
+          uuid: SecureRandom.uuid,
+          vbms_document_id: 1250,
           correspondence: corres
         )
+        @cmp_packet_number += 1
+      end
+
+      for corres_type_id in 1..24 do
+        veteran = create_veteran
+        corres = ::Correspondence.create!(
+          uuid: SecureRandom.uuid,
+          portal_entry_date: Time.zone.now,
+          source_type: "Mail",
+          package_document_type_id: 15,
+          correspondence_type_id:  corres_type_id,
+          cmp_queue_id: 1,
+          cmp_packet_number: @cmp_packet_number,
+          va_date_of_receipt: Time.zone.yesterday,
+          notes: "This is a note from CMP.",
+          assigned_by_id: 81,
+          veteran_id: veteran.id
+        )
+        CorrespondenceDocument.create!(
+          document_file_number: veteran.file_number,
+          uuid: SecureRandom.uuid,
+          vbms_document_id: 1250,
+          correspondence: corres
+        )
+        @cmp_packet_number += 1
+      end
+
+      for cmp_queue_id in 1..17 do
+        veteran = create_veteran
+        corres = ::Correspondence.create!(
+          uuid: SecureRandom.uuid,
+          portal_entry_date: Time.zone.now,
+          source_type: "Mail",
+          package_document_type_id: 15,
+          correspondence_type_id:  9,
+          cmp_queue_id: cmp_queue_id,
+          cmp_packet_number: @cmp_packet_number,
+          va_date_of_receipt: Time.zone.yesterday,
+          notes: "This is a note from CMP.",
+          assigned_by_id: 81,
+          veteran_id: veteran.id
+        )
+        CorrespondenceDocument.create!(
+          document_file_number: veteran.file_number,
+          uuid: SecureRandom.uuid,
+          vbms_document_id: 1250,
+          correspondence: corres
+        )
+        @cmp_packet_number += 1
       end
     end
   end
