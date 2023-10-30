@@ -1,11 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import ProgressBar from 'app/components/ProgressBar';
 import Button from '../../../../components/Button';
-import Table from '../../../../components/Table';
-import Checkbox from '../../../../components/Checkbox';
-import RadioField from '../../../../components/RadioField';
-/* import { AddCorrespondenceView } from './AddCorrespondence/AddCorrespondenceView';
-import { ReviewCorrespondenceView } from './ReviewCorrespondence/ReviewCorrespondenceView';
+import AddCorrespondenceView from './AddCorrespondence/AddCorrespondenceView';
+/* import { ReviewCorrespondenceView } from './ReviewCorrespondence/ReviewCorrespondenceView';
 import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView'; */
 
 const progressBarSections = [
@@ -49,15 +46,16 @@ export const CorrespondenceIntake = () => {
       sections={sections}
       classNames={['cf-progress-bar', 'cf-']}
       styling={{ style: { marginBottom: '5rem', float: 'right' } }} />
-{/*     {currentStep === 1 &&
+    {currentStep === 1 &&
       <AddCorrespondenceView />
     }
-    {currentStep === 2 &&
+    {/* currentStep === 2 &&
       <ReviewCorrespondenceView />
     }
     {currentStep === 3 &&
       <ConfirmCorrespondenceView />
-    } */}
+    */}
+
     <div>
       <a href="/queue/correspondence">
         <Button
