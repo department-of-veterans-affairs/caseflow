@@ -87,7 +87,7 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
 
     Rails.logger.info("Cancelled?: (#{virtual_hearing.cancelled?})")
     Rails.logger.info("Conference id: (#{virtual_hearing.conference_id?})")
-    Rails.logger.info("Meeting Type: (#{virtual_hearing.conference_provider?})")
+    # Rails.logger.info("Meeting Type: (#{virtual_hearing.conference_provider?})")
   end
 
   def send_cancellation_emails(virtual_hearing)
@@ -145,18 +145,20 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
 
   # Returns whether or not the conference was deleted from Pexip or Webex
   def delete_conference(virtual_hearing)
-    response = client.delete_conference(conference_id: virtual_hearing.conference_id)
-    Rails.logger.info("#{virtual_hearing.conference_provider.capitalize} response: #{response}")
+    if virtual_hearing.conference_provider == "pexip"
+      response = client(virtual_hearing).delete_conference(virtual_hearing)
+      Rails.logger.info("#{virtual_hearing.conference_provider.capitalize} response: #{response}")
 
-    fail response.error unless response.success?
+      fail response.error unless response.success?
 
-    true
+      true
+    end
   rescue Caseflow::Error::PexipNotFoundError
     Rails.logger.info("Conference for hearing (#{virtual_hearing.hearing_id}) was already deleted")
-  rescue Caseflow::Error::WebexNotFoundError
-    Rails.logger.info("Conference for hearing (#{virtual_hearing.hearing_id}) was already deleted")
+  # rescue Caseflow::Error::WebexNotFoundError
+  # Rails.logger.info("Conference for hearing (#{virtual_hearing.hearing_id}) was already deleted")
 
-    # Assume the conference was already deleted if it's no longer in Pexip or Webex.
+    # Assume the conference was already deleted if it's no longer in Pexip.
     true
   rescue Caseflow::Error::PexipApiError => error
     Rails.logger.error("Failed to delete conference from Pexip for hearing (#{virtual_hearing.hearing_id})" \
@@ -175,21 +177,21 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
     )
 
     false
-  rescue Caseflow::Error::WebexApiError => error
-    Rails.logger.error("Failed to delete conference from Webex for hearing (#{virtual_hearing.hearing_id})" \
-      " with error: (#{error.code}) #{error.message}")
+  # rescue Caseflow::Error::WebexApiError => error
+  #   Rails.logger.error("Failed to delete conference from Webex for hearing (#{virtual_hearing.hearing_id})" \
+  #     " with error: (#{error.code}) #{error.message}")
 
-    (exception_list[Caseflow::Error::WebexApiError] ||= []) << virtual_hearing
+  #   (exception_list[Caseflow::Error::WebexApiError] ||= []) << virtual_hearing
 
-    capture_exception(
-      error: error,
-      extra: {
-        hearing_id: virtual_hearing.hearing_id,
-        virtual_hearing_id: virtual_hearing.id,
-        webex_conference_Id: virtual_hearing.conference_id
-      }
-    )
+  #   capture_exception(
+  #     error: error,
+  #     extra: {
+  #       hearing_id: virtual_hearing.hearing_id,
+  #       virtual_hearing_id: virtual_hearing.id,
+  #       webex_conference_Id: virtual_hearing.conference_id
+  #     }
+  #   )
 
-    false
+  #   false
   end
 end

@@ -12,32 +12,12 @@ class ExternalApi::WebexService
     @api_endpoint = api_endpoint
   end
 
-  # :reek:UtilityFunction
-  def combine_time_and_date(time, timezone, date)
-    time_with_zone = time.in_time_zone(timezone)
-    time_and_date_string = "#{date.strftime('%F')} #{time_with_zone.strftime('%T')}"
-    combined_datetime = time_and_date_string.in_time_zone(timezone)
-    formatted_datetime_string = combined_datetime.iso8601
-
-    formatted_datetime_string
-  end
-
-  # rubocop:disable Metrics/MethodLength
   def create_conference(virtual_hearing)
-    hearing_day = HearingDay.find(virtual_hearing.hearing.hearing_day_id)
-    hearing = Hearing.find(virtual_hearing.hearing.hearing_day_id)
-    timezone = hearing.regional_office&.timezone
-    date = hearing_day.scheduled_for
-    start_time = "00:00:01"
-    end_time = "23:59:59"
-    end_date_time = combine_time_and_date(end_time, timezone, date)
-    start_date_time = combine_time_and_date(start_time, timezone, date)
-
     body = {
       "jwt": {
         "sub": virtual_hearing.subject_for_conference,
-        "Nbf": start_date_time,
-        "Exp": end_date_time
+        "Nbf": virtual_hearing.hearing.scheduled_for.beginning_of_day.to_i,
+        "Exp": virtual_hearing.hearing.scheduled_for.end_of_day.to_i
       },
       "aud": aud,
       "numGuest": 1,
@@ -45,13 +25,13 @@ class ExternalApi::WebexService
       "provideShortUrls": true
     }
 
-    resp = send_webex_request(ENDPOINT, :post, body: body)
+    resp = send_webex_request(api_endpoint, :post, body: body)
     return if resp.nil?
 
     ExternalApi::WebexService::CreateResponse.new(resp)
   end
-  # rubocop:enable Metrics/MethodLength
 
+  # won't even need this method at all
   def delete_conference(virtual_hearing)
     return if virtual_hearing.conference_id.nil?
 

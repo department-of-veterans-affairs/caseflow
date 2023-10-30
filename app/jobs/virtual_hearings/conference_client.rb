@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module VirtualHearings::ConferenceClient
-  def client
+  def client(virtual_hearing)
     case virtual_hearing.conference_provider
     when "pexip"
       @client ||= PexipService.new(
