@@ -71,13 +71,14 @@ describe Api::V4::AmaIssues::VeteransController, :postgres, type: :request do
       context "when a veteran is found" do
         context "when a veteran is found - but has no reqeust issues" do
           let(:vet) { create(:veteran) }
-          it "should return request issues not found" do
+          it "should return empty request issues array for veteran" do
             get(
               "/api/v4/ama_issues_by_veteran/#{vet.participant_id}",
               headers: authorization_header
             )
-            expect(response).to have_http_status(404)
-            expect(response.body).to include("No Request Issues found for the given veteran.")
+            expect(response).to have_http_status(200)
+            response_hash = JSON.parse(response.body)
+            expect(response_hash["request_issues"].empty?).to eq true
           end
         end
 

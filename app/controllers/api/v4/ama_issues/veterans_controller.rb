@@ -45,14 +45,6 @@ class Api::V4::AmaIssues::VeteransController < Api::BaseController
   end
 
   def render_request_issues(request_issues)
-    if request_issues[:request_issues].empty?
-      render_errors(
-        status: 404,
-        code: :no_request_issues_found,
-        title: "No Request Issues found for the given veteran."
-      ) && return
-    else
-      render json: request_issues.to_json
-    end
+    render json: request_issues.to_json
   end
 end
