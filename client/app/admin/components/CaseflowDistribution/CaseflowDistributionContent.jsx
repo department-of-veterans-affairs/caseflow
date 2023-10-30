@@ -3,6 +3,7 @@
 import React from 'react';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
 import StaticLeverWrapper from './StaticLeversWrapper';
+import StaticLever from './StaticLever';
 import LeverHistory from './LeverHistory';
 import PropTypes from 'prop-types';
 import TabWindow from '../../../components/TabWindow';
@@ -52,6 +53,17 @@ const CaseflowDistributionContent = ({ levers, activeLevers, inactiveLevers, sav
             </a>
           </h2>
           <div {...sectionSegmentStyling}>
+            {/* Temporary Static Lever Implementation before wrapper */}
+            <table>
+              <tbody>
+                <tr>
+                  <StaticLever key={levers[0].item} lever={levers[0]} />
+                  <StaticLever key={levers[1].item} lever={levers[1]} />
+                  <StaticLever key={levers[2].item} lever={levers[2]} />
+                  <StaticLever key={levers[3].item} lever={levers[3]} />
+                </tr>
+              </tbody>
+            </table>
             {/* <StaticLeverWrapper levers={levers} activeLevers={inactiveLevers} /> */}
           </div>
         </div>

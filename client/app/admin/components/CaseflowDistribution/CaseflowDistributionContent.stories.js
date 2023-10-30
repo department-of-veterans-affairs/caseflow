@@ -1,6 +1,7 @@
 import React from 'react';
 import CaseflowDistributionContent from './CaseflowDistributionContent';
 import { formattedHistory } from '../../../../../client/test/data/adminCaseDistributionLevers';
+import { formatted_history, formatted_levers } from '../../../../../client/test/data/formattedCaseDistributionData';
 
 export default {
   title: 'CaseDistribution/Caseflow Distribution Content',
@@ -9,11 +10,11 @@ export default {
 
 export const Primary = () =>
   <CaseflowDistributionContent
-    levers = {[]}
+    levers = {formatted_levers}
     activeLevers = {[]}
     inactiveLevers = {[]}
     saveChanges = {[]}
-    formattedHistory={formattedHistory}
+    formattedHistory={formatted_history}
     isAdmin
   />;
 
