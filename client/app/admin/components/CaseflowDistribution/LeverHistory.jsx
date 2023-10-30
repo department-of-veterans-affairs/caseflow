@@ -5,20 +5,22 @@ import { css } from 'glamor';
 
 const LeverHistory = (props) => {
 
-  const leverHistoryStyling = css({
+  const historyTableStyling = css({
+    paddingTop: '0',
+    marginTop: '0',
+    paddingBottom: '0',
     borderLeft: '0',
     borderRight: '0',
     borderTop: '0',
     borderColor: '#d6d7d9;',
-    paddingTop: '0',
-    marginTop: '0',
-    paddingBottom: '0',
     verticalAlign: 'text-top',
     fontFamily: 'Source Sans Pro',
     fontWeight: '400',
     fontSize: '19px',
-    lineHeight: '1.3em/25px'
+    lineHeight: '1.3em/25px',
+    width: '20%'
   });
+
   const leverHistoryTableHeaderStyling = css({
     borderLeft: '0',
     borderRight: '0',
@@ -42,26 +44,26 @@ const LeverHistory = (props) => {
         </tr>
         <tbody>{props.historyData.map((entry, index) =>
           <tr key={index}>
-            <td {...leverHistoryStyling}>{entry.created_at}</td>
-            <td {...leverHistoryStyling}>{entry.user}</td>
-            <td {...leverHistoryStyling}>
-              <ol {...leverHistoryStyling}>
+            <td {...historyTableStyling}>{entry.created_at}</td>
+            <td {...historyTableStyling}>{entry.user}</td>
+            <td {...historyTableStyling}>
+              <ol>
                 {entry.titles.map((title) => {
                   return <li key={title}>{title}</li>;
                 })
                 }
               </ol>
             </td>
-            <td {...leverHistoryStyling}>
-              <ol {...leverHistoryStyling}>
+            <td {...historyTableStyling}>
+              <ol>
                 {entry.original_values.map((originalValue, index) => {
                   return <li key={originalValue}>{originalValue}{' '}{entry.units[index]}</li>;
                 })
                 }
               </ol>
             </td>
-            <td {...leverHistoryStyling}>
-              <ol {...leverHistoryStyling}>
+            <td {...historyTableStyling}>
+              <ol>
                 {entry.current_values.map((currentValue, index) => {
                   return <li key={currentValue}>{currentValue}{' '}{entry.units[index]}</li>;
                 })
