@@ -155,7 +155,13 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
       DataDogService.increment_counter(metric_name: "created_conference.successful", **create_conference_datadog_tags)
 
-      virtual_hearing.update(conference_id: create_conference_response.data[:conference_id])
+      if virtual_hearing.conference_provider == "pexip"
+        virtual_hearing.update(conference_id: create_conference_response.data[:conference_id])
+      else
+        response = "#{virtual_hearing.hearing.hearing.docket_number}#{virtual_hearing.hearing.id}"
+        response = response.delete "-"
+        virtual_hearing.update(conference_id: response.to_i)
+      end
     end
   end
 

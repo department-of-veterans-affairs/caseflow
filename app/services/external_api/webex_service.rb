@@ -35,9 +35,18 @@ class ExternalApi::WebexService
   def delete_conference(virtual_hearing)
     return if virtual_hearing.conference_id.nil?
 
-    delete_endpoint = "#{api_endpoint}#{conference_id}/"
-    resp = send_webex_request(delete_endpoint, :delete)
-    return if resp.nil?
+    body = {
+      "jwt": {
+        "sub": virtual_hearing.subject_for_conference,
+        "nbf": "0",
+        "exp": "0"
+      },
+      "aud": aud,
+      "numGuest": 1,
+      "numHost": 1,
+      "provideShortUrls": true
+    }
+    resp = send_webex_request(api_endpoint, :post, body: body)
 
     ExternalApi::WebexService::DeleteResponse.new(resp)
   end

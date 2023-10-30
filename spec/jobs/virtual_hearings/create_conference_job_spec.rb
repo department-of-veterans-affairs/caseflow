@@ -97,12 +97,6 @@ describe VirtualHearings::CreateConferenceJob do
       expect(virtual_hearing.guest_pin.to_s.length).to eq(11)
     end
 
-    it "fails when meeting type is webex" do
-      current_user.meeting_type.update!(service_name: "webex")
-
-      expect { subject.perform_now }.to raise_exception(Caseflow::Error::WebexApiError)
-    end
-
     include_examples "confirmation emails are sent"
 
     include_examples "sent email event objects are created"
