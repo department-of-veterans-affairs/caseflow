@@ -12,15 +12,14 @@ module VirtualHearings::ConferenceClient
         client_host: ENV["PEXIP_CLIENT_HOST"]
       )
     when "webex"
-      msg = "You hit the Webex Service!"
-      fail Caseflow::Error::WebexApiError, message: msg
-      # @client ||= WebexService.new(
-      #   host: ENV["WEBEX_MANAGEMENT_NODE_HOST"],
-      #   port: ENV["WEBEX_MANAGEMENT_NODE_PORT"],
-      #   user_name: ENV["WEBEX_USERNAME"],
-      #   password: ENV["WEBEX_PASSWORD"],
-      #   client_host: ENV["WEBEX_CLIENT_HOST"]
-      # )
+      @client ||= WebexService.new(
+        host: ENV["WEBEX_HOST"],
+        port: ENV["WEBEX_PORT"],
+        aud: ENV["WEBEX_ORGANIZATION"],
+        apikey: ENV["WEBEX_BOTTOKEN"],
+        domain: ENV["WEBEX_DOMAIN"],
+        api_endpoint: ENV["WEBEX_API"]
+      )
     else
       msg = "Meeting type for the user is invalid"
       fail Caseflow::Error::MeetingTypeNotFoundError, message: msg
