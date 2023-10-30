@@ -61,7 +61,7 @@ module Seeds
         @cmp_packet_number += 1
       end
 
-      for package_doc_id in 1..77 do
+      1..77.each do |package_doc_id|
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
@@ -85,7 +85,7 @@ module Seeds
         @cmp_packet_number += 1
       end
 
-      for corres_type_id in 1..24 do
+      1..24.each do |corres_type_id|
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
@@ -109,7 +109,7 @@ module Seeds
         @cmp_packet_number += 1
       end
 
-      for cmp_queue_id in 1..17 do
+      1..17.each do |cmp_queue_id|
         veteran = create_veteran
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
