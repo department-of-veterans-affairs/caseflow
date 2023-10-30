@@ -1,12 +1,25 @@
 import React from 'react';
-import StaticLever from './StaticLever';
 import PropTypes from 'prop-types';
+import { createStore } from 'redux';
+import StaticLever from './StaticLever';
+import leversReducer from 'app/admin/reducers/Levers/leversReducer';
+import { levers } from 'test/data/adminCaseDistributionLevers';
 
-const StaticLeverWrapper = ({ levers }) => {
+const activeLevers = levers.filter((lever) => lever.is_active);
+
+const preloadedState = {
+  levers: JSON.parse(JSON.stringify(activeLevers)),
+  initial_levers: JSON.parse(JSON.stringify(activeLevers)),
+  formatted_history: {}
+};
+
+const leverStore = createStore(leversReducer, preloadedState);
+
+const StaticLeverWrapper = () => {
   return (
     <div>
-      {levers.map((lever) => (
-        <StaticLever key={lever.title} lever={lever} />
+      {leverStore.getState().levers.map((lever) => (
+        <StaticLever key={lever.item} lever={lever} />
       ))}
     </div>
   );
@@ -15,6 +28,7 @@ const StaticLeverWrapper = ({ levers }) => {
 StaticLeverWrapper.propTypes = {
   levers: PropTypes.arrayOf(
     PropTypes.shape({
+      item: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
       data_type: PropTypes.string.isRequired,
