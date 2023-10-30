@@ -396,4 +396,37 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       it_behaves_like "Vha HLR/SC adding issue without decision date to existing claim review"
     end
   end
+
+  context "adding an unidentified issue without a decision date" do
+    let(:intake_type) do
+      start_higher_level_review(veteran, benefit_type: "vha")
+    end
+
+    it "should not show no decision date banner or edit decision date issue option" do
+      intake_type
+      visit "/intake"
+      click_intake_continue
+      click_intake_add_issue
+      click_intake_no_matching_issues
+
+      fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
+      click_on("Add this issue", class: "add-issue")
+
+      expect(page).to_not have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
+      click_intake_finish
+
+      expect(page).to have_content("Veterans Health Administration")
+      click_on veteran.name.to_s
+
+      # Grab the new HLR and visit the edit page
+      hlr = Intake.last.detail
+      issue_id = hlr.request_issues.first.id
+
+      expect(page).to have_content("Edit Issues")
+
+      within "#issue-#{issue_id}" do
+        expect(page).to have_no_selector("select option", text: "Add decision date")
+      end
+    end
+  end
 end
