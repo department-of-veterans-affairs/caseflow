@@ -148,17 +148,17 @@ $form-width: 575px;
   }
 }
 
-.non-comp-report{
-  .cf-select {
-    .cf-select__control {
-      max-width: $form-width;
-    }
+// .non-comp-report{
+//   .cf-select {
+//     .cf-select__control {
+//       max-width: $form-width;
+//     }
 
-    .cf-select__menu {
-      max-width: $form-width;
-    }
-  }
-}
+//     .cf-select__menu {
+//       max-width: $form-width;
+//     }
+//   }
+// }
 
 .report-page-segment {
   display: flex;
