@@ -23,24 +23,18 @@ class Api::V3::VbmsIntake::Legacy::VbmsLegacyDtoBuilder
   end
 
   def serialized_vacols_issues
-
+    vacols_issues = []
     v_ids = LegacyAppeal.fetch_appeals_by_file_number(@veteran_file_number).map(&:vacols_id)
+    v_ids.each do |i|
+      vacols_issues.push(AppealRepository.issues(i))
+    end
 
-    # returns Issue
-    # las = v_ids.each { |vi| AppealRepository.issues(vi) }
-
-    # puts "$$$$$$$$$$$$$$$$$"
-    # puts las[0]
-    # # puts las.first.id
-    # puts "$$$$$$$$$$$$$$$$$"
-    # puts las[1].id
-    # puts "$$$$$$$$$$$$$$$$$"
-
-    Api::V3::VbmsIntake::Legacy::VacolsIssueSerializer.new(
-      # las
-      # Kaminari.paginate_array(VACOLS::CaseIssue.where(isskey: v_ids)).page(@page)
-      Kaminari.paginate_array(AppealRepository.issues(v_ids.first)).page(@page)
+    serialized_data = Api::V3::VbmsIntake::Legacy::VacolsIssueSerializer.new(
+      Kaminari.paginate_array(vacols_issues.flatten).page(@page)
     ).serializable_hash[:data]
+
+    # We are calling attributes to map and pull the data we only want
+    serialized_data.attributes.map { |issue| issue[:vacols_issue] }
   end
 
   def build_json_response
