@@ -11,7 +11,9 @@ import NumberField from 'app/components/NumberField';
 const DocketTimeGoals = ({ docketLevers }) => {
 
   const leverNumberDiv = css({
-    '& .cf-form-int-input' : {width: 'auto', display: 'inline-block'}
+    '& .cf-form-int-input' : {width: 'auto', display: 'inline-block'},
+    '& .cf-form-int-input .input-container' : {width: 'auto', display: 'inline-block', verticalAlign: 'middle'},
+    '& .cf-form-int-input label' : {float: 'right', margin: '0', lineHeight: '50px'}
   });
 
   const [lever, setLever] = useState(docketLevers);
@@ -63,24 +65,31 @@ const DocketTimeGoals = ({ docketLevers }) => {
             <strong>{lever.title}</strong>
           </div>
           <div className={`${styles.leverMiddle} ${leverNumberDiv}`}>
-          <label htmlFor={lever.item}>{lever.title}</label>
             <NumberField
-              id={lever.item}
               name={lever.item}
               isInteger
-              readOnly={!lever.is_active}
+              readOnly={true}
               value={lever.value}
-              label={false}
+              label={lever.unit}
               onChange={updateLever(index)}
             />
-            <span className={styles.leverUnit}>{lever.unit}</span>
           </div>
-          <div className={`${styles.leverRight} ${styles.docketLeverRight}`}>
+          <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
             <ToggleSwitch
               selected={lever.is_active}
               disabled={lever.is_disable}
               toggleSelected={toggleLever(index)}
             />
+            <div className={lever.is_active ? styles.toggleSwichInput : styles.toggleInputHide}>
+              <NumberField
+                name={`toogle-${lever.item}`}
+                isInteger
+                readOnly={!lever.is_active}
+                value={lever.value}
+                label={lever.unit}
+                onChange={updateLever(index)}
+              />
+            </div>
           </div>
         </div>
       ))}

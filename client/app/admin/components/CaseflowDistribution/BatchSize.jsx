@@ -10,7 +10,9 @@ import NumberField from 'app/components/NumberField';
 const BatchSize = ({ batchSizeLevers }) => {
 
   const leverNumberDiv = css({
-    '& .cf-form-int-input' : {width: 'auto', display: 'inline-block'}
+    '& .cf-form-int-input' : {width: 'auto', display: 'inline-block'},
+    '& .cf-form-int-input .input-container' : {width: 'auto', display: 'inline-block', verticalAlign: 'middle'},
+    '& .cf-form-int-input label' : {float: 'right', margin: '0', lineHeight: '50px'}
   });
 
   const [lever, setLever] = useState(batchSizeLevers);
@@ -40,16 +42,13 @@ const BatchSize = ({ batchSizeLevers }) => {
             <p>{lever.description}</p>
           </div>
           <div className={`${styles.leverRight} ${leverNumberDiv}`}>
-          <label htmlFor={lever.item}>{lever.title}</label>
             <NumberField
-              id={lever.item}
               name={lever.item}
-              label={false}
+              label={lever.unit}
               isInteger
               value={lever.value}
               onChange={updateLever(index)}
             />
-            <span className={styles.leverUnit}>{lever.unit}</span>
           </div>
         </div>
       ))}
