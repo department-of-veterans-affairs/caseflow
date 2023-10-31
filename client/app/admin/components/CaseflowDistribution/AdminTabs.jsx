@@ -3,13 +3,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-const AdminTabs = ({ activeLevers, reorderLevers, updateLeverValue }) => {
+const AdminTabs = () => {
   return (
     <div>
-        {/* create the two tabs, and make sure that it can go between the two states */}
+      {/* create the two tabs, and make sure that it can go between the two states */}
     </div>
   );
 };
 
-
-export default connect(mapStateToProps, mapDispatchToProps)(AdminTabs);
+export default AdminTabs;

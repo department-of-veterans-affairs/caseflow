@@ -114,7 +114,28 @@ export const levers = [
         ],
         "is_active": true
       }
-  ]
+    ],
+    is_active: true
+  },
+  {
+    item: 'lever_10',
+    title: 'Lever 10',
+    description: 'This is the ninth lever. It is a radio data type with the default value of option_1. Therefore there should be a radio options displayed and option_1 is selected by default. If the option is text only the text is displayed, but if it is a different data type then the appropriate input and unit are displayed and the value stored. This lever is active so it should be in the active lever section',
+    data_type: 'combination',
+    value: 78,
+    unit: 'cases',
+    options: [
+      {
+        item: 'option_1',
+        data_type: 'boolean',
+        value: true,
+        text: 'This feature is turned on or off',
+        unit: ''
+      }
+    ],
+    is_active: true
+  }
+];
 
 export const history = [
   {
@@ -134,12 +155,12 @@ export const history = [
     "unit": ""
   },
   {
-    "user": "jane_smith",
-    "created_at": "2023-07-01 12:10:01",
-    "title": 'Lever 1',
-    "original_value": 5,
-    "current_value": 42,
-    "unit": "cases"
+    user: 'jane_smith',
+    created_at: '2023-07-01 12:10:01',
+    title: 'Lever 1',
+    original_value: 5,
+    current_value: 42,
+    unit: 'Cases'
   }
 ]
 

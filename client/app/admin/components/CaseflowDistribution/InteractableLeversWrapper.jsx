@@ -10,6 +10,7 @@ const InteractableLeverWrapper = ({ InteractableLevers, levers }) => {
       <h3>Active Levers</h3>
       {InteractableLevers.map((leverItem) => {
         const lever = levers.find((l) => l.item === leverItem);
+
         return lever ? (
           <InteractableLever key={lever.item} lever={lever} />
         ) : null;
