@@ -1,6 +1,6 @@
 import React from 'react';
 import { useController, useForm, FormProvider } from 'react-hook-form';
-import { css, left } from 'glamor';
+import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import Button from 'app/components/Button';
 import NonCompLayout from '../components/NonCompLayout';
@@ -140,6 +140,7 @@ const ReportPage = ({ history }) => {
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
 
+  // eslint-disable-next-line no-console
   const onSubmit = (data) => console.log(data);
 
   return (

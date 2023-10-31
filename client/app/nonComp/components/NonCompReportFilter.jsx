@@ -3,7 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import PropTypes from 'prop-types';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
-import REPORT_TYPE_CONSTANTS from '../../../constants/REPORT_TYPE_CONSTANTS.json'
+import REPORT_TYPE_CONSTANTS from '../../../constants/REPORT_TYPE_CONSTANTS';
 
 const NonCompReportFilter = ({ control }) => (
   <>
@@ -11,7 +11,7 @@ const NonCompReportFilter = ({ control }) => (
     <Controller
       control={control}
       name="reportType"
-      render={({ onChange, ref, ...rest }) => (
+      render={({ onChange, ...rest }) => (
         <SearchableDropdown
           {...rest}
           name="reportType"
