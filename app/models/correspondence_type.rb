@@ -1,3 +1,3 @@
-class CorrespondenceTypes < ApplicationRecord
-  has_many :correspondence
+class CorrespondenceType < ApplicationRecord
+  has_many :correspondences
 end
