@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::V3::VbmsIntake::Legacy::VbmsLegacyDtoBuilder
+class Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder
   attr_reader :json_response
 
   def initialize(veteran, page)
@@ -29,12 +29,17 @@ class Api::V3::VbmsIntake::Legacy::VbmsLegacyDtoBuilder
       vacols_issues.push(AppealRepository.issues(i))
     end
 
-    serialized_data = Api::V3::VbmsIntake::Legacy::VacolsIssueSerializer.new(
+    serialized_data = Api::V3::Issues::Legacy::VacolsIssueSerializer.new(
       Kaminari.paginate_array(vacols_issues.flatten).page(@page)
     ).serializable_hash[:data]
 
-    # We are calling attributes to map and pull the data we only want
-    serialized_data.attributes.map { |issue| issue[:vacols_issue] }
+    extract_vacols_issues(serialized_data)
+  end
+
+  def extract_vacols_issues(serialized_data)
+    wanted_attributes = serialized_data.map { |issue| issue[:attributes] }
+
+    wanted_attributes.map { |issue| issue[:vacols_issue] }
   end
 
   def build_json_response
