@@ -4,7 +4,6 @@
 class Api::V3::Issues::Ama::VeteransController < Api::V3::BaseController
   include ApiV3FeatureToggleConcern
 
-  # TODO: investigate roles
   before_action do
     api_released?(:api_v3_ama_issues)
   end
