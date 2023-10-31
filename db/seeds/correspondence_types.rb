@@ -3,7 +3,7 @@
 # Create correspondence type seeds
 
 module Seeds
-  class CorrespondenceTypes < Base
+  class CorrespondenceType < Base
     def seed!
       create_correspondence_types
     end
@@ -36,7 +36,7 @@ module Seeds
          "Withdrawal of appeal"]
 
       correspondence_types_list.each do |type|
-        CorrespondenceType.find_or_create_by(name: type)
+        CorrespondenceTypes.find_or_create_by(name: type)
       end
     end
   end
