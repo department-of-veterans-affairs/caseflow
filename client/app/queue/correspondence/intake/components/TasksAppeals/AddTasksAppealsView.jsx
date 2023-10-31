@@ -42,7 +42,7 @@ export const AddTasksAppealsView = () => {
                   name={name}
                   label={name}
                 />
-              )
+              );
             })}
           </div>
         </div>

@@ -38,7 +38,7 @@ export const CorrespondenceIntake = () => {
     title,
     current: (step === currentStep)
   }),
-);
+  );
 
   return <div>
     <ProgressBar
