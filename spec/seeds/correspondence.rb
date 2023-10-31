@@ -12,7 +12,7 @@ describe Seeds::Correspondence do
 
     it "are set properly when seed has been previously run" do
       veteran = Veteran.create!(file_number: 500_000_001)
-      Correspondence.create!(cmp_packet_number: 1000000001, veteran_id: veteran.id)
+      Correspondence.create!(cmp_packet_number: 1_000_000_001, veteran_id: veteran.id)
 
       expect(seed.instance_variable_get(:@file_number)).to eq 500_000_100
       expect(seed.instance_variable_get(:@participant_id)).to eq 850_000_100

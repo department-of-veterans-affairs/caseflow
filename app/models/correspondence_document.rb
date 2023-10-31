@@ -6,8 +6,7 @@ class CorrespondenceDocument < CaseflowRecord
   # remove after implementing fetch from S3
   def fetch_document
     if FeatureToggle.enabled?(:correspondence_queue)
-      file = File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf")
-      file
+      File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf")
     end
   end
 end

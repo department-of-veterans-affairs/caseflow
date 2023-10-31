@@ -21,9 +21,7 @@ module Seeds
       end
 
       @cmp_packet_number ||= 1_000_000_000
-      while ::Correspondence.find_by(cmp_packet_number: @cmp_packet_number + 1)
-        @cmp_packet_number += 10000
-      end
+      @cmp_packet_number += 100_00 while ::Correspondence.find_by(cmp_packet_number: @cmp_packet_number + 1)
     end
 
     def create_veteran(options = {})
@@ -36,6 +34,7 @@ module Seeds
       create(:veteran, params.merge(options))
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def create_correspondences
       10.times do
         veteran = create_veteran
@@ -44,7 +43,7 @@ module Seeds
           portal_entry_date: Time.zone.now,
           source_type: "Mail",
           package_document_type_id: 15,
-          correspondence_type_id:  8,
+          correspondence_type_id: 8,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
           va_date_of_receipt: Time.zone.yesterday,
@@ -68,7 +67,7 @@ module Seeds
           portal_entry_date: Time.zone.now,
           source_type: "Mail",
           package_document_type_id: package_doc_id,
-          correspondence_type_id:  8,
+          correspondence_type_id: 9,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
           va_date_of_receipt: Time.zone.yesterday,
@@ -92,7 +91,7 @@ module Seeds
           portal_entry_date: Time.zone.now,
           source_type: "Mail",
           package_document_type_id: 15,
-          correspondence_type_id:  corres_type_id,
+          correspondence_type_id: corres_type_id,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
           va_date_of_receipt: Time.zone.yesterday,
@@ -116,7 +115,7 @@ module Seeds
           portal_entry_date: Time.zone.now,
           source_type: "Mail",
           package_document_type_id: 15,
-          correspondence_type_id:  8,
+          correspondence_type_id: 9,
           cmp_queue_id: cmp_queue_id,
           cmp_packet_number: @cmp_packet_number,
           va_date_of_receipt: Time.zone.yesterday,
@@ -132,6 +131,7 @@ module Seeds
         )
         @cmp_packet_number += 1
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
     end
   end
 end
