@@ -63,7 +63,9 @@ const DocketTimeGoals = ({ docketLevers }) => {
             <strong>{lever.title}</strong>
           </div>
           <div className={`${styles.leverMiddle} ${leverNumberDiv}`}>
+          <label htmlFor={lever.item}>{lever.title}</label>
             <NumberField
+              id={lever.item}
               name={lever.item}
               isInteger
               readOnly={!lever.is_active}

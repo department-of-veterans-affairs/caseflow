@@ -40,7 +40,9 @@ const BatchSize = ({ batchSizeLevers }) => {
             <p>{lever.description}</p>
           </div>
           <div className={`${styles.leverRight} ${leverNumberDiv}`}>
+          <label htmlFor={lever.item}>{lever.title}</label>
             <NumberField
+              id={lever.item}
               name={lever.item}
               label={false}
               isInteger
