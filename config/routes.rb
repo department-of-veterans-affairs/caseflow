@@ -58,6 +58,7 @@ Rails.application.routes.draw do
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do
         get 'decision_reviews', to: 'docs#decision_reviews'
+        get 'ama_issues', to: 'docs#ama_issues'
       end
     end
     get "metadata", to: 'metadata#index'
