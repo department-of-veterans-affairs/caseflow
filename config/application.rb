@@ -12,7 +12,7 @@ require "vbms"
 module CaseflowCertification
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.0
+    config.load_defaults 5.2
 
     # Override new 'zeitwerk' autoloading default to preserve 'classic' behavior.
     # We must transition to 'zeitwerk' when upgrading to Rails 7.0.
