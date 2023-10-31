@@ -662,11 +662,11 @@ class QueueApp extends React.PureComponent {
   );
 
   routedCorrespondenceIntake = () => (
-<<<<<<< HEAD
-    <CorrespondenceCases {...this.props} />
-=======
     <CorrespondenceIntake />
->>>>>>> feature/APPEALS-27311
+  );
+
+  routedCorrespondenceCase = () => (
+    <CorrespondenceCases {...this.props} />
   );
 
   queueName = () =>
@@ -726,7 +726,7 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               path="/queue/correspondence"
               title={`${PAGE_TITLES.CORRESPONDENCE_CASES_LIST}`}
-              render={this.routedCorrespondenceIntake}
+              render={this.routedCorrespondenceCase}
             />
 
             <PageRoute

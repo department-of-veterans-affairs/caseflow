@@ -212,11 +212,8 @@ export const PAGE_TITLES = {
   CONVERT_HEARING_TO_VIDEO: 'Change Hearing Request Type to Video',
   CONVERT_HEARING_TO_CENTRAL: 'Change Hearing Request Type to Central',
   COMPLETE_HEARING_POSTPONEMENT_REQUEST: 'Complete Hearing Postponement Request',
-<<<<<<< HEAD
-  CORRESPONDENCE_CASES_LIST: 'Correspondence Cases'
-=======
+  CORRESPONDENCE_CASES_LIST: 'Correspondence Cases',
   CORRESPONDENCE_INTAKE: 'Correspondence Intake'
->>>>>>> feature/APPEALS-27311
 };
 
 export const CUSTOM_HOLD_DURATION_TEXT = 'Custom';
