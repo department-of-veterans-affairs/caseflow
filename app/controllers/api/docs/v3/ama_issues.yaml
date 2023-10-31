@@ -20,6 +20,8 @@ info:
 
     * Detailed error messages will be returned to help your application provide meaningful information to the Veteran attempting to make the AMA Request Issue request.
 
+    * The Request Issues are paginated in the response. The page paramenter must be a integer greater than or equal to 1. 0 and negative numbers are defaulted to page 1.
+
     ## Authorization
 
     API requests are authorized through a token, provided in an HTTP header.
@@ -50,7 +52,7 @@ paths:
           name: page
           schema:
             type: integer
-          description: The page of request issues for the supplied veteran. Positive greater than 0.
+          description: The page of request issues for the supplied veteran. Positive greater than 0. 0 or negative numbers are defaulted to 1.
       summary: Retrieve all AMA request issues and associated decision issues from Veteran.
       description: >+
         Will return a paginated response of request issues and associated decision issue for the Veteran.
