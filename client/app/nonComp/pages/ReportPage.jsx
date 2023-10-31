@@ -1,5 +1,5 @@
 import React from 'react';
-import { useForm, FormProvider } from 'react-hook-form';
+import { useController, useForm, FormProvider } from 'react-hook-form';
 import { css, left } from 'glamor';
 import PropTypes from 'prop-types';
 import Button from 'app/components/Button';
@@ -9,7 +9,7 @@ import Checkbox from '../../components/Checkbox';
 import RadioField from '../../components/RadioField';
 import NonCompReportFilterContainer from '../components/NonCompReportFilter';
 
-import REPORT_TYPE_CONSTANTS from '../../../constants/REPORT_TYPE_CONSTANTS.json'
+import REPORT_TYPE_CONSTANTS from '../../../constants/REPORT_TYPE_CONSTANTS';
 
 const buttonInnerContainerStyle = css({
   display: 'flex',
@@ -62,39 +62,55 @@ const ReportPageButtons = ({
   );
 };
 
-const RHFCheckboxGroup = ({ options, methods }) => {
+const RHFCheckboxGroup = ({ options, name, control }) => {
+  const { field } = useController({
+    control,
+    name,
+  });
+  const [value, setValue] = React.useState({});
+
   return (
-    <fieldset className="checkbox" style={{ paddingLeft: "30px" }}> {
-      options.map((option) =>
-      <div className="checkbox" key={option.id} >
-        <Checkbox
-          {...methods.register(`specificEventType.${option.id}`)}
-          name={`specificEventType.${option.id}`}
-          key={`specificEventType.${option.id}`}
-          label={option.label}
-          stronglabel
-          value={methods.getValues(`specificEventType.${option.id}`)}
-          onChange={(value) => methods.setValue(`specificEventType.${option.id}`, value)}
-          unpadded
-        />
-      </div>
-      )
-    }
+    <fieldset className="checkbox" style={{ paddingLeft: '30px' }}>
+      {' '}
+      {options.map((option) => (
+        <div className="checkbox" key={option.id}>
+          <Checkbox
+            name={`specificEventType.${option.id}`}
+            key={`specificEventType.${option.id}`}
+            label={option.label}
+            stronglabel
+            onChange={(val) => {
+              value[option.id] = val;
+              field.onChange(value);
+              setValue(value);
+            }}
+            unpadded
+          />
+        </div>
+      ))}
     </fieldset>
   );
 };
 
-const RHFRadioButton = ({ options, methods}) => {
+const RHFRadioButton = ({ options, name, control }) => {
+  const { field } = useController({
+    control,
+    name,
+  });
+
   return (
-    <div style={{marginTop: "20px"}}>
-      <RadioField name=""
-      {...methods.register('radioEventAction')}
-      label=""
-      vertical
-      options={options}
-      value={methods.getValues('radioEventAction')}
-      stronglabel
-      onChange={(value) => methods.setValue('radioEventAction', value)} />
+    <div style={{ marginTop: '20px' }}>
+      <RadioField
+        name=""
+        label=""
+        vertical
+        options={options}
+        stronglabel
+        value={field.value}
+        onChange={(val) => {
+          field.onChange(val);
+        }}
+      />
     </div>
   );
 };
@@ -102,23 +118,29 @@ const RHFRadioButton = ({ options, methods}) => {
 const ReportPage = ({ history }) => {
   const defaultFormValues = {
     reportType: '',
-    radioEventAction: '',
-    specificEventType: [],
+    radioEventAction: 'all_events_action',
+    specificEventType: {
+      added_decision_date: '',
+      added_issue: '',
+      added_issue_no_decision_date: '',
+      claim_created: '',
+      claim_closed: '',
+      claim_status_incomplete: '',
+      claim_status_inprogress: '',
+      completed_disposition: '',
+      removed_issue: '',
+      withdrew_issue: '',
+    },
   };
 
   const methods = useForm({ defaultValues: { ...defaultFormValues } });
 
-  const { register, reset, watch, getValues,setValue, formState } = methods;
+  const { reset, watch, formState, control } = methods;
 
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
 
-
   const onSubmit = (data) => console.log(data);
-
-  const handleOnChange = (value) => {
-    console.log(value);
-  }
 
   return (
     <NonCompLayout
@@ -135,14 +157,25 @@ const ReportPage = ({ history }) => {
       <FormProvider {...methods}>
         <form>
           <NonCompReportFilterContainer />
-          {watchReportType === 'event_type_action' ?
-            <RHFRadioButton options={REPORT_TYPE_CONSTANTS.RADIO_EVENT_TYPE_OPTIONS} methods={methods} />
-            : ''
-          }
-          {(watchReportType === 'event_type_action'  && watchRadioEventAction === 'specific_events_action') ?
-              <RHFCheckboxGroup options={REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS} methods={methods} />
-            : ''
-          }
+          {watchReportType === 'event_type_action' ? (
+            <RHFRadioButton
+              options={REPORT_TYPE_CONSTANTS.RADIO_EVENT_TYPE_OPTIONS}
+              methods={methods}
+              name="radioEventAction"
+            />
+          ) : (
+            ''
+          )}
+          {watchReportType === 'event_type_action' &&
+          watchRadioEventAction === 'specific_events_action' ? (
+              <RHFCheckboxGroup
+                options={REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS}
+                control={control}
+                name="specificEventType"
+              />
+            ) : (
+              ''
+            )}
         </form>
       </FormProvider>
     </NonCompLayout>
@@ -160,15 +193,16 @@ ReportPage.propTypes = {
   history: PropTypes.object,
 };
 
-
 RHFCheckboxGroup.propTypes = {
   options: PropTypes.array,
-  methods: PropTypes.object
+  control: PropTypes.object,
+  name: PropTypes.string
 };
 
 RHFRadioButton.propTypes = {
   options: PropTypes.array,
-  methods: PropTypes.object
+  control: PropTypes.object,
+  name: PropTypes.string
 };
 
 export default ReportPage;
