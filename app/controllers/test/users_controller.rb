@@ -178,8 +178,8 @@ class Test::UsersController < ApplicationController
 
   def veteran_records
     redirect_to "/unauthorized" if Rails.deploy_env?(:prod) || \
-                                Rails.deploy_env?(:prodtest) || \
-                                Rails.deploy_env?(:preprod)
+                                   Rails.deploy_env?(:prodtest) || \
+                                   Rails.deploy_env?(:preprod)
 
     build_veteran_profile_records
   end
