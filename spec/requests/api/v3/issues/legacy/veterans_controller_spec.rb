@@ -44,12 +44,22 @@ describe Api::V3::Issues::Legacy::VeteransController, :postgres, type: :request 
         end
       end
 
-      # context "when a veteran is found" do
-      #   context "when a veteran has a legacy appeal" do
+      context "when a veteran is found" do
+        context "when a veteran has no legacy appeal(s)" do
+          let(:vet) { create(:veteran) }
+          it "should return success" do
+            get(
+              "/api/v3/issues/legacy/find_by_veteran/#{vet.participant_id}",
+              headers: authorization_header
+            )
+            expect(response).to have_http_status(200)
+            expect(response.body).to include("No VACOLS Issues found for the given veteran")
+          end
+        end
+        # context "when a veteran has legacy appeals(s)" do
 
-
-      #   end
-      # end
+        # end
+      end
     end
   end
 end
