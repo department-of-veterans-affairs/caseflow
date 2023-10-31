@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CorrespondenceController < ApplicationController
   before_action :verify_feature_toggle
 

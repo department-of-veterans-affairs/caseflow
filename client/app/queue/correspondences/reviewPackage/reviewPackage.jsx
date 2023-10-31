@@ -27,10 +27,13 @@ export const CorrespondenceReviewPackage = () => {
             styling={{ style: { marginRight: '2rem' } }}
             classNames={['usa-button-secondary']}
           />
-          <Button
-            name="Create record"
-            classNames={['usa-button-primary']}
-          />
+          <a href="/queue/correspondence/12/intake">
+            <Button
+              name="Create record"
+              href="/queue/correspondence/12/intake"
+              classNames={['usa-button-primary']}
+            />
+          </a>
         </div>
       </div>
     </React.Fragment>
