@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # frozen_string_literal: true
 
 class CorrespondenceController < ApplicationController
@@ -5,6 +6,13 @@ class CorrespondenceController < ApplicationController
 
   def correspondence_cases
     render 'correspondence_cases'
+=======
+class CorrespondenceController < ApplicationController
+  before_action :verify_feature_toggle
+
+  def intake
+    render "correspondence/intake"
+>>>>>>> feature/APPEALS-27311
   end
 
   private
