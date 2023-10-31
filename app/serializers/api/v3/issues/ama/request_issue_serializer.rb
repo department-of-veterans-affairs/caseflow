@@ -28,6 +28,10 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
   attribute :caseflow_considers_title_of_active_review, &:title_of_active_review
   attribute :caseflow_considers_eligible, &:eligible?
 
+  attribute :claimant_participant_id do |object|
+    object.decision_review.claimant.participant_id
+  end
+
   attribute :decision_issues do |object|
     object.decision_issues.map do |di|
       {
