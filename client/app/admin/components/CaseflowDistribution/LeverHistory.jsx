@@ -35,13 +35,15 @@ const LeverHistory = (props) => {
   return (
     <div>
       <table>
-        <tr>
-          <th {...leverHistoryTableHeaderStyling}>Date of Last Change</th>
-          <th {...leverHistoryTableHeaderStyling}>User ID</th>
-          <th {...leverHistoryTableHeaderStyling}>Data Element Changed</th>
-          <th {...leverHistoryTableHeaderStyling}>Previous Value</th>
-          <th {...leverHistoryTableHeaderStyling}>Updated Value</th>
-        </tr>
+        <tbody>
+          <tr>
+            <th {...leverHistoryTableHeaderStyling}>Date of Last Change</th>
+            <th {...leverHistoryTableHeaderStyling}>User ID</th>
+            <th {...leverHistoryTableHeaderStyling}>Data Element Changed</th>
+            <th {...leverHistoryTableHeaderStyling}>Previous Value</th>
+            <th {...leverHistoryTableHeaderStyling}>Updated Value</th>
+          </tr>
+        </tbody>
         <tbody>{props.historyData.map((entry, index) =>
           <tr key={index}>
             <td {...historyTableStyling}>{entry.created_at}</td>

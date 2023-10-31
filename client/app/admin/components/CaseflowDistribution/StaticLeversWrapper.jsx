@@ -11,7 +11,7 @@ const tableHeaderStyling = css({
   borderColor: '#d6d7d9;',
   fontFamily: 'Source Sans Pro',
   fontWeight: '700',
-  fontSize: '19px',
+  fontSize: '21px',
   lineHeight: '1.3em/25px'
 });
 
@@ -19,6 +19,7 @@ const tableStyling = css({
   width: '100%',
   tablelayout: 'fixed'
 });
+
 const StaticLeversWrapper = (props) => {
   const { leverList, leverStore } = props;
 
@@ -33,15 +34,13 @@ const StaticLeversWrapper = (props) => {
   return (
 
     <table {...tableStyling}>
-      <tr>
-        <th {...tableHeaderStyling}>
-          <span style={{ display: 'inline-block', width: '70%'}}>Data Elements</span>
-          <span style={{ display: 'inline-block', marginLeft: '20px'}}>Values</span>
-        </th>
-      </tr>
-      <tbody >
-        {WrapperList}
+      <tbody>
+        <tr>
+          <th {...tableHeaderStyling}>Data Elements</th>
+          <th {...tableHeaderStyling}>Values</th>
+        </tr>
       </tbody>
+      {WrapperList}
     </table>
   );
 

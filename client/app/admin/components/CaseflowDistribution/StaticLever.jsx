@@ -18,7 +18,7 @@ const StaticLever = ({ lever }) => {
   };
   const titleStyling = {
     border: 'none',
-    paddingTop: '0',
+    paddingTop: '20px',
     marginTop: '0',
     paddingBottom: '0',
     verticalAlign: 'text-top',
@@ -49,30 +49,24 @@ const StaticLever = ({ lever }) => {
     verticalAlign: 'text-top',
     borderBottom: '1px solid #ccc',
   };
-  const tableStyling = {
-    borderCollapse: 'collapse',
-    width: '100%',
-  };
   const valueWithUnit = renderValue();
   const valueArray = valueWithUnit.split(' ');
   const value = valueArray[0];
   const unit = valueArray[1];
 
   return (
-    <table style={tableStyling}>
-      <tbody>
-        <tr>
-          <td style={titleStyling}>{lever.title}</td>
-        </tr>
-        <tr>
-          <td className="cf-lead-paragraph" style={descriptionStyling}>{lever.description}</td>
-          <td className="cf-lead-paragraph" style={valueStyling}>
-            <span style={{ marginRight: '5px' }}>{value} </span>
-            <span>{unit}</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <tbody>
+      <tr>
+        <td style={titleStyling}>{lever.title}</td>
+      </tr>
+      <tr>
+        <td className="cf-lead-paragraph" style={descriptionStyling}>{lever.description}</td>
+        <td className="cf-lead-paragraph" style={valueStyling}>
+          <span style={{ marginRight: '5px' }}>{value} </span>
+          <span>{unit}</span>
+        </td>
+      </tr>
+    </tbody>
   );
 };
 

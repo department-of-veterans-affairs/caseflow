@@ -1,30 +1,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as Constants from '../../reducers/Levers/leversActionTypes';
+import Button from 'app/components/Button';
 
-export function LeverCancelButton({leverStore}) {
+export function LeverCancelButton({leverStore }) {
   const cancelLeverChanges = () => {
     leverStore.dispatch({
       type: Constants.REVERT_LEVERS,
     });
-    console.log("Reverted levers");
+    console.log('Reverted levers');
     console.log(leverStore.getState());
     // refresh page
-  }
+  };
 
   return (
-    <button id="CancelLeversButton" onClick={cancelLeverChanges}>
+    <Button
+    id="CancelLeversButton"
+    onClick={cancelLeverChanges}
+    classNames={['cf-btn-link']}
+    >
       Cancel
-    </button>
+    </Button>
   );
 };
 
-export function LeverSaveButton({leverStore}) {
+export function LeverSaveButton({leverStore }) {
   const saveLeverChanges = () => {
     leverStore.dispatch({
       type: Constants.SAVE_LEVERS,
     });
-    console.log("Saved levers");
+    console.log('Saved levers');
     console.log(leverStore.getState());
     // update lever history
       // create history row object
@@ -35,13 +40,13 @@ export function LeverSaveButton({leverStore}) {
   }
 
   return (
-    <button id="SaveLeversButton" onClick={saveLeverChanges}>
+    <Button id="SaveLeversButton" onClick={saveLeverChanges}>
       Save
-    </button>
+    </Button>
   );
-};
+}
 
-LeverCancelButton.PropTypes = {
+LeverCancelButton.propTypes = {
   leverStore: PropTypes.any
 };
 

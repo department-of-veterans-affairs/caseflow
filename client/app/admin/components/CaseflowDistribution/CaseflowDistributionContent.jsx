@@ -4,11 +4,13 @@ import React from 'react';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
 import StaticLeversWrapper from './StaticLeversWrapper';
 import LeverHistory from './LeverHistory';
+import LeverButtonsWrapper from './LeverButtonsWrapper';
 import PropTypes from 'prop-types';
-// import ContentSection from '../../../components/ContentSection';
-import { sectionSegmentStyling, sectionHeadingStyling, anchorJumpLinkStyling } from '../../../queue/StickyNavContentArea';
+import {
+  sectionSegmentStyling,
+  sectionHeadingStyling,
+  anchorJumpLinkStyling } from '../../../queue/StickyNavContentArea';
 import COPY from '../../../../COPY';
-// import { css } from 'glamor';
 
 const CaseflowDistributionContent = ({ levers, activeLevers, staticLevers, saveChanges, formattedHistory, isAdmin, leverStore }) => {
   return (
@@ -26,6 +28,7 @@ const CaseflowDistributionContent = ({ levers, activeLevers, staticLevers, saveC
           <div {...sectionSegmentStyling}>
             {/* <InteractableLeverWrapper levers={levers} activeLevers={activeLevers} /> */}
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_ACTIVE_LEVERS_DESCRIPTION}</p>
+            <LeverButtonsWrapper leverStore={leverStore}/>
           </div>
         </div>
 
@@ -62,6 +65,7 @@ CaseflowDistributionContent.propTypes = {
   saveChanges: PropTypes.func.isRequired,
   formattedHistory: PropTypes.array.isRequired,
   isAdmin: PropTypes.bool.isRequired,
+  leverStore: PropTypes.any.isRequired
 };
 
 export default CaseflowDistributionContent;
