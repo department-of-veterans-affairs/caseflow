@@ -1,26 +1,28 @@
-// client/app/admin/components/CaseflowDistribution/StaticLeverWrapper.js
-
 import React from 'react';
-import StaticLever from './StaticLever';
 import PropTypes from 'prop-types';
 
-const StaticLeverWrapper = ({ InteractableLevers, levers }) => {
+import StaticLever from './StaticLever';
+
+const StaticLeversWrapper = (props) => {
+  const { leverList, leverStore } = props;
+
+  const orderedLeversList = leverList.map((item) => {
+    return leverStore.getState().levers.find((lever) => lever.item === item);
+  });
+
+  const WrapperList = orderedLeversList.map((lever) => (
+    <StaticLever key={lever.item} lever={lever} />
+  ));
+
   return (
-    <div>
-      <h3>Inactive Levers</h3>
-      {InteractableLevers.map((leverItem) => {
-        const lever = levers.find((l) => l.item === leverItem);
-        return lever ? (
-          <StaticLever key={lever.item} lever={lever} />
-        ) : null;
-      })}
-    </div>
+    <div>{WrapperList}</div>
   );
+
 };
 
-StaticLeverWrapper.propTypes = {
-  StaticLevers: PropTypes.array.isRequired,
-  levers: PropTypes.array.isRequired,
+StaticLeversWrapper.propTypes = {
+  leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
+  leverStore: PropTypes.any
 };
 
-export default StaticLeverWrapper;
+export default StaticLeversWrapper;
