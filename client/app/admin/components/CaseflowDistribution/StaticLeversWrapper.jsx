@@ -1,26 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import { createStore } from 'redux';
+
 import StaticLever from './StaticLever';
-// import leversReducer from 'app/admin/reducers/Levers/leversReducer';
-import { levers } from 'test/data/adminCaseDistributionLevers';
 
-// const activeLevers = levers.filter((lever) => lever.is_active);
-
-// const preloadedState = {
-//   levers: JSON.parse(JSON.stringify(activeLevers)),
-//   initial_levers: JSON.parse(JSON.stringify(activeLevers))
-// };
-
-// {levers.map((lever) => (
-//   <StaticLever key={lever.item} lever={lever} />
-// ))}
-// const leverStore = createStore(leversReducer, preloadedState);
 const StaticLeversWrapper = (props) => {
-  const { leverList } = props;
+  const { leverList, leverStore } = props;
 
   const orderedLeversList = leverList.map((item) => {
-    return levers.find((lever) => lever.item === item);
+    return leverStore.getState().levers.find((lever) => lever.item === item);
   });
 
   const WrapperList = orderedLeversList.map((lever) => (
@@ -34,6 +21,8 @@ const StaticLeversWrapper = (props) => {
 };
 
 StaticLeversWrapper.propTypes = {
-  leverList: PropTypes.arrayOf(PropTypes.string).isRequired };
+  leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
+  leverStore: PropTypes.any
+};
 
 export default StaticLeversWrapper;
