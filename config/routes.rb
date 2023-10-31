@@ -53,9 +53,6 @@ Rails.application.routes.draw do
         namespace :ama do
           get "veterans/:participant_id", to: "veterans#show"
         end
-        namespace :legacy do
-          get "veterans/:file_number", to: "veterans#show"
-        end
       end
     end
     namespace :docs do
