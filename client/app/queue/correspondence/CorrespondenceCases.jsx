@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { css } from 'glamor';
-import ListCorrespondenceTable from './corrrespondenceList';
+import CorrespondenceTable from './CorrespondenceTable';
 import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
 
 const rootStyles = css({
@@ -18,11 +16,7 @@ const rootStyles = css({
 //   initialCamoAssignTasksToVhaProgramOffice
 // } from '../QueueActions';
 
-class CorrespondenceCasesList extends React.PureComponent {
-  // componentDidMount = () => {
-  //   this.props.resetSuccessMessages();
-  //   this.props.resetErrorMessages();
-  // }
+class CorrespondenceCases extends React.PureComponent {
   render = () => {
     const {
       organizations,
@@ -35,18 +29,16 @@ class CorrespondenceCasesList extends React.PureComponent {
 
       <React.Fragment>
         <div>
-          <React.Fragment>
-            <ListCorrespondenceTable />
-          </React.Fragment>
+          <CorrespondenceTable />
         </div>
       </React.Fragment>
     </div>;
   }
 }
 
-CorrespondenceCasesList.propTypes = {
+CorrespondenceCases.propTypes = {
   organizations: PropTypes.array,
   featureToggles: PropTypes.object
 };
 
-export default CorrespondenceCasesList;
+export default CorrespondenceCases;
