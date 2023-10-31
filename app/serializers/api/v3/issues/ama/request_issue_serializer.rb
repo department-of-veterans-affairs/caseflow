@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-# use via `V3::RequestIssueSerializer.new(<request issue obj>, include: [:decision_issues]).serializable_hash.to_json`
+# use via `V3::Issues::Ama::RequestIssueSerializer.new(<request issue obj>, include: [:decision_issues]).serializable_hash.to_json`
 # or for a relation example:
-#   `V3::RequestIssueSerializer.new(
+#   `V3::Issues::Ama::RequestIssueSerializer.new(
 #       RequestIssue.includes(:decision_issues).where(veteran_participant_id: "574727696"), include: [:decision_issues]
 #   ).serializable_hash.to_json`
 # or with pagination:
-#   `V3::RequestIssueSerializer.new(
+#   `V3::Issues::Ama::RequestIssueSerializer.new(
 #      RequestIssue.includes(:decision_issues).page(2), include: [:decision_issues]
 #   ).serializable_hash.to_json`
 class Api::V3::Issues::Ama::RequestIssueSerializer
