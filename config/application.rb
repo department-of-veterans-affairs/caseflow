@@ -103,7 +103,8 @@ module CaseflowCertification
     Rails.application.config.action_dispatch.use_cookies_with_metadata = false
 
     # Change the return value of `ActionDispatch::Response#content_type` to Content-Type header without modification.
-    # Rails.application.config.action_dispatch.return_only_media_type_on_content_type = false
+    # Default as of 6.0: false
+    Rails.application.config.action_dispatch.return_only_media_type_on_content_type = true
 
     # Return false instead of self when enqueuing is aborted from a callback.
     # Rails.application.config.active_job.return_false_on_aborted_enqueue = true
