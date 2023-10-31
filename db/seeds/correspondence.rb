@@ -21,7 +21,7 @@ module Seeds
       end
 
       @cmp_packet_number ||= 1_000_000_000
-      @cmp_packet_number += 100_00 while ::Correspondence.find_by(cmp_packet_number: @cmp_packet_number + 1)
+      @cmp_packet_number += 10_000 while ::Correspondence.find_by(cmp_packet_number: @cmp_packet_number + 1)
     end
 
     def create_veteran(options = {})
