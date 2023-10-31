@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Seeds
+  # :reek:InstanceVariableAssumption
   class Correspondence < Base
     def initialize
       initial_id_values
