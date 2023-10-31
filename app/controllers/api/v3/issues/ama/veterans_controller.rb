@@ -25,8 +25,8 @@ class Api::V3::Issues::Ama::VeteransController < Api::V3::BaseController
   def show
     veteran = find_veteran
     page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]
-    # Disallow page(0) since page(0) == page(1) in kaminari. This is to avoid confusion.
-    (page == 0) ? page = 1 : page ||= 1
+    # Disallow page(0) or negative. Page(0) == page(1) in kaminari. This is to avoid confusion.
+    (page.nil? || page <= 0) ? page = 1 : page ||= 1
     render_request_issues(Api::V3::Issues::Ama::VbmsAmaDtoBuilder.new(veteran, page).hash_response) if veteran
   end
 

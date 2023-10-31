@@ -50,7 +50,7 @@ paths:
           name: page
           schema:
             type: integer
-          description: The page of request issues for the supplied veteran
+          description: The page of request issues for the supplied veteran. Positive greater than 0.
       summary: Retrieve all AMA request issues and associated decision issues from Veteran.
       description: >+
         Will return a paginated response of request issues and associated decision issue for the Veteran.

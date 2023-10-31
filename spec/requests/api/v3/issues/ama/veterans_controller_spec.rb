@@ -63,6 +63,7 @@ describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
             "/api/v3/issues/ama/find_by_veteran/9999999999",
             headers: authorization_header
           )
+          #byebug
           expect(response).to have_http_status(404)
           expect(response.body).to include("No Veteran found for the given identifier.")
         end
