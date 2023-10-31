@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_27_141826) do
+ActiveRecord::Schema.define(version: 2023_10_31_041759) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -613,13 +613,6 @@ ActiveRecord::Schema.define(version: 2023_10_27_141826) do
     t.bigint "user_id", comment: "Foreign key on users table"
     t.index ["correspondence_id"], name: "index_on_correspondence_id"
     t.index ["user_id"], name: "index_on_user_id"
-  end
-
-  create_table "correspondence_types", force: :cascade do |t|
-    t.boolean "active", default: true
-    t.datetime "created_at", null: false
-    t.string "name"
-    t.datetime "updated_at", null: false
   end
 
   create_table "correspondences", force: :cascade do |t|
@@ -1400,6 +1393,13 @@ ActiveRecord::Schema.define(version: 2023_10_27_141826) do
     t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
   end
 
+  create_table "package_document_types", force: :cascade do |t|
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+  end
+
   create_table "people", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date_of_birth", comment: "PII"
@@ -1785,6 +1785,7 @@ ActiveRecord::Schema.define(version: 2023_10_27_141826) do
     t.text "instructions", default: [], array: true
     t.integer "parent_id"
     t.datetime "placed_on_hold_at"
+    t.jsonb "previous", default: [], array: true
     t.datetime "started_at"
     t.string "status", default: "assigned"
     t.string "type"

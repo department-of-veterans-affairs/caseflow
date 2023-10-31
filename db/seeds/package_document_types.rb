@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Seeds
-  class CorrespondenceTypes
+  class PackageDocumentTypes
     def seed!
       perform_seeding_correspondence_types
     end
@@ -18,8 +18,8 @@ module Seeds
         "8049", "820", "8416", "8940", "BENE TRVL", "CH 31 APP", "CH36 APP", "CONG INQ", "CONSNT",
         "DBQ", "Debt Dispute", "GRADES/DEGREE", "IU", "NOD", "OMPF", "PMR", "RAMP", "REHAB PLAN", "RFA", "RM",
         "RNI", "SF180", "STR", "VA 9", "VCAA", "VRE INV"
-      ].each do |correspondence_type|
-        CorrespondenceType.find_or_create_by(name: correspondence_type)
+      ].each do |package_document_type|
+        PackageDocumentType.find_or_create_by(name: package_document_type)
       end
     end
   end

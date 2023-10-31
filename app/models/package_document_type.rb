@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class CorrespondenceType < ApplicationRecord
+class PackageDocumentType < ApplicationRecord
   has_many :correspondences
 end
