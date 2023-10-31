@@ -23,9 +23,7 @@ class CorrespondenceController < ApplicationController
   def correspondence_load
     @correspondence ||= correspondence_by_uuid
     vet = veteran_by_correspondence
-    @all_correspondence = Correspondence.where(veteran_id: vet.id).map do |corr|
-      corr.to_hash
-    end
+    @all_correspondence = Correspondence.where(veteran_id: vet.id).map(&:to_hash)
   end
 
   def correspondence_by_uuid

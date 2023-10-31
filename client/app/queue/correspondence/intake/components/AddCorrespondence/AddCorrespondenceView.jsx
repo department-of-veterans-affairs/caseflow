@@ -1,7 +1,6 @@
 /* eslint-disable max-lines */
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -11,66 +10,39 @@ import RadioField from '../../../../../components/RadioField';
 import ApiUtil from '../../../../../util/ApiUtil';
 import uuid from 'uuid';
 
-const priorMailAnswer = [
-  { displayText: 'Yes',
-    value: 'yes' },
-  { displayText: 'No',
-    value: 'no' }
-];
-
-/* export const getRowObjects = (correspondence) => {
-  return correspondence.reduce((acc, corr) => {
-    acc.push(corr);
-    const corrCorrespondences = _.size(correspondence[corr.id]);
-
-    if (corrCorrespondences && corr.listComments) {
-      acc.push({
-        ...corr,
-        hasCorrespondence: true,
-      });
-    }
-
-    return acc;
-  }, []);
-}; */
-
 export const getRowObjects = () => {
-  return ApiUtil.get(`/queue/correspondence/${uuid}/intake?json`).then((response) => {
+  return ApiUtil.get(`/queue/correspondence/a9a15f84-b105-4981-92d9-ecddf7c3a03a/intake?json`).then((response) => {
     const returnedObject = response.body;
     const correspondences = returnedObject.correspondence;
 
   }).
     catch((err) => {
       // allow HTTP errors to fall on the floor via the console.
-      console.error(new Error(`Problem with GET /queue/corresondence/${uuid}/intake?json ${err}`));
+      console.error(new Error(`Problem with GET /queue/corresondence/a9a15f84-b105-4981-92d9-ecddf7c3a03a/intake?json ${err}`));
     });
 };
+
 class AddCorrespondenceView extends React.Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      selectedValue: false,
+      value: '2',
       checked: false,
       veteran_id: '',
       va_date_of_receipt: '',
       source_type: '',
       package_document_type: '',
       correspondence_type_id: '',
-      notes: '',
-      selectedRadio: 'no',
+      notes: ''
     };
   }
 
-  setSelectedValue = () => {
-    this.setState({ selectedValue: true });
-  }
-
-  handleRadioChange = (selectedRadio) => {
+  onChange = (value) => {
     this.setState({
-      selected: value
+      value
     });
-  };
+  }
 
   getKeyForRow = (index, { hasCorrespondence, id }) => {
     return hasCorrespondence ? `${id}-comment` : `${id}`;
@@ -145,10 +117,17 @@ class AddCorrespondenceView extends React.Component {
     ];
   };
 
-  render(selectedValue, handleRadioChange) {
+  render() {
     const rowObjects = getRowObjects(
-      this.props.correspondence,
+      this.props.correspondence
     );
+
+    const priorMailAnswer = [
+      { displayText: 'Yes',
+        value: '1' },
+      { displayText: 'No',
+        value: '2' }
+    ];
 
     return (
       <div className="cf-app-segment cf-app-segment--alt">
@@ -160,9 +139,9 @@ class AddCorrespondenceView extends React.Component {
         <RadioField
           name=""
           options={priorMailAnswer}
-          value={this.state.selectedRadio}
-          onChange={handleRadioChange} />
-        {selectedValue === 'yes' && (
+          value={this.state.value}
+          onChange={this.onChange} />
+        {this.state.value === '1' && (
           <div className="cf-app-segment cf-app-segment--alt">
             <p>Please select the prior mail to link to this correspondence</p>
             <p>Viewing 1-15 out of 200 total</p>
@@ -186,7 +165,7 @@ class AddCorrespondenceView extends React.Component {
 }
 
 AddCorrespondenceView.propTypes = {
-  correspondence: PropTypes.arrayOf(PropTypes.object).isRequired,
+  correspondence: PropTypes.arrayOf(PropTypes.object),
   featureToggles: PropTypes.object,
   uuid: PropTypes.uuid,
 };
