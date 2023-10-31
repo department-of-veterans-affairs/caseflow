@@ -48,6 +48,7 @@ describe Api::V3::Issues::Ama::RequestIssueSerializer, :postgres do
       expect(serialized_request_issue.key?(:caseflow_considers_status_active)).to eq true
       expect(serialized_request_issue.key?(:caseflow_considers_title_of_active_review)).to eq true
       expect(serialized_request_issue.key?(:caseflow_considers_eligible)).to eq true
+      expect(serialized_request_issue.key?(:claimant_participant_id)).to eq true
       expect(serialized_request_issue.key?(:decision_issues)).to eq true
 
       serialized_decision_issue = serialized_request_issue[:decision_issues].first
