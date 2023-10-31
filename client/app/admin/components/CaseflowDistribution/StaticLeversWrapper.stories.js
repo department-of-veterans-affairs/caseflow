@@ -1,11 +1,17 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-
 import StaticLeversWrapper from './StaticLeversWrapper';
+import { createStore } from 'redux';
+import leversReducer from 'app/admin/reducers/Levers/leversReducer';
 
-// import { levers } from 'test/data/adminCaseDistributionLevers';
-// import StaticLever from './StaticLever';
+import { levers } from 'test/data/adminCaseDistributionLevers';
 
+const preloadedState = {
+  levers: JSON.parse(JSON.stringify(levers)),
+  initial_levers: JSON.parse(JSON.stringify(levers))
+};
+
+const leverStore = createStore(leversReducer, preloadedState);
 const RouterDecorator = (Story) => (
   <MemoryRouter initialEntries={['/']}>
     <Story />
@@ -26,7 +32,7 @@ export const StaticWrapper = () => (
   <table>
     <tbody>
       <tr>
-        <StaticLeversWrapper leverList={leverList} />
+        <StaticLeversWrapper leverList={leverList} leverStore={leverStore}/>
       </tr>
     </tbody>
   </table>
