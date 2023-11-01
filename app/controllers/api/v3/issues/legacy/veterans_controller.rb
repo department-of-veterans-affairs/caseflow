@@ -10,6 +10,7 @@ class Api::V3::Issues::Legacy::VeteransController < Api::V3::BaseController
   end
 
   rescue_from StandardError do |error|
+    # byebug
     Raven.capture_exception(error, extra: raven_extra_context)
 
     render json: {
@@ -26,10 +27,8 @@ class Api::V3::Issues::Legacy::VeteransController < Api::V3::BaseController
     veteran = find_veteran
     page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]
     # Disallow page(0) since page(0) == page(1) in kaminari. This is to avoid confusion.
-    (page == 0) ? page = 1 : page ||= 1
-    puts "Legacy Issues API"
-    # TODO uncomment when DTO mapper/ serializer is finished
-    # render_vacols_issues(Api::V3::LegacyIssues::VbmsLegacyDtoBuilder.new(veteran, page).hash_response) if veteran
+    (page.nil? || page <= 0) ? page = 1 : page ||= 1
+    render_vacols_issues(Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder.new(veteran, page).hash_response) if veteran
   end
 
   private
@@ -47,14 +46,16 @@ class Api::V3::Issues::Legacy::VeteransController < Api::V3::BaseController
   end
 
   def render_vacols_issues(vacols_issues)
-    if vacols_issues[:vacols_issues].empty?
-      render_errors(
-        status: 404,
-        code: :no_vacols_issues_found,
-        title: "No VACOLS Issues found for the given veteran."
-      ) && return
-    else
-      render json: vacols_issues.to_json
-    end
+    byebug
+    # if vacols_issues[:vacols_issues].empty?
+    #   render_errors(
+    #     status: 204,
+    #     code: :no_vacols_issues_found,
+    #     title: "No VACOLS Issues found for the given veteran."
+    #   ) && return
+    # else
+    #   render json: vacols_issues.to_json
+    # end
+    render json: vacols_issues.to_json
   end
 end
