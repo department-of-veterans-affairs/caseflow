@@ -18,6 +18,6 @@ FactoryBot.define do
 
   factory :correspondence_document do
     uuid { SecureRandom.uuid }
-    vbms_document_id { SecureRandom.uuid }
+    vbms_document_id { "1250" }
   end
 end
