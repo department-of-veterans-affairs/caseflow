@@ -144,3 +144,11 @@
     }
   }
 }
+
+@media screen and (max-width: 1200px) {
+  .cf-filter-summary {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1em;
+  }
+}
