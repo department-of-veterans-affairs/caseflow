@@ -545,6 +545,19 @@ describe BusinessLine do
     end
 
     context "with task_id filter" do
+      context "with multiple task ids" do
+        let(:change_history_filters) { { task_id: [hlr_task.id, sc_task.id] } }
+
+        it "should return rows for all matching ids" do
+          expect(subject.entries.count).to eq(3)
+          expect(subject.entries).to include(
+            hlr_task_1_ri_1_expectation,
+            hlr_task_1_ri_2_expectation,
+            sc_task_1_ri_1_expectation
+          )
+        end
+      end
+
       let(:change_history_filters) { { task_id: hlr_task.id } }
 
       it "should only return rows for that task" do

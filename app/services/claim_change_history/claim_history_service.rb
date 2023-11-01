@@ -216,7 +216,7 @@ class ClaimHistoryService
       # TODO: Rename this later
       # @events.push(*ClaimHistoryEvent.no_database_create_status_events(change_data))
       save_events(ClaimHistoryEvent.create_claim_creation_event(change_data))
-      save_events(ClaimHistoryEvent.no_database_create_status_events(change_data))
+      save_events(ClaimHistoryEvent.create_status_events(change_data))
     end
   end
 
