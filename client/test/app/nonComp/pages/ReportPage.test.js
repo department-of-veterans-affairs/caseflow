@@ -1,11 +1,12 @@
 import React from 'react';
 import { axe } from 'jest-axe';
-import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
+
 import userEvent from '@testing-library/user-event';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import ReportPage from 'app/nonComp/pages/ReportPage';
+import SearchableDropdown from 'app/components/SearchableDropdown';
+import { shallow } from 'enzyme';
 
 describe('ReportPage', () => {
   const setup = () => {
@@ -40,5 +41,17 @@ describe('ReportPage', () => {
     await userEvent.click(cancelButton);
 
     expect(history.location.pathname).toBe('/vha');
+  });
+
+  it('should have Generate task Report button and Clear Filter button disabled on initial load', () => {
+    render(
+      <ReportPage />
+    );
+
+    const generateTaskReport = screen.getByRole('button', { name: /Generate task Report/i });
+    expect(generateTaskReport).toHaveClass('usa-button-disabled');
+
+    const clearFilters = screen.getByText('Clear filters');
+    expect(clearFilters).toHaveClass('usa-button-disabled');
   });
 });
