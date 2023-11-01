@@ -14,24 +14,23 @@ describe Api::V3::Issues::Legacy::VeteransController, :postgres, type: :request 
   end
 
   describe "#show" do
-    # context "when feature is not enabled" do
-    #   let!(:vet) { create(:veteran) }
+    context "when feature is not enabled" do
+      let!(:vet) { create(:veteran) }
 
-    #   it "should return 'Not Implemented' error" do
-    #     FeatureToggle.disable!(:api_v3_vbms_intake_ama)
-    #     get(
-    #       "/api/v3/legacy_issues/veterans/#{vet.participant_id}",
-    #       headers: authorization_header
-    #     )
-    #     expect(response).to have_http_status(501)
-    #     expect(response.body).to include("Not Implemented")
-    #   end
-    # end
+      it "should return 'Not Implemented' error" do
+        FeatureToggle.disable!(:api_v3_legacy_issues)
+        get(
+          "/api/v3/issues/legacy/find_by_veteran/#{vet.participant_id}",
+          headers: authorization_header
+        )
+        expect(response).to have_http_status(501)
+        expect(response.body).to include("Not Implemented")
+      end
+    end
 
     context "when feature is enabled" do
-      # before { FeatureToggle.enable!(:api_v3_vbms_intake_ama) }
-
-      # after { FeatureToggle.disable!(:api_v3_vbms_intake_ama) }
+      before { FeatureToggle.enable!(:api_v3_legacy_issues) }
+      after { FeatureToggle.disable!(:api_v3_legacy_issues) }
 
       context "when a veteran is not found" do
         it "should return veteran not found error" do

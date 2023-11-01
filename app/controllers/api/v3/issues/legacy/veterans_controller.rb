@@ -6,7 +6,7 @@ class Api::V3::Issues::Legacy::VeteransController < Api::V3::BaseController
 
   # TODO: investigate roles
   before_action do
-    #api_released?(:api_v3_vbms_intake_ama)
+    api_released?(:api_v3_legacy_issues)
   end
 
   rescue_from StandardError do |error|
