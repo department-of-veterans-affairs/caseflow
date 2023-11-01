@@ -3,7 +3,9 @@
 class CorrespondencesController < ApplicationController
   # before_action :verify_access
 
-  def index; end
+  def index
+    render "index"
+  end
 
   def review_package
     render "correspondences/review_package"
