@@ -63,7 +63,6 @@ describe Api::V3::Issues::Legacy::VeteransController, :postgres, type: :request 
           let!(:veteran_with_legacy_issues) {create(:veteran, file_number: "123456789")}
           let!(:veteran_file_number_legacy) {"123456789S"}
           let!(:vacols_id) {"LEGACYID"}
-
           before do
             12.times do
               create(:case_issue,
@@ -73,10 +72,9 @@ describe Api::V3::Issues::Legacy::VeteransController, :postgres, type: :request 
                 isslev1: "04")
             end
           end
-
           let!(:case_issues) {VACOLS::CaseIssue.where(isskey: vacols_id)}
           let!(:vacols_case) do
-            create(:case_with_soc, :status_advance, case_issues: case_issues, bfkey: vacols_id)
+            create(:case_with_soc, :status_advance, case_issues: case_issues, bfkey: vacols_id, bfcorlid: veteran_file_number_legacy)
           end
           let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
@@ -87,7 +85,11 @@ describe Api::V3::Issues::Legacy::VeteransController, :postgres, type: :request 
               headers: authorization_header
             )
             expect(response).to have_http_status(200)
-            byebug
+            response_hash = JSON.parse(response.body)
+            expect(response_hash["veteran_participant_id"]).to eq veteran_with_legacy_issues.participant_id
+            expect(response_hash["total_vacols_issues_for_vet"]).to eq(12)
+            expect(response_hash["total_number_of_pages"]).to eq(2)
+            # byebug
           end
         end
       end

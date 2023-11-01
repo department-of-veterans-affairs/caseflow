@@ -89,7 +89,7 @@ Rails.application.configure do
   ENV["BATCH_PROCESS_MAX_ERRORS_BEFORE_STUCK"] ||= "3" # When record errors for X time, it's declared stuck
 
   # RequestIssue paginates_per offset (vbms intake)
-  ENV["REQUEST_ISSUE_PAGINATION_OFFSET"] ||= "100"
+  ENV["REQUEST_ISSUE_PAGINATION_OFFSET"] ||= "10"
 
   # Necessary vars needed to create virtual hearing links
   # Used by VirtualHearings::LinkService

@@ -69,7 +69,7 @@ class Api::V3::Issues::Legacy::VeteransController < Api::V3::BaseController
     #   ) && return
     # else
       vacols_issues = dto.hash_response
-      render json: vacols_issues.to_json
+      render json: vacols_issues
     # end
   end
 end
