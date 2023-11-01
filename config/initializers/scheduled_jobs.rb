@@ -50,6 +50,6 @@ SCHEDULED_JOBS = {
     "change_hearing_request_type_task_cancellation_job" => ChangeHearingRequestTypeTaskCancellationJob,
     "cannot_delete_contention_remediation_job" => CannotDeleteContentionRemediationJob,
     "contention_not_found_remediation_job" => ContentionNotFoundRemediationJob,
-    "case_distribution_ineligible_judges" => IneligibleJudgesJob
+    "ineligible_judges_job" => IneligibleJudgesJob
 
 }.freeze
