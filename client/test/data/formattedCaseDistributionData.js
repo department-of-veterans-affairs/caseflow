@@ -116,14 +116,14 @@ export const formattedLevers = [
       },
       {
         item: 'option_2',
-        data_type: 'text',
+        data_type: '',
         value: 'option_2',
         text: 'Always distribute to current judge',
         unit: ''
       },
       {
         item: 'option_3',
-        data_type: 'text',
+        data_type: '',
         value: 'option_3',
         text: 'Omit variable from distribution rules',
         unit: ''
@@ -148,14 +148,14 @@ export const formattedLevers = [
       },
       {
         item: 'option_2',
-        data_type: 'text',
+        data_type: '',
         value: 'option_2',
         text: 'Always distribute to current judge',
         unit: ''
       },
       {
         item: 'option_3',
-        data_type: 'text',
+        data_type: '',
         value: 'option_3',
         text: 'Omit variable from distribution rules',
         unit: ''
@@ -181,14 +181,14 @@ export const formattedLevers = [
       },
       {
         item: 'option_2',
-        data_type: 'text',
+        data_type: '',
         value: 'option_2',
         text: 'Always distribute to current judge',
         unit: ''
       },
       {
         item: 'option_3',
-        data_type: 'text',
+        data_type: '',
         value: 'option_3',
         text: 'Omit variable from distribution rules',
         unit: ''
@@ -214,14 +214,14 @@ export const formattedLevers = [
       },
       {
         item: 'option_2',
-        data_type: 'text',
+        data_type: '',
         value: 'option_2',
         text: 'Always distribute to current judge',
         unit: ''
       },
       {
         item: 'option_3',
-        data_type: 'text',
+        data_type: '',
         value: 'option_3',
         text: 'Omit variable from distribution rules',
         unit: ''
@@ -247,14 +247,14 @@ export const formattedLevers = [
       },
       {
         item: 'option_2',
-        data_type: 'text',
+        data_type: '',
         value: 'option_2',
         text: 'Always distribute to current judge',
         unit: ''
       },
       {
         item: 'option_3',
-        data_type: 'text',
+        data_type: '',
         value: 'option_3',
         text: 'Omit variable from distribution rules',
         unit: ''
@@ -280,14 +280,14 @@ export const formattedLevers = [
       },
       {
         item: 'option_2',
-        data_type: 'text',
+        data_type: '',
         value: 'option_2',
         text: 'Always distribute to current judge',
         unit: ''
       },
       {
         item: 'option_3',
-        data_type: 'text',
+        data_type: '',
         value: 'option_3',
         text: 'Omit variable from distribution rules',
         unit: ''
@@ -313,14 +313,14 @@ export const formattedLevers = [
       },
       {
         item: 'option_2',
-        data_type: 'text',
+        data_type: '',
         value: 'option_2',
         text: 'Always distribute to current judge',
         unit: ''
       },
       {
         item: 'option_3',
-        data_type: 'text',
+        data_type: '',
         value: 'option_3',
         text: 'Omit variable from distribution rules',
         unit: ''

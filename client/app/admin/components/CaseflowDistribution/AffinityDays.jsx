@@ -62,6 +62,7 @@ const AffinityDays = (props) => {
               <div>
                 <div>
                   <input
+                    checked={option.item === lever.value}
                     type="radio"
                     value={option.item}
                     disabled={lever.is_disabled}
@@ -75,7 +76,7 @@ const AffinityDays = (props) => {
                 </div>
 
                 <div>
-                {selectedOption === option && (
+                {(
                   <div className={styles.combinedRadioInput}>
                     {option.data_type === 'number' ? (
                       <NumberField
