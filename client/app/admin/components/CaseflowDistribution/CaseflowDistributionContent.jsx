@@ -1,10 +1,10 @@
-// client/app/admin/components/CaseflowDistribution/CaseflowDistributionContent.js
-
 import React from 'react';
-import InteractableLeverWrapper from './InteractableLeversWrapper';
 import StaticLeversWrapper from './StaticLeversWrapper';
 import LeverHistory from './LeverHistory';
 import LeverButtonsWrapper from './LeverButtonsWrapper';
+import BatchSize from './BatchSize';
+import DocketTimeGoals from './DocketTimeGoals';
+import AffinityDays from './AffinityDays';
 import PropTypes from 'prop-types';
 import {
   sectionSegmentStyling,
@@ -12,7 +12,7 @@ import {
   anchorJumpLinkStyling } from '../../../queue/StickyNavContentArea';
 import COPY from '../../../../COPY';
 
-const CaseflowDistributionContent = ({ levers, activeLevers, staticLevers, saveChanges, formattedHistory, isAdmin, leverStore }) => {
+const CaseflowDistributionContent = ({ levers, saveChanges, formattedHistory, isAdmin, leverStore }) => {
   return (
     <div className="cf-app-segment cf-app-segment--alt">
       <h1>{isAdmin ? 'Administration' : 'Non-Admin User'}</h1>
@@ -26,9 +26,11 @@ const CaseflowDistributionContent = ({ levers, activeLevers, staticLevers, saveC
             <a id="our-elemnt" {...anchorJumpLinkStyling}>{COPY.CASE_DISTRIBUTION_ACTIVE_LEVERS_TITLE}</a>
           </h2>
           <div {...sectionSegmentStyling}>
-            {/* <InteractableLeverWrapper levers={levers} activeLevers={activeLevers} /> */}
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_ACTIVE_LEVERS_DESCRIPTION}</p>
-            <LeverButtonsWrapper leverStore={leverStore}/>
+            <BatchSize leverList={levers.batchSizeLevers} leverStore={leverStore} />
+            <AffinityDays leverList={levers.affinityLevers} leverStore={leverStore} />
+            <DocketTimeGoals leverList={levers.docketLevers} leverStore={leverStore} />
+            <LeverButtonsWrapper leverStore={leverStore} />
           </div>
         </div>
 
@@ -38,7 +40,7 @@ const CaseflowDistributionContent = ({ levers, activeLevers, staticLevers, saveC
           </h2>
           <div {...sectionSegmentStyling}>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_STATIC_LEVERS_DESCRIPTION}</p>
-            <StaticLeversWrapper leverList={staticLevers} leverStore={leverStore} />
+            <StaticLeversWrapper leverList={levers.staticLevers} leverStore={leverStore} />
           </div>
         </div>
 
@@ -60,8 +62,6 @@ const CaseflowDistributionContent = ({ levers, activeLevers, staticLevers, saveC
 
 CaseflowDistributionContent.propTypes = {
   levers: PropTypes.array.isRequired,
-  activeLevers: PropTypes.array.isRequired,
-  staticLevers: PropTypes.array.isRequired,
   saveChanges: PropTypes.func.isRequired,
   formattedHistory: PropTypes.array.isRequired,
   isAdmin: PropTypes.bool.isRequired,
