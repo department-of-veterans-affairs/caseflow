@@ -10,9 +10,9 @@ const LeverButtonsWrapper = (props) => {
   const saveButton = <LeverSaveButton leverStore={leverStore} />;
 
   return (
-    <div>
+    <div style={{display: "flex"}}>
       <div>{cancelButton}</div>
-      <div>{saveButton}</div>
+      <div style={{"margin-left": "auto"}}>{saveButton}</div>
     </div>
   );
 };
