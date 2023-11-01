@@ -246,4 +246,17 @@ namespace :appeals_held_by_inactive_judges do
         $stdout.puts("You have created Legacy Appeals")
       end
     end
+
+    desc "given 'less' or 'more', create appeals that have been ready to be distributed for less/more than 60 days"
+    task :create_appeals, [:more_or_less] => :environment do |_t, args|
+      more_or_less = args[:more_or_less].upcase
+      
+      if more_or_less == "LESS"
+        review_task_today = ReviewTask.create(legacy_appeal: LegacyAppeal.last, created_at: Time.now)
+      elsif more_or_less == "MORE"
+        review_task_60_days_ago = ReviewTask.create(legacy_appeal: LegacyAppeal.last, created_at: 61.days.ago)
+      else
+        STDOUT.puts("Please add 'more' or 'less' as an argument.")
+      end
+    end
   end
