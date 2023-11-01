@@ -3,7 +3,9 @@
 #
 # A scheduled job that caches the list of ineligible judges within Caseflow and Vacols for Case Distribution use.
 # This job is ran once a week, with a cache that lasts a week.
-class IneligibleJudgesJob < ApplicationJob
+class IneligibleJudgesJob < CaseflowJob
+  # For time_ago_in_words()
+  include ActionView::Helpers::DateHelper
   queue_with_priority :low_priority
   application_attr :queue
 
@@ -16,7 +18,7 @@ class IneligibleJudgesJob < ApplicationJob
   end
 
   # {Grabs both vacols and caseflow ineligible judges then merges into one list with duplicates merged if they have the same CSS_ID/SDOMAINID}
-  def self.case_distribution_ineligible_judges
+  def case_distribution_ineligible_judges
     Rails.cache.fetch("case_distribution_ineligible_judges", expires_in: 1.week) do
       [*CaseDistributionIneligibleJudges.ineligible_vacols_judges, *CaseDistributionIneligibleJudges.ineligible_caseflow_judges]
         .group_by { |h| h[:sdomainid] || h[:css_id] }
