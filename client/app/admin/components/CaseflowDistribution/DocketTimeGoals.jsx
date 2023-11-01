@@ -2,13 +2,18 @@
 
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { css, style } from 'glamor';
+import { css } from 'glamor';
 import cx from 'classnames';
 import styles from "./InteractableLevers.module.scss";
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 
-const DocketTimeGoals = ({ docketLevers }) => {
+const DocketTimeGoals = (props) => {
+  const { leverList, leverStore } = props;
+
+  const docketLevers = leverList.map((item) => {
+    return leverStore.getState().levers.find((lever) => lever.item === item);
+  });
 
   const leverNumberDiv = css({
     '& .cf-form-int-input' : {width: 'auto', display: 'inline-block'},
@@ -16,7 +21,7 @@ const DocketTimeGoals = ({ docketLevers }) => {
     '& .cf-form-int-input label' : {float: 'right', margin: '0', lineHeight: '50px'}
   });
 
-  const [lever, setLever] = useState(docketLevers);
+  const [_, setLever] = useState(docketLevers);
   const updateLever = (index) => (e) => {
     const levers = docketLevers.map((lever, i) => {
       if (index === i) {
@@ -30,7 +35,7 @@ const DocketTimeGoals = ({ docketLevers }) => {
     setLever(levers);
   };
 
-  const toggleLever = (index) => (e) => {
+  const toggleLever = (index) => () => {
     const levers = docketLevers.map((lever, i) => {
       if (index === i) {
         lever.is_active = !lever.is_active
@@ -41,12 +46,6 @@ const DocketTimeGoals = ({ docketLevers }) => {
     });
     setLever(levers);
   };
-
-  const [selected, setSelected] = useState(false);
-
-  const handleChange = (lever) => {
-    setSelected(!selected)
-  }
 
   return (
     <div className={styles.leverContent}>
@@ -99,7 +98,8 @@ const DocketTimeGoals = ({ docketLevers }) => {
 };
 
 DocketTimeGoals.propTypes = {
-    docketLevers: PropTypes.array.isRequired
+  leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
+  leverStore: PropTypes.any
 };
 
 export default DocketTimeGoals;

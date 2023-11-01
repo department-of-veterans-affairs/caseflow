@@ -7,11 +7,16 @@ import cx from 'classnames';
 import styles from "./InteractableLevers.module.scss";
 import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
-import RadioField from 'app/components/RadioField';
 
-const AffinityDays = ({ affinityLevers }) => {
+const AffinityDays = (props) => {
+  const { leverList, leverStore } = props;
+
+  const affinityLevers = leverList.map((item) => {
+    return leverStore.getState().levers.find((lever) => lever.item === item);
+  });
+
   const [selectedOption, setSelectedOption] = useState(null);
-  const [lever, setLever] = useState(affinityLevers);
+  const [_, setLever] = useState(affinityLevers);
 
   const handleRadioChange = (option) => {
     setSelectedOption(option);
@@ -107,7 +112,8 @@ const AffinityDays = ({ affinityLevers }) => {
 
 
 AffinityDays.propTypes = {
-  affinityLevers: PropTypes.array.isRequired
+  leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
+  leverStore: PropTypes.any
 };
 
 export default AffinityDays;

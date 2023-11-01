@@ -3,11 +3,15 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
-import cx from 'classnames';
 import styles from "./InteractableLevers.module.scss";
 import NumberField from 'app/components/NumberField';
 
-const BatchSize = ({ batchSizeLevers }) => {
+const BatchSize = (props) => {
+  const { leverList, leverStore } = props;
+
+  const batchSizeLevers = leverList.map((item) => {
+    return leverStore.getState().levers.find((lever) => lever.item === item);
+  });
 
   const leverNumberDiv = css({
     '& .cf-form-int-input' : {width: 'auto', display: 'inline-block'},
@@ -15,7 +19,7 @@ const BatchSize = ({ batchSizeLevers }) => {
     '& .cf-form-int-input label' : {float: 'right', margin: '0', lineHeight: '50px'}
   });
 
-  const [lever, setLever] = useState(batchSizeLevers);
+  const [_, setLever] = useState(batchSizeLevers);
   const updateLever = (index) => (e) => {
     const levers = batchSizeLevers.map((lever, i) => {
       if (index === i) {
@@ -58,7 +62,8 @@ const BatchSize = ({ batchSizeLevers }) => {
 };
 
 BatchSize.propTypes = {
-    batchSizeLevers: PropTypes.array.isRequired
+  leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
+  leverStore: PropTypes.any
 };
 
 export default BatchSize;
