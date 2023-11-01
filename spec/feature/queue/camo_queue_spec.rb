@@ -98,7 +98,7 @@ feature "CamoQueue", :all_dbs do
         # Need a *= matcher because the aria-label is appended with all the filtered types for some reason.
         find("[aria-label*='Filter by issue type']").click
         find("label", text: "Beneficiary Travel").click
-        expect(page).to have_content("Filtering by: #{filter_column_label_text} (2)")
+        expect(page).to have_content("Filtering by:\n #{filter_column_label_text} (2)")
         expect(page).to have_content("Medical and Dental Care Reimbursement")
         expect(page).to have_content("Beneficiary Travel")
         expect(page).to_not have_content("Prosthetics | Other (not clothing allowance)")
@@ -106,7 +106,7 @@ feature "CamoQueue", :all_dbs do
         # Clear filter and check if all the data is there again
         find(".cf-clear-filters-link").click
 
-        expect(page).to_not have_content("Filtering by: #{filter_column_label_text}")
+        expect(page).to_not have_content("Filtering by:\n #{filter_column_label_text}")
         expect(page).to have_content("Prosthetics | Other (not clothing allowance)")
         expect(page).to have_content("Medical and Dental Care Reimbursement")
         expect(page).to have_content("Beneficiary Travel")
