@@ -15,7 +15,7 @@ export const formattedHistory = [
     original_values: [21],
     titles: ['AOJ CAVC Affinity Days'],
     units: ['days'],
-    user: 'TEAM_ADMIN (VACO)'
+    user: 'TEAM_ADMIN (VACO)',
   },
   {
     created_at: 'Thu Mar 23 09:21:47 2023',
@@ -161,7 +161,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: false
+    is_active: false,
+    is_disabled: true
   },
   {
     item: 'lever_10',
@@ -193,7 +194,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: false
+    is_active: false,
+    is_disabled: true
   },
   {
     item: 'lever_11',
@@ -225,7 +227,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: false
+    is_active: false,
+    is_disabled: true
   },
   {
     item: 'lever_12',
@@ -257,7 +260,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: false
+    is_active: false,
+    is_disabled: true
   },
   {
     item: 'lever_13',
@@ -289,7 +293,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: false
+    is_active: false,
+    is_disabled: true
   },
   {
     item: 'lever_14',
@@ -321,7 +326,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: true
+    is_active: true,
+    is_disabled: true
   },
   {
     item: 'lever_15',
@@ -339,7 +345,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: false
+    is_active: false,
+    is_disabled: true
   },
   {
     item: 'lever_16',
@@ -375,6 +382,7 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: false
+    is_active: false,
+    is_disabled: true
   },
 ];

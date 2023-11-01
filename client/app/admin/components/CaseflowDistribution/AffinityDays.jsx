@@ -52,7 +52,7 @@ const AffinityDays = (props) => {
         <div className={styles.leverRight}><strong>Value</strong></div>
       </div>
       {affinityLevers.map((lever, index) => (
-        <div className={cx(styles.activeLever, lever.is_disable ? styles.leverDisabled : '')}  key={`${lever.item}-${index}`}>
+        <div className={cx(styles.activeLever, lever.is_disabled ? styles.leverDisabled : '')}  key={`${lever.item}-${index}`}>
           <div className={styles.leverLeft}>
             <strong>{lever.title}</strong>
             <p>{lever.description}</p>
@@ -64,7 +64,7 @@ const AffinityDays = (props) => {
                   <input
                     type="radio"
                     value={option.item}
-                    disabled={lever.is_disable}
+                    disabled={lever.is_disabled}
                     id={`${lever.item}-${option.item}`}
                     name={lever.item}
                     onChange={() => handleRadioChange(option)}
@@ -82,7 +82,7 @@ const AffinityDays = (props) => {
                         name={option.item}
                         label={false}
                         isInteger
-                        disabled={lever.is_disable}
+                        disabled={lever.is_disabled}
                         value={option.value}
                         onChange={updateLever(option,index)}
                       />
@@ -91,7 +91,7 @@ const AffinityDays = (props) => {
                         <TextField
                           name={option.item}
                           label={false}
-                          disabled={lever.is_disable}
+                          disabled={lever.is_disabled}
                           value={option.value}
                           onChange={updateLever(option,index)}
                         />
