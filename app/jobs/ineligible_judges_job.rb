@@ -3,7 +3,10 @@
 #
 # A scheduled job that caches the list of ineligible judges within Caseflow and Vacols for Case Distribution use.
 # This job is ran once a week, with a cache that lasts a week.
-class IneligibleJudgesJob < CaseflowJob
+class IneligibleJudgesJob < ApplicationJob
+  queue_with_priority :low_priority
+  application_attr :queue
+
   def perform
     case_distribution_ineligible_judges
 
