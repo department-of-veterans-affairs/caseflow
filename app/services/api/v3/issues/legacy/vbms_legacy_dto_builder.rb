@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder
-  attr_reader :hash_response
+  attr_reader :hash_response, :vacols_issue_count
 
   def initialize(veteran, page)
     @page = page

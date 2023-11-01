@@ -46,18 +46,50 @@ describe Api::V3::Issues::Legacy::VeteransController, :postgres, type: :request 
       context "when a veteran is found" do
         context "when a veteran has no legacy issues(s)" do
           let(:vet) { create(:veteran) }
-          it "should return success" do
+          it "should return a 204 status" do
             get(
               "/api/v3/issues/legacy/find_by_veteran/#{vet.participant_id}",
               headers: authorization_header
             )
-            expect(response).to have_http_status(200)
+            # expect(response).to have_http_status(202)
             # expect(response.body).to include("No VACOLS Issues found for the given veteran")
+
+            expect(response).to have_http_status(200)
+            response_hash = JSON.parse(response.body)
           end
         end
-        # context "when a veteran has legacy issues(s)" do
 
-        # end
+        context "when a veteran has legacy issues(s)" do
+          let!(:veteran_with_legacy_issues) {create(:veteran, file_number: "123456789")}
+          let!(:veteran_file_number_legacy) {"123456789S"}
+          let!(:vacols_id) {"LEGACYID"}
+
+          before do
+            12.times do
+              create(:case_issue,
+                isskey: vacols_id,
+                issprog: "02",
+                isscode: "15",
+                isslev1: "04")
+            end
+          end
+
+          let!(:case_issues) {VACOLS::CaseIssue.where(isskey: vacols_id)}
+          let!(:vacols_case) do
+            create(:case_with_soc, :status_advance, case_issues: case_issues, bfkey: vacols_id)
+          end
+          let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+
+          it "should return all their issues" do
+            expect(case_issues.count).to eq(12)
+            get(
+              "/api/v3/issues/legacy/find_by_veteran/#{veteran_with_legacy_issues.participant_id}",
+              headers: authorization_header
+            )
+            expect(response).to have_http_status(200)
+            byebug
+          end
+        end
       end
     end
   end

@@ -10,7 +10,7 @@ class Api::V3::Issues::Legacy::VeteransController < Api::V3::BaseController
   end
 
   rescue_from StandardError do |error|
-    # byebug
+    byebug
     Raven.capture_exception(error, extra: raven_extra_context)
 
     render json: {
@@ -28,7 +28,7 @@ class Api::V3::Issues::Legacy::VeteransController < Api::V3::BaseController
     page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]
     # Disallow page(0) since page(0) == page(1) in kaminari. This is to avoid confusion.
     (page.nil? || page <= 0) ? page = 1 : page ||= 1
-    render_vacols_issues(Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder.new(veteran, page).hash_response) if veteran
+    render_vacols_issues(Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder.new(veteran, page)) if veteran
   end
 
   private
@@ -36,6 +36,7 @@ class Api::V3::Issues::Legacy::VeteransController < Api::V3::BaseController
   def find_veteran
     begin
       Veteran.find_by!(participant_id: params[:participant_id])
+      # Veteran.find_or_create_by_file_number_or_ssn() #may need to use this method to create Veteran if one doesn't exist
     rescue ActiveRecord::RecordNotFound
       render_errors(
         status: 404,
@@ -45,17 +46,30 @@ class Api::V3::Issues::Legacy::VeteransController < Api::V3::BaseController
     end
   end
 
-  def render_vacols_issues(vacols_issues)
-    byebug
-    # if vacols_issues[:vacols_issues].empty?
+  # def render_vacols_issues(vacols_issues)
+  #   byebug
+  #   # if vacols_issues[:vacols_issues].empty?
+  #   #   render_errors(
+  #   #     status: 204,
+  #   #     code: :no_vacols_issues_found,
+  #   #     title: "No VACOLS Issues found for the given veteran."
+  #   #   ) && return
+  #   # else
+  #   #   render json: vacols_issues.to_json
+  #   # end
+  #   render json: vacols_issues.to_json
+  # end
+
+  def render_vacols_issues(dto)
+    # if dto.vacols_issue_count == 0
     #   render_errors(
-    #     status: 204,
+    #     status: 202,
     #     code: :no_vacols_issues_found,
-    #     title: "No VACOLS Issues found for the given veteran."
+    #     title: "No VACOLS Issues found for the given veteran"
     #   ) && return
     # else
-    #   render json: vacols_issues.to_json
+      vacols_issues = dto.hash_response
+      render json: vacols_issues.to_json
     # end
-    render json: vacols_issues.to_json
   end
 end
