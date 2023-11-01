@@ -3,13 +3,13 @@ import { useController, useForm, FormProvider } from 'react-hook-form';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import Button from 'app/components/Button';
-import NonCompLayout from '../components/NonCompLayout';
+import NonCompLayout from 'app/nonComp/components/NonCompLayout';
 
-import Checkbox from '../../components/Checkbox';
-import RadioField from '../../components/RadioField';
-import NonCompReportFilterContainer from '../components/NonCompReportFilter';
+import Checkbox from 'app/components/Checkbox';
+import RadioField from 'app/components/RadioField';
+import NonCompReportFilterContainer from 'app/nonComp/components/NonCompReportFilter';
 
-import REPORT_TYPE_CONSTANTS from '../../../constants/REPORT_TYPE_CONSTANTS';
+import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS';
 
 const buttonInnerContainerStyle = css({
   display: 'flex',
@@ -24,7 +24,7 @@ const buttonOuterContainerStyling = css({
 
 const ReportPageButtons = ({
   history,
-  disableGenerateButton,
+  isGenerateButtonDisabled,
   handleClearFilters,
   handleSubmit,
 }) => {
@@ -44,7 +44,7 @@ const ReportPageButtons = ({
           label="clear-filters"
           name="clear-filters"
           onClick={handleClearFilters}
-          disabled={disableGenerateButton}
+          disabled={isGenerateButtonDisabled}
         >
           Clear filters
         </Button>
@@ -53,7 +53,7 @@ const ReportPageButtons = ({
           label="generate-report"
           name="generate-report"
           onClick={handleSubmit}
-          disabled={disableGenerateButton}
+          disabled={isGenerateButtonDisabled}
         >
           Generate task report
         </Button>
@@ -71,9 +71,8 @@ const RHFCheckboxGroup = ({ options, name, control }) => {
 
   return (
     <fieldset className="checkbox" style={{ paddingLeft: '30px' }}>
-      {' '}
       {options.map((option) => (
-        <div className="checkbox" key={option.id}>
+        <div key={option.id}>
           <Checkbox
             name={`specificEventType.${option.id}`}
             key={`specificEventType.${option.id}`}
@@ -148,7 +147,7 @@ const ReportPage = ({ history }) => {
       buttons={
         <ReportPageButtons
           history={history}
-          disableGenerateButton={!formState.isDirty}
+          isGenerateButtonDisabled={!formState.isDirty}
           handleClearFilters={() => reset(defaultFormValues)}
           handleSubmit={methods.handleSubmit(onSubmit)}
         />
@@ -164,9 +163,8 @@ const ReportPage = ({ history }) => {
               methods={methods}
               name="radioEventAction"
             />
-          ) : (
-            ''
-          )}
+          ) : null
+          }
           {watchReportType === 'event_type_action' &&
           watchRadioEventAction === 'specific_events_action' ? (
               <RHFCheckboxGroup
@@ -174,9 +172,8 @@ const ReportPage = ({ history }) => {
                 control={control}
                 name="specificEventType"
               />
-            ) : (
-              ''
-            )}
+            ) : null
+          }
         </form>
       </FormProvider>
     </NonCompLayout>
@@ -185,7 +182,7 @@ const ReportPage = ({ history }) => {
 
 ReportPageButtons.propTypes = {
   history: PropTypes.object,
-  disableGenerateButton: PropTypes.bool,
+  isGenerateButtonDisabled: PropTypes.bool,
   handleClearFilters: PropTypes.func,
   handleSubmit: PropTypes.func,
 };

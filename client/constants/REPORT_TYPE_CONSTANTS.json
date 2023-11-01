@@ -27,7 +27,7 @@
       "id": "added_decision_date"
     },
     {
-      "label": "Added Issue",
+      "label": "Added issue",
       "id": "added_issue"
     },
     {
@@ -39,7 +39,7 @@
       "id":"claim_created"
     },
     {
-      "label": "Claim Closed",
+      "label": "Claim closed",
       "id":"claim_closed"
     },
     {
