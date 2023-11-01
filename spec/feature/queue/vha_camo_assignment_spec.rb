@@ -147,7 +147,6 @@ RSpec.feature "CAMO assignment to program office", :all_dbs do
 
       # Filter by Caregiver | Eligibility
       find("label", text: "Caregiver | Eligibility").click
-      # expect(page).to have_content("Filtering by: #{filter_column_label_text} (1)")
       expect(page).to have_content("Filtering by:\n", "#{filter_column_label_text} (1)")
       expect(page).to have_content("Caregiver | Eligibility")
       expect(page).to_not have_content("Beneficiary Travel")

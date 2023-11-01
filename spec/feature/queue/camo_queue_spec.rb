@@ -89,7 +89,7 @@ feature "CamoQueue", :all_dbs do
 
         # Filter by Medical and Dental Care Reimbursement
         find("label", text: "Medical and Dental Care Reimbursement").click
-        expect(page).to have_content("Filtering by: #{filter_column_label_text} (1)")
+        expect(page).to have_content("Filtering by:\n", "#{filter_column_label_text} (1)")
         expect(page).to have_content("Medical and Dental Care Reimbursement")
         expect(page).to_not have_content("Beneficiary Travel")
         expect(page).to_not have_content("Prosthetics | Other (not clothing allowance)")
