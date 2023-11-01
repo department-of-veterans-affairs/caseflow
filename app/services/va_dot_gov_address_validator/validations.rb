@@ -82,4 +82,14 @@ module VaDotGovAddressValidator::Validations
   def veteran_lives_in_texas?
     state_code == "TX"
   end
+
+  def appellant_lives_in_usa?
+    return true if address.country.nil?
+
+    %w[USA US].include? address.country unless address.country.nil?
+  end
+
+  def appellant_lives_in_phillipines?
+    %w[PH RP PI].include? address.country
+  end
 end
