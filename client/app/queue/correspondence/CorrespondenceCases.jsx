@@ -7,12 +7,6 @@ import { css } from 'glamor';
 import CorrespondenceTable from './CorrespondenceTable';
 import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
 
-const rootStyles = css({
-  '.usa-alert + &': {
-    marginTop: '1.5em'
-  }
-});
-
 // import {
 //   initialAssignTasksToUser,
 //   initialCamoAssignTasksToVhaProgramOffice
