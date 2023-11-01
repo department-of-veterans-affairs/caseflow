@@ -816,7 +816,7 @@ feature "NonComp Reviews Queue", :postgres do
       scenario "Using a filter from the get url paramaters that contains a '|' character" do
         visit url_with_params
         expect(page).to have_content("Caregiver | Eligibility")
-        expect(page).to have_content("Filtering by: Issue Type (1)")
+        expect(page).to have_content("Filtering by:", "Issue Type (1)")
         expect(page).to_not have_content("Beneficiary Travel")
       end
 
@@ -831,23 +831,23 @@ feature "NonComp Reviews Queue", :postgres do
         find("label", text: pipe_issue_category).click
         expect(page).to have_content(pipe_issue_category)
         expect(page).to_not have_content("Foreign Medical Program")
-        expect(page).to have_content("Filtering by: Issue Type (1)")
+        expect(page).to have_content("Filtering by:", "Issue Type (1)")
 
         # Swap to the completed tab
         click_button("tasks-organization-queue-tab-2")
         expect(page).to have_content(pipe_issue_category)
-        expect(page).to have_content("Filtering by: Issue Type (1)")
+        expect(page).to have_content("Filtering by:", "Issue Type (1)")
 
         # Swap back to the in progress tab
         click_button("tasks-organization-queue-tab-1")
         expect(page).to have_content(pipe_issue_category)
         expect(page).to_not have_content("Foreign Medical Program")
-        expect(page).to have_content("Filtering by: Issue Type (1)")
+        expect(page).to have_content("Filtering by:", "Issue Type (1)")
 
         # Swap to the incomplete tab with no results
         click_button("tasks-organization-queue-tab-0")
         expect(page).to_not have_content("Foreign Medical Program")
-        expect(page).to have_content("Filtering by: Issue Type (1)")
+        expect(page).to have_content("Filtering by:", "Issue Type (1)")
       end
 
       # Simulate this by setting a filter, visiting the task page, and coming back
@@ -862,7 +862,7 @@ feature "NonComp Reviews Queue", :postgres do
         find("label", text: pipe_issue_category).click
         expect(page).to have_content(pipe_issue_category)
         expect(page).to_not have_content("Foreign Medical Program")
-        expect(page).to have_content("Filtering by: Issue Type (1)")
+        expect(page).to have_content("Filtering by:", "Issue Type (1)")
 
         # Visit a task page
         visit dispositions_url
@@ -872,7 +872,7 @@ feature "NonComp Reviews Queue", :postgres do
         visit BASE_URL
         expect(page).to have_content(pipe_issue_category)
         expect(page).to_not have_content("Foreign Medical Program")
-        expect(page).to have_content("Filtering by: Issue Type (1)")
+        expect(page).to have_content("Filtering by:", "Issue Type (1)")
 
         # Visit a task page again
         visit dispositions_url
@@ -881,7 +881,7 @@ feature "NonComp Reviews Queue", :postgres do
         # Return to the completed tab
         visit BASE_URL + "?tab=completed&page=1"
         expect(page).to have_content(pipe_issue_category)
-        expect(page).to have_content("Filtering by: Issue Type (1)")
+        expect(page).to have_content("Filtering by:", "Issue Type (1)")
       end
     end
   end
