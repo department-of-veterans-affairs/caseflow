@@ -25,7 +25,10 @@ class Api::V3::Issues::Ama::VbmsAmaDtoBuilder
 
   def serialized_request_issues(page = @page)
     serialized_data = Api::V3::Issues::Ama::RequestIssueSerializer.new(
-      RequestIssue.includes(:decision_issues).where(veteran_participant_id: @veteran_participant_id).page(page)
+      RequestIssue.includes(:decision_issues)
+      .where(veteran_participant_id: @veteran_participant_id)
+      .where(benefit_type: %w[compensation pension fiduciary])
+      .page(page)
     ).serializable_hash[:data]
 
     serialized_data.map { |issue| issue[:attributes] }
