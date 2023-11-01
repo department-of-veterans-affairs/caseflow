@@ -7,7 +7,7 @@ import { createMemoryHistory } from 'history';
 import ReportPage from 'app/nonComp/pages/ReportPage';
 import selectEvent from 'react-select-event';
 
-import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS.json'
+import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS';
 
 describe('ReportPage', () => {
   const setup = () => {
@@ -70,7 +70,7 @@ describe('ReportPage', () => {
 
     it('should list two radio buttons options when Event Type/Action is selected in ReportType', async () => {
       setup();
-      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event Type/Action']);
+      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
 
       expect(screen.getAllByText('Event Type/Action').length).toBe(1);
       expect(screen.getAllByRole('radio').length).toBe(2);
