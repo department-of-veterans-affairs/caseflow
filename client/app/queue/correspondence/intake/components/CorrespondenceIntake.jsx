@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import ProgressBar from 'app/components/ProgressBar';
 import Button from '../../../../components/Button';
 
+import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
+
 const progressBarSections = [
   {
     title: '1. Add Related Correspondence',
@@ -42,7 +44,11 @@ export const CorrespondenceIntake = () => {
     <ProgressBar
       sections={sections}
       classNames={['cf-progress-bar', 'cf-']}
-      styling={{ style: { marginBottom: '5rem', float: 'right' } }} />
+      styling={{ style: { marginBottom: '5rem', float: 'right' } }}
+    />
+    {currentStep === 2 &&
+      <AddTasksAppealsView />
+    }
     <div>
       <a href="/queue/correspondence">
         <Button
