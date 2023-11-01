@@ -21,7 +21,7 @@ class Fakes::WebexService
     @num_guests = args[:num_guests] || 1
   end
 
-  def create_conference(**args)
+  def create_conference(virtual_hearing)
     if error?
       return ExternalApi::WebexService::CreateResponse.new(
         HTTPI::Response.new(@status_code, {}, error_response)
@@ -37,7 +37,7 @@ class Fakes::WebexService
     )
   end
 
-  def delete_conference(*)
+  def delete_conference(virtual_hearing)
     if error?
       return ExternalApi::WebexService::DeleteResponse.new(
         HTTPI::Response.new(@status_code, {}, error_response)
