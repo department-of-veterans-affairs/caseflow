@@ -67,6 +67,8 @@ class SeedDB
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
     call_and_log_seed_step Seeds::AdditionalRemandedAppeals
     call_and_log_seed_step Seeds::AdditionalLegacyRemandedAppeals
+    call_and_log_seed_step Seeds::CorrespondenceTypes
+
   end
 end
 
