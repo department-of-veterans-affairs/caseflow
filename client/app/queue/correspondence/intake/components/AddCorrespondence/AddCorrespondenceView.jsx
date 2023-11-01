@@ -8,19 +8,6 @@ import Table from '../../../../../components/Table';
 import Checkbox from '../../../../../components/Checkbox';
 import RadioField from '../../../../../components/RadioField';
 import ApiUtil from '../../../../../util/ApiUtil';
-
-export const getRowObjects = (correspondenceUuid) => {
-  return ApiUtil.get(`/queue/correspondence/${correspondenceUuid}/intake?json`).then((response) => {
-    const returnedObject = response.body;
-    const correspondences = returnedObject.correspondence;
-
-  }).
-    catch((err) => {
-      // allow HTTP errors to fall on the floor via the console.
-      console.error(new Error(`Problem with GET /queue/corresondence/a9a15f84-b105-4981-92d9-ecddf7c3a03a/intake?json ${err}`));
-    });
-};
-
 class AddCorrespondenceView extends React.Component {
 
   constructor(props) {
@@ -33,8 +20,27 @@ class AddCorrespondenceView extends React.Component {
       source_type: '',
       package_document_type: '',
       correspondence_type_id: '',
-      notes: ''
+      notes: '',
+      rowObjects: ''
     };
+  }
+
+  getRowObjects(correspondenceUuid) {
+    return ApiUtil.get(`/queue/correspondence/${correspondenceUuid}/intake?json`).then((response) => {
+      const returnedObject = response.body;
+
+      this.setState({
+        rowObjects: returnedObject.correspondence
+      });
+    }).
+      catch((err) => {
+        // allow HTTP errors to fall on the floor via the console.
+        console.error(new Error(`Problem with GET /queue/corresondence/a9a15f84-b105-4981-92d9-ecddf7c3a03a/intake?json ${err}`));
+      });
+  }
+
+  componentDidMount() {
+    this.getRowObjects(this.props.correspondenceUuid);
   }
 
   onChange = (value) => {
@@ -117,9 +123,6 @@ class AddCorrespondenceView extends React.Component {
   };
 
   render() {
-    const rowObjects = getRowObjects(
-      this.props.correspondenceUuid
-    );
 
     const priorMailAnswer = [
       { displayText: 'Yes',
@@ -130,6 +133,7 @@ class AddCorrespondenceView extends React.Component {
 
     return (
       <div className="cf-app-segment cf-app-segment--alt">
+        {console.log(`correspondences state: ${JSON.stringify(this.state.rowObjects)}`)}
         <h1>Add Related Correspondence</h1>
         <p>Add any related correspondence to the mail package that is in progress.</p>
         <br></br>
@@ -147,7 +151,7 @@ class AddCorrespondenceView extends React.Component {
             <div>
               <Table
                 columns={this.getDocumentColumns}
-                rowObjects={rowObjects}
+                rowObjects={this.state.rowObjects}
                 summary="Correspondence list"
                 className="correspondence-table"
                 headerClassName="cf-correspondence-list-header-row"
