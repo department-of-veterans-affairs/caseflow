@@ -62,7 +62,7 @@ const AffinityDays = (props) => {
               <div>
                 <div>
                   <input
-                    checked={option.item === lever.value}
+                    checked={selectedOption ? option.item === selectedOption.item : option.item === lever.value}
                     type="radio"
                     value={option.item}
                     disabled={lever.is_disabled}
