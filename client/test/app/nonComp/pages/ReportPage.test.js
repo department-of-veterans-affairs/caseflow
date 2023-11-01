@@ -59,20 +59,22 @@ describe('ReportPage', () => {
   describe('ReportType Dropdown', () => {
     it('should enable clearFilter and generate buttons when any option is selected', async () => {
       setup();
-      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event Type/Action']);
+      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
 
       const generateTaskReport = screen.getByRole('button', { name: /Generate task Report/i });
+
       expect(generateTaskReport).not.toHaveClass('usa-button-disabled');
 
       const clearFilters = screen.getByText('Clear filters');
+
       expect(clearFilters).not.toHaveClass('usa-button-disabled');
     });
 
-    it('should list two radio buttons options when Event Type/Action is selected in ReportType', async () => {
+    it('should list two radio buttons options when Event / Action is selected in ReportType', async () => {
       setup();
       await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
 
-      expect(screen.getAllByText('Event Type/Action').length).toBe(1);
+      expect(screen.getAllByText('Event / Action').length).toBe(1);
       expect(screen.getAllByRole('radio').length).toBe(2);
       expect(screen.getAllByText('All Events / Actions').length).toBe(1);
       expect(screen.getAllByText('Specific Events / Actions').length).toBe(1);
@@ -81,8 +83,8 @@ describe('ReportPage', () => {
     it('should add 10 checkbox when radio Specific Events/ Actions is clicked', async () => {
       setup();
 
-      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event Type/Action']);
-      expect(screen.getAllByText('Event Type/Action').length).toBe(1);
+      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
+      expect(screen.getAllByText('Event / Action').length).toBe(1);
 
       const specificEvents = screen.getAllByText('Specific Events / Actions');
 
