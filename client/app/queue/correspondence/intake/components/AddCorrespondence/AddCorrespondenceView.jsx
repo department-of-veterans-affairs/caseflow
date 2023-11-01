@@ -35,7 +35,7 @@ class AddCorrespondenceView extends React.Component {
     }).
       catch((err) => {
         // allow HTTP errors to fall on the floor via the console.
-        console.error(new Error(`Problem with GET /queue/corresondence/a9a15f84-b105-4981-92d9-ecddf7c3a03a/intake?json ${err}`));
+        console.error(new Error(`Problem with GET /queue/correspondence/a9a15f84-b105-4981-92d9-ecddf7c3a03a/intake?json ${err}`));
       });
   }
 
@@ -49,18 +49,19 @@ class AddCorrespondenceView extends React.Component {
     });
   }
 
-  getKeyForRow = (index, { hasCorrespondence, id }) => {
-    return hasCorrespondence ? `${id}-comment` : `${id}`;
+  getKeyForRow = (index, { id }) => {
+    return `${id}`;
   };
 
   // eslint-disable-next-line max-statements
-  getDocumentColumns = (row) => {
+  getDocumentColumns = (correspondence) => {
     return [
       {
         cellClass: 'checkbox-column',
         valueFunction: () => (
           <Checkbox
-            name={row.id}
+            name={correspondence.id}
+            hideLabel
           />
         ),
       },
@@ -81,7 +82,7 @@ class AddCorrespondenceView extends React.Component {
         header: (
           <div id="source-type-header">
             <span id="source-type-header-label" className="table-header-label">
-              VA DOR
+              Source Type
             </span>
           </div>
         ),
@@ -92,7 +93,7 @@ class AddCorrespondenceView extends React.Component {
         header: (
           <div id="package-document-type-header">
             <span id="package-document-type-header-label" className="table-header-label">
-              VA DOR
+              Package Document Type
             </span>
           </div>
         ),
@@ -103,7 +104,7 @@ class AddCorrespondenceView extends React.Component {
         header: (
           <div id="correspondence-type-header">
             <span id="correspondence-type-header-label" className="table-header-label">
-              VA DOR
+              Correspondence Type
             </span>
           </div>
         ),
@@ -114,7 +115,7 @@ class AddCorrespondenceView extends React.Component {
         header: (
           <div id="notes-header">
             <span id="notes-header-label" className="table-header-label">
-              VA DOR
+              Notes
             </span>
           </div>
         ),
@@ -147,7 +148,7 @@ class AddCorrespondenceView extends React.Component {
         {this.state.value === '1' && (
           <div className="cf-app-segment cf-app-segment--alt">
             <p>Please select the prior mail to link to this correspondence</p>
-            <p>Viewing 1-15 out of 200 total</p>
+            <p>Viewing {this.state.rowObjects.length} related correspondences.</p>
             <div>
               <Table
                 columns={this.getDocumentColumns}
