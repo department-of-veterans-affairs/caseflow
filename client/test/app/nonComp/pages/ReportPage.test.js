@@ -1,12 +1,13 @@
 import React from 'react';
 import { axe } from 'jest-axe';
-import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
+
 import userEvent from '@testing-library/user-event';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import ReportPage from 'app/nonComp/pages/ReportPage';
 import selectEvent from 'react-select-event';
+import SearchableDropdown from 'app/components/SearchableDropdown';
+import { shallow } from 'enzyme';
 
 describe('ReportPage', () => {
   const setup = () => {
@@ -62,8 +63,8 @@ describe('ReportPage', () => {
 
       await userEvent.click(addConditionButton);
 
-      const selectText = screen.getByText('Select a variable')
-      const removeConditionLink = screen.getByText('Remove condition')
+      const selectText = screen.getByText('Select a variable');
+      const removeConditionLink = screen.getByText('Remove condition');
 
       await userEvent.click(removeConditionLink);
 
@@ -90,11 +91,12 @@ describe('ReportPage', () => {
 
       await userEvent.click(addConditionButton);
 
-      const select = screen.getByText('Select a variable')
+      const select = screen.getByText('Select a variable');
 
       await selectEvent.select(select, ['Days Waiting']);
 
-      await selectEvent.openMenu(select); // try to open the same dropdown again
+      // try to open the same dropdown again
+      await selectEvent.openMenu(select);
       expect(screen.queryByText('Facility')).not.toBeInTheDocument();
     });
 
@@ -108,7 +110,7 @@ describe('ReportPage', () => {
       }
 
       // Select Days waiting, then open another dropdown and it shouldn't be in that dropdown
-      const selects = screen.getAllByText('Select a variable')
+      const selects = screen.getAllByText('Select a variable');
 
       await selectEvent.select(
         selects[0],
@@ -128,7 +130,7 @@ describe('ReportPage', () => {
         await userEvent.click(addConditionButton);
       }
 
-      const selects = screen.getAllByText('Select a variable')
+      const selects = screen.getAllByText('Select a variable');
 
       await selectEvent.select(
         selects[0],
@@ -137,6 +139,20 @@ describe('ReportPage', () => {
 
       await selectEvent.openMenu(selects[1]);
       expect(screen.queryByText('Facility')).not.toBeInTheDocument();
-    })
-  })
+    });
+  });
+
+  it('should have Generate task Report button and Clear Filter button disabled on initial load', () => {
+    render(
+      <ReportPage />
+    );
+
+    const generateTaskReport = screen.getByRole('button', { name: /Generate task Report/i });
+
+    expect(generateTaskReport).toHaveClass('usa-button-disabled');
+
+    const clearFilters = screen.getByText('Clear filters');
+
+    expect(clearFilters).toHaveClass('usa-button-disabled');
+  });
 });
