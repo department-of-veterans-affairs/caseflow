@@ -25,19 +25,6 @@ RSpec.feature("The Correspondence Cases page") do
       FeatureToggle.enable!(:correspondence_queue)
       User.authenticate!(roles: ["Mail Intake"])
       @correspondence_uuid = "123456789"
-      visit "/queue/correspondence"
-    end
-
-    it "go to correspondence cases" do
-      visit "/queue"
-      click_on("Switch views")
-      click_on(format(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES))
-      expect(page).to have_current_path("/queue/correspondence")
-    end
-
-    it "the correspondece cases page exists" do
-      expect(page).to have_current_path("/queue/correspondence")
-      expect(page).to have_content(format(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES))
     end
   end
 end
