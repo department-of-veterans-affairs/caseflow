@@ -1,8 +1,14 @@
 import React from 'react';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import NumberField from 'app/components/NumberField';
+import styled from 'styled-components';
 
 import { Controller, useFormContext } from 'react-hook-form';
+
+const WidthDiv = styled.div`
+  max-width: 45%;
+  width: 100%
+`;
 
 export const DaysWaiting = ({ control, register, name }) => {
 
@@ -23,58 +29,63 @@ export const DaysWaiting = ({ control, register, name }) => {
 
   const { setValue, getValues } = useFormContext();
 
-  console.log(getValues(dropdownName));
-  const displayValueOne = getValues(dropdownName); // display if any value is selected from comparison operator dropdown
+  const displayValueOne = getValues(dropdownName);
 
-  const displayValueTwo = getValues(dropdownName) === 'between'; // display only if between is selected
+  const displayValueTwo = getValues(dropdownName) === 'between';
 
   const valueOneLabel = displayValueTwo ? 'Min days' : 'Number of days';
 
-  return <div>
-    <Controller
-      control={control}
-      name={dropdownName}
-      defaultValue={null}
-      // eslint-disable-next-line no-unused-vars
-      render={({ onChange, ...rest }) => (
-        <SearchableDropdown
-          {...rest}
-          label="Time Range"
-          options={options}
-          onChange={(valObj) => {
-            onChange(valObj?.value);
-          }}
-          // placeholder="Select a variable"
-        />
-      )}
-    />
+  const valueTwoContent = () => {
+    return <>
+      to
+      <NumberField
+        label="Max days"
+        name={valueTwoName}
+        inputRef={register}
+        isInteger
+        onChange={(value) => {
+          setValue(valueTwoName, value);
 
-    {displayValueOne &&
-    <NumberField
-      label={valueOneLabel}
-      name={valueOneName}
-      inputRef={register}
-      isInteger
-      // value={this.state.value}
-      onChange={(value) => {
-        setValue(valueOneName, value);
+          return value;
+        }}
+      />
+    </>;
+  };
 
-        return value;
-      }}
-    />}
+  return <div className="space-it-out">
+    <WidthDiv>
+      <Controller
+        control={control}
+        name={dropdownName}
+        defaultValue={null}
+        render={({ onChange, ...rest }) => (
+          <SearchableDropdown
+            {...rest}
+            label="Time Range"
+            options={options}
+            onChange={(valObj) => {
+              setValue(valueOneName, null);
+              setValue(valueTwoName, null);
+              onChange(valObj?.value);
+            }}
+          />
+        )}
+      />
+    </WidthDiv>
+    {displayValueOne ?
+      <NumberField
+        label={valueOneLabel}
+        name={valueOneName}
+        inputRef={register}
+        isInteger
+        onChange={(value) => {
+          setValue(valueOneName, value);
 
-    {displayValueTwo &&
-    <NumberField
-      label="Max days"
-      name={valueTwoName}
-      inputRef={register}
-      isInteger
-      // value={this.state.value}
-      onChange={(value) => {
-        setValue(valueTwoName, value);
+          return value;
+        }}
+      /> : null}
+    {displayValueTwo ?
+      valueTwoContent() : null}
 
-        return value;
-      }}
-    />}
   </div>;
 };

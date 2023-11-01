@@ -156,16 +156,24 @@
   .report-page-variable-condition {
     width: 100%;
     display: flex;
+    gap: 1%;
+    align-items: center;
 
     .report-page-variable-select {
-      width: 50%;
+      width: 40%;
     }
 
     .report-page-variable-content {
       display: flex;
-      justify-content: right;
-      align-items: center;
-      width: 50%;
+      width: 60%;
+
+      .space-it-out {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 5%;
+      }
     }
   }
 
