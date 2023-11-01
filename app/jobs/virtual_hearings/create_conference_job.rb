@@ -53,6 +53,20 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     Raven.capture_exception(exception, extra: extra)
   end
 
+  # Retry if Webex returns an invalid response.
+  retry_on(Caseflow::Error::WebexApiError, attempts: 10, wait: :exponentially_longer) do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+
+    kwargs = job.arguments.first
+    extra = {
+      application: job.class.app_name.to_s,
+      hearing_id: kwargs[:hearing_id],
+      hearing_type: kwargs[:hearing_type]
+    }
+
+    Raven.capture_exception(exception, extra: extra)
+  end
+
   # Log the timezone of the job. This is primarily used for debugging context around times
   # that appear in the hearings notification emails.
   before_perform do |job|
@@ -158,6 +172,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       if virtual_hearing.conference_provider == "pexip"
         virtual_hearing.update(conference_id: create_conference_response.data[:conference_id])
       else
+        # Manually adds the subject of the body for the Webex IC Request as the conference id(int only)
         response = "#{virtual_hearing.hearing.hearing.docket_number}#{virtual_hearing.hearing.id}"
         response = response.delete "-"
         virtual_hearing.update(conference_id: response.to_i)

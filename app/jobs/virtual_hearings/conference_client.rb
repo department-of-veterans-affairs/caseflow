@@ -13,12 +13,12 @@ module VirtualHearings::ConferenceClient
       )
     when "webex"
       @client ||= WebexService.new(
-        host: ENV["WEBEX_HOST"],
+        host: ENV["WEBEX_HOST_IC"],
         port: ENV["WEBEX_PORT"],
         aud: ENV["WEBEX_ORGANIZATION"],
         apikey: ENV["WEBEX_BOTTOKEN"],
-        domain: ENV["WEBEX_DOMAIN"],
-        api_endpoint: ENV["WEBEX_API"]
+        domain: ENV["WEBEX_DOMAIN_IC"],
+        api_endpoint: ENV["WEBEX_API_IC"]
       )
     else
       msg = "Conference Provider for the Virtual Hearing Not Found"

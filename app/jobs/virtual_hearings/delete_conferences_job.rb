@@ -86,8 +86,8 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
     super
 
     Rails.logger.info("Cancelled?: (#{virtual_hearing.cancelled?})")
-    Rails.logger.info("Conference id: (#{virtual_hearing.conference_id?})")
-    # Rails.logger.info("Meeting Type: (#{virtual_hearing.conference_provider?})")
+    Rails.logger.info("Conference id: (#{virtual_hearing.conference_id})")
+    Rails.logger.info("Meeting Type: (#{virtual_hearing.conference_provider})")
   end
 
   def send_cancellation_emails(virtual_hearing)
