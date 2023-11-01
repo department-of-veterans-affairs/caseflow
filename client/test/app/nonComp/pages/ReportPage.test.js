@@ -48,9 +48,11 @@ describe('ReportPage', () => {
     setup();
 
     const generateTaskReport = screen.getByRole('button', { name: /Generate task Report/i });
+
     expect(generateTaskReport).toHaveClass('usa-button-disabled');
 
     const clearFilters = screen.getByText('Clear filters');
+
     expect(clearFilters).toHaveClass('usa-button-disabled');
   });
 
@@ -64,7 +66,7 @@ describe('ReportPage', () => {
 
       const clearFilters = screen.getByText('Clear filters');
       expect(clearFilters).not.toHaveClass('usa-button-disabled');
-    })
+    });
 
     it('should list two radio buttons options when Event Type/Action is selected in ReportType', async () => {
       setup();
