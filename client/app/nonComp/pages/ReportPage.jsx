@@ -84,6 +84,7 @@ const RHFCheckboxGroup = ({ options, name, control }) => {
               setValue(value);
             }}
             unpadded
+            style={{ outline: 'none' }}
           />
         </div>
       ))}

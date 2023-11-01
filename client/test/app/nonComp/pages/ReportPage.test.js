@@ -66,7 +66,7 @@ describe('ReportPage', () => {
       expect(clearFilters).not.toHaveClass('usa-button-disabled');
     })
 
-    it('should list two radio buttons options when Event Type/Action is selected in ReportType',async () => {
+    it('should list two radio buttons options when Event Type/Action is selected in ReportType', async () => {
       setup();
       await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event Type/Action']);
 
@@ -91,8 +91,8 @@ describe('ReportPage', () => {
 
       REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.map((option) => {
         expect(screen.getAllByText(option.label)).toBeTruthy();
-      } )
+      })
     });
-  })
+  });
 });
 
