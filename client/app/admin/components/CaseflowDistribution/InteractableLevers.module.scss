@@ -1,0 +1,137 @@
+.leverContainer {
+  width: 100%;
+  border: 1px solid #e4e2e0;
+  border-radius: 4px;
+  margin-top: 20px;
+  display: inline-block;
+  h4: {
+      margin: 0;
+      background: #e4e2e0;
+      padding: 10px 20px;
+  }
+  strong: {
+      fontSize: 14px;
+  }
+}
+
+.leverContent {
+  width: 100%;
+  padding: 20px;
+  padding-bottom: 0;
+  box-sizing: border-box;
+  p {
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 14px;
+  }
+}
+
+.leverTop {
+  p {
+      margin: 10px 0;
+      font-size: 14px;
+  }
+}
+
+.activeLever {
+  width: 100%;
+  padding: 15px;
+  border-bottom: 1px solid #e4e2e0;
+  box-sizing: border-box;
+}
+
+.leverHead {
+  width: 100%;
+  border-bottom: 1px solid #e4e2e0;
+  display: inline-block;
+  padding-bottom: 15px;
+}
+
+.leverLeft {
+  width: 70%;
+  display: inline-block;
+  margin-right: 30px;
+}
+
+.leverH2 {
+  display: block;
+  font-size: 1.5em;
+  margin-top: 0.83em;
+  margin-bottom: 0.83em;
+  margin-left: 0;
+  margin-right: 0;
+  font-weight: bold;
+}
+.leverRight {
+  width: 25%;
+  vertical-align: top;
+  display: inline-block;
+  input {
+      width: 65px;
+      height: 45px;
+      margin-right: 10px;
+      font-size: 12px;
+      display: inline-block;
+      text-align: right;
+  }
+}
+.leverUnit {
+  width: auto;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+.docketLeverLeft{
+  vertical-align: middle;
+  width: 36%;
+  margin-right: 0;
+}
+
+.leverMiddle{
+  width: 36%;
+  display: inline-block;
+  vertical-align: middle;
+  input {
+      width: 65px;
+      height: 45px;
+      margin-right: 10px;
+      font-size: 12px;
+      display: inline-block;
+      text-align: right;
+  }
+}
+
+.docketLeverRight {
+  vertical-align: middle;
+  button {
+    vertical-align: middle;
+    display: inline-block;
+  }
+}
+
+.leverDisabled {
+  opacity: 0.5;
+}
+
+.combinedRadioInput {
+  input {
+      width: 65px;
+      height: 45px;
+      margin-right: 10px;
+      font-size: 12px;
+      display: inline-block;
+      text-align: right;
+      margin-left: 28px;
+      margin-bottom: 10px;
+  }
+}
+
+.toggleInputHide {
+    display: none;
+}
+
+.toggleSwichInput {
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+}

@@ -113,7 +113,74 @@ export const levers = [
             }
         ],
         "is_active": true
-      }
+    },
+    {
+      "item": "lever_11",
+      "title": "Lever 11",
+      "description": "This is the ninth lever. It is a radio data type with the default value of option_1. Therefore there should be a radio options displayed and option_1 is selected by default. If the option is text only the text is displayed, but if it is a different data type then the appropriate input and unit are displayed and the value stored. This lever is active so it should be in the active lever section",
+      "data_type": "combination",
+      "value": 50,
+      "unit": "Days",
+      "options": [
+          {
+          "item": "option_1",
+          "data_type": "boolean",
+          "value": false,
+          "text": "This feature is turned on or off",
+          "unit": ""
+          }
+      ],
+      "is_active": false
+    },
+    {
+      "item": "lever_12",
+      "title": "Lever 12",
+      "description": "This is the ninth lever. It is a radio data type with the default value of option_1. Therefore there should be a radio options displayed and option_1 is selected by default. If the option is text only the text is displayed, but if it is a different data type then the appropriate input and unit are displayed and the value stored. This lever is active so it should be in the active lever section",
+      "data_type": "combination",
+      "value": 50,
+      "unit": "Days",
+      "options": [
+          {
+          "item": "option_1",
+          "data_type": "boolean",
+          "value": false,
+          "text": "This feature is turned on or off",
+          "unit": ""
+          }
+      ],
+      "is_active": false,
+      "is_disable": true
+    },
+    {
+      "item": "lever_13",
+      "title": "Lever 13",
+      "description": "This is the ninth lever. It is a radio data type with the default value of option_1. Therefore there should be a radio options displayed and option_1 is selected by default. If the option is text only the text is displayed, but if it is a different data type then the appropriate input and unit are displayed and the value stored. This lever is active so it should be in the active lever section",
+      "data_type": "radio",
+      "value": "option_1",
+      "unit": "Cases",
+      "options": [
+          {
+          "item": "option_1",
+          "data_type": "text",
+          "value": "option_1",
+          "text": "Option 1",
+          "unit": ""
+          },
+          {
+          "item": "option_2",
+          "data_type": "number",
+          "value": 68,
+          "text": "Option 2",
+          "unit": "Days"
+          },
+          {
+            "item": "option_3",
+            "text": "Option 3",
+          }
+      ],
+      "is_active": true,
+      "is_disable": true
+    },
   ]
 
 export const history = [
