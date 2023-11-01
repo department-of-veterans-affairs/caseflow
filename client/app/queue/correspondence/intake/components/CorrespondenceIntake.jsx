@@ -23,8 +23,6 @@ const progressBarSections = [
 
 export const CorrespondenceIntake = (props) => {
 
-  const { correspondenceUuid } = props.correspondence_uuid;
-
   const [currentStep, setCurrentStep] = useState(1);
 
   const nextStep = () => {
@@ -52,7 +50,7 @@ export const CorrespondenceIntake = (props) => {
       styling={{ style: { marginBottom: '5rem', float: 'right' } }} />
     {currentStep === 1 &&
       <AddCorrespondenceView
-        correspondenceUuid = {correspondenceUuid}
+        correspondenceUuid={props.correspondence_uuid}
       />
     }
     {/* currentStep === 2 &&
@@ -99,7 +97,6 @@ export const CorrespondenceIntake = (props) => {
 };
 
 CorrespondenceIntake.propTypes = {
-  correspondenceUuid: PropTypes.string,
   correspondence_uuid: PropTypes.string
 };
 
