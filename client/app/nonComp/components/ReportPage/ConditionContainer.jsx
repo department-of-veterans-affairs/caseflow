@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 
 export const ConditionContainer = ({ control, index, remove }) => {
 
-  const { watch } = useFormContext();
+  const { watch, register } = useFormContext();
 
   const variableOptions = [
     { label: 'Days Waiting',
@@ -50,12 +50,12 @@ export const ConditionContainer = ({ control, index, remove }) => {
       !selectedOptions.some((selectedOption) => option.value === selectedOption));
   };
 
-  const name = `conditions.${index}.condition`;
+  const name = `conditions.${index}`;
 
   const conditionsLength = useWatch({ name: 'conditions' }).length;
   const shouldShowAnd = (conditionsLength > 1) && (index !== (conditionsLength - 1));
 
-  const selectedConditionValue = useWatch({ control, name });
+  const selectedConditionValue = useWatch({ control, name: `${name}.condition` });
 
   const getConditionContent = () => {
     const selectedVariableOption = variableOptions.find((opt) => opt.value === selectedConditionValue);
@@ -67,7 +67,7 @@ export const ConditionContainer = ({ control, index, remove }) => {
     if (selectedVariableOption.component) {
       const ConditionContent = selectedVariableOption.component;
 
-      return <ConditionContent {...{ control, name }} />;
+      return <ConditionContent {...{ control, register, name }} />;
     }
   };
 

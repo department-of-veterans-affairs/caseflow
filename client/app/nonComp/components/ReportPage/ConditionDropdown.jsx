@@ -8,9 +8,11 @@ export const ConditionDropdown = ({ control, determineOptions, name }) => {
 
   const filteredOptions = determineOptions();
 
+  const dropdownName = `${name}.condition`;
+
   return <Controller
     control={control}
-    name={name}
+    name={dropdownName}
     defaultValue={null}
     render={({ onChange, ...rest }) => (
       <SearchableDropdown
