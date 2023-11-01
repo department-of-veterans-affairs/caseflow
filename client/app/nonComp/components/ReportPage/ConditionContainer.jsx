@@ -60,10 +60,14 @@ export const ConditionContainer = ({ control, index, remove }) => {
   const getConditionContent = () => {
     const selectedVariableOption = variableOptions.find((opt) => opt.value === selectedConditionValue);
 
-    if (selectedConditionValue && selectedVariableOption.component) {
+    if (!selectedConditionValue || !selectedVariableOption) {
+      return <div></div>;
+    }
+
+    if (selectedVariableOption.component) {
       const ConditionContent = selectedVariableOption.component;
 
-      return <ConditionContent />;
+      return <ConditionContent {...{ control, name }} />;
     }
   };
 
