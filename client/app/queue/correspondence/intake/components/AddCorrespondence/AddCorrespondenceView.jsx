@@ -75,6 +75,11 @@ class AddCorrespondenceView extends React.Component {
             </span>
           </div>
         ),
+        valueFunction: () => (
+          <span className="va-dor-item">
+            <p>{correspondence.va_date_of_receipt}</p>
+          </span>
+        )
       },
       {
         cellClass: 'source-type-column',
@@ -86,6 +91,11 @@ class AddCorrespondenceView extends React.Component {
             </span>
           </div>
         ),
+        valueFunction: () => (
+          <span className="va-source-type-item">
+            <p>{correspondence.source_type}</p>
+          </span>
+        )
       },
       {
         cellClass: 'package-document-type-column',
@@ -97,6 +107,11 @@ class AddCorrespondenceView extends React.Component {
             </span>
           </div>
         ),
+        valueFunction: () => (
+          <span className="va-package-document-type-item">
+            <p>{correspondence.package_document_type_id}</p>
+          </span>
+        )
       },
       {
         cellClass: 'correspondence-type-column',
@@ -108,6 +123,11 @@ class AddCorrespondenceView extends React.Component {
             </span>
           </div>
         ),
+        valueFunction: () => (
+          <span className="va-correspondence-type-item">
+            <p>{correspondence.correspondence_type_id}</p>
+          </span>
+        )
       },
       {
         cellClass: 'notes-column',
@@ -119,6 +139,11 @@ class AddCorrespondenceView extends React.Component {
             </span>
           </div>
         ),
+        valueFunction: () => (
+          <span className="va-notes-item">
+            <p>{correspondence.notes}</p>
+          </span>
+        )
       },
     ];
   };
