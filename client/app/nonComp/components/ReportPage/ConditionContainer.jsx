@@ -76,10 +76,10 @@ export const ConditionContainer = ({ control, index, remove }) => {
       <div className="report-page-variable-select">
         <ConditionDropdown {...{ control, determineOptions, name }} />
       </div>
-      <div className="report-page-variable-content">{selectedConditionValue && getConditionContent()} </div>
+      <div className="report-page-variable-content">{selectedConditionValue ? getConditionContent() : null} </div>
     </div>
     <Link onClick={() => remove(index)}>Remove condition</Link>
-    {shouldShowAnd && <div className="report-page-condition-and">AND</div>}
+    {shouldShowAnd ? <div className="report-page-condition-and">AND</div> : null}
   </div>;
 };
 
