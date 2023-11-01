@@ -8,10 +8,9 @@ import Table from '../../../../../components/Table';
 import Checkbox from '../../../../../components/Checkbox';
 import RadioField from '../../../../../components/RadioField';
 import ApiUtil from '../../../../../util/ApiUtil';
-import uuid from 'uuid';
 
-export const getRowObjects = () => {
-  return ApiUtil.get(`/queue/correspondence/a9a15f84-b105-4981-92d9-ecddf7c3a03a/intake?json`).then((response) => {
+export const getRowObjects = (correspondenceUuid) => {
+  return ApiUtil.get(`/queue/correspondence/${correspondenceUuid}/intake?json`).then((response) => {
     const returnedObject = response.body;
     const correspondences = returnedObject.correspondence;
 
@@ -119,7 +118,7 @@ class AddCorrespondenceView extends React.Component {
 
   render() {
     const rowObjects = getRowObjects(
-      this.props.correspondence
+      this.props.correspondenceUuid
     );
 
     const priorMailAnswer = [
@@ -167,7 +166,7 @@ class AddCorrespondenceView extends React.Component {
 AddCorrespondenceView.propTypes = {
   correspondence: PropTypes.arrayOf(PropTypes.object),
   featureToggles: PropTypes.object,
-  uuid: PropTypes.uuid,
+  correspondenceUuid: PropTypes.string,
 };
 
 const mapDispatchToProps = (dispatch) =>
