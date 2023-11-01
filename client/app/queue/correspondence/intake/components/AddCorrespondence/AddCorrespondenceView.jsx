@@ -75,11 +75,15 @@ class AddCorrespondenceView extends React.Component {
             </span>
           </div>
         ),
-        valueFunction: () => (
-          <span className="va-dor-item">
-            <p>{correspondence.va_date_of_receipt}</p>
-          </span>
-        )
+        valueFunction: () => {
+          const date = new Date(correspondence.va_date_of_receipt);
+
+          return (
+            <span className="va-dor-item">
+              <p>{date.toLocaleDateString('en-US')}</p>
+            </span>
+          );
+        }
       },
       {
         cellClass: 'source-type-column',
@@ -159,7 +163,6 @@ class AddCorrespondenceView extends React.Component {
 
     return (
       <div className="cf-app-segment cf-app-segment--alt">
-        {console.log(`correspondences state: ${JSON.stringify(this.state.rowObjects)}`)}
         <h1>Add Related Correspondence</h1>
         <p>Add any related correspondence to the mail package that is in progress.</p>
         <br></br>
