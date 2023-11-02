@@ -98,7 +98,12 @@ describe VirtualHearings::CreateConferenceJob do
     end
 
     describe "for webex" do
-      let(:virtual_hearing) { create(:virtual_hearing, conference_provider: "webex") }
+      let(:virtual_hearing) do
+        create(:virtual_hearing).tap do |virtual_hearing|
+          virtual_hearing.meeting_type.update(service_name: "webex")
+        end
+      end
+
       it "creates a webex conference" do
         conference_id = "#{virtual_hearing.hearing.hearing.docket_number}#{virtual_hearing.hearing.id}"
         conference_id = conference_id.delete "-"
