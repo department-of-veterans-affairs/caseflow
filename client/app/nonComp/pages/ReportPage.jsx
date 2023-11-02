@@ -7,6 +7,8 @@ import NonCompLayout from '../components/NonCompLayout';
 
 import NonCompReportFilterContainer from '../components/NonCompReportFilter';
 
+import TimingSpecificationCondition from 'app/nonComp/components/TimingSpecificationCondition';
+
 const buttonInnerContainerStyle = css({
   display: 'flex',
   gap: '32px',
@@ -81,6 +83,7 @@ const ReportPage = ({ history }) => {
       <FormProvider {...methods}>
         <form>
           <NonCompReportFilterContainer />
+          <TimingSpecificationCondition />
         </form>
       </FormProvider>
     </NonCompLayout>
