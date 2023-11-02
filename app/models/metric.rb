@@ -83,7 +83,7 @@ class Metric < CaseflowRecord
       metric_group: params[:group] || METRIC_GROUPS[:service],
       metric_message: params[:message] || METRIC_TYPES[:log],
       metric_type: params[:type] || METRIC_TYPES[:log],
-      metric_product: PRODUCT_TYPES[params[:product]].to_sym || PRODUCT_TYPES[:caseflow],
+      metric_product: PRODUCT_TYPES[params[:product].to_sym] || PRODUCT_TYPES[:caseflow],
       app_name: params[:app_name] || APP_NAMES[:caseflow],
       metric_attributes: params[:metric_attributes],
       additional_info: params[:additional_info],
