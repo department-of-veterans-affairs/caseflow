@@ -5,6 +5,7 @@ import LeverButtonsWrapper from './LeverButtonsWrapper';
 import BatchSize from './BatchSize';
 import DocketTimeGoals from './DocketTimeGoals';
 import AffinityDays from './AffinityDays';
+import ExclusionTable from './ExclusionTable';
 import PropTypes from 'prop-types';
 import {
   sectionSegmentStyling,
@@ -27,6 +28,11 @@ const CaseflowDistributionContent = ({ levers, saveChanges, formattedHistory, is
           </h2>
           <div {...sectionSegmentStyling}>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_ACTIVE_LEVERS_DESCRIPTION}</p>
+            <div className="cf-help-divider"></div>
+            <h2>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_TITLE}</h2>
+            <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION}</p>
+            <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION_NOTE}</p>
+            <ExclusionTable />
             <BatchSize leverList={levers.batchSizeLevers} leverStore={leverStore} />
             <AffinityDays leverList={levers.affinityLevers} leverStore={leverStore} />
             <DocketTimeGoals leverList={levers.docketLevers} leverStore={leverStore} />

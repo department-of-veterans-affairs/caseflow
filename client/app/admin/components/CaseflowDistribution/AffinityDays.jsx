@@ -10,6 +10,10 @@ import TextField from 'app/components/TextField';
 
 const AffinityDays = (props) => {
   const { leverList, leverStore } = props;
+  const footerStyling = css({
+    marginTop: '10px',
+    paddingTop: '10px',
+  });
 
   const affinityLevers = leverList.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
@@ -107,6 +111,8 @@ const AffinityDays = (props) => {
           </div>
         </div>
       ))}
+      <h4 {...footerStyling}>* Denotes a variable that is also relevant to the currently inactive distribution algorithm</h4>
+      <div className="cf-help-divider"></div>
     </div>
   );
   }

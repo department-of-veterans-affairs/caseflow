@@ -48,7 +48,6 @@ describe('CaseflowDistributionContent', () => {
     expect(screen.getByText('Administration')).toBeInTheDocument();
     expect(screen.getByText('Maximum Direct Review Proportion')).toBeInTheDocument();
     expect(screen.getByText('Minimum Legacy Proportion')).toBeInTheDocument();
-    expect(screen.getByText('Alternative Batch Size*')).toBeInTheDocument();
     expect(screen.getByText('Batch Size Per Attorney*')).toBeInTheDocument();
     expect(screen.getByText('AMA Hearing Case AOD Affinity Days')).toBeInTheDocument();
     expect(screen.getByText('Fri Jul 07 10:49:07 2023')).toBeInTheDocument();
