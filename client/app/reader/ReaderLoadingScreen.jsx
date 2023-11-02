@@ -53,7 +53,8 @@ export class ReaderLoadingScreen extends React.Component {
         title: 'Unable to load documents'
       }}
       failStatusMessageChildren={failStatusMessageChildren}
-      metricsLoadScreen={this.props.featureToggles.metricsLoadScreen}>
+      metricsLoadScreen={this.props.featureToggles.metricsLoadScreen}
+      prefetchDisabled={this.props.featureToggles.prefetchDisabled}>
       {this.props.children}
     </LoadingDataDisplay>;
 

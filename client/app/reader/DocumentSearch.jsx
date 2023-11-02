@@ -43,12 +43,13 @@ export class DocumentSearch extends React.PureComponent {
     this.getText();
 
     const metricData = {
-      message: `Searching within Reader document ${this.props.file} for "${this.searchTerm}"`,
+      message: `Searching within Reader document ${this.props.file} for ${this.searchTerm.length} character(s)`,
       type: 'performance',
       product: 'reader',
       data: {
-        searchTerm: this.searchTerm,
+        searchCharacters: this.searchTerm.length,
         file: this.props.file,
+        prefetchDisabled: this.props.featureToggles.prefetchDisabled
       },
     };
 

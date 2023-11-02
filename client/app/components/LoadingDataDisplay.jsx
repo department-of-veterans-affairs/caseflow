@@ -43,6 +43,7 @@ class LoadingDataDisplay extends React.PureComponent {
 
     this.setState({ promiseStartTimeMs: Date.now() });
 
+    const prefetchDisabled = this.props.prefetchDisabled;
     const metricData = {
       message: this.props.loadingComponentProps?.message || 'loading screen',
       type: 'performance',
@@ -51,7 +52,8 @@ class LoadingDataDisplay extends React.PureComponent {
         loadingComponentProps: this.props.loadingComponentProps,
         slowLoadMessage: this.props.slowLoadMessage,
         slowLoadThresholdMs: this.props.slowLoadThresholdMs,
-        timeoutMs: this.props.timeoutMs
+        timeoutMs: this.props.timeoutMs,
+        prefetchDisabled
       }
     };
 
@@ -178,6 +180,7 @@ LoadingDataDisplay.propTypes = {
   slowLoadThresholdMs: PropTypes.number,
   timeoutMs: PropTypes.number,
   metricsLoadScreen: PropTypes.bool,
+  prefetchDisabled: PropTypes.bool,
 };
 
 LoadingDataDisplay.defaultProps = {
