@@ -101,11 +101,12 @@ describe VirtualHearings::CreateConferenceJob do
       let(:virtual_hearing) do
         create(:virtual_hearing).tap do |virtual_hearing|
           virtual_hearing.meeting_type.update(service_name: "webex")
+          virtual_hearing.update(conference_id: 23_110_155)
         end
       end
 
       it "creates a webex conference" do
-        conference_id = "#{virtual_hearing.hearing.hearing.docket_number}#{virtual_hearing.hearing.id}"
+        conference_id = "#{virtual_hearing.hearing.docket_number}#{virtual_hearing.hearing.id}"
         conference_id = conference_id.delete "-"
         subject.perform_now
         expect(virtual_hearing.conference_id).to eq(conference_id.to_i)
