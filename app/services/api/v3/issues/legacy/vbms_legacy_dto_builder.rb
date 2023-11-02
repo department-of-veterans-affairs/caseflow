@@ -9,7 +9,7 @@ class Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder
     @veteran_file_number = veteran.file_number.to_s
     @vacols_issue_count = total_vacols_issue_count
     @vacols_issues = serialized_vacols_issues
-    @offset = RequestIssue.default_per_page
+    @offset = RequestIssue.default_per_page #LegacyIssues will be consistent with AMA RequestIssues
     @total_number_of_pages = (@vacols_issue_count / @offset.to_f).ceil
     @hash_response = build_hash_response
   end

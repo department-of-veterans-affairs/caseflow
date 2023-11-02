@@ -20,7 +20,7 @@ describe Api::V3::Issues::Legacy::VeteransController, :postgres, type: :request 
       it "should return 'Not Implemented' error" do
         FeatureToggle.disable!(:api_v3_legacy_issues)
         get(
-          "/api/v3/issues/legacy/find_by_veteran/#{vet.participant_id}",
+          "/api/v3/issues/legacy/find_by_veteran/#{vet.file_number}",
           headers: authorization_header
         )
         expect(response).to have_http_status(501)
@@ -48,7 +48,7 @@ describe Api::V3::Issues::Legacy::VeteransController, :postgres, type: :request 
           let(:vet) { create(:veteran) }
           it "should return a 204 status" do
             get(
-              "/api/v3/issues/legacy/find_by_veteran/#{vet.participant_id}",
+              "/api/v3/issues/legacy/find_by_veteran/#{vet.file_number}",
               headers: authorization_header
             )
             # expect(response).to have_http_status(202)
@@ -59,7 +59,7 @@ describe Api::V3::Issues::Legacy::VeteransController, :postgres, type: :request 
           end
         end
 
-        context "when a veteran has legacy issues(s)" do
+        context "when veterans have legacy issues(s)" do
           let!(:veteran_with_legacy_issues) {create(:veteran, file_number: "123456789")}
           let!(:veteran_file_number_legacy) {"123456789S"}
           let!(:vacols_id) {"LEGACYID"}
@@ -78,10 +78,42 @@ describe Api::V3::Issues::Legacy::VeteransController, :postgres, type: :request 
           end
           let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
-          it "should return all their issues" do
+          # Create Veteran with 2 Legacy Appeals
+          let!(:veteran_with_multiple_legacy_appeals) {create(:veteran, file_number: "222222222")}
+          let!(:veteran_file_number_legacy2) {"222222222S"}
+          let!(:vacols_id2) {"LEGACYID2"}
+          let!(:vacols_id3) {"LEGACYID3"}
+          before do
+            7.times do
+              create(:case_issue,
+                isskey: vacols_id2,
+                issprog: "02",
+                isscode: "15",
+                isslev1: "04")
+            end
+            7.times do
+              create(:case_issue,
+                isskey: vacols_id3,
+                issprog: "02",
+                isscode: "15",
+                isslev1: "04")
+            end
+          end
+          let!(:case_issues2) {VACOLS::CaseIssue.where(isskey: vacols_id2)}
+          let!(:case_issues3) {VACOLS::CaseIssue.where(isskey: vacols_id3)}
+          let!(:vacols_case2) do
+            create(:case_with_soc, :status_advance, case_issues: case_issues2, bfkey: vacols_id2, bfcorlid: veteran_file_number_legacy2)
+          end
+          let!(:vacols_case3) do
+            create(:case_with_soc, :status_advance, case_issues: case_issues3, bfkey: vacols_id3, bfcorlid: veteran_file_number_legacy2)
+          end
+          let!(:appeal2) { create(:legacy_appeal, vacols_case: vacols_case2) }
+          let!(:appeal3) { create(:legacy_appeal, vacols_case: vacols_case3) }
+
+          it "the standard API call should return all their Issues if a Veteran only has 1 Legacy Appeal" do
             expect(case_issues.count).to eq(12)
             get(
-              "/api/v3/issues/legacy/find_by_veteran/#{veteran_with_legacy_issues.participant_id}",
+              "/api/v3/issues/legacy/find_by_veteran/#{veteran_with_legacy_issues.file_number}",
               headers: authorization_header
             )
             expect(response).to have_http_status(200)
@@ -89,10 +121,27 @@ describe Api::V3::Issues::Legacy::VeteransController, :postgres, type: :request 
             expect(response_hash["veteran_participant_id"]).to eq veteran_with_legacy_issues.participant_id
             expect(response_hash["total_vacols_issues_for_vet"]).to eq(12)
             expect(response_hash["total_number_of_pages"]).to eq(2)
-            # byebug
+          end
+
+          it "the API call should return all Issues across all Legacy Appeals for a given Veteran" do
+            get(
+              "/api/v3/issues/legacy/find_by_veteran/#{veteran_with_multiple_legacy_appeals.file_number}",
+              headers: authorization_header
+            )
+            expect(response).to have_http_status(200)
+            response_hash = JSON.parse(response.body)
+            expect(response_hash["veteran_participant_id"]).to eq veteran_with_multiple_legacy_appeals.participant_id
+            expect(response_hash["total_vacols_issues_for_vet"]).to eq(14)
+            expect(response_hash["total_number_of_pages"]).to eq(2)
           end
         end
       end
+    end
+
+    def get_vacols_issues(file_number: nil)
+      headers = { "Authorization": "Token #{api_key}", "X-VA-File-Number": file_number}
+
+      get("/api/v3/issues/legacy/find_by_veteran", headers: headers)
     end
   end
 end
