@@ -1,5 +1,8 @@
 import React from 'react';
 import Checkbox from '../../../../../components/Checkbox';
+import Dropdown from '../../../../../components/Dropdown';
+// import SearchBar from '../../../../../components/SearchBar';
+import TextareaField from '../../../../../components/TextareaField';
 
 const mailTasksLeft = [
   'Change of address',
@@ -44,6 +47,91 @@ export const AddTasksAppealsView = () => {
                 />
               );
             })}
+          </div>
+        </div>
+
+        <h2 style={{ margin: '3rem auto 1rem auto'}}>Tasks not related to an Appeal</h2>
+        <p style={{ marginTop: '0rem', marginBottom: '2rem' }}>
+          Add new tasks related to this correspondence or to an appeal not yet created in Caseflow.
+        </p>
+        <div className="gray-border" style={{ padding: '0rem 0rem' }}>
+          <div style={{ width: '100%', height: 'auto', backgroundColor: 'white', paddingBottom: '3rem'}}>
+            <div style={{ backgroundColor: '#f1f1f1', width: '100%', height: '50px', paddingTop: '1.5rem'}}>
+              <b style={{
+                verticalAlign: 'center',
+                paddingLeft: '2.5rem',
+                paddingTop: '1.5rem',
+                border: '0',
+                paddingBottom: '1.5rem',
+                paddingRight: '5.5rem'
+              }}>New Tasks</b>
+            </div>
+            <div style={{ width: '100%', height: '1rem'}} />
+            {/* <p style={{ textAlign: 'left', paddingLeft: '10px', height: '5px' }}>Search document contents</p>
+            <span style={{
+              width: '75%',
+              display: 'flex',
+              justifyContent: 'flex-end'
+            }}>
+            </span> */}
+            <div style={{ display: 'inline-block', marginRight: '2rem' }}>
+              <div className="gray-border" style={{ padding: '2rem 2rem', marginLeft: '3rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', paddingLeft: '1rem', marginLeft: '0.5rem', minWidth: '500px' }}>
+                  <Dropdown
+                    name="Task"
+                    label="Task"
+                    options={[['Option1', 'Option 1'], ['Option 2'], ['Option 3']]}
+                    defaultText="Select..."
+                    style={{ display: 'flex', width: '100%', marginRight: '1rem' }}
+                    // onChange={(option) => onClickIssueAction(issue.index, option)}
+                  />
+                  <div style={{ marginRight: '10rem' }} />
+                  <hr />
+                  <TextareaField
+                    name="Task Information"
+                    label="Provide context and instruction on this task"
+                    defaultText=""
+                  />
+                </div>
+              </div>
+            </div>
+            <div style={{ display: 'inline-block' }}>
+              <div className="gray-border" style={{ padding: '2rem 2rem', marginLeft: '3rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', paddingLeft: '1rem', marginLeft: '0.5rem', minWidth: '500px' }}>
+                  <Dropdown
+                    name="Task"
+                    label="Task"
+                    options={[['Option1', 'Option 1'], ['Option 2'], ['Option 3']]}
+                    defaultText="Select..."
+                    style={{ display: 'flex', width: '100%' }}
+                    // onChange={(option) => onClickIssueAction(issue.index, option)}
+                  />
+                  <div style={{ marginRight: '10rem' }} />
+                  <hr />
+                  <TextareaField
+                    name="Task Information"
+                    label="Provide context and instruction on this task"
+                    defaultText=""
+                  />
+                </div>
+              </div>
+              {/* <div className="gray-border" style={{ padding: '0rem 2rem', display: 'flex' }}>
+                <div style={{ display: 'inline-block', paddingLeft: '10px', minWidth: '150px' }}>
+                  <h4>This is a test element</h4>
+                  <br />
+                  <SearchBar
+                    value="searchText"
+                    // onChange={"handleSearchTextChange"}
+                    // onSubmit={"handleClick"}
+                    size="big"
+                    // onClearSearch={"handleClearSearch"}
+                    submitUsingEnterKey
+                    inputProps={{
+                      style: { maxWidth: '500px!', minWidth: '500px!', width: '500px' }
+                    }} />
+                </div>
+              </div> */}
+            </div>
           </div>
         </div>
       </div>
