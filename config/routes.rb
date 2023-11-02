@@ -298,6 +298,7 @@ Rails.application.routes.draw do
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/correspondences', to: 'correspondences#index'
     get '/correspondences/:correspondence_uuid/review_package', to: 'correspondences#review_package'
+    get '/correspondences/:id', to: 'correspondences#show'
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
 

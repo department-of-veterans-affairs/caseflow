@@ -612,8 +612,8 @@ class QueueApp extends React.PureComponent {
     <PostponeHearingTaskModal {...props.match.params} />
   );
 
-  routedReviewPackage = () => (
-    <CorrespondenceReviewPackage />
+  routedReviewPackage = (props) => (
+    <CorrespondenceReviewPackage {...props.match.params} />
   );
 
   routedStartHoldModal = (props) => <StartHoldModal {...props.match.params} />;
@@ -1474,6 +1474,7 @@ QueueApp.propTypes = {
   canEditCavcDashboards: PropTypes.bool,
   canViewCavcDashboards: PropTypes.bool,
   userIsCobAdmin: PropTypes.bool,
+  correspondence: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({

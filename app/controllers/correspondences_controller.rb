@@ -11,6 +11,11 @@ class CorrespondencesController < ApplicationController
     render "correspondences/review_package"
   end
 
+  def show
+    @correspondence = Correspondence.find(params[:id])
+    render json: { correspondence: @correspondence }
+  end
+
   private
 
   def verify_access
