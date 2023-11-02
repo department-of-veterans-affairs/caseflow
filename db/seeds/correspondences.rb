@@ -36,7 +36,7 @@ module Seeds
                   params)
       10.times do
         create(:correspondence,
-               veteran_id: veteran.participant_id,
+               veteran_id: veteran.id,
                source_type: "Mail",
                package_document_type_id: 10182,
                notes: "This is an example of notes for correspondence"
@@ -53,7 +53,7 @@ module Seeds
                   params)
       8.times do
         create(:correspondence,
-               veteran_id: veteran.participant_id,
+               veteran_id: veteran.id,
                source_type: "Mail",
                package_document_type_id: 10182,
                notes: "This is an example of notes for correspondence"
@@ -71,7 +71,7 @@ module Seeds
                   params)
       25.times do
         create(:correspondence,
-               veteran_id: veteran.participant_id,
+               veteran_id: veteran.id,
                source_type: "Mail",
                package_document_type_id: 10182,
                notes: "This is an example of notes for correspondence"
