@@ -4,3 +4,6 @@ require "opentelemetry/sdk"
 
 class OpenTelemetryService
   @otel = OpenTelemetry::SDK.new
+
+
+end

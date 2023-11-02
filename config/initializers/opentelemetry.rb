@@ -1,7 +1,5 @@
 # config/initializers/opentelemetry.rb
 
-# pending cutover
-require 'datadog/opentelemetry'
 # required imports
 require 'opentelemetry/sdk'
 require 'opentelemetry/exporter/otlp'
