@@ -39,9 +39,9 @@ gem "multiverse"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.11.0.rc4"
 # https://github.com/open-telemetry/opentelemetry-ruby
-gem "opentelemetry-sdk"
-gem "opentelemetry-instrumentation-all"
 gem "opentelemetry-exporter-otlp"
+gem "opentelemetry-instrumentation-all"
+gem "opentelemetry-sdk"
 gem "paper_trail", "~> 10"
 # Used to speed up reporting
 gem "parallel"
