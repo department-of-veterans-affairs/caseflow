@@ -73,6 +73,7 @@ paths:
                     request_issues:
                       - id: 1
                         benefit_type: compensation
+                        closed_at: nil
                         closed_status: nil
                         contention_reference_id: 1
                         contested_decision_issue_id: 453
@@ -106,7 +107,8 @@ paths:
                         vacols_sequence_id: 1234
                         verified_unidentified_issue: false
                         veteran_participant_id: "574727684"
-                        caseflow_considers_status_active: true
+                        caseflow_considers_decision_review_active: true
+                        caseflow_considers_issue_active: true
                         caseflow_considers_title_of_active_review: "some title"
                         caseflow_considers_eligible: true
                         claimant_participant_id: "123456789"
@@ -128,6 +130,7 @@ paths:
                             updated_at: Tue, 26 Sep 2023 16:54:17 UTC +00:00
                       - id: 2
                         benefit_type: compensation
+                        closed_at: nil
                         closed_status: nil
                         contention_reference_id: 1
                         contested_decision_issue_id: 453
@@ -161,7 +164,8 @@ paths:
                         vacols_sequence_id: 1234
                         verified_unidentified_issue: false
                         veteran_participant_id: "574727684"
-                        caseflow_considers_status_active: true
+                        caseflow_considers_decision_review_active: true
+                        caseflow_considers_issue_active: true
                         caseflow_considers_title_of_active_review: "some title"
                         caseflow_considers_eligible: true
                         claimant_participant_id: "123456789"
@@ -178,6 +182,7 @@ paths:
                     request_issues:
                       - id: 1
                         benefit_type: compensation
+                        closed_at: nil
                         closed_status: nil
                         contention_reference_id: 1
                         contested_decision_issue_id: 453
@@ -211,7 +216,8 @@ paths:
                         vacols_sequence_id: 1234
                         verified_unidentified_issue: false
                         veteran_participant_id: "574727684"
-                        caseflow_considers_status_active: true
+                        caseflow_considers_decision_review_active: true
+                        caseflow_considers_issue_active: true
                         caseflow_considers_title_of_active_review: "some title"
                         caseflow_considers_eligible: true
                         claimant_participant_id: "111111"
@@ -243,6 +249,7 @@ paths:
                       request_issues:
                         - id: 1
                           benefit_type: compensation
+                          closed_at: nil
                           closed_status: nil
                           contention_reference_id: 1
                           contested_decision_issue_id: 453
@@ -277,6 +284,7 @@ paths:
                           verified_unidentified_issue: false
                           veteran_participant_id: "574727684"
                           caseflow_considers_status_active: true
+                          caseflow_considers_issue_active: true
                           caseflow_considers_title_of_active_review: "some title"
                           caseflow_considers_eligible: true
                           claimant_participant_id: "111111"
@@ -354,6 +362,9 @@ components:
             benefit_type:
               type: string
               description: "The Line of Business the issue is connected with."
+            closed_at:
+              type: string
+              description: "Timestamp when the request issue was closed. The reason it was closed is in closed_status."
             closed_status:
               type: string
               description: "Indicates whether the request issue is closed, for example if it was removed from a Decision Review, the associated End Product got canceled, the Decision Review was withdrawn."
@@ -453,9 +464,12 @@ components:
             veteran_participant_id:
               type: string
               description: "The veteran participant ID. This should be unique in upstream systems and used in the future to reconcile duplicates."
-            caseflow_considers_status_active:
+            caseflow_considers_decision_review_active:
               type: boolean
               description: "This value is populated by a method call in the request_issue model. Returns true if the Request Issue's decision_review is an Appeal that has open tasks OR if the End Product Establishment's synced_status is nil or anything other than CAN or CLR."
+            caseflow_considers_issue_active:
+              type: boolean
+              description: "This value is populated by a method call in the request_issue model. Is true when the issue is eligible, not closed, no split issue status or the split issue status is in_progress."
             caseflow_considers_title_of_active_review:
               type: string
               description: "This value is populated by a method call in the request_issue model. If the Request Issue is a duplicate of a request issue already being reviewed, the decision_review type will be listed here"
