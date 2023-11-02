@@ -159,12 +159,27 @@
     gap: 1%;
     align-items: center;
 
+    .report-page-middle-content {
+      align-self: center;
+      text-align: center;
+      width: 20%;
+    }
+
     .report-page-variable-select {
       width: 40%;
     }
 
     .report-page-variable-content {
       display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      width: 40%;
+    }
+
+    .report-page-variable-content-wider {
+      align-items: center;
+      display: flex;
+      justify-content: flex-end;
       width: 60%;
 
       .days-waiting {
