@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 import Button from 'app/components/Button';
 import NonCompLayout from 'app/nonComp/components/NonCompLayout';
 
+import { ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
+
 import Checkbox from 'app/components/Checkbox';
 import RadioField from 'app/components/RadioField';
 import NonCompReportFilterContainer from 'app/nonComp/components/NonCompReportFilter';
@@ -22,12 +24,24 @@ const buttonOuterContainerStyling = css({
   marginTop: '4rem',
 });
 
-const ReportPageButtons = ({
-  history,
+const ReportPageButtons = ({ history,
   isGenerateButtonDisabled,
   handleClearFilters,
-  handleSubmit,
-}) => {
+  handleSubmit }) => {
+
+// for later
+// const schema = yup.object().shape({
+//   conditions: yup.array(
+//     yup.object().shape({
+//       condition: yup.string().required(),
+//       options: yup.object().required(),
+//     })
+//   ),
+// });
+
+  // eslint-disable-next-line no-console
+  const onSubmit = (data) => console.log(data);
+
   return (
     <div {...buttonOuterContainerStyling}>
       <Button
@@ -52,8 +66,8 @@ const ReportPageButtons = ({
           classNames={['usa-button']}
           label="generate-report"
           name="generate-report"
-          onClick={handleSubmit}
           disabled={isGenerateButtonDisabled}
+          onClick={handleSubmit(onSubmit)}
         >
           Generate task report
         </Button>
@@ -131,11 +145,12 @@ const ReportPage = ({ history }) => {
       removed_issue: '',
       withdrew_issue: '',
     },
+    conditions: []
   };
 
   const methods = useForm({ defaultValues: { ...defaultFormValues } });
 
-  const { reset, watch, formState, control } = methods;
+  const { reset, watch, formState, control, handleSubmit } = methods;
 
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
@@ -175,6 +190,7 @@ const ReportPage = ({ history }) => {
               />
             ) : null
           }
+          <ReportPageConditions />
         </form>
       </FormProvider>
     </NonCompLayout>
