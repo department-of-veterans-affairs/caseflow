@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ExternalApi::WebexService
-  BASE_URL = "#{ENV['WEBEX_HOST']}#{ENV['WEBEX_DOMAIN']}"
+  BASE_URL = "#{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}"
   AUTH_URL = "/v1/access_token"
   GRANT_TYPE = "refresh_token"
   CLIENT_ID = ENV["WEBEX_CLIENT_ID"]
