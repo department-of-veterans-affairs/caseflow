@@ -10,13 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 2023_10_26_123217) do
 
-=======
-ActiveRecord::Schema.define(version: 2023_10_31_041759) do
-  
->>>>>>> 386b62b68fd3fc5f791c3ec0c5bdd672c70999b0
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
