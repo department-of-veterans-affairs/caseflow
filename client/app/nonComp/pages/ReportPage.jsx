@@ -150,7 +150,7 @@ const ReportPage = ({ history }) => {
 
   const methods = useForm({ defaultValues: { ...defaultFormValues } });
 
-  const { reset, watch, formState, control, handleSubmit } = methods;
+  const { reset, watch, formState, control } = methods;
 
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
