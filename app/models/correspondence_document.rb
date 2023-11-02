@@ -3,11 +3,13 @@
 class CorrespondenceDocument < CaseflowRecord
   belongs_to :correspondence
 
-  # remove after implementing fetch from S3
+  attr_accessor :uuid
+
+  S3_BUCKET_NAME = "correspondence_documents"
+
   def fetch_document
     if FeatureToggle.enabled?(:correspondence_queue)
-      file = File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf")
-      file
+      S3Service.files["#{S3_BUCKET_NAME}/#{uuid}"]
     end
   end
 end
