@@ -57,7 +57,7 @@ export const CorrespondenceIntake = (props) => {
     /* 
     {currentStep === 3 &&
       <ConfirmCorrespondenceView />
-    */}
+    */
     <div>
       <a href="/queue/correspondence">
         <Button
