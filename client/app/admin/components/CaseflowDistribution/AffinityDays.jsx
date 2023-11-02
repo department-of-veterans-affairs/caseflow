@@ -10,6 +10,10 @@ import TextField from 'app/components/TextField';
 
 const AffinityDays = (props) => {
   const { leverList, leverStore } = props;
+  const footerStyling = css({
+    marginTop: '10px',
+    paddingTop: '10px',
+  });
 
   const affinityLevers = leverList.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
@@ -60,7 +64,7 @@ const AffinityDays = (props) => {
         <div className={styles.leverRight}><strong>Value</strong></div>
       </div>
       {affinityLevers.map((lever, index) => (
-        <div className={cx(styles.activeLever, lever.is_disable ? styles.leverDisabled : '')}  key={`${lever.item}-${index}`}>
+        <div className={cx(styles.activeLever, lever.is_disabled ? styles.leverDisabled : '')}  key={`${lever.item}-${index}`}>
           <div className={styles.leverLeft}>
             <strong>{lever.title}</strong>
             <p>{lever.description}</p>
@@ -70,9 +74,10 @@ const AffinityDays = (props) => {
               <div>
                 <div>
                   <input
+                    checked={selectedOption ? option.item === selectedOption.item : option.item === lever.value}
                     type="radio"
                     value={option.item}
-                    disabled={lever.is_disable}
+                    disabled={lever.is_disabled}
                     id={`${lever.item}-${option.item}`}
                     name={lever.item}
                     onChange={() => handleRadioChange(option)}
@@ -83,14 +88,14 @@ const AffinityDays = (props) => {
                 </div>
 
                 <div>
-                {selectedOption === option && (
+                {(
                   <div className={styles.combinedRadioInput}>
                     {option.data_type === 'number' ? (
                       <NumberField
                         name={option.item}
                         label={option.unit}
                         isInteger
-                        disabled={lever.is_disable}
+                        disabled={lever.is_disabled}
                         value={option.value}
                         errorMessage={option.errorMessage}
                         onChange={updateLever(option,index)}
@@ -100,7 +105,7 @@ const AffinityDays = (props) => {
                         <TextField
                           name={option.item}
                           label={false}
-                          disabled={lever.is_disable}
+                          disabled={lever.is_disabled}
                           value={option.value}
                           onChange={updateLever(option,index)}
                         />
@@ -114,6 +119,8 @@ const AffinityDays = (props) => {
           </div>
         </div>
       ))}
+      <h4 {...footerStyling}>* Denotes a variable that is also relevant to the currently inactive distribution algorithm</h4>
+      <div className="cf-help-divider"></div>
     </div>
   );
   }

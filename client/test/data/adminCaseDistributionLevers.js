@@ -149,7 +149,7 @@ export const levers = [
           }
       ],
       "is_active": false,
-      "is_disable": true
+      "is_disabled": true
     },
     {
       "item": "lever_13",
@@ -179,7 +179,7 @@ export const levers = [
           }
       ],
       "is_active": true,
-      "is_disable": true
+      "is_disabled": true
     },
   ]
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as Constants from '../../reducers/Levers/leversActionTypes';
+import Button from 'app/components/Button';
 
 function CancelLeverChanges(leverStore)  {
   leverStore.dispatch({
@@ -48,9 +49,13 @@ export function LeverCancelButton({leverStore}) {
   };
 
   return (
-    <button style={{"background": "none", "color": "blue", "font-weight": "300"}} id="CancelLeversButton" onClick={() => CancelButtonActions(leverStore)}>
+    <Button
+      style={{"background": "none", "color": "blue", "font-weight": "300"}}
+      id="CancelLeversButton"
+      classNames={['cf-btn-link']}
+      onClick={() => CancelButtonActions(leverStore)}>
       Cancel
-    </button>
+    </Button>
   );
 };
 
@@ -64,11 +69,12 @@ export function LeverSaveButton({leverStore}) {
   };
 
   return (
-    <button id="SaveLeversButton" onClick={() => SaveButtonActions(leverStore)}>
+    <Button id="SaveLeversButton"
+    onClick={() => SaveButtonActions(leverStore)}>
       Save
-    </button>
+    </Button>
   );
-};
+}
 
 LeverCancelButton.propTypes = {
   leverStore: PropTypes.any
