@@ -213,6 +213,7 @@ export const PAGE_TITLES = {
   CONVERT_HEARING_TO_CENTRAL: 'Change Hearing Request Type to Central',
   COMPLETE_HEARING_POSTPONEMENT_REQUEST: 'Complete Hearing Postponement Request',
   REVIEW_PACKAGE: 'Review Package',
+  CORRESPONDENCE_CASES_LIST: 'Correspondence Cases',
   CORRESPONDENCE_INTAKE: 'Correspondence Intake'
 };
 

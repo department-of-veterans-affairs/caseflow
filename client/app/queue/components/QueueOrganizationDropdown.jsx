@@ -7,7 +7,7 @@ import COPY from '../../../COPY';
 
 export default class QueueOrganizationDropdown extends React.Component {
   render = () => {
-    const { organizations, featureToggles } = this.props;
+    const { organizations } = this.props;
     const url = window.location.pathname.split('/');
     const location = url[url.length - 1];
     const queueHref = (location === 'queue') ? '#' : '/queue';
@@ -36,8 +36,8 @@ export default class QueueOrganizationDropdown extends React.Component {
 
     let items = [queueItem, ...organizationItems];
 
-    if (/*featureToggles.correspondence_queue && */organizations[0].name === 'Mail') {
-      const orgHref = 'queue/correspondences';
+    if (organizations[0].name === 'Mail') {
+      const orgHref = '/queue/correspondence';
 
       correspondenceItems = {
         key: (2).toString(),
@@ -57,5 +57,4 @@ QueueOrganizationDropdown.propTypes = {
     name: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired
   })),
-  featureToggles: PropTypes.object
 };
