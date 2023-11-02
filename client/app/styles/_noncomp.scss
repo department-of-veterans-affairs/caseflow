@@ -15,11 +15,8 @@
       input {
         border: 1px solid $color-secondary-dark;
       }
-
     }
-
   }
-
 }
 
 .cf-review-details {
@@ -147,3 +144,33 @@
   }
 }
 
+.report-page-segment {
+  display: flex;
+  flex-wrap: wrap;
+
+  a {
+    align-self: flex-end;
+    margin-left: auto;
+  }
+
+  .report-page-variable-condition {
+    width: 100%;
+    display: flex;
+
+    .report-page-variable-select {
+      width: 50%;
+    }
+
+    .report-page-variable-content {
+      display: flex;
+      justify-content: right;
+      align-items: center;
+      width: 50%;
+    }
+  }
+
+  .report-page-condition-and {
+    width: 100%;
+    text-align: center;
+  }
+}
