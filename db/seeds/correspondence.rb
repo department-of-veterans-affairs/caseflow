@@ -50,7 +50,8 @@ module Seeds
           va_date_of_receipt: Time.zone.yesterday,
           notes: "This is a note from CMP.",
           assigned_by_id: 81,
-          veteran_id: veteran.id
+          veteran_id: veteran.id,
+          prior_correspondence_id: 1
         )
         CorrespondenceDocument.create!(
           document_file_number: veteran.file_number,
@@ -74,7 +75,8 @@ module Seeds
           va_date_of_receipt: Time.zone.yesterday,
           notes: "This is a note from CMP.",
           assigned_by_id: 81,
-          veteran_id: veteran.id
+          veteran_id: veteran.id,
+          prior_correspondence_id: 1
         )
         CorrespondenceDocument.create!(
           document_file_number: veteran.file_number,
@@ -98,7 +100,8 @@ module Seeds
           va_date_of_receipt: Time.zone.yesterday,
           notes: "This is a note from CMP.",
           assigned_by_id: 81,
-          veteran_id: veteran.id
+          veteran_id: veteran.id,
+          prior_correspondence_id: 1
         )
         CorrespondenceDocument.create!(
           document_file_number: veteran.file_number,
@@ -122,7 +125,8 @@ module Seeds
           va_date_of_receipt: Time.zone.yesterday,
           notes: "This is a note from CMP.",
           assigned_by_id: 81,
-          veteran_id: veteran.id
+          veteran_id: veteran.id,
+          prior_correspondence_id: 1
         )
         CorrespondenceDocument.create!(
           document_file_number: veteran.file_number,
