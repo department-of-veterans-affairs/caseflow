@@ -97,26 +97,15 @@ describe VirtualHearings::CreateConferenceJob do
       expect(virtual_hearing.guest_pin.to_s.length).to eq(11)
     end
 
-    # For feature toggle testing...
-    # Should we have implemented a feature toggle check in the create conference job create method
-    # That points to either service based on feature toggle that would bypass the conference client?
-    # Otherwise, to my understanding, there doesnt seem to be a reason for feature toggle tests
-    # Unless we wanted to ensure that no matter what the users conference provider is, if the feature toggle
-    # Is turned to pexip only pexip conferences can be created and if its webex only webex conferences could be created?
-    # Because that would change the create conference job entirely....
-
-    # Having trouble trying to update the conference provider, I think it has to be done by updating
-    # The users conference provider and then creating the virtual hearing....
-
-    # describe "for webex" do
-    #   let(:virtual_hearing) { create(:virtual_hearing, conference_provider: "webex") }
-    #   it "creates a webex conference" do
-    #     conference_id = "#{virtual_hearing.hearing.hearing.docket_number}#{virtual_hearing.hearing.id}"
-    #     conference_id = conference_id.delete "-"
-    #     subject.perform_now
-    #     expect(virtual_hearing.conference_id).to eq(conference_id.to_i)
-    #   end
-    # end
+    describe "for webex" do
+      let(:virtual_hearing) { create(:virtual_hearing, conference_provider: "webex") }
+      it "creates a webex conference" do
+        conference_id = "#{virtual_hearing.hearing.hearing.docket_number}#{virtual_hearing.hearing.id}"
+        conference_id = conference_id.delete "-"
+        subject.perform_now
+        expect(virtual_hearing.conference_id).to eq(conference_id.to_i)
+      end
+    end
 
     include_examples "confirmation emails are sent"
 
