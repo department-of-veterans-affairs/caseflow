@@ -257,6 +257,13 @@ class RequestIssue < CaseflowRecord
     end_product_establishment.status_active?
   end
 
+  def active?
+    eligible? &&
+      closed_at.nil? &&
+      (split_issue_status.nil? ||
+      split_issue_status == "in_progress")
+  end
+
   def rating?
     !!associated_rating_issue? ||
       !!previous_rating_issue? ||
