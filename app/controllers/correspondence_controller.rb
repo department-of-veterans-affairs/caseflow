@@ -12,14 +12,12 @@ class CorrespondenceController < ApplicationController
   end
 
   def review_package
-    # binding.pry
     render "correspondence/review_package"
   end
 
   private
 
   def verify_feature_toggle
-    # binding.pry
     if !FeatureToggle.enabled?(:correspondence_queue)
       redirect_to "/unauthorized"
     end
