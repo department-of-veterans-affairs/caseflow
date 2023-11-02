@@ -10,13 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(version: 2023_10_26_123217) do
-
-=======
 ActiveRecord::Schema.define(version: 2023_10_31_041759) do
   
->>>>>>> 386b62b68fd3fc5f791c3ec0c5bdd672c70999b0
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -618,6 +613,13 @@ ActiveRecord::Schema.define(version: 2023_10_31_041759) do
     t.bigint "user_id", comment: "Foreign key on users table"
     t.index ["correspondence_id"], name: "index_on_correspondence_id"
     t.index ["user_id"], name: "index_on_user_id"
+  end
+
+  create_table "correspondence_types", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "correspondences", force: :cascade do |t|
