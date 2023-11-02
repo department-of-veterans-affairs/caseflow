@@ -24,25 +24,22 @@ const StaticLever = ({ lever }) => {
     verticalAlign: 'text-top',
     fontFamily: 'Source Sans Pro',
     fontWeight: 'bold',
-    fontSize: '17px',
-    lineHeight: '1.5em/33px',
+    fontSize: '19px',
+    lineHeight: '1.5em/25px',
     columnSpan: 'all',
   };
   const descriptionStyling = {
+    width: '70%',
     border: 'none',
     paddingTop: '0',
     marginTop: '0',
-    maxWidth: '750px',
     paddingRight: '20px',
     paddingBottom: '20px',
     verticalAlign: 'text-top',
-    fontFamily: 'Source Sans Pro',
-    fontWeight: '400',
-    fontSize: '15px',
-    lineHeight: '1.5em/33px',
     borderBottom: '1px solid #ccc',
   };
   const valueStyling = {
+    width: '30%',
     border: 'none',
     paddingTop: '0',
     marginTop: '0',
@@ -50,15 +47,7 @@ const StaticLever = ({ lever }) => {
     paddingBottom: '20px',
     paddingRight: '20px',
     verticalAlign: 'text-top',
-    fontFamily: 'Source Sans Pro',
-    fontWeight: '400',
-    fontSize: '15px',
-    lineHeight: '1.5em/33px',
-    textAlign: 'right',
     borderBottom: '1px solid #ccc',
-  };
-  const tableStyling = {
-    borderCollapse: 'collapse',
   };
   const valueWithUnit = renderValue();
   const valueArray = valueWithUnit.split(' ');
@@ -66,22 +55,18 @@ const StaticLever = ({ lever }) => {
   const unit = valueArray[1];
 
   return (
-    <div>
-      <table style={tableStyling}>
-        <tbody>
-          <tr>
-            <td style={titleStyling}>{lever.title}</td>
-          </tr>
-          <tr>
-            <td style={descriptionStyling}>{lever.description}</td>
-            <td style={valueStyling}>
-              <span style={{ marginRight: '5px' }}>{value} </span>
-              <span>{unit}</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <tbody>
+      <tr>
+        <td style={titleStyling}>{lever.title}</td>
+      </tr>
+      <tr>
+        <td className="cf-lead-paragraph" style={descriptionStyling}>{lever.description}</td>
+        <td className="cf-lead-paragraph" style={valueStyling}>
+          <span style={{ marginRight: '5px' }}>{value} </span>
+          <span>{unit}</span>
+        </td>
+      </tr>
+    </tbody>
   );
 };
 

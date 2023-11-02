@@ -1,26 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import { createStore } from 'redux';
+
 import StaticLever from './StaticLever';
-// import leversReducer from 'app/admin/reducers/Levers/leversReducer';
-import { levers } from 'test/data/adminCaseDistributionLevers';
+import { css } from 'glamor';
 
-// const activeLevers = levers.filter((lever) => lever.is_active);
+const tableHeaderStyling = css({
+  borderLeft: '0',
+  borderRight: '0',
+  borderTop: '0',
+  borderColor: '#d6d7d9;',
+  fontFamily: 'Source Sans Pro',
+  fontWeight: '700',
+  fontSize: '21px',
+  lineHeight: '1.3em/25px'
+});
 
-// const preloadedState = {
-//   levers: JSON.parse(JSON.stringify(activeLevers)),
-//   initial_levers: JSON.parse(JSON.stringify(activeLevers))
-// };
+const tableStyling = css({
+  width: '100%',
+  tablelayout: 'fixed'
+});
 
-// {levers.map((lever) => (
-//   <StaticLever key={lever.item} lever={lever} />
-// ))}
-// const leverStore = createStore(leversReducer, preloadedState);
 const StaticLeversWrapper = (props) => {
-  const { leverList } = props;
+  const { leverList, leverStore } = props;
 
   const orderedLeversList = leverList.map((item) => {
-    return levers.find((lever) => lever.item === item);
+    return leverStore.getState().levers.find((lever) => lever.item === item);
   });
 
   const WrapperList = orderedLeversList.map((lever) => (
@@ -28,12 +32,23 @@ const StaticLeversWrapper = (props) => {
   ));
 
   return (
-    <div>{WrapperList}</div>
+
+    <table {...tableStyling}>
+      <tbody>
+        <tr>
+          <th {...tableHeaderStyling}>Data Elements</th>
+          <th {...tableHeaderStyling}>Values</th>
+        </tr>
+      </tbody>
+      {WrapperList}
+    </table>
   );
 
 };
 
 StaticLeversWrapper.propTypes = {
-  leverList: PropTypes.arrayOf(PropTypes.string).isRequired };
+  leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
+  leverStore: PropTypes.any
+};
 
 export default StaticLeversWrapper;
