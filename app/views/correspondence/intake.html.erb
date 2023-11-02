@@ -7,7 +7,6 @@
     organizations: current_user.selectable_organizations.map {|o| o.slice(:name, :url)},
     featureToggles: {
       correspondence_queue: FeatureToggle.enabled?(:correspondence_queue, user: current_user)
-    },
-    correspondence: @correspondence
+    }
   }) %>
 <% end %>

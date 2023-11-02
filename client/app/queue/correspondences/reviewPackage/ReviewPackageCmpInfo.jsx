@@ -63,14 +63,18 @@ class ReviewPackageCmpInfo extends React.PureComponent {
 
 const CmpInfoScaffolding = (props) => {
   const correspondence = props.correspondence
-  const date = new Date(correspondence?.portal_entry_date)
-  let customDate = date && `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`
+  const portal_entry_date = new Date(correspondence?.portal_entry_date)
+  let customPortalEntryDate = portal_entry_date && `${portal_entry_date.getMonth()}/${portal_entry_date.getDate()}/${portal_entry_date.getFullYear()}`
+
+  const bva_receipt_date = new Date(correspondence?.va_date_of_receipt)
+  let customBvaReceiptDate = bva_receipt_date && `${bva_receipt_date.getMonth()}/${bva_receipt_date.getDate()}/${bva_receipt_date.getFullYear()}`
+
   return (
     <div>
       <h2> {COPY.CORRESPONDENCE_REVIEW_CMP_INFO_TITLE} </h2>
       <TitleDetailsSubheader id="caseTitleDetailsSubheader">
         <TitleDetailsSubheaderSection title="Portal Entry Date">
-          {customDate}
+          {customPortalEntryDate}
         </TitleDetailsSubheaderSection>
          <TitleDetailsSubheaderSection title="Source Type">
           {correspondence?.source_type}
@@ -85,7 +89,7 @@ const CmpInfoScaffolding = (props) => {
           {correspondence?.cmp_packet_number}
         </TitleDetailsSubheaderSection> 
         <TitleDetailsSubheaderSection title="BVA Receipt Date">
-          {customDate}
+          {customBvaReceiptDate}
         </TitleDetailsSubheaderSection>
       </TitleDetailsSubheader>
     </div>
