@@ -57,8 +57,8 @@ export const ConditionContainer = ({ control, index, remove, field }) => {
   const shouldShowAnd = (conditionsLength > 1) && (index !== (conditionsLength - 1));
   const selectedConditionValue = useWatch({ control, name: `${name}.condition` });
 
-  const isShouldDisplayMiddleContent = selectedConditionValue && selectedConditionValue !== 'daysWaiting';
-  const middleContentClassName = isShouldDisplayMiddleContent ?
+  const hasMiddleContent = selectedConditionValue && selectedConditionValue !== 'daysWaiting';
+  const middleContentClassName = hasMiddleContent ?
     'report-page-variable-content' :
     'report-page-variable-content-wider';
 
@@ -81,7 +81,7 @@ export const ConditionContainer = ({ control, index, remove, field }) => {
       <div className="report-page-variable-select">
         <ConditionDropdown {...{ control, filteredOptions, name }} />
       </div>
-      {isShouldDisplayMiddleContent ? <div className="report-page-middle-content">including</div> : null}
+      {hasMiddleContent ? <div className="report-page-middle-content">including</div> : null}
       <div className={middleContentClassName}>
         {conditionContent}
       </div>
