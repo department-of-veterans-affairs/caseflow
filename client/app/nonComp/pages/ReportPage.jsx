@@ -4,7 +4,6 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import Button from 'app/components/Button';
 import NonCompLayout from 'app/nonComp/components/NonCompLayout';
-
 import { ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
 
 import Checkbox from 'app/components/Checkbox';
@@ -24,11 +23,12 @@ const buttonOuterContainerStyling = css({
   marginTop: '4rem',
 });
 
-const ReportPageButtons = ({ history,
+const ReportPageButtons = ({
+  history,
   isGenerateButtonDisabled,
   handleClearFilters,
-  handleSubmit }) => {
-
+  handleSubmit
+})  => {
 // for later
 // const schema = yup.object().shape({
 //   conditions: yup.array(
@@ -66,8 +66,8 @@ const ReportPageButtons = ({ history,
           classNames={['usa-button']}
           label="generate-report"
           name="generate-report"
+          onClick={handleSubmit}
           disabled={isGenerateButtonDisabled}
-          onClick={handleSubmit(onSubmit)}
         >
           Generate task report
         </Button>
