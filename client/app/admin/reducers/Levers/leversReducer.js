@@ -1,4 +1,3 @@
-import {_, uniq } from 'lodash';
 import * as Constants from './leversActionTypes';
  import { update } from '../../../util/ReducerUtil';
 
@@ -36,7 +35,7 @@ const leversReducer = (state = initialState, action = {}) => {
 
 export const formatLeverHistory = (lever_history_list) => {
   let formatted_lever_history = []
-  const row_id_list = _.uniq(lever_history_list.map(x => `${x.created_at},${x.user}`)); //get unique created_at + user
+  const row_id_list = [...new Set(lever_history_list.map(x => `${x.created_at},${x.user}`))];
 
   row_id_list.forEach( function (row_id) {
     let row_created_at = row_id.split(',')[0];
