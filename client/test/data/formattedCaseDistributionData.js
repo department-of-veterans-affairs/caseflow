@@ -30,7 +30,7 @@ export const formattedHistory = [
     current_values: ['Omit variable from distribution rules'],
     original_values: ['Attempt distribution to current judge for max of 25 days'],
     titles: ['CAVC Affinity Days'],
-    units: ['days'],
+    units: [''],
     user: 'TEAM_ADMIN (VACO)'
   },
 ];
