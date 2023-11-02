@@ -13,10 +13,10 @@ export const CorrespondenceReviewPackage = () => {
       </AppSegment>
       <div className="cf-app-segment">
         <div className="cf-push-left">
-          <a href="/queue/correspondences">
+          <a href="/queue/correspondence">
             <Button
               name="Cancel"
-              href="/queue/correspondences"
+              href="/queue/correspondence"
               classNames={['cf-btn-link']}
             />
           </a>

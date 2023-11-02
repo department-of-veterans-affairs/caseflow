@@ -84,7 +84,7 @@ import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
-import CorrespondenceReviewPackage from './correspondences/reviewPackage/reviewPackage';
+import CorrespondenceReviewPackage from './correspondence/review_package/CorrespondenceReviewPackage';
 import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -729,6 +729,7 @@ class QueueApp extends React.PureComponent {
             />
 
             <PageRoute
+              exact
               path="/queue/correspondence"
               title={`${PAGE_TITLES.CORRESPONDENCE_CASES_LIST}`}
               render={this.routedCorrespondenceCase}
@@ -891,7 +892,8 @@ class QueueApp extends React.PureComponent {
             />
 
             <PageRoute
-              path="/queue/correspondences/:correspondenceId/review_package"
+              exact
+              path="/queue/correspondence/:correspondenceId/review_package"
               title={`${PAGE_TITLES.REVIEW_PACKAGE}`}
               render={this.routedReviewPackage}
             />

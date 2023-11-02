@@ -12,6 +12,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def review_package
+    # binding.pry
     render "correspondence/review_package"
   end
 
