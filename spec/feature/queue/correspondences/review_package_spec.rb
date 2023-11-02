@@ -20,7 +20,7 @@ RSpec.feature("The Correspondence Review Pacakage page") do
     it "on click of create record button successfully navigates to intake page" do
       visit "/queue/correspondences/#{@correspondence_uuid}/review_package"
       click_on("button-Create-record")
-      FeatureToggle.enable!(:correspondence_queue)
+      FeatureToggle.enable(:correspondence_queue)
       expect(page).to have_current_path("/queue/correspondence/#{@correspondence_uuid}/intake")
     end
 
