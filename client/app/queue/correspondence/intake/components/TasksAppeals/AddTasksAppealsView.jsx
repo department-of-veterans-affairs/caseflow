@@ -63,6 +63,7 @@ export const AddTasksAppealsView = () => {
         <p style={{ marginTop: '0rem', marginBottom: '2rem' }} onClick={() => (console.log("onClick worked"))}>
           Add new tasks related to this correspondence or to an appeal not yet created in Caseflow.
         </p>
+        <div />
 
         <Button
           type="button"
