@@ -315,77 +315,7 @@ export const updated_levers = [
     "value": 90,
     "unit": "Days",
     "is_active": true
-  },
-  {
-    "item": "lever_6",
-    "title": "Lever 6",
-    "description": "This is the fifth lever. It is a number data type with the default value of 15. Therefore '15 days' should be displayed. This lever is inactive so it should be in the inactive lever section",
-    "data_type": "number",
-    "value": 15,
-    "unit": "Days",
-    "is_active": false
-  },
-    {
-    "item": "lever_7",
-    "title": "Lever 7",
-    "description": "This is the seventh lever. It is a number data type with the default value of 35. Therefore there should be a number input that displays 35 and 'cases' as the unit. This lever is active so it should be in the active lever section",
-    "data_type": "number",
-    "value": 35,
-    "unit": "Cases",
-    "is_active": true
-  },
-  {
-    "item": "lever_8",
-    "title": "Lever 8",
-    "description": "This is the eigth lever. It is a number data type with the default value of 200. Therefore '200 cases' should be displayed. This lever is inactive so it should be in the inactive lever section",
-    "data_type": "number",
-    "value": 200,
-    "unit": "Cases",
-    "is_active": false
-  },
-  {
-    "item": "lever_9",
-    "title": "Lever 9",
-    "description": "This is the ninth lever. It is a radio data type with the default value of option_1. Therefore there should be a radio options displayed and option_1 is selected by default. If the option is text only the text is displayed, but if it is a different data type then the appropriate input and unit are displayed and the value stored. This lever is active so it should be in the active lever section",
-    "data_type": "radio",
-    "value": "option_1",
-    "unit": "Cases",
-    "options": [
-        {
-        "item": "option_1",
-        "data_type": "text",
-        "value": "option_1",
-        "text": "Option 1",
-        "unit": ""
-        },
-        {
-        "item": "option_2",
-        "data_type": "number",
-        "value": 68,
-        "text": "Option 2",
-        "unit": "Days"
-        }
-    ],
-    "is_active": true
-  },
-  {
-      "item": "lever_10",
-      "title": "Lever 10",
-      "description": "This is the ninth lever. It is a radio data type with the default value of option_1. Therefore there should be a radio options displayed and option_1 is selected by default. If the option is text only the text is displayed, but if it is a different data type then the appropriate input and unit are displayed and the value stored. This lever is active so it should be in the active lever section",
-      "data_type": "combination",
-      "value": 78,
-      "unit": "Cases",
-      "options": [
-          {
-          "item": "option_1",
-          "data_type": "boolean",
-          "value": true,
-          "text": "This feature is turned on or off",
-          "unit": ""
-          }
-      ],
-      "is_active": true
-    }
+  }
 ]
 
 /* END Reducer Test Data */
