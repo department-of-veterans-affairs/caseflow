@@ -168,7 +168,9 @@ FactoryBot.define do
 
     trait :with_decision do
       after(:create) do |hlr|
-        hlr.decision_issues << create(:decision_issue, request_issues: hlr.request_issues, benefit_type: hlr.benefit_type)
+        hlr.decision_issues << create(:decision_issue,
+                                      request_issues: hlr.request_issues,
+                                      benefit_type: hlr.benefit_type)
       end
     end
   end

@@ -195,7 +195,6 @@ class ClaimHistoryEvent
       }
     end
 
-    # TODO: Finish this method and use it to replace the two spots that use it
     def update_event_hash(change_data)
       {
         "event_user_name" => change_data["update_user_name"],
@@ -204,8 +203,8 @@ class ClaimHistoryEvent
       }
     end
 
-    def date_strings_within_seconds?(date1, date2, time_in_seconds)
-      ((date1.to_datetime - date2.to_datetime).abs * 24 * 60 * 60).to_f < time_in_seconds
+    def date_strings_within_seconds?(first_date, second_date, time_in_seconds)
+      ((first_date.to_datetime - second_date.to_datetime).abs * 24 * 60 * 60).to_f < time_in_seconds
     end
   end
 

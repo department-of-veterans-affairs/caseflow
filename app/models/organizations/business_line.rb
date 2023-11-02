@@ -204,8 +204,7 @@ class BusinessLine < Organization
         AND tasks.assigned_to_id = '#{parent.id.to_i}'
       SQL
 
-      # TODO: Brakeman is going to yell so hard about this
-      # I was correct it really did not like this
+      # Append all of the filter queries to the end of the sql block
       change_history_sql_block += change_history_sql_filter_array.join(" ")
 
       ActiveRecord::Base.connection.execute change_history_sql_block
@@ -261,8 +260,6 @@ class BusinessLine < Organization
     end
 
     def issue_types_filter
-      # TODO: Can do some validation either here or in the controller to make sure the issue types in the params
-      # match the json values in ISSUE_CATEGORIES.json
       if query_params[:issue_types].present?
         sql = where_clause_from_array(RequestIssue, :nonrating_issue_category, query_params[:issue_types]).to_sql
         " AND #{sql} "
@@ -270,7 +267,6 @@ class BusinessLine < Organization
     end
 
     def days_waiting_filter
-      # TODO: Make sure this filter gets parsed correctly to use the > < = and between
       if query_params[:days_waiting].present?
         number_of_days = query_params[:days_waiting][:number_of_days]
         operator = query_params[:days_waiting][:range]

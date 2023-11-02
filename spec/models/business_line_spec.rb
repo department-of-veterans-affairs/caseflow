@@ -770,7 +770,9 @@ describe BusinessLine do
       end
 
       context "multiple issue types and claim type" do
-        let(:change_history_filters) { { issue_types: ["Beneficiary Travel", "CHAMPVA"], claim_type: "SupplementalClaim" } }
+        let(:change_history_filters) do
+          { issue_types: ["Beneficiary Travel", "CHAMPVA"], claim_type: "SupplementalClaim" }
+        end
 
         it "should only return rows that match both filters" do
           expect(subject.entries.count).to eq(1)
