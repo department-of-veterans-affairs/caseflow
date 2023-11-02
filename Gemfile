@@ -24,8 +24,6 @@ gem "console_tree_renderer", git: "https://github.com/department-of-veterans-aff
 gem "countries"
 gem "ddtrace"
 gem "dogstatsd-ruby"
-# pending cutover
-gem "datadog/opentelemetry"
 gem "dry-schema", "~> 1.4"
 gem "fast_jsonapi"
 gem "fuzzy_match"
@@ -41,8 +39,8 @@ gem "multiverse"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.11.0.rc4"
 # https://github.com/open-telemetry/opentelemetry-ruby
-gem "opentelemetry/sdk"
-gem "opentelemetry/instrumentation/all"
+gem "opentelemetry-sdk"
+gem "opentelemetry-instrumentation-all"
 gem "opentelemetry-exporter-otlp"
 gem "paper_trail", "~> 10"
 # Used to speed up reporting
