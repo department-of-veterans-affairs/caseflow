@@ -4,31 +4,38 @@
 class Api::V3::Issues::Legacy::VeteransController < Api::V3::BaseController
   include ApiV3FeatureToggleConcern
 
-  # TODO: investigate roles
   before_action do
     api_released?(:api_v3_legacy_issues)
   end
 
-  # before_action :validate_headers :validate_veteran_presence
+  before_action :validate_headers, :validate_veteran_presence
 
-  # def validate_headers
-  #   render_missing_headers unless file_number
-  # end
+  def validate_headers
+    render_missing_headers unless file_number
+  end
 
-  # def render_missing_headers
-  #   render_errors(
-  #     status: 422,
-  #     code: :missing_identifying_headers,
-  #     title: "Veteran file number or SSN header is required"
-  #   )
-  # end
+  def validate_veteran_presence
+    render_veteran_not_found unless veteran
+  end
 
-  # def file_number
-  #   @file_number ||= request.headers["X-VA-FILE-NUMBER"].presence
-  # end
+  def veteran
+    vet_file_number = file_number
+    @veteran ||= find_veteran
+  end
+
+  def render_missing_headers
+    render_errors(
+      status: 422,
+      code: :missing_identifying_headers,
+      title: "Veteran file number header is required"
+    )
+  end
+
+  def file_number
+    @file_number ||= request.headers["X-VA-FILE-NUMBER"].presence
+  end
 
   rescue_from StandardError do |error|
-    # byebug
     Raven.capture_exception(error, extra: raven_extra_context)
 
     render json: {
@@ -42,20 +49,17 @@ class Api::V3::Issues::Legacy::VeteransController < Api::V3::BaseController
   end
 
   def show
-    veteran = find_veteran
-    render_veteran_not_found unless veteran
     page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]
     # Disallow page(0) since page(0) == page(1) in kaminari. This is to avoid confusion.
     (page.nil? || page <= 0) ? page = 1 : page ||= 1
-    render_vacols_issues(Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder.new(veteran, page)) if veteran
+    render_vacols_issues(Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder.new(@veteran, page))
   end
 
   private
 
   def find_veteran
-    # Veteran.find_by!(participant_id: params[:participant_id])
-    Veteran.find_by_file_number_or_ssn(params[:file_number])
-    # Veteran.find_or_create_by_file_number_or_ssn(params[:file_number]) #may need to use this method to create Veteran if one doesn't exist
+    # may need to create Veteran if one doesn't exist in Caseflow but exists in BGS
+    Veteran.find_or_create_by_file_number_or_ssn(@file_number)
   end
 
   def render_veteran_not_found
