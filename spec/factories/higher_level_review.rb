@@ -130,7 +130,6 @@ FactoryBot.define do
         create(:request_issue,
                benefit_type: "vha",
                nonrating_issue_category: "Caregiver | Other",
-               # TODO: Remove this stupid space and see if it breaks tests
                nonrating_issue_description: "VHA - Caregiver ",
                decision_review: higher_level_review,
                decision_date: 1.month.ago)
@@ -162,7 +161,6 @@ FactoryBot.define do
     end
 
     trait :with_intake do
-      # Should this be after create? Probably should be build
       after(:create) do |hlr|
         hlr.intake = create(:intake, :completed, veteran_file_number: hlr.veteran_file_number)
       end

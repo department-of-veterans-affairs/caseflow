@@ -12,21 +12,16 @@ class ClaimHistoryService
     @processed_request_issue_update_ids = Set.new
     @processed_decision_issue_ids = Set.new
     @processed_request_issue_ids = Set.new
+    @events = []
 
-    # TODO: Not sure if we care about this stuff or not
+    # Some attributes for processing stats
     @number_of_database_rows = 0
     @number_of_database_columns = 0
     @database_query_time = 0
     @event_generation_time = 0
-
-    # TODO: Should this automatically build events on creation? Probably not since it could be pretty slow
-    # Also should this be persisted or not. Might be a pretty good chunk of memory but idk
-    @events = []
   end
 
   def build_events
-    # puts "Generating change history events for the: #{business_line.name} business line"
-    # TODO: filter processing?? Either here or in the controller
     all_data = []
 
     # Reset the instance attributes from the last time build_events was ran
@@ -100,8 +95,8 @@ class ClaimHistoryService
     # Go ahead and extract any nil events
     filtered_events = process_event_filter(filtered_events.compact)
     filtered_events = process_timing_filter(filtered_events)
-    # These two should be mutally exclusive according to the AC but no technical reason why
-    # they couldn't both be used simultaneously
+
+    # These are mutally exclusive in the UI, but no technical reason why both can't be used together
     filtered_events = process_personnel_filter(filtered_events)
     filtered_events = process_facility_filter(filtered_events)
 
@@ -114,10 +109,10 @@ class ClaimHistoryService
     new_events.select { |event| event && @filters[:events].include?(event.event_type) }
   end
 
-  # TODO: I have no idea what the format of the date from the filter is going to be here
   def process_timing_filter(new_events)
     return new_events if @filters[:timing].blank?
 
+    # Try to guess the date format from either a string or iso8601 date string object
     start_date, end_date = date_range_for_timing_filter
     start_date, end_date = parse_date_strings(start_date, end_date)
 
@@ -168,8 +163,7 @@ class ClaimHistoryService
   def process_facility_filter(new_events)
     return new_events if @filters[:facilities].blank?
 
-    # TODO: Station ids are strings because I have no idea why. So filter needs to be string
-    # Unless I force the history event to save it as a integer to the attribute. Which would be fine
+    # Station ids are strings for some reason
     new_events.select { |event| @filters[:facilities].include?(event.user_facility) }
   end
 
@@ -185,9 +179,7 @@ class ClaimHistoryService
   def process_task_events(change_data)
     task_id = change_data["task_id"]
 
-    # Can a task id ever be null? Maybe if you have like 3 request issue update rows, but only 1 or 2 of request issues
-    # TODO: Test this scenario
-    if !@processed_task_ids.include?(task_id)
+    if task_id && !@processed_task_ids.include?(task_id)
       @processed_task_ids.add(task_id)
       save_events(ClaimHistoryEvent.create_claim_creation_event(change_data))
       save_events(ClaimHistoryEvent.create_status_events(change_data))
@@ -212,7 +204,7 @@ class ClaimHistoryService
     end
   end
 
-  # For timing stuff
+  # Timing method wrapper
   def measure_execution_time
     start_time = Time.zone.now
     yield

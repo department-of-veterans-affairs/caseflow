@@ -169,13 +169,9 @@ class BusinessLine < Organization
 
       issue_count_options
     end
-    # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/AbcSize
 
     def change_history_rows
-      # The request_decision_issues is weird because it's a composite index on request_issue_id and decision_issue_id
-      # but in order for it to work correctly it needs to be joined before decision_issues
-      # TODO: Verify how slow this is and possibly use a CTE/lateral join instead of the joins if it's not using the index
       # TODO: Remove * from the select statement and only select what we need
       change_history_sql_block = <<-SQL
         SELECT *, tasks.id AS task_id, tasks.status AS task_status, request_issues.id AS request_issue_id,
@@ -209,35 +205,30 @@ class BusinessLine < Organization
       SQL
 
       # TODO: Brakeman is going to yell so hard about this
+      # I was correct it really did not like this
       change_history_sql_block += change_history_sql_filter_array.join(" ")
-
-      # Events filter block
-      # TODO: Idk how much we can actually do on this one for now
-      # Can maybe do things like if no disposition event then don't grab completed tasks?
 
       ActiveRecord::Base.connection.execute change_history_sql_block
     end
+    # rubocop:enable Metrics/MethodLength
 
     private
 
     #################### Change history filter helpers ############################
 
     def change_history_sql_filter_array
-      filtering_sql = []
-
-      # Task status and claim type filtering always happens regardless of params
-      filtering_sql.push task_status_filter
-      filtering_sql.push claim_type_filter
-
-      # All the other filters are optional
-      filtering_sql.push task_id_filter
-      filtering_sql.push dispositions_filter
-      filtering_sql.push issue_types_filter
-      filtering_sql.push days_waiting_filter
-      filtering_sql.push station_id_filter
-      filtering_sql.push user_id_filter
-
-      filtering_sql.compact
+      [
+        # Task status and claim type filtering always happens regardless of params
+        task_status_filter,
+        claim_type_filter,
+        # All the other filters are optional
+        task_id_filter,
+        dispositions_filter,
+        issue_types_filter,
+        days_waiting_filter,
+        station_id_filter,
+        user_id_filter
+      ].compact
     end
 
     def task_status_filter
@@ -287,15 +278,7 @@ class BusinessLine < Organization
         number_of_days = query_params[:days_waiting][:number_of_days]
         operator = query_params[:days_waiting][:range]
         current_time_string = Time.now.iso8601
-        # current_time_zone = Time.zone.now.zone
-        #
-        # AND DATE_PART('day', CEIL(EXTRACT(EPOCH FROM ('#{current_time_string}'::timestamp - tasks.assigned_at)) / 86400)) #{operator} #{number_of_days.to_i}
-        # AND CEIL(DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at))) #{operator} #{number_of_days.to_i}
-        # This works I think
-        # AND CEIL(EXTRACT(EPOCH FROM ('#{current_time_string}'::timestamp - tasks.assigned_at)) / 86400)  #{operator} #{number_of_days.to_i}
 
-        # AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) >= #{number_of_days.to_i}
-        # AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) <= #{end_days.to_i}
         case operator
         when ">", "<", "="
           <<-SQL
@@ -683,7 +666,6 @@ class BusinessLine < Organization
       end
     end
 
-    # TODO: Move this to an ArelHelper module or something since it's pretty generic
     def where_clause_from_array(table_class, column, values_array)
       table_class.arel_table[column].in(values_array)
     end

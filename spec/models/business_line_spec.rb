@@ -531,8 +531,6 @@ describe BusinessLine do
 
       hlr_task2.assigned_at = Time.zone.now - 5.days
       hlr_task2.save
-
-      # TODO: Add at least a withdrawn event via request issue updates
     end
 
     subject { business_line.change_history_rows(change_history_filters) }

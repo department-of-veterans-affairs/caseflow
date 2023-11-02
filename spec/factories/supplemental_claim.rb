@@ -154,9 +154,14 @@ FactoryBot.define do
     end
 
     trait :with_intake do
-      # Should this be after create? Probably should be build
       after(:create) do |sc|
         sc.intake = create(:intake, :completed, veteran_file_number: sc.veteran_file_number)
+      end
+    end
+
+    trait :with_decision do
+      after(:create) do |sc|
+        sc.decision_issues << create(:decision_issue, request_issues: sc.request_issues, benefit_type: sc.benefit_type)
       end
     end
   end

@@ -343,8 +343,8 @@ describe ClaimHistoryService do
             # Change the intake date for claim created and two of the issues to more than 7 days
             # To remove them from the event list
             new_time = 25.days.ago
-            issue = hlr_task.appeal.request_issues.first
             hlr_task.appeal.intake.completed_at = new_time
+            issue = hlr_task.appeal.request_issues.first
             issue.created_at = new_time
             extra_hlr_request_issue.created_at = new_time
             issue.save

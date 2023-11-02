@@ -362,14 +362,19 @@ describe ClaimHistoryEvent do
 
     describe "helper class methods" do
       describe ".retrieve_issue_data" do
+        before do
+          Timecop.freeze
+        end
+        after do
+          Timecop.return
+        end
         let(:request_issue) do
           create(
             :request_issue,
             nonrating_issue_category: "Issue Category",
             nonrating_issue_description: "Issue description",
             decision_date: Time.zone.today,
-            # Round this because it's apparently imprecise when saving to the DB.
-            decision_date_added_at: Time.zone.now.round
+            decision_date_added_at: Time.zone.now
           )
         end
 

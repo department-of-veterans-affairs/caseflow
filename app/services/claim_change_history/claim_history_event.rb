@@ -28,17 +28,9 @@ class ClaimHistoryEvent
 
   class << self
     def from_change_data(event_type, change_data)
-      # if EVENT_TYPES.include?(event_type)
-      #   new(event_type, change_data)
-      # else
-      #   fail InvalidEventType, "Invalid event type: #{event_type}"
-      # end
       new(event_type, change_data)
     end
 
-    # TODO: There's no good way to determine who completed a disposition
-    # There's task.completed_by but it's not being used on dispositions. It also won't be present for past data unless
-    # We could run a job/script to backfill this to the whodunnit on task versions for status -> completed
     def create_completed_disposition_event(change_data)
       if change_data["disposition"]
         event_hash = {
@@ -70,14 +62,11 @@ class ClaimHistoryEvent
 
         # Assume that if the dates are equal then it should be a assigned -> on_hold status event that is recorded
         # Due to the way intake is processed a task is always created as assigned first
-        # TODO: Is it possible to not have an updated_at time? Timecop.freeze causes this which is not good
         first_changeset = first_version.changeset
         time_difference = (first_changeset["updated_at"][0] - first_changeset["updated_at"][1]).to_f.abs
-        # Old comparison
-        # if first_version.changeset["updated_at"][0].round != first_version.changeset["updated_at"][1].round
 
         # If the time difference is > than 2 seconds then assume it is a valid status change instead of the
-        # Normal intake assigned -> on_hold that will happen for no decision date
+        # Normal intake assigned -> on_hold that will happen for no decision date HLR/SC intakes
         if time_difference > 2
           status_events.push event_from_version(first_version, 0, change_data)
         end
@@ -88,7 +77,7 @@ class ClaimHistoryEvent
           status_events.push event_from_version(version, 1, change_data)
         end
       else
-        # No versions so just make one with the current status?
+        # No versions so make an event with the current status
         event_type = task_status_to_event_type(change_data["task_status"])
         event_hash = { "event_date" => change_data["intake_completed_at"], "event_user_name" => "System" }
         status_events.push from_change_data(event_type, change_data.merge(event_hash))
@@ -100,33 +89,26 @@ class ClaimHistoryEvent
     def create_issue_events(change_data)
       issue_events = []
 
-      # TODO: before request issue ids does NOT contain withdrawn issues, but after issues does
-      # This is definitely not correct
+      # before request issue ids does NOT contain withdrawn issues, but after issues does
       before_request_issue_ids = change_data["before_request_issue_ids"].scan(/\d+/).map(&:to_i)
       after_request_issue_ids = change_data["after_request_issue_ids"].scan(/\d+/).map(&:to_i)
       withdrawn_request_issue_ids = change_data["withdrawn_request_issue_ids"].scan(/\d+/).map(&:to_i)
       edited_request_issue_ids = change_data["edited_request_issue_ids"].scan(/\d+/).map(&:to_i)
       removed_request_issue_ids = (before_request_issue_ids - after_request_issue_ids)
-
-      # TODO: Pull this out into a method except event_date
-      updates_hash = {
-        "event_date" => change_data["request_issue_update_time"],
-        "event_user_name" => change_data["update_user_name"],
-        "user_facility" => change_data["update_user_station_id"],
-        "event_user_id" => change_data["update_user_id"]
-      }
+      updates_hash = update_event_hash(change_data).merge("event_date" => change_data["request_issue_update_time"])
 
       # Adds events to the issue events array
       # TODO: Withdrawn might need to add withdrawn date to the updates hash before sending it in
-      process_issue_ids!(withdrawn_request_issue_ids, :withdrew_issue, change_data, updates_hash, issue_events)
-      process_issue_ids!(removed_request_issue_ids, :removed_issue, change_data, updates_hash, issue_events)
-      process_issue_ids!(edited_request_issue_ids, :edited_issue, change_data, updates_hash, issue_events)
+      issue_events.push(*process_issue_ids(withdrawn_request_issue_ids, :withdrew_issue, change_data, updates_hash))
+      issue_events.push(*process_issue_ids(removed_request_issue_ids, :removed_issue, change_data, updates_hash))
+      issue_events.push(*process_issue_ids(edited_request_issue_ids, :edited_issue, change_data, updates_hash))
 
       issue_events
     end
 
-    # This is a mutating helper function that modifies the issue_events array parameter
-    def process_issue_ids!(request_issue_ids, event_type, change_data, updates_hash, issue_events)
+    def process_issue_ids(request_issue_ids, event_type, change_data, updates_hash)
+      created_events = []
+
       request_issue_ids.each do |request_issue_id|
         issue_data = retrieve_issue_data(request_issue_id)
 
@@ -142,20 +124,18 @@ class ClaimHistoryEvent
           if request_issue_data["decision_date_added_at"].present? &&
              ((request_issue_data["decision_date_added_at"].to_datetime -
               change_data["request_issue_update_time"].to_datetime).abs * 24 * 60 * 60).to_f < 15
-            issue_events.push from_change_data(:added_decision_date, change_data.merge(request_issue_data))
+            created_events.push from_change_data(:added_decision_date, change_data.merge(request_issue_data))
           end
         else
-          issue_events.push from_change_data(event_type, change_data.merge(request_issue_data))
+          created_events.push from_change_data(event_type, change_data.merge(request_issue_data))
         end
       end
+
+      created_events
     end
 
     def create_add_issue_event(change_data)
       # Make a guess that it was the same transaction as intake. If not it was a probably an update
-      # TODO: Verify that this date comparison is valid/good enough
-      # ((Time.zone.now - 7.days - 2.hours).iso8601.to_datetime -
-      # Time.zone.now.iso8601.to_datetime).abs * 24 * 60 * 60.to_f
-
       # TODO: Investigate if these values can ever be null or empty strings since it will syntax error
       # TODO: Move this to a helper method since it is used in two spots
       same_transaction = ((change_data["intake_completed_at"].to_datetime -
@@ -163,13 +143,7 @@ class ClaimHistoryEvent
       event_hash = if same_transaction
                      intake_event_hash(change_data)
                    else
-                     {
-                       "event_date" => change_data["request_issue_created_at"],
-                       "event_user_name" => change_data["update_user_name"],
-                       "user_facility" => change_data["update_user_regional_office"] ||
-                         change_data["update_user_station_id"],
-                       "event_user_id" => change_data["update_user_id"]
-                     }
+                     update_event_hash(change_data).merge("event_date" => change_data["request_issue_created_at"])
                    end
 
       from_change_data(:added_issue, change_data.merge(event_hash))
@@ -243,8 +217,8 @@ class ClaimHistoryEvent
 
   def to_csv_array
     [
-      @veteran_file_number, @claimant_name, task_url, readable_task_status,
-      @days_waiting, readable_claim_type, @user_facility, readable_user_name, readable_event_date,
+      veteran_file_number, claimant_name, task_url, readable_task_status,
+      days_waiting, readable_claim_type, user_facility, readable_user_name, readable_event_date,
       readable_event_type, issue_or_status_information, disposition_information
     ]
   end
