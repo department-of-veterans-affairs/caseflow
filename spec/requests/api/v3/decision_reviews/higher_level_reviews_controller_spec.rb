@@ -180,7 +180,7 @@ describe Api::V3::DecisionReviews::HigherLevelReviewsController, :all_dbs, type:
         "/api/v3/decision_reviews/higher_level_reviews/#{uuid}",
         headers: authorization_header
       )
-
+      #byebug
       request_issue = JSON.parse(response.body)["included"].find { |obj| obj["type"] == "RequestIssue" }["attributes"]
       rating_issue = rating.issues.find { |issue| issue.reference_id == request_issue["ratingIssueId"] }
 
@@ -338,19 +338,19 @@ describe Api::V3::DecisionReviews::HigherLevelReviewsController, :all_dbs, type:
 
         it "should include the veteran" do
           expect(subject.dig("veteran", "data", "id")).to eq higher_level_review.veteran.id.to_s
-          expect(subject.dig("veteran", "data", "type")).to eq "Veteran"
+          expect(subject.dig("veteran", "data", "type")).to eq "veteran"
         end
 
         it "should include the claimant" do
           expect(subject.dig("claimant", "data", "id")).to eq higher_level_review.claimant.id.to_s
-          expect(subject.dig("claimant", "data", "type")).to eq "Claimant"
+          expect(subject.dig("claimant", "data", "type")).to eq "claimant"
         end
 
         it "should include request issues" do
           ri_relationships = subject["requestIssues"]["data"]
           expect(ri_relationships.count).to eq request_issues.count
           expect(ri_relationships.collect { |ri| ri["id"].to_i }).to include(*request_issues.collect(&:id))
-          expect(ri_relationships.collect { |ri| ri["type"] }.uniq).to eq ["RequestIssue"]
+          expect(ri_relationships.collect { |ri| ri["type"] }.uniq).to eq ["requestIssue"]
         end
 
         it "should include decision issues" do
@@ -359,7 +359,7 @@ describe Api::V3::DecisionReviews::HigherLevelReviewsController, :all_dbs, type:
           di_relationships = subject["decisionIssues"]["data"]
           expect(di_relationships.count).to eq decision_issues.count
           expect(di_relationships.collect { |di| di["id"].to_i }).to include(*decision_issues.collect(&:id))
-          expect(di_relationships.collect { |di| di["type"] }.uniq).to eq ["DecisionIssue"]
+          expect(di_relationships.collect { |di| di["type"] }.uniq).to eq ["decisionIssue"]
         end
       end
     end
