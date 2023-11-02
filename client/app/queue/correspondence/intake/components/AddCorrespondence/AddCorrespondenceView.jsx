@@ -35,7 +35,7 @@ class AddCorrespondenceView extends React.Component {
     }).
       catch((err) => {
         // allow HTTP errors to fall on the floor via the console.
-        console.error(new Error(`Problem with GET /queue/correspondence/a9a15f84-b105-4981-92d9-ecddf7c3a03a/intake?json ${err}`));
+        console.error(new Error(`Problem with GET /queue/correspondence/${correspondenceUuid}/intake?json ${err}`));
       });
   }
 
@@ -176,7 +176,7 @@ class AddCorrespondenceView extends React.Component {
         {this.state.value === '1' && (
           <div className="cf-app-segment cf-app-segment--alt">
             <p>Please select the prior mail to link to this correspondence</p>
-            <p>Viewing {this.state.rowObjects.length} related correspondences.</p>
+            <p>Viewing {this.state.rowObjects.length} out of {this.state.rowObjects.length} total</p>
             <div>
               <Table
                 columns={this.getDocumentColumns}
