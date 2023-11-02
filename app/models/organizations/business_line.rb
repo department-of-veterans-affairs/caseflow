@@ -248,10 +248,7 @@ class BusinessLine < Organization
     end
 
     def task_id_filter
-      # TODO: Could potentially use the same where clause from array here even though we usually only care
-      # about one task_id to make it more flexible
       if query_params[:task_id].present?
-        # " AND tasks.id = '#{query_params[:task_id].to_i}'"
         " AND #{where_clause_from_array(Task, :id, query_params[:task_id]).to_sql} "
       end
     end

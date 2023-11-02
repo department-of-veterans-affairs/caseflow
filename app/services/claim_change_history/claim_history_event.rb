@@ -26,6 +26,8 @@ class ClaimHistoryEvent
     :incomplete
   ].freeze
 
+  REQUEST_ISSUE_TIME_WINDOW = 15
+
   class << self
     def from_change_data(event_type, change_data)
       new(event_type, change_data)
@@ -99,14 +101,16 @@ class ClaimHistoryEvent
 
       # Adds events to the issue events array
       # TODO: Withdrawn might need to add withdrawn date to the updates hash before sending it in
-      issue_events.push(*process_issue_ids(withdrawn_request_issue_ids, :withdrew_issue, change_data, updates_hash))
-      issue_events.push(*process_issue_ids(removed_request_issue_ids, :removed_issue, change_data, updates_hash))
-      issue_events.push(*process_issue_ids(edited_request_issue_ids, :edited_issue, change_data, updates_hash))
+      issue_events.push(*process_issue_ids(withdrawn_request_issue_ids,
+                                           :withdrew_issue,
+                                           change_data.merge(updates_hash)))
+      issue_events.push(*process_issue_ids(removed_request_issue_ids, :removed_issue, change_data.merge(updates_hash)))
+      issue_events.push(*process_issue_ids(edited_request_issue_ids, :edited_issue, change_data.merge(updates_hash)))
 
       issue_events
     end
 
-    def process_issue_ids(request_issue_ids, event_type, change_data, updates_hash)
+    def process_issue_ids(request_issue_ids, event_type, change_data)
       created_events = []
 
       request_issue_ids.each do |request_issue_id|
@@ -117,17 +121,17 @@ class ClaimHistoryEvent
           next
         end
 
-        request_issue_data = updates_hash.merge(issue_data)
-        # TODO: Pull this date comparison out into function since it's used in two spots. It also has magic numbers
+        request_issue_data = change_data.merge(issue_data)
         if event_type == :edited_issue
           # Compare the two dates to try to guess if it was adding a decision date or not
-          if request_issue_data["decision_date_added_at"].present? &&
-             ((request_issue_data["decision_date_added_at"].to_datetime -
-              change_data["request_issue_update_time"].to_datetime).abs * 24 * 60 * 60).to_f < 15
-            created_events.push from_change_data(:added_decision_date, change_data.merge(request_issue_data))
+          same_transaction = date_strings_within_seconds?(request_issue_data["decision_date_added_at"],
+                                                          change_data["request_issue_update_time"],
+                                                          REQUEST_ISSUE_TIME_WINDOW)
+          if request_issue_data["decision_date_added_at"].present? && same_transaction
+            created_events.push from_change_data(:added_decision_date, request_issue_data)
           end
         else
-          created_events.push from_change_data(event_type, change_data.merge(request_issue_data))
+          created_events.push from_change_data(event_type, request_issue_data)
         end
       end
 
@@ -135,11 +139,10 @@ class ClaimHistoryEvent
     end
 
     def create_add_issue_event(change_data)
-      # Make a guess that it was the same transaction as intake. If not it was a probably an update
-      # TODO: Investigate if these values can ever be null or empty strings since it will syntax error
-      # TODO: Move this to a helper method since it is used in two spots
-      same_transaction = ((change_data["intake_completed_at"].to_datetime -
-                          change_data["request_issue_created_at"].to_datetime).abs * 24 * 60 * 60).to_f < 15
+      # Make a guess that it was the same transaction as intake. If not it was a probably added during an issue update
+      same_transaction = date_strings_within_seconds?(change_data["intake_completed_at"],
+                                                      change_data["request_issue_created_at"],
+                                                      REQUEST_ISSUE_TIME_WINDOW)
       event_hash = if same_transaction
                      intake_event_hash(change_data)
                    else
@@ -152,8 +155,6 @@ class ClaimHistoryEvent
     private
 
     def retrieve_issue_data(request_issue_id)
-      # TODO: If this fails for some reason what do I do?
-      # Example: The issue was removed so it's gone from the database now should I just return nils for the fields?
       request_issue = RequestIssue.find_by(id: request_issue_id)
 
       if request_issue
@@ -167,13 +168,12 @@ class ClaimHistoryEvent
     end
 
     def task_status_to_event_type(task_status)
-      if task_status == "in_progress" || task_status == "assigned"
-        :in_progress
-      elsif task_status == "on_hold"
-        :incomplete
-      elsif task_status == "completed"
-        :completed
-      end
+      {
+        "in_progress" => :in_progress,
+        "assigned" => :in_progress,
+        "on_hold" => :incomplete,
+        "completed" => :completed
+      }[task_status]
     end
 
     def event_from_version(version, index, change_data)
@@ -203,6 +203,10 @@ class ClaimHistoryEvent
         "event_user_id" => change_data["update_user_id"]
       }
     end
+
+    def date_strings_within_seconds?(date1, date2, time_in_seconds)
+      ((date1.to_datetime - date2.to_datetime).abs * 24 * 60 * 60).to_f < time_in_seconds
+    end
   end
 
   ############### End of Class methods ##################
@@ -225,7 +229,7 @@ class ClaimHistoryEvent
 
   # This needs to be replaced later depending on request data or usage in the app
   def task_url
-    "https://www.caseflowdemo.com/decision_reviews/vha/tasks/#{@task_id}"
+    "https://www.caseflowdemo.com/decision_reviews/vha/tasks/#{task_id}"
   end
 
   def readable_task_status
@@ -234,34 +238,34 @@ class ClaimHistoryEvent
       "in_progress" => "in progress",
       "on_hold" => "incomplete",
       "completed" => "completed"
-    }[@task_status]
+    }[task_status]
   end
 
   def readable_claim_type
     {
       "HigherLevelReview" => "Higher-Level Review",
       "SupplementalClaim" => "Supplemental Claim"
-    }[@claim_type]
+    }[claim_type]
   end
 
   def readable_user_name
-    if @event_user_name == "System"
-      @event_user_name
-    elsif @event_user_name.present?
-      abbreviated_user_name(@event_user_name)
+    if event_user_name == "System"
+      event_user_name
+    elsif event_user_name.present?
+      abbreviated_user_name(event_user_name)
     end
   end
 
   def readable_event_date
-    format_date_string(@event_date)
+    format_date_string(event_date)
   end
 
   def readable_decision_date
-    format_date_string(@decision_date)
+    format_date_string(decision_date)
   end
 
   def readable_disposition_date
-    format_date_string(@disposition_date)
+    format_date_string(disposition_date)
   end
 
   def readable_event_type
@@ -275,26 +279,26 @@ class ClaimHistoryEvent
       withdrew_issue: "Withdrew issue",
       removed_issue: "Removed issue",
       added_decision_date: "Added decision date"
-    }[@event_type]
+    }[event_type]
   end
 
   def issue_event?
-    [:completed_disposition, :added_issue, :withdrew_issue, :removed_issue, :added_decision_date].include?(@event_type)
+    [:completed_disposition, :added_issue, :withdrew_issue, :removed_issue, :added_decision_date].include?(event_type)
   end
 
   def disposition_event?
-    @event_type == :completed_disposition
+    event_type == :completed_disposition
   end
 
   def status_event?
-    [:in_progress, :incomplete, :completed, :claim_creation].include?(@event_type)
+    [:in_progress, :incomplete, :completed, :claim_creation].include?(event_type)
   end
 
   private
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-  def set_attributes_from_change_history_data(event_type, change_data)
-    @event_type = event_type
+  def set_attributes_from_change_history_data(new_event_type, change_data)
+    @event_type = new_event_type
     @task_id = change_data["task_id"]
     @task_status = change_data["task_status"]
     @intake_completed_date = change_data["completed_at"]
@@ -342,13 +346,13 @@ class ClaimHistoryEvent
 
   def issue_information
     if issue_event?
-      [@issue_type, @issue_description, readable_decision_date]
+      [issue_type, issue_description, readable_decision_date]
     end
   end
 
   def disposition_information
     if disposition_event?
-      [@disposition, @decision_description, readable_disposition_date]
+      [disposition, decision_description, readable_disposition_date]
     end
   end
 
@@ -366,7 +370,7 @@ class ClaimHistoryEvent
       incomplete: "Claim cannot be processed until decision date is entered.",
       completed: "Claim closed.",
       claim_creation: "Claim created."
-    }[@event_type]
+    }[event_type]
   end
 
   def format_date_string(date)

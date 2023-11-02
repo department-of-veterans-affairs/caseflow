@@ -659,7 +659,6 @@ describe ClaimHistoryEvent do
         subject { event_instance.readable_event_type }
 
         # Copy of the hash from claim_history_event.rb
-        # TODO: Possibly move this to a json somewhere or utils
         event_types = {
           in_progress: "Claim status - In Progress",
           incomplete: "Claim status - Incomplete",
@@ -851,7 +850,6 @@ describe ClaimHistoryEvent do
         subject { event_instance.send(:status_description) }
 
         # Copy of the hash from claim_history_event.rb
-        # TODO: Possibly move this to a json somewhere or utils
         status_descriptions = {
           in_progress: "Claim can be processed.",
           incomplete: "Claim cannot be processed until decision date is entered.",
