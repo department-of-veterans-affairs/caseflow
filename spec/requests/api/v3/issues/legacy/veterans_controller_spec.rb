@@ -9,6 +9,10 @@ describe Api::V3::Issues::Legacy::VeteransController, :postgres, type: :request 
     ApiKey.create!(consumer_name: "ApiV3 Test VBMS Consumer").key_string
   end
 
+  let_it_be(:authorization_token) do
+    "Token #{api_key}"
+  end
+
   describe "#show" do
     context "when feature is not enabled" do
       let!(:vet) { create(:veteran) }
@@ -25,6 +29,24 @@ describe Api::V3::Issues::Legacy::VeteransController, :postgres, type: :request 
     context "when feature is enabled" do
       before { FeatureToggle.enable!(:api_v3_legacy_issues) }
       after { FeatureToggle.disable!(:api_v3_legacy_issues) }
+
+      context "when no ApiKey is provided" do
+        it "returns a 401 error" do
+          get_vacols_issues(auth_token: nil)
+
+          expect(response).to have_http_status(401)
+        end
+      end
+
+      context "when no file_number provided" do
+        it "returns a 422 error" do
+          get_vacols_issues
+          errors = JSON.parse(response.body)["errors"][0]
+
+          expect(errors["status"]).to eq 422
+          expect(errors["title"]).to eq "Veteran file number header is required"
+        end
+      end
 
       context "when a veteran is not found" do
         it "should return veteran not found error" do
@@ -122,8 +144,8 @@ describe Api::V3::Issues::Legacy::VeteransController, :postgres, type: :request 
       end
     end
 
-    def get_vacols_issues(file_number: nil)
-      headers = { "Authorization": "Token #{api_key}", "X-VA-File-Number": file_number}
+    def get_vacols_issues(auth_token: authorization_token, file_number: nil)
+      headers = { "Authorization": auth_token, "X-VA-File-Number": file_number}
 
       get("/api/v3/issues/legacy/find_by_veteran", headers: headers)
     end
