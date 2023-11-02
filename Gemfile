@@ -24,6 +24,13 @@ gem "console_tree_renderer", git: "https://github.com/department-of-veterans-aff
 gem "countries"
 gem "ddtrace"
 gem "dogstatsd-ruby"
+# https://github.com/open-telemetry/opentelemetry-ruby
+gem "opentelemetry"
+gem "opentelemetry/sdk"
+# pending cutover
+gem "datadog/opentelemetry"
+gem "opentelemetry/instrumentation/all"
+gem "opentelemetry-exporter-otlp"
 gem "dry-schema", "~> 1.4"
 gem "fast_jsonapi"
 gem "fuzzy_match"
