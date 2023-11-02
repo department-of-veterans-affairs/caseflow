@@ -3,9 +3,8 @@
 require "opentelemetry/sdk"
 
 class OpenTelemetryService
-  def initialize
-      @meter = OpenTelemetry.meter
-  end
+
+  @meter = OpenTelemetry.meter
 
   def increment_counter(metric_group:, metric_name:, app_name:, attrs: {})
       tags = attributes_to_tags(app_name, attrs)
@@ -35,18 +34,17 @@ class OpenTelemetryService
       gauge.set(metric_value, labels: tags)
   end
 
-  private
-
-  def get_stat_name(metric_group, metric_name)
-      "dsva-appeals.#{metric_group}.#{metric_name}"
+  private_class_method def self.get_stat_name(metric_group, metric_name)
+    "dsva-appeals.#{metric_group}.#{metric_name}"
   end
 
-  def attributes_to_tags(app_name, attrs)
-      extra_tags = attrs.map { |key, val| "#{key}:{val}" }
-      [
-          "app:#{app_name}",
-          "env:#{Rails.current_env}",
-          "hostname:#{@host}"
-      ] + extra_tags
+  private_class_method def self.get_tags(app_name, attrs)
+    extra_tags = attrs.reduce([]) do |tags, (key, val)|
+      tags + ["#{key}:#{val}"]
+    end
+    [
+      "app:#{app_name}",
+      "env:#{Rails.current_env}"
+    ] + extra_tags
   end
 end
