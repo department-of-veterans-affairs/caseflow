@@ -66,14 +66,13 @@ describe ClaimHistoryEvent do
   let(:change_data_claim_type) { "HigherLevelReview" }
   let(:change_data_event_user_name) { nil }
   let(:change_data_event_date) { nil }
-
   let(:event_attribute_data) do
     {
       assigned_at: "2023-10-19 22:47:16.222148",
       benefit_type: "vha",
       claim_type: "HigherLevelReview",
       claimant_name: "Bob Smithboehm",
-      days_waiting: 11,
+      days_waiting: (Time.zone.today - DateTime.parse("2023-10-19 22:47:16.222148")).to_i,
       decision_date: "2023-05-31",
       decision_description: "granting clothing allowance",
       disposition: "Granted",
