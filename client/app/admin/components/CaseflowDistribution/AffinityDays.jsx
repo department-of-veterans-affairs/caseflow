@@ -27,8 +27,8 @@ const AffinityDays = (props) => {
       if (index === i) {
         const opt = lever.options.map((opt) => {
           if (opt === option) {
-            if (!/^\d{0,5}$/.test(e)) {
-              opt.errorMessage = 'Please enter a valid number with up to 5 digits.';
+            if (!/^\d{0,3}$/.test(e)) {
+              opt.errorMessage = 'Please enter a value less than or equal to 999';
             } else {
               opt.errorMessage = null;
             }
