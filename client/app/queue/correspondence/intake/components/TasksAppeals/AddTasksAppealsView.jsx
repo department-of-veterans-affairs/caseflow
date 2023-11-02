@@ -67,7 +67,7 @@ export const AddTasksAppealsView = () => {
 
         <Button
           type="button"
-          onClick={() => (console.log("onClick worked"))}
+          onClick={() => {clickAddTask()}}
           // onClick={clickAddTask}
           name="addTasks"
           classNames={['cf-left-side']}>
