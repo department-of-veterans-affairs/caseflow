@@ -12,7 +12,7 @@
 class Api::V3::Issues::Ama::RequestIssueSerializer
   include FastJsonapi::ObjectSerializer
 
-  attributes :id, :benefit_type, :closed_status, :contention_reference_id, :contested_decision_issue_id,
+  attributes :id, :benefit_type, :closed_at, :closed_status, :contention_reference_id, :contested_decision_issue_id,
              :contested_issue_description, :contested_rating_decision_reference_id,
              :contested_rating_issue_diagnostic_code, :contested_rating_issue_profile_date,
              :contested_rating_issue_reference_id, :corrected_by_request_issue_id,
@@ -24,7 +24,8 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
              :untimely_exemption, :untimely_exemption_notes, :updated_at, :vacols_id,
              :vacols_sequence_id, :verified_unidentified_issue, :veteran_participant_id
 
-  attribute :caseflow_considers_status_active, &:status_active?
+  attribute :caseflow_considers_decision_review_active, &:status_active?
+  attribute :caseflow_considers_issue_active, &:active?
   attribute :caseflow_considers_title_of_active_review, &:title_of_active_review
   attribute :caseflow_considers_eligible, &:eligible?
 
