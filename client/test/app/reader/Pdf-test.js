@@ -12,8 +12,8 @@ const FILE_URLS = [
 ];
 
 describe('Pdf', () => {
-  describe('Prefetch Feature toggle', () => {
-    it('creates previous, current, and next PdfFile components when it is disabled', () => {
+  describe('prefetch_disabled Feature Toggle', () => {
+    it('creates previous, current, and next PdfFile components when it is OFF', () => {
       // Set up props with three document urls and prefetchDisabled OFF
       const props = {
         prefetchFiles: [FILE_URLS[0], FILE_URLS[2]],
@@ -32,7 +32,7 @@ describe('Pdf', () => {
       // Expect the file urls of each PdfFile component to match the prefetch files and current file
       expect(fileUrls).toEqual([...props.prefetchFiles, props.file]);
     });
-    it('creates current PdfFile component when it is enabled', () => {
+    it('creates current PdfFile component when it is ON', () => {
       // Set up props with three document urls and prefetchDisabled ON
       const props = {
         prefetchFiles: [FILE_URLS[0], FILE_URLS[2]],
