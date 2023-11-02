@@ -51,9 +51,9 @@ describe Api::Docs::V3::DocsController, type: :request do
       get "/api/docs/v3/ama_issues"
       expect(response).to have_http_status(200)
       json = JSON.parse(response.body)
-      expect(json["openapi"]).to eq("3.0.0")
+      expect(json["openapi"]).to eq("3.0.3")
     end
-    describe "/intake_statuses/{uuid} documentation" do
+    describe "/issues/ama/find_by_veteran/{veteran_participant_id} documentation" do
       before(:each) do
         get "/api/docs/v3/ama_issues"
       end
