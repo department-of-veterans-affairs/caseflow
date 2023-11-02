@@ -3,8 +3,7 @@ import ProgressBar from 'app/components/ProgressBar';
 import Button from '../../../../components/Button';
 import PropTypes from 'prop-types';
 import AddCorrespondenceView from './AddCorrespondence/AddCorrespondenceView';
-/* import { ReviewCorrespondenceView } from './ReviewCorrespondence/ReviewCorrespondenceView';
-import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView'; */
+import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
 
 const progressBarSections = [
   {
@@ -22,7 +21,6 @@ const progressBarSections = [
 ];
 
 export const CorrespondenceIntake = (props) => {
-
   const [currentStep, setCurrentStep] = useState(1);
 
   const nextStep = () => {
@@ -53,13 +51,13 @@ export const CorrespondenceIntake = (props) => {
         correspondenceUuid={props.correspondence_uuid}
       />
     }
-    {/* currentStep === 2 &&
-      <ReviewCorrespondenceView />
+    {currentStep === 2 &&
+      <AddTasksAppealsView />
     }
+    /* 
     {currentStep === 3 &&
       <ConfirmCorrespondenceView />
     */}
-
     <div>
       <a href="/queue/correspondence">
         <Button

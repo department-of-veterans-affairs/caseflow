@@ -61,11 +61,14 @@ class SeedDB
     call_and_log_seed_step Seeds::Notifications
     call_and_log_seed_step Seeds::CavcDashboardData
     call_and_log_seed_step Seeds::VbmsExtClaim
+    call_and_log_seed_step Seeds::Correspondence
     # Always run this as last one
     call_and_log_seed_step Seeds::StaticTestCaseData
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
     call_and_log_seed_step Seeds::AdditionalRemandedAppeals
     call_and_log_seed_step Seeds::AdditionalLegacyRemandedAppeals
+    call_and_log_seed_step Seeds::CorrespondenceTypes
+
   end
 end
 
