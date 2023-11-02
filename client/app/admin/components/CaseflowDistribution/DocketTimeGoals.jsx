@@ -59,7 +59,7 @@ const DocketTimeGoals = (props) => {
         <div className={styles.leverRight}><strong>Start Distribution Prior to Docket Time Goal</strong></div>
       </div>
       {docketLevers && docketLevers.map((lever, index) => (
-        <div className={cx(styles.activeLever, lever.is_disable ? styles.leverDisabled : '')} key={`${lever.item}-${index}`}>
+        <div className={cx(styles.activeLever, lever.is_disabled ? styles.leverDisabled : '')} key={`${lever.item}-${index}`}>
           <div className={cx(styles.leverLeft, styles.docketLeverLeft)}>
             <strong>{lever.title}</strong>
           </div>
@@ -76,7 +76,7 @@ const DocketTimeGoals = (props) => {
           <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
             <ToggleSwitch
               selected={lever.is_active}
-              disabled={lever.is_disable}
+              disabled={lever.is_disabled}
               toggleSelected={toggleLever(index)}
             />
             <div className={lever.is_active ? styles.toggleSwichInput : styles.toggleInputHide}>
