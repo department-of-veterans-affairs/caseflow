@@ -6,12 +6,12 @@
 class Api::V3::Issues::Ama::VbmsAmaDtoBuilder
   attr_reader :hash_response
 
-  def initialize(veteran, page)
+  def initialize(veteran, page, per_page=nil)
     @page = page
     @veteran_participant_id = veteran.participant_id.to_s
     @request_issue_count = total_request_issue_count
     @request_issues = serialized_request_issues
-    @offset = RequestIssue.default_per_page
+    @offset = per_page || RequestIssue.default_per_page
     @total_number_of_pages = (@request_issue_count / @offset.to_f).ceil
     @legacy_appeals_present_boolean = legacy_appeals_present?(veteran)
     @hash_response = build_hash_response
