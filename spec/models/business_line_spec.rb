@@ -675,8 +675,7 @@ describe BusinessLine do
       end
 
       context "= filter" do
-        # Due to rounding, this is 9 instead of the 10 used in the setup
-        let(:change_history_filters) { { days_waiting: { number_of_days: 9, range: "=" } } }
+        let(:change_history_filters) { { days_waiting: { number_of_days: 10, range: "=" } } }
 
         it "should only return rows that are equal to the filtered days waiting value" do
           expect(subject.entries.count).to eq(2)
@@ -690,7 +689,7 @@ describe BusinessLine do
       context "between filter" do
         let(:change_history_filters) { { days_waiting: { number_of_days: 4, end_days: 11, range: "between" } } }
 
-        it "should only return rows that are under the filtered days waiting value" do
+        it "should only return rows that are between the number of days and end of days" do
           expect(subject.entries.count).to eq(4)
           expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation]))
         end

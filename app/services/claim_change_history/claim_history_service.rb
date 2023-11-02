@@ -12,6 +12,7 @@ class ClaimHistoryService
     @processed_request_issue_update_ids = Set.new
     @processed_decision_issue_ids = Set.new
     @processed_request_issue_ids = Set.new
+
     # TODO: Not sure if we care about this stuff or not
     @number_of_database_rows = 0
     @number_of_database_columns = 0
@@ -28,23 +29,18 @@ class ClaimHistoryService
     # TODO: filter processing?? Either here or in the controller
     all_data = []
 
+    # Reset the instance attributes from the last time build_events was ran
+    reset_processing_attributes
+
     @database_query_time = measure_execution_time do
       all_data = business_line.change_history_rows(@filters)
     end
-    # all_data = business_line.change_history_rows(@filters)
 
-    reset_processing_attributes
-
-    # Print the total number of columns
-    # puts "Total Number of columns: #{all_data.nfields}"
-    # puts "Total Number of rows: #{all_data.count}"
     @number_of_database_columns = all_data.nfields
     @number_of_database_rows = all_data.count
 
     @event_generation_time = measure_execution_time do
       all_data.entries.map do |change_data|
-        # So what if we pass the filter down into the event class and let it decide what to do for filtering
-        # Instead of returning new then return nil and compact the events later to remove those
         process_request_issue_update_events(change_data)
         process_request_issue_events(change_data)
         process_task_events(change_data)
@@ -95,9 +91,14 @@ class ClaimHistoryService
   end
 
   def matches_filter(new_events)
+    # Days Waiting, Task ID, Task Status, Issue Types, Dispositions, and Claim Type are all filtered
+    # entirely by the business line DB queries
+    # The personnel and facilities filters are partially filtered by DB queries and further filtered below
+
     # Ensure that we always treat this as an array of events for processing
     filtered_events = new_events.is_a?(Array) ? new_events : [new_events]
-    filtered_events = process_event_filter(filtered_events)
+    # Go ahead and extract any nil events
+    filtered_events = process_event_filter(filtered_events.compact)
     filtered_events = process_timing_filter(filtered_events)
     # These two should be mutally exclusive according to the AC but no technical reason why
     # they couldn't both be used simultaneously
@@ -110,7 +111,7 @@ class ClaimHistoryService
   def process_event_filter(new_events)
     return new_events if @filters[:events].blank?
 
-    new_events.select { |event| @filters[:events].include?(event.event_type) }
+    new_events.select { |event| event && @filters[:events].include?(event.event_type) }
   end
 
   # TODO: I have no idea what the format of the date from the filter is going to be here
@@ -118,8 +119,6 @@ class ClaimHistoryService
     return new_events if @filters[:timing].blank?
 
     start_date, end_date = date_range_for_timing_filter
-    # TODO: If the filter date is a string then guess the format?
-    # Should I require it in iso8601? Makes it harder to manually test in irb though.
     start_date, end_date = parse_date_strings(start_date, end_date)
 
     new_events.select do |event|
@@ -129,21 +128,6 @@ class ClaimHistoryService
   end
 
   def date_range_for_timing_filter
-    # case @filters[:timing][:range]
-    # when "before"
-    #   [@filters[:timing][:start_date], nil]
-    # when "after"
-    #   [@filters[:timing][:start_date], nil]
-    # when "between"
-    #   [@filters[:timing][:start_date], @filters[:timing][:end_date]]
-    # when "last 7 days"
-    #   [Time.zone.today - 6, Time.zone.today]
-    # when "last 30 days"
-    #   [Time.zone.today - 29, Time.zone.today]
-    # when "last 365 days"
-    #   [Time.zone.today - 364, Time.zone.today]
-    # end
-
     {
       "before" => [nil, @filters[:timing][:start_date]],
       "after" => [@filters[:timing][:start_date], nil],
@@ -154,12 +138,6 @@ class ClaimHistoryService
     }[@filters[:timing][:range]]
   end
 
-  # def parse_date_strings(start_date, end_date)
-  #   start_date = Date.strptime(start_date, "%m/%d/%Y") if start_date.is_a?(String)
-  #   end_date = Date.strptime(end_date, "%m/%d/%Y") if end_date.is_a?(String)
-  #   [start_date, end_date]
-  # end
-
   # Date helpers for filtering
   def parse_date_strings(start_date, end_date)
     start_date = parse_date(start_date)
@@ -167,6 +145,8 @@ class ClaimHistoryService
     [start_date, end_date]
   end
 
+  # Function to attempt to guess the date from the filter. Works for 11/1/2023 format and iso8601
+  # It's gross because it's using error handling for logic though.
   def parse_date(date)
     if date.is_a?(String)
       begin
@@ -180,7 +160,6 @@ class ClaimHistoryService
   end
 
   def process_personnel_filter(new_events)
-    # This will be based on event_user_id?
     return new_events if @filters[:personnel].blank?
 
     new_events.select { |event| @filters[:personnel].include?(event.event_user_id) }
@@ -189,8 +168,7 @@ class ClaimHistoryService
   def process_facility_filter(new_events)
     return new_events if @filters[:facilities].blank?
 
-    # This will be based on facility
-    # TODO: Station ids are strings because I have no freaking idea why. So filter needs to be string
+    # TODO: Station ids are strings because I have no idea why. So filter needs to be string
     # Unless I force the history event to save it as a integer to the attribute. Which would be fine
     new_events.select { |event| @filters[:facilities].include?(event.user_facility) }
   end
@@ -200,7 +178,6 @@ class ClaimHistoryService
 
     if request_issue_update_id && !@processed_request_issue_update_ids.include?(request_issue_update_id)
       @processed_request_issue_update_ids.add(request_issue_update_id)
-      # @events.push(*ClaimHistoryEvent.create_issue_events(change_data))
       save_events(ClaimHistoryEvent.create_issue_events(change_data))
     end
   end
@@ -212,9 +189,6 @@ class ClaimHistoryService
     # TODO: Test this scenario
     if !@processed_task_ids.include?(task_id)
       @processed_task_ids.add(task_id)
-      # @events.push ClaimHistoryEvent.create_claim_creation_event(change_data)
-      # TODO: Rename this later
-      # @events.push(*ClaimHistoryEvent.no_database_create_status_events(change_data))
       save_events(ClaimHistoryEvent.create_claim_creation_event(change_data))
       save_events(ClaimHistoryEvent.create_status_events(change_data))
     end
@@ -225,7 +199,6 @@ class ClaimHistoryService
 
     if request_issue_id && !@processed_request_issue_ids.include?(request_issue_id)
       @processed_request_issue_ids.add(request_issue_id)
-      # @events.push(ClaimHistoryEvent.create_add_issue_event(change_data))
       save_events(ClaimHistoryEvent.create_add_issue_event(change_data))
     end
   end
@@ -235,7 +208,6 @@ class ClaimHistoryService
 
     if decision_issue_id && !@processed_decision_issue_ids.include?(decision_issue_id)
       @processed_decision_issue_ids.add(decision_issue_id)
-      # @events.push ClaimHistoryEvent.create_completed_disposition_event(change_data)
       save_events(ClaimHistoryEvent.create_completed_disposition_event(change_data))
     end
   end

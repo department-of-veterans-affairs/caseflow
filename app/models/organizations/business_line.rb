@@ -287,17 +287,25 @@ class BusinessLine < Organization
         number_of_days = query_params[:days_waiting][:number_of_days]
         operator = query_params[:days_waiting][:range]
         current_time_string = Time.now.iso8601
+        # current_time_zone = Time.zone.now.zone
+        #
+        # AND DATE_PART('day', CEIL(EXTRACT(EPOCH FROM ('#{current_time_string}'::timestamp - tasks.assigned_at)) / 86400)) #{operator} #{number_of_days.to_i}
+        # AND CEIL(DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at))) #{operator} #{number_of_days.to_i}
+        # This works I think
+        # AND CEIL(EXTRACT(EPOCH FROM ('#{current_time_string}'::timestamp - tasks.assigned_at)) / 86400)  #{operator} #{number_of_days.to_i}
 
+        # AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) >= #{number_of_days.to_i}
+        # AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) <= #{end_days.to_i}
         case operator
         when ">", "<", "="
           <<-SQL
-            AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) #{operator} #{number_of_days.to_i}
+            AND CEIL(EXTRACT(EPOCH FROM ('#{current_time_string}'::timestamp - tasks.assigned_at)) / 86400)  #{operator} #{number_of_days.to_i}
           SQL
         when "between"
           end_days = query_params[:days_waiting][:end_days]
           <<-SQL
-            AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) >= #{number_of_days.to_i}
-            AND DATE_PART('day', ('#{current_time_string}'::timestamp - tasks.assigned_at)) <= #{end_days.to_i}
+            AND CEIL(EXTRACT(EPOCH FROM ('#{current_time_string}'::timestamp - tasks.assigned_at)) / 86400) >= #{number_of_days.to_i}
+            AND CEIL(EXTRACT(EPOCH FROM ('#{current_time_string}'::timestamp - tasks.assigned_at)) / 86400) <= #{end_days.to_i}
           SQL
         end
       end

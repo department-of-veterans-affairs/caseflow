@@ -70,7 +70,15 @@ class ClaimHistoryEvent
 
         # Assume that if the dates are equal then it should be a assigned -> on_hold status event that is recorded
         # Due to the way intake is processed a task is always created as assigned first
-        if first_version.changeset["updated_at"][0].round != first_version.changeset["updated_at"][1].round
+        # TODO: Is it possible to not have an updated_at time? Timecop.freeze causes this which is not good
+        first_changeset = first_version.changeset
+        time_difference = (first_changeset["updated_at"][0] - first_changeset["updated_at"][1]).to_f.abs
+        # Old comparison
+        # if first_version.changeset["updated_at"][0].round != first_version.changeset["updated_at"][1].round
+
+        # If the time difference is > than 2 seconds then assume it is a valid status change instead of the
+        # Normal intake assigned -> on_hold that will happen for no decision date
+        if time_difference > 2
           status_events.push event_from_version(first_version, 0, change_data)
         end
 
@@ -196,10 +204,12 @@ class ClaimHistoryEvent
 
     def event_from_version(version, index, change_data)
       changes = version.changeset
-      event_type = task_status_to_event_type(changes["status"][index])
-      event_date = changes["updated_at"][index]
-      event_date_hash = { "event_date" => event_date, "event_user_name" => "System" }
-      from_change_data(event_type, change_data.merge(event_date_hash))
+      if changes["status"]
+        event_type = task_status_to_event_type(changes["status"][index])
+        event_date = changes["updated_at"][index]
+        event_date_hash = { "event_date" => event_date, "event_user_name" => "System" }
+        from_change_data(event_type, change_data.merge(event_date_hash))
+      end
     end
 
     def intake_event_hash(change_data)
@@ -331,14 +341,15 @@ class ClaimHistoryEvent
 
     # TODO: Should probably use event date instead of this
     @withdrawal_request_date = change_data["request_issue_update_time"]
+
     # Try to keep all the dates consistent as a iso8601 string if possible
     @event_date = if change_data["event_date"].is_a?(String)
                     change_data["event_date"]
                   else
                     change_data["event_date"]&.iso8601
                   end
-    @user_facility = change_data["user_facility"] || change_data["station_id"]
-    @event_user_name = change_data["event_user_name"] || change_data["full_name"]
+    @user_facility = change_data["user_facility"]
+    @event_user_name = change_data["event_user_name"]
     @event_user_id = change_data["event_user_id"]
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
