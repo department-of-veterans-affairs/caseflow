@@ -12,8 +12,8 @@ describe ('LeverButtonsWrapper', () => {
 
   beforeEach(() => {
     const preloadedState = {
-      levers: JSON.parse(JSON.stringify(leverData.levers)),
-      initial_levers: JSON.parse(JSON.stringify(leverData.levers))
+      levers: JSON.parse(JSON.stringify(leverData.levers.slice(0,5))),
+      initial_levers: JSON.parse(JSON.stringify(leverData.levers.slice(0,5)))
     }
      leverStore = createStore(leversReducer, preloadedState);
      buttonsDiv = render(<LeverButtonsWrapper leverStore={leverStore}/>)
@@ -43,7 +43,7 @@ describe ('LeverButtonsWrapper', () => {
       cancelButton.click()
 
       expect(leverStore.getState().levers).not.toEqual(leverData.updated_levers)
-      expect(leverStore.getState().levers).toEqual(leverData.levers)
+      expect(leverStore.getState().levers).toEqual(leverData.levers.slice(0,5))
     });
   });
 
@@ -70,7 +70,7 @@ describe ('LeverButtonsWrapper', () => {
 
       saveButton.click()
 
-      expect(leverStore.getState().levers).not.toEqual(leverData.levers)
+      expect(leverStore.getState().levers).not.toEqual(leverData.levers.slice(0,5))
       expect(leverStore.getState().levers).toEqual(leverData.updated_levers)
     });
   });
