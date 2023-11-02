@@ -14,15 +14,21 @@ const BatchSize = (props) => {
   });
 
   const leverNumberDiv = css({
-    '& .cf-form-int-input' : {width: 'auto', display: 'inline-block'},
+    '& .cf-form-int-input' : {width: 'auto', display: 'inline-block', position: 'relative'},
     '& .cf-form-int-input .input-container' : {width: 'auto', display: 'inline-block', verticalAlign: 'middle'},
-    '& .cf-form-int-input label' : {float: 'right', margin: '0', lineHeight: '50px'}
+    '& .cf-form-int-input label' : {position: 'absolute',bottom: '8px', left: '75px'},
+    '& .usa-input-error label': {bottom: '15px', left: '89px'}
   });
 
   const [_, setLever] = useState(batchSizeLevers);
   const updateLever = (index) => (e) => {
     const levers = batchSizeLevers.map((lever, i) => {
       if (index === i) {
+        if (!/^\d{0,3}$/.test(e)) {
+          lever.errorMessage = 'Please enter a value less than or equal to 999';
+        } else {
+          lever.errorMessage = null;
+        }
         lever.value = e;
         return lever;
       } else {
@@ -51,6 +57,7 @@ const BatchSize = (props) => {
               label={lever.unit}
               isInteger
               value={lever.value}
+              errorMessage={lever.errorMessage}
               onChange={updateLever(index)}
             />
           </div>
