@@ -660,8 +660,8 @@ class QueueApp extends React.PureComponent {
     <CompleteHearingPostponementRequestModal {...props.match.params} />
   );
 
-  routedCorrespondenceIntake = () => (
-    <CorrespondenceIntake />
+  routedCorrespondenceIntake = (props) => (
+    <CorrespondenceIntake {...props.match.params} />
   );
 
   queueName = () =>
@@ -891,13 +891,13 @@ class QueueApp extends React.PureComponent {
               render={this.routedUserManagement}
             />
             <PageRoute
-              path="/queue/correspondence/:correspondenceId/intake"
+              path="/queue/correspondence/:correspondence_uuid/intake"
               title={`${PAGE_TITLES.USER_MANAGEMENT} | Caseflow`}
               render={this.routedCorrespondenceIntake}
             />
 
             <PageRoute
-              path="/queue/correspondence/:correspondenceId/intake"
+              path="/queue/correspondence/:correspondence_uuid/intake"
               title={`${PAGE_TITLES.CORRESPONDENCE_INTAKE}`}
               render={this.routedCorrespondenceIntake}
             />
