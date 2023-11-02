@@ -65,8 +65,8 @@ class MetricsService
     increment_datadog_counter("request_error", service, name, app) if service
 
     metric_params = {
-      name: "Stand in object if metrics_service.record fails",
-      message: "Variables not initialized before failure",
+      name: "error",
+      message: error.message,
       type: Metric::METRIC_TYPES[:error],
       product: "",
       attrs: {
