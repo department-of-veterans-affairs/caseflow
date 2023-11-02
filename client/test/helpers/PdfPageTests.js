@@ -12,7 +12,7 @@ export const pageMetricData = [
     pageIndex: 1
   },
   message: 'Storing PDF page',
-  product: 'pdfjs.document.pages',
+  product: 'reader',
   type: 'performance'
   },
   true
@@ -25,7 +25,7 @@ export const textMetricData = [
     file: documents[0].content_url
   },
   message: 'Storing PDF page text',
-  product: 'pdfjs.document.pages',
+  product: 'reader',
   type: 'performance'
   },
   true
@@ -65,9 +65,11 @@ export const recordMetricsArgs = [
   { data: {
     documentId: documents[0].id,
     documentType: 'Test',
-    file: documents[0].content_url
+    file: documents[0].content_url,
+    numPagesInDoc: 1,
+    pageIndex: 1
   },
-  message: 'Searching within Reader document text',
+  message: 'PDFJS rendering text layer',
   product: 'reader',
   type: 'performance',
   uuid: '1234'
