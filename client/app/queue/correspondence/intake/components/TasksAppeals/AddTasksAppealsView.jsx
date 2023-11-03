@@ -24,7 +24,7 @@ export const AddTasksAppealsView = () => {
   const clickAddTask = () => {
     // const clickButt = () => {
     console.log("we added a task *evil laugh*");
-    const currentTask = addTask;
+    const currentTask = [...addTask];
     const randNum = Math.floor(Math.random * 10000);
     currentTask.push({ Object: randNum })
     setAddTask(currentTask);
