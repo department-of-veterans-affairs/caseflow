@@ -19,8 +19,8 @@ def init_opentelemetry
         OpenTelemetry::SemanticConventions::Resource::SERVICE_NAME => 'rails',
         OpenTelemetry::SemanticConventions::Resource::SERVICE_INSTANCE_ID => Socket.gethostname,
         OpenTelemetry::SemanticConventions::Resource::SERVICE_VERSION => "0.0.0"
-        c.use_all
-  })      rescue
+        })      rescue
+    c.use_all
       end
     end
     c.add_span_processor(
