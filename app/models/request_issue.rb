@@ -17,7 +17,7 @@ class RequestIssue < CaseflowRecord
   paginates_per ENV["REQUEST_ISSUE_PAGINATION_OFFSET"].to_i
 
   # Max page per limit
-  DEFAULT_UPPER_BOUND_PER_PAGE = ENV["DEFAULT_UPPER_BOUND_PER_PAGE"].to_i
+  DEFAULT_UPPER_BOUND_PER_PAGE = ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"].to_i
 
   # how many days before we give up trying to sync decisions
   REQUIRES_PROCESSING_WINDOW_DAYS = 30
