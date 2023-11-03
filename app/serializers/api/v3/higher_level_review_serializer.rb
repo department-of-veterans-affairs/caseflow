@@ -19,11 +19,7 @@ class Api::V3::HigherLevelReviewSerializer
     higher_level_review.veteran
   end
 
-  has_one :claimant, polymorphic: { Claimant => :claimant,
-                                    VeteranClaimant => :claimant,
-                                    AttorneyClaimant => :claimant,
-                                    OtherClaimant => :claimant,
-                                    DependentClaimant => :claimant } do |higher_level_review|
+  has_one :claimant, record_type: "Claimant" do |higher_level_review|
     higher_level_review.claimant
   end
 
