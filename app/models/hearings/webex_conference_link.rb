@@ -20,7 +20,7 @@ class WebexConferenceLink < ConferenceLink
 
     update!(
       host_link: "#{base_url}#{conference.data[:host].first[:short]}",
-      guest_hearing_link: "#{base_url}#{conference.data[:guest].first[:short]}",
+      guest_hearing_link: "#{base_url}#{conference.data[:guest].first[:short]}"
     )
   end
 end

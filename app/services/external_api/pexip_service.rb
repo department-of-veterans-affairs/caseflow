@@ -39,10 +39,10 @@ class ExternalApi::PexipService
     ExternalApi::PexipService::CreateResponse.new(resp)
   end
 
-  def delete_conference(conference_id:)
-    return if conference_id.nil?
+  def delete_conference(virtual_hearing)
+    return if virtual_hearing.conference_id.nil?
 
-    delete_endpoint = "#{CONFERENCES_ENDPOINT}#{conference_id}/"
+    delete_endpoint = "#{CONFERENCES_ENDPOINT}#{virtual_hearing.conference_id}/"
     resp = send_pexip_request(delete_endpoint, :delete)
     return if resp.nil?
 

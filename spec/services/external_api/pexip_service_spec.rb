@@ -93,7 +93,10 @@ describe ExternalApi::PexipService do
   end
 
   describe "#delete_conference" do
-    subject { pexip_service.delete_conference(conference_id: "123") }
+    let(:virtual_hearing) do
+      create(:virtual_hearing, conference_id: "123")
+    end
+    subject { pexip_service.delete_conference(virtual_hearing) }
 
     let(:success_del_resp) { HTTPI::Response.new(204, {}, {}) }
     let(:error_del_resp) { HTTPI::Response.new(404, {}, {}) }
