@@ -17,6 +17,8 @@ class IneligibleJudgesJob < CaseflowJob
     log_error(error)
   end
 
+  private
+
   # {Grabs both vacols and caseflow ineligible judges then merges into one list with duplicates merged if they have the same CSS_ID/SDOMAINID}
   def case_distribution_ineligible_judges
     Rails.cache.fetch("case_distribution_ineligible_judges", expires_in: 1.week) do

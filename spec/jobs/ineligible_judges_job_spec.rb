@@ -31,41 +31,4 @@ RSpec.describe IneligibleJudgesJob, type: :job do
       job.perform
     end
   end
-
-  describe "#case_distribution_ineligible_judges" do
-    it "fetches and merges ineligible judges from different sources" do
-      # Stub the methods that fetch data from different sources
-      allow(CaseDistributionIneligibleJudges).to receive(:ineligible_vacols_judges).and_return([{ css_id: "454" }])
-      allow(CaseDistributionIneligibleJudges).to receive(:ineligible_caseflow_judges).and_return([{ sdomainid: "123" }])
-
-      result = job.case_distribution_ineligible_judges
-
-      # Expect the result to be an array with merged data
-      expect(result).to be_an(Array)
-      expect(result).to include(css_id: "454") # Data from the first source
-      expect(result).to include(sdomainid: "123") # Data from the second source
-    end
-
-    it "groups and merges data by css_id or sdomainid" do
-      # Stub the methods that fetch data from different sources
-      allow(CaseDistributionIneligibleJudges).to receive(:ineligible_vacols_judges).and_return([{ css_id: "123" }])
-      allow(CaseDistributionIneligibleJudges).to receive(:ineligible_caseflow_judges).and_return([{ sdomainid: "123" }])
-
-      result = job.case_distribution_ineligible_judges
-
-      # Expect the result to be an array with merged data grouped by '123'
-      expect(result).to be_an(Array)
-      expect(result).to include(css_id: "123", sdomainid: "123")
-    end
-  end
-
-  describe "#log_success" do
-    let(:slack_service) { SlackService.new(url: "http://www.example.com") }
-    it "logs success message with duration" do
-      expect(Rails.logger).to receive(:info)
-      allow(SlackService).to receive(:new).and_return(slack_service)
-      allow(slack_service).to receive(:send_notification) { true }
-      job.log_success(Time.zone.now)
-    end
-  end
 end
