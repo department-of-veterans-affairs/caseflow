@@ -2,6 +2,7 @@
 
 # :reek:InstanceVariableAssumption
 class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
+  DEFAULT_UPPER_BOUND_PER_PAGE = 50
   # include ApiV3FeatureToggleConcern
 
   # before_action do
@@ -50,9 +51,10 @@ class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
 
   def show
     page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]
+    per_page = [params[:per_page].to_i, DEFAULT_UPPER_BOUND_PER_PAGE].min if params[:per_page]
     # Disallow page(0) since page(0) == page(1) in kaminari. This is to avoid confusion.
     (page.nil? || page <= 0) ? page = 1 : page ||= 1
-    render_vacols_issues(Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder.new(@veteran, page))
+    render_vacols_issues(Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder.new(@veteran, page, per_page))
   end
 
   private

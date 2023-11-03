@@ -144,9 +144,31 @@ describe Api::V3::Issues::Vacols::VeteransController, :postgres, type: :request 
           it "API call works when you pass in a page param" do
             headers = { "Authorization": authorization_token, "X-VA-File-Number": veteran_with_multiple_legacy_appeals.file_number}
             get("/api/v3/issues/vacols/find_by_veteran?page=1", headers: headers)
-            expect(response).to have_http_status(200)
             response_hash = JSON.parse(response.body)
-            byebug
+            expect(response).to have_http_status(200)
+            expect(response_hash["total_vacols_issues_for_vet"]).to eq(14)
+            expect(response_hash["total_number_of_pages"]).to eq(2)
+            expect(response_hash["vacols_issues"].count).to eq(10)
+          end
+
+          it "API call works when you pass in a page and per_page param" do
+            headers = { "Authorization": authorization_token, "X-VA-File-Number": veteran_with_multiple_legacy_appeals.file_number}
+            get("/api/v3/issues/vacols/find_by_veteran?page=1&per_page=4", headers: headers)
+            response_hash = JSON.parse(response.body)
+            expect(response).to have_http_status(200)
+            expect(response_hash["total_vacols_issues_for_vet"]).to eq(14)
+            expect(response_hash["total_number_of_pages"]).to eq(4)
+            expect(response_hash["vacols_issues"].count).to eq(4)
+          end
+
+          it "API call works when you pass in a per_page param thats over upper_limit of 50" do
+            headers = { "Authorization": authorization_token, "X-VA-File-Number": veteran_with_multiple_legacy_appeals.file_number}
+            get("/api/v3/issues/vacols/find_by_veteran?page=1&per_page=100", headers: headers)
+            response_hash = JSON.parse(response.body)
+            expect(response).to have_http_status(200)
+            expect(response_hash["total_vacols_issues_for_vet"]).to eq(14)
+            expect(response_hash["total_number_of_pages"]).to eq(1)
+            expect(response_hash["vacols_issues"].count).to eq(14)
           end
         end
       end
