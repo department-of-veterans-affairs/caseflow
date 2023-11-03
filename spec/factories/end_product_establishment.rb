@@ -45,7 +45,11 @@ FactoryBot.define do
     trait :cleared_hlr_with_veteran_claimant do
       synced_status { "CLR" }
       established_at { 5.days.ago }
-      source { create(:higher_level_review, veteran_file_number: veteran_file_number, claimant_type: :veteran_claimant) }
+      source do
+        create(:higher_level_review,
+               veteran_file_number: veteran_file_number,
+               claimant_type: :veteran_claimant)
+      end
     end
 
     trait :active_supp_with_veteran_claimant do
