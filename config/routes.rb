@@ -290,7 +290,9 @@ Rails.application.routes.draw do
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
+    get '/correspondence', to: 'correspondence#correspondence_cases'
     get '/correspondence/:correspondence_uuid/intake', to: 'correspondence#intake'
+    get '/correspondence/:correspondence_uuid/review_package', to: 'correspondence#review_package'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:appealId/notifications', to: 'queue#index'
     get '/appeals/:appeal_id/cavc_dashboard', to: 'cavc_dashboard#index'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CorrespondenceController < ApplicationController
   before_action :verify_feature_toggle
 
@@ -10,6 +12,14 @@ class CorrespondenceController < ApplicationController
         }
       end
     end
+  end
+
+  def correspondence_cases
+    render "correspondence_cases"
+  end
+
+  def review_package
+    render "correspondence/review_package"
   end
 
   private
