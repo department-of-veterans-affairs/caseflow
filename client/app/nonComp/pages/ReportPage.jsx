@@ -4,10 +4,13 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import Button from 'app/components/Button';
 import NonCompLayout from '../components/NonCompLayout';
+import { ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
 
 import NonCompReportFilterContainer from '../components/NonCompReportFilter';
+import TimingSpecification from 'app/nonComp/components/ReportPage/TimingSpecification';
 
-import TimingSpecificationCondition from 'app/nonComp/components/TimingSpecificationCondition';
+// import ReportPageDateSelector from 'app/nonComp/components/ReportPage/ReportPageDateSelector';
+import REPORT_TYPE_OPTIONS from '../../../constants/REPORT_TYPE_OPTIONS';
 
 const buttonInnerContainerStyle = css({
   display: 'flex',
@@ -20,12 +23,24 @@ const buttonOuterContainerStyling = css({
   marginTop: '4rem',
 });
 
-const ReportPageButtons = ({
-  history,
+// for later
+// const schema = yup.object().shape({
+//   conditions: yup.array(
+//     yup.object().shape({
+//       condition: yup.string().required(),
+//       options: yup.object().required(),
+//     })
+//   ),
+// });
+
+const ReportPageButtons = ({ history,
   disableGenerateButton,
   handleClearFilters,
-  handleSubmit,
-}) => {
+  handleSubmit }) => {
+
+  // eslint-disable-next-line no-console
+  const onSubmit = (data) => console.log(data);
+
   return (
     <div {...buttonOuterContainerStyling}>
       <Button
@@ -50,7 +65,7 @@ const ReportPageButtons = ({
           classNames={['usa-button']}
           label="generate-report"
           name="generate-report"
-          onClick={handleSubmit}
+          onClick={handleSubmit(onSubmit)}
           disabled={disableGenerateButton}
         >
           Generate task report
@@ -63,11 +78,18 @@ const ReportPageButtons = ({
 const ReportPage = ({ history }) => {
   const defaultFormValues = {
     reportType: '',
+    conditions: [],
+    timingSpecifications: null,
+    date: '',
+    from: '',
+    to: '',
   };
 
   const methods = useForm({ defaultValues: { ...defaultFormValues } });
 
-  const { reset, formState } = methods;
+  const { reset, watch, formState, handleSubmit } = methods;
+
+  const watchReportType = watch('reportType');
 
   return (
     <NonCompLayout
@@ -76,14 +98,24 @@ const ReportPage = ({ history }) => {
           history={history}
           disableGenerateButton={!formState.isDirty}
           handleClearFilters={() => reset(defaultFormValues)}
+          handleSubmit={handleSubmit}
         />
       }
     >
       <h1>Generate task report</h1>
       <FormProvider {...methods}>
         <form>
-          <NonCompReportFilterContainer />
-          <TimingSpecificationCondition />
+          <NonCompReportFilterContainer
+            header="Type of Report"
+            name="reportType"
+            label="Report Type"
+            options={REPORT_TYPE_OPTIONS}
+          />
+          {watchReportType === 'event_type_action' ?
+            <TimingSpecification /> :
+            null
+          }
+          {formState.isDirty ? <ReportPageConditions /> : null}
         </form>
       </FormProvider>
     </NonCompLayout>

@@ -3,38 +3,46 @@ import { Controller, useFormContext } from 'react-hook-form';
 import PropTypes from 'prop-types';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
-import REPORT_TYPE_OPTIONS from '../../../constants/REPORT_TYPE_OPTIONS';
 
-const NonCompReportFilter = ({ control }) => (
+const NonCompReportFilter = ({ control, props }) =>(
   <>
-    <h2>Type of Report</h2>
+    {/* <h2>Type of Report</h2> */}
+    <h2>{ props.header }</h2>
     <Controller
       control={control}
-      name="reportType"
-      render={({ onChange, ref, ...rest }) => (
+      name={props.name}
+      render={({ onChange, ...rest }) => (
         <SearchableDropdown
-          inputRef={ref}
           {...rest}
-          name="reportType"
-          label="Report Type"
-          options={REPORT_TYPE_OPTIONS}
+          name={props.name}
+          label={props.label}
+          options={props.options}
           searchable={false}
-          onChange={(valObj) => onChange(valObj?.value)}
-          defaultValue=""
+          onChange={(valObj) => {
+            onChange(valObj?.value);
+          }}
         />
       )}
     />
   </>
 );
 
-export const NonCompReportFilterContainer = () => {
+export const NonCompReportFilterContainer = (props) => {
   const methods = useFormContext();
 
-  return <NonCompReportFilter {...methods} />;
+  return <NonCompReportFilter {...methods} props={props} />;
 };
 
 NonCompReportFilter.propTypes = {
-  control: PropTypes.node,
+  control: PropTypes.object,
+  props: PropTypes.object,
+};
+
+NonCompReportFilterContainer.propTypes = {
+  props: PropTypes.object,
+  name: PropTypes.string,
+  label: PropTypes.string,
+  options: PropTypes.array
 };
 
 export default NonCompReportFilterContainer;
