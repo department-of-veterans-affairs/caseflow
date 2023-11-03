@@ -23,13 +23,29 @@ class Api::V3::Issues::Ama::VeteransController < Api::V3::BaseController
 
   def show
     veteran = find_veteran
-    page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]
-    # Disallow page(0) or negative. Page(0) == page(1) in kaminari. This is to avoid confusion.
-    (page.nil? || page <= 0) ? page = 1 : page ||= 1
-    render_request_issues(Api::V3::Issues::Ama::VbmsAmaDtoBuilder.new(veteran, page).hash_response) if veteran
+    page = init_page
+    per = init_per
+    render_request_issues(Api::V3::Issues::Ama::VbmsAmaDtoBuilder.new(veteran, page, per).hash_response) if veteran
   end
 
   private
+
+  def init_page
+    page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]
+    # Disallow page(0) or negative. Page(0) == page(1) in kaminari. This is to avoid confusion.
+    if page.nil? || page <= 0
+      page = 1
+    end
+    page
+  end
+
+  def init_per
+    per = ActiveRecord::Base.sanitize_sql(params[:per].to_i) if params[:per]
+    if per.nil? || per <= 0 || per > RequestIssue::DEFAULT_UPPER_BOUND_PER_PAGE
+      per = RequestIssue.default_per_page
+    end
+    per
+  end
 
   def find_veteran
     begin
