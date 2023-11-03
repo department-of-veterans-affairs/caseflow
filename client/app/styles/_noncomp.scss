@@ -156,7 +156,6 @@
   .report-page-variable-condition {
     width: 100%;
     display: flex;
-    gap: 1%;
     align-items: center;
 
     .report-page-middle-content {
@@ -167,6 +166,7 @@
 
     .report-page-variable-select {
       width: 40%;
+      margin-right: 1%;
     }
 
     .report-page-variable-content {
@@ -187,7 +187,7 @@
         display: flex;
         justify-content: flex-start;
         align-items: center;
-        gap: 5%;
+        grid-gap: 5%;
       }
     }
   }
