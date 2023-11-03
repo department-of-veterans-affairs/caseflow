@@ -80,13 +80,14 @@ const DocketTimeGoals = (props) => {
           </div>
           <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
             <ToggleSwitch
+              id={`toggle-switch-${lever.item}`}
               selected={lever.is_active}
               disabled={lever.is_disabled}
               toggleSelected={toggleLever(index)}
             />
             <div className={lever.is_active ? styles.toggleSwichInput : styles.toggleInputHide}>
               <NumberField
-                name={`toogle-${lever.item}`}
+                name={`toggle-${lever.item}`}
                 isInteger
                 readOnly={!lever.is_active}
                 value={lever.value}
