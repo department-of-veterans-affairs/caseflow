@@ -43,7 +43,6 @@ class LoadingDataDisplay extends React.PureComponent {
 
     this.setState({ promiseStartTimeMs: Date.now() });
 
-    const prefetchDisabled = this.props.prefetchDisabled;
     const metricData = {
       message: this.props.loadingComponentProps?.message || 'loading screen',
       type: 'performance',
@@ -53,16 +52,14 @@ class LoadingDataDisplay extends React.PureComponent {
         slowLoadMessage: this.props.slowLoadMessage,
         slowLoadThresholdMs: this.props.slowLoadThresholdMs,
         timeoutMs: this.props.timeoutMs,
-        prefetchDisabled
+        prefetchDisabled: this.props.prefetchDisabled
       }
     };
-
-    const shouldRecordMetrics = this.props.metricsLoadScreen;
 
     // Promise does not give us a way to "un-then" and stop listening
     // when the component unmounts. So we'll leave this reference dangling,
     // but at least we can use this._isMounted to avoid taking action if necessary.
-    recordAsyncMetrics(promise, metricData, shouldRecordMetrics).then(
+    recordAsyncMetrics(promise, metricData, this.props.metricsLoadScreen).then(
       () => {
         if (!this._isMounted) {
           return;
