@@ -197,10 +197,10 @@ exports[`DaysWaiting renders correctly 1`] = `
                   </div>
                 </div>
                 <div
-                  class="report-page-variable-content"
+                  class="report-page-variable-content-wider"
                 >
                   <div
-                    class="space-it-out"
+                    class="days-waiting"
                   >
                     <div
                       class="sc-bdfBwQ gZlgoQ"
@@ -235,7 +235,7 @@ exports[`DaysWaiting renders correctly 1`] = `
                                   <div
                                     class="cf-select__placeholder css-1wa3eu0-placeholder"
                                   >
-                                    Select?
+                                    Select...
                                   </div>
                                   <div
                                     class="css-81nyic-Input"
@@ -303,7 +303,6 @@ exports[`DaysWaiting renders correctly 1`] = `
                       </div>
                     </div>
                   </div>
-                   
                 </div>
               </div>
               <a>
