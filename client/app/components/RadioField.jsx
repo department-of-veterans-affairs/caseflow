@@ -42,7 +42,8 @@ export const RadioField = (props) => {
     strongLabel,
     hideLabel,
     styling,
-    vertical
+    vertical,
+    optionsStyling
   } = props;
 
   const isVertical = useMemo(() => props.vertical || props.options.length > 2, [
@@ -67,11 +68,11 @@ export const RadioField = (props) => {
 
   const maybeAddTooltip = (option, radioField) => {
     if (option.tooltipText) {
-      const idKey = `tooltip-${option.value}`;
+      const keyId = `tooltip-${option.value}`;
 
       return <Tooltip
-        key={idKey}
-        id={idKey}
+        key={keyId}
+        id={keyId}
         text={option.tooltipText}
         position="right"
         className="cf-radio-option-tooltip"
@@ -99,17 +100,16 @@ export const RadioField = (props) => {
         <span className="usa-input-error-message" tabIndex={0}>{errorMessage}</span>
       )}
 
-      <div className="cf-form-radio-options">
+      <div className="cf-form-radio-options" style={optionsStyling}>
         {options.map((option, i) => {
           const optionDisabled = isDisabled(option);
-
           const radioField = (<div
             className="cf-form-radio-option"
             key={`${idPart}-${option.value}-${i}`}
           >
             <input
-              name={name}
               onChange={handleChange}
+              name={name}
               type="radio"
               id={`${idPart}_${option.value}`}
               value={option.value}
@@ -204,7 +204,7 @@ RadioField.propTypes = {
   /**
    * The value of the named `input` element(s); required for a controlled component
    */
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 
   /**
    * Stack `input` elements vertically (automatic for more than two options)
@@ -213,7 +213,8 @@ RadioField.propTypes = {
   errorMessage: PropTypes.string,
   strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  optionsStyling: PropTypes.object
 };
 
 export default RadioField;

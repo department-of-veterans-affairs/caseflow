@@ -825,7 +825,7 @@ feature "Task queue", :all_dbs do
         # On case details page fill in the admin action
         action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
         click_dropdown(text: action)
-        fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
+        fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "Please complete this task")
         find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
 
         # Expect to see a success message, the correct number of remaining tasks and have the task in the database
@@ -971,6 +971,8 @@ feature "Task queue", :all_dbs do
       before do
         # force objects above to reload to ensure the visit doesn't fail to load them
         judge_task.reload
+        FeatureToggle.enable!(:mst_identification)
+        FeatureToggle.enable!(:pact_identification)
 
         # Add a user to the Colocated team so the task assignment will suceed.
         Colocated.singleton.add_user(create(:user))
@@ -1069,7 +1071,7 @@ feature "Task queue", :all_dbs do
         # On case details page fill in the admin action
         action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
         click_dropdown(text: action)
-        fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
+        fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "Please complete this task")
         find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
 
         # Expect to see a success message and the correct number of remaining tasks

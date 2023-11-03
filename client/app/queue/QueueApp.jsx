@@ -1,4 +1,4 @@
-/* eslint-disable max-lines */
+/* eslint-disable max-lines, max-len */
 
 import querystring from 'querystring';
 import React from 'react';
@@ -68,7 +68,10 @@ import SetOvertimeStatusModal from './SetOvertimeStatusModal';
 import StartHoldModal from './components/StartHoldModal';
 import EndHoldModal from './components/EndHoldModal';
 import BulkAssignModal from './components/BulkAssignModal';
-
+import CompleteHearingPostponementRequestModal
+  from './components/hearingMailRequestModals/CompleteHearingPostponementRequestModal';
+import CompleteHearingWithdrawalRequestModal
+  from './components/hearingMailRequestModals/CompleteHearingWithdrawalRequestModal';
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
@@ -218,6 +221,10 @@ class QueueApp extends React.PureComponent {
       appealId={props.match.params.appealId}
       taskId={props.match.params.taskId}
       checkoutFlow={props.match.params.checkoutFlow}
+      justificationFeatureToggle={this.props.featureToggles.justification_reason}
+      mstFeatureToggle={this.props.featureToggles.mst_identification}
+      pactFeatureToggle={this.props.featureToggles.pact_identification}
+      legacyMstPactFeatureToggle={this.props.featureToggles.legacy_mst_pact_identification}
     />
   );
 
@@ -229,6 +236,8 @@ class QueueApp extends React.PureComponent {
         <SelectSpecialIssuesView
           appealId={appealId}
           taskId={taskId}
+          legacyMstIdentification={this.props.featureToggles.legacy_mst_pact_identification}
+          mstIdentification={this.props.featureToggles.mst_identification}
           prevStep={`/queue/appeals/${appealId}`}
           nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         />
@@ -243,6 +252,8 @@ class QueueApp extends React.PureComponent {
       <AddEditIssueView
         nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         prevStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
+        justificationFeatureToggle={this.props.featureToggles.justification_reason}
+        legacyMstPactFeatureToggle={this.props.featureToggles.legacy_mst_pact_identification}
         {...props.match.params}
       />
     );
@@ -255,6 +266,7 @@ class QueueApp extends React.PureComponent {
       <SelectRemandReasonsView
         prevStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         {...props.match.params}
+        featureToggles={this.props.featureToggles}
       />
     );
   };
@@ -656,6 +668,14 @@ class QueueApp extends React.PureComponent {
     <CompleteTaskModal modalType="vha_caregiver_support_return_to_board_intake" {...props.match.params} />
   );
 
+  routedCompleteHearingPostponementRequest = (props) => (
+    <CompleteHearingPostponementRequestModal {...props.match.params} />
+  );
+
+  routedCompleteHearingWithdrawalRequest = (props) => (
+    <CompleteHearingWithdrawalRequestModal {...props.match.params} />
+  );
+
   queueName = () =>
     this.props.userRole === USER_ROLE_TYPES.attorney ?
       'Your Queue' :
@@ -757,6 +777,7 @@ class QueueApp extends React.PureComponent {
               title={(props) => {
                 let reviewActionType = props.match.params.checkoutFlow;
 
+                /* eslint-disable indent */
                 // eslint-disable-next-line default-case
                 switch (this.props.reviewActionType) {
                 case DECISION_TYPES.OMO_REQUEST:
@@ -769,6 +790,7 @@ class QueueApp extends React.PureComponent {
                   reviewActionType = 'to Dispatch';
                   break;
                 }
+                /* eslint-enable indent */
 
                 return `Draft Decision | Submit ${reviewActionType}`;
               }}
@@ -927,11 +949,9 @@ class QueueApp extends React.PureComponent {
               render={this.routedAssignToSingleTeam}
             />
             <Route
-              path={
-                `/queue/appeals/:appealId/tasks/:taskId/${
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
                   TASK_ACTIONS.SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION.value
-                }`
-              }
+                }`}
               render={this.routedAssignToSingleTeam}
             />
             <Route
@@ -942,7 +962,7 @@ class QueueApp extends React.PureComponent {
             />
             <Route
               path={`/queue/appeals/:appealId/tasks/:taskId/${
-                  TASK_ACTIONS.SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION.value
+                TASK_ACTIONS.SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION.value
                 }`}
               render={this.routedAssignToSingleTeam}
             />
@@ -1219,6 +1239,18 @@ class QueueApp extends React.PureComponent {
                 }`}
               title={`${PAGE_TITLES.RETURN_TO_BOARD_INTAKE} | Caseflow`}
               render={this.routedVhaCaregiverSupportReturnToBoardIntake}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.COMPLETE_AND_POSTPONE.value}`}
+              title={`${PAGE_TITLES.COMPLETE_HEARING_POSTPONEMENT_REQUEST} | Caseflow`}
+              render={this.routedCompleteHearingPostponementRequest}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.COMPLETE_AND_WITHDRAW.value}`}
+              title={`${PAGE_TITLES.COMPLETE_HEARING_WITHDRAWAL_REQUEST} | Caseflow`}
+              render={this.routedCompleteHearingWithdrawalRequest}
             />
             <PageRoute
               exact
