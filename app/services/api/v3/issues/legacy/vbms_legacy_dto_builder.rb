@@ -8,8 +8,8 @@ class Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder
     @veteran_participant_id = veteran.participant_id.to_s
     @veteran_file_number = veteran.file_number.to_s
     @vacols_issue_count = total_vacols_issue_count
-    @vacols_issues = serialized_vacols_issues
     @offset = RequestIssue.default_per_page #LegacyIssues will be consistent with AMA RequestIssues
+    @vacols_issues = serialized_vacols_issues
     @total_number_of_pages = (@vacols_issue_count / @offset.to_f).ceil
     @hash_response = build_hash_response
   end
@@ -23,7 +23,7 @@ class Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder
     VACOLS::CaseIssue.where(isskey: vacols_ids).size
   end
 
-  def serialized_vacols_issues(page = @page)
+  def serialized_vacols_issues(page = @page, offset = @offset)
     vacols_issues = []
     v_ids = LegacyAppeal.fetch_appeals_by_file_number(@veteran_file_number).map(&:vacols_id)
     v_ids.each do |i|
@@ -31,7 +31,7 @@ class Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder
     end
 
     serialized_data = Api::V3::Issues::Legacy::VacolsIssueSerializer.new(
-      Kaminari.paginate_array(vacols_issues.flatten).page(page)
+      Kaminari.paginate_array(vacols_issues.flatten).page(page).per(offset)
     ).serializable_hash[:data]
 
     extract_vacols_issues(serialized_data)
@@ -46,7 +46,7 @@ class Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder
   def build_hash_response
     if @page > @total_number_of_pages
       @page = @total_number_of_pages
-      @vacols_issues = serialized_vacols_issues(@total_number_of_pages)
+      @vacols_issues = serialized_vacols_issues(@total_number_of_pages, @offset)
     end
     json_response
   end

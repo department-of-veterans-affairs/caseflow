@@ -2,11 +2,11 @@
 
 # :reek:InstanceVariableAssumption
 class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
-  include ApiV3FeatureToggleConcern
+  # include ApiV3FeatureToggleConcern
 
-  before_action do
-    api_released?(:api_v3_legacy_issues)
-  end
+  # before_action do
+  #   api_released?(:api_v3_legacy_issues)
+  # end
 
   before_action :validate_headers, :validate_veteran_presence
 

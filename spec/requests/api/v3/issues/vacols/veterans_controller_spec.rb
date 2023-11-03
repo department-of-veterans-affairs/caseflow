@@ -140,6 +140,14 @@ describe Api::V3::Issues::Vacols::VeteransController, :postgres, type: :request 
             expect(response_hash["total_vacols_issues_for_vet"]).to eq(14)
             expect(response_hash["total_number_of_pages"]).to eq(2)
           end
+
+          it "API call works when you pass in a page param" do
+            headers = { "Authorization": authorization_token, "X-VA-File-Number": veteran_with_multiple_legacy_appeals.file_number}
+            get("/api/v3/issues/vacols/find_by_veteran?page=1", headers: headers)
+            expect(response).to have_http_status(200)
+            response_hash = JSON.parse(response.body)
+            byebug
+          end
         end
       end
     end
