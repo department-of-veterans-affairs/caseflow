@@ -1,33 +1,71 @@
 # frozen_string_literal: true
 
-describe IneligibleJudgesJob, :all_dbs do
-  context "when successful job occurs" do
-    # {Test successful slack message}
+require "rails_helper" # Adjust this line based on your project's directory structure
+require "timecop" # For time-related testing
+
+RSpec.describe IneligibleJudgesJob, type: :job do
+  let(:job) { described_class.new }
+  let(:start_time) { Time.zone.now }
+
+  before do
+    # Freeze time to ensure consistent time measurements in the test
+    Timecop.freeze(start_time)
   end
 
-  context "when error occurs" do
-    # {Not complete just a basic example from other job specs. Need to test for slack and sentry error messages}
-    subject { job.perform_now }
-    let(:job) { described_class.new }
-    let(:slack_service) { SlackService.new(url: "http://www.example.com") }
+  after do
+    Timecop.return
+  end
 
-    it "sends alert to Sentry and Slack" do
-      subject
+  describe "perform method to test the execution" do
+    it "calls #case_distribution_ineligible_judges and logs success" do
+      expect(job).to receive(:case_distribution_ineligible_judges)
+      expect(job).to receive(:log_success)
 
-      expect(slack_service).to have_received(:send_notification).with(
-        "Error running ETLBuilderJob. See Sentry event sentry_12345",
-        "ETLBuilderJob"
-      )
-      expect(@raven_called).to eq(true)
+      job.perform
     end
 
-    it "saves Exception messages and logs error" do
-      allow(Raven).to receive(:capture_exception) { @raven_called = true }
-      allow_any_instance_of(IneligibleJudgesJob).to receive(:sync!).and_raise(bgs_error)
+    it "catches and logs errors" do
+      allow(job).to receive(:case_distribution_ineligible_judges).and_raise(StandardError)
+      expect(job).to receive(:log_error)
 
-      IneligibleJudgesJob.perform_now
+      job.perform
+    end
+  end
 
-      expect(@raven_called).to eq(true)
+  describe "#case_distribution_ineligible_judges" do
+    it "fetches and merges ineligible judges from different sources" do
+      # Stub the methods that fetch data from different sources
+      allow(CaseDistributionIneligibleJudges).to receive(:ineligible_vacols_judges).and_return([{ css_id: "454" }])
+      allow(CaseDistributionIneligibleJudges).to receive(:ineligible_caseflow_judges).and_return([{ sdomainid: "123" }])
+
+      result = job.case_distribution_ineligible_judges
+
+      # Expect the result to be an array with merged data
+      expect(result).to be_an(Array)
+      expect(result).to include(css_id: "454") # Data from the first source
+      expect(result).to include(sdomainid: "123") # Data from the second source
+    end
+
+    it "groups and merges data by css_id or sdomainid" do
+      # Stub the methods that fetch data from different sources
+      allow(CaseDistributionIneligibleJudges).to receive(:ineligible_vacols_judges).and_return([{ css_id: "123" }])
+      allow(CaseDistributionIneligibleJudges).to receive(:ineligible_caseflow_judges).and_return([{ sdomainid: "123" }])
+
+      result = job.case_distribution_ineligible_judges
+
+      # Expect the result to be an array with merged data grouped by '123'
+      expect(result).to be_an(Array)
+      expect(result).to include(css_id: "123", sdomainid: "123")
+    end
+  end
+
+  describe "#log_success" do
+    let(:slack_service) { SlackService.new(url: "http://www.example.com") }
+    it "logs success message with duration" do
+      expect(Rails.logger).to receive(:info)
+      allow(SlackService).to receive(:new).and_return(slack_service)
+      allow(slack_service).to receive(:send_notification) { true }
+      job.log_success(Time.zone.now)
     end
   end
 end

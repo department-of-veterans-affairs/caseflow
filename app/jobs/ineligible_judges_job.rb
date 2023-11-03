@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-#
 # A scheduled job that caches the list of ineligible judges within Caseflow and Vacols for Case Distribution use.
 # This job is ran once a week, with a cache that lasts a week.
 class IneligibleJudgesJob < CaseflowJob
@@ -13,12 +12,10 @@ class IneligibleJudgesJob < CaseflowJob
     @start_time ||= Time.zone.now
     case_distribution_ineligible_judges
 
-    log_success
+    log_success(@start_time)
   rescue StandardError => error
     log_error(error)
   end
-
-  private
 
   # {Grabs both vacols and caseflow ineligible judges then merges into one list with duplicates merged if they have the same CSS_ID/SDOMAINID}
   def case_distribution_ineligible_judges
@@ -33,8 +30,8 @@ class IneligibleJudgesJob < CaseflowJob
     end
   end
 
-  def log_success
-    duration = time_ago_in_words(@start_time)
+  def log_success(start_time)
+    duration = time_ago_in_words(start_time)
     msg = "#{self.class.name} completed after running for #{duration}."
     Rails.logger.info(msg)
 
