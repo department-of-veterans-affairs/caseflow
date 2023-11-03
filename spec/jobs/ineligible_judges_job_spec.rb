@@ -35,8 +35,8 @@ RSpec.describe IneligibleJudgesJob, type: :job do
   describe "#case_distribution_ineligible_judges" do
     it "fetches and merges ineligible judges from different sources" do
       # Stub the methods that fetch data from different sources
-      allow(CaseDistributionIneligibleJudges).to receive(:ineligible_vacols_judges).and_return([{ css_id: "454" }])
-      allow(CaseDistributionIneligibleJudges).to receive(:ineligible_caseflow_judges).and_return([{ sdomainid: "123" }])
+      allow(CaseDistributionIneligibleJudges).to receive(:ineligible_caseflow_judges).and_return([{ css_id: "454" }])
+      allow(CaseDistributionIneligibleJudges).to receive(:ineligible_vacols_judges).and_return([{ sdomainid: "123" }])
 
       result = job.send(:case_distribution_ineligible_judges)
 
@@ -49,8 +49,8 @@ RSpec.describe IneligibleJudgesJob, type: :job do
 
     it "groups and merges data by css_id or sdomainid" do
       # Stub the methods that fetch data from different sources
-      allow(CaseDistributionIneligibleJudges).to receive(:ineligible_vacols_judges).and_return([{ css_id: "123" }])
-      allow(CaseDistributionIneligibleJudges).to receive(:ineligible_caseflow_judges).and_return([{ sdomainid: "123" }])
+      allow(CaseDistributionIneligibleJudges).to receive(:ineligible_caseflow_judges).and_return([{ css_id: "123" }])
+      allow(CaseDistributionIneligibleJudges).to receive(:ineligible_vacols_judges).and_return([{ sdomainid: "123" }])
 
       result = job.send(:case_distribution_ineligible_judges)
 
