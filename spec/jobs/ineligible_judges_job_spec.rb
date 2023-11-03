@@ -33,7 +33,7 @@ RSpec.describe IneligibleJudgesJob, type: :job do
   end
 
   describe "#case_distribution_ineligible_judges" do
-    it "fetches and merges ineligible judges from different sources" do
+    it "merges ineligible judges from different sources and store to cache" do
       # Stub the methods that fetch data from different sources
       allow(CaseDistributionIneligibleJudges).to receive(:ineligible_caseflow_judges).and_return([{ css_id: "454" }])
       allow(CaseDistributionIneligibleJudges).to receive(:ineligible_vacols_judges).and_return([{ sdomainid: "123" }])
@@ -53,6 +53,20 @@ RSpec.describe IneligibleJudgesJob, type: :job do
       allow(CaseDistributionIneligibleJudges).to receive(:ineligible_vacols_judges).and_return([{ sdomainid: "123" }])
 
       result = job.send(:case_distribution_ineligible_judges)
+
+      # Expect the result to be an array with merged data grouped by '123'
+      expect(result).to be_an(Array)
+      expect(result).to include(css_id: "123", sdomainid: "123")
+      expect(result.count).to eq 1
+    end
+
+    it "fetches ineligible judges from cache" do
+      # Stub the methods that fetch data from different sources
+      allow(CaseDistributionIneligibleJudges).to receive(:ineligible_caseflow_judges).and_return([{ css_id: "123" }])
+      allow(CaseDistributionIneligibleJudges).to receive(:ineligible_vacols_judges).and_return([{ sdomainid: "123" }])
+
+      job.send(:case_distribution_ineligible_judges)
+      result = Rails.cache.fetch("case_distribution_ineligible_judges")
 
       # Expect the result to be an array with merged data grouped by '123'
       expect(result).to be_an(Array)
