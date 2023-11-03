@@ -52,7 +52,7 @@ export const DaysWaiting = ({ control, register, name }) => {
     </>;
   };
 
-  return <div className="space-it-out">
+  return <div className="days-waiting">
     <WidthDiv>
       <Controller
         control={control}
