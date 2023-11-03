@@ -13,9 +13,6 @@ class ExternalApi::WebexService
     "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json"
   }.freeze
 
-  def create_conference(*)
-    fail NotImplementedError
-
   def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:)
     @host = host
     @port = port
@@ -62,6 +59,22 @@ class ExternalApi::WebexService
     ExternalApi::WebexService::DeleteResponse.new(resp)
   end
 
+  # Purpose: Refreshing the access token to access the API
+  # Return: The response body
+  def refresh_access_token
+    url = URI::DEFAULT_PARSER.escape(BASE_URL + AUTH_URL)
+    params = {
+      grant_type: GRANT_TYPE,
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      refresh_token: REFRESH_TOKEN
+    }
+    encoded_params = URI.encode_www_form(params)
+    response = Faraday.post(url, encoded_params)
+    caseflow_res = ExternalApi::WebexService::Response.new(response)
+    caseflow_res.resp unless caseflow_res.error
+  end
+
   private
 
   # :nocov:
@@ -82,21 +95,4 @@ class ExternalApi::WebexService
       HTTPI.post(request)
     end
   end
-
-  # Purpose: Refreshing the access token to access the API
-  # Return: The response body
-  def refresh_access_token
-    url = URI::DEFAULT_PARSER.escape(BASE_URL + AUTH_URL)
-    params = {
-      grant_type: GRANT_TYPE,
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
-      refresh_token: REFRESH_TOKEN
-    }
-    encoded_params = URI.encode_www_form(params)
-    response = Faraday.post(url, encoded_params)
-    caseflow_res = ExternalApi::WebexService::Response.new(response)
-    caseflow_res.resp unless caseflow_res.error
-  end
-  # :nocov:
 end

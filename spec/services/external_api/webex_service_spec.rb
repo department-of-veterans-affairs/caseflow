@@ -1,8 +1,23 @@
 # frozen_string_literal: true
 
 describe ExternalApi::WebexService do
+  let(:host) { "fake-broker." }
+  let(:port) { "0000" }
+  let(:aud) { "1234abcd" }
+  let(:apikey) { SecureRandom.uuid.to_s }
+  let(:domain) { "gov.fake.com" }
+  let(:api_endpoint) { "/api/v2/fake" }
+  let(:webex_service) do
+    ExternalApi::WebexService.new(
+      host: host,
+      domain: domain,
+      api_endpoint: api_endpoint,
+      aud: aud,
+      apikey: apikey,
+      port: port
+    )
+  end
   before do
-    subject { ExternalApi::WebexService.new }
     stub_const("ENV", "WEBEX_HOST" => "fake.api")
     stub_const("ENV", "WEBEX_DOMAIN" => ".webex.com")
     stub_const("ENV", "WEBEX_CLIENT_ID" => "fake_id")
@@ -22,11 +37,11 @@ describe ExternalApi::WebexService do
     let(:caseflow_auth_response) { ExternalApi::WebexService::Response.new(example_auth_response) }
     it "refreshes access token" do
       allow(Faraday).to receive(:post).and_return(example_auth_response)
-      expect(subject.refresh_access_token).to eq(caseflow_auth_response.resp)
+      expect(webex_service.refresh_access_token).to eq(caseflow_auth_response.resp)
     end
   end
 
-  context "error" do
+  context "Oauth error" do
     let(:example_expired_refresh_token_response) do
       { "error": "invalid_token",
         "error_description": "The access token expired" }
@@ -36,14 +51,11 @@ describe ExternalApi::WebexService do
     let(:caseflow_401_response) { ExternalApi::WebexService::Response.new(example_401_response) }
     it "returns an invalid token error" do
       allow(Faraday).to receive(:post).and_return(example_401_response)
-      expect { subject.refresh_access_token }.to raise_error(Caseflow::Error::WebexInvalidTokenError)
+      expect { webex_service.refresh_access_token }.to raise_error(Caseflow::Error::WebexInvalidTokenError)
     end
-    let(:host) { "fake-broker." }
-    let(:port) { "0000" }
-    let(:aud) { "1234abcd" }
-    let(:apikey) { SecureRandom.uuid.to_s }
-    let(:domain) { "gov.fake.com" }
-    let(:api_endpoint) { "/api/v2/fake" }
+  end
+
+  context "error" do
 
     let(:webex_service) do
       ExternalApi::WebexService.new(

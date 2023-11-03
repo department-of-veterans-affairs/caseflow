@@ -109,6 +109,7 @@ describe VirtualHearings::CreateConferenceJob do
         conference_id = "#{virtual_hearing.hearing.docket_number}#{virtual_hearing.hearing.id}"
         conference_id = conference_id.delete "-"
         subject.perform_now
+        byebug
         expect(virtual_hearing.conference_id).to eq(conference_id.to_i)
       end
     end
