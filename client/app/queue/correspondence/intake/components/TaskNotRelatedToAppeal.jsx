@@ -1,20 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Dropdown from '../../../../components/Dropdown';
 import TextareaField from '../../../../components/TextareaField';
+import ReactSelectDropdown from '../../../../components/ReactSelectDropdown';
 
-const TaskNotRelatedToAppeal = (task) => {
+const TaskNotRelatedToAppeal = (props) => {
+
+  const dummyOptions = [
+    { value: 0, label: 'Abeyance' },
+    { value: 1, label: 'Attorney Inquiry' },
+    { value: 2, label: 'CAVC Correspondence' }
+  ];
+
+  const [selectedTaskType, setSelectedTaskType] = useState(-1);
+
+  const handleChangeTaskType = (newType) => {
+    setSelectedTaskType(newType);
+  }
+
   return (
-    <div style={{ display: 'inline-block', marginRight: '2rem' }} key={i}>
+    <div key={props.key} style={{ display: 'inline-block', marginRight: '2rem' }}>
       <div className="gray-border" style={{ padding: '2rem 2rem', marginLeft: '3rem' }}>
         <div style={
           { display: 'flex', justifyContent: 'flex-end', paddingLeft: '1rem', marginLeft: '0.5rem', minWidth: '500px' }
         }>
-          <Dropdown
-            name="Task"
+          <ReactSelectDropdown
+            options={dummyOptions}
+            defaultValue={{ value: -1, label:'Select...' }}
             label="Task"
-            options={[['Option1', 'Option 1'], ['Option 2'], ['Option 3']]}
-            defaultText="Select..."
-            style={{ display: 'flex', width: '100%', marginRight: '1rem' }}
+            onChangeMethod={(selectedOption) => handleChangeTaskType(selectedOption.value)}
+            className="date-filter-type-dropdown"
             // onChange={(option) => onClickIssueAction(issue.index, option)}
           />
           <div style={{ marginRight: '10rem' }} />
@@ -24,10 +38,11 @@ const TaskNotRelatedToAppeal = (task) => {
             label="Provide context and instruction on this task"
             defaultText=""
           />
+          <p onClick={props.removeTask}>Remove task</p>
         </div>
       </div>
     </div>
-);
+  );
 };
 
 export default TaskNotRelatedToAppeal;

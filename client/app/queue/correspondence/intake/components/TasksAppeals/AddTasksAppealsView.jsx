@@ -25,10 +25,22 @@ export const AddTasksAppealsView = () => {
     // const clickButt = () => {
     console.log("we added a task *evil laugh*");
     const currentTask = [...addTask];
-    const randNum = Math.floor(Math.random * 10000);
+    const randNum = Math.floor(Math.random() * 1000000);
     currentTask.push({ Object: randNum })
     setAddTask(currentTask);
     // setAddTask(currentTask.push({ Object: 'DummyData' }));
+  };
+
+  const removeTaskAtIndex = (index) => {
+    const currentTask = [...addTask];
+
+    // bug is happening in this metehod I think
+    console.log("Removing at index " + index)
+    console.log(currentTask);
+    const newTask = currentTask.splice(index, 1);
+    console.log(newTask);
+    setAddTask(newTask);
+
   };
 
   return (
@@ -99,7 +111,7 @@ export const AddTasksAppealsView = () => {
             }}>
             </span> */}
             { addTask && addTask.map((currentTask, i) => (
-              <TaskNotRelatedToAppeal />
+              <TaskNotRelatedToAppeal secret={i} key={i} removeTask={() => removeTaskAtIndex(i)} />
 
               // <div style={{ display: 'inline-block', marginRight: '2rem' }} key={i}>
               //   <div className="gray-border" style={{ padding: '2rem 2rem', marginLeft: '3rem' }}>
