@@ -132,7 +132,7 @@ describe Api::V3::Issues::Vacols::VeteransController, :postgres, type: :request 
             expect(response_hash["total_number_of_pages"]).to eq(2)
           end
 
-          it "the API call should return all Issues across all Legacy Appeals for a given Veteran" do
+          it "the standard API call should return all Issues across all Legacy Appeals for a given Veteran" do
             get_vacols_issues(file_number: veteran_with_multiple_legacy_appeals.file_number)
             expect(response).to have_http_status(200)
             response_hash = JSON.parse(response.body)
@@ -151,6 +151,17 @@ describe Api::V3::Issues::Vacols::VeteransController, :postgres, type: :request 
             expect(response_hash["vacols_issues"].count).to eq(10)
           end
 
+          it "API call returns the last page when you pass in a page param that exceeds it" do
+            headers = { "Authorization": authorization_token, "X-VA-File-Number": veteran_with_multiple_legacy_appeals.file_number}
+            get("/api/v3/issues/vacols/find_by_veteran?page=9", headers: headers)
+            response_hash = JSON.parse(response.body)
+            expect(response).to have_http_status(200)
+            expect(response_hash["total_vacols_issues_for_vet"]).to eq(14)
+            expect(response_hash["page"]).to eq(2)
+            expect(response_hash["total_number_of_pages"]).to eq(2)
+            expect(response_hash["vacols_issues"].count).to eq(4)
+          end
+
           it "API call works when you pass in a page and per_page param" do
             headers = { "Authorization": authorization_token, "X-VA-File-Number": veteran_with_multiple_legacy_appeals.file_number}
             get("/api/v3/issues/vacols/find_by_veteran?page=1&per_page=4", headers: headers)
@@ -161,7 +172,7 @@ describe Api::V3::Issues::Vacols::VeteransController, :postgres, type: :request 
             expect(response_hash["vacols_issues"].count).to eq(4)
           end
 
-          it "API call works when you pass in a per_page param thats over upper_limit of 50 we return a maximum of 50 issues" do
+          it "API call returns a maximum of 50 issues when you pass in a per_page param thats over the upper_limit of 50" do
             headers = { "Authorization": authorization_token, "X-VA-File-Number": veteran_with_multiple_legacy_appeals.file_number}
             get("/api/v3/issues/vacols/find_by_veteran?page=1&per_page=100", headers: headers)
             response_hash = JSON.parse(response.body)
@@ -172,7 +183,7 @@ describe Api::V3::Issues::Vacols::VeteransController, :postgres, type: :request 
             expect(response_hash["max_vacols_issues_per_page"]).to eq(50)
           end
 
-          it "API call works when you pass in a per_page param of 0" do
+          it "API call returns the default max issues when you pass in a per_page param of 0" do
             headers = { "Authorization": authorization_token, "X-VA-File-Number": veteran_with_multiple_legacy_appeals.file_number}
             get("/api/v3/issues/vacols/find_by_veteran?page=1&per_page=0", headers: headers)
             response_hash = JSON.parse(response.body)
