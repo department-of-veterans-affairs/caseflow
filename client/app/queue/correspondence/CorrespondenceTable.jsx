@@ -7,13 +7,14 @@ class CorrespondenceTable extends React.Component {
 
   render() {
     const testobj = [{
-      veteranDetails: 'Rosalie Turner',
+
+      veteranDetails: 'Rosalie Turner (123456789)',
       packageDocumentType: '1111111',
       cmPacketNumber: '22222222',
-      correspondeceId: 1,
+      correspondeceId: 11,
     },
     {
-      veteranDetails: 'Ana Turner',
+      veteranDetails: 'Ana Turner (123456789)',
       packageDocumentType: '12345678',
       cmPacketNumber: '12345679',
       correspondeceId: 2,
