@@ -13,7 +13,7 @@ class CorrespondencesController < ApplicationController
 
   def show
     @correspondence = Correspondence.find(params[:id])
-    render json: { correspondence: @correspondence }
+    render json: { correspondence: @correspondence, package_document_type: @correspondence.package_document_type }
   end
 
   private

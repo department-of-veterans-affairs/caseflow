@@ -41,27 +41,29 @@ class ReviewPackageCmpInfo extends React.PureComponent {
   constructor(props){
     super(props);
     this.state = {
-      correspondence: null
+      correspondence: null,
+      package_document_type: null
     }
   }
 
   componentDidMount(){
     const correspondence = this.props;
     ApiUtil.get(`/queue/correspondences/${correspondence.correspondenceId}`).then((response) => {
-      this.setState({ correspondence: response.body.correspondence })  
+      this.setState({ correspondence: response.body.correspondence, package_document_type: response.body.package_document_type })  
     })
   }
 
   render = () => {
     return (
       <div>
-        <CmpInfoScaffolding correspondence={this.state?.correspondence} />
+        <CmpInfoScaffolding correspondence={this.state?.correspondence} packageDocumentType = {this.state?.package_document_type} />
       </div>
     );
   };
 }
 
 const CmpInfoScaffolding = (props) => {
+  const packageDocumentType = props.packageDocumentType
   const correspondence = props.correspondence
   const date = new Date(correspondence?.portal_entry_date)
   let customDate = date && `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`
@@ -72,11 +74,11 @@ const CmpInfoScaffolding = (props) => {
         <TitleDetailsSubheaderSection title="Portal Entry Date">
           {customDate}
         </TitleDetailsSubheaderSection>
-         <TitleDetailsSubheaderSection title="Source Type">
+        <TitleDetailsSubheaderSection title="Source Type">
           {correspondence?.source_type}
         </TitleDetailsSubheaderSection>
         <TitleDetailsSubheaderSection title="Package Document Type">
-          {correspondence?.cmp_packet_number}
+          {packageDocumentType?.name}
         </TitleDetailsSubheaderSection> 
         <TitleDetailsSubheaderSection title="CM Packet Number">
           {correspondence?.cmp_packet_number}
@@ -84,7 +86,7 @@ const CmpInfoScaffolding = (props) => {
         <TitleDetailsSubheaderSection title="CMP Queue Name">
           {correspondence?.cmp_packet_number}
         </TitleDetailsSubheaderSection> 
-        <TitleDetailsSubheaderSection title="BVA Receipt Date">
+        <TitleDetailsSubheaderSection title="VA DOR">
           {customDate}
         </TitleDetailsSubheaderSection>
       </TitleDetailsSubheader>
