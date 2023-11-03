@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 # Disable :reek:InstanceVariableAssumption
+# rubocop:disable Layout/LineLength
+# rubocop:disable Lint/UselessAssignment
 module Seeds
   class AmaIntake < Base
     def initialize
@@ -188,75 +190,63 @@ module Seeds
 
     def create_end_product_establishment(synced_status_and_source, veteran)
       create(:end_product_establishment,
-            synced_status_and_source,
-            veteran_file_number: veteran.file_number
-            )
+             synced_status_and_source,
+             veteran_file_number: veteran.file_number)
     end
 
-    # rubocop:disable Metrics/ParameterLists
     # :reek:LongParameterList
     def create_claim_review_request_issue(rating_or_nonrating_trait, claim_review, veteran, associated_decision_issue_trait = nil)
       if associated_decision_issue_trait
         create(:request_issue,
-              rating_or_nonrating_trait,
-              associated_decision_issue_trait,
-              veteran_participant_id: veteran.participant_id,
-              decision_review: claim_review.source,
-              end_product_establishment: claim_review
-              )
+               rating_or_nonrating_trait,
+               associated_decision_issue_trait,
+               veteran_participant_id: veteran.participant_id,
+               decision_review: claim_review.source,
+               end_product_establishment: claim_review)
       else
         create(:request_issue,
-              rating_or_nonrating_trait,
-              decision_review: claim_review.source,
-              veteran_participant_id: veteran.participant_id,
-              end_product_establishment: claim_review
-              )
+               rating_or_nonrating_trait,
+               decision_review: claim_review.source,
+               veteran_participant_id: veteran.participant_id,
+               end_product_establishment: claim_review)
       end
     end
 
-    # rubocop:disable Metrics/ParameterLists
     # :reek:LongParameterList
     def create_appeal_request_issue(rating_trait, appeal, veteran, associated_decision_issue_trait)
       create(:request_issue,
-            rating_trait,
-            associated_decision_issue_trait,
-            veteran_participant_id: veteran.participant_id,
-            decision_review: appeal
-            )
+             rating_trait,
+             associated_decision_issue_trait,
+             veteran_participant_id: veteran.participant_id,
+             decision_review: appeal)
     end
 
-    # rubocop:disable Metrics/ParameterLists
     # :reek:LongParameterList
     def create_request_issue_with_many_decision_issues(rating_or_nonrating_trait, hlr_epe, veteran, number_of_issues)
       decision_issues = create_list(:decision_issue,
                                     number_of_issues,
                                     participant_id: veteran.participant_id,
-                                    decision_review: hlr_epe.source
-                                    )
+                                    decision_review: hlr_epe.source)
       request_issue = create(:request_issue,
-                            rating_or_nonrating_trait,
-                            decision_review: hlr_epe.source,
-                            end_product_establishment: hlr_epe,
-                            veteran_participant_id: veteran.participant_id,
-                            decision_issues: decision_issues
-                            )
+                             rating_or_nonrating_trait,
+                             decision_review: hlr_epe.source,
+                             end_product_establishment: hlr_epe,
+                             veteran_participant_id: veteran.participant_id,
+                             decision_issues: decision_issues)
     end
 
-    # rubocop:disable Metrics/ParameterLists
     # :reek:LongParameterList
     def create_decision_issue_with_many_request_issues(rating_or_nonrating_trait, hlr_epe, veteran, number_of_issues)
       request_issues = create_list(:request_issue,
-                                    number_of_issues,
-                                    rating_or_nonrating_trait,
-                                    decision_review: hlr_epe.source,
-                                    end_product_establishment: hlr_epe,
-                                    veteran_participant_id: veteran.participant_id
-                                    )
+                                   number_of_issues,
+                                   rating_or_nonrating_trait,
+                                   decision_review: hlr_epe.source,
+                                   end_product_establishment: hlr_epe,
+                                   veteran_participant_id: veteran.participant_id)
       decision_issue = create(:decision_issue,
                               participant_id: veteran.participant_id,
                               decision_review: hlr_epe.source,
-                              request_issues: request_issues
-                              )
+                              request_issues: request_issues)
     end
 
     def create_vacols_appeal(veteran)
@@ -264,3 +254,5 @@ module Seeds
     end
   end
 end
+# rubocop:enable Layout/LineLength
+# rubocop:enable Lint/UselessAssignment
