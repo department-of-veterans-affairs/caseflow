@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # :reek:InstanceVariableAssumption
-class Api::V3::Issues::Legacy::VeteransController < Api::V3::BaseController
+class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
   include ApiV3FeatureToggleConcern
 
   before_action do
@@ -71,15 +71,7 @@ class Api::V3::Issues::Legacy::VeteransController < Api::V3::BaseController
   end
 
   def render_vacols_issues(dto)
-    # if dto.vacols_issue_count == 0
-    #   render_errors(
-    #     status: 202,
-    #     code: :no_vacols_issues_found,
-    #     title: "No VACOLS Issues found for the given veteran"
-    #   ) && return
-    # else
-      vacols_issues = dto.hash_response
-      render json: vacols_issues
-    # end
+    vacols_issues = dto.hash_response
+    render json: vacols_issues
   end
 end

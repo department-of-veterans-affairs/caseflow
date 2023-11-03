@@ -4,7 +4,7 @@ require "test_prof/recipes/rspec/let_it_be"
 
 # rubocop:disable Layout/LineLength
 # rubocop:disable Lint/ParenthesesAsGroupedExpression
-describe Api::V3::Issues::Legacy::VeteransController, :postgres, type: :request do
+describe Api::V3::Issues::Vacols::VeteransController, :postgres, type: :request do
   let_it_be(:api_key) do
     ApiKey.create!(consumer_name: "ApiV3 Test VBMS Consumer").key_string
   end
@@ -147,7 +147,7 @@ describe Api::V3::Issues::Legacy::VeteransController, :postgres, type: :request 
     def get_vacols_issues(auth_token: authorization_token, file_number: nil)
       headers = { "Authorization": auth_token, "X-VA-File-Number": file_number}
 
-      get("/api/v3/issues/legacy/find_by_veteran", headers: headers)
+      get("/api/v3/issues/vacols/find_by_veteran", headers: headers)
     end
   end
 end

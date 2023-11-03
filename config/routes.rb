@@ -55,7 +55,7 @@ Rails.application.routes.draw do
         end
       end
       namespace :issues do
-        namespace :legacy do
+        namespace :vacols do
           get 'find_by_veteran', to: "veterans#show" # passing in ssn/vfn as a header
         end
       end
