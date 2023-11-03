@@ -20,7 +20,7 @@ module Seeds
                   :veteran,
                   params)
       create_const_correspondence(veteran, uuid)
-      10.times do
+      20.times do
         create_default_correspondence(veteran)
       end
     end
@@ -48,7 +48,7 @@ module Seeds
                   :veteran,
                   params)
       create_const_correspondence(veteran, uuid)
-      25.times do
+      100.times do
         create_default_correspondence(veteran)
       end
     end
