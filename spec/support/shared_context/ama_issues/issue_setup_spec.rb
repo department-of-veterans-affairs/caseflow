@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
+# rubocop:disable Layout/LineLength
 require "test_prof/recipes/rspec/let_it_be"
 
 RSpec.shared_context :set_new_page_per do
   before { RequestIssue.paginates_per(2) }
-  after { RequestIssue.paginates_per(ENV["REQUEST_ISSUE_PAGINATION_OFFSET"]) }
+  after { RequestIssue.paginates_per(ENV["REQUEST_ISSUE_PAGINATION_OFFSET"].to_i) }
 end
 
 RSpec.shared_context :multiple_ri_multiple_di do
@@ -40,5 +41,7 @@ RSpec.shared_context :number_of_request_issues_exceeds_paginates_per do |legacy_
     it_behaves_like :it_should_default_to_page_1, legacy_appeals_present
     it_behaves_like :it_should_show_first_page_if_page_negatvie, legacy_appeals_present
     it_behaves_like :it_should_show_last_page_if_page_larger_than_total, legacy_appeals_present
+    it_behaves_like :it_should_show_correct_total_number_of_pages_and_max_request_issues_per_page_on_per_change, legacy_appeals_present
   end
 end
+# rubocop:enable Layout/LineLength

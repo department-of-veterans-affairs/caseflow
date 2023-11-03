@@ -3,6 +3,28 @@
 # rubocop:disable Layout/LineLength
 # rubocop:disable Lint/ParenthesesAsGroupedExpression
 
+RSpec.shared_examples :it_should_show_correct_total_number_of_pages_and_max_request_issues_per_page_on_per_change do |legacy_appeals_present|
+  it "should show correct total number of pages and max request issues per page on per change" do
+    RequestIssue::DEFAULT_UPPER_BOUND_PER_PAGE = 50
+    per = 1
+    get(
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=1&per=#{per}",
+      headers: authorization_header
+    )
+    response_hash = JSON.parse(response.body)
+    total_number_of_pages = (request_issue_for_vet_count / per.to_f).ceil
+    expect(response).to have_http_status(200)
+    expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
+    expect(response_hash["legacy_appeals_present"]).to eq legacy_appeals_present
+    expect(response_hash["request_issues"].size).to eq per
+    expect(response_hash["page"]).to eq 1
+    expect(response_hash["total_number_of_pages"]).to eq total_number_of_pages
+    expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+    expect(response_hash["max_request_issues_per_page"]).to eq per
+    expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
+  end
+end
+
 RSpec.shared_examples :it_should_show_first_page_if_page_negatvie do |legacy_appeals_present|
   it "should show the first page if page is negative" do
     get(
