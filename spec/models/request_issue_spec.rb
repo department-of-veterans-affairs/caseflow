@@ -1120,7 +1120,8 @@ describe RequestIssue, :all_dbs do
       end
     end
 
-    context "when the current request issue has no ineligible reason, not closed, and has a split issue status of in_progress" do
+    context "when the current request issue has no ineligible reason,\
+     not closed, and has a split issue status of in_progress" do
       it "should be active" do
         request_issue.update!(split_issue_status: "in_progress")
         expect(request_issue.active?).to eq true
@@ -1140,7 +1141,6 @@ describe RequestIssue, :all_dbs do
         expect(request_issue.active?).to eq false
       end
     end
-
   end
 
   context "#description" do
