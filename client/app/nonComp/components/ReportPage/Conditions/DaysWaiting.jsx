@@ -2,6 +2,7 @@ import React from 'react';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import NumberField from 'app/components/NumberField';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
 import { Controller, useFormContext } from 'react-hook-form';
 
@@ -88,4 +89,10 @@ export const DaysWaiting = ({ control, register, name }) => {
       valueTwoContent() : null}
 
   </div>;
+};
+
+DaysWaiting.propTypes = {
+  control: PropTypes.object,
+  register: PropTypes.func,
+  name: PropTypes.string
 };
