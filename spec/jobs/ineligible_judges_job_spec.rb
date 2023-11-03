@@ -44,6 +44,7 @@ RSpec.describe IneligibleJudgesJob, type: :job do
       expect(result).to be_an(Array)
       expect(result).to include(css_id: "454") # Data from the first source
       expect(result).to include(sdomainid: "123") # Data from the second source
+      expect(result.count).to eq 2
     end
 
     it "groups and merges data by css_id or sdomainid" do
@@ -56,6 +57,7 @@ RSpec.describe IneligibleJudgesJob, type: :job do
       # Expect the result to be an array with merged data grouped by '123'
       expect(result).to be_an(Array)
       expect(result).to include(css_id: "123", sdomainid: "123")
+      expect(result.count).to eq 1
     end
   end
 
