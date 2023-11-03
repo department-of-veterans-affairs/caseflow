@@ -4,7 +4,7 @@
 class ClaimHistoryService
   attr_reader :business_line, :processed_task_ids,
               :processed_request_issue_ids, :processed_request_issue_update_ids,
-              :processed_decision_issue_ids, :events
+              :processed_decision_issue_ids, :events, :filters
 
   def initialize(business_line = VhaBusinessLine.singleton, filters = {})
     @business_line = business_line
@@ -58,6 +58,10 @@ class ClaimHistoryService
       number_of_database_columns: @number_of_database_columns,
       number_of_database_rows: @number_of_database_rows
     }
+  end
+
+  def filters=(value)
+    @filters = parse_filters(value)
   end
 
   private

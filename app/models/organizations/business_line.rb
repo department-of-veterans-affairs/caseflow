@@ -16,6 +16,10 @@ class BusinessLine < Organization
     }
   end
 
+  def can_generate_claim_history
+    false
+  end
+
   # Example Params:
   # sort_order: 'desc',
   # sort_by: 'assigned_at',
