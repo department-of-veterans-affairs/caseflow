@@ -297,6 +297,7 @@ class ClaimHistoryEvent
 
     # Pulled from the person model
     @claimant_name = FullName.new(change_data["first_name"], "", change_data["last_name"]).formatted(:readable_short)
+    @event_date = change_data["event_date"]
     parse_event_attributes(change_data)
     parse_intake_attributes(change_data)
     parse_task_attributes(change_data)
@@ -332,18 +333,18 @@ class ClaimHistoryEvent
   end
 
   def parse_event_attributes(change_data)
-    # Try to keep all the dates consistent as a iso8601 string if possible
-    parse_event_date(change_data)
+    standardize_event_date
     @user_facility = change_data["user_facility"]
     @event_user_name = change_data["event_user_name"]
     @event_user_id = change_data["event_user_id"]
   end
 
-  def parse_event_date(change_data)
-    @event_date = if change_data["event_date"].is_a?(String)
-                    change_data["event_date"]
+  def standardize_event_date
+    # Try to keep all the dates consistent as a iso8601 string if possible
+    @event_date = if event_date.is_a?(String)
+                    event_date
                   else
-                    change_data["event_date"]&.iso8601
+                    event_date&.iso8601
                   end
   end
 
