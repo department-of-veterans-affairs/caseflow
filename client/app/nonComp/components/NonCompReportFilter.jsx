@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 
-const NonCompReportFilter = ({ control, props }) =>(
+const NonCompReportFilter = ({ control, props }) => (
   <>
     {/* <h2>Type of Report</h2> */}
     <h2>{ props.header }</h2>
@@ -21,6 +21,7 @@ const NonCompReportFilter = ({ control, props }) =>(
           onChange={(valObj) => {
             onChange(valObj?.value);
           }}
+          required={false}
         />
       )}
     />

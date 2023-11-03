@@ -49,7 +49,7 @@ export const TimingSpecification = () => {
         ['after', 'before', 'between'].includes(watchTimingSpecification) ?
           <ReportPageDateSelector
             control={control}
-            name={watchTimingSpecification === 'between' ? 'From' : 'Date'}
+            name={watchTimingSpecification === 'between' ? 'from' : 'date'}
             label={watchTimingSpecification === 'between' ? 'From' : 'Date'}
           /> :
           null

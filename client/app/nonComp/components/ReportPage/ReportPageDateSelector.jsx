@@ -23,6 +23,7 @@ const ReportPageDateSelector = ({ name, label, control }) => {
             field.onChange(val);
           }}
           type="date"
+          noFutureDates
         />
       </div>
     </fieldset>
