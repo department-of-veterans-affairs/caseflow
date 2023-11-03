@@ -180,6 +180,31 @@
       align-items: center;
       justify-content: flex-end;
       width: 40%;
+
+      .decisionReviewTypeContainer {
+        display: flex;
+        text-wrap: nowrap;
+
+        // Do some media query magic to make the checkboxes look nice for different screen sizes
+        @media screen and (max-width: 1439px) {
+          align-self: flex-end;
+          flex-wrap: wrap;
+          // scss-lint:disable PropertySpelling
+          gap: 8px;
+          padding-left: 28px;
+
+        }
+
+        @media screen and (min-width: 1440px) {
+          // scss-lint:disable PropertySpelling
+          gap: 16px;
+        }
+
+        // Override Checkbox component margin
+        label {
+          margin: 0;
+        }
+      }
     }
 
     .report-page-variable-content-wider {

@@ -2,7 +2,7 @@ import React from 'react';
 import { axe } from 'jest-axe';
 
 import userEvent from '@testing-library/user-event';
-import { fireEvent, getAllByRole, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import ReportPage from 'app/nonComp/pages/ReportPage';
 import selectEvent from 'react-select-event';
@@ -135,6 +135,41 @@ describe('ReportPage', () => {
 
       await selectEvent.openMenu(selects[1]);
       expect(screen.queryByText('Facility')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Decision Review Type Section', () => {
+    beforeEach(clickOnReportType);
+
+    const navigateToDecisionReviewType = async () => {
+      const addConditionButton = screen.getByText('Add Condition');
+
+      await userEvent.click(addConditionButton);
+      const select = screen.getByText('Select a variable');
+
+      await selectEvent.select(select, ['Decision Review Type']);
+    };
+
+    it('shows the correct checkbox fields', async () => {
+      setup();
+      await navigateToDecisionReviewType();
+
+      expect(screen.getByText('Higher-Level Reviews')).toBeInTheDocument();
+      expect(screen.getByText('Supplemental Claims')).toBeInTheDocument();
+    });
+
+    it('clicking the checkbox should toggle the checked status', async () => {
+      setup();
+      await navigateToDecisionReviewType();
+
+      const checkbox = screen.getByLabelText('Higher-Level Reviews');
+
+      await userEvent.click(checkbox);
+      expect(checkbox.checked).toEqual(true);
+
+      await userEvent.click(checkbox);
+      expect(checkbox.checked).toEqual(false);
+
     });
   });
 
