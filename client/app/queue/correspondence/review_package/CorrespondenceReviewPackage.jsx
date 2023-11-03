@@ -1,5 +1,3 @@
-
-
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import React from 'react';
 import ReviewPackageCmpInfo from './ReviewPackageCmpInfo';  
