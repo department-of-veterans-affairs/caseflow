@@ -431,12 +431,17 @@ describe BusinessLine do
         "nonrating_issue_description" => "VHA - Caregiver ",
         "task_id" => hlr_task.id,
         "veteran_file_number" => hlr_task.appeal.veteran_file_number,
-        "intake_user_name" => "Lauren Roth",
+        "intake_user_name" => hlr_task.appeal.intake.user.full_name,
+        "intake_user_id" => hlr_task.appeal.intake.user.id,
+        "intake_user_station_id" => hlr_task.appeal.intake.user.station_id,
         "disposition" => "allowed",
-        "decision_user_name" => "Gaius Baelsar",
+        "decision_user_name" => decision_user.full_name,
+        "decision_user_id" => decision_user.id,
+        "decision_user_station_id" => decision_user.station_id,
         "first_name" => hlr_task.appeal.claimant.first_name,
         "last_name" => hlr_task.appeal.claimant.last_name,
-        "middle_name" => hlr_task.appeal.claimant.middle_name
+        "task_status" => hlr_task.status,
+        "request_issue_benefit_type" => "vha"
       )
     end
     let(:hlr_task_1_ri_2_expectation) do
@@ -445,12 +450,17 @@ describe BusinessLine do
         "nonrating_issue_description" => "This is a CHAMPVA issue",
         "task_id" => hlr_task.id,
         "veteran_file_number" => hlr_task.appeal.veteran_file_number,
-        "intake_user_name" => "Lauren Roth",
+        "intake_user_name" => hlr_task.appeal.intake.user.full_name,
+        "intake_user_id" => hlr_task.appeal.intake.user.id,
+        "intake_user_station_id" => hlr_task.appeal.intake.user.station_id,
         "disposition" => "denied",
-        "decision_user_name" => "Gaius Baelsar",
+        "decision_user_name" => decision_user.full_name,
+        "decision_user_id" => decision_user.id,
+        "decision_user_station_id" => decision_user.station_id,
         "first_name" => hlr_task.appeal.claimant.first_name,
         "last_name" => hlr_task.appeal.claimant.last_name,
-        "middle_name" => hlr_task.appeal.claimant.middle_name
+        "task_status" => hlr_task.status,
+        "request_issue_benefit_type" => "vha"
       )
     end
     let(:hlr_task_2_ri_1_expectation) do
@@ -459,12 +469,17 @@ describe BusinessLine do
         "nonrating_issue_description" => "VHA - Caregiver ",
         "task_id" => hlr_task2.id,
         "veteran_file_number" => hlr_task2.appeal.veteran_file_number,
-        "intake_user_name" => "Alexander Dewitt",
+        "intake_user_name" => intake_user.full_name,
+        "intake_user_id" => intake_user.id,
+        "intake_user_station_id" => intake_user.station_id,
         "disposition" => nil,
         "decision_user_name" => nil,
+        "decision_user_id" => nil,
+        "decision_user_station_id" => nil,
         "first_name" => hlr_task2.appeal.claimant.first_name,
         "last_name" => hlr_task2.appeal.claimant.last_name,
-        "middle_name" => hlr_task2.appeal.claimant.middle_name
+        "task_status" => hlr_task2.status,
+        "request_issue_benefit_type" => "vha"
       )
     end
     let(:hlr_task_2_ri_2_expectation) do
@@ -473,12 +488,17 @@ describe BusinessLine do
         "nonrating_issue_description" => "This is a Camp Lejune issue",
         "task_id" => hlr_task2.id,
         "veteran_file_number" => hlr_task2.appeal.veteran_file_number,
-        "intake_user_name" => "Alexander Dewitt",
+        "intake_user_name" => intake_user.full_name,
+        "intake_user_id" => intake_user.id,
+        "intake_user_station_id" => intake_user.station_id,
         "disposition" => nil,
         "decision_user_name" => nil,
+        "decision_user_id" => nil,
+        "decision_user_station_id" => nil,
         "first_name" => hlr_task2.appeal.claimant.first_name,
         "last_name" => hlr_task2.appeal.claimant.last_name,
-        "middle_name" => hlr_task2.appeal.claimant.middle_name
+        "task_status" => hlr_task2.status,
+        "request_issue_benefit_type" => "vha"
       )
     end
     let(:sc_task_1_ri_1_expectation) do
@@ -487,12 +507,17 @@ describe BusinessLine do
         "nonrating_issue_description" => "VHA issue description ",
         "task_id" => sc_task.id,
         "veteran_file_number" => sc_task.appeal.veteran_file_number,
-        "intake_user_name" => "Lauren Roth",
+        "intake_user_name" => sc_task.appeal.intake.user.full_name,
+        "intake_user_id" => sc_task.appeal.intake.user.id,
+        "intake_user_station_id" => sc_task.appeal.intake.user.station_id,
         "disposition" => nil,
         "decision_user_name" => nil,
+        "decision_user_id" => nil,
+        "decision_user_station_id" => nil,
         "first_name" => sc_task.appeal.claimant.first_name,
         "last_name" => sc_task.appeal.claimant.last_name,
-        "middle_name" => sc_task.appeal.claimant.middle_name
+        "task_status" => sc_task.status,
+        "request_issue_benefit_type" => "vha"
       )
     end
 
@@ -509,10 +534,12 @@ describe BusinessLine do
     before do
       issue = create(:request_issue,
                      nonrating_issue_category: "CHAMPVA",
-                     nonrating_issue_description: "This is a CHAMPVA issue")
+                     nonrating_issue_description: "This is a CHAMPVA issue",
+                     benefit_type: "vha")
       issue2 = create(:request_issue,
                       nonrating_issue_category: "Camp Lejune Family Member",
-                      nonrating_issue_description: "This is a Camp Lejune issue")
+                      nonrating_issue_description: "This is a Camp Lejune issue",
+                      benefit_type: "vha")
       hlr_task.appeal.request_issues << issue
       hlr_task2.appeal.request_issues << issue2
 
