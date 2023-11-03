@@ -333,14 +333,18 @@ class ClaimHistoryEvent
 
   def parse_event_attributes(change_data)
     # Try to keep all the dates consistent as a iso8601 string if possible
+    parse_event_date(change_data)
+    @user_facility = change_data["user_facility"]
+    @event_user_name = change_data["event_user_name"]
+    @event_user_id = change_data["event_user_id"]
+  end
+
+  def parse_event_date(change_data)
     @event_date = if change_data["event_date"].is_a?(String)
                     change_data["event_date"]
                   else
                     change_data["event_date"]&.iso8601
                   end
-    @user_facility = change_data["user_facility"]
-    @event_user_name = change_data["event_user_name"]
-    @event_user_id = change_data["event_user_id"]
   end
 
   ############ CSV and Serializer Helpers ############
