@@ -1,42 +1,37 @@
-# config/initializers/opentelemetry.rb
+# frozen_string_literal: true
 
-# required imports
 require 'opentelemetry/sdk'
 require 'opentelemetry/exporter/otlp'
 require 'opentelemetry/instrumentation/all'
 
-# Exporter and Processor configuration
-otel_exporter = OpenTelemetry::Exporter::OTLP::Exporter.new
-processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(otel_exporter)
+DT_API_URL = ''
+DT_API_TOKEN = ''
 
-OpenTelemetry::SDK.configure do |c|
-  # Exporter and Processor configuration
-  c.add_span_processor(processor) # Created above this SDK.configure block
-
-  # Resource configuration
-  c.resource = OpenTelemetry::SDK::Resources::Resource.create({
-    OpenTelemetry::SemanticConventions::Resource::SERVICE_NAMESPACE => 'Caseflow',
-    OpenTelemetry::SemanticConventions::Resource::SERVICE_NAME => 'rails',
-    OpenTelemetry::SemanticConventions::Resource::SERVICE_INSTANCE_ID => Socket.gethostname,
-    OpenTelemetry::SemanticConventions::Resource::SERVICE_VERSION => "0.0.0"
-  })
-
-  # Instruments
-  c.use 'OpenTelemetry::Instrumentation::Rack'
-  c.use 'OpenTelemetry::Instrumentation::ActionPack'
-  c.use 'OpenTelemetry::Instrumentation::ActionView'
-  c.use 'OpenTelemetry::Instrumentation::ActiveJob'
-  c.use 'OpenTelemetry::Instrumentation::ActiveRecord'
-  c.use 'OpenTelemetry::Instrumentation::ConcurrentRuby'
-  c.use 'OpenTelemetry::Instrumentation::Faraday'
-  c.use 'OpenTelemetry::Instrumentation::HttpClient'
-  c.use 'OpenTelemetry::Instrumentation::Net::HTTP'
-  c.use 'OpenTelemetry::Instrumentation::PG', {
-    db_statement: :obfuscate,
-  }
-  c.use 'OpenTelemetry::Instrumentation::Rails'
-  c.use 'OpenTelemetry::Instrumentation::Redis'
-  # c.use 'OpenTelemetry::Instrumentation::RestClient'
-  # c.use 'OpenTelemetry::Instrumentation::RubyKafka'
-  # c.use 'OpenTelemetry::Instrumentation::Sidekiq'
+def init_opentelemetry
+  OpenTelemetry::SDK.configure do |c|
+    c.service_name = 'ruby-quickstart' #TODO Replace with the name of your application
+    c.service_version = '1.0.1' #TODO Replace with the version of your application
+    for name in ["dt_metadata_e617c525669e072eebe3d0f08212e8f2.properties", "/var/lib/dynatrace/enrichment/dt_metadata.properties"] do
+      begin
+        # Resource configuration
+        c.resource = OpenTelemetry::SDK::Resources::Resource.create({
+        OpenTelemetry::SemanticConventions::Resource::SERVICE_NAMESPACE => 'Caseflow',
+        OpenTelemetry::SemanticConventions::Resource::SERVICE_NAME => 'rails',
+        OpenTelemetry::SemanticConventions::Resource::SERVICE_INSTANCE_ID => Socket.gethostname,
+        OpenTelemetry::SemanticConventions::Resource::SERVICE_VERSION => "0.0.0"
+        c.use_all
+  })      rescue
+      end
+    end
+    c.add_span_processor(
+      OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(
+        OpenTelemetry::Exporter::OTLP::Exporter.new(
+          endpoint: DT_API_URL + "/v1/traces",
+          headers: {
+            "Authorization": "Api-Token " + DT_API_TOKEN
+          }
+        )
+      )
+    )
+  end
 end
