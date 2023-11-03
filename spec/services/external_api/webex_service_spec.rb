@@ -37,22 +37,24 @@ describe ExternalApi::WebexService do
     it "returns an invalid token error" do
       allow(Faraday).to receive(:post).and_return(example_401_response)
       expect { subject.refresh_access_token }.to raise_error(Caseflow::Error::WebexInvalidTokenError)
-  let(:host) { "fake-broker." }
-  let(:port) { "0000" }
-  let(:aud) { "1234abcd" }
-  let(:apikey) { SecureRandom.uuid.to_s }
-  let(:domain) { "gov.fake.com" }
-  let(:api_endpoint) { "/api/v2/fake" }
+    end
+    let(:host) { "fake-broker." }
+    let(:port) { "0000" }
+    let(:aud) { "1234abcd" }
+    let(:apikey) { SecureRandom.uuid.to_s }
+    let(:domain) { "gov.fake.com" }
+    let(:api_endpoint) { "/api/v2/fake" }
 
-  let(:webex_service) do
-    ExternalApi::WebexService.new(
-      host: host,
-      domain: domain,
-      api_endpoint: api_endpoint,
-      aud: aud,
-      apikey: apikey,
-      port: port
-    )
+    let(:webex_service) do
+      ExternalApi::WebexService.new(
+        host: host,
+        domain: domain,
+        api_endpoint: api_endpoint,
+        aud: aud,
+        apikey: apikey,
+        port: port
+      )
+    end
   end
 
   describe "webex requests" do
