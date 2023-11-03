@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import StringUtil from '../util/StringUtil';
+import CorrespondenceCases from './correspondence/CorrespondenceCases';
 
 import {
   setCanEditAod,
@@ -83,6 +84,7 @@ import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
+import CorrespondenceReviewPackage from './correspondence/review_package/CorrespondenceReviewPackage';
 import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -611,6 +613,10 @@ class QueueApp extends React.PureComponent {
     <PostponeHearingTaskModal {...props.match.params} />
   );
 
+  routedReviewPackage = () => (
+    <CorrespondenceReviewPackage />
+  );
+
   routedStartHoldModal = (props) => <StartHoldModal {...props.match.params} />;
 
   routedEndHoldModal = (props) => <EndHoldModal {...props.match.params} />;
@@ -662,6 +668,10 @@ class QueueApp extends React.PureComponent {
 
   routedCorrespondenceIntake = (props) => (
     <CorrespondenceIntake {...props.match.params} />
+  );
+
+  routedCorrespondenceCase = () => (
+    <CorrespondenceCases {...this.props} />
   );
 
   queueName = () =>
@@ -717,6 +727,14 @@ class QueueApp extends React.PureComponent {
               title={`${this.queueName()}  | Caseflow`}
               render={this.routedQueueList}
             />
+
+            <PageRoute
+              exact
+              path="/queue/correspondence"
+              title={`${PAGE_TITLES.CORRESPONDENCE_CASES_LIST}`}
+              render={this.routedCorrespondenceCase}
+            />
+
             <PageRoute
               exact
               path="/queue/:userId"
@@ -871,6 +889,13 @@ class QueueApp extends React.PureComponent {
               path="/queue/appeals/:appealId/edit_appellant_information"
               title={`${PAGE_TITLES.EDIT_APPELLANT_INFORMATION} | Caseflow`}
               render={this.routedEditAppellantInformation}
+            />
+
+            <PageRoute
+              exact
+              path="/queue/correspondence/:correspondenceId/review_package"
+              title={`${PAGE_TITLES.REVIEW_PACKAGE}`}
+              render={this.routedReviewPackage}
             />
 
             <PageRoute
@@ -1406,7 +1431,6 @@ class QueueApp extends React.PureComponent {
               path="/team_management/lookup_participant_id"
               render={this.routedLookupParticipantIdModal}
             />
-
             {motionToVacateRoutes.modal}
           </Switch>
         </div>
