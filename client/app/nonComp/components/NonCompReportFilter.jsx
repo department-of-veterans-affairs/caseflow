@@ -11,16 +11,14 @@ const NonCompReportFilter = ({ control }) => (
     <Controller
       control={control}
       name="reportType"
-      render={({ onChange, ref, ...rest }) => (
+      render={({ onChange, ...rest }) => (
         <SearchableDropdown
-          inputRef={ref}
           {...rest}
           name="reportType"
           label="Report Type"
           options={REPORT_TYPE_OPTIONS}
           searchable={false}
           onChange={(valObj) => onChange(valObj?.value)}
-          defaultValue=""
         />
       )}
     />
@@ -34,7 +32,7 @@ export const NonCompReportFilterContainer = () => {
 };
 
 NonCompReportFilter.propTypes = {
-  control: PropTypes.node,
+  control: PropTypes.object,
 };
 
 export default NonCompReportFilterContainer;

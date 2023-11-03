@@ -4,6 +4,7 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import Button from 'app/components/Button';
 import NonCompLayout from '../components/NonCompLayout';
+import { ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
 
 import NonCompReportFilterContainer from '../components/NonCompReportFilter';
 
@@ -18,12 +19,24 @@ const buttonOuterContainerStyling = css({
   marginTop: '4rem',
 });
 
-const ReportPageButtons = ({
-  history,
+// for later
+// const schema = yup.object().shape({
+//   conditions: yup.array(
+//     yup.object().shape({
+//       condition: yup.string().required(),
+//       options: yup.object().required(),
+//     })
+//   ),
+// });
+
+const ReportPageButtons = ({ history,
   disableGenerateButton,
   handleClearFilters,
-  handleSubmit,
-}) => {
+  handleSubmit }) => {
+
+  // eslint-disable-next-line no-console
+  const onSubmit = (data) => console.log(data);
+
   return (
     <div {...buttonOuterContainerStyling}>
       <Button
@@ -48,7 +61,7 @@ const ReportPageButtons = ({
           classNames={['usa-button']}
           label="generate-report"
           name="generate-report"
-          onClick={handleSubmit}
+          onClick={handleSubmit(onSubmit)}
           disabled={disableGenerateButton}
         >
           Generate task report
@@ -61,11 +74,12 @@ const ReportPageButtons = ({
 const ReportPage = ({ history }) => {
   const defaultFormValues = {
     reportType: '',
+    conditions: []
   };
 
   const methods = useForm({ defaultValues: { ...defaultFormValues } });
 
-  const { reset, formState } = methods;
+  const { reset, formState, handleSubmit } = methods;
 
   return (
     <NonCompLayout
@@ -74,6 +88,7 @@ const ReportPage = ({ history }) => {
           history={history}
           disableGenerateButton={!formState.isDirty}
           handleClearFilters={() => reset(defaultFormValues)}
+          handleSubmit={handleSubmit}
         />
       }
     >
@@ -81,6 +96,7 @@ const ReportPage = ({ history }) => {
       <FormProvider {...methods}>
         <form>
           <NonCompReportFilterContainer />
+          <ReportPageConditions />
         </form>
       </FormProvider>
     </NonCompLayout>
