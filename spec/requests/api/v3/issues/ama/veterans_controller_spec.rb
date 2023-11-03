@@ -85,10 +85,16 @@ describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
         end
 
         context "when a veteran is found - but an unexpected error has happened." do
-          it "should return veteran not found error" do
-            response = JSON.parse("{\"errors\":[{\"status\":\"500\",\"title\":\"Unknown error occured\",\"detail\":\"Message: There was a server error. Use the error uuid to submit a support ticket: \"}]}")
-            expect(response["errors"].first["status"]).to include("500")
-            expect(response["errors"].first["title"]).to include("Unknown error occured")
+          before { RequestIssue::DEFAULT_UPPER_BOUND_PER_PAGE = nil }
+          after { RequestIssue::DEFAULT_UPPER_BOUND_PER_PAGE = 50 }
+          let(:vet) { create(:veteran) }
+          it "should return empty request issues array for veteran" do
+            get(
+              "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=1",
+              headers: authorization_header
+            )
+            expect(response).to have_http_status(500)
+            expect(response.body.include?("Use the error uuid to submit a support ticket")).to eq true
           end
         end
 
