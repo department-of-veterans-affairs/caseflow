@@ -42,9 +42,11 @@ RSpec.shared_context :number_of_request_issues_exceeds_paginates_per do |legacy_
     it_behaves_like :it_should_show_first_page_if_page_negatvie, legacy_appeals_present
     it_behaves_like :it_should_show_last_page_if_page_larger_than_total, legacy_appeals_present
     it_behaves_like :it_should_show_correct_total_number_of_pages_and_max_request_issues_per_page_on_per_change, legacy_appeals_present
-    it_behaves_like :it_should_show_upper_bound_limit_on_excessive_per_value, legacy_appeals_present
+    it_behaves_like :it_should_show_default_limit_on_excessive_per_value, legacy_appeals_present
     it_behaves_like :it_should_show_default_if_negative_per_param, legacy_appeals_present
     it_behaves_like :it_should_show_default_if_0_per_param, legacy_appeals_present
+    it_behaves_like :it_should_show_correct_number_of_issues_on_page_increment_with_per, legacy_appeals_present
+    it_behaves_like :it_should_show_upper_bound_per_if_default_is_higher, legacy_appeals_present
   end
 end
 # rubocop:enable Layout/LineLength

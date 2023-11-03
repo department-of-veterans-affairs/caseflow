@@ -12,6 +12,8 @@ describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
     { "Authorization" => "Token #{api_key}" }
   end
 
+  RequestIssue::DEFAULT_UPPER_BOUND_PER_PAGE = 50
+
   describe "#show" do
     context "when feature is not enabled" do
       before { FeatureToggle.disable!(:api_v3_ama_issues) }

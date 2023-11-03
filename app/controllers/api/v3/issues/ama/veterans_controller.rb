@@ -39,10 +39,11 @@ class Api::V3::Issues::Ama::VeteransController < Api::V3::BaseController
     page
   end
 
+  # :reek:FeatureEnvy
   def init_per
     per = ActiveRecord::Base.sanitize_sql(params[:per].to_i) if params[:per]
     if per.nil? || per <= 0 || per > RequestIssue::DEFAULT_UPPER_BOUND_PER_PAGE
-      per = RequestIssue.default_per_page
+      per = [RequestIssue.default_per_page, RequestIssue::DEFAULT_UPPER_BOUND_PER_PAGE].min
     end
     per
   end
