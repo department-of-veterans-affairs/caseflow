@@ -142,4 +142,9 @@ Example JSON
   ]
 }
 
+Payload required
+The general format of the payload is the following:
+
+format,dataPoint timestamp
+
 =end
