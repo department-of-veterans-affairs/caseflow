@@ -2,7 +2,7 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import COPY from 'app/../COPY';
-import ApiUtil from 'app/util/ApiUtil'
+import ApiUtil from 'app/util/ApiUtil';
 import { sectionSegmentStyling } from 'app/queue/StickyNavContentArea';
 import { TitleDetailsSubheader } from 'app/components/TitleDetailsSubheader';
 import { COLORS } from 'app/constants/AppConstants';
@@ -38,12 +38,12 @@ export const TitleDetailsSubheaderSection = ({ title, children }) => (
 );
 
 class ReviewPackageCmpInfo extends React.PureComponent {
-  constructor(props){
+  constructor (props){
     super(props);
     this.state = {
       correspondence: null,
       package_document_type: null
-    }
+    };
   }
 
   componentDidMount(){
