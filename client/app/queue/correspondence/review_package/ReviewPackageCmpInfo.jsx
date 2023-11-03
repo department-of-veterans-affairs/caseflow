@@ -38,7 +38,7 @@ export const TitleDetailsSubheaderSection = ({ title, children }) => (
 );
 
 class ReviewPackageCmpInfo extends React.PureComponent {
-  constructor (props){
+  constructor (props) {
     super(props);
     this.state = {
       correspondence: null,
@@ -46,11 +46,12 @@ class ReviewPackageCmpInfo extends React.PureComponent {
     };
   }
 
-  componentDidMount(){
+  componentDidMount (){
     const correspondence = this.props;
+    
     ApiUtil.get(`/queue/correspondences/${correspondence.correspondenceId}`).then((response) => {
-      this.setState({ correspondence: response.body.correspondence, package_document_type: response.body.package_document_type })  
-    })
+      this.setState({ correspondence: response.body.correspondence, package_document_type: response.body.package_document_type }); 
+    });
   }
 
   render = () => {
@@ -63,10 +64,11 @@ class ReviewPackageCmpInfo extends React.PureComponent {
 }
 
 const CmpInfoScaffolding = (props) => {
-  const packageDocumentType = props.packageDocumentType
-  const correspondence = props.correspondence
-  const date = new Date(correspondence?.portal_entry_date)
+  const packageDocumentType = props.packageDocumentType;
+  const correspondence = props.correspondence;
+  const date = new Date(correspondence?.portal_entry_date);
   let customDate = date && `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`
+  
   return (
     <div>
       <h2> {COPY.CORRESPONDENCE_REVIEW_CMP_INFO_TITLE} </h2>
@@ -75,30 +77,28 @@ const CmpInfoScaffolding = (props) => {
           {customDate}
         </TitleDetailsSubheaderSection>
         <TitleDetailsSubheaderSection title="Source Type">
-          {correspondence?.source_type}
+          {correspondence?.sourceType}
         </TitleDetailsSubheaderSection>
         <TitleDetailsSubheaderSection title="Package Document Type">
           {packageDocumentType?.name}
-        </TitleDetailsSubheaderSection> 
+        </TitleDetailsSubheaderSection>
         <TitleDetailsSubheaderSection title="CM Packet Number">
-          {correspondence?.cmp_packet_number}
-        </TitleDetailsSubheaderSection> 
+          {correspondence?.cmpPacketNumber}
+        </TitleDetailsSubheaderSection>
         <TitleDetailsSubheaderSection title="CMP Queue Name">
-          {correspondence?.cmp_packet_number}
-        </TitleDetailsSubheaderSection> 
+          {correspondence?.cmpPacketNumber}
+        </TitleDetailsSubheaderSection>
         <TitleDetailsSubheaderSection title="VA DOR">
           {customDate}
         </TitleDetailsSubheaderSection>
       </TitleDetailsSubheader>
     </div>
-  )
+  );
 };
-
 
 TitleDetailsSubheaderSection.propTypes = {
   children: PropTypes.node,
   title: PropTypes.string.isRequired
 };
-
 
 export default ReviewPackageCmpInfo;
