@@ -2,25 +2,88 @@
 
 # rubocop:disable Layout/LineLength
 # rubocop:disable Lint/ParenthesesAsGroupedExpression
+RSpec.shared_examples :it_should_show_default_if_0_per_param do |legacy_appeals_present|
+  it "should show default if 0 per param is supplied" do
+    RequestIssue::DEFAULT_UPPER_BOUND_PER_PAGE = 50
+    get(
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=1&per=0",
+      headers: authorization_header
+    )
+    response_hash = JSON.parse(response.body)
+    # default RequestIssue.default_per_page is set to 2 in other shared context
+    total_number_of_pages = (request_issue_for_vet_count / 2.to_f).ceil
+    expect(response).to have_http_status(200)
+    expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
+    expect(response_hash["legacy_appeals_present"]).to eq legacy_appeals_present
+    expect(response_hash["request_issues"].size).to eq 2
+    expect(response_hash["page"]).to eq 1
+    expect(response_hash["total_number_of_pages"]).to eq total_number_of_pages
+    expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+    expect(response_hash["max_request_issues_per_page"]).to eq 2
+    expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
+  end
+end
+
+RSpec.shared_examples :it_should_show_default_if_negative_per_param do |legacy_appeals_present|
+  it "should show default if negative per param is supplied" do
+    RequestIssue::DEFAULT_UPPER_BOUND_PER_PAGE = 50
+    get(
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=1&per=-1",
+      headers: authorization_header
+    )
+    response_hash = JSON.parse(response.body)
+    # default RequestIssue.default_per_page is set to 2 in other shared context
+    total_number_of_pages = (request_issue_for_vet_count / 2.to_f).ceil
+    expect(response).to have_http_status(200)
+    expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
+    expect(response_hash["legacy_appeals_present"]).to eq legacy_appeals_present
+    expect(response_hash["request_issues"].size).to eq 2
+    expect(response_hash["page"]).to eq 1
+    expect(response_hash["total_number_of_pages"]).to eq total_number_of_pages
+    expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+    expect(response_hash["max_request_issues_per_page"]).to eq 2
+    expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
+  end
+end
+
+RSpec.shared_examples :it_should_show_upper_bound_limit_on_excessive_per_value do |legacy_appeals_present|
+  it "should show upper bound limit on excessive per value" do
+    RequestIssue::DEFAULT_UPPER_BOUND_PER_PAGE = 2
+    get(
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=1&per=50",
+      headers: authorization_header
+    )
+    response_hash = JSON.parse(response.body)
+    total_number_of_pages = (request_issue_for_vet_count / 2.to_f).ceil
+    expect(response).to have_http_status(200)
+    expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
+    expect(response_hash["legacy_appeals_present"]).to eq legacy_appeals_present
+    expect(response_hash["request_issues"].size).to eq 2
+    expect(response_hash["page"]).to eq 1
+    expect(response_hash["total_number_of_pages"]).to eq total_number_of_pages
+    expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
+    expect(response_hash["max_request_issues_per_page"]).to eq 2
+    expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
+  end
+end
 
 RSpec.shared_examples :it_should_show_correct_total_number_of_pages_and_max_request_issues_per_page_on_per_change do |legacy_appeals_present|
   it "should show correct total number of pages and max request issues per page on per change" do
     RequestIssue::DEFAULT_UPPER_BOUND_PER_PAGE = 50
-    per = 1
     get(
-      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=1&per=#{per}",
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=1&per=1",
       headers: authorization_header
     )
     response_hash = JSON.parse(response.body)
-    total_number_of_pages = (request_issue_for_vet_count / per.to_f).ceil
+    total_number_of_pages = (request_issue_for_vet_count / 1.to_f).ceil
     expect(response).to have_http_status(200)
     expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
     expect(response_hash["legacy_appeals_present"]).to eq legacy_appeals_present
-    expect(response_hash["request_issues"].size).to eq per
+    expect(response_hash["request_issues"].size).to eq 1
     expect(response_hash["page"]).to eq 1
     expect(response_hash["total_number_of_pages"]).to eq total_number_of_pages
     expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
-    expect(response_hash["max_request_issues_per_page"]).to eq per
+    expect(response_hash["max_request_issues_per_page"]).to eq 1
     expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
   end
 end
