@@ -28,7 +28,7 @@ const ReportPageButtons = ({
   isGenerateButtonDisabled,
   handleClearFilters,
   handleSubmit
-})  => {
+}) => {
 // for later
 // const schema = yup.object().shape({
 //   conditions: yup.array(
@@ -37,7 +37,7 @@ const ReportPageButtons = ({
 //       options: yup.object().required(),
 //     })
 //   ),
-// });
+  // });
 
   // eslint-disable-next-line no-console
   const onSubmit = (data) => console.log(data);
@@ -66,7 +66,7 @@ const ReportPageButtons = ({
           classNames={['usa-button']}
           label="generate-report"
           name="generate-report"
-          onClick={handleSubmit}
+          onClick={handleSubmit(onSubmit)}
           disabled={isGenerateButtonDisabled}
         >
           Generate task report
@@ -155,9 +155,6 @@ const ReportPage = ({ history }) => {
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
 
-  // eslint-disable-next-line no-console
-  const onSubmit = (data) => console.log(data);
-
   return (
     <NonCompLayout
       buttons={
@@ -165,7 +162,7 @@ const ReportPage = ({ history }) => {
           history={history}
           isGenerateButtonDisabled={!formState.isDirty}
           handleClearFilters={() => reset(defaultFormValues)}
-          handleSubmit={methods.handleSubmit(onSubmit)}
+          handleSubmit={handleSubmit}
         />
       }
     >
