@@ -6,6 +6,7 @@ class InvalidEventType < StandardError
   end
 end
 
+# :reek:TooManyInstanceVariables
 class ClaimHistoryEvent
   attr_reader :task_id, :event_type, :event_date, :assigned_at, :days_waiting,
               :veteran_file_number, :claim_type, :claimant_name, :user_facility,
@@ -49,11 +50,7 @@ class ClaimHistoryEvent
       from_change_data(:claim_creation, change_data.merge(intake_event_hash(change_data)))
     end
 
-    # TODO: This is not great since it's more DB calls inside of the loop
-    # This is actually terrible. It's beyond not great
-    # Might have to bulk retrieve these somehow if it is too slow. I'm pretty sure it will be.
-    # Might have to do two loops of the records unfortunately and then do this and then loop over that
-    # tasks = Task.where(id: array_of_task_ids).includes(:versions)
+    # This might have to change depending on performance for a lot of records
     def create_status_events(change_data)
       status_events = []
       task = Task.find(change_data["task_id"])
@@ -99,8 +96,7 @@ class ClaimHistoryEvent
       removed_request_issue_ids = (before_request_issue_ids - after_request_issue_ids)
       updates_hash = update_event_hash(change_data).merge("event_date" => change_data["request_issue_update_time"])
 
-      # Adds events to the issue events array
-      # TODO: Withdrawn might need to add withdrawn date to the updates hash before sending it in
+      # Adds all request issue events to the issue events array
       issue_events.push(*process_issue_ids(withdrawn_request_issue_ids,
                                            :withdrew_issue,
                                            change_data.merge(updates_hash)))
@@ -125,7 +121,7 @@ class ClaimHistoryEvent
         if event_type == :edited_issue
           # Compare the two dates to try to guess if it was adding a decision date or not
           same_transaction = date_strings_within_seconds?(request_issue_data["decision_date_added_at"],
-                                                          change_data["request_issue_update_time"],
+                                                          request_issue_data["request_issue_update_time"],
                                                           REQUEST_ISSUE_TIME_WINDOW)
           if request_issue_data["decision_date_added_at"].present? && same_transaction
             created_events.push from_change_data(:added_decision_date, request_issue_data)
@@ -162,7 +158,8 @@ class ClaimHistoryEvent
           "nonrating_issue_category" => request_issue.nonrating_issue_category,
           "nonrating_issue_description" => request_issue.nonrating_issue_description,
           "decision_date" => request_issue.decision_date,
-          "decision_date_added_at" => request_issue.decision_date_added_at&.iso8601
+          "decision_date_added_at" => request_issue.decision_date_added_at&.iso8601,
+          "request_issue_closed_at" => request_issue.closed_at
         }
       end
     end
@@ -295,30 +292,46 @@ class ClaimHistoryEvent
 
   private
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def set_attributes_from_change_history_data(new_event_type, change_data)
     @event_type = new_event_type
-    @task_id = change_data["task_id"]
-    @task_status = change_data["task_status"]
-    @intake_completed_date = change_data["completed_at"]
-    @veteran_file_number = change_data["veteran_file_number"]
-    @claim_type = change_data["appeal_type"]
-    @assigned_at = change_data["assigned_at"]
-    @days_waiting = days_waiting_helper(change_data["assigned_at"])
 
     # Pulled from the person model
     @claimant_name = FullName.new(change_data["first_name"], "", change_data["last_name"]).formatted(:readable_short)
+    parse_event_attributes(change_data)
+    parse_intake_attributes(change_data)
+    parse_task_attributes(change_data)
+    parse_issue_attributes(change_data)
+    parse_disposition_attributes(change_data)
+  end
+
+  def parse_task_attributes(change_data)
+    @task_id = change_data["task_id"]
+    @task_status = change_data["task_status"]
+    @claim_type = change_data["appeal_type"]
+    @assigned_at = change_data["assigned_at"]
+    @days_waiting = days_waiting_helper(change_data["assigned_at"])
+  end
+
+  def parse_intake_attributes(change_data)
+    @intake_completed_date = change_data["intake_completed_at"]
+    @veteran_file_number = change_data["veteran_file_number"]
+  end
+
+  def parse_issue_attributes(change_data)
     @issue_type = change_data["nonrating_issue_category"]
     @issue_description = change_data["nonrating_issue_description"]
     @decision_date = change_data["decision_date"]
     @benefit_type = change_data["request_issue_benefit_type"]
+    @withdrawal_request_date = change_data["request_issue_closed_at"]
+  end
+
+  def parse_disposition_attributes(change_data)
     @disposition = change_data["disposition"]
     @disposition_date = change_data["caseflow_decision_date"]
     @decision_description = change_data["decision_description"]
+  end
 
-    # TODO: Should probably use event date instead of this
-    @withdrawal_request_date = change_data["request_issue_update_time"]
-
+  def parse_event_attributes(change_data)
     # Try to keep all the dates consistent as a iso8601 string if possible
     @event_date = if change_data["event_date"].is_a?(String)
                     change_data["event_date"]
@@ -329,7 +342,6 @@ class ClaimHistoryEvent
     @event_user_name = change_data["event_user_name"]
     @event_user_id = change_data["event_user_id"]
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   ############ CSV and Serializer Helpers ############
 

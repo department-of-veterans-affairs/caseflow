@@ -10,14 +10,8 @@ describe ClaimHistoryEvent do
       "appeal_id" => 155,
       "appeal_type" => change_data_claim_type,
       "assigned_at" => "2023-10-19 22:47:16.222148",
-      "assigned_by_id" => nil,
       "assigned_to_id" => 200_000_022_2,
       "assigned_to_type" => "Organization",
-      "closed_at" => nil,
-      "completed_by_id" => nil,
-      "created_at" => nil,
-      "placed_on_hold_at" => "2023-10-19 22:45:43.148646",
-      "started_at" => "2023-10-19 22:36:44.417478",
       "decision_date" => "2023-05-31",
       "nonrating_issue_category" => "Clothing Allowance",
       "nonrating_issue_description" => "Clothing allowance no decision date",
@@ -29,14 +23,10 @@ describe ClaimHistoryEvent do
       "withdrawn_request_issue_ids" => "{}",
       "caseflow_decision_date" => "2023-10-19",
       "decision_text" => nil,
-      "description" => "granting clothing allowance",
       "disposition" => "Granted",
       "first_name" => "Bob",
       "last_name" => "Smithboehm",
       "middle_name" => nil,
-      "name_suffix" => nil,
-      # TODO: Figure out what I need so I can remove select *
-      # START OF MY ALIASES.
       "task_id" => 124_28,
       "task_status" => change_data_task_status,
       "request_issue_update_time" => "2023-10-19 22:47:16.233187",
@@ -56,6 +46,7 @@ describe ClaimHistoryEvent do
       "intake_user_id" => 200_000_601_2,
       "decision_user_id" => nil,
       "update_user_id" => 3992,
+      "request_issue_closed_at" => "2023-10-16 22:47:16.233187",
       "event_user_name" => change_data_event_user_name,
       "event_date" => change_data_event_date
     }
@@ -81,15 +72,14 @@ describe ClaimHistoryEvent do
       event_type: event_type,
       event_user_id: nil,
       event_user_name: nil,
-      intake_completed_date: nil,
+      intake_completed_date: "2023-10-19 22:39:14.270897",
       issue_description: "Clothing allowance no decision date",
       issue_type: "Clothing Allowance",
       task_id: 124_28,
       task_status: "completed",
       user_facility: nil,
       veteran_file_number: "000100022",
-      # TODO: Does this even matter? or should this be the event_date? It's technically different
-      withdrawal_request_date: "2023-10-19 22:47:16.233187"
+      withdrawal_request_date: "2023-10-16 22:47:16.233187"
     }
   end
 
@@ -385,7 +375,8 @@ describe ClaimHistoryEvent do
             "nonrating_issue_category" => request_issue.nonrating_issue_category,
             "nonrating_issue_description" => request_issue.nonrating_issue_description,
             "decision_date" => request_issue.decision_date,
-            "decision_date_added_at" => request_issue.decision_date_added_at.iso8601
+            "decision_date_added_at" => request_issue.decision_date_added_at.iso8601,
+            "request_issue_closed_at" => request_issue.closed_at
           }
         end
 

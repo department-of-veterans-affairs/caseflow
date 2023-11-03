@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# :reek:TooManyInstanceVariables
 class ClaimHistoryService
   attr_reader :business_line, :processed_task_ids,
               :processed_request_issue_ids, :processed_request_issue_update_ids,
@@ -62,7 +63,7 @@ class ClaimHistoryService
   private
 
   def parse_filters(filters)
-    filters.with_indifferent_access
+    filters.to_h.with_indifferent_access
   end
 
   def reset_processing_attributes

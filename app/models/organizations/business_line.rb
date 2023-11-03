@@ -172,9 +172,8 @@ class BusinessLine < Organization
     # rubocop:enable Metrics/AbcSize
 
     def change_history_rows
-      # TODO: Remove * from the select statement and only select what we need
       change_history_sql_block = <<-SQL
-        SELECT *, tasks.id AS task_id, tasks.status AS task_status, request_issues.id AS request_issue_id,
+        SELECT tasks.id AS task_id, tasks.status AS task_status, request_issues.id AS request_issue_id,
           request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
           request_issues.benefit_type AS request_issue_benefit_type, request_issues_updates.id AS request_issue_update_id,
           request_issues.id AS actual_request_issue_id, request_issues.created_at AS request_issue_created_at,
@@ -182,7 +181,13 @@ class BusinessLine < Organization
           intake_users.full_name AS intake_user_name, update_users.station_id AS update_user_station_id,
           intake_users.station_id AS intake_user_station_id, decision_users.full_name AS decision_user_name,
           decision_users.station_id AS decision_user_station_id, decision_issues.created_at AS decision_created_at,
-          intake_users.id AS intake_user_id, decision_users.id AS decision_user_id, update_users.id AS update_user_id
+          intake_users.id AS intake_user_id, decision_users.id AS decision_user_id, update_users.id AS update_user_id,
+          request_issues_updates.before_request_issue_ids, request_issues_updates.after_request_issue_ids,
+          request_issues_updates.withdrawn_request_issue_ids, request_issues_updates.edited_request_issue_ids,
+          decision_issues.caseflow_decision_date, request_issues.decision_date_added_at, intakes.veteran_file_number,
+          tasks.appeal_type, tasks.appeal_id, request_issues.nonrating_issue_category, request_issues.nonrating_issue_description,
+          request_issues.decision_date, decision_issues.disposition, tasks.assigned_at, people.first_name, people.last_name,
+          request_decision_issues.decision_issue_id, request_issues.closed_at AS request_issue_closed_at
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
