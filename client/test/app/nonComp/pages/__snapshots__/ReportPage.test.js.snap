@@ -110,20 +110,6 @@ exports[`ReportPage renders correctly 1`] = `
               </div>
             </div>
           </div>
-          <div>
-            <hr />
-            <h2>
-              Conditions
-            </h2>
-            <span>
-              <button
-                class="cf-submit usa-button"
-                type="button"
-              >
-                Add Condition
-              </button>
-            </span>
-          </div>
         </form>
       </div>
     </section>

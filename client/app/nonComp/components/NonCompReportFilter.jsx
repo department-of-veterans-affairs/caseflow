@@ -6,7 +6,6 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 
 const NonCompReportFilter = ({ control, props }) => (
   <>
-    {/* <h2>Type of Report</h2> */}
     <h2>{ props.header }</h2>
     <Controller
       control={control}
@@ -37,13 +36,14 @@ export const NonCompReportFilterContainer = (props) => {
 NonCompReportFilter.propTypes = {
   control: PropTypes.object,
   props: PropTypes.object,
-};
-
-NonCompReportFilterContainer.propTypes = {
-  props: PropTypes.object,
+  header: PropTypes.string,
   name: PropTypes.string,
   label: PropTypes.string,
   options: PropTypes.array
+};
+
+NonCompReportFilterContainer.propTypes = {
+  props: PropTypes.object
 };
 
 export default NonCompReportFilterContainer;

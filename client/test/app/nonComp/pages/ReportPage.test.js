@@ -16,6 +16,11 @@ describe('ReportPage', () => {
     );
   };
 
+  const clickOnReportType = async () => {
+    setup();
+    await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
+  };
+
   it('passes a11y testing', async () => {
     const { container } = setup();
 
@@ -45,8 +50,9 @@ describe('ReportPage', () => {
   });
 
   describe('conditions section', () => {
+    beforeEach(clickOnReportType);
+
     it('adds a condition variable when you click add condition', async () => {
-      setup();
 
       const addConditionButton = screen.getByText('Add Condition');
 
@@ -57,8 +63,6 @@ describe('ReportPage', () => {
     });
 
     it('removes condition variables when clicking the remove condition link', async () => {
-      setup();
-
       const addConditionButton = screen.getByText('Add Condition');
 
       await userEvent.click(addConditionButton);
@@ -73,8 +77,6 @@ describe('ReportPage', () => {
     });
 
     it('only allows up to 5 variables before disabling the add condition button', async () => {
-      setup();
-
       const addConditionButton = screen.getByText('Add Condition');
 
       for (let count = 0; count < 5; count++) {
@@ -85,8 +87,6 @@ describe('ReportPage', () => {
     });
 
     it('disables the dropdown once an option is chosen', async () => {
-      setup();
-
       const addConditionButton = screen.getByText('Add Condition');
 
       await userEvent.click(addConditionButton);
@@ -101,8 +101,6 @@ describe('ReportPage', () => {
     });
 
     it('does not allow repeat variables', async () => {
-      setup();
-
       const addConditionButton = screen.getByText('Add Condition');
 
       for (let count = 0; count < 2; count++) {
@@ -122,8 +120,6 @@ describe('ReportPage', () => {
     });
 
     it('does not allow personnel and facility to be selected at the same time', async () => {
-      setup();
-
       const addConditionButton = screen.getByText('Add Condition');
 
       for (let count = 0; count < 2; count++) {
@@ -154,5 +150,46 @@ describe('ReportPage', () => {
     const clearFilters = screen.getByText('Clear filters');
 
     expect(clearFilters).toHaveClass('usa-button-disabled');
+  });
+
+  describe('Timing Specification Section', () => {
+    beforeEach(clickOnReportType);
+
+    it('should have Timing Specifications as header', () => {
+      const h2 = screen.getByText(/Timing specifications/);
+
+      expect(h2).toBeInTheDocument();
+    });
+
+    it('should have a dropdown name Range', () => {
+      const dropdownName = screen.getByText(/Range/);
+
+      expect(dropdownName).toBeInTheDocument();
+    });
+
+    it('adds a datetime field with name Date when you select After option', async () => {
+      await selectEvent.select(screen.getByLabelText('Range'), ['After']);
+
+      expect(screen.getAllByText('After').length).toBe(1);
+      expect(screen.getAllByText(/Date/).length).toBe(1);
+    });
+
+    it('adds a datetime field with name Date when you select Before option', async () => {
+      await selectEvent.select(screen.getByLabelText('Range'), ['Before']);
+
+      expect(screen.getAllByText('Before').length).toBe(1);
+
+      expect(screen.getAllByText(/Date/).length).toBe(1);
+
+    });
+
+    it('adds two datetime field, From and To when you select Between option', async () => {
+      await selectEvent.select(screen.getByLabelText('Range'), ['Between']);
+
+      expect(screen.getAllByText('Between').length).toBe(1);
+
+      expect(screen.getAllByText(/From/).length).toBe(1);
+      expect(screen.getAllByText(/To/).length).toBe(1);
+    });
   });
 });
