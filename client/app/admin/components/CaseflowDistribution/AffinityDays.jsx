@@ -15,12 +15,12 @@ const AffinityDays = (props) => {
     paddingTop: '10px',
   });
 
-  const affinityLevers = leverList.map((item) => {
+  const filteredLevers = leverList.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
 
   const [selectedOption, setSelectedOption] = useState(null);
-  const [_, setLever] = useState(affinityLevers);
+  const [affinityLevers, setLever] = useState(filteredLevers);
 
   const handleRadioChange = (option) => {
     setSelectedOption(option);

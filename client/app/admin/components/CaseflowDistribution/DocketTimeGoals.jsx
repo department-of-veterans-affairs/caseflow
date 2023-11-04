@@ -11,7 +11,7 @@ import NumberField from 'app/components/NumberField';
 const DocketTimeGoals = (props) => {
   const { leverList, leverStore } = props;
 
-  const docketLevers = leverList.map((item) => {
+  const filteredLevers = leverList.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
 
@@ -22,7 +22,7 @@ const DocketTimeGoals = (props) => {
     '& .usa-input-error label': {bottom: '15px', left: '89px'}
   });
 
-  const [_, setLever] = useState(docketLevers);
+  const [docketLevers, setLever] = useState(filteredLevers);
   const updateLever = (index) => (e) => {
     const levers = docketLevers.map((lever, i) => {
       if (index === i) {

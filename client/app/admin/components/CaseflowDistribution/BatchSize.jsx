@@ -9,7 +9,7 @@ import NumberField from 'app/components/NumberField';
 const BatchSize = (props) => {
   const { leverList, leverStore } = props;
 
-  const batchSizeLevers = leverList.map((item) => {
+  const filteredLevers = leverList.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
 
@@ -25,7 +25,7 @@ const BatchSize = (props) => {
     '& .usa-input-error label': {bottom: '15px', left: '89px'}
   });
 
-  const [_, setLever] = useState(batchSizeLevers);
+  const [batchSizeLevers, setLever] = useState(filteredLevers);
   const updateLever = (index) => (e) => {
     const levers = batchSizeLevers.map((lever, i) => {
       if (index === i) {
