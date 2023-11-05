@@ -44,11 +44,11 @@ class ReviewPackageCmpInfo extends React.PureComponent {
     };
   }
 
-  componentDidMount (){
+  componentDidMount () {
     const correspondence = this.props;
-    
+
     ApiUtil.get(`/queue/correspondence/${correspondence.correspondenceId}`).then((response) => {
-      this.setState({ correspondence: response.body.correspondence, package_document_type: response.body.package_document_type }); 
+      this.setState({ correspondence: response.body.correspondence, package_document_type: response.body.package_document_type });
     });
   }
 
@@ -65,8 +65,8 @@ const CmpInfoScaffolding = (props) => {
   const packageDocumentType = props.packageDocumentType;
   const correspondence = props.correspondence;
   const date = new Date(correspondence?.portal_entry_date);
-  let customDate = date && `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`
-  
+  const customDate = date && `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`;
+
   return (
     <div>
       <h2> {COPY.CORRESPONDENCE_REVIEW_CMP_INFO_TITLE} </h2>
