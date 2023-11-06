@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
