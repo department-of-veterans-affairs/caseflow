@@ -1,5 +1,3 @@
-// client/app/admin/components/CaseflowDistribution/InteractableLever.js
-
 import React from 'react';
 import PropTypes from 'prop-types';
 

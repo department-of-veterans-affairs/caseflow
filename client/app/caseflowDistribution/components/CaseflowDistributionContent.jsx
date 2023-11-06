@@ -10,8 +10,8 @@ import PropTypes from 'prop-types';
 import {
   sectionSegmentStyling,
   sectionHeadingStyling,
-  anchorJumpLinkStyling } from '../../../queue/StickyNavContentArea';
-import COPY from '../../../../COPY';
+  anchorJumpLinkStyling } from 'app/queue/StickyNavContentArea';
+import COPY from '../../../COPY';
 
 const CaseflowDistributionContent = ({ levers, saveChanges, formattedHistory, isAdmin, leverStore }) => {
   return (

@@ -2,8 +2,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import TextField from 'app/components/TextField';
-import RadioField from '../../../components/RadioField';
-import Table from '../../../components/Table';
+import RadioField from '../../components/RadioField';
+import Table from '../../components/Table';
 import NumberField from 'app/components/NumberField';
 
 const StaticLever = ({ lever }) => {

@@ -2,7 +2,7 @@ import React from 'react';
 import AffinityDays from './AffinityDays';
 import { levers } from 'test/data/adminCaseDistributionLevers';
 import { createStore } from 'redux';
-import leversReducer from 'app/admin/reducers/Levers/leversReducer';
+import leversReducer from '../reducers/Levers/leversReducer';
 
 
 export default {

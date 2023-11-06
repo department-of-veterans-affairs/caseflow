@@ -1,5 +1,3 @@
-// client/app/admin/components/CaseflowDistribution/AdminTabs.js
-
 import React from 'react';
 import { connect } from 'react-redux';
 

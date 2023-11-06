@@ -1,7 +1,7 @@
 
 import React from 'react';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
-import RadioField from '../../../components/RadioField';
+import RadioField from 'app/components/RadioField';
 import { css } from 'glamor';
 
 const ExclusionTable = () => {
