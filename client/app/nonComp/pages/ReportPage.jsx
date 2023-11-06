@@ -79,10 +79,14 @@ const ReportPage = ({ history }) => {
   const defaultFormValues = {
     reportType: '',
     conditions: [],
-    timingSpecifications: null,
-    date: '',
-    from: '',
-    to: '',
+    // timing: null,
+    // start_date: '',
+    // end_date: '',
+    timing: {
+      range: null,
+      start_date: '',
+      end_date: '',
+    }
   };
 
   const methods = useForm({ defaultValues: { ...defaultFormValues } });

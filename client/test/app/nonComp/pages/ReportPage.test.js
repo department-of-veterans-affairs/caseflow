@@ -2,7 +2,7 @@ import React from 'react';
 import { axe } from 'jest-axe';
 
 import userEvent from '@testing-library/user-event';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, getAllByRole, render, screen, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import ReportPage from 'app/nonComp/pages/ReportPage';
 import selectEvent from 'react-select-event';
@@ -167,29 +167,52 @@ describe('ReportPage', () => {
       expect(dropdownName).toBeInTheDocument();
     });
 
-    it('adds a datetime field with name Date when you select After option', async () => {
-      await selectEvent.select(screen.getByLabelText('Range'), ['After']);
+    it('adds a datetime field with name Date when you select After Or Before option', async () => {
+      const dropdownName = screen.getByLabelText(/Range/);
 
-      expect(screen.getAllByText('After').length).toBe(1);
-      expect(screen.getAllByText(/Date/).length).toBe(1);
-    });
+      ['After', 'Before'].forEach(async (option) => {
 
-    it('adds a datetime field with name Date when you select Before option', async () => {
-      await selectEvent.select(screen.getByLabelText('Range'), ['Before']);
+        await selectEvent.select(dropdownName, [option]);
 
-      expect(screen.getAllByText('Before').length).toBe(1);
+        await waitFor(() => {
+          expect(screen.getAllByText(option).length).toBe(1);
+        });
 
-      expect(screen.getAllByText(/Date/).length).toBe(1);
-
+        await waitFor(() => {
+          expect(screen.queryByText('Date')).toBeInTheDocument();
+        });
+      });
     });
 
     it('adds two datetime field, From and To when you select Between option', async () => {
-      await selectEvent.select(screen.getByLabelText('Range'), ['Between']);
+      const dropdownName = screen.getByLabelText(/Range/);
+
+      await selectEvent.select(dropdownName, ['Between']);
 
       expect(screen.getAllByText('Between').length).toBe(1);
 
       expect(screen.getAllByText(/From/).length).toBe(1);
       expect(screen.getAllByText(/To/).length).toBe(1);
+
+    });
+
+    it('should not display any date time input if option selected in input is one of Last 7 days, Last 30 days, Last 365 days', async () => {
+      ['Last 30 Days', 'Last 7 Days', 'Last 365 Days'].forEach(async (option) => {
+
+        const dropdownName = screen.getByLabelText(/Range/);
+
+        await selectEvent.select(dropdownName, [option]);
+
+        await waitFor(() => {
+          expect(screen.getAllByText([option]).length).toBe(1);
+        });
+
+        await waitFor(() => {
+          expect(screen.queryByText('Date')).not.toBeInTheDocument();
+          expect(screen.queryByText('From')).not.toBeInTheDocument();
+          expect(screen.queryByText('To')).not.toBeInTheDocument();
+        });
+      });
     });
   });
 });

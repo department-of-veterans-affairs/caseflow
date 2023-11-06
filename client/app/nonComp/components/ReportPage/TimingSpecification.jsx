@@ -34,22 +34,23 @@ const TIMING_SPECIFIC_OPTIONS = [
 
 export const TimingSpecification = () => {
   const { watch, control } = useFormContext();
-  const watchTimingSpecification = watch('timingSpecifications');
+  const watchTimingSpecification = watch('timing.range');
 
   return (
     <div>
       <hr style={{ marginTop: '50px', marginBottom: '50px' }} />
       <NonCompReportFilterContainer
         header="Timing specifications"
-        name="timingSpecifications"
+        name="timing.range"
         label="Range"
         options={TIMING_SPECIFIC_OPTIONS}
+        optional
       />
       {
         ['after', 'before', 'between'].includes(watchTimingSpecification) ?
           <ReportPageDateSelector
             control={control}
-            name={watchTimingSpecification === 'between' ? 'from' : 'date'}
+            name="timing.start_date"
             label={watchTimingSpecification === 'between' ? 'From' : 'Date'}
           /> :
           null
@@ -57,7 +58,7 @@ export const TimingSpecification = () => {
       {
         watchTimingSpecification === 'between' ?
           <ReportPageDateSelector control={control}
-            name="to"
+            name="timing.end_date"
             label="To" /> : null
       }
     </div>

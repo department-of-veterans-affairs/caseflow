@@ -3,6 +3,7 @@ import { useController } from 'react-hook-form';
 import PropTypes from 'prop-types';
 
 import DateSelector from 'app/components/DateSelector';
+import { marginTop } from 'app/hearings/components/details/style';
 
 const ReportPageDateSelector = ({ name, label, control }) => {
   const { field } = useController({
@@ -24,6 +25,7 @@ const ReportPageDateSelector = ({ name, label, control }) => {
           }}
           type="date"
           noFutureDates
+          inputStyling={marginTop('0 !important')}
         />
       </div>
     </fieldset>

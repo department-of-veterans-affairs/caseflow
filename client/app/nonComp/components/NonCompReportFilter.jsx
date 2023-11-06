@@ -20,7 +20,8 @@ const NonCompReportFilter = ({ control, props }) => (
           onChange={(valObj) => {
             onChange(valObj?.value);
           }}
-          required={false}
+          required={props.required}
+          optional={props.optional}
         />
       )}
     />
@@ -39,7 +40,9 @@ NonCompReportFilter.propTypes = {
   header: PropTypes.string,
   name: PropTypes.string,
   label: PropTypes.string,
-  options: PropTypes.array
+  options: PropTypes.array,
+  optional: PropTypes.bool,
+  required: PropTypes.bool
 };
 
 NonCompReportFilterContainer.propTypes = {
