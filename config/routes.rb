@@ -49,11 +49,6 @@ Rails.application.routes.draw do
         resources :intake_statuses, only: :show
         get 'legacy_appeals', to: "legacy_appeals#index"
       end
-      namespace :vbms_intake do
-        namespace :ama do
-          get "veterans/:participant_id", to: "veterans#show"
-        end
-      end
       namespace :issues do
         namespace :vacols do
           get 'find_by_veteran', to: "veterans#show" # passing in ssn/vfn as a header
