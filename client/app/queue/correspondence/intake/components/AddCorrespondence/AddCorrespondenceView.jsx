@@ -23,8 +23,7 @@ class AddCorrespondenceView extends React.Component {
       source_type: '',
       package_document_type: '',
       correspondence_type_id: '',
-      notes: '',
-      rowObjects: ''
+      notes: ''
     };
   }
 
@@ -35,9 +34,6 @@ class AddCorrespondenceView extends React.Component {
       const correspondences = returnedObject.correspondence;
 
       this.props.loadCorrespondences(correspondences);
-      this.setState({
-        rowObjects: returnedObject.correspondence
-      });
     }).
       catch((err) => {
         // allow HTTP errors to fall on the floor via the console.
