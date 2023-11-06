@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::TaskColumnSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   def self.serialize_attribute?(params, columns)
     (params[:columns] & columns).any?

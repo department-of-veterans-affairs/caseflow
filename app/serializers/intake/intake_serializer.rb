@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Intake::IntakeSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :id
   attribute :form_type

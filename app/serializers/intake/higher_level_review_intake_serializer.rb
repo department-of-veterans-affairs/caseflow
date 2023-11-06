@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Intake::HigherLevelReviewIntakeSerializer < Intake::ClaimReviewIntakeSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   set_key_transform :camel_lower
 
   attribute :same_office do |object|

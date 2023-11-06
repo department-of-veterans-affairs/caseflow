@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class HearingDaySerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :bva_poc
   attribute :created_at

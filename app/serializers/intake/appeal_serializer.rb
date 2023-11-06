@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Intake::AppealSerializer < Intake::DecisionReviewSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   set_key_transform :camel_lower
 
   attribute :docket_type

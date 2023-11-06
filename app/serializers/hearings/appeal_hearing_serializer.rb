@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AppealHearingSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :date, &:scheduled_for
   attribute :disposition

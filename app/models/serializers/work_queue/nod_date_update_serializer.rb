@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::NodDateUpdateSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :old_date
   attribute :new_date

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::CavcRemandsAppellantSubstitutionSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :substitution_date
   attribute :participant_id

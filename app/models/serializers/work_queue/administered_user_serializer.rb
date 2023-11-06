@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::AdministeredUserSerializer < WorkQueue::UserSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :admin do |object, params|
     params[:organization].user_is_admin?(object)

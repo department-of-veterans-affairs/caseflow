@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::RegionalOfficeTaskSerializer < WorkQueue::TaskSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :previous_task do
     {

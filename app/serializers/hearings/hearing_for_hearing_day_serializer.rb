@@ -11,7 +11,7 @@
 # serializer needs to return.
 
 class HearingForHearingDaySerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :aod, &:aod?
   attribute :appeal_id

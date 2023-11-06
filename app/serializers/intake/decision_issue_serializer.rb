@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Intake::DecisionIssueSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   set_key_transform :camel_lower
 
   # converts ui_hash into a serializer

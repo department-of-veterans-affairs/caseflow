@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::PowerOfAttorneySerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
   attribute :id
   attribute :claimant_participant_id
   attribute :poa_participant_id

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkQueue::AppellantSubstitutionHistorySerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attribute :substitution_date
   attribute :original_appellant_veteran_participant_id
