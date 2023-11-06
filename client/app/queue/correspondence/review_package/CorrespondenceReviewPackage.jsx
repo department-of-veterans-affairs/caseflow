@@ -25,7 +25,6 @@ export const CorrespondenceReviewPackage = () => {
           <Button
             name="Intake appeal"
             styling={{ style: { marginRight: '2rem' } }}
-            href="/queue/correspondence/9d912a08-7847-436f-9c58-bdf3896be2f1/intake"
             classNames={['usa-button-secondary']}
           />
           <a href="/queue/correspondence/9d912a08-7847-436f-9c58-bdf3896be2f1/intake">
@@ -33,6 +32,7 @@ export const CorrespondenceReviewPackage = () => {
             <Button
               name="Create record"
               classNames={['usa-button-primary']}
+              href="/queue/correspondence/9d912a08-7847-436f-9c58-bdf3896be2f1/intake"
             />
           </a>
         </div>
