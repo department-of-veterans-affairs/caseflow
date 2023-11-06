@@ -170,15 +170,19 @@ describe('ReportPage', () => {
     it('adds a datetime field with name Date when you select After Or Before option', async () => {
       const dropdownName = screen.getByLabelText(/Range/);
 
-      ['After', 'Before'].forEach(async (option) => {
+      await selectEvent.select(dropdownName, ['After']);
 
-        await selectEvent.select(dropdownName, [option]);
+      expect(screen.getAllByText('After').length).toBe(1);
+      expect(screen.queryByText('Date')).toBeInTheDocument();
+    });
 
-        await waitFor(() => {
-          expect(screen.getAllByText(option).length).toBe(1);
-          expect(screen.queryByText('Date')).toBeInTheDocument();
-        });
-      });
+    it('adds a datetime field with name Date when you select Before option', async () => {
+      const dropdownName = screen.getByLabelText(/Range/);
+
+      await selectEvent.select(dropdownName, ['Before']);
+
+      expect(screen.getAllByText('Before').length).toBe(1);
+      expect(screen.queryByText('Date')).toBeInTheDocument();
     });
 
     it('adds two datetime field, From and To when you select Between option', async () => {
