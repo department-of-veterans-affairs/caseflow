@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_08_14_133820) do
+ActiveRecord::Schema.define(version: 2023_11_06_174051) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -343,6 +343,24 @@ ActiveRecord::Schema.define(version: 2023_08_14_133820) do
     t.datetime "updated_at", null: false
     t.index ["sdomainid"], name: "index_cached_user_attributes_on_sdomainid", unique: true
     t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
+  end
+
+  create_table "case_distribution_levers", comment: "A generalized table for Caseflow Distribution lever records within caseflow", force: :cascade do |t|
+    t.json "algorithms_used", comment: "Indicates the algorithms used"
+    t.json "control_group", comment: "Indicates the group which contain json formatted data that controls the Case Distribution Levers"
+    t.datetime "created_at", null: false
+    t.string "data_type", null: false, comment: "Indicates which type of record either BOOLEAN/RADIO/COMBO"
+    t.text "description", comment: "Indicates the description of the Lever"
+    t.boolean "is_active", null: false, comment: "Indicates the active lever"
+    t.boolean "is_disabled", null: false, comment: "Used to diabled the row"
+    t.string "item", null: false, comment: "Is unique value to identify the Caseflow Distribution lever"
+    t.integer "max_value", comment: "Set max value for the input"
+    t.integer "min_value", comment: "Set min value for the input"
+    t.json "options", comment: "Indicates the options which contain json formatted data"
+    t.string "title", null: false, comment: "Indicates the Lever title"
+    t.string "unit", comment: "Indicates the type of data like Cases or Days"
+    t.datetime "updated_at", null: false
+    t.string "value", null: false, comment: "Indicates the value based in the data type wither string/number"
   end
 
   create_table "caseflow_stuck_records", comment: "This is a polymorphic table consisting of records that have repeatedly errored out of the syncing process. Currently, the only records on this table come from the PriorityEndProductSyncQueue table.", force: :cascade do |t|
