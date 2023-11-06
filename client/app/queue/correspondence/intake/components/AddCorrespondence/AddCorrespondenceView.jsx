@@ -8,6 +8,9 @@ import Table from '../../../../../components/Table';
 import Checkbox from '../../../../../components/Checkbox';
 import RadioField from '../../../../../components/RadioField';
 import ApiUtil from '../../../../../util/ApiUtil';
+import {
+  loadCorrespondences
+} from '../../../correspondenceReducer/correspondenceActions';
 class AddCorrespondenceView extends React.Component {
 
   constructor(props) {
@@ -25,10 +28,13 @@ class AddCorrespondenceView extends React.Component {
     };
   }
 
+  // grabs correspondences and loads into intakeCorrespondence redux store.
   getRowObjects(correspondenceUuid) {
     return ApiUtil.get(`/queue/correspondence/${correspondenceUuid}/intake?json`).then((response) => {
       const returnedObject = response.body;
+      const correspondences = returnedObject.correspondence;
 
+      this.props.loadCorrespondences(correspondences);
       this.setState({
         rowObjects: returnedObject.correspondence
       });
@@ -176,11 +182,11 @@ class AddCorrespondenceView extends React.Component {
         {this.state.value === '1' && (
           <div className="cf-app-segment cf-app-segment--alt">
             <p>Please select the prior mail to link to this correspondence</p>
-            <p>Viewing {this.state.rowObjects.length} out of {this.state.rowObjects.length} total</p>
+            <p>Viewing {this.props.correspondences.length} out of {this.props.correspondences.length} total</p>
             <div>
               <Table
                 columns={this.getDocumentColumns}
-                rowObjects={this.state.rowObjects}
+                rowObjects={this.props.correspondences}
                 summary="Correspondence list"
                 className="correspondence-table"
                 headerClassName="cf-correspondence-list-header-row"
@@ -200,13 +206,21 @@ AddCorrespondenceView.propTypes = {
   correspondence: PropTypes.arrayOf(PropTypes.object),
   featureToggles: PropTypes.object,
   correspondenceUuid: PropTypes.string,
+  loadCorrespondences: PropTypes.func,
+  correspondences: PropTypes.array
 };
 
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    dispatch
-  );
+const mapStateToProps = (state) => ({
+  correspondences: state.intakeCorrespondence.correspondences
+});
+
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    loadCorrespondences
+  }, dispatch)
+);
 
 export default connect(
+  mapStateToProps,
   mapDispatchToProps
 )(AddCorrespondenceView);
