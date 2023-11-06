@@ -176,9 +176,6 @@ describe('ReportPage', () => {
 
         await waitFor(() => {
           expect(screen.getAllByText(option).length).toBe(1);
-        });
-
-        await waitFor(() => {
           expect(screen.queryByText('Date')).toBeInTheDocument();
         });
       });
