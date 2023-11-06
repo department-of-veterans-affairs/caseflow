@@ -6,14 +6,15 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 class CorrespondenceTable extends React.Component {
 
   render() {
+    // test data names link to multi_correspondence.rb seed data
     const testobj = [{
-      veteranDetails: 'Rosalie Turner (123456789)',
+      veteranDetails: 'Adam West (66555444)',
       packageDocumentType: '1111111',
       cmPacketNumber: '22222222',
       correspondeceId: 11,
     },
     {
-      veteranDetails: 'Ana Turner (123456789)',
+      veteranDetails: 'Michael Keaton (67555444)',
       packageDocumentType: '12345678',
       cmPacketNumber: '12345679',
       correspondeceId: 2,

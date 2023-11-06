@@ -25,12 +25,13 @@ export const CorrespondenceReviewPackage = () => {
           <Button
             name="Intake appeal"
             styling={{ style: { marginRight: '2rem' } }}
+            href="/queue/correspondence/9d912a08-7847-436f-9c58-bdf3896be2f1/intake"
             classNames={['usa-button-secondary']}
           />
-          <a href="/queue/correspondence/12/intake">
+          <a href="/queue/correspondence/9d912a08-7847-436f-9c58-bdf3896be2f1/intake">
+            {/* hard coded UUID to link to multi_correspondence.rb data */}
             <Button
               name="Create record"
-              href="/queue/correspondence/12/intake"
               classNames={['usa-button-primary']}
             />
           </a>
