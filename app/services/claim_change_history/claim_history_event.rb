@@ -201,6 +201,8 @@ class ClaimHistoryEvent
     end
 
     def date_strings_within_seconds?(first_date, second_date, time_in_seconds)
+      return false unless first_date && second_date
+
       ((first_date.to_datetime - second_date.to_datetime).abs * 24 * 60 * 60).to_f < time_in_seconds
     end
   end
