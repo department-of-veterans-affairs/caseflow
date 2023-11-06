@@ -72,7 +72,9 @@ const CmpInfoScaffolding = (props) => {
   const packageDocumentType = props.packageDocumentType;
   const correspondence = props.correspondence;
   const date = new Date(correspondence?.portal_entry_date);
-  const customDate = date && `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`;
+  const customDate = date && `${date.getMonth().toString().
+    padStart(2, '0')}/${date.getDate().toString().
+      padStart(2, '0')}/${date.getFullYear()}`;
 
   return (
     <div>
