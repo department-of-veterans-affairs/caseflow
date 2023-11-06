@@ -18,6 +18,7 @@ class DecisionReviewsController < ApplicationController
            :completed_tasks_type_counts,
            :completed_tasks_issue_type_counts,
            :included_tabs,
+           :can_generate_claim_history?,
            to: :business_line
 
   SORT_COLUMN_MAPPINGS = {
@@ -65,7 +66,7 @@ class DecisionReviewsController < ApplicationController
   end
 
   def generate_report
-    return render "errors/404" unless business_line.can_generate_claim_history
+    return render "errors/404" unless can_generate_claim_history?
     return requires_admin_access_redirect unless business_line.user_is_admin?(current_user)
 
     respond_to do |format|
@@ -122,7 +123,8 @@ class DecisionReviewsController < ApplicationController
 
   def business_line_config_options
     {
-      tabs: included_tabs
+      tabs: included_tabs,
+      canGenerateClaimHistory: can_generate_claim_history?
     }
   end
 

@@ -72,7 +72,7 @@ class NonCompReviewsPage extends React.PureComponent {
                 Download completed tasks
               </Button>
             }
-            {this.props.businessLineUrl === 'vha' && this.props.isBusinessLineAdmin ?
+            {this.props.canGenerateClaimHistory && this.props.isBusinessLineAdmin ?
               <Button
                 classNames={secondaryButtonClassNames}
                 onClick={() => {
@@ -97,13 +97,15 @@ NonCompReviewsPage.propTypes = {
   decisionIssuesStatus: PropTypes.object,
   businessLineUrl: PropTypes.string,
   isBusinessLineAdmin: PropTypes.bool,
-  history: PropTypes.object
+  canGenerateClaimHistory: PropTypes.bool,
+  history: PropTypes.object,
 };
 
 const ReviewPage = connect(
   (state) => ({
     isBusinessLineAdmin: state.nonComp.isBusinessLineAdmin,
     businessLine: state.nonComp.businessLine,
+    canGenerateClaimHistory: state.nonComp.businessLineConfig.canGenerateClaimHistory,
     decisionIssuesStatus: state.nonComp.decisionIssuesStatus,
     businessLineUrl: state.nonComp.businessLineUrl
   })
