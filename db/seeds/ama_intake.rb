@@ -16,6 +16,7 @@ module Seeds
       create_veteran_with_legacy_appeals_and_request_issue_with_many_decision_issues
       create_veteran_with_no_legacy_appeals_and_decision_issue_with_many_request_issues
       create_veteran_with_legacy_appeals_and_decision_issue_with_many_request_issues
+      create_veteran_without_request_issues
     end
 
     private
@@ -45,7 +46,7 @@ module Seeds
       end
 
       # 1 Supplemental Claim containing 60 Request Issues with no Decision Issues
-      supp_epe = create_end_product_establishment(:active_supp_with_veteran_claimant, veteran)
+      supp_epe = create_end_product_establishment(:active_supp_with_dependent_claimant, veteran)
       60.times do
         create_claim_review_request_issue(:nonrating, supp_epe, veteran)
       end
@@ -74,7 +75,7 @@ module Seeds
       end
 
       # 1 Supplemental Claim containing 60 Request Issues with no Decision Issues
-      supp_epe = create_end_product_establishment(:active_supp_with_veteran_claimant, veteran)
+      supp_epe = create_end_product_establishment(:active_supp_with_dependent_claimant, veteran)
       60.times do
         create_claim_review_request_issue(:nonrating, supp_epe, veteran)
       end
@@ -176,6 +177,10 @@ module Seeds
       end
       # Outlier Decision Issue with 31 Request Issues
       create_decision_issue_with_many_request_issues(:nonrating, hlr_epe, veteran, number_of_issues = 31)
+    end
+
+    def create_veteran_without_request_issues
+      veteran = create_veteran
     end
 
     def create_veteran
