@@ -48,14 +48,19 @@ class ReviewPackageCmpInfo extends React.PureComponent {
     const correspondence = this.props;
 
     ApiUtil.get(`/queue/correspondence/${correspondence.correspondenceId}`).then((response) => {
-      this.setState({ correspondence: response.body.correspondence, package_document_type: response.body.package_document_type });
+      this.setState({
+        correspondence: response.body.correspondence,
+        package_document_type: response.body.package_document_type
+      });
     });
   }
 
   render = () => {
     return (
       <div>
-        <CmpInfoScaffolding correspondence={this.state?.correspondence} packageDocumentType = {this.state?.package_document_type} />
+        <CmpInfoScaffolding
+          correspondence={this.state?.correspondence}
+          packageDocumentType = {this.state?.package_document_type} />
       </div>
     );
   };
@@ -94,9 +99,18 @@ const CmpInfoScaffolding = (props) => {
   );
 };
 
+CmpInfoScaffolding.propTypes = {
+  packageDocumentType: PropTypes.object,
+  correspondence: PropTypes.object
+};
+
 TitleDetailsSubheaderSection.propTypes = {
   children: PropTypes.node,
   title: PropTypes.string.isRequired
+};
+
+ReviewPackageCmpInfo.propTypes = {
+  correspondenceId: PropTypes.string
 };
 
 export default ReviewPackageCmpInfo;
