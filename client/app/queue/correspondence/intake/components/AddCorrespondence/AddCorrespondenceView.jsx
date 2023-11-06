@@ -3,11 +3,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
-import Table from '../../../../../components/Table';
 import Checkbox from '../../../../../components/Checkbox';
 import RadioField from '../../../../../components/RadioField';
 import ApiUtil from '../../../../../util/ApiUtil';
+import PaginationWrapper from '../../../CorrespondencePaginationWrapper';
 class AddCorrespondenceView extends React.Component {
 
   constructor(props) {
@@ -176,10 +175,10 @@ class AddCorrespondenceView extends React.Component {
         {this.state.value === '1' && (
           <div className="cf-app-segment cf-app-segment--alt">
             <p>Please select the prior mail to link to this correspondence</p>
-            <p>Viewing {this.state.rowObjects.length} out of {this.state.rowObjects.length} total</p>
             <div>
-              <Table
+              <PaginationWrapper
                 columns={this.getDocumentColumns}
+                columnsToDisplay={15}
                 rowObjects={this.state.rowObjects}
                 summary="Correspondence list"
                 className="correspondence-table"
@@ -188,6 +187,7 @@ class AddCorrespondenceView extends React.Component {
                 tbodyId="correspondence-table-body"
                 getKeyForRow={this.getKeyForRow}
               />
+
             </div>
           </div>
         )}
