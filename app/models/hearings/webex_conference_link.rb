@@ -16,6 +16,7 @@ class WebexConferenceLink < ConferenceLink
 
     conference = WebexService.new(
       host: ENV["WEBEX_HOST_IC"],
+      port: ENV["WEBEX_PORT"],
       aud: ENV["WEBEX_ORGANIZATION"],
       apikey: ENV["WEBEX_BOTTOKEN"],
       domain: ENV["WEBEX_DOMAIN_IC"],
