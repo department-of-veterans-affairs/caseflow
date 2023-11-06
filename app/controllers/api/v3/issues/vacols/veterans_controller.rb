@@ -3,11 +3,11 @@
 # :reek:InstanceVariableAssumption
 class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
   DEFAULT_UPPER_BOUND_PER_PAGE = 50 # The max amount of Issues that can be paginated on a single page
-  # include ApiV3FeatureToggleConcern
+  include ApiV3FeatureToggleConcern
 
-  # before_action do
-  #   api_released?(:api_v3_legacy_issues)
-  # end
+  before_action do
+    api_released?(:api_v3_legacy_issues)
+  end
 
   before_action :validate_headers, :validate_veteran_presence
 
