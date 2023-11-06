@@ -6,7 +6,13 @@ import { bindActionCreators } from 'redux';
 import Checkbox from '../../../../../components/Checkbox';
 import RadioField from '../../../../../components/RadioField';
 import ApiUtil from '../../../../../util/ApiUtil';
+<<<<<<< HEAD
 import PaginationWrapper from '../../../CorrespondencePaginationWrapper';
+=======
+import {
+  loadCorrespondences
+} from '../../../correspondenceReducer/correspondenceActions';
+>>>>>>> 2fcea0d8d0c9cb0a7ea8369d3c3d8be6546ebf15
 class AddCorrespondenceView extends React.Component {
 
   constructor(props) {
@@ -19,18 +25,17 @@ class AddCorrespondenceView extends React.Component {
       source_type: '',
       package_document_type: '',
       correspondence_type_id: '',
-      notes: '',
-      rowObjects: ''
+      notes: ''
     };
   }
 
+  // grabs correspondences and loads into intakeCorrespondence redux store.
   getRowObjects(correspondenceUuid) {
     return ApiUtil.get(`/queue/correspondence/${correspondenceUuid}/intake?json`).then((response) => {
       const returnedObject = response.body;
+      const correspondences = returnedObject.correspondence;
 
-      this.setState({
-        rowObjects: returnedObject.correspondence
-      });
+      this.props.loadCorrespondences(correspondences);
     }).
       catch((err) => {
         // allow HTTP errors to fall on the floor via the console.
@@ -175,11 +180,11 @@ class AddCorrespondenceView extends React.Component {
         {this.state.value === '1' && (
           <div className="cf-app-segment cf-app-segment--alt">
             <p>Please select the prior mail to link to this correspondence</p>
+            <p>Viewing {this.props.correspondences.length} out of {this.props.correspondences.length} total</p>
             <div>
               <PaginationWrapper
                 columns={this.getDocumentColumns}
-                columnsToDisplay={15}
-                rowObjects={this.state.rowObjects}
+                rowObjects={this.props.correspondences}
                 summary="Correspondence list"
                 className="correspondence-table"
                 headerClassName="cf-correspondence-list-header-row"
@@ -200,13 +205,21 @@ AddCorrespondenceView.propTypes = {
   correspondence: PropTypes.arrayOf(PropTypes.object),
   featureToggles: PropTypes.object,
   correspondenceUuid: PropTypes.string,
+  loadCorrespondences: PropTypes.func,
+  correspondences: PropTypes.array
 };
 
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    dispatch
-  );
+const mapStateToProps = (state) => ({
+  correspondences: state.intakeCorrespondence.correspondences
+});
+
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    loadCorrespondences
+  }, dispatch)
+);
 
 export default connect(
+  mapStateToProps,
   mapDispatchToProps
 )(AddCorrespondenceView);

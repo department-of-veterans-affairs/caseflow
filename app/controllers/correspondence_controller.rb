@@ -22,6 +22,11 @@ class CorrespondenceController < ApplicationController
     render "correspondence/review_package"
   end
 
+  def show
+    @correspondence = Correspondence.find(params[:id])
+    render json: { correspondence: @correspondence, package_document_type: @correspondence.package_document_type }
+  end
+
   private
 
   def verify_feature_toggle
