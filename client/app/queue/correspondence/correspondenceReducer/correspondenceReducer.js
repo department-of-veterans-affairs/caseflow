@@ -1,4 +1,3 @@
-import { fromPairs, map } from 'lodash';
 import { update } from '../../../util/ReducerUtil';
 import { ACTIONS } from './correspondenceConstants';
 
