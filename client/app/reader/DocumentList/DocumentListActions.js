@@ -102,6 +102,33 @@ export const setTagFilter = (text, checked, tagId) => (dispatch) => {
   dispatch(updateFilteredIdsAndDocs());
 };
 
+export const setClaimEvidenceDocs = (documents, claimSearchTerm) => (dispatch) => {
+  dispatch({
+    type: Constants.SET_CLAIM_EVIDENCE_DOCS,
+    payload: { documents, claimSearchTerm },
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'set-claim-evidence-docs'
+      }
+    }
+  });
+  dispatch(updateFilteredIdsAndDocs());
+};
+
+export const clearClaimEvidenceDocs = () => (dispatch) => {
+  dispatch({
+    type: Constants.CLEAR_CLAIM_EVIDENCE_DOCS,
+    meta: {
+      analytics: {
+        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
+        action: 'clear-doc-filters'
+      }
+    }
+  });
+  dispatch(updateFilteredIdsAndDocs());
+};
+
 export const setDocFilter = (text, checked) => (dispatch) => {
   dispatch({
     type: Constants.SET_DOC_FILTER,

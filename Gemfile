@@ -21,6 +21,7 @@ gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", branch: "master"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
+gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "e3380fc6e4c2103322043d4be50fe2e8cdce5dae"
 gem "countries"
 gem "ddtrace"
 gem "dogstatsd-ruby"
