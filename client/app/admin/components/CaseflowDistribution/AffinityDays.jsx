@@ -15,12 +15,12 @@ const AffinityDays = (props) => {
     paddingTop: '10px',
   });
 
-  const affinityLevers = leverList.map((item) => {
+  const filteredLevers = leverList.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
 
   const [selectedOption, setSelectedOption] = useState(null);
-  const [_, setLever] = useState(affinityLevers);
+  const [affinityLevers, setLever] = useState(filteredLevers);
 
   const handleRadioChange = (option) => {
     setSelectedOption(option);
@@ -31,6 +31,11 @@ const AffinityDays = (props) => {
       if (index === i) {
         const opt = lever.options.map((opt) => {
           if (opt === option) {
+            if (!/^\d{0,3}$/.test(e)) {
+              opt.errorMessage = 'Please enter a value less than or equal to 999';
+            } else {
+              opt.errorMessage = null;
+            }
             opt.value = e;
           }
           return opt;
@@ -45,7 +50,10 @@ const AffinityDays = (props) => {
   };
 
   const leverNumberDiv = css({
-    '& .cf-form-int-input' : {width: 'auto', display: 'inline-block'}
+    '& .cf-form-int-input' : {width: 'auto', display: 'inline-block', position: 'relative'},
+    '& .cf-form-int-input .input-container' : {width: 'auto', display: 'inline-block', verticalAlign: 'middle'},
+    '& .cf-form-int-input label' : {position: 'absolute',bottom: '15px', left: '100px'},
+    '& .usa-input-error label': {bottom: '24px', left: '115px'}
   });
 
   return (
@@ -85,10 +93,11 @@ const AffinityDays = (props) => {
                     {option.data_type === 'number' ? (
                       <NumberField
                         name={option.item}
-                        label={false}
+                        label={option.unit}
                         isInteger
                         disabled={lever.is_disabled}
                         value={option.value}
+                        errorMessage={option.errorMessage}
                         onChange={updateLever(option,index)}
                       />
                     ) : (
@@ -102,7 +111,6 @@ const AffinityDays = (props) => {
                         />
                       ) : null
                     )}
-                    {option.unit && <span className={styles.leverUnit}>{option.unit}</span>}
                   </div>
                 )}
                 </div>
