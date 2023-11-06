@@ -82,6 +82,7 @@ export const AddTasksAppealsView = () => {
         </p>
         <div />
 
+        {/* This button will activate the New Tasks section */}
         {!addTask && <Button
           type="button"
           onClick={clickAddTask}
@@ -89,6 +90,8 @@ export const AddTasksAppealsView = () => {
           classNames={['cf-left-side']}>
             + Add tasks
         </Button>}
+
+        {/* This is the New Tasks section. Tasks will show next to each other in line. */}
         <div className="gray-border" style={{ padding: '0rem 0rem' }}>
           <div style={{ width: '100%', height: 'auto', backgroundColor: 'white', paddingBottom: '3rem' }}>
             <div style={{ backgroundColor: '#f1f1f1', width: '100%', height: '50px', paddingTop: '1.5rem' }}>
@@ -103,6 +106,7 @@ export const AddTasksAppealsView = () => {
             </div>
             <div style={{ width: '100%', height: '3rem' }} />
             <div style={{ display: 'flex' }}>
+              {/* { (addTask.length <= 2) && addTask.map((currentTask, i) => ( */}
               { addTask && addTask.map((currentTask, i) => (
                 <TaskNotRelatedToAppeal secret={i} key={i} removeTask={() => removeTaskAtIndex(i)} />
 
