@@ -12,13 +12,7 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
   case ACTIONS.LOAD_CORRESPONDENCES:
     return update(state, {
       correspondences: {
-        $set: fromPairs(map(action.payload.correspondences, (cor) => [
-          cor.id,
-          {
-            ...cor,
-            checked: false
-          }
-        ]))
+        $set: action.payload.correspondences
       }
     });
 
