@@ -4,6 +4,7 @@ describe VACOLS::CaseDocket, :all_dbs do
   before do
     FeatureToggle.enable!(:test_facols)
     FeatureToggle.enable!(:acd_disable_legacy_lock_ready_appeals)
+    FeatureToggle.enable!(:legacy_das_deprecation)
   end
 
   after do
@@ -654,7 +655,7 @@ describe VACOLS::CaseDocket, :all_dbs do
 
     it "sets the case location to 'CASEFLOW'" do
       VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, "any", nil, 2, false)
-      expect(nonpriority_ready_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:caseflow])
+      expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
     end
   end
 end

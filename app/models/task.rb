@@ -71,6 +71,7 @@ class Task < CaseflowRecord
     include_association :cancelled_by_id
     include_association :closed_at
     include_association :instructions
+    include_association :previous
     include_association :placed_on_hold_at
     include_association :started_at
     include_association :type
@@ -145,6 +146,10 @@ class Task < CaseflowRecord
       name.titlecase
     end
 
+    def legacy_blocking?
+      false
+    end
+
     def closed_statuses
       [Constants.TASK_STATUSES.completed, Constants.TASK_STATUSES.cancelled]
     end
@@ -178,13 +183,29 @@ class Task < CaseflowRecord
       false
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def verify_user_can_create!(user, parent)
       can_create = parent&.available_actions(user)&.map do |action|
         parent.build_action_hash(action, user)
       end&.any? do |action|
-        action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
+        action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option[:value] == name }
       end
 
+      can_assign_to_parent?(user, parent, can_create)
+    end
+
+    def verify_user_can_create_legacy!(user, parent)
+      can_create = parent&.available_actions(user, "SCM")&.map do |action|
+        parent.build_action_hash(action, user)
+      end&.any? do |action|
+        action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option[:value] == name }
+      end
+
+      can_assign_to_parent?(user, parent, can_create)
+    end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+    def can_assign_to_parent?(user, parent, can_create)
       if !parent&.actions_allowable?(user) || !can_create
         user_description = user ? "User #{user.id}" : "nil User"
         parent_description = parent ? " from #{parent.class.name} #{parent.id}" : ""
@@ -211,15 +232,96 @@ class Task < CaseflowRecord
     end
 
     def create_from_params(params, user)
-      parent_task = Task.find(params[:parent_id])
-      fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
-
-      verify_user_can_create!(user, parent_task)
-
+      parent_task = create_parent_task(params, user)
       params = modify_params_for_create(params)
-      child = create_child_task(parent_task, user, params)
-      parent_task.update!(status: params[:status]) if params[:status]
-      child
+      if parent_task.appeal_type == "LegacyAppeal" && parent_task.type != "TranslationTask" &&
+         !parent_task.type.is_a?(ColocatedTask)
+        special_case_for_legacy(parent_task, params, user)
+      else # regular appeal
+        child = create_child_task(parent_task, user, params)
+        parent_task.update!(status: params[:status]) if params[:status]
+        child
+      end
+    end
+
+    def create_parent_task(params, user)
+      parent_task = {}
+      if (params[:appeal_type] == "LegacyAppeal") && (params[:legacy_task_type] == "AttorneyLegacyTask")
+        if params[:type] == "SpecialCaseMovementTask" || params[:type] == "BlockedSpecialCaseMovementTask"
+          parent_task = LegacyWorkQueue.tasks_by_appeal_id(params[:external_id])[0]
+          verify_user_can_create_legacy!(user, parent_task)
+          parent_task = Task.find(params[:parent_id])
+        end
+      else
+        parent_task = Task.find(params[:parent_id])
+        fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
+
+        verify_user_can_create!(user, parent_task)
+      end
+
+      parent_task
+    end
+
+    def special_case_for_legacy(parent_task, params, user)
+      if (params[:type] == "SpecialCaseMovementTask") && (parent_task.type == "RootTask")
+        create_judge_assigned_task_for_legacy(params, parent_task)
+      elsif (params[:type] == "BlockedSpecialCaseMovementTask") && (parent_task.type == "HearingTask")
+        cancel_blocking_task_legacy(params, parent_task.parent)
+      else
+
+        judge = User.find(params[:assigned_to_id])
+        legacy_appeal = LegacyAppeal.find(parent_task.appeal_id)
+
+        child = create_child_task(parent_task, user, params)
+        parent_task.update!(status: params[:status]) if params[:status]
+        AppealRepository.update_location!(legacy_appeal, judge.vacols_uniq_id)
+        child
+      end
+    end
+
+    def cancel_blocking_task_legacy(params, parent_task)
+      parent_task.children.each { |current_task| search_for_blocking(params[:instructions], current_task) }
+
+      legacy_appeal = LegacyAppeal.find(parent_task.appeal_id)
+      judge = User.find(params["assigned_to_id"])
+
+      current_child = JudgeAssignTask.create!(appeal: legacy_appeal,
+                                              parent: legacy_appeal.root_task,
+                                              assigned_to: judge,
+                                              instructions: params[:instructions],
+                                              assigned_by: params["assigned_by"])
+      AppealRepository.update_location!(legacy_appeal, judge.vacols_uniq_id)
+      current_child
+    end
+
+    def cancelled_task(task)
+      task.update!(
+        status: Constants.TASK_STATUSES.cancelled,
+        cancelled_by_id: RequestStore[:current_user]&.id,
+        closed_at: Time.zone.now
+      )
+    end
+
+    def search_for_blocking(instructions, current_task)
+      if current_task.legacy_blocking?
+        current_task.cancel_descendants(instructions: "**#{COPY::LEGACY_APPEALS_VLJ_REASON_INSTRUCTIONS}**\n" +
+                                        instructions[1])
+      else
+        current_task.children.each { |task| search_for_blocking(task) }
+      end
+    end
+
+    def create_judge_assigned_task_for_legacy(params, parent_task)
+      legacy_appeal = LegacyAppeal.find(parent_task.appeal_id)
+      judge = User.find(params["assigned_to_id"])
+
+      current_child = JudgeAssignTask.create!(appeal: legacy_appeal,
+                                              parent: legacy_appeal.root_task,
+                                              assigned_to: judge,
+                                              instructions: params[:instructions],
+                                              assigned_by: params["assigned_by"])
+      AppealRepository.update_location!(legacy_appeal, judge.vacols_uniq_id)
+      current_child
     end
 
     def parent_of_same_type_has_same_assignee(parent_task, params)
@@ -235,7 +337,8 @@ class Task < CaseflowRecord
         assigned_by_id: child_assigned_by_id(parent, current_user),
         parent_id: parent.id,
         assigned_to: params[:assigned_to] || child_task_assignee(parent, params),
-        instructions: params[:instructions]
+        instructions: params[:instructions],
+        cancellation_reason: params[:cancellation_reason]
       )
     end
 
@@ -441,7 +544,7 @@ class Task < CaseflowRecord
 
   def calculated_on_hold_duration
     timed_hold_task = active_child_timed_hold_task
-    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i
+    (timed_hold_task&.timer_end_time&.to_date&.- timed_hold_task&.timer_start_time&.to_date)&.to_i
   end
 
   def calculated_last_change_duration
@@ -506,7 +609,6 @@ class Task < CaseflowRecord
 
   def update_from_params(params, current_user)
     verify_user_can_update!(current_user)
-
     return reassign(params[:reassign], current_user) if params[:reassign]
 
     update_with_instructions(params)
@@ -525,7 +627,7 @@ class Task < CaseflowRecord
   end
 
   def flattened_instructions(params)
-    [instructions, params.dig(:instructions).presence].flatten.compact
+    [instructions, params[:instructions].presence].flatten.compact
   end
 
   def append_instruction(instruction)
@@ -620,7 +722,7 @@ class Task < CaseflowRecord
     end
   end
 
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def reassign(reassign_params, current_user)
     # We do not validate the number of tasks in this scenario because when a
     # task is reassigned, more than one open task of the same type must exist during the reassignment.
@@ -628,11 +730,14 @@ class Task < CaseflowRecord
     replacement = dup.tap do |task|
       begin
         ActiveRecord::Base.transaction do
+          if !reassign_params[:previous].nil?
+            reassign_params[:previous][:new_judge] = self.class.child_task_assignee(parent, reassign_params).css_id
+          end
           task.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
           task.assigned_to = self.class.child_task_assignee(parent, reassign_params)
-          task.instructions = flattened_instructions(reassign_params)
+          task.instructions = [reassign_params[:instructions]]
           task.status = Constants.TASK_STATUSES.assigned
-
+          task.previous ? (task.previous << reassign_params[:previous]) : (task.previous = [reassign_params[:previous]])
           task.save!
         end
       ensure
@@ -649,7 +754,7 @@ class Task < CaseflowRecord
 
     [replacement, self, replacement.children].flatten
   end
-  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def can_move_on_docket_switch?
     return false unless open_with_no_children?
@@ -710,16 +815,6 @@ class Task < CaseflowRecord
     [self, children.map(&:descendants)].flatten
   end
 
-  def ancestor_task_of_type(task_type)
-    return nil unless parent
-
-    parent.is_a?(task_type) ? parent : parent.ancestor_task_of_type(task_type)
-  end
-
-  def previous_task
-    nil
-  end
-
   def cancel_task_and_child_subtasks
     # Cancel all descendants at the same time to avoid after_update hooks marking some tasks as completed.
     # it would be better if we could allow the callbacks to happen sanely
@@ -728,7 +823,6 @@ class Task < CaseflowRecord
     # by avoiding callbacks, we aren't saving PaperTrail versions
     # Manually save the state before and after.
     tasks = Task.open.where(id: descendant_ids)
-
     transaction do
       tasks.each { |task| task.paper_trail.save_with_version }
       tasks.update_all(
@@ -738,6 +832,16 @@ class Task < CaseflowRecord
       )
       tasks.each { |task| task.reload.paper_trail.save_with_version }
     end
+  end
+
+  def ancestor_task_of_type(task_type)
+    return nil unless parent
+
+    parent.is_a?(task_type) ? parent : parent.ancestor_task_of_type(task_type)
+  end
+
+  def previous_task
+    nil
   end
 
   # :reek:FeatureEnvy
@@ -823,6 +927,11 @@ class Task < CaseflowRecord
     update_appeal_state_when_privacy_act_created
     update_appeal_state_when_appeal_docketed
     update_appeal_state_when_ihp_created
+  end
+
+  ## Tag to determine if this task is considered a blocking task for Legacy Appeal Distribution
+  def legacy_blocking?
+    self.class.legacy_blocking?
   end
 
   private

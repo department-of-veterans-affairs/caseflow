@@ -43,9 +43,9 @@ RSpec.feature "Privacy team tasks and queue", :all_dbs do
         # Assignee dropdown selector should be hidden.
         expect(find_all(".cf-modal-body .cf-select__control").count).to eq(0)
         fill_in("taskInstructions", with: instructions_text)
-        find("button", text: "Submit").click
+        find("button", text: "Assign").click
 
-        expect(page).to have_content("Task assigned to #{PrivacyTeam.singleton.name}")
+        expect(page).to have_content("You have successfully reassigned this task to #{PrivacyTeam.singleton.name}")
 
         # Log in as Privacy team member.
         User.authenticate!(user: privacy_team_member)
@@ -70,9 +70,9 @@ RSpec.feature "Privacy team tasks and queue", :all_dbs do
         # Assignee dropdown selector should be hidden.
         expect(find_all(".cf-modal-body .cf-select__control").count).to eq(0)
         fill_in("taskInstructions", with: instructions_text)
-        find("button", text: "Submit").click
+        find("button", text: "Assign").click
 
-        expect(page).to have_content("Task assigned to #{PrivacyTeam.singleton.name}")
+        expect(page).to have_content("You have successfully reassigned this task to #{PrivacyTeam.singleton.name}")
 
         # Log in as Privacy team member.
         User.authenticate!(user: privacy_team_member)

@@ -73,7 +73,8 @@ describe JudgeCaseAssignmentToAttorney, :all_dbs do
       JudgeCaseAssignmentToAttorney.update(
         task_id: task_id,
         assigned_by: assigned_by,
-        assigned_to: assigned_to
+        assigned_to: assigned_to,
+        appeal_id: appeal.id
       )
     end
     context "when all required values are present" do
@@ -84,18 +85,6 @@ describe JudgeCaseAssignmentToAttorney, :all_dbs do
       it "it is successful" do
         expect(QueueRepository).to receive(:reassign_case_to_attorney!).once
         expect(subject.valid?).to eq true
-      end
-    end
-
-    context "when task id is not valid" do
-      let(:task_id) { 1234 }
-      let(:assigned_by) { judge }
-      let(:assigned_to) { attorney }
-
-      it "does not reassign case to attorney" do
-        expect(QueueRepository).to_not receive(:reassign_case_to_attorney!)
-        expect(subject.valid?).to eq false
-        expect(subject.errors.full_messages).to eq ["Task is invalid"]
       end
     end
 

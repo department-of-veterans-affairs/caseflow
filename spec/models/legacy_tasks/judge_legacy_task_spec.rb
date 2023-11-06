@@ -11,10 +11,12 @@ describe JudgeLegacyTask, :postgres do
   let(:assigned_by_last_name) { "Snuffy" }
   let(:reassigned_to_judge_date) { nil }
   let(:assigned_to_attorney_date) { nil }
+  let(:bfcurloc) { "64" }
+  let(:vacols_case) { create(:case, bfcurloc: bfcurloc) }
   let(:legacy_judge_task) do
     JudgeLegacyTask.from_vacols(
       case_assignment,
-      LegacyAppeal.create(vacols_id: vacols_id),
+      LegacyAppeal.create(vacols_id: vacols_id, case_record: vacols_case),
       judge
     )
   end
@@ -82,7 +84,7 @@ describe JudgeLegacyTask, :postgres do
           expect(subject).to match_array [
             Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
             Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
-            Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
+            Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h
           ]
         end
       end
@@ -92,8 +94,8 @@ describe JudgeLegacyTask, :postgres do
 
         it "returns only case movement actions" do
           expect(subject).to match_array [
-            Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
-            Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
+            Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h,
+            Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY_LEGACY.to_h
           ]
         end
       end
@@ -107,7 +109,9 @@ describe JudgeLegacyTask, :postgres do
         it "returns all judge actions" do
           expect(subject).to match_array [
             Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-            Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.to_h
+            Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.to_h,
+            Constants.TASK_ACTIONS.JUDGE_LEGACY_RETURN_TO_ATTORNEY.to_h,
+            Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h
           ]
         end
       end

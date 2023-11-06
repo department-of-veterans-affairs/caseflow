@@ -73,7 +73,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         click_dropdown(text: attorney_one.full_name)
 
         click_on "Assign 2 cases"
-        expect(page).to have_content("Assigned 2 tasks to #{attorney_one.full_name}")
+        expect(page).to have_content("You have successfully assigned 2 cases to #{attorney_one.full_name}")
       end
 
       step "navigates to the attorney's case list" do
@@ -92,7 +92,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
         click_dropdown(text: attorney_two.full_name)
 
         click_on "Assign 1 case"
-        expect(page).to have_content("Reassigned 1 task to #{attorney_two.full_name}")
+        expect(page).to have_content("You have successfully reassigned 1 case to #{attorney_two.full_name}")
       end
 
       step "navigates to the other attorney's case list" do
@@ -256,11 +256,15 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       click_on("#{appeal.veteran_first_name} #{appeal.veteran_last_name}")
 
       click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.label)
-      click_dropdown(prompt: "Select a user", text: judge_two.full_name)
+      within all(".cf-select")[1] do
+        click_dropdown(prompt: "Select", text: judge_two.full_name)
+      end
       fill_in("taskInstructions", with: "Test")
-      click_on("Submit")
+      appeal.reload.tasks.update_all(status: Constants.TASK_STATUSES.cancelled)
+      click_on("Assign")
 
-      expect(page).to have_content("Task reassigned to #{judge_two.full_name}")
+      expect(page).to have_content("You have successfully assigned #{appeal.veteran_first_name} " \
+                                   "#{appeal.veteran_last_name}’s case to #{judge_two.full_name}")
 
       click_on("Switch views")
       click_on(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.css_id))
@@ -286,9 +290,9 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label)
       click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
       fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "note")
-      click_on("Submit")
+      click_on("Assign")
 
-      expect(page).to have_content("Assigned 1 task to #{attorney_one.full_name}")
+      expect(page).to have_content("You have successfully assigned 1 case to #{attorney_one.full_name}")
     end
   end
 
@@ -302,10 +306,12 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       expect(page).to have_content("Cases to Assign (1)")
       click_on("#{appeal_one.veteran_first_name} #{appeal_one.veteran_last_name}")
 
-      click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.label)
-      click_dropdown(prompt: "Select a user", text: judge_two.full_name)
+      click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.label)
+      within all(".cf-select")[1] do
+        click_dropdown(prompt: "Select", text: judge_two.full_name)
+      end
       fill_in("taskInstructions", with: "Test")
-      click_on("Submit")
+      click_on("Assign")
 
       click_on("Switch views")
       click_on(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.css_id))
@@ -329,15 +335,16 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
     it "should allow us to assign an ama appeal to an acting judge from the 'Assign to attorney' action'" do
       visit("/queue/appeals/#{appeal_one.external_id}")
-
+      refresh
       click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label)
       click_dropdown(prompt: "Select a user", text: "Other")
       safe_click ".dropdown-Other"
       click_dropdown({ text: judge_two.full_name }, page.find(".dropdown-Other"))
       fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "note")
 
-      click_on("Submit")
-      expect(page).to have_content("Assigned 1 task to #{judge_two.full_name}")
+      click_on("Assign")
+      expect(page).to have_content("You have successfully assigned #{appeal_one.veteran_first_name} " \
+                                   "#{appeal_one.veteran_last_name}'s case to #{judge_two.full_name}")
     end
   end
 
@@ -348,13 +355,14 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
 
     it "should allow us to assign an ama appeal to an acting judge from the 'Assign to attorney' action'" do
       visit("/queue/appeals/#{appeal_one.external_id}")
-
+      refresh
       click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label)
       click_dropdown(prompt: "Select a user", text: judge_one.full_name)
       fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "note")
 
-      click_on("Submit")
-      expect(page).to have_content("Assigned 1 task to #{judge_one.full_name}")
+      click_on("Assign")
+      expect(page).to have_content("You have successfully assigned #{appeal_one.veteran_first_name} " \
+                                   "#{appeal_one.veteran_last_name}'s case to #{judge_one.full_name}")
     end
   end
 
