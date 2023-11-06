@@ -6,13 +6,9 @@ import { bindActionCreators } from 'redux';
 import Checkbox from '../../../../../components/Checkbox';
 import RadioField from '../../../../../components/RadioField';
 import ApiUtil from '../../../../../util/ApiUtil';
-<<<<<<< HEAD
-import PaginationWrapper from '../../../CorrespondencePaginationWrapper';
-=======
 import {
   loadCorrespondences
 } from '../../../correspondenceReducer/correspondenceActions';
->>>>>>> 2fcea0d8d0c9cb0a7ea8369d3c3d8be6546ebf15
 class AddCorrespondenceView extends React.Component {
 
   constructor(props) {
