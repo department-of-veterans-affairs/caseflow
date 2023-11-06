@@ -29,7 +29,7 @@ end
 RSpec.shared_examples :it_should_show_correct_number_of_issues_on_page_increment_with_per do |legacy_appeals_present|
   it "should show correct number of issues on page increment with per" do
     get(
-      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=2&per=1",
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=2&per_page=1",
       headers: authorization_header
     )
     response_hash = JSON.parse(response.body)
@@ -50,7 +50,7 @@ end
 RSpec.shared_examples :it_should_show_default_if_0_per_param do |legacy_appeals_present|
   it "should show default if 0 per param is supplied" do
     get(
-      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=1&per=0",
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=1&per_page=0",
       headers: authorization_header
     )
     response_hash = JSON.parse(response.body)
@@ -71,7 +71,7 @@ end
 RSpec.shared_examples :it_should_show_default_if_negative_per_param do |legacy_appeals_present|
   it "should show default if negative per param is supplied" do
     get(
-      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=1&per=-1",
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=1&per_page=-1",
       headers: authorization_header
     )
     response_hash = JSON.parse(response.body)
@@ -94,7 +94,7 @@ RSpec.shared_examples :it_should_show_default_limit_on_excessive_per_value do |l
   after { RequestIssue::DEFAULT_UPPER_BOUND_PER_PAGE = 50 }
   it "should show default limit on excessive per value" do
     get(
-      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=1&per=50",
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=1&per_page=50",
       headers: authorization_header
     )
     response_hash = JSON.parse(response.body)
@@ -115,7 +115,7 @@ end
 RSpec.shared_examples :it_should_show_correct_total_number_of_pages_and_max_request_issues_per_page_on_per_change do |legacy_appeals_present|
   it "should show correct total number of pages and max request issues per page on per change" do
     get(
-      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=1&per=1",
+      "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}?page=1&per_page=1",
       headers: authorization_header
     )
     response_hash = JSON.parse(response.body)
