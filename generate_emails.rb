@@ -40,7 +40,7 @@ def generate_and_send_emails
   recipient = HearingEmailRecipient.new(email_address: 'recipient@example.com')  # Replace with the recipient's email address
 
   # Get the "from" email address (sender's email address)
-  from_email = 'your@example.com'  # Replace with the desired sender's email address
+  from_email = 'your@example.com'  
 
   # Get the "to" email address (recipient's email address)
   to_email = recipient.email_address
