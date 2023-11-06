@@ -16,7 +16,7 @@ class BusinessLine < Organization
     }
   end
 
-  def can_generate_claim_history
+  def can_generate_claim_history?
     false
   end
 
@@ -185,7 +185,7 @@ class BusinessLine < Organization
           intake_users.full_name AS intake_user_name, update_users.station_id AS update_user_station_id,
           intake_users.station_id AS intake_user_station_id, decision_users.full_name AS decision_user_name,
           decision_users.station_id AS decision_user_station_id, decision_issues.created_at AS decision_created_at,
-          intake_users.id AS intake_user_id, decision_users.id AS decision_user_id, update_users.id AS update_user_id,
+          intake_users.css_id AS intake_user_css_id, decision_users.css_id AS decision_user_css_id, update_users.css_id AS update_user_css_id,
           request_issues_updates.before_request_issue_ids, request_issues_updates.after_request_issue_ids,
           request_issues_updates.withdrawn_request_issue_ids, request_issues_updates.edited_request_issue_ids,
           decision_issues.caseflow_decision_date, request_issues.decision_date_added_at, intakes.veteran_file_number,
@@ -235,7 +235,7 @@ class BusinessLine < Organization
         issue_types_filter,
         days_waiting_filter,
         station_id_filter,
-        user_id_filter
+        user_css_id_filter
       ].compact
     end
 
@@ -243,7 +243,7 @@ class BusinessLine < Organization
       if query_params[:task_status].present?
         " AND #{where_clause_from_array(Task, :status, query_params[:task_status]).to_sql}"
       else
-        " AND tasks.status IN ('assigned', 'in_progress', 'on_hold', 'completed') "
+        " AND tasks.status IN ('assigned', 'in_progress', 'on_hold', 'completed', 'cancelled') "
       end
     end
 
@@ -279,18 +279,15 @@ class BusinessLine < Organization
       if query_params[:days_waiting].present?
         number_of_days = query_params[:days_waiting][:number_of_days]
         operator = query_params[:days_waiting][:range]
-        current_time_string = Time.now.iso8601
-
         case operator
         when ">", "<", "="
           <<-SQL
-            AND CEIL(EXTRACT(EPOCH FROM ('#{current_time_string}'::timestamp - tasks.assigned_at)) / 86400)  #{operator} #{number_of_days.to_i}
+            AND EXTRACT(DAYS FROM (CURRENT_TIMESTAMP - tasks.assigned_at))::integer #{operator} '#{number_of_days.to_i}'
           SQL
         when "between"
           end_days = query_params[:days_waiting][:end_days]
           <<-SQL
-            AND CEIL(EXTRACT(EPOCH FROM ('#{current_time_string}'::timestamp - tasks.assigned_at)) / 86400) >= #{number_of_days.to_i}
-            AND CEIL(EXTRACT(EPOCH FROM ('#{current_time_string}'::timestamp - tasks.assigned_at)) / 86400) <= #{end_days.to_i}
+            AND EXTRACT(DAYS FROM (CURRENT_TIMESTAMP - tasks.assigned_at))::integer BETWEEN '#{number_of_days.to_i}' AND '#{end_days.to_i}'
           SQL
         end
       end
@@ -311,16 +308,16 @@ class BusinessLine < Organization
       end
     end
 
-    def user_id_filter
+    def user_css_id_filter
       if query_params[:personnel].present?
         <<-SQL
           AND
           (
-            #{User.arel_table.alias(:intake_users)[:id].in(query_params[:personnel]).to_sql}
+            #{User.arel_table.alias(:intake_users)[:css_id].in(query_params[:personnel]).to_sql}
             OR
-            #{User.arel_table.alias(:update_users)[:id].in(query_params[:personnel]).to_sql}
+            #{User.arel_table.alias(:update_users)[:css_id].in(query_params[:personnel]).to_sql}
             OR
-            #{User.arel_table.alias(:decision_users)[:id].in(query_params[:personnel]).to_sql}
+            #{User.arel_table.alias(:decision_users)[:css_id].in(query_params[:personnel]).to_sql}
           )
         SQL
       end
