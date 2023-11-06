@@ -533,7 +533,7 @@ describe ClaimHistoryService do
       end
 
       context "with personnel filter" do
-        let(:filters) { { personnel: [update_user.id, sc_intake_user.id] } }
+        let(:filters) { { personnel: [update_user.css_id, sc_intake_user.css_id] } }
 
         it "should only return events with an event user that matches the user id(s) in the personnel filter" do
           subject
@@ -555,7 +555,7 @@ describe ClaimHistoryService do
         end
 
         context "with personnel and claim type filter" do
-          let(:filters) { { personnel: [update_user.id, sc_intake_user.id], claim_type: "HigherLevelReview" } }
+          let(:filters) { { personnel: [update_user.css_id, sc_intake_user.css_id], claim_type: "HigherLevelReview" } }
 
           it "should only return events with an event user that matches the user id(s) in the personnel filter" do
             subject

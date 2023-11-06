@@ -162,7 +162,7 @@ class ClaimHistoryService
   def process_personnel_filter(new_events)
     return new_events if @filters[:personnel].blank?
 
-    new_events.select { |event| @filters[:personnel].include?(event.event_user_id) }
+    new_events.select { |event| @filters[:personnel].include?(event.event_user_css_id) }
   end
 
   def process_facility_filter(new_events)

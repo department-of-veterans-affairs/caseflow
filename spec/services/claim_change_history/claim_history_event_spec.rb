@@ -43,9 +43,9 @@ describe ClaimHistoryEvent do
       "decision_user_name" => nil,
       "decision_user_station_id" => nil,
       "decision_created_at" => "2023-10-19 22:48:25.281657",
-      "intake_user_id" => 200_000_601_2,
-      "decision_user_id" => nil,
-      "update_user_id" => 3992,
+      "intake_user_css_id" => 200_000_601_2,
+      "decision_user_css_id" => nil,
+      "update_user_css_id" => 3992,
       "request_issue_closed_at" => "2023-10-16 22:47:16.233187",
       "event_user_name" => change_data_event_user_name,
       "event_date" => change_data_event_date
@@ -70,7 +70,7 @@ describe ClaimHistoryEvent do
       disposition_date: "2023-10-19",
       event_date: nil,
       event_type: event_type,
-      event_user_id: nil,
+      event_user_css_id: nil,
       event_user_name: nil,
       intake_completed_date: "2023-10-19 22:39:14.270897",
       issue_description: "Clothing allowance no decision date",
@@ -88,7 +88,7 @@ describe ClaimHistoryEvent do
       event_date: change_data["intake_completed_at"],
       event_user_name: change_data["intake_user_name"],
       user_facility: change_data["intake_user_station_id"],
-      event_user_id: change_data["intake_user_id"]
+      event_user_css_id: change_data["intake_user_css_id"]
     }
   end
 
@@ -97,7 +97,7 @@ describe ClaimHistoryEvent do
       event_date: change_data["request_issue_created_at"],
       event_user_name: change_data["update_user_name"],
       user_facility: change_data["update_user_station_id"],
-      event_user_id: change_data["update_user_id"]
+      event_user_css_id: change_data["update_user_css_id"]
     }
   end
 
@@ -134,7 +134,7 @@ describe ClaimHistoryEvent do
             event_date: change_data["decision_created_at"],
             event_user_name: change_data["decision_user_name"],
             user_facility: change_data["decision_user_station_id"],
-            event_user_id: change_data["decision_user_id"]
+            event_user_css_id: change_data["decision_user_css_id"]
           }
         end
 
@@ -249,7 +249,7 @@ describe ClaimHistoryEvent do
           expect(event.event_type).to eq(:added_decision_date)
           expect(event.event_date).to eq(change_data["request_issue_update_time"])
           expect(event.event_user_name).to eq(change_data["update_user_name"])
-          expect(event.event_user_id).to eq(change_data["update_user_id"])
+          expect(event.event_user_css_id).to eq(change_data["update_user_css_id"])
           expect(event.decision_date).to eq(request_issue.decision_date)
         end
       end
@@ -267,7 +267,7 @@ describe ClaimHistoryEvent do
           expect(event.event_type).to eq(:withdrew_issue)
           expect(event.event_date).to eq(change_data["request_issue_update_time"])
           expect(event.event_user_name).to eq(change_data["update_user_name"])
-          expect(event.event_user_id).to eq(change_data["update_user_id"])
+          expect(event.event_user_css_id).to eq(change_data["update_user_css_id"])
           expect(event.decision_date).to eq(request_issue.decision_date)
         end
       end
@@ -285,7 +285,7 @@ describe ClaimHistoryEvent do
           expect(event.event_type).to eq(:removed_issue)
           expect(event.event_date).to eq(change_data["request_issue_update_time"])
           expect(event.event_user_name).to eq(change_data["update_user_name"])
-          expect(event.event_user_id).to eq(change_data["update_user_id"])
+          expect(event.event_user_css_id).to eq(change_data["update_user_css_id"])
           expect(event.decision_date).to eq(request_issue.decision_date)
         end
       end
@@ -468,7 +468,7 @@ describe ClaimHistoryEvent do
             "event_date" => change_data["intake_completed_at"],
             "event_user_name" => change_data["intake_user_name"],
             "user_facility" => change_data["intake_user_station_id"],
-            "event_user_id" => change_data["intake_user_id"]
+            "event_user_css_id" => change_data["intake_user_css_id"]
           }
         end
 
@@ -484,7 +484,7 @@ describe ClaimHistoryEvent do
           {
             "event_user_name" => change_data["update_user_name"],
             "user_facility" => change_data["update_user_station_id"],
-            "event_user_id" => change_data["update_user_id"]
+            "event_user_css_id" => change_data["update_user_css_id"]
           }
         end
 

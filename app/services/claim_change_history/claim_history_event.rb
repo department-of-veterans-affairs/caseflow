@@ -13,7 +13,7 @@ class ClaimHistoryEvent
               :benefit_type, :issue_type, :issue_description, :decision_date,
               :disposition, :decision_description, :withdrawal_request_date,
               :task_status, :disposition_date, :intake_completed_date, :event_user_name,
-              :event_user_id
+              :event_user_css_id
 
   EVENT_TYPES = [
     :completed_disposition,
@@ -40,7 +40,7 @@ class ClaimHistoryEvent
           "event_date" => change_data["decision_created_at"],
           "event_user_name" => change_data["decision_user_name"],
           "user_facility" => change_data["decision_user_station_id"],
-          "event_user_id" => change_data["decision_user_id"]
+          "event_user_css_id" => change_data["decision_user_css_id"]
         }
         from_change_data(:completed_disposition, change_data.merge(event_hash))
       end
@@ -188,7 +188,7 @@ class ClaimHistoryEvent
         "event_date" => change_data["intake_completed_at"],
         "event_user_name" => change_data["intake_user_name"],
         "user_facility" => change_data["intake_user_station_id"],
-        "event_user_id" => change_data["intake_user_id"]
+        "event_user_css_id" => change_data["intake_user_css_id"]
       }
     end
 
@@ -196,7 +196,7 @@ class ClaimHistoryEvent
       {
         "event_user_name" => change_data["update_user_name"],
         "user_facility" => change_data["update_user_station_id"],
-        "event_user_id" => change_data["update_user_id"]
+        "event_user_css_id" => change_data["update_user_css_id"]
       }
     end
 
@@ -338,7 +338,7 @@ class ClaimHistoryEvent
     standardize_event_date
     @user_facility = change_data["user_facility"]
     @event_user_name = change_data["event_user_name"]
-    @event_user_id = change_data["event_user_id"]
+    @event_user_css_id = change_data["event_user_css_id"]
   end
 
   def standardize_event_date

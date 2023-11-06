@@ -432,11 +432,11 @@ describe BusinessLine do
         "task_id" => hlr_task.id,
         "veteran_file_number" => hlr_task.appeal.veteran_file_number,
         "intake_user_name" => hlr_task.appeal.intake.user.full_name,
-        "intake_user_id" => hlr_task.appeal.intake.user.id,
+        "intake_user_css_id" => hlr_task.appeal.intake.user.css_id,
         "intake_user_station_id" => hlr_task.appeal.intake.user.station_id,
         "disposition" => "allowed",
         "decision_user_name" => decision_user.full_name,
-        "decision_user_id" => decision_user.id,
+        "decision_user_css_id" => decision_user.css_id,
         "decision_user_station_id" => decision_user.station_id,
         "first_name" => hlr_task.appeal.claimant.first_name,
         "last_name" => hlr_task.appeal.claimant.last_name,
@@ -451,11 +451,11 @@ describe BusinessLine do
         "task_id" => hlr_task.id,
         "veteran_file_number" => hlr_task.appeal.veteran_file_number,
         "intake_user_name" => hlr_task.appeal.intake.user.full_name,
-        "intake_user_id" => hlr_task.appeal.intake.user.id,
+        "intake_user_css_id" => hlr_task.appeal.intake.user.css_id,
         "intake_user_station_id" => hlr_task.appeal.intake.user.station_id,
         "disposition" => "denied",
         "decision_user_name" => decision_user.full_name,
-        "decision_user_id" => decision_user.id,
+        "decision_user_css_id" => decision_user.css_id,
         "decision_user_station_id" => decision_user.station_id,
         "first_name" => hlr_task.appeal.claimant.first_name,
         "last_name" => hlr_task.appeal.claimant.last_name,
@@ -470,11 +470,11 @@ describe BusinessLine do
         "task_id" => hlr_task2.id,
         "veteran_file_number" => hlr_task2.appeal.veteran_file_number,
         "intake_user_name" => intake_user.full_name,
-        "intake_user_id" => intake_user.id,
+        "intake_user_css_id" => intake_user.css_id,
         "intake_user_station_id" => intake_user.station_id,
         "disposition" => nil,
         "decision_user_name" => nil,
-        "decision_user_id" => nil,
+        "decision_user_css_id" => nil,
         "decision_user_station_id" => nil,
         "first_name" => hlr_task2.appeal.claimant.first_name,
         "last_name" => hlr_task2.appeal.claimant.last_name,
@@ -489,11 +489,11 @@ describe BusinessLine do
         "task_id" => hlr_task2.id,
         "veteran_file_number" => hlr_task2.appeal.veteran_file_number,
         "intake_user_name" => intake_user.full_name,
-        "intake_user_id" => intake_user.id,
+        "intake_user_css_id" => intake_user.css_id,
         "intake_user_station_id" => intake_user.station_id,
         "disposition" => nil,
         "decision_user_name" => nil,
-        "decision_user_id" => nil,
+        "decision_user_css_id" => nil,
         "decision_user_station_id" => nil,
         "first_name" => hlr_task2.appeal.claimant.first_name,
         "last_name" => hlr_task2.appeal.claimant.last_name,
@@ -508,11 +508,11 @@ describe BusinessLine do
         "task_id" => sc_task.id,
         "veteran_file_number" => sc_task.appeal.veteran_file_number,
         "intake_user_name" => sc_task.appeal.intake.user.full_name,
-        "intake_user_id" => sc_task.appeal.intake.user.id,
+        "intake_user_css_id" => sc_task.appeal.intake.user.css_id,
         "intake_user_station_id" => sc_task.appeal.intake.user.station_id,
         "disposition" => nil,
         "decision_user_name" => nil,
-        "decision_user_id" => nil,
+        "decision_user_css_id" => nil,
         "decision_user_station_id" => nil,
         "first_name" => sc_task.appeal.claimant.first_name,
         "last_name" => sc_task.appeal.claimant.last_name,
@@ -553,10 +553,10 @@ describe BusinessLine do
       hlr_task.appeal.decision_issues << decision_issue
       hlr_task.appeal.save
       hlr_task.completed_by = decision_user
-      hlr_task.assigned_at = Time.zone.now - 10.days
+      hlr_task.assigned_at = 10.days.ago
       hlr_task.completed!
 
-      hlr_task2.assigned_at = Time.zone.now - 5.days
+      hlr_task2.assigned_at = 5.days.ago
       hlr_task2.save
     end
 
@@ -755,8 +755,8 @@ describe BusinessLine do
     end
 
     context "user id filter" do
-      context "when filtering by a user id that has no tasks" do
-        let(:change_history_filters) { { personnel: ["9894"] } }
+      context "when filtering by a user css id that has no tasks" do
+        let(:change_history_filters) { { personnel: ["NOCSSID"] } }
 
         it "should return no rows" do
           expect(subject.entries.count).to eq(0)
@@ -764,19 +764,19 @@ describe BusinessLine do
         end
       end
 
-      context "when filtering by multiple station ids" do
-        let(:change_history_filters) { { personnel: [intake_user.id, decision_user.id] } }
+      context "when filtering by multiple user css ids" do
+        let(:change_history_filters) { { personnel: [intake_user.css_id, decision_user.css_id] } }
 
-        it "only return rows where either an intake, decisions, or updates user matches the station ids" do
+        it "only return rows where either an intake, decisions, or updates user matches the  css_ids" do
           expect(subject.entries.count).to eq(4)
           expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation]))
         end
       end
 
-      context "when filtering by a single station id" do
-        let(:change_history_filters) { { personnel: [intake_user.id] } }
+      context "when filtering by a single css id" do
+        let(:change_history_filters) { { personnel: [intake_user.css_id] } }
 
-        it "only return rows where either an intake, decisions, or updates user matches the station id" do
+        it "only return rows where either an intake, decisions, or updates user matches the user css id" do
           expect(subject.entries.count).to eq(2)
           expect(subject.entries).to include(
             hlr_task_2_ri_1_expectation,
