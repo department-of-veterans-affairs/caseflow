@@ -24,8 +24,8 @@ class Api::V3::Issues::Ama::VeteransController < Api::V3::BaseController
   def show
     veteran = find_veteran
     page = init_page
-    per = init_per
-    render_request_issues(Api::V3::Issues::Ama::VbmsAmaDtoBuilder.new(veteran, page, per).hash_response) if veteran
+    per_page = init_per
+    render_request_issues(Api::V3::Issues::Ama::VbmsAmaDtoBuilder.new(veteran, page, per_page).hash_response) if veteran
   end
 
   private
