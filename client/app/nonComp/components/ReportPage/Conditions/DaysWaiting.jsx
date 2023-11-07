@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
 import { Controller, useFormContext } from 'react-hook-form';
+import DAYS_WAITING_CONDITION_OPTIONS from 'constants/DAYS_WAITING_CONDITION_OPTIONS';
 
 const WidthDiv = styled.div`
   max-width: 45%;
@@ -12,18 +13,6 @@ const WidthDiv = styled.div`
 `;
 
 export const DaysWaiting = ({ index, control, register, name, field }) => {
-
-  const options = [
-    { label: 'Less than',
-      value: 'lessThan' },
-    { label: 'More than',
-      value: 'moreThan' },
-    { label: 'Equal to',
-      value: 'equalTo' },
-    { label: 'Between',
-      value: 'between' }
-  ];
-
   const dropdownName = `${name}.options.comparisonOperator`;
   const valueOneName = `${name}.options.valueOne`;
   const valueTwoName = `${name}.options.valueTwo`;
@@ -65,7 +54,7 @@ export const DaysWaiting = ({ index, control, register, name, field }) => {
           <SearchableDropdown
             {...rest}
             label="Time Range"
-            options={options}
+            options={DAYS_WAITING_CONDITION_OPTIONS}
             onChange={(valObj) => {
               setValue(valueOneName, null);
               setValue(valueTwoName, null);
