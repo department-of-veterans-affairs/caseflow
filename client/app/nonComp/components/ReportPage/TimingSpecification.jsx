@@ -2,7 +2,7 @@ import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import PropTypes from 'prop-types';
 
-import NonCompReportFilterContainer from 'app/nonComp/components/NonCompReportFilter';
+import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
 import ReportPageDateSelector from 'app/nonComp/components/ReportPage/ReportPageDateSelector';
 
 import { TIMING_SPECIFIC_OPTIONS } from 'constants/REPORT_TYPE_CONSTANTS';
@@ -14,7 +14,7 @@ export const TimingSpecification = () => {
   return (
     <div>
       <hr style={{ marginTop: '50px', marginBottom: '50px' }} />
-      <NonCompReportFilterContainer
+      <RHFControlledDropdownContainer
         header="Timing specifications"
         name="timing.range"
         label="Range"

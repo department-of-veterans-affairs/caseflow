@@ -6,7 +6,7 @@ import Button from 'app/components/Button';
 import NonCompLayout from 'app/nonComp/components/NonCompLayout';
 import { ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
 
-import NonCompReportFilterContainer from 'app/nonComp/components/NonCompReportFilter';
+import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
 import TimingSpecification from 'app/nonComp/components/ReportPage/TimingSpecification';
 
 // import ReportPageDateSelector from 'app/nonComp/components/ReportPage/ReportPageDateSelector';
@@ -182,7 +182,7 @@ const ReportPage = ({ history }) => {
       <h1>Generate task report</h1>
       <FormProvider {...methods}>
         <form>
-          <NonCompReportFilterContainer
+          <RHFControlledDropdownContainer
             header="Type of report"
             name="reportType"
             label="Report Type"

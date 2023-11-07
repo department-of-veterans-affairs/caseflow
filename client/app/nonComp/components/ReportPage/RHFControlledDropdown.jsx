@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import SearchableDropdown from 'app/components/SearchableDropdown';
 
-const NonCompReportFilter = ({ control, props }) => (
+const RHFControlledDropdown = ({ control, props }) => (
   <>
     <h2>{ props.header }</h2>
     <Controller
@@ -28,13 +28,13 @@ const NonCompReportFilter = ({ control, props }) => (
   </>
 );
 
-export const NonCompReportFilterContainer = (props) => {
+export const RHFControlledDropdownContainer = (props) => {
   const methods = useFormContext();
 
-  return <NonCompReportFilter {...methods} props={props} />;
+  return <RHFControlledDropdown {...methods} props={props} />;
 };
 
-NonCompReportFilter.propTypes = {
+RHFControlledDropdown.propTypes = {
   control: PropTypes.object,
   props: PropTypes.object,
   header: PropTypes.string,
@@ -45,8 +45,8 @@ NonCompReportFilter.propTypes = {
   required: PropTypes.bool
 };
 
-NonCompReportFilterContainer.propTypes = {
+RHFControlledDropdownContainer.propTypes = {
   props: PropTypes.object
 };
 
-export default NonCompReportFilterContainer;
+export default RHFControlledDropdownContainer;
