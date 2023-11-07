@@ -22,7 +22,7 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
         $set: action.payload.radioValue
       }
     });
-  
+
   case ACTIONS.SAVE_CHECKBOX_STATE:
     if (action.payload.isChecked) {
       return update(state, {
