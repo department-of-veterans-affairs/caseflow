@@ -55,7 +55,8 @@
       cavc_dashboard_workflow: FeatureToggle.enabled?(:cavc_dashboard_workflow, user: current_user),
       cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user),
       cc_vacatur_visibility: FeatureToggle.enabled?(:cc_vacatur_visibility, user: current_user),
-      conference_selection_visibility: FeatureToggle.enabled?(:conference_selection_visibility,user: current_user)
+      conference_selection_visibility: (FeatureToggle.enabled?(:pexip_conference_service) &&
+        FeatureToggle.enabled?(:webex_conference_service))
     }
   }) %>
 <% end %>
