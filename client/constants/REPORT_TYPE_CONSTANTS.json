@@ -31,7 +31,7 @@
       "id": "added_issue"
     },
     {
-      "label": "Added issue – No decision date",
+      "label": "Added issue - No decision date",
       "id":"added_issue_no_decision_date"
     },
     {
@@ -43,11 +43,11 @@
       "id":"claim_closed"
     },
     {
-      "label": "Claim status – Incomplete",
+      "label": "Claim status - Incomplete",
       "id":"claim_status_incomplete"
     },
     {
-      "label": "Claim status – In progress",
+      "label": "Claim status - In progress",
       "id":"claim_status_inprogress"
     },
     {
