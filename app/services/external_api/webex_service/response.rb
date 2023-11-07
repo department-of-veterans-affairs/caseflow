@@ -42,9 +42,29 @@ class ExternalApi::WebexService::Response
     return "No error message from Webex" if resp.raw_body.empty?
 
     begin
+      body = JSON.parse(resp.raw_body)
+      if !invalid_token
+        {
+          message: body.dig(:message),
+          descriptions: body.dig(:errors)&.pluck(:description)&.compact
+        }
+      end
       JSON.parse(resp.raw_body)["message"]
     rescue JSON::ParserError
       "No error message from Webex"
     end
+  end
+
+  def invalid_token
+    body = JSON.parse(resp.raw_body)
+    if body["error_description"] == "The access token expired"
+      fail Caseflow::Error::WebexInvalidTokenError.new(
+        code: @code,
+        message: body["error"],
+        descriptions: body["error_description"]
+      )
+    end
+
+    nil
   end
 end

@@ -424,6 +424,8 @@ module Caseflow::Error
   class WebexBadRequestError < WebexApiError; end
   class WebexMethodNotAllowedError < WebexApiError; end
 
+  class WebexInvalidTokenError < ConferenceCreationError; end
+
   class WorkModeCouldNotUpdateError < StandardError; end
 
   class VirtualHearingConversionFailed < SerializableError
