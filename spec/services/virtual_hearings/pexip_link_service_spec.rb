@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe VirtualHearings::LinkService do
+describe VirtualHearings::PexipLinkService do
   URL_HOST = "example.va.gov"
   URL_PATH = "/sample"
   PIN_KEY = "mysecretkey"
@@ -18,7 +18,7 @@ describe VirtualHearings::LinkService do
       end
 
       it "raises the missing PIN key error" do
-        expect { described_class.new.host_link }.to raise_error VirtualHearings::LinkService::PINKeyMissingError
+        expect { described_class.new.host_link }.to raise_error VirtualHearings::PexipLinkService::PINKeyMissingError
       end
     end
 
@@ -29,7 +29,7 @@ describe VirtualHearings::LinkService do
       end
 
       it "raises the missing host error" do
-        expect { described_class.new.host_link }.to raise_error VirtualHearings::LinkService::URLHostMissingError
+        expect { described_class.new.host_link }.to raise_error VirtualHearings::PexipLinkService::URLHostMissingError
       end
     end
 
@@ -40,7 +40,7 @@ describe VirtualHearings::LinkService do
       end
 
       it "raises the missing path error" do
-        expect { described_class.new.host_link }.to raise_error VirtualHearings::LinkService::URLPathMissingError
+        expect { described_class.new.host_link }.to raise_error VirtualHearings::PexipLinkService::URLPathMissingError
       end
     end
 

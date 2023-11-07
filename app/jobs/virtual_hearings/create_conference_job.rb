@@ -223,7 +223,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
       "[#{virtual_hearing.hearing_id}])..."
     )
     begin
-      link_service = VirtualHearings::LinkService.new
+      link_service = VirtualHearings::PexipLinkService.new
       virtual_hearing.update!(
         host_hearing_link: link_service.host_link,
         guest_hearing_link: link_service.guest_link,

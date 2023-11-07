@@ -182,10 +182,10 @@ class VirtualHearing < CaseflowRecord
   def test_link(title)
     if use_vc_test_link?
       if ENV["VIRTUAL_HEARING_URL_HOST"].blank?
-        fail(VirtualHearings::LinkService::URLHostMissingError, message: COPY::URL_HOST_MISSING_ERROR_MESSAGE)
+        fail(VirtualHearings::PexipLinkService::URLHostMissingError, message: COPY::URL_HOST_MISSING_ERROR_MESSAGE)
       end
       if ENV["VIRTUAL_HEARING_URL_PATH"].blank?
-        fail(VirtualHearings::LinkService::URLPathMissingError, message: COPY::URL_PATH_MISSING_ERROR_MESSAGE)
+        fail(VirtualHearings::PexipLinkService::URLPathMissingError, message: COPY::URL_PATH_MISSING_ERROR_MESSAGE)
       end
 
       host_and_path = "#{ENV['VIRTUAL_HEARING_URL_HOST']}#{ENV['VIRTUAL_HEARING_URL_PATH']}"
@@ -265,7 +265,7 @@ class VirtualHearing < CaseflowRecord
     fail NoAliasWithHostPresentError if alias_with_host.blank?
 
     conference_id = alias_with_host[/BVA(\d+)@/, 1]
-    link_service = VirtualHearings::LinkService.new(conference_id)
+    link_service = VirtualHearings::PexipLinkService.new(conference_id)
 
     # confirm that we extracted the conference ID correctly,
     # and that the original link was generated with the link service

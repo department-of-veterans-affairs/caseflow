@@ -22,7 +22,7 @@ describe PexipConferenceLink do
         RequestStore[:current_user] = user
         expect do
           described_class.create(hearing_day: hearing_day)
-        end.to raise_error VirtualHearings::LinkService::PINKeyMissingError
+        end.to raise_error VirtualHearings::PexipLinkService::PINKeyMissingError
       end
     end
 
@@ -37,7 +37,7 @@ describe PexipConferenceLink do
         RequestStore[:current_user] = user
         expect do
           described_class.create(hearing_day: hearing_day)
-        end.to raise_error VirtualHearings::LinkService::URLHostMissingError
+        end.to raise_error VirtualHearings::PexipLinkService::URLHostMissingError
       end
     end
 
@@ -52,7 +52,7 @@ describe PexipConferenceLink do
         RequestStore[:current_user] = user
         expect do
           described_class.create(hearing_day: hearing_day)
-        end.to raise_error VirtualHearings::LinkService::URLPathMissingError
+        end.to raise_error VirtualHearings::PexipLinkService::URLPathMissingError
       end
     end
 
@@ -63,7 +63,7 @@ describe PexipConferenceLink do
         RequestStore[:current_user] = user
         expect do
           described_class.create(hearing_day: hearing_day)
-        end.to raise_error VirtualHearings::LinkService::PINKeyMissingError
+        end.to raise_error VirtualHearings::PexipLinkService::PINKeyMissingError
       end
     end
   end
@@ -176,8 +176,8 @@ describe PexipConferenceLink do
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
 
-      allow_any_instance_of(VirtualHearings::LinkService).to receive(:conference_id).and_return expected_conference_id
-      allow_any_instance_of(VirtualHearings::LinkService).to receive(:guest_pin).and_return expected_pin
+      allow_any_instance_of(VirtualHearings::PexipLinkService).to receive(:conference_id).and_return expected_conference_id
+      allow_any_instance_of(VirtualHearings::PexipLinkService).to receive(:guest_pin).and_return expected_pin
     end
 
     let(:hearing_day) { create(:hearing_day) }

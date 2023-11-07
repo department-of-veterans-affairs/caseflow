@@ -7,9 +7,9 @@ describe VirtualHearings::DeleteConferenceLinkJob, :all_dbs do
   let!(:judge) { Judge.new(create(:user)) }
 
   before do
-    allow_any_instance_of(VirtualHearings::LinkService).to receive(:pin_key).and_return("mysecretkey")
-    allow_any_instance_of(VirtualHearings::LinkService).to receive(:host).and_return("example.va.gov")
-    allow_any_instance_of(VirtualHearings::LinkService).to receive(:path).and_return("/sample")
+    allow_any_instance_of(VirtualHearings::PexipLinkService).to receive(:pin_key).and_return("mysecretkey")
+    allow_any_instance_of(VirtualHearings::PexipLinkService).to receive(:host).and_return("example.va.gov")
+    allow_any_instance_of(VirtualHearings::PexipLinkService).to receive(:path).and_return("/sample")
   end
 
   describe ".perform" do

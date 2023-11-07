@@ -29,7 +29,7 @@ class PexipConferenceLink < ConferenceLink
   def guest_pin
     return guest_pin_long if !guest_pin_long.nil?
 
-    link_service = VirtualHearings::LinkService.new
+    link_service = VirtualHearings::PexipLinkService.new
     update!(guest_pin_long: link_service.guest_pin)
     guest_pin_long
   end
@@ -38,10 +38,10 @@ class PexipConferenceLink < ConferenceLink
     return guest_hearing_link if !guest_hearing_link.to_s.empty?
 
     if !alias_name.nil?
-      link_service = VirtualHearings::LinkService.new(alias_name)
+      link_service = VirtualHearings::PexipLinkService.new(alias_name)
       update!(guest_hearing_link: link_service.guest_link)
     elsif !alias_with_host.nil?
-      link_service = VirtualHearings::LinkService.new(alias_with_host.split("@")[0].split("A")[1])
+      link_service = VirtualHearings::PexipLinkService.new(alias_with_host.split("@")[0].split("A")[1])
       update!(guest_hearing_link: link_service.guest_link, alias: link_service.get_conference_id)
     end
     guest_hearing_link
@@ -54,7 +54,7 @@ class PexipConferenceLink < ConferenceLink
       "Trying to create a Pexip conference link for Hearing Day Id: #{hearing_day_id}."
     )
     begin
-      link_service = VirtualHearings::LinkService.new
+      link_service = VirtualHearings::PexipLinkService.new
       update!(
         alias: link_service.get_conference_id,
         host_link: link_service.host_link,
@@ -63,9 +63,9 @@ class PexipConferenceLink < ConferenceLink
         guest_hearing_link: link_service.guest_link,
         guest_pin_long: link_service.guest_pin
       )
-    rescue VirtualHearings::LinkService::PINKeyMissingError,
-           VirtualHearings::LinkService::URLHostMissingError,
-           VirtualHearings::LinkService::URLPathMissingError => error
+    rescue VirtualHearings::PexipLinkService::PINKeyMissingError,
+           VirtualHearings::PexipLinkService::URLHostMissingError,
+           VirtualHearings::PexipLinkService::URLPathMissingError => error
       Raven.capture_exception(error: error)
       raise error
     end
