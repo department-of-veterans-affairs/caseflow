@@ -73,7 +73,7 @@ class CorrespondenceController < ApplicationController
       lastName: veteran.last_name,
       fileNumber: veteran.file_number,
       cmPacketNumber: correspondence.cmp_packet_number,
-      correspondenceId: correspondence.id,
+      correspondenceUuid: correspondence.uuid,
       packageDocumentType: correspondence.correspondence_type_id
     }
   end

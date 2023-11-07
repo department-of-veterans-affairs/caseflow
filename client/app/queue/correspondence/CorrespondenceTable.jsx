@@ -16,7 +16,7 @@ class CorrespondenceTable extends React.Component {
         getSortValue: (row) => row.firstName,
         backendCanSort: true,
         valueFunction: (row) => (
-          <Link href={`/queue/correspondence/${row.correspondenceId}/review_package`}>
+          <Link href={`/queue/correspondence/${row.correspondenceUuid}/review_package`}>
             {`${row.firstName} ${row.lastName} (${row.fileNumber})`}
           </Link>
         )
