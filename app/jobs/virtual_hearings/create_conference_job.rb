@@ -142,42 +142,42 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   end
 
   def create_conference
-    if FeatureToggle.enabled?(:virtual_hearings_use_new_links, user: virtual_hearing.updated_by)
-      generate_links_and_pins
-    else
-      assign_virtual_hearing_alias_and_pins if should_initialize_alias_and_pins?
+    return generate_links_and_pins if virtual_hearing.conference_provider == "pexip"
 
-      Rails.logger.info(
-        "Trying to create conference for hearing (#{virtual_hearing.hearing_type} " \
-        "[#{virtual_hearing.hearing_id}])..."
-      )
+    create_webex_conference
+  end
 
-      create_conference_response = create_new_conference
+  def create_webex_conference
+    Rails.logger.info(
+      "Trying to create Webex conference for hearing (#{virtual_hearing.hearing_type} " \
+      "[#{virtual_hearing.hearing_id}])..."
+    )
 
-      Rails.logger.info("Create Conference Response: #{create_conference_response.inspect}")
-      if create_conference_response.error
-        error_display = error_display(create_conference_response)
+    create_webex_conference_response = create_new_conference
 
-        Rails.logger.error("CreateConferenceJob failed: #{error_display}")
+    Rails.logger.info("Create Webex Conference Response: #{create_webex_conference_response.inspect}")
 
-        virtual_hearing.establishment.update_error!(error_display)
+    conference_creation_error(create_webex_conference_response) if create_webex_conference_response.error
 
-        DataDogService.increment_counter(metric_name: "created_conference.failed", **create_conference_datadog_tags)
+    DataDogService.increment_counter(metric_name: "created_conference.successful", **create_conference_datadog_tags)
 
-        fail create_conference_response.error
-      end
+    virtual_hearing.update(
+      conference_id: 1,
+      host_hearing_link: create_webex_conference_response.host_link,
+      guest_hearing_link: create_webex_conference_response.guest_link
+    )
+  end
 
-      DataDogService.increment_counter(metric_name: "created_conference.successful", **create_conference_datadog_tags)
+  def conference_creation_error(create_conference_response)
+    error_display = error_display(create_conference_response)
 
-      if virtual_hearing.conference_provider == "pexip"
-        virtual_hearing.update(conference_id: create_conference_response.data[:conference_id])
-      else
-        # Manually adds the subject of the body for the Webex IC Request as the conference id(int only)
-        response = "#{virtual_hearing.hearing.hearing.docket_number}#{virtual_hearing.hearing.id}"
-        response = response.delete "-"
-        virtual_hearing.update(conference_id: response.to_i)
-      end
-    end
+    Rails.logger.error("CreateConferenceJob failed: #{error_display}")
+
+    virtual_hearing.establishment.update_error!(error_display)
+
+    DataDogService.increment_counter(metric_name: "created_conference.failed", **create_conference_datadog_tags)
+
+    fail create_conference_response.error
   end
 
   def send_emails(email_type)
