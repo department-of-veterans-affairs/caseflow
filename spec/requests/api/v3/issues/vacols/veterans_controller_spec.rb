@@ -70,6 +70,18 @@ describe Api::V3::Issues::Vacols::VeteransController, :postgres, type: :request 
           end
         end
 
+        context "when a veteran is found - but an unexpected error has happened." do
+          before { Api::V3::Issues::Vacols::VeteransController::DEFAULT_UPPER_BOUND_PER_PAGE = "breaking_the_api" }
+          after { Api::V3::Issues::Vacols::VeteransController::DEFAULT_UPPER_BOUND_PER_PAGE = 50 }
+          let(:vet) { create(:veteran) }
+          it "should return 500 error" do
+            headers = { "Authorization": authorization_token, "X-VA-File-Number": vet.file_number}
+            get("/api/v3/issues/vacols/find_by_veteran?page=1&per_page=40", headers: headers)
+            expect(response).to have_http_status(500)
+            expect(response.body.include?("Use the error uuid to submit a support ticket")).to eq true
+          end
+        end
+
         context "when veterans have legacy issues(s)" do
           let!(:veteran_with_legacy_issues) {create(:veteran, file_number: "123456789")}
           let!(:veteran_file_number_legacy) {"123456789S"}
