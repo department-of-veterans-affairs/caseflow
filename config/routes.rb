@@ -50,6 +50,9 @@ Rails.application.routes.draw do
         get 'legacy_appeals', to: "legacy_appeals#index"
       end
       namespace :issues do
+        namespace :ama do
+          get "find_by_veteran/:participant_id", to: "veterans#show"
+        end
         namespace :vacols do
           get 'find_by_veteran', to: "veterans#show" # passing in ssn/vfn as a header
         end
@@ -58,6 +61,7 @@ Rails.application.routes.draw do
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do
         get 'decision_reviews', to: 'docs#decision_reviews'
+        get "ama_issues", to: "docs#ama_issues"
         get "vacols_issues", to: "docs#vacols_issues"
       end
     end
