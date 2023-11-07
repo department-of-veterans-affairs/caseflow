@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import REPORT_TYPE_OPTIONS from '../../../constants/REPORT_TYPE_OPTIONS';
 
-const NonCompReportFilter = ({ control }) => (
+const NonCompReportFilter = ({ control, formState }) => (
   <>
     <h2>Type of Report</h2>
     <Controller
@@ -18,6 +18,7 @@ const NonCompReportFilter = ({ control }) => (
           label="Report Type"
           options={REPORT_TYPE_OPTIONS}
           searchable={false}
+          errorMessage={formState.errors?.reportType?.message ?? ''}
           onChange={(valObj) => onChange(valObj?.value)}
         />
       )}
@@ -33,6 +34,7 @@ export const NonCompReportFilterContainer = () => {
 
 NonCompReportFilter.propTypes = {
   control: PropTypes.object,
+  formState: PropTypes.object
 };
 
 export default NonCompReportFilterContainer;
