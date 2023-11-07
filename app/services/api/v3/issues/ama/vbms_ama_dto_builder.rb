@@ -20,7 +20,9 @@ class Api::V3::Issues::Ama::VbmsAmaDtoBuilder
   private
 
   def total_request_issue_count
-    RequestIssue.where(veteran_participant_id: @veteran_participant_id).count
+    RequestIssue.where(veteran_participant_id: @veteran_participant_id)
+      .where(benefit_type: %w[compensation pension fiduciary])
+      .count
   end
 
   def serialized_request_issues(page = @page, per_page = @per_page)
