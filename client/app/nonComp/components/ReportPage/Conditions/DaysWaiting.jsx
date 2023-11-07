@@ -17,7 +17,7 @@ export const DaysWaiting = ({ control, register, name, field, errors }) => {
   const valueOneName = `${name}.options.valueOne`;
   const valueTwoName = `${name}.options.valueTwo`;
 
-  const { setValue, formState } = useFormContext();
+  const { setValue } = useFormContext();
 
   const displayValueOne = field.options.comparisonOperator;
 
@@ -31,11 +31,12 @@ export const DaysWaiting = ({ control, register, name, field, errors }) => {
         control={control}
         name={dropdownName}
         defaultValue={field.options.comparisonOperator ?? ''}
-        render={({ onChange, ...rest }) => (
+        render={({ onChange, ref, ...rest }) => (
           <SearchableDropdown
             {...rest}
             label="Time Range"
             options={DAYS_WAITING_CONDITION_OPTIONS}
+            inputRef={ref}
             errorMessage={errors?.options?.comparisonOperator?.message}
             onChange={(valObj) => {
               setValue(valueOneName, null);

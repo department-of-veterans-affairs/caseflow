@@ -11,13 +11,13 @@ const NonCompReportFilter = ({ control, formState }) => (
     <Controller
       control={control}
       name="reportType"
-      render={({ onChange, ...rest }) => (
+      render={({ onChange, ref, ...rest }) => (
         <SearchableDropdown
           {...rest}
-          name="reportType"
           label="Report Type"
           options={REPORT_TYPE_OPTIONS}
           searchable={false}
+          inputRef={ref}
           errorMessage={formState.errors?.reportType?.message}
           onChange={(valObj) => onChange(valObj?.value)}
         />

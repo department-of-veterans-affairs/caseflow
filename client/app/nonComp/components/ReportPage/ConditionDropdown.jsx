@@ -12,12 +12,13 @@ export const ConditionDropdown = ({ control, filteredOptions, name, errors }) =>
     control={control}
     name={dropdownName}
     defaultValue={null}
-    render={({ onChange, ...rest }) => (
+    render={({ onChange, ref, ...rest }) => (
       <SearchableDropdown
         {...rest}
         label="Variable"
         options={filteredOptions}
         readOnly={disabled}
+        inputRef={ref}
         errorMessage={errors?.condition?.message}
         onChange={(valObj) => {
           setDisabled(true);
