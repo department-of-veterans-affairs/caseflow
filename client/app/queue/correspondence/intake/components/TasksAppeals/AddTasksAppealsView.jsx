@@ -6,6 +6,7 @@ import Checkbox from '../../../../../components/Checkbox';
 // import TextareaField from '../../../../../components/TextareaField';
 import Button from '../../../../../components/Button';
 import TaskNotRelatedToAppeal from '../TaskNotRelatedToAppeal';
+import { disabled } from 'glamor';
 
 const mailTasksLeft = [
   'Change of address',
@@ -24,13 +25,10 @@ export const AddTasksAppealsView = () => {
   const [addTasksVisible, setAddTasksVisible] = useState(false);
   const clickAddTask = () => {
     setAddTasksVisible(true);
-    console.log("we added a task *evil laugh*");
     const currentTask = [...addTask];
     const randNum = Math.floor(Math.random() * 1000000);
     currentTask.push({ Object: randNum })
     setAddTask(currentTask);
-    // setAddTask(currentTask.push({ Object: 'DummyData' }));
-    console.log(addTasksVisible);
   };
 
   const removeTaskAtIndex = (index) => {
@@ -43,7 +41,6 @@ export const AddTasksAppealsView = () => {
     console.log('The currentTask variable is ' + currentTask)
     console.log(currentTask);
     const newTask = currentTask.splice(index, 1);
-    console.log(newTask);
     setAddTask(newTask);
 
   };
@@ -121,6 +118,7 @@ export const AddTasksAppealsView = () => {
               <Button
                 type="button"
                 onClick={clickAddTask}
+                disabled={addTask.length === 2 ? true : false}
                 name="addTasks"
                 classNames={['cf-left-side']}>
                   + Add tasks

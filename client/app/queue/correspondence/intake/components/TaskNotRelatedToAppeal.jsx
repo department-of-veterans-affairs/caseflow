@@ -56,10 +56,16 @@ const TaskNotRelatedToAppeal = (props) => {
             defaultText=""
           />
           <Button
+            name="Add"
+            styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
+            classNames={['cf-btn-link', 'cf-left-side']} >
+            Add autotext
+          </Button>
+          <Button
             name="Remove"
             styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
             onClick={props.removeTask}
-            classNames={['cf-btn-link', 'cf-left-side']} >
+            classNames={['cf-btn-link', 'cf-right-side']} >
             <i className="fa fa-trash-o" aria-hidden="true"></i> Remove task
           </Button>
         </div>
