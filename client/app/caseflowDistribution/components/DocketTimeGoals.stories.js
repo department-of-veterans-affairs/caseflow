@@ -2,7 +2,7 @@ import React from 'react';
 import DocketTimeGoals from './DocketTimeGoals';
 import { levers } from 'test/data/adminCaseDistributionLevers';
 import { createStore } from 'redux';
-import leversReducer from 'app/admin/reducers/Levers/leversReducer';
+import leversReducer from 'app/caseflowDistribution/reducers/Levers/leversReducer';
 
 
 export default {

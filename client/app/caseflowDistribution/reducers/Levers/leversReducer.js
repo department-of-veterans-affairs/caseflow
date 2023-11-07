@@ -1,5 +1,5 @@
 import * as Constants from './leversActionTypes';
- import { update } from '../../../util/ReducerUtil';
+ import { update } from 'app/util/ReducerUtil';
 
 export const initialState = {
   levers: [],

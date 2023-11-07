@@ -1,5 +1,3 @@
-// client/app/admin/components/CaseflowDistribution/AffinityDays.jsx
-
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
@@ -39,12 +37,15 @@ const AffinityDays = (props) => {
             opt.value = e;
           }
           return opt;
-        })
+        });
+
         lever.option = opt;
-        return lever;
-      } else {
+
         return lever;
       }
+
+      return lever;
+
     });
     setLever(levers);
   };

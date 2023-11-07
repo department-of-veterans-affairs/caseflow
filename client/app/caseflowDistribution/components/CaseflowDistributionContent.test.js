@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import CaseflowDistributionContent from './CaseflowDistributionContent';
-import { formattedHistory, formattedLevers } from '../../../../../client/test/data/formattedCaseDistributionData';
+import { formattedHistory, formattedLevers } from 'test/data/formattedCaseDistributionData';
 import { createStore } from 'redux';
-import leversReducer from 'app/admin/reducers/Levers/leversReducer';
+import leversReducer from '../reducers/Levers/leversReducer';
 
 describe('CaseflowDistributionContent', () => {
 

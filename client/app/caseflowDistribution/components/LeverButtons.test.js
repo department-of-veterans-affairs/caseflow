@@ -2,9 +2,9 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { createStore } from "@reduxjs/toolkit";
 import LeverButtonsWrapper from './LeverButtonsWrapper';
-import leversReducer from '../../reducers/Levers/leversReducer';
-import * as Constants from '../../reducers/Levers/leversActionTypes';
-import * as leverData from '../../../../test/data/adminCaseDistributionLevers';
+import leversReducer from '../reducers/Levers/leversReducer';
+import * as Constants from '../reducers/Levers/leversActionTypes';
+import * as leverData from 'test/data/adminCaseDistributionLevers';
 
 describe ('LeverButtonsWrapper', () => {
   let leverStore;

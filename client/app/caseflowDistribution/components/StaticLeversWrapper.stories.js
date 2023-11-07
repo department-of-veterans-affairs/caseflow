@@ -2,7 +2,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router';
 import StaticLeversWrapper from './StaticLeversWrapper';
 import { createStore } from 'redux';
-import leversReducer from 'app/admin/reducers/Levers/leversReducer';
+import leversReducer from '../reducers/Levers/leversReducer';
 
 import { levers } from 'test/data/adminCaseDistributionLevers';
 

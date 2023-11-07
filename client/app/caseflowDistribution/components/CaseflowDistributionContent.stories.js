@@ -1,8 +1,8 @@
 import React from 'react';
 import CaseflowDistributionContent from './CaseflowDistributionContent';
 import { createStore } from 'redux';
-import leversReducer from 'app/admin/reducers/Levers/leversReducer';
-import { formattedHistory, formattedLevers } from '../../../../../client/test/data/formattedCaseDistributionData';
+import leversReducer from '../reducers/Levers/leversReducer';
+import { formattedHistory, formattedLevers } from 'test/data/formattedCaseDistributionData';
 import { MemoryRouter } from 'react-router';
 
 const preloadedState = {
@@ -45,7 +45,7 @@ formattedLevers.forEach((lever) => {
 });
 
 export default {
-  title: 'Admin/CaseDistribution/Caseflow Distribution Content',
+  title: 'Admin/Caseflow Distribution/Caseflow Distribution Content',
   component: CaseflowDistributionContent,
   decorators: [RouterDecorator]
 };

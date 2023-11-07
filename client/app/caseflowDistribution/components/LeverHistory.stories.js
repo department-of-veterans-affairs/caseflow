@@ -1,9 +1,9 @@
 import React from 'react';
 import LeverHistory from './LeverHistory';
-import { formattedHistory } from '../../../../../client/test/data/adminCaseDistributionLevers';
+import { formattedHistory } from 'test/data/adminCaseDistributionLevers';
 
 export default {
-  title: 'CaseDistribution/Lever History',
+  title: 'Admin/Caseflow Distribution/Lever History',
   component: LeverHistory,
 };
 
