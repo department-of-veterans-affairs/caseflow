@@ -14,7 +14,7 @@ feature "NonComp Report Page", :postgres do
   it "report page should be accessable to VHA Admin user" do
     visit vha_report_url
     expect(page).to have_content("Generate task report")
-    expect(page).to have_content("Type of Report")
+    expect(page).to have_content("Type of report")
   end
 
   it "when report type dropdown is changed button should be enabled" do
