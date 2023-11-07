@@ -7,7 +7,7 @@ const CorrespondencePaginationWrapper = (props) => {
 
   const totalPages = Math.ceil(props.rowObjects.length / props.columnsToDisplay);
   const startIndex = (currentPage * props.columnsToDisplay) - 15;
-  const endIndex = (currentPage * props.columnsToDisplay) - 1;
+  const endIndex = (currentPage * props.columnsToDisplay);
 
   return <React.Fragment>
     <CorrespondencePagination
@@ -16,7 +16,7 @@ const CorrespondencePaginationWrapper = (props) => {
       // index user  is on
       currentPage={currentPage}
       // displayed label for items on page
-      currentItems={props.columnsToDisplay}
+      currentItems={props.rowObjects.slice(startIndex, endIndex).length}
       // displayed pages user can click
       totalPages={totalPages}
       // displayed label for total items
