@@ -90,6 +90,7 @@ Rails.application.configure do
 
   # RequestIssue paginates_per offset (vbms intake)
   ENV["REQUEST_ISSUE_PAGINATION_OFFSET"] ||= "10"
+  ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"] ||= "50"
 
   # Necessary vars needed to create virtual hearing links
   # Used by VirtualHearings::LinkService

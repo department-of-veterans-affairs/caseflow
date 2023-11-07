@@ -2,11 +2,12 @@
 
 # :reek:InstanceVariableAssumption
 class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
-  DEFAULT_UPPER_BOUND_PER_PAGE = 50 # The max amount of Issues that can be paginated on a single page
+  # DEFAULT_UPPER_BOUND_PER_PAGE = ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"].to_i # The max amount of Issues that can be paginated on a single page
+  DEFAULT_UPPER_BOUND_PER_PAGE = 50
   include ApiV3FeatureToggleConcern
 
   before_action do
-    api_released?(:api_v3_legacy_issues)
+    api_released?(:api_v3_vacols_issues)
   end
 
   before_action :validate_headers, :validate_veteran_presence
@@ -37,6 +38,7 @@ class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
   end
 
   rescue_from StandardError do |error|
+    byebug
     Raven.capture_exception(error, extra: raven_extra_context)
 
     render json: {
@@ -56,7 +58,7 @@ class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
     per_page = [params[:per_page].to_i, DEFAULT_UPPER_BOUND_PER_PAGE].min if params[:per_page]&.to_i&.positive?
     # Disallow page(0) since page(0) == page(1) in kaminari. This is to avoid confusion.
     (page.nil? || page <= 0) ? page = 1 : page ||= 1
-    render_vacols_issues(Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder.new(@veteran, page, per_page))
+    render_vacols_issues(Api::V3::Issues::Vacols::VbmsVacolsDtoBuilder.new(@veteran, page, per_page))
   end
 
   private

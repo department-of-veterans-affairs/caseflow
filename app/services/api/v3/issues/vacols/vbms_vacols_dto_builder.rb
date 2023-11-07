@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-class Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder
+class Api::V3::Issues::Vacols::VbmsVacolsDtoBuilder
   attr_reader :hash_response, :vacols_issue_count
 
   def initialize(veteran, page, per_page = nil)
     @page = page
-    @veteran_participant_id = veteran.participant_id.to_s
-    @veteran_file_number = veteran.file_number.to_s
+    @veteran_participant_id = veteran.participant_id&.to_s
+    @veteran_file_number = veteran.file_number&.to_s
     @vacols_issue_count = total_vacols_issue_count
     @offset = per_page || RequestIssue.default_per_page #LegacyIssues will be consistent with AMA RequestIssues
     @vacols_issues = serialized_vacols_issues
@@ -30,7 +30,7 @@ class Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder
       vacols_issues.push(AppealRepository.issues(i))
     end
 
-    serialized_data = Api::V3::Issues::Legacy::VacolsIssueSerializer.new(
+    serialized_data = Api::V3::Issues::Vacols::VacolsIssueSerializer.new(
       Kaminari.paginate_array(vacols_issues.flatten).page(page).per(offset)
     ).serializable_hash[:data]
 

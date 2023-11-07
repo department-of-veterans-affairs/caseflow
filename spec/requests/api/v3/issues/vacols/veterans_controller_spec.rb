@@ -18,7 +18,7 @@ describe Api::V3::Issues::Vacols::VeteransController, :postgres, type: :request 
       let!(:vet) { create(:veteran) }
 
       it "should return 'Not Implemented' error" do
-        FeatureToggle.disable!(:api_v3_legacy_issues)
+        FeatureToggle.disable!(:api_v3_vacols_issues)
 
         get_vacols_issues(file_number: vet.file_number)
         expect(response).to have_http_status(501)
@@ -27,8 +27,8 @@ describe Api::V3::Issues::Vacols::VeteransController, :postgres, type: :request 
     end
 
     context "when feature is enabled" do
-      before { FeatureToggle.enable!(:api_v3_legacy_issues) }
-      after { FeatureToggle.disable!(:api_v3_legacy_issues) }
+      before { FeatureToggle.enable!(:api_v3_vacols_issues) }
+      after { FeatureToggle.disable!(:api_v3_vacols_issues) }
 
       context "when no ApiKey is provided" do
         it "returns a 401 error" do
