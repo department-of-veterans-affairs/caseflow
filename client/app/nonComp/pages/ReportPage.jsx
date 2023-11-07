@@ -7,6 +7,8 @@ import NonCompLayout from '../components/NonCompLayout';
 import { ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
 
 import NonCompReportFilterContainer from '../components/NonCompReportFilter';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 const buttonInnerContainerStyle = css({
   display: 'flex',
@@ -19,15 +21,39 @@ const buttonOuterContainerStyling = css({
   marginTop: '4rem',
 });
 
-// for later
-// const schema = yup.object().shape({
-//   conditions: yup.array(
-//     yup.object().shape({
-//       condition: yup.string().required(),
-//       options: yup.object().required(),
-//     })
-//   ),
-// });
+const conditionOptionSchemas = {
+  daysWaiting: yup.object({
+    comparisonOperator: yup.string().oneOf(['lessThan', 'moreThan', 'equalTo', 'between']),
+    valueOne: yup.number().typeError('Please enter a number.').
+      required().
+      positive().
+      integer(),
+    valueTwo: yup.number().label('Max days').
+      when('comparisonOperator', {
+        is: 'between',
+        then: (schema) => schema.typeError('Please enter a number.').moreThan(yup.ref('valueOne')).
+          required(),
+        otherwise: (schema) => schema.notRequired()
+      })
+  }),
+  decisionReviewType: yup.object(),
+  facility: yup.object(),
+  issueDisposition: yup.object(),
+  issueType: yup.object(),
+  personnel: yup.object()
+};
+const schema = yup.object().shape({
+  reportType: yup.string().oneOf(['event_type_action', 'status']),
+  conditions: yup.array().of(
+    yup.lazy((value) => {
+      return yup.object(
+        { condition: yup.string().oneOf(['daysWaiting', 'decisionReviewType', 'facility', 'issueDisposition', 'issueType', 'personnel']).
+          required('You must select a condition'),
+        options: conditionOptionSchemas[value.condition]
+        });
+    })
+  )
+});
 
 const ReportPageButtons = ({ history,
   disableGenerateButton,
@@ -77,7 +103,10 @@ const ReportPage = ({ history }) => {
     conditions: []
   };
 
-  const methods = useForm({ defaultValues: { ...defaultFormValues } });
+  const methods = useForm({ defaultValues: { ...defaultFormValues },
+    resolver: yupResolver(schema),
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit' });
 
   const { reset, formState, handleSubmit } = methods;
 
