@@ -37,8 +37,6 @@ export const DaysWaiting = ({ control, register, name, field, errors }) => {
         errorMessage={errors?.options?.valueTwo?.message ?? ''}
         onChange={(value) => {
           setValue(valueTwoName, value);
-
-          return value;
         }}
       />
     </>;
@@ -75,8 +73,6 @@ export const DaysWaiting = ({ control, register, name, field, errors }) => {
         errorMessage={errors?.options?.valueOne?.message ?? ''}
         onChange={(value) => {
           setValue(valueOneName, value);
-
-          return value;
         }}
       /> : null}
     {displayValueTwo ?
