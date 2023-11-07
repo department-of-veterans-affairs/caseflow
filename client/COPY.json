@@ -1407,5 +1407,6 @@
   "CASE_DISTRIBUTION_STATIC_LEVERS_TITLE": "Inactive Data Elements",
   "CASE_DISTRIBUTION_STATIC_LEVERS_DESCRIPTION": "The below values do not effect the current active Case Distribution algorithm.",
   "CASE_DISTRIBUTION_HISTORY_TITLE": "Case Distribution Algorithm Change History",
-  "CASE_DISTRIBUTION_HISTORY_DESCRIPTION": "Change history for Case Distribution Admin shows changes made in the last 365 days."
+  "CASE_DISTRIBUTION_HISTORY_DESCRIPTION": "Change history for Case Distribution Admin shows changes made in the last 365 days.",
+  "CASE_DISTRIBUTION_FOOTER_ASTERISK_DESCRIPTION": "* Denotes a variable that is also relevant to the currently inactive distribution algorithm"
 }

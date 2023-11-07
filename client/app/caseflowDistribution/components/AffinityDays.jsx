@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
-import styles from "./InteractableLevers.module.scss";
+import styles from './InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
+import COPY from '../../../COPY';
 
 const AffinityDays = (props) => {
   const { leverList, leverStore } = props;
@@ -24,19 +25,22 @@ const AffinityDays = (props) => {
     setSelectedOption(option);
   };
 
-  const updateLever = (option, index) => (e) => {
+  const updateLever = (option, index) => (event) => {
     const levers = affinityLevers.map((lever, i) => {
       if (index === i) {
-        const opt = lever.options.map((opt) => {
-          if (opt === option) {
-            if (!/^\d{0,3}$/.test(e)) {
-              opt.errorMessage = 'Please enter a value less than or equal to 999';
+        const opt = lever.options.map((op) => {
+          if (op === option) {
+            let errorResult = !(/^\d{0,3}$/).test(event);
+
+            if (errorResult) {
+              op.errorMessage = 'Please enter a value less than or equal to 999';
             } else {
-              opt.errorMessage = null;
+              op.errorMessage = null;
             }
-            opt.value = e;
+            op.value = event;
           }
-          return opt;
+
+          return op;
         });
 
         lever.option = opt;
@@ -47,15 +51,45 @@ const AffinityDays = (props) => {
       return lever;
 
     });
+
     setLever(levers);
   };
 
   const leverNumberDiv = css({
-    '& .cf-form-int-input' : {width: 'auto', display: 'inline-block', position: 'relative'},
-    '& .cf-form-int-input .input-container' : {width: 'auto', display: 'inline-block', verticalAlign: 'middle'},
-    '& .cf-form-int-input label' : {position: 'absolute',bottom: '15px', left: '100px'},
-    '& .usa-input-error label': {bottom: '24px', left: '115px'}
+    '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
+    '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
+    '& .cf-form-int-input label': { position: 'absolute', bottom: '15px', left: '100px' },
+    '& .usa-input-error label': { bottom: '24px', left: '115px' }
   });
+
+  const generateFields = (dataType, option, lever, index) => {
+    if (dataType === 'number') {
+      return (
+        <NumberField
+          name={option.item}
+          label={option.unit}
+          isInteger
+          disabled={lever.is_disabled}
+          value={option.value}
+          errorMessage={option.errorMessage}
+          onChange={updateLever(option, index)}
+        />
+      );
+    }
+    if (dataType === 'text') {
+      return (
+        <TextField
+          name={option.item}
+          label={false}
+          disabled={lever.is_disabled}
+          value={option.value}
+          onChange={updateLever(option, index)}
+        />
+      );
+    }
+
+    return null;
+  };
 
   return (
     <div className={styles.leverContent}>
@@ -65,7 +99,9 @@ const AffinityDays = (props) => {
         <div className={styles.leverRight}><strong>Value</strong></div>
       </div>
       {affinityLevers.map((lever, index) => (
-        <div className={cx(styles.activeLever, lever.is_disabled ? styles.leverDisabled : '')}  key={`${lever.item}-${index}`}>
+        <div className={cx(styles.activeLever, lever.is_disabled ? styles.leverDisabled : '')}
+          key={`${lever.item}-${index}`}
+        >
           <div className={styles.leverLeft}>
             <strong>{lever.title}</strong>
             <p>{lever.description}</p>
@@ -89,43 +125,20 @@ const AffinityDays = (props) => {
                 </div>
 
                 <div>
-                {(
                   <div className={styles.combinedRadioInput}>
-                    {option.data_type === 'number' ? (
-                      <NumberField
-                        name={option.item}
-                        label={option.unit}
-                        isInteger
-                        disabled={lever.is_disabled}
-                        value={option.value}
-                        errorMessage={option.errorMessage}
-                        onChange={updateLever(option,index)}
-                      />
-                    ) : (
-                      option.data_type === 'text' ? (
-                        <TextField
-                          name={option.item}
-                          label={false}
-                          disabled={lever.is_disabled}
-                          value={option.value}
-                          onChange={updateLever(option,index)}
-                        />
-                      ) : null
-                    )}
+                    {generateFields(option.data_type, option, lever, index)}
                   </div>
-                )}
                 </div>
               </div>
             ))}
           </div>
         </div>
       ))}
-      <h4 {...footerStyling}>* Denotes a variable that is also relevant to the currently inactive distribution algorithm</h4>
+      <h4 {...footerStyling}>{COPY.CASE_DISTRIBUTION_FOOTER_ASTERISK_DESCRIPTION}</h4>
       <div className="cf-help-divider"></div>
     </div>
   );
-  }
-
+};
 
 AffinityDays.propTypes = {
   leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
