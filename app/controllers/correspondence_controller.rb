@@ -2,6 +2,7 @@
 
 class CorrespondenceController < ApplicationController
   before_action :verify_feature_toggle
+  before_action :load_correspondence, only: [:show, :update]
 
   def intake
     respond_to do |format|
@@ -23,11 +24,47 @@ class CorrespondenceController < ApplicationController
   end
 
   def show
-    @correspondence = Correspondence.find(params[:id])
-    render json: { correspondence: @correspondence, package_document_type: @correspondence.package_document_type }
+    response_json = {
+      correspondence: @correspondence,
+      package_document_type: @correspondence.package_document_type,
+      general_information: general_information
+    }
+    render({ json: response_json }, status: :ok)
+  end
+
+  def update
+    if veteran_by_correspondence.update(veteran_params) && @correspondence.update(correspondence_params)
+      render json: { status: :ok }
+    else
+      render json: { error: 'Failed to update records' }, status: :unprocessable_entity
+    end
   end
 
   private
+
+  def load_correspondence
+    @correspondence ||= Correspondence.find(params[:id])
+  end
+
+  def general_information
+    vet = veteran_by_correspondence
+    {
+      notes: @correspondence.notes,
+      file_number: vet.file_number,
+      veteran_name: vet.name,
+      correspondence_type_id: @correspondence.correspondence_type_id,
+      correspondence_types: CorrespondenceType.all
+      # correspondence_types: CorrespondenceType.pluck(:id, :name)
+    }
+  end
+
+  def correspondence_params
+    params.require(:correspondence).permit(:notes, :correspondence_type_id)
+  end
+
+  def veteran_params
+    params.require(:veteran).permit(:file_number)
+  end
 
   def verify_feature_toggle
     if !FeatureToggle.enabled?(:correspondence_queue)
@@ -37,8 +74,7 @@ class CorrespondenceController < ApplicationController
 
   def correspondence_load
     @correspondence ||= correspondence_by_uuid
-    vet = veteran_by_correspondence
-    @all_correspondence = Correspondence.where(veteran_id: vet.id)
+    @all_correspondence = Correspondence.where(veteran_id: veteran_by_correspondence.id)
   end
 
   def correspondence_by_uuid
@@ -46,7 +82,6 @@ class CorrespondenceController < ApplicationController
   end
 
   def veteran_by_correspondence
-    Veteran.find(@correspondence.veteran_id)
+    @veteran_by_correspondence ||= Veteran.find(@correspondence.veteran_id)
   end
-
 end
