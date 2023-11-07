@@ -40,7 +40,7 @@ export const AddTasksAppealsView = () => {
     console.log('Removing at index ' + index)
     console.log('The currentTask variable is ' + currentTask)
     console.log(currentTask);
-    const newTask = currentTask.splice(index, 1);
+    const newTask = currentTask.splice(0, index);
     setAddTask(newTask);
 
   };
