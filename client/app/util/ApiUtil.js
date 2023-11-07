@@ -74,7 +74,8 @@ const errorHandling = (url, error, method, options = {}) => {
         metric_attributes: JSON.stringify({
           method,
           url,
-          error
+          error,
+          prefetchDisabled: options.prefetchDisabled
         }),
         sent_to: 'javascript_console',
         start: options.start,
@@ -106,7 +107,8 @@ const successHandling = (url, res, method, options = {}) => {
         product: 'caseflow',
         metric_attributes: JSON.stringify({
           method,
-          url
+          url,
+          prefetchDisabled: options.prefetchDisabled
         }),
         sent_to: 'javascript_console',
         sent_to_info: JSON.stringify({
@@ -172,16 +174,18 @@ const httpMethods = {
 
     if (options.cache) {
       return promise.
-      then((res) => {
-        successHandling(url, res, 'GET', options);
-        return res;
-      });
+        then((res) => {
+          successHandling(url, res, 'GET', options);
+
+          return res;
+        });
     }
 
     return promise.
       use(nocache).
       then((res) => {
         successHandling(url, res, 'GET', options);
+
         return res;
       });
   },
