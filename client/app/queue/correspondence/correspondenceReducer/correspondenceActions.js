@@ -17,10 +17,19 @@ export const updateRadioValue = (value) =>
       payload: value
     });
 };
+export const saveCheckboxState = (id, isChecked) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SAVE_CHECKBOX_STATE,
+      payload: {
+        id, isChecked
+      }
+    });
+  };
 
-export const updateCheckboxs = (id, isChecked) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.UPDATE_CHECKBOX_VALUES,
-    payload: { id, isChecked },
-  });
-};
+export const clearCheckboxState = () =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.CLEAR_CHECKBOX_STATE,
+    });
+  };

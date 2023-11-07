@@ -9,7 +9,10 @@ import Checkbox from '../../../../../components/Checkbox';
 import RadioField from '../../../../../components/RadioField';
 import ApiUtil from '../../../../../util/ApiUtil';
 import {
-  loadCorrespondences, updateRadioValue, updateCheckboxs
+  loadCorrespondences,
+  updateRadioValue,
+  saveCheckboxState,
+  clearCheckboxState
 } from '../../../correspondenceReducer/correspondenceActions';
 class AddCorrespondenceView extends React.Component {
 
@@ -21,8 +24,7 @@ class AddCorrespondenceView extends React.Component {
       source_type: '',
       package_document_type: '',
       correspondence_type_id: '',
-      notes: '',
-      selectedCheckboxes: [],
+      notes: ''
     };
   }
 
@@ -46,31 +48,22 @@ class AddCorrespondenceView extends React.Component {
   onChange = (value) => {
     this.props.updateRadioValue({ radioValue: value });
     this.props.onContinueStatusChange(value === '2');
+    this.props.clearCheckboxState();
   }
 
   onChangeCheckbox = (id, isChecked) => {
-    this.props.updateCheckboxs(id, isChecked);
-    const selectedCheckboxes = Object.keys(this.props.checkboxValues).filter(
-      (id) => this.props.checkboxValues[id]
-    );
+    this.props.saveCheckboxState(id, isChecked);
+    let selectedCheckboxes = this.props.checkboxes;
 
-    if (isChecked && !selectedCheckboxes.includes(id)) {
+    if (isChecked) {
       selectedCheckboxes.push(id);
-    } else if (!isChecked) {
-      const index = selectedCheckboxes.indexOf(id);
-
-      if (index !== -1) {
-        selectedCheckboxes.splice(index, 1);
-      }
+    } else {
+      selectedCheckboxes = selectedCheckboxes.filter((checkboxId) => checkboxId !== id);
     }
-
-    console.log('selectedCheckboxes', selectedCheckboxes);
 
     const isAnyCheckboxSelected = selectedCheckboxes.length > 0;
 
     this.props.onCheckboxChange(isAnyCheckboxSelected);
-
-    // return { selectedCheckboxes };
   }
 
   getKeyForRow = (index, { id }) => {
@@ -87,8 +80,8 @@ class AddCorrespondenceView extends React.Component {
             name={correspondence.id.toString()}
             id={correspondence.id.toString()}
             hideLabel
-            checked={this.props.checkboxValues[correspondence.id.toString()] || false}
-            onChange={(checked) => this.onChangeCheckbox(correspondence.id.toString(), checked)}
+            defaultValue={this.props.checkboxes.includes(String(correspondence.id))}
+            onChange={(checked) => this.onChangeCheckbox(String(correspondence.id), checked)}
           />
         ),
       },
@@ -180,8 +173,6 @@ class AddCorrespondenceView extends React.Component {
   };
 
   render() {
-    console.log('props:', this.props);
-    console.log('checkboxValues:', this.props.checkboxValues);
     const priorMailAnswer = [
       { displayText: 'Yes',
         value: '1' },
@@ -231,24 +222,26 @@ AddCorrespondenceView.propTypes = {
   loadCorrespondences: PropTypes.func,
   updateRadioValue: PropTypes.func,
   radioValue: PropTypes.string,
-  checkboxValues: PropTypes.object,
-  updateCheckboxs: PropTypes.func,
+  saveCheckboxState: PropTypes.func,
   correspondences: PropTypes.array,
   onContinueStatusChange: PropTypes.func,
   onCheckboxChange: PropTypes.func.isRequired,
+  clearCheckboxState: PropTypes.func.isRequired,
+  checkboxes: PropTypes.array
 };
 
 const mapStateToProps = (state) => ({
   correspondences: state.intakeCorrespondence.correspondences,
   radioValue: state.intakeCorrespondence.radioValue,
-  checkboxValues: state.intakeCorrespondence.checkboxValues
+  checkboxes: state.intakeCorrespondence.toggledCheckboxes
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     loadCorrespondences,
     updateRadioValue,
-    updateCheckboxs
+    saveCheckboxState,
+    clearCheckboxState
   }, dispatch)
 );
 

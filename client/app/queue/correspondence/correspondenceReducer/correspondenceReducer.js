@@ -4,11 +4,10 @@ import { ACTIONS } from './correspondenceConstants';
 export const initialState = {
   correspondences: [],
   radioValue: '2',
-  checkboxValues: {},
+  toggledCheckboxes: []
 };
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
-  let id, isChecked;
 
   switch (action.type) {
   case ACTIONS.LOAD_CORRESPONDENCES:
@@ -24,13 +23,26 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
       }
     });
 
-  case ACTIONS.UPDATE_CHECKBOX_VALUES:
-    ({ id, isChecked } = action.payload);
+  case ACTIONS.SAVE_CHECKBOX_STATE:
+    if (action.payload.isChecked) {
+      return update(state, {
+        toggledCheckboxes: {
+          $push: [action.payload.id]
+        }
+      });
+    }
 
     return update(state, {
-      checkboxValues: {
-        [id]: { $set: isChecked },
-      },
+      toggledCheckboxes: {
+        $set: state.toggledCheckboxes.filter((id) => id !== action.payload.id)
+      }
+    });
+
+  case ACTIONS.CLEAR_CHECKBOX_STATE:
+    return update(state, {
+      toggledCheckboxes: {
+        $set: []
+      }
     });
 
   default:
