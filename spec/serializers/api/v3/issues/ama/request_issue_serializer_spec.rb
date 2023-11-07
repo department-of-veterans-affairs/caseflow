@@ -2,14 +2,14 @@
 
 require "test_prof/recipes/rspec/let_it_be"
 
-describe Api::V3::VbmsIntake::Ama::RequestIssueSerializer, :postgres do
+describe Api::V3::Issues::Ama::RequestIssueSerializer, :postgres do
   context "request issue object" do
     let(:vet) { create(:veteran) }
     let(:request_issue) do
       create(:request_issue, :with_associated_decision_issue, veteran_participant_id: vet.participant_id)
     end
     it "should have all eligiblity fields" do
-      serialized_request_issue = Api::V3::VbmsIntake::Ama::RequestIssueSerializer.new(request_issue)
+      serialized_request_issue = Api::V3::Issues::Ama::RequestIssueSerializer.new(request_issue)
         .serializable_hash[:data][:attributes]
       expect(serialized_request_issue.key?(:id)).to eq true
       expect(serialized_request_issue.key?(:benefit_type)).to eq true
@@ -45,9 +45,11 @@ describe Api::V3::VbmsIntake::Ama::RequestIssueSerializer, :postgres do
       expect(serialized_request_issue.key?(:vacols_sequence_id)).to eq true
       expect(serialized_request_issue.key?(:verified_unidentified_issue)).to eq true
       expect(serialized_request_issue.key?(:veteran_participant_id)).to eq true
-      expect(serialized_request_issue.key?(:caseflow_considers_status_active)).to eq true
+      expect(serialized_request_issue.key?(:caseflow_considers_decision_review_active)).to eq true
+      expect(serialized_request_issue.key?(:caseflow_considers_issue_active)).to eq true
       expect(serialized_request_issue.key?(:caseflow_considers_title_of_active_review)).to eq true
       expect(serialized_request_issue.key?(:caseflow_considers_eligible)).to eq true
+      expect(serialized_request_issue.key?(:claimant_participant_id)).to eq true
       expect(serialized_request_issue.key?(:decision_issues)).to eq true
 
       serialized_decision_issue = serialized_request_issue[:decision_issues].first
