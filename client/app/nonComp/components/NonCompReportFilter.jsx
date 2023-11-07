@@ -2,12 +2,12 @@ import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import PropTypes from 'prop-types';
 
-import SearchableDropdown from '../../components/SearchableDropdown';
-import REPORT_TYPE_OPTIONS from '../../../constants/REPORT_TYPE_OPTIONS';
+import SearchableDropdown from 'app/components/SearchableDropdown';
+import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS';
 
 const NonCompReportFilter = ({ control, formState }) => (
   <>
-    <h2>Type of Report</h2>
+    <h2>Type of report</h2>
     <Controller
       control={control}
       name="reportType"
@@ -15,7 +15,7 @@ const NonCompReportFilter = ({ control, formState }) => (
         <SearchableDropdown
           {...rest}
           label="Report Type"
-          options={REPORT_TYPE_OPTIONS}
+          options={REPORT_TYPE_CONSTANTS.REPORT_TYPE_OPTIONS}
           searchable={false}
           inputRef={ref}
           errorMessage={formState.errors?.reportType?.message}
