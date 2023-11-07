@@ -2,7 +2,7 @@
 # Create correspondence type seeds
 
 module Seeds
-  class VdmsDocumentTypes < Base
+  class VbmsDocumentTypes < Base
     def seed!
       create_document_types
     end

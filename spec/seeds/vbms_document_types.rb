@@ -1,4 +1,4 @@
-describe Seeds::VdmsDocumentTypes do
+describe Seeds::VbmsDocumentTypes do
   describe "#seed!" do
     subject { described_class.new.seed! }
 
