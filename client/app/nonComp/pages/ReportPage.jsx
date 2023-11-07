@@ -157,8 +157,7 @@ const ReportPage = ({ history }) => {
       completed_disposition: '',
       removed_issue: '',
       withdrew_issue: '',
-    },
-    conditions: []
+    }
   };
 
   const methods = useForm({ defaultValues: { ...defaultFormValues } });
