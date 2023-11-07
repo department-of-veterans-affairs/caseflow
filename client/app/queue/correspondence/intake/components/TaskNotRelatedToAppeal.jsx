@@ -10,10 +10,16 @@ import TextField from '../../../../components/TextField';
 
 const TaskNotRelatedToAppeal = (props) => {
 
-  const dummyOptions = [
-    { value: 0, label: 'Abeyance' },
-    { value: 1, label: 'Attorney Inquiry' },
-    { value: 2, label: 'CAVC Correspondence' }
+  const dropdownOptions = [
+    { value: 0, label: 'CAVC Correspondence' },
+    { value: 1, label: 'Congressional interest' },
+    { value: 2, label: 'Death certificate' },
+    { value: 3, label: 'FOIA request' },
+    { value: 4, label: 'Other motion' },
+    { value: 5, label: 'Power of attorney-related' },
+    { value: 6, label: 'Privacy act request' },
+    { value: 7, label: 'Privacy complaint' },
+    { value: 8, label: 'Status inquiry' }
   ];
 
   const [selectedTaskType, setSelectedTaskType] = useState(-1);
@@ -24,16 +30,15 @@ const TaskNotRelatedToAppeal = (props) => {
 
   return (
     <div key={props.key} style={{ display: 'block', marginRight: '2rem' }}>
-      <div className="gray-border" style={{ display: 'flex', padding: '2rem 2rem', marginLeft: '3rem', width: '50rem' }}>
-      {/* <div className="gray-border" style={{ marginLeft: '3rem', maxWidth: '50rem' }} > */}
-      {/* <div> */}
+      <div className="gray-border"
+        style={{ display: 'flex', padding: '2rem 2rem', marginLeft: '3rem', width: '50rem' }}>
         <div
           style={
             { width: '45rem' }
           }
         >
           <ReactSelectDropdown
-            options={dummyOptions}
+            options={dropdownOptions}
             defaultValue={{ value: -1, label: 'Select...' }}
             label="Task"
             style={{ width: '50rem' }}
@@ -47,9 +52,6 @@ const TaskNotRelatedToAppeal = (props) => {
             name="Task Information"
             label="Provide context and instruction on this task"
             defaultText=""
-            // style={
-            //   { display: 'flex', justifyContent: 'flex-end', paddingLeft: '1rem', marginLeft: '0.5rem', minWidth: '500px' }
-            // }
           />
           <Button
             name="Remove"
@@ -58,7 +60,6 @@ const TaskNotRelatedToAppeal = (props) => {
             classNames={['cf-btn-link', 'cf-left-side']} >
             Remove task
           </Button>
-          {/* <p onClick={props.removeTask}>Remove task</p> */}
         </div>
       </div>
     </div>
