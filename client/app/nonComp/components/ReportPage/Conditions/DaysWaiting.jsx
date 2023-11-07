@@ -36,7 +36,7 @@ export const DaysWaiting = ({ control, register, name, field, errors }) => {
             {...rest}
             label="Time Range"
             options={DAYS_WAITING_CONDITION_OPTIONS}
-            errorMessage={errors?.options?.comparisonOperator?.message ?? ''}
+            errorMessage={errors?.options?.comparisonOperator?.message}
             onChange={(valObj) => {
               setValue(valueOneName, null);
               setValue(valueTwoName, null);
@@ -53,7 +53,7 @@ export const DaysWaiting = ({ control, register, name, field, errors }) => {
         defaultValue={field.options.valueOne}
         inputRef={register}
         isInteger
-        errorMessage={errors?.options?.valueOne?.message ?? ''}
+        errorMessage={errors?.options?.valueOne?.message}
         onChange={(value) => {
           setValue(valueOneName, value);
         }}
@@ -67,7 +67,7 @@ export const DaysWaiting = ({ control, register, name, field, errors }) => {
           defaultValue={field.options.valueTwo}
           inputRef={register}
           isInteger
-          errorMessage={errors?.options?.valueTwo?.message ?? ''}
+          errorMessage={errors?.options?.valueTwo?.message}
           onChange={(value) => {
             setValue(valueTwoName, value);
           }}

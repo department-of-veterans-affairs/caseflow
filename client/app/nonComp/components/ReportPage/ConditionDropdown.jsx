@@ -18,7 +18,7 @@ export const ConditionDropdown = ({ control, filteredOptions, name, errors }) =>
         label="Variable"
         options={filteredOptions}
         readOnly={disabled}
-        errorMessage={errors?.condition?.message ?? ''}
+        errorMessage={errors?.condition?.message}
         onChange={(valObj) => {
           setDisabled(true);
           onChange(valObj?.value);

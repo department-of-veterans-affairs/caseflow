@@ -18,7 +18,7 @@ const NonCompReportFilter = ({ control, formState }) => (
           label="Report Type"
           options={REPORT_TYPE_OPTIONS}
           searchable={false}
-          errorMessage={formState.errors?.reportType?.message ?? ''}
+          errorMessage={formState.errors?.reportType?.message}
           onChange={(valObj) => onChange(valObj?.value)}
         />
       )}
