@@ -25,7 +25,6 @@ export const CorrespondenceIntake = (props) => {
   const [isCheckboxSelected, setCheckboxSelected] = useState(false);
   const [isContinueEnabled, setContinueEnabled] = useState(true);
 
-
   const handleContinueStatusChange = (isEnabled) => {
     setContinueEnabled(isEnabled);
   };
