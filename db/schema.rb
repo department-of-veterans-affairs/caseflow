@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_11_06_174051) do
+ActiveRecord::Schema.define(version: 2023_11_06_212732) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 2023_11_06_174051) do
     t.boolean "appeal_docketed", default: false, null: false, comment: "When true, appeal has been docketed"
     t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID"
     t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
-    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the table"
+    t.datetime "created_at", null: false
     t.bigint "created_by_id", null: false, comment: "User id of the user that inserted the record"
     t.boolean "decision_mailed", default: false, null: false, comment: "When true, appeal has decision mail request complete"
     t.boolean "hearing_postponed", default: false, null: false, comment: "When true, appeal has hearing postponed and no hearings scheduled"
@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 2023_11_06_174051) do
     t.boolean "privacy_act_complete", default: false, null: false, comment: "When true, appeal has a privacy act request completed"
     t.boolean "privacy_act_pending", default: false, null: false, comment: "When true, appeal has a privacy act request still open"
     t.boolean "scheduled_in_error", default: false, null: false, comment: "When true, hearing was scheduled in error and none scheduled"
-    t.datetime "updated_at", comment: "Date and time the record was last updated"
+    t.datetime "updated_at"
     t.bigint "updated_by_id", comment: "User id of the last user that updated the record"
     t.boolean "vso_ihp_complete", default: false, null: false, comment: "When true, appeal has a VSO IHP request completed"
     t.boolean "vso_ihp_pending", default: false, null: false, comment: "When true, appeal has a VSO IHP request pending"
@@ -343,6 +343,18 @@ ActiveRecord::Schema.define(version: 2023_11_06_174051) do
     t.datetime "updated_at", null: false
     t.index ["sdomainid"], name: "index_cached_user_attributes_on_sdomainid", unique: true
     t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
+  end
+
+  create_table "case_distribution_audit_lever_entries", comment: "A generalized table for Case Distribution audit lever records within caseflow", force: :cascade do |t|
+    t.bigint "case_distribution_lever_id", null: false, comment: "Indicates the Case Distriubution levers id"
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.string "previous_value", comment: "Indicates the previous value of the column"
+    t.string "title", null: false, comment: "Indicates the title to maintain the history"
+    t.string "update_value", comment: "Indicates the updated value of the column"
+    t.bigint "user_id", comment: "Indicates the id of the user who perfomed the action"
+    t.string "user_name", null: false, comment: "Indicates the Username"
+    t.index ["case_distribution_lever_id"], name: "index_cd_audit_lever_entries_on_cd_lever_id"
+    t.index ["user_id"], name: "index_case_distribution_audit_lever_entries_on_user_id"
   end
 
   create_table "case_distribution_levers", comment: "A generalized table for Caseflow Distribution lever records within caseflow", force: :cascade do |t|
@@ -1269,6 +1281,33 @@ ActiveRecord::Schema.define(version: 2023_11_06_174051) do
     t.index ["updated_at"], name: "index_messages_on_updated_at"
   end
 
+  create_table "metrics", force: :cascade do |t|
+    t.json "additional_info", comment: "additional data to store for the metric"
+    t.string "app_name", null: false, comment: "Application name: caseflow or efolder"
+    t.datetime "created_at", null: false
+    t.float "duration", comment: "Time in milliseconds from start to end"
+    t.datetime "end", comment: "When metric recording stopped"
+    t.json "metric_attributes", comment: "Store attributes relevant to the metric: OS, browser, etc"
+    t.string "metric_class", null: false, comment: "Class of metric, use reflection to find value to populate this"
+    t.string "metric_group", default: "service", null: false, comment: "Metric group: service, etc"
+    t.string "metric_message", null: false, comment: "Message or log for metric"
+    t.string "metric_name", null: false, comment: "Name of metric"
+    t.string "metric_product", null: false, comment: "Where in application: Queue, Hearings, Intake, VHA, etc"
+    t.string "metric_type", null: false, comment: "Type of metric: ERROR, LOG, PERFORMANCE, etc"
+    t.json "relevant_tables_info", comment: "Store information to tie metric to database table(s)"
+    t.string "sent_to", comment: "Which system metric was sent to: Datadog, Rails Console, Javascript Console, etc ", array: true
+    t.json "sent_to_info", comment: "Additional information for which system metric was sent to"
+    t.datetime "start", comment: "When metric recording started"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false, comment: "The ID of the user who generated metric."
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "Unique ID for the metric, can be used to search within various systems for the logging"
+    t.index ["app_name"], name: "index_metrics_on_app_name"
+    t.index ["metric_name"], name: "index_metrics_on_metric_name"
+    t.index ["metric_product"], name: "index_metrics_on_metric_product"
+    t.index ["sent_to"], name: "index_metrics_on_sent_to"
+    t.index ["user_id"], name: "index_metrics_on_user_id"
+  end
+
   create_table "mpi_update_person_events", force: :cascade do |t|
     t.bigint "api_key_id", null: false, comment: "API Key used to initiate the event"
     t.datetime "completed_at", comment: "Timestamp of when update was completed, regardless of success or failure"
@@ -1311,7 +1350,7 @@ ActiveRecord::Schema.define(version: 2023_11_06_174051) do
     t.string "appeals_type", null: false, comment: "Type of Appeal"
     t.datetime "created_at", comment: "Timestamp of when Noticiation was Created"
     t.boolean "email_enabled", default: true, null: false
-    t.text "email_notification_content", comment: "Full Email Text Content of Notification"
+    t.string "email_notification_content", comment: "Full Email Text Content of Notification"
     t.string "email_notification_external_id", comment: "VA Notify Notification Id for the email notification send through their API "
     t.string "email_notification_status", comment: "Status of the Email Notification"
     t.date "event_date", null: false, comment: "Date of Event"
@@ -1322,8 +1361,8 @@ ActiveRecord::Schema.define(version: 2023_11_06_174051) do
     t.string "participant_id", comment: "ID of Participant"
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
-    t.text "sms_notification_content", comment: "Full SMS Text Content of Notification"
-    t.string "sms_notification_external_id"
+    t.string "sms_notification_content", comment: "Full SMS Text Content of Notification"
+    t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
@@ -1913,6 +1952,46 @@ ActiveRecord::Schema.define(version: 2023_11_06_174051) do
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
   end
 
+  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
+    t.string "ALLOW_POA_ACCESS", limit: 5
+    t.decimal "CLAIMANT_PERSON_ID", precision: 38
+    t.datetime "CLAIM_DATE"
+    t.string "CLAIM_SOJ", limit: 25
+    t.integer "CONTENTION_COUNT"
+    t.datetime "CREATEDDT", null: false
+    t.string "EP_CODE", limit: 25
+    t.datetime "ESTABLISHMENT_DATE"
+    t.datetime "EXPIRATIONDT"
+    t.string "INTAKE_SITE", limit: 25
+    t.datetime "LASTUPDATEDT", null: false
+    t.string "LEVEL_STATUS_CODE", limit: 25
+    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
+    t.string "LIFECYCLE_STATUS_NAME", limit: 50
+    t.string "ORGANIZATION_NAME", limit: 100
+    t.string "ORGANIZATION_SOJ", limit: 25
+    t.string "PAYEE_CODE", limit: 25
+    t.string "POA_CODE", limit: 25
+    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
+    t.string "PRE_DISCHARGE_IND", limit: 5
+    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
+    t.string "PRIORITY", limit: 10
+    t.string "PROGRAM_TYPE_CODE", limit: 10
+    t.string "RATING_SOJ", limit: 25
+    t.string "SERVICE_TYPE_CODE", limit: 10
+    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
+    t.string "SUBMITTER_ROLE_CODE", limit: 25
+    t.datetime "SUSPENSE_DATE"
+    t.string "SUSPENSE_REASON_CODE", limit: 25
+    t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
+    t.decimal "SYNC_ID", precision: 38, null: false
+    t.string "TEMPORARY_CLAIM_SOJ", limit: 25
+    t.string "TYPE_CODE", limit: 25
+    t.decimal "VERSION", precision: 38, null: false
+    t.decimal "VETERAN_PERSON_ID", precision: 15
+    t.index ["CLAIM_ID"], name: "claim_id_index"
+    t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
+  end
+
   create_table "vbms_uploaded_documents", force: :cascade do |t|
     t.bigint "appeal_id", comment: "Appeal/LegacyAppeal ID; use as FK to appeals/legacy_appeals"
     t.string "appeal_type", comment: "'Appeal' or 'LegacyAppeal'"
@@ -2075,6 +2154,8 @@ ActiveRecord::Schema.define(version: 2023_11_06_174051) do
   add_foreign_key "board_grant_effectuations", "decision_documents"
   add_foreign_key "board_grant_effectuations", "decision_issues", column: "granted_decision_issue_id"
   add_foreign_key "board_grant_effectuations", "end_product_establishments"
+  add_foreign_key "case_distribution_audit_lever_entries", "case_distribution_levers"
+  add_foreign_key "case_distribution_audit_lever_entries", "users"
   add_foreign_key "cavc_dashboard_dispositions", "cavc_dashboards"
   add_foreign_key "cavc_dashboard_dispositions", "users", column: "created_by_id", name: "cavc_dashboard_dispositions_created_by_id_fk"
   add_foreign_key "cavc_dashboard_dispositions", "users", column: "updated_by_id", name: "cavc_dashboard_dispositions_updated_by_id_fk"
@@ -2155,6 +2236,7 @@ ActiveRecord::Schema.define(version: 2023_11_06_174051) do
   add_foreign_key "membership_requests", "users", column: "decider_id"
   add_foreign_key "membership_requests", "users", column: "requestor_id"
   add_foreign_key "messages", "users"
+  add_foreign_key "metrics", "users"
   add_foreign_key "mpi_update_person_events", "api_keys"
   add_foreign_key "nod_date_updates", "appeals"
   add_foreign_key "nod_date_updates", "users"
