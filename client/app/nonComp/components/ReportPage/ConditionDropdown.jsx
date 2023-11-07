@@ -3,10 +3,8 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 import { Controller } from 'react-hook-form';
 import PropTypes from 'prop-types';
 
-export const ConditionDropdown = ({ control, determineOptions, name, errors }) => {
+export const ConditionDropdown = ({ control, filteredOptions, name, errors }) => {
   let [disabled, setDisabled] = useState(false);
-
-  const filteredOptions = determineOptions();
 
   const dropdownName = `${name}.condition`;
 
@@ -33,7 +31,7 @@ export const ConditionDropdown = ({ control, determineOptions, name, errors }) =
 
 ConditionDropdown.propTypes = {
   control: PropTypes.object,
-  determineOptions: PropTypes.func,
+  filteredOptions: PropTypes.array,
   name: PropTypes.string,
   errors: PropTypes.object
 };

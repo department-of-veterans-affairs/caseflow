@@ -37,7 +37,7 @@ export const ConditionContainer = ({ control, index, remove, field }) => {
       component: Facility },
   ];
 
-  const determineOptions = () => {
+  const filteredOptions = useMemo(() => {
     let conds = watch('conditions');
     let selectedOptions = conds.map((cond) => cond.condition).filter((cond) => cond !== null);
 
@@ -50,7 +50,7 @@ export const ConditionContainer = ({ control, index, remove, field }) => {
 
     return variableOptions.filter((option) =>
       !selectedOptions.some((selectedOption) => option.value === selectedOption));
-  };
+  }, [variableOptions]);
 
   const name = `conditions.${index}`;
 
@@ -75,12 +75,12 @@ export const ConditionContainer = ({ control, index, remove, field }) => {
 
       return <ConditionContent {...{ control, register, name, field, errors }} />;
     }
-  }, [index, control, name, register, selectedConditionValue, variableOptions]);
+  }, [control, name, register, selectedConditionValue, variableOptions]);
 
   return <div className="report-page-segment">
     <div className="cf-app-segment cf-app-segment--alt report-page-variable-condition" >
       <div className="report-page-variable-select">
-        <ConditionDropdown {...{ control, determineOptions, name, errors }} />
+        <ConditionDropdown {...{ control, filteredOptions, name, errors }} />
       </div>
       {isShouldDisplayMiddleContent ? <div className="report-page-middle-content">including</div> : null}
       <div className={middleContentClassName}>
