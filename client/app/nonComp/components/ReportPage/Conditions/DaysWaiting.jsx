@@ -25,23 +25,6 @@ export const DaysWaiting = ({ control, register, name, field, errors }) => {
 
   const valueOneLabel = displayValueTwo ? 'Min days' : 'Number of days';
 
-  const valueTwoContent = () => {
-    return <>
-      to
-      <NumberField
-        label="Max days"
-        name={valueTwoName}
-        defaultValue={field.options.valueTwo}
-        inputRef={register}
-        isInteger
-        errorMessage={errors?.options?.valueTwo?.message ?? ''}
-        onChange={(value) => {
-          setValue(valueTwoName, value);
-        }}
-      />
-    </>;
-  };
-
   return <div className="days-waiting">
     <WidthDiv>
       <Controller
@@ -76,7 +59,20 @@ export const DaysWaiting = ({ control, register, name, field, errors }) => {
         }}
       /> : null}
     {displayValueTwo ?
-      valueTwoContent() : null}
+      <>
+      to
+        <NumberField
+          label="Max days"
+          name={valueTwoName}
+          defaultValue={field.options.valueTwo}
+          inputRef={register}
+          isInteger
+          errorMessage={errors?.options?.valueTwo?.message ?? ''}
+          onChange={(value) => {
+            setValue(valueTwoName, value);
+          }}
+        />
+      </> : null}
 
   </div>;
 };
