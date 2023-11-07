@@ -5,32 +5,7 @@ import PropTypes from 'prop-types';
 import NonCompReportFilterContainer from 'app/nonComp/components/NonCompReportFilter';
 import ReportPageDateSelector from 'app/nonComp/components/ReportPage/ReportPageDateSelector';
 
-const TIMING_SPECIFIC_OPTIONS = [
-  {
-    label: 'After',
-    value: 'after'
-  },
-  {
-    label: 'Before',
-    value: 'before'
-  },
-  {
-    label: 'Between',
-    value: 'between'
-  },
-  {
-    label: 'Last 7 Days',
-    value: 'last_7_days'
-  },
-  {
-    label: 'Last 30 Days',
-    value: 'last_30_days'
-  },
-  {
-    label: 'Last 365 Days',
-    value: 'last_365_days'
-  },
-];
+import { TIMING_SPECIFIC_OPTIONS } from 'constants/REPORT_TYPE_CONSTANTS';
 
 export const TimingSpecification = () => {
   const { watch, control } = useFormContext();

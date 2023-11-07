@@ -2,7 +2,7 @@ import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import PropTypes from 'prop-types';
 
-import SearchableDropdown from '../../components/SearchableDropdown';
+import SearchableDropdown from 'app/components/SearchableDropdown';
 
 const NonCompReportFilter = ({ control, props }) => (
   <>

@@ -12,7 +12,7 @@ exports[`ReportPage renders correctly 1`] = `
         </h1>
         <form>
           <h2>
-            Type of Report
+            Type of report
           </h2>
           <div
             class=""

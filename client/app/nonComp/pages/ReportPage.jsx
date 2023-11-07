@@ -1,16 +1,23 @@
 import React from 'react';
-import { useForm, FormProvider } from 'react-hook-form';
+import { useController, useForm, FormProvider } from 'react-hook-form';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import Button from 'app/components/Button';
-import NonCompLayout from '../components/NonCompLayout';
+import NonCompLayout from 'app/nonComp/components/NonCompLayout';
 import { ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
 
-import NonCompReportFilterContainer from '../components/NonCompReportFilter';
+import NonCompReportFilterContainer from 'app/nonComp/components/NonCompReportFilter';
 import TimingSpecification from 'app/nonComp/components/ReportPage/TimingSpecification';
 
 // import ReportPageDateSelector from 'app/nonComp/components/ReportPage/ReportPageDateSelector';
-import REPORT_TYPE_OPTIONS from '../../../constants/REPORT_TYPE_OPTIONS';
+import Checkbox from 'app/components/Checkbox';
+import RadioField from 'app/components/RadioField';
+
+import {
+  REPORT_TYPE_OPTIONS,
+  RADIO_EVENT_TYPE_OPTIONS,
+  SPECTIFIC_EVENT_OPTIONS
+} from 'constants/REPORT_TYPE_CONSTANTS';
 
 const buttonInnerContainerStyle = css({
   display: 'flex',
@@ -23,6 +30,12 @@ const buttonOuterContainerStyling = css({
   marginTop: '4rem',
 });
 
+const ReportPageButtons = ({
+  history,
+  isGenerateButtonDisabled,
+  handleClearFilters,
+  handleSubmit
+}) => {
 // for later
 // const schema = yup.object().shape({
 //   conditions: yup.array(
@@ -31,12 +44,7 @@ const buttonOuterContainerStyling = css({
 //       options: yup.object().required(),
 //     })
 //   ),
-// });
-
-const ReportPageButtons = ({ history,
-  disableGenerateButton,
-  handleClearFilters,
-  handleSubmit }) => {
+  // });
 
   // eslint-disable-next-line no-console
   const onSubmit = (data) => console.log(data);
@@ -57,7 +65,7 @@ const ReportPageButtons = ({ history,
           label="clear-filters"
           name="clear-filters"
           onClick={handleClearFilters}
-          disabled={disableGenerateButton}
+          disabled={isGenerateButtonDisabled}
         >
           Clear filters
         </Button>
@@ -66,7 +74,7 @@ const ReportPageButtons = ({ history,
           label="generate-report"
           name="generate-report"
           onClick={handleSubmit(onSubmit)}
-          disabled={disableGenerateButton}
+          disabled={isGenerateButtonDisabled}
         >
           Generate task report
         </Button>
@@ -75,32 +83,97 @@ const ReportPageButtons = ({ history,
   );
 };
 
+const RHFCheckboxGroup = ({ options, name, control }) => {
+  const { field } = useController({
+    control,
+    name,
+  });
+  const [value, setValue] = React.useState({});
+
+  return (
+    <fieldset className="checkbox" style={{ paddingLeft: '30px' }}>
+      {options.map((option) => (
+        <div key={option.id}>
+          <Checkbox
+            name={`specificEventType.${option.id}`}
+            key={`specificEventType.${option.id}`}
+            label={option.label}
+            stronglabel
+            onChange={(val) => {
+              value[option.id] = val;
+              field.onChange(value);
+              setValue(value);
+            }}
+            unpadded
+            style={{ outline: 'none' }}
+          />
+        </div>
+      ))}
+    </fieldset>
+  );
+};
+
+const RHFRadioButton = ({ options, name, control }) => {
+  const { field } = useController({
+    control,
+    name,
+  });
+
+  return (
+    <div style={{ marginTop: '20px' }}>
+      <RadioField
+        name=""
+        label=""
+        vertical
+        options={options}
+        stronglabel
+        value={field.value}
+        onChange={(val) => {
+          field.onChange(val);
+        }}
+      />
+    </div>
+  );
+};
+
 const ReportPage = ({ history }) => {
   const defaultFormValues = {
     reportType: '',
     conditions: [],
-    // timing: null,
-    // start_date: '',
-    // end_date: '',
     timing: {
       range: null,
       start_date: '',
       end_date: '',
-    }
+    },
+    radioEventAction: 'all_events_action',
+    specificEventType: {
+      added_decision_date: '',
+      added_issue: '',
+      added_issue_no_decision_date: '',
+      claim_created: '',
+      claim_closed: '',
+      claim_status_incomplete: '',
+      claim_status_inprogress: '',
+      completed_disposition: '',
+      removed_issue: '',
+      withdrew_issue: '',
+    },
+    conditions: []
   };
 
   const methods = useForm({ defaultValues: { ...defaultFormValues } });
 
-  const { reset, watch, formState, handleSubmit } = methods;
+  const { reset, watch, formState, control, handleSubmit } = methods;
 
   const watchReportType = watch('reportType');
+  const watchRadioEventAction = watch('radioEventAction');
 
   return (
     <NonCompLayout
       buttons={
         <ReportPageButtons
           history={history}
-          disableGenerateButton={!formState.isDirty}
+          isGenerateButtonDisabled={!formState.isDirty}
           handleClearFilters={() => reset(defaultFormValues)}
           handleSubmit={handleSubmit}
         />
@@ -110,11 +183,28 @@ const ReportPage = ({ history }) => {
       <FormProvider {...methods}>
         <form>
           <NonCompReportFilterContainer
-            header="Type of Report"
+            header="Type of report"
             name="reportType"
             label="Report Type"
             options={REPORT_TYPE_OPTIONS}
           />
+          {watchReportType === 'event_type_action' ? (
+            <RHFRadioButton
+              options={RADIO_EVENT_TYPE_OPTIONS}
+              methods={methods}
+              name="radioEventAction"
+            />
+          ) : null
+          }
+          {watchReportType === 'event_type_action' &&
+          watchRadioEventAction === 'specific_events_action' ? (
+              <RHFCheckboxGroup
+                options={SPECTIFIC_EVENT_OPTIONS}
+                control={control}
+                name="specificEventType"
+              />
+            ) : null
+          }
           {watchReportType === 'event_type_action' ?
             <TimingSpecification /> :
             null
@@ -128,13 +218,25 @@ const ReportPage = ({ history }) => {
 
 ReportPageButtons.propTypes = {
   history: PropTypes.object,
-  disableGenerateButton: PropTypes.bool,
+  isGenerateButtonDisabled: PropTypes.bool,
   handleClearFilters: PropTypes.func,
   handleSubmit: PropTypes.func,
 };
 
 ReportPage.propTypes = {
   history: PropTypes.object,
+};
+
+RHFCheckboxGroup.propTypes = {
+  options: PropTypes.array,
+  control: PropTypes.object,
+  name: PropTypes.string
+};
+
+RHFRadioButton.propTypes = {
+  options: PropTypes.array,
+  control: PropTypes.object,
+  name: PropTypes.string
 };
 
 export default ReportPage;
