@@ -30,7 +30,6 @@ module Seeds
       veteran = create(
                   :veteran,
                   params)
-      create_const_correspondence(veteran, uuid)
       30.times do
         create_default_correspondence(veteran)
       end
