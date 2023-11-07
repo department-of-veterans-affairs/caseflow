@@ -6,6 +6,8 @@ describe VaDotGovAddressValidator do
   describe "#closest_regional_office" do
     let(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
     let(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
+    let(:non_us_address) { Address.new(country: "MX", country_name: "Mexico", city: "Mexico City") }
+    let(:philippines_address) { Address.new(country: "PI", country_name: "Philippines", city: "Manila") }
     let(:closest_ro_facilities) do
       [
         mock_facility_data(id: ro_facility_id)
@@ -28,6 +30,22 @@ describe VaDotGovAddressValidator do
 
       it "returns RO01" do
         expect(subject).to eq("RO01")
+      end
+    end
+
+    context "when appellant does not live in the us" do
+      let(:ro_facility_id) { nil }
+      before { appeal.instance_variable_set(:@address, non_us_address) }
+      it "returns RO11" do
+        expect(subject).to eq("RO11")
+      end
+    end
+
+    context "when appellant lives in the Philippines" do
+      let(:ro_facility_id) { "vba_358" }
+      before { appeal.instance_variable_set(:@address, philippines_address) }
+      it "returns RO58" do
+        expect(subject).to eq("RO58")
       end
     end
 
@@ -99,22 +117,7 @@ describe VaDotGovAddressValidator do
   end
 
   describe "#update_closest_ro_and_ahls" do
-    let!(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
     let!(:appeal) { create(:appeal, :with_schedule_hearing_tasks) }
-    let!(:valid_address_country_code) { "US" }
-    let!(:valid_address_state_code) { "PA" }
-    let!(:valid_address_error) { nil }
-    let!(:valid_address) do
-      {
-        lat: 0.0,
-        long: 0.0,
-        city: "Fake City",
-        full_address: "555 Fake Address",
-        country_code: valid_address_country_code,
-        state_code: valid_address_state_code,
-        zip_code: "20035"
-      }
-    end
     let!(:ro43_facility_id) { "vba_343" }
     let!(:closest_ro_facilities) do
       [
@@ -126,27 +129,6 @@ describe VaDotGovAddressValidator do
         mock_facility_data(id: ro43_facility_id),
         mock_facility_data(id: "vba_343f")
       ]
-    end
-
-    before(:each) do
-      valid_address_response = ExternalApi::VADotGovService::AddressValidationResponse.new(mock_response)
-      allow(valid_address_response).to receive(:data).and_return(valid_address)
-      allow(valid_address_response).to receive(:error).and_return(valid_address_error)
-      allow_any_instance_of(VaDotGovAddressValidator).to receive(:valid_address_response)
-        .and_return(valid_address_response)
-
-      closest_ro_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
-      allow(closest_ro_response).to receive(:data).and_return(closest_ro_facilities)
-      allow(closest_ro_response).to receive(:error).and_return(nil)
-      allow_any_instance_of(VaDotGovAddressValidator).to receive(:closest_ro_response)
-        .and_return(closest_ro_response)
-
-      available_hearing_locations_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
-      allow(available_hearing_locations_response).to receive(:data)
-        .and_return(available_hearing_locations_facilities)
-      allow(available_hearing_locations_response).to receive(:error).and_return(nil)
-      allow_any_instance_of(VaDotGovAddressValidator).to receive(:available_hearing_locations_response)
-        .and_return(available_hearing_locations_response)
     end
 
     it "assigns a closest_regional_office and creates an available hearing location" do
@@ -169,11 +151,7 @@ describe VaDotGovAddressValidator do
       end
     end
 
-    context "when address is nil" do
-      before do
-        allow(appeal).to receive(:address).and_return(nil)
-      end
-
+    shared_examples "verify address admin action" do
       it "creates Verify Address admin action" do
         appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
 
@@ -181,10 +159,28 @@ describe VaDotGovAddressValidator do
       end
     end
 
+    context "when address is nil" do
+      before do
+        allow(appeal).to receive(:address).and_return(nil)
+      end
+
+      include_examples "verify address admin action"
+    end
+
+    context "when zip code is invalid" do
+      before do
+        allow_any_instance_of(ExternalApi::VADotGovService::AddressValidationResponse)
+          .to receive(:coordinates_invalid?).and_return(true)
+      end
+
+      include_examples "verify address admin action"
+    end
+
     context "when veteran state is outside US territories" do
-      let(:valid_address_state_code) { "AE" }
+      let(:valid_address) { { country_code: "US", state_code: "AE" } }
 
       it "creates foreign veteran admin action" do
+        allow_any_instance_of(VaDotGovAddressValidator).to receive(:valid_address).and_return(valid_address)
         appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
 
         expect(appeal.tasks.of_type(:HearingAdminActionForeignVeteranCaseTask).count).to eq(1)
@@ -192,9 +188,10 @@ describe VaDotGovAddressValidator do
     end
 
     context "when veteran country is outside US territories" do
-      let!(:valid_address_country_code) { "VN" }
+      let(:valid_address) { { country_code: "VN" } }
 
       it "creates foreign veteran admin action" do
+        allow_any_instance_of(VaDotGovAddressValidator).to receive(:valid_address).and_return(valid_address)
         appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
 
         expect(appeal.tasks.of_type(:HearingAdminActionForeignVeteranCaseTask).count).to eq(1)
@@ -207,18 +204,14 @@ describe VaDotGovAddressValidator do
       Caseflow::Error::VaDotGovMultipleAddressError.new(code: 500, message: "")
     ].each do |error|
       context "when va_dot_gov_service throws a #{error.class.name} error and zipcode fallback fails" do
-        let!(:valid_address_error) { error }
-
         before do
-          allow_any_instance_of(VaDotGovAddressValidator).to receive(:validate_zip_code)
+          allow_any_instance_of(ExternalApi::VADotGovService::AddressValidationResponse).to receive(:error)
+            .and_return(error)
+          allow_any_instance_of(VaDotGovAddressValidator).to receive(:manually_validate_zip_code)
             .and_return(nil)
         end
 
-        it "creates a verify address admin action" do
-          appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
-
-          expect(appeal.tasks.of_type(:HearingAdminActionVerifyAddressTask).count).to eq(1)
-        end
+        include_examples "verify address admin action"
 
         context "and veteran's country is Philippines" do
           let(:address) do
@@ -226,13 +219,10 @@ describe VaDotGovAddressValidator do
           end
 
           before do
-            # this mocks get_facility_data call for ErrorHandler#check_for_philippines_and_maybe_update
-            philippines_response = ExternalApi::VADotGovService::FacilitiesResponse.new(mock_response)
-            allow(philippines_response).to receive(:data).and_return([mock_facility_data(id: "vba_358")])
-            allow(philippines_response).to receive(:error).and_return(nil)
-            allow(ExternalApi::VADotGovService).to receive(:get_facility_data)
-              .and_return(philippines_response)
-
+            allow_any_instance_of(ExternalApi::VADotGovService::FacilitiesResponse).to receive(:data)
+              .and_return([mock_facility_data(id: "vba_358")])
+            allow_any_instance_of(ExternalApi::VADotGovService::FacilitiesResponse).to receive(:error)
+              .and_return(nil)
             allow(appeal).to receive(:address).and_return(address)
           end
 
