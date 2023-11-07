@@ -9,12 +9,9 @@ import { ReportPageConditions } from '../components/ReportPage/ReportPageConditi
 import NonCompReportFilterContainer from '../components/NonCompReportFilter';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import NonCompLayout from 'app/nonComp/components/NonCompLayout';
-import { ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
 
 import Checkbox from 'app/components/Checkbox';
 import RadioField from 'app/components/RadioField';
-import NonCompReportFilterContainer from 'app/nonComp/components/NonCompReportFilter';
 
 import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS';
 
@@ -65,7 +62,7 @@ const schema = yup.object().shape({
 });
 
 const ReportPageButtons = ({ history,
-  disableGenerateButton,
+  isGenerateButtonDisabled,
   handleClearFilters,
   handleSubmit }) => {
 
@@ -97,7 +94,7 @@ const ReportPageButtons = ({ history,
           label="generate-report"
           name="generate-report"
           onClick={handleSubmit(onSubmit)}
-          disabled={disableGenerateButton}
+          disabled={isGenerateButtonDisabled}
         >
           Generate task report
         </Button>
