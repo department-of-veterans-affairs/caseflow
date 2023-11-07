@@ -42,10 +42,26 @@ FactoryBot.define do
       source { create(:supplemental_claim, veteran_file_number: veteran_file_number) }
     end
 
-    trait :cleared_hlr do
+    trait :cleared_hlr_with_veteran_claimant do
       synced_status { "CLR" }
       established_at { 5.days.ago }
-      source { create(:higher_level_review, veteran_file_number: veteran_file_number) }
+      source do
+        create(:higher_level_review,
+               veteran_file_number: veteran_file_number,
+               claimant_type: :veteran_claimant)
+      end
+    end
+
+    trait :active_supp_with_dependent_claimant do
+      synced_status { "PEND" }
+      established_at { 5.days.ago }
+      source do
+        create(
+          :supplemental_claim,
+          veteran_file_number: veteran_file_number,
+          claimant_type: :dependent_claimant
+        )
+      end
     end
 
     trait :active_hlr_with_canceled_vbms_ext_claim do

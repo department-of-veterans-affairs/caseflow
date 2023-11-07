@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Api::V3::Issues::Legacy::VacolsIssueSerializer
-  include JSONAPI::Serializer
+  include FastJsonapi::ObjectSerializer
 
   # attributes :vacols_issue
 
