@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import SearchableDropdown from 'app/components/SearchableDropdown';
 
-const RHFControlledDropdown = ({ control, props }) => (
+const RHFControlledDropdown = ({ control, ...props }) => (
   <>
     <h2>{ props.header }</h2>
     <Controller
@@ -31,22 +31,17 @@ const RHFControlledDropdown = ({ control, props }) => (
 export const RHFControlledDropdownContainer = (props) => {
   const methods = useFormContext();
 
-  return <RHFControlledDropdown {...methods} props={props} />;
+  return <RHFControlledDropdown {...methods} {...props} />;
 };
 
 RHFControlledDropdown.propTypes = {
   control: PropTypes.object,
-  props: PropTypes.object,
   header: PropTypes.string,
   name: PropTypes.string,
   label: PropTypes.string,
   options: PropTypes.array,
   optional: PropTypes.bool,
   required: PropTypes.bool
-};
-
-RHFControlledDropdownContainer.propTypes = {
-  props: PropTypes.object
 };
 
 export default RHFControlledDropdownContainer;

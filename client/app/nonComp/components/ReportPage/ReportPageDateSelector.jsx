@@ -14,10 +14,10 @@ const ReportPageDateSelector = ({ name, label, control }) => {
 
   return (
     <fieldset style={{ marginTop: '35px' }}>
-      <div key={`${name}_1`}>
+      <div key={`date-selector-container-${name}`}>
         <DateSelector
           name={`${name}_1`}
-          key={`${name}_1`}
+          key={`date-selector-${name}`}
           label={label}
           stronglabel
           onChange={(val) => {

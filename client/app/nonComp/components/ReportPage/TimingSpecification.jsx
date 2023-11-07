@@ -10,6 +10,7 @@ import { TIMING_SPECIFIC_OPTIONS } from 'constants/REPORT_TYPE_CONSTANTS';
 export const TimingSpecification = () => {
   const { watch, control } = useFormContext();
   const watchTimingSpecification = watch('timing.range');
+  const isTimingsSpecificationBetween = watchTimingSpecification === 'between';
 
   return (
     <div>
@@ -26,12 +27,12 @@ export const TimingSpecification = () => {
           <ReportPageDateSelector
             control={control}
             name="timing.start_date"
-            label={watchTimingSpecification === 'between' ? 'From' : 'Date'}
+            label={isTimingsSpecificationBetween ? 'From' : 'Date'}
           /> :
           null
       }
       {
-        watchTimingSpecification === 'between' ?
+        isTimingsSpecificationBetween ?
           <ReportPageDateSelector control={control}
             name="timing.end_date"
             label="To" /> : null
