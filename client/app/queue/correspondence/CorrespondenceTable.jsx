@@ -48,11 +48,11 @@ class CorrespondenceTable extends React.Component {
         header: 'Veteran Details',
         align: 'left',
         valueName: 'veteranDetails',
-        getSortValue: (row) => row.veteranDetails,
+        getSortValue: (row) => row.firstName,
         backendCanSort: true,
         valueFunction: (row) => (
-          <Link href={`/queue/correspondence/${row.correspondeceId}/review_package`}>
-            {row.veteranDetails}
+          <Link href={`/queue/correspondence/${row.correspondenceId}/review_package`}>
+            {`${row.firstName} ${row.lastName} (${row.fileNumber})`}
           </Link>
         )
       },
