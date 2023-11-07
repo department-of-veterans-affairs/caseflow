@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_11_06_174051) do
+ActiveRecord::Schema.define(version: 2023_11_06_212732) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -343,6 +343,18 @@ ActiveRecord::Schema.define(version: 2023_11_06_174051) do
     t.datetime "updated_at", null: false
     t.index ["sdomainid"], name: "index_cached_user_attributes_on_sdomainid", unique: true
     t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
+  end
+
+  create_table "case_distribution_audit_lever_entries", comment: "A generalized table for Case Distribution audit lever records within caseflow", force: :cascade do |t|
+    t.bigint "case_distribution_lever_id", null: false, comment: "Indicates the Case Distriubution levers id"
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.string "previous_value", comment: "Indicates the previous value of the column"
+    t.string "title", null: false, comment: "Indicates the title to maintain the history"
+    t.string "update_value", comment: "Indicates the updated value of the column"
+    t.bigint "user_id", comment: "Indicates the id of the user who perfomed the action"
+    t.string "user_name", null: false, comment: "Indicates the Username"
+    t.index ["case_distribution_lever_id"], name: "index_cd_audit_lever_entries_on_cd_lever_id"
+    t.index ["user_id"], name: "index_case_distribution_audit_lever_entries_on_user_id"
   end
 
   create_table "case_distribution_levers", comment: "A generalized table for Caseflow Distribution lever records within caseflow", force: :cascade do |t|
@@ -2075,6 +2087,8 @@ ActiveRecord::Schema.define(version: 2023_11_06_174051) do
   add_foreign_key "board_grant_effectuations", "decision_documents"
   add_foreign_key "board_grant_effectuations", "decision_issues", column: "granted_decision_issue_id"
   add_foreign_key "board_grant_effectuations", "end_product_establishments"
+  add_foreign_key "case_distribution_audit_lever_entries", "case_distribution_levers"
+  add_foreign_key "case_distribution_audit_lever_entries", "users"
   add_foreign_key "cavc_dashboard_dispositions", "cavc_dashboards"
   add_foreign_key "cavc_dashboard_dispositions", "users", column: "created_by_id", name: "cavc_dashboard_dispositions_created_by_id_fk"
   add_foreign_key "cavc_dashboard_dispositions", "users", column: "updated_by_id", name: "cavc_dashboard_dispositions_updated_by_id_fk"
