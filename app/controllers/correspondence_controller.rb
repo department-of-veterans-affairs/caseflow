@@ -15,7 +15,12 @@ class CorrespondenceController < ApplicationController
   end
 
   def correspondence_cases
-    render "correspondence_cases"
+    respond_to do |format|
+      format.html { "correspondence_cases" }
+      format.json do
+        render json: { vetCorrespondences: veterans_with_correspondences }
+      end
+    end
   end
 
   def review_package
@@ -47,6 +52,29 @@ class CorrespondenceController < ApplicationController
 
   def veteran_by_correspondence
     Veteran.find(@correspondence.veteran_id)
+  end
+
+  def veterans_with_correspondences
+    serialized_veteran_array = []
+    all_ids_with_corrs = Correspondence.select(:veteran_id).map(&:veteran_id).uniq
+
+    all_ids_with_corrs.each do |id|
+      veteran = Veteran.find(id)
+      correspondence = Correspondence.find_by(veteran_id: id)
+      serialized_veteran_array << vet_info_serializer(veteran, correspondence)
+    end
+
+    serialized_veteran_array
+  end
+
+  def vet_info_serializer(veteran, correspondence)
+    {
+      firstName: veteran.first_name,
+      lastName: veteran.last_name,
+      fileNumber: veteran.file_number,
+      cmPacketNumber: correspondence.cmp_packet_number,
+      correspondenceId: correspondence.id
+    }
   end
 
 end
