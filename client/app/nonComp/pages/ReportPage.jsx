@@ -43,7 +43,7 @@ const conditionOptionSchemas = {
   personnel: yup.object()
 };
 const schema = yup.object().shape({
-  reportType: yup.string().oneOf(['event_type_action', 'status']),
+  reportType: yup.string().oneOf(['event_type_action', 'status'], 'Please make a selection.'),
   conditions: yup.array().of(
     yup.lazy((value) => {
       return yup.object(
