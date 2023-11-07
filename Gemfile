@@ -38,7 +38,7 @@ gem "moment_timezone-rails"
 gem "multiverse"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.11.0.rc4"
-gem "paper_trail", "~> 10"
+gem "paper_trail", "~> 12.0"
 # Used to speed up reporting
 gem "parallel"
 # soft delete gem
@@ -99,7 +99,7 @@ group :test, :development, :demo do
   gem "capybara"
   gem "capybara-screenshot"
   gem "danger", "~> 6.2.2"
-  gem "database_cleaner"
+  gem "database_cleaner-active_record"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
   gem "guard-rspec"
