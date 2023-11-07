@@ -91,14 +91,16 @@ class ClaimHistoryService
   end
 
   def matches_filter(new_events)
-    # Days Waiting, Task ID, Task Status, Issue Types, Dispositions, and Claim Type are all filtered
-    # entirely by the business line DB queries
-    # The personnel and facilities filters are partially filtered by DB queries and further filtered below
+    # Days Waiting, Task ID, Task Status, and Claim Type are all filtered entirely by the business line DB query
+    # The Issue types, dispositions, personnel, and facilities filters are partially filtered by DB query then further
+    # filtered below in this service class after the event has been created
 
     # Ensure that we always treat this as an array of events for processing
     filtered_events = new_events.is_a?(Array) ? new_events : [new_events]
     # Go ahead and extract any nil events
     filtered_events = process_event_filter(filtered_events.compact)
+    filtered_events = process_issue_type_filter(filtered_events)
+    filtered_events = process_dispositions_filter(filtered_events)
     filtered_events = process_timing_filter(filtered_events)
 
     # These are mutally exclusive in the UI, but no technical reason why both can't be used together
@@ -112,6 +114,18 @@ class ClaimHistoryService
     return new_events if @filters[:events].blank?
 
     new_events.select { |event| event && @filters[:events].include?(event.event_type) }
+  end
+
+  def process_issue_type_filter(new_events)
+    return new_events if @filters[:issue_types].blank?
+
+    new_events.select { |event| event && @filters[:issue_types].include?(event.issue_type) }
+  end
+
+  def process_dispositions_filter(new_events)
+    return new_events if @filters[:dispositions].blank?
+
+    new_events.select { |event| event && @filters[:dispositions].include?(event.disposition) }
   end
 
   def process_timing_filter(new_events)

@@ -83,6 +83,32 @@ describe ClaimHistoryEvent do
     }
   end
 
+  let(:status_event_attribute_data) do
+    {
+      assigned_at: "2023-10-19 22:47:16.222148",
+      benefit_type: "vha",
+      claim_type: "HigherLevelReview",
+      claimant_name: "Bob Smithboehm",
+      days_waiting: (Time.zone.today - DateTime.parse("2023-10-19 22:47:16.222148")).to_i,
+      decision_date: nil,
+      decision_description: nil,
+      disposition: nil,
+      disposition_date: nil,
+      event_date: nil,
+      event_type: event_type,
+      event_user_css_id: nil,
+      event_user_name: nil,
+      intake_completed_date: "2023-10-19 22:39:14.270897",
+      issue_description: nil,
+      issue_type: nil,
+      task_id: 124_28,
+      task_status: "completed",
+      user_facility: nil,
+      veteran_file_number: "000100022",
+      withdrawal_request_date: nil
+    }
+  end
+
   let(:intake_event_data) do
     {
       event_date: change_data["intake_completed_at"],
@@ -105,8 +131,18 @@ describe ClaimHistoryEvent do
     describe ".from_change_data" do
       subject { described_class.from_change_data(event_type, change_data) }
 
-      context "when the event type is valid" do
+      context "when the event type is a valid status event type" do
         let(:event_type) { :incomplete }
+
+        it "should create an instance and not raise an error" do
+          claim_history_event = subject
+
+          expect_attributes(claim_history_event, status_event_attribute_data)
+        end
+      end
+
+      context "when the event type is a valid disposition event type" do
+        let(:event_type) { :completed_disposition }
 
         it "should create an instance and not raise an error" do
           claim_history_event = subject
@@ -160,7 +196,7 @@ describe ClaimHistoryEvent do
       subject { described_class.create_claim_creation_event(change_data) }
 
       it "should create a claim creation event" do
-        expect_attributes(subject, event_attribute_data.merge(intake_event_data))
+        expect_attributes(subject, status_event_attribute_data.merge(intake_event_data))
       end
     end
 
@@ -512,7 +548,7 @@ describe ClaimHistoryEvent do
         end
 
         context "when the event type is valid" do
-          let(:event_type) { :incomplete }
+          let(:event_type) { :added_issue }
 
           it "should create an instance and not raise an error" do
             expect_attributes(subject, event_attribute_data)

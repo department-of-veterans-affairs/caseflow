@@ -284,6 +284,10 @@ class ClaimHistoryEvent
     [:completed_disposition, :added_issue, :withdrew_issue, :removed_issue, :added_decision_date].include?(event_type)
   end
 
+  def event_can_contain_disposition?
+    [:completed_disposition, :added_issue, :added_decision_date].include?(event_type)
+  end
+
   def disposition_event?
     event_type == :completed_disposition
   end
@@ -321,17 +325,21 @@ class ClaimHistoryEvent
   end
 
   def parse_issue_attributes(change_data)
-    @issue_type = change_data["nonrating_issue_category"]
-    @issue_description = change_data["nonrating_issue_description"]
-    @decision_date = change_data["decision_date"]
+    if issue_event?
+      @issue_type = change_data["nonrating_issue_category"]
+      @issue_description = change_data["nonrating_issue_description"]
+      @decision_date = change_data["decision_date"]
+      @withdrawal_request_date = change_data["request_issue_closed_at"]
+    end
     @benefit_type = change_data["request_issue_benefit_type"]
-    @withdrawal_request_date = change_data["request_issue_closed_at"]
   end
 
   def parse_disposition_attributes(change_data)
-    @disposition = change_data["disposition"]
-    @disposition_date = change_data["caseflow_decision_date"]
-    @decision_description = change_data["decision_description"]
+    if event_can_contain_disposition?
+      @disposition = change_data["disposition"]
+      @disposition_date = change_data["caseflow_decision_date"]
+      @decision_description = change_data["decision_description"]
+    end
   end
 
   def parse_event_attributes(change_data)

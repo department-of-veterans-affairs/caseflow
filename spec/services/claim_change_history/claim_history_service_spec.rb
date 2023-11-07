@@ -230,23 +230,13 @@ describe ClaimHistoryService do
       context "with dispositions filter" do
         let(:filters) { { dispositions: ["allowed"] } }
 
-        # TODO: Figure out exactly how this one should work.
-        # It currently returns everything that match that disposition
-        # Which means it will return status event, disposition events (but only the ones that match),
-        # Issue events (but only the ones that match), claim_creation, and issue events that match
-        # Is this fine? Or should it only return issue events with that disposition
         it "should only return events for the tasks that match the dispositions filter" do
           subject
-          # TODO: Will need to change based on above comments
+
           expected_event_types = [
             :added_decision_date,
             :added_issue,
-            :claim_creation,
-            :completed,
-            :completed_disposition,
-            :in_progress,
-            :incomplete,
-            :withdrew_issue
+            :completed_disposition
           ]
           expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_event_types)
         end
@@ -261,21 +251,14 @@ describe ClaimHistoryService do
         end
       end
 
-      # TODO: This should behave the exact same as dispositions
       context "with issue_types filter" do
         let(:filters) { { issue_types: ["Caregiver | Other"] } }
 
         it "should only return events for the tasks that match the issue types filter" do
           subject
           expected_event_types = [
-            :added_decision_date,
             :added_issue,
-            :claim_creation,
-            :completed,
-            :completed_disposition,
-            :in_progress,
-            :incomplete,
-            :withdrew_issue
+            :completed_disposition
           ]
           expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_event_types)
         end
@@ -286,6 +269,21 @@ describe ClaimHistoryService do
           it "should return no events" do
             subject
             expect(service_instance.events).to eq([])
+          end
+        end
+
+        context "with multiple issue types" do
+          let(:filters) { { issue_types: ["Caregiver | Other", "CHAMPVA"] } }
+
+          it "should only return events for the tasks that match the issue types filter" do
+            subject
+            expected_event_types = [
+              :added_issue,
+              :completed_disposition,
+              :added_issue,
+              :withdrew_issue
+            ]
+            expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_event_types)
           end
         end
       end
