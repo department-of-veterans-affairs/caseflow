@@ -28,6 +28,7 @@ class AddCorrespondenceView extends React.Component {
     };
   }
 
+  // grabs correspondences and loads into intakeCorrespondence redux store.
   getRowObjects(correspondenceUuid) {
     return ApiUtil.get(`/queue/correspondence/${correspondenceUuid}/intake?json`).then((response) => {
       const returnedObject = response.body;
@@ -234,7 +235,9 @@ const mapStateToProps = (state) => ({
   correspondences: state.intakeCorrespondence.correspondences,
   radioValue: state.intakeCorrespondence.radioValue,
   checkboxes: state.intakeCorrespondence.toggledCheckboxes
-});
+=======
+  correspondences: PropTypes.array
+};
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({

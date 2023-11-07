@@ -8,7 +8,6 @@ export const initialState = {
 };
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
-
   switch (action.type) {
   case ACTIONS.LOAD_CORRESPONDENCES:
     return update(state, {
@@ -16,13 +15,14 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
         $set: action.payload.correspondences
       }
     });
+
   case ACTIONS.UPDATE_RADIO_VALUE:
     return update(state, {
       radioValue: {
         $set: action.payload.radioValue
       }
     });
-
+  
   case ACTIONS.SAVE_CHECKBOX_STATE:
     if (action.payload.isChecked) {
       return update(state, {
