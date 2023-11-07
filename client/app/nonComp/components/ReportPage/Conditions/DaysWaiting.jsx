@@ -12,7 +12,7 @@ const WidthDiv = styled.div`
   width: 100%
 `;
 
-export const DaysWaiting = ({ index, control, register, name, field }) => {
+export const DaysWaiting = ({ control, register, name, field, errors }) => {
   const dropdownName = `${name}.options.comparisonOperator`;
   const valueOneName = `${name}.options.valueOne`;
   const valueTwoName = `${name}.options.valueTwo`;
@@ -34,7 +34,7 @@ export const DaysWaiting = ({ index, control, register, name, field }) => {
         defaultValue={field.options.valueTwo}
         inputRef={register}
         isInteger
-        errorMessage={formState.errors?.conditions?.at(index)?.options?.valueTwo?.message ?? ''}
+        errorMessage={errors?.options?.valueTwo?.message ?? ''}
         onChange={(value) => {
           setValue(valueTwoName, value);
 
@@ -55,6 +55,7 @@ export const DaysWaiting = ({ index, control, register, name, field }) => {
             {...rest}
             label="Time Range"
             options={DAYS_WAITING_CONDITION_OPTIONS}
+            errorMessage={errors?.options?.comparisonOperator?.message ?? ''}
             onChange={(valObj) => {
               setValue(valueOneName, null);
               setValue(valueTwoName, null);
@@ -71,7 +72,7 @@ export const DaysWaiting = ({ index, control, register, name, field }) => {
         defaultValue={field.options.valueOne}
         inputRef={register}
         isInteger
-        errorMessage={formState.errors?.conditions?.at(index)?.options?.valueOne?.message ?? ''}
+        errorMessage={errors?.options?.valueOne?.message ?? ''}
         onChange={(value) => {
           setValue(valueOneName, value);
 
@@ -89,5 +90,5 @@ DaysWaiting.propTypes = {
   register: PropTypes.func,
   name: PropTypes.string,
   field: PropTypes.object,
-  index: PropTypes.number
+  errors: PropTypes.object
 };

@@ -23,16 +23,16 @@ const buttonOuterContainerStyling = css({
 
 const conditionOptionSchemas = {
   daysWaiting: yup.object({
-    comparisonOperator: yup.string().oneOf(['lessThan', 'moreThan', 'equalTo', 'between']),
+    comparisonOperator: yup.string().oneOf(['lessThan', 'moreThan', 'equalTo', 'between'], 'Please select a time range.'),
     valueOne: yup.number().typeError('Please enter a number.').
-      required().
+      required('Please enter a number.').
       positive().
       integer(),
     valueTwo: yup.number().label('Max days').
       when('comparisonOperator', {
         is: 'between',
         then: (schema) => schema.typeError('Please enter a number.').moreThan(yup.ref('valueOne')).
-          required(),
+          required('Please enter a number.'),
         otherwise: (schema) => schema.notRequired()
       })
   }),
@@ -47,8 +47,9 @@ const schema = yup.object().shape({
   conditions: yup.array().of(
     yup.lazy((value) => {
       return yup.object(
-        { condition: yup.string().oneOf(['daysWaiting', 'decisionReviewType', 'facility', 'issueDisposition', 'issueType', 'personnel']).
-          required('You must select a condition'),
+        { condition: yup.string().typeError('You must select a variable.').
+          oneOf(['daysWaiting', 'decisionReviewType', 'facility', 'issueDisposition', 'issueType', 'personnel']).
+          required(),
         options: conditionOptionSchemas[value.condition]
         });
     })
