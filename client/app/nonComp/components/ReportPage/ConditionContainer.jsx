@@ -10,7 +10,7 @@ import { Facility } from './Conditions/Facility';
 import { Personnel } from './Conditions/Personnel';
 import PropTypes from 'prop-types';
 
-export const ConditionContainer = ({ control, index, remove }) => {
+export const ConditionContainer = ({ control, index, remove, field }) => {
 
   const { watch, register } = useFormContext();
 
@@ -71,9 +71,9 @@ export const ConditionContainer = ({ control, index, remove }) => {
     if (selectedVariableOption.component) {
       const ConditionContent = selectedVariableOption.component;
 
-      return <ConditionContent {...{ control, register, name }} />;
+      return <ConditionContent {...{ index, control, register, name, field }} />;
     }
-  }, [control, name, register, selectedConditionValue, variableOptions]);
+  }, [index, control, name, register, selectedConditionValue, variableOptions]);
 
   return <div className="report-page-segment">
     <div className="cf-app-segment cf-app-segment--alt report-page-variable-condition" >
@@ -93,5 +93,6 @@ export const ConditionContainer = ({ control, index, remove }) => {
 ConditionContainer.propTypes = {
   control: PropTypes.object,
   index: PropTypes.number,
-  remove: PropTypes.func
+  remove: PropTypes.func,
+  field: PropTypes.object
 };

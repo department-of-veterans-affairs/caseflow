@@ -11,7 +11,7 @@ const WidthDiv = styled.div`
   width: 100%
 `;
 
-export const DaysWaiting = ({ control, register, name }) => {
+export const DaysWaiting = ({ index, control, register, name, field }) => {
 
   const options = [
     { label: 'Less than',
@@ -28,11 +28,11 @@ export const DaysWaiting = ({ control, register, name }) => {
   const valueOneName = `${name}.options.valueOne`;
   const valueTwoName = `${name}.options.valueTwo`;
 
-  const { setValue, getValues } = useFormContext();
+  const { setValue, formState } = useFormContext();
 
-  const displayValueOne = getValues(dropdownName);
+  const displayValueOne = field.options.comparisonOperator;
 
-  const displayValueTwo = getValues(dropdownName) === 'between';
+  const displayValueTwo = field.options.comparisonOperator === 'between';
 
   const valueOneLabel = displayValueTwo ? 'Min days' : 'Number of days';
 
@@ -42,8 +42,10 @@ export const DaysWaiting = ({ control, register, name }) => {
       <NumberField
         label="Max days"
         name={valueTwoName}
+        defaultValue={field.options.valueTwo}
         inputRef={register}
         isInteger
+        errorMessage={formState.errors?.conditions?.at(index)?.options?.valueTwo?.message ?? ''}
         onChange={(value) => {
           setValue(valueTwoName, value);
 
@@ -58,7 +60,7 @@ export const DaysWaiting = ({ control, register, name }) => {
       <Controller
         control={control}
         name={dropdownName}
-        defaultValue={null}
+        defaultValue={field.options.comparisonOperator ?? ''}
         render={({ onChange, ...rest }) => (
           <SearchableDropdown
             {...rest}
@@ -77,8 +79,10 @@ export const DaysWaiting = ({ control, register, name }) => {
       <NumberField
         label={valueOneLabel}
         name={valueOneName}
+        defaultValue={field.options.valueOne}
         inputRef={register}
         isInteger
+        errorMessage={formState.errors?.conditions?.at(index)?.options?.valueOne?.message ?? ''}
         onChange={(value) => {
           setValue(valueOneName, value);
 
@@ -94,5 +98,7 @@ export const DaysWaiting = ({ control, register, name }) => {
 DaysWaiting.propTypes = {
   control: PropTypes.object,
   register: PropTypes.func,
-  name: PropTypes.string
+  name: PropTypes.string,
+  field: PropTypes.object,
+  index: PropTypes.number
 };
