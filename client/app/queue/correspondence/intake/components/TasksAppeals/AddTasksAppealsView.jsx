@@ -21,14 +21,17 @@ const mailTasksRight = [
 
 export const AddTasksAppealsView = () => {
   const [addTask, setAddTask] = useState([]);
+  const [addTasksVisible, setAddTasksVisible] = useState(false);
   const clickAddTask = () => {
     // const clickButt = () => {
+    setAddTasksVisible(true);
     console.log("we added a task *evil laugh*");
     const currentTask = [...addTask];
     const randNum = Math.floor(Math.random() * 1000000);
     currentTask.push({ Object: randNum })
     setAddTask(currentTask);
     // setAddTask(currentTask.push({ Object: 'DummyData' }));
+    console.log(addTasksVisible);
   };
 
   const removeTaskAtIndex = (index) => {
@@ -77,13 +80,13 @@ export const AddTasksAppealsView = () => {
         </div>
 
         <h2 style={{ margin: '3rem auto 1rem auto'}}>Tasks not related to an Appeal</h2>
-        <p style={{ marginTop: '0rem', marginBottom: '2rem' }} onClick={() => (console.log("onClick worked"))}>
+        <p style={{ marginTop: '0rem', marginBottom: '2rem' }} onClick={() => (console.log(["Is the AddTasksVisible? ", addTasksVisible]))}>
           Add new tasks related to this correspondence or to an appeal not yet created in Caseflow.
         </p>
         <div />
 
         {/* This button will activate the New Tasks section */}
-        {!addTask && <Button
+        {!addTasksVisible && <Button
           type="button"
           onClick={clickAddTask}
           name="addTaskOpen"
@@ -92,7 +95,7 @@ export const AddTasksAppealsView = () => {
         </Button>}
 
         {/* This is the New Tasks section. Tasks will show next to each other in line. */}
-        <div className="gray-border" style={{ padding: '0rem 0rem' }}>
+        {addTasksVisible && <div className="gray-border" style={{ padding: '0rem 0rem' }}>
           <div style={{ width: '100%', height: 'auto', backgroundColor: 'white', paddingBottom: '3rem' }}>
             <div style={{ backgroundColor: '#f1f1f1', width: '100%', height: '50px', paddingTop: '1.5rem' }}>
               <b style={{
@@ -144,7 +147,7 @@ export const AddTasksAppealsView = () => {
               </Button>
             </div>
           </div>
-        </div>
+        </div>}
       </div>
     </div>
   );
