@@ -52,7 +52,8 @@ export class PdfFile extends React.PureComponent {
       timeout: true,
       responseType: 'arraybuffer',
       metricsLogRestError: this.props.featureToggles.metricsLogRestError,
-      metricsLogRestSuccess: this.props.featureToggles.metricsLogRestSuccess
+      metricsLogRestSuccess: this.props.featureToggles.metricsLogRestSuccess,
+      prefetchDisabled: this.props.featureToggles.prefetchDisabled
     };
 
     window.addEventListener('keydown', this.keyListener);
@@ -74,6 +75,7 @@ export class PdfFile extends React.PureComponent {
       documentId: this.props.documentId,
       documentType: this.props.documentType,
       file: this.props.file,
+      prefetchDisabled: this.props.featureToggles.prefetchDisabled
     };
 
     return ApiUtil.get(this.props.file, requestOptions).
@@ -135,6 +137,7 @@ export class PdfFile extends React.PureComponent {
             { message,
               type: 'error',
               product: 'browser',
+              prefetchDisabled: this.props.featureToggles.prefetchDisabled
             }
           );
         }
@@ -158,7 +161,8 @@ export class PdfFile extends React.PureComponent {
         documentType,
         file,
         step,
-        reason
+        reason,
+        prefetchDisabled: this.props.featureToggles.prefetchDisabled
       };
 
       storeMetrics(logId, documentData, {

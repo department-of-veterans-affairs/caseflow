@@ -114,8 +114,9 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
       storeMetrics(
         id,
         data,
-        { type: 'error',
-          product: 'browser',
+        { message: event,
+          type: 'error',
+          product: 'caseflow',
           start,
           end,
           duration }

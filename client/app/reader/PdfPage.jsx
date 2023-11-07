@@ -215,13 +215,14 @@ export class PdfPage extends React.PureComponent {
     if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
       const pageMetricData = {
         message: 'Storing PDF page',
-        product: 'pdfjs.document.pages',
+        product: 'reader',
         type: 'performance',
         data: {
           file: this.props.file,
           documentId: this.props.documentId,
           pageIndex: this.props.pageIndex,
           numPagesInDoc: this.props.pdfDocument.numPages,
+          prefetchDisabled: this.props.featureToggles.prefetchDisabled
         },
       };
 
@@ -235,23 +236,29 @@ export class PdfPage extends React.PureComponent {
 
         const textMetricData = {
           message: 'Storing PDF page text',
-          product: 'pdfjs.document.pages',
+          product: 'reader',
           type: 'performance',
           data: {
             file: this.props.file,
             documentId: this.props.documentId,
+            pageIndex: this.props.pageIndex,
+            numPagesInDoc: this.props.pdfDocument.numPages,
+            prefetchDisabled: this.props.featureToggles.prefetchDisabled
           },
         };
 
         const readerRenderText = {
           uuid: uuidv4(),
-          message: 'Searching within Reader document text',
+          message: 'PDFJS rendering text layer',
           type: 'performance',
           product: 'reader',
           data: {
             documentId: this.props.documentId,
             documentType: this.props.documentType,
-            file: this.props.file
+            file: this.props.file,
+            pageIndex: this.props.pageIndex,
+            numPagesInDoc: this.props.pdfDocument.numPages,
+            prefetchDisabled: this.props.featureToggles.prefetchDisabled
           },
         };
 
@@ -266,7 +273,8 @@ export class PdfPage extends React.PureComponent {
           const data = {
             overscan: this.props.windowingOverscan,
             documentType: this.props.documentType,
-            pageCount: this.props.pdfDocument.numPages
+            pageCount: this.props.pdfDocument.numPages,
+            prefetchDisabled: this.props.featureToggles.prefetchDisabled
           };
 
           if (this.props.featureToggles.pdfPageRenderTimeInMs) {
@@ -287,7 +295,8 @@ export class PdfPage extends React.PureComponent {
         const data = {
           documentId: this.props.documentId,
           documentType: this.props.documentType,
-          file: this.props.file
+          file: this.props.file,
+          prefetchDisabled: this.props.featureToggles.prefetchDisabled
         };
         const message = `${id} : setUpPage ${this.props.file} : ${error}`;
 

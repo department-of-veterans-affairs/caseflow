@@ -4,29 +4,29 @@ import { documents } from '../data/documents';
 import { PdfPage } from '../../app/reader/PdfPage';
 
 export const pageMetricData = [
-  "test",
-  {"data": {
-    "documentId": documents[0].id,
-    "file": documents[0].content_url,
-    "numPagesInDoc": 1,
-    "pageIndex": 1
+  'test',
+  { data: {
+    documentId: documents[0].id,
+    file: documents[0].content_url,
+    numPagesInDoc: 1,
+    pageIndex: 1
   },
-    "message": "Storing PDF page",
-    "product": "pdfjs.document.pages",
-    "type": "performance"
+  message: 'Storing PDF page',
+  product: 'reader',
+  type: 'performance'
   },
   true
 ];
 
 export const textMetricData = [
-  "test",
-  {"data": {
-    "documentId": documents[0].id,
-    "file": documents[0].content_url
+  'test',
+  { data: {
+    documentId: documents[0].id,
+    file: documents[0].content_url
   },
-    "message": "Storing PDF page text",
-    "product": "pdfjs.document.pages",
-    "type": "performance"
+  message: 'Storing PDF page text',
+  product: 'reader',
+  type: 'performance'
   },
   true
 ];
@@ -34,43 +34,45 @@ export const textMetricData = [
 export const storeMetricsData = [
   documents[0].id,
   {
-    "documentType": "Test",
-    "overscan": "",
-    "pageCount": 1
+    documentType: 'Test',
+    overscan: '',
+    pageCount: 1
   },
   {
-    "duration": 0,
-    "message": "pdf_page_render_time_in_ms",
-    "product": "reader",
-    "type": "performance"
+    duration: 0,
+    message: 'pdf_page_render_time_in_ms',
+    product: 'reader',
+    type: 'performance'
   }
 ];
 
 export const storeMetricsBrowserError = [
-  "1234",
+  '1234',
   {
-    "documentId": documents[0].id,
-    "documentType": "Test",
-    "file": documents[0].content_url
+    documentId: documents[0].id,
+    documentType: 'Test',
+    file: documents[0].content_url
   },
   {
-    "message": "1234 : setUpPage /document/1/pdf : Error",
-    "product": "browser",
-    "type": "error",
+    message: '1234 : setUpPage /document/1/pdf : Error',
+    product: 'browser',
+    type: 'error',
   }
 ];
 
 export const recordMetricsArgs = [
-  "Test",
-  {"data": {
-      "documentId": documents[0].id,
-      "documentType": "Test",
-      "file": documents[0].content_url
-    },
-    "message": "Searching within Reader document text",
-    "product": "reader",
-    "type": "performance",
-    "uuid": "1234"
+  'Test',
+  { data: {
+    documentId: documents[0].id,
+    documentType: 'Test',
+    file: documents[0].content_url,
+    numPagesInDoc: 1,
+    pageIndex: 1
+  },
+  message: 'PDFJS rendering text layer',
+  product: 'reader',
+  type: 'performance',
+  uuid: '1234'
   },
   true
 ];
