@@ -14,7 +14,12 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
         $set: action.payload.correspondences
       }
     });
-
+  case ACTIONS.LOAD_VET_CORRESPONDENCE:
+    return update(state, {
+      vetCorrespondences: {
+        $set: action.payload.vetCorrespondences
+      }
+    });
   default:
     return state;
   }

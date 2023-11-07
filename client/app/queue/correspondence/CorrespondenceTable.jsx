@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import ApiUtil from '../../../app/util/ApiUtil';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { loadVetCorrespondence } from './correspondenceReducer/correspondenceActions';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 class CorrespondenceTable extends React.Component {
@@ -14,12 +15,17 @@ class CorrespondenceTable extends React.Component {
       const returnedObject = response.body;
       const vetCorrespondences = returnedObject.vetCorrespondences;
 
-      this.props.loadVeterans(vetCorrespondences);
+      this.props.loadVetCorrespondence(vetCorrespondences);
     }).
       catch((err) => {
         // allow HTTP errors to fall on the floor via the console.
         console.error(new Error(`Problem with GET /queue/correspondence?json ${err}`));
       });
+  }
+
+  // load veteran correspondence info on page load
+  componentDidMount() {
+    this.getVeteransWithCorrespondence();
   }
   render() {
     // test data names link to multi_correspondence.rb seed data
@@ -89,6 +95,8 @@ CorrespondenceTable.propTypes = {
   hearingScheduleColumns: PropTypes.array,
   hearingScheduleRows: PropTypes.array,
   onApply: PropTypes.func,
+  loadVetCorrespondence: PropTypes.func,
+  vetCorrespondences: PropTypes.array,
   history: PropTypes.object,
   user: PropTypes.shape({
     userCanBuildHearingSchedule: PropTypes.bool
@@ -101,7 +109,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    loadVeterans
+    loadVetCorrespondence
   }, dispatch)
 );
 
