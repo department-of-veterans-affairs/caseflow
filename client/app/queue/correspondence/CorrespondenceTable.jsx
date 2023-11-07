@@ -1,10 +1,26 @@
 import React from 'react';
 import QueueTable from '../QueueTable';
 import PropTypes from 'prop-types';
+import ApiUtil from '../../../app/util/ApiUtil';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 class CorrespondenceTable extends React.Component {
 
+  // grabs correspondences and loads into intakeCorrespondence redux store.
+  getVeteransWithCorrespondence() {
+    return ApiUtil.get('/queue/correspondence?json').then((response) => {
+      const returnedObject = response.body;
+      const vetCorrespondences = returnedObject.vetCorrespondences;
+
+      this.props.loadVeterans(vetCorrespondences);
+    }).
+      catch((err) => {
+        // allow HTTP errors to fall on the floor via the console.
+        console.error(new Error(`Problem with GET /queue/correspondence?json ${err}`));
+      });
+  }
   render() {
     // test data names link to multi_correspondence.rb seed data
     const testobj = [{
@@ -79,4 +95,17 @@ CorrespondenceTable.propTypes = {
   })
 };
 
-export default CorrespondenceTable;
+const mapStateToProps = (state) => ({
+  vetCorrespondences: state.intakeCorrespondence.vetCorrespondences
+});
+
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    loadVeterans
+  }, dispatch)
+);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CorrespondenceTable);
