@@ -8,7 +8,9 @@ import RadioField from '../../../../../components/RadioField';
 import ApiUtil from '../../../../../util/ApiUtil';
 import CorrespondencePaginationWrapper from '../../../CorrespondencePaginationWrapper';
 import {
-  loadCorrespondences
+  loadCorrespondences,
+  saveCheckboxState,
+  clearCheckboxState
 } from '../../../correspondenceReducer/correspondenceActions';
 class AddCorrespondenceView extends React.Component {
 
@@ -48,24 +50,11 @@ class AddCorrespondenceView extends React.Component {
   onChange = (value) => {
     this.setState({ selectedRadioValue: value });
     this.props.onContinueStatusChange(value === '2');
+    this.props.clearCheckboxState();
   }
 
   onChangeCheckbox = (id, isChecked) => {
-    this.setState((prevState) => {
-      let selectedCheckboxes = [...prevState.selectedCheckboxes];
-
-      if (isChecked) {
-        selectedCheckboxes.push(id);
-      } else {
-        selectedCheckboxes = selectedCheckboxes.filter((checkboxId) => checkboxId !== id);
-      }
-      const isAnyCheckboxSelected = selectedCheckboxes.length > 0;
-
-      this.props.onCheckboxChange(isAnyCheckboxSelected);
-
-      return { selectedCheckboxes };
-    });
-
+    this.props.saveCheckboxState(id, isChecked);
   }
 
   getKeyForRow = (index, { id }) => {
@@ -82,7 +71,7 @@ class AddCorrespondenceView extends React.Component {
             name={String(correspondence.id)}
             id={String(correspondence.id)}
             hideLabel
-            defaultValue={this.state.selectedCheckboxes.includes(String(correspondence.id))}
+            defaultValue={this.props.checkboxes.includes(String(correspondence.id))}
             onChange={(checked) => this.onChangeCheckbox(String(correspondence.id), checked)}
           />
         ),
@@ -225,18 +214,24 @@ AddCorrespondenceView.propTypes = {
   featureToggles: PropTypes.object,
   correspondenceUuid: PropTypes.string,
   loadCorrespondences: PropTypes.func,
+  saveCheckboxState: PropTypes.func,
   correspondences: PropTypes.array,
   onContinueStatusChange: PropTypes.func,
   onCheckboxChange: PropTypes.func.isRequired,
+  clearCheckboxState: PropTypes.func.isRequired,
+  checkboxes: PropTypes.array
 };
 
 const mapStateToProps = (state) => ({
-  correspondences: state.intakeCorrespondence.correspondences
+  correspondences: state.intakeCorrespondence.correspondences,
+  checkboxes: state.intakeCorrespondence.toggledCheckboxes
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    loadCorrespondences
+    loadCorrespondences,
+    saveCheckboxState,
+    clearCheckboxState
   }, dispatch)
 );
 
