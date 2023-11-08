@@ -86,5 +86,6 @@ export const ConditionContainer = ({ control, index, remove, field }) => {
 ConditionContainer.propTypes = {
   control: PropTypes.object,
   index: PropTypes.number,
-  remove: PropTypes.func
+  remove: PropTypes.func,
+  field: PropTypes.object,
 };
