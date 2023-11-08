@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styles from './StaticLevers.module.scss';
+import styles from 'app/styles/caseDistribution/StaticLevers.module.scss';
 
 const StaticLever = ({ lever }) => {
   const renderValue = () => {

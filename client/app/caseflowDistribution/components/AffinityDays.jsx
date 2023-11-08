@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
-import styles from './InteractableLevers.module.scss';
+import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
