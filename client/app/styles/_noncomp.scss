@@ -189,14 +189,12 @@
         @media screen and (max-width: 1439px) {
           align-self: flex-end;
           flex-wrap: wrap;
-          // scss-lint:disable PropertySpelling
           gap: 8px;
           padding-left: 28px;
 
         }
 
         @media screen and (min-width: 1440px) {
-          // scss-lint:disable PropertySpelling
           gap: 16px;
         }
 
