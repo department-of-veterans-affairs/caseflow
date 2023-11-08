@@ -46,7 +46,7 @@ module Seeds
         Timecop.return
       end
   
-      def create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, judge, attorney, workflow)
+      def create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, judge, attorney)
         # We need these retries because the sequence for FactoryBot comes out of
         # sync with what's in the DB. This just essentially updates the FactoryBot
         # sequence to match what's in the DB.
@@ -79,7 +79,7 @@ module Seeds
           retry if (retries += 1) < retry_max
         end
   
-        sdomain_id = workflow === 'decision_ready_hr' ? attorney.css_id : judge.css_id
+        sdomain_id = judge.css_id
         # Create the vacols_case
         begin
           retries ||= 0
@@ -140,7 +140,7 @@ module Seeds
           type = "video"
           
           # AC1: create legacy appeals ready to be distributed that have a hearing held by an inactive judge
-          legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, inactive_judge, attorney, workflow)
+          legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, inactive_judge, attorney)
           # Create the task tree, need to create each task like this to avoid user creation and index conflicts
           create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, judge, attorney)
         end
