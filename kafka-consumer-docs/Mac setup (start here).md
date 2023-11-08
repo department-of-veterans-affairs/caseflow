@@ -5,6 +5,14 @@
 
 ## clone the repo
 
+Create a `~/dev/appeals/` directory
+
+Clone the following repo using git clone into this directory
+
+ - < REPLACE WITH LINK TO REPO >
+
+> If you cannot clone the above, you might need to do [this setup](https://docs.github.com/en/enterprise-server@3.4/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+
 ## installing postgresql
 
 if you haven't already install postgres, you can do so using Homebrew:
