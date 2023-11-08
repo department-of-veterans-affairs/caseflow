@@ -1,16 +1,18 @@
 # frozen_string_literal: true
 
-class Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder
-  attr_reader :json_response
+#:reek:TooManyInstanceVariables
+class Api::V3::Issues::Vacols::VbmsVacolsDtoBuilder
+  attr_reader :hash_response, :vacols_issue_count
 
-  def initialize(veteran, page)
+  def initialize(veteran, page, per_page = nil)
     @page = page
-    @veteran_participant_id = veteran.participant_id.to_s
-    @veteran_file_number = veteran.file_number.to_s
+    @veteran_participant_id = veteran.participant_id&.to_s
+    @veteran_file_number = veteran.file_number&.to_s
     @vacols_issue_count = total_vacols_issue_count
+    @offset = per_page || RequestIssue.default_per_page #LegacyIssues will be consistent with AMA RequestIssues
     @vacols_issues = serialized_vacols_issues
-    @offset = RequestIssue.default_per_page
-    @json_response = build_json_response
+    @total_number_of_pages = (@vacols_issue_count / @offset.to_f).ceil
+    @hash_response = build_hash_response
   end
 
   private
@@ -22,15 +24,15 @@ class Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder
     VACOLS::CaseIssue.where(isskey: vacols_ids).size
   end
 
-  def serialized_vacols_issues
+  def serialized_vacols_issues(page = @page, offset = @offset)
     vacols_issues = []
     v_ids = LegacyAppeal.fetch_appeals_by_file_number(@veteran_file_number).map(&:vacols_id)
     v_ids.each do |i|
       vacols_issues.push(AppealRepository.issues(i))
     end
 
-    serialized_data = Api::V3::Issues::Legacy::VacolsIssueSerializer.new(
-      Kaminari.paginate_array(vacols_issues.flatten).page(@page)
+    serialized_data = Api::V3::Issues::Vacols::VacolsIssueSerializer.new(
+      Kaminari.paginate_array(vacols_issues.flatten).page(page).per(offset)
     ).serializable_hash[:data]
 
     extract_vacols_issues(serialized_data)
@@ -42,10 +44,18 @@ class Api::V3::Issues::Legacy::VbmsLegacyDtoBuilder
     wanted_attributes.map { |issue| issue[:vacols_issue] }
   end
 
-  def build_json_response
+  def build_hash_response
+    if @page > @total_number_of_pages
+      @page = @total_number_of_pages
+      @vacols_issues = serialized_vacols_issues(@total_number_of_pages, @offset)
+    end
+    json_response
+  end
+
+  def json_response
     {
       "page": @page,
-      "total_number_of_pages": (@vacols_issue_count / @offset.to_f).ceil,
+      "total_number_of_pages": @total_number_of_pages,
       "total_vacols_issues_for_vet": @vacols_issue_count,
       "max_vacols_issues_per_page": @offset,
       "veteran_participant_id": @veteran_participant_id,

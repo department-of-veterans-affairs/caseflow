@@ -40,10 +40,10 @@ describe Seeds::AmaIntake do
   end
 
   context "#seed!" do
-    it "seeds total of 6 Veterans, 15 Legacy Appeals, 6 Appeals, 6 Higher Level Reviews End Product Establishments,
+    it "seeds total of 7 Veterans, 15 Legacy Appeals, 6 Appeals, 6 Higher Level Reviews End Product Establishments,
       2 Supplemental Claim End Product Establishments, 940 Request Issues, and 894 Decision Issues" do
       seed.seed!
-      expect(Veteran.count).to eq(6)
+      expect(Veteran.count).to eq(7)
       expect(VACOLS::Case.all.size).to eq(15)
       expect(Appeal.count).to eq(6)
       expect(HigherLevelReview.count).to eq(6)
@@ -221,6 +221,17 @@ describe Seeds::AmaIntake do
 
     it "one Decision Issue on the Veteran's Higher Level Review is associated with 31 Request Issues" do
       expect(veteran_hlr_decision_issues.count { |di| di.request_issues.size == 31 }).to eq(1)
+    end
+  end
+
+  context "#create_veteran_without_request_issues" do
+    before do
+      seed.send(:create_veteran_without_request_issues)
+    end
+
+    it "A Veteran is created with 0 Request Issues" do
+      expect(Veteran.count).to eq(1)
+      expect(veteran_appeal_request_issues.size).to eq(0)
     end
   end
 end
