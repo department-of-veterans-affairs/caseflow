@@ -16,6 +16,7 @@ export const ConditionContainer = ({ control, index, remove, field }) => {
 
   const errors = formState.errors?.conditions?.at(index);
 
+  // this can't easily be extracted to somewhere else without breaking the form
   const variableOptions = [
     { label: 'Days Waiting',
       value: 'daysWaiting',
