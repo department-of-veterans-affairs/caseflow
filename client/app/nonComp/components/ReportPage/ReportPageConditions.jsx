@@ -8,6 +8,7 @@ export const ReportPageConditions = () => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'conditions',
+    defaultValues: [{ condition: '', options: {} }]
   });
 
   const watchFieldArray = watch('conditions');
@@ -23,11 +24,11 @@ export const ReportPageConditions = () => {
       <hr />
       <h2>Conditions</h2>
       {controlledFields.map((field, index) => {
-        return <ConditionContainer key={field.id} {... { control, index, remove }} />;
+        return <ConditionContainer key={field.id} {... { control, field, index, remove }} />;
       })}
       <Button
         disabled={watchFieldArray.length >= 5}
-        onClick={() => append({ condition: '' })}>
+        onClick={() => append({ condition: '', options: {} })}>
       Add Condition</Button>
     </div>
   );
