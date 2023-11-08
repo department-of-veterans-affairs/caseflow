@@ -10,7 +10,7 @@ import { Facility } from './Conditions/Facility';
 import { Personnel } from './Conditions/Personnel';
 import PropTypes from 'prop-types';
 
-export const ConditionContainer = ({ control, index, remove }) => {
+export const ConditionContainer = ({ control, index, remove, field }) => {
 
   const { watch, register } = useFormContext();
 
@@ -67,7 +67,7 @@ export const ConditionContainer = ({ control, index, remove }) => {
     if (selectedVariableOption.component) {
       const ConditionContent = selectedVariableOption.component;
 
-      return <ConditionContent {...{ control, register, name }} />;
+      return <ConditionContent {...{ control, register, name, field }} />;
     }
   };
 
