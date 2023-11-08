@@ -33,3 +33,4 @@ export const clearCheckboxState = () =>
       type: ACTIONS.CLEAR_CHECKBOX_STATE,
     });
   };
+
