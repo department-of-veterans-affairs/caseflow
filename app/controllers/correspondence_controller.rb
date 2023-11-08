@@ -55,16 +55,8 @@ class CorrespondenceController < ApplicationController
   end
 
   def veterans_with_correspondences
-    serialized_veteran_array = []
-    all_ids_with_corrs = Correspondence.select(:veteran_id).map(&:veteran_id).uniq
-
-    all_ids_with_corrs.each do |id|
-      veteran = Veteran.find(id)
-      correspondence = Correspondence.find_by(veteran_id: id)
-      serialized_veteran_array << vet_info_serializer(veteran, correspondence)
-    end
-
-    serialized_veteran_array
+    veterans = Veteran.includes(:correspondences).where(correspondences: { id: Correspondence.select(:id) })
+    veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.first) }
   end
 
   def vet_info_serializer(veteran, correspondence)
