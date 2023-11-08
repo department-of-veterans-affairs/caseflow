@@ -124,6 +124,20 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
 
         expect(page.has_button?("Continue")).to be(true)
       end
+
+      it "Checkbox values are reset if user clicks No and then Yes" do
+        visit_intake_form_with_correspondence_load
+
+        associate_with_prior_mail_radio_options[:yes].click
+
+        page.all(".cf-form-checkbox")[0..5].each { |cb| cb.set(true) }
+
+        associate_with_prior_mail_radio_options[:no].click
+
+        associate_with_prior_mail_radio_options[:yes].click
+
+        expect(page.has_button?("Continue")).to be(false)
+      end
     end
   end
 end
