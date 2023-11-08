@@ -78,6 +78,7 @@
   "CORRESPONDENCE_REVIEW_PACKAGE_TITLE": "Review Package",
   "CORRESPONDENCE_REVIEW_PACKAGE_SUB_TITLE": "Review the mail package details below. If the document type is a 10182, select the appropriate action needed for the form.",
   "CORRESPONDENCE_REVIEW_CMP_INFO_TITLE": "CMP Information",
+  "DOCUMENT_PREVIEW": "Document Preview",
   "TASK_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
   "TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL": "Hearing Type",
   "TASK_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Appeal Stream Type",

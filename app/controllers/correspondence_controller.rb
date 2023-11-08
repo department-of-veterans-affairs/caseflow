@@ -24,7 +24,7 @@ class CorrespondenceController < ApplicationController
 
   def show
     @correspondence = Correspondence.find(params[:id])
-    render json: { correspondence: @correspondence, package_document_type: @correspondence.package_document_type }
+    render json: { correspondence: @correspondence, package_document_type: @correspondence.package_document_type, correspondence_documents: @correspondence.correspondence_documents }
   end
 
   private

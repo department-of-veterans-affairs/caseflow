@@ -7,6 +7,7 @@ import COPY from 'app/../COPY';
 import ApiUtil from 'app/util/ApiUtil';
 import { TitleDetailsSubheader } from 'app/components/TitleDetailsSubheader';
 
+
 const listItemStyling = css({
   display: 'inline-block',
   padding: '0.5rem 1.5rem 0.5rem 0',
@@ -37,12 +38,13 @@ export const TitleDetailsSubheaderSection = ({ title, children }) => (
   </div>
 );
 
-class ReviewPackageCmpInfo extends React.PureComponent {
+class ReviewPackageData extends React.PureComponent {
   constructor (props) {
     super(props);
     this.state = {
       correspondence: null,
-      package_document_type: null
+      package_document_type: null,
+      correspondence_documents: null
     };
   }
 
@@ -52,7 +54,8 @@ class ReviewPackageCmpInfo extends React.PureComponent {
     ApiUtil.get(`/queue/correspondence/${correspondence.correspondenceId}`).then((response) => {
       this.setState({
         correspondence: response.body.correspondence,
-        package_document_type: response.body.package_document_type
+        package_document_type: response.body.package_document_type,
+        correspondence_documents: response.body.correspondence_documents
       });
     });
   }
@@ -63,9 +66,32 @@ class ReviewPackageCmpInfo extends React.PureComponent {
         <CmpInfoScaffolding
           correspondence={this.state?.correspondence}
           packageDocumentType = {this.state?.package_document_type} />
+        <CmpDocuments correspondence_documents = {this.state?.correspondence_documents} />
       </div>
     );
   };
+}
+
+const CmpDocuments = (props) => {
+  const documents = props.correspondence_documents;
+  const document = documents && documents[0]
+
+  return(
+    <div>
+      <h2> {COPY.DOCUMENT_PREVIEW} </h2>
+      <TitleDetailsSubheader id="ReviewPackageDate">
+        <TitleDetailsSubheaderSection title="Document Type">
+          {document?.document_type}
+        </TitleDetailsSubheaderSection>
+        <TitleDetailsSubheaderSection title="Pages">
+          {document?.pages}
+        </TitleDetailsSubheaderSection>
+         <TitleDetailsSubheaderSection title="Action">
+          Edit
+        </TitleDetailsSubheaderSection>
+      </TitleDetailsSubheader>
+    </div>
+  )
 }
 
 const CmpInfoScaffolding = (props) => {
@@ -113,8 +139,8 @@ TitleDetailsSubheaderSection.propTypes = {
   title: PropTypes.string.isRequired
 };
 
-ReviewPackageCmpInfo.propTypes = {
+ReviewPackageData.propTypes = {
   correspondenceId: PropTypes.string
 };
 
-export default ReviewPackageCmpInfo;
+export default ReviewPackageData;

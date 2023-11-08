@@ -1,6 +1,6 @@
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import React from 'react';
-import ReviewPackageCmpInfo from './ReviewPackageCmpInfo';
+import ReviewPackageData from './ReviewPackageData';
 import ReviewPackageCaseTitle from './ReviewPackageCaseTitle';
 import Button from '../../../components/Button';
 
@@ -10,7 +10,7 @@ export const CorrespondenceReviewPackage = (props) => {
     <React.Fragment>
       <AppSegment filledBackground>
         <ReviewPackageCaseTitle />
-        <ReviewPackageCmpInfo {...props} />
+        <ReviewPackageData {...props} />
       </AppSegment>
       <div className="cf-app-segment">
         <div className="cf-push-left">
