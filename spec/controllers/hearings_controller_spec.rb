@@ -12,6 +12,8 @@ RSpec.describe HearingsController, type: :controller do
   let(:disposition) { nil }
   let!(:vso_participant_id) { "12345" }
 
+  include_context "Enable both conference services"
+
   describe "PATCH update" do
     it "should be successful", :aggregate_failures do
       params = {
