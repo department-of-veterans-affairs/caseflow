@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { LeverCancelButton, LeverSaveButton } from './LeverButtons';
+import { LeverCancelButton } from './LeverButtons';
+import { LeverSaveButton } from './LeverModal';
 import { css } from 'glamor';
 
 const saveButtonStyling = css({
