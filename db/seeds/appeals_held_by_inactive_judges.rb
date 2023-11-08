@@ -135,7 +135,7 @@ module Seeds
           # AC1: create legacy appeals ready to be distributed that have a hearing held by an inactive judge
           legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, inactive_judge, attorney)
           # Create the task tree, need to create each task like this to avoid user creation and index conflicts
-          create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, judge, attorney)
+          create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, inactive_judge, attorney)
         end
       end
 
