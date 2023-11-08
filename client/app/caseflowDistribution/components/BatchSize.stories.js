@@ -5,7 +5,7 @@ import { createStore } from 'redux';
 import leversReducer from 'app/caseflowDistribution/reducers/Levers/leversReducer';
 
 export default {
-  title: 'Admin/Caseflow Distribution/InteractableLevers',
+  title: 'CaseDistribution/InteractableLevers',
   component: BatchSize
 };
 

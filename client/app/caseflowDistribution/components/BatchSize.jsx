@@ -12,11 +12,6 @@ const BatchSize = (props) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
 
-  const footerStyling = css({
-    marginTop: '10px',
-    paddingTop: '10px',
-  });
-
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
     '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
@@ -71,7 +66,7 @@ const BatchSize = (props) => {
           </div>
         </div>
       ))}
-      <h4 {...footerStyling}>{COPY.CASE_DISTRIBUTION_FOOTER_ASTERISK_DESCRIPTION}</h4>
+      <h4 className={styles.footerStyling}>{COPY.CASE_DISTRIBUTION_FOOTER_ASTERISK_DESCRIPTION}</h4>
       <div className="cf-help-divider"></div>
     </div>
   );

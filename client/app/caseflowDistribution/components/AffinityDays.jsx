@@ -9,10 +9,6 @@ import COPY from '../../../COPY';
 
 const AffinityDays = (props) => {
   const { leverList, leverStore } = props;
-  const footerStyling = css({
-    marginTop: '10px',
-    paddingTop: '10px',
-  });
 
   const filteredLevers = leverList.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
@@ -134,7 +130,7 @@ const AffinityDays = (props) => {
           </div>
         </div>
       ))}
-      <h4 {...footerStyling}>{COPY.CASE_DISTRIBUTION_FOOTER_ASTERISK_DESCRIPTION}</h4>
+      <h4 className={styles.footerStyling}>{COPY.CASE_DISTRIBUTION_FOOTER_ASTERISK_DESCRIPTION}</h4>
       <div className="cf-help-divider"></div>
     </div>
   );

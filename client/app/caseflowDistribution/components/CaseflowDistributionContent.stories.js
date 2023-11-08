@@ -45,7 +45,7 @@ formattedLevers.forEach((lever) => {
 });
 
 export default {
-  title: 'Admin/Caseflow Distribution/Caseflow Distribution Content',
+  title: 'CaseDistribution/Caseflow Distribution Content',
   component: CaseflowDistributionContent,
   decorators: [RouterDecorator]
 };

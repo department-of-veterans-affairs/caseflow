@@ -20,7 +20,7 @@ const RouterDecorator = (Story) => (
 const leverList = ['lever_3', 'lever_2', 'lever_7'];
 
 export default {
-  title: 'Admin/Caseflow Distribution/Static Levers Wrapper',
+  title: 'CaseDistribution/Static Levers Wrapper',
   component: StaticLeversWrapper,
   decorators: [RouterDecorator]
 };

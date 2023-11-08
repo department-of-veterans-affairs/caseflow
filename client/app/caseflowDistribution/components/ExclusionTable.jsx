@@ -6,7 +6,7 @@ import { css } from 'glamor';
 
 const ExclusionTable = () => {
 
-  const headerStyling = css({
+  const exclusionTableHeaderStyling = css({
     color: 'lightgray',
     paddingTop: '0',
     paddingBottom: '0',
@@ -14,12 +14,12 @@ const ExclusionTable = () => {
     marginBottom: '0'
   });
 
-  const containerStyling = css({
+  const exclusionTableContainerStyling = css({
     paddingTop: '0',
     paddingBottom: '0',
   });
 
-  const tableStyling = css({
+  const exclusionTableStyling = css({
     paddingTop: '0',
     marginTop: '0',
     paddingBottom: '0',
@@ -58,7 +58,7 @@ const ExclusionTable = () => {
   ];
 
   return (
-    <div {...containerStyling}>
+    <div {...exclusionTableContainerStyling}>
       <table>
         <tbody>
           <th {...tableHeaderStyling}>{' '}</th>
@@ -69,36 +69,36 @@ const ExclusionTable = () => {
         </tbody>
         <tbody>
           <tr>
-            <td {...tableStyling}>
-              <h4 {...headerStyling}>All Non-priority</h4>
+            <td {...exclusionTableStyling}>
+              <h4 {...exclusionTableHeaderStyling}>All Non-priority</h4>
               <ToggleSwitch
                 id = "All Non-priority"
                 selected = {false}
                 disabled
               />
             </td>
-            <td {...tableStyling}>
+            <td {...exclusionTableStyling}>
               <RadioField
                 name=""
                 options={options}
                 vertical
               />
             </td>
-            <td {...tableStyling}>
+            <td {...exclusionTableStyling}>
               <RadioField
                 name=""
                 options={options}
                 vertical
               />
             </td>
-            <td {...tableStyling}>
+            <td {...exclusionTableStyling}>
               <RadioField
                 name=""
                 options={options}
                 vertical
               />
             </td>
-            <td {...tableStyling}>
+            <td {...exclusionTableStyling}>
               <RadioField
                 name=""
                 options={options}
@@ -107,36 +107,36 @@ const ExclusionTable = () => {
             </td>
           </tr>
           <tr>
-            <td {...tableStyling}>
-              <h4 {...headerStyling}>All Priority</h4>
+            <td {...exclusionTableStyling}>
+              <h4 {...exclusionTableHeaderStyling}>All Priority</h4>
               <ToggleSwitch
                 id = "All Priority"
                 selected = {false}
                 disabled
               />
             </td>
-            <td {...tableStyling}>
+            <td {...exclusionTableStyling}>
               <RadioField
                 name=""
                 options={options}
                 vertical
               />
             </td>
-            <td {...tableStyling}>
+            <td {...exclusionTableStyling}>
               <RadioField
                 name=""
                 options={options}
                 vertical
               />
             </td>
-            <td {...tableStyling}>
+            <td {...exclusionTableStyling}>
               <RadioField
                 name=""
                 options={options}
                 vertical
               />
             </td>
-            <td {...tableStyling}>
+            <td {...exclusionTableStyling}>
               <RadioField
                 name=""
                 options={options}

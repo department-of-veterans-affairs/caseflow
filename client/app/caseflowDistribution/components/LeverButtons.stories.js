@@ -19,7 +19,7 @@ const RouterDecorator = (Story) => (
 );
 
 export default {
-  title: 'Admin/Caseflow Distribution/Lever Buttons',
+  title: 'CaseDistribution/Lever Buttons',
   component: LeverButtonsWrapper,
   decorators: [RouterDecorator]
 };

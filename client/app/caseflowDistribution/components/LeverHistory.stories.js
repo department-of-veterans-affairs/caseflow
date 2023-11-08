@@ -3,7 +3,7 @@ import LeverHistory from './LeverHistory';
 import { formattedHistory } from 'test/data/adminCaseDistributionLevers';
 
 export default {
-  title: 'Admin/Caseflow Distribution/Lever History',
+  title: 'CaseDistribution/Lever History',
   component: LeverHistory,
 };
 

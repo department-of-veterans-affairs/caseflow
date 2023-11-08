@@ -135,3 +135,33 @@
     display: inline-block;
     vertical-align: middle;
 }
+
+.footerStyling {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+.leverNumberDiv {
+  & .cf-form-int-input {
+    width: auto;
+    display: inline-block;
+    position: relative;
+  }
+
+  & .cf-form-int-input .input-container {
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  & .cf-form-int-input label {
+    position: absolute;
+    bottom: 15px;
+    left: 100px;
+  }
+
+  & .usa-input-error label {
+    bottom: 24px;
+    left: 115px;
+  }
+}

@@ -10,7 +10,7 @@ const RouterDecorator = (Story) => (
 );
 
 export default {
-  title: 'Admin/Caseflow Distribution/CaseflowDistributionApp',
+  title: 'CaseDistribution/CaseflowDistributionApp',
   component: CaseflowDistributionApp,
   decorators: [RouterDecorator]
 };
