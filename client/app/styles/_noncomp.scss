@@ -188,6 +188,10 @@
         justify-content: flex-start;
         align-items: center;
         grid-gap: 5%;
+
+        .usa-input-error {
+          position: sticky;
+        }
       }
     }
   }
