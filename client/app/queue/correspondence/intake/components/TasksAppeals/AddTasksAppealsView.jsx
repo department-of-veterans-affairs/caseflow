@@ -6,6 +6,7 @@ import Checkbox from '../../../../../components/Checkbox';
 // import TextareaField from '../../../../../components/TextareaField';
 import Button from '../../../../../components/Button';
 import TaskNotRelatedToAppeal from '../TaskNotRelatedToAppeal';
+import { isNull } from 'lodash';
 
 const mailTasksLeft = [
   'Change of address',
@@ -45,6 +46,13 @@ export const AddTasksAppealsView = () => {
     setAddTask(newTask);
     console.log('The newTask variable is ' + newTask);
     console.log('The NEW currentTask variable is ' + currentTask);
+    console.log('The new task length is ' + newTask.length);
+    console.log('Is the new task null? ' + newTask.isNull);
+    console.log(newTask.isNull);
+
+    if (newTask.length === 0 || newTask.isNull) {
+      setAddTasksVisible(false);
+    }
   };
 
   return (
