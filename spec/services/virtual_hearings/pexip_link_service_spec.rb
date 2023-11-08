@@ -15,6 +15,7 @@ describe VirtualHearings::PexipLinkService do
       before do
         allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return URL_HOST
         allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return URL_PATH
+        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return nil
       end
 
       it "raises the missing PIN key error" do
@@ -24,6 +25,7 @@ describe VirtualHearings::PexipLinkService do
 
     context "url host env variable is missing" do
       before do
+        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return nil
         allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return PIN_KEY
         allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return URL_PATH
       end
@@ -37,6 +39,7 @@ describe VirtualHearings::PexipLinkService do
       before do
         allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return PIN_KEY
         allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return URL_HOST
+        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return nil
       end
 
       it "raises the missing path error" do
