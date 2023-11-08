@@ -19,12 +19,10 @@ describe VirtualHearings::CreateConferenceJob do
     end
     let(:pexip_url) { "fake.va.gov" }
     before do
-      stub_const("ENV", "PEXIP_CLIENT_HOST" => pexip_url)
+      stub_const("ENV", ENV.to_hash.merge("PEXIP_CLIENT_HOST" => pexip_url))
       allow(ENV).to receive(:[]).and_call_original
       allow(ENV).to receive(:fetch).and_call_original
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return PIN_KEY
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return URL_HOST
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return URL_PATH
+
       User.authenticate!(user: current_user)
     end
 
@@ -303,9 +301,6 @@ describe VirtualHearings::CreateConferenceJob do
         let(:expected_conference_id) { "0000001" }
 
         before do
-          allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return PIN_KEY
-          allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return URL_HOST
-          allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return URL_PATH
           allow(VirtualHearings::SequenceConferenceId).to receive(:next).and_return expected_conference_id
         end
 
@@ -337,6 +332,8 @@ describe VirtualHearings::CreateConferenceJob do
       end
 
       context "when all required env variables are not set" do
+        before { allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return nil }
+
         include_examples "raises error", VirtualHearings::CreateConferenceJob::VirtualHearingLinkGenerationFailed
         include_examples "does not retry job"
       end
