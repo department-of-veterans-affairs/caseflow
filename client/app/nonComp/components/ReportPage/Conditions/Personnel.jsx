@@ -1,39 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import { Controller } from 'react-hook-form';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { Controller, useFormContext } from 'react-hook-form';
+import { useSelector } from 'react-redux';
 
 import SearchableDropdown from 'app/components/SearchableDropdown';
-import ApiUtil from 'app/util/ApiUtil';
 
-export const Personnel = ({ control, register }) => {
-  const [teamMemberOptions, setTeamMemberOptions] = useState();
+export const Personnel = ({ control, field, name }) => {
+  const { setValue } = useFormContext();
+  const teamMembers = useSelector((state) => (state.orgUsers.users));
 
-  useEffect(() => {
-    ApiUtil.get('/organizations/vha/users').then((response) => {
-      setTeamMemberOptions(response.body.organization_users.data.map((member) => (
-        {
-          label: member.attributes.full_name,
-          value: member.attributes.css_id
-        }
-      )));
-    });
-  }, []);
+  const dropdownOptions = teamMembers.map((member) => (
+    {
+      label: member.full_name,
+      value: member.css_id
+    }
+  ));
 
   return (
     <>
       <Controller
         control={control}
-        defaultValue
-        name="personnel"
-        render={() => {
+        defaultValue={field.options.personnel ?? ''}
+        name={`${name}.options.personnel`}
+        render={({ ref, ...rest }) => {
           return (
             <>
               <SearchableDropdown
+                {...rest}
                 label="VHA team members"
-                name="VHA team members"
-                options={teamMemberOptions}
-                inputRef={register}
+                options={dropdownOptions}
+                inputRef={ref}
                 multi
+                onChange={(valObj) => {
+                  setValue(`${name}.options.personnel`, valObj);
+                }}
               />
             </>
           );
@@ -45,5 +45,6 @@ export const Personnel = ({ control, register }) => {
 
 Personnel.propTypes = {
   control: PropTypes.object,
-  register: PropTypes.func
+  name: PropTypes.string,
+  field: PropTypes.object,
 };
