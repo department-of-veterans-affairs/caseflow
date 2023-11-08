@@ -49,6 +49,7 @@ class PexipConferenceLink < ConferenceLink
 
   private
 
+  # :reek:FeatureEnvy
   def generate_conference_information
     Rails.logger.info(
       "Trying to create a Pexip conference link for Hearing Day Id: #{hearing_day_id}."

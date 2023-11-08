@@ -137,6 +137,7 @@ class HearingDay < CaseflowRecord
     caseflow_and_vacols_hearings
   end
 
+  # :reek:BooleanParameter
   def to_hash(include_conference_links = false)
     judge_names = HearingDayJudgeNameQuery.new([self]).call
     video_hearing_days_request_types = if VirtualHearing::VALID_REQUEST_TYPES.include? request_type
@@ -233,7 +234,7 @@ class HearingDay < CaseflowRecord
 
   # called through the 'before_destroy' callback on the hearing_day object.
   def soft_link_removal
-    ConferenceLink.where(hearing_day: self).each(&:soft_removal_of_link)
+    ConferenceLink.where(hearing_day: self).find_each(&:soft_removal_of_link)
   end
 
   def assign_created_by_user

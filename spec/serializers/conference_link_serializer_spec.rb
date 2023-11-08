@@ -34,11 +34,7 @@ describe ConferenceLinkSerializer, :all_dbs do
     subject { described_class.new(conference_link) }
 
     context "With a Pexip conference link" do
-      before do
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
-      end
+      include_context "Mock Pexip service env vars"
 
       let(:conference_link) { create(:pexip_conference_link, hearing_day: hearing_day) }
 

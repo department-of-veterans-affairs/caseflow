@@ -68,11 +68,7 @@ describe PexipConferenceLink do
     end
   end
   context "#create" do
-    before do
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
-    end
+    include_context "Mock Pexip service env vars"
 
     let(:hearing_day) do
       create(:hearing_day, id: 1)
@@ -100,11 +96,7 @@ describe PexipConferenceLink do
   end
 
   context "update conference day" do
-    before do
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
-    end
+    include_context "Mock Pexip service env vars"
 
     let(:hearing_day) do
       create(:hearing_day, id: 1)
@@ -141,14 +133,8 @@ describe PexipConferenceLink do
   end
 
   describe "#guest_pin" do
-    before do
-      FeatureToggle.enable!(:pexip_conference_service)
-      FeatureToggle.enable!(:webex_conference_service)
-
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
-    end
+    include_context "Mock Pexip service env vars"
+    include_context "Enable both conference services"
 
     let(:hearing_day) { create(:hearing_day) }
 
@@ -171,11 +157,9 @@ describe PexipConferenceLink do
   end
 
   describe "#guest_link" do
-    before do
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
+    include_context "Mock Pexip service env vars"
 
+    before do
       allow_any_instance_of(VirtualHearings::PexipLinkService).to receive(:conference_id).and_return expected_conference_id
       allow_any_instance_of(VirtualHearings::PexipLinkService).to receive(:guest_pin).and_return expected_pin
     end
