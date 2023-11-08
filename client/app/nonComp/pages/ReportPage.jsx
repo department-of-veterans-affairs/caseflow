@@ -7,7 +7,9 @@ import NonCompLayout from 'app/nonComp/components/NonCompLayout';
 import { ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
 
 import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
-import TimingSpecification from 'app/nonComp/components/ReportPage/TimingSpecification';
+import { timingSchema, TimingSpecification } from 'app/nonComp/components/ReportPage/TimingSpecification';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 import Checkbox from 'app/components/Checkbox';
 import RadioField from 'app/components/RadioField';
@@ -27,6 +29,10 @@ const buttonOuterContainerStyling = css({
   display: 'flex',
   justifyContent: 'space-between',
   marginTop: '4rem',
+});
+
+const schema = yup.object().shape({
+  timing: timingSchema
 });
 
 const ReportPageButtons = ({
@@ -141,8 +147,8 @@ const ReportPage = ({ history }) => {
     conditions: [],
     timing: {
       range: null,
-      start_date: '',
-      end_date: '',
+      startDate: '',
+      endDate: '',
     },
     radioEventAction: 'all_events_action',
     specificEventType: {
@@ -159,7 +165,12 @@ const ReportPage = ({ history }) => {
     }
   };
 
-  const methods = useForm({ defaultValues: { ...defaultFormValues } });
+  const methods = useForm({
+    defaultValues: { ...defaultFormValues },
+    resolver: yupResolver(schema),
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit'
+  });
 
   const { reset, watch, formState, control, handleSubmit } = methods;
 
