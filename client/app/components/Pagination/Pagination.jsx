@@ -36,7 +36,7 @@ class Pagination extends React.PureComponent {
   };
 
   generateBlankButton = (key) => {
-    return <button disabled key={`blank-button-${key}`} aria-label="More Pages">...</button>;
+    return <button disabled key={`blank-button-${key}`} aria-label={`More Pages`}>...</button>;
   };
 
   render() {
