@@ -102,13 +102,13 @@ module Seeds
           closest_regional_office: regional_office
         )
         create(:available_hearing_locations, regional_office, appeal: legacy_appeal)
-        create_tasks_for_legacy_appeals(legacy_appeal, attorney, judge, workflow)
+        create_tasks_for_legacy_appeals(legacy_appeal, attorney, judge)
   
         # Return the legacy_appeal
         legacy_appeal
       end
   
-      def create_tasks_for_legacy_appeals(appeal, attorney, judge, workflow)
+      def create_tasks_for_legacy_appeals(appeal, attorney, judge)
         # Will need a judge user for judge decision review task and an attorney user for the subsequent Attorney Task
         root_task = RootTask.find_or_create_by!(appeal: appeal)
       end
