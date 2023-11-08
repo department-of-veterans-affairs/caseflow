@@ -36,7 +36,7 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
         visit_intake_form_with_correspondence_load
 
         associate_with_prior_mail_radio_options[:yes].click
-        page.all(".cf-form-checkbox")[0].click
+        page.all(".cf-form-checkbox")[1].click
 
         expect(page.has_button?("Continue")).to be(true)
       end
