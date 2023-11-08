@@ -40,7 +40,7 @@ describe Seeds::AmaIntake do
   end
 
   context "#seed!" do
-    it "seeds total of 6 Veterans, 15 Legacy Appeals, 6 Appeals, 6 Higher Level Reviews End Product Establishments,
+    it "seeds total of 7 Veterans, 15 Legacy Appeals, 6 Appeals, 6 Higher Level Reviews End Product Establishments,
       2 Supplemental Claim End Product Establishments, 940 Request Issues, and 894 Decision Issues" do
       seed.seed!
       expect(Veteran.count).to eq(7)
