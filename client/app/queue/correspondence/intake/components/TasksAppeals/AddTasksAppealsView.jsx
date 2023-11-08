@@ -35,7 +35,7 @@ export const AddTasksAppealsView = () => {
     const currentTask = [...addTask];
 
     // bug is happening in this method
-    // TODO task needs to remove the correct index instead of the last option.
+    // TODO task removes the correct index, but visually removes the last option. Should remove the correct option visually
     // NOTE: Is there a way to move the second task into the first position if the user removes the first task?
     console.log('Removing at index ' + index);
     console.log('The currentTask variable is ' + currentTask);
@@ -44,11 +44,6 @@ export const AddTasksAppealsView = () => {
     const newTask = currentTask.filter((item, i) => index !== i);
 
     setAddTask(newTask);
-    console.log('The newTask variable is ' + newTask);
-    console.log('The NEW currentTask variable is ' + currentTask);
-    console.log('The new task length is ' + newTask.length);
-    console.log('Is the new task null? ' + newTask.isNull);
-    console.log(newTask.isNull);
 
     if (newTask.length === 0 || newTask.isNull) {
       setAddTasksVisible(false);
@@ -120,7 +115,7 @@ export const AddTasksAppealsView = () => {
             <div style={{ display: 'flex' }}>
               {/* { (addTask.length <= 2) && addTask.map((currentTask, i) => ( */}
               { addTask && addTask.map((currentTask, i) => (
-                <TaskNotRelatedToAppeal secret={i} key={i} removeTask={() => removeTaskAtIndex(i)} />
+                <TaskNotRelatedToAppeal secret={i} key={currentTask.Object} removeTask={() => removeTaskAtIndex(i)} />
               ))}
 
             </div>
