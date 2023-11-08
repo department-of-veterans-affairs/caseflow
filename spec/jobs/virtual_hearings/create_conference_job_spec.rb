@@ -7,6 +7,8 @@ describe VirtualHearings::CreateConferenceJob do
   URL_PATH = "/sample"
   PIN_KEY = "mysecretkey"
 
+  include_context "Enable both conference services"
+
   context ".perform" do
     let(:current_user) { create(:user, roles: ["Build HearSched"]) }
     let(:hearing) { create(:hearing, regional_office: "RO06") }
@@ -93,7 +95,7 @@ describe VirtualHearings::CreateConferenceJob do
 
       virtual_hearing.reload
       expect(virtual_hearing.status).to eq(:active)
-      expect(virtual_hearing.alias_with_host).to eq("BVA0000001@#{URL_HOST}")
+      expect(virtual_hearing.alias_with_host).to eq("BVA0000002@#{URL_HOST}")
       expect(virtual_hearing.host_pin.to_s.length).to eq(7)
       expect(virtual_hearing.guest_pin.to_s.length).to eq(10)
     end
