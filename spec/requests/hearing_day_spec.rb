@@ -150,11 +150,8 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
   end
 
   describe "Show a hearing day with its children hearings" do
-    before do
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
-    end
+    include_context "Mock Pexip service env vars"
+
     let!(:regional_office) do
       create(:staff, stafkey: "RO13", stc4: 11)
     end

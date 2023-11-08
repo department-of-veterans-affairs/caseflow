@@ -278,6 +278,7 @@ class VirtualHearing < CaseflowRecord
     update!(host_hearing_link: link_service.host_link, guest_hearing_link: link_service.guest_link)
   end
 
+  # :reek:FeatureEnvy
   def subject_for_conference
     appeal = hearing.appeal
 

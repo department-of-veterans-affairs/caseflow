@@ -548,11 +548,7 @@ describe HearingDay, :all_dbs do
   end
 
   context "hearing day in the past, conference link doesnt exist" do
-    before do
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
-    end
+    include_context "Mock Pexip service env vars"
 
     after do
       FeatureToggle.disable!(:pexip_conference_service)
@@ -573,10 +569,7 @@ describe HearingDay, :all_dbs do
     subject { hearing_day.conference_links }
 
     context "The Pexip and Webex services are both enabled" do
-      before do
-        FeatureToggle.enable!(:pexip_conference_service)
-        FeatureToggle.enable!(:webex_conference_service)
-      end
+      include_context "Enable both conference services"
 
       it "Both conference links are created whenever requested" do
         expect(subject).to eq []
@@ -607,14 +600,8 @@ describe HearingDay, :all_dbs do
   end
 
   context "#subject_for_conference" do
-    before do
-      FeatureToggle.enable!(:pexip_conference_service)
-      FeatureToggle.enable!(:webex_conference_service)
-
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
-    end
+    include_context "Enable both conference services"
+    include_context "Mock Pexip service env vars"
 
     let(:expected_date) { "Sep 21, 2023" }
     let(:expected_date_parsed) { Date.parse(expected_date) }
@@ -633,11 +620,7 @@ describe HearingDay, :all_dbs do
   end
 
   context "hearing day in the future, conference link doesnt exist" do
-    before do
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
-    end
+    include_context "Mock Pexip service env vars"
 
     let(:hearing_day) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
