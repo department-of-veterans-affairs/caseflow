@@ -34,9 +34,9 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
         link.alias || link.guestLink?.match(/pin=\d+/)[0]?.split('=')[1] || null
       );
     } else if (link.type === 'WebexConferenceLink') {
-      const newLink = 'instant-usgov';
+      const webexGuestLink = link.guestLink;
 
-      return link.alias || newLink || null;
+      return link.alias || webexGuestLink || null;
     }
 
     return null;
@@ -46,7 +46,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
     if (link.type === 'PexipConferenceLink') {
       return `${link.guestPin}#`;
     } else if (link.type === 'WebexConferenceLink') {
-      return 'N/A';
+      return null;
     }
 
     return null;
@@ -74,65 +74,45 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
             <div key={index} style={roomInfoStyle(index)}>
               <h3
                 style={{
-                  width: '350px',
-                  display: 'flex',
-                  marginBottom: '0px',
-                  alignItems: 'center',
-                  marginLeft: '10px',
+                  width: "350px",
+                  display: "flex",
+                  marginBottom: "0px",
+                  alignItems: "center",
+                  marginLeft: "10px",
                 }}
               >
-                {type === 'PexipConferenceLink' ?
-                  GUEST_LINK_LABELS.PEXIP_GUEST_LINK_SECTION_LABEL :
-                  GUEST_LINK_LABELS.WEBEX_GUEST_LINK_SECTION_LABEL}
+                {type === "PexipConferenceLink"
+                  ? GUEST_LINK_LABELS.PEXIP_GUEST_LINK_SECTION_LABEL
+                  : GUEST_LINK_LABELS.WEBEX_GUEST_LINK_SECTION_LABEL}
               </h3>
 
               <h3
                 style={{
-                  display: 'flex',
-                  marginBottom: '0px',
-                  alignItems: 'center',
-                  width: '400px',
+                  display: "flex",
+                  marginBottom: "0px",
+                  alignItems: "center",
+                  width: "400px",
                 }}
               >
                 {GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}
-                <span style={{ fontWeight: 'normal' }}>{alias || 'N/A'}</span>
+                <span style={{ fontWeight: "normal" }}>{alias || "N/A"}</span>
               </h3>
-              {linkGuestPin === 'N/A' ? (
+              {type === "PexipConferenceLink" && (
                 <h3
                   style={{
-                    width: 'max-content',
-                    display: 'flex',
-                    alignItems: 'center',
-                    marginBottom: '0px',
-                    marginRight: '75px',
+                    width: "max-content",
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "0px",
+                    marginRight: "75px",
                   }}
                 >
                   {GUEST_LINK_LABELS.GUEST_PIN}
                   <span
                     style={{
-                      fontWeight: 'normal',
-                      paddingRight: '10px',
-                      display: 'flex',
-                    }}
-                  >
-                    N/A
-                  </span>
-                </h3>
-              ) : (
-                <h3
-                  style={{
-                    width: 'max-content',
-                    display: 'flex',
-                    alignItems: 'center',
-                    marginBottom: '20px',
-                  }}
-                >
-                  {GUEST_LINK_LABELS.GUEST_PIN}
-                  <span
-                    style={{
-                      fontWeight: 'normal',
-                      paddingRight: '10px',
-                      display: 'flex',
+                      fontWeight: "normal",
+                      paddingRight: "10px",
+                      display: "flex",
                     }}
                   >
                     {linkGuestPin}
@@ -141,10 +121,10 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
               )}
               <h3
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  marginBottom: '0px',
-                  marginRight: '10px',
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "0px",
+                  marginRight: "10px",
                 }}
               >
                 <CopyTextButton {...CopyTextButtonProps} />
