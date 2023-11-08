@@ -9,7 +9,7 @@ import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 import * as yup from 'yup';
 
 export const reportTypeSchema = yup.string().
-  oneOf([REPORT_TYPE_CONSTANTS.REPORT_TYPE_OPTIONS.map((opt) => opt.value)], ERRORS.MISSING_SELECTION);
+  oneOf(REPORT_TYPE_CONSTANTS.REPORT_TYPE_OPTIONS.map((opt) => opt.value), ERRORS.MISSING_SELECTION);
 
 const NonCompReportFilter = ({ control, formState }) => (
   <>
