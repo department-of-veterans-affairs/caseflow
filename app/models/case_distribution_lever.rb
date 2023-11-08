@@ -8,4 +8,10 @@ class CaseDistributionLever < ApplicationRecord
   validates :is_disabled, inclusion: { in: [true, false] }
 
   self.table_name = "case_distribution_levers"
+
+  def update_levers(lever_list)
+    lever_list.each do |updated_lever|
+      updated_lever.save!
+    end
+  end
 end
