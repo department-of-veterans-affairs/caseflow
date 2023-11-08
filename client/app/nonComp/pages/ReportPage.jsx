@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useController, useForm, FormProvider } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import Button from 'app/components/Button';
 import NonCompLayout from 'app/nonComp/components/NonCompLayout';
 import { ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
+import { fetchUsers } from 'app/nonComp/actions/usersSlice';
 
 import Checkbox from 'app/components/Checkbox';
 import RadioField from 'app/components/RadioField';
@@ -154,6 +156,12 @@ const ReportPage = ({ history }) => {
 
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchUsers({ queryType: 'organization', queryParams: { query: 'vha' } }));
+  }, []);
 
   return (
     <NonCompLayout
