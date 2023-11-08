@@ -12,14 +12,11 @@ describe PexipConferenceLink do
 
   context "#create with errors" do
     context "pin key env variable is missing" do
-      before do
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return URL_HOST
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return URL_PATH
-      end
       let(:hearing_day) { create(:hearing_day) }
       let(:user) { create(:user) }
       it "raises the missing PIN key error" do
         RequestStore[:current_user] = user
+        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return(nil)
         expect do
           described_class.create(hearing_day: hearing_day)
         end.to raise_error VirtualHearings::PexipLinkService::PINKeyMissingError
@@ -27,14 +24,11 @@ describe PexipConferenceLink do
     end
 
     context "url host env variable is missing" do
-      before do
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return PIN_KEY
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return URL_PATH
-      end
       let(:hearing_day) { create(:hearing_day) }
       let(:user) { create(:user) }
       it "raises the missing host error" do
         RequestStore[:current_user] = user
+        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return(nil)
         expect do
           described_class.create(hearing_day: hearing_day)
         end.to raise_error VirtualHearings::PexipLinkService::URLHostMissingError
@@ -42,14 +36,11 @@ describe PexipConferenceLink do
     end
 
     context "url path env variable is missing" do
-      before do
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return PIN_KEY
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return URL_HOST
-      end
       let(:hearing_day) { create(:hearing_day) }
       let(:user) { create(:user) }
       it "raises the missing path error" do
         RequestStore[:current_user] = user
+        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return(nil)
         expect do
           described_class.create(hearing_day: hearing_day)
         end.to raise_error VirtualHearings::PexipLinkService::URLPathMissingError
@@ -60,6 +51,7 @@ describe PexipConferenceLink do
       let(:hearing_day) { create(:hearing_day) }
       let(:user) { create(:user) }
       it "raises the missing PIN key error" do
+        allow(ENV).to receive(:[]).with(anything).and_return(nil)
         RequestStore[:current_user] = user
         expect do
           described_class.create(hearing_day: hearing_day)
@@ -67,6 +59,7 @@ describe PexipConferenceLink do
       end
     end
   end
+
   context "#create" do
     include_context "Mock Pexip service env vars"
 
