@@ -383,6 +383,16 @@ describe VirtualHearing do
         include_context "virtual hearing not created with new link generation"
         include_examples "all test link behaviors"
       end
+
+      context "for a webex conference" do
+        let(:virtual_hearing) do
+          create(:virtual_hearing).tap { |vh| vh.meeting_type.update!(service_name: "webex") }
+        end
+
+        it "returns the webex test link" do
+          expect(virtual_hearing.test_link(nil)).to eq "https://instant-usgov.webex.com/mediatest"
+        end
+      end
     end
   end
 
