@@ -18,13 +18,8 @@ module Seeds
       veteran = create(
                   :veteran,
                   params)
-      10.times do
-        create(:correspondence,
-               veteran_id: veteran.id,
-               source_type: "Mail",
-               package_document_type_id: 10182,
-               notes: "This is an example of notes for correspondence"
-        )
+      20.times do
+        create_default_correspondence(veteran)
       end
     end
 
@@ -35,14 +30,8 @@ module Seeds
       veteran = create(
                   :veteran,
                   params)
-      8.times do
-        create(:correspondence,
-               veteran_id: veteran.id,
-               source_type: "Mail",
-               package_document_type_id: 10182,
-               notes: "This is an example of notes for correspondence"
-        )
-
+      30.times do
+        create_default_correspondence(veteran)
       end
     end
 
@@ -53,14 +42,18 @@ module Seeds
       veteran = create(
                   :veteran,
                   params)
-      25.times do
-        create(:correspondence,
-               veteran_id: veteran.id,
-               source_type: "Mail",
-               package_document_type_id: 10182,
-               notes: "This is an example of notes for correspondence"
-        )
+      100.times do
+        create_default_correspondence(veteran)
       end
+    end
+
+    def create_default_correspondence(veteran)
+      create(:correspondence,
+        veteran_id: veteran.id,
+        source_type: "Mail",
+        package_document_type_id: 10182,
+        notes: "This is an example of notes for correspondence"
+      )
     end
   end
 end
