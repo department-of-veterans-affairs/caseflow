@@ -162,7 +162,6 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     DataDogService.increment_counter(metric_name: "created_conference.successful", **create_conference_datadog_tags)
 
     virtual_hearing.update(
-      conference_id: "#{virtual_hearing.hearing.docket_number}#{virtual_hearing.hearing.id}",
       host_hearing_link: create_webex_conference_response.host_link,
       guest_hearing_link: create_webex_conference_response.guest_link
     )
