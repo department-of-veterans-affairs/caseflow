@@ -41,9 +41,7 @@ module Seeds
       end
 
       def create_ama_tasks
-        Timecop.travel(65.days.ago)
-          create_ama_appeals(50)
-        Timecop.return
+        create_ama_appeals(50)
       end
   
       def create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, judge, attorney)
