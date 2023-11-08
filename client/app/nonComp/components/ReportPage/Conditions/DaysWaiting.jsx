@@ -24,7 +24,8 @@ export const daysWaitingSchema = yup.object({
   valueTwo: yup.number().label('Max days').
     when('comparisonOperator', {
       is: 'between',
-      then: (schema) => schema.typeError(ERRORS.MISSING_NUMBER).moreThan(yup.ref('valueOne')).
+      then: (schema) => schema.typeError(ERRORS.MISSING_NUMBER).
+        moreThan(yup.ref('valueOne'), ERRORS.MAX_DAYS_TOO_SMALL).
         required(ERRORS.MISSING_NUMBER),
       otherwise: (schema) => schema.notRequired()
     })
