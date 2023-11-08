@@ -6,7 +6,7 @@ import Button from 'app/components/Button';
 import NonCompLayout from '../components/NonCompLayout';
 import { conditionsSchema, ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
 
-import { reportTypeSchema, NonCompReportFilterContainer } from '../components/NonCompReportFilter';
+import { NonCompReportFilterContainer } from '../components/NonCompReportFilter';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
@@ -27,7 +27,6 @@ const buttonOuterContainerStyling = css({
 });
 
 const schema = yup.object().shape({
-  reportType: reportTypeSchema,
   conditions: conditionsSchema
 });
 
