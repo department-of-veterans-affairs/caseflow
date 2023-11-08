@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_11_01_163717) do
+ActiveRecord::Schema.define(version: 2023_11_07_103628) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1957,6 +1957,12 @@ ActiveRecord::Schema.define(version: 2023_11_01_163717) do
     t.index ["created_by_id"], name: "index_vbms_distributions_on_created_by_id"
     t.index ["updated_by_id"], name: "index_vbms_distributions_on_updated_by_id"
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
+  end
+
+  create_table "vbms_document_types", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "doc_type_id"
+    t.datetime "updated_at", null: false
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
