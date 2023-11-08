@@ -121,6 +121,8 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
         click_button("Next")
 
         click_button("Previous")
+
+        expect(page.has_button?("Continue")).to be(true)
       end
     end
   end
