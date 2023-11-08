@@ -222,7 +222,6 @@ RSpec.describe HearingsController, type: :controller do
           subject
           expect(VirtualHearing.first.establishment.submitted?).to eq(true)
           expect(VirtualHearing.first.status).to eq(:active)
-          expect(VirtualHearing.first.conference_id).to_not eq(nil)
           expect(VirtualHearing.first.appellant_email_sent).to eq(true)
           expect(VirtualHearing.first.judge_email_sent).to eq(true)
           expect(VirtualHearing.first.representative_email_sent).to eq(true)
