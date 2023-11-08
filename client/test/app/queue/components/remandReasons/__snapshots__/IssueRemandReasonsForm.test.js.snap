@@ -266,48 +266,96 @@ exports[`IssueRemandReasonsForm AMA renders correctly by default 1`] = `
             </span>
           </legend>
           <div
-            class="checkbox-wrapper-issue-1-medical_examinations"
+            class="checkbox-wrapper-issue-1-no_medical_examination"
           >
             <div
               class="cf-form-checkbox"
             >
               <input
-                aria-label="issue-1-medical_examinations"
-                id="issue-1-medical_examinations"
-                name="issue-1-medical_examinations"
+                aria-label="issue-1-no_medical_examination"
+                id="issue-1-no_medical_examination"
+                name="issue-1-no_medical_examination"
                 type="checkbox"
               />
               <label
-                for="issue-1-medical_examinations"
+                for="issue-1-no_medical_examination"
               >
                 <span
                   class=""
                 >
-                  Medical examinations
+                  No medical examination
                 </span>
                  
               </label>
             </div>
           </div>
           <div
-            class="checkbox-wrapper-issue-1-medical_opinions"
+            class="checkbox-wrapper-issue-1-inadequate_medical_examination"
           >
             <div
               class="cf-form-checkbox"
             >
               <input
-                aria-label="issue-1-medical_opinions"
-                id="issue-1-medical_opinions"
-                name="issue-1-medical_opinions"
+                aria-label="issue-1-inadequate_medical_examination"
+                id="issue-1-inadequate_medical_examination"
+                name="issue-1-inadequate_medical_examination"
                 type="checkbox"
               />
               <label
-                for="issue-1-medical_opinions"
+                for="issue-1-inadequate_medical_examination"
               >
                 <span
                   class=""
                 >
-                  Medical opinions
+                  Inadequate medical examination
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+          <div
+            class="checkbox-wrapper-issue-1-no_medical_opinion"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="issue-1-no_medical_opinion"
+                id="issue-1-no_medical_opinion"
+                name="issue-1-no_medical_opinion"
+                type="checkbox"
+              />
+              <label
+                for="issue-1-no_medical_opinion"
+              >
+                <span
+                  class=""
+                >
+                  No Medical opinion
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+          <div
+            class="checkbox-wrapper-issue-1-inadequate_opinion"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="issue-1-inadequate_opinion"
+                id="issue-1-inadequate_opinion"
+                name="issue-1-inadequate_opinion"
+                type="checkbox"
+              />
+              <label
+                for="issue-1-inadequate_opinion"
+              >
+                <span
+                  class=""
+                >
+                  Inadequate Medical opinion
                 </span>
                  
               </label>
