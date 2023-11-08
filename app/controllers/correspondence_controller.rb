@@ -16,7 +16,12 @@ class CorrespondenceController < ApplicationController
   end
 
   def correspondence_cases
-    render "correspondence_cases"
+    respond_to do |format|
+      format.html { "correspondence_cases" }
+      format.json do
+        render json: { vetCorrespondences: veterans_with_correspondences }
+      end
+    end
   end
 
   def review_package
@@ -84,4 +89,21 @@ class CorrespondenceController < ApplicationController
   def veteran_by_correspondence
     @veteran_by_correspondence ||= Veteran.find(@correspondence.veteran_id)
   end
+
+  def veterans_with_correspondences
+    veterans = Veteran.includes(:correspondences).where(correspondences: { id: Correspondence.select(:id) })
+    veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.first) }
+  end
+
+  def vet_info_serializer(veteran, correspondence)
+    {
+      firstName: veteran.first_name,
+      lastName: veteran.last_name,
+      fileNumber: veteran.file_number,
+      cmPacketNumber: correspondence.cmp_packet_number,
+      correspondenceUuid: correspondence.uuid,
+      packageDocumentType: correspondence.correspondence_type_id
+    }
+  end
+
 end
