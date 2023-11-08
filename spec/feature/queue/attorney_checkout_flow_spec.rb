@@ -241,7 +241,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         decision.remand_reasons.first.code
       end
 
-      expect(remand_reasons).to match_array(%w[service_treatment_records medical_examinations])
+      expect(remand_reasons).to match_array(%w[service_treatment_records no_medical_examination])
       expect(appeal.decision_issues.second.disposition).to eq("remanded")
       expect(appeal.decision_issues.second.diagnostic_code).to eq(diagnostic_code)
       expect(appeal.decision_issues.third.disposition).to eq("allowed")
@@ -285,7 +285,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
 
       click_on "Continue"
       expect(page).to have_content("Issue 2 of 2")
-      expect(find("input", id: "2-medical_examinations", visible: false).checked?).to eq(true)
+      expect(find("input", id: "2-no_medical_examination", visible: false).checked?).to eq(true)
       # Again, hate to add a sleep, but for some reason clicking continue too soon doesn't go
       # to the next page. I think it's related to how we're using continue to load the next
       # section of the remand reason screen.
@@ -311,7 +311,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
         decision.remand_reasons.first.code
       end
 
-      expect(remand_reasons).to match_array(%w[service_treatment_records medical_examinations])
+      expect(remand_reasons).to match_array(%w[service_treatment_records no_medical_examination])
       expect(appeal.decision_issues.where(disposition: "remanded").count).to eq(2)
       expect(appeal.decision_issues.where(disposition: "allowed").count).to eq(1)
       expect(appeal.request_issues.map { |issue| issue.decision_issues.count }).to match_array([3, 1])
