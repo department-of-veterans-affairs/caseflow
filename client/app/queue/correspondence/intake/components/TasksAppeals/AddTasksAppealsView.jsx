@@ -6,7 +6,6 @@ import Checkbox from '../../../../../components/Checkbox';
 // import TextareaField from '../../../../../components/TextareaField';
 import Button from '../../../../../components/Button';
 import TaskNotRelatedToAppeal from '../TaskNotRelatedToAppeal';
-import { disabled } from 'glamor';
 
 const mailTasksLeft = [
   'Change of address',
@@ -37,12 +36,15 @@ export const AddTasksAppealsView = () => {
     // bug is happening in this method
     // TODO task needs to remove the correct index instead of the last option.
     // NOTE: Is there a way to move the second task into the first position if the user removes the first task?
-    console.log('Removing at index ' + index)
-    console.log('The currentTask variable is ' + currentTask)
+    console.log('Removing at index ' + index);
+    console.log('The currentTask variable is ' + currentTask);
     console.log(currentTask);
-    const newTask = currentTask.splice(0, index);
-    setAddTask(newTask);
+    // const newTask = currentTask.splice(index, 1);
+    const newTask = currentTask.filter((item, i) => index !== i);
 
+    setAddTask(newTask);
+    console.log('The newTask variable is ' + newTask);
+    console.log('The NEW currentTask variable is ' + currentTask);
   };
 
   return (
