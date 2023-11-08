@@ -83,13 +83,8 @@ module Seeds
         # Create the vacols_case
         begin
           retries ||= 0
-          if type == "video"
-            vacols_case = create_video_vacols_case(vacols_titrnum, vacols_folder, correspondent)
-            create(:staff, slogid: vacols_case.bfcurloc, sdomainid: sdomain_id)
-          elsif type == "travel"
-            vacols_case = create_travel_vacols_case(vacols_titrnum, vacols_folder, correspondent)
-            create(:staff, slogid: vacols_case.bfcurloc, sdomainid: sdomain_id)
-          end
+          vacols_case = create_video_vacols_case(vacols_titrnum, vacols_folder, correspondent)
+          create(:staff, slogid: vacols_case.bfcurloc, sdomainid: sdomain_id)
         rescue ActiveRecord::RecordNotUnique
           retry if (retries += 1) < retry_max
         end
