@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# Create VbmsDocumentType seed data
 module Seeds
   class VbmsDocumentTypes < Base
     def seed!
