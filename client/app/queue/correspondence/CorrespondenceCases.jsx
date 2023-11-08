@@ -33,7 +33,10 @@ class CorrespondenceCases extends React.PureComponent {
 
   // load veteran correspondence info on page load
   componentDidMount() {
-    this.getVeteransWithCorrespondence();
+    // Retry the request after a delay
+    setTimeout(() => {
+      this.getVeteransWithCorrespondence();
+    }, 1000);
   }
 
   render = () => {
