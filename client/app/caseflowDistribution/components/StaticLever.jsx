@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styles from './StaticLevers.module.scss';
 
 const StaticLever = ({ lever }) => {
   const renderValue = () => {
@@ -16,39 +17,7 @@ const StaticLever = ({ lever }) => {
       return null;
     }
   };
-  const titleStyling = {
-    border: 'none',
-    paddingTop: '20px',
-    marginTop: '0',
-    paddingBottom: '0',
-    verticalAlign: 'text-top',
-    fontFamily: 'Source Sans Pro',
-    fontWeight: 'bold',
-    fontSize: '19px',
-    lineHeight: '1.5em/25px',
-    columnSpan: 'all',
-  };
-  const descriptionStyling = {
-    width: '70%',
-    border: 'none',
-    paddingTop: '0',
-    marginTop: '0',
-    paddingRight: '20px',
-    paddingBottom: '20px',
-    verticalAlign: 'text-top',
-    borderBottom: '1px solid #ccc',
-  };
-  const valueStyling = {
-    width: '30%',
-    border: 'none',
-    paddingTop: '0',
-    marginTop: '0',
-    whiteSpace: 'noWrap',
-    paddingBottom: '20px',
-    paddingRight: '20px',
-    verticalAlign: 'text-top',
-    borderBottom: '1px solid #ccc',
-  };
+
   const valueWithUnit = renderValue();
   const valueArray = valueWithUnit.split(' ');
   const value = valueArray[0];
@@ -57,12 +26,12 @@ const StaticLever = ({ lever }) => {
   return (
     <tbody>
       <tr>
-        <td style={titleStyling}>{lever.title}</td>
+        <td className={styles.titleStyling}>{lever.title}</td>
       </tr>
       <tr>
-        <td className="cf-lead-paragraph" style={descriptionStyling}>{lever.description}</td>
-        <td className="cf-lead-paragraph" style={valueStyling}>
-          <span style={{ marginRight: '5px' }}>{value} </span>
+        <td className={`cf-lead-paragraph ${styles.descriptionStyling}`}>{lever.description}</td>
+        <td className={`cf-lead-paragraph ${styles.valueStyling}`}>
+          <span className={styles.valueRightStyling}>{value} </span>
           <span>{unit}</span>
         </td>
       </tr>

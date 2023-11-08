@@ -17,8 +17,6 @@ export default {
   decorators: [RouterDecorator]
 };
 
-// const Template = (args) => <StaticLever {...args} />;
-
 export const StaticLever3 = (args) => (
   <table>
     <tbody>
