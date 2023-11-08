@@ -1,0 +1,2 @@
+class VbmsDocumentType < ApplicationRecord
+end
