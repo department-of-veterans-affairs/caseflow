@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
-// import React from 'react';
 import Checkbox from '../../../../../components/Checkbox';
-// import Dropdown from '../../../../../components/Dropdown';
-// import SearchBar from '../../../../../components/SearchBar';
-// import TextareaField from '../../../../../components/TextareaField';
 import Button from '../../../../../components/Button';
 import TaskNotRelatedToAppeal from '../TaskNotRelatedToAppeal';
-import { isNull } from 'lodash';
 
 const mailTasksLeft = [
   'Change of address',
@@ -27,20 +22,13 @@ export const AddTasksAppealsView = () => {
     setAddTasksVisible(true);
     const currentTask = [...addTask];
     const randNum = Math.floor(Math.random() * 1000000);
-    currentTask.push({ Object: randNum })
+
+    currentTask.push({ Object: randNum });
     setAddTask(currentTask);
   };
 
   const removeTaskAtIndex = (index) => {
     const currentTask = [...addTask];
-
-    // bug is happening in this method
-    // TODO task removes the correct index, but visually removes the last option. Should remove the correct option visually
-    // NOTE: Is there a way to move the second task into the first position if the user removes the first task?
-    console.log('Removing at index ' + index);
-    console.log('The currentTask variable is ' + currentTask);
-    console.log(currentTask);
-    // const newTask = currentTask.splice(index, 1);
     const newTask = currentTask.filter((item, i) => index !== i);
 
     setAddTask(newTask);
@@ -84,7 +72,7 @@ export const AddTasksAppealsView = () => {
         </div>
 
         <h2 style={{ margin: '3rem auto 1rem auto'}}>Tasks not related to an Appeal</h2>
-        <p style={{ marginTop: '0rem', marginBottom: '2rem' }} onClick={() => (console.log(["Is the AddTasksVisible? ", addTasksVisible]))}>
+        <p style={{ marginTop: '0rem', marginBottom: '2rem' }}>
           Add new tasks related to this correspondence or to an appeal not yet created in Caseflow.
         </p>
         <div />
@@ -113,7 +101,6 @@ export const AddTasksAppealsView = () => {
             </div>
             <div style={{ width: '100%', height: '3rem' }} />
             <div style={{ display: 'flex' }}>
-              {/* { (addTask.length <= 2) && addTask.map((currentTask, i) => ( */}
               { addTask && addTask.map((currentTask, i) => (
                 <TaskNotRelatedToAppeal secret={i} key={currentTask.Object} removeTask={() => removeTaskAtIndex(i)} />
               ))}
