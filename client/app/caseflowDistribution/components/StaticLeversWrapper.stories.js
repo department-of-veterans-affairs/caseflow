@@ -32,7 +32,7 @@ export const StaticWrapper = () => (
   <table>
     <tbody>
       <tr>
-        <StaticLeversWrapper leverList={leverList} leverStore={leverStore}/>
+        <StaticLeversWrapper leverList={leverList} leverStore={leverStore} />
       </tr>
     </tbody>
   </table>

@@ -25,5 +25,5 @@ export default {
 };
 
 export const ButtonWrapper = () => (
-  <LeverButtonsWrapper leverStore={leverStore}/>
+  <LeverButtonsWrapper leverStore={leverStore} />
 );

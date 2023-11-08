@@ -58,16 +58,16 @@ const LeverHistory = (props) => {
             </td>
             <td {...historyTableStyling}>
               <ol>
-                {entry.original_values.map((originalValue, index) => {
-                  return <li key={originalValue}>{originalValue}{' '}{entry.units[index]}</li>;
+                {entry.original_values.map((originalValue, idx) => {
+                  return <li key={originalValue}>{originalValue}{' '}{entry.units[idx]}</li>;
                 })
                 }
               </ol>
             </td>
             <td {...historyTableStyling}>
               <ol>
-                {entry.current_values.map((currentValue, index) => {
-                  return <li key={currentValue}>{currentValue}{' '}{entry.units[index]}</li>;
+                {entry.current_values.map((currentValue, idx) => {
+                  return <li key={currentValue}>{currentValue}{' '}{entry.units[idx]}</li>;
                 })
                 }
               </ol>

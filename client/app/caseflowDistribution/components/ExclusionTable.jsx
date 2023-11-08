@@ -5,37 +5,6 @@ import RadioField from 'app/components/RadioField';
 import { css } from 'glamor';
 
 const ExclusionTable = () => {
-  // const { leverList, leverStore } = props;
-
-  // const exclusionLevers = leverList.map((item) => {
-  //   return leverStore.getState().levers.find((lever) => lever.item === item);
-  // });
-
-  // const [_, setLever] = useState(exclusionLevers);
-  // const updateLever = (index) => (e) => {
-  //   const levers = exclusionLevers.map((lever, i) => {
-  //     if (index === i) {
-  //       lever.value = e;
-
-  //       return lever;
-  //     } else {
-  //       return lever;
-  //     }
-  //   });
-  //   setLever(levers);
-  // };
-
-  // const toggleLever = (index) => () => {
-  //   const levers = exclusionLevers.map((lever, i) => {
-  //     if (index === i) {
-  //       lever.is_active = !lever.is_active
-  //       return lever;
-  //     } else {
-  //       return lever;
-  //     }
-  //   });
-  //   setLever(levers);
-  // };
 
   const headerStyling = css({
     color: 'lightgray',
