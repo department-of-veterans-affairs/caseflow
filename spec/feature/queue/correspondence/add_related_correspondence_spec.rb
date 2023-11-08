@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
 include CorrespondenceHelpers
   context "No related correspondence" do
@@ -30,7 +32,13 @@ include CorrespondenceHelpers
         expect(page.has_button?("Continue")).to be(false)
       end
 
-      xit "continue button is active if a checkbox is checked" do
+      it "continue button is active if a checkbox is checked" do
+        visit_intake_form_with_correspondence_load
+
+        associate_with_prior_mail_radio_options[:yes].click
+        page.all(".cf-form-checkbox")[0].click
+
+        expect(page.has_button?("Continue")).to be(true)
       end
     end
 
@@ -108,20 +116,11 @@ include CorrespondenceHelpers
 
         associate_with_prior_mail_radio_options[:yes].click
 
-        page.all(".cf-form-checkbox")[0..5].each { |cb| cb.click }
+        page.all(".cf-form-checkbox")[0..5].each { |cb| cb.set(true) }
 
         click_button("Next")
 
         click_button("Previous")
-      end
-
-      xit do
-      end
-
-      xit do
-      end
-
-      xit do
       end
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module CorrespondenceHelpers
   def visit_intake_form_with_correspondence_load
     FeatureToggle.enable!(:correspondence_queue)
