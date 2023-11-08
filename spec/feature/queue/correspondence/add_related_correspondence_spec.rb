@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
-include CorrespondenceHelpers
+  include CorrespondenceHelpers
   context "No related correspondence" do
 
     it "Displays the expected content" do
@@ -111,7 +111,7 @@ include CorrespondenceHelpers
         expect(page).to have_content("Viewing 46-54 of 54 total")
       end
 
-      xit "Checkbox values persist through page navigation" do
+      it "Checkbox values persist through page navigation" do
         visit_intake_form_with_correspondence_load
 
         associate_with_prior_mail_radio_options[:yes].click
