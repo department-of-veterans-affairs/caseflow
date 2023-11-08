@@ -9,6 +9,7 @@ import ApiUtil from '../../../../../util/ApiUtil';
 import CorrespondencePaginationWrapper from '../../../CorrespondencePaginationWrapper';
 import {
   loadCorrespondences,
+  updateRadioValue,
   saveCheckboxState,
   clearCheckboxState
 } from '../../../correspondenceReducer/correspondenceActions';
@@ -17,8 +18,6 @@ class AddCorrespondenceView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedRadioValue: '2',
-      checked: false,
       veteran_id: '',
       va_date_of_receipt: '',
       source_type: '',
@@ -48,13 +47,24 @@ class AddCorrespondenceView extends React.Component {
   }
 
   onChange = (value) => {
-    this.setState({ selectedRadioValue: value });
+    this.props.updateRadioValue({ radioValue: value });
     this.props.onContinueStatusChange(value === '2');
     this.props.clearCheckboxState();
   }
 
   onChangeCheckbox = (id, isChecked) => {
     this.props.saveCheckboxState(id, isChecked);
+    let selectedCheckboxes = this.props.checkboxes;
+
+    if (isChecked) {
+      selectedCheckboxes.push(id);
+    } else {
+      selectedCheckboxes = selectedCheckboxes.filter((checkboxId) => checkboxId !== id);
+    }
+
+    const isAnyCheckboxSelected = selectedCheckboxes.length > 0;
+
+    this.props.onCheckboxChange(isAnyCheckboxSelected);
   }
 
   getKeyForRow = (index, { id }) => {
@@ -68,8 +78,8 @@ class AddCorrespondenceView extends React.Component {
         cellClass: 'checkbox-column',
         valueFunction: () => (
           <Checkbox
-            name={String(correspondence.id)}
-            id={String(correspondence.id)}
+            name={correspondence.id.toString()}
+            id={correspondence.id.toString()}
             hideLabel
             defaultValue={this.props.checkboxes.includes(String(correspondence.id))}
             onChange={(checked) => this.onChangeCheckbox(String(correspondence.id), checked)}
@@ -164,7 +174,6 @@ class AddCorrespondenceView extends React.Component {
   };
 
   render() {
-
     const priorMailAnswer = [
       { displayText: 'Yes',
         value: '1' },
@@ -182,9 +191,9 @@ class AddCorrespondenceView extends React.Component {
         <RadioField
           name=""
           options={priorMailAnswer}
-          value={this.state.selectedRadioValue}
+          value={this.props.radioValue}
           onChange={this.onChange} />
-        {this.state.selectedRadioValue === '1' && (
+        {this.props.radioValue === '1' && (
           <div className="cf-app-segment cf-app-segment--alt">
             <p>Please select the prior mail to link to this correspondence</p>
             {/* <p>Viewing {this.props.correspondences.length} out of {this.props.correspondences.length} total</p> */}
@@ -214,6 +223,8 @@ AddCorrespondenceView.propTypes = {
   featureToggles: PropTypes.object,
   correspondenceUuid: PropTypes.string,
   loadCorrespondences: PropTypes.func,
+  updateRadioValue: PropTypes.func,
+  radioValue: PropTypes.string,
   saveCheckboxState: PropTypes.func,
   correspondences: PropTypes.array,
   onContinueStatusChange: PropTypes.func,
@@ -224,12 +235,14 @@ AddCorrespondenceView.propTypes = {
 
 const mapStateToProps = (state) => ({
   correspondences: state.intakeCorrespondence.correspondences,
-  checkboxes: state.intakeCorrespondence.toggledCheckboxes
+  radioValue: state.intakeCorrespondence.radioValue,
+  checkboxes: state.intakeCorrespondence.toggledCheckboxes,
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     loadCorrespondences,
+    updateRadioValue,
     saveCheckboxState,
     clearCheckboxState
   }, dispatch)

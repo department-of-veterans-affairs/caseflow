@@ -3,6 +3,7 @@ import { ACTIONS } from './correspondenceConstants';
 
 export const initialState = {
   correspondences: [],
+  radioValue: '2',
   toggledCheckboxes: []
 };
 
@@ -12,6 +13,13 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       correspondences: {
         $set: action.payload.correspondences
+      }
+    });
+
+  case ACTIONS.UPDATE_RADIO_VALUE:
+    return update(state, {
+      radioValue: {
+        $set: action.payload.radioValue
       }
     });
 

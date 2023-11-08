@@ -10,6 +10,13 @@ export const loadCorrespondences = (correspondences) =>
     });
   };
 
+export const updateRadioValue = (value) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.UPDATE_RADIO_VALUE,
+      payload: value
+    });
+};
 export const saveCheckboxState = (id, isChecked) =>
   (dispatch) => {
     dispatch({
