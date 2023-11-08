@@ -4,9 +4,9 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import Button from 'app/components/Button';
 import NonCompLayout from '../components/NonCompLayout';
-import { ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
+import { conditionsSchema, ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
 
-import NonCompReportFilterContainer from '../components/NonCompReportFilter';
+import { reportTypeSchema, NonCompReportFilterContainer } from '../components/NonCompReportFilter';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
@@ -26,39 +26,9 @@ const buttonOuterContainerStyling = css({
   marginTop: '4rem',
 });
 
-const conditionOptionSchemas = {
-  daysWaiting: yup.object({
-    comparisonOperator: yup.string().oneOf(['lessThan', 'moreThan', 'equalTo', 'between'], 'Please select a time range.'),
-    valueOne: yup.number().typeError('Please enter a number.').
-      required('Please enter a number.').
-      positive().
-      integer(),
-    valueTwo: yup.number().label('Max days').
-      when('comparisonOperator', {
-        is: 'between',
-        then: (schema) => schema.typeError('Please enter a number.').moreThan(yup.ref('valueOne')).
-          required('Please enter a number.'),
-        otherwise: (schema) => schema.notRequired()
-      })
-  }),
-  decisionReviewType: yup.object(),
-  facility: yup.object(),
-  issueDisposition: yup.object(),
-  issueType: yup.object(),
-  personnel: yup.object()
-};
 const schema = yup.object().shape({
-  reportType: yup.string().oneOf(['event_type_action', 'status'], 'Please make a selection.'),
-  conditions: yup.array().of(
-    yup.lazy((value) => {
-      return yup.object(
-        { condition: yup.string().typeError('You must select a variable.').
-          oneOf(['daysWaiting', 'decisionReviewType', 'facility', 'issueDisposition', 'issueType', 'personnel']).
-          required(),
-        options: conditionOptionSchemas[value.condition]
-        });
-    })
-  )
+  reportType: reportTypeSchema,
+  conditions: conditionsSchema
 });
 
 const ReportPageButtons = ({ history,

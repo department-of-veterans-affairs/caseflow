@@ -4,6 +4,12 @@ import PropTypes from 'prop-types';
 
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS';
+import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
+
+import * as yup from 'yup';
+
+export const reportTypeSchema = yup.string().
+  oneOf([REPORT_TYPE_CONSTANTS.REPORT_TYPE_OPTIONS.map((opt) => opt.value)], ERRORS.MISSING_SELECTION);
 
 const NonCompReportFilter = ({ control, formState }) => (
   <>

@@ -3,14 +3,32 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 import NumberField from 'app/components/NumberField';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
+import * as yup from 'yup';
 
 import { Controller, useFormContext } from 'react-hook-form';
 import DAYS_WAITING_CONDITION_OPTIONS from 'constants/DAYS_WAITING_CONDITION_OPTIONS';
+import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 
 const WidthDiv = styled.div`
   max-width: 45%;
   width: 100%
 `;
+
+export const daysWaitingSchema = yup.object({
+  comparisonOperator: yup.string().
+    oneOf(DAYS_WAITING_CONDITION_OPTIONS.map((cond) => cond.value), ERRORS.MISSING_TIME_RANGE),
+  valueOne: yup.number().typeError(ERRORS.MISSING_NUMBER).
+    required(ERRORS.MISSING_NUMBER).
+    positive().
+    integer(),
+  valueTwo: yup.number().label('Max days').
+    when('comparisonOperator', {
+      is: 'between',
+      then: (schema) => schema.typeError(ERRORS.MISSING_NUMBER).moreThan(yup.ref('valueOne')).
+        required(ERRORS.MISSING_NUMBER),
+      otherwise: (schema) => schema.notRequired()
+    })
+});
 
 export const DaysWaiting = ({ control, register, name, field, errors }) => {
   const dropdownName = `${name}.options.comparisonOperator`;

@@ -3,6 +3,30 @@ import { useFormContext, useFieldArray } from 'react-hook-form';
 import { ConditionContainer } from './ConditionContainer';
 import Button from 'app/components/Button';
 
+import * as yup from 'yup';
+import { daysWaitingSchema } from './Conditions/DaysWaiting';
+import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
+
+const conditionOptionSchemas = {
+  daysWaiting: daysWaitingSchema,
+  decisionReviewType: yup.object(),
+  facility: yup.object(),
+  issueDisposition: yup.object(),
+  issueType: yup.object(),
+  personnel: yup.object()
+};
+
+export const conditionsSchema = yup.array().of(
+  yup.lazy((value) => {
+    return yup.object(
+      { condition: yup.string().typeError(ERRORS.MISSING_SELECTION).
+        oneOf(['daysWaiting', 'decisionReviewType', 'facility', 'issueDisposition', 'issueType', 'personnel']).
+        required(),
+      options: conditionOptionSchemas[value.condition]
+      });
+  })
+);
+
 export const ReportPageConditions = () => {
   const { control, watch } = useFormContext();
   const { fields, append, remove } = useFieldArray({
