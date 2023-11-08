@@ -13,6 +13,7 @@ class ExternalApi::PexipService
     @client_host = client_host
   end
 
+  # :reek:FeatureEnvy
   def create_conference(virtual_hearing)
     host_pin = virtual_hearing.host_pin
     guest_pin = virtual_hearing.guest_pin

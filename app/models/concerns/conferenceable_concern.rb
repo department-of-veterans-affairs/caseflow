@@ -30,7 +30,7 @@ module ConferenceableConcern
   def determine_service_name
     return hearing&.conference_provider if is_a? VirtualHearing
 
-    created_by&.conference_provider if respond_to? :created_by
+    try(:created_by).try(:conference_provider)
   end
 
   # Creates an associated MeetingType record for the newly created object.

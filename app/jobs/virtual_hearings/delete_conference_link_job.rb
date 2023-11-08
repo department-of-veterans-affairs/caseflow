@@ -24,6 +24,6 @@ class VirtualHearings::DeleteConferenceLinkJob < CaseflowJob
   #
   # Return: A collection of links for hearing days that have passed.
   def retreive_stale_conference_links
-    ConferenceLink.joins(:hearing_day).where("scheduled_for < ?", Date.today)
+    ConferenceLink.joins(:hearing_day).where("scheduled_for < ?", Time.zone.today)
   end
 end

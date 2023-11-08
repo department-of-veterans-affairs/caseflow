@@ -27,6 +27,8 @@ class ConferenceLink < CaseflowRecord
     destroy
   end
 
+  private
+
   # Purpose: Updates conference_link attributes when passed into the 'update!' method.
   #
   # Params: None
@@ -39,8 +41,6 @@ class ConferenceLink < CaseflowRecord
       updated_at: Time.zone.now
     }
   end
-
-  private
 
   def generate_conference_information
     fail NotImplementedError
