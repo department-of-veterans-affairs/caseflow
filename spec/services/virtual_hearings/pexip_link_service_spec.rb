@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 describe VirtualHearings::PexipLinkService do
-  URL_HOST = "example.va.gov"
-  URL_PATH = "/sample"
-  PIN_KEY = "mysecretkey"
+  URL_HOST = ENV["VIRTUAL_HEARING_URL_HOST"]
+  URL_PATH = ENV["VIRTUAL_HEARING_URL_PATH"]
+  PIN_KEY = ENV["VIRTUAL_HEARING_PIN_KEY"]
 
   before do
     allow(ENV).to receive(:[]).and_call_original
@@ -13,8 +13,6 @@ describe VirtualHearings::PexipLinkService do
   describe ".host_link" do
     context "pin key env variable is missing" do
       before do
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return URL_HOST
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return URL_PATH
         allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return nil
       end
 
@@ -26,8 +24,6 @@ describe VirtualHearings::PexipLinkService do
     context "url host env variable is missing" do
       before do
         allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return nil
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return PIN_KEY
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return URL_PATH
       end
 
       it "raises the missing host error" do
@@ -37,8 +33,6 @@ describe VirtualHearings::PexipLinkService do
 
     context "url path env variable is missing" do
       before do
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return PIN_KEY
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return URL_HOST
         allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return nil
       end
 
@@ -48,12 +42,6 @@ describe VirtualHearings::PexipLinkService do
     end
 
     context "all env variables are present" do
-      before do
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return PIN_KEY
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return URL_HOST
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return URL_PATH
-      end
-
       context "the sequence returns '0000001'" do
         before do
           allow(VirtualHearings::SequenceConferenceId).to receive(:next).and_return "0000001"
@@ -98,12 +86,6 @@ describe VirtualHearings::PexipLinkService do
 
   describe ".guest_link" do
     context "all env variables are present" do
-      before do
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return PIN_KEY
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return URL_HOST
-        allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return URL_PATH
-      end
-
       context "the sequence returns '0000001'" do
         before do
           allow(VirtualHearings::SequenceConferenceId).to receive(:next).and_return "0000001"
