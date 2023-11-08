@@ -13,6 +13,12 @@ class RequestIssue < CaseflowRecord
   include HasDecisionReviewUpdatedSince
   include SyncLock
 
+  # Pagination for VBMS API
+  paginates_per ENV["REQUEST_ISSUE_PAGINATION_OFFSET"].to_i
+
+  # Max page per limit
+  DEFAULT_UPPER_BOUND_PER_PAGE = ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"].to_i
+
   # how many days before we give up trying to sync decisions
   REQUIRES_PROCESSING_WINDOW_DAYS = 30
 
@@ -252,6 +258,13 @@ class RequestIssue < CaseflowRecord
     return false unless end_product_establishment
 
     end_product_establishment.status_active?
+  end
+
+  def active?
+    eligible? &&
+      closed_at.nil? &&
+      (split_issue_status.nil? ||
+      split_issue_status == "in_progress")
   end
 
   def rating?
