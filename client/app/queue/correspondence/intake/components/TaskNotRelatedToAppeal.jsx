@@ -26,7 +26,7 @@ const TaskNotRelatedToAppeal = (props) => {
 
   const handleChangeInstructionText = (newText) => {
     setInstructionText(newText);
-  }
+  };
 
   return (
     <div key={props.key} style={{ display: 'block', marginRight: '2rem' }}>
@@ -74,6 +74,7 @@ const TaskNotRelatedToAppeal = (props) => {
 
 TaskNotRelatedToAppeal.propTypes = {
   removeTask: PropTypes.func,
+  key: PropTypes.object,
 };
 
 export default TaskNotRelatedToAppeal;

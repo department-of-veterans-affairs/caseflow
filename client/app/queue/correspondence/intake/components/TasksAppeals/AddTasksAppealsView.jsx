@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Checkbox from '../../../../../components/Checkbox';
 import Button from '../../../../../components/Button';
 import TaskNotRelatedToAppeal from '../TaskNotRelatedToAppeal';
+import PropTypes from 'prop-types';
 
 const mailTasksLeft = [
   'Change of address',
@@ -70,7 +71,7 @@ export const AddTasksAppealsView = (props) => {
           </div>
         </div>
 
-        <h2 style={{ margin: '3rem auto 1rem auto'}}>Tasks not related to an Appeal</h2>
+        <h2 style={{ margin: '3rem auto 1rem auto' }}>Tasks not related to an Appeal</h2>
         <p style={{ marginTop: '0rem', marginBottom: '2rem' }}>
           Add new tasks related to this correspondence or to an appeal not yet created in Caseflow.
         </p>
@@ -101,7 +102,7 @@ export const AddTasksAppealsView = (props) => {
             <div style={{ width: '100%', height: '3rem' }} />
             <div style={{ display: 'flex' }}>
               { addTask && addTask.map((currentTask, i) => (
-                <TaskNotRelatedToAppeal secret={i} key={currentTask.Object} removeTask={() => removeTaskAtIndex(i)} />
+                <TaskNotRelatedToAppeal key={currentTask.Object} removeTask={() => removeTaskAtIndex(i)} />
               ))}
 
             </div>
@@ -109,7 +110,7 @@ export const AddTasksAppealsView = (props) => {
               <Button
                 type="button"
                 onClick={clickAddTask}
-                disabled={addTask.length === 2 ? true : false}
+                disabled={addTask.length === 2}
                 name="addTasks"
                 classNames={['cf-left-side']}>
                   + Add tasks
@@ -123,7 +124,8 @@ export const AddTasksAppealsView = (props) => {
 };
 
 AddTasksAppealsView.propTypes = {
-
+  addTasksVisible: PropTypes.bool,
+  setAddTasksVisible: PropTypes.func,
 };
 
 export default AddTasksAppealsView;
