@@ -83,7 +83,7 @@ export const AddTasksAppealsView = (props) => {
         {!props.addTasksVisible && <Button
           type="button"
           onClick={clickAddTask}
-          disabled={addTask.length === 2 ? true : false}
+          disabled={addTask.length === 2}
           name="addTaskOpen"
           classNames={['cf-left-side']}>
             + Add tasks

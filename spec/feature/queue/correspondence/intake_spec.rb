@@ -83,8 +83,8 @@ RSpec.feature("The Correspondence Intake page") do
     it "Paragraph text appears below the title" do
       click_on("button-continue")
       expect(page).to have_button("+ Add tasks")
-      expect(page).to have_text("Add new tasks related to this correspondence or
-        to an appeal not yet created in Caseflow.")
+      expect(page).to have_text("Add new tasks related to this correspondence or " +
+        "to an appeal not yet created in Caseflow.")
     end
   end
 
