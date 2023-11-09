@@ -465,6 +465,11 @@ RSpec.feature "Hearing Details", :all_dbs do
         end
 
         scenario "async job is completed" do
+          virtual_hearing.update!(
+            host_hearing_link: "https://example.va.gov/sample/?conference",
+            guest_hearing_link: "https://example.va.gov/sample/?conference"
+          )
+
           # Mock the conference details
           virtual_hearing.alias_name = rand(1..9).to_s[0..6]
           virtual_hearing.guest_pin = rand(1..9).to_s[0..3].to_i
