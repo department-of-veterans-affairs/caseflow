@@ -59,7 +59,6 @@ class CorrespondenceController < ApplicationController
       veteran_name: vet.name,
       correspondence_type_id: @correspondence.correspondence_type_id,
       correspondence_types: CorrespondenceType.all
-      # correspondence_types: CorrespondenceType.pluck(:id, :name)
     }
   end
 
@@ -79,7 +78,8 @@ class CorrespondenceController < ApplicationController
 
   def correspondence_load
     @correspondence ||= correspondence_by_uuid
-    @all_correspondence = Correspondence.where(veteran_id: veteran_by_correspondence.id)
+    vet = veteran_by_correspondence
+    @all_correspondence = Correspondence.where(veteran_id: vet.id).where.not(uuid: params[:correspondence_uuid])
   end
 
   def correspondence_by_uuid
