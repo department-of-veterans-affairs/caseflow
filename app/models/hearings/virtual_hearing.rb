@@ -180,6 +180,8 @@ class VirtualHearing < CaseflowRecord
   end
 
   def test_link(title)
+    return "https://instant-usgov.webex.com/mediatest" if conference_provider == "webex"
+
     if use_vc_test_link?
       if ENV["VIRTUAL_HEARING_URL_HOST"].blank?
         fail(VirtualHearings::PexipLinkService::URLHostMissingError, message: COPY::URL_HOST_MISSING_ERROR_MESSAGE)
@@ -216,7 +218,7 @@ class VirtualHearing < CaseflowRecord
   # Determines if the hearing conference has been created
   def active?
     # the conference has been created the virtual hearing is active
-    conference_id.present? || (guest_hearing_link.present? && host_hearing_link.present?)
+    guest_hearing_link.present? && host_hearing_link.present?
   end
 
   # Determines if the conference was deleted
