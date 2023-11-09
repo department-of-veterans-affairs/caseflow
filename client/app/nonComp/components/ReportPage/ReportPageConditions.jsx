@@ -46,8 +46,9 @@ export const ReportPageConditions = () => {
 
   return (
     <div>
-      <hr style={{ marginTop: '50px', marginBottom: '50px' }} />
-      <h2>Conditions</h2>
+      <hr style={{ margin: '50px 0' }} />
+      {/* Update margin depending on the presence of controlledField elements */}
+      <h2 style={controlledFields.length ? { margin: '0' } : null}>Conditions</h2>
       {controlledFields.map((field, index) => {
         return <ConditionContainer key={field.id} {... { control, index, remove, field }} />;
       })}

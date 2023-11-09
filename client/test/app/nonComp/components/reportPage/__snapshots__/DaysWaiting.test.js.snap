@@ -274,9 +274,11 @@ exports[`DaysWaiting renders correctly 1`] = `
           </div>
           <div>
             <hr
-              style="margin-top: 50px; margin-bottom: 50px;"
+              style="margin: 50px 0px;"
             />
-            <h2>
+            <h2
+              style="margin: 0px;"
+            >
               Conditions
             </h2>
             <div
