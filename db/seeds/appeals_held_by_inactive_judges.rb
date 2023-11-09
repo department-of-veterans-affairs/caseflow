@@ -139,7 +139,7 @@ module Seeds
           # AC1: create legacy appeals ready to be distributed that have a hearing held by an inactive judge
           legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, inactive_judge, attorney, veteran)
           # Create the task tree, need to create each task like this to avoid user creation and index conflicts
-          create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, inactive_judge, attorney)
+          create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, inactive_judge, attorney, veteran)
         end
       end
 
@@ -173,8 +173,7 @@ module Seeds
       end
       
       # Creates legacy appeal ready for dispatch and hearing
-      def create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, judge, attorney)
-        vet = create_veteran(first_name: Faker::Name.first_name, last_name: Faker::Name.last_name)
+      def create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, judge, attorney, veteran)
         created_at = legacy_appeal[:created_at]
         task_id = "#{legacy_appeal.vacols_id}-#{VacolsHelper.day_only_str(created_at)}"
   
@@ -191,16 +190,9 @@ module Seeds
 
         ## Hearing held by inactive judge
         create(
-          :appeal,
-          :hearing_docket,
-          :with_post_intake_tasks,
-          :advanced_on_docket_due_to_age,
-          :held_hearing_and_ready_to_distribute,
-          :tied_to_judge,
-          veteran: create_veteran,
-          receipt_date: num.weeks.ago,
-          tied_judge: judge,
-          adding_user: User.first
+          :case_hearing,
+          :disposition_held,
+          folder_nr: ""
         )
       end
 
