@@ -228,7 +228,7 @@ class VirtualHearing < CaseflowRecord
   # require us to delete the conference but not set `request_cancelled`.
   def closed?
     # the conference has been created the virtual hearing was deleted
-    conference_id.present? && conference_deleted?
+    conference_deleted?
   end
 
   # Determines the status of the Virtual Hearing based on the establishment
