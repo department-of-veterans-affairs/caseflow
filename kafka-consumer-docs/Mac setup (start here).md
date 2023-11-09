@@ -9,7 +9,7 @@ Create a `~/dev/appeals/` directory
 
 Clone the following repo using git clone into this directory
 
- - < REPLACE WITH LINK TO REPO >
+ - `< REPLACE WITH LINK TO REPO >`
 
 > If you cannot clone the above, you might need to do [this setup](https://docs.github.com/en/enterprise-server@3.4/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
 
@@ -39,9 +39,15 @@ For the newer Macs with Arm64 processors, we will need to compile and build Ruby
 run `rbenv rehash` to ensure that the shims have been added correctly.
 
 After Ruby is installed, you can `cd` into the project directory and check that you have the correct ruby version with `ruby -v`. Additionally, you should see version 3.2.2 listed when you run `rbenv versions`.
-## Project dependencies
+## Project dependencies and setup DB
 
-From the project directory, run `bundle`.
+From the project directory, run:
+
+```bash
+bundle
+rails db:setup
+```
+
 
 
 
