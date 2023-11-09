@@ -16270,20 +16270,24 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                       </FormLabel>
                     </strong>
                   </label>
-                  <input
-                    className={
-                      Array [
-                        "cf-form-textinput cf-inline-field",
-                      ]
-                    }
-                    id="Veteran Email"
-                    name="Veteran Email"
-                    onBlur={[Function]}
-                    onChange={[Function]}
-                    readOnly={false}
-                    type="text"
-                    value="tom.brady@caseflow.gov"
-                  />
+                  <div
+                    className="input-container"
+                  >
+                    <input
+                      className={
+                        Array [
+                          "cf-form-textinput cf-inline-field",
+                        ]
+                      }
+                      id="Veteran Email"
+                      name="Veteran Email"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      readOnly={false}
+                      type="text"
+                      value="tom.brady@caseflow.gov"
+                    />
+                  </div>
                 </div>
               </TextField>
               <HelperText
@@ -32461,20 +32465,24 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                       </FormLabel>
                     </strong>
                   </label>
-                  <input
-                    className={
-                      Array [
-                        "cf-form-textinput cf-inline-field",
-                      ]
-                    }
-                    id="POA/Representative Email"
-                    name="POA/Representative Email"
-                    onBlur={[Function]}
-                    onChange={[Function]}
-                    readOnly={false}
-                    type="text"
-                    value="tom.brady@caseflow.gov"
-                  />
+                  <div
+                    className="input-container"
+                  >
+                    <input
+                      className={
+                        Array [
+                          "cf-form-textinput cf-inline-field",
+                        ]
+                      }
+                      id="POA/Representative Email"
+                      name="POA/Representative Email"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      readOnly={false}
+                      type="text"
+                      value="tom.brady@caseflow.gov"
+                    />
+                  </div>
                 </div>
               </TextField>
               <HelperText
@@ -48765,20 +48773,24 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                       </FormLabel>
                     </strong>
                   </label>
-                  <input
-                    className={
-                      Array [
-                        "cf-form-textinput cf-inline-field",
-                      ]
-                    }
-                    id="Veteran Email"
-                    name="Veteran Email"
-                    onBlur={[Function]}
-                    onChange={[Function]}
-                    readOnly={false}
-                    type="text"
-                    value="tom.brady@caseflow.gov"
-                  />
+                  <div
+                    className="input-container"
+                  >
+                    <input
+                      className={
+                        Array [
+                          "cf-form-textinput cf-inline-field",
+                        ]
+                      }
+                      id="Veteran Email"
+                      name="Veteran Email"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      readOnly={false}
+                      type="text"
+                      value="tom.brady@caseflow.gov"
+                    />
+                  </div>
                 </div>
               </TextField>
               <HelperText
@@ -64956,20 +64968,24 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                       </FormLabel>
                     </strong>
                   </label>
-                  <input
-                    className={
-                      Array [
-                        "cf-form-textinput cf-inline-field",
-                      ]
-                    }
-                    id="POA/Representative Email"
-                    name="POA/Representative Email"
-                    onBlur={[Function]}
-                    onChange={[Function]}
-                    readOnly={false}
-                    type="text"
-                    value="tom.brady@caseflow.gov"
-                  />
+                  <div
+                    className="input-container"
+                  >
+                    <input
+                      className={
+                        Array [
+                          "cf-form-textinput cf-inline-field",
+                        ]
+                      }
+                      id="POA/Representative Email"
+                      name="POA/Representative Email"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      readOnly={false}
+                      type="text"
+                      value="tom.brady@caseflow.gov"
+                    />
+                  </div>
                 </div>
               </TextField>
               <HelperText
