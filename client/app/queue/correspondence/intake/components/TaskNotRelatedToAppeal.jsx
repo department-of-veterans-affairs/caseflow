@@ -4,6 +4,7 @@ import TextareaField from '../../../../components/TextareaField';
 import ReactSelectDropdown from '../../../../components/ReactSelectDropdown';
 import PropTypes from 'prop-types';
 import Button from '../../../../components/Button';
+import { TrashcanIcon } from '../../../../components/icons/TrashcanIcon';
 import EditableField from '../../../../components/EditableField';
 import SaveableTextArea from '../../../../components/SaveableTextArea';
 import TextField from '../../../../components/TextField';
@@ -31,7 +32,8 @@ const TaskNotRelatedToAppeal = (props) => {
   return (
     <div key={props.key} style={{ display: 'block', marginRight: '2rem' }}>
       <div className="gray-border"
-        style={{ display: 'flex', padding: '2rem 2rem', marginLeft: '3rem', width: '50rem' }}>
+        style={{ display: 'block', padding: '2rem 2rem', marginLeft: '3rem', width: '50rem' }}>
+        {/* // style={{ padding: '2rem 2rem', marginLeft: '3rem', width: '50rem' }}> */}
         <div
           style={
             { width: '45rem' }
@@ -63,7 +65,7 @@ const TaskNotRelatedToAppeal = (props) => {
             name="Remove"
             styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
             onClick={props.removeTask}
-            classNames={['cf-btn-link', 'cf-right-side']} >
+            classNames={['cf-btn-link', 'cf-left-side']} >
             Remove task
           </Button>
         </div>
