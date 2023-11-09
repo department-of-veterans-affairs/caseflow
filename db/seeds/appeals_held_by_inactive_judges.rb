@@ -76,13 +76,17 @@ module Seeds
         rescue ActiveRecord::RecordNotUnique
           retry if (retries += 1) < retry_max
         end
-  
         sdomain_id = judge.css_id
+        # Create the judge
+        vacols_judge = create(
+          :staff,
+          :inactive_judge,
+          sdomainid: sdomain_id
+        )
         # Create the vacols_case
         begin
           retries ||= 0
-          vacols_case = create_video_vacols_case(vacols_titrnum, vacols_folder, correspondent)
-          create(:staff, slogid: vacols_case.bfcurloc, sdomainid: sdomain_id)
+          vacols_case = create_video_vacols_case(vacols_titrnum, vacols_folder, correspondent, vacols_judge)
         rescue ActiveRecord::RecordNotUnique
           retry if (retries += 1) < retry_max
         end
@@ -154,15 +158,15 @@ module Seeds
       end
   
       # Creates the video hearing request
-      def create_video_vacols_case(vacols_titrnum, vacols_folder, correspondent)
+      def create_video_vacols_case(vacols_titrnum, vacols_folder, correspondent, vacols_judge)
         create(
           :case,
           :assigned,
           :video_hearing_requested,
           :type_original,
+          user: vacols_judge,
           correspondent: correspondent,
           bfcorlid: vacols_titrnum,
-          bfcurloc: "CASEFLOW",
           folder: vacols_folder,
           case_issues: [create(:case_issue, :compensation), create(:case_issue, :compensation), create(:case_issue, :compensation)]
         )
