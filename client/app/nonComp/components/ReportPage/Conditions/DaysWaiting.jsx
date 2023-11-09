@@ -8,6 +8,7 @@ import * as yup from 'yup';
 import { Controller, useFormContext } from 'react-hook-form';
 import DAYS_WAITING_CONDITION_OPTIONS from 'constants/DAYS_WAITING_CONDITION_OPTIONS';
 import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
+import { get } from 'lodash';
 
 const WidthDiv = styled.div`
   max-width: 45%;
@@ -31,12 +32,12 @@ export const daysWaitingSchema = yup.object({
     })
 });
 
-export const DaysWaiting = ({ control, register, name, field, errors }) => {
+export const DaysWaiting = ({ control, register, name, field }) => {
   const dropdownName = `${name}.options.comparisonOperator`;
   const valueOneName = `${name}.options.valueOne`;
   const valueTwoName = `${name}.options.valueTwo`;
 
-  const { setValue } = useFormContext();
+  const { setValue, errors } = useFormContext();
 
   const displayValueOne = field.options.comparisonOperator;
 
@@ -56,7 +57,7 @@ export const DaysWaiting = ({ control, register, name, field, errors }) => {
             label="Time Range"
             options={DAYS_WAITING_CONDITION_OPTIONS}
             inputRef={ref}
-            errorMessage={errors?.options?.comparisonOperator?.message}
+            errorMessage={get(errors, dropdownName)?.message}
             onChange={(valObj) => {
               setValue(valueOneName, null);
               setValue(valueTwoName, null);
@@ -73,7 +74,7 @@ export const DaysWaiting = ({ control, register, name, field, errors }) => {
         defaultValue={field.options.valueOne}
         inputRef={register}
         isInteger
-        errorMessage={errors?.options?.valueOne?.message}
+        errorMessage={get(errors, valueOneName)?.message}
         onChange={(value) => {
           setValue(valueOneName, value);
         }}
@@ -87,7 +88,7 @@ export const DaysWaiting = ({ control, register, name, field, errors }) => {
           defaultValue={field.options.valueTwo}
           inputRef={register}
           isInteger
-          errorMessage={errors?.options?.valueTwo?.message}
+          errorMessage={get(errors, valueTwoName)?.message}
           onChange={(value) => {
             setValue(valueTwoName, value);
           }}

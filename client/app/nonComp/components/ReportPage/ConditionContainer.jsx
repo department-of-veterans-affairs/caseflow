@@ -12,9 +12,7 @@ import PropTypes from 'prop-types';
 
 export const ConditionContainer = ({ control, index, remove, field }) => {
 
-  const { watch, register, formState } = useFormContext();
-
-  const errors = formState.errors?.conditions?.at(index);
+  const { watch, register } = useFormContext();
 
   // this can't easily be extracted to somewhere else without breaking the form
   const variableOptions = [
@@ -74,14 +72,14 @@ export const ConditionContainer = ({ control, index, remove, field }) => {
     if (selectedVariableOption.component) {
       const ConditionContent = selectedVariableOption.component;
 
-      return <ConditionContent {...{ control, register, name, field, errors }} />;
+      return <ConditionContent {...{ control, register, name, field }} />;
     }
   }, [control, name, register, selectedConditionValue, variableOptions]);
 
   return <div className="report-page-segment">
     <div className="cf-app-segment cf-app-segment--alt report-page-variable-condition" >
       <div className="report-page-variable-select">
-        <ConditionDropdown {...{ control, filteredOptions, name, errors }} />
+        <ConditionDropdown {...{ control, filteredOptions, name }} />
       </div>
       {isShouldDisplayMiddleContent ? <div className="report-page-middle-content">including</div> : null}
       <div className={middleContentClassName}>

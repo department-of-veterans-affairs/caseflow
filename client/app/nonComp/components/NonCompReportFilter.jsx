@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS';
 
-const NonCompReportFilter = ({ control, formState }) => (
+const NonCompReportFilter = ({ control }) => (
   <>
     <h2>Type of report</h2>
     <Controller
@@ -18,7 +18,6 @@ const NonCompReportFilter = ({ control, formState }) => (
           options={REPORT_TYPE_CONSTANTS.REPORT_TYPE_OPTIONS}
           searchable={false}
           inputRef={ref}
-          errorMessage={formState.errors?.reportType?.message}
           onChange={(valObj) => onChange(valObj?.value)}
         />
       )}
