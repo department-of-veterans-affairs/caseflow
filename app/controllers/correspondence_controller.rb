@@ -23,7 +23,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def veteran
-    render json: veteran_by_correspondence&.id
+    render json: { veteran_id: veteran_by_correspondence&.id, file_number: veteran_by_correspondence&.file_number }
   end
 
   def show
@@ -55,7 +55,11 @@ class CorrespondenceController < ApplicationController
   end
 
   def veteran_by_correspondence
-    Veteran.find(correspondence&.veteran_id)
+    return @veteran_by_correspondence if @veteran_by_correspondence.present?
+
+    @veteran_by_correspondence = Veteran.find(correspondence&.veteran_id)
+
+    @veteran_by_correspondence
   end
 
 end

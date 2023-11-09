@@ -50,12 +50,12 @@ export const AddTasksAppealsView = (props) => {
       return;
     }
 
-    debugger;
-    ApiUtil.get(`/queue/correspondence/${props.correspondence_uuid}/veteran`).then((response) => {
-      const veteranId = response.body.id;
+    ApiUtil.get(`/queue/correspondence/${props.correspondenceUuid}/veteran`).then((response) => {
+      const veteranFileNumber = response.body.file_number;
 
-      ApiUtil.get('/appeals', { headers: { 'case-search': veteranId } }).
+      ApiUtil.get('/appeals', { headers: { 'case-search': veteranFileNumber } }).
         then((response) => {
+          debugger;
           setAppeals(response.body.appeals)
         });
       }
