@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import Checkbox from '../../../../../components/Checkbox';
 import Button from '../../../../../components/Button';
 import TaskNotRelatedToAppeal from '../TaskNotRelatedToAppeal';
@@ -24,6 +25,7 @@ export const AddTasksAppealsView = (props) => {
 
     currentTask.push({ Object: randNum });
     setAddTask(currentTask);
+    props.disableContinue(false);
   };
 
   const removeTaskAtIndex = (index) => {
@@ -34,6 +36,7 @@ export const AddTasksAppealsView = (props) => {
 
     if (newTask.length === 0 || newTask.isNull) {
       props.setAddTasksVisible(false);
+      props.disableContinue(true);
     }
   };
 
@@ -80,6 +83,7 @@ export const AddTasksAppealsView = (props) => {
         {!props.addTasksVisible && <Button
           type="button"
           onClick={clickAddTask}
+          disabled={addTask.length === 2 ? true : false}
           name="addTaskOpen"
           classNames={['cf-left-side']}>
             + Add tasks
@@ -123,6 +127,7 @@ export const AddTasksAppealsView = (props) => {
 };
 
 AddTasksAppealsView.propTypes = {
+  disableContinue: PropTypes.func
 
 };
 

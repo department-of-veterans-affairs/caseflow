@@ -67,6 +67,7 @@ export const CorrespondenceIntake = (props) => {
       <AddTasksAppealsView
         addTasksVisible={addTasksVisible}
         setAddTasksVisible={setAddTasksVisible}
+        disableContinue={handleContinueStatusChange}
       />
     }
     <div>
