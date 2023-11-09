@@ -147,6 +147,7 @@ RSpec.describe HearingsController, type: :controller do
             create(
               :virtual_hearing,
               :initialized,
+              :link_generation_initialized,
               status: :active,
               hearing: hearing,
               appellant_email: "existing_veteran_email@caseflow.gov",
@@ -234,6 +235,7 @@ RSpec.describe HearingsController, type: :controller do
             create(
               :virtual_hearing,
               :initialized,
+              :link_generation_initialized,
               status: :active,
               hearing: hearing,
               appellant_email: "existing_veteran_email@caseflow.gov",
@@ -263,6 +265,7 @@ RSpec.describe HearingsController, type: :controller do
           create(
             :virtual_hearing,
             :all_emails_sent,
+            :link_generation_initialized,
             status: :active,
             hearing: hearing,
             conference_id: "000000"
@@ -398,6 +401,7 @@ RSpec.describe HearingsController, type: :controller do
         create(
           :virtual_hearing,
           :initialized,
+          :link_generation_initialized,
           status: :active,
           hearing: hearing,
           appellant_email: "existing_veteran_email@caseflow.gov",
