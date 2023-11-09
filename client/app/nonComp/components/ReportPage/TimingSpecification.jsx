@@ -1,6 +1,6 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import PropTypes, { oneOf } from 'prop-types';
+import PropTypes from 'prop-types';
 
 import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
 import ReportPageDateSelector from 'app/nonComp/components/ReportPage/ReportPageDateSelector';
