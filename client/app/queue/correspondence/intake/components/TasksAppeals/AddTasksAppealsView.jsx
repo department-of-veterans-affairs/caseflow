@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import Checkbox from '../../../../../components/Checkbox';
 import Button from '../../../../../components/Button';
 import TaskNotRelatedToAppeal from '../TaskNotRelatedToAppeal';
-import PropTypes from 'prop-types';
 
 const mailTasksLeft = [
   'Change of address',
@@ -130,8 +129,7 @@ export const AddTasksAppealsView = (props) => {
 AddTasksAppealsView.propTypes = {
   addTasksVisible: PropTypes.bool,
   setAddTasksVisible: PropTypes.func,
-  disableContinue: PropTypes.func
-
+  disableContinue: PropTypes.func,
 };
 
 export default AddTasksAppealsView;
