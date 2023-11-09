@@ -21,6 +21,7 @@ const progressBarSections = [
 ];
 
 export const CorrespondenceIntake = (props) => {
+  console.log(props)
   const [currentStep, setCurrentStep] = useState(1);
 
   const nextStep = () => {

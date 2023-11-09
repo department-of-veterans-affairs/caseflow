@@ -1,5 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Checkbox from '../../../../../components/Checkbox';
+import RadioField from '../../../../../components/RadioField';
+import { current } from '@reduxjs/toolkit';
+import CaseListTable from '../../../../CaseListTable';
+import ApiUtil from '../../../../../util/ApiUtil';
 
 const mailTasksLeft = [
   'Change of address',
@@ -13,7 +17,59 @@ const mailTasksRight = [
   'Associated with Claims Folder'
 ];
 
-export const AddTasksAppealsView = () => {
+const existingAppealAnswer = [
+  { displayText: 'Yes',
+    value: '1' },
+  { displayText: 'No',
+    value: '2' }
+];
+
+
+export const AddTasksAppealsView = (props) => {
+
+  const [appeals, setAppeals] = useState([])
+  const [relatedToExistingAppeal, setRelatedToExistingAppeal] = useState(false)
+  const [existingAppealRadio, setExistingAppealRadio] = useState('2')
+
+  const selectYes = () => {
+    if (existingAppealRadio === '2') {
+      setExistingAppealRadio('1');
+      setRelatedToExistingAppeal(true);
+    }
+  };
+
+  const selectNo = () => {
+    if (existingAppealRadio === '1') {
+      setExistingAppealRadio('2');
+      setRelatedToExistingAppeal(false);
+    }
+  };
+
+  useEffect(() => {
+    if (relatedToExistingAppeal === false) {
+      return;
+    }
+
+    debugger;
+    ApiUtil.get(`/queue/correspondence/${props.correspondence_uuid}/veteran`).then((response) => {
+      const veteranId = response.body.id;
+
+      ApiUtil.get('/appeals', { headers: { 'case-search': veteranId } }).
+        then((response) => {
+          setAppeals(response.body.appeals)
+        });
+      }
+    );
+  }, [relatedToExistingAppeal]);
+
+  const selections = existingAppealAnswer.map(({displayText, value}) => ({
+
+    displayText,
+    current: (value === existingAppealRadio)
+  }),
+  );
+
+
   return (
     <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
       <h1 style={{ marginBottom: '10px' }}>Review Tasks & Appeals</h1>
@@ -46,6 +102,20 @@ export const AddTasksAppealsView = () => {
             })}
           </div>
         </div>
+        <br></br>
+        <h2>Tasks related to an existing Appeal</h2>
+        <p>Is this correspondence related to an existing appeal?</p>
+          <RadioField
+          name=""
+          value= {existingAppealRadio}
+          options={existingAppealAnswer}
+          onChange={existingAppealRadio === '2' ? selectYes : selectNo }/>
+
+          {existingAppealRadio === '1' && <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
+
+                          <CaseListTable appeals={appeals}/>
+            </div>}
+
       </div>
     </div>
   );
