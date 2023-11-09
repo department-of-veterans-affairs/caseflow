@@ -145,6 +145,7 @@ export const ReviewForm = (props) => {
                 label="Veteran file number"
                 value={props.editableData.veteran_file_number}
                 onChange={handleFileNumber}
+                name="veteran-file-number-input"
               />
               <TextField
                 label="Veteran name"

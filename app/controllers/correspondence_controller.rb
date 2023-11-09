@@ -2,7 +2,7 @@
 
 class CorrespondenceController < ApplicationController
   before_action :verify_feature_toggle
-  before_action :load_correspondence, only: [:show, :update]
+  before_action :correspondence, only: [:show, :update]
 
   def intake
     respond_to do |format|
@@ -41,13 +41,13 @@ class CorrespondenceController < ApplicationController
     if veteran_by_correspondence.update(veteran_params) && @correspondence.update(correspondence_params)
       render json: { status: :ok }
     else
-      render json: { error: 'Failed to update records' }, status: :unprocessable_entity
+      render json: { error: "Failed to update records" }, status: :unprocessable_entity
     end
   end
 
   private
 
-  def load_correspondence
+  def correspondence
     @correspondence ||= Correspondence.find(params[:id])
   end
 
@@ -105,5 +105,4 @@ class CorrespondenceController < ApplicationController
       packageDocumentType: correspondence.correspondence_type_id
     }
   end
-
 end
