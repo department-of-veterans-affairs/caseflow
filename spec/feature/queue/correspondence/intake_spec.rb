@@ -70,5 +70,49 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_button("Back")
       expect(page).to have_no_button("Submit")
     end
+
+  context "access 'Tasks not Related to an Appeals'" do
+    before :each do
+      FeatureToggle.enable!(:correspondence_queue)
+      User.authenticate!(roles: ["Mail Intake"])
+      @correspondence_uuid = "12345"
+      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+    end
+
+    it "Paragraph text appears below the title" do
+      click_on("button-continue")
+      expect(page).to have_button("+Add tasks")
+    end
+
+  context "The mail team user is able to click an 'add tasks' button" do
+    before :each do
+      FeatureToggle.enable!(:correspondence_queue)
+      User.authenticate!(roles: ["Mail Intake"])
+      @correspondence_uuid = "12345"
+      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+    end
+
+    it "The user can add additional tasks to correspondence by selecting the '+add tasks' button again"
+      click_on("+Add tasks")
+      expect(page).to have_button("+add tasks")
+    end
+
+    it "Two tasks is the limit for the user"
+      click_on("+Add tasks")
+      expect(page).to have_button("background-color: gray")
+    end
   end
-end
+
+  context "The 'add Tasks' button is grayed out when two tasks have been selected" do
+    before :each do
+      FeatureToggle.enable!(:correspondence_queue)
+      User.authenticate!(roles: ["Mail Intake"])
+      @correspondence_uuid = "12345"
+      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+    end
+
+    it "new section appears titled 'New Tasks'"
+      click_on("+Add tasks")
+      expect(page).to have_button("+add tasks")
+    end
+  end

@@ -65,7 +65,7 @@ const TaskNotRelatedToAppeal = (props) => {
             name="Remove"
             styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
             onClick={props.removeTask}
-            classNames={['cf-btn-link', 'cf-left-side']} >
+            classNames={['cf-btn-link', 'cf-right-side']} >
             Remove task
           </Button>
         </div>
