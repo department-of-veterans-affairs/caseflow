@@ -149,7 +149,7 @@ describe PexipConferenceLink do
       allow_any_instance_of(VirtualHearings::PexipLinkService).to receive(:conference_id).and_return expected_conference_id
       allow_any_instance_of(VirtualHearings::PexipLinkService).to receive(:guest_pin).and_return expected_pin
     end
-
+    let(:hearing_day) { create(:hearing_day) }
     let!(:user) { RequestStore.store[:current_user] = User.system_user }
 
     let(:conference_link) do
