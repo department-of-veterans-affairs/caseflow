@@ -83,7 +83,8 @@ RSpec.feature("The Correspondence Intake page") do
     it "Paragraph text appears below the title" do
       click_on("button-continue")
       expect(page).to have_button("+ Add tasks")
-      expect(page).to have_text("Add new tasks related to this correspondence or to an appeal not yet created in Caseflow.")
+      expect(page).to have_text("Add new tasks related to this correspondence or
+        to an appeal not yet created in Caseflow.")
     end
   end
 
@@ -104,18 +105,22 @@ RSpec.feature("The Correspondence Intake page") do
     it "Two tasks is the limit for the user" do
       click_on("+ Add tasks")
       click_on("+ Add tasks")
-      expect(getByText("+ Add tasks").closest(button)).toBeDisabled();
-      expect(page).to have_button('+ Add tasks', disabled: true)
+      expect(page).to have_button("+ Add tasks", disabled: true)
     end
 
     it "Two unrelated tasks have been added." do
-      binding.pry
-      click_on("button-continue")
-
       click_on("+ Add tasks")
+      expect(page).to have_text("Provide context and instruction on this task")
       expect(page.all(".cf-form-textarea").count).to eq(1)
       click_on("+ Add tasks")
       expect(page.all(".cf-form-textarea").count).to eq(2)
+    end
+
+    it "Closes out new section when unrelated tasks have been removed." do
+      click_on("+ Add tasks")
+      expect(page).to have_text("Provide context and instruction on this task")
+      click_on("button-Remove")
+      expect(page).to_not have_text("New Tasks")
     end
   end
 end
