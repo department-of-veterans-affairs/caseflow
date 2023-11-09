@@ -95,30 +95,20 @@ RSpec.feature("The Correspondence Intake page") do
     end
 
     it "The user can add additional tasks to correspondence by selecting the '+add tasks' button again" do
-      click_on("+Add tasks")
-      expect(page).to have_button("+Add tasks")
+      click_on("+ Add tasks")
+      expect(page).to have_button("+ Add tasks")
     end
 
     it "Two tasks is the limit for the user" do
-      click_on("+Add tasks")
-      # expect(page).to have_button("background-color: gray")
-      # expect(button).to be(disabled)
-      expect(getByText("+Add tasks").closest(button)).toBeDisabled();
-      expect(page).to have_button('+Add tasks', disabled: true)
-    end
-  end
-
-  context "The 'add Tasks' button is grayed out when two tasks have been selected" do
-    before :each do
-      FeatureToggle.enable!(:correspondence_queue)
-      User.authenticate!(roles: ["Mail Intake"])
-      @correspondence_uuid = "12345"
-      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      click_on("+ Add tasks")
+      click_on("+ Add tasks")
+      expect(getByText("+ Add tasks").closest(button)).toBeDisabled();
+      expect(page).to have_button('+ Add tasks', disabled: true)
     end
 
-    it "new section appears titled 'New Tasks'"
-      click_on("+Add tasks")
-      expect(page).to have_button("+Add tasks")
+    it "The new task section loads when clicking add tasks" do
+      click_on("+ Add tasks")
+=      expect(page).to have_text("Provide context and instruction on this task")
     end
   end
 end
