@@ -49,4 +49,4 @@ CorrespondencePaginationWrapper.propTypes = {
   getKeyForRow: PropTypes.func
 };
 
-export default CorrespondencePaginationWrapper;
+export default React.memo(CorrespondencePaginationWrapper);

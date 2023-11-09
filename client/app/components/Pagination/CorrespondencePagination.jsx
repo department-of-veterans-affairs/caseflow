@@ -158,4 +158,4 @@ CorrespondencePagination.propTypes = {
   getKeyForRow: PropTypes.func
 };
 
-export default CorrespondencePagination;
+export default React.memo(CorrespondencePagination);
