@@ -3,79 +3,78 @@ import PropTypes from 'prop-types';
 import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import Button from 'app/components/Button';
 
-let cancelLeverChanges = (leverStore) => {
+function CancelLeverChanges(leverStore)  {
   leverStore.dispatch({
     type: Constants.REVERT_LEVERS,
   });
 };
 
-let saveLeverChanges = (leverStore) => {
+function SaveLeverChanges(leverStore)  {
   leverStore.dispatch({
     type: Constants.SAVE_LEVERS,
   });
 };
 
-let refreshLevers = () => {
-  window.location.reload(false);
-  // PLACEHOLDER
+function RefreshLevers () {
+  window.location.reload(false); //PLACEHOLDER
   // Find levers div
   // refresh levers div
 };
 
-let updateLeverHistory = (leverStore) => {
+function UpdateLeverHistory(leverStore) {
   // create history row object
   // append history row object to formatted_history array
   // save history row object to database
   // refresh lever div
 };
 
-let saveLeversToDB = (leverStore) => {
-  // load the levers from leverStore.getState().levers into the DB
+function SaveLeversToDB(leverStore) {
+  //load the levers from leverStore.getState().levers into the DB
 };
 
-let displayButtonLeverAlert = (alert) => {
-  console.log('alert', alert);
-  // show small banner displaying the alert
+function DisplayButtonLeverAlert(alert) {
+  console.log("alert", alert)
+  //show small banner displaying the alert
 };
 
-let disableSaveButton = () => {
-  document.getElementById('SaveLeversButton').disabled = true;
-};
+function DisableSaveButton() {
+  document.getElementById("SaveLeversButton").disabled = true;
+}
 
-export let LeverCancelButton = (leverStore) => {
-  const cancelButtonActions = (levStore) => {
-    cancelLeverChanges(levStore);
-    refreshLevers();
-    displayButtonLeverAlert('Cancelled');
+export function LeverCancelButton({leverStore}) {
+  const CancelButtonActions = (leverStore) => {
+    CancelLeverChanges(leverStore);
+    RefreshLevers();
+    DisplayButtonLeverAlert("Cancelled")
   };
 
   return (
     <Button
-      style={{ background: 'none', color: 'blue', 'font-weight': '300' }}
+      style={{"background": "none", "color": "blue", "font-weight": "300"}}
       id="CancelLeversButton"
       classNames={['cf-btn-link']}
-      onClick={() => cancelButtonActions(leverStore)}>
+      onClick={() => CancelButtonActions(leverStore)}>
       Cancel
     </Button>
   );
 };
 
-export let LeverSaveButton = (leverStore) => {
-  const saveButtonActions = (levStore) => {
-    saveLeverChanges(levStore);
-    disableSaveButton();
-    updateLeverHistory(levStore);
-    saveLeversToDB(levStore);
-    displayButtonLeverAlert('Saved');
+export function LeverSaveButton({leverStore}) {
+  const SaveButtonActions = (leverStore) => {
+    SaveLeverChanges(leverStore);
+    DisableSaveButton();
+    UpdateLeverHistory(leverStore);
+    SaveLeversToDB(leverStore);
+    DisplayButtonLeverAlert("Saved")
   };
 
   return (
     <Button id="SaveLeversButton"
-      onClick={() => saveButtonActions(leverStore)}>
+    onClick={() => SaveButtonActions(leverStore)}>
       Save
     </Button>
   );
-};
+}
 
 LeverCancelButton.propTypes = {
   leverStore: PropTypes.any

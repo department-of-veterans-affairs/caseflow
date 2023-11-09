@@ -44,7 +44,7 @@ const BatchSize = (props) => {
   return (
     <div className={styles.leverContent}>
       <div className={styles.leverHead}>
-        <div className={styles.leverH2}>Batch Size</div>
+        <h2>Batch Size</h2>
         <div className={styles.leverLeft}><strong>Data Elements</strong></div>
         <div className={styles.leverRight}><strong>Value</strong></div>
       </div>

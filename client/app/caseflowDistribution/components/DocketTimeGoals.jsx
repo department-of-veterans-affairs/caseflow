@@ -61,10 +61,16 @@ const DocketTimeGoals = (props) => {
   return (
     <div className={styles.leverContent}>
       <div className={styles.leverHead}>
-        <div className={styles.leverH2}>{COPY.CASE_DISTRIBUTION_DISTRIBUTION_TITLE}​</div>
-        <p><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_1}</strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_2}</p>
-        <p><strong>{COPY.CASE_DISTRIBUTION_DISTRIBUTION_1}</strong>{COPY.CASE_DISTRIBUTION_DISTRIBUTION_2}</p>
-        <p>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_NOTE}​​</p>
+        <h2>{COPY.CASE_DISTRIBUTION_DISTRIBUTION_TITLE}</h2>
+        <p className="cf-lead-paragraph">
+          <strong className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_1}</strong>
+          {COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_2}
+        </p>
+        <p className="cf-lead-paragraph">
+          <strong className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_DISTRIBUTION_1}</strong>
+          {COPY.CASE_DISTRIBUTION_DISTRIBUTION_2}
+        </p>
+        <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_DOCKET_TIME_NOTE}</p>
         <div className={cx(styles.leverLeft, styles.docketLeverLeft)}><strong></strong></div>
         <div className={styles.leverMiddle}><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_1}</strong></div>
         <div className={styles.leverRight}><strong>{COPY.CASE_DISTRIBUTION_DISTRIBUTION_1}</strong></div>
@@ -93,7 +99,7 @@ const DocketTimeGoals = (props) => {
               disabled={lever.is_disabled}
               toggleSelected={toggleLever(index)}
             />
-            <div className={lever.is_active ? styles.toggleSwichInput : styles.toggleInputHide}>
+            <div className={lever.is_active ? styles.toggleSwitchInput : styles.toggleInputHide}>
               <NumberField
                 name={`toggle-${lever.item}`}
                 isInteger

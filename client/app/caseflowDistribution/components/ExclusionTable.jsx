@@ -6,6 +6,7 @@ import styles from 'app/styles/caseDistribution/ExclusionTable.module.scss';
 
 const ExclusionTable = () => {
 
+  // Placeholder options until future implementation
   let options = [
     { displayText: 'On',
       value: '1',
