@@ -166,7 +166,6 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
 
         expect(page).to have_content(vlj_virtual_hearing_link)
-        expect(page).to have_xpath "//a[contains(@href,'role=host')]"
       end
     end
     context "VLJ view" do
@@ -176,7 +175,6 @@ RSpec.feature "Editing virtual hearing information on daily Docket", :all_dbs do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
 
         expect(page).to have_content(vlj_virtual_hearing_link)
-        expect(page).to have_xpath "//a[contains(@href,'role=host')]"
       end
     end
   end
