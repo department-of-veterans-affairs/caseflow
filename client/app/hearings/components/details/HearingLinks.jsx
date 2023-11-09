@@ -39,6 +39,7 @@ export const VirtualHearingLinkDetails = ({
         hearing={hearing}
       />
     )}
+    {/* depending on the user being pexip or webex shows the correct links */}
     {hearing.conferenceProvider === 'pexip' ?
       (<><div {...labelPaddingFirst}>
         <strong>Conference Room: </strong>
