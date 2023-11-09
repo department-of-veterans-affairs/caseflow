@@ -44,7 +44,7 @@ module Seeds
         create_ama_appeals(50)
       end
   
-      def create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, judge, attorney)
+      def create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, judge, attorney, veteran)
         # We need these retries because the sequence for FactoryBot comes out of
         # sync with what's in the DB. This just essentially updates the FactoryBot
         # sequence to match what's in the DB.
@@ -69,8 +69,8 @@ module Seeds
           retries ||= 0
           correspondent = create(
             :correspondent,
-            snamef: Faker::Name.first_name,
-            snamel: Faker::Name.last_name,
+            snamef: veteran.first_name,
+            snamel: veteran.last_name,
             ssalut: ""
           )
         rescue ActiveRecord::RecordNotUnique
@@ -133,7 +133,7 @@ module Seeds
           type = "video"
           
           # AC1: create legacy appeals ready to be distributed that have a hearing held by an inactive judge
-          legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, inactive_judge, attorney)
+          legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, inactive_judge, attorney, veteran)
           # Create the task tree, need to create each task like this to avoid user creation and index conflicts
           create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, inactive_judge, attorney)
         end
