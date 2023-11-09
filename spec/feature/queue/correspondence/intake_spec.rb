@@ -108,9 +108,14 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_button('+ Add tasks', disabled: true)
     end
 
-    it "The new task section loads when clicking add tasks" do
+    it "Two unrelated tasks have been added." do
+      binding.pry
+      click_on("button-continue")
+
       click_on("+ Add tasks")
-      expect(page).to have_text("Provide context and instruction on this task")
+      expect(page.all(".cf-form-textarea").count).to eq(1)
+      click_on("+ Add tasks")
+      expect(page.all(".cf-form-textarea").count).to eq(2)
     end
   end
 end
