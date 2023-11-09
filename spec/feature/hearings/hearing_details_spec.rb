@@ -299,7 +299,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         let!(:virtual_hearing) do
           create(
             :virtual_hearing,
-            :link_generation_initialized,
+            :initialized,
             :all_emails_sent,
             :timezones_initialized,
             status: :active,
@@ -410,7 +410,7 @@ RSpec.feature "Hearing Details", :all_dbs do
         context "after the virtual hearing is scheduled" do
           let!(:hearing_day) { create(:hearing_day, scheduled_for: Date.yesterday - 2) }
           let!(:virtual_hearing) do
-            create(:virtual_hearing, :all_emails_sent, :link_generation_initialized, hearing: hearing)
+            create(:virtual_hearing, :all_emails_sent, :initialized, hearing: hearing)
           end
 
           before do
@@ -454,7 +454,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       context "Hearing type dropdown and vet and poa fields are disabled while async job is running" do
         let!(:virtual_hearing) do
-          create(:virtual_hearing, :all_emails_sent, :link_generation_initialized, hearing: hearing)
+          create(:virtual_hearing, :all_emails_sent, :initialized, hearing: hearing)
         end
 
         scenario "async job is not completed" do
@@ -486,7 +486,7 @@ RSpec.feature "Hearing Details", :all_dbs do
             :virtual_hearing,
             :all_emails_sent,
             :timezones_initialized,
-            :link_generation_initialized,
+            :initialized,
             status: :active,
             hearing: hearing
           )
@@ -539,7 +539,7 @@ RSpec.feature "Hearing Details", :all_dbs do
             :virtual_hearing,
             :all_emails_sent,
             :timezones_initialized,
-            :link_generation_initialized,
+            :initialized,
             status: :active,
             hearing: hearing
           )
@@ -600,7 +600,7 @@ RSpec.feature "Hearing Details", :all_dbs do
             :virtual_hearing,
             :all_emails_sent,
             :timezones_initialized,
-            :link_generation_initialized,
+            :initialized,
             status: :active,
             hearing: hearing
           )
@@ -637,7 +637,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           create(:virtual_hearing,
                  :all_emails_sent,
                  :timezones_initialized,
-                 :link_generation_initialized,
+                 :initialized,
                  status: :active,
                  hearing: hearing)
         end
@@ -672,7 +672,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           create(:virtual_hearing,
                  :all_emails_sent,
                  :timezones_initialized,
-                 :link_generation_initialized,
+                 :initialized,
                  status: :active,
                  hearing: hearing)
         end
@@ -708,7 +708,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           create(:virtual_hearing,
                  :all_emails_sent,
                  :timezones_initialized,
-                 :link_generation_initialized,
+                 :initialized,
                  status: :active,
                  hearing: hearing)
         end
@@ -747,7 +747,7 @@ RSpec.feature "Hearing Details", :all_dbs do
           create(:virtual_hearing,
                  :all_emails_sent,
                  :timezones_initialized,
-                 :link_generation_initialized,
+                 :initialized,
                  status: :active,
                  hearing: hearing)
         end
