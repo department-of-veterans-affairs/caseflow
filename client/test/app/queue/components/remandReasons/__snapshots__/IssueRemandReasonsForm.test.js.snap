@@ -331,7 +331,7 @@ exports[`IssueRemandReasonsForm AMA renders correctly by default 1`] = `
                 <span
                   class=""
                 >
-                  No Medical opinion
+                  No medical opinion
                 </span>
                  
               </label>
@@ -355,7 +355,7 @@ exports[`IssueRemandReasonsForm AMA renders correctly by default 1`] = `
                 <span
                   class=""
                 >
-                  Inadequate Medical opinion
+                  Inadequate medical opinion
                 </span>
                  
               </label>
