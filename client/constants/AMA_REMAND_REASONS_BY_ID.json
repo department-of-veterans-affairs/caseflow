@@ -14,8 +14,8 @@
   "medicalExam": {
     "no_medical_examination": "No medical examination",
     "inadequate_medical_examination": "Inadequate medical examination",
-    "no_medical_opinion": "No Medical opinion",
-    "inadequate_opinion": "Inadequate Medical opinion",
+    "no_medical_opinion": "No medical opinion",
+    "inadequate_opinion": "Inadequate medical opinion",
     "advisory_medical_opinion": "Advisory medical opinion"
   },
   "dueProcess": {
