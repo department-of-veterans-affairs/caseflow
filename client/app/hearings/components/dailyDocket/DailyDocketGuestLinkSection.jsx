@@ -1,8 +1,37 @@
-/* eslint-disable id-length */
 import React from 'react';
 import PropTypes from 'prop-types';
 import CopyTextButton from '../../../components/CopyTextButton';
 import { GUEST_LINK_LABELS } from '../../constants';
+
+const H3Styled = ({ children, style }) => (
+  <h3
+    style={{
+      marginBottom: '0px',
+      display: 'flex',
+      alignItems: 'center',
+      ...style,
+    }}
+  >
+    {children}
+  </h3>
+);
+
+const SpanStyled = ({ children }) => (
+  <span style={{ fontWeight: 'normal', paddingRight: '10px', display: 'flex' }}>
+    {children}
+  </span>
+);
+
+const ConferenceRoom = ({ type, alias }) => (
+  <H3Styled
+    style={{ width: type === 'PexipConferenceLink' ? '400px' : '725px' }}
+  >
+    {type === 'PexipConferenceLink' ?
+      GUEST_LINK_LABELS.PEXIP_GUEST_CONFERENCE_ROOM :
+      GUEST_LINK_LABELS.WEBEX_GUEST_CONFERENCE_ROOM}
+    <SpanStyled>{alias || 'N/A'}</SpanStyled>
+  </H3Styled>
+);
 
 export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
   const containerStyle = {
@@ -59,10 +88,10 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
    * @param {roleAccess} - Boolean for if the current user has access to the guest link
    * @returns The room information
    */
-  const renderRoomInfo = () => {
-    return (
-      <div>
-        {linkInfo && Object.values(linkInfo).map((link, index) => {
+  const renderRoomInfo = () => (
+    <div>
+      {linkInfo &&
+        Object.values(linkInfo).map((link, index) => {
           const { guestLink, type } = link;
 
           CopyTextButtonProps.textToCopy = guestLink;
@@ -72,77 +101,56 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
 
           return (
             <div key={index} style={roomInfoStyle(index)}>
-              <h3
-                style={{
-                  width: "350px",
-                  display: "flex",
-                  marginBottom: "0px",
-                  alignItems: "center",
-                  marginLeft: "10px",
-                }}
-              >
-                {type === "PexipConferenceLink"
-                  ? GUEST_LINK_LABELS.PEXIP_GUEST_LINK_SECTION_LABEL
-                  : GUEST_LINK_LABELS.WEBEX_GUEST_LINK_SECTION_LABEL}
-              </h3>
+              <H3Styled style={{ width: '350px', marginLeft: '10px' }}>
+                {type === 'PexipConferenceLink' ?
+                  GUEST_LINK_LABELS.PEXIP_GUEST_LINK_SECTION_LABEL :
+                  GUEST_LINK_LABELS.WEBEX_GUEST_LINK_SECTION_LABEL}
+              </H3Styled>
 
-              <h3
-                style={{
-                  display: "flex",
-                  marginBottom: "0px",
-                  alignItems: "center",
-                  width: "400px",
-                }}
-              >
-                {GUEST_LINK_LABELS.GUEST_CONFERENCE_ROOM}
-                <span style={{ fontWeight: "normal" }}>{alias || "N/A"}</span>
-              </h3>
-              {type === "PexipConferenceLink" && (
-                <h3
-                  style={{
-                    width: "max-content",
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: "0px",
-                    marginRight: "75px",
-                  }}
-                >
+              <ConferenceRoom type={type} alias={alias} />
+
+              {type === 'PexipConferenceLink' && (
+                <H3Styled style={{ width: 'max-content', marginRight: '75px' }}>
                   {GUEST_LINK_LABELS.GUEST_PIN}
-                  <span
-                    style={{
-                      fontWeight: "normal",
-                      paddingRight: "10px",
-                      display: "flex",
-                    }}
-                  >
-                    {linkGuestPin}
-                  </span>
-                </h3>
+                  <SpanStyled>{linkGuestPin}</SpanStyled>
+                </H3Styled>
               )}
-              <h3
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  marginBottom: "0px",
-                  marginRight: "10px",
-                }}
-              >
+
+              <H3Styled style={{ marginRight: '10px' }}>
                 <CopyTextButton {...CopyTextButtonProps} />
-              </h3>
+              </H3Styled>
             </div>
           );
         })}
-      </div>
-    );
-  };
+    </div>
+  );
 
   return <div style={containerStyle}>{renderRoomInfo()}</div>;
 };
 
+H3Styled.propTypes = {
+  children: PropTypes.node,
+  style: PropTypes.object,
+};
+
+SpanStyled.propTypes = {
+  children: PropTypes.node,
+};
+
+ConferenceRoom.propTypes = {
+  type: PropTypes.string,
+  alias: PropTypes.string,
+  children: PropTypes.node,
+  style: PropTypes.object,
+};
+
 DailyDocketGuestLinkSection.propTypes = {
-  linkInfo: PropTypes.shape({
-    guestLink: PropTypes.string,
-    guestPin: PropTypes.string,
-    alias: PropTypes.string,
-  }),
+  linkInfo: PropTypes.arrayOf(
+    PropTypes.shape({
+      guestLink: PropTypes.string,
+      guestPin: PropTypes.string,
+      alias: PropTypes.string,
+      type: PropTypes.string,
+    })
+  ),
 };
