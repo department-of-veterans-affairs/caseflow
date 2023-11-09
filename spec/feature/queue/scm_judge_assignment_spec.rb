@@ -160,7 +160,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(prompt: "Select a user", text: "Other")
           click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
           instructions = "#{judge_one.full_name} is on leave. Please draft a decision for this case"
-          fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions)
+          fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: instructions)
           click_on("Submit")
 
           expect(page).to have_content("Assigned 1 task to #{attorney_one.full_name}")
@@ -250,7 +250,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(prompt: "Select a user", text: "Other")
           click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
           instructions = "#{judge_one.full_name} is on leave. Please draft a decision for this case"
-          fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions)
+          fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: instructions)
           click_on("Submit")
 
           expect(page).to have_content("Assigned 1 task to #{attorney_one.full_name}")

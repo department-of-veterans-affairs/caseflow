@@ -131,13 +131,17 @@ Object {
                     </span>
                   </strong>
                 </label>
-                <input
-                  class="cf-form-textinput"
-                  id="firstName"
-                  name="firstName"
-                  type="text"
-                  value=""
-                />
+                <div
+                  class="input-container"
+                >
+                  <input
+                    class="cf-form-textinput"
+                    id="firstName"
+                    name="firstName"
+                    type="text"
+                    value=""
+                  />
+                </div>
               </div>
             </div>
             <div
@@ -160,13 +164,17 @@ Object {
                     </span>
                   </strong>
                 </label>
-                <input
-                  class="cf-form-textinput"
-                  id="middleName"
-                  name="middleName"
-                  type="text"
-                  value=""
-                />
+                <div
+                  class="input-container"
+                >
+                  <input
+                    class="cf-form-textinput"
+                    id="middleName"
+                    name="middleName"
+                    type="text"
+                    value=""
+                  />
+                </div>
               </div>
             </div>
             <div
@@ -189,13 +197,17 @@ Object {
                     </span>
                   </strong>
                 </label>
-                <input
-                  class="cf-form-textinput"
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  value=""
-                />
+                <div
+                  class="input-container"
+                >
+                  <input
+                    class="cf-form-textinput"
+                    id="lastName"
+                    name="lastName"
+                    type="text"
+                    value=""
+                  />
+                </div>
               </div>
             </div>
             <div
@@ -219,13 +231,17 @@ Object {
                     </span>
                   </strong>
                 </label>
-                <input
-                  class="cf-form-textinput"
-                  id="suffix"
-                  name="suffix"
-                  type="text"
-                  value=""
-                />
+                <div
+                  class="input-container"
+                >
+                  <input
+                    class="cf-form-textinput"
+                    id="suffix"
+                    name="suffix"
+                    type="text"
+                    value=""
+                  />
+                </div>
               </div>
               <div
                 class="cf-form-textinput   "
@@ -246,15 +262,19 @@ Object {
                     </span>
                   </strong>
                 </label>
-                <input
-                  class="cf-form-textinput"
-                  id="dateOfBirth"
-                  max="9999-12-31"
-                  name="dateOfBirth"
-                  placeholder="mm/dd/yyyy"
-                  type="date"
-                  value=""
-                />
+                <div
+                  class="input-container"
+                >
+                  <input
+                    class="cf-form-textinput"
+                    id="dateOfBirth"
+                    max="9999-12-31"
+                    name="dateOfBirth"
+                    placeholder="mm/dd/yyyy"
+                    type="date"
+                    value=""
+                  />
+                </div>
               </div>
             </div>
             <div
@@ -272,13 +292,17 @@ Object {
                     </span>
                   </strong>
                 </label>
-                <input
-                  class="cf-form-textinput"
-                  id="addressLine1"
-                  name="addressLine1"
-                  type="text"
-                  value=""
-                />
+                <div
+                  class="input-container"
+                >
+                  <input
+                    class="cf-form-textinput"
+                    id="addressLine1"
+                    name="addressLine1"
+                    type="text"
+                    value=""
+                  />
+                </div>
               </div>
             </div>
             <div
@@ -301,13 +325,17 @@ Object {
                     </span>
                   </strong>
                 </label>
-                <input
-                  class="cf-form-textinput"
-                  id="addressLine2"
-                  name="addressLine2"
-                  type="text"
-                  value=""
-                />
+                <div
+                  class="input-container"
+                >
+                  <input
+                    class="cf-form-textinput"
+                    id="addressLine2"
+                    name="addressLine2"
+                    type="text"
+                    value=""
+                  />
+                </div>
               </div>
             </div>
             <div
@@ -325,13 +353,17 @@ Object {
                     </span>
                   </strong>
                 </label>
-                <input
-                  class="cf-form-textinput"
-                  id="city"
-                  name="city"
-                  type="text"
-                  value=""
-                />
+                <div
+                  class="input-container"
+                >
+                  <input
+                    class="cf-form-textinput"
+                    id="city"
+                    name="city"
+                    type="text"
+                    value=""
+                  />
+                </div>
               </div>
               <div
                 class=""
@@ -474,13 +506,17 @@ Object {
                     </span>
                   </strong>
                 </label>
-                <input
-                  class="cf-form-textinput"
-                  id="zip"
-                  name="zip"
-                  type="text"
-                  value=""
-                />
+                <div
+                  class="input-container"
+                >
+                  <input
+                    class="cf-form-textinput"
+                    id="zip"
+                    name="zip"
+                    type="text"
+                    value=""
+                  />
+                </div>
               </div>
               <div
                 class="cf-form-textinput   "
@@ -494,13 +530,17 @@ Object {
                     </span>
                   </strong>
                 </label>
-                <input
-                  class="cf-form-textinput"
-                  id="country"
-                  name="country"
-                  type="text"
-                  value=""
-                />
+                <div
+                  class="input-container"
+                >
+                  <input
+                    class="cf-form-textinput"
+                    id="country"
+                    name="country"
+                    type="text"
+                    value=""
+                  />
+                </div>
               </div>
             </div>
             <div
@@ -523,13 +563,17 @@ Object {
                     </span>
                   </strong>
                 </label>
-                <input
-                  class="cf-form-textinput"
-                  id="emailAddress"
-                  name="emailAddress"
-                  type="text"
-                  value=""
-                />
+                <div
+                  class="input-container"
+                >
+                  <input
+                    class="cf-form-textinput"
+                    id="emailAddress"
+                    name="emailAddress"
+                    type="text"
+                    value=""
+                  />
+                </div>
               </div>
             </div>
             <div
@@ -552,13 +596,17 @@ Object {
                     </span>
                   </strong>
                 </label>
-                <input
-                  class="cf-form-textinput"
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  type="text"
-                  value=""
-                />
+                <div
+                  class="input-container"
+                >
+                  <input
+                    class="cf-form-textinput"
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    type="text"
+                    value=""
+                  />
+                </div>
               </div>
             </div>
           </form>
@@ -711,13 +759,17 @@ Object {
                   </span>
                 </strong>
               </label>
-              <input
-                class="cf-form-textinput"
-                id="firstName"
-                name="firstName"
-                type="text"
-                value=""
-              />
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput"
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  value=""
+                />
+              </div>
             </div>
           </div>
           <div
@@ -740,13 +792,17 @@ Object {
                   </span>
                 </strong>
               </label>
-              <input
-                class="cf-form-textinput"
-                id="middleName"
-                name="middleName"
-                type="text"
-                value=""
-              />
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput"
+                  id="middleName"
+                  name="middleName"
+                  type="text"
+                  value=""
+                />
+              </div>
             </div>
           </div>
           <div
@@ -769,13 +825,17 @@ Object {
                   </span>
                 </strong>
               </label>
-              <input
-                class="cf-form-textinput"
-                id="lastName"
-                name="lastName"
-                type="text"
-                value=""
-              />
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput"
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  value=""
+                />
+              </div>
             </div>
           </div>
           <div
@@ -799,13 +859,17 @@ Object {
                   </span>
                 </strong>
               </label>
-              <input
-                class="cf-form-textinput"
-                id="suffix"
-                name="suffix"
-                type="text"
-                value=""
-              />
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput"
+                  id="suffix"
+                  name="suffix"
+                  type="text"
+                  value=""
+                />
+              </div>
             </div>
             <div
               class="cf-form-textinput   "
@@ -826,15 +890,19 @@ Object {
                   </span>
                 </strong>
               </label>
-              <input
-                class="cf-form-textinput"
-                id="dateOfBirth"
-                max="9999-12-31"
-                name="dateOfBirth"
-                placeholder="mm/dd/yyyy"
-                type="date"
-                value=""
-              />
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput"
+                  id="dateOfBirth"
+                  max="9999-12-31"
+                  name="dateOfBirth"
+                  placeholder="mm/dd/yyyy"
+                  type="date"
+                  value=""
+                />
+              </div>
             </div>
           </div>
           <div
@@ -852,13 +920,17 @@ Object {
                   </span>
                 </strong>
               </label>
-              <input
-                class="cf-form-textinput"
-                id="addressLine1"
-                name="addressLine1"
-                type="text"
-                value=""
-              />
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput"
+                  id="addressLine1"
+                  name="addressLine1"
+                  type="text"
+                  value=""
+                />
+              </div>
             </div>
           </div>
           <div
@@ -881,13 +953,17 @@ Object {
                   </span>
                 </strong>
               </label>
-              <input
-                class="cf-form-textinput"
-                id="addressLine2"
-                name="addressLine2"
-                type="text"
-                value=""
-              />
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput"
+                  id="addressLine2"
+                  name="addressLine2"
+                  type="text"
+                  value=""
+                />
+              </div>
             </div>
           </div>
           <div
@@ -905,13 +981,17 @@ Object {
                   </span>
                 </strong>
               </label>
-              <input
-                class="cf-form-textinput"
-                id="city"
-                name="city"
-                type="text"
-                value=""
-              />
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput"
+                  id="city"
+                  name="city"
+                  type="text"
+                  value=""
+                />
+              </div>
             </div>
             <div
               class=""
@@ -1054,13 +1134,17 @@ Object {
                   </span>
                 </strong>
               </label>
-              <input
-                class="cf-form-textinput"
-                id="zip"
-                name="zip"
-                type="text"
-                value=""
-              />
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput"
+                  id="zip"
+                  name="zip"
+                  type="text"
+                  value=""
+                />
+              </div>
             </div>
             <div
               class="cf-form-textinput   "
@@ -1074,13 +1158,17 @@ Object {
                   </span>
                 </strong>
               </label>
-              <input
-                class="cf-form-textinput"
-                id="country"
-                name="country"
-                type="text"
-                value=""
-              />
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput"
+                  id="country"
+                  name="country"
+                  type="text"
+                  value=""
+                />
+              </div>
             </div>
           </div>
           <div
@@ -1103,13 +1191,17 @@ Object {
                   </span>
                 </strong>
               </label>
-              <input
-                class="cf-form-textinput"
-                id="emailAddress"
-                name="emailAddress"
-                type="text"
-                value=""
-              />
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput"
+                  id="emailAddress"
+                  name="emailAddress"
+                  type="text"
+                  value=""
+                />
+              </div>
             </div>
           </div>
           <div
@@ -1132,13 +1224,17 @@ Object {
                   </span>
                 </strong>
               </label>
-              <input
-                class="cf-form-textinput"
-                id="phoneNumber"
-                name="phoneNumber"
-                type="text"
-                value=""
-              />
+              <div
+                class="input-container"
+              >
+                <input
+                  class="cf-form-textinput"
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  type="text"
+                  value=""
+                />
+              </div>
             </div>
           </div>
         </form>

@@ -2417,19 +2417,23 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant
       >
         Something went wrong...
       </span>
-      <input
-        className={
-          Array [
-            "cf-form-textinput",
-          ]
-        }
-        id="appellant-email"
-        name="appellant-email"
-        onBlur={[Function]}
-        onChange={[Function]}
-        type="text"
-        value="Bob.Smith@test.com"
-      />
+      <div
+        className="input-container"
+      >
+        <input
+          className={
+            Array [
+              "cf-form-textinput",
+            ]
+          }
+          id="appellant-email"
+          name="appellant-email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          type="text"
+          value="Bob.Smith@test.com"
+        />
+      </div>
     </div>
   </TextField>
   <TextField
@@ -2467,19 +2471,23 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays appellant
           </FormLabel>
         </strong>
       </label>
-      <input
-        className={
-          Array [
-            "cf-form-textinput",
-          ]
-        }
-        id="representative-email"
-        name="representative-email"
-        onBlur={[Function]}
-        onChange={[Function]}
-        type="text"
-        value="tom.brady@caseflow.gov"
-      />
+      <div
+        className="input-container"
+      >
+        <input
+          className={
+            Array [
+              "cf-form-textinput",
+            ]
+          }
+          id="representative-email"
+          name="representative-email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          type="text"
+          value="tom.brady@caseflow.gov"
+        />
+      </div>
     </div>
   </TextField>
   <p
@@ -2822,19 +2830,23 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for
           </FormLabel>
         </strong>
       </label>
-      <input
-        className={
-          Array [
-            "cf-form-textinput",
-          ]
-        }
-        id="appellant-email"
-        name="appellant-email"
-        onBlur={[Function]}
-        onChange={[Function]}
-        type="text"
-        value="Bob.Smith@test.com"
-      />
+      <div
+        className="input-container"
+      >
+        <input
+          className={
+            Array [
+              "cf-form-textinput",
+            ]
+          }
+          id="appellant-email"
+          name="appellant-email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          type="text"
+          value="Bob.Smith@test.com"
+        />
+      </div>
     </div>
   </TextField>
   <TextField
@@ -2872,19 +2884,23 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays input for
           </FormLabel>
         </strong>
       </label>
-      <input
-        className={
-          Array [
-            "cf-form-textinput",
-          ]
-        }
-        id="representative-email"
-        name="representative-email"
-        onBlur={[Function]}
-        onChange={[Function]}
-        type="text"
-        value="tom.brady@caseflow.gov"
-      />
+      <div
+        className="input-container"
+      >
+        <input
+          className={
+            Array [
+              "cf-form-textinput",
+            ]
+          }
+          id="representative-email"
+          name="representative-email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          type="text"
+          value="tom.brady@caseflow.gov"
+        />
+      </div>
     </div>
   </TextField>
   <p
@@ -3269,19 +3285,23 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
           </FormLabel>
         </strong>
       </label>
-      <input
-        className={
-          Array [
-            "cf-form-textinput",
-          ]
-        }
-        id="appellant-email"
-        name="appellant-email"
-        onBlur={[Function]}
-        onChange={[Function]}
-        type="text"
-        value="Bob.Smith@test.com"
-      />
+      <div
+        className="input-container"
+      >
+        <input
+          className={
+            Array [
+              "cf-form-textinput",
+            ]
+          }
+          id="appellant-email"
+          name="appellant-email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          type="text"
+          value="Bob.Smith@test.com"
+        />
+      </div>
     </div>
   </TextField>
   <TextField
@@ -3326,19 +3346,23 @@ exports[`EmailConfirmationModal ChangeToVirtual sub-component Displays represent
       >
         Something went wrong...
       </span>
-      <input
-        className={
-          Array [
-            "cf-form-textinput",
-          ]
-        }
-        id="representative-email"
-        name="representative-email"
-        onBlur={[Function]}
-        onChange={[Function]}
-        type="text"
-        value="tom.brady@caseflow.gov"
-      />
+      <div
+        className="input-container"
+      >
+        <input
+          className={
+            Array [
+              "cf-form-textinput",
+            ]
+          }
+          id="representative-email"
+          name="representative-email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          type="text"
+          value="tom.brady@caseflow.gov"
+        />
+      </div>
     </div>
   </TextField>
   <p
@@ -6563,20 +6587,24 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
                           </FormLabel>
                         </strong>
                       </label>
-                      <input
-                        className={
-                          Array [
-                            "cf-form-textinput",
-                          ]
-                        }
-                        id="appellant-email"
-                        name="appellant-email"
-                        onBlur={[Function]}
-                        onChange={[Function]}
-                        readOnly={false}
-                        type="text"
-                        value="Bob.Smith@test.com"
-                      />
+                      <div
+                        className="input-container"
+                      >
+                        <input
+                          className={
+                            Array [
+                              "cf-form-textinput",
+                            ]
+                          }
+                          id="appellant-email"
+                          name="appellant-email"
+                          onBlur={[Function]}
+                          onChange={[Function]}
+                          readOnly={false}
+                          type="text"
+                          value="Bob.Smith@test.com"
+                        />
+                      </div>
                     </div>
                   </TextField>
                   <TextField
@@ -6616,20 +6644,24 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
                           </FormLabel>
                         </strong>
                       </label>
-                      <input
-                        className={
-                          Array [
-                            "cf-form-textinput",
-                          ]
-                        }
-                        id="representative-email"
-                        name="representative-email"
-                        onBlur={[Function]}
-                        onChange={[Function]}
-                        readOnly={false}
-                        type="text"
-                        value="tom.brady@caseflow.gov"
-                      />
+                      <div
+                        className="input-container"
+                      >
+                        <input
+                          className={
+                            Array [
+                              "cf-form-textinput",
+                            ]
+                          }
+                          id="representative-email"
+                          name="representative-email"
+                          onBlur={[Function]}
+                          onChange={[Function]}
+                          readOnly={false}
+                          type="text"
+                          value="tom.brady@caseflow.gov"
+                        />
+                      </div>
                     </div>
                   </TextField>
                   <p

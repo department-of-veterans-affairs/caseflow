@@ -548,13 +548,6 @@ describe HearingDay, :all_dbs do
   end
 
   context "hearing day in the past, conference link doesnt exist" do
-    include_context "Mock Pexip service env vars"
-
-    after do
-      FeatureToggle.disable!(:pexip_conference_service)
-      FeatureToggle.disable!(:webex_conference_service)
-    end
-
     let(:hearing_day) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
       create(
@@ -601,7 +594,6 @@ describe HearingDay, :all_dbs do
 
   context "#subject_for_conference" do
     include_context "Enable both conference services"
-    include_context "Mock Pexip service env vars"
 
     let(:expected_date) { "Sep 21, 2023" }
     let(:expected_date_parsed) { Date.parse(expected_date) }
@@ -620,8 +612,6 @@ describe HearingDay, :all_dbs do
   end
 
   context "hearing day in the future, conference link doesnt exist" do
-    include_context "Mock Pexip service env vars"
-
     let(:hearing_day) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
       create(
