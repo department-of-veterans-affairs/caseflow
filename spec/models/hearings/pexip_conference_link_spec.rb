@@ -61,8 +61,6 @@ describe PexipConferenceLink do
   end
 
   context "#create" do
-    include_context "Mock Pexip service env vars"
-
     let(:hearing_day) do
       create(:hearing_day, id: 1)
     end
@@ -89,8 +87,6 @@ describe PexipConferenceLink do
   end
 
   context "update conference day" do
-    include_context "Mock Pexip service env vars"
-
     let(:hearing_day) do
       create(:hearing_day, id: 1)
     end
@@ -126,7 +122,6 @@ describe PexipConferenceLink do
   end
 
   describe "#guest_pin" do
-    include_context "Mock Pexip service env vars"
     include_context "Enable both conference services"
 
     let(:hearing_day) { create(:hearing_day) }
@@ -150,14 +145,10 @@ describe PexipConferenceLink do
   end
 
   describe "#guest_link" do
-    include_context "Mock Pexip service env vars"
-
     before do
       allow_any_instance_of(VirtualHearings::PexipLinkService).to receive(:conference_id).and_return expected_conference_id
       allow_any_instance_of(VirtualHearings::PexipLinkService).to receive(:guest_pin).and_return expected_pin
     end
-
-    let(:hearing_day) { create(:hearing_day) }
 
     let!(:user) { RequestStore.store[:current_user] = User.system_user }
 

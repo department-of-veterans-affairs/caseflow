@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.feature "Hearing Details", :all_dbs do
+  include_context "Enable both conference services"
+
   before do
     # VSO users require this task to be active on an appeal for them to access its hearings.
     TrackVeteranTask.create!(appeal: hearing.appeal, parent: hearing.appeal.root_task, assigned_to: vso_org)

@@ -34,8 +34,6 @@ describe ConferenceLinkSerializer, :all_dbs do
     subject { described_class.new(conference_link) }
 
     context "With a Pexip conference link" do
-      include_context "Mock Pexip service env vars"
-
       let(:conference_link) { create(:pexip_conference_link, hearing_day: hearing_day) }
 
       include_examples "Serialized conferenced link attributes meet expectations"
