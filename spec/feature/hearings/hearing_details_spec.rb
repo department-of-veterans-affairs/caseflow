@@ -454,7 +454,7 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       context "Hearing type dropdown and vet and poa fields are disabled while async job is running" do
         let!(:virtual_hearing) do
-          create(:virtual_hearing, :all_emails_sent, :initialized, hearing: hearing)
+          create(:virtual_hearing, :all_emails_sent, hearing: hearing)
         end
 
         scenario "async job is not completed" do
