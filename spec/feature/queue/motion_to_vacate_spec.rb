@@ -858,7 +858,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
           # Add remand reasons for issue 2
           within all("div.remand-reasons-form")[1] do
-            find_field("No Medical examination", visible: false).sibling("label").click
+            find_field("No medical examination", visible: false).sibling("label").click
             find_field("Pre AOJ", visible: false).sibling("label").click
           end
 

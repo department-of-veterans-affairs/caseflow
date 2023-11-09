@@ -209,7 +209,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       # Adding sleeps is bad... but I'm not sure how else to get this to work.
       sleep 1
 
-      all("label", text: "No Medical examination", visible: false, count: 2)[1].click
+      all("label", text: "No medical examination", visible: false, count: 2)[1].click
       all("label", text: "Pre AOJ", visible: false, count: 2)[1].click
 
       click_on "Continue"
