@@ -94,12 +94,12 @@ RSpec.feature("The Correspondence Intake page") do
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
     end
 
-    it "The user can add additional tasks to correspondence by selecting the '+add tasks' button again"
+    it "The user can add additional tasks to correspondence by selecting the '+add tasks' button again" do
       click_on("+Add tasks")
       expect(page).to have_button("+Add tasks")
     end
 
-    it "Two tasks is the limit for the user"
+    it "Two tasks is the limit for the user" do
       click_on("+Add tasks")
       # expect(page).to have_button("background-color: gray")
       # expect(button).to be(disabled)
