@@ -103,6 +103,8 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("+Add tasks")
       # expect(page).to have_button("background-color: gray")
       # expect(button).to be(disabled)
+      expect(getByText("+Add tasks").closest(button)).toBeDisabled();
+      expect(page).to have_button('+Add tasks', disabled: true)
     end
   end
 
