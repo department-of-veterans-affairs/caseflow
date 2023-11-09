@@ -19,17 +19,45 @@ describe ExternalApi::WebexService do
     )
   end
 
-  describe "webex requests" do
-    let(:virtual_hearing) do
-      create(:virtual_hearing)
+  let(:virtual_hearing) { create(:virtual_hearing) }
+  let(:success_create_resp) { HTTPI::Response.new(200, {}, {}) }
+  let(:error_create_resp) { HTTPI::Response.new(400, {}, {}) }
+
+  shared_examples_for "webex request" do |method, response_class|
+    subject { webex_service.public_send(method, virtual_hearing) }
+
+    it "calls send_webex_request and passes the correct body" do
+      expect(webex_service).to receive(:send_webex_request).with(body: body)
+      subject
     end
 
-    let(:success_create_resp) do
-      HTTPI::Response.new(200, {}, {})
+    it "returns a successful instance of #{response_class} class" do
+      allow(webex_service).to receive(:send_webex_request).with(body: body).and_return(success_create_resp)
+
+      expect(subject).to be_instance_of(response_class)
+      expect(subject.code).to eq(200)
+      expect(subject.success?).to eq(true)
     end
 
-    let(:error_create_resp) do
-      HTTPI::Response.new(400, {}, {})
+    it "returns error response" do
+      allow(webex_service).to receive(:send_webex_request).with(body: body).and_return(error_create_resp)
+
+      expect(subject.code).to eq(400)
+      expect(subject.success?).to eq(false)
+      expect(subject.error).to eq(Caseflow::Error::WebexBadRequestError.new(code: 400))
+    end
+  end
+
+  describe "with fakes" do
+    let(:webex_service) do
+      Fakes::WebexService.new(
+        host: host,
+        port: port,
+        aud: aud,
+        apikey: apikey,
+        domain: domain,
+        api_endpoint: api_endpoint
+      )
     end
 
     describe "create conference" do
@@ -49,87 +77,67 @@ describe ExternalApi::WebexService do
 
       subject { webex_service.create_conference(virtual_hearing) }
 
-      it "calls send_webex_request and passes the correct body" do
-        expect(webex_service).to receive(:send_webex_request).with(body: body)
-        subject
-      end
-
-      it "returns a successful instance of CreateResponse class" do
-        allow(webex_service).to receive(:send_webex_request).with(body: body).and_return(success_create_resp)
-
-        expect(subject).to be_instance_of(ExternalApi::WebexService::CreateResponse)
+      it "creates a conference" do
         expect(subject.code).to eq(200)
-        expect(subject.success?).to eq(true)
-      end
-
-      it "returns error response" do
-        allow(webex_service).to receive(:send_webex_request).with(body: body).and_return(error_create_resp)
-
-        expect(subject.code).to eq(400)
-        expect(subject.success?).to eq(false)
-        expect(subject.error).to eq(Caseflow::Error::WebexBadRequestError.new(code: 400))
-      end
-
-      describe "with fakes" do
-        let(:webex_service) do
-          Fakes::WebexService.new
-        end
-
-        it "creates a conference" do
-          expect(subject.code).to eq(200)
-          expect(subject.resp.body[:baseUrl]).to eq("https://instant-usgov.webex.com/visit/")
-          subject
-        end
+        expect(subject.resp.body[:baseUrl]).to eq("https://instant-usgov.webex.com/visit/")
+        subject
       end
     end
+  end
 
-    describe "delete conference" do
-      let(:body) do
-        {
-          "jwt": {
-            "sub": virtual_hearing.subject_for_conference,
-            "Nbf": 0,
-            "Exp": 0
-          },
-          "aud": aud,
-          "numGuest": 1,
-          "numHost": 1,
-          "provideShortUrls": true
-        }
+  describe "delete conference" do
+    let(:body) do
+      {
+        "jwt": {
+          "sub": virtual_hearing.subject_for_conference,
+          "Nbf": 0,
+          "Exp": 0
+        },
+        "aud": aud,
+        "numGuest": 1,
+        "numHost": 1,
+        "provideShortUrls": true
+      }
+    end
+    subject { webex_service.delete_conference(virtual_hearing) }
+
+    it "calls send_webex_request and passes correct body" do
+      expect(webex_service).to receive(:send_webex_request).with(body: body)
+      subject
+    end
+
+    it "returns a successful instance of CreateResponse class" do
+      allow(webex_service).to receive(:send_webex_request).with(body: body).and_return(success_create_resp)
+
+      expect(subject).to be_instance_of(ExternalApi::WebexService::DeleteResponse)
+      expect(subject.code).to eq(200)
+      expect(subject.success?).to eq(true)
+    end
+
+    it "returns error response" do
+      allow(webex_service).to receive(:send_webex_request).with(body: body).and_return(error_create_resp)
+
+      expect(subject.code).to eq(400)
+      expect(subject.success?).to eq(false)
+      expect(subject.error).to eq(Caseflow::Error::WebexBadRequestError.new(code: 400))
+    end
+
+    describe "with fakes" do
+      let(:webex_service) do
+        Fakes::WebexService.new(
+          host: host,
+          port: port,
+          aud: aud,
+          apikey: apikey,
+          domain: domain,
+          api_endpoint: api_endpoint
+        )
       end
-      subject { webex_service.delete_conference(virtual_hearing) }
 
-      it "calls send_webex_request and passes correct body" do
-        expect(webex_service).to receive(:send_webex_request).with(body: body)
-        subject
-      end
-
-      it "returns a successful instance of CreateResponse class" do
-        allow(webex_service).to receive(:send_webex_request).with(body: body).and_return(success_create_resp)
-
-        expect(subject).to be_instance_of(ExternalApi::WebexService::DeleteResponse)
+      it "deletes a conference" do
         expect(subject.code).to eq(200)
-        expect(subject.success?).to eq(true)
-      end
-
-      it "returns error response" do
-        allow(webex_service).to receive(:send_webex_request).with(body: body).and_return(error_create_resp)
-
-        expect(subject.code).to eq(400)
-        expect(subject.success?).to eq(false)
-        expect(subject.error).to eq(Caseflow::Error::WebexBadRequestError.new(code: 400))
-      end
-
-      describe "with fakes" do
-        let(:webex_service) do
-          Fakes::WebexService.new
-        end
-
-        it "deletes a conference" do
-          expect(subject.code).to eq(200)
-          expect(subject.resp.body[:baseUrl]).to eq("https://instant-usgov.webex.com/visit/")
-          subject
-        end
+        expect(subject.resp.body[:baseUrl]).to eq("https://instant-usgov.webex.com/visit/")
+        subject
       end
     end
   end
