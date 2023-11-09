@@ -3,11 +3,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
-import Table from '../../../../../components/Table';
 import Checkbox from '../../../../../components/Checkbox';
 import RadioField from '../../../../../components/RadioField';
 import ApiUtil from '../../../../../util/ApiUtil';
+import CorrespondencePaginationWrapper from '../../../CorrespondencePaginationWrapper';
 import {
   loadCorrespondences,
   updateRadioValue,
@@ -24,7 +23,8 @@ class AddCorrespondenceView extends React.Component {
       source_type: '',
       package_document_type: '',
       correspondence_type_id: '',
-      notes: ''
+      notes: '',
+      selectedCheckboxes: []
     };
   }
 
@@ -196,10 +196,11 @@ class AddCorrespondenceView extends React.Component {
         {this.props.radioValue === '1' && (
           <div className="cf-app-segment cf-app-segment--alt">
             <p>Please select the prior mail to link to this correspondence</p>
-            <p>Viewing {this.props.correspondences.length} out of {this.props.correspondences.length} total</p>
+            {/* <p>Viewing {this.props.correspondences.length} out of {this.props.correspondences.length} total</p> */}
             <div>
-              <Table
+              <CorrespondencePaginationWrapper
                 columns={this.getDocumentColumns}
+                columnsToDisplay={15}
                 rowObjects={this.props.correspondences}
                 summary="Correspondence list"
                 className="correspondence-table"
@@ -208,6 +209,7 @@ class AddCorrespondenceView extends React.Component {
                 tbodyId="correspondence-table-body"
                 getKeyForRow={this.getKeyForRow}
               />
+
             </div>
           </div>
         )}

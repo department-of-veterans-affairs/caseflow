@@ -6,18 +6,6 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 class CorrespondenceTable extends React.Component {
 
   render() {
-    const testobj = [{
-      veteranDetails: 'Rosalie Turner (123456789)',
-      packageDocumentType: '1111111',
-      cmPacketNumber: '22222222',
-      correspondeceId: 11,
-    },
-    {
-      veteranDetails: 'Ana Turner (123456789)',
-      packageDocumentType: '12345678',
-      cmPacketNumber: '12345679',
-      correspondeceId: 2,
-    }];
 
     const columns = [
       {
@@ -25,11 +13,11 @@ class CorrespondenceTable extends React.Component {
         header: 'Veteran Details',
         align: 'left',
         valueName: 'veteranDetails',
-        getSortValue: (row) => row.veteranDetails,
+        getSortValue: (row) => row.firstName,
         backendCanSort: true,
         valueFunction: (row) => (
-          <Link href={`/queue/correspondence/${row.correspondeceId}/review_package`}>
-            {row.veteranDetails}
+          <Link href={`/queue/correspondence/${row.correspondenceUuid}/review_package`}>
+            {`${row.firstName} ${row.lastName} (${row.fileNumber})`}
           </Link>
         )
       },
@@ -59,7 +47,7 @@ class CorrespondenceTable extends React.Component {
       <QueueTable
         className="assign-correspondence-table"
         columns={columns}
-        rowObjects={testobj}
+        rowObjects={this.props.vetCorrespondences}
         summary="scheduled-hearings-table"
         enablePagination
         tabPaginationOptions={tabPaginationOptions}
@@ -72,6 +60,8 @@ CorrespondenceTable.propTypes = {
   hearingScheduleColumns: PropTypes.array,
   hearingScheduleRows: PropTypes.array,
   onApply: PropTypes.func,
+  loadVetCorrespondence: PropTypes.func,
+  vetCorrespondences: PropTypes.array,
   history: PropTypes.object,
   user: PropTypes.shape({
     userCanBuildHearingSchedule: PropTypes.bool

@@ -10,6 +10,16 @@ export const loadCorrespondences = (correspondences) =>
     });
   };
 
+export const loadVetCorrespondence = (vetCorrespondences) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.LOAD_VET_CORRESPONDENCE,
+      payload: {
+        vetCorrespondences
+      }
+    });
+  };
+
 export const updateRadioValue = (value) =>
   (dispatch) => {
     dispatch({
@@ -33,4 +43,3 @@ export const clearCheckboxState = () =>
       type: ACTIONS.CLEAR_CHECKBOX_STATE,
     });
   };
-

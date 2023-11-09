@@ -22,7 +22,6 @@ const progressBarSections = [
 
 export const CorrespondenceIntake = (props) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [isCheckboxSelected, setCheckboxSelected] = useState(false);
   const [isContinueEnabled, setContinueEnabled] = useState(true);
 
   const handleContinueStatusChange = (isEnabled) => {
@@ -30,7 +29,6 @@ export const CorrespondenceIntake = (props) => {
   };
 
   const handleCheckboxChange = (isSelected) => {
-    setCheckboxSelected(isSelected);
     setContinueEnabled(isSelected);
   };
 
