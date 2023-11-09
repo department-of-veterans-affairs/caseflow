@@ -5,11 +5,12 @@ import Button from 'app/components/Button';
 
 import * as yup from 'yup';
 import { daysWaitingSchema } from './Conditions/DaysWaiting';
+import { decisionReviewTypeSchema } from './Conditions/DecisionReviewType';
 import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 
 const conditionOptionSchemas = {
   daysWaiting: daysWaitingSchema,
-  decisionReviewType: yup.object(),
+  decisionReviewType: decisionReviewTypeSchema,
   facility: yup.object(),
   issueDisposition: yup.object(),
   issueType: yup.object(),
