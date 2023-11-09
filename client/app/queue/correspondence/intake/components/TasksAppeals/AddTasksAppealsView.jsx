@@ -15,11 +15,10 @@ const mailTasksRight = [
   'Associated with Claims Folder'
 ];
 
-export const AddTasksAppealsView = () => {
+export const AddTasksAppealsView = (props) => {
   const [addTask, setAddTask] = useState([]);
-  const [addTasksVisible, setAddTasksVisible] = useState(false);
   const clickAddTask = () => {
-    setAddTasksVisible(true);
+    props.setAddTasksVisible(true);
     const currentTask = [...addTask];
     const randNum = Math.floor(Math.random() * 1000000);
 
@@ -34,7 +33,7 @@ export const AddTasksAppealsView = () => {
     setAddTask(newTask);
 
     if (newTask.length === 0 || newTask.isNull) {
-      setAddTasksVisible(false);
+      props.setAddTasksVisible(false);
     }
   };
 
@@ -78,7 +77,7 @@ export const AddTasksAppealsView = () => {
         <div />
 
         {/* This button will activate the New Tasks section */}
-        {!addTasksVisible && <Button
+        {!props.addTasksVisible && <Button
           type="button"
           onClick={clickAddTask}
           name="addTaskOpen"
@@ -87,7 +86,7 @@ export const AddTasksAppealsView = () => {
         </Button>}
 
         {/* This is the New Tasks section. Tasks will show next to each other in line. */}
-        {addTasksVisible && <div className="gray-border" style={{ padding: '0rem 0rem' }}>
+        {props.addTasksVisible && <div className="gray-border" style={{ padding: '0rem 0rem' }}>
           <div style={{ width: '100%', height: 'auto', backgroundColor: 'white', paddingBottom: '3rem' }}>
             <div style={{ backgroundColor: '#f1f1f1', width: '100%', height: '50px', paddingTop: '1.5rem' }}>
               <b style={{
@@ -96,7 +95,7 @@ export const AddTasksAppealsView = () => {
                 paddingTop: '1.5rem',
                 border: '0',
                 paddingBottom: '1.5rem',
-                paddingRight: '5.5rem'
+                paddingRigfht: '5.5rem'
               }}>New Tasks</b>
             </div>
             <div style={{ width: '100%', height: '3rem' }} />

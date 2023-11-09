@@ -19,10 +19,14 @@ const TaskNotRelatedToAppeal = (props) => {
   ];
 
   const [selectedTaskType, setSelectedTaskType] = useState(-1);
-
+  const [instructionText, setInstructionText] = useState('');
   const handleChangeTaskType = (newType) => {
     setSelectedTaskType(newType);
   };
+
+  const handleChangeInstructionText = (newText) => {
+    setInstructionText(newText);
+  }
 
   return (
     <div key={props.key} style={{ display: 'block', marginRight: '2rem' }}>
@@ -46,6 +50,8 @@ const TaskNotRelatedToAppeal = (props) => {
             name="Task Information"
             label="Provide context and instruction on this task"
             defaultText=""
+            value={instructionText}
+            onChange={handleChangeInstructionText}
           />
           <Button
             name="Add"

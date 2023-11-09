@@ -23,6 +23,7 @@ const progressBarSections = [
 export const CorrespondenceIntake = (props) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isContinueEnabled, setContinueEnabled] = useState(true);
+  const [addTasksVisible, setAddTasksVisible] = useState(false);
 
   const handleContinueStatusChange = (isEnabled) => {
     setContinueEnabled(isEnabled);
@@ -63,7 +64,10 @@ export const CorrespondenceIntake = (props) => {
       />
     }
     {currentStep === 2 &&
-      <AddTasksAppealsView />
+      <AddTasksAppealsView
+        addTasksVisible={addTasksVisible}
+        setAddTasksVisible={setAddTasksVisible}
+      />
     }
     <div>
       <a href="/queue/correspondence">
