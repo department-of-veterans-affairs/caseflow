@@ -28,12 +28,6 @@ FactoryBot.define do
       status { nil }
     end
 
-    trait :initialized do
-      alias_name { format("%07<id>d", id: rand(99..10_001)) }
-      conference_id { rand(1..9) }
-      after(:build, &:generate_conference_pins)
-    end
-
     trait :timezones_initialized do
       appellant_tz { "America/Denver" }
       representative_tz { "America/Los_Angeles" }
@@ -45,7 +39,7 @@ FactoryBot.define do
       judge_email_sent { true }
     end
 
-    trait :link_generation_initialized do
+    trait :initialized do
       alias_with_host { "BVA0000001@example.va.gov" }
       host_pin_long { "3998472" }
       guest_pin_long { "7470125694" }

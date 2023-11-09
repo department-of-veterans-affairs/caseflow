@@ -68,8 +68,7 @@ class VirtualHearing < CaseflowRecord
         lambda {
           joins(:establishment)
             .where("
-              conference_deleted = false AND
-              conference_id IS NOT NULL AND (
+              conference_deleted = false AND (
               request_cancelled = true OR
               virtual_hearing_establishments.processed_at IS NOT NULL
             )")
@@ -228,7 +227,7 @@ class VirtualHearing < CaseflowRecord
   # require us to delete the conference but not set `request_cancelled`.
   def closed?
     # the conference has been created the virtual hearing was deleted
-    conference_id.present? && conference_deleted?
+    conference_deleted?
   end
 
   # Determines the status of the Virtual Hearing based on the establishment
