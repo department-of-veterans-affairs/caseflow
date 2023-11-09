@@ -24,7 +24,7 @@ const SpanStyled = ({ children }) => (
 
 const ConferenceRoom = ({ type, alias }) => (
   <H3Styled
-    style={{ width: type === 'PexipConferenceLink' ? '400px' : '725px' }}
+    style={{ width: type === 'PexipConferenceLink' ? '400px' : '540px' }}
   >
     {type === 'PexipConferenceLink' ?
       GUEST_LINK_LABELS.PEXIP_GUEST_CONFERENCE_ROOM :
@@ -109,12 +109,10 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
 
               <ConferenceRoom type={type} alias={alias} />
 
-              {type === 'PexipConferenceLink' && (
-                <H3Styled style={{ width: 'max-content', marginRight: '75px' }}>
-                  {GUEST_LINK_LABELS.GUEST_PIN}
-                  <SpanStyled>{linkGuestPin}</SpanStyled>
-                </H3Styled>
-              )}
+              <H3Styled style={{ width: 'max-content', marginRight: '75px' }}>
+                {type === 'PexipConferenceLink' && GUEST_LINK_LABELS.GUEST_PIN}
+                <SpanStyled>{linkGuestPin}</SpanStyled>
+              </H3Styled>
 
               <H3Styled style={{ marginRight: '10px' }}>
                 <CopyTextButton {...CopyTextButtonProps} />
