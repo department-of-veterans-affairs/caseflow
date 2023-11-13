@@ -21,22 +21,26 @@ class CaseListTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
 
   getColumns = () => {
-    const columns = [
-      {
-        header: '',
-        valueFunction: (appeal) => {
-          if (appeal.showCheckboxes) {
+    const columns = [];
+
+    if (this.props.showCheckboxes) {
+      columns.push(
+        {
+          header: '',
+          valueFunction: (appeal) => {
             return (
               <Checkbox
-                label={appeal.id}
-                name={appeal.id}
-                value={appeal.id}
-                onChange={() => { console.log("change") }}
+                name={`appeal-${appeal.id}`}
+                defaultValue={false}
+                hideLabel
               />
             );
           }
         }
-      },
+      );
+    }
+
+    columns.push(
       {
         header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
         valueFunction: (appeal) => {
@@ -72,7 +76,7 @@ class CaseListTable extends React.PureComponent {
         header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
         valueFunction: (appeal) => labelForLocation(appeal, this.props.userCssId)
       }
-    ];
+    );
 
     const anyAppealsHaveFnod = Boolean(
       find(this.props.appeals, (appeal) => appeal.veteranAppellantDeceased)

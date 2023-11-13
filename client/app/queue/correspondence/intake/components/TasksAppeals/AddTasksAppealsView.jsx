@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Checkbox from '../../../../../components/Checkbox';
 import RadioField from '../../../../../components/RadioField';
-import { current } from '@reduxjs/toolkit';
+import PropTypes from 'prop-types';
 import CaseListTable from '../../../../CaseListTable';
 import ApiUtil from '../../../../../util/ApiUtil';
 import { prepareAppealForStore } from '../../../../utils';
+import LoadingContainer from '../../../../../components/LoadingContainer';
+import { LOGO_COLORS } from '../../../../../constants/AppConstants';
 
 const mailTasksLeft = [
   'Change of address',
@@ -27,6 +29,7 @@ const existingAppealAnswer = [
 
 export const AddTasksAppealsView = (props) => {
   const [appeals, setAppeals] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [relatedToExistingAppeal, setRelatedToExistingAppeal] = useState(false);
   const [existingAppealRadio, setExistingAppealRadio] = useState('2');
 
@@ -45,27 +48,38 @@ export const AddTasksAppealsView = (props) => {
   };
 
   useEffect(() => {
+    // Only fetch if user indicates appeals data is needed
     if (relatedToExistingAppeal === false) {
       return;
     }
 
-    ApiUtil.get(`/queue/correspondence/${props.correspondenceUuid}/veteran`).then((response) => {
-      const veteranFileNumber = response.body.file_number;
+    // Don't refetch (use cache)
+    if (appeals.length) {
+      return;
+    }
 
-      ApiUtil.get('/appeals', { headers: { 'case-search': veteranFileNumber } }).
-        then((response) => {
-          let appealsForStore = prepareAppealForStore(response.body.appeals);
+    // Visually indicate that we are fetching data
+    setLoading(true);
 
-          let appealArr = [];
-          for (let appeal in appealsForStore.appeals) {
-            appealsForStore.appeals[appeal].showCheckboxes = true;
-            appealArr.push(appealsForStore.appeals[appeal]);
-          }
+    ApiUtil.get(`/queue/correspondence/${props.correspondenceUuid}/veteran`).
+      then((vetResponse) => {
+        const veteranFileNumber = vetResponse.body.file_number;
 
-          setAppeals(appealArr);
-        });
+        ApiUtil.get('/appeals', { headers: { 'case-search': veteranFileNumber } }).
+          then((appealResponse) => {
+            const appealsForStore = prepareAppealForStore(appealResponse.body.appeals);
+
+            const appealArr = [];
+
+            for (const appeal in appealsForStore.appeals) {
+              appealArr.push(appealsForStore.appeals[appeal]);
+            }
+
+            setAppeals(appealArr);
+            setLoading(false);
+          });
       }
-    );
+      );
   }, [relatedToExistingAppeal]);
 
   const selections = existingAppealAnswer.map(({displayText, value}) => {
@@ -112,20 +126,30 @@ export const AddTasksAppealsView = (props) => {
         <br></br>
         <h2>Tasks related to an existing Appeal</h2>
         <p>Is this correspondence related to an existing appeal?</p>
-          <RadioField
-            name=""
-            value= {existingAppealRadio}
-            options={existingAppealAnswer}
-            onChange={existingAppealRadio === '2' ? selectYes : selectNo }
-          />
-          {existingAppealRadio === '1' &&
-            <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
-              <CaseListTable appeals={appeals} showCheckboxes={true} />
+        <RadioField
+          name=""
+          value= {existingAppealRadio}
+          options={existingAppealAnswer}
+          onChange={existingAppealRadio === '2' ? selectYes : selectNo }
+        />
+        {existingAppealRadio === '1' && loading &&
+          <LoadingContainer color={LOGO_COLORS.QUEUE.ACCENT}>
+            <div className="loading-div">
             </div>
-          }
+          </LoadingContainer>
+        }
+        {existingAppealRadio === '1' && !loading &&
+          <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
+            <CaseListTable appeals={appeals} showCheckboxes />
+          </div>
+        }
       </div>
     </div>
   );
+};
+
+AddTasksAppealsView.propTypes = {
+  correspondenceUuid: PropTypes.string.isRequired
 };
 
 export default AddTasksAppealsView;
