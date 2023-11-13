@@ -80,18 +80,17 @@ describe('Personnel', () => {
     await selectEvent.select(selectText, ['Personnel']);
   };
 
-  it('renders a dropdown with the correct label', async () => {
+  beforeEach(async () => {
     setup();
     await navigateToPersonnel();
+  });
 
+  it('renders a dropdown with the correct label', async () => {
     expect(screen.getByText('VHA team members')).toBeInTheDocument();
     expect(screen.getAllByText(selectPlaceholder).length).toBe(2);
   });
 
   it('allows to select multiple options from dropdown', async () => {
-    setup();
-    await navigateToPersonnel();
-
     let selectText = screen.getAllByText(selectPlaceholder);
     const teamMember1 = 'VHAUSER01';
 
