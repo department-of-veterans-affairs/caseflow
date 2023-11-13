@@ -34,56 +34,56 @@ module Seeds
           title: 'Maximum Direct Review Proportion',
           description: "Sets the maximum number of direct reviews in relation to due direct review proportion to prevent a complete halt to work on other dockets should demand for direct reviews approach the Board's capacity.",
           data_type: 'number',
-          value: 80,
+          value: 0.07,
           unit: '%',
           is_active: false,
           is_disabled: true,
           min_value: 0,
-          max_value: 100,
-          algorithms_used: ['priority']
+          max_value: 1,
+          algorithms_used: ['proportion']
         },
         {
           item: 'minimum_legacy_proportion',
           title: 'Minimum Legacy Proportion',
           description: 'Sets the minimum proportion of legacy appeals that will be distributed.',
           data_type: 'number',
-          value: 20,
+          value: 0.9,
           unit: '%',
           is_active: false,
           is_disabled: true,
           min_value: 0,
-          max_value: 100,
-          algorithms_used: ['priority']
+          max_value: 1,
+          algorithms_used: ['proportion']
         },
         {
           item: 'nod_adjustment',
           title: 'NOD Adjustment',
           description: 'Applied for docket balancing reflecting the likelihood that HODs will advance to a Form 9.',
           data_type: 'number',
-          value: 90,
+          value: 0.4,
           unit: '%',
           is_active: false,
           is_disabled: true,
           min_value: 0,
-          max_value: 100,
-          algorithms_used: ['priority']
+          max_value: 1,
+          algorithms_used: ['proportion']
         },
         {
-          item: 'priority_bust_backlog',
+          item: 'bust_backlog',
           title: 'Priority Bust Backlog',
           description: 'Distribute legacy cases tied to a judge to the Board-provided limit of 30, regardless of the legacy docket range.',
           data_type: 'boolean',
-          value: true,
+          value: false,
           unit: '',
           is_active: false,
           is_disabled: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['priority']
+          algorithms_used: ['proportion']
         },
         {
-          item: 'alternate_batch_size*',
-          title: 'Alternate Batch Size*',
+          item: 'alternative_batch_size',
+          title: 'Alternate Batch Size',
           description: 'Set case-distribution batch size for judges who do not have their own attorney teams.',
           data_type: 'number',
           value: 15,
@@ -92,11 +92,11 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['docket', 'priority']
+          algorithms_used: ['docket', 'proportion']
         },
         {
-          item: 'batch_size_per_attorney*',
-          title: 'Batch Size Per Attorney*',
+          item: 'batch_size_per_attorney',
+          title: 'Batch Size Per Attorney',
           description: 'Set case distribution batch size for judges with attorney teams. The value for this data element is per attorney.',
           data_type: 'number',
           value: 3,
@@ -105,11 +105,11 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['docket', 'priority']
+          algorithms_used: ['docket', 'proportion']
         },
         {
-          item: 'request_more_cases_minimum*',
-          title: 'Request More Cases Minimum*',
+          item: 'request_more_cases_minimum',
+          title: 'Request More Cases Minimum',
           description: 'Set the number of remaining cases a VLJ must have equal to or less than to request more cases. (The number entered is used to equal to or less than.)',
           data_type: 'number',
           value: 8,
@@ -118,7 +118,7 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['docket', 'priority']
+          algorithms_used: ['docket', 'proportion']
         },
         {
           item: 'ama_hearing_case_affinity_days',
@@ -131,23 +131,21 @@ module Seeds
             {
               item: 'option_1',
               data_type: 'number',
-              value: 14,
+              value: 0,
               text: 'Attempt distribution to current judge for max of:',
-              unit: 'days'
+              unit: 'days',
+              min_value: 0,
+              max_value: 100,
             },
             {
               item: 'option_2',
-              data_type: '',
               value: 'option_2',
               text: 'Always distribute to current judge',
-              unit: ''
             },
             {
               item: 'option_3',
-              data_type: '',
               value: 'option_3',
               text: 'Omit variable from distribution rules',
-              unit: ''
             }
           ],
           is_active: true,
@@ -167,7 +165,7 @@ module Seeds
             {
               item: 'option_1',
               data_type: 'number',
-              value: 14,
+              value: 0,
               text: 'Attempt distribution to current judge for max of:',
               unit: 'days'
             },
@@ -190,11 +188,11 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['priority']
+          algorithms_used: ['proportion']
         },
         {
-          item: 'cavc_affinity_days*',
-          title: 'CAVC Affinity Days*',
+          item: 'cavc_affinity_days',
+          title: 'CAVC Affinity Days',
           description: 'Sets the number of days a case returned from CAVC respects the affinity to the judge who authored a decision before distributing the appeal to any available judge. This does not include Legacy CAVC Remand Appeals with a hearing held.',
           data_type: 'radio',
           value: 'option_1',
@@ -209,24 +207,20 @@ module Seeds
             },
             {
               item: 'option_2',
-              data_type: '',
               value: 'option_2',
-              text: 'Always distribute to current judge',
-              unit: ''
+              text: 'Always distribute to current judge'
             },
             {
               item: 'option_3',
-              data_type: '',
               value: 'option_3',
-              text: 'Omit variable from distribution rules',
-              unit: ''
+              text: 'Omit variable from distribution rules'
             }
           ],
           is_active: false,
           is_disabled: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['docket', 'priority']
+          algorithms_used: ['docket', 'proportion']
         },
         {
           item: 'cavc_aod_affinity_days',
@@ -245,24 +239,18 @@ module Seeds
             },
             {
               item: 'option_2',
-              data_type: '',
               value: 'option_2',
               text: 'Always distribute to current judge',
-              unit: ''
             },
             {
               item: 'option_3',
-              data_type: '',
               value: 'option_3',
               text: 'Omit variable from distribution rules',
-              unit: ''
             }
           ],
           is_active: false,
           is_disabled: true,
-          min_value: 0,
-          max_value: 100,
-          algorithms_used: ['priority']
+          algorithms_used: ['proportion']
         },
         {
           item: 'aoj_affinity_days',
@@ -298,7 +286,7 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['priority']
+          algorithms_used: ['proportion']
         },
         {
           item: 'aoj_aod_affinity_days',
@@ -334,7 +322,7 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['priority']
+          algorithms_used: ['proportion']
         },
         {
           item: 'aoj_cavc_affinity_days',
@@ -392,7 +380,7 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['priority']
+          algorithms_used: ['proportion']
         },
         {
           item: 'ama_direct_review',
@@ -436,7 +424,31 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['priority']
+          algorithms_used: ['proportion']
+        },
+        {
+          item: 'direct_docket_time_goal',
+          title: 'Direct Docket Time Goal',
+          data_type: 'number',
+          value: 550,
+          unit: 'days',
+          is_active: false,
+          is_disabled: true,
+          min_value: 0,
+          max_value: 1000,
+          algorithms_used: ['proportion']
+        },
+        {
+          item: 'days_before_goal_due_for_distribution',
+          title: 'Days Before Goal Due for Distribution',
+          data_type: 'number',
+          value: null,
+          unit: 'days',
+          is_active: false,
+          is_disabled: true,
+          min_value: 0,
+          max_value: 1000,
+          algorithms_used: ['proportion']
         },
       ]
     end
