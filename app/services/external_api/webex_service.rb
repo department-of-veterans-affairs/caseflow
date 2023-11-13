@@ -3,13 +3,13 @@
 require "json"
 
 class ExternalApi::WebexService
-  def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:)
-    @host = host
-    @port = port
-    @aud = aud
-    @apikey = apikey
-    @domain = domain
-    @api_endpoint = api_endpoint
+  def initialize(params)
+    @host = params[:host]
+    @port = params[:port]
+    @aud = params[:aud]
+    @apikey = params[:apikey]
+    @domain = params[:domain]
+    @api_endpoint = params[:api_endpoint]
   end
 
   def create_conference(virtual_hearing)
