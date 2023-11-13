@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import CaseDetailsView from "../../../app/queue/CaseDetailsView";
+import CaseDetailsView from '../../../app/queue/CaseDetailsView';
 import { queueWrapper as Wrapper } from 'test/data/stores/queueStore';
 import { amaAppeal, legacyAppeal, powerOfAttorney } from '../../data/appeals';
 import COPY from '../../../COPY';
