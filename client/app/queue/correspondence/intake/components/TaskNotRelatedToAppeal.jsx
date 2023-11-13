@@ -18,11 +18,7 @@ const TaskNotRelatedToAppeal = (props) => {
     { value: 8, label: 'Status inquiry' }
   ];
 
-  const [selectedTaskType, setSelectedTaskType] = useState(-1);
   const [instructionText, setInstructionText] = useState('');
-  const handleChangeTaskType = (newType) => {
-    setSelectedTaskType(newType);
-  };
 
   const handleChangeInstructionText = (newText) => {
     setInstructionText(newText);
@@ -42,7 +38,7 @@ const TaskNotRelatedToAppeal = (props) => {
             defaultValue={{ value: -1, label: 'Select...' }}
             label="Task"
             style={{ width: '50rem' }}
-            onChangeMethod={(selectedOption) => handleChangeTaskType(selectedOption.value)}
+            onChangeMethod={(selectedOption) => props.handleChangeTaskType(selectedOption.value)}
             className="date-filter-type-dropdown"
           />
           <div style={{ padding: '1.5rem' }} />
@@ -75,6 +71,7 @@ const TaskNotRelatedToAppeal = (props) => {
 TaskNotRelatedToAppeal.propTypes = {
   removeTask: PropTypes.func,
   key: PropTypes.object,
+  handleChangeTaskType: PropTypes.func,
 };
 
 export default TaskNotRelatedToAppeal;

@@ -40,6 +40,14 @@ export const AddTasksAppealsView = (props) => {
     }
   };
 
+  const [selectedTaskType, setSelectedTaskType] = useState(-1);
+  const handleChangeTaskType = (newType) => {
+    setSelectedTaskType(newType);
+
+    props.disableContinue(addTask.length !== 0);
+
+  };
+
   return (
     <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
       <h1 style={{ marginBottom: '10px' }}>Review Tasks & Appeals</h1>
@@ -105,7 +113,11 @@ export const AddTasksAppealsView = (props) => {
             <div style={{ width: '100%', height: '3rem' }} />
             <div style={{ display: 'flex' }}>
               { addTask && addTask.map((currentTask, i) => (
-                <TaskNotRelatedToAppeal key={currentTask.Object} removeTask={() => removeTaskAtIndex(i)} />
+                <TaskNotRelatedToAppeal
+                  key={currentTask.Object}
+                  removeTask={() => removeTaskAtIndex(i)}
+                  handleChangeTaskType={handleChangeTaskType}
+                />
               ))}
 
             </div>
@@ -129,7 +141,7 @@ export const AddTasksAppealsView = (props) => {
 AddTasksAppealsView.propTypes = {
   addTasksVisible: PropTypes.bool,
   setAddTasksVisible: PropTypes.func,
-  disableContinue: PropTypes.func,
+  disableContinue: PropTypes.func
 };
 
 export default AddTasksAppealsView;
