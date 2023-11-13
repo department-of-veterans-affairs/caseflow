@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_09_24_014623) do
+ActiveRecord::Schema.define(version: 2023_11_07_173746) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -220,7 +220,7 @@ ActiveRecord::Schema.define(version: 2023_09_24_014623) do
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
-  create_table "batch_processes", primary_key: "batch_id", id: :uuid, default: -> { "uuid_generate_v4()" }, comment: "The unique id of the created batch", comment: "A generalized table for batching and processing records within caseflow", force: :cascade do |t|
+  create_table "batch_processes", primary_key: "batch_id", id: :uuid, default: -> { "uuid_generate_v4()" }, comment: "A generalized table for batching and processing records within caseflow", force: :cascade do |t|
     t.string "batch_type", null: false, comment: "Indicates what type of record is being batched"
     t.datetime "created_at", null: false, comment: "Date and Time that batch was created."
     t.datetime "ended_at", comment: "The date/time that the batch finsished processing"
@@ -573,7 +573,7 @@ ActiveRecord::Schema.define(version: 2023_09_24_014623) do
     t.string "alias", comment: "Alias of the conference"
     t.string "alias_with_host", comment: "Alieas of the conference for the host"
     t.boolean "conference_deleted", default: false, null: false, comment: "Flag to represent if a con ference has been deleted"
-    t.integer "conference_id", comment: "Id of the conference"
+    t.string "conference_id", comment: "Id of the conference"
     t.datetime "created_at", null: false, comment: "Date and Time of creation"
     t.bigint "created_by_id", null: false, comment: "User id of the user who created the record. FK on User table"
     t.datetime "deleted_at", comment: "Needed column to make use of the paranoia gem."
@@ -1984,7 +1984,7 @@ ActiveRecord::Schema.define(version: 2023_09_24_014623) do
     t.datetime "appellant_reminder_sent_at", comment: "The datetime the last reminder email was sent to the appellant."
     t.string "appellant_tz", limit: 50, comment: "Stores appellant timezone"
     t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
-    t.integer "conference_id", comment: "ID of conference from Pexip"
+    t.string "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false, comment: "Automatic timestamp of when virtual hearing was created"
     t.bigint "created_by_id", null: false, comment: "User who created the virtual hearing"
     t.string "guest_hearing_link", comment: "Link used by appellants and/or representatives to join virtual hearing conference"

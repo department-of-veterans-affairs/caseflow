@@ -112,7 +112,7 @@ Rails.application.configure do
   ENV["BATCH_PROCESS_MAX_ERRORS_BEFORE_STUCK"] ||= "3" # When record errors for X time, it's declared stuck
 
   # Necessary vars needed to create virtual hearing links
-  # Used by VirtualHearings::LinkService
+  # Used by VirtualHearings::PexipLinkService
   ENV["VIRTUAL_HEARING_PIN_KEY"] ||= "mysecretkey"
   ENV["VIRTUAL_HEARING_URL_HOST"] ||= "example.va.gov"
   ENV["VIRTUAL_HEARING_URL_PATH"] ||= "/sample"

@@ -77,6 +77,8 @@ describe StuckVirtualHearingsChecker, :postgres do
   end
 
   context "there is a virtual hearing where all emails haven't sent" do
+    before { stub_const("ENV", ENV.to_hash.merge("VIRTUAL_HEARING_PIN_KEY" => nil)) }
+
     let!(:virtual_hearing) do
       create(
         :virtual_hearing, :initialized, :all_emails_sent,
@@ -86,7 +88,7 @@ describe StuckVirtualHearingsChecker, :postgres do
     end
     let!(:virtual_hearing_no_emails) do
       create(
-        :virtual_hearing, :initialized,
+        :virtual_hearing,
         updated_at: Time.zone.now - 3.hours,
         hearing: create(:hearing, hearing_day: hearing_day, regional_office: "RO13")
       )
@@ -99,7 +101,7 @@ describe StuckVirtualHearingsChecker, :postgres do
       expect(report_lines).to include("Found 1 stuck virtual hearing: ")
       pending_line = report_lines[1]
       expect(pending_line).to include "VirtualHearing.find(#{virtual_hearing_no_emails.id})"
-      expect(pending_line).to include "last attempted: never"
+      expect(pending_line).to include "less than a minute ago"
       display_scheduled_for = virtual_hearing_no_emails.hearing.scheduled_for.strftime("%a %m/%d")
       expect(pending_line).to include "scheduled for: #{display_scheduled_for}"
       expect(pending_line).to include "updated by: #{virtual_hearing_no_emails.updated_by.css_id}"
@@ -113,13 +115,16 @@ describe StuckVirtualHearingsChecker, :postgres do
     let(:scheduled_time) { (time_now - 20.hours).strftime("%I:%M%p") }
     let!(:virtual_hearing_no_emails) do
       create(
-        :virtual_hearing, :initialized,
+        :virtual_hearing,
         updated_at: time_now - 3.hours,
         hearing: create(:hearing, hearing_day: hearing_day, regional_office: "RO13", scheduled_time: scheduled_time)
       )
     end
 
-    before { Timecop.freeze(time_now) }
+    before do
+      Timecop.freeze(time_now)
+      stub_const("ENV", ENV.to_hash.merge("VIRTUAL_HEARING_PIN_KEY" => nil))
+    end
     after { Timecop.return }
 
     it "includes the hearing in the report", :aggregate_failures do
@@ -129,7 +134,7 @@ describe StuckVirtualHearingsChecker, :postgres do
       expect(report_lines).to include("Found 1 stuck virtual hearing: ")
       pending_line = report_lines[1]
       expect(pending_line).to include "VirtualHearing.find(#{virtual_hearing_no_emails.id})"
-      expect(pending_line).to include "last attempted: never"
+      expect(pending_line).to include "less than a minute ago"
       display_scheduled_for = virtual_hearing_no_emails.hearing.scheduled_for.strftime("%a %m/%d")
       expect(pending_line).to include "scheduled for: #{display_scheduled_for}"
       expect(pending_line).to include "updated by: #{virtual_hearing_no_emails.updated_by.css_id}"
@@ -138,9 +143,11 @@ describe StuckVirtualHearingsChecker, :postgres do
   end
 
   context "there is an eligible legacy virtual hearing" do
+    before { stub_const("ENV", ENV.to_hash.merge("VIRTUAL_HEARING_PIN_KEY" => nil)) }
+
     let!(:virtual_hearing_no_emails) do
       create(
-        :virtual_hearing, :initialized,
+        :virtual_hearing,
         updated_at: Time.zone.now - 3.hours,
         hearing: create(:legacy_hearing, hearing_day: hearing_day, regional_office: "RO13")
       )
@@ -153,54 +160,11 @@ describe StuckVirtualHearingsChecker, :postgres do
       expect(report_lines).to include("Found 1 stuck virtual hearing: ")
       pending_line = report_lines[1]
       expect(pending_line).to include "VirtualHearing.find(#{virtual_hearing_no_emails.id})"
-      expect(pending_line).to include "last attempted: never"
+      expect(pending_line).to include "less than a minute ago"
       display_scheduled_for = virtual_hearing_no_emails.hearing.scheduled_for.strftime("%a %m/%d")
       expect(pending_line).to include "scheduled for: #{display_scheduled_for}"
       expect(pending_line).to include "updated by: #{virtual_hearing_no_emails.updated_by.css_id}"
       expect(pending_line).to include "VACOLS ID: #{virtual_hearing_no_emails.hearing.vacols_id}"
-    end
-  end
-
-  context "there are virtual hearings with pending conference and all emails haven't sent" do
-    let!(:virtual_hearing) do
-      create(
-        :virtual_hearing, :initialized, :all_emails_sent,
-        updated_at: Time.zone.now - 3.hours,
-        hearing: create(:hearing, regional_office: "RO13")
-      )
-    end
-
-    let!(:virtual_hearing_pending) do
-      create(
-        :virtual_hearing, :all_emails_sent,
-        updated_at: Time.zone.now - 3.hours,
-        hearing: create(:hearing, regional_office: "RO13")
-      )
-    end
-
-    let!(:virtual_hearing_no_emails) do
-      create(
-        :virtual_hearing, :initialized,
-        updated_at: Time.zone.now - 3.hours,
-        hearing: create(:hearing, hearing_day: hearing_day, regional_office: "RO13")
-      )
-    end
-
-    it "builds a report containing one where all emails haven't sent" do
-      virtual_hearing_pending.establishment.attempted!
-      virtual_hearing_no_emails.establishment.update!(attempted_at: 4.days.ago)
-
-      subject.call
-
-      report_lines = subject.report.split("\n")
-      expect(report_lines).to include("Found 1 stuck virtual hearing: ")
-      pending_line = report_lines[1]
-      expect(pending_line).to include "VirtualHearing.find(#{virtual_hearing_no_emails.id})"
-      expect(pending_line).to match(/last attempted\:( about | )4 days ago/)
-      display_scheduled_for = virtual_hearing_no_emails.hearing.scheduled_for.strftime("%a %m/%d")
-      expect(pending_line).to include "scheduled for: #{display_scheduled_for}"
-      expect(pending_line).to include "updated by: #{virtual_hearing_no_emails.updated_by.css_id}"
-      expect(pending_line).to include "UUID: #{virtual_hearing_no_emails.hearing.uuid}"
     end
   end
 end

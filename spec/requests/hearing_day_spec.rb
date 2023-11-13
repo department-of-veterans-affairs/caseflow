@@ -150,8 +150,6 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
   end
 
   describe "Show a hearing day with its children hearings" do
-    include_context "Mock Pexip service env vars"
-
     let!(:regional_office) do
       create(:staff, stafkey: "RO13", stc4: 11)
     end
