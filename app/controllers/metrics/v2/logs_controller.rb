@@ -4,7 +4,6 @@ class Metrics::V2::LogsController < ApplicationController
   skip_before_action :verify_authentication
 
   def create
-
     return metrics_not_saved unless FeatureToggle.enabled?(:metrics_monitoring, user: current_user)
 
     metric = Metric.create_metric_from_rest(self, allowed_params, current_user)
@@ -35,7 +34,6 @@ class Metrics::V2::LogsController < ApplicationController
                                    :relevant_tables_info,
                                    :start,
                                    :end,
-                                   :duration
-                                  )
+                                   :duration)
   end
 end
