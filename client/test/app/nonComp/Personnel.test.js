@@ -9,82 +9,40 @@ import selectEvent from 'react-select-event';
 
 import ReportPage from 'app/nonComp/pages/ReportPage';
 import ApiUtil from '../../../app/util/ApiUtil';
-
-const initialState = {
-  orgUsers: {
-    users: [],
-    status: 'idle',
-    error: null,
-  }
-};
-
-const createReducer = (storeValues) => {
-  return (state = storeValues) => {
-
-    return state;
-  };
-};
-
-const createStoreValues = () => {
-  return {
-    orgUsers: {
-      users: [
-        {
-          css_id: 'VHAUSER01',
-          full_name: 'VHAUSER01',
-          id: '01',
-          type: 'user',
-        },
-        {
-          css_id: 'VHAUSER02',
-          full_name: 'VHAUSER02',
-          id: '02',
-          type: 'user',
-        },
-        {
-          css_id: 'VHAUSER03',
-          full_name: 'VHAUSER03',
-          id: '03',
-          type: 'user',
-        }
-      ]
-    }
-  };
-};
+import CombinedNonCompReducer from 'app/nonComp/reducers';
 
 const getUsers = () => {
   const data = {
     users: {
-      data:
-        [
-          {
-            id: '20',
-            type: 'user',
-            attributes: {
-              css_id: 'VHAUSER01',
-              full_name: 'VHAUSER01',
-              email: null
-            }
-          },
-          {
-            id: '21',
-            type: 'user',
-            attributes: {
-              css_id: 'VHAUSER02',
-              full_name: 'VHAUSER02',
-              email: null
-            }
-          },
-          {
-            id: '2000006012',
-            type: 'user',
-            attributes: {
-              css_id: 'VHAUSER03',
-              full_name: 'VHAUSER03',
-              email: null
-            }
-          },
-        ]
+      data: [
+        {
+          id: '20',
+          type: 'user',
+          attributes: {
+            css_id: 'VHAUSER01',
+            full_name: 'VHAUSER01',
+            email: null
+          }
+        },
+        {
+          id: '21',
+          type: 'user',
+          attributes: {
+            css_id: 'VHAUSER02',
+            full_name: 'VHAUSER02',
+            email: null
+          }
+        },
+        {
+          id: '2000006012',
+          type: 'user',
+          attributes: {
+            css_id: 'VHAUSER03',
+            full_name: 'Susanna Bahringer DDS',
+            email: 'marilou_doyle@hahn.org'
+          }
+        },
+      ]
     }
   };
 
@@ -96,11 +54,10 @@ beforeEach(() => {
 });
 
 describe('Personnel', () => {
-  const setup = (storeValues) => {
-    const reducer = createReducer(storeValues);
-
+  const setup = (storeValues = {}) => {
     const store = createStore(
-      reducer,
+      CombinedNonCompReducer,
+      storeValues,
       compose(applyMiddleware(thunk))
     );
 
@@ -124,9 +81,7 @@ describe('Personnel', () => {
   };
 
   it('renders a dropdown with the correct label', async () => {
-    // const storeValues = createStoreValues();
-
-    setup(initialState);
+    setup();
     await navigateToPersonnel();
 
     expect(screen.getByText('VHA team members')).toBeInTheDocument();
@@ -134,9 +89,7 @@ describe('Personnel', () => {
   });
 
   it('allows to select multiple options from dropdown', async () => {
-    // const storeValues = createStoreValues();
-
-    setup(initialState);
+    setup();
     await navigateToPersonnel();
 
     let selectText = screen.getAllByText(selectPlaceholder);
