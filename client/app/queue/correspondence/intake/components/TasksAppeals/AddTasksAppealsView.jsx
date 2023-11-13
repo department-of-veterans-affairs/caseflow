@@ -41,11 +41,18 @@ export const AddTasksAppealsView = (props) => {
   };
 
   const [selectedTaskType, setSelectedTaskType] = useState(-1);
+  const [instructionText, setInstructionText] = useState('');
+
   const handleChangeTaskType = (newType) => {
     setSelectedTaskType(newType);
 
-    props.disableContinue(addTask.length !== 0);
+  };
 
+  const handleChangeInstructionText = (newText) => {
+    setInstructionText(newText);
+    const isContinueEnabled = selectedTaskType !== -1 && instructionText.trim() !== null;
+
+    props.disableContinue(isContinueEnabled);
   };
 
   return (
@@ -117,6 +124,7 @@ export const AddTasksAppealsView = (props) => {
                   key={currentTask.Object}
                   removeTask={() => removeTaskAtIndex(i)}
                   handleChangeTaskType={handleChangeTaskType}
+                  handleChangeInstructionText={handleChangeInstructionText}
                 />
               ))}
 

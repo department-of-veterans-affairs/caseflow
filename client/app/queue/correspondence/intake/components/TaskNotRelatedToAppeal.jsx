@@ -18,12 +18,6 @@ const TaskNotRelatedToAppeal = (props) => {
     { value: 8, label: 'Status inquiry' }
   ];
 
-  const [instructionText, setInstructionText] = useState('');
-
-  const handleChangeInstructionText = (newText) => {
-    setInstructionText(newText);
-  };
-
   return (
     <div key={props.key} style={{ display: 'block', marginRight: '2rem' }}>
       <div className="gray-border"
@@ -46,8 +40,8 @@ const TaskNotRelatedToAppeal = (props) => {
             name="Task Information"
             label="Provide context and instruction on this task"
             defaultText=""
-            value={instructionText}
-            onChange={handleChangeInstructionText}
+            value={props.instructionText}
+            onChange={props.handleChangeInstructionText}
           />
           <Button
             name="Add"
@@ -72,6 +66,8 @@ TaskNotRelatedToAppeal.propTypes = {
   removeTask: PropTypes.func,
   key: PropTypes.object,
   handleChangeTaskType: PropTypes.func,
+  instructionText: PropTypes.string,
+  handleChangeInstructionText: PropTypes.func
 };
 
 export default TaskNotRelatedToAppeal;
