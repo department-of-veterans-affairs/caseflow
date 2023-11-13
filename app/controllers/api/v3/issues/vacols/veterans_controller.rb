@@ -36,6 +36,8 @@ class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
     @file_number ||= request.headers["X-VA-FILE-NUMBER"].presence
   end
 
+  rescue_from Caseflow::Error::InvalidFileNumber, BGS::ShareError, with: :render_veteran_not_found
+
   rescue_from StandardError do |error|
     Raven.capture_exception(error, extra: raven_extra_context)
 
