@@ -9,6 +9,7 @@ import DocketTypeBadge from '../components/DocketTypeBadge';
 import Table from '../components/Table';
 import BadgeArea from 'app/components/badges/BadgeArea';
 import { clearCaseListSearch } from './CaseList/CaseListActions';
+import { Checkbox } from "../components/Checkbox";
 
 import { DateString } from '../util/DateUtil';
 import { statusLabel, labelForLocation, renderAppealType, mostRecentHeldHearingForAppeal } from './utils';
@@ -21,6 +22,21 @@ class CaseListTable extends React.PureComponent {
 
   getColumns = () => {
     const columns = [
+      {
+        header: '',
+        valueFunction: (appeal) => {
+          if (appeal.showCheckboxes) {
+            return (
+              <Checkbox
+                label={appeal.id}
+                name={appeal.id}
+                value={appeal.id}
+                onChange={() => { console.log("change") }}
+              />
+            );
+          }
+        }
+      },
       {
         header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
         valueFunction: (appeal) => {
@@ -105,10 +121,15 @@ class CaseListTable extends React.PureComponent {
 
 CaseListTable.propTypes = {
   appeals: PropTypes.arrayOf(PropTypes.object).isRequired,
+  showCheckboxes: PropTypes.bool,
   styling: PropTypes.object,
   clearCaseListSearch: PropTypes.func,
   userRole: PropTypes.string,
   userCssId: PropTypes.string
+};
+
+CaseListTable.defaultProps = {
+  showCheckboxes: false
 };
 
 const mapStateToProps = (state) => ({

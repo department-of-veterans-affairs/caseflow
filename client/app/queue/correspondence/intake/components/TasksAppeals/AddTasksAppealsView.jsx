@@ -4,6 +4,7 @@ import RadioField from '../../../../../components/RadioField';
 import { current } from '@reduxjs/toolkit';
 import CaseListTable from '../../../../CaseListTable';
 import ApiUtil from '../../../../../util/ApiUtil';
+import { prepareAppealForStore } from '../../../../utils';
 
 const mailTasksLeft = [
   'Change of address',
@@ -24,12 +25,10 @@ const existingAppealAnswer = [
     value: '2' }
 ];
 
-
 export const AddTasksAppealsView = (props) => {
-
-  const [appeals, setAppeals] = useState([])
-  const [relatedToExistingAppeal, setRelatedToExistingAppeal] = useState(false)
-  const [existingAppealRadio, setExistingAppealRadio] = useState('2')
+  const [appeals, setAppeals] = useState([]);
+  const [relatedToExistingAppeal, setRelatedToExistingAppeal] = useState(false);
+  const [existingAppealRadio, setExistingAppealRadio] = useState('2');
 
   const selectYes = () => {
     if (existingAppealRadio === '2') {
@@ -55,18 +54,26 @@ export const AddTasksAppealsView = (props) => {
 
       ApiUtil.get('/appeals', { headers: { 'case-search': veteranFileNumber } }).
         then((response) => {
-          debugger;
-          setAppeals(response.body.appeals)
+          let appealsForStore = prepareAppealForStore(response.body.appeals);
+
+          let appealArr = [];
+          for (let appeal in appealsForStore.appeals) {
+            appealsForStore.appeals[appeal].showCheckboxes = true;
+            appealArr.push(appealsForStore.appeals[appeal]);
+          }
+
+          setAppeals(appealArr);
         });
       }
     );
   }, [relatedToExistingAppeal]);
 
-  const selections = existingAppealAnswer.map(({displayText, value}) => ({
-
-    displayText,
-    current: (value === existingAppealRadio)
-  }),
+  const selections = existingAppealAnswer.map(({displayText, value}) => {
+    return ({
+      displayText,
+      current: (value === existingAppealRadio)
+    });
+  },
   );
 
 
@@ -106,16 +113,16 @@ export const AddTasksAppealsView = (props) => {
         <h2>Tasks related to an existing Appeal</h2>
         <p>Is this correspondence related to an existing appeal?</p>
           <RadioField
-          name=""
-          value= {existingAppealRadio}
-          options={existingAppealAnswer}
-          onChange={existingAppealRadio === '2' ? selectYes : selectNo }/>
-
-          {existingAppealRadio === '1' && <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
-
-                          <CaseListTable appeals={appeals}/>
-            </div>}
-
+            name=""
+            value= {existingAppealRadio}
+            options={existingAppealAnswer}
+            onChange={existingAppealRadio === '2' ? selectYes : selectNo }
+          />
+          {existingAppealRadio === '1' &&
+            <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
+              <CaseListTable appeals={appeals} showCheckboxes={true} />
+            </div>
+          }
       </div>
     </div>
   );
