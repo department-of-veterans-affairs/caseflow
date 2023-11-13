@@ -5,6 +5,7 @@ require "benchmark"
 # see https://dropwizard.github.io/metrics/3.1.0/getting-started/ for abstractions on metric types
 class MetricsService
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # :reek:LongParameterList
   def self.record(description, service: nil, name: "unknown", caller: nil)
     return_value = nil
     app = RequestStore[:application] || "other"
@@ -102,7 +103,7 @@ class MetricsService
       }
     )
   end
-
+  # :reek:ControlParameter
   def self.store_record_metric(uuid, params, caller)
     return nil unless FeatureToggle.enabled?(:metrics_monitoring, user: RequestStore[:current_user])
 
@@ -118,7 +119,7 @@ class MetricsService
       sent_to_info: params[:sent_to_info],
       start: params[:start],
       end: params[:end],
-      duration: params[:duration],
+      duration: params[:duration]
     }
 
     metric = Metric.create_metric(caller || self, params, RequestStore[:current_user])

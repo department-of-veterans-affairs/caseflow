@@ -71,6 +71,7 @@ class Metric < CaseflowRecord
   # - duration
 
   # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # :reek:ControlParameter
   def self.default_object(klass, params, user)
     {
       uuid: params[:uuid],
