@@ -10,6 +10,14 @@ import selectEvent from 'react-select-event';
 import ReportPage from 'app/nonComp/pages/ReportPage';
 import ApiUtil from '../../../app/util/ApiUtil';
 
+const initialState = {
+  orgUsers: {
+    users: [],
+    status: 'idle',
+    error: null,
+  }
+};
+
 const createReducer = (storeValues) => {
   return (state = storeValues) => {
 
@@ -45,37 +53,42 @@ const createStoreValues = () => {
 };
 
 const getUsers = () => {
-  ApiUtil.get = jest.fn().mockResolvedValue({
-    data: [
-      {
-        id: '20',
-        type: 'user',
-        attributes: {
-          css_id: 'VHAADMIN',
-          full_name: 'VHAADMIN',
-          email: null
-        }
-      },
-      {
-        id: '21',
-        type: 'user',
-        attributes: {
-          css_id: 'VHAADMIN2',
-          full_name: 'VHAADMIN2',
-          email: null
-        }
-      },
-      {
-        id: '2000006012',
-        type: 'user',
-        attributes: {
-          css_id: 'ACBAUERVVHAH',
-          full_name: 'Susanna Bahringer DDS',
-          email: 'marilou_doyle@hahn.org'
-        }
-      },
-    ]
-  });
+  const data = {
+    users: {
+      data:
+        [
+          {
+            id: '20',
+            type: 'user',
+            attributes: {
+              css_id: 'VHAUSER01',
+              full_name: 'VHAUSER01',
+              email: null
+            }
+          },
+          {
+            id: '21',
+            type: 'user',
+            attributes: {
+              css_id: 'VHAUSER02',
+              full_name: 'VHAUSER02',
+              email: null
+            }
+          },
+          {
+            id: '2000006012',
+            type: 'user',
+            attributes: {
+              css_id: 'VHAUSER03',
+              full_name: 'VHAUSER03',
+              email: null
+            }
+          },
+        ]
+    }
+  };
+
+  ApiUtil.get = jest.fn().mockResolvedValue({ body: data });
 };
 
 beforeEach(() => {
@@ -111,9 +124,9 @@ describe('Personnel', () => {
   };
 
   it('renders a dropdown with the correct label', async () => {
-    const storeValues = createStoreValues();
+    // const storeValues = createStoreValues();
 
-    setup(storeValues);
+    setup(initialState);
     await navigateToPersonnel();
 
     expect(screen.getByText('VHA team members')).toBeInTheDocument();
@@ -121,9 +134,9 @@ describe('Personnel', () => {
   });
 
   it('allows to select multiple options from dropdown', async () => {
-    const storeValues = createStoreValues();
+    // const storeValues = createStoreValues();
 
-    setup(storeValues);
+    setup(initialState);
     await navigateToPersonnel();
 
     let selectText = screen.getAllByText(selectPlaceholder);
