@@ -1,7 +1,7 @@
 {
-  "MISSING_NUMBER": "Please enter a number.",
-  "MISSING_TIME_RANGE": "Please select a time range.",
-  "MISSING_SELECTION": "Plase make a selection.",
-  "MISSING_CONDITION": "Plase make a selection or remove this condition.",
-  "MAX_DAYS_TOO_SMALL": "Max days must be greater than min days."
+  "MISSING_NUMBER": "Please enter a number",
+  "MISSING_TIME_RANGE": "Please select a time range",
+  "MISSING_SELECTION": "Plase make a selection",
+  "MISSING_CONDITION": "Plase make a selection or remove this condition",
+  "MAX_DAYS_TOO_SMALL": "Max days must be greater than min days"
 }
