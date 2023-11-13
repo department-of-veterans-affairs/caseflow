@@ -8,9 +8,13 @@ class ProcessNotificationStatusUpdatesJob < CaseflowJob
 
     redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
 
+    processed_count = 0
+
     # prefer scan so we only load a single record into memory,
     # dumping the whole list could cause performance issues when job runs
     redis.scan_each(match: "*_update:*") do |key|
+      break if processed_count >= 1000
+
       begin
         raw_notification_type, uuid, status = key.split(":")
 
@@ -28,6 +32,7 @@ class ProcessNotificationStatusUpdatesJob < CaseflowJob
       ensure
         # cleanup keys - do first so we don't reporcess any failed keys
         redis.del key
+        processed_count += 1
       end
     end
   end
