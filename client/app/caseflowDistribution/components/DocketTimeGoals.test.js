@@ -3,6 +3,7 @@ import { render, fireEvent } from '@testing-library/react';
 import DocketTimeGoals from './DocketTimeGoals';
 import { levers } from 'test/data/adminCaseDistributionLevers';
 
+jest.mock('app/styles/caseDistribution/InteractableLevers.module.scss', () => '');
 describe('DocketTimeGoals Component', () => {
   const mockLeverList = ['lever_10', 'lever_11', 'lever_12'];
   const mockLeverStore = {
@@ -32,7 +33,7 @@ describe('DocketTimeGoals Component', () => {
   });
 
   it('renders DocketTimeGoals component correctly', () => {
-    expect(component.getByText('AMA Non-priority Distribution Goals by Docket​')).toBeInTheDocument();
+    expect(component.getByText('AMA Non-priority Distribution Goals by Docket')).toBeInTheDocument();
     expect(component.getByText('Lever 11')).toBeInTheDocument();
   });
 

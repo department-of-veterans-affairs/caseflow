@@ -3,6 +3,7 @@ import { render, fireEvent } from '@testing-library/react';
 import AffinityDays from './AffinityDays';
 import { levers } from 'test/data/adminCaseDistributionLevers';
 
+jest.mock('app/styles/caseDistribution/InteractableLevers.module.scss', () => '');
 describe('AffinityDays Component', () => {
   const mockLeverList = ['lever_9', 'lever_13'];
   const mockLeverStore = {
