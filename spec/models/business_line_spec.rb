@@ -558,6 +558,11 @@ describe BusinessLine do
 
       hlr_task2.assigned_at = 5.days.ago
       hlr_task2.save
+
+      # Set the whodunnnit of the completed version status to the decision user
+      version = hlr_task.versions.first
+      version.whodunnit = decision_user.id.to_s
+      version.save
     end
 
     subject { business_line.change_history_rows(change_history_filters) }

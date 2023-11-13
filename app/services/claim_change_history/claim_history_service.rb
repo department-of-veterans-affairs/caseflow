@@ -201,6 +201,7 @@ class ClaimHistoryService
     if task_id && !@processed_task_ids.include?(task_id)
       @processed_task_ids.add(task_id)
       save_events(ClaimHistoryEvent.create_claim_creation_event(change_data))
+      # save_events(ClaimHistoryEvent.create_status_events(change_data))
       save_events(ClaimHistoryEvent.create_status_events(change_data))
     end
   end

@@ -22,12 +22,15 @@ class ClaimHistoryEvent
     :removed_issue,
     :added_decision_date,
     :added_issue,
+    :added_issue_without_decision_date,
     :in_progress,
     :completed,
-    :incomplete
+    :incomplete,
+    :cancelled
   ].freeze
 
   REQUEST_ISSUE_TIME_WINDOW = 15
+  STATUS_EVENT_TIME_WINDOW = 2
 
   class << self
     def from_change_data(event_type, change_data)
@@ -51,22 +54,56 @@ class ClaimHistoryEvent
     end
 
     # This might have to change depending on performance for a lot of records
+    # def create_status_events(change_data)
+    #   status_events = []
+    #   task = Task.find(change_data["task_id"])
+    #   versions = task.versions
+
+    #   if versions.present?
+    #     first_version, *rest_of_versions = task.versions
+
+    #     # Assume that if the dates are equal then it should be a assigned -> on_hold status event that is recorded
+    #     # Due to the way intake is processed a task is always created as assigned first
+    #     first_changeset = first_version.changeset
+    #     time_difference = (first_changeset["updated_at"][0] - first_changeset["updated_at"][1]).to_f.abs
+
+    #     # If the time difference is > than 2 seconds then assume it is a valid status change instead of the
+    #     # Normal intake assigned -> on_hold that will happen for no decision date HLR/SC intakes
+    #     if time_difference > 2
+    #       status_events.push event_from_version(first_version, 0, change_data)
+    #     end
+
+    #     status_events.push event_from_version(first_version, 1, change_data)
+
+    #     rest_of_versions.map do |version|
+    #       status_events.push event_from_version(version, 1, change_data)
+    #     end
+    #   else
+    #     # No versions so make an event with the current status
+    #     event_type = task_status_to_event_type(change_data["task_status"])
+    #     event_hash = { "event_date" => change_data["intake_completed_at"], "event_user_name" => "System" }
+    #     status_events.push from_change_data(event_type, change_data.merge(event_hash))
+    #   end
+
+    #   status_events
+    # end
+
     def create_status_events(change_data)
       status_events = []
-      task = Task.find(change_data["task_id"])
-      versions = task.versions
+      versions = parse_versions(change_data)
+
+      # puts versions.inspect
 
       if versions.present?
-        first_version, *rest_of_versions = task.versions
+        first_version, *rest_of_versions = versions
 
         # Assume that if the dates are equal then it should be a assigned -> on_hold status event that is recorded
         # Due to the way intake is processed a task is always created as assigned first
-        first_changeset = first_version.changeset
-        time_difference = (first_changeset["updated_at"][0] - first_changeset["updated_at"][1]).to_f.abs
+        time_difference = (first_version["updated_at"][0] - first_version["updated_at"][1]).to_f.abs
 
         # If the time difference is > than 2 seconds then assume it is a valid status change instead of the
         # Normal intake assigned -> on_hold that will happen for no decision date HLR/SC intakes
-        if time_difference > 2
+        if time_difference > STATUS_EVENT_TIME_WINDOW
           status_events.push event_from_version(first_version, 0, change_data)
         end
 
@@ -83,6 +120,13 @@ class ClaimHistoryEvent
       end
 
       status_events
+    end
+
+    def parse_versions(change_data)
+      versions = change_data["task_versions"]
+      if versions
+        versions[1..-2].split(",").map { |yaml| YAML.safe_load(yaml.gsub(/^"|"$/, ""), [Time]) }
+      end
     end
 
     def create_issue_events(change_data)
@@ -135,7 +179,7 @@ class ClaimHistoryEvent
     end
 
     def create_add_issue_event(change_data)
-      # Make a guess that it was the same transaction as intake. If not it was a probably added during an issue update
+      # Try to guess if it added during intake. If not, it was a probably added during an issue update
       same_transaction = date_strings_within_seconds?(change_data["intake_completed_at"],
                                                       change_data["request_issue_created_at"],
                                                       REQUEST_ISSUE_TIME_WINDOW)
@@ -145,7 +189,8 @@ class ClaimHistoryEvent
                      update_event_hash(change_data).merge("event_date" => change_data["request_issue_created_at"])
                    end
 
-      from_change_data(:added_issue, change_data.merge(event_hash))
+      event_type = determine_add_issue_event_type(change_data)
+      from_change_data(event_type, change_data.merge(event_hash))
     end
 
     private
@@ -169,18 +214,42 @@ class ClaimHistoryEvent
         "in_progress" => :in_progress,
         "assigned" => :in_progress,
         "on_hold" => :incomplete,
-        "completed" => :completed
+        "completed" => :completed,
+        "cancelled" => :cancelled
       }[task_status]
     end
 
-    def event_from_version(version, index, change_data)
-      changes = version.changeset
+    # def event_from_version(version, index, change_data)
+    #   changes = version.changeset
+    #   if changes["status"]
+    #     event_type = task_status_to_event_type(changes["status"][index])
+    #     event_date = changes["updated_at"][index]
+    #     event_date_hash = { "event_date" => event_date, "event_user_name" => "System" }
+    #     from_change_data(event_type, change_data.merge(event_date_hash))
+    #   end
+    # end
+
+    def event_from_version(changes, index, change_data)
       if changes["status"]
         event_type = task_status_to_event_type(changes["status"][index])
         event_date = changes["updated_at"][index]
         event_date_hash = { "event_date" => event_date, "event_user_name" => "System" }
         from_change_data(event_type, change_data.merge(event_date_hash))
       end
+    end
+
+    def determine_add_issue_event_type(change_data)
+      # If there is no decision_date_added_at time, assume it is old data and it had a decision date on creation
+      had_decision_date = if change_data["decision_date"] && change_data["decision_date_added_at"]
+                            # Assume if the time window was within 15 seconds of creation it had a decision date
+                            date_strings_within_seconds?(change_data["request_issue_created_at"],
+                                                         change_data["decision_date_added_at"],
+                                                         REQUEST_ISSUE_TIME_WINDOW)
+                          else
+                            true
+                          end
+
+      had_decision_date ? :added_issue : :added_issue_without_decision_date
     end
 
     def intake_event_hash(change_data)
@@ -201,9 +270,23 @@ class ClaimHistoryEvent
     end
 
     def date_strings_within_seconds?(first_date, second_date, time_in_seconds)
+      # puts "date1: #{first_date}"
+      # puts "date2: #{second_date}"
+
       return false unless first_date && second_date
 
-      ((first_date.to_datetime - second_date.to_datetime).abs * 24 * 60 * 60).to_f < time_in_seconds
+      # seconds_between_dates = (Time.zone.parse(first_date) - Time.zone.parse(second_date)).to_i.abs
+
+      # puts "number of seconds between the two dates: #{seconds_between_dates} compared to time window: #{time_in_seconds}"
+
+      # puts "#{seconds_between_dates} < #{time_in_seconds}: #{seconds_between_dates < time_in_seconds}"
+      # result = (seconds_between_dates < time_in_seconds)
+
+      # puts "nasty calculation: #{((first_date.to_datetime - second_date.to_datetime).abs * 24 * 60 * 60).to_f}"
+
+      result = ((first_date.to_datetime - second_date.to_datetime).abs * 24 * 60 * 60).to_f < time_in_seconds
+      # puts "result of comparison: #{result}"
+      result
     end
   end
 
@@ -235,7 +318,8 @@ class ClaimHistoryEvent
       "assigned" => "in progress",
       "in_progress" => "in progress",
       "on_hold" => "incomplete",
-      "completed" => "completed"
+      "completed" => "completed",
+      "cancelled" => "cancelled"
     }[task_status]
   end
 
@@ -274,18 +358,32 @@ class ClaimHistoryEvent
       claim_creation: "Claim created",
       completed_disposition: "Completed disposition",
       added_issue: "Added Issue",
+      added_issue_without_decision_date: "Added issue - No decision date",
       withdrew_issue: "Withdrew issue",
       removed_issue: "Removed issue",
-      added_decision_date: "Added decision date"
+      added_decision_date: "Added decision date",
+      cancelled: "Claim closed"
     }[event_type]
   end
 
   def issue_event?
-    [:completed_disposition, :added_issue, :withdrew_issue, :removed_issue, :added_decision_date].include?(event_type)
+    [
+      :completed_disposition,
+      :added_issue,
+      :withdrew_issue,
+      :removed_issue,
+      :added_decision_date,
+      :added_issue_without_decision_date
+    ].include?(event_type)
   end
 
   def event_can_contain_disposition?
-    [:completed_disposition, :added_issue, :added_decision_date].include?(event_type)
+    [
+      :completed_disposition,
+      :added_issue,
+      :added_issue_without_decision_date,
+      :added_decision_date
+    ].include?(event_type)
   end
 
   def disposition_event?
@@ -293,7 +391,7 @@ class ClaimHistoryEvent
   end
 
   def status_event?
-    [:in_progress, :incomplete, :completed, :claim_creation].include?(event_type)
+    [:in_progress, :incomplete, :completed, :claim_creation, :cancelled].include?(event_type)
   end
 
   private
@@ -361,7 +459,7 @@ class ClaimHistoryEvent
   ############ CSV and Serializer Helpers ############
 
   def days_waiting_helper(date_string)
-    assigned_on = DateTime.parse(date_string)
+    assigned_on = Date.parse(date_string)
     (Time.zone.today - assigned_on).to_i
   end
 
@@ -395,7 +493,8 @@ class ClaimHistoryEvent
       in_progress: "Claim can be processed.",
       incomplete: "Claim cannot be processed until decision date is entered.",
       completed: "Claim closed.",
-      claim_creation: "Claim created."
+      claim_creation: "Claim created.",
+      cancelled: "Claim closed."
     }[event_type]
   end
 

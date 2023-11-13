@@ -177,6 +177,20 @@ class BusinessLine < Organization
 
     def change_history_rows
       change_history_sql_block = <<-SQL
+        WITH versions_agg AS (
+          SELECT
+              versions.item_id,
+              versions.item_type,
+              ARRAY_AGG(versions.object_changes) AS object_changes_array,
+              MAX(CASE
+                  WHEN versions.object_changes LIKE '%closed_at:%' THEN versions.whodunnit
+                  ELSE NULL
+              END) AS version_closed_by_id
+          FROM
+              versions
+          GROUP BY
+              versions.item_id, versions.item_type
+        )
         SELECT tasks.id AS task_id, tasks.status AS task_status, request_issues.id AS request_issue_id,
           request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
           request_issues.benefit_type AS request_issue_benefit_type, request_issues_updates.id AS request_issue_update_id,
@@ -191,7 +205,8 @@ class BusinessLine < Organization
           decision_issues.caseflow_decision_date, request_issues.decision_date_added_at, intakes.veteran_file_number,
           tasks.appeal_type, tasks.appeal_id, request_issues.nonrating_issue_category, request_issues.nonrating_issue_description,
           request_issues.decision_date, decision_issues.disposition, tasks.assigned_at, people.first_name, people.last_name,
-          request_decision_issues.decision_issue_id, request_issues.closed_at AS request_issue_closed_at
+          request_decision_issues.decision_issue_id, request_issues.closed_at AS request_issue_closed_at,
+          tv.object_changes_array AS task_versions
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
@@ -204,10 +219,12 @@ class BusinessLine < Organization
         AND decision_issues.decision_review_type = tasks.appeal_type AND decision_issues.id = request_decision_issues.decision_issue_id
         LEFT JOIN claimants ON claimants.decision_review_id = tasks.appeal_id
         AND claimants.decision_review_type = tasks.appeal_type
+        LEFT join versions_agg tv ON tv.item_type = 'Task' AND tv.item_id = tasks.id
         LEFT JOIN people ON claimants.participant_id = people.participant_id
         LEFT JOIN users intake_users ON intakes.user_id = intake_users.id
         LEFT JOIN users update_users ON request_issues_updates.user_id = update_users.id
-        LEFT JOIN users decision_users ON decision_users.id = tasks.completed_by_id
+        /*LEFT JOIN users decision_users ON decision_users.id = tasks.completed_by_id*/
+        LEFT JOIN users decision_users ON decision_users.id = tv.version_closed_by_id::int
         WHERE tasks.type = 'DecisionReviewTask'
         AND tasks.assigned_to_type = 'Organization'
         AND tasks.assigned_to_id = '#{parent.id.to_i}'
@@ -275,6 +292,7 @@ class BusinessLine < Organization
       end
     end
 
+    # AND EXTRACT(DAYS FROM (CURRENT_TIMESTAMP - tasks.assigned_at))::integer #{operator} '#{number_of_days.to_i}'
     def days_waiting_filter
       if query_params[:days_waiting].present?
         number_of_days = query_params[:days_waiting][:number_of_days]
@@ -282,7 +300,7 @@ class BusinessLine < Organization
         case operator
         when ">", "<", "="
           <<-SQL
-            AND EXTRACT(DAYS FROM (CURRENT_TIMESTAMP - tasks.assigned_at))::integer #{operator} '#{number_of_days.to_i}'
+            AND (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) #{operator} '#{number_of_days.to_i}'
           SQL
         when "between"
           end_days = query_params[:days_waiting][:end_days]

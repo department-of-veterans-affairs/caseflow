@@ -48,7 +48,9 @@ describe ClaimHistoryEvent do
       "update_user_css_id" => 3992,
       "request_issue_closed_at" => "2023-10-16 22:47:16.233187",
       "event_user_name" => change_data_event_user_name,
-      "event_date" => change_data_event_date
+      "event_date" => change_data_event_date,
+      "task_versions" => version_changes,
+
     }
   end
 
@@ -57,13 +59,14 @@ describe ClaimHistoryEvent do
   let(:change_data_claim_type) { "HigherLevelReview" }
   let(:change_data_event_user_name) { nil }
   let(:change_data_event_date) { nil }
+  let(:version_changes) { nil }
   let(:event_attribute_data) do
     {
       assigned_at: "2023-10-19 22:47:16.222148",
       benefit_type: "vha",
       claim_type: "HigherLevelReview",
       claimant_name: "Bob Smithboehm",
-      days_waiting: (Time.zone.today - DateTime.parse("2023-10-19 22:47:16.222148")).to_i,
+      days_waiting: (Time.zone.today - Date.parse("2023-10-19 22:47:16.222148")).to_i,
       decision_date: "2023-05-31",
       decision_description: "granting clothing allowance",
       disposition: "Granted",
@@ -89,7 +92,7 @@ describe ClaimHistoryEvent do
       benefit_type: "vha",
       claim_type: "HigherLevelReview",
       claimant_name: "Bob Smithboehm",
-      days_waiting: (Time.zone.today - DateTime.parse("2023-10-19 22:47:16.222148")).to_i,
+      days_waiting: (Time.zone.today - Date.parse("2023-10-19 22:47:16.222148")).to_i,
       decision_date: nil,
       decision_description: nil,
       disposition: nil,
@@ -201,63 +204,179 @@ describe ClaimHistoryEvent do
     end
 
     describe ".create_status_events" do
-      let(:task) { create(:task) }
-
       subject { described_class.create_status_events(change_data) }
 
       context "if the task status was assigned -> completed" do
-        before do
-          change_data["task_id"] = task.id
-          task.completed!
+        let(:version_changes) do
+          "{\"---\n" \
+          "closed_at:\n" \
+          "- \n" \
+          "- 2023-11-08 19:22:47.244142348 Z\n" \
+          "status:\n" \
+          "- assigned\n" \
+          "- completed\n" \
+          "updated_at:\n" \
+          "- 2023-11-08 19:22:47.227634704 Z\n" \
+          "- 2023-11-09 19:22:47.244304624 Z\n" \
+          "\"}"
         end
 
-        it "should create a :completed status event" do
-          event = subject[0]
-          expect(event.event_type).to eq(:completed)
-          expect(event.task_id).to eq(task.id)
-          expect(event.event_user_name).to eq("System")
-          expect(event.event_date).to eq(task.versions[0].changeset["updated_at"][1].iso8601)
+        it "should create an in progress event and a completed status event" do
+          events = subject
+          expect(events.count).to eq(2)
+          expect(events[0].event_type).to eq(:in_progress)
+          expect(events[0].event_user_name).to eq("System")
+          expect(events[0].event_date).to eq("2023-11-08T19:22:47Z")
+          expect(events[1].event_type).to eq(:completed)
+          expect(events[1].event_user_name).to eq("System")
+          expect(events[1].event_date).to eq("2023-11-09T19:22:47Z")
         end
       end
 
-      context "if the task status was assigned -> on_hold during intake then -> completed" do
-        before do
-          change_data["task_id"] = task.id
-          task.on_hold!
-          task.completed!
+      context "if the task status was assigned -> cancelled" do
+        let(:version_changes) do
+          "{\"---\n" \
+          "closed_at:\n" \
+          "- \n" \
+          "- 2023-11-09 23:16:28.446266110 Z\n" \
+          "status:\n" \
+          "- assigned\n" \
+          "- cancelled\n" \
+          "updated_at:\n" \
+          "- 2023-11-09 23:16:15.724150103 Z\n" \
+          "- 2023-11-11 23:16:28.446399290 Z\n" \
+          "\"}"
         end
 
-        it "should generate two status events" do
+        it "should generate an in progress and a cancelled status event" do
+          events = subject
+          expect(events.count).to eq(2)
+          expect(events[0].event_type).to eq(:in_progress)
+          expect(events[0].event_user_name).to eq("System")
+          expect(events[0].event_date).to eq("2023-11-09T23:16:15Z")
+          expect(events[1].event_type).to eq(:cancelled)
+          expect(events[1].event_user_name).to eq("System")
+          expect(events[1].event_date).to eq("2023-11-11T23:16:28Z")
+        end
+      end
+
+      context "if the task status was assigned -> on_hold -> assigned -> completed" do
+        let(:version_changes) do
+          "{\"---\n" \
+          "status:\n" \
+          "- assigned\n" \
+          "- on_hold\n" \
+          "placed_on_hold_at:\n" \
+          "- \n" \
+          "- 2023-10-19 22:45:43.148646561 Z\n" \
+          "updated_at:\n" \
+          "- 2023-10-19 22:39:14.207143000 Z\n" \
+          "- 2023-10-19 22:45:43.148742110 Z\n" \
+          "\",---\n" \
+          "status:\n" \
+          "- on_hold\n" \
+          "- assigned\n" \
+          "assigned_at:\n" \
+          "- 2023-10-19 22:39:14.203532000 Z\n" \
+          "- 2023-10-19 22:47:16.222148939 Z\n" \
+          "updated_at:\n" \
+          "- 2023-10-19 22:45:43.148742000 Z\n" \
+          "- 2023-10-19 22:47:16.222311778 Z\n" \
+          "\",---\n" \
+          "status:\n" \
+          "- assigned\n" \
+          "- completed\n" \
+          "closed_at:\n" \
+          "- \n" \
+          "- 2023-10-19 22:48:25.322988083 Z\n" \
+          "updated_at:\n" \
+          "- 2023-10-19 22:47:16.222311000 Z\n" \
+          "- 2023-10-19 22:48:25.324023984 Z\n" \
+          "\"}"
+        end
+
+        it "should generate four status events" do
+          events = subject
+          assigned_event = events[0]
+          on_hold_event = events[1]
+          second_assigned_event = events[2]
+          completed_event = events[3]
+
+          expect(events.count).to eq(4)
+          expect(assigned_event.event_type).to eq(:in_progress)
+          expect(on_hold_event.event_type).to eq(:incomplete)
+          expect(second_assigned_event.event_type).to eq(:in_progress)
+          expect(completed_event.event_type).to eq(:completed)
+          events.each do |event|
+            expect(event.event_user_name).to eq("System")
+          end
+          expect(assigned_event.event_date).to eq("2023-10-19T22:39:14Z")
+          expect(on_hold_event.event_date).to eq("2023-10-19T22:45:43Z")
+          expect(second_assigned_event.event_date).to eq("2023-10-19T22:47:16Z")
+          expect(completed_event.event_date).to eq("2023-10-19T22:48:25Z")
+        end
+      end
+
+      context "if the task has no decision date and the task status was immediately set to on hold during intake" do
+        let(:version_changes) do
+          "{\"---\n" \
+          "status:\n" \
+          "- assigned\n" \
+          "- on_hold\n" \
+          "placed_on_hold_at:\n" \
+          "- \n" \
+          "- 2023-10-19 22:45:43.148646561 Z\n" \
+          "updated_at:\n" \
+          "- 2023-10-19 22:39:14.207143000 Z\n" \
+          "- 2023-10-19 22:39:14.207143000 Z\n" \
+          "\",---\n" \
+          "status:\n" \
+          "- on_hold\n" \
+          "- assigned\n" \
+          "assigned_at:\n" \
+          "- 2023-10-19 22:39:14.203532000 Z\n" \
+          "- 2023-10-19 22:47:16.222148939 Z\n" \
+          "updated_at:\n" \
+          "- 2023-10-19 22:45:43.148742000 Z\n" \
+          "- 2023-10-19 22:47:16.222311778 Z\n" \
+          "\",---\n" \
+          "status:\n" \
+          "- assigned\n" \
+          "- completed\n" \
+          "closed_at:\n" \
+          "- \n" \
+          "- 2023-10-19 22:48:25.322988083 Z\n" \
+          "updated_at:\n" \
+          "- 2023-10-19 22:47:16.222311000 Z\n" \
+          "- 2023-10-19 22:48:25.324023984 Z\n" \
+          "\"}"
+        end
+
+        it "should create an on_hold event, an in progress event, and a completed event" do
           events = subject
           on_hold_event = events[0]
-          completed_event = events[1]
+          assigned_event = events[1]
+          completed_event = events[2]
 
-          expect(events.count).to eq(2)
-          # on hold event
+          expect(events.count).to eq(3)
           expect(on_hold_event.event_type).to eq(:incomplete)
-          expect(on_hold_event.task_id).to eq(task.id)
-          expect(on_hold_event.event_user_name).to eq("System")
-          expect(on_hold_event.event_date).to eq(task.versions.first.changeset["updated_at"][1].iso8601)
-
-          # Completed event
+          expect(assigned_event.event_type).to eq(:in_progress)
           expect(completed_event.event_type).to eq(:completed)
-          expect(completed_event.task_id).to eq(task.id)
-          expect(completed_event.event_user_name).to eq("System")
-          expect(completed_event.event_date).to eq(task.versions.last.changeset["updated_at"][1].iso8601)
+          events.each do |event|
+            expect(event.event_user_name).to eq("System")
+          end
+          expect(on_hold_event.event_date).to eq("2023-10-19T22:39:14Z")
+          expect(assigned_event.event_date).to eq("2023-10-19T22:47:16Z")
+          expect(completed_event.event_date).to eq("2023-10-19T22:48:25Z")
         end
       end
 
       context "if the task has no versions" do
         let(:change_data_task_status) { "assigned" }
 
-        before do
-          change_data["task_id"] = task.id
-        end
-
         it "should create an event of the current task status which should be assigned" do
           event = subject[0]
           expect(event.event_type).to eq(:in_progress)
-          expect(event.task_id).to eq(task.id)
           expect(event.event_user_name).to eq("System")
           expect(event.event_date).to eq(change_data["intake_completed_at"])
         end
@@ -367,10 +486,24 @@ describe ClaimHistoryEvent do
 
       subject { described_class.create_add_issue_event(change_data) }
 
-      context "if the request issue was added during intake" do
+      context "if the request issue was added during intake without a decision date" do
+        let(:event_type) { :added_issue_without_decision_date }
         before do
           # The example change_data request_issue was added during an update so adjust the time to match the intake
           change_data["request_issue_created_at"] = change_data["intake_completed_at"]
+        end
+
+        it "should create an added issue without decision date event with intake event data" do
+          expect_attributes(subject, event_attribute_data.merge(intake_event_data))
+        end
+      end
+
+      context "if the request issue was added during intake with a decision date" do
+        before do
+          # The example change_data request_issue was added during an update so adjust the time to match the intake
+          # Also set the decision date added at to be the same time
+          change_data["request_issue_created_at"] = change_data["intake_completed_at"]
+          change_data["decision_date_added_at"] = change_data["intake_completed_at"]
         end
 
         it "should create an added issue event with intake event data" do
@@ -379,6 +512,8 @@ describe ClaimHistoryEvent do
       end
 
       context "if the request issue was added during a request issues update" do
+        let(:event_type) { :added_issue_without_decision_date }
+
         # The base change_data was added during an update so no data updates are neccesary
         it "should create an added issue event with intake event data" do
           expect_attributes(subject, event_attribute_data.merge(update_event_data))
@@ -463,37 +598,6 @@ describe ClaimHistoryEvent do
 
           it "should return a completed symbol" do
             expect(subject).to eq(:completed)
-          end
-        end
-      end
-
-      describe ".event_from_version" do
-        let(:task) { create(:task) }
-
-        before do
-          task.completed!
-        end
-
-        let(:version) { task.versions.first }
-        let(:version_index) { 1 }
-
-        subject { described_class.send(:event_from_version, version, version_index, change_data) }
-
-        it "should return a completed status event from the version at index 1" do
-          event = subject
-          expect(event.event_type).to eq(:completed)
-          expect(event.event_date).to eq(version.changeset["updated_at"][version_index].iso8601)
-          expect(event.event_user_name).to eq("System")
-        end
-
-        context "index of 0" do
-          let(:version_index) { 0 }
-
-          it "should return an in progress status event from the version at index 0" do
-            event = subject
-            expect(event.event_type).to eq(:in_progress)
-            expect(event.event_date).to eq(version.changeset["updated_at"][version_index].iso8601)
-            expect(event.event_user_name).to eq("System")
           end
         end
       end
@@ -789,7 +893,7 @@ describe ClaimHistoryEvent do
         subject { event_instance.send(:days_waiting_helper, change_data["assigned_at"]) }
 
         it "should convert an iso8601 string to number of days from current date" do
-          expect(subject).to eq(10)
+          expect(subject).to eq(11)
         end
       end
 

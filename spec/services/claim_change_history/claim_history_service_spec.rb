@@ -34,7 +34,6 @@ describe ClaimHistoryService do
     create(:request_issues_update,
            user: update_user,
            review: hlr_task.appeal,
-           # Pluck might not work because of setup order
            before_request_issue_ids: hlr_task.appeal.request_issues.pluck(:id),
            after_request_issue_ids: hlr_task.appeal.request_issues.pluck(:id),
            withdrawn_request_issue_ids: [withdrew_issue.id],
@@ -45,7 +44,8 @@ describe ClaimHistoryService do
     create(:request_issues_update,
            user: update_user2,
            review: hlr_task.appeal,
-           # Pluck might not work because of setup order
+           # Make the created at time different from the request issue created at and intake times for event creation
+           created_at: Time.zone.now + 1.day,
            before_request_issue_ids: hlr_task.appeal.request_issues.pluck(:id),
            after_request_issue_ids: hlr_task.appeal.request_issues.pluck(:id),
            withdrawn_request_issue_ids: [],
@@ -71,7 +71,7 @@ describe ClaimHistoryService do
       :completed_disposition,
       :added_decision_date,
       :added_issue,
-      :added_issue,
+      :added_issue_without_decision_date,
       :completed_disposition
     ]
   end
@@ -88,16 +88,18 @@ describe ClaimHistoryService do
     # Simulate the task status for a task that went intake -> on_hold -> assigned -> completed
     hlr_task.on_hold!
 
-    # Setup add decision date event
+    # Setup add decision date event and added_issue_without_decision_date
     extra_hlr_request_issue.decision_date = Time.zone.today
+
     extra_hlr_request_issue.decision_date_added_at = request_issue_update_add_decision_date.created_at
     extra_hlr_request_issue.save
 
     hlr_task.assigned!
 
-    hlr_task.completed_by = decision_user
-    hlr_task.status = "completed"
-    hlr_task.save
+    # Set the whodunnnit of the completed version status to the decision user
+    version = hlr_task.versions.first
+    version.whodunnit = decision_user.id.to_s
+    version.save
 
     # Setup request issues and decision issues
     decision_issue.request_issues << extra_hlr_request_issue
@@ -110,8 +112,14 @@ describe ClaimHistoryService do
     hlr_task.appeal.save
 
     # Set the time and save it for days waiting filter. Should override assigned!
-    hlr_task.assigned_at = 5.days.ago
+    # hlr_task.assigned_at = 5.days.ago
+    hlr_task.assigned_at = 5.days.ago - 2.hours
     hlr_task.save
+
+    # Set the task status back to completed without triggering papertrail so the task is in the correct state
+    PaperTrail.request(enabled: false) do
+      hlr_task.completed!
+    end
   end
 
   describe ".build_events" do
@@ -127,6 +135,7 @@ describe ClaimHistoryService do
 
         # Expect to get back all the combined event types
         all_event_types = expected_hlr_event_types + expected_sc_event_types
+        expect(events.count).to eq(14)
         expect(events.map(&:event_type)).to contain_exactly(*all_event_types)
 
         # Verify the issue data is correct for the completed_dispostion events
@@ -144,7 +153,9 @@ describe ClaimHistoryService do
         added_issue_types = [*disposition_issue_types, "CHAMPVA", "Beneficiary Travel"]
         added_issue_descriptions = [*disposition_issue_descriptions, "Withdrew CHAMPVA", "VHA issue description "]
         added_issue_user_names = ["Lauren Roth", "Lauren Roth", "Lauren Roth", "Eleanor Reynolds"]
-        add_issue_events = events.select { |event| event.event_type == :added_issue }
+        add_issue_events = events.select do |event|
+          event.event_type == :added_issue || event.event_type == :added_issue_without_decision_date
+        end
         expect(add_issue_events.map(&:issue_type)).to contain_exactly(*added_issue_types)
         expect(add_issue_events.map(&:issue_description)).to contain_exactly(*added_issue_descriptions)
         expect(add_issue_events.map(&:event_user_name)).to contain_exactly(*added_issue_user_names)
@@ -297,7 +308,6 @@ describe ClaimHistoryService do
             :added_issue,
             :added_issue,
             :added_issue,
-            :added_issue,
             :completed_disposition,
             :completed_disposition
           ]
@@ -353,8 +363,12 @@ describe ClaimHistoryService do
 
           it "should only return events for task that are after the start_date in the filter" do
             subject
+            filtered_hlr_event_types = [
+              *(expected_hlr_event_types - [:added_issue, :claim_creation, :added_issue_without_decision_date]),
+              :added_issue
+            ]
             expect(service_instance.events.map(&:event_type)).to contain_exactly(
-              *(expected_hlr_event_types - [:added_issue, :claim_creation]), :added_issue,
+              *filtered_hlr_event_types,
               *expected_sc_event_types
             )
           end
@@ -383,7 +397,7 @@ describe ClaimHistoryService do
             )
           end
 
-          context "with between and task status filter with no matches" do
+          context "with between and task status" do
             let(:filters) do
               {
                 timing: {
@@ -397,8 +411,9 @@ describe ClaimHistoryService do
 
             it "should only return events between the dates and has a completed task status in the filter" do
               subject
+              # The before block adds one additional completed event due to the setup code
               expect(service_instance.events.map(&:event_type)).to contain_exactly(
-                *(expected_hlr_event_types - [:claim_creation])
+                *(expected_hlr_event_types - [:claim_creation, :completed]), :completed
               )
             end
           end

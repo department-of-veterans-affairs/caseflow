@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useController, useForm, FormProvider } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { downloadReportCSV } from 'app/nonComp/actions/changeHistorySlice';
+import { fetchUsers } from 'app/nonComp/actions/usersSlice';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import Button from 'app/components/Button';
@@ -40,9 +43,14 @@ const ReportPageButtons = ({
   // });
 
   // eslint-disable-next-line no-console
-  const onSubmit = (data) => console.log(data);
+  // const onSubmit = (data) => {
+  //   console.log(data);
+
+  //   return data;
+  // };
 
   return (
+
     <div {...buttonOuterContainerStyling}>
       <Button
         classNames={['cf-modal-link', 'cf-btn-link']}
@@ -66,7 +74,7 @@ const ReportPageButtons = ({
           classNames={['usa-button']}
           label="generate-report"
           name="generate-report"
-          onClick={handleSubmit(onSubmit)}
+          onClick={handleSubmit}
           disabled={isGenerateButtonDisabled}
         >
           Generate task report
@@ -149,8 +157,17 @@ const ReportPage = ({ history }) => {
   };
 
   const methods = useForm({ defaultValues: { ...defaultFormValues } });
-
   const { reset, watch, formState, control, handleSubmit } = methods;
+  const dispatch = useDispatch();
+  const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
+
+  const submitForm = (data) => {
+    // eslint-disable-next-line no-console
+    console.log(data);
+
+    // Example csv generation code:
+    dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: { report: 'true' } } }));
+  };
 
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
@@ -162,7 +179,7 @@ const ReportPage = ({ history }) => {
           history={history}
           isGenerateButtonDisabled={!formState.isDirty}
           handleClearFilters={() => reset(defaultFormValues)}
-          handleSubmit={handleSubmit}
+          handleSubmit={handleSubmit(submitForm)}
         />
       }
     >
