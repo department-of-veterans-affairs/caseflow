@@ -1,22 +1,24 @@
 # frozen_string_literal: true
 
 class ClaimDateDtFixJob < CaseflowJob
-  ERROR_TEXT = "ClaimDateDt"
+  queue_with_priority :low_priority
 
-  attr_reader :stuck_job_report_service
+  ERROR_TEXT = "ClaimDateDt"
 
   def initialize
     @stuck_job_report_service = StuckJobReportService.new
+    super
   end
 
   def perform
+    RequestStore[:current_user] = User&.system_user
     process_decision_documents
   end
 
   def process_decision_documents
     return if decision_docs_with_errors.blank?
 
-    stuck_job_report_service.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
+    @stuck_job_report_service.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
 
     decision_docs_with_errors.each do |single_decision_document|
       next unless valid_decision_document?(single_decision_document)
@@ -24,9 +26,9 @@ class ClaimDateDtFixJob < CaseflowJob
       process_decision_document(single_decision_document)
     end
 
-    stuck_job_report_service.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
+    @stuck_job_report_service.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
 
-    stuck_job_report_service.write_log_report(ERROR_TEXT)
+    @stuck_job_report_service.write_log_report(ERROR_TEXT)
   end
 
   def valid_decision_document?(decision_document)
@@ -40,7 +42,7 @@ class ClaimDateDtFixJob < CaseflowJob
       decision_document.clear_error!
     rescue StandardError => error
       log_error(error)
-      stuck_job_report_service.append_errors(decision_document.class.name, decision_document.id, error)
+      @stuck_job_report_service.append_errors(decision_document.class.name, decision_document.id, error)
     end
   end
 

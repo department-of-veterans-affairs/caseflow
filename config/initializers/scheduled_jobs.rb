@@ -49,5 +49,10 @@ SCHEDULED_JOBS = {
     "legacy_notification_efolder_sync_job" => LegacyNotificationEfolderSyncJob,
     "change_hearing_request_type_task_cancellation_job" => ChangeHearingRequestTypeTaskCancellationJob,
     "cannot_delete_contention_remediation_job" => CannotDeleteContentionRemediationJob,
-    "contention_not_found_remediation_job" => ContentionNotFoundRemediationJob
+    "contention_not_found_remediation_job" => ContentionNotFoundRemediationJob,
+    "bgs_share_error_fix_job" => BgsShareErrorFixJob,
+    "claim_date_dt_fix_job" => ClaimDateDtFixJob,
+    "claim_not_established_fix_job" => ClaimNotEstablishedFixJob,
+    "dta_sc_creation_failed_fix_job" => DtaScCreationFailedFixJob,
+    "sc_dta_for_appeal_fix_job" => ScDtaForAppealFixJob
 }.freeze
