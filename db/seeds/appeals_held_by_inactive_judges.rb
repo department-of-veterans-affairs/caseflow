@@ -200,8 +200,8 @@ module Seeds
       def create_ama_appeals_decision_ready_dr_less_than_60_days(judge, attorney)
         Timecop.travel(1.days.ago)
           appeal = create(:appeal,
-                          :direct_review_docket,
-                          :at_attorney_drafting,
+                          :held_hearing_and_ready_to_distribute,
+                          :with_post_intake_tasks,
                           associated_judge: judge,
                           associated_attorney: attorney,
                           veteran: create_veteran)
@@ -212,8 +212,8 @@ module Seeds
       def create_ama_appeals_decision_ready_dr_more_than_60_days(judge, attorney)
         Timecop.travel(61.days.ago)
           appeal = create(:appeal,
-                          :direct_review_docket,
-                          :at_attorney_drafting,
+                          :held_hearing_and_ready_to_distribute,
+                          :with_post_intake_tasks,
                           associated_judge: judge,
                           associated_attorney: attorney,
                           veteran: create_veteran)
