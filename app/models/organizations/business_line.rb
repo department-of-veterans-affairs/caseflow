@@ -292,7 +292,6 @@ class BusinessLine < Organization
       end
     end
 
-    # AND EXTRACT(DAYS FROM (CURRENT_TIMESTAMP - tasks.assigned_at))::integer #{operator} '#{number_of_days.to_i}'
     def days_waiting_filter
       if query_params[:days_waiting].present?
         number_of_days = query_params[:days_waiting][:number_of_days]
@@ -305,7 +304,7 @@ class BusinessLine < Organization
         when "between"
           end_days = query_params[:days_waiting][:end_days]
           <<-SQL
-            AND EXTRACT(DAYS FROM (CURRENT_TIMESTAMP - tasks.assigned_at))::integer BETWEEN '#{number_of_days.to_i}' AND '#{end_days.to_i}'
+            AND (CURRENT_TIMESTAMP::date - tasks.assigned_at::date)::integer BETWEEN '#{number_of_days.to_i}' AND '#{end_days.to_i}'
           SQL
         end
       end

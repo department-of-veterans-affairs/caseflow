@@ -160,7 +160,6 @@ class ClaimHistoryService
   end
 
   # Function to attempt to guess the date from the filter. Works for 11/1/2023 format and iso8601
-  # It's gross because it's using error handling for logic though.
   def parse_date(date)
     if date.is_a?(String)
       begin
@@ -201,7 +200,6 @@ class ClaimHistoryService
     if task_id && !@processed_task_ids.include?(task_id)
       @processed_task_ids.add(task_id)
       save_events(ClaimHistoryEvent.create_claim_creation_event(change_data))
-      # save_events(ClaimHistoryEvent.create_status_events(change_data))
       save_events(ClaimHistoryEvent.create_status_events(change_data))
     end
   end

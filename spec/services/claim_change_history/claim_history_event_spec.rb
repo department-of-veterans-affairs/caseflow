@@ -49,7 +49,7 @@ describe ClaimHistoryEvent do
       "request_issue_closed_at" => "2023-10-16 22:47:16.233187",
       "event_user_name" => change_data_event_user_name,
       "event_date" => change_data_event_date,
-      "task_versions" => version_changes,
+      "task_versions" => version_changes
 
     }
   end
