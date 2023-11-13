@@ -188,21 +188,9 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
             </Link>
           </VirtualHearingLink>
           <div
+            className="helper-text"
             data-css-1abghdv=""
-          >
-            <strong>
-              Conference Room: 
-            </strong>
-            BVA#00000001@localhost
-          </div>
-          <div
-            data-css-6aejb2=""
-          >
-            <strong>
-              PIN: 
-            </strong>
-            1234567890#
-          </div>
+          />
           <CopyTextButton
             ariaLabel="Copy VLJ Link"
             label=""
@@ -529,21 +517,9 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
             </Link>
           </VirtualHearingLink>
           <div
+            className="helper-text"
             data-css-1abghdv=""
-          >
-            <strong>
-              Conference Room: 
-            </strong>
-            BVA#00000001@localhost
-          </div>
-          <div
-            data-css-6aejb2=""
-          >
-            <strong>
-              PIN: 
-            </strong>
-            12345678#
-          </div>
+          />
           <CopyTextButton
             ariaLabel="Copy Guest Link"
             label=""
@@ -824,21 +800,9 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
             N/A
           </span>
           <div
+            className="helper-text"
             data-css-1abghdv=""
-          >
-            <strong>
-              Conference Room: 
-            </strong>
-            BVA#00000001@localhost
-          </div>
-          <div
-            data-css-6aejb2=""
-          >
-            <strong>
-              PIN: 
-            </strong>
-            1234567890#
-          </div>
+          />
         </VirtualHearingLinkDetails>
       </div>
     </LinkContainer>
@@ -915,21 +879,9 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
             N/A
           </span>
           <div
+            className="helper-text"
             data-css-1abghdv=""
-          >
-            <strong>
-              Conference Room: 
-            </strong>
-            BVA#00000001@localhost
-          </div>
-          <div
-            data-css-6aejb2=""
-          >
-            <strong>
-              PIN: 
-            </strong>
-            12345678#
-          </div>
+          />
         </VirtualHearingLinkDetails>
       </div>
     </LinkContainer>
