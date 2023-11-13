@@ -289,11 +289,17 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
-      where (VLJ = ? or VLJ in ? or VLJ is null)
+      where (VLJ = ? or (VLJ in (?) and 1 = ?) or VLJ is null)
       and rownum <= ?
     SQL
 
-    fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id, ineligible_judges_sattyid_cache, num])
+    fmtd_query = sanitize_sql_array([
+                                      query,
+                                      judge.vacols_attorney_id,
+                                      ineligible_judges_sattyid_cache,
+                                      FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0,
+                                      num
+                                    ])
 
     appeals = conn.exec_query(fmtd_query).to_hash
     appeals.map { |appeal| appeal["bfd19"] }
@@ -304,11 +310,17 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     query = <<-SQL
       #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
-      where (VLJ = ? or VLJ in ? or VLJ is null)
+      where (VLJ = ? or (VLJ in (?) and 1 = ?) or VLJ is null)
       and rownum <= ?
     SQL
 
-    fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id, ineligible_judges_sattyid_cache, num])
+    fmtd_query = sanitize_sql_array([
+                                      query,
+                                      judge.vacols_attorney_id,
+                                      ineligible_judges_sattyid_cache,
+                                      FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0,
+                                      num
+                                    ])
 
     appeals = conn.exec_query(fmtd_query).to_hash
     appeals.map { |appeal| appeal["bfd19"] }
@@ -348,20 +360,30 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.priority_hearing_cases_for_judge_count(judge)
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
-      where (VLJ = ? or VLJ in ?)
+      where (VLJ = ? or (VLJ in (?) and 1 = ?))
     SQL
 
-    fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id, ineligible_judges_sattyid_cache])
+    fmtd_query = sanitize_sql_array([
+                                      query,
+                                      judge.vacols_attorney_id,
+                                      ineligible_judges_sattyid_cache,
+                                      FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0
+                                    ])
     connection.exec_query(fmtd_query).count
   end
 
   def self.nonpriority_hearing_cases_for_judge_count(judge)
     query = <<-SQL
       #{SELECT_NONPRIORITY_APPEALS}
-      where (VLJ = ? or VLJ in ?)
+      where (VLJ = ? or (VLJ in (?) and 1 = ?))
     SQL
 
-    fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id, ineligible_judges_sattyid_cache])
+    fmtd_query = sanitize_sql_array([
+                                      query,
+                                      judge.vacols_attorney_id,
+                                      ineligible_judges_sattyid_cache,
+                                      FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0
+                                    ])
     connection.exec_query(fmtd_query).count
   end
 
@@ -376,7 +398,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     if use_by_docket_date?
       query = <<-SQL
         #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
-        where (((VLJ = ? or VLJ in ?) and 1 = ?) or (VLJ is null and 1 = ?))
+        where (((VLJ = ? or (VLJ in (?) and 1 = ?)) and 1 = ?) or (VLJ is null and 1 = ?))
         and (DOCKET_INDEX <= ? or 1 = ?)
         and rownum <= ?
       SQL
@@ -396,7 +418,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
       query = <<-SQL
         #{SELECT_NONPRIORITY_APPEALS}
-        where (((VLJ = ? or VLJ in ?) and 1 = ?) or (VLJ is null and 1 = ?))
+        where (((VLJ = ? or (VLJ in (?) and 1 = ?)) and 1 = ?) or (VLJ is null and 1 = ?))
         and (DOCKET_INDEX <= ? or 1 = ?)
         and rownum <= ?
       SQL
@@ -406,6 +428,7 @@ class VACOLS::CaseDocket < VACOLS::Record
                                       query,
                                       judge.vacols_attorney_id,
                                       ineligible_judges_sattyid_cache,
+                                      FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0,
                                       (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
                                       (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
                                       range,
@@ -420,13 +443,13 @@ class VACOLS::CaseDocket < VACOLS::Record
     query = if use_by_docket_date?
               <<-SQL
         #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
-        where (((VLJ = ? or VLJ in ?) and 1 = ?) or (VLJ is null and 1 = ?))
+        where (((VLJ = ? or (VLJ in (?) and 1 = ?)) and 1 = ?) or (VLJ is null and 1 = ?))
         and (rownum <= ? or 1 = ?)
               SQL
             else
               <<-SQL
         #{SELECT_PRIORITY_APPEALS}
-        where (((VLJ = ? or VLJ in ?) and 1 = ?) or (VLJ is null and 1 = ?))
+        where (((VLJ = ? or (VLJ in (?) and 1 = ?)) and 1 = ?) or (VLJ is null and 1 = ?))
         and (rownum <= ? or 1 = ?)
               SQL
             end
@@ -435,6 +458,7 @@ class VACOLS::CaseDocket < VACOLS::Record
                                       query,
                                       judge.vacols_attorney_id,
                                       ineligible_judges_sattyid_cache,
+                                      FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0,
                                       (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
                                       (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
                                       limit,
