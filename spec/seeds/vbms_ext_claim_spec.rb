@@ -3,6 +3,10 @@
 describe Seeds::VbmsExtClaim do
   let(:seed) { Seeds::VbmsExtClaim.new }
 
+  before(:all) do
+    system("bundle exec rails r -e test db/scripts/external/create_vbms_ext_claim_table.rb")
+  end
+
   context "#seed!" do
     it "seeds total of 325 VBMS EXT CLAIMS, 100 High Level Review EndProduct Establishments
       100 Supplemental Claim End Product Establishments, and 125 Non Associated End Product
