@@ -21,7 +21,7 @@ export const ReportPageConditions = () => {
 
   return (
     <div>
-      <hr />
+      <hr style={{ marginTop: '50px', marginBottom: '50px' }} />
       <h2>Conditions</h2>
       {controlledFields.map((field, index) => {
         return <ConditionContainer key={field.id} {... { control, field, index, remove }} />;
