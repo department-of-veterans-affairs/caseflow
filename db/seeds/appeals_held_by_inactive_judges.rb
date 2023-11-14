@@ -202,7 +202,8 @@ module Seeds
           appeal = create(:appeal,
                           :held_hearing_and_ready_to_distribute,
                           :with_post_intake_tasks,
-                          associated_judge: judge,
+                          :hearing_docket,
+                          tied_judge: judge,
                           associated_attorney: attorney,
                           veteran: create_veteran)
         Timecop.return
@@ -214,7 +215,8 @@ module Seeds
           appeal = create(:appeal,
                           :held_hearing_and_ready_to_distribute,
                           :with_post_intake_tasks,
-                          associated_judge: judge,
+                          :hearing_docket,
+                          tied_judge: judge,
                           associated_attorney: attorney,
                           veteran: create_veteran)
         Timecop.return
