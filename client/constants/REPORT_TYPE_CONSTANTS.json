@@ -62,6 +62,36 @@
       "label": "Withdrew issue",
       "id":"withdrew_issue"
     }
+  ],
+  "TIMING_SPECIFIC_OPTIONS": [
+    {
+      "label": "None",
+      "value": "none"
+    },
+    {
+      "label": "After",
+      "value": "after"
+    },
+    {
+      "label": "Before",
+      "value": "before"
+    },
+    {
+      "label": "Between",
+      "value": "between"
+    },
+    {
+      "label": "Last 7 Days",
+      "value": "last_7_days"
+    },
+    {
+      "label": "Last 30 Days",
+      "value": "last_30_days"
+    },
+    {
+      "label": "Last 365 Days",
+      "value": "last_365_days"
+    }
   ]
 }
 
