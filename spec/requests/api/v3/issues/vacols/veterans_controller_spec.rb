@@ -53,6 +53,17 @@ describe Api::V3::Issues::Vacols::VeteransController, :postgres, type: :request 
           expect(response).to have_http_status(404)
           expect(response.body).to include("No Veteran found for the given identifier")
         end
+
+        it "should return 404 error for non happy paths" do
+          get_vacols_issues(file_number: 87)
+          expect(response).to have_http_status(404)
+
+          get_vacols_issues(file_number: 12345678987654321)
+          expect(response).to have_http_status(404)
+
+          get_vacols_issues(file_number: "fakevet")
+          expect(response).to have_http_status(404)
+        end
       end
 
       context "when a veteran is found" do
