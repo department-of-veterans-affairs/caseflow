@@ -8,7 +8,8 @@ class Issue
   include ActiveModel::Serialization
 
   attr_accessor :id, :vacols_sequence_id, :codes, :disposition, :disposition_date,
-                :disposition_id, :readable_disposition, :close_date, :note
+                :disposition_id, :readable_disposition, :close_date, :note,
+                :mst_status, :pact_status
 
   # Labels are only loaded if we run the joins to ISSREF and VFTYPES (see VACOLS::CaseIssue)
   attr_writer :labels
@@ -220,6 +221,28 @@ class Issue
     }
   end
 
+  def vbms_attributes
+    {
+      id: id,
+      notice_of_disagreement_date: appeal.nod_date,
+      legacy_appeal_status: appeal.status,
+      legacy_appeal_soc_date: appeal.soc_date,
+      legacy_appeal_ssoc_dates: appeal.ssoc_dates,
+      legacy_appeal_eligible_for_opt_in: appeal.eligible_for_opt_in?(receipt_date: Time.zone.today),
+      legacy_appeal_eligible_for_soc_opt_in_with_exemption: appeal.eligible_for_opt_in?(
+        receipt_date: Time.zone.today, covid_flag: true
+      ),
+      vacols_id: id,
+      vacols_sequence_id: vacols_sequence_id,
+      eligible_for_soc_opt_in: eligible_for_opt_in?,
+      eligible_for_soc_opt_in_with_exemption: eligible_for_opt_in?(covid_flag: true),
+      description: friendly_description,
+      disposition: disposition,
+      close_date: close_date,
+      note: note
+    }
+  end
+
   attr_writer :remand_reasons
   def remand_reasons
     @remand_reasons ||= self.class.remand_repository.load_remands_from_vacols(id, vacols_sequence_id)
@@ -328,7 +351,9 @@ class Issue
         disposition_date: hash["issdcls"],
         # readable disposition is a string, i.e. "Remanded"
         readable_disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[hash["issdc"]],
-        close_date: AppealRepository.normalize_vacols_date(hash["issdcls"])
+        close_date: AppealRepository.normalize_vacols_date(hash["issdcls"]),
+        mst_status: hash["issmst"]&.casecmp("y")&.zero? || false,
+        pact_status: hash["isspact"]&.casecmp("y")&.zero? || false
       )
     end
 
