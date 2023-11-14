@@ -39,9 +39,14 @@ export const CorrespondenceIntake = (props) => {
     }
   };
 
+  const handleContinueAfterBack = () => {
+    setContinueEnabled(true);
+  };
+
   const prevStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+      handleContinueAfterBack();
     }
   };
 
