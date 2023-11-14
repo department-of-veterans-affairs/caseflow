@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Seeds
-  class AdditionalLegacyRemandedAppeals < Base
+  class RemandedLegacyAppeals < Base
     def initialize
       @legacy_appeals = []
       initial_file_number_and_participant_id
