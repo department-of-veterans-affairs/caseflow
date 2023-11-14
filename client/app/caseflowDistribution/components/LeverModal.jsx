@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
+import { formattedLevers } from 'test/data/formattedCaseDistributionData';
 import COPY from '../../../COPY';
 
 
@@ -28,18 +29,29 @@ function SaveLeversToDB(leverStore) {
 function DisableSaveButton() {
   document.getElementById("SaveLeversButton").disabled = true;
 }
+function leverList(leverStore) {
+  leverStore.getState().levers
+
+  return (
+    console.log("herherhehrere")
+  )
+}
+
 
 export function LeverSaveButton({ leverStore }) {
   const [showModal, setShowModal] = useState(false);
 
   const handleSave = () => {
     SaveLeverChanges(leverStore);
+    leverList(leverStore);
     DisableSaveButton();
     UpdateLeverHistory(leverStore);
     SaveLeversToDB(leverStore);
     DisplayButtonLeverAlert('');
     setShowModal(false);
   };
+
+
 
   return (
     <>
