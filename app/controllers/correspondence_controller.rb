@@ -48,7 +48,7 @@ class CorrespondenceController < ApplicationController
   private
 
   def correspondence
-    @correspondence ||= Correspondence.find(params[:id])
+    @correspondence ||= Correspondence.find_by(uuid: params[:id])
   end
 
   def general_information
