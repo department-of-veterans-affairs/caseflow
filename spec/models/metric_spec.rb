@@ -7,15 +7,15 @@ describe Metric do
 
   describe "create_metric" do
     let!(:params) do
-       {
+      {
         uuid: SecureRandom.uuid,
         method: "123456789",
-        name: 'log',
-        group: 'service',
-        message: 'This is a test',
-        type: 'performance',
-        product: 'reader',
-       }
+        name: "log",
+        group: "service",
+        message: "This is a test",
+        type: "performance",
+        product: "reader"
+      }
     end
 
     it "creates a javascript metric for performance" do
@@ -26,7 +26,7 @@ describe Metric do
     end
 
     it "creates a javascript metric for log" do
-      params[:type] = 'log'
+      params[:type] = "log"
       metric = Metric.create_metric(self, params, user)
 
       expect(metric.valid?).to be true
@@ -34,7 +34,7 @@ describe Metric do
     end
 
     it "creates a javascript metric for error" do
-      params[:type]  = 'error'
+      params[:type] = "error"
       metric = Metric.create_metric(self, params, user)
 
       expect(metric.valid?).to be true
@@ -42,7 +42,7 @@ describe Metric do
     end
 
     it "creates a javascript metric with invalid sent_to" do
-      metric = Metric.create_metric(self, params.merge({sent_to: 'fake'}), user)
+      metric = Metric.create_metric(self, params.merge(sent_to: "fake"), user)
 
       expect(metric.valid?).to be false
     end

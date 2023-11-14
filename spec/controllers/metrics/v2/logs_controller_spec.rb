@@ -6,11 +6,11 @@ describe Metrics::V2::LogsController, type: :controller do
     {
       metric: {
         uuid: "PAT123456^CFL200^A",
-        name: '',
-        group: '',
-        message: '',
-        type: '',
-        product: '',
+        name: "",
+        group: "",
+        message: "",
+        type: "",
+        product: ""
       }
     }
   end
@@ -18,13 +18,12 @@ describe Metrics::V2::LogsController, type: :controller do
   let(:request_params_min) do
     {
       metric: {
-        message: 'min'
+        message: "min"
       }
     }
   end
 
   context "with good request and metrics_monitoring feature ON" do
-
     before do
       FeatureToggle.enable!(:metrics_monitoring)
     end
@@ -43,7 +42,6 @@ describe Metrics::V2::LogsController, type: :controller do
   end
 
   context "with good request and metrics_monitoring feature OFF" do
-
     it "does not create a metric and returns 422" do
       expect(Metric).not_to receive(:create_metric_from_rest)
       post :create, params: request_params_javascript
