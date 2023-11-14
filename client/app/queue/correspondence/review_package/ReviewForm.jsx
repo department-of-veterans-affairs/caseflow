@@ -1,11 +1,11 @@
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import React from 'react';
 import { css } from 'glamor';
-import TextField from '../../../../components/TextField';
-import SearchableDropdown from '../../../../components/SearchableDropdown';
-import TextareaField from '../../../../components/TextareaField';
-import Button from '../../../../components/Button';
-import ApiUtil from '../../../../util/ApiUtil';
+import TextField from '../../../components/TextField';
+import SearchableDropdown from '../../../components/SearchableDropdown';
+import TextareaField from '../../../components/TextareaField';
+import Button from '../../../components/Button';
+import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
 
 const flexDivStyling = css({

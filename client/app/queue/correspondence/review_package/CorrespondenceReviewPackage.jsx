@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import ReviewPackageCmpInfo from './ReviewPackageCmpInfo';
 import ReviewPackageCaseTitle from './ReviewPackageCaseTitle';
 import Button from '../../../components/Button';
-import ReviewForm from '../../correspondences/reviewPackage/components/ReviewForm';
+import ReviewForm from './ReviewForm';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
 

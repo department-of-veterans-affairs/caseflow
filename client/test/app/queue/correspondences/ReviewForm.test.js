@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import ReviewForm from '../../../../app/queue/correspondences/reviewPackage/components/ReviewForm';
+import ReviewForm from '../../../../app/queue/correspondence/review_package/ReviewForm';
 describe('ReviewForm', () => {
   let props;
 
