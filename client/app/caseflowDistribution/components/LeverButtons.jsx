@@ -9,27 +9,10 @@ function CancelLeverChanges(leverStore)  {
   });
 };
 
-function SaveLeverChanges(leverStore)  {
-  leverStore.dispatch({
-    type: Constants.SAVE_LEVERS,
-  });
-};
-
 function RefreshLevers () {
   window.location.reload(false); //PLACEHOLDER
   // Find levers div
   // refresh levers div
-};
-
-function UpdateLeverHistory(leverStore) {
-  // create history row object
-  // append history row object to formatted_history array
-  // save history row object to database
-  // refresh lever div
-};
-
-function SaveLeversToDB(leverStore) {
-  //load the levers from leverStore.getState().levers into the DB
 };
 
 function DisplayButtonLeverAlert(alert) {
@@ -59,27 +42,8 @@ export function LeverCancelButton({leverStore}) {
   );
 };
 
-export function LeverSaveButton({leverStore}) {
-  const SaveButtonActions = (leverStore) => {
-    SaveLeverChanges(leverStore);
-    DisableSaveButton();
-    UpdateLeverHistory(leverStore);
-    SaveLeversToDB(leverStore);
-    DisplayButtonLeverAlert("Saved")
-  };
-
-  return (
-    <Button id="SaveLeversButton"
-    onClick={() => SaveButtonActions(leverStore)}>
-      Save
-    </Button>
-  );
-}
-
 LeverCancelButton.propTypes = {
   leverStore: PropTypes.any
 };
 
-LeverSaveButton.propTypes = {
-  leverStore: PropTypes.any
-};
+

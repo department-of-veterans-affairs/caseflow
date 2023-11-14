@@ -39,6 +39,11 @@ FactoryBot.define do
       roles { ["Admin Intake"] }
     end
 
+    factory :lever_user do
+      css_id { "LEVERUSER" }
+      roles { ["View Levers"] }
+    end
+
     trait :inactive do
       status { "inactive" }
     end
