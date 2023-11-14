@@ -77,8 +77,6 @@ module Seeds
           unit: '',
           is_active: false,
           is_disabled: true,
-          min_value: 0,
-          max_value: 100,
           algorithms_used: ['proportion']
         },
         {
@@ -442,7 +440,7 @@ module Seeds
           item: 'days_before_goal_due_for_distribution',
           title: 'Days Before Goal Due for Distribution',
           data_type: 'number',
-          value: null,
+          value: nil,
           unit: 'days',
           is_active: false,
           is_disabled: true,
