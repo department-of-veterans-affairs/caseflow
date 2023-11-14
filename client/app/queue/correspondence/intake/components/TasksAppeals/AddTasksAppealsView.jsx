@@ -18,13 +18,15 @@ const mailTasksRight = [
 
 export const AddTasksAppealsView = (props) => {
   const [addTask, setAddTask] = useState([]);
+
   const clickAddTask = () => {
     props.setAddTasksVisible(true);
     const currentTask = [...addTask];
     const randNum = Math.floor(Math.random() * 1000000);
 
-    currentTask.push({ Object: randNum });
+    currentTask.push({ Object: randNum, Task: '', Text: '', SelectedTaskType: -1});
     setAddTask(currentTask);
+
     props.disableContinue(false);
   };
 
@@ -33,26 +35,48 @@ export const AddTasksAppealsView = (props) => {
     const newTask = currentTask.filter((item, i) => index !== i);
 
     setAddTask(newTask);
-
+    if (currentTask.length >= 2) {
+      props.disableContinue(true);
+    }
     if (newTask.length === 0 || newTask.isNull) {
       props.setAddTasksVisible(false);
       props.disableContinue(true);
     }
   };
 
-  const [selectedTaskType, setSelectedTaskType] = useState(-1);
-  const [instructionText, setInstructionText] = useState('');
+  const [, setInstructionText] = useState('');
 
-  const handleChangeTaskType = (newType) => {
-    setSelectedTaskType(newType);
+  const checkContinueStatus = (newType, newText, index) => {
+    const currentTask = [...addTask];
 
+    currentTask[index].Task = newType;
+
+    currentTask[index].Text = newText.replace(/\s+/g, '').trim();
+
+    let continueEnabled = true;
+
+    currentTask.forEach((selectedTask) => {
+      if (selectedTask.SelectedTaskType !== -1 && selectedTask.Text !== '') {
+        // the condition is met
+
+      } else {
+        continueEnabled = false;
+        // This will exit the current iteration, not the entire function
+
+        return;
+      }
+    });
+
+    props.disableContinue(continueEnabled);
   };
 
-  const handleChangeInstructionText = (newText) => {
-    setInstructionText(newText);
-    const isContinueEnabled = selectedTaskType !== -1 && instructionText.trim() !== null;
+  const handleChangeTaskTypeandText = (newType, newText, index) => {
+    const currentTask = [...addTask];
 
-    props.disableContinue(isContinueEnabled);
+    currentTask[index].SelectedTaskType = newType;
+    setAddTask(currentTask);
+    setInstructionText(newText);
+    checkContinueStatus(newType, newText, index);
   };
 
   return (
@@ -123,8 +147,8 @@ export const AddTasksAppealsView = (props) => {
                 <TaskNotRelatedToAppeal
                   key={currentTask.Object}
                   removeTask={() => removeTaskAtIndex(i)}
-                  handleChangeTaskType={handleChangeTaskType}
-                  handleChangeInstructionText={handleChangeInstructionText}
+                  handleChangeTaskType={(newType, newText) => handleChangeTaskTypeandText(newType, newText, i)}
+                  taskType={currentTask.SelectedTaskType}
                 />
               ))}
 
@@ -149,7 +173,7 @@ export const AddTasksAppealsView = (props) => {
 AddTasksAppealsView.propTypes = {
   addTasksVisible: PropTypes.bool,
   setAddTasksVisible: PropTypes.func,
-  disableContinue: PropTypes.func
+  disableContinue: PropTypes.func,
 };
 
 export default AddTasksAppealsView;

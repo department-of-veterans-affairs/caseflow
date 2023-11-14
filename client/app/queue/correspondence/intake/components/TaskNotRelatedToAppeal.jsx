@@ -18,6 +18,14 @@ const TaskNotRelatedToAppeal = (props) => {
     { value: 8, label: 'Status inquiry' }
   ];
 
+  const [instructionText, setInstructionText] = useState('');
+  const [index] = useState(-1);
+
+  const handleChangeInstructionText = (newText) => {
+    setInstructionText(newText);
+    props.handleChangeTaskType(props.taskType, newText, index);
+  };
+
   return (
     <div key={props.key} style={{ display: 'block', marginRight: '2rem' }}>
       <div className="gray-border"
@@ -32,7 +40,8 @@ const TaskNotRelatedToAppeal = (props) => {
             defaultValue={{ value: -1, label: 'Select...' }}
             label="Task"
             style={{ width: '50rem' }}
-            onChangeMethod={(selectedOption) => props.handleChangeTaskType(selectedOption.value)}
+            onChangeMethod={(selectedOption) =>
+              props.handleChangeTaskType(selectedOption.value, instructionText, index)}
             className="date-filter-type-dropdown"
           />
           <div style={{ padding: '1.5rem' }} />
@@ -40,8 +49,8 @@ const TaskNotRelatedToAppeal = (props) => {
             name="Task Information"
             label="Provide context and instruction on this task"
             defaultText=""
-            value={props.instructionText}
-            onChange={props.handleChangeInstructionText}
+            value={instructionText}
+            onChange={handleChangeInstructionText}
           />
           <Button
             name="Add"
@@ -64,10 +73,10 @@ const TaskNotRelatedToAppeal = (props) => {
 
 TaskNotRelatedToAppeal.propTypes = {
   removeTask: PropTypes.func,
+  index: PropTypes.number,
   key: PropTypes.object,
   handleChangeTaskType: PropTypes.func,
-  instructionText: PropTypes.string,
-  handleChangeInstructionText: PropTypes.func
+  taskType: PropTypes.number,
 };
 
 export default TaskNotRelatedToAppeal;
