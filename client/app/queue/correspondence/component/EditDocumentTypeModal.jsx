@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { sprintf } from 'sprintf-js';
+import { DocumentTypeCorrespondenceDropdown } from '../../../components/DataDropdowns';
 
 import COPY from '../../../../COPY';
 // import { onReceiveAmaTasks } from '../../queue/QueueActions';
@@ -14,15 +15,12 @@ import Button from '../../../components/Button';
 
 export const EditDocumentTypeModal = ({
   document,
-  onCancel,
-
+  onCancel
 }) => {
   const [loading] = useState(false);
   // const [unscheduledNotes, setUnscheduledNotes] = useState(task?.unscheduledHearingNotes?.notes);
 
   const disable = true;
-
-
   // eslint-disable-next-line no-empty-function
   const submit = async () => { };
 
@@ -33,18 +31,20 @@ export const EditDocumentTypeModal = ({
       confirmButton={<Button disabled={disable} onClick={submit}>Save</Button>}
       cancelButton={<Button linkStyling disabled={loading} onClick={onCancel}>Cancel</Button>}
     >
-      <p>
-        <div>{sprintf(COPY.TEXT_MODAL_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}</div>
-      </p>
-      <p>
-        <div style={{ fontWeight: 'bold' }}>{sprintf(COPY.ORIGINAL_DOC_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}</div>
-        <div>{document.documentName}</div>
-      </p>
+      <div>
+        <p>{sprintf(COPY.TEXT_MODAL_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}</p>
+      </div>
+      <div style={{ fontWeight: 'bold' }}>{sprintf(COPY.ORIGINAL_DOC_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}</div>
+      <div>{document.documentName}</div>
 
-      <p>
-        <div>{sprintf(COPY.NEW_DOC_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}</div>
-        <div>{sprintf(COPY.ORIGINAL_DOC_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}</div>
-      </p>
+      <div>
+        <DocumentTypeCorrespondenceDropdown
+          name="correspondence_new_doc"
+          label= {sprintf(COPY.NEW_DOC_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}
+          value={document?.documentName}
+          // onChange={(value, label) => this.onTypeChange({ value, label })}
+        />
+      </div>
 
     </Modal>
   );
@@ -53,7 +53,12 @@ export const EditDocumentTypeModal = ({
 EditDocumentTypeModal.propTypes = {
   modalState: PropTypes.bool,
   onCancel: PropTypes.func,
-  document: PropTypes.string
+  document: PropTypes.object,
+  // onChange: PropTypes.func,
+  // coordinator: PropTypes.shape({
+  //   value: PropTypes.string
+  // }),
+  // selectHearingCoordinator: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) =>

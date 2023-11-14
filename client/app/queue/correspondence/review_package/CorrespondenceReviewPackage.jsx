@@ -37,9 +37,9 @@ export const CorrespondenceReviewPackage = (props) => {
       <AppSegment filledBackground>
         <ReviewPackageCaseTitle />
         <ReviewPackageCmpInfo {...props} />
-        <p> Documento 1 <OpenModalLink documentName = "VA 24-0296 Direct Deposit Enrollment" /> </p>
-        <p> Documento 2 <OpenModalLink documentName = "VA 24-0296 Direct Deposit Enrollment_1" /> </p>
-        <p> Documento 3 <OpenModalLink documentName = "VA 24-0296 Direct Deposit Enrollment_2" /> </p>
+        <p> Documento 1 <OpenModalLink documentName = "030" /> </p>
+        <p> Documento 2 <OpenModalLink documentName = "0779" /> </p>
+        <p> Documento 3 <OpenModalLink documentName = "VA 24-0296 Direct Deposit Enrollment" /> </p>
       </AppSegment>
       <div className="cf-app-segment">
         <div className="cf-push-left">
@@ -82,7 +82,7 @@ export const CorrespondenceReviewPackage = (props) => {
 };
 
 CorrespondenceReviewPackage.propTypes = {
-  correspondenceId: PropTypes.string
+  correspondenceId: PropTypes.string,
 };
 
 export default CorrespondenceReviewPackage;

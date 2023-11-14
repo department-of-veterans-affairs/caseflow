@@ -32,6 +32,10 @@ class CorrespondenceController < ApplicationController
     render json: { correspondence: @correspondence, package_document_type: @correspondence.package_document_type }
   end
 
+  def get_document_correspondence
+    render json: { allDocuments: PackageDocumentType.all }
+  end
+
   private
 
   def verify_feature_toggle
