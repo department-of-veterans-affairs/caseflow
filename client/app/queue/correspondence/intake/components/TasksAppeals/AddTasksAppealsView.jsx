@@ -17,8 +17,6 @@ const mailTasksRight = [
 ];
 
 export const AddTasksAppealsView = (props) => {
-  const [, ] = useState([]);
-
   const clickAddTask = () => {
     props.setAddTasksVisible(true);
     const currentTask = [...props.unrelatedTasks];
