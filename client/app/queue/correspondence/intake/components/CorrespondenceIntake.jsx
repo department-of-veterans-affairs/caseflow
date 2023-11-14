@@ -22,6 +22,15 @@ const progressBarSections = [
 
 export const CorrespondenceIntake = (props) => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isContinueEnabled, setContinueEnabled] = useState(true);
+
+  const handleContinueStatusChange = (isEnabled) => {
+    setContinueEnabled(isEnabled);
+  };
+
+  const handleCheckboxChange = (isSelected) => {
+    setContinueEnabled(isSelected);
+  };
 
   const nextStep = () => {
     if (currentStep < 3) {
@@ -49,6 +58,8 @@ export const CorrespondenceIntake = (props) => {
     {currentStep === 1 &&
       <AddCorrespondenceView
         correspondenceUuid={props.correspondence_uuid}
+        onContinueStatusChange={handleContinueStatusChange}
+        onCheckboxChange={handleCheckboxChange}
       />
     }
     {currentStep === 2 &&
@@ -67,7 +78,7 @@ export const CorrespondenceIntake = (props) => {
         type="button"
         onClick={nextStep}
         name="continue"
-        classNames={['cf-right-side']}>
+        classNames={['cf-right-side']} disabled={!isContinueEnabled}>
           Continue
       </Button>}
       {currentStep === 3 &&

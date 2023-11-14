@@ -3,8 +3,11 @@ import React from 'react';
 import ReviewPackageCmpInfo from './ReviewPackageCmpInfo';
 import ReviewPackageCaseTitle from './ReviewPackageCaseTitle';
 import Button from '../../../components/Button';
+import PropTypes from 'prop-types';
 
 export const CorrespondenceReviewPackage = (props) => {
+
+  const intakeLink = `/queue/correspondence/${props.correspondenceId}/intake`;
 
   return (
     <React.Fragment>
@@ -28,17 +31,22 @@ export const CorrespondenceReviewPackage = (props) => {
             styling={{ style: { marginRight: '2rem' } }}
             classNames={['usa-button-secondary']}
           />
-          <a href="/queue/correspondence/12/intake">
+          <a href={intakeLink}>
+            {/* hard coded UUID to link to multi_correspondence.rb data */}
             <Button
               name="Create record"
-              href="/queue/correspondence/12/intake"
               classNames={['usa-button-primary']}
+              href={intakeLink}
             />
           </a>
         </div>
       </div>
     </React.Fragment>
   );
+};
+
+CorrespondenceReviewPackage.propTypes = {
+  correspondenceId: PropTypes.string
 };
 
 export default CorrespondenceReviewPackage;
