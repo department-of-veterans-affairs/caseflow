@@ -7,7 +7,6 @@ class ClaimDateDtFixJob < CaseflowJob
 
   def initialize
     @stuck_job_report_service = StuckJobReportService.new
-    super
   end
 
   def perform
@@ -23,7 +22,6 @@ class ClaimDateDtFixJob < CaseflowJob
       next unless valid_decision_document?(single_decision_document)
 
       process_decision_document(single_decision_document)
-      stuck_job_report_service.append_single_record(single_decision_document.class.name, single_decision_document.id)
     end
 
     stuck_job_report_service.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
