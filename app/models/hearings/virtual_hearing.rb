@@ -286,7 +286,6 @@ class VirtualHearing < CaseflowRecord
     "#{appeal.docket_number}_#{appeal.id}_#{appeal.class}"
   end
 
-  # adding comment so gha can run
   def nbf
     hearing.scheduled_for.beginning_of_day.to_i
   end
