@@ -4,21 +4,23 @@ require "benchmark"
 
 # see https://dropwizard.github.io/metrics/3.1.0/getting-started/ for abstractions on metric types
 class MetricsService
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # :reek:LongParameterList
   def self.record(description, service: nil, name: "unknown", caller: nil)
     return_value = nil
     app = RequestStore[:application] || "other"
     service ||= app
     uuid = SecureRandom.uuid
-    metric_name= 'request_latency'
+    metric_name = "request_latency"
     sent_to = [[Metric::LOG_SYSTEMS[:rails_console]]]
     sent_to_info = nil
 
-    start = Time.now
+    start = Time.zone.now
     Rails.logger.info("STARTED #{description}")
     stopwatch = Benchmark.measure do
       return_value = yield
     end
-    stopped = Time.now
+    stopped = Time.zone.now
 
     if service
       latency = stopwatch.real
@@ -75,9 +77,9 @@ class MetricsService
       },
       sent_to: [[Metric::LOG_SYSTEMS[:rails_console]]],
       sent_to_info: "",
-      start: 'Time not recorded',
-      end: 'Time not recorded',
-      duration: 'Time not recorded'
+      start: "Time not recorded",
+      end: "Time not recorded",
+      duration: "Time not recorded"
     }
 
     store_record_metric(uuid, metric_params, caller)
@@ -88,6 +90,7 @@ class MetricsService
   ensure
     increment_datadog_counter("request_attempt", service, name, app) if service
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   private_class_method def self.increment_datadog_counter(metric_name, service, endpoint_name, app_name)
     DataDogService.increment_counter(
@@ -100,14 +103,11 @@ class MetricsService
       }
     )
   end
-
-  private
-
+  # :reek:ControlParameter
   def self.store_record_metric(uuid, params, caller)
-
     return nil unless FeatureToggle.enabled?(:metrics_monitoring, user: RequestStore[:current_user])
 
-    name ="caseflow.server.metric.#{params[:name]&.downcase.gsub(/::/, '.')}"
+    name = "caseflow.server.metric.#{params[:name]&.downcase&.gsub(/::/, '.')}"
     params = {
       uuid: uuid,
       name: name,
@@ -119,7 +119,7 @@ class MetricsService
       sent_to_info: params[:sent_to_info],
       start: params[:start],
       end: params[:end],
-      duration: params[:duration],
+      duration: params[:duration]
     }
 
     metric = Metric.create_metric(caller || self, params, RequestStore[:current_user])
