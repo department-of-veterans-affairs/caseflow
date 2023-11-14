@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Checkbox from '../../../../../components/Checkbox';
 import Button from '../../../../../components/Button';
@@ -45,22 +45,15 @@ export const AddTasksAppealsView = (props) => {
 
   const [, setInstructionText] = useState('');
 
-  const checkContinueStatus = (newType, newText, index) => {
+  const checkContinueStatus = () => {
     const currentTask = [...props.unrelatedTasks];
-
-    currentTask[index].Task = newType;
-    currentTask[index].Text = newText.trimStart();
 
     let continueEnabled = true;
 
     currentTask.forEach((selectedTask) => {
-      if (selectedTask.SelectedTaskType !== -1 && selectedTask.Text !== '') {
+      if (selectedTask.SelectedTaskType === -1 || selectedTask.Text === '') {
         // the condition is met
-        continueEnabled = true;
-
-      } else {
         continueEnabled = false;
-        // This will exit the current iteration, not the entire function
       }
     });
 
@@ -73,8 +66,13 @@ export const AddTasksAppealsView = (props) => {
     currentTask[index].SelectedTaskType = newType;
     props.setUnrelatedTasks(currentTask);
     setInstructionText(newText);
-    checkContinueStatus(newType, newText, index);
+    currentTask[index].Task = newType;
+    currentTask[index].Text = newText.trimStart();
   };
+
+  useEffect(() => {
+    checkContinueStatus();
+  });
 
   return (
     <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
