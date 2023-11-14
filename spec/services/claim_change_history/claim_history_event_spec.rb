@@ -49,7 +49,8 @@ describe ClaimHistoryEvent do
       "request_issue_closed_at" => "2023-10-16 22:47:16.233187",
       "event_user_name" => change_data_event_user_name,
       "event_date" => change_data_event_date,
-      "task_versions" => version_changes
+      "task_versions" => version_changes,
+      "days_waiting" => 25
 
     }
   end
@@ -66,7 +67,7 @@ describe ClaimHistoryEvent do
       benefit_type: "vha",
       claim_type: "HigherLevelReview",
       claimant_name: "Bob Smithboehm",
-      days_waiting: (Time.zone.today - Date.parse("2023-10-19 22:47:16.222148")).to_i,
+      days_waiting: 25,
       decision_date: "2023-05-31",
       decision_description: "granting clothing allowance",
       disposition: "Granted",
@@ -92,7 +93,7 @@ describe ClaimHistoryEvent do
       benefit_type: "vha",
       claim_type: "HigherLevelReview",
       claimant_name: "Bob Smithboehm",
-      days_waiting: (Time.zone.today - Date.parse("2023-10-19 22:47:16.222148")).to_i,
+      days_waiting: 25,
       decision_date: nil,
       decision_description: nil,
       disposition: nil,
@@ -477,6 +478,33 @@ describe ClaimHistoryEvent do
           expect(event2.event_type).to eq(:withdrew_issue)
           expect(event2.issue_type).to eq(request_issue2.nonrating_issue_category)
           expect(event2.issue_description).to eq(request_issue2.nonrating_issue_description)
+        end
+      end
+
+      context "when there are more before issues than after issues" do
+        let!(:removed_issue) do
+          create(:request_issue,
+                 id: 4011,
+                 nonrating_issue_category: "Removed issue",
+                 nonrating_issue_description: "Removed issue description",
+                 decision_date: Time.zone.today,
+                 decision_date_added_at: Time.zone.now)
+        end
+
+        before do
+          change_data["edited_request_issue_ids"] = "{}"
+          change_data["withdrawn_request_issue_ids"] = "{}"
+          change_data["before_request_issue_ids"] = "{4008,4011}"
+          change_data["after_request_issue_ids"] = "{4008}"
+        end
+
+        it "should generate a removed_issue event" do
+          events = subject
+          removed_event = subject[0]
+          expect(events.count).to eq(1)
+          expect(removed_event.event_type).to eq(:removed_issue)
+          expect(removed_event.issue_type).to eq(removed_issue.nonrating_issue_category)
+          expect(removed_event.issue_description).to eq(removed_issue.nonrating_issue_description)
         end
       end
     end
@@ -881,22 +909,6 @@ describe ClaimHistoryEvent do
     end
 
     describe "private methods" do
-      describe ".days_waiting_helper" do
-        before do
-          Timecop.freeze(Time.utc(2023, 10, 30, 12, 0, 0))
-        end
-
-        after do
-          Timecop.return
-        end
-
-        subject { event_instance.send(:days_waiting_helper, change_data["assigned_at"]) }
-
-        it "should convert an iso8601 string to number of days from current date" do
-          expect(subject).to eq(11)
-        end
-      end
-
       describe ".abbreviated_user_name" do
         subject { event_instance.send(:abbreviated_user_name, "Bob Smith") }
 

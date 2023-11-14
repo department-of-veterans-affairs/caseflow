@@ -206,7 +206,7 @@ class BusinessLine < Organization
           tasks.appeal_type, tasks.appeal_id, request_issues.nonrating_issue_category, request_issues.nonrating_issue_description,
           request_issues.decision_date, decision_issues.disposition, tasks.assigned_at, people.first_name, people.last_name,
           request_decision_issues.decision_issue_id, request_issues.closed_at AS request_issue_closed_at,
-          tv.object_changes_array AS task_versions
+          tv.object_changes_array AS task_versions, (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) AS days_waiting
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
@@ -223,7 +223,6 @@ class BusinessLine < Organization
         LEFT JOIN people ON claimants.participant_id = people.participant_id
         LEFT JOIN users intake_users ON intakes.user_id = intake_users.id
         LEFT JOIN users update_users ON request_issues_updates.user_id = update_users.id
-        /*LEFT JOIN users decision_users ON decision_users.id = tasks.completed_by_id*/
         LEFT JOIN users decision_users ON decision_users.id = tv.version_closed_by_id::int
         WHERE tasks.type = 'DecisionReviewTask'
         AND tasks.assigned_to_type = 'Organization'

@@ -49,10 +49,6 @@ class ClaimHistoryService
 
   def event_stats
     {
-      parsed_task_ids: @processed_task_ids,
-      parsed_request_issue_ids: @processed_request_issue_ids,
-      parsed_request_issue_update_ids: @processed_request_issue_update_ids,
-      parsed_decision_issue_ids: @processed_decision_issue_ids,
       database_query_time: @database_query_time,
       event_generation_time: @event_generation_time,
       number_of_database_columns: @number_of_database_columns,
@@ -67,7 +63,8 @@ class ClaimHistoryService
   private
 
   def parse_filters(filters)
-    filters.to_h.with_indifferent_access
+    # filters.to_h.with_indifferent_access
+    filters.to_h
   end
 
   def reset_processing_attributes

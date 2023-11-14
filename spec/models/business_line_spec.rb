@@ -441,7 +441,8 @@ describe BusinessLine do
         "first_name" => hlr_task.appeal.claimant.first_name,
         "last_name" => hlr_task.appeal.claimant.last_name,
         "task_status" => hlr_task.status,
-        "request_issue_benefit_type" => "vha"
+        "request_issue_benefit_type" => "vha",
+        "days_waiting" => 10
       )
     end
     let(:hlr_task_1_ri_2_expectation) do
@@ -460,7 +461,8 @@ describe BusinessLine do
         "first_name" => hlr_task.appeal.claimant.first_name,
         "last_name" => hlr_task.appeal.claimant.last_name,
         "task_status" => hlr_task.status,
-        "request_issue_benefit_type" => "vha"
+        "request_issue_benefit_type" => "vha",
+        "days_waiting" => 10
       )
     end
     let(:hlr_task_2_ri_1_expectation) do
@@ -479,7 +481,8 @@ describe BusinessLine do
         "first_name" => hlr_task2.appeal.claimant.first_name,
         "last_name" => hlr_task2.appeal.claimant.last_name,
         "task_status" => hlr_task2.status,
-        "request_issue_benefit_type" => "vha"
+        "request_issue_benefit_type" => "vha",
+        "days_waiting" => 5
       )
     end
     let(:hlr_task_2_ri_2_expectation) do
@@ -498,7 +501,8 @@ describe BusinessLine do
         "first_name" => hlr_task2.appeal.claimant.first_name,
         "last_name" => hlr_task2.appeal.claimant.last_name,
         "task_status" => hlr_task2.status,
-        "request_issue_benefit_type" => "vha"
+        "request_issue_benefit_type" => "vha",
+        "days_waiting" => 5
       )
     end
     let(:sc_task_1_ri_1_expectation) do
@@ -517,7 +521,8 @@ describe BusinessLine do
         "first_name" => sc_task.appeal.claimant.first_name,
         "last_name" => sc_task.appeal.claimant.last_name,
         "task_status" => sc_task.status,
-        "request_issue_benefit_type" => "vha"
+        "request_issue_benefit_type" => "vha",
+        "days_waiting" => (Time.zone.today - Date.parse(sc_task.assigned_at.iso8601)).to_i
       )
     end
 
