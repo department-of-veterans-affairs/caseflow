@@ -49,9 +49,7 @@ export const AddTasksAppealsView = (props) => {
     const currentTask = [...props.unrelatedTasks];
 
     currentTask[index].Task = newType;
-    // currentTask[index].Text = newText.replace(/\s+/g, '').trim();
-
-    currentTask[index].Text = newText;
+    currentTask[index].Text = newText.trimStart();
 
     let continueEnabled = true;
 
@@ -63,8 +61,6 @@ export const AddTasksAppealsView = (props) => {
       } else {
         continueEnabled = false;
         // This will exit the current iteration, not the entire function
-
-        // return;
       }
     });
 
