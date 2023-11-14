@@ -38,7 +38,9 @@ class CorrespondenceController < ApplicationController
   end
 
   def update
-    if veteran_by_correspondence.update(veteran_params) && @correspondence.update(correspondence_params)
+    if veteran_by_correspondence.update(veteran_params) && @correspondence.update(
+      correspondence_params.merge(updated_by_id: RequestStore.store[:current_user].id)
+    )
       render json: { status: :ok }
     else
       render json: { error: "Failed to update records" }, status: :unprocessable_entity
