@@ -16,7 +16,7 @@ class MetricsService
 
     if service
       latency = stopwatch.real
-      DataDogService.emit_gauge(
+      CustomMetricsService.emit_gauge(
         metric_group: "service",
         metric_name: "request_latency",
         metric_value: latency,
@@ -41,7 +41,7 @@ class MetricsService
   end
 
   private_class_method def self.increment_datadog_counter(metric_name, service, endpoint_name, app_name)
-    DataDogService.increment_counter(
+    CustomMetricsService.increment_counter(
       metric_group: "service",
       metric_name: metric_name,
       app_name: app_name,
