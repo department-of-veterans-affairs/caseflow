@@ -43,3 +43,15 @@ export const clearCheckboxState = () =>
       type: ACTIONS.CLEAR_CHECKBOX_STATE,
     });
   };
+
+export const setUnrelatedTasks = (tasks) =>
+  // console.log('The Tasks are: ' + tasks);
+  // binding.pry;
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_UNRELATED_TASKS,
+      payload: {
+        tasks
+      }
+    });
+  };

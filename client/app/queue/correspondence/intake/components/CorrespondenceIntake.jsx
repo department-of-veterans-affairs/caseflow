@@ -4,6 +4,9 @@ import Button from '../../../../components/Button';
 import PropTypes from 'prop-types';
 import AddCorrespondenceView from './AddCorrespondence/AddCorrespondenceView';
 import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
 
 const progressBarSections = [
   {
@@ -73,6 +76,8 @@ export const CorrespondenceIntake = (props) => {
         addTasksVisible={addTasksVisible}
         setAddTasksVisible={setAddTasksVisible}
         disableContinue={handleContinueStatusChange}
+        unrelatedTasks={props.unrelatedTasks}
+        setUnrelatedTasks={props.setUnrelatedTasks}
       />
     }
     <div>
@@ -112,7 +117,23 @@ export const CorrespondenceIntake = (props) => {
 };
 
 CorrespondenceIntake.propTypes = {
-  correspondence_uuid: PropTypes.string
+  correspondence_uuid: PropTypes.string,
+  unrelatedTasks: PropTypes.arrayOf(Object),
+  setUnrelatedTasks: PropTypes.func
 };
 
-export default CorrespondenceIntake;
+const mapStateToProps = (state) => ({
+  correspondences: state.intakeCorrespondence.correspondences,
+  unrelatedTasks: state.intakeCorrespondence.unrelatedTasks
+});
+
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    setUnrelatedTasks
+  }, dispatch)
+);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CorrespondenceIntake);

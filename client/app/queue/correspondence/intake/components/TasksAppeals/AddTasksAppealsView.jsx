@@ -17,24 +17,23 @@ const mailTasksRight = [
 ];
 
 export const AddTasksAppealsView = (props) => {
-  const [addTask, setAddTask] = useState([]);
+  const [, ] = useState([]);
 
   const clickAddTask = () => {
     props.setAddTasksVisible(true);
-    const currentTask = [...addTask];
+    const currentTask = [...props.unrelatedTasks];
     const randNum = Math.floor(Math.random() * 1000000);
 
-    currentTask.push({ Object: randNum, Task: '', Text: '', SelectedTaskType: -1});
-    setAddTask(currentTask);
-
+    currentTask.push({ Object: randNum, Task: '', Text: '', SelectedTaskType: -1 });
+    props.setUnrelatedTasks(currentTask);
     props.disableContinue(false);
   };
 
   const removeTaskAtIndex = (index) => {
-    const currentTask = [...addTask];
+    const currentTask = [...props.unrelatedTasks];
     const newTask = currentTask.filter((item, i) => index !== i);
 
-    setAddTask(newTask);
+    props.setUnrelatedTasks(newTask);
     if (currentTask.length >= 2) {
       props.disableContinue(true);
     }
@@ -47,23 +46,25 @@ export const AddTasksAppealsView = (props) => {
   const [, setInstructionText] = useState('');
 
   const checkContinueStatus = (newType, newText, index) => {
-    const currentTask = [...addTask];
+    const currentTask = [...props.unrelatedTasks];
 
     currentTask[index].Task = newType;
+    // currentTask[index].Text = newText.replace(/\s+/g, '').trim();
 
-    currentTask[index].Text = newText.replace(/\s+/g, '').trim();
+    currentTask[index].Text = newText;
 
     let continueEnabled = true;
 
     currentTask.forEach((selectedTask) => {
       if (selectedTask.SelectedTaskType !== -1 && selectedTask.Text !== '') {
         // the condition is met
+        continueEnabled = true;
 
       } else {
         continueEnabled = false;
         // This will exit the current iteration, not the entire function
 
-        return;
+        // return;
       }
     });
 
@@ -71,10 +72,10 @@ export const AddTasksAppealsView = (props) => {
   };
 
   const handleChangeTaskTypeandText = (newType, newText, index) => {
-    const currentTask = [...addTask];
+    const currentTask = [...props.unrelatedTasks];
 
     currentTask[index].SelectedTaskType = newType;
-    setAddTask(currentTask);
+    props.setUnrelatedTasks(currentTask);
     setInstructionText(newText);
     checkContinueStatus(newType, newText, index);
   };
@@ -122,14 +123,16 @@ export const AddTasksAppealsView = (props) => {
         {!props.addTasksVisible && <Button
           type="button"
           onClick={clickAddTask}
-          disabled={addTask.length === 2}
+          disabled={props.unrelatedTasks.length === 2}
           name="addTaskOpen"
           classNames={['cf-left-side']}>
             + Add tasks
         </Button>}
 
         {/* This is the New Tasks section. Tasks will show next to each other in line. */}
-        {props.addTasksVisible && <div className="gray-border" style={{ padding: '0rem 0rem' }}>
+        {props.addTasksVisible &&
+        <div className="gray-border"
+          style={{ padding: '0rem 0rem', display: 'flex', flexWrap: 'wrap', flexDirection: 'column' }}>
           <div style={{ width: '100%', height: 'auto', backgroundColor: 'white', paddingBottom: '3rem' }}>
             <div style={{ backgroundColor: '#f1f1f1', width: '100%', height: '50px', paddingTop: '1.5rem' }}>
               <b style={{
@@ -142,13 +145,14 @@ export const AddTasksAppealsView = (props) => {
               }}>New Tasks</b>
             </div>
             <div style={{ width: '100%', height: '3rem' }} />
-            <div style={{ display: 'flex' }}>
-              { addTask && addTask.map((currentTask, i) => (
+            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+              { props.unrelatedTasks && props.unrelatedTasks.map((currentTask, i) => (
                 <TaskNotRelatedToAppeal
                   key={currentTask.Object}
                   removeTask={() => removeTaskAtIndex(i)}
                   handleChangeTaskType={(newType, newText) => handleChangeTaskTypeandText(newType, newText, i)}
                   taskType={currentTask.SelectedTaskType}
+                  taskText={currentTask.Text}
                 />
               ))}
 
@@ -157,7 +161,7 @@ export const AddTasksAppealsView = (props) => {
               <Button
                 type="button"
                 onClick={clickAddTask}
-                disabled={addTask.length === 2}
+                disabled={props.unrelatedTasks.length === 2}
                 name="addTasks"
                 classNames={['cf-left-side']}>
                   + Add tasks
@@ -174,6 +178,8 @@ AddTasksAppealsView.propTypes = {
   addTasksVisible: PropTypes.bool,
   setAddTasksVisible: PropTypes.func,
   disableContinue: PropTypes.func,
+  unrelatedTasks: PropTypes.arrayOf(Object),
+  setUnrelatedTasks: PropTypes.func
 };
 
 export default AddTasksAppealsView;

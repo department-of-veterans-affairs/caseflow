@@ -29,7 +29,9 @@ const TaskNotRelatedToAppeal = (props) => {
   return (
     <div key={props.key} style={{ display: 'block', marginRight: '2rem' }}>
       <div className="gray-border"
-        style={{ display: 'block', padding: '2rem 2rem', marginLeft: '3rem', width: '50rem' }}>
+        style={
+          { display: 'block', padding: '2rem 2rem', marginLeft: '3rem', marginBottom: '3rem', width: '50rem' }
+        }>
         <div
           style={
             { width: '45rem' }
@@ -37,7 +39,7 @@ const TaskNotRelatedToAppeal = (props) => {
         >
           <ReactSelectDropdown
             options={dropdownOptions}
-            defaultValue={{ value: -1, label: 'Select...' }}
+            defaultValue={dropdownOptions[props.taskType]}
             label="Task"
             style={{ width: '50rem' }}
             onChangeMethod={(selectedOption) =>
@@ -48,8 +50,8 @@ const TaskNotRelatedToAppeal = (props) => {
           <TextareaField
             name="Task Information"
             label="Provide context and instruction on this task"
-            defaultText=""
-            value={instructionText}
+            defaultText="Is this existing"
+            value={props.taskText}
             onChange={handleChangeInstructionText}
           />
           <Button
@@ -77,6 +79,7 @@ TaskNotRelatedToAppeal.propTypes = {
   key: PropTypes.object,
   handleChangeTaskType: PropTypes.func,
   taskType: PropTypes.number,
+  taskText: PropTypes.string
 };
 
 export default TaskNotRelatedToAppeal;
