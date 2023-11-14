@@ -230,6 +230,14 @@ class HearingDay < CaseflowRecord
     "Guest Link for #{scheduled_for.strftime('%b %e, %Y')}"
   end
 
+  def nbf
+    scheduled_for.beginning_of_day.to_i
+  end
+
+  def exp
+    scheduled_for.end_of_day.to_i
+  end
+
   private
 
   # called through the 'before_destroy' callback on the hearing_day object.

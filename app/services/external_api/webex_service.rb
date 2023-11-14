@@ -16,8 +16,8 @@ class ExternalApi::WebexService
     body = {
       "jwt": {
         "sub": virtual_hearing.subject_for_conference,
-        "Nbf": virtual_hearing.hearing.scheduled_for.beginning_of_day.to_i,
-        "Exp": virtual_hearing.hearing.scheduled_for.end_of_day.to_i
+        "Nbf": virtual_hearing.nbf,
+        "Exp": virtual_hearing.exp
       },
       "aud": @aud,
       "numGuest": 1,

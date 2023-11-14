@@ -442,10 +442,9 @@ describe VirtualHearing do
     end
     let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
 
-    subject { virtual_hearing.subject_for_conference }
-
     context "For an AMA Hearing" do
       let(:hearing) { create(:hearing, hearing_day: hearing_day) }
+      subject { virtual_hearing.subject_for_conference }
 
       it "returns the expected meeting conference details" do
         is_expected.to eq(
@@ -456,11 +455,29 @@ describe VirtualHearing do
 
     context "For a Legacy Hearing" do
       let(:hearing) { create(:legacy_hearing, hearing_day: hearing_day) }
+      subject { virtual_hearing.subject_for_conference }
 
       it "returns the expected meeting conference details" do
         is_expected.to eq(
           "#{hearing.appeal.docket_number}_#{hearing.appeal.id}_LegacyAppeal"
         )
+      end
+    end
+
+    context "nbf and exp" do
+      let(:hearing) { create(:hearing, hearing_day: hearing_day) }
+      subject { virtual_hearing.nbf }
+
+      it "returns correct nbf" do
+        expect subject == 1_695_355_200
+      end
+
+      before do
+        subject { virtual_hearing.exp }
+      end
+
+      it "returns correct exp" do
+        expect subject == 1_695_427_199
       end
     end
   end
