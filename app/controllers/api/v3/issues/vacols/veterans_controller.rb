@@ -49,6 +49,14 @@ class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
     }, status: :internal_server_error
   end
 
+  rescue_from Caseflow::Error::InvalidFileNumber, BGS::ShareError do |error|
+    Raven.capture_exception(error, extra: raven_extra_context)
+    Rails.logger.error "Unable to find Veteran, please review the entered params: #{error}"
+
+    render_veteran_not_found
+  end
+
+
   def show
     page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]
     # per_page uses the default value defined in the DtoBuilder unless a param is given,
