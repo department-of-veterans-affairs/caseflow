@@ -28,13 +28,30 @@ function SaveLeversToDB(leverStore) {
 };
 function DisableSaveButton() {
   document.getElementById("SaveLeversButton").disabled = true;
-}
+};
 function leverList(leverStore) {
-  leverStore.getState().levers
+  const levers = leverStore.getState().levers;
 
   return (
-    console.log("herherhehrere")
-  )
+    <table>
+      <thead>
+        <tr>
+          <th>Data Element</th>
+          <th>Previous Value</th>
+          <th>New Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {levers.map((lever, index) => (
+          <tr key={index}>
+            <td>{lever.title}</td>
+            <td>{lever.value}</td>
+            <td>{lever.newValue}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 }
 
 
@@ -43,7 +60,6 @@ export function LeverSaveButton({ leverStore }) {
 
   const handleSave = () => {
     SaveLeverChanges(leverStore);
-    leverList(leverStore);
     DisableSaveButton();
     UpdateLeverHistory(leverStore);
     SaveLeversToDB(leverStore);
@@ -67,6 +83,7 @@ export function LeverSaveButton({ leverStore }) {
         cancelButton={<Button onClick={() => setShowModal(false)}>{COPY.MODAL_CANCEL_BUTTON}</Button>}
       >
         <p>{COPY.CASE_DISTRIBUTION_MODAL_DESCRIPTION}</p>
+        {leverList(leverStore)}
       </Modal>
       }
     </>
