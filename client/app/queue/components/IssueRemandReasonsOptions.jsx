@@ -315,7 +315,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     if (this.props.featureToggles.additional_remand_reasons) {
       this.filterSelectableAmaRemandReasons('medicalExam', 0);
       this.filterSelectableAmaRemandReasons('medicalExam', 1);
-    } else if (!this.props.featureToggles.additional_remand_reasons) {
+    } else {
       this.filterSelectableAmaRemandReasons('medicalExam', 2);
       this.filterSelectableAmaRemandReasons('medicalExam', 3);
       this.filterSelectableAmaRemandReasons('medicalExam', 4);
