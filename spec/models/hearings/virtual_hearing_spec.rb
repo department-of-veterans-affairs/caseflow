@@ -442,8 +442,6 @@ describe VirtualHearing do
     end
     let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
 
-
-
     context "For an AMA Hearing" do
       let(:hearing) { create(:hearing, hearing_day: hearing_day) }
       subject { virtual_hearing.subject_for_conference }
