@@ -2,13 +2,16 @@
 
 require "datadog/statsd"
 
-class DataDogService
+class CustomMetricsService
   @statsd = Datadog::Statsd.new
+  @DynatraceService ||= ExternalApi::DynatraceService.new
 
   def self.increment_counter(metric_group:, metric_name:, app_name:, attrs: {}, by: 1)
     tags = get_tags(app_name, attrs)
     stat_name = get_stat_name(metric_group, metric_name)
+
     @statsd.increment(stat_name, tags: tags, by: by)
+    @DynatraceService.increment(stat_name, tags: tags, by: by)
   end
 
   def self.record_runtime(metric_group:, app_name:, start_time: Time.zone.now)
@@ -26,14 +29,18 @@ class DataDogService
   def self.emit_gauge(metric_group:, metric_name:, metric_value:, app_name:, attrs: {})
     tags = get_tags(app_name, attrs)
     stat_name = get_stat_name(metric_group, metric_name)
+
     @statsd.gauge(stat_name, metric_value, tags: tags)
+    @DynatraceService.gauge(stat_name, metric_value, tags: tags)
   end
 
   # :nocov:
   def self.histogram(metric_group:, metric_name:, metric_value:, app_name:, attrs: {})
     tags = get_tags(app_name, attrs)
     stat_name = get_stat_name(metric_group, metric_name)
+
     @statsd.histogram(stat_name, metric_value, tags: tags)
+    @DynatraceService.histogram(stat_name, metric_value, tags: tags)
   end
   # :nocov:
 
@@ -45,9 +52,9 @@ class DataDogService
     extra_tags = attrs.reduce([]) do |tags, (key, val)|
       tags + ["#{key}:#{val}"]
     end
-    [
-      "app:#{app_name}",
-      "env:#{Rails.current_env}"
-    ] + extra_tags
+  [
+    "app:#{app_name}",
+    "env:#{Rails.current_env}"
+  ] + extra_tags
   end
 end
