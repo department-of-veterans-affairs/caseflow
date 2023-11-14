@@ -251,6 +251,14 @@ Rails.application.routes.draw do
   end
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
 
+  get 'acd-controls', :to => 'case_distribution_levers#acd_lever_index'
+
+  resources :case_distribution_levers, only: [] do
+    collection do
+      post :update, to: "case_distribution_levers#update_levers_and_history"
+    end
+  end
+
   resources :decision_reviews, param: :business_line_slug, only: [] do
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
       member do
