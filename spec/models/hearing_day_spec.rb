@@ -609,6 +609,22 @@ describe HearingDay, :all_dbs do
     it "returns the expected meeting conference details" do
       is_expected.to eq("Guest Link for #{expected_date}")
     end
+
+    context "nbf and exp" do
+      subject { hearing_day.nbf }
+
+      it "returns correct nbf" do
+        expect subject == 1_695_254_400
+      end
+
+      before do
+        subject { hearing_day.exp }
+      end
+
+      it "returns correct exp" do
+        expect subject == 1_695_340_799
+      end
+    end
   end
 
   context "hearing day in the future, conference link doesnt exist" do

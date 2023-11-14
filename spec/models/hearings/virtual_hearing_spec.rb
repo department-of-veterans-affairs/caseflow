@@ -471,7 +471,7 @@ describe VirtualHearing do
       subject { virtual_hearing.nbf }
 
       it "returns correct nbf" do
-        expect subject == 1695355200
+        expect subject == 1_695_355_200
       end
 
       before do
@@ -479,7 +479,7 @@ describe VirtualHearing do
       end
 
       it "returns correct exp" do
-        expect subject == 1695427199
+        expect subject == 1_695_427_199
       end
     end
   end
