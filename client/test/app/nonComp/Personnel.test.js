@@ -60,9 +60,11 @@ describe('Personnel', () => {
   };
 
   const navigateToPersonnel = async () => {
+    await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
+
     const addConditionBtn = screen.getByText('Add Condition');
 
-    await userEvent.click(addConditionBtn);
+    userEvent.click(addConditionBtn);
 
     const selectText = screen.getByText('Select a variable');
 
@@ -95,6 +97,16 @@ describe('Personnel', () => {
     expect(screen.getByText('VHA team members')).toBeInTheDocument();
     expect(screen.getAllByText(selectPlaceholder).length).toBe(2);
   });
+
+  // it('renders an error if no option is selected', async () => {
+  //   const generateReportBtn = screen.getByRole('button', { name: 'Generate task report' });
+
+  //   expect(generateReportBtn).toBeInTheDocument();
+
+  //   await userEvent.click(generateReportBtn);
+
+  //   expect(screen.getByText('Error: At least one person must be selected')).toBeInTheDocument();
+  // });
 
   it('allows to select multiple options from dropdown', async () => {
     let selectText = screen.getAllByText(selectPlaceholder);
