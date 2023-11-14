@@ -35,6 +35,15 @@ class ChangeTaskTypeModal extends React.PureComponent {
 
   validateForm = () => Boolean(this.state.typeOption) && Boolean(this.state.instructions);
 
+  prependUrlToInstructions = () => {
+
+    if (this.isHearingRequestMailTask()) {
+      return (`**DETAILS:** \n ${this.state.instructions}`);
+    }
+
+    return this.state.instructions;
+  };
+
   buildPayload = () => {
     const { typeOption } = this.state;
 
@@ -42,6 +51,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
       data: {
         task: {
           type: typeOption.value,
+          instructions: this.prependUrlToInstructions()
         }
       }
     };

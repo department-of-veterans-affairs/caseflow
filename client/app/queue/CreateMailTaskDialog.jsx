@@ -39,6 +39,15 @@ export class CreateMailTaskDialog extends React.Component {
 
   validateForm = () => this.state.selectedValue !== null && this.state.instructions !== '';
 
+  prependUrlToInstructions = () => {
+
+    if (this.isHearingRequestMailTask()) {
+      return (`**DETAILS:** \n ${this.state.instructions}`);
+    }
+
+    return this.state.instructions;
+  };
+
   submit = () => {
     const { appeal, task } = this.props;
 
@@ -49,6 +58,7 @@ export class CreateMailTaskDialog extends React.Component {
             type: this.state.selectedValue,
             external_id: appeal.externalId,
             parent_id: task.taskId,
+            instructions: this.prependUrlToInstructions()
           },
         ],
       },
