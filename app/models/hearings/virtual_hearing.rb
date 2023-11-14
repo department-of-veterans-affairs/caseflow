@@ -286,6 +286,14 @@ class VirtualHearing < CaseflowRecord
     "#{appeal.docket_number}_#{appeal.id}_#{appeal.class}"
   end
 
+  def nbf
+    hearing.scheduled_for.beginning_of_day.to_i
+  end
+
+  def exp
+    hearing.scheduled_for.end_of_day.to_i
+  end
+
   private
 
   def assign_created_by_user
