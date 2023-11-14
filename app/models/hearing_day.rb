@@ -230,7 +230,6 @@ class HearingDay < CaseflowRecord
     "Guest Link for #{scheduled_for.strftime('%b %e, %Y')}"
   end
 
-  # adding comment so gha can run
   def nbf
     scheduled_for.beginning_of_day.to_i
   end
