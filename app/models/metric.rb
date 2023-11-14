@@ -2,7 +2,7 @@
 
 class Metric < CaseflowRecord
   belongs_to :user
-  delegate :ccs_id, to: :user
+  delegate :css_id, to: :user
 
   METRIC_TYPES = { error: "error", log: "log", performance: "performance", info: "info" }.freeze
   LOG_SYSTEMS = { datadog: "datadog", rails_console: "rails_console", javascript_console: "javascript_console" }.freeze
