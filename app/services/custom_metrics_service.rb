@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "datadog/statsd"
+
 # ManagedDynatrace for Government	https://{your-domain}/e/{your-environment-id}/api/v2/metrics/ingest
 BASE_URL = ENV[""]
 
@@ -7,6 +9,8 @@ BASE_URL = ENV[""]
 #
 
 class CustomMetricsService
+  @statsd = Datadog::Statsd.new
+
   def self.increment_counter(metric_group:, metric_name:, app_name:, attrs: {}, by: 1)
     tags = get_tags(app_name, attrs)
     stat_name = get_stat_name(metric_group, metric_name)
