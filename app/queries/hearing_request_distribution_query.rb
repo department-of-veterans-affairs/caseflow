@@ -95,6 +95,7 @@ class HearingRequestDistributionQuery
     def tied_to_distribution_judge(judge)
       joins(with_assigned_distribution_task_sql)
         .where(hearings: { disposition: "held", judge_id: judge.id })
+        .where("judge_id IN (?)", ineligible_judges_id_cache)
         .where("distribution_task.assigned_at > ?", Constants::DISTRIBUTION["hearing_case_affinity_days"].days.ago)
     end
 
