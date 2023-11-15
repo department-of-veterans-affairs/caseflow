@@ -167,10 +167,10 @@
 
 .modalTableStyling {
   margin-top: 0;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 5;
-  padding-right: 5;
+  padding-top: 18px;
+  padding-bottom: 18px;
+  padding-left: 0;
+  padding-right: 0;
   border-left: 0;
   border-right: 0;
   border-bottom: 0;
@@ -188,6 +188,7 @@
   border-left: 0;
   border-right: 0;
   border-top: 0;
+  padding-left: 0;
   color: #212121;
   border-color: #d6d7d9;
   font-family: Source Sans Pro;
@@ -202,4 +203,8 @@
 
 .modalTableRightStyling {
   width: 20%;
+}
+
+.updatedModalStyling > div > div {
+  padding-bottom: 0px;
 }

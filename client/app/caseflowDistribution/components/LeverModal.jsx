@@ -88,6 +88,7 @@ export function LeverSaveButton({ leverStore }) {
         title={COPY.CASE_DISTRIBUTION_MODAL_TITLE}
         confirmButton={<Button onClick={handleSave}>{COPY.MODAL_CONFIRM_BUTTON}</Button>}
         cancelButton={<Button onClick={() => setShowModal(false)}>{COPY.MODAL_CANCEL_BUTTON}</Button>}
+        className={styles.updatedModalStyling}
       >
         <p>{COPY.CASE_DISTRIBUTION_MODAL_DESCRIPTION}</p>
         {leverList(leverStore)}

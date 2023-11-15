@@ -3,8 +3,6 @@ import { MemoryRouter } from 'react-router';
 import LeverButtonsWrapper from './LeverButtonsWrapper';
 import { createStore } from 'redux';
 import leversReducer from '../reducers/Levers/leversReducer';
-
-// import { levers } from 'test/data/adminCaseDistributionLevers';
 import { formattedLevers, updatedLevers } from 'test/data/formattedCaseDistributionData';
 
 const preloadedState = {
@@ -20,7 +18,7 @@ const RouterDecorator = (Story) => (
 );
 
 export default {
-  title: 'Admin/Caseflow Distribution/Lever Modal',
+  title: 'CaseDistribution/Lever Modal',
   component: LeverButtonsWrapper,
   decorators: [RouterDecorator]
 };
