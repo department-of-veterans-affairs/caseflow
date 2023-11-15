@@ -43,7 +43,7 @@ class Fakes::WebexService
   private
 
   def build_meeting_response
-    "{\"host\":[{\"cipher\":\"abc123\",\"short\":\"hjASGlI\"}],\"guest\":[{\"cipher\":\"123abc\",\"short\":\"pi9P6TL\"}],\"baseUrl\":\https://instant-usgov.webex.com/visit/\}\""
+    "{\"host\":[{\"cipher\":\"abc123\",\"short\":\"hjASGlI\"}],\"guest\":[{\"cipher\":\"123abc\",\"short\":\"pi9P6TL\"}],\"baseUrl\":\"https://instant-usgov.webex.com/visit/\"}"
   end
 
   def link_info(num_links = 1)
