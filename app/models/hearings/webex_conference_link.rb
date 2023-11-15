@@ -14,7 +14,7 @@ class WebexConferenceLink < ConferenceLink
   def generate_conference_information
     meeting_type.update!(service_name: "webex")
 
-    conference = WebexService.new(
+    conference_response = WebexService.new(
       host: ENV["WEBEX_HOST_IC"],
       port: ENV["WEBEX_PORT"],
       aud: ENV["WEBEX_ORGANIZATION"],
@@ -23,11 +23,9 @@ class WebexConferenceLink < ConferenceLink
       api_endpoint: ENV["WEBEX_API_IC"]
     ).create_conference(hearing_day)
 
-    base_url = conference.data["baseUrl"]
-
     update!(
-      host_link: "#{base_url}#{conference.data['host'].first['short']}",
-      guest_hearing_link: "#{base_url}#{conference.data['guest'].first['short']}"
+      host_link: conference_response.host_link,
+      guest_hearing_link: conference_response.guest_link
     )
   end
 end
