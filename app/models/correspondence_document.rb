@@ -2,6 +2,7 @@
 
 class CorrespondenceDocument < CaseflowRecord
   belongs_to :correspondence
+  belongs_to :vbms_document_type
 
   attr_accessor :uuid
 
