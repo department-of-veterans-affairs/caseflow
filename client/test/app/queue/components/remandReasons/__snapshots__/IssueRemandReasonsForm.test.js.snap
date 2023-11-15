@@ -266,6 +266,54 @@ exports[`IssueRemandReasonsForm AMA renders correctly by default 1`] = `
             </span>
           </legend>
           <div
+            class="checkbox-wrapper-issue-1-medical_examinations"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="issue-1-medical_examinations"
+                id="issue-1-medical_examinations"
+                name="issue-1-medical_examinations"
+                type="checkbox"
+              />
+              <label
+                for="issue-1-medical_examinations"
+              >
+                <span
+                  class=""
+                >
+                  Medical examinations
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+          <div
+            class="checkbox-wrapper-issue-1-medical_opinions"
+          >
+            <div
+              class="cf-form-checkbox"
+            >
+              <input
+                aria-label="issue-1-medical_opinions"
+                id="issue-1-medical_opinions"
+                name="issue-1-medical_opinions"
+                type="checkbox"
+              />
+              <label
+                for="issue-1-medical_opinions"
+              >
+                <span
+                  class=""
+                >
+                  Medical opinions
+                </span>
+                 
+              </label>
+            </div>
+          </div>
+          <div
             class="checkbox-wrapper-issue-1-no_medical_examination"
           >
             <div

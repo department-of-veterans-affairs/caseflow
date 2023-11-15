@@ -62,6 +62,7 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
     end
 
     scenario "submits draft decision" do
+      FeatureToggle.enable!(:additional_remand_reasons)
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
@@ -202,7 +203,6 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       click_on "Continue"
 
       find_field("Service treatment records", visible: false).sibling("label").click
-      find_field("Post AOJ", visible: false).sibling("label").click
 
       click_on "Continue"
       # For some reason clicking too quickly on the next remand reason breaks the test.
@@ -210,7 +210,6 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
       sleep 1
 
       all("label", text: "No medical examination", visible: false, count: 2)[1].click
-      all("label", text: "Pre AOJ", visible: false, count: 2)[1].click
 
       click_on "Continue"
 
