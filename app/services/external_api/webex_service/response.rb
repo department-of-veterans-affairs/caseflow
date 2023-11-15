@@ -41,6 +41,6 @@ class ExternalApi::WebexService::Response
   def error_message
     return "No error message from Webex" if resp.raw_body.empty?
 
-    resp.raw_body.with_indifferent_access["message"]
+    JSON.parse(resp.raw_body).with_indifferent_access["message"]
   end
 end
