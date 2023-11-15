@@ -5,16 +5,16 @@ class CaseDistributionLeversController < ApplicationController
     @acd_levers = CaseDistributionLever.all.to_json
     @acd_history = CaseDistributionAuditLeverEntry.past_year.to_json
     @user_is_an_acd_admin = current_user.admin?
-    # binding.pry
 
-    render "index" ##TODO: path to file
+    render "index"
   end
 
   def update_levers_and_history
-    errors = nil
-    if user_is_an_acd_admin?
-      errors = update_acd_levers
-      errors  = add_audit_lever_entries
+    if current_user.admin?
+      errors = update_acd_levers(JSON.parse(params["current_levers"]))
+      if errors.empty?
+        errors = add_audit_lever_entries(JSON.parse(params["audit_lever_entries"]))
+      end
 
       if errors.empty?
         render json: { successful: true }
@@ -27,22 +27,29 @@ class CaseDistributionLeversController < ApplicationController
     end
   end
 
-  def update_levers
+  def update_acd_levers(current_levers)
+    grouped_levers = current_levers.index_by { |lever| lever["id"] }
+
     ActiveRecord::Base.transaction do
-      CaseDistributionLever.update_levers(params[current_levers])
+      @levers = CaseDistributionLever.update(grouped_levers.keys, grouped_levers.values)
+      if @levers.all? { |lever| lever.changed? }
+        return []
+      else
+        return @levers.select(&:invalid?).map{ |l| "Lever ID:#{l.id} - #{l.errors.full_messages}" }.join("<br/>")
+      end
     end
-    # rescue ActiveRecord::RecordInvalid => error
-    #   return error
-    # end
   end
 
-  def add_audit_lever_entries
-    ActiveRecord::Base.transaction do
-      CaseDistributionAuditLeverEntries.create_entries(params[audit_lever_entries])
+  def add_audit_lever_entries(audit_lever_entries)
+    begin
+      ActiveRecord::Base.transaction do
+        CaseDistributionAuditLeverEntry.create(audit_lever_entries)
+      end
+    rescue Exception => error
+      return [error]
     end
-    # rescue ActiveRecord::RecordInvalid => error
-    #   raise error
-    # end
+
+    return []
   end
 
   private
