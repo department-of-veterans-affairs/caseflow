@@ -53,7 +53,7 @@ class ExternalApi::WebexService
   private
 
   # :nocov:
-  def send_webex_request(body: nil)
+  def send_webex_request(body = nil)
     url = "https://#{@host}#{@domain}#{@api_endpoint}"
     request = HTTPI::Request.new(url)
     request.open_timeout = 300
