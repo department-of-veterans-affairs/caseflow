@@ -511,7 +511,7 @@ export const updatedLevers = [
     title: 'Batch Size Per Attorney*',
     description: 'Set case distribution batch size for judges with attorney teams. The value for this data element is per attorney.',
     data_type: 'number',
-    value: '06',
+    value: '6',
     unit: 'cases',
     is_active: true,
     is_disabled: false,
