@@ -340,7 +340,9 @@ class IssueRemandReasonsOptions extends React.PureComponent {
         </div>
         <div {...flexColumn}>
           <CheckboxGroup
-            label={<h3>Medical examination and opinion</h3>}
+            label={this.props.featureToggles.additional_remand_reasons ?
+              <h3>Medical examination and opinion</h3> :
+              <h3>Medical examination</h3>}
             name="medical-exam"
             options={REMAND_REASONS.medicalExam}
             {...checkboxGroupProps}
