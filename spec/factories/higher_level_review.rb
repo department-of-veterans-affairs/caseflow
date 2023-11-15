@@ -162,15 +162,16 @@ FactoryBot.define do
 
     trait :with_intake do
       after(:create) do |hlr|
-        hlr.intake = create(:intake, :completed, veteran_file_number: hlr.veteran_file_number)
+        create(:intake, :completed, detail: hlr, veteran_file_number: hlr.veteran_file_number)
       end
     end
 
     trait :with_decision do
       after(:create) do |hlr|
-        hlr.decision_issues << create(:decision_issue,
-                                      request_issues: hlr.request_issues,
-                                      benefit_type: hlr.benefit_type)
+        create(:decision_issue,
+               decision_review: hlr,
+               request_issues: hlr.request_issues,
+               benefit_type: hlr.benefit_type)
       end
     end
   end
