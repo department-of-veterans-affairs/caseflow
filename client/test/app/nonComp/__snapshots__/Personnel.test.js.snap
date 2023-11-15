@@ -361,6 +361,11 @@ exports[`Personnel component renders correctly renders correctly 1`] = `
                   </div>
                 </div>
                 <div
+                  class="report-page-middle-content"
+                >
+                  including
+                </div>
+                <div
                   class="report-page-variable-content"
                 >
                   <div>
@@ -462,7 +467,6 @@ exports[`Personnel component renders correctly renders correctly 1`] = `
                       </div>
                     </div>
                   </div>
-                   
                 </div>
               </div>
               <a>

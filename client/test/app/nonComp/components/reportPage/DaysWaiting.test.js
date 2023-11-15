@@ -8,6 +8,7 @@ import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
 import ReportPage from 'app/nonComp/pages/ReportPage';
 import selectEvent from 'react-select-event';
+import { getVhaUsers } from 'test/helpers/reportPageHelper';
 import CombinedNonCompReducer from 'app/nonComp/reducers';
 
 describe('DaysWaiting', () => {
@@ -34,6 +35,10 @@ describe('DaysWaiting', () => {
 
     await selectEvent.select(select, ['Days Waiting']);
   };
+
+  beforeEach(() => {
+    getVhaUsers();
+  });
 
   it('passes a11y testing', async () => {
     const { container } = setup();
