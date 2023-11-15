@@ -143,16 +143,18 @@ module Seeds
         end
       end
 
-      # AC 2 and 3
+      # AC 2-6
       def create_ama_appeals(number_of_appeals_to_create)
         # The offset should start at 100 to avoid collisions
         offsets = (100..(100 + number_of_appeals_to_create - 1)).to_a
         # Use a hearings user so the factories don't try to create one (and sometimes fail)
         active_judge = User.find_by_css_id("BVAAABSHIRE")
+        inactive_judge = User.find_by_css_id("BVADSLADER")
       
         offsets.each do |offset|
-          create_ama_appeals_decision_ready_dr_less_than_60_days(active_judge)
-          create_ama_appeals_decision_ready_dr_more_than_60_days(active_judge)
+          create_ama_appeals_dispatch_ready_less_than_60_days(active_judge)
+          create_ama_appeals_dispatch_ready_more_than_60_days(active_judge)
+          create_ama_appeals_dispatch_ready_less_than_60_days_with_inactive_judge(inactive_judge)
         end
       end
   
@@ -196,7 +198,7 @@ module Seeds
       end
 
       # AC2: ready to distribute for less than 60 days
-      def create_ama_appeals_decision_ready_dr_less_than_60_days(judge)
+      def create_ama_appeals_dispatch_ready_less_than_60_days(judge)
         Timecop.travel(1.days.ago)
           appeal = create(:appeal,
                           :with_post_intake_tasks,
@@ -208,8 +210,20 @@ module Seeds
       end
 
       # AC3: ready to distribute for more than 60 days
-      def create_ama_appeals_decision_ready_dr_more_than_60_days(judge)
+      def create_ama_appeals_dispatch_ready_more_than_60_days(judge)
         Timecop.travel(61.days.ago)
+          appeal = create(:appeal,
+                          :with_post_intake_tasks,
+                          :held_hearing_and_ready_to_distribute,
+                          :hearing_docket,
+                          tied_judge: judge,
+                          veteran: create_veteran)
+        Timecop.return
+      end
+
+      # AC4: ready to distribute for less than 60 days with inactive judge
+      def create_ama_appeals_dispatch_ready_less_than_60_days_with_inactive_judge(judge)
+        Timecop.travel(1.days.ago)
           appeal = create(:appeal,
                           :with_post_intake_tasks,
                           :held_hearing_and_ready_to_distribute,
