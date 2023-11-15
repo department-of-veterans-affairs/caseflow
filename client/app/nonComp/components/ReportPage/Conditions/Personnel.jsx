@@ -9,8 +9,8 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 
 export const personnelSchema = object({
   personnel: array().of(object()).
-    min(1, 'Error: At least one person must be selected').
-    typeError('Error: At least one person must be selected')
+    min(1, 'Please select at least one team member').
+    typeError('Please select at least one team member')
 });
 
 export const Personnel = ({ control, field, name }) => {
