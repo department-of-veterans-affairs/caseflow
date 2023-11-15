@@ -1,4 +1,4 @@
-class CreateCorrespondenceIntakes < ActiveRecord::Migration[5.2]
+class CreateCorrespondenceIntakes < Caseflow::Migration
   def change
     create_table :correspondence_intakes do |t|
       t.integer :current_step, comment: "Tracks users progress on intake workflow"
