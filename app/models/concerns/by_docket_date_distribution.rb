@@ -85,7 +85,10 @@ module ByDocketDateDistribution
   end
 
   def distributed_cases_tied_to_ineligible_judges
-    @appeals.filter_map { |appeal| appeal[:case_id] if VACOLS::CaseDocket.ineligible_judges_sattyid_cache.include?(hearing_judge_id(appeal[:case_id])) }
+    @appeals.filter_map do |appeal|
+      appeal[:case_id] if VACOLS::CaseDocket.ineligible_judges_sattyid_cache
+        &.include?(hearing_judge_id(appeal[:case_id]))
+    end
   end
 
   def hearing_judge_id(uuid)
