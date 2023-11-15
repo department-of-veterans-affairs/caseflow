@@ -26,30 +26,28 @@ export const Personnel = ({ control, field, name }) => {
   ));
 
   return (
-    <>
+    <div>
       <Controller
         control={control}
         defaultValue={field.options.personnel ?? ''}
         name={namePersonnel}
         render={({ ref, ...rest }) => {
           return (
-            <>
-              <SearchableDropdown
-                {...rest}
-                label="VHA team members"
-                options={dropdownOptions}
-                inputRef={ref}
-                multi
-                onChange={(valObj) => {
-                  setValue(namePersonnel, valObj);
-                }}
-                errorMessage={get(errors, namePersonnel)?.message}
-              />
-            </>
+            <SearchableDropdown
+              {...rest}
+              label="VHA team members"
+              options={dropdownOptions}
+              inputRef={ref}
+              multi
+              onChange={(valObj) => {
+                setValue(namePersonnel, valObj);
+              }}
+              errorMessage={get(errors, namePersonnel)?.message}
+            />
           );
         }}
       />
-    </>
+    </div>
   );
 };
 
