@@ -23,11 +23,11 @@ class WebexConferenceLink < ConferenceLink
       api_endpoint: ENV["WEBEX_API_IC"]
     ).create_conference(hearing_day)
 
-    base_url = conference.data[:baseUrl]
+    base_url = conference.data["baseUrl"]
 
     update!(
-      host_link: "#{base_url}#{conference.data[:host].first[:short]}",
-      guest_hearing_link: "#{base_url}#{conference.data[:guest].first[:short]}"
+      host_link: "#{base_url}#{conference.data['host'].first['short']}",
+      guest_hearing_link: "#{base_url}#{conference.data['guest'].first['short']}"
     )
   end
 end
