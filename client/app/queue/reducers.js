@@ -23,6 +23,7 @@ import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 
 import editClaimantReducer from './editAppellantInformation/editAppellantInformationSlice';
 import cavcDashboardReducer from './cavcDashboard/cavcDashboardReducer';
+import intakeCorrespondenceReducer from './correspondence/correspondenceReducer/correspondenceReducer';
 
 export const initialState = {
   judges: {},
@@ -807,7 +808,8 @@ const rootReducer = combineReducers({
   substituteAppellant: substituteAppellantReducer,
   cavcRemand: editCavRemandReducer,
   editClaimantReducer,
-  cavcDashboard: cavcDashboardReducer
+  cavcDashboard: cavcDashboardReducer,
+  intakeCorrespondence: intakeCorrespondenceReducer
 });
 
 export default timeFunction(

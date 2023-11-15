@@ -4,6 +4,9 @@ import Modal from 'app/components/Modal';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import DateSelector from 'app/components/DateSelector';
 import { validateDateNotInFuture } from '../../../intake/util/issues';
+import Button from '../../../components/Button';
+import ApiUtil from '../../../util/ApiUtil';
+import _ from 'lodash';
 
 class EditModal extends React.Component {
 
@@ -13,21 +16,39 @@ class EditModal extends React.Component {
     this.state = {
       VADORDate: '',
       packageDocument: '',
-      dateError: ''
+      dateError: '',
+      showEditModal: false,
+      packageOptions: ''
     };
   }
+
+  componentDidMount() {
+    setTimeout(this.getPackages, 0);
+  }
+
+  onClickEditCMP = () => {
+    this.setState({ showEditModal: true });
+  };
+
+  onClickCancel = () => {
+    this.setState({
+      showEditModal: false,
+      packageDocument: '',
+      VADORDate: ''
+    });
+  };
 
   getModalButtons() {
     const btns = [
       {
         classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
         name: 'Cancel',
-        onClick: this.props.onCancel
+        onClick: this.onClickCancel
       },
       {
         classNames: ['usa-button', 'add-issue'],
         name: 'Save',
-        onClick: this.onAddIssue,
+        onClick: this.handleCMPSave,
         disabled: this.requiredFieldsMissing() || Boolean(this.state.dateError)
       }
     ];
@@ -47,6 +68,12 @@ class EditModal extends React.Component {
     );
   }
 
+  packageDocumentOnChange = (value) => {
+    this.setState({
+      packageDocument: value
+    });
+  };
+
   VADORDateOnChange = (value) => {
     this.setState({
       VADORDate: value,
@@ -62,37 +89,56 @@ class EditModal extends React.Component {
     }
   };
 
+  getPackages = () => {
+    ApiUtil.get('/queue/correspondence/packages').then((resp) => {
+      const packageTypeOptions = _.values(ApiUtil.convertToCamelCase(resp.body.package_document_types)).map((packages) => ({
+        label: packages.name,
+        value: packages.id.toString()
+      }));
+
+      packageTypeOptions.sort((first, second) => (first.label - second.label));
+      this.setState({ packageOptions: packageTypeOptions });
+    });
+  }
+
   render() {
-    const { onCancel } = this.props;
-    const { VADORDate, packageDocument } = this.state;
+    // const { onCancel } = this.props;
+    const { VADORDate, packageDocument, showEditModal } = this.state;
 
     return (
       <div>
-        <Modal buttons={this.getModalButtons()} visible closeHandler={onCancel} title="Edit CMP information">
-          <div className="add-nonrating-request-issue">
-            <div className="decision-date">
-              <DateSelector
-                name="decision-date"
-                label="VA DOR"
+        <Button
+          name="Edit"
+          onClick={() => this.onClickEditCMP()}
+          classNames={['usa-button-primary']}
+        />
+        {showEditModal && (
+          <Modal buttons={this.getModalButtons()} visible closeHandler={this.onClickCancel} title="Edit CMP information">
+            <div className="add-nonrating-request-issue">
+              <div className="decision-date">
+                <DateSelector
+                  name="decision-date"
+                  label="VA DOR"
+                  strongLabel
+                  value={VADORDate}
+                  errorMessage={this.state.dateError}
+                  onChange={this.VADORDateOnChange}
+                  type="date"
+                />
+              </div>
+              <br />
+              <SearchableDropdown
+                name="issue-category"
+                label="Package document type"
                 strongLabel
-                value={VADORDate}
-                errorMessage={this.state.dateError}
-                onChange={this.VADORDateOnChange}
-                type="date"
+                placeholder="Select or enter..."
+                options={this.state.packageOptions}
+                value={packageDocument}
+                onChange={this.packageDocumentOnChange}
               />
             </div>
-            <br />
-            <SearchableDropdown
-              name="issue-category"
-              label="Package document type"
-              strongLabel
-              placeholder="Select or enter..."
-              // options={}
-              value={packageDocument}
-              // onChange={}
-            />
-          </div>
-        </Modal>
+          </Modal>
+        )}
       </div>
     );
   }
