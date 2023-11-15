@@ -47,16 +47,16 @@ class CorrespondenceController < ApplicationController
     return @correspondence if @correspondence.present?
 
     if params[:id].present?
-     @correspondence = Correspondence.find(params[:id])
+      @correspondence = Correspondence.find(params[:id])
     elsif params[:correspondence_uuid].present?
-     @correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
+      @correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
     end
 
     @correspondence
   end
 
   def correspondence_load
-    @all_correspondence = Correspondence.where(veteran_id: veteran_by_correspondence&.id)
+    Correspondence.where(veteran_id: vet.id).where.not(uuid: params[:correspondence_uuid])
   end
 
   def veteran_by_correspondence
