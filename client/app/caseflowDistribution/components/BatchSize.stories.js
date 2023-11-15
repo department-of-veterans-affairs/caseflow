@@ -5,7 +5,7 @@ import { createStore } from 'redux';
 import leversReducer from 'app/caseflowDistribution/reducers/Levers/leversReducer';
 
 export default {
-  title: 'Admin/Caseflow Distribution/InteractableLevers',
+  title: 'CaseDistribution/InteractableLevers',
   component: BatchSize
 };
 
@@ -17,13 +17,14 @@ const preloadedState = {
 const leverStore = createStore(leversReducer, preloadedState);
 
 const leverList = ['lever_5', 'lever_6', 'lever_7', 'lever_8'];
-const batchSizeLevers = []
+const batchSizeLevers = [];
+
 levers.forEach((lever) => {
-  if(lever.data_type === "number" && leverList.includes(lever.item)){
-    batchSizeLevers.push(lever.item)
+  if (lever.data_type === 'number' && leverList.includes(lever.item)) {
+    batchSizeLevers.push(lever.item);
   }
 });
 
-export const batchSize = (args) => (
+export const batchSize = () => (
   <BatchSize leverList={batchSizeLevers} leverStore={leverStore} />
 );
