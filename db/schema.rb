@@ -1756,7 +1756,6 @@ ActiveRecord::Schema.define(version: 2023_10_10_161703) do
     t.text "instructions", default: [], array: true
     t.integer "parent_id"
     t.datetime "placed_on_hold_at"
-    t.jsonb "previous", default: [], array: true
     t.datetime "started_at"
     t.string "status", default: "assigned"
     t.string "type"
