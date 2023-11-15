@@ -122,7 +122,7 @@ module Seeds
         # Use a hearings user so the factories don't try to create one (and sometimes fail)
         inactive_judge = User.find_by_css_id("BVADSLADER")
         # call to make inactive
-        create_ineligible_judge(judge)
+        create_ineligible_judge(inactive_judge)
         active_judge = User.find_by_css_id("BVAAABSHIRE")
         attorney = User.find_by_css_id("BVASCASPER1")
         # Set this for papertrail when creating vacols_case
