@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_11_07_103628) do
+ActiveRecord::Schema.define(version: 2023_11_14_215220) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -199,6 +199,10 @@ ActiveRecord::Schema.define(version: 2023_11_07_103628) do
     t.index ["appeal_type", "appeal_id"], name: "index_attorney_case_reviews_on_appeal_type_and_appeal_id"
     t.index ["task_id"], name: "index_attorney_case_reviews_on_task_id"
     t.index ["updated_at"], name: "index_attorney_case_reviews_on_updated_at"
+  end
+
+  create_table "auto_texts", force: :cascade do |t|
+    t.string "name"
   end
 
   create_table "available_hearing_locations", force: :cascade do |t|

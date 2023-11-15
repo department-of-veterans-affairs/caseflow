@@ -1,24 +1,26 @@
 import React from 'react';
 import Modal from '../../../../components/Modal';
 import Checkbox from '../../../../components/Checkbox';
-import { style, css } from 'glamor';
+import { style, css, backdrop } from 'glamor';
 
 const CheckboxModal = (props) => {
 
   const hearingPreppedStyling = css({
-    margin: '4rem 4rem 0 1.75rem'
+    transform: 'scale(1.3)',
+    translate: '15%',
+    // overflowX: 'scroll'
   });
 
   return (
     <Modal
       title="Add autotext"
-      customStyles={{ style: { scrollbarWidth: 'none' } }}
-
+      customStyles={{ style: { scrollbarWidth: 'none', width: '40%' } }}
+      closeHandler={props.closeHandler}
       buttons={[
         {
           classNames: ['cf-modal-link', 'cf-btn-link'],
           name: 'Cancel',
-          onClick: () => console.log('Cancel'),
+          onClick: props.closeHandler,
           disabled: false
         },
         {
@@ -36,8 +38,18 @@ const CheckboxModal = (props) => {
           disabled: false
         }
       ]}>
-      <div style={{ display: 'flex', flexDirection: 'column', overflowY: 'scroll', maxHeight: '500px' }}>
-        {props.data.map((data) => <Checkbox name={data} />)
+      <div style={{ display: 'flex',
+        flexDirection: 'column',
+        overflowY: 'scroll',
+        maxHeight: '500px',
+        paddingLeft: 0,
+        marginLeft: '2%',
+        width: '100%',
+        overflowX: 'hidden' }}>
+        {props.data.map((data) => <Checkbox name={data}
+          styling={hearingPreppedStyling}
+        // inputProps={{style:{hearingPreppedStyling}}}
+        />)
         }
       </div>
     </Modal>

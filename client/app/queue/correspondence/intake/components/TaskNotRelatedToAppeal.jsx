@@ -23,21 +23,46 @@ const TaskNotRelatedToAppeal = (props) => {
 
   const [instructionText, setInstructionText] = useState('');
   const [index] = useState(-1);
+  const [modalVisible, setModalVisible] = useState(false)
 
   const handleChangeInstructionText = (newText) => {
     setInstructionText(newText);
     props.handleChangeTaskType(props.taskType, newText, index);
   };
 
-  let debugData = [];
-
-  for(let i = 0; i < 30; i++) {
-    debugData.push(Math.random());
+  const handleModalToggle = () => {
+    setModalVisible(!modalVisible);
   }
+
+  let debugData = ["Address updated in VACOLS",
+  "Decision sent to Senator or Congressman mm/dd/yy",
+  "Interest noted in telephone call of mm/dd/yy",
+  "Interest noted in evidence file regarding current appeal",
+  "Email - responded via email on mm/dd/yy",
+  "Email - written response req; confirmed receipt via email to Congress office on mm/dd/yy",
+  "Possible motion pursuant to BVA decision dated mm/dd/yy",
+  "Motion pursuant to BVA decision dated mm/dd/yy",
+  "Statement in support of appeal by appellant",
+  "Statement in support of appeal by rep",
+  "Medical evidence X-Rays submitted or referred by",
+  "Medical evidence clinical reports submitted or referred by",
+  "Medical evidence examination reports submitted or referred by",
+  "Medical evidence progress notes submitted or referred by",
+  "Medical evidence physician's medical statement submitted or referred by",
+  "C&P exam report",
+  "Consent form (specify)",
+  "Withdrawal of issues",
+  "Response to BVA solicitation letter dated mm/dd/yy",
+  "VAF 9 (specify)"];
 
   return (
     <div key={props.key} style={{ display: 'block', marginRight: '2rem' }}>
-      <CheckboxModal data={debugData} />
+
+      {modalVisible && <CheckboxModal
+      data={debugData}
+      toggleModal={handleModalToggle}
+      closeHandler={handleModalToggle}
+       />}
 
       <div className="gray-border"
         style={
@@ -68,7 +93,9 @@ const TaskNotRelatedToAppeal = (props) => {
           <Button
             name="Add"
             styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
-            classNames={['cf-btn-link', 'cf-left-side']} >
+            classNames={['cf-btn-link', 'cf-left-side']}
+            onClick={handleModalToggle}
+            >
             Add autotext
           </Button>
           <Button
