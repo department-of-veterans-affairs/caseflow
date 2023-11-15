@@ -78,9 +78,18 @@ module ByDocketDateDistribution
       priority_target: @push_priority_target || @request_priority_count,
       priority: priority_counts,
       nonpriority: nonpriority_counts,
+      distributed_cases_tied_to_ineligible_judges: distributed_cases_tied_to_ineligible_judges,
       algorithm: "by_docket_date",
       settings: settings
     }
+  end
+
+  def distributed_cases_tied_to_ineligible_judges
+    @appeals.filter_map { |appeal| appeal[:case_id] if VACOLS::CaseDocket.ineligible_judges_sattyid_cache.include?(hearing_judge_id(appeal[:case_id])) }
+  end
+
+  def hearing_judge_id(uuid)
+    Appeal.find_by(uuid: uuid)&.hearings&.select(&:held?)&.max_by(&:scheduled_for)&.judge_id
   end
 
   def num_oldest_priority_appeals_for_judge_by_docket(distribution, num)
