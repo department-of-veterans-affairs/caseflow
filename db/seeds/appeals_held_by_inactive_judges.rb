@@ -107,7 +107,7 @@ module Seeds
   
       def create_tasks_for_legacy_appeals(appeal, attorney, judge)
         # Will need a judge user for judge decision review task and an attorney user for the subsequent Attorney Task
-        root_task = RootTask.find_or_create_by!(appeal: appeal)
+        RootTask.find_or_create_by!(appeal: appeal)
       end
 
       # set judge to inactive
