@@ -6,14 +6,11 @@ import Button from 'app/components/Button';
 import NonCompLayout from '../components/NonCompLayout';
 import { conditionsSchema, ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
 
-import { NonCompReportFilterContainer } from '../components/NonCompReportFilter';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
 import { timingSchema, TimingSpecification } from 'app/nonComp/components/ReportPage/TimingSpecification';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 
 import Checkbox from 'app/components/Checkbox';
 import RadioField from 'app/components/RadioField';
