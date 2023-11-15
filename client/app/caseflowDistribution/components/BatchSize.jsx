@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
-import styles from "./InteractableLevers.module.scss";
+import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
+import COPY from '../../../COPY';
 
 const BatchSize = (props) => {
   const { leverList, leverStore } = props;
@@ -11,40 +12,39 @@ const BatchSize = (props) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
 
-  const footerStyling = css({
-    marginTop: '10px',
-    paddingTop: '10px',
-  });
-
   const leverNumberDiv = css({
-    '& .cf-form-int-input' : {width: 'auto', display: 'inline-block', position: 'relative'},
-    '& .cf-form-int-input .input-container' : {width: 'auto', display: 'inline-block', verticalAlign: 'middle'},
-    '& .cf-form-int-input label' : {position: 'absolute',bottom: '8px', left: '75px'},
-    '& .usa-input-error label': {bottom: '15px', left: '89px'}
+    '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
+    '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
+    '& .cf-form-int-input label': { position: 'absolute', bottom: '8px', left: '75px' },
+    '& .usa-input-error label': { bottom: '15px', left: '89px' }
   });
 
   const [batchSizeLevers, setLever] = useState(filteredLevers);
-  const updateLever = (index) => (e) => {
+  const updateLever = (index) => (event) => {
     const levers = batchSizeLevers.map((lever, i) => {
       if (index === i) {
-        if (!/^\d{0,3}$/.test(e)) {
+        let errorResult = !(/^\d{0,3}$/).test(event);
+
+        if (errorResult) {
           lever.errorMessage = 'Please enter a value less than or equal to 999';
         } else {
           lever.errorMessage = null;
         }
-        lever.value = e;
-        return lever;
-      } else {
+        lever.value = event;
+
         return lever;
       }
+
+      return lever;
     });
+
     setLever(levers);
   };
 
   return (
     <div className={styles.leverContent}>
       <div className={styles.leverHead}>
-      <div className={styles.leverH2}>Batch Size</div>
+        <h2>Batch Size</h2>
         <div className={styles.leverLeft}><strong>Data Elements</strong></div>
         <div className={styles.leverRight}><strong>Value</strong></div>
       </div>
@@ -66,10 +66,9 @@ const BatchSize = (props) => {
           </div>
         </div>
       ))}
-      <h4 {...footerStyling}>* Denotes a variable that is also relevant to the currently inactive distribution algorithm</h4>
+      <h4 className={styles.footerStyling}>{COPY.CASE_DISTRIBUTION_FOOTER_ASTERISK_DESCRIPTION}</h4>
       <div className="cf-help-divider"></div>
     </div>
-
   );
 };
 

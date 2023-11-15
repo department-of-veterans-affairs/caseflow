@@ -12,12 +12,10 @@ const RouterDecorator = (Story) => (
 );
 
 export default {
-  title: 'Admin/Caseflow Distribution/Static Levers',
+  title: 'CaseDistribution/Static Levers',
   component: StaticLever,
   decorators: [RouterDecorator]
 };
-
-// const Template = (args) => <StaticLever {...args} />;
 
 export const StaticLever3 = (args) => (
   <table>

@@ -10,7 +10,10 @@
       padding: 10px 20px;
   }
   strong: {
-      fontSize: 14px;
+    font-size: 19px;
+    line-height: 1.5em;
+    margin-bottom: 5px;
+    margin-top: 5px;
   }
 }
 
@@ -19,17 +22,15 @@
   padding: 20px;
   padding-bottom: 0;
   box-sizing: border-box;
-  p {
-      margin-top: 0;
-      margin-bottom: 15px;
-      font-size: 14px;
-  }
 }
 
 .leverTop {
   p {
       margin: 10px 0;
-      font-size: 14px;
+      font-size: 19px;
+      line-height: 1.5em;
+      margin-bottom: 5px;
+      margin-top: 5px;
   }
 }
 
@@ -38,6 +39,9 @@
   padding: 15px;
   border-bottom: 1px solid #e4e2e0;
   box-sizing: border-box;
+  font-size: 19px;
+  line-height: 1.5em;
+  margin-bottom: 5px;
 }
 
 .leverHead {
@@ -51,28 +55,28 @@
   width: 70%;
   display: inline-block;
   margin-right: 30px;
+  font-size: 19px;
+  line-height: 1.5em;
+  margin-bottom: 5px;
+  margin-top: 5px;
 }
 
-.leverH2 {
-  display: block;
-  font-size: 1.5em;
-  margin-top: 0.83em;
-  margin-bottom: 0.83em;
-  margin-left: 0;
-  margin-right: 0;
-  font-weight: bold;
-}
 .leverRight {
   width: 25%;
   vertical-align: top;
   display: inline-block;
+  margin-bottom: 5px;
+  margin-top: 5px;
   input {
       width: 65px;
       height: 45px;
       margin-right: 10px;
-      font-size: 12px;
       display: inline-block;
       text-align: right;
+      font-size: 19px;
+      line-height: 1.5em;
+      margin-bottom: 5px;
+      margin-top: 5px;
   }
 }
 .leverUnit {
@@ -95,9 +99,21 @@
       width: 65px;
       height: 45px;
       margin-right: 10px;
-      font-size: 12px;
       display: inline-block;
       text-align: right;
+      font-size: 19px;
+      line-height: 1.5em;
+      margin-bottom: 5px;
+      margin-top: 5px;
+  }
+  label {
+    margin-right: 10px;
+    display: inline-block;
+    text-align: right;
+    font-size: 19px;
+    line-height: 1.5em;
+    margin-bottom: 5px;
+    margin-top: 5px;
   }
 }
 
@@ -118,7 +134,8 @@
       width: 65px;
       height: 45px;
       margin-right: 10px;
-      font-size: 12px;
+      font-size: 19px;
+      line-height: 1.5em;
       display: inline-block;
       text-align: right;
       margin-left: 28px;
@@ -130,8 +147,20 @@
     display: none;
 }
 
-.toggleSwichInput {
+.toggleSwitchInput {
     width: auto;
     display: inline-block;
     vertical-align: middle;
+}
+
+.footerStyling {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+#numberFieldInput {
+  font-size: 19px;
+  line-height: 1.5em;
+  margin-bottom: 5px;
+  vertical-align: middle;
 }

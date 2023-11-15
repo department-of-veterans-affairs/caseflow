@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import LeverHistory from './LeverHistory';
 
+jest.mock('app/styles/caseDistribution/LeverHistory.module.scss', () => '');
 describe('LeverHistory', () => {
 
   afterEach(() => {
