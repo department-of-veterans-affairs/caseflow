@@ -14,6 +14,7 @@ describe('DaysWaiting', () => {
   };
 
   const navigateToDaysWaiting = async () => {
+    await selectEvent.select(screen.getByLabelText('Report Type'), ['Event / Action']);
     const addConditionButton = screen.getByText('Add Condition');
 
     await userEvent.click(addConditionButton);
