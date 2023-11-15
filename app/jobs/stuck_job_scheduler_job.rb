@@ -12,7 +12,7 @@ class StuckJobSchedulerJob < CaseflowJob
     super
   end
 
-  def perform_master_stuck_job_with_profiling
+  def perform
     result = RubyProf.profile do
       begin
         perform_master_stuck_job
