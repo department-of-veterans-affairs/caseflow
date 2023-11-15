@@ -44,7 +44,7 @@ class ExternalApi::WebexService
       "provideShortUrls": true,
       "verticalType": "gen"
     }
-    resp = send_webex_request(body: body)
+    resp = send_webex_request(body)
     return if resp.nil?
 
     ExternalApi::WebexService::DeleteResponse.new(resp)
