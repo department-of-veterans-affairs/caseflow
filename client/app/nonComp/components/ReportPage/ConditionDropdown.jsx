@@ -1,25 +1,28 @@
 import React, { useState } from 'react';
 import SearchableDropdown from 'app/components/SearchableDropdown';
-import { Controller } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import PropTypes from 'prop-types';
+import { get } from 'lodash';
 
-export const ConditionDropdown = ({ control, determineOptions, name }) => {
+export const ConditionDropdown = ({ control, filteredOptions, name }) => {
   let [disabled, setDisabled] = useState(false);
 
-  const filteredOptions = determineOptions();
-
   const dropdownName = `${name}.condition`;
+
+  const { errors } = useFormContext();
 
   return <Controller
     control={control}
     name={dropdownName}
     defaultValue={null}
-    render={({ onChange, ...rest }) => (
+    render={({ onChange, ref, ...rest }) => (
       <SearchableDropdown
         {...rest}
         label="Variable"
         options={filteredOptions}
         readOnly={disabled}
+        inputRef={ref}
+        errorMessage={get(errors, dropdownName)?.message}
         onChange={(valObj) => {
           setDisabled(true);
           onChange(valObj?.value);
@@ -32,6 +35,7 @@ export const ConditionDropdown = ({ control, determineOptions, name }) => {
 
 ConditionDropdown.propTypes = {
   control: PropTypes.object,
-  determineOptions: PropTypes.func,
-  name: PropTypes.string
+  filteredOptions: PropTypes.array,
+  name: PropTypes.string,
+  errors: PropTypes.object
 };

@@ -5,14 +5,15 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
 import Button from 'app/components/Button';
-import NonCompLayout from 'app/nonComp/components/NonCompLayout';
+import NonCompLayout from '../components/NonCompLayout';
 import { conditionsSchema, ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
+
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import { fetchUsers } from 'app/nonComp/actions/usersSlice';
 
 import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
 import { timingSchema, TimingSpecification } from 'app/nonComp/components/ReportPage/TimingSpecification';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 
 import Checkbox from 'app/components/Checkbox';
 import RadioField from 'app/components/RadioField';
@@ -43,17 +44,7 @@ const ReportPageButtons = ({
   history,
   isGenerateButtonDisabled,
   handleClearFilters,
-  handleSubmit
-}) => {
-// for later
-// const schema = yup.object().shape({
-//   conditions: yup.array(
-//     yup.object().shape({
-//       condition: yup.string().required(),
-//       options: yup.object().required(),
-//     })
-//   ),
-  // });
+  handleSubmit }) => {
 
   // eslint-disable-next-line no-console
   const onSubmit = (data) => console.log(data);
