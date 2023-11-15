@@ -6,14 +6,14 @@ class ExternalApi::WebexService::CreateResponse < ExternalApi::WebexService::Res
   end
 
   def base_url
-    data[:baseUrl]
+    data["baseUrl"]
   end
 
   def host_link
-    "#{base_url}#{data.dig(:host, 0, :short)}"
+    "#{base_url}#{data.dig('host', 0, 'short')}"
   end
 
   def guest_link
-    "#{base_url}#{data.dig(:guest, 0, :short)}"
+    "#{base_url}#{data.dig('guest', 0, 'short')}"
   end
 end
