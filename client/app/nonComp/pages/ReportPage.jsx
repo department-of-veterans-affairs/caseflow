@@ -3,9 +3,10 @@ import { useController, useForm, FormProvider } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
+
 import Button from 'app/components/Button';
 import NonCompLayout from 'app/nonComp/components/NonCompLayout';
-import { ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
+import { conditionsSchema, ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
 import { fetchUsers } from 'app/nonComp/actions/usersSlice';
 
 import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
@@ -34,6 +35,7 @@ const buttonOuterContainerStyling = css({
 });
 
 const schema = yup.object().shape({
+  conditions: conditionsSchema,
   timing: timingSchema
 });
 
