@@ -164,3 +164,42 @@
   margin-bottom: 5px;
   vertical-align: middle;
 }
+
+.modalTableStyling {
+  margin-top: 0;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 5;
+  padding-right: 5;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  border-color: #d6d7d9;
+  color: #212121;
+  vertical-align: text-top;
+  font-family: Source Sans Pro;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.3em/25px;
+  width: 20%
+}
+
+.modalTableHeaderStyling {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  color: #212121;
+  border-color: #d6d7d9;
+  font-family: Source Sans Pro;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.3em/25px;
+}
+
+.modalTableLeftStyling {
+  width: 60%;
+}
+
+.modalTableRightStyling {
+  width: 20%;
+}
