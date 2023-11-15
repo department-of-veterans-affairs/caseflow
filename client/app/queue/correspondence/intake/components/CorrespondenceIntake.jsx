@@ -30,7 +30,6 @@ export const CorrespondenceIntake = (props) => {
   };
 
   const handleCheckboxChange = (isSelected) => {
-    setCheckboxSelected(isSelected);
     setContinueEnabled(isSelected);
   };
 
