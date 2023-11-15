@@ -127,5 +127,11 @@ FactoryBot.define do
         ri.save
       end
     end
+
+    trait :add_decision_date do
+      after(:create) do |ri|
+        ri.save_decision_date!(1.day.ago)
+      end
+    end
   end
 end

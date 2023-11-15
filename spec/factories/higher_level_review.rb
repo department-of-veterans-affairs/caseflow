@@ -17,6 +17,22 @@ FactoryBot.define do
     end
 
     transient do
+      issue_type { nil }
+    end
+
+    transient do
+      decision_date { nil }
+    end
+
+    transient do
+      add_decision_date { false }
+    end
+
+    transient do
+      withdraw { false }
+    end
+
+    transient do
       veteran do
         Veteran.find_by(file_number: veteran_file_number) ||
           create(:veteran, file_number: (generate :veteran_file_number))
@@ -137,6 +153,30 @@ FactoryBot.define do
         if evaluator.veteran
           higher_level_review.veteran_file_number = evaluator.veteran.file_number
           higher_level_review.save
+        end
+      end
+    end
+
+    trait :with_specific_issue_type do
+      after(:create) do |hlr, evaluator|
+        ri = create(:request_issue,
+                    benefit_type: hlr.benefit_type,
+                    nonrating_issue_category: evaluator.issue_type,
+                    nonrating_issue_description: "#{hlr.business_line.name} Seeded issue",
+                    decision_review: hlr
+                    )
+
+        if evaluator.veteran
+          hlr.veteran_file_number = evaluator.veteran.file_number
+          hlr.save
+        end
+
+        if evaluator.add_decision_date
+          ri.save_decision_date!(evaluator.decision_date)
+        end
+
+        if evaluator.withdraw
+          ri.withdraw!(Time.zone.now)
         end
       end
     end

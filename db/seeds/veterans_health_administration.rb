@@ -23,17 +23,19 @@ module Seeds
     BENEFIT_TYPE_LIST = Constants::BENEFIT_TYPES.keys.map(&:to_s).freeze
 
     def seed!
-      setup_camo_org
-      setup_caregiver_org
-      setup_program_offices!
-      create_visn_org_teams!
-      create_vha_camo
-      create_vha_caregiver
-      create_vha_program_office
-      create_vha_visn_pre_docket_queue
-      create_higher_level_reviews
-      create_supplemental_claims
-      add_vha_user_to_be_vha_business_line_member
+      # setup_camo_org
+      # setup_caregiver_org
+      # setup_program_offices!
+      # create_visn_org_teams!
+      # create_vha_camo
+      # create_vha_caregiver
+      # create_vha_program_office
+      # create_vha_visn_pre_docket_queue
+      # create_higher_level_reviews
+      # create_supplemental_claims
+      # add_vha_user_to_be_vha_business_line_member
+      # byebug
+      create_vha_seeds
     end
 
     private
@@ -215,5 +217,84 @@ module Seeds
         organization.add_user(user)
       end
     end
+
+    #might need a better naming for this.
+    def create_vha_seeds
+      # Constants::ISSUE_CATEGORIES['vha'].each do |issue_type|
+      #   CLAIMANT_TYPES.each do |claimant_type|
+          # create(
+          #   :higher_level_review,
+          #   :with_specific_issue_type,
+          #   :requires_processing,
+          #   :create_business_line,
+          #   benefit_type: 'vha',
+          #   decision_date: 4.months.ago,
+          #   claimant_type: :veteran_claimant,
+          #   issue_type: 'Other',
+          #   number_of_claimants: 1
+          # )
+          # create_hlr_with_no_decision_date('veteran_claimant', 'Other', false)
+          # create_withdrawn_hlr('veteran_claimant','Other')
+          create_hlr_with_updated_assigned_at('veteran_claimant','Other')
+      #   end
+      # end
+    end
+
+    def create_hlr_with_no_decision_date(*args)
+      claimant_type, issue_type, add_decision_date = args
+
+      create(
+            :higher_level_review,
+            :with_specific_issue_type,
+            :processed,
+            :create_business_line,
+            add_decision_date: add_decision_date||=false,
+            decision_date: rand(1.year.ago..1.day.ago),
+            # assigned_at: rand(1.year.ago..1.day.ago),
+            benefit_type: 'vha',
+            claimant_type: claimant_type.to_sym,
+            issue_type: issue_type,
+            number_of_claimants: 1
+          )
+    end
+
+    def create_withdrawn_hlr(*args)
+      claimant_type, issue_type = args
+      hlr = create(
+            :higher_level_review,
+            :with_specific_issue_type,
+            :processed,
+            :create_business_line,
+            benefit_type: 'vha',
+            claimant_type: claimant_type.to_sym,
+            decision_date: Time.zone.now,
+            withdraw: true,
+            issue_type: issue_type,
+            number_of_claimants: 1
+          )
+      hlr.create_business_line_tasks!
+    end
+
+    def create_hlr_with_updated_assigned_at(*args)
+      claimant_type, issue_type = args
+      hlr = create(
+        :higher_level_review,
+        :with_specific_issue_type,
+        :processed,
+        add_decision_date: add_decision_date||=false,
+        decision_date: rand(1.year.ago..1.day.ago),
+
+        benefit_type: 'vha',
+        claimant_type: claimant_type.to_sym,
+        issue_type: issue_type,
+        number_of_claimants: 1
+      )
+      hlr.create_business_line_tasks!
+
+      task = Task.find_by(appeal: hlr)
+      task.assigned_at= rand(1.year.ago..1.day.ago)
+      task.save!
+    end
+
   end
 end
