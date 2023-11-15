@@ -60,7 +60,7 @@ class ExternalApi::WebexService
     request.read_timeout = 300
     request.body = body.to_json unless body.nil?
 
-    request.headers["Authorization"] = "Bearer #{@apikey}"
+    request.headers = { "Authorization": "Bearer #{@apikey}", "Content-Type": "application/json" }
 
     MetricsService.record(
       "#{@host} POST request to #{url}",
