@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { LeverSaveButton } from './LeverModal';
 import { createStore } from '@reduxjs/toolkit';
+import COPY from '../../../COPY';
 
 jest.mock('app/styles/caseDistribution/InteractableLevers.module.scss', () => '');
 describe('LeverSaveButton Component', () => {
@@ -24,7 +25,7 @@ describe('LeverSaveButton Component', () => {
     render(<LeverSaveButton leverStore={mockLeverStore} />);
     const saveButton = screen.getByText('Save');
     fireEvent.click(saveButton);
-    expect(screen.getByText('CASE_DISTRIBUTION_MODAL_TITLE')).toBeInTheDocument();
+    expect(screen.getByText(COPY.CASE_DISTRIBUTION_MODAL_TITLE)).toBeInTheDocument();
   });
 
   it('should not display the modal initially', () => {
@@ -34,6 +35,6 @@ describe('LeverSaveButton Component', () => {
     }));
 
     render(<LeverSaveButton leverStore={mockLeverStore} />);
-    expect(screen.queryByText('CASE_DISTRIBUTION_MODAL_TITLE')).toBeNull();
+    expect(screen.queryByText(COPY.CASE_DISTRIBUTION_MODAL_TITLE)).toBeNull();
   });
 });
