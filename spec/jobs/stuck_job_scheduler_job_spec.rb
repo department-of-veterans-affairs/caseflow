@@ -15,14 +15,6 @@ describe StuckJobSchedulerJob, :postgres do
 
   describe "#perform_master_stuck_job" do
     it "executes each child job even if one fails" do
-      # Stub the new method for each child job to call the original implementation
-      allow(ClaimDateDtFixJob).to receive(:new).and_return("blah")
-      allow(BgsShareErrorFixJob).to receive(:new).and_call_original
-      allow(ClaimNotEstablishedFixJob).to receive(:new).and_call_original
-      allow(NoAvailableModifiersFixJob).to receive(:new).and_call_original
-      allow(PageRequestedByUserFixJob).to receive(:new).and_call_original
-      allow(ScDtaForAppealFixJob).to receive(:new).and_call_original
-      allow(DtaScCreationFailedFixJob).to receive(:new).and_call_original
 
       # Expect that the perform method is called on each child job
       expect_any_instance_of(ClaimDateDtFixJob).to receive(:perform)
@@ -32,6 +24,7 @@ describe StuckJobSchedulerJob, :postgres do
       expect_any_instance_of(PageRequestedByUserFixJob).to receive(:perform)
       expect_any_instance_of(ScDtaForAppealFixJob).to receive(:perform)
       expect_any_instance_of(DtaScCreationFailedFixJob).to receive(:perform)
+      # Add additional stuck jobs here
 
       StuckJobSchedulerJob.new.perform_master_stuck_job
     end
