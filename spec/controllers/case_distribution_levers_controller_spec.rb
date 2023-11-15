@@ -2,7 +2,6 @@
 
 
 RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
-  let!(:admin_user) { User.authenticate!(roles: ["Admin"]) }
   let!(:lever_user) { create(:lever_user) }
   # //let!(:group_user) { User.authenticate!(roles: ["LeverGroupUser"]) }
 
