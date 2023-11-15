@@ -22,7 +22,8 @@ class ExternalApi::WebexService
       "aud": @aud,
       "numGuest": 1,
       "numHost": 1,
-      "provideShortUrls": true
+      "provideShortUrls": true,
+      "verticalType": "gen"
     }
 
     resp = send_webex_request(body: body)
