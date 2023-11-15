@@ -12,7 +12,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     description: "This is the first lever. It is a boolean with the default value of true. Therefore there should be a two radio buttons that display true and false as the example with true being the default option chosen. This lever is active so it should be in the active lever section",
     data_type: "boolean",
     value: true,
-    unit: "",
+    unit: ""
   )}
   let!(:lever2) {create(:case_distribution_lever,
     item: "lever_2",
@@ -20,11 +20,11 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     description: "This is the second lever. It is a number data type with the default value of 42. Therefore there should be a number input that displays 42 and 'days' as the unit. This lever is active so it should be in the active lever section",
     data_type: "number",
     value: 55,
-    unit: "Days",
+    unit: "Days"
   )}
 
-  let!(:audit_lever_entity1) {create(:case_distribution_audit_lever_entry,
-    user: admin_user,
+  let!(:audit_lever_entry1) {create(:case_distribution_audit_lever_entry,
+    user: lever_user,
     user_name: "john smith",
     created_at: "2023-07-01 10:10:01",
     title: 'Lever 1',
@@ -32,8 +32,8 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     update_value: 42,
     case_distribution_lever: lever2
   )}
-  let!(:audit_lever_entity2) {create(:case_distribution_audit_lever_entry,
-    user: admin_user,
+  let!(:audit_lever_entry2) {create(:case_distribution_audit_lever_entry,
+    user: lever_user,
     user_name: "john smith",
     created_at: "2023-07-01 10:11:01",
     title: 'Lever 1',
@@ -43,7 +43,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
   )}
 
   let!(:levers) {[lever1, lever2]}
-  let!(:lever_history) {[audit_lever_entity1, audit_lever_entity2]}
+  let!(:lever_history) {[audit_lever_entry1, audit_lever_entry2]}
 
   before do
   end
@@ -75,31 +75,134 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     end
   end
 
-  describe "POST update_levers" do
+  describe "POST update_levers_and_history" do
+    it "redirects the user to the unauthorized page if they are not authorized" do
+      User.authenticate!(user: create(:user))
+      post "update_levers_and_history"
+
+      expect(response.status).to eq 302
+      expect(response.body).to match(/unauthorized/)
+    end
+
     it "updates all provided levers" do
-      expect(lever1).to eq(2)
+      User.authenticate!(roles: ["System Admin"])
+
+      expect(CaseDistributionLever.all).to eq(levers)
+      updated_lever_1 = {
+        id: lever1.id,
+        item: lever1.item,
+        title: lever1.title,
+        description: lever1.description,
+        data_type: lever1.data_type,
+        value: false,
+        unit: lever1.unit
+      }
+
+      save_params = {
+        current_levers: [updated_lever_1, lever2].to_json,
+        audit_lever_entries: [].to_json
+      }
+
+      post "update_levers_and_history", params: save_params
+
+      expect(CaseDistributionLever.find(lever1.id).value).to eq("f")
+      expect(CaseDistributionLever.all).to include(lever2)
+      expect(CaseDistributionLever.find(lever1.id).value).to_not eq("t")
+      expect(JSON.parse(response.body)["successful"]).to be_truthy
+      expect(JSON.parse(response.body)["errors"]).to be_empty
     end
 
     it "returns an error message then the format of a lever in invalid" do
-      expect(levers).to eq(2)
-    end
-  end
+      User.authenticate!(roles: ["System Admin"])
+      expect(CaseDistributionLever.all).to eq(levers)
 
-  describe "GET show_audit_lever_entries" do
-    it "returns all the audit lever entries from only the past year" do
-      expect(1).to eq(2)
-    end
-  end
+      invalid_updated_lever_1 = {
+        id: lever1.id,
+        item: 1,
+        title: nil,
+        description: lever1.description,
+        data_type: nil,
+        value: false,
+        unit: lever1.unit
+      }
 
-  describe "POST add_audit_lever_entries" do
+      save_params = {
+        current_levers: [invalid_updated_lever_1, lever2].to_json,
+        audit_lever_entries: [].to_json
+      }
+
+      post "update_levers_and_history", params: save_params
+
+      expect(CaseDistributionLever.find(lever1.id).value).to eq("t")
+      expect(CaseDistributionLever.all).to include(lever2)
+      expect(CaseDistributionLever.find(lever1.id).value).to_not eq("f")
+      expect(JSON.parse(response.body)["successful"]).to be_falsey
+      expect(JSON.parse(response.body)["errors"]).not_to be_empty
+    end
+
     it "creates records for the provided audit lever entries in the database" do
-      expect(1).to eq(2)
+      admin_user = User.authenticate!(roles: ["System Admin"])
+      created_at_date = Time.now
+      audit_lever_entry3 = {
+        case_distribution_lever_id: lever1.id,
+        user_id: lever_user.id,
+        user_name: lever_user.full_name,
+        title: lever1.title,
+        created_at: created_at_date
+      }
+      audit_lever_entry4 = {
+        case_distribution_lever_id: lever2.id,
+        user_id: lever_user.id,
+        user_name: lever_user.full_name,
+        title: lever2.title,
+        created_at: created_at_date
+      }
+
+      save_params = {
+        current_levers: [].to_json,
+        audit_lever_entries: [audit_lever_entry3, audit_lever_entry4].to_json
+      }
+
+      expect(CaseDistributionAuditLeverEntry.past_year.count).to eq(2)
+
+      post "update_levers_and_history", params: save_params
+
+      expect(CaseDistributionAuditLeverEntry.past_year.count).to eq(4)
+      expect(JSON.parse(response.body)["successful"]).to be_truthy
+      expect(JSON.parse(response.body)["errors"]).to be_empty.or be_nil
     end
 
     it "returns an error message when the format of the audit lever entry is invalid" do
-      expect(1).to eq(2)
+      admin_user = User.authenticate!(roles: ["System Admin"])
+      created_at_date = Time.now
+      audit_lever_entry3 = {
+        case_distribution_lever_id: lever1.id,
+        user_id: lever_user.id,
+        user_name: lever_user.full_name,
+        title: lever1.title,
+        created_at: created_at_date
+      }
+      audit_lever_entry4 = {
+        case_distribution_lever_id: nil,
+        user_id: lever_user.id,
+        user_name: lever_user.full_name,
+        title: lever2.title,
+        created_at: created_at_date
+      }
+
+      save_params = {
+        current_levers: [].to_json,
+        audit_lever_entries: [audit_lever_entry3, audit_lever_entry4].to_json
+      }
+
+      expect(CaseDistributionAuditLeverEntry.past_year.count).to eq(2)
+
+      post "update_levers_and_history", params: save_params
+
+      expect(CaseDistributionAuditLeverEntry.past_year.count).to eq(2)
+      expect(JSON.parse(response.body)["successful"]).to be_falsey
+      expect(JSON.parse(response.body)["errors"]).not_to be_empty
     end
   end
-
 
 end

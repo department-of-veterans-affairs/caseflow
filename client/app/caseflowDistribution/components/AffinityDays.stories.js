@@ -4,9 +4,8 @@ import { levers } from 'test/data/adminCaseDistributionLevers';
 import { createStore } from 'redux';
 import leversReducer from '../reducers/Levers/leversReducer';
 
-
 export default {
-  title: 'Admin/Caseflow Distribution/InteractableLevers',
+  title: 'CaseDistribution/InteractableLevers',
   component: AffinityDays
 };
 
@@ -18,13 +17,14 @@ const preloadedState = {
 const leverStore = createStore(leversReducer, preloadedState);
 
 const leverList = ['lever_9', 'lever_13'];
-const affinityLevers = []
+const affinityLevers = [];
+
 levers.forEach((lever) => {
-  if(lever.data_type === "radio" && leverList.includes(lever.item)){
-    affinityLevers.push(lever.item)
+  if (lever.data_type === 'radio' && leverList.includes(lever.item)) {
+    affinityLevers.push(lever.item);
   }
 });
 
-export const affinityDays = (args) => (
-    <AffinityDays leverList={affinityLevers} leverStore={leverStore} />
+export const affinityDays = () => (
+  <AffinityDays leverList={affinityLevers} leverStore={leverStore} />
 );

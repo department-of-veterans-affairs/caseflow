@@ -2,6 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import StaticLever from './StaticLever';
 
+jest.mock('app/styles/caseDistribution/StaticLevers.module.scss', () => '');
 describe('StaticLever', () => {
   const lever = {
     title: 'Test Title',

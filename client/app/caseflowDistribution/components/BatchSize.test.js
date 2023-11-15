@@ -3,6 +3,7 @@ import { render, fireEvent } from '@testing-library/react';
 import BatchSize from './BatchSize';
 import { levers } from 'test/data/adminCaseDistributionLevers';
 
+jest.mock('app/styles/caseDistribution/InteractableLevers.module.scss', () => '');
 describe('BatchSize', () => {
   let props;
   let component;
@@ -12,7 +13,7 @@ describe('BatchSize', () => {
       leverList: ['lever_5', 'lever_6', 'lever_7', 'lever_8'],
       leverStore: {
         getState: jest.fn().mockReturnValue({
-          levers: levers
+          levers
         })
       }
     };
@@ -24,12 +25,14 @@ describe('BatchSize', () => {
   });
 
   it('renders correct number of levers', () => {
-    const levers = component.container.querySelectorAll('input');
-    expect(levers.length).toBe(props.leverList.length);
+    const lev = component.container.querySelectorAll('input');
+
+    expect(lev.length).toBe(props.leverList.length);
   });
 
   it('updates lever value and error message on input change', () => {
     const leverInput = component.container.querySelector('#lever_5');
+
     fireEvent.change(leverInput, { target: { value: '100089' } });
     expect(leverInput.value).toBe('100089');
     expect(component.getByText('Please enter a value less than or equal to 999')).toBeInTheDocument();

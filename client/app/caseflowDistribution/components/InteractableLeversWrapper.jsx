@@ -3,39 +3,25 @@ import PropTypes from 'prop-types';
 import BatchSize from './BatchSize';
 import DocketTimeGoals from './DocketTimeGoals';
 import AffinityDays from './AffinityDays';
-import styles from './InteractableLevers.module.scss';
+import LeverButtonsWrapper from './LeverButtonsWrapper';
+import ExclusionTable from './ExclusionTable';
 
-const InteractableLeverWrapper = ({ levers }) => {
-
-  const batchSizeLevers = levers.filter((lever) => {
-    return lever.data_type === "number";
-  });
-
-  const docketLevers = levers.filter((lever) => {
-    return lever.data_type === "combination";
-  });
-
-  const affinityLevers = levers.filter((lever) => {
-    return lever.data_type === "radio";
-  });
+const InteractableLeverWrapper = ({ levers, leverStore }) => {
 
   return (
-    <div className={styles.leverContainer}>
-      <div className={styles.leverContent}>
-        <div className={styles.leverHead}>
-        <div className={styles.leverH2}>Active Data Elements</div>
-          <p>You may make changes to the Case Distribution algorithm values based on the data elements below. Changes will be applied to the next scheduled case distribution event unless subsequent confirmed changes are made to the same variable.</p>
-        </div>
-      </div>
-      <BatchSize batchSizeLevers={batchSizeLevers} />
-      <AffinityDays affinityLevers={affinityLevers} />
-      <DocketTimeGoals docketLevers={docketLevers} />
+    <div>
+      <ExclusionTable />
+      <BatchSize leverList={levers.batchSizeLevers} leverStore={leverStore} />
+      <AffinityDays leverList={levers.affinityLevers} leverStore={leverStore} />
+      <DocketTimeGoals leverList={levers.docketLevers} leverStore={leverStore} />
+      <LeverButtonsWrapper leverStore={leverStore} />
     </div>
   );
 };
 
 InteractableLeverWrapper.propTypes = {
   levers: PropTypes.array.isRequired,
+  leverStore: PropTypes.any
 };
 
 export default InteractableLeverWrapper;
