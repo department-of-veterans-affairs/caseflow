@@ -40,98 +40,96 @@ const getUsers = () => {
   ApiUtil.get = jest.fn().mockResolvedValue({ body: data });
 };
 
+const setup = (storeValues = {}) => {
+  const store = createStore(
+    CombinedNonCompReducer,
+    storeValues,
+    compose(applyMiddleware(thunk))
+  );
+
+  return render(
+    <Provider store={store}>
+      <ReportPage />
+    </Provider>
+  );
+};
+
+const navigateToPersonnel = async () => {
+  await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
+
+  const addConditionBtn = screen.getByText('Add Condition');
+
+  userEvent.click(addConditionBtn);
+
+  const selectText = screen.getByText('Select a variable');
+
+  await selectEvent.select(selectText, ['Personnel']);
+};
+
 beforeEach(() => {
   getUsers();
 });
 
 describe('Personnel', () => {
-  const setup = (storeValues = {}) => {
-    const store = createStore(
-      CombinedNonCompReducer,
-      storeValues,
-      compose(applyMiddleware(thunk))
-    );
+  describe('component renders correctly', () => {
+    it('passes a11y testing', async () => {
+      const { container } = setup();
 
-    return render(
-      <Provider store={store}>
-        <ReportPage />
-      </Provider>
-    );
-  };
+      await navigateToPersonnel();
 
-  const navigateToPersonnel = async () => {
-    await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
+      const results = await axe(container);
 
-    const addConditionBtn = screen.getByText('Add Condition');
+      expect(results).toHaveNoViolations();
+    });
 
-    userEvent.click(addConditionBtn);
+    it('renders correctly', async () => {
+      const { container } = setup();
 
-    const selectText = screen.getByText('Select a variable');
+      await navigateToPersonnel();
 
-    await selectEvent.select(selectText, ['Personnel']);
-  };
-
-  beforeEach(async () => {
-    setup();
-    await navigateToPersonnel();
+      expect(container).toMatchSnapshot();
+    });
   });
 
-  const selectPlaceholder = 'Select...';
-  const teamMember1 = 'VHAUSER01';
+  describe('component functions correctly', () => {
+    beforeEach(async () => {
+      setup();
+      await navigateToPersonnel();
+    });
 
-  it('passes a11y testing', async () => {
-    const { container } = setup();
+    const selectPlaceholder = 'Select...';
+    const teamMember1 = 'VHAUSER01';
 
-    const results = await axe(container);
+    it('renders a dropdown with the correct label', async () => {
+      expect(screen.getByText('VHA team members')).toBeInTheDocument();
+      expect(screen.getAllByText(selectPlaceholder).length).toBe(2);
+    });
 
-    expect(results).toHaveNoViolations();
-  });
+    it('allows to select multiple options from dropdown', async () => {
+      let selectText = screen.getAllByText(selectPlaceholder);
 
-  it('renders correctly', async () => {
-    const { container } = setup();
+      await selectEvent.select(selectText[1], [teamMember1]);
 
-    expect(container).toMatchSnapshot();
-  });
+      selectText = screen.getByText(teamMember1);
+      const teamMember2 = 'VHAUSER02';
 
-  it('renders a dropdown with the correct label', async () => {
-    expect(screen.getByText('VHA team members')).toBeInTheDocument();
-    expect(screen.getAllByText(selectPlaceholder).length).toBe(2);
-  });
+      await selectEvent.select(selectText, [teamMember2]);
 
-  // it('renders an error if no option is selected', async () => {
-  //   const generateReportBtn = screen.getByRole('button', { name: 'Generate task report' });
+      expect(screen.getByText(teamMember1)).toBeInTheDocument();
+      expect(screen.getByText(teamMember2)).toBeInTheDocument();
+    });
 
-  //   expect(generateReportBtn).toBeInTheDocument();
+    it('selects an option from dropdown, then removes it and renders an error', async () => {
+      const selectText = screen.getAllByText(selectPlaceholder);
 
-  //   await userEvent.click(generateReportBtn);
+      await selectEvent.select(selectText[1], [teamMember1]);
+      expect(screen.getByText(teamMember1)).toBeInTheDocument();
 
-  //   expect(screen.getByText('Error: At least one person must be selected')).toBeInTheDocument();
-  // });
+      const clearBtn = document.querySelector('.cf-select__indicator.cf-select__clear-indicator');
 
-  it('allows to select multiple options from dropdown', async () => {
-    let selectText = screen.getAllByText(selectPlaceholder);
+      userEvent.click(clearBtn);
 
-    await selectEvent.select(selectText[1], [teamMember1]);
-
-    selectText = screen.getByText(teamMember1);
-    const teamMember2 = 'VHAUSER02';
-
-    await selectEvent.select(selectText, [teamMember2]);
-
-    expect(screen.getByText(teamMember1)).toBeInTheDocument();
-    expect(screen.getByText(teamMember2)).toBeInTheDocument();
-  });
-
-  it('selects an option from dropdown, then removes it and renders an error', async () => {
-    const selectText = screen.getAllByText(selectPlaceholder);
-
-    await selectEvent.select(selectText[1], [teamMember1]);
-    expect(screen.getByText(teamMember1)).toBeInTheDocument();
-
-    const clearBtn = document.querySelector('.cf-select__indicator.cf-select__clear-indicator');
-
-    userEvent.click(clearBtn);
-
-    expect(screen.queryByText(teamMember1)).not.toBeInTheDocument();
+      expect(screen.queryByText(teamMember1)).not.toBeInTheDocument();
+    });
   });
 });
