@@ -34,6 +34,9 @@ export class ReaderLoadingScreen extends React.Component {
       catch((err) => {
         // allow HTTP errors to fall on the floor via the console.
         console.error(new Error(`Problem with GET /reader/appeal/${this.props.vacolsId}/documents?json ${err}`));
+        if (this.props.featureToggles.sensitiveFileFix && (err.status === 403 || err.status === 404)) {
+          throw err;
+        }
       });
   }
 
