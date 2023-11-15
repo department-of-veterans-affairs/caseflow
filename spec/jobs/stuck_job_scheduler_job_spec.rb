@@ -15,7 +15,6 @@ describe StuckJobSchedulerJob, :postgres do
 
   describe "#perform_master_stuck_job" do
     it "executes each child job even if one fails" do
-
       # Expect that the perform method is called on each child job
       expect_any_instance_of(ClaimDateDtFixJob).to receive(:perform)
       expect_any_instance_of(BgsShareErrorFixJob).to receive(:perform)
