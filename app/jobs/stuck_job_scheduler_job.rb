@@ -27,7 +27,7 @@ class StuckJobSchedulerJob < CaseflowJob
     else
       @logs.push("Profiling result is nil. There might be an issue during profiling.")
     end
-
+    upload_logs
   end
 
   def perform_master_stuck_job
@@ -49,7 +49,7 @@ class StuckJobSchedulerJob < CaseflowJob
     end
   end
 
-  def upload_logs_to_s3
+  def upload_logs
     content = @logs.join("\n")
     file_name = "stuck-jobs-profiling-logs/sjp-profiling-log-#{Time.zone.now}"
     S3Service.store_file("#{@folder_name}/#{file_name}", content)
