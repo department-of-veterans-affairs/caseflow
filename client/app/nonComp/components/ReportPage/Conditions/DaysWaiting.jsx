@@ -19,9 +19,7 @@ export const daysWaitingSchema = yup.object({
   comparisonOperator: yup.string().
     oneOf(DAYS_WAITING_CONDITION_OPTIONS.map((cond) => cond.value), ERRORS.MISSING_TIME_RANGE),
   valueOne: yup.number().typeError(ERRORS.MISSING_NUMBER).
-    required(ERRORS.MISSING_NUMBER).
-    positive().
-    integer(),
+    required(ERRORS.MISSING_NUMBER),
   valueTwo: yup.number().label('Max days').
     when('comparisonOperator', {
       is: 'between',
