@@ -69,6 +69,6 @@ class Fakes::WebexService
         description: @error_message
       ],
       trackingId: "ROUTER_#{SecureRandom.uuid}"
-    }
+    }.to_json
   end
 end
