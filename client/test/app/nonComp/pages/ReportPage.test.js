@@ -38,32 +38,43 @@ describe('ReportPage', () => {
     getVhaUsers();
   });
 
-  it('passes a11y testing', async () => {
-    const { container } = setup();
+  describe('renders correctly', () => {
+    it('passes a11y testing', async () => {
+      const { container } = setup();
 
-    const results = await axe(container);
+      const results = await axe(container);
 
-    expect(results).toHaveNoViolations();
-  });
+      expect(results).toHaveNoViolations();
+    });
 
-  it('renders correctly', () => {
-    const { container } = setup();
+    it('renders correctly', () => {
+      const { container } = setup();
 
-    expect(container).toMatchSnapshot();
-  });
+      expect(container).toMatchSnapshot();
+    });
 
-  it('brings you to the decision review page when clicking the cancel button', async () => {
-    const history = createMemoryHistory();
+    it('brings you to the decision review page when clicking the cancel button', async () => {
+      const history = createMemoryHistory();
+      const storeValues = {};
 
-    render(
-      <ReportPage history={history} />
-    );
+      const store = createStore(
+        CombinedNonCompReducer,
+        storeValues,
+        compose(applyMiddleware(thunk))
+      );
 
-    const cancelButton = screen.getByText('Cancel');
+      render(
+        <Provider store={store}>
+          <ReportPage history={history} />
+        </Provider>
+      );
 
-    await userEvent.click(cancelButton);
+      const cancelButton = screen.getByText('Cancel');
 
-    expect(history.location.pathname).toBe('/vha');
+      await userEvent.click(cancelButton);
+
+      expect(history.location.pathname).toBe('/vha');
+    });
   });
 
   describe('conditions section', () => {
