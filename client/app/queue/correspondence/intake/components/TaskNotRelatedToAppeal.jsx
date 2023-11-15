@@ -3,6 +3,9 @@ import TextareaField from '../../../../components/TextareaField';
 import ReactSelectDropdown from '../../../../components/ReactSelectDropdown';
 import PropTypes from 'prop-types';
 import Button from '../../../../components/Button';
+import Modal from '../../../../components/Modal';
+import Checkbox from '../../../../components/Checkbox';
+import CheckboxModal from './CheckboxModal';
 
 const TaskNotRelatedToAppeal = (props) => {
 
@@ -26,8 +29,16 @@ const TaskNotRelatedToAppeal = (props) => {
     props.handleChangeTaskType(props.taskType, newText, index);
   };
 
+  let debugData = [];
+
+  for(let i = 0; i < 30; i++) {
+    debugData.push(Math.random());
+  }
+
   return (
     <div key={props.key} style={{ display: 'block', marginRight: '2rem' }}>
+      <CheckboxModal data={debugData} />
+
       <div className="gray-border"
         style={
           { display: 'block', padding: '2rem 2rem', marginLeft: '3rem', marginBottom: '3rem', width: '50rem' }
