@@ -82,14 +82,6 @@ export const AddTasksAppealsView = (props) => {
       );
   }, [relatedToExistingAppeal]);
 
-  const selections = existingAppealAnswer.map(({displayText, value}) => {
-    return ({
-      displayText,
-      current: (value === existingAppealRadio)
-    });
-  },
-  );
-
 
   return (
     <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
