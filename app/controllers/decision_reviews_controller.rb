@@ -86,7 +86,11 @@ class DecisionReviewsController < ApplicationController
   def show_history
     puts "--------------in show_history with task id: #{task_id} -----------------"
     respond_to do |format|
-      format.html { render "index" }
+      format.html { render "show" }
+      format.json do
+        puts "gets into the json block?"
+        puts params.inspect
+      end
     end
   end
 

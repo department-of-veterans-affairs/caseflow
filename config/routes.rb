@@ -257,7 +257,7 @@ Rails.application.routes.draw do
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
 
   resources :decision_reviews, param: :business_line_slug do
-    resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
+    resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update, :show_history] do
       member do
         get :power_of_attorney
         patch :update_power_of_attorney
@@ -267,7 +267,6 @@ Rails.application.routes.draw do
     get "report", to: "decision_reviews#generate_report", on: :member, as: :report, format: false
     get "/(*all)", to: "decision_reviews#index"
   end
-    match '/decision_reviews/:business_line_slug/tasks/:task_id/show-history' => 'decision_reviews#show_history', via: [:get]
 
   resources :unrecognized_appellants, only: [:update] do
     resource :power_of_attorney, only: [:update], controller: :unrecognized_appellants, action: :update_power_of_attorney

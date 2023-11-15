@@ -5,8 +5,15 @@ import ApiUtil from '../../util/ApiUtil';
 const initialState = {
   // We might not keep filters here and may only persist them in local state
   filters: [],
-  status: 'idle',
-  error: null,
+  events: [],
+  downloadReportCSV: {
+    status: 'idle',
+    error: null,
+  },
+  fetchClaimEvents: {
+    status: 'idle',
+    error: null,
+  },
 };
 
 // Move this to utils or something
@@ -51,6 +58,34 @@ export const downloadReportCSV = createAsyncThunk('changeHistory/downloadReport'
     }
   });
 
+export const fetchClaimEvents = createAsyncThunk('changeHistory/fetchClaimEvents',
+  async ({ taskID, businessLineUrl }, thunkApi) => {
+  // Prepare data if neccessary. Although that could be reducer logic for filters if we end up using redux for it.
+    // const data = prepareFilters(filterData);
+
+    try {
+      // const getOptions = { query: data, headers: { Accept: 'text/csv' }, responseType: 'arraybuffer' };
+      // const response = await ApiUtil.get(`/decision_reviews/${organizationUrl}/report`, getOptions);
+
+      console.log('attempting to create a response');
+      console.log(`/decision_reviews/${businessLineUrl}/${taskID}/show-history`);
+      const response = await ApiUtil.get(`/decision_reviews/${businessLineUrl}/tasks/${taskID}/show-history`);
+
+      console.log(response);
+
+      const preparedData = [];
+
+      // return thunkApi.fulfillWithValue('success', { analytics: true });
+
+      return thunkApi.fulfillWithValue(preparedData, { analytics: true });
+
+    } catch (error) {
+      console.error(error);
+
+      return thunkApi.rejectWithValue(`Event fetching failed: ${error.message}`, { analytics: true });
+    }
+  });
+
 const changeHistorySlice = createSlice({
   name: 'changeHistory',
   initialState,
@@ -58,14 +93,25 @@ const changeHistorySlice = createSlice({
   extraReducers: (builder) => {
     builder.
       addCase(downloadReportCSV.pending, (state) => {
-        state.status = 'loading';
+        state.downloadReportCSV.status = 'loading';
       }).
       addCase(downloadReportCSV.fulfilled, (state) => {
-        state.status = 'succeeded';
+        state.downloadReportCSV.status = 'succeeded';
       }).
       addCase(downloadReportCSV.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
+        state.downloadReportCSV.status = 'failed';
+        state.downloadReportCSV.error = action.error.message;
+      }).
+      addCase(fetchClaimEvents.pending, (state) => {
+        state.fetchClaimEvents.status = 'loading';
+      }).
+      addCase(fetchClaimEvents.fulfilled, (state, action) => {
+        state.fetchClaimEvents.status = 'succeeded';
+        state.events = action.payload;
+      }).
+      addCase(fetchClaimEvents.rejected, (state, action) => {
+        state.fetchClaimEvents.status = 'failed';
+        state.fetchClaimEvents.error = action.error.message;
       });
   },
 });

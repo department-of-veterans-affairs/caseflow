@@ -12,6 +12,7 @@ import ReviewPage from './pages/ReviewPage';
 import TaskPage from './pages/TaskPage';
 import ReportPage from './pages/ReportPage';
 import CombinedNonCompReducer, { mapDataToInitialState } from './reducers';
+import ClaimHistoryPage from './pages/ClaimHistoryPage';
 
 class NonComp extends React.PureComponent {
   render() {
@@ -54,6 +55,12 @@ class NonComp extends React.PureComponent {
                   path="/:businessLineSlug"
                   title={`${appName} Reviews | Caseflow`}
                   component={ReviewPage}
+                />
+                <PageRoute
+                  exact
+                  path="/:businessLineSlug/tasks/:taskId/show-history"
+                  title={`${appName} Show Claim History | Caseflow`}
+                  component={ClaimHistoryPage}
                 />
               </AppFrame>
             </NavigationBar>
