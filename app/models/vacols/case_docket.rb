@@ -501,6 +501,6 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   def self.ineligible_judges_sattyid_cache
-    Rails.cache.fetch("case_distribution_ineligible_judges").pluck(:sattyid).reject(&:blank?)
+    Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?)
   end
 end
