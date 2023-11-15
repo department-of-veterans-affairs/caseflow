@@ -2,7 +2,7 @@
 
 class ExternalApi::WebexService::CreateResponse < ExternalApi::WebexService::Response
   def data
-    resp.raw_body
+    JSON.parse(resp.raw_body)
   end
 
   def base_url
