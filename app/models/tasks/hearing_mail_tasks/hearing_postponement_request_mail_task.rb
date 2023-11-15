@@ -184,7 +184,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   #         date_of_ruling - string for the date of ruling
   # Return: instructions string
   def format_instructions_on_completion(params)
-    date_of_ruling, granted = params.values_at(:date_of_ruling, :granted)
+    date_of_ruling, granted, param_instructions = params.values_at(:date_of_ruling, :granted, :instructions)
     formatted_date = date_of_ruling.to_date&.strftime("%m/%d/%Y")
     ruling = granted ? "GRANTED" : "DENIED"
 
@@ -201,7 +201,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
       #{formatted_date}
 
       **DETAILS**
-      #{params[:instructions]}
+      #{param_instructions}
     EOS
 
     [instructions[0] + markdown_to_append]
