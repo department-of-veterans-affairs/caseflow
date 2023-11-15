@@ -2,11 +2,12 @@
 
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 import COPY from 'app/../COPY';
 import ApiUtil from 'app/util/ApiUtil';
 import { TitleDetailsSubheader } from 'app/components/TitleDetailsSubheader';
-
+import Button from 'app/components/Button';
+import { boldText } from 'app/queue/constants';
 
 const listItemStyling = css({
   display: 'inline-block',
@@ -29,6 +30,23 @@ const listItemStyling = css({
   '& > div': { minHeight: '22px' }
 });
 
+const cmpDocumentStyling = css({
+  marginTop: '5%'
+});
+
+const correspondenceStyling = css({
+  border: '1px solid #dee2e6'
+});
+
+const tableStyling = css({
+  width: '100%'
+});
+
+const paginationStyle = css({
+  marginTop: '3%',
+  marginLeft: '1.5%'
+});
+
 export const TitleDetailsSubheaderSection = ({ title, children }) => (
   <div {...listItemStyling}>
     <p>{title}</p>
@@ -44,7 +62,9 @@ class ReviewPackageData extends React.PureComponent {
     this.state = {
       correspondence: null,
       package_document_type: null,
-      correspondence_documents: null
+      correspondence_documents: null,
+      totalDocuments: 0,
+      currentDocument: 0
     };
   }
 
@@ -55,7 +75,8 @@ class ReviewPackageData extends React.PureComponent {
       this.setState({
         correspondence: response.body.correspondence,
         package_document_type: response.body.package_document_type,
-        correspondence_documents: response.body.correspondence_documents
+        correspondence_documents: response.body.correspondence_documents,
+        totalDocuments: response.body.correspondence_documents.length,
       });
     });
   }
@@ -66,33 +87,55 @@ class ReviewPackageData extends React.PureComponent {
         <CmpInfoScaffolding
           correspondence={this.state?.correspondence}
           packageDocumentType = {this.state?.package_document_type} />
-        <CmpDocuments correspondence_documents = {this.state?.correspondence_documents} />
+        <CmpDocuments
+          correspondence_documents = {this.state?.correspondence_documents}
+          totalCount = {this.state?.totalDocuments} />
       </div>
     );
   };
 }
 
 const CmpDocuments = (props) => {
-  const documents = props.correspondence_documents;
-  const document = documents && documents[0]
+  const { correspondence_documents, totalCount } = props;
 
-  return(
-    <div>
+  const [selectedId, setSelectedId] = useState(0);
+
+  const paginationText = `Viewing 1-${totalCount} out of ${totalCount} total`;
+
+  const setCurrentDocument = (index) => {
+    setSelectedId(index);
+  };
+
+  return (
+    <div {...cmpDocumentStyling} >
       <h2> {COPY.DOCUMENT_PREVIEW} </h2>
-      <TitleDetailsSubheader id="ReviewPackageDate">
-        <TitleDetailsSubheaderSection title="Document Type">
-          {document?.document_type}
-        </TitleDetailsSubheaderSection>
-        <TitleDetailsSubheaderSection title="Pages">
-          {document?.pages}
-        </TitleDetailsSubheaderSection>
-         <TitleDetailsSubheaderSection title="Action">
-          Edit
-        </TitleDetailsSubheaderSection>
-      </TitleDetailsSubheader>
+      <div {...correspondenceStyling}>
+        <div {...paginationStyle}> {paginationText} </div>
+        <table className="correspondence-document-table" {...tableStyling}>
+          <tr>
+            <td style={{ width: '80%', fontWeight: 'bold' }} > Document Type </td>
+            <td {...boldText} className="cf-txt-c"> Action </td>
+          </tr>
+          { correspondence_documents?.map((document, index) => {
+            return (
+              <tr>
+                <td style={{ background: selectedId === index ? '#0071bc' : 'white',
+                  color: selectedId === index ? 'white' : '#0071bc' }}
+                onClick={() => setCurrentDocument(index)}> {document?.document_type}
+                </td>
+                <td className="cf-txt-c">
+                  <Button linkStyling >
+                    <span>Edit</span>
+                  </Button>
+                </td>
+              </tr>
+            );
+          })}
+        </table>
+      </div>
     </div>
-  )
-}
+  );
+};
 
 const CmpInfoScaffolding = (props) => {
   const packageDocumentType = props.packageDocumentType;
@@ -132,6 +175,11 @@ const CmpInfoScaffolding = (props) => {
 CmpInfoScaffolding.propTypes = {
   packageDocumentType: PropTypes.object,
   correspondence: PropTypes.object
+};
+
+CmpDocuments.propTypes = {
+  correspondence_documents: PropTypes.array,
+  totalCount: PropTypes.number
 };
 
 TitleDetailsSubheaderSection.propTypes = {

@@ -7,7 +7,7 @@ module Seeds
     private
 
     def create_correspondence_documents
-        CorrespondenceDocument.find_or_create_by(correspondence_id: 2, document_type: 1234, pages: 20, vbms_document_id: 1)
+        CorrespondenceDocument.find_or_create_by(correspondence_id: 1, document_type: 1234, pages: 20, vbms_document_id: 1)
     end
   end
 end

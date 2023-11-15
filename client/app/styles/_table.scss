@@ -25,6 +25,16 @@
   margin-bottom: 1em;
 }
 
+.correspondence-document-table {
+  th,
+  td {
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    border-bottom: 1px solid #dee2e6;
+  }
+}
+
 .cf-filter-option-row {
   margin: 0;
 
