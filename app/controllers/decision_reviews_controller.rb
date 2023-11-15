@@ -83,6 +83,13 @@ class DecisionReviewsController < ApplicationController
     render json: { error: error.message }, status: :bad_request, content_type: "application/json"
   end
 
+  def show_history
+    puts "--------------in show_history with task id: #{task_id} -----------------"
+    respond_to do |format|
+      format.html { render "index" }
+    end
+  end
+
   def business_line_slug
     allowed_params[:business_line_slug] || allowed_params[:decision_review_business_line_slug]
   end
