@@ -255,7 +255,7 @@ Rails.application.routes.draw do
 
   resources :case_distribution_levers, only: [] do
     collection do
-      post :update, to: "case_distribution_levers#update_levers_and_history"
+      post :update_levers_and_history
     end
   end
 
