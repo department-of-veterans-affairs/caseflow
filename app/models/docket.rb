@@ -8,6 +8,10 @@ class Docket
     fail Caseflow::Error::MustImplementInSubclass
   end
 
+  def self.ineligible_judges_id_cache
+    Rails.cache.fetch("case_distribution_ineligible_judges").pluck(:id).reject(&:blank?)
+  end
+
   # :reek:LongParameterList
   def appeals(priority: nil, genpop: nil, ready: nil, judge: nil)
     fail "'ready for distribution' value cannot be false" if ready == false
@@ -149,7 +153,6 @@ class Docket
       include_aod_motions
         .where("advance_on_docket_motions.created_at > appeals.established_at")
         .where("advance_on_docket_motions.granted = ?", true)
-        .where("css_id IN (?)", ineligible_judges_cssid_cache)
         .or(include_aod_motions.where("people.date_of_birth <= ?", 75.years.ago))
         .or(include_aod_motions.where("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand))
         .group("appeals.id")
@@ -159,7 +162,6 @@ class Docket
       include_aod_motions
         .where("people.date_of_birth > ? or people.date_of_birth is null", 75.years.ago)
         .where.not("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.court_remand)
-        .where("css_id IN (?)", ineligible_judges_cssid_cache)
         .group("appeals.id")
         .having("count(case when advance_on_docket_motions.granted "\
           "\n and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
@@ -202,7 +204,6 @@ class Docket
       joins(with_assigned_distribution_task_sql)
         .with_original_appeal_and_judge_task
         .where("distribution_task.assigned_at > ?", Constants.DISTRIBUTION.cavc_affinity_days.days.ago)
-        .where("css_id IN (?)", ineligible_judges_cssid_cache)
         .where(original_judge_task: { assigned_to_id: judge.id })
     end
 
@@ -212,10 +213,6 @@ class Docket
         .order(
           Arel.sql("max(case when tasks.type = 'DistributionTask' then tasks.assigned_at end)")
         )
-    end
-
-    def self.ineligible_judges_cssid_cache
-      Rails.cache.fetch("case_distribution_ineligible_judges").pluck(:css_id).reject(&:blank?)
     end
 
     def non_ihp
