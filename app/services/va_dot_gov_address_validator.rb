@@ -174,7 +174,7 @@ class VaDotGovAddressValidator
   end
 
   def valid_address_response
-    @valid_address_response ||= VADotGovService.validate_zip_code(address.zip)
+    @valid_address_response ||= VADotGovService.validate_zip_code(address)
   end
 
   def available_hearing_locations_response

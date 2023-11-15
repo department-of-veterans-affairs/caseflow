@@ -180,8 +180,8 @@ class ExternalApi::VADotGovService
     #   }
     # }
     # ```
-    def validate_zip_code(zip_code)
-      response = send_va_dot_gov_request(zip_code_validation_request(zip_code))
+    def validate_zip_code(address)
+      response = send_va_dot_gov_request(zip_code_validation_request(address))
 
       ExternalApi::VADotGovService::AddressValidationResponse.new(response)
     end
@@ -453,17 +453,19 @@ class ExternalApi::VADotGovService
     # This will return "AddressCouldNotBeFound" and "lowConfidenceScore" messages. However, given a valid zip code, the
     # response body will include valid coordinates for latitude and longitude.
     #
-    # Note: Hard code placeholder string for addressLine1 to avoid "InvalidRequestStreetAddress" error
+    # Note 1: Hard code placeholder string for addressLine1 to avoid "InvalidRequestStreetAddress" error
+    # Note 2: Include country name to ensure foreign addresses are properly handled
     #
-    # @param zip_code [String] The veteran's five-digit zip code
+    # @param address [Address] The veteran's address
     #
     # @return        [Hash] The payload to send to the VA.gov API
-    def zip_code_validation_request(zip_code)
+    def zip_code_validation_request(address)
       {
         body: {
           requestAddress: {
             addressLine1: "address",
-            zipCode5: zip_code
+            zipCode5: address.zip,
+            requestCountry: { countryName: address.country }
           }
         },
         headers: {

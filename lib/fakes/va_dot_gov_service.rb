@@ -25,7 +25,7 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
       request_address_keys = args[:body][:requestAddress].keys
 
       # If request was built by self.zip_code_validations_request
-      if request_address_keys == [:addressLine1, :zipCode5]
+      if request_address_keys.sort == [:addressLine1, :requestCountry, :zipCode5]
         HTTPI::Response.new 200, {}, fake_zip_code_data.to_json
       # If request was built by self.address_validations_request
       else
