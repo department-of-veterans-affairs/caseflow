@@ -24,13 +24,13 @@ describe('ReviewForm', () => {
     expect(screen.getByText('General Information')).toBeInTheDocument();
     expect(screen.getByText('Veteran file number')).toBeInTheDocument();
     expect(screen.getByText('Veteran name')).toBeInTheDocument();
-    expect(screen.getByText('Correspondence Type')).toBeInTheDocument();
+    expect(screen.getByText('Correspondence type')).toBeInTheDocument();
     expect(screen.getByText('Notes')).toBeInTheDocument();
   });
 
   it('check if button is disabled', () => {
     render(<ReviewForm {...props} />);
-    const button = screen.getByText('Save Changes');
+    const button = screen.getByText('Save changes');
 
     expect(button).toBeDisabled();
   });

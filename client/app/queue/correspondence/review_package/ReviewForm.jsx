@@ -14,32 +14,66 @@ const flexDivStyling = css({
 
 const mainDiv = css(flexDivStyling, {
   justifyContent: 'space-between',
+  width: '100%',
+  gap: '3%',
+  '@media (max-width: 600px)': {
+    flexDirection: 'column'
+  }
 });
 
 const divideStyling = css(flexDivStyling, {
   width: '50%',
   flexDirection: 'column',
-  gap: '30px',
+  gap: '12%',
+  '@media (max-width: 600px)': {
+    width: '100%'
+  }
+});
+
+const divideTextareaStyling = css(flexDivStyling, {
+  width: '50%',
+  flexDirection: 'column',
+  '@media (max-width: 600px)': {
+    width: '100%'
+  }
+});
+
+const veternalFileStyling = css({
+  width: '40%',
+  '@media (max-width: 1081px)': {
+    width: '100%',
+  }
+});
+
+const veternalNameStyling = css({
+  width: '60%',
+  '@media (max-width: 1081px)': {
+    width: '100%'
+  }
 });
 
 const inputStyling = css(flexDivStyling, {
-  gap: '20px',
-});
-
-const veteranInputStyling = css({
-  width: '350px',
+  gap: '5%',
+  '@media (max-width: 1081px)': {
+    flexDirection: 'column'
+  },
 });
 
 const tagStyling = css({
-  maxWidth: '60rem',
+  '& .cf-select__control': {
+    maxWidth: '63rem !important',
+  },
 });
 
 const textareaStyling = css({
-  maxWidth: '60rem',
+  maxWidth: '60rem'
+
 });
 
 const textareaWidth = css({
-  height: '14rem',
+  height: '15rem',
+  resize: 'none'
+
 });
 
 export const ReviewForm = (props) => {
@@ -130,7 +164,7 @@ export const ReviewForm = (props) => {
       <div {...flexDivStyling} style={{ gap: '20px', marginTop: '20px' }}>
         <h2>General Information</h2>
         <Button
-          name="Save Changes"
+          name="Save changes"
           href="/queue/correspondence/12/intake"
           classNames={['usa-button-primary']}
           disabled={!props.disableButton}
@@ -141,29 +175,38 @@ export const ReviewForm = (props) => {
         <main {...mainDiv}>
           <div {...divideStyling}>
             <div {...inputStyling}>
-              <TextField
-                label="Veteran file number"
-                value={props.editableData.veteran_file_number}
-                onChange={handleFileNumber}
-                name="veteran-file-number-input"
-              />
-              <TextField
-                label="Veteran name"
-                value={fullName(props.reviewDetails.veteran_name)}
-                readOnly
-                inputStyling={veteranInputStyling}
+              <div {...veternalFileStyling}>
+                <TextField
+                  label="Veteran file number"
+                  value={props.editableData.veteran_file_number}
+                  onChange={handleFileNumber}
+                  name="veteran-file-number-input"
+                />
+              </div>
+
+              <div {...veternalNameStyling}>
+                <TextField
+                  label="Veteran name"
+                  value={fullName(props.reviewDetails.veteran_name)}
+                  readOnly
+                />
+              </div>
+
+            </div>
+            <div >
+
+              <SearchableDropdown
+                name="correspondence-dropdown"
+                label="Correspondence type"
+                styling={tagStyling}
+                value={defaultSelectedValue}
+                options={generateOptions(props.reviewDetails.dropdown_values)}
+                onChange={handleSelect}
               />
             </div>
-            <SearchableDropdown
-              name="correspondence-dropdown"
-              label="Correspondence Type"
-              styling={tagStyling}
-              value={defaultSelectedValue}
-              options={generateOptions(props.reviewDetails.dropdown_values)}
-              onChange={handleSelect}
-            />
+
           </div>
-          <div {...divideStyling}>
+          <div {...divideTextareaStyling}>
             <div>
               <TextareaField
                 name="Notes"
