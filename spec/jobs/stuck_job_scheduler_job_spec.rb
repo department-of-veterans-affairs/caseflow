@@ -9,7 +9,7 @@ describe StuckJobSchedulerJob, :postgres do
 
       expect(job_instance).to receive(:perform_master_stuck_job)
 
-      job_instance.perform_master_stuck_job_with_profiling
+      job_instance.perform
     end
   end
 
