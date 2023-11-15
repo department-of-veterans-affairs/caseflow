@@ -20,13 +20,12 @@ class ExternalApi::WebexService
         "Exp": virtual_hearing.exp
       },
       "aud": @aud,
-      "numGuest": 1,
       "numHost": 1,
       "provideShortUrls": true,
       "verticalType": "gen"
     }
 
-    resp = send_webex_request(body: body)
+    resp = send_webex_request(body)
     return if resp.nil?
 
     ExternalApi::WebexService::CreateResponse.new(resp)
@@ -40,7 +39,6 @@ class ExternalApi::WebexService
         "Exp": 0
       },
       "aud": @aud,
-      "numGuest": 1,
       "numHost": 1,
       "provideShortUrls": true,
       "verticalType": "gen"
