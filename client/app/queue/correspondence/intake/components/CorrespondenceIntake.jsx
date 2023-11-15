@@ -63,7 +63,10 @@ export const CorrespondenceIntake = (props) => {
       />
     }
     {currentStep === 2 &&
-      <AddTasksAppealsView correspondenceUuid={props.correspondence_uuid} />
+      <AddTasksAppealsView
+        correspondenceUuid={props.correspondence_uuid}
+        onContinueStatusChange={handleContinueStatusChange}
+      />
     }
     <div>
       <a href="/queue/correspondence">

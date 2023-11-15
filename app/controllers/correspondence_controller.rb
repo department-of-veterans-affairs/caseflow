@@ -56,7 +56,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def correspondence_load
-    Correspondence.where(veteran_id: vet.id).where.not(uuid: params[:correspondence_uuid])
+    Correspondence.where(veteran_id: veteran_by_correspondence.id).where.not(uuid: params[:correspondence_uuid])
   end
 
   def veteran_by_correspondence

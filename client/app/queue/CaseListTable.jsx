@@ -33,6 +33,7 @@ class CaseListTable extends React.PureComponent {
                 name={`appeal-${appeal.id}`}
                 defaultValue={false}
                 hideLabel
+                onChange={(checked) => this.props.checkboxOnChange(String(appeal.id), checked)}
               />
             );
           }
@@ -126,6 +127,7 @@ class CaseListTable extends React.PureComponent {
 CaseListTable.propTypes = {
   appeals: PropTypes.arrayOf(PropTypes.object).isRequired,
   showCheckboxes: PropTypes.bool,
+  checkboxOnChange: PropTypes.func,
   styling: PropTypes.object,
   clearCaseListSearch: PropTypes.func,
   userRole: PropTypes.string,

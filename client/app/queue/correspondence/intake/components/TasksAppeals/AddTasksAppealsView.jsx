@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Checkbox from '../../../../../components/Checkbox';
 import RadioField from '../../../../../components/RadioField';
 import PropTypes from 'prop-types';
@@ -29,6 +29,7 @@ const existingAppealAnswer = [
 
 export const AddTasksAppealsView = (props) => {
   const [appeals, setAppeals] = useState([]);
+  const [selectedAppeals, setSelectedAppeals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [relatedToExistingAppeal, setRelatedToExistingAppeal] = useState(false);
   const [existingAppealRadio, setExistingAppealRadio] = useState('2');
@@ -44,8 +45,18 @@ export const AddTasksAppealsView = (props) => {
     if (existingAppealRadio === '1') {
       setExistingAppealRadio('2');
       setRelatedToExistingAppeal(false);
+      setSelectedAppeals([]);
     }
   };
+
+  const checkboxOnChange = useCallback((id, isChecked) => {
+    if (isChecked) {
+      setSelectedAppeals([...selectedAppeals, id]);
+    } else {
+      const selected = selectedAppeals.filter((checkboxId) => checkboxId !== id);
+      setSelectedAppeals(selected);
+    }
+  }, [selectedAppeals]);
 
   useEffect(() => {
     // Only fetch if user indicates appeals data is needed
@@ -82,6 +93,14 @@ export const AddTasksAppealsView = (props) => {
       );
   }, [relatedToExistingAppeal]);
 
+  useEffect(() => {
+    // If user has selected appeals, enable continue
+    if (relatedToExistingAppeal) {
+      props.onContinueStatusChange(selectedAppeals.length);
+    } else {
+      props.onContinueStatusChange(true);
+    }
+  }, [relatedToExistingAppeal, selectedAppeals]);
 
   return (
     <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
@@ -132,7 +151,11 @@ export const AddTasksAppealsView = (props) => {
         }
         {existingAppealRadio === '1' && !loading &&
           <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
-            <CaseListTable appeals={appeals} showCheckboxes />
+            <CaseListTable
+              appeals={appeals}
+              showCheckboxes
+              checkboxOnChange={checkboxOnChange}
+            />
           </div>
         }
       </div>
@@ -141,7 +164,8 @@ export const AddTasksAppealsView = (props) => {
 };
 
 AddTasksAppealsView.propTypes = {
-  correspondenceUuid: PropTypes.string.isRequired
+  correspondenceUuid: PropTypes.string.isRequired,
+  onContinueStatusChange: PropTypes.func.isRequired
 };
 
 export default AddTasksAppealsView;
