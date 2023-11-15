@@ -150,11 +150,22 @@ module Seeds
         # Use a hearings user so the factories don't try to create one (and sometimes fail)
         active_judge = User.find_by_css_id("BVAAABSHIRE")
         inactive_judge = User.find_by_css_id("BVADSLADER")
+
+        judge_team_org = create(
+          :judge_team
+        )
+
+        # nonadmin on single judge team
+        nonadmin = create(
+          :organizations_user,
+          organization: judge_team_org
+        )
       
         offsets.each do |offset|
           create_ama_appeals_dispatch_ready_less_than_60_days(active_judge)
           create_ama_appeals_dispatch_ready_more_than_60_days(active_judge)
           create_ama_appeals_dispatch_ready_less_than_60_days_with_inactive_judge(inactive_judge)
+          create_ama_appeals_dispatch_ready_less_than_60_days_with_nonadmin(nonadmin)
         end
       end
   
@@ -223,6 +234,18 @@ module Seeds
 
       # AC4: ready to distribute for less than 60 days with inactive judge
       def create_ama_appeals_dispatch_ready_less_than_60_days_with_inactive_judge(judge)
+        Timecop.travel(1.days.ago)
+          appeal = create(:appeal,
+                          :with_post_intake_tasks,
+                          :held_hearing_and_ready_to_distribute,
+                          :hearing_docket,
+                          tied_judge: judge,
+                          veteran: create_veteran)
+        Timecop.return
+      end
+
+      # AC5: ready to distribute for less than 60 days with nonadmin on single judge team
+      def create_ama_appeals_dispatch_ready_less_than_60_days_with_nonadmin(judge)
         Timecop.travel(1.days.ago)
           appeal = create(:appeal,
                           :with_post_intake_tasks,
