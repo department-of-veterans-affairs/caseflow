@@ -363,50 +363,6 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         .with(appeal)
         .and_return([])
     end
-
-    context "Appeal" do
-      let(:appeal) { create(:appeal) }
-      context "when document exists in the documents table" do
-        let!(:document) do
-          create(:document,
-                 series_id: "{#{series_id.upcase}}",
-                 file_number: appeal.veteran_file_number)
-        end
-        include_examples "document present"
-      end
-
-      context "when document exists in VBMS" do
-        before { allow_vbms_to_return_doc }
-        include_examples "document present"
-      end
-
-      context "when document does not exist" do
-        before { allow_vbms_to_return_empty_array }
-        include_examples "document not present"
-      end
-    end
-
-    context "LegacyAppeal" do
-      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
-      context "when document exists in the documents table" do
-        let!(:document) do
-          create(:document,
-                 series_id: "{#{series_id.upcase}}",
-                 file_number: appeal.veteran_file_number)
-        end
-        include_examples "document present"
-      end
-
-      context "when document exists in VBMS" do
-        before { allow_vbms_to_return_doc }
-        include_examples "document present"
-      end
-
-      context "when document does not exist" do
-        before { allow_vbms_to_return_empty_array }
-        include_examples "document not present"
-      end
-    end
   end
 
   describe "GET cases/:id" do

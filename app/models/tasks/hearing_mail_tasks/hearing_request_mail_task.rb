@@ -170,22 +170,4 @@ class HearingRequestMailTask < MailTask
     "##### REASON FOR CANCELLATION:\n" \
     "Hearing #{request_action} when #{task_name} was completed on #{formatted_date}"
   end
-
-  # Purpose: Completes the Mail task assigned to the MailTeam and the one for HearingAdmin
-  # Params: user - The current user object
-  #         params - The attributes needed to update the instructions specific to HPR/HWR
-  # Return: Boolean for if the tasks have been updated
-  def update_self_and_parent_mail_task(user:, params:)
-    updated_instructions = format_instructions_on_completion(params)
-    begin
-      update!(
-        completed_by: user,
-        status: Constants.TASK_STATUSES.completed,
-        instructions: updated_instructions
-      )
-    rescue StandardError => error
-      log_error(error)
-    end
-    update_parent_status
-  end
 end
