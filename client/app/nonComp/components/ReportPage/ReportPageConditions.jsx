@@ -1,6 +1,5 @@
 import React from 'react';
 import { useFormContext, useFieldArray } from 'react-hook-form';
-import * as yup from 'yup';
 
 import { ConditionContainer } from './ConditionContainer';
 import { personnelSchema } from './Conditions/Personnel';
