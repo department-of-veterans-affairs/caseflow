@@ -18,6 +18,7 @@ class DecisionReviewsController < ApplicationController
            :completed_tasks_type_counts,
            :completed_tasks_issue_type_counts,
            :included_tabs,
+           :can_generate_claim_history?,
            to: :business_line
 
   SORT_COLUMN_MAPPINGS = {
@@ -65,7 +66,7 @@ class DecisionReviewsController < ApplicationController
   end
 
   def generate_report
-    return render "errors/404" unless business_line.can_generate_claim_history
+    return render "errors/404" unless can_generate_claim_history?
     return requires_admin_access_redirect unless business_line.user_is_admin?(current_user)
 
     respond_to do |format|
@@ -75,8 +76,9 @@ class DecisionReviewsController < ApplicationController
 
         fail ActionController::ParameterMissing.new(:report), report_missing_message unless filter_params[:report]
 
-        events_as_csv = ChangeHistoryReporter.new([], filter_params.to_h).as_csv
-        send_data events_as_csv, filename: csv_filename, type: "text/csv", disposition: "attachment"
+        events_as_csv = create_change_history_csv(filter_params)
+        filename = Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
+        send_data events_as_csv, filename: filename, type: "text/csv", disposition: "attachment"
       end
     end
   rescue ActionController::ParameterMissing => error
@@ -132,7 +134,8 @@ class DecisionReviewsController < ApplicationController
 
   def business_line_config_options
     {
-      tabs: included_tabs
+      tabs: included_tabs,
+      canGenerateClaimHistory: can_generate_claim_history?
     }
   end
 
@@ -281,5 +284,11 @@ class DecisionReviewsController < ApplicationController
       representative_tz: task.appeal&.representative_tz,
       poa_last_synced_at: task.appeal&.poa_last_synced_at
     }
+  end
+
+  def create_change_history_csv(filter_params)
+    base_url = "#{request.base_url}/decision_reviews/#{business_line.url}/tasks/"
+    events = ClaimHistoryService.new(business_line, filter_params).build_events
+    ChangeHistoryReporter.new(events, base_url, filter_params.to_h).as_csv
   end
 end

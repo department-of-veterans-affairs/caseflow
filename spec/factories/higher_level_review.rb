@@ -159,5 +159,27 @@ FactoryBot.define do
         hlr.create_business_line_tasks!
       end
     end
+
+    trait :with_intake do
+      after(:create) do |hlr|
+        css_id = "CSS_ID#{generate :css_id}"
+
+        intake_user = User.find_by(css_id: css_id)
+
+        if intake_user.nil?
+          intake_user = create(:user, css_id: css_id)
+        end
+
+        hlr.intake = create(:intake, :completed, veteran_file_number: hlr.veteran_file_number, user: intake_user)
+      end
+    end
+
+    trait :with_decision do
+      after(:create) do |hlr|
+        hlr.decision_issues << create(:decision_issue,
+                                      request_issues: hlr.request_issues,
+                                      benefit_type: hlr.benefit_type)
+      end
+    end
   end
 end
