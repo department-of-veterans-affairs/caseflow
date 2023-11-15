@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.feature("The Correspondence Intake page") do
+  include CorrespondenceHelpers
   context "intake form feature toggle" do
     before :each do
       User.authenticate!(roles: ["Mail Intake"])
@@ -76,7 +77,7 @@ RSpec.feature("The Correspondence Intake page") do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
       User.authenticate!(roles: ["Mail Intake"])
-      @correspondence_uuid = "12345"
+      @correspondence_uuid = "0c77d6d2-c19f-4dbb-8e79-919a4090ed33"
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
     end
 
@@ -88,11 +89,11 @@ RSpec.feature("The Correspondence Intake page") do
     end
   end
 
-  context "The mail team user is able to click an 'add tasks' button" do
+  context "The mail team user is able to add unrelated tasks" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
       User.authenticate!(roles: ["Mail Intake"])
-      @correspondence_uuid = "12345"
+      @correspondence_uuid = "0c77d6d2-c19f-4dbb-8e79-919a4090ed33"
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
       click_on("button-continue")
     end
@@ -108,7 +109,7 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_button("+ Add tasks", disabled: true)
     end
 
-    it "Two unrelated tasks have been added." do
+    it "Two unrelated tasks have been added" do
       click_on("+ Add tasks")
       expect(page).to have_text("Provide context and instruction on this task")
       expect(page.all(".cf-form-textarea").count).to eq(1)
@@ -116,11 +117,40 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page.all(".cf-form-textarea").count).to eq(2)
     end
 
-    it "Closes out new section when unrelated tasks have been removed." do
+    it "Closes out new section when unrelated tasks have been removed" do
       click_on("+ Add tasks")
       expect(page).to have_text("Provide context and instruction on this task")
       click_on("button-Remove")
       expect(page).to_not have_text("New Tasks")
+    end
+
+    it "Disables continue button when task is added" do
+      click_on("+ Add tasks")
+      expect(page).to have_text("Provide context and instruction on this task")
+      expect(page).to have_button("button-continue", disabled: true)
+    end
+
+    it "Re-enables continue button when all new task has been filled out" do
+      # visit_intake_form_with_correspondence_load
+      # click_on("date-filter-type-dropdown css-2b097c-container")
+      # click_on("CAVC Correspondence")
+      # click_on("Task Information")
+      click_on("+ Add tasks")
+      click_dropdown(prompt: "select...", text: "CAVC Correspondence")
+      expect(page).to have_button("button-continue", disabled: true)
+      fill_in("Task Information", with: "Correspondence Text")
+      expect(page).to have_button("button-continue", disabled: false)
+    end
+
+    it "Re populates feilds after going back a step and then continuing forward again" do
+      click_on("+ Add tasks")
+      click_dropdown(prompt: "select...", text: "CAVC Correspondence")
+      fill_in("Task Information", with: "Correspondence test text")
+      click_button("button-back-button")
+      click_button("button-continue")
+      expect(page).to have_button("button-continue", disabled: false)
+      expect(page).to have_content("CAVC Correspondence")
+      expect(page).to have_content("Correspondence test text")
     end
   end
 end
