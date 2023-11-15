@@ -1,18 +1,31 @@
 import React from 'react';
 import { axe } from 'jest-axe';
+import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
+import { applyMiddleware, createStore, compose } from 'redux';
 
 import userEvent from '@testing-library/user-event';
-import { fireEvent, getAllByRole, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import ReportPage from 'app/nonComp/pages/ReportPage';
 import selectEvent from 'react-select-event';
+import { getVhaUsers } from 'test/helpers/reportPageHelper';
+import CombinedNonCompReducer from 'app/nonComp/reducers';
 
 import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS';
 
 describe('ReportPage', () => {
-  const setup = () => {
+  const setup = (storeValues = {}) => {
+    const store = createStore(
+      CombinedNonCompReducer,
+      storeValues,
+      compose(applyMiddleware(thunk))
+    );
+
     return render(
-      <ReportPage />
+      <Provider store={store}>
+        <ReportPage />
+      </Provider>
     );
   };
 
@@ -20,6 +33,10 @@ describe('ReportPage', () => {
     setup();
     await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
   };
+
+  beforeEach(() => {
+    getVhaUsers();
+  });
 
   it('passes a11y testing', async () => {
     const { container } = setup();
@@ -189,7 +206,7 @@ describe('ReportPage', () => {
 
       REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.map((option) => {
         expect(screen.getAllByText(option.label)).toBeTruthy();
-      })
+      });
     });
   });
 

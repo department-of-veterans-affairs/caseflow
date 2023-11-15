@@ -8,37 +8,8 @@ import { render, screen } from '@testing-library/react';
 import selectEvent from 'react-select-event';
 
 import ReportPage from 'app/nonComp/pages/ReportPage';
-import ApiUtil from 'app/util/ApiUtil';
+import { getVhaUsers } from 'test/helpers/reportPageHelper';
 import CombinedNonCompReducer from 'app/nonComp/reducers';
-
-const getUsers = () => {
-  const data = {
-    users: {
-      data: [
-        {
-          id: '01',
-          type: 'user',
-          attributes: {
-            css_id: 'VHAUSER01',
-            full_name: 'VHAUSER01',
-            email: null
-          }
-        },
-        {
-          id: '02',
-          type: 'user',
-          attributes: {
-            css_id: 'VHAUSER02',
-            full_name: 'VHAUSER02',
-            email: null
-          }
-        }
-      ]
-    }
-  };
-
-  ApiUtil.get = jest.fn().mockResolvedValue({ body: data });
-};
 
 const setup = (storeValues = {}) => {
   const store = createStore(
@@ -67,7 +38,7 @@ const navigateToPersonnel = async () => {
 };
 
 beforeEach(() => {
-  getUsers();
+  getVhaUsers();
 });
 
 describe('Personnel', () => {
