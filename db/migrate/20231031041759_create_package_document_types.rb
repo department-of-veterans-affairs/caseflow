@@ -1,4 +1,4 @@
-class CreatePackageDocumentTypes < ActiveRecord::Migration[5.2]
+class CreatePackageDocumentTypes < Caseflow::Migration
   def change
     create_table :package_document_types do |t|
       t.string :name
