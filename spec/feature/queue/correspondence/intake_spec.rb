@@ -93,7 +93,7 @@ RSpec.feature("The Correspondence Intake page") do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
       User.authenticate!(roles: ["Mail Intake"])
-      @correspondence_uuid = "0c77d6d2-c19f-4dbb-8e79-919a4090ed33"
+      @correspondence_uuid = SecureRandom.uuid
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
       click_on("button-continue")
     end
@@ -131,12 +131,9 @@ RSpec.feature("The Correspondence Intake page") do
     end
 
     it "Re-enables continue button when all new task has been filled out" do
-      # visit_intake_form_with_correspondence_load
-      # click_on("date-filter-type-dropdown css-2b097c-container")
-      # click_on("CAVC Correspondence")
-      # click_on("Task Information")
       click_on("+ Add tasks")
-      click_dropdown(prompt: "select...", text: "CAVC Correspondence")
+      find_by_id("reactSelectContainer").click
+      find_by_id("react-select-2-option-1").click
       expect(page).to have_button("button-continue", disabled: true)
       fill_in("Task Information", with: "Correspondence Text")
       expect(page).to have_button("button-continue", disabled: false)
@@ -144,7 +141,8 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "Re populates feilds after going back a step and then continuing forward again" do
       click_on("+ Add tasks")
-      click_dropdown(prompt: "select...", text: "CAVC Correspondence")
+      find_by_id("reactSelectContainer").click
+      find_by_id("react-select-2-option-0").click
       fill_in("Task Information", with: "Correspondence test text")
       click_button("button-back-button")
       click_button("button-continue")

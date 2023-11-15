@@ -37,15 +37,17 @@ const TaskNotRelatedToAppeal = (props) => {
             { width: '45rem' }
           }
         >
-          <ReactSelectDropdown
-            options={dropdownOptions}
-            defaultValue={dropdownOptions[props.taskType]}
-            label="Task"
-            style={{ width: '50rem' }}
-            onChangeMethod={(selectedOption) =>
-              props.handleChangeTaskType(selectedOption.value, instructionText, index)}
-            className="date-filter-type-dropdown"
-          />
+          <div id='reactSelectContainer'>
+            <ReactSelectDropdown
+              options={dropdownOptions}
+              defaultValue={dropdownOptions[props.taskType]}
+              label="Task"
+              style={{ width: '50rem' }}
+              onChangeMethod={(selectedOption) =>
+                props.handleChangeTaskType(selectedOption.value, instructionText, index)}
+              className="date-filter-type-dropdown"
+            />
+          </div>
           <div style={{ padding: '1.5rem' }} />
           <TextareaField
             name="Task Information"
