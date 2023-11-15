@@ -149,11 +149,10 @@ module Seeds
         offsets = (100..(100 + number_of_appeals_to_create - 1)).to_a
         # Use a hearings user so the factories don't try to create one (and sometimes fail)
         active_judge = User.find_by_css_id("BVAAABSHIRE")
-        attorney = User.find_by_css_id("BVASCASPER1")
       
         offsets.each do |offset|
-          create_ama_appeals_decision_ready_dr_less_than_60_days(active_judge, attorney)
-          create_ama_appeals_decision_ready_dr_more_than_60_days(active_judge, attorney)
+          create_ama_appeals_decision_ready_dr_less_than_60_days(active_judge)
+          create_ama_appeals_decision_ready_dr_more_than_60_days(active_judge)
         end
       end
   
@@ -197,27 +196,25 @@ module Seeds
       end
 
       # AC2: ready to distribute for less than 60 days
-      def create_ama_appeals_decision_ready_dr_less_than_60_days(judge, attorney)
+      def create_ama_appeals_decision_ready_dr_less_than_60_days(judge)
         Timecop.travel(1.days.ago)
           appeal = create(:appeal,
                           :with_post_intake_tasks,
                           :held_hearing_and_ready_to_distribute,
                           :hearing_docket,
                           tied_judge: judge,
-                          associated_attorney: attorney,
                           veteran: create_veteran)
         Timecop.return
       end
 
       # AC3: ready to distribute for more than 60 days
-      def create_ama_appeals_decision_ready_dr_more_than_60_days(judge, attorney)
+      def create_ama_appeals_decision_ready_dr_more_than_60_days(judge)
         Timecop.travel(61.days.ago)
           appeal = create(:appeal,
                           :with_post_intake_tasks,
                           :held_hearing_and_ready_to_distribute,
                           :hearing_docket,
                           tied_judge: judge,
-                          associated_attorney: attorney,
                           veteran: create_veteran)
         Timecop.return
       end
