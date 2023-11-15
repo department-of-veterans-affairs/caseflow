@@ -11,9 +11,6 @@ import { Personnel } from './Conditions/Personnel';
 import PropTypes from 'prop-types';
 
 export const ConditionContainer = ({ control, index, remove, field }) => {
-
-  const { watch, register } = useFormContext();
-
   // this can't easily be extracted to somewhere else without breaking the form
   const variableOptions = [
     { label: 'Days Waiting',
@@ -36,20 +33,20 @@ export const ConditionContainer = ({ control, index, remove, field }) => {
       component: Facility },
   ];
 
-  const filteredOptions = useMemo(() => {
-    let conds = watch('conditions');
-    let selectedOptions = conds.map((cond) => cond.condition).filter((cond) => cond !== null);
+  const { watch, register } = useFormContext();
+  const conds = watch('conditions');
 
-    // personnel and facility are mutually exclusive
-    if (selectedOptions.includes('facility')) {
-      selectedOptions = selectedOptions.concat('personnel');
-    } else if (selectedOptions.includes('personnel')) {
-      selectedOptions = selectedOptions.concat('facility');
-    }
+  let selectedOptions = conds.map((cond) => cond.condition).filter((cond) => cond !== null);
 
-    return variableOptions.filter((option) =>
-      !selectedOptions.some((selectedOption) => option.value === selectedOption));
-  }, [variableOptions]);
+  // personnel and facility are mutually exclusive
+  if (selectedOptions.includes('facility')) {
+    selectedOptions = selectedOptions.concat('personnel');
+  } else if (selectedOptions.includes('personnel')) {
+    selectedOptions = selectedOptions.concat('facility');
+  }
+
+  const filteredOptions = variableOptions.filter((option) =>
+    !selectedOptions.some((selectedOption) => option.value === selectedOption));
 
   const name = `conditions.${index}`;
 
