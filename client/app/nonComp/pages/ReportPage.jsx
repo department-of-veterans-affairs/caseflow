@@ -10,10 +10,19 @@ import { NonCompReportFilterContainer } from '../components/NonCompReportFilter'
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
+import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
+import { timingSchema, TimingSpecification } from 'app/nonComp/components/ReportPage/TimingSpecification';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+
 import Checkbox from 'app/components/Checkbox';
 import RadioField from 'app/components/RadioField';
 
-import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS';
+import {
+  REPORT_TYPE_OPTIONS,
+  RADIO_EVENT_TYPE_OPTIONS,
+  SPECTIFIC_EVENT_OPTIONS
+} from 'constants/REPORT_TYPE_CONSTANTS';
 
 const buttonInnerContainerStyle = css({
   display: 'flex',
@@ -27,10 +36,12 @@ const buttonOuterContainerStyling = css({
 });
 
 const schema = yup.object().shape({
-  conditions: conditionsSchema
+  conditions: conditionsSchema,
+  timing: timingSchema
 });
 
-const ReportPageButtons = ({ history,
+const ReportPageButtons = ({
+  history,
   isGenerateButtonDisabled,
   handleClearFilters,
   handleSubmit }) => {
@@ -128,6 +139,12 @@ const RHFRadioButton = ({ options, name, control }) => {
 const ReportPage = ({ history }) => {
   const defaultFormValues = {
     reportType: '',
+    conditions: [],
+    timing: {
+      range: null,
+      startDate: '',
+      endDate: '',
+    },
     radioEventAction: 'all_events_action',
     specificEventType: {
       added_decision_date: '',
@@ -140,14 +157,15 @@ const ReportPage = ({ history }) => {
       completed_disposition: '',
       removed_issue: '',
       withdrew_issue: '',
-    },
-    conditions: []
+    }
   };
 
-  const methods = useForm({ defaultValues: { ...defaultFormValues },
+  const methods = useForm({
+    defaultValues: { ...defaultFormValues },
     resolver: yupResolver(schema),
     mode: 'onSubmit',
-    reValidateMode: 'onSubmit' });
+    reValidateMode: 'onSubmit'
+  });
 
   const { reset, watch, formState, control, handleSubmit } = methods;
 
@@ -168,10 +186,15 @@ const ReportPage = ({ history }) => {
       <h1>Generate task report</h1>
       <FormProvider {...methods}>
         <form>
-          <NonCompReportFilterContainer />
+          <RHFControlledDropdownContainer
+            header="Type of report"
+            name="reportType"
+            label="Report Type"
+            options={REPORT_TYPE_OPTIONS}
+          />
           {watchReportType === 'event_type_action' ? (
             <RHFRadioButton
-              options={REPORT_TYPE_CONSTANTS.RADIO_EVENT_TYPE_OPTIONS}
+              options={RADIO_EVENT_TYPE_OPTIONS}
               methods={methods}
               name="radioEventAction"
             />
@@ -180,13 +203,17 @@ const ReportPage = ({ history }) => {
           {watchReportType === 'event_type_action' &&
           watchRadioEventAction === 'specific_events_action' ? (
               <RHFCheckboxGroup
-                options={REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS}
+                options={SPECTIFIC_EVENT_OPTIONS}
                 control={control}
                 name="specificEventType"
               />
             ) : null
           }
-          <ReportPageConditions />
+          {watchReportType === 'event_type_action' ?
+            <TimingSpecification /> :
+            null
+          }
+          {formState.isDirty ? <ReportPageConditions /> : null}
         </form>
       </FormProvider>
     </NonCompLayout>
