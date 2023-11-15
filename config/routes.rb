@@ -293,6 +293,7 @@ Rails.application.routes.draw do
     get '/correspondence', to: 'correspondence#correspondence_cases'
     get '/correspondence/:correspondence_uuid/intake', to: 'correspondence#intake'
     get '/correspondence/:correspondence_uuid/review_package', to: 'correspondence#review_package'
+    put '/correspondence/:correspondence_uuid/update_cmp', to: 'correspondence#update_cmp'
     get '/correspondence/packages', to: 'correspondence#package_documents'
     get '/correspondence/:id', to: 'correspondence#show'
     get '/appeals/:vacols_id', to: 'queue#index'

@@ -37,6 +37,14 @@ class CorrespondenceController < ApplicationController
     render json: { correspondence: @correspondence, package_document_type: @correspondence.package_document_type }
   end
 
+  def update_cmp
+    @correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
+    @correspondence["va_date_of_receipt"] = params["VADORDate"].in_time_zone
+    @correspondence["package_document_type_id"] = params["packageDocument"]["value"].to_i
+    @correspondence.save
+    render json: { status: 200, correspondence: @correspondence }
+  end
+
   private
 
   def verify_feature_toggle

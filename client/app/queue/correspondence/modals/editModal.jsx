@@ -38,6 +38,23 @@ class EditModal extends React.Component {
     });
   };
 
+  handleCMPSave = async(props) => {
+    const locationPath = location.pathname.split('/');
+    const correspondenceId = locationPath[3];
+
+    const {
+      VADORDate,
+      packageDocument
+    } = props.state;
+
+    await ApiUtil.put(`/queue/correspondence/${correspondenceId}/update_cmp`, { data: { packageDocument, VADORDate } }).
+      then((response) => {
+        if (response.status === 200) {
+          props.onClickCancel();
+        }
+      });
+  }
+
   getModalButtons() {
     const btns = [
       {
@@ -48,7 +65,7 @@ class EditModal extends React.Component {
       {
         classNames: ['usa-button', 'add-issue'],
         name: 'Save',
-        onClick: this.handleCMPSave,
+        onClick: this.handleCMPSave.bind(this, this),
         disabled: this.requiredFieldsMissing() || Boolean(this.state.dateError)
       }
     ];
