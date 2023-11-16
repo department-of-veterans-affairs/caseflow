@@ -26,16 +26,16 @@ class HearingRequestDistributionQuery
     [not_genpop_appeals, only_genpop_appeals] if genpop == "any"
   end
 
+  def self.ineligible_judges_id_cache
+    Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:id)&.reject(&:blank?) || []
+  end
+
   private
 
   attr_reader :base_relation, :genpop, :judge
 
   def not_genpop_appeals
     base_relation.most_recent_hearings.tied_to_distribution_judge(judge)
-  end
-
-  def ineligible_judges_id_cache
-    Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:id)&.reject(&:blank?) || []
   end
 
   def only_genpop_appeals
@@ -99,8 +99,9 @@ class HearingRequestDistributionQuery
     def tied_to_distribution_judge(judge)
       joins(with_assigned_distribution_task_sql)
         .where(hearings: { disposition: "held", judge_id: judge.id })
-        .where("hearings.judge_id = ? OR (hearings.judge_id IS NULL AND judge_id IN (?))", judge.id, ineligible_judges_id_cache)
         .where("distribution_task.assigned_at > ?", Constants::DISTRIBUTION["hearing_case_affinity_days"].days.ago)
+        .or(where(hearings: { disposition: "held", judge_id: ineligible_judges_id_cache }
+          .where("1 = ?", FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0)))
     end
 
     # If an appeal has exceeded the affinity, it should be returned to genpop.
@@ -114,7 +115,8 @@ class HearingRequestDistributionQuery
     # when that distinction became irrelevant because cases become genpop after 30 days anyway.
     def not_tied_to_any_judge
       where(hearings: { disposition: "held", judge_id: nil })
-      .or(where("hearings.judge_id IS NULL AND judge_id IN (?)", ineligible_judges_id_cache))
+        .or(where(hearings: { disposition: "held", judge_id: ineligible_judges_id_cache })
+        .where("1 = ?", FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0))
     end
 
     def with_no_hearings
