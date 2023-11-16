@@ -298,6 +298,7 @@ Rails.application.routes.draw do
     get '/correspondence', to: 'correspondence#correspondence_cases'
     get '/correspondence/:correspondence_uuid/intake', to: 'correspondence#intake'
     get '/correspondence/:correspondence_uuid/review_package', to: 'correspondence#review_package'
+    get '/correspondence/:correspondence_uuid/veteran', to: 'correspondence#veteran'
     get '/correspondence/:id', to: 'correspondence#show'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:appealId/notifications', to: 'queue#index'
