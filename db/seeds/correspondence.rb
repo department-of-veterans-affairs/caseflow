@@ -32,7 +32,11 @@ module Seeds
         file_number: format("%<n>09d", n: @file_number),
         participant_id: format("%<n>09d", n: @participant_id)
       }
-      create(:veteran, params.merge(options))
+      veteran = create(:veteran, params.merge(options))
+      5.times do
+        create(:appeal, veteran_file_number: veteran.file_number)
+      end
+      veteran
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
