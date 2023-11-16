@@ -78,6 +78,7 @@ class ReviewPackageData extends React.PureComponent {
         correspondence_documents: response.body.correspondence_documents,
         totalDocuments: response.body.correspondence_documents.length,
       });
+      console.log(response)
     });
   }
 
@@ -141,9 +142,14 @@ const CmpInfoScaffolding = (props) => {
   const packageDocumentType = props.packageDocumentType;
   const correspondence = props.correspondence;
   const date = new Date(correspondence?.portal_entry_date);
-  const customDate = date && `${date.getMonth().toString().
-    padStart(2, '0')}/${date.getDate().toString().
+  const dateOfReceipt = new Date(correspondence?.va_date_of_receipt);
+  const customDate = date && `${(date.getMonth() + 1).toString().
+    padStart(2, '0')}/${(date.getDate()).toString().
       padStart(2, '0')}/${date.getFullYear()}`;
+
+  const dateOfReceiptCustomDate = dateOfReceipt && `${(dateOfReceipt.getMonth() + 1).toString().
+    padStart(2, '0')}/${(dateOfReceipt.getDate()).toString().
+      padStart(2, '0')}/${dateOfReceipt.getFullYear()}`;
 
   return (
     <div>
@@ -162,10 +168,10 @@ const CmpInfoScaffolding = (props) => {
           {correspondence?.cmp_packet_number}
         </TitleDetailsSubheaderSection>
         <TitleDetailsSubheaderSection title="CMP Queue Name">
-          {correspondence?.cmp_packet_number}
+          BVA Intake
         </TitleDetailsSubheaderSection>
         <TitleDetailsSubheaderSection title="VA DOR">
-          {customDate}
+          {dateOfReceiptCustomDate}
         </TitleDetailsSubheaderSection>
       </TitleDetailsSubheader>
     </div>
