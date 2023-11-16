@@ -72,7 +72,9 @@ export const AddTasksAppealsView = (props) => {
             const appealArr = [];
 
             for (const appeal in appealsForStore.appeals) {
-              appealArr.push(appealsForStore.appeals[appeal]);
+              if (Object.hasOwn(appealsForStore.appeals, appeal)) {
+                appealArr.push(appealsForStore.appeals[appeal]);
+              }
             }
 
             setAppeals(appealArr);
@@ -82,7 +84,7 @@ export const AddTasksAppealsView = (props) => {
       );
   }, [relatedToExistingAppeal]);
 
-  const selections = existingAppealAnswer.map(({displayText, value}) => {
+  const selections = existingAppealAnswer.map(({ displayText, value }) => {
     return ({
       displayText,
       current: (value === existingAppealRadio)
@@ -140,7 +142,12 @@ export const AddTasksAppealsView = (props) => {
         }
         {existingAppealRadio === '1' && !loading &&
           <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
-            <CaseListTable appeals={appeals} showCheckboxes />
+            <CaseListTable
+              appeals={appeals}
+              showCheckboxes
+              paginate
+              linkOpensInNewTab
+            />
           </div>
         }
       </div>
