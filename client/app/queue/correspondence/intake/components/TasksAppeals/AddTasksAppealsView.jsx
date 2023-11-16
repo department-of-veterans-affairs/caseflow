@@ -238,8 +238,9 @@ export const AddTasksAppealsView = (props) => {
             </div>
           </div>
         </div>}
-
-        <br></br>
+        <br />
+        <br />
+        <br />
         <h2>Tasks related to an existing Appeal</h2>
         <p>Is this correspondence related to an existing appeal?</p>
         <RadioField
