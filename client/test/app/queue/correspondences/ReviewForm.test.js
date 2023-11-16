@@ -42,7 +42,7 @@ describe('ReviewForm', () => {
     render(<ReviewForm {...props} />);
     const inputNode = screen.getByRole('textbox', { name: 'Veteran file number' });
 
-    fireEvent.change(inputNode, { target: { value: 'new value' } });
+    fireEvent.change(inputNode, { target: { value: '12345678' } });
     expect(mockFunction).toHaveBeenCalledTimes(1);
   });
 
