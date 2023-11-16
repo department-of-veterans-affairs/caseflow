@@ -39,9 +39,8 @@ class CorrespondenceController < ApplicationController
 
   def update_cmp
     @correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
-    @correspondence["va_date_of_receipt"] = params["VADORDate"].in_time_zone
-    @correspondence["package_document_type_id"] = params["packageDocument"]["value"].to_i
-    @correspondence.save
+    @correspondence.update(va_date_of_receipt: params["VADORDate"].in_time_zone,
+                           package_document_type_id: params["packageDocument"]["value"].to_i)
     render json: { status: 200, correspondence: @correspondence }
   end
 
