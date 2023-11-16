@@ -9,7 +9,7 @@ import DocketTypeBadge from '../components/DocketTypeBadge';
 import Table from '../components/Table';
 import BadgeArea from 'app/components/badges/BadgeArea';
 import { clearCaseListSearch } from './CaseList/CaseListActions';
-import { Checkbox } from "../components/Checkbox";
+import { Checkbox } from '../components/Checkbox';
 
 import { DateString } from '../util/DateUtil';
 import { statusLabel, labelForLocation, renderAppealType, mostRecentHeldHearingForAppeal } from './utils';
