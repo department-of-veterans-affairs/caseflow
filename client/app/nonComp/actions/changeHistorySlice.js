@@ -73,7 +73,15 @@ export const fetchClaimEvents = createAsyncThunk('changeHistory/fetchClaimEvents
 
       console.log(response);
 
-      const preparedData = [];
+      const events = response.body.data;
+
+      // const preparedData = [];
+
+      const preparedData = events.map(({ attributes, ...rest }) => ({ ...attributes, ...rest }));
+
+      console.log(events);
+
+      console.log(preparedData);
 
       // return thunkApi.fulfillWithValue('success', { analytics: true });
 

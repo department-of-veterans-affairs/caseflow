@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 import moment from 'moment';
 import { capitalize, startCase } from 'lodash';
+import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
+
+const detailKeys = ['benefitType', 'issueType', 'issueDescription', 'decisionDate'];
 
 const DetailsList = ({ event }) => {
 
@@ -10,6 +13,10 @@ const DetailsList = ({ event }) => {
     if (key === 'decisionDate') {
       return moment(value).utc().
         format('MM/DD/YY');
+    }
+
+    if (key === 'benefitType') {
+      return BENEFIT_TYPES[value] || value;
     }
 
     return value;
@@ -21,12 +28,23 @@ const DetailsList = ({ event }) => {
     // marginBottom: '10px'
   };
 
+  const detailsObject = Object.entries(event).
+    filter(([key]) => detailKeys.includes(key)).
+    reduce((obj, [key, value]) => {
+      obj[key] = value;
+
+      return obj;
+    }, {});
+
+  console.log(detailsObject);
+
   // This currently relies on the object.entries remaining in the same order which is not ideal
   // Could probably map into the object based on a keys array instead
 
+  // Object.entries(event.details).slice(0, 3).
   return (
     <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-      {Object.entries(event.details).slice(0, 3).
+      {Object.entries(detailsObject).
         map(([key, value]) => (
           <li key={key} style={listStyle}>
             <strong>{capitalize(startCase(key))}:</strong> {formatValue(key, value)}
@@ -73,19 +91,20 @@ const renderEventDetails = (event) => {
   let renderBlock = null;
 
   switch (event.eventType) {
-  case 'Added Decision Date':
-  case 'Added Issue':
-  case 'Add Issue - No Decision Date':
-  case 'Completed Disposition':
-  case 'Withdrew Issue':
+  case 'added_decision_date':
+  case 'added_issue':
+  case 'added_issue_without_decision_date':
+  case 'completed_disposition':
+  case 'withdrew_issue':
+  case 'removed_issue':
     renderBlock = <DetailsList event={event} />;
     break;
 
-  case 'Claim Created':
+  case 'claim_creation':
     renderBlock = 'Claim created.';
     break;
 
-  case 'Claim Closed':
+  case 'completed':
     renderBlock = <>
       <span>Claim closed.</span>
       <br />
@@ -94,16 +113,21 @@ const renderEventDetails = (event) => {
     </>;
     break;
 
-  case 'Claim Status - Incomplete':
+  case 'cancelled':
+    renderBlock = 'Claim closed.';
+    break;
+
+  case 'incomplete':
     renderBlock = 'Claim can not be processed until decision date is entered.';
     break;
 
-  case 'Claim Status - In Progress':
+  case 'in_progress':
     renderBlock = 'Claim can be processed';
     break;
 
   default:
     // Code to handle unexpected keys
+    renderBlock = 'Unknown event type';
     break;
   }
 
@@ -111,13 +135,12 @@ const renderEventDetails = (event) => {
 
 };
 
-// TOOD: This isn't perfect lol
-const formatUserName = (userName) => {
-  const splitNames = userName.split(' ');
-  const last = splitNames.pop();
+// const formatUserName = (userName) => {
+//   const splitNames = userName.split(' ');
+//   const last = splitNames.pop();
 
-  return [splitNames.map((remainingName) => `${remainingName[0] }.`), last].join(' ');
-};
+//   return [splitNames.map((remainingName) => `${remainingName[0] }.`), last].join(' ');
+// };
 
 export const userColumn = (events) => {
   return {
@@ -128,8 +151,8 @@ export const userColumn = (events) => {
     valueName: 'user',
     columnName: 'eventUser',
     tableData: events,
-    valueFunction: (event) => formatUserName(event.eventUser),
-    getSortValue: (event) => event.eventUser
+    valueFunction: (event) => event.eventUserName,
+    getSortValue: (event) => event.eventUserName
   };
 };
 
@@ -154,8 +177,8 @@ export const activityColumn = (events) => {
     columnName: 'eventType',
     anyFiltersAreSet: true,
     tableData: events,
-    valueFunction: (event) => event.eventType,
-    getSortValue: (event) => event.eventType
+    valueFunction: (event) => event.readableEventType,
+    getSortValue: (event) => event.readableEventType
   };
 };
 

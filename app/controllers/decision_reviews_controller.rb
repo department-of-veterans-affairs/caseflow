@@ -86,12 +86,21 @@ class DecisionReviewsController < ApplicationController
   end
 
   def show_history
-    puts "--------------in show_history with task id: #{task_id} -----------------"
+    # puts "--------------in show_history with task id: #{task_id} -----------------"
     respond_to do |format|
       format.html { render "show" }
       format.json do
-        puts "gets into the json block?"
-        puts params.inspect
+        # puts "gets into the json block?"
+        # puts params.inspect
+        events = ClaimHistoryService.new(business_line, task_id: task_id).build_events
+        # puts "----------------- generated these event types ----------------"
+        # puts events.map(&:event_type).inspect
+        # Serialize the Change History Events and extract the attributes
+        # ChangeHistoryEventSerializer.new(events, is_collection: true)
+        #   .serializable_hash[:data]
+        #   .map { |hash| hash[:attributes] }
+        # render json: serialized_events(events)
+        render json: serialized_events(events)
       end
     end
   end
@@ -290,5 +299,14 @@ class DecisionReviewsController < ApplicationController
     base_url = "#{request.base_url}/decision_reviews/#{business_line.url}/tasks/"
     events = ClaimHistoryService.new(business_line, filter_params).build_events
     ChangeHistoryReporter.new(events, base_url, filter_params.to_h).as_csv
+  end
+
+  def serialized_events(events)
+    return [] if events.blank?
+
+    # ::WorkQueue::UserSerializer.new(users, is_collection: true)
+    ChangeHistoryEventSerializer.new(events, is_collection: true)
+      # .serializable_hash[:data]
+      # .map { |hash| hash[:attributes] }
   end
 end

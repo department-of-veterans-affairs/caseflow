@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { css } from 'glamor';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
@@ -65,19 +65,27 @@ const ClaimHistoryGenerator = (props) => {
 
   const dispatch = useDispatch();
 
+  const events = useSelector((state) => state.changeHistory.events);
+
   useEffect(() => {
     dispatch(fetchClaimEvents({ taskID: task.id, businessLineUrl }));
   }, []);
 
   // Generate a list of 10 fake data
-  const fakeJsonData = Array.from({ length: 20 }, generateFakeData);
+  // const fakeJsonData = Array.from({ length: 20 }, generateFakeData);
+
+  // const changeHistoryColumns = [
+  //   dateTimeColumn(), userColumn(fakeJsonData), activityColumn(fakeJsonData), detailsColumn()
+  // ];
 
   const changeHistoryColumns = [
-    dateTimeColumn(), userColumn(fakeJsonData), activityColumn(fakeJsonData), detailsColumn()
+    dateTimeColumn(), userColumn(events), activityColumn(events), detailsColumn()
   ];
 
   // Print the generated data
   // fakeJsonData.forEach((data) => console.log(data));
+
+  console.log(events);
 
   return <>
     <Link to={`/${businessLineUrl}/tasks/${task.id}`}> &lt; Back to Decision Review </Link>
@@ -85,8 +93,9 @@ const ClaimHistoryGenerator = (props) => {
     <div {...clearingDivStyling} />
     <QueueTable
       columns={changeHistoryColumns}
-      rowObjects={fakeJsonData}
-      getKeyForRow={(_rowNumber, event) => event.uniqueId}
+      rowObjects={events}
+      // rowObjects={fakeJsonData}
+      getKeyForRow={(_rowNumber, event) => event.id}
       defaultSort={{ sortColIdx: 0 }}
       enablePagination
     />
