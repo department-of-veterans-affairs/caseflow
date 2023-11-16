@@ -7,7 +7,6 @@ import COPY from 'app/../COPY';
 import ApiUtil from 'app/util/ApiUtil';
 import { TitleDetailsSubheader } from 'app/components/TitleDetailsSubheader';
 import Button from 'app/components/Button';
-import { boldText } from 'app/queue/constants';
 
 const listItemStyling = css({
   display: 'inline-block',
@@ -38,12 +37,8 @@ const correspondenceStyling = css({
   border: '1px solid #dee2e6'
 });
 
-const tableStyling = css({
-  width: '100%'
-});
-
 const paginationStyle = css({
-  marginTop: '3%',
+  marginTop: '2%',
   marginLeft: '1.5%'
 });
 
@@ -111,10 +106,10 @@ const CmpDocuments = (props) => {
       <h2> {COPY.DOCUMENT_PREVIEW} </h2>
       <div {...correspondenceStyling}>
         <div {...paginationStyle}> {paginationText} </div>
-        <table className="correspondence-document-table" {...tableStyling}>
+        <table className="correspondence-document-table">
           <tr>
-            <td style={{ width: '80%', fontWeight: 'bold' }} > Document Type </td>
-            <td {...boldText} className="cf-txt-c"> Action </td>
+            <th > Document Type </th>
+            <th className="cf-txt-c"> Action </th>
           </tr>
           { correspondence_documents?.map((document, index) => {
             return (

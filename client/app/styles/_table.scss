@@ -26,13 +26,26 @@
 }
 
 .correspondence-document-table {
-  th,
-  td {
-    border-left: none;
-    border-right: none;
-    border-top: none;
-    border-bottom: 1px solid $color-gray-lighter;
+  table {
+    width: 100%;
   }
+  th {
+    width: 100%;
+    font-weight: bold;
+  }
+  tr, th, td{
+    position: relative;
+    border: none;
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      width: 95%;
+      left: 1%;
+      border-bottom: 1px solid $color-gray-lighter;
+    }
+  }
+
 }
 
 .cf-filter-option-row {
