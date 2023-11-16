@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
 import { useSelector } from 'react-redux';
@@ -18,12 +18,14 @@ export const Personnel = ({ control, field, name }) => {
   const teamMembers = useSelector((state) => (state.orgUsers.users));
   const namePersonnel = `${name}.options.personnel`;
 
-  const dropdownOptions = teamMembers.map((member) => (
-    {
-      label: member.full_name,
-      value: member.css_id
-    }
-  ));
+  const dropdownOptions = useMemo(() => {
+    return teamMembers.map((member) => (
+      {
+        label: member.full_name,
+        value: member.css_id
+      }
+    )).sort((stringA, stringB) => stringA.label.localeCompare(stringB.label));
+  }, [teamMembers]);
 
   return (
     <div className="personnel">
