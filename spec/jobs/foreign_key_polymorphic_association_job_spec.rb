@@ -198,4 +198,3 @@ xdescribe ForeignKeyPolymorphicAssociationJob, :postgres do
     end
   end
 end
-
