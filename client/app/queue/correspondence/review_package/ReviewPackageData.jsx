@@ -117,6 +117,7 @@ const CmpDocuments = (props) => {
             <td {...boldText} className="cf-txt-c"> Action </td>
           </tr>
           { correspondence_documents?.map((document, index) => {
+            console.log(document)
             return (
               <tr>
                 <td style={{ background: selectedId === index ? '#0071bc' : 'white',

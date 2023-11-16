@@ -10,7 +10,7 @@ class WorkQueue::CorrespondenceDocumentSerializer
   attribute :uuid
   attribute :document_type
   attribute :document_title do |object|
-    doc_id = object.attributes["vbms_document_id"].to_i
+    doc_id = object.attributes["document_type"]
     Caseflow::DocumentTypes::TYPES[doc_id]
   end
 end
