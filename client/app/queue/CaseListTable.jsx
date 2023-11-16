@@ -9,6 +9,7 @@ import DocketTypeBadge from '../components/DocketTypeBadge';
 import Table from '../components/Table';
 import BadgeArea from 'app/components/badges/BadgeArea';
 import { clearCaseListSearch } from './CaseList/CaseListActions';
+import { saveAppealCheckboxState } from 'app/queue/correspondence/correspondenceReducer/correspondenceActions';
 import { Checkbox } from '../components/Checkbox';
 
 import { DateString } from '../util/DateUtil';
@@ -19,6 +20,10 @@ import Pagination from 'app/components/Pagination/Pagination';
 class CaseListTable extends React.PureComponent {
 
   state = { currentPage: 1 }
+
+  onChangeCheckbox = (appeal, isChecked) => {
+    this.props.saveAppealCheckboxState(appeal, isChecked);
+  }
 
   componentWillUnmount = () => this.props.clearCaseListSearch();
 
@@ -34,10 +39,10 @@ class CaseListTable extends React.PureComponent {
           valueFunction: (appeal) => {
             return (
               <Checkbox
-                name={`appeal-${appeal.id}`}
-                id={`appeal-${appeal.id}`}
-                defaultValue={this.props.checkboxes.includes(`appeal-${appeal.id}`)}
-                onChange={(checked) => this.onChangeCheckbox(`appeal-${appeal.id}`, checked)}
+                name={`${appeal.id}`}
+                id={`${appeal.id}`}
+                defaultValue={this.props.selectedAppeals.includes(appeal)}
+                onChange={(checked) => this.onChangeCheckbox(appeal, checked)}
                 hideLabel
               />
             );
@@ -166,13 +171,15 @@ class CaseListTable extends React.PureComponent {
 
 CaseListTable.propTypes = {
   appeals: PropTypes.arrayOf(PropTypes.object).isRequired,
+  selectedAppeals: PropTypes.array,
   showCheckboxes: PropTypes.bool,
   paginate: PropTypes.bool,
   linkOpensInNewTab: PropTypes.bool,
   styling: PropTypes.object,
   clearCaseListSearch: PropTypes.func,
   userRole: PropTypes.string,
-  userCssId: PropTypes.string
+  userCssId: PropTypes.string,
+  saveAppealCheckboxState: PropTypes.func,
 };
 
 CaseListTable.defaultProps = {
@@ -182,13 +189,15 @@ CaseListTable.defaultProps = {
 
 const mapStateToProps = (state) => ({
   userCssId: state.ui.userCssId,
-  userRole: state.ui.userRole
+  userRole: state.ui.userRole,
+  selectedAppeals: state.intakeSelectedAppeals.selectedAppeals
 });
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      clearCaseListSearch
+      clearCaseListSearch,
+      saveAppealCheckboxState,
     },
     dispatch
   );

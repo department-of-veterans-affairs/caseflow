@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Checkbox from '../../../../../components/Checkbox';
 import RadioField from '../../../../../components/RadioField';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
 import CaseListTable from '../../../../CaseListTable';
 import ApiUtil from '../../../../../util/ApiUtil';
 import { prepareAppealForStore } from '../../../../utils';
 import LoadingContainer from '../../../../../components/LoadingContainer';
 import { LOGO_COLORS } from '../../../../../constants/AppConstants';
+import { clearAppealCheckboxState } from 'app/queue/correspondence/correspondenceReducer/correspondenceActions';
 
 const mailTasksLeft = [
   'Change of address',
@@ -32,6 +34,7 @@ export const AddTasksAppealsView = (props) => {
   const [loading, setLoading] = useState(false);
   const [relatedToExistingAppeal, setRelatedToExistingAppeal] = useState(false);
   const [existingAppealRadio, setExistingAppealRadio] = useState('2');
+  const dispatch = useDispatch();
 
   const selectYes = () => {
     if (existingAppealRadio === '2') {
@@ -44,6 +47,7 @@ export const AddTasksAppealsView = (props) => {
     if (existingAppealRadio === '1') {
       setExistingAppealRadio('2');
       setRelatedToExistingAppeal(false);
+      dispatch(clearAppealCheckboxState());
     }
   };
 
@@ -133,7 +137,12 @@ export const AddTasksAppealsView = (props) => {
         }
         {existingAppealRadio === '1' && !loading &&
           <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
-            <CaseListTable appeals={appeals} showCheckboxes />
+            <CaseListTable
+              appeals={appeals}
+              showCheckboxes
+              paginate
+              linkOpensInNewTab
+            />
           </div>
         }
       </div>
