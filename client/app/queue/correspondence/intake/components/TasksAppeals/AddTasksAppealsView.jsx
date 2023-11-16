@@ -54,6 +54,7 @@ export const AddTasksAppealsView = (props) => {
       setSelectedAppeals([...selectedAppeals, id]);
     } else {
       const selected = selectedAppeals.filter((checkboxId) => checkboxId !== id);
+
       setSelectedAppeals(selected);
     }
   }, [selectedAppeals]);
@@ -82,8 +83,10 @@ export const AddTasksAppealsView = (props) => {
 
             const appealArr = [];
 
-            for (const appeal in appealsForStore.appeals) {
-              appealArr.push(appealsForStore.appeals[appeal]);
+            for (const appealGuid in appealsForStore.appeals) {
+              if (appealsForStore.appeals.hasOwnProperty(appealGuid)) {
+                appealArr.push(appealsForStore.appeals[appealGuid]);
+              }
             }
 
             setAppeals(appealArr);
@@ -141,7 +144,7 @@ export const AddTasksAppealsView = (props) => {
           name=""
           value= {existingAppealRadio}
           options={existingAppealAnswer}
-          onChange={existingAppealRadio === '2' ? selectYes : selectNo }
+          onChange={existingAppealRadio === '2' ? selectYes : selectNo}
         />
         {existingAppealRadio === '1' && loading &&
           <LoadingContainer color={LOGO_COLORS.QUEUE.ACCENT}>
