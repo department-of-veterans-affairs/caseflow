@@ -8,6 +8,7 @@ module Seeds
       end
   
       def seed!
+        load_and_update_ineligible_judge
         create_legacy_tasks
         create_ama_tasks
       end
@@ -111,8 +112,10 @@ module Seeds
       end
 
       # set judge to inactive
-      def update_ineligible_judge(judge)
-        judge.update_status!("inactive")
+      def load_and_update_ineligible_judge
+        inactive_judge = User.find_by_css_id("BVADSLADER")
+        inactive_judge.update_status!("inactive")
+        @inactive_judge
       end
       
       # AC1
@@ -120,9 +123,7 @@ module Seeds
         # The offset should start at 100 to avoid collisions
         offsets = (100..(100 + number_of_appeals_to_create - 1)).to_a
         # Use a hearings user so the factories don't try to create one (and sometimes fail)
-        inactive_judge = User.find_by_css_id("BVADSLADER")
         # call to make inactive
-        update_ineligible_judge(inactive_judge)
         active_judge = User.find_by_css_id("BVAAABSHIRE")
         attorney = User.find_by_css_id("BVASCASPER1")
         # Set this for papertrail when creating vacols_case
@@ -137,9 +138,9 @@ module Seeds
           type = "video"
           
           # AC1: create legacy appeals ready to be distributed that have a hearing held by an inactive judge
-          legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, inactive_judge, attorney, veteran)
+          legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, @inactive_judge, attorney, veteran)
           # Create the task tree, need to create each task like this to avoid user creation and index conflicts
-          create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, inactive_judge, attorney, veteran)
+          create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, @inactive_judge, attorney, veteran)
         end
       end
 
@@ -149,7 +150,6 @@ module Seeds
         offsets = (100..(100 + number_of_appeals_to_create - 1)).to_a
         # Use a hearings user so the factories don't try to create one (and sometimes fail)
         active_judge = User.find_by_css_id("BVAAABSHIRE")
-        inactive_judge = User.find_by_css_id("BVADSLADER")
 
         nonadmin_user = create(:user)
         admin_and_nonadmin_user = create(:user)
@@ -173,7 +173,7 @@ module Seeds
         offsets.each do |offset|
           create_ama_appeals_dispatch_ready_less_than_60_days(active_judge)
           create_ama_appeals_dispatch_ready_more_than_60_days(active_judge)
-          create_ama_appeals_dispatch_ready_less_than_60_days(inactive_judge)
+          create_ama_appeals_dispatch_ready_less_than_60_days(@inactive_judge)
           create_ama_appeals_dispatch_ready_less_than_60_days(nonadmin_user)
           create_ama_appeals_dispatch_ready_less_than_60_days(admin_and_nonadmin_user)
         end
