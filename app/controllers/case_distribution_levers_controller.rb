@@ -2,8 +2,8 @@ class CaseDistributionLeversController < ApplicationController
   before_action :verify_access
 
   def acd_lever_index
-    @acd_levers = CaseDistributionLever.all.to_json
-    @acd_history = CaseDistributionAuditLeverEntry.past_year.to_json
+    @acd_levers = CaseDistributionLever.all
+    @acd_history = CaseDistributionAuditLeverEntry.past_year
     @user_is_an_acd_admin = current_user.admin?
 
     render "index"
@@ -17,7 +17,7 @@ class CaseDistributionLeversController < ApplicationController
       end
 
       if errors.empty?
-        render json: { successful: true }
+        render json: { errors: [], successful: true }
       else
         render json: { errors: errors, successful: false }
       end

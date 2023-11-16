@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-
 RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
   let!(:lever_user) { create(:lever_user) }
-  # //let!(:group_user) { User.authenticate!(roles: ["LeverGroupUser"]) }
 
   let!(:lever1) {create(:case_distribution_lever,
     item: "lever_1",
@@ -40,16 +38,21 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     update_value: 55,
     case_distribution_lever: lever2
   )}
+  let!(:old_audit_lever_entry) {create(:case_distribution_audit_lever_entry,
+    user: lever_user,
+    user_name: "john smith",
+    created_at: "2020-07-01 10:11:01",
+    title: 'Lever 1',
+    previous_value: 42,
+    update_value: 55,
+    case_distribution_lever: lever2
+  )}
 
   let!(:levers) {[lever1, lever2]}
   let!(:lever_history) {[audit_lever_entry1, audit_lever_entry2]}
 
-  before do
-  end
-
   describe "GET acd_lever_index", :type => :request do
     it "redirects the user to the unauthorized page if they are not authorized" do
-
       User.authenticate!(user: create(:user))
       get "/acd-controls"
 
@@ -57,20 +60,42 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(response.body).to match(/unauthorized/)
     end
 
-    it "renders a page with the correct levers when user is allowed to view the page" do
+    it "renders a page with the correct levers, lever history, and user admin status when user is allowed to view the page" do
       User.authenticate!(user: lever_user)
       get "/acd-controls"
 
+      request_levers = @controller.view_assigns["acd_levers"]
+      request_history = @controller.view_assigns["acd_history"]
+      request_user_is_an_admin = @controller.view_assigns["user_is_an_acd_admin"]
+
       expect(response.status).to eq 200
-      expect(response.body).to eq(2)
+      expect(request_levers.count).to eq(2)
+      expect(request_levers).to include(lever1)
+      expect(request_levers).to include(lever2)
+      expect(request_history.count).to eq(2)
+      expect(request_history).to include(audit_lever_entry1)
+      expect(request_history).to include(audit_lever_entry2)
+      expect(request_history).not_to include(old_audit_lever_entry)
+      expect(request_user_is_an_admin).to be_falsey
     end
 
-    it "renders a page with the correct levers when user is an admin" do
-      User.authenticate!(roles: ["Admin"])
+    it "renders a page with the correct levers, lever history, and user admin status when user is an admin" do
+      User.authenticate!(roles: ["System Admin"])
       get "/acd-controls"
 
+      request_levers = @controller.view_assigns["acd_levers"]
+      request_history = @controller.view_assigns["acd_history"]
+      request_user_is_an_admin = @controller.view_assigns["user_is_an_acd_admin"]
+
       expect(response.status).to eq 200
-      expect(user.roles).to eq(2)
+      expect(request_levers.count).to eq(2)
+      expect(request_levers).to include(lever1)
+      expect(request_levers).to include(lever2)
+      expect(request_history.count).to eq(2)
+      expect(request_history).to include(audit_lever_entry1)
+      expect(request_history).to include(audit_lever_entry2)
+      expect(request_history).not_to include(old_audit_lever_entry)
+      expect(request_user_is_an_admin).to be_truthy
     end
   end
 
