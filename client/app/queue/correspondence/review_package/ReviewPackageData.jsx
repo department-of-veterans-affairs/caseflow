@@ -78,7 +78,6 @@ class ReviewPackageData extends React.PureComponent {
         correspondence_documents: response.body.correspondence_documents,
         totalDocuments: response.body.correspondence_documents.length,
       });
-      console.log(response)
     });
   }
 
