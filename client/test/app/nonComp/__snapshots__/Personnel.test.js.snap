@@ -368,7 +368,9 @@ exports[`Personnel component renders correctly renders correctly 1`] = `
                 <div
                   class="report-page-variable-content"
                 >
-                  <div>
+                  <div
+                    class="personnel"
+                  >
                     <div
                       class=""
                     >
