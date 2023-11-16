@@ -487,3 +487,54 @@ export const formattedLevers = [
     control_group: []
   },
 ];
+
+export const updatedLevers = [
+  {
+    id: 4,
+    item: 'lever_5',
+    title: 'Alternate Batch Size*',
+    description: 'Set case-distribution batch size for judges who do not have their own attorney teams.',
+    data_type: 'number',
+    value: '30',
+    unit: 'cases',
+    is_active: true,
+    is_disabled: false,
+    min_value: 0,
+    max_value: 500,
+    algorithms_used: [],
+    options: [],
+    control_group: []
+  },
+  {
+    id: 5,
+    item: 'lever_6',
+    title: 'Batch Size Per Attorney*',
+    description: 'Set case distribution batch size for judges with attorney teams. The value for this data element is per attorney.',
+    data_type: 'number',
+    value: '6',
+    unit: 'cases',
+    is_active: true,
+    is_disabled: false,
+    min_value: 0,
+    max_value: 500,
+    algorithms_used: [],
+    options: [],
+    control_group: []
+  },
+  {
+    id: 6,
+    item: 'lever_7',
+    title: 'Request More Cases Minimum*',
+    description: 'Set the number of remaining cases a VLJ must have equal to or less than to request more cases. (The number entered is used to equal to or less than.)',
+    data_type: 'number',
+    value: 16,
+    unit: 'cases',
+    is_active: true,
+    is_disabled: false,
+    min_value: 0,
+    max_value: 500,
+    algorithms_used: [],
+    options: [],
+    control_group: []
+  },
+]

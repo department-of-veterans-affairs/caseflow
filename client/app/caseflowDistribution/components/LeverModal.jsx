@@ -4,6 +4,7 @@ import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActio
 import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
 import COPY from '../../../COPY';
+import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 
 
 function SaveLeverChanges(leverStore)  {
@@ -27,6 +28,38 @@ function SaveLeversToDB(leverStore) {
 };
 function DisableSaveButton() {
   document.getElementById("SaveLeversButton").disabled = true;
+};
+
+function leverList(leverStore) {
+  const levers = leverStore.getState().levers;
+  const initialLevers = leverStore.getState().initial_levers;
+
+  const hasStateChanged = JSON.stringify(levers) !== JSON.stringify(initialLevers);
+
+  return (
+    <div>
+      {hasStateChanged && (
+        <table>
+          <tbody>
+            <tr>
+              <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableLeftStyling}`}>Data Element</th>
+              <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableRightStyling}`}>Previous Value</th>
+              <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableRightStyling}`}>New Value</th>
+            </tr>
+          </tbody>
+          <tbody>
+            {levers.map((lever, index) => (
+              <tr key={index}>
+                <td className={`${styles.modalTableStyling} ${styles.modalTableLeftStyling}`}>{lever.title}</td>
+                <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>{initialLevers[index].value}</td>
+                <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}><strong>{lever.value}</strong></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
 }
 
 export function LeverSaveButton({ leverStore }) {
@@ -41,6 +74,8 @@ export function LeverSaveButton({ leverStore }) {
     setShowModal(false);
   };
 
+
+
   return (
     <>
       <Button id="SaveLeversButton" onClick={() => setShowModal(true)}>
@@ -53,8 +88,10 @@ export function LeverSaveButton({ leverStore }) {
         title={COPY.CASE_DISTRIBUTION_MODAL_TITLE}
         confirmButton={<Button onClick={handleSave}>{COPY.MODAL_CONFIRM_BUTTON}</Button>}
         cancelButton={<Button onClick={() => setShowModal(false)}>{COPY.MODAL_CANCEL_BUTTON}</Button>}
+        className={styles.updatedModalStyling}
       >
         <p>{COPY.CASE_DISTRIBUTION_MODAL_DESCRIPTION}</p>
+        {leverList(leverStore)}
       </Modal>
       }
     </>
