@@ -8,7 +8,7 @@ module Seeds
       end
   
       def seed!
-        load_and_update_ineligible_judge
+        inactive_judge
         create_legacy_tasks
         create_ama_tasks
       end
@@ -112,10 +112,8 @@ module Seeds
       end
 
       # set judge to inactive
-      def load_and_update_ineligible_judge
-        inactive_judge = User.find_by_css_id("BVADSLADER")
-        inactive_judge.update_status!("inactive")
-        @inactive_judge
+      def inactive_judge
+        @inactive_judge ||= User.find_or_create_by(css_id: "BVADSLADER", station_id: 101)
       end
       
       # AC1
@@ -138,9 +136,9 @@ module Seeds
           type = "video"
           
           # AC1: create legacy appeals ready to be distributed that have a hearing held by an inactive judge
-          legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, @inactive_judge, attorney, veteran)
+          legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, inactive_judge, attorney, veteran)
           # Create the task tree, need to create each task like this to avoid user creation and index conflicts
-          create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, @inactive_judge, attorney, veteran)
+          create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, inactive_judge, attorney, veteran)
         end
       end
 
@@ -173,7 +171,7 @@ module Seeds
         offsets.each do |offset|
           create_ama_appeals_dispatch_ready_less_than_60_days(active_judge)
           create_ama_appeals_dispatch_ready_more_than_60_days(active_judge)
-          create_ama_appeals_dispatch_ready_less_than_60_days(@inactive_judge)
+          create_ama_appeals_dispatch_ready_less_than_60_days(inactive_judge)
           create_ama_appeals_dispatch_ready_less_than_60_days(nonadmin_user)
           create_ama_appeals_dispatch_ready_less_than_60_days(admin_and_nonadmin_user)
         end
